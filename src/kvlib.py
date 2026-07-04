@@ -56,6 +56,33 @@ def greedy_generate(model, cache, first_logits, max_tokens, eos_ids):
     return tokens, step_logits
 
 
+def first_step_logits(model, cache, last_token_id):
+    """Run the final prompt token as a 1-token decode step.
+
+    Protocol: every arm builds its cache over prompt[:-1], then computes the
+    first continuation logits this way, so all cross-arm comparisons use
+    identically-shaped forward passes (batched prefill and 1-token decode are
+    not numerically interchangeable).
+    """
+    return model(mx.array([[last_token_id]]), cache=cache)[:, -1, :]
+
+
+def teacher_forced_logprobs(model, cache, first_logits, cont_ids):
+    """Per-token logprobs of a fixed continuation under a cache (decode steps).
+
+    Returns (logprobs, per_step_logits). Mutates cache.
+    """
+    logprobs = []
+    step_logits = []
+    logits = first_logits
+    for t in cont_ids:
+        lp = logits - mx.logsumexp(logits, axis=-1, keepdims=True)
+        logprobs.append(lp[0, t].item())
+        step_logits.append(logits)
+        logits = model(mx.array([[t]]), cache=cache)[:, -1, :]
+    return logprobs, step_logits
+
+
 def snapshot_cache(cache):
     """Serialize a cache list to plain (keys, values, offset) tuples (trimmed)."""
     out = []
@@ -75,6 +102,51 @@ def rebuild_cache(snapshot):
         c.offset = offset
         cache.append(c)
     return cache
+
+
+class GappedKVCache:
+    """KV cache whose stored entries may be fewer than the position counter.
+
+    Used for Arm C (summary-anchored eviction): retained entries keep their
+    original (post-RoPE) positions, and `offset` continues from the original
+    conversation end so new queries/keys are rotated in-distribution.
+
+    Storage length and position counter are decoupled: `offset` drives RoPE;
+    `keys.shape[2]` drives the attention mask. New entries are appended
+    contiguously after the retained ones (the positional gap lives in the
+    rotation already baked into the retained keys, not in the array layout).
+
+    Implements `make_mask` so mlx_lm's create_attention_mask() builds a mask
+    sized to actual storage: for N new tokens, all previously stored entries
+    are attendable and the new block is causal.
+    """
+
+    def __init__(self, keys, values, position_offset):
+        self.keys = keys
+        self.values = values
+        self.offset = position_offset
+
+    def update_and_fetch(self, keys, values):
+        self.keys = mx.concatenate([self.keys, keys], axis=2)
+        self.values = mx.concatenate([self.values, values], axis=2)
+        self.offset += keys.shape[2]
+        return self.keys, self.values
+
+    def make_mask(self, N, return_array=False, window_size=None):
+        assert window_size is None
+        if N == 1:
+            return None
+        S = self.keys.shape[2]  # called before update_and_fetch for this step
+        linds = mx.arange(N)[:, None]
+        rinds = mx.arange(S + N)[None]
+        return linds + S >= rinds
+
+    @property
+    def state(self):
+        return self.keys, self.values
+
+    def size(self):
+        return self.offset
 
 
 def max_abs_diff(a, b):
