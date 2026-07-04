@@ -32,6 +32,7 @@ from kvlib import (
     rebuild_cache,
     snapshot_cache,
 )
+from mlx_lm.models.cache import KVCache
 
 N_SINK = 4
 MIN_BLOCK = 8  # minimum matching-block length for E alignment
@@ -196,6 +197,60 @@ def build_alignment(b_ids, old_ids, special_ids, regions):
                     continue
                 pairs.append((npos, opos))
     return pairs
+
+
+class SwapKVCache:
+    """E-inter: blends old V into incoming values AS THEY ARE WRITTEN during
+    prefill, so layer l's attention output (and hence every upper layer's
+    fresh K/V) is computed over old payloads. One instance per layer.
+
+    old_v: this layer's old-context V array. pairs: (new_pos, old_pos)."""
+
+    def __init__(self, old_v, pairs, alpha):
+        self.inner = KVCache()
+        self.old_v = old_v
+        self.pairs = pairs
+        self.alpha = alpha
+
+    @property
+    def offset(self):
+        return self.inner.offset
+
+    @property
+    def state(self):
+        return self.inner.state
+
+    def size(self):
+        return self.inner.size()
+
+    def update_and_fetch(self, keys, values):
+        prev = self.inner.offset
+        L = values.shape[2]
+        in_window = [(n, o) for n, o in self.pairs if prev <= n < prev + L]
+        if in_window and self.alpha > 0.0:
+            nidx = mx.array([n - prev for n, _ in in_window])
+            oidx = mx.array([o for _, o in in_window])
+            old = self.old_v[..., oidx, :].astype(mx.float32)
+            fresh = values[..., nidx, :].astype(mx.float32)
+            values = mx.array(values)
+            values[..., nidx, :] = (
+                (1 - self.alpha) * fresh + self.alpha * old
+            ).astype(values.dtype)
+        return self.inner.update_and_fetch(keys, values)
+
+
+def arm_e_inter_build(model, b_ids, old_snap, pairs, alpha):
+    """Prefill Arm B's context with SwapKVCache per layer (E-inter)."""
+    from kvlib import extend_cache
+
+    cache = [
+        SwapKVCache(old_snap[li][1], pairs, alpha)
+        for li in range(len(model.layers))
+    ]
+    extend_cache(model, cache, b_ids)
+    return [
+        (c.inner.state[0], c.inner.state[1], c.inner.offset) for c in cache
+    ]
 
 
 def arm_e_snapshot(b_snap, old_snap, pairs, alpha, layer_set=None):

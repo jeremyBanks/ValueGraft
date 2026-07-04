@@ -83,6 +83,34 @@ def teacher_forced_logprobs(model, cache, first_logits, cont_ids):
     return logprobs, step_logits
 
 
+def batched_teacher_forced(model, cache, feed_ids, target_ids, chunk=256):
+    """Batched teacher forcing: run `feed_ids` through the model on top of
+    `cache` and return logprobs of `target_ids`, where target_ids[i] is scored
+    by the logits at feed position len(feed_ids) - len(target_ids) + i - ... —
+    concretely: feed = [prefix tokens..., t_0, ..., t_{n-2}] and the last
+    len(target_ids) logits positions score t_0..t_{n-1}.
+
+    All arms use this same batched pass shape, so comparisons are fair even
+    though batched and stepwise kernels differ numerically.
+    """
+    n = len(target_ids)
+    assert len(feed_ids) >= n  # feed must contain t_0..t_{n-2} plus >=1 prefix
+    lps = []
+    ids = mx.array(feed_ids)[None]
+    pos = 0  # feed position of the next chunk start
+    for i in range(0, len(feed_ids), chunk):
+        logits = model(ids[:, i : i + chunk], cache=cache)[0]
+        lp = logits - mx.logsumexp(logits, axis=-1, keepdims=True)
+        for j in range(logits.shape[0]):
+            fpos = i + j  # this position's logits predict feed[fpos + 1]
+            t = fpos - (len(feed_ids) - n)  # index into target_ids
+            if t >= 0:
+                lps.append(lp[j, target_ids[t]].item())
+        mx.eval([c.state[0] for c in cache])
+    assert len(lps) == n
+    return lps
+
+
 def sampled_generate(model, cache, first_logits, max_tokens, eos_ids, temp=0.7):
     """Temperature-sampled decode from an existing cache. Returns token ids
     (without the terminating eos). Determinism comes from mx.random.seed set
