@@ -202,7 +202,13 @@
     "swerve",
     "secondhand"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    40,
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-referent-2",
@@ -215,7 +221,12 @@
     "preloaded",
     "high goal"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-sense-1",
@@ -228,7 +239,10 @@
     "duplicate",
     "practice robot"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-sense-2",
@@ -240,7 +254,12 @@
    "keywords": [
     "station"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-stance-1",
@@ -255,7 +274,10 @@
    "anti_keywords": [
     "candy",
     "snack"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-stance-2",
@@ -269,7 +291,12 @@
    ],
    "anti_keywords": [
     "drill"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-ruled-out-1",
@@ -284,7 +311,10 @@
    ],
    "anti_keywords": [
     "optitrak"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-ruled-out-2",
@@ -299,7 +329,10 @@
    ],
    "anti_keywords": [
     "brushed"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-evicted-fact-1",
@@ -311,7 +344,12 @@
    "keywords": [
     "8472"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    34
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c12-evicted-fact-2",
@@ -323,7 +361,10 @@
    "keywords": [
     "137"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

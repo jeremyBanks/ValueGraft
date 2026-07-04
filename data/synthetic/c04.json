@@ -202,7 +202,14 @@
     "emnlp",
     "findings"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    34,
+    38,
+    40
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-referent-2",
@@ -215,7 +222,13 @@
     "36",
     "raters"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38,
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-sense-1",
@@ -228,7 +241,12 @@
     "multi-task",
     "comparison"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-sense-2",
@@ -241,7 +259,13 @@
     "internal",
     "ten days"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    34,
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-stance-1",
@@ -256,7 +280,10 @@
    "anti_keywords": [
     "preprint",
     "arxiv"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-stance-2",
@@ -270,7 +297,10 @@
    ],
    "anti_keywords": [
     "pie"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-ruled-out-1",
@@ -284,7 +314,10 @@
    ],
    "anti_keywords": [
     "synthetic"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-ruled-out-2",
@@ -299,7 +332,10 @@
    ],
    "anti_keywords": [
     "consulting office"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-evicted-fact-1",
@@ -311,7 +347,10 @@
    "keywords": [
     "2214807"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c04-evicted-fact-2",
@@ -323,7 +362,10 @@
    "keywords": [
     "795"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

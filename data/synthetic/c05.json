@@ -202,7 +202,14 @@
     "cold open",
     "juiciest"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    34,
+    40,
+    44
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-referent-2",
@@ -215,7 +222,14 @@
     "rotating",
     "guest-host"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36,
+    42,
+    44
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-sense-1",
@@ -228,7 +242,12 @@
     "mini-arc",
     "trades"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-sense-2",
@@ -241,7 +260,12 @@
     "patreon",
     "supporters"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-stance-1",
@@ -256,7 +280,10 @@
    "anti_keywords": [
     "mid-roll",
     "dynamic ad"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-stance-2",
@@ -270,7 +297,10 @@
    ],
    "anti_keywords": [
     "crypto"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-ruled-out-1",
@@ -285,7 +315,10 @@
    ],
    "anti_keywords": [
     "twice"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-ruled-out-2",
@@ -301,7 +334,10 @@
    "anti_keywords": [
     "video call",
     "call app"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-evicted-fact-1",
@@ -313,7 +349,10 @@
    "keywords": [
     "23.50"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c05-evicted-fact-2",
@@ -325,7 +364,10 @@
    "keywords": [
     "ottoline"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

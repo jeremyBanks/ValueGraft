@@ -202,7 +202,12 @@
     "punchboard",
     "folding"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-referent-2",
@@ -216,7 +221,10 @@
     "lanterns",
     "foxes"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-sense-1",
@@ -229,7 +237,12 @@
     "duel",
     "two-player"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    40
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-sense-2",
@@ -242,7 +255,12 @@
     "retailer",
     "stores"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-stance-1",
@@ -256,7 +274,10 @@
    ],
    "anti_keywords": [
     "exclusive"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-stance-2",
@@ -271,7 +292,10 @@
    "anti_keywords": [
     "ai-generated",
     "ai art"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-ruled-out-1",
@@ -286,7 +310,10 @@
    ],
    "anti_keywords": [
     "printforge"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-ruled-out-2",
@@ -301,7 +328,10 @@
    ],
    "anti_keywords": [
     "banner"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-evicted-fact-1",
@@ -313,7 +343,12 @@
    "keywords": [
     "4,860"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    44
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c07-evicted-fact-2",
@@ -325,7 +360,10 @@
    "keywords": [
     "0863921"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

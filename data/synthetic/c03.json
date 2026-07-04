@@ -202,7 +202,12 @@
     "gesture-first",
     "floating"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-referent-2",
@@ -215,7 +220,10 @@
     "slate",
     "coral"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-sense-1",
@@ -228,7 +236,12 @@
     "first-run",
     "wizard"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    40
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-sense-2",
@@ -241,7 +254,13 @@
     "figma",
     "redlines"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36,
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-stance-1",
@@ -255,7 +274,10 @@
    ],
    "anti_keywords": [
     "carousel"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-stance-2",
@@ -270,7 +292,10 @@
    "anti_keywords": [
     "badge",
     "gamification"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-ruled-out-1",
@@ -284,7 +309,10 @@
    ],
    "anti_keywords": [
     "nudgekit"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-ruled-out-2",
@@ -299,7 +327,10 @@
    ],
    "anti_keywords": [
     "panelpro"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-evicted-fact-1",
@@ -311,7 +342,10 @@
    "keywords": [
     "99.62"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c03-evicted-fact-2",
@@ -324,7 +358,10 @@
     "1,140",
     "august 23"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

@@ -202,7 +202,14 @@
     "rain barrels",
     "soaker"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [
+    2
+   ],
+   "contaminated_tail": [
+    40
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-referent-2",
@@ -215,7 +222,12 @@
     "pollinator",
     "children"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-sense-1",
@@ -228,7 +240,10 @@
     "vacant lot",
     "delling"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-sense-2",
@@ -240,7 +255,12 @@
    "keywords": [
     "three-bay"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-stance-1",
@@ -256,7 +276,12 @@
     "pesticide",
     "neem",
     "spray"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-stance-2",
@@ -270,7 +295,10 @@
    ],
    "anti_keywords": [
     "bake"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-ruled-out-1",
@@ -284,7 +312,10 @@
    ],
    "anti_keywords": [
     "whiteboard"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-ruled-out-2",
@@ -300,7 +331,10 @@
    "anti_keywords": [
     "free pile",
     "wood-chip"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-evicted-fact-1",
@@ -312,7 +346,10 @@
    "keywords": [
     "184"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c06-evicted-fact-2",
@@ -324,7 +361,10 @@
    "keywords": [
     "5521"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

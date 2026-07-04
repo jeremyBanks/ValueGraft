@@ -99,6 +99,46 @@ class ConversationBuilder:
     def n_tokens(self):
         return len(self.stream)
 
+    # -- replay/repair API (used by fix_tails.py) --
+
+    def _canonical_after(self, msgs):
+        r_with_dummy = render(
+            self.tokenizer, msgs + [{"role": "user", "content": "x"}], False
+        )
+        im_start = self.tokenizer.encode("<|im_start|>")[0]
+        starts = [i for i, t in enumerate(r_with_dummy) if t == im_start]
+        return r_with_dummy[: starts[len(msgs)]]
+
+    def commit_turn(self, user_text, reply_text):
+        """Append a known user/assistant exchange, extending the cache in
+        canonical form (no sampling)."""
+        self.msgs.append({"role": "user", "content": user_text})
+        self.msgs.append({"role": "assistant", "content": reply_text})
+        canon = self._canonical_after(self.msgs)
+        assert canon[: len(self.stream)] == self.stream
+        extend_cache(self.model, self.cache, canon[len(self.stream):])
+        self.stream = canon
+
+    replay_turn = commit_turn
+
+    def peek_reply(self, user_text):
+        """Sample a candidate reply without committing; cache is restored."""
+        trial = self.msgs + [{"role": "user", "content": user_text}]
+        r_gen = render(self.tokenizer, trial, gen_prompt=True)
+        assert r_gen[: len(self.stream)] == self.stream
+        logits = extend_cache(self.model, self.cache, r_gen[len(self.stream):])
+        reply_ids = sampled_generate(
+            self.model, self.cache, logits, MAX_REPLY_TOKENS, self.eos_ids, TEMP
+        )
+        truncate_cache(self.cache, len(self.stream))
+        text = self.tokenizer.decode(reply_ids).strip()
+        if len(reply_ids) == MAX_REPLY_TOKENS:
+            cut = max(text.rfind("\n\n"), text.rfind(". "),
+                      text.rfind("! "), text.rfind("? "))
+            if cut > len(text) // 3:
+                text = text[: cut + 1].rstrip()
+        return text
+
 
 def compose(scenario, model, tokenizer, seed):
     mx.random.seed(seed)

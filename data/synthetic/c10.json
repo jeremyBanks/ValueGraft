@@ -202,7 +202,16 @@
     "l-shape",
     "island"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [
+    2,
+    4
+   ],
+   "contaminated_tail": [
+    38,
+    40
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-referent-2",
@@ -215,7 +224,10 @@
     "quartz",
     "veining"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-sense-1",
@@ -227,7 +239,12 @@
    "keywords": [
     "deck"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-sense-2",
@@ -239,7 +256,13 @@
    "keywords": [
     "electrical"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    40,
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-stance-1",
@@ -253,7 +276,10 @@
    ],
    "anti_keywords": [
     "open shelv"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-stance-2",
@@ -267,7 +293,10 @@
    ],
    "anti_keywords": [
     "heloc"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-ruled-out-1",
@@ -282,7 +311,10 @@
    ],
    "anti_keywords": [
     "hartwell"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-ruled-out-2",
@@ -296,7 +328,10 @@
    ],
    "anti_keywords": [
     "vinyl"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-evicted-fact-1",
@@ -309,7 +344,10 @@
     "342",
     "february 6"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c10-evicted-fact-2",
@@ -321,7 +359,10 @@
    "keywords": [
     "11.875"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

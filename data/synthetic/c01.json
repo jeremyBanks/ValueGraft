@@ -202,7 +202,15 @@
     "usage-based",
     "credits"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [
+    4
+   ],
+   "contaminated_tail": [
+    38,
+    40
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-referent-2",
@@ -215,7 +223,13 @@
     "invite-only",
     "design partners"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38,
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-sense-1",
@@ -228,7 +242,13 @@
     "self-serve",
     "signup"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    34,
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-sense-2",
@@ -240,7 +260,12 @@
    "keywords": [
     "investor"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-stance-1",
@@ -254,7 +279,10 @@
    ],
    "anti_keywords": [
     "countdown"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-stance-2",
@@ -268,7 +296,10 @@
    ],
    "anti_keywords": [
     "webinar"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-ruled-out-1",
@@ -282,7 +313,10 @@
    ],
    "anti_keywords": [
     "prospexo"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-ruled-out-2",
@@ -297,7 +331,10 @@
    ],
    "anti_keywords": [
     "guidely"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-evicted-fact-1",
@@ -309,7 +346,10 @@
    "keywords": [
     "6,410"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c01-evicted-fact-2",
@@ -322,7 +362,10 @@
     "88214",
     "april 9"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

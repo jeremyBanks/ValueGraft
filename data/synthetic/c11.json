@@ -202,7 +202,12 @@
     "cohort",
     "6-week"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    34
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-referent-2",
@@ -215,7 +220,12 @@
     "jump-cuts",
     "keystrokes"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-sense-1",
@@ -227,7 +237,10 @@
    "keywords": [
     "capstone"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-sense-2",
@@ -240,7 +253,15 @@
     "queries",
     "datasets"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [
+    2
+   ],
+   "contaminated_tail": [
+    36,
+    38
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-stance-1",
@@ -254,7 +275,10 @@
    ],
    "anti_keywords": [
     "lifetime"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-stance-2",
@@ -268,7 +292,10 @@
    ],
    "anti_keywords": [
     "slide"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-ruled-out-1",
@@ -282,7 +309,10 @@
    ],
    "anti_keywords": [
     "coursemint"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-ruled-out-2",
@@ -296,7 +326,10 @@
    ],
    "anti_keywords": [
     "youtube"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-evicted-fact-1",
@@ -308,7 +341,10 @@
    "keywords": [
     "288"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c11-evicted-fact-2",
@@ -320,7 +356,10 @@
    "keywords": [
     "wilhelmina"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {

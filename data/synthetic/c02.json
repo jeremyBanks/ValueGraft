@@ -202,7 +202,13 @@
     "boxed",
     "co-op"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    38,
+    44
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-referent-2",
@@ -215,7 +221,12 @@
     "split",
     "25-minute"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    36
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-sense-1",
@@ -228,7 +239,13 @@
     "mentorship",
     "first-time"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    34,
+    40
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-sense-2",
@@ -241,7 +258,12 @@
     "annex",
     "hall b"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [
+    42
+   ],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-stance-1",
@@ -255,7 +277,10 @@
    ],
    "anti_keywords": [
     "raffle"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-stance-2",
@@ -269,7 +294,10 @@
    ],
    "anti_keywords": [
     "lanyard"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-ruled-out-1",
@@ -284,7 +312,10 @@
    "anti_keywords": [
     "fairgrounds",
     "pavilion"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-ruled-out-2",
@@ -299,7 +330,10 @@
    "anti_keywords": [
     "tixaroo",
     "early-bird"
-   ]
+   ],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-evicted-fact-1",
@@ -312,7 +346,10 @@
     "3,275",
     "january 17"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   },
   {
    "id": "c02-evicted-fact-2",
@@ -324,7 +361,10 @@
    "keywords": [
     "godfrey"
    ],
-   "anti_keywords": []
+   "anti_keywords": [],
+   "contaminated_early": [],
+   "contaminated_tail": [],
+   "keywords_present_in_middle": true
   }
  ],
  "meta": {
