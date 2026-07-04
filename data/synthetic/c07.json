@@ -148,7 +148,7 @@
   },
   {
    "role": "assistant",
-   "content": "Great follow-up — and perfectly timed.\n\nYou're asking about **how the component tier choice affects per-unit shipping weight**, which is **critical** for accurate fulfillment pricing, lead time, and carrier cost modeling — especially when you're dealing with **volume-based shipping** across different regions.\n\nLet’s break this down with **realistic, tangible, and actionable estimates** — so you can plug them directly into your shipping spreadsheets or carrier quotes.\n\n---\n\n## 📦 PER-UNIT SHIP WEIGHT FOR *MARROW & VINE* (STANDARD BOX + PUNCHBOARD + FOLDING BOARD)\n\n> ✅ **Component Tier:** Standard Box with Punchboard Tokens & Folding Board  \n> ✅ **Estimated Per-Unit Shipping Weight:** **~1.1 to 1.4 pounds (500–630 grams)**  \n\n> 🚨 **Why this range?** Because it depends on the *actual materials and fill* — not just the box.\n\n---\n\n### 🔍 Breakdown by Component"
+   "content": "Great follow-up — and perfectly timed.\n\nYou're asking about **how the component tier choice affects per-unit shipping weight**, which is **critical** for accurate fulfillment pricing, lead time, and carrier cost modeling — especially when you're dealing with **volume-based shipping** across different regions.\n\nLet’s break this down with **realistic, tangible, and actionable estimates** — so you can plug them directly into your shipping spreadsheets or carrier quotes.\n\n---"
   },
   {
    "role": "user",
@@ -156,7 +156,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Excellent question — and one that speaks directly to the heart of a successful, sustainable crowdfunding campaign.**\n\nYou're asking:  \n> *\"What should we cap the **retailer pledge** (i.e., the bulk retail pledge level) at — so it doesn’t eat into the backer revenue or campaign health?\"*\n\nThis is **not just about numbers** — it's about **protecting your campaign’s financial integrity, player trust, and long-term viability**.\n\nLet’s build a **clear, data-informed, and strategic cap** — one that protects your backer tiers, respects retail demand, and ensures your campaign doesn’t “bloat” itself with unrealistic or unbalanced retail volumes.\n\n---\n\n## ✅ RECOMMENDED RETAIL PLEDGE CAP: **15% of the Total Campaign Goal**\n\n> 🔹 **Cap at: 15% of the overall campaign funding goal**  \n> 🔹 **Example:**  \n> - If your campaign goal is **$100,000**, then the **retail pledge tier should not exceed $15,000**  \n> - If your goal is **$50,000**, cap it at **$7,500**\n\n> 🚫 **Do NOT cap at 10% or 20%** — 15% is the **sweet spot** where you:\n> - Protect your **backer revenue stream**  \n> - Allow **retailers a realistic volume incentive**  \n> - Prevent **retailers from dominating the campaign** (which can hurt small backer tiers)  \n> - Avoid **overpromising** — and the risk of *not meeting volume targets*"
+   "content": "**Excellent question — and one that speaks directly to the heart of a successful, sustainable crowdfunding campaign.**"
   },
   {
    "role": "user",
@@ -164,7 +164,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Great question — and a pivotal one in game design, player experience, and campaign strategy.**\n\nLet’s cut through the noise and give you a **clear, balanced, and player-first answer** — so you can decide whether *Ember* (the two-player duel variant) belongs in the base box or as a stretch goal.\n\n---\n\n# 🎲 SHOULD \"EMBER\" (THE TWO-PLAYER DUEL VARIANT) SHIP IN THE BASE BOX OR AS A STRETCH GOAL?\n\n> ✅ **Answer: It should ship as a STRETCH GOAL — but only if the game is designed such that it’s a *meaningful, optional, and deeply strategic* addition.**\n\n> ✅ **Final Recommendation: Ember as a stretch goal — with a clear, compelling reason.**\n\n---\n\n## ✅ WHY EMBER AS A STRETCH GOAL IS BETTER\n\n| Reason | Explanation |\n|------|-------------|\n| 🎯 **Protects the base game experience** | The core game (base) should feel *complete and accessible* — without the pressure of mastering a complex, high-stakes duel mode. |\n| 🎯 **Encourages deeper engagement** | Players who want to explore the two-player duel *will* go for the stretch — and it gives them a sense of progression and mastery. |\n| 🎯 **Avoids a \"feature\" that feels like a bug** | If it's in the base, it can feel like an afterthought — or worse, a *complicated, unwelcome* mode that breaks immersion. |\n| 🎯 **Preserves game balance and pacing** | The duel mode (Ember) is *intentionally* more intense, strategic, and time-consuming — it’s not meant for casual play. A stretch goal respects that. |\n| 🎯 **Builds community excitement** | When players see \"Ember\" as a *strategic challenge* — not a default — it becomes a *story* worth seeking out. |"
+   "content": "**Great question — and a pivotal one in game design, player experience, and campaign strategy.**"
   },
   {
    "role": "user",
@@ -180,7 +180,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Absolutely — and you're right to be hyper-vigilant here.**\n\nPostage and shipping costs **do rise** — not just due to inflation, but because of **inflation in carrier rates, volume surges, and global supply chain volatility**. What happens is often:  \n> *\"We know the estimate — we send it — and then, 3 weeks before launch, the actual shipping cost is 18–25% higher.\"*\n\nThat’s not just bad luck — it’s **systemic risk in indie fulfillment**.\n\nSo let’s build a **smart, practical, and resilient buffer** — one that protects your margins *without* being an overcorrection.\n\n---\n\n# 📦 SHIPPING CHARGE BUFFER: THE PROVEN, SAFE, AND REALISTIC APPROACH\n\n> ✅ **Recommended Buffer: +15% to +20%** (over the *pre-launch estimate*)  \n> ✅ **Apply this buffer to your *final shipping cost per unit*, not just to the total.**\n\n> 🚫 Don’t build a 100% buffer — that’s unworkable.  \n> ✅ Don’t build a 5% buffer — that’s too little for real-world volatility.\n\n> ✅ **The 15–20% buffer is the sweet spot** — it protects you from mid-campaign surprises, while still being *plausible and transparent* to backers.\n\n---\n\n## ✅ HOW TO APPLY THE BUFFER (Step-by-Step)\n\n| Step | Action |\n|------|--------|\n| 1. **Base Shipping Cost** | Start with your *pre-launch ocean freight & domestic shipping estimate* (e.g., $4,860) |\n| 2. **Add Buffer** | Apply **15–20%** to the total shipping cost — *before* finalizing your pledge tiers or quote to backers. |  \n| 3."
+   "content": "**You're absolutely right — and this is one of the most *underestimated* and *dangerous* risks in indie publishing.**\n\nPostage and shipping costs don’t stay still. They **rise due to inflation, carrier rates, regional spikes, and volume shifts** — and **many creators lose 15–30% of their margins mid-campaign** because they didn’t plan for it.\n\nLet’s build a **realistic, proactive, and protective buffer** — so you don’t just survive, you *thrive* in the face of shipping volatility.\n\n---\n\n# 📦 SHIPPING CHARGE BUFFER: THE RIGHT WAY TO PROTECT YOUR MARGINS\n\n> ✅ **Goal:** Protect your profitability, avoid surprise cost overruns, and maintain trust with backers — without sacrificing transparency.\n\n> ⚠️ **Rule of thumb:** **Never lock in shipping costs at launch.**  \n> Instead, build **a 10–15% buffer** into your *final quoted shipping rates* — and **track it as a fixed, visible, and transparent cost**.\n\n---\n\n## ✅ PROVEN BUFFER STRATEGY (What to Do)\n\n### 📌 1. **Build a 15% Shipping Buffer into Your Final Price Estimates**\n\n> ✅ **Before launch:** Add **15% above your base shipping cost** as a *pre-emptive buffer*  \n> (e.g., if base shipping is $1.50/unit → cap at $1.725/unit)\n\n> 🎯 Why 15%?  \n> - Historical data shows **shipping costs increase 8–18% mid-campaign** due to:  \n>   - Carrier inflation (UPS, FedEx, DHL)  \n>   - Regional spikes (e.g., California vs."
   }
  ],
  "sections": {
@@ -188,7 +188,7 @@
   "middle_end_msg": 33,
   "early_end_tokens": 964,
   "middle_end_tokens": 7113,
-  "total_tokens": 9346
+  "total_tokens": 8481
  },
  "plants": [
   {
@@ -204,9 +204,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    36
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -239,9 +237,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    40
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -257,9 +253,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    38
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -345,9 +339,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    44
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -370,6 +362,7 @@
   "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
   "seed": 1006,
   "temp": 0.7,
-  "truncated_replies": 22
+  "truncated_replies": 22,
+  "tail_repaired": 4
  }
 }

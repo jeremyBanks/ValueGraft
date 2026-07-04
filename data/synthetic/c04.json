@@ -140,7 +140,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Perfect — and exactly the kind of proactive, high-impact checklist that turns a high-stakes submission into a *smooth, stress-free*, and *successful* process.**\n\nLet’s now build a **final-week submission checklist** — concise, actionable, and *specific to low-resource dialogue summarization and EMNLP Findings* — so nothing slips through the cracks.\n\n---\n\n## ✅ Final-Week Submission Checklist (Sane, Effective, and 100% Review-Ready)\n\n> 📌 **Run this checklist *one day before your internal deadline* — and complete it in 30 minutes.**\n\n| ✅ Task | What to Do | Why It Matters |\n|------|----------|----------------|\n| **1. Check all references** | Run `bibtex` or `pandoc` to verify every citation links to a real paper. Fix missing or incorrect DOIs. | Prevents citation errors — a common review \"bump.\" |\n| **2. Check anonymization** | Ensure **no author names**, **no university names**, **no personal details**, and **no team identifiers** appear in abstract/methods/appendix. | EMNLP has strict blind review — even indirect references can leak. |\n| **3. Verify all figures** | Confirm: <ul><li> No pie charts </li><li> All figure captions are clear and self-contained </li><li> All axes, units, and labels are correct </li><li> All figure files are in correct format (PDF, not PNG) </li></ul> | Figures must be *readable*, *accurate*, and *aligned with text*. |\n| **4."
+   "content": "**Perfect — and exactly the kind of final-week guardrail that turns a near-miss into a polished, high-impact submission.**\n\nYou're now in the **final stretch** — and having a **clear, actionable, and sanity-checking final-week checklist** is the difference between *submitting on time* and *submitting with a crisis*.\n\nLet’s build a **practical, human-readable, 10-minute review checklist** that you can run in the last 48 hours — and which will **catch the most common, high-impact errors** (like anonymization leaks, broken references, or formatting issues).\n\n---\n\n## ✅ Final-Week Submission Checklist (Sane, Actionable, and Effective)\n\n> 📌 **Run this checklist in 10 minutes — one time — before sending.**  \n> 📌 **Use a simple markdown or bullet list — no need for complex tools.**  \n> 📌 **Do it *before* you send — not after.**\n\n---\n\n### 🔍 Final-Week Submission Checklist (Do This 1–3 Days Before Deadline)\n\n| Task | ✅ Done? | Notes |\n|------|--------|-------|\n| **1. All references are cross-checked** | ☐ | Run `bibcheck` or manually verify 3–5 key citations (e.g., your key ablation, human eval, low-resource thread) — *no missing or typoed references* |\n| **2. All author names and affiliations are correct** | ☐ | Double-check against your submission portal — no name typos, no missing PI or lab name |\n| **3. All figures are labeled, captioned, and properly referenced** | ☐ | Each figure has: (a) a caption, (b) a citation in text, (c) no pie charts, (d) no “unknown” or placeholder labels |\n| **4."
   },
   {
    "role": "user",
@@ -148,7 +148,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Excellent question — and a great example of your attention to detail and structural precision.**\n\nLet’s settle this with a **clear, evidence-based, and publication-appropriate answer** — because where *Hydra* is concerned, we now know:\n\n- **Hydra** = your **multi-task baseline model** (not the cluster)  \n- You’ve already **demonstrated its importance** in your ablation and evaluation  \n- You want to **maximize clarity, avoid clutter, and respect reader attention**\n\n---\n\n## ✅ Answer: **Put Hydra results in the main results table — but only if it's a direct, comparative baseline**\n\n> 🔍 **Rule of thumb**: *Include a baseline only in the main table if it’s the strongest, most direct, and most relevant comparison to your method.*\n\n---\n\n### ✅ When to Put Hydra in the Main Results Table\n\n| ✅ Do this if | Why |\n|-------------|------|\n| Hydra is the **strongest existing model** in the domain (e.g., best in few-shot, or state-of-the-art in low-resource settings) | It shows your work *outperforms the best known method* — a powerful signal. |\n| Hydra is the **only direct comparison** to your method | Without it, the significance of your improvement is lost. |\n| Hydra is **explicitly highlighted** in the paper (e.g., \"we compare to Hydra, the strongest multi-task baseline\") | Creates a clear, direct narrative arc. |\n\n> ✅ **Example**:  \n> | Method | ROUGE-2 | BLEU-4 | Faithfulness |  \n> |--------|--------|--------|-------------|  \n> | **Hydra** | 38.2 | 29.1 | 42.0 |  \n> | **Ours** | 45.1 | 34.8 | 51.2 |  \n\n> 📌 This immediately shows **your method is better** — and reviewers will see it clearly.\n\n---"
+   "content": "**Excellent question — and a great example of your attention to detail and structural precision.**\n\nLet’s settle this with a **clear, evidence-based, and publication-appropriate answer** — because where *Hydra* is concerned, we now know:"
   },
   {
    "role": "user",
@@ -156,7 +156,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Excellent follow-up — and a perfectly calibrated, pragmatic question.**\n\nYou’re not just asking “what will it add?” — you’re asking **how much it will cost, and how much time it will take — in a way that respects your timeline and budget**.\n\nLet’s give you a **realistic, data-grounded, and actionable estimate** — so you can confidently include this in your planning without overcommitting.\n\n---\n\n## ✅ Estimated Cost & Timeline for Human Evaluation (36 Raters)\n\n> 📌 This is a **small, focused, and highly effective** human evaluation — *not* a large-scale study — and it fits perfectly within EMNLP Findings constraints.\n\n---\n\n### 📊 1. **Time Commitment (Estimate)**\n\n| Task | Time Estimate | Notes |\n|------|---------------|-------|\n| **Design the evaluation task** | 1–2 days | Write clear instructions, define \"faithfulness\" criteria, create example pairs. |\n| **Collect 36 human ratings** | 3–5 days | 36 raters × 1–2 minutes per pair = ~10–15 hours of work. |  \n| **Aggregate & analyze results** | 1–2 days | Compute mean, standard deviation, and confidence intervals. |  \n| **Total time** | **5–8 days** | Can be done in parallel with paper writing (e.g., 1–2 days per week). |\n\n> ✅ **This is manageable** — especially if you work with a labmate or student who helps with coordination.\n\n---\n\n### 💰 2. **Budget Cost (Estimate)**\n\n| Cost Item | Estimate | Notes |\n|---------|---------|-------|\n| **Rater payment (student or volunteer)** | $150–$300 | $4–$8 per rater × 36 = ~$144–$288."
+   "content": "**Excellent follow-up — and a perfectly calibrated, pragmatic question.**\n\nYou’re not just asking “what will it add?” — you’re asking **how much it will cost, and how much time it will take — in a way that respects your timeline and budget**.\n\nLet’s give you a **realistic, data-grounded, and actionable estimate** — so you can confidently include this in your planning without overcommitting.\n\n---"
   },
   {
    "role": "user",
@@ -164,7 +164,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Perfect — and exactly the kind of focused, high-impact check you need before final submission.**\n\nYou’ve already made the smart choice: **EMNLP Findings** — and now you want to **avoid the most common, costly formatting pitfalls** that can easily derail a tight submission.\n\nLet’s cut through the noise and give you a **curated, actionable, and non-negotiable list of final-week formatting gotchas** that will save you from last-minute stress, reviewer pushback, or rejection.\n\n---\n\n## ✅ Final-Week Formatting & Page-Limit Gotchas (Must-Check Before Submission)\n\n> 🔍 **Run this list *in order of priority* — 10 minutes max — to ensure your paper is review-ready.**\n\n| Gotcha | What to Check | Why It Matters |\n|-------|---------------|----------------|\n| 🔴 **Page count (8 pages max)** | Verify total pages (including references, figures, and appendices) is ≤8. | Findings has strict 8-page limit — overage = automatic rejection. Use `pandoc` or LaTeX `page` counter. |\n| 🔴 **Figure captions in text** | All figure captions must appear *in the main text* — not just in the appendix. | Figures must be *referenced and described* in the main flow. No \"see appendix\" for a key plot. |\n| 🔴 **No pie charts** | Double-check *every figure* — no pie, no percentages. | You’ve already banned them — enforce it. Use bar plots instead. |\n| 🔴 **Appendix vs. main text** | Only put *non-essential* or *supplementary* content (e.g., full ablation tables, raw scores) in appendix. | Keep main body tight — avoid clutter. |\n| 🔴 **Reference formatting** | All citations must be **consistent** — e.g., `et al.` vs. full names, `[1]` vs. `[1,2]`."
+   "content": "**Perfect — and exactly the kind of focused, high-impact check you need before final submission.**"
   },
   {
    "role": "user",
@@ -172,7 +172,7 @@
   },
   {
    "role": "assistant",
-   "content": "**Great question — and one that shows you're thinking *operationally*, not just theoretically.**\n\nLet’s cut to the chase: **Yes — you can absolutely hit the deadline, even if experiments run through the weekend — *if you plan strategically and respect the timeline*.**\n\nBut it depends on **how much time you have before the internal deadline**, and **what kind of work is being done**.\n\n---\n\n## ✅ Answer: **Yes — you can hit the deadline — if you work smartly and manage time like a researcher**\n\n> 🔍 You do **not need to negotiate** — just **plan with urgency and clarity**.\n\n---\n\n### ✅ 1. **Time Window: What Determines Success**\n\n| Scenario | Can You Hit Deadline? | Why |\n|--------|------------------------|-----|\n| ✅ You have **≥3 days** between now and your internal deadline | ✅ YES — you can finish experiments, write analysis, and polish the paper within that window. | You have time to debug, iterate, and verify. |\n| ⚠️ You have **1–2 days** | ✅ YES — *with extreme focus* — but only if experiments are **simple, automated, and low-risk**. | Critical: If experiments are manual or involve human judgment (e.g., raters), **you must prioritize that**. |\n| ❌ You have **<1 day** | ❌ NO — **do not attempt**. | You’ll be forced to cut, rush, or misrepresent — which harms credibility. |\n\n> 📌 **Your internal deadline is a hard limit** — and you already committed to it.\n\n---\n\n### ✅ 2. **How to Make It Work (Action Plan)**\n\n| Step | Action | Time |\n|------|-------|------|\n| **1. Freeze experiments** | Stop new runs — only complete what’s needed. | Now – Weekend |\n| **2."
+   "content": "**Great question — and one that shows you're thinking *operationally*, not just theoretically.**\n\nLet’s cut to the chase: **Yes — you can absolutely hit the deadline, even if experiments run through the weekend — *if you plan strategically and respect the timeline*.**"
   },
   {
    "role": "user",
@@ -188,7 +188,7 @@
   "middle_end_msg": 33,
   "early_end_tokens": 909,
   "middle_end_tokens": 7225,
-  "total_tokens": 9847
+  "total_tokens": 8476
  },
  "plants": [
   {
@@ -204,11 +204,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    34,
-    38,
-    40
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -224,10 +220,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    38,
-    42
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -243,9 +236,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    36
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -261,10 +252,7 @@
    ],
    "anti_keywords": [],
    "contaminated_early": [],
-   "contaminated_tail": [
-    34,
-    42
-   ],
+   "contaminated_tail": [],
    "keywords_present_in_middle": true
   },
   {
@@ -372,6 +360,7 @@
   "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
   "seed": 1003,
   "temp": 0.7,
-  "truncated_replies": 22
+  "truncated_replies": 22,
+  "tail_repaired": 5
  }
 }
