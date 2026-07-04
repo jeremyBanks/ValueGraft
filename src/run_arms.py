@@ -66,6 +66,10 @@ class ArmSet:
         self.tail_start_msg = tail_start_msg
         self.ids = canonical_ids(tokenizer, msgs)
         starts = message_token_starts(tokenizer, self.ids, len(msgs))
+        if tail_start_msg is None:  # natural mode: boundary nearest 75%
+            from arms import pick_tail_start
+            tail_start_msg, _ = pick_tail_start(tokenizer, msgs, self.ids, 1)
+            self.tail_start_msg = tail_start_msg
         self.tail_start_tok = starts[tail_start_msg]
         self.special_ids = set(tokenizer.all_special_ids)
         self.summary = generate_summary(model, tokenizer, msgs)
@@ -198,6 +202,50 @@ def run_probe_mode(model, tokenizer, msgs, tail_start_msg, plants,
     return out
 
 
+def run_natural(model, tokenizer, conv_path, outdir):
+    """Natural mode: hold out the last `holdout_msgs` messages; teacher-force
+    the entire rendered holdout suffix (message frames included) under each
+    arm. Tail = message boundary nearest 75% of the truncated context."""
+    from arms import pick_tail_start
+
+    conv = json.load(open(conv_path))
+    cid = conv["id"]
+    outfile = outdir / f"{cid}.json"
+    if outfile.exists():
+        print(f"{cid}: done already, skipping")
+        return
+    msgs = conv["messages"]
+    ctx = msgs[: len(msgs) - conv["holdout_msgs"]]
+    assert ctx[-1]["role"] == "assistant"
+
+    full_canon = canonical_ids(tokenizer, msgs)
+    t0 = time.time()
+    aset = ArmSet(model, tokenizer, ctx, None)
+    # holdout suffix in canonical rendering
+    assert full_canon[: len(aset.ids)] == aset.ids
+    suffix = full_canon[len(aset.ids):]
+    print(f"== {cid}: {len(full_canon)} tokens, holdout {len(suffix)}")
+    aset.prepare_a()
+
+    out = {"stats": aset.stats, "arms": {}}
+    for name, mk, ctx_ids in aset.variants():
+        t1 = time.time()
+        cache = mk()
+        # Score suffix[1:]; suffix[0] is the deterministic <|im_start|> frame
+        # token, skipping it avoids needing the last context token's logits.
+        feed, targets = suffix[:-1], suffix[1:]
+        lps = batched_teacher_forced(model, cache, feed, targets)
+        out["arms"][name] = {"mean_logprob": sum(lps) / len(lps),
+                             "logprobs": lps}
+        print(f"    NAT {name}: {out['arms'][name]['mean_logprob']:.4f} "
+              f"({time.time()-t1:.0f}s)")
+        clear(cache)
+    json.dump({"id": cid, "model": MODEL, "cont": out,
+               "wall_seconds": time.time() - t0},
+              open(outfile, "w"), indent=1, ensure_ascii=False)
+    print(f"== {cid} done in {time.time()-t0:.0f}s")
+
+
 def run_conversation(model, tokenizer, conv_path, outdir):
     conv = json.load(open(conv_path))
     cid = conv["id"]
@@ -228,12 +276,15 @@ def main():
     model, tokenizer = load(MODEL)
     outdir = Path("results/raw")
     outdir.mkdir(parents=True, exist_ok=True)
-    paths = sorted(Path("data/synthetic").glob("c*.json"))
     only = set(sys.argv[1:])
-    for p in paths:
+    for p in sorted(Path("data/synthetic").glob("c*.json")):
         if only and p.stem not in only:
             continue
         run_conversation(model, tokenizer, p, outdir)
+    for p in sorted(Path("data/natural").glob("n*.json")):
+        if only and p.stem not in only:
+            continue
+        run_natural(model, tokenizer, p, outdir)
 
 
 if __name__ == "__main__":

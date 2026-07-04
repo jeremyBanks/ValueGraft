@@ -65,14 +65,27 @@ class ConversationBuilder:
         reply_ids = sampled_generate(
             self.model, self.cache, logits, MAX_REPLY_TOKENS, self.eos_ids, TEMP
         )
+        reply_text = self.tokenizer.decode(reply_ids).strip()
         if len(reply_ids) == MAX_REPLY_TOKENS:
             self.truncated_replies += 1
-        reply_text = self.tokenizer.decode(reply_ids).strip()
+            # trim a capped reply back to the last complete sentence/paragraph
+            cut = max(reply_text.rfind("\n\n"), reply_text.rfind(". "),
+                      reply_text.rfind("! "), reply_text.rfind("? "))
+            if cut > len(reply_text) // 3:
+                reply_text = reply_text[: cut + 1].rstrip()
         self.msgs.append({"role": "assistant", "content": reply_text})
 
-        # rebuild cache in canonical form: canonical rendering of the now
-        # non-final assistant message (no <think> block)
-        r_new = render(self.tokenizer, self.msgs, gen_prompt=False)
+        # rebuild cache in canonical form: canonical NON-FINAL rendering of
+        # the new assistant message (no <think> block). A plain render would
+        # treat it as final and include one — hence the dummy-user trick.
+        r_with_dummy = render(
+            self.tokenizer,
+            self.msgs + [{"role": "user", "content": "x"}],
+            gen_prompt=False,
+        )
+        im_start = self.tokenizer.encode("<|im_start|>")[0]
+        starts = [i for i, t in enumerate(r_with_dummy) if t == im_start]
+        r_new = r_with_dummy[: starts[len(self.msgs)]]
         # everything after the shared canonical prefix gets re-prefilled;
         # shared prefix = r_canon (user-final canonical render) extended by
         # whatever of the assistant header both renderings share. Simplest

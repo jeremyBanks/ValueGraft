@@ -1,0 +1,1958 @@
+[
+  {
+    "id": "c01",
+    "title": "SaaS product launch",
+    "system": "You are a helpful assistant supporting a startup founder planning a software product launch.",
+    "project": "The user is the founder of Chartkite, a small B2B analytics SaaS about to launch publicly. Together with the assistant they are planning pricing, onboarding, marketing, and support for launch week.",
+    "subtopics": [
+      "pricing strategy",
+      "onboarding flow",
+      "launch-week marketing",
+      "support readiness",
+      "post-launch metrics"
+    ],
+    "early_user_turns": [
+      "Hey, so Chartkite is finally feature-complete and I want to nail the launch. We're a tiny team, three engineers and me, and I need help thinking through the whole plan over the next few weeks. Can you be my sounding board?",
+      "Let's start with pricing strategy since everything else hangs off it. What are the main dimensions I should be weighing for a B2B analytics tool at our stage? Don't give me numbers yet, just the framework."
+    ],
+    "middle_filler_user_turns": [
+      "Switching to the onboarding flow for a bit. Right now new accounts land on an empty dashboard and I suspect that's killing activation. What do the best-in-class tools do in the first five minutes?",
+      "Still on onboarding: how do you feel about requiring a data source connection before letting people into the app at all? Some tools gate hard, some let you poke around with sample data. What's the tradeoff?",
+      "Okay, launch-week marketing. We've got a modest budget and a decent Twitter following through my personal account. How should I sequence announcements across the week so we don't blow everything on day one?",
+      "One more marketing question: press outreach. Is it worth pitching trade publications for a company our size, or is that effort better spent elsewhere? Be honest, I've never done PR."
+    ],
+    "tail_filler_user_turns": [
+      "Let's talk post-launch metrics. Once we're live, what should be on the one dashboard I look at every morning? I want five numbers max, I know myself.",
+      "And how long after launch before the metrics actually mean anything? I don't want to panic over week-one noise or, worse, celebrate it."
+    ],
+    "plants": [
+      {
+        "id": "c01-referent-1",
+        "category": "referent",
+        "middle_user": "Okay, decision time on pricing. We narrowed it to three models: (1) a flat monthly fee per workspace, (2) usage-based metering where customers prepay for credits and draw them down per query, and (3) per-seat tiers. I've slept on it and I'm going with the second one. It matches how our costs scale.",
+        "tail_user_fragment": "Back to the pricing model we settled on, and no need to re-explain it, I remember the details. What billing edge cases should we test before launch day?",
+        "probe": "Earlier we settled on a specific pricing model for Chartkite. What exactly was it?",
+        "gold": "Usage-based metering where customers prepay for credits and draw them down per query (the second of the three options).",
+        "keywords": [
+          "usage-based",
+          "credits"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c01-referent-2",
+        "category": "referent",
+        "middle_user": "My advisor Marisol pitched something interesting. Her proposal is that instead of a big public splash, we do an invite-only beta with about thirty design partners first, and only open the doors once they've each shipped one real report. I think she's right and I want to fold it into the plan.",
+        "tail_user_fragment": "On Marisol's proposal, I'm fully sold, so don't re-describe it. What's the biggest risk it poses to our overall launch timing?",
+        "probe": "What specifically was Marisol's proposal?",
+        "gold": "An invite-only beta with roughly thirty design partners before the public launch, opening up only once each partner had shipped a real report.",
+        "keywords": [
+          "invite-only",
+          "design partners"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c01-sense-1",
+        "category": "sense",
+        "middle_user": "Quick terminology note so we don't trip over it later. Internally 'Nimbus' is overloaded: the infra folks use it for the cloud-hosting migration, but when I say Nimbus in our chats I always mean the self-serve signup funnel work, the new flow from landing page to first login. Just so we're aligned.",
+        "tail_user_fragment": "Does anything in the Nimbus copy need updating before Thursday, given everything else we've decided?",
+        "probe": "When I referred to Nimbus in this conversation, which workstream did I mean?",
+        "gold": "The self-serve signup funnel work (landing page to first login), not the cloud-hosting migration.",
+        "keywords": [
+          "self-serve",
+          "signup"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c01-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I mention 'the deck' I mean the investor update deck I owe our seed backers this month, not the sales pitch deck the team uses on demos. Both exist and both need work, but the sales one isn't your problem.",
+        "tail_user_fragment": "Can you outline two more slides for the deck? You know the one I mean.",
+        "probe": "When I asked for slides for 'the deck', which deck was I referring to?",
+        "gold": "The investor update deck owed to the seed backers, not the sales pitch deck.",
+        "keywords": [
+          "investor"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c01-stance-1",
+        "category": "stance",
+        "middle_user": "One firm rule for anything you draft for the launch page: I cannot stand countdown timers. They read as scammy infomercial nonsense and I will veto any mockup that has one. Please never suggest them.",
+        "tail_user_fragment": null,
+        "probe": "Give me five ideas for adding urgency to the launch landing page.",
+        "gold": "Suggests urgency tactics (limited beta seats, launch-week bonus, expiring intro price, etc.) while avoiding countdown timers entirely, ideally noting the user finds them scammy.",
+        "keywords": [
+          "scammy"
+        ],
+        "anti_keywords": [
+          "countdown"
+        ]
+      },
+      {
+        "id": "c01-stance-2",
+        "category": "stance",
+        "middle_user": "Another preference, and it's a strong one: no webinars, ever. I've sat through a hundred of them and every single one was a snoozefest that burned an hour of goodwill. Whatever we do for education or engagement, it won't be that.",
+        "tail_user_fragment": null,
+        "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
+        "gold": "Suggests formats like short videos, interactive demos, written guides, or office-hours chats, while never proposing a webinar, ideally recalling the user called them a snoozefest.",
+        "keywords": [
+          "snoozefest"
+        ],
+        "anti_keywords": [
+          "webinar"
+        ]
+      },
+      {
+        "id": "c01-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "For outreach history: we already tried cold-email campaigns through a tool called Prospexo last quarter. It flopped hard, a 0.4 percent reply rate and two spam complaints that nearly got our domain blocklisted. That door is closed.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for early customer outreach?",
+        "gold": "Anything except cold-email via Prospexo, e.g. warm intros, founder-led community engagement, or partner referrals, ideally acknowledging cold email was already tried and rejected.",
+        "keywords": [
+          "blocklisted"
+        ],
+        "anti_keywords": [
+          "prospexo"
+        ]
+      },
+      {
+        "id": "c01-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Also for the record, we tested an in-app product tour from a vendor called Guidely. Users dismissed it 91 percent of the time and completion cratered, so we ripped it out. Not going back to that.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next to improve new-user activation inside the app?",
+        "gold": "Anything except the Guidely in-app tour, e.g. templates, sample data, checklists, or human onboarding, ideally acknowledging the tour was tried and rejected.",
+        "keywords": [
+          "dismissed",
+          "91"
+        ],
+        "anti_keywords": [
+          "guidely"
+        ]
+      },
+      {
+        "id": "c01-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random bookkeeping note while I think of it: our sandbox cloud budget is capped at $6,410 a month, finance set that in stone. Doesn't change anything we're planning, just parking it here.",
+        "tail_user_fragment": null,
+        "probe": "What is our monthly sandbox cloud budget cap?",
+        "gold": "$6,410 per month.",
+        "keywords": [
+          "6,410"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c01-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Oh, and our trademark application finally went in. The filing reference is TM-88214, submitted April 9th. Lawyer says twelve to eighteen months, so nothing to do but wait.",
+        "tail_user_fragment": null,
+        "probe": "What was the trademark filing reference number, and when was it submitted?",
+        "gold": "TM-88214, submitted April 9th.",
+        "keywords": [
+          "88214",
+          "april 9"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c02",
+    "title": "Community conference",
+    "system": "You are a helpful assistant experienced in event planning, helping organize a community tech conference.",
+    "project": "The user is the lead organizer of Riverbend DevCon, a 300-person volunteer-run community conference happening this fall. Together with the assistant they are planning the venue, program, ticketing, sponsorships, and volunteer operations.",
+    "subtopics": [
+      "venue logistics",
+      "speaker lineup",
+      "ticketing",
+      "sponsorships",
+      "volunteer coordination"
+    ],
+    "early_user_turns": [
+      "Hi! I'm running Riverbend DevCon again this year, about 300 attendees, all volunteer-organized, and I've got roughly four months of runway. I'd love to work through the whole plan with you piece by piece over this chat.",
+      "First up, venue logistics. We've signed the community center downtown. What's the checklist of things organizers always forget to confirm with a venue, beyond the obvious room bookings?"
+    ],
+    "middle_filler_user_turns": [
+      "Moving to the speaker lineup. We got 140 talk submissions this year, way up from last time. How should a small program committee run reviews without burning out or playing favorites?",
+      "Related question: how many newcomers versus experienced speakers should we aim for in the program? I want fresh voices but I also can't have a day of shaky talks.",
+      "Okay, ticketing. We've historically underpriced badly. How do I think about setting a price that covers costs without pricing out students and folks between jobs?",
+      "On sponsorships: what does a sane three-tier sponsor package look like for an event our size? I want to know what's actually worth promising versus what sounds good and becomes a headache."
+    ],
+    "tail_filler_user_turns": [
+      "Let's close out with volunteer coordination. I'll have maybe 25 volunteers day-of. What roles do I actually need to fill, and which ones need training beforehand?",
+      "And what's the best way to keep volunteers happy on the day itself? Last year two people quietly left after lunch and we scrambled."
+    ],
+    "plants": [
+      {
+        "id": "c02-referent-1",
+        "category": "referent",
+        "middle_user": "Catering decision. Three options on the table: (1) food trucks parked in the courtyard, (2) a hot buffet from Cateright, or (3) boxed lunches from the worker co-op bakery on Fifth. I compared quotes and dietary coverage, and I'm going with the third one. Locking it in today.",
+        "tail_user_fragment": "One thing about the catering we picked, and don't walk me through it again, I've got the details. Does it change how we should time the afternoon break?",
+        "probe": "Which catering option did we lock in for the conference?",
+        "gold": "Boxed lunches from the worker co-op bakery on Fifth (the third option).",
+        "keywords": [
+          "boxed",
+          "co-op"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c02-referent-2",
+        "category": "referent",
+        "middle_user": "My co-organizer Ravi found a middle path on the opening-slot argument. His compromise is to split the single 60-minute keynote into two 25-minute morning talks by different speakers, back to back. Everyone on the committee likes it, so that's the plan now.",
+        "tail_user_fragment": "For Ravi's compromise, I'm sold and you don't need to rehash it. Who from the committee should host each half, and how do we brief them?",
+        "probe": "What specifically was Ravi's compromise?",
+        "gold": "Splitting the 60-minute keynote into two 25-minute morning talks by different speakers, back to back.",
+        "keywords": [
+          "split",
+          "25-minute"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c02-sense-1",
+        "category": "sense",
+        "middle_user": "Naming clarification before it bites us: 'Beacon' means two things around here. The sponsors want a Beacon networking lounge, but when I say Beacon with you I mean our mentorship track that pairs first-time speakers with veterans for talk prep. That's the one I care about in this chat.",
+        "tail_user_fragment": "Could you draft a one-paragraph program blurb for Beacon? Keep it under 80 words.",
+        "probe": "When I said Beacon in this conversation, what was I referring to?",
+        "gold": "The mentorship track pairing first-time speakers with veterans for talk prep, not the sponsor networking lounge.",
+        "keywords": [
+          "mentorship",
+          "first-time"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c02-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the hall' I'm talking about the smaller annex room on the east side, the one the venue confusingly labels Hall B. I do not mean the main auditorium, even though everyone else calls that the hall. Habit from last year.",
+        "tail_user_fragment": "What's the most we could seat in the hall if we set it up theater-style?",
+        "probe": "When I asked about seating in 'the hall', which room did I mean?",
+        "gold": "The smaller annex room on the east side, labeled Hall B, not the main auditorium.",
+        "keywords": [
+          "annex",
+          "hall b"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c02-stance-1",
+        "category": "stance",
+        "middle_user": "Ground rule for anything engagement-related: no raffles. I think they're a cash grab dressed up as fun, and they always end with someone annoyed about the drawing. Please never propose one, in any form.",
+        "tail_user_fragment": null,
+        "probe": "Give me three ideas to boost attendee engagement during the day.",
+        "gold": "Suggests engagement ideas like hallway-track prompts, lightning talks, or sticker quests, while never proposing a raffle, ideally recalling the user called them a cash grab.",
+        "keywords": [
+          "cash grab"
+        ],
+        "anti_keywords": [
+          "raffle"
+        ]
+      },
+      {
+        "id": "c02-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard no: sponsor-branded lanyards. Last year's looked unbelievably tacky, like a walking billboard around every neck, and I swore never again. Whatever we sell sponsors, that placement is off the menu permanently.",
+        "tail_user_fragment": null,
+        "probe": "Suggest three sponsor placement ideas we could include in the packages.",
+        "gold": "Suggests placements like stage signage, charging stations, or coffee sponsorship, while never proposing branded lanyards, ideally recalling the user found them tacky.",
+        "keywords": [
+          "tacky"
+        ],
+        "anti_keywords": [
+          "lanyard"
+        ]
+      },
+      {
+        "id": "c02-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "History note on the evening social: we tried the fairgrounds pavilion for the mixer two years ago and it was a disaster, the acoustics turned every conversation into shouting and half the crowd left early. That option is dead and buried.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for the evening social venue?",
+        "gold": "Anything except the fairgrounds pavilion, e.g. a brewery, restaurant buyout, or the venue courtyard, ideally acknowledging the pavilion was tried and rejected.",
+        "keywords": [
+          "acoustics"
+        ],
+        "anti_keywords": [
+          "fairgrounds",
+          "pavilion"
+        ]
+      },
+      {
+        "id": "c02-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Also on pricing history: in 2024 we ran stepped early-bird tiers through a platform called Tixaroo, and the tier jumps triggered a refund avalanche from people who missed cutoffs by hours. Never again, that whole approach is out.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for structuring ticket pricing?",
+        "gold": "Anything except stepped early-bird tiers via Tixaroo, e.g. flat pricing, sliding scale, or scholarship codes, ideally acknowledging the tiered approach was tried and rejected.",
+        "keywords": [
+          "avalanche"
+        ],
+        "anti_keywords": [
+          "tixaroo",
+          "early-bird"
+        ]
+      },
+      {
+        "id": "c02-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "For my records while I remember: the venue deposit came to $3,275 and I paid it January 17th out of the leftover fund. It's refundable up to 60 days out. Okay, moving on.",
+        "tail_user_fragment": null,
+        "probe": "How much was the venue deposit and when was it paid?",
+        "gold": "$3,275, paid January 17th.",
+        "keywords": [
+          "3,275",
+          "january 17"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c02-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "One more admin crumb: our fiscal sponsor's paperwork contact is a fellow named Godfrey Tan, he handles all the reimbursement forms. I keep forgetting his name so I'm writing it here. Anyway.",
+        "tail_user_fragment": null,
+        "probe": "What is the name of the fiscal sponsor's paperwork contact?",
+        "gold": "Godfrey Tan.",
+        "keywords": [
+          "godfrey"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c03",
+    "title": "Mobile app redesign",
+    "system": "You are a helpful assistant with product design expertise, supporting a mobile app redesign effort.",
+    "project": "The user is a product lead redesigning Fernly, a plant-care mobile app with about 80,000 monthly users. Together with the assistant they are working through navigation, visual design, accessibility, beta testing, and the rollout.",
+    "subtopics": [
+      "navigation architecture",
+      "visual design system",
+      "accessibility",
+      "beta testing",
+      "release rollout"
+    ],
+    "early_user_turns": [
+      "Hey, I'm leading the redesign of Fernly, our plant-care app. The current design is four years old and it shows. I want to use this chat as my running planning doc for the whole redesign, from nav to rollout.",
+      "Let's start with navigation architecture. Our users mainly do three things: check care schedules, log waterings, and browse the plant encyclopedia. What nav structures should even be on my shortlist?"
+    ],
+    "middle_filler_user_turns": [
+      "Now the visual design system. We've never had a real one, just a style page nobody follows. What's the minimum viable design system for a four-person team that ships weekly?",
+      "Design system follow-up: how do we handle spacing and type scales so engineers stop eyeballing values? I want rules simple enough that people actually use them.",
+      "Accessibility next. Our older users struggle with the current app and I want the redesign to fix that properly, not as an afterthought. Where do the biggest wins usually hide in a redesign like this?",
+      "Also on accessibility, what's a realistic way to test with actual assistive-tech users when we have basically no budget for a research vendor?"
+    ],
+    "tail_filler_user_turns": [
+      "Okay, release rollout. I'm nervous about dropping a full redesign on 80,000 people at once. Walk me through how a staged percentage rollout should work for something this visible.",
+      "And what should our rollback criteria be? I want to agree on the tripwires before launch so we're not arguing about them at midnight."
+    ],
+    "plants": [
+      {
+        "id": "c03-referent-1",
+        "category": "referent",
+        "middle_user": "Nav decision time. We prototyped three patterns: (1) the classic hamburger drawer, (2) a bottom tab bar with four tabs, and (3) a gesture-first layout with a floating action button for logging. Testing was close, but I'm choosing the third one. It fits how people actually log waterings one-handed.",
+        "tail_user_fragment": "Circling back to the nav pattern we chose, no need to re-explain it. What's its biggest risk for the older users we talked about, and how do we mitigate?",
+        "probe": "Which navigation pattern did we choose for the redesign?",
+        "gold": "The gesture-first layout with a floating action button for logging (the third option).",
+        "keywords": [
+          "gesture-first",
+          "floating"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c03-referent-2",
+        "category": "referent",
+        "middle_user": "Our designer Ingrid presented her direction yesterday. Her mockup is a deep slate background with a coral accent color and rounded 16px cards, warm but modern. The team unanimously loved it, so that's our visual direction, done deal.",
+        "tail_user_fragment": "Ingrid's mockup is approved and you don't need to describe it back to me. Realistically, how long to turn it into a working component library?",
+        "probe": "What did Ingrid's approved mockup look like?",
+        "gold": "A deep slate background with a coral accent color and rounded 16px cards.",
+        "keywords": [
+          "slate",
+          "coral"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c03-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology check: 'Aurora' is doing double duty at our company. The platform team calls their Android tablet layout project Aurora, but in our conversations Aurora means the first-run experience rework, the new plant-setup wizard for fresh installs. That's the sense I'll always mean here.",
+        "tail_user_fragment": "Is Aurora still realistic for the sprint after next, given everything else on the plate?",
+        "probe": "When I said Aurora in this conversation, which project did I mean?",
+        "gold": "The first-run experience rework, the new plant-setup wizard for fresh installs, not the Android tablet layout project.",
+        "keywords": [
+          "first-run",
+          "wizard"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c03-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the handoff' I mean the design-to-engineering handoff in Figma, specs and redlines and all that. Not the support-ticket handoff between shifts, which our ops folks also call the handoff. Two different headaches.",
+        "tail_user_fragment": "Can we realistically tighten the handoff to under two days per screen? What would have to change?",
+        "probe": "When I talked about tightening 'the handoff', which handoff did I mean?",
+        "gold": "The design-to-engineering handoff in Figma (specs and redlines), not the support-ticket handoff between shifts.",
+        "keywords": [
+          "figma",
+          "redlines"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c03-stance-1",
+        "category": "stance",
+        "middle_user": "Strong opinion incoming: I loathe carousels on home screens. Nobody ever swipes past the first card, the metrics prove it every time, and they're a burial ground for features. Never propose one for any screen in this redesign.",
+        "tail_user_fragment": null,
+        "probe": "Give me three ideas for surfacing seasonal plant-care content on the home screen.",
+        "gold": "Suggests approaches like a single featured banner, an inline feed section, or contextual cards, while never proposing a carousel, ideally recalling that nobody swipes past the first card.",
+        "keywords": [
+          "swipes"
+        ],
+        "anti_keywords": [
+          "carousel"
+        ]
+      },
+      {
+        "id": "c03-stance-2",
+        "category": "stance",
+        "middle_user": "Another line in the sand: no gamification badges. Our core users are serious plant people and slapping achievement badges on them feels condescending, like a fitness app for ferns. Do not ever suggest badges or streak trophies.",
+        "tail_user_fragment": null,
+        "probe": "Suggest three ways to encourage users to log waterings more consistently.",
+        "gold": "Suggests approaches like smart reminders, plant-health feedback, or gentle scheduling, while never proposing badges or gamification, ideally recalling the user found badges condescending.",
+        "keywords": [
+          "condescending"
+        ],
+        "anti_keywords": [
+          "badge",
+          "gamification"
+        ]
+      },
+      {
+        "id": "c03-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Context on app-store ratings: we already tried in-app rating prompts using a library called Nudgekit. It backfired spectacularly, a wave of one-star reviews from people annoyed at the interruption. We pulled it after two weeks and it's permanently off the table.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next to improve our app store ratings?",
+        "gold": "Anything except in-app rating prompts via Nudgekit, e.g. improving the experience first, asking after positive moments via support, or responding to reviews, ideally acknowledging the prompts were tried and rejected.",
+        "keywords": [
+          "one-star"
+        ],
+        "anti_keywords": [
+          "nudgekit"
+        ]
+      },
+      {
+        "id": "c03-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Beta recruiting history: last cycle we paid for testers through a panel service called PanelPro, and the feedback was worthless, generic praise clearly written in thirty seconds for the payout. Burned $900 learning that. Not doing panels again.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for recruiting beta testers?",
+        "gold": "Anything except the PanelPro paid panel, e.g. recruiting from our own engaged users, community forums, or a waitlist, ideally acknowledging the paid panel was tried and rejected.",
+        "keywords": [
+          "payout",
+          "900"
+        ],
+        "anti_keywords": [
+          "panelpro"
+        ]
+      },
+      {
+        "id": "c03-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Stat for the record since I just pulled it: our current crash-free session rate is 99.62 percent. Engineering is proud of it and I promised not to let the redesign wreck it. Filed away, carry on.",
+        "tail_user_fragment": null,
+        "probe": "What is our current crash-free session rate?",
+        "gold": "99.62 percent.",
+        "keywords": [
+          "99.62"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c03-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Unrelated admin note before I forget: the license for our old font family expires August 23rd, and the renewal quote came in at $1,140 a year. Since the redesign replaces it anyway, I'm letting it lapse. Just logging it.",
+        "tail_user_fragment": null,
+        "probe": "When does the old font license expire and what was the renewal quote?",
+        "gold": "It expires August 23rd; the renewal quote was $1,140 a year.",
+        "keywords": [
+          "1,140",
+          "august 23"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c04",
+    "title": "Academic paper submission",
+    "system": "You are a helpful assistant with research experience, supporting a PhD student preparing a paper submission.",
+    "project": "The user is a fourth-year PhD student preparing a natural language processing paper on low-resource dialogue summarization for submission this cycle. Together with the assistant they are planning experiments, related work, writing, figures, and submission logistics.",
+    "subtopics": [
+      "experiment design",
+      "related work coverage",
+      "writing and structure",
+      "figures and tables",
+      "submission logistics"
+    ],
+    "early_user_turns": [
+      "Hi, I'm in the final push on my dialogue summarization paper, low-resource setting, and my advisor wants a submission this cycle. I'd like to plan everything with you here: experiments, writing, figures, logistics, the works.",
+      "Let's begin with experiment design. I have my main method working, but I'm unsure how many ablations reviewers will expect. What's the minimal ablation set that makes a summarization paper feel complete rather than padded?"
+    ],
+    "middle_filler_user_turns": [
+      "Onto related work coverage. My draft cites 34 papers and I suspect there are gaps in the multilingual summarization thread. How do I systematically check I haven't missed a line of work reviewers will consider obvious?",
+      "Also, how much space should related work get in an eight-page draft? Mine sprawls to a page and a half and something has to give.",
+      "Writing and structure now. My intro currently takes a full page before stating the contribution. How do the best NLP intros get to the point faster without feeling abrupt?",
+      "And on structure, my method section interleaves motivation with equations and my labmate says it's hard to follow. Is there a standard ordering that works, or does it depend on the method?"
+    ],
+    "tail_filler_user_turns": [
+      "Let's finish with submission logistics. What's a sane final-week checklist so nothing dumb slips through, like anonymization leaks or broken references?",
+      "And after submission, how should I prepare for the rebuttal period while everything's still fresh? I always regret not doing this."
+    ],
+    "plants": [
+      {
+        "id": "c04-referent-1",
+        "category": "referent",
+        "middle_user": "Venue decision, finally. My advisor and I weighed three targets: (1) the ACL main track, (2) the EMNLP findings track, and (3) the TACL journal. Given our timeline and the paper's scope, we're committing to the second one. Done deliberating.",
+        "tail_user_fragment": "About the venue we committed to, no need to rehash the tradeoffs. What formatting and page-limit gotchas should I double-check this week?",
+        "probe": "Which submission venue did we commit to?",
+        "gold": "The EMNLP findings track (the second of the three options).",
+        "keywords": [
+          "emnlp",
+          "findings"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c04-referent-2",
+        "category": "referent",
+        "middle_user": "Met with Dr. Okafor this morning. Her suggestion is to add a small human evaluation with 36 raters comparing our summaries against the strongest neural system on faithfulness. It would strengthen the claims a lot, and I've decided to do it.",
+        "tail_user_fragment": "On Dr. Okafor's suggestion, I'm convinced, so don't re-argue the case. Roughly what will it add to the budget and the timeline?",
+        "probe": "What specifically was Dr. Okafor's suggestion?",
+        "gold": "Adding a small human evaluation with 36 raters comparing our summaries against the strongest neural system on faithfulness.",
+        "keywords": [
+          "36",
+          "raters"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c04-sense-1",
+        "category": "sense",
+        "middle_user": "Naming hazard in my lab: 'Hydra' is both the GPU cluster we run jobs on and the multi-task model I use as my main comparison system. When I say Hydra in this chat, I always mean the comparison model, never the cluster. Flagging it now because it will come up.",
+        "tail_user_fragment": "Should the Hydra numbers go in the main results table or get pushed to the appendix?",
+        "probe": "When I mentioned Hydra numbers, which Hydra did I mean?",
+        "gold": "The multi-task comparison model, not the GPU cluster.",
+        "keywords": [
+          "multi-task",
+          "comparison"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c04-sense-2",
+        "category": "sense",
+        "middle_user": "One more disambiguation: when I say 'the deadline' I mean my internal full-draft deadline that Dr. Okafor set, which is ten days before the official one. If I mean the actual conference cutoff I'll say so explicitly. The internal one is the scary one.",
+        "tail_user_fragment": "If the last experiments run through the weekend, can I still hit the deadline, or do I need to negotiate?",
+        "probe": "When I asked about hitting 'the deadline', which deadline was I referring to?",
+        "gold": "The internal full-draft deadline set by Dr. Okafor, ten days before the official submission cutoff.",
+        "keywords": [
+          "internal",
+          "ten days"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c04-stance-1",
+        "category": "stance",
+        "middle_user": "Firm personal policy: I will not post a preprint before the reviews come back. A labmate got scooped that way two years ago and Dr. Okafor still brings it up. Whatever feedback strategies you suggest, that one is permanently off the list.",
+        "tail_user_fragment": null,
+        "probe": "Suggest three ways to get early feedback on the paper before the reviews arrive.",
+        "gold": "Suggests options like lab-group reviews, trusted colleagues at other institutions, or a practice talk, while never suggesting posting a preprint or arXiv upload, ideally recalling the scooping concern.",
+        "keywords": [
+          "scooped"
+        ],
+        "anti_keywords": [
+          "preprint",
+          "arxiv"
+        ]
+      },
+      {
+        "id": "c04-stance-2",
+        "category": "stance",
+        "middle_user": "Also, a visual pet peeve you should know: I despise pie charts and think proportions in them are unreadable. Not one is going in this paper, ever, and I don't want you suggesting them for any figure.",
+        "tail_user_fragment": null,
+        "probe": "What chart types would you suggest for showing the error-category breakdown in the analysis section?",
+        "gold": "Suggests bar charts, stacked bars, or tables, while never proposing a pie chart, ideally recalling the user finds them unreadable.",
+        "keywords": [
+          "unreadable"
+        ],
+        "anti_keywords": [
+          "pie"
+        ]
+      },
+      {
+        "id": "c04-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Data history you should know: we tried augmenting training data with LLM-generated synthetic dialogues back in the spring. Scores looked great until we realized the generations leaked test-set phrasing patterns, so the whole experiment was invalid. Synthetic augmentation is dead for this project.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next to expand the training data?",
+        "gold": "Anything except LLM-generated synthetic augmentation, e.g. cross-lingual transfer, weak labeling of real dialogues, or annotating more data, ideally acknowledging synthetic data was tried and rejected.",
+        "keywords": [
+          "leaked"
+        ],
+        "anti_keywords": [
+          "synthetic"
+        ]
+      },
+      {
+        "id": "c04-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Also, I already went to the university statistics consulting office about significance testing. Their backlog was six weeks, completely useless for a conference cycle, so I gave up on that route entirely. Just so you don't send me back there.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for getting help with the statistical analysis?",
+        "gold": "Anything except the university statistics consulting office, e.g. a statistician labmate, standard bootstrap tooling, or online methods resources, ideally acknowledging the office was tried and rejected due to its wait.",
+        "keywords": [
+          "backlog",
+          "six weeks"
+        ],
+        "anti_keywords": [
+          "consulting office"
+        ]
+      },
+      {
+        "id": "c04-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Bookkeeping I need to note somewhere: the grant number that must appear in the acknowledgments is NSF-2214807. My advisor will absolutely check for it. Okay, noted, back to real work.",
+        "tail_user_fragment": null,
+        "probe": "What grant number must appear in the acknowledgments?",
+        "gold": "NSF-2214807.",
+        "keywords": [
+          "2214807"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c04-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Trivia from budgeting: last year's camera-ready and registration fee for a student came to $795 total, so I'm penciling that in for this cycle too. Nothing to decide, just recording it.",
+        "tail_user_fragment": null,
+        "probe": "What did last year's student camera-ready and registration fee come to?",
+        "gold": "$795 total.",
+        "keywords": [
+          "795"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c05",
+    "title": "Podcast series launch",
+    "system": "You are a helpful assistant with audio and media production knowledge, helping plan an interview podcast.",
+    "project": "The user is launching Second Draft, an interview podcast about people who changed careers, aiming for a ten-episode first season. Together with the assistant they are planning format, guests, production, distribution, and growth.",
+    "subtopics": [
+      "format and episode structure",
+      "guest booking",
+      "audio production",
+      "distribution",
+      "listener growth"
+    ],
+    "early_user_turns": [
+      "Hey! I'm finally making my podcast real. It's called Second Draft, interviews with people who changed careers dramatically. I want to plan the whole first season with you in this thread, ten episodes.",
+      "First topic: format and episode structure. I'm torn between 30-minute tight edits and looser hour-long conversations. What actually drives that choice, beyond my own stamina?"
+    ],
+    "middle_filler_user_turns": [
+      "Guest booking next. I have maybe six people in my own network worth interviewing. How do I land the other four guests when nobody's heard of the show yet?",
+      "And what does a good guest outreach message look like? I've received terrible ones myself so I know what not to do, but not what works.",
+      "Audio production questions: my spare room has bare walls and an echo I can hear when I clap. What are the cheapest treatments that make a real difference before I spend money on gear?",
+      "Also, what's a realistic per-episode production workflow for one person? Recording, editing, notes, art. I need to know what I'm signing up for weekly."
+    ],
+    "tail_filler_user_turns": [
+      "Let's talk listener growth. Beyond telling friends, what actually moves the needle for a brand-new interview show in its first three months?",
+      "And how much should I invest in a website versus just the podcast directories? I keep going back and forth on whether it matters early on."
+    ],
+    "plants": [
+      {
+        "id": "c05-referent-1",
+        "category": "referent",
+        "middle_user": "Intro format decision. I auditioned three openings with friends: (1) a cold open pulling the juiciest clip from the interview, (2) me and a different friend bantering for a minute, and (3) scripted narration over theme music. The first one tested miles better, so that's locked.",
+        "tail_user_fragment": "For the intro format we landed on, don't re-pitch it to me, it's decided. Does it change anything about how Sylvie should structure her edit pass?",
+        "probe": "Which intro format did we lock in for the show?",
+        "gold": "A cold open pulling the juiciest clip from the interview (the first option).",
+        "keywords": [
+          "cold open",
+          "juiciest"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c05-referent-2",
+        "category": "referent",
+        "middle_user": "My producer friend Jonas had an idea I love: a rotating guest-host seat, where each month a past interviewee comes back to co-interview the next guest. It keeps alumni engaged and doubles the promotion reach. I'm adopting it starting episode four.",
+        "tail_user_fragment": "Jonas's idea is a go and you don't need to re-explain it. What should the invitation email say about the time commitment involved?",
+        "probe": "What specifically was Jonas's idea?",
+        "gold": "A rotating guest-host seat where each month a past interviewee returns to co-interview the next guest.",
+        "keywords": [
+          "rotating",
+          "guest-host"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c05-sense-1",
+        "category": "sense",
+        "middle_user": "Heads up on a name collision: my editor Sylvie built a mastering preset she calls Echo, but when I say Echo in our planning I mean the three-episode mini-arc about founders who left tech for trades. Two Echoes, and I'll only ever mean the mini-arc here.",
+        "tail_user_fragment": "Should Echo run before or after the holidays? I can argue it both ways.",
+        "probe": "When I said Echo in this conversation, what was I referring to?",
+        "gold": "The three-episode mini-arc about founders who left tech for trades, not Sylvie's mastering preset.",
+        "keywords": [
+          "mini-arc",
+          "trades"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c05-sense-2",
+        "category": "sense",
+        "middle_user": "Another shorthand: when I say 'the feed' I mean the private supporters-only feed on Patreon, not the public RSS feed everyone subscribes to. I know it's confusing, but that's how I talk, so noting it here.",
+        "tail_user_fragment": "Let's plan to put the extended cuts on the feed first, a week ahead. Does that create any workflow problems?",
+        "probe": "When I said to put extended cuts on 'the feed' first, which feed did I mean?",
+        "gold": "The private supporters-only Patreon feed, not the public RSS feed.",
+        "keywords": [
+          "patreon",
+          "supporters"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c05-stance-1",
+        "category": "stance",
+        "middle_user": "Monetization boundary, and I mean it: no mid-roll ads, ever. Interrupting someone's vulnerable career story to sell mattresses is gross and I'd rather earn nothing. Don't bring dynamic ad insertion anywhere near this show.",
+        "tail_user_fragment": null,
+        "probe": "Give me three realistic monetization ideas for the show's first year.",
+        "gold": "Suggests options like listener support tiers, a single tasteful pre-roll sponsor, merch, or live events, while never proposing mid-roll or dynamic ad insertion, ideally recalling the user finds interruptions gross.",
+        "keywords": [
+          "gross"
+        ],
+        "anti_keywords": [
+          "mid-roll",
+          "dynamic ad"
+        ]
+      },
+      {
+        "id": "c05-stance-2",
+        "category": "stance",
+        "middle_user": "Also a booking rule: no crypto founders as guests, full stop. I got burned helping promote one back in 2022 and the episode aged like milk. However good the career-change story sounds, that category is banned from my calendar.",
+        "tail_user_fragment": null,
+        "probe": "Suggest three guest profiles for the money-and-risk themed episode.",
+        "gold": "Suggests guests like a firefighter-turned-financial-planner, a laid-off banker who opened a bakery, etc., while never proposing a crypto founder, ideally recalling the user was burned before.",
+        "keywords": [
+          "burned"
+        ],
+        "anti_keywords": [
+          "crypto"
+        ]
+      },
+      {
+        "id": "c05-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Cadence history: I actually piloted publishing twice a week for a month with old material. Downloads per episode halved almost immediately and I torched my whole backlog buffer. Twice-weekly is conclusively dead for this show.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for the publishing cadence?",
+        "gold": "Anything except twice-weekly publishing, e.g. weekly or biweekly with seasons, ideally acknowledging twice-weekly was tried and rejected.",
+        "keywords": [
+          "halved",
+          "torched"
+        ],
+        "anti_keywords": [
+          "twice"
+        ]
+      },
+      {
+        "id": "c05-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Remote recording history: I tried capturing a remote interview over a plain video call app and the compressed audio ruined what would've been my best episode, robotic artifacts everywhere. Never again with call-app audio, that lesson cost me a great guest.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for recording remote guests?",
+        "gold": "Anything except plain video-call audio capture, e.g. a double-ender setup, a dedicated remote recording studio tool, or mailing guests a mic, ideally acknowledging call-app audio was tried and rejected.",
+        "keywords": [
+          "compressed",
+          "robotic"
+        ],
+        "anti_keywords": [
+          "video call",
+          "call app"
+        ]
+      },
+      {
+        "id": "c05-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Budget line I want written down somewhere: hosting is $23.50 a month on the plan I chose, billed annually. Fine, decided, moving on to things that matter.",
+        "tail_user_fragment": null,
+        "probe": "How much does our podcast hosting cost per month?",
+        "gold": "$23.50 a month.",
+        "keywords": [
+          "23.50"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c05-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Also for the credits file: the theme music is licensed from a composer named Ottoline Marsh, and she asked to be credited in every episode description. Logging that so I don't forget her name mid-season.",
+        "tail_user_fragment": null,
+        "probe": "Who composed the theme music that must be credited in every episode?",
+        "gold": "Ottoline Marsh.",
+        "keywords": [
+          "ottoline"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c06",
+    "title": "Neighborhood garden",
+    "system": "You are a helpful assistant with community organizing and gardening knowledge, supporting a neighborhood garden project.",
+    "project": "The user coordinates the Wrenfield Street community garden, a twenty-bed plot shared by about forty households. Together with the assistant they are planning the layout, soil program, volunteer system, storage, and harvest events for the coming season.",
+    "subtopics": [
+      "bed layout",
+      "soil and amendments",
+      "volunteer scheduling",
+      "tool shed and storage",
+      "harvest events"
+    ],
+    "early_user_turns": [
+      "Hi there. I coordinate our neighborhood garden on Wrenfield Street, twenty beds, about forty households involved, and this season I want to actually plan instead of improvising. Can we work through everything together in this chat?",
+      "Starting with bed layout. Last year the tall crops shaded out half the leafy greens by July. How should I think about arranging beds this season so everyone's plot gets a fair shot at sun?"
+    ],
+    "middle_filler_user_turns": [
+      "Let's do soil and amendments. Our beds have been planted hard for six years with nothing given back. What's a realistic soil-building program for a group with more enthusiasm than money?",
+      "Follow-up on soil: a member offered a truckload of manure from her cousin's farm. What questions do I need to ask before I say yes to that?",
+      "Volunteer scheduling now. We have forty households but the same eight people do everything. How do other gardens structure shifts so the work actually spreads out?",
+      "And what about accountability? I don't want to police neighbors, but no-shows leave beds unwatered in August and resentment builds. What works without turning me into the garden cop?"
+    ],
+    "tail_filler_user_turns": [
+      "Okay, harvest events. I want two this season, a midsummer one and a fall one. What makes these gatherings actually fun instead of feeling like a chore with vegetables?",
+      "For the fall event specifically, how do we handle surplus produce fairly? Last year there was quiet grumbling about who took home what."
+    ],
+    "plants": [
+      {
+        "id": "c06-referent-1",
+        "category": "referent",
+        "middle_user": "Watering decision made. We looked at three setups: (1) a hand-watering rota, (2) drip lines on a battery timer, and (3) rain barrels feeding soaker hoses by gravity. The committee voted for the third one at Tuesday's meeting, so that's what we're building.",
+        "tail_user_fragment": "About the watering setup we agreed on, skip the recap, I was at the meeting. What's the winterization plan for it before first frost?",
+        "probe": "Which watering setup did the committee agree on?",
+        "gold": "Rain barrels feeding soaker hoses by gravity (the third option).",
+        "keywords": [
+          "rain barrels",
+          "soaker"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c06-referent-2",
+        "category": "referent",
+        "middle_user": "Mabel presented her plan at the same meeting and it carried the room. Her plan is to reserve the two sunniest beds by the south fence for a children's pollinator patch, run with the elementary school two blocks over. It's happening, and honestly it's the thing I'm most excited about.",
+        "tail_user_fragment": "On Mabel's plan, no need to re-describe it. Is there any liability or permission paperwork we should sort out with the city first?",
+        "probe": "What specifically was Mabel's plan?",
+        "gold": "Reserving the two sunniest beds by the south fence for a children's pollinator patch run with the nearby elementary school.",
+        "keywords": [
+          "pollinator",
+          "children"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c06-sense-1",
+        "category": "sense",
+        "middle_user": "Name collision warning: people here say 'Meadow' for two different things. Some mean the wildflower strip along the west fence, but when I say Meadow I mean the expansion onto the vacant lot on Delling Street that we're negotiating with the city. That's the sense I'll use with you.",
+        "tail_user_fragment": "Did we ever decide who follows up with Ortiz about Meadow, or is that still floating?",
+        "probe": "When I said Meadow in this conversation, what did I mean?",
+        "gold": "The expansion onto the vacant lot on Delling Street being negotiated with the city, not the wildflower strip along the west fence.",
+        "keywords": [
+          "vacant lot",
+          "delling"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c06-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the bins' I mean the big three-bay composting structure by the gate, not the plastic storage bins inside the shed. Both come up constantly and people mix them up in the group chat every week.",
+        "tail_user_fragment": "Can we get the bins relocated before Saturday's workday, or is that overambitious?",
+        "probe": "When I asked about relocating 'the bins', which bins did I mean?",
+        "gold": "The big three-bay composting structure by the gate, not the plastic storage bins in the shed.",
+        "keywords": [
+          "three-bay"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c06-stance-1",
+        "category": "stance",
+        "middle_user": "Non-negotiable garden policy from me personally: no pesticides, not even the organic-approved sprays, and definitely no neem oil workarounds. We're beside a storm drain and I lose sleep about runoff reaching the creek. Never suggest spraying anything, whatever the pest.",
+        "tail_user_fragment": null,
+        "probe": "The squash bugs are back. Give me three ways to deal with them.",
+        "gold": "Suggests non-spray methods like row covers, hand-picking, trap crops, or timing adjustments, while never proposing pesticides or sprays, ideally recalling the runoff concern.",
+        "keywords": [
+          "runoff"
+        ],
+        "anti_keywords": [
+          "pesticide",
+          "neem",
+          "spray"
+        ]
+      },
+      {
+        "id": "c06-stance-2",
+        "category": "stance",
+        "middle_user": "Fundraising preference, strongly held: I refuse to run another bake sale. They net absolute peanuts for the mountain of effort, and I personally end up baking half of it. Whatever money-raising ideas come up, that one is banned.",
+        "tail_user_fragment": null,
+        "probe": "Give me three ideas to raise money for the new shed roof.",
+        "gold": "Suggests ideas like a plant-start sale, local business sponsorship, or a crowdfunding drive, while never proposing a bake sale, ideally recalling that they net peanuts for the effort.",
+        "keywords": [
+          "peanuts"
+        ],
+        "anti_keywords": [
+          "bake"
+        ]
+      },
+      {
+        "id": "c06-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Scheduling history you should know: we tried a sign-up whiteboard bolted to the shed for shifts. Weather destroyed it twice, and even when legible nobody honored what they'd written. That experiment is over for good.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for organizing volunteer shifts?",
+        "gold": "Anything except the shed sign-up whiteboard, e.g. a shared online calendar, a group-chat bot, or paired bed-buddy assignments, ideally acknowledging the board was tried and rejected.",
+        "keywords": [
+          "honored"
+        ],
+        "anti_keywords": [
+          "whiteboard"
+        ]
+      },
+      {
+        "id": "c06-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Path material history: we hauled in the city's free wood-chip pile two seasons ago and it turned out to be full of shredded trash and glass shards, took a dozen workdays to sift out. Free municipal chips are permanently off the list.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for the path material between beds?",
+        "gold": "Anything except the city's free wood chips, e.g. purchased arborist chips from a known source, gravel, or pavers, ideally acknowledging the free pile was tried and rejected.",
+        "keywords": [
+          "glass",
+          "sift"
+        ],
+        "anti_keywords": [
+          "free pile",
+          "wood-chip"
+        ]
+      },
+      {
+        "id": "c06-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Treasurer note to self, parking it here: our liability insurance rider costs $184 a year and renews in November. Nothing to discuss, just don't want to lose the number again.",
+        "tail_user_fragment": null,
+        "probe": "How much does the garden's liability insurance rider cost per year?",
+        "gold": "$184 a year.",
+        "keywords": [
+          "184"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c06-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Also filing this away: the water spigot permit number with the utility is WP-5521, in case anyone from the city ever asks at the gate. Okay, that's my admin brain emptied.",
+        "tail_user_fragment": null,
+        "probe": "What is the water spigot permit number?",
+        "gold": "WP-5521.",
+        "keywords": [
+          "5521"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c07",
+    "title": "Board game publishing",
+    "system": "You are a helpful assistant familiar with tabletop game design and publishing, supporting an indie game launch.",
+    "project": "The user is an indie designer publishing Marrow & Vine, a medium-weight strategy board game, through a crowdfunding campaign. Together with the assistant they are planning playtesting, art, manufacturing, the campaign, and fulfillment.",
+    "subtopics": [
+      "rulebook and playtesting",
+      "art direction",
+      "manufacturing",
+      "crowdfunding campaign",
+      "fulfillment and shipping"
+    ],
+    "early_user_turns": [
+      "Hey, I'm self-publishing my board game Marrow & Vine, a medium-weight strategy game, and the crowdfunding campaign is about five months out. I want this chat to be my planning headquarters for everything from playtests to shipping.",
+      "First area: the rulebook and playtesting. I've done maybe thirty plays with my own group. How many blind playtests do I actually need before the rulebook can be trusted, and how do I run them properly?"
+    ],
+    "middle_filler_user_turns": [
+      "Art direction questions. The game has a harvest-folklore vibe and I have budget for one illustrator. How do I write an art brief that gets consistent results across sixty-plus components?",
+      "Related: how do designers handle art feedback rounds without becoming the client from hell? I have opinions but I've never directed an artist before.",
+      "Manufacturing next. I keep hearing horror stories about color shifts between the digital files and printed cards. What proofing steps actually catch that before a full run?",
+      "Also, how far ahead of the campaign should I have final manufacturing quotes locked? I don't want to promise prices that evaporate."
+    ],
+    "tail_filler_user_turns": [
+      "Let's get into fulfillment and shipping. The zones-and-weights stuff makes my head spin. Walk me through how indie publishers usually structure fulfillment across the US, EU, and everywhere else.",
+      "And what buffer should I build into shipping charges? I've watched creators lose their margins to postage increases mid-campaign and I refuse to be a cautionary tale."
+    ],
+    "plants": [
+      {
+        "id": "c07-referent-1",
+        "category": "referent",
+        "middle_user": "Component tier decision. I costed three versions: (1) a stripped card-only edition, (2) a standard box with punchboard tokens and a folding board, and (3) a deluxe edition with resin miniatures. Margins and playtester feedback point the same way, so I'm locking in the second one.",
+        "tail_user_fragment": "For the component tier we locked in, no recap needed. What does it do to per-unit weight, roughly, for shipping estimates?",
+        "probe": "Which component tier did we lock in for the game?",
+        "gold": "The standard box with punchboard tokens and a folding board (the second option).",
+        "keywords": [
+          "punchboard",
+          "folding"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c07-referent-2",
+        "category": "referent",
+        "middle_user": "Kenji sent over his cover concept and it's stunning: a bustling night-market scene lit by paper lanterns, with the game's twin foxes bartering at a stall in the foreground. I approved it on the spot. That's our cover, full stop.",
+        "tail_user_fragment": "Kenji's cover concept is final, don't re-describe it to me. When does he need to deliver print-ready files to stay on schedule?",
+        "probe": "What did Kenji's approved cover concept depict?",
+        "gold": "A bustling night-market scene lit by paper lanterns, with the game's twin foxes bartering at a stall in the foreground.",
+        "keywords": [
+          "night-market",
+          "lanterns",
+          "foxes"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c07-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology flag: 'Ember' means two things in my notes. There's the solo automa mode a fan is developing under that name, but when I say Ember with you I mean the official two-player duel variant I designed myself. Only the duel variant, always.",
+        "tail_user_fragment": "Should Ember ship in the base box or be a stretch goal? I keep flip-flopping.",
+        "probe": "When I said Ember in this conversation, which game mode did I mean?",
+        "gold": "The official two-player duel variant the user designed, not the fan-made solo automa mode.",
+        "keywords": [
+          "duel",
+          "two-player"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c07-sense-2",
+        "category": "sense",
+        "middle_user": "One more shorthand: when I say 'the pledge' I mean the bulk retailer pledge level for game stores, not backer pledges in general. The retailer level has its own math and its own headaches, hence the shorthand.",
+        "tail_user_fragment": "What should we cap the pledge at so it doesn't cannibalize the campaign?",
+        "probe": "When I asked about capping 'the pledge', which pledge did I mean?",
+        "gold": "The bulk retailer pledge level for game stores, not backer pledges in general.",
+        "keywords": [
+          "retailer",
+          "stores"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c07-stance-1",
+        "category": "stance",
+        "middle_user": "Campaign principle I won't budge on: no campaign-exclusive content, ever. Exclusives are hostile to the retail buyers and future fans who find the game late, and I want everything reprintable. Don't pitch me exclusives in any form.",
+        "tail_user_fragment": null,
+        "probe": "Give me three stretch goal ideas for the campaign.",
+        "gold": "Suggests stretch goals like upgraded components, extra content added for everyone, or art upgrades, while never proposing campaign-exclusive items, ideally recalling the user considers exclusives hostile to late buyers.",
+        "keywords": [
+          "hostile"
+        ],
+        "anti_keywords": [
+          "exclusive"
+        ]
+      },
+      {
+        "id": "c07-stance-2",
+        "category": "stance",
+        "middle_user": "Second principle, equally firm: no AI-generated art anywhere in this project, not even for prototype placeholders or ad variations. It's soulless and my community would rightly torch me for it. Never suggest it as a cost saver.",
+        "tail_user_fragment": null,
+        "probe": "I need twelve more card illustrations and the budget is tight. Give me three options.",
+        "gold": "Suggests options like simplifying the art style, reusing motifs, staggering commissions, or finding a second human artist, while never proposing AI-generated art, ideally recalling the user called it soulless.",
+        "keywords": [
+          "soulless"
+        ],
+        "anti_keywords": [
+          "ai-generated",
+          "ai art"
+        ]
+      },
+      {
+        "id": "c07-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Prototype history: I ordered proof copies from a shop called PrintForge and every single copy came back with misaligned die cuts, tokens ruined. They offered a discount to retry and I declined. PrintForge is out of the running permanently.",
+        "tail_user_fragment": null,
+        "probe": "Where should we go next for prototype copies?",
+        "gold": "Anywhere except PrintForge, e.g. another print-on-demand prototype shop or the eventual manufacturer's sampling service, ideally acknowledging PrintForge was tried and rejected.",
+        "keywords": [
+          "misaligned",
+          "die cuts"
+        ],
+        "anti_keywords": [
+          "printforge"
+        ]
+      },
+      {
+        "id": "c07-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Marketing history: I bought banner ads on a big hobby forum for $210 and got exactly three clicks, one of which was me checking the link. Paid banner advertising is conclusively dead for this project, whatever the site.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for pre-campaign marketing?",
+        "gold": "Anything except paid banner ads, e.g. reviewer preview copies, convention demos, or content marketing, ideally acknowledging banner ads were tried and rejected.",
+        "keywords": [
+          "210",
+          "clicks"
+        ],
+        "anti_keywords": [
+          "banner"
+        ]
+      },
+      {
+        "id": "c07-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Number I need parked somewhere: the ocean freight estimate came in at $4,860 for the full print run to the US warehouse. It'll change by campaign time, but that's the baseline in my spreadsheet. Parked.",
+        "tail_user_fragment": null,
+        "probe": "What was the ocean freight estimate to the US warehouse?",
+        "gold": "$4,860.",
+        "keywords": [
+          "4,860"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c07-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Admin milestone: I registered for a barcode prefix and ours is 0863921. Every SKU we ever make hangs off that. Nothing to do with it today, just recording it before I lose the email.",
+        "tail_user_fragment": null,
+        "probe": "What is our registered barcode prefix?",
+        "gold": "0863921.",
+        "keywords": [
+          "0863921"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c08",
+    "title": "E-commerce platform migration",
+    "system": "You are a helpful assistant with e-commerce and web engineering expertise, supporting a platform migration.",
+    "project": "The user is the technical lead migrating Bramble & Twine, a mid-size home-goods online store, from a legacy self-hosted platform to a modern commerce stack. Together with the assistant they are planning data migration, catalog and search, payments, SEO preservation, and the cutover.",
+    "subtopics": [
+      "data migration",
+      "catalog and search",
+      "payments",
+      "SEO preservation",
+      "cutover planning"
+    ],
+    "early_user_turns": [
+      "Hi, I'm leading the replatform of our home-goods store, Bramble & Twine, off a creaky self-hosted system onto a modern stack. Eight years of data, real revenue on the line, and I want to plan the whole migration carefully with you.",
+      "Let's open with data migration. Orders, customers, products, reviews, gift cards. How do I figure out what actually needs to move versus what can be archived and left behind?"
+    ],
+    "middle_filler_user_turns": [
+      "Catalog and search next. Our product taxonomy grew organically for eight years and it shows, four levels deep in places, duplicated in others. Should we restructure during the migration or move it as-is and fix later?",
+      "Staying on search: what does good faceted navigation look like for home goods? Our shoppers filter by room and material more than anything else.",
+      "Payments questions. We need to move stored payment methods for our subscription customers without forcing everyone to re-enter cards. How does a credential migration between processors actually work?",
+      "And on SEO preservation, we rank well for a few hundred category and product terms. What's the redirect strategy that keeps us from lighting eight years of link equity on fire?"
+    ],
+    "tail_filler_user_turns": [
+      "Now cutover planning. Assume everything's built and tested. Walk me through what the final week should look like, day by day, for a team of six.",
+      "And who needs to be in the room, or at least on call, during the switch itself? I want the staffing plan settled early."
+    ],
+    "plants": [
+      {
+        "id": "c08-referent-1",
+        "category": "referent",
+        "middle_user": "Cutover strategy decision. We evaluated three: (1) a big-bang weekend switch, (2) a phased migration category by category, and (3) a parallel run with traffic gradually shifted between old and new. After the risk review, leadership signed off on the third one. That's our strategy now.",
+        "tail_user_fragment": "For the cutover strategy we chose, you know it, don't restate it. What monitoring do we need in place on day one to know it's working?",
+        "probe": "Which cutover strategy did leadership sign off on?",
+        "gold": "A parallel run with traffic gradually shifted between the old and new platforms (the third option).",
+        "keywords": [
+          "parallel",
+          "gradually"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c08-referent-2",
+        "category": "referent",
+        "middle_user": "Our consultant Vikram cracked the order-history problem. His workaround is a thin middleware shim that translates legacy order IDs to the new format on the fly, so old confirmation emails and bookmarks keep working forever. Approved it this morning, it's in scope.",
+        "tail_user_fragment": "Vikram's workaround is approved, skip the explanation. What performance overhead should we expect from it at peak traffic?",
+        "probe": "What specifically was Vikram's workaround?",
+        "gold": "A thin middleware shim that translates legacy order IDs to the new format on the fly, keeping old confirmation emails and bookmarks working.",
+        "keywords": [
+          "shim",
+          "order ids"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c08-sense-1",
+        "category": "sense",
+        "middle_user": "Name collision alert: 'Falcon' is both the fraud-screening vendor our finance team is evaluating and our internal codename for the rebuilt checkout service. When I say Falcon in this chat, I mean our checkout service, never the vendor. Finance can keep their bird.",
+        "tail_user_fragment": "Is Falcon behind a feature flag yet, or is that still on the backlog?",
+        "probe": "When I asked whether Falcon was behind a feature flag, what was I referring to?",
+        "gold": "The internal rebuilt checkout service, not the fraud-screening vendor.",
+        "keywords": [
+          "checkout"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c08-sense-2",
+        "category": "sense",
+        "middle_user": "Another disambiguation: when I say 'the freeze' I mean the content freeze on product descriptions and imagery that merchandising has to observe, not the engineering code freeze. Both happen near cutover and people conflate them in every meeting.",
+        "tail_user_fragment": "Can we start the freeze the Monday before instead of the Wednesday? Merch is asking.",
+        "probe": "When I asked about moving 'the freeze' earlier, which freeze did I mean?",
+        "gold": "The content freeze on product descriptions and imagery observed by merchandising, not the engineering code freeze.",
+        "keywords": [
+          "descriptions",
+          "imagery"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c08-stance-1",
+        "category": "stance",
+        "middle_user": "URL structure hill I will die on: we stay on the root domain, period. Every migration consultant pitches moving the new site to a subdomain first and I have vetoed it three times. Do not raise it again in any option list.",
+        "tail_user_fragment": null,
+        "probe": "Give me three options for structuring our URLs after the migration.",
+        "gold": "Suggests URL structures all on the root domain (path-based approaches, preserved slugs, etc.), while never proposing a subdomain, ideally recalling the user has repeatedly vetoed it.",
+        "keywords": [
+          "root"
+        ],
+        "anti_keywords": [
+          "subdomain"
+        ]
+      },
+      {
+        "id": "c08-stance-2",
+        "category": "stance",
+        "middle_user": "Second immovable position: no planned downtime window, no maintenance page, not even at 3am. We lost $27,400 in the outage two Novembers ago and I promised the CEO it would never happen by choice. Every plan you propose must keep the store selling.",
+        "tail_user_fragment": null,
+        "probe": "How should we handle the DNS switch during cutover?",
+        "gold": "Proposes a zero-downtime approach (low TTLs, gradual shift, both stacks serving), while never proposing a maintenance window or planned downtime, ideally recalling the costly past outage.",
+        "keywords": [
+          "27,400"
+        ],
+        "anti_keywords": [
+          "downtime",
+          "maintenance page"
+        ]
+      },
+      {
+        "id": "c08-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Search vendor history: we ran a paid pilot with a service called Querybird. Typo tolerance was abysmal, 'blu shert' returned zero results while our ancient built-in search at least found shirts. Pilot cancelled, Querybird eliminated.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for the site search solution?",
+        "gold": "Anything except Querybird, e.g. another hosted search vendor, the platform's native search, or an open-source engine, ideally acknowledging Querybird was piloted and rejected.",
+        "keywords": [
+          "typo",
+          "blu shert"
+        ],
+        "anti_keywords": [
+          "querybird"
+        ]
+      },
+      {
+        "id": "c08-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Catalog transfer history: the first attempt used CSV exports and the encoding mangled diacritics across two thousand product names, Bj\u00f8rn became Bj?rn everywhere. We rolled it back. Flat-file CSV transfer is disqualified for the real migration.",
+        "tail_user_fragment": null,
+        "probe": "What approach should we try next for transferring the catalog data?",
+        "gold": "Anything except CSV flat-file export/import, e.g. API-based transfer or a proper ETL pipeline with encoding validation, ideally acknowledging CSV was tried and rejected.",
+        "keywords": [
+          "diacritics",
+          "mangled"
+        ],
+        "anti_keywords": [
+          "csv"
+        ]
+      },
+      {
+        "id": "c08-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Inventory factoid for the record: the legacy database holds exactly 48,912 SKUs including discontinued ones. I keep misquoting it in meetings so I'm writing it down here once. Done.",
+        "tail_user_fragment": null,
+        "probe": "How many SKUs are in the legacy database?",
+        "gold": "48,912 SKUs.",
+        "keywords": [
+          "48,912"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c08-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "One calendar landmine to note: the TLS certificate on the legacy platform expires October 12th and ops decided not to renew it. Irrelevant if we're off the system by then, which is the plan. Noted and moving on.",
+        "tail_user_fragment": null,
+        "probe": "When does the legacy platform's TLS certificate expire?",
+        "gold": "October 12th.",
+        "keywords": [
+          "october 12"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c09",
+    "title": "Nonprofit fundraiser gala",
+    "system": "You are a helpful assistant experienced in nonprofit development, helping plan an annual fundraising event.",
+    "project": "The user is the development director of Open Door Literacy, a small adult-literacy nonprofit, planning its annual fundraising gala for 220 guests. Together with the assistant they are planning the theme, donor outreach, the auction, logistics, and post-event stewardship.",
+    "subtopics": [
+      "event theme and program",
+      "donor outreach",
+      "auction items",
+      "venue and logistics",
+      "post-event stewardship"
+    ],
+    "early_user_turns": [
+      "Hello! I run development for Open Door Literacy and our annual gala is in four months, 220 guests, our biggest revenue night of the year. I want to plan every piece of it with you in this conversation.",
+      "Starting with the event theme and program. Last year's program dragged, forty minutes of speeches before dinner. What does a well-paced gala program actually look like, minute by minute?"
+    ],
+    "middle_filler_user_turns": [
+      "Donor outreach time. Our mailing list has about 1,800 names but our events keep drawing the same faces. How do I get genuinely new people in the room this year?",
+      "Also on outreach: how far in advance should sponsor asks go out to local businesses, and who should sign those letters, me or a board member?",
+      "Let's talk auction items. Our silent auction always has too many gift baskets nobody wants. What categories actually drive bidding at events like ours?",
+      "And should we do a live auction segment this year? We've never dared. What has to be true about the room for a live auction to work?"
+    ],
+    "tail_filler_user_turns": [
+      "Last section: post-event stewardship. What should the week after the gala look like so donors feel thanked rather than processed?",
+      "And how do I turn one-night event donors into people who care about the mission year-round? That leap is where we always fail."
+    ],
+    "plants": [
+      {
+        "id": "c09-referent-1",
+        "category": "referent",
+        "middle_user": "Theme decision is made. The committee shortlisted three: (1) a casino night, (2) a 1920s speakeasy evening with a live jazz trio, and (3) a trivia-night format. The vote went strongly to the second one, so that's our theme. I'm relieved, honestly.",
+        "tail_user_fragment": "About the theme we picked, no need to sell me on it again. Roughly what should we budget for decor to do it properly?",
+        "probe": "Which gala theme did the committee pick?",
+        "gold": "A 1920s speakeasy evening with a live jazz trio (the second option).",
+        "keywords": [
+          "speakeasy",
+          "jazz"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c09-referent-2",
+        "category": "referent",
+        "middle_user": "My colleague Aisha pulled together a list I'm excited about: 75 lapsed donors who each gave $500 or more at some point but nothing in the last three years. Her list is our reactivation target for this gala cycle. We're calling every single one.",
+        "tail_user_fragment": "Let's schedule the calls through Aisha's list, you remember which one, no recap. How many calls a week is realistic alongside my other work?",
+        "probe": "What specifically was Aisha's list?",
+        "gold": "75 lapsed donors who each gave $500 or more at some point but nothing in the last three years, targeted for reactivation.",
+        "keywords": [
+          "lapsed",
+          "75"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c09-sense-1",
+        "category": "sense",
+        "middle_user": "Watch out for a name we overloaded: 'Orchard' is both our long-running community orchard volunteer project and the new monthly-giving program we're quietly building. In this conversation Orchard always means the monthly-giving program. The trees can fend for themselves.",
+        "tail_user_fragment": "Should Orchard get its own page on the website before the gala, or is a signup card at the tables enough?",
+        "probe": "When I said Orchard in this conversation, which program did I mean?",
+        "gold": "The new monthly-giving program, not the community orchard volunteer project.",
+        "keywords": [
+          "monthly-giving"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c09-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the match' I mean board member Elaine's dollar-for-dollar matching pledge up to a threshold she set, not the volunteer table-matching spreadsheet the events team keeps calling a match. Development jargon, sorry.",
+        "tail_user_fragment": "Where in the program should we announce the match for maximum effect?",
+        "probe": "When I asked about announcing 'the match', what was I referring to?",
+        "gold": "Board member Elaine's dollar-for-dollar matching pledge, not the volunteer table-matching spreadsheet.",
+        "keywords": [
+          "dollar-for-dollar",
+          "elaine"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c09-stance-1",
+        "category": "stance",
+        "middle_user": "Event philosophy, set in stone: I will never run a golf tournament. They're exclusionary, they eat a full day of staff time per foursome, and our literacy learners would never see themselves at one. If spring event ideas come up, that one is pre-rejected.",
+        "tail_user_fragment": null,
+        "probe": "Give me three ideas for a smaller spring fundraising event.",
+        "gold": "Suggests events like a spelling bee, author talk, or community read-a-thon, while never proposing a golf tournament, ideally recalling the user finds them exclusionary.",
+        "keywords": [
+          "exclusionary"
+        ],
+        "anti_keywords": [
+          "golf"
+        ]
+      },
+      {
+        "id": "c09-stance-2",
+        "category": "stance",
+        "middle_user": "Copy standard I insist on: our appeals lead with dignity, always. No pity narratives, no tragic framing of our learners to shake loose donations. Anything you ever draft for us must show learners as capable adults choosing to grow.",
+        "tail_user_fragment": null,
+        "probe": "Draft the opening two sentences of the gala appeal letter.",
+        "gold": "Writes an opening that frames learners with dignity as capable adults, avoiding pity or tragic framing, consistent with the stated copy standard.",
+        "keywords": [
+          "dignity"
+        ],
+        "anti_keywords": [
+          "tragic",
+          "pity"
+        ]
+      },
+      {
+        "id": "c09-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Payments history: last year we used a text-to-give platform called Givly for day-of donations. Fees quietly ate eleven percent and the post-event reconciliation took our bookkeeper three full days. Givly and its ilk are out for good.",
+        "tail_user_fragment": null,
+        "probe": "What should we use for collecting day-of donations at the gala?",
+        "gold": "Anything except the Givly text-to-give platform, e.g. simple pledge cards, QR codes to our own donation page, or card readers, ideally acknowledging Givly was tried and rejected.",
+        "keywords": [
+          "reconciliation",
+          "eleven"
+        ],
+        "anti_keywords": [
+          "givly"
+        ]
+      },
+      {
+        "id": "c09-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Emcee history: we spent two months chasing celebrity emcees through agents. Three never replied after initial interest, and the one quote we got was $8,500 plus travel. That whole route is closed, I'm not chasing famous people again.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for finding a gala emcee?",
+        "gold": "Anything except pursuing celebrity emcees through agents, e.g. a beloved local radio host, a board member with stage presence, or a program alum, ideally acknowledging the celebrity route was tried and rejected.",
+        "keywords": [
+          "8,500"
+        ],
+        "anti_keywords": [
+          "celebrity"
+        ]
+      },
+      {
+        "id": "c09-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "For context I'll note once: last year's gala netted $61,230 after expenses. The board wants growth on that but hasn't set a number. Okay, filed, let's keep planning.",
+        "tail_user_fragment": null,
+        "probe": "How much did last year's gala net after expenses?",
+        "gold": "$61,230.",
+        "keywords": [
+          "61,230"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c09-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Compliance crumb to park here: our auctioneer's license number on file with the state is AU-77031, renewed through next year. The venue asked for it once and I scrambled, never again. Parked.",
+        "tail_user_fragment": null,
+        "probe": "What is the auctioneer's license number on file?",
+        "gold": "AU-77031.",
+        "keywords": [
+          "77031"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c10",
+    "title": "Home renovation",
+    "system": "You are a helpful assistant knowledgeable about home renovation, helping a homeowner plan a major remodel.",
+    "project": "The user is planning a kitchen remodel plus related projects on their 1968 house, working with a general contractor named Bogdan and a designer named Naomi. Together with the assistant they are planning layout, permits, contractor coordination, materials, and the budget.",
+    "subtopics": [
+      "kitchen layout",
+      "permits and inspections",
+      "contractor management",
+      "materials and finishes",
+      "budget tracking"
+    ],
+    "early_user_turns": [
+      "Hi, we're finally doing the big kitchen remodel on our 1968 house, plus a couple of side projects while walls are open. I've got a contractor and a designer lined up, and I want to use this chat to plan and track everything.",
+      "First up, kitchen layout. The current kitchen is a cramped galley with a door to the dining room we never use. What layout possibilities should we even be considering given we're willing to move one interior wall?"
+    ],
+    "middle_filler_user_turns": [
+      "Permits and inspections next. Moving that wall and relocating the range means permits, obviously. What's the typical sequence of inspections for a remodel like this, and where do projects usually stall?",
+      "A follow-up: our neighbor did unpermitted work years ago and it haunted their sale. What's actually at stake if something here accidentally falls outside the permit scope?",
+      "Contractor management now. Bogdan seems great but this is the biggest project we've ever run. What should a weekly check-in with a GC cover so problems surface early instead of at invoice time?",
+      "And how do change orders work in practice? I want to understand the paper trail before the first mid-project surprise, not during it."
+    ],
+    "tail_filler_user_turns": [
+      "Let's set up budget tracking. We have a contingency but I've heard horror stories about how fast it evaporates. What system should we use to track committed versus spent versus remaining, ideally something simple?",
+      "And at what percentage of contingency burned should we start cutting scope? I'd rather set that trigger now while we're calm."
+    ],
+    "plants": [
+      {
+        "id": "c10-referent-1",
+        "category": "referent",
+        "middle_user": "Layout verdict is in. Naomi drew up three schemes: (1) keeping the galley but widening it, (2) an L-shape with a center island where the dining door was, and (3) a U-shape with a peninsula. After living with the tape outlines on the floor for a week, we're going with the second one.",
+        "tail_user_fragment": "Regarding the layout we decided on, don't walk me through it again, we lived with the tape on the floor. Does it change the plumbing rough-in Bogdan quoted?",
+        "probe": "Which kitchen layout did we decide on?",
+        "gold": "The L-shape with a center island where the dining door was (the second scheme).",
+        "keywords": [
+          "l-shape",
+          "island"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c10-referent-2",
+        "category": "referent",
+        "middle_user": "Counter decision: Naomi's alternative won me over. Instead of the real marble I was romanticizing, she proposed a quartz composite that mimics the veining but shrugs off wine and lemon juice. My partner is thrilled to stop worrying about etching. That's the counter, done.",
+        "tail_user_fragment": "We're going with Naomi's alternative, no re-pitch needed. What's the typical lead time once we template?",
+        "probe": "What specifically was Naomi's alternative for the counters?",
+        "gold": "A quartz composite that mimics marble veining but resists wine and lemon juice, instead of real marble.",
+        "keywords": [
+          "quartz",
+          "veining"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c10-sense-1",
+        "category": "sense",
+        "middle_user": "Shorthand warning: in our house 'Cedar' means two projects. My partner uses it for the cedar closet lining idea upstairs, but when I say Cedar with you I mean the back deck rebuild we're bundling into this remodel. Deck only, always, in this chat.",
+        "tail_user_fragment": "Should Cedar wait until after the framing inspection clears, or can it run in parallel?",
+        "probe": "When I said Cedar in this conversation, which project did I mean?",
+        "gold": "The back deck rebuild bundled into the remodel, not the cedar closet lining idea.",
+        "keywords": [
+          "deck"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c10-sense-2",
+        "category": "sense",
+        "middle_user": "One more: when I say 'the sub' I mean the electrical subcontractor Bogdan brought in, the quiet guy with the van. Not the subfloor, which also comes up constantly because of the water stain we found. Context won't always make it obvious, hence this note.",
+        "tail_user_fragment": "Is the sub confirmed for the week of the 14th? Everything downstream slips if not.",
+        "probe": "When I asked whether 'the sub' was confirmed, what was I referring to?",
+        "gold": "The electrical subcontractor Bogdan brought in, not the subfloor.",
+        "keywords": [
+          "electrical"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c10-stance-1",
+        "category": "stance",
+        "middle_user": "Design line I will not cross: no open shelving in this kitchen. I know it photographs beautifully, but I refuse to spend my life dusting dishes and staging shelves for guests. Closed storage everywhere, and please never float the idea.",
+        "tail_user_fragment": null,
+        "probe": "Give me three storage ideas for the awkward corner by the range.",
+        "gold": "Suggests closed-storage solutions like corner drawers, a lazy susan cabinet, or a pull-out pantry, while never proposing open shelving, ideally recalling the user refuses to dust dishes.",
+        "keywords": [
+          "dusting"
+        ],
+        "anti_keywords": [
+          "open shelv"
+        ]
+      },
+      {
+        "id": "c10-stance-2",
+        "category": "stance",
+        "middle_user": "Financing rule, absolute: we are not touching a HELOC, don't ever suggest one. Variable rates spook me after watching my brother's payment double, and I sleep better funding this from savings and a fixed loan. That topic is closed permanently.",
+        "tail_user_fragment": null,
+        "probe": "If we run over budget near the end, what are our options?",
+        "gold": "Suggests options like cutting scope, phasing later items, or the existing fixed loan and savings, while never proposing a HELOC, ideally recalling the user's aversion to variable rates.",
+        "keywords": [
+          "variable"
+        ],
+        "anti_keywords": [
+          "heloc"
+        ]
+      },
+      {
+        "id": "c10-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Bidding history for the record: we also got a bid from Hartwell Builders before choosing Bogdan. They showed up late to both walkthroughs and their bid conveniently omitted demolition entirely. Hartwell is out, permanently, whatever happens with scheduling.",
+        "tail_user_fragment": null,
+        "probe": "If we need extra crew capacity mid-project, what should we try?",
+        "gold": "Anything except bringing in Hartwell Builders, e.g. Bogdan's own network, staggering the side projects, or adjusting the schedule, ideally acknowledging Hartwell was considered and rejected.",
+        "keywords": [
+          "omitted",
+          "walkthroughs"
+        ],
+        "anti_keywords": [
+          "hartwell"
+        ]
+      },
+      {
+        "id": "c10-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Flooring history: we brought home luxury vinyl plank samples and lived with them in the hallway light for a week. Up close they looked plasticky, my partner vetoed them on sight, and the samples went back. Vinyl plank is off the table for the main floor.",
+        "tail_user_fragment": null,
+        "probe": "What should we look at next for the main floor flooring?",
+        "gold": "Anything except luxury vinyl plank, e.g. engineered hardwood, site-finished oak, or tile, ideally acknowledging vinyl plank was tried and rejected.",
+        "keywords": [
+          "plasticky"
+        ],
+        "anti_keywords": [
+          "vinyl"
+        ]
+      },
+      {
+        "id": "c10-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Paperwork note, filing it here: the building permit fee came to $342 and we filed on February 6th. The clerk said eight to ten business days for review. Nothing to do but wait, moving on.",
+        "tail_user_fragment": null,
+        "probe": "How much was the building permit fee and when did we file?",
+        "gold": "$342, filed February 6th.",
+        "keywords": [
+          "342",
+          "february 6"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c10-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Engineering detail I want recorded once: the beam replacing the wall is an LVL sized 3.5 by 11.875 inches, per the structural engineer's letter. Bogdan has the spec, I just want it findable. Recorded.",
+        "tail_user_fragment": null,
+        "probe": "What are the dimensions of the LVL beam replacing the wall?",
+        "gold": "3.5 by 11.875 inches.",
+        "keywords": [
+          "11.875"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c11",
+    "title": "Online course creation",
+    "system": "You are a helpful assistant experienced in online education, helping an expert build and launch a paid course.",
+    "project": "The user is a data analyst building a paid online course called Practical SQL for Analysts, their first info product. Together with the assistant they are planning the curriculum, video production, platform, pricing and launch, and the student community.",
+    "subtopics": [
+      "curriculum outline",
+      "video production",
+      "platform choice",
+      "pricing and launch",
+      "student community"
+    ],
+    "early_user_turns": [
+      "Hey! I'm building my first paid course, Practical SQL for Analysts, based on the workshop I've taught internally for years. I want to plan the whole thing here: curriculum, videos, platform, launch, community.",
+      "Let's start with the curriculum outline. My workshop is six hours of material but online attention spans are different. How do I decide what makes the cut and how granular the lessons should be?"
+    ],
+    "middle_filler_user_turns": [
+      "Video production questions. I've never filmed myself teaching. What's the minimum setup that looks professional, and what do first-time creators always get wrong in their first ten videos?",
+      "Related: scripting versus improvising. I'm fluent when teaching live but I ramble. Should I write full scripts, bullet outlines, or something in between?",
+      "On platform choice, I keep drowning in comparison articles. Instead of naming products, tell me: what capabilities actually matter for a course like mine, and which advertised features turn out to be fluff?",
+      "One more platform thing: how much should I care about owning student emails and payment relationships versus letting a marketplace handle everything? I hear strong opinions both ways."
+    ],
+    "tail_filler_user_turns": [
+      "Now the student community piece. I want students helping each other instead of everything routing through me. What community structures actually work for a course at my expected scale?",
+      "And how do I keep the community alive between launches without it becoming a second full-time job? Be realistic with me."
+    ],
+    "plants": [
+      {
+        "id": "c11-referent-1",
+        "category": "referent",
+        "middle_user": "Structure decision made. I weighed three formats: (1) a live 6-week cohort with weekly deadlines, (2) fully self-paced modules with auto-graded quizzes, and (3) a drip-release hybrid. After talking to three creator friends, I'm committing to the first one for launch. Higher touch, higher completion.",
+        "tail_user_fragment": "Given the structure we committed to, no recap needed. How many office hours per week should I realistically hold, and when should they be?",
+        "probe": "Which course structure did we commit to for launch?",
+        "gold": "A live 6-week cohort with weekly deadlines (the first option).",
+        "keywords": [
+          "cohort",
+          "6-week"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c11-referent-2",
+        "category": "referent",
+        "middle_user": "My editor Ruben cut a sample lesson two ways, and his recommended style is the winner: tight jump-cuts on the talking-head segments with my keystrokes overlaid as floating captions whenever I'm in the query editor. It tested great with my beta watchers. That's the house style now.",
+        "tail_user_fragment": "We're sticking with Ruben's style, don't re-describe it. Will it slow his per-lesson turnaround once we're producing weekly?",
+        "probe": "What specifically was Ruben's recommended editing style?",
+        "gold": "Tight jump-cuts on talking-head segments with keystrokes overlaid as floating captions during query-editor screens.",
+        "keywords": [
+          "jump-cuts",
+          "keystrokes"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c11-sense-1",
+        "category": "sense",
+        "middle_user": "Naming note: 'Compass' is doing double duty in my planning docs. There's the welcome email sequence my marketing friend drafted under that name, but when I say Compass here I mean the capstone project spec, the end-of-course analysis students build on a messy real dataset. Capstone, always.",
+        "tail_user_fragment": "Should Compass unlock from day one or stay gated until week four? I can see arguments both ways.",
+        "probe": "When I said Compass in this conversation, what was I referring to?",
+        "gold": "The capstone project spec, the end-of-course analysis on a messy real dataset, not the welcome email sequence.",
+        "keywords": [
+          "capstone"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c11-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the sandbox' I mean the shared database environment where students run practice queries against my datasets, not the sandbox billing tier the platform offers for testing checkout flows. Both will come up, and I'll only ever mean the student one.",
+        "tail_user_fragment": "Can the sandbox handle 200 students hammering it at once during a live session, or do I need to plan for that?",
+        "probe": "When I asked whether 'the sandbox' could handle 200 students, which sandbox did I mean?",
+        "gold": "The shared database environment where students run practice queries, not the platform's sandbox billing tier.",
+        "keywords": [
+          "queries",
+          "datasets"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c11-stance-1",
+        "category": "stance",
+        "middle_user": "Pricing conviction, firmly held: I will never sell lifetime access. It wrecks my motivation to keep the material fresh and turns every update into unpaid labor forever. Whatever pricing structures we discuss, that one is permanently excluded.",
+        "tail_user_fragment": null,
+        "probe": "Give me three ways to structure the pricing page offer.",
+        "gold": "Suggests structures like per-run enrollment, annual access, or tiered packages, while never proposing lifetime access, ideally recalling it wrecks the user's motivation to update.",
+        "keywords": [
+          "motivation"
+        ],
+        "anti_keywords": [
+          "lifetime"
+        ]
+      },
+      {
+        "id": "c11-stance-2",
+        "category": "stance",
+        "middle_user": "Teaching format conviction: I hate slide-heavy lectures and refuse to build any lesson around a deck. Everything gets taught through live screen-share demos in the actual tools, the way I learned. If you ever storyboard a lesson for me, no slides.",
+        "tail_user_fragment": null,
+        "probe": "How should I present the lesson on window functions?",
+        "gold": "Proposes teaching through live screen-share demos in the actual tools with worked examples, never proposing a slide deck, consistent with the stated conviction.",
+        "keywords": [
+          "screen-share"
+        ],
+        "anti_keywords": [
+          "slide"
+        ]
+      },
+      {
+        "id": "c11-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Platform history: I ran a paid trial on a platform called Coursemint. The video player buffered constantly for my testers in Brazil and India, which is a third of my audience, and support shrugged. Coursemint is eliminated, no revisiting.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for choosing the course platform?",
+        "gold": "Anything except Coursemint, e.g. trialing other hosted platforms with better global delivery or a self-hosted stack with a solid CDN, ideally acknowledging Coursemint was tried and rejected.",
+        "keywords": [
+          "buffered"
+        ],
+        "anti_keywords": [
+          "coursemint"
+        ]
+      },
+      {
+        "id": "c11-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Audience-building history: last year I made a free three-part YouTube mini-course as lead generation. Forty hours of work produced exactly nine signups to my email list. That channel is dead to me as a list-building strategy, don't resurrect it.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for building the email list before launch?",
+        "gold": "Anything except a free YouTube mini-course, e.g. a downloadable SQL cheat-sheet, guest posts in analytics newsletters, or workshop partnerships, ideally acknowledging the YouTube route was tried and rejected.",
+        "keywords": [
+          "nine signups"
+        ],
+        "anti_keywords": [
+          "youtube"
+        ]
+      },
+      {
+        "id": "c11-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Expense note, recording once: my editing software subscription renews at $288 a year next month, and I'm keeping it since Ruben and I both use it. Fine. Onward.",
+        "tail_user_fragment": null,
+        "probe": "How much does the editing software subscription cost per year?",
+        "gold": "$288 a year.",
+        "keywords": [
+          "288"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c11-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Also parking a name here: the continuing-education accreditation contact at the analysts' association is Wilhelmina Choo. If the course ever offers CE credits, she's the person to email. Parked, back to planning.",
+        "tail_user_fragment": null,
+        "probe": "Who is the continuing-education accreditation contact at the analysts' association?",
+        "gold": "Wilhelmina Choo.",
+        "keywords": [
+          "wilhelmina"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  },
+  {
+    "id": "c12",
+    "title": "Robotics club competition",
+    "system": "You are a helpful assistant with robotics and engineering knowledge, mentoring a high school robotics team's competition prep.",
+    "project": "The user is the student captain of a high school robotics team preparing for this season's regional competition, with mentor Ms. Whitfield and programming lead Diego. Together with the assistant they are planning the drivetrain, autonomous routines, fundraising, scrimmages, and competition-day logistics.",
+    "subtopics": [
+      "drivetrain design",
+      "autonomous programming",
+      "team fundraising",
+      "scrimmage prep",
+      "competition-day logistics"
+    ],
+    "early_user_turns": [
+      "Hi! I'm captain of my school's robotics team this year and regionals are in eleven weeks. Ms. Whitfield says I should own the planning, so I want to work through everything with you: robot, code, money, logistics, all of it.",
+      "Biggest decision first: drivetrain design. This year's game has tight corridors and a ramp climb at the end. What drivetrain characteristics does that combination actually demand?"
+    ],
+    "middle_filler_user_turns": [
+      "Autonomous programming next. Diego's team has the robot driving straight lines reliably but that's it. What's a sensible progression of autonomous milestones between now and regionals?",
+      "Also, how should we split Diego's three programmers so they're not stepping on each other? One robot, three people, constant merge conflicts.",
+      "Fundraising section. We need about two grand more for parts and travel. What actually works for high school robotics teams asking local businesses for support?",
+      "And when we approach sponsors, what do we offer them in return that doesn't overpromise? We're students, not a marketing agency."
+    ],
+    "tail_filler_user_turns": [
+      "Competition-day logistics time. It's a two-day event, forty teams, and last year we were a mess, missing tools, skipped meals, one match nearly forfeited. Help me build the checklist that prevents a repeat.",
+      "And how should we structure roles on the day so people aren't improvising? Who talks to judges, who runs repairs, who watches the match schedule?"
+    ],
+    "plants": [
+      {
+        "id": "c12-referent-1",
+        "category": "referent",
+        "middle_user": "Drivetrain decision is done. We prototyped three options: (1) a simple tank drive, (2) mecanum wheels for strafing, and (3) swerve modules Ms. Whitfield helped us source secondhand. After two weekends of testing on the practice ramp, the team voted unanimously for the third one.",
+        "tail_user_fragment": "For the drivetrain we settled on, no need to re-justify it, the vote was unanimous. What spares should we pack for it, worst case?",
+        "probe": "Which drivetrain option did the team vote for?",
+        "gold": "The secondhand swerve modules Ms. Whitfield helped source (the third option).",
+        "keywords": [
+          "swerve",
+          "secondhand"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c12-referent-2",
+        "category": "referent",
+        "middle_user": "Diego's routine is officially our primary auto. It scores both preloaded game pieces in the high goal, then backs onto the ramp for the parking bonus, all in under twelve seconds in testing. We're building the strategy around it.",
+        "tail_user_fragment": "Assuming Diego's routine stays primary, don't re-explain it, what's our failure mode if an alliance partner crosses our path mid-run?",
+        "probe": "What specifically does Diego's routine do?",
+        "gold": "Scores both preloaded game pieces in the high goal, then backs onto the ramp for the parking bonus, in under twelve seconds.",
+        "keywords": [
+          "preloaded",
+          "high goal"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c12-sense-1",
+        "category": "sense",
+        "middle_user": "Name overload warning: 'Titan' means two things this season. There's the Titan Valley Regional we might attend as a second event, but when I say Titan with you I mean our practice robot, the duplicate chassis we built so drivers can train while the competition bot is being worked on. Practice bot, always.",
+        "tail_user_fragment": "Can the freshmen drive Titan unsupervised this week, or does Ms. Whitfield need to sign off first?",
+        "probe": "When I said Titan in this conversation, what was I referring to?",
+        "gold": "The practice robot, the duplicate chassis built for driver training, not the Titan Valley Regional event.",
+        "keywords": [
+          "duplicate",
+          "practice robot"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c12-sense-2",
+        "category": "sense",
+        "middle_user": "Also, 'the pit' is ambiguous around our shop. There's the foam pit where we drop-test components, but when I say the pit in this chat I mean our assigned pit station at competitions, the workspace where we stage tools and do repairs between matches. Competition sense only.",
+        "tail_user_fragment": "What should live at the pit versus stay in the trailer? I want that split decided before we pack.",
+        "probe": "When I talked about 'the pit', which pit did I mean?",
+        "gold": "The assigned pit station workspace at competitions, not the foam drop-test pit at the shop.",
+        "keywords": [
+          "station"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c12-stance-1",
+        "category": "stance",
+        "middle_user": "Fundraising constraint from bitter experience: never suggest candy sales. The school banned on-campus food sales two years ago, I spent a semester fighting it and lost, and I'm done relitigating. Any money idea involving selling snacks is automatically dead.",
+        "tail_user_fragment": null,
+        "probe": "Give me three fundraising ideas for covering our travel costs.",
+        "gold": "Suggests ideas like sponsor letters, a robot demo night, or a car wash, while never proposing candy or snack sales, ideally recalling the school ban.",
+        "keywords": [
+          "banned"
+        ],
+        "anti_keywords": [
+          "candy",
+          "snack"
+        ]
+      },
+      {
+        "id": "c12-stance-2",
+        "category": "stance",
+        "middle_user": "Build rule I enforce as captain: we never cut weight by drilling holes in structural plates. We cracked a chassis member at a scrimmage doing exactly that last season and lost two matches. Whatever weight problems we hit, that technique is forbidden.",
+        "tail_user_fragment": null,
+        "probe": "We're 1.5 pounds over the weight limit. Give me three ways to get under.",
+        "gold": "Suggests approaches like swapping to lighter materials, removing non-structural extras, or redesigning brackets, while never proposing drilling holes in structural plates, ideally recalling the cracked chassis incident.",
+        "keywords": [
+          "cracked"
+        ],
+        "anti_keywords": [
+          "drill"
+        ]
+      },
+      {
+        "id": "c12-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Vision history: we spent three weeks on an OptiTrak sensor for target detection. The latency was around 300 milliseconds, way too slow, and it missed targets under the venue lighting. Ms. Whitfield agreed we shelve it for good this season.",
+        "tail_user_fragment": null,
+        "probe": "What should we try next for target detection in autonomous?",
+        "gold": "Anything except the OptiTrak sensor, e.g. odometry-based dead reckoning, a different vision pipeline, or simple encoders with known positions, ideally acknowledging OptiTrak was tried and rejected.",
+        "keywords": [
+          "latency",
+          "300"
+        ],
+        "anti_keywords": [
+          "optitrak"
+        ]
+      },
+      {
+        "id": "c12-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Motor history on the lift: we ran brushed motors on the first lift prototype and they overheated in about ninety seconds of continuous load, tripping the breaker mid-climb. Rebuild is happening with different motors, brushed is done on that mechanism.",
+        "tail_user_fragment": null,
+        "probe": "What should we use next for the lift motors?",
+        "gold": "Anything except brushed motors, e.g. brushless motors with proper gearing and current limits, ideally acknowledging brushed motors were tried and rejected for overheating.",
+        "keywords": [
+          "overheated",
+          "ninety"
+        ],
+        "anti_keywords": [
+          "brushed"
+        ]
+      },
+      {
+        "id": "c12-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "For the record since people keep asking: our official team number this season is 8472. It goes on the robot, the shirts, and every form. Okay, logged, moving on.",
+        "tail_user_fragment": null,
+        "probe": "What is our official team number this season?",
+        "gold": "8472.",
+        "keywords": [
+          "8472"
+        ],
+        "anti_keywords": []
+      },
+      {
+        "id": "c12-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Logistics receipt to park: the equipment trailer rental is $137 for the competition weekend, booked through the boosters. Ms. Whitfield has the paperwork. Parked and done.",
+        "tail_user_fragment": null,
+        "probe": "How much is the equipment trailer rental for the competition weekend?",
+        "gold": "$137.",
+        "keywords": [
+          "137"
+        ],
+        "anti_keywords": []
+      }
+    ]
+  }
+]
