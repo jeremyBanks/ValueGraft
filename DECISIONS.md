@@ -2,6 +2,8 @@
 
 Format: date — decision — reason.
 
+- 2026-07-04 — **Added a micro-experiment (user suggestion, src/micro_sense.py) outside the brief:** isolated sense-disambiguation transplant. Carrier sentence token-identical in disambiguated vs bare context at identical absolute positions; swap carrier V (or K+V) from old into new; forced-choice letter readout, both option orders. Result on 4B (n=6 items, mean of both orders): oracle +3.81, fresh −0.23, V-swap α=1 +0.84 (monotone in α), KV-swap α=1 +1.95 nats. Values alone carry sense; keys+values carry ~half the oracle margin. Direct, pipeline-free support for H1; H2 only partially — addresses (K) contribute materially.
+
 - 2026-07-04 — **Environment:** uv project, Python 3.12, `mlx-lm==0.31.3`, `mlx==0.31.2`, `transformers==5.0.0`. transformers pinned to 5.0.0 because mlx-lm 0.31.3 requires ≥5 but crashes on 5.13 (`AutoTokenizer.register` API change).
 - 2026-07-04 — **Dev model:** `mlx-community/Qwen3-4B-Instruct-2507-4bit` rather than plain Qwen3-4B/8B. Same 2507-instruct family as the 30B-A3B target, instruct-tuned without thinking-mode preamble, small enough to iterate fast. Brief allowed either.
 - 2026-07-04 — **Repo layout:** per brief §7 — `src/` (surgery, arms, probes), `data/` (manifests + conversations), `results/` (tables, plots, logs).
