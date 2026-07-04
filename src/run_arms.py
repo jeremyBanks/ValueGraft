@@ -86,6 +86,9 @@ class ArmSet:
             self.b_ids, self.summary["old_ids"], self.special_ids, self.regions
         )
         self._b_snap = None
+        self._bmin_snap = None
+        self.bmin_msgs = self.b_msgs[:2]  # system + context-note only
+        self.bmin_ids = canonical_ids(tokenizer, self.bmin_msgs)
         self.stats = {
             "n_tokens": len(self.ids),
             "tail_start_tok": self.tail_start_tok,
@@ -102,24 +105,44 @@ class ArmSet:
         return self._b_snap
 
     def variants(self, e_post_alphas=E_POST_ALPHAS, e_inter_alphas=E_INTER_ALPHAS):
-        """Yield (name, make_cache, ids_of_context). make_cache() returns a
-        fresh cache list holding exactly the arm's context (no gen prompt)."""
-        yield "A", (lambda: rebuild_cache(self._a_snap)), self.ids
-        yield "B", (lambda: rebuild_cache(self.b_snap())), self.b_ids
+        """Yield (name, make_cache, ids_of_context, msgs_for_render).
+        make_cache() returns a fresh cache list holding exactly the arm's
+        context (no gen prompt)."""
+        yield "A", (lambda: rebuild_cache(self._a_snap)), self.ids, self.msgs
+        yield "B", (lambda: rebuild_cache(self.b_snap())), self.b_ids, self.b_msgs
         yield "C", (lambda: gapped_cache_from(
-            arm_c_snapshot(self.summary, self.tail_start_tok, True))), self.ids
+            arm_c_snapshot(self.summary, self.tail_start_tok, True))), \
+            self.ids, self.msgs
         yield "D", (lambda: gapped_cache_from(
-            arm_c_snapshot(self.summary, self.tail_start_tok, False))), self.ids
+            arm_c_snapshot(self.summary, self.tail_start_tok, False))), \
+            self.ids, self.msgs
+        # Arm H (SelfGist, gap variant): sinks + S's in-context entries only —
+        # arm C with an empty tail. Positions/probes continue after S.
+        yield "H-gap", (lambda: gapped_cache_from(
+            arm_c_snapshot(self.summary, self.summary["conv_end"], True))), \
+            self.ids, self.msgs
+        # B-min: matched control for H — system + identical summary text,
+        # freshly encoded, no tail.
+        yield "B-min", (lambda: rebuild_cache(self.bmin_snap())), \
+            self.bmin_ids, self.bmin_msgs
         for a in e_post_alphas:
             snap = arm_e_snapshot(
                 self.b_snap(), self.summary["snapshot"], self.pairs, a
             )
-            yield f"E-post-a{a}", (lambda s=snap: rebuild_cache(s)), self.b_ids
+            yield f"E-post-a{a}", (lambda s=snap: rebuild_cache(s)), \
+                self.b_ids, self.b_msgs
         for a in e_inter_alphas:
             snap = arm_e_inter_build(
                 self.model, self.b_ids, self.summary["snapshot"], self.pairs, a
             )
-            yield f"E-inter-a{a}", (lambda s=snap: rebuild_cache(s)), self.b_ids
+            yield f"E-inter-a{a}", (lambda s=snap: rebuild_cache(s)), \
+                self.b_ids, self.b_msgs
+
+    def bmin_snap(self):
+        if self._bmin_snap is None:
+            cache, _ = prefill(self.model, self.bmin_ids)
+            self._bmin_snap = snapshot_cache(cache)
+        return self._bmin_snap
 
     def prepare_a(self):
         cache, _ = prefill(self.model, self.ids)
@@ -142,21 +165,20 @@ def run_cont_mode(model, tokenizer, msgs, tail_start_msg, cont_text):
     ctx = msgs
     aset = ArmSet(model, tokenizer, ctx, tail_start_msg)
     aset.prepare_a()
-    # generation-prompt suffix: render(ctx, True) extends canonical(ctx)
-    gp = render(tokenizer, ctx, True)
-    assert gp[: len(aset.ids)] == aset.ids
-    gp_suffix_full = gp[len(aset.ids):]
-    gp_b = render(tokenizer, aset.b_msgs, True)
-    assert gp_b[: len(aset.b_ids)] == aset.b_ids
-    gp_suffix_b = gp_b[len(aset.b_ids):]
-    assert gp_suffix_full == gp_suffix_b
 
     cont_ids = tokenizer.encode(cont_text, add_special_tokens=False)
     out = {"stats": aset.stats, "arms": {}}
-    for name, mk, ctx_ids in aset.variants():
+    for name, mk, ctx_ids, render_msgs in aset.variants():
         t0 = time.time()
+        gp = render(tokenizer, render_msgs, True)
+        if gp[: len(ctx_ids)] != ctx_ids:
+            print(f"    CONT {name}: SKIP (gen-prompt render not a prefix "
+                  f"extension of canonical context)")
+            out["arms"][name] = {"error": "render_prefix_mismatch"}
+            continue
+        gp_suffix = gp[len(ctx_ids):]
         cache = mk()
-        feed = gp_suffix_full + cont_ids[:-1]
+        feed = gp_suffix + cont_ids[:-1]
         lps = batched_teacher_forced(model, cache, feed, cont_ids)
         out["arms"][name] = {
             "mean_logprob": sum(lps) / len(lps),
@@ -176,18 +198,14 @@ def run_probe_mode(model, tokenizer, msgs, tail_start_msg, plants,
     aset.prepare_a()
     eos_ids = set(tokenizer.eos_token_ids or [tokenizer.eos_token_id])
     out = {"stats": aset.stats, "arms": {}}
-    for name, mk, ctx_ids in aset.variants():
+    for name, mk, ctx_ids, render_msgs in aset.variants():
         if arm_filter and name not in arm_filter:
             continue
         t0 = time.time()
         answers = {}
         for plant in plants:
             probe_msgs_suffix = [{"role": "user", "content": plant["probe"]}]
-            # canonical ctx + probe turn + gen prompt
-            if ctx_ids is aset.ids:
-                full = render(tokenizer, msgs + probe_msgs_suffix, True)
-            else:
-                full = render(tokenizer, aset.b_msgs + probe_msgs_suffix, True)
+            full = render(tokenizer, render_msgs + probe_msgs_suffix, True)
             assert full[: len(ctx_ids)] == ctx_ids
             cache, logits = continue_from(
                 model, tokenizer, mk, ctx_ids, full[len(ctx_ids):]
@@ -228,7 +246,7 @@ def run_natural(model, tokenizer, conv_path, outdir):
     aset.prepare_a()
 
     out = {"stats": aset.stats, "arms": {}}
-    for name, mk, ctx_ids in aset.variants():
+    for name, mk, ctx_ids, render_msgs in aset.variants():
         t1 = time.time()
         cache = mk()
         # Score suffix[1:]; suffix[0] is the deterministic <|im_start|> frame
