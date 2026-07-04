@@ -83,6 +83,40 @@ def teacher_forced_logprobs(model, cache, first_logits, cont_ids):
     return logprobs, step_logits
 
 
+def sampled_generate(model, cache, first_logits, max_tokens, eos_ids, temp=0.7):
+    """Temperature-sampled decode from an existing cache. Returns token ids
+    (without the terminating eos). Determinism comes from mx.random.seed set
+    by the caller."""
+    tokens = []
+    logits = first_logits
+    for _ in range(max_tokens):
+        tok = mx.random.categorical(logits.astype(mx.float32) / temp)
+        tok_id = tok.item()
+        if tok_id in eos_ids:
+            break
+        tokens.append(tok_id)
+        logits = model(tok[None], cache=cache)[:, -1, :]
+    return tokens
+
+
+def truncate_cache(cache, length):
+    """Truncate KVCache list in place to `length` tokens."""
+    for c in cache:
+        c.keys = c.keys[..., :length, :]
+        c.values = c.values[..., :length, :]
+        c.offset = length
+
+
+def extend_cache(model, cache, token_ids, batch_size=1024):
+    """Prefill additional tokens onto an existing cache; returns last logits."""
+    ids = mx.array(token_ids)[None]
+    logits = None
+    for i in range(0, ids.shape[1], batch_size):
+        logits = model(ids[:, i : i + batch_size], cache=cache)
+        mx.eval([c.state for c in cache])
+    return logits[:, -1, :]
+
+
 def snapshot_cache(cache):
     """Serialize a cache list to plain (keys, values, offset) tuples (trimmed)."""
     out = []
