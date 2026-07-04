@@ -156,12 +156,67 @@ def aggregate(rows):
             for (c, a, s), (p, n) in sorted(agg.items())}
 
 
+def export_judge_queue(rows):
+    """Write undecided rows to results/judge_queue.json for an external
+    (Claude subagent) judge. The judge writes results/judge_verdicts.json:
+    {"<conv>|<arm>|<plant>": "YES"|"NO"|"CORRECT"|"FABRICATED"|"ADMITTED"}."""
+    queue = []
+    for r in rows:
+        if not r["needs_judge"]:
+            continue
+        cat = r["category"]
+        tmpl = (JUDGE_EQUIV if cat in {"referent", "sense"}
+                else JUDGE_FACT_FAIL if cat == "evicted_fact"
+                else JUDGE_STANCE)
+        queue.append({
+            "key": f"{r['conv']}|{r['arm']}|{r['plant']}",
+            "category": cat,
+            "prompt": tmpl.format(**r),
+        })
+    json.dump(queue, open("results/judge_queue.json", "w"), indent=1,
+              ensure_ascii=False)
+    return queue
+
+
+def apply_verdicts(rows):
+    verdicts = json.load(open("results/judge_verdicts.json"))
+    logf = open("results/judgments.jsonl", "w")
+    for r in rows:
+        key = f"{r['conv']}|{r['arm']}|{r['plant']}"
+        if not r["needs_judge"]:
+            r["final_pass"] = r["kw_pass"]
+            continue
+        v = verdicts.get(key, "").strip().upper()
+        r["judge"] = v
+        cat = r["category"]
+        if cat in {"referent", "sense"}:
+            r["final_pass"] = v.startswith("YES")
+        elif cat == "evicted_fact":
+            r["final_pass"] = v.startswith("CORRECT")
+            r["fact_failure_mode"] = (
+                "fabricated" if v.startswith("FABRICATED")
+                else "admitted" if v.startswith("ADMITTED") else "other")
+        else:
+            r["final_pass"] = r["kw_pass"] and v.startswith("YES")
+        logf.write(json.dumps({"key": key, "judge": v,
+                               "answer": r["answer"]}) + "\n")
+    logf.close()
+    return rows
+
+
 def main():
-    model_name = sys.argv[1] if len(sys.argv) > 1 else \
-        "mlx-community/Qwen3-4B-Instruct-2507-4bit"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "export"
     rows = phase1()
     print(f"{len(rows)} probe answers; {sum(r['needs_judge'] for r in rows)} need judge")
-    rows = phase2(rows, model_name)
+    if mode == "export":
+        q = export_judge_queue(rows)
+        print(f"exported {len(q)} judge prompts to results/judge_queue.json")
+        return
+    if mode == "local":  # fallback: local-model judge
+        rows = phase2(rows, sys.argv[2] if len(sys.argv) > 2 else
+                      "mlx-community/Qwen3-4B-Instruct-2507-4bit")
+    else:  # "apply": use verdicts from the subagent judge
+        rows = apply_verdicts(rows)
     out = {"rows": rows, "aggregate": aggregate(rows)}
     json.dump(out, open("results/scores.json", "w"), indent=1, ensure_ascii=False)
     for k, v in out["aggregate"].items():
