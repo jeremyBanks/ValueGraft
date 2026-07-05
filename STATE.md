@@ -2,7 +2,25 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 14:45 07-05
+## Current focus (read this first) — updated 15:35 07-05
+
+**CLOUD PHASE RUNNING (user approved; ~$100 budget).**
+- Pod-1 (secure, .pod_state.json, ssh -p 31918 root@213.173.105.10):
+  stage-1 shard 0/2. Pod-2 (community, .pod2_state.json, ssh -p 11989
+  root@104.255.9.187): stage-1 shard 1/2. LongMemEval ×350 all types,
+  ~120 s/q, ETA ~21:30. Dual watchdog armed (stall/complete only).
+- Stage 1b APPROVED (standard-protocol full-haystack LME ×100) — queued for
+  pods 1+2 tonight after stage 1; runner still to write (adapt run_lme_hf:
+  no subsampling, evict-oldest-sessions compaction, benchmark's judge
+  prompts). Stage-1 numbers are NOT leaderboard-comparable; only 1b is.
+- Stage 2 (SWE-Gym) runner BUILT (src/run_swegym_hf.py; swegym.parquet
+  cached); local 0.6B smoke in flight; pod-3 after smoke passes.
+- Judging: incremental Sonnet batches during runs. Balance at stage
+  boundaries (opening $50; user top-up to ~$100 pending on account).
+- SSH key ~/.ssh/id_ed25519_runpod; pod tool src/pod.py (SC_POD_STATE,
+  SC_POD_CLOUD). ALWAYS kill pod processes by PID + pgrep-verify empty.
+
+## Older focus (14:45) notes
 
 **READY TO LAUNCH CLOUD PHASE — waiting ONLY on the user's explicit go.**
 Read cloud-plan.md end-to-end first: Strategy P (scale evidence on
