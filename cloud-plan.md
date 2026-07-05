@@ -127,3 +127,12 @@ error/discovery events in the evicted region (~1 pod-hour); (4) short
 multi-action rollouts scored against the recorded trajectory for grounded
 error counts (~1 pod-hour). Full SWE-bench task-resolution runs remain out of
 scope at this budget (amendments doc item 11 rationale).
+
+## Designated follow-up (if stage 2 shows signal): end-to-end harness run
+
+OpenHands' condenser abstraction is the standard plug point for compaction
+policy; our KV interventions then need only an OpenAI-compatible serving shim
+around the existing HF DynamicCache stack (~1 day build; implements the
+opaque-compaction-token API for real). SWE-bench-Lite subset n≈25 × 2-3 arms
+≈ $50-100 GPU. First possible end-to-end task-success test of the concept —
+the natural target for the conditional additional budget.
