@@ -1,0 +1,44 @@
+{
+ "idx": 58,
+ "meta": {
+  "n_tokens_full": 12118,
+  "cut_msg": 12,
+  "n_ctx_tokens": 8219
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 101,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 59,
+ "arms": {
+  "A": {
+   "tf_mean": -0.13734114685373364,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.05551632343300082,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/responses.py</parameter>\n<parameter=view_range>[511, 520]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.07318451627147891,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/responses.py</parameter>\n<parameter=view_range>[511, 520]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.2594416516047615,
+   "gen": "The issue you're describing involves a bug in the **Moto** library's RDS (Relational Database Service) implementation, where a request for a non-existent database cluster raises a `KeyError` instead of the expected `DBClusterNotFoundFault` exception (which is what AWS actually returns).\n\nHere's how to fix this issue in the Moto codebase:\n\n---\n\n### \u2705 **Problem Summary**\nWhen a user requests a non-existent RDS cluster (e.g., via `describe_db_clusters`), the current code raises a `KeyError` because",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.0043291464693476,
+   "gen": "Based on your description, here's the solution to fix the issue where a non-existent database cluster raises a `KeyError` instead of the expected `ClientError` (or similar AWS-style exception):\n\n### Problem Analysis\nWhen a user requests a non-existent RDS cluster via the `describe_db_clusters` method (or similar), the current code likely:\n1. Looks up the cluster in an internal dictionary/list.\n2. If not found, raises a `KeyError` (Python's default for missing dict keys).\n3. This doesn't match AW",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "idx": 108,
+ "meta": {
+  "n_tokens_full": 11692,
+  "cut_msg": 14,
+  "n_ctx_tokens": 9028
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 111,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 59,
+ "arms": {
+  "A": {
+   "tf_mean": -0.23869102993728358,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/rds/models.py</parameter>\n<parameter=view_range>[1950, 2000]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.2543348169347364,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/rds/models.py</parameter>\n<parameter=view_range>[1950, 2000]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.23647437645615965,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/rds/models.py</parameter>\n<parameter=view_range>[1950, 2000]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.16090315820716,
+   "gen": "You're working with the **moto** library, which is a popular mocking library for AWS services in Python. You're specifically dealing with **Amazon RDS (Relational Database Service)**, and you've identified a bug in the `describe_db_clusters` method where it **fails when an ARN is provided as input**, even though the cluster exists.\n\n---\n\n### \u2705 Problem Summary\n\n- You're calling `describe_db_clusters(ClusterIdentifier='arn:aws:rds:...')`\n- The cluster **exists** in the mock state.\n- But moto **fai",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.3052834357279606,
+   "gen": "Based on your description, the issue is that `describe_db_clusters` fails when an ARN is provided, even though the cluster exists. This is a common issue in AWS mock libraries where ARN parsing and matching logic is missing or incomplete.\n\nHere's how to fix it:\n\n## Root Cause\nThe `describe_db_clusters` method likely only checks for direct matches against cluster IDs, but doesn't parse and validate ARNs before looking up clusters.\n\n## Solution\n\n1. **Locate the `describe_db_clusters` method** in t",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

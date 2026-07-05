@@ -1,0 +1,44 @@
+{
+ "idx": 25,
+ "meta": {
+  "n_tokens_full": 14533,
+  "cut_msg": 8,
+  "n_ctx_tokens": 12086
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 94,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 45,
+ "arms": {
+  "A": {
+   "tf_mean": -0.12261554660170601,
+   "gen": "<function=execute_bash>\n<parameter=command>grep -n \"dataclass\" /workspace/dask__dask__2021.04/dask/delayed.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.4781417633903868,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2021.04/dask/delayed.py</parameter>\n<parameter=view_range>[110, 199]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.3868223499572254,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2021.04/dask/delayed.py</parameter>\n<parameter=view_range>[110, 199]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.262759082214595,
+   "gen": "You're working on a Dask PR to fix an issue where `dask.delayed` fails when used with dataclass instances that have fields marked `init=False`. This is a common problem because Dask's internal logic tries to inspect or access attributes during serialization, but fields with `init=False` aren't initialized during `__init__`, leading to `AttributeError`.\n\nHere\u2019s a breakdown of the problem and how to fix it properly:\n\n---\n\n### \ud83d\udd0d **Problem Summary**\nWhen you define a dataclass like this:\n\n```python\n",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.5657683307084174,
+   "gen": "You're on the right track! Let's summarize and clarify the next steps to fix this issue in the Dask library.\n\n---\n\n### \ud83d\udd0d **Problem Recap**\nWhen using `dask.delayed` on a dataclass instance with fields marked `init=False`, Dask attempts to access all attributes during serialization (e.g., for task graph construction), even if they haven't been initialized. This causes an `AttributeError` because those attributes don't exist yet.\n\nExample:\n```python\nfrom dataclasses import dataclass\nimport dask\n\n@",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

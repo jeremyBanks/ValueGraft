@@ -1,0 +1,44 @@
+{
+ "idx": 146,
+ "meta": {
+  "n_tokens_full": 14762,
+  "cut_msg": 16,
+  "n_ctx_tokens": 11549
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 113,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 68,
+ "arms": {
+  "A": {
+   "tf_mean": -0.20548166618193656,
+   "gen": "Let's look at the scan method in the Table class:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/dynamodb/models/table.py</parameter>\n<parameter=view_range>\n[802, 900]\n</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.325848297761584,
+   "gen": "Now let's examine the scan method in table.py to understand how it handles GSI projections:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/dynamodb/models/table.py</parameter>\n<parameter=view_range>[802, 900]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.27350625883839236,
+   "gen": "Now let's look at the scan method implementation in table.py:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/dynamodb/models/table.py</parameter>\n<parameter=view_range>[802, 865]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.1078822355985904,
+   "gen": "# Issue: DynamoDB GSI Scan Ignores Projection Type\n\n## Problem Summary\nWhen scanning a DynamoDB table's Global Secondary Index (GSI), the scan operation ignores the projection type settings and returns all attributes instead of only those specified in the projection. This affects both `INCLUDE` and `KEYS_ONLY` projection types.\n\n## Root Cause Analysis\nThe issue lies in the table model's scan functionality, specifically in how it handles GSI projections when returning results. The scan operation ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.9912708485515385,
+   "gen": "Based on your description, the issue is that the scan operation on a DynamoDB GSI is not respecting the projection configuration (INCLUDE or KEYS_ONLY), returning all attributes instead of only the projected ones. This is a common issue in the moto library's DynamoDB implementation.\n\nHere's the most likely root cause and solution:\n\n## Root Cause\nThe issue is likely in the `scan` method of the `Table` class in moto's DynamoDB implementation. When scanning a GSI, the code is probably not properly ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "idx": 90,
+ "meta": {
+  "n_tokens_full": 11622,
+  "cut_msg": 10,
+  "n_ctx_tokens": 8150
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 126,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 176,
+ "arms": {
+  "A": {
+   "tf_mean": -0.4999467397732685,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.5193348149869177,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/models.py</parameter>\n<parameter=old_str>    def describe_db_clusters(self, cluster_identifier):\n        if cluster_identifier:\n            return [self.clusters[cluster_identifier]]\n        return self.clusters.values()</parameter>\n<parameter=new_str>    def describe_db_clusters(self, cluster_identifier):\n        if cluster_identifier:\n            if cluster_identifier",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.500505444259717,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/responses.py</parameter>\n<parameter=view_range>[510, 520]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.7798383905318282,
+   "gen": "# Analysis of the Issue\n\nThe problem is in the `describe_db_clusters` method of the RDS models in the Moto library. When a non-existent database cluster is queried, the method raises a `KeyError` instead of the expected `DBClusterNotFoundFault` error.\n\n## Root Cause\n\nLooking at the code, the issue occurs because:\n1. The method tries to access a cluster by its identifier from a dictionary\n2. When the cluster doesn't exist, it raises a `KeyError` instead of properly handling the missing cluster ca",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.6625203936262691,
+   "gen": "Based on the analysis, here's the correct fix for the `describe_db_clusters` method in Moto's RDS implementation:\n\n## The Problem\nThe `describe_db_clusters` method currently doesn't validate if the requested cluster exists, causing a `KeyError` when accessing a non-existent cluster from the internal storage.\n\n## The Solution\nAdd a validation check before accessing the cluster data, raising the appropriate `DBClusterNotFoundFault` error if the cluster doesn't exist.\n\n```python\n# In the moto/rds/m",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

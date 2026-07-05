@@ -1,0 +1,44 @@
+{
+ "idx": 78,
+ "meta": {
+  "n_tokens_full": 12088,
+  "cut_msg": 12,
+  "n_ctx_tokens": 9104
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 128,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 58,
+ "arms": {
+  "A": {
+   "tf_mean": -0.0731179775842636,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/batch/models.py</parameter>\n<parameter=view_range>[630, 650]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.09085127771766491,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/batch/models.py</parameter>\n<parameter=view_range>[630, 650]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.06849175528635733,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/batch/models.py</parameter>\n<parameter=view_range>[630, 650]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.008464469689435,
+   "gen": "The issue you're encountering \u2014 a `RuntimeError: cannot join thread before it is started` \u2014 in the `moto` library's batch service during test resets is a known regression that occurred between versions 4.0.11 and 4.2.11. This happens because of improper thread lifecycle management in the `moto/batch/models.py` file, specifically in the `reset()` method.\n\n### \ud83d\udd0d Root Cause\n\nIn the `reset()` method of the `BatchBackend` class, there's a call to `self._job_thread.join()` **without first checking if ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.0733227860850705,
+   "gen": "Based on the error description and the context of moto's thread management in the batch service, here's a targeted solution:\n\n## Root Cause Analysis\n\nThe `RuntimeError: cannot join thread before it is started` occurs because the `join()` method is called on a thread object that hasn't been started yet. This typically happens in the `reset()` or `cleanup()` methods of the batch service where threads are joined without first checking if they were actually started.\n\n## Solution\n\nThe fix involves mo",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

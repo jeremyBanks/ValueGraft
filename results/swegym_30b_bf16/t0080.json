@@ -1,0 +1,44 @@
+{
+ "idx": 80,
+ "meta": {
+  "n_tokens_full": 12835,
+  "cut_msg": 30,
+  "n_ctx_tokens": 9139
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 120,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 36,
+ "arms": {
+  "A": {
+   "tf_mean": -0.0014457013278516622,
+   "gen": "<function=execute_bash>\n<parameter=command>python /workspace/conan-io__conan__2.1/test_autoreconf.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.006214076426031667,
+   "gen": "<function=execute_bash>\n<parameter=command>python /workspace/conan-io__conan__2.1/test_autoreconf.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.0017471916878700631,
+   "gen": "<function=execute_bash>\n<parameter=command>python /workspace/conan-io__conan__2.1/test_autoreconf.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.3628235740086816,
+   "gen": "You're working on a **Conan tool modification** to allow specifying the `autoreconf` command's working directory via a `build_script_folder` parameter \u2014 aligning it with the `configure` method's behavior. You've encountered issues with setting up the ConanFile's build folder correctly in a test script due to **lifecycle and attribute access problems**.\n\nLet\u2019s walk through the **core issue**, **why it happens**, and how to **fix it properly** in your test script and Conan tool.\n\n---\n\n### \ud83d\udd0d **Root",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.468143574678225,
+   "gen": "You're on the right track with your goal: **adding a `build_script_folder` parameter to the `autoreconf` method** in Conan to make it consistent with the `configure` method. Let's walk through a **complete, working solution** that addresses your test script issues and ensures proper behavior.\n\n---\n\n### \u2705 **Step 1: Understand the Problem**\nThe `autoreconf` tool in Conan (e.g., in `conan.tools.gnu.Autotools`) currently runs in the source folder by default. You want to allow users to specify a diff",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

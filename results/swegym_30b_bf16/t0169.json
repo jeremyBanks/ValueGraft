@@ -1,0 +1,44 @@
+{
+ "idx": 169,
+ "meta": {
+  "n_tokens_full": 13807,
+  "cut_msg": 14,
+  "n_ctx_tokens": 11565
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 141,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 48,
+ "arms": {
+  "A": {
+   "tf_mean": -0.12873535802119415,
+   "gen": "Let's search for the specific line where the error occurs:\n\n<function=execute_bash>\n<parameter=command>grep -n \"extras_annotation = candidate_cls.__annotations__.get('__pydantic_extra__', None)\" /testbed/pydantic/_internal/_generate_schema.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -1.0889877484573576,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/pydantic/_internal/_generate_schema.py</parameter>\n<parameter=view_range>[1000, 1100]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -1.0979419684150058,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/pydantic/_internal/_generate_schema.py</parameter>\n<parameter=view_range>[1000, 1100]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.2367931589122723,
+   "gen": "The issue you're encountering is a known compatibility problem between **Pydantic v2** and **OpenAI SDK v1.0+**, specifically related to how Pydantic v2 handles `__annotations__` on `Generic` types.\n\n### \ud83d\udd0d Root Cause\n\nIn **Python 3.11+**, the `__annotations__` attribute is no longer available on `Generic` types (like `List`, `Dict`, `Optional`, etc.) because they are now `typing._GenericAlias` objects, which do **not** have `__annotations__`. However, **Pydantic v2** (especially in certain versi",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.2274838550830673,
+   "gen": "Based on the error description and the context of Pydantic's schema generation, this is a known issue related to changes in Python's typing system and how Pydantic handles generic types. Here's the analysis and solution:\n\n## Root Cause\n\nThe error occurs because:\n1. Python 3.9+ removed `__annotations__` from `typing.Generic` classes\n2. Pydantic's schema generation code is trying to access `__annotations__` on generic types\n3. This breaks when using `typing.Generic` with type variables\n\n## Solutio",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

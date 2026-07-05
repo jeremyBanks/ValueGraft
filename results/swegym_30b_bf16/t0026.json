@@ -1,0 +1,44 @@
+{
+ "idx": 26,
+ "meta": {
+  "n_tokens_full": 10587,
+  "cut_msg": 10,
+  "n_ctx_tokens": 7925
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 112,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 60,
+ "arms": {
+  "A": {
+   "tf_mean": -0.1052485864716284,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/ecs/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.01933691089460261,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/ecs/models.py</parameter>\n<parameter=view_range>[1350, 1360]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.017895191942155365,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/ecs/models.py</parameter>\n<parameter=view_range>[1350, 1370]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.011334608009494,
+   "gen": "I'll help you fix the bug in the moto library's ECS service where the `list_services` method fails to raise a `ClusterNotFoundException` when an invalid cluster name is provided.\n\nLooking at the issue, the problem is that when an invalid cluster name is provided, the method currently returns an empty list instead of raising the expected `ClusterNotFoundException`. Here's how to fix it:\n\n```python\n# In the models.py file within the ECS module\n\ndef list_services(self, cluster, max_results=None, ne",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.1059457769388144,
+   "gen": "Based on the code analysis, here's the fix for the `list_services` method in the ECS service:\n\n```python\ndef list_services(self, cluster, max_results=None, next_token=None):\n    # Validate cluster exists\n    if cluster and cluster not in self.clusters:\n        raise ClientError(\n            error_code=\"ClusterNotFoundException\",\n            error_message=f\"Cluster {cluster} not found\"\n        )\n    \n    # Get services for the cluster\n    cluster_services = self.clusters.get(cluster, [])\n    \n   ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

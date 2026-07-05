@@ -1,0 +1,44 @@
+{
+ "idx": 37,
+ "meta": {
+  "n_tokens_full": 10793,
+  "cut_msg": 8,
+  "n_ctx_tokens": 8552
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 91,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 60,
+ "arms": {
+  "A": {
+   "tf_mean": -0.16906311640512067,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/batch/models.py</parameter>\n<parameter=view_range>\n[1050, 1065]\n</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.1932455432692501,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/batch/models.py</parameter>\n<parameter=view_range>[1053, 1065]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.19586364372461726,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/batch/models.py</parameter>\n<parameter=view_range>[1053, 1065]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.341320388710332,
+   "gen": "# Fix for \"RuntimeError: cannot join thread before it is started\" in moto\n\nThe issue occurs in the `moto` library when resetting the batch backend, where a thread is being joined before it's been started. This is a race condition that can happen when the thread lifecycle isn't properly managed.\n\n## Root Cause Analysis\n\nThe error \"RuntimeError: cannot join thread before it is started\" indicates that the code is trying to call `thread.join()` on a thread object that hasn't been started yet. This t",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.1160352398755418,
+   "gen": "Based on the error and the context, the issue is in the `reset()` method of the batch backend where it's trying to join a thread that may not have been started (or was already joined). Here's the most likely fix:\n\n## Root Cause Analysis\nThe error occurs because the code is trying to call `join()` on a thread that either:\n1. Was never started\n2. Was already joined previously\n3. The thread reference is stale\n\n## Solution\n\nThe fix should be to add a null check before calling `join()` on the thread.",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

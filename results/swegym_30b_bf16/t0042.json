@@ -1,0 +1,44 @@
+{
+ "idx": 42,
+ "meta": {
+  "n_tokens_full": 12432,
+  "cut_msg": 14,
+  "n_ctx_tokens": 9427
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 98,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 235,
+ "arms": {
+  "A": {
+   "tf_mean": -0.20601847991262234,
+   "gen": "The changes look good. I've added a check to ensure that the `PackageType` attribute is set to `\"Zip\"` if it is not provided in the `spec` dictionary. This will ensure that the `PackageType` attribute is always present in the Lambda function's details.\n\nNow, let's create a script to reproduce the error and confirm that the fix works.\n\n<function=str_replace_editor>\n<parameter=command>create</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n<parameter=file_te",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.8064832680010943,
+   "gen": "The changes have been successfully applied to the `create_function` method in the `moto/awslambda/models.py` file. The `PackageType` attribute is now ensured to be present in the function's specification, with a default value of `\"Zip\"` if it is not provided in the `spec`.\n\nThis change ensures that the `PackageType` attribute is included in the Lambda function's details, which aligns with the AWS Lambda service behavior. The modification is minimal and focused on the specific issue at hand.\n\nThe",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.7911652134076264,
+   "gen": "The changes have been successfully made to the `create_function` method in the `moto/awslambda/models.py` file. The `PackageType` attribute is now ensured to be set with a default value of `\"Zip\"` if it is not provided in the `spec` dictionary.\n\nThis change ensures that the `PackageType` attribute is always present in the Lambda function's details, which aligns with the requirements specified in the PR.\n\nI will now finish the task.\n\n<function=finish>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.4072391398141855,
+   "gen": "The issue you're describing involves the `moto` library's AWS Lambda service mock, specifically the missing `PackageType` attribute in the response when creating a Lambda function. This is a common issue when testing AWS Lambda functionality with moto, as the mock may not fully replicate the behavior of the real AWS service.\n\nHere's how to address this issue:\n\n## Problem Analysis\n\nThe `PackageType` attribute is a required field in AWS Lambda function creation, with a default value of \"Zip\" if no",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.321441799589882,
+   "gen": "You're right \u2014 let's clarify and finalize the explanation based on your input.\n\n### Summary of the Issue:\nIn the **moto** library, when mocking AWS Lambda using `moto`, the `create_function` call was not including the `PackageType` field in the response, even though AWS Lambda functions can have a `PackageType` (e.g., `Zip` or `Image`). This caused discrepancies between the real AWS behavior and the mocked behavior, especially when testing code that checks for this field.\n\n### The Fix:\nThe issue",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

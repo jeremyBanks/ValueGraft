@@ -1,0 +1,44 @@
+{
+ "idx": 100,
+ "meta": {
+  "n_tokens_full": 12208,
+  "cut_msg": 14,
+  "n_ctx_tokens": 9550
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 122,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 204,
+ "arms": {
+  "A": {
+   "tf_mean": -0.14195767659918032,
+   "gen": "The changes to the `create_function` method in `moto/awslambda/models.py` have been made to ensure that the `PackageType` attribute is set to `\"Zip\"` if it is not provided in the `spec` dictionary. This change will ensure that the `PackageType` attribute is always present in the function's metadata when a Lambda function is created.\n\nNext, let's create a script to reproduce the error and verify that the `PackageType` attribute is correctly included in the Lambda function's metadata.\n\n<function=s",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.6659857407682621,
+   "gen": "The changes to the `create_function` method have been successfully implemented. The code now ensures that the `PackageType` attribute is set to `\"Zip\"` if it is not provided in the `spec` dictionary. This change aligns with the behavior of the real AWS Lambda service, where `PackageType` defaults to `\"Zip\"` if not specified.\n\nNext, let's create a test script to verify that the `PackageType` attribute is correctly included in the Lambda function's metadata when a function is created.\n\n<function=s",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.6903958574027674,
+   "gen": "The changes to the `create_function` method have been successfully implemented. The `PackageType` attribute is now set to `\"Zip\"` if it is not provided in the `spec` dictionary. This ensures that the `PackageType` attribute is always present in the function's metadata, matching the behavior of the real AWS Lambda service.\n\nNext, let's create a script to reproduce the error and verify that the `PackageType` attribute is correctly included in the Lambda function's metadata.\n\n<function=str_replace_",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.397604125774131,
+   "gen": "Based on your description, you're working with the **moto** library to mock AWS Lambda services for testing, and you've identified that the `PackageType` attribute is missing from Lambda function metadata when creating functions. You've already made changes to ensure `PackageType` is always present (defaulting to \"Zip\" if not specified), and now you want to verify that the fix works correctly.\n\nHere\u2019s a complete **test script** to verify your changes:\n\n---\n\n### \u2705 **Test Script: Verify `PackageTy",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.328992714917089,
+   "gen": "You're on the right track! Let me help you complete the process by providing a **test script** to verify that your changes to the `create_function` method in moto's Lambda service are working correctly.\n\n---\n\n### \u2705 **Step 1: Confirm Your Code Change**\nEnsure that in `moto/lambda/models.py`, the `create_function` method includes logic like this:\n\n```python\ndef create_function(self, name, role, code, handler, runtime, **kwargs):\n    # ... existing code ...\n    function = Function(\n        name=nam",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

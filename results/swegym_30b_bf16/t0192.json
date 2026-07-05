@@ -1,0 +1,44 @@
+{
+ "idx": 192,
+ "meta": {
+  "n_tokens_full": 10981,
+  "cut_msg": 12,
+  "n_ctx_tokens": 8176
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 110,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 61,
+ "arms": {
+  "A": {
+   "tf_mean": -0.23683230035382694,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/cognitoidp/models.py</parameter>\n<parameter=view_range>[890, 920]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.23392682434515305,
+   "gen": "The issue is in the `CognitoResourceServer` class initialization, where `self.scopes` is assigned directly from the input `scopes` parameter without handling the case where `scopes` is `None`. This leads to a crash when `len(self.scopes)` is called later, as `self.scopes` would be `None`.\n\nTo fix this, we need to ensure that `self.scopes` defaults to an empty list if `scopes` is `None`. This can be done by modifying the `__init__` method to handle the `None` case.\n\nI will update the `__init__` m",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.24294817948089018,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/cognitoidp/models.py</parameter>\n<parameter=old_str>    def __init__(\\n        self,\\n        user_pool_id: str,\\n        identifier: str,\\n        name: str,\\n        scopes: List[Dict[str, str]],\\n    ):\\n        self.user_pool_id = user_pool_id\\n        self.identifier = identifier\\n        self.name = name\\n        self.scopes = scopes</parameter>\n<parameter=new_str>   ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.241525414140022,
+   "gen": "# Fix for Cognito IDP Resource Server Scopes Issue\n\nThe issue occurs when creating a resource server in AWS Cognito IDP without providing any scopes, causing a `None` value to be assigned to `self.scopes` which then leads to a crash when trying to check its length.\n\n## Root Cause\nThe problem is in the `ResourceServer` class where `self.scopes` is initialized as `None` by default, but later code attempts to check `len(self.scopes)` without first verifying it's not `None`.\n\n## Solution\nModify the ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.910231813934308,
+   "gen": "Based on your description, here's the correct and minimal fix for the issue where `self.scopes` is `None` when creating a resource server without scopes:\n\n### \u2705 Root Cause\nThe error occurs because `self.scopes` is being assigned `None` (or not initialized) when no scopes are provided, but the code later tries to call `len(self.scopes)` or similar operations, which fails with `TypeError: object of type 'NoneType' has no len()`.\n\n### \u2705 Solution\nEnsure `self.scopes` is always initialized as an empt",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

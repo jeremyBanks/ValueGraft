@@ -1,0 +1,44 @@
+{
+ "idx": 196,
+ "meta": {
+  "n_tokens_full": 11066,
+  "cut_msg": 10,
+  "n_ctx_tokens": 8374
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 104,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 43,
+ "arms": {
+  "A": {
+   "tf_mean": -0.16153201414158602,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/cloudformation/models.py</parameter>\n<parameter=view_range>[340, 360]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.27374030463856447,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/cloudformation/models.py</parameter>\n<parameter=view_range>[177, 188]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.16143179731745572,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/cloudformation/models.py</parameter>\n<parameter=view_range>[177, 188]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.7282052993169112,
+   "gen": "The issue you're describing is a classic Python gotcha: **modifying a list while iterating over it**. In the `delete_stack_instances` method of the CloudFormation service in `moto`, removing items from the list during iteration causes some items to be skipped because the list indices shift after each removal.\n\nHere\u2019s how to fix it with minimal changes:\n\n### \u2705 Problem\n```python\nfor instance in stack_instances:\n    # ... some logic ...\n    stack_instances.remove(instance)  # \u274c Dangerous: modifies ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.240054466138354,
+   "gen": "You're absolutely right \u2014 the issue is a classic **\"modifying a list while iterating over it\"** problem, which causes elements to be skipped because the indices shift after removal.\n\nHere\u2019s how to fix it properly in the `delete_stack_instances` method (or wherever this logic exists):\n\n---\n\n### \u2705 **Problem:**\n```python\nfor instance in stack_instances:\n    if should_delete(instance):\n        stack_instances.remove(instance)  # \u274c Dangerous: modifies list during iteration\n```\n\nThis causes some insta",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

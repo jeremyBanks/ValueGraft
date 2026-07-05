@@ -1,0 +1,44 @@
+{
+ "idx": 65,
+ "meta": {
+  "n_tokens_full": 7531,
+  "cut_msg": 12,
+  "n_ctx_tokens": 5533
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 95,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 428,
+ "arms": {
+  "A": {
+   "tf_mean": -0.33726636313011116,
+   "gen": "The error is confirmed. The `to_snake` function is not correctly inserting underscores between words in CamelCase strings. The expected output for `to_snake(\"HTTPResponse\")` should be \"http_response\", but the actual output is \"httpresponse\".\n\n### Analysis of the `to_snake` Function\n\nThe current implementation of `to_snake` in `alias_generators.py` is:\n\n```python\ndef to_snake(camel: str) -> str:\n    \"\"\"Convert a PascalCase or camelCase string to snake_case.\n\n    Args:\n        camel: The string to",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.3820674547944484,
+   "gen": "The script confirms the issue: `to_snake(\"HTTPResponse\")` outputs `httpresponse` instead of the expected `http_response`. This indicates that the current implementation of `to_snake` does not handle consecutive uppercase letters correctly.\n\n### Fix Plan\n\nThe `to_snake` function currently uses two regular expressions:\n1. `re.sub(r'([a-z0-9])([A-Z])', lambda m: f'{m.group(1)}_{m.group(2)}', snake)` \u2014 This inserts an underscore between a lowercase/number and an uppercase letter.\n2. The function the",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.3415050499059908,
+   "gen": "The script confirms the issue: `to_snake(\"HTTPResponse\")` returns \"httpresponse\" instead of the expected \"http_response\".\n\n### Analysis of the Problem\n\nThe current implementation of `to_snake` uses two regular expressions:\n1. `re.sub(r'([a-zA-Z])([0-9])', lambda m: f'{m.group(1)}_{m.group(2)}', camel)` - This handles cases where a letter is followed by a digit.\n2. `re.sub(r'([a-z0-9])([A-Z])', lambda m: f'{m.group(1)}_{m.group(2)}', snake)` - This handles cases where a lowercase letter or digit ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.052379685486893,
+   "gen": "# Fixing the `to_snake` Alias Generator Function\n\nThe issue with the `to_snake` alias generator function is that it fails to insert underscores between consecutive uppercase letters in CamelCase strings. For example, \"HTTPStatus\" should become \"http_status\" but currently becomes \"httpstatus\".\n\n## Problem Analysis\n\nThe current implementation likely only handles transitions from uppercase to lowercase letters, but not consecutive uppercase letters. This means \"HTTPStatus\" becomes \"httpstatus\" inst",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -0.9913577028770137,
+   "gen": "You're on the right track! Let's walk through the **fix** for the `to_snake` alias generator issue, which is a common problem when converting CamelCase to snake_case.\n\n---\n\n### \ud83d\udd0d **Problem Recap**\nThe `to_snake` function (or similar utility) currently fails to insert underscores between consecutive uppercase letters in CamelCase strings.\n\n**Example:**\n```python\n\"HTTPRequest\" \u2192 \"httprequest\" \u274c (should be \"http_request\")\n\"XMLParser\" \u2192 \"xmlparser\" \u274c (should be \"xml_parser\")\n```\n\nThis happens becaus",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

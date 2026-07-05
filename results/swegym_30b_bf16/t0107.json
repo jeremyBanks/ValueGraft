@@ -1,0 +1,44 @@
+{
+ "idx": 107,
+ "meta": {
+  "n_tokens_full": 13912,
+  "cut_msg": 16,
+  "n_ctx_tokens": 9995
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 116,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 469,
+ "arms": {
+  "A": {
+   "tf_mean": -0.5323735723713064,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/dynamodb/parsing/key_condition_expression.py</parameter>\n<parameter=view_range>[160, 180]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.8704495414422447,
+   "gen": "The issue lies in the parsing logic for `KeyConditionExpression` in `key_condition_expression.py`. The current code incorrectly treats parentheses as function calls, specifically checking if the text before a `(` is `begins_with` and raising an error if it isn't. However, parentheses can also be used for grouping conditions, not just for function calls.\n\nThe problematic section is around line 160-172, where the parser checks for `(` and assumes it's the start of a function call. This logic needs",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.8267366191768049,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/dynamodb/parsing/key_condition_expression.py</parameter>\n<parameter=view_range>[1, 50]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.6510561701436086,
+   "gen": "The issue you're describing involves the **Moto library's DynamoDB `KeyConditionExpression` parser** incorrectly rejecting valid expressions that contain parentheses used for **grouping conditions**, treating them as invalid function calls. This is a known parsing bug in Moto's DynamoDB implementation.\n\n---\n\n### \ud83d\udd0d Problem Summary\n\nWhen using a `KeyConditionExpression` like:\n```python\n\"PK = :pk AND (SK = :sk1 OR SK = :sk2)\"\n```\nMoto's parser throws an error like:\n```\nInvalid function name: '('\n``",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.5932854899427273,
+   "gen": "Based on the error message and the context of DynamoDB's KeyConditionExpression parsing, the issue is likely in the parser logic that incorrectly interprets parentheses as function calls rather than grouping operators.\n\nHere's the most probable fix:\n\n## Root Cause\nThe parser is likely treating parentheses as function invocations (e.g., `FUNCTION_NAME(...)`) rather than grouping operators. When a user writes `(#attr1 = :val1) AND (#attr2 = :val2)`, the parser sees the parentheses and tries to fin",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

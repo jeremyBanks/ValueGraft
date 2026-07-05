@@ -1,0 +1,44 @@
+{
+ "idx": 83,
+ "meta": {
+  "n_tokens_full": 13575,
+  "cut_msg": 10,
+  "n_ctx_tokens": 11257
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 100,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 58,
+ "arms": {
+  "A": {
+   "tf_mean": -0.10546580004792067,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2022.6/dask/base.py</parameter>\n<parameter=view_range>\n[923, 1000]\n</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.11946017412723156,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2022.6/dask/base.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.07223220928137739,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2022.6/dask/base.py</parameter>\n<parameter=view_range>[920, 930]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.9558799150431065,
+   "gen": "To implement **deterministic hashing for `Enum` types in Dask**, you need to ensure that `Enum` instances produce consistent token values across runs \u2014 which is currently broken because Dask's default tokenization doesn't handle `Enum` types deterministically.\n\nHere\u2019s a **minimal, focused fix** that you can apply to `dask/base.py` to register a custom tokenization function for `Enum` types, ensuring deterministic behavior.\n\n---\n\n### \u2705 **Goal**\nEnsure that `Enum` instances (e.g., `Enum`, `IntEnum",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.0159677422871183,
+   "gen": "You're on the right track! Let's walk through the **complete implementation** of deterministic hashing for `Enum` types in Dask, step by step, so you can confidently apply it.\n\n---\n\n### \u2705 **Problem Recap**\nDask uses `hash()` and `id()` internally for object comparison and caching. By default, `Enum` instances (from `enum.Enum`) do **not** have consistent hashing behavior across sessions or processes, which can break caching, serialization, or distributed computation.\n\nFor example:\n```python\nfrom",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

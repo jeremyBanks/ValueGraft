@@ -1,0 +1,44 @@
+{
+ "idx": 88,
+ "meta": {
+  "n_tokens_full": 13284,
+  "cut_msg": 20,
+  "n_ctx_tokens": 10047
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 92,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 36,
+ "arms": {
+  "A": {
+   "tf_mean": -1.064507780333833e-05,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -2.8841498637256614e-06,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -3.105998163061625e-06,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.995938659061922,
+   "gen": "It looks like you've provided a summary of a bug fix in a Python library that mocks AWS services (specifically **SESv2** for email sending). Here's a clear, structured breakdown of what you've described, along with suggestions for documentation, testing, and next steps:\n\n---\n\n### \u2705 **Summary of the Issue & Fix**\n\n- **Problem**:  \n  In the mock implementation of AWS SESv2 (`boto3`-like mock), when sending an email, the **email body was incorrectly being set to the subject text** instead of the ac",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.959310086450487,
+   "gen": "You're right \u2014 let's wrap this up clearly and professionally, especially if you're preparing for a pull request, documentation, or a team update.\n\n---\n\n### \u2705 Summary of Fix: Corrected Email Body Assignment in SESv2 Mock\n\n**Issue:**  \nIn the `sesv2` mock implementation, the `send_email` method was incorrectly assigning the `Subject` value to the `Body` field, resulting in the email body being populated with the subject text instead of the actual message content.\n\n**Root Cause:**  \nA parameter map",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

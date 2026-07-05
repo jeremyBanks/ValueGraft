@@ -1,0 +1,44 @@
+{
+ "idx": 197,
+ "meta": {
+  "n_tokens_full": 11302,
+  "cut_msg": 10,
+  "n_ctx_tokens": 8109
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 123,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 298,
+ "arms": {
+  "A": {
+   "tf_mean": -0.5129335309725518,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.0/moto/secretsmanager/models.py</parameter>\n<parameter=view_range>[710, 730]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.5277257293964155,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.0/moto/secretsmanager/models.py</parameter>\n<parameter=view_range>[190, 210]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.5541958821187879,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.0/moto/secretsmanager/models.py</parameter>\n<parameter=view_range>[190, 210]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.4470328433223831,
+   "gen": "# Fixing SecretsManager ARN Resolution in moto\n\nThe issue you're describing is a common problem in AWS mocking libraries like moto, where ARN resolution for SecretsManager secrets isn't properly handled. When deleting a secret using its full ARN, the system fails to recognize the secret unless `ForceDeleteWithoutRecovery=True` is specified.\n\n## Root Cause Analysis\n\nThe problem occurs in the `SecretsStore.get()` method where ARNs aren't being properly resolved to secret names. When a delete opera",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.3383162939852196,
+   "gen": "Based on the problem description, the issue is that `SecretsStore.get()` (or the underlying dictionary access) isn't properly resolving ARNs to their corresponding secret objects, causing a `ResourceNotFoundException` when trying to delete a secret using its full ARN.\n\nHere's the solution:\n\n## Root Cause\nThe `SecretsStore` class likely uses the secret's `name` as the key in its internal dictionary. When you pass an ARN (e.g., `arn:aws:secretsmanager:us-east-1:123456789012:secret:my-secret-abc123",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

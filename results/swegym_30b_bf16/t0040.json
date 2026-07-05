@@ -1,0 +1,44 @@
+{
+ "idx": 40,
+ "meta": {
+  "n_tokens_full": 11427,
+  "cut_msg": 14,
+  "n_ctx_tokens": 8777
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 129,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 284,
+ "arms": {
+  "A": {
+   "tf_mean": -0.7852408701260281,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/dynamodb/parsing/key_condition_expression.py</parameter>\n<parameter=view_range>[160, 180]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.9926228321566894,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/dynamodb/parsing/key_condition_expression.py</parameter>\n<parameter=view_range>[170, 200]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.9697258278343023,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/dynamodb/parsing/key_condition_expression.py</parameter>\n<parameter=view_range>[1, 100]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.8411890109466076,
+   "gen": "The issue you're describing involves the **moto** library's DynamoDB `KeyConditionExpression` parser incorrectly rejecting valid expressions that contain parentheses, particularly when used for grouping conditions. The error \"Invalid function name\" suggests the parser is misinterpreting parentheses as part of a function name rather than as grouping operators.\n\nThis is a known issue in older versions of moto, where the parser for `KeyConditionExpression` does not properly handle parentheses used ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.8045471889706877,
+   "gen": "Based on the error message and the context of DynamoDB's KeyConditionExpression parsing, the issue is likely in the `key_condition_expression.py` file where the parser incorrectly interprets parentheses used for grouping conditions as part of a function name.\n\nHere's the fix:\n\n```python\n# In key_condition_expression.py, modify the function that handles function parsing\n\ndef _parse_function(self, token):\n    # Original problematic code - this was treating parentheses as part of function names\n   ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}
