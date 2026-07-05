@@ -164,7 +164,7 @@ def main():
         except AssertionError as e:
             print(f"{q['question_id']}: build failed ({e}); skipping")
             continue
-        s_leak = q["answer"].lower() in aset.summary["text"].lower()
+        s_leak = str(q["answer"]).lower() in aset.summary["text"].lower()
 
         e_snap = arm_e_snapshot(aset.b_snap(), aset.summary["snapshot"],
                                 aset.pairs, alpha, layer_set=layer_set)
@@ -189,7 +189,7 @@ def main():
             answers[name] = answer(model, tokenizer, mk(), sfx, eos_ids)
         json.dump({
             "question_id": q["question_id"], "question": probe,
-            "answer": q["answer"], "question_type": q["question_type"],
+            "answer": str(q["answer"]), "question_type": q["question_type"],
             "model": MODEL, "meta": meta, "s_leak": s_leak,
             "summary_text": aset.summary["text"], "arms": answers,
         }, open(outfile, "w"), indent=1, ensure_ascii=False)
