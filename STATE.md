@@ -1,0 +1,75 @@
+# STATE.md — session handoff notes
+
+*Last updated: 2026-07-04 ~21:40 (update this file at every phase transition).*
+
+## What this project is
+
+Testing whether KV-cache state written at generation time carries semantic
+continuity that text-recomputation loses across a chat-compaction boundary.
+Read in order: `semantic-continuity-experiment-brief.md` (main design),
+`followup-explorations-arms-GH.md`, `phase2-scaleup-and-coding-extension.md`,
+`amendments-from-external-review.md` (adds B-causal, negative controls,
+leakage classes, metric hierarchy). `DECISIONS.md` = every deviation + verified
+model/runtime facts (READ IT before touching cache code — it documents the
+traps: think-block template instability, batched-vs-stepwise kernel mismatch,
+alignment region crossing).
+
+## Environment
+
+- uv project; `uv run python src/...`. mlx-lm 0.31.3 + transformers pinned 5.0.0.
+- Dev model: `mlx-community/Qwen3-4B-Instruct-2507-4bit` (all results so far).
+- Final model downloaded, unused yet: `mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit`.
+- Long jobs: launch detached (`nohup ... & disown`, PID to scratchpad
+  `pipeline.pid`) because harness-tracked background tasks got killed twice.
+  `python -u` + `tee` to scratchpad log; monitor greps the log.
+
+## Pipeline state (as of last update)
+
+- DONE: L0–L4 ladder (all pass; identities exact), micro sense experiment
+  (results/micro_sense.json — V-swap carries sense, KV-swap ~half of oracle),
+  corpus (12 synthetic in data/synthetic + 8 natural in data/natural,
+  tail-contamination repaired, 115/120 plants clean), main 4B batch
+  (results/raw/*.json: CONT + probes for 12 arms per conversation).
+- RUNNING now (detached, ~21:30 start): supplement pass (B-causal +
+  E-wrongconv + E-shuffled) merging into results/raw; then run_brief.py
+  (terse-summary shadow condition) → results/raw_brief/.
+- QUEUED after that (in order):
+  1. `uv run python src/fix_bcausal_cont.py` — B-causal CONT was skipped by a
+     template quirk during supplements (see DECISIONS); this repairs it.
+  2. `uv run python src/score.py export` — builds results/judge_queue.json
+     (judgments + paraphrase leakage checks).
+  3. `uv run python src/judge_batches.py split` — batch files; judge each
+     batch with a Haiku-model subagent (prompt: answer each item's prompt
+     with the single word demanded; write verdicts_NN.json as {key: verdict});
+     max 2 agents at a time. Then `judge_batches.py merge`.
+  4. `uv run python src/score.py apply` — final scores (results/scores.json).
+  5. `uv run python src/analyze.py` + `src/plots.py` — tables + figures.
+  6. Decide 30B run scope (trim α sweep; include H/B-min/B-causal/negative
+     controls); switch MODEL constant in src/run_arms.py etc., rerun L0/L3
+     identities on 30B first (never report from an un-laddered config).
+  7. RESULTS.md write-up (+ paper-style draft if results warrant; user wants
+     funny observations noted too). Then decision memo for Phase 2 (see
+     phase2 doc): Strategy S(cale) vs P(ower) for ~$200 cloud budget.
+
+## Key interim findings (4B, pre-judge — do not over-claim)
+
+- Calibration perfect: evicted-only facts A 9/9, ALL compacted arms 0/9.
+- Summary leakage: 81/120 plants explicit-in-summary → clean referent/sense
+  cut underpowered; hence the brief-summary shadow condition now running.
+- CONT (both corpora consistently): E-post α=0.25 small reliable gain
+  (closure ~+0.08, CI excludes 0 on both); heavier α hurts monotonically;
+  C ~ −0.2..−0.7; D ≈ 0. Negative controls (c01): shuffled/wrong-conv graft
+  crater to −2.6 — effect is content+alignment-specific.
+- Probes (leaky cut, keyword-only): C/H-gap ≥ B on referent/sense; E ≤ B.
+- Stance keyword numbers are junk pre-judge (anti-keyword penalizes quoting).
+
+## File map (src/)
+
+kvlib.py (cache primitives, GappedKVCache, teacher-forcing), arms.py (arm
+builders, summary gen, alignment), run_arms.py (main driver, ArmSet,
+12 variants), supplement_arms.py (B-causal + negative controls),
+run_brief.py (shadow condition), fix_bcausal_cont.py (repair),
+compose.py / compose_natural.py / fix_tails.py (corpus), audit_corpus.py
+(contamination flags), score.py (leak classes, judge queue/apply),
+judge_batches.py, analyze.py (gap closure), plots.py, micro_sense.py,
+l0..l4 scripts (ladder — rerun on any new model/config).
