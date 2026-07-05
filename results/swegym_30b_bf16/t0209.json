@@ -1,0 +1,44 @@
+{
+ "idx": 209,
+ "meta": {
+  "n_tokens_full": 11300,
+  "cut_msg": 14,
+  "n_ctx_tokens": 8593
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 123,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 57,
+ "arms": {
+  "A": {
+   "tf_mean": -0.07304750023071749,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/logs/models.py</parameter>\n<parameter=view_range>[560, 580]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.07183002113311825,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/logs/models.py</parameter>\n<parameter=view_range>[1040, 1060]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.07844922389439932,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/logs/models.py</parameter>\n<parameter=view_range>[1040, 1060]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.244120689894147,
+   "gen": "# Fixing CloudWatch Logs Subscription Filter Limit in moto\n\nThe issue is that the moto library currently enforces a limit of only one subscription filter per log group, but AWS actually allows up to two subscription filters per log group.\n\n## Problem Analysis\n\nLooking at the code, the issue is in the `LogsBackend` class where it checks the number of existing subscription filters before allowing a new one to be added. The current implementation incorrectly limits to just one filter.\n\n## Solution\n",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.3969247677497942,
+   "gen": "Based on the analysis of the issue and the typical structure of moto's CloudWatch Logs implementation, here's the solution to allow up to two subscription filters per log group:\n\n## Root Cause\nThe issue occurs in the `put_subscription_filter` method of the `CloudWatchLogsBackend` class, where there's a hard-coded limit of 1 filter per log group. This limit needs to be increased to 2 to match AWS's actual behavior.\n\n## Solution\n\n```python\n# In the moto/cloudwatch/models.py file (or equivalent loc",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

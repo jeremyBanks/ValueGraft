@@ -1,0 +1,44 @@
+{
+ "idx": 210,
+ "meta": {
+  "n_tokens_full": 13230,
+  "cut_msg": 14,
+  "n_ctx_tokens": 9970
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "summary_tokens": 113,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 35,
+ "arms": {
+  "A": {
+   "tf_mean": -0.003375982998433967,
+   "gen": "<function=execute_bash>\n<parameter=command>python /workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.2437281374736961,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.2644089910571846,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -4.05841394148608,
+   "gen": "You're on the right track with modifying the `moto` library to support additional filtering in the **AutoScaling `describe_tags`** API. Let's walk through the **complete solution**, including:\n\n1. \u2705 Understanding the current limitation\n2. \u2705 The fix in `moto`\n3. \u2705 How to verify it works\n4. \u2705 A working test script\n\n---\n\n### \ud83d\udd0d Problem Summary\n\nThe `describe_tags` API in `moto`'s AutoScaling service currently only supports filtering by:\n- `auto-scaling-group`\n- `propagate-at-launch`\n\nBut **not** by:",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.812394927977581,
+   "gen": "You've provided a clear and well-structured summary of the task and progress. Here's a refined version of your summary that could be used in documentation, a pull request description, or a team update:\n\n---\n\n### **Task Summary: Extend `describe_tags` Filtering in AWS Moto Library**\n\n**Objective:**  \nEnhance the `describe_tags` functionality in the AWS Moto library to support filtering by `key` and `value`, in addition to the existing `auto-scaling-group` and `propagate-at-launch` filters.\n\n**Cur",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}
