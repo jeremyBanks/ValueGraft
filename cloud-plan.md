@@ -66,7 +66,8 @@ adaptation (~an hour), best done on the pod against the actual target model.
 | 1. Second family, high n: Mistral-Small-3.2 (24B), full arm set, synthetic+LongMemEval subsets, n≈100 questions | 1× A100 80GB | ~8–12 h | ~$15–20 |
 | 2. Scale anchor: Llama-3.3-70B-Instruct bf16, trimmed arms (A/B/B-min-pack/H-pack/E-tuned), n≈48 | 2× A100 80GB (~$3.2/hr) or 1× H100 (~$2.8/hr) | ~10–15 h | ~$30–45 |
 | 3. Profile-then-graft recipe test: per-layer graft profile on each cloud model (one diagnostic pass), derive thresholded layer-set graft on validation, evaluate holdout — does the PROCEDURE transfer across families/scales? | included in stages 1-2 pods | +2–3 h | ~$5–8 |
-| 4. (Optional) contingency/reruns | — | — | remainder |
+| 4. (Budget permitting) Hybrid-architecture testbed: Gemma 3 27B, PROFILE-FIRST — per-layer graft profile auto-discovers whether value concentrates in the sparse global-attention layers (prediction: yes). Requires per-layer-type cache handling; scoped to profile + one derived-graft holdout run. | 1x A100 80GB | ~3-4 h | ~$6-8 |
+| 5. (Optional) contingency/reruns | — | — | remainder |
 
 Total for stages 0–2: **roughly $50–70**, inside a $100 top-up with margin;
 $25 initial credit fully covers stages 0–1. Everything is resumable
