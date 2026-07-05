@@ -47,9 +47,14 @@ alignment region crossing).
   6. Decide 30B run scope (trim α sweep; include H/B-min/B-causal/negative
      controls); switch MODEL constant in src/run_arms.py etc., rerun L0/L3
      identities on 30B first (never report from an un-laddered config).
-  7. RESULTS.md write-up (+ paper-style draft if results warrant; user wants
-     funny observations noted too). Then decision memo for Phase 2 (see
-     phase2 doc): Strategy S(cale) vs P(ower) for ~$200 cloud budget.
+  7. RESULTS.md write-up structured per refocusing-and-reframing.md
+     (mitigation-first claim hierarchy; E/H/negative-controls center of
+     gravity; C kept for mechanism/factorization, not the practical claim;
+     funny observations noted per user). Paper-style draft, Phase-2 memo,
+     and 30B run are DEFERRED (user decision 2026-07-04 ~22:20) until after
+     RESULTS + a careful re-review of refocusing-and-reframing.md.
+     If H-gap shows judged clean-cut signal, H-pack (re-rotation + identity
+     test) is the top follow-up candidate.
 
 ## Key interim findings (4B, pre-judge — do not over-claim)
 
