@@ -117,3 +117,13 @@ Stages 0-3 ≈ $40-60 — the core, all industry-standard data. 4-6 from remaind
   gitignored, never committed). DO NOT use either until the user explicitly
   approves the first pod launch. HF gating: everything in the core plan is
   ungated; Gemma approved; Llama-3.3-70B pending Meta approval (dispensable).
+
+## Stage-2 contingencies (pre-registered 07-05, before results)
+
+If SWE-Gym shows no intervention effect: (1) dependence-stratified analysis
+(per-item A−B gap as moderator; free); (2) rescore command/code spans only or
+discrete next-command/next-file accuracy (free); (3) targeted re-cuts placing
+error/discovery events in the evicted region (~1 pod-hour); (4) short
+multi-action rollouts scored against the recorded trajectory for grounded
+error counts (~1 pod-hour). Full SWE-bench task-resolution runs remain out of
+scope at this budget (amendments doc item 11 rationale).
