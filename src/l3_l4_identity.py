@@ -42,7 +42,8 @@ from kvlib import (
     teacher_forced_logprobs,
 )
 
-MODEL = "mlx-community/Qwen3-4B-Instruct-2507-4bit"
+import os
+MODEL = os.environ.get("SC_MODEL", "mlx-community/Qwen3-4B-Instruct-2507-4bit")
 
 MESSAGES = [
     {"role": "system", "content": "You are a helpful assistant."},

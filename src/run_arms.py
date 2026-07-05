@@ -44,9 +44,12 @@ from kvlib import (
     snapshot_cache,
 )
 
-MODEL = "mlx-community/Qwen3-4B-Instruct-2507-4bit"
-E_POST_ALPHAS = [0.25, 0.5, 0.75, 1.0]
-E_INTER_ALPHAS = [0.5, 1.0]
+import os
+
+MODEL = os.environ.get("SC_MODEL", "mlx-community/Qwen3-4B-Instruct-2507-4bit")
+E_POST_ALPHAS = [float(x) for x in os.environ.get("SC_E_POST", "0.25,0.5,0.75,1.0").split(",") if x]
+E_INTER_ALPHAS = [float(x) for x in os.environ.get("SC_E_INTER", "0.5,1.0").split(",") if x]
+OUTDIR = os.environ.get("SC_OUTDIR", "results/raw")
 PROBE_MAX_TOKENS = 160
 
 
@@ -294,7 +297,7 @@ def run_conversation(model, tokenizer, conv_path, outdir):
 
 def main():
     model, tokenizer = load(MODEL)
-    outdir = Path("results/raw")
+    outdir = Path(OUTDIR)
     outdir.mkdir(parents=True, exist_ok=True)
     only = set(sys.argv[1:])
     for p in sorted(Path("data/synthetic").glob("c*.json")):

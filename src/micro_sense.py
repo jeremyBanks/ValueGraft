@@ -33,7 +33,8 @@ from mlx_lm import load
 sys.path.insert(0, "src")
 from kvlib import first_step_logits, prefill, rebuild_cache, snapshot_cache
 
-MODEL = "mlx-community/Qwen3-4B-Instruct-2507-4bit"
+import os
+MODEL = os.environ.get("SC_MODEL", "mlx-community/Qwen3-4B-Instruct-2507-4bit")
 
 # Each item: disambig (fixes minority sense), pad (neutral filler so carrier
 # lands at identical absolute positions in both contexts), carrier (uses the

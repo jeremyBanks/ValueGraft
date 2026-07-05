@@ -21,7 +21,8 @@ from kvlib import (
     snapshot_cache,
 )
 
-MODEL = "mlx-community/Qwen3-4B-Instruct-2507-4bit"
+import os
+MODEL = os.environ.get("SC_MODEL", "mlx-community/Qwen3-4B-Instruct-2507-4bit")
 MAX_TOKENS = 60
 
 MESSAGES = [

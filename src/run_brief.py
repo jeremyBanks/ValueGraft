@@ -22,7 +22,8 @@ ARMS = {"B", "C", "H-gap", "B-min", "E-post-a0.5", "E-post-a1.0"}
 
 def main():
     model, tokenizer = load(MODEL)
-    outdir = Path("results/raw_brief")
+    import os
+    outdir = Path(os.environ.get("SC_OUTDIR_BRIEF", "results/raw_brief"))
     outdir.mkdir(parents=True, exist_ok=True)
     only = set(sys.argv[1:])
     import run_arms
