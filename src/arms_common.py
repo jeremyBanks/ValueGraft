@@ -108,3 +108,65 @@ def build_alignment(b_ids, old_ids, special_ids, regions):
                     continue
                 pairs.append((npos, opos))
     return pairs
+
+
+# ---- template adapter: message boundaries for non-Qwen templates ----
+
+def message_token_starts_prefix(tokenizer, msgs, renderer):
+    """Template-agnostic message boundaries via incremental prefix rendering.
+    Valid when the template renders msgs[:i] as an exact prefix of
+    msgs[:i+1] (true for Mistral [INST] templates; NOT for Qwen-2507, which
+    injects <think> into final assistant messages — use im_start scan there).
+    Verified per-model by the ladder before use."""
+    starts = []
+    prev = []
+    for i in range(len(msgs)):
+        cur = renderer(tokenizer, msgs[: i + 1], False)
+        assert cur[: len(prev)] == prev, f"template not prefix-stable at {i}"
+        starts.append(len(prev))
+        prev = cur
+    return starts
+
+
+def detect_template_family(tokenizer):
+    probe = renderer_probe = [{"role": "user", "content": "x"}]
+    text = tokenizer.apply_chat_template(probe, add_generation_prompt=True,
+                                         tokenize=False)
+    if "<|im_start|>" in text:
+        return "qwen"
+    if "[INST]" in text:
+        return "mistral"
+    return "unknown"
+
+
+def template_ops(tokenizer, renderer=None):
+    """Family-dispatched (canonical_fn, starts_fn, prep_msgs_fn).
+
+    qwen   : dummy-user canonicalization + <|im_start|> scanning; msgs as-is.
+    mistral: plain render is canonical (no think blocks); prefix-diff
+             boundaries; system message folded into the first user turn
+             (Mistral's template relocates system text into the FINAL [INST],
+             destroying prefix stability — verified 2026-07-05).
+    """
+    r = renderer or render
+    fam = detect_template_family(tokenizer)
+    if fam == "qwen":
+        return (lambda m: canonical_ids(tokenizer, m, renderer=r),
+                lambda ids, n: message_token_starts(tokenizer, ids, n),
+                lambda m: m,
+                fam)
+    if fam == "mistral":
+        def prep(msgs):
+            if msgs and msgs[0]["role"] == "system":
+                sys_txt = msgs[0]["content"]
+                rest = [dict(x) for x in msgs[1:]]
+                assert rest and rest[0]["role"] == "user"
+                rest[0]["content"] = sys_txt + "\n\n" + rest[0]["content"]
+                return rest
+            return list(msgs)
+        def canon(msgs):
+            return r(tokenizer, msgs, False)
+        def starts(_ids, n_msgs_ctx):
+            raise NotImplementedError("use starts_from_msgs for mistral")
+        return canon, starts, prep, fam
+    raise ValueError(f"unsupported template family: {fam}")
