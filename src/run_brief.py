@@ -17,7 +17,12 @@ sys.path.insert(0, "src")
 from arms import SUMMARY_REQUEST_BRIEF
 from run_arms import MODEL, ArmSet, run_probe_mode
 
-ARMS = {"B", "C", "H-gap", "B-min", "E-post-a0.5", "E-post-a1.0"}
+import os as _os
+
+# match the main run's alpha set (4B used 0.5; 30B targeted run uses 0.25)
+_ALPHAS = [float(x) for x in _os.environ.get(
+    "SC_BRIEF_E_POST", _os.environ.get("SC_E_POST", "0.5,1.0")).split(",") if x]
+ARMS = {"B", "C", "H-gap", "B-min"} | {f"E-post-a{a}" for a in _ALPHAS}
 
 
 def main():
@@ -50,7 +55,7 @@ def main():
         eos_ids = set(tokenizer.eos_token_ids or [tokenizer.eos_token_id])
         out = {"stats": aset.stats, "arms": {}}
         for name, mk, ctx_ids, render_msgs in aset.variants(
-            e_post_alphas=[0.5, 1.0], e_inter_alphas=[]
+            e_post_alphas=_ALPHAS, e_inter_alphas=[]
         ):
             if name not in ARMS:
                 continue
