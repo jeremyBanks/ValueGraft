@@ -2,7 +2,22 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 13:30 07-05
+## Current focus (read this first) — updated 14:45 07-05
+
+**READY TO LAUNCH CLOUD PHASE — waiting ONLY on the user's explicit go.**
+Read cloud-plan.md end-to-end first: Strategy P (scale evidence on
+Qwen3-30B-A3B bf16), stages = ladder → LongMemEval full 500 → SWE-Gym agent
+traces → 2nd standard benchmark (LoCoMo/SCBench) → [homemade probes n=50] →
+[model variety: Mistral Small 3.2; Llama-70B only if budget + Meta approval]
+→ [Gemma 27B hybrid profile]. One A100-80GB pod at a time, terminate between
+stages, ~$40-60 core. Credentials staged in repo root (.runpod_key,
+.huggingface_key — gitignored, 600, UNUSED until user approval). HF gates:
+all core ungated; Gemma approved; Llama pending (dispensable).
+Afternoon results: per-layer graft profile (mid-band hump L12-L22 peak L17,
+late layers harmful; profile-derived rule ties tuned champion on holdout —
+see per-head-alpha-speculation.md addendum + results/layer_profile_4b*).
+
+## Earlier 07-05 focus notes
 
 Today added: LongMemEval validation both scales (LONGMEMEVAL-RESULTS.md —
 compaction damage replicates on standard data; honesty effect
