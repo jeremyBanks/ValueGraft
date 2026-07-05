@@ -97,7 +97,7 @@ def run_one(model, tokenizer, msgs, tail_start_msg, cont_spec, n_layers):
     out = {}
     for a in ALPHAS:
         snap = b_snap if a == 0 else arm_e_snapshot(b_snap, old_snap, pairs, a)
-        out[f"a{a}"] = score(model, tokenizer, snap, feed, targets)
+        out[f"a{a:g}"] = score(model, tokenizer, snap, feed, targets)
     third = n_layers // 3
     out[f"midband_a{GATE_ALPHA}"] = score(
         model, tokenizer,
