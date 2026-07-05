@@ -93,3 +93,24 @@ Stages 0-3 ≈ $40-60 — the core, all industry-standard data. 4-6 from remaind
 - Scale anchor: Llama-3.3-70B stays (newest CLEAN dense 70B: vanilla
   GQA+RoPE); its age is an architectural constraint, noted in write-up.
 - Budget: $25 initial / $100 ceiling (default).
+
+## Hardware strategy and utilization (agreed 07-05)
+
+- **One pod, one A100 80GB, serial stages.** 30B-A3B bf16 (~61 GB weights)
+  fits one card; workload is bandwidth-bound so H100 is worse per dollar;
+  multi-GPU only if the (bottom-priority) Llama-70B option ever runs.
+- Tier: secure cloud (~$1.6–1.9/hr) for the first pod; community
+  (~$1.1–1.4/hr) acceptable for long batches afterward — all runners are
+  per-item resumable so preemption is cheap.
+- Utilization: provision → detached resumable batch → rsync results →
+  TERMINATE → analyze/judge locally off-meter → next stage. GPU billed only
+  while a batch runs. Add a small network volume (~$7/mo prorated) to cache
+  the model if >2 stages.
+- Total core estimate: 25–35 GPU-hours ≈ $40–60.
+
+## Credentials (staged, NOT yet authorized for use)
+
+- `.runpod_key` and `.huggingface_key` exist in repo root (chmod 600,
+  gitignored, never committed). DO NOT use either until the user explicitly
+  approves the first pod launch. HF gating: everything in the core plan is
+  ungated; Gemma approved; Llama-3.3-70B pending Meta approval (dispensable).
