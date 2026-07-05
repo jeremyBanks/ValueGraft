@@ -72,11 +72,12 @@ from every local result.
 | 0 | Pod setup + HF-port identity ladder on the 30B bf16 | ~1-2 h | ~$3 |
 | 1 | **LongMemEval, full 500 questions** (vs our n=36-48 sample), all 6 arms, incl. the multi-session + temporal-reasoning types we skipped locally | ~8-12 h | ~$15-25 |
 | 2 | **Coding-agent traces (SWE-Gym OpenHands trajectories)**: filter to ≤16K tokens, n≈50-100; offline next-action prediction under compaction arms + behavioral checks (does the compacted agent re-run already-failed commands?) | ~6-10 h | ~$12-20 |
-| 3 | Powered synthetic probes: regenerate probe corpus at n≈50 conversations (vs 12), key arms, judged | ~4-6 h | ~$8-12 |
-| 4 | (Secondary, budget permitting) family diversity: Mistral Small 3.2 24B on the stage-3 corpus; Llama-3.3-70B only if budget clearly allows | ~4-8 h | ~$10-25 |
-| 5 | (Contingent) hybrid testbed: Gemma 3 27B profile-first | ~3-4 h | ~$6-8 |
+| 3 | **Second standard benchmark**: LoCoMo (long-conversation memory, ACL 2024) or SCBench (Microsoft, KV-lifecycle-aware — closest published eval framing to ours); pick whichever fits ≤16K instances better on inspection | ~4-6 h | ~$8-12 |
+| 4 | (Only if a gap needs it) powered synthetic probes n≈50 — our controlled instrument for leakage-audited fabrication decoys, which standard benchmarks lack; small and clearly labeled as ours | ~3-4 h | ~$6-10 |
+| 5 | (Bonus, budget permitting) model variety: Mistral Small 3.2 24B on stages 1/3 subsets; Llama-3.3-70B or others only if budget clearly allows | ~4-8 h | ~$10-25 |
+| 6 | (Contingent) hybrid testbed: Gemma 3 27B profile-first | ~3-4 h | ~$6-8 |
 
-Stages 0-3 ≈ $40-60 — the core. 4-5 only from remainder.
+Stages 0-3 ≈ $40-60 — the core, all industry-standard data. 4-6 from remainder.
 
 ## Decision points for you (defaults chosen, change freely)
 
