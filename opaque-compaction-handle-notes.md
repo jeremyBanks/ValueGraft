@@ -77,6 +77,59 @@ One possible lifecycle:
 The visible summary remains the auditable text channel. The handle represents
 the model-native state associated with that summary.
 
+## Harness/API primitive framing
+
+Another way to phrase this is that compaction should be an explicit operation
+the harness can call, not a hidden transport detail. The harness already
+decides when to summarize or truncate context; an opaque-state version could
+fit into that existing control point.
+
+For example:
+
+```text
+compact_from(boundary, instructions) -> {
+  summary_text,
+  compaction_token
+}
+```
+
+where:
+
+- `boundary` is the message/token boundary before which history should be
+  compacted.
+- `instructions` are the summarization/compaction instructions.
+- `summary_text` is the ordinary visible summary the harness would already
+  insert.
+- `compaction_token` is an opaque provider-side handle to the latent state
+  produced while the full pre-compaction history/cache was still available.
+
+Future requests could then remain mostly text-shaped:
+
+```text
+system/developer messages
+summary_text
+<compaction_token>
+recent_tail_messages
+new_user_turn
+```
+
+The token's semantics would be something like:
+
+```text
+Apply the provider-side latent state associated with this summary at this
+compaction boundary.
+```
+
+It could be represented as a special cache handle attached to the summary
+message, or as a synthetic opaque token placed immediately after the summary.
+The exact surface is a product/API choice. The important point is that the
+harness does not need to inspect tensors; it only needs to preserve and pass
+the handle in the compacted context.
+
+This also gives a natural fallback story. If a provider or model does not
+support latent compaction handles, the harness simply keeps `summary_text` and
+drops `compaction_token`, reducing to ordinary text-only compaction.
+
 ## How to describe the overhead
 
 There are several different costs, and they should not be collapsed into one
@@ -150,3 +203,13 @@ opaque-state compaction:
 This is no longer purely stateless, but it is not full conversation state
 either. It is a middle point: a compact, server-resident continuation artifact
 created at compaction time.
+
+For agent harnesses, the practical description might be:
+
+> When context gets too long, the harness asks the provider to compact from a
+> chosen boundary. The provider returns a human-readable summary plus an
+> opaque compaction token. The harness inserts both where it would normally
+> insert a summary, keeps the recent tail as text, and continues. The
+> experiment's in-memory cache surgery is testing whether such a token would
+> be worth having; serialization, expiration, and handle transport follow
+> established cached-state API patterns.
