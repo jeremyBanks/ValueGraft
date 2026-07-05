@@ -23,7 +23,8 @@ import urllib.request
 
 KEY = Path(".runpod_key").read_text().strip()
 REST = "https://rest.runpod.io/v1"
-STATE = Path(".pod_state.json")
+import os
+STATE = Path(os.environ.get("SC_POD_STATE", ".pod_state.json"))
 DEFAULT_GPU = "NVIDIA A100 80GB PCIe"
 IMAGE = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
 SSH_KEY = Path.home() / ".ssh" / "id_ed25519_runpod"
@@ -82,7 +83,7 @@ def create(gpu=DEFAULT_GPU):
         "imageName": IMAGE,
         "gpuTypeIds": [gpu],
         "gpuCount": 1,
-        "cloudType": "SECURE",
+        "cloudType": os.environ.get("SC_POD_CLOUD", "SECURE"),
         "containerDiskInGb": 200,
         "volumeInGb": 0,
         "supportPublicIp": True,

@@ -1,0 +1,20 @@
+{
+ "question_id": "b320f3f8",
+ "question": "What type of action figure did I buy from a thrift store?",
+ "answer": "a blue Snaggletooth",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14014,
+  "tail_start_msg": 48
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned that you recently bought a **rare blue Snaggletooth action figure** from a thrift store.  \n\nSnaggletooth is a character from the *G.I. Joe* universe, specifically known as a member of the **Cobra** organization. He’s a distinctive figure with a unique, jagged-toothed grin, a green and black color scheme, and a rugged, battle-worn look. The **blue version** you found is particularly rare and highly sought after by collectors—especially vintage or limited-edition releases from the 1980s or early 1990s.\n\nSo, to clarify:  \n👉 You bought a **rare blue Snaggletooth action figure**, a collectible *G.I. Joe*",
+  "B": "I'm sorry, but I don't have any information about your past purchases or what you may have bought from a thrift store. If you're trying to identify a specific action figure, you might want to:\n\n- Take a photo of it and compare it to images online (e.g., on eBay, Etsy, or collector forums).\n- Look for any markings, logos, or packaging that could help identify the brand or release year.\n- Check the figure’s style, color scheme, and character (e.g., superhero, movie character, toy line like G.I. Joe, Star Wars, etc.).\n\nIf you can describe the figure—its appearance, character, or any details you remember—I’d be happy to help you narrow down what it might be!",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine what type of action figure you bought from a thrift store. Could you please provide more details? For example:\n\n- The name or character of the figure (e.g., Spider-Man, G.I. Joe, Star Wars character)?\n- The brand or manufacturer (e.g., Hasbro, Mattel, Bandai)?\n- Any distinctive features (e.g., color, accessories, packaging)?\n- The approximate size or era (e.g., 1980s, 1990s, modern)?\n\nWith a bit more context, I’d be happy to help identify it or tell you more about its history and value!",
+  "B-min-pack": "I'd love to help you figure out what type of action figure you bought from the thrift store! To give you a more accurate answer, could you please share a few details?\n\n- **What does it look like?** (e.g., superhero, military, cartoon character, sci-fi, animal, etc.)\n- **Any identifying marks?** (e.g., a logo, name, or number on the figure, packaging, or base)\n- **Size and material?** (e.g., 6 inches tall, plastic, soft vinyl, etc.)\n- **Any accessories?** (e.g., weapons, vehicles, outfits)\n- **Approximate age or style?** (e.g., 1980s, 1990s, vintage, modern)",
+  "H-pack": "I'd love to help you figure out what type of action figure you bought from the thrift store! To give you a more accurate answer, could you please share a few details?\n\n- **What does it look like?** (e.g., superhero, military, animal, sci-fi, cartoon character, etc.)\n- **Any distinctive features?** (e.g., color, accessories, unique pose, logo, or packaging)\n- **Size and material?** (e.g., small plastic figure, larger with fabric, vintage or modern style)\n- **Any markings or names on the figure or base?**\n\nEven a description or a photo (if you're able to share one) would go a long way in identifying it. Let me know! 🕹️🔍",
+  "H-gap": "I'd love to help you figure out what type of action figure you bought from the thrift store! To give you a more accurate answer, could you please share a few details?\n\n- **What does it look like?** (e.g., superhero, military, animal, sci-fi, cartoon character, etc.)\n- **Any identifying features?** (e.g., color, uniform, weapons, logo, brand name, or packaging)\n- **Size and material?** (e.g., 6 inches tall, plastic, soft vinyl, etc.)\n- **Any markings or labels on the figure or base?**\n\nEven a description or a photo (if you're able to share one) would go a long way in helping identify it. Let me know! 🕹️🔍"
+ }
+}

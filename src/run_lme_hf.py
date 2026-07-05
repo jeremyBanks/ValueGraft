@@ -53,6 +53,10 @@ TYPES = (None if _types == "all" else
          ("single-session-user", "single-session-assistant",
           "knowledge-update"))
 DATA = os.environ.get("SC_LME_DATA", "data/longmemeval_s_cleaned.json")
+# SC_SHARD="k/N": process only items where pool_index % N == k (after the
+# fixed-seed shuffle, so shards are deterministic and disjoint)
+_shard = os.environ.get("SC_SHARD", "0/1")
+SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
 
 
 def session_msgs(session):
@@ -147,6 +151,7 @@ def main():
     rng = random.Random(42)
     pool = [q for q in data if TYPES is None or q["question_type"] in TYPES]
     rng.shuffle(pool)
+    pool = pool[SHARD_K::SHARD_N]
     outdir = Path(f"results/longmemeval_{TAG}")
     outdir.mkdir(parents=True, exist_ok=True)
 
