@@ -37,6 +37,9 @@ from kvlib import (
     snapshot_cache,
 )
 from run_arms import MODEL, PROBE_MAX_TOKENS, ArmSet, clear
+import os
+RAW_DIR = os.environ.get("SC_SUPP_RAW", "results/raw")
+SUPP_ARMS = set(os.environ.get("SC_SUPP_ARMS", "B-causal,E-shuffled,E-wrongconv").split(","))
 
 
 def build_bcausal_messages(msgs, summary_text, tail_start_msg):
@@ -85,19 +88,22 @@ def supplement_conversation(model, tokenizer, conv, other_summary_snap,
         bc_ids = canonical_ids(tokenizer, bc_msgs)
         bc_cache, _ = prefill(model, bc_ids)
         bc_snap = snapshot_cache(bc_cache)
-        variants.append(("B-causal", lambda s=bc_snap: rebuild_cache(s),
-                         bc_ids, bc_msgs))
+        if "B-causal" in SUPP_ARMS:
+            variants.append(("B-causal", lambda s=bc_snap: rebuild_cache(s),
+                             bc_ids, bc_msgs))
         # negative controls on E-post a=1
         sh_pairs = shuffled_pairs(aset.pairs, seed=hash(conv["id"]) & 0xFFFF)
         sh_snap = arm_e_snapshot(aset.b_snap(), aset.summary["snapshot"],
                                  sh_pairs, 1.0)
-        variants.append(("E-shuffled", lambda s=sh_snap: rebuild_cache(s),
-                         aset.b_ids, aset.b_msgs))
+        if "E-shuffled" in SUPP_ARMS:
+            variants.append(("E-shuffled", lambda s=sh_snap: rebuild_cache(s),
+                             aset.b_ids, aset.b_msgs))
         wc_pairs = wrongconv_pairs(aset.pairs, other_len)
         wc_snap = arm_e_snapshot(aset.b_snap(), other_summary_snap,
                                  wc_pairs, 1.0)
-        variants.append(("E-wrongconv", lambda s=wc_snap: rebuild_cache(s),
-                         aset.b_ids, aset.b_msgs))
+        if "E-wrongconv" in SUPP_ARMS:
+            variants.append(("E-wrongconv", lambda s=wc_snap: rebuild_cache(s),
+                             aset.b_ids, aset.b_msgs))
 
         eos_ids = set(tokenizer.eos_token_ids or [tokenizer.eos_token_id])
         for name, mk, ctx_ids, render_msgs in variants:
@@ -146,12 +152,12 @@ def main():
     for i, cid in enumerate(ids):
         if only and cid not in only:
             continue
-        rp = Path("results/raw") / f"{cid}.json"
+        rp = Path(RAW_DIR) / f"{cid}.json"
         if not rp.exists():
             print(f"{cid}: no raw results yet, skipping")
             continue
         raw = json.load(open(rp))
-        if "B-causal" in raw["cont"]["arms"]:
+        if all(a in raw["cont"]["arms"] for a in SUPP_ARMS):
             print(f"{cid}: already supplemented")
             continue
         # wrong-conversation donor: next conversation (cyclic), probe-mode
