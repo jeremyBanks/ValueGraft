@@ -221,3 +221,10 @@ compose.py / compose_natural.py / fix_tails.py (corpus), audit_corpus.py
 (contamination flags), score.py (leak classes, judge queue/apply),
 judge_batches.py, analyze.py (gap closure), plots.py, micro_sense.py,
 l0..l4 scripts (ladder — rerun on any new model/config).
+
+## Deferred housekeeping (user note 07-05 eve — do NOT act mid-experiment)
+
+Before broad sharing: repo cleanup pass — organize the accumulated docs
+(RESULTS*/notes/briefs), prune scratch scripts, coherent README, verify no
+credentials/large artifacts, tidy results/ layout. Explicitly deferred to the
+very end; touching structure mid-flight risks disrupting running pipelines.
