@@ -119,19 +119,32 @@ value blend, once, at compaction time — but it needs the *entire* old cache
 resident (~1.2 GB for a 12K-token context at 30B), so it is a server-side /
 local technique only.
 
-SelfGist is the one with a plausible stateless-API story. The retained state
-is just the summary's cache entries: at fp16, 30B-A3B costs ≈96 KB/token
-(48 layers × K,V × 4 kv-heads × 128 dims × 2 B), so a terse 80-token summary
-plus sinks is **≈8 MB** — about 0.7% of the full context's KV, though
-~15,000× the summary *text* it augments. That's an image-sized request
-attachment: a client could hold this blob and send it with each request,
-restoring the stateless model. KV quantization would plausibly take it to
-2–4 MB, but we ran the cache in fp16 throughout, so quantized-blob quality
-is untested here. Real deployment caveats: the blob is only valid for the
-exact model build and tokenizer, and accepting client-supplied KV is a new
-trust surface (injected cache state is an unauditable soft prompt) — a
-provider would likely wrap it as a signed, expiring portable prompt-cache
-entry rather than raw tensors.
+SelfGist's retained state is just the summary's cache entries: at fp16 on
+the 30B, ≈96 KiB/token (48 layers × K,V × 4 kv-heads × 128 dims × 2 B) —
+so ~9 MiB for a terse 100-token summary, ~47 MiB for a thorough 500-token
+one. That's ~0.7% of the full context's KV but ~15,000× the summary *text*,
+which makes a raw client-uploaded KV sidecar an unattractive stateless-API
+payload.
+
+The more plausible surface is an **opaque compaction handle**, following
+existing patterns (prompt-cache handles, session continuation, opaque
+reasoning tokens): the harness calls something like
+`compact_from(boundary, instructions) → {summary_text, compaction_token}`;
+the provider generates the summary while the full cache is still resident,
+stores the packed summary state server-side, and later requests stay
+text-shaped — summary text + token + recent tail. The visible summary
+remains the auditable channel; the token means "apply the provider-side
+latent state associated with this summary." Fallback is free: a harness
+talking to a provider without support just drops the token and gets ordinary
+text compaction. The honest cost accounting then splits into: negligible
+client bandwidth; tens of MiB of provider storage per compaction checkpoint
+(with prompt-cache-style expiry/billing); one summary generation plus state
+packing at compaction time. Caveats that don't go away: the handle is
+model-, tokenizer-, and template-version-specific; it encodes state derived
+from conversation content (privacy/audit surface — the visible summary is no
+longer the whole persisted state, and APIs should disclose when latent
+compaction state is active); and quantizing the stored state (plausibly
+2–4× smaller) needs separate validation — we ran fp16 throughout.
 
 ## Mechanism evidence (why this isn't nothing)
 

@@ -1,0 +1,24 @@
+{
+ "question_id": "0f05491a",
+ "question": "How many stars do I need to reach the gold level on my Starbucks Rewards app?",
+ "answer": "120",
+ "question_type": "knowledge-update",
+ "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 14530,
+  "ev_start_msg": 27,
+  "ev_end_msg": 51,
+  "tail_start_msg": 53,
+  "tail_frac": 0.24755677907777018
+ },
+ "s_leak": false,
+ "summary_text": "The conversation has centered on personal wellness and lifestyle improvements, from physical health and mental well-being to daily habits and self-care. We've explored topics including yoga, diet, sleep, and stress management, with a focus on building sustainable routines. The discussion has evolved from health-related inquiries to broader reflections on community, inclusion, and the role of everyday practices in fostering well-being. The overall tone is one of mindful self-improvement and intentional living.",
+ "arms": {
+  "A": "To reach the **Gold level** on the Starbucks Rewards app, you need to earn **120 stars** within a 12-month period.\n\n✅ This is the correct number — I appreciate your patience in correcting me earlier! (I apologize for the earlier error — you're absolutely right.)\n\nOnce you earn 120 stars, you’ll be upgraded to **Starbucks Rewards Gold**, which comes with benefits like:\n\n- Free drinks and food (up to $5 per month)\n- 2x stars on every dollar spent at Starbucks\n- Priority ordering and pickup\n- Free birthday drink or treat\n- Access to exclusive offers and early access to new products\n\n💡 Pro tip: The easiest way to earn stars is by using the Starbucks app to order and pay — you’ll earn",
+  "B": "To reach the **Gold level** on the Starbucks Rewards app, you need to earn **100 stars**.\n\nHere’s a quick breakdown:\n\n- **Starbucks Rewards levels** (based on earned stars):\n  - **Free** (0–49 stars): Basic tier, no benefits.\n  - **Silver** (50–99 stars): Earns you a free drink or pastry after 100 purchases.\n  - **Gold** (100+ stars): Earns you a free drink or pastry after 100 purchases, plus **free 10% off your next order** and **free 10% off your next order** (or a free drink or pastry after 100 purchases).\n\n💡 **Note**: The exact",
+  "E-tuned": "To reach the **Gold level** on the Starbucks Rewards app, you need to earn **100 stars**.\n\nHere’s a quick breakdown:\n\n- **Starbucks Rewards levels** (in order):\n  - **Free** (0–49 stars)\n  - **Silver** (50–99 stars)\n  - **Gold** (100+ stars)\n\nSo, once you earn **100 stars**, you’ll automatically unlock the **Gold level**.\n\n💡 **Bonus tips to help you reach 100 stars:**\n- Earn 1 star for every $1 spent (or 100 points per $1 spent).\n- Get 100 stars by spending $100 in a single calendar month (or more).\n- You",
+  "B-min-pack": "To reach the **Gold level** on the Starbucks Rewards app, you need to earn **100 stars**.\n\nHere’s a quick breakdown:\n\n- **Silver Level**: 100 stars  \n- **Gold Level**: 100 stars (you need 100 stars to reach Gold, and you can earn them by purchasing drinks, food, or other items through the app)\n\n💡 **Note**: You don’t need to earn 100 stars just to get Gold — you just need to accumulate 100 stars. Once you reach 100, you’ll automatically be promoted to the Gold level, and you’ll enjoy benefits like:\n\n- Free drinks and food on your birthday  \n- Free 10% off on all purchases (after 1",
+  "H-pack": "To reach the **Gold level** on the Starbucks Rewards app, you need to earn **100 stars**.\n\nHere’s a quick breakdown:\n\n- **Silver Level**: 50 stars  \n- **Gold Level**: 100 stars  \n- **Platinum Level**: 200 stars  \n\nOnce you reach 100 stars, you’ll unlock **Gold membership benefits**, such as:\n\n- Free drinks and food (up to $5 per order)  \n- Free 10% off your next order (after 100 stars)  \n- Free 10% off your next order (after 100 stars)  \n- Free 10% off your next order (after 100 stars)  \n- Free 10%",
+  "H-gap": "To reach the **Gold level** on the Starbucks Rewards app, you need to earn **100 stars**.\n\nHere’s a quick breakdown:\n\n- **Silver Level**: 100 stars  \n- **Gold Level**: 100 stars (you need 100 stars to unlock the Gold level)\n\n✅ So, you need **100 stars** to reach the Gold level.\n\n💡 Tip: You can earn stars by purchasing drinks, food, or merchandise at Starbucks locations, or by using the app to track your purchases. You can also earn bonus stars through promotions, rewards, or by referring friends.\n\nOnce you reach 100 stars, you’ll unlock benefits like:\n- Free drinks and food on your birthday\n- Free 10% off your next"
+ }
+}
