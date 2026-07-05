@@ -2,7 +2,19 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 02:35 07-05
+## Current focus (read this first) — updated 05:15 07-05
+
+**Phase 2 COMPLETE at both scales — see PHASE2-RESULTS.md.** H-pack cuts
+fabrication vs production compaction (30B decoys 19:5→3:21); matched pair
+shows encoding component grows with scale (10→3 at 30B). Tuned ValueGraft:
+holdout-validated +0.017 (4B, midband α=.25) and +0.033/24% closure (30B,
+global α=.75). All negative-control-certified. Tasks #10 #11 done.
+
+**REMAINING:** blog write-up per writeup-guidelines.md (incl. real web
+literature pass for related-work); #12 coding-trace dataset scouting;
+#13 benchmark scoping (LongMemEval etc.). GPU idle.
+
+## Older (Phase-1-era) focus notes
 
 **Phase 1 CLOSED** (RESULTS.md + RESULTS-30B-addendum.md): honesty effect
 replicates & strengthens at 30B (H-gap 1:23 fab:adm vs B 15:9); α inversion
