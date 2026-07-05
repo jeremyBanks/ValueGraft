@@ -5,3 +5,4 @@ __pycache__/
 .runpod_key
 .huggingface_key
 *.key
+.pod_state.json

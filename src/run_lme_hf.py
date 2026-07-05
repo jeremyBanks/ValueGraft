@@ -156,8 +156,12 @@ def main():
             break
         outfile = outdir / f"{q['question_id']}.json"
         if outfile.exists():
-            done += 1
-            continue
+            try:  # validate resumable artifact; drop truncated files
+                json.load(open(outfile))
+                done += 1
+                continue
+            except Exception:
+                outfile.unlink()
         built = build_conversation(q, tokenizer, random.Random(q["question_id"]))
         if built is None:
             continue
@@ -221,11 +225,14 @@ def main():
                                      summary["s_end"])
         del hg, summary
 
-        json.dump({"question_id": q["question_id"], "question": probe,
-                   "answer": str(q["answer"]),
-                   "question_type": q["question_type"], "model": MODEL,
-                   "meta": meta, "s_leak": s_leak, "arms": answers},
-                  open(outfile, "w"), indent=1, ensure_ascii=False)
+        tmp = outfile.with_suffix(".tmp")
+        with open(tmp, "w") as f:
+            json.dump({"question_id": q["question_id"], "question": probe,
+                       "answer": str(q["answer"]),
+                       "question_type": q["question_type"], "model": MODEL,
+                       "meta": meta, "s_leak": s_leak, "arms": answers},
+                      f, indent=1, ensure_ascii=False)
+        tmp.rename(outfile)
         done += 1
         print(f"== {q['question_id']} ({q['question_type']}, "
               f"{meta['n_tokens']} tok, leak={s_leak}) done in "
