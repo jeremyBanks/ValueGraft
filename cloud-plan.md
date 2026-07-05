@@ -136,3 +136,11 @@ around the existing HF DynamicCache stack (~1 day build; implements the
 opaque-compaction-token API for real). SWE-bench-Lite subset n≈25 × 2-3 arms
 ≈ $50-100 GPU. First possible end-to-end task-success test of the concept —
 the natural target for the conditional additional budget.
+
+Decision rule (07-05, user discussion): end-to-end is DEFAULT-ON, not
+signal-gated — the offline replay is off-policy (trajectories recorded from
+a different agent/model; teacher-forcing conflates memory with policy
+mimicry, partially mitigated by A's high absolute logprob ~74%/token). It is
+skipped only if stage 2 shows the mechanism genuinely inert in coding frames
+(dependence present + no recovery on any metric). Scenario call made with
+stage-2 results.
