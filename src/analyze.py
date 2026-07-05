@@ -60,9 +60,8 @@ def main():
         lines.append(f"\n## {kind} (n={len({r['conv'] for r in rows if r['kind']==kind})})\n")
         lines.append("| arm | mean logprob | Δ vs B (nats) | gap closure | 95% CI |")
         lines.append("|---|---|---|---|---|")
-        order = ["A", "B", "C", "D"] + sorted(
-            a for a in arm_names if a.startswith("E")
-        )
+        order = (["A", "B", "B-causal", "B-min", "C", "D", "H-gap"] +
+                 sorted(a for a in arm_names if a.startswith("E")))
         for arm in [a for a in order if a in arm_names]:
             rs = by_arm[(kind, arm)]
             lp = sum(r["mean_logprob"] for r in rs) / len(rs)
