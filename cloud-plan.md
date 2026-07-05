@@ -53,8 +53,10 @@ surgery is ~all "manipulate per-layer K/V tensors + position offsets," which
 maps to transformers' `DynamicCache`. Plan: port `kvlib.py`/`arms.py` cores
 and **re-run the L0–L4 + LH identity ladder locally** (Qwen3-4B on MPS —
 slow but sufficient for identity tests) BEFORE renting anything. Cloud hours
-then buy experiments, not debugging at $3/hr. I can start this port today if
-time allows; it is the long pole.
+then buy experiments, not debugging at $3/hr. **STATUS: core port DONE and identity-validated locally** (src/kvlib_hf.py +
+src/l_hf_ladder.py, all-pass on Qwen3-0.6B/CPU, keys post-RoPE confirmed,
+re-rotation exact to 7e-5 in fp32). Remaining port work: arms/runner
+adaptation (~an hour), best done on the pod against the actual target model.
 
 ## Stages and cost estimates (RunPod secure-cloud prices, ±30%)
 
