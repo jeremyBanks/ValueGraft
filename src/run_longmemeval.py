@@ -165,28 +165,36 @@ def main():
             print(f"{q['question_id']}: build failed ({e}); skipping")
             continue
         s_leak = str(q["answer"]).lower() in aset.summary["text"].lower()
+        probe = q["question"]
 
+        # Build → answer → free each arm sequentially: six concurrent 30B
+        # snapshots at 12-15K tokens exceed RAM and cause swap collapse.
+        answers = {}
+
+        def ask(name, cache, mode, rmsgs):
+            sfx = (probe_suffix_ids(tokenizer, rmsgs, probe)
+                   if mode == "render" else packed_probe_suffix(tokenizer, probe))
+            answers[name] = answer(model, tokenizer, cache, sfx, eos_ids)
+            clear(cache)
+
+        ask("A", rebuild_cache(aset._a_snap), "render", msgs)
+        aset._a_snap = None
+        clear()
+        ask("B", rebuild_cache(aset.b_snap()), "render", aset.b_msgs)
         e_snap = arm_e_snapshot(aset.b_snap(), aset.summary["snapshot"],
                                 aset.pairs, alpha, layer_set=layer_set)
-        hp_snap = arm_h_pack_snapshot(aset.summary, rope_base)
-        bmp = bmin_pack_ids(aset.summary, aset.ids)
-        bmp_snap = snapshot_cache(prefill(model, bmp)[0])
-
-        probe = q["question"]
-        arm_defs = [
-            ("A", lambda: rebuild_cache(aset._a_snap), "render", msgs),
-            ("B", lambda: rebuild_cache(aset.b_snap()), "render", aset.b_msgs),
-            ("E-tuned", lambda: rebuild_cache(e_snap), "render", aset.b_msgs),
-            ("B-min-pack", lambda: rebuild_cache(bmp_snap), "packed", None),
-            ("H-pack", lambda: rebuild_cache(hp_snap), "packed", None),
-            ("H-gap", lambda: gapped_cache_from(arm_c_snapshot(
-                aset.summary, aset.summary["conv_end"], True)), "render", msgs),
-        ]
-        answers = {}
-        for name, mk, mode, rmsgs in arm_defs:
-            sfx = (probe_suffix_ids(tokenizer, rmsgs, probe) if mode == "render"
-                   else packed_probe_suffix(tokenizer, probe))
-            answers[name] = answer(model, tokenizer, mk(), sfx, eos_ids)
+        aset._b_snap = None
+        ask("E-tuned", rebuild_cache(e_snap), "render", aset.b_msgs)
+        e_snap = None
+        clear()
+        bmp_snap = snapshot_cache(prefill(model, bmin_pack_ids(
+            aset.summary, aset.ids))[0])
+        ask("B-min-pack", rebuild_cache(bmp_snap), "packed", None)
+        bmp_snap = None
+        ask("H-pack", rebuild_cache(arm_h_pack_snapshot(
+            aset.summary, rope_base)), "packed", None)
+        ask("H-gap", gapped_cache_from(arm_c_snapshot(
+            aset.summary, aset.summary["conv_end"], True)), "render", msgs)
         json.dump({
             "question_id": q["question_id"], "question": probe,
             "answer": str(q["answer"]), "question_type": q["question_type"],
@@ -197,7 +205,7 @@ def main():
         print(f"== {q['question_id']} ({q['question_type']}, "
               f"{meta['n_tokens']} tok, leak={s_leak}) done in "
               f"{time.time()-t0:.0f}s [{done}/{N_QUESTIONS}]")
-        clear(aset, e_snap, hp_snap, bmp_snap)
+        clear(aset)
 
 
 if __name__ == "__main__":

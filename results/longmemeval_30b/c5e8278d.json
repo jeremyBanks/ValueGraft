@@ -1,0 +1,24 @@
+{
+ "question_id": "c5e8278d",
+ "question": "What was my last name before I changed it?",
+ "answer": "Johnson",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 13860,
+  "ev_start_msg": 19,
+  "ev_end_msg": 31,
+  "tail_start_msg": 41,
+  "tail_frac": 0.23455988455988452
+ },
+ "s_leak": false,
+ "summary_text": "The conversation has centered on helping a user prepare for a family picnic, including organizing their space, managing time, creating a playlist, planning food and drinks, and arranging outdoor activities. The user has been guided through practical steps for meal prep, household organization, and event planning. The focus has been on creating a seamless, enjoyable experience for a family gathering. The user has received advice on logistics, atmosphere, and memory-making. The overall goal has been to support the user in hosting a thoughtful, well-organized, and meaningful outing.",
+ "arms": {
+  "A": "You mentioned earlier that your last name was Johnson before you changed it to Winters. So, your previous last name was **Johnson**.  \n\nIt's nice to see how you're embracing your new name—Winters—while still honoring your past. If you'd like help with anything else, like updating your name on forms, creating a new email address, or even brainstorming a fun \"Winters\" family nickname, I'm here to help! 😊<|im_end|>",
+  "B": "I don't have access to personal information about you, including your name or any past details. I respect your privacy and don't store or recall personal data from our conversations. If you'd like to continue planning your picnic or need help with anything else, I'm here to help!<|im_end|>",
+  "E-tuned": "I don't have access to personal information about you, including your previous name. I respect your privacy and don't store or recall personal details from our conversations. If you've changed your name, that's a personal choice, and I'm here to support you with whatever you need—whether it's planning a picnic, choosing music, or anything else. Let me know how I can help!<|im_end|>",
+  "B-min-pack": "I don't have access to your personal history or past records, so I can't know what your last name was before you changed it. If you're trying to remember or find out, you might want to check official documents like your birth certificate, old passport, or legal name change paperwork. Let me know if you'd like help with anything else related to your name or identity!<|im_end|>",
+  "H-pack": "I don't have access to your personal history or past records, so I can't know your previous last name. If you're looking to find out your original last name, you may want to check official documents like birth certificates, old IDs, or legal name change records. Let me know if you'd like help with anything else related to your picnic plans!<|im_end|>",
+  "H-gap": "I don't have access to your personal information, including your previous name. If you're looking to find out your legal name before a name change, you may need to check official documents like your birth certificate, old government IDs, or contact the relevant government agency in your country. Let me know if you'd like help with anything else!<|im_end|>"
+ }
+}
