@@ -63,7 +63,7 @@ adaptation (~an hour), best done on the pod against the actual target model.
 | stage | hardware | time | est. cost |
 |---|---|---|---|
 | 0. Port validation on cloud (ladder on 8B, bf16) | 1× A100 80GB (~$1.6/hr) | ~2 h | ~$4 |
-| 1. Second family, high n: Llama-3.1-8B-Instruct, full arm set, synthetic+LongMemEval subsets, n≈100 questions | 1× A100 80GB | ~8–12 h | ~$15–20 |
+| 1. Second family, high n: Mistral-Small-3.2 (24B), full arm set, synthetic+LongMemEval subsets, n≈100 questions | 1× A100 80GB | ~8–12 h | ~$15–20 |
 | 2. Scale anchor: Llama-3.3-70B-Instruct bf16, trimmed arms (A/B/B-min-pack/H-pack/E-tuned), n≈48 | 2× A100 80GB (~$3.2/hr) or 1× H100 (~$2.8/hr) | ~10–15 h | ~$30–45 |
 | 3. Profile-then-graft recipe test: per-layer graft profile on each cloud model (one diagnostic pass), derive thresholded layer-set graft on validation, evaluate holdout — does the PROCEDURE transfer across families/scales? | included in stages 1-2 pods | +2–3 h | ~$5–8 |
 | 4. (Optional) contingency/reruns | — | — | remainder |
@@ -78,6 +78,12 @@ one item.
 - Provider: RunPod (default) vs Lambda vs AWS (only if you specifically want
   to stay in AWS — then: request quota for `g6e.xlarge`/`p4d` now, since
   approval latency dominates).
-- Second family: Llama-3.1-8B (default; different pretraining + RoPE config)
-  vs Mistral-Nemo/Small.
+- Second family: **Mistral Small 3.2 (24B)** (default — modern, dense, standard
+  attention; Ministral-8B as the cheaper fallback) vs OLMo-2-32B (fully-open
+  reproducibility pick). NOTE most 2025-26 frontier open models are
+  architecture-incompatible with the surgery (Llama-4 iRoPE/NoPE layers,
+  DeepSeek/GLM MLA latent caches, Gemma sliding-window, Qwen3.5+ linear
+  hybrids) — verify config on-pod before committing to any model.
+- Scale anchor: Llama-3.3-70B stays (newest CLEAN dense 70B: vanilla
+  GQA+RoPE); its age is an architectural constraint, noted in write-up.
 - Budget: $25 initial / $100 ceiling (default).
