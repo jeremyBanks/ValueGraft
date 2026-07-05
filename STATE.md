@@ -1,6 +1,26 @@
 # STATE.md — session handoff notes
 
-*Last updated: 2026-07-05 ~00:30 (update this file at every phase transition).*
+*Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
+
+## Current focus (read this first)
+
+- **Phase 2 pivot is active** (user directive): mitigation-first, one clean
+  contrast — see phase2-design.md. Machinery COMPLETE and validated
+  (rerotate.py + LH ladder PASS, arm_h_pack_snapshot/bmin_pack_ids in
+  arms.py, run_phase2.py with HP-0 identity, data/decoy_probes.json 24/24
+  audited). Launch `uv run python -u src/run_phase2.py` (4B, ~1h) as soon as
+  the GPU frees.
+- **30B targeted chain RUNNING** (9/12 main pass as of 01:10; then naturals,
+  then brief pass; scratchpad run30b.log). Interim n=7: H-gap>B-min +0.126
+  (7/7); α INVERTS at scale (α=1 beats B by +0.053 ≈27% closure; was harmful
+  at 4B); C≈B. When done: narrow scoring (referent/sense/evicted only, skip
+  stance/ruled_out), Sonnet judging, scale addendum to RESULTS.md, commit =
+  Phase 1 close.
+- **Queued tasks:** #10 Phase 2 run; #11 α sweep w/ validation-holdout split
+  (4B fine-low grid; 30B extended-up grid; + span-length & layer-band gates);
+  #12 scout SWE-agent/OpenHands trajectory datasets (brainstorm-level).
+- Write-up target: HF blog post per writeup-guidelines.md (provenance:
+  Claude Fable 5 + GPT-5.5 review + user direction).
 
 ## What this project is
 
