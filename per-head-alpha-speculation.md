@@ -84,3 +84,32 @@ If mentioned later, the modest version is:
 > one scalar for the entire model.
 
 This belongs in future-work/speculation, not the current core claims.
+
+---
+
+## Empirical follow-up (2026-07-05, added by Claude)
+
+Ran the diagnostic version at 4B: per-layer graft profile (α=1, one layer at
+a time, all 20 conversations). Results (results/layer_profile_4b*):
+
+- Clear structure: graftable signal concentrates in a mid-depth band
+  (L12–L22 of 36; peak L17 = +12.3 milli-nats from a single layer). Late
+  layers (L24+) are uniformly NEGATIVE — grafting them hurts. Early layers
+  are noise. This explains why mid-band gating beat global α at 4B.
+- Profile-derived rule (positive-validation-delta layers, 2 DOF), evaluated
+  once on holdout: α=0.75 on derived layers = +0.0182 (8/10) vs the
+  hand-tuned mid-band champion's +0.0173 (10/10) — a tie. α=1.0 on derived
+  layers still hurts at 4B (−0.003).
+- Conclusion: at this scale the calibration procedure REPRODUCES manual
+  tuning rather than beating it; its value is automation + potential
+  transfer. Queued for the cloud stage: does profile-then-graft transfer
+  across families/scales (procedure, not layer indices)?
+
+## Hybrid-attention corollary (Gemma-class models)
+
+In sliding-window hybrids (e.g. Gemma 3: ~5 local layers per global layer),
+full-history conditioning can only live in the sparse global-attention
+layers — the profile predicts its mass piles up exactly there. If true:
+mechanism confirmation + a practical win (retain/graft only ~1/6 of layers;
+SelfGist state shrinks proportionally). Requires per-layer-type surgery
+handling; a follow-up study, not a replication target.
