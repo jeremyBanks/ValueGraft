@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 .DS_Store
+.runpod_key
+.huggingface_key
+*.key
