@@ -2,7 +2,19 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 07:00 07-05
+## Current focus (read this first) — updated 13:30 07-05
+
+Today added: LongMemEval validation both scales (LONGMEMEVAL-RESULTS.md —
+compaction damage replicates on standard data; honesty effect
+frame-dependent: real at 4B, washed out at 30B QA framing), HF transformers
+port core validated (kvlib_hf.py + l_hf_ladder.py PASS — cloud prerequisite
+retired), cloud-plan.md ready for user review (RunPod prepaid, staged
+$50-70, 10-min setup), blog-draft.md complete (benchmark section +
+opaque-compaction-handle deployment framing). Incident: double-instance
+swap thrash cost ~3h (fixed; kill-by-PID + progress & memory watchdogs now
+standard). AWAITING USER: cloud-plan review + API key; blog draft review.
+
+## Older focus (morning 07-05) notes
 
 **ALL PLANNED WORK COMPLETE.** Deliverables: RESULTS.md (4B pilot),
 RESULTS-30B-addendum.md, PHASE2-RESULTS.md (mitigation + tuned sweeps),

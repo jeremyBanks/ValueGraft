@@ -146,6 +146,23 @@ longer the whole persisted state, and APIs should disclose when latent
 compaction state is active); and quantizing the stored state (plausibly
 2–4× smaller) needs separate validation — we ran fp16 throughout.
 
+## Result 4: standard-benchmark check (LongMemEval) bounds the claim
+
+On LongMemEval-S questions restructured so the evidence session is evicted
+(n=48 at 4B, n=36 at 30B): compaction damage replicates exactly — full
+context answers 71–81%, every compacted arm ≤11%. The honesty effect holds
+at 4B (H-pack fabricates 11 vs the baseline's 17) but **washes out at 30B on
+this benchmark** — because the benchmark's personal-fact framing already
+triggers the larger model's "I don't have access to your history" refusal
+training, so the baseline barely fabricates and there's nothing to fix.
+The scope statement this forces: cache-state honesty interventions matter
+where the compacted frame *invites* the model to keep confabulating as a
+conversation participant — mid-task agentic contexts, which is where
+production compaction actually runs — not in retrieval-style QA that
+refusal training already covers. Real data also revealed a fabrication
+channel our synthetic corpus couldn't: substituting plausible *world
+knowledge* (a real-but-wrong song title) for lost personal facts.
+
 ## Mechanism evidence (why this isn't nothing)
 
 The same summary text predicts the conversation's future better when its KV
