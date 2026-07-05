@@ -145,8 +145,44 @@ comparison — our identity tests are all same-shape for this reason.
 
 ## Related work (what we searched and why none of it is quite this)
 
-[PENDING — verified list from the literature pass goes here, with the exact
-dead-end search phrases.]
+We could not find work that (a) takes a *conversation-compaction* event
+(history → generated text summary + re-encoded recent turns), (b) preserves
+or transplants the generation-time KV entries across it, and (c) compares
+against the text-only summary baseline. The neighbors fall into three
+families:
+
+**Learned latent compression** (train something to squeeze context into few
+tokens/vectors): gist tokens (Mu et al., NeurIPS 2023), AutoCompressor
+(Chevalier et al., EMNLP 2023), ICAE (Ge et al., ICLR 2024), Activation
+Beacon (Zhang et al., ICLR 2024), Compressed Context Memory (Kim et al.,
+ICLR 2024 — closest *problem setting*: online conversational compression,
+but a trained LoRA compressor on raw KV, no text summary anywhere). SelfGist
+is the training-free, natural-language cousin of these.
+
+**KV reuse across independently-encoded chunks** (RAG-flavored): CacheBlend
+(Yao et al., EuroSys 2025), KVLink (Yang et al., arXiv:2502.16002), and
+SamKV (arXiv:2508.11661) — the last literally uses a
+`θ·KV_new + (1−θ)·KV_old` blend, the closest existing instantiation of
+ValueGraft's formula, but applied to document-chunk concatenation, not a
+compaction boundary, and never against a summary baseline.
+
+**Within-context budget management**: StreamingLLM's attention sinks (Xiao
+et al., ICLR 2024 — we retain sinks in every arm), H2O (NeurIPS 2023),
+SnapKV, CaM (ICML 2024), KVMerger — eviction/merging inside one continuous
+context; and text-space compression (LLMLingua, RECOMP) which is essentially
+the *baseline* we compare against, plus MemGPT-style text-level memory
+management.
+
+The closest mechanistic precedent is "Models Take Notes at Prefill"
+(arXiv:2606.17107, June 2026), which reports KV entries are position-portable
+and spliceable near-losslessly — effectively the physics SelfGist relies on —
+but for precompiled "skills," with no compaction event and no summary
+baseline. (We had difficulty fully verifying this paper beyond its abstract;
+read it yourself before leaning on it.) C2C (ICLR 2026) fuses caches *across
+models*. Searches that came up empty, for the record: "context compaction KV
+cache preservation", "keep summary activations compaction conversation",
+"transplant KV cache summary tokens", and both coinages ("SelfGist",
+"ValueGraft") — no collisions.
 
 ## The open question
 
