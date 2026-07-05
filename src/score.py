@@ -154,10 +154,12 @@ def phase2(rows, model_name):
                 "fabricated" if v.startswith("FABRICATED")
                 else "admitted" if v.startswith("ADMITTED") else "other"
             )
-        else:  # stance / ruled_out: judge consistency; combine with anti-kw
+        else:  # stance / ruled_out: judge verdict carries the category
+            # (matches apply_verdicts — anti-keyword hits over-penalize
+            # answers that quote the disliked thing while complying)
             v = ask(JUDGE_STANCE.format(**r))
             r["judge"] = v
-            r["final_pass"] = r["kw_pass"] and v.startswith("YES")
+            r["final_pass"] = v.startswith("YES")
         logf.write(json.dumps({k: r[k] for k in
                                ("conv", "arm", "plant", "judge", "answer")}) + "\n")
     for r in rows:

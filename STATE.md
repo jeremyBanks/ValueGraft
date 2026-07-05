@@ -1,6 +1,6 @@
 # STATE.md — session handoff notes
 
-*Last updated: 2026-07-04 ~21:40 (update this file at every phase transition).*
+*Last updated: 2026-07-05 ~00:30 (update this file at every phase transition).*
 
 ## What this project is
 
@@ -18,7 +18,10 @@ alignment region crossing).
 
 - uv project; `uv run python src/...`. mlx-lm 0.31.3 + transformers pinned 5.0.0.
 - Dev model: `mlx-community/Qwen3-4B-Instruct-2507-4bit` (all results so far).
-- Final model downloaded, unused yet: `mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit`.
+- Final model `mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit`: ladder L0–L4
+  green (2026-07-04 23:41); targeted run IN PROGRESS → results/raw_30b +
+  raw_30b_brief (arms A/B/C/D/H-gap/B-min/E-post-{0.25,1.0}). Final artifact:
+  HF community blog post per writeup-guidelines.md (not a paper).
 - Long jobs: launch detached (`nohup ... & disown`, PID to scratchpad
   `pipeline.pid`) because harness-tracked background tasks got killed twice.
   `python -u` + `tee` to scratchpad log; monitor greps the log.

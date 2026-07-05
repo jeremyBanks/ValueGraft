@@ -84,7 +84,8 @@ def main():
     # per-conversation table for the appendix
     lines.append("\n## Per-conversation gap closure\n")
     convs = sorted({r["conv"] for r in rows})
-    arms_all = [a for a in ["C", "D", "E-post-a1.0", "E-inter-a1.0"]
+    arms_all = [a for a in ["C", "D", "H-gap", "B-min", "B-causal",
+                            "E-post-a0.25", "E-post-a1.0", "E-inter-a1.0"]
                 if any(r["arm"] == a for r in rows)]
     lines.append("| conv | A | B | " + " | ".join(arms_all) + " |")
     lines.append("|" + "---|" * (len(arms_all) + 3))
