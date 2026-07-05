@@ -39,7 +39,8 @@ alignment region crossing).
   2. `uv run python src/score.py export` — builds results/judge_queue.json
      (judgments + paraphrase leakage checks).
   3. `uv run python src/judge_batches.py split` — batch files; judge each
-     batch with a Haiku-model subagent (prompt: answer each item's prompt
+     batch with a Sonnet subagent (user: no Haiku — use Sonnet; prompt:
+     answer each item's prompt
      with the single word demanded; write verdicts_NN.json as {key: verdict});
      max 2 agents at a time. Then `judge_batches.py merge`.
   4. `uv run python src/score.py apply` — final scores (results/scores.json).
