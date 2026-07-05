@@ -45,10 +45,23 @@ def phase1():
                     kw_pass = all(k in a for k in kws)
                 else:
                     kw_pass = not any(k in a for k in anti)
+                # six-class leakage label (amendments item 4); the
+                # explicit/absent split is keyword-based here, and
+                # absent-from-summary rows get a paraphrase check by the
+                # external judge (upgrading them to paraphrased-in-summary).
+                if plant.get("contaminated_tail"):
+                    leak = "tail-visible"
+                elif any(k in s_text for k in kws):
+                    leak = "explicit-in-summary"
+                elif plant["category"] == "evicted_fact":
+                    leak = "evicted-only"
+                else:
+                    leak = "absent-from-summary"
                 rows.append({
                     "conv": res["id"], "arm": arm, "plant": pid,
                     "category": plant["category"],
                     "kw_pass": kw_pass,
+                    "leak_class": leak,
                     "s_contaminated": any(k in s_text for k in kws),
                     "tail_contaminated": bool(plant.get("contaminated_tail")),
                     "answer": ans,
@@ -140,26 +153,39 @@ def phase2(rows, model_name):
 
 
 def aggregate(rows):
+    """Accuracy by category x arm x leak-class (+ 'all' and the load-bearing
+    'clean' cut = absent-from-summary + evicted-only)."""
     from collections import defaultdict
     agg = defaultdict(lambda: [0, 0])
     for r in rows:
-        if r["tail_contaminated"]:
-            continue
-        key = (r["category"], r["arm"],
-               "s_leak" if r["s_contaminated"] else "clean")
-        agg[key][0] += int(r["final_pass"])
-        agg[key][1] += 1
-        key2 = (r["category"], r["arm"], "all")
-        agg[key2][0] += int(r["final_pass"])
-        agg[key2][1] += 1
+        cuts = ["all", r["leak_class"]]
+        if r["leak_class"] in ("absent-from-summary", "evicted-only"):
+            cuts.append("clean")
+        for cut in cuts:
+            key = (r["category"], r["arm"], cut)
+            agg[key][0] += int(r["final_pass"])
+            agg[key][1] += 1
     return {f"{c}|{a}|{s}": {"pass": p, "n": n, "acc": p / n}
             for (c, a, s), (p, n) in sorted(agg.items())}
+
+
+JUDGE_PARAPHRASE = (
+    "A summary was written of a longer conversation. Does the summary below "
+    "contain, in ANY wording, the following specific information?\n"
+    "Information: {gold}\n\nSummary:\n{summary}\n\n"
+    "Reply with exactly one word: YES (the information is present, even "
+    "paraphrased) or NO (it is absent)."
+)
 
 
 def export_judge_queue(rows):
     """Write undecided rows to results/judge_queue.json for an external
     (Claude subagent) judge. The judge writes results/judge_verdicts.json:
-    {"<conv>|<arm>|<plant>": "YES"|"NO"|"CORRECT"|"FABRICATED"|"ADMITTED"}."""
+    {"<key>": "YES"|"NO"|"CORRECT"|"FABRICATED"|"ADMITTED"}.
+
+    Also exports one paraphrase-check prompt per (conv, plant) whose leak
+    class is absent-from-summary or evicted-only, keyed "para|<conv>|<plant>"
+    — YES upgrades the class to paraphrased-in-summary."""
     queue = []
     for r in rows:
         if not r["needs_judge"]:
@@ -173,6 +199,25 @@ def export_judge_queue(rows):
             "category": cat,
             "prompt": tmpl.format(**r),
         })
+    # paraphrase checks: one per plant, against the probe-mode summary
+    seen = set()
+    summaries = {}
+    for rp in Path("results/raw").glob("c*.json"):
+        res = json.load(open(rp))
+        summaries[res["id"]] = res["probes"]["stats"]["summary_text"]
+    for r in rows:
+        pk = (r["conv"], r["plant"])
+        if pk in seen or r["leak_class"] not in (
+            "absent-from-summary", "evicted-only"
+        ):
+            continue
+        seen.add(pk)
+        queue.append({
+            "key": f"para|{r['conv']}|{r['plant']}",
+            "category": "paraphrase-check",
+            "prompt": JUDGE_PARAPHRASE.format(
+                gold=r["gold"], summary=summaries[r["conv"]]),
+        })
     json.dump(queue, open("results/judge_queue.json", "w"), indent=1,
               ensure_ascii=False)
     return queue
@@ -181,6 +226,13 @@ def export_judge_queue(rows):
 def apply_verdicts(rows):
     verdicts = json.load(open("results/judge_verdicts.json"))
     logf = open("results/judgments.jsonl", "w")
+    # paraphrase upgrades first
+    for r in rows:
+        v = verdicts.get(f"para|{r['conv']}|{r['plant']}", "")
+        if v.strip().upper().startswith("YES") and r["leak_class"] in (
+            "absent-from-summary", "evicted-only"
+        ):
+            r["leak_class"] = "paraphrased-in-summary"
     for r in rows:
         key = f"{r['conv']}|{r['arm']}|{r['plant']}"
         if not r["needs_judge"]:
