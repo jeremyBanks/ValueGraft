@@ -29,6 +29,9 @@ ANTI_CATS = {"stance", "ruled_out"}
 
 CONDITIONS = {"std": "results/raw", "brief": "results/raw_brief"}
 
+# keyword-only arms (not centrally interpreted; saves judge volume)
+NO_JUDGE_ARMS = {"E-post-a0.75", "E-inter-a0.5"}
+
 
 def phase1():
     convs = {p.stem: json.load(open(p)) for p in Path("data/synthetic").glob("c*.json")}
@@ -79,7 +82,7 @@ def _score_file(rp, convs, cond):
                     "answer": ans,
                     "gold": plant["gold"],
                     "probe": plant["probe"],
-                    "needs_judge": (
+                    "needs_judge": arm not in NO_JUDGE_ARMS and (
                         (plant["category"] in {"referent", "sense"} and not kw_pass)
                         or (plant["category"] == "evicted_fact" and not kw_pass)
                         or plant["category"] in ANTI_CATS  # verify consistency
