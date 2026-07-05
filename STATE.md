@@ -2,7 +2,22 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first)
+## Current focus (read this first) — updated 02:35 07-05
+
+**Phase 1 CLOSED** (RESULTS.md + RESULTS-30B-addendum.md): honesty effect
+replicates & strengthens at 30B (H-gap 1:23 fab:adm vs B 15:9); α inversion
+(E-post α=1 = +29% gap closure at 30B, was harmful at 4B); C +18pp clean
+sense; naturals DON'T replicate (A−B gap tiny there — effects conditional
+on continuation depending on evicted content). 30B judging done (798
+verdicts, results/judge_*_30b*). Remaining certification: negative controls
+at 30B (supplement_arms needs outdir env patch) — queued after Phase 2.
+
+**RUNNING: Phase 2** (run_phase2.py, 4B, results/phase2_4b/, HP-0 passed,
+~4/12 as of 02:35). Then: 30B negative controls → α sweep w/ gates (#11) →
+Phase 2 at 30B if signal → blog write-up (writeup-guidelines.md) →
+dataset/benchmark scouting (#12, #13).
+
+## Older focus notes
 
 - **Phase 2 pivot is active** (user directive): mitigation-first, one clean
   contrast — see phase2-design.md. Machinery COMPLETE and validated
