@@ -1,0 +1,24 @@
+{
+ "question_id": "66f24dbb",
+ "question": "What did I buy for my sister's birthday gift?",
+ "answer": "a yellow dress",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 13581,
+  "ev_start_msg": 21,
+  "ev_end_msg": 33,
+  "tail_start_msg": 55,
+  "tail_frac": 0.2440173772181724
+ },
+ "s_leak": false,
+ "summary_text": "We're developing a series of engaging, promotional social media posts to highlight a restaurant's menu and ambiance, with a focus on driving customer traffic. The campaign will feature enticing, descriptive content that emphasizes the restaurant's Italian cuisine and BYOB policy. The posts are being crafted to be visually appealing and emotionally compelling, with consistent branding and location details included in each. The plan is to publish two posts per day for the next 30 days to maintain visibility and engagement.",
+ "arms": {
+  "A": "You bought your sister a **yellow dress** and a **pair of earrings to match** for her birthday. 🎉👗✨\n\nThat’s a thoughtful and stylish gift — perfect for a special occasion! Let me know if you'd like to create a fun note or card to go with it! 😊<|im_end|>",
+  "B": "I'm sorry, but I don't have any information about what you bought for your sister's birthday gift. Could you please provide more context or details?<|im_end|>",
+  "E-tuned": "I'm sorry, but I don't have information about what you bought for your sister's birthday gift. Could you please provide more context or details?<|im_end|>",
+  "B-min-pack": "I'm sorry, but I don't have information about what you bought for your sister's birthday gift. Could you please provide more details? For example, did you buy something specific like a book, a gift card, or a handmade item? Or are you looking for ideas or help brainstorming a gift idea?\n\nIf you'd like, I can help suggest thoughtful birthday gift ideas for a sister — just let me know her interests, age, or any preferences! 😊<|im_end|>",
+  "H-pack": "I'm sorry, but I don't have information about what you bought for your sister's birthday gift. Could you please provide more details or context? For example, did you buy something specific, or are you looking for ideas or help with a gift suggestion? I’d be happy to assist! 😊<|im_end|>",
+  "H-gap": "I'm sorry, but I don't have information about what you bought for your sister's birthday gift. Could you please provide more details or context? For example, did you buy something specific, or are you just looking for ideas? I’d be happy to help you think of a gift or remember what you might have purchased! 😊<|im_end|>"
+ }
+}

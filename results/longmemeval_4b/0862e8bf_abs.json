@@ -1,0 +1,24 @@
+{
+ "question_id": "0862e8bf_abs",
+ "question": "What is the name of my hamster?",
+ "answer": "You did not mention this information. You mentioned your cat Luna but not your hamster.",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 12180,
+  "ev_start_msg": 28,
+  "ev_end_msg": 40,
+  "tail_start_msg": 48,
+  "tail_frac": 0.22183908045977008
+ },
+ "s_leak": false,
+ "summary_text": "This conversation has explored the cultural and musical legacy of The Orioles, focusing on their key songs, collaborations, and influence in early R&B and rock and roll. The discussion highlighted their signature tracks and their role in shaping the sound and spirit of mid-20th century popular music. The dialogue has centered on their enduring impact, with a particular emphasis on their emotional depth and historical significance in the development of American popular music.",
+ "arms": {
+  "A": "I'm sorry, but I don't have access to personal information like the name of your hamster. You might want to check your pet's cage, bedding, or any notes you've made when you first got him or her. If you'd like, you can share a bit more about your hamster—like its breed or favorite activities—and I’d be happy to help you come up with a fun or meaningful name! 😊🐹<|im_end|>",
+  "B": "I'm sorry, but I don't have access to personal information like the name of your hamster. That detail is private and belongs to you! 😊\n\nBut if you'd like, I can help you come up with a fun or meaningful name for your hamster — or just help you remember it! If you're trying to recall the name, maybe it's something playful, clever, or even inspired by a song, a color, or a favorite food?\n\nJust let me know — I’d love to help you celebrate your little furry friend! 🐹✨\n\n(And if you *do* want to share the name, I’d be happy to say something sweet about it!)<|im_end|>",
+  "E-tuned": "I'm sorry, but I don't have access to personal information like the name of your hamster. That detail is private and belongs to you! 😊\n\nBut if you'd like, I can help you come up with a fun or meaningful name for your hamster — or just help you remember it! If you tell me a bit about your hamster (like their personality, color, or favorite treat), I’d be happy to suggest a name that fits perfectly. 🐹✨\n\nFor now, I’d say: *You’ve got a great pet — and a very special one, just like your hamster deserves to be celebrated!* Let me know if you'd like to brainstorm a name together. 🌟<|im_end|>",
+  "B-min-pack": "I'm sorry, but I don't know the name of your hamster! 😊  \nCould you tell me a little more about your hamster—like its color, personality, or any special quirks? That might help me guess (or just have fun imagining) a name that fits! 🐹✨  \n\nOr… maybe you’d just like to pick a fun name together? Like \"Biscuit,\" \"Sunny,\" \"Pip,\" or \"Mochi\"? 😄  \n\n(Just saying—I’d love to help you find the perfect name!)<|im_end|>",
+  "H-pack": "I'm sorry, but I don't know the name of your hamster! 😊\n\nBut don't worry — that's probably because you're the one who chose it, and that makes it even more special. 🐹✨\n\nIf you'd like, you can tell me a little about your hamster — its color, personality, or favorite toy — and I’d be happy to help you come up with a fun name or just celebrate the joy of having a little furry friend! 🎉\n\n(Or… maybe it’s just a secret name you’ve been keeping — and I’m not going to guess it. 😉)<|im_end|>",
+  "H-gap": "I'm sorry, but I don't know the name of your hamster! 😊\n\nCould you tell me a little more about your hamster — like its color, personality, or favorite treat? That might help me guess (or just have fun imagining) a name for it! 🐹✨\n\nOr… maybe you’d like to pick a name together? Just say the word! 😄<|im_end|>"
+ }
+}
