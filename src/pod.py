@@ -33,17 +33,23 @@ def api(method, path, body=None):
     req = urllib.request.Request(
         REST + path, method=method,
         headers={"Authorization": f"Bearer {KEY}",
-                 "Content-Type": "application/json"},
+                 "Content-Type": "application/json",
+                 "User-Agent": "curl/8.4"},
         data=json.dumps(body).encode() if body is not None else None)
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read() or "{}")
+    try:
+        with urllib.request.urlopen(req) as r:
+            return json.loads(r.read() or "{}")
+    except urllib.error.HTTPError as e:
+        print("API ERROR", e.code, e.read().decode()[:500])
+        raise
 
 
 def gql(query):
     req = urllib.request.Request(
         "https://api.runpod.io/graphql", method="POST",
         headers={"Authorization": f"Bearer {KEY}",
-                 "Content-Type": "application/json"},
+                 "Content-Type": "application/json",
+                 "User-Agent": "curl/8.4"},
         data=json.dumps({"query": query}).encode())
     with urllib.request.urlopen(req) as r:
         return json.loads(r.read())
@@ -80,7 +86,6 @@ def create(gpu=DEFAULT_GPU):
         "containerDiskInGb": 200,
         "volumeInGb": 0,
         "supportPublicIp": True,
-        "startSsh": True,
         "ports": ["22/tcp"],
     }
     pod = api("POST", "/pods", body)
