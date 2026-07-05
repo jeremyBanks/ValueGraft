@@ -1,7 +1,10 @@
 # Cloud scale-up plan (for review — nothing here is started)
 
-Goal: replicate the local findings on (a) a second model family and (b) a
-70B-class model, at higher n, per the Phase-2 doc's Strategy S/P discussion.
+Goal (revised 07-05 after user discussion): SCALE THE EVIDENCE on the model
+we already know — Qwen3-30B-A3B in bf16 — against established benchmarks and
+real agent/coding traces at high n (the Phase-2 doc's Strategy P: our effects
+are real-but-conditional, so power > new models). Model diversity is a
+secondary stage, not the point of renting hardware.
 Everything below is designed so **you do ~10 minutes of account setup and I
 do the rest over an API key + SSH**, with spending capped by construction.
 
@@ -60,19 +63,20 @@ adaptation (~an hour), best done on the pod against the actual target model.
 
 ## Stages and cost estimates (RunPod secure-cloud prices, ±30%)
 
-| stage | hardware | time | est. cost |
-|---|---|---|---|
-| 0. Port validation on cloud (ladder on 8B, bf16) | 1× A100 80GB (~$1.6/hr) | ~2 h | ~$4 |
-| 1. Second family, high n: Mistral-Small-3.2 (24B), full arm set, synthetic+LongMemEval subsets, n≈100 questions | 1× A100 80GB | ~8–12 h | ~$15–20 |
-| 2. Scale anchor: Llama-3.3-70B-Instruct bf16, trimmed arms (A/B/B-min-pack/H-pack/E-tuned), n≈48 | 2× A100 80GB (~$3.2/hr) or 1× H100 (~$2.8/hr) | ~10–15 h | ~$30–45 |
-| 3. Profile-then-graft recipe test: per-layer graft profile on each cloud model (one diagnostic pass), derive thresholded layer-set graft on validation, evaluate holdout — does the PROCEDURE transfer across families/scales? | included in stages 1-2 pods | +2–3 h | ~$5–8 |
-| 4. (Budget permitting) Hybrid-architecture testbed: Gemma 3 27B, PROFILE-FIRST — per-layer graft profile auto-discovers whether value concentrates in the sparse global-attention layers (prediction: yes). Requires per-layer-type cache handling; scoped to profile + one derived-graft holdout run. | 1x A100 80GB | ~3-4 h | ~$6-8 |
-| 5. (Optional) contingency/reruns | — | — | remainder |
+Primary model throughout: Qwen3-30B-A3B-Instruct-2507 **bf16** (fits 1×
+A100-80GB; fast — 3B active params). Also removes the 4-bit-quant confound
+from every local result.
 
-Total for stages 0–2: **roughly $50–70**, inside a $100 top-up with margin;
-$25 initial credit fully covers stages 0–1. Everything is resumable
-(per-item output files, same as local), so an interrupted pod wastes at most
-one item.
+| stage | what | time | est. cost |
+|---|---|---|---|
+| 0 | Pod setup + HF-port identity ladder on the 30B bf16 | ~1-2 h | ~$3 |
+| 1 | **LongMemEval, full 500 questions** (vs our n=36-48 sample), all 6 arms, incl. the multi-session + temporal-reasoning types we skipped locally | ~8-12 h | ~$15-25 |
+| 2 | **Coding-agent traces (SWE-Gym OpenHands trajectories)**: filter to ≤16K tokens, n≈50-100; offline next-action prediction under compaction arms + behavioral checks (does the compacted agent re-run already-failed commands?) | ~6-10 h | ~$12-20 |
+| 3 | Powered synthetic probes: regenerate probe corpus at n≈50 conversations (vs 12), key arms, judged | ~4-6 h | ~$8-12 |
+| 4 | (Secondary, budget permitting) family diversity: Mistral Small 3.2 24B on the stage-3 corpus; Llama-3.3-70B only if budget clearly allows | ~4-8 h | ~$10-25 |
+| 5 | (Contingent) hybrid testbed: Gemma 3 27B profile-first | ~3-4 h | ~$6-8 |
+
+Stages 0-3 ≈ $40-60 — the core. 4-5 only from remainder.
 
 ## Decision points for you (defaults chosen, change freely)
 
