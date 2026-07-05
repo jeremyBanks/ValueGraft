@@ -27,10 +27,21 @@ KEYWORD_CATS = {"referent", "sense", "evicted_fact"}
 ANTI_CATS = {"stance", "ruled_out"}
 
 
+CONDITIONS = {"std": "results/raw", "brief": "results/raw_brief"}
+
+
 def phase1():
     convs = {p.stem: json.load(open(p)) for p in Path("data/synthetic").glob("c*.json")}
     rows = []
-    for rp in sorted(Path("results/raw").glob("c*.json")):
+    for cond, d in CONDITIONS.items():
+        for rp in sorted(Path(d).glob("c*.json")):
+            rows.extend(_score_file(rp, convs, cond))
+    return rows
+
+
+def _score_file(rp, convs, cond):
+    rows = []
+    if True:
         res = json.load(open(rp))
         conv = convs[res["id"]]
         plants = {p["id"]: p for p in conv["plants"]}
@@ -58,6 +69,7 @@ def phase1():
                 else:
                     leak = "absent-from-summary"
                 rows.append({
+                    "cond": cond,
                     "conv": res["id"], "arm": arm, "plant": pid,
                     "category": plant["category"],
                     "kw_pass": kw_pass,
@@ -162,11 +174,11 @@ def aggregate(rows):
         if r["leak_class"] in ("absent-from-summary", "evicted-only"):
             cuts.append("clean")
         for cut in cuts:
-            key = (r["category"], r["arm"], cut)
+            key = (r["cond"], r["category"], r["arm"], cut)
             agg[key][0] += int(r["final_pass"])
             agg[key][1] += 1
-    return {f"{c}|{a}|{s}": {"pass": p, "n": n, "acc": p / n}
-            for (c, a, s), (p, n) in sorted(agg.items())}
+    return {f"{co}|{c}|{a}|{s}": {"pass": p, "n": n, "acc": p / n}
+            for (co, c, a, s), (p, n) in sorted(agg.items())}
 
 
 JUDGE_PARAPHRASE = (
@@ -195,28 +207,30 @@ def export_judge_queue(rows):
                 else JUDGE_FACT_FAIL if cat == "evicted_fact"
                 else JUDGE_STANCE)
         queue.append({
-            "key": f"{r['conv']}|{r['arm']}|{r['plant']}",
+            "key": f"{r['cond']}|{r['conv']}|{r['arm']}|{r['plant']}",
             "category": cat,
             "prompt": tmpl.format(**r),
         })
-    # paraphrase checks: one per plant, against the probe-mode summary
+    # paraphrase checks: one per (condition, plant), against that
+    # condition's probe-mode summary
     seen = set()
     summaries = {}
-    for rp in Path("results/raw").glob("c*.json"):
-        res = json.load(open(rp))
-        summaries[res["id"]] = res["probes"]["stats"]["summary_text"]
+    for cond, d in CONDITIONS.items():
+        for rp in Path(d).glob("c*.json"):
+            res = json.load(open(rp))
+            summaries[(cond, res["id"])] = res["probes"]["stats"]["summary_text"]
     for r in rows:
-        pk = (r["conv"], r["plant"])
+        pk = (r["cond"], r["conv"], r["plant"])
         if pk in seen or r["leak_class"] not in (
             "absent-from-summary", "evicted-only"
         ):
             continue
         seen.add(pk)
         queue.append({
-            "key": f"para|{r['conv']}|{r['plant']}",
+            "key": f"para|{r['cond']}|{r['conv']}|{r['plant']}",
             "category": "paraphrase-check",
             "prompt": JUDGE_PARAPHRASE.format(
-                gold=r["gold"], summary=summaries[r["conv"]]),
+                gold=r["gold"], summary=summaries[(r["cond"], r["conv"])]),
         })
     json.dump(queue, open("results/judge_queue.json", "w"), indent=1,
               ensure_ascii=False)
@@ -228,13 +242,13 @@ def apply_verdicts(rows):
     logf = open("results/judgments.jsonl", "w")
     # paraphrase upgrades first
     for r in rows:
-        v = verdicts.get(f"para|{r['conv']}|{r['plant']}", "")
+        v = verdicts.get(f"para|{r['cond']}|{r['conv']}|{r['plant']}", "")
         if v.strip().upper().startswith("YES") and r["leak_class"] in (
             "absent-from-summary", "evicted-only"
         ):
             r["leak_class"] = "paraphrased-in-summary"
     for r in rows:
-        key = f"{r['conv']}|{r['arm']}|{r['plant']}"
+        key = f"{r['cond']}|{r['conv']}|{r['arm']}|{r['plant']}"
         if not r["needs_judge"]:
             r["final_pass"] = r["kw_pass"]
             continue
