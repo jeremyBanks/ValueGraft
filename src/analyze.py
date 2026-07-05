@@ -31,12 +31,20 @@ def main():
         arms = res["cont"]["arms"]
         a, b = arms["A"]["mean_logprob"], arms["B"]["mean_logprob"]
         for name, d in arms.items():
+            if "mean_logprob" not in d:
+                continue
+            # gap closure is unstable when A ~ B (amendment 6): flag those
+            # conversations; their raw deltas still count, closure is excluded
+            # from closure aggregates.
+            unstable = (a - b) < 0.05
             rows.append({
                 "conv": res["id"],
                 "kind": "synthetic" if res["id"].startswith("c") else "natural",
                 "arm": name,
                 "mean_logprob": d["mean_logprob"],
-                "closure": (d["mean_logprob"] - b) / (a - b) if a != b else 0.0,
+                "delta_vs_b": d["mean_logprob"] - b,
+                "closure": (d["mean_logprob"] - b) / (a - b) if not unstable else None,
+                "unstable": unstable,
             })
 
     by_arm = defaultdict(list)
@@ -50,21 +58,27 @@ def main():
         if not arm_names:
             continue
         lines.append(f"\n## {kind} (n={len({r['conv'] for r in rows if r['kind']==kind})})\n")
-        lines.append("| arm | mean logprob | gap closure | 95% CI |")
-        lines.append("|---|---|---|---|")
+        lines.append("| arm | mean logprob | Δ vs B (nats) | gap closure | 95% CI |")
+        lines.append("|---|---|---|---|---|")
         order = ["A", "B", "C", "D"] + sorted(
             a for a in arm_names if a.startswith("E")
         )
         for arm in [a for a in order if a in arm_names]:
             rs = by_arm[(kind, arm)]
             lp = sum(r["mean_logprob"] for r in rs) / len(rs)
-            cl = [r["closure"] for r in rs]
-            mcl = sum(cl) / len(cl)
-            lo, hi = bootstrap_ci(cl)
-            lines.append(f"| {arm} | {lp:.4f} | {mcl:.3f} | [{lo:.3f}, {hi:.3f}] |")
+            dl = sum(r["delta_vs_b"] for r in rs) / len(rs)
+            cl = [r["closure"] for r in rs if r["closure"] is not None]
+            if cl:
+                mcl = sum(cl) / len(cl)
+                lo, hi = bootstrap_ci(cl)
+                cl_txt = f"{mcl:.3f} | [{lo:.3f}, {hi:.3f}]"
+            else:
+                mcl, lo, hi = None, None, None
+                cl_txt = "n/a | n/a"
+            lines.append(f"| {arm} | {lp:.4f} | {dl:+.4f} | {cl_txt} |")
             out[f"{kind}|{arm}"] = {
-                "mean_logprob": lp, "closure_mean": mcl,
-                "closure_ci": [lo, hi],
+                "mean_logprob": lp, "delta_vs_b": dl, "closure_mean": mcl,
+                "closure_ci": [lo, hi], "n_closure": len(cl),
                 "per_conv": {r["conv"]: r["closure"] for r in rs},
             }
 
@@ -78,7 +92,12 @@ def main():
     for cv in convs:
         rr = {r["arm"]: r for r in rows if r["conv"] == cv}
         cells = [f"{rr['A']['mean_logprob']:.3f}", f"{rr['B']['mean_logprob']:.3f}"]
-        cells += [f"{rr[a]['closure']:.2f}" if a in rr else "-" for a in arms_all]
+        cells += [
+            ("-" if a not in rr else
+             f"{rr[a]['delta_vs_b']:+.2f}n" if rr[a]["closure"] is None else
+             f"{rr[a]['closure']:.2f}")
+            for a in arms_all
+        ]
         lines.append(f"| {cv} | " + " | ".join(cells) + " |")
     Path("results/analysis.md").write_text("\n".join(lines) + "\n")
     json.dump(out, open("results/gap_closure.json", "w"), indent=1)
