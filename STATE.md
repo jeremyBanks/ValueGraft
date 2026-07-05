@@ -2,7 +2,17 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 05:15 07-05
+## Current focus (read this first) — updated 07:00 07-05
+
+**ALL PLANNED WORK COMPLETE.** Deliverables: RESULTS.md (4B pilot),
+RESULTS-30B-addendum.md, PHASE2-RESULTS.md (mitigation + tuned sweeps),
+blog-draft.md (complete incl. verified related-work; needs repo LINK +
+human review before publishing), scouting-notes.md (#12/#13 GO paths).
+Open follow-ups if resumed: publish blog (user decision), H-pack+tail
+hybrid, SWE-Gym trajectory replication, LongMemEval ≤16K subset, G/SoftGraft,
+Phase-2 cloud scale-up per phase2 doc.
+
+## Older focus (Phase-2-era) notes
 
 **Phase 2 COMPLETE at both scales — see PHASE2-RESULTS.md.** H-pack cuts
 fabrication vs production compaction (30B decoys 19:5→3:21); matched pair
