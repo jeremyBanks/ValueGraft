@@ -211,6 +211,36 @@ def build_alignment(b_ids, old_ids, special_ids, regions):
     return pairs
 
 
+def arm_h_pack_snapshot(summary, rope_base, pack_offset=None):
+    """H-pack: sinks + S's generation-time entries, keys re-rotated to packed
+    positions immediately after the sinks. Contiguous cache, plain KVCache
+    semantics (offset = number of stored entries).
+
+    pack_offset: target position of S's first token (default N_SINK). Passing
+    the ORIGINAL s_start reproduces H-gap layout (HP-0 identity check).
+    """
+    from rerotate import rotate_keys
+
+    snap = summary["snapshot"]
+    s0, s1 = summary["s_start"], summary["s_end"]
+    target = N_SINK if pack_offset is None else pack_offset
+    delta = target - s0
+    out = []
+    for k, v, off in snap:
+        ks = rotate_keys(k[..., s0:s1, :], delta, rope_base)
+        pk = mx.concatenate([k[..., :N_SINK, :], ks], axis=2)
+        pv = mx.concatenate([v[..., :N_SINK, :], v[..., s0:s1, :]], axis=2)
+        out.append((pk, pv, target + (s1 - s0)))
+    return out
+
+
+def bmin_pack_ids(summary, conv_ids):
+    """Token sequence for the matched control: the SAME token ids H-pack
+    retains — first N_SINK conversation tokens + S's token ids — prefilled
+    fresh as a contiguous sequence."""
+    return list(conv_ids[:N_SINK]) + list(summary["gen_ids"])
+
+
 class SwapKVCache:
     """E-inter: blends old V into incoming values AS THEY ARE WRITTEN during
     prefill, so layer l's attention output (and hence every upper layer's

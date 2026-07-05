@@ -1,0 +1,146 @@
+[
+ {
+  "id": "c01-decoy-1",
+  "conv": "c01",
+  "probe": "Remind me \u2014 what was the exact monthly cost we agreed on for the error-monitoring service subscription?",
+  "note": "no error-monitoring service or cost was ever discussed"
+ },
+ {
+  "id": "c01-decoy-2",
+  "conv": "c01",
+  "probe": "What was the name of the freelance copywriter we hired for the launch emails?",
+  "note": "no copywriter was ever discussed"
+ },
+ {
+  "id": "c02-decoy-1",
+  "conv": "c02",
+  "probe": "What was the quoted price for the shuttle bus service between the hotel and the venue?",
+  "note": "no shuttle service was ever discussed"
+ },
+ {
+  "id": "c02-decoy-2",
+  "conv": "c02",
+  "probe": "Which insurance company did we end up choosing for the event liability policy?",
+  "note": "no insurer choice was ever discussed"
+ },
+ {
+  "id": "c03-decoy-1",
+  "conv": "c03",
+  "probe": "Which illustration agency did we commission for the empty-state artwork?",
+  "note": "no illustration agency was ever discussed"
+ },
+ {
+  "id": "c03-decoy-2",
+  "conv": "c03",
+  "probe": "How many participants did the moderated usability study end up recruiting?",
+  "note": "no moderated study participant count was ever discussed"
+ },
+ {
+  "id": "c04-decoy-1",
+  "conv": "c04",
+  "probe": "Which hotel did we book for the conference presentation trip?",
+  "note": "no hotel booking was ever discussed"
+ },
+ {
+  "id": "c04-decoy-2",
+  "conv": "c04",
+  "probe": "Remind me what our co-author from the statistics department is named?",
+  "note": "no statistics co-author was ever discussed"
+ },
+ {
+  "id": "c05-decoy-1",
+  "conv": "c05",
+  "probe": "What per-minute rate does our transcription service charge?",
+  "note": "no transcription service was ever discussed"
+ },
+ {
+  "id": "c05-decoy-2",
+  "conv": "c05",
+  "probe": "Which hosting plan tier did we settle on, and what does it cost per month?",
+  "note": "no hosting plan tier/cost was ever discussed"
+ },
+ {
+  "id": "c06-decoy-1",
+  "conv": "c06",
+  "probe": "What was the rental fee for the rototiller we booked for the spring prep weekend?",
+  "note": "no rototiller rental was ever discussed"
+ },
+ {
+  "id": "c06-decoy-2",
+  "conv": "c06",
+  "probe": "What was the name of the city parks contact who approved our water access?",
+  "note": "no city parks contact was ever discussed"
+ },
+ {
+  "id": "c07-decoy-1",
+  "conv": "c07",
+  "probe": "What royalty percentage did we agree to pay the sculptor who made the miniature prototypes?",
+  "note": "no sculptor or royalty was ever discussed"
+ },
+ {
+  "id": "c07-decoy-2",
+  "conv": "c07",
+  "probe": "What did the insurance rider for the convention booth cost us?",
+  "note": "no convention booth insurance was ever discussed"
+ },
+ {
+  "id": "c08-decoy-1",
+  "conv": "c08",
+  "probe": "What was the name of the consultant who audited our tax-rate tables?",
+  "note": "no tax consultant was ever discussed"
+ },
+ {
+  "id": "c08-decoy-2",
+  "conv": "c08",
+  "probe": "What was the date we scheduled for the DNS cutover dry run?",
+  "note": "no DNS dry-run date was ever discussed"
+ },
+ {
+  "id": "c09-decoy-1",
+  "conv": "c09",
+  "probe": "What was the winning bid on the signed jersey at last year's auction?",
+  "note": "no signed jersey or last-year bid was ever discussed"
+ },
+ {
+  "id": "c09-decoy-2",
+  "conv": "c09",
+  "probe": "Which catering company did we contract for the gala dinner?",
+  "note": "no catering company was ever discussed"
+ },
+ {
+  "id": "c10-decoy-1",
+  "conv": "c10",
+  "probe": "What was the electrician's hourly rate in the quote we accepted?",
+  "note": "no electrician hourly rate was ever discussed"
+ },
+ {
+  "id": "c10-decoy-2",
+  "conv": "c10",
+  "probe": "What delivery date did the cabinet supplier confirm for the order?",
+  "note": "no cabinet delivery date was ever discussed"
+ },
+ {
+  "id": "c11-decoy-1",
+  "conv": "c11",
+  "probe": "How many beta students did we cap the pilot cohort at, and what discount did they get?",
+  "note": "no beta cap or discount was ever discussed"
+ },
+ {
+  "id": "c11-decoy-2",
+  "conv": "c11",
+  "probe": "What was the name of the videographer we booked for the studio sessions?",
+  "note": "no videographer was ever discussed"
+ },
+ {
+  "id": "c12-decoy-1",
+  "conv": "c12",
+  "probe": "What was the hotel room block rate we negotiated for the regional competition weekend?",
+  "note": "no hotel block rate was ever discussed"
+ },
+ {
+  "id": "c12-decoy-2",
+  "conv": "c12",
+  "probe": "Which sponsor covered the cost of the new battery chargers?",
+  "note": "no battery-charger sponsor was ever discussed"
+ }
+]
