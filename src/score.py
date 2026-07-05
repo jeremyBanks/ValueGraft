@@ -27,7 +27,20 @@ KEYWORD_CATS = {"referent", "sense", "evicted_fact"}
 ANTI_CATS = {"stance", "ruled_out"}
 
 
-CONDITIONS = {"std": "results/raw", "brief": "results/raw_brief"}
+import os
+
+# override e.g. SC_CONDS="std30:results/raw_30b,brief30:results/raw_30b_brief"
+_conds_env = os.environ.get("SC_CONDS")
+if _conds_env:
+    CONDITIONS = dict(kv.split(":", 1) for kv in _conds_env.split(","))
+else:
+    CONDITIONS = {"std": "results/raw", "brief": "results/raw_brief"}
+JUDGE_QUEUE = os.environ.get("SC_JUDGE_QUEUE", "results/judge_queue.json")
+JUDGE_VERDICTS = os.environ.get("SC_JUDGE_VERDICTS", "results/judge_verdicts.json")
+SCORES_OUT = os.environ.get("SC_SCORES_OUT", "results/scores.json")
+# optionally restrict judged categories, e.g. SC_JUDGE_CATS="referent,sense,evicted_fact"
+_jc = os.environ.get("SC_JUDGE_CATS")
+JUDGE_CATS = set(_jc.split(",")) if _jc else None
 
 # keyword-only arms (not centrally interpreted; saves judge volume)
 NO_JUDGE_ARMS = {"E-post-a0.75", "E-inter-a0.5"}
@@ -208,6 +221,8 @@ def export_judge_queue(rows):
         if not r["needs_judge"]:
             continue
         cat = r["category"]
+        if JUDGE_CATS is not None and cat not in JUDGE_CATS:
+            continue
         tmpl = (JUDGE_EQUIV if cat in {"referent", "sense"}
                 else JUDGE_FACT_FAIL if cat == "evicted_fact"
                 else JUDGE_STANCE)
@@ -237,13 +252,13 @@ def export_judge_queue(rows):
             "prompt": JUDGE_PARAPHRASE.format(
                 gold=r["gold"], summary=summaries[(r["cond"], r["conv"])]),
         })
-    json.dump(queue, open("results/judge_queue.json", "w"), indent=1,
+    json.dump(queue, open(JUDGE_QUEUE, "w"), indent=1,
               ensure_ascii=False)
     return queue
 
 
 def apply_verdicts(rows):
-    verdicts = json.load(open("results/judge_verdicts.json"))
+    verdicts = json.load(open(JUDGE_VERDICTS))
     logf = open("results/judgments.jsonl", "w")
     # paraphrase upgrades first
     for r in rows:
@@ -292,7 +307,7 @@ def main():
     else:  # "apply": use verdicts from the subagent judge
         rows = apply_verdicts(rows)
     out = {"rows": rows, "aggregate": aggregate(rows)}
-    json.dump(out, open("results/scores.json", "w"), indent=1, ensure_ascii=False)
+    json.dump(out, open(SCORES_OUT, "w"), indent=1, ensure_ascii=False)
     for k, v in out["aggregate"].items():
         if k.endswith("|all"):
             print(f"{k}: {v['acc']:.2f} ({v['pass']}/{v['n']})")

@@ -12,11 +12,14 @@ import json
 import sys
 from pathlib import Path
 
-BDIR = Path("results/judge_batches")
+import os
+BDIR = Path(os.environ.get("SC_JUDGE_BDIR", "results/judge_batches"))
+QUEUE = os.environ.get("SC_JUDGE_QUEUE", "results/judge_queue.json")
+VERDICTS = os.environ.get("SC_JUDGE_VERDICTS", "results/judge_verdicts.json")
 
 
 def split(batch_size=150):
-    queue = json.load(open("results/judge_queue.json"))
+    queue = json.load(open(QUEUE))
     BDIR.mkdir(parents=True, exist_ok=True)
     for old in BDIR.glob("batch_*.json"):
         old.unlink()
@@ -34,8 +37,8 @@ def merge():
     verdicts = {}
     for vf in sorted(BDIR.glob("verdicts_*.json")):
         verdicts.update(json.load(open(vf)))
-    json.dump(verdicts, open("results/judge_verdicts.json", "w"), indent=1)
-    queue = json.load(open("results/judge_queue.json"))
+    json.dump(verdicts, open(VERDICTS, "w"), indent=1)
+    queue = json.load(open(QUEUE))
     missing = [q["key"] for q in queue if q["key"] not in verdicts]
     print(f"{len(verdicts)} verdicts merged; {len(missing)} missing")
     if missing:
