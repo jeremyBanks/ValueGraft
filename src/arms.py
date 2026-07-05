@@ -48,6 +48,16 @@ SUMMARY_REQUEST = (
     "Do not add commentary before or after the note itself."
 )
 
+# Summary-shadow manipulation (brief §6 plant 6, via scarcity): a terse
+# summary starves the text channel so probe recovery must come from retained
+# activations. Used by the brief-summary condition.
+SUMMARY_REQUEST_BRIEF = (
+    "Please write a very brief context note (3-5 sentences, no lists) giving "
+    "only the big picture of our conversation so far: what the project is and "
+    "roughly where we are. Do not include specific decisions, names, numbers, "
+    "or details. No commentary before or after."
+)
+
 
 def render(tokenizer, msgs, gen_prompt):
     return tokenizer.apply_chat_template(
@@ -86,7 +96,7 @@ def pick_tail_start(tokenizer, msgs, ids, min_msg, frac=0.75):
 
 # ---------------------------------------------------------------- summary
 
-def generate_summary(model, tokenizer, msgs, max_tokens=900):
+def generate_summary(model, tokenizer, msgs, max_tokens=900, request=None):
     """Generate S greedily in-context at the end of `msgs`.
 
     Returns text, S's old-context token span [s_start, s_end) (positions whose
@@ -95,7 +105,9 @@ def generate_summary(model, tokenizer, msgs, max_tokens=900):
     """
     conv_ids = canonical_ids(tokenizer, msgs)
     req_ids = render(
-        tokenizer, msgs + [{"role": "user", "content": SUMMARY_REQUEST}], True
+        tokenizer,
+        msgs + [{"role": "user", "content": request or SUMMARY_REQUEST}],
+        True,
     )
     assert req_ids[: len(conv_ids)] == conv_ids
     cache, logits = prefill(model, req_ids)

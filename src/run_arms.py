@@ -60,7 +60,8 @@ def clear(*objs):
 class ArmSet:
     """Builds arm caches lazily for a given context (msgs) and tail split."""
 
-    def __init__(self, model, tokenizer, msgs, tail_start_msg):
+    def __init__(self, model, tokenizer, msgs, tail_start_msg,
+                 summary_request=None):
         self.model, self.tok = model, tokenizer
         self.msgs = msgs
         self.tail_start_msg = tail_start_msg
@@ -72,7 +73,8 @@ class ArmSet:
             self.tail_start_msg = tail_start_msg
         self.tail_start_tok = starts[tail_start_msg]
         self.special_ids = set(tokenizer.all_special_ids)
-        self.summary = generate_summary(model, tokenizer, msgs)
+        self.summary = generate_summary(model, tokenizer, msgs,
+                                        request=summary_request)
         self.b_msgs = build_b_messages(msgs, self.summary["text"], tail_start_msg)
         self.b_ids = canonical_ids(tokenizer, self.b_msgs)
         b_starts = message_token_starts(tokenizer, self.b_ids, len(self.b_msgs))
