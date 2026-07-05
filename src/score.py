@@ -266,7 +266,10 @@ def apply_verdicts(rows):
                 "fabricated" if v.startswith("FABRICATED")
                 else "admitted" if v.startswith("ADMITTED") else "other")
         else:
-            r["final_pass"] = r["kw_pass"] and v.startswith("YES")
+            # stance/ruled_out: the judge's consistency verdict carries the
+            # category; anti-keyword hits alone over-penalize answers that
+            # QUOTE the disliked thing while complying (arm A does this a lot).
+            r["final_pass"] = v.startswith("YES")
         logf.write(json.dumps({"key": key, "judge": v,
                                "answer": r["answer"]}) + "\n")
     logf.close()

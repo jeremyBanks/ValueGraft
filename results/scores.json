@@ -96,7 +96,7 @@
    "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -245,7 +245,7 @@
    "probe": "Give me five ideas for adding urgency to the launch landing page.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -262,7 +262,7 @@
    "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -413,7 +413,7 @@
    "probe": "Give me five ideas for adding urgency to the launch landing page.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -770,7 +770,7 @@
    "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -939,7 +939,7 @@
    "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -956,7 +956,7 @@
    "probe": "What should we try next for early customer outreach?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -1090,7 +1090,7 @@
    "probe": "Give me five ideas for adding urgency to the launch landing page.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -1107,7 +1107,7 @@
    "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -1275,7 +1275,7 @@
    "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -2088,7 +2088,7 @@
    "probe": "Give me five ideas for adding urgency to the launch landing page.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -2615,7 +2615,7 @@
    "probe": "Suggest three sponsor placement ideas we could include in the packages.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -2632,7 +2632,7 @@
    "probe": "What should we try next for the evening social venue?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -2815,7 +2815,7 @@
    "probe": "What should we try next for structuring ticket pricing?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -2948,7 +2948,7 @@
    "probe": "Suggest three sponsor placement ideas we could include in the packages.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -2965,7 +2965,7 @@
    "probe": "What should we try next for the evening social venue?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -3304,7 +3304,7 @@
    "probe": "What should we try next for the evening social venue?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -3438,7 +3438,7 @@
    "probe": "Give me three ideas to boost attendee engagement during the day.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -3455,7 +3455,7 @@
    "probe": "Suggest three sponsor placement ideas we could include in the packages.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -3472,7 +3472,7 @@
    "probe": "What should we try next for the evening social venue?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -3640,7 +3640,7 @@
    "probe": "What should we try next for the evening social venue?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -3657,7 +3657,7 @@
    "probe": "What should we try next for structuring ticket pricing?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -3789,7 +3789,7 @@
    "probe": "Suggest three sponsor placement ideas we could include in the packages.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -4614,7 +4614,7 @@
    "probe": "Suggest three sponsor placement ideas we could include in the packages.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -5109,7 +5109,7 @@
    "probe": "Give me three ideas for surfacing seasonal plant-care content on the home screen.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -5126,7 +5126,7 @@
    "probe": "Suggest three ways to encourage users to log waterings more consistently.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -5293,7 +5293,7 @@
    "probe": "Suggest three ways to encourage users to log waterings more consistently.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -5953,7 +5953,7 @@
    "probe": "Give me three ideas for surfacing seasonal plant-care content on the home screen.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -5970,7 +5970,7 @@
    "probe": "Suggest three ways to encourage users to log waterings more consistently.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -6139,7 +6139,7 @@
    "probe": "Suggest three ways to encourage users to log waterings more consistently.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -6969,7 +6969,7 @@
    "probe": "Suggest three ways to encourage users to log waterings more consistently.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -7635,7 +7635,7 @@
    "probe": "Suggest three ways to get early feedback on the paper before the reviews arrive.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -7652,7 +7652,7 @@
    "probe": "What chart types would you suggest for showing the error-category breakdown in the analysis section?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -7669,7 +7669,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -7836,7 +7836,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -8344,7 +8344,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -8493,7 +8493,7 @@
    "probe": "What chart types would you suggest for showing the error-category breakdown in the analysis section?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -8510,7 +8510,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -8677,7 +8677,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -8829,7 +8829,7 @@
    "probe": "What chart types would you suggest for showing the error-category breakdown in the analysis section?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -8846,7 +8846,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -9175,7 +9175,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -9678,7 +9678,7 @@
    "probe": "What should we try next to expand the training data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -10207,7 +10207,7 @@
    "probe": "What should we try next for recording remote guests?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -10866,7 +10866,7 @@
    "probe": "What should we try next for the publishing cadence?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -11202,7 +11202,7 @@
    "probe": "What should we try next for the publishing cadence?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -12678,7 +12678,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -12695,7 +12695,7 @@
    "probe": "Give me three ideas to raise money for the new shed roof.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -12712,7 +12712,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -12844,7 +12844,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -12861,7 +12861,7 @@
    "probe": "Give me three ideas to raise money for the new shed roof.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -12878,7 +12878,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13011,7 +13011,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13028,7 +13028,7 @@
    "probe": "Give me three ideas to raise money for the new shed roof.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13366,7 +13366,7 @@
    "probe": "Give me three ideas to raise money for the new shed roof.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13383,7 +13383,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13516,7 +13516,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13550,7 +13550,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13682,7 +13682,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13716,7 +13716,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13848,7 +13848,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13865,7 +13865,7 @@
    "probe": "Give me three ideas to raise money for the new shed roof.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -13882,7 +13882,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -14176,7 +14176,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -14210,7 +14210,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -14674,7 +14674,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -14708,7 +14708,7 @@
    "probe": "What should we try next for organizing volunteer shifts?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -15219,7 +15219,7 @@
    "probe": "Where should we go next for prototype copies?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -15401,7 +15401,7 @@
    "probe": "What should we try next for pre-campaign marketing?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -16041,7 +16041,7 @@
    "probe": "I need twelve more card illustrations and the budget is tight. Give me three options.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -16075,7 +16075,7 @@
    "probe": "What should we try next for pre-campaign marketing?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -16208,7 +16208,7 @@
    "probe": "I need twelve more card illustrations and the budget is tight. Give me three options.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -16376,7 +16376,7 @@
    "probe": "I need twelve more card illustrations and the budget is tight. Give me three options.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -16410,7 +16410,7 @@
    "probe": "What should we try next for pre-campaign marketing?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -17699,7 +17699,7 @@
    "probe": "Give me three options for structuring our URLs after the migration.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -17716,7 +17716,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -17733,7 +17733,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -17750,7 +17750,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -17883,7 +17883,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -17900,7 +17900,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -17917,7 +17917,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18052,7 +18052,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18069,7 +18069,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18086,7 +18086,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18222,7 +18222,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18393,7 +18393,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18410,7 +18410,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18427,7 +18427,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18544,7 +18544,7 @@
    "probe": "Give me three options for structuring our URLs after the migration.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18561,7 +18561,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18578,7 +18578,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18595,7 +18595,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18730,7 +18730,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18747,7 +18747,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18764,7 +18764,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18899,7 +18899,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18916,7 +18916,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -18933,7 +18933,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19228,7 +19228,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19245,7 +19245,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19262,7 +19262,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19556,7 +19556,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19708,7 +19708,7 @@
    "probe": "Give me three options for structuring our URLs after the migration.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19725,7 +19725,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19742,7 +19742,7 @@
    "probe": "What should we try next for the site search solution?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -19759,7 +19759,7 @@
    "probe": "What approach should we try next for transferring the catalog data?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -20253,7 +20253,7 @@
    "probe": "What should we use for collecting day-of donations at the gala?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -20270,7 +20270,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -20419,7 +20419,7 @@
    "probe": "What should we use for collecting day-of donations at the gala?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -20436,7 +20436,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -20603,7 +20603,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -20926,7 +20926,7 @@
    "probe": "What should we use for collecting day-of donations at the gala?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -20943,7 +20943,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -21111,7 +21111,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -21244,7 +21244,7 @@
    "probe": "Draft the opening two sentences of the gala appeal letter.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -21278,7 +21278,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -21413,7 +21413,7 @@
    "probe": "Draft the opening two sentences of the gala appeal letter.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -21447,7 +21447,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -22279,7 +22279,7 @@
    "probe": "What should we try next for finding a gala emcee?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -22738,7 +22738,7 @@
    "probe": "Give me three storage ideas for the awkward corner by the range.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -22789,7 +22789,7 @@
    "probe": "What should we look at next for the main floor flooring?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -22907,7 +22907,7 @@
    "probe": "Give me three storage ideas for the awkward corner by the range.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -23122,7 +23122,7 @@
    "probe": "What should we look at next for the main floor flooring?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -23456,7 +23456,7 @@
    "probe": "What should we look at next for the main floor flooring?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -23570,7 +23570,7 @@
    "probe": "Give me three storage ideas for the awkward corner by the range.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -23621,7 +23621,7 @@
    "probe": "What should we look at next for the main floor flooring?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -23785,7 +23785,7 @@
    "probe": "What should we look at next for the main floor flooring?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -23898,7 +23898,7 @@
    "probe": "Give me three storage ideas for the awkward corner by the range.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -24719,7 +24719,7 @@
    "probe": "Give me three storage ideas for the awkward corner by the range.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -24770,7 +24770,7 @@
    "probe": "What should we look at next for the main floor flooring?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -25228,7 +25228,7 @@
    "probe": "Give me three ways to structure the pricing page offer.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -25411,7 +25411,7 @@
    "probe": "How should I present the lesson on window functions?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -25581,7 +25581,7 @@
    "probe": "How should I present the lesson on window functions?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -26073,7 +26073,7 @@
    "probe": "Give me three ways to structure the pricing page offer.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -26090,7 +26090,7 @@
    "probe": "How should I present the lesson on window functions?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -26258,7 +26258,7 @@
    "probe": "How should I present the lesson on window functions?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -26428,7 +26428,7 @@
    "probe": "How should I present the lesson on window functions?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -27260,7 +27260,7 @@
    "probe": "How should I present the lesson on window functions?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -27757,7 +27757,7 @@
    "probe": "Give me three fundraising ideas for covering our travel costs.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -27791,7 +27791,7 @@
    "probe": "What should we try next for target detection in autonomous?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -27942,7 +27942,7 @@
    "probe": "We're 1.5 pounds over the weight limit. Give me three ways to get under.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -28097,7 +28097,7 @@
    "probe": "Give me three fundraising ideas for covering our travel costs.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -28441,7 +28441,7 @@
    "probe": "Give me three fundraising ideas for covering our travel costs.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -28475,7 +28475,7 @@
    "probe": "What should we try next for target detection in autonomous?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -28613,7 +28613,7 @@
    "probe": "Give me three fundraising ideas for covering our travel costs.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -28647,7 +28647,7 @@
    "probe": "What should we try next for target detection in autonomous?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -29793,7 +29793,7 @@
    "probe": "Give me three fundraising ideas for covering our travel costs.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "std",
@@ -35463,7 +35463,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -36150,7 +36150,7 @@
    "probe": "The squash bugs are back. Give me three ways to deal with them.",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -37543,7 +37543,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -37714,7 +37714,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -37886,7 +37886,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -38058,7 +38058,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -38228,7 +38228,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -38400,7 +38400,7 @@
    "probe": "How should we handle the DNS switch during cutover?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -39808,7 +39808,7 @@
    "probe": "What should we look at next for the main floor flooring?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -40628,7 +40628,7 @@
    "probe": "How should I present the lesson on window functions?",
    "needs_judge": true,
    "judge": "YES",
-   "final_pass": false
+   "final_pass": true
   },
   {
    "cond": "brief",
@@ -42832,19 +42832,19 @@
    "acc": 0.9166666666666666
   },
   "brief|ruled_out|C|absent-from-summary": {
-   "pass": 19,
+   "pass": 20,
    "n": 24,
-   "acc": 0.7916666666666666
+   "acc": 0.8333333333333334
   },
   "brief|ruled_out|C|all": {
-   "pass": 19,
+   "pass": 20,
    "n": 24,
-   "acc": 0.7916666666666666
+   "acc": 0.8333333333333334
   },
   "brief|ruled_out|C|clean": {
-   "pass": 19,
+   "pass": 20,
    "n": 24,
-   "acc": 0.7916666666666666
+   "acc": 0.8333333333333334
   },
   "brief|ruled_out|E-post-a0.5|absent-from-summary": {
    "pass": 21,
@@ -42982,19 +42982,19 @@
    "acc": 0.125
   },
   "brief|stance|B|absent-from-summary": {
-   "pass": 19,
+   "pass": 22,
    "n": 23,
-   "acc": 0.8260869565217391
+   "acc": 0.9565217391304348
   },
   "brief|stance|B|all": {
-   "pass": 19,
+   "pass": 22,
    "n": 24,
-   "acc": 0.7916666666666666
+   "acc": 0.9166666666666666
   },
   "brief|stance|B|clean": {
-   "pass": 19,
+   "pass": 22,
    "n": 23,
-   "acc": 0.8260869565217391
+   "acc": 0.9565217391304348
   },
   "brief|stance|B|explicit-in-summary": {
    "pass": 0,
@@ -43002,19 +43002,19 @@
    "acc": 0.0
   },
   "brief|stance|B-min|absent-from-summary": {
-   "pass": 21,
+   "pass": 22,
    "n": 23,
-   "acc": 0.9130434782608695
+   "acc": 0.9565217391304348
   },
   "brief|stance|B-min|all": {
-   "pass": 22,
+   "pass": 23,
    "n": 24,
-   "acc": 0.9166666666666666
+   "acc": 0.9583333333333334
   },
   "brief|stance|B-min|clean": {
-   "pass": 21,
+   "pass": 22,
    "n": 23,
-   "acc": 0.9130434782608695
+   "acc": 0.9565217391304348
   },
   "brief|stance|B-min|explicit-in-summary": {
    "pass": 1,
@@ -43022,19 +43022,19 @@
    "acc": 1.0
   },
   "brief|stance|C|absent-from-summary": {
-   "pass": 19,
+   "pass": 20,
    "n": 23,
-   "acc": 0.8260869565217391
+   "acc": 0.8695652173913043
   },
   "brief|stance|C|all": {
-   "pass": 19,
+   "pass": 20,
    "n": 24,
-   "acc": 0.7916666666666666
+   "acc": 0.8333333333333334
   },
   "brief|stance|C|clean": {
-   "pass": 19,
+   "pass": 20,
    "n": 23,
-   "acc": 0.8260869565217391
+   "acc": 0.8695652173913043
   },
   "brief|stance|C|explicit-in-summary": {
    "pass": 0,
@@ -43042,19 +43042,19 @@
    "acc": 0.0
   },
   "brief|stance|E-post-a0.5|absent-from-summary": {
-   "pass": 17,
+   "pass": 19,
    "n": 23,
-   "acc": 0.7391304347826086
+   "acc": 0.8260869565217391
   },
   "brief|stance|E-post-a0.5|all": {
-   "pass": 17,
+   "pass": 19,
    "n": 24,
-   "acc": 0.7083333333333334
+   "acc": 0.7916666666666666
   },
   "brief|stance|E-post-a0.5|clean": {
-   "pass": 17,
+   "pass": 19,
    "n": 23,
-   "acc": 0.7391304347826086
+   "acc": 0.8260869565217391
   },
   "brief|stance|E-post-a0.5|explicit-in-summary": {
    "pass": 0,
@@ -43062,19 +43062,19 @@
    "acc": 0.0
   },
   "brief|stance|E-post-a1.0|absent-from-summary": {
-   "pass": 21,
+   "pass": 22,
    "n": 23,
-   "acc": 0.9130434782608695
+   "acc": 0.9565217391304348
   },
   "brief|stance|E-post-a1.0|all": {
-   "pass": 21,
+   "pass": 22,
    "n": 24,
-   "acc": 0.875
+   "acc": 0.9166666666666666
   },
   "brief|stance|E-post-a1.0|clean": {
-   "pass": 21,
+   "pass": 22,
    "n": 23,
-   "acc": 0.9130434782608695
+   "acc": 0.9565217391304348
   },
   "brief|stance|E-post-a1.0|explicit-in-summary": {
    "pass": 0,
@@ -43082,19 +43082,19 @@
    "acc": 0.0
   },
   "brief|stance|H-gap|absent-from-summary": {
-   "pass": 17,
+   "pass": 18,
    "n": 23,
-   "acc": 0.7391304347826086
+   "acc": 0.782608695652174
   },
   "brief|stance|H-gap|all": {
-   "pass": 18,
+   "pass": 19,
    "n": 24,
-   "acc": 0.75
+   "acc": 0.7916666666666666
   },
   "brief|stance|H-gap|clean": {
-   "pass": 17,
+   "pass": 18,
    "n": 23,
-   "acc": 0.7391304347826086
+   "acc": 0.782608695652174
   },
   "brief|stance|H-gap|explicit-in-summary": {
    "pass": 1,
@@ -43782,9 +43782,9 @@
    "acc": 1.0
   },
   "std|ruled_out|A|all": {
-   "pass": 10,
+   "pass": 21,
    "n": 24,
-   "acc": 0.4166666666666667
+   "acc": 0.875
   },
   "std|ruled_out|A|clean": {
    "pass": 4,
@@ -43792,14 +43792,14 @@
    "acc": 1.0
   },
   "std|ruled_out|A|explicit-in-summary": {
-   "pass": 4,
+   "pass": 13,
    "n": 16,
-   "acc": 0.25
+   "acc": 0.8125
   },
   "std|ruled_out|A|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 4,
    "n": 4,
-   "acc": 0.5
+   "acc": 1.0
   },
   "std|ruled_out|B|absent-from-summary": {
    "pass": 4,
@@ -43807,9 +43807,9 @@
    "acc": 1.0
   },
   "std|ruled_out|B|all": {
-   "pass": 15,
+   "pass": 23,
    "n": 24,
-   "acc": 0.625
+   "acc": 0.9583333333333334
   },
   "std|ruled_out|B|clean": {
    "pass": 4,
@@ -43817,14 +43817,14 @@
    "acc": 1.0
   },
   "std|ruled_out|B|explicit-in-summary": {
-   "pass": 9,
+   "pass": 15,
    "n": 16,
-   "acc": 0.5625
+   "acc": 0.9375
   },
   "std|ruled_out|B|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 4,
    "n": 4,
-   "acc": 0.5
+   "acc": 1.0
   },
   "std|ruled_out|B-causal|absent-from-summary": {
    "pass": 4,
@@ -43832,9 +43832,9 @@
    "acc": 1.0
   },
   "std|ruled_out|B-causal|all": {
-   "pass": 16,
+   "pass": 22,
    "n": 24,
-   "acc": 0.6666666666666666
+   "acc": 0.9166666666666666
   },
   "std|ruled_out|B-causal|clean": {
    "pass": 4,
@@ -43842,14 +43842,14 @@
    "acc": 1.0
   },
   "std|ruled_out|B-causal|explicit-in-summary": {
-   "pass": 10,
+   "pass": 14,
    "n": 16,
-   "acc": 0.625
+   "acc": 0.875
   },
   "std|ruled_out|B-causal|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 4,
    "n": 4,
-   "acc": 0.5
+   "acc": 1.0
   },
   "std|ruled_out|B-min|absent-from-summary": {
    "pass": 4,
@@ -43857,9 +43857,9 @@
    "acc": 1.0
   },
   "std|ruled_out|B-min|all": {
-   "pass": 11,
+   "pass": 21,
    "n": 24,
-   "acc": 0.4583333333333333
+   "acc": 0.875
   },
   "std|ruled_out|B-min|clean": {
    "pass": 4,
@@ -43867,14 +43867,14 @@
    "acc": 1.0
   },
   "std|ruled_out|B-min|explicit-in-summary": {
-   "pass": 6,
+   "pass": 13,
    "n": 16,
-   "acc": 0.375
+   "acc": 0.8125
   },
   "std|ruled_out|B-min|paraphrased-in-summary": {
-   "pass": 1,
+   "pass": 4,
    "n": 4,
-   "acc": 0.25
+   "acc": 1.0
   },
   "std|ruled_out|C|absent-from-summary": {
    "pass": 4,
@@ -43882,9 +43882,9 @@
    "acc": 1.0
   },
   "std|ruled_out|C|all": {
-   "pass": 18,
+   "pass": 23,
    "n": 24,
-   "acc": 0.75
+   "acc": 0.9583333333333334
   },
   "std|ruled_out|C|clean": {
    "pass": 4,
@@ -43892,9 +43892,9 @@
    "acc": 1.0
   },
   "std|ruled_out|C|explicit-in-summary": {
-   "pass": 10,
+   "pass": 15,
    "n": 16,
-   "acc": 0.625
+   "acc": 0.9375
   },
   "std|ruled_out|C|paraphrased-in-summary": {
    "pass": 4,
@@ -43982,9 +43982,9 @@
    "acc": 1.0
   },
   "std|ruled_out|E-post-a0.25|all": {
-   "pass": 14,
+   "pass": 23,
    "n": 24,
-   "acc": 0.5833333333333334
+   "acc": 0.9583333333333334
   },
   "std|ruled_out|E-post-a0.25|clean": {
    "pass": 4,
@@ -43992,14 +43992,14 @@
    "acc": 1.0
   },
   "std|ruled_out|E-post-a0.25|explicit-in-summary": {
-   "pass": 8,
+   "pass": 15,
    "n": 16,
-   "acc": 0.5
+   "acc": 0.9375
   },
   "std|ruled_out|E-post-a0.25|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 4,
    "n": 4,
-   "acc": 0.5
+   "acc": 1.0
   },
   "std|ruled_out|E-post-a0.5|absent-from-summary": {
    "pass": 4,
@@ -44007,9 +44007,9 @@
    "acc": 1.0
   },
   "std|ruled_out|E-post-a0.5|all": {
-   "pass": 16,
+   "pass": 22,
    "n": 24,
-   "acc": 0.6666666666666666
+   "acc": 0.9166666666666666
   },
   "std|ruled_out|E-post-a0.5|clean": {
    "pass": 4,
@@ -44017,14 +44017,14 @@
    "acc": 1.0
   },
   "std|ruled_out|E-post-a0.5|explicit-in-summary": {
-   "pass": 10,
+   "pass": 14,
    "n": 16,
-   "acc": 0.625
+   "acc": 0.875
   },
   "std|ruled_out|E-post-a0.5|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 4,
    "n": 4,
-   "acc": 0.5
+   "acc": 1.0
   },
   "std|ruled_out|E-post-a0.75|absent-from-summary": {
    "pass": 4,
@@ -44057,9 +44057,9 @@
    "acc": 1.0
   },
   "std|ruled_out|E-post-a1.0|all": {
-   "pass": 16,
+   "pass": 20,
    "n": 24,
-   "acc": 0.6666666666666666
+   "acc": 0.8333333333333334
   },
   "std|ruled_out|E-post-a1.0|clean": {
    "pass": 4,
@@ -44067,14 +44067,14 @@
    "acc": 1.0
   },
   "std|ruled_out|E-post-a1.0|explicit-in-summary": {
-   "pass": 10,
+   "pass": 12,
    "n": 16,
-   "acc": 0.625
+   "acc": 0.75
   },
   "std|ruled_out|E-post-a1.0|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 4,
    "n": 4,
-   "acc": 0.5
+   "acc": 1.0
   },
   "std|ruled_out|E-shuffled|absent-from-summary": {
    "pass": 3,
@@ -44132,9 +44132,9 @@
    "acc": 1.0
   },
   "std|ruled_out|H-gap|all": {
-   "pass": 12,
+   "pass": 22,
    "n": 24,
-   "acc": 0.5
+   "acc": 0.9166666666666666
   },
   "std|ruled_out|H-gap|clean": {
    "pass": 4,
@@ -44142,14 +44142,14 @@
    "acc": 1.0
   },
   "std|ruled_out|H-gap|explicit-in-summary": {
-   "pass": 6,
+   "pass": 14,
    "n": 16,
-   "acc": 0.375
+   "acc": 0.875
   },
   "std|ruled_out|H-gap|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 4,
    "n": 4,
-   "acc": 0.5
+   "acc": 1.0
   },
   "std|sense|A|absent-from-summary": {
    "pass": 2,
@@ -44527,104 +44527,104 @@
    "acc": 1.0
   },
   "std|stance|A|absent-from-summary": {
-   "pass": 0,
+   "pass": 2,
    "n": 4,
-   "acc": 0.0
+   "acc": 0.5
   },
   "std|stance|A|all": {
-   "pass": 8,
+   "pass": 21,
    "n": 24,
-   "acc": 0.3333333333333333
+   "acc": 0.875
   },
   "std|stance|A|clean": {
-   "pass": 0,
+   "pass": 2,
    "n": 4,
-   "acc": 0.0
+   "acc": 0.5
   },
   "std|stance|A|explicit-in-summary": {
-   "pass": 5,
+   "pass": 7,
    "n": 8,
-   "acc": 0.625
+   "acc": 0.875
   },
   "std|stance|A|paraphrased-in-summary": {
-   "pass": 3,
+   "pass": 12,
    "n": 12,
-   "acc": 0.25
+   "acc": 1.0
   },
   "std|stance|B|absent-from-summary": {
-   "pass": 1,
+   "pass": 2,
    "n": 4,
-   "acc": 0.25
+   "acc": 0.5
   },
   "std|stance|B|all": {
-   "pass": 13,
+   "pass": 22,
    "n": 24,
-   "acc": 0.5416666666666666
+   "acc": 0.9166666666666666
   },
   "std|stance|B|clean": {
-   "pass": 1,
+   "pass": 2,
    "n": 4,
-   "acc": 0.25
+   "acc": 0.5
   },
   "std|stance|B|explicit-in-summary": {
-   "pass": 5,
+   "pass": 8,
    "n": 8,
-   "acc": 0.625
+   "acc": 1.0
   },
   "std|stance|B|paraphrased-in-summary": {
-   "pass": 7,
+   "pass": 12,
    "n": 12,
-   "acc": 0.5833333333333334
+   "acc": 1.0
   },
   "std|stance|B-causal|absent-from-summary": {
-   "pass": 3,
+   "pass": 4,
    "n": 4,
-   "acc": 0.75
+   "acc": 1.0
   },
   "std|stance|B-causal|all": {
-   "pass": 15,
+   "pass": 23,
    "n": 24,
-   "acc": 0.625
+   "acc": 0.9583333333333334
   },
   "std|stance|B-causal|clean": {
+   "pass": 4,
+   "n": 4,
+   "acc": 1.0
+  },
+  "std|stance|B-causal|explicit-in-summary": {
+   "pass": 8,
+   "n": 8,
+   "acc": 1.0
+  },
+  "std|stance|B-causal|paraphrased-in-summary": {
+   "pass": 11,
+   "n": 12,
+   "acc": 0.9166666666666666
+  },
+  "std|stance|B-min|absent-from-summary": {
    "pass": 3,
    "n": 4,
    "acc": 0.75
   },
-  "std|stance|B-causal|explicit-in-summary": {
+  "std|stance|B-min|all": {
+   "pass": 21,
+   "n": 24,
+   "acc": 0.875
+  },
+  "std|stance|B-min|clean": {
+   "pass": 3,
+   "n": 4,
+   "acc": 0.75
+  },
+  "std|stance|B-min|explicit-in-summary": {
    "pass": 6,
    "n": 8,
    "acc": 0.75
   },
-  "std|stance|B-causal|paraphrased-in-summary": {
-   "pass": 6,
-   "n": 12,
-   "acc": 0.5
-  },
-  "std|stance|B-min|absent-from-summary": {
-   "pass": 1,
-   "n": 4,
-   "acc": 0.25
-  },
-  "std|stance|B-min|all": {
-   "pass": 7,
-   "n": 24,
-   "acc": 0.2916666666666667
-  },
-  "std|stance|B-min|clean": {
-   "pass": 1,
-   "n": 4,
-   "acc": 0.25
-  },
-  "std|stance|B-min|explicit-in-summary": {
-   "pass": 4,
-   "n": 8,
-   "acc": 0.5
-  },
   "std|stance|B-min|paraphrased-in-summary": {
-   "pass": 2,
+   "pass": 12,
    "n": 12,
-   "acc": 0.16666666666666666
+   "acc": 1.0
   },
   "std|stance|C|absent-from-summary": {
    "pass": 3,
@@ -44632,9 +44632,9 @@
    "acc": 0.75
   },
   "std|stance|C|all": {
-   "pass": 15,
+   "pass": 22,
    "n": 24,
-   "acc": 0.625
+   "acc": 0.9166666666666666
   },
   "std|stance|C|clean": {
    "pass": 3,
@@ -44642,14 +44642,14 @@
    "acc": 0.75
   },
   "std|stance|C|explicit-in-summary": {
-   "pass": 5,
+   "pass": 7,
    "n": 8,
-   "acc": 0.625
+   "acc": 0.875
   },
   "std|stance|C|paraphrased-in-summary": {
-   "pass": 7,
+   "pass": 12,
    "n": 12,
-   "acc": 0.5833333333333334
+   "acc": 1.0
   },
   "std|stance|D|absent-from-summary": {
    "pass": 2,
@@ -44657,9 +44657,9 @@
    "acc": 0.5
   },
   "std|stance|D|all": {
-   "pass": 19,
+   "pass": 20,
    "n": 24,
-   "acc": 0.7916666666666666
+   "acc": 0.8333333333333334
   },
   "std|stance|D|clean": {
    "pass": 2,
@@ -44672,9 +44672,9 @@
    "acc": 0.875
   },
   "std|stance|D|paraphrased-in-summary": {
-   "pass": 10,
+   "pass": 11,
    "n": 12,
-   "acc": 0.8333333333333334
+   "acc": 0.9166666666666666
   },
   "std|stance|E-inter-a0.5|absent-from-summary": {
    "pass": 4,
@@ -44707,9 +44707,9 @@
    "acc": 0.5
   },
   "std|stance|E-inter-a1.0|all": {
-   "pass": 20,
+   "pass": 22,
    "n": 24,
-   "acc": 0.8333333333333334
+   "acc": 0.9166666666666666
   },
   "std|stance|E-inter-a1.0|clean": {
    "pass": 2,
@@ -44717,64 +44717,64 @@
    "acc": 0.5
   },
   "std|stance|E-inter-a1.0|explicit-in-summary": {
-   "pass": 7,
+   "pass": 8,
    "n": 8,
-   "acc": 0.875
+   "acc": 1.0
   },
   "std|stance|E-inter-a1.0|paraphrased-in-summary": {
-   "pass": 11,
+   "pass": 12,
    "n": 12,
-   "acc": 0.9166666666666666
+   "acc": 1.0
   },
   "std|stance|E-post-a0.25|absent-from-summary": {
-   "pass": 3,
+   "pass": 4,
    "n": 4,
-   "acc": 0.75
+   "acc": 1.0
   },
   "std|stance|E-post-a0.25|all": {
-   "pass": 16,
+   "pass": 24,
    "n": 24,
-   "acc": 0.6666666666666666
+   "acc": 1.0
   },
   "std|stance|E-post-a0.25|clean": {
+   "pass": 4,
+   "n": 4,
+   "acc": 1.0
+  },
+  "std|stance|E-post-a0.25|explicit-in-summary": {
+   "pass": 8,
+   "n": 8,
+   "acc": 1.0
+  },
+  "std|stance|E-post-a0.25|paraphrased-in-summary": {
+   "pass": 12,
+   "n": 12,
+   "acc": 1.0
+  },
+  "std|stance|E-post-a0.5|absent-from-summary": {
    "pass": 3,
    "n": 4,
    "acc": 0.75
   },
-  "std|stance|E-post-a0.25|explicit-in-summary": {
-   "pass": 5,
-   "n": 8,
-   "acc": 0.625
-  },
-  "std|stance|E-post-a0.25|paraphrased-in-summary": {
-   "pass": 8,
-   "n": 12,
-   "acc": 0.6666666666666666
-  },
-  "std|stance|E-post-a0.5|absent-from-summary": {
-   "pass": 1,
-   "n": 4,
-   "acc": 0.25
-  },
   "std|stance|E-post-a0.5|all": {
-   "pass": 13,
+   "pass": 23,
    "n": 24,
-   "acc": 0.5416666666666666
+   "acc": 0.9583333333333334
   },
   "std|stance|E-post-a0.5|clean": {
-   "pass": 1,
+   "pass": 3,
    "n": 4,
-   "acc": 0.25
+   "acc": 0.75
   },
   "std|stance|E-post-a0.5|explicit-in-summary": {
-   "pass": 7,
+   "pass": 8,
    "n": 8,
-   "acc": 0.875
+   "acc": 1.0
   },
   "std|stance|E-post-a0.5|paraphrased-in-summary": {
-   "pass": 5,
+   "pass": 12,
    "n": 12,
-   "acc": 0.4166666666666667
+   "acc": 1.0
   },
   "std|stance|E-post-a0.75|absent-from-summary": {
    "pass": 4,
@@ -44807,9 +44807,9 @@
    "acc": 0.5
   },
   "std|stance|E-post-a1.0|all": {
-   "pass": 20,
+   "pass": 22,
    "n": 24,
-   "acc": 0.8333333333333334
+   "acc": 0.9166666666666666
   },
   "std|stance|E-post-a1.0|clean": {
    "pass": 2,
@@ -44822,9 +44822,9 @@
    "acc": 1.0
   },
   "std|stance|E-post-a1.0|paraphrased-in-summary": {
-   "pass": 10,
+   "pass": 12,
    "n": 12,
-   "acc": 0.8333333333333334
+   "acc": 1.0
   },
   "std|stance|E-shuffled|absent-from-summary": {
    "pass": 0,
@@ -44882,9 +44882,9 @@
    "acc": 0.5
   },
   "std|stance|H-gap|all": {
-   "pass": 17,
+   "pass": 21,
    "n": 24,
-   "acc": 0.7083333333333334
+   "acc": 0.875
   },
   "std|stance|H-gap|clean": {
    "pass": 2,
@@ -44892,14 +44892,14 @@
    "acc": 0.5
   },
   "std|stance|H-gap|explicit-in-summary": {
-   "pass": 7,
+   "pass": 8,
    "n": 8,
-   "acc": 0.875
+   "acc": 1.0
   },
   "std|stance|H-gap|paraphrased-in-summary": {
-   "pass": 8,
+   "pass": 11,
    "n": 12,
-   "acc": 0.6666666666666666
+   "acc": 0.9166666666666666
   }
  }
 }
