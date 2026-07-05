@@ -92,7 +92,10 @@ Stages 0-3 ≈ $40-60 — the core, all industry-standard data. 4-6 from remaind
   hybrids) — verify config on-pod before committing to any model.
 - Scale anchor: Llama-3.3-70B stays (newest CLEAN dense 70B: vanilla
   GQA+RoPE); its age is an architectural constraint, noted in write-up.
-- Budget: $25 initial / $100 ceiling (default).
+- Budget (updated 07-05): user loaded $50 + $50 top-up = ~$100 total. Full
+  plan incl. Llama-3.3-70B (~$85 worst case) is authorized. A further $100
+  is CONDITIONAL: only if results through the current budget are very
+  promising, I recommend it at that point, AND the user agrees again.
 
 ## Hardware strategy and utilization (agreed 07-05)
 
