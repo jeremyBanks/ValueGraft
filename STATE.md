@@ -2,7 +2,25 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 15:35 07-05
+## Current focus (read this first) — updated 17:25 07-05
+
+**FOUR PODS + LOCAL, all healthy.** Pod-1 (secure :31918@213.173.105.10)
+stage-1 shard 0/2 (recovered from CPU-offload stall — ALWAYS verify
+nvidia-smi VRAM > weights after model load). Pod-2 (community
+:11989@104.255.9.187) shard 1/2. Pod-3 (community :11867@104.255.9.187)
+stage-2 SWE-Gym. Pod-4 (secure :12618@38.128.232.177) stage-T tuning
+(sweep done, layer/head phases running; early: α≥1 wins some convs at bf16).
+ONE consolidated watchdog (retry-hardened, staggered). Local: scale-curve
+done (generation-split curiosity, see DECISIONS); per-head playground queued
+(task #17) after stage-1 preliminary judging.
+QUEUE: stage-1 finish → judge → stage-1b (approved, full-haystack) on pods
+1+2 → tuning holdout eval + adopt config (rule in chat 07-05: better OR
+equivalent ⇒ adopt bf16-tuned; E-arm re-runs on completed items) → Mistral
+2409 pre-tuning on pod-4 (template adapter DONE in arms_common.template_ops;
+run system-less!) → stage 3 (LoCoMo/SCBench) → stages 4-6.
+Deletions done with approval: ~/.ollama, ~/.lmstudio/models (100GiB free).
+
+## Older focus (15:35) notes
 
 **CLOUD PHASE RUNNING (user approved; ~$100 budget).**
 - Pod-1 (secure, .pod_state.json, ssh -p 31918 root@213.173.105.10):
