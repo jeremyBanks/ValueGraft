@@ -23,7 +23,26 @@ alignment region crossing).
   `pipeline.pid`) because harness-tracked background tasks got killed twice.
   `python -u` + `tee` to scratchpad log; monitor greps the log.
 
-## Pipeline state (as of last update)
+## Pipeline state (as of 2026-07-04 ~23:45)
+
+**4B pilot COMPLETE — see RESULTS.md.** Headline: probe-accuracy mitigation
+null; mechanism supported (H-gap>B-min +0.093 nats CI[.04,.14]; E-post α=.25
+closure +0.08 both corpora; micro-sense positive; negative controls clean);
+novel honesty effect (H-gap flips fabricate:admit from B's 19:5 to 4:20 in the
+brief condition, robust across 10/12 convs). Judging: 2089 Sonnet verdicts,
+all logged.
+
+**NOW RUNNING:** L-ladder on the 30B (SC_MODEL env; scratchpad
+ladder30b.log). If green → launch targeted 30B run overnight:
+`SC_MODEL=...30B... SC_OUTDIR=results/raw_30b SC_E_POST=0.25,1.0 SC_E_INTER=
+uv run python -u src/run_arms.py` then run_brief with
+SC_OUTDIR_BRIEF=results/raw_30b_brief. Purpose: do the three live effects
+(honesty, α=.25 CONT gain, H>B-min) survive scale? Negative controls at 30B
+via supplement_arms.py only if 30B shows effects. Then: score both new dirs
+(extend CONDITIONS in score.py or point at new dirs), judge new answers,
+compare 4B vs 30B in RESULTS addendum.
+
+## Pipeline state (older, for context)
 
 - DONE: L0–L4 ladder (all pass; identities exact), micro sense experiment
   (results/micro_sense.json — V-swap carries sense, KV-swap ~half of oracle),
