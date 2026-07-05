@@ -55,6 +55,7 @@ def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None)
             position_ids=position_ids,
             attention_mask=attention_mask,
             use_cache=True,
+            logits_to_keep=1,
         )
     return out.past_key_values, out.logits[:, -1, :]
 

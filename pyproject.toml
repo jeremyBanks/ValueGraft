@@ -3,6 +3,7 @@ name = "experimentation"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "accelerate>=1.14.0",
     "matplotlib>=3.11.0",
     "mlx-lm>=0.31.3",
     "torch>=2.12.1",
