@@ -7,11 +7,13 @@ terminology, or is it so trivial/inconsequential that nobody wrote it up?
 Either way, here's what I observed."
 
 1. **Provenance (in the body, not the byline):** experiment design,
-   implementation, and most of the writing by Claude (Fable), directed by the
-   user, who made scaling/budget decisions and commissioned an adversarial
-   review from another frontier model. "Designed and largely executed by the
-   model, directed and sanity-checked by me." Be explicit about what the user
-   personally verified vs. couldn't.
+   implementation, and most of the writing by Anthropic's Claude Fable 5,
+   directed by the user, who made scaling/budget decisions and commissioned
+   an adversarial review from OpenAI's GPT-5.5 (source of the external-review
+   amendments, the mitigation reframing, and the blog-post target framing).
+   "Designed and largely executed by Claude Fable 5, with adversarial review
+   by GPT-5.5, directed and sanity-checked by me." Be explicit about what the
+   user personally verified vs. couldn't.
 2. **Findability is the primary goal.** Front-load naive plain-language
    phrasings ("summary tokens lose their original activations after context
    compaction") in title/opening/README alongside proper terminology. Give
