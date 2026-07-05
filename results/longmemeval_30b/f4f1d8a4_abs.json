@@ -1,0 +1,24 @@
+{
+ "question_id": "f4f1d8a4_abs",
+ "question": "What did my dad gave me as a birthday gift?",
+ "answer": "You did not mention this information. You mentioned receiving a birthday gift from your sister, but not your dad.",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 15539,
+  "ev_start_msg": 25,
+  "ev_end_msg": 37,
+  "tail_start_msg": 49,
+  "tail_frac": 0.24004118669155028
+ },
+ "s_leak": false,
+ "summary_text": "The user is a graduate student working on their master's thesis, having recently completed the literature review. They are now focused on organizing their remaining work, including methodology, data collection, analysis, and writing. To support this, they have set up a Trello board for task management and a Toggl project for time tracking. The goal is to maintain structure and momentum over the coming weeks to meet the final deadline.",
+ "arms": {
+  "A": "I don't have access to your personal information, including details about your birthday gifts. I can't know what your dad gave you, as that information isn't shared in our conversation.\n\nIf you'd like to share what your dad gave you, I'd be happy to hear about it and celebrate your birthday with you!<|im_end|>",
+  "B": "I don't have access to your personal memories, family details, or past conversations—so I can't know what your dad gave you for your birthday.\n\nIf you're trying to remember, here are a few ways to find out:\n- Check your social media or photo albums for birthday posts or pictures.\n- Look through your messages or emails from your dad around your birthday.\n- Ask your dad directly—he might even have a photo of you opening it!\n\nLet me know if you'd like help writing a message to ask him, or if you're trying to recall a specific gift. I'm here to help! 🎉<|im_end|>",
+  "E-tuned": "I don't have access to your personal memories or past events, so I can't tell you what your dad gave you for your birthday. That information is private and specific to your life.\n\nIf you're trying to remember, you might want to:\n- Think about the occasion (was it a surprise? Did you open it right away?)\n- Recall any clues from the gift (e.g., a box, a receipt, a note, a specific color or shape)\n- Ask a family member or friend who might remember\n- Look through photos from your birthday\n\nLet me know if you'd like help brainstorming possible gifts based on your interests or past memories!<|im_end|>",
+  "B-min-pack": "I'm sorry, but I don't have any information about your dad or your birthday gift. You might want to check your memories, messages, or ask your dad directly! 😊<|im_end|>",
+  "H-pack": "I'm sorry, but I don't know what your dad gave you as a birthday gift. I don’t have access to your personal memories, past events, or family details. You might want to check your birthday photos, a message from your dad, or ask a family member to help you remember! 🎉<|im_end|>",
+  "H-gap": "I'm sorry, but I don't know what your dad gave you as a birthday gift. I don’t have access to your personal memories, conversations, or past events. You might want to check your birthday photos, messages, or ask your family members to help you remember! 🎉<|im_end|>"
+ }
+}

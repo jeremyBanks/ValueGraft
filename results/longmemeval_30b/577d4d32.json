@@ -1,0 +1,24 @@
+{
+ "question_id": "577d4d32",
+ "question": "What time do I stop checking work emails and messages?",
+ "answer": "7 pm",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 14332,
+  "ev_start_msg": 39,
+  "ev_end_msg": 49,
+  "tail_start_msg": 55,
+  "tail_frac": 0.24909293887803519
+ },
+ "s_leak": false,
+ "summary_text": "The user has been exploring ways to improve their English language skills through structured learning and practical practice. They have engaged with resources like BBC Learning English, including its lessons, quizzes, and discussion forums. The user has expressed interest in connecting with language exchange partners to enhance speaking and listening abilities. They are actively seeking tools and strategies to support their language development journey. The focus remains on building foundational skills through consistent, real-world practice.",
+ "arms": {
+  "A": "That's a great question — and a very important one for maintaining work-life balance.\n\nThe ideal time to stop checking work emails and messages is **by 7:00 PM**, as you've already started doing. That’s a fantastic boundary to set, and it shows real intentionality about protecting your personal time.\n\nHere’s why 7:00 PM works so well:\n\n- **It gives you a clear mental break**: By 7:00 PM, you’ve finished your workday and can truly shift into \"personal time\" mode.\n- **It helps you wind down**: Your brain needs time to transition from work mode to relaxation mode. Stopping emails at 7 PM gives you 1–2 hours to read, relax, play guitar, meditate, or spend",
+  "B": "That’s a great question — and one that many people struggle with, especially when balancing work, personal time, and well-being.\n\nThere’s no single \"right\" time to stop checking work emails and messages — it depends on your job, schedule, and personal boundaries. But here are some practical tips to help you decide:\n\n### ✅ **Set a Clear \"Work End Time\"**\n- Choose a consistent time each day to stop checking work messages — for example, 7:00 PM or 8:00 PM.\n- Stick to it as much as possible, like a personal rule (e.g., \"After 7:00 PM, I don’t check work emails\").\n- This helps your brain transition from \"work mode\" to \"personal time.\"\n\n### �",
+  "E-tuned": "That's a great question — and one that many people struggle with, especially when balancing work and personal life.\n\nThere’s no single \"right\" time to stop checking work emails and messages — it depends on your job, schedule, and personal boundaries. But here are some practical guidelines to help you decide:\n\n### ✅ **Set a Clear \"Work End Time\"**\n- Choose a consistent time each day to stop checking work messages — for example, **7:00 PM** or **8:00 PM**.\n- Stick to it as much as possible, like a personal rule (e.g., \"After 8 PM, I don’t check work emails\").\n- This helps train your brain to switch off and gives you mental space to relax.\n\n### 🚫 **Avoid the",
+  "B-min-pack": "That’s a great question — and one many people struggle with, especially in today’s always-on work culture.\n\nThere’s no one-size-fits-all answer, but here’s a practical approach to help you decide when to stop checking work emails and messages:\n\n### 1. **Set a Clear End Time**\nDecide on a consistent time each day to stop checking work messages — for example, **7:00 PM** or **8:00 PM**. Stick to it like a meeting with yourself.\n\n> 💡 *Tip:* Use a calendar reminder or a phone alarm to signal \"work time is over.\"\n\n### 2. **Communicate Your Boundaries**\nLet your team know your off-hours. For example:\n> “I’ll be offline after 8 PM to focus",
+  "H-pack": "A great question — and one that’s all about setting healthy boundaries for your well-being and productivity.\n\nThere’s no one-size-fits-all answer, but here’s a practical approach to help you decide when to stop checking work emails and messages:\n\n### 🕒 **Set a Clear \"Offline\" Time**\nChoose a consistent time each day to **stop checking work messages** — ideally **1–2 hours before bedtime**. For example:\n- If you go to bed at 10:00 PM, stop at **8:00 PM**.\n- If you’re a morning person, maybe **7:00 PM** works.\n\nThis gives you time to unwind, process the day, and avoid mental clutter.\n\n### ✅ **Key Guidelines:**\n1. **Be",
+  "H-gap": "Great question — and one that’s *so* important for mental well-being and work-life balance.\n\nThere’s no one-size-fits-all answer to \"when\" you should stop checking work emails and messages — it depends on your job, your team, your personal energy, and your boundaries. But here’s a practical framework to help you decide:\n\n### 🕒 **Set a Clear \"Offline\" Time**\nChoose a time each day to **officially close the work door** — and stick to it. For most people, this is:\n- **6:00 PM** (if you work a standard 9–5)\n- **7:00 PM** (if you’re more flexible or work later hours)\n- **8:00 PM** (if you’re"
+ }
+}

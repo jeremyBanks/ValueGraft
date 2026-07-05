@@ -1,0 +1,24 @@
+{
+ "question_id": "58bf7951",
+ "question": "What play did I attend at the local community theater?",
+ "answer": "The Glass Menagerie",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 12472,
+  "ev_start_msg": 31,
+  "ev_end_msg": 43,
+  "tail_start_msg": 59,
+  "tail_frac": 0.23861449647209754
+ },
+ "s_leak": false,
+ "summary_text": "The conversation began with a personal update about organizing a game night, including decorating the living room and planning snacks. The discussion then shifted to music, with the user expressing interest in organizing their digital music library. They explored options for music management software, focusing on features like library organization and music discovery. The user ultimately decided on a specific software and began planning the import process. The conversation has centered on personal life, home organization, and digital media management.",
+ "arms": {
+  "A": "You mentioned in a previous message that you attended a production of *The Glass Menagerie* at the local community theater. That’s the play you saw! It’s a classic American drama by Tennessee Williams, known for its emotional depth, poetic language, and exploration of family, memory, and longing. It’s a powerful choice for a community theater production, and it sounds like you were deeply moved by the performance—especially since the lead actress reminded you of your friend Emily, who’s also an aspiring actress. That connection between the stage and your personal life makes the experience even more meaningful. 🎭<|im_end|>",
+  "B": "I don’t have access to your personal history, memories, or past events—so I can’t tell you which play you attended at the local community theater.\n\nIf you’re trying to remember, here are a few ways you might find out:\n- Check your ticket stub or any photos you might have taken.\n- Look at your calendar or event reminders from that time.\n- Ask a friend or family member who might have gone with you.\n- Search your email or social media for messages about the event.\n\nLet me know if you’d like help brainstorming possible plays based on your interests or the time of year it might have been!<|im_end|>",
+  "E-tuned": "I don't have access to your personal experiences or memories, so I can't tell you which play you attended at the local community theater. If you're trying to remember, you might want to check your ticket stub, look at photos from the event, or ask a friend who was with you. Let me know if you'd like help brainstorming details that might jog your memory!<|im_end|>",
+  "B-min-pack": "I don’t have access to your personal memories or past events, so I can’t recall which play you attended at the local community theater. If you’re trying to remember, you might want to check your notes, photos, or any tickets you saved. Let me know if you’d like help brainstorming based on details like the time of year, the theme, or the cast—sometimes those clues can help jog your memory!<|im_end|>",
+  "H-pack": "I don’t have access to your personal memories or past events, so I can’t tell you which play you attended at the local community theater. If you’re trying to remember, you might check your notes, photos, or event tickets from that night—those often hold clues! Let me know if you’d like help brainstorming possible plays based on your interests.<|im_end|>",
+  "H-gap": "I don’t have access to your personal memories or past experiences, so I can’t tell you which play you attended at the local community theater. If you’re trying to remember, you might check your notes, photos, or event tickets from that night—those often have the play’s name and date! Let me know if you’d like help brainstorming possible titles based on your interests.<|im_end|>"
+ }
+}

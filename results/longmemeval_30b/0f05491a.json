@@ -1,0 +1,24 @@
+{
+ "question_id": "0f05491a",
+ "question": "How many stars do I need to reach the gold level on my Starbucks Rewards app?",
+ "answer": "120",
+ "question_type": "knowledge-update",
+ "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 14530,
+  "ev_start_msg": 27,
+  "ev_end_msg": 51,
+  "tail_start_msg": 53,
+  "tail_frac": 0.24755677907777018
+ },
+ "s_leak": false,
+ "summary_text": "The conversation has centered on a personal lifestyle and wellness journey, involving health management, fitness, and home environment improvements. The individual has been addressing physical health concerns, exploring yoga and wellness practices, and making thoughtful choices about personal care and home decor. They’ve engaged with various loyalty programs and shopping experiences, focusing on value and intentionality. The discussion has also touched on broader values like inclusivity, community, and the positive impact of sports and personal habits. The overall arc reflects a deliberate effort to enhance well-being and create a more intentional, balanced life.",
+ "arms": {
+  "A": "You're on the right track! To reach the **Gold level** on the Starbucks Rewards app, you need to earn **300 stars** within a 12-month period.\n\nHere’s a quick breakdown of the levels:\n\n- **Green**: 0–119 stars  \n- **Gold**: 120–299 stars  \n- **Platinum**: 300+ stars (and you keep it for 12 months)\n\nSo, you need **300 stars** to achieve Platinum status — which is the highest tier. (Note: Some people mistakenly think 120 stars gets you Gold, but that’s actually the threshold to *start* earning Gold benefits — the full Gold level is 120–299 stars",
+  "B": "The number of stars needed to reach the **Gold level** in the **Starbucks Rewards** program depends on your location and the current program structure, but here’s the most up-to-date general information (as of 2024):\n\n### 🌟 Starbucks Rewards – Tier Progression (U.S. and many international markets):\n\n- **Green Level**: 300 stars (free drink, free food, and early access to new products)\n- **Gold Level**: 1,000 stars (exclusive perks like free refills, free birthday drink, and priority service)\n\nSo, to reach **Gold status**, you need **1,000 stars**.\n\n### ✅ What You Get at Gold Level:\n- Free refills on most hot and cold beverages (",
+  "E-tuned": "The number of stars needed to reach the Gold level on the Starbucks Rewards app varies slightly depending on your location and any current promotions, but here’s the standard:\n\n**You need 300 stars to reach Gold status.**\n\nHere’s how it works:\n\n- **Stars are earned** by purchasing eligible Starbucks products (e.g., drinks, food, merchandise).\n- **Each purchase earns 2 stars per $1 spent** (on eligible items).\n- **Gold status** unlocks benefits like:\n  - Free birthday drink\n  - Free refills on most hot and iced drinks\n  - Free in-store food items (e.g., pastries, snacks)\n  - Early access to new products and limited-time offers\n  - Personalized rewards and offers\n\nOnce you hit 3",
+  "B-min-pack": "To reach the **Gold level** in the **Starbucks Rewards** program, you need to earn **300 Stars within a rolling 12-month period**.\n\nHere’s a quick breakdown:\n\n- **Green (Base Level):** 0 Stars  \n- **Gold (Top Tier):** 300 Stars in the past 12 months  \n- **Bonus:** Gold members get perks like free refills on hot or iced drinks, free birthday drink, and early access to new products.\n\n💡 **Pro tip:** You earn 1 Star per $1 spent (after tax), so you’d need to spend $300 over the course of a year to hit Gold. You can also earn Stars through the Starbucks app, mobile order & pay, and special promotions",
+  "H-pack": "To reach the **Gold level** in the **Starbucks Rewards** program, you need to earn **300 Stars within a rolling 12-month period**.\n\nHere’s a quick breakdown:\n\n- **Green Level**: 0–29 Stars  \n- **Gold Level**: 300 Stars (achieved within a 12-month window)  \n- **Platinum Level**: 1,000 Stars (also within a rolling 12-month period)\n\n💡 **Pro tip**: Stars are earned at a rate of 1 Star per $1 spent (after tax), and you can earn bonus Stars through promotions, app-only offers, or special events.\n\nOnce you hit 300 Stars in a year, you’ll automatically be upgraded to Gold status and",
+  "H-gap": "To reach the **Gold level** in the **Starbucks Rewards** program, you need to earn **3,000 Stars** within a rolling 12-month period.\n\nHere’s a quick breakdown:\n\n- **Green Level**: 300 Stars  \n- **Gold Level**: 3,000 Stars (achieved within 12 months)\n\nOnce you hit 3,000 Stars, you’ll automatically be upgraded to Gold status, which comes with benefits like:\n- Free birthday drink\n- Free refills on brewed coffee and tea\n- Free in-store food items (on select days)\n- Early access to new products\n- Personalized offers\n\n💡 Pro tip: You earn 1 Star per $1 spent (on eligible purchases), so you’d"
+ }
+}

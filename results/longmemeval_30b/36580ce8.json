@@ -1,0 +1,24 @@
+{
+ "question_id": "36580ce8",
+ "question": "What health issue did I initially think was just a cold?",
+ "answer": "bronchitis",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 12138,
+  "ev_start_msg": 29,
+  "ev_end_msg": 41,
+  "tail_start_msg": 57,
+  "tail_frac": 0.21024880540451474
+ },
+ "s_leak": false,
+ "summary_text": "You're building a personal wellness brand on Instagram, focusing on fitness, mindfulness, and books. You've established a foundation with a content strategy centered on consistency, theme days, and audience engagement. You're planning to organize your content through a curated highlight reel and a structured posting schedule. The goal is to grow a cohesive, authentic presence that reflects your diverse interests while maintaining focus. You're in the early stages of shaping your brand identity and content flow.",
+ "arms": {
+  "A": "Based on your earlier message, you mentioned:  \n> \"I recently had a bad case of bronchitis that I initially thought was just a cold...\"\n\nSo, the health issue you initially thought was just a cold was **bronchitis**.  \n\nIt's common for bronchitis to start with symptoms similar to a cold—like coughing, mild fatigue, and a low-grade fever—but it's actually a more serious inflammation of the bronchial tubes, often caused by a viral infection that lingers or worsens. It's great that you're now focusing on recovery and self-care—your awareness and proactive steps are exactly what help you heal and stay strong. 🌿<|im_end|>",
+  "B": "I don’t have access to your personal history or previous messages, so I can’t know what health issue you initially thought was just a cold. If you’re sharing this in the context of a story or reflection, feel free to provide more details, and I’d be happy to help you explore it further—whether it’s about health awareness, self-care, or even how to communicate such experiences on social media.<|im_end|>",
+  "E-tuned": "I don’t have access to your personal history or previous messages, so I can’t know what health issue you initially thought was just a cold. If you’re referring to a specific experience you’ve had, please share more details, and I’ll do my best to help you reflect on or understand it.<|im_end|>",
+  "B-min-pack": "It sounds like you might be referring to a situation where you initially dismissed a symptom as a common cold, only to later realize it was something more serious—like a viral infection, allergies, or even a more chronic condition such as sinusitis, bronchitis, or even something like post-viral fatigue or an autoimmune flare.\n\nSince you mentioned fitness, mindfulness, and books in your brand context, it’s possible you’re reflecting on a personal health journey—maybe a time when you pushed through what you thought was just a cold, only to experience prolonged fatigue, brain fog, or a setback in your fitness routine. That kind of experience is common among wellness enthusiasts who often ignore early warning signs in pursuit of consistency.\n\nIf you’re sharing this as part of your brand story, it could be a",
+  "H-pack": "It sounds like you're reflecting on a time when you dismissed a symptom as a simple cold—only to later realize it was something more serious. While I don’t have access to your personal medical history, common health issues people often initially mistake for a cold include:\n\n- **Allergies** (especially seasonal or environmental) – often cause sneezing, runny nose, and fatigue, but not fever or body aches.\n- **Sinus infection (sinusitis)** – can mimic a cold but lasts longer and may include facial pressure, thick mucus, and sometimes fever.\n- **Flu (influenza)** – often starts with cold-like symptoms but comes on more suddenly and includes high fever, body aches, and extreme fatigue.\n- **Mononucleosis",
+  "H-gap": "It sounds like you're reflecting on a time when you dismissed a symptom as a simple cold—only to later realize it was something more serious. While I don’t have access to your personal medical history, common health issues people often initially mistake for a cold include:\n\n- **Allergies** (especially seasonal or environmental) – often cause sneezing, runny nose, and fatigue, but not fever or body aches.\n- **Sinus infection (sinusitis)** – can mimic a cold but lasts longer and may include facial pressure, thick mucus, and sometimes fever.\n- **Flu (influenza)** – often starts with cold-like symptoms but comes on more suddenly and includes high fever, severe body aches, and exhaustion.\n- **COVID-19"
+ }
+}
