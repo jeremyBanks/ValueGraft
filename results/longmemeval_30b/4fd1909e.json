@@ -1,0 +1,24 @@
+{
+ "question_id": "4fd1909e",
+ "question": "Where did I attend the Imagine Dragons concert?",
+ "answer": "Xfinity Center",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 12141,
+  "ev_start_msg": 28,
+  "ev_end_msg": 40,
+  "tail_start_msg": 49,
+  "tail_frac": 0.24866156000329465
+ },
+ "s_leak": false,
+ "summary_text": "You're organizing a collection of loyalty programs and rewards across multiple retailers, aiming to track them in a clear, centralized way. The goal is to maintain a simple, up-to-date record of all your active programs, including what you've earned and redeemed. You've already begun by adding several major programs, including grocery, pharmacy, pet supplies, and coffee shop rewards. The system is taking shape as a living document that reflects your current progress across all accounts.",
+ "arms": {
+  "A": "You attended the Imagine Dragons concert at the **Xfinity Center** on June 15th. 🎵\n\nThat's a great venue—known for its excellent sound and outdoor setting, perfect for a high-energy rock show like Imagine Dragons! I hope you still have that concert ticket or a photo to remember the night. That show must have been unforgettable with hits like \"Radioactive\" and \"Demons\"!<|im_end|>",
+  "B": "I don’t have access to your personal event history, including past concert attendance. To find out where you attended the Imagine Dragons concert, you can check:\n\n- Your email inbox (look for confirmation emails, receipts, or ticket stubs)\n- Your ticketing app (like Ticketmaster, StubHub, or Apple Wallet)\n- Social media posts or photos from the event\n- Your calendar (if you saved the event there)\n\nIf you remember the date or city, I can help you look up the most likely concert venue based on Imagine Dragons’ tour history. Just let me know!<|im_end|>",
+  "E-tuned": "I don't have access to your personal event history, including concert attendance. To find out where you attended the Imagine Dragons concert, you might want to check:\n\n- Your email inbox (for ticket confirmations or event reminders)\n- Your calendar app (if you saved the event)\n- Your social media accounts (e.g., photos, check-ins, or posts from the event)\n- Your ticketing app (like Ticketmaster, Live Nation, or Eventbrite)\n\nIf you remember the date or city, I can help you look up the most likely concert location based on Imagine Dragons’ tour history. Just let me know!<|im_end|>",
+  "B-min-pack": "I don't have access to your personal history, including past concert attendance. To find out where you attended an Imagine Dragons concert, you might want to check:\n\n- Your email inbox (for ticket confirmations or event reminders)\n- Your ticketing app (like Ticketmaster, StubHub, or Apple Wallet)\n- Social media posts or photos from the event\n- Your calendar or travel records\n\nLet me know if you'd like help drafting a message to check your ticket history or search for clues!<|im_end|>",
+  "H-pack": "I don't have access to your personal history, including past events you've attended like concerts. To find out where you saw Imagine Dragons, check your ticket stubs, event emails, social media posts, or photos from the night. If you remember the city or venue, you could also search online for \"Imagine Dragons concert [your city] [year]\" to help jog your memory.<|im_end|>",
+  "H-gap": "I don't have access to your personal memories, location history, or past events like concerts you've attended. To find out where you saw Imagine Dragons, you might want to check:\n\n- Your concert ticket stubs or digital tickets (if saved in your email or wallet app)\n- Photos or social media posts from the event\n- Your calendar or event history (on your phone or computer)\n- Messages or emails from friends who were with you\n\nLet me know if you'd like help creating a digital record of your concert experiences! 🎤🎶<|im_end|>"
+ }
+}
