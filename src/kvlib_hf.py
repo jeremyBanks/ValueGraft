@@ -126,3 +126,20 @@ def rotate_keys(keys, delta, base):
     x1, x2 = kf[..., :half], kf[..., half:]
     return torch.cat([x1 * cos - x2 * sin, x1 * sin + x2 * cos],
                      dim=-1).to(keys.dtype)
+
+
+def tf_logprobs(model, cache, feed_ids, target_ids, position_ids=None):
+    """Teacher-forced logprobs of target_ids, where the last len(target_ids)
+    logit positions of the feed score them (mirrors kvlib.batched_teacher_forced).
+    feed = [prefix..., t_0..t_{n-2}]; returns list of n logprobs."""
+    import torch
+    n = len(target_ids)
+    dev = model.device
+    ids = torch.tensor([feed_ids], device=dev)
+    with torch.no_grad():
+        out = model(input_ids=ids, past_key_values=cache,
+                    position_ids=position_ids, use_cache=True,
+                    logits_to_keep=n)
+    lp = torch.log_softmax(out.logits[0].float(), dim=-1)
+    tgt = torch.tensor(target_ids, device=dev)
+    return lp[torch.arange(n), tgt].tolist()
