@@ -1,0 +1,24 @@
+{
+ "question_id": "c5e8278d",
+ "question": "What was my last name before I changed it?",
+ "answer": "Johnson",
+ "question_type": "single-session-user",
+ "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+ "meta": {
+  "n_tokens": 13860,
+  "ev_start_msg": 19,
+  "ev_end_msg": 31,
+  "tail_start_msg": 41,
+  "tail_frac": 0.23455988455988452
+ },
+ "s_leak": false,
+ "summary_text": "The conversation began with a focus on personal well-being, including fitness, nutrition, and time management, and evolved into a thoughtful exploration of daily routines and lifestyle habits. It then shifted to practical, joyful planning for a family picnic, covering food preparation, outdoor activities, and photo opportunities. The overall tone remained supportive and encouraging, centered around building healthy, intentional habits and strengthening family connections.",
+ "arms": {
+  "A": "Your last name before you changed it was **Johnson**. 😊\n\n(And now it's Winters — a great new name choice!)<|im_end|>",
+  "B": "I'm sorry, but I don't have access to personal information like your previous name or any private details about individuals. That kind of information is protected for privacy and security reasons.\n\nIf you'd like to share more about your journey or have questions about anything else—like family, hobbies, or future plans—I’d be happy to help! 😊\n\nJust remember: I can't access personal records, and that's by design to protect your privacy. But I'm always here to support, advise, and chat about anything from picnics and family time to goals, wellness, or just good conversation. Have a lovely day! 🌞<|im_end|>",
+  "E-tuned": "I'm sorry, but I don't have access to personal information like your previous name or any private details about individuals. That kind of information is protected for privacy and security reasons.\n\nIf you'd like to share more about your journey or have questions about anything else—like family, hobbies, or future plans—I’d be happy to help! 😊\n\nJust remember: I can't access personal records, and that's by design to protect your privacy. But I'm always here to help with fun, thoughtful, and helpful conversations! 🌳🌞<|im_end|>",
+  "B-min-pack": "I'm sorry, but I don't have access to personal information like your previous last name. That detail would be private and not something I can provide. If you'd like to share more about your journey or need help with something else—like planning a family picnic, setting fitness goals, or organizing a daily routine—feel free to ask! 😊<|im_end|>",
+  "H-pack": "I don't have access to personal information, including your previous last name, as I am an AI assistant and do not have personal data or identity. If you'd like to share more context or discuss something else—like your name change journey, or how you're managing your personal growth—I’d be happy to help! 😊<|im_end|>",
+  "H-gap": "I'm sorry, but I don't have access to personal information like your previous last name. As an AI assistant, I don't have personal details or a history of your name changes. If you'd like to share more context or discuss something else, I'm here to help! 😊<|im_end|>"
+ }
+}

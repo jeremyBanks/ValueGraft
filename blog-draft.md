@@ -112,14 +112,26 @@ on evicted content (our probe corpus guarantees it). On free-form chat where
 the summary already suffices, the measured gap between full context and
 compaction was tiny and the interventions did roughly nothing.
 
-## Overhead
+## Overhead, and what "no longer stateless" costs in practice
 
 ValueGraft: one extra prefill of the compacted context plus a vectorized
-value blend, once, at compaction time; the old cache is then freed.
-SelfGist: one summary generation (which production compaction already does)
-plus retaining ~4+|summary| cache entries (≈100 KB/token at 30B ⇒ ~10 MB for
-an 80-token summary); key re-rotation to packed positions is exact and
-costs microseconds.
+value blend, once, at compaction time — but it needs the *entire* old cache
+resident (~1.2 GB for a 12K-token context at 30B), so it is a server-side /
+local technique only.
+
+SelfGist is the one with a plausible stateless-API story. The retained state
+is just the summary's cache entries: at fp16, 30B-A3B costs ≈96 KB/token
+(48 layers × K,V × 4 kv-heads × 128 dims × 2 B), so a terse 80-token summary
+plus sinks is **≈8 MB** — about 0.7% of the full context's KV, though
+~15,000× the summary *text* it augments. That's an image-sized request
+attachment: a client could hold this blob and send it with each request,
+restoring the stateless model. KV quantization would plausibly take it to
+2–4 MB, but we ran the cache in fp16 throughout, so quantized-blob quality
+is untested here. Real deployment caveats: the blob is only valid for the
+exact model build and tokenizer, and accepting client-supplied KV is a new
+trust surface (injected cache state is an unauditable soft prompt) — a
+provider would likely wrap it as a signed, expiring portable prompt-cache
+entry rather than raw tensors.
 
 ## Mechanism evidence (why this isn't nothing)
 
