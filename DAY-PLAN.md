@@ -85,3 +85,13 @@ trained for native calls); (2) temperature 0.0 (Qwen card recommends
 if chain smokes fail → scaffold-config A/B (native calls + recommended
 sampling on one failed instance, ~$1) BEFORE any model swap. If chain
 smokes pass → config adequate, difficulty is real.
+
+## Serving-stack upgrade ideas (captured 07-07, NOT scheduled)
+1. vLLM KV-connector graft plugin (days-weeks): paged-KV blend via the
+   cache-transfer/LMCache interfaces; version-brittle; the right EVENTUAL
+   home — also the write-up's "deployment path" section (opaque handle as
+   a serving-layer feature; our shim = reference implementation).
+2. Own-stack hot-path upgrade (~1 day, 2-4x): FA2 kernels + compiled
+   decode + async server (replace wsgiref) + icache-v2 (validated,
+   benched). Keeps surgery freedom + test discipline. The investment if
+   the program continues at scale.
