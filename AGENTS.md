@@ -106,3 +106,12 @@ scientific audit trail. Scratchpad is for working files (workspaces,
 logs, transcripts) only — a score file is never a working file.
 Contaminated/void results go to results/_QUARANTINE_* paths with READMEs,
 never deleted, never left outside the repo.
+
+## Stateful-change checklist (07-06, after incident #11 — MANDATORY)
+
+Any change adding/modifying retained state in a serving path must answer,
+IN THE COMMIT MESSAGE: (1) What state is retained, keyed by what? (2) What
+bounds its size, and where is that bound ASSERTED in code? (3) Who evicts
+it and when? (4) What is the correctness/equivalence proof? (5) Which
+probe gate exercises it before production traffic? Unanswered = do not
+deploy. Prose rules do not survive attention under pressure; forms do.

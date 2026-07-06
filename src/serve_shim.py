@@ -125,6 +125,8 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
             for other in list(_sessions):
                 _sessions[other].pop("icache", None)
             sess["icache"] = {"ids": list(ids), "snap": snap}
+            n_cached = sum(1 for v in _sessions.values() if "icache" in v)
+            assert n_cached <= 1, f"icache bound violated: {n_cached}"
         gp = render_hf(_tok, msgs, True)
         text = answer_hf(_model, _tok, snap, gp[len(ids):], len(ids),
                          max_tokens=max_tokens)
