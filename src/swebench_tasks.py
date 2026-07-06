@@ -39,6 +39,10 @@ _DF = None
 
 
 def _load_df():
+    return _load_df_merged()
+
+
+def _load_df_merged():
     """Download (once, cached) and return the SWE-bench-Lite test split."""
     global _DF
     if _DF is not None:
@@ -49,7 +53,14 @@ def _load_df():
         urllib.request.urlretrieve(DATASET_URL, tmp)
         tmp.rename(DATA_CACHE)
     import pandas as pd
-    _DF = pd.read_parquet(DATA_CACHE)
+    lite = pd.read_parquet(DATA_CACHE)
+    vpath = CACHE_ROOT / "verified-test.parquet"
+    if vpath.exists():
+        ver = pd.read_parquet(vpath)
+        ver = ver[~ver.instance_id.isin(set(lite.instance_id))]
+        _DF = pd.concat([lite, ver], ignore_index=True)
+    else:
+        _DF = lite
     return _DF
 
 
