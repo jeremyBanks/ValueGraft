@@ -29,6 +29,21 @@ def enrich():
         if tt.exists():
             data["wall_seconds"] = round(sc.stat().st_mtime - tt.stat().st_mtime)
         data["log_bytes"] = len(txt)
+        repo = d / "repo"
+        if (repo / ".git").exists():
+            import subprocess
+            r = subprocess.run(["git", "diff", "--numstat"], cwd=repo,
+                               capture_output=True, text=True, timeout=60)
+            adds = dels = files = 0
+            for line in r.stdout.splitlines():
+                parts = line.split("\t")
+                if len(parts) == 3:
+                    files += 1
+                    adds += int(parts[0]) if parts[0].isdigit() else 0
+                    dels += int(parts[1]) if parts[1].isdigit() else 0
+            data["diff_lines_added"] = adds
+            data["diff_lines_deleted"] = dels
+            data["diff_files_touched"] = files
         data["source"] = "swebench" if d.name.startswith("swb") else "synthetic"
         json.dump(data, open(OUT / f"{d.name}.json", "w"), indent=1)
         n += 1
