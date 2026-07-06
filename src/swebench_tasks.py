@@ -215,14 +215,37 @@ def score(task, d, log):
     meta = json.loads((root / "meta.json").read_text())
     repo_dir = root / "repo"
     py = _venv_python(root)
-    f2p = meta["FAIL_TO_PASS"]
-    p2p = meta["PASS_TO_PASS"]
+    def _existing(ids):
+        keep, phantom = [], []
+        for i in ids:
+            f = i.split("::", 1)[0]
+            (keep if (repo_dir / f).exists() else phantom).append(i)
+        return keep, phantom
+    f2p, ph1 = _existing(meta["FAIL_TO_PASS"])
+    p2p, ph2 = _existing(meta["PASS_TO_PASS"])
+    phantom_ids = ph1 + ph2
     all_ids = f2p + p2p
 
     outcomes, tail = {}, ""
+    degraded = False
     if all_ids:
         outcomes, r = _run_pytest(repo_dir, py, all_ids)
         tail = (r.stdout or r.stderr)[-3000:]
+        # DEGRADE PATH: ids with parametrize escapes may collect 0 on old
+        # pytest. Retry with bracket-stripped test names; grade each
+        # original id by its de-parametrized prefix — CONSERVATIVE: a
+        # prefix counts PASSED only if every collected param of that test
+        # passed.
+        if not outcomes or "collected 0 items" in tail or "no tests ran" in tail:
+            degraded = True
+            prefixes = sorted({i.split("[", 1)[0] for i in all_ids})
+            po, r2 = _run_pytest(repo_dir, py, prefixes)
+            tail = (r2.stdout or r2.stderr)[-3000:]
+            for i in all_ids:
+                pref = i.split("[", 1)[0]
+                fam = [v for k, v in po.items() if k.split("[", 1)[0] == pref]
+                outcomes[i] = ("PASSED" if fam and all(v == "PASSED" for v in fam)
+                               else "FAILED")
 
     f2p_pass = sum(1 for t in f2p if outcomes.get(t) == "PASSED")
     p2p_ok = all(outcomes.get(t) == "PASSED" for t in p2p)
@@ -235,6 +258,8 @@ def score(task, d, log):
         "f2p_total": len(f2p),
         "p2p_ok": p2p_ok,
         "dropped_ids": meta.get("dropped_ids", []),
+        "degraded_scoring": degraded,
+        "phantom_ids": phantom_ids,
         "pytest_tail": tail,
     }
 
