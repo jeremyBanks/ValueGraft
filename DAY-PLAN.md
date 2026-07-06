@@ -36,3 +36,14 @@ in current pods' DC, pre-warm /workspace/hf from a live pod, add
 networkVolumeId + dataCenterId to pod.py create (env SC_POD_VOLUME).
 Payoff: cold pod → serving in ~3 min; biggest win for spot churn.
 Implement opportunistically behind gate-watching.
+
+## icache v2 validation plan (user-requested; build at confirm boundary, NOT before)
+(1) bit-exact CPU test of in-place extension (no per-call clone);
+(2) VRAM predictor formula validated against measured allocator peaks on
+0.6B at 1K/4K/16K (±15%) → same formula, 30B params, drives a live
+headroom guard (refuse-to-cache, serve fresh, never die);
+(3) fake-budget local soak: interleaved A/B/E crossing the cap — asserts
+cache-drop logging, correct service, process survival;
+(4) pod-side: measured-vs-predicted check on first real calls gates the
+flag. Checklist question added: "peak VRAM at max realistic input, shown
+as arithmetic."
