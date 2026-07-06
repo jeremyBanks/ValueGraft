@@ -49,10 +49,10 @@ that result is evidence about write-time summary encoding, not a current
 ValueGraft arm. Early end-to-end coding-agent task runs remain unbalanced,
 actively running, and not yet confirmatory.
 
-The resulting claim is that conversation compaction is a text-plus-state
-problem. Summary text carries explicit information. Write-time attention state
-can carry some of the context-conditioned interpretation and uncertainty that
-text-only re-encoding loses.
+The evidence points to a text-plus-state view of conversation compaction.
+Summary text carries explicit information; write-time attention state can carry
+part of the context-conditioned interpretation and uncertainty that text-only
+re-encoding loses.
 
 ## 1. Introduction
 
@@ -74,10 +74,10 @@ The central question in this work is mitigation-first:
 > preserving a small amount of write-time attention state reduce the behavioral
 > damage?
 
-This question is narrower than "does the KV cache contain meaning?" Prior work
-and the transformer architecture itself already make that broad claim
-unsurprising. The practical question is whether the state available at the
-moment of compaction can be reused in a way that improves downstream behavior.
+The question is not whether cached state contains information. Prior work and
+the transformer architecture already make that unsurprising. The practical
+question is whether the state available at compaction time can be reused to
+improve downstream behavior.
 
 We study this with a family of interventions called **ValueGraft**. In its
 general form, ValueGraft treats key and value state as separate experimental
@@ -149,27 +149,25 @@ Main result labels translate as follows:
 | `E`, `E:a0.75`, `E:a1.0` | V-only Graft with stated `alpha_V` |
 | `E:cfg=layers` | Layer-tuned V-only Graft |
 
-This terminology matters because it prevents uncontrolled differences from
-being mistaken for method differences. If the claim is about keys, then summary
-text, token ids, layout, tail retention, positions, prompt, decoding, and value
-policy must be held fixed. If the claim is about values, the key policy and
-non-state context must be held fixed. The in-flight V-only coding arms satisfy
-this as value-side experiments; a future K-only or full KV comparison should be
-built in the same production-shaped compacted context rather than reusing the
-older summary-only context.
+The naming follows the controlled variable. A key-side claim requires fixed
+summary text, token ids, layout, tail retention, positions, prompt, decoding,
+and value policy. A value-side claim requires fixed key policy and fixed
+non-state context. The in-flight coding arms satisfy this requirement for
+value-side experiments. Future K-only or full KV comparisons should use the
+same production-shaped compacted context rather than the older summary-only
+setup.
 
 Two older labels appear in result files but should not be used as method names
 in the paper. `B-min-pack` means "summary-only fresh encoding." `H-pack` means
 "summary-only write-time KV." Their comparison is an auxiliary historical
 result, not a current experiment arm family.
 
-That older pair varies one thing internally: whether the summary-only context
-uses fresh KV or write-time KV for the same generated summary tokens. Relative
-to the current ValueGraft design, however, it also differs in context shape: it
-has no retained tail and is not the production-shaped compacted transcript.
-It also changes K and V together. Therefore it can support a narrow statement
-about write-time summary encoding, but it cannot support claims about the
-current `alpha_K` / `alpha_V` taxonomy.
+Inside that older pair, the controlled variable is state source: fresh KV or
+write-time KV for the same generated summary tokens. Compared with the current
+ValueGraft design, it also has a different context shape, no retained tail, and
+coupled changes to K and V. It supports a narrow statement about write-time
+summary encoding; it does not support claims about the current `alpha_K` /
+`alpha_V` taxonomy.
 
 ## 3. Outcomes
 
@@ -183,13 +181,12 @@ context.
 **Continuity:** assigning higher likelihood to the true next continuation or
 next agent action after compaction.
 
-The current evidence supports honesty and continuity effects. It does not
-support evicted factual recall recovery.
+The current evidence supports honesty and continuity effects, not recovery of
+evicted factual details.
 
-This distinction is important. Showing that full-context performance is better
-than text-compacted performance is not the contribution. That gap is the
-baseline damage measurement. The contribution, if any, is reducing the impact
-of that damage in controlled comparisons.
+The contribution is not the baseline fact that full context beats text-only
+compaction. That gap measures the damage. The contribution, if any, is reducing
+that damage in controlled comparisons.
 
 ## 4. Related Work and Product Context
 
