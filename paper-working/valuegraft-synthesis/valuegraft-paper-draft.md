@@ -204,11 +204,22 @@ must be bounded by this numerical floor.
 
 ### 4.2 Experimental Arms
 
+Each arm starts from the same canonical rendering of a conversation. The first
+four tokens are retained as attention sinks. A tail boundary is chosen at a
+message boundary near the final quarter of the tokenized conversation; material
+between the sinks and that boundary is the evicted region. A summary is then
+generated greedily by the subject model while the full pre-compaction
+conversation remains attendable. The resulting cache snapshot is the source of
+the write-time state used by H-pack and ValueGraft.
+
 The core arms are:
 
 - **A, full context:** the original conversation; the oracle ceiling.
-- **B, production text compaction:** summary plus recent tail, freshly encoded.
-- **B-min / B-min-pack:** minimal packed summary text controls, freshly encoded.
+- **B, production text compaction:** a new transcript containing the system
+  message, an assistant context note with the summary, and the retained tail;
+  freshly encoded from scratch.
+- **B-min / B-min-pack:** four sink tokens plus the exact generated summary
+  token ids, packed contiguously and freshly encoded.
 - **H-gap / H-pack:** summary cache entries generated under full context and
   carried forward; H-pack uses packed positions with re-rotated keys.
 - **C, gapped retention:** sinks, original tail entries, and summary write-time
@@ -221,6 +232,32 @@ H-pack vs B-min-pack is the clean matched pair for summary write-time encoding:
 same packed token sequence and positions; different cached attention state.
 ValueGraft vs B measures whether old value payloads improve a normal compacted
 context.
+
+H-pack is built by extracting the generated-summary span from the saved
+summary-generation cache. Since Qwen3 keys are already RoPE-rotated in cache,
+moving the summary to a packed prefix requires re-rotating the keys by the
+difference between their original write-time positions and their new packed
+positions. Values are unrotated and are copied directly. The packed cache then
+contains only the sink entries and the summary entries, and future tokens are
+generated as if this were an ordinary contiguous prefix. B-min-pack is the
+matched fresh-prefill control for exactly this packed token sequence.
+
+ValueGraft instead keeps the production B transcript. After freshly pre-filling
+B, it aligns B's summary and tail tokens to the old full-context
+summary-generation token stream. Alignment is exact-token matching in the
+summary and tail regions separately; blocks shorter than eight tokens are
+dropped, and special tokens and sink positions are excluded. For every accepted
+pair `(new_pos, old_pos)`, each selected layer's value tensor is replaced by
+`(1 - alpha) * V_fresh[new_pos] + alpha * V_old[old_pos]`. Keys remain fresh.
+The reported version is post-prefill ValueGraft: it edits the completed B cache
+rather than feeding edited values forward during prefill. The current tuned
+settings are mid-layer alpha=0.25 at 4B and global alpha=0.75 at 30B.
+
+Wrong-conversation, shuffled-value, and wrong-summary controls test whether
+improvements come from content-specific state rather than generic perturbation.
+Wrong-conversation grafts use old values from another conversation;
+shuffled-value grafts use the right conversation's values at wrong matched
+positions; H-pack-wrongS uses packed summary entries from another conversation.
 
 ### 4.3 Data and Tasks
 

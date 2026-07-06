@@ -112,24 +112,95 @@ white-box open-model measurement of one such mechanism.
 
 ## 4. Methods
 
-### 4.1 Experimental Arms
+### 4.1 Shared Compaction Setup
 
-The main arms are:
+Each example is first rendered with the model's chat template in a canonical
+non-final form, so token spans can be compared across arms without Qwen's final
+assistant-message template instability. We keep the first four tokens as
+attention sinks. The retained tail begins at a message boundary near the final
+quarter of the tokenized conversation; the material between the sinks and that
+tail is the evicted region.
+
+A summary is generated greedily by the same subject model while the full
+pre-compaction conversation is still available. The summary request is appended
+as a normal user turn, the model is prefixed through the full conversation plus
+that request, and the generated summary tokens are decoded from the resulting
+continuation. The cache snapshot from this generation run is saved. It contains
+the key/value tensors written for the original conversation, the summary
+request, and the summary tokens as they were generated under full context.
+
+The production text-compaction baseline then constructs a new transcript:
+system message, assistant context note containing the summary, and the retained
+tail messages. That transcript is freshly encoded from scratch. The
+interventions differ only in which cached attention state is carried across
+this boundary.
+
+### 4.2 Arms and Controls
+
+The main evaluated arms are:
 
 - **A:** full context, no compaction.
-- **B:** production-style text compaction, `summary + tail`, freshly encoded.
-- **B-min-pack:** packed summary text, freshly encoded.
-- **H-pack:** same packed summary tokens as B-min-pack, but using the summary's
-  write-time cache entries.
-- **ValueGraft:** production compacted context with fresh keys and blended old
-  value tensors at exact-aligned positions.
+- **B:** production-style text compaction, `summary + tail`, freshly encoded
+  from the shortened transcript.
+- **B-min-pack:** the first four sink tokens plus the exact generated summary
+  token ids, packed contiguously and freshly encoded.
+- **H-pack:** the same packed token sequence as B-min-pack, but using the
+  summary's write-time cache entries.
+- **ValueGraft:** the normal B transcript with fresh keys and blended old value
+  tensors at exact-aligned summary and tail positions.
 - **Negative controls:** shuffled-value and wrong-conversation grafts.
 
 H-pack vs B-min-pack isolates the effect of write-time summary encoding in a
-packed layout. ValueGraft vs B tests whether old value payloads improve a normal
-compacted context.
+packed layout: identical tokens, identical packed positions, different cache
+state. ValueGraft vs B tests whether old value payloads improve an otherwise
+ordinary compacted transcript.
 
-### 4.2 Validation
+### 4.3 H-Pack Construction
+
+H-pack extracts the summary token span from the saved summary-generation cache.
+For Qwen3 in this stack, keys are stored after RoPE rotation and values are
+unrotated. To make the retained summary cache contiguous and prefix-shaped, we
+move the summary span immediately after the four sink tokens. The summary keys
+are re-rotated by the positional offset between their write-time positions and
+their packed positions; the values are copied unchanged. The resulting cache
+contains only the sinks and summary entries, with the cache offset set to the
+end of the packed summary.
+
+B-min-pack is the matched text-only control for this operation. It uses the
+same sink tokens and the same summary token ids at the same packed positions,
+but obtains their key/value tensors by an ordinary fresh prefill. Any H-pack vs
+B-min-pack difference is therefore not due to summary wording, token count, or
+packed position layout.
+
+### 4.4 ValueGraft Construction
+
+ValueGraft starts from the production text-compaction baseline B. We first
+freshly prefill the compacted transcript, preserving its ordinary contiguous
+positions and its fresh keys. We then align tokens from the compacted transcript
+to tokens from the old full-context summary-generation run.
+
+Alignment is exact-token matching, not semantic retrieval. The summary region
+and tail region are matched separately because B places the summary before the
+tail, while the old generation run places the summary after the original
+conversation and summary request. Matching blocks shorter than eight tokens are
+discarded to avoid common-token coincidences, and special tokens and sink
+positions are excluded. For each accepted pair `(new_pos, old_pos)`, each
+layer's value tensor is replaced by a linear blend:
+
+```text
+V_final[layer, new_pos] =
+    (1 - alpha) * V_fresh[layer, new_pos]
+  + alpha       * V_old[layer, old_pos]
+```
+
+The reported ValueGraft arm is the post-prefill version: blending happens after
+B's compacted transcript has been encoded. Earlier exploratory arms also tried
+interleaving the blend during prefill, but the current headline comparison uses
+fresh keys and post-prefill blended values. The 4B setting used a mid-layer-band
+gate with alpha=0.25; the 30B setting used a global alpha=0.75, both selected
+on validation continuation likelihood before holdout evaluation.
+
+### 4.5 Validation
 
 Because cache surgery is sensitive to position, template, and kernel details,
 every reported configuration had to pass identity tests before its results
@@ -140,7 +211,14 @@ key re-rotation for packed H-pack. Runtime traps found during the work include
 Qwen chat-template instability, batched-vs-stepwise logit differences, and
 sequence-length-dependent 4-bit kernel behavior.
 
-### 4.3 Data
+Negative controls check whether gains can be explained by generic smoothing or
+odd cache perturbations. Shuffled-value grafts use the correct conversation's
+old values but attach them to the wrong aligned positions. Wrong-conversation
+grafts use old values from another conversation. H-pack-wrongS uses packed
+summary state from another conversation. These controls test whether an effect
+survives after content/state alignment is broken.
+
+### 4.6 Data and Scoring
 
 The evidence comes from four sources:
 
@@ -155,8 +233,13 @@ The evidence comes from four sources:
 - **SWE-Gym/OpenHands traces:** 75 real coding-agent trajectories scored by
   teacher-forced likelihood of the true next assistant action.
 
-All evaluation is temperature 0. Local 4B results are 4-bit MLX; cloud 30B
-results are bf16 HuggingFace/Transformers unless otherwise stated.
+Probe-style tasks append a user question to each arm and greedily generate an
+answer at temperature 0. Continuation and coding-trajectory tasks teacher-force
+the held-out continuation or next assistant action and report mean per-token
+log likelihood. Where possible, results are paired by conversation and reported
+with wins, bootstrap confidence intervals, and gap closure `(arm - B) / (A -
+B)`. Local 4B results are 4-bit MLX; cloud 30B results are bf16
+HuggingFace/Transformers unless otherwise stated.
 
 ## 5. Results
 
