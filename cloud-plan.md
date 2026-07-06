@@ -153,3 +153,13 @@ factored-calibration work is EXPLORATION-section material. Gemma stage uses
 the factored calibration interface. Guard check (wrong-conv through the 57
 slots) still runs — its outcome is reported either way but does not change
 the primary approach.
+
+
+## Superseding update (02:40 07-06)
+
+Stages 1b/3-6 as originally planned are OBSOLETE. Live program: E-track
+agent-coding evaluation (serve_shim.py + OpenHands SDK + synthetic
+constraint-memory tasks, objective pytest scoring) with the tuning ladder
+(value-steering-design-notes.md + DECISIONS 07-06 02:30) and
+champion/challenger validation. Honesty-bf16 + 4B calibration are the
+remaining non-E workloads. LongMemEval abandoned (user, 07-06 01:35).

@@ -2,7 +2,29 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 22:00 07-05
+## Current focus (read this first) — updated 02:40 07-06
+
+**NIGHT PROGRAM: E-track (agent coding) is thefocus.** LongMemEval is DEAD
+(user directive; stage-1 damage table kept, 1b/H200 killed). First signal:
+B 0/2 vs E 2/2 on objective pytest tasks end-to-end.
+**PODS (7):** p2=honesty-bf16 (running); p4=4B block then slot-guard, then
+standing TUNING/VALIDATION pod; e1=shim (old queue rounds 2-3 draining →
+then deploy NEW shim + tune_configs.json + start spec1); e2/e3/e4=shims
+provisioning (spec2/3/4, tunnels 8011-8013); w1=WILDCARD (wild_ideas.md).
+**MATRIX (~86 runs, spec1-4.txt):** t1/t2 × seeds s1-s5 × {B, E, E:a0.5,
+E:a1.0, E:a-0.5(anti), E:shuf(control), B:c6000, E:c6000, E:cfg=layers,
+E:cfg=posslots} + A controls; every run ends with the from-memory recall
+probe (dissociation analysis). Matrix runner skips scored runs — safe to
+re-split/re-run.
+**TUNING LADDER (paper exhibit):** B → E(α=.75) → E(per-layer coarse) →
+E(slot mask); champion/challenger + ≥25% baseline guard after promotion
+(see DECISIONS 02:30). tune_configs.json must reach every shim pod.
+**MORNING REPORT:** pass-rate table by condition, dose curves (α from -0.5
+to 1.0), threshold effect (6K vs 9K), shuffled control, dissociation
+table, honesty-bf16 results, 4B-bf16 calibration, wildcard journal, spend
+ledger (balance ~$101 at 02:00, burn ~$9.5/hr at full width).
+
+## Older focus (22:00 07-05) notes
 ### (written for a possibly-different successor agent — GPT-5.5 handoff likely)
 
 **GO-WIDE APPROVED (9 pods max, secure tier OK).** Use ONLY
