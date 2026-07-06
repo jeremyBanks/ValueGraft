@@ -25,7 +25,7 @@ cd /Users/jeb/experimentation
 # (connection errors, or trivially small log). A TIMEOUT after real work is
 # a legitimate failure observation — score the repo state as-is.
 LOGSZ=$(wc -c < "$WS/agent.log" 2>/dev/null | tr -d " "); LOGSZ=${LOGSZ:-0}
-if grep -qE "Connection refused|Connection reset|APIConnectionError" "$WS/agent.log" 2>/dev/null || [ "$LOGSZ" -lt 3000 ]; then
+if grep -qE "Connection refused|Connection reset|APIConnectionError|InternalServerError|APIError|APIStatusError|Error code: 5" "$WS/agent.log" 2>/dev/null || [ "$LOGSZ" -lt 3000 ]; then
   echo "INVALID_EPISODE (connection errors or never started, log=$LOGSZ) — no score written" | tee "$WS/invalid.marker"
   exit 0
 fi
