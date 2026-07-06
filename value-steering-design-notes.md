@@ -116,3 +116,11 @@ effect and broke consistency (collinearity variance), and the factored fit
 itself underperforms the simple band rule (profile matrix ≈ noise + band).
 Per the evidence-grading rule this does NOT close the question for
 30B-bf16 / richer profiles; it does establish signed fits aren't free money.
+
+*Process note (user-requested): the geometry argument was proposed by the
+user from first principles, assessed as formally correct, prioritized for
+empirical test the same evening, and decisively lost on holdout within
+hours — which is the collaboration working as intended. Arguments here earn
+their tests, and losing an empirical test is a result, not an error; the
+argument's correctness-in-principle stands recorded above alongside its
+defeat-in-practice at this scale.*
