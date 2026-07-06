@@ -348,3 +348,7 @@ KV+activations > 80G). FIX: chunked prefill in kvlib_hf.hf_prefill_ids
 position_ids per chunk) + SC_MAX_FULL=85000 in job.sh. Write-up caveat:
 standard-protocol subset = haystacks <=85K tokens on A100-80G.
 E1 queue: running fine on e1 (B/E rounds); summary-cache deploys at drain.
+UPDATE 00:35: p1 OOM root cause was snapshot CLONE in generate_summary_hf
+(16GB dup at 85K) — now snapshot=("E-tuned" in ARMS); chunked prefill also
+in (bit-exact verified). p1 cycled; podcheck alerts within ~5min if it
+fails again.
