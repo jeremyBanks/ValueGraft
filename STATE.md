@@ -352,3 +352,21 @@ UPDATE 00:35: p1 OOM root cause was snapshot CLONE in generate_summary_hf
 (16GB dup at 85K) — now snapshot=("E-tuned" in ARMS); chunked prefill also
 in (bit-exact verified). p1 cycled; podcheck alerts within ~5min if it
 fails again.
+
+## OVERNIGHT E-MATRIX PLAN (01:50 07-06) — the night's main thread
+
+User: LongMemEval DEAD (stage-1 data kept; 1b/H200 killed). E-track = focus;
+round-1 signal B 0/2 vs E 2/2. 64-run matrix ready: specA/specB.txt in
+scratchpad (t1/t2 x s1-s5 seeds x B/E/E:a0.5/E:a1.0/B:c6000/E:c6000 + 4 A
+controls; core B/E pairs FIRST in specs). Steps:
+1. When e1's OLD queue prints E1_QUEUE_DONE (monitor live): kill serve_shim
+   on e1 (18624@213.173.105.10), rsync src, relaunch job.sh (new shim w/
+   per-request knobs + summary cache), tunnel 8010, then:
+   nohup bash scratchpad/e1_matrix.sh http://localhost:8010/v1 \
+     scratchpad/specA.txt scratchpad/matrixA.log &
+2. When e2 pod ready ("shim listening" in job.log; launch_e2.log has
+   ip/port; pods.list registered): tunnel 8011 -> :8000, run specB likewise
+   into matrixB.log.
+3. Analysis: per-condition pass rates; paired core B-vs-E table; alpha and
+   threshold dose curves; A ceiling. Morning report leads with this.
+Score dirs: scratchpad/e1_runs/<task>_<mode>/score.json (colons -> dashes).
