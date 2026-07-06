@@ -87,6 +87,12 @@ def load_jobs():
 
 
 def build_ctx(model, tokenizer, cid, msgs, tsm, cont_spec):
+    from arms_common import detect_template_family, merge_consecutive_roles
+    if detect_template_family(tokenizer) == "gemma":
+        n_before = len(msgs)
+        msgs = merge_consecutive_roles(msgs)
+        if tsm is not None and len(msgs) != n_before:
+            tsm = None  # boundary indices shifted; fall back to 75% rule
     ids = canonical_ids_any(tokenizer, msgs, render_hf)
     starts = message_starts_any(tokenizer, msgs, ids, render_hf)
     if tsm is None:

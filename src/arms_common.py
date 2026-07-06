@@ -190,3 +190,14 @@ def message_starts_any(tokenizer, msgs, ids, renderer):
     if fam == "qwen":
         return message_token_starts(tokenizer, ids, len(msgs))
     return message_token_starts_prefix(tokenizer, msgs, renderer)
+
+
+def merge_consecutive_roles(msgs):
+    out = []
+    for m in msgs:
+        if out and out[-1]["role"] == m["role"]:
+            out[-1] = {"role": m["role"],
+                       "content": out[-1]["content"] + "\n\n" + m["content"]}
+        else:
+            out.append(dict(m))
+    return out
