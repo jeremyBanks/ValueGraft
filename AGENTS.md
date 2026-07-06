@@ -9,6 +9,7 @@ loses, across LLM conversation-compaction boundaries.
 
 ## Read in this order
 
+0. `INCIDENTS.md` — what went wrong, KNOWN vs THEORY, and which data is VOID. Read before trusting ANY result.
 1. `STATE.md` — where things stand right now and what's queued. Start here.
 2. `DECISIONS.md` — every methodology decision, deviation, and verified
    runtime fact. Non-negotiable reading before touching cache-surgery code.
