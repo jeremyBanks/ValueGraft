@@ -180,6 +180,7 @@ def app(environ, start_response):
             int(environ.get("CONTENT_LENGTH") or 0))
         req = json.loads(body)
         mode = "A"
+        req_head_map = None
         alpha = E_ALPHA
         compact_at = COMPACT_AT
         m = str(req.get("model", ""))
@@ -199,9 +200,9 @@ def app(environ, start_response):
                         alpha = {int(k): v for k, v in _c["alpha_map"].items()}
                     else:
                         alpha = _c.get("alpha", 0.75)
-                    sess["cfg_head_map"] = ({int(k): v for k, v in
-                                             _c["head_map"].items()}
-                                            if _c.get("head_map") else None)
+                    req_head_map = ({int(k): v for k, v in
+                                     _c["head_map"].items()}
+                                    if _c.get("head_map") else None)
                 elif p.startswith("c"):
                     compact_at = int(p[1:])
         msgs = _norm(req["messages"])
@@ -209,6 +210,7 @@ def app(environ, start_response):
         skey = _skey(msgs) + "|" + m.split("sc-")[-1]
         with _lock:
             sess = _sessions.setdefault(skey, {})
+            sess["cfg_head_map"] = req_head_map
             t0 = time.time()
             text, dbg = _generate(msgs, max_tokens, mode, sess, alpha, compact_at)
         resp = {
