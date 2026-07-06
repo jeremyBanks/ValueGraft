@@ -224,3 +224,25 @@ at its spec completion (~06:00) and its stall half was never replaced.
 FIX: throughput-floor alarm (runners alive + 0 scores in 60 min → alarm).
 RULE 13: health checks must measure OUTPUT RATE against expectation,
 never merely process existence. "N lanes running" is not a status.
+
+## Coverage map (rule 12 EXECUTED, 20:15 07-06 — the table that should have existed this morning)
+| link | failure mode | watcher | latency |
+|---|---|---|---|
+| pod exists/billed | orphan burning | pod-count vs pods.list (podcheck) | 5m |
+| shim process | death | single-strike dead-proc alarm | 5m |
+| shim serving correctly | wrong mode/config | isolation probe at lane start + CONFIG banner + per-request DBG log | at start/always |
+| tunnel | dies/mis-wired | forwarder check + identity verify on establish | 5m |
+| runner | dead | (outcome watcher covers) | ≤100m |
+| runner | waiting forever | stuck-waiting check | ~10m |
+| episode | hung >60m | perl alarm; scored as timeout | hard bound |
+| episode | never ran | validity-at-source (no score) | immediate |
+| PER-LANE output | silent stall/all-errors | per-lane score-rate alarm | 100m |
+| GLOBAL output | total stall | throughput floor | 60m |
+| score integrity | impossible data | A-failure + burst alarms; dropped_ids flags | 5m |
+| results→repo | sync breaks | GAP — no watcher (cp -n in loop; failure silent) |
+| balance | runaway spend | GAP — no low-balance alarm (prepaid cap only) |
+| local disk/mem | exhaustion | disk+memory watchdogs | 10m/2m |
+Two gaps found by doing the exercise: (1) repo-sync failure would be
+silent — mitigation: sync errors now matter only at analysis (reads
+scratchpad directly as fallback); accepted, documented. (2) no
+low-balance alarm — added below.
