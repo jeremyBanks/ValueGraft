@@ -94,3 +94,15 @@ counter-argument that carried the decision):**
   regularized*, and only within the exploration section (decision 4). If
   (c) beats (b) on holdout, the geometry argument wins in practice and the
   write-up says so.
+
+## Evidence-grading rule (user, 07-05 night)
+
+Small-model / 4-bit / local results are exploratory only: they can
+demonstrate that something is POSSIBLE (existence proofs, candidate
+generators) but are never evidence that something is impossible or absent —
+the models are too small and unrepresentative for nulls to transfer.
+Empirical support for the asymmetry within this project: the α dose-response
+INVERTED between 4B and 30B; older-family small models showed nothing at any
+α. Claims are earned at 30B-bf16 on standard data (or larger); small-scale
+positives are promoted for validation there; small-scale negatives prune
+nothing at larger scale (applies to Gemma head factors too).
