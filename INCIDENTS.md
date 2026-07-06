@@ -246,3 +246,19 @@ Two gaps found by doing the exercise: (1) repo-sync failure would be
 silent — mitigation: sync errors now matter only at analysis (reads
 scratchpad directly as fallback); accepted, documented. (2) no
 low-balance alarm — added below.
+
+## 19. Dataset difficulty unvalidated before committing the experiment to it (07-06, evening)
+KNOWN: SWE-bench-Lite was adopted as primary real-task source on
+runnability evidence alone (adapter fail/pass validation) — never a
+CAPABILITY check (can THIS model solve ANY of it, in ANY setting?). 0/2
+easy-tier full-capability validations + 0 passes across all attempts;
+signal cost scales 1/p, making the plain setting economically
+unmeasurable long before statistical questions arise. Two full days of
+agent-pipeline work targeted a dataset the subject model may not be able
+to touch. RULE 14: before adopting any task source, run a CAPABILITY
+SMOKE — a handful of full-capability (oracle-best-case) episodes to
+estimate p — BEFORE building comparisons on it. Difficulty-to-model
+matching is a precondition, not a tuning detail.
+RULE 15 (from the same evening): validation queues should mix SOURCES
+(interleaved), so a single dataset's difficulty miss doesn't stall the
+whole program.
