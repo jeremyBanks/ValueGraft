@@ -11,3 +11,4 @@
 ## 04:58 Claude shift: MORNING-REPORT.md committed (champion=cfg-layers 9/9 w/ guard-pass; alpha-0.75 anomaly flagged; honesty judging launched 2 agents). Lanes at 81 scored and continuing. Next shift: verdicts aggregation + confirm-table refresh into report.
 ## 05:25 Claude shift: confirm tier still B-ceilinged (3/3); dissociation probe = instrument bug (0/82 incl. A — capture broken, logged honestly); report refreshed. Balance $57.
 ## 06:00 Claude shift: wind-down complete (2 pods, $2.78/hr, balance $51.81). Validity fixes committed (session isolation, probe capture). t3 authoring deferred to day shift w/ user. Night program CLOSED — report final.
+## 07:05 Claude: anomaly re-runs live (isolated sessions); DAY-PLAN.md staged for user wake; balance $48.8, 2 pods.
