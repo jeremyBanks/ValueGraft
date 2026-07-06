@@ -266,3 +266,21 @@ Before broad sharing: repo cleanup pass — organize the accumulated docs
 (RESULTS*/notes/briefs), prune scratch scripts, coherent README, verify no
 credentials/large artifacts, tidy results/ layout. Explicitly deferred to the
 very end; touching structure mid-flight risks disrupting running pipelines.
+
+## Overnight mandate (user, going to sleep 07-05 ~22:30)
+
+PRIORITY 1: E0 serving shim → smoke → E1 coding runs fanned across pods.
+Design: OpenHands runs LOCALLY (docker) with NO condenser; the SHIM does
+compaction internally per mode (model-name suffix selects A/B/E) — agent
+sees a normal API; the model's context is silently compacted/grafted
+server-side. This is the opaque-handle deployment shape and needs zero
+OpenHands forking.
+PRIORITY 2 (parallel, creative): try MULTIPLE cheap evaluation angles for
+the coding setting, smoke-test each, follow the signal. Candidate probes to
+try (add more): resume-after-compaction replay at many cut points;
+mid-task file-content recall probes; repeated-failed-command with
+exit-code-grounded definition; steps-to-green on small synthetic repos;
+diff-quality vs gold patch. Negative results fine — be SURE, avoid
+overfit; cross-model consult (AGENTS.md) when stuck.
+User asleep: no check-ins; full morning report expected (what ran, what
+separated, spend ledger, E-track story).
