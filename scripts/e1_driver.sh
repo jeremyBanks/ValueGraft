@@ -16,7 +16,7 @@ export LLM_MODEL="openai/sc-$MODE"  # suffixes :aX :cN ride along
 export SANDBOX_TYPE=local WORKSPACE_BASE="$WS/repo"
 export LOG_ALL_EVENTS=true
 uv run --project /Users/jeb/experimentation python /Users/jeb/experimentation/$TASKMOD prompt "$TASK" > "$WS/task.txt"
-perl -e 'alarm 5400; exec @ARGV' -- ./.venv/bin/python \
+perl -e 'alarm 1800; exec @ARGV' -- ./.venv/bin/python \
   /Users/jeb/experimentation/src/e1_agent.py "$MODE" "$BASE" "$WS/repo" "$WS/task.txt" \
   > "$WS/agent.log" 2>&1 || true
 cd /Users/jeb/experimentation
