@@ -1,6 +1,0 @@
-{
- "note": "forced 450-token generations from corrupted caches (c03, 4B); shows early breakdown -> late generic-fluency attractor",
- "shuffled_early": "- **Final Answer**: The provided response is a (incomplete)... <|im_end|><|im_start|> loop",
- "wrongconv_early": "I see you are asking for a,, and I can help you with that... Response to: What is the,",
- "late_both": "fluent generic assistant-speak, no conversation content"
-}
