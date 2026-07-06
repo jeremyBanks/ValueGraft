@@ -285,6 +285,18 @@ overfit; cross-model consult (AGENTS.md) when stuck.
 User asleep: no check-ins; full morning report expected (what ran, what
 separated, spend ledger, E-track story).
 
+## Board snapshot (23:30 07-05) — supersedes older lines below
+
+p1=stage-1b-mini (A/B x40 full-haystack, job_new.log); p2=honesty-bf16
+(job_new.log); p4=4B-bf16 block (tune4b.log; sweep done, layer running);
+g1=Gemma attempt-4 (job4.log; see DECISIONS Gemma ledger — 4 template
+fixes, dry-run rule now in force); e1=shim pod loading 30B (job.log, ready
+= "shim listening"; then: SSH tunnel + E0 = e1_driver.sh A t1). Stage-1
+COMPLETE+judged (table in DECISIONS). Balance $112.73 (~$7/hr, 5 pods).
+Stale-guard note: use pgrep -f "[b]racketed" patterns (self-match trap).
+pgrep/kill discipline + charter (paced, gates=spending-not-effort,
+approaches killable / mission not) all in DECISIONS.
+
 ## E-track status (22:55 07-05)
 
 Shim (src/serve_shim.py) smoke-PASSED locally (A/B/E modes, compaction +
