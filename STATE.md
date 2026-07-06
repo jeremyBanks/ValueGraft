@@ -284,3 +284,16 @@ diff-quality vs gold patch. Negative results fine — be SURE, avoid
 overfit; cross-model consult (AGENTS.md) when stuck.
 User asleep: no check-ins; full morning report expected (what ran, what
 separated, spend ledger, E-track story).
+
+## E-track status (22:55 07-05)
+
+Shim (src/serve_shim.py) smoke-PASSED locally (A/B/E modes, compaction +
+graft through OpenAI protocol). Pod e1 provisioning with 30B (job.log:
+"shim listening" = ready; port 8000 NOT exposed externally — use SSH tunnel
+`ssh -L 8000:localhost:8000 -p <port> root@<ip>`). OpenHands: uv tool
+install FAILS (no entrypoints) — use venv at scratchpad/ohenv/.venv +
+`python -m openhands.core.main -t "<task>"` headless; install in flight.
+Driver script for SWE-Gym tasks still to write (pick instances w/ runnable
+tests from swegym.parquet; conditions via model name sc-A/sc-B/sc-E;
+LLM_BASE_URL=http://localhost:<tunneled>/v1). p1=1b-mini, p2=honesty,
+p4=4B block(+guard,mistral queued), g1=gemma — all running.
