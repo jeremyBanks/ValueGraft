@@ -115,3 +115,12 @@ KNOWN: detected by the new-error alarm within one 5-min pass. Fix
 verified by syntax + redeploy; lanes restarted (1-2 in-flight rows may
 score as casualties — check for suspicious False rows at 09:05-09:20 and
 re-run if found).
+
+## 11. icache unbounded VRAM growth (07-06 ~12:30)
+KNOWN: incremental session cache stored per-session GPU snapshots with no
+eviction → accumulated across episodes → r4 shim died silently (VRAM
+exhaustion class), detected by dead-job alarm in ≤10 min. The "one task
+per pod" assumption violated by MY OWN new code — third occurrence of the
+class. FIX: one-entry cache (all other sessions' icache evicted on
+store). Bit-exactness unaffected (eviction only). Rule 1 reaffirmed: this
+assumption must become an assert, not a memory.

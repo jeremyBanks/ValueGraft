@@ -122,6 +122,8 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
             if INCR_CACHE:
                 dbg["icache"] = "MISS"
         if INCR_CACHE:
+            for other in list(_sessions):
+                _sessions[other].pop("icache", None)
             sess["icache"] = {"ids": list(ids), "snap": snap}
         gp = render_hf(_tok, msgs, True)
         text = answer_hf(_model, _tok, snap, gp[len(ids):], len(ids),
