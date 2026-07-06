@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_7ddcf75f",
+ "question": "How many days ago did I go on a whitewater rafting trip in the Oregon mountains?",
+ "answer": "3 days ago. 4 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12166,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned in your last message that you just got back from an amazing whitewater rafting trip in the Oregon mountains **today**.\n\nSo, you went on the trip **0 days ago** — it happened *today*. 🎉\n\nThat means you're still riding the high of that adventure, and it's the perfect time to start planning your next one (or even reviewing those awesome GoPro clips you’ll be capturing with your new Hero8 Black)!",
+  "B": "I don’t have access to your personal history or past events, including whether you went on a whitewater rafting trip in the Oregon mountains. That information isn’t part of our conversation or any shared context.\n\nIf you’re trying to recall when that trip happened, you might check your calendar, photos, travel logs, or any notes you may have saved. Let me know if you’d like help planning a future trip or organizing your travel memories! 🌲rafting",
+  "E-tuned": "I don't have access to your personal history or past activities, including whether you went on a whitewater rafting trip in the Oregon mountains. If you're trying to recall the date, you might check your photos, travel logs, social media posts, or calendar entries from that time. Let me know if you'd like help estimating the date based on other details!",
+  "B-min-pack": "I don't have access to your personal history or past activities, so I can't tell you how many days ago you went on a whitewater rafting trip in the Oregon mountains. If you remember the date, you can calculate it yourself by comparing today’s date to the day of your trip! Let me know if you'd like help with that. 🌲rafting 🏞️",
+  "H-pack": "I don't have access to your personal calendar or past activities, so I can't tell you how many days ago you went on a whitewater rafting trip in the Oregon mountains. If you remember the date, you can calculate it using a calendar or date calculator! Let me know if you'd like help with that. 🌲rafting🌊",
+  "H-gap": "I don't have access to your personal calendar or past activities, so I can't tell you how many days ago you went on a whitewater rafting trip in the Oregon mountains. If you remember the date, you can calculate it using a calendar or date calculator! Let me know if you'd like help with that. 🌲rafting🌊"
+ }
+}

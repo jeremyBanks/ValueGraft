@@ -1,0 +1,20 @@
+{
+ "question_id": "bc8a6e93",
+ "question": "What did I bake for my niece's birthday party?",
+ "answer": "a lemon blueberry cake",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12342,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You baked a **lemon blueberry cake** for your niece's birthday party! You mentioned it was a huge hit, and you were happy with how the tangy lemon and sweet blueberries turned out. It sounds like a delicious and thoughtful treat that brought joy to your niece and her guests! 🎂🍋💙",
+  "B": "I'm sorry, but I don't have any information about your niece's birthday party or what you baked. I wasn't present at the event, and you haven't shared those details with me. If you'd like help with a recipe, decorating ideas, or planning for future parties, I’d be happy to assist!",
+  "E-tuned": "I'm sorry, but I don't have any information about your niece's birthday party or what you baked. I can't access personal memories or private details. If you'd like, I can help you brainstorm fun dessert ideas for future parties! 🎉🧁",
+  "B-min-pack": "I'm sorry, but I don't have any information about what you baked for your niece's birthday party. I wasn’t part of that event or aware of your plans! 😊 If you'd like help coming up with a fun or delicious dessert idea for a future party, I’d be happy to help!",
+  "H-pack": "I'm sorry, but I don't have any information about what you baked for your niece's birthday party. I wasn’t there, and you haven’t shared those details with me yet! 😊  \nIf you’d like help naming a dessert, writing a cute label, or even brainstorming a fun baking idea for next time, I’d be happy to help! 🎂🧁",
+  "H-gap": "I'm sorry, but I don't have enough information to know what you baked for your niece's birthday party. Could you provide more details? 😊"
+ }
+}

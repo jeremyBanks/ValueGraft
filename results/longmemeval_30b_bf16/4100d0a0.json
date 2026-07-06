@@ -1,0 +1,20 @@
+{
+ "question_id": "4100d0a0",
+ "question": "What is my ethnicity?",
+ "answer": "A mix of Irish and Italian",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14191,
+  "tail_start_msg": 46
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I can't determine your ethnicity. I don't have access to personal information about you, such as your ancestry, family background, or cultural heritage. \n\nEthnicity is a personal and complex identity that's shaped by a combination of factors like your family's origins, cultural traditions, language, and self-identification. If you're curious about your own ethnicity, you might consider exploring your family history, talking to relatives, or even using DNA testing services (like AncestryDNA or 23andMe) to learn more about your genetic background.\n\nIf you'd like, I can help you explore resources or guide you through the process of learning more about your heritage. Just let me know!",
+  "B": "I'm sorry, but I can't determine your ethnicity. I don't have access to personal information about you, and ethnicity is a complex and personal aspect of identity that can't be determined by an AI without your explicit input.\n\nIf you're curious about your heritage or ethnic background, you might consider:\n\n- Talking with family members about your ancestry\n- Taking a DNA ancestry test (like those from 23andMe, AncestryDNA, or MyHeritage)\n- Researching family history through records, photos, or cultural traditions\n\nLet me know if you'd like help finding resources or learning more about cultural heritage in general.",
+  "E-tuned": "I'm sorry, but I can't determine your ethnicity. That information is personal and private, and it's something only you can define based on your background, culture, and identity. If you're curious about your heritage, you might consider exploring family history, cultural traditions, or even genetic testing (if you're interested in that). Let me know if you'd like help finding resources or learning more!",
+  "B-min-pack": "I'm sorry, but I can't determine your ethnicity. That's a personal and complex aspect of identity that depends on your background, heritage, culture, and self-identification. If you're exploring your ethnicity, you might consider researching your family history, speaking with relatives, or using genetic ancestry tests (like those from companies such as 23andMe or AncestryDNA) for insights—though these should be interpreted with care, as they provide probabilities, not definitive answers.\n\nIf you'd like, I can help you explore resources or guide you through understanding your cultural or ancestral roots. Let me know how I can assist!",
+  "H-pack": "I don't know your ethnicity, and I can't determine it from the information provided. Ethnicity is a personal and complex aspect of identity that is best defined by you. If you'd like to share more about your background or identity, I'm here to listen and support.",
+  "H-gap": "I'm sorry, but I can't determine your ethnicity. That information is personal and depends on your background, heritage, and self-identification. If you'd like to learn more about your ethnic background, you might consider exploring family history, cultural traditions, or genetic ancestry testing. Let me know if you'd like help with anything else!"
+ }
+}

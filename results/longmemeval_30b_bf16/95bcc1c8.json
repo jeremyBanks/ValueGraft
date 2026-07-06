@@ -1,0 +1,20 @@
+{
+ "question_id": "95bcc1c8",
+ "question": "How many amateur comedians did I watch perform at the open mic night?",
+ "answer": "10",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12720,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned in your previous message that you saw **10 amateur comedians** perform at the open mic night. That’s a great turnout, and it sounds like a fantastic experience! It’s always inspiring to see so many people sharing their humor and trying out new material. Keep up the momentum—your passion for comedy is clearly growing!",
+  "B": "I'm sorry, but I don't have that information. I don't have access to your personal experiences or events you've attended, like open mic nights. If you're trying to recall how many comedians performed, you might want to check any notes, photos, or social media posts from the event. Let me know if you'd like help with something else!",
+  "E-tuned": "I'm sorry, but I don't have that information. I wasn't there to count the performers, and you haven't shared any details about the event in our conversation. If you remember the number or have a way to check (like a program or a photo), you might be able to recall it! Let me know if you'd like help with anything else.",
+  "B-min-pack": "I'm sorry, but I don't have that information. I wasn't there to count or observe the open mic night. If you're trying to recall how many amateur comedians performed, you might want to check your notes, a photo from the event, or ask someone who was with you! 😊",
+  "H-pack": "I don’t have that information — I wasn’t there to count the amateur comedians you watched perform at the open mic night. 😄 If you remember, you could check your notes, a photo, or even ask a friend who was with you! Let me know if you’d like help writing a recap or reviewing your experience.",
+  "H-gap": "I don’t have that information — I wasn’t there, and you haven’t shared the number in our conversation. 😄 If you remember, feel free to tell me how many amateur comedians you saw perform!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_468eb064",
+ "question": "Who did I meet with during the lunch last Tuesday?",
+ "answer": "Emma",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13827,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar, meeting notes, or past conversations, so I can't recall who you met with during lunch last Tuesday. If you're trying to remember, you might want to check your email, calendar invites, or any notes you took after the meeting. Let me know if you'd like help drafting a follow-up message or preparing for a future meeting!",
+  "B": "I'm sorry, but I don't have access to your personal schedule or meeting history. I can't recall who you met with during lunch last Tuesday. You might want to check your calendar, email, or notes from that day to find the information. Let me know if you'd like help organizing or reviewing your schedule!",
+  "E-tuned": "I don't have access to your personal schedule, calendar, or past conversations, so I can't recall who you met with during lunch last Tuesday. If you're trying to remember, you might want to check your calendar, email, or notes from that day. Let me know if you'd like help drafting a follow-up message or organizing your meeting notes!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal schedule or past meetings. I can't recall who you met with during lunch last Tuesday. You might want to check your calendar, email, or notes from that day for a reminder. Let me know if you'd like help drafting a follow-up message or organizing your meeting notes!",
+  "H-pack": "I don’t have access to your personal schedule or past meetings, so I can’t tell you who you met with during lunch last Tuesday. You might want to check your calendar, email, or notes from that day for a reminder. Let me know if you’d like help drafting a follow-up message or organizing your meeting details!",
+  "H-gap": "I'm sorry, but I don’t have access to your personal schedule or past meetings. I can’t recall who you met with during lunch last Tuesday. You might want to check your calendar, email, or notes from that day for a reminder. Let me know if you’d like help drafting a follow-up message!"
+ }
+}

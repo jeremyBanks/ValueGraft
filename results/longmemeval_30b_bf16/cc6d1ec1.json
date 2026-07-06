@@ -1,0 +1,20 @@
+{
+ "question_id": "cc6d1ec1",
+ "question": "How long had I been bird watching when I attended the bird watching workshop?",
+ "answer": "Two months",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12364,
+  "tail_start_msg": 44
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your message, you mentioned:  \n> \"By the way, I recently attended a bird watching workshop at the local Audubon society a month ago, and I learned a lot about attracting birds to my yard.\"\n\nYou also said:  \n> \"I've been getting into bird watching for about three months now...\"\n\nSo, you had been bird watching for **about three months** when you attended the workshop. Since the workshop was a month ago, that means you started bird watching roughly **two months before** the workshop.",
+  "B": "I'm sorry, but I don't have enough information to answer your question about how long you had been bird watching before attending the workshop. The details about your personal experience with bird watching aren't included in our conversation history. If you can provide more context or specific details, I’d be happy to help!",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer your question. The details about your bird watching experience prior to attending the workshop weren't included in our conversation. Could you provide more context or clarify?",
+  "B-min-pack": "I'm sorry, but I don't have enough information to answer how long you had been bird watching before attending the workshop. Could you provide more context, such as when you started bird watching or any details about your experience prior to the event?",
+  "H-pack": "I'm sorry, but I don't have enough information to answer how long you had been bird watching before attending the workshop. The details about your personal experience or timeline aren't included in our conversation. If you can provide more context, I’d be happy to help!",
+  "H-gap": "I'm sorry, but I don't have enough information to answer how long you had been bird watching before attending the workshop. The details about your personal experience or timeline aren't included in our conversation. If you can provide more context, I’d be happy to help!"
+ }
+}

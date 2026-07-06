@@ -1,0 +1,20 @@
+{
+ "question_id": "92a0aa75",
+ "question": "How long have I been working in my current role?",
+ "answer": "1 year and 5 months",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12967,
+  "tail_start_msg": 54
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided earlier, you mentioned:\n\n> *\"I've been in marketing for a while now, started as a Marketing Coordinator and worked my way up to Senior Marketing Specialist after 2 years and 4 months.\"*\n\nSo, you've been in your current role as **Senior Marketing Specialist** for **2 years and 4 months**.\n\nThat’s a significant achievement—reaching a senior position in just over two years is impressive and speaks to your dedication, skills, and impact in the field. Congratulations on your progress! 🎉",
+  "B": "I don't have access to your personal work history or employment details. To find out how long you've been in your current role, you can:\n\n- Check your employment contract or offer letter for your start date  \n- Look at your pay stubs or HR records  \n- Review your LinkedIn profile (if you've listed your job dates)  \n- Contact your HR department or manager directly  \n\nLet me know if you'd like help drafting a message to ask about your start date!",
+  "E-tuned": "I don't have access to your personal work history or employment details. To find out how long you've been in your current role, you can:\n\n- Check your employment contract or offer letter\n- Look at your pay stubs or HR records\n- Review your LinkedIn profile (if you've listed your current position)\n- Contact your HR department or manager directly\n\nLet me know if you'd like help drafting a message to ask about your start date!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been in your current role, you can check your employment contract, pay stubs, or HR records, or simply recall the start date from your memory. If you'd like, I can help you calculate the duration based on a date you provide!",
+  "H-pack": "I don't have access to your personal work history or employment details. To find out how long you've been in your current role, you can check your employment contract, pay stubs, or HR records, or log into your company’s internal systems (like an HR portal or email archives) to review start dates and related documentation. Let me know if you'd like help drafting a message to HR or reviewing your employment timeline!",
+  "H-gap": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been working in your current role, you can check your employment contract, pay stubs, or HR records, or simply recall the start date of your position. If you're unsure, reaching out to your HR department is a reliable way to confirm."
+ }
+}

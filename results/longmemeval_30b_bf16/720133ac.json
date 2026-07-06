@@ -1,0 +1,20 @@
+{
+ "question_id": "720133ac",
+ "question": "What is the total cost of Lola's vet visit and flea medication?",
+ "answer": "$75",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12218,
+  "tail_start_msg": 51
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided:\n\n- The vet consultation fee was **$50** (discounted for a regular customer).\n- The flea and tick prevention medication was **$25** for a 3-month supply.\n\n**Total cost:**  \n$50 (vet visit) + $25 (medication) = **$75**\n\nSo, the total cost for Lola’s vet visit and flea medication is **$75**. That’s a great deal for both services—especially since the vet fee was already discounted! 💛",
+  "B": "I'm sorry, but I don't have any information about Lola's vet visit or flea medication costs. The details of veterinary expenses would depend on factors like location, the specific treatments needed, the clinic's pricing, and whether Lola has pet insurance. If you're looking for an estimate, I’d recommend contacting a local veterinarian directly for a quote based on Lola’s needs.",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine the total cost of Lola's vet visit and flea medication. The cost can vary widely depending on several factors, such as:\n\n- The location (urban vs. rural, region of the country)\n- The specific veterinary clinic or hospital\n- The services provided during the visit (e.g., basic check-up, bloodwork, vaccinations)\n- The type and brand of flea medication prescribed (over-the-counter vs. prescription, topical vs. oral, brand name vs. generic)\n- Whether Lola has any underlying health conditions requiring additional treatment\n\nTypical costs might include:\n- Vet visit: $50–$150 (or more, depending on the services)\n- Flea medication: $20–$80 per",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine the total cost of Lola's vet visit and flea medication. Could you please provide details such as the vet visit fee, the cost of the flea medication, and any additional charges (like tests or treatments)? With that information, I’d be happy to help calculate the total.",
+  "H-pack": "I'm sorry, but I don't have enough information to determine the total cost of Lola's vet visit and flea medication. Could you please provide details such as the vet visit fee, the cost of the flea medication, or any other relevant expenses?",
+  "H-gap": "I'm sorry, but I don't have enough information to determine the total cost of Lola's vet visit and flea medication. Could you please provide details such as the vet visit fee, the cost of the flea medication, or any other relevant expenses?"
+ }
+}

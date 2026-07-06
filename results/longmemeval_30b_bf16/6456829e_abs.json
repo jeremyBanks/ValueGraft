@@ -1,0 +1,20 @@
+{
+ "question_id": "6456829e_abs",
+ "question": "How many plants did I initially plant for tomatoes and chili peppers?",
+ "answer": "The information provided is not enough. You mentioned planting 5 plants for tomatoes but you did not mention chili peppers.",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13825,
+  "tail_start_msg": 53
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned earlier that you initially planted **5 tomato plants**. However, you didn’t specify the number of chili pepper plants you started with. If you’d like to recall or confirm that detail, feel free to share — I’d be happy to help you track your garden progress! 🌱🌶️🍅",
+  "B": "I'm sorry, but I don't have enough information to answer your question. You haven't provided any details about the number of plants you initially planted for tomatoes and chili peppers. If you can provide more context or information, I'd be happy to help!",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer your question. Could you please provide more details about the number of plants you initially planted for tomatoes and chili peppers?",
+  "B-min-pack": "I'm sorry, but I don't have any information about your initial planting of tomatoes and chili peppers. Could you please provide more context or details?",
+  "H-pack": "I'm sorry, but I don't have enough information to answer your question about how many plants you initially planted for tomatoes and chili peppers. Could you please provide more details or context?",
+  "H-gap": "I'm sorry, but I don't have any information about your initial planting of tomatoes and chili peppers. Could you please provide more context or details?"
+ }
+}

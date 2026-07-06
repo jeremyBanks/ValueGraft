@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_45189cb4",
+ "question": "What is the order of the sports events I watched in January?",
+ "answer": "First, I attended a NBA game at the Staples Center, then I watched the College Football National Championship game, and finally, I watched the NFL playoffs.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12733,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I’d love to help you recall the order of the sports events you watched in January! However, I don’t have access to your personal viewing history or calendar.\n\nTo help me give you the most accurate answer, could you please provide a few details?\n\n- What sports events did you watch in January? (e.g., NFL playoffs, college basketball, NHL games, etc.)\n- Do you remember the dates or specific teams involved?\n- Were the events part of a tournament or series (like the NCAA Tournament, NBA playoffs, etc.)?\n\nWith a bit more context, I can help you reconstruct the sequence of events, identify the order of games or rounds, and even provide some fun facts or highlights from each!",
+  "B": "I'm sorry, but I don't have access to your viewing history or personal records, including the sports events you watched in January. To help you recall the order, you might want to check:\n\n- Your streaming service or TV provider’s watch history (e.g., Netflix, Hulu, ESPN+, YouTube TV, etc.)\n- Calendar or notes app where you may have recorded the events\n- Social media posts or messages where you discussed the games\n\nIf you can provide the names of the events or teams involved, I’d be happy to help you organize or verify the sequence based on typical sports schedules!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal viewing history or the specific sports events you watched in January. To help you recall the order, you might want to check:\n\n- Your calendar or event reminders\n- Streaming service watch history (e.g., ESPN+, Hulu, YouTube TV, etc.)\n- Social media posts or notes where you may have recorded the events\n- Any emails or confirmations from ticket purchases\n\nIf you can provide the names of the events or teams involved, I’d be happy to help you organize or verify the sequence!",
+  "B-min-pack": "I'm sorry, but I don't have any information about the sports events you watched in January. Could you please provide more details, such as the names of the events, teams, or dates? That way, I can help you determine the correct order.",
+  "H-pack": "I'm sorry, but I don't have any information about the sports events you watched in January. Could you please provide more details, such as the names of the events, teams, or dates? That way, I can help you determine the order.",
+  "H-gap": "I'm sorry, but I don't have any information about the sports events you watched in January. Could you please provide more details, such as the names of the events, teams, or dates? That way, I can help you determine the order."
+ }
+}

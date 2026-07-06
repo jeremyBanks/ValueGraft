@@ -1,0 +1,20 @@
+{
+ "question_id": "0862e8bf_abs",
+ "question": "What is the name of my hamster?",
+ "answer": "You did not mention this information. You mentioned your cat Luna but not your hamster.",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12180,
+  "tail_start_msg": 48
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't know the name of your hamster.",
+  "B": "I don’t know the name of your hamster, as we haven’t discussed it before. If you’d like, you can tell me the name, and I’d be happy to help you with anything related—like fun facts, care tips, or even a little story featuring your furry friend! 🐹💕",
+  "E-tuned": "I don't know the name of your hamster. You might want to check with your family or friends who may have helped choose the name, or look back at any notes or photos where you might have written it down. If you'd like, I can help you brainstorm some cute or fun names for your furry friend! 🐹💕",
+  "B-min-pack": "I don't know the name of your hamster, but I'd love to help you find a fun or fitting name if you're looking for one! Just let me know your hamster's personality, color, or any special traits, and I can suggest some ideas. 🐹✨",
+  "H-pack": "I don't know the name of your hamster. 😊  \nIf you'd like, you can tell me the name, and I’d be happy to help you with fun facts, care tips, or even a little story about your furry friend! 🐹💕",
+  "H-gap": "I don't know the name of your hamster. 😊  \nIf you'd like, you can tell me the name, and I’d be happy to help you celebrate your furry friend! 🐹💕"
+ }
+}

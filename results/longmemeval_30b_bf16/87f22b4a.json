@@ -1,0 +1,20 @@
+{
+ "question_id": "87f22b4a",
+ "question": "How much have I made from selling eggs this month?",
+ "answer": "$120",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12339,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned earlier that you sold **40 dozen eggs** this month at **$3 per dozen**.\n\nTo calculate your total earnings:\n\n40 dozen × $3 per dozen = **$120**\n\nSo, you've made **$120** from selling eggs this month! 🥚💰\n\nThat’s a great result—especially with your own backyard flock! If you’d like, I can help you track this in your budget template or calculate your profit after expenses like feed, vet care, and supplies.",
+  "B": "I'm sorry, but I don't have access to your personal financial records or business data—like your egg sales or income—since that information hasn't been shared with me.  \n\nIf you're tracking your farm income, I’d be happy to help you calculate it! Just let me know:  \n- How many eggs you sold  \n- The price per egg (or per dozen)  \n- Any additional costs or fees (if you're calculating profit)  \n\nWith that, I can help you figure out your total earnings for the month. 🥚💰",
+  "E-tuned": "I'm sorry, but I don't have access to your personal financial records or sales data. To find out how much you've made from selling eggs this month, you'll need to check your sales logs, receipts, or accounting records. If you use a digital tool like a spreadsheet, accounting software (like QuickBooks or Excel), or a point-of-sale system, you can calculate your total revenue by multiplying the number of eggs sold by the price per egg, then subtracting any costs (like feed, packaging, or labor) to get your net profit.\n\nIf you'd like help setting up a simple system to track your egg sales, I’d be happy to help!",
+  "B-min-pack": "I don’t have access to your personal financial records or sales data, so I can’t tell you exactly how much you’ve made from selling eggs this month. To find out, you’ll want to check your sales logs, receipts, or any accounting system you’re using (like a spreadsheet, app, or bookkeeping software).\n\nHere’s a quick way to calculate it:\n\n1. **Count the number of eggs sold** this month.\n2. **Determine your selling price per egg or per dozen**.\n3. **Multiply the number of eggs by the price per egg** (or divide by 12 and multiply by price per dozen).\n\nFor example:\n- If you sold 200 eggs at $0.50 each → 200 × $0.5",
+  "H-pack": "I don’t have access to your personal financial records or sales data, so I can’t tell you exactly how much you’ve made from selling eggs this month. To find out, you’ll need to check your records—such as a sales log, ledger, or accounting app—where you’ve tracked:\n\n- The number of eggs sold each day  \n- The price per egg or per dozen  \n- Any associated costs (like feed, packaging, or labor) if you're calculating net profit  \n\nIf you’d like, I can help you calculate your total earnings or profit margin—just share the numbers! 🥚📊",
+  "H-gap": "I don’t have access to your personal financial records or sales data, so I can’t tell you exactly how much you’ve made from selling eggs this month. To find out, you’ll need to check your records—like a sales log, ledger, or accounting app—where you track:\n\n- The number of eggs sold each day  \n- The price per egg or per dozen  \n- Any associated costs (like feed, packaging, or labor) if you're calculating net profit  \n\nIf you’d like, I can help you set up a simple spreadsheet or formula to calculate your monthly egg sales! Just let me know:  \n- How many eggs you sold  \n- At what price  \n- And any expenses you’d like to subtract  \n\nThen I’ll do the math for you. 🥚"
+ }
+}

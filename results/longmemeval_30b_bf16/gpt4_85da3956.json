@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_85da3956",
+ "question": "How many weeks ago did I attend the 'Summer Nights' festival at Universal Studios Hollywood?",
+ "answer": "3 weeks ago",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15071,
+  "tail_start_msg": 51
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or past events, so I can't determine exactly how many weeks ago you attended the \"Summer Nights\" festival at Universal Studios Hollywood. However, you mentioned earlier that you went to the festival with your friends Rachel and Mike, and that you recently returned from a trip to Six Flags Magic Mountain.\n\nIf you're trying to recall the timing, you might want to check your calendar, photos, or any notes you took around that time. If you're referring to a specific event, it's possible that \"Summer Nights\" is an annual festival at Universal Studios Hollywood, so it may have occurred during the summer months—typically June through August.\n\nIf you'd like, I can help you brainstorm ways to keep track of future events or create a personal event tracker",
+  "B": "I don't have access to your personal calendar, event history, or past activities, so I can't determine how many weeks ago you attended the 'Summer Nights' festival at Universal Studios Hollywood.\n\nIf you'd like to find out, you could check:\n\n- Your email receipts or confirmation emails from Universal Studios\n- Photos or social media posts from the event\n- Your calendar app (Google Calendar, Apple Calendar, etc.)\n- Any notes or journals where you might have recorded the date\n\nLet me know if you'd like help estimating the date based on other details (like the season or a specific year), and I’d be happy to assist!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal event history or calendar information. I can't recall or track past events like your attendance at the 'Summer Nights' festival at Universal Studios Hollywood.\n\nTo find out how many weeks ago you attended, you could check:\n\n- Your calendar (Google Calendar, Apple Calendar, etc.)\n- Photos or social media posts from the event\n- Receipts or tickets from the visit\n- Any emails or confirmations related to your booking\n\nIf you remember the date, I’d be happy to help you calculate how many weeks ago it was! Just let me know the date.",
+  "B-min-pack": "I don't have access to your personal attendance history or calendar data, so I can't determine how many weeks ago you attended the 'Summer Nights' festival at Universal Studios Hollywood.\n\nTo find out, you can check:\n\n- Your email receipts or confirmation emails from the event.\n- Your Universal Studios Hollywood account or app (if you used one to purchase tickets).\n- Your calendar (Google Calendar, Apple Calendar, etc.).\n- Photos or social media posts from the event with dates.\n\nIf you provide the date you attended, I’d be happy to calculate how many weeks ago that was!",
+  "H-pack": "I don't have access to your personal calendar, attendance records, or past events, so I can't determine how many weeks ago you attended the 'Summer Nights' festival at Universal Studios Hollywood. If you remember the date, you can calculate it by comparing that date to today’s date using a calendar or date calculator. Let me know if you'd like help with that!",
+  "H-gap": "I don't have access to your personal calendar, attendance records, or past events, so I can't determine how many weeks ago you attended the 'Summer Nights' festival at Universal Studios Hollywood. If you remember the date, you can calculate it by comparing that date to today’s date using a calendar or date calculator. Let me know if you'd like help with that!"
+ }
+}

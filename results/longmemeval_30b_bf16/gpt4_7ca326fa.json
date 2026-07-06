@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_7ca326fa",
+ "question": "Who graduated first, second and third among Emma, Rachel and Alex?",
+ "answer": "Emma graduated first, followed by Rachel and then Alex.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13173,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information provided in our conversation:\n\n- **Rachel** graduated first — you mentioned she completed her master’s degree **yesterday**.\n- **Emma** graduated second — you said she graduated **yesterday** as well, but the context suggests it was the same day as Rachel’s ceremony, and you referred to her as a high school graduate, which typically comes before a master’s degree.\n- **Alex** graduated third — you mentioned he graduated from college **about two weeks ago**, which places his graduation before Rachel’s but after Emma’s.\n\nSo, the order of graduation is:\n\n1. **Rachel** (Master’s degree — yesterday)  \n2. **Emma** (High school — yesterday)  \n3. **Alex** (College — about two weeks ago)\n\nWait —",
+  "B": "I don't have enough information to determine the graduation order of Emma, Rachel, and Alex. Could you please provide more context or details about their graduation?",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine the graduation order of Emma, Rachel, and Alex. Could you please provide more context or details about their graduation?",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine who graduated first, second, and third among Emma, Rachel, and Alex. Could you please provide more context or details, such as their graduation ranks, test scores, or any other relevant information?",
+  "H-pack": "I'm sorry, but there isn't enough information provided to determine who graduated first, second, and third among Emma, Rachel, and Alex. The details about their graduation order or any related context are missing. If you can provide more information—such as rankings, dates, or clues—I’d be happy to help!",
+  "H-gap": "I'm sorry, but there isn't enough information in your question to determine who graduated first, second, and third among Emma, Rachel, and Alex. You haven't provided any details about their graduation order, academic performance, or any related context.\n\nPlease provide more information—such as rankings, dates, or clues about their graduation—to help answer the question."
+ }
+}

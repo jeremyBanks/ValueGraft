@@ -1,0 +1,20 @@
+{
+ "question_id": "b29f3365",
+ "question": "How long had I been taking guitar lessons when I bought the new guitar amp?",
+ "answer": "Four weeks",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14296,
+  "tail_start_msg": 42
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned that you've been taking guitar lessons with your instructor, Alex, for six weeks when you bought the new guitar amp. So, you had been taking lessons for six weeks when you made the purchase.",
+  "B": "I don't have enough information to determine how long you'd been taking guitar lessons when you bought the new guitar amp. The conversation history doesn't mention anything about guitar lessons or the timing of your amp purchase. If you'd like to share more details, I’d be happy to help!",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer that question. The conversation history doesn't mention when you started taking guitar lessons or when you bought the new guitar amp. If you'd like to provide more context, I'd be happy to help!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to answer your question. You haven't provided any details about when you started guitar lessons or when you bought the new guitar amp. If you can share those dates or a timeline, I’d be happy to help calculate how long you'd been taking lessons!",
+  "H-pack": "I'm sorry, but I don't have enough information to answer your question. The details about how long you'd been taking guitar lessons before buying the new guitar amp aren't included in our conversation. Could you provide more context or clarify?",
+  "H-gap": "I'm sorry, but I don't have enough information to answer your question. You didn't provide any details about when you started guitar lessons or when you bought the new guitar amp. If you can share those dates or a timeline, I’d be happy to help calculate how long you'd been taking lessons!"
+ }
+}

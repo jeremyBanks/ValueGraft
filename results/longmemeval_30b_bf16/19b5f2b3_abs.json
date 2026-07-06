@@ -1,0 +1,20 @@
+{
+ "question_id": "19b5f2b3_abs",
+ "question": "How long was I in Korea for?",
+ "answer": "You did not mention this information. You mentioned staying in Japan, but not in Korea.",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12286,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal travel history or past conversations, so I can't tell you how long you were in Korea. If you're trying to recall your trip, you might check your travel documents, photos, or calendar for the dates. Let me know if you'd like help with anything else!",
+  "B": "I don't have access to your personal history or past conversations, so I can't tell you how long you were in Korea. If you're referring to a specific trip or stay, you might want to check your travel records, passport stamps, or personal notes for the exact duration. Let me know if you'd like help with something else!",
+  "E-tuned": "I don't have access to personal information or your travel history, so I can't tell you how long you were in Korea. If you're trying to recall your trip, you might check your passport stamps, travel itineraries, boarding passes, or photos from your trip. Let me know if you'd like help with anything else!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal travel history or any information about your past trips. If you're trying to recall how long you were in Korea, you might want to check your passport stamps, travel itineraries, boarding passes, or personal records like photos and journals. Let me know if you'd like help with anything else!",
+  "H-pack": "I'm sorry, but I don't have access to your personal travel history or records. To find out how long you were in Korea, you might check your passport stamps, travel itineraries, boarding passes, or any personal records like photos or journals from that time. Let me know if you'd like help with anything else!",
+  "H-gap": "I'm sorry, but I don't have access to your personal travel history or records. To find out how long you were in Korea, you might check your passport stamps, travel itineraries, boarding passes, or personal records like photos and journals from that time. Let me know if you'd like help with anything else!"
+ }
+}

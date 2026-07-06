@@ -1,0 +1,20 @@
+{
+ "question_id": "2ebe6c92",
+ "question": "Which book did I finish a week ago?",
+ "answer": "'The Nightingale' by Kristin Hannah",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13022,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal reading history or past conversations, so I can't recall which book you finished a week ago. If you'd like to share the title, I’d be happy to discuss it with you or recommend something similar!",
+  "B": "I don’t have access to your personal reading history or past conversations, so I can’t recall which book you finished a week ago. If you’d like help remembering, you could check:\n\n- Your reading journal or notes  \n- Your Goodreads or Kindle reading history  \n- Any bookmarks or highlights you left in the book  \n- A recent conversation or post where you mentioned it  \n\nIf you give me a clue—like the genre, author, or a memorable detail—I’d be happy to help jog your memory!",
+  "E-tuned": "I don't have access to your personal reading history or recent activities, so I can't tell you which book you finished a week ago. If you're trying to remember, you might want to check:\n\n- Your reading app (like Goodreads, Kindle, or Libby)\n- Your journal or notes\n- Your social media or book club posts\n- The bookshelf or reading list you keep\n\nLet me know if you'd like help finding a book you're trying to recall!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal reading history or the specific details of what you've read recently. If you'd like, you can tell me the title or a few details about the book—like the author, genre, or a memorable part—and I’d be happy to help discuss it or recommend something similar!",
+  "H-pack": "I don’t have access to your personal reading history or past conversations, so I can’t recall which book you finished a week ago. If you’d like to share the title or a detail about it, I’d be happy to help discuss it or recommend something similar!",
+  "H-gap": "I don’t have access to your personal reading history or past conversations, so I can’t recall which book you finished a week ago. If you’d like to share the title or a detail about it, I’d be happy to help discuss it or recommend something similar!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "ed4ddc30",
+ "question": "How many dozen eggs do we currently have stocked up in our refrigerator?",
+ "answer": "20",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12026,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal information or current inventory, so I can't tell you exactly how many dozen eggs you have in your refrigerator. 😊\n\nBut if you're keeping track, you might want to:\n\n- Check the egg carton and count the number of eggs.\n- Divide by 12 to get the number of dozens.\n- Consider labeling the carton with the date you stored it to help track freshness.\n\nIf you're trying to use them up, you're in luck—there are so many delicious ways to use eggs! From omelets and quiches to baked goods and homemade mayonnaise, you’ve got a world of possibilities. Let me know if you’d like some recipe ideas! 🥚🍳",
+  "B": "I don’t have access to your refrigerator or real-time inventory — so I can’t check how many eggs you have on hand! 😄\n\nIf you're keeping track of your egg supply (great for a self-sufficient homestead!), you might want to:\n\n- **Check the carton** — most egg cartons hold 12 eggs (1 dozen). Count how many are left and multiply by 12.\n- **Use a simple log** — keep a small notebook or digital note (like a Google Doc or app) to track when you collect eggs and when you use them.\n- **Set a reminder** — use your Amazon Echo Dot or phone to set a weekly reminder to check your egg supply.\n\nIf you're raising chickens, you might also want to track egg production",
+  "E-tuned": "I don't have access to your refrigerator or real-time inventory, so I can't tell you how many dozen eggs you have on hand. 😊\n\nIf you're trying to keep track, you might want to:\n- Check your fridge and count them (maybe even take a quick photo to remember next time).\n- Use a kitchen inventory app or a simple notebook to track staples like eggs, milk, and bread.\n- Set a reminder to restock when you get low—some smart fridges even do this automatically!\n\nLet me know if you'd like help setting up a simple tracking system! 🥚🥚🥚",
+  "B-min-pack": "I don't have access to your refrigerator or real-time inventory, so I can't tell you how many dozen eggs you currently have stocked up. If you're managing a self-sufficient farm, I’d recommend keeping a simple log or using a smart fridge with inventory tracking to stay updated. Alternatively, just check the fridge and count them—fresh eggs are a great reward for your hard work! 🥚🏡",
+  "H-pack": "I don't have access to your refrigerator or real-time inventory, so I can't tell you how many dozen eggs you have stocked up. You might want to check your fridge directly or keep a simple log to track your egg supply! 🥚🥚🥚",
+  "H-gap": "I'm sorry, but I don't have access to your refrigerator or your current egg inventory. You might want to check inside your fridge to see how many eggs you have on hand—just count them and divide by 12 to find the number of dozens! Let me know if you'd like help tracking or managing your egg supply over time. 🥚🥚🥚"
+ }
+}

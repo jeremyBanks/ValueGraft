@@ -1,0 +1,20 @@
+{
+ "question_id": "ef9cf60a",
+ "question": "How much did I spend on gifts for my sister?",
+ "answer": "$300",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13324,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal financial records or spending history, so I can't tell you how much you spent on gifts for your sister. If you're trying to track your gift expenses, you might want to check your bank or credit card statements, receipts, or a personal budgeting app you use. Let me know if you'd like help estimating costs for future gifts!",
+  "B": "I'm sorry, but I don't have access to your personal financial records or purchase history, so I can't tell you how much you spent on gifts for your sister. If you're trying to track your spending, you might want to check your bank or credit card statements, receipts, or a budgeting app you use (like Mint, YNAB, or Google Sheets). Let me know if you'd like help setting up a simple system to track future gift expenses!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal financial information or purchase history. To find out how much you spent on gifts for your sister, you can check:\n\n- Your bank or credit card statements  \n- Receipts from stores or online orders  \n- Your digital wallet or payment app (like Apple Pay, Google Pay, or PayPal)  \n- Email confirmations from retailers  \n\nIf you're trying to track spending for budgeting or gift planning, consider using a simple spreadsheet or budgeting app to record future purchases. Let me know if you'd like help setting one up!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal spending history or financial details. To find out how much you spent on gifts for your sister, you might want to check your bank or credit card statements, receipts, or any notes you’ve made about the purchases. Let me know if you'd like help tracking expenses or budgeting for future gifts!",
+  "H-pack": "I'm sorry, but I don't have access to your personal spending information or financial records. To find out how much you spent on gifts for your sister, you might want to check your bank or credit card statements, receipts, or any notes you’ve made about the purchases. Let me know if you’d like help tracking expenses or budgeting for future gifts!",
+  "H-gap": "I'm sorry, but I don't have access to your personal spending information or financial records. To find out how much you spent on gifts for your sister, you might want to check your bank or credit card statements, receipts, or any notes you’ve made about the purchases. Let me know if you’d like help tracking expenses or budgeting for future gifts!"
+ }
+}

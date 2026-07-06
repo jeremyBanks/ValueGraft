@@ -1,0 +1,20 @@
+{
+ "question_id": "c19f7a0b",
+ "question": "What time do I usually get home from work on weeknights?",
+ "answer": "6:30 pm",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13606,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned earlier that you usually get home from work around **6:30 PM on weeknights**. That’s a great time to start winding down and preparing dinner—especially with your routine of making dinner, doing yoga, and then dedicating an hour to language learning on Tuesdays and Thursdays. It gives you a nice rhythm to your evenings!  \n\nIf you're looking to optimize your time even more, you could consider prepping ingredients for dinner earlier in the day or using your lunch break to plan your evening meals. That way, you can minimize stress and make the most of your 6:30 PM arrival.  \n\nLet me know if you'd like help creating a weekly evening schedule or meal prep plan!",
+  "B": "I don’t have access to your personal schedule or routine, so I can’t tell you the exact time you usually get home from work on weeknights. That information is specific to your daily life and habits.\n\nHowever, if you're trying to figure it out for planning purposes—like meal prep, grocery shopping, or setting up a routine—you might consider:\n\n- **Checking your calendar or commute logs** (e.g., work end time, travel time).\n- **Looking at your phone’s location history** (if enabled) to see when you typically arrive home.\n- **Reviewing your calendar or task app** to see your work end time and estimate travel time.\n\nIf you’d like, I can help you create a sample evening routine based on a typical work schedule (e.g.,",
+  "E-tuned": "I don't have access to your personal schedule or routine, so I can't know your exact work hours or when you typically get home on weeknights.\n\nHowever, if you're asking this question to help plan things like dinner, grocery shopping, or evening activities, here are some general patterns:\n\n- Many people in the U.S. and other countries work a standard 9-to-5 schedule, so they typically get home between **5:30 PM and 7:00 PM** on weekdays.\n- If you work a shift that starts earlier or later (e.g., 7 AM–3 PM or 12 PM–8 PM), your arrival time might be earlier or later.\n- Commute time, traffic, and workday length can also affect your arrival time",
+  "B-min-pack": "I don’t have access to your personal schedule, so I can’t tell you your exact work end time. However, if you're asking this to help plan your evenings—like dinner, exercise, or family time—many people typically get home between **5:30 PM and 7:00 PM** on weeknights, depending on their job, commute, and time zone.\n\nIf you’d like, you can share a bit more (like your work start time or typical commute), and I can help estimate a likely home time or even suggest ways to optimize your evening routine!",
+  "H-pack": "I don't have access to your personal schedule or routine, so I can't tell you your exact work end time. However, if you're asking this to help plan your evening—like when to leave for a trip, when to start dinner, or when to pick up kids—most people get home from work between **5:00 PM and 7:00 PM** on weeknights, depending on their job, commute, and time zone.\n\nIf you'd like, you can share a bit more about your work hours or typical routine, and I can help you estimate or plan around your schedule!",
+  "H-gap": "I don't have access to your personal schedule or routine, so I can't tell you the exact time you usually get home from work on weeknights. That information would depend on your specific job, commute, and daily habits.\n\nIf you're trying to recall or track your typical arrival time, you might consider:\n\n- Checking your calendar or commute logs\n- Looking at your phone’s location history (if enabled)\n- Reflecting on your recent routine over the past few weeks\n\nLet me know if you'd like help planning your evening based on a typical arrival time!"
+ }
+}

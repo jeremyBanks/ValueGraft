@@ -1,0 +1,20 @@
+{
+ "question_id": "60472f9c",
+ "question": "How many projects have I been working on simultaneously, excluding my thesis?",
+ "answer": "2",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15205,
+  "tail_start_msg": 51
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal project history or workload details, so I can't tell you exactly how many projects you've been working on simultaneously (excluding your thesis). \n\nTo find out, you could:\n\n1. **Check your task management tools** (like Trello, Asana, Jira, or even your calendar) and look at your active projects over the past few months.\n2. **Review your work emails or team communications** to see which projects you’ve been involved in.\n3. **Reflect on your recent work**—how many different initiatives, tasks, or deliverables have you been juggling at once?\n\nIf you're trying to assess your capacity or workload, it might also be helpful to categorize the projects by priority, time commitment, and team size.",
+  "B": "I don’t have access to your personal work history, project logs, or calendar data, so I can’t determine how many projects you’ve been working on simultaneously (excluding your thesis). To find this information, you could:\n\n- Review your task management tools (e.g., Jira, Trello, Asana, ClickUp).\n- Check your calendar for overlapping project timelines.\n- Look at your recent sprint or weekly stand-up notes.\n- Reflect on your workload during the past few months and count the distinct projects you were actively contributing to at the same time.\n\nIf you’d like, I can help you draft a self-assessment or prepare a summary of your project load for performance reviews or career planning. Just let me know!",
+  "E-tuned": "I don’t have access to your personal work history, project logs, or calendar data, so I can’t determine how many projects you’ve been working on simultaneously (excluding your thesis). To find this information, you could:\n\n- Review your task management tools (e.g., Jira, Trello, Asana, ClickUp).\n- Check your calendar for overlapping project timelines.\n- Look at your recent emails or team stand-up notes for project assignments.\n- Reflect on your current workload and recent deliverables.\n\nIf you’d like, I can help you create a template to track or analyze your project load going forward!",
+  "B-min-pack": "I don't have access to your personal project history or work records, so I can't determine how many projects you've been working on simultaneously (excluding your thesis). To answer this question, you’d need to review your own records, such as:\n\n- Project management tools (e.g., Trello, Asana, Jira)\n- Calendar or time-tracking logs\n- Work or research journals\n- Emails or documentation related to your tasks\n\nIf you’d like, I can help you create a system to track and organize your projects going forward!",
+  "H-pack": "I don't have access to your personal project history or records, so I can't determine how many projects you've been working on simultaneously—excluding your thesis. To answer this question accurately, you would need to review your own work logs, calendars, task management tools (like Trello, Asana, or Notion), or project documentation. If you'd like, I can help you organize or track your projects going forward!",
+  "H-gap": "I don't have access to your personal project history or records, so I can't determine how many projects you've been working on simultaneously—excluding your thesis. To answer this question accurately, you would need to review your own work logs, project timelines, or records from your academic or professional experience. If you'd like, I can help you organize or track your projects going forward!"
+ }
+}

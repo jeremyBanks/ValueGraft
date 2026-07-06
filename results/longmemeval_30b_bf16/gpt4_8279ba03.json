@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_8279ba03",
+ "question": "What kitchen appliance did I buy 10 days ago?",
+ "answer": "a smoker",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12575,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal purchase history or past conversations, so I can't tell you what kitchen appliance you bought 10 days ago. If you're trying to remember, you might want to check your email receipts, online shopping accounts, or your phone's purchase notifications. Let me know if you'd like help with anything else!",
+  "B": "I don't have access to your personal purchase history or past conversations, so I can't tell you what kitchen appliance you bought 10 days ago. If you're trying to remember, you might want to check your email receipts, online shopping accounts (like Amazon, Walmart, or Target), or your bank/credit card statements. Let me know if you'd like help with anything else!",
+  "E-tuned": "I don't have access to your personal purchase history or past conversations, so I can't tell you what kitchen appliance you bought 10 days ago. If you're trying to remember, you might want to check your email receipts, online shopping accounts (like Amazon, Walmart, or Target), or your bank/credit card statements for a recent transaction. Let me know if you'd like help with anything else!",
+  "B-min-pack": "I don't have access to your personal purchase history or past conversations, so I can't recall what kitchen appliance you bought 10 days ago. If you're trying to remember, you might check your email receipts, online shopping accounts (like Amazon, Walmart, or Target), or your phone's purchase notifications. Let me know if you'd like help brainstorming possible appliances or organizing your kitchen!",
+  "H-pack": "I don’t have access to your personal purchase history or past conversations, so I can’t tell you what kitchen appliance you bought 10 days ago. If you’re unsure, you might check your email receipts, online shopping account (like Amazon, Walmart, etc.), or your bank/credit card statements for a recent transaction. Let me know if you’d like help troubleshooting any of those!",
+  "H-gap": "I don’t have access to your personal purchase history or past conversations, so I can’t tell you what kitchen appliance you bought 10 days ago. If you’re unsure, you might check your email receipts, online shopping account (like Amazon, Walmart, or Target), or your bank/credit card statements for a recent transaction. Let me know if you’d like help troubleshooting any of those!"
+ }
+}

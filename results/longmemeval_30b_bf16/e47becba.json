@@ -1,0 +1,20 @@
+{
+ "question_id": "e47becba",
+ "question": "What degree did I graduate with?",
+ "answer": "Business Administration",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14042,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You graduated with a degree in **Business Administration**.",
+  "B": "I don't have access to your personal information, including your academic records or degree details. To find out what degree you graduated with, you can check your official transcripts, diploma, or contact your school’s registrar office. Let me know if you'd like help with anything else!",
+  "E-tuned": "I don't have access to your personal information, including your academic records or degree details. To find out what degree you graduated with, you can check your official transcripts, diploma, or contact your school's registrar office. Let me know if you'd like help with anything else!",
+  "B-min-pack": "I don't have access to your personal information, including your academic history or the degree you graduated with. If you're trying to recall your degree, you might want to check your diploma, official transcripts, or university records. Let me know if you'd like help with something related—like formatting a resume, writing a cover letter, or organizing your academic achievements!",
+  "H-pack": "I don’t have access to your personal information, including your academic history or the degree you earned. If you’re trying to recall your degree, you might check your diploma, official transcripts, or alumni records from your university. Let me know if you’d like help with anything else!",
+  "H-gap": "I don’t have access to your personal information, including your academic history or the degree you earned. If you’re trying to recall your degree, you might check your diploma, official transcripts, or alumni records from your university. Let me know if you’d like help with anything else!"
+ }
+}

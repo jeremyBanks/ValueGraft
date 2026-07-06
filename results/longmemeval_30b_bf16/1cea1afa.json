@@ -1,0 +1,20 @@
+{
+ "question_id": "1cea1afa",
+ "question": "How many Instagram followers do I currently have?",
+ "answer": "600",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13269,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal social media accounts or follower counts. I can't see your Instagram profile or any of your account data.\n\nTo check your current follower count, simply open the Instagram app, go to your profile, and look at the number displayed under your username. That number will show your exact follower count at this moment.\n\nIf you're tracking your growth, you might also want to check Instagram Insights (if you have a business or creator account) for more detailed analytics about your audience and engagement.",
+  "B": "I don't have access to your personal social media accounts or data, including your Instagram follower count. That information is private and only available to you through the Instagram app or website.\n\nIf you'd like to check your current follower count, simply open the Instagram app, go to your profile, and look at the number displayed under your username. Let me know if you'd like help with anything else!",
+  "E-tuned": "I don't have access to your personal social media accounts or data, including your Instagram follower count. To check your current number of followers, you can:\n\n1. Open the Instagram app\n2. Go to your profile\n3. Look at the number displayed under your username (e.g., \"1.2K followers\")\n\nIf you're asking this question in a different context (like a hypothetical or fictional scenario), feel free to clarify!",
+  "B-min-pack": "I don't have access to your personal social media accounts or follower counts, including Instagram. To check your current number of followers, please open the Instagram app or website, go to your profile, and look at the follower count displayed under your name. Let me know if you'd like help with anything else related to your tech setup or social media!",
+  "H-pack": "I don't have access to your personal social media accounts or data, including your Instagram follower count. To check your current number of followers, please open the Instagram app, go to your profile, and look at the number displayed under your username.",
+  "H-gap": "I don't have access to your personal social media accounts or data, including your Instagram follower count. To check your current number of followers, open the Instagram app, go to your profile, and look at the number displayed under your username. If you're using a desktop browser, the same information appears on your profile page."
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "8ebdbe50",
+ "question": "What certification did I complete last month?",
+ "answer": "Data Science",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14449,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You completed a **certification in Data Science** last month.",
+  "B": "I don’t have access to your personal records or past actions, so I can’t recall what certification you completed last month. If you’re trying to remember, you might want to check your email (especially from the issuing organization), your LinkedIn profile, or any learning platforms you’ve used (like Coursera, Udemy, or LinkedIn Learning).  \n\nIf you’d like, I can help you draft a message to ask someone who might know, or assist in creating a summary of your achievements for your resume or portfolio. Just let me know!",
+  "E-tuned": "I don't have access to your personal history or past actions, including any certifications you may have completed. If you're trying to recall a specific certification, you might want to check your email, learning platform accounts (like Coursera, LinkedIn Learning, or edX), or any official documentation you received. Let me know if you'd like help drafting a message to inquire about it!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal records or past actions, so I can't recall what certification you completed last month. If you're trying to remember, you might want to check your email inbox (especially from the certification provider), your LinkedIn profile, or any learning platforms you’ve used (like Coursera, Udemy, LinkedIn Learning, etc.). Let me know if you’d like help drafting a message to confirm or if you’d like tips on how to showcase it!",
+  "H-pack": "I don't have access to your personal records or past activities, so I can't recall what certification you completed last month. If you'd like help documenting it, updating your LinkedIn, or preparing a summary for your resume, I’d be happy to assist! Just let me know the details. 😊",
+  "H-gap": "I don’t have access to your personal records or past activities, so I can’t recall what certification you completed last month. If you’d like help documenting or sharing it—such as updating your LinkedIn profile, creating a summary, or preparing a post—I’d be happy to assist! Just let me know the details. 😊"
+ }
+}

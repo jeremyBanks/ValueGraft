@@ -1,0 +1,20 @@
+{
+ "question_id": "91b15a6e",
+ "question": "What is the minimum amount I could get if I sold the vintage diamond necklace and the antique vanity?",
+ "answer": "$5,150",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12261,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "The minimum amount you could get for your **vintage diamond necklace** and **antique vanity** depends on several factors, but here’s a realistic breakdown based on typical market conditions and your situation:\n\n---\n\n### 💎 **Vintage Diamond Necklace (Estimated Minimum): $2,500–$3,000**\nEven if you're not getting the full $5,000 appraised value, you can likely sell it for **at least $2,500–$3,000** if you:\n- Sell through a reputable **jewelry consignment shop** or **online luxury marketplace** (like The RealReal, 1stdibs, or Ruby Lane).\n- Provide the **original appraisal**, photos, and any documentation (e.g.,",
+  "B": "The minimum amount you could get for selling a **vintage diamond necklace** and an **antique vanity** depends on several key factors, and there’s no one-size-fits-all answer. However, I can help you estimate a realistic *lowest possible* range based on typical market conditions—especially if you're selling quickly, without professional appraisal, or to a buyer who doesn’t value the historical or sentimental aspects.\n\n---\n\n### 🔹 1. **Vintage Diamond Necklace**\n- **Minimum realistic value (if sold quickly, without appraisal, to a pawn shop or reseller):**\n  - **$100 – $500**\n  - *Why so low?* Pawn shops and some resellers often offer only a fraction of market value (typically 20–5",
+  "E-tuned": "The minimum amount you could get for selling a **vintage diamond necklace** and an **antique vanity** depends on several key factors, and there’s no one-size-fits-all answer. However, I can help you estimate a realistic *minimum* based on typical market conditions.\n\n---\n\n### 🔹 1. **Vintage Diamond Necklace**\n- **Minimum possible value**: **$100 – $300** (if poorly assessed or in very poor condition)\n- **Why so low?**\n  - If the diamonds are small (e.g., 0.10 carats or less), low quality (I1 or lower clarity, yellowish tint), or set in low-value metal (e.g., brass or base metal).\n  - If the necklace is damaged,",
+  "B-min-pack": "The minimum amount you could get for selling a **vintage diamond necklace** and an **antique vanity** depends on several factors, but here’s a realistic estimate based on typical market conditions for such items:\n\n---\n\n### 🕊️ **1. Vintage Diamond Necklace**\n- **Minimum Possible Sale Price:** **$200 – $500**\n- **Why this range?**\n  - If the necklace is vintage (e.g., 1920s–1970s), but has small or low-quality diamonds (e.g., SI1 clarity, I1–I2 color, under 0.50 carats total), it may not be valuable to collectors.\n  - If it’s a costume or fashion piece (e.g., rhin",
+  "H-pack": "The minimum amount you could get for selling a **vintage diamond necklace** and an **antique vanity** depends on several key factors, and there’s no one-size-fits-all answer. However, we can estimate a *realistic minimum* based on typical market conditions for such items.\n\n---\n\n### 🔹 1. **Vintage Diamond Necklace**\n- **Minimum Possible Value:** **$200 – $500** (if sold in a distressed or non-specialist market)\n- **Why so low?**\n  - If the diamonds are small (e.g., 0.25 carats or less), low clarity (SI or lower), and not certified.\n  - If the setting is simple, outdated, or made of lower-grade gold (e.g.,",
+  "H-gap": "The minimum amount you could get for selling a **vintage diamond necklace** and an **antique vanity** depends on several key factors, and there’s no universal \"minimum\" — but we can estimate a realistic **lowest possible range** based on typical market conditions.\n\n---\n\n### 🔹 1. **Vintage Diamond Necklace**\n- **Assumptions**:  \n  - \"Vintage\" means pre-1980s, possibly mid-20th century.  \n  - Not a designer or high-end brand (e.g., Cartier, Van Cleef).  \n  - Likely small to medium diamonds (e.g., 0.25–0.50 carats total weight).  \n  - Lower clarity/color (e.g., SI1–SI2, I"
+ }
+}

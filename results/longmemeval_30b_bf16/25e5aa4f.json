@@ -1,0 +1,20 @@
+{
+ "question_id": "25e5aa4f",
+ "question": "Where did I complete my Bachelor's degree in Computer Science?",
+ "answer": "University of California, Los Angeles (UCLA)",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13172,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal information, including where you completed your Bachelor's degree in Computer Science. If you're referring to a specific institution, you might want to check your academic records, diploma, or official transcripts for confirmation. Let me know if you'd like help with anything else!",
+  "B": "I don't have access to your personal history or details, including where you completed your Bachelor's degree in Computer Science. That information is private and not part of my knowledge base.\n\nIf you're trying to recall or confirm your educational background, I’d recommend checking:\n\n- Your official transcripts or diploma\n- Your LinkedIn profile or resume\n- Alumni directories from your university\n- Personal records or emails from your time in college\n\nLet me know if you'd like help drafting a message to your university’s registrar or formatting your academic information!",
+  "E-tuned": "I don't have access to personal information about you, including details about your education or past experiences. If you're trying to recall where you completed your Bachelor's degree in Computer Science, you might want to check:\n\n- Your academic transcripts or diploma  \n- Alumni records from your university  \n- Personal documents or emails from your time in college  \n- Social media profiles or professional networks like LinkedIn  \n\nLet me know if you'd like help drafting a message to contact your university’s registrar or alumni office!",
+  "B-min-pack": "I don't have access to your personal history or past records, so I can't tell you where you completed your Bachelor's degree in Computer Science. If you're trying to recall or confirm this information, you might want to check your academic transcripts, diploma, or university records. Let me know if you'd like help drafting a message to your alma mater or organizing your educational details!",
+  "H-pack": "I don't have access to your personal history or details, so I can't tell where you completed your Bachelor's degree in Computer Science. If you'd like to share that information, I’d be happy to help with anything related—like reviewing your resume, preparing for interviews, or discussing your academic background!",
+  "H-gap": "I don't have access to your personal information, including where you completed your Bachelor's degree in Computer Science. That details are private and not stored in my database. If you're looking to recall or verify this information, you might check your academic transcripts, diploma, or university records. Let me know if you'd like help with something else!"
+ }
+}

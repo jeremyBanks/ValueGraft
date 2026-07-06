@@ -1,0 +1,20 @@
+{
+ "question_id": "c5e8278d",
+ "question": "What was my last name before I changed it?",
+ "answer": "Johnson",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13860,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal information, including your previous name. I can't recall or store personal details from our conversation history for privacy and security reasons. If you're trying to remember your old name, you might want to check official documents like your driver's license, passport, or birth certificate.",
+  "B": "I don't have access to personal information about you, including your previous name or any details about your identity. Your privacy is important, and I’m designed to respect that. If you have any other questions or need help with something else, I’m here to assist!",
+  "E-tuned": "I don't have access to personal information about you, including your previous name or any details about your identity. Your privacy is important, and I can't retrieve or store personal data from past conversations. If you're looking to find out about your own name change, you may want to check official documents like birth certificates, legal papers, or contact a government records office. Let me know if you'd like help with anything else!",
+  "B-min-pack": "I don't have access to your personal history or previous names, so I can't tell you what your last name was before you changed it. If you're trying to recall or confirm this information, you might want to check official documents like your birth certificate, passport, or legal name change records. Let me know if you'd like help with anything else related to your name change or organizing your personal details!",
+  "H-pack": "I don't have access to your personal history or previous names, so I can't tell you what your last name was before you changed it. If you're trying to recall or confirm a name change, you may want to check official documents like your birth certificate, passport, or legal name change records. Let me know if you'd like help with anything else!",
+  "H-gap": "I don't have access to your personal history or previous names, so I can't tell you what your last name was before you changed it. If you're trying to recall or confirm your legal name change, you may want to check official documents like your birth certificate, passport, or court records related to the name change. Let me know if you'd like help with anything else!"
+ }
+}

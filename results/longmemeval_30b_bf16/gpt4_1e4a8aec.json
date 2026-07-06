@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_1e4a8aec",
+ "question": "What gardening-related activity did I do two weeks ago?",
+ "answer": "planting 12 new tomato saplings",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14258,
+  "tail_start_msg": 55
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal history or past activities, so I can't recall what gardening-related activity you did two weeks ago. If you're trying to remember, you might want to check your notes, photos, or a gardening journal you may have kept. Let me know if you'd like help planning your next gardening project!",
+  "B": "I don’t have access to your personal history or past activities, so I can’t recall what gardening-related activity you did two weeks ago. If you’re trying to remember, you might want to check your photos, journal, or calendar for clues! Let me know if you’d like help planning a gardening project or identifying plants—happy to assist. 🌿🌸",
+  "E-tuned": "I don't have access to your personal history or past activities, so I can't tell you what gardening-related activity you did two weeks ago. If you're trying to remember, you might want to check your calendar, photos, or journal entries from that time. Let me know if you'd like help planning a gardening project or learning more about gardening tips!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal calendar or past activities. I can't recall what gardening-related activity you did two weeks ago. If you're trying to remember, you might want to check your photos, journal, or any notes you took around that time. Let me know if you'd like help planning a gardening project or reflecting on past experiences!",
+  "H-pack": "I don't have access to your personal activities or memories, so I can't know what gardening-related activity you did two weeks ago. If you'd like help remembering, you could check your photos, journal, or calendar—those often have clues! Let me know if you'd like gardening tips or ideas for what to do next. 🌿🌸",
+  "H-gap": "I don't have access to your personal activities or memories, so I can't tell you what gardening-related activity you did two weeks ago. If you're trying to recall it, you might think about recent tasks like planting seeds, pruning plants, weeding, watering, or harvesting. Let me know if you'd like help planning or reflecting on your gardening routine! 🌱"
+ }
+}

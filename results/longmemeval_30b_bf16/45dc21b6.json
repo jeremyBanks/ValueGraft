@@ -1,0 +1,20 @@
+{
+ "question_id": "45dc21b6",
+ "question": "How many of Emma's recipes have I tried out?",
+ "answer": "3",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12260,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal history or past interactions, so I can't track how many of Emma's recipes you've tried. However, based on your message, you mentioned that you've tried out **three** of Emma's recipes so far — and you loved them all! That’s a great start, and it sounds like you’ve found a recipe creator whose style really resonates with you.  \n\nIf you’d like, I can help you find more vegan recipes or even suggest a themed cooking challenge (like \"30 Days of Vegan Baking\" or \"Global Vegan Flavors\") to keep the fun going! 🌱✨",
+  "B": "I'm sorry, but I don't have any information about Emma or her recipes, or which ones you've tried. If you're referring to a specific cookbook, blog, or source of recipes (like a particular person named Emma), I’d need more context to help! Could you clarify who Emma is and where her recipes come from? 😊",
+  "E-tuned": "I'm sorry, but I don't have access to your personal history or a record of which recipes you've tried. If you're referring to recipes from a specific source—like a cookbook, blog, or app named \"Emma\"—you might want to check your notes, recipe journal, or app history to see how many you've tried.\n\nIf you'd like, I can help you keep track of recipes you’ve tried by creating a simple list or spreadsheet! Just let me know. 😊",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal history or the list of recipes you've tried from Emma. If you're referring to a specific cookbook, blog, or platform (like Emma's Kitchen, Emma's Secret Recipes, or another source), you might want to check your notes, recipe journal, or app history to see which ones you've made.\n\nIf you'd like, I can help you organize a list of Emma’s recipes you’ve tried—or even suggest some new ones based on your preferences! Just let me know what kind of cuisine or ingredients you enjoy. 🌱🍽️",
+  "H-pack": "I'm sorry, but I don't have any information about Emma or her recipes, nor do I know which ones you've tried. Could you provide more context or clarify who Emma is and what recipes you're referring to? That way, I can better assist you!",
+  "H-gap": "I'm sorry, but I don't have any information about Emma or her recipes, nor do I know which ones you've tried. Could you provide more context or clarify who Emma is and what recipes you're referring to? That way, I can better assist you!"
+ }
+}

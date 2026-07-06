@@ -1,0 +1,20 @@
+{
+ "question_id": "c14c00dd",
+ "question": "What brand of shampoo do I currently use?",
+ "answer": "Trader Joe's",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15072,
+  "tail_start_msg": 53
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal information, including the brand of shampoo you use. I can't recall past conversations or store personal details for privacy reasons. If you're trying to remember what shampoo you're using, you might check the bottle, look at your bathroom shelf, or review your recent purchases. Let me know if you'd like help finding a new shampoo or learning about different types!",
+  "B": "I don't have access to your personal information, including your current shampoo brand. That kind of detail is private and not something I can know unless you tell me directly.\n\nIf you're trying to remember what shampoo you use, you might check:\n- The bottle in your shower or bathroom\n- Your shopping list or online order history\n- Any notes or reminders you’ve made\n\nLet me know if you’d like help choosing a new shampoo based on your hair type or preferences—I’d be happy to help with that!",
+  "E-tuned": "I don't have access to your personal information, including your current shampoo brand. If you're trying to remember what you're using, you might check the label on your bottle, look in your bathroom cabinet, or recall the last time you purchased it. Let me know if you'd like help choosing a new shampoo based on your hair type or preferences!",
+  "B-min-pack": "I don't have access to your personal information, including your current shampoo brand. If you're unsure, you might check the bottle in your shower or look at your recent purchases. Let me know if you'd like help choosing a new shampoo based on your hair type or concerns! 😊",
+  "H-pack": "I don't have access to your personal information, including your current shampoo brand. If you're unsure, you might check the bottle in your bathroom or look at your shopping history if you've purchased it online. Let me know if you'd like help choosing a new shampoo based on your hair type or needs!",
+  "H-gap": "I don't have access to your personal information, including your current shampoo brand. If you're unsure, you might check the label on your bottle or look through your bathroom supplies! Let me know if you'd like help choosing a new shampoo based on your hair type or needs. 😊"
+ }
+}

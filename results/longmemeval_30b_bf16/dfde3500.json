@@ -1,0 +1,20 @@
+{
+ "question_id": "dfde3500",
+ "question": "What day of the week did I meet with my previous language exchange tutor Juan?",
+ "answer": "Wednesday",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14816,
+  "tail_start_msg": 60
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your earlier message, you met with your language exchange tutor Juan on **Wednesday evening**. You mentioned:  \n*\"I remember that Juan and I always meet in the evening, and I usually have dinner plans with friends on Thursdays. I'm pretty sure it's not Thursday.\"*  \nAnd later confirmed:  \n*\"Now I remember! My language exchange class with Juan is on Wednesday evening.\"*\n\nSo, the answer is: **Wednesday**.",
+  "B": "I don’t have access to your personal schedule or past appointments, including meetings with your language exchange tutor Juan. You may want to check your calendar, email, or any notes you’ve kept about your tutoring sessions to find the specific day. Let me know if you’d like help drafting a message to ask Juan directly!",
+  "E-tuned": "I don't have access to your personal schedule or past meetings, including details about your language exchange tutor Juan. You may want to check your calendar, email, or any notes you took from your previous sessions to find the specific day. Let me know if you'd like help drafting a message to ask Juan directly!",
+  "B-min-pack": "I'm sorry, but I don't have any information about your previous language exchange sessions or the day of the week you met with your tutor Juan. If you have a calendar, journal, or notes from that time, you might be able to check there for the specific date. Let me know if you'd like help remembering or organizing your schedule!",
+  "H-pack": "I'm sorry, but I don't have enough information to determine the day of the week you met with your previous language exchange tutor Juan. The details of your past meetings aren't included in our conversation history. If you have a calendar, appointment notes, or any other reference, that would be the best place to check.",
+  "H-gap": "I'm sorry, but I don't have enough information to determine what day of the week you met with your previous language exchange tutor Juan. The details of your past meetings aren't included in our conversation history. If you have any additional context—like the date or a recurring schedule—I’d be happy to help you figure it out!"
+ }
+}

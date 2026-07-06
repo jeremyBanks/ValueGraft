@@ -1,0 +1,20 @@
+{
+ "question_id": "0862e8bf",
+ "question": "What is the name of my cat?",
+ "answer": "Luna",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15489,
+  "tail_start_msg": 59
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't know the name of your cat. You mentioned earlier that your cat's name is Luna.",
+  "B": "I don't know the name of your cat. 😊\n\nIf you'd like help choosing a name, brainstorming ideas, or even learning how to say \"cat\" in different languages, I’d be happy to help! Just let me know. 🐱",
+  "E-tuned": "I don't know the name of your cat. I haven't been told that information before. If you'd like to share your cat's name, I'd be happy to help you with anything related to it—like suggesting fun games, creating a name tag, or even writing a short story about your feline friend! 😺",
+  "B-min-pack": "I'm sorry, but I don't know the name of your cat. I haven't been told that information before. 😊 If you'd like, you can tell me the name, and I’d be happy to help you with something fun or useful related to your cat—like writing a story, creating a name tag, or even practicing German with cat-themed vocabulary! 🐱",
+  "H-pack": "I don't know the name of your cat. 😺 Could you tell me what your cat's name is? I'd love to learn more about your furry friend! 🐾",
+  "H-gap": "I don't know the name of your cat. 😺 Could you tell me? I’d love to help you learn more about your furry friend! 🐾"
+ }
+}

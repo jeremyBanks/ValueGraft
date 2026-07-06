@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_4929293a",
+ "question": "Which event happened first, my cousin's wedding or Michael's engagement party?",
+ "answer": "Michael's engagement party",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13711,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your message, **Michael's engagement party happened first**.\n\nYou mentioned:  \n> \"I just came back from Michael's engagement party at a trendy rooftop bar today, and it got me thinking about my own wedding plans.\"\n\nThen later, you said:  \n> \"I'm getting ready to start planning my own wedding and I was wondering if you could give me some advice on how to choose the right wedding planner. By the way, I just walked down the aisle as a bridesmaid at my cousin's wedding today...\"\n\nSince you attended Michael's engagement party *today* and then walked down the aisle at your cousin's wedding *today*, the engagement party must have occurred earlier in the day — or at least on the same day, but before the wedding ceremony.\n\nSo, **Michael",
+  "B": "I'm sorry, but I don't have enough information to determine which event happened first—your cousin's wedding or Michael's engagement party.\n\nTo help answer your question, I’d need to know the **dates** of both events. If you can provide the dates (or even just the months or years), I’d be happy to compare them and tell you which one occurred first.\n\nFor example:\n- If your cousin’s wedding was on **June 15, 2023**, and Michael’s engagement party was on **September 10, 2023**, then the wedding happened first.\n- If Michael’s engagement party was on **March 5, 2023**, and your cousin’s wedding was on **April 20, 20",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine which event happened first—your cousin's wedding or Michael's engagement party. To help answer your question, I would need:\n\n- The **dates** of both events (e.g., \"Cousin's wedding: June 15, 2023\" and \"Michael's engagement party: May 20, 2023\").\n- Or a **relative timeline** (e.g., \"Michael's engagement party was two months before the wedding\").\n\nIf you can provide either the dates or a clear sequence of events, I’d be happy to help you figure out which came first!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine which event happened first—your cousin's wedding or Michael's engagement party. To help answer your question, I’d need to know the dates of each event. If you can provide those, I’d be happy to compare them and tell you which came first!",
+  "H-pack": "I'm sorry, but I don't have enough information to determine which event happened first—your cousin's wedding or Michael's engagement party. To answer your question, I would need to know the dates of both events. If you can provide those, I’d be happy to help compare them!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine which event happened first—your cousin's wedding or Michael's engagement party. To answer your question, I would need to know the dates of both events or some context that links them chronologically (like \"Michael's engagement party was two months before my cousin's wedding\"). If you can provide that, I’d be happy to help!"
+ }
+}

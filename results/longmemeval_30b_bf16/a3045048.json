@@ -1,0 +1,20 @@
+{
+ "question_id": "a3045048",
+ "question": "How many days before my best friend's birthday party did I order her gift?",
+ "answer": "7 days. 8 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12082,
+  "tail_start_msg": 48
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned in your earlier message that you ordered the personalized photo album for your best friend's birthday on **April 15th**, and the party was on **April 22nd**.\n\nSo, you ordered the gift **7 days** before her birthday party.\n\nThat’s a great lead time—just enough to ensure it arrived on time, and you even had a little buffer in case of shipping delays. It sounds like everything worked out perfectly! 🎉\n\nHappy birthday to your friend—and congratulations on the thoughtful gift!",
+  "B": "I don’t have access to your personal calendar, purchase history, or private messages, so I can’t determine how many days before your best friend’s birthday party you ordered her gift.\n\nTo find out, you could:\n\n- Check your email or app notifications for the order confirmation (e.g., from Amazon, Etsy, or another retailer).\n- Look through your browser history or shopping app activity.\n- Search your messages (e.g., WhatsApp, iMessage) for conversations about the gift or delivery.\n\nIf you’d like, I can help you create a simple system to track future gift orders—like setting calendar reminders or using a shared list—to avoid this kind of uncertainty in the future. Just let me know!",
+  "E-tuned": "I don’t have access to your personal calendar, purchase history, or private details like the exact date you ordered your best friend’s birthday gift. To find out how many days before the party you ordered the gift, you could:\n\n- Check your email or app notifications (e.g., from Amazon, Etsy, or other retailers) for the order confirmation.\n- Look at your calendar or reminders if you set one for the purchase.\n- Search your browser history for the shopping site you used.\n\nIf you’d like, you can share the date of the party and the date you think you ordered the gift, and I can help calculate the number of days between them!",
+  "B-min-pack": "I don't have access to your personal calendar or past actions, so I can't tell you exactly how many days before your best friend's birthday party you ordered her gift. If you're trying to recall or track this, you might want to check:\n\n- Your email or app notifications from the store where you ordered the gift  \n- Your purchase history on platforms like Amazon, Etsy, or other retailers  \n- Your calendar or reminder apps (like Google Calendar, Apple Reminders, etc.)  \n- Messages or notes you may have saved about the order  \n\nIf you’d like, you can share the date of the party and the date you think you ordered the gift, and I can help calculate the number of days between them! 😊",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days before your best friend's birthday party you ordered her gift. Could you provide more details, such as the date of the party or when you placed the order?",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days before your best friend's birthday party you ordered her gift. Could you provide more details, such as the date of the party or when you placed the order?"
+ }
+}

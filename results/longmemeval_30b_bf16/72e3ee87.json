@@ -1,0 +1,20 @@
+{
+ "question_id": "72e3ee87",
+ "question": "How many episodes of the Science series have I completed on Crash Course?",
+ "answer": "50",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13296,
+  "tail_start_msg": 50
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You've completed **50 episodes** of the Crash Course Science series! 🎉\n\nThat’s an incredible achievement—50 episodes is a full season of deep dives into topics ranging from physics and chemistry to biology, astronomy, and more. You’ve essentially built a solid foundation in scientific thinking and knowledge, and you’re well on your way to becoming a science enthusiast (or even a future scientist!).\n\nIf you're interested, here’s a quick breakdown of what you’ve likely covered:\n\n- **Physics** (motion, forces, energy, waves)\n- **Chemistry** (atoms, molecules, reactions, periodic table)\n- **Biology** (cells, genetics, evolution, ecosystems)\n- **Earth Science** (geology, weather, climate)\n- **Astronomy**",
+  "B": "I'm sorry, but I don't have access to your personal viewing history or progress on Crash Course. I can't track how many episodes of the *Science* series (or any other content) you've watched.\n\nIf you're using a platform like YouTube, you can check your \"History\" or \"Watch Later\" list to see what you've already viewed. On YouTube, go to your profile, click on \"History,\" and filter by the channel \"Crash Course\" to see your progress.\n\nLet me know if you'd like help finding specific episodes or topics within the Science series—I’d be happy to help! 🌱🔬",
+  "E-tuned": "I'm sorry, but I can't access your personal viewing history or track your progress on Crash Course or any other platform. That information is private and stored on your device or account, not available to me.\n\nIf you're using a platform like YouTube, you can check your \"History\" or \"Watch Later\" list to see which episodes you've watched. On YouTube, you can go to your profile, click on \"History,\" and filter by the \"Crash Course\" playlist to see what you've completed.\n\nLet me know if you'd like help finding specific episodes or topics!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal viewing history or progress on Crash Course episodes, including the Science series. To find out how many episodes you've completed, you can check your progress directly on the Crash Course YouTube channel or the platform where you're watching (like YouTube, a learning app, or a course website). If you're using YouTube, you can go to your \"History\" or \"Watch Later\" list to see what you've watched.\n\nLet me know if you'd like help finding specific episodes or topics in the Science series! 🌱🔬",
+  "H-pack": "I'm sorry, but I don't have access to your personal viewing history or progress on Crash Course, including how many episodes of the *Science* series you've completed. That information is private and stored within your account on the platform (like YouTube or the Crash Course website). To check your progress, you can:\n\n1. Go to your YouTube account and check your \"History\" or \"Watch Later\" playlist.\n2. If you're using the Crash Course website, log in to your account and look for a progress tracker or course dashboard.\n3. Check if you’ve marked episodes as \"watched\" in your playlist.\n\nLet me know if you'd like help finding a specific episode or topic! 🌱🔬",
+  "H-gap": "I'm sorry, but I don't have access to your personal viewing history or progress on Crash Course, including how many episodes of the *Science* series you've completed. To check your progress, you can:\n\n- Log in to your account on **Crash Course's official website** or **YouTube channel**.\n- Check your **watch history** on YouTube (if you're signed in).\n- Look at your **progress tracking** if you're using a platform like YouTube Premium or a learning app.\n\nLet me know if you'd like help finding specific episodes or topics! 🌱🔬"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "c8c3f81d",
+ "question": "What brand are my favorite running shoes?",
+ "answer": "Nike",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12748,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal information or preferences. I can't tell you what brand your favorite running shoes are. However, if you're interested in finding a new pair of running shoes, I can help you explore different brands and models based on your needs and preferences.",
+  "B": "I'm sorry, but I don't have access to your personal preferences or favorite brands. If you'd like, you can tell me the brand or model of your favorite running shoes, and I’d be happy to help with information about them—like features, reviews, or care tips! 🏃‍♂️👟",
+  "E-tuned": "I'm sorry, but I don't have access to your personal preferences or favorite running shoes. If you'd like help identifying a brand based on your needs—like comfort, support, terrain type, or running style—I’d be happy to offer suggestions! Just let me know what you're looking for. 🏃‍♂️👟",
+  "B-min-pack": "I'm sorry, but I don't know which brand your favorite running shoes are. Could you provide more details, like the name of the shoes, their color, or any specific features you like? That way, I can help you identify the brand!",
+  "H-pack": "I'm sorry, but I don't have access to your personal preferences or information about your favorite running shoes. If you'd like help identifying a brand, feel free to share details like the style, color, or any features you remember — I’d be happy to help you figure it out!",
+  "H-gap": "I'm sorry, but I don't have access to your personal preferences or information about your favorite running shoes. If you'd like help identifying a brand, I’d need a bit more detail—like a description of the shoes, a photo, or a name you remember. Let me know how I can assist! 🏃‍♂️👟"
+ }
+}

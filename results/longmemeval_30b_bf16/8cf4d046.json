@@ -1,0 +1,20 @@
+{
+ "question_id": "8cf4d046",
+ "question": "What is the average GPA of my undergraduate and graduate studies?",
+ "answer": "3.83",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13646,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided earlier:\n\n- Your **undergraduate GPA** from the University of Mumbai is equivalent to **3.86 out of 4.0**, which you mentioned corresponds to a First-Class distinction with an overall percentage of 83%.\n- Your **graduate GPA** from the University of Illinois at Urbana-Champaign is **3.8 out of 4.0**.\n\nSo, your average GPA across both degrees is approximately **3.83 out of 4.0**, which is an excellent academic record and reflects strong performance in both your undergraduate and graduate studies.",
+  "B": "I don't have access to your personal academic records, including your GPA from undergraduate or graduate studies. That information is private and protected, and only you or your institution can provide it.\n\nIf you're trying to recall your GPA for a job application, graduate school, or personal reference, I’d recommend checking your official transcripts from your university. These documents are the most accurate and authoritative source for your academic performance.\n\nLet me know if you’d like help interpreting your GPA, understanding how it compares to averages in your field, or preparing a statement about your academic background!",
+  "E-tuned": "I don't have access to your personal academic records, including your undergraduate or graduate GPA. GPA (Grade Point Average) is a private academic metric tied to your individual transcripts, and only you or your institution can provide that information.\n\nIf you're trying to recall your GPA, I’d recommend checking:\n\n- Your official academic transcripts (usually available through your university’s student portal).\n- Any graduation documents or diploma supplements.\n- Records from your academic advisor or registrar’s office.\n\nIf you're preparing for job applications, grad school, or other opportunities, and you're unsure of your GPA, you can often calculate it manually using your course grades and credit hours.\n\nLet me know if you'd like help with that calculation or guidance on how to present your academic record effectively!",
+  "B-min-pack": "I don't have access to your personal academic records, including your undergraduate or graduate GPA. That information is private and stored securely in your institution's systems. If you're looking to calculate or recall your average GPA, you can:\n\n- Check your official transcripts from your university.\n- Use a GPA calculator tool if you have your course grades and credit hours.\n- Contact your academic advisor or registrar’s office for a formal transcript.\n\nIf you're sharing this in the context of job applications (e.g., for roles like Quantitative Analyst at Goldman Sachs), many employers look at your overall academic performance, but they also value relevant skills, projects, and experience—especially in data science. If you're aiming to highlight your academic background, focus on how your education has prepared you for data-driven roles, even",
+  "H-pack": "I don't have access to your personal academic records, including your undergraduate or graduate GPA. That information is private and specific to you. If you're looking to calculate or report your GPA, you can do so using your official transcripts from your institutions. Let me know if you'd like help understanding how to calculate it or how to present it for job applications, grad school, or other purposes!",
+  "H-gap": "I don't have access to your personal academic records, including your undergraduate or graduate GPA. That information is private and specific to you. If you're looking to calculate or report your GPA, you can do so using your official transcripts from your institutions. Let me know if you'd like help understanding how to calculate it or how to present it for job applications, grad school, or other purposes!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "3d86fd0a",
+ "question": "Where did I meet Sophia?",
+ "answer": "a coffee shop in the city",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12368,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You met Sophia at a coffee shop in the city.",
+  "B": "I don't have access to your personal memories or past experiences, so I can't tell you where you met Sophia. If you're trying to recall a specific moment, you might want to think about the context—was it at a place you often visit, a special event, or through a mutual friend? Sometimes, a photo, a shared memory, or even a song from that time can help jog your memory. Let me know if you'd like help brainstorming possible locations or scenarios!",
+  "E-tuned": "I don't have access to your personal memories or past experiences, so I can't tell you where you met Sophia. If you're trying to recall a specific event, you might want to think about the context—such as a place you were visiting, a social event, or a shared interest. If you provide more details, I’d be happy to help you brainstorm or organize your thoughts!",
+  "B-min-pack": "I'm sorry, but I don't have any information about where you met Sophia. I don’t have access to your personal memories or past experiences. If you're trying to recall, maybe think about the context—was it at a place, event, or through someone you both knew? Let me know if you'd like help brainstorming or organizing your thoughts!",
+  "H-pack": "I'm sorry, but I don't have any information about where you met Sophia. I wasn’t present for your personal experiences, and I don’t have access to your memories or past events. If you're trying to recall, you might think about the context—where you were, what you were doing, or who else was there. Let me know if you'd like help brainstorming or remembering!",
+  "H-gap": "I'm sorry, but I don't have any information about where you met Sophia. I wasn’t present for your personal experiences, and I don’t have access to your past interactions or memories. If you're trying to recall, you might think about the context—where you were, what you were doing, or who else was there. Let me know if you'd like help brainstorming or remembering!"
+ }
+}

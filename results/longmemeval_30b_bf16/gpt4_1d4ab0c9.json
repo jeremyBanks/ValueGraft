@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_1d4ab0c9",
+ "question": "How many days passed between the day I started watering my herb garden and the day I harvested my first batch of fresh herbs?",
+ "answer": "24 days. 25 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12358,
+  "tail_start_msg": 42
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have enough information to determine how many days passed between the day you started watering your herb garden and the day you harvested your first batch of fresh herbs.\n\nThe time it takes for herbs to grow from seed to harvest depends on several factors, including the type of herb, growing conditions, and the method of propagation (e.g., starting from seed vs. starting from a cutting).\n\nHere are some general guidelines for when to expect your first harvest:\n\n* **Basil**: 4-6 weeks after planting\n* **Cilantro**: 3-4 weeks after planting\n* **Parsley**: 6-8 weeks after planting\n* **Mint**: 4-6 weeks after planting\n* **Thyme**: 6-8 weeks",
+  "B": "I'm sorry, but I don't have the information about when you started watering your herb garden or when you harvested your first batch of herbs. That detail isn't in our conversation history, and I don’t have access to your personal calendar or daily activities.  \n\nIf you’d like, you can tell me the dates, and I’d be happy to calculate the number of days between them! 🌿",
+  "E-tuned": "I'm sorry, but I don't have the information about when you started watering your herb garden or when you harvested your first batch of herbs. To calculate the number of days between those two events, I would need the specific dates for both the start of watering and the harvest. If you can provide those dates, I’d be happy to help you calculate the number of days that passed!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days passed between when you started watering your herb garden and when you harvested your first batch of fresh herbs. \n\nTo calculate that, I’d need to know:\n- The specific date or day you began watering the garden.\n- The specific date or day you harvested your first herbs.\n\nIf you can provide those two dates, I’d be happy to help you calculate the number of days in between! 🌿",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days passed between when you started watering your herb garden and when you harvested your first batch of fresh herbs. To calculate that, I’d need to know the specific dates or at least the number of days between those two events.\n\nIf you can provide:\n- The date you started watering the garden, and  \n- The date you harvested your first herbs,\n\nI’d be happy to calculate the number of days between them! 🌿",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days passed between when you started watering your herb garden and when you harvested your first batch of fresh herbs. To calculate that, I’d need to know the specific dates or at least the number of days between those two events.\n\nIf you can provide:\n- The date you started watering the garden, or\n- The date you harvested your first herbs, or\n- How many days apart they were,\n\nI’d be happy to help you calculate the exact number of days! 🌿"
+ }
+}

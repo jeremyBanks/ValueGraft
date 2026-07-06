@@ -1,0 +1,20 @@
+{
+ "question_id": "3fe836c9",
+ "question": "How much more was the pre-approval amount than the final sale price of the house?",
+ "answer": "$25,000",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15169,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Hi! I'm Little J, and I'm in first grade. Let me help you with that!\n\nSo, the house I bought was $325,000. That's the final sale price. But the bank said I could borrow up to $350,000. That means the pre-approval amount was more than the sale price.\n\nTo find out how much more, I can do a little math:\n\n$350,000 (pre-approval)  \nminus  \n$325,000 (sale price)  \nequals  \n$25,000\n\nSo, the pre-approval amount was $25,000 more than the final sale price!\n\nThat means I had extra money to use for",
+  "B": "I'm sorry, but I don't have enough information to answer your question. Could you please provide details about the house, such as the pre-approval amount and the final sale price? That way, I can help you calculate the difference!",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer your question. To figure out how much more the pre-approval amount was than the final sale price, I would need to know:\n\n- The pre-approval amount (how much the lender said the buyer could borrow)\n- The final sale price of the house (how much the house actually sold for)\n\nIf you can provide those two numbers, I’d be happy to help calculate the difference!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to answer your question. To determine how much more the pre-approval amount was than the final sale price of the house, I would need:\n\n- The pre-approval loan amount (the maximum amount the lender said you could borrow).\n- The final sale price of the house (the actual price the house sold for).\n\nIf you can provide those two numbers, I’d be happy to calculate the difference for you!",
+  "H-pack": "I'm sorry, but I don't have enough information to answer your question. To determine how much more the pre-approval amount was than the final sale price of the house, I would need details such as:\n\n- The pre-approval loan amount (how much the lender said the buyer could borrow)\n- The final sale price of the house (the actual amount paid by the buyer)\n\nIf you can provide those two numbers, I’d be happy to calculate the difference for you.",
+  "H-gap": "I'm sorry, but I don't have enough information to answer your question. To determine how much more the pre-approval amount was than the final sale price of the house, I would need details such as:\n\n- The pre-approval loan amount (how much the lender said the buyer could borrow)\n- The final sale price of the house (the agreed-upon purchase price)\n\nIf you can provide those two numbers, I’d be happy to calculate the difference for you."
+ }
+}

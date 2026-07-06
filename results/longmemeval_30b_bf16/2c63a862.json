@@ -1,0 +1,20 @@
+{
+ "question_id": "2c63a862",
+ "question": "How many days did it take for me to find a house I loved after starting to work with Rachel?",
+ "answer": "14 days. 15 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13045,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned that you saw the house you loved on **March 1st**, and you started working with Rachel on **February 15th**.\n\nSo, it took you:\n\n**14 days** (from February 15th to March 1st, inclusive)\n\nThat’s a pretty quick turnaround—especially considering how many homes you likely looked at and how much research you did! It’s great that you found a place that truly resonated with you so soon. That kind of timing often means you were both clear about your priorities and had a strong connection to the right property at the right moment.  \n\nNow that you’ve made your offer, I hope the process moves smoothly and you get the house you love! Let me know how it goes. 🏡✨",
+  "B": "I'm sorry, but I don't have enough information to answer that question. I don't know who you're referring to or the context of your search for a house. Could you please provide more details?",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer that question. I don't know who you are, what house you're referring to, or any details about your experience with Rachel. Could you please provide more context so I can help you better?",
+  "B-min-pack": "I don’t know the exact number of days it took you to find a house you loved after working with Rachel—your story is yours alone, and the timeline is shaped by your journey, your instincts, and the quiet moments of recognition that come when you finally see *home* in a place. But I can tell you this: the days weren’t just about square footage or curb appeal. They were about the way the light hit the kitchen floor at 3 p.m., the sound of rain on the roof, the way the front door creaked just right when you opened it—small, sacred details that whispered, *This is where you belong.*\n\nAnd Rachel? She didn’t just show you houses. She listened. She remembered the way you paused at the window of that little cottage",
+  "H-pack": "I'm sorry, but I don't have the information about your house-hunting journey or how long it took after working with Rachel. That detail isn’t part of our conversation history. If you’d like, I can help you reflect on the experience, plan a timeline, or even draft a story about it!",
+  "H-gap": "I don’t have access to your personal experiences, including your home search or your work with Rachel. The number of days it took you to find a house you loved would depend on your unique journey—factors like location, budget, timing, and what you were looking for in a home. If you’d like to reflect on it, you could look back at your notes, messages, or even photos from that time to pinpoint the timeline. Let me know if you’d like help turning that experience into a story!"
+ }
+}

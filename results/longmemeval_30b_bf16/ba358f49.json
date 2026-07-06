@@ -1,0 +1,20 @@
+{
+ "question_id": "ba358f49",
+ "question": "How many years will I be when my friend Rachel gets married?",
+ "answer": "33",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13995,
+  "tail_start_msg": 52
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have enough information to answer that question. To determine how old you'll be when your friend Rachel gets married, I would need to know:\n\n1. Your current age\n2. The date of Rachel's wedding (or how many years from now it is)\n\nOnce I have those details, I can calculate your age at the time of her wedding. For example:\n- If you're 30 now and Rachel's wedding is in 1 year, you'll be 31.\n- If you're 28 now and her wedding is in 2 years, you'll be 30.\n\nLet me know your current age and how far in the future the wedding is, and I’ll be happy to help!",
+  "B": "I'm sorry, but I don't have enough information to answer that question. To figure out how old you'll be when your friend Rachel gets married, I’d need to know:\n\n1. **Your current age**  \n2. **The date of Rachel’s wedding** (or how many years from now it is)\n\nOnce you provide those details, I can easily calculate your age at the time of her wedding! 😊",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer that question. To figure out how old you'll be when your friend Rachel gets married, I’d need to know:\n\n1. **Your current age**  \n2. **The date of Rachel’s wedding** (or how many years from now it is)\n\nOnce I have those details, I can calculate your age at the time of her wedding. Let me know! 😊",
+  "B-min-pack": "I'd love to help you figure out how old you'll be when your friend Rachel gets married—but I’ll need a little more information! Could you please share:\n\n1. **Your current age**  \n2. **When Rachel is getting married** (e.g., date or how many years from now)\n\nWith those details, I can calculate exactly how old you’ll be on her wedding day. 😊💍",
+  "H-pack": "I'd love to help you figure out how old you'll be when your friend Rachel gets married — but I’ll need a little more information! 😊\n\nCould you please share:\n\n1. **Your current age**  \n2. **When Rachel is getting married** (e.g., date or how many years from now)\n\nWith those details, I can calculate exactly how old you’ll be on her wedding day! 💍✨",
+  "H-gap": "I'd love to help you figure out how old you'll be when your friend Rachel gets married — but I’ll need a little more information! 😊\n\nCould you please share:\n\n1. **Your current age**  \n2. **When Rachel is getting married** (e.g., date or how many years from now)\n\nWith those details, I can calculate exactly how old you’ll be on her wedding day! 💍✨"
+ }
+}

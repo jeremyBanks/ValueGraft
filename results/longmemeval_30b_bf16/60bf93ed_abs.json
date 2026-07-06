@@ -1,0 +1,20 @@
+{
+ "question_id": "60bf93ed_abs",
+ "question": "How many days did it take for my iPad case to arrive after I bought it?",
+ "answer": "The information provided is not enough. You did not mention buying an iPad case.",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12653,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your purchase history or shipping details. To find out how many days it took for your iPad case to arrive, you can check the order confirmation email from the retailer, look at the shipping tracking information, or check your account on the website where you made the purchase.",
+  "B": "I'm sorry, but I don't have access to your purchase history or shipping details. To check the delivery status of your iPad case, please:\n\n1. Log in to your account on the retailer’s website (e.g., Apple, Amazon, Best Buy, etc.).\n2. Go to your order history or \"My Orders\" section.\n3. Look for the specific order and check the shipping status and estimated delivery date.\n\nIf you still can’t find the information, you can contact the retailer’s customer service directly with your order number for assistance.",
+  "E-tuned": "I'm sorry, but I don't have access to your purchase history or shipping details. To find out how many days it took for your iPad case to arrive, you can check the order confirmation email or track the package using the shipping carrier's website with your tracking number. Let me know if you'd like help finding that information!",
+  "B-min-pack": "I'm sorry, but I don't have access to your purchase history or shipping details. To find out how many days it took for your iPad case to arrive, you can check your order confirmation email or log in to your account on the retailer’s website (like Apple, Amazon, or another store) to view the shipping and delivery dates. Let me know if you'd like help interpreting that information!",
+  "H-pack": "I'm sorry, but I don't have access to your purchase history or shipping details. To check how many days it took for your iPad case to arrive, you can:\n\n1. **Check your email** – Look for the order confirmation and shipping update emails from the retailer.\n2. **Log in to your account** – Go to the store’s website (like Apple, Amazon, Best Buy, etc.) and view your order history.\n3. **Check the tracking number** – If you received a tracking link, you can use it to see the delivery timeline.\n\nLet me know if you’d like help interpreting a tracking update!",
+  "H-gap": "I'm sorry, but I don't have access to your purchase history or shipping details. To check how long it took for your iPad case to arrive, you can:\n\n1. **Check your email** – Look for the order confirmation and shipping update emails from the retailer.\n2. **Log in to your account** – Go to the website or app where you made the purchase (like Apple, Amazon, Best Buy, etc.) and view your order history.\n3. **Check the tracking number** – If you received a tracking link, enter it on the carrier’s website (like USPS, FedEx, UPS) to see the delivery timeline.\n\nLet me know if you’d like help interpreting a tracking update!"
+ }
+}

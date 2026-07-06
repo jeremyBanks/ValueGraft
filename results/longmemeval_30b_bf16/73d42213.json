@@ -1,0 +1,20 @@
+{
+ "question_id": "73d42213",
+ "question": "What time did I reach the clinic on Monday?",
+ "answer": "9:00 AM",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12177,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your earlier message, you said:\n\n> \"I had a doctor's appointment last Monday, so I took a half-day off from work and got back to the office around 1:00 PM.\"\n\nThis means you arrived at the clinic **before 1:00 PM** on Monday. Since you took a half-day off and returned to the office at 1:00 PM, it's likely you arrived at the clinic sometime in the morning—probably between 8:00 AM and 11:00 AM—depending on how long your appointment lasted and how much time you needed to travel.\n\nYou also mentioned it took you two hours to get to the clinic from home, so if you left home at 7:00 AM, you would have",
+  "B": "I don't have access to your personal schedule or location data, so I can't tell you what time you reached the clinic on Monday. Please check your calendar, phone records, or any notes you may have made to find the exact time.",
+  "E-tuned": "I don't have access to your personal schedule or location data, so I can't tell you what time you reached the clinic on Monday. Please check your calendar, phone records, or any notes you may have made to find the exact time.",
+  "B-min-pack": "I don't have access to your personal schedule or location data, so I can't tell you what time you reached the clinic on Monday. Please check your calendar, phone records, or any notes you may have made to find the exact time. Let me know if you'd like help drafting a reminder or organizing your appointments!",
+  "H-pack": "I don't have access to your personal schedule or location data, so I can't tell you what time you reached the clinic on Monday. Please check your calendar, phone records, or any notes you may have made to find the exact time.",
+  "H-gap": "I don't have access to your personal schedule or location data, so I can't tell you what time you reached the clinic on Monday. Please check your calendar, phone records, or any notes you may have made to find the exact time."
+ }
+}

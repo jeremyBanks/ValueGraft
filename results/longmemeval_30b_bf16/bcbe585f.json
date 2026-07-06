@@ -1,0 +1,20 @@
+{
+ "question_id": "bcbe585f",
+ "question": "How many weeks ago did I attend a bird watching workshop at the local Audubon society?",
+ "answer": "4",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13513,
+  "tail_start_msg": 44
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or past events, so I can't determine exactly how many weeks ago you attended the bird watching workshop at the local Audubon society.\n\nHowever, based on your earlier message, you mentioned:  \n> \"By the way, I just got back from a bird watching workshop at the local Audubon society today, which was really informative.\"\n\nThis indicates that you attended the workshop **today** — so it was **0 weeks ago**.\n\nIf you're asking from a future perspective (e.g., you're reading this later), then the answer would depend on how many weeks have passed since today. Let me know if you'd like help calculating it! 🐦",
+  "B": "I'm sorry, but I don't have access to your personal schedule or past events, including when you attended a bird watching workshop at the local Audubon Society. To find out how many weeks ago that was, you could check your calendar, email confirmations, or any notes you may have taken at the time. If you're using a digital calendar (like Google Calendar or Apple Calendar), you can search for the event and see the date. From there, you can calculate the number of weeks between then and today.\n\nLet me know if you'd like help calculating it once you have the date!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal schedule or past events, including when you attended a bird watching workshop at the local Audubon Society. To find out how many weeks ago that was, you could check your calendar, email confirmations, or any notes you may have made at the time. If you provide a specific date, I’d be happy to help calculate the number of weeks!",
+  "B-min-pack": "I don't have access to your personal schedule or past activities, so I can't determine how many weeks ago you attended a bird watching workshop at the local Audubon Society. If you remember the date, you can calculate the number of weeks by subtracting that date from today’s date and dividing by 7. Let me know if you'd like help with that! 🐦",
+  "H-pack": "I don't have access to your personal schedule or past activities, so I can't determine how many weeks ago you attended a bird watching workshop at the local Audubon Society. You might want to check your calendar, email, or any notes you took after the event!",
+  "H-gap": "I don't have access to your personal schedule or past events, so I can't determine how many weeks ago you attended a bird watching workshop at the local Audubon society. You might want to check your calendar, email, or any notes you took from the event to find the exact date."
+ }
+}

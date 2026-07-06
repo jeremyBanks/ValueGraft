@@ -1,0 +1,20 @@
+{
+ "question_id": "e6041065",
+ "question": "What percentage of packed shoes did I wear on my last trip?",
+ "answer": "40%",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13850,
+  "tail_start_msg": 59
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your earlier message, you mentioned:\n\n> \"I packed a lot of shoes for my last trip, but I ended up only wearing two - my sneakers and sandals.\"\n\nSince you packed 5 pairs of shoes (as mentioned in a previous message) and only wore 2, the percentage of packed shoes you actually wore is:\n\n**(2 worn / 5 packed) × 100 = 40%**\n\nSo, you wore 40% of the shoes you packed on your last trip.",
+  "B": "I don't have enough information to determine what percentage of packed shoes you wore on your last trip. Please provide more details, such as how many shoes you packed and how many you actually wore.",
+  "E-tuned": "I don't have enough information to determine what percentage of packed shoes you wore on your last trip.",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine what percentage of your packed shoes you wore on your last trip. To calculate that, I’d need to know:\n\n- How many shoes you packed\n- How many shoes you actually wore\n\nOnce you provide those numbers, I can help you calculate the percentage. For example:\n\n> If you packed 5 shoes and wore 3, then:  \n> (3 ÷ 5) × 100 = **60%**\n\nLet me know the details! 👟🧦",
+  "H-pack": "I'm sorry, but I don't have enough information to determine what percentage of your packed shoes you wore on your last trip. To calculate that, I’d need to know:\n\n- How many shoes you packed in total.\n- How many of those shoes you actually wore during the trip.\n\nIf you can provide those numbers, I’d be happy to help you calculate the percentage!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine what percentage of your packed shoes you wore on your last trip. To calculate that, I’d need to know:\n\n- How many shoes you packed in total.\n- How many of those shoes you actually wore during the trip.\n\nIf you can provide those numbers, I’d be happy to help you calculate the percentage!"
+ }
+}

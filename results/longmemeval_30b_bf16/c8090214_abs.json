@@ -1,0 +1,20 @@
+{
+ "question_id": "c8090214_abs",
+ "question": "How many days before I bought my iPad did I attend the Holiday Market?",
+ "answer": "The information provided is not enough. You mentioned getting the iPhone 13 Pro and attending the market, but you did not mention buying an iPad.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14239,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal purchase history or calendar, so I can't tell you exactly how many days before buying your iPad you attended the Holiday Market.\n\nTo find the answer, you could:\n\n- Check your iPad's purchase receipt or Apple account (if you bought it through Apple or an authorized retailer).\n- Look at your calendar or notes app for the date of the Holiday Market.\n- Review your email or text messages from the time for any mentions of the event or your iPad purchase.\n\nIf you remember the approximate dates, you can simply subtract one from the other to calculate the number of days between the two events. Let me know if you'd like help with that!",
+  "B": "I'm sorry, but I don't have enough information to answer your question. I don't know when you bought your iPad or when you attended the Holiday Market. Could you please provide more context or details?",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer your question. You haven't provided any details about when you attended the Holiday Market or when you bought your iPad. Could you please share those dates or any related context? That way, I can help you calculate the number of days between the two events.",
+  "B-min-pack": "I'm sorry, but I don't have enough information to answer your question. You haven't provided any details about when you bought your iPad or when you attended the Holiday Market. If you can share those dates, I’d be happy to help calculate the number of days between them!",
+  "H-pack": "I'm sorry, but I don't have enough information to answer your question. You haven't provided any details about when you bought your iPad or when you attended the Holiday Market. If you can share those dates or any related clues, I’d be happy to help you figure it out!",
+  "H-gap": "I'm sorry, but I don't have enough information to answer your question. You haven't provided any details about when you bought your iPad or when you attended the Holiday Market. If you can share those dates or any related clues, I’d be happy to help you figure it out!"
+ }
+}

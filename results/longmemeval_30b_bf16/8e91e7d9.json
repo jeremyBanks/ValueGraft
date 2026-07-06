@@ -1,0 +1,20 @@
+{
+ "question_id": "8e91e7d9",
+ "question": "What is the total number of siblings I have?",
+ "answer": "4",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13562,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you've shared, you have **one sibling** — a brother.\n\nYou mentioned:  \n> \"Oh, and I should mention that I have a brother, which might be influencing my social circle dynamics.\"\n\nSince you have a brother and no other siblings were mentioned, the total number of siblings you have is **1**.  \n\n(You are the other sibling, so your total family size includes you and your brother — two children in total.)",
+  "B": "I don't have access to your personal information, including details about your family or siblings. To find out how many siblings you have, you can check with your family members, look at your birth certificate, or refer to family records. Let me know if you'd like help with something else!",
+  "E-tuned": "I don't have access to your personal information, including details about your family or siblings. To find out how many siblings you have, you can check with your family members, look at your birth certificate, or refer to family records. Let me know if you'd like help with something else!",
+  "B-min-pack": "I don't have enough information to determine how many siblings you have. Could you provide more details? 😊",
+  "H-pack": "I don't have enough information to determine how many siblings you have. Could you provide more details, such as how many brothers or sisters you have, or any other clues? 😊",
+  "H-gap": "I don't have enough information to determine the total number of siblings you have. Could you provide more details, such as how many brothers or sisters you know of, or any other relevant context?"
+ }
+}

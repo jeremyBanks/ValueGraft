@@ -1,0 +1,20 @@
+{
+ "question_id": "853b0a1d",
+ "question": "How old was I when my grandma gave me the silver necklace?",
+ "answer": "18",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12034,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned that your grandma gave you the silver necklace on your 18th birthday, so you were 18 years old when you received it. That’s a meaningful milestone — turning 18 is often seen as a rite of passage, and having a special gift from a loved one on that day makes it even more memorable. Even though you’ve lost the necklace, the story and the sentiment behind it remain deeply valuable. It’s a beautiful reminder of your grandma’s love and the special moment in your life.",
+  "B": "I'm sorry, but I don't have that information. I'm not able to access personal memories or specific details about your past, such as the age you were when your grandma gave you the silver necklace. That memory is unique to you and your relationship with her. If you're curious, you might try looking at old photos, checking family records, or asking other family members who might remember the occasion. The necklace likely holds special meaning—its value isn’t just in the silver, but in the love and moment behind it.",
+  "E-tuned": "I'm sorry, but I don't have access to personal memories or specific details about your life, including when your grandma gave you the silver necklace. That’s a special moment unique to you, and only you can recall the exact age or time it happened.  \n\nIf you're trying to remember, you might think about:  \n- The year or season it was (e.g., a birthday, holiday, or family event)  \n- How old you were when you first wore it  \n- What you were doing or feeling at the time  \n\nSometimes, a photo, a journal entry, or even a conversation with a family member can help jog your memory. The necklace may hold more than just a date—it might carry love, stories, and a connection to your grandma that lasts far beyond the moment",
+  "B-min-pack": "I don’t have access to your personal memories or past experiences, so I can’t tell you exactly how old you were when your grandma gave you the silver necklace. But if you’re thinking about it now, maybe you can recall a special moment—what you were wearing, what year it was, or how you felt when you received it. Those details often help bring the memory back. If you’d like, I can help you create a little memory journal entry for the necklace—its story, the moment it was given, and what it means to you. Would you like to try that?",
+  "H-pack": "I'm sorry, but I don’t have that information. I wasn’t there to witness the moment, and you haven’t shared your age or the date when your grandma gave you the necklace. If you remember the year or the occasion—like a birthday, holiday, or special event—I’d be happy to help you calculate your age at the time!",
+  "H-gap": "I'm sorry, but I don’t have that information. I wasn’t there to witness your memories, and I don’t have access to personal details about your life unless you share them with me. If you’d like, you can tell me the year or age you were when you received the necklace, and I can help you document it in your jewelry inventory—maybe even suggest a way to preserve the story for future generations. 💛"
+ }
+}

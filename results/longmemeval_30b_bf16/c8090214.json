@@ -1,0 +1,20 @@
+{
+ "question_id": "c8090214",
+ "question": "How many days before I bought the iPhone 13 Pro did I attend the Holiday Market?",
+ "answer": "7 days. 8 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14901,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided, you attended the Holiday Market **one week before Black Friday**.\n\nYou mentioned that you bought the iPhone 13 Pro at a discounted price from Best Buy on **Black Friday**, which was a great deal.\n\nSince Black Friday typically falls on the **fourth Friday of November**, and you attended the Holiday Market **one week before** that, you attended the Holiday Market **7 days before** you bought the iPhone 13 Pro.\n\nSo, the answer is: **7 days**.",
+  "B": "I'm sorry, but I don't have access to your personal purchase history or calendar events. To find out how many days before you bought the iPhone 13 Pro you attended the Holiday Market, you’d need to check your calendar, receipts, or device records (like the Apple Wallet or purchase history in your Apple ID account). If you remember the approximate date of the market, I can help you calculate the difference! Just let me know the dates.",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer your question. To determine how many days before you bought the iPhone 13 Pro you attended the Holiday Market, I would need to know the specific dates of both events—your attendance at the Holiday Market and the date you purchased the iPhone 13 Pro. If you can provide those dates, I’d be happy to help calculate the number of days between them!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days before you bought the iPhone 13 Pro you attended the Holiday Market. To answer your question, I would need to know the specific dates of both events — your attendance at the Holiday Market and the date you purchased the iPhone 13 Pro. If you can provide those dates, I’d be happy to calculate the difference for you!",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days before you bought the iPhone 13 Pro you attended the Holiday Market. To answer your question, I would need to know the specific dates of both events — when you attended the Holiday Market and when you purchased the iPhone 13 Pro. If you provide those dates, I’d be happy to calculate the difference for you!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days before you bought the iPhone 13 Pro you attended the Holiday Market. To answer your question, I would need to know the specific dates of both events — your purchase date for the iPhone 13 Pro and the date you attended the Holiday Market. If you provide those dates, I’d be happy to calculate the difference for you!"
+ }
+}

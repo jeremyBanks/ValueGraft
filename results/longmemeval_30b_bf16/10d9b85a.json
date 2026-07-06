@@ -1,0 +1,20 @@
+{
+ "question_id": "10d9b85a",
+ "question": "How many days did I spend attending workshops, lectures, and conferences in April?",
+ "answer": "3 days",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12908,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal schedule or calendar, so I can't determine how many days you spent attending workshops, lectures, and conferences in April. If you'd like to track your time, you could review your calendar, notes, or any event reminders you may have saved.",
+  "B": "I don't have access to your personal schedule or calendar, so I can't tell you how many days you spent attending workshops, lectures, or conferences in April. If you'd like to find out, you could check your calendar, email, or any notes you may have from that time. Let me know if you'd like help organizing or reviewing that information!",
+  "E-tuned": "I don't have access to your personal schedule or calendar, so I can't tell you how many days you spent attending workshops, lectures, or conferences in April. If you'd like to find out, you could check your calendar, email, or any notes you may have made about those events. Let me know if you'd like help organizing or tracking your time!",
+  "B-min-pack": "I don't have access to your personal schedule or calendar, so I can't determine how many days you spent attending workshops, lectures, and conferences in April. If you have a record of your events or a calendar, you can count the days with such activities. Let me know if you'd like help organizing or analyzing that data!",
+  "H-pack": "I don't have access to your personal schedule or calendar, so I can't determine how many days you spent attending workshops, lectures, and conferences in April. If you have a record of your events or calendar entries, you can check those to find the exact number of days. Let me know if you'd like help organizing or analyzing that data!",
+  "H-gap": "I don't have access to your personal schedule or calendar, so I can't determine how many days you spent attending workshops, lectures, and conferences in April. If you have a record of your events or a calendar, you can check it directly to count the days. Let me know if you'd like help organizing or analyzing that information!"
+ }
+}

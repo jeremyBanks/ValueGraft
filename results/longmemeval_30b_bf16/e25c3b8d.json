@@ -1,0 +1,20 @@
+{
+ "question_id": "e25c3b8d",
+ "question": "How much did I save on the designer handbag at TK Maxx?",
+ "answer": "$300",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12323,
+  "tail_start_msg": 48
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned earlier that you got the designer handbag for $200, which was a fantastic deal on an original price of $500.  \n\nSo, you saved:  \n$500 (original price) – $200 (your price) = **$300 saved**.\n\nThat’s a 60% discount—great job spotting a real steal! 🎉",
+  "B": "I'm sorry, but I don't have access to your personal shopping history, financial records, or any details about purchases you've made — including at TK Maxx or elsewhere. I can’t track or calculate how much you saved on a handbag (or anything else) because that information isn’t available to me.\n\nIf you’re curious about your savings, you might check your receipt, the original retail price of the handbag, and the price you paid at TK Maxx. The difference between those two numbers is your savings!\n\nLet me know if you’d like help estimating a typical discount at TK Maxx or how to spot a good deal — I’d be happy to help with that. 😊",
+  "E-tuned": "I'm sorry, but I don't have access to your personal shopping history or financial details. I can't tell you how much you saved on a designer handbag at TK Maxx. If you remember the original price and the sale price, you can calculate the difference yourself! Let me know if you'd like help with that. 😊",
+  "B-min-pack": "I'm sorry, but I don’t have access to your personal shopping history or financial details—so I can’t tell you exactly how much you saved on the designer handbag at TK Maxx. 😊\n\nBut if you remember the original retail price and the price you paid, you can easily calculate your savings by subtracting the TK Maxx price from the original price. For example:\n\n- Original price: $500  \n- TK Maxx price: $250  \n- Savings: $500 – $250 = **$250 saved!**\n\nLet me know the numbers, and I’ll help you crunch the math! 🎉👜",
+  "H-pack": "I'm sorry, but I don’t have access to your personal shopping history or purchase details — including what you bought at TK Maxx or the original price of the designer handbag. To find out how much you saved, check your receipt or the original retail price of the handbag (often listed on the brand’s website or in store). Then subtract the TK Maxx sale price from the original to calculate your savings!\n\nIf you remember the original price and the TK Maxx price, I’d be happy to help you calculate the difference. 😊",
+  "H-gap": "I'm sorry, but I don’t have access to your personal shopping history or purchase details — including what you bought at TK Maxx or the original price of the handbag. To find out how much you saved, you’d need to check your receipt or the original retail price of the handbag (often listed on the tag or website) and subtract the price you paid at TK Maxx.\n\nIf you remember the original price and the TK Maxx sale price, I can help you calculate the savings! Just share those numbers. 😊"
+ }
+}

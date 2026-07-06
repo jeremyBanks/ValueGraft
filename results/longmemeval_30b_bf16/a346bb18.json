@@ -1,0 +1,20 @@
+{
+ "question_id": "a346bb18",
+ "question": "How many minutes did I exceed my target time by in the marathon?",
+ "answer": "12",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15428,
+  "tail_start_msg": 51
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You completed your marathon in **4 hours and 22 minutes**, and your target time was **4 hours and 10 minutes**.\n\nTo find out how many minutes you exceeded your target by:\n\n- 4 hours 22 minutes = 262 minutes  \n- 4 hours 10 minutes = 250 minutes  \n- Difference: 262 - 250 = **12 minutes**\n\nSo, you exceeded your target time by **12 minutes**.\n\nThat’s still an incredible achievement—finishing a marathon is no small feat! Every runner has off days or unexpected challenges, and you still crossed the finish line strong. Use this as motivation to keep training and refining your pace. You're on your way to even better times! �",
+  "B": "I'm sorry, but I don't have enough information to determine how many minutes you exceeded your target time by in the marathon. To calculate that, I would need to know:\n\n- Your **target time** (e.g., 4 hours, 30 minutes)\n- Your **actual finish time** (e.g., 4 hours, 45 minutes)\n\nOnce I have both of those, I can subtract your target time from your actual time to find the difference.\n\nFor example:\n- If your target was **4:30:00** and you finished in **4:45:00**, you exceeded your target by **15 minutes**.\n\nLet me know your target and actual times, and I’ll help you calculate it! 🏃‍",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine how many minutes you exceeded your target time by in the marathon. To calculate that, I would need to know:\n\n- Your **target time** (e.g., 4 hours, 30 minutes)\n- Your **actual finish time** (e.g., 4 hours, 45 minutes)\n\nOnce I have both times, I can subtract your target from your actual time to find the difference.\n\nFor example:\n- If your target was **4:30:00** and you finished in **4:45:00**, you exceeded your target by **15 minutes**.\n\nPlease share your target and actual times, and I’ll help you calculate the difference! 🏃‍♂️",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many minutes you exceeded your target time by in the marathon. To calculate that, I would need:\n\n1. Your **actual marathon finish time** (e.g., 4 hours 25 minutes).\n2. Your **target marathon time** (e.g., 4 hours 00 minutes).\n\nOnce I have both, I can subtract your target time from your actual time to find the difference.\n\nFor example:\n- If you finished in **4:25:00** and your target was **4:00:00**, you exceeded your target by **25 minutes**.\n\nPlease share your actual and target times, and I’ll help you calculate the difference! 🏃‍♂️",
+  "H-pack": "I'm sorry, but I don't have the information needed to determine how many minutes you exceeded your target time by in the marathon. To calculate that, I would need:\n\n- Your actual marathon finish time  \n- Your target (goal) time for the marathon  \n\nIf you provide those two details, I can easily calculate the difference for you. For example:  \nIf your target was 4 hours (240 minutes) and you finished in 4 hours 30 minutes (270 minutes), you exceeded your target by 30 minutes.\n\nLet me know your times and I’ll help!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many minutes you exceeded your target time by in the marathon. Could you please provide your actual finishing time and your target time? Once I have those details, I can calculate the difference for you."
+ }
+}

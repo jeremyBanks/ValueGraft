@@ -1,0 +1,20 @@
+{
+ "question_id": "d01c6aa8",
+ "question": "How old was I when I moved to the United States?",
+ "answer": "27",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13573,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have that information. I don't have access to your personal history or details about your past, including your age when you moved to the United States. If you're trying to recall that information, you might want to check old documents like your passport, visa records, or school records.",
+  "B": "I'm sorry, but I don't have access to your personal history or age. I can't determine when you moved to the United States or any details about your past. If you'd like to share that information, I’d be happy to help with anything related to your journey, such as immigration processes, cultural tips, or planning your next trip!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal information, including your age or when you moved to the United States. I’m here to help with general advice, recommendations, and information—like travel tips, museum suggestions, or pizza spots in Brooklyn! 😊\n\nIf you're curious about your own timeline, you might want to check personal records like birth certificates, immigration documents, or family photos. Let me know if you'd like help planning a trip, finding a great hostel, or discovering more of NYC’s hidden gems!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal history or specific details about your life, including when you moved to the United States. If you're trying to recall your age at the time of your move, you might consider checking personal records like birth certificates, immigration documents (such as your visa or green card), or family records. If you provide the year you moved and your birth year, I can help calculate your age at that time!",
+  "H-pack": "I'm sorry, but I don't have access to your personal history or specific life details, including your age when you moved to the United States. If you'd like to figure it out, you can check your birthdate and the date you arrived in the U.S. — then subtract your birth year from the year you moved. Let me know if you'd like help with that calculation!",
+  "H-gap": "I'm sorry, but I don't have access to your personal history or specific life details, including your age when you moved to the United States. That information would need to come from your own records or memories. If you'd like help estimating it based on a known date (like when you arrived or your birthdate), feel free to share those details, and I can assist with the calculation!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "af082822",
+ "question": "How many weeks ago did I attend the friends and family sale at Nordstrom?",
+ "answer": "2",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13757,
+  "tail_start_msg": 52
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal calendar or past events. I can't determine how many weeks ago you attended the Nordstrom friends and family sale.\n\nIf you remember the date (for example, if you know it was last month or a few weeks back), you can use a calendar or date calculator to figure it out. Let me know if you'd like help with that!",
+  "B": "I don’t have access to your personal calendar, shopping history, or past events, so I can’t determine how many weeks ago you attended the Nordstrom Friends and Family Sale. If you’re trying to recall the date, you might check your email receipts, calendar entries, or any photos or notes you may have saved from that day. Let me know if you’d like help estimating based on a specific time frame!",
+  "E-tuned": "I don't have access to your personal calendar, shopping history, or past events, so I can't determine how many weeks ago you attended the Nordstrom Friends and Family Sale. If you're trying to recall the date, you might check your email receipts, calendar entries, or any photos or notes you may have saved from that day. Let me know if you'd like help estimating based on a specific time frame!",
+  "B-min-pack": "I don't have access to your personal calendar or past events, so I can't tell you exactly how many weeks ago you attended the friends and family sale at Nordstrom. If you remember the date, you can calculate it by comparing that date to today’s date using a calendar or date calculator. Let me know if you'd like help with that!",
+  "H-pack": "I don’t have access to your personal calendar or past events, so I can’t determine how many weeks ago you attended the Nordstrom friends and family sale. If you remember the date, you can calculate it using a calendar or date calculator by comparing that day to today’s date. Let me know if you’d like help with that!",
+  "H-gap": "I don’t have access to your personal calendar or past events, so I can’t determine how many weeks ago you attended the Nordstrom friends and family sale. If you remember the date, you can calculate it by comparing it to today’s date—just count the number of weeks between then and now. Let me know if you’d like help with that!"
+ }
+}

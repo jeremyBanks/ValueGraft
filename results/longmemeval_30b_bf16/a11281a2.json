@@ -1,0 +1,20 @@
+{
+ "question_id": "a11281a2",
+ "question": "What was the approximate increase in Instagram followers I experienced in two weeks?",
+ "answer": "100",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12364,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided earlier, you started with **250 followers** on Instagram and reached **350 followers** after two weeks.\n\nTo calculate the approximate increase:\n\n350 (current followers) - 250 (initial followers) = **100 new followers**\n\nSo, you experienced an **increase of approximately 100 followers in two weeks** — that’s a fantastic growth rate! 🎉\n\nThis is a strong start, especially for a new or growing account. With consistent posting, engagement, and strategic use of features like Stories, Reels, and hashtags, you’re well on your way to building a vibrant and engaged community. Keep up the great work! 💪",
+  "B": "I'm sorry, but I don't have access to your Instagram account or any personal data about your social media performance. To find out your follower increase over the past two weeks, you can check your Instagram Insights (if you have a Business or Creator account) by going to your profile, tapping the menu (three lines), and selecting \"Insights.\" There, you can view follower growth over specific time periods, including the last 7 or 14 days.\n\nIf you're not using a Business or Creator account, you won’t have access to detailed analytics. In that case, you’d need to manually track your follower count by noting it at the start and end of the two-week period.\n\nLet me know if you'd like help interpreting your Insights or optimizing your content!",
+  "E-tuned": "I don't have access to your Instagram account or any personal data, including follower counts or growth statistics. To find out your approximate follower increase over two weeks, you can:\n\n1. **Check Instagram Insights** (if you have a Business or Creator account):  \n   - Go to your profile → tap the menu (three lines) → \"Insights\" → \"Followers\"  \n   - Select the date range (e.g., the past 14 days) to see the exact number of new followers.\n\n2. **Manually compare:**  \n   - Note your follower count from two weeks ago.  \n   - Check your current follower count.  \n   - Subtract the old number from the new one to find the increase.\n\nIf you'd like help interpreting the data or optimizing your growth",
+  "B-min-pack": "I don't have access to your Instagram account or any personal data, so I can't determine your follower increase. To find out how many followers you gained in two weeks, check your Instagram Insights (available on a business or creator account). Go to your profile → Insights → Audience → Follower Growth to see the exact number and trend over time. Let me know if you'd like help interpreting the data!",
+  "H-pack": "I don't have access to your Instagram account or any personal data, so I can't determine your follower increase. To find out your approximate increase in followers over two weeks, check your Instagram Insights (available on a business or creator account). Go to your profile → Insights → Audience → Follower Growth. This will show you the exact number of new followers during that time period.",
+  "H-gap": "I'm sorry, but I don't have access to your Instagram account or any personal analytics data, including follower growth. To find out your approximate increase in Instagram followers over two weeks, you can check your Instagram Insights (available on a business or creator account) or use a third-party analytics tool like Iconosquare, Hootsuite, or Sprout Social. These platforms track follower growth over time and provide detailed reports. If you're using the Instagram app, go to your profile → Insights → Follower Growth to see the exact numbers."
+ }
+}

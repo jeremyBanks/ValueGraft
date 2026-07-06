@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_6dc9b45b",
+ "question": "How many months ago did I attend the Seattle International Film Festival?",
+ "answer": "4 months ago",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13093,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or specific dates, so I can't determine exactly how many months ago you attended the Seattle International Film Festival (SIFF). \n\nHowever, since you mentioned that you attended SIFF \"today\" in your previous message, and assuming that message was sent recently, it would mean you attended the festival just a few days ago — not months ago.\n\nIf you're asking about a past SIFF event (like the 2023 festival, which typically runs in late June to early July), then it would have been about 6–9 months ago, depending on the current date.\n\nLet me know if you'd like help calculating the exact time difference based on a specific date!",
+  "B": "I don't have access to your personal calendar or past events, so I can't tell you how many months ago you attended the Seattle International Film Festival. If you're trying to recall the date, you might check your email receipts, social media posts, or calendar apps for clues. Let me know if you'd like help estimating based on a specific year or event!",
+  "E-tuned": "I don't have access to your personal calendar or past events, so I can't tell you how many months ago you attended the Seattle International Film Festival. If you're trying to recall the date, you might check your email receipts, social media posts, or calendar apps for clues. Let me know if you'd like help estimating based on a specific year or event!",
+  "B-min-pack": "I don't have access to your personal calendar or past events, so I can't determine how many months ago you attended the Seattle International Film Festival. If you remember the date, I can help you calculate the time difference! Just let me know the month and year you went. 🎬🍿",
+  "H-pack": "I don't have access to your personal calendar or past events, so I can't determine how many months ago you attended the Seattle International Film Festival. If you remember the date or have a reference (like a ticket, photo, or journal entry), you can use a date calculator to find the exact number of months. Let me know if you'd like help with that!",
+  "H-gap": "I don't have access to your personal calendar or past events, so I can't determine how many months ago you attended the Seattle International Film Festival. If you remember the date or have a photo, ticket, or reminder, you can use a calendar or date calculator to find the exact number of months. Let me know if you'd like help with that!"
+ }
+}

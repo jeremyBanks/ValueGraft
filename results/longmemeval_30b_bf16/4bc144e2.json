@@ -1,0 +1,20 @@
+{
+ "question_id": "4bc144e2",
+ "question": "How much did I spend on car wash and parking ticket?",
+ "answer": "$65",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13744,
+  "tail_start_msg": 67
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided earlier:\n\n- You spent **$15** on a car wash on **February 3rd**.\n- You were issued a parking ticket on **January 5th** for **$50**.\n\nSo, in total, you spent:\n\n- **$15** on a car wash  \n- **$50** on a parking ticket  \n\n👉 **Total: $65** (for these two specific expenses)\n\nLet me know if you'd like to track these in a budget or add more expenses!",
+  "B": "I don’t have access to your personal financial records, receipts, or transaction history, so I can’t tell you how much you spent on a car wash or a parking ticket.\n\nTo find out, you can:\n\n- Check your bank or credit card statements (online or via app).\n- Review your receipts (physical or digital) from the car wash or parking service.\n- Look at any notifications or emails from the parking authority or car wash business.\n- Use a budgeting app (like Mint, YNAB, or PocketGuard) if you’ve linked your accounts.\n\nIf you’re trying to recall a specific expense, try to remember the date, location, or amount if possible—this can help narrow down the search.\n\nLet me know if you’d like help estimating typical costs for a car",
+  "E-tuned": "I don't have access to your personal financial records, spending history, or any data about your car wash or parking ticket expenses. To find out how much you spent, you can check:\n\n- Your bank or credit card statements  \n- Receipts from the car wash or parking ticket  \n- Mobile banking or budgeting apps (like Mint, YNAB, or PayPal)  \n- The parking ticket notice (if it includes the fine amount)\n\nIf you’re trying to recall a specific expense, I’d recommend reviewing your recent transactions or receipts. Let me know if you’d like help estimating typical costs for a car wash or parking tickets in your area!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal financial records or transaction history. To find out how much you spent on a car wash and a parking ticket, you’ll need to check:\n\n- Your bank or credit card statements  \n- Receipts from the car wash or parking ticket  \n- Any mobile app or digital wallet records (like Apple Wallet, Google Pay, etc.)\n\nIf you’re trying to recall or estimate the cost, let me know the approximate amount you think you paid, and I can help you analyze or budget around it!",
+  "H-pack": "I'm sorry, but I don't have access to your personal financial records or transaction history. To find out how much you spent on a car wash and a parking ticket, you’ll need to check your bank statements, credit card statements, or any receipts related to those expenses. Let me know if you’d like help organizing or tracking your spending!",
+  "H-gap": "I'm sorry, but I don't have access to your personal financial records or transaction history. To find out how much you spent on a car wash and a parking ticket, you’ll need to check your bank statements, credit card statements, or any receipts related to those expenses. Let me know if you’d like help organizing or tracking your spending!"
+ }
+}

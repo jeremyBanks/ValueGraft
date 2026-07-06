@@ -1,0 +1,20 @@
+{
+ "question_id": "60bf93ed",
+ "question": "How many days did it take for my laptop backpack to arrive after I bought it?",
+ "answer": "5 days. 6 days (including the last day) is also acceptable.",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14245,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned that your laptop backpack arrived on **January 20th**, and you bought it on **January 15th**.\n\nThat means it took **5 days** to arrive after you placed your order.\n\nThat’s a pretty fast delivery—especially if it was shipped from Amazon! Great job on the timely arrival, and it sounds like it’s been a real lifesaver for carrying your work laptop. 😊",
+  "B": "I'm sorry, but I don't have access to your purchase history or shipping details. To find out how many days it took for your laptop backpack to arrive, you can check your order confirmation email or track the package using the tracking number provided by the seller or shipping carrier.\n\nIf you're still unsure, feel free to check your email inbox for messages from the retailer or shipping company (like USPS, FedEx, UPS, etc.)—they usually include delivery timelines and tracking updates. Let me know if you'd like help interpreting a tracking status!",
+  "E-tuned": "I'm sorry, but I don't have access to your purchase history or shipping details. To find out how many days it took for your laptop backpack to arrive, you can check your order confirmation email or track the package using the tracking number provided by the seller or shipping carrier. Let me know if you'd like help interpreting a tracking update!",
+  "B-min-pack": "I'm sorry, but I don't have access to your purchase history or shipping details. To find out how many days it took for your laptop backpack to arrive, you can check the order confirmation email, the shipping tracking information, or your account on the retailer’s website. Let me know if you'd like help interpreting any of that information!",
+  "H-pack": "I'm sorry, but I don't have access to your purchase history or shipping details. To find out how many days it took for your laptop backpack to arrive, you can check the order confirmation email, the shipping tracking information, or your account on the retailer’s website. Let me know if you'd like help interpreting any of that information!",
+  "H-gap": "I'm sorry, but I don’t have access to your purchase history or shipping details. To find out how many days it took for your laptop backpack to arrive, check your order confirmation email or the shipping tracking information provided by the retailer. If you let me know the date you placed the order and the delivery date, I can help calculate the number of days for you!"
+ }
+}

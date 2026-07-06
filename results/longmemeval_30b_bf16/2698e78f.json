@@ -1,0 +1,20 @@
+{
+ "question_id": "2698e78f",
+ "question": "How often do I see my therapist, Dr. Smith?",
+ "answer": "every week",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15207,
+  "tail_start_msg": 55
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on our conversation, you mentioned that you see Dr. Smith **every two weeks**.  \n\nYou also mentioned that you had a session with her this week, which confirms the bi-weekly schedule. This regular check-in is a great way to stay on track with your goals around boundaries, self-care, and managing overwhelm. Keep up the great work—your commitment to your well-being is clear and meaningful. 💙",
+  "B": "I'm sorry, but I can't provide information about your therapy schedule. I'm an AI assistant and don't have access to personal medical records or appointments. \n\nTo find out how often you see Dr. Smith, I recommend checking your calendar, appointment book, or contacting Dr. Smith's office directly. If you're unsure about your schedule, it's always a good idea to confirm with your therapist's office to ensure you don't miss any appointments.",
+  "E-tuned": "I'm sorry, but I can't provide information about your therapy schedule. I'm an AI assistant and don't have access to personal medical records or appointments. \n\nTo find out how often you see Dr. Smith, I recommend checking your calendar, appointment book, or contacting Dr. Smith's office directly. If you're unsure about your appointment frequency, it's always best to confirm with your therapist or their administrative staff.",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal information, including your therapy schedule or details about Dr. Smith. Only you and your therapist know how often you meet. If you're unsure, the best way to find out is to check your appointment calendar, contact Dr. Smith’s office directly, or review any correspondence or reminders you’ve received. Let me know if you’d like help preparing a message to ask about your session frequency!",
+  "H-pack": "I'm sorry, but I don't have access to your personal information, including your therapy schedule or details about your sessions with Dr. Smith. To find out how often you see your therapist, the best source is your own appointment calendar, therapy intake records, or by directly contacting Dr. Smith’s office. If you're unsure, you can also check any confirmation emails or reminders you’ve received. Let me know if you’d like help preparing questions to ask your therapist about your treatment plan!",
+  "H-gap": "I'm sorry, but I don't have access to your personal information, including your therapy schedule or details about your sessions with Dr. Smith. That information is private and confidential. To find out how often you see your therapist, the best way is to check your appointment calendar, contact Dr. Smith’s office directly, or review any correspondence or reminders you’ve received. If you're unsure, reaching out to the practice’s administrative staff is the most reliable option."
+ }
+}

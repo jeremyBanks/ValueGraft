@@ -1,0 +1,20 @@
+{
+ "question_id": "8077ef71",
+ "question": "How many days ago did I attend a networking event?",
+ "answer": "26 days. 27 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13408,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or past events, so I can't determine how many days ago you attended your networking event. \n\nHowever, you mentioned earlier that the event was \"today\" — so if you're asking this question on the same day as the event, then it was **0 days ago**. If you're asking this the next day, it would be **1 day ago**, and so on.\n\nLet me know if you'd like help tracking future events or setting reminders!",
+  "B": "I don't have access to your personal calendar or past events, so I can't tell you how many days ago you attended a networking event. If you'd like to know, you could check your calendar, email, or notes from that day. Let me know if you'd like help organizing or remembering future events!",
+  "E-tuned": "I don't have access to your personal calendar or past events, so I can't tell you how many days ago you attended a networking event. If you'd like to know, you could check your calendar, email, or notes from that time. Let me know if you'd like help estimating based on a specific date or event details!",
+  "B-min-pack": "I don't have access to your personal calendar or past activities, so I can't tell you how many days ago you attended a networking event. If you remember the date, you can check it using your calendar app, email, or notes. Let me know if you'd like help calculating the number of days between two dates!",
+  "H-pack": "I don't have access to your personal calendar or past activities, so I can't tell you how many days ago you attended a networking event. If you remember the date, you can calculate it by comparing today's date with the event date. Let me know if you'd like help with that!",
+  "H-gap": "I don't have access to your personal calendar or past activities, so I can't tell you how many days ago you attended a networking event. If you remember the date, you can calculate it by comparing today's date with the event date. Let me know if you'd like help with that!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_483dd43c",
+ "question": "Which show did I start watching first, 'The Crown' or 'Game of Thrones'?",
+ "answer": "'Game of Thrones'",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13272,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your messages, you started watching **'The Crown'** first.\n\nYou mentioned:  \n> *\"I just finished binge-watching the third season of 'The Crown' on Netflix, and I'm looking for some new shows to watch.\"*\n\nThen later, you said:  \n> *\"I've been meaning to check out 'Game of Thrones' for a while, and I finally started it about a month ago.\"*\n\nSo, the timeline is clear:  \n1. You finished *The Crown* (Season 3) first.  \n2. Then, about a month ago, you started *Game of Thrones*.\n\nGreat to see you diving into such rich, character-driven stories—both are fantastic choices!",
+  "B": "I don’t have access to your personal viewing history, so I can’t say for sure which show you started watching first. But if you're trying to remember, here are a few clues that might help:\n\n- *Game of Thrones* premiered on HBO in **April 2011**.\n- *The Crown* premiered on Netflix in **November 2016**.\n\nSo, if you watched both, you likely started with *Game of Thrones* first — unless you began watching *The Crown* before 2016, which would be unusual since it didn’t exist yet.\n\nIf you’re still unsure, think about which one you remember being more popular or talked about when it first came out — that might help jog your memory! 😊",
+  "E-tuned": "I don’t have access to your personal viewing history, so I can’t say for sure which show you started watching first. However, if you're trying to recall, here’s a helpful way to figure it out:\n\n- **Game of Thrones** premiered on HBO in **April 2011**.\n- **The Crown** premiered on Netflix in **November 2016**.\n\nSo, if you watched both, you likely started with *Game of Thrones* first—unless you began watching *The Crown* before 2016, which would be unusual since it didn’t exist yet.\n\nIf you remember which one you watched during a particular time in your life (e.g., during college, after a friend recommended it, or during a specific year), that could",
+  "B-min-pack": "You started watching *Game of Thrones* first.\n\n*Game of Thrones* premiered on April 17, 2011, while *The Crown* premiered later, on November 4, 2016. So unless you watched them out of order or in a different timeline (which would be pretty impressive!), *Game of Thrones* came first. 🎬✨",
+  "H-pack": "You started watching **'Game of Thrones'** first.\n\nHere’s why:\n\n- **'Game of Thrones'** premiered on **April 17, 2011**.\n- **'The Crown'** premiered later, on **November 4, 2016**.\n\nSince *Game of Thrones* launched over five years before *The Crown*, if you watched both, you must have started with *Game of Thrones*.",
+  "H-gap": "You started watching **'Game of Thrones'** first.\n\n* **Game of Thrones** premiered on **April 17, 2011**.\n* **The Crown** premiered on **November 4, 2016**.\n\nSince *Game of Thrones* launched over five years before *The Crown*, if you watched both, you would have started with *Game of Thrones*."
+ }
+}

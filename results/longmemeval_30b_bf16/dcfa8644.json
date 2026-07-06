@@ -1,0 +1,20 @@
+{
+ "question_id": "dcfa8644",
+ "question": "How many days had passed since I bought my Adidas running shoes when I realized one of the shoelaces on my old Converse sneakers had broken?",
+ "answer": "14 days. 15 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12715,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You bought your Adidas running shoes on **January 10th**.\n\nYou realized the shoelace on your old Converse sneakers had broken on **January 24th**.\n\nTo calculate the number of days between these two dates:\n\n- From **January 10th to January 24th** is **14 days**.\n\nSo, **14 days** had passed since you bought your Adidas running shoes when you noticed the Converse shoelace had broken.",
+  "B": "I'm sorry, but I don't have enough information to answer your question.\n\nTo determine how many days had passed since you bought your Adidas running shoes when you noticed the broken shoelace on your old Converse sneakers, I would need:\n\n- The date you purchased the Adidas running shoes.\n- The date (or approximate time) when you realized the Converse shoelace had broken.\n\nWithout those specific dates, it's impossible to calculate the number of days between the two events.\n\nIf you can provide those two dates, I’d be happy to help you calculate the difference!",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer your question. You mentioned buying Adidas running shoes and noticing a broken shoelace on your Converse sneakers, but you didn't provide any specific dates or timeline details (like when you bought the Adidas shoes or when you noticed the broken Converse lace). \n\nTo calculate how many days had passed, I’d need:\n- The date you purchased the Adidas running shoes\n- The date you noticed the broken Converse shoelace\n\nIf you can provide those two dates, I’d be happy to help you calculate the number of days between them!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days had passed since you bought your Adidas running shoes when you noticed the broken shoelace on your old Converse sneakers.\n\nTo answer your question, I’d need:\n\n- The date you purchased the Adidas running shoes.\n- The date you noticed the broken shoelace on your Converse sneakers.\n\nIf you can provide those two dates, I’d be happy to calculate the number of days between them!",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days had passed since you bought your Adidas running shoes when you noticed the broken shoelace on your old Converse sneakers. The details you provided don’t include any dates or timeline references. If you can share when you bought the Adidas shoes and when you noticed the broken lace, I’d be happy to help calculate the number of days between those events!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days had passed since you bought your Adidas running shoes when you noticed the broken shoelace on your old Converse sneakers. The details you provided don’t include any dates or timeline references. If you can share when you bought the Adidas shoes and when you noticed the broken lace, I’d be happy to help calculate the number of days between those events!"
+ }
+}

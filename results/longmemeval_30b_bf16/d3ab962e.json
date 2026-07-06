@@ -1,0 +1,20 @@
+{
+ "question_id": "d3ab962e",
+ "question": "What is the total distance of the hikes I did on two consecutive weekends?",
+ "answer": "8 miles",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13111,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have enough information to determine the total distance of your hikes.\n\nTo calculate the total distance, I would need to know the length of each hike you did on those two consecutive weekends. For example:\n\n- How many miles was your 5-mile hike at Red Rock Canyon?\n- How long was your week-long backpacking trip on the John Muir Trail?\n\nIf you can provide the distance for each hike, I’d be happy to add them together and give you the total distance.",
+  "B": "I'm sorry, but I don't have the specific details about the hikes you completed on those two consecutive weekends. To calculate the total distance, I would need to know the length of each hike you did.\n\nIf you can provide the names of the trails or the distances for each hike (e.g., \"3 miles on Saturday\" and \"5 miles on Sunday\"), I’d be happy to add them up and give you the total distance. Let me know!",
+  "E-tuned": "I'm sorry, but I don't have the specific details about the hikes you completed on those two consecutive weekends. To calculate the total distance, I would need to know the length of each hike you did.\n\nIf you can provide the distance for each hike (for example, \"3 miles\" or \"5 kilometers\"), I’d be happy to add them together and give you the total distance traveled. Just let me know!",
+  "B-min-pack": "I'd love to help you calculate the total distance of your hikes! However, I don’t have the specific details about the two hikes you completed—like the names of the trails, their lengths, or any notes you may have taken.\n\nCould you please share:\n- The name or location of each hike?\n- The distance of each hike (e.g., 5 miles, 8 km)?\n- Any other relevant details (like elevation gain or time spent)?\n\nOnce I have that info, I’ll be happy to add them up and give you the total distance! 🥾🚴‍♂️",
+  "H-pack": "I'd love to help you calculate the total distance of your hikes! However, I don't have the specific details about the hikes you did on those two consecutive weekends. Could you please share:\n\n- The distance of each hike (in miles or kilometers)\n- Or the names of the trails, so I can look up the distances?\n\nOnce you provide that information, I’ll be happy to add them up and give you the total distance! 🥾🗺️",
+  "H-gap": "I'd love to help you calculate the total distance of your hikes! However, I don’t have the specific details about the two hikes you completed—like the length of each trail or the routes you took.\n\nCould you please share:\n- The distance of the first hike (e.g., 5 miles, 8 km)?\n- The distance of the second hike?\n\nOnce I have those numbers, I’ll add them up and give you the total distance! 🥾🗺️"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_2f8be40d",
+ "question": "How many weddings have I attended in this year?",
+ "answer": "I attended three weddings. The couples were Rachel and Mike, Emily and Sarah, and Jen and Tom.",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13428,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on our conversation, you've attended **three weddings** this year:\n\n1. **Your sister's wedding** – You were the maid of honor and shared in the planning and celebration.\n2. **Your cousin Rachel's wedding** – A vineyard wedding in August that you found inspiring.\n3. **Your friend Jen's wedding** – A rustic barn wedding in the countryside that you recently attended.\n\nYou’ve also been thinking about your own upcoming wedding, so it sounds like you’ve been quite busy with wedding season! It’s wonderful that you’ve had so many meaningful celebrations to be part of.",
+  "B": "Based on our conversation so far, you’ve attended **one wedding this year** — your sister’s wedding.\n\nYou mentioned that it was “just amazing” and that you were the maid of honor, which was a meaningful and memorable experience. There’s no mention of any other weddings you’ve attended this year, so it seems like that’s the only one so far.\n\nIf you’ve been to more recently (like a friend’s or family member’s wedding), feel free to share — I’d love to hear about it! Otherwise, it sounds like your sister’s wedding was the highlight of your year so far. 💍✨",
+  "E-tuned": "Based on our conversation so far, you’ve attended **one wedding this year** — your sister’s wedding.  \n\nYou mentioned it was “just amazing” and that you were the maid of honor, which was a meaningful and memorable experience for you. There’s no mention of any other weddings you’ve attended this year, so it seems like that’s the only one so far.  \n\nIf you’ve been to more recently (like a friend’s or family member’s wedding), feel free to share — I’d love to hear about it! 😊",
+  "B-min-pack": "I don’t have access to your personal calendar, attendance records, or past events—so I can’t tell you exactly how many weddings you’ve attended this year. If you’re trying to recall or track them, you might check your phone’s calendar, social media event history, or wedding guest lists you’ve saved.\n\nIf you’d like help organizing or remembering details about weddings you’ve attended (like dates, venues, or guests), I’d be happy to help you create a simple tracker or memory log! 💍✨",
+  "H-pack": "I don’t have access to your personal calendar, attendance records, or past events—so I can’t tell you exactly how many weddings you’ve attended this year. If you’re trying to recall, you might check your phone’s calendar, social media event history, or photos from the past year. Let me know if you’d like help tracking or organizing your wedding memories! 💍✨",
+  "H-gap": "I don’t have access to your personal calendar, memories, or past events—so I can’t tell you exactly how many weddings you’ve attended this year. 😊\n\nIf you’d like to keep track, you could check your phone’s calendar, social media event history, or photos from the year. Or if you’re curious, just think back: how many weddings stand out in your mind? 🎉💍"
+ }
+}

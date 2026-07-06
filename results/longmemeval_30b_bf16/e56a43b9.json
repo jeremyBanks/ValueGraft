@@ -1,0 +1,20 @@
+{
+ "question_id": "e56a43b9",
+ "question": "How much discount will I get on my next purchase at FreshMart?",
+ "answer": "$5",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14478,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your earlier message, you mentioned that you’ve earned **500 points** at FreshMart, and that **every 100 points equals a $1 discount** on your next purchase.\n\nSo, here’s the math:\n\n- 500 points ÷ 100 points per $1 = **$5 discount**\n\n✅ **You’ll get a $5 discount on your next purchase at FreshMart!**\n\nThat’s a great reward for shopping regularly — enjoy your savings! 🎉  \n(And if you’re still unsure about FreshMart being a real store, just double-check the name with your local grocery chain — it might be a regional name or a typo. But if it’s real for you, happy shopping!)",
+  "B": "I'm sorry, but I can't help with discounts or promotions at FreshMart. I don’t have access to store-specific offers, loyalty programs, or your purchase history.  \n\nTo find out about your next discount, I’d recommend checking:  \n- The FreshMart app or website (look for “Promotions” or “Deals”)  \n- Your email inbox for promotional offers  \n- The store’s social media pages  \n- Asking a staff member in-store  \n\nLet me know if you’d like help finding a coupon or comparing deals! 😊",
+  "E-tuned": "I'm sorry, but I don't have access to your personal account information or FreshMart's current promotions. To find out how much discount you'll get on your next purchase, I recommend:\n\n1. Checking your FreshMart app or website – look for a \"Promotions\" or \"My Offers\" section.\n2. Reviewing your recent emails – FreshMart often sends discount codes to registered users.\n3. Signing up for their newsletter – this can give you exclusive deals and first access to sales.\n\nIf you have a specific promo code or offer in mind, feel free to share it here and I’d be happy to help you calculate the discount!",
+  "B-min-pack": "I'm sorry, but I can't provide information about discounts at FreshMart, as I don't have access to their current promotions or your personal account details. To find out how much discount you’ll get on your next purchase, I recommend:\n\n- Checking the FreshMart app or website for active deals.\n- Signing up for their newsletter or loyalty program (if you haven’t already).\n- Looking for promo codes on their official social media pages.\n\nLet me know if you’d like help finding current offers or understanding how their loyalty program works!",
+  "H-pack": "I'm sorry, but I don't have access to your personal account information or FreshMart's current promotions. To find out how much discount you'll get on your next purchase, I recommend:\n\n1. **Checking your FreshMart app or website** – Look under \"Promotions,\" \"My Offers,\" or \"Rewards\" for any available discounts.\n2. **Reviewing your email** – FreshMart often sends exclusive deals to registered users.\n3. **Contacting customer service** – They can provide details about your current rewards or ongoing sales.\n\nLet me know if you'd like help finding a promo code or understanding how their loyalty program works!",
+  "H-gap": "I'm sorry, but I don't have access to your personal account details or FreshMart's current promotions. To find out how much discount you'll get on your next purchase, I recommend:\n\n1. **Check your FreshMart app or website** – Look under \"My Offers,\" \"Promotions,\" or \"Rewards\" for any active discounts.\n2. **Review your email or SMS** – FreshMart often sends exclusive deals to registered users.\n3. **Log in to your account** – Discounts may be tied to loyalty points, membership status, or first-time buyer offers.\n\nIf you provide more details (like a promo code or membership type), I’d be happy to help interpret it!"
+ }
+}

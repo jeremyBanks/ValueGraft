@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_93159ced_abs",
+ "question": "How long have I been working before I started my current job at Google?",
+ "answer": "The information provided is not enough. From the information provided, You haven't started working at Google yet.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12475,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been working before your current job at Google, you would need to check your own records, such as:\n\n- Your resume or LinkedIn profile\n- Previous employment contracts or offer letters\n- Pay stubs or tax documents from past jobs\n- Personal notes or calendars\n\nIf you're trying to calculate your total work experience, you can add up the duration of all your previous jobs (from start date to end date) and then add that to your time at Google.\n\nLet me know if you'd like help with anything else—like preparing for a job interview, writing a resume, or understanding career milestones!",
+  "B": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been working before joining Google, you would need to check your employment records, resume, or personal notes. If you're unsure, you could also reach out to a previous employer or HR department for confirmation. Let me know if you'd like help drafting a message to request that information!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been working before joining Google, you would need to check your resume, employment records, or personal notes. If you're referring to a specific timeline or career milestone, feel free to share more context, and I’d be happy to help you reflect on or plan your career journey!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been working before joining Google, you would need to review your own employment records, resume, or personal timeline. If you're looking to calculate it, you can subtract the start date of your first job from the start date of your role at Google.\n\nLet me know if you'd like help with a calculation or formatting your work history!",
+  "H-pack": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been working before joining Google, you would need to review your own employment records, resume, or personal timeline. If you're referring to a specific job or career path, feel free to share more context, and I can help guide you on how to calculate or document your work experience.",
+  "H-gap": "I'm sorry, but I don't have access to your personal work history or employment details. To find out how long you've been working before joining Google, you would need to review your own employment records, resume, or personal timeline. If you're referring to a specific role or career path, feel free to share more context, and I can help guide you on how to calculate or document your work experience."
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "9a707b81",
+ "question": "How many days ago did I attend a baking class at a local culinary school when I made my friend's birthday cake?",
+ "answer": "21 days. 22 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13372,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or past events, so I can't determine how many days ago you attended the baking class or made your friend's birthday cake. If you'd like to know the exact date, you might check your phone's calendar, a journal, or any notes you may have written about the event. Let me know if you'd like help with anything else!",
+  "B": "I'm sorry, but I don't have enough information to determine how many days ago you attended a baking class at a local culinary school or made your friend's birthday cake. I don’t have access to your personal calendar, memories, or past events. If you’d like help remembering, you could check your phone’s calendar, photos, or notes—sometimes a photo of the cake or a message from your friend can serve as a helpful clue! Let me know if you’d like help writing a birthday message or planning a future baking project. 🎂✨",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine how many days ago you attended the baking class. I don't have access to your personal calendar, memories, or past events. If you remember the date or can check your records (like a phone calendar, journal, or photos), you can calculate the number of days from that date to today. Let me know if you'd like help with that!",
+  "B-min-pack": "I'm sorry, but I don't have the information needed to determine how many days ago you attended a baking class or made your friend's birthday cake. I don’t have access to your personal calendar, memories, or past events. If you remember the date, you can calculate the number of days by subtracting that date from today’s date. Let me know if you'd like help with that! 🎂📅",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days ago you attended the baking class. Could you provide a specific date or any related details, such as the day of the week or a reference point (like \"last weekend\" or \"two weeks ago\")? That would help me give you a more accurate answer!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days ago you attended the baking class. Could you provide a specific date or any related details, such as the day of the week or a recent event that might help pinpoint the timing?"
+ }
+}

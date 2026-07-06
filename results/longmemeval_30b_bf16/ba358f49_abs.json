@@ -1,0 +1,20 @@
+{
+ "question_id": "ba358f49_abs",
+ "question": "How old will Rachel be when I get married?",
+ "answer": "The information provided is not enough. You did not mention how old Rachel is right now, nor when will you get married.",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14868,
+  "tail_start_msg": 59
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to personal information about Rachel or your future plans. I can't predict the exact date of your wedding or calculate Rachel's age at that time. \n\nIf you're curious about how old she'll be, you'd need to know the current date and the date of your wedding. You can calculate it by subtracting her birth year from the year of your wedding. For example, if Rachel was born in 1990 and you're getting married in 2026, she would be 36 years old.\n\nIf you'd like help with wedding planning, timeline suggestions, or anything else related to your big day, I'd be happy to assist!",
+  "B": "I'm sorry, but I don't know who Rachel is or when you're getting married. Could you please provide more context or clarify your question? That way, I can help you better!",
+  "E-tuned": "I'm sorry, but I don't know who Rachel is or when you're getting married. Could you please provide more context or clarify your question?",
+  "B-min-pack": "I'm sorry, but I don't have enough information to answer that question. To figure out how old Rachel will be when you get married, I’d need to know:\n\n1. Rachel’s current age.\n2. When you plan to get married (or how many years from now that will be).\n\nOnce you provide those details, I can calculate it for you! 😊",
+  "H-pack": "I'm sorry, but I don't have enough information to answer that question. I don't know your age, Rachel's age, or when you're getting married. If you provide those details, I’d be happy to help calculate how old Rachel will be! 😊",
+  "H-gap": "I'm sorry, but I don't have enough information to answer that question. I don't know your age, Rachel's age, or when you're getting married. If you can provide those details, I’d be happy to help calculate how old Rachel will be when you get married! 😊"
+ }
+}

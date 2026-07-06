@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_fe651585_abs",
+ "question": "Who became a parent first, Tom or Alex?",
+ "answer": "The information provided is not enough. You mentioned Alex becoming a parent in January, but you didn't mention anything about Tom.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13340,
+  "tail_start_msg": 38
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information provided in the conversation, **Alex** became a parent first.\n\nThe text states: *\"My cousin Alex just adopted a baby girl from China in January...\"* — this indicates that Alex became a parent in January.\n\nThere is no mention of Tom adopting a child or becoming a parent at any point in the conversation. Therefore, Alex is the first to become a parent.",
+  "B": "I don't have enough information to determine who became a parent first between Tom and Alex. The conversation so far hasn't included any details about their personal lives or timelines related to parenthood. If you have more context or details, I’d be happy to help analyze or discuss further!",
+  "E-tuned": "I don't have enough information to determine who became a parent first between Tom and Alex. Could you provide more context or details about them?",
+  "B-min-pack": "I don't have enough information to determine who became a parent first between Tom and Alex. Could you provide more context or details about them?",
+  "H-pack": "I don't have enough information to determine who became a parent first between Tom and Alex. There's no context or details provided about either individual in our conversation. If you can share more about Tom and Alex, I’d be happy to help!",
+  "H-gap": "I don't have enough information to determine who became a parent first between Tom and Alex. There was no mention of either individual in the previous conversation. Could you provide more context?"
+ }
+}

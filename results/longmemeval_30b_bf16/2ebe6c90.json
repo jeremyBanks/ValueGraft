@@ -1,0 +1,20 @@
+{
+ "question_id": "2ebe6c90",
+ "question": "How many days did it take me to finish 'The Nightingale' by Kristin Hannah?",
+ "answer": "21 days. 22 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12857,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't know how many days it took you to finish *The Nightingale* by Kristin Hannah. I wasn't present during your reading, so I can't track your personal reading progress. However, I'm glad you enjoyed it! If you'd like, I can help you find your next great read or discuss the book further.",
+  "B": "I don't have access to your personal reading history or the time it took you to read *The Nightingale* by Kristin Hannah. Please check your reading logs or app (like Goodreads, Kindle, or a journal) for that information.",
+  "E-tuned": "I don't have access to your personal reading history or the specific details of how long it took you to finish *The Nightingale* by Kristin Hannah. If you'd like to track your reading time, you can use a reading journal, app, or simply note the start and end dates yourself. Let me know if you'd like help creating a reading log!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal reading history or the specific details of how long it took you to finish *The Nightingale* by Kristin Hannah. If you're trying to track your reading progress, you might want to check your reading app, journal, or a book-tracking platform like Goodreads. Let me know if you'd like help estimating reading time based on the book’s length or your typical reading speed!",
+  "H-pack": "I'm sorry, but I don't have access to your personal reading history or the specific details of how long it took you to finish *The Nightingale* by Kristin Hannah. That information would need to be tracked through your own records, a reading app, or a journal. If you're curious, you could check your Goodreads log, a reading tracker, or simply reflect on when you started and finished the book! 📚",
+  "H-gap": "I'm sorry, but I don’t have access to your personal reading history or the specific details of how long it took you to finish *The Nightingale* by Kristin Hannah. That information would need to be tracked through your own records, a reading app, or a journal. If you're curious, you could check your Goodreads log, a reading tracker, or simply reflect on when you started and finished the book! 📚"
+ }
+}

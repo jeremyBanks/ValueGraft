@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_78cf46a3",
+ "question": "Which event happened first, the narrator losing their phone charger or the narrator receiving their new phone case?",
+ "answer": "Receiving the new phone case",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13444,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the conversation history, the narrator received their new phone case **first**.\n\nThe timeline is clear from the messages:\n\n1. The narrator mentions: *\"I just got my new phone case about a month ago, and it's been doing a great job protecting my phone.\"*  \n2. Later, they say: *\"I'm actually planning to buy a new phone charger, since I lost my old one at the gym about two weeks ago.\"*\n\nSince the phone case was acquired \"about a month ago\" and the charger was lost \"about two weeks ago,\" the phone case came first—by roughly two weeks.",
+  "B": "I don't have enough information to determine the order of events between the narrator losing their phone charger and receiving their new phone case. The details of the story or context you're referring to aren't provided. If you can share the full passage or more context, I’d be happy to help analyze the sequence of events!",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine the order of those two events. The narrator's story or context mentioning both the lost phone charger and receiving a new phone case wasn't provided. If you can share the full passage or description, I’d be happy to help figure out which event happened first!",
+  "B-min-pack": "The narrator received their new phone case before losing their phone charger.",
+  "H-pack": "The narrator losing their phone charger happened first.",
+  "H-gap": "The narrator losing their phone charger happened first."
+ }
+}

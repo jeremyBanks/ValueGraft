@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_468eb063",
+ "question": "How many days ago did I meet Emma?",
+ "answer": "9 days ago. 10 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12287,
+  "tail_start_msg": 42
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or past interactions, so I can't determine how many days ago you met Emma. However, based on your message, you mentioned that you \"caught up with Emma over lunch today,\" which suggests that you met her **today**. If you're asking about a previous meeting, you might want to check your calendar or notes for the exact date.",
+  "B": "I don’t have access to your personal calendar, messages, or past conversations, so I can’t determine how many days ago you met Emma. If you’d like to track this, you could check your calendar, messages, or notes where you might have recorded the date. Let me know if you’d like help setting up a system to track future meetings!",
+  "E-tuned": "I don't have access to your personal calendar or past conversations, so I can't tell you how many days ago you met Emma. If you'd like to track that, you could check your calendar, notes, or a journal where you might have recorded the date. Let me know if you'd like help setting up a system to keep track of such events in the future!",
+  "B-min-pack": "I don't have access to your personal calendar or past events, so I can't tell you how many days ago you met Emma. If you'd like to track that, you could check your notes, calendar, or a photo from the meeting! Let me know if you'd like help setting up a routine to remember such details in the future. 😊",
+  "H-pack": "I don't have access to your personal calendar or past events, so I can't tell you how many days ago you met Emma. If you remember the date or have a note about it, you can calculate the difference using a calendar or date calculator. Let me know if you'd like help with that!",
+  "H-gap": "I don't have access to your personal calendar or past events, so I can't tell you how many days ago you met Emma. If you remember the date or have a reference (like a photo, message, or note), you can use a calendar app or date calculator to find the exact number of days. Let me know if you'd like help with that!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "19b5f2b3",
+ "question": "How long was I in Japan for?",
+ "answer": "two weeks",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13440,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned in your conversation that you spent **two weeks** traveling solo around Japan. 🌸\n\nThat’s a wonderful amount of time to explore the country—enough to experience the highlights of cities like Tokyo, Kyoto, and Osaka, plus some of the countryside and cultural gems. It sounds like you had a truly memorable trip, especially with your morning walks and visits to places like Fushimi Inari Shrine and onsen.  \n\nIf you ever go back, you could even plan a longer trip to dive deeper into regional specialties, seasonal festivals, or hidden mountain villages! 🍵⛩️",
+  "B": "I'm sorry, but I don't have access to your personal history or past events, including the length of your stay in Japan. If you're trying to recall a specific trip, you might check your travel records, photos, or journal entries from that time. Let me know if you'd like help with something else—like planning a trip, remembering a favorite memory, or even writing a travel journal! 🌸",
+  "E-tuned": "I'm sorry, but I don't have access to your personal history or past events, including the duration of your trip to Japan. If you're trying to recall how long you were there, you might check travel documents, photos, or your calendar for reference. Let me know if you'd like help with something else!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal travel history or past conversations. If you're trying to recall how long you were in Japan, you might want to check your travel documents, photos, or calendar entries from that time. Let me know if you'd like help planning a trip or remembering details about a past visit! 🌸✈️",
+  "H-pack": "I'm sorry, but I don't have access to your personal travel history or past experiences. If you're trying to recall how long you were in Japan, you might check your passport stamps, travel itineraries, photos, or flight records for the exact dates. Let me know if you'd like help estimating based on any details you remember!",
+  "H-gap": "I'm sorry, but I don't have access to your personal travel history or past experiences. If you're trying to recall how long you were in Japan, you might check your passport stamps, travel itineraries, photos, or flight records for the exact dates. Let me know if you'd like help estimating based on any details you remember!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "157a136e",
+ "question": "How many years older is my grandma than me?",
+ "answer": "43",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14079,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have enough information to determine how many years older your grandma is than you. To calculate the age difference, I would need to know your age and your grandma's age. If you provide those details, I’d be happy to help you figure it out!",
+  "B": "I'm sorry, but I don't have enough information to answer that question. To determine how many years older your grandma is than you, I would need to know your age and your grandma's age (or her birth year). If you share those details, I’d be happy to help calculate the difference!",
+  "E-tuned": "I'd love to help you figure that out! To determine how many years older your grandma is than you, you can use this simple formula:\n\n**Grandma's age – Your age = Number of years older**\n\nFor example:\n- If your grandma is 75 years old and you are 30, then she is 75 – 30 = **45 years older**.\n\nIf you'd like, you can share your age and your grandma’s age (or the year she was born and the year you were born), and I’ll calculate it for you right away! 🌟",
+  "B-min-pack": "I'd love to help you figure out how many years older your grandma is than you! To calculate the difference, I just need to know:\n\n- Your age (in years)\n- Your grandma’s age (in years)\n\nOnce I have those two numbers, I can subtract your age from hers to find the difference.\n\nFor example:\n- If you're 12 and your grandma is 70, then she is 70 – 12 = **58 years older**.\n\nJust let me know your ages, and I’ll do the math for you! 🌟",
+  "H-pack": "I'd love to help you figure out how many years older your grandma is than you! 😊\n\nTo find the answer, you can subtract your age from your grandma’s age:\n\n**Grandma’s age – Your age = Number of years she is older**\n\nFor example:\n- If your grandma is 75 and you are 10, then she is 75 – 10 = **65 years older**.\n\nIf you tell me your age and your grandma’s age, I’ll calculate it for you right away! 🎉",
+  "H-gap": "I'd love to help you figure out how many years older your grandma is than you! 😊\n\nTo find the answer, you just need to:\n\n1. **Know your age** (for example, if you're 12 years old).\n2. **Know your grandma’s age** (for example, if she’s 70 years old).\n\nThen subtract your age from hers:\n\n> Grandma’s age – Your age = Number of years she is older\n\nFor example:\n- If your grandma is 70 and you are 12 → 70 – 12 = **58 years older**\n\n👉 Just tell me your age and your grandma’s age, and I’ll calculate it for you! 🎉"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_1d80365e",
+ "question": "How many days did I spend on my solo camping trip to Yosemite National Park?",
+ "answer": "2 days. 3 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13070,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal trip details or calendar information. The number of days you spent on your solo camping trip to Yosemite National Park would depend on your own schedule and itinerary. If you're looking to recall or document your trip, I recommend checking your travel logs, photos, or any notes you may have taken during your adventure.",
+  "B": "I'm sorry, but I don't have access to personal details about your trips. If you're looking to recall or document your solo camping adventure in Yosemite National Park, I’d be happy to help you write a reflection, create a travel recap, or even draft a social media post about it! Just let me know how you’d like to share your experience. 🌲✨",
+  "E-tuned": "I'm sorry, but I don't have access to your personal travel history or details about your solo camping trip to Yosemite National Park. If you're looking to recall or document your trip, you might want to check your journal, photos, or travel logs! Let me know if you'd like help planning a future trip or creating a travel recap. 🌲🏕️",
+  "B-min-pack": "I'm sorry, but I don't have the specific information about your solo camping trip to Yosemite National Park. If you're trying to recall or document your trip, you might want to check your travel journal, photos, or any notes you took during the adventure! Let me know if you'd like help planning a future trip or creating a travel recap. 🏕️🌄",
+  "H-pack": "I'm sorry, but I don't have the information about your solo camping trip to Yosemite National Park. You'd need to check your personal records, travel logs, or photos to recall how many days you spent there. If you'd like help planning a future trip or reflecting on your experience, I’d be happy to assist!",
+  "H-gap": "I'm sorry, but I don't have that information. I wasn't with you on your trip, so I can't recall how many days you spent camping in Yosemite National Park. If you'd like, you can tell me the dates or details, and I can help you calculate the duration! 🏕️🌄"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_74aed68e",
+ "question": "How many days passed between the day I replaced my spark plugs and the day I participated in the Turbocharged Tuesdays auto racking event?",
+ "answer": "29 days. 30 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12732,
+  "tail_start_msg": 36
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don’t have access to the exact dates of your spark plug replacement or the Turbocharged Tuesdays event, so I can’t calculate the number of days between them.\n\nHowever, if you remember the specific dates (e.g., \"I replaced the spark plugs on Monday, March 18\" and \"the event was on Tuesday, March 26\"), I’d be happy to help you calculate the exact number of days between those two events! Just share the dates, and I’ll do the math for you. 😊",
+  "B": "I'm sorry, but I don't have enough information to determine how many days passed between replacing your spark plugs and participating in the Turbocharged Tuesdays auto racing event.\n\nTo calculate the time between those two events, I would need to know the specific dates of both:\n\n1. The date you replaced your spark plugs  \n2. The date you participated in the Turbocharged Tuesdays event\n\nIf you can provide those two dates, I’d be happy to help you calculate the number of days between them! 🚗💨",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine how many days passed between replacing your spark plugs and participating in the Turbocharged Tuesdays auto racking event.\n\nTo calculate the time difference, I would need to know the specific dates of both events. If you can provide those dates, I’d be happy to help you calculate the number of days between them!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days passed between when you replaced your spark plugs and your participation in the Turbocharged Tuesdays auto racing event. To calculate the difference, I would need the specific dates of both events. Could you please provide those dates?",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days passed between the day you replaced your spark plugs and the Turbocharged Tuesdays auto racking event. To calculate the time difference, I would need the specific dates of both events. If you can provide those dates, I’d be happy to help you figure it out!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days passed between the day you replaced your spark plugs and the Turbocharged Tuesdays auto racking event.\n\nTo calculate the number of days between two events, I would need:\n\n- The specific date or day of the week when you replaced the spark plugs.\n- The specific date or day of the week when you participated in the Turbocharged Tuesdays event.\n\nIf you can provide either the dates or the days of the week (e.g., \"I replaced the spark plugs on Monday, April 1st\" and \"I raced on Tuesday, April 9th\"), I’d be happy to help you calculate the exact number of days in between!"
+ }
+}

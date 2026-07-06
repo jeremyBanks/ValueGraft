@@ -1,0 +1,20 @@
+{
+ "question_id": "7a8d0b71",
+ "question": "I'm looking back at our previous chat about the DHL Wellness Retreats campaign. Can you remind me how much was allocated for influencer marketing in the campaign plan?",
+ "answer": "$2,000",
+ "question_type": "single-session-assistant",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14318,
+  "tail_start_msg": 75
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "In the DHL Wellness Retreats influencer marketing campaign plan, **$2,000** was allocated for influencer marketing.",
+  "B": "I'm sorry, but I don’t have access to previous conversations or specific campaign details like the DHL Wellness Retreats campaign or its budget allocations. If you’re referring to a real-world marketing plan or a fictional project you’re developing, I’d be happy to help you brainstorm or structure a budget for influencer marketing—just let me know the goals, target audience, and scale you’re working with!\n\nFor example, I can help you:\n- Estimate influencer marketing costs based on platform (Instagram, TikTok, YouTube, etc.)\n- Suggest tiers of influencers (micro, macro, celebrity)\n- Create a sample budget breakdown\n- Develop a strategy for measuring ROI\n\nLet me know how I can assist!",
+  "E-tuned": "I'm sorry, but I don't have access to previous conversations or specific campaign details, including budget allocations for the DHL Wellness Retreats campaign. If you're referring to a real-world campaign or a project you're working on, I recommend checking your campaign documentation, financial reports, or project management tools for the exact figures.\n\nIf you'd like help estimating a budget for influencer marketing or creating a sample allocation based on industry standards, I’d be happy to assist with that! Just let me know the overall campaign budget or goals.",
+  "B-min-pack": "I'm sorry, but I don’t have access to previous conversations or specific campaign plans, including details about the DHL Wellness Retreats campaign or budget allocations for influencer marketing. If you’re referring to a real-world campaign, I recommend checking your internal documents, financial reports, or campaign briefs for the exact figures.\n\nIf you’d like help estimating a budget for influencer marketing in a wellness retreat campaign—based on industry standards or best practices—I’d be happy to assist with that! Just let me know your target audience, goals, and region.",
+  "H-pack": "I’m sorry, but I don’t have access to our previous chat about the DHL Wellness Retreats campaign or any specific campaign budget details, including allocations for influencer marketing. If you can provide more context or share the relevant details from earlier messages, I’d be happy to help analyze or build upon them!",
+  "H-gap": "I’m sorry, but I don’t have access to our previous chat about the DHL Wellness Retreats campaign or any specific budget allocations, including influencer marketing. If you can provide more context or details from that conversation, I’d be happy to help you recall or build upon it!"
+ }
+}

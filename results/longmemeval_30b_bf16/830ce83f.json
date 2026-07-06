@@ -1,0 +1,20 @@
+{
+ "question_id": "830ce83f",
+ "question": "Where did Rachel move to after her recent relocation?",
+ "answer": "the suburbs",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12499,
+  "tail_start_msg": 55
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have information about Rachel's recent relocation. I don't have access to personal details or updates about individuals unless they're shared in our conversation. If you're trying to find out where Rachel moved, the best way would be to ask her directly or check any recent messages or updates from her. Let me know if you'd like help with anything else!",
+  "B": "I'm sorry, but I don't have any information about a specific person named Rachel or her recent relocation. If you're referring to a character from a show, book, or a personal acquaintance, please provide more context so I can better assist you.",
+  "E-tuned": "I don't have information about a specific person named Rachel or her recent relocation. If you're referring to a public figure, a character from a show or book, or someone in your personal life, please provide more context so I can better assist you.",
+  "B-min-pack": "I'm sorry, but I don't have any information about a specific person named Rachel or her recent relocation. If you're referring to a character from a show, book, or another context, please provide more details so I can help better!",
+  "H-pack": "I don't have information about a specific person named Rachel or her recent relocation. If you're referring to a public figure, character from a show, or someone in a personal context, please provide more details so I can assist you better.",
+  "H-gap": "I don't have information about a specific person named Rachel or her recent relocation. If you're referring to a public figure, character from a show, or someone in a personal context, please provide more details so I can assist you better."
+ }
+}

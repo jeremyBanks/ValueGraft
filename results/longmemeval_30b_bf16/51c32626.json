@@ -1,0 +1,20 @@
+{
+ "question_id": "51c32626",
+ "question": "When did I submit my research paper on sentiment analysis?",
+ "answer": "February 1st",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13969,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal submission history or calendar. I can't recall when you submitted your research paper on sentiment analysis.\n\nIf you're trying to remember the date, you might want to check:\n\n- Your email inbox (look for confirmation emails from ACL or the submission system)\n- Your personal calendar or notes\n- The submission portal's history (if you have an account)\n- Any reminders or drafts you may have saved\n\nLet me know if you'd like help drafting a reminder or checking submission guidelines!",
+  "B": "I don't have access to your personal records, submission history, or any external databases, so I can't tell you when you submitted your research paper on sentiment analysis. If you're unsure, I recommend checking:\n\n- Your email inbox (especially sent items or notifications from the journal/conference)\n- The submission portal or platform you used (e.g., IEEE Xplore, Springer, ACL, or a university repository)\n- Your personal notes or calendar\n- Any confirmation emails or receipts from the submission system\n\nIf you provide more context (e.g., the conference, journal, or deadline you were aiming for), I’d be happy to help you draft a follow-up email or check for typical timelines.",
+  "E-tuned": "I don't have access to your personal records, submission history, or any external databases, so I can't tell you when you submitted your research paper on sentiment analysis. If you're referring to a submission through a specific platform (like a university portal, journal website, or conference system), I recommend checking your email inbox (including spam/junk folders), the submission system’s dashboard, or your academic records for confirmation.\n\nIf you’d like help drafting a reminder email or checking for submission deadlines, feel free to share more context!",
+  "B-min-pack": "I don't have access to your personal submission history or any specific details about your research paper, including when it was submitted. If you're referring to a submission to a journal, conference, or institution, I recommend checking your email archives, submission system (like ScholarOne, OpenReview, or a university portal), or any records you may have kept.\n\nIf you'd like help drafting a reminder email or checking submission deadlines, feel free to provide more context!",
+  "H-pack": "I don't have access to your personal records, submission history, or any external databases, so I can't tell you when you submitted your research paper on sentiment analysis. If you're unsure, you might want to check your email (including spam or junk folders), the submission portal of the journal or conference you applied to, or your personal notes and calendar. Let me know if you'd like help drafting a reminder or checking submission guidelines!",
+  "H-gap": "I don't have access to your personal records, submission history, or any external databases, so I can't tell you when you submitted your research paper on sentiment analysis. If you're unsure, I recommend checking your email (especially your inbox and sent folder), the submission portal of the journal or conference you applied to, or any notes you may have made during the submission process. Let me know if you'd like help drafting a reminder or checking the status of a submission!"
+ }
+}

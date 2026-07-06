@@ -1,0 +1,20 @@
+{
+ "question_id": "bc149d6b",
+ "question": "What is the total weight of the new feed I purchased in the past two months?",
+ "answer": "70 pounds",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14006,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your purchase history or personal records, so I can't determine the total weight of the feed you purchased in the past two months.\n\nTo find this information, you’ll need to:\n\n1. **Check your receipts or purchase records** – Look through your receipts, bank statements, or shopping app records from the past two months to see how much feed you bought and the weight of each purchase.\n2. **Review your inventory logs** – If you’ve been tracking your feed usage or inventory, you can add up the total weight of all purchases during that time.\n3. **Check with the supplier** – If you bought the feed from a local farm supply store, you might be able to contact them to get a summary of your recent purchases.\n\nIf you’d like,",
+  "B": "I don't have access to your personal purchase history, financial records, or any external data about your feed purchases. To find the total weight of the new feed you bought in the past two months, you’ll need to:\n\n1. Check your receipts or invoices from the supplier.\n2. Review your purchase records (e.g., in a notebook, spreadsheet, or app).\n3. Contact the supplier directly and ask for a summary of your orders over the last two months.\n\nIf you provide more details (like the quantity per bag, number of bags, or a list of purchases), I’d be happy to help calculate the total weight for you!",
+  "E-tuned": "I don't have access to your personal purchase history, financial records, or any external data about your feed purchases. To find the total weight of the new feed you bought in the past two months, you’ll need to:\n\n1. Check your receipts or invoices from the purchases.\n2. Look at your order history if you bought it online.\n3. Contact the supplier or retailer for a detailed summary.\n\nIf you provide more details (like the quantity and weight per unit), I can help you calculate the total weight.",
+  "B-min-pack": "I'm sorry, but I don't have access to your purchase history or personal data, including the weight of any feed you may have bought. To find the total weight of the new feed you purchased in the past two months, you’ll need to check your receipts, order records, or contact the supplier directly. Let me know if you’d like help organizing that information!",
+  "H-pack": "I'm sorry, but I don't have access to your purchase history or personal data, including the weight of any feed you may have bought. To find the total weight of the new feed you purchased in the past two months, you can check your receipts, order history from the retailer, or contact customer service for that information. Let me know if you'd like help calculating it from specific details!",
+  "H-gap": "I'm sorry, but I don't have access to your purchase history or personal data, including the weight of any feed you may have bought. To find the total weight of the new feed you purchased in the past two months, you’ll need to check your receipts, order records, or account statements from the retailer where you made the purchase. If you have a digital record (like from an online store or app), you can review your order history there. Let me know if you'd like help organizing that information!"
+ }
+}

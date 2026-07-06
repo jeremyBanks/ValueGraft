@@ -1,0 +1,20 @@
+{
+ "question_id": "bc8a6e93_abs",
+ "question": "What did I bake for my uncle's birthday party?",
+ "answer": "You did not mention this information. You mentioned baking for your niece's birthday party but not your uncle's",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13443,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have any information about what you baked for your uncle's birthday party. I don't have access to your personal memories or past actions. If you're trying to remember, you might want to check your recipe book, photos from the party, or ask someone who was there!",
+  "B": "I'm sorry, but I don't have any information about what you baked for your uncle's birthday party. I wasn't present at the event, and you haven't shared that detail in our conversation. If you'd like help with something related—like a recipe, presentation idea, or a birthday message—feel free to ask!",
+  "E-tuned": "I'm sorry, but I don't have any information about what you baked for your uncle's birthday party. I wasn't there, and you haven't shared that detail with me. 😊\n\nIf you'd like help naming your dessert, describing it, or even coming up with a fun recipe for next time, I’d be happy to help!",
+  "B-min-pack": "I'm sorry, but I don't know what you baked for your uncle's birthday party. I wasn’t there, and you haven’t shared that detail with me yet! 😊\n\nIf you'd like help naming your dessert, writing a sweet note to go with it, or even planning a recipe for next time, I’d be happy to help! What kind of treat did you make? 🎂🧁",
+  "H-pack": "I'm sorry, but I don't have any information about what you baked for your uncle's birthday party. I wasn’t there, and you haven’t shared that detail with me yet! 😊  \nIf you’d like, I can help you come up with a fun dessert idea for a future celebration—or even help you write a sweet note to go with your baked treat! 🎂🧁",
+  "H-gap": "I'm sorry, but I don't have any information about what you baked for your uncle's birthday party. I wasn’t there, and you haven’t shared that detail with me yet! 😊  \nIf you’d like, you can tell me what you made—maybe it was a cake, cookies, or something special—and I’d be happy to help you celebrate or even suggest a fun way to present it! 🎂🍪"
+ }
+}

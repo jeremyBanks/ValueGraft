@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_61e13b3c",
+ "question": "How many weeks passed between the time I sold homemade baked goods at the Farmers' Market for the last time and the time I participated in the Spring Fling Market?",
+ "answer": "3 weeks",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12201,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have enough information to determine how many weeks passed between your last Farmers' Market appearance and your participation in the Spring Fling Market.\n\nTo calculate the time difference, I would need to know the specific dates of both events. If you can provide those dates, I’d be happy to help you calculate the number of weeks between them!",
+  "B": "I'm sorry, but I don't have enough information to determine how many weeks passed between your last Farmers' Market appearance and your participation in the Spring Fling Market. To calculate the time difference, I would need the specific dates of both events.\n\nIf you can provide the dates (e.g., \"I sold at the Farmers' Market on May 12, and the Spring Fling Market was on June 10\"), I’d be happy to help you calculate the number of weeks between them!",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine how many weeks passed between your last Farmers' Market appearance and your participation in the Spring Fling Market. To calculate the time difference, I would need the specific dates of both events. If you can provide those dates, I’d be happy to help you figure it out!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many weeks passed between your last Farmers' Market appearance and your participation in the Spring Fling Market. To calculate the time difference, I would need the specific dates of both events. Could you provide those dates?",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many weeks passed between your last Farmers' Market appearance and your participation in the Spring Fling Market. To calculate the time difference, I would need the specific dates of both events. If you can provide those dates, I’d be happy to help you calculate the number of weeks between them!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many weeks passed between your last Farmers' Market appearance and your participation in the Spring Fling Market. To calculate the time difference, I would need the specific dates of both events. If you can provide those dates, I’d be happy to help you calculate the number of weeks between them!"
+ }
+}

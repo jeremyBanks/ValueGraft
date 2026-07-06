@@ -1,0 +1,20 @@
+{
+ "question_id": "6cb6f249",
+ "question": "How many days did I take social media breaks in total?",
+ "answer": "17 days",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12492,
+  "tail_start_msg": 44
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal history or data, so I can't determine how many days you've taken social media breaks in total. However, based on your message, you mentioned taking a **10-day break in mid-February** and a **one-week break in mid-January**.\n\nIf we add those together:\n- 10 days (mid-February)\n- 7 days (mid-January)\n\nThat makes a total of **17 days** of social media breaks that you've mentioned.\n\nGreat job on those intentional digital detoxes — taking regular breaks like that can really help reset your relationship with technology and improve your focus and well-being! 🌿📱➡️🧘‍♂️",
+  "B": "I don’t have access to your personal data, including your social media usage or breaks. So I can’t tell you how many days you’ve taken social media breaks in total.\n\nIf you’re tracking your own digital wellness journey, you might want to review your journal entries, calendar, or use a habit-tracking app to see how many days you’ve intentionally taken breaks. If you’d like, I can help you create a simple tracker or reflection template to keep track going forward! Just let me know. 😊",
+  "E-tuned": "I don't have access to your personal data or history, including how many days you've taken social media breaks. That information isn't available to me unless you share it directly.\n\nIf you're tracking your social media breaks, you might consider using a journal, habit-tracking app, or calendar to log each day you step away. Let me know if you'd like help setting up a simple system to track it!",
+  "B-min-pack": "I don't have access to your personal data, including your social media usage or break history. To find out how many days you took social media breaks, you’d need to check your own records—like a journal, habit tracker, or app that logs screen time and breaks.\n\nIf you’ve been using a habit-tracking app (like Habitica, Streaks, or a simple spreadsheet), you can count the days marked as \"break days.\" Alternatively, if you’ve used built-in screen time features (like Apple’s Screen Time or Android’s Digital Wellbeing), you can review your usage reports to see when you reduced or paused social media.\n\nLet me know if you’d like help setting up a system to track this going forward! 🌿📱📵",
+  "H-pack": "I don't have access to your personal data, including your social media usage or break history. So, I can't tell you how many days you've taken social media breaks. If you've been tracking your breaks manually or through an app, you might want to check your notes or the app's records for the total count. Let me know if you'd like help creating a system to track them going forward!",
+  "H-gap": "I don't have access to your personal data, including your social media usage or break history. So, I can't tell you how many days you've taken social media breaks. If you've been tracking your breaks manually or through an app, you might want to check your notes or the app's records for the total count. Let me know if you'd like help setting up a system to track it going forward!"
+ }
+}

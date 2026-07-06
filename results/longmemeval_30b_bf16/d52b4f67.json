@@ -1,0 +1,20 @@
+{
+ "question_id": "d52b4f67",
+ "question": "Where did I attend my cousin's wedding?",
+ "answer": "The Grand Ballroom",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12773,
+  "tail_start_msg": 51
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You attended your cousin's wedding at the **Grand Ballroom**.",
+  "B": "I don’t have access to your personal history or past events, so I can’t recall where you attended your cousin’s wedding. If you’re trying to remember, you might want to check:\n\n- Photos or social media posts from the event  \n- Your calendar or travel itinerary  \n- Messages or invitations from the wedding  \n- Conversations with family members who were there  \n\nLet me know if you’d like help brainstorming possible locations or planning a trip to revisit the place!",
+  "E-tuned": "I don't have access to your personal history or past events, so I can't tell you where you attended your cousin's wedding. If you're trying to remember, you might want to check old photos, social media posts, travel itineraries, or ask family members who were there. Let me know if you'd like help brainstorming possible locations or planning a trip to revisit the place!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to know where you attended your cousin's wedding. I don’t have access to your personal memories or past events unless you share them with me. If you’d like, you can tell me more details—like the location, date, or any special moments—and I’d be happy to help you reminisce or plan around that memory! 🌟",
+  "H-pack": "I don't have access to your personal memories or past events, so I can't tell you where you attended your cousin's wedding. If you're trying to recall the location, you might check photos, invitations, travel records, or ask family members who were there. Let me know if you'd like help brainstorming clues or organizing your memories!",
+  "H-gap": "I don't have access to your personal memories or past events, so I can't tell you where you attended your cousin's wedding. If you're trying to recall the location, you might check photos, invitations, travel records, or ask family members who were there. Let me know if you'd like help brainstorming clues or organizing your memories!"
+ }
+}

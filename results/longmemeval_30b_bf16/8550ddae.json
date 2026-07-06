@@ -1,0 +1,20 @@
+{
+ "question_id": "8550ddae",
+ "question": "What type of cocktail recipe did I try last weekend?",
+ "answer": "lavender gin fizz",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14504,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal history or past actions, so I can't recall what cocktail recipe you tried last weekend. If you'd like to share the details, I’d be happy to help you refine it, suggest variations, or even create a new recipe inspired by it!",
+  "B": "I'm sorry, but I don't have access to your personal history or past conversations, so I can't recall what cocktail recipe you tried last weekend. If you'd like help identifying a cocktail or recreating a recipe, feel free to describe it—like the ingredients, flavor profile (e.g., sweet, citrusy, spicy), or how it was served—and I’d be happy to help!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal history or past conversations, so I can't recall what cocktail recipe you tried last weekend. If you'd like help identifying a cocktail or recreating a recipe, feel free to describe it—like the ingredients, flavor profile (e.g., sweet, citrusy, spicy), or any memorable details—and I’d be happy to help!",
+  "B-min-pack": "I'm sorry, but I don't have any information about what cocktail recipe you tried last weekend. I wasn’t present for your trip or your activities, so I can’t recall specific details from your past experiences. If you’d like, you can describe the cocktail—its ingredients, flavor, or how it was served—and I’d be happy to help identify or suggest a similar recipe!",
+  "H-pack": "I'm sorry, but I don't have any information about what cocktail recipe you tried last weekend. I wasn’t present, and you haven’t shared those details in our conversation. If you’d like help recreating it or finding a similar drink, feel free to describe the flavor, ingredients, or vibe you remember! 🍸",
+  "H-gap": "I'm sorry, but I don't have any information about what cocktail recipe you tried last weekend. I wasn’t present, and you haven’t shared those details in our conversation. If you’d like, you can describe the drink—its ingredients, flavor, or how it was served—and I’d be happy to help identify or suggest a similar recipe!"
+ }
+}

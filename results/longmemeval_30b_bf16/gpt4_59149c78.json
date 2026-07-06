@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_59149c78",
+ "question": "I mentioned that I participated in an art-related event two weeks ago. Where was that event held at?",
+ "answer": "The Metropolitan Museum of Art.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12681,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal history or past events, so I can't recall where the art-related event you mentioned two weeks ago was held. If you're trying to remember the location, you might want to check your calendar, event invitations, or any photos or notes you took from the event. Let me know if you'd like help brainstorming possible venues or remembering details!",
+  "B": "I don’t have access to your personal history or past conversations, so I can’t recall where the art-related event you participated in two weeks ago was held. If you’d like help remembering, you could check your calendar, event invitations, or photos from the event. Let me know if you’d like help drafting a message to someone who might remember the location!",
+  "E-tuned": "I don't have access to your personal history or past conversations, so I can't recall where the art-related event you participated in two weeks ago was held. If you'd like help remembering, you could check your calendar, event invitations, or photos from the event. Let me know if you'd like help drafting a message to someone who might remember!",
+  "B-min-pack": "I don't have access to your personal history or past conversations, so I can't recall the specific event you mentioned or its location. If you’d like, you can share more details, and I’d be happy to help you remember or find information about it!",
+  "H-pack": "I don’t have access to your personal history or past conversations, so I can’t recall the specific art-related event you mentioned two weeks ago. If you’d like to share more details—like the name of the event, city, or any other clues—I’d be happy to help you remember or find information about it!",
+  "H-gap": "I don’t have access to your personal history or past conversations, so I can’t recall where the art-related event you mentioned two weeks ago was held. If you’d like, you can share more details, and I’d be happy to help you remember or organize the information!"
+ }
+}

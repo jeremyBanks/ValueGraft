@@ -1,0 +1,20 @@
+{
+ "question_id": "a96c20ee_abs",
+ "question": "At which university did I present a poster for my undergrad course research project?",
+ "answer": "The information provided is not enough. You did not mention presenting a poster for your undergrad course research project.",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14242,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal history or past events, including where you presented your undergraduate research poster. If you're trying to recall the university, you might want to check:\n\n- Your academic transcripts or course syllabi\n- Emails or correspondence from the conference or department\n- Photos or notes from the event\n- Your university's research portal or student research database\n\nIf you remember the name of the conference, the year, or any details about the event, I’d be happy to help you search for more information!",
+  "B": "I don't have access to your personal history, academic records, or specific details about your past activities, including where you presented a poster for your undergraduate research project. To find out the university, you may want to:\n\n- Check your course syllabus or academic records.\n- Look through emails or announcements from your undergraduate program.\n- Review any certificates, transcripts, or event programs from the time of the presentation.\n- Contact your department or professor who supervised your research.\n\nLet me know if you'd like help drafting a message to your university or professor to retrieve this information!",
+  "E-tuned": "I don't have access to your personal history, academic records, or specific details about your past activities, including where you presented a poster for your undergraduate research project. To find out the university, you may want to:\n\n- Check your course syllabus or academic records.\n- Look through emails or announcements from your undergraduate program.\n- Review any certificates, transcripts, or event programs from the time of the presentation.\n- Contact your department or professor who supervised your research.\n\nLet me know if you'd like help drafting a message to your university or professor to retrieve this information!",
+  "B-min-pack": "I don't have access to your personal history or past presentations, so I can't determine which university you presented your undergraduate research poster at. If you're trying to recall this information, you might check your course records, academic portfolio, emails from the university, or contact your professor or department for confirmation. Let me know if you'd like help drafting a message to inquire!",
+  "H-pack": "I don't have access to your personal history or past academic activities, so I can't determine which university you presented a poster for your undergraduate research project. If you're trying to recall or document this information, you might check your course records, university portal, research portfolio, or contact your department's academic advisor. Let me know if you'd like help drafting a message to inquire about it!",
+  "H-gap": "I don't have access to your personal history or past academic activities, including where you presented a poster for your undergraduate research project. You may need to check your university’s archives, course syllabi, or contact your department directly for that information. If you provide more context—such as the name of your university, the course, or the year—I might be able to help guide you further."
+ }
+}

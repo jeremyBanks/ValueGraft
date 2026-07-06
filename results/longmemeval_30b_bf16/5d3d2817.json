@@ -1,0 +1,20 @@
+{
+ "question_id": "5d3d2817",
+ "question": "What was my previous occupation?",
+ "answer": "Marketing specialist at a small startup",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12908,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on our conversation, your previous occupation was **marketing specialist** at a small startup. You mentioned this when discussing your experience with project management tools and automating workflows for managing a team of interns.",
+  "B": "I don’t have access to your personal history or previous occupations. I can only respond based on the information you’ve shared in our current conversation. If you’d like to tell me about your background or career, I’d be happy to help with related advice or suggestions!",
+  "E-tuned": "I don't have access to your personal history or previous occupations. I can only assist with information and recommendations based on our current conversation. If you'd like to share more about your background or interests, I’d be happy to help!",
+  "B-min-pack": "I don't have access to your personal history or previous occupations. If you'd like to share details about your background, I’d be happy to help you reflect on it, craft a professional summary, or assist with related tasks like resume writing or networking strategies. Let me know how I can support you!",
+  "H-pack": "I don’t have access to your personal history or previous occupations. The information shared in our conversation doesn’t include details about your past work or career. If you’d like to discuss your professional background or need help with something related to your career, feel free to share more!",
+  "H-gap": "I don’t have access to your personal history or previous occupations. The information shared in our conversation doesn’t include details about your past work or career. If you’d like to discuss your professional background or need help with something related to your career, feel free to share more!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "4dfccbf8",
+ "question": "What did I do with Rachel on the Wednesday two months ago?",
+ "answer": "I started taking ukulele lessons with Rachel.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12525,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal calendar or past events. I can't recall what you did with Rachel two months ago or any other specific personal details from your life.\n\nIf you're trying to remember a past event, you might want to check your calendar, messages, photos, or ask Rachel directly!",
+  "B": "I'm sorry, but I don't have access to your personal memories, schedules, or past events. I can't recall what you did with Rachel two months ago. If you're trying to remember, you might want to check your calendar, messages, photos, or ask Rachel directly! Let me know if you'd like help brainstorming ways to jog your memory.",
+  "E-tuned": "I'm sorry, but I don't have access to your personal calendar, memories, or past events. I can't recall what you did with Rachel two months ago. If you're trying to remember, you might want to check your calendar, messages, photos, or ask Rachel directly!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal memories or past events, including what you did with Rachel two months ago. If you're trying to recall a specific event, you might want to check your calendar, photos, messages, or ask Rachel directly! Let me know if you'd like help brainstorming ways to remember or organize your past activities.",
+  "H-pack": "I don't have access to your personal memories, events, or private details—like what you did with Rachel two months ago. If you're trying to recall a specific event, you might want to check your calendar, photos, messages, or think about where you were and what you were doing around that time. Let me know if you'd like help brainstorming ways to jog your memory!",
+  "H-gap": "I'm sorry, but I don't have access to your personal memories or past events, including what you did with Rachel two months ago. If you're trying to recall a specific event, you might want to check your calendar, photos, messages, or ask Rachel directly! Let me know if you'd like help brainstorming ways to remember."
+ }
+}

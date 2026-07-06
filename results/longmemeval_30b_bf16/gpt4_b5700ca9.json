@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_b5700ca9",
+ "question": "How many days ago did I attend the Maundy Thursday service at the Episcopal Church?",
+ "answer": "4 days.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13707,
+  "tail_start_msg": 44
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal calendar or the ability to track the exact date of your past events. I can't determine how many days ago you attended the Maundy Thursday service.\n\nHowever, if you're asking this question today, you can easily check the date by:\n\n- Looking at your phone or computer calendar\n- Checking the date on a physical calendar or journal\n- Using a search engine to find the date of Maundy Thursday this year (e.g., \"Maundy Thursday 2024 date\")\n\nIf you let me know the current date, I can help you calculate the number of days since the service!",
+  "B": "I'm sorry, but I don't have access to your personal calendar or attendance records, so I can't determine how many days ago you attended the Maundy Thursday service at the Episcopal Church.\n\nHowever, I can help you figure it out:\n\n1. **Check your calendar or phone reminders** – Look for any event, email, or note you may have saved about the service.\n2. **Check your church’s website or app** – Many churches post service schedules and may have a record of attendance or event history.\n3. **Ask a friend or family member** – If you attended with someone, they might remember the date.\n4. **Recall the date of Maundy Thursday** – Maundy Thursday is the Thursday before Easter Sunday. Easter 2025 falls on **",
+  "E-tuned": "I'm sorry, but I don't have access to your personal calendar or attendance records, so I can't determine how many days ago you attended the Maundy Thursday service at the Episcopal Church.\n\nTo find out, you can:\n\n- Check your calendar app (Google Calendar, Apple Calendar, etc.) for any event labeled \"Maundy Thursday\" or \"Holy Week Service.\"\n- Look at your email or church newsletter for a confirmation or reminder from the church.\n- Ask a church staff member or fellow parishioner who might remember the date.\n\nIf you let me know the current date, I can help you calculate how many days ago Maundy Thursday was — since it's always the Thursday before Easter Sunday, and Easter changes each year. Just share today’s date, and I’ll do the math",
+  "B-min-pack": "I don't have access to your personal calendar or attendance records, so I can't determine how many days ago you attended the Maundy Thursday service at the Episcopal Church. If you'd like to figure it out, you can check the date of the most recent Maundy Thursday (which is the Thursday before Easter Sunday) and compare it to today’s date.\n\nFor example:\n- If today is April 5, 2024, then Maundy Thursday was on March 28, 2024 — that would be 8 days ago.\n- If today is April 12, 2024, then Maundy Thursday was on April 4, 2024 — that would be 8 days ago.\n\nLet me know the current date,",
+  "H-pack": "I don't have access to your personal calendar or attendance records, so I can't determine how many days ago you attended the Maundy Thursday service at the Episcopal Church. If you'd like to find out, you can check your calendar app, personal journal, or the date of the most recent Maundy Thursday (which falls on the Thursday before Easter Sunday). For example, in 2024, Maundy Thursday was on **April 11**. If today is **April 18**, then it was **7 days ago**. Let me know the current date, and I can help calculate it!",
+  "H-gap": "I don't have access to your personal calendar or attendance records, so I can't determine how many days ago you attended the Maundy Thursday service at the Episcopal Church. If you'd like to find out, you can check your calendar app, personal journal, or contact the church directly for confirmation. Let me know if you'd like help calculating the date based on a specific day!"
+ }
+}

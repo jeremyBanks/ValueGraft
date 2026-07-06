@@ -1,0 +1,20 @@
+{
+ "question_id": "e4e14d04",
+ "question": "How long had I been a member of 'Book Lovers Unite' when I attended the meetup?",
+ "answer": "Two weeks",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12146,
+  "tail_start_msg": 38
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned that you joined the Facebook group \"Book Lovers Unite\" **three weeks ago**, and that you attended the meetup **last week**.\n\nSo, if you joined three weeks ago and the meetup was last week, you had been a member for **two weeks** when you attended the event.\n\nThat’s a great start—just two weeks in, and already you’ve connected with fellow readers and participated in a lively discussion! It sounds like you’re already making the most of your membership. 📚✨",
+  "B": "I'm sorry, but I don't have enough information to answer that question. The details about your membership duration in 'Book Lovers Unite' and the meetup aren't included in our conversation history. If you'd like to share more context, I’d be happy to help!",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer that question. The details about your membership duration in 'Book Lovers Unite' and the meetup aren't included in our conversation history. If you'd like to share more context, I’d be happy to help!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how long you'd been a member of 'Book Lovers Unite' when you attended the meetup. Could you provide more details, such as when you joined the group or when the meetup took place? That way, I can help calculate your membership duration!",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how long you'd been a member of *Book Lovers Unite* when you attended the meetup. The details about your membership duration or the date of the meetup weren’t included in our conversation. If you can provide more context—like when you joined or when the meetup took place—I’d be happy to help calculate the length of your membership!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how long you'd been a member of *Book Lovers Unite* when you attended the meetup. The details about your membership duration or the meetup date aren't included in our conversation. If you can provide more context—like when you joined or when the meetup took place—I’d be happy to help calculate it!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "5025383b",
+ "question": "What are the two hobbies that led me to join online communities?",
+ "answer": "photography and cooking",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12893,
+  "tail_start_msg": 41
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on our conversation, the two hobbies that led you to join online communities are:\n\n1. **Photography** – You mentioned being into street and portrait photography, learning about lenses, editing in Lightroom, and planning to start a photography blog.\n2. **Cooking** – You expressed interest in learning cooking techniques, exploring recipe videos, participating in cooking challenges, and engaging with food-related online communities.\n\nThese two passions have clearly inspired your active participation in online communities to share knowledge, learn from others, and grow your skills.",
+  "B": "I'm sorry, but I don't have enough information to answer that question.",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer that question.",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine the two hobbies that led you to join online communities. Could you provide more context or details about your interests?",
+  "H-pack": "I'm sorry, but I don't have enough information to determine the two hobbies that led you to join online communities. Could you provide more context or details about your interests?",
+  "H-gap": "I'm sorry, but I don't have enough information to determine the two hobbies that led you to join online communities. Could you please provide more context or details about your interests?"
+ }
+}

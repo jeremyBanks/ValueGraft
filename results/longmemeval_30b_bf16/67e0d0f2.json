@@ -1,0 +1,20 @@
+{
+ "question_id": "67e0d0f2",
+ "question": "What is the total number of online courses I've completed?",
+ "answer": "20",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14594,
+  "tail_start_msg": 58
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal records or course completion history, so I can't determine the total number of online courses you've completed. However, you mentioned earlier that you've taken 12 courses on Coursera, and you've also completed 8 courses on edX. If those are the only platforms you're referring to, then the total would be:\n\n12 (Coursera) + 8 (edX) = **20 courses**\n\nIf you've completed additional courses on other platforms (like DataCamp, Udemy, Khan Academy, etc.), you may want to review your course completion records on each platform to get an accurate total. Let me know if you'd like help organizing or tracking your learning journey!",
+  "B": "I don't have access to your personal data, including your online course completion history. This information is private and stored in your individual accounts (like Coursera, Udemy, LinkedIn Learning, etc.), not in our conversation.\n\nIf you'd like to know how many courses you've completed, I’d recommend checking your account dashboard on the platform(s) where you took the courses. Most platforms provide a progress or achievement section that tracks your completed courses.\n\nLet me know if you'd like help organizing or reflecting on your learning journey!",
+  "E-tuned": "I don't have access to your personal records or history, including the number of online courses you've completed. That information would be stored in your account on the specific learning platform you used (like Coursera, Udemy, edX, etc.), and I can't retrieve it.\n\nIf you'd like to find out, you can:\n\n- Log in to the platform where you took the courses.\n- Check your \"My Courses\" or \"Learning History\" section.\n- Look for a \"Certificates\" or \"Achievements\" tab, which often lists completed courses.\n\nLet me know if you'd like help reviewing or organizing your course list!",
+  "B-min-pack": "I don't have access to your personal data, including your online course completion history. To find out the total number of online courses you've completed, you’ll need to check your account on the platform(s) where you took the courses—such as Coursera, Udemy, LinkedIn Learning, edX, or others. Each platform typically provides a dashboard or certificate section that tracks your progress and completed courses. Let me know if you'd like help navigating one of those platforms!",
+  "H-pack": "I don't have access to your personal data, including your online course completion history. To find out the total number of online courses you've completed, you’ll need to check your account on the specific learning platform you used (such as Coursera, edX, Udemy, LinkedIn Learning, etc.). Each platform typically provides a dashboard or certificate section where you can view your completed courses. Let me know if you'd like help navigating a specific platform!",
+  "H-gap": "I don't have access to your personal data, including your online course completion history. To find out the total number of online courses you've completed, you’ll need to check your account on the specific learning platform you used (such as Coursera, edX, Udemy, LinkedIn Learning, etc.). Each platform typically provides a dashboard or certificate section where you can view your completed courses. Let me know if you'd like help navigating a specific platform!"
+ }
+}

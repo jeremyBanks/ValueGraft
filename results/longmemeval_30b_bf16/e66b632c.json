@@ -1,0 +1,20 @@
+{
+ "question_id": "e66b632c",
+ "question": "What was my previous personal best time for the charity 5K run?",
+ "answer": "27 minutes and 45 seconds",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14894,
+  "tail_start_msg": 57
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on our conversation, your previous personal best time for the charity 5K run was **27 minutes and 45 seconds**. You mentioned that you recently beat this time by shaving off about a minute and a half, finishing with a new personal best of 26 minutes and 30 seconds. Congratulations on that impressive improvement!",
+  "B": "I don't have access to your personal records, including your previous best time for the charity 5K run. That information would be specific to you and likely stored in your own fitness tracker, running app (like Strava, Garmin, or Nike Run Club), or personal notes.\n\nIf you're trying to recall it, you might check:\n- Your running app or wearable device history\n- The event's official results page (if you registered through a platform like RunSignUp or Race Roster)\n- Any emails or confirmation messages from the race organizers\n\nLet me know if you'd like help analyzing your running data or setting a new goal! 🏃‍♂️💨",
+  "E-tuned": "I don't have access to your personal records, including your previous best time for the charity 5K run. You may want to check your race results from past events, fitness apps (like Strava, Garmin, or Nike Run Club), or the event's official website for your personal best time. Let me know if you'd like help analyzing or improving your running performance!",
+  "B-min-pack": "I don't have access to your personal history or past performance data, including your previous best time for the charity 5K run. That information would be specific to you and likely stored in your personal records, running app (like Strava, Garmin, or Nike Run Club), or event results. If you're trying to recall it, checking your past race results or training logs might help! Let me know if you'd like help analyzing or improving your running times. 🏃‍♂️💨",
+  "H-pack": "I don't have access to your personal records or past performance data, including your previous best time for the charity 5K run. That information would be specific to you and likely stored in your own records, running app (like Strava, Garmin, or Nike Run Club), or the event's results database. If you're unsure, checking your running app or the event's official website might help you find your personal best.",
+  "H-gap": "I don't have access to your personal records, including your previous best time for the charity 5K run. You may want to check your race results from past events, fitness apps like Strava or Garmin, or the event's official website for your personal best time. Let me know if you'd like help analyzing or improving your time!"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "0bb5a684",
+ "question": "How many days before the team meeting I was preparing for did I attend the workshop on 'Effective Communication in the Workplace'?",
+ "answer": "7 days. 8 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13351,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided, you attended the workshop on **January 10th**, and you're preparing for your team meeting on **January 17th**.\n\nTo calculate how many days before the meeting you attended the workshop:\n\n- January 17th (meeting date)  \n- January 10th (workshop date)  \n\nSubtracting:  \n17 - 10 = **7 days**\n\nSo, you attended the workshop **7 days before** your team meeting.  \n\nThat’s a great lead time—perfect for reflecting on the skills and applying them effectively!",
+  "B": "I don’t have access to your personal schedule or calendar, so I can’t tell you exactly how many days before your team meeting you attended the workshop on *Effective Communication in the Workplace*.  \n\nHowever, based on our conversation, you mentioned that you were preparing for the meeting and had recently attended the workshop—so it was likely within the past week or two. If you’d like to track it, you could check your calendar, email, or notes from the workshop to confirm the exact date.\n\nLet me know if you’d like help drafting a reminder or preparing talking points for your meeting based on what you learned!",
+  "E-tuned": "I don't have information about the specific timing of your workshop or the team meeting. The details about how many days before the meeting you attended the workshop weren't included in our conversation. If you'd like to recall or track that, you might check your calendar, email, or notes from the workshop. Let me know if you'd like help organizing your preparation timeline!",
+  "B-min-pack": "I don't have enough information to determine how many days before the team meeting you attended the workshop on \"Effective Communication in the Workplace.\" You mentioned that you were preparing for a team meeting and had recently attended the workshop, but no specific dates or timeframes were provided.\n\nTo answer your question, I would need to know either:\n\n- The date of the team meeting, or  \n- The date you attended the workshop.\n\nIf you can provide one of those, I can calculate the number of days between the workshop and the meeting.",
+  "H-pack": "The information provided does not specify how many days before the team meeting you attended the workshop on \"Effective Communication in the Workplace.\" There is no mention of dates or a timeline between the workshop and the meeting. Therefore, based on the given text, the number of days cannot be determined.",
+  "H-gap": "The information provided does not specify how many days before the team meeting you attended the workshop on \"Effective Communication in the Workplace.\" There is no mention of dates or time intervals between the workshop and the meeting. Therefore, based on the given text, the number of days cannot be determined."
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "77eafa52",
+ "question": "How much more did I have to pay for the trip after the initial quote?",
+ "answer": "$300",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13929,
+  "tail_start_msg": 55
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal financial records or booking details, so I can't tell you how much more you had to pay for your trip after the initial quote.\n\nHowever, based on our earlier conversation, you mentioned that the **initial quote** from Sakura Travel Agency was **$2,500**, and later you were told the **corrected price** was **$2,800**.\n\nThat means the difference — the additional amount you had to pay — is:\n\n**$2,800 – $2,500 = $300**\n\nSo, you had to pay **$300 more** than the original quote.\n\n⚠️ **Important Note:** Given that Sakura Travel Agency appears to be fictional or non",
+  "B": "I'm sorry, but I don't have access to your trip details, quotes, or financial information. To answer your question, I’d need specific details like:\n\n- The initial quote amount  \n- Any additional charges (e.g., fees, taxes, upgrades, changes)  \n- The final total you paid  \n\nIf you can share those numbers, I’d be happy to help calculate the difference. Otherwise, you may want to check your booking confirmation or contact the travel provider directly for a breakdown of charges.",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer your question. Could you please provide details such as the initial quote amount and the final amount you paid? That way, I can help you calculate the difference.",
+  "B-min-pack": "I'm sorry, but I don't have enough information to answer your question. Could you please provide details such as the initial quote amount and the final amount you paid? That way, I can help calculate the difference.",
+  "H-pack": "I'm sorry, but I don't have enough information to answer your question. Could you please provide details such as the initial quote amount and the final amount you paid? That way, I can help calculate the difference.",
+  "H-gap": "I'm sorry, but I don't have enough information to answer your question. Could you please provide details such as the initial quote amount and the final amount you paid? That way, I can help calculate the difference."
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_8279ba02",
+ "question": "How many days ago did I buy a smoker?",
+ "answer": "10 days ago. 11 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12897,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal purchase history or timeline, so I can't tell you exactly how many days ago you bought your smoker. However, based on our conversation, you mentioned:  \n> *\"I just got a smoker today...\"*\n\nThis suggests you purchased or received your smoker **today** — so the answer is: **0 days ago**.  \n\nEnjoy your new smoker and happy grilling! 🍖🔥",
+  "B": "I don’t have access to your personal purchase history or calendar, so I can’t tell you how many days ago you bought a smoker. If you’re trying to recall, you might check your email receipts, online shopping accounts (like Amazon, Walmart, or Home Depot), or your bank/credit card statements. Let me know if you’d like help with anything else!",
+  "E-tuned": "I don't have access to your personal purchase history or past conversations, so I can't tell you how many days ago you bought a smoker. If you're trying to recall, you might check your email receipts, online shopping accounts, or payment statements for the purchase date. Let me know if you'd like help with anything else!",
+  "B-min-pack": "I don't have access to your personal purchase history or past events, so I can't tell you how many days ago you bought a smoker. If you're trying to recall, you might check your email receipts, credit card statements, or any notes you may have made. Let me know if you'd like help with something else!",
+  "H-pack": "I don't have access to your personal purchase history or calendar, so I can't tell you how many days ago you bought a smoker. If you're trying to recall, you might check your email receipts, shopping app history, or bank statements for the purchase date. Let me know if you'd like help estimating based on other details!",
+  "H-gap": "I don't have access to your personal purchase history or calendar, so I can't tell you how many days ago you bought a smoker. If you're trying to recall, you might check your email receipts, credit card statements, or the purchase confirmation from the retailer. Let me know if you'd like help drafting a message to customer service for assistance!"
+ }
+}

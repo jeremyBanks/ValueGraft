@@ -1,0 +1,20 @@
+{
+ "question_id": "370a8ff4",
+ "question": "How many weeks had passed since I recovered from the flu when I went on my 10th jog outdoors?",
+ "answer": "15",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12402,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you provided earlier:\n\n- You mentioned that you \"finally recovered from the flu today\" and that you were \"thinking about getting back into my exercise routine.\"\n- You then said, \"I went on my 10th jog outdoors today.\"\n\nThis means that **the 10th jog occurred on the same day you recovered from the flu**.\n\nSince you hadn't gone jogging at all during your illness (which lasted about two weeks), and you're now doing your 10th jog on the day you're feeling better, **no weeks had passed since your recovery**—you're starting your jogging routine *on* the day you recovered.\n\nSo, the answer is: **0 weeks had passed** since you recovered from the flu when you went on your",
+  "B": "I'm sorry, but I don't have enough information to determine how many weeks had passed since you recovered from the flu when you went on your 10th jog outdoors.\n\nIn our earlier conversation, you mentioned gradually returning to jogging after recovering from illness, but you didn’t provide specific details such as:\n- When you first started feeling better (e.g., the date you recovered from the flu),\n- When you began jogging again,\n- Or how many days or weeks passed between your recovery and your 10th jog.\n\nIf you can share any of those details, I’d be happy to help calculate the time that passed!",
+  "E-tuned": "I'm sorry, but I don't have enough information to answer that question. I don't have access to your personal health history or jogging schedule. To determine how many weeks had passed since you recovered from the flu when you went on your 10th outdoor jog, you would need to:\n\n1. Recall the date you fully recovered from the flu.\n2. Recall the date you went on your 10th outdoor jog.\n3. Calculate the difference between those two dates in weeks.\n\nIf you can provide those dates, I’d be happy to help you calculate the number of weeks!",
+  "B-min-pack": "I don’t have enough information to determine exactly how many weeks had passed since you recovered from the flu when you went on your 10th jog outdoors. To calculate that, I’d need:\n\n- The date or time when you *recovered* from the flu.\n- The date when you went on your *10th outdoor jog*.\n\nIf you can provide either the dates or a timeline (e.g., “I recovered on June 10th” and “I did my 10th jog on August 1st”), I’d be happy to help you calculate the number of weeks between those two events.",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many weeks had passed since you recovered from the flu when you went on your 10th jog outdoors.\n\nTo answer that question, I would need to know:\n\n- When you officially recovered from the flu (e.g., the date you felt well enough to resume physical activity).\n- The date of your 10th outdoor jog.\n\nWith those two dates, I could calculate the number of weeks between them.\n\nIf you can provide either the recovery date or the jog date, I’d be happy to help you calculate the time that passed!",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many weeks had passed since you recovered from the flu when you went on your 10th jog outdoors.\n\nTo answer that question, I would need to know:\n\n- When you officially recovered from the flu (e.g., the date you felt well enough to start exercising again).\n- When you went on your 10th outdoor jog (the specific date or timeline of that jog).\n\nIf you can provide either of those dates—or a timeline like “I started jogging again 1 week after recovering” and “my 10th jog was 3 weeks later”—I’d be happy to calculate the number of weeks in between!"
+ }
+}

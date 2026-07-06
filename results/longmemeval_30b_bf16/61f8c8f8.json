@@ -1,0 +1,20 @@
+{
+ "question_id": "61f8c8f8",
+ "question": "How much faster did I finish the 5K run compared to my previous year's time?",
+ "answer": "10 minutes",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14429,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Great question! Let's calculate how much faster you finished your 5K run compared to your previous year's time.\n\nYou mentioned:\n- **This year's time:** 35 minutes\n- **Last year's time:** 45 minutes\n\nTo find the difference:\n45 minutes (last year) - 35 minutes (this year) = **10 minutes**\n\nSo, you finished your 5K run **10 minutes faster** this year compared to last year!\n\nThat's an impressive improvement—especially in just one year. Not only did you shave off 10 minutes, but you also ran it in under 35 minutes, which is a solid time for a 5K. That’s a great achievement and a testament to your dedication and training!",
+  "B": "I'd love to help you figure out how much faster you finished your 5K run this year compared to last year! To calculate the difference, I’ll need:\n\n1. **Your current year’s 5K time** (e.g., 28 minutes and 45 seconds)  \n2. **Your previous year’s 5K time** (e.g., 31 minutes and 20 seconds)\n\nOnce you provide those two times, I can:\n- Calculate the exact time difference (in minutes and seconds)\n- Show you how much faster you ran (e.g., \"You improved by 2 minutes and 35 seconds!\")\n- Even break it down into seconds if you'd like a precise comparison\n\nJust share your two times, and I’ll do the",
+  "E-tuned": "I'd love to help you calculate how much faster you finished your 5K run this year compared to last year! However, I don't have your actual times from both years.\n\nTo find the difference, you can use this simple formula:\n\n**Time Difference = Previous Year's Time – This Year's Time**\n\nFor example:\n- If last year you ran a 5K in 30 minutes (30:00) and this year you finished in 27 minutes (27:00), then:\n  - 30:00 – 27:00 = 3 minutes faster\n\nJust share your two times (in minutes and seconds, like \"28:45\" or \"31:10\"), and I’ll calculate the",
+  "B-min-pack": "To figure out how much faster you finished the 5K run compared to your previous year's time, you’ll need to subtract your current time from your previous year’s time.\n\nHere’s the formula:\n\n**Improvement = Previous Year’s Time – Current Time**\n\nFor example:\n- If last year you ran the 5K in **30 minutes** (30:00) and this year you finished in **27 minutes** (27:00), then:\n  - Improvement = 30:00 – 27:00 = **3 minutes faster**\n\nPlease share your two times (in minutes and seconds), and I’ll calculate the difference for you! 🏃‍♂️💨",
+  "H-pack": "To determine how much faster you finished your 5K run compared to last year, I’ll need two pieces of information:\n\n1. **Your current 5K time** (e.g., 28:45 minutes).\n2. **Your previous year’s 5K time** (e.g., 31:20 minutes).\n\nOnce you provide those, I can calculate the difference for you.\n\nFor example:\n- If this year: 28:45  \n- Last year: 31:20  \n- Difference: 31:20 – 28:45 = **2 minutes and 35 seconds faster**\n\nJust share your times, and I’ll do the math! 🏃‍♂️💨",
+  "H-gap": "To determine how much faster you finished your 5K run compared to last year, I’ll need two pieces of information:\n\n1. **Your current 5K time** (e.g., 28:30 minutes).\n2. **Your previous year’s 5K time** (e.g., 31:15 minutes).\n\nOnce you provide those, I can calculate the difference for you.\n\nFor example:\n- If this year: 28:30  \n- Last year: 31:15  \n- Difference: 31:15 – 28:30 = **2 minutes 45 seconds faster**\n\nJust share your times, and I’ll give you the exact improvement! 🏃‍♂️💨"
+ }
+}

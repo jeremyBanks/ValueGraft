@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_b5700ca0",
+ "question": "Where did I attend the religious activity last week?",
+ "answer": "the Episcopal Church",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13535,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal schedule or location history, so I can't tell you where you attended a religious activity last week. If you're trying to recall the location, you might want to check your calendar, email, or messages from the organization or event. If you remember the name of the church, temple, mosque, or community center, you could also search online or ask someone who attended with you.",
+  "B": "I don't have access to your personal schedule or location history, so I can't tell you where you attended a religious activity last week. If you're trying to remember, you might want to check your calendar, phone notes, or any messages or emails related to the event. Let me know if you'd like help brainstorming ways to recall it!",
+  "E-tuned": "I don't have access to your personal schedule or location history, so I can't tell you where you attended a religious activity last week. If you're trying to remember, you might want to check your calendar, phone notes, or any messages or emails related to the event. Let me know if you'd like help brainstorming possible locations or recalling details!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal schedule or past activities, including where you may have attended a religious event last week. If you're trying to recall the location, you might check your calendar, phone records, or recent messages. Let me know if you'd like help brainstorming ways to remember!",
+  "H-pack": "I don't have access to your personal schedule or past activities, so I can't tell you where you attended a religious activity last week. If you're trying to recall, you might check your calendar, phone records, messages, or ask someone you were with. Let me know if you'd like help brainstorming ways to remember!",
+  "H-gap": "I don't have access to your personal schedule or past activities, so I can't tell you where you attended a religious activity last week. If you're trying to recall, you might check your calendar, phone records, or recent messages. Let me know if you'd like help brainstorming possible locations or ways to remember!"
+ }
+}

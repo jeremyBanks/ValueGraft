@@ -1,0 +1,20 @@
+{
+ "question_id": "c2ac3c61",
+ "question": "How many online courses have I completed in total?",
+ "answer": "5",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15038,
+  "tail_start_msg": 66
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don’t have access to your personal records or history, so I can’t tell you exactly how many online courses you’ve completed. However, based on our conversation, you’ve mentioned completing:\n\n- 3 courses on **Coursera**  \n- 2 courses on **edX**\n\nThat’s a total of **5 online courses** so far.\n\nIf you’ve taken any others on platforms like Udemy, LinkedIn Learning, Fast.ai, or others, you might want to keep a personal log to track your progress. But for now, based on what you’ve shared, **5 courses** is the number we can confirm. Great job on all that learning! 🎓",
+  "B": "I don't have access to your personal learning history or online course completion records. To find out how many online courses you've completed, you'll need to check your account on the platforms where you've taken courses (such as Coursera, Udemy, LinkedIn Learning, edX, etc.). Each platform typically provides a dashboard or certificate section that tracks your completed courses.\n\nIf you'd like, I can help you organize or summarize your course list once you share the details!",
+  "E-tuned": "I don't have access to your personal records or history of completed online courses. To find out how many online courses you've completed, you would need to check your account on the platforms where you've taken courses (such as Coursera, Udemy, LinkedIn Learning, edX, etc.) or review any records you've kept yourself.\n\nIf you'd like, I can help you organize a system to track your course completions going forward!",
+  "B-min-pack": "I don't have access to your personal data, including your online course completion history. To find out how many courses you've completed, check your account on the learning platform you used (such as Coursera, Udemy, LinkedIn Learning, edX, etc.). Each platform typically provides a dashboard or certificate section that tracks your progress and completed courses. Let me know if you'd like help navigating one of those platforms!",
+  "H-pack": "I don't have access to your personal data, including your online course completion history. To find out how many courses you've completed, check your account on the learning platform you used (such as Coursera, Udemy, LinkedIn Learning, etc.). Each platform typically provides a dashboard or profile section that tracks your progress and completed courses.",
+  "H-gap": "I don't have access to your personal data, including your online course completion history. To find out how many courses you've completed, check your account on the learning platform you used (such as Coursera, Udemy, LinkedIn Learning, etc.). Each platform typically provides a dashboard or profile section that tracks your progress and completed courses."
+ }
+}

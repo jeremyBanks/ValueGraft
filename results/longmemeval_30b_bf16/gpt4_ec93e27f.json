@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_ec93e27f",
+ "question": "Which mode of transport did I use most recently, a bus or a train?",
+ "answer": "train",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13347,
+  "tail_start_msg": 49
+ },
+ "s_leak": true,
+ "arms": {
+  "A": "Based on your most recent message, you mentioned:\n\n> \"I took a train ride to visit my family in the countryside just recently, on March 3rd, and it was a nice 2-hour journey.\"\n\nSo, your most recent trip was by **train**.\n\nYou also mentioned earlier that you've been taking more trains and buses for shorter distances, but the most recent specific trip you described was by train.",
+  "B": "I don’t have access to your recent travel history or personal records, so I can’t tell you which mode of transport you used most recently—bus or train.\n\nTo find out, you could check:\n\n- Your calendar or travel itinerary  \n- Bank or payment app statements (for ticket purchases)  \n- Public transit apps (like Citymapper, Google Maps, or your local transit authority’s app)  \n- Photos or notes from your recent trips  \n\nIf you’re trying to recall a specific trip, think about where you were going, how long the journey took, or whether you saw tracks (train) or bus stops (bus). That might help jog your memory!\n\nLet me know if you’d like help planning your next trip or comparing bus vs. train travel options!",
+  "E-tuned": "I don't have access to your personal travel history or recent activities, so I can't tell you which mode of transport you used most recently—bus or train.\n\nTo find out, you could check:\n\n- Your calendar or travel app (like Google Maps, Apple Maps, or transit apps)\n- Your bank or payment app (if you used a contactless card or transit pass)\n- Your phone’s location history or travel logs\n- Any notes or messages you may have saved about your recent trips\n\nLet me know if you'd like help interpreting any of those!",
+  "B-min-pack": "I don't have access to your personal travel history, so I can't tell which mode of transport you used most recently—bus or train. If you'd like to recall or track your recent trips, you might check your travel itineraries, boarding passes, or digital records (like calendar events or apps such as Google Maps or train/bus ticketing apps). Let me know if you'd like help organizing or planning future trips!",
+  "H-pack": "I don't have access to your personal travel history or recent activities, so I can't determine whether you used a bus or a train most recently. If you'd like to recall, consider checking your recent travel logs, tickets, or digital records (like calendar entries or apps). Let me know if you'd like help organizing or tracking your travel!",
+  "H-gap": "I don’t have access to your personal travel history or recent activities, so I can’t determine whether you used a bus or a train most recently. If you’d like to recall, consider checking your recent travel logs, tickets, or calendar entries. Let me know if you’d like help organizing or tracking your travel patterns!"
+ }
+}

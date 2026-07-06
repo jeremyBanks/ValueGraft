@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_fe651585",
+ "question": "Who became a parent first, Rachel or Alex?",
+ "answer": "Alex",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13893,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you've shared, **Rachel** became a parent first.\n\nYou mentioned that your cousin Alex adopted a baby girl from China in January, and that your sister-in-law Rachel had twins, Jackson and Julia, who were born on February 12th.\n\nSince January comes before February, Alex became a parent first.",
+  "B": "I don't have enough information to determine who became a parent first between Rachel and Alex. The context of your question isn't clear—there's no mention of who Rachel and Alex are, or any details about their lives or timelines. If you can provide more context (like a story, show, or real-life scenario), I’d be happy to help!",
+  "E-tuned": "I don't have enough information to determine who became a parent first between Rachel and Alex. The context of your question isn't clear—there's no mention of who Rachel and Alex are, or any details about their lives or timelines. If you can provide more context (like a story, show, or real-life scenario), I’d be happy to help!",
+  "B-min-pack": "I don't have enough context to determine who became a parent first between Rachel and Alex. Could you provide more details about who you're referring to—such as characters from a show, book, or real-life individuals? That way, I can help answer more accurately!",
+  "H-pack": "I don't have enough information to determine who became a parent first between Rachel and Alex. The context or details about their lives, such as timelines or personal milestones, haven't been provided. If you can share more background, I’d be happy to help!",
+  "H-gap": "I don't have enough information to determine who became a parent first between Rachel and Alex. Could you provide more context or details about them?"
+ }
+}

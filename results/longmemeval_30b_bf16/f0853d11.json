@@ -1,0 +1,20 @@
+{
+ "question_id": "f0853d11",
+ "question": "How many days had passed between the 'Walk for Hunger' event and the 'Coastal Cleanup' event?",
+ "answer": "14 days. 8 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12839,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "The \"Walk for Hunger\" 5K walk took place on **February 21st**, and the \"Coastal Cleanup\" event was on **March 7th**.\n\nTo calculate the number of days between these two dates:\n\n- From **February 21st to February 28th** = 7 days (including February 21st as day 1, so 8 days total if counting both start and end dates)\n- From **March 1st to March 7th** = 7 days\n\nSo, the total number of days between **February 21st** and **March 7th** is:\n\n**14 days** (from February 21st to March 7th, inclusive of both dates).\n\nIf you",
+  "B": "I'm sorry, but I don't have enough information to determine how many days passed between the \"Walk for Hunger\" event and the \"Coastal Cleanup\" event. The details of these events—such as their dates, locations, or any related context—were not provided in our conversation.\n\nIf you can share the specific dates or more background about the events, I’d be happy to help calculate the number of days between them!",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine how many days passed between the \"Walk for Hunger\" event and the \"Coastal Cleanup\" event. Could you please provide the dates of both events?",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days passed between the 'Walk for Hunger' event and the 'Coastal Cleanup' event. The details about the dates of these events aren't included in our conversation. If you can provide the specific dates or a timeline reference, I’d be happy to help calculate the number of days between them.",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days passed between the 'Walk for Hunger' event and the 'Coastal Cleanup' event. Please provide the specific dates of both events, and I’d be happy to calculate the difference for you.",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days passed between the 'Walk for Hunger' event and the 'Coastal Cleanup' event. Please provide the specific dates of both events, and I’d be happy to calculate the difference for you."
+ }
+}

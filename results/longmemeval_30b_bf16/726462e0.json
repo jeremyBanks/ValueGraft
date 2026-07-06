@@ -1,0 +1,20 @@
+{
+ "question_id": "726462e0",
+ "question": "What was the discount I got on my first purchase from the new clothing brand?",
+ "answer": "10%",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12001,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal purchase history or details about your transactions, so I can't recall the specific discount you received on your first purchase from the clothing brand. 😊\n\nBut I do remember you mentioned getting a 10% discount — and that’s a great deal! It’s always nice to start a new shopping experience with a little extra value. If you’re curious, you might want to check your order confirmation email or account history on the brand’s website to see the exact details.\n\nLet me know if you’d like help finding similar discounts or deals on other brands! 🛍️",
+  "B": "I'm sorry, but I don't have access to your purchase history or any personal account details, including discounts or transaction records. If you're referring to a specific brand or website, I recommend checking your order confirmation email, account dashboard, or the brand's website directly for details about your discount.\n\nIf you can share the name of the brand or provide more context, I’d be happy to help guide you on where to look!",
+  "E-tuned": "I'm sorry, but I don't have access to your purchase history or personal details like discounts or account information. If you're trying to remember a discount you received, you might want to check your email for a confirmation message from the brand, or log into your account on their website to see your order details.\n\nLet me know if you'd like help finding a specific discount code or understanding how promotions work!",
+  "B-min-pack": "I'm sorry, but I don't have access to your purchase history or personal details, including discounts from your first purchase with a clothing brand. You might want to check your order confirmation email or the brand’s website/account portal for details about your discount. Let me know if you'd like help drafting a message to customer service!",
+  "H-pack": "I'm sorry, but I don't have access to your purchase history or personal details, including discounts from any clothing brand. To find out the discount you received on your first purchase, you can check your order confirmation email, account history on the brand’s website, or contact their customer service directly. Let me know if you'd like help drafting a message to them!",
+  "H-gap": "I'm sorry, but I don't have access to your purchase history or personal details, including discounts from any clothing brand. To find out the discount you received on your first purchase, you can check your order confirmation email, review your account on the brand’s website, or contact their customer service directly. Let me know if you'd like help drafting a message to them!"
+ }
+}

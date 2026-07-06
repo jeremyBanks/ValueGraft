@@ -1,0 +1,20 @@
+{
+ "question_id": "078150f1",
+ "question": "How much more money did I raise than my initial goal in the charity cycling event?",
+ "answer": "$50",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14252,
+  "tail_start_msg": 48
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You raised **$50 more** than your initial goal of $200.\n\nHere's the math:  \nYou raised **$250** total, and your goal was **$200**.  \nSo, $250 − $200 = **$50**.\n\nThat’s a great achievement—well done on exceeding your target by 25%! 🎉🚴‍♂️",
+  "B": "It looks like your question about the charity cycling event might be missing some key details—like your initial fundraising goal and the total amount you actually raised. Could you please share those numbers so I can help calculate how much more you raised than your goal?\n\nFor example:\n- What was your fundraising goal? (e.g., $500)\n- How much did you actually raise? (e.g., $750)\n\nOnce I have those, I’ll be able to tell you exactly how much over your goal you went! 🚴‍♂️💙",
+  "E-tuned": "I'd love to help you calculate how much more you raised than your initial goal! To figure this out, I'll need two pieces of information:\n\n1. **Your initial fundraising goal** (e.g., $500)\n2. **The total amount you actually raised** (e.g., $750)\n\nOnce you provide those numbers, I can calculate the difference for you:\n\n**Amount raised over goal = Total raised – Initial goal**\n\nFor example:\n- If your goal was $500 and you raised $750, you raised **$250 over** your goal.\n- If your goal was $1,000 and you raised $1,200, you raised **$200 over** your goal.\n\nJust share your",
+  "B-min-pack": "To figure out how much more money you raised than your initial goal in the charity cycling event, you’ll need two numbers:\n\n1. **The total amount of money you raised**  \n2. **Your initial fundraising goal**\n\nThen, subtract your goal from the total raised:\n\n$$\n\\text{Amount raised over goal} = \\text{Total raised} - \\text{Initial goal}\n$$\n\nFor example, if you raised $1,200 and your goal was $1,000:\n\n$$\n1,200 - 1,000 = 200\n$$\n\nSo, you raised **$200 more** than your goal.\n\n👉 Please share your total amount raised and your initial goal, and I’ll calculate the difference for",
+  "H-pack": "To determine how much more money you raised than your initial goal in the charity cycling event, you’ll need to subtract your initial goal from the total amount you actually raised.\n\nHere’s the formula:\n\n**Amount raised over goal = Total amount raised − Initial goal**\n\nFor example:\n- If you raised **$2,500** and your goal was **$2,000**, then:\n  $2,500 − $2,000 = **$500**\n\nSo, you raised **$500 more** than your goal.\n\n👉 Please share your total amount raised and your initial goal, and I’ll calculate the difference for you!",
+  "H-gap": "To determine how much more money you raised than your initial goal in the charity cycling event, you’ll need to subtract your initial goal from the total amount you raised.\n\nHere’s the formula:\n\n**Amount raised over goal = Total money raised − Initial fundraising goal**\n\nFor example:\n- If you raised **$2,500** and your goal was **$2,000**, then:\n  $2,500 − $2,000 = **$500**\n\nSo, you raised **$500 more** than your goal.\n\n👉 Please share your total amount raised and your initial goal, and I’ll calculate the difference for you!"
+ }
+}

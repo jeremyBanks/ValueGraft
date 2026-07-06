@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_59149c77",
+ "question": "How many days passed between my visit to the Museum of Modern Art (MoMA) and the 'Ancient Civilizations' exhibit at the Metropolitan Museum of Art?",
+ "answer": "7 days. 8 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12762,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal calendar or visit history. I can't determine how many days passed between your visits to MoMA and the Metropolitan Museum of Art.\n\nIf you'd like to figure it out, you can check your calendar, photos, or any notes you might have from those days. Just count the days between the two dates, and you'll have your answer! Let me know if you'd like help with anything else related to your museum visits or interests.",
+  "B": "I'm sorry, but I don't have access to your personal schedule or past events, such as when you visited the Museum of Modern Art (MoMA) or the Metropolitan Museum of Art's \"Ancient Civilizations\" exhibit. To find out how many days passed between your visits, you’d need to check your calendar, journal, or any records you may have kept of those dates.\n\nIf you provide the specific dates of your visits, I’d be happy to calculate the number of days between them for you!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal schedule or visit history. To determine how many days passed between your visits to MoMA and the Metropolitan Museum of Art, you would need to check your calendar, photos, or any notes you may have recorded about those dates. If you provide the specific dates of your visits, I’d be happy to help calculate the number of days between them!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days passed between your visits to the Museum of Modern Art (MoMA) and the 'Ancient Civilizations' exhibit at the Metropolitan Museum of Art. To calculate the time between two events, I would need the specific dates of each visit.\n\nIf you can provide the dates (e.g., \"I visited MoMA on March 10, 2024, and the Met on March 15, 2024\"), I’d be happy to help you calculate the number of days in between!",
+  "H-pack": "I'm sorry, but I don't have access to your personal visit history or calendar data. To determine how many days passed between your visits to the Museum of Modern Art (MoMA) and the Metropolitan Museum of Art’s 'Ancient Civilizations' exhibit, you’ll need to check the dates of those visits—either in your personal records, photos, tickets, or a calendar app.\n\nIf you provide the specific dates of your visits, I’d be happy to calculate the number of days between them!",
+  "H-gap": "I'm sorry, but I don't have access to your personal visit history or calendar. To determine how many days passed between your visits to the Museum of Modern Art (MoMA) and the 'Ancient Civilizations' exhibit at the Metropolitan Museum of Art, you’ll need to check the dates of those visits—either in your personal records, photos, tickets, or a calendar app. If you provide the specific dates, I’d be happy to calculate the number of days between them!"
+ }
+}

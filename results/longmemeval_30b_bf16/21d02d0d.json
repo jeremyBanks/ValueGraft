@@ -1,0 +1,20 @@
+{
+ "question_id": "21d02d0d",
+ "question": "How many fun runs did I miss in March due to work commitments?",
+ "answer": "2",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14463,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on the information you shared earlier, you mentioned missing **one** 5K fun run in March — specifically, the one on **March 5th** due to work commitments.\n\nYou also noted that you attended most of the weekly 5K fun runs at the local park during March, so it sounds like you only missed that single event. That’s a great track record! It’s completely normal to miss a run now and then, especially with a busy schedule — what matters most is that you’re staying consistent overall and making time for your running and wellness goals. Keep up the great work! 🏃‍♂️💪",
+  "B": "I don’t have access to your personal schedule, calendar, or details about your fun runs in March—so I can’t tell you exactly how many you missed. 😊\n\nBut if you’d like to track or reflect on it, here’s a quick way to figure it out:\n\n1. **Check your calendar or fitness app** (like Strava, Google Calendar, or a running journal) to see how many fun runs were scheduled in March.\n2. **Review your work schedule** for that month—look for days when you had long hours, meetings, or travel that might have made it hard to run.\n3. **Compare the two lists** to see which runs you had to skip.\n\nIf you're feeling a bit guilty about missing a few, remember: consistency over perfection",
+  "E-tuned": "I don't have access to your personal schedule or calendar, so I can't tell you exactly how many fun runs you missed in March due to work commitments.  \n\nHowever, if you're tracking your runs or using a fitness app (like Strava, Garmin, or a simple journal), you could check your activity log for the month of March to see which days you were unable to run. That way, you can get a clear picture of how many you missed—and maybe even celebrate the ones you *did* complete!  \n\nIf you're feeling guilty about missing a few, remember: consistency over perfection is the goal. Even one run a week is a win. And if you're planning to get back on track, I’d be happy to help you create a realistic, flexible running schedule that",
+  "B-min-pack": "I don't have access to your personal schedule or calendar, so I can't tell you exactly how many fun runs you missed in March due to work commitments. However, if you'd like help tracking or reflecting on your progress, I can help you:\n\n- Set up a simple tracker for future runs  \n- Reflect on patterns in your schedule  \n- Suggest ways to balance work and fitness goals  \n\nLet me know how I can support you in staying consistent and enjoying your runs! 🏃‍♂️💪",
+  "H-pack": "I don't have access to your personal schedule, calendar, or past events, so I can't tell you how many fun runs you missed in March due to work commitments. To find out, you could check:\n\n- Your calendar (Google Calendar, Apple Calendar, etc.) for any scheduled fun runs or events in March.\n- Event platforms like RunSignUp, Facebook Events, or local running group announcements.\n- Any emails or notifications from race organizers or running clubs.\n\nIf you’d like, I can help you create a system to track future fun runs and avoid missing them!",
+  "H-gap": "I don't have access to your personal schedule, calendar, or past events, so I can't tell you how many fun runs you missed in March due to work commitments. To find out, you could check:\n\n- Your calendar (Google Calendar, Apple Calendar, etc.) for any fun run events you signed up for.\n- Event platforms like RunSignUp, Eventbrite, or local running club websites.\n- Your email inbox for registration confirmations or reminders.\n\nIf you’d like, I can help you create a system to track future fun runs and avoid missing them! 🏃‍♂️💨"
+ }
+}

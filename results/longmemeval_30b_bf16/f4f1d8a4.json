@@ -1,0 +1,20 @@
+{
+ "question_id": "f4f1d8a4",
+ "question": "Who gave me a new stand mixer as a birthday gift?",
+ "answer": "my sister",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13812,
+  "tail_start_msg": 60
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don’t have access to your personal information or past conversations, so I can’t tell you who gave you the stand mixer as a birthday gift. However, based on your earlier message, you mentioned:  \n\n> *\"I actually got my new stand mixer as a birthday gift from my sister last month...\"*\n\nSo, according to your own words, it was your **sister** who gave you the stand mixer. 🎉\n\nThat’s a thoughtful and practical gift—especially great for someone who loves baking and experimenting with recipes! I hope it’s been a joy to use.",
+  "B": "I don’t have access to personal information, including your birthday gifts or who gave them to you. That kind of detail is private and not shared in our conversation.\n\nBut I’m so happy for you—receiving a stand mixer as a gift sounds like a wonderful surprise! It’s a fantastic tool for baking, cooking, and even making homemade pasta or dough. If you’d like, I can help you get started with your new mixer—like tips for using it, recipes to try, or how to clean and maintain it. Just let me know! 🎉🧁",
+  "E-tuned": "I'm sorry, but I don't have access to personal information like your birthday gifts or who gave them to you. That kind of detail is private and not part of our conversation history.\n\nIf you're wondering who gave you the stand mixer, you might want to check your birthday cards, messages, or ask the people close to you who might have been involved in the gift. It’s a thoughtful and exciting gift—happy birthday, and enjoy baking! 🎉🎂",
+  "B-min-pack": "I'm sorry, but I don't have any information about your personal life or gifts you've received. I can't know who gave you a stand mixer for your birthday. If you're wondering, you might want to check your gift tags, ask the people close to you, or look through your birthday messages and photos! 😊",
+  "H-pack": "I'm sorry, but I don't have access to personal information like who gave you a birthday gift. That detail would be something only you or the gift-giver would know! If you're trying to figure out who gave it to you, you might want to check your birthday messages, social media posts, or ask friends and family who were present. 😊",
+  "H-gap": "I don’t have access to personal information, including your birthday gifts or who gave them to you. That detail would be private and specific to your personal experiences. If you're trying to remember who gave you the stand mixer, you might check your birthday messages, social media posts, or ask friends and family who were present at the celebration! 🎉🎂"
+ }
+}

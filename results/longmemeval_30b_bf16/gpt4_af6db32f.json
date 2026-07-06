@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_af6db32f",
+ "question": "How many days ago did I watch the Super Bowl?",
+ "answer": "17 days ago. 18 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15456,
+  "tail_start_msg": 44
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or viewing history, so I can't tell you exactly how many days ago you watched the Super Bowl.\n\nHowever, if you're referring to the most recent Super Bowl (Super Bowl LVIII), it was played on **February 11, 2024**. If you watched it on that day, it would have been **13 days ago** as of today (February 24, 2024).\n\nIf you watched it on a different date, you can check your calendar, social media activity, or TV guide to find the exact date. Let me know if you'd like help calculating the difference!",
+  "B": "I don’t have access to your personal history or calendar, so I can’t tell you exactly how many days ago you watched the Super Bowl. 😊\n\nBut here’s a quick way to figure it out:\n\n- The **2024 Super Bowl (LVIII)** was played on **Sunday, February 11, 2024**.\n- If you watched it on that day, then it’s been:\n  - **103 days** as of **May 23, 2024**.\n\nIf you watched it on a different date, just subtract that date from today (May 23, 2024) to get the number of days.\n\nLet me know if you’d like help tracking your personal events or setting reminders",
+  "E-tuned": "I don’t have access to your personal history or past activities, including when you watched the Super Bowl. If you're trying to recall, the most recent Super Bowl (Super Bowl LVIII) took place on **February 11, 2024**. If you watched it on that day, it was **about 100 days ago** (as of May 20, 2024).  \n\nIf you watched it on a different date, you can check your calendar, device history, or social media to find the exact day! Let me know if you'd like help estimating based on a specific date. 😊",
+  "B-min-pack": "I don't have access to your personal viewing history or calendar, so I can't tell you exactly how many days ago you watched the Super Bowl.  \n\nHowever, if you're referring to the most recent Super Bowl (Super Bowl LVIII), it was played on **February 11, 2024**.  \n\nSo, as of today (April 5, 2024), that would be **54 days ago**.\n\nLet me know if you meant a different Super Bowl or want help tracking your personal events!",
+  "H-pack": "I don't have access to your personal viewing history or calendar, so I can't tell you exactly how many days ago you watched the Super Bowl. If you remember the date or can check your calendar, you can calculate it easily! For reference, the most recent Super Bowl (Super Bowl LVIII) was played on **February 11, 2024**. Just subtract that date from today’s date to find out how many days ago it was. Let me know if you'd like help with the calculation!",
+  "H-gap": "I don't have access to your personal viewing history or calendar, so I can't tell you exactly how many days ago you watched the Super Bowl. If you remember the date or can check your calendar, you can calculate it easily! For reference, the most recent Super Bowl (Super Bowl LVIII) was played on **February 11, 2024**. Just subtract that date from today’s date to find out how many days ago it was. Let me know if you'd like help with the calculation!"
+ }
+}

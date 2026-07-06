@@ -1,0 +1,20 @@
+{
+ "question_id": "71017277",
+ "question": "I received a piece of jewelry last Saturday from whom?",
+ "answer": "my aunt",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12333,
+  "tail_start_msg": 48
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "It looks like your sentence got cut off! You wrote: *\"I received a piece of jewelry last Saturday from whom?\"* — but the name or person is missing at the end.\n\nCould you please complete the sentence? For example:\n- *\"I received a piece of jewelry last Saturday from my grandmother.\"*\n- *\"I received a piece of jewelry last Saturday from my friend Sarah.\"*\n\nOnce you provide the full information, I’d be happy to help you craft a thoughtful response, write a thank-you note, or even help you research the piece!",
+  "B": "It looks like your sentence is incomplete — you wrote: *\"I received a piece of jewelry last Saturday from whom?\"* — which seems to be asking a question, but the name or identity of the person who gave you the jewelry is missing.\n\nTo help you better, could you please clarify:\n\n- Who gave you the jewelry?  \n- Or are you trying to remember who it was?\n\nIf you're asking for help recalling the person, I’d be happy to help you think through possible clues — like the occasion, where you were, or any details about the gift.\n\nLet me know how I can assist! 💎",
+  "E-tuned": "It looks like your sentence is incomplete — you wrote, *\"I received a piece of jewelry last Saturday from whom?\"* — which seems to be asking a question, but the name or identity of the person who gave you the jewelry is missing.\n\nTo help you better, could you please clarify:\n\n- Who gave you the jewelry?\n- Are you trying to remember the person’s name?\n- Or are you asking for help phrasing a thank-you message?\n\nLet me know how I can assist! 😊",
+  "B-min-pack": "I'm sorry, but I don't have enough information to answer your question. You mentioned receiving a piece of jewelry last Saturday, but you didn't provide details about who gave it to you. If you'd like help figuring it out, you could share more context—like who was around, what the occasion was, or any clues you remember. I’d be happy to help you think through it!",
+  "H-pack": "I'm sorry, but I don't have enough information to answer your question. You mentioned receiving a piece of jewelry last Saturday, but you didn’t provide any details about who gave it to you. Could you share more context, such as the person’s name or the occasion? That way, I can help you figure it out!",
+  "H-gap": "I'm sorry, but I don't have enough information to answer your question. You mentioned receiving a piece of jewelry last Saturday, but you didn’t provide the name of the person who gave it to you. Could you please share more details?"
+ }
+}

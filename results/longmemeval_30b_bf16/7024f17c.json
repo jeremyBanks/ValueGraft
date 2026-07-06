@@ -1,0 +1,20 @@
+{
+ "question_id": "7024f17c",
+ "question": "How many hours of jogging and yoga did I do last week?",
+ "answer": "0.5 hours",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12758,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal workout history or data, so I can't tell you exactly how many hours of jogging and yoga you did last week.\n\nHowever, if you’ve been tracking your workouts using a journal, app (like Down Dog, Google Fit, or Apple Health), or a calendar, you can easily calculate your total time by:\n\n1. **Reviewing your workout log** – Look back at your entries from the past week.\n2. **Adding up the durations** – For example:\n   - If you jogged 30 minutes on Saturday and did a 30-minute yoga session on Monday and Wednesday, that’s:\n     - 30 minutes (jog) + 30 minutes (yoga) + 30 minutes (yoga)",
+  "B": "I'm sorry, but I don't have access to your personal fitness data or activity logs. To find out how many hours of jogging and yoga you did last week, you can check your fitness tracking apps or devices, such as:\n\n- **Apple Health** (if you use an iPhone or Apple Watch)\n- **Google Fit** (if you use an Android device)\n- **Strava** (great for jogging and running)\n- **MyFitnessPal** (tracks both exercise and yoga)\n- **Fitbit**, **Garmin**, or **Samsung Health** (if you use a smartwatch or fitness tracker)\n\nThese apps usually provide weekly summaries that show your total time spent on different activities, including jogging and yoga. If you’ve been logging your sessions manually or using a journal, you",
+  "E-tuned": "I'm sorry, but I don't have access to your personal fitness data or activity logs. To find out how many hours of jogging and yoga you did last week, you can check your fitness tracking apps or devices, such as:\n\n- **Apple Health** (if you use an iPhone or Apple Watch)\n- **Google Fit** (if you use an Android device)\n- **Strava** (great for jogging and running)\n- **MyFitnessPal** (tracks both exercise and yoga)\n- **Fitbit** or **Garmin** apps (if you use a fitness tracker)\n- **Yoga apps** like Down Dog, Alo Moves, or Glo, which often log your practice time\n\nThese apps typically provide weekly summaries that show your total time spent on different activities, including jogging",
+  "B-min-pack": "I don’t have access to your personal activity logs or data from last week, so I can’t tell you exactly how many hours of jogging and yoga you did. To find out, you can check:\n\n- Your fitness tracker (like Apple Watch, Fitbit, Garmin, etc.)\n- A workout app (such as Strava, MyFitnessPal, Google Fit, or Apple Health)\n- Your journal or habit tracker (if you’ve been recording it manually)\n\nIf you’d like, I can help you set up a simple way to track your weekly jogging and yoga time going forward—just let me know! 🏃‍♂️🧘‍♀️",
+  "H-pack": "I'm sorry, but I don’t have access to your personal activity data, including how many hours of jogging or yoga you did last week. To find out, you can check your fitness tracker (like a smartwatch or phone app such as Apple Health, Google Fit, Strava, or Fitbit), journal, or workout log where you may have recorded your sessions.\n\nIf you’d like, I can help you set up a simple weekly tracking system or suggest ways to stay consistent with your goals! Just let me know. 😊",
+  "H-gap": "I'm sorry, but I don’t have access to your personal activity logs or data from last week—so I can’t tell you exactly how many hours of jogging and yoga you did.\n\nTo find out, you can check:\n\n- **Fitness apps** like Strava, Google Fit, Apple Health, or Fitbit  \n- **Yoga apps** such as Down Dog, Yoga with Adriene (YouTube), or Glo  \n- **Your journal or notes** if you’ve been tracking manually  \n- **Smartwatch or fitness tracker** data (e.g., Garmin, Apple Watch, Samsung Galaxy Watch)\n\nIf you’d like, I can help you set up a simple weekly tracking system to keep better records going forward! Just let me know. 😊"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_93159ced",
+ "question": "How long have I been working before I started my current job at NovaTech?",
+ "answer": "4 years and 9 months",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15029,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal work history or employment details. To determine how long you've been working before starting your current job at NovaTech, you would need to look at your resume, employment records, or personal notes that track your career timeline.\n\nIf you're trying to recall this information, consider:\n\n- Reviewing your past job offers, contracts, or onboarding documents\n- Checking your LinkedIn profile or other professional networking sites\n- Looking at your personal calendar or journal entries from that time\n- Asking a former colleague or supervisor for confirmation\n\nIf you're preparing for a job interview or updating your resume, it's a good idea to compile a clear timeline of your work experience. Let me know if you'd like help organizing your career history!",
+  "B": "I'm sorry, but I don't have access to your personal work history or employment details. I can't tell you how long you've been working before joining NovaTech.\n\nIf you're trying to recall your work history, you might want to check:\n\n- Your resume or LinkedIn profile  \n- Previous employment records or offer letters  \n- Pay stubs or tax documents from past jobs  \n- Conversations or notes you may have made about your career timeline  \n\nLet me know if you'd like help organizing your work history or preparing for a job-related conversation!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal work history or employment details. I can't provide information about how long you've been working before your current job at NovaTech.\n\nIf you're trying to recall your work history, you might want to check:\n\n- Your resume or LinkedIn profile\n- Previous employment records or pay stubs\n- Contacting former employers or HR departments\n- Personal notes or journals where you may have recorded career milestones\n\nLet me know if you'd like help with something else—like preparing for a job interview, writing a resume, or exploring career development topics!",
+  "B-min-pack": "I don’t have access to your personal work history or employment records, so I can’t tell you exactly how long you’ve been working before joining NovaTech. If you’re trying to recall or document your professional timeline, you might want to review your resume, LinkedIn profile, or past employment records. Let me know if you’d like help organizing or reflecting on your career journey—I’m happy to assist!",
+  "H-pack": "I don't have access to your personal work history or employment details, so I can't tell you how long you've been working before your current job at NovaTech. That information would need to come from your own records, resume, or personal memory. If you're trying to recall or document your career timeline, you might consider reviewing past job offers, employment contracts, or personal notes. Let me know if you'd like help structuring a professional timeline or resume!",
+  "H-gap": "I don't have access to your personal work history or employment details, so I can't tell you how long you've been working before starting your current job at NovaTech. That information would need to come from your own records, resume, or personal memory. If you're trying to recall or document your career timeline, you might consider reviewing past job offers, employment contracts, or personal notes. Let me know if you'd like help structuring a professional timeline or resume!"
+ }
+}

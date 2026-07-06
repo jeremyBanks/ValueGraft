@@ -1,0 +1,20 @@
+{
+ "question_id": "4c36ccef",
+ "question": "Can you remind me of the name of the romantic Italian restaurant in Rome you recommended for dinner?",
+ "answer": "Roscioli",
+ "question_type": "single-session-assistant",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15145,
+  "tail_start_msg": 75
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "The romantic Italian restaurant I recommended for a special dinner in Rome is **Roscioli**.  \n\nLocated near the Campo dei Fiori market, Roscioli is celebrated for its elegant atmosphere, exceptional wine list, and high-quality ingredients. It’s a perfect choice for a romantic evening, offering a refined yet welcoming experience with a focus on traditional Italian cuisine.  \n\nEnjoy your dinner there—it’s truly a gem in the heart of Rome! 🍷🍝",
+  "B": "I'm sorry, but I don’t recall recommending a specific romantic Italian restaurant in Rome in our conversation. It’s possible that this detail was mentioned in a previous conversation that wasn’t included in our current chat history.\n\nIf you’d like, I can help you find some highly recommended romantic Italian restaurants in Rome based on ambiance, reviews, and location—just let me know!",
+  "E-tuned": "I'm sorry, but I don't have access to previous conversations or personal details, including restaurant recommendations from earlier in our chat. If you'd like, I can help you find a romantic Italian restaurant in Rome based on your preferences—such as location, ambiance, or cuisine—just let me know!",
+  "B-min-pack": "I'm sorry, but I don’t recall recommending a specific romantic Italian restaurant in Rome, as I don’t have access to past conversations or personal recommendations unless you’ve shared them in this current chat. If you’d like, I can help you find some highly rated romantic restaurants in Rome based on your preferences—such as ambiance, cuisine, or location. Just let me know! 🍝✨",
+  "H-pack": "I'm sorry, but I don’t recall recommending a specific romantic Italian restaurant in Rome in our previous conversation. If you’d like, I can help you find some highly rated romantic restaurants in Rome based on your preferences—such as ambiance, cuisine, or location. Just let me know!",
+  "H-gap": "I'm sorry, but I don’t recall recommending a specific romantic Italian restaurant in Rome in our previous conversation. If you’d like, I can help you find some highly rated, romantic dining spots in Rome based on your preferences—such as ambiance, cuisine, or location. Just let me know!"
+ }
+}

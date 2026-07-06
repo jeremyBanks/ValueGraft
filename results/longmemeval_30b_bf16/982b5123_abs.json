@@ -1,0 +1,20 @@
+{
+ "question_id": "982b5123_abs",
+ "question": "When did I book the Airbnb in Sacramento?",
+ "answer": "The information provided is not enough. You only mentioned booking Airbnb in San Francisco.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12034,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have access to your personal booking history or calendar. I can't check when you booked your Airbnb in Sacramento.\n\nIf you're trying to recall the date, here are a few ways you might find out:\n\n- Check your email inbox for confirmation messages from Airbnb (look for subject lines like \"Your reservation is confirmed\").\n- Log in to your Airbnb account and go to your \"Trips\" or \"Reservations\" section.\n- Search your phone or computer for emails with keywords like \"Airbnb,\" \"Sacramento,\" or \"reservation.\"\n\nLet me know if you'd like help with anything else related to your trip!",
+  "B": "I don’t have access to your personal booking history or calendar, so I can’t tell you when you booked your Airbnb in Sacramento.  \n\nIf you’re trying to find out, here are a few quick ways to check:  \n- **Check your email** — Look for a confirmation email from Airbnb (search for “Airbnb” or “Sacramento” in your inbox).  \n- **Log in to your Airbnb account** — Go to [airbnb.com](https://www.airbnb.com) and visit your “Trips” or “Reservations” section.  \n- **Check your phone’s notifications** — Airbnb often sends a confirmation alert when a booking is made.  \n\nLet me know if you’d like help drafting a message to Airbnb customer support or checking availability for future trips!",
+  "E-tuned": "I don’t have access to your personal booking history or calendar, so I can’t tell you when you booked your Airbnb in Sacramento.  \n\nTo find out, you can check:  \n- Your email inbox (look for confirmation emails from Airbnb)  \n- The Airbnb app or website (go to \"Trips\" or \"Reservations\")  \n- Any saved documents or notes you may have made  \n\nLet me know if you’d like help drafting a message to Airbnb customer support or checking for clues in your email!",
+  "B-min-pack": "I don’t have access to your personal booking history or calendar, so I can’t tell you when you booked the Airbnb in Sacramento. You might want to check your email inbox (look for messages from Airbnb or the host), your Airbnb account online or in the app, or your calendar for confirmation details. Let me know if you’d like help drafting a message to your host or troubleshooting your booking!",
+  "H-pack": "I don’t have access to your personal booking history, including Airbnb reservations or any other private details. To check when you booked your Airbnb in Sacramento, please:\n\n1. Log in to your Airbnb account.\n2. Go to your **Trips** or **Reservations** section.\n3. Look for the Sacramento listing and check the reservation details, which include the booking date.\n\nIf you’re having trouble locating it, you can also check your email for confirmation messages from Airbnb. Let me know if you’d like help drafting a message to Airbnb support!",
+  "H-gap": "I don’t have access to your personal booking history, calendar, or any private information—so I can’t tell you when you booked your Airbnb in Sacramento.  \n\nIf you’re trying to find that information, here are a few places to check:  \n- **Your email inbox** – Look for confirmation emails from Airbnb (check spam/junk folders too).  \n- **Airbnb app or website** – Log in to your account and go to \"Trips\" or \"Reservations.\"  \n- **Calendar apps** – If you synced the booking with Google Calendar or Apple Calendar, it might be listed there.  \n\nLet me know if you’d like help drafting a message to Airbnb support or searching for clues in your email!"
+ }
+}

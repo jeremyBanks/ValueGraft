@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_b0863698",
+ "question": "How many days ago did I participate in the 5K charity run?",
+ "answer": "7 days ago. 8 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13469,
+  "tail_start_msg": 39
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar or the exact date of your 5K charity run. To find out how many days ago you participated, you can:\n\n1. Check your phone's calendar or fitness app (like Strava, Garmin, or Nike Run Club) for the date of your run.\n2. Look at your email or text messages from the event organizers.\n3. Recall the day of the week and count backward from today.\n\nIf you let me know the date of your run or the day of the week, I can help you calculate the number of days!",
+  "B": "I don’t have access to your personal activity history or calendar, so I can’t determine how many days ago you participated in the 5K charity run. If you remember the date, you can calculate it yourself by comparing today’s date with the date of the event. Let me know if you’d like help with that!",
+  "E-tuned": "I don't have access to your personal activity history or calendar, so I can't determine how many days ago you participated in the 5K charity run. If you remember the date, you can calculate it yourself by comparing it to today's date. Let me know if you'd like help with that!",
+  "B-min-pack": "I don't have access to your personal activity history or calendar, so I can't determine how many days ago you participated in the 5K charity run. If you remember the date or have a record (like in a fitness app or event confirmation), you can calculate it from today’s date. Let me know if you'd like help with that! 🏃‍♂️✨",
+  "H-pack": "I don't have access to your personal schedule or past activities, so I can't determine how many days ago you participated in the 5K charity run. If you remember the date or have a reference (like a photo, event confirmation, or calendar entry), you can use that to calculate the number of days. Let me know if you'd like help with that!",
+  "H-gap": "I don't have access to your personal schedule or past activities, so I can't determine how many days ago you participated in the 5K charity run. If you remember the date or have a reference (like a photo, event confirmation, or calendar entry), you can use that to calculate the number of days. Let me know if you'd like help with that!"
+ }
+}
