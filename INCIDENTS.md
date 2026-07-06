@@ -202,3 +202,17 @@ sc_debug per episode.
 11. Any per-request/per-process config that can vary MUST be recorded in
     the data it produces (self-reporting instruments), never only in
     narrative docs.
+
+## 17. Local plumbing unmonitored (caught by Codex read-only pass, 19:00 07-06)
+KNOWN: lanes sat in "waiting: shim down" for hours after local tunnels
+died — pods healthy, runners correctly waiting, ZERO alarms: pod-side
+monitoring existed, results-side existed, but the LOCAL links (tunnels,
+runner wait-states) had no watcher; the one lane-progress monitor had
+self-retired at spec completion that morning. The validity audit
+legitimately missed it (out of scope). FIX: local-plumbing watch in the
+5-min loop (stuck-waiting lanes ≥12 min; forwarder-less local ports).
+RULE 12: maintain a monitoring COVERAGE MAP — enumerate every link in the
+chain (pod proc → shim health → tunnel → runner → driver → score → sync)
+and name the watcher for each; any link without one is a standing gap.
+Cross-model read-only passes are cheap and catch what scoped audits
+don't.
