@@ -370,3 +370,9 @@ controls; core B/E pairs FIRST in specs). Steps:
 3. Analysis: per-condition pass rates; paired core B-vs-E table; alpha and
    threshold dose curves; A ceiling. Morning report leads with this.
 Score dirs: scratchpad/e1_runs/<task>_<mode>/score.json (colons -> dashes).
+CREATIVE ARMS (01:55): specs now 37+37 incl. E:a-0.5 (anti-graft agents),
+E:shuf (shuffled-pairs control; expects NO benefit), and EVERY run ends
+with a from-memory recall probe (E1_RECALL_PROBE line in agent.log; true
+value = seeded constant, extract via e1_tasks prompt). Morning analysis:
+pass-rate table by condition + recall-vs-compliance dissociation (predict:
+E improves compliance more than recall).
