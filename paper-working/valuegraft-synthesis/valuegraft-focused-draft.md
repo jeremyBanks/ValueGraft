@@ -388,6 +388,11 @@ This supports treating conversation compaction as a text-plus-state problem. The
 summary is the visible artifact, but the computation that produced and
 interpreted it may also be worth preserving.
 
+## Code Availability
+
+Code, experiment scripts, draft analysis, and reproducibility notes are available
+at <https://github.com/jeremyBanks/ValueGraft>.
+
 ## References
 
 - Anthropic. n.d. [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction). Claude Platform Docs. Accessed 2026-07-06.
