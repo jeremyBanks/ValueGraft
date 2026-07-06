@@ -111,3 +111,17 @@ facts H-pack is BOTH the most accurate (38/48) AND the least fabricating
 (4%) — write-time cache state doesn't just make the model honest about
 what it lost; it loses less. This is the behavioral headline for the
 write-up, now earned at bf16 on the 30B.
+
+## 05:25 refresh
+
+- Confirm tier (c4500): B 3/3, E 3/3, layers 3/3, a1.0 1/1 — **B remains
+  ceilinged even at 4500**; the champion comparison needs genuinely harder
+  tasks (multi-constraint design queued for the day plan; single seeded
+  constraints survive any reasonable summary).
+- Dissociation probe: INSTRUMENT BUG — recall extraction shows 0/82
+  recalls including all 6 A-condition runs (the oracle "failing" to recite
+  proves the probe capture is broken, likely grabbing wrong events from the
+  SDK log). No dissociation claims tonight; fix = capture final assistant
+  message text specifically. Honest ledger entry, not a finding.
+- 91 runs scored; balance $57.49 (~$9.5/hr, 7 pods). Recommend scaling to
+  3-4 pods after the matrix drains unless E2 is approved on wake.
