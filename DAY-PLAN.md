@@ -78,3 +78,10 @@ small variant). 9B-0414 = prev-gen dense: code-path smoke only, NOT
 representative. Representative tooling smoke = 1-hour single pass of
 Air-FP8 itself on 2xA100 (~$4): mini-ladder + one A-mode episode; doubles
 as capability evidence + first onboarding step if swap proceeds.
+SCAFFOLD-CONFIG SUSPECTS (user incredulity → audit, 07-07): (1)
+native_tool_calling=False in e1_agent.py (bring-up choice; Qwen3 is
+trained for native calls); (2) temperature 0.0 (Qwen card recommends
+~0.7; documents greedy degradation in long generations). LADDER INSERT:
+if chain smokes fail → scaffold-config A/B (native calls + recommended
+sampling on one failed instance, ~$1) BEFORE any model swap. If chain
+smokes pass → config adequate, difficulty is real.
