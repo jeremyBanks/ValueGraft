@@ -432,7 +432,19 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 14:00 07-06 — PLAN OF RECORD (read first; supersedes below)
+## 15:35 07-06 — PLAN OF RECORD (read first; supersedes below)
+
+REAL-TASK BLOCK IN PROGRESS: 0 scored, 4 episodes in flight (15-25+ min,
+logs growing, compaction firing constantly — fit criterion (a) PASSED,
+see DECISIONS 15:30). Timeouts now SCORED (timeout.marker) not voided.
+4 verified lanes: r1/r3/r4 stable no-cache, r2 = icache v2 CANARY
+(gate-passed after tunnel mis-wire fix, INCIDENTS #14). Specs P1-P3 +
+P4X (canary slice; overlaps tolerated via skip-by-score). First real
+completions due ≤60 min by alarm bound; then episode economics become
+measured. Verdict analysis when real block done (~18:00-19:00 est) →
+autonomy rule. Balance ~$72.
+
+## 14:00 07-06 — (superseded)
 
 FOUR no-cache lanes (r1-r4; icache WITHDRAWN — INCIDENTS #13) running the
 priority docket: 40 REAL SWE-bench rows FIRST (0 scored yet; first
