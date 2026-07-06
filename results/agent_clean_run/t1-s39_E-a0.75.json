@@ -8,5 +8,7 @@
  "recall_probe": "711",
  "wall_seconds": 298,
  "log_bytes": 51992,
+ "self_terminated": true,
+ "timed_out": false,
  "source": "synthetic"
 }

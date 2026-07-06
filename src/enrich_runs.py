@@ -29,6 +29,8 @@ def enrich():
         if tt.exists():
             data["wall_seconds"] = round(sc.stat().st_mtime - tt.stat().st_mtime)
         data["log_bytes"] = len(txt)
+        data["self_terminated"] = "E1_AGENT_DONE" in txt
+        data["timed_out"] = (d / "timeout.marker").exists()
         repo = d / "repo"
         if (repo / ".git").exists():
             import subprocess
