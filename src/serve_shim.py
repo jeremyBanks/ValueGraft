@@ -99,6 +99,7 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
     ids = canonical_ids(_tok, msgs, renderer=render_hf)
     dbg = {"mode": mode, "alpha": alpha, "compact_at": compact_at, "full_tokens": len(ids),
            "n_compactions": sess.get("n_compactions", 0)}
+    dbg["alpha_kind"] = "map" if isinstance(alpha, dict) else alpha
     if mode == "A" or len(ids) <= compact_at:
         snap, _ = hf_prefill_ids(_model, ids)
         gp = render_hf(_tok, msgs, True)
@@ -154,7 +155,8 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
             b_snap = blend_values(b_snap, summary["snapshot"], pairs, 0.75)
             dbg["shuffled_control"] = True
         else:
-            b_snap = blend_values(b_snap, summary["snapshot"], pairs, alpha)
+            b_snap = blend_values(b_snap, summary["snapshot"], pairs, alpha,
+                                  head_map=sess.get("cfg_head_map"))
         dbg["grafted_positions"] = len(pairs)
     gp = render_hf(_tok, b_msgs, True)
     text = answer_hf(_model, _tok, b_snap, gp[len(b_ids):], len(b_ids),
@@ -189,6 +191,17 @@ def app(environ, start_response):
                     alpha = 999.0  # sentinel: shuffled-pairs control
                 elif p.startswith("a"):
                     alpha = float(p[1:])
+                elif p.startswith("cfg="):
+                    import json as _j
+                    _cfgs = _j.load(open("tune_configs.json"))
+                    _c = _cfgs[p[4:]]
+                    if "alpha_map" in _c:
+                        alpha = {int(k): v for k, v in _c["alpha_map"].items()}
+                    else:
+                        alpha = _c.get("alpha", 0.75)
+                    sess["cfg_head_map"] = ({int(k): v for k, v in
+                                             _c["head_map"].items()}
+                                            if _c.get("head_map") else None)
                 elif p.startswith("c"):
                     compact_at = int(p[1:])
         msgs = _norm(req["messages"])

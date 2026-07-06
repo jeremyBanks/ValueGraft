@@ -114,19 +114,30 @@ def evict_span(snap, start, end):
     ]
 
 
-def blend_values(b_snap, old_snap, pairs, alpha, layer_set=None):
-    """E-post: V[new_idx] <- (1-a) V_fresh + a V_old[old_idx]."""
+def blend_values(b_snap, old_snap, pairs, alpha, layer_set=None,
+                 head_map=None):
+    """E-post: V[new_idx] <- (1-a) V_fresh + a V_old[old_idx].
+    alpha: float, or dict {layer_idx: alpha} (missing layers untouched).
+    head_map: {layer_idx: [kv_head,...]} restricting which heads blend."""
     new_idx = torch.tensor([n for n, _ in pairs])
     old_idx = torch.tensor([o for _, o in pairs])
+    per_layer = isinstance(alpha, dict)
     out = []
     for li, (k, v) in enumerate(b_snap):
-        if layer_set is not None and li not in layer_set:
+        a = alpha.get(li, 0.0) if per_layer else alpha
+        heads = head_map.get(li) if head_map else None
+        if (layer_set is not None and li not in layer_set) or                 (per_layer and abs(a) < 1e-6) or                 (head_map is not None and not heads):
             out.append((k, v))
             continue
         v2 = v.clone()
         vf = v2[..., new_idx, :].float()
         vo = old_snap[li][1][..., old_idx, :].float()
-        v2[..., new_idx, :] = ((1 - alpha) * vf + alpha * vo).to(v2.dtype)
+        mixed = ((1 - a) * vf + a * vo).to(v2.dtype)
+        if heads is None:
+            v2[..., new_idx, :] = mixed
+        else:
+            for h in heads:
+                v2[:, h, new_idx, :] = mixed[:, h]
         out.append((k, v2))
     return out
 
