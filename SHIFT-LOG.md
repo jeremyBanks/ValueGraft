@@ -1,3 +1,5 @@
 ## 03:45 Claude: shift protocol begins; shims reloading; matrix pending transitions
 ## 03:50 Claude (interrupt): stale monitor reported old launcher syntax error; bash -n confirms CURRENT launch_pod.sh is valid (fixed in the register-reorder commit). No action. Back to sleep.
 ## 04:10 Claude (alarm response): e4+w1 transition scripts died post-kill; shims were up — tunneled 8013/8014 manually, started spec4+spec_w. 4 lanes now running (e1,e2,e4,w1). Stall alarm did its job.
+## 02:07 (local) Claude shift-start: no Codex entry found (may not have engaged). Board: 4 lanes running, 6 scored (incl. first B pass + first E fail — seed variance is real; a1.5 2/2!, a2.0 1/2). Honesty 11/12. Working: lane distribution check, p4 guard launch, confirm-phase prep.
+## 02:20 Claude shift-end: guard running on p4 (GUARD_DONE marker; expect 'guard' scores to CRATER vs B — if guard HELPS, posslots is contaminated). Confirm-phase spec staged (spec_confirm.txt, 80 runs, CHAMPION placeholder — sed-substitute the matrix winner then split across lanes). Matrix at ~8 scored, 4 lanes healthy. Handing to Codex 30 min.
