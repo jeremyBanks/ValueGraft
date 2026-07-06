@@ -125,3 +125,16 @@ write-up, now earned at bf16 on the 30B.
   message text specifically. Honest ledger entry, not a finding.
 - 91 runs scored; balance $57.49 (~$9.5/hr, 7 pods). Recommend scaling to
   3-4 pods after the matrix drains unless E2 is approved on wake.
+
+## 06:00 wind-down (final night state)
+
+Final matrix: 96 runs. A 6/6 | B 24/26 (92%) | E@0.75 6/22 (27%, ANOMALY —
+see below) | E other-α 16/20 (80%) | **cfg=layers 9/9** | shuffled 3/3 |
+anti-graft 2/5. Two validity fixes landed for the day's re-runs: (1)
+per-mode session isolation in the shim — arms sharing a task:seed COULD
+previously share frozen-boundary/summary/config state server-side, a
+candidate explanation for the α=0.75 anomaly (its rows ran interleaved
+with other modes); (2) recall-probe capture now grabs the final assistant
+message (last night's dissociation data was instrument-invalid).
+Terminated 5 pods; kept e1 (warm shim, for anomaly re-runs + champion
+work) + p4 (tuning). Balance $51.81, burn now $2.78/hr.
