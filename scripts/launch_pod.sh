@@ -33,6 +33,6 @@ LME=/Users/jeb/.cache/huggingface/hub/datasets--xiaowu0162--longmemeval-cleaned/
 rsync -azL -e "ssh -i $K -p $PORT" "$LME" root@$IP:/workspace/exp/longmemeval_s_cleaned.json
 $SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural data/ 2>/dev/null; true"
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh
-$SSH 'cd /workspace/exp && chmod +x job.sh && nohup bash job.sh > job.log 2>&1 & echo "job pid $!"'
 echo "$NAME $PORT $IP" >> $S/pods.list
+$SSH 'cd /workspace/exp && chmod +x job.sh && nohup bash job.sh > job.log 2>&1 & echo "job pid $!"' 
 echo "LAUNCHED $NAME at $IP:$PORT"
