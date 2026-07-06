@@ -53,6 +53,7 @@ COMPACT_AT = int(os.environ.get("SC_COMPACT_AT", "9000"))
 TAIL_KEEP = int(os.environ.get("SC_TAIL_KEEP", "2500"))
 E_ALPHA = float(os.environ.get("SC_E_ALPHA", "0.75"))
 PORT = int(os.environ.get("SC_PORT", "8000"))
+INCR_CACHE = os.environ.get("SC_INCR_CACHE") == "1"
 
 _lock = threading.Lock()
 _model = None
@@ -101,11 +102,32 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
            "n_compactions": sess.get("n_compactions", 0)}
     dbg["alpha_kind"] = "map" if isinstance(alpha, dict) else alpha
     if mode == "A" or len(ids) <= compact_at:
-        snap, _ = hf_prefill_ids(_model, ids)
+        snap = None
+        if INCR_CACHE:
+            ic = sess.get("icache")
+            if ic and ids[: len(ic["ids"])] == ic["ids"]:
+                from kvlib_hf import prefill as _pf, snapshot_cache as _sc, rebuild_cache as _rc
+                from transformers import DynamicCache as _DC
+                cache = _rc(ic["snap"], _DC)
+                new = ids[len(ic["ids"]):]
+                if new:
+                    pos = torch.arange(len(ic["ids"]), len(ids),
+                                       device=_model.device)[None]
+                    cache, _ = _pf(_model, torch.tensor([new], device=_model.device),
+                                   past=cache, position_ids=pos)
+                snap = _sc(cache)
+                dbg["icache"] = "HIT"
+        if snap is None:
+            snap, _ = hf_prefill_ids(_model, ids)
+            if INCR_CACHE:
+                dbg["icache"] = "MISS"
+        if INCR_CACHE:
+            sess["icache"] = {"ids": list(ids), "snap": snap}
         gp = render_hf(_tok, msgs, True)
         text = answer_hf(_model, _tok, snap, gp[len(ids):], len(ids),
                          max_tokens=max_tokens)
-        del snap
+        if not INCR_CACHE:
+            del snap
         torch.cuda.empty_cache()
         return text, dbg
 
