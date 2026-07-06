@@ -32,6 +32,8 @@ rsync -azL -e "ssh -i $K -p $PORT" src data/synthetic data/natural data/decoy_pr
 LME=/Users/jeb/.cache/huggingface/hub/datasets--xiaowu0162--longmemeval-cleaned/snapshots/98d7416c24c778c2fee6e6f3006e7a073259d48f/longmemeval_s_cleaned.json
 rsync -azL -e "ssh -i $K -p $PORT" "$LME" root@$IP:/workspace/exp/longmemeval_s_cleaned.json
 $SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural data/ 2>/dev/null; true"
+bash -n "$JOB" || { echo "FAIL: job script syntax"; exit 1; }
+for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" || { echo "FAIL: $f syntax"; exit 1; }; done
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh
 echo "$NAME $PORT $IP" >> $S/pods.list
 $SSH 'cd /workspace/exp && chmod +x job.sh && nohup bash job.sh > job.log 2>&1 & echo "job pid $!"' 
