@@ -65,7 +65,12 @@ code and PASSED isolation probes (r4 verified serving mode-specific debug
 fields). Root cause not yet found — do NOT reuse e1-style hand-reloaded
 shims; always launcher-fresh + probe-gated.
 
-## 7. Ceiling effect (instrument insensitivity)
+## 7. Ceiling effect (instrument insensitivity) — REVISED 10:30 07-06
+UPDATE (KNOWN): clean-instrument B = 2/7 on the same task family — the
+"ceiling" did NOT reproduce post-fix; it was plausibly a session-leak
+artifact (B inheriting warm summaries from earlier arms on shared
+sessions). Treat the night ceiling as a property of the LEAKY instrument.
+Original entry (context):
 KNOWN: single-constraint seeded tasks pass under plain compaction ~90%
 (constraints survive summaries/tail echoes) at c9000/c6000/c4500 — B~A
 means NO room to show recovery. Round-1's dramatic B-fail/E-pass (4
