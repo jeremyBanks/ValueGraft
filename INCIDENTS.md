@@ -150,3 +150,13 @@ redesign + soak test at confirm phase. Also: r2 discovered (earlier
 width-retry success), synced, added as 4th lane; registry deduped.
 THEORY→KNOWN update for #12: resource arithmetic, not just leak, was the
 recurring shim-death mechanism all day.
+
+## 14. Mis-wired tunnel: 8023 → r3 instead of r2 (07-06, found ~15:05)
+KNOWN: local tunnel 8023 was created against r3's endpoint; r2's lane
+unknowingly sent all rows to r3's shim (r2 GPU idle; r3 double-loaded —
+throughput loss, no validity impact: same code+isolation semantics served
+correctly). Canary gate correctly FAILED against the wrong pod — the gate
+design caught the mis-wire before v2 was trusted. Rewired + verified;
+canary gate PASS (MISS→HIT, pred 59.2GB); r2 admitted with icache v2.
+LESSON: tunnel creation must verify endpoint identity (health + a
+pod-unique marker), not just connectivity — added to fix backlog.
