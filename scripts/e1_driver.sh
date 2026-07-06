@@ -13,7 +13,7 @@ cd "$S/ohenv"
 export LLM_MODEL="openai/sc-$MODE" LLM_BASE_URL="$BASE" LLM_API_KEY="sc"
 export SANDBOX_TYPE=local WORKSPACE_BASE="$WS/repo"
 export LOG_ALL_EVENTS=true
-timeout 3600 ./.venv/bin/python -m openhands.core.main \
+perl -e 'alarm 3600; exec @ARGV' -- ./.venv/bin/python -m openhands.core.main \
   -t "$(uv run --project /Users/jeb/experimentation python /Users/jeb/experimentation/src/e1_tasks.py prompt "$TASK")" \
   > "$WS/agent.log" 2>&1 || true
 cd /Users/jeb/experimentation
