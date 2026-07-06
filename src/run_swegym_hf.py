@@ -198,7 +198,7 @@ def main():
 
         tmp = outfile.with_suffix(".tmp")
         with open(tmp, "w") as f:
-            json.dump({"idx": idx, "meta": meta, "model": MODEL,
+            json.dump({"idx": idx, "meta": meta, "model": MODEL, "dtype": "bfloat16",
                        "summary_tokens": len(summary["gen_ids"]),
                        "failed_evicted_commands": failed_evicted,
                        "n_target_tokens": len(tgt_ids), **res},

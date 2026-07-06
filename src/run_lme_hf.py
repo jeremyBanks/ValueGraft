@@ -234,7 +234,7 @@ def main():
         with open(tmp, "w") as f:
             json.dump({"question_id": q["question_id"], "question": probe,
                        "answer": str(q["answer"]),
-                       "question_type": q["question_type"], "model": MODEL,
+                       "question_type": q["question_type"], "model": MODEL, "dtype": "bfloat16",
                        "meta": meta, "s_leak": s_leak, "arms": answers},
                       f, indent=1, ensure_ascii=False)
         tmp.rename(outfile)
