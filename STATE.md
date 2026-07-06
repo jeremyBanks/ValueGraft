@@ -376,3 +376,11 @@ with a from-memory recall probe (E1_RECALL_PROBE line in agent.log; true
 value = seeded constant, extract via e1_tasks prompt). Morning analysis:
 pass-rate table by condition + recall-vs-compliance dissociation (predict:
 E improves compliance more than recall).
+PARALLEL FAN-OUT (02:10): e3+e4 launching (7 pods total). Matrix resplit
+spec1-4.txt (~19 runs each, round-robin so core B/E pairs stay first).
+Assignment when shims ready: e1->spec1 (tunnel 8010), e2->spec2 (8011),
+e3->spec3 (8012), e4->spec4 (8013); w1 = wildcard (wild_ideas.md in
+scratchpad). Matrix cmd per pod:
+nohup bash scratchpad/e1_matrix.sh http://localhost:<port>/v1 \
+  scratchpad/spec<n>.txt scratchpad/matrix<n>.log &
+The matrix script SKIPS already-scored runs (safe across resplits).
