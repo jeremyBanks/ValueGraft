@@ -13,3 +13,4 @@
 ## 06:00 Claude shift: wind-down complete (2 pods, $2.78/hr, balance $51.81). Validity fixes committed (session isolation, probe capture). t3 authoring deferred to day shift w/ user. Night program CLOSED — report final.
 ## 07:05 Claude: anomaly re-runs live (isolated sessions); DAY-PLAN.md staged for user wake; balance $48.8, 2 pods.
 ## 07:50 Claude: CLEAN RUN LAUNCHING — t3 verified+committed; 150-run pre-registered design across 5 lanes (e1 queued behind anomaly drain; r1-r4 probe-gated starters armed); disjoint task:seed per lane; isolation probe required before any lane runs.
+## 13:49 humane tier live: r1/r2/r3 real tasks @15K/6K (r2=v2 canary), r4 synthetic legacy
