@@ -301,6 +301,7 @@ def app(environ, start_response):
         print(f"[{mode}] {dbg['full_tokens']}tok "
               f"{'C' if dbg.get('compacted') else '-'} "
               f"{time.time()-t0:.0f}s", flush=True)
+        print("DBG " + json.dumps(dbg), flush=True)
         out = json.dumps(resp).encode()
         start_response("200 OK", [("Content-Type", "application/json")])
         return [out]
