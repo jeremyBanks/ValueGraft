@@ -6,11 +6,11 @@
 set -euo pipefail
 MODE=$1; TASK=$2; BASE=$3
 S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
-WS=$S/e1_runs/${TASK}_${MODE}
+WS=$S/e1_runs/${TASK//:/-}_${MODE//:/-}
 rm -rf "$WS" && mkdir -p "$WS"
 uv run python src/e1_tasks.py materialize "$TASK" "$WS/repo"
 cd "$S/ohenv"
-export LLM_MODEL="openai/sc-$MODE" LLM_BASE_URL="$BASE" LLM_API_KEY="sc"
+export LLM_MODEL="openai/sc-$MODE"  # MODE may carry :aX :cN suffixes LLM_BASE_URL="$BASE" LLM_API_KEY="sc"
 export SANDBOX_TYPE=local WORKSPACE_BASE="$WS/repo"
 export LOG_ALL_EVENTS=true
 uv run --project /Users/jeb/experimentation python /Users/jeb/experimentation/src/e1_tasks.py prompt "$TASK" > "$WS/task.txt"
