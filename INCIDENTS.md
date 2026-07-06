@@ -137,3 +137,16 @@ burn = connection errors in agent.log OR no E1_AGENT_DONE — 102 purged,
 16 genuine kept, all purged rows re-runnable (score-skip cleared).
 THEORY: most/all of today's shim deaths (r3, r4 pre-icache, possibly e1's
 weirdness) trace to the ccache leak — it was the day's root pathogen.
+
+## 13. icache VRAM-arithmetic deaths → optimization withdrawn (07-06 ~13:50)
+KNOWN: even with entry-count bounds, model (61G) + A-session snapshot
+(~5G) + summary snapshot + per-request transient clones exceeded 80G
+during long real-repo episodes → r-shims died repeatedly (~12:09).
+Validity-at-source held: the in-flight real episode (pylint-7080) produced
+invalid.marker, NOT a false score — first proof the burn class is truly
+dead. DECISION: incremental cache WITHDRAWN for the day's run (stable
+no-cache shims on all 4 lanes); returns only after VRAM-headroom-guard
+redesign + soak test at confirm phase. Also: r2 discovered (earlier
+width-retry success), synced, added as 4th lane; registry deduped.
+THEORY→KNOWN update for #12: resource arithmetic, not just leak, was the
+recurring shim-death mechanism all day.

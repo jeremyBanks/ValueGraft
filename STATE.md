@@ -432,7 +432,19 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 12:15 07-06 — PLAN OF RECORD (read first; supersedes below)
+## 14:00 07-06 — PLAN OF RECORD (read first; supersedes below)
+
+FOUR no-cache lanes (r1-r4; icache WITHDRAWN — INCIDENTS #13) running the
+priority docket: 40 REAL SWE-bench rows FIRST (0 scored yet; first
+episodes in flight), then 30 champion, then core synthetic, then dose
+variants (NOT droppable — user; champion-improvement axis). Episode
+economics UNCALIBRATED until ~5 real scores land (10-60 min/episode
+range). Fit criteria + A-solvability screening + secondary process
+endpoints all pre-registered (DECISIONS 10:15/13:20/13:35). Enrichment
+adds steps/wall/diff-size/recall/source per row. Real-task provenance
+labeling mandatory in all reports. Balance ~$78, 4 pods $5.56/hr.
+
+## 12:15 07-06 — (superseded)
 
 CLEAN RUN restarting after incident 12 (see INCIDENTS #11-12: ccache/icache
 unbounded-VRAM leaks = the day's root pathogen; dead-shim row burn purged
