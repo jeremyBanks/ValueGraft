@@ -1,0 +1,20 @@
+{
+ "question_id": "60159905",
+ "question": "How many dinner parties have I attended in the past month?",
+ "answer": "three",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13940,
+  "tail_start_msg": 46
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal calendar, attendance records, or past events. I can't track how many dinner parties you've attended in the past month.\n\nIf you'd like to keep track of your social events, you might consider using a calendar app (like Google Calendar, Apple Calendar, or Outlook) to log each dinner party or gathering. That way, you can easily look back and see how many you've attended and even add notes about the host, cuisine, or memorable moments!",
+  "B": "I don’t have access to your personal calendar, memories, or past events, so I can’t tell you how many dinner parties you’ve attended in the past month. That information is specific to your personal experience and would need to be recalled from your own records or notes.\n\nIf you’d like, I can help you create a simple way to track future events—like keeping a weekly log or using a calendar app. Just let me know!",
+  "E-tuned": "I don't have access to your personal calendar, memories, or past events, so I can't tell you how many dinner parties you've attended in the past month.  \n\nIf you're trying to recall, you might check your phone's calendar, messages, or social media for invitations or photos. Let me know if you'd like help organizing your schedule or remembering past events!",
+  "B-min-pack": "I don't have access to your personal calendar, social activities, or past events, so I can't tell you how many dinner parties you've attended in the past month. If you're trying to recall or track your social engagements, you might check your phone's calendar, messages, or notes—those are great tools for remembering such details! Let me know if you'd like help organizing your schedule or reflecting on your social life. 😊",
+  "H-pack": "I don’t have access to your personal calendar, memories, or past events—so I can’t tell you how many dinner parties you’ve attended in the past month. If you’re trying to recall, you might check your phone’s calendar, social media events, or chat logs with friends! Let me know if you’d like help tracking or organizing future events. 😊",
+  "H-gap": "I don’t have access to your personal calendar, memories, or past events—so I can’t tell you how many dinner parties you’ve attended in the past month. If you’re trying to recall, you might check your phone’s calendar, social media events, or chat logs with friends. Let me know if you’d like help brainstorming ways to track or remember such things!"
+ }
+}
