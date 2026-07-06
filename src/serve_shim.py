@@ -54,6 +54,17 @@ TAIL_KEEP = int(os.environ.get("SC_TAIL_KEEP", "2500"))
 E_ALPHA = float(os.environ.get("SC_E_ALPHA", "0.75"))
 PORT = int(os.environ.get("SC_PORT", "8000"))
 INCR_CACHE = os.environ.get("SC_INCR_CACHE") == "1"
+VRAM_BUDGET = float(os.environ.get("SC_VRAM_BUDGET_GB", "76")) * (1 << 30)
+
+
+def predicted_peak_bytes(n_tokens, cfg, weights_bytes):
+    """Arithmetic VRAM model (validated vs allocator on small model):
+    weights + live cache at (ctx+gen) + activation transient."""
+    tc = getattr(cfg, "text_config", cfg)
+    per_tok = (tc.num_hidden_layers * tc.num_key_value_heads
+               * getattr(tc, "head_dim", tc.hidden_size // tc.num_attention_heads)
+               * 2 * 2)  # K+V, bf16
+    return weights_bytes + (n_tokens + 3200) * per_tok + (2 << 30)
 
 _lock = threading.Lock()
 _model = None
@@ -102,36 +113,60 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
            "n_compactions": sess.get("n_compactions", 0)}
     dbg["alpha_kind"] = "map" if isinstance(alpha, dict) else alpha
     if mode == "A" or len(ids) <= compact_at:
-        snap = None
         if INCR_CACHE:
+            from kvlib_hf import prefill as _pf, greedy_generate as _gg
+            w = getattr(_model, "_sc_weights_bytes", None)
+            if w is None:
+                w = sum(p.numel() * p.element_size() for p in _model.parameters())
+                _model._sc_weights_bytes = w
+            fits = predicted_peak_bytes(len(ids), _model.config, w) < VRAM_BUDGET
             ic = sess.get("icache")
-            if ic and ids[: len(ic["ids"])] == ic["ids"]:
-                from kvlib_hf import prefill as _pf, snapshot_cache as _sc, rebuild_cache as _rc
-                from transformers import DynamicCache as _DC
-                cache = _rc(ic["snap"], _DC)
+            cache = None
+            if fits and ic and ids[: len(ic["ids"])] == ic["ids"]:
+                cache = ic["cache"]
                 new = ids[len(ic["ids"]):]
                 if new:
                     pos = torch.arange(len(ic["ids"]), len(ids),
                                        device=_model.device)[None]
                     cache, _ = _pf(_model, torch.tensor([new], device=_model.device),
                                    past=cache, position_ids=pos)
-                snap = _sc(cache)
                 dbg["icache"] = "HIT"
-        if snap is None:
-            snap, _ = hf_prefill_ids(_model, ids)
-            if INCR_CACHE:
-                dbg["icache"] = "MISS"
-        if INCR_CACHE:
-            for other in list(_sessions):
-                _sessions[other].pop("icache", None)
-            sess["icache"] = {"ids": list(ids), "snap": snap}
-            n_cached = sum(1 for v in _sessions.values() if "icache" in v)
-            assert n_cached <= 1, f"icache bound violated: {n_cached}"
+            if cache is None:
+                for other in list(_sessions):
+                    _sessions[other].pop("icache", None)
+                sess.pop("icache", None)
+                torch.cuda.empty_cache()
+                from transformers import DynamicCache as _DC
+                cache, _ = _pf(_model, torch.tensor([ids], device=_model.device),
+                               past=_DC())
+                dbg["icache"] = "MISS" if fits else "SKIP(size)"
+            gp = render_hf(_tok, msgs, True)
+            feed = gp[len(ids):]
+            pos = torch.arange(len(ids), len(gp),
+                               device=_model.device)[None]
+            cache, logits = _pf(_model, torch.tensor([feed], device=_model.device),
+                                past=cache, position_ids=pos)
+            eos = _model.config.eos_token_id
+            eos_ids = {eos} if isinstance(eos, int) else set(eos)
+            toks = _gg(_model, cache, logits, max_tokens, eos_ids,
+                       next_position=len(gp))
+            text = _tok.decode(toks, skip_special_tokens=True)
+            cache.crop(len(ids))
+            if fits:
+                for other in list(_sessions):
+                    _sessions[other].pop("icache", None)
+                sess["icache"] = {"ids": list(ids), "cache": cache}
+                n_cached = sum(1 for v in _sessions.values() if "icache" in v)
+                assert n_cached <= 1, f"icache bound violated: {n_cached}"
+            dbg["icache_pred_gb"] = round(predicted_peak_bytes(
+                len(ids), _model.config, w) / (1 << 30), 1)
+            torch.cuda.empty_cache()
+            return text, dbg
+        snap, _ = hf_prefill_ids(_model, ids)
         gp = render_hf(_tok, msgs, True)
         text = answer_hf(_model, _tok, snap, gp[len(ids):], len(ids),
                          max_tokens=max_tokens)
-        if not INCR_CACHE:
-            del snap
+        del snap
         torch.cuda.empty_cache()
         return text, dbg
 
