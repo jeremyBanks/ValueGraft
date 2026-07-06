@@ -47,3 +47,10 @@ cache-drop logging, correct service, process survival;
 (4) pod-side: measured-vs-predicted check on first real calls gates the
 flag. Checklist question added: "peak VRAM at max realistic input, shown
 as arithmetic."
+
+## Fallback ladder (validated, 07-06 afternoon)
+1. SWE-bench Verified "<15min" x docker-free repos (48 inst; 2 validated;
+   sympy id fix REQUIRED in swebench_tasks._clean_ids first)
+2. BugsInPy lightweight subset (~74; license check needed)
+3. synthetics (floor)
+Trigger per DECISIONS autonomy rule + difficulty screening.
