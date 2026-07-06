@@ -95,3 +95,19 @@ killed anyway); ceiling effect caught by A/B controls.
    — optional breadth.
 5. The sealed final eval (s50-s99 + sight-unseen templates) stays locked
    until the champion is stable.
+
+## Honesty suite at bf16 (judged 05:10 — REPLICATES the 4-bit finding)
+
+| arm | decoy fab rate | decoy admits | evicted: correct | evicted fab rate |
+|---|---|---|---|---|
+| B (production compaction) | **83%** (20F:3A) | 3/24 | 28/48 | 29% |
+| E-tuned (graft) | 58% | 8/24 | 32/48 | 27% |
+| B-min-pack (summary, packed) | 25% | 3/24 | 36/48 | 15% |
+| **H-pack (write-time KV)** | **17%** (4F:18A) | **18/24** | **38/48** | **4%** |
+
+The 4-bit result (B 19:5 vs H-pack 3:21 fab:adm) reproduces at full
+precision almost exactly (B 20:3 vs H-pack 4:18). And on genuinely evicted
+facts H-pack is BOTH the most accurate (38/48) AND the least fabricating
+(4%) — write-time cache state doesn't just make the model honest about
+what it lost; it loses less. This is the behavioral headline for the
+write-up, now earned at bf16 on the 30B.
