@@ -144,3 +144,12 @@ mimicry, partially mitigated by A's high absolute logprob ~74%/token). It is
 skipped only if stage 2 shows the mechanism genuinely inert in coding frames
 (dependence present + no recovery on any metric). Scenario call made with
 stage-2 results.
+
+
+## Configuration policy (07-05 night; authoritative: value-steering-design-notes.md)
+
+Primary/reported intervention = global α (0.75 at 30B). Slot-mask and
+factored-calibration work is EXPLORATION-section material. Gemma stage uses
+the factored calibration interface. Guard check (wrong-conv through the 57
+slots) still runs — its outcome is reported either way but does not change
+the primary approach.
