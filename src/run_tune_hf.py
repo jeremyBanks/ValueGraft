@@ -104,7 +104,9 @@ def build_ctx(model, tokenizer, cid, msgs, tsm, cont_spec):
                     if msgs[i]["role"] == "user"]
         tgt75 = 0.75 * len(ids)
         tsm = min(user_idx, key=lambda i: abs(starts[i] - tgt75))
-    summary = generate_summary_hf(model, tokenizer, msgs,
+    smsgs = (msgs[:-1] if fam == "gemma" and msgs[-1]["role"] == "user"
+             else msgs)
+    summary = generate_summary_hf(model, tokenizer, smsgs,
                                   request=SUMMARY_REQUEST)
     if fam == "gemma":
         from arms_common import build_b_messages_gemma
