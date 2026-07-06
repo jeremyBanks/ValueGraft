@@ -20,6 +20,13 @@ perl -e 'alarm 3600; exec @ARGV' -- ./.venv/bin/python \
   /Users/jeb/experimentation/src/e1_agent.py "$MODE" "$BASE" "$WS/repo" "$WS/task.txt" \
   > "$WS/agent.log" 2>&1 || true
 cd /Users/jeb/experimentation
+# validity-at-source: an episode that never ran (connection errors, no
+# completion marker) must NOT produce a score file — it stays re-runnable.
+if ! grep -q "E1_AGENT_DONE" "$WS/agent.log" 2>/dev/null || \
+   grep -qE "Connection refused|Connection reset|APIConnectionError" "$WS/agent.log"; then
+  echo "INVALID_EPISODE (no completion / connection errors) — no score written" | tee "$WS/invalid.marker"
+  exit 0
+fi
 uv run python $TASKMOD score "$TASK" "$WS/repo" "$WS/agent.log" \
   > "$WS/score.json"
 cat "$WS/score.json"
