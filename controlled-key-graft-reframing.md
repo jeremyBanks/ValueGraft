@@ -1,212 +1,179 @@
-# Controlled Key-Graft Reframing
+# Controlled KV-Graft Reframing
 
-This note records a required tightening of the ValueGraft terminology and
-experimental design. The goal is to separate exploratory arms that changed
-multiple things at once from the cleaner causal comparison we now actually
-want.
+This note records the revised terminology and experimental-control rule for
+ValueGraft-style interventions. The purpose is to make future comparisons
+scientifically interpretable while preserving the meaning of experiments
+already in flight.
 
-## Core Correction
+## Core Model
 
-The main scientific question is not whether a packed layout, a different tail
-policy, or a different summary presentation helps. Those can be useful
-engineering choices or auxiliary controls, but they are not the key causal
-axis.
+**ValueGraft** should refer to the family of interventions that reuse or blend
+cached key/value state across a compaction boundary.
 
-For a clean comparison, the intended difference between arms must be the axis
-we claim to be testing. In particular, for a key-policy comparison, the only
-intended difference between the two state-preserving variants should be:
+For an aligned token in the compacted context, the general form is:
 
 ```text
-How are the cached keys for the same summary tokens constructed?
+K(alpha_K) = (1 - alpha_K) * K_fresh
+             + alpha_K * K_write_time_rerotated
+
+V(alpha_V) = (1 - alpha_V) * V_fresh
+             + alpha_V * V_write_time
 ```
 
-Everything else should be held fixed:
+`K_fresh` and `V_fresh` come from ordinary re-encoding of the compacted
+context. `K_write_time_rerotated` and `V_write_time` come from the state the
+model wrote when the summary token was generated. If a write-time key is used
+at a different position, it must first be re-rotated into the compacted
+position.
 
-- same source conversation
-- same generated summary text
-- same summary token IDs
-- same compacted context layout
-- same recent tail
-- same token positions for the summary and tail
-- same continuation prompt
-- same value vectors, or the same value-blending rule
-- same decoding and evaluation settings
+`alpha_K` and `alpha_V` may be constants or structured policies, including
+per-layer, per-head, token/span-dependent, or tuned matrices. A bare `alpha`
+should only be used when it is clear from context that the same setting applies
+to both K and V, or when the experiment only has one active alpha parameter.
+For new design notes, prefer explicit `alpha_K` and `alpha_V`.
 
-If an arm drops the tail while another keeps it, or if one arm uses a different
-layout, then that comparison is not an isolated test of key handling.
+## Named Regions
 
-## Revised Vocabulary
+These are not separate algorithms so much as regions of the same parameter
+space:
 
-Use **ValueGraft** as the umbrella name for cache-state interventions across a
-compaction boundary. Under that umbrella, describe variants by their key and
-value policies, not by incidental layout names.
+| Name | Key policy | Value policy |
+|---|---|---|
+| Plain Summary Compaction | `alpha_K = 0` | `alpha_V = 0` |
+| V-only Graft | `alpha_K = 0` | `alpha_V` varied or tuned |
+| K-only Graft | `alpha_K` varied or tuned | `alpha_V = 0` |
+| KV-Graft | `alpha_K` varied or tuned | `alpha_V` varied or tuned |
+| Coupled KV-Graft | `alpha_K = alpha_V = alpha` | same shared alpha |
 
-### Plain Summary Compaction
+`alpha = 1` is not a separate method. It is the parameter setting where that
+side uses write-time state exactly. `alpha = 0` means that side uses fresh
+compacted-context state exactly. Values above 1 are extrapolation settings and
+should be described as such.
 
-Freshly re-encode the compacted prompt:
+Do not introduce a separate method name for the `alpha = 1` case. If needed,
+say `alpha_V = 1`, `alpha_K = 1`, or `alpha_K = alpha_V = 1`.
+
+## Current Experiment State
+
+The in-flight coding experiments using `E`, `E:a0.75`, `E:a1.0`, and
+`E:cfg=layers` should be interpreted as **V-only Graft** experiments:
 
 ```text
-K = fresh compact-context keys
-V = fresh compact-context values
+alpha_K = 0
+alpha_V = constant or tuned, depending on the arm
 ```
 
-This is the ordinary summary baseline.
+Those experiments do not need to be renamed or interrupted. Existing internal
+identifiers, specs, result directories, and logs should remain stable for
+provenance. In reports, translate them into the clearer conceptual vocabulary.
 
-### V-Graft
+The historical `H-pack` arm should be interpreted as a packed/minimal-layout
+KV-retention experiment, not as the clean V-only versus KV comparison. It used
+a packed layout with sinks plus summary-token state, while the live coding
+setup uses a production-shaped compacted context with summary plus recent tail.
+That layout/tail difference is a confound for claims about key policy.
 
-Use fresh compact-context keys, but blend the values for aligned tokens toward
-their write-time values:
+The historical packed arms are still useful evidence about the behavior of
+that packed layout. They should not be used as if they isolate the effect of
+fresh keys versus write-time keys in the same compacted context.
+
+## Controlled Comparisons
+
+For any future comparison, the intended experimental axis must be the axis that
+actually changes.
+
+To test key policy:
+
+- hold `alpha_V` fixed
+- hold summary text fixed
+- hold summary token IDs fixed
+- hold compacted-context layout fixed
+- hold retained tail fixed
+- hold token positions fixed
+- hold continuation prompt and decoding fixed
+- vary only `alpha_K` or the key policy
+
+To test value policy:
+
+- hold `alpha_K` fixed
+- hold the same context, layout, tail, positions, prompt, and decoding fixed
+- vary only `alpha_V` or the value policy
+
+To test a coupled KV policy:
+
+- state that both K and V are changing by design
+- keep summarization, layout, tail, token positions, prompt, and decoding fixed
+- compare against appropriate one-sided and plain-compaction controls when
+  possible
+
+The central rule is simple:
 
 ```text
-K = fresh compact-context keys
-V = write-time/blended values
+Do not change summarization, layout, tail retention, token positions, or prompt
+shape unless that is the experimental axis being claimed.
 ```
 
-At `alpha = 0`, V-Graft is identical to plain summary compaction. At
-`alpha = 1`, it uses the write-time values exactly. At intermediate alpha, it
-interpolates between fresh values and write-time values. At alpha greater than
-1, it extrapolates past the write-time value in the same value direction.
+## Corrected Future Arm Family
 
-### KV-Graft
-
-Use write-time keys and write-time values for the same aligned tokens. If the
-tokens are placed at different positions in the compacted prompt, the cached
-keys must be position-corrected by RoPE re-rotation:
-
-```text
-K = write-time keys, re-rotated to the compact-context positions
-V = write-time/blended values, using the same value rule as the matched V-Graft arm
-```
-
-For the cleanest first key-policy contrast against V-Graft, use the same alpha
-in both arms. Then the remaining difference is whether the keys are freshly
-computed from the compact context or preserved from write time and re-rotated
-into place. `alpha = 1` is not a distinct method; it is simply one parameter
-setting where the value side is entirely write-time.
-
-### Alpha Policy
-
-Alpha is a value-policy parameter. It controls how much of the value vector is
-drawn from the fresh compact-context encoding versus the write-time encoding:
-
-```text
-V_blend(alpha) = (1 - alpha) * V_fresh + alpha * V_write_time
-```
-
-Alpha may be a single constant, a per-layer setting, a per-head setting, a
-token/span-dependent setting, or a tuned matrix. Those are all valid
-experiments as long as the active comparison is named clearly and all unrelated
-axes are controlled.
-
-Important boundary cases:
-
-- `alpha = 0` turns off value grafting. In V-Graft, because the keys are also
-  fresh, this is identical to plain summary compaction.
-- `alpha = 1` uses the write-time values exactly. This is not a separate
-  method; it is one point in the same alpha parameterization.
-- `alpha > 1` extrapolates past the write-time value in the same value
-  direction.
-- In KV-Graft, `alpha = 0` would still leave a keys-only intervention if the
-  keys are taken from write time. It is therefore not a full no-op unless the
-  key policy is also fresh.
-
-When comparing key policies, the alpha policy must be identical across the
-arms. When comparing alpha policies, the key policy and all context/layout
-details must be identical across the arms.
-
-## What Was Wrong With The Old `H-pack` Contrast
-
-The historical `H-pack` arm was useful as an exploratory packed-cache arm, but
-it should not be treated as the clean conceptual comparison against V-Graft.
-It changed more than key handling.
-
-In particular, the implemented packed arm used a minimal packed layout: sinks
-plus summary-token state. That differs from the production-shaped compacted
-context used by the live coding shim, which keeps a summary plus a recent
-tail. Dropping the tail changes the task-visible context and therefore
-confounds the comparison.
-
-So the old packed results should be preserved under their historical
-identifiers for provenance, but interpreted narrowly:
-
-- They can inform us about packed summary-only cache retention.
-- They can inform us about honesty or caution effects in that layout.
-- They cannot, by themselves, answer whether write-time keys outperform fresh
-  keys when all other context and value choices are held fixed.
-
-## Corrected Controlled Comparison
-
-The corrected key-policy comparison should be built in one shared compacted
+A future clean implementation should build all arms inside one shared compacted
 context:
 
 1. Generate the summary once from the original conversation prefix.
-2. Build the compacted prompt once: summary plus the same retained tail.
-3. Freshly prefill that exact compacted prompt to obtain the plain compaction
-   baseline.
+2. Build the compacted prompt once, with the same summary and same retained
+   tail.
+3. Freshly prefill that exact compacted prompt to obtain `K_fresh` and
+   `V_fresh`.
 4. Align identical summary tokens, and any other explicitly chosen identical
-   token spans, between the write-time trace and the compacted prompt.
-5. Construct V-Graft by blending only the values at those aligned positions,
-   leaving fresh keys in place.
-6. Construct KV-Graft by using the same values as V-Graft, but taking the
-   corresponding keys from the write-time cache after re-rotating them to the
-   same compacted positions.
-7. Compare V-Graft and KV-Graft only when summary text, token positions,
-   values, tail, prompt shape, and decoding settings are all identical.
+   spans, between the write-time trace and the compacted prompt.
+5. Re-rotate write-time keys for those aligned tokens into the compacted
+   positions.
+6. Construct arms by applying the chosen `alpha_K` and `alpha_V` policies.
+7. Compare arms only when all non-target axes are identical.
 
-For example, at `alpha = 1`:
+Examples:
 
 ```text
-V-Graft(alpha=1):  K_fresh + V_write_time
-KV-Graft(alpha=1): K_write_time_rerotated + V_write_time
+Plain Summary Compaction:
+  alpha_K = 0, alpha_V = 0
+
+V-only Graft:
+  alpha_K = 0, alpha_V = tuned
+
+K-only Graft:
+  alpha_K = tuned, alpha_V = 0
+
+Coupled KV-Graft:
+  alpha_K = alpha_V = tuned
+
+Independent KV-Graft:
+  alpha_K = tuned_K, alpha_V = tuned_V
 ```
 
-That isolates the key policy at that alpha setting. The same rule applies
-across the sweep:
+This framing lets us ask cleaner questions:
 
-```text
-V-Graft(alpha):  K_fresh + V_blend(alpha)
-KV-Graft(alpha): K_write_time_rerotated + V_blend(alpha)
-```
+- Does value grafting help when keys are fresh?
+- Does key grafting help when values are fresh?
+- Do key and value grafting interact?
+- Is the best policy scalar, layer-specific, head-specific, token-specific, or
+  some structured combination?
 
-The alpha policy may be scalar, per-layer, per-head, or otherwise structured.
-It must not vary between V-Graft and KV-Graft in a key-policy comparison.
+## Naming Guidance
 
-The same control principle applies in the other direction: if the experiment
-is an alpha-policy comparison, then key policy, summary text, token layout,
-tail retention, and decoding must remain fixed.
+Use method names that describe the active policy:
 
-## Naming Guidance Going Forward
+| Historical name | Recommended report name |
+|---|---|
+| `B` | Plain Summary Compaction |
+| `E` / `E:a...` | V-only Graft, with stated `alpha_V` policy |
+| `E:cfg=layers` | Layer-tuned V-only Graft |
+| `B-min-pack` | Packed Fresh-KV Control |
+| `H-pack` | Packed KV-Graft, auxiliary layout experiment |
 
-The code and existing result artifacts may keep historical identifiers such as
-`E`, `H-pack`, or `B-min-pack` where changing them would risk provenance or
-interrupt active runs. But future descriptions should not elevate those names
-into conceptual categories.
+Do not reuse `H-pack` for a future matched-context key experiment if the
+packed/minimal-layout implementation detail has been removed. That future arm
+should be named by its actual policy, for example K-only Graft, KV-Graft, or
+Coupled KV-Graft, with the relevant `alpha_K` and `alpha_V` settings stated.
 
-Recommended conceptual names:
-
-| Conceptual name | Key policy | Value policy | Context/layout requirement |
-|---|---|---|---|
-| Plain Summary Compaction | fresh | fresh | matched compacted context |
-| V-Graft(alpha) | fresh | blended by alpha | matched compacted context |
-| KV-Graft(alpha) | write-time, re-rotated if moved | blended by same alpha | same matched compacted context |
-| Packed Fresh-KV Control | fresh | fresh | packed/minimal layout; auxiliary only |
-| Packed KV-Graft | write-time, re-rotated if moved | write-time | packed/minimal layout; auxiliary only |
-
-The word "packed" should describe a layout condition, not the headline method.
-If a packed layout is studied, it should be named as such and treated as a
-separate layout experiment or auxiliary control.
-
-## Implication For Current Interpretation
-
-We should not discard the exploratory packed-arm results, but we should stop
-using them as if they cleanly answer the V-Graft versus KV-Graft question. The
-right interpretation is:
-
-```text
-Old packed arms: evidence about packed summary-only retention and its behavior.
-Matched V/KV arms: required evidence about whether preserving keys matters.
-```
-
-This is a basic experimental-control issue. Now that the relevant options are
-clearer, the next implementation should minimize variation rather than
-continue comparing arms that differ in both cache state and visible context.
+The old identifiers can remain in code and result files where changing them
+would create provenance risk. The write-up vocabulary should use the clearer
+policy names.
