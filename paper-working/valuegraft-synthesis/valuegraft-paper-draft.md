@@ -82,6 +82,41 @@ negative-control-certified ways, and the positive effects are strongest in the
 settings where compaction resembles an agent continuing a task rather than a
 personal-QA benchmark eliciting refusal.
 
+### 1.1 Terminology
+
+Throughout this draft, **cached attention state** means the per-layer key and
+value tensors stored for each token during transformer prefill/generation.
+**Cached value tensors** or **value state** refer specifically to the V side of
+that state. These are not scalar attention weights. We keep the term **KV
+cache** when referring to the standard implementation object, but the
+intervention is about preserving or modifying the state stored there, not about
+ordinary caching as a speed optimization.
+
+We use **old** or **write-time** state for tensors computed while the full
+pre-compaction context was still attendable. We use **fresh** state for tensors
+computed by re-encoding the compacted summary/tail context from scratch.
+
+We separate three outcomes:
+
+- **Recall:** correctly answering questions whose evidence was in the evicted
+  context.
+- **Honesty:** admitting missing information rather than fabricating an answer.
+- **Continuity:** assigning higher likelihood to the true next continuation or
+  next agent action after compaction.
+
+The current interventions mainly improve honesty and continuity, not recall.
+
+### 1.2 Conclusions If Cut Off Here
+
+| Question | Current answer | Strength |
+| --- | --- | --- |
+| Does text-only compaction damage behavior when the task depends on evicted context? | Yes. This is clear in synthetic probes, LongMemEval, and coding-trace likelihood. | Strong within tested settings |
+| Does write-time state affect behavior for identical visible text? | Yes. H-gap vs B-min and micro-sense tests show same-text/different-state effects. | Strong as mechanism evidence |
+| Does preserving summary write-time state recover evicted factual recall? | No. Recall remains mostly lost. | Strong negative in current data |
+| Does H-pack reduce fabrication? | Yes in agentic/synthetic frames; less or not at all in 30B personal-QA framing. | Moderate, frame-dependent |
+| Does ValueGraft improve continuation or next-action likelihood? | Yes, by small but consistent amounts on holdout and coding traces. | Moderate |
+| Are per-head/per-slot policies ready for the headline method? | No. They are promising exploration, but too overfit-prone so far. | Strong methodological decision |
+
 ## 2. Contributions
 
 This draft makes four contributions, scoped to the evidence currently in hand:
