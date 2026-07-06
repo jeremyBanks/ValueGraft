@@ -277,3 +277,30 @@ RULE 16: every scorer needs a KNOWN-GOOD-SOLUTION self-test per data
 source (score the gold patch! if gold doesn't PASS, the scorer—not the
 subject—is broken). Gold-patch scoring now the mandatory smoke for any
 new instance source.
+
+## 21. Scaffold configuration may have crippled the subject model all along (found 07-07 by user-prompted audit; A/B IN FLIGHT)
+KNOWN (config facts): (a) e1_agent.py set native_tool_calling=False since
+E0 bring-up — the agent drives tools through prompt-text conventions
+although Qwen3's agentic training centers on NATIVE function calls; (b)
+generation was hardcoded GREEDY server-side (argmax in greedy_generate;
+the agent's temperature setting silently never reached decoding) although
+Qwen's model card explicitly recommends ~temp 0.7 and documents greedy
+degradation in long generations — our episodes are exactly that regime.
+IMPLICATION IF CONFIRMED: every agent-task result to date (synthetic and
+real, all tiers) measured a configuration-handicapped model; absolute
+solve rates are lower bounds only. Arm COMPARISONS remain internally
+valid (config was arm-symmetric). STATUS: discriminating A/B in flight
+(native+T0.7 on a 3x-failed control instance) + chain smokes (difficulty
+control). ROOT CAUSE: bring-up conveniences never re-derived (rule 9
+class); "temperature accepted but ignored" is also a self-reporting
+violation (rule 11 class — the config LIED by accepting a parameter).
+RULE 17: subject-model serving must follow the MODEL CARD's recommended
+inference settings unless deviation is a documented experimental choice;
+accepted-but-ignored parameters are forbidden (error or honor them).
+
+## 21b. Near-miss: T-knob repeated the incident-10 bug class — caught pre-fire
+KNOWN: the sampling knob's first implementation assigned to the session
+object before creation (identical to incident 10's cfg bug); caught by
+self-review BEFORE any traffic. Recorded as evidence the class recurs
+under speed pressure; the sess-safe pattern is now the mandatory
+template for per-request knobs.
