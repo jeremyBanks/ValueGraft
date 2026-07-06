@@ -384,3 +384,7 @@ scratchpad). Matrix cmd per pod:
 nohup bash scratchpad/e1_matrix.sh http://localhost:<port>/v1 \
   scratchpad/spec<n>.txt scratchpad/matrix<n>.log &
 The matrix script SKIPS already-scored runs (safe across resplits).
+TUNING LADDER (02:30): spec1 has E:cfg=layers rows, spec2 E:cfg=posslots.
+tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
+new-shim deploy step (launcher now ships it for new pods; e1 needs it
+manually at queue-drain transition).
