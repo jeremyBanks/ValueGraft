@@ -94,9 +94,11 @@ def main():
         if outfile.exists():
             print(f"{cid}: done"); continue
         probes = list(by_conv.get(cid, []))
-        for pr in c.get("probes", []):
-            if pr.get("class") in ("evicted-fact", "ruled-out"):
-                probes.append((pr["id"], pr["probe"]))
+        for pl in c.get("plants", []):
+            if (pl.get("category") in ("evicted_fact", "ruled_out")
+                    and not pl.get("contaminated_early")
+                    and not pl.get("contaminated_tail")):
+                probes.append((pl["id"], pl["probe"]))
         if not probes:
             continue
         t0 = time.time()
