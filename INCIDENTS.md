@@ -262,3 +262,18 @@ matching is a precondition, not a tuning detail.
 RULE 15 (from the same evening): validation queues should mix SOURCES
 (interleaved), so a single dataset's difficulty miss doesn't stall the
 whole program.
+
+## 20. Phantom test-ids aborted entire scoring runs (found via Sonnet probe, 07-06 night)
+KNOWN: some SWE-bench PASS_TO_PASS lists contain ids referencing files
+that don't exist in-repo (benchmark-era temp files, e.g.
+"test_capsysbinary.py::test_hello"); old pytest treats one missing file
+as a FATAL usage error → collects zero tests → EVERYTHING false-FAILs.
+Found only because the Sonnet difficulty probe self-verified thoroughly
+and contradicted our scorer; manual bisection isolated the phantom id.
+FIX: scorer drops-and-records phantom_ids (file-existence check) +
+degraded-scoring fallback for uncollectable parametrize escapes. All 17
+prior real verdicts re-scored: NO FLIPS (Qwen's failures were real).
+RULE 16: every scorer needs a KNOWN-GOOD-SOLUTION self-test per data
+source (score the gold patch! if gold doesn't PASS, the scorer—not the
+subject—is broken). Gold-patch scoring now the mandatory smoke for any
+new instance source.
