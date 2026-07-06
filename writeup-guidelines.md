@@ -32,3 +32,21 @@ Either way, here's what I observed."
    generation for SelfGist).
 5. **Tone:** "here's a thing I measured." Not apologetic, not overclaiming;
    limitations matter-of-fact.
+
+## Canonical arm names (user-set, 07-06 — use these in ALL human-facing text)
+
+| internal id | canonical name | formal (reframing-doc) name |
+|---|---|---|
+| A | **Original** (no compaction) | — |
+| B | **Compacted** | Plain Summary Compaction |
+| E / E:a0.75 | **Compacted + value graft (α=0.75)** | V-only Graft, α_V=0.75 |
+| E:a1.0 | **Compacted + value graft (α=1.0)** | V-only Graft, α_V=1.0 |
+| E:cfg=layers | **Compacted + layer-tuned value graft** | Layer-tuned V-only Graft |
+| E:shuf | Compacted + shuffled graft (negative control) | corrupted-alignment control |
+| E:a-0.5 | Compacted + inverted graft (negative control) | α_V<0 extrapolation control |
+| B-min-pack | Packed summary (fresh KV) control | Packed Fresh-KV Control |
+| H-pack | Packed write-time-KV | Packed KV-Graft (layout differs — see reframing doc) |
+
+Internal ids stay frozen in code/specs/result files for provenance; every
+table, report, and figure translates. Reports/messages to the user should
+use canonical names by default.
