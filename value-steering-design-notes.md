@@ -106,3 +106,13 @@ INVERTED between 4B and 30B; older-family small models showed nothing at any
 α. Claims are earned at 30B-bf16 on standard data (or larger); small-scale
 positives are promoted for validation there; small-scale negatives prune
 nothing at larger scale (applies to Gemma head factors too).
+
+## Outcome of the (b)-vs-(c) ladder at 4B (07-05 night)
+
+Holdout: factored CLAMPED +0.0074 (10/10) vs factored SIGNED +0.0036 (6/10);
+hand-tuned mid-band reference +0.0173 (10/10). At this scale/sample size the
+statistical counter-argument won: negative degrees of freedom halved the
+effect and broke consistency (collinearity variance), and the factored fit
+itself underperforms the simple band rule (profile matrix ≈ noise + band).
+Per the evidence-grading rule this does NOT close the question for
+30B-bf16 / richer profiles; it does establish signed fits aren't free money.
