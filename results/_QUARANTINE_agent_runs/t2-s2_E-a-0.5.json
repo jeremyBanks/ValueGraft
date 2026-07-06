@@ -1,0 +1,7 @@
+{
+ "task": "t2:s2",
+ "tests_pass": false,
+ "pytest_tail": "en\n\ntests/test_fetcher.py:5: TypeError\n=========================== short test summary info ============================\nFAILED tests/test_fetcher.py::test_format_log - TypeError: format_log() takes...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.01s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0
+}

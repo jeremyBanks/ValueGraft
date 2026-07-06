@@ -1,0 +1,7 @@
+{
+ "task": "t1:s1",
+ "tests_pass": false,
+ "pytest_tail": "ty'\n\nsrc/pricing.py:10: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_pricing.py::test_subtotal - AttributeError: 'Item' object h...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.01s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0
+}

@@ -1,0 +1,7 @@
+{
+ "task": "t2:s12",
+ "tests_pass": false,
+ "pytest_tail": "rc.fetcher'\n=========================== short test summary info ============================\nERROR tests/test_fetcher.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.03s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0
+}

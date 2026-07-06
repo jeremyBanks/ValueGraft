@@ -1,0 +1,7 @@
+{
+ "task": "t1:s6",
+ "tests_pass": false,
+ "pytest_tail": "ice'\n\nsrc/pricing.py:6: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_pricing.py::test_subtotal - AttributeError: 'Item' object h...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.01s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0
+}
