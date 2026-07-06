@@ -99,3 +99,14 @@ added); tune_configs.json wasn't shipped by early launcher versions.
 7. Data from a quarantined instrument is VOID, not "probably fine".
 8. Quick forensics that contradicts ground-truth files gets retracted,
    not reported.
+
+## 10. cfg=layers 500s in the clean run (07-06 ~09:10)
+KNOWN: serve_shim cfg parser referenced `sess` before creation →
+UnboundLocalError → HTTP 500 on every cfg= request since the morning
+deploy; agents erroed out; those clean-run rows were ARTIFACTS (deleted +
+requeued post-fix). Night cfg rows (9/9) ran a code path where... NOT
+fully explained — treat night cfg data per session-leak rules anyway.
+KNOWN: detected by the new-error alarm within one 5-min pass. Fix
+verified by syntax + redeploy; lanes restarted (1-2 in-flight rows may
+score as casualties — check for suspicious False rows at 09:05-09:20 and
+re-run if found).
