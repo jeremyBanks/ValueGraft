@@ -108,14 +108,30 @@ def _generate(msgs, max_tokens, mode, sess):
         torch.cuda.empty_cache()
         return text, dbg
 
-    # B/E: compact — summary of everything except the last TAIL_KEEP tokens
+    # B/E: compact — summary of everything except the last TAIL_KEEP tokens.
+    # Boundary FREEZES at first compaction (production semantics) and only
+    # rolls forward when the tail regrows past threshold; the summary (and
+    # its write-time snapshot, for E) is cached per frozen prefix.
     starts = message_token_starts(_tok, ids, len(msgs))
-    target = len(ids) - TAIL_KEEP
-    tsm = min(range(1, len(msgs)), key=lambda i: abs(starts[i] - target))
-    tsm = max(2, min(tsm, len(msgs) - 2))
-    summary = generate_summary_hf(_model, _tok, msgs,
-                                  request=SUMMARY_REQUEST_BRIEF,
-                                  max_tokens=400)
+    cache = sess.get("ccache")
+    tsm = None
+    if cache and cache["n_msgs"] <= len(msgs) \
+            and msgs[: cache["n_msgs"]] == cache["prefix_msgs"] \
+            and len(ids) - starts[cache["tsm"]] <= COMPACT_AT - min(1000, TAIL_KEEP):
+        tsm = cache["tsm"]
+        summary = cache["summary"]
+        dbg["summary_cache"] = "HIT"
+    if tsm is None:
+        target = len(ids) - TAIL_KEEP
+        tsm = min(range(1, len(msgs)), key=lambda i: abs(starts[i] - target))
+        tsm = max(2, min(tsm, len(msgs) - 2))
+        summary = generate_summary_hf(_model, _tok, msgs,
+                                      request=SUMMARY_REQUEST_BRIEF,
+                                      max_tokens=400)
+        sess["ccache"] = {"tsm": tsm, "n_msgs": len(msgs),
+                          "prefix_msgs": [dict(m) for m in msgs],
+                          "summary": summary}
+        dbg["summary_cache"] = "MISS"
     b_msgs = build_b_messages(msgs, summary["text"], tsm)
     b_ids = canonical_ids(_tok, b_msgs, renderer=render_hf)
     b_snap, _ = hf_prefill_ids(_model, b_ids)
@@ -136,7 +152,7 @@ def _generate(msgs, max_tokens, mode, sess):
     text = answer_hf(_model, _tok, b_snap, gp[len(b_ids):], len(b_ids),
                      max_tokens=max_tokens)
     sess["n_compactions"] = sess.get("n_compactions", 0) + 1
-    del b_snap, summary
+    del b_snap
     torch.cuda.empty_cache()
     return text, dbg
 
