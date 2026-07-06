@@ -1,4 +1,4 @@
-# ValueGraft: Reducing Conversation-Compaction Damage with Write-Time Value State
+# ValueGraft: Mitigating Conversation Compaction with Write-Time Value State
 
 **Status:** focused second draft. The broader synthesis remains preserved in
 `valuegraft-paper-draft.md`.  
@@ -11,7 +11,7 @@ Long-running LLM agents often compact their conversation history by replacing
 old turns with a summary and re-encoding the shortened transcript. This keeps
 visible text but discards the attention state written when the model originally
 interpreted that text in full context. We test whether preserving part of that
-write-time state can reduce compaction damage. We study two training-free
+write-time state can reduce the impact of compaction. We study two training-free
 interventions on Qwen3-4B-Instruct-2507 and Qwen3-30B-A3B-Instruct-2507:
 H-pack, which carries a summary's write-time cache entries into a packed
 context, and ValueGraft, which freshly encodes the compacted context but blends
@@ -19,12 +19,13 @@ aligned old cached value tensors into the fresh cache. The interventions do not
 recover evicted factual recall. They do, however, produce two narrower effects:
 H-pack reduces fabrication on unknowable questions in agentic compaction frames,
 and tuned ValueGraft recovers a small but consistent fraction of continuation
-and coding-agent next-action likelihood lost to compaction. On 75 OpenHands
-SWE-Gym traces, ValueGraft improves true next-action likelihood by +0.0156
-nats/token, about 10% of the full-context vs compacted gap. These results
-support a limited mitigation claim: write-time value state can preserve some
-behavioral continuity across compaction boundaries, but it is not a general
-memory-recovery mechanism.
+and coding-agent next-action likelihood lost to compaction. We use
+full-context vs text-compacted performance only as the baseline gap to be
+reduced, not as a discovery. On 75 OpenHands SWE-Gym traces, ValueGraft improves
+true next-action likelihood by +0.0156 nats/token, about 10% of that gap. These
+results support a limited mitigation claim: write-time value state can preserve
+some behavioral continuity across compaction boundaries, but it is not a
+general memory-recovery mechanism.
 
 ## 1. Introduction
 
@@ -42,7 +43,7 @@ earlier discussion was attendable.
 
 This paper asks a mitigation question:
 
-> Can we reduce the damage from text-only compaction by carrying forward a small
+> Can we reduce the impact of text-only compaction by carrying forward a small
 > amount of write-time attention state?
 
 We test two interventions.
@@ -160,17 +161,19 @@ results are bf16 HuggingFace/Transformers unless otherwise stated.
 
 ## 5. Results
 
-### 5.1 Compaction Damage Is Real but Not the Novel Claim
+### 5.1 Baseline Gap Used for Evaluation
 
-Text-only compaction substantially hurts when the target depends on evicted
-context. On LongMemEval-S, early runs show full context at 71-81% correct while
-compacted variants fall to at most 11%. The later 30B-bf16 aggregate gives a
-larger standard-data estimate: 52.5% correct with full context vs 4.1% with
-text compaction over n=320. On SWE-Gym/OpenHands next-action prediction, the
-full-context vs compacted gap is 0.164 nats/token.
+We compare each intervention against text-only compaction by measuring how much
+of the full-context vs compacted gap it reduces. That gap is a denominator and
+sanity check, not a contribution. It is already expected that removing the
+evidence hurts recall.
 
-This establishes headroom. It is not the discovery. The relevant question is
-whether write-time state reduces this damage.
+For calibration, the early LongMemEval-S runs show full context at 71-81%
+correct while compacted variants fall to at most 11%. The later 30B-bf16
+aggregate gives a larger standard-data estimate: 52.5% correct with full
+context vs 4.1% with text compaction over n=320. On SWE-Gym/OpenHands
+next-action prediction, the full-context vs compacted gap is 0.164 nats/token.
+The relevant question is how much, if any, write-time state closes those gaps.
 
 ### 5.2 Same Text, Different State
 
@@ -243,10 +246,10 @@ real but modest signal on real agent trajectories.
 
 The interventions do not recover evicted facts. On LongMemEval, all compacted
 variants remain at or below 11% correct in the early runs, and the larger
-Stage-1 aggregate confirms a large full-context vs compacted gap. In synthetic
-probe cuts, referent recovery remains poor. H-pack mainly changes whether the
-model fabricates or admits missing information; ValueGraft mainly shifts
-likelihood toward the full-context continuation.
+Stage-1 aggregate gives the expected full-context vs compacted recall gap. In
+synthetic probe cuts, referent recovery remains poor. H-pack mainly changes
+whether the model fabricates or admits missing information; ValueGraft mainly
+shifts likelihood toward the full-context continuation.
 
 This negative result is central. The current evidence supports "less damaging
 compaction," not "latent recall of deleted context."
