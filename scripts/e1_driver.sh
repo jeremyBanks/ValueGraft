@@ -20,13 +20,15 @@ perl -e 'alarm 3600; exec @ARGV' -- ./.venv/bin/python \
   /Users/jeb/experimentation/src/e1_agent.py "$MODE" "$BASE" "$WS/repo" "$WS/task.txt" \
   > "$WS/agent.log" 2>&1 || true
 cd /Users/jeb/experimentation
-# validity-at-source: an episode that never ran (connection errors, no
-# completion marker) must NOT produce a score file — it stays re-runnable.
-if ! grep -q "E1_AGENT_DONE" "$WS/agent.log" 2>/dev/null || \
-   grep -qE "Connection refused|Connection reset|APIConnectionError" "$WS/agent.log"; then
-  echo "INVALID_EPISODE (no completion / connection errors) — no score written" | tee "$WS/invalid.marker"
+# validity-at-source v2: invalid ONLY if the episode never really ran
+# (connection errors, or trivially small log). A TIMEOUT after real work is
+# a legitimate failure observation — score the repo state as-is.
+LOGSZ=$(wc -c < "$WS/agent.log" 2>/dev/null | tr -d " "); LOGSZ=${LOGSZ:-0}
+if grep -qE "Connection refused|Connection reset|APIConnectionError" "$WS/agent.log" 2>/dev/null || [ "$LOGSZ" -lt 3000 ]; then
+  echo "INVALID_EPISODE (connection errors or never started, log=$LOGSZ) — no score written" | tee "$WS/invalid.marker"
   exit 0
 fi
+grep -q "E1_AGENT_DONE" "$WS/agent.log" 2>/dev/null || echo "TIMEOUT_EPISODE (real work, no self-termination) — scoring repo state" | tee "$WS/timeout.marker"
 uv run python $TASKMOD score "$TASK" "$WS/repo" "$WS/agent.log" \
   > "$WS/score.json"
 cat "$WS/score.json"
