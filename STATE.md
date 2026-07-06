@@ -2,7 +2,45 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 17:25 07-05
+## Current focus (read this first) — updated 22:00 07-05
+### (written for a possibly-different successor agent — GPT-5.5 handoff likely)
+
+**GO-WIDE APPROVED (9 pods max, secure tier OK).** Use ONLY
+scripts/launch_pod.sh to start pods (idempotent: provision→ssh→sync→launch
+job.sh→register in scratchpad pods.list). Watchdog = scratchpad/podwatch.sh
+run by a Monitor every 30 min; it AUTO-PULLS results from every pod in
+pods.list into scratchpad/../pulled_results/ (data-loss window ≤30 min).
+NEVER hand-SSH kills: kill by PID then pgrep-verify empty. After any model
+load on a pod, verify nvidia-smi used-memory > weights size (CPU-offload
+trap). Balance check: `uv run python src/pod.py balance` (prepaid; ~$79 +
+user adding $50 soon).
+
+**In flight right now:** pod-1 (:31918@213.173.105.10) draining stage-1
+shard 0/2 (~done); pod-2 (:11989@104.255.9.187) stage-1 shard 1/2 (~30
+left); pod-4 (:12618@38.128.232.177) 4B-bf16 calibration block (tune4b.log).
+Local: idle. Sonnet judging of stage-1: batches 00-04 of 13 done
+(results/judge_batches_lme_30b_bf16/), keep 2 concurrent, prompt pattern =
+copy any prior judge Agent prompt, increment batch number.
+
+**Queue (in order):** (1) smoke run_lme_full_hf.py with SC_LME_N=1 on freed
+pod-1, then stage-1b fan-out ×4 shards via launcher (SC_SHARD=k/4, tag
+30b_full); (2) slot-guard check (wrongconv through the 57 posslots — needs
+small runner variant; NOT yet written); (3) stage-3 LoCoMo adapter (NOT yet
+written — GitHub xiaowu0162-style download, see scouting-notes.md); (4)
+Mistral-2409 pre-tune (template integration into run_tune_hf NOT done; see
+arms_common.template_ops + value-steering-design-notes; run SYSTEM-LESS);
+(5) Gemma hybrid code (NOT written); (6) 70B needs H200/2xA100 sizing.
+Config policy: value-steering-design-notes.md is authoritative (primary =
+global α=0.75 at 30B; slot mask = exploration only; evidence-grading rule:
+4-bit/small results are possibility-proofs only).
+
+**Tonight's results already banked (committed):** stage 2 complete (+0.0156,
+45/75, 10% closure on real agent traces); extended-α bracket (smooth decline
+past 1.0, peak 0.75); 4B factored/clamped-vs-signed resolved (clamped wins,
+both below simple mid-band); 4B + 30B head profiles (no validated head
+structure at 4B; 30B diffuse; posslots holdout win PENDING ITS GUARD).
+
+## Older (17:25) notes
 
 **FOUR PODS + LOCAL, all healthy.** Pod-1 (secure :31918@213.173.105.10)
 stage-1 shard 0/2 (recovered from CPU-offload stall — ALWAYS verify
