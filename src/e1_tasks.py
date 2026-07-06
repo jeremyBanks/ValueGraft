@@ -129,6 +129,12 @@ def score(task, d, log):
 
 if __name__ == "__main__":
     cmd = sys.argv[1]
+    if ":" in sys.argv[2]:
+        base, seed = sys.argv[2].split(":")
+        import hashlib
+        h = int(hashlib.sha1(seed.encode()).hexdigest()[:6], 16)
+        tpl = json.loads(json.dumps(TASKS[base]).replace("825", str(700 + h % 300)).replace("8.25%", f"{(700 + h % 300)/100:.2f}%").replace("250", str(200 + h % 200)))
+        TASKS[sys.argv[2]] = tpl
     if cmd == "materialize":
         materialize(sys.argv[2], sys.argv[3])
     elif cmd == "prompt":

@@ -94,12 +94,12 @@ def _norm(messages):
     return merged
 
 
-def _generate(msgs, max_tokens, mode, sess):
+def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT):
     """Return (text, dbg). msgs = normalized full history from the agent."""
     ids = canonical_ids(_tok, msgs, renderer=render_hf)
-    dbg = {"mode": mode, "full_tokens": len(ids),
+    dbg = {"mode": mode, "alpha": alpha, "compact_at": compact_at, "full_tokens": len(ids),
            "n_compactions": sess.get("n_compactions", 0)}
-    if mode == "A" or len(ids) <= COMPACT_AT:
+    if mode == "A" or len(ids) <= compact_at:
         snap, _ = hf_prefill_ids(_model, ids)
         gp = render_hf(_tok, msgs, True)
         text = answer_hf(_model, _tok, snap, gp[len(ids):], len(ids),
@@ -117,7 +117,7 @@ def _generate(msgs, max_tokens, mode, sess):
     tsm = None
     if cache and cache["n_msgs"] <= len(msgs) \
             and msgs[: cache["n_msgs"]] == cache["prefix_msgs"] \
-            and len(ids) - starts[cache["tsm"]] <= COMPACT_AT - min(1000, TAIL_KEEP):
+            and len(ids) - starts[cache["tsm"]] <= compact_at - min(1000, TAIL_KEEP):
         tsm = cache["tsm"]
         summary = cache["summary"]
         dbg["summary_cache"] = "HIT"
@@ -146,7 +146,7 @@ def _generate(msgs, max_tokens, mode, sess):
         ]
         pairs = build_alignment(b_ids, summary["old_ids"],
                                 set(_tok.all_special_ids), regions)
-        b_snap = blend_values(b_snap, summary["snapshot"], pairs, E_ALPHA)
+        b_snap = blend_values(b_snap, summary["snapshot"], pairs, alpha)
         dbg["grafted_positions"] = len(pairs)
     gp = render_hf(_tok, b_msgs, True)
     text = answer_hf(_model, _tok, b_snap, gp[len(b_ids):], len(b_ids),
@@ -170,16 +170,24 @@ def app(environ, start_response):
             int(environ.get("CONTENT_LENGTH") or 0))
         req = json.loads(body)
         mode = "A"
+        alpha = E_ALPHA
+        compact_at = COMPACT_AT
         m = str(req.get("model", ""))
-        if m.endswith(("sc-A", "sc-B", "sc-E")):
-            mode = m[-1]
+        if "sc-" in m:
+            parts = m.split("sc-", 1)[1].split(":")
+            mode = parts[0][:1] if parts[0][:1] in "ABE" else "A"
+            for p in parts[1:]:
+                if p.startswith("a"):
+                    alpha = float(p[1:])
+                elif p.startswith("c"):
+                    compact_at = int(p[1:])
         msgs = _norm(req["messages"])
         max_tokens = min(int(req.get("max_tokens") or 1500), 3000)
         skey = _skey(msgs)
         with _lock:
             sess = _sessions.setdefault(skey, {})
             t0 = time.time()
-            text, dbg = _generate(msgs, max_tokens, mode, sess)
+            text, dbg = _generate(msgs, max_tokens, mode, sess, alpha, compact_at)
         resp = {
             "id": f"sc-{int(time.time()*1000)}",
             "object": "chat.completion",
