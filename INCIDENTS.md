@@ -304,3 +304,17 @@ object before creation (identical to incident 10's cfg bug); caught by
 self-review BEFORE any traffic. Recorded as evidence the class recurs
 under speed pressure; the sess-safe pattern is now the mandatory
 template for per-request knobs.
+
+## 22. Validity-net pattern gap: shim 500s scored as failures (07-07, caught by inspection)
+KNOWN: chain-s1 graft@1.0 scored FAIL 0/4 but its log held 23 shim-error
+lines (InternalServerError-class phrasings) + no completion marker — an
+artifact of r2's mid-flight shim restart. The driver's invalid-episode
+pattern matched only client-side connection phrasings, missing
+server-side 500 phrasings → artifact scored. Caught because a
+total-collapse result (0/4 incl. pre-compaction ex1) was IMPLAUSIBLE and
+inspected before belief. FIX: pattern widened (InternalServerError,
+APIError, APIStatusError, "Error code: 5"). RULE 19: implausible results
+get inspected before they get believed OR reported — "too clean" and
+"too catastrophic" are both audit triggers. RULE 20: error-pattern nets
+must enumerate BOTH sides' phrasings (client + server) — tested against
+real failure logs, not imagination.

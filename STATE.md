@@ -432,7 +432,27 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 23:15 07-06 — PLAN OF RECORD (user AFK; supersedes below)
+## 04:15 07-07 — PLAN OF RECORD (supersedes below)
+
+CHAIN TIER IS THE PROGRAM. Validated: s1,s3,s4,s6 (4/6; s2/s5 pending) —
+vendor-certified difficulty (Aider-Polyglot 55.1% on the model card;
+RULE 18: card = difficulty certificate, consult FIRST). SWE-bench fully
+retired (0/7 boundary documented; only Coder variant is certified for
+it). ARM QUEUE: ~17 rows across priority lanes (B/E0.75/E1.0/champion x
+validated chains); B 4/4 on s1 = only real arm datum yet; graft@1.0
+"collapse" was an ARTIFACT (INCIDENTS 22; net widened; re-running).
+NOTE: chain A-passes do NOT trigger the swbo gate monitor — feed arms
+manually (or extend gate) on each new validation.
+CONFIRM PHASE DESIGNED: tau2 banking_knowledge (evictable policy) vs core
+tau (unevictable) = built-in dissociation on standard tasks
+(vendor-benchmarks-scouting.md; PILOT first per rule 14).
+STAGED OPTIONS: scaffold A/B (audit_ab.sh — never started, 8021-wait
+issue, LOW priority now chains pass); GLM-Air supervised trial (≤2
+pod-hrs, DECISIONS 00:45); Qwen3-Coder swap (template-validated);
+serving upgrade at phase boundary. Balance $36.5 (~6h runway at current
+burn); synthetic lane winds down at current quads' end.
+
+## 23:15 07-06 — (superseded)
 
 DIFFICULTY CRISIS + RESPONSE LADDER (all pre-agreed with user):
 1. SWE-bench validations: pruned to ≤14-line-patch instances ONLY (16
