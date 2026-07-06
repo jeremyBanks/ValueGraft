@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_98f46fc6",
+ "question": "Which event did I participate in first, the charity gala or the charity bake sale?",
+ "answer": "I participated in the charity bake sale first.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12415,
+  "tail_start_msg": 59
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "Based on your earlier messages, you participated in the **charity bake sale first**.\n\nYou mentioned:  \n> \"I'm looking for some healthy snack ideas for my office. I help organize a charity bake sale at my office today...\"\n\nThen later:  \n> \"I was thinking of participating in a charity run soon. Do you have any recommendations for a good training plan for a 5K run? I'm doing this to raise money for the local food bank, which is actually the same organization that organized the 'Run for Hunger' event I participated in a few weeks ago.\"\n\nAnd:  \n> \"I'll definitely mention the gala on my fundraising page. Speaking of which, do you have any suggestions for some good fundraising page platforms that I could use to create my page and share it",
+  "B": "I don’t have access to your personal history or past events, so I can’t tell you which event you participated in first—the charity gala or the charity bake sale.\n\nTo figure it out, you might want to check:\n- Your calendar or appointment history\n- Any emails or event invitations you received\n- Photos or social media posts from the events\n- A journal or notes where you recorded your activities\n\nIf you share a bit more context (like dates or approximate times), I’d be happy to help you sort it out!",
+  "E-tuned": "I don't have enough information to determine which event you participated in first—the charity gala or the charity bake sale. Could you provide more context, such as dates, times, or a sequence of events you remember? That would help me give you a more accurate answer.",
+  "B-min-pack": "I don’t have enough information to determine which event you participated in first—the charity gala or the charity bake sale. Could you provide more context, such as the dates or sequence of events you remember? That way, I can help you figure it out!",
+  "H-pack": "I don’t have enough information to determine which event you participated in first—the charity gala or the charity bake sale. Could you provide more context, such as dates, a timeline, or details about when each event took place? That would help me give you a clear answer.",
+  "H-gap": "I don’t have enough information to determine which event you participated in first—the charity gala or the charity bake sale. Could you provide more context, such as dates, a timeline, or details about when each event took place? That would help me give you a clear answer."
+ }
+}
