@@ -5,5 +5,7 @@ __pycache__/
 .runpod_key
 .huggingface_key
 *.key
-.pod_state.json
+.pod*state*.json
 *.parquet
+.pod*_state.json
+.pod[0-9]_state.json
