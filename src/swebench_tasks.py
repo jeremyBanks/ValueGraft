@@ -54,8 +54,8 @@ def _load_df():
 
 
 def _iid(task):
-    assert task.startswith("swb:"), f"not a swb task id: {task!r}"
-    return task[len("swb:"):]
+    assert task.startswith(("swb:", "swbo:")), f"not a swb task id: {task!r}"
+    return task.split(":", 1)[1]
 
 
 def _row(instance_id):
@@ -176,7 +176,14 @@ def prompt(task):
         "explore the relevant files, then fix the issue described below. "
         "Do not modify test files.\n\n"
     )
-    print(preamble + str(row["problem_statement"]))
+    extra = ""
+    if task.startswith("swbo:"):
+        files = sorted(set(re.findall(r"diff --git a/(\S+)",
+                                      str(row["patch"]))))
+        extra = ("\n\nThe fix is known to involve these files (oracle "
+                 "retrieval setting):\n"
+                 + "\n".join("- " + f for f in files) + "\n")
+    print(preamble + str(row["problem_statement"]) + extra)
 
 
 _OUTCOME_RE = re.compile(r"^(\S+::\S+)\s+(PASSED|FAILED|ERROR|SKIPPED)\b",
