@@ -58,3 +58,11 @@ loses, across LLM conversation-compaction boundaries.
 - Data: `data/scenarios.json` (authored plants), `data/synthetic/`,
   `data/natural/` (composed conversations), `results/raw*/` (per-conversation
   arm outputs), `results/scores.json` (probe scoring).
+
+## Source-control policy (07-05)
+
+- Committed: all docs, src/, small JSON experiment artifacts in results/
+  (the experiment record — keep them versioned). NOT committed: datasets
+  (*.parquet, HF caches), model weights, credentials (.gitignored), venv.
+- A local pre-commit hook rejects staged files >4MB (.git/hooks/pre-commit —
+  hooks do NOT travel with clones; recreate it from this note if absent).

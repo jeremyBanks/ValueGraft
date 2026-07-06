@@ -6,3 +6,4 @@ __pycache__/
 .huggingface_key
 *.key
 .pod_state.json
+*.parquet

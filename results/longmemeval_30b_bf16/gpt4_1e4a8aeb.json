@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_1e4a8aeb",
+ "question": "How many days passed between the day I attended the gardening workshop and the day I planted the tomato saplings?",
+ "answer": "6 days. 7 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13291,
+  "tail_start_msg": 48
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have enough information to determine how many days passed between the day you attended the gardening workshop and the day you planted the tomato saplings.\n\nTo calculate the number of days between two dates, I would need to know the specific dates of both events. If you can provide those dates, I’d be happy to help you calculate the difference!",
+  "B": "I'm sorry, but I don't have enough information to determine how many days passed between the day you attended the gardening workshop and the day you planted the tomato saplings. Could you please provide the dates of these two events?",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine how many days passed between attending the gardening workshop and planting the tomato saplings. Could you please provide the dates of these two events?",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days passed between your gardening workshop and the day you planted the tomato saplings. Could you please provide the dates of both events? Once I have those, I can calculate the number of days between them.",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days passed between the day you attended the gardening workshop and the day you planted the tomato saplings. Could you please provide the specific dates for both events?",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days passed between the day you attended the gardening workshop and the day you planted the tomato saplings. Could you please provide the dates of those two events?"
+ }
+}

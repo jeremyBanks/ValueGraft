@@ -1,0 +1,20 @@
+{
+ "question_id": "118b2229",
+ "question": "How long is my daily commute to work?",
+ "answer": "45 minutes each way",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12047,
+  "tail_start_msg": 43
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal information, including your daily commute time. You mentioned earlier that your commute is 45 minutes each way, so your total daily commute would be 90 minutes (1 hour and 30 minutes) if you're traveling to and from work. \n\nIf you'd like to track or analyze your commute time more precisely, you could use a GPS app like Google Maps, Apple Maps, or a dedicated commute tracker. These tools can help you monitor average travel times, identify patterns, and even suggest alternative routes to save time.",
+  "B": "I'm sorry, but I don't have access to your personal information like your daily commute time. That kind of detail isn't shared in our conversation, and I can't see your location or travel patterns.\n\nIf you'd like to know your commute time, you can check it using:\n\n- A map app like Google Maps, Apple Maps, or Waze (just enter your home and work addresses).\n- Your calendar or transit app (many automatically track commute times).\n- A fitness tracker or smartwatch that logs your daily travel.\n\nLet me know if you'd like help optimizing your commute, reducing stress during it, or turning it into a more productive or enjoyable time!",
+  "E-tuned": "I'm sorry, but I don't have access to your personal information like your daily commute time. That kind of detail isn't shared in our conversation, and I can't see your location or travel patterns.\n\nIf you'd like to estimate your commute time, you can:\n\n- Check a map app like Google Maps, Apple Maps, or Waze.\n- Use your phone’s built-in travel time tracking (if enabled).\n- Recall your usual travel time based on past experience.\n\nLet me know if you'd like tips on making your commute more enjoyable or productive!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal details like your location, workplace, or travel route—so I can't determine the length of your daily commute.\n\nHowever, if you tell me a bit more—like your starting point and destination—I’d be happy to help estimate the commute time using general transit or driving data (e.g., via Google Maps or public transit schedules). Just let me know! 🚶‍♂️🚗🚇",
+  "H-pack": "I'm sorry, but I don't have access to your personal information like your daily commute details. To find out how long your commute is, you can:\n\n- Use a map app like Google Maps, Apple Maps, or Waze — just enter your home address and workplace.\n- Check your calendar or commute tracking app (like Google Fit or a dedicated commute app).\n- Estimate based on your usual travel time using public transit, driving, biking, or walking.\n\nLet me know if you'd like help planning or optimizing your commute!",
+  "H-gap": "I'm sorry, but I don't have access to your personal information like your daily commute details. To find out how long your commute is, you can:\n\n- Use a map app like Google Maps, Apple Maps, or Waze — just enter your home address and workplace.\n- Check your calendar or commute tracking app (like Moovit or Citymapper).\n- Estimate based on your usual travel time using public transit, driving, biking, or walking.\n\nLet me know if you’d like help planning or optimizing your commute!"
+ }
+}

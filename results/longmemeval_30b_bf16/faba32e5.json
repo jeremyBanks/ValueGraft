@@ -1,0 +1,20 @@
+{
+ "question_id": "faba32e5",
+ "question": "How long did Alex marinate the BBQ ribs in special sauce?",
+ "answer": "24 hours",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14065,
+  "tail_start_msg": 45
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have any information about Alex or his BBQ ribs. I'm not sure how long he marinated them. If you're interested in learning more about his recipe, you might want to ask him directly!",
+  "B": "I'm sorry, but I don't have any information about Alex or their BBQ ribs. It seems like this question is referencing a specific story, personal experience, or context that wasn't included in our conversation. Could you provide more details or clarify the situation? I’d be happy to help!",
+  "E-tuned": "I don't have any information about Alex or their BBQ ribs. If you're asking about a specific recipe or story involving Alex, feel free to provide more context, and I’d be happy to help!",
+  "B-min-pack": "I don't have any information about Alex marinating BBQ ribs in a special sauce. This seems to be a fictional or context-specific scenario not covered in the provided knowledge base. If you have more details or context, feel free to share!",
+  "H-pack": "I don't have any information about Alex marinating BBQ ribs in a special sauce. This seems to be a fictional or context-specific scenario not covered in the provided knowledge base. If you have more details or context, I’d be happy to help!",
+  "H-gap": "I don't have any information about Alex marinating BBQ ribs in a special sauce. This seems to be a fictional or context-specific scenario not covered in the provided knowledge base. If you have more details or context, I’d be happy to help!"
+ }
+}
