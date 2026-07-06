@@ -2,7 +2,28 @@
 
 *Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
 
-## Current focus (read this first) — updated 02:40 07-06
+## Current focus (read this first) — updated 07:35 07-06
+
+**USER MANDATE: real results, done right.** The CLEAN RE-RUN is the only
+thing that matters today (pre-registration: DECISIONS 07:30). Sequence:
+1. t3 authoring+self-test by subagent (IN FLIGHT — accept only if
+   fail-pre/pass-post on base AND s30 variant verified).
+2. Anomaly probe on e1 (spec_anomaly, matrix_anomaly.log — 6 E@0.75 + 2 B,
+   isolated sessions).
+3. Pre-flight isolation probe on each shim (two modes, same task —
+   sc_debug must show independent sessions), THEN fire the 150-run
+   pre-registered design: t1/t2/t3 × s30-s39 × {A, B, E:a0.75, E:a1.0,
+   E:cfg=layers}, DISJOINT task:seed per lane (no task appears on two
+   pods), 2-3 shims (~$20-25). Analysis pre-fixed: binomial CIs +
+   McNemar-vs-B paired by task:seed.
+4. Champion promotion + confirm/sealed-final per existing pipeline rules.
+NIGHT MATRIX = exploration only (session-leak postmortem, DECISIONS 07:20);
+do NOT cite its arm comparisons. Valid night results: guards (posslots
+dead, layers passed), honesty-bf16 replication, stage-1 damage, stage-2
+final, round-1 signal. Board: e1 shim (fixed code, session-isolated) + p4;
+balance ~$48; monitors live; MORNING-REPORT.md + DAY-PLAN.md current.
+
+## Older focus (02:40 07-06) notes
 
 **NIGHT PROGRAM: E-track (agent coding) is thefocus.** LongMemEval is DEAD
 (user directive; stage-1 damage table kept, 1b/H200 killed). First signal:
