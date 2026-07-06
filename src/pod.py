@@ -89,6 +89,9 @@ def create(gpu=DEFAULT_GPU):
         "supportPublicIp": True,
         "ports": ["22/tcp"],
     }
+    if os.environ.get("SC_POD_SPOT") == "1":
+        body["interruptible"] = True
+        body["bidPerGpu"] = float(os.environ.get("SC_POD_BID", "1.0"))
     pod = api("POST", "/pods", body)
     STATE.write_text(json.dumps(pod, indent=1))
     print("created pod", pod.get("id"))
