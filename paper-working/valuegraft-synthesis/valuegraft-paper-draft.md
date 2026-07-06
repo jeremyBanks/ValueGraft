@@ -20,11 +20,14 @@ context but replaces or blends aligned cached value tensors with their
 full-context counterparts. Across synthetic conversations, standard benchmark
 material, and offline coding-agent traces, these methods do not restore evicted
 factual recall. However, they do produce two scoped positive effects:
-write-time summary state sharply reduces fabrication on unknowable post-
-compaction questions in agentic frames, and tuned ValueGraft recovers a small
-but consistent fraction of continuation or next-action likelihood lost to
-compaction. The strongest coding-adjacent result so far is a +0.0156 nat/token
-gain on OpenHands SWE-Gym trajectory prediction over 75 traces, about 10% of the
+write-time summary state reduces fabrication on unknowable post-compaction
+questions in agentic frames, and tuned ValueGraft recovers a small but
+consistent fraction of continuation or next-action likelihood lost to
+compaction. A larger 30B-bf16 LongMemEval aggregate confirms severe compaction
+damage on standard data, but also shows that QA-style framing can erase
+mitigation headroom by making all compacted arms similarly cautious. The
+strongest coding-adjacent result so far is a +0.0156 nat/token gain on
+OpenHands SWE-Gym trajectory prediction over 75 traces, about 10% of the
 full-context vs compacted gap. The results support a limited claim: cached
 attention value state can be used as a mitigation signal across compaction
 boundaries, but the current evidence does not show general recall recovery or
@@ -197,8 +200,9 @@ full-context vs compacted gap, limiting recoverable signal.
 
 **LongMemEval-S.** Standard benchmark material is restructured so evidence
 sessions fall in the evicted region and distractor sessions remain in the tail.
-Reported runs cover n=48 at 4B and n=36 at 30B in the earlier standard-benchmark
-validation, plus a larger 30B-bf16 run in progress at the time of this draft.
+Early reported runs cover n=48 at 4B and n=36 at 30B. A later Stage-1 30B-bf16
+aggregate over n=320 standard-data questions is now the larger anchor for
+compaction damage and QA-frame arm equivalence.
 
 **SWE-Gym/OpenHands trajectory prediction.** Seventy-five real OpenHands traces
 are compacted mid-trajectory. The main offline coding metric is teacher-forced
@@ -227,11 +231,13 @@ separately where possible.
 ### 5.1 Compaction Damage Replicates
 
 The full context substantially outperforms text compaction whenever the task
-depends on evicted material. In LongMemEval-S, full context answers 71-81% of
-questions correctly, while every compacted variant in the reported n=48/n=36
-runs falls to at most 11% correct. On SWE-Gym/OpenHands next-action prediction,
-the A-B gap is reported as 0.164 nats/token. This establishes headroom for
-mitigation but is not itself the main claim.
+depends on evicted material. In the early LongMemEval-S runs, full context
+answers 71-81% of questions correctly, while every compacted variant in the
+reported n=48/n=36 runs falls to at most 11% correct. The later 30B-bf16 Stage-1
+aggregate gives a larger standard-data estimate: full context at 52.5% correct
+vs compacted baseline at 4.1% over n=320. On SWE-Gym/OpenHands next-action
+prediction, the A-B gap is reported as 0.164 nats/token. This establishes
+headroom for mitigation but is not itself the main claim.
 
 ### 5.2 Identical Text, Different Write-Time State
 
@@ -288,9 +294,13 @@ LongMemEval bounds the claim. At 4B, H-pack reduces fabrication on
 LongMemEval-S from 17 to 11 relative to B. At 30B, the effect vanishes: B
 already fabricates rarely on personal-history questions, apparently because the
 model's refusal or uncertainty calibration is triggered by the benchmark frame.
-This suggests the effect is most relevant where the compacted context invites
-the model to continue acting as a task participant, not where the prompt already
-sounds like retrieval from unavailable personal history.
+The larger 30B-bf16 Stage-1 aggregate reinforces this: local evidence had
+already predicted arm-equivalence under QA framing, and the cloud run confirmed
+that honesty was flat across compacted arms while grafting did not increase
+fabrication (50 vs 51). This suggests the effect is most relevant where the
+compacted context invites the model to continue acting as a task participant,
+not where the prompt already sounds like retrieval from unavailable personal
+history.
 
 ### 5.4 ValueGraft Recovers a Small Fraction of Continuation Loss
 
@@ -370,7 +380,8 @@ gives clean measurement but not a complete distribution of real agent failures.
 
 Third, LongMemEval validation shows that frame matters. In personal-QA framing,
 larger models may already admit missing history, leaving little room for
-honesty interventions. Agentic contexts are the intended deployment target, but
+honesty interventions; the n=320 Stage-1 aggregate makes this more than a
+small-sample caveat. Agentic contexts are the intended deployment target, but
 the current coding evidence is offline next-action prediction rather than
 end-to-end task success.
 
@@ -387,6 +398,11 @@ content-correct latent state.
 Sixth, per-slot calibration is underpowered. The 30B slot result is promising,
 but without a guard pass and more data it is too easy to overfit a profile
 matrix. The paper should keep the primary method simple.
+
+Seventh, illustrative demos are not evidence. One-off examples are useful for
+explaining the mechanism to readers, but the evidence for sense-level recovery
+in this draft comes from the controlled micro-sense experiment, not from
+hand-built demonstrations.
 
 ## 8. Practical Overhead
 

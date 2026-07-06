@@ -17,6 +17,7 @@ Most authoritative for the draft:
   per-slot/per-head exploration.
 - `provider-compaction-prior-art-review.md` for hosted API and prior-art
   implications.
+- Late `DECISIONS.md` entries for Stage-1 aggregate and demo/data hygiene.
 
 In-flight / provisional:
 
@@ -24,6 +25,8 @@ In-flight / provisional:
 - The latest `STATE.md` describes active/remote pod work and queued items.
 - Any numbers from uncommitted artifacts should be treated as current
   filesystem observations, not final claims.
+- Demo artifacts formerly under `results/specimens/` were explicitly deleted
+  and reclassified as illustrations, not evidence.
 
 ## Claim hierarchy if cut off now
 
@@ -35,6 +38,9 @@ Support:
   and planted probes where the relevant information is in the evicted middle.
 - LongMemEval-S: full context answers 71-81% while compacted variants are <=11%
   correct in the reported n=48 / n=36 runs.
+- Later Stage-1 30B-bf16 aggregate: standard data damage quantification
+  52.5% -> 4.1% over n=320. This is the larger current standard-data anchor,
+  but it also shows arm-equivalence in QA framing.
 - SWE-Gym/OpenHands offline trajectory prediction: A-B gap reported as 0.164
   nats on true next-action prediction.
 
@@ -73,6 +79,9 @@ Support:
   - 4B evicted facts: B 15:9 -> B-min-pack 6:18 -> H-pack 2:22.
 - LongMemEval-S at 4B: H-pack fabrications 11 vs B 17, same direction on real
   data.
+- Stage-1 30B-bf16 aggregate: honesty flat across arms in QA framing; graft
+  does not increase fabrication (50 vs 51). This reinforces the frame-specific
+  scope rather than adding positive mitigation evidence.
 
 Scope:
 
@@ -141,6 +150,9 @@ Draft consequence:
   applicable.
 - Local 4B results are 4-bit MLX; pod 30B results are bf16 HF. Cross-precision
   comparisons must say so.
+- One-off demos, including the Pokemon sense demo and incoherence dynamics
+  specimen, must not be cited as evidence. The evidence for sense-level recovery
+  is the controlled micro-sense experiment.
 
 ## Prior art / product-surface implications
 
