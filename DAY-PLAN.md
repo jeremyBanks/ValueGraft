@@ -54,3 +54,11 @@ as arithmetic."
 2. BugsInPy lightweight subset (~74; license check needed)
 3. synthetics (floor)
 Trigger per DECISIONS autonomy rule + difficulty screening.
+
+## Model-swap options if capability floor persists (user asked; NO action)
+1. Qwen3-Coder-30B-A3B: drop-in (same arch/template/size/pods), coder-tuned;
+   ~$3 recalibration; first resort.
+2. Qwen3-235B-A22B: same family, big capability jump; multi-GPU ($12-25/hr),
+   conditional-budget scale; episode math must be redone.
+3. Cross-family (70B dense etc.): new adapter+calibration+continuity break;
+   last resort.
