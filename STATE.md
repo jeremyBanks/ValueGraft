@@ -432,7 +432,24 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 09:20 07-06 — CLEAN RUN STATUS (read first; supersedes 08:20 block)
+## 10:20 07-06 — PLAN OF RECORD (read first; supersedes below)
+
+1. CLEAN RUN (synthetic, seeds s30-39) continues on r3/r4 — keep all
+   scored rows; results/agent_clean_run/ auto-syncs.
+2. STANDARD-TASK PIVOT (user + pre-registered amendments, DECISIONS
+   ~10:00/~10:15): SWE-bench-Lite sans Docker VERIFIED viable
+   (standard-tasks-scouting.md). Adapter (src/swebench_tasks.py) being
+   built+validated by subagent (gate: fail-pre/pass-post on the 2 scout
+   instances). When it lands: un-run synthetic rows may be replaced by
+   swb: rows, SAME five arms, task-source = analysis stratum. FIT
+   CRITERIA pre-stated (compaction-pressure + dependency via sc_debug);
+   pressure knobs tunable+logged; fallback ladder: other standard sets →
+   synthetics.
+3. Vocabulary: controlled-key-graft-reframing.md adopted; K-only arm
+   queued post-clean-run.
+4. Then: champion → confirm (preferring standard tasks) → sealed final.
+
+## 09:20 07-06 — (superseded)
 
 Lanes r3+r4 (secure, probe-gated) own ALL 150 rows (specs R3/R4 with
 R0-R2 appended); spot bids s1/s2 out (SC_POD_SPOT=1 support in pod.py) —
