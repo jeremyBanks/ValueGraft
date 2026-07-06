@@ -432,7 +432,21 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 15:35 07-06 — PLAN OF RECORD (read first; supersedes below)
+## 18:40 07-06 — PLAN OF RECORD (read first; supersedes below)
+
+HUMANE TIER (the production-faithful stratum, post-audit) RUNNING on
+r1/r2/r3: original 8 SWE-bench instances x 5 arms, compact_at 12000 (per
+row suffix c12000), TAIL_KEEP 6000, SUMMARY=prod (see INCIDENTS #15-16 for
+why previous settings were invalid), uniform no-cache lanes (audit C1),
+alarm 5400, config self-reported in every sc_debug. r4 = synthetic
+remainder on legacy calibration (internally-consistent stratum). Prior
+agent strata: tier-0 real + all brief-summary synthetic rows = labeled,
+non-headline. Audit fixes deployed (DECISIONS 18:20; PIPELINE-AUDIT.md).
+Analysis: pre-registered rules + timeout-as-covariate + per-arm
+timeout-rate + dropped_ids flagging + n_recompactions verification.
+VERDICT when humane 40-row block done (~late evening) → autonomy rule.
+
+## 15:35 07-06 — (superseded)
 
 REAL-TASK BLOCK IN PROGRESS: 0 scored, 4 episodes in flight (15-25+ min,
 logs growing, compaction firing constantly — fit criterion (a) PASSED,
