@@ -87,3 +87,12 @@ different model family for a fresh perspective:
   the value is the independent perspective, not raw capability. Getting
   stuck is natural — treat cross-model consultation as a normal tool, not
   a last resort.
+
+## Dual-agent convention (07-06)
+
+A second agent (different model) may read this repo and occasionally create
+its OWN new files/folders in non-conflicting paths, committing them
+directly (rare, user-requested). Rules for the primary agent: stage with
+explicit paths (avoid `git add -A` sweeps); unexpected new files are
+normal, not anomalies; commit-lock races are retry-safe. Second agent:
+never modify existing files, scripts, specs, state docs, or pods.
