@@ -50,6 +50,7 @@ MODEL = os.environ.get("SC_HF_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
 TAG = os.environ.get("SC_LME_TAG", "30b_full")
 N_QUESTIONS = int(os.environ.get("SC_LME_N", "100"))
 E_ALPHA = float(os.environ.get("SC_E_ALPHA", "0.75"))
+ARMS = set(os.environ.get("SC_ARMS", "A,B").split(","))
 TAIL_TOKENS = 12000
 MAX_FULL = 200000
 _shard = os.environ.get("SC_SHARD", "0/1")
@@ -165,41 +166,49 @@ def main():
         probe = q["question"]
         answers = {}
 
-        a_snap, _ = hf_prefill_ids(model, conv_ids)
-        answers["A"] = answer_hf(model, tokenizer, a_snap,
-                                 probe_suffix(tokenizer, msgs, probe),
-                                 len(conv_ids))
-        del a_snap; torch.cuda.empty_cache()
+        if "A" in ARMS:
+            a_snap, _ = hf_prefill_ids(model, conv_ids)
+            answers["A"] = answer_hf(model, tokenizer, a_snap,
+                                     probe_suffix(tokenizer, msgs, probe),
+                                     len(conv_ids))
+            del a_snap; torch.cuda.empty_cache()
         b_snap, _ = hf_prefill_ids(model, b_ids)
-        answers["B"] = answer_hf(model, tokenizer, b_snap,
-                                 probe_suffix(tokenizer, b_msgs, probe),
-                                 len(b_ids))
-        starts = message_token_starts(tokenizer, conv_ids, len(msgs))
-        b_starts = message_token_starts(tokenizer, b_ids, len(b_msgs))
-        regions = [
-            ((b_starts[2], len(b_ids)), (starts[tail_start_msg],
-                                         summary["conv_end"])),
-            ((b_starts[1], b_starts[2]), (summary["s_start"],
-                                          summary["s_end"])),
-        ]
-        pairs = build_alignment(b_ids, summary["old_ids"],
-                                set(tokenizer.all_special_ids), regions)
-        e_snap = blend_values(b_snap, summary["snapshot"], pairs, E_ALPHA)
-        answers["E-tuned"] = answer_hf(model, tokenizer, e_snap,
-                                       probe_suffix(tokenizer, b_msgs, probe),
-                                       len(b_ids))
-        del b_snap, e_snap; torch.cuda.empty_cache()
-        bmp = bmin_pack_ids(summary, conv_ids)
-        bmp_snap, _ = hf_prefill_ids(model, bmp)
-        answers["B-min-pack"] = answer_hf(model, tokenizer, bmp_snap,
+        if "B" in ARMS:
+            answers["B"] = answer_hf(model, tokenizer, b_snap,
+                                     probe_suffix(tokenizer, b_msgs, probe),
+                                     len(b_ids))
+        if "E-tuned" in ARMS:
+            starts = message_token_starts(tokenizer, conv_ids, len(msgs))
+            b_starts = message_token_starts(tokenizer, b_ids, len(b_msgs))
+            regions = [
+                ((b_starts[2], len(b_ids)), (starts[tail_start_msg],
+                                             summary["conv_end"])),
+                ((b_starts[1], b_starts[2]), (summary["s_start"],
+                                              summary["s_end"])),
+            ]
+            pairs = build_alignment(b_ids, summary["old_ids"],
+                                    set(tokenizer.all_special_ids), regions)
+            e_snap = blend_values(b_snap, summary["snapshot"], pairs, E_ALPHA)
+            answers["E-tuned"] = answer_hf(model, tokenizer, e_snap,
+                                           probe_suffix(tokenizer, b_msgs,
+                                                        probe),
+                                           len(b_ids))
+            del e_snap
+        del b_snap; torch.cuda.empty_cache()
+        if "B-min-pack" in ARMS:
+            bmp = bmin_pack_ids(summary, conv_ids)
+            bmp_snap, _ = hf_prefill_ids(model, bmp)
+            answers["B-min-pack"] = answer_hf(model, tokenizer, bmp_snap,
+                                              packed_suffix(tokenizer, probe),
+                                              len(bmp))
+            del bmp_snap
+        if "H-pack" in ARMS:
+            hp = arm_h_pack_snapshot_hf(summary, base)
+            answers["H-pack"] = answer_hf(model, tokenizer, hp,
                                           packed_suffix(tokenizer, probe),
-                                          len(bmp))
-        del bmp_snap
-        hp = arm_h_pack_snapshot_hf(summary, base)
-        answers["H-pack"] = answer_hf(model, tokenizer, hp,
-                                      packed_suffix(tokenizer, probe),
-                                      hp[0][0].shape[2])
-        del hp, summary; torch.cuda.empty_cache()
+                                          hp[0][0].shape[2])
+            del hp
+        del summary; torch.cuda.empty_cache()
 
         tmp = outfile.with_suffix(".tmp")
         with open(tmp, "w") as f:
