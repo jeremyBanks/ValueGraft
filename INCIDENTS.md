@@ -124,3 +124,16 @@ per pod" assumption violated by MY OWN new code — third occurrence of the
 class. FIX: one-entry cache (all other sessions' icache evicted on
 store). Bit-exactness unaffected (eviction only). Rule 1 reaffirmed: this
 assumption must become an assert, not a memory.
+
+## 12. Dead-shim row burn (07-06 ~11:20) — the second big one
+KNOWN: matrix runners had NO per-row shim-health check; while r1/r3/r4
+shims were dead (ccache VRAM leak — the SAME unbounded-session-snapshot
+bug as #11, present in the summary cache SINCE ITS DEPLOY last night),
+runners burned ~102 spec rows as instant connection-failure "False"
+scores, including 18 false A-failures (the tell: Original can't fail 78%).
+FIX: (a) ccache one-entry bound + assert (same as icache); (b) runner now
+health-gates before every row (waits, not burns); (c) forensic purge:
+burn = connection errors in agent.log OR no E1_AGENT_DONE — 102 purged,
+16 genuine kept, all purged rows re-runnable (score-skip cleared).
+THEORY: most/all of today's shim deaths (r3, r4 pre-icache, possibly e1's
+weirdness) trace to the ccache leak — it was the day's root pathogen.
