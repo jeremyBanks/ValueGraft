@@ -257,6 +257,7 @@ def app(environ, start_response):
         req = json.loads(body)
         mode = "A"
         req_head_map = None
+        req_gen_temp = 0.0
         alpha = E_ALPHA
         compact_at = COMPACT_AT
         m = str(req.get("model", ""))
@@ -280,7 +281,7 @@ def app(environ, start_response):
                                      _c["head_map"].items()}
                                     if _c.get("head_map") else None)
                 elif p.startswith("T"):
-                    sess["gen_temp"] = float(p[1:])
+                    req_gen_temp = float(p[1:])
                 elif p.startswith("c"):
                     compact_at = int(p[1:])
         msgs = _norm(req["messages"])
@@ -289,6 +290,7 @@ def app(environ, start_response):
         with _lock:
             sess = _sessions.setdefault(skey, {})
             sess["cfg_head_map"] = req_head_map
+            sess["gen_temp"] = req_gen_temp
             t0 = time.time()
             text, dbg = _generate(msgs, max_tokens, mode, sess, alpha, compact_at)
         resp = {
