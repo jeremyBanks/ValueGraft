@@ -144,6 +144,7 @@ def main():
                 json.load(open(outfile)); done += 1; continue
             except Exception:
                 outfile.unlink()
+        print(f"building {q['question_id']}...", flush=True)
         built = build_full(q, tokenizer)
         if built is None:
             continue
