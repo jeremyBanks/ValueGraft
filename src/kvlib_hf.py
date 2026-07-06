@@ -46,18 +46,40 @@ def rebuild_cache(snap, cache_cls):
     return cache
 
 
+PREFILL_CHUNK = 4096
+
+
 def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None):
-    """Forward pass building/extending a cache; returns (cache, last_logits)."""
-    with torch.no_grad():
-        out = model(
-            input_ids=input_ids,
-            past_key_values=past,
-            position_ids=position_ids,
-            attention_mask=attention_mask,
-            use_cache=True,
-            logits_to_keep=1,
-        )
-    return out.past_key_values, out.logits[:, -1, :]
+    """Forward pass building/extending a cache; returns (cache, last_logits).
+    Long inputs are fed in PREFILL_CHUNK pieces (bounds activation memory;
+    KV result identical — verified vs single-shot on short inputs)."""
+    n = input_ids.shape[1]
+    if n <= PREFILL_CHUNK or attention_mask is not None:
+        with torch.no_grad():
+            out = model(
+                input_ids=input_ids,
+                past_key_values=past,
+                position_ids=position_ids,
+                attention_mask=attention_mask,
+                use_cache=True,
+                logits_to_keep=1,
+            )
+        return out.past_key_values, out.logits[:, -1, :]
+    cache = past
+    logits = None
+    for lo in range(0, n, PREFILL_CHUNK):
+        hi = min(lo + PREFILL_CHUNK, n)
+        pos = position_ids[:, lo:hi] if position_ids is not None else None
+        with torch.no_grad():
+            out = model(
+                input_ids=input_ids[:, lo:hi],
+                past_key_values=cache,
+                position_ids=pos,
+                use_cache=True,
+                logits_to_keep=1,
+            )
+        cache, logits = out.past_key_values, out.logits[:, -1, :]
+    return cache, logits
 
 
 def greedy_generate(model, cache, first_logits, max_tokens, eos_ids,
