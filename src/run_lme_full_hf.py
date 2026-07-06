@@ -52,7 +52,7 @@ N_QUESTIONS = int(os.environ.get("SC_LME_N", "100"))
 E_ALPHA = float(os.environ.get("SC_E_ALPHA", "0.75"))
 ARMS = set(os.environ.get("SC_ARMS", "A,B").split(","))
 TAIL_TOKENS = 12000
-MAX_FULL = 200000
+MAX_FULL = int(os.environ.get("SC_MAX_FULL", "110000"))
 _shard = os.environ.get("SC_SHARD", "0/1")
 SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
 DATA = os.environ.get("SC_LME_DATA", "longmemeval_s_cleaned.json")
@@ -155,7 +155,7 @@ def main():
             summary = generate_summary_hf(model, tokenizer, msgs,
                                           request=SUMMARY_REQUEST_BRIEF,
                                           max_tokens=400)
-        except (AssertionError, torch.cuda.OutOfMemoryError) as e:
+        except (AssertionError, RuntimeError, torch.cuda.OutOfMemoryError) as e:
             print(f"{q['question_id']}: failed ({type(e).__name__})", flush=True)
             torch.cuda.empty_cache()
             continue
@@ -166,18 +166,19 @@ def main():
         probe = q["question"]
         answers = {}
 
-        if "A" in ARMS:
+        try:
+          if "A" in ARMS:
             a_snap, _ = hf_prefill_ids(model, conv_ids)
             answers["A"] = answer_hf(model, tokenizer, a_snap,
                                      probe_suffix(tokenizer, msgs, probe),
                                      len(conv_ids))
             del a_snap; torch.cuda.empty_cache()
-        b_snap, _ = hf_prefill_ids(model, b_ids)
-        if "B" in ARMS:
+          b_snap, _ = hf_prefill_ids(model, b_ids)
+          if "B" in ARMS:
             answers["B"] = answer_hf(model, tokenizer, b_snap,
                                      probe_suffix(tokenizer, b_msgs, probe),
                                      len(b_ids))
-        if "E-tuned" in ARMS:
+          if "E-tuned" in ARMS:
             starts = message_token_starts(tokenizer, conv_ids, len(msgs))
             b_starts = message_token_starts(tokenizer, b_ids, len(b_msgs))
             regions = [
@@ -194,22 +195,25 @@ def main():
                                                         probe),
                                            len(b_ids))
             del e_snap
-        del b_snap; torch.cuda.empty_cache()
-        if "B-min-pack" in ARMS:
+          del b_snap; torch.cuda.empty_cache()
+          if "B-min-pack" in ARMS:
             bmp = bmin_pack_ids(summary, conv_ids)
             bmp_snap, _ = hf_prefill_ids(model, bmp)
             answers["B-min-pack"] = answer_hf(model, tokenizer, bmp_snap,
                                               packed_suffix(tokenizer, probe),
                                               len(bmp))
             del bmp_snap
-        if "H-pack" in ARMS:
+          if "H-pack" in ARMS:
             hp = arm_h_pack_snapshot_hf(summary, base)
             answers["H-pack"] = answer_hf(model, tokenizer, hp,
                                           packed_suffix(tokenizer, probe),
                                           hp[0][0].shape[2])
             del hp
-        del summary; torch.cuda.empty_cache()
-
+          del summary; torch.cuda.empty_cache()
+        except torch.cuda.OutOfMemoryError:
+            print(f"{q['question_id']}: OOM — skipped", flush=True)
+            torch.cuda.empty_cache()
+            continue
         tmp = outfile.with_suffix(".tmp")
         with open(tmp, "w") as f:
             json.dump({"question_id": q["question_id"], "question": probe,
