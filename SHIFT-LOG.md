@@ -15,3 +15,4 @@
 ## 07:50 Claude: CLEAN RUN LAUNCHING — t3 verified+committed; 150-run pre-registered design across 5 lanes (e1 queued behind anomaly drain; r1-r4 probe-gated starters armed); disjoint task:seed per lane; isolation probe required before any lane runs.
 ## 13:49 humane tier live: r1/r2/r3 real tasks @15K/6K (r2=v2 canary), r4 synthetic legacy
 ## 19:15 Claude: Codex refresh notes verified+actioned — tunnels 8021/8013 restored (pods were healthy; local tunnels had died), provenance dbg-logging added (deploys at next shim restart), floor-risk noted pending A rows.
+## 19:30 Claude: full handoff block written at user request; all docs current; work continues uninterrupted.
