@@ -113,7 +113,7 @@ def materialize(task, d):
 
 
 def score(task, d, log):
-    r = subprocess.run(["python", "-m", "pytest", "tests/", "-q",
+    r = subprocess.run([sys.executable, "-m", "pytest", "tests/", "-q",
                         "--no-header", "-x"],
                        cwd=d, capture_output=True, text=True, timeout=300)
     passed = r.returncode == 0
