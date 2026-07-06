@@ -26,10 +26,14 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(
         T.MODEL, dtype=torch.bfloat16, device_map="auto")
     model.eval()
-    head_map = {int(k): v for k, v in json.load(
-        open("tune_configs.json"))["posslots"]["head_map"].items()}
+    cfg = json.load(open("tune_configs.json"))[
+        os.environ.get("SC_GUARD_CFG", "posslots")]
+    head_map = ({int(k): v for k, v in cfg["head_map"].items()}
+                if cfg.get("head_map") else None)
+    alpha_cfg = ({int(k): v for k, v in cfg["alpha_map"].items()}
+                 if cfg.get("alpha_map") else 1.0)
     jobs = T.load_jobs()
-    outdir = Path("results/guard_posslots_30b_bf16")
+    outdir = Path(f"results/guard_{os.environ.get('SC_GUARD_CFG', 'posslots')}_30b_bf16")
     outdir.mkdir(parents=True, exist_ok=True)
     prev = None  # (snapshot, its length)
     ctxs = {}
@@ -40,7 +44,7 @@ def main():
         if prev is not None:
             donor, dlen = prev
             wpairs = [(n, min(o, dlen - 1)) for n, o in pairs]
-            g = blend_values(b_snap, donor, wpairs, 1.0, head_map=head_map)
+            g = blend_values(b_snap, donor, wpairs, alpha_cfg, head_map=head_map)
             out["guard"] = T.score(model, g, feed, targets, next_pos)
             del g
         json.dump(out, open(outdir / f"{cid}.json", "w"), indent=1)
