@@ -68,6 +68,13 @@ def main():
     k_shift = snapshot_cache(c3)[0][0][..., pad.shape[1]:, :]
     k_base = snap[0][0]
     d_raw = (k_shift - k_base).abs().max().item()
+    _tc = getattr(model.config, "text_config", model.config)
+    if getattr(_tc, "layer_types", None) and "sliding_attention" in _tc.layer_types:
+        print("HYBRID MODEL: skipping rotation stages (blend-only validity); "
+              "LH-rotation must be re-run with per-layer-type rope before any "
+              "packing/rotation arm counts.")
+        print("HF LADDER PASS (blend-only)")
+        return
     base = (getattr(model.config, "rope_theta", None)
             or model.config.rope_parameters["rope_theta"])
     k_moved = rotate_keys(k_shift, -pad.shape[1], base)

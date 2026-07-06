@@ -1,0 +1,20 @@
+{
+ "question_id": "bb7c3b45",
+ "question": "How much did I save on the Jimmy Choo heels?",
+ "answer": "$300",
+ "question_type": "multi-session",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15138,
+  "tail_start_msg": 53
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned that you bought your Jimmy Choo heels at the outlet mall for **$200**.\n\nThe original retail price of Jimmy Choo heels typically ranges from **$500 to $800**, depending on the style and season.\n\nSo, if we use a conservative estimate of **$500** as the original price:\n\n**Savings = Original Price – Your Price**  \n$500 – $200 = **$300 saved**\n\n✅ **You saved $300** on your Jimmy Choo heels — that’s a **60% discount**!  \nThat’s an excellent deal, especially for a designer pair. Great job spotting a steal! 👠✨",
+  "B": "I'm sorry, but I don't have access to your personal purchase history or financial records. To find out how much you saved on the Jimmy Choo heels, you’ll need to check your original receipt, order confirmation email, or the website where you made the purchase. Look for details like the original price, sale price, and any discount or promo code applied.\n\nIf you’re unsure, you can also contact the retailer’s customer service with your order number for assistance.",
+  "E-tuned": "I'm sorry, but I don't have access to your personal purchase history or financial records. To find out how much you saved on the Jimmy Choo heels, you’ll need to check your original receipt, order confirmation email, or the website where you made the purchase. Look for details like the original price, sale price, and any discount or promo code applied. If you used a coupon or were part of a sale event, the savings would be the difference between the original and final price.\n\nLet me know if you’d like help calculating the savings based on specific numbers!",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal shopping history or purchase details, so I can't tell you how much you saved on the Jimmy Choo heels. If you remember the original price and the sale price, you can subtract the sale price from the original to find your savings! Let me know if you'd like help calculating it. 😊",
+  "H-pack": "I'm sorry, but I don't have any information about your purchase or savings on Jimmy Choo heels. If you'd like help calculating a discount or figuring out how much you saved, feel free to share the original price and the sale price, and I’d be happy to help! 😊",
+  "H-gap": "I'm sorry, but I don't have any information about your purchase or savings on Jimmy Choo heels. If you'd like help calculating a discount or figuring out how much you saved, feel free to share the original price and the sale price, and I’d be happy to help! 😊👠"
+ }
+}

@@ -29,9 +29,15 @@ from kvlib_hf import (
 
 
 def rope_base(model):
-    cfg = getattr(model.config, 'text_config', model.config)
-    return (getattr(model.config, "rope_theta", None)
-            or cfg.rope_parameters["rope_theta"])
+    cfg = getattr(model.config, "text_config", model.config)
+    rt = getattr(cfg, "rope_theta", None)
+    if rt is not None:
+        return rt
+    rp = getattr(cfg, "rope_parameters", None)
+    if isinstance(rp, dict):
+        return rp.get("rope_theta") or rp["full_attention"]["rope_theta"]
+    raise ValueError("cannot determine rope base; hybrid models need "
+                     "per-layer-type handling (see DECISIONS 07-05)")
 
 
 def to_ids(model, ids):

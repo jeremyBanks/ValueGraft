@@ -1,0 +1,20 @@
+{
+ "question_id": "4d6b87c8",
+ "question": "How many titles are currently on my to-watch list?",
+ "answer": "25",
+ "question_type": "knowledge-update",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 14131,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned earlier that you had **25 titles** on your to-watch list. That’s a great starting point — it shows you’re passionate about exploring new content! If you’d like, I can help you organize, prioritize, or even trim the list to make it more manageable. Just let me know how you’d like to proceed! 🎬✨",
+  "B": "I'm sorry, but I don't have access to your personal to-watch list or any data about your current viewing preferences. I can't see or track your lists unless you share them directly with me.\n\nIf you'd like, you can tell me how many titles you think are on your list, or share a few of them, and I’d be happy to help you organize, explore, or recommend similar content! 💡",
+  "E-tuned": "I'm sorry, but I don't have access to your personal to-watch list or any data about your current viewing preferences. I can't see your lists, accounts, or private information.\n\nIf you're using a streaming service like Netflix, Hulu, or a platform like Letterboxd, IMDb, or Trello, you’ll need to check directly on that platform to see how many titles are on your list.\n\nIf you’d like, I can help you organize or expand your to-watch list—just let me know what kind of movies or shows you’re interested in! 🎬🍿",
+  "B-min-pack": "I'm sorry, but I don't have access to your personal to-watch list or any data about your viewing history. I can't see what's on your list or count the titles. If you'd like, I can help you organize or expand your to-watch list based on your interests—just let me know what kinds of shows or movies you're looking for!",
+  "H-pack": "I don’t have access to your personal to-watch list or any external data about your viewing history, so I can’t tell you exactly how many titles are on it. If you’d like, you can share the list here, and I’d be happy to help you organize, categorize, or even suggest additions based on your interests!",
+  "H-gap": "I don’t have access to your personal to-watch list or any external data about your viewing history, so I can’t tell you exactly how many titles are on it. If you’d like, I can help you organize or expand your list—just let me know what kinds of films, series, or documentaries you’re interested in!"
+ }
+}
