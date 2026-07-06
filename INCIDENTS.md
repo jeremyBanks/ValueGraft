@@ -216,3 +216,11 @@ chain (pod proc → shim health → tunnel → runner → driver → score → s
 and name the watcher for each; any link without one is a standing gap.
 Cross-model read-only passes are cheap and catch what scoped audits
 don't.
+
+## 18. Liveness≠progress (why the waiting lanes went unnoticed, 07-06)
+KNOWN: all my board checks counted alive processes; waiting runners are
+alive, so half-stalled looked healthy. The only rate-watcher self-retired
+at its spec completion (~06:00) and its stall half was never replaced.
+FIX: throughput-floor alarm (runners alive + 0 scores in 60 min → alarm).
+RULE 13: health checks must measure OUTPUT RATE against expectation,
+never merely process existence. "N lanes running" is not a status.
