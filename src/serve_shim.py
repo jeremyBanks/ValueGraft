@@ -111,8 +111,12 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
     """Return (text, dbg). msgs = normalized full history from the agent."""
     ids = canonical_ids(_tok, msgs, renderer=render_hf)
     dbg = {"mode": mode, "alpha": alpha, "compact_at": compact_at, "full_tokens": len(ids),
-           "n_compactions": sess.get("n_compactions", 0)}
+           "n_compactions": sess.get("n_compactions", 0),
+           "n_recompactions": sess.get("n_recompactions", 0)}
     dbg["alpha_kind"] = "map" if isinstance(alpha, dict) else alpha
+    dbg["summary_variant"] = os.environ.get("SC_SUMMARY", "prod")
+    dbg["tail_keep"] = TAIL_KEEP
+    dbg["incr_cache_on"] = INCR_CACHE
     if mode == "A" or len(ids) <= compact_at:
         if INCR_CACHE:
             from kvlib_hf import prefill as _pf, greedy_generate as _gg
@@ -202,6 +206,7 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
         n_cc = sum(1 for v in _sessions.values() if "ccache" in v)
         assert n_cc <= 1, f"ccache bound violated: {n_cc}"
         dbg["summary_cache"] = "MISS"
+        sess["n_recompactions"] = sess.get("n_recompactions", 0) + 1
     b_msgs = build_b_messages(msgs, summary["text"], tsm)
     b_ids = canonical_ids(_tok, b_msgs, renderer=render_hf)
     b_snap, _ = hf_prefill_ids(_model, b_ids)
@@ -311,6 +316,10 @@ def app(environ, start_response):
 def main():
     _load()
     from wsgiref.simple_server import make_server
+    print(f"CONFIG tail_keep={TAIL_KEEP} compact_at={COMPACT_AT} "
+          f"summary={os.environ.get('SC_SUMMARY', 'prod')} "
+          f"incr_cache={INCR_CACHE} budget_gb={VRAM_BUDGET/(1<<30):.0f}",
+          flush=True)
     print(f"shim listening :{PORT}", flush=True)
     make_server("0.0.0.0", PORT, app).serve_forever()
 

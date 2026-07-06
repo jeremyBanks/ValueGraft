@@ -67,7 +67,7 @@ def _row(instance_id):
     return hits.iloc[0]
 
 
-def _clean_ids(raw_json):
+def _clean_ids(raw_json, dropped=None):
     """Parse a FAIL_TO_PASS/PASS_TO_PASS JSON-string field into a list of
     valid pytest node ids, dropping the occasional garbage entry (some
     instances' PASS_TO_PASS lists contain stray captured-output fragments
@@ -83,7 +83,10 @@ def _clean_ids(raw_json):
     # treats them as a fatal "not found" (aborting the whole invocation,
     # not just that id), so drop them rather than let one bad id block
     # every other id in the same run.
-    return [i for i in ids if ".py::" in i and i.count("[") == i.count("]")]
+    keep = [i for i in ids if ".py::" in i and i.count("[") == i.count("]")]
+    if dropped is not None:
+        dropped.extend(i for i in ids if i not in keep)
+    return keep
 
 
 def _repo_cache_dir(repo):
@@ -152,13 +155,15 @@ def materialize(task, d):
         _run(["git", "apply", "--whitespace=fix", patch_file.resolve()],
              cwd=repo_dir)
 
+    _dropped = []
     meta = {
         "task": task,
         "instance_id": iid,
         "repo": row["repo"],
         "base_commit": row["base_commit"],
-        "FAIL_TO_PASS": _clean_ids(row["FAIL_TO_PASS"]),
-        "PASS_TO_PASS": _clean_ids(row["PASS_TO_PASS"]),
+        "FAIL_TO_PASS": _clean_ids(row["FAIL_TO_PASS"], _dropped),
+        "PASS_TO_PASS": _clean_ids(row["PASS_TO_PASS"], _dropped),
+        "dropped_ids": _dropped,
     }
     (root / "meta.json").write_text(json.dumps(meta, indent=1))
 
@@ -211,6 +216,7 @@ def score(task, d, log):
         "f2p_pass": f2p_pass,
         "f2p_total": len(f2p),
         "p2p_ok": p2p_ok,
+        "dropped_ids": meta.get("dropped_ids", []),
         "pytest_tail": tail,
     }
 
