@@ -97,3 +97,12 @@ directly (rare, user-requested). Rules for the primary agent: stage with
 explicit paths (avoid `git add -A` sweeps); unexpected new files are
 normal, not anomalies; commit-lock races are retry-safe. Second agent:
 never modify existing files, scripts, specs, state docs, or pods.
+
+## Results-in-repo rule (07-06, from a real gap)
+
+EVERY scored result must land in results/ and be committed, regardless of
+where the run executed (pod, scratchpad, local). The repo IS the
+scientific audit trail. Scratchpad is for working files (workspaces,
+logs, transcripts) only — a score file is never a working file.
+Contaminated/void results go to results/_QUARANTINE_* paths with READMEs,
+never deleted, never left outside the repo.
