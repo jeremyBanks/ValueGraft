@@ -38,6 +38,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 sys.path.insert(0, "src")
 from arms_common import (
+    SUMMARY_REQUEST_PROD,
     SUMMARY_REQUEST_BRIEF,
     build_alignment,
     build_b_messages,
@@ -187,9 +188,12 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
         target = len(ids) - TAIL_KEEP
         tsm = min(range(1, len(msgs)), key=lambda i: abs(starts[i] - target))
         tsm = max(2, min(tsm, len(msgs) - 2))
+        _sreq = (SUMMARY_REQUEST_PROD
+                 if os.environ.get("SC_SUMMARY", "prod") == "prod"
+                 else SUMMARY_REQUEST_BRIEF)
         summary = generate_summary_hf(_model, _tok, msgs,
-                                      request=SUMMARY_REQUEST_BRIEF,
-                                      max_tokens=400)
+                                      request=_sreq,
+                                      max_tokens=700)
         for other in list(_sessions):
             _sessions[other].pop("ccache", None)
         sess["ccache"] = {"tsm": tsm, "n_msgs": len(msgs),

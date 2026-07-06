@@ -219,3 +219,19 @@ def build_b_messages_gemma(msgs, summary_text, tail_start_msg):
          "content": "Understood - I have that context and will continue."},
         *msgs[tail_start_msg:],
     ]
+
+
+SUMMARY_REQUEST_PROD = (
+    "Context is about to be condensed. Write a context summary for an AI "
+    "coding agent that will continue this work seeing ONLY this summary "
+    "plus the most recent messages. Preserve, specifically and concretely: "
+    "(1) the TASK: what issue/goal is being worked on, quoting key "
+    "requirements verbatim where stated; (2) STATE: which files and "
+    "functions have been examined or modified (exact paths), and what was "
+    "found or changed; (3) DECISIONS and findings so far, including "
+    "approaches ruled out and errors encountered; (4) NEXT STEPS: what "
+    "remains to be done, including any verification or testing steps "
+    "already planned. Be specific with names, paths, and numbers — this "
+    "summary is the agent's only memory of everything before the recent "
+    "tail. Aim for 300-500 words. No commentary before or after."
+)
