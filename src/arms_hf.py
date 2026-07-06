@@ -7,6 +7,7 @@ from transformers import DynamicCache
 import sys
 sys.path.insert(0, "src")
 from arms_common import (
+    canonical_ids_any,
     N_SINK,
     SUMMARY_REQUEST,
     SUMMARY_REQUEST_BRIEF,
@@ -50,7 +51,7 @@ def hf_prefill_ids(model, ids):
 
 
 def generate_summary_hf(model, tokenizer, msgs, request=None, max_tokens=900, snapshot=True):
-    conv_ids = canonical_ids(tokenizer, msgs, renderer=render_hf)
+    conv_ids = canonical_ids_any(tokenizer, msgs, render_hf)
     req_ids = render_hf(
         tokenizer, msgs + [{"role": "user",
                             "content": request or SUMMARY_REQUEST}], True)

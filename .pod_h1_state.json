@@ -1,0 +1,38 @@
+{
+ "consumerUserId": "user_3G5wF5ViMltodbCpnDgQzyxVUhB",
+ "containerDiskInGb": 200,
+ "costPerHr": 4.39,
+ "createdAt": "2026-07-06 04:31:20.732 +0000 UTC",
+ "desiredStatus": "RUNNING",
+ "env": {
+  "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEyaMzCoAfXuAwhOAuoszLymMVEyTi63s7xPddF84bla runpod-experiment"
+ },
+ "gpuCount": 1,
+ "id": "8wgdf4snci5fbe",
+ "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+ "lastStartedAt": "2026-07-06 04:31:20.727 +0000 UTC",
+ "lastStatusChange": "Rented by User: Mon Jul 06 2026 04:31:20 GMT+0000 (Coordinated Universal Time)",
+ "machine": {
+  "dataCenterId": "US-NC-1",
+  "diskThroughputMBps": 17901,
+  "gpuTypeId": "NVIDIA H200",
+  "location": "US",
+  "maxDownloadSpeedMbps": 19644,
+  "maxUploadSpeedMbps": 2779,
+  "note": "",
+  "secureCloud": true,
+  "supportPublicIp": true,
+  "reservedCountVersion": 128086
+ },
+ "machineId": "ok0arx1i2uxf",
+ "memoryInGb": 251,
+ "name": "semantic-continuity",
+ "ports": [
+  "22/tcp"
+ ],
+ "publicIp": "",
+ "templateId": "",
+ "vcpuCount": 24,
+ "volumeInGb": 0,
+ "volumeMountPath": "/workspace"
+}
