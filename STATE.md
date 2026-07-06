@@ -432,7 +432,23 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 08:20 07-06 — CLEAN RUN STATUS (read first)
+## 09:20 07-06 — CLEAN RUN STATUS (read first; supersedes 08:20 block)
+
+Lanes r3+r4 (secure, probe-gated) own ALL 150 rows (specs R3/R4 with
+R0-R2 appended); spot bids s1/s2 out (SC_POD_SPOT=1 support in pod.py) —
+arriving pods share specs, skip-by-score dedupes. INCIDENT 10 (see
+INCIDENTS.md): cfg=layers rows 500'd until ~09:10 (sess-before-creation
+bug) — artifact rows purged+requeued; shims redeployed FIXED code;
+check 09:05-09:20 False rows as possible restart casualties.
+FRAMEWORK: controlled-key-graft-reframing.md (2nd agent) ADOPTED — report
+vocabulary = (alpha_K, alpha_V) policy space + layout/position axes;
+K-only Graft arm queued post-clean-run. Honesty decomposition for
+write-up: layout 83→25% decoy fab, value-source-within-layout 25→17%,
+admissions 3/24→18/24.
+Gate: sensitivity rule live (DECISIONS 08:05), still starving for t3-B
+rows. E@0.75 clean so far 3/3 (night anomaly dissolving). Balance ~$45.
+
+## 08:20 07-06 — (superseded)
 
 ONLY r4 lane survives (pod ocdluygijjaisw, see pods.list; e1 QUARANTINED
 mode-parse/A-mode bug + dead, p4/others terminated). r1-r3 relaunching
