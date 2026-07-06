@@ -12,7 +12,8 @@ TASKMOD=src/e1_tasks.py
 case "$TASK" in swb:*|swbo:*) TASKMOD=src/swebench_tasks.py;; chain:*) TASKMOD=src/chain_tasks.py;; esac
 uv run python $TASKMOD materialize "$TASK" "$WS/repo"
 cd "$S/ohenv"
-export LLM_MODEL="openai/sc-$MODE"  # suffixes :aX :cN ride along
+export LLM_MODEL="openai/sc-$MODE"
+export E1_NATIVE="${E1_NATIVE:-0}"  # suffixes :aX :cN ride along
 export SANDBOX_TYPE=local WORKSPACE_BASE="$WS/repo"
 export LOG_ALL_EVENTS=true
 uv run --project /Users/jeb/experimentation python /Users/jeb/experimentation/$TASKMOD prompt "$TASK" > "$WS/task.txt"

@@ -60,6 +60,7 @@ def generate_summary_hf(model, tokenizer, msgs, request=None, max_tokens=900, sn
     eos = model.config.eos_token_id
     eos_ids = {eos} if isinstance(eos, int) else set(eos)
     toks = greedy_generate(model, cache, logits, max_tokens, eos_ids,
+                           temperature=GEN_TEMP, top_p=0.8, seed=17,
                            next_position=len(req_ids))
     gen_ids = toks[:-1]
     return {
@@ -97,6 +98,9 @@ def arm_h_gap_snapshot_hf(summary):
          torch.cat([v[..., :N_SINK, :], v[..., s0:s1, :]], dim=2))
         for k, v in snap
     ]
+
+
+GEN_TEMP = 0.0
 
 
 def answer_hf(model, tokenizer, snap, suffix_ids, next_position,

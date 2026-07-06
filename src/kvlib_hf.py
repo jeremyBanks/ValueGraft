@@ -83,13 +83,26 @@ def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None)
 
 
 def greedy_generate(model, cache, first_logits, max_tokens, eos_ids,
-                    next_position):
-    """Greedy decode with explicit position ids (supports gapped caches)."""
+                    next_position, temperature=0.0, top_p=1.0, seed=None):
+    """Decode with explicit position ids. temperature==0 -> greedy;
+    otherwise seeded nucleus sampling (Qwen3 card recommends ~0.7/0.8)."""
+    gen = torch.Generator(device="cpu")
+    if seed is not None:
+        gen.manual_seed(seed)
     toks = []
     logits = first_logits
     pos = next_position
     for _ in range(max_tokens):
-        t = int(torch.argmax(logits, dim=-1).item())
+        if temperature and temperature > 0:
+            probs = torch.softmax(logits.float() / temperature, dim=-1)[0]
+            sp, si = torch.sort(probs, descending=True)
+            keep = torch.cumsum(sp, 0) - sp < top_p
+            keep[0] = True
+            sp, si = sp[keep], si[keep]
+            t = int(si[torch.multinomial(sp.cpu() / sp.sum().cpu(), 1,
+                                         generator=gen)].item())
+        else:
+            t = int(torch.argmax(logits, dim=-1).item())
         toks.append(t)
         if t in eos_ids:
             break

@@ -14,7 +14,7 @@ from openhands.tools.preset.default import get_default_agent
 def main():
     mode, base, ws, taskf = sys.argv[1:5]
     llm = LLM(model=f"openai/sc-{mode}", base_url=base,
-              api_key=SecretStr("sc"), temperature=0.0, native_tool_calling=False)
+              api_key=SecretStr("sc"), temperature=0.0, native_tool_calling=(__import__("os").environ.get("E1_NATIVE") == "1"))
     agent = get_default_agent(llm=llm, cli_mode=True)
     conv = Conversation(agent=agent, workspace=ws)
     conv.send_message(open(taskf).read())

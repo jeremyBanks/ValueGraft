@@ -108,6 +108,8 @@ def _norm(messages):
 
 
 def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT):
+    import arms_hf as _ah
+    _ah.GEN_TEMP = sess.get("gen_temp", 0.0)
     """Return (text, dbg). msgs = normalized full history from the agent."""
     ids = canonical_ids(_tok, msgs, renderer=render_hf)
     dbg = {"mode": mode, "alpha": alpha, "compact_at": compact_at, "full_tokens": len(ids),
@@ -277,6 +279,8 @@ def app(environ, start_response):
                     req_head_map = ({int(k): v for k, v in
                                      _c["head_map"].items()}
                                     if _c.get("head_map") else None)
+                elif p.startswith("T"):
+                    sess["gen_temp"] = float(p[1:])
                 elif p.startswith("c"):
                     compact_at = int(p[1:])
         msgs = _norm(req["messages"])
