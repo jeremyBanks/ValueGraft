@@ -333,3 +333,18 @@ E1 next: B/E modes need compaction to trigger — CHECK max tokens from A run
 vs SC_COMPACT_AT=9000; if under, restart shim with SC_COMPACT_AT lower
 (kill serve_shim on e1, relaunch with env). Queue: B t1, E t1, B t2, E t2,
 then repeat rounds; scores accumulate in scratchpad/e1_runs/*/score.json.
+
+## ACTIVE FIXES (00:20 07-06) — read before touching p1/p2
+
+p2 honesty: pod LACKED data/synthetic + decoy_probes (pre-launcher sync);
+runner exited HONESTY_DONE with 0 results (silent-empty-success). FIX:
+rsync -azL data root@104.255.9.187 (port 11989) :/workspace/exp/, relaunch
+job.sh, then VERIFY results/honesty_30b_bf16 count == 12. RULE: every job
+script must end by asserting expected output count (add `test $(ls ... | wc
+-l) -ge N && echo X_DONE` pattern), podcheck greps markers.
+p1 1b-mini: ALL items OOM in summary phase (bf16 weights 61G + >100K-token
+KV+activations > 80G). FIX: chunked prefill in kvlib_hf.hf_prefill_ids
+(feed ~4096-token chunks through DynamicCache sequentially; explicit
+position_ids per chunk) + SC_MAX_FULL=85000 in job.sh. Write-up caveat:
+standard-protocol subset = haystacks <=85K tokens on A100-80G.
+E1 queue: running fine on e1 (B/E rounds); summary-cache deploys at drain.
