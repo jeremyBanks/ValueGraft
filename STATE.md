@@ -432,7 +432,25 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 10:20 07-06 — PLAN OF RECORD (read first; supersedes below)
+## 12:15 07-06 — PLAN OF RECORD (read first; supersedes below)
+
+CLEAN RUN restarting after incident 12 (see INCIDENTS #11-12: ccache/icache
+unbounded-VRAM leaks = the day's root pathogen; dead-shim row burn purged
+102 artifact rows, 16 genuine kept). HARDENED STACK NOW: both shim caches
+one-entry-bounded+ASSERTED; runner health-gates every row; driver refuses
+to score invalid episodes (validity-at-source — burn class impossible);
+streamcheck watches results for anomalies (A-failures, burst scoring);
+stateful-change checklist MANDATORY (AGENTS.md). Lanes r1/r3/r4, all with
+SC_INCR_CACHE=1 (bit-exact validated, DECISIONS 12:00).
+DOCKET: ~135 synthetic + 40 standard rows re-runnable (specs unchanged,
+purged rows re-run via missing-score). ETA verdict data 17:00-19:00 →
+autonomy rule (DECISIONS 11:00/11:05): fit+direction validate → confirm
+phase auto-proceeds; else stop high spend, small-scale exploration only,
+report to user. Balance ~$80 post top-up. Canonical arm names:
+writeup-guidelines.md (Original/Compacted/+graft variants). 16 clean rows
+in results/agent_clean_run/; artifacts fenced in _QUARANTINE paths.
+
+## 10:20 07-06 — (superseded)
 
 1. CLEAN RUN (synthetic, seeds s30-39) continues on r3/r4 — keep all
    scored rows; results/agent_clean_run/ auto-syncs.

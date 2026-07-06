@@ -21,3 +21,13 @@ count.
 - Pipeline: explore (tonight) → confirm (A/B/champion, s10-s49) → sealed
   final (s50-s99; DECISIONS 02:50). Champion picked from matrix table.
 - Morning report contract in STATE.md. Failure ledger in DECISIONS.md.
+
+## 12:15 07-06 addendum — hardened-stack rules (supersede where conflicting)
+Shims: ALWAYS single-pod restart commands (loops fail silently — incidents
+ledger); SC_INCR_CACHE=1 is validated bit-exact; both session caches are
+one-entry-bounded with asserts. Runner (e1_matrix.sh) health-gates rows;
+driver writes NO score for invalid episodes (invalid.marker instead).
+Trust only rows with score.json + E1_AGENT_DONE. streamcheck alarms on
+A-arm failures (near-impossible) and burst scoring. Read INCIDENTS.md
+#11-12 before touching shim/serving code; fill the AGENTS.md
+stateful-change checklist in any such commit.
