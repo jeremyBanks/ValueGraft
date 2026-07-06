@@ -29,8 +29,9 @@ from kvlib_hf import (
 
 
 def rope_base(model):
+    cfg = getattr(model.config, 'text_config', model.config)
     return (getattr(model.config, "rope_theta", None)
-            or model.config.rope_parameters["rope_theta"])
+            or cfg.rope_parameters["rope_theta"])
 
 
 def to_ids(model, ids):

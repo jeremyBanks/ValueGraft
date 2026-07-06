@@ -25,6 +25,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, DynamicCache
 
 sys.path.insert(0, "src")
 from arms_common import (
+    canonical_ids_any,
+    message_starts_any,
     SUMMARY_REQUEST,
     build_alignment,
     build_b_messages,
@@ -85,16 +87,16 @@ def load_jobs():
 
 
 def build_ctx(model, tokenizer, cid, msgs, tsm, cont_spec):
-    ids = canonical_ids(tokenizer, msgs, renderer=render_hf)
-    starts = message_token_starts(tokenizer, ids, len(msgs))
+    ids = canonical_ids_any(tokenizer, msgs, render_hf)
+    starts = message_starts_any(tokenizer, msgs, ids, render_hf)
     if tsm is None:
         target = 0.75 * len(ids)
         tsm = min(range(1, len(msgs)), key=lambda i: abs(starts[i] - target))
     summary = generate_summary_hf(model, tokenizer, msgs,
                                   request=SUMMARY_REQUEST)
     b_msgs = build_b_messages(msgs, summary["text"], tsm)
-    b_ids = canonical_ids(tokenizer, b_msgs, renderer=render_hf)
-    b_starts = message_token_starts(tokenizer, b_ids, len(b_msgs))
+    b_ids = canonical_ids_any(tokenizer, b_msgs, render_hf)
+    b_starts = message_starts_any(tokenizer, b_msgs, b_ids, render_hf)
     regions = [
         ((b_starts[2], len(b_ids)), (starts[tsm], summary["conv_end"])),
         ((b_starts[1], b_starts[2]), (summary["s_start"], summary["s_end"])),
@@ -110,7 +112,7 @@ def build_ctx(model, tokenizer, cid, msgs, tsm, cont_spec):
         feed, targets = gp[len(ids):] + tgt[:-1], tgt
         next_pos = len(b_ids)
     else:
-        fullc = canonical_ids(tokenizer, payload, renderer=render_hf)
+        fullc = canonical_ids_any(tokenizer, payload, render_hf)
         assert fullc[: len(ids)] == ids
         sfx = fullc[len(ids):]
         feed, targets = sfx[:-1], sfx[1:]
@@ -131,8 +133,9 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(
         MODEL, dtype=torch.bfloat16, device_map="auto")
     model.eval()
-    n_layers = model.config.num_hidden_layers
-    n_kv = model.config.num_key_value_heads
+    _tcfg = getattr(model.config, "text_config", model.config)
+    n_layers = _tcfg.num_hidden_layers
+    n_kv = _tcfg.num_key_value_heads
     jobs = load_jobs()
     convs = VAL if PHASE in ("sweep", "layer", "head") else HOLD
     outdir = Path(f"results/tune_{PHASE}_{TAG}")

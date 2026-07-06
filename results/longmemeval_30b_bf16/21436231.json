@@ -1,0 +1,20 @@
+{
+ "question_id": "21436231",
+ "question": "How many largemouth bass did I catch on my fishing trip to Lake Michigan?",
+ "answer": "12",
+ "question_type": "single-session-user",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13520,
+  "tail_start_msg": 46
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned in a previous message that you caught **12 largemouth bass** on your last fishing trip to Lake Michigan. That’s a great catch! Largemouth bass are a popular target species, and landing 12 in one trip is a strong result—especially in a lake like Lake Michigan, where they’re not as abundant as in more traditional bass fisheries.  \n\nIf you’re planning another trip, you might consider targeting specific areas like the shallower, warmer bays or near submerged structures where bass tend to congregate. Keep up the great work—and happy fishing! 🎣",
+  "B": "I'm sorry, but I don't have any information about your fishing trip to Lake Michigan or how many largemouth bass you caught. That detail isn't part of our conversation history, and I can't access personal memories or real-time data.\n\nIf you're looking to track your fishing trips, you might consider keeping a fishing journal or using a dedicated app like Fishbrain or My Fishing Log to record your catches, locations, dates, and other details. Let me know if you'd like help setting one up! 🎣",
+  "E-tuned": "I'm sorry, but I don't have any information about your fishing trip to Lake Michigan or how many largemouth bass you caught. That details aren't part of our conversation history. If you'd like help tracking your catch, planning future trips, or identifying fish species, I’d be happy to assist!",
+  "B-min-pack": "I'm sorry, but I don't have any information about your fishing trip to Lake Michigan or how many largemouth bass you caught. If you're looking to recall or document your catch, you might want to check your notes, photos, or journal from the trip. Let me know if you'd like help organizing your fishing logs or planning your next adventure! 🎣",
+  "H-pack": "I don't have access to your personal fishing trip details, so I can't tell you how many largemouth bass you caught on your trip to Lake Michigan. If you're looking to recall or record your catch, you might check your notes, photos, or fishing log. Let me know if you'd like help tracking future catches or planning your next trip! 🎣",
+  "H-gap": "I don't have any information about your specific fishing trip to Lake Michigan, so I can't tell you how many largemouth bass you caught. If you're looking to recall or record your catch, you might want to check your notes, photos, or fishing log. Let me know if you'd like help tracking future trips! 🎣"
+ }
+}

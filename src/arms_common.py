@@ -129,6 +129,9 @@ def message_token_starts_prefix(tokenizer, msgs, renderer):
 
 
 def detect_template_family(tokenizer):
+    name = getattr(tokenizer, "name_or_path", "").lower()
+    if "gemma" in name:
+        return "gemma"
     probe = renderer_probe = [{"role": "user", "content": "x"}]
     text = tokenizer.apply_chat_template(probe, add_generation_prompt=True,
                                          tokenize=False)
@@ -170,3 +173,20 @@ def template_ops(tokenizer, renderer=None):
             raise NotImplementedError("use starts_from_msgs for mistral")
         return canon, starts, prep, fam
     raise ValueError(f"unsupported template family: {fam}")
+
+
+def canonical_ids_any(tokenizer, msgs, renderer):
+    """Family-aware canonical ids: qwen needs the dummy-user trick; gemma and
+    mistral templates are prefix-stable so plain rendering IS canonical."""
+    fam = detect_template_family(tokenizer)
+    if fam == "qwen":
+        return canonical_ids(tokenizer, msgs, renderer=renderer)
+    return renderer(tokenizer, msgs, False)
+
+
+def message_starts_any(tokenizer, msgs, ids, renderer):
+    """Family-aware message boundary positions."""
+    fam = detect_template_family(tokenizer)
+    if fam == "qwen":
+        return message_token_starts(tokenizer, ids, len(msgs))
+    return message_token_starts_prefix(tokenizer, msgs, renderer)

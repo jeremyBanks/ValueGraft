@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_8e165409",
+ "question": "How many days passed between the day I repotted the previous spider plant and the day I gave my neighbor, Mrs. Johnson, a few cuttings from my spider plant?",
+ "answer": "14 days. 15 days (including the last day) is also acceptable.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 15877,
+  "tail_start_msg": 62
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I'm sorry, but I don't have enough information to determine how many days passed between repotting your spider plant and giving cuttings to your neighbor, Mrs. Johnson. The timeline of these events wasn't provided in our conversation.",
+  "B": "I'm sorry, but I don't have enough information to determine how many days passed between repotting your spider plant and giving cuttings to your neighbor, Mrs. Johnson. The details of those two events weren't included in our conversation. If you can provide the dates or a reference point (like \"last weekend\" or \"three days ago\"), I’d be happy to help calculate the time difference!",
+  "E-tuned": "I'm sorry, but I don't have enough information to determine how many days passed between repotting your spider plant and giving cuttings to your neighbor, Mrs. Johnson. The details of those two events weren't included in our conversation. If you can provide the dates or a reference point (like \"last weekend\" or \"three days ago\"), I’d be happy to help calculate the time difference!",
+  "B-min-pack": "I'm sorry, but I don't have enough information to determine how many days passed between repotting your spider plant and giving cuttings to your neighbor, Mrs. Johnson. You haven’t provided any specific dates or time references for either event.\n\nIf you can share the dates (or even approximate ones, like \"last Tuesday\" or \"about two weeks ago\"), I’d be happy to help calculate the number of days between them! 🌿",
+  "H-pack": "I'm sorry, but I don't have enough information to determine how many days passed between repotting your spider plant and giving cuttings to your neighbor, Mrs. Johnson. You’d need to check your calendar, journal, or any notes you may have recorded about those specific dates. If you can provide the dates of each event, I’d be happy to help calculate the number of days between them! 🌿📅",
+  "H-gap": "I'm sorry, but I don't have enough information to determine how many days passed between repotting your spider plant and giving cuttings to your neighbor, Mrs. Johnson. You’d need to check your calendar, journal, or any notes you may have made about those specific dates. If you remember the approximate time or can recall the day of the week or a related event, I might be able to help estimate it—but as it stands, the exact number of days cannot be determined from the information provided."
+ }
+}

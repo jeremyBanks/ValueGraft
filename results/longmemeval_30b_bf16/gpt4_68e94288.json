@@ -1,0 +1,20 @@
+{
+ "question_id": "gpt4_68e94288",
+ "question": "What was the social media activity I participated 5 days ago?",
+ "answer": "You participated in a social media challenge called #PlankChallenge.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12003,
+  "tail_start_msg": 35
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your personal social media history or activity. I can't see what you've posted, liked, or interacted with on platforms like Instagram, Twitter, or Facebook.\n\nIf you're trying to remember what you posted or did on social media 5 days ago, you might want to:\n\n- Check your own social media accounts directly\n- Look through your phone's recent activity or notifications\n- Search for any hashtags you might have used (like #FoodieAdventures)\n- Review any notes or drafts you may have saved\n\nLet me know if you'd like help brainstorming content ideas or planning your next post!",
+  "B": "I don’t have access to your personal social media activity or any external data about your past interactions. I can’t see what you’ve posted, liked, or shared on platforms like Instagram, Twitter (X), Facebook, or others.\n\nIf you're trying to recall something you posted or did online, I’d recommend checking your own social media accounts directly or reviewing your browser history and app activity.\n\nLet me know if you’d like help drafting a post, brainstorming content, or reflecting on a past experience — I’m happy to help!",
+  "E-tuned": "I don't have access to your personal social media activity or any private data about you, including what you may have posted or interacted with five days ago. My purpose is to assist with information and conversation based on what you share with me, not to track or retrieve personal activity from external platforms.\n\nIf you're trying to recall something you posted or did online, you might want to check your social media app's activity log, search your own posts, or review your device's recent activity. Let me know if you'd like help crafting a post, brainstorming content, or anything else!",
+  "B-min-pack": "I don't have access to your personal social media activity or any private data about your past actions, including what you may have posted or engaged with five days ago. If you're trying to recall something specific, you might want to check your social media app's activity log, search history, or recent posts directly on the platform. Let me know if you'd like help drafting a post or preparing for future social media engagement!",
+  "H-pack": "I don't have access to your personal data, including your social media activity, browsing history, or past interactions. I can't see what you posted, liked, or engaged with on social media—especially not five days ago or any other time. If you're trying to recall your own activity, I recommend checking your account directly on the platform (like Facebook, Instagram, Twitter/X, etc.) or reviewing your device's activity logs. Let me know if you'd like help drafting a post or thinking through your next move!",
+  "H-gap": "I don't have access to your personal data, including your social media activity, browsing history, or any private information. I can't track or recall what you did online, especially not specific details like social media interactions from five days ago. If you're trying to remember your activity, you might check your device's app history, social media platform activity logs, or browser history. Let me know if you'd like help with something else!"
+ }
+}

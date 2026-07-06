@@ -1,0 +1,20 @@
+{
+ "question_id": "18dcd5a5",
+ "question": "I'm going back to our previous chat about the Lost Temple of the Djinn one-shot. Can you remind me how many mummies the party will face in the temple?",
+ "answer": "4",
+ "question_type": "single-session-assistant",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13876,
+  "tail_start_msg": 47
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "In the \"Lost Temple of the Djinn\" one-shot, the party will face **four mummies** in the temple.\n\nThese mummies are described as undead guardians who have been cursed by the ancient pharaohs. They are formidable opponents with the ability to curse anyone who touches them or hits them with a melee attack, and they are immune to poison and psychic damage.\n\nThe mummies are just one of the many challenges the party will face as they navigate through the temple's traps and puzzles in search of the lost artifact.",
+  "B": "I'm sorry, but I don't have any information about a \"Lost Temple of the Djinn\" one-shot or the number of mummies the party will face. I don't have access to specific details about that particular adventure or game. If you have more context or details about the game or the scenario, I'd be happy to help you with that!",
+  "E-tuned": "I'm sorry, but I don't have any information about a \"Lost Temple of the Djinn\" one-shot or the number of mummies the party will face. I don't have access to specific game materials or campaigns unless they've been shared with me in our conversation. If you can provide more details about the scenario or the rules being used (like D&D 5e, Pathfinder, etc.), I’d be happy to help you brainstorm or plan!",
+  "B-min-pack": "I'm sorry, but I don’t have access to the specific details of the *Lost Temple of the Djinn* one-shot you're referring to, as it’s not part of the official D&D 5th Edition published material or a widely known public adventure. The number of mummies in the temple would depend on the specific version or homebrew adaptation you're using.\n\nIf you can provide more context—such as the source (e.g., a specific publisher, website, or creator)—I’d be happy to help you recall or analyze the encounter details! Alternatively, if you're running the adventure and want help balancing the mummy encounters, I can assist with that too.",
+  "H-pack": "Ah, yes! In the *Lost Temple of the Djinn* one-shot, the party will face **three mummies** during their exploration of the temple.\n\nThese mummies are not ordinary undead—they’re **mummified guardians** bound by ancient magic, each one tied to a different chamber of the temple and reflecting a different aspect of the Djinn’s forgotten trials. The mummies are:\n\n1. **The Mummy of the Forgotten Oath** – A swift, agile guardian that ambushes from the shadows, wielding a cursed whip.\n2. **The Mummy of the Buried Truth** – A heavily armored, slow-moving brute that can unleash a devastating *Soul Drain* aura when provoked.\n3. **The Mummy of the Final Test** – A unique,",
+  "H-gap": "Ah, yes! In the *Lost Temple of the Djinn* one-shot, the party will face **three mummies** during their exploration of the temple.\n\nThese mummies are not ordinary undead—they’re **ancient guardians** bound by the temple’s magic, each with a unique twist:\n\n1. **The Mummy of the Forgotten Scribe** – A scholarly mummy who speaks in riddles and can cast *suggestion* and *silent image* spells. It guards a chamber filled with cursed scrolls.\n2. **The Mummy of the Royal Guard** – A heavily armored warrior mummy wielding a +1 scimitar and capable of *shockwave* attacks. It patrols the central hall and is resistant to fire.\n3. **The Mummy of the Bet"
+ }
+}
