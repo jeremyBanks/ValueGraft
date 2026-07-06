@@ -62,3 +62,7 @@ Trigger per DECISIONS autonomy rule + difficulty screening.
    conditional-budget scale; episode math must be redone.
 3. Cross-family (70B dense etc.): new adapter+calibration+continuity break;
    last resort.
+GLM scaffold-validation plan (if that rung is reached): layer 1 = full
+template dry-run vs the TARGET model's tokenizer (KBs, exact); layer 2 =
+serving-path smoke on GLM-4-9B 4-bit locally (~6GB). Zero pod spend
+before commitment.
