@@ -9,7 +9,7 @@ S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde
 WS=$S/e1_runs/${TASK//:/-}_${MODE//:/-}
 rm -rf "$WS" && mkdir -p "$WS"
 TASKMOD=src/e1_tasks.py
-case "$TASK" in swb:*|swbo:*) TASKMOD=src/swebench_tasks.py;; esac
+case "$TASK" in swb:*|swbo:*) TASKMOD=src/swebench_tasks.py;; chain:*) TASKMOD=src/chain_tasks.py;; esac
 uv run python $TASKMOD materialize "$TASK" "$WS/repo"
 cd "$S/ohenv"
 export LLM_MODEL="openai/sc-$MODE"  # suffixes :aX :cN ride along
