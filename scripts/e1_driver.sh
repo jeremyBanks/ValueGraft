@@ -13,8 +13,9 @@ cd "$S/ohenv"
 export LLM_MODEL="openai/sc-$MODE" LLM_BASE_URL="$BASE" LLM_API_KEY="sc"
 export SANDBOX_TYPE=local WORKSPACE_BASE="$WS/repo"
 export LOG_ALL_EVENTS=true
-perl -e 'alarm 3600; exec @ARGV' -- ./.venv/bin/python -m openhands.core.main \
-  -t "$(uv run --project /Users/jeb/experimentation python /Users/jeb/experimentation/src/e1_tasks.py prompt "$TASK")" \
+uv run --project /Users/jeb/experimentation python /Users/jeb/experimentation/src/e1_tasks.py prompt "$TASK" > "$WS/task.txt"
+perl -e 'alarm 3600; exec @ARGV' -- ./.venv/bin/python \
+  /Users/jeb/experimentation/src/e1_agent.py "$MODE" "$BASE" "$WS/repo" "$WS/task.txt" \
   > "$WS/agent.log" 2>&1 || true
 cd /Users/jeb/experimentation
 uv run python src/e1_tasks.py score "$TASK" "$WS/repo" "$WS/agent.log" \
