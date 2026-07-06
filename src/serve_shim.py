@@ -146,7 +146,15 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
         ]
         pairs = build_alignment(b_ids, summary["old_ids"],
                                 set(_tok.all_special_ids), regions)
-        b_snap = blend_values(b_snap, summary["snapshot"], pairs, alpha)
+        if alpha == 999.0:
+            import random as _r
+            olds = [o for _, o in pairs]
+            _r.Random(13).shuffle(olds)
+            pairs = [(n, o) for (n, _), o in zip(pairs, olds)]
+            b_snap = blend_values(b_snap, summary["snapshot"], pairs, 0.75)
+            dbg["shuffled_control"] = True
+        else:
+            b_snap = blend_values(b_snap, summary["snapshot"], pairs, alpha)
         dbg["grafted_positions"] = len(pairs)
     gp = render_hf(_tok, b_msgs, True)
     text = answer_hf(_model, _tok, b_snap, gp[len(b_ids):], len(b_ids),
@@ -177,7 +185,9 @@ def app(environ, start_response):
             parts = m.split("sc-", 1)[1].split(":")
             mode = parts[0][:1] if parts[0][:1] in "ABE" else "A"
             for p in parts[1:]:
-                if p.startswith("a"):
+                if p == "shuf":
+                    alpha = 999.0  # sentinel: shuffled-pairs control
+                elif p.startswith("a"):
                     alpha = float(p[1:])
                 elif p.startswith("c"):
                     compact_at = int(p[1:])
