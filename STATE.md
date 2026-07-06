@@ -432,7 +432,33 @@ tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
 
-## 18:40 07-06 — PLAN OF RECORD (read first; supersedes below)
+## 23:15 07-06 — PLAN OF RECORD (user AFK; supersedes below)
+
+DIFFICULTY CRISIS + RESPONSE LADDER (all pre-agreed with user):
+1. SWE-bench validations: pruned to ≤14-line-patch instances ONLY (16
+   rows, oracle mode, 30-min caps, easiest-first incl. pytest-7521 which
+   Sonnet solved in 52s/objectively verified). Per-verdict user reports
+   until first PASS (standing order).
+2. CHAIN TIER (easier, being built+self-tested by subagent →
+   src/chain_tasks.py, "chain:<seed>"): 4 chained easy exercises/session,
+   per-exercise scoring + embedded recall; RULE 14 capability smoke
+   (A-mode chain:s1/s2) BEFORE any arms; if A passes → run 5-arm
+   comparisons on chains (task source stratum "chain").
+3. If chains ALSO fail at full capability → MODEL SWAP per DAY-PLAN
+   ladder: Qwen3-Coder-30B (template-validated drop-in) first; GLM-4-9B
+   serving-path smoke IN FLIGHT on r4 (glm_smoke.log) as GLM-rung
+   pre-validation; user pre-authorized trying easier tasks then GLM-class
+   if needed. Swap = new calibration pass + gold-patch scorer smoke +
+   full 20-conv dry-run (checklist in DAY-PLAN).
+EVENING'S KEY EVENTS (recorded in INCIDENTS 19-20 + DECISIONS 21:40+):
+plain-Lite unmeasurable (economics); oracle setting added; Verified
+merged+interleaved; 30-min caps; A-first gating + priority-queue lanes;
+Sonnet probe (52s PASS) → phantom-id scorer bug found+fixed, 17 verdicts
+re-scored (no flips); GLM/Coder scaffold validation done at tokenizer
+level. Balance ~$60. Synthetic quads keep accruing on r4 (guaranteed
+floor). All monitors + per-verdict reporting live.
+
+## 18:40 07-06 — (superseded)
 
 HUMANE TIER (the production-faithful stratum, post-audit) RUNNING on
 r1/r2/r3: original 8 SWE-bench instances x 5 arms, compact_at 12000 (per
