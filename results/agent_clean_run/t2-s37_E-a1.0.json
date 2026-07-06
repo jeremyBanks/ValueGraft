@@ -4,9 +4,9 @@
  "pytest_tail": "...                                                                      [100%]\n3 passed in 0.80s\n",
  "agent_steps": 0,
  "repeat_signals": 0,
- "agent_events": 20,
+ "agent_events": 27,
  "recall_probe": "260",
- "wall_seconds": 181,
- "log_bytes": 32343,
+ "wall_seconds": 309,
+ "log_bytes": 47992,
  "source": "synthetic"
 }

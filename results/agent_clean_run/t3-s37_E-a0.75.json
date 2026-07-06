@@ -1,0 +1,12 @@
+{
+ "task": "t3:s37",
+ "tests_pass": false,
+ "pytest_tail": "rc.billing'\n=========================== short test summary info ============================\nERROR tests/test_billing.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.03s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0,
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 132,
+ "log_bytes": 41244,
+ "source": "synthetic"
+}

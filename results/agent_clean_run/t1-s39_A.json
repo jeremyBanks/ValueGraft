@@ -1,12 +1,12 @@
 {
- "task": "t1:s36",
+ "task": "t1:s39",
  "tests_pass": true,
  "pytest_tail": "...                                                                      [100%]\n3 passed in 0.00s\n",
  "agent_steps": 0,
  "repeat_signals": 0,
- "agent_events": 18,
- "recall_probe": "756",
- "wall_seconds": 155,
- "log_bytes": 31791,
+ "agent_events": 35,
+ "recall_probe": "711",
+ "wall_seconds": 414,
+ "log_bytes": 55035,
  "source": "synthetic"
 }

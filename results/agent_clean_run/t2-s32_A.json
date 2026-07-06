@@ -1,0 +1,12 @@
+{
+ "task": "t2:s32",
+ "tests_pass": true,
+ "pytest_tail": "...                                                                      [100%]\n3 passed in 0.86s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0,
+ "agent_events": 20,
+ "recall_probe": "280",
+ "wall_seconds": 168,
+ "log_bytes": 32335,
+ "source": "synthetic"
+}

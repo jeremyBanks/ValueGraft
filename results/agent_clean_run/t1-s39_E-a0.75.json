@@ -3,5 +3,10 @@
  "tests_pass": true,
  "pytest_tail": "...                                                                      [100%]\n3 passed in 0.00s\n",
  "agent_steps": 0,
- "repeat_signals": 0
+ "repeat_signals": 0,
+ "agent_events": 28,
+ "recall_probe": "711",
+ "wall_seconds": 298,
+ "log_bytes": 51992,
+ "source": "synthetic"
 }
