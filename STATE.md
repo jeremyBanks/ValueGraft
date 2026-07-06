@@ -431,3 +431,13 @@ TUNING LADDER (02:30): spec1 has E:cfg=layers rows, spec2 E:cfg=posslots.
 tune_configs.json MUST be rsynced to EVERY shim pod alongside src at the
 new-shim deploy step (launcher now ships it for new pods; e1 needs it
 manually at queue-drain transition).
+
+## 08:20 07-06 — CLEAN RUN STATUS (read first)
+
+ONLY r4 lane survives (pod ocdluygijjaisw, see pods.list; e1 QUARANTINED
+mode-parse/A-mode bug + dead, p4/others terminated). r1-r3 relaunching
+(500-capacity retries; launch_r*b.log). Clean run = spec_R1..R4 + spec_R0
+redistributed; matrix_Rr4.log progressing. Sensitivity gate armed
+(DECISIONS 08:05): B>=75% at n>=6 (2 t3) → ABORT+harden; B<=50% →
+continue. Anomaly probe VOID (e1 A-mode bug). Balance $47. If r-capacity
+stays dry: one lane ≈ 15h — surface interim tables every ~2h to user.
