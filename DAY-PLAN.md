@@ -93,5 +93,7 @@ smokes pass → config adequate, difficulty is real.
    a serving-layer feature; our shim = reference implementation).
 2. Own-stack hot-path upgrade (~1 day, 2-4x): FA2 kernels + compiled
    decode + async server (replace wsgiref) + icache-v2 (validated,
-   benched). Keeps surgery freedom + test discipline. The investment if
+   benched). Keeps surgery freedom + test discipline. The investment if PRIORITY RAISED (user 07-07):
+   FIRST infra investment at next phase boundary, before confirm/E2
+   spend; ships with full validation ritual.
    the program continues at scale.
