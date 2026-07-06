@@ -28,3 +28,11 @@ MORNING-REPORT.md.
   arm-vs-arm comparisons may carry state-leak noise; the fix is committed.
 - Recall/dissociation probe now captures final assistant message — usable
   going forward.
+
+## Infra: network-volume model cache (user, 07-06 morning)
+15-min pod spin-up is ~12 min HF download + ~3 min load. FIX: RunPod
+network volume (~70GB ≈ $5/mo, per-datacenter, secure-cloud only): create
+in current pods' DC, pre-warm /workspace/hf from a live pod, add
+networkVolumeId + dataCenterId to pod.py create (env SC_POD_VOLUME).
+Payoff: cold pod → serving in ~3 min; biggest win for spot churn.
+Implement opportunistically behind gate-watching.
