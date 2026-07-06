@@ -97,3 +97,13 @@ smokes pass → config adequate, difficulty is real.
    FIRST infra investment at next phase boundary, before confirm/E2
    spend; ships with full validation ritual.
    the program continues at scale.
+
+## Confirm-phase standard-source plan (scouted 07-07)
+tau2-bench banking_knowledge (97 tasks, MIT, base_url drop-in): policy
+arrives via EVICTABLE turns/documents → compaction-relevant. Core tau
+domains (policy in system msg, unevictable) = built-in NEGATIVE CONTROL →
+the designed dissociation: damage should appear ONLY where policy is
+evictable — cleanest causal signature available, on standard tasks.
+MANDATORY PILOT first (rule 14 + scout caveat): 2-3 banking episodes,
+verify token lengths >12K, reward determinism, user-simulator cost
+(needs a second LLM — use a cheap API model).
