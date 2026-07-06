@@ -160,3 +160,45 @@ design caught the mis-wire before v2 was trusted. Rewired + verified;
 canary gate PASS (MISS→HIT, pred 59.2GB); r2 admitted with icache v2.
 LESSON: tunnel creation must verify endpoint identity (health + a
 pod-unique marker), not just connectivity — added to fix backlog.
+
+## 15. Adversarial summarizer as production baseline (caught 17:30 07-06, by user question)
+KNOWN: every agent episode from E0 (07-05 night) through the first humane
+relaunch ran compaction with SUMMARY_REQUEST_BRIEF — a prompt DESIGNED to
+exclude specifics ("Do not include specific decisions, names, numbers, or
+details"), built for mechanism-isolation experiments where summary text
+must NOT carry facts (so KV grafts' contribution is identifiable). Using
+it as the production-compaction baseline made B adversarially weak vs any
+real condenser. Affected strata: ALL synthetic agent rows + tier-0 real
+rows (internally consistent — all arms equally handicapped — but not
+production-faithful; labeled, kept, never headline). NOT affected: TF
+experiments (used the thorough variant), honesty/packed experiments
+(brief was correct-by-design there), stage-1/2. ROOT CAUSE: a
+context-specific design choice silently inherited across an experiment
+boundary — nobody re-derived the choice when the E-track's purpose
+changed from mechanism to deployment-realism. FIX: SUMMARY_REQUEST_PROD
+(task/state-with-paths/decisions/next-steps, 300-500w); variant recorded
+in every response (audit C2).
+
+## 16. Tier-0 compaction settings: over-corrected pressure (caught 16:00 07-06, by user question)
+KNOWN: compact_at 9000 / tail 2500 gave real agents ~2.9K effective
+working memory on 17-27K-token investigations — ~10x tighter than
+production practice, chosen (last night) to guarantee compaction fired on
+SMALL synthetic tasks and never re-derived for real repos. Observed
+consequence: 51 compacted calls in one episode; forensic autopsy
+(forensics-flask5063-tier0.md) shows the working-memory-amputation
+signature (4x path re-guessing, evicted self-todo, divergent plan
+re-derivations). Tier-0 B failures conflate "compaction damages context"
+with "we amputated working memory below task viability". FIX: humane tier
+12K/6K targeting 2-6 TRUE recompactions (M1 counter), verified from
+sc_debug per episode.
+
+## Design-confound rules distilled (join the standing rules)
+9. Every design parameter inherited across an experiment-purpose boundary
+   must be RE-DERIVED for the new purpose (summary prompt, thresholds,
+   timeouts — list them explicitly at each phase change).
+10. The baseline arm must be a GOOD-FAITH implementation of production
+    practice — an experiment showing "X beats a strawman" is worthless;
+    audit the baseline as adversarially as the intervention.
+11. Any per-request/per-process config that can vary MUST be recorded in
+    the data it produces (self-reporting instruments), never only in
+    narrative docs.
