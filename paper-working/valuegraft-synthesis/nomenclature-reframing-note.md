@@ -1,89 +1,142 @@
 # Nomenclature Reframing Note
 
-This note records a suggested naming cleanup for the paper/write-up. It is not
-a request to rename code, result directories, or historical logs. Those names
-should remain available for provenance. The goal is to make the public-facing
-story sound like one coherent research program rather than a collection of
-unrelated arm names.
+This note records a proposed naming cleanup for future descriptions of the
+experiment. It is not a request to rename code, result directories, historical
+logs, or active arm identifiers. During active experimentation, internal names
+such as `E`, `H-pack`, `B-min-pack`, and result directory names should remain
+stable for provenance. The names below should be treated as public-facing or
+write-up-facing aliases until the experiment is no longer in flight.
 
-During active experimentation, the safest policy is to treat these as
-**paper-facing aliases**. Internal identifiers such as `E`, `H-pack`,
-`B-min-pack`, and result directory names should probably stay unchanged until
-the experiment is no longer in flight. Renaming code paths, arm labels, or
-output directories mid-run is an unnecessary source of provenance mistakes.
+## The Problem With the Current Names
 
-## Core Suggestion
+The current names mix two different axes:
 
-Use **ValueGraft** as the umbrella name for the overall approach:
+1. **Layout:** where the retained tokens live in the cache.
+   - compact summary + tail
+   - packed summary-only layout
+   - gapped/original-position layout
 
-> preserving or reusing write-time KV state across a compaction boundary so
-> that compacted text is not interpreted only from a clean, post-hoc context.
+2. **State source:** whether keys and values are freshly encoded or preserved
+   from write time.
+   - fresh K + fresh V
+   - fresh K + write-time/blended V
+   - write-time K + write-time V
 
-Under this framing, the different experimental arms are variants of
-ValueGraft, not separate inventions with unrelated names.
+Names like `H-pack` emphasize the layout axis. That is why they are confusing.
+Both `B-min-pack` and `H-pack` are "packed"; packing is not the experimental
+contrast. The meaningful contrast is which parts of the KV state are fresh
+versus preserved from write time.
 
-## Suggested Crosswalk
+## Conceptual Model
 
-| Current / historical name | Suggested paper-facing name | Role |
-|---|---|---|
-| ValueGraft / E / E-tuned | ValueGraft Blend | Fresh compacted context plus blended write-time value states. |
-| E:a1.0 | ValueGraft Replace | Use write-time values directly rather than a partial blend. |
-| E:cfg=layers | Layer-Steered ValueGraft | Per-layer coefficient map; current champion candidate, pending clean validation. |
-| E:cfg=posslots | Slot-Masked ValueGraft | Exploratory variant; failed contamination guard, so not a main finding. |
-| H-pack | ValueGraft Pack | Packed summary cache entries written while the full context was available. |
-| H-gap | ValueGraft Gap | Diagnostic, non-deployable gapped version of the packed-state idea. |
-| B-min-pack | Fresh Pack Control | Same packed layout/text, freshly encoded; control for ValueGraft Pack. |
-| B | Plain Summary Compaction | Production-like text-only summary compaction baseline. |
-| A | Full-Context Oracle | No compaction baseline. |
+Use the shorthand:
 
-## Why Change It
+- **K / keys:** attention addresses. They affect whether later tokens attend
+  to a prior token. In RoPE models, cached keys include positional rotation.
+- **V / values:** attention payloads. They determine what information is read
+  out if a later token attends to that prior token.
 
-`H-pack` and `ValueGraft` sound like fundamentally different ideas even though
-they are closely related: both ask whether write-time state preserves useful
-semantic conditioning that fresh re-encoding loses. The old names mostly came
-from arm labels and implementation details. They are useful internally, but
-they make the paper harder to read.
+When a summary token was originally written at position `p` but is moved to a
+packed position `q`, preserving its write-time key requires a positional
+correction:
 
-The word `pack` is used because this variant takes state that was originally
-written at one set of positions and places it into the compacted, contiguous
-post-summary layout. In other words, the summary's cached state is "packed"
-next to the remaining context instead of being left at its old gapped
-positions. That is a layout distinction, not the core scientific claim.
+```text
+rotated write-time key = RoPE(q) * W_k(h_write_time)
+fresh key              = RoPE(q) * W_k(h_fresh_compact_context)
+```
 
-This may still be confusing as a public name. If `ValueGraft Pack` sounds too
-mechanical, alternatives include **ValueGraft Preserve**, **ValueGraft Summary
-State**, or **Packed-State ValueGraft**. The important contrast is:
+These are not equivalent unless the write-time hidden state and the fresh
+compact-context hidden state are identical. The whole hypothesis is that they
+are often not identical. Key rotation is therefore not just an implementation
+detail; it is the operation that lets us preserve a write-time key while
+placing it in a new packed layout.
 
-- the control freshly re-encodes the same summary text in the compact layout;
-- the intervention keeps the summary's write-time state and adapts it to that
-  compact layout.
+Values do not need RoPE re-rotation. Blending or replacing values is literally
+changing the value payload while leaving the key/address side alone.
 
-## Proposed Writing Pattern
+## Recommended Names
 
-Introduce the family first:
+Use **ValueGraft** as the umbrella for methods that preserve or reuse
+write-time KV state across a compaction boundary. Within that family, name the
+variants by which parts of KV state they preserve.
 
-> We call this family of interventions **ValueGraft**: training-free methods
-> that carry write-time KV state across a compaction boundary.
+| Historical name | Recommended name | Keys | Values | Layout |
+|---|---|---|---|---|
+| `A` | Full-Context Oracle | fresh from full context | fresh from full context | full context |
+| `B` | Plain Summary Compaction | fresh | fresh | compact summary + tail |
+| `E` / `E-tuned` | V-Graft | fresh | blended write-time V | compact summary + tail |
+| `E:a0.75` | V-Graft Blend | fresh | interpolated write-time V | compact summary + tail |
+| `E:a1.0` | V-Graft Replace | fresh | write-time V | compact summary + tail |
+| `E:cfg=layers` | Layer-Tuned V-Graft | fresh | layer-tuned write-time V | compact summary + tail |
+| `E:cfg=posslots` | Slot-Masked V-Graft | fresh | slot-masked write-time V | compact summary + tail |
+| `B-min-pack` | Fresh-KV Control | fresh | fresh | packed summary |
+| `H-pack` | KV-Graft | write-time K, re-rotated | write-time V | packed summary |
+| `H-gap` | Gapped KV-Graft | write-time K | write-time V | gapped summary |
+| `H-pack-wrongS` | Wrong-Source KV-Graft Control | wrong-source write-time K, re-rotated | wrong-source write-time V | packed summary |
 
-Then introduce the two main branches:
+## Why `Pack` Should Not Be the Headline Name
 
-> **ValueGraft Blend** modifies the compacted context's value vectors by
-> interpolating or extrapolating from write-time values. **ValueGraft Pack**
-> instead preserves the summary's write-time K/V entries directly in a packed
-> cache layout.
+`Pack` describes only the fact that summary tokens are placed into a compact
+contiguous cache layout. That layout detail matters methodologically, but it is
+shared by both sides of the important contrast:
 
-Then discuss controls:
+- `B-min-pack` uses packed layout with freshly encoded K/V.
+- `H-pack` uses the same packed layout with write-time K/V.
 
-> **Fresh Pack Control** uses the same packed text and positions as
-> ValueGraft Pack, but obtains its K/V state by ordinary fresh re-encoding.
+So `H-pack` should not be explained as "the packed one". The clearer
+explanation is:
 
-This keeps the story unified while still making the methodological distinctions
-clear.
+> **KV-Graft** preserves both keys and values from the summary's write-time
+> state. Because those keys were written at their original positions, they are
+> re-rotated when moved into the packed compact layout.
 
-## Caution
+The matched control is:
 
-Do not let the naming imply that all variants succeeded. In particular,
-Slot-Masked ValueGraft should be described as an exploratory variant that
-failed its wrong-conversation contamination guard. That failure is useful
-evidence about the tuning surface, but it should not be folded into the main
-positive claim.
+> **Fresh-KV Control** uses the same summary text and the same packed layout,
+> but recomputes both keys and values from the compact context.
+
+## V-Graft vs KV-Graft
+
+The main distinction should be stated directly:
+
+```text
+V-Graft:  fresh keys + write-time/blended values
+KV-Graft: write-time keys + write-time values
+```
+
+More concretely:
+
+- **V-Graft** builds the compacted context normally, keeps its freshly computed
+  keys, and blends or replaces only the values at aligned token positions.
+- **KV-Graft** keeps the summary token K/V states from write time. Its keys are
+  position-corrected by re-rotation when the summary is moved into a packed
+  layout.
+- **Fresh-KV Control** uses the same packed summary layout as KV-Graft, but
+  obtains both K and V by ordinary fresh re-encoding.
+
+This taxonomy avoids the earlier confusion where `H-pack` sounded like a
+layout variant of `V-Graft`. It is not. It is the K+V preservation branch of
+the family.
+
+## Suggested Prose
+
+Use something close to this:
+
+> We use **ValueGraft** for a family of training-free cache-state interventions
+> across compaction boundaries. **V-Graft** preserves write-time value state
+> while leaving freshly computed keys in place. **KV-Graft** preserves both
+> keys and values from the summary's write-time state; when evaluated in a
+> compact layout, its keys are re-rotated to the packed positions. The
+> **Fresh-KV Control** uses the same summary text and packed layout as
+> KV-Graft, but recomputes both keys and values from the compact context.
+
+## Cautions
+
+- Do not rename code paths, existing result files, or historical logs while
+  the experiment is still active.
+- Do not let the naming imply that every variant succeeded. In particular,
+  Slot-Masked V-Graft failed its wrong-conversation contamination guard and
+  should be described as an exploratory variant/control, not as a headline
+  positive result.
+- Do not describe KV-Graft as "just V-Graft with alpha = 1". V-Graft alpha
+  controls values only. KV-Graft preserves both keys and values.
