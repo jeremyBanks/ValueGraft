@@ -322,3 +322,14 @@ Run order: t1_A (E0 smoke) → then B/E interleaved, both tasks, ~4 rounds
 each on 2-4 shim pods (launch more via scripts/launch_pod.sh eN job_shim.sh).
 Judging batch 13 done → stage-1 final table = regenerate aggregate over
 verdicts_00..13 (2100 verdicts).
+
+## E0 SUCCESS (23:40 07-05)
+
+Full pipeline works: OpenHands 1.x SDK (src/e1_agent.py) -> tunnel :8010 ->
+e1 shim pod (18624@213.173.105.10) -> 30B -> t1 SOLVED, pytest green
+(scratchpad/e1_runs/t1_A/score.json tests_pass=true, 40 events).
+agent_steps regex is stale (SDK log format) — count "events=" line instead.
+E1 next: B/E modes need compaction to trigger — CHECK max tokens from A run
+vs SC_COMPACT_AT=9000; if under, restart shim with SC_COMPACT_AT lower
+(kill serve_shim on e1, relaunch with env). Queue: B t1, E t1, B t2, E t2,
+then repeat rounds; scores accumulate in scratchpad/e1_runs/*/score.json.
