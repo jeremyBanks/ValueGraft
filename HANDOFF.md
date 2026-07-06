@@ -31,3 +31,28 @@ Trust only rows with score.json + E1_AGENT_DONE. streamcheck alarms on
 A-arm failures (near-impossible) and burst scoring. Read INCIDENTS.md
 #11-12 before touching shim/serving code; fill the AGENTS.md
 stateful-change checklist in any such commit.
+
+## 19:30 07-06 — FULL SUCCESSOR HANDOFF (supersedes all above where conflicting)
+
+READ ORDER: INCIDENTS.md (all 17 + rules) → STATE.md top block →
+DECISIONS.md 07-06 entries → PIPELINE-AUDIT.md → this file.
+
+LIVE SYSTEM:
+- Pods (4, ~$5.6/hr): r1=45557@38.128.232.57, r3=30237@213.173.105.10,
+  r4=15419@213.173.105.10, r2=11448@38.128.233.55. All shims alive,
+  config: tail_keep=6000 summary=prod no-icache (r4: tail 2500 legacy for
+  synthetic stratum). Boot banner "CONFIG ..." in each shim.log verifies.
+- Local tunnels: 8021→r1, 8022→r3, 8023→r2, 8013→r4. VERIFY IDENTITY
+  after any re-establish (incident 14): health + CONFIG banner match.
+- Runners: matrix_H1/H2/H3 (real tasks, spec_H1-3, humane tier) +
+  matrix_SYN (synthetic remainder). Health-gated (wait, never burn);
+  driver refuses scores for never-ran episodes; timeouts scored.
+- Monitors: podloop v3 (5-min pulls + podcheck single-strike death +
+  streamcheck incl. local-plumbing watch), heartbeat 90min, memory+disk.
+- Analysis: pre-registered rules in DECISIONS (fit criteria 10:15,
+  screening 13:20, secondaries 13:35+17:15, autonomy rule 11:00/11:05,
+  covariates 18:20). Scores → results/agent_clean_run/ (auto-sync);
+  quarantines fenced. Balance ~$66. Canonical names in writeup-guidelines.
+RESUME: watch matrix_H*.log fill; when 40 real rows done → verdict per
+autonomy rule → confirm phase or stop-and-report. icache v2 (validated,
+flag-off) only post-soak. Sealed final eval seeds s50-99 untouched.
