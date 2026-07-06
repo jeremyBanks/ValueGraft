@@ -66,3 +66,9 @@ GLM scaffold-validation plan (if that rung is reached): layer 1 = full
 template dry-run vs the TARGET model's tokenizer (KBs, exact); layer 2 =
 serving-path smoke on GLM-4-9B 4-bit locally (~6GB). Zero pod spend
 before commitment.
+SWAP-LADDER SCAFFOLD STATUS (validated 07-06 night, tokenizer-level, 6/20
+convs): Qwen3-Coder-30B = qwen family, PASS (drop-in); GLM-4.5-Air +
+GLM-4-9B = prefix-stable via generic path, PASS. Remaining before any
+pivot: full 20-conv dry-run (~5 min), local serving smoke (0.6B qwen /
+GLM-4-9B), calibration pass (~$3), gold-patch scorer smoke.
+Disk: 96G free; HF cache 34G (no pressure).
