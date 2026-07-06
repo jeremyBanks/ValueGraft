@@ -34,8 +34,8 @@ The experiments completed so far mostly evaluate V-only Graft: fresh keys in
 the compacted context, plus blended write-time value tensors at exact-aligned
 summary and tail tokens. An older summary-only comparison also tested whether
 the same generated summary behaves differently when freshly encoded versus when
-carried forward with its write-time key/value state. That comparison is useful
-auxiliary evidence, but it is not part of the main ValueGraft method taxonomy.
+carried forward with its write-time key/value state. That comparison is
+informative auxiliary evidence outside the main ValueGraft method taxonomy.
 
 Across Qwen3-4B-Instruct-2507 and Qwen3-30B-A3B-Instruct-2507, the current
 evidence supports a limited mitigation claim. ValueGraft does not recover
@@ -92,7 +92,7 @@ alpha_V = constant or tuned
 
 Earlier summary-only experiments carried both key and value state for summary
 tokens into a minimal context without the recent tail. Those experiments remain
-useful as historical evidence about write-time summary encoding and honesty.
+relevant as historical evidence about write-time summary encoding and honesty.
 They changed context shape and tail retention as well as state source, so they
 are not part of the main key/value taxonomy.
 
@@ -157,10 +157,10 @@ value-side experiments. Future K-only or full KV comparisons should use the
 same production-shaped compacted context rather than the older summary-only
 setup.
 
-Two older labels appear in result files but should not be used as method names
-in the paper. `B-min-pack` means "summary-only fresh encoding." `H-pack` means
-"summary-only write-time KV." Their comparison is an auxiliary historical
-result, not a current experiment arm family.
+Two older labels appear in result files as provenance names, not method names.
+`B-min-pack` means "summary-only fresh encoding." `H-pack` means "summary-only
+write-time KV." Their comparison is an auxiliary historical result, not a
+current experiment arm family.
 
 Inside that older pair, the controlled variable is state source: fresh KV or
 write-time KV for the same generated summary tokens. Compared with the current
@@ -210,9 +210,9 @@ memory policies rather than by reusing the write-time attention state of the
 summary or retained tail.
 
 Parallel Context Compaction (Cim et al., 2026) is close in deployment setting:
-it studies compaction for long-horizon agent serving. It is a text-summary
-serving technique, not the same state-preserving intervention, and therefore
-serves as a useful baseline neighbor.
+it studies compaction for long-horizon agent serving. It remains a text-summary
+serving technique, so it is best treated as a neighboring baseline rather than
+the same intervention.
 
 The narrower setting here is conversation compaction: old dialogue is replaced
 by a generated visible summary plus recent tail, and the system continues as an
@@ -227,11 +227,9 @@ server-side compaction blocks and context-management controls; Gemini exposes
 context caching and opaque thought-signature-like artifacts. These interfaces
 show that production systems can carry non-textual continuation state. They do
 not publicly reveal whether providers use raw KV tensors, value-state blends,
-learned summaries, reasoning-state locks, or something unrelated. The correct
-claim is therefore not that frontier providers are doing ValueGraft. The claim
-is that ValueGraft is an open, white-box mechanism whose external shape is
-compatible with the kind of opaque state and compaction handles providers are
-already exposing.
+learned summaries, reasoning-state locks, or something unrelated. ValueGraft is
+an open, white-box mechanism compatible with these opaque state and compaction
+handles, not a claim about provider internals.
 
 ## 5. Methods
 
@@ -252,8 +250,8 @@ Cache surgery is only counted after identity tests. The build ladder verifies
 cache reconstruction, null surgery, tokenization stability, summary/tail
 alignment, alpha=0 equivalence to Plain Summary Compaction, old-context equals
 new-context equivalence to Full Context, and key re-rotation for the older
-summary-only comparison.
-Several implementation traps were discovered and documented: Qwen chat-template
+summary-only comparison. Several implementation traps were discovered and
+documented: Qwen chat-template
 instability around final assistant messages, batched-prefill vs decode-step
 logit differences, sequence-length-dependent 4-bit kernels, and session-state
 leaks in the first scaled end-to-end agent harness.
@@ -304,10 +302,10 @@ The 4B continuation-tuning result used a mid-layer-band setting with
 `alpha_V = 0.75`. The live coding-agent matrix currently compares scalar
 `alpha_V` settings and a layer-tuned V-only policy.
 
-### 5.4 Auxiliary Historical Summary-Only Comparison
+### 5.4 Historical Summary-Only Comparison
 
-One older experiment used a summary-only context. It should be read as an
-auxiliary historical comparison, not as part of the current experiment design.
+One earlier experiment used a summary-only context. It is auxiliary historical
+evidence, not part of the current experiment design.
 
 Both arms in that pair use the same four sink tokens and the same generated
 summary tokens in the same summary-only context. The fresh control, historically
@@ -316,13 +314,13 @@ historically `H-pack`, extracts the generated-summary span from the write-time
 cache, re-rotates its keys into the summary-only positions, and copies its
 values unchanged.
 
-Within that old pair, the controlled contrast is fresh summary KV versus
-write-time summary KV. Relative to the current ValueGraft experiments, the pair
-also changes major design axes: it omits the retained tail, uses a different
-context shape from the production-shaped compacted transcript, and changes K
-and V together rather than varying `alpha_K` and `alpha_V` separately. It is
-therefore evidence about write-time summary encoding and honesty, not evidence
-about the current key/value graft taxonomy.
+Within that pair, the controlled contrast is fresh summary KV versus write-time
+summary KV. Compared with the current ValueGraft experiments, it also changes
+major design axes: no retained tail, a different context shape from the
+production-shaped compacted transcript, and coupled K/V changes rather than
+separate `alpha_K` and `alpha_V` variation. The result is evidence about
+write-time summary encoding and honesty, not evidence about the current
+key/value graft taxonomy.
 
 ### 5.5 Coding-Agent Harness
 
@@ -355,8 +353,8 @@ tasks. At this draft cutoff, no standard-task score files were available yet.
 ### 6.1 Text-Only Compaction Produces the Baseline Gap
 
 Full-context performance exceeds text-compacted performance when the task
-depends on evicted context. This is the damage measurement against which
-mitigation is evaluated, not the novelty claim.
+depends on evicted context. This gap is the damage measurement against which
+mitigation is evaluated.
 
 In LongMemEval-S, full context answered 71-81% of questions in early runs,
 while compacted variants were at or below 11%. A later 30B-bf16 aggregate
@@ -364,40 +362,39 @@ measured 52.5% correct with full context vs 4.1% with text compaction over
 320 standard-data questions. In SWE-Gym/OpenHands next-action prediction, the
 full-context vs text-compacted gap is 0.164 nats/token.
 
-These numbers establish headroom for mitigation, but they also show an
-important boundary: when the evidence is truly evicted, the methods tested here
-do not recover ordinary factual recall.
+These numbers establish headroom for mitigation and mark a boundary: when the
+evidence is truly evicted, the methods tested here do not recover ordinary
+factual recall.
 
 ### 6.2 Same Text, Different Write-Time State
 
 Several tests show that identical visible text can behave differently depending
-on the cached attention state associated with it. These tests motivate the
-method, but they are not all current method arms.
+on the cached attention state associated with it. They motivate the method, but
+not all of them are current method arms.
 
 In the historical summary-only pilot, the same generated summary predicted
 future continuation better when its cached state had been written under full
 context than when the same summary tokens were freshly encoded: +0.093 nats,
 winning 10/12 conversations. At 30B, the contrast grew to +0.128 nats, winning
-12/12 conversations. This is the same auxiliary comparison described in
-Section 5.4: useful evidence about write-time summary KV, but not part of the
-current `alpha_K` / `alpha_V` taxonomy.
+12/12 conversations. This pilot is the auxiliary comparison described in
+Section 5.4: evidence about write-time summary KV outside the current
+`alpha_K` / `alpha_V` taxonomy.
 
 The micro-sense experiment isolates the mechanism. A carrier sentence with
 identical tokens and positions is evaluated with and without a disambiguating
 context. The fresh bare-context sense margin is -0.23 nats. Transplanting only
 write-time values moves it to +0.84. Transplanting K+V moves it to +1.95.
-Full context is +3.81. This shows that write-time values carry some
-context-conditioned interpretation, while keys also matter.
+Full context is +3.81. These margins indicate that write-time values carry
+some context-conditioned interpretation, while keys also matter.
 
 Wrong-conversation and shuffled-value controls degrade performance rather than
 helping. This argues against a generic smoothing or cache-perturbation account.
 
-### 6.3 Auxiliary Summary-Only Comparison: Fabrication
+### 6.3 Historical Summary-Only Comparison: Fabrication
 
-The older summary-only comparison is relevant to one result: fabrication on
-unknowable questions. It is not part of the current ValueGraft design. It is
-included here because it separates, inside that older summary-only context,
-fresh summary KV from write-time summary KV.
+The older summary-only comparison contributes one result: fabrication on
+unknowable questions. It separates fresh summary KV from write-time summary KV
+inside a summary-only context, under the design caveats in Section 5.4.
 
 On unknowable questions, text-only compaction often fabricates. Summary-only
 contexts make the model more cautious, and write-time summary KV adds a further
@@ -416,11 +413,10 @@ vs fresh summary KV. At 30B, write-time KV reduces decoy fabrication from 10 to
 3. At 4B, most of the honesty improvement is already produced by the
 summary-only context; the write-time component is small.
 
-LongMemEval adds a useful boundary. At 4B, the summary-only write-time KV arm
+LongMemEval adds a boundary. At 4B, the summary-only write-time KV arm
 reduces fabrication relative to Plain Summary Compaction. At 30B in personal-QA
 framing, the production compacted baseline already tends to admit missing
 personal history, so the honesty advantage largely disappears. The effect is
-therefore
 frame-dependent: it matters most when compaction happens inside an ongoing
 working conversation, where the model is tempted to keep acting as if it knows
 the missing details.
@@ -437,8 +433,8 @@ when tuned on validation data and evaluated on holdout.
 
 The dose response is model-dependent. At 4B, high `alpha_V` is harmful and
 layer gating helps. At 30B, a global setting around 0.75 works best, and values
-above 1 decline smoothly rather than failing immediately. This makes
-per-model calibration important.
+above 1 decline smoothly rather than failing immediately. Per-model calibration
+is required.
 
 Per-head and per-slot tuning remain exploratory. A 57-slot profile looked
 strong on one 30B holdout, but its wrong-conversation guard indicated that much
@@ -453,9 +449,9 @@ teacher-forced likelihood of the true next assistant action by +0.0156
 nats/token. It wins 45/75 traces, with CI [0.005, 0.027], recovering about 10%
 of the full-context vs text-compacted gap.
 
-This result is important because the domain is closer to real agent work than
-the synthetic planted probes. It is still an offline next-action metric, not
-end-to-end task success.
+This domain is closer to real agent work than the synthetic planted probes.
+The metric is still offline next-action likelihood, not end-to-end task
+success.
 
 ### 6.6 Early End-to-End Coding-Agent Runs
 
@@ -487,8 +483,8 @@ The live scratch table had grown to 41 synthetic score files:
 
 These numbers should be read cautiously. They are unbalanced, still running,
 and include early `t3` rows where Full Context had not yet passed. Two rows had
-lane/runtime `TASKMOD` errors rather than valid scores. The clean information
-so far is that the instrument is not ceilinged and that `alpha_V = 0.75` remains
+lane/runtime `TASKMOD` errors rather than valid scores. The clean data so far
+show that the instrument is not ceilinged and that `alpha_V = 0.75` remains
 encouraging on `t1`; the aggregate live synthetic table is not yet enough to
 choose an arm. The decisive question remains the pre-registered paired
 comparison after the clean synthetic and standard task strata finish.
@@ -497,26 +493,25 @@ comparison after the clean synthetic and standard task strata finish.
 
 Across the current evidence, ValueGraft does not restore facts that exist only
 in the evicted context. LongMemEval compacted variants remain near floor for
-correctness. Synthetic evicted-fact probes show the same pattern.
-The auxiliary summary-only comparison changes whether the model fabricates or
+correctness. Synthetic evicted-fact probes show the same pattern. The
+historical summary-only comparison changes whether the model fabricates or
 admits missing information. V-only Graft shifts likelihood toward the
 full-context continuation. Neither turns a compacted transcript into a
 hidden-memory store.
 
 ## 7. Discussion
 
-The cleanest interpretation is that text-only compaction loses two things:
-visible information and context-conditioned computation. Summary text can only
-preserve what it says. Write-time attention state can preserve some of the
-model's previous interpretation of what the text meant, how confident it was,
-or what trajectory it was following.
+Text-only compaction loses visible information and context-conditioned
+computation. Summary text can only preserve what it says. Write-time attention
+state can preserve some of the model's previous interpretation of what the text
+meant, how confident it was, or what trajectory it was following.
 
 That state is not a retrieval mechanism. It does not recover arbitrary deleted
-facts. It is most useful when the compacted context still contains the relevant
+facts. It matters most when the compacted context still contains the relevant
 surface text or summary tokens, but re-encoding them from scratch loses how
 they were understood in the original context.
 
-This explains the split in observed effects. In the auxiliary summary-only
+The observed effects split by outcome. In the historical summary-only
 comparison, write-time summary KV mostly affects honesty: summary tokens written
 under full context may carry a signal about the extent and uncertainty of what
 was actually discussed. In the current production-shaped experiments, V-only
@@ -524,20 +519,19 @@ Graft mostly affects continuation likelihood: values at aligned tokens can
 nudge the compacted trajectory back toward the full-context trajectory without
 changing the visible transcript.
 
-The coding-agent setting is where this matters most. Agents do not merely need
-to answer one fact question after compaction; they need to continue a process:
+The coding-agent setting is the strongest motivation for this work. Agents do
+not merely answer one fact question after compaction; they continue a process:
 avoid repeating failed approaches, preserve constraints, remember what kind of
 work is in progress, and make the next action coherent with a long exploration
-history. The offline SWE-Gym result and early end-to-end runs are therefore
-more important than their small absolute effect sizes might suggest. They are
-fragile proxies, but they point at the right failure surface.
+history. The offline SWE-Gym result and early end-to-end runs are fragile
+proxies, but they test the right failure surface.
 
-The current standard-task pivot is a good scientific adjustment. Synthetic
-tasks make the dependency structure controllable, but standard tasks test
-whether the same mechanism survives contact with real repositories and real
-issue statements. The pre-stated fit criteria are also essential: a standard
-task only tests compaction if the run actually crosses the compaction boundary
-and the answer-relevant problem statement falls outside the retained tail.
+The current standard-task pivot strengthens the design. Synthetic tasks make
+the dependency structure controllable; standard tasks test whether the same
+mechanism survives contact with real repositories and real issue statements.
+The pre-stated fit criteria are essential: a standard task only tests
+compaction if the run crosses the compaction boundary and the answer-relevant
+problem statement falls outside the retained tail.
 
 ## 8. Limitations
 
@@ -547,15 +541,15 @@ so far is offline next-action likelihood, not end-to-end task success. The
 end-to-end coding-agent matrix is still in progress and has already required
 strict quarantine of contaminated runs.
 
-The summary-only result is especially easy to overstate. Within that old pair,
-context shape is controlled. Relative to the current design, context shape is
-different: no retained tail, different token positions, and K and V change
-together. The result should therefore be reported as auxiliary evidence about
-write-time summary encoding, not as evidence for K-only Graft, V-only Graft, or
-KV-Graft in the production-shaped compacted context. A clean K-only or KV-Graft
-comparison should hold summary text, tail, context shape, positions, values,
-prompts, and decoding fixed while varying only `alpha_K`, or only the intended
-pair of parameters.
+The historical summary-only result has a narrow interpretation. Within that
+old pair, context shape is controlled. Relative to the current design, context
+shape is different: no retained tail, different token positions, and coupled K
+and V changes. Its paper-facing role is auxiliary evidence about write-time
+summary encoding, not evidence for K-only Graft, V-only Graft, or KV-Graft in
+the production-shaped compacted context. A clean K-only or KV-Graft comparison
+should hold summary text, tail, context shape, positions, values, prompts, and
+decoding fixed while varying only `alpha_K`, or only the intended pair of
+parameters.
 
 The alpha policies are not universal. The best 4B setting is not the best 30B
 setting, and per-slot tuning is vulnerable to selection artifacts. The safer
@@ -572,9 +566,9 @@ provider uses this mechanism internally.
 If the project stopped at this evidence frontier, the defensible conclusion
 would be:
 
-ValueGraft does not make compacted models remember deleted facts. It does show
-that write-time cached attention state can reduce some behavioral harm from
-compaction. The auxiliary summary-only comparison reduces fabrication in
+ValueGraft does not make compacted models remember deleted facts. It shows that
+write-time cached attention state can reduce some behavioral harm from
+compaction. The historical summary-only comparison reduces fabrication in
 agentic frames, partly through context shape and partly through write-time
 summary KV. V-only Graft recovers a small but consistent fraction of
 continuation and coding-trajectory likelihood lost to text-only compaction.
