@@ -154,7 +154,8 @@ def main():
         try:
             summary = generate_summary_hf(model, tokenizer, msgs,
                                           request=SUMMARY_REQUEST_BRIEF,
-                                          max_tokens=400)
+                                          max_tokens=400,
+                                          snapshot=("E-tuned" in ARMS))
         except (AssertionError, RuntimeError, torch.cuda.OutOfMemoryError) as e:
             print(f"{q['question_id']}: failed ({type(e).__name__})", flush=True)
             torch.cuda.empty_cache()

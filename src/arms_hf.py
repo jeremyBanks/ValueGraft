@@ -49,7 +49,7 @@ def hf_prefill_ids(model, ids):
     return snapshot_cache(cache), logits
 
 
-def generate_summary_hf(model, tokenizer, msgs, request=None, max_tokens=900):
+def generate_summary_hf(model, tokenizer, msgs, request=None, max_tokens=900, snapshot=True):
     conv_ids = canonical_ids(tokenizer, msgs, renderer=render_hf)
     req_ids = render_hf(
         tokenizer, msgs + [{"role": "user",
