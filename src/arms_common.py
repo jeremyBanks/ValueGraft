@@ -201,3 +201,21 @@ def merge_consecutive_roles(msgs):
         else:
             out.append(dict(m))
     return out
+
+
+def build_b_messages_gemma(msgs, summary_text, tail_start_msg):
+    """Alternation-safe B context for gemma-family templates:
+    [system?, user(note), assistant(ack), *tail(starting at a USER msg)].
+    Summary msg index = 1 (after system fold this is still msgs[1] in our
+    list), ack = 2, tail starts at index 3."""
+    note = (
+        "[Context note] Earlier parts of this conversation were compacted. "
+        "Summary of what came before:\n\n" + summary_text
+    )
+    return [
+        msgs[0],
+        {"role": "user", "content": note},
+        {"role": "assistant",
+         "content": "Understood - I have that context and will continue."},
+        *msgs[tail_start_msg:],
+    ]

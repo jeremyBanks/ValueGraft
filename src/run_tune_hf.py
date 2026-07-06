@@ -98,13 +98,25 @@ def build_ctx(model, tokenizer, cid, msgs, tsm, cont_spec):
     if tsm is None:
         target = 0.75 * len(ids)
         tsm = min(range(1, len(msgs)), key=lambda i: abs(starts[i] - target))
+    fam = detect_template_family(tokenizer)
+    if fam == "gemma":
+        user_idx = [i for i in range(2, len(msgs) - 1)
+                    if msgs[i]["role"] == "user"]
+        tgt75 = 0.75 * len(ids)
+        tsm = min(user_idx, key=lambda i: abs(starts[i] - tgt75))
     summary = generate_summary_hf(model, tokenizer, msgs,
                                   request=SUMMARY_REQUEST)
-    b_msgs = build_b_messages(msgs, summary["text"], tsm)
+    if fam == "gemma":
+        from arms_common import build_b_messages_gemma
+        b_msgs = build_b_messages_gemma(msgs, summary["text"], tsm)
+    else:
+        b_msgs = build_b_messages(msgs, summary["text"], tsm)
     b_ids = canonical_ids_any(tokenizer, b_msgs, render_hf)
     b_starts = message_starts_any(tokenizer, b_msgs, b_ids, render_hf)
+    tail_b_idx = 3 if fam == "gemma" else 2
     regions = [
-        ((b_starts[2], len(b_ids)), (starts[tsm], summary["conv_end"])),
+        ((b_starts[tail_b_idx], len(b_ids)),
+         (starts[tsm], summary["conv_end"])),
         ((b_starts[1], b_starts[2]), (summary["s_start"], summary["s_end"])),
     ]
     pairs = build_alignment(b_ids, summary["old_ids"],
