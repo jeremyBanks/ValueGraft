@@ -11,20 +11,22 @@ Long-running LLM agents often compact their conversation history by replacing
 old turns with a summary and re-encoding the shortened transcript. This keeps
 visible text but discards the attention state written when the model originally
 interpreted that text in full context. We test whether preserving part of that
-write-time state can reduce the impact of compaction. We study two training-free
-interventions on Qwen3-4B-Instruct-2507 and Qwen3-30B-A3B-Instruct-2507:
-H-pack, which carries a summary's write-time cache entries into a packed
-context, and ValueGraft, which freshly encodes the compacted context but blends
-aligned old cached value tensors into the fresh cache. The interventions do not
-recover evicted factual recall. They produce two narrower mitigation effects:
-H-pack reduces fabrication on unknowable questions in agentic compaction frames,
-and tuned ValueGraft recovers a small but consistent fraction of continuation
-and coding-agent next-action likelihood lost to compaction. We use
-full-context vs text-compacted performance to normalize effect sizes. On 75
-OpenHands SWE-Gym traces, ValueGraft improves true next-action likelihood by
-+0.0156 nats/token, about 10% of that gap. The evidence supports a limited
-mitigation claim: write-time value state can preserve some behavioral continuity
-across compaction boundaries, but it is not a general memory-recovery mechanism.
+write-time state can reduce the impact of compaction. We use **ValueGraft** as
+the name for a family of training-free compaction-state interventions and study
+two variants on Qwen3-4B-Instruct-2507 and Qwen3-30B-A3B-Instruct-2507:
+**ValueGraft-Pack**, which carries a summary's write-time cache entries into a
+packed context, and **ValueGraft-Blend**, which freshly encodes the compacted
+context but blends aligned old cached value tensors into the fresh cache. The
+interventions do not recover evicted factual recall. They produce two narrower
+mitigation effects: ValueGraft-Pack reduces fabrication on unknowable questions
+in agentic compaction frames, and tuned ValueGraft-Blend recovers a small but
+consistent fraction of continuation and coding-agent next-action likelihood
+lost to compaction. We use full-context vs text-compacted performance to
+normalize effect sizes. On 75 OpenHands SWE-Gym traces, ValueGraft-Blend
+improves true next-action likelihood by +0.0156 nats/token, about 10% of that
+gap. The evidence supports a limited mitigation claim: write-time value state
+can preserve some behavioral continuity across compaction boundaries, but it is
+not a general memory-recovery mechanism.
 
 ## 1. Introduction
 
@@ -43,14 +45,17 @@ earlier discussion was attendable.
 We ask whether carrying forward a small amount of write-time attention state can
 reduce the impact of text-only compaction.
 
-We test two interventions.
+We use **ValueGraft** as the umbrella name for two closely related
+interventions.
 
-**H-pack** generates a summary while the full conversation is still available,
-then carries the summary's write-time key/value entries into a compact packed
-context. Keys are re-rotated to their packed positions; values are unchanged.
+**ValueGraft-Pack** generates a summary while the full conversation is still
+available, then carries the summary's write-time key/value entries into a
+compact packed context. Keys are re-rotated to their packed positions; values
+are unchanged.
 
-**ValueGraft** builds the ordinary compacted context and keeps its fresh keys,
-but blends old value tensors into exact-aligned summary and tail positions:
+**ValueGraft-Blend** builds the ordinary compacted context and keeps its fresh
+keys, but blends old value tensors into exact-aligned summary and tail
+positions:
 
 ```text
 V_final = (1 - alpha) * V_fresh + alpha * V_old
@@ -142,39 +147,39 @@ The main evaluated arms are:
 - **A:** full context, no compaction.
 - **B:** production-style text compaction, `summary + tail`, freshly encoded
   from the shortened transcript.
-- **B-min-pack:** the first four sink tokens plus the exact generated summary
+- **FreshPack:** the first four sink tokens plus the exact generated summary
   token ids, packed contiguously and freshly encoded.
-- **H-pack:** the same packed token sequence as B-min-pack, but using the
+- **ValueGraft-Pack:** the same packed token sequence as FreshPack, but using the
   summary's write-time cache entries.
-- **ValueGraft:** the normal B transcript with fresh keys and blended old value
-  tensors at exact-aligned summary and tail positions.
+- **ValueGraft-Blend:** the normal B transcript with fresh keys and blended old
+  value tensors at exact-aligned summary and tail positions.
 - **Negative controls:** shuffled-value and wrong-conversation grafts.
 
-H-pack vs B-min-pack isolates the effect of write-time summary encoding in a
-packed layout: identical tokens, identical packed positions, different cache
-state. ValueGraft vs B tests whether old value payloads improve an otherwise
-ordinary compacted transcript.
+ValueGraft-Pack vs FreshPack isolates the effect of write-time summary encoding
+in a packed layout: identical tokens, identical packed positions, different
+cache state. ValueGraft-Blend vs B tests whether old value payloads improve an
+otherwise ordinary compacted transcript.
 
-### 4.3 H-Pack Construction
+### 4.3 ValueGraft-Pack Construction
 
-H-pack extracts the summary token span from the saved summary-generation cache.
-For Qwen3 in this stack, keys are stored after RoPE rotation and values are
-unrotated. To make the retained summary cache contiguous and prefix-shaped, we
-move the summary span immediately after the four sink tokens. The summary keys
-are re-rotated by the positional offset between their write-time positions and
-their packed positions; the values are copied unchanged. The resulting cache
-contains only the sinks and summary entries, with the cache offset set to the
-end of the packed summary.
+ValueGraft-Pack extracts the summary token span from the saved
+summary-generation cache. For Qwen3 in this stack, keys are stored after RoPE
+rotation and values are unrotated. To make the retained summary cache contiguous
+and prefix-shaped, we move the summary span immediately after the four sink
+tokens. The summary keys are re-rotated by the positional offset between their
+write-time positions and their packed positions; the values are copied
+unchanged. The resulting cache contains only the sinks and summary entries,
+with the cache offset set to the end of the packed summary.
 
-B-min-pack is the matched text-only control for this operation. It uses the
+FreshPack is the matched text-only control for this operation. It uses the
 same sink tokens and the same summary token ids at the same packed positions,
-but obtains their key/value tensors by an ordinary fresh prefill. Any H-pack vs
-B-min-pack difference is therefore not due to summary wording, token count, or
-packed position layout.
+but obtains their key/value tensors by an ordinary fresh prefill. Any
+ValueGraft-Pack vs FreshPack difference is therefore not due to summary wording,
+token count, or packed position layout.
 
-### 4.4 ValueGraft Construction
+### 4.4 ValueGraft-Blend Construction
 
-ValueGraft starts from the production text-compaction baseline B. We first
+ValueGraft-Blend starts from the production text-compaction baseline B. We first
 freshly prefill the compacted transcript, preserving its ordinary contiguous
 positions and its fresh keys. We then align tokens from the compacted transcript
 to tokens from the old full-context summary-generation run.
@@ -193,30 +198,30 @@ V_final[layer, new_pos] =
   + alpha       * V_old[layer, old_pos]
 ```
 
-The reported ValueGraft arm is the post-prefill version: blending happens after
-B's compacted transcript has been encoded. Earlier exploratory arms also tried
-interleaving the blend during prefill, but the current headline comparison uses
-fresh keys and post-prefill blended values. The 4B setting used a mid-layer-band
-gate with alpha=0.25; the 30B setting used a global alpha=0.75, both selected
-on validation continuation likelihood before holdout evaluation.
+The reported ValueGraft-Blend arm is the post-prefill version: blending happens
+after B's compacted transcript has been encoded. Earlier exploratory arms also
+tried interleaving the blend during prefill, but the current headline comparison
+uses fresh keys and post-prefill blended values. The 4B setting used a
+mid-layer-band gate with alpha=0.25; the 30B setting used a global alpha=0.75,
+both selected on validation continuation likelihood before holdout evaluation.
 
 ### 4.5 Validation
 
 Because cache surgery is sensitive to position, template, and kernel details,
 every reported configuration had to pass identity tests before its results
 counted. The ladder verifies cache
-serialization, null surgery, value-graft alpha=0 equivalence to B,
+serialization, null surgery, ValueGraft-Blend alpha=0 equivalence to B,
 old-context-equals-new-context equivalence to A, tokenization stability, and
-key re-rotation for packed H-pack. Runtime traps found during the work include
-Qwen chat-template instability, batched-vs-stepwise logit differences, and
-sequence-length-dependent 4-bit kernel behavior.
+key re-rotation for packed ValueGraft-Pack. Runtime traps found during the work
+include Qwen chat-template instability, batched-vs-stepwise logit differences,
+and sequence-length-dependent 4-bit kernel behavior.
 
 Negative controls check whether gains can be explained by generic smoothing or
 odd cache perturbations. Shuffled-value grafts use the correct conversation's
 old values but attach them to the wrong aligned positions. Wrong-conversation
-grafts use old values from another conversation. H-pack-wrongS uses packed
-summary state from another conversation. These controls test whether an effect
-survives after content/state alignment is broken.
+grafts use old values from another conversation. The wrong-summary pack control
+uses packed summary state from another conversation. These controls test whether
+an effect survives after content/state alignment is broken.
 
 ### 4.6 Data and Scoring
 
@@ -260,9 +265,10 @@ The reported intervention effects are measured against these gaps.
 ### 5.2 Same Text, Different State
 
 The same summary text behaves differently depending on whether its cache entries
-were written under full context. H-gap beats a fresh-encoded minimal summary
-control by +0.093 nats on the 4B pilot, winning 10/12 conversations. At 30B the
-contrast grows to +0.128 nats, winning 12/12 conversations, CI [0.097, 0.158].
+were written under full context. In an earlier gapped summary-state pilot, the
+write-time cache variant beats a fresh-encoded minimal summary control by
++0.093 nats on the 4B pilot, winning 10/12 conversations. At 30B the contrast
+grows to +0.128 nats, winning 12/12 conversations, CI [0.097, 0.158].
 
 A separate micro-sense experiment isolates the mechanism. A sentence with
 identical tokens and positions is evaluated with and without a
@@ -274,24 +280,24 @@ context-conditioned interpretation in this controlled setting.
 Wrong-conversation and shuffled-value grafts degrade performance rather than
 improve it, arguing against a generic smoothing explanation.
 
-### 5.3 H-Pack Reduces Fabrication in Agentic Frames
+### 5.3 ValueGraft-Pack Reduces Fabrication in Agentic Frames
 
-H-pack's clearest benefit is honesty rather than recall. On unknowable questions,
-production-style compaction often fabricates. Packed summary contexts make the
-model more cautious, and write-time summary state adds a further component,
-especially at 30B.
+ValueGraft-Pack's clearest benefit is honesty rather than recall. On unknowable
+questions, production-style compaction often fabricates. Packed summary contexts
+make the model more cautious, and write-time summary state adds a further
+component, especially at 30B.
 
 Fabricated:admitted counts on Phase 2 synthetic/decoy probes:
 
 | Arm | 30B decoys | 30B evicted facts | 4B decoys | 4B evicted facts |
 | --- | --- | --- | --- | --- |
 | B, production compaction | 19:5 | 16:8 | 18:6 | 15:9 |
-| B-min-pack, fresh packed summary | 10:14 | 5:19 | 4:20 | 6:18 |
-| H-pack, write-time packed summary | **3:21** | **1:23** | **3:21** | **2:22** |
+| FreshPack, fresh packed summary | 10:14 | 5:19 | 4:20 | 6:18 |
+| ValueGraft-Pack, write-time packed summary | **3:21** | **1:23** | **3:21** | **2:22** |
 
-The matched comparison is H-pack vs B-min-pack. At 30B, write-time state reduces
-decoy fabrication from 10 to 3. At 4B the matched difference is small; most of
-the effect is already produced by the packed minimal layout.
+The matched comparison is ValueGraft-Pack vs FreshPack. At 30B, write-time
+state reduces decoy fabrication from 10 to 3. At 4B the matched difference is
+small; most of the effect is already produced by the packed minimal layout.
 
 The same distinction explains why the standard benchmark result is weaker. In 30B
 LongMemEval personal-QA framing, the compacted baseline already tends to admit
@@ -300,10 +306,10 @@ arms, and grafting does not increase fabrication. The honesty effect therefore
 appears frame-dependent: it matters most when the compacted context invites the
 model to continue acting as a task participant.
 
-### 5.4 ValueGraft Recovers a Small Continuation Signal
+### 5.4 ValueGraft-Blend Recovers a Small Continuation Signal
 
-ValueGraft improves continuation likelihood by small but consistent amounts
-when tuned on a validation split and evaluated once on holdout.
+ValueGraft-Blend improves continuation likelihood by small but consistent
+amounts when tuned on a validation split and evaluated once on holdout.
 
 | Scale | Setting | Holdout gain vs B | Wins | CI | Gap closure |
 | --- | --- | --- | --- | --- | --- |
@@ -317,19 +323,20 @@ promising 30B holdout result, but it is not yet robust enough to be a headline
 method.
 
 In the closest coding-domain check so far, on 75 OpenHands SWE-Gym traces,
-tuned ValueGraft improves true next-action likelihood by +0.0156 nats/token,
-wins 45/75, CI [0.005, 0.027], and recovers about 10% of the full-context vs
-compacted gap. This remains an offline proxy rather than an end-to-end
-task-success result, but it places the effect on real agent trajectories.
+tuned ValueGraft-Blend improves true next-action likelihood by +0.0156
+nats/token, wins 45/75, CI [0.005, 0.027], and recovers about 10% of the
+full-context vs compacted gap. This remains an offline proxy rather than an
+end-to-end task-success result, but it places the effect on real agent
+trajectories.
 
 ### 5.5 Boundary: No Recall Recovery
 
 The interventions do not recover evicted facts. On LongMemEval, all compacted
 variants remain at or below 11% correct in the early runs, and the larger
 Stage-1 aggregate gives the expected full-context vs compacted recall gap. In
-synthetic probe cuts, referent recovery remains poor. H-pack mainly changes
-whether the model fabricates or admits missing information; ValueGraft mainly
-shifts likelihood toward the full-context continuation.
+synthetic probe cuts, referent recovery remains poor. ValueGraft-Pack mainly
+changes whether the model fabricates or admits missing information;
+ValueGraft-Blend mainly shifts likelihood toward the full-context continuation.
 
 The current evidence therefore supports "less damaging compaction," not "latent
 recall of deleted context."
@@ -359,7 +366,7 @@ honesty intervention has little room to help. The coding evidence is offline
 next-action prediction, not end-to-end task completion.
 
 Several controls remain. A stronger text-only summary baseline is needed.
-H-pack's honesty effect is partly layout-driven and partly write-time
+ValueGraft-Pack's honesty effect is partly layout-driven and partly write-time
 state-driven; the matched pair isolates some of the latter, but not every
 possible caution mechanism. Per-slot calibration should remain exploratory until
 it passes wrong-conversation guards and larger holdout tests. One-off demos are
@@ -370,11 +377,12 @@ controlled micro-sense experiment.
 
 The current evidence supports the following conclusion:
 
-ValueGraft and H-pack do not make compacted models remember deleted facts. They
-show that write-time cached attention state can reduce some behavioral harm from
-compaction. H-pack can make post-compaction models less likely to fabricate
-unsupported details in agentic frames. ValueGraft can recover a small but
-consistent fraction of continuation and next-action likelihood lost to compaction.
+ValueGraft-Pack and ValueGraft-Blend do not make compacted models remember
+deleted facts. They show that write-time cached attention state can reduce some
+behavioral harm from compaction. ValueGraft-Pack can make post-compaction models
+less likely to fabricate unsupported details in agentic frames. ValueGraft-Blend
+can recover a small but consistent fraction of continuation and next-action
+likelihood lost to compaction.
 
 This supports treating conversation compaction as a text-plus-state problem. The
 summary is the visible artifact, but the computation that produced and
