@@ -29,8 +29,17 @@ def main():
             "or the backoff base in ms)? Answer with just the number.")
         conv.run()
         evs = getattr(conv.state, "events", [])
-        tail = "".join(str(getattr(e, "content", "") or "") for e in evs[-4:])
-        print(f"E1_RECALL_PROBE: {tail[-300:]}", flush=True)
+        msgs = [e for e in evs
+                if getattr(e, "source", "") == "agent" and
+                getattr(e, "llm_message", None)]
+        final = ""
+        for e in reversed(evs):
+            lm = getattr(e, "llm_message", None)
+            c = getattr(lm, "content", None) if lm else None
+            if c:
+                final = "".join(getattr(p, "text", str(p)) for p in c)                     if isinstance(c, list) else str(c)
+                break
+        print(f"E1_RECALL_PROBE: {final[:300]}", flush=True)
     except Exception as e:
         print(f"E1_RECALL_PROBE_FAILED {e}", flush=True)
 

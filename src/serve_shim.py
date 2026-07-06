@@ -206,7 +206,7 @@ def app(environ, start_response):
                     compact_at = int(p[1:])
         msgs = _norm(req["messages"])
         max_tokens = min(int(req.get("max_tokens") or 1500), 3000)
-        skey = _skey(msgs)
+        skey = _skey(msgs) + "|" + m.split("sc-")[-1]
         with _lock:
             sess = _sessions.setdefault(skey, {})
             t0 = time.time()
