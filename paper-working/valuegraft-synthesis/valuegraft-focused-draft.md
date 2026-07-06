@@ -86,14 +86,15 @@ recovery.
 ## 3. Related Work
 
 Several nearby literatures already establish that cached attention state can be
-useful beyond speed. **Models Take Notes at Prefill** argues that prefill writes
-conclusions into downstream cached state and that those cached blocks can be
-edited or composed. **Fast KV Compaction via Attention Matching** studies
-latent-space KV compaction directly. KV reuse systems such as KVLink,
-CacheBlend-style serving methods, and SamKV-like blending methods reuse or mix
-cache state for independently encoded chunks. Learned compression methods such
-as gist tokens, AutoCompressor, ICAE, Activation Beacon, Compressed Context
-Memory, and Cartridges explore non-textual ways to carry context.
+useful beyond speed. Li (2026) argues that prefill writes conclusions into
+downstream cached state and that those cached blocks can be edited or composed.
+Zweiger et al. (2026) study latent-space KV compaction directly. KV reuse
+systems such as KVLink (Yang et al., 2025), CacheBlend (Yao et al., 2025), and
+SamKV (Cao et al., 2025) reuse or mix cache state for independently encoded
+chunks. Learned compression methods such as gist tokens (Mu et al., 2023),
+AutoCompressor (Chevalier et al., 2023), ICAE (Ge et al., 2024), Activation
+Beacon (Zhang et al., 2024), Compressed Context Memory (Kim et al., 2024), and
+Cartridges (Eyuboglu et al., 2025) explore non-textual ways to carry context.
 
 The narrower setting here is conversation compaction: old dialogue is replaced
 by a generated text summary and the system continues from a compacted transcript.
@@ -103,7 +104,8 @@ compare it to re-encoding the same visible compacted text from scratch.
 
 Hosted provider APIs now expose related product surfaces, including opaque
 compaction, reasoning, thought-signature, context-caching, and session
-continuation artifacts. Those interfaces show that production APIs can carry
+continuation artifacts (OpenAI, n.d.; Anthropic, n.d.; Google AI for
+Developers, n.d.). Those interfaces show that production APIs can carry
 non-textual continuation state, although public documentation does not show
 whether providers use a ValueGraft-like mechanism. The evidence here is a
 white-box open-model measurement of one such mechanism.
@@ -294,6 +296,23 @@ consistent fraction of continuation and next-action likelihood lost to compactio
 This supports treating conversation compaction as a text-plus-state problem. The
 summary is the visible artifact, but the computation that produced and
 interpreted it may also be worth preserving.
+
+## References
+
+- Anthropic. n.d. [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction). Claude Platform Docs. Accessed 2026-07-06.
+- Cao, Ziyi, Qingyi Si, Jingbin Zhang, and Bingquan Liu. 2025. [Sparse Attention across Multiple-context KV Cache](https://arxiv.org/abs/2508.11661). arXiv:2508.11661. DOI: [10.48550/arXiv.2508.11661](https://doi.org/10.48550/arXiv.2508.11661).
+- Chevalier, Alexis, Alexander Wettig, Anirudh Ajith, and Danqi Chen. 2023. [Adapting Language Models to Compress Contexts](https://aclanthology.org/2023.emnlp-main.232/). In *Proceedings of EMNLP 2023*, pages 3829-3846. DOI: [10.18653/v1/2023.emnlp-main.232](https://doi.org/10.18653/v1/2023.emnlp-main.232).
+- Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley, Emily Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and Christopher Re. 2025. [Cartridges: Lightweight and general-purpose long context representations via self-study](https://arxiv.org/abs/2506.06266). arXiv:2506.06266. DOI: [10.48550/arXiv.2506.06266](https://doi.org/10.48550/arXiv.2506.06266).
+- Ge, Tao, Jing Hu, Lei Wang, Xun Wang, Si-Qing Chen, and Furu Wei. 2024. [In-context Autoencoder for Context Compression in a Large Language Model](https://arxiv.org/abs/2307.06945). ICLR 2024; arXiv:2307.06945. DOI: [10.48550/arXiv.2307.06945](https://doi.org/10.48550/arXiv.2307.06945).
+- Google AI for Developers. n.d. [Gemini thinking](https://ai.google.dev/gemini-api/docs/thinking) and [context caching](https://ai.google.dev/gemini-api/docs/caching). Accessed 2026-07-06.
+- Kim, Jang-Hyun, Junyoung Yeom, Sangdoo Yun, and Hyun Oh Song. 2024. [Compressed Context Memory For Online Language Model Interaction](https://arxiv.org/abs/2312.03414). ICLR 2024; arXiv:2312.03414. DOI: [10.48550/arXiv.2312.03414](https://doi.org/10.48550/arXiv.2312.03414).
+- Li, Bojie. 2026. [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107). arXiv:2606.17107. DOI: [10.48550/arXiv.2606.17107](https://doi.org/10.48550/arXiv.2606.17107).
+- Mu, Jesse, Xiang Lisa Li, and Noah Goodman. 2023. [Learning to Compress Prompts with Gist Tokens](https://arxiv.org/abs/2304.08467). NeurIPS 2023; arXiv:2304.08467. DOI: [10.48550/arXiv.2304.08467](https://doi.org/10.48550/arXiv.2304.08467).
+- OpenAI. n.d. [Compact a response](https://platform.openai.com/docs/api-reference/responses/compact) and [Conversation state](https://platform.openai.com/docs/guides/conversation-state). OpenAI API documentation. Accessed 2026-07-06.
+- Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025. [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002). arXiv:2502.16002. DOI: [10.48550/arXiv.2502.16002](https://doi.org/10.48550/arXiv.2502.16002).
+- Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang, Kuntai Du, Shan Lu, and Junchen Jiang. 2025. [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444). *EuroSys 2025*; arXiv:2405.16444. DOI: [10.48550/arXiv.2405.16444](https://doi.org/10.48550/arXiv.2405.16444).
+- Zhang, Peitian, Zheng Liu, Shitao Xiao, Ninglu Shao, Qiwei Ye, and Zhicheng Dou. 2024. [Long Context Compression with Activation Beacon](https://arxiv.org/abs/2401.03462). arXiv:2401.03462. DOI: [10.48550/arXiv.2401.03462](https://doi.org/10.48550/arXiv.2401.03462).
+- Zweiger, Adam, Xinghong Fu, Han Guo, and Yoon Kim. 2026. [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284). arXiv:2602.16284. DOI: [10.48550/arXiv.2602.16284](https://doi.org/10.48550/arXiv.2602.16284).
 
 ## Author Contributions and Provenance
 

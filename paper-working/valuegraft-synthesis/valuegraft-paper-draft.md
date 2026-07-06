@@ -137,17 +137,20 @@ This draft makes four contributions, scoped to the evidence currently in hand:
 ## 3. Related Work and Product Context
 
 The broad claim that KV state is meaningful is no longer novel. The closest
-mechanistic neighbor is **Models Take Notes at Prefill**, which argues that
-prefill writes conclusions onto downstream cached state and demonstrates
-editable, composable, position-portable KV blocks. **Fast KV Compaction via
-Attention Matching** directly studies latent KV compaction and per-head
-attention matching. **KVLink**, CacheBlend-style systems, and SamKV-like
-methods study reuse or blending of independently encoded chunks, usually for
-RAG or serving efficiency. Learned latent compression methods such as gist
-tokens, AutoCompressor, ICAE, Activation Beacon, Compressed Context Memory, and
-Cartridges ask models to carry context in compressed non-text forms. Text-space
-compression and memory systems such as LLMLingua, RECOMP, MemGPT-like memory,
-and framework-level agent summarization are the operational baseline.
+mechanistic neighbor is Li (2026), which argues that prefill writes conclusions
+onto downstream cached state and demonstrates editable, composable,
+position-portable KV blocks. Zweiger et al. (2026) directly study latent KV
+compaction and per-head attention matching. KVLink (Yang et al., 2025),
+CacheBlend (Yao et al., 2025), and SamKV (Cao et al., 2025) study reuse or
+blending of independently encoded chunks, usually for RAG or serving
+efficiency. Learned latent compression methods such as gist tokens (Mu et al.,
+2023), AutoCompressor (Chevalier et al., 2023), ICAE (Ge et al., 2024),
+Activation Beacon (Zhang et al., 2024), Compressed Context Memory (Kim et al.,
+2024), and Cartridges (Eyuboglu et al., 2025) ask models to carry context in
+compressed non-text forms. Text-space compression and memory systems such as
+LLMLingua (Jiang et al., 2023), RECOMP (Xu et al., 2024), MemGPT (Packer et
+al., 2023), and framework-level agent summarization are the operational
+baseline.
 
 The specific gap here is narrower: we study a conversation-compaction event
 where old history is replaced by a generated visible summary plus retained
@@ -157,15 +160,15 @@ improves behavior relative to text-only compaction.
 Hosted provider APIs also now overlap with the proposed deployment shape.
 OpenAI Responses exposes compaction through `context_management` and
 `/responses/compact`, returning an encrypted `compaction` item that can be
-passed forward. Anthropic exposes beta server-side compaction blocks and opaque
-thinking signatures. Gemini exposes thought signatures, context caching, managed
-agent compaction, Live API compression, and resumption handles. These public
-interfaces strongly suggest that frontier providers are exploring opaque state
-and compaction artifacts internally, but they do not reveal whether those
-systems use raw KV tensors, cached value vectors, or any ValueGraft-like
-mechanism. Therefore we should not claim novelty for opaque compaction handles
-or infer provider internals. The contribution here is the open, controlled,
-white-box measurement of one possible mechanism.
+passed forward (OpenAI, n.d.). Anthropic exposes beta server-side compaction
+blocks and context-management controls (Anthropic, n.d.). Gemini exposes thought
+signatures, context caching, and server-managed interaction state
+(Google AI for Developers, n.d.). These public interfaces show that frontier
+providers are already exposing opaque state and compaction artifacts, but they
+do not reveal whether those systems use raw KV tensors, cached value vectors, or
+any ValueGraft-like mechanism. Therefore we should not claim novelty for opaque
+compaction handles or infer provider internals. The contribution here is the
+open, controlled, white-box measurement of one possible mechanism.
 
 ## 4. Methods
 
@@ -491,10 +494,28 @@ logged answer judging. All AI-generated experimental and analytical work should
 be treated as assisted research output directed by the human first author, not
 as independent personal authorship in the human sense.
 
-## References and Pointers
+## References
 
-This draft is intentionally light on formal bibliography formatting. The
-working source documents are:
+- Anthropic. n.d. [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction), [Context windows](https://platform.claude.com/docs/en/build-with-claude/context-windows), and [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching). Claude Platform Docs. Accessed 2026-07-06.
+- Cao, Ziyi, Qingyi Si, Jingbin Zhang, and Bingquan Liu. 2025. [Sparse Attention across Multiple-context KV Cache](https://arxiv.org/abs/2508.11661). arXiv:2508.11661. DOI: [10.48550/arXiv.2508.11661](https://doi.org/10.48550/arXiv.2508.11661).
+- Chevalier, Alexis, Alexander Wettig, Anirudh Ajith, and Danqi Chen. 2023. [Adapting Language Models to Compress Contexts](https://aclanthology.org/2023.emnlp-main.232/). In *Proceedings of EMNLP 2023*, pages 3829-3846. DOI: [10.18653/v1/2023.emnlp-main.232](https://doi.org/10.18653/v1/2023.emnlp-main.232).
+- Cim, Musa, Burak Topcu, Chita Das, and Mahmut Taylan Kandemir. 2026. [Parallel Context Compaction for Long-Horizon LLM Agent Serving](https://arxiv.org/abs/2605.23296). arXiv:2605.23296. DOI: [10.48550/arXiv.2605.23296](https://doi.org/10.48550/arXiv.2605.23296).
+- Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley, Emily Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and Christopher Re. 2025. [Cartridges: Lightweight and general-purpose long context representations via self-study](https://arxiv.org/abs/2506.06266). arXiv:2506.06266. DOI: [10.48550/arXiv.2506.06266](https://doi.org/10.48550/arXiv.2506.06266).
+- Ge, Tao, Jing Hu, Lei Wang, Xun Wang, Si-Qing Chen, and Furu Wei. 2024. [In-context Autoencoder for Context Compression in a Large Language Model](https://arxiv.org/abs/2307.06945). ICLR 2024; arXiv:2307.06945. DOI: [10.48550/arXiv.2307.06945](https://doi.org/10.48550/arXiv.2307.06945).
+- Google AI for Developers. n.d. [Gemini thinking](https://ai.google.dev/gemini-api/docs/thinking), [Context caching](https://ai.google.dev/gemini-api/docs/caching), and [Interactions API](https://ai.google.dev/gemini-api/docs/interactions-overview). Accessed 2026-07-06.
+- Jiang, Huiqiang, Qianhui Wu, Chin-Yew Lin, Yuqing Yang, and Lili Qiu. 2023. [LLMLingua: Compressing Prompts for Accelerated Inference of Large Language Models](https://arxiv.org/abs/2310.05736). EMNLP 2023; arXiv:2310.05736. DOI: [10.48550/arXiv.2310.05736](https://doi.org/10.48550/arXiv.2310.05736).
+- Kim, Jang-Hyun, Junyoung Yeom, Sangdoo Yun, and Hyun Oh Song. 2024. [Compressed Context Memory For Online Language Model Interaction](https://arxiv.org/abs/2312.03414). ICLR 2024; arXiv:2312.03414. DOI: [10.48550/arXiv.2312.03414](https://doi.org/10.48550/arXiv.2312.03414).
+- Li, Bojie. 2026. [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107). arXiv:2606.17107. DOI: [10.48550/arXiv.2606.17107](https://doi.org/10.48550/arXiv.2606.17107).
+- Mu, Jesse, Xiang Lisa Li, and Noah Goodman. 2023. [Learning to Compress Prompts with Gist Tokens](https://arxiv.org/abs/2304.08467). NeurIPS 2023; arXiv:2304.08467. DOI: [10.48550/arXiv.2304.08467](https://doi.org/10.48550/arXiv.2304.08467).
+- OpenAI. n.d. [Compact a response](https://platform.openai.com/docs/api-reference/responses/compact), [Conversation state](https://platform.openai.com/docs/guides/conversation-state), and [Prompt caching](https://platform.openai.com/docs/guides/prompt-caching). OpenAI API documentation. Accessed 2026-07-06.
+- Packer, Charles, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. 2023. [MemGPT: Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560). arXiv:2310.08560. DOI: [10.48550/arXiv.2310.08560](https://doi.org/10.48550/arXiv.2310.08560).
+- Xu, Fangyuan, Weijia Shi, and Eunsol Choi. 2024. [RECOMP: Improving Retrieval-Augmented LMs with Compression and Selective Augmentation](https://arxiv.org/abs/2310.04408). ICLR 2024; arXiv:2310.04408. DOI: [10.48550/arXiv.2310.04408](https://doi.org/10.48550/arXiv.2310.04408).
+- Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025. [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002). arXiv:2502.16002. DOI: [10.48550/arXiv.2502.16002](https://doi.org/10.48550/arXiv.2502.16002).
+- Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang, Kuntai Du, Shan Lu, and Junchen Jiang. 2025. [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444). *EuroSys 2025*; arXiv:2405.16444. DOI: [10.48550/arXiv.2405.16444](https://doi.org/10.48550/arXiv.2405.16444).
+- Zhang, Peitian, Zheng Liu, Shitao Xiao, Ninglu Shao, Qiwei Ye, and Zhicheng Dou. 2024. [Long Context Compression with Activation Beacon](https://arxiv.org/abs/2401.03462). arXiv:2401.03462. DOI: [10.48550/arXiv.2401.03462](https://doi.org/10.48550/arXiv.2401.03462).
+- Zweiger, Adam, Xinghong Fu, Han Guo, and Yoon Kim. 2026. [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284). arXiv:2602.16284. DOI: [10.48550/arXiv.2602.16284](https://doi.org/10.48550/arXiv.2602.16284).
+
+Repository source documents used for this synthesis:
 
 - `RESULTS.md`
 - `RESULTS-30B-addendum.md`
@@ -505,15 +526,3 @@ working source documents are:
 - `provider-compaction-prior-art-review.md`
 - `semantic-continuity-experiment-brief.md`
 - `amendments-from-external-review.md`
-
-Key external items to cite formally in a final version:
-
-- Models Take Notes at Prefill: KV Cache Can Be Editable and Composable.
-- Fast KV Compaction via Attention Matching.
-- Parallel Context Compaction for Long-Horizon LLM Agent Serving.
-- KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse.
-- OpenAI Responses compaction and prompt-caching documentation.
-- Anthropic compaction, context-editing, prompt-caching, and extended-thinking
-  documentation.
-- Gemini context caching, thought-signature, Managed Agents, and Live API
-  session-management documentation.
