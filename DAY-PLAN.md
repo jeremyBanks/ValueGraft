@@ -72,3 +72,9 @@ GLM-4-9B = prefix-stable via generic path, PASS. Remaining before any
 pivot: full 20-conv dry-run (~5 min), local serving smoke (0.6B qwen /
 GLM-4-9B), calibration pass (~$3), gold-patch scorer smoke.
 Disk: 96G free; HF cache 34G (no pressure).
+GLM current-family fact (checked 07-06 night): NO small member exists —
+GLM-4.5-Air (106B-A12B) IS the smallest of the current line (4.6 adds no
+small variant). 9B-0414 = prev-gen dense: code-path smoke only, NOT
+representative. Representative tooling smoke = 1-hour single pass of
+Air-FP8 itself on 2xA100 (~$4): mini-ladder + one A-mode episode; doubles
+as capability evidence + first onboarding step if swap proceeds.
