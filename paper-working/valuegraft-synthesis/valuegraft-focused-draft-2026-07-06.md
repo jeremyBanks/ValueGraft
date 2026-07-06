@@ -32,15 +32,15 @@ V_final = (1 - alpha_V) * V_fresh
 
 The experiments completed so far mostly evaluate V-only Graft: fresh keys in
 the compacted context, plus blended write-time value tensors at exact-aligned
-summary and tail tokens. Earlier packed-summary experiments, historically
-called H-pack, are better described as Packed KV-Graft: a useful auxiliary
-layout experiment, but not a clean comparison of key policy alone.
+summary and tail tokens. Earlier summary-only experiments are better described
+as **Summary-State Graft**: a useful auxiliary experiment on write-time summary
+state, but not a clean comparison of key policy alone.
 
 Across Qwen3-4B-Instruct-2507 and Qwen3-30B-A3B-Instruct-2507, the current
 evidence supports a limited mitigation claim. ValueGraft does not recover
 evicted factual recall. It does, however, reduce some post-compaction harm:
-packed write-time summary state reduces fabrication in agentic frames, and
-tuned V-only Graft recovers a small but consistent fraction of continuation and
+summary write-time state reduces fabrication in agentic frames, and tuned
+V-only Graft recovers a small but consistent fraction of continuation and
 coding-trajectory likelihood lost to compaction. On 75 OpenHands SWE-Gym
 trajectories, V-only Graft improves true next-action likelihood by +0.0156
 nats/token, about 10% of the full-context vs text-compacted gap. Early
@@ -89,12 +89,12 @@ alpha_K = 0
 alpha_V = constant or tuned
 ```
 
-Earlier packed-summary experiments carry both key and value state for summary
-tokens into a minimal packed layout. Those experiments remain useful, but they
-should not be described as the clean key-vs-value comparison. They change
-layout and tail retention as well as state source. In this draft, they are
-called **Packed KV-Graft** and treated as an auxiliary experiment on
-write-time summary state and honesty.
+Earlier summary-only experiments carry both key and value state for summary
+tokens into a minimal context without the recent tail. Those experiments remain
+useful, but they should not be described as the clean key-vs-value comparison.
+They change context shape and tail retention as well as state source. In this
+draft, they are called **Summary-State Graft** and treated as an auxiliary
+experiment on write-time summary state and honesty.
 
 ## 2. Terminology
 
@@ -148,8 +148,8 @@ Historical result labels translate as follows:
 | `B` | Plain Summary Compaction |
 | `E`, `E:a0.75`, `E:a1.0` | V-only Graft with stated `alpha_V` |
 | `E:cfg=layers` | Layer-tuned V-only Graft |
-| `B-min-pack` | Packed Fresh-KV Control |
-| `H-pack` | Packed KV-Graft, auxiliary layout experiment |
+| `B-min-pack` | Summary-Only Fresh Control |
+| `H-pack` | Summary-State Graft, auxiliary summary-only experiment |
 
 This terminology matters because it prevents uncontrolled differences from
 being mistaken for method differences. If the claim is about keys, then summary
@@ -158,7 +158,7 @@ policy must be held fixed. If the claim is about values, the key policy and
 non-state context must be held fixed. The in-flight V-only coding arms satisfy
 this as value-side experiments; a future K-only or full KV comparison should be
 built in the same production-shaped compacted context rather than reusing the
-older packed layout.
+older summary-only context.
 
 ## 3. Outcomes
 
@@ -187,11 +187,24 @@ conclusions into downstream KV state and demonstrates editable, composable KV
 blocks. Zweiger et al. (2026) study latent KV compaction through attention
 matching. KVLink (Yang et al., 2025), CacheBlend (Yao et al., 2025), and SamKV
 (Cao et al., 2025) reuse or fuse cached state for independently encoded
-chunks, often for serving efficiency or retrieval. Learned compression methods
-such as gist tokens (Mu et al., 2023), AutoCompressor (Chevalier et al., 2023),
-ICAE (Ge et al., 2024), Activation Beacon (Zhang et al., 2024), Compressed
-Context Memory (Kim et al., 2024), and Cartridges (Eyuboglu et al., 2025)
-carry context through learned latent or memory-like representations.
+chunks, often for serving efficiency or retrieval. These systems are close in
+mechanism because they reuse or combine cache state, but they are not framed
+around a dialogue-summary compaction boundary.
+
+Another line of work trains or adapts models to carry context through compact
+latent or memory-like forms: gist tokens (Mu et al., 2023), AutoCompressor
+(Chevalier et al., 2023), ICAE (Ge et al., 2024), Activation Beacon (Zhang et
+al., 2024), Compressed Context Memory (Kim et al., 2024), and Cartridges
+(Eyuboglu et al., 2025). Text compression and memory systems such as LLMLingua
+(Jiang et al., 2023), RECOMP (Xu et al., 2024), and MemGPT (Packer et al.,
+2023) are also relevant, but they operate primarily through text or learned
+memory policies rather than by reusing the write-time attention state of the
+summary or retained tail.
+
+Parallel Context Compaction (Cim et al., 2026) is close in deployment setting:
+it studies compaction for long-horizon agent serving. It is a text-summary
+serving technique, not the same state-preserving intervention, and therefore
+serves as a useful baseline neighbor.
 
 The narrower setting here is conversation compaction: old dialogue is replaced
 by a generated visible summary plus recent tail, and the system continues as an
@@ -230,7 +243,8 @@ that distinction explicitly.
 Cache surgery is only counted after identity tests. The build ladder verifies
 cache reconstruction, null surgery, tokenization stability, summary/tail
 alignment, alpha=0 equivalence to Plain Summary Compaction, old-context equals
-new-context equivalence to Full Context, and key re-rotation for packed arms.
+new-context equivalence to Full Context, and key re-rotation for summary-state
+arms.
 Several implementation traps were discovered and documented: Qwen chat-template
 instability around final assistant messages, batched-prefill vs decode-step
 logit differences, sequence-length-dependent 4-bit kernels, and session-state
@@ -282,21 +296,21 @@ The 4B continuation-tuning result used a mid-layer-band setting with
 `alpha_V = 0.75`. The live coding-agent matrix currently compares scalar
 `alpha_V` settings and a layer-tuned V-only policy.
 
-### 5.4 Packed KV-Graft
+### 5.4 Summary-State Graft
 
-The historical H-pack experiment is renamed here as Packed KV-Graft. It
+The historical `H-pack` experiment is renamed here as Summary-State Graft. It
 extracts the generated-summary span from the write-time cache, places it after
-the sink tokens in a minimal packed context, re-rotates keys into their new
-positions, and copies values unchanged. The matched control, Packed Fresh-KV
+the sink tokens in a summary-only context, re-rotates keys into their new
+positions, and copies values unchanged. The matched control, Summary-Only Fresh
 Control, freshly encodes the same sink tokens and same generated summary token
-ids at the same packed positions.
+ids at the same positions.
 
 This pair tests whether the same summary text behaves differently when its
-state was written under full context. It also changes layout: the packed context
-does not include the same retained tail as the production-shaped compacted
-transcript. For that reason, Packed KV-Graft is not a clean key-policy test for
-the current ValueGraft family. It is still useful evidence about write-time
-summary state and post-compaction honesty.
+state was written under full context. It also changes the visible context shape:
+the summary-only context does not include the same retained tail as the
+production-shaped compacted transcript. For that reason, Summary-State Graft is
+not a clean key-policy test for the current ValueGraft family. It is still
+useful evidence about write-time summary state and post-compaction honesty.
 
 ### 5.5 Coding-Agent Harness
 
@@ -363,10 +377,10 @@ context-conditioned interpretation, while keys also matter.
 Wrong-conversation and shuffled-value controls degrade performance rather than
 helping. This argues against a generic smoothing or cache-perturbation account.
 
-### 6.3 Packed KV-Graft Mainly Reduces Fabrication
+### 6.3 Summary-State Graft Mainly Reduces Fabrication
 
-Packed KV-Graft's clearest benefit is honesty, not recall. On unknowable
-questions, text-only compaction often fabricates. Packed summary contexts make
+Summary-State Graft's clearest benefit is honesty, not recall. On unknowable
+questions, text-only compaction often fabricates. Summary-only contexts make
 the model more cautious, and write-time summary state adds a further component,
 especially at 30B.
 
@@ -375,18 +389,18 @@ Fabricated:admitted counts on Phase 2 synthetic/decoy probes:
 | Arm | 30B decoys | 30B evicted facts | 4B decoys | 4B evicted facts |
 | --- | --- | --- | --- | --- |
 | Plain Summary Compaction | 19:5 | 16:8 | 18:6 | 15:9 |
-| Packed Fresh-KV Control | 10:14 | 5:19 | 4:20 | 6:18 |
-| Packed KV-Graft | **3:21** | **1:23** | **3:21** | **2:22** |
+| Summary-Only Fresh Control | 10:14 | 5:19 | 4:20 | 6:18 |
+| Summary-State Graft | **3:21** | **1:23** | **3:21** | **2:22** |
 
-The matched encoding-specific comparison is Packed KV-Graft vs Packed
-Fresh-KV Control. At 30B, write-time state reduces decoy fabrication from 10 to
-3. At 4B, most of the honesty improvement is already produced by the packed
-minimal layout; the write-time component is small.
+The matched encoding-specific comparison is Summary-State Graft vs
+Summary-Only Fresh Control. At 30B, write-time state reduces decoy fabrication
+from 10 to 3. At 4B, most of the honesty improvement is already produced by the
+summary-only context; the write-time component is small.
 
-LongMemEval adds a useful boundary. At 4B, Packed KV-Graft reduces fabrication
-relative to Plain Summary Compaction. At 30B in personal-QA framing, the
-production compacted baseline already tends to admit missing personal history,
-so the honesty advantage largely disappears. The effect is therefore
+LongMemEval adds a useful boundary. At 4B, Summary-State Graft reduces
+fabrication relative to Plain Summary Compaction. At 30B in personal-QA
+framing, the production compacted baseline already tends to admit missing
+personal history, so the honesty advantage largely disappears. The effect is therefore
 frame-dependent: it matters most when compaction happens inside an ongoing
 working conversation, where the model is tempted to keep acting as if it knows
 the missing details.
@@ -463,9 +477,10 @@ comparison after the clean synthetic and standard task strata finish.
 
 Across the current evidence, ValueGraft does not restore facts that exist only
 in the evicted context. LongMemEval compacted variants remain near floor for
-correctness. Synthetic evicted-fact probes show the same pattern. Packed
-KV-Graft changes whether the model fabricates or admits missing information;
-V-only Graft shifts likelihood toward the full-context continuation. Neither
+correctness. Synthetic evicted-fact probes show the same pattern.
+Summary-State Graft changes whether the model fabricates or admits missing
+information; V-only Graft shifts likelihood toward the full-context
+continuation. Neither
 turns a compacted transcript into a hidden-memory store.
 
 ## 7. Discussion
@@ -481,12 +496,12 @@ facts. It is most useful when the compacted context still contains the relevant
 surface text or summary tokens, but re-encoding them from scratch loses how
 they were understood in the original context.
 
-This explains the split in observed effects. Packed KV-Graft is strongest on
-honesty because a summary token written under full context may carry a signal
-about the extent and uncertainty of what was actually discussed. V-only Graft is
-strongest on continuation likelihood because values at aligned tokens can
-nudge the compacted trajectory back toward the full-context trajectory without
-changing the visible transcript.
+This explains the split in observed effects. Summary-State Graft is strongest
+on honesty because a summary token written under full context may carry a
+signal about the extent and uncertainty of what was actually discussed. V-only
+Graft is strongest on continuation likelihood because values at aligned tokens
+can nudge the compacted trajectory back toward the full-context trajectory
+without changing the visible transcript.
 
 The coding-agent setting is where this matters most. Agents do not merely need
 to answer one fact question after compaction; they need to continue a process:
@@ -511,13 +526,13 @@ so far is offline next-action likelihood, not end-to-end task success. The
 end-to-end coding-agent matrix is still in progress and has already required
 strict quarantine of contaminated runs.
 
-The packed-summary results are especially easy to overstate. Packed KV-Graft
-changes both state source and layout. Its matched fresh packed control helps
-separate those components, but it should not be used as if it isolates key
-policy in the production-shaped compacted context. A clean K-only or KV-Graft
-comparison should hold summary text, tail, layout, positions, values, prompts,
-and decoding fixed while varying only `alpha_K`, or only the intended pair of
-parameters.
+The summary-only results are especially easy to overstate. Summary-State Graft
+changes both state source and visible context shape. Its matched fresh control
+helps separate those components, but it should not be used as if it isolates
+key policy in the production-shaped compacted context. A clean K-only or
+KV-Graft comparison should hold summary text, tail, context shape, positions,
+values, prompts, and decoding fixed while varying only `alpha_K`, or only the
+intended pair of parameters.
 
 The alpha policies are not universal. The best 4B setting is not the best 30B
 setting, and per-slot tuning is vulnerable to selection artifacts. The safer
@@ -536,11 +551,11 @@ would be:
 
 ValueGraft does not make compacted models remember deleted facts. It does show
 that write-time cached attention state can reduce some behavioral harm from
-compaction. Packed KV-Graft reduces fabrication in agentic frames, partly
-through layout and partly through write-time state. V-only Graft recovers a
-small but consistent fraction of continuation and coding-trajectory likelihood
-lost to text-only compaction. Early end-to-end coding-agent results are
-encouraging enough to continue, but not yet enough to claim task-success
+compaction. Summary-State Graft reduces fabrication in agentic frames, partly
+through context shape and partly through write-time state. V-only Graft
+recovers a small but consistent fraction of continuation and coding-trajectory
+likelihood lost to text-only compaction. Early end-to-end coding-agent results
+are encouraging enough to continue, but not yet enough to claim task-success
 improvement.
 
 The practical lesson is to treat compaction as more than a text summarization
@@ -554,16 +569,20 @@ available at <https://github.com/jeremyBanks/ValueGraft>.
 
 ## References
 
-- Anthropic. n.d. [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction). Claude Platform Docs. Accessed 2026-07-06.
+- Anthropic. n.d. [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction), [Context windows](https://platform.claude.com/docs/en/build-with-claude/context-windows), and [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching). Claude Platform Docs. Accessed 2026-07-06.
 - Cao, Ziyi, Qingyi Si, Jingbin Zhang, and Bingquan Liu. 2025. [Sparse Attention across Multiple-context KV Cache](https://arxiv.org/abs/2508.11661). arXiv:2508.11661. DOI: [10.48550/arXiv.2508.11661](https://doi.org/10.48550/arXiv.2508.11661).
 - Chevalier, Alexis, Alexander Wettig, Anirudh Ajith, and Danqi Chen. 2023. [Adapting Language Models to Compress Contexts](https://aclanthology.org/2023.emnlp-main.232/). In *Proceedings of EMNLP 2023*, pages 3829-3846. DOI: [10.18653/v1/2023.emnlp-main.232](https://doi.org/10.18653/v1/2023.emnlp-main.232).
+- Cim, Musa, Burak Topcu, Chita Das, and Mahmut Taylan Kandemir. 2026. [Parallel Context Compaction for Long-Horizon LLM Agent Serving](https://arxiv.org/abs/2605.23296). arXiv:2605.23296. DOI: [10.48550/arXiv.2605.23296](https://doi.org/10.48550/arXiv.2605.23296).
 - Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley, Emily Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and Christopher Re. 2025. [Cartridges: Lightweight and general-purpose long context representations via self-study](https://arxiv.org/abs/2506.06266). arXiv:2506.06266. DOI: [10.48550/arXiv.2506.06266](https://doi.org/10.48550/arXiv.2506.06266).
 - Ge, Tao, Jing Hu, Lei Wang, Xun Wang, Si-Qing Chen, and Furu Wei. 2024. [In-context Autoencoder for Context Compression in a Large Language Model](https://arxiv.org/abs/2307.06945). ICLR 2024; arXiv:2307.06945. DOI: [10.48550/arXiv.2307.06945](https://doi.org/10.48550/arXiv.2307.06945).
-- Google AI for Developers. n.d. [Gemini thinking](https://ai.google.dev/gemini-api/docs/thinking) and [context caching](https://ai.google.dev/gemini-api/docs/caching). Accessed 2026-07-06.
+- Google AI for Developers. n.d. [Gemini thinking](https://ai.google.dev/gemini-api/docs/thinking), [Context caching](https://ai.google.dev/gemini-api/docs/caching), and [Interactions API](https://ai.google.dev/gemini-api/docs/interactions-overview). Accessed 2026-07-06.
+- Jiang, Huiqiang, Qianhui Wu, Chin-Yew Lin, Yuqing Yang, and Lili Qiu. 2023. [LLMLingua: Compressing Prompts for Accelerated Inference of Large Language Models](https://arxiv.org/abs/2310.05736). EMNLP 2023; arXiv:2310.05736. DOI: [10.48550/arXiv.2310.05736](https://doi.org/10.48550/arXiv.2310.05736).
 - Kim, Jang-Hyun, Junyoung Yeom, Sangdoo Yun, and Hyun Oh Song. 2024. [Compressed Context Memory For Online Language Model Interaction](https://arxiv.org/abs/2312.03414). ICLR 2024; arXiv:2312.03414. DOI: [10.48550/arXiv.2312.03414](https://doi.org/10.48550/arXiv.2312.03414).
 - Li, Bojie. 2026. [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107). arXiv:2606.17107. DOI: [10.48550/arXiv.2606.17107](https://doi.org/10.48550/arXiv.2606.17107).
 - Mu, Jesse, Xiang Lisa Li, and Noah Goodman. 2023. [Learning to Compress Prompts with Gist Tokens](https://arxiv.org/abs/2304.08467). NeurIPS 2023; arXiv:2304.08467. DOI: [10.48550/arXiv.2304.08467](https://doi.org/10.48550/arXiv.2304.08467).
-- OpenAI. n.d. [Compact a response](https://platform.openai.com/docs/api-reference/responses/compact) and [Conversation state](https://platform.openai.com/docs/guides/conversation-state). OpenAI API documentation. Accessed 2026-07-06.
+- OpenAI. n.d. [Compact a response](https://platform.openai.com/docs/api-reference/responses/compact), [Conversation state](https://platform.openai.com/docs/guides/conversation-state), and [Prompt caching](https://platform.openai.com/docs/guides/prompt-caching). OpenAI API documentation. Accessed 2026-07-06.
+- Packer, Charles, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. 2023. [MemGPT: Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560). arXiv:2310.08560. DOI: [10.48550/arXiv.2310.08560](https://doi.org/10.48550/arXiv.2310.08560).
+- Xu, Fangyuan, Weijia Shi, and Eunsol Choi. 2024. [RECOMP: Improving Retrieval-Augmented LMs with Compression and Selective Augmentation](https://arxiv.org/abs/2310.04408). ICLR 2024; arXiv:2310.04408. DOI: [10.48550/arXiv.2310.04408](https://doi.org/10.48550/arXiv.2310.04408).
 - Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025. [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002). arXiv:2502.16002. DOI: [10.48550/arXiv.2502.16002](https://doi.org/10.48550/arXiv.2502.16002).
 - Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang, Kuntai Du, Shan Lu, and Junchen Jiang. 2025. [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444). *EuroSys 2025*; arXiv:2405.16444. DOI: [10.48550/arXiv.2405.16444](https://doi.org/10.48550/arXiv.2405.16444).
 - Zhang, Peitian, Zheng Liu, Shitao Xiao, Ninglu Shao, Qiwei Ye, and Zhicheng Dou. 2024. [Long Context Compression with Activation Beacon](https://arxiv.org/abs/2401.03462). arXiv:2401.03462. DOI: [10.48550/arXiv.2401.03462](https://doi.org/10.48550/arXiv.2401.03462).
@@ -585,7 +604,7 @@ AI-assisted research directed by the human first author.
 - Add the SWE-bench-Lite fit verdict once `sc_debug` compaction criteria and
   first standard B/A rows are available.
 - If K-only or full KV-Graft runs land, revise the method taxonomy from
-  "planned" to "evaluated" and report them separately from historical packed
-  arms.
+  "planned" to "evaluated" and report them separately from historical
+  summary-only arms.
 - Keep quarantined night-matrix data out of headline results except as a data
   hygiene incident.
