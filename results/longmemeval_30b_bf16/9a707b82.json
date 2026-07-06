@@ -1,0 +1,20 @@
+{
+ "question_id": "9a707b82",
+ "question": "I mentioned cooking something for my friend a couple of days ago. What was it?",
+ "answer": "a chocolate cake",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 12986,
+  "tail_start_msg": 37
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "You mentioned baking a **chocolate cake** for your friend's birthday party the weekend before last. You said it turned out amazing and that you used **espresso powder** in the recipe to intensify the chocolate flavor—great choice! That little trick really enhances the depth of chocolate without making it taste like coffee.  \n\nIt sounds like you’ve been having a wonderful baking streak lately—strawberries, sourdough, lemon bars, croissants, banana bread, and now a show-stopping chocolate cake! You’re clearly on a creative roll.  \n\nIf you’d like, I can help you plan your next baking project or even help you adapt that chocolate cake recipe for a different occasion. Just let me know! 🎂✨",
+  "B": "I don’t have access to our previous conversation history beyond what’s currently in this chat thread. So, I can’t recall what you mentioned about cooking for your friend earlier.\n\nHowever, if you’d like to share the details again—like what dish you were planning, the occasion, or any preferences (e.g., dietary needs, cooking time, cuisine style)—I’d be happy to help you plan, suggest ingredients, or even provide a recipe! Just let me know. 😊",
+  "E-tuned": "I don’t have access to our previous conversation history beyond the current chat session. So, I can’t recall what you mentioned about cooking for your friend a couple of days ago.\n\nIf you’d like, you can remind me of the details—like what dish you were planning to make, the occasion, or any ingredients involved—and I’d be happy to help you with recipes, tips, or suggestions!",
+  "B-min-pack": "I don’t have access to our previous conversations, so I can’t recall what you mentioned cooking for your friend a couple of days ago. Could you please remind me of the details? That way, I can help you plan, troubleshoot, or share ideas! 😊",
+  "H-pack": "You mentioned cooking something for your friend a couple of days ago, but I don’t have access to our previous conversation history beyond this current chat. So, I can’t recall the specific dish you mentioned unless you share it again. Could you remind me what you were planning to cook? I’d love to help you with ideas, tips, or recipe suggestions! 😊",
+  "H-gap": "You mentioned cooking something for your friend a couple of days ago, but I don’t have access to our previous conversation history beyond this current chat. So, I can’t recall the specific dish you mentioned unless you share it again. Could you remind me what you were planning to cook? I’d love to help you with ideas, tips, or even a recipe! 😊"
+ }
+}

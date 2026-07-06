@@ -66,3 +66,24 @@ loses, across LLM conversation-compaction boundaries.
   (*.parquet, HF caches), model weights, credentials (.gitignored), venv.
 - A local pre-commit hook rejects staged files >4MB (.git/hooks/pre-commit —
   hooks do NOT travel with clones; recreate it from this note if absent).
+
+## When stuck: invoke a different model family (user directive, 07-05)
+
+Both Claude and (per user) OpenAI Codex CLIs should be available on this
+machine (`claude` is on PATH; `codex` was NOT found on PATH as of 07-05 —
+check again / ask the user if needed). If you are hitting repeated
+obstacles — many attempts, little progress, or a diagnosis that keeps not
+paying off — you are STRONGLY ENCOURAGED to invoke an agent from a
+different model family for a fresh perspective:
+
+- Use the highest available model + reasoning-effort settings.
+- Point it at the relevant documents (STATE.md, DECISIONS.md, the
+  experiment briefs, the failing code/logs) so it builds real context, and
+  ask it to (a) explain what might be going wrong and (b) suggest what else
+  to try.
+- If the CLI supports session resumption, resume the same session for an
+  extended back-and-forth rather than one-shot queries.
+- Rationale (user): differently-trained models make different connections;
+  the value is the independent perspective, not raw capability. Getting
+  stuck is natural — treat cross-model consultation as a normal tool, not
+  a last resort.

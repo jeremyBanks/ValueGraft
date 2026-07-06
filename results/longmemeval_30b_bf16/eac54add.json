@@ -1,0 +1,20 @@
+{
+ "question_id": "eac54add",
+ "question": "What was the significant buisiness milestone I mentioned four weeks ago?",
+ "answer": "I signed a contract with my first client.",
+ "question_type": "temporal-reasoning",
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "meta": {
+  "n_tokens": 13272,
+  "tail_start_msg": 49
+ },
+ "s_leak": false,
+ "arms": {
+  "A": "I don't have access to your previous conversations or personal information, so I can't recall any specific business milestone you mentioned four weeks ago. If you'd like to refresh your memory, feel free to share the details, and I’d be happy to help you reflect on it or plan your next steps!",
+  "B": "I don’t have access to your previous conversations or personal details, including any business milestones you may have mentioned four weeks ago. I can’t recall past interactions or specific information you’ve shared unless it’s included in the current conversation thread.\n\nIf you’d like to revisit that milestone, feel free to share a quick reminder—like the name of the project, goal, or achievement—and I’ll be happy to help you reflect on it, plan next steps, or celebrate the progress! 🌟",
+  "E-tuned": "I don't have access to your previous conversations or personal information, so I can't recall any specific business milestone you mentioned four weeks ago. If you'd like to share the details, I’d be happy to help you reflect on it, plan next steps, or celebrate the achievement!",
+  "B-min-pack": "I don’t have access to our previous conversations or any specific details you may have shared four weeks ago, including business milestones. If you’d like, you can remind me of the milestone, and I’d be happy to help you reflect on it, plan next steps, or celebrate the achievement! 🎉",
+  "H-pack": "The significant business milestone you mentioned four weeks ago was **launching your website and business plan**. This marked a key step in establishing your professional presence and setting the foundation for your freelance design business.",
+  "H-gap": "The significant business milestone you mentioned four weeks ago was **launching your website and business plan**. This marked a key step in establishing your professional presence and setting the foundation for your freelance design business."
+ }
+}
