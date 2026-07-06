@@ -297,3 +297,16 @@ Driver script for SWE-Gym tasks still to write (pick instances w/ runnable
 tests from swegym.parquet; conditions via model name sc-A/sc-B/sc-E;
 LLM_BASE_URL=http://localhost:<tunneled>/v1). p1=1b-mini, p2=honesty,
 p4=4B block(+guard,mistral queued), g1=gemma — all running.
+
+## E1 runbook (verified 23:10 07-05)
+
+Per task+mode: `bash scripts/e1_driver.sh <A|B|E> <t1|t2> http://localhost:<LP>/v1`
+after tunneling: `ssh -f -N -L <LP>:localhost:8000 -i ~/.ssh/id_ed25519_runpod -p <pod_port> root@<pod_ip>`.
+Shim pod e1 in pods.list; ready when job.log has "shim listening".
+SC_COMPACT_AT=9000 default — tasks' read-everything phase crosses it.
+Scoring: scratchpad/e1_runs/<task>_<mode>/score.json (tests_pass objective,
+agent_steps, repeat_signals). Self-test: fail-pre/pass-post VERIFIED.
+Run order: t1_A (E0 smoke) → then B/E interleaved, both tasks, ~4 rounds
+each on 2-4 shim pods (launch more via scripts/launch_pod.sh eN job_shim.sh).
+Judging batch 13 done → stage-1 final table = regenerate aggregate over
+verdicts_00..13 (2100 verdicts).
