@@ -50,3 +50,10 @@ Either way, here's what I observed."
 Internal ids stay frozen in code/specs/result files for provenance; every
 table, report, and figure translates. Reports/messages to the user should
 use canonical names by default.
+
+## Tier names (translate in all report text)
+- internal "tier-0" → "aggressive compaction (stress setting)": compact_at
+  9000, tail 2500, detail-free summary — mechanism-era settings, labeled
+  stratum, never headline.
+- internal "humane tier" → "production-calibrated compaction": compact_at
+  12000, tail 6000, production-style summary, 2-6 recompactions/episode.
