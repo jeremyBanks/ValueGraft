@@ -155,9 +155,13 @@ def _generate(msgs, max_tokens, mode, sess, alpha=E_ALPHA, compact_at=COMPACT_AT
         summary = generate_summary_hf(_model, _tok, msgs,
                                       request=SUMMARY_REQUEST_BRIEF,
                                       max_tokens=400)
+        for other in list(_sessions):
+            _sessions[other].pop("ccache", None)
         sess["ccache"] = {"tsm": tsm, "n_msgs": len(msgs),
                           "prefix_msgs": [dict(m) for m in msgs],
                           "summary": summary}
+        n_cc = sum(1 for v in _sessions.values() if "ccache" in v)
+        assert n_cc <= 1, f"ccache bound violated: {n_cc}"
         dbg["summary_cache"] = "MISS"
     b_msgs = build_b_messages(msgs, summary["text"], tsm)
     b_ids = canonical_ids(_tok, b_msgs, renderer=render_hf)
