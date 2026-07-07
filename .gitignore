@@ -13,3 +13,7 @@ __pycache__/
 # large raw lens telemetry (analyzable summaries ARE committed)
 jlens_boundary_probe/outputs/qwen36_strong_example_probe.json
 jlens_boundary_probe/outputs/qwen36_ordinary_lens.json
+
+# local pod address files
+.pod2_addr
+.pod*_addr
