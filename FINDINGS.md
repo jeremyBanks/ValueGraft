@@ -163,3 +163,12 @@ corroborator for this V-only intervention — it confirms the graft is active +
 alignment-sensitive on average, and confirms the omitted-fact negative, but
 cannot supply vivid single-example exhibits. Paper uses it honestly as such;
 no dramatic per-example lens figure exists or is claimed.
+
+## Phase 2 F-entry — Key-grafting is technically sound (07-07)
+Built K-grafting with RoPE RE-ROTATION (re-rotate a stored write-time key by
+the position delta p_new−p_old, since RoPE composes by angle: R(p_new)=
+R(delta)·R(p_old)). VALIDATED on 0.6B to fp32 precision: re-rotated key vs
+freshly-encoded key at new position = cosine 0.99999982, max-diff 3e-05 (vs
+0.9964 un-rotated control). α_K=0 bit-identical to fresh; α_K=1 changes output.
+So the K-graft is not an approximation — keys can be moved across positions
+exactly. Enables the V/K/coupled/independent sweep. src/kv_graft.py.
