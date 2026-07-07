@@ -416,6 +416,18 @@ columns are top vocabulary items from the same anchored token under write-time
 versus fresh encoding. They should be read as a noisy lens view, not as
 generated answers.
 
+We also ran a next-token control for five of these anchors, comparing the
+J-lens top-20 readout with the model's ordinary next-token top-20 distribution
+at the same token position. The mean top-20 Jaccard overlap was 0.256 overall,
+with a large layer split: 0.076 at layer 48 and 0.436 at layer 62. This means
+late-layer readouts can resemble continuation probabilities, especially when
+the next literal word is locally predictable. The intermediate-layer examples
+remain more distinct. The clearest control case is `B-410`: at the `B` token,
+next-token logits mostly predict the hyphen/code continuation, while
+write-time layer-48 J-lens reads out `obsolete`, `outdated`, `deprecated`, and
+`expired`. We therefore present J-lens as an interpretability aid, not as an
+independent behavioral metric.
+
 **Pokemon planning summary.** The old conversation establishes several private
 labels: `Vacuum` is a Zigzagoon with Pickup; `Dex` is a person/trade obligation,
 not a Pokedex progress tracker. The summary text says:
@@ -483,7 +495,9 @@ agent trajectory: tool name, command, file path, and line range.
 The raw artifacts for these qualitative examples are
 `jlens_boundary_probe/pokemon_readout_notes.md`,
 `jlens_boundary_probe/plain_conversation_readout_notes.md`, and
-`jlens_boundary_probe/swegym_next_action_readout_notes.md`, with JSON outputs
+`jlens_boundary_probe/swegym_next_action_readout_notes.md`, plus the
+next-token control report
+`jlens_boundary_probe/next_token_readout_control_report.md`, with JSON outputs
 under `jlens_boundary_probe/outputs/`.
 
 The J-lens evidence has a narrower role than the likelihood and probe metrics.
