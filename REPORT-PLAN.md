@@ -87,3 +87,14 @@ citations: compaction/summarization practice, KV-cache papers, logit lens
 Aider-Polyglot, Qwen3 model cards, LongMemEval. Verify claims of novelty
 against the prior-art notes ("we couldn't find it named" claim must
 survive the check).
+
+## P7 — Holistic prose pass (user, 07-07; the LAST pass, after exhibits+citations)
+Insight (user): context-drowned writers lose the thread — so this pass uses
+FRESH EYES ONLY. A clean-context agent reads NOTHING but the finished
+report (no project docs) and edits holistically for: natural human prose
+(no AI cadence), narrative build (each section hands off to the next;
+tension rises to the §3 payoff; §7 satisfies), rhythm/variety of sentence
+shape, transitions that pull forward. It may restructure sentences freely
+but NOT alter facts/numbers/quotes/caveats (verify-after: numbers+quotes
+diff-checked against pre-pass version). Then I read end-to-end as final
+gate before push. Iterate if it still reads as assembled-by-committee.
