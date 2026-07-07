@@ -97,3 +97,10 @@ tau-banking) don't naturally reach the compaction-stress regime without
 threshold tuning. The operative regime — hard enough that eviction matters,
 easy enough the model can use recovered context — is narrow and
 under-served by existing benchmarks. (INCIDENTS 19; DECISIONS 07-06/07.) CONFIRMED empirically 07-07: tau-bench banking, even with a capable GPT-4o-mini user-simulator, produced ~3-4K-token sessions — too short for meaningful eviction at any threshold (high→compaction never fires; low→nothing substantial to evict). All 3 arms reward 0.00, no separation. Standard interactive benchmarks with short task-dialogues are structurally unsuited; the operative regime needs genuinely long sessions (which our synthetic F1 data has naturally).
+
+## F1 robustness (strict scoring, 07-07)
+Strict RECOVERED-only cut (PARTIAL counts as miss) — dissociation HOLDS:
+stance +4pp (null), sense +9pp, referent +8pp. Not an artifact of the
+PARTIAL=0.5 choice. THIRD independent confirmation of the same pattern
+(judged-lenient, judged-strict, and TF-logprob gap-closure all agree that
+grafting helps sense/referent, null on stance).
