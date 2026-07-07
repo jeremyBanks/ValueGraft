@@ -1,16 +1,26 @@
 # STATE.md — session handoff notes
 
-*Updated 07-07 ~15:16 by Opus 4.8. RESUME-READY. Read FINDINGS.md, MASTER-PLAN.md, INCIDENTS.md (esp #27).*
+*Updated 07-07 ~16:50 by Opus 4.8. ALL EXPERIMENTS CONCLUDED. Paper final update in progress.*
 
-## LIVE STATE — Phase 2: coarse K/V DONE (negative), per-layer probe NEXT
-COARSE SWEEP RESULT (recorded FINDINGS): keys DON'T help — K-only hurts all cats,
-coupled/independent don't beat v_only; VALUE is operative axis. Sanity passed
-(v_only ref +0.057≈paper). RoPE-addressing hypothesis unsupported by UNIFORM graft.
-NOW: per-layer key probe building (src/kv_layer_probe.py, subagent a641bde3144e775f3)
-— tests if ANY single layer benefits from K (uniform could mask layer-specific).
-Pod lveawgxzfm5xte KEPT WARM for it (working, CUDA-fixed torch 2.6.0+cu124).
-If per-layer negative → K/V CONCLUDES clean-negative (strengthens paper). If some
-layer helps → per-head + 27B port.
+## LIVE STATE — final paper update (all evidence in)
+ALL EXPERIMENTS DONE, all committed to FINDINGS:
+- Phase 1 paper: SHIPPED (REPORT.md on trunk).
+- K/V exploration: NEGATIVE, SCOPED — value is operative axis for SEMANTIC-phrase
+  referent recovery; keys don't help (uniform + per-layer, 30B); K-only hurts.
+  OPEN edge: short-IDENTIFIER targets may differ (microtest 0.6B hint; Fable
+  cross-check → scoped, not universal). = Phase 3 (task 25, post-paper).
+- Lens free-divergence: clean PRE-REGISTERED NEGATIVE (0 toward-A / 17 subtle /
+  26 disconfirming, N=43) — free-gen didn't rescue the lens; paper's honest
+  "low-res corroborator, no vivid figure" framing STANDS+strengthened.
+NOW (task 24): paper update draft running (subagent ab111f768643daa90) — folds
+K/V-scoped into §10 (open-question → done-scoped + morphology-next) + lens-negative
+into §6. THEN: Fable conceptual gut-check (honesty-critical K/V scoping) → critics
+→ Fable readability → my review → push. Fable MANDATORY (Opus-flipped).
+0 pods (all terminated). Balance $82.5.
+
+## QUEUED (post-paper): task 25 (identifier-morphology 30B test — the ONE key
+experiment worth doing, closes the question either way); lens trajectory-scan
+(point→per-token scan, user idea, easy tack-on if fork-probe muddy — it was).
 
 ## (superseded) LIVE STATE — Phase 2 K/V sweep RUNNING (resume from here)
 PHASE 1 DONE: synthesis paper shipped to trunk (REPORT.md, ~7700w, honest, pushed).
