@@ -16,6 +16,6 @@ python3 -u boundary_probe.py \
   --layers quarter \
   --top-k 8 \
   --max-new-summary-tokens 96 \
-  --output outputs/qwen36_boundary_probe.json
+  --output outputs/qwen36_boundary_three_state_probe.json
 
-echo "probe complete: /workspace/jlens_boundary_probe/outputs/qwen36_boundary_probe.json"
+echo "probe complete: /workspace/jlens_boundary_probe/outputs/qwen36_boundary_three_state_probe.json"
