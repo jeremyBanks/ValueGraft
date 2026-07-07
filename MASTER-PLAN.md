@@ -260,3 +260,17 @@ VENUES (their take): r/LocalLLaMA + EleutherAI primary (KV/compaction mechanism)
 LessWrong optional (fine with empirical-internals posts, not misrepresentation).
 NOTE: the cross-arch sweep already produces the multi-model numbers that make the
 repro path credible — build the README repro section AFTER the sweep, off its harness.
+
+## PHASE 4 addendum 8 — cross-arch MEASUREMENT PROTOCOL: baseline → champion-tune → champion pass (user 07-07)
+The effect-bound scare exposed that UNIFORM α is an UNFAIR test (uniform can be
+past the sweet spot → net-negative; paper §8: per-layer champion needed). So each
+model gets its FAIR tuned result, not a flat uniform dose. PER-MODEL WORKFLOW:
+1. BASELINE pass — neutral α=0.5 (user: gentler baseline than 0.75), small subset.
+2. CHAMPION-TUNE per-layer on a SMALL set (search per-layer α profile, guard-validate).
+3. CHAMPION PASS — measure gap-closure with the tuned config = the model's fair result.
+Byproduct = per-model champion PROFILE = architectural fingerprint (addendum 7).
+Cost tradeoff: tuning adds compute (>45min/model) → do the full workflow on the
+PILOT models first; if uniform-baseline already shows signal, champion is upside.
+NOTE: this also means the paper's cross-arch result should be the TUNED per model,
+with uniform-baseline shown as the untuned floor (honest: "untuned uniform is
+net-neutral, tuning recovers it" — which is consistent with §8).
