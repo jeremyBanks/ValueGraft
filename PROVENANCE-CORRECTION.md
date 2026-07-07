@@ -53,3 +53,11 @@ analysis; first Opus content = debugging a stuck local port. No sensitive
 topic, capability boundary, or subject change at the seam. Signature =
 Fable-5 QUOTA EXHAUSTION → automatic fallback to Opus 4.8 at the next
 turn. (User had independently noted Fable was "basically out of quota".)
+
+## Correction to the trigger note (07-07)
+My "quota exhaustion" conclusion above was OVERCONFIDENT. The raw boundary
+shows a `bridge-session` marker and the first Opus generation beginning
+"fallback" — consistent with an automatic SYSTEM-LEVEL REROUTE (user's
+hypothesis) rather than plain quota. Evidence is suggestive, not
+conclusive; not investigating further per user. Recorded so the earlier
+note isn't left falsely certain.
