@@ -1,366 +1,212 @@
-# ValueGraft Under the Lens: A Four-Sequence Intervention Probe
+# ValueGraft Under the Lens
 
-Status: corrected standalone report draft
+Status: standalone report draft
 Date: 2026-07-07
 Primary artifact: `outputs/qwen36_boundary_three_state_probe.json`
 Validator: `validate_three_state_probe.py`
 
-## How To Read This
+## Summary
 
-There are three evidence types in this project. Old-vs-fresh J-lens sweeps
-diagnose state that may be available to preserve. This report tests an actual
-grafted cache condition under controlled decoding. Task metrics decide whether
-the method helps real work.
+ValueGraft is a cache-state intervention for conversation compaction. A model
+normally continues from compacted text by freshly encoding the summary and
+recent tail. ValueGraft instead keeps the same visible compacted text while
+blending selected key/value cache entries written when the summary was produced
+under the original long context.
 
-## Abstract
-
-ValueGraft is a family of cache-state interventions for conversation
-compaction. Ordinary compaction keeps visible text, typically a summary plus a
-recent tail, but re-encodes that text in a new context. ValueGraft asks whether
-some of the key/value state written under the original long context can be
-carried across the boundary so the compacted conversation behaves more like the
-uncompacted one.
-
-This note corrects an earlier interpretability mistake. A two-state J-lens
-comparison between old-context and fresh summary encodings can show that
-context-conditioned residual-stream state exists, but it cannot show the effect
-of ValueGraft. The corrected probe compares three substantive states
-(`full_context`, `fresh_compacted`, and `grafted_compacted`) plus one machinery
-control (`alpha0_grafted_compacted`) over the same forced target tokens. In
-this single constructed coding-style example, a V-only graft changes downstream
-next-token and J-lens readouts relative to the fresh compacted condition. The
-most concrete result is one next-token argmax rescue. A rescue means fresh
-compaction's top next token differs from full context, while grafted compaction
-returns to the full-context top token. For the token ` inspected`, fresh
-compacted predicts ` priorit`, while grafted compacted returns to
-` inspected`. The layer-level readout is mixed: grafted states move closer to
-full context at layers 16, 32, and 48, but farther at layer 62.
-
-This validates the measurement design on one constructed example; it is not an
-effect-size estimate.
-
-## What ValueGraft Is Testing
-
-In transformer self-attention, each token position contributes keys and values.
-Later tokens produce queries, compare those queries to earlier keys, and mix
-the corresponding values. The standard Transformer formulation introduced this
-query/key/value attention language; modern autoregressive inference stores
-previous keys and values as a KV cache so later decode steps can attend to
-earlier positions without recomputing the whole prefix.
-
-Conversation compaction creates a specific problem for that mechanism. Suppose
-the model has a long conversation, generates or receives a summary, and then
-continues with only the summary plus recent turns. The visible words may be
-adequate, but the key/value states for those words are now freshly written in a
-shorter context. Any context-conditioned interpretation that existed when the
-summary was produced under the full conversation has to be reconstructed from
-text.
-
-ValueGraft parameterizes interventions at that boundary:
+This report studies one small coding-style probe with Qwen3.6-27B and a
+Jacobian-lens readout. The target continuation is:
 
 ```text
-K_final = (1 - alpha_K) * K_fresh
-        + alpha_K       * K_write_time_rerotated
-
-V_final = (1 - alpha_V) * V_fresh
-        + alpha_V       * V_write_time
+Update src/rivermark/sort.py so wet driftwood is inspected first, then run tests/test_sort.py.
 ```
 
-`alpha_K = 0, alpha_V = 0` is ordinary text-only compaction. A V-only graft has
-`alpha_K = 0` and `alpha_V > 0`: it keeps fresh attention addresses while
-blending in value content written under the old context. A K-only graft would
-set `alpha_V = 0` and vary `alpha_K`. A full KV graft can vary both. Keys need
-the rerotation qualifier because RoPE-style position encoding rotates queries
-and keys by position; values are not RoPE-rotated in the same way.
+The most readable result is at the token ` inspected`. Full context predicts
+` inspected`; fresh compaction predicts ` priorit`; aligned ValueGraft at
+`alpha_V = 0.75` returns the argmax to ` inspected`. The alpha-zero control
+matches fresh exactly, so the cache plumbing itself is not creating the
+change.
 
-The corrected J-lens artifact here is V-only:
+The richer control run adds an alpha sweep and a shifted-value negative
+control. The aligned `alpha_V = 0.75` run improves the layer-48 lens distance
+to full context. The shifted control, which injects the same old value states
+at the wrong summary-token positions, worsens the layer-48 distance even though
+it also changes one next-token argmax. That is a useful sign: alignment matters
+for the internal readout, and next-token rescues alone are too weak to carry
+the interpretation.
+
+## Intervention
+
+For each summary-token position, the probe has two cache traces:
+
+- a fresh compacted trace, produced from the visible compacted context;
+- a write-time trace, produced when the same summary text was written after
+  the original context.
+
+This artifact tests a V-only graft:
 
 ```text
-alpha_K = 0
-alpha_V = 0.75
+K_final = K_fresh
+V_final = (1 - alpha_V) * V_fresh + alpha_V * V_write_time
 ```
 
-The artifact records the policy as:
+The implementation aligns 96 summary-token positions and changes value entries
+in 16 value-cache layers: 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51,
+55, 59, and 63. Fresh keys and all non-value cache state are preserved.
 
-```text
-V-only summary-token value-cache blend; fresh keys and linear-attention
-recurrent state preserved
-```
-
-In plain language: only the aligned summary-token value entries are blended;
-fresh keys and all non-value cache state are preserved. It aligns 96
-summary-token positions and changes value entries in 16 layers. Those layers
-are the ordinary value-cache layers exposed by this Qwen3.6 hybrid cache object:
-3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, and 63.
-
-## Why the Earlier Two-State Readout Was Not Enough
-
-The broad J-lens sweep compares two paths:
-
-- **write-time summary:** the summary token is processed after the original
-  conversation that produced it.
-- **fresh summary:** the same literal summary token is re-encoded in the
-  compacted context.
-
-That comparison is useful. It can show that the same visible summary text has
-different residual-stream readouts depending on whether it was processed under
-the old context or freshly. It helps explain what kind of state ValueGraft may
-be trying to preserve.
-
-But it omits the intervention. It does not answer:
-
-```text
-Does the grafted compacted state move the model away from fresh compaction
-and toward the full-context behavior?
-```
-
-The corrected probe therefore has to compare at least these sequences:
-
-| State | Visible context | Cache state |
-| --- | --- | --- |
-| `full_context` | Original conversation plus the same probe question | Normal full-context cache |
-| `fresh_compacted` | Summary plus retained tail plus the same probe question | Normal freshly encoded compacted cache |
-| `alpha0_grafted_compacted` | Same as fresh compacted | Graft code path with `alpha_V = 0`; should match fresh |
-| `grafted_compacted` | Same as fresh compacted | Fresh compacted cache with aligned summary value states blended from write-time context |
-
-The alpha-0 state is not a scientific arm by itself. It is a machinery check:
-if alpha-0 differs from fresh, then the cache rebuild path is changing the
-measurement and the artifact is not trustworthy.
+The main run uses `alpha_V = 0.75`. The control run also records
+`alpha_V = 0`, `0.25`, `0.5`, and `1.0`, plus a shifted control where the old
+summary-token values are cyclically shifted by one token before injection.
 
 ## Probe Design
 
-The corrected probe uses Qwen3.6-27B with the Anthropic/Neuronpedia Jacobian
-lens weights for that model. It builds a small coding-style scenario around a
-package named `rivermark`, where `bank` means river bank, not financial bank.
-A relevant excerpt from the compacted summary says:
-
-```text
-Task: Fix `rivermark` package where "bank" refers to a river bank. The failing
-test in `tests/test_sort.py` concerns sorting driftwood by distance from the
-waterline.
-
-Current State:
-- Bug identified in `src/rivermark/sort.py`: Wet driftwood is currently
-  treated as lower priority.
-- Specification requirement: Wet driftwood must be inspected first (higher
-  priority).
-- Next Step: Update the priority key logic ... [summary truncated by the
-  96-token cap]
-```
+The compacted scenario concerns a package named `rivermark`. The important
+facts are that `bank` means river bank, the relevant file is
+`src/rivermark/sort.py`, wet driftwood is being prioritized incorrectly, and
+the relevant test is `tests/test_sort.py`.
 
 The probe question is:
 
 ```text
-Continue the task. What exact file should be changed next, and what test should
-be run? Answer in one sentence.
+Continue the task. What exact file should be changed next, and what test should be run? Answer in one sentence.
 ```
 
-The forced target sequence is:
+The target continuation is teacher-forced one token at a time. Before each
+forced token, the probe records:
 
-```text
-Update src/rivermark/sort.py so wet driftwood is inspected first, then run
-tests/test_sort.py.
-```
+- the model's next-token top candidates;
+- whether the next-token argmax matches full context;
+- J-lens top candidates at layers 16, 32, 48, and 62.
 
-For each state, the probe teacher-forces that target one token at a time. At
-each position it records:
+The comparison conditions are:
 
-- the model's next-token top-k before the target token is forced;
-- the argmax next token before forcing;
-- J-lens top-k readouts at sampled layers 16, 32, 48, and 62.
-
-The forced target makes the internal readout comparable across states. It is
-not claiming the model would freely generate the entire sentence unaided.
-
-## Validation Checks
-
-The artifact passes `validate_three_state_probe.py` in strict mode. The
-validator checks that:
-
-- `graft.available` is true;
-- all required states exist;
-- all four forced target sequences have the same token IDs;
-- the forced sequence is nonempty and matches `probe_target.token_count`;
-- all four sequences record the same forced text, matching `probe_target.text`;
-- graft provenance fields exist;
-- the graft changes a positive number of value layers;
-- the alpha-0 graft matches fresh compacted exactly on next-token and per-layer
-  top-k token IDs and scores.
-
-The alpha-0 result is especially important. It means the observed fresh-vs-graft
-differences are not merely artifacts of snapshotting and rebuilding the cache.
-
-## Result Summary
-
-The target contains 23 tokens. The V-only graft changes the next-token argmax
-at one target position and creates no argmax regressions under the validator's
-definition.
-
-| Metric | Value |
-| --- | ---: |
-| Aligned summary-token pairs | 96 |
-| Changed value-cache layers | 16 |
-| Changed value slots | 1,536 |
-| Forced target tokens | 23 |
-| Argmax rescues | 1 |
-| Argmax regressions | 0 |
-| Argmax changed by graft | 1 |
-
-Layer-level J-lens movement is measured as mean Jaccard distance between top-k
-token sets. Lower full-vs-state distance means closer to full context. Positive
-closure means the grafted state moved closer to full context than fresh did.
-
-| Layer | Full vs fresh | Full vs grafted | Fresh vs grafted | Fresh vs alpha-0 | Closure |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 16 | 0.1488 | 0.1430 | 0.0657 | 0.0000 | 0.0058 |
-| 32 | 0.1899 | 0.1788 | 0.0676 | 0.0000 | 0.0111 |
-| 48 | 0.3882 | 0.3546 | 0.1838 | 0.0000 | 0.0337 |
-| 62 | 0.3359 | 0.3506 | 0.1507 | 0.0000 | -0.0146 |
-
-This is not a clean "graft always helps" story. It is a narrower result: the
-intervention is active, alpha-0 is inert, and the grafted state moves closer on
-layers 16/32/48 and farther on layer 62.
-
-## Concrete Example: The `inspected` Token
-
-The strongest single row occurs at target index 13, where the forced token is
-` inspected`.
-
-| State | Argmax before forcing | Next-token top candidates |
+| Condition | Visible text | Cache state |
 | --- | --- | --- |
-| `full_context` | ` inspected` | `inspected`, `priorit`, `given`, `treated`, `sorted`, `assigned`, `highest`, `handled` |
-| `fresh_compacted` | ` priorit` | `priorit`, `inspected`, `given`, `assigned`, `treated`, `sorted`, `higher`, `highest` |
-| `alpha0_grafted_compacted` | ` priorit` | `priorit`, `inspected`, `given`, `assigned`, `treated`, `sorted`, `higher`, `highest` |
-| `grafted_compacted` | ` inspected` | `inspected`, `priorit`, `given`, `assigned`, `treated`, `sorted`, `processed`, `highest` |
+| Full context | Original conversation plus probe question | Normal full-context cache |
+| Fresh compacted | Summary plus recent tail plus probe question | Freshly encoded compacted cache |
+| Alpha-zero control | Same as fresh compacted | Graft path with `alpha_V = 0` |
+| Aligned ValueGraft | Same as fresh compacted | Aligned write-time values blended into summary-token positions |
+| Shifted control | Same as fresh compacted | Write-time values shifted to the wrong summary-token positions |
 
-This is the cleanest next-token effect in the artifact. With the same visible
-compacted text, the V-only graft changes the next-token argmax from the fresh
-compacted answer back to the full-context answer. The alpha-0 control stays
-identical to fresh.
+## Results
 
-At layer 48, the J-lens readout also shifts slightly toward the full-context
-ranking:
+The validator confirms that all conditions use the same 23 forced target
+tokens, the alpha-zero control matches fresh exactly on token IDs and scores,
+and the grafted paths use 96 aligned summary-token pairs.
 
-| State | Layer-48 J-lens top candidates |
-| --- | --- |
-| `full_context` | `priority`, `priorit`, `instead`, `precedence`, `prioritize` |
-| `fresh_compacted` | `priority`, `priorit`, `prioritize`, `precedence`, `faster` |
-| `alpha0_grafted_compacted` | `priority`, `priorit`, `prioritize`, `precedence`, `faster` |
-| `grafted_compacted` | `priority`, `priorit`, `precedence`, `prioritize`, `faster` |
+Layer closure below is the improvement in mean Jaccard distance to full
+context, using J-lens top-k token sets. Positive values mean closer to full
+context than fresh compaction at that layer. Negative values mean farther.
 
-At layer 62, all states strongly express "first/before" ordering, and the
-difference is mostly rank order rather than concept identity. This matches the
-broader next-token control: late-layer J-lens readouts are more
-continuation-like, so layer 62 should be treated cautiously.
+| Condition | Argmax rescues | Argmax regressions | Changed argmax | Layer-48 closure | Layer-62 closure |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `alpha_V = 0` | 0 | 0 | 0 | 0.0000 | 0.0000 |
+| `alpha_V = 0.25` | 0 | 0 | 0 | 0.0019 | -0.0097 |
+| `alpha_V = 0.5` | 0 | 0 | 0 | 0.0129 | -0.0193 |
+| `alpha_V = 0.75` | 1 | 0 | 1 | 0.0337 | -0.0146 |
+| `alpha_V = 1.0` | 2 | 0 | 2 | -0.0184 | -0.0265 |
+| Shifted `alpha_V = 0.75` | 1 | 0 | 1 | -0.0903 | -0.0560 |
 
-## Concrete Example: The `rivermark` Span
+The best overall balance in this small probe is `alpha_V = 0.75`. It produces
+one next-token rescue and the strongest layer-48 closure. Full replacement
+(`alpha_V = 1.0`) rescues two argmax positions, but its layer-48 and layer-62
+readouts move farther from full context. The shifted control also rescues one
+argmax position, but its readouts are much farther from full context. That
+combination argues for reading the result through both next-token behavior and
+internal readout, not either one alone.
 
-The target contains the file path `src/rivermark/sort.py`. At the token
-`river`, all states correctly put `river` at next-token argmax, so there is no
-next-token rescue. But layer 62 shows a readable internal-state shift:
+For the primary aligned `alpha_V = 0.75` condition, all sampled layers are:
 
-| State | Layer-62 J-lens top candidates at `river` |
-| --- | --- |
-| `full_context` | `mark`, `bank`, `marks`, `-mark`, `_mark` |
-| `fresh_compacted` | `tests`, `/tests`, `mark`, `then`, `tests`, `/run` |
-| `alpha0_grafted_compacted` | `tests`, `/tests`, `mark`, `then`, `tests`, `/run` |
-| `grafted_compacted` | `mark`, `bank`, `tests`, `mask`, `/tests`, `/run` |
+| Layer | Full vs fresh | Full vs aligned graft | Fresh vs aligned graft | Closure |
+| ---: | ---: | ---: | ---: | ---: |
+| 16 | 0.1488 | 0.1430 | 0.0657 | 0.0058 |
+| 32 | 0.1899 | 0.1788 | 0.0676 | 0.0111 |
+| 48 | 0.3882 | 0.3546 | 0.1838 | 0.0337 |
+| 62 | 0.3359 | 0.3506 | 0.1507 | -0.0146 |
 
-This is qualitatively suggestive, not decisive. The grafted state brings
-`mark` and `bank` upward relative to fresh, which fits the scenario's
-river-bank disambiguation. But file paths and subword tokens are noisy, and
-the next-token distribution already handles the literal token. This example is
-best used as an interpretability illustration, not as a behavioral result.
+Layers 16, 32, and 48 move closer to full context. Layer 62 moves slightly
+farther away; this is consistent with late-layer readouts being more tied to
+immediate continuation pressure.
 
-## What the J-Lens Adds
+## Token-Level Comparisons
 
-The Jacobian lens reads residual-stream activations by transporting them into a
-final-layer vocabulary basis with an averaged Jacobian, then decoding through
-the model's unembedding. It is a principled relative of the logit lens and
-tuned lens: all three are vocabulary-space readouts of internal states, but the
-J-lens is designed to surface concepts an activation is disposed to verbalize
-across contexts, not merely the next token in this context.
+### ` inspected`
 
-For this project, the J-lens is useful because it can make the compaction
-boundary visible. It can show that:
+At target index 13, the forced token is ` inspected`.
 
-- old-context and fresh summary encodings can carry different readable state;
-- a grafted compacted state can differ from fresh compacted under the same
-  visible text;
-- mid-layer readouts are often more distinct from ordinary next-token
-  probabilities than very late-layer readouts.
+| Condition | Argmax before forcing | Top candidates |
+| --- | --- | --- |
+| Full context | ` inspected` | `inspected`, `priorit`, `given`, `treated` |
+| Fresh compacted | ` priorit` | `priorit`, `inspected`, `given`, `assigned` |
+| Alpha-zero control | ` priorit` | `priorit`, `inspected`, `given`, `assigned` |
+| `alpha_V = 0.25` | ` priorit` | `priorit`, `inspected`, `given`, `assigned` |
+| `alpha_V = 0.5` | ` priorit` | `priorit`, `inspected`, `given`, `assigned` |
+| Aligned `alpha_V = 0.75` | ` inspected` | `inspected`, `priorit`, `given`, `assigned` |
+| `alpha_V = 1.0` | ` inspected` | `inspected`, `priorit`, `given`, `treated` |
+| Shifted `alpha_V = 0.75` | ` priorit` | `priorit`, `inspected`, `given`, `treated` |
 
-But the J-lens does not directly label KV-cache entries, and it does not
-replace behavioral evaluation. It reads residual-stream state after attention
-and MLP computation. In this report, lens-only patterns are described as
-suggestions unless paired with a controlled intervention or task metric.
+This is the cleanest local effect. The aligned graft changes the next-token
+argmax in the same direction as full context; the shifted control does not.
 
-## Prior-Art Context
+### ` is`
 
-This work sits near two literatures.
+At target index 12, the forced token is ` is`.
 
-First, it depends on standard transformer attention and KV caching. Vaswani et
-al. introduced scaled dot-product attention and the query/key/value framing:
-queries decide where to attend, keys provide the addressable side, and values
-provide the content mixed into the next representation. KV caching is the
-inference-time reuse of those earlier keys and values. RoPE, introduced by Su
-et al., explains why moved keys require position-aware handling: the positional
-rotation is applied to query/key geometry, so a key copied to a new compacted
-position must be treated differently from a value.
+| Condition | Argmax before forcing | Top candidates |
+| --- | --- | --- |
+| Full context | ` is` | `is`, `has`, `on`, `gets` |
+| Fresh compacted | ` has` | `has`, `is`, `on`, `receives` |
+| Alpha-zero control | ` has` | `has`, `is`, `on`, `receives` |
+| Aligned `alpha_V = 0.75` | ` has` | `has`, `is`, `on`, `receives` |
+| `alpha_V = 1.0` | ` is` | `is`, `has`, `on`, `receives` |
+| Shifted `alpha_V = 0.75` | ` is` | `is`, `has`, `on`, `gets` |
 
-Recent KV-cache work is especially close. Li's "Models Take Notes at Prefill"
-argues that prefill writes field-conditioned conclusions onto downstream cache
-states and shows that those states can be edited and composed. That
-substantially constrains any novelty claim here. The distinctive ValueGraft
-question is not "can KV caches be edited?" or "can cache blocks be reused?"
-It is narrower: when a conversation is compacted into a summary, can selected
-write-time cache state preserve useful semantic continuity that fresh
-re-encoding of the same visible text loses?
+This row is a warning against using argmax rescues by themselves. The shifted
+control recovers the full-context argmax here, but the shifted condition is
+worse by the J-lens distance metrics. A local token-level win can come from a
+badly aligned perturbation.
 
-Second, the readout method belongs to the vocabulary-lens family. The logit
-lens applies the unembedding directly to intermediate states. The tuned lens
-learns per-layer translators so intermediate hidden states can be decoded more
-reliably. The J-lens uses an averaged Jacobian transport into a final-layer
-vocabulary basis, aiming to read concepts an activation is disposed to
-verbalize across contexts rather than just this position's next-token pressure.
-Our use is deliberately modest: we use the lens to inspect candidate examples
-and generate mechanistic hypotheses, then require behavioral or controlled
-intervention tests before treating those hypotheses as results.
+## Interpretation
 
-## Limitations
+This probe shows that aligned write-time value states can change downstream
+prediction and residual-stream readouts under identical visible compacted
+text. The alpha sweep suggests a non-monotonic pattern: moderate blending looks
+better than either no graft or full replacement on the layer-48 readout. The
+shifted control makes the result more informative by showing that injecting old
+values at the wrong positions is not equivalent to aligned ValueGraft.
 
-This corrected artifact fixes the missing-intervention comparison, but it is
-still a single small probe.
+The result is still a single constructed example. It is useful because it
+connects the cache intervention to an inspectable internal readout and a
+token-level prediction change. Broader task metrics remain the main evidence
+for whether the technique improves real coding work.
 
-- It uses one constructed coding-style scenario, not a broad benchmark.
-- It uses a V-only graft with `alpha_V = 0.75`; it does not compare K-only,
-  coupled KV, or independent `alpha_K`/`alpha_V` policies.
-- The target is teacher-forced for measurement, so the sequence readout is a
-  controlled diagnostic rather than a free-generation result.
-- The summary was capped at 96 generated tokens and ends mid-fragment, though
-  the key file/test facts appear earlier in the summary.
-- J-lens readouts are residual-stream telemetry, not direct KV-cache labels.
-- The layer-62 result is mixed and slightly farther from full context after
-  grafting.
-- There is no wrong-graft or shuffled-graft negative control in this artifact.
+## How the J-Lens Is Used
 
-The right conclusion is therefore: this probe detects that the grafted cache
-path changes next-token and lens readouts relative to fresh compaction while
-alpha-0 remains inert. It does not establish generality or production impact.
+The Jacobian lens maps residual-stream activations into a vocabulary basis
+using an averaged Jacobian transport, then decodes them with the model's
+unembedding. Here it is used as an inspection tool: it helps compare whether
+different cache states make the same visible continuation look more or less
+like the full-context state.
 
-## Next Steps
+The lens does not label individual KV-cache vectors. It reads the
+residual-stream state produced after the model uses the cache. That is exactly
+why this probe pairs lens metrics with next-token candidates and alpha/shifted
+controls.
 
-The next useful work is not more prose polish over this single example. It is
-to run the same validated three-state design over multiple examples and tasks:
+## Scope
 
-- add wrong-graft or shuffled-graft controls;
-- predeclare the gap-closure metric before looking at examples;
-- run V-only, K-only, coupled KV, and independent KV variants under the same
-  visible text and same summary;
-- apply the method to existing next-action trajectory examples where the
-  behavioral target is already known;
-- keep broad old-vs-fresh J-lens sweeps as diagnostic scouting, not as
-  intervention evidence.
+This artifact studies one short coding-style setup, one model, one generated
+summary, one target continuation, and V-only grafting. It is a measurement
+design and qualitative mechanistic probe. It should be expanded across more
+tasks, summaries, models, and graft policies before being treated as an effect
+size estimate.
+
+The most important next additions are:
+
+- run the same alpha/shifted-control design on several existing trajectory
+  prediction examples;
+- add a wrong-conversation graft control;
+- test K-only and independent K/V policies under the same visible text;
+- connect lens movement to the existing behavioral scoring pipeline.
 
 ## References
 
