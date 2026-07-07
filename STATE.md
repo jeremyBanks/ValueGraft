@@ -1,27 +1,34 @@
 # STATE.md — session handoff notes
 
-*Last updated: 2026-07-05 ~01:15 (update this file at every phase transition).*
+*Last updated: 2026-07-07 ~08:45 by Claude Opus 4.8 (see PROVENANCE-CORRECTION.md — earlier work mislabeled as Fable). Update at EVERY phase transition (rule 22).*
 
-## Current focus (read this first) — updated 07:35 07-06
+## 08:45 07-07 — PLAN OF RECORD (read first; supersedes all below)
 
-**USER MANDATE: real results, done right.** The CLEAN RE-RUN is the only
-thing that matters today (pre-registration: DECISIONS 07:30). Sequence:
-1. t3 authoring+self-test by subagent (IN FLIGHT — accept only if
-   fail-pre/pass-post on base AND s30 variant verified).
-2. Anomaly probe on e1 (spec_anomaly, matrix_anomaly.log — 6 E@0.75 + 2 B,
-   isolated sessions).
-3. Pre-flight isolation probe on each shim (two modes, same task —
-   sc_debug must show independent sessions), THEN fire the 150-run
-   pre-registered design: t1/t2/t3 × s30-s39 × {A, B, E:a0.75, E:a1.0,
-   E:cfg=layers}, DISJOINT task:seed per lane (no task appears on two
-   pods), 2-3 shims (~$20-25). Analysis pre-fixed: binomial CIs +
-   McNemar-vs-B paired by task:seed.
-4. Champion promotion + confirm/sealed-final per existing pipeline rules.
-NIGHT MATRIX = exploration only (session-leak postmortem, DECISIONS 07:20);
-do NOT cite its arm comparisons. Valid night results: guards (posslots
-dead, layers passed), honesty-bf16 replication, stage-1 damage, stage-2
-final, round-1 signal. Board: e1 shim (fixed code, session-isolated) + p4;
-balance ~$48; monitors live; MORNING-REPORT.md + DAY-PLAN.md current.
+MODEL: now Opus 4.8 (Fable quota out). Read INCIDENTS.md #1-26 + rules 1-23
+before acting. DECISIONS.md is current (107 entries); STATE/HANDOFF/INCIDENTS
+were stale until this update (incident 25).
+
+LIVE NOW: tau2 BANKING pilot running on pod t1 (shim @ tunnel 8040), domain
+banking_knowledge (EVICTABLE policy = compaction-relevant), --retrieval-config
+bm25 (keyless; rank_bm25 installed in scratchpad/tau2/.venv), agent+user both
+= our shim openai/sc-A. 698 docs loaded, 2 tasks in flight. Watcher (5-min
+poll) checks completion + PEAK TOKENS (pilot gate: sessions must exceed 12K
+for compaction to fire). Retail control ran first: reward 0, 16-msg episode —
+harness+scoring work but that was NOT "pipeline proven" (control domain,
+failed task; incident 24).
+tau CLI: scratchpad/tau2/.venv/bin/tau2 run -d banking_knowledge
+--retrieval-config bm25 --agent-llm openai/sc-A --agent-llm-args
+'{"api_base":"http://localhost:8040/v1","api_key":"sc"}' (same for --user-llm).
+Entry point is `tau2` console script NOT `python -m tau2`.
+
+STANDING RESULTS (banked, clean): mechanism suite, stage-1 damage, stage-2
+recovery, honesty-bf16 replication, tuning story + guards, CHAIN ARM TABLE
+(champion cures a1.0 collapse=REAL; chains compaction-robust=NULL; recall
+probe void — DECISIONS 08:15). SWE-bench retired (model floor, 0/7).
+
+PENDING/QUEUED: jlens_boundary_probe/ review AFTER tau (DECISIONS 07:00-07:15,
+lean-in-but-behaviorally-check stance); independent K/V tuning (next-gen);
+serving-stack upgrade at phase boundary. Balance ~$43, 1 pod (t1) live.
 
 ## Older focus (02:40 07-06) notes
 

@@ -56,3 +56,12 @@ LIVE SYSTEM:
 RESUME: watch matrix_H*.log fill; when 40 real rows done → verdict per
 autonomy rule → confirm phase or stop-and-report. icache v2 (validated,
 flag-off) only post-soak. Sealed final eval seeds s50-99 untouched.
+
+## 08:45 07-07 addendum (Opus 4.8) — CURRENT
+Supersedes prior handoff blocks. See STATE.md 08:45 block for live state.
+Key deltas since last handoff: model is now Opus (provenance correction
+filed); SWE-bench retired; chain arm table complete (mixed verdict);
+tau2 integrated + banking pilot running (bm25, keyless). Docs were stale
+(incident 25) — now current. If resuming: read STATE 08:45 block, check
+scratchpad/tau_banking.log + the 5-min watcher, then continue tau or
+review jlens per queued directives.
