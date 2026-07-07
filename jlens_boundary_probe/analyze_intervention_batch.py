@@ -46,6 +46,13 @@ def available_sequences(case: dict[str, Any]) -> dict[str, list[dict[str, Any]]]
     return seqs
 
 
+def alpha_sort_key(name: str) -> float:
+    try:
+        return float(name.removeprefix("alpha_"))
+    except ValueError:
+        return float("inf")
+
+
 def focus_positions(case: dict[str, Any]) -> list[int]:
     positions: set[int] = set()
     for vals in case["probe_target"].get("focus_positions", {}).values():
@@ -144,10 +151,17 @@ def analyze_case(case: dict[str, Any], layers: list[int], k: int) -> dict[str, A
         "alpha0_grafted_compacted",
         "grafted_compacted",
         "shifted_grafted_compacted",
-        "alpha_0.25",
-        "alpha_0.5",
-        "alpha_1",
     ]
+    condition_names.extend(
+        sorted(
+            (
+                name
+                for name in seqs
+                if name.startswith("alpha_") and name != "alpha_0"
+            ),
+            key=alpha_sort_key,
+        )
+    )
     conditions = {}
     for name in condition_names:
         if name not in seqs:

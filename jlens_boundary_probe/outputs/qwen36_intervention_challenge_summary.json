@@ -1,5 +1,5 @@
 {
-  "source_artifact": "outputs/qwen36_intervention_challenge_probe.json",
+  "source_artifact": "jlens_boundary_probe/outputs/qwen36_intervention_challenge_probe.json",
   "model": "Qwen/Qwen3.6-27B",
   "layers": [
     16,
@@ -395,6 +395,102 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.50174,
+                "full_vs_condition": 0.509281,
+                "fresh_vs_condition": 0.032086,
+                "closure": -0.007541
+              },
+              "32": {
+                "full_vs_fresh": 0.450393,
+                "full_vs_condition": 0.455995,
+                "fresh_vs_condition": 0.053476,
+                "closure": -0.005602
+              },
+              "48": {
+                "full_vs_fresh": 0.563709,
+                "full_vs_condition": 0.556168,
+                "fresh_vs_condition": 0.078843,
+                "closure": 0.007541
+              },
+              "62": {
+                "full_vs_fresh": 0.31451,
+                "full_vs_condition": 0.308046,
+                "fresh_vs_condition": 0.032086,
+                "closure": 0.006464
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              9,
+              10,
+              11,
+              12,
+              13,
+              15
+            ],
+            "tokens": [
+              " P",
+              "-",
+              "7",
+              "7",
+              "1",
+              " current",
+              " B",
+              "-",
+              "4",
+              "1",
+              "0",
+              " stale"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.544131,
+                "full_vs_condition": 0.544131,
+                "fresh_vs_condition": 0.030303,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.503053,
+                "full_vs_condition": 0.510989,
+                "fresh_vs_condition": 0.060606,
+                "closure": -0.007937
+              },
+              "48": {
+                "full_vs_fresh": 0.638332,
+                "full_vs_condition": 0.627648,
+                "fresh_vs_condition": 0.111694,
+                "closure": 0.010684
+              },
+              "62": {
+                "full_vs_fresh": 0.249086,
+                "full_vs_condition": 0.249086,
+                "fresh_vs_condition": 0.030303,
+                "closure": 0.0
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -487,6 +583,102 @@
                 "full_vs_condition": 0.321957,
                 "fresh_vs_condition": 0.151154,
                 "closure": -0.072872
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 2,
+              "changed_argmax": 2
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.50174,
+                "full_vs_condition": 0.52007,
+                "fresh_vs_condition": 0.139449,
+                "closure": -0.018331
+              },
+              "32": {
+                "full_vs_fresh": 0.450393,
+                "full_vs_condition": 0.485892,
+                "fresh_vs_condition": 0.200212,
+                "closure": -0.035499
+              },
+              "48": {
+                "full_vs_fresh": 0.563709,
+                "full_vs_condition": 0.577244,
+                "fresh_vs_condition": 0.321566,
+                "closure": -0.013534
+              },
+              "62": {
+                "full_vs_fresh": 0.31451,
+                "full_vs_condition": 0.403129,
+                "fresh_vs_condition": 0.223542,
+                "closure": -0.088618
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              9,
+              10,
+              11,
+              12,
+              13,
+              15
+            ],
+            "tokens": [
+              " P",
+              "-",
+              "7",
+              "7",
+              "1",
+              " current",
+              " B",
+              "-",
+              "4",
+              "1",
+              "0",
+              " stale"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 1,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.544131,
+                "full_vs_condition": 0.559416,
+                "fresh_vs_condition": 0.152098,
+                "closure": -0.015285
+              },
+              "32": {
+                "full_vs_fresh": 0.503053,
+                "full_vs_condition": 0.544185,
+                "fresh_vs_condition": 0.268482,
+                "closure": -0.041132
+              },
+              "48": {
+                "full_vs_fresh": 0.638332,
+                "full_vs_condition": 0.63167,
+                "fresh_vs_condition": 0.410098,
+                "closure": 0.006662
+              },
+              "62": {
+                "full_vs_fresh": 0.249086,
+                "full_vs_condition": 0.357535,
+                "fresh_vs_condition": 0.233352,
+                "closure": -0.108449
               }
             }
           }
@@ -1786,6 +1978,94 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 2
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.727092,
+                "full_vs_condition": 0.727092,
+                "fresh_vs_condition": 0.060606,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.620831,
+                "full_vs_condition": 0.615275,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.005556
+              },
+              "48": {
+                "full_vs_fresh": 0.876867,
+                "full_vs_condition": 0.876867,
+                "fresh_vs_condition": 0.048485,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.804249,
+                "full_vs_condition": 0.816154,
+                "fresh_vs_condition": 0.080808,
+                "closure": -0.011905
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              6,
+              7,
+              9,
+              11,
+              12,
+              13
+            ],
+            "tokens": [
+              "Map",
+              "le",
+              " Maple",
+              " Room",
+              " storage",
+              " volunteer",
+              " check",
+              "-in"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 2
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.621467,
+                "full_vs_condition": 0.621467,
+                "fresh_vs_condition": 0.068182,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.687046,
+                "full_vs_condition": 0.676629,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.010417
+              },
+              "48": {
+                "full_vs_fresh": 0.898446,
+                "full_vs_condition": 0.898446,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.73264,
+                "full_vs_condition": 0.754962,
+                "fresh_vs_condition": 0.064394,
+                "closure": -0.022321
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -1870,6 +2150,94 @@
                 "full_vs_condition": 0.765379,
                 "fresh_vs_condition": 0.174242,
                 "closure": -0.032738
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 3
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.727092,
+                "full_vs_condition": 0.71497,
+                "fresh_vs_condition": 0.084848,
+                "closure": 0.012121
+              },
+              "32": {
+                "full_vs_fresh": 0.620831,
+                "full_vs_condition": 0.614017,
+                "fresh_vs_condition": 0.197691,
+                "closure": 0.006813
+              },
+              "48": {
+                "full_vs_fresh": 0.876867,
+                "full_vs_condition": 0.875474,
+                "fresh_vs_condition": 0.249928,
+                "closure": 0.001393
+              },
+              "62": {
+                "full_vs_fresh": 0.804249,
+                "full_vs_condition": 0.831164,
+                "fresh_vs_condition": 0.261833,
+                "closure": -0.026915
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              6,
+              7,
+              9,
+              11,
+              12,
+              13
+            ],
+            "tokens": [
+              "Map",
+              "le",
+              " Maple",
+              " Room",
+              " storage",
+              " volunteer",
+              " check",
+              "-in"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 2
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.621467,
+                "full_vs_condition": 0.598739,
+                "fresh_vs_condition": 0.068182,
+                "closure": 0.022727
+              },
+              "32": {
+                "full_vs_fresh": 0.687046,
+                "full_vs_condition": 0.677237,
+                "fresh_vs_condition": 0.200216,
+                "closure": 0.009808
+              },
+              "48": {
+                "full_vs_fresh": 0.898446,
+                "full_vs_condition": 0.889254,
+                "fresh_vs_condition": 0.226732,
+                "closure": 0.009191
+              },
+              "62": {
+                "full_vs_fresh": 0.73264,
+                "full_vs_condition": 0.775795,
+                "fresh_vs_condition": 0.19697,
+                "closure": -0.043155
               }
             }
           }
@@ -3138,6 +3506,88 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.556374,
+                "full_vs_condition": 0.555065,
+                "fresh_vs_condition": 0.025974,
+                "closure": 0.001308
+              },
+              "32": {
+                "full_vs_fresh": 0.588582,
+                "full_vs_condition": 0.588582,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.751797,
+                "full_vs_condition": 0.757049,
+                "fresh_vs_condition": 0.051948,
+                "closure": -0.005252
+              },
+              "62": {
+                "full_vs_fresh": 0.785129,
+                "full_vs_condition": 0.785129,
+                "fresh_vs_condition": 0.012987,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              5,
+              7,
+              11,
+              12
+            ],
+            "tokens": [
+              " Raven",
+              " Falcon",
+              " rejected",
+              " subscription",
+              " coupons"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.565568,
+                "full_vs_condition": 0.587546,
+                "fresh_vs_condition": 0.036364,
+                "closure": -0.021978
+              },
+              "32": {
+                "full_vs_fresh": 0.628992,
+                "full_vs_condition": 0.628992,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.780017,
+                "full_vs_condition": 0.780017,
+                "fresh_vs_condition": 0.072727,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.806769,
+                "full_vs_condition": 0.806769,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -3216,6 +3666,88 @@
                 "full_vs_condition": 0.806769,
                 "fresh_vs_condition": 0.066667,
                 "closure": 0.0
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 1,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.556374,
+                "full_vs_condition": 0.548263,
+                "fresh_vs_condition": 0.051948,
+                "closure": 0.008111
+              },
+              "32": {
+                "full_vs_fresh": 0.588582,
+                "full_vs_condition": 0.606207,
+                "fresh_vs_condition": 0.051948,
+                "closure": -0.017625
+              },
+              "48": {
+                "full_vs_fresh": 0.751797,
+                "full_vs_condition": 0.763694,
+                "fresh_vs_condition": 0.162338,
+                "closure": -0.011898
+              },
+              "62": {
+                "full_vs_fresh": 0.785129,
+                "full_vs_condition": 0.777626,
+                "fresh_vs_condition": 0.169331,
+                "closure": 0.007503
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              5,
+              7,
+              11,
+              12
+            ],
+            "tokens": [
+              " Raven",
+              " Falcon",
+              " rejected",
+              " subscription",
+              " coupons"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.565568,
+                "full_vs_condition": 0.587546,
+                "fresh_vs_condition": 0.036364,
+                "closure": -0.021978
+              },
+              "32": {
+                "full_vs_fresh": 0.628992,
+                "full_vs_condition": 0.648039,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.019048
+              },
+              "48": {
+                "full_vs_fresh": 0.780017,
+                "full_vs_condition": 0.81032,
+                "fresh_vs_condition": 0.242424,
+                "closure": -0.030303
+              },
+              "62": {
+                "full_vs_fresh": 0.806769,
+                "full_vs_condition": 0.821475,
+                "fresh_vs_condition": 0.139394,
+                "closure": -0.014706
               }
             }
           }
@@ -4509,6 +5041,96 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.582669,
+                "full_vs_condition": 0.568663,
+                "fresh_vs_condition": 0.042781,
+                "closure": 0.014006
+              },
+              "32": {
+                "full_vs_fresh": 0.502561,
+                "full_vs_condition": 0.502561,
+                "fresh_vs_condition": 0.010695,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.699328,
+                "full_vs_condition": 0.693654,
+                "fresh_vs_condition": 0.040998,
+                "closure": 0.005674
+              },
+              "62": {
+                "full_vs_fresh": 0.452087,
+                "full_vs_condition": 0.464153,
+                "fresh_vs_condition": 0.051693,
+                "closure": -0.012066
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              4,
+              5,
+              10,
+              11,
+              12,
+              13,
+              15
+            ],
+            "tokens": [
+              "R",
+              "3",
+              " current",
+              " live",
+              " Patch",
+              " ",
+              "1",
+              "7",
+              " stale"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.550061,
+                "full_vs_condition": 0.523606,
+                "fresh_vs_condition": 0.060606,
+                "closure": 0.026455
+              },
+              "32": {
+                "full_vs_fresh": 0.537139,
+                "full_vs_condition": 0.537139,
+                "fresh_vs_condition": 0.020202,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.750577,
+                "full_vs_condition": 0.727649,
+                "fresh_vs_condition": 0.057239,
+                "closure": 0.022928
+              },
+              "62": {
+                "full_vs_fresh": 0.410108,
+                "full_vs_condition": 0.4329,
+                "fresh_vs_condition": 0.057239,
+                "closure": -0.022792
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -4595,6 +5217,96 @@
                 "full_vs_condition": 0.469937,
                 "fresh_vs_condition": 0.175084,
                 "closure": -0.059829
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 1,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.582669,
+                "full_vs_condition": 0.575989,
+                "fresh_vs_condition": 0.185383,
+                "closure": 0.00668
+              },
+              "32": {
+                "full_vs_fresh": 0.502561,
+                "full_vs_condition": 0.447969,
+                "fresh_vs_condition": 0.177998,
+                "closure": 0.054592
+              },
+              "48": {
+                "full_vs_fresh": 0.699328,
+                "full_vs_condition": 0.653992,
+                "fresh_vs_condition": 0.360822,
+                "closure": 0.045337
+              },
+              "62": {
+                "full_vs_fresh": 0.452087,
+                "full_vs_condition": 0.456256,
+                "fresh_vs_condition": 0.268359,
+                "closure": -0.004169
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              4,
+              5,
+              10,
+              11,
+              12,
+              13,
+              15
+            ],
+            "tokens": [
+              "R",
+              "3",
+              " current",
+              " live",
+              " Patch",
+              " ",
+              "1",
+              "7",
+              " stale"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 1,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.550061,
+                "full_vs_condition": 0.572853,
+                "fresh_vs_condition": 0.212121,
+                "closure": -0.022792
+              },
+              "32": {
+                "full_vs_fresh": 0.537139,
+                "full_vs_condition": 0.429395,
+                "fresh_vs_condition": 0.255411,
+                "closure": 0.107744
+              },
+              "48": {
+                "full_vs_fresh": 0.750577,
+                "full_vs_condition": 0.677404,
+                "fresh_vs_condition": 0.404682,
+                "closure": 0.073173
+              },
+              "62": {
+                "full_vs_fresh": 0.410108,
+                "full_vs_condition": 0.453102,
+                "fresh_vs_condition": 0.206164,
+                "closure": -0.042994
               }
             }
           }
@@ -5898,6 +6610,96 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.683845,
+                "full_vs_condition": 0.680214,
+                "fresh_vs_condition": 0.020202,
+                "closure": 0.003631
+              },
+              "32": {
+                "full_vs_fresh": 0.691168,
+                "full_vs_condition": 0.694417,
+                "fresh_vs_condition": 0.010101,
+                "closure": -0.003249
+              },
+              "48": {
+                "full_vs_fresh": 0.904797,
+                "full_vs_condition": 0.901548,
+                "fresh_vs_condition": 0.040404,
+                "closure": 0.003249
+              },
+              "62": {
+                "full_vs_fresh": 0.709136,
+                "full_vs_condition": 0.705887,
+                "fresh_vs_condition": 0.020202,
+                "closure": 0.003249
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              4,
+              5,
+              6,
+              9,
+              10,
+              11,
+              12,
+              16
+            ],
+            "tokens": [
+              "Delta",
+              " Delta",
+              " ",
+              "6",
+              "7",
+              ":",
+              "4",
+              "0",
+              " airline"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.714459,
+                "full_vs_condition": 0.707196,
+                "fresh_vs_condition": 0.040404,
+                "closure": 0.007262
+              },
+              "32": {
+                "full_vs_fresh": 0.673235,
+                "full_vs_condition": 0.679732,
+                "fresh_vs_condition": 0.020202,
+                "closure": -0.006498
+              },
+              "48": {
+                "full_vs_fresh": 0.954678,
+                "full_vs_condition": 0.948181,
+                "fresh_vs_condition": 0.040404,
+                "closure": 0.006498
+              },
+              "62": {
+                "full_vs_fresh": 0.615152,
+                "full_vs_condition": 0.615152,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -5984,6 +6786,96 @@
                 "full_vs_condition": 0.615152,
                 "fresh_vs_condition": 0.040404,
                 "closure": 0.0
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.683845,
+                "full_vs_condition": 0.667167,
+                "fresh_vs_condition": 0.050505,
+                "closure": 0.016678
+              },
+              "32": {
+                "full_vs_fresh": 0.691168,
+                "full_vs_condition": 0.68141,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.009758
+              },
+              "48": {
+                "full_vs_fresh": 0.904797,
+                "full_vs_condition": 0.887564,
+                "fresh_vs_condition": 0.19179,
+                "closure": 0.017232
+              },
+              "62": {
+                "full_vs_fresh": 0.709136,
+                "full_vs_condition": 0.706049,
+                "fresh_vs_condition": 0.126263,
+                "closure": 0.003086
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              4,
+              5,
+              6,
+              9,
+              10,
+              11,
+              12,
+              16
+            ],
+            "tokens": [
+              "Delta",
+              " Delta",
+              " ",
+              "6",
+              "7",
+              ":",
+              "4",
+              "0",
+              " airline"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.714459,
+                "full_vs_condition": 0.707196,
+                "fresh_vs_condition": 0.040404,
+                "closure": 0.007262
+              },
+              "32": {
+                "full_vs_fresh": 0.673235,
+                "full_vs_condition": 0.66098,
+                "fresh_vs_condition": 0.121212,
+                "closure": 0.012254
+              },
+              "48": {
+                "full_vs_fresh": 0.954678,
+                "full_vs_condition": 0.932424,
+                "fresh_vs_condition": 0.251489,
+                "closure": 0.022255
+              },
+              "62": {
+                "full_vs_fresh": 0.615152,
+                "full_vs_condition": 0.606983,
+                "fresh_vs_condition": 0.077441,
+                "closure": 0.00817
               }
             }
           }
@@ -7275,6 +8167,92 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.525345,
+                "full_vs_condition": 0.521819,
+                "fresh_vs_condition": 0.073084,
+                "closure": 0.003526
+              },
+              "32": {
+                "full_vs_fresh": 0.621964,
+                "full_vs_condition": 0.620687,
+                "fresh_vs_condition": 0.032086,
+                "closure": 0.001277
+              },
+              "48": {
+                "full_vs_fresh": 0.764754,
+                "full_vs_condition": 0.764754,
+                "fresh_vs_condition": 0.02139,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.721079,
+                "full_vs_condition": 0.721079,
+                "fresh_vs_condition": 0.02139,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              3,
+              8,
+              9,
+              11,
+              15
+            ],
+            "tokens": [
+              "Ghost",
+              "2",
+              " alive",
+              " Victory",
+              " Road",
+              " Ghost",
+              " graveyard"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.525015,
+                "full_vs_condition": 0.50337,
+                "fresh_vs_condition": 0.073593,
+                "closure": 0.021645
+              },
+              "32": {
+                "full_vs_fresh": 0.7312,
+                "full_vs_condition": 0.728099,
+                "fresh_vs_condition": 0.051948,
+                "closure": 0.003101
+              },
+              "48": {
+                "full_vs_fresh": 0.678087,
+                "full_vs_condition": 0.678087,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.701722,
+                "full_vs_condition": 0.701722,
+                "fresh_vs_condition": 0.025974,
+                "closure": 0.0
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -7357,6 +8335,92 @@
                 "full_vs_condition": 0.695311,
                 "fresh_vs_condition": 0.077922,
                 "closure": 0.00641
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.525345,
+                "full_vs_condition": 0.53955,
+                "fresh_vs_condition": 0.105169,
+                "closure": -0.014205
+              },
+              "32": {
+                "full_vs_fresh": 0.621964,
+                "full_vs_condition": 0.613336,
+                "fresh_vs_condition": 0.167558,
+                "closure": 0.008627
+              },
+              "48": {
+                "full_vs_fresh": 0.764754,
+                "full_vs_condition": 0.737702,
+                "fresh_vs_condition": 0.230358,
+                "closure": 0.027053
+              },
+              "62": {
+                "full_vs_fresh": 0.721079,
+                "full_vs_condition": 0.714114,
+                "fresh_vs_condition": 0.142602,
+                "closure": 0.006965
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              3,
+              8,
+              9,
+              11,
+              15
+            ],
+            "tokens": [
+              "Ghost",
+              "2",
+              " alive",
+              " Victory",
+              " Road",
+              " Ghost",
+              " graveyard"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.525015,
+                "full_vs_condition": 0.525015,
+                "fresh_vs_condition": 0.103896,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.7312,
+                "full_vs_condition": 0.731893,
+                "fresh_vs_condition": 0.17316,
+                "closure": -0.000693
+              },
+              "48": {
+                "full_vs_fresh": 0.678087,
+                "full_vs_condition": 0.665779,
+                "fresh_vs_condition": 0.17316,
+                "closure": 0.012308
+              },
+              "62": {
+                "full_vs_fresh": 0.701722,
+                "full_vs_condition": 0.684807,
+                "fresh_vs_condition": 0.125541,
+                "closure": 0.016914
               }
             }
           }
@@ -8652,6 +9716,96 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 1,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.514136,
+                "full_vs_condition": 0.526435,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.012299
+              },
+              "32": {
+                "full_vs_fresh": 0.64626,
+                "full_vs_condition": 0.64626,
+                "fresh_vs_condition": 0.048485,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.796789,
+                "full_vs_condition": 0.800688,
+                "fresh_vs_condition": 0.094949,
+                "closure": -0.003899
+              },
+              "62": {
+                "full_vs_fresh": 0.706711,
+                "full_vs_condition": 0.711613,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.004902
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              4,
+              5,
+              6,
+              8,
+              9,
+              10,
+              13
+            ],
+            "tokens": [
+              "D",
+              "ex",
+              " Mak",
+              "uh",
+              "ita",
+              "-C",
+              "ast",
+              "form",
+              " Ruby"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.450808,
+                "full_vs_condition": 0.481888,
+                "fresh_vs_condition": 0.080808,
+                "closure": -0.03108
+              },
+              "32": {
+                "full_vs_fresh": 0.709455,
+                "full_vs_condition": 0.709455,
+                "fresh_vs_condition": 0.080808,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.815636,
+                "full_vs_condition": 0.815636,
+                "fresh_vs_condition": 0.117845,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.667918,
+                "full_vs_condition": 0.667918,
+                "fresh_vs_condition": 0.060606,
+                "closure": 0.0
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -8737,6 +9891,96 @@
                 "full_vs_fresh": 0.667918,
                 "full_vs_condition": 0.687085,
                 "fresh_vs_condition": 0.222999,
+                "closure": -0.019167
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.514136,
+                "full_vs_condition": 0.545012,
+                "fresh_vs_condition": 0.129293,
+                "closure": -0.030876
+              },
+              "32": {
+                "full_vs_fresh": 0.64626,
+                "full_vs_condition": 0.628276,
+                "fresh_vs_condition": 0.33137,
+                "closure": 0.017984
+              },
+              "48": {
+                "full_vs_fresh": 0.796789,
+                "full_vs_condition": 0.807435,
+                "fresh_vs_condition": 0.350878,
+                "closure": -0.010646
+              },
+              "62": {
+                "full_vs_fresh": 0.706711,
+                "full_vs_condition": 0.719409,
+                "fresh_vs_condition": 0.268576,
+                "closure": -0.012698
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              0,
+              1,
+              4,
+              5,
+              6,
+              8,
+              9,
+              10,
+              13
+            ],
+            "tokens": [
+              "D",
+              "ex",
+              " Mak",
+              "uh",
+              "ita",
+              "-C",
+              "ast",
+              "form",
+              " Ruby"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.450808,
+                "full_vs_condition": 0.494098,
+                "fresh_vs_condition": 0.154882,
+                "closure": -0.04329
+              },
+              "32": {
+                "full_vs_fresh": 0.709455,
+                "full_vs_condition": 0.729737,
+                "fresh_vs_condition": 0.386524,
+                "closure": -0.020282
+              },
+              "48": {
+                "full_vs_fresh": 0.815636,
+                "full_vs_condition": 0.818711,
+                "fresh_vs_condition": 0.456073,
+                "closure": -0.003075
+              },
+              "62": {
+                "full_vs_fresh": 0.667918,
+                "full_vs_condition": 0.687085,
+                "fresh_vs_condition": 0.261664,
                 "closure": -0.019167
               }
             }
@@ -10061,6 +11305,102 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.627506,
+                "full_vs_condition": 0.614459,
+                "fresh_vs_condition": 0.060606,
+                "closure": 0.013047
+              },
+              "32": {
+                "full_vs_fresh": 0.51224,
+                "full_vs_condition": 0.506135,
+                "fresh_vs_condition": 0.030303,
+                "closure": 0.006105
+              },
+              "48": {
+                "full_vs_fresh": 0.696226,
+                "full_vs_condition": 0.685018,
+                "fresh_vs_condition": 0.084564,
+                "closure": 0.011207
+              },
+              "62": {
+                "full_vs_fresh": 0.434891,
+                "full_vs_condition": 0.434891,
+                "fresh_vs_condition": 0.010101,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              8,
+              9,
+              11,
+              12,
+              13,
+              14,
+              16
+            ],
+            "tokens": [
+              " T",
+              "-",
+              "1",
+              "0",
+              "4",
+              " active",
+              " escalation",
+              " T",
+              "-",
+              "8",
+              "8",
+              " stale"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.632883,
+                "full_vs_condition": 0.613312,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.019571
+              },
+              "32": {
+                "full_vs_fresh": 0.531181,
+                "full_vs_condition": 0.522024,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.009158
+              },
+              "48": {
+                "full_vs_fresh": 0.732385,
+                "full_vs_condition": 0.715574,
+                "fresh_vs_condition": 0.126845,
+                "closure": 0.016811
+              },
+              "62": {
+                "full_vs_fresh": 0.366189,
+                "full_vs_condition": 0.366189,
+                "fresh_vs_condition": 0.015152,
+                "closure": 0.0
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -10153,6 +11493,102 @@
                 "full_vs_condition": 0.380037,
                 "fresh_vs_condition": 0.114219,
                 "closure": -0.013847
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.627506,
+                "full_vs_condition": 0.603945,
+                "fresh_vs_condition": 0.153587,
+                "closure": 0.023561
+              },
+              "32": {
+                "full_vs_fresh": 0.51224,
+                "full_vs_condition": 0.517841,
+                "fresh_vs_condition": 0.163448,
+                "closure": -0.0056
+              },
+              "48": {
+                "full_vs_fresh": 0.696226,
+                "full_vs_condition": 0.693199,
+                "fresh_vs_condition": 0.452919,
+                "closure": 0.003027
+              },
+              "62": {
+                "full_vs_fresh": 0.434891,
+                "full_vs_condition": 0.434054,
+                "fresh_vs_condition": 0.173789,
+                "closure": 0.000837
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              8,
+              9,
+              11,
+              12,
+              13,
+              14,
+              16
+            ],
+            "tokens": [
+              " T",
+              "-",
+              "1",
+              "0",
+              "4",
+              " active",
+              " escalation",
+              " T",
+              "-",
+              "8",
+              "8",
+              " stale"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.632883,
+                "full_vs_condition": 0.592304,
+                "fresh_vs_condition": 0.200078,
+                "closure": 0.040579
+              },
+              "32": {
+                "full_vs_fresh": 0.531181,
+                "full_vs_condition": 0.538361,
+                "fresh_vs_condition": 0.187091,
+                "closure": -0.00718
+              },
+              "48": {
+                "full_vs_fresh": 0.732385,
+                "full_vs_condition": 0.736287,
+                "fresh_vs_condition": 0.565741,
+                "closure": -0.003902
+              },
+              "62": {
+                "full_vs_fresh": 0.366189,
+                "full_vs_condition": 0.403125,
+                "fresh_vs_condition": 0.1723,
+                "closure": -0.036935
               }
             }
           }
@@ -11423,6 +12859,88 @@
             }
           }
         },
+        "alpha_0.1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.673978,
+                "full_vs_condition": 0.680662,
+                "fresh_vs_condition": 0.033058,
+                "closure": -0.006684
+              },
+              "32": {
+                "full_vs_fresh": 0.665771,
+                "full_vs_condition": 0.644523,
+                "fresh_vs_condition": 0.066116,
+                "closure": 0.021248
+              },
+              "48": {
+                "full_vs_fresh": 0.794344,
+                "full_vs_condition": 0.794344,
+                "fresh_vs_condition": 0.066116,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.744685,
+                "full_vs_condition": 0.738,
+                "fresh_vs_condition": 0.016529,
+                "closure": 0.006684
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              9
+            ],
+            "tokens": [
+              " amber",
+              " read",
+              "-only",
+              " recovery",
+              " purple"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.739474,
+                "full_vs_condition": 0.739474,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.821011,
+                "full_vs_condition": 0.807939,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.013072
+              },
+              "48": {
+                "full_vs_fresh": 0.918885,
+                "full_vs_condition": 0.90418,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.014706
+              },
+              "62": {
+                "full_vs_fresh": 0.779576,
+                "full_vs_condition": 0.764871,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.014706
+              }
+            }
+          }
+        },
         "alpha_0.5": {
           "all_tokens": {
             "argmax": {
@@ -11500,6 +13018,88 @@
                 "full_vs_fresh": 0.779576,
                 "full_vs_condition": 0.781537,
                 "fresh_vs_condition": 0.175758,
+                "closure": -0.001961
+              }
+            }
+          }
+        },
+        "alpha_0.75": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.673978,
+                "full_vs_condition": 0.680662,
+                "fresh_vs_condition": 0.049587,
+                "closure": -0.006684
+              },
+              "32": {
+                "full_vs_fresh": 0.665771,
+                "full_vs_condition": 0.645606,
+                "fresh_vs_condition": 0.15978,
+                "closure": 0.020166
+              },
+              "48": {
+                "full_vs_fresh": 0.794344,
+                "full_vs_condition": 0.793601,
+                "fresh_vs_condition": 0.129477,
+                "closure": 0.000743
+              },
+              "62": {
+                "full_vs_fresh": 0.744685,
+                "full_vs_condition": 0.736918,
+                "fresh_vs_condition": 0.229922,
+                "closure": 0.007767
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              9
+            ],
+            "tokens": [
+              " amber",
+              " read",
+              "-only",
+              " recovery",
+              " purple"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "16": {
+                "full_vs_fresh": 0.739474,
+                "full_vs_condition": 0.75418,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.014706
+              },
+              "32": {
+                "full_vs_fresh": 0.821011,
+                "full_vs_condition": 0.81032,
+                "fresh_vs_condition": 0.145455,
+                "closure": 0.010691
+              },
+              "48": {
+                "full_vs_fresh": 0.918885,
+                "full_vs_condition": 0.917251,
+                "fresh_vs_condition": 0.10303,
+                "closure": 0.001634
+              },
+              "62": {
+                "full_vs_fresh": 0.779576,
+                "full_vs_condition": 0.781537,
+                "fresh_vs_condition": 0.268065,
                 "closure": -0.001961
               }
             }

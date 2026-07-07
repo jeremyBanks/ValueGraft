@@ -12,38 +12,44 @@ Artifacts:
 
 ## Summary
 
-We ran two post-boundary intervention probes with Qwen3.6-27B and the public
-Neuronpedia/Anthropic Jacobian-lens weights.
+Context compaction replaces older conversation turns with a visible summary.
+In the fresh compacted baseline, the model re-encodes that summary from text.
+Write-time state means the cache entries produced when the same summary was
+written while the old conversation was still present. These probes ask whether
+blending those old value vectors into aligned summary-token positions makes
+the compacted run's J-lens readouts look more like full-context readouts.
 
-The first probe used ordinary, information-rich summaries plus the last two
-conversation messages. It shows a small but real-looking pattern: low and
-moderate value grafts move J-lens readouts slightly toward full context, while
-a shifted-value control is consistently worse. That is useful evidence that
-the cache surgery is doing something position-sensitive and that alignment
-matters. It is not a compelling human-readable semantic rescue. The visible
-summary and tail already contain most answers, and many of the largest token
-movements are formatting, punctuation, number, or continuation effects.
+We ran two J-lens intervention probes on Qwen3.6-27B using the public
+Neuronpedia/Anthropic Jacobian-lens weights. Both probes tested the same
+V-only ValueGraft variant: keep fresh compacted keys, but blend write-time
+value vectors into aligned summary-token cache positions.
 
-The second probe was deliberately stricter. It used sparse summaries that kept
-the labels but omitted key facts, and it retained no tail. This creates large
-full-vs-fresh gaps. Under that setup, V-only grafting did not recover the
-omitted facts. Closures are tiny, next-token rescues are absent, and stronger
-alphas introduce regressions. This is a useful falsification of an overly
-strong story: with this model, lens setup, and V-only summary-token graft,
-ValueGraft does not behave like a hidden fact-recovery channel for label-only
-summaries.
+The ordinary probe used information-rich summaries plus the last two
+conversation messages. In that setting, low-to-moderate value grafts produced
+small shifts toward the full-context J-lens readout, while shifted-value grafts
+were worse on aggregate and caused more argmax disruptions. This supports the
+narrow claim that the intervention is alignment-sensitive. It does not show a
+strong semantic rescue, because the visible compacted prompt already contained
+most of the answer.
+
+The sparse challenge removed the retained tail and used summaries that named
+the relevant labels while omitting the key relations. This created large
+full-vs-fresh gaps. In that stricter setting, V-only grafting did not recover
+the omitted facts: closure stayed near zero, next-token rescues were absent,
+and higher alpha values introduced regressions.
 
 The combined interpretation is narrower and better:
 
 - V-only grafting can slightly steer compacted-state readouts toward the
   full-context state when the visible compacted prompt already contains enough
   relevant information.
-- Alignment matters; injecting the same values at the wrong summary-token
-  positions is reliably worse in the ordinary batch.
+- Alignment matters; in the ordinary batch, injecting the same values at the
+  wrong summary-token positions is worse on aggregate and causes more argmax
+  disruptions.
 - V-only grafting alone does not rescue details that the compacted text has
   aggressively omitted.
-- Higher alpha is not automatically better. The ordinary batch often prefers
-  `alpha_V = 0.25` or `0.5`; alpha-one is more disruptive.
+- Higher alpha is not automatically better. The ordinary batch often looks
+  better at `alpha_V = 0.25` or `0.5`; alpha-one is more disruptive.
 
 This does not invalidate the broader ValueGraft behavioral result. It does
 constrain the mechanistic story we should tell from the J-lens side probe.
@@ -96,26 +102,31 @@ closure = distance(full_context, fresh_compacted)
 Distance is Jaccard distance between top-k readout token sets at the same
 target position and layer. Positive closure means the condition is closer to
 full context than fresh compaction. Negative closure means it is farther away.
+These are absolute changes in top-k set distance, not normalized "percent
+recovered" scores. Values around 0.01 to 0.04 should be read as small readout
+shifts, not large behavioral effects.
 
 ## Validation
 
-The validator confirms the two artifacts are internally consistent.
+The local raw artifacts passed `validate_intervention_artifact.py`. The raw
+JSON files are kept local/ignored because they are larger than normal repo
+limits; the compact summaries below are committed.
 
 | Artifact | Cases | Forced target tokens | Aligned summary-token pairs | Layers | Errors |
 | --- | ---: | ---: | ---: | --- | --- |
 | ordinary batch | 10 | 156 | 1,820 | 16, 32, 48, 62 | none |
 | sparse challenge | 9 | 142 | 485 | 16, 32, 48, 62 | none |
 
-For every case, alpha-zero exactly matches fresh compaction on token IDs,
-argmaxes, and J-lens readout rows. That is an important sanity check: any
-observed graft effect is not coming from simply running through a different
-capture path.
+The raw validator confirms that, for every case, alpha-zero exactly matches
+fresh compaction on token IDs, argmaxes, and J-lens readout rows. That is an
+important sanity check: any observed graft effect is not coming from simply
+running through a different capture path.
 
-One implementation note: in the sparse challenge, the compacted prefix by
-itself is only `system + summary note`, with no retained user turn. Qwen's chat
-template refuses to render that prefix alone because it has no user query. The
-actual measured prompt appends the probe user question before rendering, so it
-is valid. The artifact records the prefix-only render failure as metadata and
+Validation note: in the sparse challenge, the compacted prefix by itself is
+only `system + summary note`, with no retained user turn. Qwen's chat template
+refuses to render that prefix alone because it has no user query. The actual
+measured prompt appends the probe user question before rendering, so it is
+valid. The artifact records the prefix-only render failure as metadata and
 does not use it in the measurement.
 
 ## Ordinary Batch
@@ -131,6 +142,11 @@ whether the graft can recover missing information, because little information
 is actually missing from the prompt.
 
 Mean focus-token closure:
+
+In the final column, a rescue means fresh compaction missed the full-context
+next-token argmax and the condition recovered it. A regression means fresh
+matched full context and the condition moved away. A change counts any
+condition argmax that differs from fresh.
 
 | Condition | L16 | L32 | L48 | L62 | Focus argmax rescues / regressions / changes |
 | --- | ---: | ---: | ---: | ---: | --- |
@@ -148,8 +164,8 @@ shape of the controls:
 - `alpha_V = 0.75` still has positive closure at layer 16 but turns negative at
   layer 48.
 - `alpha_V = 1.0` is worse, especially at layers 48 and 62.
-- The shifted control is clearly bad: negative closure at every sampled layer
-  and many more argmax disruptions.
+- The shifted control is much worse in aggregate: negative mean closure at
+  every sampled layer and many more argmax disruptions.
 
 That pattern supports a modest mechanistic claim: aligned value-state blending
 has a measurable direction, and misaligned value injection is not an innocent
@@ -158,30 +174,13 @@ semantic fix.
 
 ### Example: Shifted Values Are Not Harmless
 
-In the permit case, the target answer is:
+The example tables below show selected human-readable tokens from the recorded
+top-k lists, keeping their broad rank order but omitting structural or
+unhelpful tokens when they would obscure the comparison. The raw local JSON
+preserves the exact token lists and ranks.
 
-```text
-Use P-771 on the insurance form, not B-410.
-```
-
-At the final digit of `P-771`, full, fresh, and aligned graft all keep the
-next-token argmax as `1`. The shifted control changes the argmax to ` on`.
-Layer-62 readouts also become number-like under the shifted control:
-
-| Path | Layer-62 J-lens readout after `P-771` |
-| --- | --- |
-| full context | `on`, `,`, `for`, `;`, `and` |
-| fresh compacted | `on`, `,`, `for`, `;`, `on` |
-| aligned V-graft | `on`, `,`, `for`, `on`, `;` |
-| shifted control | `on`, `0`, `9`, `8`, `4`, `6`, `2`, `3` |
-
-This is not a semantic win for aligned grafting; aligned and fresh are almost
-the same here. The useful point is the negative control. Moving the same value
-states to wrong summary-token positions creates a qualitatively different and
-less coherent readout.
-
-In the Maple case, the shifted control similarly drifts into unrelated
-operational words around the `check-in` span:
+In the Maple case, the shifted control drifts into unrelated operational words
+around the `check-in` span:
 
 | Path | Layer-16 J-lens readout near `check-in` |
 | --- | --- |
@@ -190,8 +189,19 @@ operational words around the `check-in` span:
 | aligned V-graft | `,`, `.`, `-`, `with`, `at`, `on` |
 | shifted control | `weekend`, `folks`, `online`, `onsite`, `overnight` |
 
-Again, this is mainly a shifted-control result. It shows that the graft path is
-not equivalent to arbitrary noise or smoothing. It does not show that aligned
+In the permit case, the shifted control changes the next-token argmax at the
+final digit of `P-771` from `1` to ` on`, and layer-62 readouts become
+number-like:
+
+| Path | Layer-62 J-lens readout after `P-771` |
+| --- | --- |
+| full context | `on`, `,`, `for`, `;`, `and` |
+| fresh compacted | `on`, `,`, `for`, `;`, `on` |
+| aligned V-graft | `on`, `,`, `for`, `on`, `;` |
+| shifted control | `on`, `0`, `9`, `8`, `4`, `6`, `2`, `3` |
+
+These are mainly shifted-control results. They show that the graft path is not
+equivalent to arbitrary noise or smoothing; they do not show that aligned
 V-Graft recovers a hidden fact.
 
 ## Sparse Challenge
@@ -218,22 +228,24 @@ Mean focus-token closure:
 
 | Condition | L16 | L32 | L48 | L62 | Focus argmax rescues / regressions / changes |
 | --- | ---: | ---: | ---: | ---: | --- |
+| `alpha_V = 0.1` | 0.0024 | 0.0024 | 0.0080 | -0.0034 | 0 / 0 / 2 |
 | `alpha_V = 0.25` | -0.0021 | 0.0056 | 0.0098 | -0.0040 | 0 / 0 / 2 |
 | `alpha_V = 0.5` | -0.0010 | 0.0071 | 0.0106 | -0.0216 | 0 / 2 / 4 |
+| `alpha_V = 0.75` | -0.0053 | 0.0058 | 0.0098 | -0.0269 | 0 / 2 / 4 |
 | `alpha_V = 1.0` | -0.0096 | -0.0062 | 0.0082 | -0.0363 | 0 / 3 / 5 |
 | shifted `alpha_V = 0.25` | -0.0016 | 0.0037 | -0.0012 | -0.0128 | 0 / 0 / 2 |
 
-The sparse challenge gives a cleaner negative result:
+The sparse challenge gives a cleaner negative result for this specific setup:
 
 - There are no focus-token argmax rescues.
 - Closure is near zero.
 - Aligned and shifted conditions are often too close to distinguish.
 - Higher alphas add regressions without revealing omitted facts.
 
-This is exactly the failure mode that matters for interpretation. The old
-write-time value states may carry context-conditioned information, but a
-V-only summary-token graft does not appear to be enough to reconstruct
-omitted relations when the summary itself has collapsed them to a label list.
+This is the failure mode that matters for interpretation. The old write-time
+value states may carry context-conditioned information, but in this 9-case
+V-only summary-token probe, they did not reconstruct omitted relations after
+the summary collapsed them to a label list.
 
 ### Example: Falcon/Raven Does Not Recover
 
@@ -306,13 +318,12 @@ This suggests a more disciplined story for the J-lens work:
    arbitrary: they differ from shifted grafts and have an alpha-dependent
    effect.
 3. The sparse challenge prevents overclaiming. V-only grafting should not be
-   described as a way to smuggle entire omitted facts through a terse label
-   summary.
+   described as evidence that terse label summaries can carry entire omitted
+   relations through the value cache.
 
-That is consistent with the broader ValueGraft framing as mitigation, not
-magic recall. It may preserve or improve state around a reasonably good
-summary. It does not eliminate the need for the summary to actually carry
-important facts.
+That is consistent with the broader ValueGraft framing as mitigation. It may
+preserve or improve state around a reasonably good summary. It does not
+eliminate the need for the summary to actually carry important facts.
 
 ## Consequences For Next Experiments
 
@@ -322,7 +333,7 @@ main proof that ValueGraft works. They are better used as:
 - evidence that the intervention has measurable, alignment-sensitive internal
   effects;
 - a warning that full replacement and high alpha can be harmful;
-- a clean negative against the strongest hidden-fact-recovery interpretation;
+- a scoped negative against the strongest hidden-fact-recovery interpretation;
 - motivation for independent key/value experiments.
 
 The most natural next branch is not more prose around V-only examples. It is a
@@ -336,8 +347,8 @@ controlled K/V axis experiment:
 The sparse challenge is especially useful for that next branch. If key
 grafting matters for retrieval/addressing, the label-only summaries are where
 it should have a chance to show up. If K-only and KV variants also fail there,
-we learn that omitted relations are not practically recoverable from these
-summary-token states under this setup.
+that would suggest these label-only summaries do not leave enough recoverable
+relation information for this family of summary-token interventions.
 
 We should also keep summary quality as an explicit axis. The sparse challenge
 is intentionally under-specified; a production system should not generate
