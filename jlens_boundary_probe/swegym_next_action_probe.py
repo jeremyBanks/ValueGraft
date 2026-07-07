@@ -40,13 +40,16 @@ MIN_TOK = 6000
 MAX_TOK = 15000
 
 SUMMARY_REQUEST_SWE = (
-    "Context is about to be condensed. Write a compact state summary for an "
-    "AI coding agent that will continue this task seeing only the summary plus "
-    "recent messages. Preserve the task, exact repository paths, files already "
-    "inspected, commands or tools used, errors encountered, decisions made, "
-    "and the next likely action. Be concrete with names, paths, numbers, and "
-    "line ranges. No commentary before or after."
+    "Context is about to be condensed. This is not a request to continue the "
+    "coding task, and you must not call tools or write function-call XML. "
+    "Write a compact plain-English state summary for an AI coding agent that "
+    "will continue this task seeing only the summary plus recent messages. "
+    "Preserve the task, exact repository paths, files already inspected, "
+    "commands or tools used, errors encountered, decisions made, and the next "
+    "likely action. Be concrete with names, paths, numbers, and line ranges. "
+    "No commentary before or after."
 )
+SUMMARY_PREFILL = "Summary:\n"
 
 
 @dataclass(frozen=True)
@@ -148,11 +151,13 @@ def generate_summary(
 ) -> dict[str, Any]:
     req_messages = messages + [{"role": "user", "content": SUMMARY_REQUEST_SWE}]
     req_ids = render_ids(tokenizer, req_messages, True)
+    prefill_ids = tokenizer(SUMMARY_PREFILL, add_special_tokens=False).input_ids
+    prompt_ids = req_ids + prefill_ids
     eos = model.config.eos_token_id
     pad = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else eos
     with torch.no_grad():
         out = model.generate(
-            input_ids=token_tensor(model, req_ids),
+            input_ids=token_tensor(model, prompt_ids),
             max_new_tokens=max_new_tokens,
             do_sample=False,
             use_cache=True,
@@ -160,14 +165,15 @@ def generate_summary(
             eos_token_id=eos,
         )
     all_ids = out[0].tolist()
-    gen_ids = all_ids[len(req_ids) :]
+    gen_ids = all_ids[len(prompt_ids) :]
     if eos is not None:
         eos_ids = {eos} if isinstance(eos, int) else set(eos)
         gen_ids = [tok for tok in gen_ids if tok not in eos_ids]
+    summary_text = (SUMMARY_PREFILL + tokenizer.decode(gen_ids, skip_special_tokens=True)).strip()
     return {
-        "text": tokenizer.decode(gen_ids, skip_special_tokens=True).strip(),
+        "text": summary_text,
         "request_ids": req_ids,
-        "gen_ids": gen_ids,
+        "gen_ids": tokenizer(summary_text, add_special_tokens=False).input_ids,
     }
 
 
