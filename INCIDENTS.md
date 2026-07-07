@@ -374,3 +374,23 @@ after model load BEFORE trusting results — a silent CPU fallback looks like a
 slow run, not an error. NEVER `pip install -U torch` on a pod (breaks the
 driver-matched build). RULE 25: don't suppress stderr on deploy/bootstrap
 commands — the missing-rsync no-op hid for two deploy attempts.
+
+## 28. Job "launched" but crashed instantly — pod billed for nothing, not caught (07-07, user-called)
+KNOWN: lens probe launched, a sleep-3 check echoed "LAUNCHED", I trusted it and
+walked away. It had aborted on line 4 (bad cd path) → model never loaded (GPU
+1 MiB) → pod billed doing NOTHING. The "RUNNING" I reported was grep matching
+itself. A cascade of 3 setup bugs (bad cd → missing jlens pkg → torchaudio
+symbol mismatch) each aborted before real work; none caught until a scheduled
+wake forced a manual check. Compounded by the new QUIET watcher (silent-until-
+done) — a crash-at-launch stays invisible longer, and backoff sleep delays the
+STOP-branch notice.
+RULE 26 — LAUNCH VERIFICATION GATE: after launching ANY pod/long job, before
+trusting it + walking away, VERIFY IT REACHED REAL WORK: (a) GPU memory climbed
+to the expected level (model actually loaded — 1 MiB = NOT loaded), AND (b) the
+log advanced past setup into real progress (first conv/probe/token, not just a
+process existing). "process exists" / "pgrep matches" / a "launched" echo are
+NOT proof. Do this within ~1-2 min of launch, synchronously, before moving on.
+RULE 27 — quiet watchers MUST include an EARLY real-work check: within the first
+2-3 min confirm work actually started (GPU loaded + log progressing); if not,
+SPEAK immediately (don't wait for the DONE/STOP branch under backoff). Quiet on
+routine progress, loud on failed-to-start.
