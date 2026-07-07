@@ -37,6 +37,7 @@ Raw files:
 - `outputs/qwen36_pokemon_probe_v2.json`
 - `outputs/qwen36_plain_probe.json`
 - `outputs/qwen36_multi_demo_scan.json`
+- `outputs/qwen36_next_token_readout_comparison.json`
 
 ## What The Probe Shows
 
@@ -127,6 +128,30 @@ semantic targets, not merely the largest change in top-k readout.
 
 Still, the format variation is encouraging. The effect is not limited to one
 pretty summary template.
+
+## Next-Token Control
+
+Because J-lens readouts are vocabulary-ranked, we should compare them to the
+model's ordinary next-token probabilities before treating them as a distinct
+semantic view. The control in `next_token_readout_control_report.md` does this
+for five summary anchors from the Pokemon and block-party demos.
+
+Across anchors, states, and sampled layers, the mean top-20 Jaccard overlap
+between J-lens readouts and next-token logits was `0.256`. The split by layer
+is the important part: layer 48 averaged `0.076`, while layer 62 averaged
+`0.436`. Late layers are closer to continuation behavior; intermediate layers
+more often expose a different semantic neighborhood.
+
+This changes how the examples should be presented. Some anchors, such as the
+sampled `Vacuum never...` occurrence, are mostly continuation-dominated and
+should not be used as core evidence for distinctness. Others show additional
+signal. The clearest current case is `B-410`: at the `B` token, next-token
+logits mostly predict the hyphen/code continuation, while write-time layer-48
+J-lens reads out `obsolete`, `outdated`, `deprecated`, and `expired`.
+
+For future figures, the report should show local context, the actual next
+token, next-token candidates, write-time J-lens candidates, fresh J-lens
+candidates, and top-k overlap side by side.
 
 ## Software Incident Table
 
