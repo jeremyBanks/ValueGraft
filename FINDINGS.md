@@ -116,3 +116,18 @@ bounded: three-method-corroborated AT 30B, NOT cross-scale; the mechanism
 behaves differently at small scale. State F1 as a large-model finding.
 Caveat: gap-closure ratios are noisier at 4B (smaller A−B denominators);
 a judged 4B cut would confirm, but the non-replication direction is clear.
+
+## F1 mechanistic readout (07-07) — PARTIAL support, honestly bounded
+Logit-lens on the gold concept token at the probe position (30B, 61 probes):
+grafting increases the evicted concept's internal presence — E>B on 68-77%
+of probes, lp_E BETWEEN lp_B and lp_A in every category. Direct internal
+evidence that grafting INSERTS concept content and moves the residual
+stream partway back toward full-context. HOWEVER it does NOT reproduce the
+category DISSOCIATION: stance shows ~77% E>B, same as sense (behaviorally
+stance was null). CAVEAT: near-floor signal (gold-token logprob ~−12 to
+−14, rank in thousands) → single-token logit-lens is a weak/noisy
+instrument, detects "graft nudges concept up broadly" but can't resolve
+WHERE recovery matters. VERDICT: supports the GENERAL mechanism (graft
+inserts concept, E→A) but NOT the specific dissociation. Sharper readout
+(J-lens / multi-token / targeted layers) = future work. Do not overclaim
+this as mechanistic proof of the dissociation.
