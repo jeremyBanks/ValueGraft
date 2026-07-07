@@ -167,3 +167,24 @@ HONEST FRAME: validated on standard-GQA Qwen; transfer is gradiated — blocked 
 MLA, attenuated on sliding-window, fine on standard GQA. Separate "we were lazy"
 from "architecture forbids it" — don't overclaim either way. Fable researches, we
 state the bound honestly in the paper's limitations.
+
+## PHASE 4 addendum 4 — CROSS-ARCHITECTURE grafting experiment (user 07-07: measure it, don't just document)
+Upgrade the generalizability limitation into a MEASURED result: try value grafting
+on DIFFERENT architectures + measure impact. Either way = strong: works on Gemma →
+generalizes beyond Qwen (strengthens primary); attenuated/blocked on MLA → grounded
+bound with receipts.
+SCOPED (Fable to pressure-test):
+- METRIC: existing teacher-forced GAP-CLOSURE (judge-free, cheap) on our sense/
+  referent/stance corpus — directly comparable to Qwen results. Same machinery,
+  new backbones. Optionally the placebo-controlled effect-bound.
+- MODELS (small — the variable is ARCHITECTURE not scale): Gemma-2-9B / Gemma-3-12B
+  (sliding-window+GQA → "attenuates?"); DeepSeek-V2-Lite 16B (MLA → "blocked/
+  adaptable?"; even a clean empirical block-with-mechanism is a result). Qwen =
+  standard-GQA baseline we already have.
+- PORT EFFORT: kvlib snapshot/blend/reinject must handle each HF cache. Gemma likely
+  minor; DeepSeek MLA = no per-head values (cache is latent) → adapt to graft latent
+  OR document the block empirically.
+- DISCIPLINE: one model at a time; SMOKE first (α=0≡fresh, graft changes output)
+  before any number; one pod; gated; small models keep it affordable.
+RESULT FRAME: cross-architecture generalization map — standard-GQA (Qwen, works) /
+sliding-window (Gemma, ?) / MLA (DeepSeek, ?). Separate lazy-vs-architectural honestly.
