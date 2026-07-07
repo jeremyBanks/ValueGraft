@@ -62,6 +62,13 @@ GATES: cheap smokes before scale; report at milestones; stop-and-report if a
 branch floors. Findings → FINDINGS.md (new F-entries); fold a K/V section /
 update into the paper if results warrant.
 
+## FABLE READABILITY (hard req, user 07-07)
+The main loop keeps getting filter-flipped to Opus even when the user sets
+Fable. So: EVERY writing deliverable MUST get a Fable readability pass via a
+`model: fable` SUBAGENT, regardless of the main-loop model at the time. Fable
+does its best on CLEAN, minimal context (just the doc). This is not optional —
+if the final prose didn't pass through a Fable subagent, the writing isn't done.
+
 ## Sequencing / autonomy
 Run Phase 1 to completion (paper pushed) → THEN Phase 2. Drive via scheduled
 wakeups; keep this file + STATE + FINDINGS + DECISIONS current. Milestone
