@@ -7,107 +7,174 @@ Every prior lens probe (``boundary_probe``, ``intervention_batch_probe``,
 ``strong_example_probe``) *teacher-forced the SAME gold continuation* under all
 three cache states (full / fresh-compacted / aligned-graft). Forcing an
 identical trajectory PINS the states together and SUPPRESSES divergence, so the
-J-lens readouts came out subtle (deltas of ~0.01-0.04). The graft's real effect
-never got a chance to *express itself behaviorally* because the tokens were held
-fixed.
+J-lens readouts came out subtle. This probe removes the pin: it lets B
+(fresh-compacted) and E (aligned-graft) FREELY generate, finds the FORK where a
+subtle internal difference blooms into a behavioral divergence, and puts the
+J-lens THERE.
 
-This probe removes the pin. For each strong "label preserved / role lost" case
-it:
+Core method (kept)
+------------------
+For every usable plant we build the three cache states with the *existing*
+machinery (``generate_summary`` + ``snapshot_standard_kv`` +
+``alignment_pairs_by_exact_tokens`` + ``blend_values`` from ``boundary_probe``,
+the same compaction/graft path as ``gap_closure_27b``):
+    A = full-context, B = fresh-compacted, E = aligned-graft (alpha_V=0.75).
+Then for each plant probe we FREELY greedy-generate B and E separately, find the
+first argmax fork, and read the J-lens across layers under B / E / A at the fork
+window.
 
-  1. Builds the three cache states with the *existing* machinery
-     (``snapshot_standard_kv`` / ``blend_values`` from ``boundary_probe``, the
-     same three-state construction as ``intervention_batch_probe.run_case``):
-        A = full-context, B = fresh-compacted, E = aligned-graft (alpha_V=0.75).
-  2. FREELY greedy-generates (~30-40 tokens) the continuation from B and from E
-     *separately* (NOT teacher-forced) after the probe question.
-  3. Finds the FORK: the first generated position where B's and E's argmax
-     tokens differ -- the point where a subtle internal difference blooms into a
-     visible behavioral divergence.
-  4. Puts the J-lens AT the fork (and a couple positions around it), reading the
-     concept-neighborhood across layers under B vs E vs A. The question: does
-     E's readout at the fork lean toward the CORRECT concept (matching the
-     full-context reference A) while B leans toward the WRONG one?
+FABLE GUT-CHECK FIXES (07-07) folded in -- this is the honest version
+---------------------------------------------------------------------
+1. DISTRIBUTION, NOT 3 HEROES: the case set is now EVERY usable ``sense`` and
+   ``referent`` plant in ``data/synthetic/c*.json`` (contaminated plants
+   skipped), ~43 cases, so the headline is a DISTRIBUTION and any vivid case is
+   one point on it -- not a standalone anecdote.
+2. FORK MARGIN: at the fork position we record the MARGIN of the argmax (top-1
+   minus top-2 logit) for both E and B. A near-tie fork is a decoder-amplified
+   coin-flip, not a robust mechanistic pull; the margin lets the analysis flag
+   it.
+3. DECODING ROBUSTNESS: B and E are also generated at two extra temperatures
+   (0.3, 0.7) with a fixed seed. We record whether E's lean toward the RIGHT
+   concept is STABLE across the greedy + 2 sampled runs (e.g. "3/3 runs
+   E->right"). A robust exhibit's lean survives decoding variation.
+4. THREE-BUCKET CLASSIFICATION (kills heads-I-win): each case falls in exactly
+   one bucket --
+     (a) FORK_TOWARD_A : E forks to the right concept, decisive margin, stable.
+     (b) SUBTLE_LEAN   : small but CONSISTENT lean toward right (weak margin but
+                          stable direction).
+     (c) DISCONFIRMING : E does NOT fork from B at all, OR forks toward the
+                          WRONG concept, OR its lean does not survive decoding.
+   Bucket (c) counts AGAINST the claim and is reported as such -- never
+   relabeled "subtle." The three-bucket COUNTS are the headline.
 
-The strong cases (Nimbus / Hydra / sandbox) are reused verbatim from
-``strong_example_probe`` -- a single overloaded label, disambiguated once by the
-user, then compacted so the label survives but its referent (role) is dropped.
+Right/wrong concept vocabulary is DERIVED from the plant data (never authored to
+steer the model): ``right_terms`` come from the plant's disambiguating
+``keywords``; ``wrong_terms`` come from the "... not the X" alternative in the
+gold plus any ``anti_keywords``. Referent plants have no clean "wrong" concept
+vocabulary, so for them "fork toward wrong" is undetectable and DISCONFIRMING is
+reached only via no-fork / no-right-lean -- noted honestly in the output.
 
-Self-test locally with ``--dry-run`` (no torch, no model, no lens, no
-tokenizer): it constructs and prints every case with its gold role and the
-right/wrong fork expectation so the design can be eyeballed.
+Self-test locally with ``--dry-run`` (no torch / model / lens / tokenizer): it
+builds every case, prints the count, a couple of sample specs, and the estimated
+forward-pass count.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import traceback
 from pathlib import Path
 from typing import Any
 
-# ``strong_example_probe`` is import-safe with NO ML deps (it defers torch to
-# past its own dry-run gate), so we can reuse its strong cases + case builder
-# directly here without dragging torch into --dry-run.
-from strong_example_probe import (
+# ``gap_closure_27b`` is import-safe with NO ML deps (it defers torch past its
+# own dry-run gate), so we reuse its corpus loader + plant-spec construction
+# directly -- the SAME construction the behavioral gap-closure numbers use.
+from gap_closure_27b import (
     DEFAULT_DATA_DIR,
-    STRONG_SPECS,
-    build_case,
-    selected_specs,
+    PlantSpec,
+    conversation_paths,
+    plant_specs_for,
 )
 
+# Only sense + referent plants: both are "the label/subject survives compaction
+# but its specific referent is lost" cases where a graft could restore the role.
+USABLE_CATEGORIES = ("sense", "referent")
+
+STOPWORDS = {
+    "the", "a", "an", "of", "for", "and", "or", "not", "but", "into", "being",
+    "with", "on", "in", "to", "by", "that", "this", "was", "were", "our", "their",
+    "his", "her", "its", "them", "then", "than", "from", "over", "each", "only",
+    "both", "one", "two", "three", "set", "new", "big", "small", "used", "use",
+    "when", "where", "which", "what", "work", "project", "thing", "idea",
+}
+
 
 # ---------------------------------------------------------------------------
-# Per-case right/wrong concept vocabulary for the divergence read-out. The
-# "right" terms are the disambiguated (gold) role; the "wrong" terms are the
-# overloaded alternative sense that fresh-compaction is expected to drift into.
-# These drive only the human-readable summary heuristic -- they never steer the
-# model. Keyed by StrongSpec.case_id.
+# Right/wrong concept vocabulary, DERIVED from plant data (not authored to
+# steer the model -- it drives only the read-out heuristic and classification).
 # ---------------------------------------------------------------------------
-RIGHT_WRONG: dict[str, dict[str, Any]] = {
-    "nimbus_sense": {
-        "right_concept": "self-serve signup funnel (landing page -> first login)",
-        "wrong_concept": "cloud-hosting migration / infra",
-        "right_terms": ["signup", "self-serve", "self serve", "funnel", "landing", "login", "sign-up", "sign up"],
-        "wrong_terms": ["cloud", "hosting", "migration", "infra", "host"],
-    },
-    "hydra_sense": {
-        "right_concept": "multi-task comparison model",
-        "wrong_concept": "GPU compute cluster",
-        "right_terms": ["multi-task", "multitask", "multi task", "comparison", "compare", "model", "baseline"],
-        "wrong_terms": ["gpu", "cluster", "compute", "node", "hardware"],
-    },
-    "sandbox_sense": {
-        "right_concept": "shared student database for practice queries",
-        "wrong_concept": "platform billing / pricing tier",
-        "right_terms": ["database", "query", "queries", "practice", "student", "dataset", "schema"],
-        "wrong_terms": ["billing", "tier", "pricing", "subscription", "quota"],
-    },
-}
+def _content_words(text: str, min_len: int = 4) -> list[str]:
+    words = re.findall(r"[a-z][a-z\-]+", text.lower())
+    return [w for w in words if len(w) >= min_len and w not in STOPWORDS]
+
+
+def _derive_label(plant: dict[str, Any]) -> str | None:
+    """The overloaded label token, pulled from the first quoted phrase in the
+    plant's establishing user turn (sense plants say e.g. "'Nimbus' is ...")."""
+    mu = str(plant.get("middle_user", ""))
+    # A true quoted label: opening quote at a word boundary, short content with
+    # no sentence punctuation, closing quote followed by space/punct/end. This
+    # avoids matching in-word apostrophes ("don't", "we'll").
+    m = re.search(
+        r"(?:(?<=\s)|^)['‘“\"]([^'’”\".]{1,40}?)['’”\"](?=[\s,.:;)]|$)",
+        mu,
+    )
+    if m:
+        return m.group(1).strip()
+    return None
+
+
+def derive_terms(plant: dict[str, Any]) -> dict[str, Any]:
+    keywords = [str(k).lower().strip() for k in plant.get("keywords", []) if str(k).strip()]
+    anti = [str(k).lower().strip() for k in plant.get("anti_keywords", []) if str(k).strip()]
+    gold = str(plant.get("gold", ""))
+    gold_l = gold.lower()
+
+    # RIGHT: the disambiguating role keywords curated into the data.
+    right = list(dict.fromkeys(keywords))
+    if not right:  # fallback: content words from the head of the gold role
+        head = gold_l.split(" not ")[0] if " not " in gold_l else gold_l
+        right = list(dict.fromkeys(_content_words(head)))[:6]
+
+    # WRONG: the "... not the X" alternative in the gold + anti_keywords.
+    wrong: list[str] = list(anti)
+    m = re.search(r"\bnot\b\s+(?:the\s+|a\s+|an\s+)?(.+)$", gold_l)
+    if m:
+        tail = re.split(r"[,.;:]", m.group(1).strip())[0].strip().rstrip(". ")
+        if tail:
+            wrong.append(tail)
+            wrong += _content_words(tail)
+    wrong = list(dict.fromkeys([w for w in wrong if w]))
+
+    return {
+        "right_terms": right,
+        "wrong_terms": wrong,
+        "wrong_concept_detectable": bool(wrong),
+        "label": _derive_label(plant),
+    }
 
 
 def _contains_any(text: str, terms: list[str]) -> list[str]:
     low = text.lower()
-    return [t for t in terms if t.lower() in low]
+    return [t for t in terms if t and t in low]
 
 
-def classify_text(text: str, case_id: str) -> dict[str, Any]:
-    rw = RIGHT_WRONG.get(case_id, {"right_terms": [], "wrong_terms": []})
-    right_hits = _contains_any(text, rw["right_terms"])
-    wrong_hits = _contains_any(text, rw["wrong_terms"])
-    if right_hits and not wrong_hits:
+def classify_text(text: str, terms: dict[str, Any]) -> dict[str, Any]:
+    right_hits = _contains_any(text, terms["right_terms"])
+    wrong_hits = _contains_any(text, terms["wrong_terms"])
+    r, w = len(right_hits), len(wrong_hits)
+    if r > w and r > 0:
         verdict = "RIGHT"
-    elif wrong_hits and not right_hits:
+    elif w > r and w > 0:
         verdict = "WRONG"
-    elif right_hits and wrong_hits:
+    elif r > 0 and w > 0:
         verdict = "MIXED"
     else:
         verdict = "NEITHER"
-    return {"verdict": verdict, "right_hits": right_hits, "wrong_hits": wrong_hits}
+    return {
+        "verdict": verdict,
+        "right_hits": right_hits,
+        "wrong_hits": wrong_hits,
+        "leans_right": (r > w and r > 0),
+        "leans_wrong": (w > r and w > 0),
+    }
 
 
 # ===========================================================================
-# Everything below the dry-run gate needs torch. Kept out of module scope so
-# --dry-run runs on a CPU-only box with no ML deps.
+# Everything below needs torch. Kept out of module scope so --dry-run runs on a
+# CPU-only box with no ML deps.
 # ===========================================================================
 def _lens_layers_readout(lens_model, lens, tokenizer, activations, layers, top_k):
     """J-lens top-k per layer from recorded activations (last fed position)."""
@@ -123,8 +190,6 @@ def _lens_layers_readout(lens_model, lens, tokenizer, activations, layers, top_k
 
 def free_generate(
     model,
-    lens_model,
-    lens,
     tokenizer,
     snap,
     suffix_ids,
@@ -133,12 +198,15 @@ def free_generate(
     top_k,
     eos_ids,
     label,
+    temperature=0.0,
+    seed=0,
 ):
-    """Greedy free generation (NOT teacher-forced) from a cache snapshot.
+    """Free generation (NOT teacher-forced) from a cache snapshot.
 
-    Returns the generated token ids, decoded text, and a compact per-step trace
-    (token + own next-token top-k). Lens read-outs are NOT stored here; the fork
-    window is read separately, uniformly across A/B/E, by ``readout_at_steps``.
+    ``temperature==0`` -> greedy argmax; ``temperature>0`` -> temperature
+    sampling with a fixed ``seed`` (for the decoding-robustness check). Returns
+    generated token ids, decoded text, and a per-step trace that includes the
+    argmax MARGIN (top-1 minus top-2 logit) at every step.
     """
     import torch
 
@@ -148,6 +216,9 @@ def free_generate(
         token_tensor,
         topk_from_logits,
     )
+
+    if temperature and temperature > 0:
+        torch.manual_seed(seed)
 
     cache = rebuild_standard_cache(snap, model)
     dev = model_input_device(model)
@@ -167,24 +238,35 @@ def free_generate(
     logits = out.logits[:, -1, :]
     next_position += len(suffix_ids)
 
+    def pick(lg):
+        top = topk_from_logits(tokenizer, lg[0], max(top_k, 2))
+        margin = (top[0]["score"] - top[1]["score"]) if len(top) >= 2 else None
+        if temperature and temperature > 0:
+            probs = torch.softmax(lg[0].float() / temperature, dim=-1)
+            tok = int(torch.multinomial(probs, 1).item())
+        else:
+            tok = int(top[0]["token_id"])
+        return tok, top, margin
+
     gen_ids: list[int] = []
     rows: list[dict[str, Any]] = []
     for step in range(n_new):
-        argmax_id = int(torch.argmax(logits, dim=-1).item())
+        tok_id, top, margin = pick(logits)
         rows.append(
             {
                 "step": step,
-                "token_id": argmax_id,
-                "token": tokenizer.decode([argmax_id]),
-                "next_token_top": topk_from_logits(tokenizer, logits[0], top_k),
+                "token_id": tok_id,
+                "token": tokenizer.decode([tok_id]),
+                "margin": margin,
+                "next_token_top": top[:top_k],
             }
         )
-        gen_ids.append(argmax_id)
-        if argmax_id in eos_ids:
+        gen_ids.append(tok_id)
+        if tok_id in eos_ids:
             break
         with torch.no_grad():
             out = model(
-                input_ids=torch.tensor([[argmax_id]], device=dev),
+                input_ids=torch.tensor([[tok_id]], device=dev),
                 past_key_values=cache,
                 position_ids=torch.tensor([[next_position]], device=dev),
                 use_cache=True,
@@ -193,10 +275,10 @@ def free_generate(
         logits = out.logits[:, -1, :]
         next_position += 1
 
-    # Trim a trailing eos from the reported text but keep it in the trace.
     text_ids = [t for t in gen_ids if t not in eos_ids]
     return {
         "label": label,
+        "temperature": temperature,
         "gen_token_ids": gen_ids,
         "gen_token_count": len(gen_ids),
         "text": tokenizer.decode(text_ids).strip(),
@@ -221,10 +303,9 @@ def readout_at_steps(
     """Teacher-force ``cont_ids`` through a snapshot; J-lens read-out at ``steps``.
 
     ``step`` is a generation index: after feeding ``cont_ids[:step]`` the residual
-    at the last fed position PREDICTS the token at generation position ``step``
-    (its "moment of commitment"). We record the lens across ``layers`` there. Used
-    uniformly for A (full), B (fresh) and E (graft) at the fork window so the ONLY
-    difference is the cache state, not the tokens.
+    at the last fed position PREDICTS the token at generation position ``step``.
+    Used uniformly for A / B / E at the fork window so the ONLY difference is the
+    cache state, not the tokens.
     """
     import torch
 
@@ -307,10 +388,9 @@ def readout_at_steps(
     return {"label": label, "steps": captured}
 
 
-def _fork_lean(readout_step: dict[str, Any] | None, case_id: str) -> dict[str, Any]:
+def _fork_lean(readout_step: dict[str, Any] | None, terms: dict[str, Any]) -> dict[str, Any]:
     """Aggregate a single state's lens read-out at one step into right/wrong lean."""
-    rw = RIGHT_WRONG.get(case_id, {"right_terms": [], "wrong_terms": []})
-    right_terms, wrong_terms = rw["right_terms"], rw["wrong_terms"]
+    right_terms, wrong_terms = terms["right_terms"], terms["wrong_terms"]
     right_hits: list[str] = []
     wrong_hits: list[str] = []
     if readout_step is not None:
@@ -334,88 +414,7 @@ def _fork_lean(readout_step: dict[str, Any] | None, case_id: str) -> dict[str, A
         "wrong_lens_hits": sorted(set(wrong_hits)),
         "right_count": r,
         "wrong_count": w,
-    }
-
-
-def build_states(demo, case, model, tokenizer, alpha):
-    """Construct A/B/E cache snapshots + generation suffixes (same three-state
-    build as ``intervention_batch_probe.run_case``). Requires torch."""
-    from boundary_probe import (
-        SUMMARY_REQUEST,
-        alignment_pairs_by_exact_tokens,
-        blend_values,
-        build_b_messages,
-        find_subsequence,
-        graftable_value_layers,
-        render_ids,
-        snapshot_standard_kv,
-    )
-
-    summary_ids = tokenizer(demo.summary, add_special_tokens=False).input_ids
-    summary_messages = [
-        *demo.messages,
-        {"role": "user", "content": SUMMARY_REQUEST},
-        {"role": "assistant", "content": demo.summary},
-    ]
-    old_ids = render_ids(tokenizer, summary_messages, False)
-    old_summary_start = find_subsequence(old_ids, summary_ids)
-    if old_summary_start is None:
-        raise ValueError("could not locate summary in old write-time context")
-    old_summary_range = (old_summary_start, old_summary_start + len(summary_ids))
-
-    # tail_messages=0 -> the role must come ONLY from the graft, not retained tail.
-    tail_start_msg = max(1, len(demo.messages))
-    compacted_messages = build_b_messages(demo.messages, demo.summary, tail_start_msg)
-    full_probe_messages = [*demo.messages, {"role": "user", "content": case.probe_user}]
-    compacted_probe_messages = [
-        *compacted_messages,
-        {"role": "user", "content": case.probe_user},
-    ]
-    full_probe_ids = render_ids(tokenizer, full_probe_messages, False)
-    compacted_probe_ids = render_ids(tokenizer, compacted_probe_messages, False)
-    compacted_summary_start = find_subsequence(compacted_probe_ids, summary_ids)
-    if compacted_summary_start is None:
-        raise ValueError("could not locate summary in compacted probe context")
-    compacted_summary_range = (
-        compacted_summary_start,
-        compacted_summary_start + len(summary_ids),
-    )
-
-    old_snap, _ = snapshot_standard_kv(model, old_ids)
-    full_probe_snap, _ = snapshot_standard_kv(model, full_probe_ids)  # A
-    compacted_probe_snap, _ = snapshot_standard_kv(model, compacted_probe_ids)  # B
-    pairs = alignment_pairs_by_exact_tokens(
-        compacted_probe_ids, old_ids, compacted_summary_range, old_summary_range
-    )
-    if not pairs:
-        raise ValueError("no exact summary-token alignment pairs")
-    grafted_probe_snap = blend_values(compacted_probe_snap, old_snap, pairs, alpha)  # E
-
-    full_probe_gen_ids = render_ids(tokenizer, full_probe_messages, True)
-    compacted_probe_gen_ids = render_ids(tokenizer, compacted_probe_messages, True)
-    if full_probe_gen_ids[: len(full_probe_ids)] != full_probe_ids:
-        raise ValueError("full generation prompt does not extend full prefix")
-    if compacted_probe_gen_ids[: len(compacted_probe_ids)] != compacted_probe_ids:
-        raise ValueError("compacted generation prompt does not extend compacted prefix")
-    full_suffix = full_probe_gen_ids[len(full_probe_ids):]
-    compacted_suffix = compacted_probe_gen_ids[len(compacted_probe_ids):]
-
-    return {
-        "A_snap": full_probe_snap,
-        "B_snap": compacted_probe_snap,
-        "E_snap": grafted_probe_snap,
-        "full_suffix": full_suffix,
-        "compacted_suffix": compacted_suffix,
-        "full_prefix_len": len(full_probe_ids),
-        "compacted_prefix_len": len(compacted_probe_ids),
-        "pairs": len(pairs),
-        "graft_value_layers": graftable_value_layers(compacted_probe_snap, old_snap),
-        "token_counts": {
-            "old_write_time": len(old_ids),
-            "summary_tokens": len(summary_ids),
-            "full_probe": len(full_probe_ids),
-            "fresh_probe": len(compacted_probe_ids),
-        },
+        "lean_toward_A_magnitude": r - w,
     }
 
 
@@ -429,178 +428,343 @@ def find_fork(b_ids: list[int], e_ids: list[int]) -> int | None:
     return None
 
 
-def run_case(
-    spec,
-    demo,
-    case,
+def build_conv_states(conv, model, tokenizer, alpha, max_new_summary_tokens):
+    """Compact one conversation ONCE (model-generated summary) and build the
+    A/B/E cache snapshots shared by all of that conversation's plants. Same path
+    as ``gap_closure_27b.main``. Requires torch."""
+    from boundary_probe import (
+        alignment_pairs_by_exact_tokens,
+        blend_values,
+        build_b_messages,
+        find_subsequence,
+        generate_summary,
+        graftable_value_layers,
+        render_ids,
+        snapshot_standard_kv,
+    )
+
+    msgs = conv["messages"][:-1]
+    tsm = conv["sections"]["middle_end_msg"]
+
+    summary = generate_summary(model, tokenizer, msgs, max_new_summary_tokens)
+    summary_text = summary["text"]
+    b_msgs = build_b_messages(msgs, summary_text, tsm)
+
+    full_ids = render_ids(tokenizer, msgs, False)
+    b_ids = render_ids(tokenizer, b_msgs, False)
+    summary_text_ids = tokenizer(summary_text, add_special_tokens=False).input_ids
+    b_summary_start = find_subsequence(b_ids, summary_text_ids)
+    if b_summary_start is None:
+        raise ValueError("could not locate summary text in fresh-compacted ids")
+    b_summary_range = (b_summary_start, b_summary_start + len(summary_text_ids))
+
+    pairs = alignment_pairs_by_exact_tokens(
+        b_ids,
+        summary["old_ids"],
+        b_summary_range,
+        (summary["s_start"], summary["s_end"]),
+    )
+    if not pairs:
+        raise ValueError("no exact summary-token alignment pairs")
+
+    a_snap, _ = snapshot_standard_kv(model, full_ids)
+    b_snap, _ = snapshot_standard_kv(model, b_ids)
+    old_snap, _ = snapshot_standard_kv(model, summary["old_ids"])
+    e_snap = blend_values(b_snap, old_snap, pairs, alpha)
+
+    return {
+        "msgs": msgs,
+        "b_msgs": b_msgs,
+        "A_snap": a_snap,
+        "B_snap": b_snap,
+        "E_snap": e_snap,
+        "full_ids": full_ids,
+        "b_ids": b_ids,
+        "summary_text": summary_text,
+        "pairs": len(pairs),
+        "graft_value_layers": graftable_value_layers(b_snap, old_snap),
+        "token_counts": {
+            "full": len(full_ids),
+            "fresh_compacted": len(b_ids),
+            "old_with_summary": len(summary["old_ids"]),
+            "summary_tokens": len(summary_text_ids),
+        },
+    }
+
+
+def classify_bucket(
+    fork_found, e_right, e_wrong, margin_E, decisive_threshold, e_right_count, n_runs
+) -> dict[str, Any]:
+    """Pre-registered THREE-bucket classification (kills heads-I-win)."""
+    stable_majority = e_right_count >= (n_runs // 2 + 1)
+    stable_all = e_right_count == n_runs
+    decisive = margin_E is not None and margin_E >= decisive_threshold
+
+    if not fork_found:
+        bucket, why = "DISCONFIRMING", "no fork: E did not diverge from B under free-gen"
+    elif e_wrong:
+        bucket, why = "DISCONFIRMING", "E forks toward the WRONG concept"
+    elif not e_right:
+        bucket, why = "DISCONFIRMING", "E does not move toward the RIGHT concept"
+    elif not stable_majority:
+        bucket, why = "DISCONFIRMING", "E's right-lean does not survive decoding variation"
+    elif decisive and stable_all:
+        bucket, why = "FORK_TOWARD_A", "clean fork toward right concept, decisive margin, stable"
+    else:
+        bucket, why = "SUBTLE_LEAN", "small but consistent lean toward right concept"
+
+    return {
+        "bucket": bucket,
+        "reason": why,
+        "decisive_margin": decisive,
+        "stable_majority": stable_majority,
+        "stable_all": stable_all,
+    }
+
+
+def run_plant(
+    spec: PlantSpec,
+    plant: dict[str, Any],
+    st,
     model,
     lens_model,
     lens,
     tokenizer,
     layers,
     top_k,
-    alpha,
     n_new,
+    temperatures,
+    seed,
+    decisive_threshold,
+    eos_ids,
 ) -> dict[str, Any]:
-    eos = model.config.eos_token_id
-    eos_ids = set(eos) if isinstance(eos, (list, tuple, set)) else {eos}
-    if tokenizer.eos_token_id is not None:
-        eos_ids.add(tokenizer.eos_token_id)
+    from boundary_probe import render_ids
 
-    st = build_states(demo, case, model, tokenizer, alpha)
+    terms = derive_terms(plant)
 
-    b_free = free_generate(
-        model, lens_model, lens, tokenizer,
-        st["B_snap"], st["compacted_suffix"], st["compacted_prefix_len"],
-        n_new, top_k, eos_ids, "fresh_compacted",
-    )
-    e_free = free_generate(
-        model, lens_model, lens, tokenizer,
-        st["E_snap"], st["compacted_suffix"], st["compacted_prefix_len"],
-        n_new, top_k, eos_ids, "aligned_graft",
-    )
-    a_free = free_generate(
-        model, lens_model, lens, tokenizer,
-        st["A_snap"], st["full_suffix"], st["full_prefix_len"],
-        n_new, top_k, eos_ids, "full_context",
-    )
+    def suffix(mm, probe):
+        gen = render_ids(tokenizer, mm + [{"role": "user", "content": probe}], True)
+        cn = render_ids(tokenizer, mm, False)
+        if gen[: len(cn)] != cn:
+            raise ValueError("probe generation prompt does not extend prefix")
+        return gen[len(cn):]
+
+    sa = suffix(st["msgs"], spec.probe)      # A (full) side
+    sb = suffix(st["b_msgs"], spec.probe)    # B/E (compacted) side
+    a_prefix, b_prefix = st["token_counts"]["full"], st["token_counts"]["fresh_compacted"]
+
+    # --- greedy free-generation (the exhibit trajectory) ---
+    b_free = free_generate(model, tokenizer, st["B_snap"], sb, b_prefix,
+                           n_new, top_k, eos_ids, "fresh_compacted")
+    e_free = free_generate(model, tokenizer, st["E_snap"], sb, b_prefix,
+                           n_new, top_k, eos_ids, "aligned_graft")
+    a_free = free_generate(model, tokenizer, st["A_snap"], sa, a_prefix,
+                           n_new, top_k, eos_ids, "full_context")
 
     fork = find_fork(b_free["gen_token_ids"], e_free["gen_token_ids"])
 
-    # Fork window: the fork step and one on either side (clamped to valid range).
-    max_common = min(len(b_free["gen_token_ids"]), len(e_free["gen_token_ids"]))
-    if fork is None:
-        center = max(0, max_common - 1)
-    else:
-        center = fork
-    window = sorted({s for s in (center - 1, center, center + 1) if 0 <= s < max_common})
-    if not window:
-        window = [0]
+    # --- fork MARGIN (decoder-amplification guard) ---
+    def margin_at(free, idx):
+        if idx is None or idx >= len(free["steps"]):
+            return None
+        return free["steps"][idx]["margin"]
 
-    # Uniform A/B/E lens read-out across the window. Same tokens fed to A/B/E at
-    # the pre-fork steps (B and E are identical up to the fork); at post-fork
-    # steps B and E follow their OWN trajectories and A follows B's (canonical
-    # compacted-side continuation) so it stays token-aligned with B.
-    b_read = readout_at_steps(
-        model, lens_model, lens, tokenizer,
-        st["B_snap"], st["compacted_suffix"], st["compacted_prefix_len"],
-        b_free["gen_token_ids"], window, layers, top_k, "fresh_compacted",
-    )
-    e_read = readout_at_steps(
-        model, lens_model, lens, tokenizer,
-        st["E_snap"], st["compacted_suffix"], st["compacted_prefix_len"],
-        e_free["gen_token_ids"], window, layers, top_k, "aligned_graft",
-    )
-    a_read = readout_at_steps(
-        model, lens_model, lens, tokenizer,
-        st["A_snap"], st["full_suffix"], st["full_prefix_len"],
-        b_free["gen_token_ids"], window, layers, top_k, "full_context",
-    )
+    margin_E = margin_at(e_free, fork)
+    margin_B = margin_at(b_free, fork)
+
+    # --- decoding-robustness: greedy + sampled temperatures, is E's lean stable? ---
+    b_greedy_v = classify_text(b_free["text"], terms)
+    e_greedy_v = classify_text(e_free["text"], terms)
+    runs = [{
+        "temperature": 0.0,
+        "e_text": e_free["text"],
+        "e_leans_right": e_greedy_v["leans_right"],
+        "b_leans_wrong": b_greedy_v["leans_wrong"],
+    }]
+    for temp in temperatures:
+        b_s = free_generate(model, tokenizer, st["B_snap"], sb, b_prefix,
+                            n_new, top_k, eos_ids, "fresh_compacted", temperature=temp, seed=seed)
+        e_s = free_generate(model, tokenizer, st["E_snap"], sb, b_prefix,
+                            n_new, top_k, eos_ids, "aligned_graft", temperature=temp, seed=seed)
+        b_v = classify_text(b_s["text"], terms)
+        e_v = classify_text(e_s["text"], terms)
+        runs.append({
+            "temperature": temp,
+            "e_text": e_s["text"],
+            "e_leans_right": e_v["leans_right"],
+            "b_leans_wrong": b_v["leans_wrong"],
+        })
+    n_runs = len(runs)
+    e_right_count = sum(1 for r in runs if r["e_leans_right"])
+    decoding_stability = {
+        "n_runs": n_runs,
+        "e_right_count": e_right_count,
+        "summary": f"{e_right_count}/{n_runs} runs E->right",
+        "runs": runs,
+    }
+
+    # --- lens read-out at the fork window (the interpretability core) ---
+    max_common = min(len(b_free["gen_token_ids"]), len(e_free["gen_token_ids"]))
+    center = fork if fork is not None else max(0, max_common - 1)
+    window = sorted({s for s in (center - 1, center, center + 1) if 0 <= s < max_common}) or [0]
+
+    b_read = readout_at_steps(model, lens_model, lens, tokenizer, st["B_snap"], sb, b_prefix,
+                              b_free["gen_token_ids"], window, layers, top_k, "fresh_compacted")
+    e_read = readout_at_steps(model, lens_model, lens, tokenizer, st["E_snap"], sb, b_prefix,
+                              e_free["gen_token_ids"], window, layers, top_k, "aligned_graft")
+    a_read = readout_at_steps(model, lens_model, lens, tokenizer, st["A_snap"], sa, a_prefix,
+                              b_free["gen_token_ids"], window, layers, top_k, "full_context")
 
     fork_key = str(center)
     fork_lean = {
-        "A_full": _fork_lean(a_read["steps"].get(fork_key), spec.case_id),
-        "B_fresh": _fork_lean(b_read["steps"].get(fork_key), spec.case_id),
-        "E_graft": _fork_lean(e_read["steps"].get(fork_key), spec.case_id),
+        "A_full": _fork_lean(a_read["steps"].get(fork_key), terms),
+        "B_fresh": _fork_lean(b_read["steps"].get(fork_key), terms),
+        "E_graft": _fork_lean(e_read["steps"].get(fork_key), terms),
     }
 
-    rw = RIGHT_WRONG.get(spec.case_id, {})
-    b_verdict = classify_text(b_free["text"], spec.case_id)
-    e_verdict = classify_text(e_free["text"], spec.case_id)
-    a_verdict = classify_text(a_free["text"], spec.case_id)
-
-    # Headline: did E fork to the RIGHT answer where B forked WRONG?
-    e_beats_b_text = (
-        e_verdict["verdict"] == "RIGHT" and b_verdict["verdict"] in ("WRONG", "NEITHER", "MIXED")
-    )
-    e_beats_b_lens = (
-        fork_lean["E_graft"]["lean"] == "RIGHT"
-        and fork_lean["B_fresh"]["lean"] in ("WRONG", "NEITHER", "MIXED")
+    # --- THREE-BUCKET classification ---
+    cls = classify_bucket(
+        fork_found=fork is not None,
+        e_right=e_greedy_v["leans_right"],
+        e_wrong=e_greedy_v["leans_wrong"],
+        margin_E=margin_E,
+        decisive_threshold=decisive_threshold,
+        e_right_count=e_right_count,
+        n_runs=n_runs,
     )
 
     return {
-        "case_id": spec.case_id,
-        "conversation_id": spec.conv_id,
         "plant_id": spec.plant_id,
-        "label_preserved": spec.label,
-        "gold_role": rw.get("right_concept"),
-        "wrong_concept": rw.get("wrong_concept"),
-        "hinge_phrases": list(spec.hinge),
-        "probe_user": case.probe_user,
-        "alpha_V": alpha,
-        "graft_pairs": st["pairs"],
-        "graft_value_layers": st["graft_value_layers"],
-        "token_counts": st["token_counts"],
+        "conversation_id": spec.conv_id,
+        "category": spec.category,
+        "label": terms["label"],
+        "gold": spec.gold,
+        "probe_user": spec.probe,
+        "right_terms": terms["right_terms"],
+        "wrong_terms": terms["wrong_terms"],
+        "wrong_concept_detectable": terms["wrong_concept_detectable"],
         "free_generation": {
-            "full_context_A": {"text": a_free["text"], "verdict": a_verdict},
-            "fresh_compacted_B": {"text": b_free["text"], "verdict": b_verdict},
-            "aligned_graft_E": {"text": e_free["text"], "verdict": e_verdict},
+            "full_context_A": {"text": a_free["text"], "verdict": classify_text(a_free["text"], terms)["verdict"]},
+            "fresh_compacted_B": {"text": b_free["text"], "verdict": b_greedy_v["verdict"]},
+            "aligned_graft_E": {"text": e_free["text"], "verdict": e_greedy_v["verdict"]},
             "B_steps": b_free["steps"],
             "E_steps": e_free["steps"],
             "A_steps": a_free["steps"],
         },
-        "fork": {
-            "fork_index": fork,
-            "fork_found": fork is not None,
-            "window_steps": window,
-            "center_step": center,
-            "B_fork_token": (
-                b_free["steps"][fork]["token"] if fork is not None and fork < len(b_free["steps"]) else None
-            ),
-            "E_fork_token": (
-                e_free["steps"][fork]["token"] if fork is not None and fork < len(e_free["steps"]) else None
-            ),
+        "fork_index": fork,
+        "fork_found": fork is not None,
+        "fork_tokens": {
+            "B": (b_free["steps"][fork]["token"] if fork is not None and fork < len(b_free["steps"]) else None),
+            "E": (e_free["steps"][fork]["token"] if fork is not None and fork < len(e_free["steps"]) else None),
         },
+        "margin_E": margin_E,
+        "margin_B": margin_B,
+        "decoding_stability": decoding_stability,
+        "fork_window_steps": window,
+        "fork_center_step": center,
         "fork_lens_readout": {
             "A_full": a_read["steps"],
             "B_fresh": b_read["steps"],
             "E_graft": e_read["steps"],
         },
         "fork_lean_at_center": fork_lean,
-        "verdict": {
-            "E_forks_right_B_wrong__text": e_beats_b_text,
-            "E_forks_right_B_wrong__lens": e_beats_b_lens,
-            "B_text": b_verdict["verdict"],
-            "E_text": e_verdict["verdict"],
-            "A_text": a_verdict["verdict"],
-        },
+        "lean_toward_A_magnitude": fork_lean["E_graft"]["lean_toward_A_magnitude"],
+        "bucket": cls["bucket"],
+        "bucket_detail": cls,
+        "token_counts": st["token_counts"],
+        "graft_pairs": st["pairs"],
     }
 
 
 # ---------------------------------------------------------------------------
-# Dry run (no torch): print the cases + gold roles + right/wrong expectations.
+# Dry run (no torch): build every case, print the count, sample specs, cost.
 # ---------------------------------------------------------------------------
-def dry_run(specs, data_dir: Path) -> int:
+def collect_specs(data_dir: Path, include_contaminated: bool):
+    """Return [(PlantSpec, plant_dict)] for every usable sense/referent plant."""
+    out = []
+    for path in conversation_paths(data_dir):
+        conv = json.loads(path.read_text())
+        plant_by_id = {p.get("id"): p for p in conv.get("plants", [])}
+        for spec in plant_specs_for(conv, include_contaminated):
+            if spec.category not in USABLE_CATEGORIES:
+                continue
+            out.append((spec, plant_by_id[spec.plant_id]))
+    return out
+
+
+def estimate_forward_passes(n_cases, n_new, temperatures, window=3):
+    n_decodings = 1 + len(temperatures)  # greedy + sampled temps
+    free_gen = n_cases * 3 * n_decodings * n_new  # N x 3 states x decodings x tokens
+    lens_readout = n_cases * 3 * (window + 1)      # A/B/E teacher-forced over fork window
+    prefills = 12 * 3                              # ~12 convs x (A/B/old) snapshot prefills
+    summaries = 12 * 256                           # ~12 conv summaries (<=256 tok each)
+    total = free_gen + lens_readout + prefills + summaries
+    return {
+        "n_cases": n_cases,
+        "n_decodings_per_case": n_decodings,
+        "free_gen_headline_formula": f"{n_cases} cases x 3 states x {n_decodings} decodings x {n_new} tok = {free_gen}",
+        "free_gen_passes": free_gen,
+        "lens_readout_passes": lens_readout,
+        "snapshot_prefills": prefills,
+        "summary_gen_passes": summaries,
+        "total_forward_passes_approx": total,
+    }
+
+
+def dry_run(data_dir: Path, include_contaminated: bool, n_new: int, temperatures) -> int:
     print("=" * 74)
     print("FREE-DIVERGENCE PROBE  --  DRY RUN (no model / no lens / no tokenizer)")
     print(f"data dir: {data_dir}")
+    print(f"categories: {USABLE_CATEGORIES}   include_contaminated={include_contaminated}")
     print("=" * 74)
-    all_ok = True
-    for spec in specs:
-        built = build_case(spec, data_dir)
-        rw = RIGHT_WRONG.get(spec.case_id)
-        ok = rw is not None
-        all_ok = all_ok and ok
-        plant = built.plant
-        print()
-        print(f"### CASE {spec.case_id}   [{spec.conv_id} / {spec.plant_id} / {plant.get('category')}]")
-        print(f"  label (preserved)     : {spec.label!r}")
-        print(f"  gold role (RIGHT)     : {rw.get('right_concept') if rw else '??'}")
-        print(f"  overloaded (WRONG)    : {rw.get('wrong_concept') if rw else '??'}")
-        print(f"  probe_user            : {built.case.probe_user}")
-        print(f"  role-lost summary     : {spec.summary}")
-        print(f"  right lens/text terms : {rw.get('right_terms') if rw else '??'}")
-        print(f"  wrong lens/text terms : {rw.get('wrong_terms') if rw else '??'}")
-        print(f"  EXPECTED FORK         : E (aligned-graft) -> RIGHT concept "
-              f"(matches full-context A); B (fresh-compacted) -> WRONG/NEITHER")
-        print(f"  => {'OK' if ok else 'MISSING right/wrong vocab'}")
-    print()
+    cases = collect_specs(data_dir, include_contaminated)
+    if not cases:
+        print("NO CASES FOUND")
+        return 1
+
+    by_cat: dict[str, int] = {c: 0 for c in USABLE_CATEGORIES}
+    ok = True
+    for spec, _plant in cases:
+        by_cat[spec.category] += 1
+
+    print(f"\nBUILT {len(cases)} CASES  (" + ", ".join(f"{c}={by_cat[c]}" for c in USABLE_CATEGORIES) + ")")
+
+    # A couple of sample specs (one sense, one referent) with derived vocab.
+    shown = {"sense": 0, "referent": 0}
+    print("\n--- SAMPLE SPECS ---")
+    for spec, plant in cases:
+        if shown.get(spec.category, 99) >= 1:
+            continue
+        shown[spec.category] = shown.get(spec.category, 0) + 1
+        terms = derive_terms(plant)
+        print(f"\n### {spec.plant_id}  ({spec.category})  [{spec.conv_id}]")
+        print(f"  label (derived)   : {terms['label']!r}")
+        print(f"  gold (RIGHT)      : {spec.gold}")
+        print(f"  probe_user        : {spec.probe}")
+        print(f"  right_terms       : {terms['right_terms']}")
+        print(f"  wrong_terms       : {terms['wrong_terms']}")
+        print(f"  wrong detectable  : {terms['wrong_concept_detectable']}")
+        if not spec.gold.strip():
+            ok = False
+
+    est = estimate_forward_passes(len(cases), n_new, temperatures)
+    print("\n--- COST ESTIMATE ---")
+    print(f"  decodings/case    : {est['n_decodings_per_case']} (greedy + temps {list(temperatures)})")
+    print(f"  free-gen headline : {est['free_gen_headline_formula']}")
+    print(f"  lens-readout      : {est['lens_readout_passes']} passes (A/B/E over fork window)")
+    print(f"  snapshot prefills : {est['snapshot_prefills']}  summaries: {est['summary_gen_passes']}")
+    print(f"  TOTAL (approx)    : {est['total_forward_passes_approx']} single-token forward passes")
+    # ~40-60ms/token decode on a 27B on one A100 -> rough wall-clock.
+    secs = est["total_forward_passes_approx"] * 0.05
+    print(f"  wall-clock @50ms/tok ~ {secs/60:.1f} min  (well under 60 min on one A100)")
+
+    print("\n" + "=" * 74)
+    print(f"DRY RUN {'PASSED' if ok else 'FAILED'}: {len(cases)} free-divergence case(s).")
+    print("Design: model-compact each conv once (A/B/E), free greedy-gen B & E per")
+    print("plant probe, find first argmax fork, record MARGIN + decoding stability,")
+    print("read J-lens at the fork, classify into 3 buckets. No teacher-forced pin.")
     print("=" * 74)
-    print(f"DRY RUN {'PASSED' if all_ok else 'FAILED'}: {len(specs)} free-divergence case(s).")
-    print("Design: free greedy-gen from B and E, find first argmax fork, read")
-    print("J-lens at the fork under B / E / A. No teacher-forced pin.")
-    print("=" * 74)
-    return 0 if all_ok else 1
+    return 0 if ok else 1
 
 
 def parse_args() -> argparse.Namespace:
@@ -624,14 +788,22 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--lens-filename", default=DEFAULT_QWEN36_LENS)
     p.add_argument("--lens-revision", default=DEFAULT_LENS_REVISION)
     p.add_argument("--data-dir", default=str(DEFAULT_DATA_DIR))
-    p.add_argument("--cases", default="all")
     p.add_argument("--output", default="outputs/qwen36_free_divergence.json")
     p.add_argument("--top-k", type=int, default=10)
     p.add_argument("--layers", default="8,16,24,32,40,48,56,62")
     p.add_argument("--alpha", type=float, default=0.75,
                    help="alpha_V for the aligned graft state E")
     p.add_argument("--max-new-tokens", type=int, default=36,
-                   help="free-generation length for B and E (greedy)")
+                   help="free-generation length for B and E")
+    p.add_argument("--max-new-summary-tokens", type=int, default=256)
+    p.add_argument("--temperatures", default="0.3,0.7",
+                   help="extra sampled decoding temperatures for the robustness check")
+    p.add_argument("--seed", type=int, default=1234,
+                   help="fixed seed for the sampled decoding-robustness runs")
+    p.add_argument("--margin-threshold", type=float, default=2.0,
+                   help="fork logit-margin (top1-top2) at/above which a fork counts as 'decisive'")
+    p.add_argument("--include-contaminated", action="store_true", default=False,
+                   help="include plants flagged contaminated_early/tail (default: skip)")
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16"])
     p.add_argument("--trust-remote-code", action="store_true", default=True)
     p.add_argument("--no-trust-remote-code", dest="trust_remote_code", action="store_false")
@@ -640,33 +812,77 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+def parse_temperatures(arg: str) -> list[float]:
+    return [float(x) for x in arg.split(",") if x.strip()]
+
+
+def _histogram(values: list[float], edges) -> dict[str, int]:
+    hist = {f"<{edges[0]}": 0}
+    for a, b in zip(edges, edges[1:]):
+        hist[f"[{a},{b})"] = 0
+    hist[f">={edges[-1]}"] = 0
+    for v in values:
+        if v < edges[0]:
+            hist[f"<{edges[0]}"] += 1
+        elif v >= edges[-1]:
+            hist[f">={edges[-1]}"] += 1
+        else:
+            for a, b in zip(edges, edges[1:]):
+                if a <= v < b:
+                    hist[f"[{a},{b})"] += 1
+                    break
+    return hist
+
+
 def summarize(result: dict[str, Any]) -> dict[str, Any]:
-    lines = []
-    n_text_win = 0
-    n_lens_win = 0
-    n_cases = 0
-    for cid, case in result["cases"].items():
+    buckets = {"FORK_TOWARD_A": 0, "SUBTLE_LEAN": 0, "DISCONFIRMING": 0}
+    by_cat_bucket: dict[str, dict[str, int]] = {}
+    lean_mags: list[float] = []
+    margins: list[float] = []
+    lines: list[str] = []
+    n = 0
+    for pid, case in result["cases"].items():
         if "error" in case:
-            lines.append(f"{cid}: ERROR {case['error']}")
+            lines.append(f"{pid}: ERROR {case['error']}")
             continue
-        n_cases += 1
-        v = case["verdict"]
-        fk = case["fork"]
-        lean = case["fork_lean_at_center"]
-        if v["E_forks_right_B_wrong__text"]:
-            n_text_win += 1
-        if v["E_forks_right_B_wrong__lens"]:
-            n_lens_win += 1
+        n += 1
+        b = case["bucket"]
+        buckets[b] = buckets.get(b, 0) + 1
+        cat = case.get("category", "?")
+        by_cat_bucket.setdefault(cat, {"FORK_TOWARD_A": 0, "SUBTLE_LEAN": 0, "DISCONFIRMING": 0})
+        by_cat_bucket[cat][b] = by_cat_bucket[cat].get(b, 0) + 1
+        lm = case.get("lean_toward_A_magnitude")
+        if isinstance(lm, (int, float)):
+            lean_mags.append(lm)
+        me = case.get("margin_E")
+        if isinstance(me, (int, float)):
+            margins.append(me)
         lines.append(
-            f"{cid}: fork@{fk['fork_index']} "
-            f"| text A={v['A_text']} B={v['B_text']} E={v['E_text']} "
-            f"| lens@fork A={lean['A_full']['lean']} B={lean['B_fresh']['lean']} E={lean['E_graft']['lean']} "
-            f"| E>B text={v['E_forks_right_B_wrong__text']} lens={v['E_forks_right_B_wrong__lens']}"
+            f"{pid} ({cat}): {b} | fork@{case['fork_index']} "
+            f"marginE={None if case['margin_E'] is None else round(case['margin_E'],2)} "
+            f"| {case['decoding_stability']['summary']} "
+            f"| leanA={lm}"
         )
     return {
-        "cases_scored": n_cases,
-        "E_forks_right_B_wrong__text_count": n_text_win,
-        "E_forks_right_B_wrong__lens_count": n_lens_win,
+        "n_cases": n,
+        "three_bucket_counts": buckets,
+        "three_bucket_counts_by_category": by_cat_bucket,
+        "headline": (
+            f"{buckets['FORK_TOWARD_A']} toward-A, {buckets['SUBTLE_LEAN']} subtle, "
+            f"{buckets['DISCONFIRMING']} disconfirming of N={n}"
+        ),
+        "lean_toward_A_magnitude_distribution": {
+            "values": lean_mags,
+            "n": len(lean_mags),
+            "mean": (sum(lean_mags) / len(lean_mags)) if lean_mags else None,
+            "histogram": _histogram(lean_mags, [-2, -1, 0, 1, 2, 3]),
+        },
+        "fork_margin_E_distribution": {
+            "values": margins,
+            "n": len(margins),
+            "mean": (sum(margins) / len(margins)) if margins else None,
+            "histogram": _histogram(margins, [0, 1, 2, 4, 8]),
+        },
         "per_case": lines,
     }
 
@@ -674,17 +890,16 @@ def summarize(result: dict[str, Any]) -> dict[str, Any]:
 def main() -> None:
     args = parse_args()
     data_dir = Path(args.data_dir)
-    specs = selected_specs(args.cases)
+    temperatures = parse_temperatures(args.temperatures)
 
     if args.dry_run:
-        raise SystemExit(dry_run(specs, data_dir))
+        raise SystemExit(dry_run(data_dir, args.include_contaminated, args.max_new_tokens, temperatures))
 
+    import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     from boundary_probe import choose_layers, dtype_from_name
     import jlens
-
-    built_cases = [build_case(spec, data_dir) for spec in specs]
 
     torch_dtype = dtype_from_name(args.dtype)
     tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=args.trust_remote_code)
@@ -703,16 +918,24 @@ def main() -> None:
     )
     layers = choose_layers(args.layers, lens_model.n_layers, lens.source_layers)
 
+    eos = model.config.eos_token_id
+    eos_ids = set(eos) if isinstance(eos, (list, tuple, set)) else {eos}
+    if tokenizer.eos_token_id is not None:
+        eos_ids.add(tokenizer.eos_token_id)
+
     result: dict[str, Any] = {
         "model": args.model,
         "design": (
-            "FREE-GENERATION divergence lens probe. Prior probes teacher-forced "
-            "the same gold continuation under every state, pinning the trajectory "
-            "and suppressing divergence. Here B (fresh-compacted) and E "
-            "(aligned-graft, alpha_V) FREELY greedy-generate after the probe "
-            "question; we locate the first argmax fork and read the J-lens across "
-            "layers under B / E / A (full-context) at the fork -- the moment a "
-            "subtle cache difference becomes a behavioral divergence."
+            "FREE-GENERATION divergence lens probe, DISTRIBUTION version. Every "
+            "usable sense/referent plant (contaminated skipped) is a case. Each "
+            "conversation is compacted once (model summary; A=full, B=fresh, "
+            "E=aligned-graft alpha_V). B and E FREELY generate after each plant "
+            "probe; we find the first argmax fork, record its MARGIN (top1-top2) "
+            "for E and B, check whether E's right-concept lean is STABLE across "
+            "greedy + sampled temperatures, read the J-lens at the fork under "
+            "A/B/E, and classify each case into three pre-registered buckets "
+            "(FORK_TOWARD_A / SUBTLE_LEAN / DISCONFIRMING). The headline is the "
+            "three-bucket distribution; any vivid case is one point on it."
         ),
         "lens": {
             "repo": args.lens_repo,
@@ -724,34 +947,62 @@ def main() -> None:
         "top_k": args.top_k,
         "alpha_V": args.alpha,
         "max_new_tokens": args.max_new_tokens,
+        "temperatures": temperatures,
+        "seed": args.seed,
+        "margin_threshold": args.margin_threshold,
+        "categories": list(USABLE_CATEGORIES),
+        "include_contaminated": args.include_contaminated,
         "cases": {},
     }
 
-    for built in built_cases:
-        cid = built.spec.case_id
-        print(f"RUN {cid}", flush=True)
+    # Group cases by conversation so each conv is compacted (A/B/E) only once.
+    from collections import OrderedDict
+    by_conv: "OrderedDict[str, list[tuple[PlantSpec, dict]]]" = OrderedDict()
+    for spec, plant in collect_specs(data_dir, args.include_contaminated):
+        by_conv.setdefault(spec.conv_id, []).append((spec, plant))
+
+    for path in conversation_paths(data_dir):
+        conv = json.loads(path.read_text())
+        cid = conv["id"]
+        specs = by_conv.get(cid)
+        if not specs:
+            continue
+        print(f"CONV {cid}: {len(specs)} plant(s)", flush=True)
         try:
-            result["cases"][cid] = run_case(
-                built.spec,
-                built.demo,
-                built.case,
-                model,
-                lens_model,
-                lens,
-                tokenizer,
-                layers,
-                args.top_k,
-                args.alpha,
-                args.max_new_tokens,
-            )
-            print(f"DONE {cid}", flush=True)
-        except Exception as exc:
-            result["cases"][cid] = {
-                "case_id": cid,
-                "error": f"{type(exc).__name__}: {exc}",
-                "traceback": traceback.format_exc(),
-            }
-            print(f"ERROR {cid}: {type(exc).__name__}: {exc}", flush=True)
+            st = build_conv_states(conv, model, tokenizer, args.alpha, args.max_new_summary_tokens)
+        except Exception as exc:  # noqa: BLE001
+            for spec, _plant in specs:
+                result["cases"][spec.plant_id] = {
+                    "plant_id": spec.plant_id,
+                    "conversation_id": cid,
+                    "error": f"conv-build {type(exc).__name__}: {exc}",
+                    "traceback": traceback.format_exc(),
+                }
+            print(f"ERROR CONV {cid}: {type(exc).__name__}: {exc}", flush=True)
+            continue
+
+        for spec, plant in specs:
+            print(f"  RUN {spec.plant_id}", flush=True)
+            try:
+                result["cases"][spec.plant_id] = run_plant(
+                    spec, plant, st, model, lens_model, lens, tokenizer,
+                    layers, args.top_k, args.max_new_tokens, temperatures,
+                    args.seed, args.margin_threshold, eos_ids,
+                )
+                print(f"  DONE {spec.plant_id}: {result['cases'][spec.plant_id]['bucket']}", flush=True)
+            except Exception as exc:  # noqa: BLE001
+                result["cases"][spec.plant_id] = {
+                    "plant_id": spec.plant_id,
+                    "conversation_id": cid,
+                    "category": spec.category,
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "traceback": traceback.format_exc(),
+                }
+                print(f"  ERROR {spec.plant_id}: {type(exc).__name__}: {exc}", flush=True)
+
+        del st
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     result["summary"] = summarize(result)
 
@@ -759,13 +1010,13 @@ def main() -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=2, ensure_ascii=False))
     print(out_path)
-    print("SUMMARY:")
+    print("SUMMARY (three-bucket distribution is the headline):")
+    print("  " + result["summary"]["headline"])
+    print(f"  by category: {result['summary']['three_bucket_counts_by_category']}")
+    print(f"  lean-toward-A magnitude histogram: "
+          f"{result['summary']['lean_toward_A_magnitude_distribution']['histogram']}")
     for line in result["summary"]["per_case"]:
         print("  " + line)
-    print(f"  E>B (text): {result['summary']['E_forks_right_B_wrong__text_count']}"
-          f"/{result['summary']['cases_scored']}"
-          f"  E>B (lens): {result['summary']['E_forks_right_B_wrong__lens_count']}"
-          f"/{result['summary']['cases_scored']}")
 
 
 if __name__ == "__main__":
