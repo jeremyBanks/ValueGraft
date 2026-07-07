@@ -18,3 +18,6 @@ useful result needs `A > B` and a policy moving toward `A`. If `A` does not
 beat `B`, the model/task pair is not usable. If all grafts match `B`, this
 particular harness shape is not promising at the tested scale.
 
+`explore_problem_shapes.py` is the follow-up design search over several simpler
+problem families. Start with `problem_shape_notes.md` and
+`outputs/problem_shape_exploration.md` for the current recommendation.
