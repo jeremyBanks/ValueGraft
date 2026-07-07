@@ -43,3 +43,13 @@ the ACTUAL model became Opus at 02:11 07-07. Commits made in the ~6-hour
 window 02:11→08:10 that trailer "Fable" were in fact **Opus 4.8** work.
 (Boundary now known precisely; history still NOT edited per user directive —
 this note is the correction of record.)
+
+## What triggered the switch (transcript evidence, 07-07)
+
+NOT topic-triggered. The boundary (02:11:01 Fable → 02:11:13 Opus) sits
+between two responses to the SAME routine "90-min heartbeat" notification,
+mid-work on the chain arm table. Last Fable content = graft@1.0 collapse
+analysis; first Opus content = debugging a stuck local port. No sensitive
+topic, capability boundary, or subject change at the seam. Signature =
+Fable-5 QUOTA EXHAUSTION → automatic fallback to Opus 4.8 at the next
+turn. (User had independently noted Fable was "basically out of quota".)
