@@ -1,0 +1,4885 @@
+{
+  "model": "Qwen/Qwen3.6-27B",
+  "lens": {
+    "repo": "neuronpedia/jacobian-lens",
+    "filename": "qwen3.6-27b/jlens/Salesforce-wikitext/Qwen3.6-27B_jacobian_lens_n1000.pt",
+    "revision": "qwen-n1000",
+    "source_layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62
+    ],
+    "sampled_layers": [
+      48,
+      62
+    ]
+  },
+  "top_k": 20,
+  "note": "Qualitative control: compare J-lens readouts at selected anchor tokens with actual model next-token logits at the same positions.",
+  "cases": [
+    {
+      "case_id": "pokemon_vacuum_1",
+      "source": "pokemon",
+      "summary_name": "canonical",
+      "phrase": "Vacuum",
+      "occurrence": 1,
+      "private_terms": [
+        "zig",
+        "pickup",
+        "nick",
+        "nickname"
+      ],
+      "lexical_terms": [
+        "vacuum",
+        "clean",
+        "cleaner",
+        "suction",
+        "dust"
+      ],
+      "note": "Second Vacuum mention: the local text says Vacuum never battles.",
+      "states": {
+        "write_time": {
+          "state": "write_time",
+          "token_position": 1010,
+          "summary_relative_position": 67,
+          "anchor_token_id": 72457,
+          "anchor_token": " Vacuum",
+          "actual_next_token_id": 2496,
+          "actual_next_token": " never",
+          "context_window": "zagoon with Pickup, a utility slot only; Vacuum never battles gyms or major fights such as Drake",
+          "next_token_top": [
+            {
+              "token_id": 2496,
+              "token": " never",
+              "score": 23.0
+            },
+            {
+              "token_id": 1503,
+              "token": " does",
+              "score": 20.75
+            },
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 19.5
+            },
+            {
+              "token_id": 3070,
+              "token": " doesn",
+              "score": 16.125
+            },
+            {
+              "token_id": 26544,
+              "token": " fights",
+              "score": 16.125
+            },
+            {
+              "token_id": 1220,
+              "token": " should",
+              "score": 15.6875
+            },
+            {
+              "token_id": 1902,
+              "token": " must",
+              "score": 15.5625
+            },
+            {
+              "token_id": 668,
+              "token": " will",
+              "score": 15.3125
+            },
+            {
+              "token_id": 23779,
+              "token": " battles",
+              "score": 15.1875
+            },
+            {
+              "token_id": 13081,
+              "token": " handles",
+              "score": 15.0625
+            },
+            {
+              "token_id": 682,
+              "token": " has",
+              "score": 14.625
+            },
+            {
+              "token_id": 4021,
+              "token": " cannot",
+              "score": 14.4375
+            },
+            {
+              "token_id": 321,
+              "token": " and",
+              "score": 14.0
+            },
+            {
+              "token_id": 25710,
+              "token": " stays",
+              "score": 13.75
+            },
+            {
+              "token_id": 635,
+              "token": " do",
+              "score": 13.6875
+            },
+            {
+              "token_id": 24660,
+              "token": " strictly",
+              "score": 13.625
+            },
+            {
+              "token_id": 53176,
+              "token": " NEVER",
+              "score": 13.625
+            },
+            {
+              "token_id": 5601,
+              "token": " goes",
+              "score": 13.5625
+            },
+            {
+              "token_id": 13468,
+              "token": " neither",
+              "score": 13.375
+            },
+            {
+              "token_id": 5533,
+              "token": " uses",
+              "score": 13.3125
+            }
+          ],
+          "next_private_hits": [],
+          "next_lexical_hits": [],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 2496,
+                  "token": " never",
+                  "score": 22.0
+                },
+                {
+                  "token_id": 13468,
+                  "token": " neither",
+                  "score": 19.125
+                },
+                {
+                  "token_id": 147785,
+                  "token": "不参与",
+                  "score": 18.25
+                },
+                {
+                  "token_id": 146494,
+                  "token": "不参加",
+                  "score": 17.75
+                },
+                {
+                  "token_id": 53176,
+                  "token": " NEVER",
+                  "score": 16.0
+                },
+                {
+                  "token_id": 1503,
+                  "token": " does",
+                  "score": 15.6875
+                },
+                {
+                  "token_id": 53007,
+                  "token": " avoids",
+                  "score": 15.6875
+                },
+                {
+                  "token_id": 39277,
+                  "token": " refuses",
+                  "score": 15.375
+                },
+                {
+                  "token_id": 102590,
+                  "token": "不承担",
+                  "score": 15.3125
+                },
+                {
+                  "token_id": 4021,
+                  "token": " cannot",
+                  "score": 15.1875
+                },
+                {
+                  "token_id": 17967,
+                  "token": " rarely",
+                  "score": 15.0
+                },
+                {
+                  "token_id": 14271,
+                  "token": " Never",
+                  "score": 14.9375
+                },
+                {
+                  "token_id": 50968,
+                  "token": " nunca",
+                  "score": 14.9375
+                },
+                {
+                  "token_id": 92502,
+                  "token": " ineligible",
+                  "score": 14.75
+                },
+                {
+                  "token_id": 61228,
+                  "token": " excludes",
+                  "score": 14.375
+                },
+                {
+                  "token_id": 29784,
+                  "token": " avoided",
+                  "score": 14.375
+                },
+                {
+                  "token_id": 119615,
+                  "token": "永远不会",
+                  "score": 14.3125
+                },
+                {
+                  "token_id": 175875,
+                  "token": " никогда",
+                  "score": 14.1875
+                },
+                {
+                  "token_id": 26241,
+                  "token": " nowhere",
+                  "score": 14.125
+                },
+                {
+                  "token_id": 22518,
+                  "token": " exclusively",
+                  "score": 14.125
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 5,
+                "union": 35,
+                "jaccard": 0.14285714285714285,
+                "overlap_tokens": [
+                  " never",
+                  " neither",
+                  " NEVER",
+                  " does",
+                  " cannot"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": []
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 2496,
+                  "token": " never",
+                  "score": 18.625
+                },
+                {
+                  "token_id": 1503,
+                  "token": " does",
+                  "score": 18.5
+                },
+                {
+                  "token_id": 26544,
+                  "token": " fights",
+                  "score": 15.0
+                },
+                {
+                  "token_id": 23779,
+                  "token": " battles",
+                  "score": 14.3125
+                },
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 14.1875
+                },
+                {
+                  "token_id": 3070,
+                  "token": " doesn",
+                  "score": 14.1875
+                },
+                {
+                  "token_id": 13081,
+                  "token": " handles",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 1902,
+                  "token": " must",
+                  "score": 12.6875
+                },
+                {
+                  "token_id": 4021,
+                  "token": " cannot",
+                  "score": 12.625
+                },
+                {
+                  "token_id": 87086,
+                  "token": " participates",
+                  "score": 12.4375
+                },
+                {
+                  "token_id": 53007,
+                  "token": " avoids",
+                  "score": 12.25
+                },
+                {
+                  "token_id": 25710,
+                  "token": " stays",
+                  "score": 12.0
+                },
+                {
+                  "token_id": 1220,
+                  "token": " should",
+                  "score": 11.875
+                },
+                {
+                  "token_id": 668,
+                  "token": " will",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 682,
+                  "token": " has",
+                  "score": 11.625
+                },
+                {
+                  "token_id": 53176,
+                  "token": " NEVER",
+                  "score": 11.625
+                },
+                {
+                  "token_id": 24660,
+                  "token": " strictly",
+                  "score": 11.5
+                },
+                {
+                  "token_id": 5601,
+                  "token": " goes",
+                  "score": 11.5
+                },
+                {
+                  "token_id": 39277,
+                  "token": " refuses",
+                  "score": 11.375
+                },
+                {
+                  "token_id": 7796,
+                  "token": " battle",
+                  "score": 11.25
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 16,
+                "union": 24,
+                "jaccard": 0.6666666666666666,
+                "overlap_tokens": [
+                  " never",
+                  " does",
+                  " fights",
+                  " battles",
+                  " is",
+                  " doesn",
+                  " handles",
+                  " must",
+                  " cannot",
+                  " stays",
+                  " should",
+                  " will",
+                  " has",
+                  " NEVER",
+                  " strictly",
+                  " goes"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": []
+            }
+          }
+        },
+        "fresh": {
+          "state": "fresh",
+          "token_position": 158,
+          "summary_relative_position": 67,
+          "anchor_token_id": 72457,
+          "anchor_token": " Vacuum",
+          "actual_next_token_id": 2496,
+          "actual_next_token": " never",
+          "context_window": "zagoon with Pickup, a utility slot only; Vacuum never battles gyms or major fights such as Drake",
+          "next_token_top": [
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 16.875
+            },
+            {
+              "token_id": 682,
+              "token": " has",
+              "score": 15.75
+            },
+            {
+              "token_id": 1503,
+              "token": " does",
+              "score": 14.9375
+            },
+            {
+              "token_id": 4021,
+              "token": " cannot",
+              "score": 14.9375
+            },
+            {
+              "token_id": 281,
+              "token": " f",
+              "score": 14.8125
+            },
+            {
+              "token_id": 668,
+              "token": " will",
+              "score": 14.8125
+            },
+            {
+              "token_id": 557,
+              "token": " was",
+              "score": 14.625
+            },
+            {
+              "token_id": 1902,
+              "token": " must",
+              "score": 14.5
+            },
+            {
+              "token_id": 725,
+              "token": "’s",
+              "score": 14.3125
+            },
+            {
+              "token_id": 628,
+              "token": " can",
+              "score": 14.25
+            },
+            {
+              "token_id": 579,
+              "token": "'s",
+              "score": 13.875
+            },
+            {
+              "token_id": 8209,
+              "token": " died",
+              "score": 13.875
+            },
+            {
+              "token_id": 1220,
+              "token": " should",
+              "score": 13.8125
+            },
+            {
+              "token_id": 22651,
+              "token": " carries",
+              "score": 13.8125
+            },
+            {
+              "token_id": 4862,
+              "token": " currently",
+              "score": 13.8125
+            },
+            {
+              "token_id": 2496,
+              "token": " never",
+              "score": 13.5625
+            },
+            {
+              "token_id": 25710,
+              "token": " stays",
+              "score": 13.5625
+            },
+            {
+              "token_id": 1189,
+              "token": " may",
+              "score": 13.375
+            },
+            {
+              "token_id": 9687,
+              "token": " holds",
+              "score": 13.25
+            },
+            {
+              "token_id": 321,
+              "token": " and",
+              "score": 13.1875
+            }
+          ],
+          "next_private_hits": [],
+          "next_lexical_hits": [],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 557,
+                  "token": " was",
+                  "score": 12.6875
+                },
+                {
+                  "token_id": 4862,
+                  "token": " currently",
+                  "score": 12.4375
+                },
+                {
+                  "token_id": 2496,
+                  "token": " never",
+                  "score": 12.1875
+                },
+                {
+                  "token_id": 682,
+                  "token": " has",
+                  "score": 12.125
+                },
+                {
+                  "token_id": 2582,
+                  "token": " already",
+                  "score": 12.0625
+                },
+                {
+                  "token_id": 8198,
+                  "token": " remains",
+                  "score": 11.6875
+                },
+                {
+                  "token_id": 25057,
+                  "token": " survived",
+                  "score": 11.5
+                },
+                {
+                  "token_id": 8209,
+                  "token": " died",
+                  "score": 11.375
+                },
+                {
+                  "token_id": 5384,
+                  "token": " lost",
+                  "score": 11.3125
+                },
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 11.25
+                },
+                {
+                  "token_id": 12134,
+                  "token": " hasn",
+                  "score": 11.0
+                },
+                {
+                  "token_id": 14195,
+                  "token": " remained",
+                  "score": 11.0
+                },
+                {
+                  "token_id": 995,
+                  "token": " had",
+                  "score": 10.8125
+                },
+                {
+                  "token_id": 4490,
+                  "token": " failed",
+                  "score": 10.8125
+                },
+                {
+                  "token_id": 7190,
+                  "token": " killed",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 1381,
+                  "token": " now",
+                  "score": 10.6875
+                },
+                {
+                  "token_id": 5902,
+                  "token": " safe",
+                  "score": 10.375
+                },
+                {
+                  "token_id": 79476,
+                  "token": " survives",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 4021,
+                  "token": " cannot",
+                  "score": 10.0
+                },
+                {
+                  "token_id": 27469,
+                  "token": " disappeared",
+                  "score": 9.9375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 7,
+                "union": 33,
+                "jaccard": 0.21212121212121213,
+                "overlap_tokens": [
+                  " was",
+                  " currently",
+                  " never",
+                  " has",
+                  " died",
+                  " is",
+                  " cannot"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": []
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 15.6875
+                },
+                {
+                  "token_id": 4021,
+                  "token": " cannot",
+                  "score": 15.4375
+                },
+                {
+                  "token_id": 682,
+                  "token": " has",
+                  "score": 15.125
+                },
+                {
+                  "token_id": 1503,
+                  "token": " does",
+                  "score": 14.625
+                },
+                {
+                  "token_id": 281,
+                  "token": " f",
+                  "score": 13.875
+                },
+                {
+                  "token_id": 1902,
+                  "token": " must",
+                  "score": 13.6875
+                },
+                {
+                  "token_id": 22651,
+                  "token": " carries",
+                  "score": 13.6875
+                },
+                {
+                  "token_id": 8209,
+                  "token": " died",
+                  "score": 13.6875
+                },
+                {
+                  "token_id": 9687,
+                  "token": " holds",
+                  "score": 13.4375
+                },
+                {
+                  "token_id": 668,
+                  "token": " will",
+                  "score": 13.375
+                },
+                {
+                  "token_id": 36334,
+                  "token": " faint",
+                  "score": 13.1875
+                },
+                {
+                  "token_id": 25710,
+                  "token": " stays",
+                  "score": 12.9375
+                },
+                {
+                  "token_id": 557,
+                  "token": " was",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 8198,
+                  "token": " remains",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 628,
+                  "token": " can",
+                  "score": 12.6875
+                },
+                {
+                  "token_id": 79476,
+                  "token": " survives",
+                  "score": 12.625
+                },
+                {
+                  "token_id": 725,
+                  "token": "’s",
+                  "score": 12.5
+                },
+                {
+                  "token_id": 25057,
+                  "token": " survived",
+                  "score": 12.4375
+                },
+                {
+                  "token_id": 5384,
+                  "token": " lost",
+                  "score": 12.0
+                },
+                {
+                  "token_id": 10255,
+                  "token": " caught",
+                  "score": 12.0
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 14,
+                "union": 26,
+                "jaccard": 0.5384615384615384,
+                "overlap_tokens": [
+                  " is",
+                  " cannot",
+                  " has",
+                  " does",
+                  " f",
+                  " must",
+                  " carries",
+                  " died",
+                  " holds",
+                  " will",
+                  " stays",
+                  " was",
+                  " can",
+                  "’s"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "pokemon_dex_0",
+      "source": "pokemon",
+      "summary_name": "canonical",
+      "phrase": "Dex",
+      "occurrence": 0,
+      "private_terms": [
+        "owe",
+        "owed",
+        "owes",
+        "trade",
+        "traded",
+        "trades",
+        "promise",
+        "exchange"
+      ],
+      "lexical_terms": [
+        "dex",
+        "nav",
+        "entry",
+        "entries",
+        "completion",
+        "progress",
+        "tracker"
+      ],
+      "note": "Dex should mean a person/trade obligation, not Pokedex progress.",
+      "states": {
+        "write_time": {
+          "state": "write_time",
+          "token_position": 1085,
+          "summary_relative_position": 142,
+          "anchor_token_id": 70175,
+          "anchor_token": " Dex",
+          "actual_next_token_id": 6355,
+          "actual_next_token": " trade",
+          "context_window": " ruled out and should not be suggested.\n- Dex trade: spare Makuhita for Dex's Cast",
+          "next_token_top": [
+            {
+              "token_id": 66515,
+              "token": " owes",
+              "score": 18.75
+            },
+            {
+              "token_id": 11,
+              "token": ",",
+              "score": 16.5
+            },
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 16.25
+            },
+            {
+              "token_id": 6355,
+              "token": " trade",
+              "score": 16.0
+            },
+            {
+              "token_id": 318,
+              "token": " (",
+              "score": 15.625
+            },
+            {
+              "token_id": 46310,
+              "token": " owed",
+              "score": 15.5625
+            },
+            {
+              "token_id": 1990,
+              "token": " still",
+              "score": 14.9375
+            },
+            {
+              "token_id": 279,
+              "token": " the",
+              "score": 14.6875
+            },
+            {
+              "token_id": 494,
+              "token": " from",
+              "score": 14.375
+            },
+            {
+              "token_id": 579,
+              "token": "'s",
+              "score": 14.125
+            },
+            {
+              "token_id": 29123,
+              "token": " traded",
+              "score": 14.125
+            },
+            {
+              "token_id": 29353,
+              "token": " trades",
+              "score": 13.6875
+            },
+            {
+              "token_id": 725,
+              "token": "’s",
+              "score": 13.5625
+            },
+            {
+              "token_id": 682,
+              "token": " has",
+              "score": 13.4375
+            },
+            {
+              "token_id": 557,
+              "token": " was",
+              "score": 13.3125
+            },
+            {
+              "token_id": 23495,
+              "token": " owns",
+              "score": 13.25
+            },
+            {
+              "token_id": 11301,
+              "token": " debt",
+              "score": 12.875
+            },
+            {
+              "token_id": 4099,
+              "token": " friend",
+              "score": 12.4375
+            },
+            {
+              "token_id": 9687,
+              "token": " holds",
+              "score": 12.4375
+            },
+            {
+              "token_id": 18378,
+              "token": " promised",
+              "score": 12.25
+            }
+          ],
+          "next_private_hits": [
+            {
+              "rank": 1,
+              "term": "owe",
+              "token": " owes",
+              "score": 18.75
+            },
+            {
+              "rank": 4,
+              "term": "trade",
+              "token": " trade",
+              "score": 16.0
+            },
+            {
+              "rank": 6,
+              "term": "owe",
+              "token": " owed",
+              "score": 15.5625
+            },
+            {
+              "rank": 11,
+              "term": "trade",
+              "token": " traded",
+              "score": 14.125
+            },
+            {
+              "rank": 12,
+              "term": "trade",
+              "token": " trades",
+              "score": 13.6875
+            },
+            {
+              "rank": 20,
+              "term": "promise",
+              "token": " promised",
+              "score": 12.25
+            }
+          ],
+          "next_lexical_hits": [],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 18378,
+                  "token": " promised",
+                  "score": 15.625
+                },
+                {
+                  "token_id": 50466,
+                  "token": " partnered",
+                  "score": 12.125
+                },
+                {
+                  "token_id": 8005,
+                  "token": " partner",
+                  "score": 11.8125
+                },
+                {
+                  "token_id": 14859,
+                  "token": " partnership",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 7003,
+                  "token": " agreed",
+                  "score": 11.625
+                },
+                {
+                  "token_id": 10896,
+                  "token": " promise",
+                  "score": 11.1875
+                },
+                {
+                  "token_id": 12539,
+                  "token": " planned",
+                  "score": 11.0
+                },
+                {
+                  "token_id": 9013,
+                  "token": " exchange",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 14836,
+                  "token": " pending",
+                  "score": 10.5625
+                },
+                {
+                  "token_id": 4099,
+                  "token": " friend",
+                  "score": 10.5625
+                },
+                {
+                  "token_id": 19421,
+                  "token": " collaboration",
+                  "score": 10.5625
+                },
+                {
+                  "token_id": 20021,
+                  "token": " promises",
+                  "score": 10.3125
+                },
+                {
+                  "token_id": 66780,
+                  "token": " partnering",
+                  "score": 10.25
+                },
+                {
+                  "token_id": 8855,
+                  "token": " agreement",
+                  "score": 10.25
+                },
+                {
+                  "token_id": 10897,
+                  "token": " requested",
+                  "score": 10.1875
+                },
+                {
+                  "token_id": 57705,
+                  "token": " pact",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 45981,
+                  "token": " teammate",
+                  "score": 10.0
+                },
+                {
+                  "token_id": 40845,
+                  "token": " pledged",
+                  "score": 10.0
+                },
+                {
+                  "token_id": 23767,
+                  "token": " contacted",
+                  "score": 9.9375
+                },
+                {
+                  "token_id": 25661,
+                  "token": " friendship",
+                  "score": 9.9375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 2,
+                "union": 38,
+                "jaccard": 0.05263157894736842,
+                "overlap_tokens": [
+                  " promised",
+                  " friend"
+                ]
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 1,
+                  "term": "promise",
+                  "token": " promised",
+                  "score": 15.625
+                },
+                {
+                  "rank": 6,
+                  "term": "promise",
+                  "token": " promise",
+                  "score": 11.1875
+                },
+                {
+                  "rank": 8,
+                  "term": "exchange",
+                  "token": " exchange",
+                  "score": 10.625
+                },
+                {
+                  "rank": 12,
+                  "term": "promise",
+                  "token": " promises",
+                  "score": 10.3125
+                }
+              ],
+              "lens_lexical_hits": []
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 66515,
+                  "token": " owes",
+                  "score": 23.0
+                },
+                {
+                  "token_id": 46310,
+                  "token": " owed",
+                  "score": 19.75
+                },
+                {
+                  "token_id": 39753,
+                  "token": " owe",
+                  "score": 16.375
+                },
+                {
+                  "token_id": 6355,
+                  "token": " trade",
+                  "score": 16.25
+                },
+                {
+                  "token_id": 29123,
+                  "token": " traded",
+                  "score": 15.375
+                },
+                {
+                  "token_id": 98388,
+                  "token": "欠",
+                  "score": 15.0
+                },
+                {
+                  "token_id": 29353,
+                  "token": " trades",
+                  "score": 14.4375
+                },
+                {
+                  "token_id": 23495,
+                  "token": " owns",
+                  "score": 14.0
+                },
+                {
+                  "token_id": 11,
+                  "token": ",",
+                  "score": 13.375
+                },
+                {
+                  "token_id": 53648,
+                  "token": " owing",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 12.5625
+                },
+                {
+                  "token_id": 16706,
+                  "token": " Trade",
+                  "score": 12.375
+                },
+                {
+                  "token_id": 11301,
+                  "token": " debt",
+                  "score": 12.0
+                },
+                {
+                  "token_id": 15113,
+                  "token": " ow",
+                  "score": 11.875
+                },
+                {
+                  "token_id": 27927,
+                  "token": " OW",
+                  "score": 11.875
+                },
+                {
+                  "token_id": 79197,
+                  "token": "-trade",
+                  "score": 11.875
+                },
+                {
+                  "token_id": 18378,
+                  "token": " promised",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 9687,
+                  "token": " holds",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 42735,
+                  "token": " debts",
+                  "score": 11.6875
+                },
+                {
+                  "token_id": 1990,
+                  "token": " still",
+                  "score": 11.375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 12,
+                "union": 28,
+                "jaccard": 0.42857142857142855,
+                "overlap_tokens": [
+                  " owes",
+                  " owed",
+                  " trade",
+                  " traded",
+                  " trades",
+                  " owns",
+                  ",",
+                  " is",
+                  " debt",
+                  " promised",
+                  " holds",
+                  " still"
+                ]
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 1,
+                  "term": "owe",
+                  "token": " owes",
+                  "score": 23.0
+                },
+                {
+                  "rank": 2,
+                  "term": "owe",
+                  "token": " owed",
+                  "score": 19.75
+                },
+                {
+                  "rank": 3,
+                  "term": "owe",
+                  "token": " owe",
+                  "score": 16.375
+                },
+                {
+                  "rank": 4,
+                  "term": "trade",
+                  "token": " trade",
+                  "score": 16.25
+                },
+                {
+                  "rank": 5,
+                  "term": "trade",
+                  "token": " traded",
+                  "score": 15.375
+                },
+                {
+                  "rank": 7,
+                  "term": "trade",
+                  "token": " trades",
+                  "score": 14.4375
+                },
+                {
+                  "rank": 12,
+                  "term": "trade",
+                  "token": " Trade",
+                  "score": 12.375
+                },
+                {
+                  "rank": 16,
+                  "term": "trade",
+                  "token": "-trade",
+                  "score": 11.875
+                },
+                {
+                  "rank": 17,
+                  "term": "promise",
+                  "token": " promised",
+                  "score": 11.75
+                }
+              ],
+              "lens_lexical_hits": []
+            }
+          }
+        },
+        "fresh": {
+          "state": "fresh",
+          "token_position": 233,
+          "summary_relative_position": 142,
+          "anchor_token_id": 70175,
+          "anchor_token": " Dex",
+          "actual_next_token_id": 6355,
+          "actual_next_token": " trade",
+          "context_window": " ruled out and should not be suggested.\n- Dex trade: spare Makuhita for Dex's Cast",
+          "next_token_top": [
+            {
+              "token_id": 9796,
+              "token": "Nav",
+              "score": 13.375
+            },
+            {
+              "token_id": 3596,
+              "token": "nav",
+              "score": 13.0
+            },
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 12.0
+            },
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 11.875
+            },
+            {
+              "token_id": 9167,
+              "token": " slot",
+              "score": 11.6875
+            },
+            {
+              "token_id": 9463,
+              "token": " completion",
+              "score": 11.375
+            },
+            {
+              "token_id": 11627,
+              "token": " Nav",
+              "score": 11.1875
+            },
+            {
+              "token_id": 4202,
+              "token": " entry",
+              "score": 10.875
+            },
+            {
+              "token_id": 321,
+              "token": " and",
+              "score": 10.8125
+            },
+            {
+              "token_id": 7822,
+              "token": " nav",
+              "score": 10.8125
+            },
+            {
+              "token_id": 4862,
+              "token": " currently",
+              "score": 10.25
+            },
+            {
+              "token_id": 10331,
+              "token": " navigation",
+              "score": 10.1875
+            },
+            {
+              "token_id": 2552,
+              "token": " status",
+              "score": 10.125
+            },
+            {
+              "token_id": 3602,
+              "token": " location",
+              "score": 10.125
+            },
+            {
+              "token_id": 1906,
+              "token": " order",
+              "score": 10.0625
+            },
+            {
+              "token_id": 2119,
+              "token": " level",
+              "score": 10.0625
+            },
+            {
+              "token_id": 15808,
+              "token": " requirement",
+              "score": 9.6875
+            },
+            {
+              "token_id": 4936,
+              "token": " progress",
+              "score": 9.5625
+            },
+            {
+              "token_id": 988,
+              "token": "lock",
+              "score": 9.5625
+            },
+            {
+              "token_id": 10379,
+              "token": " entries",
+              "score": 9.5625
+            }
+          ],
+          "next_private_hits": [],
+          "next_lexical_hits": [
+            {
+              "rank": 1,
+              "term": "nav",
+              "token": "Nav",
+              "score": 13.375
+            },
+            {
+              "rank": 2,
+              "term": "nav",
+              "token": "nav",
+              "score": 13.0
+            },
+            {
+              "rank": 6,
+              "term": "completion",
+              "token": " completion",
+              "score": 11.375
+            },
+            {
+              "rank": 7,
+              "term": "nav",
+              "token": " Nav",
+              "score": 11.1875
+            },
+            {
+              "rank": 8,
+              "term": "entry",
+              "token": " entry",
+              "score": 10.875
+            },
+            {
+              "rank": 10,
+              "term": "nav",
+              "token": " nav",
+              "score": 10.8125
+            },
+            {
+              "rank": 12,
+              "term": "nav",
+              "token": " navigation",
+              "score": 10.1875
+            },
+            {
+              "rank": 18,
+              "term": "progress",
+              "token": " progress",
+              "score": 9.5625
+            },
+            {
+              "rank": 20,
+              "term": "entries",
+              "token": " entries",
+              "score": 9.5625
+            }
+          ],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 9463,
+                  "token": " completion",
+                  "score": 12.25
+                },
+                {
+                  "token_id": 27410,
+                  "token": " tracker",
+                  "score": 11.0625
+                },
+                {
+                  "token_id": 10159,
+                  "token": " stats",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 54360,
+                  "token": " Completion",
+                  "score": 10.6875
+                },
+                {
+                  "token_id": 11694,
+                  "token": " bonus",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 7888,
+                  "token": " completed",
+                  "score": 10.4375
+                },
+                {
+                  "token_id": 76591,
+                  "token": " completeness",
+                  "score": 10.25
+                },
+                {
+                  "token_id": 56570,
+                  "token": " Collector",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 87849,
+                  "token": " trackers",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 7176,
+                  "token": " cards",
+                  "score": 9.9375
+                },
+                {
+                  "token_id": 4947,
+                  "token": " numbers",
+                  "score": 9.875
+                },
+                {
+                  "token_id": 38847,
+                  "token": " Tracker",
+                  "score": 9.8125
+                },
+                {
+                  "token_id": 28198,
+                  "token": " Explorer",
+                  "score": 9.8125
+                },
+                {
+                  "token_id": 40948,
+                  "token": " Comple",
+                  "score": 9.8125
+                },
+                {
+                  "token_id": 67138,
+                  "token": " registrations",
+                  "score": 9.75
+                },
+                {
+                  "token_id": 47525,
+                  "token": " quests",
+                  "score": 9.5625
+                },
+                {
+                  "token_id": 4281,
+                  "token": " collection",
+                  "score": 9.5
+                },
+                {
+                  "token_id": 27282,
+                  "token": " Bonus",
+                  "score": 9.5
+                },
+                {
+                  "token_id": 30901,
+                  "token": " collector",
+                  "score": 9.4375
+                },
+                {
+                  "token_id": 7189,
+                  "token": " records",
+                  "score": 9.4375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 1,
+                "union": 39,
+                "jaccard": 0.02564102564102564,
+                "overlap_tokens": [
+                  " completion"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": [
+                {
+                  "rank": 1,
+                  "term": "completion",
+                  "token": " completion",
+                  "score": 12.25
+                },
+                {
+                  "rank": 2,
+                  "term": "tracker",
+                  "token": " tracker",
+                  "score": 11.0625
+                },
+                {
+                  "rank": 4,
+                  "term": "completion",
+                  "token": " Completion",
+                  "score": 10.6875
+                },
+                {
+                  "rank": 9,
+                  "term": "tracker",
+                  "token": " trackers",
+                  "score": 10.0625
+                },
+                {
+                  "rank": 12,
+                  "term": "tracker",
+                  "token": " Tracker",
+                  "score": 9.8125
+                }
+              ]
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 9796,
+                  "token": "Nav",
+                  "score": 13.125
+                },
+                {
+                  "token_id": 3596,
+                  "token": "nav",
+                  "score": 12.625
+                },
+                {
+                  "token_id": 9463,
+                  "token": " completion",
+                  "score": 12.5625
+                },
+                {
+                  "token_id": 11627,
+                  "token": " Nav",
+                  "score": 11.5
+                },
+                {
+                  "token_id": 7822,
+                  "token": " nav",
+                  "score": 10.8125
+                },
+                {
+                  "token_id": 77148,
+                  "token": " dex",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 10331,
+                  "token": " navigation",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 4202,
+                  "token": " entry",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 9167,
+                  "token": " slot",
+                  "score": 9.6875
+                },
+                {
+                  "token_id": 70175,
+                  "token": " Dex",
+                  "score": 9.625
+                },
+                {
+                  "token_id": 3602,
+                  "token": " location",
+                  "score": 9.4375
+                },
+                {
+                  "token_id": 10159,
+                  "token": " stats",
+                  "score": 9.375
+                },
+                {
+                  "token_id": 76591,
+                  "token": " completeness",
+                  "score": 9.1875
+                },
+                {
+                  "token_id": 52870,
+                  "token": " filler",
+                  "score": 9.1875
+                },
+                {
+                  "token_id": 22663,
+                  "token": " acquisition",
+                  "score": 9.125
+                },
+                {
+                  "token_id": 10379,
+                  "token": " entries",
+                  "score": 9.0625
+                },
+                {
+                  "token_id": 15808,
+                  "token": " requirement",
+                  "score": 9.0
+                },
+                {
+                  "token_id": 10480,
+                  "token": " moves",
+                  "score": 9.0
+                },
+                {
+                  "token_id": 2552,
+                  "token": " status",
+                  "score": 9.0
+                },
+                {
+                  "token_id": 25694,
+                  "token": " Navigator",
+                  "score": 8.9375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 12,
+                "union": 28,
+                "jaccard": 0.42857142857142855,
+                "overlap_tokens": [
+                  "Nav",
+                  "nav",
+                  " completion",
+                  " Nav",
+                  " nav",
+                  " navigation",
+                  " entry",
+                  " slot",
+                  " location",
+                  " entries",
+                  " requirement",
+                  " status"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": [
+                {
+                  "rank": 1,
+                  "term": "nav",
+                  "token": "Nav",
+                  "score": 13.125
+                },
+                {
+                  "rank": 2,
+                  "term": "nav",
+                  "token": "nav",
+                  "score": 12.625
+                },
+                {
+                  "rank": 3,
+                  "term": "completion",
+                  "token": " completion",
+                  "score": 12.5625
+                },
+                {
+                  "rank": 4,
+                  "term": "nav",
+                  "token": " Nav",
+                  "score": 11.5
+                },
+                {
+                  "rank": 5,
+                  "term": "nav",
+                  "token": " nav",
+                  "score": 10.8125
+                },
+                {
+                  "rank": 6,
+                  "term": "dex",
+                  "token": " dex",
+                  "score": 10.0625
+                },
+                {
+                  "rank": 7,
+                  "term": "nav",
+                  "token": " navigation",
+                  "score": 10.0625
+                },
+                {
+                  "rank": 8,
+                  "term": "entry",
+                  "token": " entry",
+                  "score": 10.0625
+                },
+                {
+                  "rank": 10,
+                  "term": "dex",
+                  "token": " Dex",
+                  "score": 9.625
+                },
+                {
+                  "rank": 16,
+                  "term": "entries",
+                  "token": " entries",
+                  "score": 9.0625
+                },
+                {
+                  "rank": 20,
+                  "term": "nav",
+                  "token": " Navigator",
+                  "score": 8.9375
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "plain_maple_0",
+      "source": "plain",
+      "summary_name": "block_party_canonical",
+      "phrase": "Maple",
+      "occurrence": 0,
+      "private_terms": [
+        "refers",
+        "means",
+        "denotes",
+        "room",
+        "library",
+        "="
+      ],
+      "lexical_terms": [
+        "street",
+        "ave",
+        "avenue",
+        "park",
+        "town",
+        "city",
+        "maple"
+      ],
+      "note": "Maple is the library room, not a generic street/place name.",
+      "states": {
+        "write_time": {
+          "state": "write_time",
+          "token_position": 764,
+          "summary_relative_position": 9,
+          "anchor_token_id": 42033,
+          "anchor_token": " Maple",
+          "actual_next_token_id": 3254,
+          "actual_next_token": " means",
+          "context_window": "\nRiverside block party state:\n- Maple means the library's Maple Room for storage and volunteer",
+          "next_token_top": [
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 22.875
+            },
+            {
+              "token_id": 283,
+              "token": " =",
+              "score": 22.5
+            },
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 20.25
+            },
+            {
+              "token_id": 18675,
+              "token": " refers",
+              "score": 18.375
+            },
+            {
+              "token_id": 3254,
+              "token": " means",
+              "score": 18.125
+            },
+            {
+              "token_id": 318,
+              "token": " (",
+              "score": 17.5
+            },
+            {
+              "token_id": 10110,
+              "token": " Room",
+              "score": 17.0
+            },
+            {
+              "token_id": 28,
+              "token": "=",
+              "score": 16.5
+            },
+            {
+              "token_id": 68701,
+              "token": " denotes",
+              "score": 15.8125
+            },
+            {
+              "token_id": 6522,
+              "token": " library",
+              "score": 15.75
+            },
+            {
+              "token_id": 606,
+              "token": " ==",
+              "score": 14.625
+            },
+            {
+              "token_id": 2790,
+              "token": " design",
+              "score": 14.5625
+            },
+            {
+              "token_id": 11300,
+              "token": " Library",
+              "score": 14.1875
+            },
+            {
+              "token_id": 2956,
+              "token": " room",
+              "score": 14.0
+            },
+            {
+              "token_id": 18091,
+              "token": " defines",
+              "score": 13.75
+            },
+            {
+              "token_id": 8288,
+              "token": " Ref",
+              "score": 13.375
+            },
+            {
+              "token_id": 14619,
+              "token": " references",
+              "score": 13.375
+            },
+            {
+              "token_id": 4874,
+              "token": " names",
+              "score": 13.125
+            },
+            {
+              "token_id": 198,
+              "token": "\n",
+              "score": 13.0
+            },
+            {
+              "token_id": 803,
+              "token": " name",
+              "score": 12.8125
+            }
+          ],
+          "next_private_hits": [
+            {
+              "rank": 2,
+              "term": "=",
+              "token": " =",
+              "score": 22.5
+            },
+            {
+              "rank": 4,
+              "term": "refers",
+              "token": " refers",
+              "score": 18.375
+            },
+            {
+              "rank": 5,
+              "term": "means",
+              "token": " means",
+              "score": 18.125
+            },
+            {
+              "rank": 7,
+              "term": "room",
+              "token": " Room",
+              "score": 17.0
+            },
+            {
+              "rank": 8,
+              "term": "=",
+              "token": "=",
+              "score": 16.5
+            },
+            {
+              "rank": 9,
+              "term": "denotes",
+              "token": " denotes",
+              "score": 15.8125
+            },
+            {
+              "rank": 10,
+              "term": "library",
+              "token": " library",
+              "score": 15.75
+            },
+            {
+              "rank": 11,
+              "term": "=",
+              "token": " ==",
+              "score": 14.625
+            },
+            {
+              "rank": 13,
+              "term": "library",
+              "token": " Library",
+              "score": 14.1875
+            },
+            {
+              "rank": 14,
+              "term": "room",
+              "token": " room",
+              "score": 14.0
+            }
+          ],
+          "next_lexical_hits": [],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 18675,
+                  "token": " refers",
+                  "score": 17.5
+                },
+                {
+                  "token_id": 535,
+                  "token": " :",
+                  "score": 13.625
+                },
+                {
+                  "token_id": 111427,
+                  "token": "指的是",
+                  "score": 13.5625
+                },
+                {
+                  "token_id": 283,
+                  "token": " =",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 129956,
+                  "token": "就是指",
+                  "score": 11.6875
+                },
+                {
+                  "token_id": 21345,
+                  "token": " referring",
+                  "score": 11.625
+                },
+                {
+                  "token_id": 8042,
+                  "token": " refer",
+                  "score": 11.4375
+                },
+                {
+                  "token_id": 68701,
+                  "token": " denotes",
+                  "score": 11.4375
+                },
+                {
+                  "token_id": 246257,
+                  "token": " หมายถึง",
+                  "score": 11.1875
+                },
+                {
+                  "token_id": 3254,
+                  "token": " means",
+                  "score": 11.125
+                },
+                {
+                  "token_id": 77340,
+                  "token": "*:",
+                  "score": 11.0
+                },
+                {
+                  "token_id": 103722,
+                  "token": "是指",
+                  "score": 10.8125
+                },
+                {
+                  "token_id": 123146,
+                  "token": "指的",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 41336,
+                  "token": " designation",
+                  "score": 10.5625
+                },
+                {
+                  "token_id": 106342,
+                  "token": "意指",
+                  "score": 10.4375
+                },
+                {
+                  "token_id": 7063,
+                  "token": " meaning",
+                  "score": 10.375
+                },
+                {
+                  "token_id": 177489,
+                  "token": " означает",
+                  "score": 10.3125
+                },
+                {
+                  "token_id": 5604,
+                  "token": " reference",
+                  "score": 10.1875
+                },
+                {
+                  "token_id": 57691,
+                  "token": " Means",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 75106,
+                  "token": " signifies",
+                  "score": 10.0625
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 4,
+                "union": 36,
+                "jaccard": 0.1111111111111111,
+                "overlap_tokens": [
+                  " refers",
+                  " =",
+                  " denotes",
+                  " means"
+                ]
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 1,
+                  "term": "refers",
+                  "token": " refers",
+                  "score": 17.5
+                },
+                {
+                  "rank": 4,
+                  "term": "=",
+                  "token": " =",
+                  "score": 12.75
+                },
+                {
+                  "rank": 8,
+                  "term": "denotes",
+                  "token": " denotes",
+                  "score": 11.4375
+                },
+                {
+                  "rank": 10,
+                  "term": "means",
+                  "token": " means",
+                  "score": 11.125
+                },
+                {
+                  "rank": 19,
+                  "term": "means",
+                  "token": " Means",
+                  "score": 10.125
+                }
+              ],
+              "lens_lexical_hits": []
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 25,
+                  "token": ":",
+                  "score": 25.875
+                },
+                {
+                  "token_id": 283,
+                  "token": " =",
+                  "score": 21.625
+                },
+                {
+                  "token_id": 18675,
+                  "token": " refers",
+                  "score": 17.0
+                },
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 15.875
+                },
+                {
+                  "token_id": 3254,
+                  "token": " means",
+                  "score": 15.5
+                },
+                {
+                  "token_id": 535,
+                  "token": " :",
+                  "score": 15.1875
+                },
+                {
+                  "token_id": 28,
+                  "token": "=",
+                  "score": 15.0
+                },
+                {
+                  "token_id": 68701,
+                  "token": " denotes",
+                  "score": 14.0
+                },
+                {
+                  "token_id": 6522,
+                  "token": " library",
+                  "score": 13.8125
+                },
+                {
+                  "token_id": 10110,
+                  "token": " Room",
+                  "score": 13.3125
+                },
+                {
+                  "token_id": 606,
+                  "token": " ==",
+                  "score": 12.9375
+                },
+                {
+                  "token_id": 11300,
+                  "token": " Library",
+                  "score": 12.8125
+                },
+                {
+                  "token_id": 1610,
+                  "token": " :=",
+                  "score": 12.25
+                },
+                {
+                  "token_id": 16327,
+                  "token": " equals",
+                  "score": 11.5625
+                },
+                {
+                  "token_id": 2790,
+                  "token": " design",
+                  "score": 11.5625
+                },
+                {
+                  "token_id": 13803,
+                  "token": ":=",
+                  "score": 11.4375
+                },
+                {
+                  "token_id": 71527,
+                  "token": ":The",
+                  "score": 11.4375
+                },
+                {
+                  "token_id": 18091,
+                  "token": " defines",
+                  "score": 11.4375
+                },
+                {
+                  "token_id": 4960,
+                  "token": "：",
+                  "score": 11.25
+                },
+                {
+                  "token_id": 70206,
+                  "token": "=R",
+                  "score": 11.125
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 13,
+                "union": 27,
+                "jaccard": 0.48148148148148145,
+                "overlap_tokens": [
+                  ":",
+                  " =",
+                  " refers",
+                  " is",
+                  " means",
+                  "=",
+                  " denotes",
+                  " library",
+                  " Room",
+                  " ==",
+                  " Library",
+                  " design",
+                  " defines"
+                ]
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 2,
+                  "term": "=",
+                  "token": " =",
+                  "score": 21.625
+                },
+                {
+                  "rank": 3,
+                  "term": "refers",
+                  "token": " refers",
+                  "score": 17.0
+                },
+                {
+                  "rank": 5,
+                  "term": "means",
+                  "token": " means",
+                  "score": 15.5
+                },
+                {
+                  "rank": 7,
+                  "term": "=",
+                  "token": "=",
+                  "score": 15.0
+                },
+                {
+                  "rank": 8,
+                  "term": "denotes",
+                  "token": " denotes",
+                  "score": 14.0
+                },
+                {
+                  "rank": 9,
+                  "term": "library",
+                  "token": " library",
+                  "score": 13.8125
+                },
+                {
+                  "rank": 10,
+                  "term": "room",
+                  "token": " Room",
+                  "score": 13.3125
+                },
+                {
+                  "rank": 11,
+                  "term": "=",
+                  "token": " ==",
+                  "score": 12.9375
+                },
+                {
+                  "rank": 12,
+                  "term": "library",
+                  "token": " Library",
+                  "score": 12.8125
+                },
+                {
+                  "rank": 13,
+                  "term": "=",
+                  "token": " :=",
+                  "score": 12.25
+                },
+                {
+                  "rank": 16,
+                  "term": "=",
+                  "token": ":=",
+                  "score": 11.4375
+                },
+                {
+                  "rank": 20,
+                  "term": "=",
+                  "token": "=R",
+                  "score": 11.125
+                }
+              ],
+              "lens_lexical_hits": []
+            }
+          }
+        },
+        "fresh": {
+          "state": "fresh",
+          "token_position": 102,
+          "summary_relative_position": 9,
+          "anchor_token_id": 42033,
+          "anchor_token": " Maple",
+          "actual_next_token_id": 3254,
+          "actual_next_token": " means",
+          "context_window": "\nRiverside block party state:\n- Maple means the library's Maple Room for storage and volunteer",
+          "next_token_top": [
+            {
+              "token_id": 6476,
+              "token": " Street",
+              "score": 14.3125
+            },
+            {
+              "token_id": 769,
+              "token": " St",
+              "score": 13.875
+            },
+            {
+              "token_id": 20639,
+              "token": " Ave",
+              "score": 12.875
+            },
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 12.5
+            },
+            {
+              "token_id": 8329,
+              "token": " street",
+              "score": 12.0
+            },
+            {
+              "token_id": 6451,
+              "token": "wood",
+              "score": 11.6875
+            },
+            {
+              "token_id": 15675,
+              "token": " Drive",
+              "score": 11.4375
+            },
+            {
+              "token_id": 594,
+              "token": " &",
+              "score": 11.375
+            },
+            {
+              "token_id": 352,
+              "token": " st",
+              "score": 11.3125
+            },
+            {
+              "token_id": 321,
+              "token": " and",
+              "score": 11.3125
+            },
+            {
+              "token_id": 11,
+              "token": ",",
+              "score": 11.25
+            },
+            {
+              "token_id": 16627,
+              "token": " Avenue",
+              "score": 10.75
+            },
+            {
+              "token_id": 14,
+              "token": "/",
+              "score": 10.625
+            },
+            {
+              "token_id": 25187,
+              "token": " Lane",
+              "score": 10.5625
+            },
+            {
+              "token_id": 38802,
+              "token": " Grove",
+              "score": 10.4375
+            },
+            {
+              "token_id": 608,
+              "token": "St",
+              "score": 10.375
+            },
+            {
+              "token_id": 248046,
+              "token": "<|im_end|>",
+              "score": 10.3125
+            },
+            {
+              "token_id": 5540,
+              "token": " Sy",
+              "score": 10.3125
+            },
+            {
+              "token_id": 2832,
+              "token": " Dr",
+              "score": 10.125
+            },
+            {
+              "token_id": 26577,
+              "token": " Rd",
+              "score": 10.0625
+            }
+          ],
+          "next_private_hits": [],
+          "next_lexical_hits": [
+            {
+              "rank": 1,
+              "term": "street",
+              "token": " Street",
+              "score": 14.3125
+            },
+            {
+              "rank": 3,
+              "term": "ave",
+              "token": " Ave",
+              "score": 12.875
+            },
+            {
+              "rank": 5,
+              "term": "street",
+              "token": " street",
+              "score": 12.0
+            },
+            {
+              "rank": 12,
+              "term": "ave",
+              "token": " Avenue",
+              "score": 10.75
+            }
+          ],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 6476,
+                  "token": " Street",
+                  "score": 14.0
+                },
+                {
+                  "token_id": 8329,
+                  "token": " street",
+                  "score": 12.8125
+                },
+                {
+                  "token_id": 12174,
+                  "token": " neighborhood",
+                  "score": 12.0
+                },
+                {
+                  "token_id": 5926,
+                  "token": " park",
+                  "score": 11.9375
+                },
+                {
+                  "token_id": 13959,
+                  "token": " streets",
+                  "score": 11.8125
+                },
+                {
+                  "token_id": 4170,
+                  "token": " City",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 6092,
+                  "token": " town",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 13570,
+                  "token": " Town",
+                  "score": 11.625
+                },
+                {
+                  "token_id": 42033,
+                  "token": " Maple",
+                  "score": 11.5625
+                },
+                {
+                  "token_id": 59438,
+                  "token": " Neighborhood",
+                  "score": 11.25
+                },
+                {
+                  "token_id": 5367,
+                  "token": " Park",
+                  "score": 11.125
+                },
+                {
+                  "token_id": 63309,
+                  "token": " Streets",
+                  "score": 11.125
+                },
+                {
+                  "token_id": 8672,
+                  "token": " Tree",
+                  "score": 11.0625
+                },
+                {
+                  "token_id": 3177,
+                  "token": " city",
+                  "score": 10.9375
+                },
+                {
+                  "token_id": 18337,
+                  "token": " downtown",
+                  "score": 10.875
+                },
+                {
+                  "token_id": 23316,
+                  "token": " Village",
+                  "score": 10.8125
+                },
+                {
+                  "token_id": 56892,
+                  "token": " Trees",
+                  "score": 10.375
+                },
+                {
+                  "token_id": 13721,
+                  "token": " village",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 6075,
+                  "token": " County",
+                  "score": 9.9375
+                },
+                {
+                  "token_id": 50894,
+                  "token": " Township",
+                  "score": 9.875
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 2,
+                "union": 38,
+                "jaccard": 0.05263157894736842,
+                "overlap_tokens": [
+                  " Street",
+                  " street"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": [
+                {
+                  "rank": 1,
+                  "term": "street",
+                  "token": " Street",
+                  "score": 14.0
+                },
+                {
+                  "rank": 2,
+                  "term": "street",
+                  "token": " street",
+                  "score": 12.8125
+                },
+                {
+                  "rank": 4,
+                  "term": "park",
+                  "token": " park",
+                  "score": 11.9375
+                },
+                {
+                  "rank": 5,
+                  "term": "street",
+                  "token": " streets",
+                  "score": 11.8125
+                },
+                {
+                  "rank": 6,
+                  "term": "city",
+                  "token": " City",
+                  "score": 11.75
+                },
+                {
+                  "rank": 7,
+                  "term": "town",
+                  "token": " town",
+                  "score": 11.75
+                },
+                {
+                  "rank": 8,
+                  "term": "town",
+                  "token": " Town",
+                  "score": 11.625
+                },
+                {
+                  "rank": 9,
+                  "term": "maple",
+                  "token": " Maple",
+                  "score": 11.5625
+                },
+                {
+                  "rank": 11,
+                  "term": "park",
+                  "token": " Park",
+                  "score": 11.125
+                },
+                {
+                  "rank": 12,
+                  "term": "street",
+                  "token": " Streets",
+                  "score": 11.125
+                },
+                {
+                  "rank": 14,
+                  "term": "city",
+                  "token": " city",
+                  "score": 10.9375
+                },
+                {
+                  "rank": 15,
+                  "term": "town",
+                  "token": " downtown",
+                  "score": 10.875
+                },
+                {
+                  "rank": 20,
+                  "term": "town",
+                  "token": " Township",
+                  "score": 9.875
+                }
+              ]
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 6476,
+                  "token": " Street",
+                  "score": 17.0
+                },
+                {
+                  "token_id": 8329,
+                  "token": " street",
+                  "score": 13.6875
+                },
+                {
+                  "token_id": 20639,
+                  "token": " Ave",
+                  "score": 13.25
+                },
+                {
+                  "token_id": 16627,
+                  "token": " Avenue",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 769,
+                  "token": " St",
+                  "score": 12.3125
+                },
+                {
+                  "token_id": 25,
+                  "token": ":",
+                  "score": 12.0
+                },
+                {
+                  "token_id": 15675,
+                  "token": " Drive",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 63309,
+                  "token": " Streets",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 13959,
+                  "token": " streets",
+                  "score": 11.0625
+                },
+                {
+                  "token_id": 38802,
+                  "token": " Grove",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 25187,
+                  "token": " Lane",
+                  "score": 10.6875
+                },
+                {
+                  "token_id": 33402,
+                  "token": "Street",
+                  "score": 10.5625
+                },
+                {
+                  "token_id": 8672,
+                  "token": " Tree",
+                  "score": 10.4375
+                },
+                {
+                  "token_id": 59621,
+                  "token": " avenue",
+                  "score": 10.3125
+                },
+                {
+                  "token_id": 33072,
+                  "token": " Ridge",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 26007,
+                  "token": " Leaf",
+                  "score": 9.875
+                },
+                {
+                  "token_id": 9254,
+                  "token": " Road",
+                  "score": 9.8125
+                },
+                {
+                  "token_id": 81527,
+                  "token": "/St",
+                  "score": 9.8125
+                },
+                {
+                  "token_id": 14,
+                  "token": "/",
+                  "score": 9.8125
+                },
+                {
+                  "token_id": 22474,
+                  "token": " Creek",
+                  "score": 9.625
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 10,
+                "union": 30,
+                "jaccard": 0.3333333333333333,
+                "overlap_tokens": [
+                  " Street",
+                  " street",
+                  " Ave",
+                  " Avenue",
+                  " St",
+                  ":",
+                  " Drive",
+                  " Grove",
+                  " Lane",
+                  "/"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": [
+                {
+                  "rank": 1,
+                  "term": "street",
+                  "token": " Street",
+                  "score": 17.0
+                },
+                {
+                  "rank": 2,
+                  "term": "street",
+                  "token": " street",
+                  "score": 13.6875
+                },
+                {
+                  "rank": 3,
+                  "term": "ave",
+                  "token": " Ave",
+                  "score": 13.25
+                },
+                {
+                  "rank": 4,
+                  "term": "ave",
+                  "token": " Avenue",
+                  "score": 12.75
+                },
+                {
+                  "rank": 8,
+                  "term": "street",
+                  "token": " Streets",
+                  "score": 11.75
+                },
+                {
+                  "rank": 9,
+                  "term": "street",
+                  "token": " streets",
+                  "score": 11.0625
+                },
+                {
+                  "rank": 12,
+                  "term": "street",
+                  "token": "Street",
+                  "score": 10.5625
+                },
+                {
+                  "rank": 14,
+                  "term": "ave",
+                  "token": " avenue",
+                  "score": 10.3125
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "plain_b410_0",
+      "source": "plain",
+      "summary_name": "block_party_canonical",
+      "phrase": "B-410",
+      "occurrence": 0,
+      "private_terms": [
+        "obsolete",
+        "outdated",
+        "deprecated",
+        "expired",
+        "stale"
+      ],
+      "lexical_terms": [
+        "municipal",
+        "city",
+        "civic",
+        "permit",
+        "town",
+        "code"
+      ],
+      "note": "B-410 is stale; P-771 is current.",
+      "states": {
+        "write_time": {
+          "state": "write_time",
+          "token_position": 867,
+          "summary_relative_position": 112,
+          "anchor_token_id": 417,
+          "anchor_token": " B",
+          "actual_next_token_id": 12,
+          "actual_next_token": "-",
+          "context_window": " lane. Red means cancel.\n- Permit: B-410 is stale. Use P-",
+          "next_token_top": [
+            {
+              "token_id": 12,
+              "token": "-",
+              "score": 25.25
+            },
+            {
+              "token_id": 248046,
+              "token": "<|im_end|>",
+              "score": 14.0625
+            },
+            {
+              "token_id": 19,
+              "token": "4",
+              "score": 13.6875
+            },
+            {
+              "token_id": 471,
+              "token": " -",
+              "score": 13.375
+            },
+            {
+              "token_id": 54087,
+              "token": "‑",
+              "score": 12.8125
+            },
+            {
+              "token_id": 5304,
+              "token": "-st",
+              "score": 12.1875
+            },
+            {
+              "token_id": 4006,
+              "token": "–",
+              "score": 11.9375
+            },
+            {
+              "token_id": 198,
+              "token": "\n",
+              "score": 11.9375
+            },
+            {
+              "token_id": 220,
+              "token": " ",
+              "score": 11.875
+            },
+            {
+              "token_id": 62,
+              "token": "_",
+              "score": 11.4375
+            },
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 11.375
+            },
+            {
+              "token_id": 67677,
+              "token": "-_",
+              "score": 10.6875
+            },
+            {
+              "token_id": 271,
+              "token": "\n\n",
+              "score": 10.625
+            },
+            {
+              "token_id": 13,
+              "token": ".",
+              "score": 10.375
+            },
+            {
+              "token_id": 312,
+              "token": "--",
+              "score": 10.3125
+            },
+            {
+              "token_id": 2218,
+              "token": "—",
+              "score": 10.0625
+            },
+            {
+              "token_id": 9023,
+              "token": "-P",
+              "score": 10.0
+            },
+            {
+              "token_id": 16520,
+              "token": "-per",
+              "score": 10.0
+            },
+            {
+              "token_id": 4623,
+              "token": "uses",
+              "score": 10.0
+            },
+            {
+              "token_id": 20069,
+              "token": "ETA",
+              "score": 9.8125
+            }
+          ],
+          "next_private_hits": [],
+          "next_lexical_hits": [],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 44529,
+                  "token": " obsolete",
+                  "score": 16.25
+                },
+                {
+                  "token_id": 39188,
+                  "token": " outdated",
+                  "score": 15.6875
+                },
+                {
+                  "token_id": 30551,
+                  "token": " deprecated",
+                  "score": 14.75
+                },
+                {
+                  "token_id": 53166,
+                  "token": "obsolete",
+                  "score": 14.5
+                },
+                {
+                  "token_id": 25547,
+                  "token": " expired",
+                  "score": 14.0625
+                },
+                {
+                  "token_id": 36924,
+                  "token": "deprecated",
+                  "score": 14.0
+                },
+                {
+                  "token_id": 130944,
+                  "token": "作废",
+                  "score": 13.75
+                },
+                {
+                  "token_id": 106482,
+                  "token": "老旧",
+                  "score": 13.4375
+                },
+                {
+                  "token_id": 20461,
+                  "token": "_old",
+                  "score": 13.25
+                },
+                {
+                  "token_id": 44524,
+                  "token": ".old",
+                  "score": 13.125
+                },
+                {
+                  "token_id": 138973,
+                  "token": "被淘汰",
+                  "score": 13.0625
+                },
+                {
+                  "token_id": 142227,
+                  "token": "是老",
+                  "score": 13.0
+                },
+                {
+                  "token_id": 19284,
+                  "token": "precated",
+                  "score": 13.0
+                },
+                {
+                  "token_id": 81021,
+                  "token": " Deprecated",
+                  "score": 12.875
+                },
+                {
+                  "token_id": 91940,
+                  "token": "Obsolete",
+                  "score": 12.8125
+                },
+                {
+                  "token_id": 105544,
+                  "token": "废弃",
+                  "score": 12.8125
+                },
+                {
+                  "token_id": 21295,
+                  "token": "(old",
+                  "score": 12.625
+                },
+                {
+                  "token_id": 49617,
+                  "token": "Deprecated",
+                  "score": 12.625
+                },
+                {
+                  "token_id": 139275,
+                  "token": "过时",
+                  "score": 12.5625
+                },
+                {
+                  "token_id": 72954,
+                  "token": "expired",
+                  "score": 12.4375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 0,
+                "union": 40,
+                "jaccard": 0.0,
+                "overlap_tokens": []
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 1,
+                  "term": "obsolete",
+                  "token": " obsolete",
+                  "score": 16.25
+                },
+                {
+                  "rank": 2,
+                  "term": "outdated",
+                  "token": " outdated",
+                  "score": 15.6875
+                },
+                {
+                  "rank": 3,
+                  "term": "deprecated",
+                  "token": " deprecated",
+                  "score": 14.75
+                },
+                {
+                  "rank": 4,
+                  "term": "obsolete",
+                  "token": "obsolete",
+                  "score": 14.5
+                },
+                {
+                  "rank": 5,
+                  "term": "expired",
+                  "token": " expired",
+                  "score": 14.0625
+                },
+                {
+                  "rank": 6,
+                  "term": "deprecated",
+                  "token": "deprecated",
+                  "score": 14.0
+                },
+                {
+                  "rank": 14,
+                  "term": "deprecated",
+                  "token": " Deprecated",
+                  "score": 12.875
+                },
+                {
+                  "rank": 15,
+                  "term": "obsolete",
+                  "token": "Obsolete",
+                  "score": 12.8125
+                },
+                {
+                  "rank": 18,
+                  "term": "deprecated",
+                  "token": "Deprecated",
+                  "score": 12.625
+                },
+                {
+                  "rank": 20,
+                  "term": "expired",
+                  "token": "expired",
+                  "score": 12.4375
+                }
+              ],
+              "lens_lexical_hits": []
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 12,
+                  "token": "-",
+                  "score": 21.125
+                },
+                {
+                  "token_id": 471,
+                  "token": " -",
+                  "score": 12.625
+                },
+                {
+                  "token_id": 7428,
+                  "token": "-B",
+                  "score": 12.3125
+                },
+                {
+                  "token_id": 67677,
+                  "token": "-_",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 4006,
+                  "token": "–",
+                  "score": 11.25
+                },
+                {
+                  "token_id": 9023,
+                  "token": "-P",
+                  "score": 10.875
+                },
+                {
+                  "token_id": 212192,
+                  "token": "-**",
+                  "score": 10.6875
+                },
+                {
+                  "token_id": 19,
+                  "token": "4",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 312,
+                  "token": "--",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 12249,
+                  "token": ".-",
+                  "score": 10.5
+                },
+                {
+                  "token_id": 29533,
+                  "token": "-\\",
+                  "score": 10.5
+                },
+                {
+                  "token_id": 14105,
+                  "token": "-.",
+                  "score": 10.25
+                },
+                {
+                  "token_id": 6481,
+                  "token": "-A",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 32160,
+                  "token": "−",
+                  "score": 9.875
+                },
+                {
+                  "token_id": 7415,
+                  "token": "-C",
+                  "score": 9.75
+                },
+                {
+                  "token_id": 63882,
+                  "token": "-/",
+                  "score": 9.625
+                },
+                {
+                  "token_id": 26754,
+                  "token": "-\"",
+                  "score": 9.4375
+                },
+                {
+                  "token_id": 89383,
+                  "token": "-ST",
+                  "score": 9.25
+                },
+                {
+                  "token_id": 39641,
+                  "token": "-[",
+                  "score": 9.25
+                },
+                {
+                  "token_id": 38308,
+                  "token": "-St",
+                  "score": 9.1875
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 7,
+                "union": 33,
+                "jaccard": 0.21212121212121213,
+                "overlap_tokens": [
+                  "-",
+                  " -",
+                  "-_",
+                  "–",
+                  "-P",
+                  "4",
+                  "--"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": []
+            }
+          }
+        },
+        "fresh": {
+          "state": "fresh",
+          "token_position": 205,
+          "summary_relative_position": 112,
+          "anchor_token_id": 417,
+          "anchor_token": " B",
+          "actual_next_token_id": 12,
+          "actual_next_token": "-",
+          "context_window": " lane. Red means cancel.\n- Permit: B-410 is stale. Use P-",
+          "next_token_top": [
+            {
+              "token_id": 12,
+              "token": "-",
+              "score": 17.75
+            },
+            {
+              "token_id": 17,
+              "token": "2",
+              "score": 15.25
+            },
+            {
+              "token_id": 22308,
+              "token": "PD",
+              "score": 14.9375
+            },
+            {
+              "token_id": 16,
+              "token": "1",
+              "score": 14.75
+            },
+            {
+              "token_id": 18,
+              "token": "3",
+              "score": 14.75
+            },
+            {
+              "token_id": 248046,
+              "token": "<|im_end|>",
+              "score": 14.75
+            },
+            {
+              "token_id": 11982,
+              "token": "LD",
+              "score": 14.6875
+            },
+            {
+              "token_id": 19,
+              "token": "4",
+              "score": 14.5625
+            },
+            {
+              "token_id": 497,
+              "token": "ld",
+              "score": 14.125
+            },
+            {
+              "token_id": 2822,
+              "token": "PL",
+              "score": 13.9375
+            },
+            {
+              "token_id": 15,
+              "token": "0",
+              "score": 13.375
+            },
+            {
+              "token_id": 22,
+              "token": "7",
+              "score": 13.375
+            },
+            {
+              "token_id": 23,
+              "token": "8",
+              "score": 12.8125
+            },
+            {
+              "token_id": 21,
+              "token": "6",
+              "score": 12.6875
+            },
+            {
+              "token_id": 9023,
+              "token": "-P",
+              "score": 12.5625
+            },
+            {
+              "token_id": 6277,
+              "token": "PR",
+              "score": 12.5625
+            },
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 12.5
+            },
+            {
+              "token_id": 20,
+              "token": "5",
+              "score": 12.4375
+            },
+            {
+              "token_id": 11622,
+              "token": "HS",
+              "score": 12.4375
+            },
+            {
+              "token_id": 16520,
+              "token": "-per",
+              "score": 12.375
+            }
+          ],
+          "next_private_hits": [],
+          "next_lexical_hits": [],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 25569,
+                  "token": " municipal",
+                  "score": 13.5625
+                },
+                {
+                  "token_id": 4170,
+                  "token": " City",
+                  "score": 13.25
+                },
+                {
+                  "token_id": 42770,
+                  "token": " Municipal",
+                  "score": 13.0625
+                },
+                {
+                  "token_id": 3177,
+                  "token": " city",
+                  "score": 11.5625
+                },
+                {
+                  "token_id": 8509,
+                  "token": " Local",
+                  "score": 11.5
+                },
+                {
+                  "token_id": 52985,
+                  "token": " Civic",
+                  "score": 11.375
+                },
+                {
+                  "token_id": 13570,
+                  "token": " Town",
+                  "score": 11.0625
+                },
+                {
+                  "token_id": 1811,
+                  "token": " License",
+                  "score": 10.9375
+                },
+                {
+                  "token_id": 5545,
+                  "token": " license",
+                  "score": 10.8125
+                },
+                {
+                  "token_id": 56972,
+                  "token": "-license",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 6075,
+                  "token": " County",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 10623,
+                  "token": " District",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 11217,
+                  "token": " permit",
+                  "score": 10.5
+                },
+                {
+                  "token_id": 51539,
+                  "token": "-city",
+                  "score": 10.4375
+                },
+                {
+                  "token_id": 13210,
+                  "token": "unicip",
+                  "score": 10.25
+                },
+                {
+                  "token_id": 77856,
+                  "token": " Permit",
+                  "score": 10.1875
+                },
+                {
+                  "token_id": 61625,
+                  "token": " Approval",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 80041,
+                  "token": "-town",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 54919,
+                  "token": " municipality",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 34522,
+                  "token": " Municip",
+                  "score": 10.0
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 0,
+                "union": 40,
+                "jaccard": 0.0,
+                "overlap_tokens": []
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": [
+                {
+                  "rank": 1,
+                  "term": "municipal",
+                  "token": " municipal",
+                  "score": 13.5625
+                },
+                {
+                  "rank": 2,
+                  "term": "city",
+                  "token": " City",
+                  "score": 13.25
+                },
+                {
+                  "rank": 3,
+                  "term": "municipal",
+                  "token": " Municipal",
+                  "score": 13.0625
+                },
+                {
+                  "rank": 4,
+                  "term": "city",
+                  "token": " city",
+                  "score": 11.5625
+                },
+                {
+                  "rank": 6,
+                  "term": "civic",
+                  "token": " Civic",
+                  "score": 11.375
+                },
+                {
+                  "rank": 7,
+                  "term": "town",
+                  "token": " Town",
+                  "score": 11.0625
+                },
+                {
+                  "rank": 13,
+                  "term": "permit",
+                  "token": " permit",
+                  "score": 10.5
+                },
+                {
+                  "rank": 14,
+                  "term": "city",
+                  "token": "-city",
+                  "score": 10.4375
+                },
+                {
+                  "rank": 16,
+                  "term": "permit",
+                  "token": " Permit",
+                  "score": 10.1875
+                },
+                {
+                  "rank": 18,
+                  "term": "town",
+                  "token": "-town",
+                  "score": 10.0625
+                },
+                {
+                  "rank": 19,
+                  "term": "municipal",
+                  "token": " municipality",
+                  "score": 10.0625
+                }
+              ]
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 12,
+                  "token": "-",
+                  "score": 18.125
+                },
+                {
+                  "token_id": 17,
+                  "token": "2",
+                  "score": 16.5
+                },
+                {
+                  "token_id": 19,
+                  "token": "4",
+                  "score": 15.8125
+                },
+                {
+                  "token_id": 18,
+                  "token": "3",
+                  "score": 15.625
+                },
+                {
+                  "token_id": 16,
+                  "token": "1",
+                  "score": 15.0625
+                },
+                {
+                  "token_id": 22308,
+                  "token": "PD",
+                  "score": 14.5625
+                },
+                {
+                  "token_id": 22,
+                  "token": "7",
+                  "score": 14.375
+                },
+                {
+                  "token_id": 21,
+                  "token": "6",
+                  "score": 14.0625
+                },
+                {
+                  "token_id": 15,
+                  "token": "0",
+                  "score": 13.8125
+                },
+                {
+                  "token_id": 7428,
+                  "token": "-B",
+                  "score": 13.75
+                },
+                {
+                  "token_id": 20,
+                  "token": "5",
+                  "score": 13.625
+                },
+                {
+                  "token_id": 23,
+                  "token": "8",
+                  "score": 13.625
+                },
+                {
+                  "token_id": 7415,
+                  "token": "-C",
+                  "score": 13.375
+                },
+                {
+                  "token_id": 9023,
+                  "token": "-P",
+                  "score": 13.0
+                },
+                {
+                  "token_id": 24,
+                  "token": "9",
+                  "score": 12.9375
+                },
+                {
+                  "token_id": 11982,
+                  "token": "LD",
+                  "score": 12.8125
+                },
+                {
+                  "token_id": 10592,
+                  "token": "-R",
+                  "score": 12.25
+                },
+                {
+                  "token_id": 9110,
+                  "token": "BL",
+                  "score": 12.25
+                },
+                {
+                  "token_id": 7049,
+                  "token": "-F",
+                  "score": 11.6875
+                },
+                {
+                  "token_id": 2822,
+                  "token": "PL",
+                  "score": 11.5625
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 14,
+                "union": 26,
+                "jaccard": 0.5384615384615384,
+                "overlap_tokens": [
+                  "-",
+                  "2",
+                  "4",
+                  "3",
+                  "1",
+                  "PD",
+                  "7",
+                  "6",
+                  "0",
+                  "5",
+                  "8",
+                  "-P",
+                  "LD",
+                  "PL"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "plain_crane_0",
+      "source": "plain",
+      "summary_name": "block_party_canonical",
+      "phrase": "Crane",
+      "occurrence": 0,
+      "private_terms": [
+        "stage",
+        "delivers",
+        "risers",
+        "refers",
+        "means",
+        "company"
+      ],
+      "lexical_terms": [
+        "crane",
+        "operator",
+        "rental",
+        "lease",
+        "license",
+        "equipment"
+      ],
+      "note": "Crane is a stage-rental company, not generic equipment/operator.",
+      "states": {
+        "write_time": {
+          "state": "write_time",
+          "token_position": 974,
+          "summary_relative_position": 219,
+          "anchor_token_id": 70422,
+          "anchor_token": " Crane",
+          "actual_next_token_id": 369,
+          "actual_next_token": " is",
+          "context_window": " setup starts Saturday at 10.\n- Crane is the stage rental company, not equipment. Crane",
+          "next_token_top": [
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 26.125
+            },
+            {
+              "token_id": 3254,
+              "token": " means",
+              "score": 18.375
+            },
+            {
+              "token_id": 318,
+              "token": " (",
+              "score": 18.125
+            },
+            {
+              "token_id": 18675,
+              "token": " refers",
+              "score": 16.5
+            },
+            {
+              "token_id": 279,
+              "token": " the",
+              "score": 16.375
+            },
+            {
+              "token_id": 11,
+              "token": ",",
+              "score": 15.6875
+            },
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 15.5
+            },
+            {
+              "token_id": 248046,
+              "token": "<|im_end|>",
+              "score": 15.3125
+            },
+            {
+              "token_id": 579,
+              "token": "'s",
+              "score": 14.625
+            },
+            {
+              "token_id": 5529,
+              "token": " provides",
+              "score": 14.5
+            },
+            {
+              "token_id": 26437,
+              "token": " delivers",
+              "score": 14.375
+            },
+            {
+              "token_id": 513,
+              "token": " are",
+              "score": 13.5625
+            },
+            {
+              "token_id": 17102,
+              "token": " stages",
+              "score": 13.5625
+            },
+            {
+              "token_id": 10551,
+              "token": " represents",
+              "score": 13.5
+            },
+            {
+              "token_id": 557,
+              "token": " was",
+              "score": 13.375
+            },
+            {
+              "token_id": 6228,
+              "token": " stage",
+              "score": 13.3125
+            },
+            {
+              "token_id": 4874,
+              "token": " names",
+              "score": 13.0
+            },
+            {
+              "token_id": 682,
+              "token": " has",
+              "score": 13.0
+            },
+            {
+              "token_id": 321,
+              "token": " and",
+              "score": 13.0
+            },
+            {
+              "token_id": 16229,
+              "token": " supplies",
+              "score": 12.8125
+            }
+          ],
+          "next_private_hits": [
+            {
+              "rank": 2,
+              "term": "means",
+              "token": " means",
+              "score": 18.375
+            },
+            {
+              "rank": 4,
+              "term": "refers",
+              "token": " refers",
+              "score": 16.5
+            },
+            {
+              "rank": 11,
+              "term": "delivers",
+              "token": " delivers",
+              "score": 14.375
+            },
+            {
+              "rank": 13,
+              "term": "stage",
+              "token": " stages",
+              "score": 13.5625
+            },
+            {
+              "rank": 16,
+              "term": "stage",
+              "token": " stage",
+              "score": 13.3125
+            }
+          ],
+          "next_lexical_hits": [],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 102062,
+                  "token": "是一家",
+                  "score": 13.9375
+                },
+                {
+                  "token_id": 18675,
+                  "token": " refers",
+                  "score": 13.875
+                },
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 13.75
+                },
+                {
+                  "token_id": 10551,
+                  "token": " represents",
+                  "score": 12.9375
+                },
+                {
+                  "token_id": 139600,
+                  "token": "是一群",
+                  "score": 11.9375
+                },
+                {
+                  "token_id": 20789,
+                  "token": " hired",
+                  "score": 11.9375
+                },
+                {
+                  "token_id": 107555,
+                  "token": "是客户",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 130801,
+                  "token": "是公司",
+                  "score": 11.6875
+                },
+                {
+                  "token_id": 18254,
+                  "token": " supplier",
+                  "score": 11.5625
+                },
+                {
+                  "token_id": 139883,
+                  "token": "是一支",
+                  "score": 11.375
+                },
+                {
+                  "token_id": 122528,
+                  "token": "是一所",
+                  "score": 11.375
+                },
+                {
+                  "token_id": 23495,
+                  "token": " owns",
+                  "score": 11.25
+                },
+                {
+                  "token_id": 60723,
+                  "token": "—not",
+                  "score": 10.875
+                },
+                {
+                  "token_id": 557,
+                  "token": " was",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 30665,
+                  "token": " Supplier",
+                  "score": 10.6875
+                },
+                {
+                  "token_id": 4290,
+                  "token": " isn",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 2724,
+                  "token": " company",
+                  "score": 10.5625
+                },
+                {
+                  "token_id": 38435,
+                  "token": " surname",
+                  "score": 10.5
+                },
+                {
+                  "token_id": 120296,
+                  "token": "不是一个",
+                  "score": 10.5
+                },
+                {
+                  "token_id": 130781,
+                  "token": "作为一家",
+                  "score": 10.4375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 4,
+                "union": 36,
+                "jaccard": 0.1111111111111111,
+                "overlap_tokens": [
+                  " refers",
+                  " is",
+                  " represents",
+                  " was"
+                ]
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 2,
+                  "term": "refers",
+                  "token": " refers",
+                  "score": 13.875
+                },
+                {
+                  "rank": 17,
+                  "term": "company",
+                  "token": " company",
+                  "score": 10.5625
+                }
+              ],
+              "lens_lexical_hits": []
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 26.125
+                },
+                {
+                  "token_id": 18675,
+                  "token": " refers",
+                  "score": 15.25
+                },
+                {
+                  "token_id": 3254,
+                  "token": " means",
+                  "score": 14.5625
+                },
+                {
+                  "token_id": 21427,
+                  "token": " Stage",
+                  "score": 13.6875
+                },
+                {
+                  "token_id": 6228,
+                  "token": " stage",
+                  "score": 13.3125
+                },
+                {
+                  "token_id": 26437,
+                  "token": " delivers",
+                  "score": 13.0625
+                },
+                {
+                  "token_id": 513,
+                  "token": " are",
+                  "score": 13.0
+                },
+                {
+                  "token_id": 284,
+                  "token": "is",
+                  "score": 12.9375
+                },
+                {
+                  "token_id": 2011,
+                  "token": ".is",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 19300,
+                  "token": "\tis",
+                  "score": 12.5625
+                },
+                {
+                  "token_id": 10551,
+                  "token": " represents",
+                  "score": 12.5
+                },
+                {
+                  "token_id": 17102,
+                  "token": " stages",
+                  "score": 12.5
+                },
+                {
+                  "token_id": 5529,
+                  "token": " provides",
+                  "score": 12.375
+                },
+                {
+                  "token_id": 2091,
+                  "token": " Is",
+                  "score": 12.3125
+                },
+                {
+                  "token_id": 11,
+                  "token": ",",
+                  "score": 12.1875
+                },
+                {
+                  "token_id": 3314,
+                  "token": " IS",
+                  "score": 11.875
+                },
+                {
+                  "token_id": 29440,
+                  "token": "-is",
+                  "score": 11.75
+                },
+                {
+                  "token_id": 16229,
+                  "token": " supplies",
+                  "score": 11.375
+                },
+                {
+                  "token_id": 557,
+                  "token": " was",
+                  "score": 11.375
+                },
+                {
+                  "token_id": 682,
+                  "token": " has",
+                  "score": 11.125
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 13,
+                "union": 27,
+                "jaccard": 0.48148148148148145,
+                "overlap_tokens": [
+                  " is",
+                  " refers",
+                  " means",
+                  " stage",
+                  " delivers",
+                  " are",
+                  " represents",
+                  " stages",
+                  " provides",
+                  ",",
+                  " supplies",
+                  " was",
+                  " has"
+                ]
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 2,
+                  "term": "refers",
+                  "token": " refers",
+                  "score": 15.25
+                },
+                {
+                  "rank": 3,
+                  "term": "means",
+                  "token": " means",
+                  "score": 14.5625
+                },
+                {
+                  "rank": 4,
+                  "term": "stage",
+                  "token": " Stage",
+                  "score": 13.6875
+                },
+                {
+                  "rank": 5,
+                  "term": "stage",
+                  "token": " stage",
+                  "score": 13.3125
+                },
+                {
+                  "rank": 6,
+                  "term": "delivers",
+                  "token": " delivers",
+                  "score": 13.0625
+                },
+                {
+                  "rank": 12,
+                  "term": "stage",
+                  "token": " stages",
+                  "score": 12.5
+                }
+              ],
+              "lens_lexical_hits": []
+            }
+          }
+        },
+        "fresh": {
+          "state": "fresh",
+          "token_position": 312,
+          "summary_relative_position": 219,
+          "anchor_token_id": 70422,
+          "anchor_token": " Crane",
+          "actual_next_token_id": 369,
+          "actual_next_token": " is",
+          "context_window": " setup starts Saturday at 10.\n- Crane is the stage rental company, not equipment. Crane",
+          "next_token_top": [
+            {
+              "token_id": 369,
+              "token": " is",
+              "score": 15.125
+            },
+            {
+              "token_id": 557,
+              "token": " was",
+              "score": 13.0625
+            },
+            {
+              "token_id": 5497,
+              "token": " operator",
+              "score": 13.0
+            },
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 12.75
+            },
+            {
+              "token_id": 18083,
+              "token": " rental",
+              "score": 12.625
+            },
+            {
+              "token_id": 3254,
+              "token": " means",
+              "score": 12.5625
+            },
+            {
+              "token_id": 248046,
+              "token": "<|im_end|>",
+              "score": 12.375
+            },
+            {
+              "token_id": 579,
+              "token": "'s",
+              "score": 12.1875
+            },
+            {
+              "token_id": 682,
+              "token": " has",
+              "score": 12.125
+            },
+            {
+              "token_id": 3749,
+              "token": " needs",
+              "score": 12.0625
+            },
+            {
+              "token_id": 220,
+              "token": " ",
+              "score": 12.0
+            },
+            {
+              "token_id": 9412,
+              "token": " schedule",
+              "score": 11.9375
+            },
+            {
+              "token_id": 321,
+              "token": " and",
+              "score": 11.875
+            },
+            {
+              "token_id": 364,
+              "token": " for",
+              "score": 11.875
+            },
+            {
+              "token_id": 1902,
+              "token": " must",
+              "score": 11.5625
+            },
+            {
+              "token_id": 11554,
+              "token": " lift",
+              "score": 11.375
+            },
+            {
+              "token_id": 2528,
+              "token": " access",
+              "score": 11.0625
+            },
+            {
+              "token_id": 383,
+              "token": " on",
+              "score": 11.0
+            },
+            {
+              "token_id": 17447,
+              "token": " hire",
+              "score": 11.0
+            },
+            {
+              "token_id": 1562,
+              "token": " call",
+              "score": 10.9375
+            }
+          ],
+          "next_private_hits": [
+            {
+              "rank": 6,
+              "term": "means",
+              "token": " means",
+              "score": 12.5625
+            }
+          ],
+          "next_lexical_hits": [
+            {
+              "rank": 3,
+              "term": "operator",
+              "token": " operator",
+              "score": 13.0
+            },
+            {
+              "rank": 5,
+              "term": "rental",
+              "token": " rental",
+              "score": 12.625
+            }
+          ],
+          "layers": {
+            "48": {
+              "lens_top": [
+                {
+                  "token_id": 70466,
+                  "token": " crane",
+                  "score": 13.875
+                },
+                {
+                  "token_id": 70422,
+                  "token": " Crane",
+                  "score": 11.6875
+                },
+                {
+                  "token_id": 25909,
+                  "token": " trucks",
+                  "score": 11.0625
+                },
+                {
+                  "token_id": 28994,
+                  "token": " contractor",
+                  "score": 11.0
+                },
+                {
+                  "token_id": 10538,
+                  "token": " truck",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 20618,
+                  "token": " tower",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 17447,
+                  "token": " hire",
+                  "score": 10.4375
+                },
+                {
+                  "token_id": 21262,
+                  "token": " Tower",
+                  "score": 10.1875
+                },
+                {
+                  "token_id": 6875,
+                  "token": " equipment",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 20789,
+                  "token": " hired",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 33866,
+                  "token": " helicopter",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 4221,
+                  "token": " needed",
+                  "score": 9.9375
+                },
+                {
+                  "token_id": 56701,
+                  "token": " tractor",
+                  "score": 9.9375
+                },
+                {
+                  "token_id": 22839,
+                  "token": " engineer",
+                  "score": 9.9375
+                },
+                {
+                  "token_id": 31655,
+                  "token": " contractors",
+                  "score": 9.625
+                },
+                {
+                  "token_id": 38409,
+                  "token": " towers",
+                  "score": 9.4375
+                },
+                {
+                  "token_id": 13234,
+                  "token": " crew",
+                  "score": 9.375
+                },
+                {
+                  "token_id": 11554,
+                  "token": " lift",
+                  "score": 9.25
+                },
+                {
+                  "token_id": 83529,
+                  "token": " Contractor",
+                  "score": 9.1875
+                },
+                {
+                  "token_id": 56370,
+                  "token": " helicopters",
+                  "score": 9.0625
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 2,
+                "union": 38,
+                "jaccard": 0.05263157894736842,
+                "overlap_tokens": [
+                  " hire",
+                  " lift"
+                ]
+              },
+              "lens_private_hits": [],
+              "lens_lexical_hits": [
+                {
+                  "rank": 1,
+                  "term": "crane",
+                  "token": " crane",
+                  "score": 13.875
+                },
+                {
+                  "rank": 2,
+                  "term": "crane",
+                  "token": " Crane",
+                  "score": 11.6875
+                },
+                {
+                  "rank": 9,
+                  "term": "equipment",
+                  "token": " equipment",
+                  "score": 10.125
+                }
+              ]
+            },
+            "62": {
+              "lens_top": [
+                {
+                  "token_id": 18083,
+                  "token": " rental",
+                  "score": 13.8125
+                },
+                {
+                  "token_id": 369,
+                  "token": " is",
+                  "score": 12.75
+                },
+                {
+                  "token_id": 5497,
+                  "token": " operator",
+                  "score": 12.5625
+                },
+                {
+                  "token_id": 9412,
+                  "token": " schedule",
+                  "score": 12.0
+                },
+                {
+                  "token_id": 24270,
+                  "token": " lease",
+                  "score": 11.5625
+                },
+                {
+                  "token_id": 3749,
+                  "token": " needs",
+                  "score": 11.3125
+                },
+                {
+                  "token_id": 5545,
+                  "token": " license",
+                  "score": 11.0625
+                },
+                {
+                  "token_id": 45435,
+                  "token": " rentals",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 557,
+                  "token": " was",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 3254,
+                  "token": " means",
+                  "score": 10.75
+                },
+                {
+                  "token_id": 17447,
+                  "token": " hire",
+                  "score": 10.625
+                },
+                {
+                  "token_id": 26770,
+                  "token": " reservation",
+                  "score": 10.5
+                },
+                {
+                  "token_id": 10538,
+                  "token": " truck",
+                  "score": 10.5
+                },
+                {
+                  "token_id": 19024,
+                  "token": " operators",
+                  "score": 10.3125
+                },
+                {
+                  "token_id": 20100,
+                  "token": " vendor",
+                  "score": 10.25
+                },
+                {
+                  "token_id": 40760,
+                  "token": " logistics",
+                  "score": 10.1875
+                },
+                {
+                  "token_id": 7765,
+                  "token": " rent",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 5832,
+                  "token": " route",
+                  "score": 10.125
+                },
+                {
+                  "token_id": 11217,
+                  "token": " permit",
+                  "score": 10.0625
+                },
+                {
+                  "token_id": 14034,
+                  "token": " gear",
+                  "score": 9.9375
+                }
+              ],
+              "lens_vs_next_overlap": {
+                "intersection": 8,
+                "union": 32,
+                "jaccard": 0.25,
+                "overlap_tokens": [
+                  " rental",
+                  " is",
+                  " operator",
+                  " schedule",
+                  " needs",
+                  " was",
+                  " means",
+                  " hire"
+                ]
+              },
+              "lens_private_hits": [
+                {
+                  "rank": 10,
+                  "term": "means",
+                  "token": " means",
+                  "score": 10.75
+                }
+              ],
+              "lens_lexical_hits": [
+                {
+                  "rank": 1,
+                  "term": "rental",
+                  "token": " rental",
+                  "score": 13.8125
+                },
+                {
+                  "rank": 3,
+                  "term": "operator",
+                  "token": " operator",
+                  "score": 12.5625
+                },
+                {
+                  "rank": 5,
+                  "term": "lease",
+                  "token": " lease",
+                  "score": 11.5625
+                },
+                {
+                  "rank": 7,
+                  "term": "license",
+                  "token": " license",
+                  "score": 11.0625
+                },
+                {
+                  "rank": 8,
+                  "term": "rental",
+                  "token": " rentals",
+                  "score": 10.75
+                },
+                {
+                  "rank": 14,
+                  "term": "operator",
+                  "token": " operators",
+                  "score": 10.3125
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "rows": [
+      {
+        "case_id": "pokemon_vacuum_1",
+        "state": "write_time",
+        "layer": 48,
+        "overlap_jaccard": 0.14285714285714285,
+        "overlap_n": 5,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "pokemon_vacuum_1",
+        "state": "write_time",
+        "layer": 62,
+        "overlap_jaccard": 0.6666666666666666,
+        "overlap_n": 16,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "pokemon_vacuum_1",
+        "state": "fresh",
+        "layer": 48,
+        "overlap_jaccard": 0.21212121212121213,
+        "overlap_n": 7,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "pokemon_vacuum_1",
+        "state": "fresh",
+        "layer": 62,
+        "overlap_jaccard": 0.5384615384615384,
+        "overlap_n": 14,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "pokemon_dex_0",
+        "state": "write_time",
+        "layer": 48,
+        "overlap_jaccard": 0.05263157894736842,
+        "overlap_n": 2,
+        "lens_private_hits": 4,
+        "next_private_hits": 6,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "pokemon_dex_0",
+        "state": "write_time",
+        "layer": 62,
+        "overlap_jaccard": 0.42857142857142855,
+        "overlap_n": 12,
+        "lens_private_hits": 9,
+        "next_private_hits": 6,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "pokemon_dex_0",
+        "state": "fresh",
+        "layer": 48,
+        "overlap_jaccard": 0.02564102564102564,
+        "overlap_n": 1,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 5,
+        "next_lexical_hits": 9
+      },
+      {
+        "case_id": "pokemon_dex_0",
+        "state": "fresh",
+        "layer": 62,
+        "overlap_jaccard": 0.42857142857142855,
+        "overlap_n": 12,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 11,
+        "next_lexical_hits": 9
+      },
+      {
+        "case_id": "plain_maple_0",
+        "state": "write_time",
+        "layer": 48,
+        "overlap_jaccard": 0.1111111111111111,
+        "overlap_n": 4,
+        "lens_private_hits": 5,
+        "next_private_hits": 10,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_maple_0",
+        "state": "write_time",
+        "layer": 62,
+        "overlap_jaccard": 0.48148148148148145,
+        "overlap_n": 13,
+        "lens_private_hits": 12,
+        "next_private_hits": 10,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_maple_0",
+        "state": "fresh",
+        "layer": 48,
+        "overlap_jaccard": 0.05263157894736842,
+        "overlap_n": 2,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 13,
+        "next_lexical_hits": 4
+      },
+      {
+        "case_id": "plain_maple_0",
+        "state": "fresh",
+        "layer": 62,
+        "overlap_jaccard": 0.3333333333333333,
+        "overlap_n": 10,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 8,
+        "next_lexical_hits": 4
+      },
+      {
+        "case_id": "plain_b410_0",
+        "state": "write_time",
+        "layer": 48,
+        "overlap_jaccard": 0.0,
+        "overlap_n": 0,
+        "lens_private_hits": 10,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_b410_0",
+        "state": "write_time",
+        "layer": 62,
+        "overlap_jaccard": 0.21212121212121213,
+        "overlap_n": 7,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_b410_0",
+        "state": "fresh",
+        "layer": 48,
+        "overlap_jaccard": 0.0,
+        "overlap_n": 0,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 11,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_b410_0",
+        "state": "fresh",
+        "layer": 62,
+        "overlap_jaccard": 0.5384615384615384,
+        "overlap_n": 14,
+        "lens_private_hits": 0,
+        "next_private_hits": 0,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_crane_0",
+        "state": "write_time",
+        "layer": 48,
+        "overlap_jaccard": 0.1111111111111111,
+        "overlap_n": 4,
+        "lens_private_hits": 2,
+        "next_private_hits": 5,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_crane_0",
+        "state": "write_time",
+        "layer": 62,
+        "overlap_jaccard": 0.48148148148148145,
+        "overlap_n": 13,
+        "lens_private_hits": 6,
+        "next_private_hits": 5,
+        "lens_lexical_hits": 0,
+        "next_lexical_hits": 0
+      },
+      {
+        "case_id": "plain_crane_0",
+        "state": "fresh",
+        "layer": 48,
+        "overlap_jaccard": 0.05263157894736842,
+        "overlap_n": 2,
+        "lens_private_hits": 0,
+        "next_private_hits": 1,
+        "lens_lexical_hits": 3,
+        "next_lexical_hits": 2
+      },
+      {
+        "case_id": "plain_crane_0",
+        "state": "fresh",
+        "layer": 62,
+        "overlap_jaccard": 0.25,
+        "overlap_n": 8,
+        "lens_private_hits": 1,
+        "next_private_hits": 1,
+        "lens_lexical_hits": 6,
+        "next_lexical_hits": 2
+      }
+    ],
+    "mean_overlap_jaccard": 0.25599432244169085,
+    "mean_overlap_n": 7.3,
+    "lens_private_hit_rows": 8,
+    "next_private_hit_rows": 8,
+    "lens_lexical_hit_rows": 7,
+    "next_lexical_hit_rows": 6
+  }
+}
