@@ -78,3 +78,29 @@ P0 source-of-truth: FINDINGS.md + the jlens docs + NEW lens artifacts. Every
 2. Model-mismatch: lens on 27B w/ our-style examples + honest caveat, DON'T
    re-run behavior on 27B? [rec: YES]
 3. Cut coding-benchmark detail to one honest bounding paragraph? [rec: YES]
+
+## DECISIONS (user, 07-07) — LOCKED
+1. Lens sampling: BIGGER sweep (~$30-50) on strong examples.
+2. Model mismatch: RE-RUN BEHAVIOR ON Qwen3.6-27B too — one model, two
+   instruments, no mismatch caveat. (Was: lens-only on 27B.)
+3. Coding-benchmark: CUT the detail, but keep an HONEST HUMAN note — we tried
+   end-to-end agent validation, it burned too much budget, we were still
+   searching for a workable approach. Not buried, not over-defended: one candid
+   paragraph.
+
+## TECHNICAL RISK introduced by decision 2 (must smoke first)
+Qwen3.6-27B is a newer HYBRID architecture; our behavioral grafting machinery
+(kvlib_hf value-graft, serve_shim arms) was built for Qwen3-30B-A3B (standard
+MoE). The other agent's intervention probe DID V-graft on 27B (so V-graft is
+possible), but our behavioral pipeline needs verification there.
+PLAN:
+- Phase A (GATING): smoke that value-grafting runs on 27B and reproduces the
+  arms correctly (alpha-0 == fresh; graft changes output). Reuse the intervention
+  probe's grafting path.
+- Phase B (behavior on 27B): teacher-forced GAP-CLOSURE on our sense/referent/
+  stance synthetic cases on 27B (judge-free; no serve_shim port needed) →
+  establishes the dissociation on the SAME model as the lens. Add judged-answer
+  meaning-recovery IF the shim ports cheaply; else gap-closure carries it.
+- Phase C (lens): bigger three-state intervention on strong label-preserved-
+  role-lost examples, wide layers, four boundary points, on 27B.
+- Phase D: synthesis writing (both instruments, one model).
