@@ -264,6 +264,56 @@ treated as the current prose baseline without re-review.
   works. Inspect the producer, update or run a validator, and record the
   resolution.
 
+## 2026-07-07 Three-State Probe Correction
+
+The earlier broad J-lens sweep is not intervention evidence. It compares
+write-time summary-token residual states against freshly encoded summary-token
+residual states. That can show that there is state available to preserve, but
+it does not show what ValueGraft does, because it has no grafted condition.
+
+The corrected artifact is:
+
+- `outputs/qwen36_boundary_three_state_probe.json`
+- validator: `validate_three_state_probe.py`
+- model: `Qwen/Qwen3.6-27B`
+- forced target: `Update src/rivermark/sort.py so wet driftwood is inspected first, then run tests/test_sort.py.`
+- states: `full_context`, `fresh_compacted`, `alpha0_grafted_compacted`,
+  `grafted_compacted`
+- graft policy recorded in the artifact: V-only summary-token value-cache
+  blend; fresh keys and linear-attention recurrent state preserved
+- graft alignment: 96 summary-token pairs, 16 changed value-cache layers,
+  alpha 0.75
+
+The alpha-0 control matches the fresh compacted condition exactly on the
+validator's top-k checks. This is important: it shows the probe machinery is not
+creating apparent changes merely by rebuilding the cache.
+
+The first validated result is narrow but real:
+
+- one next-token argmax rescue, no argmax regressions
+- at the target token ` inspected`, the full-context argmax is ` inspected`;
+  fresh compacted predicts ` priorit`; grafted compacted returns to
+  ` inspected`
+- layer-top-k mean Jaccard distance from full context changes as follows:
+  layer 16: 0.1488 to 0.1430; layer 32: 0.1899 to 0.1788; layer 48: 0.3882
+  to 0.3546; layer 62: 0.3359 to 0.3506
+
+Interpretation: this artifact demonstrates that the V-only grafted condition
+can change downstream readouts and next-token behavior relative to fresh
+compaction under the same visible text. It does not establish a general effect
+size. The layer readout is mixed, with improvement at layers 16/32/48 and a
+small worsening at layer 62. Treat this as a corrected proof-of-method example,
+not as the main quantitative claim.
+
+Any public-facing writeup must separate:
+
+- broad old-vs-fresh J-lens sweeps: diagnostic evidence about state available
+  to preserve
+- three-state post-boundary probes: direct evidence about the intervention
+  itself
+- behavioral task results: the main evidence for whether the method helps
+  actual work
+
 ## Immediate Next Work
 
 1. If revising the explainer, keep the B-410 lead and next-token-control
