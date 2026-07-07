@@ -267,3 +267,19 @@ keys; placebo = norm-matched random-value graft (seeded derangement).
   preamble). NOT a "graft does nothing" — content-specificity is strong (vs placebo).
 NEXT (primary-strengthen): run SAME bound on 30B (strong model) — E−B should
 resolve positive there; that's the placebo-controlled CI that strengthens the primary.
+
+## Effect-bound 30B (K=12 pre-window) — SURPRISE, needs full-window re-run — 07-07
+30B, N=43, K=12: E−B = −0.066 CI[−0.130,−0.007] EXCLUDES 0 NEGATIVE (graft HURTS
+next-token pred over the first 12 gold tokens!); placebo−B = −0.306; E−placebo =
++0.241 CI[+0.033,+0.457] EXCLUDES 0 (graft still content-specific, beats random).
+27B was E−B null; 30B is E−B negative — on BOTH the pre-window E−B ≤ 0.
+INTERPRETATION (honest, not spin): K=12 measures the answer PREAMBLE, not the
+content tokens where the +10-12pp gap-closure benefit lands. Graft helps the model
+commit to right CONTENT (later tokens), slightly perturbs generic opening tokens →
+K=12 catches perturbation, misses payoff. In teacher-forcing there's NO divergence
+to avoid (all arms score identical gold tokens) so the K=12 cap (from the free-gen
+design) was over-conservative. RIGHT measurement = FULL gold continuation (matches
+gap-closure). RE-RUNNING at full window to validate: if E−B resolves POSITIVE over
+full continuation → confirms primary + adds placebo control; if still ≤0 → REAL
+tension with the gap-closure headline, must confront. Content-specificity (E−placebo
+>0 both models) is solid regardless.
