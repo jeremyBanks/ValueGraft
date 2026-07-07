@@ -1,0 +1,18 @@
+{
+ "task": "swb:pylint-dev",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 2,
+ "p2p_ok": true,
+ "dropped_ids": [],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": " \"load-plugins\" in config_data:\n            linter.load_plugin_modules(utils._splitstrip(config_data[\"load-plugins\"]))\n    \n        # First we parse any options from a configuration file\n        try:\n            linter._parse_configuration_file(config_args)\n        except _UnrecognizedOptionError as exc:\n            msg = \", \".join(exc.options)\n            linter.add_message(\"unrecognized-option\", line=0, args=msg)\n    \n        # Then, if a custom reporter is provided as argument, it may be overridden\n        # by file parameters, so we re-set it here. We do this before command line\n        # parsing, so it's still overridable by command line options\n        if reporter:\n            linter.set_reporter(reporter)\n    \n        # Set the current module to the command line\n        # to allow raising messages on it\n        linter.set_current_module(\"Command line\")\n    \n        # Now we parse any options from the command line, so they can override\n        # the configuration file\n        parsed_args_list = linter._parse_command_line_configuration(args_list)\n    \n        # Check if there are any options that we do not recognize\n        unrecognized_options: list[str] = []\n        for opt in parsed_args_list:\n            if opt.startswith(\"--\"):\n                unrecognized_options.append(opt[2:])\n            elif opt.startswith(\"-\"):\n                unrecognized_options.append(opt[1:])\n        if unrecognized_options:\n            msg = \", \".join(unrecognized_options)\n            linter.add_message(\"unrecognized-option\", line=0, args=msg)\n>           raise _UnrecognizedOptionError(options=unrecognized_options)\nE           pylint.config.exceptions._UnrecognizedOptionError\n\npylint/config/config_initialization.py:85: _UnrecognizedOptionError\n----------------------------- Captured stdout call -----------------------------\n************* Module Command line\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\n=============================== warnings summary ===============================\n../.venv/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:6\n  /private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pylint-dev__pylint-6506_E-cfg=layers/repo/.venv/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:6: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n    import pkg_resources\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/config/test_config.py::test_unknown_option_name - pylint.config....\nFAILED tests/config/test_config.py::test_unknown_short_option_name - pylint.c...\n==================== 2 failed, 6 passed, 1 warning in 0.10s ====================\n",
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 8980,
+ "log_bytes": 34551,
+ "self_terminated": false,
+ "timed_out": true,
+ "source": "swebench"
+}

@@ -1,0 +1,21 @@
+{
+ "task": "swbo:psf__requests-5414",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 1,
+ "p2p_ok": true,
+ "dropped_ids": [
+  "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[test-test-Basic",
+  "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[\\xd0\\xb8\\xd0\\xbc\\xd1\\x8f-\\xd0\\xbf\\xd0\\xb0\\xd1\\x80\\xd0\\xbe\\xd0\\xbb\\xd1\\x8c-Basic"
+ ],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": "kwargs)\nrequests/api.py:61: in request\n    return session.request(method=method, url=url, **kwargs)\nrequests/sessions.py:519: in request\n    settings = self.merge_environment_settings(\nrequests/sessions.py:701: in merge_environment_settings\n    env_proxies = get_environ_proxies(url, no_proxy=no_proxy)\nrequests/utils.py:804: in get_environ_proxies\n    if should_bypass_proxies(url, no_proxy=no_proxy):\nrequests/utils.py:788: in should_bypass_proxies\n    bypass = proxy_bypass(parsed.hostname)\n/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py:2647: in proxy_bypass\n    return proxy_bypass_macosx_sysconf(host)\n/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py:2624: in proxy_bypass_macosx_sysconf\n    return _proxy_bypass_macosx_sysconf(host, proxy_settings)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nhost = '.example.com'\nproxy_settings = {'exceptions': ('*.local', '169.254/16'), 'exclude_simple': False}\n\n    def _proxy_bypass_macosx_sysconf(host, proxy_settings):\n        \"\"\"\n        Return True iff this host shouldn't be accessed using a proxy\n    \n        This function uses the MacOSX framework SystemConfiguration\n        to fetch the proxy information.\n    \n        proxy_settings come from _scproxy._get_proxy_settings or get mocked ie:\n        { 'exclude_simple': bool,\n          'exceptions': ['foo.bar', '*.bar.com', '127.0.0.1', '10.1', '10.0/16']\n        }\n        \"\"\"\n        from fnmatch import fnmatch\n    \n        hostonly, port = _splitport(host)\n    \n        def ip2num(ipAddr):\n            parts = ipAddr.split('.')\n            parts = list(map(int, parts))\n            if len(parts) != 4:\n                parts = (parts + [0, 0, 0, 0])[:4]\n            return (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]\n    \n        # Check for simple host names:\n        if '.' not in host:\n            if proxy_settings['exclude_simple']:\n                return True\n    \n        hostIP = None\n    \n        for value in proxy_settings.get('exceptions', ()):\n            # Items in the list are strings like these: *.local, 169.254/16\n            if not value: continue\n    \n            m = re.match(r\"(\\d+(?:\\.\\d+)*)(/\\d+)?\", value)\n            if m is not None:\n                if hostIP is None:\n                    try:\n>                       hostIP = socket.gethostbyname(hostonly)\nE                       UnicodeError: encoding with 'idna' codec failed (UnicodeError: label empty or too long)\n\n/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py:2592: UnicodeError\n=========================== short test summary info ============================\nFAILED tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://.example.com]\n======================== 1 failed, 128 passed in 0.76s =========================\n",
+ "agent_events": 36,
+ "recall_probe": "The task description did not mention a tax rate in basis points or a backoff base in ms. Therefore, there is no numeric constraint to report.",
+ "wall_seconds": 609,
+ "log_bytes": 74569,
+ "self_terminated": true,
+ "timed_out": false,
+ "source": "swebench"
+}

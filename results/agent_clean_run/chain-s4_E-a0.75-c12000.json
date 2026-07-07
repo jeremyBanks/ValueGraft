@@ -1,0 +1,18 @@
+{
+ "task": "chain:s4",
+ "tests_pass": true,
+ "per_ex": {
+  "ex1": true,
+  "ex2": true,
+  "ex3": true,
+  "ex4": true
+ },
+ "chain_len": 4,
+ "agent_events": 50,
+ "recall_probe": "2",
+ "wall_seconds": 1131,
+ "log_bytes": 62888,
+ "self_terminated": true,
+ "timed_out": false,
+ "source": "synthetic"
+}

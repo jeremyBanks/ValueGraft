@@ -1,0 +1,22 @@
+{
+ "task": "swb:pytest-dev",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 2,
+ "p2p_ok": true,
+ "dropped_ids": [
+  "testing/test_assertion.py::TestAssert_reprcompare::test_iterable_full_diff[left0-right0-\\n",
+  "testing/test_assertion.py::TestAssert_reprcompare::test_iterable_full_diff[left1-right1-\\n",
+  "testing/test_assertion.py::TestAssert_reprcompare::test_iterable_full_diff[left2-right2-\\n"
+ ],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": " [ 91%]\ntesting/test_assertion.py::test_diff_newline_at_end PASSED               [ 92%]\ntesting/test_assertion.py::test_assert_tuple_warning PASSED              [ 94%]\ntesting/test_assertion.py::test_assert_indirect_tuple_no_warning PASSED  [ 95%]\ntesting/test_assertion.py::test_assert_with_unicode PASSED               [ 96%]\ntesting/test_assertion.py::test_raise_unprintable_assertion_error PASSED [ 97%]\ntesting/test_assertion.py::test_raise_assertion_error_raisin_repr PASSED [ 98%]\ntesting/test_assertion.py::test_issue_1944 PASSED                        [100%]\n\n=================================== FAILURES ===================================\n________________ TestAssert_reprcompare.test_bytes_diff_normal _________________\n\nself = <test_assertion.TestAssert_reprcompare object at 0x108212c70>\n\n    def test_bytes_diff_normal(self):\n        \"\"\"Check special handling for bytes diff (#5260)\"\"\"\n        diff = callequal(b\"spam\", b\"eggs\")\n    \n>       assert diff == [\n            \"b'spam' == b'eggs'\",\n            \"At index 0 diff: b's' != b'e'\",\n            \"Use -v to get the full diff\",\n        ]\nE       assert [\"b'spam' == ...he full diff'] == [\"b'spam' == b...he full diff']\nE         At index 1 diff: 'At index 0 diff: 115 != 101' != \"At index 0 diff: b's' != b'e'\"\nE         Full diff:\nE         [\"b'spam' == b'eggs'\",\nE         -  'At index 0 diff: 115 != 101',\nE         ?  ^                 ^^^    ^^^\nE         +  \"At index 0 diff: b's' != b'e'\",\nE         ?  ^                 ^^^^    ^ +++...\nE         \nE         ...Full output truncated (2 lines hidden), use '-vv' to show\n\ntesting/test_assertion.py:338: AssertionError\n________________ TestAssert_reprcompare.test_bytes_diff_verbose ________________\n\nself = <test_assertion.TestAssert_reprcompare object at 0x1082a7c40>\n\n    def test_bytes_diff_verbose(self):\n        \"\"\"Check special handling for bytes diff (#5260)\"\"\"\n        diff = callequal(b\"spam\", b\"eggs\", verbose=True)\n>       assert diff == [\n            \"b'spam' == b'eggs'\",\n            \"At index 0 diff: b's' != b'e'\",\n            \"Full diff:\",\n            \"- b'spam'\",\n            \"+ b'eggs'\",\n        ]\nE       assert [\"b'spam' == ..., \"+ b'eggs'\"] == [\"b'spam' == b..., \"+ b'eggs'\"]\nE         At index 1 diff: 'At index 0 diff: 115 != 101' != \"At index 0 diff: b's' != b'e'\"\nE         Full diff:\nE         [\"b'spam' == b'eggs'\",\nE         -  'At index 0 diff: 115 != 101',\nE         ?  ^                 ^^^    ^^^\nE         +  \"At index 0 diff: b's' != b'e'\",\nE         ?  ^                 ^^^^    ^ +++...\nE         \nE         ...Full output truncated (4 lines hidden), use '-vv' to show\n\ntesting/test_assertion.py:347: AssertionError\n=========================== short test summary info ============================\nFAILED testing/test_assertion.py::TestAssert_reprcompare::test_bytes_diff_normal\nFAILED testing/test_assertion.py::TestAssert_reprcompare::test_bytes_diff_verbose\n===================== 2 failed, 83 passed in 5.95 seconds ======================\n",
+ "agent_events": 20,
+ "recall_probe": "42",
+ "wall_seconds": 2390,
+ "log_bytes": 33529,
+ "self_terminated": true,
+ "timed_out": false,
+ "source": "swebench"
+}

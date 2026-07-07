@@ -1,0 +1,18 @@
+{
+ "task": "swb:pylint-dev",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 1,
+ "p2p_ok": false,
+ "dropped_ids": [],
+ "degraded_scoring": true,
+ "phantom_ids": [],
+ "pytest_tail": "============================= test session starts ==============================\nplatform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pylint-dev__pylint-7080_B/repo/.venv/bin/python\nrootdir: /private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pylint-dev__pylint-7080_B/repo/repo\nconfigfile: setup.cfg\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n_____________________ ERROR collecting tests/test_self.py ______________________\nImportError while importing test module '/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pylint-dev__pylint-7080_B/repo/repo/tests/test_self.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py:127: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\ntests/test_self.py:30: in <module>\n    from py._path.local import LocalPath  # type: ignore[import]\nE   ModuleNotFoundError: No module named 'py._path'; 'py' is not a package\n=============================== warnings summary ===============================\n../.venv/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:6\n  /private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pylint-dev__pylint-7080_B/repo/.venv/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:6: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n    import pkg_resources\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR tests/test_self.py\n========================= 1 warning, 1 error in 0.04s ==========================\n",
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 8822,
+ "log_bytes": 170365,
+ "self_terminated": false,
+ "timed_out": true,
+ "source": "swebench"
+}

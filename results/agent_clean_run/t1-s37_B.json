@@ -1,0 +1,14 @@
+{
+ "task": "t1:s37",
+ "tests_pass": false,
+ "pytest_tail": "ice'\n\nsrc/pricing.py:8: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_pricing.py::test_subtotal - AttributeError: 'Item' object h...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.01s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0,
+ "agent_events": 42,
+ "recall_probe": "826",
+ "wall_seconds": 504,
+ "log_bytes": 67990,
+ "self_terminated": true,
+ "timed_out": false,
+ "source": "synthetic"
+}

@@ -1,0 +1,18 @@
+{
+ "task": "swb:pallets",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 2,
+ "p2p_ok": false,
+ "dropped_ids": [],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": "98%]\ntests/test_cli.py::test_cli_empty PASSED                                 [100%]\n\n=================================== FAILURES ===================================\n__________________________ TestRoutes.test_subdomain ___________________________\n\nself = <test_cli.TestRoutes object at 0x106789220>\nrunner = <click.testing.CliRunner object at 0x1066cedf0>\n\n    def test_subdomain(self, runner):\n        app = Flask(__name__, static_folder=None)\n        app.add_url_rule(\"/a\", subdomain=\"a\", endpoint=\"a\")\n        app.add_url_rule(\"/b\", subdomain=\"b\", endpoint=\"b\")\n        cli = FlaskGroup(create_app=lambda: app)\n        result = runner.invoke(cli, [\"routes\"])\n        assert result.exit_code == 0\n>       assert \"Subdomain\" in result.output\nE       AssertionError: assert 'Subdomain' in 'Endpoint  Methods  Rule\\n--------  -------  ----\\na         GET      /a\\nb         GET      /b\\n'\nE        +  where 'Endpoint  Methods  Rule\\n--------  -------  ----\\na         GET      /a\\nb         GET      /b\\n' = <Result okay>.output\n\ntests/test_cli.py:495: AssertionError\n_____________________________ TestRoutes.test_host _____________________________\n\nself = <test_cli.TestRoutes object at 0x106789820>\nrunner = <click.testing.CliRunner object at 0x106716a30>\n\n    def test_host(self, runner):\n        app = Flask(__name__, static_folder=None, host_matching=True)\n        app.add_url_rule(\"/a\", host=\"a\", endpoint=\"a\")\n        app.add_url_rule(\"/b\", host=\"b\", endpoint=\"b\")\n        cli = FlaskGroup(create_app=lambda: app)\n        result = runner.invoke(cli, [\"routes\"])\n        assert result.exit_code == 0\n>       assert \"Host\" in result.output\nE       AssertionError: assert 'Host' in 'Endpoint  Methods  Rule\\n--------  -------  ----\\na         GET      /a\\nb         GET      /b\\n'\nE        +  where 'Endpoint  Methods  Rule\\n--------  -------  ----\\na         GET      /a\\nb         GET      /b\\n' = <Result okay>.output\n\ntests/test_cli.py:504: AssertionError\n_______________________________ test_get_version _______________________________\n\ntest_apps = None\ncapsys = <_pytest.capture.CaptureFixture object at 0x10681bf40>\n\n    def test_get_version(test_apps, capsys):\n        from flask import __version__ as flask_version\n>       from werkzeug import __version__ as werkzeug_version\nE       ImportError: cannot import name '__version__' from 'werkzeug' (/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pallets__flask-5063_E-a1.0/repo/.venv/lib/python3.9/site-packages/werkzeug/__init__.py)\n\ntests/test_cli.py:231: ImportError\n=========================== short test summary info ============================\nFAILED tests/test_cli.py::TestRoutes::test_subdomain - AssertionError: assert...\nFAILED tests/test_cli.py::TestRoutes::test_host - AssertionError: assert 'Hos...\nFAILED tests/test_cli.py::test_get_version - ImportError: cannot import name ...\n=================== 3 failed, 48 passed, 3 skipped in 0.09s ====================\n",
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 9737,
+ "log_bytes": 34782,
+ "self_terminated": false,
+ "timed_out": true,
+ "source": "swebench"
+}

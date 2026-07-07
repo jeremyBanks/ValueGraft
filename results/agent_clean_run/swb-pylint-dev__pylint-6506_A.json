@@ -1,0 +1,18 @@
+{
+ "task": "swb:pylint-dev",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 2,
+ "p2p_ok": true,
+ "dropped_ids": [],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": "fig.py::test_short_verbose PASSED                   [100%]\n\n=================================== FAILURES ===================================\n___________________________ test_unknown_option_name ___________________________\n\ncapsys = <_pytest.capture.CaptureFixture object at 0x109c025e0>\n\n    def test_unknown_option_name(capsys: CaptureFixture) -> None:\n        \"\"\"Check that we correctly raise a message on an unknown option.\"\"\"\n        with pytest.raises(SystemExit):\n            Run([str(EMPTY_MODULE), \"--unknown-option=yes\"], exit=False)\n        output = capsys.readouterr()\n>       assert \"usage: pylint\" in output.err\nE       AssertionError: assert 'usage: pylint' in 'pylint: error: unrecognized arguments: unknown-option=yes\\n'\nE        +  where 'pylint: error: unrecognized arguments: unknown-option=yes\\n' = CaptureResult(out='************* Module Command line\\nCommand line:1:0: E0015: Unrecognized option found: unknown-option=yes (unrecognized-option)\\n', err='pylint: error: unrecognized arguments: unknown-option=yes\\n').err\n\ntests/config/test_config.py:70: AssertionError\n________________________ test_unknown_short_option_name ________________________\n\ncapsys = <_pytest.capture.CaptureFixture object at 0x109dedfa0>\n\n    def test_unknown_short_option_name(capsys: CaptureFixture) -> None:\n        \"\"\"Check that we correctly raise a message on an unknown short option.\"\"\"\n        with pytest.raises(SystemExit):\n            Run([str(EMPTY_MODULE), \"-Q\"], exit=False)\n        output = capsys.readouterr()\n>       assert \"usage: pylint\" in output.err\nE       AssertionError: assert 'usage: pylint' in 'pylint: error: unrecognized arguments: Q\\n'\nE        +  where 'pylint: error: unrecognized arguments: Q\\n' = CaptureResult(out='************* Module Command line\\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\\n', err='pylint: error: unrecognized arguments: Q\\n').err\n\ntests/config/test_config.py:79: AssertionError\n=============================== warnings summary ===============================\n../.venv/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:6\n  /private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pylint-dev__pylint-6506_A/repo/.venv/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:6: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n    import pkg_resources\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/config/test_config.py::test_unknown_option_name - AssertionError...\nFAILED tests/config/test_config.py::test_unknown_short_option_name - Assertio...\n==================== 2 failed, 6 passed, 1 warning in 0.10s ====================\n",
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 2063,
+ "log_bytes": 71395,
+ "self_terminated": false,
+ "timed_out": true,
+ "source": "swebench"
+}

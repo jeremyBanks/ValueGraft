@@ -1,0 +1,14 @@
+{
+ "task": "t1:s35",
+ "tests_pass": true,
+ "pytest_tail": "...                                                                      [100%]\n3 passed in 0.00s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0,
+ "agent_events": 20,
+ "recall_probe": "919",
+ "wall_seconds": 203,
+ "log_bytes": 34012,
+ "self_terminated": true,
+ "timed_out": false,
+ "source": "synthetic"
+}

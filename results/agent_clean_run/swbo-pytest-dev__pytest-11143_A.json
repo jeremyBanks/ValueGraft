@@ -1,0 +1,29 @@
+{
+ "task": "swbo:pytest-dev__pytest-11143",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 1,
+ "p2p_ok": false,
+ "dropped_ids": [
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[assert",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[multiple",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[latin1",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[utf-8",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[multi-line",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[multi",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[backslash",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[assertion",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[escaped",
+  "testing/test_assertrewrite.py::test_get_assertion_exprs[no"
+ ],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": "emp=%s\" % p\n        monkeypatch.setenv(\"PYTHONOPTIMIZE\", \"2\")\n        monkeypatch.delenv(\"PYTHONDONTWRITEBYTECODE\", raising=False)\n        monkeypatch.delenv(\"PYTHONPYCACHEPREFIX\", raising=False)\n        assert pytester.runpytest_subprocess(tmp).ret == 0\n        tagged = \"test_pyc_vs_pyo.\" + PYTEST_TAG\n>       assert tagged + \".pyo\" in os.listdir(\"__pycache__\")\nE       FileNotFoundError: [Errno 2] No such file or directory: '__pycache__'\n\n/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swbo-pytest-dev__pytest-11143_A/repo/repo/testing/test_assertrewrite.py:894: FileNotFoundError\n----------------------------- Captured stdout call -----------------------------\nrunning: /private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swbo-pytest-dev__pytest-11143_A/repo/.venv/bin/python -mpytest --basetemp=/private/var/folders/cz/581svs_55z5fd6919b74vhnh0000gn/T/pytest-of-jeb/pytest-28/test_pyc_vs_pyo0/runpytest-1 --basetemp=/private/var/folders/cz/581svs_55z5fd6919b74vhnh0000gn/T/pytest-of-jeb/pytest-28/test_pyc_vs_pyo0/runpytest-0\n     in: /private/var/folders/cz/581svs_55z5fd6919b74vhnh0000gn/T/pytest-of-jeb/pytest-28/test_pyc_vs_pyo0\n============================= test session starts ==============================\nplatform darwin -- Python 3.9.6, pytest-8.0.0.dev53+g6995257cf, pluggy-1.6.0\nrootdir: /private/var/folders/cz/581svs_55z5fd6919b74vhnh0000gn/T/pytest-of-jeb/pytest-28/test_pyc_vs_pyo0\ncollected 1 item\n\ntest_pyc_vs_pyo.py .                                                     [100%]\n\n=============================== warnings summary ===============================\n../../../../../../../../tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swbo-pytest-dev__pytest-11143_A/repo/repo/src/_pytest/config/__init__.py:1206\n  /private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swbo-pytest-dev__pytest-11143_A/repo/repo/src/_pytest/config/__init__.py:1206: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n========================= 1 passed, 1 warning in 0.02s =========================\n=========================== short test summary info ============================\nFAILED testing/test_assertrewrite.py::TestIssue11140::test_constant_not_picked_as_module_docstring\nFAILED testing/test_assertrewrite.py::TestRewriteOnImport::test_dont_write_bytecode\nFAILED testing/test_assertrewrite.py::TestRewriteOnImport::test_cached_pyc_includes_pytest_version\nFAILED testing/test_assertrewrite.py::TestRewriteOnImport::test_pyc_vs_pyo - ...\n======================== 4 failed, 101 passed in 3.79s =========================\n",
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 1804,
+ "log_bytes": 111579,
+ "self_terminated": false,
+ "timed_out": true,
+ "source": "swebench"
+}

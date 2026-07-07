@@ -1,0 +1,14 @@
+{
+ "task": "t1:s30",
+ "tests_pass": false,
+ "pytest_tail": "rc.pricing'\n=========================== short test summary info ============================\nERROR tests/test_pricing.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.03s\n",
+ "agent_steps": 0,
+ "repeat_signals": 0,
+ "agent_events": 20,
+ "recall_probe": "982",
+ "wall_seconds": 138,
+ "log_bytes": 31078,
+ "self_terminated": true,
+ "timed_out": false,
+ "source": "synthetic"
+}

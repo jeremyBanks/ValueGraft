@@ -1,0 +1,18 @@
+{
+ "task": "chain:s6",
+ "tests_pass": true,
+ "per_ex": {
+  "ex1": true,
+  "ex2": true,
+  "ex3": true,
+  "ex4": true
+ },
+ "chain_len": 4,
+ "agent_events": 44,
+ "recall_probe": "4",
+ "wall_seconds": 460,
+ "log_bytes": 60143,
+ "self_terminated": true,
+ "timed_out": false,
+ "source": "synthetic"
+}

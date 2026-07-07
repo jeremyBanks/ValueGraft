@@ -1,0 +1,18 @@
+{
+ "task": "swb:pytest-dev",
+ "tests_pass": false,
+ "f2p_pass": 10,
+ "f2p_total": 11,
+ "p2p_ok": true,
+ "dropped_ids": [],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": "de-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/nodes.py\", line 355, in _repr_failure_py\nINTERNALERROR>     return excinfo.getrepr(\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_code/code.py\", line 635, in getrepr\nINTERNALERROR>     return fmt.repr_excinfo(self)\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_code/code.py\", line 880, in repr_excinfo\nINTERNALERROR>     reprtraceback = self.repr_traceback(excinfo_)\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_code/code.py\", line 824, in repr_traceback\nINTERNALERROR>     reprentry = self.repr_traceback_entry(entry, einfo)\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_code/code.py\", line 785, in repr_traceback_entry\nINTERNALERROR>     reprargs = self.repr_args(entry) if not short else None\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_code/code.py\", line 694, in repr_args\nINTERNALERROR>     args.append((argname, saferepr(argvalue)))\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_io/saferepr.py\", line 82, in saferepr\nINTERNALERROR>     return SafeRepr(maxsize).repr(obj)\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_io/saferepr.py\", line 51, in repr\nINTERNALERROR>     s = _format_repr_exception(exc, x)\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/src/_pytest/_io/saferepr.py\", line 23, in _format_repr_exception\nINTERNALERROR>     exc_info, obj.__class__.__name__, id(obj)\nINTERNALERROR>   File \"/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad/e1_runs/swb-pytest-dev__pytest-7168_E-cfg=layers/repo/repo/testing/io/test_saferepr.py\", line 166, in __getattribute__\nINTERNALERROR>     raise RuntimeError\nINTERNALERROR> RuntimeError\n\n============================== 10 passed in 0.02s ==============================\n",
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 9172,
+ "log_bytes": 41284,
+ "self_terminated": false,
+ "timed_out": true,
+ "source": "swebench"
+}

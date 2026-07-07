@@ -1,0 +1,18 @@
+{
+ "task": "swbo:pallets__flask-5014",
+ "tests_pass": false,
+ "f2p_pass": 0,
+ "f2p_total": 1,
+ "p2p_ok": false,
+ "dropped_ids": [],
+ "degraded_scoring": false,
+ "phantom_ids": [],
+ "pytest_tail": "RROR tests/test_blueprints.py::test_blueprint_prefix_slash[/foo-/bar-/foo/bar]\nERROR tests/test_blueprints.py::test_blueprint_prefix_slash[/foo/-//bar-/foo/bar]\nERROR tests/test_blueprints.py::test_blueprint_prefix_slash[/foo//-/bar-/foo/bar]\nERROR tests/test_blueprints.py::test_blueprint_url_defaults - AttributeError:...\nERROR tests/test_blueprints.py::test_blueprint_url_processors - AttributeErro...\nERROR tests/test_blueprints.py::test_dotted_name_not_allowed - AttributeError...\nERROR tests/test_blueprints.py::test_dotted_names_from_app - AttributeError: ...\nERROR tests/test_blueprints.py::test_empty_url_defaults - AttributeError: mod...\nERROR tests/test_blueprints.py::test_route_decorator_custom_endpoint - Attrib...\nERROR tests/test_blueprints.py::test_route_decorator_custom_endpoint_with_dots\nERROR tests/test_blueprints.py::test_endpoint_decorator - AttributeError: mod...\nERROR tests/test_blueprints.py::test_template_filter_with_template - Attribut...\nERROR tests/test_blueprints.py::test_template_filter_after_route_with_template\nERROR tests/test_blueprints.py::test_add_template_filter_with_template - Attr...\nERROR tests/test_blueprints.py::test_template_filter_with_name_and_template\nERROR tests/test_blueprints.py::test_add_template_filter_with_name_and_template\nERROR tests/test_blueprints.py::test_template_test_with_template - AttributeE...\nERROR tests/test_blueprints.py::test_template_test_after_route_with_template\nERROR tests/test_blueprints.py::test_add_template_test_with_template - Attrib...\nERROR tests/test_blueprints.py::test_template_test_with_name_and_template - A...\nERROR tests/test_blueprints.py::test_add_template_test_with_name_and_template\nERROR tests/test_blueprints.py::test_context_processing - AttributeError: mod...\nERROR tests/test_blueprints.py::test_request_processing - AttributeError: mod...\nERROR tests/test_blueprints.py::test_app_request_processing - AttributeError:...\nERROR tests/test_blueprints.py::test_app_url_processors - AttributeError: mod...\nERROR tests/test_blueprints.py::test_nested_blueprint - AttributeError: modul...\nERROR tests/test_blueprints.py::test_nested_callback_order - AttributeError: ...\nERROR tests/test_blueprints.py::test_nesting_url_prefixes[/parent-/child-None-None]\nERROR tests/test_blueprints.py::test_nesting_url_prefixes[/parent-None-None-/child]\nERROR tests/test_blueprints.py::test_nesting_url_prefixes[None-None-/parent-/child]\nERROR tests/test_blueprints.py::test_nesting_url_prefixes[/other-/something-/parent-/child]\nERROR tests/test_blueprints.py::test_nesting_subdomains - AttributeError: mod...\nERROR tests/test_blueprints.py::test_child_and_parent_subdomain - AttributeEr...\nERROR tests/test_blueprints.py::test_unique_blueprint_names - AttributeError:...\nERROR tests/test_blueprints.py::test_self_registration - AttributeError: modu...\nERROR tests/test_blueprints.py::test_blueprint_renaming - AttributeError: mod...\n=================== 1 failed, 11 passed, 48 errors in 0.50s ====================\n",
+ "agent_events": null,
+ "recall_probe": null,
+ "wall_seconds": 1801,
+ "log_bytes": 328661,
+ "self_terminated": false,
+ "timed_out": true,
+ "source": "swebench"
+}
