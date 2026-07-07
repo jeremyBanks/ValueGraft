@@ -172,3 +172,23 @@ freshly-encoded key at new position = cosine 0.99999982, max-diff 3e-05 (vs
 0.9964 un-rotated control). α_K=0 bit-identical to fresh; α_K=1 changes output.
 So the K-graft is not an approximation — keys can be moved across positions
 exactly. Enables the V/K/coupled/independent sweep. src/kv_graft.py.
+
+## Phase 2 result — Key-grafting does NOT help (coarse untuned, 30B) — 07-07
+Behavioral gap-closure, 6 global-uniform policies, 30B, sanity-passed (V-only
+referent +0.057 ≈ paper's positive 30B value → K-graft path trustworthy):
+| cat | v_only | k_only | coupled | ind_k50 | ind_v50 | ind_k100 |
+|---|---|---|---|---|---|---|
+| sense | +0.027 | −0.283 | −0.024 | +0.005 | −0.103 | −0.014 |
+| referent | +0.057 | −0.096 | +0.029 | +0.023 | −0.016 | +0.076 |
+| stance | −0.017 | −0.211 | −0.128 | +0.035 | −0.165 | −0.151 |
+VERDICT: VALUE is the operative axis. K-only actively HURTS all categories
+(re-rotated keys perturb attention). Coupled/independent don't beat V-only on
+referent or sense. ind_k100 referent +0.076 vs +0.057 = within noise (n=21).
+The RoPE-addressing hypothesis (keys recover referent where values floored) is
+NOT supported by UNIFORM grafting. The 0.6B hint (keys help referent) was noise.
+BOUNDS/OPEN: (1) this is 30B where V-only ALREADY works on referent (+0.057) —
+less room for keys to add; the exact "where-V-floored" test is 27B (referent
+flat +0.004), not yet run (needs kv_graft 27B-path port). (2) COARSE UNTUNED
+(uniform αK all layers) — uniform K-graft could average out layer-specific
+effects; PER-LAYER/PER-HEAD key tuning (kv_graft supports it) might find a
+key-profile that helps, but the strongly-negative K-only lowers that prior.
