@@ -245,6 +245,27 @@ def labeled_positions(
     return labels
 
 
+def phrase_spans(
+    tokenizer: Any, text_ids: list[int], phrases: list[str]
+) -> list[dict[str, Any]]:
+    spans = []
+    for phrase in phrases:
+        phrase_ids = tokenizer(phrase, add_special_tokens=False).input_ids
+        start = find_subsequence(text_ids, phrase_ids)
+        if start is None:
+            continue
+        spans.append(
+            {
+                "phrase": phrase,
+                "start": start,
+                "end": start + len(phrase_ids),
+                "n_tokens": len(phrase_ids),
+                "tokens": [tokenizer.decode([tok]) for tok in phrase_ids],
+            }
+        )
+    return spans
+
+
 def summarize_token_row(
     tokenizer: Any,
     target_ids: list[int],
@@ -274,6 +295,49 @@ def summarize_token_row(
         "full_context": full_row,
         "compacted_context": compact_row,
     }
+
+
+def summarize_spans(
+    rows: list[dict[str, Any]], spans: list[dict[str, Any]], layers: list[int]
+) -> list[dict[str, Any]]:
+    out = []
+    by_pos = {row["relative_position"]: row for row in rows}
+    for span in spans:
+        members = [
+            by_pos[pos]
+            for pos in range(span["start"], span["end"])
+            if pos in by_pos
+        ]
+        if not members:
+            continue
+        representative = max(
+            members,
+            key=lambda row: (row["divergence"]["mean"], row["divergence"]["max"]),
+        )
+        layer_preview = {}
+        for layer in layers:
+            key = str(layer)
+            layer_preview[key] = {
+                "representative_token": representative["token"],
+                "full_context": representative["full_context"]["layers"][key][:8],
+                "compacted_context": representative["compacted_context"]["layers"][key][:8],
+            }
+        mean_scores = [row["divergence"]["mean"] for row in members]
+        max_scores = [row["divergence"]["max"] for row in members]
+        out.append(
+            {
+                **span,
+                "divergence": {
+                    "mean": sum(mean_scores) / len(mean_scores),
+                    "max": max(max_scores),
+                    "representative_position": representative["relative_position"],
+                    "representative_token": representative["token"],
+                },
+                "layer_preview": layer_preview,
+            }
+        )
+    out.sort(key=lambda row: (row["divergence"]["mean"], row["divergence"]["max"]), reverse=True)
+    return out
 
 
 def scan_next_action(
@@ -327,6 +391,7 @@ def scan_next_action(
     )
     anchors = action_anchor_phrases(target_text)
     labels_by_rel = labeled_positions(tokenizer, target_ids, anchors)
+    spans = phrase_spans(tokenizer, target_ids, anchors)
     paired = [
         summarize_token_row(
             tokenizer,
@@ -376,6 +441,8 @@ def scan_next_action(
         "summary_text": summary["text"],
         "target_text": target_text,
         "action_anchors": anchors,
+        "anchor_spans": spans,
+        "span_summaries": summarize_spans(paired, spans, layers),
         "ranked_positions": ranking,
         "selected_rows": [row for row in paired if row["relative_position"] in selected],
     }
