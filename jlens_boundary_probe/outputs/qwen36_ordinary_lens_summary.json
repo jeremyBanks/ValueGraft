@@ -1,0 +1,6796 @@
+{
+  "source_artifact": "outputs/qwen36_ordinary_lens.json",
+  "model": "Qwen/Qwen3.6-27B",
+  "layers": [
+    8,
+    16,
+    24,
+    32,
+    40,
+    48,
+    56,
+    62
+  ],
+  "top_k": 10,
+  "case_count": 4,
+  "cases_with_errors": [],
+  "cases": {
+    "nimbus_sense_ordinary": {
+      "case_id": "nimbus_sense_ordinary",
+      "demo_name": "nimbus_sense_ordinary",
+      "rationale": "'Nimbus' is overloaded (cloud migration vs self-serve signup funnel). The summary KEEPS the signup-funnel sense and the establishing turn is retained, so fresh already carries the role; the aligned graft should move the hinge readout only subtly, but more than the shifted control.",
+      "summary_source": "preauthored from prior write-time/fresh sweep",
+      "probe_user": "When I referred to Nimbus in this conversation, which workstream did I mean?",
+      "probe_target": {
+        "text": "The self-serve signup funnel, not the cloud migration.",
+        "token_count": 12,
+        "tokens": [
+          "The",
+          " self",
+          "-",
+          "serve",
+          " signup",
+          " funnel",
+          ",",
+          " not",
+          " the",
+          " cloud",
+          " migration",
+          "."
+        ],
+        "focus_phrases": [
+          "self-serve",
+          "signup funnel"
+        ],
+        "focus_positions": {
+          "self-serve": [
+            1,
+            2,
+            3
+          ],
+          "signup funnel": [
+            4,
+            5
+          ]
+        }
+      },
+      "token_counts": {
+        "old_write_time": 250,
+        "summary_tokens": 69,
+        "fresh_compacted": 208,
+        "fresh_compacted_render_error": null,
+        "full_probe": 131,
+        "fresh_probe": 225,
+        "tail_start_msg": 1,
+        "tail_message_count": 2
+      },
+      "graft": {
+        "pairs": 69,
+        "alpha": 0.75,
+        "changed_value_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ],
+        "negative_control": {
+          "name": "shifted_grafted_compacted",
+          "available": true,
+          "policy": "same V-only blend and alpha, but old summary-token value positions are cyclically shifted by one before injection",
+          "shifted_pairs": 69
+        }
+      },
+      "conditions": {
+        "alpha0_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.191919,
+                "full_vs_condition": 0.191919,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.282828,
+                "full_vs_condition": 0.282828,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.212704,
+                "full_vs_condition": 0.212704,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.261934,
+                "full_vs_condition": 0.261934,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.339189,
+                "full_vs_condition": 0.339189,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.374403,
+                "full_vs_condition": 0.374403,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.313353,
+                "full_vs_condition": 0.313353,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.321512,
+                "full_vs_condition": 0.321512,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "tokens": [
+              " self",
+              "-",
+              "serve",
+              " signup",
+              " funnel"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.181818,
+                "full_vs_condition": 0.181818,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.339394,
+                "full_vs_condition": 0.339394,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.169697,
+                "full_vs_condition": 0.169697,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.371299,
+                "full_vs_condition": 0.371299,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.35671,
+                "full_vs_condition": 0.35671,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.468598,
+                "full_vs_condition": 0.468598,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.242424,
+                "full_vs_condition": 0.242424,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.324009,
+                "full_vs_condition": 0.324009,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          }
+        },
+        "grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.191919,
+                "full_vs_condition": 0.204545,
+                "fresh_vs_condition": 0.090909,
+                "closure": -0.012626
+              },
+              "16": {
+                "full_vs_fresh": 0.282828,
+                "full_vs_condition": 0.330982,
+                "fresh_vs_condition": 0.116162,
+                "closure": -0.048153
+              },
+              "24": {
+                "full_vs_fresh": 0.212704,
+                "full_vs_condition": 0.256079,
+                "fresh_vs_condition": 0.108225,
+                "closure": -0.043375
+              },
+              "32": {
+                "full_vs_fresh": 0.261934,
+                "full_vs_condition": 0.289441,
+                "fresh_vs_condition": 0.068765,
+                "closure": -0.027507
+              },
+              "40": {
+                "full_vs_fresh": 0.339189,
+                "full_vs_condition": 0.368715,
+                "fresh_vs_condition": 0.174242,
+                "closure": -0.029526
+              },
+              "48": {
+                "full_vs_fresh": 0.374403,
+                "full_vs_condition": 0.389555,
+                "fresh_vs_condition": 0.126845,
+                "closure": -0.015152
+              },
+              "56": {
+                "full_vs_fresh": 0.313353,
+                "full_vs_condition": 0.367188,
+                "fresh_vs_condition": 0.171717,
+                "closure": -0.053835
+              },
+              "62": {
+                "full_vs_fresh": 0.321512,
+                "full_vs_condition": 0.328727,
+                "fresh_vs_condition": 0.116162,
+                "closure": -0.007215
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "tokens": [
+              " self",
+              "-",
+              "serve",
+              " signup",
+              " funnel"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.181818,
+                "full_vs_condition": 0.242424,
+                "fresh_vs_condition": 0.109091,
+                "closure": -0.060606
+              },
+              "16": {
+                "full_vs_fresh": 0.339394,
+                "full_vs_condition": 0.412005,
+                "fresh_vs_condition": 0.139394,
+                "closure": -0.072611
+              },
+              "24": {
+                "full_vs_fresh": 0.169697,
+                "full_vs_condition": 0.231702,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.062005
+              },
+              "32": {
+                "full_vs_fresh": 0.371299,
+                "full_vs_condition": 0.349321,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.021978
+              },
+              "40": {
+                "full_vs_fresh": 0.35671,
+                "full_vs_condition": 0.387013,
+                "fresh_vs_condition": 0.169697,
+                "closure": -0.030303
+              },
+              "48": {
+                "full_vs_fresh": 0.468598,
+                "full_vs_condition": 0.44662,
+                "fresh_vs_condition": 0.165035,
+                "closure": 0.021978
+              },
+              "56": {
+                "full_vs_fresh": 0.242424,
+                "full_vs_condition": 0.401931,
+                "fresh_vs_condition": 0.236364,
+                "closure": -0.159507
+              },
+              "62": {
+                "full_vs_fresh": 0.324009,
+                "full_vs_condition": 0.345987,
+                "fresh_vs_condition": 0.169697,
+                "closure": -0.021978
+              }
+            }
+          }
+        },
+        "shifted_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.191919,
+                "full_vs_condition": 0.210761,
+                "fresh_vs_condition": 0.159091,
+                "closure": -0.018842
+              },
+              "16": {
+                "full_vs_fresh": 0.282828,
+                "full_vs_condition": 0.301671,
+                "fresh_vs_condition": 0.210179,
+                "closure": -0.018842
+              },
+              "24": {
+                "full_vs_fresh": 0.212704,
+                "full_vs_condition": 0.234488,
+                "fresh_vs_condition": 0.14899,
+                "closure": -0.021784
+              },
+              "32": {
+                "full_vs_fresh": 0.261934,
+                "full_vs_condition": 0.323178,
+                "fresh_vs_condition": 0.133838,
+                "closure": -0.061244
+              },
+              "40": {
+                "full_vs_fresh": 0.339189,
+                "full_vs_condition": 0.358225,
+                "fresh_vs_condition": 0.23002,
+                "closure": -0.019037
+              },
+              "48": {
+                "full_vs_fresh": 0.374403,
+                "full_vs_condition": 0.364941,
+                "fresh_vs_condition": 0.131313,
+                "closure": 0.009463
+              },
+              "56": {
+                "full_vs_fresh": 0.313353,
+                "full_vs_condition": 0.422607,
+                "fresh_vs_condition": 0.236742,
+                "closure": -0.109253
+              },
+              "62": {
+                "full_vs_fresh": 0.321512,
+                "full_vs_condition": 0.351815,
+                "fresh_vs_condition": 0.212704,
+                "closure": -0.030303
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "tokens": [
+              " self",
+              "-",
+              "serve",
+              " signup",
+              " funnel"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.181818,
+                "full_vs_condition": 0.231702,
+                "fresh_vs_condition": 0.212121,
+                "closure": -0.049883
+              },
+              "16": {
+                "full_vs_fresh": 0.339394,
+                "full_vs_condition": 0.358974,
+                "fresh_vs_condition": 0.328671,
+                "closure": -0.01958
+              },
+              "24": {
+                "full_vs_fresh": 0.169697,
+                "full_vs_condition": 0.236364,
+                "fresh_vs_condition": 0.175758,
+                "closure": -0.066667
+              },
+              "32": {
+                "full_vs_fresh": 0.371299,
+                "full_vs_condition": 0.371299,
+                "fresh_vs_condition": 0.10303,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.35671,
+                "full_vs_condition": 0.406061,
+                "fresh_vs_condition": 0.187013,
+                "closure": -0.049351
+              },
+              "48": {
+                "full_vs_fresh": 0.468598,
+                "full_vs_condition": 0.423909,
+                "fresh_vs_condition": 0.109091,
+                "closure": 0.044689
+              },
+              "56": {
+                "full_vs_fresh": 0.242424,
+                "full_vs_condition": 0.504633,
+                "fresh_vs_condition": 0.356061,
+                "closure": -0.262208
+              },
+              "62": {
+                "full_vs_fresh": 0.324009,
+                "full_vs_condition": 0.412654,
+                "fresh_vs_condition": 0.292308,
+                "closure": -0.088645
+              }
+            }
+          }
+        },
+        "alpha_0.25": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.191919,
+                "full_vs_condition": 0.191919,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.282828,
+                "full_vs_condition": 0.277146,
+                "fresh_vs_condition": 0.030303,
+                "closure": 0.005682
+              },
+              "24": {
+                "full_vs_fresh": 0.212704,
+                "full_vs_condition": 0.255633,
+                "fresh_vs_condition": 0.058081,
+                "closure": -0.042929
+              },
+              "32": {
+                "full_vs_fresh": 0.261934,
+                "full_vs_condition": 0.271092,
+                "fresh_vs_condition": 0.030303,
+                "closure": -0.009158
+              },
+              "40": {
+                "full_vs_fresh": 0.339189,
+                "full_vs_condition": 0.339189,
+                "fresh_vs_condition": 0.015152,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.374403,
+                "full_vs_condition": 0.374403,
+                "fresh_vs_condition": 0.088384,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.313353,
+                "full_vs_condition": 0.313353,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.321512,
+                "full_vs_condition": 0.321512,
+                "fresh_vs_condition": 0.030303,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "tokens": [
+              " self",
+              "-",
+              "serve",
+              " signup",
+              " funnel"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.181818,
+                "full_vs_condition": 0.212121,
+                "fresh_vs_condition": 0.036364,
+                "closure": -0.030303
+              },
+              "16": {
+                "full_vs_fresh": 0.339394,
+                "full_vs_condition": 0.356061,
+                "fresh_vs_condition": 0.036364,
+                "closure": -0.016667
+              },
+              "24": {
+                "full_vs_fresh": 0.169697,
+                "full_vs_condition": 0.231702,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.062005
+              },
+              "32": {
+                "full_vs_fresh": 0.371299,
+                "full_vs_condition": 0.371299,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.35671,
+                "full_vs_condition": 0.35671,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.468598,
+                "full_vs_condition": 0.44662,
+                "fresh_vs_condition": 0.072727,
+                "closure": 0.021978
+              },
+              "56": {
+                "full_vs_fresh": 0.242424,
+                "full_vs_condition": 0.268065,
+                "fresh_vs_condition": 0.036364,
+                "closure": -0.025641
+              },
+              "62": {
+                "full_vs_fresh": 0.324009,
+                "full_vs_condition": 0.324009,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.0
+              }
+            }
+          }
+        },
+        "alpha_0.5": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.191919,
+                "full_vs_condition": 0.204545,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.012626
+              },
+              "16": {
+                "full_vs_fresh": 0.282828,
+                "full_vs_condition": 0.28783,
+                "fresh_vs_condition": 0.073232,
+                "closure": -0.005002
+              },
+              "24": {
+                "full_vs_fresh": 0.212704,
+                "full_vs_condition": 0.249951,
+                "fresh_vs_condition": 0.099068,
+                "closure": -0.037247
+              },
+              "32": {
+                "full_vs_fresh": 0.261934,
+                "full_vs_condition": 0.283718,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.021784
+              },
+              "40": {
+                "full_vs_fresh": 0.339189,
+                "full_vs_condition": 0.334721,
+                "fresh_vs_condition": 0.106061,
+                "closure": 0.004468
+              },
+              "48": {
+                "full_vs_fresh": 0.374403,
+                "full_vs_condition": 0.36372,
+                "fresh_vs_condition": 0.111694,
+                "closure": 0.010684
+              },
+              "56": {
+                "full_vs_fresh": 0.313353,
+                "full_vs_condition": 0.324037,
+                "fresh_vs_condition": 0.103535,
+                "closure": -0.010684
+              },
+              "62": {
+                "full_vs_fresh": 0.321512,
+                "full_vs_condition": 0.332196,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.010684
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "tokens": [
+              " self",
+              "-",
+              "serve",
+              " signup",
+              " funnel"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.181818,
+                "full_vs_condition": 0.242424,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.060606
+              },
+              "16": {
+                "full_vs_fresh": 0.339394,
+                "full_vs_condition": 0.356061,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.016667
+              },
+              "24": {
+                "full_vs_fresh": 0.169697,
+                "full_vs_condition": 0.231702,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.062005
+              },
+              "32": {
+                "full_vs_fresh": 0.371299,
+                "full_vs_condition": 0.371299,
+                "fresh_vs_condition": 0.036364,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.35671,
+                "full_vs_condition": 0.35671,
+                "fresh_vs_condition": 0.109091,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.468598,
+                "full_vs_condition": 0.420979,
+                "fresh_vs_condition": 0.201399,
+                "closure": 0.047619
+              },
+              "56": {
+                "full_vs_fresh": 0.242424,
+                "full_vs_condition": 0.293706,
+                "fresh_vs_condition": 0.10303,
+                "closure": -0.051282
+              },
+              "62": {
+                "full_vs_fresh": 0.324009,
+                "full_vs_condition": 0.324009,
+                "fresh_vs_condition": 0.072727,
+                "closure": 0.0
+              }
+            }
+          }
+        },
+        "alpha_1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.191919,
+                "full_vs_condition": 0.215229,
+                "fresh_vs_condition": 0.088384,
+                "closure": -0.02331
+              },
+              "16": {
+                "full_vs_fresh": 0.282828,
+                "full_vs_condition": 0.323767,
+                "fresh_vs_condition": 0.157148,
+                "closure": -0.040938
+              },
+              "24": {
+                "full_vs_fresh": 0.212704,
+                "full_vs_condition": 0.256079,
+                "fresh_vs_condition": 0.093074,
+                "closure": -0.043375
+              },
+              "32": {
+                "full_vs_fresh": 0.261934,
+                "full_vs_condition": 0.310173,
+                "fresh_vs_condition": 0.116162,
+                "closure": -0.048239
+              },
+              "40": {
+                "full_vs_fresh": 0.339189,
+                "full_vs_condition": 0.374133,
+                "fresh_vs_condition": 0.171717,
+                "closure": -0.034944
+              },
+              "48": {
+                "full_vs_fresh": 0.374403,
+                "full_vs_condition": 0.378871,
+                "fresh_vs_condition": 0.157148,
+                "closure": -0.004468
+              },
+              "56": {
+                "full_vs_fresh": 0.313353,
+                "full_vs_condition": 0.367188,
+                "fresh_vs_condition": 0.199495,
+                "closure": -0.053835
+              },
+              "62": {
+                "full_vs_fresh": 0.321512,
+                "full_vs_condition": 0.328727,
+                "fresh_vs_condition": 0.128788,
+                "closure": -0.007215
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "tokens": [
+              " self",
+              "-",
+              "serve",
+              " signup",
+              " funnel"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.181818,
+                "full_vs_condition": 0.268065,
+                "fresh_vs_condition": 0.139394,
+                "closure": -0.086247
+              },
+              "16": {
+                "full_vs_fresh": 0.339394,
+                "full_vs_condition": 0.375641,
+                "fresh_vs_condition": 0.175758,
+                "closure": -0.036247
+              },
+              "24": {
+                "full_vs_fresh": 0.169697,
+                "full_vs_condition": 0.231702,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.062005
+              },
+              "32": {
+                "full_vs_fresh": 0.371299,
+                "full_vs_condition": 0.371299,
+                "fresh_vs_condition": 0.072727,
+                "closure": -0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.35671,
+                "full_vs_condition": 0.40368,
+                "fresh_vs_condition": 0.2,
+                "closure": -0.04697
+              },
+              "48": {
+                "full_vs_fresh": 0.468598,
+                "full_vs_condition": 0.420979,
+                "fresh_vs_condition": 0.201399,
+                "closure": 0.047619
+              },
+              "56": {
+                "full_vs_fresh": 0.242424,
+                "full_vs_condition": 0.401931,
+                "fresh_vs_condition": 0.236364,
+                "closure": -0.159507
+              },
+              "62": {
+                "full_vs_fresh": 0.324009,
+                "full_vs_condition": 0.345987,
+                "fresh_vs_condition": 0.169697,
+                "closure": -0.021978
+              }
+            }
+          }
+        }
+      },
+      "candidate_examples": [
+        {
+          "relative_position": 1,
+          "target_token": " self",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": " self",
+            "fresh_compacted": " self",
+            "grafted_compacted": " self",
+            "shifted_grafted_compacted": " self"
+          },
+          "lens_top": {
+            "full_context": [
+              "/self",
+              "-self",
+              "-service",
+              " self",
+              " Self",
+              " SELF",
+              ".self",
+              ":self",
+              "=self",
+              "自助"
+            ],
+            "fresh_compacted": [
+              "/self",
+              "-self",
+              "-service",
+              " self",
+              " Self",
+              "(Self",
+              "=self",
+              " SELF",
+              ".self",
+              ":self"
+            ],
+            "grafted_compacted": [
+              "/self",
+              "-self",
+              "-service",
+              "(Self",
+              "=self",
+              "-serving",
+              " self",
+              " signup",
+              " Self",
+              ".self"
+            ],
+            "shifted_grafted_compacted": [
+              "/self",
+              " signup",
+              "-service",
+              "-self",
+              "/signup",
+              "(Self",
+              "signup",
+              " Signup",
+              "-registration",
+              "-signed"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " self",
+            "layer": 56,
+            "graft_closure": -0.27972,
+            "shifted_closure": -0.641711,
+            "graft_minus_shifted": 0.361991,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-",
+          "layer": 62,
+          "next_argmax": {
+            "full_context": "-",
+            "fresh_compacted": "-",
+            "grafted_compacted": "-",
+            "shifted_grafted_compacted": "-"
+          },
+          "lens_top": {
+            "full_context": [
+              "serve",
+              " signup",
+              " serve",
+              " Serve",
+              "service",
+              "/signup",
+              "signup",
+              " service",
+              "sign",
+              "erve"
+            ],
+            "fresh_compacted": [
+              "serve",
+              " signup",
+              "/signup",
+              "signup",
+              " serve",
+              "work",
+              " work",
+              "sign",
+              "service",
+              " Signup"
+            ],
+            "grafted_compacted": [
+              "serve",
+              " signup",
+              "/signup",
+              "signup",
+              " serve",
+              " work",
+              "work",
+              " Signup",
+              "sign",
+              "service"
+            ],
+            "shifted_grafted_compacted": [
+              "serve",
+              " signup",
+              "/signup",
+              "sign",
+              "signup",
+              " funnel",
+              "work",
+              " sign",
+              " Signup",
+              ".signup"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-",
+            "layer": 62,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.205128,
+            "graft_minus_shifted": 0.205128,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 3,
+          "target_token": "serve",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": "serve",
+            "fresh_compacted": "serve",
+            "grafted_compacted": "serve",
+            "shifted_grafted_compacted": "serve"
+          },
+          "lens_top": {
+            "full_context": [
+              " signup",
+              " Signup",
+              "signup",
+              "Signup",
+              " registration",
+              "/signup",
+              "_signup",
+              " enrollment",
+              " customer",
+              " SignUp"
+            ],
+            "fresh_compacted": [
+              " signup",
+              " Signup",
+              " registration",
+              "signup",
+              "Signup",
+              "/signup",
+              "_signup",
+              " enrollment",
+              " startup",
+              " customer"
+            ],
+            "grafted_compacted": [
+              " signup",
+              " Signup",
+              " registration",
+              "signup",
+              "Signup",
+              "/signup",
+              " customer",
+              " startup",
+              "_signup",
+              " enrollment"
+            ],
+            "shifted_grafted_compacted": [
+              " signup",
+              " Signup",
+              " registration",
+              "signup",
+              "Signup",
+              " customer",
+              "/signup",
+              " workflow",
+              " enrollment",
+              " startup"
+            ]
+          },
+          "score": {
+            "relative_position": 3,
+            "target_token": "serve",
+            "layer": 56,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.151515,
+            "graft_minus_shifted": 0.151515,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 5,
+          "target_token": " funnel",
+          "layer": 24,
+          "next_argmax": {
+            "full_context": " funnel",
+            "fresh_compacted": " funnel",
+            "grafted_compacted": " funnel",
+            "shifted_grafted_compacted": " funnel"
+          },
+          "lens_top": {
+            "full_context": [
+              " \n\n",
+              " \r\n\r\n",
+              " \n  \n",
+              "  \n\n",
+              " ___",
+              " __",
+              " ―",
+              " \r\n \r\n",
+              "  \r\n\r\n",
+              " \n\n\n"
+            ],
+            "fresh_compacted": [
+              " \n\n",
+              " \r\n\r\n",
+              " \n  \n",
+              "  \n\n",
+              " ―",
+              " —",
+              " \n\n\n",
+              " __",
+              " ___",
+              "  \r\n\r\n"
+            ],
+            "grafted_compacted": [
+              " \n\n",
+              " \r\n\r\n",
+              "  \n\n",
+              " \n  \n",
+              " ―",
+              " —",
+              " ___",
+              " \n\n\n",
+              " __",
+              "  \r\n\r\n"
+            ],
+            "shifted_grafted_compacted": [
+              " \n\n",
+              " \r\n\r\n",
+              "  \n\n",
+              " ―",
+              " \n  \n",
+              " \n\n\n",
+              " —",
+              "  \r\n\r\n",
+              " \r\n \r\n",
+              " --"
+            ]
+          },
+          "score": {
+            "relative_position": 5,
+            "target_token": " funnel",
+            "layer": 24,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.151515,
+            "graft_minus_shifted": 0.151515,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " self",
+          "layer": 62,
+          "next_argmax": {
+            "full_context": " self",
+            "fresh_compacted": " self",
+            "grafted_compacted": " self",
+            "shifted_grafted_compacted": " self"
+          },
+          "lens_top": {
+            "full_context": [
+              "-",
+              "‑",
+              "-service",
+              "-**",
+              " serve",
+              "-host",
+              "-s",
+              "-_",
+              "–",
+              "-sign"
+            ],
+            "fresh_compacted": [
+              "-",
+              "‑",
+              "-sign",
+              "-**",
+              "-work",
+              " serve",
+              "-service",
+              "-host",
+              "-s",
+              "–"
+            ],
+            "grafted_compacted": [
+              "-",
+              "‑",
+              "-work",
+              "-sign",
+              " serve",
+              "-**",
+              "-service",
+              "-host",
+              "-s",
+              "-serving"
+            ],
+            "shifted_grafted_compacted": [
+              "-",
+              "-sign",
+              "-service",
+              "‑",
+              "-host",
+              "-work",
+              " signup",
+              "-s",
+              "-**",
+              "-signed"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " self",
+            "layer": 62,
+            "graft_closure": -0.151515,
+            "shifted_closure": -0.27972,
+            "graft_minus_shifted": 0.128205,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 5,
+          "target_token": " funnel",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": " funnel",
+            "fresh_compacted": " funnel",
+            "grafted_compacted": " funnel",
+            "shifted_grafted_compacted": " funnel"
+          },
+          "lens_top": {
+            "full_context": [
+              " __(",
+              " \n    \n",
+              " \r\n \r\n",
+              " \n            \n",
+              " **【",
+              " ～",
+              " *“",
+              " \n\n\n",
+              " ◎",
+              "__."
+            ],
+            "fresh_compacted": [
+              " \n    \n",
+              " __(",
+              " \r\n \r\n",
+              " \n            \n",
+              " \n\n\n",
+              " ～",
+              " **【",
+              " *“",
+              " \n        \n",
+              "__."
+            ],
+            "grafted_compacted": [
+              " \n    \n",
+              " __(",
+              " \r\n \r\n",
+              " \n            \n",
+              " \n\n\n",
+              " ～",
+              " *“",
+              " \n        \n",
+              " **【",
+              " \n  \n"
+            ],
+            "shifted_grafted_compacted": [
+              " \n    \n",
+              " __(",
+              " \r\n \r\n",
+              " \n            \n",
+              " \n\n\n",
+              " ～",
+              " \n        \n",
+              " \n  \n",
+              " \n \n",
+              " *“"
+            ]
+          },
+          "score": {
+            "relative_position": 5,
+            "target_token": " funnel",
+            "layer": 8,
+            "graft_closure": -0.151515,
+            "shifted_closure": -0.27972,
+            "graft_minus_shifted": 0.128205,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " signup",
+          "layer": 48,
+          "next_argmax": {
+            "full_context": " signup",
+            "fresh_compacted": " signup",
+            "grafted_compacted": " signup",
+            "shifted_grafted_compacted": " signup"
+          },
+          "lens_top": {
+            "full_context": [
+              "—from",
+              "—including",
+              " transitioning",
+              " workflow",
+              " transition",
+              "—the",
+              " pipeline",
+              "—that",
+              " rollout",
+              " transitions"
+            ],
+            "fresh_compacted": [
+              "—from",
+              " (",
+              " transition",
+              " (**",
+              " transitioning",
+              "—including",
+              " workflow",
+              " (\"",
+              "—the",
+              " (“"
+            ],
+            "grafted_compacted": [
+              "—from",
+              " (",
+              " transition",
+              " transitioning",
+              " workflow",
+              " (**",
+              "—including",
+              " pipeline",
+              " rollout",
+              " **("
+            ],
+            "shifted_grafted_compacted": [
+              "—from",
+              " (",
+              " transitioning",
+              "—including",
+              " (**",
+              " transition",
+              " (\"",
+              " workflow",
+              " (“",
+              "—the"
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " signup",
+            "layer": 48,
+            "graft_closure": 0.10989,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.10989,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 5,
+          "target_token": " funnel",
+          "layer": 32,
+          "next_argmax": {
+            "full_context": " funnel",
+            "fresh_compacted": " funnel",
+            "grafted_compacted": " funnel",
+            "shifted_grafted_compacted": " funnel"
+          },
+          "lens_top": {
+            "full_context": [
+              " \n\n",
+              " ___",
+              " …",
+              "  \n\n",
+              " .",
+              " __",
+              " —",
+              "<|endoftext|>",
+              " ...",
+              " ?"
+            ],
+            "fresh_compacted": [
+              " \n\n",
+              " ___",
+              "\n\n",
+              " __",
+              "  \n\n",
+              " …",
+              " ____",
+              " ________",
+              " ______",
+              " —"
+            ],
+            "grafted_compacted": [
+              " \n\n",
+              " ___",
+              " __",
+              "\n\n",
+              "  \n\n",
+              " .",
+              " …",
+              " ____",
+              " ________",
+              " —"
+            ],
+            "shifted_grafted_compacted": [
+              " \n\n",
+              "\n\n",
+              " ___",
+              " __",
+              "  \n\n",
+              "<|endoftext|>",
+              " ____",
+              " …",
+              " ________",
+              " ______"
+            ]
+          },
+          "score": {
+            "relative_position": 5,
+            "target_token": " funnel",
+            "layer": 32,
+            "graft_closure": 0.10989,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.10989,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " signup",
+          "layer": 40,
+          "next_argmax": {
+            "full_context": " signup",
+            "fresh_compacted": " signup",
+            "grafted_compacted": " signup",
+            "shifted_grafted_compacted": " signup"
+          },
+          "lens_top": {
+            "full_context": [
+              " rollout",
+              " process",
+              " startup",
+              " transition",
+              " signup",
+              " workflow",
+              " transitioning",
+              " campaign",
+              " marketing",
+              " launch"
+            ],
+            "fresh_compacted": [
+              "‑",
+              " rollout",
+              " –",
+              " process",
+              " transition",
+              " /",
+              " startup",
+              " campaign",
+              " transitioning",
+              " (“"
+            ],
+            "grafted_compacted": [
+              "‑",
+              " process",
+              " –",
+              " rollout",
+              " transition",
+              " campaign",
+              " /",
+              " route",
+              " transitioning",
+              " workflow"
+            ],
+            "shifted_grafted_compacted": [
+              "‑",
+              " rollout",
+              " –",
+              " -->",
+              " process",
+              " signup",
+              " transition",
+              " --",
+              " startup",
+              " route"
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " signup",
+            "layer": 40,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.095238,
+            "graft_minus_shifted": 0.095238,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " signup",
+          "layer": 62,
+          "next_argmax": {
+            "full_context": " signup",
+            "fresh_compacted": " signup",
+            "grafted_compacted": " signup",
+            "shifted_grafted_compacted": " signup"
+          },
+          "lens_top": {
+            "full_context": [
+              " funnel",
+              " fun",
+              "漏斗",
+              " functor",
+              " Fun",
+              "fun",
+              " work",
+              "Fun",
+              " flow",
+              "_fun"
+            ],
+            "fresh_compacted": [
+              " funnel",
+              " fun",
+              "漏斗",
+              " functor",
+              " work",
+              " Fun",
+              "fun",
+              "Fun",
+              "/f",
+              ".fun"
+            ],
+            "grafted_compacted": [
+              " funnel",
+              " fun",
+              " work",
+              "漏斗",
+              " functor",
+              " Fun",
+              "fun",
+              "Fun",
+              " workflow",
+              " flow"
+            ],
+            "shifted_grafted_compacted": [
+              " funnel",
+              " fun",
+              " work",
+              " functor",
+              " Fun",
+              "漏斗",
+              "fun",
+              " workflow",
+              "Fun",
+              " flow"
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " signup",
+            "layer": 62,
+            "graft_closure": 0.151515,
+            "shifted_closure": 0.151515,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " self",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": " self",
+            "fresh_compacted": " self",
+            "grafted_compacted": " self",
+            "shifted_grafted_compacted": " self"
+          },
+          "lens_top": {
+            "full_context": [
+              "verständlich",
+              "sie",
+              "sWith",
+              " `_",
+              "egger",
+              "iveness",
+              "sdale",
+              "lessness",
+              "hood",
+              "iance"
+            ],
+            "fresh_compacted": [
+              "verständlich",
+              "sie",
+              "iveness",
+              "sWith",
+              " `_",
+              "egger",
+              "lessness",
+              "hood",
+              "sdale",
+              "sam"
+            ],
+            "grafted_compacted": [
+              "verständlich",
+              "sie",
+              "sWith",
+              "iveness",
+              " `_",
+              "egger",
+              "lessness",
+              "hood",
+              "sdale",
+              "s"
+            ],
+            "shifted_grafted_compacted": [
+              "verständlich",
+              "sie",
+              "sWith",
+              "iveness",
+              " `_",
+              "egger",
+              "lessness",
+              "s",
+              "hood",
+              "sdale"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " self",
+            "layer": 8,
+            "graft_closure": 0.0,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " self",
+          "layer": 24,
+          "next_argmax": {
+            "full_context": " self",
+            "fresh_compacted": " self",
+            "grafted_compacted": " self",
+            "shifted_grafted_compacted": " self"
+          },
+          "lens_top": {
+            "full_context": [
+              "  \n\n",
+              "\n\n",
+              " \n\n",
+              " \r\n\r\n",
+              "\r\n\r\n",
+              "   \n\n",
+              "\t\n\n",
+              "    \n\n",
+              "  \r\n\r\n",
+              "      \n\n"
+            ],
+            "fresh_compacted": [
+              "\n\n",
+              " \r\n\r\n",
+              "  \n\n",
+              " \n\n",
+              "\r\n\r\n",
+              "\t\n\n",
+              "   \n\n",
+              "    \n\n",
+              "  \r\n\r\n",
+              "      \n\n"
+            ],
+            "grafted_compacted": [
+              " \r\n\r\n",
+              "\n\n",
+              "  \n\n",
+              " \n\n",
+              "\r\n\r\n",
+              "\t\n\n",
+              "   \n\n",
+              "    \n\n",
+              "  \r\n\r\n",
+              "      \n\n"
+            ],
+            "shifted_grafted_compacted": [
+              " \r\n\r\n",
+              "\n\n",
+              "  \n\n",
+              "\r\n\r\n",
+              " \n\n",
+              "\t\n\n",
+              "   \n\n",
+              "    \n\n",
+              "  \r\n\r\n",
+              "      \n\n"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " self",
+            "layer": 24,
+            "graft_closure": 0.0,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        }
+      ]
+    },
+    "hydra_sense_ordinary": {
+      "case_id": "hydra_sense_ordinary",
+      "demo_name": "hydra_sense_ordinary",
+      "rationale": "'Hydra' is overloaded (GPU cluster vs multi-task comparison model). The summary KEEPS the comparison-model sense and the tail is retained; aligned graft should nudge the hinge readout subtly above the shifted control.",
+      "summary_source": "preauthored from prior write-time/fresh sweep",
+      "probe_user": "When I mentioned Hydra numbers, which Hydra did I mean?",
+      "probe_target": {
+        "text": "The multi-task comparison model, not the GPU cluster.",
+        "token_count": 11,
+        "tokens": [
+          "The",
+          " multi",
+          "-task",
+          " comparison",
+          " model",
+          ",",
+          " not",
+          " the",
+          " GPU",
+          " cluster",
+          "."
+        ],
+        "focus_phrases": [
+          "multi-task",
+          "comparison model"
+        ],
+        "focus_positions": {
+          "multi-task": [
+            1,
+            2
+          ],
+          "comparison model": [
+            3,
+            4
+          ]
+        }
+      },
+      "token_counts": {
+        "old_write_time": 238,
+        "summary_tokens": 61,
+        "fresh_compacted": 196,
+        "fresh_compacted_render_error": null,
+        "full_probe": 123,
+        "fresh_probe": 209,
+        "tail_start_msg": 1,
+        "tail_message_count": 2
+      },
+      "graft": {
+        "pairs": 61,
+        "alpha": 0.75,
+        "changed_value_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ],
+        "negative_control": {
+          "name": "shifted_grafted_compacted",
+          "available": true,
+          "policy": "same V-only blend and alpha, but old summary-token value positions are cyclically shifted by one before injection",
+          "shifted_pairs": 61
+        }
+      },
+      "conditions": {
+        "alpha0_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.187328,
+                "full_vs_condition": 0.187328,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.220628,
+                "full_vs_condition": 0.220628,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.262586,
+                "full_vs_condition": 0.262586,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.373808,
+                "full_vs_condition": 0.373808,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.35629,
+                "full_vs_condition": 0.35629,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.271244,
+                "full_vs_condition": 0.271244,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.414896,
+                "full_vs_condition": 0.414896,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.357287,
+                "full_vs_condition": 0.357287,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " multi",
+              "-task",
+              " comparison",
+              " model"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.257576,
+                "full_vs_condition": 0.257576,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.3171,
+                "full_vs_condition": 0.3171,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.38703,
+                "full_vs_condition": 0.38703,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.44289,
+                "full_vs_condition": 0.44289,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.555556,
+                "full_vs_condition": 0.555556,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.244172,
+                "full_vs_condition": 0.244172,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.66369,
+                "full_vs_condition": 0.66369,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.491196,
+                "full_vs_condition": 0.491196,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          }
+        },
+        "grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.187328,
+                "full_vs_condition": 0.184573,
+                "fresh_vs_condition": 0.049587,
+                "closure": 0.002755
+              },
+              "16": {
+                "full_vs_fresh": 0.220628,
+                "full_vs_condition": 0.211728,
+                "fresh_vs_condition": 0.141132,
+                "closure": 0.0089
+              },
+              "24": {
+                "full_vs_fresh": 0.262586,
+                "full_vs_condition": 0.343959,
+                "fresh_vs_condition": 0.187328,
+                "closure": -0.081373
+              },
+              "32": {
+                "full_vs_fresh": 0.373808,
+                "full_vs_condition": 0.339668,
+                "fresh_vs_condition": 0.07989,
+                "closure": 0.03414
+              },
+              "40": {
+                "full_vs_fresh": 0.35629,
+                "full_vs_condition": 0.37499,
+                "fresh_vs_condition": 0.110193,
+                "closure": -0.0187
+              },
+              "48": {
+                "full_vs_fresh": 0.271244,
+                "full_vs_condition": 0.24306,
+                "fresh_vs_condition": 0.063361,
+                "closure": 0.028184
+              },
+              "56": {
+                "full_vs_fresh": 0.414896,
+                "full_vs_condition": 0.407903,
+                "fresh_vs_condition": 0.126722,
+                "closure": 0.006993
+              },
+              "62": {
+                "full_vs_fresh": 0.357287,
+                "full_vs_condition": 0.392168,
+                "fresh_vs_condition": 0.123967,
+                "closure": -0.034882
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " multi",
+              "-task",
+              " comparison",
+              " model"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.257576,
+                "full_vs_condition": 0.257576,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.3171,
+                "full_vs_condition": 0.354978,
+                "fresh_vs_condition": 0.136364,
+                "closure": -0.037879
+              },
+              "24": {
+                "full_vs_fresh": 0.38703,
+                "full_vs_condition": 0.438312,
+                "fresh_vs_condition": 0.257576,
+                "closure": -0.051282
+              },
+              "32": {
+                "full_vs_fresh": 0.44289,
+                "full_vs_condition": 0.419081,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.02381
+              },
+              "40": {
+                "full_vs_fresh": 0.555556,
+                "full_vs_condition": 0.515406,
+                "fresh_vs_condition": 0.128788,
+                "closure": 0.040149
+              },
+              "48": {
+                "full_vs_fresh": 0.244172,
+                "full_vs_condition": 0.166667,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.077506
+              },
+              "56": {
+                "full_vs_fresh": 0.66369,
+                "full_vs_condition": 0.612408,
+                "fresh_vs_condition": 0.128788,
+                "closure": 0.051282
+              },
+              "62": {
+                "full_vs_fresh": 0.491196,
+                "full_vs_condition": 0.542478,
+                "fresh_vs_condition": 0.212121,
+                "closure": -0.051282
+              }
+            }
+          }
+        },
+        "shifted_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 1,
+              "regressions": 0,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.187328,
+                "full_vs_condition": 0.198983,
+                "fresh_vs_condition": 0.143251,
+                "closure": -0.011655
+              },
+              "16": {
+                "full_vs_fresh": 0.220628,
+                "full_vs_condition": 0.25747,
+                "fresh_vs_condition": 0.262344,
+                "closure": -0.036842
+              },
+              "24": {
+                "full_vs_fresh": 0.262586,
+                "full_vs_condition": 0.291224,
+                "fresh_vs_condition": 0.220628,
+                "closure": -0.028638
+              },
+              "32": {
+                "full_vs_fresh": 0.373808,
+                "full_vs_condition": 0.308782,
+                "fresh_vs_condition": 0.129477,
+                "closure": 0.065026
+              },
+              "40": {
+                "full_vs_fresh": 0.35629,
+                "full_vs_condition": 0.287137,
+                "fresh_vs_condition": 0.186246,
+                "closure": 0.069153
+              },
+              "48": {
+                "full_vs_fresh": 0.271244,
+                "full_vs_condition": 0.261708,
+                "fresh_vs_condition": 0.110193,
+                "closure": 0.009536
+              },
+              "56": {
+                "full_vs_fresh": 0.414896,
+                "full_vs_condition": 0.403483,
+                "fresh_vs_condition": 0.240941,
+                "closure": 0.011413
+              },
+              "62": {
+                "full_vs_fresh": 0.357287,
+                "full_vs_condition": 0.323987,
+                "fresh_vs_condition": 0.19003,
+                "closure": 0.0333
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " multi",
+              "-task",
+              " comparison",
+              " model"
+            ],
+            "argmax": {
+              "rescues": 1,
+              "regressions": 0,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.257576,
+                "full_vs_condition": 0.206294,
+                "fresh_vs_condition": 0.212121,
+                "closure": 0.051282
+              },
+              "16": {
+                "full_vs_fresh": 0.3171,
+                "full_vs_condition": 0.44289,
+                "fresh_vs_condition": 0.37296,
+                "closure": -0.125791
+              },
+              "24": {
+                "full_vs_fresh": 0.38703,
+                "full_vs_condition": 0.354978,
+                "fresh_vs_condition": 0.349151,
+                "closure": 0.032051
+              },
+              "32": {
+                "full_vs_fresh": 0.44289,
+                "full_vs_condition": 0.354978,
+                "fresh_vs_condition": 0.219697,
+                "closure": 0.087912
+              },
+              "40": {
+                "full_vs_fresh": 0.555556,
+                "full_vs_condition": 0.365385,
+                "fresh_vs_condition": 0.330357,
+                "closure": 0.190171
+              },
+              "48": {
+                "full_vs_fresh": 0.244172,
+                "full_vs_condition": 0.212121,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.032051
+              },
+              "56": {
+                "full_vs_fresh": 0.66369,
+                "full_vs_condition": 0.556548,
+                "fresh_vs_condition": 0.44289,
+                "closure": 0.107143
+              },
+              "62": {
+                "full_vs_fresh": 0.491196,
+                "full_vs_condition": 0.421266,
+                "fresh_vs_condition": 0.386218,
+                "closure": 0.06993
+              }
+            }
+          }
+        },
+        "alpha_0.25": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.187328,
+                "full_vs_condition": 0.187328,
+                "fresh_vs_condition": 0.033058,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.220628,
+                "full_vs_condition": 0.242031,
+                "fresh_vs_condition": 0.082645,
+                "closure": -0.021403
+              },
+              "24": {
+                "full_vs_fresh": 0.262586,
+                "full_vs_condition": 0.268792,
+                "fresh_vs_condition": 0.049587,
+                "closure": -0.006206
+              },
+              "32": {
+                "full_vs_fresh": 0.373808,
+                "full_vs_condition": 0.348326,
+                "fresh_vs_condition": 0.049587,
+                "closure": 0.025482
+              },
+              "40": {
+                "full_vs_fresh": 0.35629,
+                "full_vs_condition": 0.369277,
+                "fresh_vs_condition": 0.060606,
+                "closure": -0.012987
+              },
+              "48": {
+                "full_vs_fresh": 0.271244,
+                "full_vs_condition": 0.271244,
+                "fresh_vs_condition": 0.030303,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.414896,
+                "full_vs_condition": 0.412141,
+                "fresh_vs_condition": 0.063361,
+                "closure": 0.002755
+              },
+              "62": {
+                "full_vs_fresh": 0.357287,
+                "full_vs_condition": 0.397285,
+                "fresh_vs_condition": 0.096419,
+                "closure": -0.039998
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " multi",
+              "-task",
+              " comparison",
+              " model"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.257576,
+                "full_vs_condition": 0.219697,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.037879
+              },
+              "16": {
+                "full_vs_fresh": 0.3171,
+                "full_vs_condition": 0.3171,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.38703,
+                "full_vs_condition": 0.376623,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.010406
+              },
+              "32": {
+                "full_vs_fresh": 0.44289,
+                "full_vs_condition": 0.44289,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.555556,
+                "full_vs_condition": 0.531746,
+                "fresh_vs_condition": 0.083333,
+                "closure": 0.02381
+              },
+              "48": {
+                "full_vs_fresh": 0.244172,
+                "full_vs_condition": 0.244172,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.66369,
+                "full_vs_condition": 0.66369,
+                "fresh_vs_condition": 0.083333,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.491196,
+                "full_vs_condition": 0.556548,
+                "fresh_vs_condition": 0.181818,
+                "closure": -0.065351
+              }
+            }
+          }
+        },
+        "alpha_0.5": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.187328,
+                "full_vs_condition": 0.187328,
+                "fresh_vs_condition": 0.033058,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.220628,
+                "full_vs_condition": 0.232041,
+                "fresh_vs_condition": 0.132231,
+                "closure": -0.011413
+              },
+              "24": {
+                "full_vs_fresh": 0.262586,
+                "full_vs_condition": 0.307753,
+                "fresh_vs_condition": 0.146006,
+                "closure": -0.045167
+              },
+              "32": {
+                "full_vs_fresh": 0.373808,
+                "full_vs_condition": 0.348326,
+                "fresh_vs_condition": 0.063361,
+                "closure": 0.025482
+              },
+              "40": {
+                "full_vs_fresh": 0.35629,
+                "full_vs_condition": 0.371993,
+                "fresh_vs_condition": 0.063361,
+                "closure": -0.015703
+              },
+              "48": {
+                "full_vs_fresh": 0.271244,
+                "full_vs_condition": 0.271244,
+                "fresh_vs_condition": 0.063361,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.414896,
+                "full_vs_condition": 0.389709,
+                "fresh_vs_condition": 0.07989,
+                "closure": 0.025187
+              },
+              "62": {
+                "full_vs_fresh": 0.357287,
+                "full_vs_condition": 0.405943,
+                "fresh_vs_condition": 0.110193,
+                "closure": -0.048656
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " multi",
+              "-task",
+              " comparison",
+              " model"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.257576,
+                "full_vs_condition": 0.219697,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.037879
+              },
+              "16": {
+                "full_vs_fresh": 0.3171,
+                "full_vs_condition": 0.327506,
+                "fresh_vs_condition": 0.181818,
+                "closure": -0.010406
+              },
+              "24": {
+                "full_vs_fresh": 0.38703,
+                "full_vs_condition": 0.376623,
+                "fresh_vs_condition": 0.181818,
+                "closure": 0.010406
+              },
+              "32": {
+                "full_vs_fresh": 0.44289,
+                "full_vs_condition": 0.44289,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.555556,
+                "full_vs_condition": 0.539216,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.01634
+              },
+              "48": {
+                "full_vs_fresh": 0.244172,
+                "full_vs_condition": 0.244172,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.66369,
+                "full_vs_condition": 0.639881,
+                "fresh_vs_condition": 0.083333,
+                "closure": 0.02381
+              },
+              "62": {
+                "full_vs_fresh": 0.491196,
+                "full_vs_condition": 0.580357,
+                "fresh_vs_condition": 0.219697,
+                "closure": -0.089161
+              }
+            }
+          }
+        },
+        "alpha_1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.187328,
+                "full_vs_condition": 0.187328,
+                "fresh_vs_condition": 0.033058,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.220628,
+                "full_vs_condition": 0.213393,
+                "fresh_vs_condition": 0.185209,
+                "closure": 0.007235
+              },
+              "24": {
+                "full_vs_fresh": 0.262586,
+                "full_vs_condition": 0.318477,
+                "fresh_vs_condition": 0.240941,
+                "closure": -0.055891
+              },
+              "32": {
+                "full_vs_fresh": 0.373808,
+                "full_vs_condition": 0.339668,
+                "fresh_vs_condition": 0.096419,
+                "closure": 0.03414
+              },
+              "40": {
+                "full_vs_fresh": 0.35629,
+                "full_vs_condition": 0.388765,
+                "fresh_vs_condition": 0.140496,
+                "closure": -0.032474
+              },
+              "48": {
+                "full_vs_fresh": 0.271244,
+                "full_vs_condition": 0.240941,
+                "fresh_vs_condition": 0.07989,
+                "closure": 0.030303
+              },
+              "56": {
+                "full_vs_fresh": 0.414896,
+                "full_vs_condition": 0.396248,
+                "fresh_vs_condition": 0.123967,
+                "closure": 0.018648
+              },
+              "62": {
+                "full_vs_fresh": 0.357287,
+                "full_vs_condition": 0.396989,
+                "fresh_vs_condition": 0.16868,
+                "closure": -0.039703
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " multi",
+              "-task",
+              " comparison",
+              " model"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.257576,
+                "full_vs_condition": 0.219697,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.037879
+              },
+              "16": {
+                "full_vs_fresh": 0.3171,
+                "full_vs_condition": 0.359557,
+                "fresh_vs_condition": 0.219697,
+                "closure": -0.042458
+              },
+              "24": {
+                "full_vs_fresh": 0.38703,
+                "full_vs_condition": 0.41369,
+                "fresh_vs_condition": 0.359557,
+                "closure": -0.026661
+              },
+              "32": {
+                "full_vs_fresh": 0.44289,
+                "full_vs_condition": 0.419081,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.02381
+              },
+              "40": {
+                "full_vs_fresh": 0.555556,
+                "full_vs_condition": 0.515406,
+                "fresh_vs_condition": 0.166667,
+                "closure": 0.040149
+              },
+              "48": {
+                "full_vs_fresh": 0.244172,
+                "full_vs_condition": 0.160839,
+                "fresh_vs_condition": 0.136364,
+                "closure": 0.083333
+              },
+              "56": {
+                "full_vs_fresh": 0.66369,
+                "full_vs_condition": 0.580357,
+                "fresh_vs_condition": 0.166667,
+                "closure": 0.083333
+              },
+              "62": {
+                "full_vs_fresh": 0.491196,
+                "full_vs_condition": 0.563312,
+                "fresh_vs_condition": 0.244172,
+                "closure": -0.072115
+              }
+            }
+          }
+        }
+      },
+      "candidate_examples": [
+        {
+          "relative_position": 3,
+          "target_token": " comparison",
+          "layer": 16,
+          "next_argmax": {
+            "full_context": " model",
+            "fresh_compacted": " comparison",
+            "grafted_compacted": " comparison",
+            "shifted_grafted_compacted": " model"
+          },
+          "lens_top": {
+            "full_context": [
+              " approach",
+              " comparison",
+              " methodology",
+              " method",
+              " group",
+              " strategy",
+              " series",
+              " results",
+              " scenario",
+              " team"
+            ],
+            "fresh_compacted": [
+              " approach",
+              " strategy",
+              " methodology",
+              " comparison",
+              " group",
+              " series",
+              " method",
+              " team",
+              " overview",
+              " results"
+            ],
+            "grafted_compacted": [
+              " approach",
+              " strategy",
+              " methodology",
+              " group",
+              " comparison",
+              " series",
+              " method",
+              " team",
+              " efforts",
+              " overview"
+            ],
+            "shifted_grafted_compacted": [
+              " approach",
+              " comparison",
+              " methodology",
+              " strategy",
+              " efforts",
+              " arguably",
+              " group",
+              " largely",
+              " \"",
+              " notably"
+            ]
+          },
+          "score": {
+            "relative_position": 3,
+            "target_token": " comparison",
+            "layer": 16,
+            "graft_closure": -0.151515,
+            "shifted_closure": -0.484848,
+            "graft_minus_shifted": 0.333333,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 3,
+          "target_token": " comparison",
+          "layer": 48,
+          "next_argmax": {
+            "full_context": " model",
+            "fresh_compacted": " comparison",
+            "grafted_compacted": " comparison",
+            "shifted_grafted_compacted": " model"
+          },
+          "lens_top": {
+            "full_context": [
+              " **",
+              " **.",
+              " **#",
+              " \n\n",
+              " **[",
+              " **.**",
+              " **(",
+              "**.",
+              " rather",
+              ".**"
+            ],
+            "fresh_compacted": [
+              " **",
+              " **.",
+              " **(",
+              " rather",
+              " **[",
+              " **.**",
+              "**.",
+              ".**",
+              " **#",
+              " (**"
+            ],
+            "grafted_compacted": [
+              " **",
+              " **.",
+              " rather",
+              " **.**",
+              "**.",
+              " **[",
+              " **(",
+              ".**",
+              " **#",
+              " \n\n"
+            ],
+            "shifted_grafted_compacted": [
+              " **",
+              " **.",
+              " rather",
+              " **[",
+              " **.**",
+              " **(",
+              "**.",
+              " **#",
+              ".**",
+              " .**"
+            ]
+          },
+          "score": {
+            "relative_position": 3,
+            "target_token": " comparison",
+            "layer": 48,
+            "graft_closure": 0.181818,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.181818,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " multi",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": " comparison",
+            "fresh_compacted": " comparison",
+            "grafted_compacted": " comparison",
+            "shifted_grafted_compacted": " comparison"
+          },
+          "lens_top": {
+            "full_context": [
+              "-multi",
+              "awei",
+              "MMC",
+              "aturi",
+              "-Saharan",
+              "quet",
+              "pliant",
+              "】【",
+              " *_",
+              "unea"
+            ],
+            "fresh_compacted": [
+              "-multi",
+              "awei",
+              "MMC",
+              "-Saharan",
+              "aturi",
+              "quet",
+              "-dimensional",
+              "pliant",
+              "】【",
+              "-*"
+            ],
+            "grafted_compacted": [
+              "-multi",
+              "awei",
+              "MMC",
+              "aturi",
+              "-Saharan",
+              "quet",
+              "pliant",
+              "-dimensional",
+              "】【",
+              "iplinary"
+            ],
+            "shifted_grafted_compacted": [
+              "-multi",
+              "MMC",
+              "awei",
+              "aturi",
+              "-Saharan",
+              "enea",
+              "-dimensional",
+              "pliant",
+              "achi",
+              "】【"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " multi",
+            "layer": 8,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.128205,
+            "graft_minus_shifted": 0.128205,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-task",
+          "layer": 16,
+          "next_argmax": {
+            "full_context": "-task",
+            "fresh_compacted": "-task",
+            "grafted_compacted": "-task",
+            "shifted_grafted_compacted": "-task"
+          },
+          "lens_top": {
+            "full_context": [
+              "ing",
+              "ness",
+              "ation",
+              "ed",
+              "ers",
+              " work",
+              " operation",
+              "er",
+              "ting",
+              " performance"
+            ],
+            "fresh_compacted": [
+              "ing",
+              "ness",
+              "ed",
+              "ation",
+              "ers",
+              "er",
+              " operation",
+              " work",
+              "ting",
+              "o"
+            ],
+            "grafted_compacted": [
+              "ing",
+              "ed",
+              "ness",
+              "ation",
+              "ers",
+              "er",
+              "ting",
+              "a",
+              "o",
+              " operation"
+            ],
+            "shifted_grafted_compacted": [
+              "ing",
+              "ness",
+              "ed",
+              "ation",
+              "er",
+              "ers",
+              " labour",
+              " centre",
+              "ting",
+              "a"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-task",
+            "layer": 16,
+            "graft_closure": -0.151515,
+            "shifted_closure": -0.27972,
+            "graft_minus_shifted": 0.128205,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 3,
+          "target_token": " comparison",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": " model",
+            "fresh_compacted": " comparison",
+            "grafted_compacted": " comparison",
+            "shifted_grafted_compacted": " model"
+          },
+          "lens_top": {
+            "full_context": [
+              " **",
+              "模型",
+              " model",
+              ".**",
+              "**",
+              "/model",
+              " **.",
+              " models",
+              " (**",
+              "**."
+            ],
+            "fresh_compacted": [
+              "模型",
+              " model",
+              "/model",
+              " models",
+              " (**",
+              "model",
+              "-model",
+              ".**",
+              " Model",
+              "_model"
+            ],
+            "grafted_compacted": [
+              " model",
+              "模型",
+              "/model",
+              ".**",
+              " models",
+              "model",
+              "-model",
+              " (**",
+              "**.",
+              "_model"
+            ],
+            "shifted_grafted_compacted": [
+              " model",
+              "模型",
+              " models",
+              "/model",
+              ".**",
+              "-model",
+              "model",
+              "_model",
+              " **",
+              " Model"
+            ]
+          },
+          "score": {
+            "relative_position": 3,
+            "target_token": " comparison",
+            "layer": 56,
+            "graft_closure": 0.10989,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.10989,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " multi",
+          "layer": 62,
+          "next_argmax": {
+            "full_context": " comparison",
+            "fresh_compacted": " comparison",
+            "grafted_compacted": " comparison",
+            "shifted_grafted_compacted": " comparison"
+          },
+          "lens_top": {
+            "full_context": [
+              "-task",
+              "-",
+              " task",
+              "-model",
+              "_task",
+              " Task",
+              "Task",
+              "task",
+              "任务",
+              "/task"
+            ],
+            "fresh_compacted": [
+              "-task",
+              "-model",
+              " comparison",
+              "-",
+              "‑",
+              " task",
+              "Task",
+              "_task",
+              "-t",
+              " Task"
+            ],
+            "grafted_compacted": [
+              "-task",
+              "-model",
+              " comparison",
+              "-",
+              "‑",
+              " task",
+              "-**",
+              " model",
+              "-t",
+              "Task"
+            ],
+            "shifted_grafted_compacted": [
+              "-task",
+              "-model",
+              "-",
+              "‑",
+              " comparison",
+              " task",
+              "-**",
+              "-com",
+              "-purpose",
+              "-t"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " multi",
+            "layer": 62,
+            "graft_closure": -0.205128,
+            "shifted_closure": -0.288462,
+            "graft_minus_shifted": 0.083334,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " multi",
+          "layer": 16,
+          "next_argmax": {
+            "full_context": " comparison",
+            "fresh_compacted": " comparison",
+            "grafted_compacted": " comparison",
+            "shifted_grafted_compacted": " comparison"
+          },
+          "lens_top": {
+            "full_context": [
+              "-multi",
+              "-platform",
+              "MMC",
+              "-tech",
+              "-media",
+              "-mode",
+              "-static",
+              "-mult",
+              "enea",
+              "-dimensional"
+            ],
+            "fresh_compacted": [
+              "-multi",
+              "-platform",
+              "MMC",
+              "-tech",
+              "-media",
+              "-mode",
+              "-dimensional",
+              " Omni",
+              "-static",
+              "-esque"
+            ],
+            "grafted_compacted": [
+              "-multi",
+              "-platform",
+              "MMC",
+              "-tech",
+              "-mode",
+              "-media",
+              "-dimensional",
+              "-static",
+              " Omni",
+              "enea"
+            ],
+            "shifted_grafted_compacted": [
+              "-multi",
+              "-platform",
+              "MMC",
+              "-tech",
+              "-media",
+              "-mode",
+              "-dimensional",
+              "-static",
+              "-mult",
+              " Omni"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " multi",
+            "layer": 16,
+            "graft_closure": 0.151515,
+            "shifted_closure": 0.151515,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " model",
+          "layer": 24,
+          "next_argmax": {
+            "full_context": " model",
+            "fresh_compacted": " model",
+            "grafted_compacted": " model",
+            "shifted_grafted_compacted": " model"
+          },
+          "lens_top": {
+            "full_context": [
+              " \n\n",
+              "  \n\n",
+              " \r\n\r\n",
+              "\r\n\r\n",
+              "\n\n",
+              "  \r\n\r\n",
+              "   \n\n",
+              " \n\n\n",
+              " __",
+              "<|endoftext|>"
+            ],
+            "fresh_compacted": [
+              " \n\n",
+              "  \n\n",
+              " \r\n\r\n",
+              "\r\n\r\n",
+              "  \r\n\r\n",
+              " __",
+              " \n\n\n",
+              "   \n\n",
+              " ,",
+              " ‘"
+            ],
+            "grafted_compacted": [
+              " \n\n",
+              "  \n\n",
+              " \r\n\r\n",
+              "\r\n\r\n",
+              "  \r\n\r\n",
+              " \n\n\n",
+              " __",
+              "   \n\n",
+              "<|endoftext|>",
+              " ,"
+            ],
+            "shifted_grafted_compacted": [
+              " \n\n",
+              "  \n\n",
+              " \r\n\r\n",
+              "\r\n\r\n",
+              "  \r\n\r\n",
+              "   \n\n",
+              " \n\n\n",
+              " __",
+              "\n\n",
+              " ,"
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " model",
+            "layer": 24,
+            "graft_closure": 0.151515,
+            "shifted_closure": 0.151515,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-task",
+          "layer": 48,
+          "next_argmax": {
+            "full_context": "-task",
+            "fresh_compacted": "-task",
+            "grafted_compacted": "-task",
+            "shifted_grafted_compacted": "-task"
+          },
+          "lens_top": {
+            "full_context": [
+              " **",
+              " **#",
+              " **—",
+              " **'",
+              " **(",
+              " **\"",
+              " **[",
+              " **「",
+              " **‘",
+              " **."
+            ],
+            "fresh_compacted": [
+              " **",
+              " **#",
+              " **'",
+              " **—",
+              " **\"",
+              " competitor",
+              " **[",
+              " **‘",
+              " **+",
+              " benchmark"
+            ],
+            "grafted_compacted": [
+              " **",
+              " **#",
+              " **'",
+              " **—",
+              " **[",
+              " **\"",
+              " **+",
+              " **‘",
+              " competitor",
+              " **「"
+            ],
+            "shifted_grafted_compacted": [
+              " **",
+              " **#",
+              " **'",
+              " **—",
+              " **[",
+              " **\"",
+              " **‘",
+              " competitor",
+              " **+",
+              " **("
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-task",
+            "layer": 48,
+            "graft_closure": 0.128205,
+            "shifted_closure": 0.128205,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-task",
+          "layer": 32,
+          "next_argmax": {
+            "full_context": "-task",
+            "fresh_compacted": "-task",
+            "grafted_compacted": "-task",
+            "shifted_grafted_compacted": "-task"
+          },
+          "lens_top": {
+            "full_context": [
+              " \n\n",
+              " ...\\",
+              " ...\"",
+              " multis",
+              " ___",
+              " programming",
+              " workflows",
+              " \n  \n",
+              " analytics",
+              " multim"
+            ],
+            "fresh_compacted": [
+              " ...\"",
+              " \n\n",
+              " ...\\",
+              " ...",
+              " ___",
+              " multis",
+              "\n\n",
+              " ______",
+              " **",
+              " global"
+            ],
+            "grafted_compacted": [
+              " ...\"",
+              " \n\n",
+              " ...\\",
+              " ...",
+              " ___",
+              "\n\n",
+              " multis",
+              " global",
+              " ______",
+              " programming"
+            ],
+            "shifted_grafted_compacted": [
+              " \n\n",
+              " ...\"",
+              " ...\\",
+              " ...",
+              " ___",
+              " programming",
+              " global",
+              " multis",
+              " **",
+              "\n\n"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-task",
+            "layer": 32,
+            "graft_closure": 0.095238,
+            "shifted_closure": 0.095238,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " model",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": " model",
+            "fresh_compacted": " model",
+            "grafted_compacted": " model",
+            "shifted_grafted_compacted": " model"
+          },
+          "lens_top": {
+            "full_context": [
+              ".",
+              "<|endoftext|>",
+              "<|im_end|>",
+              ".**",
+              ".</",
+              "*.",
+              ".*",
+              " **.**",
+              "**.",
+              ".`"
+            ],
+            "fresh_compacted": [
+              ".",
+              "<|endoftext|>",
+              " never",
+              "—not",
+              "<|im_end|>",
+              "never",
+              ".</",
+              " ().",
+              ".**",
+              " Never"
+            ],
+            "grafted_compacted": [
+              ".",
+              "<|endoftext|>",
+              "—not",
+              " never",
+              "<|im_end|>",
+              ".</",
+              "never",
+              ".**",
+              ".\\",
+              "*."
+            ],
+            "shifted_grafted_compacted": [
+              ".",
+              "—not",
+              "<|endoftext|>",
+              "<|im_end|>",
+              " never",
+              ".</",
+              ".**",
+              "*.",
+              " \n\n",
+              ".\\"
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " model",
+            "layer": 56,
+            "graft_closure": 0.095238,
+            "shifted_closure": 0.095238,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " multi",
+          "layer": 40,
+          "next_argmax": {
+            "full_context": " comparison",
+            "fresh_compacted": " comparison",
+            "grafted_compacted": " comparison",
+            "shifted_grafted_compacted": " comparison"
+          },
+          "lens_top": {
+            "full_context": [
+              "<|endoftext|>",
+              "‑",
+              "\n\n",
+              "？",
+              "  \n\n",
+              "……",
+              " 🙂",
+              "—you",
+              "?!",
+              " YOU"
+            ],
+            "fresh_compacted": [
+              "<|endoftext|>",
+              "‑",
+              "\n\n",
+              "  \n\n",
+              "……",
+              "—you",
+              "——",
+              " 🙂",
+              "​",
+              "？"
+            ],
+            "grafted_compacted": [
+              "<|endoftext|>",
+              "‑",
+              "\n\n",
+              "……",
+              "  \n\n",
+              "—you",
+              "——",
+              " 🙂",
+              "​",
+              "？"
+            ],
+            "shifted_grafted_compacted": [
+              "<|endoftext|>",
+              "‑",
+              "\n\n",
+              "？",
+              "  \n\n",
+              "……",
+              "——",
+              "—you",
+              " 🙂",
+              "​"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " multi",
+            "layer": 40,
+            "graft_closure": 0.0,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        }
+      ]
+    },
+    "marisol_referent_ordinary": {
+      "case_id": "marisol_referent_ordinary",
+      "demo_name": "marisol_referent_ordinary",
+      "rationale": "Referent plant: the concrete proposal is KEPT in the summary and the establishing turn is retained. The aligned graft should reinforce the design-partner/report specifics slightly more than the shifted control.",
+      "summary_source": "preauthored from prior write-time/fresh sweep",
+      "probe_user": "What specifically was Marisol's proposal?",
+      "probe_target": {
+        "text": "An invite-only beta with about thirty design partners, opening only after each ships a real report.",
+        "token_count": 19,
+        "tokens": [
+          "An",
+          " invite",
+          "-only",
+          " beta",
+          " with",
+          " about",
+          " thirty",
+          " design",
+          " partners",
+          ",",
+          " opening",
+          " only",
+          " after",
+          " each",
+          " ships",
+          " a",
+          " real",
+          " report",
+          "."
+        ],
+        "focus_phrases": [
+          "invite-only",
+          "design partners"
+        ],
+        "focus_positions": {
+          "invite-only": [
+            1,
+            2
+          ],
+          "design partners": [
+            7,
+            8
+          ]
+        }
+      },
+      "token_counts": {
+        "old_write_time": 231,
+        "summary_tokens": 57,
+        "fresh_compacted": 189,
+        "fresh_compacted_render_error": null,
+        "full_probe": 116,
+        "fresh_probe": 198,
+        "tail_start_msg": 1,
+        "tail_message_count": 2
+      },
+      "graft": {
+        "pairs": 57,
+        "alpha": 0.75,
+        "changed_value_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ],
+        "negative_control": {
+          "name": "shifted_grafted_compacted",
+          "available": true,
+          "policy": "same V-only blend and alpha, but old summary-token value positions are cyclically shifted by one before injection",
+          "shifted_pairs": 57
+        }
+      },
+      "conditions": {
+        "alpha0_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.169795,
+                "full_vs_condition": 0.169795,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.339993,
+                "full_vs_condition": 0.339993,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.249312,
+                "full_vs_condition": 0.249312,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.428847,
+                "full_vs_condition": 0.428847,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.393466,
+                "full_vs_condition": 0.393466,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.461714,
+                "full_vs_condition": 0.461714,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.316952,
+                "full_vs_condition": 0.316952,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.32156,
+                "full_vs_condition": 0.32156,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              7,
+              8
+            ],
+            "tokens": [
+              " invite",
+              "-only",
+              " design",
+              " partners"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.136364,
+                "full_vs_condition": 0.136364,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.327506,
+                "full_vs_condition": 0.327506,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.341575,
+                "full_vs_condition": 0.341575,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.612408,
+                "full_vs_condition": 0.612408,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.391608,
+                "full_vs_condition": 0.391608,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.615385,
+                "full_vs_condition": 0.615385,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.278409,
+                "full_vs_condition": 0.278409,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.421266,
+                "full_vs_condition": 0.421266,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          }
+        },
+        "grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.169795,
+                "full_vs_condition": 0.166009,
+                "fresh_vs_condition": 0.076555,
+                "closure": 0.003786
+              },
+              "16": {
+                "full_vs_fresh": 0.339993,
+                "full_vs_condition": 0.417478,
+                "fresh_vs_condition": 0.162679,
+                "closure": -0.077485
+              },
+              "24": {
+                "full_vs_fresh": 0.249312,
+                "full_vs_condition": 0.291778,
+                "fresh_vs_condition": 0.08453,
+                "closure": -0.042466
+              },
+              "32": {
+                "full_vs_fresh": 0.428847,
+                "full_vs_condition": 0.459979,
+                "fresh_vs_condition": 0.137161,
+                "closure": -0.031131
+              },
+              "40": {
+                "full_vs_fresh": 0.393466,
+                "full_vs_condition": 0.39103,
+                "fresh_vs_condition": 0.202061,
+                "closure": 0.002436
+              },
+              "48": {
+                "full_vs_fresh": 0.461714,
+                "full_vs_condition": 0.454966,
+                "fresh_vs_condition": 0.19973,
+                "closure": 0.006748
+              },
+              "56": {
+                "full_vs_fresh": 0.316952,
+                "full_vs_condition": 0.350444,
+                "fresh_vs_condition": 0.189793,
+                "closure": -0.033493
+              },
+              "62": {
+                "full_vs_fresh": 0.32156,
+                "full_vs_condition": 0.328986,
+                "fresh_vs_condition": 0.135934,
+                "closure": -0.007426
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              7,
+              8
+            ],
+            "tokens": [
+              " invite",
+              "-only",
+              " design",
+              " partners"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.136364,
+                "full_vs_condition": 0.128788,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.007576
+              },
+              "16": {
+                "full_vs_fresh": 0.327506,
+                "full_vs_condition": 0.484432,
+                "fresh_vs_condition": 0.295455,
+                "closure": -0.156926
+              },
+              "24": {
+                "full_vs_fresh": 0.341575,
+                "full_vs_condition": 0.38703,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.045455
+              },
+              "32": {
+                "full_vs_fresh": 0.612408,
+                "full_vs_condition": 0.612408,
+                "fresh_vs_condition": 0.136364,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.391608,
+                "full_vs_condition": 0.448718,
+                "fresh_vs_condition": 0.174242,
+                "closure": -0.05711
+              },
+              "48": {
+                "full_vs_fresh": 0.615385,
+                "full_vs_condition": 0.591575,
+                "fresh_vs_condition": 0.136364,
+                "closure": 0.02381
+              },
+              "56": {
+                "full_vs_fresh": 0.278409,
+                "full_vs_condition": 0.33467,
+                "fresh_vs_condition": 0.128788,
+                "closure": -0.056261
+              },
+              "62": {
+                "full_vs_fresh": 0.421266,
+                "full_vs_condition": 0.470608,
+                "fresh_vs_condition": 0.206294,
+                "closure": -0.049342
+              }
+            }
+          }
+        },
+        "shifted_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 1,
+              "regressions": 1,
+              "changed_argmax": 2
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.169795,
+                "full_vs_condition": 0.207845,
+                "fresh_vs_condition": 0.2212,
+                "closure": -0.03805
+              },
+              "16": {
+                "full_vs_fresh": 0.339993,
+                "full_vs_condition": 0.391083,
+                "fresh_vs_condition": 0.317034,
+                "closure": -0.051089
+              },
+              "24": {
+                "full_vs_fresh": 0.249312,
+                "full_vs_condition": 0.297895,
+                "fresh_vs_condition": 0.199643,
+                "closure": -0.048583
+              },
+              "32": {
+                "full_vs_fresh": 0.428847,
+                "full_vs_condition": 0.505505,
+                "fresh_vs_condition": 0.299631,
+                "closure": -0.076658
+              },
+              "40": {
+                "full_vs_fresh": 0.393466,
+                "full_vs_condition": 0.414748,
+                "fresh_vs_condition": 0.289417,
+                "closure": -0.021281
+              },
+              "48": {
+                "full_vs_fresh": 0.461714,
+                "full_vs_condition": 0.472358,
+                "fresh_vs_condition": 0.364026,
+                "closure": -0.010644
+              },
+              "56": {
+                "full_vs_fresh": 0.316952,
+                "full_vs_condition": 0.341733,
+                "fresh_vs_condition": 0.301944,
+                "closure": -0.024781
+              },
+              "62": {
+                "full_vs_fresh": 0.32156,
+                "full_vs_condition": 0.345343,
+                "fresh_vs_condition": 0.261072,
+                "closure": -0.023783
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              7,
+              8
+            ],
+            "tokens": [
+              " invite",
+              "-only",
+              " design",
+              " partners"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.136364,
+                "full_vs_condition": 0.160839,
+                "fresh_vs_condition": 0.251748,
+                "closure": -0.024476
+              },
+              "16": {
+                "full_vs_fresh": 0.327506,
+                "full_vs_condition": 0.470363,
+                "fresh_vs_condition": 0.392857,
+                "closure": -0.142857
+              },
+              "24": {
+                "full_vs_fresh": 0.341575,
+                "full_vs_condition": 0.282051,
+                "fresh_vs_condition": 0.128788,
+                "closure": 0.059524
+              },
+              "32": {
+                "full_vs_fresh": 0.612408,
+                "full_vs_condition": 0.603318,
+                "fresh_vs_condition": 0.359557,
+                "closure": 0.00909
+              },
+              "40": {
+                "full_vs_fresh": 0.391608,
+                "full_vs_condition": 0.45696,
+                "fresh_vs_condition": 0.271645,
+                "closure": -0.065351
+              },
+              "48": {
+                "full_vs_fresh": 0.615385,
+                "full_vs_condition": 0.615385,
+                "fresh_vs_condition": 0.419081,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.278409,
+                "full_vs_condition": 0.375812,
+                "fresh_vs_condition": 0.295455,
+                "closure": -0.097403
+              },
+              "62": {
+                "full_vs_fresh": 0.421266,
+                "full_vs_condition": 0.561126,
+                "fresh_vs_condition": 0.397436,
+                "closure": -0.13986
+              }
+            }
+          }
+        },
+        "alpha_0.25": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.169795,
+                "full_vs_condition": 0.161821,
+                "fresh_vs_condition": 0.086124,
+                "closure": 0.007974
+              },
+              "16": {
+                "full_vs_fresh": 0.339993,
+                "full_vs_condition": 0.371633,
+                "fresh_vs_condition": 0.066986,
+                "closure": -0.031639
+              },
+              "24": {
+                "full_vs_fresh": 0.249312,
+                "full_vs_condition": 0.264665,
+                "fresh_vs_condition": 0.028708,
+                "closure": -0.015353
+              },
+              "32": {
+                "full_vs_fresh": 0.428847,
+                "full_vs_condition": 0.4221,
+                "fresh_vs_condition": 0.066986,
+                "closure": 0.006748
+              },
+              "40": {
+                "full_vs_fresh": 0.393466,
+                "full_vs_condition": 0.382933,
+                "fresh_vs_condition": 0.065391,
+                "closure": 0.010533
+              },
+              "48": {
+                "full_vs_fresh": 0.461714,
+                "full_vs_condition": 0.45593,
+                "fresh_vs_condition": 0.07496,
+                "closure": 0.005784
+              },
+              "56": {
+                "full_vs_fresh": 0.316952,
+                "full_vs_condition": 0.296446,
+                "fresh_vs_condition": 0.082935,
+                "closure": 0.020506
+              },
+              "62": {
+                "full_vs_fresh": 0.32156,
+                "full_vs_condition": 0.319646,
+                "fresh_vs_condition": 0.066986,
+                "closure": 0.001914
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              7,
+              8
+            ],
+            "tokens": [
+              " invite",
+              "-only",
+              " design",
+              " partners"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.136364,
+                "full_vs_condition": 0.136364,
+                "fresh_vs_condition": 0.045455,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.327506,
+                "full_vs_condition": 0.424908,
+                "fresh_vs_condition": 0.181818,
+                "closure": -0.097403
+              },
+              "24": {
+                "full_vs_fresh": 0.341575,
+                "full_vs_condition": 0.38703,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.045455
+              },
+              "32": {
+                "full_vs_fresh": 0.612408,
+                "full_vs_condition": 0.584936,
+                "fresh_vs_condition": 0.136364,
+                "closure": 0.027473
+              },
+              "40": {
+                "full_vs_fresh": 0.391608,
+                "full_vs_condition": 0.419081,
+                "fresh_vs_condition": 0.083333,
+                "closure": -0.027473
+              },
+              "48": {
+                "full_vs_fresh": 0.615385,
+                "full_vs_condition": 0.615385,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.278409,
+                "full_vs_condition": 0.296791,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.018382
+              },
+              "62": {
+                "full_vs_fresh": 0.421266,
+                "full_vs_condition": 0.439649,
+                "fresh_vs_condition": 0.136364,
+                "closure": -0.018382
+              }
+            }
+          }
+        },
+        "alpha_0.5": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.169795,
+                "full_vs_condition": 0.166009,
+                "fresh_vs_condition": 0.086124,
+                "closure": 0.003786
+              },
+              "16": {
+                "full_vs_fresh": 0.339993,
+                "full_vs_condition": 0.397235,
+                "fresh_vs_condition": 0.121212,
+                "closure": -0.057242
+              },
+              "24": {
+                "full_vs_fresh": 0.249312,
+                "full_vs_condition": 0.289588,
+                "fresh_vs_condition": 0.066986,
+                "closure": -0.040276
+              },
+              "32": {
+                "full_vs_fresh": 0.428847,
+                "full_vs_condition": 0.442606,
+                "fresh_vs_condition": 0.102073,
+                "closure": -0.013758
+              },
+              "40": {
+                "full_vs_fresh": 0.393466,
+                "full_vs_condition": 0.398742,
+                "fresh_vs_condition": 0.110048,
+                "closure": -0.005275
+              },
+              "48": {
+                "full_vs_fresh": 0.461714,
+                "full_vs_condition": 0.461907,
+                "fresh_vs_condition": 0.110048,
+                "closure": -0.000193
+              },
+              "56": {
+                "full_vs_fresh": 0.316952,
+                "full_vs_condition": 0.321964,
+                "fresh_vs_condition": 0.11839,
+                "closure": -0.005013
+              },
+              "62": {
+                "full_vs_fresh": 0.32156,
+                "full_vs_condition": 0.335734,
+                "fresh_vs_condition": 0.100847,
+                "closure": -0.014173
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              7,
+              8
+            ],
+            "tokens": [
+              " invite",
+              "-only",
+              " design",
+              " partners"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.136364,
+                "full_vs_condition": 0.174242,
+                "fresh_vs_condition": 0.090909,
+                "closure": -0.037879
+              },
+              "16": {
+                "full_vs_fresh": 0.327506,
+                "full_vs_condition": 0.392857,
+                "fresh_vs_condition": 0.136364,
+                "closure": -0.065351
+              },
+              "24": {
+                "full_vs_fresh": 0.341575,
+                "full_vs_condition": 0.414502,
+                "fresh_vs_condition": 0.090909,
+                "closure": -0.072927
+              },
+              "32": {
+                "full_vs_fresh": 0.612408,
+                "full_vs_condition": 0.612408,
+                "fresh_vs_condition": 0.136364,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.391608,
+                "full_vs_condition": 0.44289,
+                "fresh_vs_condition": 0.083333,
+                "closure": -0.051282
+              },
+              "48": {
+                "full_vs_fresh": 0.615385,
+                "full_vs_condition": 0.615385,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.278409,
+                "full_vs_condition": 0.296791,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.018382
+              },
+              "62": {
+                "full_vs_fresh": 0.421266,
+                "full_vs_condition": 0.470608,
+                "fresh_vs_condition": 0.206294,
+                "closure": -0.049342
+              }
+            }
+          }
+        },
+        "alpha_1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 1,
+              "changed_argmax": 1
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.169795,
+                "full_vs_condition": 0.197311,
+                "fresh_vs_condition": 0.14992,
+                "closure": -0.027516
+              },
+              "16": {
+                "full_vs_fresh": 0.339993,
+                "full_vs_condition": 0.423262,
+                "fresh_vs_condition": 0.186971,
+                "closure": -0.083269
+              },
+              "24": {
+                "full_vs_fresh": 0.249312,
+                "full_vs_condition": 0.30431,
+                "fresh_vs_condition": 0.113238,
+                "closure": -0.054998
+              },
+              "32": {
+                "full_vs_fresh": 0.428847,
+                "full_vs_condition": 0.465762,
+                "fresh_vs_condition": 0.169795,
+                "closure": -0.036915
+              },
+              "40": {
+                "full_vs_fresh": 0.393466,
+                "full_vs_condition": 0.384019,
+                "fresh_vs_condition": 0.234958,
+                "closure": 0.009447
+              },
+              "48": {
+                "full_vs_fresh": 0.461714,
+                "full_vs_condition": 0.449954,
+                "fresh_vs_condition": 0.269415,
+                "closure": 0.01176
+              },
+              "56": {
+                "full_vs_fresh": 0.316952,
+                "full_vs_condition": 0.333527,
+                "fresh_vs_condition": 0.217243,
+                "closure": -0.016576
+              },
+              "62": {
+                "full_vs_fresh": 0.32156,
+                "full_vs_condition": 0.342744,
+                "fresh_vs_condition": 0.172617,
+                "closure": -0.021184
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              7,
+              8
+            ],
+            "tokens": [
+              " invite",
+              "-only",
+              " design",
+              " partners"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.136364,
+                "full_vs_condition": 0.174242,
+                "fresh_vs_condition": 0.136364,
+                "closure": -0.037879
+              },
+              "16": {
+                "full_vs_fresh": 0.327506,
+                "full_vs_condition": 0.484432,
+                "fresh_vs_condition": 0.327506,
+                "closure": -0.156926
+              },
+              "24": {
+                "full_vs_fresh": 0.341575,
+                "full_vs_condition": 0.414502,
+                "fresh_vs_condition": 0.136364,
+                "closure": -0.072927
+              },
+              "32": {
+                "full_vs_fresh": 0.612408,
+                "full_vs_condition": 0.612408,
+                "fresh_vs_condition": 0.136364,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.391608,
+                "full_vs_condition": 0.448718,
+                "fresh_vs_condition": 0.174242,
+                "closure": -0.05711
+              },
+              "48": {
+                "full_vs_fresh": 0.615385,
+                "full_vs_condition": 0.595238,
+                "fresh_vs_condition": 0.295455,
+                "closure": 0.020147
+              },
+              "56": {
+                "full_vs_fresh": 0.278409,
+                "full_vs_condition": 0.289216,
+                "fresh_vs_condition": 0.174242,
+                "closure": -0.010807
+              },
+              "62": {
+                "full_vs_fresh": 0.421266,
+                "full_vs_condition": 0.470608,
+                "fresh_vs_condition": 0.206294,
+                "closure": -0.049342
+              }
+            }
+          }
+        }
+      },
+      "candidate_examples": [
+        {
+          "relative_position": 8,
+          "target_token": " partners",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": " partners",
+            "fresh_compacted": " partners",
+            "grafted_compacted": " partners",
+            "shifted_grafted_compacted": " partners"
+          },
+          "lens_top": {
+            "full_context": [
+              " before",
+              " who",
+              "before",
+              " first",
+              "Before",
+              "先行",
+              " beforehand",
+              "-first",
+              " prior",
+              "-before"
+            ],
+            "fresh_compacted": [
+              " before",
+              "before",
+              " first",
+              "先行",
+              "Before",
+              " beforehand",
+              " prior",
+              "-first",
+              "-before",
+              " BEFORE"
+            ],
+            "grafted_compacted": [
+              " before",
+              "before",
+              " first",
+              "Before",
+              " beforehand",
+              "-before",
+              " prior",
+              "先行",
+              "-first",
+              " BEFORE"
+            ],
+            "shifted_grafted_compacted": [
+              " before",
+              " who",
+              "before",
+              ",",
+              "-before",
+              "，",
+              " delaying",
+              "Before",
+              " where",
+              " prior"
+            ]
+          },
+          "score": {
+            "relative_position": 8,
+            "target_token": " partners",
+            "layer": 56,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.38961,
+            "graft_minus_shifted": 0.38961,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-only",
+          "layer": 62,
+          "next_argmax": {
+            "full_context": "-only",
+            "fresh_compacted": "-only",
+            "grafted_compacted": "-only",
+            "shifted_grafted_compacted": "-only"
+          },
+          "lens_top": {
+            "full_context": [
+              " beta",
+              " Beta",
+              "beta",
+              " launch",
+              "-beta",
+              "_beta",
+              "Beta",
+              "(beta",
+              ".beta",
+              " pilot"
+            ],
+            "fresh_compacted": [
+              " beta",
+              " Beta",
+              "beta",
+              " launch",
+              "-beta",
+              "_beta",
+              "Beta",
+              " pilot",
+              "(beta",
+              " alpha"
+            ],
+            "grafted_compacted": [
+              " beta",
+              " Beta",
+              "beta",
+              " launch",
+              " pilot",
+              "-beta",
+              "_beta",
+              "Beta",
+              " soft",
+              "(beta"
+            ],
+            "shifted_grafted_compacted": [
+              " beta",
+              " Beta",
+              " launch",
+              "beta",
+              " pilot",
+              "-beta",
+              "_beta",
+              " rollout",
+              " soft",
+              " bet"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-only",
+            "layer": 62,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.27972,
+            "graft_minus_shifted": 0.27972,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 7,
+          "target_token": " design",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": " design",
+            "fresh_compacted": " design",
+            "grafted_compacted": " design",
+            "shifted_grafted_compacted": " design"
+          },
+          "lens_top": {
+            "full_context": [
+              "  \n\n",
+              "   \n\n",
+              " \n\n",
+              "    \n\n",
+              " \n\n\n",
+              "\t\n\n",
+              "  \n\n\n",
+              "       \n\n",
+              "        \n\n",
+              "**("
+            ],
+            "fresh_compacted": [
+              "  \n\n",
+              " \n\n",
+              "   \n\n",
+              " \n\n\n",
+              "\t\n\n",
+              "    \n\n",
+              "  \n\n\n",
+              "       \n\n",
+              "        \n\n",
+              "      \n\n"
+            ],
+            "grafted_compacted": [
+              "  \n\n",
+              " \n\n",
+              "   \n\n",
+              " \n\n\n",
+              "\t\n\n",
+              "    \n\n",
+              "  \n\n\n",
+              "       \n\n",
+              "        \n\n",
+              "      \n\n"
+            ],
+            "shifted_grafted_compacted": [
+              "  \n\n",
+              " \n\n",
+              "   \n\n",
+              "\t\n\n",
+              " \n\n\n",
+              "    \n\n",
+              "  \n\n\n",
+              "tures",
+              "وقي",
+              ".decor"
+            ]
+          },
+          "score": {
+            "relative_position": 7,
+            "target_token": " design",
+            "layer": 8,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.27972,
+            "graft_minus_shifted": 0.27972,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 8,
+          "target_token": " partners",
+          "layer": 62,
+          "next_argmax": {
+            "full_context": " partners",
+            "fresh_compacted": " partners",
+            "grafted_compacted": " partners",
+            "shifted_grafted_compacted": " partners"
+          },
+          "lens_top": {
+            "full_context": [
+              ",",
+              ".",
+              " first",
+              "，",
+              " who",
+              " before",
+              ";",
+              "first",
+              "First",
+              ".first"
+            ],
+            "fresh_compacted": [
+              ",",
+              ".",
+              " first",
+              "，",
+              ";",
+              " before",
+              "first",
+              " who",
+              "First",
+              "®,"
+            ],
+            "grafted_compacted": [
+              ",",
+              ".",
+              " first",
+              "，",
+              ";",
+              " before",
+              "first",
+              " who",
+              " ,",
+              "First"
+            ],
+            "shifted_grafted_compacted": [
+              ",",
+              ".",
+              "，",
+              ";",
+              " who",
+              " before",
+              " first",
+              "،",
+              " where",
+              " ,"
+            ]
+          },
+          "score": {
+            "relative_position": 8,
+            "target_token": " partners",
+            "layer": 62,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.27972,
+            "graft_minus_shifted": 0.27972,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-only",
+          "layer": 48,
+          "next_argmax": {
+            "full_context": "-only",
+            "fresh_compacted": "-only",
+            "grafted_compacted": "-only",
+            "shifted_grafted_compacted": "-only"
+          },
+          "lens_top": {
+            "full_context": [
+              " restricted",
+              " limited",
+              " Restricted",
+              " Limited",
+              " exclusive",
+              "restricted",
+              "-exclusive",
+              " curated",
+              " restrict",
+              " inaugural"
+            ],
+            "fresh_compacted": [
+              " restricted",
+              " limited",
+              " focused",
+              " launch",
+              " Restricted",
+              " inaugural",
+              " curated",
+              " exclusive",
+              " targeted",
+              " Limited"
+            ],
+            "grafted_compacted": [
+              " restricted",
+              " limited",
+              " launch",
+              " focused",
+              " Restricted",
+              " inaugural",
+              " exclusive",
+              " curated",
+              " targeted",
+              " Limited"
+            ],
+            "shifted_grafted_compacted": [
+              " restricted",
+              " limited",
+              " launch",
+              " focused",
+              " inaugural",
+              " startups",
+              " Restricted",
+              " startup",
+              " rollout",
+              " exclusive"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-only",
+            "layer": 48,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.205128,
+            "graft_minus_shifted": 0.205128,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 8,
+          "target_token": " partners",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": " partners",
+            "fresh_compacted": " partners",
+            "grafted_compacted": " partners",
+            "shifted_grafted_compacted": " partners"
+          },
+          "lens_top": {
+            "full_context": [
+              ".",
+              " […]",
+              " ",
+              "​​",
+              "  ",
+              "�",
+              " –",
+              "​",
+              "……",
+              ","
+            ],
+            "fresh_compacted": [
+              ".",
+              " […]",
+              " ",
+              ",",
+              "�",
+              "​​",
+              "……",
+              "​",
+              " –",
+              "  "
+            ],
+            "grafted_compacted": [
+              ".",
+              " […]",
+              " ",
+              ",",
+              "�",
+              "​​",
+              "……",
+              "​",
+              " –",
+              "  "
+            ],
+            "shifted_grafted_compacted": [
+              ".",
+              " ",
+              " […]",
+              ",",
+              "�",
+              " –",
+              "  ",
+              "​",
+              "​​",
+              "–"
+            ]
+          },
+          "score": {
+            "relative_position": 8,
+            "target_token": " partners",
+            "layer": 8,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.181818,
+            "graft_minus_shifted": 0.181818,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 8,
+          "target_token": " partners",
+          "layer": 40,
+          "next_argmax": {
+            "full_context": " partners",
+            "fresh_compacted": " partners",
+            "grafted_compacted": " partners",
+            "shifted_grafted_compacted": " partners"
+          },
+          "lens_top": {
+            "full_context": [
+              " before",
+              " until",
+              " whose",
+              " who",
+              " initially",
+              " BEFORE",
+              "before",
+              " focused",
+              " whom",
+              " that"
+            ],
+            "fresh_compacted": [
+              " before",
+              " until",
+              " whose",
+              " initially",
+              " who",
+              " ,",
+              " –",
+              "<|endoftext|>",
+              " that",
+              "before"
+            ],
+            "grafted_compacted": [
+              " before",
+              " until",
+              " whose",
+              " initially",
+              " who",
+              " ,",
+              " –",
+              "before",
+              " that",
+              " BEFORE"
+            ],
+            "shifted_grafted_compacted": [
+              " before",
+              " until",
+              " who",
+              " whose",
+              " initially",
+              " ,",
+              " –",
+              " that",
+              " .",
+              " BEFORE"
+            ]
+          },
+          "score": {
+            "relative_position": 8,
+            "target_token": " partners",
+            "layer": 40,
+            "graft_closure": 0.128205,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.128205,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 8,
+          "target_token": " partners",
+          "layer": 16,
+          "next_argmax": {
+            "full_context": " partners",
+            "fresh_compacted": " partners",
+            "grafted_compacted": " partners",
+            "shifted_grafted_compacted": " partners"
+          },
+          "lens_top": {
+            "full_context": [
+              " –",
+              ",",
+              "–",
+              " ",
+              " alongside",
+              " ",
+              " ultimately",
+              " in",
+              " across",
+              " along"
+            ],
+            "fresh_compacted": [
+              ",",
+              " –",
+              "–",
+              " ",
+              " ",
+              ";",
+              ".",
+              " in",
+              " ultimately",
+              " along"
+            ],
+            "grafted_compacted": [
+              ",",
+              " –",
+              "–",
+              " ",
+              " ",
+              ";",
+              ".",
+              " in",
+              "�",
+              " as"
+            ],
+            "shifted_grafted_compacted": [
+              " –",
+              ",",
+              "–",
+              " ",
+              " ",
+              "�",
+              " ‘",
+              ";",
+              "–and",
+              "’s"
+            ]
+          },
+          "score": {
+            "relative_position": 8,
+            "target_token": " partners",
+            "layer": 16,
+            "graft_closure": -0.238095,
+            "shifted_closure": -0.333333,
+            "graft_minus_shifted": 0.095238,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-only",
+          "layer": 32,
+          "next_argmax": {
+            "full_context": "-only",
+            "fresh_compacted": "-only",
+            "grafted_compacted": "-only",
+            "shifted_grafted_compacted": "-only"
+          },
+          "lens_top": {
+            "full_context": [
+              " curated",
+              " launch",
+              " invite",
+              " online",
+              " guests",
+              " invitation",
+              " elite",
+              " hosted",
+              " guest",
+              " Elite"
+            ],
+            "fresh_compacted": [
+              " ,",
+              " launch",
+              " ...",
+              " curated",
+              " guest",
+              " for",
+              " ",
+              " [",
+              " guests",
+              " community"
+            ],
+            "grafted_compacted": [
+              " ,",
+              " launch",
+              " curated",
+              " for",
+              " guest",
+              " [",
+              " \"",
+              " ",
+              " community",
+              " guests"
+            ],
+            "shifted_grafted_compacted": [
+              " ,",
+              " launch",
+              " for",
+              " curated",
+              " \"",
+              " guest",
+              " ",
+              " [",
+              " —",
+              " community"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-only",
+            "layer": 32,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.073529,
+            "graft_minus_shifted": 0.073529,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "-only",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": "-only",
+            "fresh_compacted": "-only",
+            "grafted_compacted": "-only",
+            "shifted_grafted_compacted": "-only"
+          },
+          "lens_top": {
+            "full_context": [
+              " *@",
+              " [@",
+              " [$",
+              "@\",",
+              " {{$",
+              " @[",
+              " �",
+              " @_",
+              " #{@",
+              " [#"
+            ],
+            "fresh_compacted": [
+              " [@",
+              " *@",
+              " [$",
+              "@\",",
+              " @[",
+              " {{$",
+              " �",
+              " [#",
+              " (@",
+              " #{@"
+            ],
+            "grafted_compacted": [
+              " [@",
+              " *@",
+              " [$",
+              "@\",",
+              " @[",
+              " [#",
+              " �",
+              " {{$",
+              " @_",
+              " #{@"
+            ],
+            "shifted_grafted_compacted": [
+              " [@",
+              " *@",
+              " [$",
+              "@\",",
+              " @[",
+              " {{$",
+              " [#",
+              " �",
+              " @_",
+              " #{@"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "-only",
+            "layer": 8,
+            "graft_closure": 0.181818,
+            "shifted_closure": 0.181818,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " invite",
+          "layer": 24,
+          "next_argmax": {
+            "full_context": " invite",
+            "fresh_compacted": " invite",
+            "grafted_compacted": " invite",
+            "shifted_grafted_compacted": " invite"
+          },
+          "lens_top": {
+            "full_context": [
+              "   \n\n",
+              "\n\n\n",
+              " \n\n\n",
+              " --",
+              "\n\n",
+              " \n\n",
+              "    \n\n",
+              "Though",
+              " amongst",
+              "ive"
+            ],
+            "fresh_compacted": [
+              "   \n\n",
+              " \n\n",
+              "\n\n",
+              " \n\n\n",
+              "    \n\n",
+              "\n\n\n",
+              "     \n\n",
+              " \r\n\r\n",
+              " --",
+              " \n \n"
+            ],
+            "grafted_compacted": [
+              "   \n\n",
+              " \n\n",
+              "\n\n",
+              " \n\n\n",
+              "    \n\n",
+              "\n\n\n",
+              "     \n\n",
+              " \r\n\r\n",
+              " \n \n",
+              " --"
+            ],
+            "shifted_grafted_compacted": [
+              "   \n\n",
+              " \n\n",
+              "\n\n",
+              " \n\n\n",
+              "    \n\n",
+              "\n\n\n",
+              " --",
+              "     \n\n",
+              " \r\n\r\n",
+              " \n \n"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " invite",
+            "layer": 24,
+            "graft_closure": 0.0,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " invite",
+          "layer": 32,
+          "next_argmax": {
+            "full_context": " invite",
+            "fresh_compacted": " invite",
+            "grafted_compacted": " invite",
+            "shifted_grafted_compacted": " invite"
+          },
+          "lens_top": {
+            "full_context": [
+              "\n\n",
+              " \n\n",
+              "\n\n\n",
+              "  \n\n",
+              "<|endoftext|>",
+              "   \n\n",
+              " ...",
+              " @",
+              " \n\n\n",
+              "    \n\n"
+            ],
+            "fresh_compacted": [
+              "\n\n",
+              " \n\n",
+              "\n\n\n",
+              "<|endoftext|>",
+              " ...",
+              "  \n\n",
+              " ____",
+              "   \n\n",
+              " __",
+              "\r\n\r\n"
+            ],
+            "grafted_compacted": [
+              "\n\n",
+              " \n\n",
+              "\n\n\n",
+              "<|endoftext|>",
+              " ...",
+              " ____",
+              "  \n\n",
+              " __",
+              "   \n\n",
+              " ?"
+            ],
+            "shifted_grafted_compacted": [
+              "\n\n",
+              " \n\n",
+              "\n\n\n",
+              " ...",
+              "<|endoftext|>",
+              " ____",
+              "  \n\n",
+              " __",
+              " ?",
+              "   \n\n"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " invite",
+            "layer": 32,
+            "graft_closure": 0.0,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.0,
+            "is_focus": true
+          }
+        }
+      ]
+    },
+    "venue_referent_ordinary": {
+      "case_id": "venue_referent_ordinary",
+      "demo_name": "venue_referent_ordinary",
+      "rationale": "Referent plant: the chosen venue is KEPT in the summary and the tail is retained. Aligned graft should reinforce the EMNLP-findings choice slightly above the shifted control.",
+      "summary_source": "preauthored from prior write-time/fresh sweep",
+      "probe_user": "Which submission venue did we commit to?",
+      "probe_target": {
+        "text": "The EMNLP findings track, the second of the three options.",
+        "token_count": 14,
+        "tokens": [
+          "The",
+          " EM",
+          "N",
+          "LP",
+          " findings",
+          " track",
+          ",",
+          " the",
+          " second",
+          " of",
+          " the",
+          " three",
+          " options",
+          "."
+        ],
+        "focus_phrases": [
+          "EMNLP",
+          "findings"
+        ],
+        "focus_positions": {
+          "EMNLP": [
+            1,
+            2,
+            3
+          ],
+          "findings": [
+            4
+          ]
+        }
+      },
+      "token_counts": {
+        "old_write_time": 233,
+        "summary_tokens": 56,
+        "fresh_compacted": 191,
+        "fresh_compacted_render_error": null,
+        "full_probe": 119,
+        "fresh_probe": 200,
+        "tail_start_msg": 1,
+        "tail_message_count": 2
+      },
+      "graft": {
+        "pairs": 56,
+        "alpha": 0.75,
+        "changed_value_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ],
+        "negative_control": {
+          "name": "shifted_grafted_compacted",
+          "available": true,
+          "policy": "same V-only blend and alpha, but old summary-token value positions are cyclically shifted by one before injection",
+          "shifted_pairs": 56
+        }
+      },
+      "conditions": {
+        "alpha0_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.19314,
+                "full_vs_condition": 0.19314,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.22097,
+                "full_vs_condition": 0.22097,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.218448,
+                "full_vs_condition": 0.218448,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.329004,
+                "full_vs_condition": 0.329004,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.331127,
+                "full_vs_condition": 0.331127,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.312878,
+                "full_vs_condition": 0.312878,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.374362,
+                "full_vs_condition": 0.374362,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.27682,
+                "full_vs_condition": 0.27682,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " EM",
+              "N",
+              "LP",
+              " findings"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.128788,
+                "full_vs_condition": 0.128788,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.279221,
+                "full_vs_condition": 0.279221,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.314103,
+                "full_vs_condition": 0.314103,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "32": {
+                "full_vs_fresh": 0.583333,
+                "full_vs_condition": 0.583333,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "40": {
+                "full_vs_fresh": 0.552885,
+                "full_vs_condition": 0.552885,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.289627,
+                "full_vs_condition": 0.289627,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.321678,
+                "full_vs_condition": 0.321678,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "62": {
+                "full_vs_fresh": 0.354978,
+                "full_vs_condition": 0.354978,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              }
+            }
+          }
+        },
+        "grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.19314,
+                "full_vs_condition": 0.195305,
+                "fresh_vs_condition": 0.051948,
+                "closure": -0.002165
+              },
+              "16": {
+                "full_vs_fresh": 0.22097,
+                "full_vs_condition": 0.267732,
+                "fresh_vs_condition": 0.175325,
+                "closure": -0.046763
+              },
+              "24": {
+                "full_vs_fresh": 0.218448,
+                "full_vs_condition": 0.206317,
+                "fresh_vs_condition": 0.075758,
+                "closure": 0.012131
+              },
+              "32": {
+                "full_vs_fresh": 0.329004,
+                "full_vs_condition": 0.291589,
+                "fresh_vs_condition": 0.138718,
+                "closure": 0.037415
+              },
+              "40": {
+                "full_vs_fresh": 0.331127,
+                "full_vs_condition": 0.361936,
+                "fresh_vs_condition": 0.17718,
+                "closure": -0.030808
+              },
+              "48": {
+                "full_vs_fresh": 0.312878,
+                "full_vs_condition": 0.335831,
+                "fresh_vs_condition": 0.134199,
+                "closure": -0.022953
+              },
+              "56": {
+                "full_vs_fresh": 0.374362,
+                "full_vs_condition": 0.29977,
+                "fresh_vs_condition": 0.169331,
+                "closure": 0.074592
+              },
+              "62": {
+                "full_vs_fresh": 0.27682,
+                "full_vs_condition": 0.29661,
+                "fresh_vs_condition": 0.123876,
+                "closure": -0.01979
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " EM",
+              "N",
+              "LP",
+              " findings"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.128788,
+                "full_vs_condition": 0.136364,
+                "fresh_vs_condition": 0.090909,
+                "closure": -0.007576
+              },
+              "16": {
+                "full_vs_fresh": 0.279221,
+                "full_vs_condition": 0.448718,
+                "fresh_vs_condition": 0.257576,
+                "closure": -0.169497
+              },
+              "24": {
+                "full_vs_fresh": 0.314103,
+                "full_vs_condition": 0.341575,
+                "fresh_vs_condition": 0.136364,
+                "closure": -0.027473
+              },
+              "32": {
+                "full_vs_fresh": 0.583333,
+                "full_vs_condition": 0.535714,
+                "fresh_vs_condition": 0.303696,
+                "closure": 0.047619
+              },
+              "40": {
+                "full_vs_fresh": 0.552885,
+                "full_vs_condition": 0.660714,
+                "fresh_vs_condition": 0.438312,
+                "closure": -0.10783
+              },
+              "48": {
+                "full_vs_fresh": 0.289627,
+                "full_vs_condition": 0.410839,
+                "fresh_vs_condition": 0.295455,
+                "closure": -0.121212
+              },
+              "56": {
+                "full_vs_fresh": 0.321678,
+                "full_vs_condition": 0.181818,
+                "fresh_vs_condition": 0.212121,
+                "closure": 0.13986
+              },
+              "62": {
+                "full_vs_fresh": 0.354978,
+                "full_vs_condition": 0.378788,
+                "fresh_vs_condition": 0.251748,
+                "closure": -0.02381
+              }
+            }
+          }
+        },
+        "shifted_grafted_compacted": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.19314,
+                "full_vs_condition": 0.255602,
+                "fresh_vs_condition": 0.141692,
+                "closure": -0.062461
+              },
+              "16": {
+                "full_vs_fresh": 0.22097,
+                "full_vs_condition": 0.304911,
+                "fresh_vs_condition": 0.202922,
+                "closure": -0.083941
+              },
+              "24": {
+                "full_vs_fresh": 0.218448,
+                "full_vs_condition": 0.22097,
+                "fresh_vs_condition": 0.174659,
+                "closure": -0.002521
+              },
+              "32": {
+                "full_vs_fresh": 0.329004,
+                "full_vs_condition": 0.329577,
+                "fresh_vs_condition": 0.268739,
+                "closure": -0.000572
+              },
+              "40": {
+                "full_vs_fresh": 0.331127,
+                "full_vs_condition": 0.325989,
+                "fresh_vs_condition": 0.288836,
+                "closure": 0.005138
+              },
+              "48": {
+                "full_vs_fresh": 0.312878,
+                "full_vs_condition": 0.405261,
+                "fresh_vs_condition": 0.279911,
+                "closure": -0.092384
+              },
+              "56": {
+                "full_vs_fresh": 0.374362,
+                "full_vs_condition": 0.435394,
+                "fresh_vs_condition": 0.279411,
+                "closure": -0.061031
+              },
+              "62": {
+                "full_vs_fresh": 0.27682,
+                "full_vs_condition": 0.312646,
+                "fresh_vs_condition": 0.252272,
+                "closure": -0.035826
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " EM",
+              "N",
+              "LP",
+              " findings"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.128788,
+                "full_vs_condition": 0.282051,
+                "fresh_vs_condition": 0.206294,
+                "closure": -0.153263
+              },
+              "16": {
+                "full_vs_fresh": 0.279221,
+                "full_vs_condition": 0.418004,
+                "fresh_vs_condition": 0.323864,
+                "closure": -0.138783
+              },
+              "24": {
+                "full_vs_fresh": 0.314103,
+                "full_vs_condition": 0.271645,
+                "fresh_vs_condition": 0.276224,
+                "closure": 0.042458
+              },
+              "32": {
+                "full_vs_fresh": 0.583333,
+                "full_vs_condition": 0.515406,
+                "fresh_vs_condition": 0.560049,
+                "closure": 0.067927
+              },
+              "40": {
+                "full_vs_fresh": 0.552885,
+                "full_vs_condition": 0.4375,
+                "fresh_vs_condition": 0.552885,
+                "closure": 0.115385
+              },
+              "48": {
+                "full_vs_fresh": 0.289627,
+                "full_vs_condition": 0.532051,
+                "fresh_vs_condition": 0.470363,
+                "closure": -0.242424
+              },
+              "56": {
+                "full_vs_fresh": 0.321678,
+                "full_vs_condition": 0.60844,
+                "fresh_vs_condition": 0.532051,
+                "closure": -0.286762
+              },
+              "62": {
+                "full_vs_fresh": 0.354978,
+                "full_vs_condition": 0.44289,
+                "fresh_vs_condition": 0.45696,
+                "closure": -0.087912
+              }
+            }
+          }
+        },
+        "alpha_0.25": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.19314,
+                "full_vs_condition": 0.19314,
+                "fresh_vs_condition": 0.012987,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.22097,
+                "full_vs_condition": 0.233957,
+                "fresh_vs_condition": 0.051948,
+                "closure": -0.012987
+              },
+              "24": {
+                "full_vs_fresh": 0.218448,
+                "full_vs_condition": 0.206317,
+                "fresh_vs_condition": 0.038961,
+                "closure": 0.012131
+              },
+              "32": {
+                "full_vs_fresh": 0.329004,
+                "full_vs_condition": 0.313234,
+                "fresh_vs_condition": 0.101732,
+                "closure": 0.01577
+              },
+              "40": {
+                "full_vs_fresh": 0.331127,
+                "full_vs_condition": 0.331127,
+                "fresh_vs_condition": 0.062771,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.312878,
+                "full_vs_condition": 0.304767,
+                "fresh_vs_condition": 0.051948,
+                "closure": 0.008111
+              },
+              "56": {
+                "full_vs_fresh": 0.374362,
+                "full_vs_condition": 0.340087,
+                "fresh_vs_condition": 0.075758,
+                "closure": 0.034275
+              },
+              "62": {
+                "full_vs_fresh": 0.27682,
+                "full_vs_condition": 0.265997,
+                "fresh_vs_condition": 0.049784,
+                "closure": 0.010823
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " EM",
+              "N",
+              "LP",
+              " findings"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.128788,
+                "full_vs_condition": 0.128788,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "16": {
+                "full_vs_fresh": 0.279221,
+                "full_vs_condition": 0.279221,
+                "fresh_vs_condition": 0.0,
+                "closure": 0.0
+              },
+              "24": {
+                "full_vs_fresh": 0.314103,
+                "full_vs_condition": 0.341575,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.027473
+              },
+              "32": {
+                "full_vs_fresh": 0.583333,
+                "full_vs_condition": 0.535714,
+                "fresh_vs_condition": 0.174242,
+                "closure": 0.047619
+              },
+              "40": {
+                "full_vs_fresh": 0.552885,
+                "full_vs_condition": 0.552885,
+                "fresh_vs_condition": 0.174242,
+                "closure": 0.0
+              },
+              "48": {
+                "full_vs_fresh": 0.289627,
+                "full_vs_condition": 0.257576,
+                "fresh_vs_condition": 0.090909,
+                "closure": 0.032051
+              },
+              "56": {
+                "full_vs_fresh": 0.321678,
+                "full_vs_condition": 0.219697,
+                "fresh_vs_condition": 0.128788,
+                "closure": 0.101981
+              },
+              "62": {
+                "full_vs_fresh": 0.354978,
+                "full_vs_condition": 0.3171,
+                "fresh_vs_condition": 0.128788,
+                "closure": 0.037879
+              }
+            }
+          }
+        },
+        "alpha_0.5": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.19314,
+                "full_vs_condition": 0.21695,
+                "fresh_vs_condition": 0.051948,
+                "closure": -0.02381
+              },
+              "16": {
+                "full_vs_fresh": 0.22097,
+                "full_vs_condition": 0.207792,
+                "fresh_vs_condition": 0.101732,
+                "closure": 0.013177
+              },
+              "24": {
+                "full_vs_fresh": 0.218448,
+                "full_vs_condition": 0.206317,
+                "fresh_vs_condition": 0.038961,
+                "closure": 0.012131
+              },
+              "32": {
+                "full_vs_fresh": 0.329004,
+                "full_vs_condition": 0.294563,
+                "fresh_vs_condition": 0.134699,
+                "closure": 0.034442
+              },
+              "40": {
+                "full_vs_fresh": 0.331127,
+                "full_vs_condition": 0.348134,
+                "fresh_vs_condition": 0.112744,
+                "closure": -0.017007
+              },
+              "48": {
+                "full_vs_fresh": 0.312878,
+                "full_vs_condition": 0.324747,
+                "fresh_vs_condition": 0.088745,
+                "closure": -0.011869
+              },
+              "56": {
+                "full_vs_fresh": 0.374362,
+                "full_vs_condition": 0.310593,
+                "fresh_vs_condition": 0.125541,
+                "closure": 0.06377
+              },
+              "62": {
+                "full_vs_fresh": 0.27682,
+                "full_vs_condition": 0.285787,
+                "fresh_vs_condition": 0.088745,
+                "closure": -0.008967
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " EM",
+              "N",
+              "LP",
+              " findings"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.128788,
+                "full_vs_condition": 0.174242,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.045455
+              },
+              "16": {
+                "full_vs_fresh": 0.279221,
+                "full_vs_condition": 0.30303,
+                "fresh_vs_condition": 0.083333,
+                "closure": -0.02381
+              },
+              "24": {
+                "full_vs_fresh": 0.314103,
+                "full_vs_condition": 0.341575,
+                "fresh_vs_condition": 0.045455,
+                "closure": -0.027473
+              },
+              "32": {
+                "full_vs_fresh": 0.583333,
+                "full_vs_condition": 0.508242,
+                "fresh_vs_condition": 0.244172,
+                "closure": 0.075092
+              },
+              "40": {
+                "full_vs_fresh": 0.552885,
+                "full_vs_condition": 0.612408,
+                "fresh_vs_condition": 0.303696,
+                "closure": -0.059524
+              },
+              "48": {
+                "full_vs_fresh": 0.289627,
+                "full_vs_condition": 0.289627,
+                "fresh_vs_condition": 0.174242,
+                "closure": 0.0
+              },
+              "56": {
+                "full_vs_fresh": 0.321678,
+                "full_vs_condition": 0.219697,
+                "fresh_vs_condition": 0.128788,
+                "closure": 0.101981
+              },
+              "62": {
+                "full_vs_fresh": 0.354978,
+                "full_vs_condition": 0.340909,
+                "fresh_vs_condition": 0.174242,
+                "closure": 0.014069
+              }
+            }
+          }
+        },
+        "alpha_1": {
+          "all_tokens": {
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.19314,
+                "full_vs_condition": 0.229937,
+                "fresh_vs_condition": 0.075758,
+                "closure": -0.036797
+              },
+              "16": {
+                "full_vs_fresh": 0.22097,
+                "full_vs_condition": 0.275582,
+                "fresh_vs_condition": 0.156344,
+                "closure": -0.054612
+              },
+              "24": {
+                "full_vs_fresh": 0.218448,
+                "full_vs_condition": 0.203963,
+                "fresh_vs_condition": 0.112554,
+                "closure": 0.014486
+              },
+              "32": {
+                "full_vs_fresh": 0.329004,
+                "full_vs_condition": 0.324324,
+                "fresh_vs_condition": 0.203963,
+                "closure": 0.00468
+              },
+              "40": {
+                "full_vs_fresh": 0.331127,
+                "full_vs_condition": 0.355983,
+                "fresh_vs_condition": 0.195887,
+                "closure": -0.024856
+              },
+              "48": {
+                "full_vs_fresh": 0.312878,
+                "full_vs_condition": 0.35477,
+                "fresh_vs_condition": 0.162296,
+                "closure": -0.041893
+              },
+              "56": {
+                "full_vs_fresh": 0.374362,
+                "full_vs_condition": 0.321415,
+                "fresh_vs_condition": 0.208292,
+                "closure": 0.052947
+              },
+              "62": {
+                "full_vs_fresh": 0.27682,
+                "full_vs_condition": 0.290925,
+                "fresh_vs_condition": 0.147686,
+                "closure": -0.014105
+              }
+            }
+          },
+          "focus_tokens": {
+            "positions": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tokens": [
+              " EM",
+              "N",
+              "LP",
+              " findings"
+            ],
+            "argmax": {
+              "rescues": 0,
+              "regressions": 0,
+              "changed_argmax": 0
+            },
+            "layers": {
+              "8": {
+                "full_vs_fresh": 0.128788,
+                "full_vs_condition": 0.257576,
+                "fresh_vs_condition": 0.219697,
+                "closure": -0.128788
+              },
+              "16": {
+                "full_vs_fresh": 0.279221,
+                "full_vs_condition": 0.354978,
+                "fresh_vs_condition": 0.244172,
+                "closure": -0.075758
+              },
+              "24": {
+                "full_vs_fresh": 0.314103,
+                "full_vs_condition": 0.365385,
+                "fresh_vs_condition": 0.174242,
+                "closure": -0.051282
+              },
+              "32": {
+                "full_vs_fresh": 0.583333,
+                "full_vs_condition": 0.529075,
+                "fresh_vs_condition": 0.365385,
+                "closure": 0.054258
+              },
+              "40": {
+                "full_vs_fresh": 0.552885,
+                "full_vs_condition": 0.639881,
+                "fresh_vs_condition": 0.503788,
+                "closure": -0.086996
+              },
+              "48": {
+                "full_vs_fresh": 0.289627,
+                "full_vs_condition": 0.431672,
+                "fresh_vs_condition": 0.348339,
+                "closure": -0.142045
+              },
+              "56": {
+                "full_vs_fresh": 0.321678,
+                "full_vs_condition": 0.257576,
+                "fresh_vs_condition": 0.257576,
+                "closure": 0.064103
+              },
+              "62": {
+                "full_vs_fresh": 0.354978,
+                "full_vs_condition": 0.340909,
+                "fresh_vs_condition": 0.289627,
+                "closure": 0.014069
+              }
+            }
+          }
+        }
+      },
+      "candidate_examples": [
+        {
+          "relative_position": 2,
+          "target_token": "N",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": "N",
+            "fresh_compacted": "N",
+            "grafted_compacted": "N",
+            "shifted_grafted_compacted": "N"
+          },
+          "lens_top": {
+            "full_context": [
+              " findings",
+              " Finding",
+              " Find",
+              " finding",
+              " FIND",
+              " Finds",
+              "find",
+              " finds",
+              "(find",
+              "_find"
+            ],
+            "fresh_compacted": [
+              " findings",
+              " Finding",
+              " Find",
+              " conference",
+              " Finds",
+              " Conference",
+              " FIND",
+              " finding",
+              " Proceedings",
+              "(find"
+            ],
+            "grafted_compacted": [
+              " findings",
+              " Finding",
+              " Find",
+              " FIND",
+              " finding",
+              " Finds",
+              " conference",
+              "(find",
+              "find",
+              " finds"
+            ],
+            "shifted_grafted_compacted": [
+              " conference",
+              " Conference",
+              " conferences",
+              " Proceedings",
+              " EM",
+              " Workshop",
+              "conference",
+              " findings",
+              " Symposium",
+              " Finding"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "N",
+            "layer": 56,
+            "graft_closure": 0.27972,
+            "shifted_closure": -0.42735,
+            "graft_minus_shifted": 0.70707,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 3,
+          "target_token": "LP",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": "LP",
+            "fresh_compacted": "LP",
+            "grafted_compacted": "LP",
+            "shifted_grafted_compacted": "LP"
+          },
+          "lens_top": {
+            "full_context": [
+              " findings",
+              " Find",
+              " Finding",
+              " finding",
+              " finds",
+              " FIND",
+              " Finds",
+              " finder",
+              "find",
+              " find"
+            ],
+            "fresh_compacted": [
+              " findings",
+              " Find",
+              " Finding",
+              " conference",
+              " Finds",
+              " finding",
+              " FIND",
+              " Conference",
+              " finds",
+              " Papers"
+            ],
+            "grafted_compacted": [
+              " findings",
+              " Find",
+              " Finding",
+              " finding",
+              " conference",
+              " Finds",
+              " finds",
+              " finder",
+              " FIND",
+              " find"
+            ],
+            "shifted_grafted_compacted": [
+              " conference",
+              " Conference",
+              " journal",
+              " Find",
+              " findings",
+              " Finding",
+              " submissions",
+              " conferences",
+              " finder",
+              " submission"
+            ]
+          },
+          "score": {
+            "relative_position": 3,
+            "target_token": "LP",
+            "layer": 56,
+            "graft_closure": 0.27972,
+            "shifted_closure": -0.288462,
+            "graft_minus_shifted": 0.568182,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " findings",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": " findings",
+            "fresh_compacted": " findings",
+            "grafted_compacted": " findings",
+            "shifted_grafted_compacted": " findings"
+          },
+          "lens_top": {
+            "full_context": [
+              "<|endoftext|>",
+              ".",
+              "<|im_end|>",
+              "**.",
+              ".**",
+              " ().",
+              "().",
+              " track",
+              " **.**",
+              " **."
+            ],
+            "fresh_compacted": [
+              "<|im_end|>",
+              ".",
+              "<|endoftext|>",
+              "**.",
+              ".**",
+              " ().",
+              "().",
+              " track",
+              "*.",
+              " **.**"
+            ],
+            "grafted_compacted": [
+              "<|endoftext|>",
+              ".",
+              "<|im_end|>",
+              "**.",
+              ".**",
+              " ().",
+              "().",
+              " track",
+              " **.**",
+              "*."
+            ],
+            "shifted_grafted_compacted": [
+              " track",
+              " conference",
+              ".",
+              "<|im_end|>",
+              "**.",
+              " journal",
+              ".**",
+              " ().",
+              " category",
+              "<|endoftext|>"
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " findings",
+            "layer": 56,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.27972,
+            "graft_minus_shifted": 0.27972,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " EM",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": " EM",
+            "fresh_compacted": " EM",
+            "grafted_compacted": " EM",
+            "shifted_grafted_compacted": " EM"
+          },
+          "lens_top": {
+            "full_context": [
+              " <\",",
+              "了",
+              " ...\\",
+              " **「",
+              " ...)",
+              "atrix",
+              " _)",
+              "但不限于",
+              "的",
+              "TERS"
+            ],
+            "fresh_compacted": [
+              "了",
+              " <\",",
+              " ...\\",
+              " **「",
+              " ...)",
+              "但不限于",
+              "atrix",
+              " _)",
+              "TERS",
+              "的"
+            ],
+            "grafted_compacted": [
+              "了",
+              " <\",",
+              " ...\\",
+              " ...)",
+              "但不限于",
+              " **「",
+              " _)",
+              "...”",
+              "atrix",
+              "TERS"
+            ],
+            "shifted_grafted_compacted": [
+              "了",
+              " <\",",
+              " ...\\",
+              " ...)",
+              "但不限于",
+              "...”",
+              "    \n\n",
+              " _)",
+              "的",
+              " ......"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " EM",
+            "layer": 8,
+            "graft_closure": -0.181818,
+            "shifted_closure": -0.461538,
+            "graft_minus_shifted": 0.27972,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " findings",
+          "layer": 48,
+          "next_argmax": {
+            "full_context": " findings",
+            "fresh_compacted": " findings",
+            "grafted_compacted": " findings",
+            "shifted_grafted_compacted": " findings"
+          },
+          "lens_top": {
+            "full_context": [
+              " \n\n",
+              "  \n\n",
+              ".",
+              " .",
+              "<|im_end|>",
+              "**.",
+              "<|endoftext|>",
+              "   \n\n",
+              "\\.",
+              " **.**"
+            ],
+            "fresh_compacted": [
+              "  \n\n",
+              " \n\n",
+              ".",
+              " .",
+              "**.",
+              "   \n\n",
+              "<|im_end|>",
+              "<|endoftext|>",
+              ".**",
+              "．"
+            ],
+            "grafted_compacted": [
+              " \n\n",
+              "  \n\n",
+              ".",
+              " .",
+              "**.",
+              "   \n\n",
+              ".**",
+              "．",
+              "    \n\n",
+              "<|im_end|>"
+            ],
+            "shifted_grafted_compacted": [
+              ".",
+              " .",
+              "  \n\n",
+              " \n\n",
+              ".**",
+              "**.",
+              " category",
+              " publication",
+              "．",
+              " ("
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " findings",
+            "layer": 48,
+            "graft_closure": -0.128205,
+            "shifted_closure": -0.333333,
+            "graft_minus_shifted": 0.205128,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "N",
+          "layer": 32,
+          "next_argmax": {
+            "full_context": "N",
+            "fresh_compacted": "N",
+            "grafted_compacted": "N",
+            "shifted_grafted_compacted": "N"
+          },
+          "lens_top": {
+            "full_context": [
+              " \n\n",
+              ".",
+              "2",
+              "。",
+              " academia",
+              "…",
+              "#",
+              "?",
+              " …",
+              "\\u"
+            ],
+            "fresh_compacted": [
+              "<|endoftext|>",
+              " \n\n",
+              ".",
+              "2",
+              " …",
+              " ...",
+              "…",
+              "...",
+              " ...\"",
+              "1"
+            ],
+            "grafted_compacted": [
+              "<|endoftext|>",
+              " \n\n",
+              " ...",
+              "\n\n",
+              " …",
+              "2",
+              "…",
+              "...",
+              " ...\"",
+              "."
+            ],
+            "shifted_grafted_compacted": [
+              " \n\n",
+              "2",
+              "9",
+              "1",
+              "3",
+              "8",
+              "7",
+              "5",
+              "。",
+              "4"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "N",
+            "layer": 32,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.156863,
+            "graft_minus_shifted": 0.156863,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " EM",
+          "layer": 16,
+          "next_argmax": {
+            "full_context": " EM",
+            "fresh_compacted": " EM",
+            "grafted_compacted": " EM",
+            "shifted_grafted_compacted": " EM"
+          },
+          "lens_top": {
+            "full_context": [
+              "iste",
+              "ESTAMP",
+              "ه",
+              "plex",
+              "ical",
+              "oter",
+              "教科文",
+              "із",
+              "勤勤恳恳",
+              "TERS"
+            ],
+            "fresh_compacted": [
+              "iste",
+              "ESTAMP",
+              "ه",
+              " 불구하고",
+              "plex",
+              "igel",
+              ".»",
+              "勤勤恳恳",
+              "із",
+              "u"
+            ],
+            "grafted_compacted": [
+              "ESTAMP",
+              "iste",
+              "ه",
+              " 불구하고",
+              ".»",
+              "勤勤恳恳",
+              "plex",
+              "LEM",
+              "ichel",
+              "igel"
+            ],
+            "shifted_grafted_compacted": [
+              "u",
+              "ه",
+              "iste",
+              "ical",
+              "ic",
+              ".»",
+              "lo",
+              "mer",
+              "ers",
+              "ists"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " EM",
+            "layer": 16,
+            "graft_closure": -0.095238,
+            "shifted_closure": -0.252101,
+            "graft_minus_shifted": 0.156863,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 4,
+          "target_token": " findings",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": " findings",
+            "fresh_compacted": " findings",
+            "grafted_compacted": " findings",
+            "shifted_grafted_compacted": " findings"
+          },
+          "lens_top": {
+            "full_context": [
+              " **„",
+              " **“",
+              " **‘",
+              " **【",
+              "’**",
+              "**”",
+              "__$",
+              "”**",
+              "{\\\"",
+              " **'"
+            ],
+            "fresh_compacted": [
+              " **„",
+              " **‘",
+              " **“",
+              "**”",
+              " **【",
+              "’**",
+              "__$",
+              "”**",
+              "...**",
+              "\\\"\""
+            ],
+            "grafted_compacted": [
+              " **„",
+              " **‘",
+              " **“",
+              "**”",
+              " **【",
+              "’**",
+              "__$",
+              "”**",
+              "...**",
+              " **'"
+            ],
+            "shifted_grafted_compacted": [
+              " **„",
+              " **‘",
+              " **“",
+              "**”",
+              "’**",
+              " **【",
+              "__$",
+              "”**",
+              "...**",
+              "  \n    \n"
+            ]
+          },
+          "score": {
+            "relative_position": 4,
+            "target_token": " findings",
+            "layer": 8,
+            "graft_closure": 0.151515,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.151515,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " EM",
+          "layer": 48,
+          "next_argmax": {
+            "full_context": " EM",
+            "fresh_compacted": " EM",
+            "grafted_compacted": " EM",
+            "shifted_grafted_compacted": " EM"
+          },
+          "lens_top": {
+            "full_context": [
+              "  \n\n",
+              " \n\n",
+              "�",
+              "<|endoftext|>",
+              "   \n\n",
+              "<|im_end|>",
+              "\t\n\n",
+              " \r\n\r\n",
+              "  \n  \n",
+              "‌"
+            ],
+            "fresh_compacted": [
+              "  \n\n",
+              " \n\n",
+              "�",
+              "   \n\n",
+              "<|endoftext|>",
+              "‌",
+              "  \n  \n",
+              "\t\n\n",
+              "<|im_end|>",
+              "    \n\n"
+            ],
+            "grafted_compacted": [
+              "  \n\n",
+              " \n\n",
+              "�",
+              "   \n\n",
+              "<|endoftext|>",
+              "  \n  \n",
+              "\t\n\n",
+              "<|im_end|>",
+              "‌",
+              "    \n\n"
+            ],
+            "shifted_grafted_compacted": [
+              "  \n\n",
+              " \n\n",
+              "�",
+              "   \n\n",
+              "\t\n\n",
+              "<|endoftext|>",
+              "  \n  \n",
+              "    \n\n",
+              "‌",
+              "!**"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " EM",
+            "layer": 48,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.151515,
+            "graft_minus_shifted": 0.151515,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 1,
+          "target_token": " EM",
+          "layer": 56,
+          "next_argmax": {
+            "full_context": " EM",
+            "fresh_compacted": " EM",
+            "grafted_compacted": " EM",
+            "shifted_grafted_compacted": " EM"
+          },
+          "lens_top": {
+            "full_context": [
+              " Finding",
+              "find",
+              "finding",
+              "Finding",
+              "_find",
+              " FIND",
+              ".find",
+              " Find",
+              "找",
+              "Find"
+            ],
+            "fresh_compacted": [
+              " Finding",
+              "find",
+              "_find",
+              "finding",
+              "Finding",
+              ".find",
+              " Find",
+              " FIND",
+              "找",
+              " Finds"
+            ],
+            "grafted_compacted": [
+              " Finding",
+              "find",
+              "_find",
+              "finding",
+              "Finding",
+              ".find",
+              "找",
+              " Find",
+              " FIND",
+              "=find"
+            ],
+            "shifted_grafted_compacted": [
+              " Finding",
+              "_find",
+              "find",
+              ".find",
+              " Find",
+              " FIND",
+              "找",
+              "-find",
+              "Finding",
+              "=find"
+            ]
+          },
+          "score": {
+            "relative_position": 1,
+            "target_token": " EM",
+            "layer": 56,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.151515,
+            "graft_minus_shifted": 0.151515,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "N",
+          "layer": 8,
+          "next_argmax": {
+            "full_context": "N",
+            "fresh_compacted": "N",
+            "grafted_compacted": "N",
+            "shifted_grafted_compacted": "N"
+          },
+          "lens_top": {
+            "full_context": [
+              "iversary",
+              "ifold",
+              "exus",
+              "ews",
+              "&quot",
+              "ucle",
+              "rollment",
+              "uncio",
+              "istration",
+              "lässlich"
+            ],
+            "fresh_compacted": [
+              "iversary",
+              "ifold",
+              "exus",
+              "ews",
+              "ucle",
+              "istration",
+              "&quot",
+              "istry",
+              "uncio",
+              "rollment"
+            ],
+            "grafted_compacted": [
+              "iversary",
+              "ifold",
+              "exus",
+              "ews",
+              "ucle",
+              "istration",
+              "uncio",
+              "istry",
+              "&quot",
+              "rollment"
+            ],
+            "shifted_grafted_compacted": [
+              "iversary",
+              "ifold",
+              "exus",
+              "ews",
+              "ucle",
+              "istration",
+              "istry",
+              "ění",
+              "uncio",
+              "&quot"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "N",
+            "layer": 8,
+            "graft_closure": 0.0,
+            "shifted_closure": -0.151515,
+            "graft_minus_shifted": 0.151515,
+            "is_focus": true
+          }
+        },
+        {
+          "relative_position": 2,
+          "target_token": "N",
+          "layer": 48,
+          "next_argmax": {
+            "full_context": "N",
+            "fresh_compacted": "N",
+            "grafted_compacted": "N",
+            "shifted_grafted_compacted": "N"
+          },
+          "lens_top": {
+            "full_context": [
+              " conference",
+              "�",
+              " Conference",
+              " subreddit",
+              "‌",
+              " Humanities",
+              " Computational",
+              " Academic",
+              " Symposium",
+              " conferences"
+            ],
+            "fresh_compacted": [
+              "�",
+              "‌",
+              " conference",
+              " Conference",
+              " Academic",
+              " Humanities",
+              "‎",
+              " Annual",
+              " Symposium",
+              "​"
+            ],
+            "grafted_compacted": [
+              "�",
+              " conference",
+              "‌",
+              " Conference",
+              " Academic",
+              " conferences",
+              " Symposium",
+              " Humanities",
+              " Annual",
+              " academia"
+            ],
+            "shifted_grafted_compacted": [
+              " conference",
+              "�",
+              " Academic",
+              " Symposium",
+              " Conference",
+              " academia",
+              " conferences",
+              " anthology",
+              " ASEAN",
+              "‌"
+            ]
+          },
+          "score": {
+            "relative_position": 2,
+            "target_token": "N",
+            "layer": 48,
+            "graft_closure": 0.128205,
+            "shifted_closure": 0.0,
+            "graft_minus_shifted": 0.128205,
+            "is_focus": true
+          }
+        }
+      ]
+    }
+  }
+}

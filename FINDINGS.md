@@ -151,3 +151,15 @@ matches 30B qualitatively. NOTE: referent is essentially FLAT on 27B (+0.004)
 evicted decision" category. This is the wall V-only hits, and the direct
 motivation for the K/V (key-graft) experiment: keys carry addressing/position,
 which is what referent recovery may need.
+
+## Lens resolution (07-07) — corroborates in AGGREGATE, not per-example
+Our ordinary-regime three-state probe (role-in-summary + tail, 4 sense/referent
+cases) did NOT show clean per-case aligned>shifted separation — shifted control
+sometimes matched/beat aligned at the hinge token. The lens signal is SMALL and
+only reliably shows alignment-sensitivity when AGGREGATED over many tokens/cases
+(cf. the other agent's 10-case/156-token batch: aligned mean-positive, shifted
+mean-negative). VERDICT: the J-lens is a low-resolution, aggregate-level
+corroborator for this V-only intervention — it confirms the graft is active +
+alignment-sensitive on average, and confirms the omitted-fact negative, but
+cannot supply vivid single-example exhibits. Paper uses it honestly as such;
+no dramatic per-example lens figure exists or is claimed.
