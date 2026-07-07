@@ -80,3 +80,22 @@ wakeups; keep this file + STATE + FINDINGS + DECISIONS current. Milestone
 reports to user; don't ask permission for planned steps, do ask before a NEW
 expensive escalation not in this plan. Balance ~$38; Phase 1 ~$10-15, Phase 2
 ~$20-40 (gated). One pod default; terminate when idle.
+
+## SEQUENCING (user 07-07): FINISH PAPER → THEN identifier-morphology experiments
+PHASE 2 CONCLUDED (K/V negative for semantic targets, scoped per Fable cross-check).
+NEXT, IN ORDER:
+1. FINISH THE PAPER (task 24): fold in BOTH new results —
+   - K/V result (SCOPED: value is operative axis for SEMANTIC-phrase referent
+     recovery; keys don't help there uniform/per-layer; §10 changes from "K/V
+     untested open question" → "we ran it, here's the scoped negative + the
+     morphology-moderation hypothesis as the next experiment").
+   - Lens free-divergence result (when it lands; honest per its rationale doc).
+   Via full pipeline: Fable conceptual gut-check + critics + Fable readability
+   (I'm Opus-flipped → Fable via subagent, mandatory). Review, push. THE deliverable.
+2. PHASE 3 (post-paper, task 25): TARGET-MORPHOLOGY experiments — the microtest
+   surfaced that keys may help for SHORT TOKEN-LIKE IDENTIFIER targets (Coral→
+   userName) vs inert for semantic phrases. Pre-registered 30B run: add a
+   short-identifier target lane, sweep V/K/coupled/independent, report FULL
+   policy surface (not best-of, avoid winner's curse), test the prediction
+   "target morphology moderates K-graft utility." Cross-check with the other
+   agent's referent_recovery_microtest. Drive after paper ships.
