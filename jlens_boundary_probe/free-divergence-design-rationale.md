@@ -82,3 +82,19 @@ IMPLEMENTATION: probe runs across ALL cases (distribution, not a few heroes);
 records fork index + MARGIN + lean-toward-A per case; a robustness check over
 2-3 temperatures/seeds; classifies each case into the 3 buckets. The exhibit
 is the distribution; any single vivid case is shown as one point on it.
+
+## QUEUED LENS FOLLOW-UP (user idea 07-07) — token-by-token TRAJECTORY scan
+IDEA: we read the lens at POINTS (hinge, fork±1). Convert to TRAJECTORY —
+a LIGHTWEIGHT per-token readout (e.g. just the gold-concept-token rank/logprob,
+not full top-k) scanned across a LONG stretch of the continuation, token by
+token, under A/B/E. MOTIVATION: we keep hunting for a sharp inflection point;
+maybe there ISN'T one — a subtle effect may be a BROAD diffuse shift spread
+across many tokens that any single-point measurement misses. A trajectory shows
+the real shape (sharp fork vs gentle sustained divergence vs nothing).
+EASY TO TACK ON: we already generate ~36 tokens in the free-divergence probe;
+recording a light lens signal at EACH generated token (not just the fork) is a
+small add, same pod/cases. PRIORITY: NOT "much later" — the natural SUCCESSOR to
+the current fork-probe, especially if the fork result is muddy (likely). Same
+honesty guardrails apply (distribution over N cases; a trajectory is inherently
+more honest than a hero-point). Could even be merged into the current probe's
+next iteration.
