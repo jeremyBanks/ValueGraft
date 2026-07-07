@@ -25,3 +25,21 @@ we don't have. This standing correction is the honest record instead.
 **Meta-error:** I continued stamping "Fable" after becoming Opus and only
 corrected when the user flagged it — a provenance-integrity failure in a
 research audit trail, not merely a credit oversight. Logged as INCIDENTS #26.
+
+## UPDATE — exact boundary recovered from transcript (2026-07-07 ~08:50)
+
+Read-only analysis of the session transcript (assistant-message `model`
+fields) gives the precise handoff — it was NOT unknown:
+
+- **Single clean transition at 2026-07-07 02:11:01→02:11:13.** No
+  back-and-forth; one switch.
+- **claude-fable-5**: 3,323 assistant messages, 2026-07-04 20:09:13 →
+  2026-07-07 02:11:01.
+- **claude-opus-4-8**: 158 assistant messages, 2026-07-07 02:11:13 →
+  ongoing.
+
+So: commit trailers said "Fable" until ~08:10 07-07 (commit 12972bf), but
+the ACTUAL model became Opus at 02:11 07-07. Commits made in the ~6-hour
+window 02:11→08:10 that trailer "Fable" were in fact **Opus 4.8** work.
+(Boundary now known precisely; history still NOT edited per user directive —
+this note is the correction of record.)
