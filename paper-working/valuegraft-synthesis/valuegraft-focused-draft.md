@@ -209,6 +209,9 @@ Historical implementation names are preserved in code and result directories:
 `E`/`E-tuned` to V-Graft. We do not use those names as the public taxonomy
 because they mix layout details with state-source details.
 
+The subject models for the quantitative arms are Qwen3-4B-Instruct-2507 and
+Qwen3-30B-A3B-Instruct-2507 (Qwen Team, 2025a, 2025b).
+
 ### 4.3 KV-Graft Construction
 
 KV-Graft extracts the summary token span from the saved summary-generation
@@ -273,9 +276,9 @@ and sequence-length-dependent 4-bit kernel behavior.
 Negative controls check whether gains can be explained by generic smoothing or
 odd cache perturbations. Shuffled-value grafts use the correct conversation's
 old values but attach them to the wrong aligned positions. Wrong-conversation
-grafts use old values from another conversation. The wrong-summary pack control
-uses packed summary state from another conversation. These controls test whether
-an effect survives after content/state alignment is broken.
+grafts use old values from another conversation. The wrong-source packed-summary
+control uses summary state from another conversation. These controls test
+whether an effect survives after content/state alignment is broken.
 
 ### 4.6 Data and Scoring
 
@@ -287,10 +290,11 @@ The evidence comes from four sources:
 - **Natural/free-form conversations:** 8 conversations with held-out
   continuations.
 - **LongMemEval-S:** standard benchmark material restructured so the evidence
-  session is evicted. Early runs cover n=48 at 4B and n=36 at 30B; a later
-  30B-bf16 aggregate covers n=320.
+  session is evicted (Wu et al., 2024). Early runs cover n=48 at 4B and n=36 at
+  30B; a later 30B-bf16 aggregate covers n=320.
 - **SWE-Gym/OpenHands traces:** 75 real coding-agent trajectories scored by
-  teacher-forced likelihood of the true next assistant action.
+  teacher-forced likelihood of the true next assistant action (Pan et al.,
+  2025).
 
 Probe-style tasks append a user question to each arm and greedily generate an
 answer at temperature 0. Continuation and coding-trajectory tasks teacher-force
@@ -319,7 +323,7 @@ The reported intervention effects are measured against these gaps.
 ### 5.2 Same Text, Different State
 
 The same summary text behaves differently depending on whether its cache entries
-were written under full context. In an earlier gapped summary-state pilot, the
+were written under full context. In an earlier gapped KV-Graft pilot, the
 write-time cache variant beats a fresh-encoded minimal summary control by
 +0.093 nats on the 4B pilot, winning 10/12 conversations. At 30B the contrast
 grows to +0.128 nats, winning 12/12 conversations, CI [0.097, 0.158].
@@ -420,11 +424,10 @@ Examples:
   syntax and file paths split into many subword tokens, so phrase-level spans
   are clearer than raw token ranks.
 
-The J-lens evidence does not show that the model will take the right action,
-and it does not replace the likelihood or probe metrics. It does show a
-mechanistically plausible local substrate: the same summary text can have
-different verbalizable residual-stream content depending on whether it is read
-fresh or preserved from the state in which it was written.
+The J-lens evidence has a narrower role than the likelihood and probe metrics.
+It supplies a mechanistic readout for one local substrate: the same summary text
+can have different verbalizable residual-stream content depending on whether it
+is read fresh or preserved from the state in which it was written.
 
 ### 5.6 Boundary: No Recall Recovery
 
@@ -466,8 +469,8 @@ Several controls remain. A stronger text-only summary baseline is needed.
 KV-Graft's honesty effect is partly layout-driven and partly write-time
 state-driven; the matched pair isolates some of the latter, but not every
 possible caution mechanism. Per-slot calibration should remain exploratory until
-it passes wrong-conversation guards and larger holdout tests. One-off demos are
-useful explanations but are not evidence; the sense-level evidence is the
+it passes wrong-conversation guards and larger holdout tests. Single examples
+are explanatory rather than statistical; the sense-level evidence is the
 controlled micro-sense experiment, and the J-lens readouts are qualitative
 interpretability evidence rather than task-performance evidence.
 
@@ -511,8 +514,11 @@ at <https://github.com/jeremyBanks/ValueGraft>.
 - OpenAI. 2026a. [Compaction](https://developers.openai.com/api/docs/guides/compaction) and [Compact a response](https://developers.openai.com/api/reference/resources/responses/methods/compact). OpenAI API documentation. Accessed 2026-07-07.
 - OpenAI. 2026b. [Prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching). OpenAI API documentation. Accessed 2026-07-07.
 - Pan, Jiayi, Xingyao Wang, Graham Neubig, Navdeep Jaitly, Heng Ji, Alane Suhr, and Yizhe Zhang. 2025. [Training Software Engineering Agents and Verifiers with SWE-Gym](https://arxiv.org/abs/2412.21139). arXiv:2412.21139. DOI: [10.48550/arXiv.2412.21139](https://doi.org/10.48550/arXiv.2412.21139).
+- Qwen Team. 2025a. [Qwen3-4B-Instruct-2507 model card](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507). Hugging Face. Accessed 2026-07-07.
+- Qwen Team. 2025b. [Qwen3-30B-A3B-Instruct-2507 model card](https://huggingface.co/Qwen/Qwen3-30B-A3B-Instruct-2507). Hugging Face. Accessed 2026-07-07.
 - Qwen Team. 2026. [Qwen3.6-27B model card](https://huggingface.co/Qwen/Qwen3.6-27B). Hugging Face. Accessed 2026-07-07.
 - Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017. [Attention Is All You Need](https://arxiv.org/abs/1706.03762). NeurIPS 2017; arXiv:1706.03762. DOI: [10.48550/arXiv.1706.03762](https://doi.org/10.48550/arXiv.1706.03762).
+- Wu, Di, Hongwei Wang, Wenhao Yu, Yuwei Zhang, Kai-Wei Chang, and Dong Yu. 2024. [LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory](https://arxiv.org/abs/2410.10813). arXiv:2410.10813. DOI: [10.48550/arXiv.2410.10813](https://doi.org/10.48550/arXiv.2410.10813).
 - Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025. [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002). arXiv:2502.16002. DOI: [10.48550/arXiv.2502.16002](https://doi.org/10.48550/arXiv.2502.16002).
 - Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang, Kuntai Du, Shan Lu, and Junchen Jiang. 2025. [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444). *EuroSys 2025*; arXiv:2405.16444. DOI: [10.48550/arXiv.2405.16444](https://doi.org/10.48550/arXiv.2405.16444).
 - Zhang, Peitian, Zheng Liu, Shitao Xiao, Ninglu Shao, Qiwei Ye, and Zhicheng Dou. 2024. [Long Context Compression with Activation Beacon](https://arxiv.org/abs/2401.03462). arXiv:2401.03462. DOI: [10.48550/arXiv.2401.03462](https://doi.org/10.48550/arXiv.2401.03462).
