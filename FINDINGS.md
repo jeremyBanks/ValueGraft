@@ -131,3 +131,8 @@ WHERE recovery matters. VERDICT: supports the GENERAL mechanism (graft
 inserts concept, E→A) but NOT the specific dissociation. Sharper readout
 (J-lens / multi-token / targeted layers) = future work. Do not overclaim
 this as mechanistic proof of the dissociation.
+
+## Methods note — graft strength
+Default value-graft strength α_V = 0.75 (the project's standard graft dose;
+α=1.0 = full replacement, studied in F3 tuning). Where unspecified, results
+use α=0.75.
