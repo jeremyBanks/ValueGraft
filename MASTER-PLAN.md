@@ -227,3 +227,15 @@ why (pre-register: GQA-share/tokenizer/tuning). Instruction-tuning = residual
 confound at N=7, acknowledge. KEEP COMPACT: one figure + paragraph, MLA block noted.
 RUN ORDER: 3-model PILOT first (Qwen2.5-32B dense / non-Qwen GQA / Gemma-4
 sliding-window) = ~80% of value; if they behave, full sweep is formality.
+
+## PHASE 4 addendum 7 — per-model CHAMPION TUNING profiles (user 07-07, LOW PRIORITY)
+NOT a priority — only if time+capacity after the cross-arch sweep. For models
+that SHOW grafting SUCCESS in the sweep, run a per-LAYER (and per-HEAD where
+cheap/promising) champion tuning (like the Qwen champion that cured α=1 collapse
++ concentrated the effect). SCIENTIFIC HOOK: the champion PROFILE as an
+ARCHITECTURAL FINGERPRINT — how many layers/heads matter, and how the shape
+reflects the model's internals (e.g. sliding-window → effect in global-attn
+layers? MoE vs dense differ?). Compare profiles ACROSS models = novel cross-arch
+observation, not just "does it work." SCOPE per model = my call using knowledge
+of each architecture (don't brute-force; guess what's worth searching). Gated on
+sweep success + spare capacity; guard-validate (wrong-conv control) as always.
