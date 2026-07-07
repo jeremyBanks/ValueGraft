@@ -169,12 +169,24 @@ def generate_summary(
     if eos is not None:
         eos_ids = {eos} if isinstance(eos, int) else set(eos)
         gen_ids = [tok for tok in gen_ids if tok not in eos_ids]
-    summary_text = (SUMMARY_PREFILL + tokenizer.decode(gen_ids, skip_special_tokens=True)).strip()
+    raw_text = (SUMMARY_PREFILL + tokenizer.decode(gen_ids, skip_special_tokens=True)).strip()
+    summary_text, trimmed = clean_summary_text(raw_text)
     return {
         "text": summary_text,
+        "was_trimmed": trimmed,
         "request_ids": req_ids,
         "gen_ids": tokenizer(summary_text, add_special_tokens=False).input_ids,
     }
+
+
+def clean_summary_text(raw_text: str) -> tuple[str, bool]:
+    marker = re.search(
+        r"(<function=|<parameter=|<think>|<\\|im_start\\|>|<\\|im_end\\|>|\\buser\\s+assistant\\b)",
+        raw_text,
+    )
+    if marker is None:
+        return raw_text, False
+    return raw_text[: marker.start()].rstrip(), True
 
 
 def build_compacted_messages(
@@ -520,6 +532,7 @@ def scan_next_action(
             "target_scanned": len(target_ids),
         },
         "summary_text": summary["text"],
+        "summary_was_trimmed": bool(summary.get("was_trimmed")),
         "target_text": target_text,
         "action_anchors": anchors,
         "anchor_spans": spans,
