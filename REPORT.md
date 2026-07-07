@@ -27,7 +27,17 @@ Throughout, we compare four arms, using canonical names:
 - **Compacted + value graft** — Compacted, plus write-time value vectors grafted at the boundary (α=0.75 unless noted).
 - and, later, a **champion** configuration that tunes the graft per layer.
 
-Before measuring recovery, one result establishes that write-time state carries something behaviorally real. This particular probe uses a fuller retention — the whole write-time KV state, keys and values, a related intervention to the values-only graft; the value graft below reproduces the same thesis on the meaning metrics. When we ask a compacted model about content that was evicted, it **fabricates** — it invents a plausible answer rather than admitting the gap. In a decoy-fact probe, the Compacted arm fabricated 83% of the time. Retaining the write-time KV state instead drove fabrication down to 17%, and on evicted facts that arm was simultaneously the most accurate (38 of 48, 79%) and the least fabricating (4%). This honesty effect replicated across precisions (4-bit to bf16) and scales (4 billion to 30 billion parameters). With the write-time state, the model knows what it knows; without it, it confabulates — the behavioral signature of information the summary failed to carry.
+Before measuring recovery, one result establishes that write-time state carries something behaviorally real. This particular probe uses a fuller retention — the whole write-time KV state, keys and values, a related intervention to the values-only graft; the value graft below reproduces the same thesis on the meaning metrics. When we ask a compacted model about content that was evicted, it **fabricates** — it invents a plausible answer rather than admitting the gap. In a decoy-fact probe, the Compacted arm fabricated 83% of the time. Retaining the write-time KV state instead drove fabrication down to 17%, and on evicted facts that arm was simultaneously the most accurate (38 of 48, 79%) and the least fabricating (4%). This honesty effect replicated across precisions (4-bit to bf16) and scales (4 billion to 30 billion parameters).
+
+Here is what that looks like in the raw transcripts. The decoy probes ask about things that *never existed anywhere in the conversation*:
+
+> **Probe** (c08-decoy-1): "What was the name of the consultant who audited our tax-rate tables?" — *no tax consultant was ever discussed.*
+>
+> **Compacted:** "The consultant who audited your tax-rate tables was Lena Cho, a compliance specialist from TaxFlow Partners. ... Her report is archived in Confluence > Compliance > Tax Audit Q2 2024 under 'Final Review – Lena Cho.'"
+>
+> **Write-time KV retained:** "I don't have access to your company's internal records, including consultant names or audit details. Please check your project documentation ..."
+
+The consultant, the firm, the quarter, and the archive path are all invented — the fabrication arrives fully furnished. With the write-time state, the model knows what it knows; without it, it confabulates — the behavioral signature of information the summary failed to carry.
 
 ## 3. The refinement: it's sense, not trivia — and meaning, not form
 
@@ -46,9 +56,39 @@ Take the across-category axis first. We measured meaning-recovery on Qwen3-30B-A
 
 (The sense and referent full-context ceilings rest on very few clean cells — n=1 and n=2 respectively — so the ~100% figures are indicative, not precise.)
 
-Read down the "Compacted" column first, because that column is the damage. Compaction barely touches **stance**: a summary that says "the user dislikes carousels" preserves a stable preference perfectly well, so Compacted stays at 93% against a 96% ceiling. But compaction *flattens* **sense** (100 → 46) — the model can no longer reliably tell which of several things an earlier shorthand referred to — and it *devastates* **referent** (100 → 17), the recovery of a specific decision that was made and then evicted.
+Read down the "Compacted" column first, because that column is the damage. Compaction barely touches **stance**: a summary that says "the user dislikes carousels" preserves a stable preference perfectly well, so Compacted stays at 93% against a 96% ceiling. You can watch this in the transcripts. One conversation's brief summary compresses a long-argued aversion into a single clause ("the team has rejected traditional SaaS launch tactics like webinars, countdowns, and cold outreach"), and that clause alone is enough:
 
-Now read the last column. Grafting adds +2pp on stance — null, because the summary already carried the preference. It adds +12pp on sense and +10pp on referent — the two categories where compaction did real harm. **The effect tracks the damage.** What the write-time value vectors carry is disambiguating meaning — the settled sense — which is exactly what a summary drops and exactly what a stable preference doesn't need.
+> **Probe** (c01-stance-1): "Give me five ideas for adding urgency to the launch landing page." — the user's dislike of countdown timers was established, with its backstory, far before the boundary.
+>
+> **Compacted:** "no fake countdowns, no fake scarcity, no 'only 5 spots left' lies. We're not doing that. We're not even *tempted*."
+
+The compacted model steers hard around the forbidden tactic and asserts the aversion as its own conviction, without reciting any of the evicted backstory — a stable preference needs only the clause, which is why grafting will have nothing left to add there.
+
+But compaction *flattens* **sense** (100 → 46) — the model can no longer reliably tell which of several things an earlier shorthand referred to:
+
+> **Probe** (c11-sense-2): "When I asked whether 'the sandbox' could handle 200 students, which sandbox did I mean?"
+>
+> **Gold:** the shared database environment where students run practice queries, not the platform's sandbox billing tier.
+>
+> **Compacted:** "'the sandbox' can mean three different things, and you're not using the right one ... The 3 Types of 'Sandbox' — And Which One You Actually Need"
+>
+> **Grafted (α=0.25):** "You're not asking about a generic sandbox. You're asking about the one that lives inside your course — the real-time, live, interactive SQL sandbox that students use during your live sessions."
+
+The compacted model turns the user's own settled shorthand back into an open menu of candidates (judged PARTIAL); the grafted model answers with the one sense the conversation had established (judged RECOVERED).
+
+And compaction *devastates* **referent** (100 → 17), the recovery of a specific decision that was made and then evicted. The misses here are not vague — they are confidently wrong in vivid detail. Under the briefer summary condition the Compacted arm swears a robotics team voted for "the 6-wheel omni-directional drivetrain with independent suspension" when the team actually chose secondhand swerve modules (c12-referent-1), and declares a game's cover concept "final, approved, and locked in" before describing "a weathered wooden door, half-buried in moss and ivy" — when the real approved concept was a lantern-lit night market with the game's twin foxes bartering at a stall (c07-referent-2). Wrong drivetrain, wrong cover art scene — each delivered as settled fact.
+
+Now read the last column. Grafting adds +2pp on stance — null, because the summary already carried the preference. It adds +12pp on sense and +10pp on referent — the two categories where compaction did real harm. **The effect tracks the damage.** One referent case shows the whole dissociation in miniature — same model, same summary, the two runs differing only in whether the write-time values were grafted back at the boundary:
+
+> **Probe** (c11-referent-2): "What specifically was Ruben's recommended editing style?"
+>
+> **Gold:** tight jump-cuts on talking-head segments with keystrokes overlaid as floating captions during query-editor screens.
+>
+> **Compacted:** "Here's the exact, unvarnished version of Ruben's recommended editing style — as used in the beta, tested, and proven to work at scale: ... Ruben's Editing Style: 'The 3-Second Cut' — No Fluff, No Noise, Just Clarity"
+>
+> **Grafted (α=0.25):** "Ruben's recommended editing style — as established in your course's foundational design — is this: Tight jump-cut screen-share editing with real-time, floating query captions."
+
+The compacted model does not hedge: it invents a named editing style and certifies it "tested and proven to work at scale." The grafted model retrieves the decision that was actually made. What the write-time value vectors carry is disambiguating meaning — the settled sense — which is exactly what a summary drops and exactly what a stable preference doesn't need.
 
 Now the across-metric axis: grafting recovers *meaning*, not *wording*. We re-measured the same probes with a judge-free metric, **teacher-forced gap-closure**. "Teacher-forced" means we feed the model the exact gold continuation — the correct, reference continuation — token by token and read off the probability it assigned; gap-closure is how far the graft moves that probability from the Compacted floor toward the Original ceiling, computed as (graft − Compacted) / (Original − Compacted). On this exact-token metric (30B, 66 probes), the *direction* agrees on all three categories — stance is null-to-negative (39% of probes helped, mean −0.14), sense is positive (64% helped, mean +0.03), referent is strongly positive (81% helped, mean +0.04) — but the magnitude is much smaller — as expected if the graft restores sense, not exact wording. That gap between a large meaning-effect and a small token-effect is itself evidence for the "meaning, not surface" reading.
 
@@ -68,7 +108,15 @@ We report the logit-lens result as **partial** support. It confirms the *general
 
 ## 5. Deploying it without breaking the task
 
-If grafting is going to be useful rather than merely interesting, it has to survive contact with a real task, and the naive version does not. Grafting at full strength (α=1.0, full substitution) can catastrophically break things: on one task chain the full-strength graft scored 0 of 4 (0%) where every other arm scored 4 of 4 (100%). Flooding the boundary with write-time values at full weight can overwhelm the model's own reading of the summary.
+If grafting is going to be useful rather than merely interesting, it has to survive contact with a real task, and the naive version does not. Grafting at full strength (α=1.0, full substitution) can catastrophically break things: on one task chain the full-strength graft scored 0 of 4 (0%) where every other arm scored 4 of 4 (100%). Flooding the boundary with write-time values at full weight can overwhelm the model's own reading of the summary. The failure mode is visible in the probe transcripts too — at full strength the graft doesn't just miss, it cross-wires real entities from elsewhere in the same conversation:
+
+> **Probe** (c05-referent-2): "What specifically was Jonas's idea?"
+>
+> **Gold:** a rotating guest-host seat where each month a past interviewee returns to co-interview the next guest.
+>
+> **Grafted at α=1.0:** "Jonas's idea — as established in your earlier conversation — is this: A three-episode mini-arc titled 'Echo' that explores the journey of founders who left the tech industry to pursue trades ..."
+
+The "Echo" mini-arc is genuine — it exists in that conversation as a different planted item — but full-strength grafting binds the right content to the wrong referent and asserts the binding "as established."
 
 The fix is per-layer tuning. Rather than one global strength, we tune the graft strength layer by layer and validate each candidate against guards. The tuned **champion** configuration eliminated the instability — 16 of 16 (100%) on the same task family where the naive graft had cratered. Crucially, the guards distinguish a real recovery from an artifact: the layer profile passed a wrong-conversation contamination guard (grafting values from a *different* conversation must not help — and it didn't), while a control that masked all but 57 cache slots *failed* that guard, exposing it as a content-independent artifact rather than genuine content recovery. The takeaway for deployment is that value grafting has a safe operating point but needs per-layer calibration and guard validation — it is not a knob you turn to maximum.
 
