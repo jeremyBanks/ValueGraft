@@ -57,3 +57,13 @@ use canonical names by default.
   stratum, never headline.
 - internal "humane tier" → "production-calibrated compaction": compact_at
   12000, tail 6000, production-style summary, 2-6 recompactions/episode.
+
+## Provenance (updated 07-07 — models involved)
+- Claude Fable 5 — primary design + execution (majority of the work).
+- Claude Opus 4.8 — continuation as Fable quota exhausted (07-07 onward);
+  co-credit.
+- Claude Sonnet — subagent work: judging, dataset/benchmark scouting,
+  task-adapter construction, difficulty probes.
+- GPT-5.5 (OpenAI) — adversarial review / independent second perspective
+  (e.g. the read-only pipeline refresh that caught the local-plumbing gap).
+- Directed, sanity-checked, and funded by the user (Jeremy Banks).
