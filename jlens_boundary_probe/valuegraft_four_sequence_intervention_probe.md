@@ -42,6 +42,12 @@ Next-token behavior is useful, but too thin by itself. The lens readout gives
 a second view: not just "what token came next?" but "what
 concept-neighborhood is active at this position?"
 
+As a qualitative demonstration, however, this artifact is weaker than we would
+want. The compacted summary and retained tail already state almost all of the
+answer, so many token-level readouts look nearly identical across conditions.
+The result is useful as a cache-intervention sanity check and a warning about
+alignment controls; it is not a strong showcase of visible semantic recovery.
+
 ## The Compaction Problem
 
 A summary can preserve words without preserving the state that those words had
@@ -145,6 +151,35 @@ Current State:
 - Next Step: Update the priority key logic in `src
 ```
 
+There are two different "cuts" in this setup:
+
+- Conversation compaction: the fresh compacted prompt replaces the first
+  user/assistant task exchange with the generated summary, then keeps the last
+  user message and last assistant state note as recent tail.
+- Summary length cap: summary generation was capped at 96 new tokens, which is
+  why the generated summary itself ends after the fragment `src` with an
+  unmatched opening backtick.
+
+The concrete contexts are:
+
+| Condition | Prompt before the probe question | Token count before target |
+| --- | --- | ---: |
+| Full context | System message plus all four original task messages | 221 |
+| Fresh compacted | System message, generated summary in a context note, last user task message, last assistant state note | 261 |
+| Aligned ValueGraft | Same visible text as fresh compacted, but summary-token value states blended from write time | 261 |
+| Shifted control | Same visible text as fresh compacted, but old summary-token values shifted to wrong summary-token positions | 261 |
+
+The write-time value source is not another visible prompt condition. It is the
+cache state produced when the model generated the 96-token summary after the
+original conversation and summary request. Those write-time summary-token
+values are what the graft blends into the fresh compacted cache.
+
+This matters for interpretation. The retained tail already says the exact file
+and test, and the summary repeats the bug and requirement. That makes this a
+conservative state-manipulation probe, but a poor qualitative demo: the
+visible text leaves little for the graft to recover in a way that jumps out
+from token tables.
+
 The probe question is:
 
 ```text
@@ -215,279 +250,75 @@ The readout is not uniformly positive. Layers 16, 32, and 48 move closer to
 full context. Layer 62 moves slightly farther away. That is consistent with
 late-layer lens readouts being more tied to immediate continuation pressure.
 
-## Reading the Examples
+## Qualitative Readouts
 
-The example tables below are intentionally not just score summaries. They show
-the vocabulary neighborhoods that the model exposes through the J-lens.
+The qualitative readouts in this artifact are mostly underwhelming. That is an
+important result about the probe design, not a prose problem to hide.
 
-Some rows contain subword fragments, duplicate stems, or formatting tokens.
-That is normal for a vocabulary-space lens. For readability, the tables below
-omit non-ASCII tokens and a few uninformative formatting fragments when they
-do not change the interpretation. The raw artifact keeps the complete lists.
+The largest closure rows in this 23-token target are mostly path, punctuation,
+or formatting-like positions. For example, the biggest layer-48 closure is on
+the `.py` token in `src/rivermark/sort.py`; aligned grafting exactly matches
+the full-context J-lens top-k set there, but the token is not a semantic hinge
+of the task. The more human-readable rows, such as `river`, `wet`,
+`inspected`, `is`, and `wood`, usually differ by small rank shifts inside
+nearly the same neighborhood.
 
-## Example 1: `river` in `rivermark`
-
-Target span:
-
-```text
-Update src/rivermark/sort.py ...
-```
-
-Forced token: `river`, index 3.
-
-This is the cleanest first example because next-token prediction is not the
-interesting signal. Every condition predicts the path token `river` or a close
-variant before the token is forced. The question is whether the hidden state at
-that position looks like the full-context state or merely like generic path
-completion.
-
-### Next-Token Candidates
-
-| Condition | Argmax before forcing | Top candidates |
-| --- | --- | --- |
-| Full context | `river` | `river`, `rior`, `iver`, `river`, `River`, `runner` |
-| Fresh compacted | `river` | `river`, `river`, `rior`, `River`, `River`, `iver` |
-| Aligned `alpha_V = 0.75` | `river` | `river`, `river`, `rior`, `iver`, `River`, `River` |
-| Shifted `alpha_V = 0.75` | `river` | `river`, `runner`, `river`, `rim`, `running`, `River` |
-
-The next-token table mostly says that the spelling of `src/rivermark` is easy
-once the answer has begun. It does not say whether the model has carried
-forward the river-bank meaning that made this package name relevant.
-
-### J-Lens Readout at Layer 62
-
-| Condition | Layer-62 J-lens readout |
-| --- | --- |
-| Full context | `mark`, `mark`, `bank`, `marks`, `-mark`, `_mark` |
-| Fresh compacted | `tests`, `/tests`, `mark`, `then`, `tests`, `/run` |
-| Alpha-zero control | `tests`, `/tests`, `mark`, `then`, `tests`, `/run` |
-| `alpha_V = 0.5` | `tests`, `/tests`, `then`, `mark`, `tests`, `/run` |
-| Aligned `alpha_V = 0.75` | `mark`, `bank`, `tests`, `mask`, `/tests`, `/run` |
-| `alpha_V = 1.0` | `mark`, `bank`, `wood`, `mark`, `marks`, `markdown`, `mask` |
-| Shifted `alpha_V = 0.75` | `mark`, `bank`, `_mark`, `-mark`, `marks`, `mark` |
-
-Fresh compaction pulls the layer-62 readout toward action-plan neighbors:
-`tests`, `/tests`, `then`, `/run`. Full context is more about the path and its
-referent: `mark`, `bank`, and related path fragments. Aligned `alpha_V = 0.75`
-moves `mark` and `bank` upward relative to fresh, even though the next-token
-argmax did not need help.
-
-The shifted control is a caution. It also surfaces `mark` and `bank` on this
-row, so the row has to be read with the aggregate closure table rather than as
-a standalone win. Across the full target sequence, the shifted condition is
-much farther from full context than fresh compaction.
-
-## Example 2: `inspected`
-
-Target span:
-
-```text
-... wet driftwood is inspected first ...
-```
-
-Forced token: ` inspected`, index 13.
-
-This row connects a behavioral change to an internal readout. Fresh compaction
-prefers the stem ` priorit`; aligned grafting at `alpha_V = 0.75` returns the
-argmax to ` inspected`, matching full context.
-
-### Next-Token Candidates
+The clearest behavioral row is ` inspected`:
 
 | Condition | Argmax before forcing | Top candidates |
 | --- | --- | --- |
 | Full context | ` inspected` | `inspected`, `priorit`, `given`, `treated`, `sorted`, `assigned` |
 | Fresh compacted | ` priorit` | `priorit`, `inspected`, `given`, `assigned`, `treated`, `sorted` |
 | Alpha-zero control | ` priorit` | `priorit`, `inspected`, `given`, `assigned`, `treated`, `sorted` |
-| `alpha_V = 0.25` | ` priorit` | `priorit`, `inspected`, `given`, `assigned`, `treated`, `sorted` |
-| `alpha_V = 0.5` | ` priorit` | `priorit`, `inspected`, `given`, `assigned`, `treated`, `sorted` |
 | Aligned `alpha_V = 0.75` | ` inspected` | `inspected`, `priorit`, `given`, `assigned`, `treated`, `sorted` |
 | `alpha_V = 1.0` | ` inspected` | `inspected`, `priorit`, `given`, `treated`, `assigned`, `sorted` |
 | Shifted `alpha_V = 0.75` | ` priorit` | `priorit`, `inspected`, `given`, `treated`, `sorted`, `processed` |
 
-This is a real local rescue, and the shifted condition does not get the same
-argmax here. The stronger claim, though, comes from pairing that local rescue
-with the lens table.
+That is a real next-token rescue, but the corresponding J-lens row is modest.
+The J-lens rows below are ASCII-filtered display excerpts; the raw artifact
+keeps the complete ranked top-k lists, including non-English vocabulary items
+and duplicate subword variants.
 
-### J-Lens Readout at Layer 48
-
-| Condition | Layer-48 J-lens readout |
+| Condition | Layer-48 J-lens readout excerpt at ` inspected` |
 | --- | --- |
 | Full context | `priority`, `priorit`, `instead`, `precedence`, `prioritize` |
 | Fresh compacted | `priority`, `priorit`, `prioritize`, `precedence`, `faster` |
 | Alpha-zero control | `priority`, `priorit`, `prioritize`, `precedence`, `faster` |
-| `alpha_V = 0.5` | `priority`, `priorit`, `precedence`, `prioritize`, `faster` |
 | Aligned `alpha_V = 0.75` | `priority`, `priorit`, `precedence`, `prioritize`, `faster` |
 | `alpha_V = 1.0` | `priority`, `priorit`, `precedence`, `prioritize` |
 | Shifted `alpha_V = 0.75` | `priority`, `priorit`, `before`, `prioritize`, `precedence` |
 
-The J-lens readout is not simply saying "the next word is inspected." It is
-showing a priority/ordering neighborhood around the phrase. Full context has
-`instead` and `precedence` high in the list; fresh compaction has
-`prioritize` and `faster`; aligned grafting shifts the ordering toward
-`precedence` while also producing the next-token rescue.
+The aligned graft moves `precedence` above `prioritize`, closer to the
+full-context ordering, but the table is not visually dramatic. It should be
+read as one piece of the aggregate layer-48 closure, not as a standalone
+mechanistic demonstration.
 
-### J-Lens Readout at Layer 62
+The `river` row is the best example of the J-lens adding something beyond the
+next-token table, because every condition predicts the next path token:
 
-| Condition | Layer-62 J-lens readout |
+| Condition | Layer-62 J-lens readout excerpt at `river` |
 | --- | --- |
-| Full context | `first`, `before`, `First`, `first`, `highest`, `with`, `by` |
-| Fresh compacted | `first`, `First`, `first`, `before`, `with`, `highest`, `-first` |
-| Aligned `alpha_V = 0.75` | `first`, `First`, `with`, `first`, `before`, `highest`, `by` |
-| Shifted `alpha_V = 0.75` | `first`, `before`, `First`, `first`, `highest`, `with`, `-first` |
+| Full context | `mark`, `mark`, `bank`, `marks`, `-mark`, `_mark` |
+| Fresh compacted | `tests`, `/tests`, `mark`, `then`, `tests`, `/run` |
+| Alpha-zero control | `tests`, `/tests`, `mark`, `then`, `tests`, `/run` |
+| Aligned `alpha_V = 0.75` | `mark`, `bank`, `tests`, `mask`, `/tests`, `/run` |
+| `alpha_V = 1.0` | `mark`, `bank`, `wood`, `mark`, `marks`, `markdown`, `mask` |
+| Shifted `alpha_V = 0.75` | `mark`, `bank`, `_mark`, `-mark`, `marks`, `mark` |
 
-Layer 62 is highly readable but less discriminating. All conditions are in the
-"first/before/highest" neighborhood because the local target text and the
-summary already make the priority relation explicit. This is why the aggregate
-analysis emphasizes layer 48 rather than treating the most human-readable
-late-layer rows as the whole result.
+Even this row is not a clean win for aligned grafting, because the shifted
+control also surfaces `mark` and `bank`. It is useful mainly as a warning:
+individual top-k rows can look meaningful even when the aggregate shifted
+control is worse.
 
-## Example 3: `wet`
-
-Target span:
-
-```text
-... so wet driftwood ...
-```
-
-Forced token: ` wet`, index 9.
-
-This row illustrates the kind of semantic field the lens exposes. The
-next-token candidates are mostly local grammar and adjective choice; the
-J-lens candidates are about the physical scene around the object.
-
-### Next-Token Candidates
-
-| Condition | Argmax before forcing | Top candidates |
-| --- | --- | --- |
-| Full context | ` that` | `that`, `wet`, `the`, `it`, `dry`, `its` |
-| Fresh compacted | ` wet` | `wet`, `that`, `the`, `its`, `it`, `dry` |
-| Aligned `alpha_V = 0.75` | ` wet` | `wet`, `that`, `the`, `its`, `it`, `dry` |
-| Shifted `alpha_V = 0.75` | ` wet` | `wet`, `that`, `the`, `dry`, `it`, `its` |
-
-Full context prefers `that` here, while the compacted conditions prefer `wet`.
-That next-token difference is not the main evidence because the intended
-continuation is forced for inspection. The lens readout below is the more
-informative part of the row.
-
-### J-Lens Readout at Layer 62
-
-| Condition | Layer-62 J-lens readout |
-| --- | --- |
-| Full context | `drift`, `drifting`, `river`, `drifted`, `float`, `drain` |
-| Fresh compacted | `drift`, `river`, `drifting`, `drifted`, `bank`, `float`, `priority` |
-| Aligned `alpha_V = 0.75` | `drift`, `river`, `drifting`, `bank`, `drifted`, `drain`, `float` |
-| `alpha_V = 1.0` | `drift`, `river`, `drifting`, `bank`, `drifted`, `drain` |
-| Shifted `alpha_V = 0.75` | `drift`, `drifting`, `drifted`, `river`, `float`, `wood` |
-
-Here the readout is about drift, river, bank, floating, and drainage. Aligned
-grafting raises `bank` and `drain` relative to fresh and keeps the row in the
-river/driftwood neighborhood. The shifted row remains plausible, but it
-emphasizes `wood` and local continuation more than the aligned row.
-
-This example is useful precisely because it is not a clean next-token rescue.
-It shows the qualitative kind of state difference that the aggregate Jaccard
-closure score is trying to summarize.
-
-## Example 4: `is`
-
-Target span:
-
-```text
-... driftwood is inspected ...
-```
-
-Forced token: ` is`, index 12.
-
-This row shows why argmax rescues are insufficient. A condition can recover
-the full-context next-token argmax at one position while being a worse internal
-match across the sequence.
-
-### Next-Token Candidates
-
-| Condition | Argmax before forcing | Top candidates |
-| --- | --- | --- |
-| Full context | ` is` | `is`, `has`, `on`, `gets`, `near`, `receives` |
-| Fresh compacted | ` has` | `has`, `is`, `on`, `receives`, `gets`, `from` |
-| Aligned `alpha_V = 0.75` | ` has` | `has`, `is`, `on`, `receives`, `gets`, `from` |
-| `alpha_V = 1.0` | ` is` | `is`, `has`, `on`, `receives`, `gets`, `from` |
-| Shifted `alpha_V = 0.75` | ` is` | `is`, `has`, `on`, `gets`, `receives`, `sorts` |
-
-Full replacement and shifted values both recover the full-context argmax at
-this position. If the analysis only counted local argmax rescues, both would
-look better than aligned `alpha_V = 0.75`.
-
-### J-Lens Readout at Layer 62
-
-| Condition | Layer-62 J-lens readout |
-| --- | --- |
-| Full context | `inspected`, `priorit`, `treated`, `sorted`, `inspect`, `assigned` |
-| Fresh compacted | `inspected`, `treated`, `priorit`, `assigned`, `sorted`, `given` |
-| Aligned `alpha_V = 0.75` | `inspected`, `treated`, `priorit`, `assigned`, `given`, `sorted` |
-| `alpha_V = 1.0` | `inspected`, `treated`, `priorit`, `assigned`, `given`, `sorted` |
-| Shifted `alpha_V = 0.75` | `inspected`, `priorit`, `treated`, `processed`, `sorted`, `handled` |
-
-This local row looks semantically reasonable in several conditions. The reason
-it belongs in the report is that it prevents an overly simple interpretation:
-recovering one next-token argmax can happen under a misaligned perturbation.
-The aggregate readout says the shifted condition is much farther from full
-context than fresh compaction at every sampled layer.
-
-## Example 5: `wood` in `driftwood`
-
-Target span:
-
-```text
-... driftwood is inspected ...
-```
-
-Forced token: `wood`, index 11.
-
-This is a small example rather than a showcase. It is included because it
-explains how the aggregate layer-48 movement can be made of many modest
-rank-order changes rather than one dramatic token replacement.
-
-### Next-Token Candidates
-
-| Condition | Argmax before forcing | Top candidates |
-| --- | --- | --- |
-| Full context | `wood` | `wood`, `woods`, `wood`, `Wood`, `WOOD`, `water` |
-| Fresh compacted | `wood` | `wood`, `woods`, `wood`, `Wood`, `WOOD`, `wo` |
-| Aligned `alpha_V = 0.75` | `wood` | `wood`, `woods`, `wood`, `water`, `WOOD`, `Wood` |
-| Shifted `alpha_V = 0.75` | `wood` | `wood`, `wood`, `on`, `is`, `has`, `gets` |
-
-Every condition predicts `wood`, so the next-token table is almost entirely a
-spelling check.
-
-### J-Lens Readout at Layer 48
-
-| Condition | Layer-48 J-lens readout |
-| --- | --- |
-| Full context | `priorit`, `priority`, `prioritize`, `precedence`, `Priority` |
-| Fresh compacted | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
-| Alpha-zero control | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
-| `alpha_V = 0.5` | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
-| Aligned `alpha_V = 0.75` | `priorit`, `priority`, `prioritize`, `precedence`, `Priority` |
-| `alpha_V = 1.0` | `priorit`, `priority`, `prioritize`, `precedence`, `Priority` |
-| Shifted `alpha_V = 0.75` | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
-
-All states are in the priority neighborhood because the summary explicitly
-says wet driftwood should have higher priority. The distinction is rank rather
-than identity: full context puts the `priorit` stem first, fresh puts
-`priority` first, and aligned `alpha_V = 0.75` restores the full-context
-ordering.
-
-### J-Lens Readout at Layer 62
-
-| Condition | Layer-62 J-lens readout |
-| --- | --- |
-| Full context | `is`, `has`, `gets`, `receives`, `on`, `near`, `inspected` |
-| Fresh compacted | `has`, `receives`, `gets`, `on`, `is`, `sorts`, `ranks` |
-| Aligned `alpha_V = 0.75` | `has`, `receives`, `gets`, `on`, `is`, `sorts`, `ranks` |
-| Shifted `alpha_V = 0.75` | `has`, `gets`, `receives`, `on`, `is`, `sorts`, `ranks` |
-
-Layer 62 does not favor aligned grafting here. That is part of the result:
-the mid-layer readout improves under aligned moderate blending, while later
-continuation-like readouts are mixed.
+The right conclusion is therefore narrow. This probe shows that the graft path
+is active, alpha-zero is a valid plumbing control, and aligned values behave
+differently from shifted values. It does not provide the kind of compelling
+human-readable example we were hoping for. A better qualitative probe should
+use tokens like `B-410`, `Maple`, `Falcon`, `Patch 17`, `Ghost2`, or `Dex`
+from the broader write-time/fresh sweep, then rerun them with the full
+three-state intervention design. Those examples have larger semantic
+separation, but the existing sweep for them is only two-state telemetry, not
+direct evidence that grafting closes the gap.
 
 ## What the Controls Show
 
@@ -531,17 +362,20 @@ The safest interpretation is:
 3. Moderate blending is better than full replacement in this example.
    `alpha_V = 1.0` can produce local next-token wins while degrading the
    J-lens readout.
-4. The J-lens adds information beyond next-token candidates. Some rows have no
-   interesting next-token difference but do have readable internal differences.
+4. The J-lens can add information beyond next-token candidates, but this
+   particular probe is not a strong qualitative demonstration. The visible
+   examples are mostly subtle rank shifts or path-token effects.
 5. The result is still narrow. It is one constructed probe, not a task-level
-   success result and not an effect-size estimate.
+   success result, not an effect-size estimate, and not yet the right showcase
+   example.
 
-This makes ValueGraft inspectable: the same visible compacted text can produce
-different internal readouts depending on whether aligned write-time values are
-grafted. Behavioral benchmarks still decide whether the method helps in
-practice; the lens probe shows what kind of internal state changes when it
-does, and warns when a local next-token win may be caused by a worse
-perturbation.
+This makes the intervention inspectable in principle: the same visible
+compacted text can produce different internal readouts depending on whether
+aligned write-time values are grafted. Behavioral benchmarks still decide
+whether the method helps in practice. A better lens demonstration should be
+built from cases where compaction preserves a label but loses its role, rather
+than from a short target whose answer is already explicit in the summary and
+tail.
 
 ## Scope and Next Work
 
@@ -552,8 +386,9 @@ residual-stream telemetry, not direct access to individual KV vectors.
 
 The natural next steps are:
 
-- run the same alpha/shifted-control design on several existing trajectory
-  prediction examples;
+- run the same alpha/shifted-control design on stronger qualitative examples
+  from the write-time/fresh sweep, especially private labels and stale
+  identifiers;
 - add a wrong-conversation graft control;
 - test K-only and independent K/V policies under the same visible text;
 - connect lens movement to behavioral task metrics;
