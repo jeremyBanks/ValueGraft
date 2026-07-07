@@ -218,6 +218,10 @@ The tables normalize away leading whitespace in displayed tokens and omit a few
 non-English or formatting-heavy tokens when they do not help the reader. The
 raw artifacts keep the full token lists.
 
+In the tables, `old-context` means the write-time trace: the summary token is
+processed while the old conversation is still available. `fresh` means the
+same visible summary token is re-encoded in the compacted transcript.
+
 | Field | Meaning |
 | --- | --- |
 | Visible snippet | The literal summary text around the inspected token or span. |
@@ -323,11 +327,38 @@ Visible snippets:
 
 Selected token rows from the full-layer sweep:
 
-| Anchor | Actual next | Layer | Old-context next candidates | Fresh next candidates | Old-context J-lens | Fresh J-lens | Reading |
-| --- | --- | ---: | --- | --- | --- | --- | --- |
-| `Delta` | `=` | 47 | `=`, `means`, `refers`, `ferry` | `=`, `Lake`, `Air`, `Airlines`, `Hotel` | `refers`, `=`, `represents`, `means` | `Delta`, `airport`, `airline`, `Sky`, `River` | Local route label vs airline/name priors. |
-| `Orange` | `=` | 50 | `=`, `lock`, `tag`, `refers`, `key` | `=`, `juice`, `County`, `Juice`, `Grove` | `refers`, `signifies`, `represents`, `symbol`, `denotes` | `Orange`, `orange`, `citrus`, `color`, `Juice` | Local tag role vs ordinary color/fruit priors. |
-| `cooler` | `instruction` | 36 | `is`, `rejected`, `=`, `replaced`, `removed` | `=`, `is`, `must`, `in` | `canceled`, `replaced`, `rejected`, `failed`, `refused` | `freezer`, `fridge`, `camping`, `cooler` | Stale instruction vs generic object semantics. |
+**`Delta`**
+Layer: 47
+Actual next token: `=`
+
+| Path | Next-token candidates | J-lens readout |
+| --- | --- | --- |
+| old-context | `=`, `means`, `refers`, `ferry` | `refers`, `=`, `represents`, `means` |
+| fresh | `=`, `Lake`, `Air`, `Airlines`, `Hotel` | `Delta`, `airport`, `airline`, `Sky`, `River` |
+
+Reading: local route label vs airline/name priors.
+
+**`Orange`**
+Layer: 50
+Actual next token: `=`
+
+| Path | Next-token candidates | J-lens readout |
+| --- | --- | --- |
+| old-context | `=`, `lock`, `tag`, `refers`, `key` | `refers`, `signifies`, `represents`, `symbol`, `denotes` |
+| fresh | `=`, `juice`, `County`, `Juice`, `Grove` | `Orange`, `orange`, `citrus`, `color`, `Juice` |
+
+Reading: local tag role vs ordinary color/fruit priors.
+
+**`cooler`**
+Layer: 36
+Actual next token: `instruction`
+
+| Path | Next-token candidates | J-lens readout |
+| --- | --- | --- |
+| old-context | `is`, `rejected`, `=`, `replaced`, `removed` | `canceled`, `replaced`, `rejected`, `failed`, `refused` |
+| fresh | `=`, `is`, `must`, `in` | `freezer`, `fridge`, `camping`, `cooler` |
+
+Reading: stale instruction vs generic object semantics.
 
 These are the kinds of meanings conversation summaries are full of: aliases,
 exceptions, stale plans, and compact labels whose real meaning was established
@@ -350,10 +381,27 @@ Visible snippet:
 
 Selected token rows from the full-layer sweep:
 
-| Anchor | Actual next | Layer | Old-context next candidates | Fresh next candidates | Old-context J-lens | Fresh J-lens | Reading |
-| --- | --- | ---: | --- | --- | --- | --- | --- |
-| `Falcon` | `|` | 43 | `|`, `branch`, `old`, `rejected` | `|`, `-`, `ry`, `9` | `rejected`, `obsolete`, `deprecated`, `failed`, `outdated` | `Falcon`, `Flight`, `Aviation`, `eagle`, `Aerospace` | Rejected branch status vs bird/aviation priors. |
-| separator after `Patch 17` | `stale` | 41 | `stale`, `old`, `previous`, `patch`, `prior` | `hot`, `fix`, `tax`, `invoice`, `coupon` | `outdated`, `obsolete`, `old`, `expired`, `legacy` | `patch`, `repair`, `fixes`, `revision`, `testing` | Stale label status vs generic patch/version semantics. |
+**`Falcon`**
+Layer: 43
+Actual next token: `|`
+
+| Path | Next-token candidates | J-lens readout |
+| --- | --- | --- |
+| old-context | `|`, `branch`, `old`, `rejected` | `rejected`, `obsolete`, `deprecated`, `failed`, `outdated` |
+| fresh | `|`, `-`, `ry`, `9` | `Falcon`, `Flight`, `Aviation`, `eagle`, `Aerospace` |
+
+Reading: rejected branch status vs bird/aviation priors.
+
+**Separator after `Patch 17`**
+Layer: 41
+Actual next token: `stale`
+
+| Path | Next-token candidates | J-lens readout |
+| --- | --- | --- |
+| old-context | `stale`, `old`, `previous`, `patch`, `prior` | `outdated`, `obsolete`, `old`, `expired`, `legacy` |
+| fresh | `hot`, `fix`, `tax`, `invoice`, `coupon` | `patch`, `repair`, `fixes`, `revision`, `testing` |
+
+Reading: stale label status vs generic patch/version semantics.
 
 This is the bridge to coding agents. Real coding work is packed with compact
 operational labels: branch names, issue IDs, file paths, commands, patch
