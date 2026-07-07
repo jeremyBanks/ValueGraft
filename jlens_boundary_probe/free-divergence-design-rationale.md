@@ -98,3 +98,23 @@ the current fork-probe, especially if the fork result is muddy (likely). Same
 honesty guardrails apply (distribution over N cases; a trajectory is inherently
 more honest than a hero-point). Could even be merged into the current probe's
 next iteration.
+
+## TRAJECTORY IDEA → REFRAMED (Fable gut-check 07-07): BOUND the effect, don't hunt vividness
+Fable verdict: vivid trajectory-PLOT = SKIP (3 subtle results in a row; plotting
+muddy points in a new format tempts narrating noise). WORTH A CHEAP RUN instead:
+a rigorous BOUNDING experiment (one spin-proof number, not an exhibit).
+PRE-REGISTERED DESIGN:
+- DROP free-generation (post-fork tokens measure divergent continuations, not the
+  graft — contaminated + autocorrelated → tiny effective N).
+- TEACHER-FORCE A/B/E on the SAME shared gold continuation over a fixed
+  PRE-DIVERGENCE window of K tokens (all arms score identical tokens — THE
+  confound-killer, the one thing that must be right).
+- METRIC: mean over cases of (gold-concept logprob_E − logprob_B) per position in
+  the window; paired bootstrap CI across the 43 cases.
+- PLACEBO CONTROL: a shuffled/random-value graft as the real baseline (does the
+  TRUE graft beat random?), not just B.
+- PRE-REGISTERED NULL: CI includes 0, OR effect < trivial threshold → honest null,
+  no soft bucket to hide in.
+GOAL: BOUND the effect ("X ± CI, distinguishable from placebo at p<Y") — upgrades
+the paper's "subtle" to a defensible number. Cheaper than trajectory-scan,
+reuses the 43 cases, no long rollouts. Runs on 27B (lens regime) or 30B.
