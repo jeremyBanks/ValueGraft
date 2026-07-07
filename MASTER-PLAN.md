@@ -134,3 +134,16 @@ NEW REVIEW DIMENSION (Fable's passes missed this — all were single-dimension):
 "TERMINOLOGY CONSISTENCY / overloaded terms" — hunt words reused for 2+ distinct
 concepts (not 'is it defined' but 'is it reused ambiguously'). Add to the critic
 panel AND the final multi-perspective Fable review.
+
+## PHASE 4 addendum 2 — MORE EXAMPLES (cheap) + brief Fable on the FOCUS (user 07-07)
+- EXAMPLES over experiments where possible: we have lots of collected data
+  (full synthetic corpus, all arm outputs, honesty probes) and surfaced only a
+  few exhibits. MINE MORE compelling grafting examples from EXISTING data (no
+  pod) to strengthen the PRIMARY narrative — high value-per-effort. Do this
+  alongside any new scenarios.
+- BRIEF FABLE ON THE FOCUS whenever it reviews/edits/refocuses (not direction-
+  agnostic): the north star = GRAFTING is the PRIMARY novelty and the center of
+  gravity; the LENS is SECONDARY and must be proportionate to its small payoff;
+  goal = a focused article that lands the primary contribution. Fable makes its
+  own realistic calls, but AIMED at this focus. Put this context in every
+  conceptual/refocus/editing Fable prompt, not just "review this."
