@@ -305,18 +305,19 @@ def snapshot_standard_kv(model: torch.nn.Module, ids: list[int]) -> tuple[list[t
             "past_key_values has neither .layers nor .key_cache/.value_cache; "
             f"type={type(cache).__module__}.{type(cache).__name__}"
         )
-    snap = []
+    snap_layers = []
     for layer in layers:
-        k = getattr(layer, "keys", None)
-        v = getattr(layer, "values", None)
-        if k is None or v is None:
-            raise TypeError(
-                "cache layer lacks .keys/.values; standard K/V snapshot unavailable; "
-                f"cache={type(cache).__module__}.{type(cache).__name__} "
-                f"layer={type(layer).__module__}.{type(layer).__name__}"
-            )
-        snap.append((clone_tensor(k), clone_tensor(v)))
-    return {"kind": "layer_cache", "cache_class": cache.__class__, "layers": snap}, out.logits[:, -1, :]
+        snap_layers.append(snapshot_cache_layer(layer))
+    if not any(layer_has_kv(entry) for entry in snap_layers):
+        raise TypeError(
+            "cache has .layers but no populated K/V entries; "
+            f"type={type(cache).__module__}.{type(cache).__name__}"
+        )
+    return {
+        "kind": "layer_cache",
+        "cache_class": cache.__class__,
+        "layers": snap_layers,
+    }, out.logits[:, -1, :]
 
 
 def clone_tensor(x: torch.Tensor | None) -> torch.Tensor | None:
@@ -325,6 +326,55 @@ def clone_tensor(x: torch.Tensor | None) -> torch.Tensor | None:
 
 def clone_tensor_list(xs: list[torch.Tensor | None]) -> list[torch.Tensor | None]:
     return [clone_tensor(x) for x in xs]
+
+
+def snapshot_cache_layer(layer: Any) -> dict[str, Any]:
+    return {
+        "layer_class": layer.__class__,
+        "layer_class_name": f"{type(layer).__module__}.{type(layer).__name__}",
+        "keys": clone_tensor(getattr(layer, "keys", None)),
+        "values": clone_tensor(getattr(layer, "values", None)),
+        "conv_states": clone_tensor(getattr(layer, "conv_states", None)),
+        "recurrent_states": clone_tensor(getattr(layer, "recurrent_states", None)),
+        "has_previous_state": bool(getattr(layer, "has_previous_state", False)),
+    }
+
+
+def layer_has_kv(entry: dict[str, Any]) -> bool:
+    k = entry.get("keys")
+    v = entry.get("values")
+    return k is not None and v is not None and k.numel() > 0 and v.numel() > 0
+
+
+def restore_layer_state(layer: Any, entry: dict[str, Any]) -> None:
+    k = clone_tensor(entry.get("keys"))
+    v = clone_tensor(entry.get("values"))
+    if k is not None and v is not None:
+        layer.keys = k
+        layer.values = v
+        if hasattr(layer, "is_initialized"):
+            layer.is_initialized = True
+        if hasattr(layer, "cumulative_length"):
+            layer.cumulative_length = int(k.shape[-2])
+
+    conv = clone_tensor(entry.get("conv_states"))
+    if conv is not None and hasattr(layer, "conv_states"):
+        if hasattr(layer, "lazy_initialization") and not getattr(layer, "is_conv_states_initialized", False):
+            layer.lazy_initialization(conv_states=conv)
+        layer.conv_states.copy_(conv) if getattr(layer, "conv_states", None) is not None else setattr(layer, "conv_states", conv)
+        if hasattr(layer, "is_conv_states_initialized"):
+            layer.is_conv_states_initialized = True
+
+    recurrent = clone_tensor(entry.get("recurrent_states"))
+    if recurrent is not None and hasattr(layer, "recurrent_states"):
+        if hasattr(layer, "lazy_initialization") and not getattr(layer, "is_recurrent_states_initialized", False):
+            layer.lazy_initialization(recurrent_states=recurrent)
+        layer.recurrent_states.copy_(recurrent) if getattr(layer, "recurrent_states", None) is not None else setattr(layer, "recurrent_states", recurrent)
+        if hasattr(layer, "is_recurrent_states_initialized"):
+            layer.is_recurrent_states_initialized = True
+
+    if hasattr(layer, "has_previous_state"):
+        layer.has_previous_state = bool(entry.get("has_previous_state", conv is not None or recurrent is not None))
 
 
 def snapshot_list_cache(cache: Any) -> dict[str, Any]:
@@ -349,10 +399,15 @@ def snapshot_list_cache(cache: Any) -> dict[str, Any]:
 
 def rebuild_standard_cache(snap: dict[str, Any], model: torch.nn.Module | None = None) -> Any:
     if snap["kind"] == "layer_cache":
-        cache = DynamicCache()
-        for i, (k, v) in enumerate(snap["layers"]):
-            if k is not None and v is not None:
-                cache.update(clone_tensor(k), clone_tensor(v), i)
+        cache = DynamicCache(config=model.config) if model is not None else DynamicCache()
+        if len(cache.layers) < len(snap["layers"]):
+            for i, entry in enumerate(snap["layers"]):
+                k, v = entry.get("keys"), entry.get("values")
+                if k is not None and v is not None:
+                    cache.update(clone_tensor(k), clone_tensor(v), i)
+        else:
+            for layer, entry in zip(cache.layers, snap["layers"]):
+                restore_layer_state(layer, entry)
         return cache
 
     if snap["kind"] == "list_cache":
@@ -372,7 +427,8 @@ def rebuild_standard_cache(snap: dict[str, Any], model: torch.nn.Module | None =
 
 def cache_seq_len(snap: dict[str, Any]) -> int:
     if snap["kind"] == "layer_cache":
-        for k, _ in snap["layers"]:
+        for entry in snap["layers"]:
+            k = entry.get("keys")
             if k is not None and k.numel() > 0:
                 return int(k.shape[-2])
         return 0
@@ -387,14 +443,25 @@ def cache_seq_len(snap: dict[str, Any]) -> int:
 def cache_debug_summary(snap: dict[str, Any]) -> dict[str, Any]:
     if snap["kind"] == "layer_cache":
         shapes = [
-            None if k is None else [int(x) for x in k.shape]
-            for k, _ in snap["layers"][:8]
+            None if entry.get("keys") is None else [int(x) for x in entry["keys"].shape]
+            for entry in snap["layers"][:8]
+        ]
+        populated = [i for i, entry in enumerate(snap["layers"]) if layer_has_kv(entry)]
+        linear = [
+            i
+            for i, entry in enumerate(snap["layers"])
+            if entry.get("conv_states") is not None or entry.get("recurrent_states") is not None
         ]
         return {
             "kind": snap["kind"],
             "layers": len(snap["layers"]),
+            "populated_kv_layers": populated[:16],
+            "populated_kv_layer_count": len(populated),
+            "populated_linear_state_layers": linear[:16],
+            "populated_linear_state_layer_count": len(linear),
             "seq_len": cache_seq_len(snap),
             "first_key_shapes": shapes,
+            "layer_class_prefix": [entry.get("layer_class_name") for entry in snap["layers"][:16]],
         }
     if snap["kind"] == "list_cache":
         populated = [
@@ -434,13 +501,24 @@ def blend_values(
 
     if b_snap["kind"] == "layer_cache":
         layers = []
-        for li, (k, v) in enumerate(b_snap["layers"]):
-            if k is None or v is None:
-                layers.append((clone_tensor(k), clone_tensor(v)))
+        for li, entry in enumerate(b_snap["layers"]):
+            next_entry = copy.copy(entry)
+            k = entry.get("keys")
+            v = entry.get("values")
+            if k is None or v is None or v.numel() == 0:
+                next_entry["keys"] = clone_tensor(k)
+                next_entry["values"] = clone_tensor(v)
+                next_entry["conv_states"] = clone_tensor(entry.get("conv_states"))
+                next_entry["recurrent_states"] = clone_tensor(entry.get("recurrent_states"))
+                layers.append(next_entry)
                 continue
-            old_v = old_snap["layers"][li][1]
-            if old_v is None:
-                layers.append((clone_tensor(k), clone_tensor(v)))
+            old_v = old_snap["layers"][li].get("values")
+            if old_v is None or old_v.numel() == 0:
+                next_entry["keys"] = clone_tensor(k)
+                next_entry["values"] = clone_tensor(v)
+                next_entry["conv_states"] = clone_tensor(entry.get("conv_states"))
+                next_entry["recurrent_states"] = clone_tensor(entry.get("recurrent_states"))
+                layers.append(next_entry)
                 continue
             v2 = v.clone()
             in_bounds = (new_idx < v2.shape[-2]) & (old_idx < old_v.shape[-2])
@@ -450,7 +528,11 @@ def blend_values(
                 vf = v2.index_select(-2, ni).float()
                 vo = old_v.index_select(-2, oi).to(v2.device).float()
                 v2.index_copy_(-2, ni, ((1 - alpha) * vf + alpha * vo).to(v2.dtype))
-            layers.append((clone_tensor(k), v2))
+            next_entry["keys"] = clone_tensor(k)
+            next_entry["values"] = v2
+            next_entry["conv_states"] = clone_tensor(entry.get("conv_states"))
+            next_entry["recurrent_states"] = clone_tensor(entry.get("recurrent_states"))
+            layers.append(next_entry)
         out["layers"] = layers
         return out
 
