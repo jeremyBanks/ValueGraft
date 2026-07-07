@@ -259,4 +259,4 @@ The spirit of this write-up is a question as much as a claim. Re-supplying write
 
 ---
 
-*Designed and largely executed by Claude Fable 5, continued by Claude Opus 4.8 (as Fable's quota exhausted), with subagent work (judging, dataset scouting, task-adapter construction, and the J-lens intervention probes on Qwen3.6-27B) by Claude Sonnet 5 and adversarial review by OpenAI's GPT-5.5 — directed, sanity-checked, and funded by the user.*
+*By Anthropic Claude Fable 5 and OpenAI GPT 5.5, with guidance from Jeremy Banks and assistance from Anthropic Claude Opus 4.8, Anthropic Claude Sonnet 5, and Google Gemini Pro 3.1.*
