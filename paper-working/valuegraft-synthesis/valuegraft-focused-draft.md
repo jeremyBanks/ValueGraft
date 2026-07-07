@@ -474,7 +474,24 @@ are explanatory rather than statistical; the sense-level evidence is the
 controlled micro-sense experiment, and the J-lens readouts are qualitative
 interpretability evidence rather than task-performance evidence.
 
-## 8. Conclusion
+## 8. Next Work
+
+The next experimental step is to make the K/V taxonomy fully controlled. Using
+the same summary text, same compact layout, and same scoring set, compare
+`(alpha_K, alpha_V)` settings that isolate value-only, key-only, and K+V
+effects. In public terms, this means keeping V-Graft, adding a controlled
+K-only branch, and re-running KV-Graft only where its summary and layout
+controls match. This avoids treating unrelated implementation choices as if
+they were scientific variables.
+
+The strongest practical test remains coding. The current SWE-Gym result is a
+next-action likelihood proxy; an end-to-end agent run would test whether the
+small likelihood gain becomes meaningful task behavior. The J-lens probe should
+also become span-first for coding traces: report tool names, file paths,
+commands, symbols, and line ranges as phrase spans, with raw token rows kept as
+drill-down data.
+
+## 9. Conclusion
 
 The current evidence supports the following conclusion:
 
