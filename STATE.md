@@ -1,28 +1,22 @@
 # STATE.md — session handoff notes
-> FINDINGS.md = the headline results (read for conclusions). INCIDENTS/DECISIONS = process.
 
-*Last updated: 2026-07-07 ~08:45 by Claude Opus 4.8 (see PROVENANCE-CORRECTION.md — earlier work mislabeled as Fable). Update at EVERY phase transition (rule 22).*
+*Updated 07-07 ~14:15 by Opus 4.8. PHASE 1 COMPLETE. Read FINDINGS.md, MASTER-PLAN.md.*
 
-## 10:35 07-07 — PLAN OF RECORD (Opus 4.8; read first)
+## PHASE 1 DONE — synthesis paper shipped (REPORT.md, pushed to trunk, ~7700w)
+Grafting research = star; J-lens = honest secondary tool. Referent reconciled
+as cross-model NON-REPLICATION (strong@30B +10pp/81%, flat@27B +0.004, cause
+OPEN — NOT scale/arch-dependent, n=2 confounded). Two-part scope (capability@4B
++ referent A→B split). Core dissociation replicates both models. Lens =
+low-res aggregate corroborator (no vivid figure, honest). Full pipeline:
+draft→4 critics→v2→user scale-correction→Fable 5 refinements→Fable+Opus prose
+bake-off→push. Fable = conceptual gut-check + readability (both via subagent).
 
-**PHASE: WRITING THE REPORT.** All experiments done + banked in FINDINGS.md.
-Pod terminated (balance $37.95, 0 pods). report-draft.md being written by
-subagent (v1, follows REPORT-PLAN.md through-line, FINDINGS = source of
-truth). NEXT: 5 adversarial critic passes (through-line / gaps /
-over-justification / accessibility / accuracy-vs-FINDINGS per REPORT-PLAN
-P3) → synthesize → repeat on hot spots.
-
-**FINDINGS (final):** F1 semantic dissociation (graft recovers sense/
-referent meaning, null on stance; effect tracks damage) — 3-method
-corroborated AT 30B (lenient+strict judge, TF-logprob); robustness holds;
-does NOT replicate at 4B (scale-bound); mechanistic readout = PARTIAL
-(graft inserts concept internally, coarse lens doesn't resolve
-dissociation). F2 honesty, F3 tuning-cures-collapse, F4 scope-boundary
-(SWE-bench too hard, chains/tau too short — benchmark-landscape finding).
-
-**OPTIONAL FUTURE (not blocking report):** story-contradiction task (built,
-unrun); K-vs-V grafting; sharper mechanistic lens (J-lens); judged-4B cut.
-jlens_boundary_probe/ = OTHER AGENT's — do not touch.
+## PHASE 2 IN PROGRESS — K/V exploration (task 23)
+KEY Q: does KEY-grafting recover REFERENT where value-only floored (27B +0.004)?
+Keys carry addressing/RoPE = plausibly what retrieval needs. Steps: build
+K-graft w/ RoPE re-rotation → smoke small model (verify α0==fresh + re-rotation
+correctness) → sweep V/K/coupled/independent per-layer on sense/referent/stance
+→ sparse-regime lens testbed. Provision pod. Balance ~$85. 0 pods now.
 
 ## 11:55 07-07 — (superseded, timestamp was wrong-ordered)
 
