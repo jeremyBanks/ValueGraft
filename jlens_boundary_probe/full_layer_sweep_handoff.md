@@ -1,7 +1,7 @@
 # Full-Layer J-Lens Sweep Handoff
 
 Date: 2026-07-07  
-Status: implementation committed; pod created; broad sweep not launched yet.
+Status: broad sweep completed; raw artifact kept local/ignored; compact summary committed.
 
 ## Purpose
 
@@ -50,18 +50,34 @@ bash -n jlens_boundary_probe/job_qwen36_full_layer_sweep.sh
 ShellCheck was requested as a good preflight idea for pod scripts, but it is
 not installed locally on this machine at the time of writing.
 
-## Pod State
+## Pod/Run State
 
-An A100 80 GB PCIe pod was unavailable. A fallback A100-SXM4-80GB pod was
-created instead:
+An A100 80 GB PCIe pod was unavailable, so the sweep used A100-SXM4-80GB pods.
+The first completed run produced the expected remote JSON, but the local pull
+was accidentally started in parallel with pod termination, which cut off
+`rsync` before the file landed. The sweep was rerun from the committed script,
+then pulled and JSON-validated before termination.
 
 ```text
-pod id: 2vasci152rpelv
+first pod id: 2vasci152rpelv (completed, artifact lost during pull/terminate race)
+rerun pod id: v73xgjm79xu3uf (completed, artifact pulled and validated)
 state file: jlens_boundary_probe/.pod_jlens_fullsweep_state.json
+final pod state: terminated
 ```
 
-As of this note, the code has not yet been uploaded and the job has not yet
-been launched.
+Run scale:
+
+```text
+summary tokens: 1,175
+fitted layers sampled: 63 (layers 0..62)
+token-layer rows: 74,025
+raw output: outputs/qwen36_full_layer_sweep.json, 63 MB, valid JSON, local/ignored
+committed output: outputs/qwen36_full_layer_sweep_summary.json, 1.9 MB
+```
+
+The full raw file is ignored because the repository blocks files over 4 MB.
+The committed summary preserves full layer aggregates, per-demo aggregates, and
+compact top-token/top-row details for analysis.
 
 ## What The Script Records
 
@@ -113,16 +129,11 @@ fitted layers.
 
 ## Next Steps
 
-1. Poll the new pod for SSH endpoint.
-2. Install `rsync`/`git` remotely if needed.
-3. Upload `jlens_boundary_probe/`.
-4. Launch `job_qwen36_full_layer_sweep.sh` detached with full logging.
-5. Monitor until output exists or failure is clear.
-6. Pull `outputs/qwen36_full_layer_sweep.json`.
-7. Terminate the pod promptly.
-8. Commit the raw output if its size is reasonable.
-9. Write a report that starts with broad observations before selecting
+1. Analyze `outputs/qwen36_full_layer_sweep_summary.json`.
+2. Use the local ignored raw JSON for deeper drill-down if needed.
+3. Write a report that starts with broad observations before selecting
    illustrative examples.
+4. Commit the report.
 
 ## Open Questions For Analysis
 
