@@ -10,3 +10,6 @@ __pycache__/
 *.parquet
 .pod*_state.json
 .pod[0-9]_state.json
+# large raw lens telemetry (analyzable summaries ARE committed)
+jlens_boundary_probe/outputs/qwen36_strong_example_probe.json
+jlens_boundary_probe/outputs/qwen36_ordinary_lens.json
