@@ -2,7 +2,17 @@
 
 *Updated 07-07 ~15:16 by Opus 4.8. RESUME-READY. Read FINDINGS.md, MASTER-PLAN.md, INCIDENTS.md (esp #27).*
 
-## LIVE STATE — Phase 2 K/V sweep RUNNING (resume from here)
+## LIVE STATE — Phase 2: coarse K/V DONE (negative), per-layer probe NEXT
+COARSE SWEEP RESULT (recorded FINDINGS): keys DON'T help — K-only hurts all cats,
+coupled/independent don't beat v_only; VALUE is operative axis. Sanity passed
+(v_only ref +0.057≈paper). RoPE-addressing hypothesis unsupported by UNIFORM graft.
+NOW: per-layer key probe building (src/kv_layer_probe.py, subagent a641bde3144e775f3)
+— tests if ANY single layer benefits from K (uniform could mask layer-specific).
+Pod lveawgxzfm5xte KEPT WARM for it (working, CUDA-fixed torch 2.6.0+cu124).
+If per-layer negative → K/V CONCLUDES clean-negative (strengthens paper). If some
+layer helps → per-head + 27B port.
+
+## (superseded) LIVE STATE — Phase 2 K/V sweep RUNNING (resume from here)
 PHASE 1 DONE: synthesis paper shipped to trunk (REPORT.md, ~7700w, honest, pushed).
 PHASE 2 (task 23) IN PROGRESS — the K/V behavioral sweep is RUNNING NOW:
 - POD: lveawgxzfm5xte, COMMUNITY cloud, ssh root@104.255.9.187 -p 11534
