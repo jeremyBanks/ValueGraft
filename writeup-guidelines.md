@@ -62,7 +62,7 @@ use canonical names by default.
 - Claude Fable 5 — primary design + execution (majority of the work).
 - Claude Opus 4.8 — continuation as Fable quota exhausted (07-07 onward);
   co-credit.
-- Claude Sonnet — subagent work: judging, dataset/benchmark scouting,
+- Claude Sonnet 5 — subagent work: judging, dataset/benchmark scouting,
   task-adapter construction, difficulty probes.
 - GPT-5.5 (OpenAI) — adversarial review / independent second perspective
   (e.g. the read-only pipeline refresh that caught the local-plumbing gap).
