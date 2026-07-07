@@ -298,19 +298,24 @@ The first validated result is narrow but real:
   layer 16: 0.1488 to 0.1430; layer 32: 0.1899 to 0.1788; layer 48: 0.3882
   to 0.3546; layer 62: 0.3359 to 0.3506
 
-Interpretation: this artifact demonstrates that the V-only grafted condition
-can change downstream readouts and next-token behavior relative to fresh
-compaction under the same visible text. It does not establish a general effect
-size. The layer readout is mixed, with improvement at layers 16/32/48 and a
-small worsening at layer 62. Treat this as a corrected proof-of-method example,
-not as the main quantitative claim.
+Interpretation: this artifact detects that the V-only grafted cache path
+changes next-token and lens readouts relative to fresh compaction while alpha-0
+remains inert. It does not establish a general effect size. The layer readout
+is mixed, with improvement at layers 16/32/48 and a small worsening at layer
+62. Treat this as a corrected single-example intervention probe, not as the
+main quantitative claim.
+
+`valuegraft_four_sequence_intervention_probe.md` is the current standalone
+report for this corrected intervention readout. Older J-lens notes can still
+be used as background and example scouting, but they should not be cited as
+intervention evidence unless explicitly tied to a validated grafted condition.
 
 Any public-facing writeup must separate:
 
 - broad old-vs-fresh J-lens sweeps: diagnostic evidence about state available
   to preserve
-- three-state post-boundary probes: direct evidence about the intervention
-  itself
+- four-sequence post-boundary probes: direct evidence about the intervention
+  itself, with alpha-0 as a required machinery control
 - behavioral task results: the main evidence for whether the method helps
   actual work
 
