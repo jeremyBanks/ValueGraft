@@ -116,3 +116,25 @@ bounds its size, and where is that bound ASSERTED in code? (3) Who evicts
 it and when? (4) What is the correctness/equivalence proof? (5) Which
 probe gate exercises it before production traffic? Unanswered = do not
 deploy. Prose rules do not survive attention under pressure; forms do.
+
+## PUBLISHING: promote the best report to README.md (user 07-07)
+- The repo's landing page is **README.md**. NEVER edit README.md directly.
+- We always edit the WORKING report file (currently **REPORT.md**) — that's where
+  drafting, critics, and Fable passes happen.
+- When a MAJOR update is finished and we're CONFIDENT in it, "publish" it by
+  COPYING the working file over README.md (replacing the old published version):
+  `cp REPORT.md README.md` — so the repo page shows the latest greatest.
+- README.md = the published snapshot; REPORT.md = the live working version. They
+  diverge between promotions; re-promote after each major confident update.
+
+## FINAL PAPER REVIEW: multi-perspective Fable passes (user 07-07)
+For the FINAL review of the FINAL paper (after all work done), IN ADDITION to the
+normal pipeline: run ~3 Fable subagent reviews, NO TOOLS (Fable is expensive —
+just reasoning over the text), each prompted from a DIFFERENT angle to get varied
+perspectives:
+- (1) generic: "review this paper — what's good, what's not, structure, flow,
+  suggestions to improve."
+- (2+3) slightly different framings (e.g. a skeptical-reviewer angle; a
+  first-time-reader/accessibility angle; a "what would make this stronger/publish-
+  ready" angle). Vary the prompt to surface different angles.
+- Synthesize the three into the final revision. Tool-less to keep cost down.
