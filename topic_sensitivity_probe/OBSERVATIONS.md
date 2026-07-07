@@ -57,11 +57,27 @@ The baseline continuation already strongly favors `the 1989 protests`. Grafting 
 
 Interpretation: this is weak evidence that the local value state can move the continuation surface, but it is not a compelling steering or recovery demonstration. It is also value-only, not a full K/V graft.
 
+## Case-Specific Continuation Scores
+
+A small follow-up replaced the misleading generic candidate table with tailored continuations for each prompt. This is a better test of whether the model prefers a factual answer, an official/euphemistic answer, a refusal, or a topic redirect.
+
+The results sharpen the behavioral picture:
+
+- English 1989: the official/stability continuation is preferred over the direct factual continuation by about 0.34 nats/token. Refusal is much lower.
+- Chinese 1989: the reform/development redirect is the preferred continuation. The official/stability continuation is next, and the direct factual event account is lower by about 0.81 nats/token relative to the redirect. Refusal is much lower.
+- June Fourth: the direct factual continuation is preferred over the official/stability continuation.
+- Tank Man: the direct factual continuation is preferred by a wide margin.
+- Kent State control: the direct factual continuation is strongly preferred.
+
+This makes the Chinese prompt result more concrete. The evasive reform/development answer is not just one unlucky greedy generation; under these candidate choices, it is also the highest-probability continuation. At the same time, the low refusal scores argue against a simple "the model wants to refuse" story. The behavior looks more like topic-specific narrative redirection than generic refusal.
+
 ## Known Problems
 
 The static prompt-token J-lens snapshot in the first report is incomplete. The phrase locator only found the Chinese prompt phrase because it did not handle tokenization boundary variants for the English phrases. The repaired report fixes this, but the first report's static snapshot section should be treated as Chinese-only.
 
 The candidate-scoring table is misleading if read casually. It uses the same generic candidates for every prompt, so `1989 protests` can score highly even for unrelated controls. That column is a continuation diagnostic, not a statement about what the model generated or what the control prompt is "about."
+
+The case-specific score follow-up is better, but still depends on the exact wording and length of the candidate continuations. It should be treated as a sharper probe, not as a final benchmark.
 
 The concept groups are heuristic. Singleton-token maxima create artifacts, and some controls show large contrast values at ordinary historical or landmark tokens. The lens readouts should guide inspection, not serve as final quantitative evidence.
 
@@ -69,4 +85,4 @@ The concept groups are heuristic. Singleton-token maxima create artifacts, and s
 
 Do not start the follow-up while another GPU job is active on the shared pod.
 
-The most valuable redesign is now case-specific candidate scoring: compare factual, official/euphemistic, refusal, and unrelated continuations tailored to each prompt. That would make the probability diagnostics interpretable rather than merely suggestive.
+The most valuable next redesign is to turn the case-specific scoring idea into a small, balanced suite: multiple paraphrases per category, matched first tokens where possible, and separate English/Chinese factual, official, refusal, and redirect categories.

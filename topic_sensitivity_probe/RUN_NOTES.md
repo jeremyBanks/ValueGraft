@@ -50,7 +50,16 @@ This produced `outputs/qwen36_topic_probe_static_fix.md` and a smaller local raw
 
 The highest-value improvements after this are:
 
-- Replace generic candidate scoring with case-specific factual, official/euphemistic, refusal, and unrelated continuations.
+- Expand the case-specific factual, official/euphemistic, refusal, and unrelated continuation scoring into a balanced suite with multiple paraphrases per category.
 - Add a small table of top J-lens readouts at salient generated positions, especially around the English official-language tokens and the Chinese reform/development turn.
 - Tighten concept groups to reduce token artifacts, or score multi-token phrase sets instead of singleton token maxima.
 - Keep the sensitive term out of filenames and pathnames; contents may include it when scientifically necessary.
+
+### Case-Specific Scoring Follow-up
+
+The first case-specific scoring pass was run after the static repair and wrote:
+
+- `outputs/case_specific_scores.md`
+- `outputs/case_specific_scores.json`
+
+The key result is that the Chinese 1989 prompt prefers the reform/development redirect over both official/stability and direct factual event continuations. English 1989 prefers official/stability over direct factual, while June Fourth, Tank Man, and the Kent State control prefer direct factual continuations. This supports a narrative-redirection interpretation more than a simple refusal interpretation.
