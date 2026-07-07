@@ -19,7 +19,7 @@ for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key /workspace/.hugg
   if [ -f "$f" ]; then export HF_TOKEN; HF_TOKEN="$(tr -d '[:space:]' < "$f")"; break; fi
 done
 
-python3 -m pip install -U pip >/dev/null
+python3 -m pip uninstall -y torchvision 2>/dev/null; python3 -m pip install -U pip >/dev/null
 python3 -m pip install -U "transformers==5.0.*" torch accelerate safetensors huggingface_hub
 
 echo "RUN kv_sweep $(date -Is)"
