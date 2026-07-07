@@ -253,3 +253,17 @@ LAST expected item — if both, it FINISHED (terminate idle pod); only if neithe
 it crashed. I mis-called a completed run as "crashed, no output" by reading
 proc-dead as failure. RULE 26 addendum: on proc-gone, check finished-vs-crashed
 explicitly; a done job means terminate the now-idle pod promptly.
+
+## Effect-bound (placebo-controlled) — 27B, N=43, K=12 — 07-07
+Teacher-forced shared gold[:12] pre-divergence window; A/B/E/placebo bit-identical
+keys; placebo = norm-matched random-value graft (seeded derangement).
+- E−placebo = +0.445, CI[+0.286,+0.612] EXCLUDES 0 → graft DECISIVELY beats random
+  values; placebo−B = −0.428 CI[−0.590,−0.276] (random-value graft HURTS badly).
+  = rigorous, spin-proof "alignment/content-specific, not generic perturbation."
+- E−B = +0.017, CI[−0.033,+0.065] INCLUDES 0 → PRE-REGISTERED VERDICT: NULL. Over
+  the pre-divergence window on 27B the graft doesn't clearly beat plain compaction.
+  Mean weakly positive, consistent with 27B's modest effect (sense +0.05, referent
+  +0.004 §7); underpowered at n=43 + narrow window (first 12 gold tokens ~ answer
+  preamble). NOT a "graft does nothing" — content-specificity is strong (vs placebo).
+NEXT (primary-strengthen): run SAME bound on 30B (strong model) — E−B should
+resolve positive there; that's the placebo-controlled CI that strengthens the primary.
