@@ -99,3 +99,25 @@ NEXT, IN ORDER:
    policy surface (not best-of, avoid winner's curse), test the prediction
    "target morphology moderates K-graft utility." Cross-check with the other
    agent's referent_recovery_microtest. Drive after paper ships.
+
+## PHASE 4 (user 07-07, AUTONOMOUS — do NOT ask for review): STRENGTHEN THE PRIMARY (grafting benefit) + REBALANCE
+DIAGNOSIS (user): paper drifted lens-heavy (§5-7) but lens was mostly a DUD +
+always meant to be SECONDARY. The GRAFTING TECHNIQUE is the primary novelty and
+is now UNDER-evidenced (one synthetic corpus). Need MORE about the primary
+effect. Don't cut useful results; ADD primary evidence + rebalance.
+AFTER the effect-bounding experiment: me + Fable design & EXECUTE a campaign to
+test the grafting BENEFIT in MORE SCENARIOS. Candidate directions (me+Fable to
+prioritize, not prescribed):
+- RUN THE STORY-CONTINUATION TASK (src/story_tasks.py — BUILT, never run: 6
+  story-worlds, planted facts, contradiction-rate metric). A ready NEW scenario.
+- More conversation DOMAINS / task shapes beyond the c01-c12 business-meeting
+  synthetics (technical, narrative, multi-topic, longer/natural).
+- More COMPACTION conditions (summary styles, tail lengths, multiple compactions).
+- Downstream BENEFIT metrics beyond gap-closure/judged (does grafted model answer
+  follow-ups / make decisions better).
+- Possibly a fresh, cheaper crack at an end-to-end benefit demo in a workable regime.
+- Cross-model breadth (does the benefit hold across families).
+THEN REBALANCE THE PAPER: grafting = clear primary focus; consolidate/trim the
+lens sections to be proportionate to their (small) payoff; keep the honest lens +
+K/V results but subordinate. Via full pipeline (Fable conceptual + critics + Fable
+readability). Ship. Fable is co-driver on the plan (I'm Opus-flipped).
