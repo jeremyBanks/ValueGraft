@@ -240,3 +240,23 @@ observation, not just "does it work." SCOPE per model = my call using knowledge
 of each architecture (don't brute-force; guess what's worth searching). Gated on
 sweep success + spare capacity; guard-validate (wrong-conv control) as always.
 - ASK FABLE about the champion-tuning-profile idea at some point (user 07-07): get its conceptual take on whether cross-arch tuning-profile comparison is a real fingerprint or noise, and how to scope the per-model search. Timing = my call (sooner or later), but do it before committing pod time to tuning.
+
+## PUBLISHING / DISSEMINATION (external-agent feedback 07-07 — adopt the repro path)
+GOAL: convert "interesting claim" → "checkable tonight." One external reproduction
+on a non-Qwen model breaks the Qwen confound for free (worth more than any polish).
+DO (when publish-ready, cheap):
+1. README "Reproduce the core result" section (~10 lines): hardware needed, ONE
+   setup command, ONE command that runs the core probe (honesty OR sense/stance
+   gap-closure) on ONE model, and EXPECTED OUTPUT with our numbers to compare.
+   → cross_arch_probe.py IS ~this entry point already (runs benefit on any model
+     via one command) — wrap it clean, pin the model+corpus.
+2. PIN exact model versions/quants + probe corpus so their run is comparable.
+3. One-line disclaimer: everything else is exploratory working material, may be
+   outdated (normal; messy repo + one clean entry point > polished repo — signals
+   real ongoing work). DON'T over-clean (my archive pass was already lightweight).
+4. In any POST, put the repro command IN THE POST, not just a repo link (friction
+   kills reproduction attempts).
+VENUES (their take): r/LocalLLaMA + EleutherAI primary (KV/compaction mechanism);
+LessWrong optional (fine with empirical-internals posts, not misrepresentation).
+NOTE: the cross-arch sweep already produces the multi-model numbers that make the
+repro path credible — build the README repro section AFTER the sweep, off its harness.
