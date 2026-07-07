@@ -192,3 +192,17 @@ flat +0.004), not yet run (needs kv_graft 27B-path port). (2) COARSE UNTUNED
 (uniform αK all layers) — uniform K-graft could average out layer-specific
 effects; PER-LAYER/PER-HEAD key tuning (kv_graft supports it) might find a
 key-profile that helps, but the strongly-negative K-only lowers that prior.
+
+## Phase 2 CONCLUDED — Key-grafting doesn't help, even per-layer (30B) — 07-07
+Per-layer key probe (add α_K=0.75 at ONE layer L on top of the working value
+graft, referent, n=21 plants, 12 layers sampled). v_only baseline +0.0565.
+Best layer (24) lift = +0.0111 (only 10/21 plants positive = coin flip);
+k_only@L NEGATIVE at ALL 12 layers. NO layer meaningfully lifts referent.
+COMBINED WITH the coarse uniform sweep (keys don't help, K-only hurts all
+cats): the K/V exploration is CONCLUSIVE — VALUE is THE operative axis;
+key-grafting does not recover referent uniformly OR per-layer. RoPE-addressing
+hypothesis (keys carry "where to look" for retrieval) thoroughly UNSUPPORTED.
+Per-head not run (per-layer clean-negative + k_only-negative-everywhere makes
+it a dead direction; stopped per direction-against discipline). This STRENGTHENS
+the paper: not "value is the axis we tested" but "value is THE axis — keys
+checked uniformly + per-layer, don't help."
