@@ -61,3 +61,24 @@ behavioral divergence, and put the lens THERE.
 Phase-1-paper improvement (mechanistic illustration), SEPARATE from Phase 2
 K/V. Runs sequentially on the one pod after the K/V per-layer probe, swapping
 to 27B; pod terminates after validation. Cost-conscious, one pod at a time.
+
+## FABLE GUT-CHECK FIXES (adopted 07-07) — verdict: sound, needs adjustment
+1. DECODER-AMPLIFICATION ARTIFACT (Fable caught; I missed it): greedy fork can
+   be a 51/49 tie-break amplified by the decoder, not a robust pull → the
+   DRAMA is decoder-sensitive even when the nudge is tiny. FIX: report the fork
+   MARGIN (logit gap at divergence) + confirm the internal lean survives a few
+   decoding seeds/temperatures. A robust exhibit's lean is real regardless of
+   how the coin landed. Never exhibit a greedy tie-break as mechanism.
+2. AVAILABILITY LEAK: one hero exhibit over-persuades even with a caption. FIX:
+   present as a DISTRIBUTION — histogram of "internal lean toward A at the
+   divergence point" across ALL N cases, vivid case = one marked point. One
+   picture WITH a denominator, not a hero picture with a footnote.
+3. PRE-REGISTERED DISCONFIRMING BUCKET (kills the heads-I-win): outcomes are
+   THREE, not two — (a) clean fork toward A w/ decisive margin = mechanism
+   visible; (b) small-but-CONSISTENT lean toward A = "subtle" (earned, not
+   default); (c) NO fork under free-gen, OR fork AWAY from A = DISCONFIRMING,
+   counts AGAINST grafting's behavioral reach — must NOT be relabeled "subtle."
+IMPLEMENTATION: probe runs across ALL cases (distribution, not a few heroes);
+records fork index + MARGIN + lean-toward-A per case; a robustness check over
+2-3 temperatures/seeds; classifies each case into the 3 buckets. The exhibit
+is the distribution; any single vivid case is shown as one point on it.
