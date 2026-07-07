@@ -1,9 +1,16 @@
-# ValueGraft Under the Lens: A Corrected Three-State Readout
+# ValueGraft Under the Lens: A Four-Sequence Intervention Probe
 
 Status: corrected standalone report draft
 Date: 2026-07-07
 Primary artifact: `outputs/qwen36_boundary_three_state_probe.json`
 Validator: `validate_three_state_probe.py`
+
+## How To Read This
+
+There are three evidence types in this project. Old-vs-fresh J-lens sweeps
+diagnose state that may be available to preserve. This report tests an actual
+grafted cache condition under controlled decoding. Task metrics decide whether
+the method helps real work.
 
 ## Abstract
 
@@ -22,13 +29,15 @@ of ValueGraft. The corrected probe compares three substantive states
 control (`alpha0_grafted_compacted`) over the same forced target tokens. In
 this single constructed coding-style example, a V-only graft changes downstream
 next-token and J-lens readouts relative to the fresh compacted condition. The
-most concrete result is one next-token argmax rescue: for the token
-` inspected`, the fresh compacted state predicts ` priorit`, while the grafted
-compacted state returns to the full-context argmax ` inspected`. The
-layer-level readout is mixed: grafted states move modestly toward full context
-at layers 16, 32, and 48, but slightly away at layer 62.
+most concrete result is one next-token argmax rescue. A rescue means fresh
+compaction's top next token differs from full context, while grafted compaction
+returns to the full-context top token. For the token ` inspected`, fresh
+compacted predicts ` priorit`, while grafted compacted returns to
+` inspected`. The layer-level readout is mixed: grafted states move closer to
+full context at layers 16, 32, and 48, but farther at layer 62.
 
-This is proof of method, not a general effect-size estimate.
+This validates the measurement design on one constructed example; it is not an
+effect-size estimate.
 
 ## What ValueGraft Is Testing
 
@@ -78,7 +87,11 @@ V-only summary-token value-cache blend; fresh keys and linear-attention
 recurrent state preserved
 ```
 
-It aligns 96 summary-token positions and changes value entries in 16 layers.
+In plain language: only the aligned summary-token value entries are blended;
+fresh keys and all non-value cache state are preserved. It aligns 96
+summary-token positions and changes value entries in 16 layers. Those layers
+are the ordinary value-cache layers exposed by this Qwen3.6 hybrid cache object:
+3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, and 63.
 
 ## Why the Earlier Two-State Readout Was Not Enough
 
@@ -101,9 +114,7 @@ Does the grafted compacted state move the model away from fresh compaction
 and toward the full-context behavior?
 ```
 
-The corrected probe therefore has to compare at least these states. In this
-note, "three-state" means the three substantive states; the alpha-0 row is a
-required control on the graft machinery.
+The corrected probe therefore has to compare at least these sequences:
 
 | State | Visible context | Cache state |
 | --- | --- | --- |
@@ -121,7 +132,7 @@ measurement and the artifact is not trustworthy.
 The corrected probe uses Qwen3.6-27B with the Anthropic/Neuronpedia Jacobian
 lens weights for that model. It builds a small coding-style scenario around a
 package named `rivermark`, where `bank` means river bank, not financial bank.
-The compacted summary says:
+A relevant excerpt from the compacted summary says:
 
 ```text
 Task: Fix `rivermark` package where "bank" refers to a river bank. The failing
@@ -133,7 +144,8 @@ Current State:
   treated as lower priority.
 - Specification requirement: Wet driftwood must be inspected first (higher
   priority).
-- Next Step: Update the priority key logic in `src
+- Next Step: Update the priority key logic ... [summary truncated by the
+  96-token cap]
 ```
 
 The probe question is:
@@ -205,9 +217,9 @@ closure means the grafted state moved closer to full context than fresh did.
 | 48 | 0.3882 | 0.3546 | 0.1838 | 0.0000 | 0.0337 |
 | 62 | 0.3359 | 0.3506 | 0.1507 | 0.0000 | -0.0146 |
 
-This is not a clean "graft always helps" story. It is a narrower and more
-honest result: the intervention is active, alpha-0 is inert, and the grafted
-state sometimes moves toward the full-context state on interpretable readouts.
+This is not a clean "graft always helps" story. It is a narrower result: the
+intervention is active, alpha-0 is inert, and the grafted state moves closer on
+layers 16/32/48 and farther on layer 62.
 
 ## Concrete Example: The `inspected` Token
 
@@ -221,7 +233,7 @@ The strongest single row occurs at target index 13, where the forced token is
 | `alpha0_grafted_compacted` | ` priorit` | `priorit`, `inspected`, `given`, `assigned`, `treated`, `sorted`, `higher`, `highest` |
 | `grafted_compacted` | ` inspected` | `inspected`, `priorit`, `given`, `assigned`, `treated`, `sorted`, `processed`, `highest` |
 
-This is the cleanest behavioral sign in the artifact. With the same visible
+This is the cleanest next-token effect in the artifact. With the same visible
 compacted text, the V-only graft changes the next-token argmax from the fresh
 compacted answer back to the full-context answer. The alpha-0 control stays
 identical to fresh.
@@ -280,8 +292,8 @@ boundary visible. It can show that:
 
 But the J-lens does not directly label KV-cache entries, and it does not
 replace behavioral evaluation. It reads residual-stream state after attention
-and MLP computation. A good report should therefore say "the lens suggests"
-unless the same pattern is confirmed by behavioral task metrics.
+and MLP computation. In this report, lens-only patterns are described as
+suggestions unless paired with a controlled intervention or task metric.
 
 ## Prior-Art Context
 
@@ -332,9 +344,9 @@ still a single small probe.
   grafting.
 - There is no wrong-graft or shuffled-graft negative control in this artifact.
 
-The right conclusion is therefore: this probe demonstrates that the corrected
-three-state method can detect a real intervention effect under controlled
-conditions. It does not establish generality or production impact.
+The right conclusion is therefore: this probe detects that the grafted cache
+path changes next-token and lens readouts relative to fresh compaction while
+alpha-0 remains inert. It does not establish generality or production impact.
 
 ## Next Steps
 
