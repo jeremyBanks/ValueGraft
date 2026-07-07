@@ -3,7 +3,28 @@
 
 *Last updated: 2026-07-07 ~08:45 by Claude Opus 4.8 (see PROVENANCE-CORRECTION.md — earlier work mislabeled as Fable). Update at EVERY phase transition (rule 22).*
 
-## 11:55 07-07 — PLAN OF RECORD (Opus 4.8; read first; supersedes below)
+## 10:35 07-07 — PLAN OF RECORD (Opus 4.8; read first)
+
+**PHASE: WRITING THE REPORT.** All experiments done + banked in FINDINGS.md.
+Pod terminated (balance $37.95, 0 pods). report-draft.md being written by
+subagent (v1, follows REPORT-PLAN.md through-line, FINDINGS = source of
+truth). NEXT: 5 adversarial critic passes (through-line / gaps /
+over-justification / accessibility / accuracy-vs-FINDINGS per REPORT-PLAN
+P3) → synthesize → repeat on hot spots.
+
+**FINDINGS (final):** F1 semantic dissociation (graft recovers sense/
+referent meaning, null on stance; effect tracks damage) — 3-method
+corroborated AT 30B (lenient+strict judge, TF-logprob); robustness holds;
+does NOT replicate at 4B (scale-bound); mechanistic readout = PARTIAL
+(graft inserts concept internally, coarse lens doesn't resolve
+dissociation). F2 honesty, F3 tuning-cures-collapse, F4 scope-boundary
+(SWE-bench too hard, chains/tau too short — benchmark-landscape finding).
+
+**OPTIONAL FUTURE (not blocking report):** story-contradiction task (built,
+unrun); K-vs-V grafting; sharper mechanistic lens (J-lens); judged-4B cut.
+jlens_boundary_probe/ = OTHER AGENT's — do not touch.
+
+## 11:55 07-07 — (superseded, timestamp was wrong-ordered)
 
 **HEADLINE RESULT (FINDINGS.md F1, CORROBORATED):** write-time value
 grafting recovers ~10-12pp (judged) of compaction damage in the
