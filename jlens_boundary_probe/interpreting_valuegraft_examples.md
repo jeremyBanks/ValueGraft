@@ -7,11 +7,19 @@ details of this repository or mechanistic interpretability
 
 ## The Idea In One Example
 
-A compacted conversation often keeps the right text while losing part of the
-state that made the text mean something locally.
+A compacted conversation can keep the right words while changing the
+context-conditioned state around those words.
 
-The cleanest example in the current J-lens sweep is a permit code. The summary
-contains this line:
+Here, "state" means the hidden activations and cached attention context induced
+while the summary is processed. It does not mean an explicit belief, memory, or
+database entry.
+
+This side probe uses Qwen3.6-27B with fitted Jacobian-lens weights. It is
+explanatory support for the ValueGraft hypothesis, not the main behavioral
+experiment. The examples are selected for readability from seven constructed
+demos, a broad all-token/all-layer sweep, and a next-token control artifact.
+
+One clean example is a permit code. The summary contains this line:
 
 ```text
 - Permit: B-410 is stale. Use P-771.
@@ -38,14 +46,14 @@ At layer 48, the Jacobian-lens readout looks very different:
 | old-context | `obsolete`, `outdated`, `deprecated`, `expired` |
 | fresh | `municipal`, `City`, `Civic`, `License`, `permit` |
 
-This is the whole motivation in miniature. The visible text is still there in
-both paths. The old-context path makes the identifier itself read as a stale
-permit. The fresh path makes it read more like a generic civic code. ValueGraft
-asks whether compaction can carry some of that old-context state forward,
-rather than asking a later model pass to reconstruct everything from text.
+The printed text is unchanged. What changes is the readout around the
+identifier: the old-context path points to stale/obsolete status; the fresh
+path points to default civic-code associations. ValueGraft asks whether
+compaction can carry some of that old-context state forward, rather than asking
+a later model pass to reconstruct everything from text.
 
-This example is qualitative telemetry, not a behavioral result. It is useful
-because it makes the target of the intervention concrete.
+This example is a qualitative readout rather than a behavioral result. Its
+value is that it makes the target of the intervention concrete.
 
 ## What ValueGraft Means Here
 
@@ -56,8 +64,9 @@ content returned when attention lands there.
 
 In ordinary API-style conversation compaction, a long transcript is replaced by
 a shorter summary plus a recent tail. The summary text is then re-encoded in a
-new context. That is cheap and product-shaped, but it discards the key/value
-state that existed while the summary was written under the full conversation.
+new context. That is cheap and similar to how API context compaction is usually
+implemented, but it discards the key/value state that existed while the summary
+was written under the full conversation.
 
 ValueGraft names a family of interventions at that boundary:
 
@@ -71,7 +80,7 @@ parameters, `alpha_K` and `alpha_V`. An alpha of `0` leaves that channel fresh.
 An alpha of `1` fully substitutes the old-context state for that channel.
 Intermediate values blend; values above `1` are extrapolations. The current
 J-lens note is not evaluating which alpha is best. It explains why there may
-be useful state to preserve at all.
+be context-conditioned status/role information to preserve.
 
 ## What The J-Lens Measures
 
@@ -87,10 +96,10 @@ When the same summary token is evaluated in old-context and fresh paths,
 do the residual-stream readouts point to different concepts?
 ```
 
-Several limits matter.
+Several limits matter:
 
-- The J-lens reads residual-stream state, not the KV cache directly.
-- A token list is not behavior, a belief, or proof of downstream performance.
+- The J-lens reads residual-stream state rather than the KV cache directly.
+- A token list is only a readout; downstream performance still has to be tested.
 - The method works best for single-token or short verbalizable concepts.
 - Late layers can look like ordinary next-token prediction.
 - Paths, commands, identifiers, and Markdown syntax need span-level grouping.
@@ -105,7 +114,7 @@ The current sweep used fixed summary texts in matched wrappers. That keeps the
 token sequence stable for comparison. It is a model of the compaction boundary,
 not a claim that each displayed summary was freshly sampled during the sweep.
 
-## Why This Is Not Just Next-Token Prediction
+## Next-Token Control: What The Lens Adds
 
 The readout becomes interesting only when it differs from ordinary continuation
 pressure. The B-410 row is strong because the top next-token candidates are
@@ -114,8 +123,8 @@ name the identifier's old-context status.
 
 Other rows are weaker and should be described that way. In the `Maple` example
 below, the local text says `Maple means...`, so next-token prediction already
-sees a definition cue. That row still shows old/fresh state contrast, but it is
-not as clean a next-token control.
+sees a definition cue. That row still shows old/fresh state contrast, with a
+less clean next-token control.
 
 This distinction should stay visible in any public figure: show next-token
 candidates beside J-lens candidates. Otherwise it is too easy to mistake a
@@ -133,7 +142,7 @@ raw artifacts keep the full token lists.
 | Anchor | The token or short span being inspected. |
 | Next-token candidates | Ordinary top continuations after the anchor. |
 | J-lens readout | Vocabulary tokens from the residual-stream readout. |
-| Interpretation | What the contrast suggests, including caveats. |
+| Interpretation | What the contrast suggests, including any example-specific caveat. |
 
 ## Example 1: `B-410`, A Stale Permit Code
 
@@ -152,8 +161,6 @@ Actual next token: `-`
 | --- | --- | --- |
 | old-context | `-`, `4`, `-st`, punctuation | `obsolete`, `outdated`, `deprecated`, `expired` |
 | fresh | `-`, `2`, `PD`, `1`, `3`, `4` | `municipal`, `City`, `Civic`, `License`, `permit` |
-
-What to notice:
 
 The next-token lists are doing local syntax. Both paths mostly know that the
 next character should continue a code. The J-lens readout is doing something
@@ -183,16 +190,14 @@ Actual next token: `means`
 | old-context | `=`, `is`, `refers`, `means`, `Room` | `refers`, `=`, `referring`, `denotes` |
 | fresh | `Street`, `St`, `Ave`, `street`, `Drive` | `Street`, `street`, `neighborhood`, `park`, `City` |
 
-What to notice:
-
 The old-context path treats `Maple` as a local defined referent. The fresh path
 leans toward ordinary named-place priors: streets, parks, neighborhoods, city
 names.
 
-This row is useful but not as clean as B-410. Because the text says `Maple
-means`, the ordinary next-token list already has a definition cue. The row is
-best read as a state-contrast example: the old-context readout is about local
-reference; the fresh readout is about generic lexical priors.
+Because the text says `Maple means`, the ordinary next-token list already has
+a definition cue. The row is best read as a state-contrast example: the
+old-context readout is about local reference; the fresh readout is about the
+model's default associations for `Maple` outside this conversation.
 
 ## Example 3: `Dex`, A Trade Partner Rather Than A Pokedex
 
@@ -209,8 +214,6 @@ Layer: 48
 | --- | --- | --- |
 | old-context | `owes`, `trade`, `owed`, local trade words | `promised`, `partnered`, `promise`, `exchange` |
 | fresh | `Nav`, `entry`, `completion`, tracker words | `completion`, `tracker`, `stats`, `bonus`, `Collector` |
-
-What to notice:
 
 The old-context path treats `Dex` as a person involved in an exchange. The
 fresh path drifts toward Pokemon-interface meanings: Pokedex progress, DexNav,
@@ -242,12 +245,10 @@ Selected rows from the full-layer sweep:
 | `Orange` | 50 | `refers`, `signifies`, `represents`, `symbol`, `denotes` | `Orange`, `orange`, `citrus`, `color`, `Juice` | Local tag role vs ordinary color/fruit priors. |
 | `cooler` | 36 | `canceled`, `replaced`, `rejected`, `failed`, `refused` | `freezer`, `fridge`, `camping`, `cooler` | Stale instruction vs generic object semantics. |
 
-What to notice:
-
 These are the kinds of meanings conversation summaries are full of: aliases,
 exceptions, stale plans, and compact labels whose real meaning was established
 earlier. A text-only summary can include the labels and glosses while still
-reconstructing a weaker state around the labels themselves.
+producing a less situated readout around the labels themselves.
 
 ## Example 5: `Falcon` And `Patch 17`, Coding-Adjacent Labels
 
@@ -265,19 +266,18 @@ Selected rows from the full-layer sweep:
 | `Falcon` | 43 | `rejected`, `obsolete`, `deprecated`, `failed`, `outdated` | `Falcon`, `Flight`, `Aviation`, `eagle`, `Aerospace` | Rejected branch status vs bird/aviation priors. |
 | `Patch 17` span | 41 | `outdated`, `obsolete`, `old`, `expired`, `legacy` | `patch`, `repair`, `fixes`, `revision`, `testing` | Stale label vs generic patch/version semantics. |
 
-What to notice:
-
 This is the bridge to coding agents. Real coding work is packed with compact
 operational labels: branch names, issue IDs, file paths, commands, patch
-numbers, failing tests, line ranges. The useful state is often the status of
-those labels: current, rejected, failed, stale, already tried, next to inspect.
+numbers, failing tests, line ranges. The context-conditioned information is
+often the status of those labels: current, rejected, failed, stale, already
+tried, next to inspect.
 
 The Markdown table also exposes a reporting hazard. Some high-divergence rows
 are punctuation, spaces, table separators, or subword fragments. Public
 examples should group tokens into spans such as `Patch 17`; raw token rows are
 too noisy for humans.
 
-## Example 6: `Ghost2`, A Vivid But Secondary Example
+## Short Sidebar: `Ghost2`
 
 Visible snippet:
 
@@ -293,21 +293,19 @@ Layer: 44
 | old-context | `survived`, `is`, `made`, `survives`, `has` | `survived`, `successfully`, `surviving`, `survives`, `retained` |
 | fresh | `is`, `was`, `joined`, `started`, `replaced` | `replacement`, `replaced`, `aka`, `renamed`, `second` |
 
-What to notice:
-
 The old-context path carries survival. The fresh path emphasizes replacement
 and naming. This is intuitive and memorable, which makes it useful for
 explaining the phenomenon.
 
-It should not lead the evidence. The local phrase says `Ghost2 is alive`, so
-ordinary next-token prediction already sees survival language. It is a good
-illustration, not the cleanest control.
+The local phrase says `Ghost2 is alive`, so ordinary next-token prediction
+already sees survival language. This is a vivid illustration of the same
+pattern, though the control is less clean than B-410.
 
 ## Coding Bridge: SWE-Style Action Spans
 
 We also sampled J-lens readouts on true next assistant actions from SWE-Gym
 style trajectories. These are teacher-forced readouts of the known next action,
-not agent benchmark scores.
+rather than agent benchmark scores.
 
 In one getmoto trajectory, the true next action was:
 
@@ -325,6 +323,10 @@ divergence on:
 | `responses.py` | 0.568 |
 | `[584, 600]` | 0.407 |
 
+Here, mean span divergence is a top-k readout-change score averaged over a
+span. Higher means the old-context and compacted readout lists differ more; it
+is a comparative readout score, not task accuracy.
+
 In a Dask trajectory, the true next action was:
 
 ```text
@@ -340,8 +342,6 @@ The probe found divergence on:
 | `/workspace/dask__dask__2022.6/dask/base.py` | 0.624 |
 | `base.py` | 0.538 |
 
-What to notice:
-
 This is promising mainly as a pointer to the right unit of analysis. Coding
 examples should be span-first: full file paths, tool names, commands, symbols,
 line ranges, and named tests. Token-level examples are often unreadable because
@@ -351,7 +351,7 @@ These rows do not show that ValueGraft improves agent coding. They show that
 the readout method can localize differences on operational spans that matter
 for agent actions.
 
-## What The Examples Support
+## What This Does And Does Not Show
 
 The current J-lens examples support a narrow qualitative claim:
 
@@ -362,8 +362,9 @@ neighborhoods.
 ```
 
 In the best examples, the old-context readout points toward the local status or
-role of an identifier, while the fresh readout points toward generic lexical
-priors. That is exactly the kind of state ValueGraft is designed to preserve.
+role of an identifier, while the fresh readout points toward the model's
+default associations outside the conversation. That is compatible with the kind
+of state ValueGraft is designed to preserve.
 
 The examples do not settle the behavioral question. For that, the main
 experiment still needs arm comparisons, guardrails, held-out tasks, and clear
@@ -437,40 +438,16 @@ by Gurnee et al. (2026) uses an averaged Jacobian transport into the final-layer
 basis. We use the J-lens as interpretability telemetry for residual-stream
 states, not as a direct KV-cache measurement.
 
-References:
+Selected references:
 
-- Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
-  Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017.
-  [Attention Is All You Need](https://arxiv.org/abs/1706.03762). NeurIPS 2017.
-- nostalgebraist. 2020.
-  [Interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens).
-  LessWrong.
-- Belrose, Nora, Igor Ostrovsky, Lev McKinney, Zach Furman, Logan Smith,
-  Danny Halawi, Stella Biderman, and Jacob Steinhardt. 2023.
-  [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112).
-  arXiv:2303.08112.
-- Gurnee, Wes, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski,
-  Isaac Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang,
-  Ben Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen,
-  Joshua Batson, and Jack Lindsey. 2026.
-  [Verbalizable Representations Form a Global Workspace in Language Models](https://transformer-circuits.pub/2026/workspace/).
-  Transformer Circuits Thread.
-- Anthropic. 2026.
-  [jacobian-lens reference implementation](https://github.com/anthropics/jacobian-lens).
-- Neuronpedia. 2026.
-  [Jacobian Lens - Qwen3.6-27B](https://www.neuronpedia.org/qwen3.6-27b/jlens).
-- Li, Bojie. 2026.
-  [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107).
-  arXiv:2606.17107.
-- Zweiger, Adam, Xinghong Fu, Han Guo, and Yoon Kim. 2026.
-  [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284).
-  arXiv:2602.16284.
-- Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025.
-  [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002).
-  arXiv:2502.16002.
-- Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang,
-  Kuntai Du, Shan Lu, and Junchen Jiang. 2025.
-  [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444).
-  EuroSys 2025; arXiv:2405.16444.
-- Qwen Team. 2026.
-  [Qwen3.6-27B: Flagship-Level Coding in a 27B Dense Model](https://qwen.ai/blog?id=qwen3.6-27b).
+- Vaswani et al. 2017. [Attention Is All You Need](https://arxiv.org/abs/1706.03762).
+- nostalgebraist. 2020. [Interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens).
+- Belrose et al. 2023. [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112).
+- Gurnee et al. 2026. [Verbalizable Representations Form a Global Workspace in Language Models](https://transformer-circuits.pub/2026/workspace/).
+- Anthropic. 2026. [jacobian-lens reference implementation](https://github.com/anthropics/jacobian-lens).
+- Neuronpedia. 2026. [Jacobian Lens - Qwen3.6-27B](https://www.neuronpedia.org/qwen3.6-27b/jlens).
+- Li. 2026. [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107).
+- Zweiger et al. 2026. [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284).
+- Yang et al. 2025. [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002).
+- Yao et al. 2025. [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444).
+- Qwen Team. 2026. [Qwen3.6-27B: Flagship-Level Coding in a 27B Dense Model](https://qwen.ai/blog?id=qwen3.6-27b).
