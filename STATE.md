@@ -1,15 +1,42 @@
 # STATE.md — session handoff notes
 
-*Updated 07-07 ~14:15 by Opus 4.8. PHASE 1 COMPLETE. Read FINDINGS.md, MASTER-PLAN.md.*
+*Updated 07-07 ~15:16 by Opus 4.8. RESUME-READY. Read FINDINGS.md, MASTER-PLAN.md, INCIDENTS.md (esp #27).*
 
-## PHASE 1 DONE — synthesis paper shipped (REPORT.md, pushed to trunk, ~7700w)
-Grafting research = star; J-lens = honest secondary tool. Referent reconciled
-as cross-model NON-REPLICATION (strong@30B +10pp/81%, flat@27B +0.004, cause
-OPEN — NOT scale/arch-dependent, n=2 confounded). Two-part scope (capability@4B
-+ referent A→B split). Core dissociation replicates both models. Lens =
-low-res aggregate corroborator (no vivid figure, honest). Full pipeline:
-draft→4 critics→v2→user scale-correction→Fable 5 refinements→Fable+Opus prose
-bake-off→push. Fable = conceptual gut-check + readability (both via subagent).
+## LIVE STATE — Phase 2 K/V sweep RUNNING (resume from here)
+PHASE 1 DONE: synthesis paper shipped to trunk (REPORT.md, ~7700w, honest, pushed).
+PHASE 2 (task 23) IN PROGRESS — the K/V behavioral sweep is RUNNING NOW:
+- POD: lveawgxzfm5xte, COMMUNITY cloud, ssh root@104.255.9.187 -p 11534
+  -i ~/.ssh/id_ed25519_runpod. State: .pod_k1_state.json (annotated w/ ip+port).
+  A100 80GB. torch pinned 2.6.0+cu124 (driver CUDA 12.5 — do NOT pip -U torch,
+  incident 27). CUDA verified available.
+- RUN: /workspace/exp/src/kv_sweep.py, log kvsweep3.log, results→
+  /workspace/exp/results/kv_sweep/<conv>.json. ~8/12 convs done @15:16, ~4min/conv.
+  Watcher task bz4jt51tc pulls to results/kv_sweep/ + signals at 12/12.
+- WHAT IT IS: COARSE UNTUNED sweep — 6 global policies (uniform αK/αV across all
+  layers/heads): v_only(0,.75) k_only(.75,0) coupled(.75,.75) ind_k50(.5,.75)
+  ind_v50(.75,.5) ind_k100(1,.75). NOT per-layer/head tuned (that's next if signal).
+
+## RESUME STEPS when sweep completes (analyzer pre-staged):
+1. rsync results/kv_sweep/ from pod (watcher does this). Clear any stale first.
+2. Run scratchpad/analyze_kv.py results/kv_sweep — category×policy gap-closure table.
+3. SANITY GATE (K-graft is NEW): v_only referent must be POSITIVE (~+0.04, paper's
+   30B value — kv_sweep v_only = bit-identical to gap_closure_cat by construction).
+   If v_only referent NEGATIVE/off → K-graft or metric broken, STOP+debug, don't
+   trust K/coupled. (NB: 0.6B self-test showed v_only referent −0.125 = noise, not
+   predictive of 30B.)
+4. KEY QUESTION: does k_only/coupled/independent recover REFERENT > v_only? does
+   independent beat v_only on SENSE? Inspect implausible #s (rule 19).
+5. Record→FINDINGS new F-entry. IF keys help → (a) per-layer tuning of independent
+   (αK,αV) [kv_graft.py supports alpha-dicts+head_map], (b) 27B port (where-V-floored
+   test; kv_graft is 30B-path, needs boundary_probe 27B snapshot port), (c) fold K/V
+   into REPORT.md via Fable conceptual gut-check + Fable readability SUBAGENTS (main
+   loop is Opus-flipped; Fable readability MANDATORY). IF negative → honest 'value is
+   the operative axis' result. Either way: TERMINATE pod lveawgxzfm5xte, report to user.
+
+## VALIDATED THIS PHASE (committed): kv_graft.py (K-graft w/ RoPE re-rotation,
+fp32-exact cosine 0.99999982); kv_sweep.py (V-only bit-identical to baseline). See
+FINDINGS Phase-2 entries. Balance ~$85. Fable = conceptual gut-check + readability,
+always via subagent.
 
 ## PHASE 2 IN PROGRESS — K/V exploration (task 23)
 KEY Q: does KEY-grafting recover REFERENT where value-only floored (27B +0.004)?
