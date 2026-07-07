@@ -496,6 +496,25 @@ def cache_debug_summary(snap: dict[str, Any]) -> dict[str, Any]:
     return {"kind": snap.get("kind")}
 
 
+def graftable_value_layers(new_snap: dict[str, Any], old_snap: dict[str, Any]) -> list[int]:
+    if new_snap["kind"] == "layer_cache":
+        out = []
+        for li, entry in enumerate(new_snap["layers"]):
+            v = entry.get("values")
+            old_v = old_snap["layers"][li].get("values")
+            if v is not None and old_v is not None and v.numel() > 0 and old_v.numel() > 0:
+                out.append(li)
+        return out
+    if new_snap["kind"] == "list_cache":
+        out = []
+        for li, v in enumerate(new_snap["value_cache"]):
+            old_v = old_snap["value_cache"][li]
+            if v is not None and old_v is not None and v.numel() > 0 and old_v.numel() > 0:
+                out.append(li)
+        return out
+    return []
+
+
 def blend_values(
     b_snap: dict[str, Any],
     old_snap: dict[str, Any],
@@ -855,6 +874,7 @@ def run() -> dict[str, Any]:
         )
         if not pairs:
             raise TypeError("no exact summary-token pairs for graft alignment")
+        value_layers = graftable_value_layers(b_probe_snap, old_snap)
         alpha0_probe_snap = blend_values(b_probe_snap, old_snap, pairs, 0.0)
         grafted_probe_snap = blend_values(b_probe_snap, old_snap, pairs, args.alpha)
 
@@ -961,8 +981,12 @@ def run() -> dict[str, Any]:
         result["graft"].update(
             {
                 "available": True,
+                "policy": "V-only summary-token value-cache blend; fresh keys and linear-attention recurrent state preserved",
                 "pairs": len(pairs),
                 "alpha": args.alpha,
+                "changed_value_layers": value_layers,
+                "changed_value_layer_count": len(value_layers),
+                "changed_value_slot_count": len(value_layers) * len(pairs),
                 "cache_old_summary": cache_debug_summary(old_snap),
                 "cache_full_probe": cache_debug_summary(full_probe_snap),
                 "cache_fresh_probe": cache_debug_summary(b_probe_snap),
