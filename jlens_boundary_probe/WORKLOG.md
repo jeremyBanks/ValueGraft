@@ -310,6 +310,27 @@ report for this corrected intervention readout. Older J-lens notes can still
 be used as background and example scouting, but they should not be cited as
 intervention evidence unless explicitly tied to a validated grafted condition.
 
+Follow-up control run added an alpha sweep plus a shifted-value control to the
+same artifact. The forced target and full/fresh/aligned rows are unchanged;
+new optional sequences are `alpha_sweep_sequences` for alpha 0, 0.25, 0.5,
+and 1.0, plus `shifted_grafted_compacted`.
+
+Key control results:
+
+- alpha 0 exactly matches fresh, as before
+- alpha 0.25: no argmax changes; layer-48 closure +0.0019
+- alpha 0.5: no argmax changes; layer-48 closure +0.0129
+- aligned alpha 0.75: one argmax rescue (` inspected`); layer-48 closure
+  +0.0337
+- alpha 1.0: two argmax rescues (` is`, ` inspected`) but layer-48 closure
+  -0.0184
+- shifted alpha 0.75: one argmax rescue (` is`) but layer-48 closure -0.0903
+
+Interpretation: argmax rescues alone are not sufficient evidence of a good
+graft, because the shifted control can rescue a local token while moving the
+internal readout farther from full context. In this one probe, aligned alpha
+0.75 has the best balance of next-token rescue and layer-48 closure.
+
 Any public-facing writeup must separate:
 
 - broad old-vs-fresh J-lens sweeps: diagnostic evidence about state available

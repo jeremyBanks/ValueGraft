@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and summarize a three-state ValueGraft/J-lens boundary probe."""
+"""Validate and summarize a ValueGraft/J-lens boundary probe artifact."""
 
 from __future__ import annotations
 
@@ -298,7 +298,7 @@ def main() -> int:
 
     failures, warnings = validate(data, allow_missing_provenance=args.allow_missing_provenance)
     if failures:
-        print("INVALID three-state probe artifact:", file=sys.stderr)
+        print("INVALID boundary probe artifact:", file=sys.stderr)
         for failure in failures:
             print(f"- {failure}", file=sys.stderr)
         for warning in warnings:
@@ -310,7 +310,7 @@ def main() -> int:
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0
 
-    print("VALID three-state probe artifact")
+    print("VALID boundary probe artifact")
     if warnings:
         for warning in warnings:
             print(f"warning: {warning}")
