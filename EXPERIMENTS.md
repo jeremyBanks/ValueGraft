@@ -38,3 +38,9 @@ C6. Oracle-distribution matching: treat full-context as target, measure每 arm's
 2. A2 story-continuation + B6 contradiction-rate — new realistic task, auto-scored, natural-length eviction. Build + small run.
 3. B9 jlens interpretability — read whether graft actually inserts the concept internally. Uses the existing subdir. Validates mechanism directly.
 4. A4 cross-dependent chains — fixes the "chains too independent" flaw with genuine step-dependency.
+
+## NEXT CONCRETE STEPS (07-07 11:10, ready to run)
+- **B4 category gap-closure** (t1 pod, ~$3, HIGH): per probe, capture TF-logprob of gold continuation under A/B/E, compute (E−B)/(A−B), STRATIFY by sense/referent/stance. Independent judge-free corroboration of F1. Runner: adapt run_tune_hf score() to iterate probes×categories. Stored data has answers not logprobs → needs the run. READY.
+- **A2 story-contradiction**: subagent building src/story_tasks.py now.
+- **B9 jlens**: read jlens_boundary_probe/ + wire concept-presence readout (mechanistic F1 validation).
+- **F1 hardening**: widen A-ceiling sample; strict-RECOVERED robustness cut; 4B category replication (cheap).
