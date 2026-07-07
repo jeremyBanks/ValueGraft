@@ -35,6 +35,10 @@ RSYNC=(rsync -az -e "ssh -i $K -p $PORT -o StrictHostKeyChecking=accept-new")
 "${SSH[@]}" 'apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync git >/dev/null 2>&1; mkdir -p /workspace/jlens_boundary_probe; nvidia-smi --query-gpu=name,memory.total --format=csv,noheader' | tee -a "$LOG"
 
 "${RSYNC[@]}" "$DIR/" "root@$IP:/workspace/jlens_boundary_probe/"
+if [ -f "$ROOT/.huggingface_key" ]; then
+  "${RSYNC[@]}" "$ROOT/.huggingface_key" "root@$IP:/workspace/.huggingface_key"
+  "${SSH[@]}" 'chmod 600 /workspace/.huggingface_key'
+fi
 
 "${SSH[@]}" 'cd /workspace/jlens_boundary_probe && chmod +x job_qwen36_probe.sh && nohup bash job_qwen36_probe.sh > job.log 2>&1 < /dev/null & echo "job pid $!"' | tee -a "$LOG"
 

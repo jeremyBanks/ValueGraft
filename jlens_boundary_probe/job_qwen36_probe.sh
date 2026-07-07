@@ -4,6 +4,11 @@ set -euo pipefail
 cd /workspace/jlens_boundary_probe
 mkdir -p outputs
 
+if [ -f /workspace/.huggingface_key ]; then
+  export HF_TOKEN
+  HF_TOKEN="$(tr -d '[:space:]' < /workspace/.huggingface_key)"
+fi
+
 python3 -m pip install -U pip
 python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub
 python3 -m pip install -U "git+https://github.com/anthropics/jacobian-lens.git"
