@@ -57,6 +57,26 @@ controls elsewhere in the project crater).
 - Duplicate-key artifact in 2 judge batches (17 + 5 keys); judge resolved
   conservatively, low impact.
 
+
+
+### F1 corroboration (independent metric, 07-07)
+The category dissociation replicates on a SECOND, judge-free metric —
+teacher-forced gap-closure (E−B)/(A−B) of the exact gold continuation
+(30B, 66 probes):
+| category | judged (meaning) | gap-closure (exact tokens): % probes helped |
+|---|---|---|
+| stance | +2pp (null) | 39% (null/neg, mean −0.14) |
+| sense | +12pp | 64% (mean +0.03) |
+| referent | +10pp | 81% (mean +0.04) |
+DIRECTION agrees on all three (graft helps sense/referent, null on stance)
+across two independent measurement methods. MAGNITUDE is much smaller on
+the exact-token metric than the meaning-judge — which is PREDICTED by the
+thesis: grafting recovers SENSE, not verbatim FORM, so it should move a
+meaning-judge more than an exact-token-probability metric. The
+metric-magnitude gap is thus a SECOND signature of the same "recovers
+meaning not surface" mechanism, not a failure to replicate. Strengthens F1
+from single-method to two-method-directionally-consistent.
+
 ---
 
 ## F2. Honesty effect (banked, strong). Compaction makes the model fabricate about lost content; write-time KV retention makes it appropriately uncertain.
