@@ -225,10 +225,66 @@ def action_anchor_phrases(target_text: str) -> list[str]:
     return phrases
 
 
+def offset_mapping_for_text(
+    tokenizer: Any, text: str, text_ids: list[int]
+) -> list[tuple[int, int]] | None:
+    try:
+        encoded = tokenizer(
+            text,
+            add_special_tokens=False,
+            return_offsets_mapping=True,
+        )
+    except Exception:
+        return None
+    offsets = encoded.get("offset_mapping")
+    ids = encoded.get("input_ids")
+    if offsets is None or ids is None or list(ids) != text_ids:
+        return None
+    return [(int(start), int(end)) for start, end in offsets]
+
+
+def phrase_char_occurrences(text: str, phrase: str) -> list[tuple[int, int]]:
+    spans = []
+    start = 0
+    while True:
+        found = text.find(phrase, start)
+        if found < 0:
+            return spans
+        spans.append((found, found + len(phrase)))
+        start = found + max(1, len(phrase))
+
+
+def token_positions_for_char_span(
+    offsets: list[tuple[int, int]], char_span: tuple[int, int]
+) -> list[int]:
+    lo, hi = char_span
+    return [
+        pos
+        for pos, (start, end) in enumerate(offsets)
+        if end > lo and start < hi
+    ]
+
+
 def labeled_positions(
-    tokenizer: Any, text_ids: list[int], phrases: list[str]
+    tokenizer: Any, text: str, text_ids: list[int], phrases: list[str]
 ) -> dict[int, list[dict[str, Any]]]:
     labels: dict[int, list[dict[str, Any]]] = {}
+    offsets = offset_mapping_for_text(tokenizer, text, text_ids)
+    if offsets is not None:
+        for phrase in phrases:
+            for char_span in phrase_char_occurrences(text, phrase):
+                positions = token_positions_for_char_span(offsets, char_span)
+                for i, pos in enumerate(positions):
+                    labels.setdefault(pos, []).append(
+                        {
+                            "phrase": phrase,
+                            "token_index_in_phrase": i,
+                            "token": tokenizer.decode([text_ids[pos]]),
+                            "char_span": list(char_span),
+                        }
+                    )
+        return labels
+
     for phrase in phrases:
         phrase_ids = tokenizer(phrase, add_special_tokens=False).input_ids
         start = find_subsequence(text_ids, phrase_ids)
@@ -246,9 +302,28 @@ def labeled_positions(
 
 
 def phrase_spans(
-    tokenizer: Any, text_ids: list[int], phrases: list[str]
+    tokenizer: Any, text: str, text_ids: list[int], phrases: list[str]
 ) -> list[dict[str, Any]]:
     spans = []
+    offsets = offset_mapping_for_text(tokenizer, text, text_ids)
+    if offsets is not None:
+        for phrase in phrases:
+            for char_span in phrase_char_occurrences(text, phrase):
+                positions = token_positions_for_char_span(offsets, char_span)
+                if not positions:
+                    continue
+                spans.append(
+                    {
+                        "phrase": phrase,
+                        "start": min(positions),
+                        "end": max(positions) + 1,
+                        "n_tokens": len(positions),
+                        "tokens": [tokenizer.decode([text_ids[pos]]) for pos in positions],
+                        "char_span": list(char_span),
+                    }
+                )
+        return spans
+
     for phrase in phrases:
         phrase_ids = tokenizer(phrase, add_special_tokens=False).input_ids
         start = find_subsequence(text_ids, phrase_ids)
@@ -390,8 +465,8 @@ def scan_next_action(
         top_k,
     )
     anchors = action_anchor_phrases(target_text)
-    labels_by_rel = labeled_positions(tokenizer, target_ids, anchors)
-    spans = phrase_spans(tokenizer, target_ids, anchors)
+    labels_by_rel = labeled_positions(tokenizer, target_text, target_ids, anchors)
+    spans = phrase_spans(tokenizer, target_text, target_ids, anchors)
     paired = [
         summarize_token_row(
             tokenizer,
