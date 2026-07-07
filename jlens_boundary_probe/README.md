@@ -45,3 +45,9 @@ The script writes one JSON artifact containing:
 - whether standard K/V graft sampling was available
 
 This is mechanistic telemetry, not a scored behavioral result.
+
+## Current handoff
+
+Start with `WORKLOG.md` for the current state, run discipline, artifact map,
+and reporting cautions. The broad all-token/all-layer sweep is documented in
+`full_layer_sweep_handoff.md`, with analysis in `full_layer_sweep_report.md`.
