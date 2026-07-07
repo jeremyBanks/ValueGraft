@@ -148,10 +148,55 @@ number. For `R3`, the full-context path surfaces `latest`, `official`,
 `newest`, `current`, and `live`; the fresh-summary path mostly decodes the
 digit or generic identifier shape.
 
-This suggests a natural next probe for SWE-style tasks: align on tokens in the
+This suggested a natural next probe for SWE-style tasks: align on tokens in the
 true next action, such as the file path, tool name, function call, branch name,
-or line range, and ask whether write-time state makes the action token decode
+or line range, and ask whether full-context state makes the action token decode
 more like its operational role.
+
+## SWE-Gym Next Actions
+
+We then tried the same readout on a few real SWE-Gym/OpenHands-style
+trajectories. This is still qualitative: no agent loop, no generated behavior,
+just teacher forcing the true next assistant action after two prompts.
+
+The method:
+
+1. Reload a trajectory.
+2. Cut before an assistant action.
+3. Generate a compact state summary from the pre-action context.
+4. Build a compacted prompt from the summary plus a recent tail.
+5. Teacher-force the exact next action after the full prompt and after the
+   compacted prompt.
+6. Lens-read every action token and aggregate important spans such as tool
+   names, file paths, commands, and line ranges.
+
+Three small examples:
+
+- getmoto: `str_replace_editor` should `view`
+  `/workspace/getmoto__moto__4.1/moto/rds/responses.py` at `[584, 600]`.
+- Dask: `execute_bash` should run
+  `grep -n 'normalize_token' /workspace/dask__dask__2022.6/dask/base.py`.
+- MONAI: `execute_bash` should run
+  `python3 /workspace/Project-MONAI__MONAI__0.8/reproduce_error.py`.
+
+The readout does find the operational spans. In the getmoto case, span-level
+divergence lands on `str_replace_editor`, the exact `responses.py` path, and
+the `[584, 600]` range. In the Dask case, it lands on `execute_bash`, the
+`grep -n 'normalize_token' .../base.py` command, and the `base.py` path. In the
+MONAI case, it lands on the `python3` command and `reproduce_error.py` path.
+
+This is noisier than the Pokemon and block-party examples. Tool-call syntax,
+XML-ish wrappers, file paths, and subword splits create many uninteresting
+high-divergence punctuation tokens. The fix is to report phrase spans rather
+than raw token ranks. Once grouped by span, the examples are much easier to
+read.
+
+The other important lesson is summary control. SWE-Gym trajectories strongly
+prime the model to take an action. When asked to summarize, Qwen3.6 sometimes
+started writing the next tool call instead. The probe now uses a stronger
+no-tool summary request, pre-fills `Summary:`, and trims generated text at
+tool/chat markers. Without that guard, the compacted side can accidentally
+contain the next action, which contaminates the comparison.
 
 ## Why This Is Useful
 
@@ -169,23 +214,18 @@ That is a qualitative complement to the quantitative arms. The metrics tell us
 whether grafting helps a task. The readouts help us see what kind of information
 may be available to graft.
 
-## How To Use This Next
+## What To Use Next
 
-The most valuable next application is not a full agent loop. It is a teacher
-forced next-action probe:
+The next version should make the SWE-Gym probe span-first from the start:
 
-1. Take an existing SWE-style trajectory.
-2. Cut it at the same point used by the compaction experiment.
-3. Generate or reuse the compact summary.
-4. Teacher-force the true next assistant action under both the full-context and
-   fresh-summary paths.
-5. Run the lens over the action tokens, especially file paths, tool names,
-   command names, branch names, and line numbers.
-6. Rank tokens by divergence and inspect whether the full-context path exposes
-   task-specific operational meaning that the fresh-summary path loses.
+- Generate or load a compact summary with safeguards against tool-call leakage.
+- Extract action spans for tool names, command names, file paths, symbols, and
+  line ranges.
+- Report one compact comparison per span.
+- Keep raw token rows as drill-down data, not as the main presentation.
 
-That would connect this qualitative method directly to the strongest use case:
-not whether the model can remember a trivia label, but whether compacted state
+That connects the qualitative method directly to the strongest use case: not
+whether the model can remember a trivia label, but whether compacted state
 keeps enough situated meaning to choose the next useful coding move.
 
 ## Interpretation Boundary
