@@ -231,3 +231,25 @@ TESTABLE PREDICTION: target morphology MODERATES K-graft utility (keys help for
 short identifiers, inert for semantic phrases). WARRANTED: a focused 30B run —
 add a short-identifier target lane, pre-register K/V/coupled sweep, report FULL
 policy surface (not best-of) — before ANY general claim about keys.
+
+## Lens free-divergence result — clean pre-registered NEGATIVE (27B, N=43) — 07-07
+The free-generation fix (remove teacher-forcing pin → let A/B/E freely generate,
+find fork, lens at fork) did NOT surface a vivid internal exhibit.
+THREE-BUCKET: FORK_TOWARD_A = 0, SUBTLE_LEAN = 17, DISCONFIRMING = 26.
+ZERO cases show a clean fork toward the correct concept with decisive margin +
+decoding stability. (referent: 0/9/12; sense: 0/8/14.) Because the DISCONFIRMING
+bucket was PRE-REGISTERED (no fork, OR fork-away, OR right-lean doesn't survive
+3 decodings), the 26 can't be relabeled "subtle" — this is a genuine null, not a
+heads-I-win. CONCLUSION: even the sharper free-gen method finds no dramatic
+internal fork; the effect is genuinely subtle at the token level. The paper's
+existing honest framing (lens = low-resolution aggregate corroborator, no vivid
+per-example figure, not manufactured) STANDS and is STRENGTHENED — we tried the
+method built to reveal it and it didn't appear. (Fable's pre-registered
+disconfirming bucket is what makes this honest not spun.)
+
+## Ops note (incident 28 addendum): process-gone + GPU-freed = COMPLETION *or* crash
+Distinguish before diagnosing: check (a) output file exists, (b) log reached the
+LAST expected item — if both, it FINISHED (terminate idle pod); only if neither,
+it crashed. I mis-called a completed run as "crashed, no output" by reading
+proc-dead as failure. RULE 26 addendum: on proc-gone, check finished-vs-crashed
+explicitly; a done job means terminate the now-idle pod promptly.
