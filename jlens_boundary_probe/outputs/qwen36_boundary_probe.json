@@ -1,0 +1,1325 @@
+{
+  "model": "Qwen/Qwen3.6-27B",
+  "lens": {
+    "repo": "neuronpedia/jacobian-lens",
+    "filename": "qwen3.6-27b/jlens/Salesforce-wikitext/Qwen3.6-27B_jacobian_lens_n1000.pt",
+    "revision": "qwen-n1000",
+    "source_layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62
+    ],
+    "sampled_layers": [
+      16,
+      32,
+      48,
+      62
+    ]
+  },
+  "summary_text": "Task: Fix `rivermark` package. Domain: River management (bank = river bank, not financial).\nCurrent Issue: Failing test in `tests/test_sort.py` regarding driftwood sorting by distance from the waterline.\nRoot Cause: In `src/rivermark/sort.py`, wet driftwood is incorrectly treated as lower priority.\nRequirement: Wet driftwood must be inspected first (higher priority).\nNext Step: Update the priority key logic in `",
+  "token_counts": {
+    "conversation": 216,
+    "summary_request_context": 285,
+    "summary_tokens": 96,
+    "old_with_summary": 381,
+    "fresh_compacted": 202
+  },
+  "states": {
+    "old_context_final_token": [
+      {
+        "position": 215,
+        "token_id": 198,
+        "token": "\n",
+        "layers": {
+          "16": [
+            {
+              "token_id": 4558,
+              "token": " \n\n",
+              "score": 10.875
+            },
+            {
+              "token_id": 23110,
+              "token": " whilst",
+              "score": 10.6875
+            },
+            {
+              "token_id": 49110,
+              "token": " tasked",
+              "score": 10.5625
+            },
+            {
+              "token_id": 73865,
+              "token": " leveraging",
+              "score": 10.5
+            },
+            {
+              "token_id": 85188,
+              "token": " foundational",
+              "score": 10.375
+            },
+            {
+              "token_id": 94513,
+              "token": " impactful",
+              "score": 10.3125
+            },
+            {
+              "token_id": 93336,
+              "token": "Whilst",
+              "score": 10.3125
+            },
+            {
+              "token_id": 62951,
+              "token": " contextual",
+              "score": 10.25
+            }
+          ],
+          "32": [
+            {
+              "token_id": 271,
+              "token": "\n\n",
+              "score": 31.375
+            },
+            {
+              "token_id": 248044,
+              "token": "<|endoftext|>",
+              "score": 22.875
+            },
+            {
+              "token_id": 4558,
+              "token": " \n\n",
+              "score": 22.625
+            },
+            {
+              "token_id": 18050,
+              "token": "  \n\n",
+              "score": 22.5
+            },
+            {
+              "token_id": 4444,
+              "token": " …",
+              "score": 20.375
+            },
+            {
+              "token_id": 2423,
+              "token": " ...",
+              "score": 19.375
+            },
+            {
+              "token_id": 1873,
+              "token": "…",
+              "score": 19.25
+            },
+            {
+              "token_id": 1076,
+              "token": "...",
+              "score": 19.0
+            }
+          ],
+          "48": [
+            {
+              "token_id": 9321,
+              "token": " Context",
+              "score": 12.625
+            },
+            {
+              "token_id": 4960,
+              "token": "：",
+              "score": 12.375
+            },
+            {
+              "token_id": 2193,
+              "token": " context",
+              "score": 12.125
+            },
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 11.8125
+            },
+            {
+              "token_id": 248046,
+              "token": "<|im_end|>",
+              "score": 11.625
+            },
+            {
+              "token_id": 18050,
+              "token": "  \n\n",
+              "score": 11.4375
+            },
+            {
+              "token_id": 271,
+              "token": "\n\n",
+              "score": 11.0
+            },
+            {
+              "token_id": 4558,
+              "token": " \n\n",
+              "score": 10.75
+            }
+          ],
+          "62": [
+            {
+              "token_id": 248045,
+              "token": "<|im_start|>",
+              "score": 15.75
+            },
+            {
+              "token_id": 16412,
+              "token": " Package",
+              "score": 15.25
+            },
+            {
+              "token_id": 12722,
+              "token": "Package",
+              "score": 13.0625
+            },
+            {
+              "token_id": 6129,
+              "token": " package",
+              "score": 13.0625
+            },
+            {
+              "token_id": 5606,
+              "token": " Project",
+              "score": 12.75
+            },
+            {
+              "token_id": 7601,
+              "token": "Project",
+              "score": 11.125
+            },
+            {
+              "token_id": 1662,
+              "token": "package",
+              "score": 11.125
+            },
+            {
+              "token_id": 42668,
+              "token": "-package",
+              "score": 10.75
+            }
+          ]
+        }
+      }
+    ],
+    "write_time_summary": [
+      {
+        "position": 285,
+        "token_id": 6065,
+        "token": "Task",
+        "layers": {
+          "16": [
+            {
+              "token_id": 34412,
+              "token": " Duty",
+              "score": 9.9375
+            },
+            {
+              "token_id": 145834,
+              "token": "难于",
+              "score": 9.3125
+            },
+            {
+              "token_id": 117247,
+              "token": "性地",
+              "score": 9.1875
+            },
+            {
+              "token_id": 45947,
+              "token": "(Task",
+              "score": 9.0625
+            },
+            {
+              "token_id": 210871,
+              "token": "取り組",
+              "score": 9.0
+            },
+            {
+              "token_id": 5261,
+              "token": " Task",
+              "score": 8.875
+            },
+            {
+              "token_id": 93336,
+              "token": "Whilst",
+              "score": 8.75
+            },
+            {
+              "token_id": 3518,
+              "token": "fully",
+              "score": 8.6875
+            }
+          ],
+          "32": [
+            {
+              "token_id": 535,
+              "token": " :",
+              "score": 13.625
+            },
+            {
+              "token_id": 5261,
+              "token": " Task",
+              "score": 12.3125
+            },
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 12.1875
+            },
+            {
+              "token_id": 944,
+              "token": " work",
+              "score": 12.125
+            },
+            {
+              "token_id": 3274,
+              "token": " task",
+              "score": 11.375
+            },
+            {
+              "token_id": 1116,
+              "token": " ,",
+              "score": 11.25
+            },
+            {
+              "token_id": 4257,
+              "token": " development",
+              "score": 11.1875
+            },
+            {
+              "token_id": 13789,
+              "token": " ongoing",
+              "score": 11.0
+            }
+          ],
+          "48": [
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 18.75
+            },
+            {
+              "token_id": 5261,
+              "token": " Task",
+              "score": 16.0
+            },
+            {
+              "token_id": 38622,
+              "token": " Goal",
+              "score": 15.75
+            },
+            {
+              "token_id": 6964,
+              "token": ":\\",
+              "score": 15.625
+            },
+            {
+              "token_id": 44920,
+              "token": " Tasks",
+              "score": 15.375
+            },
+            {
+              "token_id": 52372,
+              "token": " Goals",
+              "score": 14.625
+            },
+            {
+              "token_id": 4960,
+              "token": "：",
+              "score": 14.4375
+            },
+            {
+              "token_id": 8806,
+              "token": " tasks",
+              "score": 13.9375
+            }
+          ],
+          "62": [
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 24.375
+            },
+            {
+              "token_id": 19114,
+              "token": " Fix",
+              "score": 13.6875
+            },
+            {
+              "token_id": 4960,
+              "token": "：",
+              "score": 12.9375
+            },
+            {
+              "token_id": 535,
+              "token": " :",
+              "score": 12.8125
+            },
+            {
+              "token_id": 9321,
+              "token": " Context",
+              "score": 11.8125
+            },
+            {
+              "token_id": 10625,
+              "token": ":-",
+              "score": 11.6875
+            },
+            {
+              "token_id": 39876,
+              "token": ":,",
+              "score": 11.625
+            },
+            {
+              "token_id": 67491,
+              "token": ":F",
+              "score": 11.5625
+            }
+          ]
+        }
+      },
+      {
+        "position": 333,
+        "token_id": 8179,
+        "token": "Root",
+        "layers": {
+          "16": [
+            {
+              "token_id": 82,
+              "token": "s",
+              "score": 25.375
+            },
+            {
+              "token_id": 287,
+              "token": "es",
+              "score": 13.75
+            },
+            {
+              "token_id": 290,
+              "token": "ed",
+              "score": 13.6875
+            },
+            {
+              "token_id": 286,
+              "token": "ing",
+              "score": 13.5
+            },
+            {
+              "token_id": 2022,
+              "token": "ness",
+              "score": 13.0
+            },
+            {
+              "token_id": 88,
+              "token": "y",
+              "score": 12.875
+            },
+            {
+              "token_id": 46044,
+              "token": "ات",
+              "score": 12.4375
+            },
+            {
+              "token_id": 1657,
+              "token": "less",
+              "score": 12.3125
+            }
+          ],
+          "32": [
+            {
+              "token_id": 82,
+              "token": "s",
+              "score": 13.25
+            },
+            {
+              "token_id": 4562,
+              "token": " issues",
+              "score": 11.9375
+            },
+            {
+              "token_id": 18284,
+              "token": " Root",
+              "score": 11.8125
+            },
+            {
+              "token_id": 7652,
+              "token": " failure",
+              "score": 11.625
+            },
+            {
+              "token_id": 4257,
+              "token": " development",
+              "score": 11.5
+            },
+            {
+              "token_id": 3377,
+              "token": " problem",
+              "score": 11.4375
+            },
+            {
+              "token_id": 2450,
+              "token": " source",
+              "score": 11.4375
+            },
+            {
+              "token_id": 8548,
+              "token": " investigation",
+              "score": 11.375
+            }
+          ],
+          "48": [
+            {
+              "token_id": 93007,
+              "token": " Identified",
+              "score": 16.375
+            },
+            {
+              "token_id": 42874,
+              "token": " Cause",
+              "score": 15.375
+            },
+            {
+              "token_id": 91094,
+              "token": " Diagnosis",
+              "score": 14.8125
+            },
+            {
+              "token_id": 97494,
+              "token": "原因",
+              "score": 14.375
+            },
+            {
+              "token_id": 137661,
+              "token": "原因的",
+              "score": 14.1875
+            },
+            {
+              "token_id": 18284,
+              "token": " Root",
+              "score": 13.875
+            },
+            {
+              "token_id": 70523,
+              "token": " Causes",
+              "score": 13.875
+            },
+            {
+              "token_id": 142447,
+              "token": "发现的问题",
+              "score": 13.5625
+            }
+          ],
+          "62": [
+            {
+              "token_id": 42874,
+              "token": " Cause",
+              "score": 24.0
+            },
+            {
+              "token_id": 5073,
+              "token": " cause",
+              "score": 16.625
+            },
+            {
+              "token_id": 70523,
+              "token": " Causes",
+              "score": 15.375
+            },
+            {
+              "token_id": 58860,
+              "token": "Cause",
+              "score": 14.8125
+            },
+            {
+              "token_id": 93007,
+              "token": " Identified",
+              "score": 14.4375
+            },
+            {
+              "token_id": 1508,
+              "token": "cause",
+              "score": 13.8125
+            },
+            {
+              "token_id": 11962,
+              "token": " Found",
+              "score": 11.5
+            },
+            {
+              "token_id": 9574,
+              "token": " Location",
+              "score": 11.4375
+            }
+          ]
+        }
+      },
+      {
+        "position": 380,
+        "token_id": 1510,
+        "token": " `",
+        "layers": {
+          "16": [
+            {
+              "token_id": 1510,
+              "token": " `",
+              "score": 18.375
+            },
+            {
+              "token_id": 5628,
+              "token": "(`",
+              "score": 16.0
+            },
+            {
+              "token_id": 63,
+              "token": "`",
+              "score": 15.1875
+            },
+            {
+              "token_id": 18173,
+              "token": ":`",
+              "score": 14.9375
+            },
+            {
+              "token_id": 21559,
+              "token": "=`",
+              "score": 14.0
+            },
+            {
+              "token_id": 88461,
+              "token": " `_",
+              "score": 13.75
+            },
+            {
+              "token_id": 82,
+              "token": "s",
+              "score": 13.625
+            },
+            {
+              "token_id": 5368,
+              "token": "}`",
+              "score": 13.5625
+            }
+          ],
+          "32": [
+            {
+              "token_id": 248044,
+              "token": "<|endoftext|>",
+              "score": 16.75
+            },
+            {
+              "token_id": 1510,
+              "token": " `",
+              "score": 16.0
+            },
+            {
+              "token_id": 554,
+              "token": " @",
+              "score": 14.8125
+            },
+            {
+              "token_id": 641,
+              "token": " .",
+              "score": 13.625
+            },
+            {
+              "token_id": 2423,
+              "token": " ...",
+              "score": 12.9375
+            },
+            {
+              "token_id": 1116,
+              "token": " ,",
+              "score": 12.5
+            },
+            {
+              "token_id": 359,
+              "token": " '",
+              "score": 12.4375
+            },
+            {
+              "token_id": 26533,
+              "token": " subsequently",
+              "score": 12.375
+            }
+          ],
+          "48": [
+            {
+              "token_id": 98118,
+              "token": "然后",
+              "score": 15.0
+            },
+            {
+              "token_id": 172642,
+              "token": " затем",
+              "score": 14.25
+            },
+            {
+              "token_id": 23362,
+              "token": " THEN",
+              "score": 13.125
+            },
+            {
+              "token_id": 108594,
+              "token": "随后",
+              "score": 13.125
+            },
+            {
+              "token_id": 109296,
+              "token": "然後",
+              "score": 12.9375
+            },
+            {
+              "token_id": 213503,
+              "token": " سپس",
+              "score": 12.8125
+            },
+            {
+              "token_id": 110612,
+              "token": "然后再",
+              "score": 12.5625
+            },
+            {
+              "token_id": 86478,
+              "token": "THEN",
+              "score": 12.5
+            }
+          ],
+          "62": [
+            {
+              "token_id": 2212,
+              "token": " src",
+              "score": 14.6875
+            },
+            {
+              "token_id": 3431,
+              "token": "src",
+              "score": 14.375
+            },
+            {
+              "token_id": 13050,
+              "token": "/src",
+              "score": 9.9375
+            },
+            {
+              "token_id": 54135,
+              "token": "SRC",
+              "score": 9.0
+            },
+            {
+              "token_id": 14258,
+              "token": ".src",
+              "score": 8.6875
+            },
+            {
+              "token_id": 14280,
+              "token": "(src",
+              "score": 8.3125
+            },
+            {
+              "token_id": 3282,
+              "token": "then",
+              "score": 8.3125
+            },
+            {
+              "token_id": 15795,
+              "token": "_src",
+              "score": 8.25
+            }
+          ]
+        }
+      }
+    ],
+    "fresh_compacted_summary": [
+      {
+        "position": 45,
+        "token_id": 6065,
+        "token": "Task",
+        "layers": {
+          "16": [
+            {
+              "token_id": 90003,
+              "token": "/todo",
+              "score": 9.5625
+            },
+            {
+              "token_id": 34412,
+              "token": " Duty",
+              "score": 8.875
+            },
+            {
+              "token_id": 45947,
+              "token": "(Task",
+              "score": 8.875
+            },
+            {
+              "token_id": 63932,
+              "token": " initialise",
+              "score": 8.6875
+            },
+            {
+              "token_id": 56231,
+              "token": "/task",
+              "score": 8.3125
+            },
+            {
+              "token_id": 52934,
+              "token": " Toolkit",
+              "score": 8.25
+            },
+            {
+              "token_id": 46603,
+              "token": "ishlist",
+              "score": 8.125
+            },
+            {
+              "token_id": 41148,
+              "token": "ourcing",
+              "score": 8.125
+            }
+          ],
+          "32": [
+            {
+              "token_id": 5261,
+              "token": " Task",
+              "score": 11.25
+            },
+            {
+              "token_id": 44920,
+              "token": " Tasks",
+              "score": 10.5625
+            },
+            {
+              "token_id": 56231,
+              "token": "/task",
+              "score": 10.4375
+            },
+            {
+              "token_id": 184997,
+              "token": " **:",
+              "score": 10.0
+            },
+            {
+              "token_id": 49110,
+              "token": " tasked",
+              "score": 9.6875
+            },
+            {
+              "token_id": 3274,
+              "token": " task",
+              "score": 9.625
+            },
+            {
+              "token_id": 205263,
+              "token": " **:**",
+              "score": 9.5625
+            },
+            {
+              "token_id": 58144,
+              "token": " Workflow",
+              "score": 9.5
+            }
+          ],
+          "48": [
+            {
+              "token_id": 31639,
+              "token": " progression",
+              "score": 13.5
+            },
+            {
+              "token_id": 4936,
+              "token": " progress",
+              "score": 13.3125
+            },
+            {
+              "token_id": 15561,
+              "token": " Progress",
+              "score": 12.625
+            },
+            {
+              "token_id": 2763,
+              "token": " initial",
+              "score": 12.1875
+            },
+            {
+              "token_id": 4960,
+              "token": "：",
+              "score": 12.125
+            },
+            {
+              "token_id": 3727,
+              "token": " started",
+              "score": 11.9375
+            },
+            {
+              "token_id": 3991,
+              "token": " Initial",
+              "score": 11.9375
+            },
+            {
+              "token_id": 34626,
+              "token": " Started",
+              "score": 11.875
+            }
+          ],
+          "62": [
+            {
+              "token_id": 25,
+              "token": ":",
+              "score": 18.625
+            },
+            {
+              "token_id": 15561,
+              "token": " Progress",
+              "score": 18.625
+            },
+            {
+              "token_id": 20858,
+              "token": " Summary",
+              "score": 16.375
+            },
+            {
+              "token_id": 33655,
+              "token": " Overview",
+              "score": 15.75
+            },
+            {
+              "token_id": 7419,
+              "token": " Description",
+              "score": 15.5625
+            },
+            {
+              "token_id": 10776,
+              "token": " History",
+              "score": 15.25
+            },
+            {
+              "token_id": 58144,
+              "token": " Workflow",
+              "score": 14.9375
+            },
+            {
+              "token_id": 4936,
+              "token": " progress",
+              "score": 14.9375
+            }
+          ]
+        }
+      },
+      {
+        "position": 93,
+        "token_id": 8179,
+        "token": "Root",
+        "layers": {
+          "16": [
+            {
+              "token_id": 82,
+              "token": "s",
+              "score": 25.0
+            },
+            {
+              "token_id": 2022,
+              "token": "ness",
+              "score": 13.8125
+            },
+            {
+              "token_id": 286,
+              "token": "ing",
+              "score": 13.3125
+            },
+            {
+              "token_id": 290,
+              "token": "ed",
+              "score": 13.125
+            },
+            {
+              "token_id": 287,
+              "token": "es",
+              "score": 13.0625
+            },
+            {
+              "token_id": 94458,
+              "token": "sense",
+              "score": 12.4375
+            },
+            {
+              "token_id": 46044,
+              "token": "ات",
+              "score": 12.4375
+            },
+            {
+              "token_id": 1657,
+              "token": "less",
+              "score": 12.4375
+            }
+          ],
+          "32": [
+            {
+              "token_id": 10924,
+              "token": " crisis",
+              "score": 8.9375
+            },
+            {
+              "token_id": 7652,
+              "token": " failure",
+              "score": 8.8125
+            },
+            {
+              "token_id": 82,
+              "token": "s",
+              "score": 8.6875
+            },
+            {
+              "token_id": 54087,
+              "token": "‑",
+              "score": 8.625
+            },
+            {
+              "token_id": 49406,
+              "token": " vulnerabilities",
+              "score": 8.625
+            },
+            {
+              "token_id": 18284,
+              "token": " Root",
+              "score": 8.5
+            },
+            {
+              "token_id": 3377,
+              "token": " problem",
+              "score": 8.25
+            },
+            {
+              "token_id": 26946,
+              "token": " failures",
+              "score": 8.0625
+            }
+          ],
+          "48": [
+            {
+              "token_id": 10782,
+              "token": " discovered",
+              "score": 14.625
+            },
+            {
+              "token_id": 18284,
+              "token": " Root",
+              "score": 13.625
+            },
+            {
+              "token_id": 22267,
+              "token": " diagnosis",
+              "score": 13.0
+            },
+            {
+              "token_id": 42874,
+              "token": " Cause",
+              "score": 12.9375
+            },
+            {
+              "token_id": 17789,
+              "token": " discovery",
+              "score": 12.9375
+            },
+            {
+              "token_id": 27670,
+              "token": " diagnosed",
+              "score": 12.8125
+            },
+            {
+              "token_id": 5787,
+              "token": " errors",
+              "score": 12.375
+            },
+            {
+              "token_id": 69625,
+              "token": "/root",
+              "score": 12.25
+            }
+          ],
+          "62": [
+            {
+              "token_id": 42874,
+              "token": " Cause",
+              "score": 22.0
+            },
+            {
+              "token_id": 5073,
+              "token": " cause",
+              "score": 18.0
+            },
+            {
+              "token_id": 70523,
+              "token": " Causes",
+              "score": 16.125
+            },
+            {
+              "token_id": 58860,
+              "token": "Cause",
+              "score": 14.4375
+            },
+            {
+              "token_id": 21397,
+              "token": " Problem",
+              "score": 13.5
+            },
+            {
+              "token_id": 10814,
+              "token": " causes",
+              "score": 13.25
+            },
+            {
+              "token_id": 24425,
+              "token": " Issue",
+              "score": 12.75
+            },
+            {
+              "token_id": 17775,
+              "token": " Analysis",
+              "score": 12.3125
+            }
+          ]
+        }
+      },
+      {
+        "position": 140,
+        "token_id": 1510,
+        "token": " `",
+        "layers": {
+          "16": [
+            {
+              "token_id": 1510,
+              "token": " `",
+              "score": 19.375
+            },
+            {
+              "token_id": 5628,
+              "token": "(`",
+              "score": 17.0
+            },
+            {
+              "token_id": 63,
+              "token": "`",
+              "score": 16.625
+            },
+            {
+              "token_id": 18173,
+              "token": ":`",
+              "score": 15.875
+            },
+            {
+              "token_id": 88461,
+              "token": " `_",
+              "score": 15.8125
+            },
+            {
+              "token_id": 82,
+              "token": "s",
+              "score": 15.3125
+            },
+            {
+              "token_id": 88259,
+              "token": " `\\",
+              "score": 14.5625
+            },
+            {
+              "token_id": 59327,
+              "token": " `%",
+              "score": 14.375
+            }
+          ],
+          "32": [
+            {
+              "token_id": 29739,
+              "token": " ____",
+              "score": 19.25
+            },
+            {
+              "token_id": 2062,
+              "token": "____",
+              "score": 18.375
+            },
+            {
+              "token_id": 7201,
+              "token": " ___",
+              "score": 16.875
+            },
+            {
+              "token_id": 1259,
+              "token": " __",
+              "score": 16.875
+            },
+            {
+              "token_id": 31586,
+              "token": " ______",
+              "score": 16.625
+            },
+            {
+              "token_id": 5785,
+              "token": "___",
+              "score": 16.125
+            },
+            {
+              "token_id": 4558,
+              "token": " \n\n",
+              "score": 16.0
+            },
+            {
+              "token_id": 63668,
+              "token": " _____",
+              "score": 15.5625
+            }
+          ],
+          "48": [
+            {
+              "token_id": 1103,
+              "token": " list",
+              "score": 12.8125
+            },
+            {
+              "token_id": 88461,
+              "token": " `_",
+              "score": 11.75
+            },
+            {
+              "token_id": 10300,
+              "token": " sorted",
+              "score": 11.3125
+            },
+            {
+              "token_id": 101831,
+              "token": "列表",
+              "score": 11.25
+            },
+            {
+              "token_id": 59049,
+              "token": " [{'",
+              "score": 11.125
+            },
+            {
+              "token_id": 92243,
+              "token": " \\`",
+              "score": 11.0625
+            },
+            {
+              "token_id": 74988,
+              "token": " `[",
+              "score": 11.0
+            },
+            {
+              "token_id": 27355,
+              "token": " sorting",
+              "score": 10.8125
+            }
+          ],
+          "62": [
+            {
+              "token_id": 6646,
+              "token": "sort",
+              "score": 19.0
+            },
+            {
+              "token_id": 3269,
+              "token": " sort",
+              "score": 16.875
+            },
+            {
+              "token_id": 3431,
+              "token": "src",
+              "score": 16.125
+            },
+            {
+              "token_id": 9927,
+              "token": "Sort",
+              "score": 15.625
+            },
+            {
+              "token_id": 447,
+              "token": "get",
+              "score": 15.5625
+            },
+            {
+              "token_id": 15495,
+              "token": " Sort",
+              "score": 14.875
+            },
+            {
+              "token_id": 2212,
+              "token": " src",
+              "score": 14.5625
+            },
+            {
+              "token_id": 17885,
+              "token": "_sort",
+              "score": 14.4375
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "graft": {
+    "attempted": true,
+    "available": false,
+    "skip_reason": "TypeError: cache layer lacks .keys/.values; standard K/V snapshot unavailable"
+  }
+}

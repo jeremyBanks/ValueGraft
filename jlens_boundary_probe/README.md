@@ -1,0 +1,47 @@
+# J-lens Boundary Probe Prototype
+
+This directory is an isolated prototype for adding narrow J-lens sampling
+around a compaction boundary. It is intentionally separate from the live
+serving shim and experiment runners.
+
+Nothing here is meant to change the current experiment protocol. The goal is
+to answer a narrower engineering question: can we capture small top-k
+J-space readouts at a few boundary states without recording full telemetry?
+
+## Boundary states
+
+`boundary_probe.py` samples:
+
+1. `old_context_final_token`: the final token of the original conversation
+   before asking for a summary.
+2. `write_time_summary`: selected summary tokens in the old-context rendering
+   that produced the summary.
+3. `fresh_compacted_summary`: the same summary text re-encoded in a compacted
+   context note.
+4. `grafted_post_token`: optional. If the loaded model exposes standard
+   per-layer K/V tensors, value-graft the compacted cache and sample the first
+   generated token after that graft has affected attention.
+
+For Qwen3.6-27B, the first three states are the realistic smoke path because
+the model is a newer hybrid architecture. The script detects whether standard
+K/V grafting is available and records a structured skip reason if not.
+
+## Files
+
+- `boundary_probe.py`: standalone sampler.
+- `job_qwen36_probe.sh`: pod-side smoke job for Qwen3.6-27B plus the
+  pre-fitted Neuronpedia/Anthropic J-lens.
+- `launch_probe_pod.sh`: optional RunPod launcher that keeps its state/logs in
+  this directory.
+
+## Expected output
+
+The script writes one JSON artifact containing:
+
+- model and lens metadata
+- summary text
+- sampled token positions
+- top-k token scores per state, sampled layer, and sampled position
+- whether standard K/V graft sampling was available
+
+This is mechanistic telemetry, not a scored behavioral result.
