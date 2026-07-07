@@ -407,12 +407,14 @@ formats: in the write-time path, compact labels often decode toward their
 situated role in the original conversation; in the fresh-summary path, the same
 visible token often decodes toward ordinary lexical priors.
 
-Examples:
-
-The tables below show the intended reading format. The visible text is the text
-available to both paths. The two readout columns are top vocabulary items from
-the same anchored token under write-time versus fresh encoding. They should be
-read as a noisy lens view, not as generated answers.
+The important comparison is not whether the summary text contains the right
+words. In these examples it does. The comparison is whether the cached state
+for those words still carries the private interpretation established by the old
+conversation. The tables below therefore include the visible text, the two
+readout columns, and the human interpretation of the contrast. The readout
+columns are top vocabulary items from the same anchored token under write-time
+versus fresh encoding. They should be read as a noisy lens view, not as
+generated answers.
 
 **Pokemon planning summary.** The old conversation establishes several private
 labels: `Vacuum` is a Zigzagoon with Pickup; `Dex` is a person/trade obligation,
@@ -425,8 +427,7 @@ not a Pokedex progress tracker. The summary text says:
   was for rain support.
 ```
 
-Matched-wrapper J-lens readouts from
-`jlens_boundary_probe/pokemon_readout_notes.md`:
+Matched-wrapper J-lens readouts from the Pokemon notes:
 
 | Anchor token | Write-time readout | Fresh-summary readout | Human reading |
 | --- | --- | --- | --- |
@@ -450,8 +451,7 @@ current, and `Crane` is a stage-rental company. The summary text says:
   on Saturday; their driver calls Robin, but Mateo and Jules unload.
 ```
 
-Matched-wrapper J-lens readouts from
-`jlens_boundary_probe/plain_conversation_readout_notes.md`:
+Matched-wrapper J-lens readouts from the block-party notes:
 
 | Anchor token | Write-time readout | Fresh-summary readout | Human reading |
 | --- | --- | --- | --- |
@@ -479,6 +479,12 @@ The span-level probe finds the operational objects rather than only punctuation:
 divergence 0.407. This is not as readable as `Vacuum` or `Maple`, but it shows
 that the same readout method can be aimed at the practical tokens in a coding
 agent trajectory: tool name, command, file path, and line range.
+
+The raw artifacts for these qualitative examples are
+`jlens_boundary_probe/pokemon_readout_notes.md`,
+`jlens_boundary_probe/plain_conversation_readout_notes.md`, and
+`jlens_boundary_probe/swegym_next_action_readout_notes.md`, with JSON outputs
+under `jlens_boundary_probe/outputs/`.
 
 The J-lens evidence has a narrower role than the likelihood and probe metrics.
 It supplies a mechanistic readout for one local substrate: the same summary text
