@@ -197,6 +197,20 @@ Strong examples to reuse with enough surrounding context:
   `reproduce_error.py` show the method can land on operational next-action
   spans, but the presentation needs span grouping.
 
+## Shareable Explainer
+
+`interpreting_valuegraft_examples.md` is now the current standalone
+human-readable writeup for this side investigation. It leads with `B-410`,
+shows next-token candidates beside J-lens readouts, uses the clarified
+ValueGraft terminology (`alpha_K`, `alpha_V`, old-context path, fresh path),
+demotes Pokemon to an intuition sidebar, and keeps the J-lens claims scoped to
+qualitative residual-stream readouts rather than behavioral proof.
+
+That document is the best starting point for public-facing explanation. Older
+files such as `semantic_readout_blog_draft.md`, `full_layer_sweep_report.md`,
+and the per-demo notes are useful audit/history material, but should not be
+treated as the current prose baseline without re-review.
+
 ## Run Discipline
 
 - Before running a pod script, check local syntax with `python3 -m py_compile`
@@ -218,15 +232,14 @@ Strong examples to reuse with enough surrounding context:
 
 ## Immediate Next Work
 
-1. Write a clear full-layer sweep report from
-   `outputs/qwen36_full_layer_sweep_summary.json`, using the local raw JSON for
-   deeper example drill-down if needed.
-2. Make the report human-readable: include actual quoted local context,
-   side-by-side write-time/fresh/readout snippets, and explain why each example
-   matters.
-3. Separate broad aggregate findings from illustrative examples.
+1. If revising the explainer, keep the B-410 lead and next-token-control
+   framing unless stronger examples are validated.
+2. For coding examples, report spans rather than isolated subword tokens.
+3. If adding new examples, validate the artifact schema first and pull rows
+   from named fields rather than ad hoc shape guesses.
 4. Do not use `pack` or other discarded terminology in public-facing prose.
-5. For coding examples, report spans rather than isolated subword tokens.
+5. Treat the J-lens as readout evidence that must be paired with behavioral
+   validation before making performance claims.
 
 ## Useful Commands
 

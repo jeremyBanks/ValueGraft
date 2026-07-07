@@ -51,5 +51,7 @@ This is mechanistic telemetry, not a scored behavioral result.
 Start with `WORKLOG.md` for the current state, run discipline, artifact map,
 and reporting cautions. The broad all-token/all-layer sweep is documented in
 `full_layer_sweep_handoff.md`, with analysis in `full_layer_sweep_report.md`.
+The current shareable, human-readable examples writeup is
+`interpreting_valuegraft_examples.md`.
 Before interpreting that sweep, run `validate_full_layer_sweep.py` against the
 raw local artifact and compact summary.
