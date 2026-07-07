@@ -357,3 +357,20 @@ standing correction in PROVENANCE-CORRECTION.md instead. RULE 23: on any
 model/agent handoff, the FIRST action is to update the commit-trailer
 identity + drop a dated marker commit — provenance is audit data, treat
 mislabeling as a data-integrity incident.
+
+## 27. Community-cloud pod cascade: torch upgrade broke CUDA → silent CPU load (07-07)
+KNOWN: secure-cloud A100s were out of capacity (repeated 500s) → fell back to
+COMMUNITY cloud. Its base image differs from secure, triggering a cascade:
+(1) rsync not preinstalled (deploys silently no-op'd — I'd suppressed stderr);
+(2) job's `pip install -U ... torch` upgraded torch to 2.12.1+cu130 (CUDA 13),
+but the pod DRIVER is CUDA 12.5 → torch.cuda.is_available()=False →
+device_map="auto" SILENTLY loaded the 30B to CPU (GPU 1MiB, weights "100%
+loaded"); the torchvision::nms import error was the same mismatch. A CPU 30B
+would run for hours + OOM host RAM. FIX: install torch matching the driver
+(2.6.0+cu124), verify cuda_available=True BEFORE trusting a run; job script no
+longer upgrades torch (uses the pod's driver-matched torch). RULE 24: on any
+new/community pod, VERIFY torch.cuda.is_available()==True and GPU memory climbs
+after model load BEFORE trusting results — a silent CPU fallback looks like a
+slow run, not an error. NEVER `pip install -U torch` on a pod (breaks the
+driver-matched build). RULE 25: don't suppress stderr on deploy/bootstrap
+commands — the missing-rsync no-op hid for two deploy attempts.
