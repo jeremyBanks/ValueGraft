@@ -3,7 +3,39 @@
 
 *Last updated: 2026-07-07 ~08:45 by Claude Opus 4.8 (see PROVENANCE-CORRECTION.md — earlier work mislabeled as Fable). Update at EVERY phase transition (rule 22).*
 
-## 08:45 07-07 — PLAN OF RECORD (read first; supersedes all below)
+## 11:55 07-07 — PLAN OF RECORD (Opus 4.8; read first; supersedes below)
+
+**HEADLINE RESULT (FINDINGS.md F1, CORROBORATED):** write-time value
+grafting recovers ~10-12pp (judged) of compaction damage in the
+SEMANTIC-RICHNESS regime (sense/referent), null on stance (summary already
+preserves it) — effect TRACKS the damage. Corroborated by an independent
+judge-free gap-closure metric (direction agrees: sense/referent>stance;
+weaker magnitude = predicted "recovers meaning not verbatim form" = 2nd
+signature). Two-method finding. F2 honesty, F3 tuning, F4 scope-boundary
+(SWE-bench too hard, chains/tau-banking too short) also banked.
+
+**RUNNING NOW:** 4B gap-closure (src/gap_closure_4b.py on t1) = cross-scale
+F1 replication. jlens interpretability readout = being developed (subagent).
+
+**READY/QUEUED (EXPERIMENTS.md portfolio, 8 tasks x 9 metrics x 6 designs):**
+story-contradiction task (src/story_tasks.py, built+tested, unrun); jlens
+mechanistic (B9); F1 hardening (wider ceiling, strict-RECOVERED cut);
+K-vs-V independent grafting; cross-dependent chains.
+
+**DEAD/RETIRED:** tau-banking (sessions structurally too short — all arms
+0.00; F4). SWE-bench (30B floor, 0/7). Live-agent chain arms (compaction-
+robust null, but champion-cures-a1.0-collapse = F3).
+
+**INFRA:** 1 pod (t1, running 4B gap-closure). Balance ~$40. OpenRouter key
+present (gitignored) for tau-style user-sims if needed. PROVENANCE: Opus
+since 02:11 07-07 (PROVENANCE-CORRECTION.md); commit trailers were
+mislabeled Fable in a ~6h window — noted, not rewritten.
+
+DOC MAP: FINDINGS.md=results | EXPERIMENTS.md=portfolio | DECISIONS.md=
+process/every-decision | INCIDENTS.md=26 failures+23 rules |
+PROVENANCE-CORRECTION.md=model attribution | this=state.
+
+## 08:45 07-07 — (superseded)
 
 ### 09:10 UPDATE — TWO TRACKS (don't lose either):
 1. TAU VALIDATION: OpenRouter key (.openrouter_key, gitignored, user
