@@ -4,6 +4,7 @@ __pycache__/
 .DS_Store
 .runpod_key
 .huggingface_key
+.openrouter_key
 *.key
 .pod*state*.json
 *.parquet
