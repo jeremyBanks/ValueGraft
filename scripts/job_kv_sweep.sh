@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# no torch upgrade: use pod's driver-matched torch (upgrading broke CUDA on community pod)
 # Pod job: behavioral K/V-policy sweep (src/kv_sweep.py).
 # Launched via scripts/launch_pod.sh, which syncs src+data to /workspace/exp
 # and runs this as job.sh. Model via SC_HF_MODEL (default 30B MoE).
@@ -20,7 +21,7 @@ for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key /workspace/.hugg
 done
 
 python3 -m pip uninstall -y torchvision 2>/dev/null; python3 -m pip install -U pip >/dev/null
-python3 -m pip install -U "transformers==5.0.*" torch accelerate safetensors huggingface_hub
+python3 -m pip install -U "transformers==5.0.*"  accelerate safetensors huggingface_hub
 
 echo "RUN kv_sweep $(date -Is)"
 python3 -u src/kv_sweep.py
