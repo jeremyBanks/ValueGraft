@@ -121,3 +121,16 @@ THEN REBALANCE THE PAPER: grafting = clear primary focus; consolidate/trim the
 lens sections to be proportionate to their (small) payoff; keep the honest lens +
 K/V results but subordinate. Via full pipeline (Fable conceptual + critics + Fable
 readability). Ship. Fable is co-driver on the plan (I'm Opus-flipped).
+
+## PHASE 4 addendum — FIX OVERLOADED "lens" TERMINOLOGY (user 07-07, Fable missed it)
+DATA: 76 total "lens" uses; 3 named instruments (logit lens 9 / tuned lens 3 /
+J-lens 22) + 22 BARE "the lens" (ambiguous which one). Reader can't always tell
+which lens is meant (§4 = logit lens; §5-7 = J-lens; abstract ambiguous).
+FIX in the rebalance: (a) one clear early sentence naming the two we use ("plain
+logit lens = crude baseline; Jacobian lens (J-lens) = the tool"); (b) bare "the
+lens" → the SPECIFIC instrument wherever ambiguous; (c) the volume trim (lens
+made proportionate to its small payoff) naturally cuts the count.
+NEW REVIEW DIMENSION (Fable's passes missed this — all were single-dimension):
+"TERMINOLOGY CONSISTENCY / overloaded terms" — hunt words reused for 2+ distinct
+concepts (not 'is it defined' but 'is it reused ambiguously'). Add to the critic
+panel AND the final multi-perspective Fable review.
