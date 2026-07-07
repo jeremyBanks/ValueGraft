@@ -93,6 +93,14 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--max-new-summary-tokens", type=int, default=96)
     p.add_argument("--alpha", type=float, default=0.75)
     p.add_argument(
+        "--alpha-sweep",
+        default="0,0.25,0.5,0.75,1",
+        help=(
+            "Comma-separated alpha_V values to capture as optional forced "
+            "sequence readouts. The primary --alpha is always included."
+        ),
+    )
+    p.add_argument(
         "--probe-user",
         default=(
             "Continue the task. What exact file should be changed next, and "
@@ -131,6 +139,21 @@ def load_messages(path: str | None) -> list[dict[str, str]]:
 
 def dtype_from_name(name: str) -> torch.dtype:
     return torch.bfloat16 if name == "bfloat16" else torch.float16
+
+
+def parse_alpha_sweep(spec: str, primary_alpha: float) -> list[float]:
+    values = [float(x.strip()) for x in spec.split(",") if x.strip()]
+    values.append(float(primary_alpha))
+    out: list[float] = []
+    for value in values:
+        if not any(abs(value - existing) < 1e-12 for existing in out):
+            out.append(value)
+    return sorted(out)
+
+
+def alpha_label(alpha: float) -> str:
+    text = f"{alpha:g}".replace("-", "neg").replace(".", "p")
+    return f"alpha{text}_grafted_compacted"
 
 
 def model_input_device(model: torch.nn.Module) -> torch.device:
@@ -609,6 +632,14 @@ def alignment_pairs_by_exact_tokens(
     return pairs
 
 
+def shifted_alignment_pairs(pairs: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    if len(pairs) < 2:
+        return []
+    old_positions = [old for _, old in pairs]
+    shifted_old = old_positions[1:] + old_positions[:1]
+    return [(new, old) for (new, _), old in zip(pairs, shifted_old)]
+
+
 def capture_forced_token_from_cache(
     model: torch.nn.Module,
     lens_model: Any,
@@ -875,8 +906,15 @@ def run() -> dict[str, Any]:
         if not pairs:
             raise TypeError("no exact summary-token pairs for graft alignment")
         value_layers = graftable_value_layers(b_probe_snap, old_snap)
+        alpha_values = parse_alpha_sweep(args.alpha_sweep, args.alpha)
+        shifted_pairs = shifted_alignment_pairs(pairs)
         alpha0_probe_snap = blend_values(b_probe_snap, old_snap, pairs, 0.0)
         grafted_probe_snap = blend_values(b_probe_snap, old_snap, pairs, args.alpha)
+        shifted_probe_snap = (
+            blend_values(b_probe_snap, old_snap, shifted_pairs, args.alpha)
+            if shifted_pairs
+            else None
+        )
 
         full_probe_gen_ids = render_ids(tokenizer, full_probe_messages, True)
         b_probe_gen_ids = render_ids(tokenizer, b_probe_messages, True)
@@ -965,6 +1003,27 @@ def run() -> dict[str, Any]:
             args.top_k,
             label="alpha0_grafted_compacted",
         )
+        alpha_sweep_sequences = {}
+        for alpha in alpha_values:
+            if abs(alpha) < 1e-12:
+                alpha_sweep_sequences[f"{alpha:g}"] = alpha0_sequence
+                continue
+            if abs(alpha - args.alpha) < 1e-12:
+                continue
+            alpha_snap = blend_values(b_probe_snap, old_snap, pairs, alpha)
+            alpha_sweep_sequences[f"{alpha:g}"] = capture_forced_sequence_from_cache(
+                model,
+                lens_model,
+                lens,
+                tokenizer,
+                alpha_snap,
+                b_suffix,
+                len(b_probe_ids),
+                probe_target_ids,
+                layers,
+                args.top_k,
+                label=alpha_label(alpha),
+            )
         grafted_sequence = capture_forced_sequence_from_cache(
             model,
             lens_model,
@@ -978,15 +1037,41 @@ def run() -> dict[str, Any]:
             args.top_k,
             label="grafted_compacted",
         )
+        shifted_sequence = None
+        if shifted_probe_snap is not None:
+            shifted_sequence = capture_forced_sequence_from_cache(
+                model,
+                lens_model,
+                lens,
+                tokenizer,
+                shifted_probe_snap,
+                b_suffix,
+                len(b_probe_ids),
+                probe_target_ids,
+                layers,
+                args.top_k,
+                label="shifted_grafted_compacted",
+            )
         result["graft"].update(
             {
                 "available": True,
                 "policy": "V-only summary-token value-cache blend; fresh keys and linear-attention recurrent state preserved",
                 "pairs": len(pairs),
                 "alpha": args.alpha,
+                "alpha_sweep": alpha_values,
                 "changed_value_layers": value_layers,
                 "changed_value_layer_count": len(value_layers),
                 "changed_value_slot_count": len(value_layers) * len(pairs),
+                "negative_control": {
+                    "name": "shifted_grafted_compacted",
+                    "available": shifted_probe_snap is not None,
+                    "policy": (
+                        "same V-only blend and alpha, but old summary-token "
+                        "value positions are cyclically shifted by one before "
+                        "injection"
+                    ),
+                    "shifted_pairs": len(shifted_pairs),
+                },
                 "cache_old_summary": cache_debug_summary(old_snap),
                 "cache_full_probe": cache_debug_summary(full_probe_snap),
                 "cache_fresh_probe": cache_debug_summary(b_probe_snap),
@@ -1021,7 +1106,12 @@ def run() -> dict[str, Any]:
                 "alpha0_grafted_compacted": alpha0_sequence,
                 "grafted_compacted": grafted_sequence,
             },
+            "alpha_sweep_sequences": alpha_sweep_sequences,
         }
+        if shifted_sequence is not None:
+            result["post_boundary_probe"]["forced_target_sequences"][
+                "shifted_grafted_compacted"
+            ] = shifted_sequence
         result["states"]["grafted_post_token"] = [grafted_post]
     except Exception as exc:
         result["graft"].update(

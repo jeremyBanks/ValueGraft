@@ -18,6 +18,7 @@ REQUIRED_SEQUENCES = (
     "alpha0_grafted_compacted",
     "grafted_compacted",
 )
+OPTIONAL_FORCED_SEQUENCES = ("shifted_grafted_compacted",)
 
 
 def top_ids(entries: list[dict[str, Any]]) -> tuple[int, ...]:
@@ -52,6 +53,21 @@ def require(condition: bool, message: str, failures: list[str]) -> None:
 def rows_for(data: dict[str, Any], state: str) -> list[dict[str, Any]]:
     seq = data["post_boundary_probe"]["forced_target_sequences"][state]
     return seq["rows"]
+
+
+def validate_sequence_matches_reference(
+    name: str,
+    seq: dict[str, Any],
+    reference_tokens: list[int],
+    reference_text: str | None,
+    failures: list[str],
+) -> None:
+    rows = seq.get("rows", [])
+    require(len(rows) == len(reference_tokens), f"{name} forced sequence length differs from full_context", failures)
+    token_ids = [row["token_id"] for row in rows]
+    require(token_ids == reference_tokens, f"{name} forced token IDs do not match full_context", failures)
+    if reference_text is not None:
+        require(seq.get("forced_text") == reference_text, f"{name} forced_text differs from full_context", failures)
 
 
 def validate(data: dict[str, Any], *, allow_missing_provenance: bool) -> tuple[list[str], list[str]]:
@@ -120,9 +136,29 @@ def validate(data: dict[str, Any], *, allow_missing_provenance: bool) -> tuple[l
         )
 
     reference_tokens = [row["token_id"] for row in sequences["full_context"]]
+    reference_text = sequence_meta["full_context"].get("forced_text")
     for state, rows in sequences.items():
         token_ids = [row["token_id"] for row in rows]
         require(token_ids == reference_tokens, f"{state} forced token IDs do not match full_context", failures)
+
+    for state in OPTIONAL_FORCED_SEQUENCES:
+        if state in sequence_meta:
+            validate_sequence_matches_reference(
+                state,
+                sequence_meta[state],
+                reference_tokens,
+                reference_text,
+                failures,
+            )
+
+    for alpha, seq in probe.get("alpha_sweep_sequences", {}).items():
+        validate_sequence_matches_reference(
+            f"alpha_sweep_sequences[{alpha}]",
+            seq,
+            reference_tokens,
+            reference_text,
+            failures,
+        )
 
     fresh_rows = sequences["fresh_compacted"]
     alpha0_rows = sequences["alpha0_grafted_compacted"]
@@ -157,6 +193,60 @@ def validate(data: dict[str, Any], *, allow_missing_provenance: bool) -> tuple[l
     return failures, warnings
 
 
+def metrics_for_state(
+    full: list[dict[str, Any]],
+    fresh: list[dict[str, Any]],
+    state_rows: list[dict[str, Any]],
+    layers: list[str],
+) -> dict[str, Any]:
+    layer_metrics: dict[str, dict[str, float]] = {}
+    for layer in layers:
+        ff: list[float] = []
+        fs: list[float] = []
+        fresh_state: list[float] = []
+        for a, b, c in zip(full, fresh, state_rows):
+            full_ids = top_ids(a["layers"][layer])
+            fresh_ids = top_ids(b["layers"][layer])
+            state_ids = top_ids(c["layers"][layer])
+            ff.append(jaccard_distance(full_ids, fresh_ids))
+            fs.append(jaccard_distance(full_ids, state_ids))
+            fresh_state.append(jaccard_distance(fresh_ids, state_ids))
+        layer_metrics[layer] = {
+            "mean_full_fresh": mean(ff),
+            "mean_full_state": mean(fs),
+            "mean_fresh_state": mean(fresh_state),
+            "mean_closure_full_fresh_minus_full_state": mean([a - b for a, b in zip(ff, fs)]),
+        }
+
+    argmax_rescues: list[dict[str, Any]] = []
+    argmax_regressions: list[dict[str, Any]] = []
+    state_changes: list[dict[str, Any]] = []
+    for i, (a, b, c) in enumerate(zip(full, fresh, state_rows)):
+        entry = {
+            "index": i,
+            "forced_token": a["token"],
+            "full_argmax": a["argmax_token"],
+            "fresh_argmax": b["argmax_token"],
+            "state_argmax": c["argmax_token"],
+        }
+        if b["argmax_token_id"] != c["argmax_token_id"]:
+            state_changes.append(entry)
+        if b["argmax_token_id"] != a["argmax_token_id"] and c["argmax_token_id"] == a["argmax_token_id"]:
+            argmax_rescues.append(entry)
+        if b["argmax_token_id"] == a["argmax_token_id"] and c["argmax_token_id"] != a["argmax_token_id"]:
+            argmax_regressions.append(entry)
+
+    return {
+        "layer_metrics": layer_metrics,
+        "argmax_rescue_count": len(argmax_rescues),
+        "argmax_regression_count": len(argmax_regressions),
+        "changed_argmax_count": len(state_changes),
+        "argmax_rescues": argmax_rescues,
+        "argmax_regressions": argmax_regressions,
+        "argmax_changes": state_changes,
+    }
+
+
 def summarize(data: dict[str, Any]) -> dict[str, Any]:
     sequences = {state: rows_for(data, state) for state in REQUIRED_SEQUENCES}
     full = sequences["full_context"]
@@ -165,46 +255,18 @@ def summarize(data: dict[str, Any]) -> dict[str, Any]:
     alpha0 = sequences["alpha0_grafted_compacted"]
 
     layers = sorted(full[0].get("layers", {}).keys(), key=lambda x: int(x))
-    layer_metrics: dict[str, dict[str, float]] = {}
-    for layer in layers:
-        ff: list[float] = []
-        fg: list[float] = []
-        gf: list[float] = []
-        fa0: list[float] = []
-        for a, b, c, z in zip(full, fresh, grafted, alpha0):
-            full_ids = top_ids(a["layers"][layer])
-            fresh_ids = top_ids(b["layers"][layer])
-            graft_ids = top_ids(c["layers"][layer])
-            alpha0_ids = top_ids(z["layers"][layer])
-            ff.append(jaccard_distance(full_ids, fresh_ids))
-            fg.append(jaccard_distance(full_ids, graft_ids))
-            gf.append(jaccard_distance(fresh_ids, graft_ids))
-            fa0.append(jaccard_distance(fresh_ids, alpha0_ids))
-        layer_metrics[layer] = {
-            "mean_full_fresh": mean(ff),
-            "mean_full_grafted": mean(fg),
-            "mean_fresh_grafted": mean(gf),
-            "mean_fresh_alpha0": mean(fa0),
-            "mean_closure_full_fresh_minus_full_grafted": mean([a - b for a, b in zip(ff, fg)]),
-        }
+    grafted_metrics = metrics_for_state(full, fresh, grafted, layers)
 
-    argmax_rescues: list[dict[str, Any]] = []
-    argmax_regressions: list[dict[str, Any]] = []
-    graft_changes: list[dict[str, Any]] = []
-    for i, (a, b, c) in enumerate(zip(full, fresh, grafted)):
-        entry = {
-            "index": i,
-            "forced_token": a["token"],
-            "full_argmax": a["argmax_token"],
-            "fresh_argmax": b["argmax_token"],
-            "grafted_argmax": c["argmax_token"],
-        }
-        if b["argmax_token_id"] != c["argmax_token_id"]:
-            graft_changes.append(entry)
-        if b["argmax_token_id"] != a["argmax_token_id"] and c["argmax_token_id"] == a["argmax_token_id"]:
-            argmax_rescues.append(entry)
-        if b["argmax_token_id"] == a["argmax_token_id"] and c["argmax_token_id"] != a["argmax_token_id"]:
-            argmax_regressions.append(entry)
+    sequence_metrics: dict[str, Any] = {
+        "alpha0_grafted_compacted": metrics_for_state(full, fresh, alpha0, layers),
+        "grafted_compacted": grafted_metrics,
+    }
+    forced_sequences = data["post_boundary_probe"].get("forced_target_sequences", {})
+    for state in OPTIONAL_FORCED_SEQUENCES:
+        if state in forced_sequences:
+            sequence_metrics[state] = metrics_for_state(full, fresh, forced_sequences[state]["rows"], layers)
+    for alpha, seq in data["post_boundary_probe"].get("alpha_sweep_sequences", {}).items():
+        sequence_metrics[f"alpha_sweep_{alpha}"] = metrics_for_state(full, fresh, seq["rows"], layers)
 
     return {
         "model": data.get("model"),
@@ -213,13 +275,14 @@ def summarize(data: dict[str, Any]) -> dict[str, Any]:
         "graft": data.get("graft", {}),
         "forced_token_count": len(full),
         "layers": layers,
-        "layer_metrics": layer_metrics,
-        "argmax_rescue_count": len(argmax_rescues),
-        "argmax_regression_count": len(argmax_regressions),
-        "graft_changed_argmax_count": len(graft_changes),
-        "argmax_rescues": argmax_rescues,
-        "argmax_regressions": argmax_regressions,
-        "graft_changes": graft_changes,
+        "layer_metrics": grafted_metrics["layer_metrics"],
+        "argmax_rescue_count": grafted_metrics["argmax_rescue_count"],
+        "argmax_regression_count": grafted_metrics["argmax_regression_count"],
+        "graft_changed_argmax_count": grafted_metrics["changed_argmax_count"],
+        "argmax_rescues": grafted_metrics["argmax_rescues"],
+        "argmax_regressions": grafted_metrics["argmax_regressions"],
+        "graft_changes": grafted_metrics["argmax_changes"],
+        "sequence_metrics": sequence_metrics,
     }
 
 
@@ -264,17 +327,36 @@ def main() -> int:
         print(
             f"  layer {layer}: "
             f"full-fresh={metrics['mean_full_fresh']:.4f} "
-            f"full-grafted={metrics['mean_full_grafted']:.4f} "
-            f"fresh-grafted={metrics['mean_fresh_grafted']:.4f} "
-            f"fresh-alpha0={metrics['mean_fresh_alpha0']:.4f} "
-            f"closure={metrics['mean_closure_full_fresh_minus_full_grafted']:.4f}"
+            f"full-grafted={metrics['mean_full_state']:.4f} "
+            f"fresh-grafted={metrics['mean_fresh_state']:.4f} "
+            f"closure={metrics['mean_closure_full_fresh_minus_full_state']:.4f}"
         )
+    extra_states = [
+        state
+        for state in summary["sequence_metrics"]
+        if state not in {"alpha0_grafted_compacted", "grafted_compacted"}
+    ]
+    if extra_states:
+        print("extra sequence metrics:")
+        for state in extra_states:
+            metrics = summary["sequence_metrics"][state]
+            layer48 = metrics["layer_metrics"].get("48")
+            closure = None if layer48 is None else layer48["mean_closure_full_fresh_minus_full_state"]
+            print(
+                f"  {state}: rescues={metrics['argmax_rescue_count']} "
+                f"regressions={metrics['argmax_regression_count']} "
+                f"changed_argmax={metrics['changed_argmax_count']} "
+                f"layer48_closure={closure:.4f}" if closure is not None else
+                f"  {state}: rescues={metrics['argmax_rescue_count']} "
+                f"regressions={metrics['argmax_regression_count']} "
+                f"changed_argmax={metrics['changed_argmax_count']}"
+            )
     if summary["argmax_rescues"]:
         print("argmax rescues:")
         for item in summary["argmax_rescues"]:
             print(
                 f"  {item['index']:02d} {item['forced_token']!r}: "
-                f"fresh {item['fresh_argmax']!r} -> grafted/full {item['grafted_argmax']!r}"
+                f"fresh {item['fresh_argmax']!r} -> grafted/full {item['state_argmax']!r}"
             )
     return 0
 
