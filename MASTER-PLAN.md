@@ -203,3 +203,27 @@ SMOKE GATE: α=0≡fresh + graft changes output; fail → mark UNSUPPORTED+reaso
 never crash sweep. Handle varied HF cache types. RESULT: does the sense/referent
 recovery hold across architectures → generalization map (strengthens primary if it
 travels; honest bound where it attenuates). One pod, sequential, gated.
+
+## PHASE 4 addendum 6 — cross-arch: LATEST models + Fable design fixes (07-07)
+LANDSCAPE RESEARCH (mid-2026, my list was stale): use the LATEST ~30B-class —
+Qwen3.6-35B-A3B (VERIFIED HF) + Qwen3.6-27B (known-good anchor) / Gemma-4-27B
+(sliding-window, key contrast) / Mistral-Small-4 / GLM-4.7-Flash (30B-3B) /
+OLMo-2-32B (open) / Qwen2.5-32B (dense-recipe contrast). EXCLUDE+document (MLA,
+no per-head values): Kimi K2.x, native DeepSeek-V3.
+FABLE DESIGN FIXES (folded into builder via follow-up):
+1. HOLD SUMMARY FIXED across models (THE confound fix) — one shared summary per
+   conv (fixed summarizer/corpus canonical), same text to every model, so
+   ARCHITECTURE is the only variable. NOT per-model-generated summaries.
+2. Report pre-graft gap (A−B) per model alongside fraction-gap-closed.
+3. Stronger smoke gate: + positive-direction check (graft moves TOWARD target),
+   not just "changes output".
+4. Per-model = DIRECTIONAL (small-subset CIs overlap 0), aggregate = inferential;
+   never call a single-model "null".
+FRAMING (Fable): it's a MECHANISTIC FALSIFICATION test (effect should travel to
+any standard-KV design). Outcomes: travels→"general property not Qwen artifact";
+partial (sliding-window weaker)→MOST interesting, mechanism-predicted moderation
+(cache doesn't retain boundary values); Qwen-only→honest bound BUT must diagnose
+why (pre-register: GQA-share/tokenizer/tuning). Instruction-tuning = residual
+confound at N=7, acknowledge. KEEP COMPACT: one figure + paragraph, MLA block noted.
+RUN ORDER: 3-model PILOT first (Qwen2.5-32B dense / non-Qwen GQA / Gemma-4
+sliding-window) = ~80% of value; if they behave, full sweep is formality.
