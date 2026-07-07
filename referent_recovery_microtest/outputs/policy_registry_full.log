@@ -1,0 +1,83 @@
+== 1/46 policy-label_only-citrine
+== 2/46 policy-label_only-copper
+== 3/46 policy-label_only-pearl
+== 4/46 policy-label_only-violet
+== 5/46 policy-label_only-indigo
+== 6/46 policy-label_only-umber
+== 7/46 policy-label_only-marble
+== 8/46 policy-label_only-saffron
+== 9/46 policy-label_only-nickel
+== 10/46 policy-label_only-cobalt
+== 11/46 policy-label_only-jade
+== 12/46 policy-label_only-hazel
+== 13/46 policy-label_only-topaz
+== 14/46 policy-label_only-garnet
+== 15/46 policy-label_only-opal
+== 16/46 policy-typed-citrine
+== 17/46 policy-typed-copper
+== 18/46 policy-typed-pearl
+== 19/46 policy-typed-violet
+== 20/46 policy-typed-indigo
+== 21/46 policy-typed-umber
+== 22/46 policy-typed-marble
+== 23/46 policy-typed-saffron
+== 24/46 policy-typed-nickel
+== 25/46 policy-typed-cobalt
+== 26/46 policy-typed-jade
+== 27/46 policy-typed-hazel
+== 28/46 policy-typed-topaz
+== 29/46 policy-typed-garnet
+== 30/46 policy-typed-opal
+== 31/46 transform-label_only-coral
+== 32/46 transform-label_only-iris
+== 33/46 transform-label_only-slate
+== 34/46 transform-label_only-cedar
+== 35/46 transform-label_only-pine
+== 36/46 transform-label_only-flint
+== 37/46 transform-label_only-amber
+== 38/46 transform-label_only-azure
+== 39/46 transform-typed-coral
+== 40/46 transform-typed-iris
+== 41/46 transform-typed-slate
+== 42/46 transform-typed-cedar
+== 43/46 transform-typed-pine
+== 44/46 transform-typed-flint
+== 45/46 transform-typed-amber
+== 46/46 transform-typed-azure
+{
+  "low_entropy_transform": {
+    "n": 16,
+    "usable_A_gt_B": 15,
+    "positive_best_cases": 12,
+    "mean_A_minus_B": 3.45264493006592,
+    "mean_best_delta_vs_B": 0.4540796776115894,
+    "mean_best_gap_closure": 0.20602961180637294,
+    "best_policy_counts": {
+      "k010": 2,
+      "k020": 5,
+      "v002": 3,
+      "v020": 1,
+      "k002": 2,
+      "kv005": 2,
+      "kv010": 1
+    }
+  },
+  "policy_choice": {
+    "n": 30,
+    "usable_A_gt_B": 30,
+    "positive_best_cases": 28,
+    "mean_A_minus_B": 7.2376183318049145,
+    "mean_best_delta_vs_B": 0.2652614994875943,
+    "mean_best_gap_closure": 0.035747406169757946,
+    "best_policy_counts": {
+      "v030": 2,
+      "v020": 4,
+      "v002": 2,
+      "v010": 12,
+      "v005": 9,
+      "kv005": 1
+    }
+  }
+}
+Wrote /Users/jeb/experimentation/referent_recovery_microtest/outputs/policy_registry_followup.json
+Wrote /Users/jeb/experimentation/referent_recovery_microtest/outputs/policy_registry_followup.md
