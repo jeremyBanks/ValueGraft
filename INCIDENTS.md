@@ -394,3 +394,13 @@ RULE 27 — quiet watchers MUST include an EARLY real-work check: within the fir
 2-3 min confirm work actually started (GPU loaded + log progressing); if not,
 SPEAK immediately (don't wait for the DONE/STOP branch under backoff). Quiet on
 routine progress, loud on failed-to-start.
+
+## 29. "30B" effect-bound silently re-ran 27B (wrong model, overwrote 27B output) (07-07, user)
+effect_bound_probe.py takes --model (default Qwen3.6-27B) and ignores SC_HF_MODEL.
+I launched with SC_HF_MODEL=30B (inert) → it used the 27B default → identical
+result (fixed boot seed gave byte-identical aggregate = the tell) → AND wrote to
+the shared default path, overwriting the 27B summary.json. Caught via the
+identical-aggregate tell. 27B numbers safe (committed in git).
+RULE 28: unique self-announcing output names (see AGENTS.md OUTPUT NAMING).
+RULE 29: launch-verify the RIGHT MODEL loaded (echo resolved model id), not just
+that a process is running — pass model explicitly (--model / correct env), confirm.

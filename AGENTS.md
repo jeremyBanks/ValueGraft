@@ -138,3 +138,15 @@ perspectives:
   first-time-reader/accessibility angle; a "what would make this stronger/publish-
   ready" angle). Vary the prompt to surface different angles.
 - Synthesize the three into the final revision. Tool-less to keep cost down.
+
+## OUTPUT NAMING: unique, self-announcing (user 07-07, after a 30B run overwrote 27B)
+Experiment outputs MUST be uniquely named so a re-run NEVER overwrites a prior
+result (a 30B run silently clobbered the 27B summary.json at a shared path).
+- Output filename = <experiment>_<model-slug>_<UTC-timestamp>.json (unique by
+  model AND time). Never a fixed shared "summary.json".
+- At PROCESS START, LOG the resolved model + the exact unique output path it will
+  write ("RUN <exp> model=<m> → results/.../<unique>.json"), so we know where to
+  look before it finishes.
+- Also verify at launch (rule 26 extension): confirm the RIGHT MODEL loaded, not
+  just that work is happening — a run using the wrong/default model looks healthy
+  but answers the wrong question (the 30B run that was actually 27B).
