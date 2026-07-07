@@ -239,3 +239,4 @@ layers? MoE vs dense differ?). Compare profiles ACROSS models = novel cross-arch
 observation, not just "does it work." SCOPE per model = my call using knowledge
 of each architecture (don't brute-force; guess what's worth searching). Gated on
 sweep success + spare capacity; guard-validate (wrong-conv control) as always.
+- ASK FABLE about the champion-tuning-profile idea at some point (user 07-07): get its conceptual take on whether cross-arch tuning-profile comparison is a real fingerprint or noise, and how to scope the per-model search. Timing = my call (sooner or later), but do it before committing pod time to tuning.

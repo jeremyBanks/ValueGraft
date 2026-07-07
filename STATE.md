@@ -1,26 +1,52 @@
 # STATE.md — session handoff notes
 
-*Updated 07-07 ~16:50 by Opus 4.8. ALL EXPERIMENTS CONCLUDED. Paper final update in progress.*
+*Updated 07-07 ~22:40 by Opus 4.8. Phase 4 (strengthen primary + cross-arch) IN PROGRESS.*
 
-## LIVE STATE — final paper update (all evidence in)
-ALL EXPERIMENTS DONE, all committed to FINDINGS:
-- Phase 1 paper: SHIPPED (REPORT.md on trunk).
-- K/V exploration: NEGATIVE, SCOPED — value is operative axis for SEMANTIC-phrase
-  referent recovery; keys don't help (uniform + per-layer, 30B); K-only hurts.
-  OPEN edge: short-IDENTIFIER targets may differ (microtest 0.6B hint; Fable
-  cross-check → scoped, not universal). = Phase 3 (task 25, post-paper).
-- Lens free-divergence: clean PRE-REGISTERED NEGATIVE (0 toward-A / 17 subtle /
-  26 disconfirming, N=43) — free-gen didn't rescue the lens; paper's honest
-  "low-res corroborator, no vivid figure" framing STANDS+strengthened.
-NOW (task 24): paper update draft running (subagent ab111f768643daa90) — folds
-K/V-scoped into §10 (open-question → done-scoped + morphology-next) + lens-negative
-into §6. THEN: Fable conceptual gut-check (honesty-critical K/V scoping) → critics
-→ Fable readability → my review → push. Fable MANDATORY (Opus-flipped).
-0 pods (all terminated). Balance $82.5.
+## LIVE STATE — Phase 4: strengthen the PRIMARY (grafting), cross-architecture
+POD: w99udryqm0szp1, COMMUNITY, ssh root@104.255.9.187 -p 12540 -i ~/.ssh/id_ed25519_runpod.
+A100 80GB, torch 2.4.1+cu124 (do NOT pip -U torch; torchaudio/torchvision REMOVED,
+incident 27). Code lives /workspace/exp. rsync had to be apt-installed (not preinstalled).
+State .pod_eb_state.json. Balance ~$80.
 
-## QUEUED (post-paper): task 25 (identifier-morphology 30B test — the ONE key
-experiment worth doing, closes the question either way); lens trajectory-scan
-(point→per-token scan, user idea, easy tack-on if fork-probe muddy — it was).
+RUNNING NOW: real 30B effect-bound (Qwen3-30B-A3B-Instruct-2507) — watcher brb6ubena,
+unique output results/effect_bound/effect_bound_qwen3-30b-a3b_20260707T223542Z.json.
+(A prior "30B" run mistakenly re-ran 27B — effect_bound_probe.py takes --model, ignores
+SC_HF_MODEL; fixed by passing --model + unique --output. Incident 29, rules 28-29.)
+
+NEXT ON POD (staged, ready): CROSS-ARCH pilot-3 (Qwen2.5-32B / Mistral-Small-4 /
+Gemma-4-27B) via src/cross_arch_probe.py + scripts/job_cross_arch.sh (built, committed).
+Reads data/fixed_summaries.json (Sonnet neutral summaries c01-c06, committed). Per-model
+smoke gate (α0≡fresh + graft-live + POSITIVE-direction). `PILOT_ONLY=1 bash
+scripts/job_cross_arch.sh`. Then full 7-model list. Models: Qwen3.6-35B-A3B, Qwen3.6-27B,
+Gemma-4-27B (sliding-window detector→UNSUPPORTED if HybridCache), Mistral-Small-4,
+GLM-4.7-Flash, OLMo-2-32B, Qwen2.5-32B. EXCLUDE+document: MLA (Kimi K2.x, DeepSeek-V3).
+
+RESULTS IN HAND (committed to FINDINGS):
+- Paper SHIPPED + PROMOTED to README.md (publish workflow: edit REPORT.md, cp→README when
+  confident; never edit README directly). Attribution moved to TOP.
+- K/V: NEGATIVE, SCOPED (value=operative axis for semantic-phrase; keys don't help
+  uniform/per-layer; short-identifier edge OPEN — dropped per user "stop digging keys").
+- Lens free-divergence: pre-registered NEGATIVE (0/17/26). Lens thread closing via BOUND.
+- Effect-bound 27B: graft DECISIVELY beats placebo (E−placebo +0.44 CI[+0.29,+0.61]
+  excl 0 = content-specific); E−B null on 27B narrow window (weak model). 30B rerun in
+  flight to resolve E−B on strong model.
+
+## PHASE 4 PLAN (autonomous, no review-ask; me+Fable; see MASTER-PLAN addenda 1-7)
+Strengthen PRIMARY (grafting) — paper drifted lens-heavy (dud), grafting under-evidenced.
+1. CROSS-ARCH breadth sweep (running next) — does effect travel across architectures.
+2. MORE EXAMPLES from existing data (cheap, high-value; surface more grafting exhibits).
+3. Story-continuation task (src/story_tasks.py, built-never-run) + more domains.
+4. REBALANCE paper: grafting=primary, lens proportionate; FIX overloaded "lens" (76 uses,
+   22 ambiguous — name logit-lens vs J-lens once, disambiguate).
+5. ARCHITECTURE limitation: cross-arch results + MLA block; Fable RESEARCH pass (tools).
+6. LOW-PRI: per-model CHAMPION TUNING profiles as architectural fingerprint —
+   **ASK FABLE about this at some point (user 07-07), timing my call.**
+FABLE: brief on the FOCUS (grafting primary) in every conceptual/edit prompt. FINAL review =
+3 tool-less Fable passes different angles + terminology-consistency dimension.
+
+## STANDING RULES added this phase: quiet monitors (silent unless done/error, 2min→24min
+backoff) + launch-verify REAL work AND RIGHT MODEL (rules 26,29); unique self-announcing
+output names (28); don't suppress deploy stderr (25); verify CUDA (24).
 
 ## (superseded) LIVE STATE — Phase 2 K/V sweep RUNNING (resume from here)
 PHASE 1 DONE: synthesis paper shipped to trunk (REPORT.md, ~7700w, honest, pushed).
