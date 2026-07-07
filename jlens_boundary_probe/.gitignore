@@ -1,3 +1,4 @@
 __pycache__/
 .pod_*_state.json
 *.log
+outputs/qwen36_full_layer_sweep.json
