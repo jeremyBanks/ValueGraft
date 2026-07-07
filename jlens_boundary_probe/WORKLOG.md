@@ -52,6 +52,58 @@ The broad sweep covered 1,175 aligned summary tokens across 63 fitted layers,
 for 74,025 token-layer rows. The pod that produced the validated artifact has
 been terminated.
 
+## Process Correction: 2026-07-07 Schema Surprise
+
+During the first writeup pass for the full-layer sweep, I made an analysis
+process error. I queried the JSON output with ad hoc `jq` expressions, was
+surprised by the structure, and then adjusted the queries defensively instead
+of immediately stopping to verify the producer schema.
+
+That was the wrong response. This directory is part of a research project, and
+the artifact format is ours. If the structure is surprising, the correct
+sequence is:
+
+1. Open the producing script.
+2. State the expected schema explicitly.
+3. Validate the artifact against that schema.
+4. Only then interpret the data.
+5. Record the mistake and the resolution in the repo state.
+
+What actually happened:
+
+- `full_layer_sweep.py` intentionally writes `demos` as an object keyed by
+  demo name, not as an array. My first query treated each demo value as though
+  it also contained a `demo_id`, so the demo name appeared as `null`. That was
+  a query mistake, not missing data.
+- A later query used sloppy boolean/pipe structure while filtering contexts.
+  The resulting jq error was another analysis-query mistake, not evidence that
+  `token_summary` contained mixed row types.
+- A direct schema audit showed that the raw artifact is internally consistent:
+  every demo has `token_summary == summary_tokens`, 63 layer summaries, and
+  `grid_scores == summary_tokens * 63`.
+- The compact summary also matches the raw totals: 7 demos, 1,175 summary
+  tokens, and 74,025 token-layer rows.
+
+The correction is now encoded in `validate_full_layer_sweep.py`. Run it before
+interpreting or reporting on the sweep:
+
+```sh
+python3 jlens_boundary_probe/validate_full_layer_sweep.py \
+  jlens_boundary_probe/outputs/qwen36_full_layer_sweep.json \
+  --summary jlens_boundary_probe/outputs/qwen36_full_layer_sweep_summary.json
+```
+
+Expected output for the current artifacts:
+
+```text
+VALID: demos=7 layers=63 summary_tokens=1175 grid_rows=74025
+VALID: compact summary matches raw totals and schema
+```
+
+New rule for this directory: do not "work around" surprising output structure.
+If an artifact shape is unexpected, stop analysis, validate the schema, and
+record the resolution before drawing conclusions.
+
 ## Script Map
 
 - `boundary_probe.py`: first narrow smoke probe around a compaction boundary.
@@ -66,6 +118,8 @@ been terminated.
   assistant actions from real trajectories.
 - `full_layer_sweep.py`: broad sweep over every aligned summary token and every
   fitted lens layer.
+- `validate_full_layer_sweep.py`: strict schema validator for the raw
+  full-layer sweep artifact and its compact summary.
 
 ## Output Map
 
@@ -147,6 +201,8 @@ Strong examples to reuse with enough surrounding context:
 
 - Before running a pod script, check local syntax with `python3 -m py_compile`
   and `bash -n`. Use ShellCheck too if it is available.
+- Before interpreting full-layer sweep results, run
+  `validate_full_layer_sweep.py` on the raw artifact and compact summary.
 - Do not terminate a pod until the artifact has been pulled locally and
   validated. One completed full-sweep artifact was lost by terminating during
   `rsync`; do not repeat that.
@@ -156,6 +212,9 @@ Strong examples to reuse with enough surrounding context:
   be working in this repository.
 - Treat generated reports as secondary. Raw JSON and the scripts are the
   source of truth.
+- If the output format surprises you, do not keep querying until something
+  works. Inspect the producer, update or run a validator, and record the
+  resolution.
 
 ## Immediate Next Work
 
@@ -175,9 +234,8 @@ Strong examples to reuse with enough surrounding context:
 git status --short --branch
 jq '{tokens: .total_summary_tokens, rows: .total_grid_rows, layers: (.lens.sampled_layers | length)}' \
   jlens_boundary_probe/outputs/qwen36_full_layer_sweep_summary.json
-jq '.global.layer_summary | max_by(.mean_rank_weighted_distance)' \
+jq '.global_layer_summary | max_by(.mean_rank_weighted_distance)' \
   jlens_boundary_probe/outputs/qwen36_full_layer_sweep_summary.json
 python3 -m py_compile jlens_boundary_probe/full_layer_sweep.py
 bash -n jlens_boundary_probe/job_qwen36_full_layer_sweep.sh
 ```
-
