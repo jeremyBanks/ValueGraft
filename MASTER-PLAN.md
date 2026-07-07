@@ -188,3 +188,18 @@ SCOPED (Fable to pressure-test):
   before any number; one pod; gated; small models keep it affordable.
 RESULT FRAME: cross-architecture generalization map — standard-GQA (Qwen, works) /
 sliding-window (Gemma, ?) / MLA (DeepSeek, ?). Separate lazy-vs-architectural honestly.
+
+## PHASE 4 addendum 5 — CROSS-ARCHITECTURE BREADTH sweep (user 07-07: "just do it")
+BREADTH over depth. For grafting-POSSIBLE architectures (standard KV cache; skip
+MLA where blocked), validate across AS MANY model TYPES as we can. NOT a rich
+dataset — a SUBSET that demonstrates SOME effect, fast. ~30B-class each (hold
+scale ~constant so ARCHITECTURE is the variable). MAX ~45 min/model incl download.
+MODEL SET (skip gated/unavailable gracefully): Qwen3-30B-A3B (MoE GQA baseline),
+Qwen2.5-32B (dense GQA), Gemma-2-27B (sliding-window), Mistral-Small-24B, Yi-1.5-34B,
+GLM-4-32B, OLMo-2-32B (open). DeepSeek MLA = separate documented block, NOT here.
+HARNESS: generic value-graft gap-closure (src/cross_arch_probe.py) — subset (~4
+convs, sense+referent), teacher-forced gap-closure per category, α=0.75. PER-MODEL
+SMOKE GATE: α=0≡fresh + graft changes output; fail → mark UNSUPPORTED+reason, skip,
+never crash sweep. Handle varied HF cache types. RESULT: does the sense/referent
+recovery hold across architectures → generalization map (strengthens primary if it
+travels; honest bound where it attenuates). One pod, sequential, gated.
