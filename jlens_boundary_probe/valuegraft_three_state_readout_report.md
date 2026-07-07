@@ -1,6 +1,6 @@
 # ValueGraft Under the Lens: A Corrected Three-State Readout
 
-Status: corrected standalone draft
+Status: corrected standalone report draft
 Date: 2026-07-07
 Primary artifact: `outputs/qwen36_boundary_three_state_probe.json`
 Validator: `validate_three_state_probe.py`
@@ -17,15 +17,16 @@ uncompacted one.
 This note corrects an earlier interpretability mistake. A two-state J-lens
 comparison between old-context and fresh summary encodings can show that
 context-conditioned residual-stream state exists, but it cannot show the effect
-of ValueGraft. The corrected probe uses four states over the same forced target
-tokens: `full_context`, `fresh_compacted`, `alpha0_grafted_compacted`, and
-`grafted_compacted`. In this single constructed coding-style example, a V-only
-graft changes downstream next-token and J-lens readouts relative to the fresh
-compacted condition. The most concrete result is one next-token argmax rescue:
-for the token ` inspected`, the fresh compacted state predicts ` priorit`,
-while the grafted compacted state returns to the full-context argmax
-` inspected`. The layer-level readout is mixed: grafted states move modestly
-toward full context at layers 16, 32, and 48, but slightly away at layer 62.
+of ValueGraft. The corrected probe compares three substantive states
+(`full_context`, `fresh_compacted`, and `grafted_compacted`) plus one machinery
+control (`alpha0_grafted_compacted`) over the same forced target tokens. In
+this single constructed coding-style example, a V-only graft changes downstream
+next-token and J-lens readouts relative to the fresh compacted condition. The
+most concrete result is one next-token argmax rescue: for the token
+` inspected`, the fresh compacted state predicts ` priorit`, while the grafted
+compacted state returns to the full-context argmax ` inspected`. The
+layer-level readout is mixed: grafted states move modestly toward full context
+at layers 16, 32, and 48, but slightly away at layer 62.
 
 This is proof of method, not a general effect-size estimate.
 
@@ -100,7 +101,9 @@ Does the grafted compacted state move the model away from fresh compaction
 and toward the full-context behavior?
 ```
 
-The corrected probe therefore has to compare at least these states:
+The corrected probe therefore has to compare at least these states. In this
+note, "three-state" means the three substantive states; the alpha-0 row is a
+required control on the graft machinery.
 
 | State | Visible context | Cache state |
 | --- | --- | --- |
@@ -165,10 +168,12 @@ validator checks that:
 - `graft.available` is true;
 - all required states exist;
 - all four forced target sequences have the same token IDs;
+- the forced sequence is nonempty and matches `probe_target.token_count`;
+- all four sequences record the same forced text, matching `probe_target.text`;
 - graft provenance fields exist;
 - the graft changes a positive number of value layers;
 - the alpha-0 graft matches fresh compacted exactly on next-token and per-layer
-  top-k token IDs.
+  top-k token IDs and scores.
 
 The alpha-0 result is especially important. It means the observed fresh-vs-graft
 differences are not merely artifacts of snapshotting and rebuilding the cache.
@@ -283,22 +288,32 @@ unless the same pattern is confirmed by behavioral task metrics.
 This work sits near two literatures.
 
 First, it depends on standard transformer attention and KV caching. Vaswani et
-al. introduced scaled dot-product attention and the query/key/value framing.
-RoPE, introduced by Su et al., explains why moved keys require position-aware
-handling. Recent KV-cache work is especially close: Li's "Models Take Notes at
-Prefill" shows that prefill can write field-conditioned conclusions onto
-downstream cache states, and that those states can be edited and composed. That
+al. introduced scaled dot-product attention and the query/key/value framing:
+queries decide where to attend, keys provide the addressable side, and values
+provide the content mixed into the next representation. KV caching is the
+inference-time reuse of those earlier keys and values. RoPE, introduced by Su
+et al., explains why moved keys require position-aware handling: the positional
+rotation is applied to query/key geometry, so a key copied to a new compacted
+position must be treated differently from a value.
+
+Recent KV-cache work is especially close. Li's "Models Take Notes at Prefill"
+argues that prefill writes field-conditioned conclusions onto downstream cache
+states and shows that those states can be edited and composed. That
 substantially constrains any novelty claim here. The distinctive ValueGraft
-question is not "can KV caches be edited?" but whether write-time cache state
-can preserve semantic continuity across conversation compaction and reduce the
-practical damage of replacing old context with a summary.
+question is not "can KV caches be edited?" or "can cache blocks be reused?"
+It is narrower: when a conversation is compacted into a summary, can selected
+write-time cache state preserve useful semantic continuity that fresh
+re-encoding of the same visible text loses?
 
 Second, the readout method belongs to the vocabulary-lens family. The logit
-lens applies the unembedding directly to intermediate states; the tuned lens
-learns per-layer translators; the J-lens uses an averaged Jacobian transport.
-Our use is modest: we use the lens to inspect candidate examples and generate
-mechanistic hypotheses, then require behavioral or controlled intervention
-tests before treating those hypotheses as results.
+lens applies the unembedding directly to intermediate states. The tuned lens
+learns per-layer translators so intermediate hidden states can be decoded more
+reliably. The J-lens uses an averaged Jacobian transport into a final-layer
+vocabulary basis, aiming to read concepts an activation is disposed to
+verbalize across contexts rather than just this position's next-token pressure.
+Our use is deliberately modest: we use the lens to inspect candidate examples
+and generate mechanistic hypotheses, then require behavioral or controlled
+intervention tests before treating those hypotheses as results.
 
 ## Limitations
 
