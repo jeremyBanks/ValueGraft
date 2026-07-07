@@ -27,6 +27,10 @@ compaction. The `B-410` example is the compact version of the story: the same
 printed permit code reads as stale/obsolete in the old-context path and as a
 generic civic code in the fresh path.
 
+The examples here use `Qwen/Qwen3.6-27B` as a qualitative side probe with
+public J-lens weights. They are not measurements from every behavioral model in
+the main ValueGraft experiment.
+
 ## The Compaction Problem
 
 A compacted conversation can keep the right words while changing the
@@ -50,6 +54,20 @@ a shorter summary plus a recent tail. The summary text is then re-encoded in a
 new context. That is cheap and similar to how API context compaction is usually
 implemented, but it discards the key/value state that existed while the summary
 was written under the full conversation.
+
+The baseline timeline is:
+
+```text
+long conversation
+  -> summary text is written while the old conversation is present
+  -> old turns are dropped
+  -> summary + recent tail are re-encoded from scratch
+  -> future tokens attend to fresh summary/tail K/V state
+```
+
+ValueGraft changes only the last part: after building the same visible
+compacted transcript, selected cache entries for aligned summary or tail tokens
+are blended with the entries written under the old conversation.
 
 That matters because many compact summaries contain short local labels:
 permit codes, branch names, file paths, nicknames, patch numbers, and private
@@ -567,20 +585,18 @@ control artifact.
 
 ## Related Work And Prior Art
 
-This note sits at the intersection of two bodies of work: interpretability
-readouts for internal states, and systems or methods that reuse, edit, or
-compress cached attention state. The overlap is still young. The
-interpretability work helps us look at what may be present near a compaction
-boundary; the KV-cache work constrains what can be claimed as new.
+The relevant prior art splits into two groups. Interpretability readouts help
+us inspect context-conditioned internal states. KV-cache reuse, editing, and
+compression work constrains what ValueGraft can claim as new.
 
 ### Interpretability Readouts
 
 The logit lens is the simplest ancestor of the J-lens used here. It projects an
 intermediate residual-stream vector through the model's final unembedding and
 asks which vocabulary tokens are already linearly accessible at that layer.
-This is useful because it gives an immediate vocabulary-shaped view into hidden
-states, but it is crude: intermediate layers are not naturally in the final
-layer's basis, and late-layer next-token pressure can dominate the readout.
+It gives an immediate vocabulary-shaped view into hidden states, but it is
+crude: intermediate layers are not naturally in the final layer's basis, and
+late-layer next-token pressure can dominate the readout.
 
 The tuned lens improves on that idea by learning layer-specific translators
 from intermediate residual states to the final prediction space. It is a better
