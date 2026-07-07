@@ -411,43 +411,186 @@ and 63 fitted layers, giving 74,025 token-layer rows. The examples in this
 document are selected for readability from that sweep and from the next-token
 control artifact.
 
-## Related Work
+## Related Work And Prior Art
 
-This note sits at the intersection of three literatures.
+This note sits at the intersection of two bodies of work: interpretability
+readouts for internal states, and systems or methods that reuse, edit, or
+compress cached attention state. The overlap is still young. The
+interpretability work helps us look at what may be present near a compaction
+boundary; the KV-cache work constrains what can be claimed as new.
 
-First, the transformer attention framing comes from Vaswani et al. (2017):
-attention maps queries against keys and returns weighted sums of values.
-ValueGraft operates on that cached key/value state at a compaction boundary.
+### Interpretability Readouts
 
-Second, prior work already shows that KV caches can carry useful computation,
-be edited, be reused, or be compacted. Li (2026), in "Models Take Notes at
-Prefill," is the closest mechanistic neighbor: it argues that prefill writes
-field-conditioned conclusions into downstream cache state and demonstrates
-editable, composable cached blocks. Zweiger et al. (2026) study latent KV
-compaction directly through attention matching. KVLink (Yang et al., 2025) and
-CacheBlend (Yao et al., 2025) reuse or blend precomputed caches for chunked
-contexts, mostly in retrieval-style settings. These papers mean we should not
-claim novelty for "KV state is meaningful" or "cache blocks can be reused." The
-narrow question here is conversation compaction: can the state associated with
-a human-readable summary help after the old transcript has been replaced?
+The logit lens is the simplest ancestor of the J-lens used here. It projects an
+intermediate residual-stream vector through the model's final unembedding and
+asks which vocabulary tokens are already linearly accessible at that layer.
+This is useful because it gives an immediate vocabulary-shaped view into hidden
+states, but it is crude: intermediate layers are not naturally in the final
+layer's basis, and late-layer next-token pressure can dominate the readout.
 
-Third, the readout method comes from the logit-lens lineage. The original logit
-lens projects intermediate residual states through the unembedding;
-tuned-lens work learns layer-specific translators; the Jacobian lens introduced
-by Gurnee et al. (2026) uses an averaged Jacobian transport into the final-layer
-basis. We use the J-lens as interpretability telemetry for residual-stream
-states, not as a direct KV-cache measurement.
+The tuned lens improves on that idea by learning layer-specific translators
+from intermediate residual states to the final prediction space. It is a better
+tool for reading latent next-token predictions, but it is still primarily a
+vocabulary-projection method. It does not directly read KV-cache entries, and
+it does not by itself establish whether a readout is causally responsible for a
+behavioral difference.
 
-Selected references:
+The Jacobian lens, introduced by Gurnee et al. (2026), transports a
+residual-stream vector into the final-layer basis using an averaged
+input-output Jacobian, then decodes through the model's unembedding. The
+associated Anthropic paper frames these transported, verbalizable directions as
+a functional "workspace" for concepts the model can report or use across
+contexts. For our purposes, the important part is narrower: the J-lens provides
+a principled vocabulary readout for residual-stream states at specific layers
+and positions.
 
-- Vaswani et al. 2017. [Attention Is All You Need](https://arxiv.org/abs/1706.03762).
-- nostalgebraist. 2020. [Interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens).
-- Belrose et al. 2023. [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112).
-- Gurnee et al. 2026. [Verbalizable Representations Form a Global Workspace in Language Models](https://transformer-circuits.pub/2026/workspace/).
-- Anthropic. 2026. [jacobian-lens reference implementation](https://github.com/anthropics/jacobian-lens).
-- Neuronpedia. 2026. [Jacobian Lens - Qwen3.6-27B](https://www.neuronpedia.org/qwen3.6-27b/jlens).
-- Li. 2026. [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107).
-- Zweiger et al. 2026. [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284).
-- Yang et al. 2025. [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002).
-- Yao et al. 2025. [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444).
-- Qwen Team. 2026. [Qwen3.6-27B: Flagship-Level Coding in a 27B Dense Model](https://qwen.ai/blog?id=qwen3.6-27b).
+This project uses the public Neuronpedia/Anthropic J-lens weights for
+Qwen3.6-27B. That choice matters: the examples in this document are not
+model-general evidence, and they are not measurements from the main
+ValueGraft behavioral model. They are qualitative readouts from a side probe
+whose role is to make the state-preservation hypothesis easier to inspect.
+
+The J-lens also inherits real limitations. It works best for concepts that can
+be named by single vocabulary tokens or short token neighborhoods; paths,
+commands, and multi-token relations need span-level grouping. Its false-positive
+rate is not fully characterized, so lens-visible differences should be treated
+as hypotheses or qualitative support until paired with behavioral validation.
+That is why this document keeps next-token candidates beside the J-lens
+readouts and avoids treating the readout as proof.
+
+### KV Cache, Latent Context, And Compaction
+
+The transformer architecture defines attention in terms of queries, keys, and
+values: a later token's query scores earlier keys and mixes the corresponding
+values. During inference, those per-position keys and values are cached so the
+model does not recompute the whole prefix at every decode step. ValueGraft
+operates on this cached attention state at a conversation-compaction boundary.
+
+"Models Take Notes at Prefill" is the closest mechanistic prior art for our
+claim that cached state can carry more than performance bookkeeping. Li (2026)
+argues that prefill writes field-conditioned conclusions onto downstream cache
+state, and demonstrates that cached blocks can be edited, moved, and composed
+while closely matching full recompute in controlled settings. That strongly
+constrains novelty: ValueGraft should not claim that KV caches containing useful
+semantic computation is new. Our narrower question is whether write-time state
+associated with a human-readable conversation summary can reduce the damage of
+ordinary text-summary compaction.
+
+"Fast KV Compaction via Attention Matching" is the closest latent-compaction
+neighbor. Zweiger et al. (2026) construct shorter keys and values that preserve
+attention behavior, with per-KV-head matching and efficient subproblems. This
+is directly relevant to any future per-layer or per-head `alpha_K`/`alpha_V`
+tuning, because it treats compaction at the attention-head level rather than as
+a single global operation. The difference is that Attention Matching creates a
+compact latent cache, while ValueGraft keeps a visible natural-language summary
+and asks whether selected old-context state should be attached to it.
+
+KV reuse systems such as KVLink and CacheBlend address a related serving
+problem: avoiding full prefill when chunks recur across requests. KVLink
+precomputes document caches independently, adjusts positions at inference, and
+uses trainable link tokens to help independently encoded chunks interact.
+CacheBlend reuses precomputed chunk caches even when they are not simple
+prefixes, selectively recomputing a small subset of tokens to recover
+cross-chunk conditioning. These systems weaken broad novelty claims about
+cache reuse, RoPE/position adjustment, and blending. They mostly target RAG or
+document-chunk reuse, not conversation-summary replacement after a long
+dialogue has been condensed.
+
+Learned latent-compression methods form another nearby family. Gist tokens
+train models to compress prompts into reusable special tokens. AutoCompressors
+train models to turn long contexts into compact summary vectors used as soft
+prompts. Compressed Context Memory continually compresses accumulating
+key/value context for online interaction. Cartridges train a small offline KV
+cache for a corpus using self-study, then reuse that cache for many later
+queries. These systems all show that models can be trained or adapted to carry
+context through nonstandard latent forms. ValueGraft is different because it is
+training-free and centered on the existing production pattern of replacing old
+dialogue with a human-readable summary.
+
+Hosted APIs now expose product surfaces in the same broad area. OpenAI's
+Responses compaction returns a compacted window that includes an encrypted
+opaque compaction item carrying prior state forward. Anthropic exposes
+server-side compaction as a typed compaction block containing a summary. Gemini
+has context-caching and encrypted thought-signature mechanisms that preserve
+reasoning continuity across calls. These public interfaces do not show that any
+provider is doing ValueGraft internally. They do show that opaque or
+semi-opaque state-carrying artifacts are a natural extension of current API
+design, rather than an exotic deployment shape.
+
+### What Remains Distinct
+
+Taken together, the prior art says we should be careful. We should not claim
+that internal states contain meaning, that KV caches are editable, that cache
+blocks can be reused, or that latent context compression is new. The more
+specific ValueGraft question is:
+
+```text
+When conversation history is replaced by a visible summary, does preserving
+some old-context key/value state for that summary make the compacted
+conversation behave more like the original long-context conversation?
+```
+
+The J-lens work in this directory is a qualitative companion to that behavioral
+question. It gives concrete examples of what context-conditioned information
+may be present around summary tokens before and after fresh re-encoding.
+
+### References
+
+- Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017.
+  [Attention Is All You Need](https://arxiv.org/abs/1706.03762). NeurIPS 2017.
+- nostalgebraist. 2020.
+  [Interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens).
+  LessWrong.
+- Belrose, Nora, Igor Ostrovsky, Lev McKinney, Zach Furman, Logan Smith,
+  Danny Halawi, Stella Biderman, and Jacob Steinhardt. 2023.
+  [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112).
+  arXiv:2303.08112.
+- Gurnee, Wes, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski,
+  Isaac Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang,
+  Ben Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen,
+  Joshua Batson, and Jack Lindsey. 2026.
+  [Verbalizable Representations Form a Global Workspace in Language Models](https://transformer-circuits.pub/2026/workspace/).
+  Transformer Circuits Thread.
+- Anthropic. 2026.
+  [jacobian-lens reference implementation](https://github.com/anthropics/jacobian-lens).
+- Neuronpedia. 2026.
+  [Jacobian Lens - Qwen3.6-27B](https://www.neuronpedia.org/qwen3.6-27b/jlens).
+- Li, Bojie. 2026.
+  [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107).
+  arXiv:2606.17107.
+- Zweiger, Adam, Xinghong Fu, Han Guo, and Yoon Kim. 2026.
+  [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284).
+  arXiv:2602.16284.
+- Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025.
+  [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002).
+  arXiv:2502.16002.
+- Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang,
+  Kuntai Du, Shan Lu, and Junchen Jiang. 2025.
+  [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444).
+  EuroSys 2025; arXiv:2405.16444.
+- Mu, Jesse, Xiang Lisa Li, and Noah Goodman. 2023.
+  [Learning to Compress Prompts with Gist Tokens](https://arxiv.org/abs/2304.08467).
+  NeurIPS 2023.
+- Chevalier, Alexis, Alexander Wettig, Anirudh Ajith, and Danqi Chen. 2023.
+  [Adapting Language Models to Compress Contexts](https://aclanthology.org/2023.emnlp-main.232/).
+  EMNLP 2023.
+- Kim, Jang-Hyun, Junyoung Yeom, Sangdoo Yun, and Hyun Oh Song. 2023.
+  [Compressed Context Memory For Online Language Model Interaction](https://arxiv.org/abs/2312.03414).
+  ICLR 2024.
+- Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley,
+  Emily Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and
+  Christopher Re. 2025.
+  [Cartridges: Lightweight and general-purpose long context representations via self-study](https://arxiv.org/abs/2506.06266).
+  arXiv:2506.06266.
+- OpenAI. 2026.
+  [Compaction](https://developers.openai.com/api/docs/guides/compaction).
+  OpenAI API documentation.
+- Anthropic. 2026.
+  [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction).
+  Claude Platform documentation.
+- Google AI for Developers. 2026.
+  [Thought signatures](https://ai.google.dev/gemini-api/docs/generate-content/thought-signatures)
+  and [context caching](https://ai.google.dev/gemini-api/docs/caching).
+- Qwen Team. 2026.
+  [Qwen3.6-27B: Flagship-Level Coding in a 27B Dense Model](https://qwen.ai/blog?id=qwen3.6-27b).
