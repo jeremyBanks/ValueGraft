@@ -1,0 +1,27 @@
+== case01 Rule 7
+== case02 Rule 4
+== case03 Rule 9
+{
+  "v_only_075": {
+    "valid_n": 3,
+    "mean_gap_closure": -3.3985281709146933,
+    "wins_over_B": 0
+  },
+  "k_only_075": {
+    "valid_n": 3,
+    "mean_gap_closure": -1.6572367564175163,
+    "wins_over_B": 0
+  },
+  "coupled_075": {
+    "valid_n": 3,
+    "mean_gap_closure": -1.4662773637149318,
+    "wins_over_B": 0
+  },
+  "coupled_100": {
+    "valid_n": 3,
+    "mean_gap_closure": -1.4750348510131364,
+    "wins_over_B": 0
+  }
+}
+Wrote /Users/jeb/experimentation/referent_recovery_microtest/outputs/microtest_results.json
+Wrote /Users/jeb/experimentation/referent_recovery_microtest/outputs/microtest_results.md
