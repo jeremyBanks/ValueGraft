@@ -19,6 +19,16 @@ explanatory support for the ValueGraft hypothesis, not the main behavioral
 experiment. The examples are selected for readability from seven constructed
 demos, a broad all-token/all-layer sweep, and a next-token control artifact.
 
+The main KV-cache question is behavioral: if we preserve selected old-context
+keys and values at a compaction boundary, does the compacted conversation behave
+more like the original long conversation? The interpretability question in this
+document is narrower. It asks whether the same summary tokens already show a
+different readable internal state when they are processed after the old
+conversation versus freshly re-encoded after compaction. In other words, the
+J-lens is used as a spotlight on the kind of context-conditioned signal
+ValueGraft is trying to carry, not as a replacement for the KV intervention or
+the behavioral tests.
+
 One clean example is a permit code. The summary contains this line:
 
 ```text
@@ -95,6 +105,14 @@ That gives us a way to ask:
 When the same summary token is evaluated in old-context and fresh paths,
 do the residual-stream readouts point to different concepts?
 ```
+
+This is one step downstream of the KV-cache hypothesis. The J-lens does not
+open the cache and label individual key or value vectors. Instead, it reads the
+residual-stream representation that results after the model has processed a
+token in a particular context. If old-context cache state helps bind `B-410` to
+"stale permit" during summary writing, and fresh re-encoding binds it more
+weakly or differently, the J-lens can make that contrast visible in a way a
+human can inspect.
 
 Several limits matter:
 
@@ -365,6 +383,14 @@ In the best examples, the old-context readout points toward the local status or
 role of an identifier, while the fresh readout points toward the model's
 default associations outside the conversation. That is compatible with the kind
 of state ValueGraft is designed to preserve.
+
+This is the intended relationship to the KV work: ValueGraft proposes a way to
+carry selected old-context key/value state across compaction; the J-lens
+examples make it easier to see why such state might matter by showing how the
+same visible summary text can land in different readable internal
+neighborhoods. The lens work demonstrates the potential target of preservation,
+while the arm experiments decide whether preserving it actually improves model
+behavior.
 
 The examples do not settle the behavioral question. For that, the main
 experiment still needs arm comparisons, guardrails, held-out tasks, and clear
