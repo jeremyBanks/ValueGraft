@@ -104,3 +104,15 @@ stance +4pp (null), sense +9pp, referent +8pp. Not an artifact of the
 PARTIAL=0.5 choice. THIRD independent confirmation of the same pattern
 (judged-lenient, judged-strict, and TF-logprob gap-closure all agree that
 grafting helps sense/referent, null on stance).
+
+## F1 scale-dependence (07-07) — DOES NOT replicate at 4B (honest limitation)
+The category dissociation is a 30B (large-model) result. At 4B the same
+gap-closure metric does NOT reproduce it: stance 87% helped (mean +0.19,
+was 39% at 30B), sense 55% / mean −0.09 (was 64%), referent 62% (was 81%)
+— the clean stance-null / sense-referent-positive ordering is gone/muddled.
+CONSISTENT WITH known scale-dependence of graft effects in this project
+(the alpha dose-response INVERTED 4B↔30B; DECISIONS 07-06). So F1 is
+bounded: three-method-corroborated AT 30B, NOT cross-scale; the mechanism
+behaves differently at small scale. State F1 as a large-model finding.
+Caveat: gap-closure ratios are noisier at 4B (smaller A−B denominators);
+a judged 4B cut would confirm, but the non-replication direction is clear.
