@@ -276,10 +276,9 @@ moves `mark` and `bank` upward relative to fresh, even though the next-token
 argmax did not need help.
 
 The shifted control is a caution. It also surfaces `mark` and `bank` on this
-row, which means the row is not enough by itself. Its role is different: it
-shows why we need aggregate closure and shifted controls instead of selecting
-the most vivid token table. Across the full target sequence, the shifted
-condition is much farther from full context than fresh compaction.
+row, so the row has to be read with the aggregate closure table rather than as
+a standalone win. Across the full target sequence, the shifted condition is
+much farther from full context than fresh compaction.
 
 ## Example 2: `inspected`
 
@@ -466,13 +465,13 @@ spelling check.
 
 | Condition | Layer-48 J-lens readout |
 | --- | --- |
-| Full context | `priorit`, `priority`, `prioritize`, `priority`, `precedence` |
-| Fresh compacted | `priority`, `priorit`, `prioritize`, `priority`, `precedence` |
-| Alpha-zero control | `priority`, `priorit`, `prioritize`, `priority`, `precedence` |
-| `alpha_V = 0.5` | `priority`, `priorit`, `prioritize`, `priority`, `precedence` |
-| Aligned `alpha_V = 0.75` | `priorit`, `priority`, `prioritize`, `priority`, `precedence` |
-| `alpha_V = 1.0` | `priorit`, `priority`, `prioritize`, `priority`, `precedence` |
-| Shifted `alpha_V = 0.75` | `priority`, `priorit`, `priority`, `prioritize`, `precedence` |
+| Full context | `priorit`, `priority`, `prioritize`, `precedence`, `Priority` |
+| Fresh compacted | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
+| Alpha-zero control | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
+| `alpha_V = 0.5` | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
+| Aligned `alpha_V = 0.75` | `priorit`, `priority`, `prioritize`, `precedence`, `Priority` |
+| `alpha_V = 1.0` | `priorit`, `priority`, `prioritize`, `precedence`, `Priority` |
+| Shifted `alpha_V = 0.75` | `priority`, `priorit`, `prioritize`, `precedence`, `Priority` |
 
 All states are in the priority neighborhood because the summary explicitly
 says wet driftwood should have higher priority. The distinction is rank rather
@@ -495,7 +494,8 @@ continuation-like readouts are mixed.
 
 ## What the Controls Show
 
-The alpha sweep and shifted control are the strongest part of this artifact.
+The alpha sweep and shifted control separate aligned state transfer from a
+generic perturbation.
 
 Alpha-zero is a plumbing check. It exactly matches fresh compaction, including
 J-lens token IDs and scores. That means the mere act of snapshotting,
@@ -539,10 +539,12 @@ The safest interpretation is:
 5. The result is still narrow. It is one constructed probe, not a task-level
    success result and not an effect-size estimate.
 
-This is the kind of artifact that can make ValueGraft legible. The behavioral
-benchmark tells us whether the method helps. The lens probe helps us see what
-kind of internal state changes when it helps, and warns us when a local
-next-token win may be caused by a worse perturbation.
+This makes ValueGraft inspectable: the same visible compacted text can produce
+different internal readouts depending on whether aligned write-time values are
+grafted. Behavioral benchmarks still decide whether the method helps in
+practice; the lens probe shows what kind of internal state changes when it
+does, and warns when a local next-token win may be caused by a worse
+perturbation.
 
 ## Scope and Next Work
 
