@@ -14,12 +14,9 @@ the visible text is still the summary plus recent tail, but selected cache
 entries are blended from the state that was written when the summary was
 generated under the original long context.
 
-This report asks a narrow mechanistic question:
-
-```text
-Among compacted variants with identical visible text, does a value-state graft
-move the model's internal readout toward the full-context run?
-```
+This report asks a narrow mechanistic question: among compacted variants with
+identical visible text, does a value-state graft move the model's internal
+readout toward the full-context run?
 
 The probe is deliberately small. It uses Qwen3.6-27B on a controlled coding
 scenario about a package named `rivermark`, then inspects the model with the
