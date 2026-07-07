@@ -85,12 +85,38 @@ fresh compacted transcript
 + selected old-context key/value state for the summary and retained tail
 ```
 
-In the broader design, keys and values can have separate interpolation
-parameters, `alpha_K` and `alpha_V`. An alpha of `0` leaves that channel fresh.
-An alpha of `1` fully substitutes the old-context state for that channel.
-Intermediate values blend; values above `1` are extrapolations. The current
-J-lens note is not evaluating which alpha is best. It explains why there may
-be context-conditioned status/role information to preserve.
+More concretely, the baseline compacted arm first builds the normal compacted
+transcript: summary text, recent tail, fresh positions, fresh keys, fresh
+values. Separately, during the original full-context run, the model also wrote
+keys and values for the same literal summary tokens while the old conversation
+was still present. ValueGraft aligns identical summary tokens, and any chosen
+identical tail spans, between those two traces. At the aligned compacted
+positions, it replaces or blends the freshly computed cache entries with the
+entries written under the old context.
+
+The general parameterization is:
+
+```text
+K_final = (1 - alpha_K) * K_fresh
+        + alpha_K       * K_write_time_rerotated
+
+V_final = (1 - alpha_V) * V_fresh
+        + alpha_V       * V_write_time
+```
+
+Keys need the extra "rerotated" qualifier because transformer keys are tied to
+position through RoPE-style rotation. If a write-time key is moved to a new
+compacted position, it has to be rotated into that position. Values do not have
+the same positional rotation.
+
+`alpha_K = 0, alpha_V = 0` is ordinary text-only summary compaction.
+`alpha_K = 0` with tuned `alpha_V` is the current V-Graft shape: keep the fresh
+attention addresses but blend in old-context value content. A K-only variant
+would tune `alpha_K` while leaving `alpha_V = 0`; a full KV variant can tune
+both. An alpha of `1` fully uses write-time state for that channel. Intermediate
+values blend; values above `1` are extrapolations. The current J-lens note is
+not evaluating which alpha is best. It explains why there may be
+context-conditioned status/role information to preserve.
 
 ## What The J-Lens Measures
 
