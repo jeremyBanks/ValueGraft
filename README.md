@@ -1,4 +1,8 @@
-# The sense a model builds up doesn't live in the summary
+*Here's a result I can't quite place. When an AI conversation gets compacted into a summary, the model loses some of the disambiguated "sense" it had built up — and it turns out you can recover a measurable slice of it by grafting the model's write-time KV **value** vectors back in at the summarization boundary (~10–12 points in small tests, across two models). It's an obvious enough thing to try that I assumed it was already studied, but I couldn't find this exact experiment under the terms I searched, and I couldn't afford to validate it at real scale — so I'd love any prior art, input, or opinions anyone can share. Thanks.*
+
+---
+
+# Value grafting: recovering lost semantic continuity when a conversation is compacted
 
 *When an AI conversation is compacted, the model loses something a good summary should have kept. This is a report on what that something is, where it lives, whether you can put it back — and what it looks like from inside the model when you do.*
 
