@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd /workspace/jlens_boundary_probe
+cd /workspace/exp/jlens_boundary_probe
 mkdir -p outputs
 
 echo "START free-divergence probe $(date -Is)"
