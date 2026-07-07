@@ -103,6 +103,17 @@ def parse_args() -> argparse.Namespace:
             "three-state full/fresh/grafted post-boundary probe."
         ),
     )
+    p.add_argument(
+        "--probe-target",
+        default=(
+            "Update src/rivermark/sort.py so wet driftwood is inspected first, "
+            "then run tests/test_sort.py."
+        ),
+        help=(
+            "Contentful continuation teacher-forced under full, fresh, and "
+            "grafted caches for downstream intervention readouts."
+        ),
+    )
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16"])
     p.add_argument("--trust-remote-code", action="store_true", default=True)
     p.add_argument("--no-trust-remote-code", dest="trust_remote_code", action="store_false")
@@ -650,6 +661,81 @@ def capture_forced_token_from_cache(
     return row
 
 
+def capture_forced_sequence_from_cache(
+    model: torch.nn.Module,
+    lens_model: Any,
+    lens: Any,
+    tokenizer: Any,
+    snap: dict[str, Any],
+    suffix_ids: list[int],
+    next_position: int,
+    forced_ids: list[int],
+    layers: list[int],
+    top_k: int,
+    label: str,
+) -> dict[str, Any]:
+    from jlens.hooks import ActivationRecorder
+
+    cache = rebuild_standard_cache(snap, model)
+    dev = model_input_device(model)
+    if suffix_ids:
+        pos = torch.arange(next_position, next_position + len(suffix_ids), device=dev)[None]
+        with torch.no_grad():
+            out = model(
+                input_ids=token_tensor(model, suffix_ids),
+                past_key_values=cache,
+                position_ids=pos,
+                use_cache=True,
+                logits_to_keep=1,
+            )
+        logits = out.logits[:, -1, :]
+        next_position += len(suffix_ids)
+    else:
+        raise TypeError("forced sequence capture requires a non-empty generation suffix")
+
+    final_layer = lens_model.n_layers - 1
+    record_at = sorted(set(layers) | {final_layer})
+    rows = []
+    for rel_pos, token_id in enumerate(forced_ids):
+        argmax_token_id = int(torch.argmax(logits, dim=-1).item())
+        with torch.no_grad(), ActivationRecorder(lens_model.layers, at=record_at) as rec:
+            out = model(
+                input_ids=torch.tensor([[int(token_id)]], device=dev),
+                past_key_values=cache,
+                position_ids=torch.tensor([[next_position]], device=dev),
+                use_cache=True,
+                logits_to_keep=1,
+            )
+            activations = {i: rec.activations[i].detach() for i in record_at}
+        row = {
+            "relative_position": int(rel_pos),
+            "position": int(next_position),
+            "token_id": int(token_id),
+            "token": tokenizer.decode([int(token_id)]),
+            "argmax_token_id": argmax_token_id,
+            "argmax_token": tokenizer.decode([argmax_token_id]),
+            "forced_token_in_next_top": any(
+                int(item["token_id"]) == int(token_id)
+                for item in topk_from_logits(tokenizer, logits[0], top_k)
+            ),
+            "next_token_top": topk_from_logits(tokenizer, logits[0], top_k),
+            "layers": {},
+        }
+        for layer in layers:
+            residual = activations[layer][0, 0].float().unsqueeze(0)
+            logits_l = lens_model.unembed(lens.transport(residual, layer))[0]
+            row["layers"][str(layer)] = topk_from_logits(tokenizer, logits_l, top_k)
+        rows.append(row)
+        logits = out.logits[:, -1, :]
+        next_position += 1
+    return {
+        "label": label,
+        "forced_text": tokenizer.decode(forced_ids),
+        "forced_token_count": len(forced_ids),
+        "rows": rows,
+    }
+
+
 def run() -> dict[str, Any]:
     args = parse_args()
     messages = load_messages(args.messages_json)
@@ -681,6 +767,7 @@ def run() -> dict[str, Any]:
     b_probe_messages = b_messages + [{"role": "user", "content": args.probe_user}]
     full_probe_ids = render_ids(tokenizer, full_probe_messages, False)
     b_probe_ids = render_ids(tokenizer, b_probe_messages, False)
+    probe_target_ids = tokenizer(args.probe_target, add_special_tokens=False).input_ids
 
     summary_text_ids = tokenizer(summary["text"], add_special_tokens=False).input_ids
     b_summary_start = find_subsequence(b_ids, summary_text_ids)
@@ -716,6 +803,11 @@ def run() -> dict[str, Any]:
             "fresh_probe": len(b_probe_ids),
         },
         "probe_user": args.probe_user,
+        "probe_target": {
+            "text": args.probe_target,
+            "token_count": len(probe_target_ids),
+            "tokens": [tokenizer.decode([tid]) for tid in probe_target_ids],
+        },
         "states": {},
         "graft": {"attempted": False, "available": False},
     }
@@ -763,6 +855,7 @@ def run() -> dict[str, Any]:
         )
         if not pairs:
             raise TypeError("no exact summary-token pairs for graft alignment")
+        alpha0_probe_snap = blend_values(b_probe_snap, old_snap, pairs, 0.0)
         grafted_probe_snap = blend_values(b_probe_snap, old_snap, pairs, args.alpha)
 
         full_probe_gen_ids = render_ids(tokenizer, full_probe_messages, True)
@@ -813,6 +906,58 @@ def run() -> dict[str, Any]:
             forced_token_id=forced_token_id,
             label="grafted_compacted",
         )
+        full_sequence = capture_forced_sequence_from_cache(
+            model,
+            lens_model,
+            lens,
+            tokenizer,
+            full_probe_snap,
+            full_suffix,
+            len(full_probe_ids),
+            probe_target_ids,
+            layers,
+            args.top_k,
+            label="full_context",
+        )
+        fresh_sequence = capture_forced_sequence_from_cache(
+            model,
+            lens_model,
+            lens,
+            tokenizer,
+            b_probe_snap,
+            b_suffix,
+            len(b_probe_ids),
+            probe_target_ids,
+            layers,
+            args.top_k,
+            label="fresh_compacted",
+        )
+        alpha0_sequence = capture_forced_sequence_from_cache(
+            model,
+            lens_model,
+            lens,
+            tokenizer,
+            alpha0_probe_snap,
+            b_suffix,
+            len(b_probe_ids),
+            probe_target_ids,
+            layers,
+            args.top_k,
+            label="alpha0_grafted_compacted",
+        )
+        grafted_sequence = capture_forced_sequence_from_cache(
+            model,
+            lens_model,
+            lens,
+            tokenizer,
+            grafted_probe_snap,
+            b_suffix,
+            len(b_probe_ids),
+            probe_target_ids,
+            layers,
+            args.top_k,
+            label="grafted_compacted",
+        )
         result["graft"].update(
             {
                 "available": True,
@@ -845,6 +990,12 @@ def run() -> dict[str, Any]:
                 "full_context": full_post,
                 "fresh_compacted": fresh_post,
                 "grafted_compacted": grafted_post,
+            },
+            "forced_target_sequences": {
+                "full_context": full_sequence,
+                "fresh_compacted": fresh_sequence,
+                "alpha0_grafted_compacted": alpha0_sequence,
+                "grafted_compacted": grafted_sequence,
             },
         }
         result["states"]["grafted_post_token"] = [grafted_post]
