@@ -9,6 +9,7 @@ whose Hugging Face cache exposes standard per-layer keys/values.
 from __future__ import annotations
 
 import argparse
+import copy
 import difflib
 import json
 import os
@@ -76,13 +77,6 @@ DEFAULT_MESSAGES = [
             "the river bank is inspected first, then run tests/test_sort.py."
         ),
     },
-    {
-        "role": "user",
-        "content": (
-            "Before continuing, summarize the work so far so another agent can "
-            "resume from a compacted context."
-        ),
-    },
 ]
 
 
@@ -98,6 +92,17 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--layers", default="quarter")
     p.add_argument("--max-new-summary-tokens", type=int, default=96)
     p.add_argument("--alpha", type=float, default=0.75)
+    p.add_argument(
+        "--probe-user",
+        default=(
+            "Continue the task. What exact file should be changed next, and "
+            "what test should be run? Answer in one sentence."
+        ),
+        help=(
+            "User message appended after the compaction boundary for the "
+            "three-state full/fresh/grafted post-boundary probe."
+        ),
+    )
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16"])
     p.add_argument("--trust-remote-code", action="store_true", default=True)
     p.add_argument("--no-trust-remote-code", dest="trust_remote_code", action="store_false")
@@ -292,42 +297,187 @@ def snapshot_standard_kv(model: torch.nn.Module, ids: list[int]) -> tuple[list[t
     with torch.no_grad():
         out = model(input_ids=token_tensor(model, ids), use_cache=True, logits_to_keep=1)
     cache = out.past_key_values
+    if hasattr(cache, "key_cache") and hasattr(cache, "value_cache"):
+        return snapshot_list_cache(cache), out.logits[:, -1, :]
     layers = getattr(cache, "layers", None)
     if layers is None:
-        raise TypeError("past_key_values has no .layers; standard K/V snapshot unavailable")
+        raise TypeError(
+            "past_key_values has neither .layers nor .key_cache/.value_cache; "
+            f"type={type(cache).__module__}.{type(cache).__name__}"
+        )
     snap = []
     for layer in layers:
         k = getattr(layer, "keys", None)
         v = getattr(layer, "values", None)
         if k is None or v is None:
-            raise TypeError("cache layer lacks .keys/.values; standard K/V snapshot unavailable")
-        snap.append((k.clone(), v.clone()))
-    return snap, out.logits[:, -1, :]
+            raise TypeError(
+                "cache layer lacks .keys/.values; standard K/V snapshot unavailable; "
+                f"cache={type(cache).__module__}.{type(cache).__name__} "
+                f"layer={type(layer).__module__}.{type(layer).__name__}"
+            )
+        snap.append((clone_tensor(k), clone_tensor(v)))
+    return {"kind": "layer_cache", "cache_class": cache.__class__, "layers": snap}, out.logits[:, -1, :]
 
 
-def rebuild_standard_cache(snap: list[tuple[torch.Tensor, torch.Tensor]]) -> DynamicCache:
-    cache = DynamicCache()
-    for i, (k, v) in enumerate(snap):
-        cache.update(k.clone(), v.clone(), i)
-    return cache
+def clone_tensor(x: torch.Tensor | None) -> torch.Tensor | None:
+    return None if x is None else x.clone()
+
+
+def clone_tensor_list(xs: list[torch.Tensor | None]) -> list[torch.Tensor | None]:
+    return [clone_tensor(x) for x in xs]
+
+
+def snapshot_list_cache(cache: Any) -> dict[str, Any]:
+    """Snapshot Qwen3-Next-style caches with key_cache/value_cache lists.
+
+    Qwen3.6 uses a hybrid architecture: full-attention layers have ordinary
+    K/V tensors, while linear-attention layers carry recurrent state instead.
+    For V-Graft we blend only populated attention-layer value_cache tensors and
+    preserve the fresh recurrent/conv states unchanged.
+    """
+
+    return {
+        "kind": "list_cache",
+        "cache_class": cache.__class__,
+        "key_cache": clone_tensor_list(cache.key_cache),
+        "value_cache": clone_tensor_list(cache.value_cache),
+        "conv_states": clone_tensor_list(getattr(cache, "conv_states", [])),
+        "recurrent_states": clone_tensor_list(getattr(cache, "recurrent_states", [])),
+        "layer_types": list(getattr(cache, "layer_types", [])),
+    }
+
+
+def rebuild_standard_cache(snap: dict[str, Any], model: torch.nn.Module | None = None) -> Any:
+    if snap["kind"] == "layer_cache":
+        cache = DynamicCache()
+        for i, (k, v) in enumerate(snap["layers"]):
+            if k is not None and v is not None:
+                cache.update(clone_tensor(k), clone_tensor(v), i)
+        return cache
+
+    if snap["kind"] == "list_cache":
+        if model is None:
+            raise TypeError("list-cache rebuild requires model.config")
+        cache = snap["cache_class"](config=model.config)
+        cache.key_cache = clone_tensor_list(snap["key_cache"])
+        cache.value_cache = clone_tensor_list(snap["value_cache"])
+        if hasattr(cache, "conv_states"):
+            cache.conv_states = clone_tensor_list(snap["conv_states"])
+        if hasattr(cache, "recurrent_states"):
+            cache.recurrent_states = clone_tensor_list(snap["recurrent_states"])
+        return cache
+
+    raise TypeError(f"unknown cache snapshot kind: {snap.get('kind')}")
+
+
+def cache_seq_len(snap: dict[str, Any]) -> int:
+    if snap["kind"] == "layer_cache":
+        for k, _ in snap["layers"]:
+            if k is not None and k.numel() > 0:
+                return int(k.shape[-2])
+        return 0
+    if snap["kind"] == "list_cache":
+        for k in snap["key_cache"]:
+            if k is not None and k.numel() > 0:
+                return int(k.shape[-2])
+        return 0
+    raise TypeError(f"unknown cache snapshot kind: {snap.get('kind')}")
+
+
+def cache_debug_summary(snap: dict[str, Any]) -> dict[str, Any]:
+    if snap["kind"] == "layer_cache":
+        shapes = [
+            None if k is None else [int(x) for x in k.shape]
+            for k, _ in snap["layers"][:8]
+        ]
+        return {
+            "kind": snap["kind"],
+            "layers": len(snap["layers"]),
+            "seq_len": cache_seq_len(snap),
+            "first_key_shapes": shapes,
+        }
+    if snap["kind"] == "list_cache":
+        populated = [
+            i
+            for i, k in enumerate(snap["key_cache"])
+            if k is not None and k.numel() > 0
+        ]
+        shapes = {
+            str(i): [int(x) for x in snap["key_cache"][i].shape]
+            for i in populated[:8]
+        }
+        return {
+            "kind": snap["kind"],
+            "layers": len(snap["key_cache"]),
+            "populated_attention_layers": populated[:16],
+            "populated_attention_layer_count": len(populated),
+            "seq_len": cache_seq_len(snap),
+            "first_key_shapes": shapes,
+            "layer_types_prefix": snap.get("layer_types", [])[:16],
+        }
+    return {"kind": snap.get("kind")}
 
 
 def blend_values(
-    b_snap: list[tuple[torch.Tensor, torch.Tensor]],
-    old_snap: list[tuple[torch.Tensor, torch.Tensor]],
+    b_snap: dict[str, Any],
+    old_snap: dict[str, Any],
     pairs: list[tuple[int, int]],
     alpha: float,
-) -> list[tuple[torch.Tensor, torch.Tensor]]:
+) -> dict[str, Any]:
     new_idx = torch.tensor([n for n, _ in pairs])
     old_idx = torch.tensor([o for _, o in pairs])
-    out = []
-    for li, (k, v) in enumerate(b_snap):
-        v2 = v.clone()
-        vf = v2[..., new_idx, :].float()
-        vo = old_snap[li][1][..., old_idx, :].float()
-        v2[..., new_idx, :] = ((1 - alpha) * vf + alpha * vo).to(v2.dtype)
-        out.append((k, v2))
-    return out
+
+    if b_snap["kind"] != old_snap["kind"]:
+        raise TypeError(f"cannot blend different cache kinds: {b_snap['kind']} vs {old_snap['kind']}")
+
+    out = copy.copy(b_snap)
+
+    if b_snap["kind"] == "layer_cache":
+        layers = []
+        for li, (k, v) in enumerate(b_snap["layers"]):
+            if k is None or v is None:
+                layers.append((clone_tensor(k), clone_tensor(v)))
+                continue
+            old_v = old_snap["layers"][li][1]
+            if old_v is None:
+                layers.append((clone_tensor(k), clone_tensor(v)))
+                continue
+            v2 = v.clone()
+            in_bounds = (new_idx < v2.shape[-2]) & (old_idx < old_v.shape[-2])
+            if bool(in_bounds.any()):
+                ni = new_idx[in_bounds].to(v2.device)
+                oi = old_idx[in_bounds].to(old_v.device)
+                vf = v2.index_select(-2, ni).float()
+                vo = old_v.index_select(-2, oi).to(v2.device).float()
+                v2.index_copy_(-2, ni, ((1 - alpha) * vf + alpha * vo).to(v2.dtype))
+            layers.append((clone_tensor(k), v2))
+        out["layers"] = layers
+        return out
+
+    if b_snap["kind"] == "list_cache":
+        values = clone_tensor_list(b_snap["value_cache"])
+        for li, v in enumerate(values):
+            old_v = old_snap["value_cache"][li]
+            if v is None or old_v is None or v.numel() == 0 or old_v.numel() == 0:
+                continue
+            v2 = v.clone()
+            in_bounds = (new_idx < v2.shape[-2]) & (old_idx < old_v.shape[-2])
+            if not bool(in_bounds.any()):
+                values[li] = v2
+                continue
+            ni = new_idx[in_bounds].to(v2.device)
+            oi = old_idx[in_bounds].to(old_v.device)
+            vf = v2.index_select(-2, ni).float()
+            vo = old_v.index_select(-2, oi).to(v2.device).float()
+            v2.index_copy_(-2, ni, ((1 - alpha) * vf + alpha * vo).to(v2.dtype))
+            values[li] = v2
+        out["key_cache"] = clone_tensor_list(b_snap["key_cache"])
+        out["value_cache"] = values
+        out["conv_states"] = clone_tensor_list(b_snap.get("conv_states", []))
+        out["recurrent_states"] = clone_tensor_list(b_snap.get("recurrent_states", []))
+        return out
+
+    raise TypeError(f"unknown cache snapshot kind: {b_snap.get('kind')}")
 
 
 def alignment_pairs_by_exact_tokens(
@@ -347,20 +497,22 @@ def alignment_pairs_by_exact_tokens(
     return pairs
 
 
-def capture_first_generated_token_from_cache(
+def capture_forced_token_from_cache(
     model: torch.nn.Module,
     lens_model: Any,
     lens: Any,
     tokenizer: Any,
-    snap: list[tuple[torch.Tensor, torch.Tensor]],
+    snap: dict[str, Any],
     suffix_ids: list[int],
     next_position: int,
     layers: list[int],
     top_k: int,
+    forced_token_id: int | None = None,
+    label: str | None = None,
 ) -> dict[str, Any]:
     from jlens.hooks import ActivationRecorder
 
-    cache = rebuild_standard_cache(snap)
+    cache = rebuild_standard_cache(snap, model)
     dev = model_input_device(model)
     if suffix_ids:
         pos = torch.arange(next_position, next_position + len(suffix_ids), device=dev)[None]
@@ -375,8 +527,16 @@ def capture_first_generated_token_from_cache(
         logits = out.logits[:, -1, :]
         next_position += len(suffix_ids)
     else:
-        _, logits = snapshot_standard_kv(model, [])
-    token_id = int(torch.argmax(logits, dim=-1).item())
+        with torch.no_grad():
+            out = model(
+                input_ids=torch.empty((1, 0), dtype=torch.long, device=dev),
+                past_key_values=cache,
+                use_cache=True,
+                logits_to_keep=1,
+            )
+        logits = out.logits[:, -1, :]
+    argmax_token_id = int(torch.argmax(logits, dim=-1).item())
+    token_id = argmax_token_id if forced_token_id is None else int(forced_token_id)
 
     final_layer = lens_model.n_layers - 1
     record_at = sorted(set(layers) | {final_layer})
@@ -391,9 +551,14 @@ def capture_first_generated_token_from_cache(
         activations = {i: rec.activations[i].detach() for i in record_at}
 
     row = {
+        "label": label,
         "position": int(next_position),
         "token_id": token_id,
         "token": tokenizer.decode([token_id]),
+        "forced_token": forced_token_id is not None,
+        "argmax_token_id": argmax_token_id,
+        "argmax_token": tokenizer.decode([argmax_token_id]),
+        "next_token_top": topk_from_logits(tokenizer, logits[0], top_k),
         "layers": {},
     }
     for layer in layers:
@@ -430,6 +595,10 @@ def run() -> dict[str, Any]:
     tail_start_msg = max(1, len(messages) - 2)
     b_messages = build_b_messages(messages, summary["text"], tail_start_msg)
     b_ids = render_ids(tokenizer, b_messages, False)
+    full_probe_messages = messages + [{"role": "user", "content": args.probe_user}]
+    b_probe_messages = b_messages + [{"role": "user", "content": args.probe_user}]
+    full_probe_ids = render_ids(tokenizer, full_probe_messages, False)
+    b_probe_ids = render_ids(tokenizer, b_probe_messages, False)
 
     summary_text_ids = tokenizer(summary["text"], add_special_tokens=False).input_ids
     b_summary_start = find_subsequence(b_ids, summary_text_ids)
@@ -439,6 +608,10 @@ def run() -> dict[str, Any]:
     else:
         b_summary_range = (b_summary_start, b_summary_start + len(summary_text_ids))
         b_summary_positions = sample_summary_positions(*b_summary_range)
+    b_probe_summary_start = find_subsequence(b_probe_ids, summary_text_ids)
+    b_probe_summary_range = None
+    if b_probe_summary_start is not None:
+        b_probe_summary_range = (b_probe_summary_start, b_probe_summary_start + len(summary_text_ids))
 
     old_summary_positions = sample_summary_positions(summary["s_start"], summary["s_end"])
     result: dict[str, Any] = {
@@ -457,7 +630,10 @@ def run() -> dict[str, Any]:
             "summary_tokens": len(summary["gen_ids"]),
             "old_with_summary": len(summary["old_ids"]),
             "fresh_compacted": len(b_ids),
+            "full_probe": len(full_probe_ids),
+            "fresh_probe": len(b_probe_ids),
         },
+        "probe_user": args.probe_user,
         "states": {},
         "graft": {"attempted": False, "available": False},
     }
@@ -493,33 +669,103 @@ def run() -> dict[str, Any]:
     try:
         result["graft"]["attempted"] = True
         old_snap, _ = snapshot_standard_kv(model, summary["old_ids"])
-        b_snap, _ = snapshot_standard_kv(model, b_ids)
-        if b_summary_range is None:
-            raise TypeError("could not locate summary text in fresh compacted IDs")
+        full_probe_snap, _ = snapshot_standard_kv(model, full_probe_ids)
+        b_probe_snap, _ = snapshot_standard_kv(model, b_probe_ids)
+        if b_probe_summary_range is None:
+            raise TypeError("could not locate summary text in fresh compacted probe IDs")
         pairs = alignment_pairs_by_exact_tokens(
-            b_ids,
+            b_probe_ids,
             summary["old_ids"],
-            b_summary_range,
+            b_probe_summary_range,
             (summary["s_start"], summary["s_end"]),
         )
         if not pairs:
             raise TypeError("no exact summary-token pairs for graft alignment")
-        grafted = blend_values(b_snap, old_snap, pairs, args.alpha)
-        b_gen_ids = render_ids(tokenizer, b_messages, True)
-        suffix = b_gen_ids[len(b_ids) :]
-        post = capture_first_generated_token_from_cache(
+        grafted_probe_snap = blend_values(b_probe_snap, old_snap, pairs, args.alpha)
+
+        full_probe_gen_ids = render_ids(tokenizer, full_probe_messages, True)
+        b_probe_gen_ids = render_ids(tokenizer, b_probe_messages, True)
+        if full_probe_gen_ids[: len(full_probe_ids)] != full_probe_ids:
+            raise TypeError("full probe generation prompt did not extend full probe prefix")
+        if b_probe_gen_ids[: len(b_probe_ids)] != b_probe_ids:
+            raise TypeError("fresh probe generation prompt did not extend fresh probe prefix")
+        full_suffix = full_probe_gen_ids[len(full_probe_ids) :]
+        b_suffix = b_probe_gen_ids[len(b_probe_ids) :]
+
+        full_post = capture_forced_token_from_cache(
             model,
             lens_model,
             lens,
             tokenizer,
-            grafted,
-            suffix,
-            len(b_ids),
+            full_probe_snap,
+            full_suffix,
+            len(full_probe_ids),
             layers,
             args.top_k,
+            label="full_context",
         )
-        result["graft"].update({"available": True, "pairs": len(pairs), "alpha": args.alpha})
-        result["states"]["grafted_post_token"] = [post]
+        forced_token_id = int(full_post["token_id"])
+        fresh_post = capture_forced_token_from_cache(
+            model,
+            lens_model,
+            lens,
+            tokenizer,
+            b_probe_snap,
+            b_suffix,
+            len(b_probe_ids),
+            layers,
+            args.top_k,
+            forced_token_id=forced_token_id,
+            label="fresh_compacted",
+        )
+        grafted_post = capture_forced_token_from_cache(
+            model,
+            lens_model,
+            lens,
+            tokenizer,
+            grafted_probe_snap,
+            b_suffix,
+            len(b_probe_ids),
+            layers,
+            args.top_k,
+            forced_token_id=forced_token_id,
+            label="grafted_compacted",
+        )
+        result["graft"].update(
+            {
+                "available": True,
+                "pairs": len(pairs),
+                "alpha": args.alpha,
+                "cache_old_summary": cache_debug_summary(old_snap),
+                "cache_full_probe": cache_debug_summary(full_probe_snap),
+                "cache_fresh_probe": cache_debug_summary(b_probe_snap),
+                "cache_grafted_probe": cache_debug_summary(grafted_probe_snap),
+                "alignment": {
+                    "old_summary_range": [summary["s_start"], summary["s_end"]],
+                    "fresh_probe_summary_range": list(b_probe_summary_range),
+                },
+            }
+        )
+        result["post_boundary_probe"] = {
+            "design": (
+                "Same probe user message after the boundary. Full context is "
+                "prefilled normally. Fresh compacted uses summary+tail text. "
+                "Grafted compacted starts from the same fresh compacted text "
+                "but V-grafts aligned summary-token value-cache entries from "
+                "the write-time summary path. J-lens rows force the first "
+                "full-context argmax token in all three states while retaining "
+                "each state's own next-token candidates."
+            ),
+            "forced_token_source": "full_context_argmax",
+            "forced_token_id": forced_token_id,
+            "forced_token": full_post["token"],
+            "states": {
+                "full_context": full_post,
+                "fresh_compacted": fresh_post,
+                "grafted_compacted": grafted_post,
+            },
+        }
+        result["states"]["grafted_post_token"] = [grafted_post]
     except Exception as exc:
         result["graft"].update(
             {

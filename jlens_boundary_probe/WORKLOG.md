@@ -52,6 +52,40 @@ The broad sweep covered 1,175 aligned summary tokens across 63 fitted layers,
 for 74,025 token-layer rows. The pod that produced the validated artifact has
 been terminated.
 
+## Process Correction: 2026-07-07 Missing Intervention State
+
+The first shareable ValueGraft/J-lens explainer overclaimed the relationship
+between the J-lens examples and the graft intervention. The broad sweep only
+compared two states:
+
+1. write-time summary tokens processed with the old conversation present;
+2. the same visible summary tokens freshly re-encoded in a compacted context.
+
+That two-state comparison is a useful diagnostic for a state gap, but it is
+not evidence about whether ValueGraft closes the gap. The earlier
+`boundary_probe.py` had an optional grafted post-token path, but the saved
+Qwen3.6 artifact skipped it with `cache layer lacks .keys/.values`. Therefore
+the report did not have the intervention-state data it needed.
+
+The correction is to collect a post-boundary intervention probe. The minimum
+valid artifact must include:
+
+- full context with the same appended probe user message;
+- fresh compacted context with the same visible `summary + tail` and probe;
+- grafted compacted context with the same visible text as fresh compacted, but
+  with aligned write-time summary value-cache entries blended into the fresh
+  cache;
+- each state's own ranked next-token candidates;
+- J-lens readouts for the same forced first token, chosen from the full-context
+  argmax, so token identity does not confound the readout comparison;
+- explicit cache/debug metadata showing whether the graft path was actually
+  available, how many aligned pairs were grafted, and which cache structure was
+  used.
+
+Do not rewrite public-facing conclusions from this side investigation until
+that three-condition artifact exists and an independent read-only audit has
+confirmed that it addresses the missing-intervention-state problem.
+
 ## Process Correction: 2026-07-07 Schema Surprise
 
 During the first writeup pass for the full-layer sweep, I made an analysis
