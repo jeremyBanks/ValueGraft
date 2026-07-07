@@ -147,3 +147,23 @@ panel AND the final multi-perspective Fable review.
   goal = a focused article that lands the primary contribution. Fable makes its
   own realistic calls, but AIMED at this focus. Put this context in every
   conceptual/refocus/editing Fable prompt, not just "review this."
+
+## PHASE 4 addendum 3 — ARCHITECTURE-GENERALIZABILITY limitation (user 07-07)
+On the next paper pass, ADD an honest limitation: value grafting's applicability
+is ARCHITECTURE-DEPENDENT and may be limited on some CURRENT models. Get FABLE's
+opinion AND let it do RESEARCH (this Fable pass gets TOOLS — web/read — unlike the
+tool-less readability reviews) to verify the real constraint vs our possibly-lazy
+non-Qwen attempts (user recalls Gemma + DeepSeek; also GLM asked about earlier).
+SUBSTANCE TO VERIFY (my reconstruction — Fable to confirm/correct with research):
+- Technique needs per-position/per-head VALUE vectors in a standard KV cache to
+  snapshot + re-inject. Holds for Qwen (standard GQA, what we validated).
+- DeepSeek V2/V3 = Multi-head Latent Attention (MLA): KV compressed to a shared
+  low-rank LATENT per position; no per-head value to graft directly → naive method
+  BLOCKED/needs redesign (graft the latent). Strongest "architecture forbids" case.
+- Gemma = sliding-window/global interleaving: far-back grafted values may be out of
+  window for local layers → ATTENUATED effect, not necessarily blocked.
+- GQA generally = fine (fewer KV heads, not a blocker).
+HONEST FRAME: validated on standard-GQA Qwen; transfer is gradiated — blocked on
+MLA, attenuated on sliding-window, fine on standard GQA. Separate "we were lazy"
+from "architecture forbids it" — don't overclaim either way. Fable researches, we
+state the bound honestly in the paper's limitations.
