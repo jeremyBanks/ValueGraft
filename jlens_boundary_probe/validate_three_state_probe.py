@@ -24,6 +24,14 @@ def top_ids(entries: list[dict[str, Any]]) -> tuple[int, ...]:
     return tuple(int(item["token_id"]) for item in entries)
 
 
+def top_scores(entries: list[dict[str, Any]]) -> tuple[float, ...]:
+    return tuple(float(item["score"]) for item in entries)
+
+
+def scores_match(left: tuple[float, ...], right: tuple[float, ...], *, tol: float = 1e-9) -> bool:
+    return len(left) == len(right) and all(abs(a - b) <= tol for a, b in zip(left, right))
+
+
 def jaccard_distance(left: tuple[int, ...], right: tuple[int, ...]) -> float:
     a = set(left)
     b = set(right)
@@ -91,6 +99,25 @@ def validate(data: dict[str, Any], *, allow_missing_provenance: bool) -> tuple[l
     sequences = {state: rows_for(data, state) for state in REQUIRED_SEQUENCES}
     lengths = {state: len(rows) for state, rows in sequences.items()}
     require(len(set(lengths.values())) == 1, f"forced sequence lengths differ: {lengths}", failures)
+    reference_len = lengths["full_context"]
+    require(reference_len > 0, "forced sequence must be nonempty", failures)
+    target = data.get("probe_target", {})
+    if "token_count" in target:
+        require(
+            reference_len == int(target["token_count"]),
+            f"forced sequence length {reference_len} differs from probe_target.token_count {target['token_count']}",
+            failures,
+        )
+
+    sequence_meta = data["post_boundary_probe"]["forced_target_sequences"]
+    forced_texts = {state: sequence_meta[state].get("forced_text") for state in REQUIRED_SEQUENCES}
+    require(len(set(forced_texts.values())) == 1, f"forced_text differs across sequences: {forced_texts}", failures)
+    if target.get("text") is not None:
+        require(
+            forced_texts["full_context"] == target["text"],
+            "forced_text differs from probe_target.text",
+            failures,
+        )
 
     reference_tokens = [row["token_id"] for row in sequences["full_context"]]
     for state, rows in sequences.items():
@@ -99,20 +126,31 @@ def validate(data: dict[str, Any], *, allow_missing_provenance: bool) -> tuple[l
 
     fresh_rows = sequences["fresh_compacted"]
     alpha0_rows = sequences["alpha0_grafted_compacted"]
-    for i, (fresh, alpha0) in enumerate(zip(fresh_rows, alpha0_rows, strict=True)):
+    for i, (fresh, alpha0) in enumerate(zip(fresh_rows, alpha0_rows)):
         require(fresh["argmax_token_id"] == alpha0["argmax_token_id"], f"alpha0 argmax differs from fresh at row {i}", failures)
         require(
             top_ids(fresh["next_token_top"]) == top_ids(alpha0["next_token_top"]),
             f"alpha0 next-token top-k differs from fresh at row {i}",
             failures,
         )
+        require(
+            scores_match(top_scores(fresh["next_token_top"]), top_scores(alpha0["next_token_top"])),
+            f"alpha0 next-token top-k scores differ from fresh at row {i}",
+            failures,
+        )
         fresh_layers = fresh.get("layers", {})
         alpha0_layers = alpha0.get("layers", {})
         require(set(fresh_layers) == set(alpha0_layers), f"alpha0 layer set differs from fresh at row {i}", failures)
+        require("48" in fresh_layers, f"layer 48 is missing at row {i}", failures)
         for layer in fresh_layers:
             require(
                 top_ids(fresh_layers[layer]) == top_ids(alpha0_layers[layer]),
                 f"alpha0 layer {layer} top-k differs from fresh at row {i}",
+                failures,
+            )
+            require(
+                scores_match(top_scores(fresh_layers[layer]), top_scores(alpha0_layers[layer])),
+                f"alpha0 layer {layer} top-k scores differ from fresh at row {i}",
                 failures,
             )
 
@@ -133,7 +171,7 @@ def summarize(data: dict[str, Any]) -> dict[str, Any]:
         fg: list[float] = []
         gf: list[float] = []
         fa0: list[float] = []
-        for a, b, c, z in zip(full, fresh, grafted, alpha0, strict=True):
+        for a, b, c, z in zip(full, fresh, grafted, alpha0):
             full_ids = top_ids(a["layers"][layer])
             fresh_ids = top_ids(b["layers"][layer])
             graft_ids = top_ids(c["layers"][layer])
@@ -147,13 +185,13 @@ def summarize(data: dict[str, Any]) -> dict[str, Any]:
             "mean_full_grafted": mean(fg),
             "mean_fresh_grafted": mean(gf),
             "mean_fresh_alpha0": mean(fa0),
-            "mean_closure_full_fresh_minus_full_grafted": mean([a - b for a, b in zip(ff, fg, strict=True)]),
+            "mean_closure_full_fresh_minus_full_grafted": mean([a - b for a, b in zip(ff, fg)]),
         }
 
     argmax_rescues: list[dict[str, Any]] = []
     argmax_regressions: list[dict[str, Any]] = []
     graft_changes: list[dict[str, Any]] = []
-    for i, (a, b, c) in enumerate(zip(full, fresh, grafted, strict=True)):
+    for i, (a, b, c) in enumerate(zip(full, fresh, grafted)):
         entry = {
             "index": i,
             "forced_token": a["token"],
