@@ -409,20 +409,76 @@ visible token often decodes toward ordinary lexical priors.
 
 Examples:
 
-- In a Pokemon planning summary, `Vacuum` means a Zigzagoon with Pickup. The
-  write-time readout surfaces `Zig`, `Pickup`, and utility-role tokens; the
-  fresh readout drifts toward cleaner/vacuum associations.
-- In the same example, `Dex` is tied to a pending trade. The write-time readout
-  surfaces `owes`/`trade`; the fresh readout leans toward Pokedex entry or
-  completion.
-- In a block-party summary, `Maple` means the library's Maple Room. The
-  write-time readout surfaces room/mapping tokens; the fresh readout drifts
-  toward street or avenue priors.
-- In SWE-Gym next-action probes, span-level readouts find operational tokens
-  such as `str_replace_editor`, exact file paths, `grep -n 'normalize_token'`,
-  and `reproduce_error.py`. The coding examples are noisier because tool-call
-  syntax and file paths split into many subword tokens, so phrase-level spans
-  are clearer than raw token ranks.
+The tables below show the intended reading format. The visible text is the text
+available to both paths. The two readout columns are top vocabulary items from
+the same anchored token under write-time versus fresh encoding. They should be
+read as a noisy lens view, not as generated answers.
+
+**Pokemon planning summary.** The old conversation establishes several private
+labels: `Vacuum` is a Zigzagoon with Pickup; `Dex` is a person/trade obligation,
+not a Pokedex progress tracker. The summary text says:
+
+```text
+- Vacuum is the Zigzagoon with Pickup, a utility slot only; Vacuum never
+  battles gyms or major fights such as Drake.
+- Dex trade: spare Makuhita for Dex's Castform from the Ruby save; Castform
+  was for rain support.
+```
+
+Matched-wrapper J-lens readouts from
+`jlens_boundary_probe/pokemon_readout_notes.md`:
+
+| Anchor token | Write-time readout | Fresh-summary readout | Human reading |
+| --- | --- | --- | --- |
+| `Vacuum` | layer 62: `is`, `nickname`, `nick`, `Zig`, `nicknamed`, `/Z` | layer 62: `Cleaner`, `cleaner`, `Clean`, `cleaned`, `cleaners` | With old context, the token points at the run-specific nickname; fresh encoding falls back toward the ordinary appliance sense. |
+| `Dex` | layer 62: `owes`, `owed`, `owe`, `trade`, `traded`, `trades` | layer 62: `Nav`, `nav`, `completion`, `dex`, `navigation`, `entry` | With old context, `Dex` is an agent in an owed trade; fresh encoding drifts toward Pokedex/DexNav/progress semantics. |
+
+This is the phenomenon ValueGraft is meant to preserve. The summary already
+contains the right words. The difference is that write-time state still exposes
+the private interpretation those words had when the original conversation was
+attendable.
+
+**Ordinary block-party summary.** The old conversation defines local meanings
+for otherwise generic labels: `Maple` is a room, `B-410` is stale, `P-771` is
+current, and `Crane` is a stage-rental company. The summary text says:
+
+```text
+- Maple means the library's Maple Room for storage and volunteer check-in,
+  not the tree grove or syrup sponsor.
+- Permit: B-410 is stale. Use P-771 on the insurance form.
+- Crane is the stage rental company, not equipment. Crane delivers risers at 9
+  on Saturday; their driver calls Robin, but Mateo and Jules unload.
+```
+
+Matched-wrapper J-lens readouts from
+`jlens_boundary_probe/plain_conversation_readout_notes.md`:
+
+| Anchor token | Write-time readout | Fresh-summary readout | Human reading |
+| --- | --- | --- | --- |
+| `Maple` | layer 48: `refers`, `=`, `referring`, `denotes`; layer 62: `=`, `refers`, `is`, `means` | layer 48: `Street`, `street`, `neighborhood`, `park`, `town`, `City`; layer 62: `Street`, `Ave`, `Avenue`, `St`, `Streets` | With old context, `Maple` behaves like a locally defined label; fresh encoding treats it like a generic place/street name. |
+| `B-410` | layer 48: `obsolete`, `outdated`, `deprecated`, `expired` | layer 48: `municipal`, `City`, `city`, `Civic`, `Town` | With old context, the stale-number warning is prominent; fresh encoding mostly sees a civic permit-like identifier. |
+| `Crane` | layer 62: `is`, `refers`, `means`, `Stage`, `stage`, `delivers` | layer 62: `rental`, `operator`, `schedule`, `lease`, `license` | Fresh encoding is not nonsensical, but it is more generic; write-time state better preserves the local company/stage referent. |
+
+**Coding next-action readout.** The SWE-Gym examples are less clean as semantic
+demos because tool-call syntax, file paths, and subword fragments dominate raw
+token ranks. The useful unit is the phrase span. In one getmoto trajectory, the
+true next action is:
+
+```text
+<function=str_replace_editor>
+<parameter=command>view</parameter>
+<parameter=path>/workspace/getmoto__moto__4.1/moto/rds/responses.py</parameter>
+<parameter=view_range>[584, 600]</parameter>
+</function>
+```
+
+The span-level probe finds the operational objects rather than only punctuation:
+`str_replace_editor` has mean span divergence 0.651, the full
+`/workspace/getmoto__moto__4.1/moto/rds/responses.py` path has mean divergence
+0.561, `responses.py` has mean divergence 0.568, and `[584, 600]` has mean
+divergence 0.407. This is not as readable as `Vacuum` or `Maple`, but it shows
+that the same readout method can be aimed at the practical tokens in a coding
+agent trajectory: tool name, command, file path, and line range.
 
 The J-lens evidence has a narrower role than the likelihood and probe metrics.
 It supplies a mechanistic readout for one local substrate: the same summary text
