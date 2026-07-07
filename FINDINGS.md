@@ -41,7 +41,7 @@ trivia); result extracted by re-judging already-collected data on the
 MEANING dimension (the original judging used a fact/honesty scheme that
 was blind to these categories).
 
-**Strength.** Moderate-high. Both independent graft-arm judge batches agree
+**Strength.** Moderate-high — and notably from GENUINE natural-length eviction (the synthetic conversations were long enough that policy/referents were evicted by real conversation length, NOT by an artificially low compaction threshold). This is cleaner than the tau-benchmark attempts, whose short sessions force artificial thresholds. Moderate-high. Both independent graft-arm judge batches agree
 on the gradient. Internally consistent (effect tracks damage; negative
 controls elsewhere in the project crater).
 
