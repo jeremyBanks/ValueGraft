@@ -206,3 +206,28 @@ Per-head not run (per-layer clean-negative + k_only-negative-everywhere makes
 it a dead direction; stopped per direction-against discipline). This STRENGTHENS
 the paper: not "value is the axis we tested" but "value is THE axis — keys
 checked uniformly + per-layer, don't help."
+
+## Phase 2 SCOPING CORRECTION (Fable cross-check vs referent_recovery_microtest) — 07-07
+My "VALUE is THE operative axis" was OVERCLAIMED — universal-sounding, but our
+corpus has only ONE target morphology: semantic referent PHRASES (Nimbus=signup
+funnel). A separate microtest (referent_recovery_microtest, 0.6B prospecting)
+found that for a DIFFERENT shape — label→short TOKEN-like identifier (Coral→
+userName, Azure→UTC) — KEY-grafting often WINS (k020/k010 best, GC up to ~0.8).
+CRUCIAL: where the two studies OVERLAP (semantic policy_choice phrases) they
+AGREE — the microtest reproduces our result (V-only dominates, K-only 0/30
+positive). So the divergence is in UNTESTED territory (short identifiers), not a
+contradiction. The microtest signal is statistically WEAK (0.6B, winner's-curse
+best-of-15-policy selection, tiny cells n=2-4, K-only global mean still negative)
+— it CANNOT move our claim toward "keys help", only stop it being UNIVERSAL.
+Mechanism makes the flip plausible: keys=positional addressing; short-identifier
+recovery = retrieval-by-address, not semantic reconstruction.
+HONEST SCOPED CLAIM (replaces the earlier universal one):
+> For SEMANTIC-referent recovery (decision/label → semantic phrase), VALUE-
+> grafting is the operative axis — key-grafting doesn't help (uniform or
+> per-layer, 30B rigorous), K-only hurts; RoPE-addressing unsupported FOR
+> SEMANTIC-PHRASE TARGETS. Whether keys matter for SHORT TOKEN-LIKE IDENTIFIER
+> targets (addressing/retrieval) is OPEN — only noisy 0.6B evidence hints yes.
+TESTABLE PREDICTION: target morphology MODERATES K-graft utility (keys help for
+short identifiers, inert for semantic phrases). WARRANTED: a focused 30B run —
+add a short-identifier target lane, pre-register K/V/coupled sweep, report FULL
+policy surface (not best-of) — before ANY general claim about keys.
