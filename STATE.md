@@ -4,6 +4,19 @@
 
 ## 08:45 07-07 — PLAN OF RECORD (read first; supersedes all below)
 
+### 09:10 UPDATE — TWO TRACKS (don't lose either):
+1. TAU VALIDATION: OpenRouter key (.openrouter_key, gitignored, user
+   dropping now) → rerun banking pilot with --user-llm openrouter/<strong
+   model> as customer sim → gate = sessions >12K so compaction fires.
+   Banking pilot ALREADY proved integration works; only the weak user-sim
+   (our 30B) failed it (sessions 300-1500 tok). tau CLI in STATE below.
+2. SYNTHETIC DIAL-IN: shift plants from `evicted_fact` (too precise) to
+   `sense`/`referent`/`stance` (semantic richness, Pokémon-style) — the
+   regime where graft has an edge and examples stay realistic. This
+   addresses the core gap: we have mechanism+honesty proof but ~no signal
+   on task-outcome benefit in the operative difficulty/skill band.
+
+
 MODEL: now Opus 4.8 (Fable quota out). Read INCIDENTS.md #1-26 + rules 1-23
 before acting. DECISIONS.md is current (107 entries); STATE/HANDOFF/INCIDENTS
 were stale until this update (incident 25).
