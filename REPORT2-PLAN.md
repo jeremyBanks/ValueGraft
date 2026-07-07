@@ -104,3 +104,16 @@ PLAN:
 - Phase C (lens): bigger three-state intervention on strong label-preserved-
   role-lost examples, wide layers, four boundary points, on 27B.
 - Phase D: synthesis writing (both instruments, one model).
+
+## CONFIDENCE + GATED SPEND (07-07, user asked "are you confident")
+- HIGH confidence the PIECE is valuable — the two-instrument convergence +
+  sharpened honest claim already exist in on-hand data; ships strong even if
+  new sampling underwhelms.
+- MEDIUM confidence on DRAMATIC lens exhibits — other agent got only subtle
+  rank shifts (closure ~0.01-0.04); good examples should be sharper but "snap"
+  not guaranteed.
+- GATE: cheap ~$5 SMOKE first — (a) verify grafting runs on hybrid 27B (gates
+  the same-model behavioral re-run), (b) 2-3 strong lens examples to see if
+  exhibits pop. If yes → full bigger sweep + 27B behavioral. If lens stays
+  subtle → report to user before the rest; ship the honest synthesis anyway.
+  Don't commit $30-50 on faith.
