@@ -76,4 +76,4 @@ is beyond the model (0/7 even oracle-mode); exercise-scale tasks (chains,
 tau-banking) don't naturally reach the compaction-stress regime without
 threshold tuning. The operative regime — hard enough that eviction matters,
 easy enough the model can use recovered context — is narrow and
-under-served by existing benchmarks. (INCIDENTS 19; DECISIONS 07-06/07.)
+under-served by existing benchmarks. (INCIDENTS 19; DECISIONS 07-06/07.) CONFIRMED empirically 07-07: tau-bench banking, even with a capable GPT-4o-mini user-simulator, produced ~3-4K-token sessions — too short for meaningful eviction at any threshold (high→compaction never fires; low→nothing substantial to evict). All 3 arms reward 0.00, no separation. Standard interactive benchmarks with short task-dialogues are structurally unsuited; the operative regime needs genuinely long sessions (which our synthetic F1 data has naturally).
