@@ -1,4 +1,5 @@
 # AGENTS.md — orientation for any agent working in this repo
+> FINDINGS.md = the headline results (read for conclusions). INCIDENTS/DECISIONS = process.
 
 ## What this repo is
 

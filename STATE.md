@@ -1,4 +1,5 @@
 # STATE.md — session handoff notes
+> FINDINGS.md = the headline results (read for conclusions). INCIDENTS/DECISIONS = process.
 
 *Last updated: 2026-07-07 ~08:45 by Claude Opus 4.8 (see PROVENANCE-CORRECTION.md — earlier work mislabeled as Fable). Update at EVERY phase transition (rule 22).*
 
