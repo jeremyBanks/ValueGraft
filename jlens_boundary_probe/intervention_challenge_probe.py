@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import traceback
 from pathlib import Path
 from typing import Any
 
@@ -247,20 +248,29 @@ def main() -> None:
 
     for case in cases:
         print(f"RUN {case.case_id}", flush=True)
-        result["cases"][case.case_id] = run_case(
-            case,
-            CHALLENGE_DEMOS[case.demo_name],
-            model,
-            lens_model,
-            lens,
-            tokenizer,
-            layers,
-            args.top_k,
-            args.alpha,
-            args.alpha_sweep,
-            args.tail_messages,
-        )
-        print(f"DONE {case.case_id}", flush=True)
+        try:
+            result["cases"][case.case_id] = run_case(
+                case,
+                CHALLENGE_DEMOS[case.demo_name],
+                model,
+                lens_model,
+                lens,
+                tokenizer,
+                layers,
+                args.top_k,
+                args.alpha,
+                args.alpha_sweep,
+                args.tail_messages,
+            )
+            print(f"DONE {case.case_id}", flush=True)
+        except Exception as exc:
+            result["cases"][case.case_id] = {
+                "case_id": case.case_id,
+                "demo_name": case.demo_name,
+                "error": f"{type(exc).__name__}: {exc}",
+                "traceback": traceback.format_exc(),
+            }
+            print(f"ERROR {case.case_id}: {type(exc).__name__}: {exc}", flush=True)
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)

@@ -255,7 +255,15 @@ def run_case(
     full_probe_messages = [*demo.messages, {"role": "user", "content": case.probe_user}]
     compacted_probe_messages = [*compacted_messages, {"role": "user", "content": case.probe_user}]
     full_probe_ids = render_ids(tokenizer, full_probe_messages, False)
-    compacted_ids = render_ids(tokenizer, compacted_messages, False)
+    compacted_render_error = None
+    try:
+        compacted_token_count = len(render_ids(tokenizer, compacted_messages, False))
+    except Exception as exc:
+        # Some chat templates reject a compacted prefix with no post-summary
+        # user turn. The probe context below is still valid because it appends
+        # the actual user query before rendering.
+        compacted_token_count = None
+        compacted_render_error = f"{type(exc).__name__}: {exc}"
     compacted_probe_ids = render_ids(tokenizer, compacted_probe_messages, False)
     compacted_summary_start = find_subsequence(compacted_probe_ids, summary_ids)
     if compacted_summary_start is None:
@@ -391,7 +399,8 @@ def run_case(
         "token_counts": {
             "old_write_time": len(old_ids),
             "summary_tokens": len(summary_ids),
-            "fresh_compacted": len(compacted_ids),
+            "fresh_compacted": compacted_token_count,
+            "fresh_compacted_render_error": compacted_render_error,
             "full_probe": len(full_probe_ids),
             "fresh_probe": len(compacted_probe_ids),
             "tail_start_msg": tail_start_msg,
