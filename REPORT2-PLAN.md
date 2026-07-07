@@ -117,3 +117,23 @@ PLAN:
   exhibits pop. If yes → full bigger sweep + 27B behavioral. If lens stays
   subtle → report to user before the rest; ship the honest synthesis anyway.
   Don't commit $30-50 on faith.
+
+## SMOKE VERDICT (07-07) — gate A PASS, exhibit payoff FAIL
+- GATE A PASS: value-grafting runs correctly on hybrid Qwen3.6-27B (0 errors,
+  full readouts). De-risks the same-model behavioral re-run.
+- EXHIBIT FAIL: on our 3 strong sense cases (Nimbus/Hydra/sandbox), lens shifts
+  are tiny (closure 0.00-0.04), ZERO argmax rescues, aligned ≈ shifted ≈ fresh.
+  Reproduces the other agent's underwhelming result. STRUCTURAL: "strong" =
+  role stripped from summary = the SPARSE regime where V-only grafting can't
+  recover. No V-only sweet spot for dramatic internal visuals.
+- DECISION: do NOT spend $30-50 chasing dramatic lens exhibits — they won't
+  materialize for V-only. Options to user:
+  (a) Ship honest synthesis now: lens as SUBTLE corroboration (alignment-
+      sensitive, α<1 better, small real shifts) + the sharpened claim
+      (reinterpretation-reduction, not fact-recovery — which the lens negative
+      SUPPORTS). Optionally add modest 27B behavioral gap-closure re-run
+      (~$5-10, de-risked) for clean one-model-two-instruments.
+  (b) Pivot new research to the K/V AXIS: does KEY grafting recover what
+      value-only can't? The sparse regime is the testbed. Genuinely novel,
+      but a real undertaking with its own risk of another negative.
+  (c) Hold.
