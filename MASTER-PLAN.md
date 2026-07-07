@@ -68,6 +68,11 @@ Fable. So: EVERY writing deliverable MUST get a Fable readability pass via a
 `model: fable` SUBAGENT, regardless of the main-loop model at the time. Fable
 does its best on CLEAN, minimal context (just the doc). This is not optional —
 if the final prose didn't pass through a Fable subagent, the writing isn't done.
+ALSO (user 07-07): use a SHORT Fable subagent as a HIGH-LEVEL CONCEPTUAL
+sanity-check on claims/framing/conclusions — PROACTIVELY, ahead of finalizing,
+not just readability. Fable caught-class: over-reaching conclusions (e.g. the
+"scale-dependent" referent overclaim). Gut-check big claims with short Fable
+before they reach the user.
 
 ## Sequencing / autonomy
 Run Phase 1 to completion (paper pushed) → THEN Phase 2. Drive via scheduled
