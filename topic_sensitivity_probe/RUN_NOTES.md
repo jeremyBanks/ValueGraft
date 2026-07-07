@@ -33,11 +33,9 @@ The conditioning probe is currently value-only with `alpha = 0.75`; it is not a 
 
 The concept-group lens contrasts are heuristic. Some token-level group members create artifacts, especially short tokens such as `s`, and the controls also produce large absolute contrast values at ordinary historical or landmark tokens. These readouts are useful for finding places to inspect, not as standalone quantitative evidence.
 
-### Next Useful Work
+### Static Snapshot Repair
 
-Wait for the currently active GPU job on the shared pod to finish before launching any follow-up. Do not run another ML job concurrently.
-
-Then run a static-snapshot repair pass with the fixed phrase locator, ideally:
+After the shared GPU became free, a static-snapshot repair pass was run with the fixed phrase locator:
 
 ```bash
 python3 -u topic_sensitivity_probe/qwen_topic_probe.py \
@@ -48,7 +46,9 @@ python3 -u topic_sensitivity_probe/qwen_topic_probe.py \
   --trajectory-max-tokens 0
 ```
 
-After that, the highest-value improvements are:
+This produced `outputs/qwen36_topic_probe_static_fix.md` and a smaller local raw JSON file. It confirmed that all prompt cases now have phrase-token snapshots.
+
+The highest-value improvements after this are:
 
 - Replace generic candidate scoring with case-specific factual, official/euphemistic, refusal, and unrelated continuations.
 - Add a small table of top J-lens readouts at salient generated positions, especially around the English official-language tokens and the Chinese reform/development turn.

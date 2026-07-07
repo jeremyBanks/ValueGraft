@@ -36,6 +36,19 @@ For the Tank Man answer, late-layer contrasts favor history tokens around the fa
 
 For the Chinese prompt, the generated text itself is already the key observation: the model produces a development-and-reform answer rather than an event answer. The trajectory readouts show the model continuing along that bland topic path, but the current concept groups are too rough to turn this into a precise mechanistic claim.
 
+## Static Snapshot Repair
+
+A follow-up repair pass reran the prompt-token J-lens snapshots with trajectories disabled. This fixed the phrase-location bug and found two prompt-token positions for every case.
+
+The phrase-final token is much more interpretable than the first subword token:
+
+- For the Chinese prompt, the final `广场` token surfaces `事件`, `protests`, `events`, and related "what happened" tokens in late layers, even though the generated answer redirects to reform/development achievements.
+- For `June Fourth`, the final token surfaces `Movement`, `Democracy`, `Incident`, `democracy`, and related tokens in late layers.
+- For `Tank Man`, the final token surfaces `protester`, blocking/resistance/standing terms, and image-context tokens.
+- The controls look domain-appropriate: Forbidden City points to palace/museum/Beijing, Trafalgar Square points to London/Westminster/location, and Kent State points to Ohio/University/shootings.
+
+This does not prove "panic" or a specific safety mechanism. It does suggest a useful distinction: at the prompt-token level, the model has internally available associations for the sensitive referents, while the generated answer can route toward a safer or more official-sounding surface form depending on language and framing.
+
 ## Conditioning Probe
 
 The value-only conditioning probe used the same visible compact prompt, `Topic: Tiananmen Square`, and blended value tensors on that visible phrase from prior frames: tourism, protest/crackdown, official/euphemistic, and an unrelated landmark control.
@@ -46,7 +59,7 @@ Interpretation: this is weak evidence that the local value state can move the co
 
 ## Known Problems
 
-The static prompt-token J-lens snapshot in the first report is incomplete. The phrase locator only found the Chinese prompt phrase because it did not handle tokenization boundary variants for the English phrases. The script has been fixed, but the first report's static snapshot section should be treated as Chinese-only.
+The static prompt-token J-lens snapshot in the first report is incomplete. The phrase locator only found the Chinese prompt phrase because it did not handle tokenization boundary variants for the English phrases. The repaired report fixes this, but the first report's static snapshot section should be treated as Chinese-only.
 
 The candidate-scoring table is misleading if read casually. It uses the same generic candidates for every prompt, so `1989 protests` can score highly even for unrelated controls. That column is a continuation diagnostic, not a statement about what the model generated or what the control prompt is "about."
 
@@ -56,6 +69,4 @@ The concept groups are heuristic. Singleton-token maxima create artifacts, and s
 
 Do not start the follow-up while another GPU job is active on the shared pod.
 
-When the GPU is free, run the static-snapshot repair pass with the fixed phrase locator and `--trajectory-max-tokens 0`. This should cheaply fill in prompt-token J-lens snapshots for the English cases without repeating the expensive trajectory scan.
-
-After that, the most valuable redesign is case-specific candidate scoring: compare factual, official/euphemistic, refusal, and unrelated continuations tailored to each prompt. That would make the probability diagnostics interpretable rather than merely suggestive.
+The most valuable redesign is now case-specific candidate scoring: compare factual, official/euphemistic, refusal, and unrelated continuations tailored to each prompt. That would make the probability diagnostics interpretable rather than merely suggestive.
