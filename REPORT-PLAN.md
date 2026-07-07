@@ -76,3 +76,14 @@ AFTER concept-readout lands (it's a load-bearing corroboration or an honest
 Provenance footer: Fable 5 (majority) + Opus 4.8 (continuation) + Sonnet 5
 (subagents) + GPT-5.5 (adversarial review), directed & funded by the user.
 See PROVENANCE-CORRECTION.md.
+
+## P6 — Citations pass (user, 07-07; do AFTER exhibits, low energy but MUST happen)
+Related-work/citations section at the bottom. Sources: (1) the prior-art
+research already done in-repo (locate below); (2) the NEW interpretability
+work from yesterday (J-lens paper — logit-lens lineage 2020, SAE contrast,
+Nanda caveat — see DECISIONS 07-07 07:10 calibration); (3) standard
+citations: compaction/summarization practice, KV-cache papers, logit lens
+(nostalgebraist 2020), activation patching, SWE-bench, tau-bench/tau2,
+Aider-Polyglot, Qwen3 model cards, LongMemEval. Verify claims of novelty
+against the prior-art notes ("we couldn't find it named" claim must
+survive the check).
