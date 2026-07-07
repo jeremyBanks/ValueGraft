@@ -136,3 +136,18 @@ this as mechanistic proof of the dissociation.
 Default value-graft strength α_V = 0.75 (the project's standard graft dose;
 α=1.0 = full replacement, studied in F3 tuning). Where unspecified, results
 use α=0.75.
+
+## Same-model confirmation (Qwen3.6-27B, the lens's model) — 07-07
+Behavioral gap-closure on 27B (same model the J-lens weights exist for), so
+behavior + lens sit on ONE model. The core dissociation REPLICATES:
+| category | 27B mean GC | 27B % helped | (30B % helped) |
+|---|---|---|---|
+| sense    | +0.050 | 59% | (64%) |
+| referent | +0.004 | 48% | (81%) |
+| stance   | −0.201 | 21% | (39%) |
+Graft helps SENSE (positive), null/negative on STANCE (summary suffices) —
+matches 30B qualitatively. NOTE: referent is essentially FLAT on 27B (+0.004)
+— value-only grafting barely moves the retrieval-hard "recover a specific
+evicted decision" category. This is the wall V-only hits, and the direct
+motivation for the K/V (key-graft) experiment: keys carry addressing/position,
+which is what referent recovery may need.

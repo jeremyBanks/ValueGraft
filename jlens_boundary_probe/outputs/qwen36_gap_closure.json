@@ -1,0 +1,1732 @@
+{
+  "model": "Qwen/Qwen3.6-27B",
+  "design": "Behavioral gap-closure (E-B)/(A-B) on teacher-forced GOLD-continuation logprob, ported from src/gap_closure_cat.py to the J-lens probe's 27B cache-snapshot + V-graft machinery (boundary_probe.snapshot_standard_kv / alignment_pairs_by_exact_tokens / blend_values). A=full context, B=fresh-compacted (system+summary+retained tail), E=B with aligned summary-token value-cache V-grafted from the write-time summary path. Teacher forcing mirrors kvlib_hf.tf_logprobs. Stratified by sense/referent/stance.",
+  "alpha": 0.75,
+  "categories": [
+    "sense",
+    "referent",
+    "stance"
+  ],
+  "include_contaminated": false,
+  "conversations": {
+    "c01": {
+      "title": "SaaS product launch",
+      "summary_text": "**Project:** Chartkite Launch Planning\n**Role:** AI Sounding Board for Founder (4-person team: 1 founder, 3 engineers)\n**Current Status:** Feature-complete. Preparing for invite-only beta launch.\n\n**Key Decisions & Constraints:**\n1.  **Pricing:** Usage-based metering with prepaid credits (drawn down per query). Aligns with backend cost scaling.\n2.  **Onboarding (\"Nimbus\"):**\n    *   **Definition:** \"Nimbus\" refers strictly to the self-serve signup funnel (landing page to first login). *Not* the cloud migration project.\n    *   **Flow:** No empty dashboards. Users land on a pre-loaded, interactive sample chart. One-click \"Try a Chart\" action.\n    *   **Prohibitions:** NO webinars, NO countdown timers, NO forced product tours (Guidely failed with 91% dismissal rate), NO cold email (Prospexo failed with 0.4% reply rate + spam complaints).\n    *   **Strategy:** Invite-only beta with ~30 design partners. Goal: Each partner ships one real report before public launch.\n3.  **Marketing:**\n    *   No",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8463,
+        "fresh_compacted": 1408,
+        "old_with_summary": 8788,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c01-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Marisol's proposal?",
+          "gold": "An invite-only beta with roughly thirty design partners before the public launch, opening up only once each partner had shipped a real report.",
+          "gold_token_count": 26,
+          "contaminated": false,
+          "lp_full": -1.6308934138371394,
+          "lp_fresh": -2.7306512685922475,
+          "lp_graft": -2.6202339759239783,
+          "gap_closure": 0.10040145854912458
+        },
+        "c01-sense-1": {
+          "category": "sense",
+          "probe": "When I referred to Nimbus in this conversation, which workstream did I mean?",
+          "gold": "The self-serve signup funnel work (landing page to first login), not the cloud-hosting migration.",
+          "gold_token_count": 21,
+          "contaminated": false,
+          "lp_full": -1.1778827848888578,
+          "lp_fresh": -2.4381221589587985,
+          "lp_graft": -2.2985096886044456,
+          "gap_closure": 0.11078250150483289
+        },
+        "c01-sense-2": {
+          "category": "sense",
+          "probe": "When I asked for slides for 'the deck', which deck was I referring to?",
+          "gold": "The investor update deck owed to the seed backers, not the sales pitch deck.",
+          "gold_token_count": 16,
+          "contaminated": false,
+          "lp_full": -1.5178335905075073,
+          "lp_fresh": -3.2377281188964844,
+          "lp_graft": -3.192617654800415,
+          "gap_closure": 0.026228622366933307
+        },
+        "c01-stance-1": {
+          "category": "stance",
+          "probe": "Give me five ideas for adding urgency to the launch landing page.",
+          "gold": "Suggests urgency tactics (limited beta seats, launch-week bonus, expiring intro price, etc.) while avoiding countdown timers entirely, ideally noting the user finds them scammy.",
+          "gold_token_count": 36,
+          "contaminated": false,
+          "lp_full": -3.8310343424479165,
+          "lp_fresh": -4.461826748318142,
+          "lp_graft": -4.514092339409722,
+          "gap_closure": -0.08285703918625344
+        },
+        "c01-stance-2": {
+          "category": "stance",
+          "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
+          "gold": "Suggests formats like short videos, interactive demos, written guides, or office-hours chats, while never proposing a webinar, ideally recalling the user called them a snoozefest.",
+          "gold_token_count": 37,
+          "contaminated": false,
+          "lp_full": -3.746871535842483,
+          "lp_fresh": -4.0567915632918075,
+          "lp_graft": -4.116424560546875,
+          "gap_closure": -0.19241414550022332
+        }
+      }
+    },
+    "c02": {
+      "title": "Community conference",
+      "summary_text": "**Project:** Riverbend DevCon 2025 Planning\n**Status:** 4 months out, ~300 attendees, volunteer-organized.\n**Key Personnel:** User (Lead), Ravi (Co-organizer), Godfrey Tan (Fiscal Sponsor/Reimbursements).\n\n**Decisions & Constraints:**\n1.  **Venue:** Downtown Community Center. Deposit $3,275 paid Jan 17 (refundable >60 days out).\n    *   **Naming:** \"The Hall\" = Main Auditorium. \"Hall B\" = Smaller Annex (East Side). User refers to Annex as \"the hall\" due to habit; clarify in comms.\n2.  **Speaker Program:** 140 submissions.\n    *   **Ratio:** 50% New / 50% Experienced speakers.\n    *   **Beacon (Mentorship):** Pairs first-time speakers with veterans. *Distinct from* \"Beacon Lounge\" (Sponsor networking).\n    *   **Opening Slot:** Split 60-min keynote into two 25-min talks back-to-back (Ravi's compromise).\n3.  **Sponsorship:**",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8055,
+        "fresh_compacted": 1246,
+        "old_with_summary": 8380,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c02-referent-1": {
+          "category": "referent",
+          "probe": "Which catering option did we lock in for the conference?",
+          "gold": "Boxed lunches from the worker co-op bakery on Fifth (the third option).",
+          "gold_token_count": 16,
+          "contaminated": false,
+          "lp_full": -1.2832489013671875,
+          "lp_fresh": -5.221841335296631,
+          "lp_graft": -5.239716529846191,
+          "gap_closure": -0.004538472779151427
+        },
+        "c02-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Ravi's compromise?",
+          "gold": "Splitting the 60-minute keynote into two 25-minute morning talks by different speakers, back to back.",
+          "gold_token_count": 24,
+          "contaminated": false,
+          "lp_full": -0.6167552471160889,
+          "lp_fresh": -1.9611185391743977,
+          "lp_graft": -1.9092715581258137,
+          "gap_closure": 0.03856619810646781
+        },
+        "c02-sense-1": {
+          "category": "sense",
+          "probe": "When I said Beacon in this conversation, what was I referring to?",
+          "gold": "The mentorship track pairing first-time speakers with veterans for talk prep, not the sponsor networking lounge.",
+          "gold_token_count": 20,
+          "contaminated": false,
+          "lp_full": -1.0453178405761718,
+          "lp_fresh": -2.3845144271850587,
+          "lp_graft": -2.253541946411133,
+          "gap_closure": 0.0977992940570244
+        },
+        "c02-sense-2": {
+          "category": "sense",
+          "probe": "When I asked about seating in 'the hall', which room did I mean?",
+          "gold": "The smaller annex room on the east side, labeled Hall B, not the main auditorium.",
+          "gold_token_count": 19,
+          "contaminated": false,
+          "lp_full": -1.1478225306460732,
+          "lp_fresh": -2.186288130910773,
+          "lp_graft": -2.1530759711014595,
+          "gap_closure": 0.031981954723245484
+        },
+        "c02-stance-1": {
+          "category": "stance",
+          "probe": "Give me three ideas to boost attendee engagement during the day.",
+          "gold": "Suggests engagement ideas like hallway-track prompts, lightning talks, or sticker quests, while never proposing a raffle, ideally recalling the user called them a cash grab.",
+          "gold_token_count": 34,
+          "contaminated": false,
+          "lp_full": -3.963171117446002,
+          "lp_fresh": -4.666740417480469,
+          "lp_graft": -4.694608800551471,
+          "gap_closure": -0.03961000440132482
+        },
+        "c02-stance-2": {
+          "category": "stance",
+          "probe": "Suggest three sponsor placement ideas we could include in the packages.",
+          "gold": "Suggests placements like stage signage, charging stations, or coffee sponsorship, while never proposing branded lanyards, ideally recalling the user found them tacky.",
+          "gold_token_count": 31,
+          "contaminated": false,
+          "lp_full": -4.3367452313823085,
+          "lp_fresh": -4.6980910762663814,
+          "lp_graft": -4.7013830369518645,
+          "gap_closure": -0.009110276849977962
+        }
+      }
+    },
+    "c03": {
+      "title": "Mobile app redesign",
+      "summary_text": "# Fernly App Redesign: Context Summary for AI Agent\n\n## 1. Project Overview\n*   **Goal:** Redesign \"Fernly,\" a plant-care app, for a 4-person team shipping weekly.\n*   **Current State:** 4-year-old design, 80k users, 99.62% crash-free session rate.\n*   **Target Audience:** Serious plant enthusiasts; significant segment of older users requiring high accessibility.\n*   **Key Constraint:** No gamification (badges/streaks), no carousels, no in-app rating prompts (Nudgekit failed previously).\n\n## 2. Core Decisions & Architecture\n*   **Navigation:** Gesture-first layout with a Floating Action Button (FAB) for logging waterings. Chosen over hamburger menu and bottom tabs for one-handed usability.\n*   **Visual Design (Approved by Ingrid):**\n    *   Background: Deep Slate (`#1E1E2E`).\n    *   Accent: Coral (`#FF6F61`).\n    *   Cards: 16px border radius, soft shadows.\n    *   Typography: Inter (Light, Regular, Semi-Bold).\n    *   Sp",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8592,
+        "fresh_compacted": 1643,
+        "old_with_summary": 8917,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c03-referent-1": {
+          "category": "referent",
+          "probe": "Which navigation pattern did we choose for the redesign?",
+          "gold": "The gesture-first layout with a floating action button for logging (the third option).",
+          "gold_token_count": 16,
+          "contaminated": false,
+          "lp_full": -1.7724173069000244,
+          "lp_fresh": -2.7483863830566406,
+          "lp_graft": -2.7866549491882324,
+          "gap_closure": -0.039210838812940775
+        },
+        "c03-referent-2": {
+          "category": "referent",
+          "probe": "What did Ingrid's approved mockup look like?",
+          "gold": "A deep slate background with a coral accent color and rounded 16px cards.",
+          "gold_token_count": 17,
+          "contaminated": false,
+          "lp_full": -0.3940454651327694,
+          "lp_fresh": -2.1417570675120636,
+          "lp_graft": -2.1816967234892,
+          "gap_closure": -0.022852543819451464
+        },
+        "c03-sense-1": {
+          "category": "sense",
+          "probe": "When I said Aurora in this conversation, which project did I mean?",
+          "gold": "The first-run experience rework, the new plant-setup wizard for fresh installs, not the Android tablet layout project.",
+          "gold_token_count": 23,
+          "contaminated": false,
+          "lp_full": -1.0263739046843157,
+          "lp_fresh": -5.032907900602921,
+          "lp_graft": -5.080331221870754,
+          "gap_closure": -0.011836495413777195
+        },
+        "c03-sense-2": {
+          "category": "sense",
+          "probe": "When I talked about tightening 'the handoff', which handoff did I mean?",
+          "gold": "The design-to-engineering handoff in Figma (specs and redlines), not the support-ticket handoff between shifts.",
+          "gold_token_count": 25,
+          "contaminated": false,
+          "lp_full": -0.7528575134277343,
+          "lp_fresh": -2.87766845703125,
+          "lp_graft": -2.90799560546875,
+          "gap_closure": -0.01427286908926934
+        },
+        "c03-stance-1": {
+          "category": "stance",
+          "probe": "Give me three ideas for surfacing seasonal plant-care content on the home screen.",
+          "gold": "Suggests approaches like a single featured banner, an inline feed section, or contextual cards, while never proposing a carousel, ideally recalling that nobody swipes past the first card.",
+          "gold_token_count": 36,
+          "contaminated": false,
+          "lp_full": -3.7956517537434897,
+          "lp_fresh": -4.498683081732856,
+          "lp_graft": -4.480371263292101,
+          "gap_closure": 0.02604694515268016
+        },
+        "c03-stance-2": {
+          "category": "stance",
+          "probe": "Suggest three ways to encourage users to log waterings more consistently.",
+          "gold": "Suggests approaches like smart reminders, plant-health feedback, or gentle scheduling, while never proposing badges or gamification, ideally recalling the user found badges condescending.",
+          "gold_token_count": 33,
+          "contaminated": false,
+          "lp_full": -4.276478160511363,
+          "lp_fresh": -4.775249134410512,
+          "lp_graft": -4.8342063210227275,
+          "gap_closure": -0.11820492710575613
+        }
+      }
+    },
+    "c04": {
+      "title": "Academic paper submission",
+      "summary_text": "**Project:** Low-Resource Dialogue Summarization Paper Submission\n**Target Venue:** EMNLP Findings Track\n**Key Personnel:** Student (User), Dr. Okafor (Advisor)\n\n**Critical Constraints & Policies:**\n1.  **Naming Disambiguation:**\n    *   \"Hydra\" = Multi-task baseline model (comparison system).\n    *   \"Hydra-Cluster\" or \"Hydra-GPU\" = GPU cluster infrastructure.\n    *   \"The deadline\" = Internal full-draft deadline (10 days before official cutoff).\n    *   \"Official deadline\" = Conference submission cutoff.\n2.  **Preprint Policy:** STRICTLY NO preprints before review feedback. Labmate was scooped previously; this is non-negotiable.\n3.  **Visual Policy:** NO pie charts. Use bar plots/stacked bars for proportions.\n4.  **Statistical Policy:** NO significance testing/p-values. Stats consulting backlog (6 weeks) is too long; low-resource settings make p-values unreliable. Rely on human eval and ablation.\n5.  **Budget:** $795 total (camera-ready + registration) penciled in.\n6.  **",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8145,
+        "fresh_compacted": 1136,
+        "old_with_summary": 8470,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c04-referent-1": {
+          "category": "referent",
+          "probe": "Which submission venue did we commit to?",
+          "gold": "The EMNLP findings track (the second of the three options).",
+          "gold_token_count": 14,
+          "contaminated": false,
+          "lp_full": -1.9633240018572127,
+          "lp_fresh": -3.3558850969587053,
+          "lp_graft": -3.3871361868722096,
+          "gap_closure": -0.022441449803124576
+        },
+        "c04-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Dr. Okafor's suggestion?",
+          "gold": "Adding a small human evaluation with 36 raters comparing our summaries against the strongest neural system on faithfulness.",
+          "gold_token_count": 23,
+          "contaminated": false,
+          "lp_full": -0.8119104634160581,
+          "lp_fresh": -4.836926004161006,
+          "lp_graft": -4.753691963527514,
+          "gap_closure": 0.02067918491019969
+        },
+        "c04-sense-1": {
+          "category": "sense",
+          "probe": "When I mentioned Hydra numbers, which Hydra did I mean?",
+          "gold": "The multi-task comparison model, not the GPU cluster.",
+          "gold_token_count": 11,
+          "contaminated": false,
+          "lp_full": -1.7610758001154119,
+          "lp_fresh": -2.284698659723455,
+          "lp_graft": -2.6212746013294566,
+          "gap_closure": -0.6427831318478813
+        },
+        "c04-sense-2": {
+          "category": "sense",
+          "probe": "When I asked about hitting 'the deadline', which deadline was I referring to?",
+          "gold": "The internal full-draft deadline set by Dr. Okafor, ten days before the official submission cutoff.",
+          "gold_token_count": 22,
+          "contaminated": false,
+          "lp_full": -1.0824035297740588,
+          "lp_fresh": -1.6667064319957385,
+          "lp_graft": -1.5238531286066228,
+          "gap_closure": 0.24448501427247465
+        },
+        "c04-stance-1": {
+          "category": "stance",
+          "probe": "Suggest three ways to get early feedback on the paper before the reviews arrive.",
+          "gold": "Suggests options like lab-group reviews, trusted colleagues at other institutions, or a practice talk, while never suggesting posting a preprint or arXiv upload, ideally recalling the scooping concern.",
+          "gold_token_count": 40,
+          "contaminated": false,
+          "lp_full": -3.5697311401367187,
+          "lp_fresh": -3.750749969482422,
+          "lp_graft": -3.9906185150146483,
+          "gap_closure": -1.3251027332307752
+        },
+        "c04-stance-2": {
+          "category": "stance",
+          "probe": "What chart types would you suggest for showing the error-category breakdown in the analysis section?",
+          "gold": "Suggests bar charts, stacked bars, or tables, while never proposing a pie chart, ideally recalling the user finds them unreadable.",
+          "gold_token_count": 28,
+          "contaminated": false,
+          "lp_full": -3.584528241838728,
+          "lp_fresh": -3.773761749267578,
+          "lp_graft": -3.8193155016217912,
+          "gap_closure": -0.24072772826102598
+        }
+      }
+    },
+    "c05": {
+      "title": "Podcast series launch",
+      "summary_text": "# Context Summary: Second Draft Podcast Production\n\n## Project Overview\n*   **Podcast Name:** Second Draft\n*   **Concept:** Interviews with people who changed careers dramatically. Focus on vulnerability, struggle, and transformation.\n*   **Season 1:** 10 episodes.\n*   **Current Status:** Pre-production/Planning phase. First season structure defined.\n\n## Core Constraints & Non-Negotiables\n1.  **No Crypto Founders:** Strict ban on guests from crypto/AI startup sectors due to past negative experience.\n2.  **No Mid-Roll Ads:** Zero dynamic ad insertion or mid-roll commercials. Integrity of story is paramount.\n3.  **Audio Quality:** No video-call app audio (Zoom/Meet compression). Must use high-quality remote recording (e.g., Riverside, SquadCast, or Zoom Audio Only with external mics).\n4.  **Format:** 30-minute tight edits preferred over hour-long loose conversations (based on audience retention data).\n5.  **Cadence:** Monthly release. Twice-weekly pilot failed (downloads halved, backlog torched).\n6.  **Hosting:** $23.50/month (billed annually) on current plan.",
+      "alignment_pairs": 255,
+      "token_counts": {
+        "full": 8348,
+        "fresh_compacted": 1440,
+        "old_with_summary": 8673,
+        "summary_tokens": 255
+      },
+      "plants": {
+        "c05-referent-1": {
+          "category": "referent",
+          "probe": "Which intro format did we lock in for the show?",
+          "gold": "A cold open pulling the juiciest clip from the interview (the first option).",
+          "gold_token_count": 17,
+          "contaminated": false,
+          "lp_full": -1.6482511408188765,
+          "lp_fresh": -4.053080839269302,
+          "lp_graft": -4.037104438332951,
+          "gap_closure": 0.006643464585723282
+        },
+        "c05-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Jonas's idea?",
+          "gold": "A rotating guest-host seat where each month a past interviewee returns to co-interview the next guest.",
+          "gold_token_count": 21,
+          "contaminated": false,
+          "lp_full": -1.0178350721086775,
+          "lp_fresh": -3.200363522484189,
+          "lp_graft": -3.1340470086960566,
+          "gap_closure": 0.03038517723639412
+        },
+        "c05-sense-1": {
+          "category": "sense",
+          "probe": "When I said Echo in this conversation, what was I referring to?",
+          "gold": "The three-episode mini-arc about founders who left tech for trades, not Sylvie's mastering preset.",
+          "gold_token_count": 22,
+          "contaminated": false,
+          "lp_full": -1.055201617154208,
+          "lp_fresh": -4.608761527321556,
+          "lp_graft": -4.607576543634588,
+          "gap_closure": 0.0003334638269576631
+        },
+        "c05-sense-2": {
+          "category": "sense",
+          "probe": "When I said to put extended cuts on 'the feed' first, which feed did I mean?",
+          "gold": "The private supporters-only Patreon feed, not the public RSS feed.",
+          "gold_token_count": 13,
+          "contaminated": false,
+          "lp_full": -1.9828937237079327,
+          "lp_fresh": -3.4334112314077525,
+          "lp_graft": -3.437585683969351,
+          "gap_closure": -0.002877905671209733
+        },
+        "c05-stance-1": {
+          "category": "stance",
+          "probe": "Give me three realistic monetization ideas for the show's first year.",
+          "gold": "Suggests options like listener support tiers, a single tasteful pre-roll sponsor, merch, or live events, while never proposing mid-roll or dynamic ad insertion, ideally recalling the user finds interruptions gross.",
+          "gold_token_count": 41,
+          "contaminated": false,
+          "lp_full": -3.8829866734946648,
+          "lp_fresh": -4.261983359732279,
+          "lp_graft": -4.294773008765244,
+          "gap_closure": -0.08651698081710071
+        },
+        "c05-stance-2": {
+          "category": "stance",
+          "probe": "Suggest three guest profiles for the money-and-risk themed episode.",
+          "gold": "Suggests guests like a firefighter-turned-financial-planner, a laid-off banker who opened a bakery, etc., while never proposing a crypto founder, ideally recalling the user was burned before.",
+          "gold_token_count": 39,
+          "contaminated": false,
+          "lp_full": -3.5241753993890224,
+          "lp_fresh": -3.5999888884715543,
+          "lp_graft": -3.6427369729066505,
+          "gap_closure": -0.5638585554156453
+        }
+      }
+    },
+    "c06": {
+      "title": "Neighborhood garden",
+      "summary_text": "**Project:** Wrenfield Street Neighborhood Garden Planning (20 beds, 40 households)\n**Coordinator:** User (Community Organizer)\n**Key Stakeholders:** Mabel (Pollinator Patch Lead), Ortiz (City Contact for \"Meadow\" expansion), Treasurer (Insurance $184/yr, renews Nov)\n\n**Decisions & Policies:**\n1.  **Layout:** Tall crops must not shade leafy greens. South fence beds reserved for Mabel’s Children’s Pollinator Patch (with local elementary school).\n2.  **Soil:** No-till approach. Member offered truckload of manure; pending vetting (age, composting status, animal type, chemical history).\n3.  **Watering:** Rain barrels feeding soaker hoses by gravity (voted over hand-watering or drip/timer). Permit WP-5521.\n4.  **Compost:** 3-bay structure at gate (\"The Bins\") vs. plastic storage bins in shed. User requested relocation of \"The Bins\" before Saturday’s workday.\n5.  **Fundraising:** Bake sales banned. Seeking low-effort, high-impact alternatives.\n6.  **Pestic",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8498,
+        "fresh_compacted": 1722,
+        "old_with_summary": 8823,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c06-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Mabel's plan?",
+          "gold": "Reserving the two sunniest beds by the south fence for a children's pollinator patch run with the nearby elementary school.",
+          "gold_token_count": 25,
+          "contaminated": false,
+          "lp_full": -0.9404398345947266,
+          "lp_fresh": -2.7843170166015625,
+          "lp_graft": -2.7597271728515627,
+          "gap_closure": 0.013335944492374914
+        },
+        "c06-sense-1": {
+          "category": "sense",
+          "probe": "When I said Meadow in this conversation, what did I mean?",
+          "gold": "The expansion onto the vacant lot on Delling Street being negotiated with the city, not the wildflower strip along the west fence.",
+          "gold_token_count": 26,
+          "contaminated": false,
+          "lp_full": -1.0988599337064302,
+          "lp_fresh": -3.662337376521184,
+          "lp_graft": -3.6940692021296573,
+          "gap_closure": -0.012378429815099559
+        },
+        "c06-sense-2": {
+          "category": "sense",
+          "probe": "When I asked about relocating 'the bins', which bins did I mean?",
+          "gold": "The big three-bay composting structure by the gate, not the plastic storage bins in the shed.",
+          "gold_token_count": 21,
+          "contaminated": false,
+          "lp_full": -1.0163942972819011,
+          "lp_fresh": -1.7607977730887276,
+          "lp_graft": -1.7379929678780692,
+          "gap_closure": 0.030635006353162554
+        },
+        "c06-stance-1": {
+          "category": "stance",
+          "probe": "The squash bugs are back. Give me three ways to deal with them.",
+          "gold": "Suggests non-spray methods like row covers, hand-picking, trap crops, or timing adjustments, while never proposing pesticides or sprays, ideally recalling the runoff concern.",
+          "gold_token_count": 36,
+          "contaminated": false,
+          "lp_full": -3.6888660854763455,
+          "lp_fresh": -4.291893005371094,
+          "lp_graft": -4.2831005520290795,
+          "gap_closure": 0.014580532065714264
+        },
+        "c06-stance-2": {
+          "category": "stance",
+          "probe": "Give me three ideas to raise money for the new shed roof.",
+          "gold": "Suggests ideas like a plant-start sale, local business sponsorship, or a crowdfunding drive, while never proposing a bake sale, ideally recalling that they net peanuts for the effort.",
+          "gold_token_count": 36,
+          "contaminated": false,
+          "lp_full": -3.5977550082736545,
+          "lp_fresh": -4.312951829698351,
+          "lp_graft": -4.506978352864583,
+          "gap_closure": -0.2712910870880616
+        }
+      }
+    },
+    "c07": {
+      "title": "Board game publishing",
+      "summary_text": "**Project:** Marrow & Vine (Indie Board Game, Medium-Weight Strategy)\n**Role:** Planning Headquarters for Self-Publishing/Crowdfunding Launch\n**Timeline:** ~5 months to campaign launch\n\n**Core Principles & Constraints:**\n1.  **No Campaign Exclusives:** All content must be reprintable and available to retail/future fans. No exclusive variants or limited pieces.\n2.  **No AI Art:** Strict ban on AI-generated art for any purpose (prototype, ads, placeholders). Human-only art direction.\n3.  **Terminology:**\n    *   **\"Ember\"**: Officially refers *only* to the two-player duel variant designed by the user. (Note: A fan-made solo automa mode also uses this name, but is distinct and unofficial).\n    *   **\"The Pledge\"**: Refers *only* to the bulk retailer pledge level, not general backer pledges.\n\n**Key Decisions & Status:**\n*   **Art Direction:**\n    *   **Cover:** Finalized. Kenji’s concept: Bustling night-market scene with paper lanterns, twin foxes bartering at a stall. Approved \"full stop.\"\n    *   **Artist:**",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8194,
+        "fresh_compacted": 1302,
+        "old_with_summary": 8519,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c07-referent-1": {
+          "category": "referent",
+          "probe": "Which component tier did we lock in for the game?",
+          "gold": "The standard box with punchboard tokens and a folding board (the second option).",
+          "gold_token_count": 16,
+          "contaminated": false,
+          "lp_full": -1.3061425685882568,
+          "lp_fresh": -3.9478044509887695,
+          "lp_graft": -4.077737808227539,
+          "gap_closure": -0.04918621800330381
+        },
+        "c07-referent-2": {
+          "category": "referent",
+          "probe": "What did Kenji's approved cover concept depict?",
+          "gold": "A bustling night-market scene lit by paper lanterns, with the game's twin foxes bartering at a stall in the foreground.",
+          "gold_token_count": 27,
+          "contaminated": false,
+          "lp_full": -0.06673862757506194,
+          "lp_fresh": -1.4737952903464988,
+          "lp_graft": -1.3399101539894387,
+          "gap_closure": 0.095152625974103
+        },
+        "c07-sense-1": {
+          "category": "sense",
+          "probe": "When I said Ember in this conversation, which game mode did I mean?",
+          "gold": "The official two-player duel variant the user designed, not the fan-made solo automa mode.",
+          "gold_token_count": 19,
+          "contaminated": false,
+          "lp_full": -1.640172657213713,
+          "lp_fresh": -1.6698675657573498,
+          "lp_graft": -1.6278404436613385,
+          "gap_closure": 1.415297239735633
+        },
+        "c07-sense-2": {
+          "category": "sense",
+          "probe": "When I asked about capping 'the pledge', which pledge did I mean?",
+          "gold": "The bulk retailer pledge level for game stores, not backer pledges in general.",
+          "gold_token_count": 16,
+          "contaminated": false,
+          "lp_full": -1.1370543241500854,
+          "lp_fresh": -2.164412260055542,
+          "lp_graft": -2.273601770401001,
+          "gap_closure": -0.10628185808408185
+        },
+        "c07-stance-1": {
+          "category": "stance",
+          "probe": "Give me three stretch goal ideas for the campaign.",
+          "gold": "Suggests stretch goals like upgraded components, extra content added for everyone, or art upgrades, while never proposing campaign-exclusive items, ideally recalling the user considers exclusives hostile to late buyers.",
+          "gold_token_count": 38,
+          "contaminated": false,
+          "lp_full": -4.175961143092105,
+          "lp_fresh": -4.857423079641242,
+          "lp_graft": -4.972741377981086,
+          "gap_closure": -0.1692219215115748
+        },
+        "c07-stance-2": {
+          "category": "stance",
+          "probe": "I need twelve more card illustrations and the budget is tight. Give me three options.",
+          "gold": "Suggests options like simplifying the art style, reusing motifs, staggering commissions, or finding a second human artist, while never proposing AI-generated art, ideally recalling the user called it soulless.",
+          "gold_token_count": 41,
+          "contaminated": false,
+          "lp_full": -4.038484154677972,
+          "lp_fresh": -4.393721417682927,
+          "lp_graft": -4.397385387885861,
+          "gap_closure": -0.01031414939958961
+        }
+      }
+    },
+    "c08": {
+      "title": "E-commerce platform migration",
+      "summary_text": "# Context Summary: Bramble & Twine E-commerce Migration\n\n## Project Overview\nLeading the replatform of \"Bramble & Twine\" (home-goods store) from a legacy self-hosted system to a modern stack. 8 years of data, real revenue at risk. Goal: Zero downtime, zero maintenance pages, root domain preservation.\n\n## Key Constraints & Non-Negotiables\n1.  **Zero Downtime**: No planned outages, no maintenance pages. Store must remain selling 24/7. Previous outage cost $27,400.\n2.  **Root Domain Only**: New site must go live on `brambleandtwine.com`. Subdomain migrations are strictly vetoed.\n3.  **Content Freeze**: Starts Monday before cutover (not Wednesday) to allow merchandising buffer.\n4.  **Naming Convention**: \"Falcon\" refers exclusively to the internal rebuilt checkout service. The fraud vendor is \"Falcon Inc.\" or \"Falcon Fraud Platform\".\n5.  **Data Integrity**: CSV exports are disqualified due to past encoding failures (diacritics mangled, e.g., Bjørn → Bj?rn). Must use schema-driven,",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8347,
+        "fresh_compacted": 1531,
+        "old_with_summary": 8672,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c08-referent-1": {
+          "category": "referent",
+          "probe": "Which cutover strategy did leadership sign off on?",
+          "gold": "A parallel run with traffic gradually shifted between the old and new platforms (the third option).",
+          "gold_token_count": 18,
+          "contaminated": false,
+          "lp_full": -1.3246711095174153,
+          "lp_fresh": -3.3336715698242188,
+          "lp_graft": -3.362364027235243,
+          "gap_closure": -0.014281956613709462
+        },
+        "c08-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Vikram's workaround?",
+          "gold": "A thin middleware shim that translates legacy order IDs to the new format on the fly, keeping old confirmation emails and bookmarks working.",
+          "gold_token_count": 25,
+          "contaminated": false,
+          "lp_full": -0.5516436004638672,
+          "lp_fresh": -2.4499996948242186,
+          "lp_graft": -2.4892413330078127,
+          "gap_closure": -0.02067137893684613
+        },
+        "c08-sense-2": {
+          "category": "sense",
+          "probe": "When I asked about moving 'the freeze' earlier, which freeze did I mean?",
+          "gold": "The content freeze on product descriptions and imagery observed by merchandising, not the engineering code freeze.",
+          "gold_token_count": 20,
+          "contaminated": false,
+          "lp_full": -1.1017303466796875,
+          "lp_fresh": -3.1373432159423826,
+          "lp_graft": -3.123827362060547,
+          "gap_closure": 0.006639697599638054
+        },
+        "c08-stance-1": {
+          "category": "stance",
+          "probe": "Give me three options for structuring our URLs after the migration.",
+          "gold": "Suggests URL structures all on the root domain (path-based approaches, preserved slugs, etc.), while never proposing a subdomain, ideally recalling the user has repeatedly vetoed it.",
+          "gold_token_count": 38,
+          "contaminated": false,
+          "lp_full": -4.024537337453742,
+          "lp_fresh": -4.096529508891859,
+          "lp_graft": -4.105684782329359,
+          "gap_closure": -0.12717040276205174
+        },
+        "c08-stance-2": {
+          "category": "stance",
+          "probe": "How should we handle the DNS switch during cutover?",
+          "gold": "Proposes a zero-downtime approach (low TTLs, gradual shift, both stacks serving), while never proposing a maintenance window or planned downtime, ideally recalling the costly past outage.",
+          "gold_token_count": 37,
+          "contaminated": false,
+          "lp_full": -3.9046804067250847,
+          "lp_fresh": -3.990970096072635,
+          "lp_graft": -4.132177404455237,
+          "gap_closure": -1.636433152677821
+        }
+      }
+    },
+    "c09": {
+      "title": "Nonprofit fundraiser gala",
+      "summary_text": "**Project:** Open Door Literacy Annual Gala Planning (4 Months Out)\n**Goal:** Plan a 220-guest gala to exceed last year's net revenue of $61,230. Focus on dignity, inclusion, and donor reactivation.\n\n**Key Decisions & Constraints:**\n1.  **Theme:** 1920s Speakeasy with live jazz trio. Title: \"The Roaring Twenties: A Night of Jazz, Stories, and Quiet Courage.\"\n2.  **Philosophy:** NO golf tournaments (exclusionary). NO pity/tragic narratives; learners must be portrayed as capable adults choosing growth.\n3.  **Terminology:** \"Orchard\" refers strictly to the new monthly-giving program ($50-$100/mo), NOT the volunteer orchard project. \"The Match\" refers to Board Member Elaine’s dollar-for-dollar pledge, NOT volunteer table matching.\n4.  **Compliance:** Auctioneer License AU-77031 is on file and renewed.\n5.  **Tech:** Givly is banned (11% fees, poor reconciliation). Use Stripe or similar transparent platform for day-of donations.\n6.",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8759,
+        "fresh_compacted": 1898,
+        "old_with_summary": 9084,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c09-referent-1": {
+          "category": "referent",
+          "probe": "Which gala theme did the committee pick?",
+          "gold": "A 1920s speakeasy evening with a live jazz trio (the second option).",
+          "gold_token_count": 21,
+          "contaminated": false,
+          "lp_full": -1.0761251903715587,
+          "lp_fresh": -2.214034670875186,
+          "lp_graft": -2.222306569417318,
+          "gap_closure": -0.00726938186548098
+        },
+        "c09-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Aisha's list?",
+          "gold": "75 lapsed donors who each gave $500 or more at some point but nothing in the last three years, targeted for reactivation.",
+          "gold_token_count": 30,
+          "contaminated": false,
+          "lp_full": -0.5299771308898926,
+          "lp_fresh": -2.3919077555338544,
+          "lp_graft": -2.3905741373697915,
+          "gap_closure": 0.0007162555609814247
+        },
+        "c09-sense-1": {
+          "category": "sense",
+          "probe": "When I said Orchard in this conversation, which program did I mean?",
+          "gold": "The new monthly-giving program, not the community orchard volunteer project.",
+          "gold_token_count": 15,
+          "contaminated": false,
+          "lp_full": -1.388707987467448,
+          "lp_fresh": -2.661637878417969,
+          "lp_graft": -2.615248616536458,
+          "gap_closure": 0.03644290405253267
+        },
+        "c09-sense-2": {
+          "category": "sense",
+          "probe": "When I asked about announcing 'the match', what was I referring to?",
+          "gold": "Board member Elaine's dollar-for-dollar matching pledge, not the volunteer table-matching spreadsheet.",
+          "gold_token_count": 18,
+          "contaminated": false,
+          "lp_full": -1.3612500296698675,
+          "lp_fresh": -3.036910163031684,
+          "lp_graft": -2.6116983625623913,
+          "gap_closure": 0.253757782979658
+        },
+        "c09-stance-1": {
+          "category": "stance",
+          "probe": "Give me three ideas for a smaller spring fundraising event.",
+          "gold": "Suggests events like a spelling bee, author talk, or community read-a-thon, while never proposing a golf tournament, ideally recalling the user finds them exclusionary.",
+          "gold_token_count": 35,
+          "contaminated": false,
+          "lp_full": -3.858589390345982,
+          "lp_fresh": -3.9874210902622766,
+          "lp_graft": -3.9767787388392857,
+          "gap_closure": 0.08260662111813777
+        },
+        "c09-stance-2": {
+          "category": "stance",
+          "probe": "Draft the opening two sentences of the gala appeal letter.",
+          "gold": "Writes an opening that frames learners with dignity as capable adults, avoiding pity or tragic framing, consistent with the stated copy standard.",
+          "gold_token_count": 25,
+          "contaminated": false,
+          "lp_full": -2.5855133056640627,
+          "lp_fresh": -4.154234619140625,
+          "lp_graft": -4.232870483398438,
+          "gap_closure": -0.05012736397616872
+        }
+      }
+    },
+    "c10": {
+      "title": "Home renovation",
+      "summary_text": "# Project Context Summary: 1968 Home Kitchen Remodel & Side Projects\n\n## 1. Project Overview\n*   **Home:** 1968 construction.\n*   **Primary Scope:** Major kitchen remodel involving wall removal, layout change, and full renovation.\n*   **Secondary Scope:** \"Cedar\" project (Back Deck Rebuild) bundled into this remodel.\n*   **Team:**\n    *   **GC:** Bogdan Construction (Selected over Hartwell Builders).\n    *   **Designer:** Naomi.\n    *   **Structural Engineer:** Provided specs for beam replacement.\n    *   **Electrical Subcontractor:** Referred to as \"the sub\" (quiet guy with van). *Note: \"The sub\" NEVER refers to subfloor.*\n\n## 2. Critical Decisions & Constraints (Non-Negotiable)\n*   **Layout:** L-Shaped kitchen with a central island (where the dining room door was). *Rejected:* Widened galley, U-shape with peninsula.\n*   **Countertops:** Quartz composite (mimics marble, stain/etch resistant). *Rejected:* Real marble.\n*   **Storage:** **NO OPEN SHELV",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8048,
+        "fresh_compacted": 1063,
+        "old_with_summary": 8373,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c10-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Naomi's alternative for the counters?",
+          "gold": "A quartz composite that mimics marble veining but resists wine and lemon juice, instead of real marble.",
+          "gold_token_count": 22,
+          "contaminated": false,
+          "lp_full": -1.279946674000133,
+          "lp_fresh": -2.9165788130326704,
+          "lp_graft": -3.02672680941495,
+          "gap_closure": -0.06730162127171203
+        },
+        "c10-sense-1": {
+          "category": "sense",
+          "probe": "When I said Cedar in this conversation, which project did I mean?",
+          "gold": "The back deck rebuild bundled into the remodel, not the cedar closet lining idea.",
+          "gold_token_count": 16,
+          "contaminated": false,
+          "lp_full": -1.9898087978363037,
+          "lp_fresh": -3.318162679672241,
+          "lp_graft": -3.2324717044830322,
+          "gap_closure": 0.06450914651656998
+        },
+        "c10-sense-2": {
+          "category": "sense",
+          "probe": "When I asked whether 'the sub' was confirmed, what was I referring to?",
+          "gold": "The electrical subcontractor Bogdan brought in, not the subfloor.",
+          "gold_token_count": 14,
+          "contaminated": false,
+          "lp_full": -1.4223673684256417,
+          "lp_fresh": -2.2237121037074496,
+          "lp_graft": -2.537015642438616,
+          "gap_closure": -0.3909722307228825
+        },
+        "c10-stance-1": {
+          "category": "stance",
+          "probe": "Give me three storage ideas for the awkward corner by the range.",
+          "gold": "Suggests closed-storage solutions like corner drawers, a lazy susan cabinet, or a pull-out pantry, while never proposing open shelving, ideally recalling the user refuses to dust dishes.",
+          "gold_token_count": 38,
+          "contaminated": false,
+          "lp_full": -3.3379327874434623,
+          "lp_fresh": -4.006124396073191,
+          "lp_graft": -4.037094517758018,
+          "gap_closure": -0.04634916285216215
+        },
+        "c10-stance-2": {
+          "category": "stance",
+          "probe": "If we run over budget near the end, what are our options?",
+          "gold": "Suggests options like cutting scope, phasing later items, or the existing fixed loan and savings, while never proposing a HELOC, ideally recalling the user's aversion to variable rates.",
+          "gold_token_count": 39,
+          "contaminated": false,
+          "lp_full": -3.4201863606770835,
+          "lp_fresh": -4.174530811798879,
+          "lp_graft": -4.2051520714393025,
+          "gap_closure": -0.04059320592189228
+        }
+      }
+    },
+    "c11": {
+      "title": "Online course creation",
+      "summary_text": "# Context Summary: Practical SQL for Analysts Course Launch\n\n## Project Overview\nBuilding and launching \"Practical SQL for Analysts,\" a paid, live 6-week cohort course for business analysts. The course focuses on practical, real-world SQL usage (no theory/slides) using live screen-share demos in actual tools.\n\n## Core Constraints & Decisions\n1.  **No Lifetime Access:** Strictly one-time payment per cohort to preserve motivation for updates.\n2.  **No Slides:** All teaching is via live screen-share demos in tools (e.g., DB Fiddle, BigQuery).\n3.  **Platform:** Coursemint is eliminated due to poor performance in Brazil/India. Platform must support low-latency global video, live screen sharing, and simple access.\n4.  **Data Ownership:** Must own student emails and payment relationships; no marketplace dependency.\n5.  **Production Style:** \"Jump-cut + floating query captions\" (Ruben’s style). Tight cuts on talking head, keystrokes overlaid as captions. This style is confirmed to speed up turnaround, not slow it.\n6.  **Curriculum:** 8 modules, ~4-5 hours total content. 6-week live cohort structure.",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 8986,
+        "fresh_compacted": 2068,
+        "old_with_summary": 9311,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c11-referent-1": {
+          "category": "referent",
+          "probe": "Which course structure did we commit to for launch?",
+          "gold": "A live 6-week cohort with weekly deadlines (the first option).",
+          "gold_token_count": 14,
+          "contaminated": false,
+          "lp_full": -1.7305469512939453,
+          "lp_fresh": -3.866772242954799,
+          "lp_graft": -3.9405345916748047,
+          "gap_closure": -0.034529292864357734
+        },
+        "c11-referent-2": {
+          "category": "referent",
+          "probe": "What specifically was Ruben's recommended editing style?",
+          "gold": "Tight jump-cuts on talking-head segments with keystrokes overlaid as floating captions during query-editor screens.",
+          "gold_token_count": 22,
+          "contaminated": false,
+          "lp_full": -1.162436138499867,
+          "lp_fresh": -2.7364980524236504,
+          "lp_graft": -2.9520579251376065,
+          "gap_closure": -0.136944977073115
+        },
+        "c11-sense-1": {
+          "category": "sense",
+          "probe": "When I said Compass in this conversation, what was I referring to?",
+          "gold": "The capstone project spec, the end-of-course analysis on a messy real dataset, not the welcome email sequence.",
+          "gold_token_count": 23,
+          "contaminated": false,
+          "lp_full": -1.239144117935844,
+          "lp_fresh": -3.6042430711829145,
+          "lp_graft": -3.6496927012567935,
+          "gap_closure": -0.019216798524002824
+        },
+        "c11-stance-1": {
+          "category": "stance",
+          "probe": "Give me three ways to structure the pricing page offer.",
+          "gold": "Suggests structures like per-run enrollment, annual access, or tiered packages, while never proposing lifetime access, ideally recalling it wrecks the user's motivation to update.",
+          "gold_token_count": 35,
+          "contaminated": false,
+          "lp_full": -4.3137664794921875,
+          "lp_fresh": -4.631334577287946,
+          "lp_graft": -4.610671561104911,
+          "gap_closure": 0.06506641040601151
+        },
+        "c11-stance-2": {
+          "category": "stance",
+          "probe": "How should I present the lesson on window functions?",
+          "gold": "Proposes teaching through live screen-share demos in the actual tools with worked examples, never proposing a slide deck, consistent with the stated conviction.",
+          "gold_token_count": 28,
+          "contaminated": false,
+          "lp_full": -3.8811988830566406,
+          "lp_fresh": -4.667469569614956,
+          "lp_graft": -4.670387268066406,
+          "gap_closure": -0.003710806597943946
+        }
+      }
+    },
+    "c12": {
+      "title": "Robotics club competition",
+      "summary_text": "**Team Identity & Context**\n- **Team:** High School Robotics Team #8472.\n- **Captain:** User (proactive, data-driven, enforces strict safety/logistics protocols).\n- **Mentor:** Ms. Whitfield (approves major decisions, logistics, safety sign-offs).\n- **Key Personnel:** Diego (Lead Programmer, created primary auto routine).\n- **Timeline:** 11 weeks until Regionals.\n\n**Robot & Technical Decisions**\n- **Drivetrain:** Swerve modules (secondhand, sourced by Ms. Whitfield). Unanimous team vote after testing 3 options (Tank, Mecanum, Swerve) on practice ramp. Chosen for tight corridor maneuverability and ramp climb stability.\n- **Primary Autonomous:** \"Diego’s Precision Run\" (DPR). Scores 2 preloaded pieces in high goal, backs onto ramp for parking bonus. Completes in <12 seconds. Strategy built around this routine.\n- **Lift Mechanism:** Rebuilding with brushless motors. Previous brushed motors overheated/tripped breakers after 90s continuous load. Brushed motors retired for this mechanism.\n- **Vision System:** OptiTr",
+      "alignment_pairs": 256,
+      "token_counts": {
+        "full": 9150,
+        "fresh_compacted": 2255,
+        "old_with_summary": 9475,
+        "summary_tokens": 256
+      },
+      "plants": {
+        "c12-referent-1": {
+          "category": "referent",
+          "probe": "Which drivetrain option did the team vote for?",
+          "gold": "The secondhand swerve modules Ms. Whitfield helped source (the third option).",
+          "gold_token_count": 17,
+          "contaminated": false,
+          "lp_full": -1.8524134018841911,
+          "lp_fresh": -2.6580159804400276,
+          "lp_graft": -2.5812777350930607,
+          "gap_closure": 0.09525570968818367
+        },
+        "c12-referent-2": {
+          "category": "referent",
+          "probe": "What specifically does Diego's routine do?",
+          "gold": "Scores both preloaded game pieces in the high goal, then backs onto the ramp for the parking bonus, in under twelve seconds.",
+          "gold_token_count": 26,
+          "contaminated": false,
+          "lp_full": -1.0090882227971003,
+          "lp_fresh": -1.8677374032827525,
+          "lp_graft": -1.7762944148137019,
+          "gap_closure": 0.10649633231738538
+        },
+        "c12-sense-1": {
+          "category": "sense",
+          "probe": "When I said Titan in this conversation, what was I referring to?",
+          "gold": "The practice robot, the duplicate chassis built for driver training, not the Titan Valley Regional event.",
+          "gold_token_count": 19,
+          "contaminated": false,
+          "lp_full": -1.270268390053197,
+          "lp_fresh": -3.9967041015625,
+          "lp_graft": -4.048249897203948,
+          "gap_closure": -0.018905927406926832
+        },
+        "c12-sense-2": {
+          "category": "sense",
+          "probe": "When I talked about 'the pit', which pit did I mean?",
+          "gold": "The assigned pit station workspace at competitions, not the foam drop-test pit at the shop.",
+          "gold_token_count": 18,
+          "contaminated": false,
+          "lp_full": -2.145044114854601,
+          "lp_fresh": -4.934634738498264,
+          "lp_graft": -4.906539069281684,
+          "gap_closure": 0.0100716101418074
+        },
+        "c12-stance-1": {
+          "category": "stance",
+          "probe": "Give me three fundraising ideas for covering our travel costs.",
+          "gold": "Suggests ideas like sponsor letters, a robot demo night, or a car wash, while never proposing candy or snack sales, ideally recalling the school ban.",
+          "gold_token_count": 32,
+          "contaminated": false,
+          "lp_full": -3.68943452835083,
+          "lp_fresh": -4.153962135314941,
+          "lp_graft": -4.173476219177246,
+          "gap_closure": -0.042008448087375604
+        },
+        "c12-stance-2": {
+          "category": "stance",
+          "probe": "We're 1.5 pounds over the weight limit. Give me three ways to get under.",
+          "gold": "Suggests approaches like swapping to lighter materials, removing non-structural extras, or redesigning brackets, while never proposing drilling holes in structural plates, ideally recalling the cracked chassis incident.",
+          "gold_token_count": 37,
+          "contaminated": false,
+          "lp_full": -3.346488540237014,
+          "lp_fresh": -3.8971351417335303,
+          "lp_graft": -3.878250534470017,
+          "gap_closure": 0.034295330638906406
+        }
+      }
+    }
+  },
+  "plants": {
+    "c01-referent-2": {
+      "conversation_id": "c01",
+      "category": "referent",
+      "probe": "What specifically was Marisol's proposal?",
+      "gold": "An invite-only beta with roughly thirty design partners before the public launch, opening up only once each partner had shipped a real report.",
+      "gold_token_count": 26,
+      "contaminated": false,
+      "lp_full": -1.6308934138371394,
+      "lp_fresh": -2.7306512685922475,
+      "lp_graft": -2.6202339759239783,
+      "gap_closure": 0.10040145854912458
+    },
+    "c01-sense-1": {
+      "conversation_id": "c01",
+      "category": "sense",
+      "probe": "When I referred to Nimbus in this conversation, which workstream did I mean?",
+      "gold": "The self-serve signup funnel work (landing page to first login), not the cloud-hosting migration.",
+      "gold_token_count": 21,
+      "contaminated": false,
+      "lp_full": -1.1778827848888578,
+      "lp_fresh": -2.4381221589587985,
+      "lp_graft": -2.2985096886044456,
+      "gap_closure": 0.11078250150483289
+    },
+    "c01-sense-2": {
+      "conversation_id": "c01",
+      "category": "sense",
+      "probe": "When I asked for slides for 'the deck', which deck was I referring to?",
+      "gold": "The investor update deck owed to the seed backers, not the sales pitch deck.",
+      "gold_token_count": 16,
+      "contaminated": false,
+      "lp_full": -1.5178335905075073,
+      "lp_fresh": -3.2377281188964844,
+      "lp_graft": -3.192617654800415,
+      "gap_closure": 0.026228622366933307
+    },
+    "c01-stance-1": {
+      "conversation_id": "c01",
+      "category": "stance",
+      "probe": "Give me five ideas for adding urgency to the launch landing page.",
+      "gold": "Suggests urgency tactics (limited beta seats, launch-week bonus, expiring intro price, etc.) while avoiding countdown timers entirely, ideally noting the user finds them scammy.",
+      "gold_token_count": 36,
+      "contaminated": false,
+      "lp_full": -3.8310343424479165,
+      "lp_fresh": -4.461826748318142,
+      "lp_graft": -4.514092339409722,
+      "gap_closure": -0.08285703918625344
+    },
+    "c01-stance-2": {
+      "conversation_id": "c01",
+      "category": "stance",
+      "probe": "Suggest three formats for educating prospects about Chartkite before launch.",
+      "gold": "Suggests formats like short videos, interactive demos, written guides, or office-hours chats, while never proposing a webinar, ideally recalling the user called them a snoozefest.",
+      "gold_token_count": 37,
+      "contaminated": false,
+      "lp_full": -3.746871535842483,
+      "lp_fresh": -4.0567915632918075,
+      "lp_graft": -4.116424560546875,
+      "gap_closure": -0.19241414550022332
+    },
+    "c02-referent-1": {
+      "conversation_id": "c02",
+      "category": "referent",
+      "probe": "Which catering option did we lock in for the conference?",
+      "gold": "Boxed lunches from the worker co-op bakery on Fifth (the third option).",
+      "gold_token_count": 16,
+      "contaminated": false,
+      "lp_full": -1.2832489013671875,
+      "lp_fresh": -5.221841335296631,
+      "lp_graft": -5.239716529846191,
+      "gap_closure": -0.004538472779151427
+    },
+    "c02-referent-2": {
+      "conversation_id": "c02",
+      "category": "referent",
+      "probe": "What specifically was Ravi's compromise?",
+      "gold": "Splitting the 60-minute keynote into two 25-minute morning talks by different speakers, back to back.",
+      "gold_token_count": 24,
+      "contaminated": false,
+      "lp_full": -0.6167552471160889,
+      "lp_fresh": -1.9611185391743977,
+      "lp_graft": -1.9092715581258137,
+      "gap_closure": 0.03856619810646781
+    },
+    "c02-sense-1": {
+      "conversation_id": "c02",
+      "category": "sense",
+      "probe": "When I said Beacon in this conversation, what was I referring to?",
+      "gold": "The mentorship track pairing first-time speakers with veterans for talk prep, not the sponsor networking lounge.",
+      "gold_token_count": 20,
+      "contaminated": false,
+      "lp_full": -1.0453178405761718,
+      "lp_fresh": -2.3845144271850587,
+      "lp_graft": -2.253541946411133,
+      "gap_closure": 0.0977992940570244
+    },
+    "c02-sense-2": {
+      "conversation_id": "c02",
+      "category": "sense",
+      "probe": "When I asked about seating in 'the hall', which room did I mean?",
+      "gold": "The smaller annex room on the east side, labeled Hall B, not the main auditorium.",
+      "gold_token_count": 19,
+      "contaminated": false,
+      "lp_full": -1.1478225306460732,
+      "lp_fresh": -2.186288130910773,
+      "lp_graft": -2.1530759711014595,
+      "gap_closure": 0.031981954723245484
+    },
+    "c02-stance-1": {
+      "conversation_id": "c02",
+      "category": "stance",
+      "probe": "Give me three ideas to boost attendee engagement during the day.",
+      "gold": "Suggests engagement ideas like hallway-track prompts, lightning talks, or sticker quests, while never proposing a raffle, ideally recalling the user called them a cash grab.",
+      "gold_token_count": 34,
+      "contaminated": false,
+      "lp_full": -3.963171117446002,
+      "lp_fresh": -4.666740417480469,
+      "lp_graft": -4.694608800551471,
+      "gap_closure": -0.03961000440132482
+    },
+    "c02-stance-2": {
+      "conversation_id": "c02",
+      "category": "stance",
+      "probe": "Suggest three sponsor placement ideas we could include in the packages.",
+      "gold": "Suggests placements like stage signage, charging stations, or coffee sponsorship, while never proposing branded lanyards, ideally recalling the user found them tacky.",
+      "gold_token_count": 31,
+      "contaminated": false,
+      "lp_full": -4.3367452313823085,
+      "lp_fresh": -4.6980910762663814,
+      "lp_graft": -4.7013830369518645,
+      "gap_closure": -0.009110276849977962
+    },
+    "c03-referent-1": {
+      "conversation_id": "c03",
+      "category": "referent",
+      "probe": "Which navigation pattern did we choose for the redesign?",
+      "gold": "The gesture-first layout with a floating action button for logging (the third option).",
+      "gold_token_count": 16,
+      "contaminated": false,
+      "lp_full": -1.7724173069000244,
+      "lp_fresh": -2.7483863830566406,
+      "lp_graft": -2.7866549491882324,
+      "gap_closure": -0.039210838812940775
+    },
+    "c03-referent-2": {
+      "conversation_id": "c03",
+      "category": "referent",
+      "probe": "What did Ingrid's approved mockup look like?",
+      "gold": "A deep slate background with a coral accent color and rounded 16px cards.",
+      "gold_token_count": 17,
+      "contaminated": false,
+      "lp_full": -0.3940454651327694,
+      "lp_fresh": -2.1417570675120636,
+      "lp_graft": -2.1816967234892,
+      "gap_closure": -0.022852543819451464
+    },
+    "c03-sense-1": {
+      "conversation_id": "c03",
+      "category": "sense",
+      "probe": "When I said Aurora in this conversation, which project did I mean?",
+      "gold": "The first-run experience rework, the new plant-setup wizard for fresh installs, not the Android tablet layout project.",
+      "gold_token_count": 23,
+      "contaminated": false,
+      "lp_full": -1.0263739046843157,
+      "lp_fresh": -5.032907900602921,
+      "lp_graft": -5.080331221870754,
+      "gap_closure": -0.011836495413777195
+    },
+    "c03-sense-2": {
+      "conversation_id": "c03",
+      "category": "sense",
+      "probe": "When I talked about tightening 'the handoff', which handoff did I mean?",
+      "gold": "The design-to-engineering handoff in Figma (specs and redlines), not the support-ticket handoff between shifts.",
+      "gold_token_count": 25,
+      "contaminated": false,
+      "lp_full": -0.7528575134277343,
+      "lp_fresh": -2.87766845703125,
+      "lp_graft": -2.90799560546875,
+      "gap_closure": -0.01427286908926934
+    },
+    "c03-stance-1": {
+      "conversation_id": "c03",
+      "category": "stance",
+      "probe": "Give me three ideas for surfacing seasonal plant-care content on the home screen.",
+      "gold": "Suggests approaches like a single featured banner, an inline feed section, or contextual cards, while never proposing a carousel, ideally recalling that nobody swipes past the first card.",
+      "gold_token_count": 36,
+      "contaminated": false,
+      "lp_full": -3.7956517537434897,
+      "lp_fresh": -4.498683081732856,
+      "lp_graft": -4.480371263292101,
+      "gap_closure": 0.02604694515268016
+    },
+    "c03-stance-2": {
+      "conversation_id": "c03",
+      "category": "stance",
+      "probe": "Suggest three ways to encourage users to log waterings more consistently.",
+      "gold": "Suggests approaches like smart reminders, plant-health feedback, or gentle scheduling, while never proposing badges or gamification, ideally recalling the user found badges condescending.",
+      "gold_token_count": 33,
+      "contaminated": false,
+      "lp_full": -4.276478160511363,
+      "lp_fresh": -4.775249134410512,
+      "lp_graft": -4.8342063210227275,
+      "gap_closure": -0.11820492710575613
+    },
+    "c04-referent-1": {
+      "conversation_id": "c04",
+      "category": "referent",
+      "probe": "Which submission venue did we commit to?",
+      "gold": "The EMNLP findings track (the second of the three options).",
+      "gold_token_count": 14,
+      "contaminated": false,
+      "lp_full": -1.9633240018572127,
+      "lp_fresh": -3.3558850969587053,
+      "lp_graft": -3.3871361868722096,
+      "gap_closure": -0.022441449803124576
+    },
+    "c04-referent-2": {
+      "conversation_id": "c04",
+      "category": "referent",
+      "probe": "What specifically was Dr. Okafor's suggestion?",
+      "gold": "Adding a small human evaluation with 36 raters comparing our summaries against the strongest neural system on faithfulness.",
+      "gold_token_count": 23,
+      "contaminated": false,
+      "lp_full": -0.8119104634160581,
+      "lp_fresh": -4.836926004161006,
+      "lp_graft": -4.753691963527514,
+      "gap_closure": 0.02067918491019969
+    },
+    "c04-sense-1": {
+      "conversation_id": "c04",
+      "category": "sense",
+      "probe": "When I mentioned Hydra numbers, which Hydra did I mean?",
+      "gold": "The multi-task comparison model, not the GPU cluster.",
+      "gold_token_count": 11,
+      "contaminated": false,
+      "lp_full": -1.7610758001154119,
+      "lp_fresh": -2.284698659723455,
+      "lp_graft": -2.6212746013294566,
+      "gap_closure": -0.6427831318478813
+    },
+    "c04-sense-2": {
+      "conversation_id": "c04",
+      "category": "sense",
+      "probe": "When I asked about hitting 'the deadline', which deadline was I referring to?",
+      "gold": "The internal full-draft deadline set by Dr. Okafor, ten days before the official submission cutoff.",
+      "gold_token_count": 22,
+      "contaminated": false,
+      "lp_full": -1.0824035297740588,
+      "lp_fresh": -1.6667064319957385,
+      "lp_graft": -1.5238531286066228,
+      "gap_closure": 0.24448501427247465
+    },
+    "c04-stance-1": {
+      "conversation_id": "c04",
+      "category": "stance",
+      "probe": "Suggest three ways to get early feedback on the paper before the reviews arrive.",
+      "gold": "Suggests options like lab-group reviews, trusted colleagues at other institutions, or a practice talk, while never suggesting posting a preprint or arXiv upload, ideally recalling the scooping concern.",
+      "gold_token_count": 40,
+      "contaminated": false,
+      "lp_full": -3.5697311401367187,
+      "lp_fresh": -3.750749969482422,
+      "lp_graft": -3.9906185150146483,
+      "gap_closure": -1.3251027332307752
+    },
+    "c04-stance-2": {
+      "conversation_id": "c04",
+      "category": "stance",
+      "probe": "What chart types would you suggest for showing the error-category breakdown in the analysis section?",
+      "gold": "Suggests bar charts, stacked bars, or tables, while never proposing a pie chart, ideally recalling the user finds them unreadable.",
+      "gold_token_count": 28,
+      "contaminated": false,
+      "lp_full": -3.584528241838728,
+      "lp_fresh": -3.773761749267578,
+      "lp_graft": -3.8193155016217912,
+      "gap_closure": -0.24072772826102598
+    },
+    "c05-referent-1": {
+      "conversation_id": "c05",
+      "category": "referent",
+      "probe": "Which intro format did we lock in for the show?",
+      "gold": "A cold open pulling the juiciest clip from the interview (the first option).",
+      "gold_token_count": 17,
+      "contaminated": false,
+      "lp_full": -1.6482511408188765,
+      "lp_fresh": -4.053080839269302,
+      "lp_graft": -4.037104438332951,
+      "gap_closure": 0.006643464585723282
+    },
+    "c05-referent-2": {
+      "conversation_id": "c05",
+      "category": "referent",
+      "probe": "What specifically was Jonas's idea?",
+      "gold": "A rotating guest-host seat where each month a past interviewee returns to co-interview the next guest.",
+      "gold_token_count": 21,
+      "contaminated": false,
+      "lp_full": -1.0178350721086775,
+      "lp_fresh": -3.200363522484189,
+      "lp_graft": -3.1340470086960566,
+      "gap_closure": 0.03038517723639412
+    },
+    "c05-sense-1": {
+      "conversation_id": "c05",
+      "category": "sense",
+      "probe": "When I said Echo in this conversation, what was I referring to?",
+      "gold": "The three-episode mini-arc about founders who left tech for trades, not Sylvie's mastering preset.",
+      "gold_token_count": 22,
+      "contaminated": false,
+      "lp_full": -1.055201617154208,
+      "lp_fresh": -4.608761527321556,
+      "lp_graft": -4.607576543634588,
+      "gap_closure": 0.0003334638269576631
+    },
+    "c05-sense-2": {
+      "conversation_id": "c05",
+      "category": "sense",
+      "probe": "When I said to put extended cuts on 'the feed' first, which feed did I mean?",
+      "gold": "The private supporters-only Patreon feed, not the public RSS feed.",
+      "gold_token_count": 13,
+      "contaminated": false,
+      "lp_full": -1.9828937237079327,
+      "lp_fresh": -3.4334112314077525,
+      "lp_graft": -3.437585683969351,
+      "gap_closure": -0.002877905671209733
+    },
+    "c05-stance-1": {
+      "conversation_id": "c05",
+      "category": "stance",
+      "probe": "Give me three realistic monetization ideas for the show's first year.",
+      "gold": "Suggests options like listener support tiers, a single tasteful pre-roll sponsor, merch, or live events, while never proposing mid-roll or dynamic ad insertion, ideally recalling the user finds interruptions gross.",
+      "gold_token_count": 41,
+      "contaminated": false,
+      "lp_full": -3.8829866734946648,
+      "lp_fresh": -4.261983359732279,
+      "lp_graft": -4.294773008765244,
+      "gap_closure": -0.08651698081710071
+    },
+    "c05-stance-2": {
+      "conversation_id": "c05",
+      "category": "stance",
+      "probe": "Suggest three guest profiles for the money-and-risk themed episode.",
+      "gold": "Suggests guests like a firefighter-turned-financial-planner, a laid-off banker who opened a bakery, etc., while never proposing a crypto founder, ideally recalling the user was burned before.",
+      "gold_token_count": 39,
+      "contaminated": false,
+      "lp_full": -3.5241753993890224,
+      "lp_fresh": -3.5999888884715543,
+      "lp_graft": -3.6427369729066505,
+      "gap_closure": -0.5638585554156453
+    },
+    "c06-referent-2": {
+      "conversation_id": "c06",
+      "category": "referent",
+      "probe": "What specifically was Mabel's plan?",
+      "gold": "Reserving the two sunniest beds by the south fence for a children's pollinator patch run with the nearby elementary school.",
+      "gold_token_count": 25,
+      "contaminated": false,
+      "lp_full": -0.9404398345947266,
+      "lp_fresh": -2.7843170166015625,
+      "lp_graft": -2.7597271728515627,
+      "gap_closure": 0.013335944492374914
+    },
+    "c06-sense-1": {
+      "conversation_id": "c06",
+      "category": "sense",
+      "probe": "When I said Meadow in this conversation, what did I mean?",
+      "gold": "The expansion onto the vacant lot on Delling Street being negotiated with the city, not the wildflower strip along the west fence.",
+      "gold_token_count": 26,
+      "contaminated": false,
+      "lp_full": -1.0988599337064302,
+      "lp_fresh": -3.662337376521184,
+      "lp_graft": -3.6940692021296573,
+      "gap_closure": -0.012378429815099559
+    },
+    "c06-sense-2": {
+      "conversation_id": "c06",
+      "category": "sense",
+      "probe": "When I asked about relocating 'the bins', which bins did I mean?",
+      "gold": "The big three-bay composting structure by the gate, not the plastic storage bins in the shed.",
+      "gold_token_count": 21,
+      "contaminated": false,
+      "lp_full": -1.0163942972819011,
+      "lp_fresh": -1.7607977730887276,
+      "lp_graft": -1.7379929678780692,
+      "gap_closure": 0.030635006353162554
+    },
+    "c06-stance-1": {
+      "conversation_id": "c06",
+      "category": "stance",
+      "probe": "The squash bugs are back. Give me three ways to deal with them.",
+      "gold": "Suggests non-spray methods like row covers, hand-picking, trap crops, or timing adjustments, while never proposing pesticides or sprays, ideally recalling the runoff concern.",
+      "gold_token_count": 36,
+      "contaminated": false,
+      "lp_full": -3.6888660854763455,
+      "lp_fresh": -4.291893005371094,
+      "lp_graft": -4.2831005520290795,
+      "gap_closure": 0.014580532065714264
+    },
+    "c06-stance-2": {
+      "conversation_id": "c06",
+      "category": "stance",
+      "probe": "Give me three ideas to raise money for the new shed roof.",
+      "gold": "Suggests ideas like a plant-start sale, local business sponsorship, or a crowdfunding drive, while never proposing a bake sale, ideally recalling that they net peanuts for the effort.",
+      "gold_token_count": 36,
+      "contaminated": false,
+      "lp_full": -3.5977550082736545,
+      "lp_fresh": -4.312951829698351,
+      "lp_graft": -4.506978352864583,
+      "gap_closure": -0.2712910870880616
+    },
+    "c07-referent-1": {
+      "conversation_id": "c07",
+      "category": "referent",
+      "probe": "Which component tier did we lock in for the game?",
+      "gold": "The standard box with punchboard tokens and a folding board (the second option).",
+      "gold_token_count": 16,
+      "contaminated": false,
+      "lp_full": -1.3061425685882568,
+      "lp_fresh": -3.9478044509887695,
+      "lp_graft": -4.077737808227539,
+      "gap_closure": -0.04918621800330381
+    },
+    "c07-referent-2": {
+      "conversation_id": "c07",
+      "category": "referent",
+      "probe": "What did Kenji's approved cover concept depict?",
+      "gold": "A bustling night-market scene lit by paper lanterns, with the game's twin foxes bartering at a stall in the foreground.",
+      "gold_token_count": 27,
+      "contaminated": false,
+      "lp_full": -0.06673862757506194,
+      "lp_fresh": -1.4737952903464988,
+      "lp_graft": -1.3399101539894387,
+      "gap_closure": 0.095152625974103
+    },
+    "c07-sense-1": {
+      "conversation_id": "c07",
+      "category": "sense",
+      "probe": "When I said Ember in this conversation, which game mode did I mean?",
+      "gold": "The official two-player duel variant the user designed, not the fan-made solo automa mode.",
+      "gold_token_count": 19,
+      "contaminated": false,
+      "lp_full": -1.640172657213713,
+      "lp_fresh": -1.6698675657573498,
+      "lp_graft": -1.6278404436613385,
+      "gap_closure": 1.415297239735633
+    },
+    "c07-sense-2": {
+      "conversation_id": "c07",
+      "category": "sense",
+      "probe": "When I asked about capping 'the pledge', which pledge did I mean?",
+      "gold": "The bulk retailer pledge level for game stores, not backer pledges in general.",
+      "gold_token_count": 16,
+      "contaminated": false,
+      "lp_full": -1.1370543241500854,
+      "lp_fresh": -2.164412260055542,
+      "lp_graft": -2.273601770401001,
+      "gap_closure": -0.10628185808408185
+    },
+    "c07-stance-1": {
+      "conversation_id": "c07",
+      "category": "stance",
+      "probe": "Give me three stretch goal ideas for the campaign.",
+      "gold": "Suggests stretch goals like upgraded components, extra content added for everyone, or art upgrades, while never proposing campaign-exclusive items, ideally recalling the user considers exclusives hostile to late buyers.",
+      "gold_token_count": 38,
+      "contaminated": false,
+      "lp_full": -4.175961143092105,
+      "lp_fresh": -4.857423079641242,
+      "lp_graft": -4.972741377981086,
+      "gap_closure": -0.1692219215115748
+    },
+    "c07-stance-2": {
+      "conversation_id": "c07",
+      "category": "stance",
+      "probe": "I need twelve more card illustrations and the budget is tight. Give me three options.",
+      "gold": "Suggests options like simplifying the art style, reusing motifs, staggering commissions, or finding a second human artist, while never proposing AI-generated art, ideally recalling the user called it soulless.",
+      "gold_token_count": 41,
+      "contaminated": false,
+      "lp_full": -4.038484154677972,
+      "lp_fresh": -4.393721417682927,
+      "lp_graft": -4.397385387885861,
+      "gap_closure": -0.01031414939958961
+    },
+    "c08-referent-1": {
+      "conversation_id": "c08",
+      "category": "referent",
+      "probe": "Which cutover strategy did leadership sign off on?",
+      "gold": "A parallel run with traffic gradually shifted between the old and new platforms (the third option).",
+      "gold_token_count": 18,
+      "contaminated": false,
+      "lp_full": -1.3246711095174153,
+      "lp_fresh": -3.3336715698242188,
+      "lp_graft": -3.362364027235243,
+      "gap_closure": -0.014281956613709462
+    },
+    "c08-referent-2": {
+      "conversation_id": "c08",
+      "category": "referent",
+      "probe": "What specifically was Vikram's workaround?",
+      "gold": "A thin middleware shim that translates legacy order IDs to the new format on the fly, keeping old confirmation emails and bookmarks working.",
+      "gold_token_count": 25,
+      "contaminated": false,
+      "lp_full": -0.5516436004638672,
+      "lp_fresh": -2.4499996948242186,
+      "lp_graft": -2.4892413330078127,
+      "gap_closure": -0.02067137893684613
+    },
+    "c08-sense-2": {
+      "conversation_id": "c08",
+      "category": "sense",
+      "probe": "When I asked about moving 'the freeze' earlier, which freeze did I mean?",
+      "gold": "The content freeze on product descriptions and imagery observed by merchandising, not the engineering code freeze.",
+      "gold_token_count": 20,
+      "contaminated": false,
+      "lp_full": -1.1017303466796875,
+      "lp_fresh": -3.1373432159423826,
+      "lp_graft": -3.123827362060547,
+      "gap_closure": 0.006639697599638054
+    },
+    "c08-stance-1": {
+      "conversation_id": "c08",
+      "category": "stance",
+      "probe": "Give me three options for structuring our URLs after the migration.",
+      "gold": "Suggests URL structures all on the root domain (path-based approaches, preserved slugs, etc.), while never proposing a subdomain, ideally recalling the user has repeatedly vetoed it.",
+      "gold_token_count": 38,
+      "contaminated": false,
+      "lp_full": -4.024537337453742,
+      "lp_fresh": -4.096529508891859,
+      "lp_graft": -4.105684782329359,
+      "gap_closure": -0.12717040276205174
+    },
+    "c08-stance-2": {
+      "conversation_id": "c08",
+      "category": "stance",
+      "probe": "How should we handle the DNS switch during cutover?",
+      "gold": "Proposes a zero-downtime approach (low TTLs, gradual shift, both stacks serving), while never proposing a maintenance window or planned downtime, ideally recalling the costly past outage.",
+      "gold_token_count": 37,
+      "contaminated": false,
+      "lp_full": -3.9046804067250847,
+      "lp_fresh": -3.990970096072635,
+      "lp_graft": -4.132177404455237,
+      "gap_closure": -1.636433152677821
+    },
+    "c09-referent-1": {
+      "conversation_id": "c09",
+      "category": "referent",
+      "probe": "Which gala theme did the committee pick?",
+      "gold": "A 1920s speakeasy evening with a live jazz trio (the second option).",
+      "gold_token_count": 21,
+      "contaminated": false,
+      "lp_full": -1.0761251903715587,
+      "lp_fresh": -2.214034670875186,
+      "lp_graft": -2.222306569417318,
+      "gap_closure": -0.00726938186548098
+    },
+    "c09-referent-2": {
+      "conversation_id": "c09",
+      "category": "referent",
+      "probe": "What specifically was Aisha's list?",
+      "gold": "75 lapsed donors who each gave $500 or more at some point but nothing in the last three years, targeted for reactivation.",
+      "gold_token_count": 30,
+      "contaminated": false,
+      "lp_full": -0.5299771308898926,
+      "lp_fresh": -2.3919077555338544,
+      "lp_graft": -2.3905741373697915,
+      "gap_closure": 0.0007162555609814247
+    },
+    "c09-sense-1": {
+      "conversation_id": "c09",
+      "category": "sense",
+      "probe": "When I said Orchard in this conversation, which program did I mean?",
+      "gold": "The new monthly-giving program, not the community orchard volunteer project.",
+      "gold_token_count": 15,
+      "contaminated": false,
+      "lp_full": -1.388707987467448,
+      "lp_fresh": -2.661637878417969,
+      "lp_graft": -2.615248616536458,
+      "gap_closure": 0.03644290405253267
+    },
+    "c09-sense-2": {
+      "conversation_id": "c09",
+      "category": "sense",
+      "probe": "When I asked about announcing 'the match', what was I referring to?",
+      "gold": "Board member Elaine's dollar-for-dollar matching pledge, not the volunteer table-matching spreadsheet.",
+      "gold_token_count": 18,
+      "contaminated": false,
+      "lp_full": -1.3612500296698675,
+      "lp_fresh": -3.036910163031684,
+      "lp_graft": -2.6116983625623913,
+      "gap_closure": 0.253757782979658
+    },
+    "c09-stance-1": {
+      "conversation_id": "c09",
+      "category": "stance",
+      "probe": "Give me three ideas for a smaller spring fundraising event.",
+      "gold": "Suggests events like a spelling bee, author talk, or community read-a-thon, while never proposing a golf tournament, ideally recalling the user finds them exclusionary.",
+      "gold_token_count": 35,
+      "contaminated": false,
+      "lp_full": -3.858589390345982,
+      "lp_fresh": -3.9874210902622766,
+      "lp_graft": -3.9767787388392857,
+      "gap_closure": 0.08260662111813777
+    },
+    "c09-stance-2": {
+      "conversation_id": "c09",
+      "category": "stance",
+      "probe": "Draft the opening two sentences of the gala appeal letter.",
+      "gold": "Writes an opening that frames learners with dignity as capable adults, avoiding pity or tragic framing, consistent with the stated copy standard.",
+      "gold_token_count": 25,
+      "contaminated": false,
+      "lp_full": -2.5855133056640627,
+      "lp_fresh": -4.154234619140625,
+      "lp_graft": -4.232870483398438,
+      "gap_closure": -0.05012736397616872
+    },
+    "c10-referent-2": {
+      "conversation_id": "c10",
+      "category": "referent",
+      "probe": "What specifically was Naomi's alternative for the counters?",
+      "gold": "A quartz composite that mimics marble veining but resists wine and lemon juice, instead of real marble.",
+      "gold_token_count": 22,
+      "contaminated": false,
+      "lp_full": -1.279946674000133,
+      "lp_fresh": -2.9165788130326704,
+      "lp_graft": -3.02672680941495,
+      "gap_closure": -0.06730162127171203
+    },
+    "c10-sense-1": {
+      "conversation_id": "c10",
+      "category": "sense",
+      "probe": "When I said Cedar in this conversation, which project did I mean?",
+      "gold": "The back deck rebuild bundled into the remodel, not the cedar closet lining idea.",
+      "gold_token_count": 16,
+      "contaminated": false,
+      "lp_full": -1.9898087978363037,
+      "lp_fresh": -3.318162679672241,
+      "lp_graft": -3.2324717044830322,
+      "gap_closure": 0.06450914651656998
+    },
+    "c10-sense-2": {
+      "conversation_id": "c10",
+      "category": "sense",
+      "probe": "When I asked whether 'the sub' was confirmed, what was I referring to?",
+      "gold": "The electrical subcontractor Bogdan brought in, not the subfloor.",
+      "gold_token_count": 14,
+      "contaminated": false,
+      "lp_full": -1.4223673684256417,
+      "lp_fresh": -2.2237121037074496,
+      "lp_graft": -2.537015642438616,
+      "gap_closure": -0.3909722307228825
+    },
+    "c10-stance-1": {
+      "conversation_id": "c10",
+      "category": "stance",
+      "probe": "Give me three storage ideas for the awkward corner by the range.",
+      "gold": "Suggests closed-storage solutions like corner drawers, a lazy susan cabinet, or a pull-out pantry, while never proposing open shelving, ideally recalling the user refuses to dust dishes.",
+      "gold_token_count": 38,
+      "contaminated": false,
+      "lp_full": -3.3379327874434623,
+      "lp_fresh": -4.006124396073191,
+      "lp_graft": -4.037094517758018,
+      "gap_closure": -0.04634916285216215
+    },
+    "c10-stance-2": {
+      "conversation_id": "c10",
+      "category": "stance",
+      "probe": "If we run over budget near the end, what are our options?",
+      "gold": "Suggests options like cutting scope, phasing later items, or the existing fixed loan and savings, while never proposing a HELOC, ideally recalling the user's aversion to variable rates.",
+      "gold_token_count": 39,
+      "contaminated": false,
+      "lp_full": -3.4201863606770835,
+      "lp_fresh": -4.174530811798879,
+      "lp_graft": -4.2051520714393025,
+      "gap_closure": -0.04059320592189228
+    },
+    "c11-referent-1": {
+      "conversation_id": "c11",
+      "category": "referent",
+      "probe": "Which course structure did we commit to for launch?",
+      "gold": "A live 6-week cohort with weekly deadlines (the first option).",
+      "gold_token_count": 14,
+      "contaminated": false,
+      "lp_full": -1.7305469512939453,
+      "lp_fresh": -3.866772242954799,
+      "lp_graft": -3.9405345916748047,
+      "gap_closure": -0.034529292864357734
+    },
+    "c11-referent-2": {
+      "conversation_id": "c11",
+      "category": "referent",
+      "probe": "What specifically was Ruben's recommended editing style?",
+      "gold": "Tight jump-cuts on talking-head segments with keystrokes overlaid as floating captions during query-editor screens.",
+      "gold_token_count": 22,
+      "contaminated": false,
+      "lp_full": -1.162436138499867,
+      "lp_fresh": -2.7364980524236504,
+      "lp_graft": -2.9520579251376065,
+      "gap_closure": -0.136944977073115
+    },
+    "c11-sense-1": {
+      "conversation_id": "c11",
+      "category": "sense",
+      "probe": "When I said Compass in this conversation, what was I referring to?",
+      "gold": "The capstone project spec, the end-of-course analysis on a messy real dataset, not the welcome email sequence.",
+      "gold_token_count": 23,
+      "contaminated": false,
+      "lp_full": -1.239144117935844,
+      "lp_fresh": -3.6042430711829145,
+      "lp_graft": -3.6496927012567935,
+      "gap_closure": -0.019216798524002824
+    },
+    "c11-stance-1": {
+      "conversation_id": "c11",
+      "category": "stance",
+      "probe": "Give me three ways to structure the pricing page offer.",
+      "gold": "Suggests structures like per-run enrollment, annual access, or tiered packages, while never proposing lifetime access, ideally recalling it wrecks the user's motivation to update.",
+      "gold_token_count": 35,
+      "contaminated": false,
+      "lp_full": -4.3137664794921875,
+      "lp_fresh": -4.631334577287946,
+      "lp_graft": -4.610671561104911,
+      "gap_closure": 0.06506641040601151
+    },
+    "c11-stance-2": {
+      "conversation_id": "c11",
+      "category": "stance",
+      "probe": "How should I present the lesson on window functions?",
+      "gold": "Proposes teaching through live screen-share demos in the actual tools with worked examples, never proposing a slide deck, consistent with the stated conviction.",
+      "gold_token_count": 28,
+      "contaminated": false,
+      "lp_full": -3.8811988830566406,
+      "lp_fresh": -4.667469569614956,
+      "lp_graft": -4.670387268066406,
+      "gap_closure": -0.003710806597943946
+    },
+    "c12-referent-1": {
+      "conversation_id": "c12",
+      "category": "referent",
+      "probe": "Which drivetrain option did the team vote for?",
+      "gold": "The secondhand swerve modules Ms. Whitfield helped source (the third option).",
+      "gold_token_count": 17,
+      "contaminated": false,
+      "lp_full": -1.8524134018841911,
+      "lp_fresh": -2.6580159804400276,
+      "lp_graft": -2.5812777350930607,
+      "gap_closure": 0.09525570968818367
+    },
+    "c12-referent-2": {
+      "conversation_id": "c12",
+      "category": "referent",
+      "probe": "What specifically does Diego's routine do?",
+      "gold": "Scores both preloaded game pieces in the high goal, then backs onto the ramp for the parking bonus, in under twelve seconds.",
+      "gold_token_count": 26,
+      "contaminated": false,
+      "lp_full": -1.0090882227971003,
+      "lp_fresh": -1.8677374032827525,
+      "lp_graft": -1.7762944148137019,
+      "gap_closure": 0.10649633231738538
+    },
+    "c12-sense-1": {
+      "conversation_id": "c12",
+      "category": "sense",
+      "probe": "When I said Titan in this conversation, what was I referring to?",
+      "gold": "The practice robot, the duplicate chassis built for driver training, not the Titan Valley Regional event.",
+      "gold_token_count": 19,
+      "contaminated": false,
+      "lp_full": -1.270268390053197,
+      "lp_fresh": -3.9967041015625,
+      "lp_graft": -4.048249897203948,
+      "gap_closure": -0.018905927406926832
+    },
+    "c12-sense-2": {
+      "conversation_id": "c12",
+      "category": "sense",
+      "probe": "When I talked about 'the pit', which pit did I mean?",
+      "gold": "The assigned pit station workspace at competitions, not the foam drop-test pit at the shop.",
+      "gold_token_count": 18,
+      "contaminated": false,
+      "lp_full": -2.145044114854601,
+      "lp_fresh": -4.934634738498264,
+      "lp_graft": -4.906539069281684,
+      "gap_closure": 0.0100716101418074
+    },
+    "c12-stance-1": {
+      "conversation_id": "c12",
+      "category": "stance",
+      "probe": "Give me three fundraising ideas for covering our travel costs.",
+      "gold": "Suggests ideas like sponsor letters, a robot demo night, or a car wash, while never proposing candy or snack sales, ideally recalling the school ban.",
+      "gold_token_count": 32,
+      "contaminated": false,
+      "lp_full": -3.68943452835083,
+      "lp_fresh": -4.153962135314941,
+      "lp_graft": -4.173476219177246,
+      "gap_closure": -0.042008448087375604
+    },
+    "c12-stance-2": {
+      "conversation_id": "c12",
+      "category": "stance",
+      "probe": "We're 1.5 pounds over the weight limit. Give me three ways to get under.",
+      "gold": "Suggests approaches like swapping to lighter materials, removing non-structural extras, or redesigning brackets, while never proposing drilling holes in structural plates, ideally recalling the cracked chassis incident.",
+      "gold_token_count": 37,
+      "contaminated": false,
+      "lp_full": -3.346488540237014,
+      "lp_fresh": -3.8971351417335303,
+      "lp_graft": -3.878250534470017,
+      "gap_closure": 0.034295330638906406
+    }
+  },
+  "category_summary": {
+    "sense": {
+      "n": 22,
+      "gap_closure_sum": 1.109438591555339,
+      "gap_closure_n": 22,
+      "gap_closure_mean": 0.05042902688887905
+    },
+    "referent": {
+      "n": 21,
+      "gap_closure_sum": 0.08840421957774448,
+      "gap_closure_n": 21,
+      "gap_closure_mean": 0.004209724741797356
+    },
+    "stance": {
+      "n": 24,
+      "gap_closure_sum": -4.833026252261274,
+      "gap_closure_n": 24,
+      "gap_closure_mean": -0.20137609384421976
+    }
+  }
+}
