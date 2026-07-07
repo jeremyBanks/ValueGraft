@@ -283,3 +283,24 @@ gap-closure). RE-RUNNING at full window to validate: if E−B resolves POSITIVE 
 full continuation → confirms primary + adds placebo control; if still ≤0 → REAL
 tension with the gap-closure headline, must confront. Content-specificity (E−placebo
 >0 both models) is solid regardless.
+
+## ⚠️ CRITICAL — effect-bound 30B does NOT reproduce F1 positive gap-closure (07-07)
+Full-window (K=48) 30B effect-bound, 43 sense+referent cases, UNIFORM α=0.75,
+per-model 30B-generated summary. Computed the PAPER's gap-closure metric from the
+same data:
+- Overall 37% cases helped (E>B); ratio mean −0.034 median −0.016.
+- sense: 27% helped, ratio −0.054 (NEGATIVE). referent: 48% helped, ratio −0.013.
+- Compaction DID damage (A−B +1.96, 100% cases A>B) — setup valid.
+- E beats PLACEBO (content-specific) but does NOT beat plain compaction B.
+PAPER HEADLINE (F1, 66 probes, 30B): sense 64% helped, referent 81% helped. This
+run is OPPOSITE. This is a POTENTIAL NON-REPRODUCTION of the core result and must
+be resolved before trusting the primary or expanding (cross-arch HELD).
+LIKELY EXPLANATIONS (to verify, NOT assume in our favor):
+1. CONFIG: this uses UNIFORM α=0.75; paper §8 says uniform disrupts, per-layer
+   CHAMPION needed. Original F1 config (champion? uniform?) must be checked;
+   re-run effect-bound with champion to see if effect returns.
+2. CASES/SUMMARY differ (43 free_div plants vs 66 F1 probes; per-model summary).
+3. Original F1 less robust than presented.
+ACTION: hold cross-arch, diagnose config vs original F1, re-run w/ champion, Fable
+conceptual read, report to user. If primary not robust → paper (on README) OVERCLAIMS,
+correct before external repro. HONEST — do not spin.
