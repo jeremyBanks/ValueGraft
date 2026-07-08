@@ -39,7 +39,7 @@ print("torch", torch.__version__, "cuda", torch.cuda.is_available())
 sys.exit(0 if torch.cuda.is_available() else 1)
 PY
 python3 -m pip uninstall -y torchvision 2>/dev/null
-python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
+python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
 rm -f data/fixed_summaries.json 2>/dev/null   # enforce self-gen
 
 [ -z "${MODELS:-}" ] && { echo "FATAL: MODELS env required"; exit 2; }

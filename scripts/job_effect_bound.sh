@@ -39,7 +39,7 @@ fi
 
 python3 -m pip install -U pip
 # NOTE: no torch upgrade -- rely on the pod's installed torch.
-python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub pandas pyarrow
+python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub pandas pyarrow
 
 echo "RUN effect-bound probe $(date -Is)"
 python3 -u effect_bound_probe.py \

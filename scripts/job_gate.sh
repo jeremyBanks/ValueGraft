@@ -28,7 +28,7 @@ PY
 
 python3 -m pip uninstall -y torchvision 2>/dev/null
 python3 -m pip install -U pip >/dev/null 2>&1
-python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
+python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
 
 # force SELF-GEN (redesign default); no fixed summaries
 rm -f data/fixed_summaries.json 2>/dev/null

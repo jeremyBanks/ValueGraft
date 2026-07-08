@@ -59,7 +59,7 @@ PY
 # ---- deps (NO torch upgrade). trust_remote_code models (GLM) need recent hub.
 python3 -m pip uninstall -y torchvision 2>/dev/null
 python3 -m pip install -U pip >/dev/null
-python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub || true
+python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub || true
 
 # ---- LATEST ~30B-class model list (mid-2026). Job skips-with-reason any that
 # are gated/unavailable (the probe writes status=UNSUPPORTED/ERROR + reason).

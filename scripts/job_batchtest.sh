@@ -6,7 +6,7 @@ export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:T
 echo "BATCHTEST START $(date -Is)"; nvidia-smi || true
 for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key; do [ -f "$f" ] && { export HF_TOKEN; HF_TOKEN="$(tr -d '[:space:]' < "$f")"; break; }; done
 python3 -c "import torch,sys; sys.exit(0 if torch.cuda.is_available() else 1)" || { echo "no CUDA"; exit 1; }
-python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
+python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
 export SC_NATIVE_RENDER=1 SC_BATCHED_RENDER=1 SC_SELFGEN=1 SC_HF_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507 SC_CONV_LIMIT=12 SC_CHAMPION_SCAN=0
 T0=$(date +%s)
 python3 -u src/cross_arch_probe.py 2>&1 | tee batchver.log
