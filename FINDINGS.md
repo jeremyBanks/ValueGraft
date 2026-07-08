@@ -504,3 +504,27 @@ self-gen summary; SHARED gold continuation) on c01-c12 REPRODUCES the effect:
 dissociation holds, and the headroom gate correctly floors preserved-content categories. Gate GREEN
 on the design. Remaining before wide: (1) render scaling (batched decode + snapshot-replay — render
 was ~2.5hr/12conv), (2) finalize pre-registered geometry hypothesis (fix QK-norm detect first).
+
+## Cross-arch (in progress, 2026-07-08) — first full-run result + two methodology corrections
+
+**Mistral-Small-24B-Instruct-2501 (no-QK-norm, dense), n=12 convs, conversation-clustered CIs:**
+- referent [+0.010, +0.063] — POSITIVE, excludes 0
+- sense    [-0.067, -0.005] — NEGATIVE, excludes 0
+- stance   [-0.059, -0.014] — NEGATIVE, excludes 0
+- ruled_out / evicted_fact — include 0 (null)
+Smoke identity_ok/alpha0_ok pass (valid run). Signature DIFFERS from Qwen (referent+/sense+/stance-null):
+Mistral recovers referent but the graft HURTS sense+stance. Directly relevant to H1: a no-QK-norm model
+with a POSITIVE referent challenges H1's "no-QK-norm → null/negative referent" prediction — but the
+sense/stance flip shows the architectures act differently. PRELIMINARY: n=12 is a borderline cluster
+count; the Qwen 24-conv gate + the QK-norm ablation are the anchors. Not to be over-read as one model.
+
+**Methodology correction 1 — CI clustering unit.** The headline raw_EB_ci is now the CONVERSATION-
+clustered bootstrap (was plant-clustered = anti-conservative; plants within a conv are correlated).
+Plant-level kept as raw_EB_ci_plant; ci_method records the unit. On Mistral the conv CI was ~the same
+width as plant (low between-conv correlation), so the result held — but this is not guaranteed per model.
+
+**Methodology correction 2 — OLMo-2 "empty alignment" was a MISDIAGNOSIS.** OLMo-2 alignment works
+(108/0 smoke-align). The real cause of its ERROR: the absolute competence floor (task_lpa_floor=-8.0)
+excluded EVERY OLMo plant (its gold logprobs sit lower); the old code guessed "empty alignment." New
+counters (empty_alignment_convs / short_gold_drops / task_excluded_plants) now name the true cause.
+OPEN: to get an OLMo result the floor likely needs to be per-model/relative — a methodology call.
