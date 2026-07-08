@@ -492,3 +492,15 @@ mechanism + dissociation + the SCOPE CONDITION itself (recovery needs self-nativ
 STRONGEST PAPER (Fable): "A model's own write-time value vectors can be re-injected to recover
 evicted semantic continuity — specifically referent binding — but only for on-distribution
 context, and the sign of recovery is predicted by attention geometry across architectures."
+
+## DESIGN v2.1 VALIDATED on native Qwen (07-08) — the redesign works
+Per-model native render (Qwen3-30B-A3B-Instruct-2507 generates its OWN in-context replies + own
+self-gen summary; SHARED gold continuation) on c01-c12 REPRODUCES the effect:
+  referent CI [+0.012, +0.195] (mid +0.10, headroom 1.71) — EXCLUDES ZERO, matches the pre-rendered
+  +0.12. sense +0.03 (weak-positive). stance -0.05 (~null, headroom 0.51). ruled_out FLOORED
+  (headroom 0.18<0.3, correctly EXCLUDED — summary preserved it = nothing to recover, NOT "harm").
+  evicted_fact null. identity_ok+alpha0_ok pass. reply_covariates captured (mean 316 tok/reply).
+=> The matched-scaffold model-filled design is SOUND: native replies reproduce the effect, the
+dissociation holds, and the headroom gate correctly floors preserved-content categories. Gate GREEN
+on the design. Remaining before wide: (1) render scaling (batched decode + snapshot-replay — render
+was ~2.5hr/12conv), (2) finalize pre-registered geometry hypothesis (fix QK-norm detect first).
