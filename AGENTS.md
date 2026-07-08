@@ -167,3 +167,14 @@ model_reasoning_effort=xhigh, so:
 Use -s read-only for reviews (read the paper, don't edit). It runs autonomously
 (approval_policy=never). Capture its output into the review record. Gate: don't
 ship a shareable major revision without this Codex/GPT-5.5/xhigh review on record.
+
+## FABLE MUST HAVE CURRENT FACTS (user 07-08)
+The findings have evolved MASSIVELY (estimator bug → robust metric; keys neutral not
+hurting; fixed-summary suppresses graft → MECHANISTIC FINDING graft needs model's OWN
+summary; cross-arch map). ANY Fable writing/review/gut-check prompt MUST include or
+point to the CURRENT FINDINGS.md (not stale memory of earlier claims). Give Fable the
+up-to-date facts explicitly — it does NOT see FINDINGS unless the prompt provides it,
+and writing from stale facts would reintroduce corrected errors (the -0.31 stance, the
+'keys hurt', the fixed-summary numbers). Brief Fable on: the robust metric, the CI'd
+effect (referent significant/sense underpowered/stance null), keys-neutral, and the
+own-summary mechanism.
