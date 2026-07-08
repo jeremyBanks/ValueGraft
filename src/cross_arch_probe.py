@@ -544,6 +544,184 @@ def collect_specs(data_dir: Path, conv_limit: int):
     return specs
 
 
+# ===========================================================================
+# PER-MODEL IN-CONTEXT (NATIVE) RENDERING -- CROSS-ARCH DESIGN v2 / v2.1
+# ---------------------------------------------------------------------------
+# The graft re-injects the model's OWN write-time value vectors, and that only
+# works on NATIVE context (the model's own assistant replies). So each model must
+# be measured on conversations IT would produce. Instead of reading pre-rendered
+# data/synthetic/*.json (which are Qwen-4B replies -- FOREIGN to every other
+# model), we SHARE only the semantic SCAFFOLD (data/scenarios.json: system + user
+# turns + plants) and have the TEST MODEL generate its OWN assistant elaborations
+# in-context. This is a port of src/compose.py's growing-KV-cache reply gen onto
+# the HF/transformers path already used here.
+#
+# LOAD-BEARING (design v2.1): the GOLD CONTINUATION stays SHARED -- it comes from
+# each plant's `gold` field in the scaffold, NOT from any model-generated text.
+# The metric raw_EB = lp_E - lp_B is teacher-forced on that shared gold; only the
+# difference over a SHARED target cancels per-model continuation-nativeness. The
+# native rendering below fills ONLY the assistant elaboration turns; it NEVER
+# touches gold. (select_plants pulls `gold` straight from the scaffold plant.)
+#
+# The pure turn-ordering / trimming / covariate / gate logic lives here (CPU
+# self-testable); the growing-cache generation itself is torch and lives in the
+# heavy section (native_render_specs), reasoned-through but GPU-UNVERIFIED.
+# ===========================================================================
+def scenario_turn_plan(scenario: dict, seed: int) -> dict:
+    """PURE (no model/torch) ordered turn plan for ONE scaffold scenario.
+
+    Replicates src/compose.py's proven interleaving EXACTLY so a native render
+    is structurally identical to the validated synthetic corpus recipe:
+      * early   : each early_user_turn, in order;
+      * middle  : plants (deterministically shuffled by ``seed``) interleaved
+                  with the middle fillers, ~3 plants between each filler;
+      * tail    : tail_filler[0], the plants' tail_user_fragments (shuffled,
+                  same rng continued), tail_filler[1].
+    Each turn becomes a user message + a model-generated assistant reply (2
+    messages), on top of the system message (index 0).
+
+    Returns {turns, early_end_msg, middle_end_msg, n_messages, n_early,
+    n_middle, n_tail}. ``turns`` is a list of {kind, text[, plant_id]} with kind
+    in {early, filler, plant, tail}. Message indices count the system message as
+    0 and 2 messages per turn -- middle_end_msg is the index of the FIRST tail
+    message (what run_model uses as ``tail_start_msg``)."""
+    rng = random.Random(seed)
+    turns: list[dict] = []
+    for t in scenario["early_user_turns"]:
+        turns.append({"kind": "early", "text": t})
+    n_early = len(scenario["early_user_turns"])
+
+    plants = list(scenario["plants"])
+    rng.shuffle(plants)
+    fillers = list(scenario["middle_filler_user_turns"])
+    seq: list[tuple] = []
+    pi, fi = 0, 0
+    while pi < len(plants) or fi < len(fillers):
+        if fi < len(fillers):
+            seq.append(("filler", fillers[fi])); fi += 1
+        for _ in range(3):  # ~3 plants between fillers
+            if pi < len(plants):
+                seq.append(("plant", plants[pi])); pi += 1
+    for kind, item in seq:
+        if kind == "plant":
+            turns.append({"kind": "plant", "text": item["middle_user"],
+                          "plant_id": item.get("id")})
+        else:
+            turns.append({"kind": "filler", "text": item})
+    n_middle = len(seq)
+
+    tail_frags = [p["tail_user_fragment"] for p in scenario["plants"]
+                  if p.get("tail_user_fragment")]
+    rng.shuffle(tail_frags)
+    tail_seq = [scenario["tail_filler_user_turns"][0], *tail_frags,
+                scenario["tail_filler_user_turns"][1]]
+    for t in tail_seq:
+        turns.append({"kind": "tail", "text": t})
+    n_tail = len(tail_seq)
+
+    return {
+        "turns": turns,
+        "n_early": n_early,
+        "n_middle": n_middle,
+        "n_tail": n_tail,
+        "early_end_msg": 1 + 2 * n_early,
+        "middle_end_msg": 1 + 2 * (n_early + n_middle),
+        "n_messages": 1 + 2 * (n_early + n_middle + n_tail),
+    }
+
+
+def trim_capped_reply(text: str) -> str:
+    """PURE: trim a length-capped reply back to its last complete sentence /
+    paragraph (mirrors compose.py). If no sentence boundary lands past the first
+    third, the text is returned unchanged (better a hard cut than an empty
+    reply)."""
+    cut = max(text.rfind("\n\n"), text.rfind(". "),
+              text.rfind("! "), text.rfind("? "))
+    if cut > len(text) // 3:
+        return text[: cut + 1].rstrip()
+    return text
+
+
+def reply_covariates(records: list) -> dict:
+    """PURE (design v2.1 residual-confound covariate): aggregate per-model
+    assistant-reply statistics for the sign~geometry+covariates regression.
+
+    ``records`` = [{"n_tokens": int, "logprob_sum": float|None}, ...] over the
+    model's OWN generated elaboration replies. Returns:
+      * mean_reply_len_tokens        -- reply LENGTH covariate.
+      * mean_reply_logprob_per_token -- reply INFO-CONTENT proxy: the model's mean
+        per-token logprob of its OWN replies under itself (write-time). Higher
+        (closer to 0) = more confident/predictable replies; this stands in for the
+        richness of the value payload the graft re-injects. logprob_sum may be
+        None (not captured) -> that reply is skipped for the info-content mean but
+        still counts for length.
+    Pure arithmetic so it is unit-testable on fake numbers with no model."""
+    recs = [r for r in records if r.get("n_tokens")]
+    n = len(recs)
+    if not n:
+        return {"n_replies": 0, "mean_reply_len_tokens": None,
+                "total_reply_tokens": 0, "mean_reply_logprob_per_token": None,
+                "n_replies_with_logprob": 0}
+    total_tok = sum(r["n_tokens"] for r in recs)
+    lp_recs = [r for r in recs if r.get("logprob_sum") is not None]
+    lp_tok = sum(r["n_tokens"] for r in lp_recs)
+    lp_sum = sum(r["logprob_sum"] for r in lp_recs)
+    return {
+        "n_replies": n,
+        "total_reply_tokens": total_tok,
+        "mean_reply_len_tokens": total_tok / n,
+        "mean_reply_logprob_per_token": (lp_sum / lp_tok) if lp_tok else None,
+        "n_replies_with_logprob": len(lp_recs),
+    }
+
+
+# Gate defaults (design v2.1). All configurable via env / CLI; chosen permissive
+# so the validated pre-rendered path (SC_NATIVE_RENDER=0) is unaffected.
+HEADROOM_FLOOR_DEFAULT = 0.3     # min per-category A-B gap to be interpretable
+TASK_LPA_FLOOR_DEFAULT = -8.0    # min lp_A per-token; below = model can't do task
+HEADROOM_EPS = 1e-3              # denominator floor for raw_EB normalization
+
+
+def category_headroom(raw_EB_mean, pre_gaps, floor=HEADROOM_FLOOR_DEFAULT,
+                      eps=HEADROOM_EPS) -> dict:
+    """PURE (design v2.1 gate #2 HEADROOM): per-category continuity headroom and
+    headroom-normalized raw_EB.
+
+    headroom = mean(lp_A - lp_B) over the category's plants = how much meaning the
+    compaction actually EVICTED (and thus how much is even recoverable). If a
+    model's native summary already PRESERVES the referent there is no A-B gap ->
+    the graft has nothing to recover -> a ~0 raw_EB is a CEILING/FLOOR artifact,
+    NOT "geometry says the graft harms". So:
+      * raw_EB_normalized = raw_EB_mean / max(headroom, eps) puts the lift on a
+        per-unit-evicted-meaning scale (comparable across models with different
+        summary quality);
+      * floor = headroom < ``floor`` flags the category as UNINTERPRETABLE (no
+        evicted meaning = nothing to recover) so it is EXCLUDED from the sign
+        verdict -- it is not counted as harm.
+    Pure arithmetic; unit-testable on fake logprobs."""
+    gaps = [g for g in pre_gaps if g is not None]
+    headroom = (sum(gaps) / len(gaps)) if gaps else None
+    if raw_EB_mean is None or headroom is None:
+        norm = None
+    else:
+        norm = raw_EB_mean / max(headroom, eps)
+    return {
+        "headroom": headroom,
+        "raw_EB_normalized": norm,
+        "floor": bool(headroom is not None and headroom < floor),
+        "floor_threshold": floor,
+    }
+
+
+def task_competence_ok(la, floor=TASK_LPA_FLOOR_DEFAULT) -> bool:
+    """PURE (design v2.1 gate #3 TASK-COMPETENCE): a plant is scorable only if the
+    model can do the task WITH full context -- i.e. its per-token gold logprob
+    under A (``la``, already a per-token mean from ``tf``) clears ``floor``. A
+    model whose native replies never establish the referent (very low lp_A) yields
+    a degenerate plant that should be excluded, not read as a graft signal."""
+    return la is not None and la >= floor
+
+
 # ---------------------------------------------------------------------------
 # Family-aware B-context: builder + (summary_msg_idx, tail_msg_idx) so the
 # alignment regions can be located regardless of template family.
@@ -1808,7 +1986,112 @@ def _self_test_controls() -> int:
     print(f"  robust_category_stats: n_conversations={st['n_conversations']} "
           f"cluster_ci={st['raw_EB_ci_cluster']} OK")
 
+    _self_test_native()
+
     print("\nSELF-TEST OK")
+    return 0
+
+
+def _self_test_native(scenarios_path: Path | None = None) -> int:
+    """CPU-only unit tests for the NATIVE-RENDER pure parts (design v2/v2.1):
+    scenario->turn-ordering, reply trimming, reply covariates, headroom
+    normalization + gate, task-competence gate. NO torch / model / pod."""
+    print("\n== NATIVE-RENDER pure-parts self-test (no torch/model) ==")
+
+    # ---- scenario_turn_plan: ordering + section-index math (real scaffold) ----
+    sp = scenarios_path or (Path(__file__).resolve().parent.parent
+                            / "data" / "scenarios.json")
+    scenarios = json.loads(Path(sp).read_text())
+    sc = scenarios[0]
+    plan = scenario_turn_plan(sc, seed=1000)
+    plan2 = scenario_turn_plan(sc, seed=1000)
+    assert plan == plan2, "turn plan must be deterministic for a fixed seed"
+    kinds = [t["kind"] for t in plan["turns"]]
+    n_early = len(sc["early_user_turns"])
+    assert kinds[:n_early] == ["early"] * n_early, "early turns come first"
+    # every plant's middle_user appears exactly once as a plant turn
+    plant_turn_ids = sorted(t["plant_id"] for t in plan["turns"]
+                            if t["kind"] == "plant")
+    scaffold_ids = sorted(p["id"] for p in sc["plants"])
+    assert plant_turn_ids == scaffold_ids, "all plants planted exactly once"
+    plant_texts = {t["text"] for t in plan["turns"] if t["kind"] == "plant"}
+    assert plant_texts == {p["middle_user"] for p in sc["plants"]}
+    # every non-empty tail_user_fragment appears as a tail turn
+    frags = [p["tail_user_fragment"] for p in sc["plants"]
+             if p.get("tail_user_fragment")]
+    tail_texts = {t["text"] for t in plan["turns"] if t["kind"] == "tail"}
+    for f in frags:
+        assert f in tail_texts, "tail fragment missing from tail turns"
+    # section-index math: system(0) + 2 msgs/turn; middle_end = first tail msg
+    n_turns = len(plan["turns"])
+    assert plan["n_messages"] == 1 + 2 * n_turns
+    assert plan["early_end_msg"] == 1 + 2 * plan["n_early"]
+    assert plan["middle_end_msg"] == 1 + 2 * (plan["n_early"] + plan["n_middle"])
+    assert plan["n_early"] + plan["n_middle"] + plan["n_tail"] == n_turns
+    # a different seed reorders the middle plants (not the early turns)
+    plan_b = scenario_turn_plan(sc, seed=1001)
+    mid_a = [t.get("plant_id") for t in plan["turns"] if t["kind"] == "plant"]
+    mid_b = [t.get("plant_id") for t in plan_b["turns"] if t["kind"] == "plant"]
+    assert sorted(mid_a) == sorted(mid_b), "same plant set regardless of seed"
+    print(f"  scenario_turn_plan({sc['id']}): {n_turns} turns "
+          f"(early={plan['n_early']} middle={plan['n_middle']} "
+          f"tail={plan['n_tail']}), middle_end_msg={plan['middle_end_msg']}, "
+          f"n_messages={plan['n_messages']} OK (deterministic, all plants placed)")
+
+    # ---- trim_capped_reply ----
+    long = "First sentence. Second sentence. " + "x" * 50  # boundary past 1/3
+    trimmed = trim_capped_reply(long)
+    assert trimmed == "First sentence. Second sentence.", trimmed
+    # no boundary past the first third -> unchanged
+    nb = "x" * 40 + ". y"
+    assert trim_capped_reply("no boundary here at all yet") == \
+        "no boundary here at all yet"
+    para = "Para one body text here.\n\nPara two starts and is long enough xx"
+    assert trim_capped_reply(para) == "Para one body text here."
+    print("  trim_capped_reply: sentence/paragraph trim + no-op fallback OK")
+
+    # ---- reply_covariates on fake numbers ----
+    cov = reply_covariates([
+        {"n_tokens": 100, "logprob_sum": -50.0},
+        {"n_tokens": 200, "logprob_sum": -60.0},
+        {"n_tokens": 0, "logprob_sum": -1.0},        # dropped (no tokens)
+        {"n_tokens": 150, "logprob_sum": None},       # length only, no logprob
+    ])
+    assert cov["n_replies"] == 3, cov
+    assert cov["total_reply_tokens"] == 450
+    assert abs(cov["mean_reply_len_tokens"] - 150.0) < 1e-9
+    # info-content = total_lp / total_tok over the 2 replies WITH logprob
+    assert abs(cov["mean_reply_logprob_per_token"] - (-110.0 / 300.0)) < 1e-9
+    assert cov["n_replies_with_logprob"] == 2
+    assert reply_covariates([])["n_replies"] == 0
+    print(f"  reply_covariates: mean_len={cov['mean_reply_len_tokens']:.0f} "
+          f"info={cov['mean_reply_logprob_per_token']:+.4f} nats/tok OK")
+
+    # ---- category_headroom + normalization + floor gate ----
+    # healthy: A-B gap ~0.9, raw_EB 0.18 -> normalized 0.2, NOT floored
+    h1 = category_headroom(0.18, [1.0, 0.8, 0.9])
+    assert abs(h1["headroom"] - 0.9) < 1e-9
+    assert abs(h1["raw_EB_normalized"] - 0.2) < 1e-9
+    assert h1["floor"] is False
+    # floored: tiny A-B gap 0.1 < 0.3 -> flagged, normalization uses real gap
+    h2 = category_headroom(0.05, [0.1, 0.1, 0.1])
+    assert h2["floor"] is True, "headroom below threshold must floor the category"
+    # eps guards a near-zero denominator from exploding the normalized value
+    h3 = category_headroom(0.05, [0.0, 0.0])
+    assert h3["raw_EB_normalized"] == 0.05 / HEADROOM_EPS
+    assert category_headroom(None, [1.0])["raw_EB_normalized"] is None
+    assert category_headroom(0.2, [])["headroom"] is None
+    print(f"  category_headroom: healthy norm={h1['raw_EB_normalized']:.2f} "
+          f"floor={h1['floor']}; low-gap floor={h2['floor']} OK")
+
+    # ---- task_competence_ok gate ----
+    assert task_competence_ok(-1.5, floor=-8.0) is True
+    assert task_competence_ok(-9.0, floor=-8.0) is False
+    assert task_competence_ok(None) is False
+    assert task_competence_ok(-8.0, floor=-8.0) is True  # boundary inclusive
+    print("  task_competence_ok: lp_A floor gate (inclusive) OK")
+
+    print("  NATIVE-RENDER pure-parts OK")
     return 0
 
 
@@ -2071,6 +2354,9 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--self-test", action="store_true",
                     help="run the CPU-only controls self-tests, then exit")
+    ap.add_argument("--self-test-native", action="store_true",
+                    help="run ONLY the native-render pure-parts self-test "
+                         "(turn-ordering/gates/covariates), then exit")
     ap.add_argument("--smoke-align", action="store_true",
                     help="CPU/tokenizer-only alignment preflight over the corpus "
                          "with a long think-containing summary; exits nonzero on "
@@ -2085,6 +2371,9 @@ def main():
 
     if args.self_test:
         sys.exit(_self_test_controls())
+
+    if args.self_test_native:
+        sys.exit(_self_test_native())
 
     data_dir = Path(args.data_dir)
     if args.dry_run:
