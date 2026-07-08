@@ -28,6 +28,7 @@ for n in $EXPECTED; do
   t=$(echo "$OUT" | sed -n 's/.*T=\([^|]*\).*/\1/p'); dd=$(echo "$OUT" | sed -n 's/.*D=\([0-9]*\).*/\1/p'); l=$(echo "$OUT" | sed -n 's/.*L=\([^|]*\).*/\1/p'); r=$(echo "$OUT" | sed -n 's/.*R=//p')
   if echo "$l" | grep -qiE "FATAL|RuntimeError|model load failed"; then echo "$n: ERROR — $l"; n_problem=$((n_problem+1))
   elif [ "${dd:-0}" -gt 0 ]; then echo "$n: DONE(full) — $r"; n_done=$((n_done+1))
+  elif echo "$r" | grep -qiE "^ERROR |^UNSUPPORTED |ERROR ref_ci|UNSUPPORTED ref_ci"; then echo "$n: ERROR(result) — $r"; n_problem=$((n_problem+1))
   elif echo "$r" | grep -q "ref_ci"; then echo "$n: SCORED-INTERIM (probe/partial, still running) — $r"; n_ok=$((n_ok+1))
   elif [ "${p:-0}" = "0" ]; then echo "$n: NO-PROC (died, no WIDE SWEEP DONE) — R=$r L=$l"; n_problem=$((n_problem+1))
   else echo "$n: rendering gpu=${g}% tv=${t} — $l"; n_ok=$((n_ok+1)); fi
