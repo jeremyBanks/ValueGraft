@@ -59,3 +59,47 @@ is rejected *even if a token exists* — you cannot sneak one into a fan-out. Ov
 single explicit, logged escape hatch (`SC_SKIP_PREFLIGHT="reason"`) for a deliberate
 one-off. The interlock works when you are deep in momentum and *think* you already checked,
 because it re-reads the actual state instead of trusting your memory of it.
+
+---
+
+# HARD RULE: OBSERVABILITY — DETECT FAILURES AS THEY HAPPEN (production SRE)
+
+## The framing (owner, 07-08, emphatic): THESE ARE SOLVED PROBLEMS — apply them
+When running anything at scale or unattended, think like a **Site Reliability / production
+software engineer**, NOT with ad-hoc hacks. **Detecting systems that are behaving anomalously
+or throwing errors is a SOLVED PROBLEM** with decades of established **production software
+reliability engineering (SRE)** practice. Manually SSH-ing pod-by-pod to check, "I'll just look
+at it myself", and — worst — *waiting for the owner to notice the breakage and nag* are the
+ABSENCE of engineering. Pre-flight checks alone are NOT the answer (they can't predict every
+failure). The complement is runtime fault detection. The established patterns below cover
+essentially every failure mode this project has hit. Use their real names; reach for them first:
+
+- **OBSERVABILITY** — instrument the system so its internal state is externally visible without
+  manual poking: **metrics, structured logs, traces.**
+- **ERROR REPORTING / ERROR TRACKING** (Sentry-style) — every failure (uncaught exception,
+  non-zero exit code, `status=ERROR/UNSUPPORTED`, crash, OOM) **surfaces automatically the moment
+  it happens.** It must NEVER sit silently in a log until someone looks.
+- **HEALTH CHECKS — liveness & readiness probes** per unit (Kubernetes-style): is it alive, is it
+  *making progress*, is it producing sane output?
+- **METRICS + ANOMALY DETECTION** — track key signals (progress rate, GPU/resource utilization,
+  result-in-expected-range) and flag deviations: stalled (no progress), idle-GPU-while-running,
+  out-of-range result.
+- **ALERTING** — fire a notification off the error/anomaly signals **automatically**
+  (PagerDuty-style) so a human learns of a failure in minutes without watching.
+- **CANARY / EARLY SIGNAL** — validate one small unit before fanning out (canary deployment).
+- **FAIL-CLOSED ADMISSION CONTROL** — the pre-flight gate above.
+
+## The rule
+Before ANY scaled or unattended run, the **observability is built FIRST, by construction** — not
+bolted on when the owner nags. **A run whose failures do not self-report is NOT READY to launch.**
+- Every job self-reports structured status (OK/ERROR/UNSUPPORTED + reason).
+- A standing **health monitor watches EVERY unit and ALERTS on any bad state**
+  (`scripts/pod_health.sh` + the health/alerting monitor): crashed, errored, stalled, idle-GPU,
+  died, unreachable — silent when healthy.
+- The owner learns of a failure from an **alert**, NEVER by having to ask "is it broken?".
+
+## The anti-pattern (what NOT to do — this is the pattern the owner keeps catching)
+- Manually SSH-ing pod-by-pod to see if things work — reactive, incomplete, doesn't scale.
+- Assuming a run is healthy because it "started".
+- Treating monitoring/alerting as optional or bolt-on. **It is part of building the run.**
+These are hacks. The professional move is **instrumented, automated fault detection.** Solved problem.
