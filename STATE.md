@@ -2,41 +2,26 @@
 
 *Updated 07-08 ~afternoon by Opus 4.8. EFFECT CONFIRMED REAL. Wide spend GATED on the nativeness control.*
 
-## CURRENT TRUTH (read this first)
-EFFECT IS REAL + REPRODUCES. The multi-hour debugging saga was a WRONG MODEL CHECKPOINT
-(I ran the THINKING Qwen3-30B-A3B; the +0.156 was measured on the NON-thinking
-Qwen3-30B-A3B-Instruct-2507). On the CORRECT model, positive control PASSES on BOTH
-apparatuses (they agree):
-  - gap_closure_cat.py (trusted, difflib): orig c01-c12 referent +0.1246, sense +0.047, stance +0.002(~null)
-  - cross_arch_probe.py (multi-arch harness): referent CI [+0.034,+0.230] (excludes 0), same dissociation
-The referent>sense>stance dissociation reproduces exactly. Harness is VALIDATED on the correct model.
+## WHERE WE ARE NOW (07-08 afternoon)
+- EFFECT CONFIRMED REAL on the correct model (Qwen3-30B-A3B-Instruct-2507): referent +0.12,
+  clean referent>sense>stance dissociation, TWO harnesses agree. The multi-hour saga was a
+  WRONG MODEL CHECKPOINT (thinking vs instruct) — incidents 33/34.
+- DESIGN v2.1 (MASTER-PLAN): matched-scaffold, model-filled. Shared scenarios (facts+prompts+gold),
+  each model generates its OWN replies in-context + own self-gen summary (native at ceiling =
+  correct not workaround; nativeness = part of the mechanism). Gold continuation STAYS SHARED
+  (the difference metric cancels target-nativeness). Gates: headroom-normalize+floor, competence,
+  coherence. Inference: 2 within-vendor dense/MoE pairs primary + pre-registered geometry direction
+  + covariates. Claim: "geometry predicts the DEPLOYMENT sign on each model's own native convs."
+- BUILD DONE (src/cross_arch_probe.py, committed): SC_NATIVE_RENDER (per-model in-context reply gen
+  ported from compose.py to HF path) + gates + reply covariates. CPU-tested (reproduces c01 structure).
+- GATE RUNNING: native-render verification on Qwen Instruct-2507 (pod 11784) — does native-render
+  reproduce ~+0.12? Monitor bg418bnuk. GPU-unverified torch gen loop is what this checks.
+- PRE-REGISTRATION drafted (PREREGISTRATION.md) — FINALIZE the single directional geometry hypothesis
+  (Fable + geometry table) BEFORE the 16-run.
+- NEXT: native-render verify passes -> finalize pre-reg hypothesis -> provision -> go wide (16 models,
+  per-model-native). METHODS-PROVENANCE-REQUIREMENTS.md = blocking for the paper.
 
-## THE ONE OPEN GATE (Fable-flagged, potentially paper-fatal) — running now
-NATIVENESS CONFOUND: c01-c12 replies were generated in-context by a QWEN model, so c01-c12
-may be NATIVE to Qwen and FOREIGN to other archs. If so, +0.12 is a Qwen artifact and a
-cross-arch "sign" would track PER-MODEL NATIVENESS, not attention geometry.
-DECISIVE TEST RUNNING: c01-c12 positive control on ONE non-Qwen model (Mistral-Small).
-  - survives positive -> geometry story holds -> GO WIDE (16 models, c01-c12).
-  - collapses (like the new convs did) -> nativeness confound -> REDESIGN before spending.
-Monitor: b8b9xbgw1. See FINDINGS "NATIVENESS CONFOUND" for the full analysis + cheap
-distinguishers (nativeness regression, dissociation decomposition) + red flags.
-
-## CORPUS CAVEAT: the doubled corpus DILUTES. New convs c13-c54 (frontier-model-mix rendered,
-FOREIGN assistant replies) UNDER-RECOVER: referent gap 1.12 but raw_EB +0.009 (~0), vs orig
-+0.12. Use c01-c12 (reliable) for the sweep; the augmentation is a separate corpus-quality
-problem (Fable: don't re-render per-model -> new confound; treat as future work / scope-condition).
-
-## MODEL LIST: 16 models frozen (MASTER-PLAN). ANCHOR CORRECTED: Qwen/Qwen3-30B-A3B-Instruct-2507
-(not the thinking variant). Wave-1/wave-2 launch drivers ready (scripts/launch_wave*.sh);
-job_sweep.sh anchor fixed. DO NOT go wide until the nativeness control passes.
-
-## HARNESS STATE: cross_arch_probe.py validated on correct model. arms_common build_alignment
-REVERTED to difflib (incident 33: the strict map broke on thinking-model self-gen). Minor bug:
-raw_EB point-estimate stores None while CIs compute (cosmetic; patch it).
-
-## OPERATIONAL RULES: see AGENTS.md "HARD RULES & LEARNINGS" (only-trunk, verify-exact-model,
-commit+push always, shard generation, consult-Fable-not-user-when-stuck, verify-boring-first).
-
+## ---- (earlier current-truth layer, mostly superseded) ----
 ## ---- (older layers below, superseded) ----
 
 ## PHASE 4 PLAN (autonomous, no review-ask; me+Fable; see MASTER-PLAN addenda 1-7)
