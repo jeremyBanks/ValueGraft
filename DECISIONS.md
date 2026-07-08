@@ -202,3 +202,11 @@ full-depth on every model:
   NOT hold (ablation changes nothing, or no-QK-norm shows positive), fall back to broader deep coverage.
 - The current deep set (Qwen3+OLMo QK-norm, Mistral no-QK-norm, + ablation) already tests both
   categories, so it's the decision basis for the allocation above.
+
+## Throughput policy (owner, 07-08): never leave a RUNNING pod idle waiting for a gate
+A pod that is already provisioned and running costs the same whether it's computing or idle. So an
+idle pod (a finished/errored run) is PURE WASTE — fill it with the next queue model immediately.
+The "gate-first" discipline (Fable) governs whether to PROVISION NEW spend ahead of a confirmation;
+it does NOT justify leaving already-running pods idle. Data from any queue model is informative
+regardless of how the gate lands. OPERATING RULE: keep every running pod busy with queue work; when
+a run finishes/errors, harvest its result and immediately relaunch the next model on that pod.
