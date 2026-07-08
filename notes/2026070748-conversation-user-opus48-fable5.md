@@ -6,15 +6,6 @@ the user._
 
 **Participants:** User, claude-opus-4-8, and claude-fable-5.
 
-The session opened with the user asking about tau2-bench's status. The assistant
-reiterated that tau2 (`banking_knowledge` domain, with core tau domains as
-negative control) remains the designated confirm-phase standard once two
-conditions are met: the chain-tier table shows a real graft effect, and the user
-funds the next phase — with a further
-~$3 pilot gate (session length vs. compaction threshold, reward determinism, user-simulator cost) before any real spend. The chain tier was being run instead because it answers the prior question — does the graft do anything at all on solvable agent tasks — at lower cost (~$1.50/episode)
-and without an unpiloted benchmark's unverified assumptions, following the
-established lesson of piloting before committing to a task source.
-
 **Budget status at the time:** $200 loaded across four
 $50 installments; ~$163.50 spent,
 ~$36.50 remaining, later replenished by a user top-up to ~$65 and drifting down

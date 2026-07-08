@@ -9,9 +9,6 @@ experiment infrastructure._
 
 **Participants:** User and gpt-5.5-xhigh.
 
-Participants: user (Jeremy Banks) and an assistant running on gpt-5.5 (OpenAI,
-via Codex CLI) at effort level xhigh throughout.
-
 **Research framing corrections.** The user repeatedly corrected the framing that
 "compaction destroys context-conditioned state" is a research question to be
 proven — it is a self-evident premise, not a finding. The correct question is
