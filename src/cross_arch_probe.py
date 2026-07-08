@@ -73,6 +73,16 @@ Env:
   SC_CHANGE_TOL       : min max|lp_E - lp_B| for smoke (b) (default 1e-3)
   SC_MAX_GOLD_TOK     : cap on gold continuation tokens (default 80)
   SC_TRUST_REMOTE     : "1"/"0" trust_remote_code (default 1; needed e.g. GLM)
+  SC_STRONG_PRIOR     : "1"/"0" FEATURE #2 signed codename disambiguation for
+                        strong_prior plants (default 1, additive block)
+  SC_CHAMPION_SCAN    : FEATURE #3 per-layer champion scan into N fractional-depth
+                        regions (0=off default; >=2 sets N; else uses default 6)
+  SC_CHAMPION_REGIONS : FEATURE #3 rescue test -- comma-separated region indices
+                        to graft together, e.g. "4,5" (alpha=0 elsewhere)
+
+FEATURE #1 (multi-probe averaging) is ALWAYS ON: each plant's raw_EB is the MEAN
+over its paraphrased ``probes`` of the teacher-forced gold lift (de-noises probe
+wording); per-probe values are kept in the trace.
 
 Build the shared fixed summaries ONCE (designated summarizer), then run models:
   SC_SUMMARIZER_MODEL=Qwen/Qwen3.6-27B python3 src/cross_arch_probe.py --make-summaries
@@ -93,6 +103,7 @@ import json
 import os
 import random
 import sys
+import time
 import traceback
 from pathlib import Path
 
@@ -118,11 +129,16 @@ DEFAULT_SUMMARIES = str(
     Path(__file__).resolve().parent.parent / "data" / "fixed_summaries.json")
 DEFAULT_SUMMARIZER = "Qwen/Qwen3.6-27B"
 
-# All 5 continuity categories (skip contaminated). Full dissociation + power.
-CATS = ("sense", "referent", "stance", "ruled_out", "evicted_fact")
+# All continuity categories (skip contaminated). Full dissociation + power.
+# strong_prior = famous-name codenames (each such plant carries `keywords` = the
+# conversation meaning and `anti_keywords` = the famous prior meaning); it gets
+# the standard gold raw_EB like every other category AND, additively, the SIGNED
+# disambiguation readout (FEATURE #2).
+CATS = ("sense", "referent", "stance", "ruled_out", "evicted_fact",
+        "strong_prior")
 # full gradient: sense (pure meaning) → referent/ruled_out (evicted decisions) →
-# evicted_fact (precise verbatim, tests meaning-vs-verbatim claim); stance = null anchor.
-# 115 probes/model (~72% more power than sense+referent alone).
+# evicted_fact (precise verbatim, tests meaning-vs-verbatim claim) → strong_prior
+# (codename vs famous prior); stance = null anchor.
 
 INTERPRETATION = (
     "PRIMARY metric is raw_EB = lp_E - lp_B (bounded logprob lift of the graft "
@@ -209,6 +225,9 @@ ROBUST_SEED = 42
 ALPHA_SWEEP_VALUES = (0.25, 0.5, 0.75, 1.0, 2.0)
 # Placebo-graft corruption modes (SC_PLACEBO=<mode>). See _placebo_index_plan.
 PLACEBO_MODES = ("shuffle_pos", "shuffle_probe", "gauss", "mean")
+# FEATURE #3 default region count when the champion scan is enabled but no
+# explicit N (>=2) is given (SC_CHAMPION_SCAN=1 -> this default).
+CHAMPION_SCAN_DEFAULT_N = 6
 
 
 def _placebo_index_plan(mode, old_idx, prev_old_idx, seed):
@@ -328,6 +347,74 @@ def _group_by_conv(rows):
         cid = r.get("conversation_id")
         groups.setdefault(cid, []).append(r["raw_EB"])
     return list(groups.values())
+
+
+def _mean(values):
+    """Mean (pure python, no numpy). Skips None; returns None on empty input.
+
+    Used for FEATURE #1 multi-probe averaging (mean raw_EB over a plant's
+    paraphrased probes) and for the strong_prior meaning-phrase aggregation."""
+    vals = [v for v in values if v is not None]
+    return (sum(vals) / len(vals)) if vals else None
+
+
+def _mass_shift(conv_lp_B, conv_lp_E, prior_lp_B, prior_lp_E):
+    """FEATURE #2 signed disambiguation for a strong_prior plant.
+
+    mass_shift = (conv_lp_E - prior_lp_E) - (conv_lp_B - prior_lp_B).
+    POSITIVE => the graft moved logprob mass toward the CONVERSATION meaning and
+    away from the famous PRIOR meaning (i.e. the graft disambiguated the
+    codename). Pure arithmetic so it is unit-testable without a model."""
+    return (conv_lp_E - prior_lp_E) - (conv_lp_B - prior_lp_B)
+
+
+def partition_layers(n_layers, n_groups):
+    """FEATURE #3: partition ``n_layers`` into up to ``n_groups`` CONTIGUOUS
+    layer regions [(lo, hi), ...] by RELATIVE (fractional) DEPTH.
+
+    Region ``k`` spans the layers whose depth fraction falls in
+    ``[k/n_groups, (k+1)/n_groups)`` -- i.e. lo = floor(k*L/N), hi =
+    floor((k+1)*L/N). This makes "region k" the SAME computational stage across
+    models of different layer counts (region 3 of 6 is the same relative depth in
+    a 48-layer and a 64-layer model, unlike an absolute layer index). The regions
+    tile ``[0, n_layers)`` exactly once (contiguous, gapless, full cover). Empty
+    regions (when n_layers < n_groups) are dropped, giving n_layers singletons.
+    Pure (no torch)."""
+    n_layers = int(n_layers)
+    n_groups = max(1, int(n_groups))
+    regions = []
+    for k in range(n_groups):
+        lo = (k * n_layers) // n_groups
+        hi = ((k + 1) * n_layers) // n_groups
+        if hi > lo:
+            regions.append((lo, hi))
+    return regions
+
+
+def _champion_configs(n_regions, custom_regions=None):
+    """FEATURE #3: the list of graft configs the champion scan scores, as
+    ``(label, frozenset_of_region_indices)``. Pure (no torch), unit-testable.
+
+      * ``region_k``  : each single region alone (the descriptive per-region scan).
+      * ``all``       : ALL regions together -- MUST reproduce the uniform raw_EB
+                        (miswiring sanity check). NOTE: the sum of the single
+                        region raw_EBs will NOT equal this / the uniform value --
+                        the graft composes NONLINEARLY over depth, so that is
+                        EXPECTED, not a bug.
+      * ``regions_..``: an ARBITRARY custom subset (from SC_CHAMPION_REGIONS),
+                        grafted together with alpha=0 elsewhere -- the "rescue
+                        test" (e.g. graft only the late/positive regions on a
+                        net-negative model and see if raw_EB flips positive).
+    """
+    cfgs = [(f"region_{r}", frozenset([r])) for r in range(n_regions)]
+    cfgs.append(("all", frozenset(range(n_regions))))
+    if custom_regions:
+        valid = frozenset(r for r in custom_regions if 0 <= r < n_regions)
+        if valid:
+            label = "regions_" + "_".join(str(r) for r in sorted(valid))
+            if label not in {lbl for lbl, _ in cfgs}:
+                cfgs.append((label, valid))
+    return cfgs
 
 
 def _median(values):
@@ -498,7 +585,9 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               change_tol: float, max_gold_tok: int,
               trust_remote_code: bool,
               placebo_mode: str | None = None, alpha_sweep: bool = False,
-              seed: int = ROBUST_SEED) -> dict:
+              seed: int = ROBUST_SEED,
+              strong_prior: bool = True, champion_scan: int = 0,
+              champion_regions: list | None = None) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
     was present and we fall back to per-model self-generated summaries (results
@@ -545,6 +634,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "traces": [],              # raw per-probe traces (offline recompute)
         "placebo": None,           # CONTROL #1 (SC_PLACEBO): corrupted-source graft
         "alpha_sweep": None,       # CONTROL #3 (SC_ALPHA_SWEEP): dose-response
+        "strong_prior_signed": None,  # FEATURE #2: signed codename disambiguation
+        "champion_scan": None,     # FEATURE #3: per-layer-region raw_EB fingerprint
         "smoke": {"alpha0_ok": None, "graft_changes_output": None,
                   "graft_direction_ok": None, "alpha0_max_abs_diff": None,
                   "graft_max_abs_diff": None, "graft_mean_signed_diff": None,
@@ -621,6 +712,36 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         lps = tf_logprobs(model, cache, feed, targets, position_ids=pos)
         return sum(lps) / max(1, len(targets))
 
+    def tf_sum(snap, feed_prefix, phrase_ids, npos):
+        """FEATURE #2 helper: SUM (not mean) of the teacher-forced logprobs of
+        ``phrase_ids`` scored as the continuation IMMEDIATELY AFTER
+        ``feed_prefix`` (the probe's answer-eliciting suffix). Summing keeps
+        multi-token meaning phrases comparable to single-token ones as a total
+        answer-mass. npos is the cache's stored token count (position offset)."""
+        cache = rebuild_cache(snap, DynamicCache)
+        feed = list(feed_prefix) + list(phrase_ids[:-1])
+        pos = torch.arange(npos, npos + len(feed), device=model.device)[None]
+        lps = tf_logprobs(model, cache, feed, phrase_ids, position_ids=pos)
+        return sum(lps)
+
+    def value_alignment_per_layer(b_snap, old_snap, pairs):
+        """FEATURE #3 geometry readout (~free -- tensors already in hand): per
+        layer, the mean COSINE SIMILARITY between the grafted WRITE-TIME value
+        vectors (summary snapshot at the old/source indices) and the co-located
+        READ-TIME value vectors (B-context snapshot at the new/dest indices), the
+        two operands blend_values mixes. This is the candidate geometric CAUSE of
+        the per-region raw_EB pattern. Returns a python list, one float per layer
+        (mean over batch/heads/positions)."""
+        new_idx = torch.tensor([n for n, _ in pairs], device=model.device)
+        old_idx = torch.tensor([o for _, o in pairs], device=model.device)
+        out = []
+        for li, (_k, v) in enumerate(b_snap):
+            vr = v[..., new_idx, :].float()               # read-time [B,H,n,D]
+            vw = old_snap[li][1][..., old_idx, :].float() # write-time [B,H,n,D]
+            cos = torch.nn.functional.cosine_similarity(vr, vw, dim=-1)  # [B,H,n]
+            out.append(float(cos.mean().item()))
+        return out
+
     def build_summary_snapshot(msgs, summary_text):
         """Write-time snapshot of the FIXED summary text in THIS model's cache.
 
@@ -688,6 +809,22 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     per_cat_alpha: dict[float, dict[str, list]] = {
         a: {c: [] for c in CATS} for a in ALPHA_SWEEP_VALUES} if alpha_sweep else {}
     alpha_list = list(ALPHA_SWEEP_VALUES) if alpha_sweep else [alpha_v]
+    # FEATURE #2 strong-prior signed readout: one row per strong_prior plant.
+    strong_prior_rows: list[dict] = []
+    # FEATURE #3 champion scan: N fractional-depth layer regions; per-config
+    # raw_EB rows + separate wall-clock timers so the caller can gate on %
+    # overhead. per_config_rows is keyed by config label (region_k / all /
+    # regions_..); champion_configs & the per-model region layer ranges are fixed
+    # once (constant layer count within a model).
+    n_configs = (champion_scan if champion_scan and champion_scan >= 2
+                 else (CHAMPION_SCAN_DEFAULT_N if champion_scan else 0))
+    per_config_rows: dict[str, list] = {}
+    champion_configs: list | None = None
+    champion_region_layers: list | None = None
+    value_align_sum: list | None = None   # running per-layer cosine-sim sum
+    value_align_cnt = 0                    # convs contributing to value_align_sum
+    uniform_seconds = 0.0     # wall time of the standard uniform-alpha scoring
+    champion_seconds = 0.0    # wall time of the per-config re-blend + scoring
 
     specs = collect_specs(data_dir, conv_limit)
     if not specs:
@@ -780,6 +917,37 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                                   else blend_values(b_snap, summ["snapshot"], pairs, a))
                               for a in alpha_list} if alpha_sweep else {})
 
+            # ---- FEATURE #3: champion-scan config snapshots (opt-in) ----
+            # Re-blend alpha_V ONLY in the layers of a fractional-depth region set
+            # (alpha=0 elsewhere), reusing the SAME cached b_snap + write-time
+            # summary snapshot + pairs. blend_values already accepts a per-layer
+            # alpha dict, so a config is just {layer: alpha_v for layer in its
+            # regions}. Timed into champion_seconds; the value-alignment geometry
+            # readout is accumulated here too (free -- tensors already in hand).
+            config_snaps: dict = {}
+            if n_configs and grafted_layer_count:
+                champ_region_layers = partition_layers(grafted_layer_count, n_configs)
+                if champion_configs is None:
+                    champion_region_layers = [list(r) for r in champ_region_layers]
+                    champion_configs = _champion_configs(
+                        len(champ_region_layers), champion_regions)
+                    per_config_rows = {lbl: [] for lbl, _ in champion_configs}
+                _t_ch = time.perf_counter()
+                for lbl, rset in champion_configs:
+                    layers = [li for r in rset
+                              for li in range(*champ_region_layers[r])]
+                    adict = {li: alpha_v for li in layers}
+                    config_snaps[lbl] = blend_values(
+                        b_snap, summ["snapshot"], pairs, adict)
+                champion_seconds += time.perf_counter() - _t_ch
+                val = value_alignment_per_layer(b_snap, summ["snapshot"], pairs)
+                if value_align_sum is None:
+                    value_align_sum = list(val)
+                else:
+                    for _i, _x in enumerate(val):
+                        value_align_sum[_i] += _x
+                value_align_cnt += 1
+
             conv_identity_done = False
 
             for pl in plants:
@@ -788,23 +956,61 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 if len(tgt) < 2:
                     continue
 
-                def suffix(mm):
+                def suffix(mm, probe_text):
                     full = render_hf(
-                        tok, mm + [{"role": "user", "content": pl["probe"]}], True)
+                        tok, mm + [{"role": "user", "content": probe_text}], True)
                     cn = canonical_ids_any(tok, mm, render_hf)
                     return full[len(cn):]
 
-                sa, sb = suffix(msgs), suffix(b_msgs)
-                la = tf(a_snap, sa + tgt[:-1], tgt, len(ids))
-                lb = tf(b_snap, sb + tgt[:-1], tgt, len(b_ids))
-                le = tf(e_snap, sb + tgt[:-1], tgt, len(b_ids))
-                le0 = tf(e0_snap, sb + tgt[:-1], tgt, len(b_ids))
+                # ---- FEATURE #1: MULTI-PROBE AVERAGING (default on) ----
+                # Score the gold continuation under EACH paraphrased probe and
+                # average, so the plant-level la/lb/le/le0 (and hence raw_EB) are
+                # de-noised over probe wording. raw_EB is linear in lb/le, so the
+                # mean of the per-probe (le-lb) equals mean(le)-mean(lb); the
+                # per-probe raw_EBs are kept in the trace. probes[0] == probe.
+                probes = pl.get("probes") or [pl["probe"]]
+                _t_uni = time.perf_counter()
+                per_probe_la, per_probe_lb = [], []
+                per_probe_le, per_probe_le0 = [], []
+                sa_list, sb_list = [], []
+                per_probe_lep = [] if e_placebo_snap is not None else None
+                per_probe_alpha = {a: [] for a in alpha_list} if alpha_sweep else {}
+                for probe_text in probes:
+                    sa_p = suffix(msgs, probe_text)
+                    sb_p = suffix(b_msgs, probe_text)
+                    sa_list.append(sa_p)
+                    sb_list.append(sb_p)
+                    la_p = tf(a_snap, sa_p + tgt[:-1], tgt, len(ids))
+                    lb_p = tf(b_snap, sb_p + tgt[:-1], tgt, len(b_ids))
+                    le_p = tf(e_snap, sb_p + tgt[:-1], tgt, len(b_ids))
+                    le0_p = tf(e0_snap, sb_p + tgt[:-1], tgt, len(b_ids))
+                    per_probe_la.append(la_p)
+                    per_probe_lb.append(lb_p)
+                    per_probe_le.append(le_p)
+                    per_probe_le0.append(le0_p)
+                    if per_probe_lep is not None:
+                        per_probe_lep.append(
+                            tf(e_placebo_snap, sb_p + tgt[:-1], tgt, len(b_ids)))
+                    if alpha_sweep:
+                        for a in alpha_list:
+                            le_a = (le_p if a == alpha_v
+                                    else tf(e_alpha_snaps[a], sb_p + tgt[:-1], tgt,
+                                            len(b_ids)))
+                            per_probe_alpha[a].append(le_a - lb_p)
+                uniform_seconds += time.perf_counter() - _t_uni
+                n_probes = len(probes)
+                la = _mean(per_probe_la)
+                lb = _mean(per_probe_lb)
+                le = _mean(per_probe_le)
+                le0 = _mean(per_probe_le0)
+                per_probe_raw_eb = [e - b for e, b in
+                                    zip(per_probe_le, per_probe_lb)]
 
                 # CONTROL #2: identity-graft no-op check (once per conv, reuses
-                # this plant's A-side feed/targets).
+                # this plant's FIRST-probe A-side feed/targets).
                 if id_snap is not None and not conv_identity_done:
-                    la_id = tf(id_snap, sa + tgt[:-1], tgt, len(ids))
-                    identity_diffs.append(abs(la_id - la))
+                    la_id = tf(id_snap, sa_list[0] + tgt[:-1], tgt, len(ids))
+                    identity_diffs.append(abs(la_id - per_probe_la[0]))
                     conv_identity_done = True
 
                 alpha0_diffs.append(abs(le0 - lb))
@@ -823,24 +1029,80 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                     "raw_EB": raw_eb, "pre_graft_gap": la - lb,
                     "gap_closure": gc})
 
-                # CONTROL #1: placebo raw_EB for this plant (same gold/feed).
+                # ---- FEATURE #2: STRONG-PRIOR SIGNED READOUT (default on) ----
+                # For a strong_prior codename plant, ALSO measure how much logprob
+                # mass the graft moves from the famous PRIOR meaning (anti_keywords)
+                # to the CONVERSATION meaning (keywords). We read RIGHT AFTER the
+                # probe's answer-eliciting suffix (sb, first probe) -- the position
+                # where the model would begin its answer -- scoring each meaning
+                # phrase as a short teacher-forced continuation and SUMMING its
+                # token logprobs (robust to multi-token phrases). Under B
+                # (compacted) and E (graft); mass_shift>0 => graft disambiguated
+                # toward the conversation meaning.
+                sp_signed = None
+                if strong_prior and pl.get("category") == "strong_prior":
+                    sb0 = sb_list[0]
+                    kw = pl.get("keywords") or []
+                    akw = pl.get("anti_keywords") or []
+
+                    def _meaning_lp(snap, phrases):
+                        vals = []
+                        for ph in phrases:
+                            pid = tok(str(ph),
+                                      add_special_tokens=False).input_ids
+                            if pid:
+                                vals.append(tf_sum(snap, sb0, pid, len(b_ids)))
+                        return _mean(vals)
+
+                    conv_lp_B = _meaning_lp(b_snap, kw)
+                    conv_lp_E = _meaning_lp(e_snap, kw)
+                    prior_lp_B = _meaning_lp(b_snap, akw)
+                    prior_lp_E = _meaning_lp(e_snap, akw)
+                    if None not in (conv_lp_B, conv_lp_E, prior_lp_B, prior_lp_E):
+                        sp_signed = {
+                            "plant_id": pl["id"],
+                            "conversation_id": conv["id"],
+                            "conv_meaning_lp_B": conv_lp_B,
+                            "conv_meaning_lp_E": conv_lp_E,
+                            "prior_meaning_lp_B": prior_lp_B,
+                            "prior_meaning_lp_E": prior_lp_E,
+                            "mass_shift": _mass_shift(
+                                conv_lp_B, conv_lp_E, prior_lp_B, prior_lp_E),
+                            # covariate: how dominant the famous prior is under
+                            # compaction (no graft), per model.
+                            "baseline_prior_strength": prior_lp_B - conv_lp_B,
+                        }
+                        strong_prior_rows.append(sp_signed)
+
+                # CONTROL #1: placebo raw_EB for this plant (probe-averaged).
                 placebo_raw_eb = None
                 if e_placebo_snap is not None:
-                    lep = tf(e_placebo_snap, sb + tgt[:-1], tgt, len(b_ids))
-                    placebo_raw_eb = lep - lb
+                    placebo_raw_eb = _mean(per_probe_lep) - lb
                     per_cat_placebo[pl["category"]].append({
                         "conversation_id": conv["id"], "raw_EB": placebo_raw_eb})
 
-                # CONTROL #3: alpha dose-response for this plant.
+                # CONTROL #3: alpha dose-response for this plant (probe-averaged).
                 alpha_raw_eb = {}
                 if alpha_sweep:
                     for a in alpha_list:
-                        le_a = (le if a == alpha_v
-                                else tf(e_alpha_snaps[a], sb + tgt[:-1], tgt,
-                                        len(b_ids)))
-                        alpha_raw_eb[a] = le_a - lb
+                        alpha_raw_eb[a] = _mean(per_probe_alpha[a])
                         per_cat_alpha[a][pl["category"]].append({
-                            "conversation_id": conv["id"], "raw_EB": le_a - lb})
+                            "conversation_id": conv["id"],
+                            "raw_EB": alpha_raw_eb[a]})
+
+                # ---- FEATURE #3: champion-scan per-config raw_EB for this plant
+                # (probe-averaged; reuses this plant's per-probe sb + lb). ----
+                if config_snaps:
+                    _t_ch = time.perf_counter()
+                    for lbl, csnap in config_snaps.items():
+                        per_probe_c = [
+                            tf(csnap, sb_list[pi] + tgt[:-1], tgt, len(b_ids))
+                            - per_probe_lb[pi] for pi in range(n_probes)]
+                        per_config_rows[lbl].append({
+                            "conversation_id": conv["id"],
+                            "raw_EB": _mean(per_probe_c),
+                            "category": pl["category"]})
+                    champion_seconds += time.perf_counter() - _t_ch
 
                 # CONTROL #4: save the raw per-probe trace (offline recompute).
                 traces.append({
@@ -851,9 +1113,12 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                     "seed": seed, "summary_len_tokens": summary_len_tokens,
                     "grafted_layer_count": grafted_layer_count,
                     "n_pairs": len(pairs),
+                    "n_probes": n_probes,
+                    "per_probe_raw_EB": per_probe_raw_eb,
                     "placebo_mode": placebo_mode,
                     "placebo_raw_EB": placebo_raw_eb,
                     "alpha_sweep_raw_EB": (alpha_raw_eb or None),
+                    "strong_prior_signed": sp_signed,
                 })
 
             # retain THIS conv's summary snapshot for a shuffle_probe placebo on
@@ -863,7 +1128,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 prev_old_idx = old_list
 
             del a_snap, b_snap, e_snap, e0_snap
-            del id_snap, e_placebo_snap, e_alpha_snaps
+            del id_snap, e_placebo_snap, e_alpha_snaps, config_snaps
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
     except Unsupported as e:
@@ -1008,6 +1273,117 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 "by_category_robust": per_a,
             }
         doc["alpha_sweep"] = {"alphas": list(alpha_list), "by_alpha": sweep}
+
+    # ---- FEATURE #2: strong-prior signed disambiguation aggregate ----
+    if strong_prior and strong_prior_rows:
+        ms_vals = [r["mass_shift"] for r in strong_prior_rows]
+        base_vals = [r["baseline_prior_strength"] for r in strong_prior_rows]
+        doc["strong_prior_signed"] = {
+            "n": len(strong_prior_rows),
+            "mass_shift": bootstrap_ci_95(
+                ms_vals, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED),
+            "baseline_prior_strength": bootstrap_ci_95(
+                base_vals, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED),
+            "per_plant": strong_prior_rows,
+            "note": (
+                "SIGNED codename disambiguation for strong_prior plants. At the "
+                "probe's answer position, logprob mass (summed over each meaning "
+                "phrase's tokens) for the CONVERSATION meaning (keywords) vs the "
+                "famous PRIOR meaning (anti_keywords), under B (compacted) and E "
+                "(graft). mass_shift = (conv_E - prior_E) - (conv_B - prior_B); "
+                ">0 => the graft moved mass toward the conversation meaning and "
+                "away from the prior. baseline_prior_strength = prior_lp_B - "
+                "conv_lp_B is the per-model prior dominance under compaction (no "
+                "graft) -- a covariate to de-confound the cross-model comparison, "
+                "since models differ in how strongly the famous prior dominates."),
+        }
+
+    # ---- FEATURE #3: per-layer champion scan report ----
+    # DESCRIPTIVE fingerprint of WHICH fractional-depth layer regions carry the
+    # graftable signal -- NOT an optimization (no "best" region is chosen as a
+    # headline). NOTE: the sum of the single-region raw_EBs will NOT equal the
+    # uniform raw_EB -- the graft composes NONLINEARLY across depth -- so we do
+    # NOT assert that. The 'all' config (all regions grafted) SHOULD reproduce the
+    # uniform raw_EB (miswiring check); we report both side by side.
+    if n_configs and champion_region_layers is not None:
+        n_reg = len(champion_region_layers)
+        regions_out = []
+        for r, (lo, hi) in enumerate(champion_region_layers):
+            rows = per_config_rows.get(f"region_{r}", [])
+            raw_vals = [x["raw_EB"] for x in rows]
+            eb = bootstrap_ci_95(raw_vals, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+            n_layers_r = hi - lo
+            # per-layer signal DENSITY: normalize by layers grafted so a THICK
+            # region does not read as "hot" merely from more injected alpha-mass.
+            density = (eb["mean"] / n_layers_r
+                       if (eb["mean"] is not None and n_layers_r) else None)
+            per_cat_region = {}
+            for cat in CATS:
+                crows = [x for x in rows if x["category"] == cat]
+                per_cat_region[cat] = robust_category_stats(
+                    [x["raw_EB"] for x in crows], [(None, None)] * len(crows),
+                    raw_eb_clusters=_group_by_conv(crows))
+            regions_out.append({
+                "region_index": r,
+                "depth_fraction": [r / n_reg, (r + 1) / n_reg],
+                "region_layers": [lo, hi],       # ACTUAL per-model layer range
+                "n_layers": n_layers_r,
+                "raw_EB": eb,
+                "raw_EB_per_layer": density,     # signal density (raw_EB/n_layers)
+                "by_category_robust": per_cat_region,
+            })
+        all_rows = per_config_rows.get("all", [])
+        champ_all = bootstrap_ci_95(
+            [x["raw_EB"] for x in all_rows], n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+        overhead = (100.0 * champion_seconds / uniform_seconds
+                    if uniform_seconds > 0 else None)
+        champ = {
+            "n_configs": n_reg,
+            "region_layers": champion_region_layers,
+            "regions": regions_out,
+            "champion_all_regions_raw_EB": champ_all,   # MUST ~= uniform raw_EB
+            "uniform_raw_EB": doc.get("raw_EB"),        # for the sanity compare
+            "value_alignment_per_layer": (
+                [s / value_align_cnt for s in value_align_sum]
+                if value_align_sum is not None and value_align_cnt else None),
+            "champion_scan_seconds": champion_seconds,
+            "uniform_sweep_seconds": uniform_seconds,
+            "overhead_pct": overhead,
+            "note": (
+                "Fractional-depth region scan: raw_EB when alpha_V is grafted "
+                "ONLY within a contiguous relative-depth region (alpha=0 "
+                "elsewhere), reusing the cached A/B snapshots. region_layers is "
+                "the ACTUAL per-model layer range for each [k/N,(k+1)/N) depth "
+                "bin; raw_EB_per_layer normalizes by layers grafted. DESCRIPTIVE "
+                "(which layers carry the signal), not an optimization -- no best "
+                "config is chosen. 'all' MUST reproduce the uniform raw_EB "
+                "(miswiring check); the single-region raw_EBs do NOT sum to it "
+                "(nonlinear composition over depth) and that is EXPECTED. "
+                "value_alignment_per_layer = per-layer mean cosine similarity of "
+                "grafted write-time vs co-located read-time value vectors -- the "
+                "candidate geometric cause. overhead_pct = champion_scan_seconds/"
+                "uniform_sweep_seconds; enable only if < 25%."),
+        }
+        # ARBITRARY region-set "rescue test": graft only a custom subset of
+        # regions together (SC_CHAMPION_REGIONS). On a net-negative model this
+        # expresses "graft only the positive/late regions and see if raw_EB flips
+        # positive" without touching the rest.
+        custom_lbl = next(
+            (lbl for lbl, _ in (champion_configs or []) if lbl.startswith("regions_")),
+            None)
+        if custom_lbl:
+            crows = per_config_rows.get(custom_lbl, [])
+            requested = sorted(r for r in (champion_regions or [])
+                               if 0 <= r < n_reg)
+            champ["custom_region_set"] = {
+                "regions": requested,
+                "raw_EB": bootstrap_ci_95(
+                    [x["raw_EB"] for x in crows],
+                    n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED),
+                "note": ("rescue test: alpha_V grafted ONLY in these regions, "
+                         "alpha=0 elsewhere."),
+            }
+        doc["champion_scan"] = champ
 
     # ---- per-model verdict + effect sign (DIRECTIONAL) ----
     # effect_sign is read off the AGGREGATE raw_EB CI (all plants): "positive" if
@@ -1269,17 +1645,94 @@ def _self_test_controls() -> int:
         "lp_A": -1.0, "lp_B": -2.0, "lp_E": -1.5, "raw_EB": 0.5,
         "gold": "some gold text", "n_gold_tokens": 12, "alpha": 0.75,
         "seed": ROBUST_SEED, "summary_len_tokens": 87, "grafted_layer_count": 48,
-        "n_pairs": 30, "placebo_mode": None, "placebo_raw_EB": None,
-        "alpha_sweep_raw_EB": None,
+        "n_pairs": 30, "n_probes": 3, "per_probe_raw_EB": [0.4, 0.5, 0.6],
+        "placebo_mode": None, "placebo_raw_EB": None,
+        "alpha_sweep_raw_EB": None, "strong_prior_signed": None,
     }
     expected_keys = {
         "plant_id", "conversation_id", "category", "distance", "lp_A", "lp_B",
         "lp_E", "raw_EB", "gold", "n_gold_tokens", "alpha", "seed",
-        "summary_len_tokens", "grafted_layer_count", "n_pairs", "placebo_mode",
-        "placebo_raw_EB", "alpha_sweep_raw_EB"}
+        "summary_len_tokens", "grafted_layer_count", "n_pairs", "n_probes",
+        "per_probe_raw_EB", "placebo_mode", "placebo_raw_EB",
+        "alpha_sweep_raw_EB", "strong_prior_signed"}
     assert set(trace) == expected_keys, \
         f"trace keys mismatch: {set(trace) ^ expected_keys}"
     print(f"  trace dict has all {len(expected_keys)} required fields OK")
+
+    # ---- FEATURE #1: multi-probe averaging (mean identity) ----
+    assert _mean([]) is None and _mean([None]) is None
+    assert abs(_mean([1.0, 2.0, 3.0]) - 2.0) < 1e-12
+    assert abs(_mean([0.5, None, 1.5]) - 1.0) < 1e-12  # None skipped
+    per_probe_le = [-1.0, -2.0, -1.5]
+    per_probe_lb = [-2.0, -2.5, -2.0]
+    per_probe_raw = [e - b for e, b in zip(per_probe_le, per_probe_lb)]
+    plant_raw_via_means = _mean(per_probe_le) - _mean(per_probe_lb)
+    assert abs(plant_raw_via_means - _mean(per_probe_raw)) < 1e-12, \
+        "plant raw_EB (mean le - mean lb) must equal mean of per-probe raw_EB"
+    print(f"  FEATURE #1 multi-probe: mean(per-probe raw_EB)="
+          f"{_mean(per_probe_raw):+.3f} == mean(le)-mean(lb) OK")
+
+    # ---- FEATURE #2: mass_shift formula on fake logprobs ----
+    # conv_B,conv_E,prior_B,prior_E: graft lifts conv (+1) and drops prior (-1.5)
+    ms = _mass_shift(-3.0, -2.0, -1.0, -2.5)
+    # (conv_E - prior_E) - (conv_B - prior_B) = (-2.0 - -2.5) - (-3.0 - -1.0)
+    #                                         = 0.5 - (-2.0) = 2.5
+    assert abs(ms - 2.5) < 1e-12, f"mass_shift formula wrong: {ms}"
+    # sign sanity: a graft that does NOTHING gives mass_shift 0
+    assert abs(_mass_shift(-3.0, -3.0, -1.0, -1.0)) < 1e-12
+    # a graft moving mass toward the PRIOR (conv down, prior up) is negative
+    assert _mass_shift(-2.0, -3.0, -2.0, -1.0) < 0
+    print(f"  FEATURE #2 mass_shift: (conv_E-prior_E)-(conv_B-prior_B)={ms:+.3f} "
+          f"OK (0 when graft is a no-op; <0 toward prior)")
+
+    # ---- FEATURE #3: fractional-depth layer partitioning ----
+    for L, N in [(48, 6), (64, 6), (50, 6), (40, 6), (7, 6), (5, 6), (1, 1),
+                 (13, 4), (30, 30), (12, 5)]:
+        regs = partition_layers(L, N)
+        assert regs[0][0] == 0, f"partition must start at 0 (L={L},N={N})"
+        assert regs[-1][1] == L, f"partition must cover to L (L={L},N={N})"
+        for i in range(1, len(regs)):
+            assert regs[i][0] == regs[i - 1][1], \
+                f"regions must be contiguous (L={L},N={N})"
+        assert all(lo < hi for lo, hi in regs), "no empty regions"
+        assert sum(hi - lo for lo, hi in regs) == L, \
+            f"regions must cover all L layers exactly once (L={L},N={N})"
+        assert len(regs) == min(N, L), \
+            f"expected min(N,L) regions (L={L},N={N} -> {len(regs)})"
+        # fractional-depth: each region's lo/hi are the floor of k*L/N boundaries
+        # so region k maps to the SAME relative depth across differing L.
+        assert regs == [((k * L) // N, ((k + 1) * L) // N)
+                        for k in range(N) if ((k + 1) * L) // N > (k * L) // N]
+    # region k spans the SAME relative depth for different layer counts:
+    r48 = partition_layers(48, 6)
+    r64 = partition_layers(64, 6)
+    for k in range(6):
+        f48 = (r48[k][0] / 48, r48[k][1] / 48)
+        f64 = (r64[k][0] / 64, r64[k][1] / 64)
+        assert abs(f48[0] - k / 6) < 1.0 / 48 and abs(f64[0] - k / 6) < 1.0 / 64
+    print(f"  FEATURE #3 partition: 48L->{r48}  64L->{r64} "
+          f"(same fractional depth, contiguous, full cover) OK")
+
+    # ---- FEATURE #3: arbitrary region-set masking configs ----
+    cfgs = _champion_configs(6, custom_regions=[4, 5])
+    labels = [lbl for lbl, _ in cfgs]
+    assert labels[:6] == [f"region_{r}" for r in range(6)], \
+        "must have one single-region config per region"
+    assert ("all", frozenset(range(6))) in cfgs, "must include the all-regions config"
+    custom = dict(cfgs)["regions_4_5"]
+    assert custom == frozenset({4, 5}), "custom set must be exactly {4,5}"
+    # 'all' union covers every region (reproduces uniform); a single region is a
+    # strict subset (so its raw_EB need NOT sum to uniform -- nonlinear).
+    assert dict(cfgs)["all"] == frozenset(range(6))
+    # out-of-range custom indices are dropped
+    cfgs2 = _champion_configs(3, custom_regions=[1, 9, -1])
+    assert dict(cfgs2)["regions_1"] == frozenset({1}), \
+        "custom set must drop out-of-range region indices"
+    # no custom set requested -> only single regions + all
+    cfgs3 = _champion_configs(4)
+    assert [lbl for lbl, _ in cfgs3] == ["region_0", "region_1", "region_2",
+                                         "region_3", "all"]
+    print(f"  FEATURE #3 region-set configs: {labels} (single + all + custom) OK")
 
     # ---- robust_category_stats gains cluster CI without dropping old keys ----
     rows = [{"conversation_id": "c01", "raw_EB": 0.4},
@@ -1369,6 +1822,25 @@ def main():
                          f"{ALPHA_SWEEP_VALUES}; default off")
     ap.add_argument("--seed", type=int,
                     default=int(os.environ.get("SC_SEED", str(ROBUST_SEED))))
+    ap.add_argument("--strong-prior", dest="strong_prior",
+                    action="store_true",
+                    default=os.environ.get("SC_STRONG_PRIOR", "1")
+                    not in ("0", "", "false", "False"),
+                    help="FEATURE #2: signed codename disambiguation readout for "
+                         "strong_prior plants; default ON")
+    ap.add_argument("--no-strong-prior", dest="strong_prior",
+                    action="store_false",
+                    help="disable FEATURE #2 strong-prior signed readout")
+    ap.add_argument("--champion-scan", type=int,
+                    default=int(os.environ.get("SC_CHAMPION_SCAN", "0")),
+                    help="FEATURE #3: per-layer champion scan into N "
+                         "fractional-depth regions (0=off; a value >=2 sets N; "
+                         f"any other positive value uses the default "
+                         f"{CHAMPION_SCAN_DEFAULT_N}); default off")
+    ap.add_argument("--champion-regions",
+                    default=(os.environ.get("SC_CHAMPION_REGIONS") or None),
+                    help="FEATURE #3 rescue test: comma-separated region indices "
+                         "to graft TOGETHER (e.g. '4,5'); alpha=0 elsewhere")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--self-test", action="store_true",
                     help="run the CPU-only controls self-tests, then exit")
@@ -1418,6 +1890,11 @@ def main():
 
     # top-level guard: even an unexpected crash writes an ERROR record rather
     # than taking down a multi-model sweep.
+    champion_regions = None
+    if args.champion_regions:
+        champion_regions = [int(x) for x in str(args.champion_regions).split(",")
+                            if x.strip() != ""]
+
     try:
         doc = run_model(
             args.model, data_dir, out_dir, fixed_summaries,
@@ -1425,7 +1902,8 @@ def main():
             alpha0_tol=args.alpha0_tol, change_tol=args.change_tol,
             max_gold_tok=args.max_gold_tok, trust_remote_code=trust,
             placebo_mode=args.placebo, alpha_sweep=args.alpha_sweep,
-            seed=args.seed)
+            seed=args.seed, strong_prior=args.strong_prior,
+            champion_scan=args.champion_scan, champion_regions=champion_regions)
     except SystemExit:
         raise
     except BaseException as e:  # noqa: BLE001
