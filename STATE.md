@@ -1,35 +1,56 @@
 # STATE.md — session handoff notes
 
-*Updated 07-07 ~22:40 by Opus 4.8. Phase 4 (strengthen primary + cross-arch) IN PROGRESS.*
+*Updated 07-08 ~01:45 by Opus 4.8. ESTIMATOR BUG found+resolved; robust-metric era; cross-arch diagnosing.*
 
-## LIVE STATE — Phase 4: strengthen the PRIMARY (grafting), cross-architecture
-POD: w99udryqm0szp1, COMMUNITY, ssh root@104.255.9.187 -p 12540 -i ~/.ssh/id_ed25519_runpod.
-A100 80GB, torch 2.4.1+cu124 (do NOT pip -U torch; torchaudio/torchvision REMOVED,
-incident 27). Code lives /workspace/exp. rsync had to be apt-installed (not preinstalled).
-State .pod_eb_state.json. Balance ~$80.
+## ⚠️ THE BIG EVENT (07-07/08): mean-ratio estimator BROKEN → robust-metric redo
+The gap-closure metric (E-B)/(A-B) mean is CAUCHY-UNSTABLE (small denominators).
+It made results swing run-to-run and inflated magnitudes (the dramatic "-0.31 stance",
+"K-only hurts -0.28"). RESOLUTION (Fable + user push): the EFFECT IS REAL on ROBUST
+metrics; only the estimator was broken. Apparatus is DETERMINISTIC within-env
+(live1==live2 exact); cross-env drift (transformers 5.0→5.13) is small.
+PRIMARY EFFECT w/ bootstrap CIs (raw E-B = lp_E-lp_B, live 30B):
+  referent +0.125 CI[+0.030,+0.218] SIGNIFICANT; sense +0.047 CI[-0.038,+0.131]
+  underpowered (n=22); stance +0.002 CI[-0.036,+0.049] NULL (as claimed).
+STANDARD METRIC NOW: raw E-B + %-helped + bootstrap 95% CI over probes. NEVER bare
+mean-ratio. n=21-24/cat is underpowered = the real limitation (more probes = the fix).
+KEYS: on raw E-B keys are ~NEUTRAL not "hurting" — "value is operative axis" HOLDS,
+"keys hurt" was estimator artifact. KEYS ARE CLOSED (user): numbers-fix only, no more
+key experiments.
 
-RUNNING NOW: real 30B effect-bound (Qwen3-30B-A3B-Instruct-2507) — watcher brb6ubena,
-unique output results/effect_bound/effect_bound_qwen3-30b-a3b_20260707T223542Z.json.
-(A prior "30B" run mistakenly re-ran 27B — effect_bound_probe.py takes --model, ignores
-SC_HF_MODEL; fixed by passing --model + unique --output. Incident 29, rules 28-29.)
+## LIVE STATE — cross-arch sweep (on robust metric) + estimator corrections
+POD: 0rjwbqwpte2rzf, COMMUNITY, ssh root@104.255.9.187 -p 11591 -i ~/.ssh/id_ed25519_runpod.
+A100 80GB, 400G disk (prev 200G pod DIED disk-full, incident 30 — SC_POD_DISK knob added).
+torch 2.4.1+cu124 / transformers 5.13 (do NOT pip -U torch; torchaudio/torchvision REMOVED).
+rsync NOT installable here → use scp. State .pod_sweep_state.json. Balance ~$78.
+RUNNING NOW (chained, pod stays busy): self-gen Qwen2.5 cross-arch → auto-launches
+TRUSTED gap_closure_cat on Qwen2.5 (watcher biue71k6k). PARALLEL subagent: alignment
+refactor (a4eeaf1e99232493e, CPU, non-blocking).
 
-NEXT ON POD (staged, ready): CROSS-ARCH pilot-3 (Qwen2.5-32B / Mistral-Small-4 /
-Gemma-4-27B) via src/cross_arch_probe.py + scripts/job_cross_arch.sh (built, committed).
-Reads data/fixed_summaries.json (Sonnet neutral summaries c01-c06, committed). Per-model
-smoke gate (α0≡fresh + graft-live + POSITIVE-direction). `PILOT_ONLY=1 bash
-scripts/job_cross_arch.sh`. Then full 7-model list. Models: Qwen3.6-35B-A3B, Qwen3.6-27B,
-Gemma-4-27B (sliding-window detector→UNSUPPORTED if HybridCache), Mistral-Small-4,
-GLM-4.7-Flash, OLMo-2-32B, Qwen2.5-32B. EXCLUDE+document: MLA (Kimi K2.x, DeepSeek-V3).
+CROSS-ARCH STATUS: Qwen2.5-32B (validation model) grafted NEGATIVE raw E-B -0.28
+CI[-0.37,-0.20] with the fixed summary (pre_gap +0.61 so compaction DID damage).
+DIAGNOSING whether that's ARCHITECTURE (user's hypothesis) or a cross-arch HARNESS bug
+(Qwen2.5 template region-detection). NOT the alignment (verified 100% aligned, 0 dropped)
+and NOT the fixed summary (alignment perfect). gap_closure_cat trusted test = decisive.
+Harness FIXED: negative effect = SIGNIFICANT_NEGATIVE result (recorded), NOT skipped;
+by_category_robust bug fixed. USER DIRECTIVE: don't give up from 1 model — explore ALL
+7 before concluding; "doesn't travel to X" is a valid map entry.
+Sweep design: robust metric, fixed Sonnet summaries c01-c12 (all 12 convs, ~8min compute,
+download-dominated ~20min/model), baseline α=0.5→champion-tune→champion-pass protocol,
+disk-evict between models, 2nd pod once one validates (2x throughput, user-approved).
+Models: Qwen3.6-35B-A3B/27B, Gemma-4-27B(sliding-window), Mistral-Small-4, GLM-4.7-Flash,
+OLMo-2-32B, Qwen2.5-32B. EXCLUDE+document MLA (Kimi/DeepSeek).
 
-RESULTS IN HAND (committed to FINDINGS):
-- Paper SHIPPED + PROMOTED to README.md (publish workflow: edit REPORT.md, cp→README when
-  confident; never edit README directly). Attribution moved to TOP.
-- K/V: NEGATIVE, SCOPED (value=operative axis for semantic-phrase; keys don't help
-  uniform/per-layer; short-identifier edge OPEN — dropped per user "stop digging keys").
-- Lens free-divergence: pre-registered NEGATIVE (0/17/26). Lens thread closing via BOUND.
-- Effect-bound 27B: graft DECISIVELY beats placebo (E−placebo +0.44 CI[+0.29,+0.61]
-  excl 0 = content-specific); E−B null on 27B narrow window (weak model). 30B rerun in
-  flight to resolve E−B on strong model.
+CORRECTIONS PENDING (tasks 29/30/31): (29) paper robust-metric audit of ALL ratio numbers
+(F1 30B, 27B table, 4B, K/V §10) + CIs, via Fable, re-promote README; (30) judged +12pp
+audit w/ CIs (now load-bearing for sense; scores_30b.json has multi-alpha arms E-post-a0.25/
+a1.0); (31) harden alignment (difflib→direct span map, equivalence-gated, NOT a bug just
+robustness). ALIGNMENT NOTE: difflib is NOT compromising anything (100% aligned) — user
+correctly flagged it as fragile overkill; simplifying to direct 1:1 span map.
+
+RESULTS IN HAND (some numbers NEED the robust-metric correction — see task 29):
+- Paper SHIPPED + on README (retitled "Value grafting: recovering lost semantic continuity
+  when a conversation is compacted"; forum-post intro at top). NEEDS robust-metric correction.
+- Lens: pre-registered NEGATIVE (free-gen 0/17/26). Effect-bound RETIRED (different TF, buggy).
 
 ## PHASE 4 PLAN (autonomous, no review-ask; me+Fable; see MASTER-PLAN addenda 1-7)
 Strengthen PRIMARY (grafting) — paper drifted lens-heavy (dud), grafting under-evidenced.

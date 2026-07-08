@@ -384,3 +384,15 @@ ACTION: the paper §10 K/V section needs the SAME robust-metric correction as F1
 replace ratio numbers (−0.283 etc.) with raw E-B; reframe "K-only hurts" →
 "keys ~neutral, don't help". Add to task 29 (paper correction). GENERAL LESSON:
 EVERY result using (E-B)/(A-B) mean-ratio is suspect — audit all of them on raw E-B.
+
+## Cross-arch Qwen2.5-32B: NEGATIVE raw E-B, diagnosing (07-08)
+Qwen2.5-32B (dense GQA, validation model) with fixed Sonnet summary: raw E-B AGGREGATE
+-0.28 CI[-0.37,-0.20] EXCLUDES 0 (graft HURTS), pre_gap A-B +0.61 (compaction DID
+damage, setup valid). Significant HURT (not null). CANDIDATES: (1) architecture doesn't
+transfer (user's hypothesis, live); (2) cross-arch harness bug specific to Qwen2.5 template
+(region detection). RULED OUT: alignment (difflib aligns 100%, 0 dropped on Qwen2.5) and
+fixed-summary (alignment perfect). DECISIVE TEST running: trusted gap_closure_cat.py on
+Qwen2.5 (bypasses cross-arch harness). Don't conclude from 1 model — exploring all 7.
+ALIGNMENT NOTE (user flagged difflib): build_alignment difflib is fragile overkill (drops
+<8-tok runs silently) but VERIFIED NOT compromising results (100% aligned everywhere
+checked). Being simplified to direct span map (task 31) for robustness, equivalence-gated.

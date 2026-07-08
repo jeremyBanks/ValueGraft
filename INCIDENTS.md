@@ -404,3 +404,13 @@ identical-aggregate tell. 27B numbers safe (committed in git).
 RULE 28: unique self-announcing output names (see AGENTS.md OUTPUT NAMING).
 RULE 29: launch-verify the RIGHT MODEL loaded (echo resolved model id), not just
 that a process is running — pass model explicitly (--model / correct env), confirm.
+
+## 30. Cross-arch pod DIED from disk-full (200G) mid-sweep (07-07/08)
+Downloading Qwen2.5-32B (4th large model) filled the 200G community pod (30B+27B+
+Qwen2.5 caches). Disk 100% → pod destabilized → SSH connection-refused → pod GONE
+(reclaimed). Lost only ~15min partial download; all code/data/results in git.
+FIXES: (a) SC_POD_DISK knob (pod.py) → provision 400G; (b) disk-headroom check
+(df, abort if <80G) before each model download; (c) EVICT each model's HF cache
+after its run (rm /workspace/hf/hub/models--*) — 1-2 models resident, not 7;
+(d) smoke gate is the corrupt-download catch. Community pods unstable (this + the
+2 earlier deaths) — secure preferred but often out of capacity (500s).
