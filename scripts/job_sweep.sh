@@ -39,7 +39,16 @@ print("torch", torch.__version__, "cuda", torch.cuda.is_available())
 sys.exit(0 if torch.cuda.is_available() else 1)
 PY
 python3 -m pip uninstall -y torchvision 2>/dev/null
-python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
+python3 -m pip install -U accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
+# FAIL-CLOSED transformers pin: transformers 5.x breaks weight loading ("automatic weight
+# conversion" RuntimeError). Force a known-good 4.x, then VERIFY — refuse to run if it did not take.
+python3 -m pip install --force-reinstall "transformers==4.57.1" 2>&1 | tail -2
+TV=$(python3 -c "import transformers;print(transformers.__version__)" 2>/dev/null)
+echo "transformers pinned -> ${TV:-MISSING}"
+case "${TV:-x}" in
+  4.5[7-9]*|4.[6-9]*) echo "transformers ${TV} OK (<5)";;
+  *) echo "FATAL: transformers=${TV} is not the required 4.57+/<5 — refusing to run (would fail model load)"; exit 3;;
+esac
 rm -f data/fixed_summaries.json 2>/dev/null   # enforce self-gen
 
 [ -z "${MODELS:-}" ] && { echo "FATAL: MODELS env required"; exit 2; }
