@@ -49,9 +49,17 @@ model. Each model still re-tokenizes + re-prefills that SAME text to produce its
 own write-time value snapshot (values are necessarily per-model) -- but the
 compaction content is identical, so ARCHITECTURE is the only variable.
 
-REPORTING: per model we surface BOTH the fraction-of-gap-closed
-(E-B)/(A-B) AND the raw pre-graft gap (lp_A - lp_B), so a small recovery is never
-confused with a small available gap. Per-model results are DIRECTIONAL (small-N
+REPORTING (ROBUST -- the mean-of-ratio (E-B)/(A-B) is Cauchy-unstable with small
+denominators and is NO LONGER the primary metric): the HEADLINE per-category
+quantity is now raw_EB = lp_E - lp_B (bounded: the graft's logprob lift over
+compaction) with a pure-Python percentile bootstrap 95% CI over the plants
+(N=10000, seed=42). We also report %_helped (fraction with raw_EB > 0) with its
+bootstrap CI, and -- as a scale-free SECONDARY only -- the MEDIAN of the ratio
+(E-B)/(A-B) CONDITIONED on |lp_A - lp_B| > 0.5 (tiny-denominator probes dropped;
+n_kept reported). The unconditioned mean ratio is retired/deprecated (kept only
+under clearly-labeled legacy fields for continuity). This robust block lives in
+``by_category_robust``; a per-model ``verdict`` marks SIGNIFICANT when the raw_EB
+CI excludes 0 for referent OR sense. Per-model results are DIRECTIONAL (small-N
 subset -> bootstrap CI will often overlap 0); the INFERENTIAL claim is the
 aggregate ACROSS models, not any single noisy per-model number. This is stated in
 the output (``interpretation`` field).
@@ -114,11 +122,16 @@ DEFAULT_SUMMARIZER = "Qwen/Qwen3.6-27B"
 CATS = ("sense", "referent")
 
 INTERPRETATION = (
-    "Per-model gap-closure is DIRECTIONAL only: the sense+referent subset is "
-    "small, so bootstrap_ci_95 will often straddle 0 -- do NOT read a single "
-    "model's overlap-with-0 as a 'null'. The inferential claim is the AGGREGATE "
-    "across models. Read mean_gc together with pre_graft_gap (lp_A-lp_B): a "
-    "small recovery on a small available gap is not the same as a graft failure."
+    "PRIMARY metric is raw_EB = lp_E - lp_B (bounded logprob lift of the graft "
+    "over compaction) with a bootstrap 95% CI -- NOT the mean of the ratio "
+    "(E-B)/(A-B), which is Cauchy-unstable with small denominators. The ratio is "
+    "reported only as a scale-free SECONDARY, as a MEDIAN conditioned on "
+    "|lp_A-lp_B| > 0.5. Per-model results are DIRECTIONAL only: the "
+    "sense+referent subset is small, so the raw_EB CI will often straddle 0 -- do "
+    "NOT read a single model's overlap-with-0 as a 'null' (see verdict). The "
+    "inferential claim is the AGGREGATE across models. Read raw_EB together with "
+    "pre_graft_gap (lp_A-lp_B): a small lift on a small available gap is not the "
+    "same as a graft failure."
 )
 
 
@@ -139,6 +152,54 @@ def bootstrap_ci_95(values, n_boot=10000, seed=0):
     lo = means[int(0.025 * n_boot)]
     hi = means[int(0.975 * n_boot)]
     return {"mean": sum(vals) / n, "lo": lo, "hi": hi, "n": n}
+
+
+# Fixed bootstrap params for the ROBUST reporting block (raw_EB, %_helped).
+ROBUST_N_BOOT = 10000
+ROBUST_SEED = 42
+
+
+def _median(values):
+    """Median (pure python, no numpy). Returns None on empty input."""
+    vals = sorted(v for v in values if v is not None)
+    n = len(vals)
+    if n == 0:
+        return None
+    mid = n // 2
+    if n % 2:
+        return vals[mid]
+    return 0.5 * (vals[mid - 1] + vals[mid])
+
+
+def robust_category_stats(raw_eb_vals, ratio_gap_pairs):
+    """ROBUST per-category summary. Retires the unstable mean-of-ratio.
+
+    raw_eb_vals    : [lp_E - lp_B, ...] over the plants (PRIMARY, bounded).
+    ratio_gap_pairs: [(ratio, |lp_A - lp_B|), ...] for the scale-free secondary;
+                     ratio may be None when the denominator was ~0.
+
+    Returns {n, raw_EB_mean, raw_EB_ci:[lo,hi], pct_helped, pct_helped_ci:[lo,hi],
+             median_ratio_cond, n_cond}. pct_helped is a FRACTION in [0,1] (share
+             of plants with raw_EB > 0); its CI is a bootstrap over the same
+             plants. median_ratio_cond drops tiny-denominator probes
+             (|lp_A-lp_B| <= 0.5) and reports how many survived as n_cond."""
+    raw = [v for v in raw_eb_vals if v is not None]
+    n = len(raw)
+    eb = bootstrap_ci_95(raw, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+    helped_flags = [1.0 if v > 0 else 0.0 for v in raw]
+    ph = bootstrap_ci_95(helped_flags, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+    # scale-free secondary: median ratio, tiny-denominator probes dropped.
+    cond = [r for (r, gap) in ratio_gap_pairs
+            if r is not None and gap is not None and abs(gap) > 0.5]
+    return {
+        "n": n,
+        "raw_EB_mean": eb["mean"],
+        "raw_EB_ci": [eb["lo"], eb["hi"]],
+        "pct_helped": ph["mean"],
+        "pct_helped_ci": [ph["lo"], ph["hi"]],
+        "median_ratio_cond": _median(cond),
+        "n_cond": len(cond),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -288,8 +349,11 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "n_plants": 0,
         "kv_geometry": None,
         "pre_graft_gap": None,     # mean lp_A - lp_B (meaning lost to compaction)
-        "gap_closure": None,       # aggregate (E-B)/(A-B) with bootstrap CI
-        "by_category": {},
+        "raw_EB": None,            # PRIMARY aggregate: mean(lp_E-lp_B) + boot CI
+        "gap_closure": None,       # DEPRECATED/unstable mean (E-B)/(A-B) + boot CI
+        "by_category": {},         # legacy block (kept for continuity)
+        "by_category_robust": {},  # ROBUST block -- the one that matters
+        "verdict": None,           # SIGNIFICANT | null/underpowered (directional)
         "interpretation": INTERPRETATION,
         "smoke": {"alpha0_ok": None, "graft_changes_output": None,
                   "graft_direction_ok": None, "alpha0_max_abs_diff": None,
@@ -471,13 +535,15 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 graft_signed.append(le - lb)      # >0 => toward continuity target
                 pre_gaps.append(la - lb)          # meaning lost to compaction
 
+                raw_eb = le - lb          # PRIMARY: bounded logprob lift of graft
                 gc = (le - lb) / (la - lb) if abs(la - lb) > 1e-6 else None
                 if gc is not None:
                     all_gc.append(gc)
                 n_plants += 1
                 per_cat[pl["category"]].append({
                     "plant_id": pl["id"], "lp_A": la, "lp_B": lb, "lp_E": le,
-                    "pre_graft_gap": la - lb, "gap_closure": gc})
+                    "raw_EB": raw_eb, "pre_graft_gap": la - lb,
+                    "gap_closure": gc})
 
             del a_snap, b_snap, e_snap, e0_snap
             if torch.cuda.is_available():
@@ -507,9 +573,10 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     graft_changes = graft_max >= change_tol              # (b) injection live
     # (c) POSITIVE DIRECTION: on the held check items the graft must move the
     # output TOWARD the continuity target (higher gold logprob) on average, not
-    # merely perturb it. A directionless graft (plumbing runs, manipulation dead)
-    # is flagged and NOT trusted.
-    graft_direction_ok = graft_mean_signed > 0.0
+    # merely perturb it. This is exactly the raw_EB mean = mean(lp_E - lp_B) > 0
+    # (graft_signed IS the per-plant raw_EB). A directionless graft (plumbing
+    # runs, manipulation dead) is flagged and NOT trusted.
+    graft_direction_ok = graft_mean_signed > 0.0   # == raw_EB mean > 0
     doc["smoke"] = {
         "alpha0_ok": bool(alpha0_ok),
         "graft_changes_output": bool(graft_changes),
@@ -522,6 +589,10 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     }
     doc["n_plants"] = n_plants
     doc["pre_graft_gap"] = bootstrap_ci_95(pre_gaps)
+    # PRIMARY aggregate metric: raw_EB = mean(lp_E - lp_B) over all plants, with
+    # the fixed robust bootstrap. graft_signed IS the per-plant raw_EB vector.
+    doc["raw_EB"] = bootstrap_ci_95(
+        graft_signed, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
 
     if not (alpha0_ok and graft_changes and graft_direction_ok):
         why = []
@@ -541,9 +612,15 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         return doc
 
     # ---- aggregate (only when smoke passed) ----
-    # DIRECTIONAL per-model: report mean gap-closure with a bootstrap 95% CI.
-    doc["gap_closure"] = bootstrap_ci_95(all_gc)
+    # DEPRECATED/unstable: mean of the ratio (E-B)/(A-B). Kept only for
+    # continuity -- Cauchy-unstable with small denominators, NOT the headline.
+    doc["gap_closure"] = bootstrap_ci_95(all_gc)  # unstable/deprecated
+
+    # LEGACY per-category block (kept for continuity with prior runs). The
+    # unconditioned mean_gc here is explicitly the deprecated unstable metric.
     by_cat = {}
+    # ROBUST per-category block -- THE one that matters.
+    by_cat_robust = {}
     for cat in CATS:
         rows = per_cat[cat]
         gcs = [r["gap_closure"] for r in rows if r["gap_closure"] is not None]
@@ -551,13 +628,35 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         helped = [g for g in gcs if g > 0]
         ci = bootstrap_ci_95(gcs)
         by_cat[cat] = {
-            "mean_gc": ci["mean"],
-            "gc_ci95": [ci["lo"], ci["hi"]],
+            "mean_gc_UNSTABLE_DEPRECATED": ci["mean"],  # do NOT use as headline
+            "gc_ci95_UNSTABLE_DEPRECATED": [ci["lo"], ci["hi"]],
             "pct_helped": (100.0 * len(helped) / len(gcs)) if gcs else None,
             "mean_pre_graft_gap": (sum(gaps) / len(gaps)) if gaps else None,
             "n": len(gcs),
         }
+        raw_eb_vals = [r["raw_EB"] for r in rows]
+        ratio_gap_pairs = [(r["gap_closure"], r["pre_graft_gap"]) for r in rows]
+        by_cat_robust[cat] = robust_category_stats(raw_eb_vals, ratio_gap_pairs)
     doc["by_category"] = by_cat
+    doc["by_category_robust"] = by_cat_robust
+
+    # ---- per-model verdict (DIRECTIONAL) ----
+    # SIGNIFICANT iff the raw_EB CI excludes 0 (both bounds same side of 0) for
+    # referent OR sense. Otherwise null/underpowered. n is small so this is
+    # directional -- the cross-model AGGREGATE is the inferential claim.
+    def _ci_excludes_zero(block):
+        lo, hi = block.get("raw_EB_ci", [None, None])
+        if lo is None or hi is None or block.get("n", 0) < 2:
+            return False
+        return (lo > 0 and hi > 0) or (lo < 0 and hi < 0)
+
+    any_sig = any(_ci_excludes_zero(by_cat_robust.get(c, {})) for c in CATS)
+    doc["verdict"] = "SIGNIFICANT" if any_sig else "null/underpowered"
+    doc["verdict_note"] = (
+        "raw_EB CI " + ("excludes" if any_sig else "does NOT exclude") +
+        " 0 for referent or sense. n is small so per-model verdict is "
+        "DIRECTIONAL; the cross-model aggregate is the inferential claim.")
+
     doc["status"] = "OK"
     doc["reason"] = None
     return doc
@@ -733,13 +832,24 @@ def main():
               file=sys.stderr)
         sys.exit(2)
 
-    # The shared FIXED summaries are a required INPUT -- fail clearly if missing.
-    if not summaries_path.exists():
-        print(f"FATAL: fixed summaries file {summaries_path} not found. Build it "
-              f"ONCE with: SC_SUMMARIZER_MODEL={args.summarizer} "
+    # Prefer the shared FIXED summaries file (external, Sonnet-written,
+    # {conv_id: summary_text}). If absent, fall back to per-model self-generated
+    # summaries (a convenience for testing -- results are NOT cross-model
+    # comparable and are flagged as such in the output).
+    fixed_summaries = None
+    if summaries_path.exists():
+        fixed_summaries = json.loads(summaries_path.read_text())
+        # tolerate an optional "_summarizer" provenance key if present
+        fixed_summaries = {k: v for k, v in fixed_summaries.items()
+                           if not k.startswith("_")}
+        print(f"LOADED fixed summaries: {summaries_path} "
+              f"({len(fixed_summaries)} convs)", flush=True)
+    else:
+        print(f"WARNING: fixed summaries file {summaries_path} not found -- "
+              f"falling back to PER-MODEL self-generated summaries (results NOT "
+              f"cross-model comparable). Build the shared file with Sonnet, or: "
+              f"SC_SUMMARIZER_MODEL={args.summarizer} "
               f"python3 src/cross_arch_probe.py --make-summaries", file=sys.stderr)
-        sys.exit(3)
-    summaries = json.loads(summaries_path.read_text())
 
     out_dir = Path(args.out_dir)
 
@@ -747,7 +857,7 @@ def main():
     # than taking down a multi-model sweep.
     try:
         doc = run_model(
-            args.model, data_dir, out_dir, summaries,
+            args.model, data_dir, out_dir, fixed_summaries,
             conv_limit=args.conv_limit, alpha_v=args.alpha_v,
             alpha0_tol=args.alpha0_tol, change_tol=args.change_tol,
             max_gold_tok=args.max_gold_tok, trust_remote_code=trust)
