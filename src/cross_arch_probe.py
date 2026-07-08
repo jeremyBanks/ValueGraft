@@ -118,8 +118,11 @@ DEFAULT_SUMMARIES = str(
     Path(__file__).resolve().parent.parent / "data" / "fixed_summaries.json")
 DEFAULT_SUMMARIZER = "Qwen/Qwen3.6-27B"
 
-# SUBSET for speed: sense + referent plants only (skip stance + contaminated).
-CATS = ("sense", "referent", "stance")  # stance = null control (full dissociation)
+# All 5 continuity categories (skip contaminated). Full dissociation + power.
+CATS = ("sense", "referent", "stance", "ruled_out", "evicted_fact")
+# full gradient: sense (pure meaning) → referent/ruled_out (evicted decisions) →
+# evicted_fact (precise verbatim, tests meaning-vs-verbatim claim); stance = null anchor.
+# 115 probes/model (~72% more power than sense+referent alone).
 
 INTERPRETATION = (
     "PRIMARY metric is raw_EB = lp_E - lp_B (bounded logprob lift of the graft "
