@@ -396,3 +396,15 @@ Qwen2.5 (bypasses cross-arch harness). Don't conclude from 1 model — exploring
 ALIGNMENT NOTE (user flagged difflib): build_alignment difflib is fragile overkill (drops
 <8-tok runs silently) but VERIFIED NOT compromising results (100% aligned everywhere
 checked). Being simplified to direct span map (task 31) for robustness, equivalence-gated.
+
+## ✅ Cross-arch datapoint 1: Qwen2.5-32B grafts NEGATIVE — REAL ARCHITECTURE (07-08)
+Value graft REVERSES on Qwen2.5-32B (dense GQA). Confirmed by 3 independent runs:
+cross-arch fixed-summary raw E-B -0.28, cross-arch self-gen -0.32, and TRUSTED
+gap_closure_cat.py (exact F1 code, model-gen summary) referent -0.26/sense -0.38/
+stance -0.25 (all significantly negative, %pos 4-19%). Harness VALIDATED (trusted
+matches cross-arch). NOT a bug — Qwen2.5 genuinely grafts negative where Qwen3-30B-
+MoE grafts +0.12. INTERPRETATION: the effect is ARCHITECTURE-SPECIFIC and can
+REVERSE — strong evidence it's a real mechanism, NOT a generic artifact (an
+artifact wouldn't flip sign by architecture). Map entry: Qwen3-MoE +, Qwen2.5-dense −.
+Keep exploring (Gemma next, parallel pod2). Note: Qwen2.5 vs Qwen3 differ in
+dense-vs-MoE AND generation — cause of the reversal is open (n=2).
