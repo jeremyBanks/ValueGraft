@@ -1,6 +1,0 @@
-__pycache__/
-.pod_*_state.json
-*.log
-outputs/qwen36_full_layer_sweep.json
-outputs/qwen36_intervention_batch_probe.json
-outputs/qwen36_intervention_challenge_probe.json

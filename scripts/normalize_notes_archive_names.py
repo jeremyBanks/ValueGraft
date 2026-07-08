@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normalize archive-note filenames in docs/.
+"""Normalize archive-note filenames in notes/.
 
 Names become:
 
@@ -32,9 +32,17 @@ ARCHIVE_SUFFIXES = {".md", ".txt"}
 
 
 @dataclass(frozen=True)
+class TimestampInfo:
+    value: datetime
+    source: str
+
+
+@dataclass(frozen=True)
 class Rename:
     source: Path
     target: Path
+    timestamp: TimestampInfo
+    reasons: tuple[str, ...]
 
 
 def run_git(args: list[str]) -> str:
@@ -45,7 +53,7 @@ def git_root() -> Path:
     return Path(run_git(["rev-parse", "--show-toplevel"]))
 
 
-def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
+def git_creation_timestamp(path: Path, root: Path) -> TimestampInfo | None:
     rel = path.relative_to(root).as_posix()
     try:
         output = run_git(["log", "--follow", "--format=%cI", "--", rel])
@@ -55,23 +63,25 @@ def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
     if not lines:
         return None
     timestamps = [datetime.fromisoformat(line).astimezone(timezone.utc) for line in lines]
-    return min(timestamps)
+    return TimestampInfo(min(timestamps), "git history")
 
 
-def filesystem_timestamp(path: Path) -> datetime:
+def filesystem_timestamp(path: Path) -> TimestampInfo:
     stat = path.stat()
-    timestamp = getattr(stat, "st_birthtime", stat.st_mtime)
-    return datetime.fromtimestamp(timestamp, timezone.utc)
+    if hasattr(stat, "st_birthtime"):
+        return TimestampInfo(datetime.fromtimestamp(stat.st_birthtime, timezone.utc), "filesystem birth time")
+    return TimestampInfo(datetime.fromtimestamp(stat.st_mtime, timezone.utc), "filesystem mtime")
 
 
-def timestamp_from_existing_prefix(path: Path) -> datetime | None:
+def timestamp_from_existing_prefix(path: Path) -> TimestampInfo | None:
     match = CURRENT_PREFIX_CAPTURE_RE.match(path.name)
     if not match:
         return None
-    return datetime.strptime(match.group(1), "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc)
+    timestamp = datetime.strptime(match.group(1), "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc)
+    return TimestampInfo(timestamp, "existing filename prefix")
 
 
-def timestamp_for(path: Path, root: Path) -> datetime:
+def timestamp_for(path: Path, root: Path) -> TimestampInfo:
     return (
         git_creation_timestamp(path, root)
         or timestamp_from_existing_prefix(path)
@@ -94,17 +104,31 @@ def kebab_case(text: str) -> str:
     return lowered.strip("-") or "untitled"
 
 
-def target_for(path: Path, root: Path) -> Path:
+def target_for(path: Path, root: Path) -> tuple[Path, TimestampInfo, tuple[str, ...]]:
     created = timestamp_for(path, root)
-    prefix = created.strftime("%Y%m%d%H%M%S")
+    prefix = created.value.strftime("%Y%m%d%H%M%S")
     title = kebab_case(strip_known_prefix(path.stem))
-    return path.with_name(f"{prefix}-{title}.md")
+    target = path.with_name(f"{prefix}-{title}.md")
+
+    reasons: list[str] = []
+    if not CURRENT_PREFIX_RE.match(path.name):
+        reasons.append("add UTC timestamp prefix")
+    elif not path.name.startswith(f"{prefix}-"):
+        reasons.append("correct UTC timestamp prefix")
+    if strip_known_prefix(path.stem) != title:
+        reasons.append("kebab-case title")
+    if path.suffix.lower() != ".md":
+        reasons.append("convert suffix to .md")
+    if path.name != target.name and not reasons:
+        reasons.append("normalize filename")
+
+    return target, created, tuple(reasons)
 
 
-def archive_files(docs_dir: Path) -> list[Path]:
+def archive_files(notes_dir: Path) -> list[Path]:
     return sorted(
         path
-        for path in docs_dir.iterdir()
+        for path in notes_dir.iterdir()
         if path.is_file()
         and path.suffix.lower() in ARCHIVE_SUFFIXES
         and path.name not in RESERVED_DOC_NAMES
@@ -126,12 +150,15 @@ def plan_renames(paths: list[Path], root: Path) -> list[Rename]:
     planned: list[Rename] = []
     targets: set[Path] = set()
     for source in paths:
-        target = available_target(target_for(source, root), targets, source)
+        base_target, timestamp, reasons = target_for(source, root)
+        target = available_target(base_target, targets, source)
+        if target != base_target:
+            reasons = (*reasons, f"avoid name collision with suffix {target.stem.removeprefix(base_target.stem)}")
         if source == target:
             targets.add(target)
             continue
         targets.add(target)
-        planned.append(Rename(source=source, target=target))
+        planned.append(Rename(source=source, target=target, timestamp=timestamp, reasons=reasons))
     return planned
 
 
@@ -140,19 +167,34 @@ def apply_renames(renames: list[Rename]) -> None:
         rename.source.rename(rename.target)
 
 
+def print_plan(renames: list[Rename], root: Path, mode: str, scanned_count: int) -> None:
+    print(f"notes archive normalizer: mode={mode} scanned={scanned_count} planned={len(renames)}")
+    if not renames:
+        print("No archive filenames need normalization.")
+        return
+
+    for index, rename in enumerate(renames, 1):
+        timestamp = rename.timestamp.value.strftime("%Y-%m-%dT%H:%M:%SZ")
+        reasons = ", ".join(rename.reasons) if rename.reasons else "normalize filename"
+        print(f"{index}. {rename.source.relative_to(root)}")
+        print(f"   -> {rename.target.relative_to(root)}")
+        print(f"   timestamp: {timestamp} ({rename.timestamp.source})")
+        print(f"   changes: {reasons}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "paths",
         nargs="*",
         type=Path,
-        help="specific archive-note files to normalize; defaults to docs/*.md and docs/*.txt",
+        help="specific archive-note files to normalize; defaults to notes/*.md and notes/*.txt",
     )
     parser.add_argument(
-        "--docs-dir",
+        "--notes-dir",
         type=Path,
-        default=Path("docs"),
-        help="documentation archive directory; default: docs",
+        default=Path("notes"),
+        help="notes archive directory; default: notes",
     )
     parser.add_argument(
         "--dry-run",
@@ -167,28 +209,31 @@ def main() -> int:
     args = parser.parse_args()
 
     root = git_root()
-    docs_dir = (root / args.docs_dir).resolve()
+    notes_dir = (root / args.notes_dir).resolve()
     if args.paths:
         paths = [(root / path).resolve() if not path.is_absolute() else path for path in args.paths]
     else:
-        paths = archive_files(docs_dir)
+        paths = archive_files(notes_dir)
 
     for path in paths:
-        if docs_dir not in path.parents:
-            raise SystemExit(f"refusing to normalize file outside {docs_dir}: {path}")
+        if notes_dir not in path.parents:
+            raise SystemExit(f"refusing to normalize file outside {notes_dir}: {path}")
         if path.name in RESERVED_DOC_NAMES:
             continue
         if path.suffix.lower() not in ARCHIVE_SUFFIXES:
             raise SystemExit(f"not an archive-note file: {path}")
 
     renames = plan_renames(paths, root)
-    for rename in renames:
-        print(f"{rename.source.relative_to(root)} -> {rename.target.relative_to(root)}")
+    mode = "check" if args.check else "dry-run" if args.dry_run else "apply"
+    print_plan(renames, root, mode, len(paths))
 
     if args.check and renames:
+        print("Check failed: run without --check to apply these renames.")
         return 1
     if not args.dry_run:
         apply_renames(renames)
+        if renames:
+            print(f"Applied {len(renames)} rename(s).")
     return 0
 
 
