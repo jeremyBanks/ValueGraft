@@ -29,6 +29,31 @@ SUMMARY_REQUEST_BRIEF = (
 )
 
 
+def strip_reasoning_block(text):
+    """Return the model's ANSWER with any leading chain-of-thought removed.
+
+    Qwen3 and other 'thinking' models emit a ``<think> ... </think>`` reasoning
+    span BEFORE the actual answer. When such text is placed into an assistant
+    turn and the conversation is re-rendered, the Qwen chat template STRIPS the
+    think block from assistant history -- so a self-generated summary that is
+    later dropped into a compacted (B) context contains ONLY the post-``</think>``
+    answer. The write-time snapshot, however, re-tokenizes the summary text
+    VERBATIM; if that text still carries the ``<think>...</think>`` span the two
+    renderings of the SAME summary diverge in token count (observed: 899 write
+    tokens vs 538 compacted tokens on Qwen3-30B-A3B c01), and the exact-twin
+    alignment (build_alignment_direct) cannot map them 1:1 and raises.
+
+    Normalizing here -- keep everything AFTER the final ``</think>`` (matching the
+    template, which splits on ``</think>`` and lstrips the answer) -- makes the
+    self-gen path carry the same think-free summary the fixed-summary path
+    already does, so the write-time and compacted summary token spans are
+    identical. Text with no reasoning block is returned unchanged apart from
+    surrounding-whitespace stripping."""
+    if "</think>" in text:
+        text = text.rsplit("</think>", 1)[1]
+    return text.strip()
+
+
 def render(tokenizer, msgs, gen_prompt):
     """Token ids for msgs via chat template (works for both stacks' tokenizers
     when the template returns token ids; HF fast tokenizers: use text round

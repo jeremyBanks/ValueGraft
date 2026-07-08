@@ -111,13 +111,17 @@ sys.path.insert(0, "src")
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from arms_common import (  # noqa: E402  (stdlib-only, import-safe on CPU box)
+    SUMMARY_REQUEST,
+    _find_exact_subblock,
     build_alignment,
+    build_alignment_direct,
     build_b_messages,
     build_b_messages_gemma,
     canonical_ids_any,
     detect_template_family,
     message_starts_any,
     render_hf,
+    strip_reasoning_block,
 )
 
 # The FIXED summaries are produced EXTERNALLY (coordinator uses Sonnet -- a
@@ -575,6 +579,113 @@ class Unsupported(Exception):
     """Graceful bail-out: model can't be handled; record reason, don't crash."""
 
 
+# ---------------------------------------------------------------------------
+# PURE (tokenizer-only, NO torch / NO model) token layout for the alignment.
+# Factored out of the old run_model.build_summary_snapshot + inline region
+# construction so the EXACT same token geometry can be exercised on a CPU box
+# (--smoke-align) without a GPU. run_model adds the force_prefill snapshots on
+# top of this; the smoke path needs none.
+# ---------------------------------------------------------------------------
+def summary_token_layout(tok, family, msgs, summary_text):
+    """Write-time summary token layout WITHOUT the force_prefill snapshot.
+
+    The subtlety is a ``<think>...</think>`` reasoning block in a self-generated
+    summary, and it is handled by MATCHING what the authoritative gap_closure_cat
+    (F1) harness does -- which is where the known-good self-gen numbers
+    (referent +0.136 / +0.156) come from:
+
+      * ``text`` is the FULL self-gen text, reasoning block INCLUDED, and it is
+        handed VERBATIM to build_b. The Qwen chat template strips the reasoning
+        block from the assistant-turn history -- and, because the "[Context
+        note] ..." preamble that build_b prepends sits BEFORE the block, the
+        template swallows that preamble too. So the compacted (B) summary turn
+        holds exactly the think-free summary with NO preamble. This is the B the
+        known-good result was measured on; re-introducing the preamble (by
+        pre-stripping the reasoning here) changes B's cache and FLIPS the effect
+        (self-gen referent collapsed from +0.136 to a null +0.01 with the
+        preamble present). For a fixed/foreign summary with no reasoning block
+        there is nothing to strip, so the preamble survives -- exactly the
+        verified fixed-summary layout, unchanged.
+
+      * WRITE-TIME PREFILL (``old_ids``) is req_ids + the FULL text, so the
+        grafted summary tokens' VALUE vectors are the ones the model computed
+        with its reasoning in context.
+
+      * ALIGNMENT REGION (``s_start``:``s_end``) is only the think-free CLEAN
+        summary -- exactly what survives in B -- located as an EXACT contiguous
+        sub-block of the full write-time span. build_alignment_direct maps it 1:1
+        onto B's summary turn (no raise, no dropped tokens); the reasoning tokens
+        are present in the value context but never grafted. This is the exact,
+        auditable equivalent of what the old difflib matcher did implicitly (drop
+        the unmatched reasoning tokens, graft the summary)."""
+    clean_text = strip_reasoning_block(summary_text)
+    conv_ids = canonical_ids_any(tok, msgs, render_hf)
+    if family == "gemma":
+        req_msgs = list(msgs)
+        if req_msgs and req_msgs[-1]["role"] == "user":
+            req_msgs = req_msgs + [
+                {"role": "assistant", "content": "Understood."}]
+        req_msgs = req_msgs + [{"role": "user", "content": SUMMARY_REQUEST}]
+        req_ids = render_hf(tok, req_msgs, True)
+    else:
+        req_ids = render_hf(
+            tok, msgs + [{"role": "user", "content": SUMMARY_REQUEST}], True)
+    if req_ids[:len(conv_ids)] != conv_ids:
+        raise Unsupported("summary-request render is not a prefix of conv "
+                          "(template not prefix-stable)")
+    full_summ_ids = tok(summary_text, add_special_tokens=False).input_ids
+    clean_summ_ids = tok(clean_text, add_special_tokens=False).input_ids
+    # Locate the clean summary as an exact contiguous sub-block of the full
+    # write-time span (keeps the reasoning tokens in context, grafts only the
+    # clean summary). Fall back to a think-prefix + clean split if a boundary
+    # token merge means the standalone clean tokens are not a verbatim sub-block.
+    off = _find_exact_subblock(list(full_summ_ids), list(clean_summ_ids))
+    if off is None:
+        idx = summary_text.rfind(clean_text) if clean_text else -1
+        think_prefix = summary_text[:idx] if idx > 0 else ""
+        think_ids = (tok(think_prefix, add_special_tokens=False).input_ids
+                     if think_prefix else [])
+        full_summ_ids = list(think_ids) + list(clean_summ_ids)
+        off = len(think_ids)
+    old_ids = list(req_ids) + list(full_summ_ids)
+    s_start = len(req_ids) + off
+    s_end = s_start + len(clean_summ_ids)
+    return {
+        "text": summary_text,        # FULL text -> build_b (template strips think
+                                     # + preamble); matches F1's known-good B
+        "gen_ids": clean_summ_ids,   # the grafted summary tokens
+        "conv_end": len(conv_ids),
+        "s_start": s_start,
+        "s_end": s_end,
+        "old_ids": old_ids,          # req + FULL summary (reasoning kept in ctx)
+    }
+
+
+def build_token_context(tok, family, msgs, summary_text, tsm):
+    """PURE construction of the full alignment geometry -- EXACTLY what run_model
+    builds, minus the force_prefill snapshots. Returns ids/starts (A side),
+    b_msgs/b_ids/b_starts (B side), the summary token layout, and the two
+    alignment regions. Shared by run_model and --smoke-align so the smoke guards
+    the identical code path the real run uses."""
+    ids = canonical_ids_any(tok, msgs, render_hf)
+    starts = message_starts_any(tok, msgs, ids, render_hf)
+    summ = summary_token_layout(tok, family, msgs, summary_text)
+    b_msgs, summ_idx, tail_idx = build_b_and_indices(
+        family, msgs, summ["text"], tsm)
+    b_ids = canonical_ids_any(tok, b_msgs, render_hf)
+    b_starts = message_starts_any(tok, b_msgs, b_ids, render_hf)
+    regions = [
+        ((b_starts[tail_idx], len(b_ids)), (starts[tsm], summ["conv_end"])),
+        ((b_starts[summ_idx], b_starts[summ_idx + 1]),
+         (summ["s_start"], summ["s_end"])),
+    ]
+    return {
+        "ids": ids, "starts": starts, "b_msgs": b_msgs, "b_ids": b_ids,
+        "b_starts": b_starts, "summ": summ, "regions": regions,
+        "summ_idx": summ_idx, "tail_idx": tail_idx,
+    }
+
+
 # ===========================================================================
 # The heavy path (torch/transformers) lives entirely below, imported lazily so
 # --dry-run runs on a CPU-only box with no ML deps.
@@ -742,54 +853,6 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             out.append(float(cos.mean().item()))
         return out
 
-    def build_summary_snapshot(msgs, summary_text):
-        """Write-time snapshot of the FIXED summary text in THIS model's cache.
-
-        Mirrors arms_hf.generate_summary_hf's layout, but the summary tokens are
-        the shared fixed text (teacher-forced, NOT model-generated), so the
-        compaction content is identical across models. Returns the same dict
-        shape the alignment/graft code expects.
-
-        Family-aware (``family`` captured from run_model's enclosing scope,
-        detect_template_family(tok) @ ~L390): the qwen/mistral path is
-        unchanged; gemma needs an alternation-safe [conversation +
-        summary-request] because Gemma's template (a) has no system role
-        (the template folds system into the first user turn) and (b) forbids
-        consecutive same-role messages. If the conversation already ends in a
-        user turn, appending the user summary-request directly raises
-        TemplateError ("roles must alternate"); we insert a minimal assistant
-        turn first (mirroring build_b_messages_gemma's user-note/assistant-ack
-        structure). Prefix-stability (verified for gemma via
-        message_token_starts_prefix) keeps conv_ids a prefix of req_ids, and
-        the summary tokens still land in a contiguous span [s_start, s_end) at
-        the very end (summ_ids appended after req_ids exactly as before)."""
-        conv_ids = canonical_ids_any(tok, msgs, render_hf)
-        if family == "gemma":
-            req_msgs = list(msgs)
-            if req_msgs and req_msgs[-1]["role"] == "user":
-                req_msgs = req_msgs + [
-                    {"role": "assistant", "content": "Understood."}]
-            req_msgs = req_msgs + [{"role": "user", "content": _REQ}]
-            req_ids = render_hf(tok, req_msgs, True)
-        else:
-            req_ids = render_hf(
-                tok, msgs + [{"role": "user", "content": _REQ}], True)
-        if req_ids[:len(conv_ids)] != conv_ids:
-            raise Unsupported("summary-request render is not a prefix of conv "
-                              "(template not prefix-stable)")
-        summ_ids = tok(summary_text, add_special_tokens=False).input_ids
-        old_ids = list(req_ids) + list(summ_ids)
-        snap = force_prefill(old_ids)
-        return {
-            "text": summary_text,
-            "gen_ids": summ_ids,
-            "conv_end": len(conv_ids),
-            "s_start": len(req_ids),
-            "s_end": len(req_ids) + len(summ_ids),
-            "old_ids": old_ids,
-            "snapshot": snap,
-        }
-
     # accumulators
     per_cat: dict[str, list] = {c: [] for c in CATS}
     skipped_convs: list[str] = []
@@ -851,21 +914,17 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 summary_text = generate_summary_hf(
                     model, tok, msgs, request=_REQ)["text"]
 
-            ids = canonical_ids_any(tok, msgs, render_hf)
-            starts = message_starts_any(tok, msgs, ids, render_hf)
+            # PURE token geometry (A ids/starts, B b_ids/b_starts, summary
+            # layout, alignment regions) -- the SAME construction --smoke-align
+            # exercises CPU-only. force_prefill then adds this model's value
+            # snapshot on top of the write-time summary layout.
+            ctx = build_token_context(tok, family, msgs, summary_text, tsm)
+            ids, starts = ctx["ids"], ctx["starts"]
+            b_msgs, b_ids, b_starts = ctx["b_msgs"], ctx["b_ids"], ctx["b_starts"]
+            regions = ctx["regions"]
+            summ = ctx["summ"]
+            summ["snapshot"] = force_prefill(summ["old_ids"])
 
-            summ = build_summary_snapshot(msgs, summary_text)
-
-            b_msgs, summ_idx, tail_idx = build_b_and_indices(
-                family, msgs, summ["text"], tsm)
-            b_ids = canonical_ids_any(tok, b_msgs, render_hf)
-            b_starts = message_starts_any(tok, b_msgs, b_ids, render_hf)
-
-            regions = [
-                ((b_starts[tail_idx], len(b_ids)), (starts[tsm], summ["conv_end"])),
-                ((b_starts[summ_idx], b_starts[summ_idx + 1]),
-                 (summ["s_start"], summ["s_end"])),
-            ]
             pairs = build_alignment(
                 b_ids, summ["old_ids"], set(tok.all_special_ids), regions)
             if not pairs:
@@ -1753,6 +1812,174 @@ def _self_test_controls() -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------
+# --smoke-align : CPU-only, TOKENIZER-only alignment preflight. Catches the
+# write-time-vs-compacted summary token divergence (the <think>-block bug) in
+# SECONDS, with no model / no pod / no GPU. Run BEFORE every pod launch.
+# ---------------------------------------------------------------------------
+# A LONG (~600-900 token) representative summary WITH a leading <think> reasoning
+# block -- because self-gen 30B summaries ARE long and DO carry a think block,
+# and that length+block is exactly what broke c01 (899 write tokens vs 538
+# compacted). A short fixed summary would NOT catch this. summary_token_layout
+# strips the block (matching the Qwen template) so both spans match; on the
+# pre-fix code the block survives into the write-time span and the alignment
+# raises -- which is precisely what this preflight guards.
+_SMOKE_THINK = (
+    "<think>\nOkay, the user wants a thorough context note summarizing the "
+    "conversation. Let me recall the key decisions, the open threads, the "
+    "definitions we introduced, and the constraints each side stated so I can "
+    "write something a fresh reader could continue from. I should be redundant "
+    "and specific, use retrieval-friendly wording, and avoid any commentary "
+    "before or after the note itself. Let me organize it into decisions, open "
+    "threads, definitions, and constraints.\n</think>\n\n")
+_SMOKE_SUMMARY_BODY = (
+    "**Context Note: Project Planning Summary**\n\n"
+    "**Decisions Made and What Was Chosen Over What**\n"
+    "- **Pricing Model**: Chose usage-based metering with prepaid credits (not "
+    "flat monthly fees, per-seat tiers, or other models). This aligns with cost "
+    "scaling and user flexibility, and was preferred after weighing predictable "
+    "revenue against customer fairness.\n"
+    "- **Onboarding Flow (Nimbus)**: Chose a self-serve signup funnel (landing "
+    "page then first login) with no friction, no tutorials, and no forced "
+    "steps. Rejected guided tours, pop-ups, and webinars because early testers "
+    "found them intrusive and low-value.\n"
+    "- **Launch Strategy**: Chose an invite-only beta with 30 design partners "
+    "(not a public splash). Rejected press outreach, cold email campaigns, and "
+    "public announcements as premature given the product's maturity.\n"
+    "- **Marketing Approach**: Chose low-effort, high-impact content such as "
+    "user stories and visual demos over traditional sales pitches. Rejected "
+    "countdown timers, urgency language, and webinar-style content as "
+    "inconsistent with the product's values.\n\n"
+    "**Open Threads and Next Steps**\n"
+    "- **Nimbus Copy**: Finalize updates to remove friction, jargon, and forced "
+    "steps (for example, change 'Click here to begin' to 'Try a chart by "
+    "uploading a file').\n"
+    "- **Beta Coordination**: Define criteria for design partners (each must "
+    "ship one real report) and set the timeline for opening the beta.\n"
+    "- **Metrics Dashboard**: Finalize five core metrics (active users, "
+    "first-chart conversion, time to first chart, report shipments, and credit "
+    "usage) and set thresholds for success.\n"
+    "- **Post-Launch Metrics**: Determine when metrics become meaningful (for "
+    "example, two to four weeks post-launch, after the initial noise subsides).\n\n"
+    "**Definitions, Names, and Terms**\n"
+    "- **Nimbus**: The self-serve signup and onboarding flow (landing page to "
+    "first login). It is not related to cloud infrastructure, which is called "
+    "CloudOps or Infra-Relay.\n"
+    "- **Trademark**: Filed as TM-88214 on April 9, 2024; expected twelve to "
+    "eighteen months for approval.\n"
+    "- **Cloud Budget**: Fixed at 6,410 dollars per month and non-negotiable.\n"
+    "- **Design Partners**: 30 invitees in the beta who must each ship one real "
+    "report before the product opens to the public.\n\n"
+    "**Constraints and Preferences**\n"
+    "- **No Webinars**: Rejected due to low engagement and negative user "
+    "perception in prior tests.\n"
+    "- **No Countdown Timers**: Rejected as scammy and inconsistent with the "
+    "product's values and tone.\n"
+    "- **No Cold Outreach**: Rejected after failed pilot campaigns produced "
+    "spam complaints and near-zero conversion. Both sides prefer inbound, "
+    "content-led growth and word-of-mouth from satisfied design partners.")
+_SMOKE_SUMMARY = _SMOKE_THINK + _SMOKE_SUMMARY_BODY
+
+# Default preflight tokenizers. Qwen covers the family the bug lives in; add a
+# gemma tokenizer id (env SC_SMOKE_TOKENIZERS, comma-separated) to also cover
+# the gemma B-context builder. Gemma tokenizers are gated on HF, so we do NOT
+# hard-require one -- but we DO require at least one qwen-family tokenizer.
+_SMOKE_TOKENIZERS_DEFAULT = ("Qwen/Qwen3-0.6B",)
+
+
+def _smoke_check_conv(tok, family, conv, summary_text):
+    """Build the pure token geometry for ONE conv and assert build_alignment
+    succeeds AND covers the FULL summary span (no raise, no silent drop).
+    Returns (ok, detail)."""
+    msgs = conv["messages"][:-1]
+    tsm = conv["sections"]["middle_end_msg"]
+    ctx = build_token_context(tok, family, msgs, summary_text, tsm)
+    summ, regions, b_ids = ctx["summ"], ctx["regions"], ctx["b_ids"]
+    s_start, s_end = summ["s_start"], summ["s_end"]
+    # This RAISES ValueError on a write-vs-compacted token divergence (the bug).
+    pairs = build_alignment_direct(
+        b_ids, summ["old_ids"], set(tok.all_special_ids), regions)
+    # FULL-coverage check for the summary region: every write-time summary token
+    # must map to a compacted position (clean prose has no special tokens / sinks
+    # in this span, so coverage must be the whole contiguous range).
+    covered = sorted(o for _n, o in pairs if s_start <= o < s_end)
+    expected = list(range(s_start, s_end))
+    if covered != expected:
+        missing = sorted(set(expected) - set(covered))
+        return False, (f"summary span NOT fully covered: {len(covered)}/"
+                       f"{len(expected)} tokens mapped; missing "
+                       f"{missing[:8]}{'...' if len(missing) > 8 else ''}")
+    return True, f"{len(covered)}/{len(expected)} summary tokens mapped 1:1"
+
+
+def _smoke_align(data_dir: Path, tokenizer_ids) -> int:
+    """CPU/tokenizer-only alignment preflight over EVERY corpus conv (and every
+    provided tokenizer/family), using a LONG think-containing summary. Exits 0
+    iff every conv aligns with full summary coverage; nonzero on any failure."""
+    from transformers import AutoTokenizer  # noqa: PLC0415
+    print("== cross_arch_probe --smoke-align (CPU/tokenizer-only) ==")
+    print(f"data_dir={data_dir}  tokenizers={list(tokenizer_ids)}")
+    print(f"smoke summary: {len(_SMOKE_SUMMARY)} chars "
+          f"(has <think> block: {'<think>' in _SMOKE_SUMMARY})")
+
+    convs = [json.loads(p.read_text())
+             for p in conversation_paths(data_dir)]
+    if not convs:
+        print("FAIL: no conversations found in corpus", file=sys.stderr)
+        return 2
+
+    n_fail = 0
+    n_ok = 0
+    families_covered = set()
+    loaded_any = False
+    for tid in tokenizer_ids:
+        try:
+            tok = AutoTokenizer.from_pretrained(tid)
+        except Exception as e:  # noqa: BLE001
+            print(f"  [skip tokenizer {tid}]: load failed "
+                  f"({type(e).__name__}: {e})")
+            continue
+        loaded_any = True
+        family = detect_template_family(tok)
+        families_covered.add(family)
+        # measure the summary token length for THIS tokenizer (informational).
+        raw_len = len(tok(_SMOKE_SUMMARY, add_special_tokens=False).input_ids)
+        clean_len = len(tok(strip_reasoning_block(_SMOKE_SUMMARY),
+                            add_special_tokens=False).input_ids)
+        print(f"\n  tokenizer={tid} family={family} "
+              f"summary tokens raw(with think)={raw_len} "
+              f"clean(stripped)={clean_len}")
+        for conv in convs:
+            try:
+                ok, detail = _smoke_check_conv(
+                    tok, family, conv, _SMOKE_SUMMARY)
+            except Exception as e:  # noqa: BLE001
+                ok, detail = False, f"{type(e).__name__}: {e}"
+            tag = "OK  " if ok else "FAIL"
+            print(f"    [{tag}] {conv['id']}: {detail}")
+            if ok:
+                n_ok += 1
+            else:
+                n_fail += 1
+
+    if not loaded_any:
+        print("FAIL: no tokenizer could be loaded (need a qwen-family "
+              "tokenizer, e.g. Qwen/Qwen3-0.6B)", file=sys.stderr)
+        return 2
+    if "qwen" not in families_covered:
+        print("FAIL: no qwen-family tokenizer exercised (the bug lives in the "
+              "qwen think-stripping template)", file=sys.stderr)
+        return 2
+    print(f"\nSMOKE-ALIGN: {n_ok} ok, {n_fail} failed "
+          f"(families: {sorted(families_covered)})")
+    if n_fail:
+        print("SMOKE-ALIGN FAILED -- write-time vs compacted summary token "
+              "spans diverge; do NOT launch the pod run.", file=sys.stderr)
+        return 1
+    print("SMOKE-ALIGN OK")
+    return 0
+
+
 def make_summaries(summarizer: str, data_dir: Path, summaries_path: Path,
                    conv_limit: int, trust_remote_code: bool):
     """Generate the SHARED fixed summary text ONCE with a single designated
@@ -1844,6 +2071,16 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--self-test", action="store_true",
                     help="run the CPU-only controls self-tests, then exit")
+    ap.add_argument("--smoke-align", action="store_true",
+                    help="CPU/tokenizer-only alignment preflight over the corpus "
+                         "with a long think-containing summary; exits nonzero on "
+                         "any write-vs-compacted token divergence. Run before a "
+                         "pod launch.")
+    ap.add_argument("--smoke-tokenizers",
+                    default=(os.environ.get("SC_SMOKE_TOKENIZERS") or None),
+                    help="comma-separated tokenizer ids for --smoke-align "
+                         "(default Qwen/Qwen3-0.6B; add a gemma id to cover that "
+                         "family)")
     args = ap.parse_args()
 
     if args.self_test:
@@ -1852,6 +2089,12 @@ def main():
     data_dir = Path(args.data_dir)
     if args.dry_run:
         sys.exit(_dry_run(data_dir, args.conv_limit))
+
+    if args.smoke_align:
+        toks = (tuple(t.strip() for t in args.smoke_tokenizers.split(",")
+                      if t.strip())
+                if args.smoke_tokenizers else _SMOKE_TOKENIZERS_DEFAULT)
+        sys.exit(_smoke_align(data_dir, toks))
 
     trust = os.environ.get("SC_TRUST_REMOTE", "1") not in ("0", "false", "False")
     summaries_path = Path(args.summaries)
