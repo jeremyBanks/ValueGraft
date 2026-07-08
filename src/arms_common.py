@@ -198,12 +198,17 @@ def build_alignment_direct(b_ids, old_ids, special_ids, regions):
     return pairs
 
 
-# Active alignment: direct 1:1 exact-span map. Method changed from difflib
-# SequenceMatcher to direct exact-subblock search on 2026-07-07; equivalence
-# verified pair-for-pair (12/12 synthetic convs + fixed_summaries, Qwen tok).
-# build_alignment_difflib retained above for reference.
+# Active alignment: difflib SequenceMatcher (per-region, positional-within-region
+# -- NOT spurious cross-conversation matching; verified). REVERTED 2026-07-08 from
+# build_alignment_direct: the strict exact-subblock map was equivalence-verified ONLY
+# on FIXED summaries, but it RAISES on the write-time/compacted tokenization divergence
+# that thinking-model SELF-GEN summaries create (the <think> block makes the write-time
+# summary span 899 tok vs the template-stripped compacted span 538 tok). difflib TOLERATES
+# that by matching the shared answer span (which is what B actually contains) and is the
+# aligner that produced the known +0.156 referent. It grafts the reasoning-informed answer
+# values (computed with <think> present in the write-time prefill) onto B's answer positions.
 def build_alignment(b_ids, old_ids, special_ids, regions):
-    return build_alignment_direct(b_ids, old_ids, special_ids, regions)
+    return build_alignment_difflib(b_ids, old_ids, special_ids, regions)
 
 
 # ---- template adapter: message boundaries for non-Qwen templates ----
