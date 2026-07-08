@@ -467,3 +467,13 @@ alarm which I LATER confirmed was a non-issue (difflib is positional-within-regi
 the "fix" introduced a real brittleness. Don't re-engineer correct code to soothe a
 misdiagnosis. (3) When BOTH independent apparatuses fail identically, the bug is in the SHARED
 code, not either harness — that observation would have found this in minutes.
+
+## 34. THE REAL root cause: WRONG MODEL CHECKPOINT (07-08)
+The entire multi-hour debugging saga (incidents 32/32b/33: think-block, alignment crash,
+difflib revert, negative referent) had a simpler root: I ran Qwen/Qwen3-30B-A3B (the ORIGINAL
+THINKING model, emits <think>) instead of Qwen/Qwen3-30B-A3B-Instruct-2507 (the NON-thinking
+checkpoint the +0.156 was measured on = gap_closure_cat.py's DEFAULT, which I overrode in
+job_gate.sh). The <think> block -> tokenization divergence -> alignment failure -> negatives:
+all symptoms of the wrong checkpoint. Fix: run -Instruct-2507; anchor corrected in job files.
+The difflib revert (33) is still kept (robustness) but was not the numbers fix. LESSON: verify
+EXACT model id vs the known-good run FIRST (memory: validate-before-trusting). Cost: hours.
