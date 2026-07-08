@@ -17,9 +17,11 @@ set -uo pipefail
 cd /workspace/exp 2>/dev/null || cd "$(dirname "$0")/.." || exit 1
 export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 export SC_SELFGEN=1
-export SC_CONV_LIMIT="${SC_CONV_LIMIT:-27}"     # full frozen corpus
+export SC_NATIVE_RENDER=1     # per-model native replies (v2.1)
+export SC_BATCHED_RENDER=0   # per-token (Fable: batched bf16 divergence risks the sign)
+export SC_CONV_LIMIT="${SC_CONV_LIMIT:-12}"     # per-pod override (24 anchors / 12 breadth)
 export SC_GC_ALPHA="${SC_GC_ALPHA:-0.75}"
-export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-6}"  # fingerprint on every model
+export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-0}"  # OFF for the core sign-map run (cost); champion = cheap follow-up
 export SC_TRUST_REMOTE=1
 MODEL_TIMEOUT="${MODEL_TIMEOUT:-3600}"
 ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B-Instruct-2507 Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct google/gemma-4-31B-it google/gemma-4-26B-A4B-it}"
@@ -44,7 +46,7 @@ for M in $MODELS; do
   slug="$(echo "$M" | tr '/ ' '__')"; log="cross_arch_${slug}.log"
   # anchor? -> add placebo + alpha dose-response
   if echo " $ANCHORS " | grep -q " $M "; then
-    export SC_PLACEBO=gauss; export SC_ALPHA_SWEEP=1
+    unset SC_PLACEBO; unset SC_ALPHA_SWEEP  # core sign-map first; controls are a cheap follow-up
     echo "== ANCHOR $M (self-gen + champion + placebo + alpha) $(date -Is) -> $log"
   else
     unset SC_PLACEBO; unset SC_ALPHA_SWEEP
