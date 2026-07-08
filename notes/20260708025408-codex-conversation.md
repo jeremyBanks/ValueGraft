@@ -1,107 +1,109 @@
-_This shard covers finalizing the notes archive naming convention (docs/ renamed
-to notes/, stray files fixed, jlens_boundary_probe cleanup), building a full
-transcript-extraction and summarization pipeline for Claude Code and Codex
-mainline conversations, and iterating on an incremental updater with style/tone
-guidance to keep future conversation-summary notes consistent._
+_This shard covers completing and hardening the transcript-summarization
+pipeline: separating Claude Code and Codex conversation notes by source,
+building an incremental manifest-based updater with automatic revision of
+continued conversations, iterating on generation prompts and validation until
+output required minimal manual cleanup, executing a full source-split
+regeneration of the notes archive, and making the updater a single
+default-argument command._
 
-**Notes archive cleanup and naming.** The UTC-based archival renamer
-(`scripts/normalize_docs_archive_names.py`) was fixed for two bugs:
-`git log --follow --reverse` unreliably hides the earliest commit for renamed
-files, so the oldest-date lookup was rewritten to not depend on `--reverse`; and
-untracked files with an already-valid timestamp prefix need to keep that prefix
-rather than falling back to filesystem mtime (relevant right after a rename,
-before commit). The archive directory was then renamed from `docs/` to `notes/`,
-the script renamed to `scripts/normalize_notes_archive_names.py`, and
-`docs/README.md` was replaced with a short `notes/AGENTS.md` aimed at agents
-rather than humans. The normalizer was extended to catch `.txt` archive notes (a
-stray `robust-f1-numbers.txt` had escaped `.md`-only matching) and given clearer
-per-file logging (mode, scanned/planned counts, date source, reasons).
-`jlens_boundary_probe/` was checked for note files (none found) and deleted
-entirely, including untracked logs/pod-state/cache. A separately orphaned
-`demos/pokemon-demo-conversation.md` (unreferenced anywhere in the repo) was
-archived into `notes/` with its real git creation date. Root-level JSON files
-were audited for references: `tune_configs.json` and `tune_rules.json` are
-actively used by `src/run_guard_hf.py`, `src/serve_shim.py`,
-`scripts/launch_pod.sh`, and `src/run_tune_hf.py`; most `.pod*_state.json` files
-are gitignored runtime state with no direct references except the generic
-`.pod_state.json` default and two files mentioned in `STATE.md`.
+**Incremental update design.** To avoid resummarizing already-covered
+conversation history on every run, the pipeline uses a tracked manifest
+(`scripts/transcripts/conversation-summary-manifest.json`) recording, per note,
+the source stream, covered message range, input hash, output filename, and
+commit hash. Updates re-extract all mainline messages, sort them into canonical
+order, and compare against the manifest to find uncovered ranges. New ranges
+become new notes. When a source conversation continues past a note's previously
+recorded end, the updater passes the existing summary, the old covered messages,
+and the new messages to the summarizer with an explicit boundary marker, and
+asks for an updated version that extends rather than replaces the note. An edge
+case where a single note covers multiple source streams and more than one of
+those streams advances was found and fixed so continuations are grouped per note
+into one revision prompt rather than overwriting the same prompt path
+repeatedly.
 
-**Codex commit-attribution config.** Enabled Codex's experimental
-`codex_git_commit` feature and set
-`commit_attribution = "OpenAI GPT-5.5 <noreply@openai.com>"` as a top-level key
-in `~/.codex/config.toml` (root keys must precede table headers in TOML),
-verified via `codex --strict-config --version` and `codex features list`.
+**Source separation and filenames.** Claude Code and Codex conversations were
+judged confusing when interleaved in a single note, so the pipeline's default
+was changed to always split by source application, even though the manifest
+format itself can support multi-source notes. Filenames became
+`notes/<UTC-prefix>-claude-conversation.md` and
+`notes/<UTC-prefix>-codex-conversation.md` (never a bare `-conversation.md`),
+applied both to the initial batch sharding and to incremental updates, with a
+legacy flag retained for the old packed behavior. Sequential per-source-stream
+summarization carries forward a short prior-context block derived from the
+previous note's opening summary paragraph, to aid interpretation without merging
+threads.
 
-**Transcript summarization pipeline.** Built a full extraction and summarization
-workflow, first prototyped in `/tmp/valuegraft_transcript_work` then promoted
-into the repo under `scripts/transcripts/`. Key design decisions, several
-corrected mid-stream by direct user instruction:
+**Style consistency pass.** Existing notes were inconsistent — some opened with
+a title, some used dense bullet ledgers, others were prose. The required target
+style was clarified: no top-level header, an opening italicized summary
+paragraph (a paragraph, not a single physical line — wrapping is fine;
+over-shortening these paragraphs to force one visual line was tried and
+explicitly rejected as incorrect), then short titled prose sections, with
+bullets reserved for compact lists of named items rather than one bullet per
+exchange. Priority/urgency from the original conversation should still be
+captured, but expressed as project priority, blocking status, or required
+follow-up rather than as participant mood — the tone rule is not meant to
+flatten emphasis into blandness. A default secret-shaped-string lint (AWS-style
+keys, OpenRouter keys, RunPod keys, Hugging Face tokens) was kept as a generic
+repository-safety default rather than a content-specific forbidden-terms list. A
+brief, concrete style example was added to both the transcript README and
+`notes/AGENTS.md` so future generation has a style target without becoming a
+rigid template. One internal naming choice used briefly in the tooling
+("capsule" for the opening paragraph) was judged an unnecessary term and
+replaced with plain wording ("opening summary paragraph"); this was a minor
+terminology fix, not a substantive change to the style rule, and did not warrant
+the exhaustive cleanup pass it initially received.
 
-- Only mainline (non-subagent) conversation streams are extracted: the Claude
-  Code root project JSONL under `~/.claude/projects/-Users-jeb-experimentation/`
-  (excluding `subagents/`), and the canonical Codex main-thread rollout JSONL
-  (excluding side/review/subagent threads that copied the same workspace
-  metadata).
-- Filtered output keeps only user and assistant messages — no tool
-  calls/results, no system/developer records, no heartbeats or task
-  notifications (an early filter pass leaked automation notifications as "user"
-  text and had to be tightened).
-- Assistant messages carry model provenance (e.g.
-  `model=claude-fable-5`/`claude-opus-4-8` plus `claude_code_version`;
-  `model=gpt-5.5`, `provider=openai`, `codex_cli=...`, `effort=...`) so a
-  downstream summarizer knows which model produced each reply.
-- No clock times or ISO timestamps are exposed to the summarizer or in final
-  notes; dates are used only internally to group messages by UTC day and split
-  on >1 hour gaps, and files are named with a per-day incrementing sequence, not
-  embedded time-of-day.
-- Large transcripts are sharded (~180k characters per shard, split only at
-  message boundaries) and each shard is summarized independently, then combined.
-- Summaries must use neutral, professional language: corrections, disagreements,
-  and requirements are described as project facts, while still preserving
-  genuine project priority/urgency framing (blocking status, required follow-up)
-  rather than flattening everything to bland minutes.
-- Side logistics are excluded from conversation notes unless they directly
-  affect repository workflow; only the intended document style (e.g.
-  "paper-style," "blog-style") should be retained if established.
-- A default secret-shaped-string lint (AWS-style keys, OpenRouter keys, RunPod
-  API keys, Hugging Face tokens) was added to the tooling as a repo-safety
-  default, replacing an earlier, more content-specific forbidden-terms list; ad
-  hoc `--forbid-regex` remains available.
-- Final per-conversation notes should be
-  `notes/<UTC-prefix>-<source>-conversation.md` (source = `claude` or `codex`,
-  not mixed), containing no top-level title/header, starting directly with an
-  italicized one-to-two-sentence capsule sentence, then short titled prose
-  sections; bullets reserved for compact lists of named results/rules, not one
-  bullet per exchange.
-- Claude and Codex streams are treated as separate conversations by design
-  (previously some shards mixed both apps in one file, packed by date/sequence)
-  — this was identified as a correction to redo, since interleaving separate
-  applications is confusing. The pipeline's default was changed to isolate
-  sources per shard/note, with a legacy flag retained for the old packed
-  behavior.
-- Sequential per-source-stream summarization should carry forward a short
-  prior-context block (derived from the previous note's opening capsule) to help
-  interpretation without merging threads or rewriting prior notes.
-- A manifest (`scripts/transcripts/conversation-summary-manifest.json`) records,
-  per generated note, the source stream, covered message range, input hash,
-  output filename, and commit hash, enabling incremental updates: re-extract
-  everything, diff against the manifest's last-covered position per stream, and
-  only summarize new ranges — except when a source conversation already covered
-  by an existing note continues, in which case the updater regenerates that note
-  from old-summary + old-messages + new-messages together (uncommon case),
-  grouping multiple advanced streams per note into one revision prompt rather
-  than clobbering the same prompt path.
+**Generation iteration and validation.** Reaching output that needed minimal
+manual cleanup took several rounds of prompt tightening, discovered by
+generating samples and reading them rather than trusting the summarizer's
+compliance. The durable prompt guidance is to return only the note body, keep
+the opening-summary-plus-sections structure, preserve priority as project
+priority or required follow-up, omit side logistics unless they changed
+repository workflow, and avoid retelling the tooling's own cleanup process
+inside the archive notes. After each tightening, only the shards that had failed
+validation were regenerated, using the existing manifest and rolling context to
+avoid redundant work.
 
-**Iteration and known-good state at shard boundary.** An initial
-incremental-update dry run correctly detected two notes needing revision (their
-source conversations continued) plus one new note to append. Generated summaries
-exposed style and source-mixing problems, so the prompt and pipeline were
-iterated before committing generated notes. The source split, filename
-convention, rolling context, and style guidance were patched into the scripts. A
-sample run (large Claude shard, small Codex shard) landed closer to target:
-italic capsule present, prose-first sections, and priority preserved as
-rules/results. At the point this shard ends, the plan in progress is to
-regenerate the entire source-split conversation archive from raw transcripts
-into a temp directory using the updated prompt, validate it thoroughly, and only
-then replace the existing tracked `notes/*-conversation.md` files — this full
-regeneration and replacement had not yet been executed or committed.
+**Automation and defaults.** The updater script was set up so that running it
+with no subcommand performs the standard incremental update using known local
+transcript paths, `notes/`, the manifest, the default summarizer, and automatic
+`deno fmt` formatting of generated/updated notes before hashing and commit — so
+a future agent only needs to run one script with no required arguments for the
+common case, with explicit flags available for non-default runs.
+`notes/AGENTS.md` and the transcripts README were updated to lead with this
+single-command path rather than the full manual pipeline, and to include a brief
+concrete style example so a summarizing agent has something to steer toward
+beyond abstract rules. A minor CLI ordering bug in this convenience path was
+found and fixed before the default path was relied on.
+
+**Full regeneration.** With the split-source, incremental, and style tooling in
+place, the entire notes archive was rebuilt from raw transcripts into a
+temporary directory: 17 Claude segments and 23 Codex segments packed into 16
+source-separated summary shards, run sequentially (single-threaded, to keep
+rolling per-source context meaningful) through the summarizer CLI. The run took
+several minutes per large shard; progress was tracked by polling output file
+counts rather than assuming silence meant failure. Two further
+validation-and-regeneration rounds were needed after the initial full run, each
+time regenerating only the shards that failed the style/content checks rather
+than the whole set. The resulting notes (10 Claude, 6 Codex) were validated
+against the style/secret lint before being copied over the old mixed-source
+conversation notes in the repository, with the manifest rebuilt against final
+repo paths and hashes. One incidental issue was caught and reverted: running
+`deno fmt` broadly against `notes/*-conversation.md` also reformatted an
+unrelated non-transcript note (the archived Pokemon demo), which was restored to
+its prior formatting since it is not a transcript-summary shard.
+
+**Post-regeneration currency check.** After the full regeneration, the archive
+was current only as of the rebuild's transcript snapshot. A prompt-only check
+subsequently showed two conversations (the latest Claude and Codex notes) had
+continued past that snapshot; the updater was run for real, producing revised
+notes for both and refreshing the manifest from the updater's current state. One
+intermediate manifest refresh mistakenly used the initial shard ranges, which
+would have rolled recorded coverage backward; this was caught before commit and
+corrected by rerunning the updater rather than reinitializing from scratch.
+
+Unrelated local source-file edits (e.g., `src/arms_common.py`,
+`src/cross_arch_probe.py`, `scripts/launch_pod.sh`, `scripts/preflight*`,
+`CLAUDE.md`, `results/cross_arch_wide/`) were repeatedly noted as out of scope
+and left untouched throughout this work.

@@ -15,6 +15,28 @@ The pipeline is intentionally plain:
 6. Keep a manifest of covered source-message ranges so future updates are
    incremental.
 
+## Usual Command
+
+For the normal "bring conversation notes up to date" workflow, run this from the
+repo root:
+
+```bash
+python3 scripts/transcripts/update_conversation_notes.py
+```
+
+With no arguments, the script defaults to the known local Claude Code and Codex
+transcript files for this repo, writes prompts/candidates under
+`/tmp/valuegraft_transcript_incremental`, runs `claude --print --model sonnet`,
+updates `notes/*-claude-conversation.md` and `notes/*-codex-conversation.md`,
+runs `deno fmt` on generated Markdown files when Deno is available, and
+refreshes `scripts/transcripts/conversation-summary-manifest.json`.
+
+Use `--no-command` to write prompts only, or pass `update --command ...` to use
+a different summarizer command. Small continuations of an existing note are
+deferred by default so the script does not keep rewriting the latest note for
+the live tail created while an agent is working; use
+`--force-small-continuations` only when that is intentional.
+
 The summaries should focus on ideas, decisions, methodology, results, caveats,
 and handoff state. If a discussion established an intended writing form, such as
 paper-style, blog-style, article-style, or report-style, capture that. Preserve
@@ -28,15 +50,35 @@ Conversation-note style:
 
 - name files as `YYYYMMDDHHMMSS-claude-conversation.md` or
   `YYYYMMDDHHMMSS-codex-conversation.md`
-- start with one italicized capsule paragraph containing one sentence, or at
-  most two short sentences, describing the shard
+- start with one italicized opening summary paragraph containing one sentence,
+  or at most two short sentences, describing the shard
 - prefer short titled sections and prose paragraphs
 - use bullets only for compact lists of named results, rules, arms, or open
   questions
 - keep Claude Code and Codex conversations separate even when their dates
   interleave
 
-## Example
+Style sketch:
+
+```markdown
+_This shard covers the move from mixed transcript notes to source-specific
+Claude/Codex conversation summaries, plus the tooling needed to update them
+incrementally._
+
+**Pipeline Decisions.** The archive now treats Claude Code and Codex as separate
+conversation streams. Each note records the ideas, decisions, results, caveats,
+and handoff state that matter for future work, without trying to preserve every
+exchange.
+
+**Operational Rules.** Priority should remain visible when it affects what a
+future agent should do next:
+
+- keep source streams separate
+- preserve blockers and required follow-up as project facts
+- omit side logistics unless they changed repository workflow
+```
+
+## Full Rebuild Example
 
 ```bash
 WORK=/tmp/valuegraft_transcript_work
@@ -78,7 +120,8 @@ python3 scripts/transcripts/split_summary_into_notes.py \
   --commit
 ```
 
-Run `deno fmt notes/*-conversation.md` after generating notes.
+The note-generation scripts run `deno fmt` automatically on generated Markdown
+files when Deno is available.
 
 ## Incremental Updates
 

@@ -17,6 +17,7 @@ import argparse
 import importlib.util
 import os
 import re
+import shutil
 import subprocess
 import sys
 from datetime import datetime
@@ -122,6 +123,16 @@ def git_commit(path: Path, message: str, iso_date: str, cwd: Path) -> None:
     subprocess.check_call(["git", "commit", "-m", message, "--", rel], cwd=cwd, env=env)
 
 
+def format_markdown(paths: list[Path], cwd: Path) -> None:
+    if not paths:
+        return
+    deno = shutil.which("deno")
+    if deno is None:
+        print("deno not found; skipping markdown formatting")
+        return
+    subprocess.check_call([deno, "fmt", *[str(path) for path in paths]], cwd=cwd)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--combined", type=Path, required=True)
@@ -147,6 +158,7 @@ def main() -> None:
         if path.exists():
             raise RuntimeError(f"Refusing to overwrite existing file: {path}")
         path.write_text(body, encoding="utf-8")
+        format_markdown([path], args.repo_root)
         created.append(path)
         print(f"wrote shard {shard_idx:03d}: {path}")
         if args.commit:

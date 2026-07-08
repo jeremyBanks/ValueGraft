@@ -38,3 +38,16 @@ work, while describing it as project priority, blocking status, or required
 follow-up rather than participant mood. Do not flatten importance: if emphasis
 changes what a future agent should do first, keep that as a project fact or
 required next action.
+
+Preferred shape:
+
+```markdown
+_This shard covers the concrete transition or investigation, plus the durable
+decision/result a future agent should know._
+
+**Short Topic.** Use prose paragraphs for the main summary. Capture the
+important ideas and state changes, not every exchange.
+
+**Handoff State.** Use bullets only for compact lists of named rules, results,
+arms, blockers, or required follow-up.
+```

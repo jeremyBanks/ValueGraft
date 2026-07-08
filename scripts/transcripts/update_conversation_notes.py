@@ -16,6 +16,7 @@ import importlib.util
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
@@ -27,6 +28,18 @@ from typing import Any
 
 SOURCE_ORDER = {"claude-code": "0-claude", "codex": "1-codex"}
 DEFAULT_MANIFEST = Path("scripts/transcripts/conversation-summary-manifest.json")
+DEFAULT_NOTES_DIR = Path("notes")
+DEFAULT_WORK_DIR = Path("/tmp/valuegraft_transcript_incremental")
+DEFAULT_SUMMARY_SHARDS_DIR = Path("/tmp/valuegraft_transcript_rebuild/summary_shards")
+DEFAULT_CLAUDE_JSONL = (
+    Path.home()
+    / ".claude/projects/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370.jsonl"
+)
+DEFAULT_CODEX_JSONL = (
+    Path.home()
+    / ".codex/sessions/2026/07/04/rollout-2026-07-04T22-07-20-019f3007-bab0-7e50-b019-2625d1538f63.jsonl"
+)
+DEFAULT_SUMMARY_COMMAND = ["claude", "--print", "--model", "sonnet"]
 DEFAULT_FORBID_REGEX = [
     r"\bAKIA[0-9A-Z]{16}\b",
     r"\bASIA[0-9A-Z]{16}\b",
@@ -484,6 +497,16 @@ def write_prompt(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def format_markdown(paths: list[Path], cwd: Path) -> None:
+    if not paths:
+        return
+    deno = shutil.which("deno")
+    if deno is None:
+        print("deno not found; skipping markdown formatting")
+        return
+    subprocess.check_call([deno, "fmt", *[str(path) for path in paths]], cwd=cwd)
+
+
 def first_timestamp_for_ranges(
     segments: dict[tuple[str, str, int], list[MessageRecord]],
     ranges: list[SourceRange],
@@ -537,6 +560,7 @@ def update_notes(args: argparse.Namespace) -> None:
     args.work_dir.mkdir(parents=True, exist_ok=True)
 
     changed_paths: list[Path] = []
+    wrote_prompt = False
     continuations: dict[int, list[tuple[tuple[str, str, int], int, int]]] = {}
     for key, (last_message, record_idx) in covered.items():
         messages = segments.get(key)
@@ -544,6 +568,20 @@ def update_notes(args: argparse.Namespace) -> None:
             continue
         current_last = messages[-1].message_index
         if current_last > last_message:
+            new_range = SourceRange(key[0], key[1], key[2], last_message + 1, current_last)
+            new_count = current_last - last_message
+            new_chars = len(render_messages(messages_for_range(segments, new_range)))
+            if (
+                not args.force_small_continuations
+                and new_count < args.min_continuation_messages
+                and new_chars < args.min_continuation_chars
+            ):
+                print(
+                    "deferred small continuation: "
+                    f"{key} {last_message + 1}-{current_last} "
+                    f"({new_count} messages, {new_chars} chars)"
+                )
+                continue
             continuations.setdefault(record_idx, []).append((key, last_message, current_last))
 
     for record_idx, items in continuations.items():
@@ -564,6 +602,7 @@ def update_notes(args: argparse.Namespace) -> None:
         )
         prompt_path = args.work_dir / "prompts" / f"revise-{note_path.stem}.md"
         write_prompt(prompt_path, prompt)
+        wrote_prompt = True
         for key, old_last, current_last in items:
             print(f"continuation: {note_path} {key} {old_last + 1}-{current_last}")
         print(f"prompt: {prompt_path}")
@@ -576,6 +615,8 @@ def update_notes(args: argparse.Namespace) -> None:
         if warnings:
             raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
         note_path.write_text(candidate, encoding="utf-8")
+        format_markdown([note_path], args.repo_root)
+        formatted_summary = note_path.read_text(encoding="utf-8")
         for key, _old_last, current_last in items:
             for source_range in record.source_ranges:
                 if (source_range.platform, source_range.date, source_range.sequence) == key:
@@ -585,7 +626,7 @@ def update_notes(args: argparse.Namespace) -> None:
         record.first_timestamp = first_ts
         record.last_timestamp = last_ts
         record.input_hash = sha256_text(render_messages(all_messages_for_ranges(segments, record.source_ranges)))
-        record.summary_hash = sha256_text(candidate)
+        record.summary_hash = sha256_text(formatted_summary)
         changed_paths.append(note_path)
 
     new_shards = build_new_ranges(segments, covered, args.target_chars)
@@ -604,6 +645,7 @@ def update_notes(args: argparse.Namespace) -> None:
             raise RuntimeError(f"Refusing to overwrite existing note: {note_path}")
         prompt_path = args.work_dir / "prompts" / f"new-{note_path.name}"
         write_prompt(prompt_path, prompt)
+        wrote_prompt = True
         print(f"new shard: {note_path} ({len(messages)} messages)")
         print(f"prompt: {prompt_path}")
         if not args.command:
@@ -615,6 +657,8 @@ def update_notes(args: argparse.Namespace) -> None:
         if warnings:
             raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
         note_path.write_text(candidate, encoding="utf-8")
+        format_markdown([note_path], args.repo_root)
+        formatted_summary = note_path.read_text(encoding="utf-8")
         first, last = timestamps_for_ranges(segments, ranges)
         records.append(
             NoteRecord(
@@ -623,7 +667,7 @@ def update_notes(args: argparse.Namespace) -> None:
                 first_timestamp=first,
                 last_timestamp=last,
                 input_hash=sha256_text(transcript),
-                summary_hash=sha256_text(candidate),
+                summary_hash=sha256_text(formatted_summary),
             )
         )
         changed_paths.append(note_path)
@@ -636,30 +680,71 @@ def update_notes(args: argparse.Namespace) -> None:
         if args.commit:
             git_commit([args.manifest], "Update conversation summary manifest", args.repo_root)
     elif not args.command:
-        print("No summary command provided; wrote prompts only.")
+        if wrote_prompt:
+            print("No summary command provided; wrote prompts only.")
+        else:
+            print("No new or large enough transcript ranges found.")
     else:
         print("No new or continued transcript ranges found.")
 
 
+def use_default_update_command(args: argparse.Namespace) -> None:
+    if args.no_command:
+        args.command = None
+        return
+    if args.command is not None:
+        return
+    command = DEFAULT_SUMMARY_COMMAND.copy()
+    if shutil.which(command[0]) is None:
+        raise RuntimeError(
+            f"Default summarizer command not found: {command[0]!r}. "
+            "Install the Claude CLI, pass --command explicitly, or use --no-command "
+            "to write prompts without generating summaries."
+        )
+    args.command = command
+
+
 def main() -> None:
+    if len(sys.argv) == 1:
+        sys.argv.append("update")
+    elif sys.argv[1].startswith("-") and sys.argv[1] not in {"-h", "--help"}:
+        sys.argv.insert(1, "update")
+
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command_name", required=True)
 
     init_parser = sub.add_parser("init-manifest")
     init_parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
-    init_parser.add_argument("--summary-shards-dir", type=Path, required=True)
-    init_parser.add_argument("--notes-dir", type=Path, required=True)
-    init_parser.add_argument("--claude-jsonl", type=Path, required=True)
-    init_parser.add_argument("--codex-jsonl", type=Path, required=True)
+    init_parser.add_argument("--summary-shards-dir", type=Path, default=DEFAULT_SUMMARY_SHARDS_DIR)
+    init_parser.add_argument("--notes-dir", type=Path, default=DEFAULT_NOTES_DIR)
+    init_parser.add_argument("--claude-jsonl", type=Path, default=DEFAULT_CLAUDE_JSONL)
+    init_parser.add_argument("--codex-jsonl", type=Path, default=DEFAULT_CODEX_JSONL)
     init_parser.set_defaults(func=init_manifest)
 
     update_parser = sub.add_parser("update")
     update_parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
-    update_parser.add_argument("--notes-dir", type=Path, required=True)
-    update_parser.add_argument("--claude-jsonl", type=Path, required=True)
-    update_parser.add_argument("--codex-jsonl", type=Path, required=True)
-    update_parser.add_argument("--work-dir", type=Path, default=Path("/tmp/valuegraft_transcript_incremental"))
+    update_parser.add_argument("--notes-dir", type=Path, default=DEFAULT_NOTES_DIR)
+    update_parser.add_argument("--claude-jsonl", type=Path, default=DEFAULT_CLAUDE_JSONL)
+    update_parser.add_argument("--codex-jsonl", type=Path, default=DEFAULT_CODEX_JSONL)
+    update_parser.add_argument("--work-dir", type=Path, default=DEFAULT_WORK_DIR)
     update_parser.add_argument("--target-chars", type=int, default=180_000)
+    update_parser.add_argument(
+        "--min-continuation-messages",
+        type=int,
+        default=20,
+        help="Do not revise an existing note for fewer new messages unless the continuation is large by chars.",
+    )
+    update_parser.add_argument(
+        "--min-continuation-chars",
+        type=int,
+        default=8000,
+        help="Do not revise an existing note for fewer new chars unless the continuation is large by messages.",
+    )
+    update_parser.add_argument(
+        "--force-small-continuations",
+        action="store_true",
+        help="Revise existing notes even for tiny live-tail continuations.",
+    )
     update_parser.add_argument(
         "--rolling-context-chars",
         type=int,
@@ -668,6 +753,11 @@ def main() -> None:
     )
     update_parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     update_parser.add_argument("--commit", action="store_true")
+    update_parser.add_argument(
+        "--no-command",
+        action="store_true",
+        help="Write prompts only instead of running the default Claude summarizer.",
+    )
     update_parser.add_argument(
         "--forbid-regex",
         action="append",
@@ -678,6 +768,8 @@ def main() -> None:
     update_parser.set_defaults(func=update_notes)
 
     args = parser.parse_args()
+    if args.command_name == "update":
+        use_default_update_command(args)
     args.func(args)
 
 

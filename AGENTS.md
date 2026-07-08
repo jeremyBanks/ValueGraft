@@ -60,6 +60,14 @@ loses, across LLM conversation-compaction boundaries.
 - Data: `data/scenarios.json` (authored plants), `data/synthetic/`,
   `data/natural/` (composed conversations), `results/raw*/` (per-conversation
   arm outputs), `results/scores.json` (probe scoring).
+- Conversation-summary archive: run
+  `python3 scripts/transcripts/update_conversation_notes.py` from the repo root.
+  With no arguments it uses the repo's default Claude/Codex transcript sources,
+  updates `notes/*-{claude,codex}-conversation.md`, runs the default summarizer,
+  formats generated Markdown with Deno when available, and refreshes the
+  manifest. Small live-tail continuations are deferred by default; use
+  `--force-small-continuations` only when you intentionally want to rewrite a
+  note for a tiny recent exchange.
 
 ## Source-control policy (07-05)
 
