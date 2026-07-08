@@ -384,3 +384,14 @@ Llama-lineage). VENDORS now: Qwen, Mistral, Google, AllenAI, Zhipu/GLM, OpenAI, 
 logged as a COVARIATE (hidden_size/num_layers) in the sign-regression, not a hidden confound.
 Skipped: Llama-4-Scout (Meta-gated+large), Command-R (307). Llama-2 dropped (user OK; ancient/
 off-scale — MHA-geometry point noted as possible future).
+
+## MODEL LIST -> 16 (07-08, user 'use both' = version-pairs as a control axis)
+ADDED second checkpoints (same arch, diff training snapshot -> tests geometry-vs-training):
+mistralai/Mistral-Small-3.2-24B-Instruct-2506 (pair w/ 2501), nvidia/Llama-3_3-Nemotron-Super-49B-v1_5
+(pair w/ v1). Both fit A100 80GB. GLM-4.6/4.5-Air too big (hundreds-of-B) -> GLM stays 4-32B-0414.
+Gemma-3-27B IS the latest Gemma (gemma-4 404s = never existed; old script id was hallucinated).
+NOW 16 models. Version-pairs = control: if sign is geometry-set, checkpoints agree.
+
+## CORPUS DOUBLING (07-08, user): 27->54 convs (~100/category, Fable anchor target).
+Author c28-c54 scenarios (mix), render via Fable/Opus/Sonnet/Codex. ~+$12-16 compute on the
+wide run (download is fixed; only self-gen+TF scale). CIs ~30% tighter.
