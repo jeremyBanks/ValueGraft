@@ -312,8 +312,8 @@ Does NOT cleanly reproduce the saved F1:
 - referent: 71% helped, +0.10 (saved 81%/+0.04) — directionally ok, noisy.
 - stance: 58% helped, +0.09 (saved 38%/−0.31) — DID NOT reproduce as null! flipped.
 Same code, same inputs, DIFFERENT results → NOISY apparatus. Root causes:
-1. SUMMARY is regenerated each run via greedy_generate w/ temperature+top_p=0.8
-   (sampled, seed=17 — reproducible ONLY if forward deterministic).
+1. GEN_TEMP=0.0 → summary is GREEDY (NOT sampled). But MoE argmax flips on near-tie
+   tokens across hardware/runs → different summary cascade. (Ruled out sampling.)
 2. Qwen3-30B-A3B is MoE — routing on bf16/hardware is NONDETERMINISTIC → summary
    AND teacher-forcing logprobs vary run-to-run/hardware. Ratio metric (small A−B
    denominators) AMPLIFIES the variance.
