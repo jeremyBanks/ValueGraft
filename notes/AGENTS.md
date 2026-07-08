@@ -38,19 +38,21 @@ YYYYMMDDNN-conversation-user-fable5-opus48.md
 Keep Claude Code and Codex conversations separate even when their dates
 interleave. Start each conversation summary with one italicized opening summary
 paragraph, containing one sentence or at most two short sentences, then use the
-generated `**Participants:** ...` paragraph, then use short titled sections and
-prose paragraphs. The participant paragraph includes `User` only when the source
-range has user messages, followed by full assistant model identifiers sorted by
-contributed text volume. If reasoning effort is present, append it to the model
-identifier with a hyphen, such as `gpt-5.5-xhigh`; every source model ID for the
-note must appear there. Filenames intentionally collapse model identifiers to
-compact participant slugs (`fable5`, `opus48`, `sonnet5`, `gpt55`) and omit
-effort levels. Bullets are fine for compact lists of named results, rules, arms,
-or open questions, but avoid turning a whole conversation into a bullet ledger.
-Preserve priority when it affects future work, while describing it as project
-priority, blocking status, or required follow-up rather than participant mood.
-Do not flatten importance: if emphasis changes what a future agent should do
-first, keep that as a project fact or required next action.
+generated `**Participants:** ...` paragraph, then use prose paragraphs. If
+section labels help, use optional bold paragraph-opening labels such as
+`**Handoff State.**` rather than Markdown heading syntax. The participant
+paragraph includes `User` only when the source range has user messages, followed
+by full assistant model identifiers sorted by contributed text volume. If
+reasoning effort is present, append it to the model identifier with a hyphen,
+such as `gpt-5.5-xhigh`; every source model ID for the note must appear there.
+Filenames intentionally collapse model identifiers to compact participant slugs
+(`fable5`, `opus48`, `sonnet5`, `gpt55`) and omit effort levels. Bullets are
+fine for compact lists of named results, rules, arms, or open questions, but
+avoid turning a whole conversation into a bullet ledger. Preserve priority when
+it affects future work, while describing it as project priority, blocking
+status, or required follow-up rather than participant mood. Do not flatten
+importance: if emphasis changes what a future agent should do first, keep that
+as a project fact or required next action.
 
 Preferred shape:
 

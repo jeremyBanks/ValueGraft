@@ -40,8 +40,8 @@ are not included.
 Raw transcript extraction splits at UTC day boundaries and at gaps over one
 hour. The update workflow may coalesce adjacent raw segments into one note, but
 only within a source stream and only when the inter-segment gap is at most
-`--max-coalesce-gap-hours`, default `2.0`. Crossing a UTC day boundary is allowed
-when that gap condition is still satisfied.
+`--max-coalesce-gap-hours`, default `2.0`. Crossing a UTC day boundary is
+allowed when that gap condition is still satisfied.
 
 Use `--no-command` to write prompts only, or pass `update --command ...` to use
 a different summarizer command. Small continuations of an existing note are
@@ -50,9 +50,9 @@ the live tail created while an agent is working; use
 `--force-small-continuations` only when that is intentional.
 
 Generated summaries are checked case-insensitively against `--forbid-regex`
-patterns. Defaults only cover common access-token shapes. If a candidate matches,
-the script retries with a fresh prompt that lists the accumulated forbidden
-matches and asks for vaguer language around those topics. After
+patterns. Defaults only cover common access-token shapes. If a candidate
+matches, the script retries with a fresh prompt that lists the accumulated
+forbidden matches and asks for vaguer language around those topics. After
 `--max-forbid-attempts` attempts, it deletes matching lines as a last-resort
 scrub.
 
@@ -75,7 +75,9 @@ Conversation-note style:
 - include the generated `**Participants:** ...` paragraph immediately after the
   opening summary; every source model ID for that note must appear there, with
   reasoning effort appended by hyphen when present
-- prefer short titled sections and prose paragraphs
+- use prose paragraphs; if section labels help, use optional bold
+  paragraph-opening labels like `**Handoff State.**` rather than Markdown
+  heading syntax
 - use bullets only for compact lists of named results, rules, arms, or open
   questions
 - keep Claude Code and Codex conversations separate even when their dates

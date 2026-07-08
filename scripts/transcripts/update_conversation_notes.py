@@ -85,9 +85,10 @@ The first paragraph of your answer must be the italicized opening summary, or
 at most two short italicized sentences, summarizing what this conversation
 covers. Do
 not put any title, heading, bold label, or preamble before that first italicized
-paragraph. Then use short titled sections and prose paragraphs. Use bullets only
-for compact lists of named results, rules, arms, or open questions; do not turn
-the whole conversation into a bullet ledger.
+paragraph. Then use prose paragraphs. If section labels help, use optional bold
+paragraph-opening labels such as **Handoff State.** rather than Markdown `#` or
+`##` headings. Use bullets only for compact lists of named results, rules, arms,
+or open questions; do not turn the whole conversation into a bullet ledger.
 
 Use neutral, professional prose focused on what changed and why. Do not preserve
 every exchange. Preserve priority and urgency when it affects future work, but
@@ -140,9 +141,10 @@ The first paragraph of your answer must be the italicized opening summary, or
 at most two short italicized sentences, summarizing what this conversation
 covers. Do
 not put any title, heading, bold label, or preamble before that first italicized
-paragraph. Then use short titled sections and prose paragraphs. Use bullets only
-for compact lists of named results, rules, arms, or open questions; do not turn
-the whole conversation into a bullet ledger.
+paragraph. Then use prose paragraphs. If section labels help, use optional bold
+paragraph-opening labels such as **Handoff State.** rather than Markdown `#` or
+`##` headings. Use bullets only for compact lists of named results, rules, arms,
+or open questions; do not turn the whole conversation into a bullet ledger.
 
 Use neutral, professional prose. Preserve priority and urgency when it affects
 future work, but express it as project priority, blocking status, or required
