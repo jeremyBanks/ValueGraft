@@ -15,6 +15,17 @@
 - WHOLE 54-scenario set is USABLE via native render (the "c13-c54 bad" was a foreign-reply confound in
   the OLD pre-render; native render regenerates replies for ALL — no a-priori good/bad split; gates decide).
 
+
+
+## WHEN THE BATCH-CAPPED RESULT LANDS — SEQUENCE (user 07-08, emphatic):
+1. FABLE REVIEW FIRST: get Fable's opinion on the state/design before going wide (it may suggest
+   minor tweaks). Quick review, with current facts (design validated +0.10, batched ~Nx, gates work).
+2. THEN GO WIDE for the OTHER-MODEL DATA — this is the PRIORITY. The owner *really* wants cross-arch
+   data from the 16 models. Do NOT over-optimize the render/timing: even ~2x is enough to start
+   collecting; parallelize across pods (1 model/pod). The 16-arch data IS the deliverable.
+3. Finalize the pre-registered geometry direction (can happen alongside the first models running).
+Balance: Fable-review-for-tweaks BUT don''t let render-perfectionism block the wide data collection.
+
 ## BUILT + STATUS
 - src/cross_arch_probe.py: SC_NATIVE_RENDER (per-model in-context reply gen) + SC_BATCHED_RENDER (batched
   decode across a model's convs, ~10x; render-once/replay-across-arms already present) + gates + covariates.
