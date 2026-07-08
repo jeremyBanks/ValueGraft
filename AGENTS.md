@@ -133,13 +133,18 @@ survive attention under pressure; forms do.
 ## PUBLISHING: promote the best report to README.md (user 07-07)
 
 - The repo's landing page is **README.md**. NEVER edit README.md directly.
-- We always edit the WORKING report file (currently **REPORT.md**) — that's
-  where drafting, critics, and Fable passes happen.
-- When a MAJOR update is finished and we're CONFIDENT in it, "publish" it by
-  COPYING the working file over README.md (replacing the old published version):
-  `cp REPORT.md README.md` — so the repo page shows the latest greatest.
-- README.md = the published snapshot; REPORT.md = the live working version. They
-  diverge between promotions; re-promote after each major confident update.
+- STALE-DRAFT NOTE (user 07-08): the prior working draft `REPORT.md` has been
+  ARCHIVED to `notes/2026070771-report.md` and REMOVED from root. It is a PRIOR
+  draft whose framing/style no longer reflect current requirements — kept for
+  reference only. Do NOT treat it as the live paper or the target; reading it as
+  "current" would mislead. The next paper is to be (RE)WRITTEN per the CURRENT
+  requirements (METHODS-PROVENANCE-REQUIREMENTS.md + the notes `report2-plan` /
+  `report-synthesis`) as a FRESH working file — do not resurrect the old draft.
+- Workflow once a NEW working report file exists: edit that file (drafting,
+  critics, Fable passes); when a major update is finished and CONFIDENT, publish by
+  COPYING it over README.md (`cp <working-file> README.md`). README.md = the
+  published snapshot; the working file = the live version; re-promote after each
+  major confident update.
 
 ## FINAL PAPER REVIEW: multi-perspective Fable passes (user 07-07)
 
