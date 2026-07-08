@@ -569,18 +569,25 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     alpha0_max = max(alpha0_diffs)
     graft_max = max(graft_diffs)
     graft_mean_signed = sum(graft_signed) / len(graft_signed)
+
+    # ---- MACHINERY validity (gates status) vs EFFECT direction (does NOT) ----
+    # (a) alpha0 graft is bit-identical to B  -> plumbing is correct.
+    # (b) alpha=alpha_v graft actually CHANGES the output -> injection is live,
+    #     not a dead no-op. These two are the ONLY smoke conditions that decide
+    #     whether the numbers can be TRUSTED (status OK vs UNSUPPORTED).
     alpha0_ok = alpha0_max <= alpha0_tol                 # (a) TIGHT == fresh
     graft_changes = graft_max >= change_tol              # (b) injection live
-    # (c) POSITIVE DIRECTION: on the held check items the graft must move the
-    # output TOWARD the continuity target (higher gold logprob) on average, not
-    # merely perturb it. This is exactly the raw_EB mean = mean(lp_E - lp_B) > 0
-    # (graft_signed IS the per-plant raw_EB). A directionless graft (plumbing
-    # runs, manipulation dead) is flagged and NOT trusted.
-    graft_direction_ok = graft_mean_signed > 0.0   # == raw_EB mean > 0
+    machinery_ok = alpha0_ok and graft_changes
+    # EFFECT DIRECTION is a SCIENTIFIC RESULT, not a validity condition. A graft
+    # that runs correctly but moves the output AWAY from the continuity target
+    # (negative mean raw_EB) is a VALID finding to record -- "does the effect
+    # travel? maybe it's negative on this architecture" is exactly the question.
+    # So graft_direction_ok is INFORMATIONAL only and NEVER gates status.
+    graft_direction_ok = graft_mean_signed > 0.0   # == raw_EB mean > 0 (INFO)
     doc["smoke"] = {
         "alpha0_ok": bool(alpha0_ok),
         "graft_changes_output": bool(graft_changes),
-        "graft_direction_ok": bool(graft_direction_ok),
+        "graft_direction_ok": bool(graft_direction_ok),  # INFO ONLY, not a gate
         "alpha0_max_abs_diff": alpha0_max,
         "graft_max_abs_diff": graft_max,
         "graft_mean_signed_diff": graft_mean_signed,
@@ -594,24 +601,10 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     doc["raw_EB"] = bootstrap_ci_95(
         graft_signed, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
 
-    if not (alpha0_ok and graft_changes and graft_direction_ok):
-        why = []
-        if not alpha0_ok:
-            why.append(
-                f"alpha0 graft not bit-identical to B (max|dlp|={alpha0_max:.2e} "
-                f"> {alpha0_tol:.0e})")
-        if not graft_changes:
-            why.append(
-                f"alpha={alpha_v} graft did not change output "
-                f"(max|dlp|={graft_max:.2e} < {change_tol:.0e})")
-        if not graft_direction_ok:
-            why.append(
-                f"graft directionless -- does not move toward continuity target "
-                f"(mean signed dlp={graft_mean_signed:.2e} <= 0)")
-        doc.update(status="UNSUPPORTED", reason="smoke gate failed: " + "; ".join(why))
-        return doc
-
-    # ---- aggregate (only when smoke passed) ----
+    # ---- per-category robust block: ALWAYS populated whenever plants scored ----
+    # (populated BEFORE the machinery gate so a negative/null effect -- or even a
+    # machinery-failed model -- still carries its measured numbers). This is the
+    # block that matters; it was previously left EMPTY on any early return.
     # DEPRECATED/unstable: mean of the ratio (E-B)/(A-B). Kept only for
     # continuity -- Cauchy-unstable with small denominators, NOT the headline.
     doc["gap_closure"] = bootstrap_ci_95(all_gc)  # unstable/deprecated
@@ -640,22 +633,63 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     doc["by_category"] = by_cat
     doc["by_category_robust"] = by_cat_robust
 
-    # ---- per-model verdict (DIRECTIONAL) ----
-    # SIGNIFICANT iff the raw_EB CI excludes 0 (both bounds same side of 0) for
-    # referent OR sense. Otherwise null/underpowered. n is small so this is
-    # directional -- the cross-model AGGREGATE is the inferential claim.
-    def _ci_excludes_zero(block):
-        lo, hi = block.get("raw_EB_ci", [None, None])
-        if lo is None or hi is None or block.get("n", 0) < 2:
-            return False
-        return (lo > 0 and hi > 0) or (lo < 0 and hi < 0)
+    # ---- per-model verdict + effect sign (DIRECTIONAL) ----
+    # effect_sign is read off the AGGREGATE raw_EB CI (all plants): "positive" if
+    # the CI excludes 0 and mean>0, "negative" if CI excludes 0 and mean<0, else
+    # "null". per-category significance (referent OR sense CI excludes 0) is also
+    # tracked so a directional per-category signal is not lost. n is small so
+    # per-model results are DIRECTIONAL -- the cross-model aggregate is the
+    # inferential claim.
+    def _ci_sign(lo, hi, n):
+        """+1 / -1 if CI excludes 0 (both bounds same side), else 0 (spans 0)."""
+        if lo is None or hi is None or (n is not None and n < 2):
+            return 0
+        if lo > 0 and hi > 0:
+            return 1
+        if lo < 0 and hi < 0:
+            return -1
+        return 0
 
-    any_sig = any(_ci_excludes_zero(by_cat_robust.get(c, {})) for c in CATS)
-    doc["verdict"] = "SIGNIFICANT" if any_sig else "null/underpowered"
+    eb = doc["raw_EB"]
+    agg_sign = _ci_sign(eb.get("lo"), eb.get("hi"), eb.get("n"))
+    effect_sign = "positive" if agg_sign > 0 else "negative" if agg_sign < 0 else "null"
+    doc["effect_sign"] = effect_sign
+
+    def _cat_sign(block):
+        lo, hi = block.get("raw_EB_ci", [None, None])
+        return _ci_sign(lo, hi, block.get("n", 0))
+
+    cat_signs = {c: _cat_sign(by_cat_robust.get(c, {})) for c in CATS}
+    any_sig_cat = any(s != 0 for s in cat_signs.values())
+
+    if effect_sign == "positive":
+        doc["verdict"] = "SIGNIFICANT_POSITIVE"
+    elif effect_sign == "negative":
+        doc["verdict"] = "SIGNIFICANT_NEGATIVE"
+    else:
+        doc["verdict"] = "null/underpowered"
     doc["verdict_note"] = (
-        "raw_EB CI " + ("excludes" if any_sig else "does NOT exclude") +
-        " 0 for referent or sense. n is small so per-model verdict is "
-        "DIRECTIONAL; the cross-model aggregate is the inferential claim.")
+        f"aggregate raw_EB CI [{eb.get('lo')}, {eb.get('hi')}] -> effect_sign="
+        f"{effect_sign}. per-category CI-excludes-0: {cat_signs} "
+        f"(referent/sense any-significant={any_sig_cat}). n is small so the "
+        f"per-model verdict is DIRECTIONAL; the cross-model aggregate is the "
+        f"inferential claim. A SIGNIFICANT_NEGATIVE is a VALID result, not a "
+        f"discard.")
+
+    # ---- status: decided ONLY by machinery validity (never by effect sign) ----
+    if not machinery_ok:
+        why = []
+        if not alpha0_ok:
+            why.append(
+                f"alpha0 graft not bit-identical to B (max|dlp|={alpha0_max:.2e} "
+                f"> {alpha0_tol:.0e})")
+        if not graft_changes:
+            why.append(
+                f"alpha={alpha_v} graft did not change output -- dead injection "
+                f"(max|dlp|={graft_max:.2e} < {change_tol:.0e})")
+        doc.update(status="UNSUPPORTED",
+                   reason="machinery check failed: " + "; ".join(why))
+        return doc
 
     doc["status"] = "OK"
     doc["reason"] = None
