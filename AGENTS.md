@@ -150,3 +150,14 @@ result (a 30B run silently clobbered the 27B summary.json at a shared path).
 - Also verify at launch (rule 26 extension): confirm the RIGHT MODEL loaded, not
   just that work is happening — a run using the wrong/default model looks healthy
   but answers the wrong question (the 30B run that was actually 27B).
+
+## PAPER REVIEW — Codex/GPT-5.5 external review (user 07-08)
+For EACH MAJOR REVISION we might SHARE, get — AT LEAST ONCE (NOT repeatedly; it's
+heavy) — an external review from **Codex with GPT 5.5 on EXTRA-HIGH effort**. This
+complements (does not replace) the Fable multi-perspective passes + adversarial
+critics + terminology-consistency dimension. So the review stack for a shareable
+major revision = Fable ~3 tool-less angle passes + critics + terminology check +
+ONE Codex/GPT-5.5/xhigh review. Codex is an external tool → likely user-initiated
+(flag when a major revision is review-ready so the user runs it), unless an
+invocation path exists in-session. Gate: don't ship a shareable major revision
+without this external review on record.
