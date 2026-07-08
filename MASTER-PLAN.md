@@ -307,3 +307,29 @@ FABLE'S KEY INSIGHTS:
 6. OWN-SUMMARY EXPERIMENT > 12th arch: vary summary source own/other-model/fixed/degraded/
    PARAPHRASED-OWN (crux: same content diff tokens+activations → separates 'needs own text'
    vs 'needs own write-time state'). Fund by dropping Yi/Llama-2.
+
+## CORPUS DECISION (Fable 07-08): AUGMENT, don't remake — FREEZE before spend
+The wide sweep is new compute regardless → a BETTER corpus is nearly free; remaking
+needlessly destroys F1. KEEP c01-c12 + all existing probes (F1 intact, comparable);
+ADD on top. FREEZE corpus before the big run (mid-sweep probe changes = the expensive
+failure).
+BETTER CORPUS (prioritized):
+1. MORE CONVERSATIONS 12→~24-30 (#1 POWER LEVER — conversation is the cluster-robust
+   unit; 12 is thin for conv-bootstrap; convs > probes/conv).
+2. LONGER/natural convs with DISTRACTOR turns between plant and boundary (real eviction,
+   not toy); VARY plant-to-boundary DISTANCE (near/far) → recovery-vs-distance curve (bonus).
+3. MULTIPLE paraphrased probes per planted fact (separates probe-noise from item-noise).
+4. NATIVE summary-source slots per conv (own/foreign/paraphrased-own/degraded) — built in.
+5. Small NATURALISTIC real-ish holdout (preempts "you tuned a synthetic toy").
+STRONG-PRIOR REFERENTS = dedicated category, SHARPEST idea: famous fictional names
+(Pokémon/Sanderson/LOTR) as codenames → SIGNED two-alternative disambiguation: measure
+P(prior meaning) vs P(conversation meaning), show graft MOVES mass from prior→conv-meaning
+(the −dense graft pushing TOWARD prior = beautiful failure signature). Better than one-sided
+logprob lift. MUST INSTRUMENT: baseline prior-strength per name PER MODEL (varies → confounds
+cross-arch; COVARY it); tokenization hygiene (no diacritics, stable multi-token, not OOV in
+older models); SEPARATE category (don't perturb F1).
+REVISIONS to design: power toward CONVERSATIONS (24-30) not just probes; NEW must-capture =
+per-model per-referent baseline prior-strength.
+BUILD SEQUENCE (all before the spend): augment corpus (freeze) → harness controls
+(placebo/identity/alpha/traces/hyperparams/conv-bootstrap/prior-strength) → add Qwen3-32B →
+FREEZE → provision pods → deep-anchors+wide-shallow sweep + own-summary experiment.
