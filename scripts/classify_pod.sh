@@ -111,11 +111,6 @@ classify_pod() {
     PC_CLASS="DONE"; PC_MSG="full run complete (WIDE SWEEP DONE) — $result"; return 0
   fi
 
-  # ---- scored-but-still-running (invariant 5: always show n) ----
-  if _pc_result_scored "$result"; then
-    PC_CLASS="INTERIM"; PC_MSG="scored, still running (probe/partial) — $result"; return 0
-  fi
-
   # ---- signal-loss layer (gap 4: a MISSING KEY signal while reachable is a PROBLEM) ----
   # proc and gpu are the KEY liveness/progress signals. If the pod is reachable but we could
   # not read one of them, we CANNOT certify health — losing just the GPU signal (proc alive)
@@ -125,9 +120,17 @@ classify_pod() {
     PC_CLASS="SIGNAL-LOSS"; PC_MSG="reachable but missing a key signal (proc='${proc}' gpu='${gpu}') — fail-closed"; return 1
   fi
 
-  # ---- liveness layer ----
+  # ---- liveness layer (ORDERED BEFORE interim, gap found by fresh-Fable review of e47e97f):
+  # a DEAD process (proc=0) is DIED even if it left a PARTIAL scored result behind. A run
+  # OOM-killed after writing a partial category result but before the WIDE SWEEP DONE marker
+  # must ALARM, not read as "scored, still running". proc=0 literally means not running. ----
   if [ "${proc:-0}" = "0" ]; then
     PC_CLASS="DIED"; PC_MSG="no render process and no terminal marker — last:$last"; return 1
+  fi
+
+  # ---- scored-but-still-running (invariant 5: always show n; reached ONLY with a live proc) ----
+  if _pc_result_scored "$result"; then
+    PC_CLASS="INTERIM"; PC_MSG="scored, still running (probe/partial) — $result"; return 0
   fi
 
   # ---- progress layer (invariant 4: stall is GPU-aware) ----

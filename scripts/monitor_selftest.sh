@@ -71,11 +71,16 @@ PC_REACH=ok PC_PROC=1 PC_GPU=99 PC_DONE=0 PC_LAST="native] c2 (rendering, slow)"
 PC_REACH=ok PC_PROC=1 PC_GPU=0 PC_DONE=0 PC_LAST="native] c2" \
   check "process alive but gpu idle -> anomaly" IDLE-GPU 1
 
-# ── GAP 1a (pod_health.sh:65 false-DONE): PROC=0 + a result merely containing "OK" but with
-# NO unique WIDE SWEEP DONE marker MUST be INTERIM, never DONE. If pod_health's old inline
-# `PROC=0 && grep OK => DONE` logic were live, this would (wrongly) be DONE.
+# ── GAP 1a (pod_health.sh:65 false-DONE) + SILENT-DEATH (fresh-Fable review of e47e97f):
+# PROC=0 + a result merely containing "OK" but with NO unique WIDE SWEEP DONE marker must
+# NOT be a false DONE (the old inline `PROC=0 && grep OK => DONE`) — AND must NOT be a silent
+# INTERIM either: proc=0 means the process is DEAD, so a partial result left behind by a
+# crash (e.g. OOM-kill after writing one category) is DIED and MUST ALARM, not "still running".
 PC_REACH=ok PC_PROC=0 PC_GPU=0 PC_DONE=0 PC_RESULT="OK ref_ci [0.01,0.19] n 6" \
-  check "gap1a: proc=0 + OK result, no marker -> INTERIM (NOT DONE)" INTERIM 0
+  check "gap1a: proc=0 + partial result, no marker -> DIED (alarm, NOT DONE, NOT silent INTERIM)" DIED 1
+# companion: a LIVE proc with a partial scored result + no marker IS the legit INTERIM (silent).
+PC_REACH=ok PC_PROC=1 PC_GPU=95 PC_DONE=0 PC_RESULT="OK ref_ci [0.01,0.19] n 6" \
+  check "gap1a-live: proc>0 + partial result, no marker -> INTERIM (legit, NOT DONE)" INTERIM 0
 # ── GAP 1b (pod_health.sh:69 false-stall): stall is GPU-AWARE. A stale log with the GPU BUSY
 # is a slow render (healthy); a stale log with the GPU IDLE is a genuine STALL (alarm).
 PC_REACH=ok PC_PROC=1 PC_GPU=97 PC_DONE=0 PC_LOGAGE=1800 PC_LAST="native] c2 (slow render)" \
