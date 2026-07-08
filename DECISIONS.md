@@ -166,3 +166,23 @@ reliability problems (pods that don't boot, ssh drops), switch to SECURE (~$1.6-
 CAP of 3 secure pods at a time (limit parallelism to control cost). Canary / reliability-sensitive
 runs default to SECURE. Today (07-08) community was badly unreliable -> using secure for the canary.
 Agent has discretion to pick per-situation.
+
+## Cross-arch exploration guidance (Fable, 07-08) — gates + design honesty
+- CHECKPOINT VERIFIED: cross-arch Qwen = Qwen3-30B-A3B-Instruct-2507 (the validated +0.10 checkpoint) —
+  it IS the internal positive control, not a new arm. The n=6 probe (-0.07) is noise.
+- **REPLICATION GATE (pre-registered here):** the Qwen 24-conv run is the single most important number.
+  If its referent CI does NOT exclude 0 (~+0.10 like the prior), HALT the cross-arch comparison and
+  debug — the base effect isn't stable enough to build a cross-arch sign map on. Everything downstream
+  is moot until Qwen re-clears 0.
+- **CI WIDTH is driven by CONVERSATION count** (bootstrap clusters on convs), NOT plants-per-conv.
+  Anchor: 12 convs → half-width ~0.09 (UNDERPOWERED to CONFIRM +0.10 — a true effect often still
+  touches 0; adequate only to DISCONFIRM a large effect). 24 convs → ~±0.06. So: SPEND ON CONVS, not
+  more plants. Breadth models likely need 24 convs for a real confirming verdict, not 12.
+- **QK-norm (H1) is CONFOUNDED cross-vendor:** QK-norm co-varies with vendor + MoE/dense + training
+  corpus across the 3 models (QK-norm arm = {Qwen MoE, OLMo dense}; no-QK-norm = {Mistral dense} — a
+  2-vs-1 where a sign diff is attributable to 4 things at once). The CLEAN causal H1 test is a
+  WITHIN-MODEL QK-norm ABLATION (disable q_norm/k_norm at inference on Qwen/OLMo, hold all else fixed).
+  GATE the wide vendor fan-out behind (a) Qwen replication + (b) one within-model ablation — do NOT
+  spend the full queue on correlational cross-vendor evidence alone.
+- Do NOT change the metric mid-cross-arch (raw_EB, shared gold, bootstrap-over-convs, native+self-gen) —
+  changing it loses comparability to the validated +0.10.
