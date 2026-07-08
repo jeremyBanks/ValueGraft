@@ -526,3 +526,35 @@ SCALING LEVERS (apply before/for the wide sweep):
 4. HARD PARALLELIZE: one model per pod, many pods (width = wall-clock, not total cost).
 DECIDE the exact convs/model + reply length once the native-render VERIFY confirms the design
 (the referent number). Do NOT go wide before that number.
+
+## NATIVE-RENDER SCALING v2 — Fable verdict (07-08) SUPERSEDES my solo note above
+The pod-hours are in FIXING THE RENDER, not cutting convs/replies. Do IN ORDER:
+1. ★ BATCHED DECODE (do FIRST, highest leverage, ZERO validity cost): the current per-token
+   Python loop (one model() fwd/token, sequential, batch=1) IS the bottleneck. BATCH the reply
+   decode ACROSS a model's 12-24 convs (batch dim = the convs). vLLM continuous batching or a
+   hand-rolled batched decode -> ~10x+ total cost cut, metric inputs unchanged. The <think>
+   complication does NOT apply (anchors non-thinking; summary is one-time shared) -> generate()
+   + one canonical re-prefill suffices. The rabbit hole is running 240 convs on a per-token loop.
+2. ★ RENDER-ONCE, REPLAY-ALL-ARMS via KV snapshot (the thing I MISSED, free + valid): the
+   expensive artifact is the rendered conv up to the compaction boundary. B, E, AND every control
+   (alpha/placebo/champion) graft onto the SAME prefix; only the cheap graft+score differs.
+   snapshot_cache/rebuild_cache already exist. Render once/model, snapshot at boundary, replay all
+   arms from the snapshot. Nx cut if the harness re-renders per arm. CHECK whether it does + fix.
+3. PARALLELIZE = wall-clock lever, NOT cost lever (1 model/pod x N pods). Stack on top of 1+2.
+4. 24 convs on the 4 anchors / 12 on the 12 breadth models. MIN = 12/model (set by cluster-
+   bootstrap stability, not effect size). Guard: min surviving-referent-plant count/model.
+AVOID blanket reply-shortening (my lever 2 — WRONG near the floor). If needed: cut FILLER/early
+replies only (~160), keep PLANT-ADJACENT replies full (~320), floor ~200-240, and PILOT (re-run
+the 12-conv verify at the shortened length; changing reply length between verify and sweep = a
+PROTOCOL DEVIATION).
+REGRESSION GUARDS (deep/shallow is valid WITH these): (a) use CONTINUOUS normalized raw_EB as the
+outcome, NOT hard +-1 sign (a 12-conv model in its noise band contributes proportional-to-precision
+info, not a coin-flip that swamps geometry at n=16); (b) PRECISION-WEIGHT the regression (WLS using
+each model's bootstrap SE — shallow=wider CI=measurement error=regression dilution; weighting fixes
+it). NON-NEGOTIABLE: render depth EQUAL within each de-confound pair (deep on all 4 anchors satisfies
+it — FREEZE so no one shortens one pair member).
+MIN VIABLE: 12 convs/model (24 anchors), plant-adjacent replies ~320. Pack plant-density UP,
+conv-count DOWN to ~12. The shared-fixed-corpus SUPPLEMENT arm needs NO per-model render (identical
+replies for all) — cheapest evidence.
+ORDER OF OPS: (1) native-render VERIFY confirms design (referent number, running) -> (2) implement
+batched decode + render-once/snapshot-replay -> (3) go wide.
