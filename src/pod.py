@@ -84,7 +84,7 @@ def create(gpu=DEFAULT_GPU):
         "gpuTypeIds": [gpu],
         "gpuCount": 1,
         "cloudType": os.environ.get("SC_POD_CLOUD", "SECURE"),
-        "containerDiskInGb": 200,
+        "containerDiskInGb": int(os.environ.get("SC_POD_DISK", "200")),
         "volumeInGb": 0,
         "supportPublicIp": True,
         "ports": ["22/tcp"],
