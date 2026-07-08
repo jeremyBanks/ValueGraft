@@ -449,3 +449,21 @@ Debugger running the null self-graft. Gate RED until referent reproduces ~+0.136
 POTENTIAL PAPER FINDING (regardless): for THINKING models, grafting must snapshot with the
 reasoning present — the summarization "act" the mechanism needs lives in the reasoning-informed
 answer values, not the terse answer alone.
+
+## 33. ROOT CAUSE of the positive-control regression: task-31 alignment "hardening" (07-08)
+The whole multi-hour debugging saga traced to ONE change: task 31 replaced the tolerant
+difflib aligner with the strict build_alignment_direct AT THE SHARED FUNCTION build_alignment
+(arms_common.py:206), so BOTH harnesses (trusted gap_closure_cat.py AND cross_arch_probe.py)
+used it. It was equivalence-verified ONLY on FIXED summaries — but it RAISES on thinking-model
+SELF-GEN summaries: Qwen3's <think> block makes the write-time summary span 899 tok vs the
+template-stripped compacted span 538 tok, and the strict exact-subblock map can't map them.
+difflib TOLERATED this (matched the shared answer span) and produced the known +0.156.
+The cross_arch "think-strip" fix was a downstream band-aid that further regressed the numbers.
+FIX: one line — build_alignment -> build_alignment_difflib.
+LESSONS (reinforce validate-before-trusting): (1) "equivalence-verified" on a PROXY config
+(fixed summaries) did NOT cover the PRODUCTION path (self-gen) — same lesson as incident 32,
+now twice. (2) I HARDENED A NON-PROBLEM: task 31 was done to address my own "token matching"
+alarm which I LATER confirmed was a non-issue (difflib is positional-within-region, correct) —
+the "fix" introduced a real brittleness. Don't re-engineer correct code to soothe a
+misdiagnosis. (3) When BOTH independent apparatuses fail identically, the bug is in the SHARED
+code, not either harness — that observation would have found this in minutes.
