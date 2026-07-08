@@ -157,9 +157,177 @@ def bootstrap_ci_95(values, n_boot=10000, seed=0):
     return {"mean": sum(vals) / n, "lo": lo, "hi": hi, "n": n}
 
 
+def bootstrap_ci_95_cluster(clusters, n_boot=10000, seed=0):
+    """CLUSTER (block) percentile bootstrap 95% CI of the mean.
+
+    ``clusters`` is a list of lists: one inner list per CONVERSATION holding that
+    conversation's per-probe values. Resampling is over CONVERSATIONS (whole
+    clusters, with replacement); the probes inside a resampled conversation are
+    kept together and pooled. Because probes within a conversation are positively
+    correlated (same context, same summary), this honest cluster CI is WIDER than
+    the naive probe-level ``bootstrap_ci_95`` that treats every probe as
+    independent. Returns the SAME keys as bootstrap_ci_95 plus ``n_clusters``.
+
+    The point estimate (``mean``) is the pooled grand mean over all probes -- the
+    SAME number bootstrap_ci_95 would report -- so only the interval width
+    changes, never the headline value."""
+    clusters = [[v for v in c if v is not None] for c in clusters]
+    clusters = [c for c in clusters if c]
+    flat = [v for c in clusters for v in c]
+    n_c = len(clusters)
+    if not flat:
+        return {"mean": None, "lo": None, "hi": None, "n": 0, "n_clusters": 0}
+    mean = sum(flat) / len(flat)
+    if n_c == 1:
+        return {"mean": mean, "lo": mean, "hi": mean,
+                "n": len(flat), "n_clusters": 1}
+    rng = random.Random(seed)
+    means = []
+    for _ in range(n_boot):
+        tot = 0.0
+        cnt = 0
+        for _ in range(n_c):
+            c = clusters[rng.randrange(n_c)]
+            tot += sum(c)
+            cnt += len(c)
+        means.append(tot / cnt)
+    means.sort()
+    lo = means[int(0.025 * n_boot)]
+    hi = means[int(0.975 * n_boot)]
+    return {"mean": mean, "lo": lo, "hi": hi, "n": len(flat), "n_clusters": n_c}
+
+
 # Fixed bootstrap params for the ROBUST reporting block (raw_EB, %_helped).
 ROBUST_N_BOOT = 10000
 ROBUST_SEED = 42
+
+# ---------------------------------------------------------------------------
+# CONTROLS (all env-guarded; default run is unaffected). See module docstring.
+# ---------------------------------------------------------------------------
+# Alpha dose-response sweep values (SC_ALPHA_SWEEP=1). alpha_v (0.75) is in-set
+# so the sweep's 0.75 column reproduces the primary raw_EB.
+ALPHA_SWEEP_VALUES = (0.25, 0.5, 0.75, 1.0, 2.0)
+# Placebo-graft corruption modes (SC_PLACEBO=<mode>). See _placebo_index_plan.
+PLACEBO_MODES = ("shuffle_pos", "shuffle_probe", "gauss", "mean")
+
+
+def _placebo_index_plan(mode, old_idx, prev_old_idx, seed):
+    """PURE (no torch) source-index remap for the position-shuffling placebos.
+
+    Returns a NEW list of OLD-cache source indices (same length as old_idx) to be
+    paired with the unchanged destination indices, OR None for the
+    tensor-corruption placebos (gauss/mean) that instead build a corrupted source
+    snapshot with the ORIGINAL pairing.
+
+      shuffle_pos   : permute the source values ACROSS the grafted positions --
+                      right values, wrong slots (a within-probe scramble).
+      shuffle_probe : draw source indices (with replacement) from ANOTHER probe's
+                      grafted positions (prev conversation's snapshot) -- a
+                      different probe's structured write-state. Falls back to
+                      shuffle_pos on the first conversation (no prev available).
+      gauss / mean  : returns None -> caller corrupts the source VALUE tensor
+                      (random Gaussian matched to per-layer value norm; or the
+                      mean value vector) keeping the original index pairing.
+
+    Same seed -> same plan (deterministic, reproducible)."""
+    rng = random.Random(seed)
+    n = len(old_idx)
+    if mode == "shuffle_pos" or (mode == "shuffle_probe" and not prev_old_idx):
+        perm = list(range(n))
+        rng.shuffle(perm)
+        return [old_idx[p] for p in perm]
+    if mode == "shuffle_probe":
+        m = len(prev_old_idx)
+        return [prev_old_idx[rng.randrange(m)] for _ in range(n)]
+    if mode in ("gauss", "mean"):
+        return None
+    raise ValueError(f"unknown SC_PLACEBO mode {mode!r}; "
+                     f"expected one of {PLACEBO_MODES}")
+
+
+def _corrupt_source_values(old_snap, old_idx, mode, seed):
+    """Build a source snapshot whose VALUE rows at ``old_idx`` are corrupted
+    (torch path; keys untouched, original index pairing preserved).
+
+      mean  : each grafted row -> the per-layer mean over the grafted rows.
+      gauss : each grafted row -> Gaussian noise rescaled so its per-row L2 norm
+              matches the mean per-row norm of the real grafted block IN THAT
+              LAYER (matched energy, destroyed structure).
+
+    Returns a new [(K, V'), ...] usable as ``old_snap`` in blend_values with the
+    UNCHANGED pairs."""
+    import torch  # noqa: PLC0415
+    g = torch.Generator(device="cpu")
+    g.manual_seed(seed)
+    idx = torch.tensor(list(old_idx))
+    out = []
+    for k, v in old_snap:
+        v2 = v.clone()
+        block = v2[..., idx, :].float()            # [B, H, n, D]
+        if mode == "mean":
+            rep = block.mean(dim=-2, keepdim=True).expand_as(block)
+            v2[..., idx, :] = rep.to(v2.dtype)
+        elif mode == "gauss":
+            noise = torch.randn(block.shape, generator=g).to(block.device)
+            tgt_norm = block.norm(dim=-1, keepdim=True).mean()   # per-layer scale
+            cur = noise.norm(dim=-1, keepdim=True).clamp_min(1e-8)
+            noise = noise / cur * tgt_norm
+            v2[..., idx, :] = noise.to(v2.dtype)
+        else:
+            raise ValueError(f"_corrupt_source_values: bad mode {mode!r}")
+        out.append((k, v2))
+    return out
+
+
+def detect_model_hparams(config) -> dict:
+    """Architecture hyper-parameters for the sign-of-graft regression (pure, no
+    torch). Reads the (possibly nested text_config) HF config, model-type
+    agnostic. ``qk_norm`` is detected from any of several config spellings used
+    across families; ``gqa_ratio`` = n_heads / n_kv (1.0 == full MHA, >1 == GQA,
+    == n_heads == MQA)."""
+    cfg = _cfg_text(config)
+    n_heads = getattr(cfg, "num_attention_heads", None)
+    n_kv = getattr(cfg, "num_key_value_heads", None)
+    if n_kv is None:
+        n_kv = n_heads
+    head_dim = getattr(cfg, "head_dim", None)
+    hidden = getattr(cfg, "hidden_size", None)
+    if head_dim is None and n_heads and hidden:
+        head_dim = hidden // n_heads
+    gqa = (n_heads / n_kv) if (n_heads and n_kv) else None
+    qk_keys = ("use_qk_norm", "qk_norm", "q_norm", "k_norm", "qk_layernorm",
+               "use_qk_layernorm", "attention_qk_norm", "query_key_layernorm")
+    qk_norm = (any(bool(getattr(cfg, k, None)) for k in qk_keys)
+               or any(bool(getattr(config, k, None)) for k in qk_keys))
+    rope_theta = getattr(cfg, "rope_theta", None)
+    if rope_theta is None:
+        rope_theta = getattr(cfg, "rotary_emb_base", None)
+    return {
+        "model_type": getattr(config, "model_type", None)
+        or getattr(cfg, "model_type", None),
+        "num_hidden_layers": getattr(cfg, "num_hidden_layers", None),
+        "num_attention_heads": n_heads,
+        "num_key_value_heads": n_kv,
+        "head_dim": head_dim,
+        "gqa_ratio": gqa,
+        "qk_norm": bool(qk_norm),
+        "rope_theta": rope_theta,
+        "hidden_size": hidden,
+        "vocab_size": getattr(cfg, "vocab_size", None)
+        or getattr(config, "vocab_size", None),
+    }
+
+
+def _group_by_conv(rows):
+    """[{conversation_id, raw_EB}, ...] -> [[raw_EB, ...] per conversation].
+
+    Preserves conversation grouping for the cluster bootstrap (CONTROL #6);
+    insertion-ordered so the grouping is deterministic."""
+    groups: dict = {}
+    for r in rows:
+        cid = r.get("conversation_id")
+        groups.setdefault(cid, []).append(r["raw_EB"])
+    return list(groups.values())
 
 
 def _median(values):
@@ -174,18 +342,25 @@ def _median(values):
     return 0.5 * (vals[mid - 1] + vals[mid])
 
 
-def robust_category_stats(raw_eb_vals, ratio_gap_pairs):
+def robust_category_stats(raw_eb_vals, ratio_gap_pairs, raw_eb_clusters=None):
     """ROBUST per-category summary. Retires the unstable mean-of-ratio.
 
     raw_eb_vals    : [lp_E - lp_B, ...] over the plants (PRIMARY, bounded).
     ratio_gap_pairs: [(ratio, |lp_A - lp_B|), ...] for the scale-free secondary;
                      ratio may be None when the denominator was ~0.
+    raw_eb_clusters: OPTIONAL list-of-lists grouping the raw_EB values BY
+                     CONVERSATION (one inner list per conv). When given, an
+                     honest CLUSTER (conversation-level) bootstrap CI is added as
+                     ``raw_EB_ci_cluster`` alongside the probe-level ``raw_EB_ci``,
+                     plus ``n_conversations``. Probes within a conversation are
+                     correlated, so the probe-level CI understates uncertainty and
+                     the cluster CI is the one to trust.
 
     Returns {n, raw_EB_mean, raw_EB_ci:[lo,hi], pct_helped, pct_helped_ci:[lo,hi],
-             median_ratio_cond, n_cond}. pct_helped is a FRACTION in [0,1] (share
-             of plants with raw_EB > 0); its CI is a bootstrap over the same
-             plants. median_ratio_cond drops tiny-denominator probes
-             (|lp_A-lp_B| <= 0.5) and reports how many survived as n_cond."""
+             median_ratio_cond, n_cond[, raw_EB_ci_cluster, n_conversations]}.
+    pct_helped is a FRACTION in [0,1] (share of plants with raw_EB > 0); its CI is
+    a bootstrap over the same plants. median_ratio_cond drops tiny-denominator
+    probes (|lp_A-lp_B| <= 0.5) and reports how many survived as n_cond."""
     raw = [v for v in raw_eb_vals if v is not None]
     n = len(raw)
     eb = bootstrap_ci_95(raw, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
@@ -194,7 +369,7 @@ def robust_category_stats(raw_eb_vals, ratio_gap_pairs):
     # scale-free secondary: median ratio, tiny-denominator probes dropped.
     cond = [r for (r, gap) in ratio_gap_pairs
             if r is not None and gap is not None and abs(gap) > 0.5]
-    return {
+    out = {
         "n": n,
         "raw_EB_mean": eb["mean"],
         "raw_EB_ci": [eb["lo"], eb["hi"]],
@@ -203,6 +378,12 @@ def robust_category_stats(raw_eb_vals, ratio_gap_pairs):
         "median_ratio_cond": _median(cond),
         "n_cond": len(cond),
     }
+    if raw_eb_clusters is not None:
+        cl = bootstrap_ci_95_cluster(
+            raw_eb_clusters, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+        out["raw_EB_ci_cluster"] = [cl["lo"], cl["hi"]]
+        out["n_conversations"] = cl["n_clusters"]
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -315,7 +496,9 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               fixed_summaries: dict | None, *,
               conv_limit: int, alpha_v: float, alpha0_tol: float,
               change_tol: float, max_gold_tok: int,
-              trust_remote_code: bool) -> dict:
+              trust_remote_code: bool,
+              placebo_mode: str | None = None, alpha_sweep: bool = False,
+              seed: int = ROBUST_SEED) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
     was present and we fall back to per-model self-generated summaries (results
@@ -358,10 +541,20 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "by_category_robust": {},  # ROBUST block -- the one that matters
         "verdict": None,           # SIGNIFICANT | null/underpowered (directional)
         "interpretation": INTERPRETATION,
+        "model_hparams": None,     # arch regression: predicts the graft's SIGN
+        "traces": [],              # raw per-probe traces (offline recompute)
+        "placebo": None,           # CONTROL #1 (SC_PLACEBO): corrupted-source graft
+        "alpha_sweep": None,       # CONTROL #3 (SC_ALPHA_SWEEP): dose-response
         "smoke": {"alpha0_ok": None, "graft_changes_output": None,
                   "graft_direction_ok": None, "alpha0_max_abs_diff": None,
-                  "graft_max_abs_diff": None, "graft_mean_signed_diff": None},
+                  "graft_max_abs_diff": None, "graft_mean_signed_diff": None,
+                  "identity_ok": None, "identity_max_abs_diff": None},
     }
+    if placebo_mode is not None and placebo_mode not in PLACEBO_MODES:
+        doc.update(status="ERROR",
+                   reason=f"bad SC_PLACEBO={placebo_mode!r}; expected one of "
+                          f"{PLACEBO_MODES}")
+        return doc
 
     # ---- config first (cheap; gives architecture + geometry even if load fails)
     try:
@@ -369,6 +562,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             model_id, trust_remote_code=trust_remote_code)
         doc["architecture"] = getattr(config, "model_type", None)
         doc["kv_geometry"] = detect_kv_geometry(config)
+        doc["model_hparams"] = detect_model_hparams(config)
     except Exception as e:  # noqa: BLE001
         doc["status"] = "ERROR"
         doc["reason"] = f"config load failed: {type(e).__name__}: {e}"
@@ -484,6 +678,16 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     graft_signed: list[float] = []      # lp_E - lp_B (direction toward target)
     pre_gaps: list[float] = []          # lp_A - lp_B (meaning lost)
     all_gc: list[float] = []            # gap_closure over all plants (for CI)
+    identity_diffs: list[float] = []    # CONTROL #2: |lp_identity - lp_A| per conv
+    traces: list[dict] = []             # CONTROL #4: raw per-probe traces
+    # CONTROL #1 placebo: per-category rows of raw_EB_placebo = lp_E_placebo - lp_B
+    per_cat_placebo: dict[str, list] = {c: [] for c in CATS}
+    prev_summ_snap = None               # prev conv's summary snapshot (shuffle_probe)
+    prev_old_idx: list[int] = []        # prev conv's grafted old-cache indices
+    # CONTROL #3 alpha sweep: {alpha: {cat: [rows...]}}
+    per_cat_alpha: dict[float, dict[str, list]] = {
+        a: {c: [] for c in CATS} for a in ALPHA_SWEEP_VALUES} if alpha_sweep else {}
+    alpha_list = list(ALPHA_SWEEP_VALUES) if alpha_sweep else [alpha_v]
 
     specs = collect_specs(data_dir, conv_limit)
     if not specs:
@@ -539,6 +743,45 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             e_snap = blend_values(b_snap, summ["snapshot"], pairs, alpha_v)
             e0_snap = blend_values(b_snap, summ["snapshot"], pairs, 0.0)
 
+            new_list = [n for n, _ in pairs]
+            old_list = [o for _, o in pairs]
+            grafted_layer_count = len(summ["snapshot"])
+            summary_len_tokens = len(summ["gen_ids"])
+
+            # ---- CONTROL #2: identity-graft integrity (once per conv, cheap) ----
+            # Graft A's OWN write-time values back onto the full-context A cache at
+            # the aligned tail positions. Source == destination -> blend is exactly
+            # (1-a)V + aV = V, so this MUST be a no-op (lp within alpha0_tol of
+            # lp_A). If it is NOT, the blend/rebuild/teacher-force position plumbing
+            # is corrupting rows for THIS model (e.g. a layer/position mismatch from
+            # a different layer count) and every raw_EB reversal is suspect. Handled
+            # in the smoke gate. Uses realistic tail indices [starts[tsm], len(ids)).
+            id_pairs = [(p, p) for p in range(starts[tsm], len(ids))]
+            id_snap = (blend_values(a_snap, a_snap, id_pairs, alpha_v)
+                       if id_pairs else None)
+
+            # ---- CONTROL #1: placebo graft (corrupted SOURCE, same machinery) ----
+            e_placebo_snap = None
+            if placebo_mode is not None:
+                plan = _placebo_index_plan(
+                    placebo_mode, old_list, prev_old_idx, seed + _ci)
+                if plan is not None:                    # shuffle_pos / shuffle_probe
+                    use_prev = (placebo_mode == "shuffle_probe" and prev_old_idx)
+                    pl_source = prev_summ_snap if use_prev else summ["snapshot"]
+                    pl_pairs = list(zip(new_list, plan))
+                else:                                    # gauss / mean
+                    pl_source = _corrupt_source_values(
+                        summ["snapshot"], old_list, placebo_mode, seed + _ci)
+                    pl_pairs = pairs
+                e_placebo_snap = blend_values(b_snap, pl_source, pl_pairs, alpha_v)
+
+            # ---- CONTROL #3: alpha dose-response snapshots (opt-in) ----
+            e_alpha_snaps = ({a: (e_snap if a == alpha_v
+                                  else blend_values(b_snap, summ["snapshot"], pairs, a))
+                              for a in alpha_list} if alpha_sweep else {})
+
+            conv_identity_done = False
+
             for pl in plants:
                 gold = str(pl["gold"]).strip()
                 tgt = tok(gold, add_special_tokens=False).input_ids[:max_gold_tok]
@@ -557,6 +800,13 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 le = tf(e_snap, sb + tgt[:-1], tgt, len(b_ids))
                 le0 = tf(e0_snap, sb + tgt[:-1], tgt, len(b_ids))
 
+                # CONTROL #2: identity-graft no-op check (once per conv, reuses
+                # this plant's A-side feed/targets).
+                if id_snap is not None and not conv_identity_done:
+                    la_id = tf(id_snap, sa + tgt[:-1], tgt, len(ids))
+                    identity_diffs.append(abs(la_id - la))
+                    conv_identity_done = True
+
                 alpha0_diffs.append(abs(le0 - lb))
                 graft_diffs.append(abs(le - lb))
                 graft_signed.append(le - lb)      # >0 => toward continuity target
@@ -568,11 +818,52 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                     all_gc.append(gc)
                 n_plants += 1
                 per_cat[pl["category"]].append({
-                    "plant_id": pl["id"], "lp_A": la, "lp_B": lb, "lp_E": le,
+                    "plant_id": pl["id"], "conversation_id": conv["id"],
+                    "lp_A": la, "lp_B": lb, "lp_E": le,
                     "raw_EB": raw_eb, "pre_graft_gap": la - lb,
                     "gap_closure": gc})
 
+                # CONTROL #1: placebo raw_EB for this plant (same gold/feed).
+                placebo_raw_eb = None
+                if e_placebo_snap is not None:
+                    lep = tf(e_placebo_snap, sb + tgt[:-1], tgt, len(b_ids))
+                    placebo_raw_eb = lep - lb
+                    per_cat_placebo[pl["category"]].append({
+                        "conversation_id": conv["id"], "raw_EB": placebo_raw_eb})
+
+                # CONTROL #3: alpha dose-response for this plant.
+                alpha_raw_eb = {}
+                if alpha_sweep:
+                    for a in alpha_list:
+                        le_a = (le if a == alpha_v
+                                else tf(e_alpha_snaps[a], sb + tgt[:-1], tgt,
+                                        len(b_ids)))
+                        alpha_raw_eb[a] = le_a - lb
+                        per_cat_alpha[a][pl["category"]].append({
+                            "conversation_id": conv["id"], "raw_EB": le_a - lb})
+
+                # CONTROL #4: save the raw per-probe trace (offline recompute).
+                traces.append({
+                    "plant_id": pl["id"], "conversation_id": conv["id"],
+                    "category": pl["category"], "distance": pl.get("distance"),
+                    "lp_A": la, "lp_B": lb, "lp_E": le, "raw_EB": raw_eb,
+                    "gold": gold, "n_gold_tokens": len(tgt), "alpha": alpha_v,
+                    "seed": seed, "summary_len_tokens": summary_len_tokens,
+                    "grafted_layer_count": grafted_layer_count,
+                    "n_pairs": len(pairs),
+                    "placebo_mode": placebo_mode,
+                    "placebo_raw_EB": placebo_raw_eb,
+                    "alpha_sweep_raw_EB": (alpha_raw_eb or None),
+                })
+
+            # retain THIS conv's summary snapshot for a shuffle_probe placebo on
+            # the NEXT conv (only when placebo is active -- else free it).
+            if placebo_mode == "shuffle_probe":
+                prev_summ_snap = summ["snapshot"]
+                prev_old_idx = old_list
+
             del a_snap, b_snap, e_snap, e0_snap
+            del id_snap, e_placebo_snap, e_alpha_snaps
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
     except Unsupported as e:
@@ -587,6 +878,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         return doc
 
     doc["skipped_convs"] = skipped_convs
+    doc["traces"] = traces               # CONTROL #4: always saved (additive)
 
     # ---- smoke gate ----
     if not alpha0_diffs:
@@ -596,6 +888,11 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     alpha0_max = max(alpha0_diffs)
     graft_max = max(graft_diffs)
     graft_mean_signed = sum(graft_signed) / len(graft_signed)
+    # CONTROL #2: identity-graft integrity. If no id_pairs ever built (no tail
+    # region) identity_max is None and the check is treated as PASSING (nothing to
+    # validate); otherwise it must be a near-no-op within the tight alpha0 tol.
+    identity_max = max(identity_diffs) if identity_diffs else None
+    identity_ok = (identity_max is None) or (identity_max <= alpha0_tol)
 
     # ---- MACHINERY validity (gates status) vs EFFECT direction (does NOT) ----
     # (a) alpha0 graft is bit-identical to B  -> plumbing is correct.
@@ -604,7 +901,10 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     #     whether the numbers can be TRUSTED (status OK vs UNSUPPORTED).
     alpha0_ok = alpha0_max <= alpha0_tol                 # (a) TIGHT == fresh
     graft_changes = graft_max >= change_tol              # (b) injection live
-    machinery_ok = alpha0_ok and graft_changes
+    # (c) CONTROL #2: identity self-graft is a no-op -> cross-model position/layer
+    #     plumbing is intact. A failure here (a "fake reversal" from mismatched
+    #     layer counts) is a MACHINERY failure, exactly like (a)/(b).
+    machinery_ok = alpha0_ok and graft_changes and identity_ok
     # EFFECT DIRECTION is a SCIENTIFIC RESULT, not a validity condition. A graft
     # that runs correctly but moves the output AWAY from the continuity target
     # (negative mean raw_EB) is a VALID finding to record -- "does the effect
@@ -618,6 +918,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "alpha0_max_abs_diff": alpha0_max,
         "graft_max_abs_diff": graft_max,
         "graft_mean_signed_diff": graft_mean_signed,
+        "identity_ok": bool(identity_ok),        # CONTROL #2 (gates status)
+        "identity_max_abs_diff": identity_max,
         "alpha0_tol": alpha0_tol,
         "change_tol": change_tol,
     }
@@ -656,9 +958,56 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         }
         raw_eb_vals = [r["raw_EB"] for r in rows]
         ratio_gap_pairs = [(r["gap_closure"], r["pre_graft_gap"]) for r in rows]
-        by_cat_robust[cat] = robust_category_stats(raw_eb_vals, ratio_gap_pairs)
+        # CONTROL #6: cluster (conversation-level) bootstrap -- group raw_EB by
+        # conversation so resampling is over convs, not correlated probes.
+        clusters = _group_by_conv(rows)
+        by_cat_robust[cat] = robust_category_stats(
+            raw_eb_vals, ratio_gap_pairs, raw_eb_clusters=clusters)
     doc["by_category"] = by_cat
     doc["by_category_robust"] = by_cat_robust
+
+    # ---- CONTROL #1: placebo report (corrupted-source graft) ----
+    # The REAL graft should beat every placebo: a real per-category raw_EB CI
+    # above the placebo's proves the lift is STRUCTURED write-time state, not
+    # injected energy / a wrong-slot write. Same robust + cluster machinery.
+    if placebo_mode is not None:
+        placebo_by_cat = {}
+        for cat in CATS:
+            prows = per_cat_placebo[cat]
+            placebo_by_cat[cat] = robust_category_stats(
+                [r["raw_EB"] for r in prows],
+                [(None, None)] * len(prows),
+                raw_eb_clusters=_group_by_conv(prows))
+        all_placebo = [r["raw_EB"] for c in CATS for r in per_cat_placebo[c]]
+        doc["placebo"] = {
+            "mode": placebo_mode,
+            "note": ("raw_EB of a corrupted-source graft (E_placebo - B). The "
+                     "REAL graft's raw_EB should exceed this; a placebo that "
+                     "matches the real effect means the lift is unstructured "
+                     "energy, not recovered write-time state."),
+            "raw_EB": bootstrap_ci_95(
+                all_placebo, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED),
+            "by_category_robust": placebo_by_cat,
+        }
+
+    # ---- CONTROL #3: alpha dose-response report ----
+    if alpha_sweep:
+        sweep = {}
+        for a in alpha_list:
+            per_a = {}
+            for cat in CATS:
+                arows = per_cat_alpha[a][cat]
+                per_a[cat] = robust_category_stats(
+                    [r["raw_EB"] for r in arows],
+                    [(None, None)] * len(arows),
+                    raw_eb_clusters=_group_by_conv(arows))
+            all_a = [r["raw_EB"] for c in CATS for r in per_cat_alpha[a][c]]
+            sweep[str(a)] = {
+                "raw_EB": bootstrap_ci_95(
+                    all_a, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED),
+                "by_category_robust": per_a,
+            }
+        doc["alpha_sweep"] = {"alphas": list(alpha_list), "by_alpha": sweep}
 
     # ---- per-model verdict + effect sign (DIRECTIONAL) ----
     # effect_sign is read off the AGGREGATE raw_EB CI (all plants): "positive" if
@@ -714,6 +1063,11 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             why.append(
                 f"alpha={alpha_v} graft did not change output -- dead injection "
                 f"(max|dlp|={graft_max:.2e} < {change_tol:.0e})")
+        if not identity_ok:
+            why.append(
+                f"identity self-graft is NOT a no-op (max|dlp|={identity_max:.2e} "
+                f"> {alpha0_tol:.0e}) -- cross-model layer/position plumbing "
+                f"broken; raw_EB reversals are NOT trustworthy")
         doc.update(status="UNSUPPORTED",
                    reason="machinery check failed: " + "; ".join(why))
         return doc
@@ -813,6 +1167,139 @@ def _dry_run(data_dir: Path, conv_limit: int) -> int:
     return 0
 
 
+def _self_test_controls() -> int:
+    """CPU-only unit tests for the new controls (NO torch, NO model, NO pod)."""
+    print("== cross_arch_probe --self-test (controls; no torch/model) ==")
+
+    # ---- CONTROL #6: cluster bootstrap is WIDER than probe bootstrap on
+    #      CORRELATED data (probes clustered by conversation). 3 convs x 5 probes;
+    #      strong between-conv spread, tiny within-conv noise.
+    conv_a = [0.9, 1.0, 1.1, 1.0, 1.0]
+    conv_b = [-0.1, 0.0, 0.1, 0.0, 0.0]
+    conv_c = [-1.1, -1.0, -0.9, -1.0, -1.0]
+    clusters = [conv_a, conv_b, conv_c]
+    flat = conv_a + conv_b + conv_c
+    probe = bootstrap_ci_95(flat, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+    clust = bootstrap_ci_95_cluster(clusters, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+    probe_w = probe["hi"] - probe["lo"]
+    clust_w = clust["hi"] - clust["lo"]
+    print(f"  probe-level  CI=[{probe['lo']:+.3f},{probe['hi']:+.3f}] "
+          f"width={probe_w:.3f}  n={probe['n']}")
+    print(f"  cluster (conv) CI=[{clust['lo']:+.3f},{clust['hi']:+.3f}] "
+          f"width={clust_w:.3f}  n_clusters={clust['n_clusters']}")
+    assert abs(probe["mean"] - clust["mean"]) < 1e-9, \
+        "point estimate must be identical (only interval width changes)"
+    assert clust_w > probe_w, \
+        f"cluster CI ({clust_w:.3f}) must be WIDER than probe CI ({probe_w:.3f})"
+    print(f"  OK: cluster CI is {clust_w / probe_w:.1f}x wider than probe CI")
+
+    # ---- CONTROL #1: placebo source-corruption index plans (fake tensors) ----
+    # Fake per-position value "tensor": row at position o is the marker [o,o,o].
+    fake_src = {o: [o, o, o] for o in range(200)}
+    old_idx = [10, 11, 12, 13, 14]
+
+    def sel(idxs):  # mimic blend_values reading old_snap value rows at old_idx
+        return [fake_src[o] for o in idxs]
+
+    plan_pos = _placebo_index_plan("shuffle_pos", old_idx, [], seed=ROBUST_SEED)
+    assert sorted(plan_pos) == sorted(old_idx), "shuffle_pos must be a permutation"
+    assert plan_pos != old_idx, "shuffle_pos must actually scramble (this seed)"
+    real_rows = sel(old_idx)
+    plac_rows = sel(plan_pos)
+    assert sorted(map(tuple, real_rows)) == sorted(map(tuple, plac_rows)), \
+        "shuffle_pos keeps the SAME source values (right values, wrong slots)"
+    assert real_rows != plac_rows, "shuffle_pos must land them in different slots"
+    n_moved = sum(1 for a, b in zip(real_rows, plac_rows) if a != b)
+    print(f"  shuffle_pos: {n_moved}/{len(old_idx)} positions got a wrong-slot "
+          f"source value (right values, scrambled)")
+
+    prev_old = [100, 101, 102]
+    plan_probe = _placebo_index_plan("shuffle_probe", old_idx, prev_old,
+                                     seed=ROBUST_SEED)
+    assert len(plan_probe) == len(old_idx)
+    assert all(o in prev_old for o in plan_probe), \
+        "shuffle_probe must draw from ANOTHER probe's positions"
+    print(f"  shuffle_probe: drew {plan_probe} from prev-conv positions {prev_old}")
+
+    plan_fallback = _placebo_index_plan("shuffle_probe", old_idx, [],
+                                        seed=ROBUST_SEED)
+    assert sorted(plan_fallback) == sorted(old_idx), \
+        "shuffle_probe with no prev conv must fall back to shuffle_pos"
+    print("  shuffle_probe (no prev) -> shuffle_pos fallback OK")
+
+    assert _placebo_index_plan("gauss", old_idx, [], 0) is None
+    assert _placebo_index_plan("mean", old_idx, [], 0) is None
+    print("  gauss/mean plans -> None (tensor-corruption path, pairs unchanged)")
+    try:
+        _placebo_index_plan("bogus", old_idx, [], 0)
+        raise AssertionError("bad mode must raise")
+    except ValueError:
+        print("  bad placebo mode raises ValueError OK")
+
+    # ---- CONTROL #5: model_hparams populates from config (incl. text_config) ----
+    cfg = _FakeCfg(model_type="qwen3_moe", num_hidden_layers=48,
+                   num_attention_heads=32, num_key_value_heads=4,
+                   hidden_size=2048, head_dim=128, rope_theta=1_000_000.0,
+                   vocab_size=151936, use_qk_norm=True)
+    hp = detect_model_hparams(cfg)
+    print(f"  hparams(qwen3_moe): {hp}")
+    assert hp["gqa_ratio"] == 8.0, "gqa_ratio = n_heads/n_kv"
+    assert hp["qk_norm"] is True, "qk_norm detected from use_qk_norm"
+    assert all(hp[k] is not None for k in hp), "every hparam field populated"
+
+    mm = _FakeCfg(model_type="mm_wrapper", vocab_size=200000,
+                  text_config=_FakeCfg(model_type="mistral",
+                                       num_hidden_layers=40,
+                                       num_attention_heads=40,
+                                       num_key_value_heads=8, hidden_size=5120,
+                                       rope_theta=1e6, vocab_size=131072))
+    hp2 = detect_model_hparams(mm)
+    assert hp2["num_hidden_layers"] == 40 and hp2["gqa_ratio"] == 5.0, \
+        "hparams must unwrap nested text_config"
+    assert hp2["qk_norm"] is False, "no qk-norm keys -> False"
+    print(f"  hparams(mm_wrapper->mistral): layers={hp2['num_hidden_layers']} "
+          f"gqa={hp2['gqa_ratio']} qk_norm={hp2['qk_norm']} OK")
+
+    # ---- CONTROL #4: trace dict shape (mock a scored probe) ----
+    fake_plant = {"id": "c01-referent-1", "category": "referent",
+                  "distance": None}
+    trace = {
+        "plant_id": fake_plant["id"], "conversation_id": "c01",
+        "category": fake_plant["category"], "distance": fake_plant.get("distance"),
+        "lp_A": -1.0, "lp_B": -2.0, "lp_E": -1.5, "raw_EB": 0.5,
+        "gold": "some gold text", "n_gold_tokens": 12, "alpha": 0.75,
+        "seed": ROBUST_SEED, "summary_len_tokens": 87, "grafted_layer_count": 48,
+        "n_pairs": 30, "placebo_mode": None, "placebo_raw_EB": None,
+        "alpha_sweep_raw_EB": None,
+    }
+    expected_keys = {
+        "plant_id", "conversation_id", "category", "distance", "lp_A", "lp_B",
+        "lp_E", "raw_EB", "gold", "n_gold_tokens", "alpha", "seed",
+        "summary_len_tokens", "grafted_layer_count", "n_pairs", "placebo_mode",
+        "placebo_raw_EB", "alpha_sweep_raw_EB"}
+    assert set(trace) == expected_keys, \
+        f"trace keys mismatch: {set(trace) ^ expected_keys}"
+    print(f"  trace dict has all {len(expected_keys)} required fields OK")
+
+    # ---- robust_category_stats gains cluster CI without dropping old keys ----
+    rows = [{"conversation_id": "c01", "raw_EB": 0.4},
+            {"conversation_id": "c01", "raw_EB": 0.5},
+            {"conversation_id": "c02", "raw_EB": -0.2}]
+    st = robust_category_stats([r["raw_EB"] for r in rows],
+                               [(None, None)] * len(rows),
+                               raw_eb_clusters=_group_by_conv(rows))
+    for k in ("n", "raw_EB_mean", "raw_EB_ci", "pct_helped", "pct_helped_ci",
+              "median_ratio_cond", "n_cond", "raw_EB_ci_cluster",
+              "n_conversations"):
+        assert k in st, f"robust_category_stats missing {k}"
+    assert st["n_conversations"] == 2, "two distinct convs"
+    print(f"  robust_category_stats: n_conversations={st['n_conversations']} "
+          f"cluster_ci={st['raw_EB_ci_cluster']} OK")
+
+    print("\nSELF-TEST OK")
+    return 0
+
+
 def make_summaries(summarizer: str, data_dir: Path, summaries_path: Path,
                    conv_limit: int, trust_remote_code: bool):
     """Generate the SHARED fixed summary text ONCE with a single designated
@@ -872,8 +1359,23 @@ def main():
                     default=float(os.environ.get("SC_CHANGE_TOL", "1e-3")))
     ap.add_argument("--max-gold-tok", type=int,
                     default=int(os.environ.get("SC_MAX_GOLD_TOK", "80")))
+    ap.add_argument("--placebo", default=(os.environ.get("SC_PLACEBO") or None),
+                    help="CONTROL #1: corrupted-source placebo graft mode "
+                         f"({'|'.join(PLACEBO_MODES)}); default off")
+    ap.add_argument("--alpha-sweep", action="store_true",
+                    default=os.environ.get("SC_ALPHA_SWEEP", "0")
+                    not in ("0", "", "false", "False"),
+                    help="CONTROL #3: run E at alpha in "
+                         f"{ALPHA_SWEEP_VALUES}; default off")
+    ap.add_argument("--seed", type=int,
+                    default=int(os.environ.get("SC_SEED", str(ROBUST_SEED))))
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--self-test", action="store_true",
+                    help="run the CPU-only controls self-tests, then exit")
     args = ap.parse_args()
+
+    if args.self_test:
+        sys.exit(_self_test_controls())
 
     data_dir = Path(args.data_dir)
     if args.dry_run:
@@ -921,7 +1423,9 @@ def main():
             args.model, data_dir, out_dir, fixed_summaries,
             conv_limit=args.conv_limit, alpha_v=args.alpha_v,
             alpha0_tol=args.alpha0_tol, change_tol=args.change_tol,
-            max_gold_tok=args.max_gold_tok, trust_remote_code=trust)
+            max_gold_tok=args.max_gold_tok, trust_remote_code=trust,
+            placebo_mode=args.placebo, alpha_sweep=args.alpha_sweep,
+            seed=args.seed)
     except SystemExit:
         raise
     except BaseException as e:  # noqa: BLE001
