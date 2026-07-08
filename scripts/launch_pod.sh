@@ -28,7 +28,7 @@ done
 SSH="ssh -i $K -p $PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 root@$IP"
 
 $SSH "apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync >/dev/null 2>&1; mkdir -p /workspace/exp/data; nvidia-smi --query-gpu=name --format=csv,noheader" || { echo "FAIL: bootstrap $NAME"; exit 1; }
-rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json data/synthetic data/natural data/decoy_probes.json swegym.parquet .huggingface_key root@$IP:/workspace/exp/ 2>/dev/null || true
+rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json swegym.parquet .huggingface_key root@$IP:/workspace/exp/ 2>/dev/null || true
 LME=/Users/jeb/.cache/huggingface/hub/datasets--xiaowu0162--longmemeval-cleaned/snapshots/98d7416c24c778c2fee6e6f3006e7a073259d48f/longmemeval_s_cleaned.json
 rsync -azL -e "ssh -i $K -p $PORT" "$LME" root@$IP:/workspace/exp/longmemeval_s_cleaned.json
 $SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural data/ 2>/dev/null; true"
