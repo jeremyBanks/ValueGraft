@@ -450,3 +450,13 @@ MAP status: Qwen2.5-dense NEGATIVE is REAL (self-gen −0.32 AND trusted model-g
 −0.30, both). Qwen3-MoE POSITIVE. Mistral (fixed-summary ~null) = BIASED, re-run
 self-gen. CONFOUND (Fable): self-gen summary quality varies across models → report
 pre_graft_gap + summary token-count per model, use conditioned ratio.
+
+## POSITIVE CONTROL PASSES on correct model (07-08) — effect confirmed real
+After the wrong-model saga (incident 34), the trusted apparatus (gap_closure_cat.py,
+difflib, self-gen) on the CORRECT model Qwen3-30B-A3B-Instruct-2507 reproduces the effect:
+  orig c01-c12: referent raw_EB=+0.1246 (71% helped), sense +0.047, stance +0.002 (~null).
+The dissociation (referent>sense>stance~0) reproduces exactly. The known +0.136 is confirmed.
+CAVEAT: new convs c13+ show WEAKER referent (+0.009 ~null), sense +0.083, stance -0.096 -->
+the doubled corpus DILUTES rather than strengthens on referent. Checking pre_graft_gap (A-B)
+on new convs to decide: small gap = effect-tracks-damage (fine); large unrecovered gap =
+new convs are lower-quality rendering (fix before wide).
