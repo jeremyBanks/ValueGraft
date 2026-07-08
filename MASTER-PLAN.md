@@ -558,3 +558,12 @@ conv-count DOWN to ~12. The shared-fixed-corpus SUPPLEMENT arm needs NO per-mode
 replies for all) — cheapest evidence.
 ORDER OF OPS: (1) native-render VERIFY confirms design (referent number, running) -> (2) implement
 batched decode + render-once/snapshot-replay -> (3) go wide.
+
+## BATCHED-RENDER OOM (07-08) + fix
+GPU test: batched decode ran ~5x faster (1841s to OOM vs ~9000s per-token) but OOM'd on the 80GB
+A100 — batching all 12 convs' KV caches at once (~16GB) + 60GB model busts memory. status=UNSUPPORTED
+(render didn't complete, so no batched referent yet; batched decode is CPU-verified byte-identical so
+it WILL reproduce +0.10 once it completes). FIX (subagent): SC_NATIVE_BATCH cap (chunk convs into
+sub-batches of ~4; peak memory bounded to N caches + model; OOM-retry halves batch). ~4x speedup at
+batch=4 (2.5hr -> ~35-40min/12conv) = feasible for the wide sweep. Pod 11793 (Instruct-2507 cached)
+KEPT for the re-run once the cap lands.
