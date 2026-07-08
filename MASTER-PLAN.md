@@ -395,3 +395,17 @@ NOW 16 models. Version-pairs = control: if sign is geometry-set, checkpoints agr
 ## CORPUS DOUBLING (07-08, user): 27->54 convs (~100/category, Fable anchor target).
 Author c28-c54 scenarios (mix), render via Fable/Opus/Sonnet/Codex. ~+$12-16 compute on the
 wide run (download is fixed; only self-gen+TF scale). CIs ~30% tighter.
+
+## MODEL LIST FINAL = 16 (07-08, CORRECTED — Gemma-4 DOES exist, I checked wrong size id)
+CORRECTION: gemma-4-27b 404s but google/gemma-4-31B-it (dense) + google/gemma-4-26B-A4B-it
+(MoE) EXIST (verified). "Use both" = Gemma 3 AND 4 (MAJOR versions), NOT minor checkpoints.
+GEMMA now 3 entries: gemma-3-27b-it (v3 sliding-window), gemma-4-31B-it (v4 dense),
+gemma-4-26B-A4B-it (v4 MoE) -> gives (a) Gemma3-vs-4 major-version axis AND (b) a SECOND
+independent dense/MoE de-confound (Gemma-4 26B-A4B vs 31B), orthogonal to the Qwen3 one.
+Dropped the minor version-pairs (user: "not minor") -> single latest each: Mistral-Small-3.2-2506,
+Nemotron-49B-v1_5.
+ANCHORS (deep: placebo+alpha+champion) NOW 5 = Qwen3-30B-A3B(MoE)/Qwen3-32B(dense)/Qwen2.5-32B(dense)
++ gemma-4-31B(dense)/gemma-4-26B-A4B(MoE). TWO independent within-vendor dense/MoE pairs.
+FULL 16: [anchors 5] + Mixtral, Mistral-Small-3.2-2506, gemma-3-27b-it, OLMo-2-32B,
+Qwen3.6-35B-A3B, Qwen3.6-27B, GLM-4-32B-0414, gpt-oss-20b, phi-4, Yi-1.5-34B, Nemotron-49B-v1_5.
+Vendors: Qwen, Mistral, Google, AllenAI, Zhipu, OpenAI, Microsoft, 01.ai, NVIDIA.

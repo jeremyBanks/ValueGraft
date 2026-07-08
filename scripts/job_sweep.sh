@@ -22,7 +22,7 @@ export SC_GC_ALPHA="${SC_GC_ALPHA:-0.75}"
 export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-6}"  # fingerprint on every model
 export SC_TRUST_REMOTE=1
 MODEL_TIMEOUT="${MODEL_TIMEOUT:-3600}"
-ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct}"
+ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct google/gemma-4-31B-it google/gemma-4-26B-A4B-it}"
 
 echo "WIDE SWEEP START $(date -Is)"; nvidia-smi || true
 for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key /workspace/.huggingface_key; do
