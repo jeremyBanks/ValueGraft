@@ -274,3 +274,36 @@ PILOT models first; if uniform-baseline already shows signal, champion is upside
 NOTE: this also means the paper's cross-arch result should be the TUNED per model,
 with uniform-baseline shown as the untuned floor (honest: "untuned uniform is
 net-neutral, tuning recovers it" — which is consistent with §8).
+
+## CROSS-ARCH REDESIGN (Fable design consult 07-08) — mechanism paper, not datapoint pile
+FABLE'S KEY INSIGHTS:
+1. ⚠️ MECHANISTIC WARNING (paper-saver): value vectors come from the ATTENTION block;
+   MoE lives in the FFN — MoE does NOT touch W_V. So "MoE flips the sign" is
+   mechanistically WEAK and a reviewer trap. The reversal is real but the DRIVER is
+   likely ATTENTION GEOMETRY (n_kv_heads, head_dim, GQA ratio, QK-norm, RoPE theta) or
+   training — NOT MoE. REFRAME organizing question: "what architectural property
+   PREDICTS THE SIGN (help vs harm)?" Sign-prediction IS the paper; generalization is
+   the wrapper.
+2. THE REVERSAL IS CONFOUNDED: Qwen2.5-32B vs Qwen3-30B-A3B differ on ~5 axes at once.
+   FIX (non-negotiable): ADD Qwen3-32B (DENSE) — same gen/vendor/tokenizer as
+   Qwen3-30B-A3B → cleanly isolates dense-vs-MoE.
+3. GO DEEP ON ANCHORS, SHALLOW ON BREADTH. Tier1 anchors (deep ~100-150 probes/cat):
+   Qwen3-30B-A3B(MoE), Qwen3-32B(dense), Qwen2.5-32B(dense). Tier2 replication: Mixtral,
+   Mistral-Small. Tier3 geometry: Gemma-3. Tier4 breadth shallow ~50: Qwen3.6-35B/27B,
+   GLM, OLMo. DROP: Llama-2-13B, Yi-1.5, Qwen1.5 (confound-heavy/redundant).
+4. MUST-CAPTURE CONTROLS (ranked): (1) PLACEBO graft (shuffled/random/mean values —
+   proves structured write-time state not noise); (2) IDENTITY-graft check (own values
+   onto UNCOMPACTED = ~no-op; catches fake reversals from layer-count diffs — run BEFORE
+   trusting each model's sign); (3) OWN-vs-FOREIGN summary as DESIGNED axis on anchors
+   (does foreign suppress in the −dense model too? 2×2 arch-sign × summary-source = best
+   figure); (4) ALPHA dose-response 0.25/0.5/1/2 (opposite directions MoE vs dense =
+   mechanism proof); (5) full dissociation all models; (6) SAVE ALL RAW per-probe traces
+   (lp_A/B/E, gold ids, summary text+len, conv count, layer indices, alpha, seed); (7)
+   LOG every attention hyperparam/model (n_kv_heads, head_dim, GQA, QK-norm, RoPE, layers)
+   = the regression; (8) keys-open reconfirm 2 anchors; (9) effect-vs-pre_gap scatter
+   (rule out ceiling/floor artifact).
+5. POWER: bootstrap over CONVERSATIONS not probes (within-conv correlated → naive
+   understates CIs); report distinct convs/model. Deep anchors individually significant.
+6. OWN-SUMMARY EXPERIMENT > 12th arch: vary summary source own/other-model/fixed/degraded/
+   PARAPHRASED-OWN (crux: same content diff tokens+activations → separates 'needs own text'
+   vs 'needs own write-time state'). Fund by dropping Yi/Llama-2.
