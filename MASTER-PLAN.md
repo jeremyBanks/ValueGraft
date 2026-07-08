@@ -364,3 +364,13 @@ region / never call it optimization.
 FRACTIONAL-DEPTH FIX: bin by RELATIVE depth [0,1/6)..[5/6,1] not absolute index; report
 actual per-model layer ranges/region; distrust EDGE bins (first/last layers special
 regardless of depth); NORMALIZE per-region effect by n_layers grafted (density) or disclose.
+
+## FROZEN MODEL LIST (verified on HF, 07-07) — 10 models
+ANCHORS (deep: full corpus + placebo + alpha-sweep + champion): Qwen/Qwen3-30B-A3B (MoE+),
+Qwen/Qwen3-32B (dense de-confound), Qwen/Qwen2.5-32B-Instruct (dense-).
+REPLICATION: mistralai/Mixtral-8x7B-Instruct-v0.1 (MoE), mistralai/Mistral-Small-24B-Instruct-2501 (dense).
+GEOMETRY: google/gemma-3-27b-it (sliding-window).
+BREADTH (full corpus + champion): allenai/OLMo-2-0325-32B-Instruct, Qwen/Qwen3.6-35B-A3B,
+Qwen/Qwen3.6-27B, zai-org/GLM-4-32B-0414.
+All 10 return HTTP 200 on HF api. Assign across ~5 pods (2 each) after the gate passes.
+Own-summary experiment on anchors. Sign-regression over model_hparams.
