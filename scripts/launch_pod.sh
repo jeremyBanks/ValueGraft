@@ -36,5 +36,6 @@ bash -n "$JOB" || { echo "FAIL: job script syntax"; exit 1; }
 for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" || { echo "FAIL: $f syntax"; exit 1; }; done
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh
 echo "$NAME $PORT $IP" >> $S/pods.list
-$SSH 'cd /workspace/exp && chmod +x job.sh && nohup bash job.sh > job.log 2>&1 & echo "job pid $!"' 
+# forward per-pod launch env (MODELS + conv limit) into the remote job execution
+$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' nohup bash job.sh > job.log 2>&1 & echo job-launched"
 echo "LAUNCHED $NAME at $IP:$PORT"
