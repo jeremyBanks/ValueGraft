@@ -43,3 +43,42 @@ When writing/reviewing the paper, treat this file as a checklist. A methods sect
 cannot point to where it addresses each item above is NOT DONE. Brief Fable, the critics,
 and Codex to check the paper against THIS FILE specifically. Provenance omissions are a
 blocking review failure, not a nice-to-have.
+
+## SCIENTIFIC NUANCES & SCOPE CONDITIONS — the paper MUST state these (added 07-08, owner emphatic)
+Beyond data provenance, these design decisions / scope conditions / mechanistic nuances emerged
+this session and MUST be stated clearly. A reader who doesn't know them cannot interpret or reproduce
+the result. Do not bury or omit any:
+
+1. NATIVENESS SCOPE CONDITION (central): the graft recovers evicted meaning ONLY for the model's OWN
+   NATIVE context. Evidence: foreign assistant replies collapse the effect (raw_EB +0.009 vs native
+   +0.12, same model, real A-B gap present); a foreign SUMMARY also suppresses it. The graft re-injects
+   the model's own write-time values, so the context (assistant replies) AND the summary must be what
+   THAT model produced. This is a feature (it makes the mechanism specific, kills "any KV re-injection
+   helps"), and it matches deployment (a real conversation's replies ARE the model's own). STATE it as
+   a scope condition + finding, not a footnote.
+2. PER-MODEL-NATIVE DESIGN: models were measured on DIFFERENT conversations — same shared SCAFFOLD
+   (planted facts + user prompts + gold), but each model generated its OWN in-context assistant replies +
+   its OWN self-gen summary. State this explicitly and why (ecological validity; a shared foreign corpus
+   would confound the cross-arch SIGN with per-model nativeness).
+3. EXACT CHECKPOINTS: give full HF ids incl. thinking-vs-instruct (the +0.12 is on the NON-thinking
+   Qwen3-30B-A3B-Instruct-2507; the thinking Qwen3-30B-A3B behaves differently — a wrong-checkpoint run
+   cost us hours). Report per-model attention geometry (n_kv_heads, head_dim, GQA, QK-norm, RoPE, layers).
+4. METRIC = raw_EB = lp_E - lp_B on a SHARED gold continuation (from the planted facts, not model-
+   generated) -> the difference cancels target-nativeness, so the SIGN is the robust quantity. Robust
+   estimator: raw E-B + bootstrap CI over CONVERSATIONS (the retired mean-of-ratio was Cauchy-unstable).
+   raw_EB normalized by per-model HEADROOM (A-B gap).
+5. GATES: headroom floor (a category the summary preserved has no A-B gap -> FLOORED, uninterpretable,
+   NOT "harm"); task-competence (lp_A); coherence-screen the model-filled replies. Report N excluded.
+6. ALIGNMENT: difflib positional-within-region matching (summary<->summary, tail<->tail); a strict exact-
+   span variant was tried and REVERTED because it breaks on thinking-model self-gen tokenization. State
+   the method + that it's positional-within-region (not spurious cross-conversation matching).
+7. THE DISSOCIATION: referent > sense > stance~0 — graft helps where compaction did damage (evicted
+   sense/referents), null where the summary already sufficed (stance). This is the core signature.
+8. KEYS NEUTRAL: values are the operative axis (keys ~neutral); state it, don't overclaim keys.
+9. ARCHITECTURE BOUNDARIES: MLA models (DeepSeek/Kimi) excluded by design (no per-head values to graft);
+   sliding-window (Gemma) may be UNSUPPORTED (padded snapshot) — report which models were UNSUPPORTED + why.
+10. HONEST BOUNDS: single cross-model non-replications, small-N per-model CIs straddling zero (report as
+    inconclusive-per-model, not null), and the pre-registered geometry hypothesis (state it was pre-registered).
+
+RULE: brief Fable + critics + Codex to check the paper states each of 1-10 AND the data provenance above.
+Omitting any is a blocking review failure.
