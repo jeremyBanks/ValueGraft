@@ -1,58 +1,42 @@
 # STATE.md — session handoff notes
 
-*Updated 07-08 ~01:45 by Opus 4.8. ESTIMATOR BUG found+resolved; robust-metric era; cross-arch diagnosing.*
+*Updated 07-08 ~02:30 by Opus 4.8. CROSS-ARCH REDESIGN IN FLUX (Fable) — wide sweep HELD.*
 
-## ⚠️ THE BIG EVENT (07-07/08): mean-ratio estimator BROKEN → robust-metric redo
-The gap-closure metric (E-B)/(A-B) mean is CAUCHY-UNSTABLE (small denominators).
-It made results swing run-to-run and inflated magnitudes (the dramatic "-0.31 stance",
-"K-only hurts -0.28"). RESOLUTION (Fable + user push): the EFFECT IS REAL on ROBUST
-metrics; only the estimator was broken. Apparatus is DETERMINISTIC within-env
-(live1==live2 exact); cross-env drift (transformers 5.0→5.13) is small.
-PRIMARY EFFECT w/ bootstrap CIs (raw E-B = lp_E-lp_B, live 30B):
-  referent +0.125 CI[+0.030,+0.218] SIGNIFICANT; sense +0.047 CI[-0.038,+0.131]
-  underpowered (n=22); stance +0.002 CI[-0.036,+0.049] NULL (as claimed).
-STANDARD METRIC NOW: raw E-B + %-helped + bootstrap 95% CI over probes. NEVER bare
-mean-ratio. n=21-24/cat is underpowered = the real limitation (more probes = the fix).
-KEYS: on raw E-B keys are ~NEUTRAL not "hurting" — "value is operative axis" HOLDS,
-"keys hurt" was estimator artifact. KEYS ARE CLOSED (user): numbers-fix only, no more
-key experiments.
+## ⚡ DESIGN IN FLUX (07-08) — do NOT blast the wide sweep until settled
+Fable design consult REFRAMED the cross-arch experiment (recorded MASTER-PLAN
+"CROSS-ARCH REDESIGN"). KEY DECISIONS PENDING:
+- REFRAME (paper-saver): value vectors come from the ATTENTION block; MoE is FFN →
+  MoE does NOT touch W_V. "MoE flips the sign" is a REVIEWER TRAP. Organizing
+  question = "what ATTENTION-GEOMETRY property predicts the SIGN (help/harm)?"
+- DE-CONFOUND: add Qwen3-32B (dense, same gen as Qwen3-30B-A3B MoE) — the clean
+  dense-vs-MoE control. Qwen2.5-vs-Qwen3 reversal is confounded (~5 axes).
+- DEPTH not just width: Tier1 anchors deep (Qwen3-30B-A3B, Qwen3-32B, Qwen2.5-32B,
+  +~100-150 probes/cat), Tier4 breadth shallow. Bootstrap over CONVERSATIONS not probes.
+- MUST-CAPTURE CONTROLS: placebo graft, identity-graft check, alpha dose-response,
+  own-vs-foreign summary axis, SAVE ALL raw traces + log every attn hyperparam/model.
+- OWN-SUMMARY EXPERIMENT (> a 12th model): vary summary source own/other/fixed/degraded/
+  PARAPHRASED-OWN (crux). Fund by dropping Yi/Llama-2.
+- CORPUS QUESTION (sent to Fable): corpus is SYNTHETIC (we made it up). Remake vs
+  augment? Add STRONG-PRIOR referents (Pokémon/Sanderson/LOTR famous names as codenames —
+  tests recovering conv-meaning OVER strong prior = harder disambiguation). Awaiting Fable.
+- HARNESS CHANGES NEEDED before wide launch: 5 categories (DONE, deployed), placebo,
+  identity-check, alpha-sweep, raw-trace capture, hyperparam logging, conv-bootstrap.
 
-## LIVE STATE — cross-arch sweep (on robust metric) + estimator corrections
-POD: 0rjwbqwpte2rzf, COMMUNITY, ssh root@104.255.9.187 -p 11591 -i ~/.ssh/id_ed25519_runpod.
-A100 80GB, 400G disk (prev 200G pod DIED disk-full, incident 30 — SC_POD_DISK knob added).
-torch 2.4.1+cu124 / transformers 5.13 (do NOT pip -U torch; torchaudio/torchvision REMOVED).
-rsync NOT installable here → use scp. State .pod_sweep_state.json. Balance ~$78.
-RUNNING NOW (chained, pod stays busy): self-gen Qwen2.5 cross-arch → auto-launches
-TRUSTED gap_closure_cat on Qwen2.5 (watcher biue71k6k). PARALLEL subagent: alignment
-refactor (a4eeaf1e99232493e, CPU, non-blocking).
+## CONFIRMED (the crisis arc, all resolved + recorded in FINDINGS):
+- Estimator bug (mean-ratio Cauchy) → robust metric raw E-B + bootstrap CI. Effect REAL.
+- Keys CLOSED (neutral, value is operative axis).
+- MECHANISTIC FINDING: graft needs model's OWN generated summary (fixed foreign
+  suppresses; self-gen reproduces). Sweep uses SELF-GEN.
+- MAP so far (self-gen, robust): Qwen3-30B-A3B MoE +0.14/81% (positive); Qwen2.5-32B
+  dense −0.30 (REVERSES, real — trusted apparatus agrees). Harness VALIDATED (positive
+  control passed on self-gen).
 
-CROSS-ARCH STATUS: Qwen2.5-32B (validation model) grafted NEGATIVE raw E-B -0.28
-CI[-0.37,-0.20] with the fixed summary (pre_gap +0.61 so compaction DID damage).
-DIAGNOSING whether that's ARCHITECTURE (user's hypothesis) or a cross-arch HARNESS bug
-(Qwen2.5 template region-detection). NOT the alignment (verified 100% aligned, 0 dropped)
-and NOT the fixed summary (alignment perfect). gap_closure_cat trusted test = decisive.
-Harness FIXED: negative effect = SIGNIFICANT_NEGATIVE result (recorded), NOT skipped;
-by_category_robust bug fixed. USER DIRECTIVE: don't give up from 1 model — explore ALL
-7 before concluding; "doesn't travel to X" is a valid map entry.
-Sweep design: robust metric, fixed Sonnet summaries c01-c12 (all 12 convs, ~8min compute,
-download-dominated ~20min/model), baseline α=0.5→champion-tune→champion-pass protocol,
-disk-evict between models, 2nd pod once one validates (2x throughput, user-approved).
-Models: Qwen3.6-35B-A3B/27B, Gemma-4-27B(sliding-window), Mistral-Small-4, GLM-4.7-Flash,
-OLMo-2-32B, Qwen2.5-32B. EXCLUDE+document MLA (Kimi/DeepSeek).
+## PODS: 6 up (0rjwbqwpte2rzf:11591, welhpjmbqyd880:12994, +p636wvrnqbzy06, ik8irhx4yhqdj0,
++pods5/6 provisioning). $1.19/hr each = ~$4.76-7/hr. 400G each. WIDE SWEEP HELD pending
+design. pods1-2 running OLMo/Mistral (OLD design — partial value, may redo). Idle
+watchdog b19m5koqi live. Balance ~$76-78.
 
-CORRECTIONS PENDING (tasks 29/30/31): (29) paper robust-metric audit of ALL ratio numbers
-(F1 30B, 27B table, 4B, K/V §10) + CIs, via Fable, re-promote README; (30) judged +12pp
-audit w/ CIs (now load-bearing for sense; scores_30b.json has multi-alpha arms E-post-a0.25/
-a1.0); (31) harden alignment (difflib→direct span map, equivalence-gated, NOT a bug just
-robustness). ALIGNMENT NOTE: difflib is NOT compromising anything (100% aligned) — user
-correctly flagged it as fragile overkill; simplifying to direct 1:1 span map.
-
-RESULTS IN HAND (some numbers NEED the robust-metric correction — see task 29):
-- Paper SHIPPED + on README (retitled "Value grafting: recovering lost semantic continuity
-  when a conversation is compacted"; forum-post intro at top). NEEDS robust-metric correction.
-- Lens: pre-registered NEGATIVE (free-gen 0/17/26). Effect-bound RETIRED (different TF, buggy).
-
-## PHASE 4 PLAN (autonomous, no review-ask; me+Fable; see MASTER-PLAN addenda 1-7)
+## ## PHASE 4 PLAN (autonomous, no review-ask; me+Fable; see MASTER-PLAN addenda 1-7)
 Strengthen PRIMARY (grafting) — paper drifted lens-heavy (dud), grafting under-evidenced.
 1. CROSS-ARCH breadth sweep (running next) — does effect travel across architectures.
 2. MORE EXAMPLES from existing data (cheap, high-value; surface more grafting exhibits).
