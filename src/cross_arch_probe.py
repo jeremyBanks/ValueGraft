@@ -875,10 +875,151 @@ def build_token_context(tok, family, msgs, summary_text, tsm):
 NATIVE_MAX_REPLY_DEFAULT = 320
 NATIVE_TEMP_DEFAULT = 0.0
 NATIVE_TOP_P = 0.8
+# THROUGHPUT (07-08): batch the per-reply DECODE across a model's conversations
+# (batch dim = the convs). The expensive part of native render is the token-by-
+# token decode loop; batching it is a ~10x forward-pass win with ZERO validity
+# cost -- the decoded KV is discarded and re-prefilled canonically anyway, so
+# batched decode only needs to reproduce the same reply TOKEN IDS. Greedy (temp
+# 0, the validated anchor setting) is BYTE-IDENTICAL to the per-token path
+# (CPU-verified in _self_test_batched_decode). Guarded by SC_BATCHED_RENDER
+# (default on); SC_BATCHED_RENDER=0 falls back to the validated per-token path.
+NATIVE_BATCHED_RENDER_DEFAULT = (
+    os.environ.get("SC_BATCHED_RENDER", "1") not in ("0", "false", "False"))
+
+
+def _native_pick_token(logits_row, temp, gen):
+    """Choose ONE token from a single [vocab] logits row. Greedy (temp 0): argmax
+    -- deterministic and byte-identical whether called per-token or per batch row.
+    temp>0: seeded top-p nucleus using the per-conv generator ``gen``. Module-level
+    so both decode paths AND the self-test exercise the identical sampler."""
+    import torch  # noqa: PLC0415
+    if temp and temp > 0:
+        probs = torch.softmax(logits_row.float() / temp, dim=-1)
+        sp, si = torch.sort(probs, descending=True)
+        keep = torch.cumsum(sp, 0) - sp < NATIVE_TOP_P
+        keep[0] = True
+        sp, si = sp[keep], si[keep]
+        return int(si[torch.multinomial(
+            sp.cpu() / sp.sum().cpu(), 1, generator=gen)].item())
+    return int(torch.argmax(logits_row, dim=-1).item())
+
+
+def _native_per_token_decode(model, cache, first_logits, next_position, *,
+                             max_reply_tokens, temp, eos_ids, seed, dev):
+    """Per-token (batch=1) decode -- the VALIDATED path. Returns (reply_ids,
+    lp_sum); lp_sum = SUM of chosen tokens' write-time logprobs. EOS excluded from
+    both ids and lp_sum. Mutates ``cache`` (grows it by the reply)."""
+    import torch  # noqa: PLC0415
+    gen = torch.Generator(device="cpu")
+    if seed is not None:
+        gen.manual_seed(seed)
+    toks: list[int] = []
+    lp_sum = 0.0
+    logits = first_logits
+    pos = next_position
+    for _ in range(max_reply_tokens):
+        logp = torch.log_softmax(logits.float(), dim=-1)[0]
+        t = _native_pick_token(logits[0], temp, gen)
+        if t in eos_ids:
+            break
+        lp_sum += float(logp[t].item())
+        toks.append(t)
+        with torch.no_grad():
+            out = model(input_ids=torch.tensor([[t]], device=dev),
+                        past_key_values=cache,
+                        position_ids=torch.tensor([[pos]], device=dev),
+                        use_cache=True)
+        logits = out.logits[:, -1, :]
+        pos += 1
+    return toks, lp_sum
+
+
+def _native_batched_decode(model, caches, first_logits_list, next_positions, *,
+                           max_reply_tokens, temp, eos_ids, seeds, dev, pad_id):
+    """BATCHED decode across a model's convs (batch dim = the convs). Builds a
+    transient LEFT-PADDED batched KV cache from the per-conv caches, then decodes
+    every reply concurrently -- ONE batched model forward per token -- with
+    per-sequence EOS/length handling. Only the FORWARD is batched; each row's token
+    choice reuses _native_pick_token, so GREEDY output is byte-identical to
+    _native_per_token_decode and seeded sampling uses one generator per conv.
+
+    The batched cache is DISCARDED and the per-conv ``caches`` are NOT mutated
+    (native_render throws the reply KV away and re-prefills it canonically), so
+    batching only has to reproduce the same reply TOKEN IDS. Left-padding + a
+    per-row attention_mask that zeroes the pad prefix + explicit per-row
+    position_ids (each conv's TRUE absolute position) make each row's forward
+    mathematically equal to its unbatched forward (float32 CPU: exact, verified in
+    _self_test_batched_decode; bf16 GPU: up to rounding -- GPU-UNVERIFIED).
+
+    Returns [(reply_ids, lp_sum), ...] aligned to the input order."""
+    import torch  # noqa: PLC0415
+    import torch.nn.functional as F  # noqa: PLC0415, N812
+    from transformers import DynamicCache  # noqa: PLC0415
+
+    from kvlib_hf import snapshot_cache  # noqa: PLC0415
+
+    B = len(caches)
+    if B == 0:
+        return []
+    snaps = [snapshot_cache(c) for c in caches]     # clones -- caches untouched
+    n_layers = len(snaps[0])
+    lens = [s[0][0].shape[-2] for s in snaps]        # per-conv cache length
+    assert list(lens) == [int(p) for p in next_positions], \
+        "batched-decode: cache length must equal next decode position"
+    lmax = max(lens)
+    bcache = DynamicCache()                          # transient, discarded below
+    for li in range(n_layers):
+        ks, vs = [], []
+        for s, L in zip(snaps, lens):
+            k, v = s[li]
+            pad = lmax - L                           # LEFT-pad along the T axis
+            ks.append(F.pad(k, (0, 0, pad, 0)))
+            vs.append(F.pad(v, (0, 0, pad, 0)))
+        bcache.update(torch.cat(ks, 0), torch.cat(vs, 0), li)
+    # [B, lmax] mask: 0 over the left pad, 1 over each conv's real prefix.
+    attn = torch.zeros(B, lmax, dtype=torch.long, device=dev)
+    for bi, L in enumerate(lens):
+        attn[bi, lmax - L:] = 1
+    gens = []
+    for sd in seeds:
+        g = torch.Generator(device="cpu")
+        if sd is not None:
+            g.manual_seed(sd)
+        gens.append(g)
+    toks: list[list[int]] = [[] for _ in range(B)]
+    lp_sums = [0.0] * B
+    done = [False] * B
+    logits = torch.stack([fl[0] for fl in first_logits_list], 0)   # [B, vocab]
+    pos = torch.tensor([int(p) for p in next_positions], device=dev)  # [B]
+    for _step in range(max_reply_tokens):
+        logp = torch.log_softmax(logits.float(), dim=-1)              # [B, V]
+        step_tok = torch.full((B,), pad_id, dtype=torch.long, device=dev)
+        for bi in range(B):
+            if done[bi]:
+                continue
+            t = _native_pick_token(logits[bi], temp, gens[bi])
+            if t in eos_ids:
+                done[bi] = True
+                continue
+            lp_sums[bi] += float(logp[bi, t].item())
+            toks[bi].append(t)
+            step_tok[bi] = t
+        if all(done):
+            break
+        attn = torch.cat([attn, torch.ones(B, 1, dtype=attn.dtype, device=dev)], 1)
+        with torch.no_grad():
+            out = model(input_ids=step_tok[:, None], position_ids=pos[:, None],
+                        past_key_values=bcache, attention_mask=attn,
+                        use_cache=True)
+        logits = out.logits[:, -1, :]
+        pos = pos + 1                    # done rows advance too (output ignored)
+    del bcache
+    return list(zip(toks, lp_sums))
 
 
 def native_render_specs(model, tok, family, scenarios, conv_limit, *,
-                        max_reply_tokens, temp, seed_base):
+                        max_reply_tokens, temp, seed_base,
+                        batched_render=NATIVE_BATCHED_RENDER_DEFAULT):
     """PER-MODEL IN-CONTEXT (NATIVE) RENDER of the shared scaffold (design v2).
 
     GPU path (torch). For each of the first ``conv_limit`` scaffold scenarios,
@@ -899,7 +1040,18 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
     the growing cache is truncated back to the canonical (user-final) prefix and
     the assistant block is re-prefilled in its canonical (think-free, non-final)
     form, so the stored value vectors match the compacted rendering the graft will
-    later align against. GPU-UNVERIFIED (no pod run here)."""
+    later align against. GPU-UNVERIFIED (no pod run here).
+
+    THROUGHPUT (``batched_render``, default on / SC_BATCHED_RENDER): the reply
+    DECODE is batched ACROSS this model's conversations (batch dim = the convs).
+    The loops are inverted to be TURN-MAJOR: at each turn index every still-active
+    conv prefills its user block (per-conv), then ALL active convs decode their
+    replies CONCURRENTLY in one batched forward per token, with per-sequence
+    EOS/length handling. Greedy (temp 0, the validated anchor setting) is
+    BYTE-IDENTICAL to the per-token path -- the batched decode's KV is discarded
+    and the reply re-prefilled canonically, so batching only has to reproduce the
+    same reply TOKEN IDS, and it does (CPU-verified, _self_test_batched_decode).
+    SC_BATCHED_RENDER=0 restores the validated per-token, conv-major path."""
     import torch  # noqa: PLC0415
     from transformers import DynamicCache  # noqa: PLC0415
 
@@ -912,6 +1064,9 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
     eos = model.config.eos_token_id
     eos_ids = {eos} if isinstance(eos, int) else set(eos)
     dev = model.device
+    pad_id = tok.pad_token_id
+    if pad_id is None:
+        pad_id = next(iter(eos_ids)) if eos_ids else 0
 
     def _ids(seq):
         return torch.tensor([list(seq)], device=dev)
@@ -925,101 +1080,83 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
               for k, v in snap]
         return rebuild_cache(sl, DynamicCache)
 
-    def _generate(cache, first_logits, next_position, seed):
-        """Greedy (temp 0) / seeded-nucleus decode; returns (reply_ids, lp_sum)
-        where lp_sum is the SUM of the chosen tokens' write-time logprobs (the
-        info-content covariate). EOS is excluded from both the ids and lp_sum."""
-        gen = torch.Generator(device="cpu")
-        if seed is not None:
-            gen.manual_seed(seed)
-        toks: list[int] = []
-        lp_sum = 0.0
-        logits = first_logits
-        pos = next_position
-        for _ in range(max_reply_tokens):
-            logp = torch.log_softmax(logits.float(), dim=-1)[0]
-            if temp and temp > 0:
-                probs = torch.softmax(logits.float() / temp, dim=-1)[0]
-                sp, si = torch.sort(probs, descending=True)
-                keep = torch.cumsum(sp, 0) - sp < NATIVE_TOP_P
-                keep[0] = True
-                sp, si = sp[keep], si[keep]
-                t = int(si[torch.multinomial(
-                    sp.cpu() / sp.sum().cpu(), 1, generator=gen)].item())
-            else:
-                t = int(torch.argmax(logits, dim=-1).item())
-            if t in eos_ids:
-                break
-            lp_sum += float(logp[t].item())
-            toks.append(t)
-            with torch.no_grad():
-                out = model(input_ids=_ids([t]), past_key_values=cache,
-                            position_ids=_pos(pos, pos + 1), use_cache=True)
-            logits = out.logits[:, -1, :]
-            pos += 1
-        return toks, lp_sum
-
-    specs: list = []
-    reply_records: list = []
+    # ---- per-conv mutable state (both paths share the per-turn bookkeeping) ----
+    states = []
     for i, scenario in enumerate(scenarios[:conv_limit]):
-        plan = scenario_turn_plan(scenario, seed=seed_base + i)
-        conv_seed = seed_base + i
-        msgs = [{"role": "system", "content": scenario["system"]}]
-        cache = DynamicCache()
-        stream: list[int] = []
-        truncated = 0
-        empty = 0
-        early_tokens = middle_tokens = 0
+        states.append({
+            "scenario": scenario,
+            "plan": scenario_turn_plan(scenario, seed=seed_base + i),
+            "conv_seed": seed_base + i,
+            "msgs": [{"role": "system", "content": scenario["system"]}],
+            "cache": DynamicCache(),
+            "stream": [],
+            "truncated": 0, "empty": 0, "early_tokens": 0, "middle_tokens": 0,
+            "reply_records": [], "result": None,
+        })
 
-        for ti, turn in enumerate(plan["turns"]):
-            msgs.append({"role": "user", "content": turn["text"]})
-            # canonical prefix THROUGH the user turn (plain render is canonical
-            # here -- the final message is a USER, no think injection). Mirrors
-            # compose.py's r_canon.
-            r_canon_user = render_hf(tok, msgs, False)
-            r_gen = render_hf(tok, msgs, True)
-            assert r_gen[: len(stream)] == stream, \
-                f"{scenario['id']} turn {ti}: canonical prefix broke (gen)"
-            assert r_gen[: len(r_canon_user)] == r_canon_user, \
-                f"{scenario['id']} turn {ti}: gen render doesn't extend canonical"
+    def _prefill_user_turn(st, ti):
+        """Append user turn ``ti``, prefill its (user + generation-prompt) block
+        into the conv's cache. Returns (cache, first_logits, next_position)."""
+        scenario, plan = st["scenario"], st["plan"]
+        msgs, stream = st["msgs"], st["stream"]
+        msgs.append({"role": "user", "content": plan["turns"][ti]["text"]})
+        # canonical prefix THROUGH the user turn (plain render is canonical here --
+        # the final message is a USER, no think injection). Mirrors compose r_canon.
+        r_canon_user = render_hf(tok, msgs, False)
+        r_gen = render_hf(tok, msgs, True)
+        assert r_gen[: len(stream)] == stream, \
+            f"{scenario['id']} turn {ti}: canonical prefix broke (gen)"
+        assert r_gen[: len(r_canon_user)] == r_canon_user, \
+            f"{scenario['id']} turn {ti}: gen render doesn't extend canonical"
+        new_ids = r_gen[len(stream):]
+        cache, logits = prefill(model, _ids(new_ids), past=st["cache"],
+                                position_ids=_pos(len(stream), len(r_gen)))
+        st["cache"] = cache
+        st["_r_canon_user"] = r_canon_user
+        return cache, logits, len(r_gen)
 
-            new_ids = r_gen[len(stream):]
-            cache, logits = prefill(model, _ids(new_ids), past=cache,
-                                    position_ids=_pos(len(stream), len(r_gen)))
-            reply_ids, lp_sum = _generate(cache, logits, len(r_gen), conv_seed)
-            capped = len(reply_ids) >= max_reply_tokens
-            reply_text = tok.decode(reply_ids).strip()
-            if capped:
-                truncated += 1
-                reply_text = trim_capped_reply(reply_text)
-            if not reply_text:
-                empty += 1
-            reply_records.append({"n_tokens": len(reply_ids),
-                                  "logprob_sum": lp_sum})
-            msgs.append({"role": "assistant", "content": reply_text})
+    def _finalize_reply(st, ti, reply_ids, lp_sum):
+        """Commit one decoded reply: text/trim/covariate, append assistant msg,
+        then re-canonicalize the cache (truncate to the user-final prefix, re-
+        prefill the assistant block in canonical non-final form). On the conv's
+        LAST turn, finalize the conv (build its dict, free the cache)."""
+        scenario, plan = st["scenario"], st["plan"]
+        msgs = st["msgs"]
+        capped = len(reply_ids) >= max_reply_tokens
+        reply_text = tok.decode(reply_ids).strip()
+        if capped:
+            st["truncated"] += 1
+            reply_text = trim_capped_reply(reply_text)
+        if not reply_text:
+            st["empty"] += 1
+        st["reply_records"].append({"n_tokens": len(reply_ids),
+                                    "logprob_sum": lp_sum})
+        msgs.append({"role": "assistant", "content": reply_text})
 
-            # re-canonicalize the cache: truncate back to the user-final prefix,
-            # re-prefill the assistant block in canonical (non-final) form so the
-            # stored values match what the graft alignment will later see.
-            r_new = canonical_ids_any(tok, msgs, render_hf)
-            assert r_new[: len(r_canon_user)] == r_canon_user, \
-                f"{scenario['id']} turn {ti}: assistant block changed the prefix"
-            cache = _truncate(cache, len(r_canon_user))
-            if len(r_new) > len(r_canon_user):
-                cache, _ = prefill(
-                    model, _ids(r_new[len(r_canon_user):]), past=cache,
-                    position_ids=_pos(len(r_canon_user), len(r_new)))
-            stream = r_new
+        r_canon_user = st["_r_canon_user"]
+        r_new = canonical_ids_any(tok, msgs, render_hf)
+        assert r_new[: len(r_canon_user)] == r_canon_user, \
+            f"{scenario['id']} turn {ti}: assistant block changed the prefix"
+        cache = _truncate(st["cache"], len(r_canon_user))
+        if len(r_new) > len(r_canon_user):
+            cache, _ = prefill(
+                model, _ids(r_new[len(r_canon_user):]), past=cache,
+                position_ids=_pos(len(r_canon_user), len(r_new)))
+        st["cache"] = cache
+        st["stream"] = r_new
+        if ti + 1 == plan["n_early"]:
+            st["early_tokens"] = len(r_new)
+        if ti + 1 == plan["n_early"] + plan["n_middle"]:
+            st["middle_tokens"] = len(r_new)
+        if ti + 1 == len(plan["turns"]):
+            _finalize_conv(st)
 
-            if ti + 1 == plan["n_early"]:
-                early_tokens = len(stream)
-            if ti + 1 == plan["n_early"] + plan["n_middle"]:
-                middle_tokens = len(stream)
-
-        del cache
+    def _finalize_conv(st):
+        scenario, plan = st["scenario"], st["plan"]
+        msgs, stream = st["msgs"], st["stream"]
+        st["cache"] = None                       # free per-conv cache promptly
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-
         conv = {
             "id": scenario["id"],
             "title": scenario.get("title"),
@@ -1027,21 +1164,57 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
             "sections": {
                 "early_end_msg": plan["early_end_msg"],
                 "middle_end_msg": plan["middle_end_msg"],
-                "early_end_tokens": early_tokens,
-                "middle_end_tokens": middle_tokens,
+                "early_end_tokens": st["early_tokens"],
+                "middle_end_tokens": st["middle_tokens"],
                 "total_tokens": len(stream),
             },
             "plants": scenario["plants"],
-            "meta": {"native_render": True, "seed": conv_seed, "temp": temp,
-                     "truncated_replies": truncated, "empty_replies": empty},
+            "meta": {"native_render": True, "seed": st["conv_seed"], "temp": temp,
+                     "truncated_replies": st["truncated"],
+                     "empty_replies": st["empty"]},
         }
         plants = select_plants(conv)
         assert len(msgs) == plan["n_messages"], \
             f"{scenario['id']}: built {len(msgs)} msgs != planned {plan['n_messages']}"
         print(f"  [native] {scenario['id']}: {len(msgs)} msgs, "
-              f"{len(stream)} tokens (early {early_tokens}, middle "
-              f"{middle_tokens}), truncated={truncated} empty={empty}, "
-              f"{len(plants)} usable plants", flush=True)
+              f"{len(stream)} tokens (early {st['early_tokens']}, middle "
+              f"{st['middle_tokens']}), truncated={st['truncated']} "
+              f"empty={st['empty']}, {len(plants)} usable plants", flush=True)
+        st["result"] = (conv, plants)
+
+    if batched_render:
+        # TURN-MAJOR: decode all active convs' replies for a turn concurrently.
+        max_turns = max(len(st["plan"]["turns"]) for st in states)
+        for ti in range(max_turns):
+            active = [st for st in states if ti < len(st["plan"]["turns"])]
+            caches, firsts, nps, seeds = [], [], [], []
+            for st in active:
+                c, l, npos = _prefill_user_turn(st, ti)
+                caches.append(c); firsts.append(l); nps.append(npos)
+                seeds.append(st["conv_seed"])
+            results = _native_batched_decode(
+                model, caches, firsts, nps, max_reply_tokens=max_reply_tokens,
+                temp=temp, eos_ids=eos_ids, seeds=seeds, dev=dev, pad_id=pad_id)
+            for st, (reply_ids, lp_sum) in zip(active, results):
+                _finalize_reply(st, ti, reply_ids, lp_sum)
+            print(f"  [native-batched] turn {ti + 1}/{max_turns}: "
+                  f"{len(active)} convs decoded", flush=True)
+    else:
+        # CONV-MAJOR per-token fallback (the validated path).
+        for st in states:
+            for ti in range(len(st["plan"]["turns"])):
+                c, l, npos = _prefill_user_turn(st, ti)
+                reply_ids, lp_sum = _native_per_token_decode(
+                    model, c, l, npos, max_reply_tokens=max_reply_tokens,
+                    temp=temp, eos_ids=eos_ids, seed=st["conv_seed"], dev=dev)
+                _finalize_reply(st, ti, reply_ids, lp_sum)
+
+    # assemble in scenario order (stats are order-independent, but keep it stable)
+    specs: list = []
+    reply_records: list = []
+    for st in states:
+        reply_records.extend(st["reply_records"])
+        conv, plants = st["result"]
         if plants:
             specs.append((conv, plants))
     return specs, reply_records
@@ -2267,8 +2440,114 @@ def _self_test_controls() -> int:
           f"cluster_ci={st['raw_EB_ci_cluster']} OK")
 
     _self_test_native()
+    _self_test_batched_decode()
 
     print("\nSELF-TEST OK")
+    return 0
+
+
+def _self_test_batched_decode() -> int:
+    """CPU byte-identity check for the THROUGHPUT optimizations (design v2, 07-08).
+
+    (1) BATCHED DECODE == PER-TOKEN DECODE: the left-padded batched decoder
+        (_native_batched_decode) must reproduce the per-token greedy decoder
+        (_native_per_token_decode) TOKEN-FOR-TOKEN and lp_sum-for-lp_sum, over a
+        batch of DIFFERENT-length conversations, both without EOS (length-capped)
+        and WITH an EOS that fires mid-decode for one row (per-sequence stopping).
+    (2) SNAPSHOT-REPLAY == FRESH-RENDER: rebuild_cache(snapshot_cache(prefill))
+        must give teacher-forced logprobs identical to a fresh prefill -- the
+        fidelity that lets run_model render the shared prefix ONCE and replay every
+        arm/control graft from the snapshot (render-once/replay-all-arms).
+
+    Uses a tiny RANDOM Llama built in memory (RoPE + GQA + DynamicCache, no
+    download). Skips cleanly if torch/transformers are unavailable."""
+    print("\n== BATCHED-DECODE + SNAPSHOT-REPLAY self-test (tiny torch model) ==")
+    try:
+        import torch  # noqa: PLC0415
+        from transformers import (  # noqa: PLC0415
+            DynamicCache,
+            LlamaConfig,
+            LlamaForCausalLM,
+        )
+
+        from kvlib_hf import (  # noqa: PLC0415
+            prefill,
+            rebuild_cache,
+            snapshot_cache,
+            tf_logprobs,
+        )
+    except Exception as e:  # noqa: BLE001
+        print(f"  [skip] no torch/transformers available: {type(e).__name__}: {e}")
+        return 0
+
+    torch.manual_seed(0)
+    cfg = LlamaConfig(vocab_size=64, hidden_size=32, intermediate_size=64,
+                      num_hidden_layers=2, num_attention_heads=4,
+                      num_key_value_heads=2, max_position_embeddings=512,
+                      rope_theta=10000.0)
+    model = LlamaForCausalLM(cfg).eval()
+    dev = model.device
+    maxt = 12
+    # DIFFERENT-length conversations -> exercises the left-padding + per-row pos.
+    seqs = [[3, 5, 7, 9, 11], [13, 15, 17], [19, 21, 23, 25, 27, 29, 31, 33]]
+
+    def fresh_prefill(s):
+        c, lg = prefill(model, torch.tensor([s], device=dev), past=DynamicCache(),
+                        position_ids=torch.arange(len(s), device=dev)[None])
+        return c, lg
+
+    def run_both(eos_ids):
+        cs, fs, ns = [], [], []
+        for s in seqs:
+            c, lg = fresh_prefill(s)
+            cs.append(c); fs.append(lg); ns.append(len(s))
+        # batched does NOT mutate cs (it snapshots/clones) -> reuse cs per-token.
+        bat = _native_batched_decode(
+            model, cs, fs, ns, max_reply_tokens=maxt, temp=0.0,
+            eos_ids=eos_ids, seeds=[0] * len(seqs), dev=dev, pad_id=0)
+        ref = [_native_per_token_decode(
+            model, c, lg, n, max_reply_tokens=maxt, temp=0.0,
+            eos_ids=eos_ids, seed=0, dev=dev)
+            for c, lg, n in zip(cs, fs, ns)]
+        return bat, ref
+
+    # (1a) no EOS: length-capped, all rows run to maxt.
+    bat, ref = run_both(set())
+    assert [b[0] for b in bat] == [r[0] for r in ref], \
+        f"batched tokens != per-token tokens:\n  bat={[b[0] for b in bat]}\n  ref={[r[0] for r in ref]}"
+    assert all(abs(b[1] - r[1]) < 1e-6 for b, r in zip(bat, ref)), \
+        "batched lp_sum != per-token lp_sum"
+    assert all(len(b[0]) == maxt for b in bat), "no-EOS run must be length-capped"
+    print(f"  (1a) no-EOS greedy: {len(seqs)} convs, lens={[len(b[0]) for b in bat]}"
+          f" -> batched == per-token (ids + lp_sum) OK")
+
+    # (1b) EOS fires mid-decode for conv 0 -> per-sequence stopping.
+    eos_tok = ref[0][0][3]                 # 4th greedy token of conv 0
+    bat2, ref2 = run_both({eos_tok})
+    assert [b[0] for b in bat2] == [r[0] for r in ref2], \
+        "batched != per-token under mid-decode EOS"
+    assert len(bat2[0][0]) == 3, \
+        f"conv 0 must stop BEFORE the EOS token (3 kept), got {len(bat2[0][0])}"
+    assert eos_tok not in bat2[0][0], "EOS token must be excluded from the reply"
+    print(f"  (1b) mid-decode EOS (tok={eos_tok}): conv0 stopped at 3 toks, "
+          f"batched == per-token OK")
+
+    # (2) snapshot -> rebuild teacher-forced logprobs == fresh prefill.
+    s = seqs[0]
+    src, _ = fresh_prefill(s)
+    replay = rebuild_cache(snapshot_cache(src), DynamicCache)
+    fresh, _ = fresh_prefill(s)
+    feed_prefix, targets = [2, 4, 6], [8, 10, 12]
+    feed = feed_prefix + targets[:-1]
+    pos = torch.arange(len(s), len(s) + len(feed), device=dev)[None]
+    lp_fresh = tf_logprobs(model, fresh, feed, targets, position_ids=pos)
+    lp_replay = tf_logprobs(model, replay, feed, targets, position_ids=pos)
+    md = max(abs(a - b) for a, b in zip(lp_fresh, lp_replay))
+    assert md < 1e-6, f"snapshot-replay tf logprobs differ from fresh by {md}"
+    print(f"  (2) snapshot->rebuild tf logprobs == fresh prefill "
+          f"(max|Δ|={md:.2e}) OK")
+
+    print("  BATCHED-DECODE + SNAPSHOT-REPLAY OK")
     return 0
 
 
