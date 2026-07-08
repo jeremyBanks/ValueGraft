@@ -82,3 +82,24 @@ flag. MUST detect from the LOADED MODEL's modules (presence of q_norm/k_norm lay
 model_hparams.qk_norm has the same bug and must be fixed before qk_norm is used as a predictor.
 Until fixed, do NOT pre-register on qk_norm; either fix detection first, or pre-register on a
 reliably-measured predictor (GQA ratio / head_dim / a composite). Finalize with Fable.
+
+## PRE-FLIGHT DEVIATION NOTE (07-08, appended before ANY outcome/effect data — NOT fit to data)
+An HF architecture pre-flight (querying each model's config `architectures` BEFORE running inference)
+found 5 of the 16 models ship as MULTIMODAL wrappers (`*ForConditionalGeneration`, not
+`*ForCausalLM`), incompatible with the `AutoModelForCausalLM` harness:
+- google/gemma-4-31B-it, google/gemma-4-26B-A4B-it  (Gemma4ForConditionalGeneration) — the pre-registered
+  Gemma-4 PRIMARY de-confound pair
+- google/gemma-3-27b-it  (Gemma3ForConditionalGeneration)
+- Qwen/Qwen3.6-35B-A3B, Qwen/Qwen3.6-27B  (Qwen3_5(Moe)ForConditionalGeneration)
+These are EXCLUDED BY TOOLING, discovered at pre-flight, with NO effect estimates informing the decision.
+CONSEQUENCE: PRIMARY inference drops from TWO within-vendor dense/MoE de-confound pairs to ONE (Qwen3-30B-A3B
+MoE / Qwen3-32B dense). Cross-vendor generalization now rests on the pre-registered H1 (QK-norm) regression
+across the 11 text models. This conjunction — one within-vendor de-confound + a cross-vendor geometry
+regression — is the reported primary case.
+RECOVERY ATTEMPT (pre-registered here, before results): a TIME-BOXED, positive-control-gated spike to load
+the GEMMA-4 pair via its TEXT substack (Gemma exposes a first-class text decoder). GATE: (1) the text-substack
+KV snapshot must byte-match a clean CausalLM load of the same text weights, (2) self-graft must reproduce
+baseline generation. If BOTH pass, Gemma-4 is reported as the pre-registered pair RECOVERED via a disclosed
+text-substack loading path (same comparison, not post-hoc). If either fails or the box expires, we fall back
+to the one-pair-plus-regression case above. Qwen3.6 recovery is NOT attempted (same-vendor as Qwen3 = low
+de-confound value). All 5 models appear in an exclusions table with the architecture class as the stated reason.
