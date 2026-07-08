@@ -553,6 +553,8 @@ def manifest_dict(records: list[NoteRecord]) -> dict[str, Any]:
 
 
 def load_manifest(path: Path) -> list[NoteRecord]:
+    if not path.exists():
+        return []
     data = json.loads(path.read_text(encoding="utf-8"))
     records: list[NoteRecord] = []
     for row in data.get("notes", []):
