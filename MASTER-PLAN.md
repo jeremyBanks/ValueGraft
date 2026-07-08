@@ -336,3 +336,31 @@ FREEZE → provision pods → deep-anchors+wide-shallow sweep + own-summary expe
 
 ## PAPER FRAMING GUARDRAIL — champion results (user 07-08)
 The inline champion-scan numbers are WEAK/TENTATIVE/non-exhaustive/non-comparable (quick free scan). In the paper frame them as a humble "quick scan hints at possible per-layer improvement, future work" — NOT a champion optimization or cross-model comparison. Brief Fable + critics on this so it is NOT overclaimed.
+
+## CHAMPION SCAN — Fable upgrade (07-07): fingerprint→MECHANISM via RESCUE TEST
+Fable verdict: bare "where signal lives" scan = mild DISTRACTION competing w/ the clean
+uniform sign claim; but one reframe from being the MOST important figure. FIREWALL it from
+the uniform result; UPGRADE it interventionally.
+GRAND INSIGHT: uniform raw_EB is a NONLINEAR COMPOSITION over depth (later layers consume
+earlier-grafted values — NOT linear sum of regional raw_EBs). So "sign flips" → "sign is set
+by the DEPTH-PROFILE of value-graftability, which differs by architecture." Categorical
+mystery → continuous predictable. BUT "where" is a LOCALIZER not the mechanism — the scan's
+real job = a BRIDGE telling you WHICH layers to interrogate geometrically (the actual
+attention-geometry property). Central as a bridge; dead-end if you stop at the heatmap.
+CHEAP UPGRADES (reuse cached snapshots), priority:
+1. ★ RESCUE TEST (the whole ballgame): on a NEGATIVE (dense) anchor, graft ONLY the
+   positive-scanning region(s) / just late layers, α=0 elsewhere → if net raw_EB flips
+   POSITIVE, causally PROVES sign = depth-composition, not intrinsic. Promotes scan
+   fingerprint→mechanism. Highest-leverage cheap measurement.
+2. FREE per-layer WRITE-time vs READ-time value cosine/subspace ALIGNMENT (both cached, ~0
+   cost): raw_EB-per-region = EFFECT; value-alignment-per-layer = candidate CAUSE. If
+   alignment predicts per-region sign → geometry→sign chain as a byproduct.
+3. FREE sanity: region=ALL layers must reproduce uniform raw_EB (else miswired). Sum-of-
+   single-regions ≠ uniform is EXPECTED (nonlinear composition — a FEATURE, state it).
+FRAMING: exploratory localization scan; cost-not-principle granularity; non-comparable
+magnitude; hypothesis-generating; claim ONLY "graftability is non-uniform in depth & its
+profile differs by architecture"; RESCUE TEST carries the causal weight; never rank "best"
+region / never call it optimization.
+FRACTIONAL-DEPTH FIX: bin by RELATIVE depth [0,1/6)..[5/6,1] not absolute index; report
+actual per-model layer ranges/region; distrust EDGE bins (first/last layers special
+regardless of depth); NORMALIZE per-region effect by n_layers grafted (density) or disclose.
