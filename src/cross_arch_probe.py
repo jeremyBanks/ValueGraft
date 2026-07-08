@@ -1055,11 +1055,25 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               placebo_mode: str | None = None, alpha_sweep: bool = False,
               seed: int = ROBUST_SEED,
               strong_prior: bool = True, champion_scan: int = 0,
-              champion_regions: list | None = None) -> dict:
+              champion_regions: list | None = None,
+              native_render: bool = False, scenarios: list | None = None,
+              native_max_reply: int = NATIVE_MAX_REPLY_DEFAULT,
+              native_temp: float = NATIVE_TEMP_DEFAULT,
+              headroom_floor: float = HEADROOM_FLOOR_DEFAULT,
+              task_lpa_floor: float = TASK_LPA_FLOOR_DEFAULT) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
     was present and we fall back to per-model self-generated summaries (results
-    are NOT cross-model comparable -- flagged in ``summary_source``)."""
+    are NOT cross-model comparable -- flagged in ``summary_source``).
+
+    native_render (CROSS-ARCH DESIGN v2, SC_NATIVE_RENDER): when True, the corpus
+    is RENDERED IN-CONTEXT by THIS model from the shared ``scenarios`` scaffold
+    (native_render_specs) instead of read pre-rendered from data/synthetic, and
+    the summary is ALWAYS this model's own self-gen (fixed_summaries ignored) --
+    the graft re-injects the model's own write-time values, so it must be measured
+    on this model's own native conversation. The shared plant ``gold`` continuation
+    is UNCHANGED (comes from the scaffold, teacher-forced). Adds per-model reply
+    covariates + the headroom / task-competence gates (design v2.1)."""
     import torch  # noqa: PLC0415
     from transformers import (  # noqa: PLC0415
         AutoConfig,
@@ -1085,9 +1099,15 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "reason": None,
         "alpha_v": alpha_v,
         "conv_limit": conv_limit,
-        "summary_source": ("FIXED external (shared across models)"
-                           if fixed_summaries is not None
-                           else "PER-MODEL fallback (NOT cross-model comparable)"),
+        "native_render": native_render,   # DESIGN v2: per-model in-context corpus
+        "summary_source": (
+            "PER-MODEL SELF-GEN on NATIVE in-context corpus (design v2)"
+            if native_render else
+            "FIXED external (shared across models)"
+            if fixed_summaries is not None
+            else "PER-MODEL fallback (NOT cross-model comparable)"),
+        "reply_covariates": None,  # v2.1 covariate: reply length + info-content
+        "gates": None,             # v2.1 gate summary (headroom / task-competence)
         "skipped_convs": [],
         "n_plants": 0,
         "kv_geometry": None,
@@ -1246,10 +1266,41 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     uniform_seconds = 0.0     # wall time of the standard uniform-alpha scoring
     champion_seconds = 0.0    # wall time of the per-config re-blend + scoring
 
-    specs = collect_specs(data_dir, conv_limit)
+    # ---- corpus: per-model NATIVE in-context render (design v2) or pre-rendered
+    reply_records: list = []
+    if native_render:
+        if not scenarios:
+            doc.update(status="ERROR",
+                       reason="native_render=1 but no scenarios scaffold provided")
+            return doc
+        # the graft needs THIS model's own write-time summary -> ignore any fixed
+        # summaries file in native mode.
+        fixed_summaries = None
+        try:
+            print(f"  [native-render] rendering {conv_limit} scaffold scenarios "
+                  f"in-context (temp={native_temp}, max_reply={native_max_reply})",
+                  flush=True)
+            specs, reply_records = native_render_specs(
+                model, tok, family, scenarios, conv_limit,
+                max_reply_tokens=native_max_reply, temp=native_temp,
+                seed_base=1000)
+        except torch.cuda.OutOfMemoryError as e:  # noqa: BLE001
+            doc.update(status="UNSUPPORTED", reason=f"OOM during native render: {e}")
+            return doc
+        except Exception as e:  # noqa: BLE001
+            doc.update(status="ERROR",
+                       reason=f"native render failed: {type(e).__name__}: {e}\n"
+                              f"{traceback.format_exc()}")
+            return doc
+        doc["reply_covariates"] = reply_covariates(reply_records)
+    else:
+        specs = collect_specs(data_dir, conv_limit)
     if not specs:
         doc.update(status="ERROR", reason="no usable plants in corpus subset")
         return doc
+
+    # v2.1 task-competence gate accounting (per category).
+    task_excluded: dict[str, list] = {c: [] for c in CATS}
 
     try:
         for _ci, (conv, plants) in enumerate(specs):
@@ -1423,11 +1474,25 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                                     zip(per_probe_le, per_probe_lb)]
 
                 # CONTROL #2: identity-graft no-op check (once per conv, reuses
-                # this plant's FIRST-probe A-side feed/targets).
+                # this plant's FIRST-probe A-side feed/targets). Run BEFORE the
+                # task-competence gate so the machinery control fires even if the
+                # first plant is task-excluded.
                 if id_snap is not None and not conv_identity_done:
                     la_id = tf(id_snap, sa_list[0] + tgt[:-1], tgt, len(ids))
                     identity_diffs.append(abs(la_id - per_probe_la[0]))
                     conv_identity_done = True
+
+                # ---- v2.1 GATE #3: TASK-COMPETENCE ----
+                # If the model cannot do the task even WITH full context (lp_A
+                # per-token below the floor), this plant is degenerate -> exclude
+                # it from every aggregate (do not read it as a graft signal).
+                # Default floor is permissive so the pre-rendered path is
+                # unaffected. alpha0/identity machinery checks already ran above.
+                if not task_competence_ok(la, task_lpa_floor):
+                    task_excluded[pl["category"]].append(
+                        {"plant_id": pl["id"], "conversation_id": conv["id"],
+                         "lp_A": la})
+                    continue
 
                 alpha0_diffs.append(abs(le0 - lb))
                 graft_diffs.append(abs(le - lb))
@@ -1642,10 +1707,38 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         # CONTROL #6: cluster (conversation-level) bootstrap -- group raw_EB by
         # conversation so resampling is over convs, not correlated probes.
         clusters = _group_by_conv(rows)
-        by_cat_robust[cat] = robust_category_stats(
+        block = robust_category_stats(
             raw_eb_vals, ratio_gap_pairs, raw_eb_clusters=clusters)
+        # ---- v2.1 GATE #2: HEADROOM + headroom-normalized raw_EB ----
+        # headroom = mean(lp_A - lp_B); raw_EB_normalized = raw_EB/max(headroom,eps);
+        # floor=True (headroom<floor) marks the category UNINTERPRETABLE (no evicted
+        # meaning to recover) and it is EXCLUDED from the sign verdict below.
+        hd = category_headroom(block["raw_EB_mean"], gaps,
+                               floor=headroom_floor)
+        block.update(headroom=hd["headroom"],
+                     raw_EB_normalized=hd["raw_EB_normalized"],
+                     floor=hd["floor"], floor_threshold=hd["floor_threshold"])
+        by_cat_robust[cat] = block
     doc["by_category"] = by_cat
     doc["by_category_robust"] = by_cat_robust
+
+    # ---- v2.1 gate summary (headroom floors + task-competence exclusions) ----
+    doc["gates"] = {
+        "headroom_floor": headroom_floor,
+        "task_lpa_floor": task_lpa_floor,
+        "floored_categories": [c for c in CATS
+                               if by_cat_robust.get(c, {}).get("floor")],
+        "task_excluded": {c: task_excluded[c] for c in CATS
+                          if task_excluded[c]},
+        "n_task_excluded": sum(len(v) for v in task_excluded.values()),
+        "note": (
+            "GATE #2 headroom = per-category mean(lp_A-lp_B); a floored category "
+            "(headroom<headroom_floor) has no evicted meaning to recover -> "
+            "uninterpretable, EXCLUDED from the sign verdict (NOT counted as harm); "
+            "raw_EB_normalized = raw_EB/max(headroom,eps). GATE #3 task-competence: "
+            "plants with lp_A per-token < task_lpa_floor were dropped from all "
+            "aggregates (model can't do the task even with full context)."),
+    }
 
     # ---- CONTROL #1: placebo report (corrupted-source graft) ----
     # The REAL graft should beat every placebo: a real per-category raw_EB CI
@@ -1829,6 +1922,12 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
 
     cat_signs = {c: _cat_sign(by_cat_robust.get(c, {})) for c in CATS}
     any_sig_cat = any(s != 0 for s in cat_signs.values())
+    # v2.1 GATE #2: a FLOORED category (headroom<floor) has no evicted meaning to
+    # recover -> its sign is uninterpretable and is EXCLUDED from the sign readout.
+    floored = [c for c in CATS if by_cat_robust.get(c, {}).get("floor")]
+    interpretable_cat_signs = {c: cat_signs[c] for c in CATS if c not in floored}
+    doc["interpretable_cat_signs"] = interpretable_cat_signs
+    doc["floored_categories"] = floored
 
     if effect_sign == "positive":
         doc["verdict"] = "SIGNIFICANT_POSITIVE"
@@ -1839,7 +1938,9 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     doc["verdict_note"] = (
         f"aggregate raw_EB CI [{eb.get('lo')}, {eb.get('hi')}] -> effect_sign="
         f"{effect_sign}. per-category CI-excludes-0: {cat_signs} "
-        f"(referent/sense any-significant={any_sig_cat}). n is small so the "
+        f"(referent/sense any-significant={any_sig_cat}). FLOORED (headroom<"
+        f"{headroom_floor}, EXCLUDED from sign): {floored}; interpretable "
+        f"per-category signs: {interpretable_cat_signs}. n is small so the "
         f"per-model verdict is DIRECTIONAL; the cross-model aggregate is the "
         f"inferential claim. A SIGNIFICANT_NEGATIVE is a VALID result, not a "
         f"discard.")
@@ -2530,6 +2631,43 @@ def main():
                     default=(os.environ.get("SC_CHAMPION_REGIONS") or None),
                     help="FEATURE #3 rescue test: comma-separated region indices "
                          "to graft TOGETHER (e.g. '4,5'); alpha=0 elsewhere")
+    # ---- CROSS-ARCH DESIGN v2: per-model in-context (native) render ----
+    ap.add_argument("--native-render", dest="native_render",
+                    action="store_true",
+                    default=os.environ.get("SC_NATIVE_RENDER", "1")
+                    not in ("0", "", "false", "False"),
+                    help="DESIGN v2: render the corpus IN-CONTEXT per model from "
+                         "the shared scenarios scaffold (default ON). The gold "
+                         "continuation stays SHARED; only assistant replies + the "
+                         "self-gen summary are model-filled.")
+    ap.add_argument("--no-native-render", dest="native_render",
+                    action="store_false",
+                    help="use PRE-RENDERED data/synthetic convs (validated legacy "
+                         "path; SC_NATIVE_RENDER=0)")
+    ap.add_argument("--scenarios",
+                    default=os.environ.get(
+                        "SC_SCENARIOS",
+                        str(Path(__file__).resolve().parent.parent
+                            / "data" / "scenarios.json")),
+                    help="shared scaffold for native render (data/scenarios.json)")
+    ap.add_argument("--native-max-reply", type=int,
+                    default=int(os.environ.get("SC_NATIVE_MAX_REPLY",
+                                               str(NATIVE_MAX_REPLY_DEFAULT))),
+                    help="cap on model-generated assistant reply tokens")
+    ap.add_argument("--native-temp", type=float,
+                    default=float(os.environ.get("SC_NATIVE_TEMP",
+                                                 str(NATIVE_TEMP_DEFAULT))),
+                    help="native reply gen temperature (0=greedy, reproducible)")
+    ap.add_argument("--headroom-floor", type=float,
+                    default=float(os.environ.get("SC_HEADROOM_FLOOR",
+                                                 str(HEADROOM_FLOOR_DEFAULT))),
+                    help="v2.1 GATE #2: min per-category A-B headroom to be "
+                         "interpretable (below = floored, excluded from sign)")
+    ap.add_argument("--task-lpa-floor", type=float,
+                    default=float(os.environ.get("SC_TASK_LPA_FLOOR",
+                                                 str(TASK_LPA_FLOOR_DEFAULT))),
+                    help="v2.1 GATE #3: min lp_A per-token to score a plant "
+                         "(below = model can't do the task, plant excluded)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--self-test", action="store_true",
                     help="run the CPU-only controls self-tests, then exit")
@@ -2578,16 +2716,26 @@ def main():
               file=sys.stderr)
         sys.exit(2)
 
-    # SUMMARY SOURCE. The REDESIGNED sweep uses PER-MODEL SELF-GENERATED summaries
-    # (SC_SELFGEN=1): a FIXED foreign summary was found to SUPPRESS the graft to null
-    # -- the mechanism needs the model's OWN write-time summarization act. Self-gen
-    # is therefore the intended design, not a fallback; the per-model pre_graft_gap
-    # (A-B) is reported so the differing self-summary quality is accounted for, not
-    # confounded. Set SC_SELFGEN=1 (or delete the summaries file) to force self-gen;
-    # a fixed summaries file is only loaded when SC_SELFGEN is unset (legacy path).
-    force_selfgen = os.environ.get("SC_SELFGEN", "").strip() in ("1", "true", "yes")
+    # CORPUS + SUMMARY SOURCE.
+    # DESIGN v2 (SC_NATIVE_RENDER=1, default): the corpus is rendered IN-CONTEXT by
+    # THIS model from the shared data/scenarios.json scaffold, and the summary is
+    # ALWAYS this model's own self-gen -- so fixed summaries are ignored entirely.
+    # The graft re-injects the model's own write-time values, so it must be measured
+    # on the model's own native conversation. (The plant gold stays SHARED.)
+    scenarios = None
     fixed_summaries = None
-    if force_selfgen:
+    force_selfgen = os.environ.get("SC_SELFGEN", "").strip() in ("1", "true", "yes")
+    if args.native_render:
+        scenarios = json.loads(Path(args.scenarios).read_text())
+        print(f"SC_NATIVE_RENDER=1 -> PER-MODEL IN-CONTEXT native render from "
+              f"{args.scenarios} ({len(scenarios)} scenarios); self-gen summary; "
+              f"gold stays SHARED.", flush=True)
+    # Legacy pre-rendered path (SC_NATIVE_RENDER=0): the REDESIGNED sweep still uses
+    # PER-MODEL SELF-GENERATED summaries (SC_SELFGEN=1): a FIXED foreign summary was
+    # found to SUPPRESS the graft to null -- the mechanism needs the model's OWN
+    # write-time summarization act. Set SC_SELFGEN=1 (or delete the summaries file)
+    # to force self-gen; a fixed summaries file is loaded only when SC_SELFGEN unset.
+    elif force_selfgen:
         print("SC_SELFGEN=1 -> PER-MODEL SELF-GENERATED summaries (redesign default; "
               "the graft needs the model's own summary).", flush=True)
     elif summaries_path.exists():
@@ -2621,7 +2769,10 @@ def main():
             max_gold_tok=args.max_gold_tok, trust_remote_code=trust,
             placebo_mode=args.placebo, alpha_sweep=args.alpha_sweep,
             seed=args.seed, strong_prior=args.strong_prior,
-            champion_scan=args.champion_scan, champion_regions=champion_regions)
+            champion_scan=args.champion_scan, champion_regions=champion_regions,
+            native_render=args.native_render, scenarios=scenarios,
+            native_max_reply=args.native_max_reply, native_temp=args.native_temp,
+            headroom_floor=args.headroom_floor, task_lpa_floor=args.task_lpa_floor)
     except SystemExit:
         raise
     except BaseException as e:  # noqa: BLE001
