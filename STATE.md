@@ -1,81 +1,45 @@
-# STATE.md — session handoff notes
+# STATE.md — session handoff / current state
 
-*Updated 07-08 ~05:30 by Opus 4.8. BUILD COMPLETE. Gate running. Wide staged (16 models, doubling corpus).*
+*Updated 07-08 ~afternoon by Opus 4.8. EFFECT CONFIRMED REAL. Wide spend GATED on the nativeness control.*
 
-## 🟢 WHERE WE ARE (07-08, overnight autonomous)
-BUILD IS COMPLETE; waiting on the confidence GATE + corpus doubling, then GO WIDE.
+## CURRENT TRUTH (read this first)
+EFFECT IS REAL + REPRODUCES. The multi-hour debugging saga was a WRONG MODEL CHECKPOINT
+(I ran the THINKING Qwen3-30B-A3B; the +0.156 was measured on the NON-thinking
+Qwen3-30B-A3B-Instruct-2507). On the CORRECT model, positive control PASSES on BOTH
+apparatuses (they agree):
+  - gap_closure_cat.py (trusted, difflib): orig c01-c12 referent +0.1246, sense +0.047, stance +0.002(~null)
+  - cross_arch_probe.py (multi-arch harness): referent CI [+0.034,+0.230] (excludes 0), same dissociation
+The referent>sense>stance dissociation reproduces exactly. Harness is VALIDATED on the correct model.
 
-CONFIDENCE GATE (running): pod 96yjg965q8fnhi @ 104.255.9.187:11583 (community A100 80GB,
-400G disk). job_gate.sh = Qwen3-30B-A3B self-gen positive control on c01-c12 (target
-referent raw_EB ~+0.14) + identity-check + placebo(gauss) + champion overhead (calibrates
-the <25% inline-champion budget). Monitor b4xqfound alerts on PASS/FAIL. On PASS -> provision
-~7-8 pods, split the 16 models (2 each), launch job_sweep.sh. On FAIL -> diagnose, DON'T spend.
+## THE ONE OPEN GATE (Fable-flagged, potentially paper-fatal) — running now
+NATIVENESS CONFOUND: c01-c12 replies were generated in-context by a QWEN model, so c01-c12
+may be NATIVE to Qwen and FOREIGN to other archs. If so, +0.12 is a Qwen artifact and a
+cross-arch "sign" would track PER-MODEL NATIVENESS, not attention geometry.
+DECISIVE TEST RUNNING: c01-c12 positive control on ONE non-Qwen model (Mistral-Small).
+  - survives positive -> geometry story holds -> GO WIDE (16 models, c01-c12).
+  - collapses (like the new convs did) -> nativeness confound -> REDESIGN before spending.
+Monitor: b8b9xbgw1. See FINDINGS "NATIVENESS CONFOUND" for the full analysis + cheap
+distinguishers (nativeness regression, dissociation decomposition) + red flags.
 
-CORPUS DOUBLING (running): scenario-author subagent writing c28-c54 (27 more convs -> 54 total,
-~100 plants/category = Fable anchor target). Then render via Fable/Opus/Sonnet/Codex mix +
-verify + re-freeze. c01-c27 already frozen+verified (297 plants).
+## CORPUS CAVEAT: the doubled corpus DILUTES. New convs c13-c54 (frontier-model-mix rendered,
+FOREIGN assistant replies) UNDER-RECOVER: referent gap 1.12 but raw_EB +0.009 (~0), vs orig
++0.12. Use c01-c12 (reliable) for the sweep; the augmentation is a separate corpus-quality
+problem (Fable: don't re-render per-model -> new confound; treat as future work / scope-condition).
 
-FROZEN 16-MODEL / 9-VENDOR LIST (all HF-verified). ANCHORS (deep: placebo+alpha+champion) = 5,
-with TWO independent within-vendor dense/MoE de-confounds:
-  Qwen3-30B-A3B(MoE) / Qwen3-32B(dense) / Qwen2.5-32B(dense) / gemma-4-31B(dense) / gemma-4-26B-A4B(MoE)
-GEMMA axis (3): gemma-3-27b-it(v3 sliding-window) / gemma-4-31B-it / gemma-4-26B-A4B-it
-  (Gemma3-vs-4 major-version AND the Gemma-4 internal dense/MoE pair). ⚠️ Gemma sliding-window
-  (HybridCache) MAY be UNSUPPORTED (padded snapshot) — harness flags with reason; Qwen de-confound
-  stands regardless.
-BREADTH (full corpus + champion): Mixtral, Mistral-Small-3.2-2506, OLMo-2-32B, Qwen3.6-35B-A3B,
-  Qwen3.6-27B, GLM-4-32B-0414, gpt-oss-20b(OpenAI), phi-4(Microsoft), Yi-1.5-34B(01.ai),
-  Nemotron-49B-v1_5(NVIDIA). phi-4/Nemotron off-band -> scale logged as regression COVARIATE.
+## MODEL LIST: 16 models frozen (MASTER-PLAN). ANCHOR CORRECTED: Qwen/Qwen3-30B-A3B-Instruct-2507
+(not the thinking variant). Wave-1/wave-2 launch drivers ready (scripts/launch_wave*.sh);
+job_sweep.sh anchor fixed. DO NOT go wide until the nativeness control passes.
 
-HARNESS COMPLETE (src/cross_arch_probe.py, all CPU self-tested, committed): SC_SELFGEN=1 (redesign
-default; fixed summary suppresses graft); placebo, identity-check (gates status), alpha dose-response,
-raw traces, model_hparams (sign-regression), cluster(conv)-bootstrap, multi-probe averaging,
-strong-prior SIGNED mass-shift (P(conv)vs P(prior)+baseline covariate), champion scan (fractional-depth
-regions, arbitrary-region-set/RESCUE-TEST, region=all sanity, per-layer value-alignment cosine, <25% timing).
+## HARNESS STATE: cross_arch_probe.py validated on correct model. arms_common build_alignment
+REVERTED to difflib (incident 33: the strict map broke on thinking-model self-gen). Minor bug:
+raw_EB point-estimate stores None while CIs compute (cosmetic; patch it).
 
-## ANALYSIS PLAN (post-sweep): regress effect-SIGN on attn hparams (n_kv_heads/head_dim/GQA/QK-norm/
-RoPE/layers) = "attention-geometry predicts sign" (NOT MoE — W_V untouched by FFN). RESCUE TEST on a
-negative anchor (graft only +regions -> if flips + proves sign=depth-composition). Strong-prior mass-shift
-= money figure. Distance-recovery curve. Champion = WEAK/tentative framing (guardrail in MASTER-PLAN).
-Own-summary experiment on anchors. Then PAPER (full review stack incl Codex; Fable may do initial draft).
+## OPERATIONAL RULES: see AGENTS.md "HARD RULES & LEARNINGS" (only-trunk, verify-exact-model,
+commit+push always, shard generation, consult-Fable-not-user-when-stuck, verify-boring-first).
 
-## KEY DOCS: MASTER-PLAN.md (cross-arch redesign + all model/corpus/champion decisions), DECISIONS.md,
-FINDINGS.md, INCIDENTS.md (31 = MLX-for-corpus). Memories: question-the-backend, validate-before-trusting.
+## ---- (older layers below, superseded) ----
 
-## ## ⚡ DESIGN IN FLUX (07-08) — do NOT blast the wide sweep until settled
-Fable design consult REFRAMED the cross-arch experiment (recorded MASTER-PLAN
-"CROSS-ARCH REDESIGN"). KEY DECISIONS PENDING:
-- REFRAME (paper-saver): value vectors come from the ATTENTION block; MoE is FFN →
-  MoE does NOT touch W_V. "MoE flips the sign" is a REVIEWER TRAP. Organizing
-  question = "what ATTENTION-GEOMETRY property predicts the SIGN (help/harm)?"
-- DE-CONFOUND: add Qwen3-32B (dense, same gen as Qwen3-30B-A3B MoE) — the clean
-  dense-vs-MoE control. Qwen2.5-vs-Qwen3 reversal is confounded (~5 axes).
-- DEPTH not just width: Tier1 anchors deep (Qwen3-30B-A3B, Qwen3-32B, Qwen2.5-32B,
-  +~100-150 probes/cat), Tier4 breadth shallow. Bootstrap over CONVERSATIONS not probes.
-- MUST-CAPTURE CONTROLS: placebo graft, identity-graft check, alpha dose-response,
-  own-vs-foreign summary axis, SAVE ALL raw traces + log every attn hyperparam/model.
-- OWN-SUMMARY EXPERIMENT (> a 12th model): vary summary source own/other/fixed/degraded/
-  PARAPHRASED-OWN (crux). Fund by dropping Yi/Llama-2.
-- CORPUS QUESTION (sent to Fable): corpus is SYNTHETIC (we made it up). Remake vs
-  augment? Add STRONG-PRIOR referents (Pokémon/Sanderson/LOTR famous names as codenames —
-  tests recovering conv-meaning OVER strong prior = harder disambiguation). Awaiting Fable.
-- HARNESS CHANGES NEEDED before wide launch: 5 categories (DONE, deployed), placebo,
-  identity-check, alpha-sweep, raw-trace capture, hyperparam logging, conv-bootstrap.
-
-## CONFIRMED (the crisis arc, all resolved + recorded in FINDINGS):
-- Estimator bug (mean-ratio Cauchy) → robust metric raw E-B + bootstrap CI. Effect REAL.
-- Keys CLOSED (neutral, value is operative axis).
-- MECHANISTIC FINDING: graft needs model's OWN generated summary (fixed foreign
-  suppresses; self-gen reproduces). Sweep uses SELF-GEN.
-- MAP so far (self-gen, robust): Qwen3-30B-A3B MoE +0.14/81% (positive); Qwen2.5-32B
-  dense −0.30 (REVERSES, real — trusted apparatus agrees). Harness VALIDATED (positive
-  control passed on self-gen).
-
-## PODS: 6 up (0rjwbqwpte2rzf:11591, welhpjmbqyd880:12994, +p636wvrnqbzy06, ik8irhx4yhqdj0,
-+pods5/6 provisioning). $1.19/hr each = ~$4.76-7/hr. 400G each. WIDE SWEEP HELD pending
-design. pods1-2 running OLMo/Mistral (OLD design — partial value, may redo). Idle
-watchdog b19m5koqi live. Balance ~$76-78.
-
-## ## PHASE 4 PLAN (autonomous, no review-ask; me+Fable; see MASTER-PLAN addenda 1-7)
+## PHASE 4 PLAN (autonomous, no review-ask; me+Fable; see MASTER-PLAN addenda 1-7)
 Strengthen PRIMARY (grafting) — paper drifted lens-heavy (dud), grafting under-evidenced.
 1. CROSS-ARCH breadth sweep (running next) — does effect travel across architectures.
 2. MORE EXAMPLES from existing data (cheap, high-value; surface more grafting exhibits).
