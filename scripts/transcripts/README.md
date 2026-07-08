@@ -43,6 +43,13 @@ deferred by default so the script does not keep rewriting the latest note for
 the live tail created while an agent is working; use
 `--force-small-continuations` only when that is intentional.
 
+Generated summaries are checked case-insensitively against `--forbid-regex`
+patterns. Defaults only cover common access-token shapes. If a candidate matches,
+the script retries with a fresh prompt that lists the accumulated forbidden
+matches and asks for vaguer language around those topics. After
+`--max-forbid-attempts` attempts, it deletes matching lines as a last-resort
+scrub.
+
 The summaries should focus on ideas, decisions, methodology, results, caveats,
 and handoff state. If a discussion established an intended writing form, such as
 paper-style, blog-style, article-style, or report-style, capture that. Preserve

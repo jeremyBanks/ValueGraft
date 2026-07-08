@@ -55,6 +55,22 @@ OLD_PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
 OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
 RESERVED_NOTE_NAMES = {"AGENTS.md", "README.md"}
 ARCHIVE_SUFFIXES = {".md", ".txt"}
+FORBIDDEN_RETRY_PROMPT = """\
+A previous attempt at this summary used words or phrases that matched forbidden
+output filters.
+
+Forbidden matches seen across attempts so far:
+{matches}
+
+Rewrite the summary from scratch. Avoid these exact terms and closely similar
+language. Refer to those subjects only with vague, generic phrasing and less
+detail. Do not mention the filtering rule, the forbidden list, or the previous
+attempt in the summary.
+
+Original task:
+
+{prompt}
+"""
 
 SUMMARY_PROMPT = """\
 You are summarizing mainline project conversation for a future agent.
@@ -661,12 +677,72 @@ def build_new_ranges(
     return shards
 
 
-def validate_summary(text: str, forbidden_patterns: list[str]) -> list[str]:
-    warnings: list[str] = []
+@dataclass(frozen=True)
+class ForbiddenMatch:
+    pattern: str
+    text: str
+
+
+def forbidden_matches(text: str, forbidden_patterns: list[str]) -> list[ForbiddenMatch]:
+    matches: list[ForbiddenMatch] = []
     for pattern in forbidden_patterns:
-        if re.search(pattern, text, re.IGNORECASE):
-            warnings.append(pattern)
-    return warnings
+        for match in re.finditer(pattern, text, re.IGNORECASE):
+            snippet = match.group(0).strip()
+            if snippet:
+                matches.append(ForbiddenMatch(pattern=pattern, text=snippet))
+    return matches
+
+
+def validate_summary(text: str, forbidden_patterns: list[str]) -> list[str]:
+    return sorted({match.pattern for match in forbidden_matches(text, forbidden_patterns)})
+
+
+def display_forbidden_match(match: ForbiddenMatch) -> str:
+    if match.pattern in DEFAULT_FORBID_REGEX:
+        return f"[redacted token-like match for pattern: {match.pattern}]"
+    return match.text
+
+
+def merge_forbidden_matches(
+    existing: list[ForbiddenMatch],
+    new_matches: list[ForbiddenMatch],
+) -> list[ForbiddenMatch]:
+    seen = {(match.pattern, match.text.lower()) for match in existing}
+    merged = list(existing)
+    for match in new_matches:
+        key = (match.pattern, match.text.lower())
+        if key in seen:
+            continue
+        seen.add(key)
+        merged.append(match)
+    return merged
+
+
+def retry_prompt_for_forbidden_matches(prompt: str, matches: list[ForbiddenMatch]) -> str:
+    display_values: list[str] = []
+    seen: set[str] = set()
+    for match in matches:
+        value = display_forbidden_match(match)
+        key = value.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        display_values.append(value)
+    rendered = "\n".join(f"- {value}" for value in display_values)
+    return FORBIDDEN_RETRY_PROMPT.format(matches=rendered, prompt=prompt)
+
+
+def scrub_forbidden_lines(text: str, forbidden_patterns: list[str]) -> str:
+    lines = text.splitlines()
+    kept = [
+        line
+        for line in lines
+        if not any(re.search(pattern, line, re.IGNORECASE) for pattern in forbidden_patterns)
+    ]
+    scrubbed = "\n".join(kept).strip() + "\n"
+    for pattern in forbidden_patterns:
+        scrubbed = re.sub(pattern, "", scrubbed, flags=re.IGNORECASE)
+    return scrubbed.strip() + "\n"
 
 
 def run_command(command: list[str], prompt: str) -> str:
@@ -683,6 +759,51 @@ def run_command(command: list[str], prompt: str) -> str:
             f"summary command failed with exit {proc.returncode}\nSTDERR:\n{proc.stderr}"
         )
     return proc.stdout.strip() + "\n"
+
+
+def attempt_path(path: Path, attempt: int) -> Path:
+    if attempt == 1:
+        return path
+    return path.with_name(f"{path.stem}.attempt-{attempt}{path.suffix}")
+
+
+def run_summary_command(
+    command: list[str],
+    prompt: str,
+    candidate_path: Path,
+    retry_prompt_path: Path,
+    forbidden_patterns: list[str],
+    max_forbid_attempts: int,
+) -> str:
+    all_matches: list[ForbiddenMatch] = []
+    current_prompt = prompt
+    attempts = max(1, max_forbid_attempts)
+    for attempt in range(1, attempts + 1):
+        candidate = run_command(command, current_prompt)
+        write_prompt(attempt_path(candidate_path, attempt), candidate)
+        matches = forbidden_matches(candidate, forbidden_patterns)
+        if not matches:
+            return candidate
+        all_matches = merge_forbidden_matches(all_matches, matches)
+        print(
+            f"forbidden summary output in attempt {attempt}/{attempts}: "
+            f"{len(matches)} match(es), {len(all_matches)} unique accumulated"
+        )
+        if attempt == attempts:
+            scrubbed = scrub_forbidden_lines(candidate, forbidden_patterns)
+            write_prompt(candidate_path, scrubbed)
+            remaining = forbidden_matches(scrubbed, forbidden_patterns)
+            if remaining:
+                raise RuntimeError(
+                    f"summary still matches forbidden filters after scrub: "
+                    f"{sorted({match.pattern for match in remaining})}"
+                )
+            print(f"scrubbed forbidden lines after {attempts} attempt(s): {candidate_path}")
+            return scrubbed
+        current_prompt = retry_prompt_for_forbidden_matches(prompt, all_matches)
+        write_prompt(attempt_path(retry_prompt_path, attempt + 1), current_prompt)
+
+    raise AssertionError("unreachable summary retry state")
 
 
 def write_prompt(path: Path, text: str) -> None:
@@ -841,12 +962,16 @@ def update_notes(args: argparse.Namespace) -> None:
         print(f"prompt: {prompt_path}")
         if not args.command:
             continue
-        candidate = run_command(args.command, prompt)
         candidate_path = args.work_dir / "candidates" / note_path.name
-        write_prompt(candidate_path, candidate)
-        warnings = validate_summary(candidate, args.forbid_regex)
-        if warnings:
-            raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
+        retry_prompt_path = args.work_dir / "prompts" / f"retry-revise-{note_path.stem}.md"
+        candidate = run_summary_command(
+            args.command,
+            prompt,
+            candidate_path,
+            retry_prompt_path,
+            args.forbid_regex,
+            args.max_forbid_attempts,
+        )
         for key, _old_last, current_last in items:
             for source_range in record.source_ranges:
                 if (source_range.platform, source_range.date, source_range.sequence) == key:
@@ -891,12 +1016,16 @@ def update_notes(args: argparse.Namespace) -> None:
         print(f"prompt: {prompt_path}")
         if not args.command:
             continue
-        candidate = run_command(args.command, prompt)
         candidate_path = args.work_dir / "candidates" / note_path.name
-        write_prompt(candidate_path, candidate)
-        warnings = validate_summary(candidate, args.forbid_regex)
-        if warnings:
-            raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
+        retry_prompt_path = args.work_dir / "prompts" / f"retry-new-{note_path.stem}.md"
+        candidate = run_summary_command(
+            args.command,
+            prompt,
+            candidate_path,
+            retry_prompt_path,
+            args.forbid_regex,
+            args.max_forbid_attempts,
+        )
         messages = all_messages_for_ranges(segments, ranges)
         model_entries = model_entries_for_messages(messages)
         note_text = insert_participants_block(candidate, messages)
@@ -1016,6 +1145,12 @@ def main() -> None:
         action="append",
         default=DEFAULT_FORBID_REGEX,
         help="Regex that must not appear in generated summaries; defaults to common secret-shaped strings.",
+    )
+    update_parser.add_argument(
+        "--max-forbid-attempts",
+        type=int,
+        default=5,
+        help="Retry a summary this many times when output matches --forbid-regex before scrubbing matching lines.",
     )
     update_parser.add_argument("--command", nargs=argparse.REMAINDER)
     update_parser.set_defaults(func=update_notes)
