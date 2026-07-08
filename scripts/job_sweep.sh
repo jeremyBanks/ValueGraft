@@ -23,7 +23,9 @@ export SC_CONV_LIMIT="${SC_CONV_LIMIT:-12}"     # per-pod override (24 anchors /
 export SC_GC_ALPHA="${SC_GC_ALPHA:-0.75}"
 export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-0}"  # OFF for the core sign-map run (cost); champion = cheap follow-up
 export SC_TRUST_REMOTE=1
-MODEL_TIMEOUT="${MODEL_TIMEOUT:-3600}"
+# per-token native render is ~750-900s/conv; scale the timeout with the conv count
+# (24 convs -> ~6.5h, 12 convs -> ~3.5h) so anchors don't get killed mid-render.
+MODEL_TIMEOUT="${MODEL_TIMEOUT:-$(( ${SC_CONV_LIMIT:-12} * 900 + 1800 ))}"
 ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B-Instruct-2507 Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct google/gemma-4-31B-it google/gemma-4-26B-A4B-it}"
 
 echo "WIDE SWEEP START $(date -Is)"; nvidia-smi || true
