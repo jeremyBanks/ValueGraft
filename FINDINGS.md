@@ -432,3 +432,21 @@ resolved; (c) POSSIBLE MECHANISTIC FINDING: graft needs the model's OWN summary
 (would be a real insight about how ValueGraft works, pending confirmation).
 LESSON: always run a POSITIVE control (reproduce a known result) before trusting a
 new harness — the negative-agreement (Qwen2.5) was NOT sufficient validation.
+
+## ✅✅ RESOLVED + MECHANISTIC FINDING: graft needs the model's OWN summary (07-08)
+Isolation CONFIRMED. Qwen3-30B via cross-arch harness:
+- FIXED Sonnet summary: referent +0.004 (null), sense −0.147 — POSITIVE CONTROL FAILED.
+- SELF-GEN (own) summary: referent +0.136 CI[+0.034,+0.23] 81% helped, sense +0.045
+  64% helped, agg +0.090 CI[+0.022,+0.154] SIGNIFICANT_POSITIVE — MATCHES F1
+  (+0.156/81%, +0.062/64%).
+Same model+harness, only summary source differs → the FIXED (foreign) summary
+SUPPRESSES the graft; the model's OWN generated summary reproduces the effect.
+CONCLUSIONS: (1) HARNESS VALIDATED (reproduces known positive on self-gen).
+(2) FIXED-SUMMARY DESIGN BROKEN → sweep switches to SELF-GEN summaries.
+(3) MECHANISTIC FINDING (real, not speculation now): ValueGraft re-injects the
+write-time state of the model's OWN summarization ACT — a summary the model merely
+READ doesn't carry the recoverable continuity. Enriches the paper's mechanism.
+MAP status: Qwen2.5-dense NEGATIVE is REAL (self-gen −0.32 AND trusted model-gen
+−0.30, both). Qwen3-MoE POSITIVE. Mistral (fixed-summary ~null) = BIASED, re-run
+self-gen. CONFOUND (Fable): self-gen summary quality varies across models → report
+pre_graft_gap + summary token-count per model, use conditioned ratio.
