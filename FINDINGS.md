@@ -326,3 +326,29 @@ conclusion. FIX: (a) FIXED summary (remove summary variance — use fixed_summar
 WITH error bars or honestly report it's noisier than presented. Paper (on README)
 currently OVERSTATES robustness — must fix before external repro. HOLD everything
 downstream. Do NOT spin — this is a real problem with the measurement.
+
+## ✅ RESOLVED (Fable + user push) — effect is REAL; instability was the MEAN-RATIO estimator, not the effect (07-07)
+Mined the TWO saved runs (results/gap_closure_cat vs _live, 67 common probes) — NO
+GPU needed (I was thrashing on env/GPU re-runs; the answer was on disk).
+FINDING: the effect REPRODUCES on every ROBUST metric; only mean-of-ratio swings.
+  raw E−B:      referent +0.156/+0.125, sense +0.062/+0.047, stance −0.026/+0.002
+  median ratio: referent +0.118/+0.101, sense +0.033/+0.090, stance −0.068/+0.019
+  % helped:     referent 81/71, sense 64/59, stance 38/54
+  mean ratio (BROKEN): sense sign-flips, stance −0.308 vs +0.091.
+Both runs, all robust metrics: SAME dissociation — graft raises gold logprob for
+referent+sense, ≈0 for stance. The "−0.31 stance-null" = TWO probes with near-zero
+|A−B| denominators (Cauchy blow-up). Condition |A−B|>0.5 → even mean ratio stable
+(stance −0.029/+0.039 ≈ 0 both).
+METRIC FIX (Fable): DEMOTE mean-ratio. Primary = raw lp_E−lp_B (bounded) + %-helped;
+median ratio secondary; if ratio kept, winsorize/condition on |A−B| + report n.
+NEVER report bare mean-ratio again.
+HONEST POSITION: effect REAL, reported with UNSTABLE estimator + NO error bars.
+README overstates PRECISION (point estimates, dramatic −0.31, no CI), NOT existence/
+direction. = numbers correction + error bars, NOT retraction.
+NOTE: this supersedes the "APPARATUS INSTABILITY / does NOT reproduce" alarm above —
+that alarm conflated "mean-ratio swung" with "effect unstable"; they're different.
+The MoE/summary-cascade nondeterminism is real but 2nd-order (lp_A varies ~0.03).
+NEXT: (1) recompute paper table on robust metrics (both runs, side by side, no GPU);
+(2) T1 fixed-summary 2-run determinism floor; (3) T2 N=5 → mean±CI; (4) cross-arch
+uses raw E−B not mean-ratio. Effect-bound probe uses a DIFFERENT teacher-forcing
+(raw E−B negative there) — retire it, trust gap_closure_cat.
