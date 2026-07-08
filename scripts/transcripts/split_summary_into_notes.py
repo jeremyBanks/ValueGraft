@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Split a combined shard summary into dated notes.
+"""Split a combined shard summary into dated conversation notes.
 
 The filename prefix for each shard is derived from the first raw message covered
 by the corresponding summary shard. With --commit, each created note is committed
 with matching author/committer dates so later git-history-based normalizers keep
 the files in the intended chronological position.
+
+Conversation summary notes are source-specific by default:
+`YYYYMMDDHHMMSS-claude-conversation.md` or
+`YYYYMMDDHHMMSS-codex-conversation.md`.
 """
 
 from __future__ import annotations
@@ -63,11 +67,19 @@ def build_message_timestamp_index(
     return index
 
 
-def shard_start_timestamp(
+def platform_slug(platform: str) -> str:
+    if platform == "claude-code":
+        return "claude"
+    if platform == "codex":
+        return "codex"
+    return "conversation"
+
+
+def shard_start_metadata(
     shard_idx: int,
     summary_shards_dir: Path,
     timestamps: dict[tuple[str, str, int, int], datetime],
-) -> datetime:
+) -> tuple[str, datetime]:
     shard_path = summary_shards_dir / f"shard-{shard_idx:03d}.md"
     text = shard_path.read_text(encoding="utf-8", errors="replace")
     chunk = re.search(
@@ -83,11 +95,12 @@ def shard_start_timestamp(
     if not msg:
         raise RuntimeError(f"No first message found for shard {shard_idx}")
 
-    key = (chunk.group(1), chunk.group(2), int(chunk.group(3)), int(msg.group(1)))
+    platform = chunk.group(1)
+    key = (platform, chunk.group(2), int(chunk.group(3)), int(msg.group(1)))
     ts = timestamps.get(key)
     if ts is None:
         raise RuntimeError(f"No raw timestamp found for {key}")
-    return ts
+    return platform, ts
 
 
 def split_combined_summary(text: str) -> list[tuple[int, str]]:
@@ -128,9 +141,9 @@ def main() -> None:
     created: list[Path] = []
     combined_text = args.combined.read_text(encoding="utf-8")
     for shard_idx, body in split_combined_summary(combined_text):
-        ts = shard_start_timestamp(shard_idx, args.summary_shards_dir, timestamps)
+        platform, ts = shard_start_metadata(shard_idx, args.summary_shards_dir, timestamps)
         prefix = ts.strftime("%Y%m%d%H%M%S")
-        path = args.notes_dir / f"{prefix}-conversation.md"
+        path = args.notes_dir / f"{prefix}-{platform_slug(platform)}-conversation.md"
         if path.exists():
             raise RuntimeError(f"Refusing to overwrite existing file: {path}")
         path.write_text(body, encoding="utf-8")

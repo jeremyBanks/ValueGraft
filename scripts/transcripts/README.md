@@ -6,16 +6,35 @@ These scripts reproduce the mainline conversation-summary workflow used for the
 The pipeline is intentionally plain:
 
 1. Extract mainline Claude Code and Codex messages from local JSONL stores.
-2. Build contiguous transcript shards sized for a summarizer.
+2. Build contiguous transcript shards sized for a summarizer, keeping Claude
+   Code and Codex in separate source streams by default.
 3. Summarize each shard with a CLI model.
 4. Combine shard summaries if desired.
 5. Split a combined summary back into dated `notes/` files, with optional git
    commits whose author/committer dates match each file prefix.
+6. Keep a manifest of covered source-message ranges so future updates are
+   incremental.
 
 The summaries should focus on ideas, decisions, methodology, results, caveats,
 and handoff state. If a discussion established an intended writing form, such as
-paper-style, blog-style, article-style, or report-style, capture that. Avoid
-side logistics unless they directly affect repository workflow.
+paper-style, blog-style, article-style, or report-style, capture that. Preserve
+priority when it affects future work, but describe it as project priority,
+blocking status, or required follow-up rather than participant mood. Do not
+flatten importance: if emphasis changes what a future agent should do first,
+keep that as a project fact or required next action. Avoid side logistics unless
+they directly affect repository workflow.
+
+Conversation-note style:
+
+- name files as `YYYYMMDDHHMMSS-claude-conversation.md` or
+  `YYYYMMDDHHMMSS-codex-conversation.md`
+- start with one italicized capsule sentence, or at most two short italicized
+  sentences, describing the shard
+- prefer short titled sections and prose paragraphs
+- use bullets only for compact lists of named results, rules, arms, or open
+  questions
+- keep Claude Code and Codex conversations separate even when their dates
+  interleave
 
 ## Example
 
@@ -60,3 +79,33 @@ python3 scripts/transcripts/split_summary_into_notes.py \
 ```
 
 Run `deno fmt notes/*-conversation.md` after generating notes.
+
+## Incremental Updates
+
+After the initial notes exist, initialize a manifest once:
+
+```bash
+python3 scripts/transcripts/update_conversation_notes.py init-manifest \
+  --summary-shards-dir "$WORK/summary_shards" \
+  --notes-dir notes \
+  --claude-jsonl ~/.claude/projects/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370.jsonl \
+  --codex-jsonl ~/.codex/sessions/2026/07/04/rollout-2026-07-04T22-07-20-019f3007-bab0-7e50-b019-2625d1538f63.jsonl
+```
+
+Then future runs can update only uncovered transcript ranges:
+
+```bash
+python3 scripts/transcripts/update_conversation_notes.py update \
+  --notes-dir notes \
+  --claude-jsonl ~/.claude/projects/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370.jsonl \
+  --codex-jsonl ~/.codex/sessions/2026/07/04/rollout-2026-07-04T22-07-20-019f3007-bab0-7e50-b019-2625d1538f63.jsonl \
+  --work-dir "$WORK/incremental" \
+  --command claude --print --model sonnet
+```
+
+If an already-covered conversation segment has continued, the updater writes a
+revision prompt that includes the existing summary, the previously summarized
+messages, and the new messages after the cutoff. If there are entirely new
+segments, it writes new source-specific dated note files. Without `--command`,
+it writes prompts only. Generated notes are checked for common secret-shaped
+strings before being written.

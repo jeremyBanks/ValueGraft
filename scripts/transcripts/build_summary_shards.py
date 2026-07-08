@@ -77,6 +77,10 @@ def load_chunks(filtered_root: Path) -> list[ConversationChunk]:
     return sorted(chunks, key=lambda c: (c.date, c.sequence, c.source_key, c.path.name))
 
 
+def source_sort_key(platform: str) -> str:
+    return "0-claude" if platform == "claude-code" else "1-codex"
+
+
 def chunk_intro(chunk: ConversationChunk) -> str:
     return (
         f"\n\n# Conversation Chunk: {chunk.platform} | date {chunk.date} | "
@@ -109,18 +113,18 @@ def flush_shard(out_dir: Path, shard_idx: int, parts: list[str], chunk_refs: lis
     path.write_text("\n".join(header) + "".join(parts), encoding="utf-8")
 
 
-def build_shards(filtered_root: Path, out_dir: Path, target_chars: int) -> None:
-    if out_dir.exists():
-        shutil.rmtree(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    shard_idx = 1
+def pack_chunks(
+    chunks: list[ConversationChunk],
+    out_dir: Path,
+    shard_idx: int,
+    target_chars: int,
+) -> int:
     current: list[str] = []
     current_size = 0
     current_refs: list[str] = []
     active_ref: str | None = None
 
-    for chunk in load_chunks(filtered_root):
+    for chunk in chunks:
         ref = f"{chunk.platform} {chunk.date} #{chunk.sequence:03d}"
         intro = chunk_intro(chunk)
         for message in chunk.messages:
@@ -140,7 +144,31 @@ def build_shards(filtered_root: Path, out_dir: Path, target_chars: int) -> None:
             current.append(rendered)
             current_size += len(rendered)
 
-    flush_shard(out_dir, shard_idx, current, current_refs)
+    if current:
+        flush_shard(out_dir, shard_idx, current, current_refs)
+        shard_idx += 1
+    return shard_idx
+
+
+def build_shards(
+    filtered_root: Path,
+    out_dir: Path,
+    target_chars: int,
+    split_sources: bool,
+) -> None:
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    shard_idx = 1
+    chunks = load_chunks(filtered_root)
+    if split_sources:
+        platforms = sorted({chunk.platform for chunk in chunks}, key=source_sort_key)
+        for platform in platforms:
+            platform_chunks = [chunk for chunk in chunks if chunk.platform == platform]
+            shard_idx = pack_chunks(platform_chunks, out_dir, shard_idx, target_chars)
+    else:
+        shard_idx = pack_chunks(chunks, out_dir, shard_idx, target_chars)
 
 
 def main() -> None:
@@ -148,8 +176,13 @@ def main() -> None:
     parser.add_argument("--filtered-root", type=Path, default=Path("/tmp/valuegraft_transcript_work/filtered"))
     parser.add_argument("--out-dir", type=Path, default=Path("/tmp/valuegraft_transcript_work/summary_shards"))
     parser.add_argument("--target-chars", type=int, default=180_000)
+    parser.add_argument(
+        "--combine-sources",
+        action="store_true",
+        help="Legacy mode: allow Claude Code and Codex chunks in the same shard.",
+    )
     args = parser.parse_args()
-    build_shards(args.filtered_root, args.out_dir, args.target_chars)
+    build_shards(args.filtered_root, args.out_dir, args.target_chars, not args.combine_sources)
     paths = sorted(args.out_dir.glob("shard-*.md"))
     print(f"wrote {len(paths)} shards to {args.out_dir}")
     for path in paths:

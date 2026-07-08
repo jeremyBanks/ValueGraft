@@ -1,0 +1,685 @@
+#!/usr/bin/env python3
+"""Incrementally update conversation summary notes.
+
+This script keeps a manifest of which raw transcript message ranges are covered
+by each `notes/*-conversation.md` file. Future runs use the manifest to avoid
+resummarizing already-covered material. If a covered conversation segment has
+continued, the script builds an update prompt containing the existing summary,
+the previously summarized messages, and the new messages after the cutoff.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import subprocess
+import sys
+from dataclasses import asdict, dataclass
+from datetime import datetime
+from pathlib import Path
+from types import ModuleType
+from typing import Any
+
+
+SOURCE_ORDER = {"claude-code": "0-claude", "codex": "1-codex"}
+DEFAULT_MANIFEST = Path("scripts/transcripts/conversation-summary-manifest.json")
+DEFAULT_FORBID_REGEX = [
+    r"\bAKIA[0-9A-Z]{16}\b",
+    r"\bASIA[0-9A-Z]{16}\b",
+    r"\bsk-or-v1-[A-Za-z0-9_-]{32,}\b",
+    r"\brpa_[A-Za-z0-9]{32,}\b",
+    r"\bhf_[A-Za-z0-9]{20,}\b",
+]
+
+SUMMARY_PROMPT = """\
+You are summarizing mainline project conversation for a future agent.
+
+Write a concise but information-dense note body. Capture ideas, hypotheses,
+methodology decisions, corrections, concrete results, caveats, operational
+lessons, and handoff-relevant state. If the conversation established an intended
+writing form, such as paper-style, blog-style, article-style, or report-style,
+include that.
+
+The first line of your answer must be the italicized capsule sentence, or at
+most two short italicized sentences, summarizing what this shard is about. Do not
+put any title, heading, bold label, or preamble before that first italicized
+line. Then use short titled sections and prose paragraphs. Use bullets only for
+compact lists of named results, rules, arms, or open questions; do not turn the
+whole conversation into a bullet ledger.
+
+Use neutral, professional prose focused on what changed and why. Do not preserve
+every exchange. Preserve priority and urgency when it affects future work, but
+express it as project priority, blocking status, or required follow-up rather
+than participant mood. Do not flatten importance: if emphasis changes what a
+future agent should do first, record that priority as a project fact or required
+next action. Do not describe participant emotions, temperament, or interpersonal
+tone; never use labels such as angry, frustrated, furious, annoyed, or upset.
+Describe corrections, disagreements, and requirements as project facts. Do not
+quote colorful or emotionally loaded user phrasing;
+paraphrase it into neutral project terms. Omit side logistics unless they
+directly affect repository workflow. If the transcript discusses arXiv, Zenodo,
+ACM, DOI, uploading, posting, author rights, coauthor consent, or venue
+selection, omit those details entirely unless a tracked repo artifact was
+changed; at most preserve the intended document style or a concrete repo
+workflow change. For transcript-note style discussions, record only the final
+durable style rule in general terms. Do not retell the cleanup episode, mention
+prohibited words, or quote examples of language to avoid. Return only the note
+body, with no title.
+
+{previous_context_block}
+
+Transcript to summarize:
+
+{transcript}
+"""
+
+PREVIOUS_CONTEXT_TEMPLATE = """\
+Brief context from the previous {platform} conversation summary:
+
+{context}
+"""
+
+REVISION_PROMPT = """\
+You are updating an existing mainline project conversation summary.
+
+Return a complete replacement note body. Preserve the useful content from the
+existing summary, add the new material after the cutoff, and remove stale wording
+if the new material changes the interpretation.
+
+Focus on ideas, hypotheses, methodology decisions, corrections, concrete results,
+caveats, operational lessons, and handoff-relevant state. If the conversation
+established an intended writing form, such as paper-style, blog-style,
+article-style, or report-style, include that.
+
+The first line of your answer must be the italicized capsule sentence, or at
+most two short italicized sentences, summarizing what this shard is about. Do not
+put any title, heading, bold label, or preamble before that first italicized
+line. Then use short titled sections and prose paragraphs. Use bullets only for
+compact lists of named results, rules, arms, or open questions; do not turn the
+whole conversation into a bullet ledger.
+
+Use neutral, professional prose. Preserve priority and urgency when it affects
+future work, but express it as project priority, blocking status, or required
+follow-up rather than participant mood. Do not flatten importance: if emphasis
+changes what a future agent should do first, record that priority as a project
+fact or required next action. Do not describe participant emotions, temperament,
+or interpersonal tone; never use labels such as angry, frustrated, furious,
+annoyed, or upset. Describe corrections, disagreements, and
+requirements as project facts. Do not quote colorful or emotionally loaded user
+phrasing; paraphrase it into neutral project terms. Omit side logistics unless
+they directly affect repository workflow. If the transcript discusses arXiv,
+Zenodo, ACM, DOI, uploading, posting, author rights, coauthor consent, or venue
+selection, omit those details entirely unless a tracked repo artifact was
+changed; at most preserve the intended document style or a concrete repo
+workflow change. For transcript-note style discussions, record only the final
+durable style rule in general terms. Do not retell the cleanup episode, mention
+prohibited words, or quote examples of language to avoid. Return only the note
+body, with no title.
+
+Existing summary:
+
+{existing_summary}
+
+Previously summarized transcript up to the cutoff:
+
+{old_transcript}
+
+New transcript after the cutoff:
+
+{new_transcript}
+"""
+
+@dataclass
+class MessageRecord:
+    platform: str
+    date: str
+    sequence: int
+    message_index: int
+    timestamp: str
+    role: str
+    heading_metadata: str
+    text: str
+    source_line: int
+
+
+@dataclass
+class SourceRange:
+    platform: str
+    date: str
+    sequence: int
+    first_message: int
+    last_message: int
+
+
+@dataclass
+class NoteRecord:
+    note: str
+    source_ranges: list[SourceRange]
+    first_timestamp: str
+    last_timestamp: str
+    input_hash: str
+    summary_hash: str
+    mode: str = "summary"
+
+
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def load_module(path: Path, name: str) -> ModuleType:
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Could not load {path}")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def script_dir() -> Path:
+    return Path(__file__).resolve().parent
+
+
+def load_segments(claude_jsonl: Path, codex_jsonl: Path) -> dict[tuple[str, str, int], list[MessageRecord]]:
+    claude = load_module(script_dir() / "extract_claude.py", "vg_incremental_claude")
+    codex = load_module(script_dir() / "extract_codex.py", "vg_incremental_codex")
+    segments: dict[tuple[str, str, int], list[MessageRecord]] = {}
+
+    sources = [
+        ("claude-code", claude, claude_jsonl),
+        ("codex", codex, codex_jsonl),
+    ]
+    for platform, mod, source in sources:
+        if platform == "codex":
+            _thread_id, _cwd, messages = mod.iter_messages(source)
+        else:
+            messages = mod.iter_messages(source)
+        per_day: dict[str, int] = {}
+        for segment in mod.split_segments(messages):
+            start = next((m.ts for m in segment if m.ts), None)
+            if start is None:
+                continue
+            date = start.date().isoformat()
+            per_day[date] = per_day.get(date, 0) + 1
+            sequence = per_day[date]
+            key = (platform, date, sequence)
+            records: list[MessageRecord] = []
+            for idx, msg in enumerate(segment, 1):
+                if msg.ts is None:
+                    continue
+                heading_metadata = mod.heading_metadata(msg) if hasattr(mod, "heading_metadata") else ""
+                records.append(
+                    MessageRecord(
+                        platform=platform,
+                        date=date,
+                        sequence=sequence,
+                        message_index=idx,
+                        timestamp=msg.ts.isoformat().replace("+00:00", "Z"),
+                        role=msg.role,
+                        heading_metadata=heading_metadata,
+                        text=msg.text,
+                        source_line=msg.source_line,
+                    )
+                )
+            segments[key] = records
+    return segments
+
+
+def segment_sort_key(key: tuple[str, str, int]) -> tuple[str, int, str]:
+    platform, date, sequence = key
+    return (date, sequence, SOURCE_ORDER.get(platform, platform))
+
+
+def platform_slug(platform: str) -> str:
+    if platform == "claude-code":
+        return "claude"
+    if platform == "codex":
+        return "codex"
+    return "conversation"
+
+
+def note_name_for_ranges(prefix: str, ranges: list[SourceRange]) -> str:
+    platforms = {source_range.platform for source_range in ranges}
+    if len(platforms) != 1:
+        return f"{prefix}-conversation.md"
+    return f"{prefix}-{platform_slug(next(iter(platforms)))}-conversation.md"
+
+
+def render_messages(messages: list[MessageRecord]) -> str:
+    if not messages:
+        return ""
+    parts: list[str] = []
+    current: tuple[str, str, int] | None = None
+    for msg in messages:
+        key = (msg.platform, msg.date, msg.sequence)
+        if key != current:
+            current = key
+            parts.append(
+                f"# Conversation Chunk: {msg.platform} | date {msg.date} | "
+                f"daily sequence {msg.sequence:03d}\n"
+            )
+        parts.append(
+            f"## Message {msg.message_index:03d} - {msg.role}{msg.heading_metadata}\n\n"
+            f"{msg.text.strip()}\n"
+        )
+    return "\n".join(parts).strip() + "\n"
+
+
+def messages_for_range(
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    source_range: SourceRange,
+) -> list[MessageRecord]:
+    records = segments[(source_range.platform, source_range.date, source_range.sequence)]
+    return [
+        msg
+        for msg in records
+        if source_range.first_message <= msg.message_index <= source_range.last_message
+    ]
+
+
+def all_messages_for_ranges(
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    ranges: list[SourceRange],
+) -> list[MessageRecord]:
+    messages: list[MessageRecord] = []
+    for source_range in ranges:
+        messages.extend(messages_for_range(segments, source_range))
+    return messages
+
+
+def parse_shard_ranges(shard_text: str) -> list[SourceRange]:
+    ranges: list[SourceRange] = []
+    chunks = re.finditer(
+        r"^# Conversation Chunk: (claude-code|codex) "
+        r"\| date (\d{4}-\d{2}-\d{2}) "
+        r"\| daily sequence (\d{3})\s*\n(?P<body>.*?)(?=^# Conversation Chunk: |\Z)",
+        shard_text,
+        re.M | re.S,
+    )
+    for chunk in chunks:
+        messages = [int(m) for m in re.findall(r"^## Message (\d{3}) - ", chunk.group("body"), re.M)]
+        if not messages:
+            continue
+        ranges.append(
+            SourceRange(
+                platform=chunk.group(1),
+                date=chunk.group(2),
+                sequence=int(chunk.group(3)),
+                first_message=min(messages),
+                last_message=max(messages),
+            )
+        )
+    if not ranges:
+        raise RuntimeError("No source ranges found in shard text")
+    return ranges
+
+
+def manifest_dict(records: list[NoteRecord]) -> dict[str, Any]:
+    return {
+        "version": 1,
+        "description": "Coverage manifest for scripts/transcripts/update_conversation_notes.py.",
+        "notes": [
+            {
+                **asdict(record),
+                "source_ranges": [asdict(source_range) for source_range in record.source_ranges],
+            }
+            for record in records
+        ],
+    }
+
+
+def load_manifest(path: Path) -> list[NoteRecord]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    records: list[NoteRecord] = []
+    for row in data.get("notes", []):
+        ranges = [SourceRange(**source_range) for source_range in row["source_ranges"]]
+        records.append(
+            NoteRecord(
+                note=row["note"],
+                source_ranges=ranges,
+                first_timestamp=row["first_timestamp"],
+                last_timestamp=row["last_timestamp"],
+                input_hash=row["input_hash"],
+                summary_hash=row["summary_hash"],
+                mode=row.get("mode", "summary"),
+            )
+        )
+    return records
+
+
+def write_manifest(path: Path, records: list[NoteRecord]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(manifest_dict(records), indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def context_from_summary(summary: str, max_chars: int) -> str:
+    summary = summary.strip()
+    if not summary:
+        return ""
+    first_para = summary.split("\n\n", 1)[0].strip()
+    if first_para.startswith("*") and first_para.endswith("*") and len(first_para) <= max_chars:
+        return first_para
+    compact = " ".join(first_para.split())
+    if len(compact) <= max_chars:
+        return compact
+    return compact[: max_chars - 1].rstrip() + "..."
+
+
+def timestamps_for_ranges(
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    ranges: list[SourceRange],
+) -> tuple[str, str]:
+    messages = all_messages_for_ranges(segments, ranges)
+    if not messages:
+        raise RuntimeError("No messages for ranges")
+    return messages[0].timestamp, messages[-1].timestamp
+
+
+def init_manifest(args: argparse.Namespace) -> None:
+    segments = load_segments(args.claude_jsonl, args.codex_jsonl)
+    records: list[NoteRecord] = []
+    for shard_path in sorted(args.summary_shards_dir.glob("shard-*.md")):
+        shard_text = shard_path.read_text(encoding="utf-8")
+        ranges = parse_shard_ranges(shard_text)
+        first_ts, last_ts = timestamps_for_ranges(segments, ranges)
+        prefix = first_ts.replace("-", "").replace(":", "").split(".")[0].replace("T", "")
+        if prefix.endswith("Z"):
+            prefix = prefix[:-1]
+        note_path = args.notes_dir / note_name_for_ranges(prefix, ranges)
+        if not note_path.exists():
+            raise RuntimeError(f"Expected note not found for {shard_path.name}: {note_path}")
+        summary_text = note_path.read_text(encoding="utf-8")
+        records.append(
+            NoteRecord(
+                note=str(note_path),
+                source_ranges=ranges,
+                first_timestamp=first_ts,
+                last_timestamp=last_ts,
+                input_hash=sha256_text(shard_text),
+                summary_hash=sha256_text(summary_text),
+            )
+        )
+    write_manifest(args.manifest, records)
+    print(f"wrote {args.manifest} with {len(records)} records")
+
+
+def covered_segments(records: list[NoteRecord]) -> dict[tuple[str, str, int], tuple[int, int]]:
+    covered: dict[tuple[str, str, int], tuple[int, int]] = {}
+    for record_idx, record in enumerate(records):
+        for source_range in record.source_ranges:
+            key = (source_range.platform, source_range.date, source_range.sequence)
+            current = covered.get(key)
+            if current is None or source_range.last_message > current[0]:
+                covered[key] = (source_range.last_message, record_idx)
+    return covered
+
+
+def build_new_ranges(
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    covered: dict[tuple[str, str, int], tuple[int, int]],
+    target_chars: int,
+) -> list[list[SourceRange]]:
+    shards: list[list[SourceRange]] = []
+    for platform in sorted({key[0] for key in segments}, key=lambda value: SOURCE_ORDER.get(value, value)):
+        current: list[SourceRange] = []
+        current_size = 0
+        keys = [key for key in segments if key[0] == platform]
+        for key in sorted(keys, key=segment_sort_key):
+            if key in covered:
+                continue
+            messages = segments[key]
+            if not messages:
+                continue
+            rendered = render_messages(messages)
+            if current and current_size + len(rendered) > target_chars:
+                shards.append(current)
+                current = []
+                current_size = 0
+            _platform, date, sequence = key
+            current.append(
+                SourceRange(
+                    platform=_platform,
+                    date=date,
+                    sequence=sequence,
+                    first_message=messages[0].message_index,
+                    last_message=messages[-1].message_index,
+                )
+            )
+            current_size += len(rendered)
+        if current:
+            shards.append(current)
+    return shards
+
+
+def validate_summary(text: str, forbidden_patterns: list[str]) -> list[str]:
+    warnings: list[str] = []
+    for pattern in forbidden_patterns:
+        if re.search(pattern, text, re.IGNORECASE):
+            warnings.append(pattern)
+    return warnings
+
+
+def run_command(command: list[str], prompt: str) -> str:
+    proc = subprocess.run(
+        command,
+        input=prompt,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f"summary command failed with exit {proc.returncode}\nSTDERR:\n{proc.stderr}"
+        )
+    return proc.stdout.strip() + "\n"
+
+
+def write_prompt(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def first_timestamp_for_ranges(
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    ranges: list[SourceRange],
+) -> datetime:
+    first_ts, _last_ts = timestamps_for_ranges(segments, ranges)
+    return datetime.fromisoformat(first_ts.replace("Z", "+00:00"))
+
+
+def previous_context_for_new_range(
+    records: list[NoteRecord],
+    ranges: list[SourceRange],
+    max_chars: int,
+) -> str:
+    if max_chars <= 0:
+        return ""
+    platforms = {source_range.platform for source_range in ranges}
+    if len(platforms) != 1:
+        return ""
+    platform = next(iter(platforms))
+    candidates = [
+        record
+        for record in records
+        if all(source_range.platform == platform for source_range in record.source_ranges)
+    ]
+    if not candidates:
+        return ""
+    previous = max(candidates, key=lambda record: record.last_timestamp)
+    note_path = Path(previous.note)
+    if not note_path.exists():
+        return ""
+    context = context_from_summary(note_path.read_text(encoding="utf-8"), max_chars)
+    if not context:
+        return ""
+    return PREVIOUS_CONTEXT_TEMPLATE.format(platform=platform, context=context).strip()
+
+
+def git_commit(paths: list[Path], message: str, cwd: Path, iso_date: str | None = None) -> None:
+    rels = [str(path.relative_to(cwd)) for path in paths]
+    subprocess.check_call(["git", "add", "--", *rels], cwd=cwd)
+    env = os.environ.copy()
+    if iso_date:
+        env["GIT_AUTHOR_DATE"] = iso_date
+        env["GIT_COMMITTER_DATE"] = iso_date
+    subprocess.check_call(["git", "commit", "-m", message, "--", *rels], cwd=cwd, env=env)
+
+
+def update_notes(args: argparse.Namespace) -> None:
+    records = load_manifest(args.manifest)
+    segments = load_segments(args.claude_jsonl, args.codex_jsonl)
+    covered = covered_segments(records)
+    args.work_dir.mkdir(parents=True, exist_ok=True)
+
+    changed_paths: list[Path] = []
+    continuations: dict[int, list[tuple[tuple[str, str, int], int, int]]] = {}
+    for key, (last_message, record_idx) in covered.items():
+        messages = segments.get(key)
+        if not messages:
+            continue
+        current_last = messages[-1].message_index
+        if current_last > last_message:
+            continuations.setdefault(record_idx, []).append((key, last_message, current_last))
+
+    for record_idx, items in continuations.items():
+        items = sorted(items, key=lambda item: segment_sort_key(item[0]))
+        record = records[record_idx]
+        note_path = Path(record.note)
+        old_messages = all_messages_for_ranges(segments, record.source_ranges)
+        new_messages: list[MessageRecord] = []
+        for key, old_last, current_last in items:
+            platform, date, sequence = key
+            new_range = SourceRange(platform, date, sequence, old_last + 1, current_last)
+            new_messages.extend(messages_for_range(segments, new_range))
+        new_messages = sorted(new_messages, key=lambda msg: (msg.timestamp, SOURCE_ORDER.get(msg.platform, msg.platform)))
+        prompt = REVISION_PROMPT.format(
+            existing_summary=note_path.read_text(encoding="utf-8").strip(),
+            old_transcript=render_messages(old_messages),
+            new_transcript=render_messages(new_messages),
+        )
+        prompt_path = args.work_dir / "prompts" / f"revise-{note_path.stem}.md"
+        write_prompt(prompt_path, prompt)
+        for key, old_last, current_last in items:
+            print(f"continuation: {note_path} {key} {old_last + 1}-{current_last}")
+        print(f"prompt: {prompt_path}")
+        if not args.command:
+            continue
+        candidate = run_command(args.command, prompt)
+        candidate_path = args.work_dir / "candidates" / note_path.name
+        write_prompt(candidate_path, candidate)
+        warnings = validate_summary(candidate, args.forbid_regex)
+        if warnings:
+            raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
+        note_path.write_text(candidate, encoding="utf-8")
+        for key, _old_last, current_last in items:
+            for source_range in record.source_ranges:
+                if (source_range.platform, source_range.date, source_range.sequence) == key:
+                    source_range.last_message = current_last
+                    break
+        first_ts, last_ts = timestamps_for_ranges(segments, record.source_ranges)
+        record.first_timestamp = first_ts
+        record.last_timestamp = last_ts
+        record.input_hash = sha256_text(render_messages(all_messages_for_ranges(segments, record.source_ranges)))
+        record.summary_hash = sha256_text(candidate)
+        changed_paths.append(note_path)
+
+    new_shards = build_new_ranges(segments, covered, args.target_chars)
+    for shard_idx, ranges in enumerate(new_shards, 1):
+        messages = all_messages_for_ranges(segments, ranges)
+        transcript = render_messages(messages)
+        previous_context_block = previous_context_for_new_range(records, ranges, args.rolling_context_chars)
+        prompt = SUMMARY_PROMPT.format(
+            previous_context_block=previous_context_block,
+            transcript=transcript,
+        )
+        first_ts = first_timestamp_for_ranges(segments, ranges)
+        prefix = first_ts.strftime("%Y%m%d%H%M%S")
+        note_path = args.notes_dir / note_name_for_ranges(prefix, ranges)
+        if note_path.exists():
+            raise RuntimeError(f"Refusing to overwrite existing note: {note_path}")
+        prompt_path = args.work_dir / "prompts" / f"new-{note_path.name}"
+        write_prompt(prompt_path, prompt)
+        print(f"new shard: {note_path} ({len(messages)} messages)")
+        print(f"prompt: {prompt_path}")
+        if not args.command:
+            continue
+        candidate = run_command(args.command, prompt)
+        candidate_path = args.work_dir / "candidates" / note_path.name
+        write_prompt(candidate_path, candidate)
+        warnings = validate_summary(candidate, args.forbid_regex)
+        if warnings:
+            raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
+        note_path.write_text(candidate, encoding="utf-8")
+        first, last = timestamps_for_ranges(segments, ranges)
+        records.append(
+            NoteRecord(
+                note=str(note_path),
+                source_ranges=ranges,
+                first_timestamp=first,
+                last_timestamp=last,
+                input_hash=sha256_text(transcript),
+                summary_hash=sha256_text(candidate),
+            )
+        )
+        changed_paths.append(note_path)
+        if args.commit:
+            iso = first_ts.isoformat().replace("+00:00", "Z")
+            git_commit([note_path], f"Archive conversation shard {prefix}", args.repo_root, iso)
+
+    if args.command and changed_paths:
+        write_manifest(args.manifest, records)
+        if args.commit:
+            git_commit([args.manifest], "Update conversation summary manifest", args.repo_root)
+    elif not args.command:
+        print("No summary command provided; wrote prompts only.")
+    else:
+        print("No new or continued transcript ranges found.")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="command_name", required=True)
+
+    init_parser = sub.add_parser("init-manifest")
+    init_parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    init_parser.add_argument("--summary-shards-dir", type=Path, required=True)
+    init_parser.add_argument("--notes-dir", type=Path, required=True)
+    init_parser.add_argument("--claude-jsonl", type=Path, required=True)
+    init_parser.add_argument("--codex-jsonl", type=Path, required=True)
+    init_parser.set_defaults(func=init_manifest)
+
+    update_parser = sub.add_parser("update")
+    update_parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    update_parser.add_argument("--notes-dir", type=Path, required=True)
+    update_parser.add_argument("--claude-jsonl", type=Path, required=True)
+    update_parser.add_argument("--codex-jsonl", type=Path, required=True)
+    update_parser.add_argument("--work-dir", type=Path, default=Path("/tmp/valuegraft_transcript_incremental"))
+    update_parser.add_argument("--target-chars", type=int, default=180_000)
+    update_parser.add_argument(
+        "--rolling-context-chars",
+        type=int,
+        default=700,
+        help="Carry this many chars from the previous same-source summary into a new summary prompt; 0 disables.",
+    )
+    update_parser.add_argument("--repo-root", type=Path, default=Path.cwd())
+    update_parser.add_argument("--commit", action="store_true")
+    update_parser.add_argument(
+        "--forbid-regex",
+        action="append",
+        default=DEFAULT_FORBID_REGEX,
+        help="Regex that must not appear in generated summaries; defaults to common secret-shaped strings.",
+    )
+    update_parser.add_argument("--command", nargs=argparse.REMAINDER)
+    update_parser.set_defaults(func=update_notes)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

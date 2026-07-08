@@ -1,0 +1,544 @@
+{
+  "description": "Coverage manifest for scripts/transcripts/update_conversation_notes.py.",
+  "notes": [
+    {
+      "first_timestamp": "2026-07-04T20:09:05.598000Z",
+      "input_hash": "7490ca63dca837fdeff7d48019dcebdcb2f50c6adac230d036872a4ea6d302a2",
+      "last_timestamp": "2026-07-05T19:12:37.855000Z",
+      "mode": "summary",
+      "note": "notes/20260704200905-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-04",
+          "first_message": 1,
+          "last_message": 89,
+          "platform": "claude-code",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 288,
+          "platform": "claude-code",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 53,
+          "platform": "claude-code",
+          "sequence": 2
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 110,
+          "platform": "claude-code",
+          "sequence": 3
+        }
+      ],
+      "summary_hash": "4f6391036342cd650ceb89c6904511289c046d5dfaedbc6d0f615675cdbca7d3"
+    },
+    {
+      "first_timestamp": "2026-07-05T19:13:10.304000Z",
+      "input_hash": "561df2f144298a0d9812ebf39b8c0dfc370ae6cfd0875288f8558d1ec83e21df",
+      "last_timestamp": "2026-07-06T03:08:44.584000Z",
+      "mode": "summary",
+      "note": "notes/20260705191310-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-05",
+          "first_message": 111,
+          "last_message": 192,
+          "platform": "claude-code",
+          "sequence": 3
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 31,
+          "platform": "claude-code",
+          "sequence": 4
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 107,
+          "platform": "claude-code",
+          "sequence": 1
+        }
+      ],
+      "summary_hash": "9bc193ac85a26a180dd37f513f28b7b0dd1ad37e9457d60baa8ecfb88b0c7687"
+    },
+    {
+      "first_timestamp": "2026-07-06T03:17:20.247000Z",
+      "input_hash": "ca3edfe067a2cc8e1d2a8de86500e41eeba98321b602b38ce7c279b375d0c719",
+      "last_timestamp": "2026-07-06T16:11:52.981000Z",
+      "mode": "summary",
+      "note": "notes/20260706031720-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-06",
+          "first_message": 108,
+          "last_message": 390,
+          "platform": "claude-code",
+          "sequence": 1
+        }
+      ],
+      "summary_hash": "4b80b0035340603cd1f0b76c2d0a2d87fc1a5c24c233f17eb87629be53310f8b"
+    },
+    {
+      "first_timestamp": "2026-07-06T16:15:43.053000Z",
+      "input_hash": "0ba91cf01d1e0b4eff5c4890ef8b33fd1f65a760cdadc0cef067d6a8f4f1b53f",
+      "last_timestamp": "2026-07-07T08:10:11.011000Z",
+      "mode": "summary",
+      "note": "notes/20260706161543-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-06",
+          "first_message": 391,
+          "last_message": 584,
+          "platform": "claude-code",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 9,
+          "platform": "claude-code",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 4,
+          "platform": "claude-code",
+          "sequence": 2
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 7,
+          "platform": "claude-code",
+          "sequence": 3
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 2,
+          "platform": "claude-code",
+          "sequence": 4
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 2,
+          "platform": "claude-code",
+          "sequence": 5
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 1,
+          "platform": "claude-code",
+          "sequence": 6
+        }
+      ],
+      "summary_hash": "cf0333848b31ef4d89da42f8dba79eb5d49a7e2eff327991f83dde11542e866f"
+    },
+    {
+      "first_timestamp": "2026-07-07T08:10:36.214000Z",
+      "input_hash": "28c58b324c90119c797cd95f8b83099f4887c02a26545ea7d72761e5acbcb6c1",
+      "last_timestamp": "2026-07-07T15:38:12.823000Z",
+      "mode": "summary",
+      "note": "notes/20260707081036-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-07",
+          "first_message": 2,
+          "last_message": 4,
+          "platform": "claude-code",
+          "sequence": 6
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 2,
+          "platform": "claude-code",
+          "sequence": 7
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 222,
+          "platform": "claude-code",
+          "sequence": 8
+        }
+      ],
+      "summary_hash": "9314574d8b8e55b507dca485e4a2810c56e41f2224f0de2904c6a08cb0ebeb72"
+    },
+    {
+      "first_timestamp": "2026-07-07T15:38:32.822000Z",
+      "input_hash": "a2542472254628720382f9ac333139e13d8609791652c0c10653afeb89ee8e14",
+      "last_timestamp": "2026-07-07T20:17:36.680000Z",
+      "mode": "summary",
+      "note": "notes/20260707153832-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-07",
+          "first_message": 223,
+          "last_message": 446,
+          "platform": "claude-code",
+          "sequence": 8
+        }
+      ],
+      "summary_hash": "9952935fd776cf3eeb78715c5bdd9bf73a9ba09783e295b4ea3c208d93e7ee2f"
+    },
+    {
+      "first_timestamp": "2026-07-07T20:18:23.074000Z",
+      "input_hash": "3c7fd0136adb646312f25f68a73f441d77e3b1b338631771106ef9e83b8e9780",
+      "last_timestamp": "2026-07-08T01:16:44.063000Z",
+      "mode": "summary",
+      "note": "notes/20260707201823-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-07",
+          "first_message": 447,
+          "last_message": 610,
+          "platform": "claude-code",
+          "sequence": 8
+        },
+        {
+          "date": "2026-07-08",
+          "first_message": 1,
+          "last_message": 77,
+          "platform": "claude-code",
+          "sequence": 1
+        }
+      ],
+      "summary_hash": "818ebc259130d2c6967112f8a2890383a2aaee5421b2026bf5ec6ff1b0cc408b"
+    },
+    {
+      "first_timestamp": "2026-07-08T01:17:53.788000Z",
+      "input_hash": "4dc27039a849efce54e51c108ef822e8c4dcc87f3a660807cf0a19bc93fa7a56",
+      "last_timestamp": "2026-07-08T04:57:14.006000Z",
+      "mode": "summary",
+      "note": "notes/20260708011753-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-08",
+          "first_message": 78,
+          "last_message": 329,
+          "platform": "claude-code",
+          "sequence": 1
+        }
+      ],
+      "summary_hash": "c56985a4e9136930a1332aee38be0f784f1c5480edc737a6b1ea16954c25a950"
+    },
+    {
+      "first_timestamp": "2026-07-08T04:59:51.063000Z",
+      "input_hash": "6a59bb522349c0bdc06e3a92e2be5360207a48ddca65efcdf49a87f39626be4e",
+      "last_timestamp": "2026-07-08T17:32:31.844000Z",
+      "mode": "summary",
+      "note": "notes/20260708045951-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-08",
+          "first_message": 330,
+          "last_message": 421,
+          "platform": "claude-code",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-08",
+          "first_message": 1,
+          "last_message": 77,
+          "platform": "claude-code",
+          "sequence": 2
+        },
+        {
+          "date": "2026-07-08",
+          "first_message": 1,
+          "last_message": 89,
+          "platform": "claude-code",
+          "sequence": 3
+        }
+      ],
+      "summary_hash": "4487e2f78b4c67eb2ae830142774a8128b04f524361709a52efddf99894e16cb"
+    },
+    {
+      "first_timestamp": "2026-07-08T17:33:16.131000Z",
+      "input_hash": "e314bd496f8f234d196d8e24667286cfb778047ad4631c7134934e980744f241",
+      "last_timestamp": "2026-07-08T17:41:19.987000Z",
+      "mode": "summary",
+      "note": "notes/20260708173316-claude-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-08",
+          "first_message": 90,
+          "last_message": 98,
+          "platform": "claude-code",
+          "sequence": 3
+        }
+      ],
+      "summary_hash": "d27e6c4b887e7a7277b6f50e6da91188ae06d74e9caea282140475fe59b3a40c"
+    },
+    {
+      "first_timestamp": "2026-07-05T02:08:52.348000Z",
+      "input_hash": "10ca0f787412d0816be63fb6394a02da269a70f47de0b60815572e91718d80de",
+      "last_timestamp": "2026-07-06T03:01:08.701000Z",
+      "mode": "summary",
+      "note": "notes/20260705020852-codex-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 30,
+          "platform": "codex",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 41,
+          "platform": "codex",
+          "sequence": 2
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 36,
+          "platform": "codex",
+          "sequence": 3
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 4,
+          "platform": "codex",
+          "sequence": 4
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 31,
+          "platform": "codex",
+          "sequence": 5
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 8,
+          "platform": "codex",
+          "sequence": 6
+        },
+        {
+          "date": "2026-07-05",
+          "first_message": 1,
+          "last_message": 43,
+          "platform": "codex",
+          "sequence": 7
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 12,
+          "platform": "codex",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 109,
+          "platform": "codex",
+          "sequence": 2
+        }
+      ],
+      "summary_hash": "3264befac9ba635812aedc0e053299e31d5958e4a905fcf970a332718b5483f8"
+    },
+    {
+      "first_timestamp": "2026-07-06T03:01:21.569000Z",
+      "input_hash": "08e69e0f308f216cc8594f7fcea0d97d97cd2d2e2b66d24073df87a794019b74",
+      "last_timestamp": "2026-07-06T16:00:04.900000Z",
+      "mode": "summary",
+      "note": "notes/20260706030121-codex-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-06",
+          "first_message": 110,
+          "last_message": 175,
+          "platform": "codex",
+          "sequence": 2
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 34,
+          "platform": "codex",
+          "sequence": 3
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 3,
+          "platform": "codex",
+          "sequence": 4
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 3,
+          "platform": "codex",
+          "sequence": 5
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 235,
+          "platform": "codex",
+          "sequence": 6
+        }
+      ],
+      "summary_hash": "c94b7780f88a0a3ba62832b45e52ae12aaf283db3b35f0a4b4f5d7ee1afbdd6c"
+    },
+    {
+      "first_timestamp": "2026-07-06T16:00:45.420000Z",
+      "input_hash": "a83f319cc21804d25bd81f190a63c0811b4fbea845e1011977d727db2eb7f4e3",
+      "last_timestamp": "2026-07-07T11:20:26.001000Z",
+      "mode": "summary",
+      "note": "notes/20260706160045-codex-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-06",
+          "first_message": 236,
+          "last_message": 239,
+          "platform": "codex",
+          "sequence": 6
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 26,
+          "platform": "codex",
+          "sequence": 7
+        },
+        {
+          "date": "2026-07-06",
+          "first_message": 1,
+          "last_message": 7,
+          "platform": "codex",
+          "sequence": 8
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 2,
+          "platform": "codex",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 335,
+          "platform": "codex",
+          "sequence": 2
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 78,
+          "platform": "codex",
+          "sequence": 3
+        }
+      ],
+      "summary_hash": "d54c2fd4dbe4377870f63a63ffa1ff55706ea5aea14043e3cf518ab6a2263f8d"
+    },
+    {
+      "first_timestamp": "2026-07-07T11:20:43.256000Z",
+      "input_hash": "d74ff6dddffd5117fa8d3b04a8a6c080cb38f913c857360e8e7d62bf87c068b2",
+      "last_timestamp": "2026-07-07T15:30:13.971000Z",
+      "mode": "summary",
+      "note": "notes/20260707112043-codex-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-07",
+          "first_message": 79,
+          "last_message": 564,
+          "platform": "codex",
+          "sequence": 3
+        }
+      ],
+      "summary_hash": "a6ca769a4301496bb149ac5933561ea0fbf9661b8990f3ca7b1326b742bdc345"
+    },
+    {
+      "first_timestamp": "2026-07-07T15:31:13.841000Z",
+      "input_hash": "aa9952ab35f97e0e236cc1879cb3373897f34a8574bdb57defd7f6e7abbd4ce4",
+      "last_timestamp": "2026-07-08T02:53:54.544000Z",
+      "mode": "summary",
+      "note": "notes/20260707153113-codex-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-07",
+          "first_message": 565,
+          "last_message": 670,
+          "platform": "codex",
+          "sequence": 3
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 164,
+          "platform": "codex",
+          "sequence": 4
+        },
+        {
+          "date": "2026-07-07",
+          "first_message": 1,
+          "last_message": 120,
+          "platform": "codex",
+          "sequence": 5
+        },
+        {
+          "date": "2026-07-08",
+          "first_message": 1,
+          "last_message": 124,
+          "platform": "codex",
+          "sequence": 1
+        }
+      ],
+      "summary_hash": "e3c65326946f6df16664a65ad799b00d76f86f9b9c5e7e41f656f8e117f100bf"
+    },
+    {
+      "first_timestamp": "2026-07-08T02:54:08.274000Z",
+      "input_hash": "ce8fb3e6d6858e0d38844d0a3a281ebd58b3aac8f02d9bdfad8ca274ebb26863",
+      "last_timestamp": "2026-07-08T17:43:15.039000Z",
+      "mode": "summary",
+      "note": "notes/20260708025408-codex-conversation.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-08",
+          "first_message": 125,
+          "last_message": 401,
+          "platform": "codex",
+          "sequence": 1
+        },
+        {
+          "date": "2026-07-08",
+          "first_message": 1,
+          "last_message": 2,
+          "platform": "codex",
+          "sequence": 2
+        },
+        {
+          "date": "2026-07-08",
+          "first_message": 1,
+          "last_message": 61,
+          "platform": "codex",
+          "sequence": 3
+        }
+      ],
+      "summary_hash": "04d43712aaad16160abe49897b98a5102392ff23376f68bf1586bd07a6a05a8c"
+    }
+  ],
+  "version": 1
+}
