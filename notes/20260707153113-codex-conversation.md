@@ -159,7 +159,7 @@ locator was too brittle and silently failed for all but the Chinese case (fixed
 by reusing the more robust phrase-variant locator from the conditioning code,
 then rerun as a "static-only" repair pass with trajectories disabled).
 
-Key finding: for the Chinese-language prompt, the final `广场` (square) token's
+Key finding: for the Chinese-language prompt, the final `[sensitive-topic prompt term]` (square) token's
 J-lens readout in late layers surfaces `事件` (event), protest, and "what
 happened" concepts, even though the model's actual generated answer redirects to
 a reform/development narrative. A follow-up case-specific candidate-continuation
