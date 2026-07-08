@@ -1,0 +1,1512 @@
+[
+  {
+    "id": "c33",
+    "title": "2D animated series pilot production",
+    "system": "You are a helpful assistant experienced in animation production and studio operations, supporting a small 2D animation studio producing an original series pilot.",
+    "project": "The user is the production manager at Inkwell Animation Collective, a six-person studio finishing the pilot episode of Moonlit Ferry, a hand-drawn 2D series they intend to pitch to streaming platforms. Together with the assistant they are planning the storyboard and animatic pipeline, voice casting and recording, the ink-and-paint workflow, festival submission strategy, and freelancer contracts and scheduling.",
+    "subtopics": [
+      "storyboard and animatic pipeline",
+      "voice casting and recording",
+      "ink-and-paint workflow",
+      "festival submission strategy",
+      "freelancer contracts and scheduling"
+    ],
+    "early_user_turns": [
+      "Hey, so Moonlit Ferry's pilot is deep in production at Inkwell and I want this chat to be our planning hub for everything left: storyboards and animatics, voice casting, the ink-and-paint pipeline, festival strategy, and wrangling our freelancers. Can you help me think through all of it as we go?",
+      "Let's start with the storyboard and animatic pipeline since it's the bottleneck right now. We've got hand-drawn boards but the animatic timing keeps drifting from the script. What's a sane way for a small team to keep boards and animatic timing in sync without a dedicated editor?"
+    ],
+    "middle_filler_user_turns": [
+      "For voice casting, should we hold open auditions or go straight to agents for our two lead characters?",
+      "How many callback rounds is reasonable before we lock a voice cast, given we're paying out of pocket?",
+      "On the ink-and-paint side, how do we keep line quality consistent across four different inkers working on the same episode?",
+      "What's a good QC checklist before a scene goes from ink-and-paint to compositing?",
+      "For festival submission strategy, should we submit the pilot to genre-specific festivals first or go broad with the big animation festivals?",
+      "How far in advance of a festival deadline should a submission cut actually be locked?",
+      "For freelancer contracts, what's a fair way to structure per-episode pay versus per-shot pay for background painters?",
+      "How should we handle a freelancer who consistently delivers late but the work quality is excellent?",
+      "What's a reasonable turnaround time to promise freelance colorists before we start missing our own internal deadlines?",
+      "Should the animatic include temp voice performances from the team, or just scratch dialogue read flatly?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the ink-and-paint workflow, what's the best way to onboard a new inker mid-episode without breaking consistency?",
+      "For freelancer scheduling, how much buffer should we build in before a hard delivery date for outsourced backgrounds?",
+      "Should we keep a shared style bible document, or is that overkill for a six-person studio?",
+      "What's a good way to track shot revisions so notes don't get lost between rounds?",
+      "One more thing, how do we handle a voice actor who wants script changes to their character's dialogue?"
+    ],
+    "plants": [
+      {
+        "id": "c33-referent-1",
+        "category": "referent",
+        "middle_user": "Animatic timing decision, finally made. We weighed three options: (1) sticking with hand-timed boards reviewed frame by frame in a screening room, (2) importing boards into an editing timeline with scratch audio and letting the software drive pacing, and (3) hiring an outside editor just for timing passes. Given our budget, we're going with the second one, importing into an editing timeline with scratch audio.",
+        "tail_user_fragment": "On the animatic timing approach we picked, no need to re-explain it. How soon can we get the next sequence into that timeline?",
+        "probe": "Which animatic timing approach did we settle on for Moonlit Ferry?",
+        "probes": [
+          "Which animatic timing approach did we settle on for Moonlit Ferry?",
+          "Which of the three timing options did we end up choosing?",
+          "What did we decide about how to time the animatic?",
+          "Remind me which animatic timing method we committed to."
+        ],
+        "gold": "Importing boards into an editing timeline with scratch audio and letting the software drive pacing (the second of the three options), not hand-timing in a screening room and not hiring an outside editor.",
+        "keywords": [
+          "editing timeline",
+          "scratch audio"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c33-referent-2",
+        "category": "referent",
+        "middle_user": "Marcus had a good idea for voice recording. His proposal is to record our two leads together in the same booth for banter-heavy scenes instead of recording each actor separately and cutting the performances together afterward. He thinks the timing reads far more natural that way, and I'm doing it for the remaining sessions.",
+        "tail_user_fragment": "On Marcus's joint-recording idea, I'm already sold, don't re-describe it. What booth setup do we need to make that work with two mics?",
+        "probe": "What specifically was Marcus's proposal for voice recording?",
+        "probes": [
+          "What specifically was Marcus's proposal for voice recording?",
+          "What did Marcus suggest for recording the two leads?",
+          "Describe the recording approach Marcus pitched that we adopted.",
+          "What was Marcus's idea about how to record the banter scenes?"
+        ],
+        "gold": "Recording the two lead actors together in the same booth for banter-heavy scenes, instead of recording each separately and cutting the performances together afterward.",
+        "keywords": [
+          "same booth",
+          "together",
+          "leads"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c33-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us later: 'the reel' is overloaded on our team. The compositors call the daily render output the reel too, but when I say the reel to you, I always mean the festival submission showreel we're cutting from finished shots. That's the sense I want here.",
+        "tail_user_fragment": "Is the reel long enough yet for a first festival cut, or do we need more finished shots first?",
+        "probe": "When I said 'the reel' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the reel' in this conversation, what was I referring to?",
+          "Which of the two things called 'the reel' did I mean here?",
+          "What does 'the reel' refer to in our conversation?",
+          "If I mention the reel again, what should you understand that to be?"
+        ],
+        "gold": "The festival submission showreel cut from finished shots, not the compositors' daily render output.",
+        "keywords": [
+          "festival submission",
+          "showreel"
+        ],
+        "anti_keywords": [
+          "daily render",
+          "compositors' output"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c33-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the model sheet' from here on I mean the approved final character turnaround sheet locked for production. I know some of the freelance inkers still call their rough early sketches model sheets too, but with you, the model sheet always means the locked, approved version.",
+        "tail_user_fragment": "Has the model sheet been sent to every inker yet, or is someone still working off an older draft?",
+        "probe": "When I referred to 'the model sheet' in this conversation, which one did I mean?",
+        "probes": [
+          "When I referred to 'the model sheet' in this conversation, which one did I mean?",
+          "Which version did I mean when I said 'the model sheet'?",
+          "What does 'the model sheet' refer to in our conversation, the locked one or the rough sketches?",
+          "If I bring up the model sheet again, what should you assume I'm talking about?"
+        ],
+        "gold": "The approved final character turnaround sheet locked for production, not the freelance inkers' rough early sketches.",
+        "keywords": [
+          "approved",
+          "locked",
+          "final turnaround"
+        ],
+        "anti_keywords": [
+          "rough sketches",
+          "early draft"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c33-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the whole pilot: everything is hand-drawn and hand-inked, frame by frame. No AI-assisted in-betweening, no AI upscaling of rough passes, nothing like that anywhere in the pipeline, even if it would save us weeks. I will not budge on this regardless of how tight the schedule gets.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for speeding up the in-betweening work given our tight schedule?",
+        "probes": [
+          "What are some ideas for speeding up the in-betweening work given our tight schedule?",
+          "Give me three ways to accelerate in-betweening for the pilot.",
+          "How could we get through the remaining animation faster?",
+          "Suggest ways to compress the animation timeline without changing the process."
+        ],
+        "gold": "Suggests approaches like bringing on additional human in-betweeners, simplifying certain background shots, or renegotiating scope, while never proposing AI-assisted in-betweening or AI upscaling, ideally recalling the hand-drawn commitment.",
+        "keywords": [
+          "hand-drawn",
+          "human in-betweeners"
+        ],
+        "anti_keywords": [
+          "ai-assisted",
+          "ai upscaling"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c33-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not doing a Kickstarter or any crowdfunding campaign for this pilot. I've seen too many small studios burn goodwill promising rewards they can't deliver on time. We finish this on our own budget or we cut scope, full stop.",
+        "tail_user_fragment": null,
+        "probe": "Given the budget crunch, what funding options should we consider?",
+        "probes": [
+          "Given the budget crunch, what funding options should we consider?",
+          "If money runs tight before the pilot's done, what are our options?",
+          "What should we consider if the budget doesn't stretch far enough?",
+          "Suggest ways to handle a funding shortfall without launching a public campaign."
+        ],
+        "gold": "Suggests cutting scope, seeking a private investor or grant, or delaying delivery, while never proposing Kickstarter or crowdfunding, ideally recalling the user's rejection of crowdfunding.",
+        "keywords": [
+          "cut scope",
+          "private funding",
+          "grant"
+        ],
+        "anti_keywords": [
+          "kickstarter",
+          "crowdfunding"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c33-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on outsourcing: we tried sending overflow ink-and-paint shots to a studio called BrightLine Overseas last quarter, and half the shots came back with off-model line weight, we had to redo most of them in-house anyway. Not using them again.",
+        "tail_user_fragment": null,
+        "probe": "What should we do about overflow ink-and-paint work going forward?",
+        "probes": [
+          "What should we do about overflow ink-and-paint work going forward?",
+          "What outsourcing option should we pursue for overflow shots?",
+          "Given our capacity, how should we handle extra ink-and-paint work?",
+          "What's a better approach than what we already tried for overflow shots?"
+        ],
+        "gold": "Anything except BrightLine Overseas, e.g. a different vetted studio with a trial batch, bringing on additional freelance inkers directly, or trimming shot count, ideally acknowledging BrightLine was tried and rejected.",
+        "keywords": [
+          "off-model",
+          "redo"
+        ],
+        "anti_keywords": [
+          "brightline"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c33-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we tried a scheduling tool called TaskFerry for tracking freelancer deliverables, and nobody on the team actually updated it, so it was constantly out of date and misleading. We dropped it after a month.",
+        "tail_user_fragment": null,
+        "probe": "What should we use to track freelancer deliverables going forward?",
+        "probes": [
+          "What should we use to track freelancer deliverables going forward?",
+          "How should we track freelancer deadlines now?",
+          "What's our path forward on scheduling given the earlier problems?",
+          "What tool or process should replace what we tried before for tracking deliverables?"
+        ],
+        "gold": "Anything except TaskFerry, e.g. a simpler shared spreadsheet with a designated owner, a lightweight kanban board, or manual weekly check-ins, ideally acknowledging TaskFerry's abandonment was tried and rejected.",
+        "keywords": [
+          "out of date",
+          "dropped"
+        ],
+        "anti_keywords": [
+          "taskferry"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c33-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our festival submission tracking number for the Ottawa animation festival is OIAF-22981, submitted May 14th. Nothing to decide, just don't want to lose track of the number.",
+        "tail_user_fragment": null,
+        "probe": "What is our Ottawa festival submission tracking number, and when was it submitted?",
+        "probes": [
+          "What is our Ottawa festival submission tracking number, and when was it submitted?",
+          "What's the reference number for our OIAF submission?",
+          "When did we submit to Ottawa, and what's the tracking ID?",
+          "Remind me of the Ottawa festival submission number and date."
+        ],
+        "gold": "OIAF-22981, submitted May 14th.",
+        "keywords": [
+          "OIAF-22981",
+          "may 14"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c33-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total remaining freelancer budget for the pilot is capped at $6,300, full stop, that's everything left after paying the voice cast. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total remaining freelancer budget?",
+        "probes": [
+          "What is our total remaining freelancer budget?",
+          "How much do we have left to pay freelancers?",
+          "What's the cap on our remaining freelancer spend?",
+          "Remind me the freelancer budget limit we're working with."
+        ],
+        "gold": "$6,300 total.",
+        "keywords": [
+          "6,300"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c33-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our internal shot-tracking spreadsheet 'Frodo' from now on. Every note and email thread should say Frodo, not the real filename, since we're sharing bits of these threads with a prospective distributor sometimes.",
+        "tail_user_fragment": "Is Frodo up to date with this week's shot statuses, or do I need to reconcile it against the review notes first?",
+        "probe": "What does 'Frodo' refer to in our project?",
+        "probes": [
+          "What does 'Frodo' refer to in our project?",
+          "If I mention Frodo again, what should you understand that to mean?",
+          "Remind me what we're calling Frodo internally.",
+          "What is Frodo a codename for?"
+        ],
+        "gold": "The internal shot-tracking spreadsheet.",
+        "keywords": [
+          "shot-tracking",
+          "spreadsheet"
+        ],
+        "anti_keywords": [
+          "hobbit",
+          "ring",
+          "shire"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c33-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our private freelancer feedback channel 'Vader' in all future notes. It's just easier than typing out the full channel name, and I don't want the real name floating around in shared docs with outside collaborators.",
+        "tail_user_fragment": "Can you draft a short message for Vader reminding freelancers about the revision-notes format?",
+        "probe": "What does 'Vader' refer to in our conversation?",
+        "probes": [
+          "What does 'Vader' refer to in our conversation?",
+          "If I mention Vader later, what should you take that to mean?",
+          "What is Vader a codename for in our project?",
+          "Remind me what Vader refers to internally."
+        ],
+        "gold": "The private freelancer feedback channel.",
+        "keywords": [
+          "freelancer feedback",
+          "channel"
+        ],
+        "anti_keywords": [
+          "sith",
+          "star wars",
+          "dark side"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c34",
+    "title": "Independent jazz club season programming",
+    "system": "You are a helpful assistant experienced in live music venue operations and booking, supporting an independent jazz club planning its upcoming season.",
+    "project": "The user is the co-owner and talent booker at The Blue Hour, a 90-seat independent jazz club, planning the venue's upcoming season. Together with the assistant they are planning artist booking and lineup curation, the sound and stage setup, membership and door pricing, late-night programming, and press and community outreach.",
+    "subtopics": [
+      "artist booking and lineup curation",
+      "sound and stage setup",
+      "membership and door pricing",
+      "late-night programming",
+      "press and community outreach"
+    ],
+    "early_user_turns": [
+      "Hey, so The Blue Hour is planning its next season and I want this chat to be our home base for it: booking, sound and stage, pricing and membership, late-night sets, and getting press and the community engaged. Can you help me work through all of it?",
+      "Let's start with artist booking and lineup curation since contracts need to go out soon. We want a mix of touring names and local players without the local sets feeling like filler. How do venues our size usually balance that ratio across a season?"
+    ],
+    "middle_filler_user_turns": [
+      "For sound and stage setup, is it worth investing in a proper drum shield for the smaller upright bass trios, or does that kill the room's natural sound?",
+      "How often should we actually recalibrate the room's EQ, given how much the crowd size changes the acoustics night to night?",
+      "On membership and door pricing, should members get a flat discount on every show or just priority seating?",
+      "What's a fair way to price a membership tier that includes reserved tables versus general admission?",
+      "For late-night programming, is a post-midnight jam session worth the extra staffing cost on weekends?",
+      "How do we keep a late-night jam from turning into an unpaid open mic that annoys the paying early crowd?",
+      "For press and community outreach, should we pitch the local alt-weekly directly or work through a publicist for the season opener?",
+      "What's a realistic lead time before a show to get a decent preview write-up placed?",
+      "One of our regular sidemen has been incredible about filling in on short notice, how should we make sure we're using him well going forward?",
+      "Should we livestream any of the shows, or does that undercut the whole reason people come out for a room this small?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to sound and stage setup, what's the right way to mic a piano trio in a room this size without it feeling too hot up front?",
+      "For membership pricing, how do we handle a member who wants to gift their membership to a friend for a month?",
+      "Should the late-night jam sessions be curated by us or run by a rotating guest host?",
+      "What's a good way to track which touring acts actually drove ticket sales versus which just filled the room on their name alone?",
+      "One more thing, how do we message a lineup change to members if an artist cancels close to the date?"
+    ],
+    "plants": [
+      {
+        "id": "c34-referent-1",
+        "category": "referent",
+        "middle_user": "Stage layout decision, finally made. We weighed three options: (1) keeping the small elevated stage exactly where it is against the back wall, (2) moving the stage to the center of the room with seating arranged in the round, and (3) building a slightly larger stage extension into the side alcove. Given the room's sightlines, we're going with the third one, extending into the side alcove.",
+        "tail_user_fragment": "On the stage layout we settled on, no need to re-explain it. How much seating capacity does that extension actually cost us?",
+        "probe": "Which stage layout option did we settle on for The Blue Hour?",
+        "probes": [
+          "Which stage layout option did we settle on for The Blue Hour?",
+          "Which of the three stage options did we end up choosing?",
+          "What did we decide about the stage layout?",
+          "Remind me which stage configuration we committed to."
+        ],
+        "gold": "Building a slightly larger stage extension into the side alcove (the third of the three options), not keeping the current back-wall stage and not moving to a center-in-the-round layout.",
+        "keywords": [
+          "side alcove",
+          "stage extension"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c34-referent-2",
+        "category": "referent",
+        "middle_user": "Denise had a good idea for the season opener. Her proposal is to pair a touring headliner with a short local opening set from a high school jazz ensemble, rather than the usual local-professional opener, to build community buy-in early. I'm doing it for the opener.",
+        "tail_user_fragment": "On Denise's opener idea, I'm already committed, don't re-describe it. How much rehearsal time should we offer the student ensemble beforehand?",
+        "probe": "What specifically was Denise's proposal for the season opener?",
+        "probes": [
+          "What specifically was Denise's proposal for the season opener?",
+          "What did Denise suggest for the opening night lineup?",
+          "Describe the opener format Denise pitched that we're adopting.",
+          "What was Denise's idea about who should open the season?"
+        ],
+        "gold": "Pairing the touring headliner with a short opening set from a high school jazz ensemble, instead of the usual local-professional opener.",
+        "keywords": [
+          "high school jazz ensemble",
+          "opener"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c34-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us later: 'the late set' is overloaded on our team. The bar staff use the late set to mean anything after 10pm generally, but when I say the late set to you, I always mean specifically the post-midnight jam session slot, not the regular second set of the night. That's the sense I want here.",
+        "tail_user_fragment": "Does the late set need its own separate door charge, or is it covered by the regular admission?",
+        "probe": "When I said 'the late set' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the late set' in this conversation, what was I referring to?",
+          "Which of the two things called 'the late set' did I mean here?",
+          "What does 'the late set' refer to in our conversation?",
+          "If I mention the late set again, what should you understand that to be?"
+        ],
+        "gold": "Specifically the post-midnight jam session slot, not the regular second set of the evening.",
+        "keywords": [
+          "post-midnight",
+          "jam session"
+        ],
+        "anti_keywords": [
+          "second set",
+          "10pm"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c34-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the door list' from here on I mean the guest-and-comp list handled at the entrance for each show. I know our booking software also has something it labels a door list for member check-ins, but with you, the door list always means the guest-and-comp entry list.",
+        "tail_user_fragment": "Who's currently on the door list for Saturday's show?",
+        "probe": "When I referred to 'the door list' in this conversation, which one did I mean?",
+        "probes": [
+          "When I referred to 'the door list' in this conversation, which one did I mean?",
+          "Which list did I mean when I said 'the door list'?",
+          "What does 'the door list' refer to in our conversation, the guest-comp list or the member check-in list?",
+          "If I bring up the door list again, what should you assume I'm talking about?"
+        ],
+        "gold": "The guest-and-comp entry list handled at the entrance for each show, not the booking software's member check-in list.",
+        "keywords": [
+          "guest",
+          "comp list"
+        ],
+        "anti_keywords": [
+          "member check-in",
+          "booking software"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c34-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the season: no talking during sets, ever, and we enforce it by asking chatty tables to step to the bar area. I don't care if it's a big-name touring artist packing the room, we are not becoming a background-music room. I will not budge on this no matter how much revenue pressure the bar side puts on us.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for making the bar area feel more lively and social during shows?",
+        "probes": [
+          "What are some ideas for making the bar area feel more lively and social during shows?",
+          "Give me three ways to boost bar revenue during performances.",
+          "How could we make the room feel more welcoming to casual groups?",
+          "Suggest ways to increase bar-side energy without changing how the main room runs."
+        ],
+        "gold": "Suggests approaches like a designated lounge area near the bar for conversation, pre-show or between-set social time, or a separate casual happy-hour night, while never proposing allowing talking during sets in the main room, ideally recalling the no-talking-during-sets policy.",
+        "keywords": [
+          "bar lounge area",
+          "between sets"
+        ],
+        "anti_keywords": [
+          "talking during sets",
+          "background music"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c34-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we don't book cover bands or tribute acts, period, even the ones that could sell out fast. This club exists for original and improvisational jazz, not nostalgia acts. Don't suggest a tribute booking to me as a quick revenue fix.",
+        "tail_user_fragment": null,
+        "probe": "Given a slow midweek slot, what kind of booking should fill it?",
+        "probes": [
+          "Given a slow midweek slot, what kind of booking should fill it?",
+          "If a weeknight is underbooked, what should we put there?",
+          "What should we consider to fill a quiet night in the schedule?",
+          "Suggest ways to fill a weak slot without changing what kind of acts we book."
+        ],
+        "gold": "Suggests booking an emerging local combo, a themed improvisational night, or a double bill of lesser-known original acts, while never proposing a cover band or tribute act, ideally recalling the rejection of tribute bookings.",
+        "keywords": [
+          "local combo",
+          "original jazz"
+        ],
+        "anti_keywords": [
+          "cover band",
+          "tribute act"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c34-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on ticketing: we tried a platform called QuickStub for online sales last season, and their fees ate almost 15% of every ticket plus the checkout flow confused half our older members. Not using them again.",
+        "tail_user_fragment": null,
+        "probe": "What should we use for online ticket sales going forward?",
+        "probes": [
+          "What should we use for online ticket sales going forward?",
+          "What ticketing platform should we pursue next?",
+          "Given our fee concerns, how should we sell tickets online?",
+          "What's a better approach than what we already tried for ticketing?"
+        ],
+        "gold": "Anything except QuickStub, e.g. a lower-fee ticketing platform, direct phone and door reservations, or a simpler member-portal checkout, ideally acknowledging QuickStub was tried and rejected.",
+        "keywords": [
+          "15%",
+          "fees"
+        ],
+        "anti_keywords": [
+          "quickstub"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c34-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we hired a sound engineer from a contracting agency called AudioReach for a few shows last spring, and he consistently over-compressed the bass on every mix regardless of what we asked for. We stopped requesting him.",
+        "tail_user_fragment": null,
+        "probe": "Who should handle sound engineering for the upcoming season?",
+        "probes": [
+          "Who should handle sound engineering for the upcoming season?",
+          "How should we staff sound engineering going forward?",
+          "What's our path forward on sound engineers given the earlier problems?",
+          "Who or what should handle mixing for the season's shows?"
+        ],
+        "gold": "Anything except the AudioReach engineer, e.g. a different vetted freelance engineer with a trial show, hiring a dedicated in-house engineer, or getting referrals from touring artists, ideally acknowledging the AudioReach engineer's over-compression was tried and rejected.",
+        "keywords": [
+          "over-compressed",
+          "bass"
+        ],
+        "anti_keywords": [
+          "audioreach"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c34-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our liquor license renewal confirmation number is LL-50472, filed April 9th. Nothing to decide, just don't want to lose track of the number.",
+        "tail_user_fragment": null,
+        "probe": "What is our liquor license renewal confirmation number, and when was it filed?",
+        "probes": [
+          "What is our liquor license renewal confirmation number, and when was it filed?",
+          "What's the confirmation number for our license renewal?",
+          "When did we file the renewal, and what's the reference number?",
+          "Remind me of the liquor license renewal number and date."
+        ],
+        "gold": "LL-50472, filed April 9th.",
+        "keywords": [
+          "LL-50472",
+          "april 9"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c34-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total remaining season booking budget is capped at $18,400, full stop, that's everything left after the deposit on the opener. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total remaining season booking budget?",
+        "probes": [
+          "What is our total remaining season booking budget?",
+          "How much do we have left to book artists for the season?",
+          "What's the cap on our remaining booking budget?",
+          "Remind me the booking budget limit we're working with."
+        ],
+        "gold": "$18,400 total.",
+        "keywords": [
+          "18,400"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c34-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our master booking contract spreadsheet 'Shadowfax' from now on. Every email thread and note should say Shadowfax, not the real filename, since we sometimes forward pieces of these threads to visiting agents.",
+        "tail_user_fragment": "Is Shadowfax updated with this week's signed contracts, or do I need to reconcile it against the email confirmations first?",
+        "probe": "What does 'Shadowfax' refer to in our project?",
+        "probes": [
+          "What does 'Shadowfax' refer to in our project?",
+          "If I mention Shadowfax again, what should you understand that to mean?",
+          "Remind me what we're calling Shadowfax internally.",
+          "What is Shadowfax a codename for?"
+        ],
+        "gold": "The master booking contract spreadsheet.",
+        "keywords": [
+          "booking contract",
+          "spreadsheet"
+        ],
+        "anti_keywords": [
+          "horse",
+          "lord of the rings",
+          "gandalf"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c34-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our private members-only text list 'Chewbacca' in all future notes. It's just easier than typing out the full list name, and I don't want the real name floating around in shared docs with vendors.",
+        "tail_user_fragment": "Can you draft a short message for Chewbacca announcing the season opener date?",
+        "probe": "What does 'Chewbacca' refer to in our conversation?",
+        "probes": [
+          "What does 'Chewbacca' refer to in our conversation?",
+          "If I mention Chewbacca later, what should you take that to mean?",
+          "What is Chewbacca a codename for in our project?",
+          "Remind me what Chewbacca refers to internally."
+        ],
+        "gold": "The private members-only text list.",
+        "keywords": [
+          "members-only",
+          "text list"
+        ],
+        "anti_keywords": [
+          "wookiee",
+          "star wars",
+          "co-pilot"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c35",
+    "title": "Community orchestra concert season",
+    "system": "You are a helpful assistant experienced in nonprofit arts administration and orchestra operations, supporting a volunteer-run community orchestra planning its concert season.",
+    "project": "The user is the volunteer executive director of the Riverbend Community Orchestra, a 60-member amateur and semi-professional orchestra, planning its upcoming concert season. Together with the assistant they are planning repertoire selection and guest soloists, rehearsal scheduling, venue and hall logistics, fundraising and grant applications, and audience development and outreach.",
+    "subtopics": [
+      "repertoire selection and guest soloists",
+      "rehearsal scheduling",
+      "venue and hall logistics",
+      "fundraising and grant applications",
+      "audience development and outreach"
+    ],
+    "early_user_turns": [
+      "Hey, so Riverbend Community Orchestra is putting together next season and I want this chat to be our planning base for everything: repertoire and soloists, rehearsal scheduling, the hall logistics, fundraising and grants, and getting new audiences in the door. Can you help me think through all of it?",
+      "Let's start with repertoire selection and guest soloists since we need to lock the program soon. We want something ambitious enough to challenge the players but not so hard we fall apart in performance. How do orchestras our size usually balance that?"
+    ],
+    "middle_filler_user_turns": [
+      "For rehearsal scheduling, how many full rehearsals is reasonable before a concert given most of our players have day jobs?",
+      "Should sectional rehearsals be mandatory or optional for the string sections given attendance has been inconsistent?",
+      "On venue and hall logistics, is it worth paying extra for a hall with a built-in shell, or can we rent portable acoustic panels instead?",
+      "What's a reasonable load-in time to budget before a concert given how much percussion equipment we're hauling?",
+      "For fundraising and grant applications, should we prioritize a state arts council grant or focus energy on individual donor asks this cycle?",
+      "How far in advance do most arts grants require the application, realistically?",
+      "For audience development, should we offer a discounted young-adult ticket tier, or does that just cannibalize regular ticket sales?",
+      "What's a good way to track which outreach channels actually bring first-time attendees versus just reaching existing subscribers?",
+      "One of our board members has been incredible at securing in-kind sponsorships, how do we make sure we're using her connections well going forward?",
+      "Should we record the concerts for streaming, or does that hurt in-person ticket sales?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to rehearsal scheduling, what's the right way to handle a player who consistently misses sectionals but shows up prepared anyway?",
+      "For venue logistics, how much lead time should we give the hall for a stage reconfiguration between pieces?",
+      "Should program notes be written in-house or contracted out to a musicologist?",
+      "What's a good way to track grant application deadlines so we don't miss one again?",
+      "One more thing, how do we handle a guest soloist's rider requests that stretch our budget?"
+    ],
+    "plants": [
+      {
+        "id": "c35-referent-1",
+        "category": "referent",
+        "middle_user": "Season closer decision, finally made. We weighed three options: (1) a full Mahler symphony that would stretch our brass section thin, (2) a mixed program pairing a shorter Romantic symphony with a new commission from a local composer, and (3) an all-Beethoven program that's safe but unremarkable. Given our brass roster this year, we're going with the second one, the mixed program with the local commission.",
+        "tail_user_fragment": "On the season closer program we picked, no need to re-explain it. How much rehearsal time should the new commission get relative to the symphony?",
+        "probe": "Which season closer program did we settle on for Riverbend?",
+        "probes": [
+          "Which season closer program did we settle on for Riverbend?",
+          "Which of the three program options did we end up choosing?",
+          "What did we decide about the season closer repertoire?",
+          "Remind me which closer program we committed to."
+        ],
+        "gold": "The mixed program pairing a shorter Romantic symphony with a new commission from a local composer (the second of the three options), not the full Mahler symphony and not the all-Beethoven program.",
+        "keywords": [
+          "local commission",
+          "mixed program"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c35-referent-2",
+        "category": "referent",
+        "middle_user": "Harold had a good idea for the soloist search. His proposal is to hold a blind audition where the concerto committee listens to submitted recordings without names or bios attached, rather than our usual process of inviting soloists based on reputation and recommendations. He thinks it'll surface better local talent we'd otherwise overlook. I'm doing it for this round.",
+        "tail_user_fragment": "On Harold's blind audition idea, I'm already committed, don't re-describe it. How many recordings should the committee review in this round?",
+        "probe": "What specifically was Harold's proposal for the soloist search?",
+        "probes": [
+          "What specifically was Harold's proposal for the soloist search?",
+          "What did Harold suggest for finding the guest soloist?",
+          "Describe the audition process Harold pitched that we're adopting.",
+          "What was Harold's idea about how to select the soloist?"
+        ],
+        "gold": "A blind audition where the concerto committee reviews submitted recordings without names or bios attached, instead of inviting soloists based on reputation and recommendations.",
+        "keywords": [
+          "blind audition",
+          "recordings",
+          "no names"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c35-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us later: 'the shell' is overloaded on our team. The stage crew also calls the portable storage cases for the percussion gear the shells, but when I say the shell to you, I always mean the acoustic shell structure behind the orchestra on stage. That's the sense I want here.",
+        "tail_user_fragment": "Does the shell need to be reconfigured between the first half and the second half of the concert?",
+        "probe": "When I said 'the shell' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the shell' in this conversation, what was I referring to?",
+          "Which of the two things called 'the shell' did I mean here?",
+          "What does 'the shell' refer to in our conversation?",
+          "If I mention the shell again, what should you understand that to be?"
+        ],
+        "gold": "The acoustic shell structure behind the orchestra on stage, not the stage crew's percussion storage cases.",
+        "keywords": [
+          "acoustic shell",
+          "on stage"
+        ],
+        "anti_keywords": [
+          "storage cases",
+          "percussion cases"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c35-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the ask' from here on I mean the specific major-donor solicitation letter for this season's fundraising push. I know the board sometimes uses the ask loosely for any grant request too, but with you, the ask always means the major-donor solicitation letter.",
+        "tail_user_fragment": "Has the ask gone out to all the major donors yet, or are we still waiting on a few?",
+        "probe": "When I referred to 'the ask' in this conversation, which one did I mean?",
+        "probes": [
+          "When I referred to 'the ask' in this conversation, which one did I mean?",
+          "Which document did I mean when I said 'the ask'?",
+          "What does 'the ask' refer to in our conversation, the donor letter or a grant request?",
+          "If I bring up the ask again, what should you assume I'm talking about?"
+        ],
+        "gold": "The major-donor solicitation letter for this season's fundraising push, not a grant request.",
+        "keywords": [
+          "major-donor",
+          "solicitation letter"
+        ],
+        "anti_keywords": [
+          "grant request"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c35-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the season: we never cut string sectionals to save rehearsal budget, even if brass and winds need the extra time more visibly. Intonation problems start in the strings and compound from there, so that time is non-negotiable no matter how tight the rehearsal budget gets.",
+        "tail_user_fragment": null,
+        "probe": "How should we free up more rehearsal time for brass and winds given the tight budget?",
+        "probes": [
+          "How should we free up more rehearsal time for brass and winds given the tight budget?",
+          "Give me three ways to get brass and winds more rehearsal time.",
+          "How could we accommodate the brass section's extra needs?",
+          "Suggest ways to reallocate rehearsal time without touching string sectionals."
+        ],
+        "gold": "Suggests approaches like adding a standalone brass-and-winds sectional, extending overall rehearsal length, or trimming a less-demanding piece from the program, while never proposing cutting string sectionals, ideally recalling the non-negotiable string sectional commitment.",
+        "keywords": [
+          "brass sectional",
+          "extend rehearsal"
+        ],
+        "anti_keywords": [
+          "cut string sectionals",
+          "reduce strings"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c35-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we don't do pay-to-play seating, meaning donors can't buy their way into a chair placement regardless of audition results. I don't care how large the gift is. Don't suggest that as a fundraising angle to me.",
+        "tail_user_fragment": null,
+        "probe": "Given a major donor's interest, what perks could we offer them?",
+        "probes": [
+          "Given a major donor's interest, what perks could we offer them?",
+          "What should we offer a large donor in terms of recognition?",
+          "What perks make sense for our biggest supporters?",
+          "Suggest ways to reward major donors without touching seating placement."
+        ],
+        "gold": "Suggests perks like program recognition, a reserved house seat, a post-concert reception invite, or a named sponsorship of a piece, while never proposing pay-to-play chair placement, ideally recalling the rejection of pay-to-play seating.",
+        "keywords": [
+          "program recognition",
+          "reception invite"
+        ],
+        "anti_keywords": [
+          "pay-to-play",
+          "buy a chair"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c35-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on ticketing: we tried a platform called EasyTix for online sales two seasons ago, and it double-charged a batch of subscribers during a system glitch that took weeks to sort out. Not using them again.",
+        "tail_user_fragment": null,
+        "probe": "What should we use for online ticket sales going forward?",
+        "probes": [
+          "What should we use for online ticket sales going forward?",
+          "What ticketing platform should we pursue next?",
+          "Given our past issues, how should we sell tickets online?",
+          "What's a better approach than what we already tried for ticketing?"
+        ],
+        "gold": "Anything except EasyTix, e.g. a different reputable ticketing platform, box office phone sales, or a simpler subscriber portal, ideally acknowledging EasyTix was tried and rejected.",
+        "keywords": [
+          "double-charged",
+          "glitch"
+        ],
+        "anti_keywords": [
+          "easytix"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c35-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we hired a grant-writing consultant named through an agency called GrantForward last cycle, and every application she submitted missed the budget-narrative section requirements, we lost two grants because of it. We're not rehiring her.",
+        "tail_user_fragment": null,
+        "probe": "Who should handle grant writing for this cycle?",
+        "probes": [
+          "Who should handle grant writing for this cycle?",
+          "How should we staff grant writing going forward?",
+          "What's our path forward on grant applications given the earlier problems?",
+          "Who or what should handle the grant applications this cycle?"
+        ],
+        "gold": "Anything except the GrantForward consultant, e.g. a different vetted grant writer, an in-house board member with grant experience, or a peer orchestra's referral, ideally acknowledging the GrantForward consultant's missed requirements were tried and rejected.",
+        "keywords": [
+          "budget-narrative",
+          "missed"
+        ],
+        "anti_keywords": [
+          "grantforward"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c35-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our state arts council grant application ID is SAC-6629, submitted March 3rd. Nothing to decide, just don't want to lose track of the number.",
+        "tail_user_fragment": null,
+        "probe": "What is our state arts council grant application ID, and when was it submitted?",
+        "probes": [
+          "What is our state arts council grant application ID, and when was it submitted?",
+          "What's the ID for our SAC grant submission?",
+          "When did we submit the state arts council grant, and what's the reference number?",
+          "Remind me of the grant application ID and date."
+        ],
+        "gold": "SAC-6629, submitted March 3rd.",
+        "keywords": [
+          "SAC-6629",
+          "march 3"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c35-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total remaining soloist fee budget for the season is capped at $5,200, full stop, that's everything left after the hall deposit. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total remaining soloist fee budget?",
+        "probes": [
+          "What is our total remaining soloist fee budget?",
+          "How much do we have left to pay a guest soloist?",
+          "What's the cap on our remaining soloist budget?",
+          "Remind me the soloist fee budget limit we're working with."
+        ],
+        "gold": "$5,200 total.",
+        "keywords": [
+          "5,200"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c35-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our master rehearsal attendance tracker 'Kaladin' from now on. Every board email and note should say Kaladin, not the real filename, since we sometimes share pieces of these threads with the section leaders.",
+        "tail_user_fragment": "Is Kaladin updated with this week's sectional attendance, or do I need to reconcile it against the sign-in sheets first?",
+        "probe": "What does 'Kaladin' refer to in our project?",
+        "probes": [
+          "What does 'Kaladin' refer to in our project?",
+          "If I mention Kaladin again, what should you understand that to mean?",
+          "Remind me what we're calling Kaladin internally.",
+          "What is Kaladin a codename for?"
+        ],
+        "gold": "The master rehearsal attendance tracker.",
+        "keywords": [
+          "rehearsal attendance",
+          "tracker"
+        ],
+        "anti_keywords": [
+          "stormlight",
+          "bridgeman",
+          "knight radiant"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c35-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our private board deliberation notes document 'Frodo' in all future notes. It's just easier than typing out the full document name, and I don't want the real name floating around in shared drives with the general membership.",
+        "tail_user_fragment": "Can you help me draft the next entry for Frodo about the soloist rider negotiation?",
+        "probe": "What does 'Frodo' refer to in our conversation?",
+        "probes": [
+          "What does 'Frodo' refer to in our conversation?",
+          "If I mention Frodo later, what should you take that to mean?",
+          "What is Frodo a codename for in our project?",
+          "Remind me what Frodo refers to internally."
+        ],
+        "gold": "The private board deliberation notes document.",
+        "keywords": [
+          "board deliberation",
+          "notes document"
+        ],
+        "anti_keywords": [
+          "hobbit",
+          "ring",
+          "shire"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c36",
+    "title": "Independent comic book shop relaunch",
+    "system": "You are a helpful assistant experienced in independent retail and comic book industry operations, supporting a comic shop owner relaunching the store after a move.",
+    "project": "The user is the owner of Panel & Pulp, an independent comic book shop relaunching in a larger storefront after relocating. Together with the assistant they are planning new-comics-day operations, back issue and long box inventory, convention and event presence, subscription and pull-list management, and community and creator events.",
+    "subtopics": [
+      "new-comics-day operations",
+      "back issue and long box inventory",
+      "convention and event presence",
+      "subscription and pull-list management",
+      "community and creator events"
+    ],
+    "early_user_turns": [
+      "Hey, so Panel & Pulp just relocated to a bigger space and I want this chat to be our home base for the relaunch: new-comics-day operations, the back issue inventory, conventions, pull lists, and community events. Can you help me work through all of it?",
+      "Let's start with new-comics-day operations since Wednesday is our biggest revenue day. What's a good way for a shop our size to handle the rush without the line backing up out the door?"
+    ],
+    "middle_filler_user_turns": [
+      "For back issue and long box inventory, is it worth grading and bagging everything, or just the higher-value books?",
+      "How should we price long box dollar bins so they move volume without undercutting our better-condition stock?",
+      "On convention presence, is it worth a table at a regional con if we're mostly known for the shop rather than original art sales?",
+      "What's a reasonable con inventory mix between back issues, new releases, and merch?",
+      "For pull-list management, should we cap how many titles a single customer can have on their pull list?",
+      "What's a fair grace period before we release someone's pulled books back to shelf stock if they don't pick up?",
+      "For community and creator events, should signings be ticketed or walk-in given how unpredictable turnout has been?",
+      "How far in advance should we announce a creator signing to actually build a crowd?",
+      "One of our regulars has been incredible about recommending us to his local gaming group, how should we make sure we're nurturing that relationship?",
+      "Should we run a free comic book day event, or does the foot traffic mostly just clog the store without buying anything?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to new-comics-day operations, what's the best way to handle a shipment that arrives short on a hyped issue?",
+      "For pull lists, how should we notify customers when a title gets cancelled by the publisher mid-run?",
+      "Should we keep a physical want list board, or move everything to an app?",
+      "What's a good way to track which back issue bins actually sell versus just sit there?",
+      "One more thing, how do we handle a customer who wants to return a comic they say arrived damaged?"
+    ],
+    "plants": [
+      {
+        "id": "c36-referent-1",
+        "category": "referent",
+        "middle_user": "Store layout decision, finally made. We weighed three options: (1) keeping new comics right at the front entrance like our old store, (2) putting new comics in the center of the store with back issues wrapping the perimeter, and (3) splitting new comics into two smaller displays on either side of the entrance. Given the bigger footprint, we're going with the second one, new comics in the center with back issues around the perimeter.",
+        "tail_user_fragment": "On the store layout we picked, no need to re-explain it. How much shelf space does that leave for the graphic novel section?",
+        "probe": "Which store layout option did we settle on for Panel & Pulp?",
+        "probes": [
+          "Which store layout option did we settle on for Panel & Pulp?",
+          "Which of the three layout options did we end up choosing?",
+          "What did we decide about the new store layout?",
+          "Remind me which layout we committed to."
+        ],
+        "gold": "New comics placed in the center of the store with back issues wrapping the perimeter (the second of the three options), not new comics at the entrance and not splitting new comics into two displays.",
+        "keywords": [
+          "center",
+          "perimeter",
+          "back issues"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c36-referent-2",
+        "category": "referent",
+        "middle_user": "Theo had a good idea for the relaunch pull-list migration. His proposal is to manually call every subscriber on the old pull list individually to confirm their titles before the move, rather than just mass-emailing everyone and hoping they respond. He thinks it'll catch outdated pulls we'd otherwise carry forward by mistake. I'm doing it for the migration.",
+        "tail_user_fragment": "On Theo's call-everyone idea, I'm already committed, don't re-describe it. How many calls a day is realistic for one staffer to make?",
+        "probe": "What specifically was Theo's proposal for the pull-list migration?",
+        "probes": [
+          "What specifically was Theo's proposal for the pull-list migration?",
+          "What did Theo suggest for migrating the pull lists?",
+          "Describe the migration approach Theo pitched that we're adopting.",
+          "What was Theo's idea about how to handle the pull-list move?"
+        ],
+        "gold": "Manually calling every subscriber individually to confirm their titles before the move, instead of mass-emailing everyone.",
+        "keywords": [
+          "call",
+          "individually",
+          "confirm titles"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c36-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us later: 'the wall' is overloaded on our team. Staff also call the corkboard where we post con flyers the wall, but when I say the wall to you, I always mean the graded slab display case along the back of the store. That's the sense I want here.",
+        "tail_user_fragment": "Does the wall have room for the new slabs coming in next week, or do we need to rotate something out first?",
+        "probe": "When I said 'the wall' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the wall' in this conversation, what was I referring to?",
+          "Which of the two things called 'the wall' did I mean here?",
+          "What does 'the wall' refer to in our conversation?",
+          "If I mention the wall again, what should you understand that to be?"
+        ],
+        "gold": "The graded slab display case along the back of the store, not the corkboard for con flyers.",
+        "keywords": [
+          "graded slab",
+          "display case"
+        ],
+        "anti_keywords": [
+          "corkboard",
+          "flyers"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c36-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the list' from here on I mean the master customer pull list spreadsheet we're migrating to the new store. I know staff sometimes call the want-list binder at the counter the list too, but with you, the list always means the pull list spreadsheet.",
+        "tail_user_fragment": "Has the list been fully migrated to the new register system yet, or are some entries still missing?",
+        "probe": "When I referred to 'the list' in this conversation, which one did I mean?",
+        "probes": [
+          "When I referred to 'the list' in this conversation, which one did I mean?",
+          "Which document did I mean when I said 'the list'?",
+          "What does 'the list' refer to in our conversation, the pull list or the want-list binder?",
+          "If I bring up the list again, what should you assume I'm talking about?"
+        ],
+        "gold": "The master customer pull list spreadsheet being migrated to the new store, not the want-list binder at the counter.",
+        "keywords": [
+          "pull list",
+          "spreadsheet"
+        ],
+        "anti_keywords": [
+          "want-list binder",
+          "counter"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c36-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the relaunch: no speculator-driven variant chasing as a business strategy, meaning we don't overorder ratio variants hoping to flip them for a markup. It burned us badly before with dead stock. I will not budge on this even if a hyped variant looks like easy money.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for boosting margins on new comics day?",
+        "probes": [
+          "What are some ideas for boosting margins on new comics day?",
+          "Give me three ways to increase new-comics-day revenue.",
+          "How could we make more money off Wednesday releases?",
+          "Suggest ways to improve new-comics-day profitability without changing our ordering philosophy."
+        ],
+        "gold": "Suggests approaches like better core-title order quantities based on actual sell-through, bundling with back issues or merch, or a loyalty program, while never proposing overordering ratio variants to flip, ideally recalling the rejection of speculator-driven variant chasing.",
+        "keywords": [
+          "sell-through",
+          "loyalty program"
+        ],
+        "anti_keywords": [
+          "ratio variants",
+          "speculator",
+          "flip"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c36-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we don't do store credit only returns, meaning customers with a legitimate return get real cash or card refunds, not just store credit. I've seen too many shops lose trust doing store-credit-only policies. Don't suggest that as a way to protect margin.",
+        "tail_user_fragment": null,
+        "probe": "How should we handle the cost impact of frequent returns?",
+        "probes": [
+          "How should we handle the cost impact of frequent returns?",
+          "What should we do to reduce the financial hit from returns?",
+          "How do we manage return costs without upsetting customers?",
+          "Suggest ways to control return-related losses without changing our refund policy."
+        ],
+        "gold": "Suggests approaches like a clear condition-based return window, restocking review for damaged goods, or better in-store quality checks before sale, while never proposing store-credit-only returns, ideally recalling the rejection of that policy.",
+        "keywords": [
+          "return window",
+          "quality check"
+        ],
+        "anti_keywords": [
+          "store credit only"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c36-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on distributors: we tried ordering a batch of back issues through a wholesaler called ValueBoxSupply last year, and half the books arrived with water damage they hadn't disclosed. Not using them again.",
+        "tail_user_fragment": null,
+        "probe": "Where should we source back issue restocks going forward?",
+        "probes": [
+          "Where should we source back issue restocks going forward?",
+          "What wholesaler option should we pursue for back issues?",
+          "Given the past problem, how should we restock back issues?",
+          "What's a better approach than what we already tried for back issue sourcing?"
+        ],
+        "gold": "Anything except ValueBoxSupply, e.g. a different vetted wholesaler with condition guarantees, buying collections directly from sellers, or attending regional back-issue auctions, ideally acknowledging ValueBoxSupply was tried and rejected.",
+        "keywords": [
+          "water damage",
+          "undisclosed"
+        ],
+        "anti_keywords": [
+          "valueboxsupply"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c36-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we used a point-of-sale system called RingerPOS at the old location, and it crashed during nearly every Wednesday rush, losing transaction data twice. We're not bringing it to the new store.",
+        "tail_user_fragment": null,
+        "probe": "What point-of-sale system should we use at the new store?",
+        "probes": [
+          "What point-of-sale system should we use at the new store?",
+          "How should we handle checkout at the new location?",
+          "What's our path forward on POS given the earlier problems?",
+          "What system should replace what we used before for checkout?"
+        ],
+        "gold": "Anything except RingerPOS, e.g. a different reliable comic-shop-specific POS system, a more established general retail POS, or a system with offline transaction backup, ideally acknowledging RingerPOS's crashes were tried and rejected.",
+        "keywords": [
+          "crashed",
+          "lost transaction data"
+        ],
+        "anti_keywords": [
+          "ringerpos"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c36-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our new business license number for the relocated storefront is BL-30847, issued February 11th. Nothing to decide, just don't want to lose track of the number.",
+        "tail_user_fragment": null,
+        "probe": "What is our new business license number, and when was it issued?",
+        "probes": [
+          "What is our new business license number, and when was it issued?",
+          "What's the license number for the new storefront?",
+          "When was the new license issued, and what's the reference number?",
+          "Remind me of the business license number and date."
+        ],
+        "gold": "BL-30847, issued February 11th.",
+        "keywords": [
+          "BL-30847",
+          "february 11"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c36-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total remaining relaunch fixture budget is capped at $3,750, full stop, that's everything left after the new shelving order. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total remaining relaunch fixture budget?",
+        "probes": [
+          "What is our total remaining relaunch fixture budget?",
+          "How much do we have left for store fixtures?",
+          "What's the cap on our remaining fixture budget?",
+          "Remind me the fixture budget limit we're working with."
+        ],
+        "gold": "$3,750 total.",
+        "keywords": [
+          "3,750"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c36-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our master back issue valuation spreadsheet 'Palpatine' from now on. Every note and email should say Palpatine, not the real filename, since we sometimes show pieces of these threads to visiting appraisers.",
+        "tail_user_fragment": "Is Palpatine updated with this week's grading results, or do I need to reconcile it against the intake sheets first?",
+        "probe": "What does 'Palpatine' refer to in our project?",
+        "probes": [
+          "What does 'Palpatine' refer to in our project?",
+          "If I mention Palpatine again, what should you understand that to mean?",
+          "Remind me what we're calling Palpatine internally.",
+          "What is Palpatine a codename for?"
+        ],
+        "gold": "The master back issue valuation spreadsheet.",
+        "keywords": [
+          "back issue valuation",
+          "spreadsheet"
+        ],
+        "anti_keywords": [
+          "sith",
+          "star wars",
+          "emperor"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c36-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our private staff scheduling group chat 'Moraine' in all future notes. It's just easier than typing out the full chat name, and I don't want the real name floating around in shared docs with vendors.",
+        "tail_user_fragment": "Can you draft a short message for Moraine about the new-comics-day shift swap?",
+        "probe": "What does 'Moraine' refer to in our conversation?",
+        "probes": [
+          "What does 'Moraine' refer to in our conversation?",
+          "If I mention Moraine later, what should you take that to mean?",
+          "What is Moraine a codename for in our project?",
+          "Remind me what Moraine refers to internally."
+        ],
+        "gold": "The private staff scheduling group chat.",
+        "keywords": [
+          "staff scheduling",
+          "group chat"
+        ],
+        "anti_keywords": [
+          "wheel of time",
+          "aes sedai",
+          "two rivers"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c37",
+    "title": "Screen-print shop scaling to wholesale",
+    "system": "You are a helpful assistant experienced in small-scale apparel manufacturing and print shop operations, supporting a screen-print shop scaling from direct-to-consumer to wholesale.",
+    "project": "The user is the owner of Copperline Print Co., a screen-print shop moving from mostly direct-to-consumer orders into wholesale contracts with local boutiques. Together with the assistant they are planning press and equipment capacity, ink and blank garment sourcing, wholesale client onboarding, order turnaround and scheduling, and quality control and misprint handling.",
+    "subtopics": [
+      "press and equipment capacity",
+      "ink and blank garment sourcing",
+      "wholesale client onboarding",
+      "order turnaround and scheduling",
+      "quality control and misprint handling"
+    ],
+    "early_user_turns": [
+      "Hey, so Copperline is moving from mostly direct-to-consumer orders into wholesale contracts with local boutiques and I want this chat to be our planning hub: press capacity, ink and blank sourcing, onboarding wholesale clients, scheduling, and quality control. Can you help me think through all of it?",
+      "Let's start with press and equipment capacity since that's what everything else depends on. We're running a 6-color manual press right now. What's the real signal that tells a shop our size it's time to invest in an automatic press?"
+    ],
+    "middle_filler_user_turns": [
+      "For ink and blank garment sourcing, should we lock in a single blank supplier for consistency, or keep two so we're not exposed to one company's stockouts?",
+      "How much of a price break is realistic to expect once we're ordering blanks by the case for wholesale volume?",
+      "On wholesale client onboarding, what should a standard order agreement actually cover so we're not renegotiating terms every single order?",
+      "What's a fair minimum order quantity to require from a new boutique client without scaring off smaller shops?",
+      "For order turnaround and scheduling, how do we quote a realistic turnaround time once we're juggling wholesale and direct-to-consumer at the same time?",
+      "Should wholesale orders get priority scheduling over direct-to-consumer, or does that damage our retail reputation?",
+      "For quality control, what's a reasonable misprint rate to expect and budget for on a run of a few hundred shirts?",
+      "How should we handle a client's complaint about ink cracking after a few washes if we can't verify their wash instructions were followed?",
+      "One of our press operators has gotten remarkably good at catching registration issues before a full run gets ruined, how do we make sure we're using her well going forward?",
+      "Should we offer a rush fee tier for boutiques that need a fast turnaround, or does that just create scheduling chaos?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to press capacity, what's the actual break-even point where an automatic press pays for itself given our volume?",
+      "For quality control, what's the right way to log misprints so we can spot a pattern instead of treating each one as a one-off?",
+      "Should we keep a physical swatch book of ink colors for wholesale clients, or move to digital color matching only?",
+      "What's a good way to track which wholesale clients are actually profitable once rework and rush fees are factored in?",
+      "One more thing, how do we handle a wholesale client who wants net-30 terms when we've always required payment up front?"
+    ],
+    "plants": [
+      {
+        "id": "c37-referent-1",
+        "category": "referent",
+        "middle_user": "Press upgrade decision, finally made. We weighed three options: (1) sticking with our current 6-color manual press and just adding a second one, (2) buying a used 8-color automatic press from a shop closing down, and (3) leasing a brand-new 10-color automatic press. Given our cash position, we're going with the second one, the used 8-color automatic.",
+        "tail_user_fragment": "On the press upgrade we picked, no need to re-explain it. How much floor space does that used 8-color unit actually need?",
+        "probe": "Which press upgrade option did we settle on for Copperline?",
+        "probes": [
+          "Which press upgrade option did we settle on for Copperline?",
+          "Which of the three press options did we end up choosing?",
+          "What did we decide about upgrading our press?",
+          "Remind me which press upgrade we committed to."
+        ],
+        "gold": "Buying a used 8-color automatic press from a shop closing down (the second of the three options), not adding a second manual press and not leasing a new 10-color automatic.",
+        "keywords": [
+          "used 8-color",
+          "automatic press"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c37-referent-2",
+        "category": "referent",
+        "middle_user": "Nadia had a good idea for wholesale onboarding. Her proposal is to run every new boutique client through a small paid trial order of 25 units before signing a full wholesale agreement, rather than jumping straight into a full contract based on a phone call and a mood board. She thinks it catches mismatched expectations early. I'm doing it going forward.",
+        "tail_user_fragment": "On Nadia's trial order idea, I'm already sold, don't re-describe it. What should we charge for that 25-unit trial run?",
+        "probe": "What specifically was Nadia's proposal for wholesale onboarding?",
+        "probes": [
+          "What specifically was Nadia's proposal for wholesale onboarding?",
+          "What did Nadia suggest for onboarding new boutique clients?",
+          "Describe the onboarding approach Nadia pitched that we're adopting.",
+          "What was Nadia's idea about how to bring on new wholesale clients?"
+        ],
+        "gold": "Running every new boutique client through a small paid trial order of 25 units before signing a full wholesale agreement, instead of jumping straight into a full contract.",
+        "keywords": [
+          "trial order",
+          "25 units"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c37-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us later: 'the board' is overloaded on our team. The office also calls the whiteboard with our client contact list the board, but when I say the board to you, I always mean the physical pallet board we tape shirts to for print alignment on the press. That's the sense I want here.",
+        "tail_user_fragment": "Does the board need to be re-taped before we can start the next boutique's run?",
+        "probe": "When I said 'the board' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the board' in this conversation, what was I referring to?",
+          "Which of the two things called 'the board' did I mean here?",
+          "What does 'the board' refer to in our conversation?",
+          "If I mention the board again, what should you understand that to be?"
+        ],
+        "gold": "The physical pallet board shirts are taped to for print alignment on the press, not the whiteboard with the client contact list.",
+        "keywords": [
+          "pallet board",
+          "print alignment"
+        ],
+        "anti_keywords": [
+          "whiteboard",
+          "client contact list"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c37-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the queue' from here on I mean the production scheduling queue that sequences which orders hit the press next. I know the shipping software also calls its outgoing package list a queue, but with you, the queue always means the production scheduling queue.",
+        "tail_user_fragment": "Is the queue accurate right now, or did yesterday's rush order get slotted in without updating it?",
+        "probe": "When I referred to 'the queue' in this conversation, which one did I mean?",
+        "probes": [
+          "When I referred to 'the queue' in this conversation, which one did I mean?",
+          "Which list did I mean when I said 'the queue'?",
+          "What does 'the queue' refer to in our conversation, the production schedule or the shipping list?",
+          "If I bring up the queue again, what should you assume I'm talking about?"
+        ],
+        "gold": "The production scheduling queue that sequences which orders hit the press next, not the shipping software's outgoing package list.",
+        "keywords": [
+          "production scheduling",
+          "press order"
+        ],
+        "anti_keywords": [
+          "shipping software",
+          "outgoing package"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c37-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule going into wholesale: we never skip a pre-press proof approval from the client, even for repeat orders with clients we trust. A missed color shift or placement error on a full wholesale run would be way too costly. I will not budge on this no matter how much it slows down turnaround.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for speeding up our overall order turnaround time?",
+        "probes": [
+          "What are some ideas for speeding up our overall order turnaround time?",
+          "Give me three ways to shorten turnaround for wholesale orders.",
+          "How could we get orders out the door faster?",
+          "Suggest ways to compress the production timeline without changing our approval process."
+        ],
+        "gold": "Suggests approaches like tightening internal scheduling, batching similar jobs together, or adding press capacity, while never proposing skipping client proof approval, ideally recalling the non-negotiable proof approval step.",
+        "keywords": [
+          "batching jobs",
+          "press capacity"
+        ],
+        "anti_keywords": [
+          "skip proof approval",
+          "skip approval"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c37-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we don't accept wholesale orders paid entirely on delivery with no deposit, regardless of how established the boutique is. We got burned once on unpaid inventory and I'm not repeating that. Don't suggest a no-deposit arrangement to me as a way to win a client.",
+        "tail_user_fragment": null,
+        "probe": "How should we structure payment terms to win over a hesitant new boutique client?",
+        "probes": [
+          "How should we structure payment terms to win over a hesitant new boutique client?",
+          "What payment terms could make onboarding easier for a new client?",
+          "How do we make our payment terms more appealing without risking non-payment?",
+          "Suggest ways to ease a new client's payment concerns without dropping the deposit requirement."
+        ],
+        "gold": "Suggests approaches like a smaller deposit percentage, a staged deposit schedule, or net-15 terms after an established track record, while never proposing a no-deposit, pay-on-delivery arrangement, ideally recalling the rejection of no-deposit terms.",
+        "keywords": [
+          "smaller deposit",
+          "staged payment"
+        ],
+        "anti_keywords": [
+          "no deposit",
+          "pay on delivery"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c37-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on ink suppliers: we tried a plastisol ink line from a supplier called ChromaBase last year, and it kept clogging our screens mid-run on anything darker than navy. Not using them again.",
+        "tail_user_fragment": null,
+        "probe": "What ink supplier should we use going forward?",
+        "probes": [
+          "What ink supplier should we use going forward?",
+          "Which ink line should we pursue next?",
+          "Given the clogging issue, what ink should we source?",
+          "What's a better approach than what we already tried for ink sourcing?"
+        ],
+        "gold": "Anything except ChromaBase, e.g. a different vetted plastisol or water-based ink supplier, testing samples before a full order, or getting a referral from another print shop, ideally acknowledging ChromaBase was tried and rejected.",
+        "keywords": [
+          "clogging",
+          "screens"
+        ],
+        "anti_keywords": [
+          "chromabase"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c37-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we used a blank garment wholesaler called ThreadNest for our first bulk order, and a third of the shirts came in mislabeled sizes, we had to sort the whole pallet by hand. We're not ordering from them again.",
+        "tail_user_fragment": null,
+        "probe": "Where should we source blank garments for wholesale orders going forward?",
+        "probes": [
+          "Where should we source blank garments for wholesale orders going forward?",
+          "What blank garment supplier should we pursue next?",
+          "Given the mislabeling issue, how should we source blanks?",
+          "What's a better approach than what we already tried for blank sourcing?"
+        ],
+        "gold": "Anything except ThreadNest, e.g. a different vetted blank garment wholesaler, a smaller trial order before committing to bulk, or sourcing from a supplier with verified quality control, ideally acknowledging ThreadNest was tried and rejected.",
+        "keywords": [
+          "mislabeled sizes",
+          "sort by hand"
+        ],
+        "anti_keywords": [
+          "threadnest"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c37-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our new wholesale reseller permit number is RP-91205, issued January 27th. Nothing to decide, just don't want to lose track of the number.",
+        "tail_user_fragment": null,
+        "probe": "What is our wholesale reseller permit number, and when was it issued?",
+        "probes": [
+          "What is our wholesale reseller permit number, and when was it issued?",
+          "What's the number for our reseller permit?",
+          "When was the reseller permit issued, and what's the reference number?",
+          "Remind me of the reseller permit number and date."
+        ],
+        "gold": "RP-91205, issued January 27th.",
+        "keywords": [
+          "RP-91205",
+          "january 27"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c37-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total remaining equipment upgrade budget is capped at $9,600, full stop, that's everything left after the down payment on the press. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total remaining equipment upgrade budget?",
+        "probes": [
+          "What is our total remaining equipment upgrade budget?",
+          "How much do we have left for equipment upgrades?",
+          "What's the cap on our remaining equipment budget?",
+          "Remind me the equipment budget limit we're working with."
+        ],
+        "gold": "$9,600 total.",
+        "keywords": [
+          "9,600"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c37-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our master wholesale client contract tracker 'Sauron' from now on. Every note and email should say Sauron, not the real filename, since we sometimes share pieces of these threads with our accountant.",
+        "tail_user_fragment": "Is Sauron updated with this week's signed contracts, or do I need to reconcile it against the email confirmations first?",
+        "probe": "What does 'Sauron' refer to in our project?",
+        "probes": [
+          "What does 'Sauron' refer to in our project?",
+          "If I mention Sauron again, what should you understand that to mean?",
+          "Remind me what we're calling Sauron internally.",
+          "What is Sauron a codename for?"
+        ],
+        "gold": "The master wholesale client contract tracker.",
+        "keywords": [
+          "wholesale contract",
+          "tracker"
+        ],
+        "anti_keywords": [
+          "dark lord",
+          "mordor",
+          "ring"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c37-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our private press-operator shift group chat 'Bilbo' in all future notes. It's just easier than typing out the full chat name, and I don't want the real name floating around in shared docs with clients.",
+        "tail_user_fragment": "Can you draft a short message for Bilbo about next week's rush order shift coverage?",
+        "probe": "What does 'Bilbo' refer to in our conversation?",
+        "probes": [
+          "What does 'Bilbo' refer to in our conversation?",
+          "If I mention Bilbo later, what should you take that to mean?",
+          "What is Bilbo a codename for in our project?",
+          "Remind me what Bilbo refers to internally."
+        ],
+        "gold": "The private press-operator shift group chat.",
+        "keywords": [
+          "press-operator",
+          "shift group chat"
+        ],
+        "anti_keywords": [
+          "hobbit",
+          "shire",
+          "lord of the rings"
+        ],
+        "distance": "near"
+      }
+    ]
+  }
+]

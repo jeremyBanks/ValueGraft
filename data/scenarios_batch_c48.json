@@ -1,0 +1,1160 @@
+[
+  {
+    "id": "c48",
+    "title": "Boutique law firm expansion planning",
+    "system": "You are a helpful assistant experienced in law-firm operations and legal practice management, helping the partners of a small boutique firm plan a strategic expansion.",
+    "project": "The user is Dana Okafor, managing partner at Okafor & Vance, a five-attorney boutique firm specializing in intellectual-property and startup work. Together with the assistant they are working through a practice-area expansion, a new office lease, lateral-hire recruiting, malpractice-insurance renewal, and case-management technology decisions.",
+    "subtopics": [
+      "practice-area expansion",
+      "office lease and buildout",
+      "lateral-hire recruiting",
+      "malpractice insurance and compliance",
+      "case-management technology"
+    ],
+    "early_user_turns": [
+      "Hi, so Okafor & Vance is finally big enough that we're planning a real expansion, a new practice area, a second office, some lateral hires, the whole thing, over the next quarter. I'd like to use you as a planning partner across all of it. Sound good?",
+      "Let's start with the practice-area question since it drives everything else. We're an IP-and-startup boutique thinking about adding a formal employment-law practice. What should we be weighing before we commit to standing up a whole new group?"
+    ],
+    "middle_filler_user_turns": [
+      "On the office side, we're deciding between a full second office downtown or just taking an extra floor in our current building. What's the general tradeoff for a firm our size?",
+      "For lateral hires, is it smarter to recruit one senior partner with a book of business or two mid-level associates who are cheaper but bring no clients?",
+      "Malpractice insurance renews in ninety days. Does adding an employment-law practice usually spike the premium a lot?",
+      "On case management, our current system is creaking. What features matter most when a boutique firm shops for a new platform?",
+      "Back to the employment practice, how many attorneys do we realistically need on day one to service it credibly?",
+      "For the lease, the landlord wants a ten-year term with a personal guaranty from the partners. Is a personal guaranty a normal ask?",
+      "On recruiting, what's a reasonable timeline to land a quality lateral partner from first conversation to start date?",
+      "For insurance, should we increase our per-claim limit before or after we take on the new practice area?",
+      "On technology, how important is it that the new case-management system integrates with our existing document-management setup?",
+      "For the buildout, how much should we budget for conference-room and privacy improvements in a legal office specifically?"
+    ],
+    "tail_filler_user_turns": [
+      "One more on recruiting: should we use a legal-recruiting firm or try to source laterals through our own network first?",
+      "For the lease, besides term length and the guaranty, what else should I be scrutinizing before we sign?",
+      "On the employment practice, should we lead with plaintiff-side or management-side work given our existing client base?",
+      "For insurance, how far ahead of the renewal date should we start the application to avoid a lapse?",
+      "Last thing today: what should be on the checklist for the two weeks before the new office opens?"
+    ],
+    "plants": [
+      {
+        "id": "c48-sense-1",
+        "category": "sense",
+        "middle_user": "Quick clarification: when I say 'the practice' to you, I always mean the new employment-law group we're standing up, not the firm as a whole, even though people here casually call the whole firm 'the practice' too. Just the new group, when I say it to you.",
+        "tail_user_fragment": "Does the practice need its own separate intake process before we open the second office?",
+        "probe": "When I said 'the practice', what was I referring to?",
+        "probes": [
+          "When I said 'the practice', what was I referring to?",
+          "What does 'the practice' mean when I use that term with you?",
+          "If I mention the practice again, what should you take that to be?"
+        ],
+        "gold": "The new employment-law group being stood up, not the firm as a whole.",
+        "keywords": [
+          "employment-law",
+          "group"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c48-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the vault' from now on, I mean the physical secured file room where we keep original signed client documents, not the encrypted digital document archive, which some of the associates also call 'the vault.' Two different things, and I only mean the physical room.",
+        "tail_user_fragment": "How much shelving capacity do we need in the vault after we merge the two client bases?",
+        "probe": "When I referred to 'the vault', which thing did I mean?",
+        "probes": [
+          "When I referred to 'the vault', which thing did I mean?",
+          "What specifically is 'the vault' in our conversations?",
+          "If I ask about the vault again, what should you think I'm talking about?"
+        ],
+        "gold": "The physical secured file room for original signed client documents, not the encrypted digital archive.",
+        "keywords": [
+          "physical",
+          "file room",
+          "original"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c48-referent-1",
+        "category": "referent",
+        "middle_user": "Office decision time. We looked at three routes: (1) take a full second office downtown, (2) just lease an extra floor in our current building, or (3) a hybrid where we keep our current floor and add a small satellite suite near the courthouse for litigation staff. After running the numbers with our accountant, we're going with the hybrid, current floor plus the small courthouse satellite.",
+        "tail_user_fragment": "On the office decision, no need to walk through it again, but what signage do we need to order for it?",
+        "probe": "What did we decide on for the office expansion?",
+        "probes": [
+          "What did we decide on for the office expansion?",
+          "Which of the three office routes did we end up choosing?",
+          "Remind me exactly what office setup we settled on."
+        ],
+        "gold": "The hybrid option: keeping the current floor and adding a small courthouse-area satellite suite (option three of three).",
+        "keywords": [
+          "hybrid",
+          "courthouse satellite"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c48-referent-2",
+        "category": "referent",
+        "middle_user": "On laterals, we had three candidates on the table: (1) Marisol Reyes, a senior partner with a large employment book, (2) two mid-level associates from a regional firm with no portable clients, or (3) a semi-retired judge willing to come on of counsel part-time. We talked it through and we're going with Marisol Reyes, the senior partner with the book.",
+        "tail_user_fragment": "For the lateral we picked, don't re-explain who it is, just tell me what the standard onboarding conflict check involves.",
+        "probe": "Which lateral hire did we decide to go with?",
+        "probes": [
+          "Which lateral hire did we decide to go with?",
+          "Out of the three candidates, which one did we choose?",
+          "Remind me which lateral we're bringing on."
+        ],
+        "gold": "Marisol Reyes, the senior partner with the large employment book, over the two mid-level associates or the of-counsel judge.",
+        "keywords": [
+          "marisol",
+          "reyes"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c48-stance-1",
+        "category": "stance",
+        "middle_user": "Hard preference on the employment practice: absolutely no contingency-fee plaintiff-side cases. I think they'd conflict with our management-side corporate clients and blow up our reputation with the exact companies we serve. I don't care how lucrative a big case looks, we are not taking contingency plaintiff work, ever.",
+        "tail_user_fragment": "",
+        "probe": "What kinds of employment cases should the new practice pursue first?",
+        "probes": [
+          "What kinds of employment cases should the new practice pursue first?",
+          "What sort of employment matters should we take on to build the practice?",
+          "Should we chase big contingency plaintiff cases to grow the employment group fast?"
+        ],
+        "gold": "Management-side / defense employment work, never contingency-fee plaintiff-side cases, ideally recalling that the user said those conflict with their corporate clients.",
+        "keywords": [
+          "management-side"
+        ],
+        "anti_keywords": [
+          "contingency",
+          "plaintiff-side",
+          "plaintiff side"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c48-stance-2",
+        "category": "stance",
+        "middle_user": "One more firm rule: no billing our startup clients in six-minute increments for quick emails and calls. We did nickel-and-dime billing at my old firm and it torched client relationships. Flat monthly retainers for the startup clients only, even if we technically leave money on the table.",
+        "tail_user_fragment": "",
+        "probe": "How should we bill the startup clients under the expanded firm?",
+        "probes": [
+          "How should we bill the startup clients under the expanded firm?",
+          "What billing model should we use for our startup clients?",
+          "Should we switch the startups to detailed hourly billing to capture more revenue?"
+        ],
+        "gold": "Flat monthly retainers for startup clients, never six-minute-increment hourly billing, ideally recalling the user's bad experience with nickel-and-dime billing at their old firm.",
+        "keywords": [
+          "flat retainer",
+          "monthly retainer"
+        ],
+        "anti_keywords": [
+          "six-minute",
+          "hourly",
+          "nickel"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c48-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For context, we tried a case-management platform called CaseHelm for about eight months two years ago. It corrupted a document index twice and their support took a week to respond both times. We ripped it out and will never use CaseHelm again.",
+        "tail_user_fragment": "",
+        "probe": "What case-management platform should we consider for the expanded firm?",
+        "probes": [
+          "What case-management platform should we consider for the expanded firm?",
+          "Recommend a case-management system for us.",
+          "What should we avoid when picking a case-management vendor?"
+        ],
+        "gold": "Anything except CaseHelm, given it corrupted the document index twice and had slow support.",
+        "keywords": [
+          "document index"
+        ],
+        "anti_keywords": [
+          "casehelm"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c48-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also, remember we used a legal-recruiting agency called Bright & Marlow for our last two searches and both placements left within a year, plus they double-billed us on a fee once. We dropped them and aren't going back.",
+        "tail_user_fragment": "",
+        "probe": "Which recruiting approach should we use to source the lateral hires?",
+        "probes": [
+          "Which recruiting approach should we use to source the lateral hires?",
+          "What recruiter or method should we use for laterals?",
+          "Is there a recruiting agency we should steer clear of?"
+        ],
+        "gold": "Any approach except Bright & Marlow, given the two placements that left within a year and the double-billing.",
+        "keywords": [
+          "double-billed",
+          "placements left"
+        ],
+        "anti_keywords": [
+          "bright & marlow",
+          "bright and marlow"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c48-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note for the file: the courthouse satellite suite base rent is $6,400 a month before any escalation. Just logging that, doesn't change what we're discussing.",
+        "tail_user_fragment": "",
+        "probe": "What is the base monthly rent for the courthouse satellite suite?",
+        "probes": [
+          "What is the base monthly rent for the courthouse satellite suite?",
+          "How much are we paying per month for the satellite suite?",
+          "Remind me the starting rent figure for the satellite office."
+        ],
+        "gold": "$6,400 a month before escalation.",
+        "keywords": [
+          "6,400"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c48-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "For the record, our malpractice renewal quote came in under policy number MAL-2026-77413, with the binder due back by March 9th. Just logging it.",
+        "tail_user_fragment": "",
+        "probe": "What is our malpractice renewal policy number, and when is the binder due?",
+        "probes": [
+          "What is our malpractice renewal policy number, and when is the binder due?",
+          "What's the malpractice policy number and deadline we noted earlier?",
+          "Remind me the reference number on our malpractice renewal quote."
+        ],
+        "gold": "Policy number MAL-2026-77413, binder due back by March 9th.",
+        "keywords": [
+          "77413",
+          "march 9"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c48-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's just codename the whole employment-practice launch 'Elantris' from here on, in every planning doc and email, so we're not spelling it out every time.",
+        "tail_user_fragment": "What's still open on the Elantris punch list before we can announce the new group?",
+        "probe": "What does 'Elantris' refer to in this project?",
+        "probes": [
+          "What does 'Elantris' refer to in this project?",
+          "If I say Elantris later, what should you understand that to mean?",
+          "Remind me what Elantris is in our planning -- what does it stand for?"
+        ],
+        "gold": "The whole employment-law practice launch.",
+        "keywords": [
+          "employment-practice",
+          "launch",
+          "new group"
+        ],
+        "anti_keywords": [
+          "Sanderson",
+          "fallen city",
+          "AonDor",
+          "Shai",
+          "fantasy"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c48-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's codename the case-management software migration 'Scadrial', since it's the messiest, most behind-schedule part of the whole expansion. Use that name for it in any status update.",
+        "tail_user_fragment": "Any movement on Scadrial this week, or is it still stalled?",
+        "probe": "What does 'Scadrial' refer to in this project?",
+        "probes": [
+          "What does 'Scadrial' refer to in this project?",
+          "When I mention Scadrial again, what should you take that to mean?",
+          "Remind me what we've been calling Scadrial internally -- what is it?"
+        ],
+        "gold": "The case-management software migration for the expanded firm.",
+        "keywords": [
+          "case-management",
+          "software migration"
+        ],
+        "anti_keywords": [
+          "Sanderson",
+          "Mistborn",
+          "planet",
+          "Allomancy",
+          "Preservation"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c49",
+    "title": "Community archive digitization and relocation",
+    "system": "You are a helpful assistant experienced in archival science and nonprofit operations, helping a small community archive plan a major digitization and relocation effort.",
+    "project": "The user is Teodora Blaskovic, director of the Riverbend Community Archive, a volunteer-run local-history archive preparing to digitize its photograph collection, move to a new climate-controlled space, apply for a preservation grant, recruit volunteers, and adopt new collection-management software.",
+    "subtopics": [
+      "photograph digitization",
+      "relocation to a new space",
+      "preservation grant application",
+      "volunteer recruitment and training",
+      "collection-management software"
+    ],
+    "early_user_turns": [
+      "Hi, so the Riverbend Community Archive is taking on its biggest project ever, digitizing the photo collection, moving to a climate-controlled building, and chasing a preservation grant, all over the next few months. I'd love to use you as a planning partner across the whole thing. Okay?",
+      "Let's start with digitization since it's the heart of it. We have thousands of unsorted historical photographs. What should we be thinking about before we start scanning a collection this size?"
+    ],
+    "middle_filler_user_turns": [
+      "On the move, we're deciding between a former bank building with a real vault or a newer storefront that would need climate control installed. What's the general tradeoff for an archive?",
+      "For the grant, is it smarter to apply for one large preservation grant or several smaller targeted ones?",
+      "On volunteers, most of ours are retirees. How do we recruit some younger people who can handle the scanning tech?",
+      "For collection management, what features matter most when a small archive picks cataloging software?",
+      "Back to digitization, what scanning resolution is actually appropriate for fragile historical prints?",
+      "For the new space, how tightly do we really need to control temperature and humidity for photographic material?",
+      "On the grant, how much detail do funders expect in the preservation plan section of the application?",
+      "For volunteers, what's a sane ratio of trained supervisors to general volunteers during a big scanning push?",
+      "On software, how important is it that the cataloging system can export to standard archival metadata formats?",
+      "For the move itself, what's the safest way to physically transport fragile boxed collections across town?"
+    ],
+    "tail_filler_user_turns": [
+      "One more on the grant: should we get a letter of support from the city before or after we draft the budget?",
+      "For volunteers, how should we structure training so newcomers don't damage originals in their first week?",
+      "On digitization, should we scan everything first or catalog as we scan?",
+      "For the new space, besides climate control, what else should I inspect before we sign the lease?",
+      "Last thing today: what should be on the checklist for the two weeks before the collection physically moves?"
+    ],
+    "plants": [
+      {
+        "id": "c49-sense-1",
+        "category": "sense",
+        "middle_user": "Quick clarification: when I say 'the collection' to you, I always mean the historical photograph collection specifically, not our entire holdings including papers and objects, even though the board sometimes calls everything 'the collection.' Just the photographs, when I say it to you.",
+        "tail_user_fragment": "Does the collection need to be fully inventoried before we start scanning?",
+        "probe": "When I said 'the collection', what was I referring to?",
+        "probes": [
+          "When I said 'the collection', what was I referring to?",
+          "What does 'the collection' mean when I use that term with you?",
+          "If I mention the collection again, what should you take that to be?"
+        ],
+        "gold": "The historical photograph collection specifically, not the archive's entire holdings.",
+        "keywords": [
+          "photograph",
+          "photographs"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c49-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the reading room' from now on, I mean the physical public research room where visitors view originals, not the online digital access portal, which a couple of volunteers have started calling 'the virtual reading room.' Two different things, and I only mean the physical room.",
+        "tail_user_fragment": "How many seats should the reading room have in the new building?",
+        "probe": "When I referred to 'the reading room', which thing did I mean?",
+        "probes": [
+          "When I referred to 'the reading room', which thing did I mean?",
+          "What specifically is 'the reading room' in our conversations?",
+          "If I ask about the reading room again, what should you think I'm talking about?"
+        ],
+        "gold": "The physical public research room where visitors view originals, not the online digital access portal.",
+        "keywords": [
+          "physical",
+          "research room"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c49-referent-1",
+        "category": "referent",
+        "middle_user": "Building decision time. We looked at three routes: (1) the former bank building with the existing vault, (2) the newer storefront that needs climate control installed, or (3) a hybrid where we lease the storefront but split the collection and keep the most fragile items in a rented off-site climate unit. After talking with our conservator, we're going with the hybrid, the storefront plus the off-site unit for fragile items.",
+        "tail_user_fragment": "On the building decision, no need to walk through it again, but what insurance rider does it require?",
+        "probe": "What did we decide on for the new archive space?",
+        "probes": [
+          "What did we decide on for the new archive space?",
+          "Which of the three building routes did we end up choosing?",
+          "Remind me exactly what space arrangement we settled on."
+        ],
+        "gold": "The hybrid option: leasing the storefront and keeping the most fragile items in a rented off-site climate unit (option three of three).",
+        "keywords": [
+          "hybrid",
+          "off-site"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c49-referent-2",
+        "category": "referent",
+        "middle_user": "On software, we had three options on the table: (1) CollectiveAccess, an open-source system we'd self-host, (2) a hosted commercial platform called ArchiveDesk, or (3) sticking with our current spreadsheets but adding a shared database front end. We talked it through and we're going with CollectiveAccess, the open-source self-hosted option.",
+        "tail_user_fragment": "For the software we picked, don't re-explain what it is, just tell me what server we need to host it.",
+        "probe": "Which collection-management software did we decide to go with?",
+        "probes": [
+          "Which collection-management software did we decide to go with?",
+          "Out of the three software options, which one did we choose?",
+          "Remind me which cataloging system we're adopting."
+        ],
+        "gold": "CollectiveAccess, the open-source self-hosted option, over ArchiveDesk or the spreadsheet-plus-database route.",
+        "keywords": [
+          "collectiveaccess"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c49-stance-1",
+        "category": "stance",
+        "middle_user": "Hard preference on digitization: absolutely no auto-enhancement or AI colorization of the historical photos. I think altering originals betrays the archive's duty to preserve them as they actually are. I don't care how appealing a colorized version looks to donors, we scan them faithfully and leave them be, always.",
+        "tail_user_fragment": "",
+        "probe": "How should we handle image processing when we digitize the historical photos?",
+        "probes": [
+          "How should we handle image processing when we digitize the historical photos?",
+          "What should our image-processing approach be for the scans?",
+          "Should we colorize or auto-enhance the old photos to make them more appealing?"
+        ],
+        "gold": "Faithful scans with no auto-enhancement or AI colorization, ideally recalling that the user considers altering originals a betrayal of the archive's preservation duty.",
+        "keywords": [
+          "faithful",
+          "preserve as-is"
+        ],
+        "anti_keywords": [
+          "colorization",
+          "colorize",
+          "auto-enhance"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c49-stance-2",
+        "category": "stance",
+        "middle_user": "One more firm rule: no charging researchers a fee to access the collection. We tried access fees years ago and it drove away exactly the local families whose history this is. Free public access always, even if it means we fundraise harder elsewhere.",
+        "tail_user_fragment": "",
+        "probe": "How should we handle researcher access to the collection in the new space?",
+        "probes": [
+          "How should we handle researcher access to the collection in the new space?",
+          "What access policy should we set for researchers?",
+          "Should we charge researchers an access fee to help cover costs?"
+        ],
+        "gold": "Free public access, never charging researchers an access fee, ideally recalling that fees previously drove away local families.",
+        "keywords": [
+          "free access",
+          "free public"
+        ],
+        "anti_keywords": [
+          "access fee",
+          "charge researchers"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c49-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For context, we bought a batch of archival storage boxes from a supplier called Everlong Storage a few years back and the boxes turned out to be acidic and started yellowing photos at the edges. We threw them out and will never buy from Everlong Storage again.",
+        "tail_user_fragment": "",
+        "probe": "Where should we source archival storage boxes for the new space?",
+        "probes": [
+          "Where should we source archival storage boxes for the new space?",
+          "Recommend a supplier for archival boxes.",
+          "Is there a storage-supply vendor we should avoid?"
+        ],
+        "gold": "Any supplier except Everlong Storage, given their acidic boxes that yellowed photos.",
+        "keywords": [
+          "acidic",
+          "yellowing"
+        ],
+        "anti_keywords": [
+          "everlong"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c49-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also, remember we hired a moving company called Halden Movers for a small relocation before and they stacked fragile boxes flat and cracked several framed items. We aren't using Halden Movers again.",
+        "tail_user_fragment": "",
+        "probe": "Who should we consider to physically move the collection?",
+        "probes": [
+          "Who should we consider to physically move the collection?",
+          "Which mover should we look at for the relocation?",
+          "Is there a moving company we should steer clear of?"
+        ],
+        "gold": "Any mover except Halden Movers, given they stacked fragile boxes and cracked framed items.",
+        "keywords": [
+          "stacked",
+          "cracked"
+        ],
+        "anti_keywords": [
+          "halden"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c49-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note for the file: the off-site climate unit costs $310 a month. Just logging that, doesn't change what we're discussing.",
+        "tail_user_fragment": "",
+        "probe": "What is the monthly cost of the off-site climate unit?",
+        "probes": [
+          "What is the monthly cost of the off-site climate unit?",
+          "How much are we paying per month for the off-site storage unit?",
+          "Remind me the monthly figure for the fragile-items climate unit."
+        ],
+        "gold": "$310 a month.",
+        "keywords": [
+          "310"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c49-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "For the record, our preservation grant application is filed under reference GRT-PH-40928, submitted on April 3rd, with a decision expected in eight to ten weeks. Just logging it.",
+        "tail_user_fragment": "",
+        "probe": "What is the reference number for our grant application, and when was it submitted?",
+        "probes": [
+          "What is the reference number for our grant application, and when was it submitted?",
+          "What's the grant application number and filing date we noted earlier?",
+          "Remind me the reference number on our preservation grant."
+        ],
+        "gold": "GRT-PH-40928, submitted April 3rd.",
+        "keywords": [
+          "40928",
+          "april 3"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c49-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's just codename the whole digitization-and-move project 'Tatooine' from here on, in every planning doc and email, so we're not typing it all out every time.",
+        "tail_user_fragment": "What's still open on the Tatooine punch list before we can start scanning?",
+        "probe": "What does 'Tatooine' refer to in this project?",
+        "probes": [
+          "What does 'Tatooine' refer to in this project?",
+          "If I say Tatooine later, what should you understand that to mean?",
+          "Remind me what Tatooine is in our planning -- what does it stand for?"
+        ],
+        "gold": "The whole digitization-and-relocation project.",
+        "keywords": [
+          "digitization",
+          "move",
+          "project"
+        ],
+        "anti_keywords": [
+          "Star Wars",
+          "desert planet",
+          "Luke Skywalker",
+          "twin suns",
+          "Jawa"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c49-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's codename the climate-control installation 'Naboo', since it's the trickiest and most delayed part of the whole move. Use that name for it in any status update.",
+        "tail_user_fragment": "Any movement on Naboo this week, or is the HVAC still stuck?",
+        "probe": "What does 'Naboo' refer to in this project?",
+        "probes": [
+          "What does 'Naboo' refer to in this project?",
+          "When I mention Naboo again, what should you take that to mean?",
+          "Remind me what we've been calling Naboo internally -- what is it?"
+        ],
+        "gold": "The climate-control (HVAC) installation for the new archive space.",
+        "keywords": [
+          "climate-control",
+          "HVAC",
+          "installation"
+        ],
+        "anti_keywords": [
+          "Star Wars",
+          "Padme",
+          "Queen Amidala",
+          "Gungan",
+          "planet"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c50",
+    "title": "Coworking space second-location launch",
+    "system": "You are a helpful assistant experienced in coworking and small-business operations, helping a founder open a second location of their coworking space.",
+    "project": "The user is Rashida Karim, founder of Loomworks, a coworking space opening a second location in a converted warehouse across the city. Together with the assistant they are working through the buildout and floor plan, membership pricing, staffing, an access-and-booking software decision, and a launch marketing plan.",
+    "subtopics": [
+      "buildout and floor plan",
+      "membership pricing and tiers",
+      "staffing and community management",
+      "access and booking software",
+      "launch marketing"
+    ],
+    "early_user_turns": [
+      "Hey, so Loomworks is opening its second location, this time in a converted warehouse across the city, and it's a way bigger job than our first spot. I want to use you as a planning partner across buildout, pricing, staffing, software, marketing, all of it. Cool?",
+      "Let's start with the floor plan since it locks in everything else. It's a big open warehouse shell. How should I think about balancing open desks, private offices, and meeting rooms for a second location?"
+    ],
+    "middle_filler_user_turns": [
+      "On pricing, we're deciding between keeping the same tiers as our first location or introducing a cheaper part-time tier for the new spot. What's the general tradeoff?",
+      "For staffing, is it better to transfer an experienced community manager from the first location or hire someone new who knows the neighborhood?",
+      "On software, our current access-and-booking system is clunky. What features matter most when a coworking space shops for a new one?",
+      "For the buildout, how much should I budget for soundproofing the phone booths and meeting rooms specifically?",
+      "Back to pricing, how many membership tiers is too many before it just confuses people?",
+      "For staffing, what's a sane ratio of community staff to members at a location our size?",
+      "On marketing, what's the most effective channel for filling a new coworking space before opening day?",
+      "For the floor plan, how much of the square footage should stay as flexible event space versus fixed desks?",
+      "On software, how important is it that the access system integrates with the door hardware we already own?",
+      "For the launch, how far ahead should we start pre-selling founding memberships?"
+    ],
+    "tail_filler_user_turns": [
+      "One more on marketing: should we run the launch event before or after we've onboarded the first wave of members?",
+      "For staffing, how should we structure the hiring so we're not just poaching our own first location dry?",
+      "On pricing, should the founding-member discount be permanent or expire after the first year?",
+      "For the buildout, besides soundproofing, what else should I double-check before signing off on the contractor?",
+      "Last thing today: what should be on the checklist for the two weeks before the new location opens?"
+    ],
+    "plants": [
+      {
+        "id": "c50-sense-1",
+        "category": "sense",
+        "middle_user": "Quick clarification: when I say 'the floor' to you, I always mean the open coworking desk area specifically, not the entire building or the physical flooring material, even though the contractors keep saying 'the floor' to mean the concrete slab. Just the open desk area, when I say it to you.",
+        "tail_user_fragment": "How many desks can we realistically fit on the floor without it feeling cramped?",
+        "probe": "When I said 'the floor', what was I referring to?",
+        "probes": [
+          "When I said 'the floor', what was I referring to?",
+          "What does 'the floor' mean when I use that term with you?",
+          "If I mention the floor again, what should you take that to be?"
+        ],
+        "gold": "The open coworking desk area specifically, not the whole building or the physical flooring.",
+        "keywords": [
+          "open desk",
+          "desk area"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c50-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the hub' from now on, I mean the staffed front reception-and-community desk, not our members-only mobile app which the team also nicknamed 'the hub.' Two different things, and I only mean the physical reception desk.",
+        "tail_user_fragment": "Should the hub be staffed during evening hours at the new location?",
+        "probe": "When I referred to 'the hub', which thing did I mean?",
+        "probes": [
+          "When I referred to 'the hub', which thing did I mean?",
+          "What specifically is 'the hub' in our conversations?",
+          "If I ask about the hub again, what should you think I'm talking about?"
+        ],
+        "gold": "The staffed front reception-and-community desk, not the members-only mobile app.",
+        "keywords": [
+          "reception",
+          "front desk"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c50-referent-1",
+        "category": "referent",
+        "middle_user": "Floor plan decision time. We looked at three layouts: (1) mostly open desks with just a few private offices, (2) mostly private offices with a small open area, or (3) a hybrid with a central open core ringed by private offices and meeting rooms on the perimeter. After talking with our designer, we're going with the hybrid, open core ringed by private offices.",
+        "tail_user_fragment": "On the layout decision, no need to walk through it again, but what lighting plan does it call for?",
+        "probe": "What did we decide on for the warehouse floor plan?",
+        "probes": [
+          "What did we decide on for the warehouse floor plan?",
+          "Which of the three layouts did we end up choosing?",
+          "Remind me exactly what floor plan we settled on."
+        ],
+        "gold": "The hybrid layout: a central open core ringed by private offices and perimeter meeting rooms (option three of three).",
+        "keywords": [
+          "hybrid",
+          "open core"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c50-referent-2",
+        "category": "referent",
+        "middle_user": "On the access software, we had three options on the table: (1) Kisi for door access paired with a separate booking tool, (2) an all-in-one platform called Nexudus, or (3) building a lightweight custom system on top of our existing hardware. We talked it through and we're going with Nexudus, the all-in-one platform.",
+        "tail_user_fragment": "For the software we picked, don't re-explain what it is, just tell me what the onboarding import needs from us first.",
+        "probe": "Which access-and-booking software did we decide to go with?",
+        "probes": [
+          "Which access-and-booking software did we decide to go with?",
+          "Out of the three software options, which one did we choose?",
+          "Remind me which access platform we're adopting."
+        ],
+        "gold": "Nexudus, the all-in-one platform, over the Kisi-plus-separate-tool combo or a custom build.",
+        "keywords": [
+          "nexudus"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c50-stance-1",
+        "category": "stance",
+        "middle_user": "Hard preference on pricing: absolutely no long-term lock-in contracts for members. I think forcing people into annual commitments is exactly the landlord-y behavior our whole brand rejects. I don't care how much it would smooth our revenue, memberships stay month-to-month, always.",
+        "tail_user_fragment": "",
+        "probe": "How should we structure membership commitments at the new location?",
+        "probes": [
+          "How should we structure membership commitments at the new location?",
+          "What commitment terms should members sign up for?",
+          "Should we lock members into annual contracts to stabilize revenue?"
+        ],
+        "gold": "Month-to-month memberships, never long-term lock-in or annual contracts, ideally recalling that the user sees lock-in as landlord-y and off-brand.",
+        "keywords": [
+          "month-to-month"
+        ],
+        "anti_keywords": [
+          "annual contract",
+          "lock-in",
+          "long-term contract"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c50-stance-2",
+        "category": "stance",
+        "middle_user": "One more firm rule: no selling members' contact data or email lists to sponsors or partners, ever. A space I used to work at did that and it destroyed the trust of the whole community. Members' data stays private, full stop, even if a sponsor waves money at us.",
+        "tail_user_fragment": "",
+        "probe": "How should we handle sponsor partnerships and member data at the new location?",
+        "probes": [
+          "How should we handle sponsor partnerships and member data at the new location?",
+          "What's our policy on sharing member info with sponsors?",
+          "Should we let sponsors buy access to our member email list?"
+        ],
+        "gold": "Keep member data private and never sell contact lists to sponsors, ideally recalling that the user saw this destroy trust at a previous space.",
+        "keywords": [
+          "private",
+          "never sell"
+        ],
+        "anti_keywords": [
+          "sell data",
+          "email list to sponsors",
+          "sell contact"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c50-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For context, we used a printing-and-signage vendor called Copperline Print for our first location's launch and they missed the deadline by two weeks and printed our logo in the wrong color. We will never use Copperline Print again.",
+        "tail_user_fragment": "",
+        "probe": "Who should we use for launch signage and printed materials?",
+        "probes": [
+          "Who should we use for launch signage and printed materials?",
+          "Recommend a print-and-signage vendor for the launch.",
+          "Is there a printing vendor we should avoid?"
+        ],
+        "gold": "Any vendor except Copperline Print, given they missed the deadline and printed the logo in the wrong color.",
+        "keywords": [
+          "wrong color",
+          "missed the deadline"
+        ],
+        "anti_keywords": [
+          "copperline"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c50-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also, remember we tried a coffee supplier called Marrow Roasters at the first location and members constantly complained the beans were stale and the delivery was unreliable. We dropped them and aren't going back.",
+        "tail_user_fragment": "",
+        "probe": "Who should we consider as a coffee supplier for the new location?",
+        "probes": [
+          "Who should we consider as a coffee supplier for the new location?",
+          "Which coffee vendor should we look at?",
+          "Is there a coffee supplier we should steer clear of?"
+        ],
+        "gold": "Any supplier except Marrow Roasters, given the stale beans and unreliable delivery.",
+        "keywords": [
+          "stale",
+          "unreliable delivery"
+        ],
+        "anti_keywords": [
+          "marrow"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c50-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note for the file: the warehouse lease base rent is $14,200 a month before the escalation clause kicks in. Just logging that, doesn't change what we're discussing.",
+        "tail_user_fragment": "",
+        "probe": "What is the base monthly rent for the warehouse lease?",
+        "probes": [
+          "What is the base monthly rent for the warehouse lease?",
+          "How much are we paying per month in base rent for the warehouse?",
+          "Remind me the starting rent figure before escalation for the new location."
+        ],
+        "gold": "$14,200 a month before escalation.",
+        "keywords": [
+          "14,200"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c50-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "For the record, our commercial occupancy permit application is filed under number OCC-2026-58317, submitted May 12th, with the city quoting six to eight weeks. Just logging it.",
+        "tail_user_fragment": "",
+        "probe": "What is our occupancy permit application number, and when was it submitted?",
+        "probes": [
+          "What is our occupancy permit application number, and when was it submitted?",
+          "What's the occupancy permit number and filing date we noted earlier?",
+          "Remind me the reference number on our occupancy permit."
+        ],
+        "gold": "OCC-2026-58317, submitted May 12th.",
+        "keywords": [
+          "58317",
+          "may 12"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c50-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's just codename the whole second-location launch 'Snorlax' from here on, in every planning doc and email, so we're not spelling it out every time.",
+        "tail_user_fragment": "What's still open on the Snorlax punch list before we can set an opening date?",
+        "probe": "What does 'Snorlax' refer to in this project?",
+        "probes": [
+          "What does 'Snorlax' refer to in this project?",
+          "If I say Snorlax later, what should you understand that to mean?",
+          "Remind me what Snorlax is in our planning -- what does it stand for?"
+        ],
+        "gold": "The whole second-location launch project.",
+        "keywords": [
+          "second-location",
+          "launch",
+          "project"
+        ],
+        "anti_keywords": [
+          "Pokemon",
+          "sleeping creature",
+          "blocks the road",
+          "Rest move",
+          "Pokedex"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c50-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's codename the soundproofing and acoustics work 'Charizard', since it's the most expensive and behind-schedule part of the whole buildout. Use that name for it in any status update.",
+        "tail_user_fragment": "Any movement on Charizard this week, or is the acoustics work still stuck?",
+        "probe": "What does 'Charizard' refer to in this project?",
+        "probes": [
+          "What does 'Charizard' refer to in this project?",
+          "When I mention Charizard again, what should you take that to mean?",
+          "Remind me what we've been calling Charizard internally -- what is it?"
+        ],
+        "gold": "The soundproofing and acoustics work for the warehouse buildout.",
+        "keywords": [
+          "soundproofing",
+          "acoustics"
+        ],
+        "anti_keywords": [
+          "Pokemon",
+          "fire dragon",
+          "Flamethrower",
+          "evolves from Charmander",
+          "creature"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c51",
+    "title": "Herbal apothecary storefront and product line launch",
+    "system": "You are a helpful assistant experienced in small-batch wellness retail and regulatory compliance, helping the owner of an herbal apothecary open a storefront and launch a product line.",
+    "project": "The user is Ingrid Solano, owner of Wildroot Apothecary, moving from farmers-market sales to a permanent storefront while launching a packaged tea-and-tincture product line. Together with the assistant they are working through product formulation, retail buildout, supplier sourcing, labeling-and-compliance, and wholesale distribution.",
+    "subtopics": [
+      "product formulation",
+      "retail storefront buildout",
+      "supplier and ingredient sourcing",
+      "labeling and regulatory compliance",
+      "wholesale distribution"
+    ],
+    "early_user_turns": [
+      "Hi, so Wildroot Apothecary is finally moving from the farmers market into a real storefront, and at the same time launching a packaged tea-and-tincture line. It's a lot at once. I'd like to use you as a planning partner across formulation, buildout, sourcing, compliance, and wholesale. Sound good?",
+      "Let's start with formulation since the products anchor everything. We want a small launch line of teas and tinctures. How should I think about choosing which few products to launch with instead of trying to sell everything?"
+    ],
+    "middle_filler_user_turns": [
+      "On the storefront, we're deciding between a small space with room for a tea bar or a slightly bigger one that's retail-only. What's the general tradeoff?",
+      "For sourcing, is it better to buy bulk dried herbs from one large wholesaler or piece it together from several small regional growers?",
+      "On compliance, what are the big things I need to get right on labeling for teas and tinctures specifically?",
+      "For the buildout, how much should I budget for proper shelving and climate control to keep dried herbs from degrading?",
+      "Back to formulation, how many products is a sane launch line before it becomes too much to keep in stock?",
+      "For sourcing, how do I vet whether a supplier's herbs are actually organic like they claim?",
+      "On compliance, do tinctures with alcohol bases trigger any extra licensing I should know about?",
+      "For wholesale, how do I price products so there's still margin left after a retailer takes their cut?",
+      "On the storefront, how important is smell and ambiance to actually converting browsers into buyers in this kind of shop?",
+      "For sourcing, what's a reasonable amount of safety stock to hold on the bestselling herbs so I never run dry?"
+    ],
+    "tail_filler_user_turns": [
+      "One more on wholesale: should I approach retailers before or after the retail storefront is actually open?",
+      "For sourcing, how should I structure supplier agreements so I'm not stuck if one grower has a bad season?",
+      "On formulation, should the launch line stay fixed or rotate some seasonal blends?",
+      "For the buildout, besides climate control, what else should I double-check before signing the lease?",
+      "Last thing today: what should be on the checklist for the two weeks before the storefront opens?"
+    ],
+    "plants": [
+      {
+        "id": "c51-sense-1",
+        "category": "sense",
+        "middle_user": "Quick clarification: when I say 'the line' to you, I always mean the packaged retail product line of teas and tinctures, not the physical checkout queue or the phone line, even though the staff sometimes say 'the line' to mean the customer queue. Just the product line, when I say it to you.",
+        "tail_user_fragment": "Does the line need consistent packaging before we approach wholesale buyers?",
+        "probe": "When I said 'the line', what was I referring to?",
+        "probes": [
+          "When I said 'the line', what was I referring to?",
+          "What does 'the line' mean when I use that term with you?",
+          "If I mention the line again, what should you take that to be?"
+        ],
+        "gold": "The packaged retail product line of teas and tinctures, not the checkout queue or phone line.",
+        "keywords": [
+          "product line",
+          "teas",
+          "tinctures"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c51-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the still room' from now on, I mean the back workroom where we blend and bottle tinctures, not the retail floor's herbal display which a volunteer started calling 'the still-life room.' Two different things, and I only mean the back workroom.",
+        "tail_user_fragment": "How much bench space do we need in the still room for the launch batch?",
+        "probe": "When I referred to 'the still room', which thing did I mean?",
+        "probes": [
+          "When I referred to 'the still room', which thing did I mean?",
+          "What specifically is 'the still room' in our conversations?",
+          "If I ask about the still room again, what should you think I'm talking about?"
+        ],
+        "gold": "The back workroom where tinctures are blended and bottled, not the retail floor's herbal display.",
+        "keywords": [
+          "back workroom",
+          "blend",
+          "bottle"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c51-referent-1",
+        "category": "referent",
+        "middle_user": "Storefront decision time. We looked at three options: (1) the small space with room for a tea bar, (2) the bigger retail-only space, or (3) a hybrid where we take the small space but add a tiny counter tasting station instead of a full tea bar. After running the numbers, we're going with the hybrid, small space with the tasting counter.",
+        "tail_user_fragment": "On the storefront decision, no need to walk through it again, but what permits does the tasting counter need?",
+        "probe": "What did we decide on for the storefront?",
+        "probes": [
+          "What did we decide on for the storefront?",
+          "Which of the three storefront options did we end up choosing?",
+          "Remind me exactly what storefront setup we settled on."
+        ],
+        "gold": "The hybrid option: the small space with a tiny counter tasting station instead of a full tea bar (option three of three).",
+        "keywords": [
+          "hybrid",
+          "tasting counter"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c51-referent-2",
+        "category": "referent",
+        "middle_user": "On suppliers, we had three routes on the table: (1) Fieldstone Botanicals, a big bulk wholesaler, (2) piecing it together from several small regional growers, or (3) a co-op called Greenway Growers that aggregates small organic farms into one order. We talked it through and we're going with Greenway Growers, the co-op.",
+        "tail_user_fragment": "For the supplier we picked, don't re-explain who it is, just tell me what the first order minimum is.",
+        "probe": "Which supplier did we decide to go with?",
+        "probes": [
+          "Which supplier did we decide to go with?",
+          "Out of the three sourcing routes, which one did we choose?",
+          "Remind me which herb supplier we're going with."
+        ],
+        "gold": "Greenway Growers, the co-op aggregating small organic farms, over Fieldstone Botanicals or piecing together individual growers.",
+        "keywords": [
+          "greenway"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c51-stance-1",
+        "category": "stance",
+        "middle_user": "Hard preference on the product line: absolutely no health or medical claims on any label or in any marketing, like 'cures anxiety' or 'boosts immunity.' I think those claims are both legally reckless and dishonest about what herbs actually do. I don't care how much they'd boost sales, we make no medical claims, ever.",
+        "tail_user_fragment": "",
+        "probe": "How should we write the marketing copy for the tea and tincture line?",
+        "probes": [
+          "How should we write the marketing copy for the tea and tincture line?",
+          "What should the product descriptions and marketing say?",
+          "Should we say things like 'boosts immunity' to help the products sell?"
+        ],
+        "gold": "Descriptive, non-medical copy with no health or curative claims, ideally recalling that the user considers such claims legally reckless and dishonest.",
+        "keywords": [
+          "no medical claims",
+          "descriptive"
+        ],
+        "anti_keywords": [
+          "cures",
+          "boosts immunity",
+          "medical claim"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c51-stance-2",
+        "category": "stance",
+        "middle_user": "One more firm rule: no synthetic fragrances or artificial flavorings in any blend. I built this brand on being genuinely all-natural, and adding synthetics would make me a hypocrite. Only real botanical ingredients, always, even if a synthetic would be cheaper and more consistent.",
+        "tail_user_fragment": "",
+        "probe": "How should we approach flavor and scent in the tea and tincture blends?",
+        "probes": [
+          "How should we approach flavor and scent in the tea and tincture blends?",
+          "What should we use to flavor and scent the blends?",
+          "Should we add synthetic fragrance to keep the scent consistent batch to batch?"
+        ],
+        "gold": "Only real botanical ingredients with no synthetic fragrances or artificial flavorings, ideally recalling that the user built the brand on being genuinely all-natural.",
+        "keywords": [
+          "all-natural",
+          "botanical"
+        ],
+        "anti_keywords": [
+          "synthetic fragrance",
+          "artificial flavor",
+          "synthetics"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c51-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For context, we ordered custom tincture bottles from a supplier called Amberglass Supply last year and a whole shipment arrived with cracked droppers and mismatched cap threads. We will never order from Amberglass Supply again.",
+        "tail_user_fragment": "",
+        "probe": "Where should we source tincture bottles for the launch?",
+        "probes": [
+          "Where should we source tincture bottles for the launch?",
+          "Recommend a bottle supplier for the tinctures.",
+          "Is there a packaging supplier we should avoid?"
+        ],
+        "gold": "Any supplier except Amberglass Supply, given the cracked droppers and mismatched cap threads.",
+        "keywords": [
+          "cracked droppers",
+          "cap threads"
+        ],
+        "anti_keywords": [
+          "amberglass"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c51-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also, remember we tried a fulfillment service called Parcelright for our online orders and they lost three shipments in a month and mixed up two customers' orders. We dropped them and aren't going back.",
+        "tail_user_fragment": "",
+        "probe": "Who should we consider for order fulfillment once wholesale picks up?",
+        "probes": [
+          "Who should we consider for order fulfillment once wholesale picks up?",
+          "Which fulfillment service should we look at?",
+          "Is there a fulfillment provider we should steer clear of?"
+        ],
+        "gold": "Any provider except Parcelright, given the lost shipments and mixed-up orders.",
+        "keywords": [
+          "lost shipments",
+          "mixed up"
+        ],
+        "anti_keywords": [
+          "parcelright"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c51-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note for the file: the storefront lease base rent is $3,750 a month before any escalation. Just logging that, doesn't change what we're discussing.",
+        "tail_user_fragment": "",
+        "probe": "What is the base monthly rent for the storefront lease?",
+        "probes": [
+          "What is the base monthly rent for the storefront lease?",
+          "How much are we paying per month in base rent for the storefront?",
+          "Remind me the starting rent figure for the shop lease."
+        ],
+        "gold": "$3,750 a month before escalation.",
+        "keywords": [
+          "3,750"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c51-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "For the record, our cottage-food and tincture registration is filed under reference number CFR-2026-61204, submitted June 7th, with the health department quoting four to six weeks. Just logging it.",
+        "tail_user_fragment": "",
+        "probe": "What is our product registration reference number, and when was it submitted?",
+        "probes": [
+          "What is our product registration reference number, and when was it submitted?",
+          "What's the registration number and filing date we noted earlier?",
+          "Remind me the reference number on our cottage-food registration."
+        ],
+        "gold": "CFR-2026-61204, submitted June 7th.",
+        "keywords": [
+          "61204",
+          "june 7"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c51-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's just codename the whole storefront-and-product-line launch 'Rohan' from here on, in every planning doc and email, so we're not spelling it all out every time.",
+        "tail_user_fragment": "What's still open on the Rohan punch list before we can set an opening date?",
+        "probe": "What does 'Rohan' refer to in this project?",
+        "probes": [
+          "What does 'Rohan' refer to in this project?",
+          "If I say Rohan later, what should you understand that to mean?",
+          "Remind me what Rohan is in our planning -- what does it stand for?"
+        ],
+        "gold": "The whole storefront-and-product-line launch project.",
+        "keywords": [
+          "storefront",
+          "product line",
+          "launch"
+        ],
+        "anti_keywords": [
+          "Lord of the Rings",
+          "Tolkien",
+          "horse-lords",
+          "Theoden",
+          "Edoras"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c51-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's codename the labeling-and-compliance workstream 'Isengard', since it's the most tedious and behind-schedule part of the whole launch. Use that name for it in any status update.",
+        "tail_user_fragment": "Any movement on Isengard this week, or is the labeling review still stuck?",
+        "probe": "What does 'Isengard' refer to in this project?",
+        "probes": [
+          "What does 'Isengard' refer to in this project?",
+          "When I mention Isengard again, what should you take that to mean?",
+          "Remind me what we've been calling Isengard internally -- what is it?"
+        ],
+        "gold": "The labeling-and-compliance workstream for the product line.",
+        "keywords": [
+          "labeling",
+          "compliance"
+        ],
+        "anti_keywords": [
+          "Lord of the Rings",
+          "Saruman",
+          "Tolkien",
+          "Orthanc",
+          "tower"
+        ],
+        "distance": "near"
+      }
+    ]
+  }
+]

@@ -1,0 +1,1495 @@
+[
+  {
+    "id": "c28",
+    "title": "Artisan bakery second location",
+    "system": "You are a helpful assistant experienced in food business operations, supporting a baker opening a second storefront.",
+    "project": "The user is Marisol Vega, owner of Hearth & Crumb, an artisan sourdough bakery, opening a second storefront across town. Together with the assistant they are working through sourdough production scaling, wholesale accounts, retail storefront design, hiring and training bakers, and equipment procurement.",
+    "subtopics": [
+      "sourdough production scaling",
+      "wholesale accounts",
+      "retail storefront design",
+      "hiring and training bakers",
+      "equipment procurement"
+    ],
+    "early_user_turns": [
+      "Hi, I run Hearth & Crumb, an artisan sourdough bakery, and we're opening a second storefront on the other side of town. I want to use this chat as a planning partner across everything: scaling production, wholesale accounts, the new storefront design, hiring bakers, and buying equipment. Can you help me work through all of it over the next few months?",
+      "Let's start with production scaling since that's the foundation. Right now our starter and bulk fermentation schedule is tuned for one kitchen. What should I think about first when I need to roughly double our loaf output across two locations?"
+    ],
+    "middle_filler_user_turns": [
+      "On wholesale, we've got two cafes interested in carrying our loaves. How should I think about pricing wholesale versus retail so I'm not just eating the margin?",
+      "For the storefront design, we want an open bake-in-view layout at the new spot. Is that actually worth the extra build cost compared to a closed-kitchen layout?",
+      "Hiring question: how much lead time do I need to train a new baker on our specific sourdough process before they can run a shift solo?",
+      "Equipment-wise, we're deciding on a new deck oven for the second location. What should I prioritize besides raw capacity?",
+      "Back to wholesale, should we cap the number of wholesale accounts so retail customers don't feel like they're getting leftovers?",
+      "For hiring, what's a fair trial shift structure for someone coming from a commercial bakery background versus someone with no professional experience?",
+      "On production scaling, how do I keep starter consistency across two physical locations without constantly shuttling it back and forth?",
+      "Storefront design again, how much floor space should go to seating versus grab-and-go given we're mostly a bread shop, not a cafe?",
+      "Equipment follow-up, is a used retarder-proofer a reasonable buy or does that always bite people later?",
+      "One more on wholesale, how do delivery logistics usually work for a two-cafe wholesale relationship this small?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to hiring, how should we structure pay during the training period versus once someone's running solo shifts?",
+      "For the storefront, what's a sane timeline between build-out completion and a soft-open weekend?",
+      "On equipment, should we buy the mixer and oven at the same time or stagger the purchases?",
+      "Wholesale-wise, what should go in the actual account agreement so expectations are clear on both sides?",
+      "Last one for today, what should the pre-opening checklist look like for the two weeks before the new storefront opens?"
+    ],
+    "plants": [
+      {
+        "id": "c28-referent-1",
+        "category": "referent",
+        "middle_user": "Oven decision time. We looked at three options: (1) a new triple-deck electric oven with full warranty, (2) a used stone hearth deck oven from a closing bakery two towns over, or (3) a smaller two-deck electric oven that fits our current budget with room to add a deck later. After running the numbers, we're going with the used stone hearth deck oven.",
+        "tail_user_fragment": "On the oven we picked, no need to walk through the options again. What should the inspection checklist look like before we finalize the purchase?",
+        "probe": "Which oven did we decide on for the second location?",
+        "probes": [
+          "Which oven did we decide on for the second location?",
+          "Which of the three oven options did we end up choosing?",
+          "What did we settle on for the new storefront's oven?",
+          "Remind me which oven we committed to."
+        ],
+        "gold": "The used stone hearth deck oven from the closing bakery (the second of the three options), not the new triple-deck electric or the smaller two-deck electric.",
+        "keywords": [
+          "stone hearth",
+          "used deck oven"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c28-referent-2",
+        "category": "referent",
+        "middle_user": "Diego pitched an idea for training new bakers. His proposal is a 'shadow week': every new hire spends their entire first week just observing and taking notes on a single lead baker's full shift, no hands-on baking at all until week two. He thinks it prevents bad habits from forming early. I'm adopting it for the new location.",
+        "tail_user_fragment": "On Diego's shadow week idea, I'm already sold, don't re-explain it. How should we document what trainees are supposed to observe?",
+        "probe": "What exactly was Diego's training proposal?",
+        "probes": [
+          "What exactly was Diego's training proposal?",
+          "What did Diego suggest for training new bakers?",
+          "Describe the training format Diego pitched that we're adopting.",
+          "What was Diego's idea for onboarding new hires?"
+        ],
+        "gold": "A 'shadow week' where new hires spend their entire first week only observing a lead baker's full shift, with no hands-on baking until week two.",
+        "keywords": [
+          "shadow week",
+          "observing only"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c28-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the levain' is overloaded on our team. The retail case sometimes gets called the levain case by the front-of-house staff, but when I say the levain to you, I always mean our actual liquid starter culture we feed twice daily, not the display case.",
+        "tail_user_fragment": "Should we split the levain into two separate containers so each location keeps its own, or keep it centralized at the first shop?",
+        "probe": "When I said 'the levain' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the levain' in this conversation, what was I referring to?",
+          "Which of the two things called 'the levain' did I mean here?",
+          "What does 'the levain' refer to in our conversation?",
+          "If I mention the levain again, what should you understand that to be?"
+        ],
+        "gold": "The liquid sourdough starter culture fed twice daily, not the front-of-house display case that staff also nickname the levain.",
+        "keywords": [
+          "starter culture",
+          "fed twice daily"
+        ],
+        "anti_keywords": [
+          "display case",
+          "retail case"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c28-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the morning bake' from here on I mean the wholesale batch that goes out the door by 6am for the cafes. I know our staff also casually calls the retail case restock the morning bake, but with you, the morning bake always means the wholesale run.",
+        "tail_user_fragment": "How many loaves should the morning bake include once we add the second cafe account?",
+        "probe": "When I referred to 'the morning bake' in this conversation, which batch did I mean?",
+        "probes": [
+          "When I referred to 'the morning bake' in this conversation, which batch did I mean?",
+          "Which batch did I mean when I said 'the morning bake'?",
+          "What does 'the morning bake' refer to in our conversation, wholesale or retail restock?",
+          "If I bring up the morning bake again, what should you assume I'm talking about?"
+        ],
+        "gold": "The wholesale batch that goes out by 6am for the cafe accounts, not the retail case restock.",
+        "keywords": [
+          "wholesale batch",
+          "6am",
+          "cafes"
+        ],
+        "anti_keywords": [
+          "retail case restock"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c28-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule going forward: we will never use commercial bread improvers or dough conditioners in any Hearth & Crumb product, at either location, no matter how much it would smooth out scaling headaches. Flour, water, salt, and starter, full stop. I will not budge on this even under wholesale volume pressure.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for making the wholesale batches more consistent at scale?",
+        "probes": [
+          "What are some ideas for making the wholesale batches more consistent at scale?",
+          "Give me three ways to improve consistency in the wholesale dough at higher volume.",
+          "How could we tighten up batch consistency as wholesale orders grow?",
+          "Suggest ways to scale dough production without sacrificing quality."
+        ],
+        "gold": "Suggests approaches like tighter fermentation temperature control, standardized mixing times, or hydration calibration, while never proposing bread improvers or dough conditioners, ideally recalling the flour-water-salt-starter-only commitment.",
+        "keywords": [
+          "flour water salt starter",
+          "no improvers"
+        ],
+        "anti_keywords": [
+          "dough conditioner",
+          "bread improver"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c28-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not doing a frozen par-baked product line, even though a distributor keeps pitching it as an easy revenue add. I've tasted too many par-baked sourdoughs that lose the crust entirely. Everything we sell gets baked fresh same-day at one of our two locations, or we don't sell it.",
+        "tail_user_fragment": null,
+        "probe": "What are some ways to expand our revenue without adding staff at either location?",
+        "probes": [
+          "What are some ways to expand our revenue without adding staff at either location?",
+          "If we want more revenue without more labor, what should we consider?",
+          "What low-labor revenue ideas fit our bakery?",
+          "Suggest ways to grow revenue that don't require a new product category."
+        ],
+        "gold": "Suggests approaches like extending storefront hours, adding pre-order subscriptions, or growing wholesale accounts, while never proposing a frozen par-baked line, ideally recalling the same-day fresh-baked commitment.",
+        "keywords": [
+          "fresh same-day",
+          "baked at location"
+        ],
+        "anti_keywords": [
+          "frozen par-baked",
+          "par-bake"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c28-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on flour suppliers, we already tried a regional mill called Graincroft Milling last year, and their bulk bread flour protein content varied batch to batch, our crumb structure was inconsistent for two straight months before we figured out why. We are not going back to them.",
+        "tail_user_fragment": null,
+        "probe": "Who should we look at for a second flour supplier as we scale up?",
+        "probes": [
+          "Who should we look at for a second flour supplier as we scale up?",
+          "What supplier should we consider for additional flour volume?",
+          "Given our budget, how should we source more bread flour going forward?",
+          "What's a better option than what we already tried for flour supply?"
+        ],
+        "gold": "Anything except Graincroft Milling, e.g. a different mill with consistent protein specs, a co-op purchasing arrangement, or a supplier offering batch testing, ideally acknowledging Graincroft was tried and rejected.",
+        "keywords": [
+          "protein content",
+          "inconsistent crumb"
+        ],
+        "anti_keywords": [
+          "graincroft"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c28-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting, we outsourced our storefront signage to a shop called Bright Line Signs for the first location. The lettering peeled within three months in direct sun and they blamed our wall material. Not using them for the second storefront.",
+        "tail_user_fragment": null,
+        "probe": "Who should we use for the new storefront's signage?",
+        "probes": [
+          "Who should we use for the new storefront's signage?",
+          "How should we handle signage for the second location?",
+          "What's our path forward on signage given the earlier problems?",
+          "Who or what should handle the new storefront signage?"
+        ],
+        "gold": "Anything except Bright Line Signs, e.g. a different vetted sign vendor with UV-rated materials, or a local fabricator with a warranty, ideally acknowledging Bright Line Signs' peeling lettering was tried and rejected.",
+        "keywords": [
+          "peeled",
+          "direct sun"
+        ],
+        "anti_keywords": [
+          "bright line signs"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c28-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our health department permit application number for the second location is HD-55219, filed March 14th. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": null,
+        "probe": "What is our health department permit application number for the new location, and when was it filed?",
+        "probes": [
+          "What is our health department permit application number for the new location, and when was it filed?",
+          "What's the tracking number for our second-location health permit?",
+          "When did we file for the health department permit, and what's the reference number?",
+          "Remind me of the permit application number and filing date."
+        ],
+        "gold": "HD-55219, filed March 14th.",
+        "keywords": [
+          "HD-55219",
+          "march 14"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c28-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total build-out budget for the new storefront is capped at $186,000, full stop, that's everything after the lease deposit. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total build-out budget for the new storefront?",
+        "probes": [
+          "What is our total build-out budget for the new storefront?",
+          "How much do we have for the build-out?",
+          "What's the cap on the storefront build-out budget?",
+          "Remind me the build-out spend limit we're working with."
+        ],
+        "gold": "$186,000 total.",
+        "keywords": [
+          "186,000"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c28-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our wholesale delivery route and van 'Snorlax' from now on. Every internal doc and text thread should say Snorlax instead of the van's actual plate and route name, since drivers sometimes text photos to shared threads.",
+        "tail_user_fragment": "Is Snorlax due for its scheduled maintenance before we add the second cafe stop to the route?",
+        "probe": "What does 'Snorlax' refer to in our project?",
+        "probes": [
+          "What does 'Snorlax' refer to in our project?",
+          "If I mention Snorlax again, what should you understand that to mean?",
+          "Remind me what we're calling Snorlax internally.",
+          "What is Snorlax a codename for?"
+        ],
+        "gold": "The wholesale delivery van and its route.",
+        "keywords": [
+          "delivery van",
+          "wholesale route"
+        ],
+        "anti_keywords": [
+          "sleeping pokemon",
+          "big sleepy creature"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c28-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our new-hire training binder 'Rivendell' in all future notes. It's just easier than typing out the full document name every time, and I want a short word for it in shift-handoff notes.",
+        "tail_user_fragment": "Can you draft the table of contents for Rivendell so new bakers know what to expect in week one?",
+        "probe": "What does 'Rivendell' refer to in our conversation?",
+        "probes": [
+          "What does 'Rivendell' refer to in our conversation?",
+          "If I mention Rivendell later, what should you take that to mean?",
+          "What is Rivendell a codename for in our project?",
+          "Remind me what Rivendell refers to internally."
+        ],
+        "gold": "The new-hire training binder.",
+        "keywords": [
+          "training binder",
+          "new-hire document"
+        ],
+        "anti_keywords": [
+          "elves",
+          "elvish city",
+          "lord of the rings"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c29",
+    "title": "Food-truck fleet expansion",
+    "system": "You are a helpful assistant experienced in mobile food business operations, supporting an operator scaling a food-truck fleet.",
+    "project": "The user is Owen Kessler, owner of Rolling Ember, a barbecue food-truck business, expanding from one truck to a three-truck fleet. Together with the assistant they are working through route and event scheduling, commissary kitchen logistics, permitting across multiple cities, staffing and truck-lead training, and a new truck build-out.",
+    "subtopics": [
+      "route and event scheduling",
+      "commissary kitchen logistics",
+      "multi-city permitting",
+      "staffing and truck-lead training",
+      "new truck build-out"
+    ],
+    "early_user_turns": [
+      "Hey, so Rolling Ember is going from one truck to three, and I need to plan this whole expansion out: routes and event bookings, the shared commissary kitchen, permits across a few different cities, hiring truck leads, and building out the new trucks. Can you be my planning partner across all of it over the next couple months?",
+      "Let's start with route and event scheduling since that's where the money actually gets made. With three trucks, how should I think about splitting up weekday lunch routes versus weekend festival bookings so we're not double-booking staff?"
+    ],
+    "middle_filler_user_turns": [
+      "For the commissary kitchen, we're going to share one prep space across all three trucks. What's the biggest logistical headache people run into with a shared commissary at this scale?",
+      "Permitting question: is it usually cheaper to get one truck permitted in three cities, or three separate trucks each permitted in one city?",
+      "Staffing-wise, how much authority should a truck lead actually have over daily menu tweaks versus sticking to a fixed script from me?",
+      "For the new truck build-out, we're deciding on generator sizing. What should drive that decision besides just equipment wattage?",
+      "Back to scheduling, how far in advance do festival organizers usually want a signed vendor agreement before the event?",
+      "For staffing, what's a fair trial period for a new truck lead before I hand them a truck solo for a weekend festival?",
+      "On the commissary, how should we handle inventory so three trucks aren't accidentally grabbing from the same prep batch and running short?",
+      "Build-out again, should the new truck's service window be on the same side as the current two trucks or does that not matter?",
+      "Permitting follow-up, how do health inspections typically work when a truck moves between cities on a rotating schedule?",
+      "One more on scheduling, what's a sane cancellation policy to have in our vendor agreements for weather-related event cancellations?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to staffing, how should we structure pay differently for a truck lead versus a regular line cook?",
+      "For the build-out, what's a sane timeline between the new truck's delivery and its first live event?",
+      "On the commissary, should we stagger prep shifts across the three trucks or do one big shared prep block?",
+      "Permitting-wise, what should go in our internal tracker so we don't miss a renewal in any of the cities?",
+      "Last thing for today, what should the pre-launch checklist look like for the new truck's first two weeks on the road?"
+    ],
+    "plants": [
+      {
+        "id": "c29-referent-1",
+        "category": "referent",
+        "middle_user": "Generator decision time. We looked at three options: (1) a diesel generator matched exactly to peak equipment wattage, (2) a larger diesel generator with 40 percent headroom for future equipment, or (3) a hybrid battery-plus-small-generator setup to cut fuel costs. After running the numbers with our mechanic, we're going with the larger diesel generator with headroom.",
+        "tail_user_fragment": "On the generator we picked, no need to walk through the options again. What maintenance interval should we plan around for it?",
+        "probe": "Which generator option did we decide on for the new truck?",
+        "probes": [
+          "Which generator option did we decide on for the new truck?",
+          "Which of the three generator options did we end up choosing?",
+          "What did we settle on for the new truck's power setup?",
+          "Remind me which generator we committed to."
+        ],
+        "gold": "The larger diesel generator with 40 percent headroom (the second of the three options), not the exactly-matched generator or the hybrid battery setup.",
+        "keywords": [
+          "diesel generator",
+          "40 percent headroom"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c29-referent-2",
+        "category": "referent",
+        "middle_user": "Renata pitched an idea for truck-lead training. Her proposal is a 'ride-along week': every new truck lead spends their first week riding along on someone else's truck doing every station rotation, no running their own truck at all until week two. She thinks it's the only way to build real judgment before someone's alone on a truck. I'm adopting it.",
+        "tail_user_fragment": "On Renata's ride-along week idea, I'm already committed, don't re-explain it. How should we track what a trainee has rotated through?",
+        "probe": "What exactly was Renata's training proposal?",
+        "probes": [
+          "What exactly was Renata's training proposal?",
+          "What did Renata suggest for training new truck leads?",
+          "Describe the training format Renata pitched that we're adopting.",
+          "What was Renata's idea for onboarding new truck leads?"
+        ],
+        "gold": "A 'ride-along week' where new truck leads spend their entire first week rotating through every station on someone else's truck, with no running their own truck until week two.",
+        "keywords": [
+          "ride-along week",
+          "station rotation"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c29-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the smoker' is overloaded on our team. Truck two's staff also nicknames their whole prep line the smoker because it runs hot in summer, but when I say the smoker to you, I always mean our actual offset smoker unit we haul on the trailer to festivals, not the prep line.",
+        "tail_user_fragment": "Should the smoker travel with truck one or stay dedicated to the trailer for festival weekends?",
+        "probe": "When I said 'the smoker' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the smoker' in this conversation, what was I referring to?",
+          "Which of the two things called 'the smoker' did I mean here?",
+          "What does 'the smoker' refer to in our conversation?",
+          "If I mention the smoker again, what should you understand that to be?"
+        ],
+        "gold": "The actual offset smoker unit hauled on the trailer to festivals, not truck two's prep line that staff also nickname the smoker.",
+        "keywords": [
+          "offset smoker unit",
+          "trailer"
+        ],
+        "anti_keywords": [
+          "prep line",
+          "truck two's line"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c29-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the route' from here on I mean the fixed weekday lunch circuit through the business district. I know staff also casually calls a one-off festival booking a route, but with you, the route always means the fixed weekday circuit.",
+        "tail_user_fragment": "How many stops should the route include once we add the third truck to it?",
+        "probe": "When I referred to 'the route' in this conversation, which schedule did I mean?",
+        "probes": [
+          "When I referred to 'the route' in this conversation, which schedule did I mean?",
+          "Which schedule did I mean when I said 'the route'?",
+          "What does 'the route' refer to in our conversation, the weekday circuit or a festival booking?",
+          "If I bring up the route again, what should you assume I'm talking about?"
+        ],
+        "gold": "The fixed weekday lunch circuit through the business district, not a one-off festival booking.",
+        "keywords": [
+          "weekday lunch circuit",
+          "business district"
+        ],
+        "anti_keywords": [
+          "one-off festival booking"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c29-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule going forward: no truck ever serves pre-smoked, reheated-only meat, at any location, no matter how much it would simplify multi-truck logistics. Everything gets smoked fresh on-site or on the trailer same-day. I will not budge on this even as we scale to three trucks.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for making meat prep more efficient across three trucks?",
+        "probes": [
+          "What are some ideas for making meat prep more efficient across three trucks?",
+          "Give me three ways to streamline meat prep as we add trucks.",
+          "How could we make prep logistics smoother with three trucks running?",
+          "Suggest ways to scale up meat prep without sacrificing quality."
+        ],
+        "gold": "Suggests approaches like staggered commissary prep shifts, standardized rub batching, or trailer-smoker scheduling, while never proposing pre-smoked reheated meat, ideally recalling the smoked-fresh-same-day commitment.",
+        "keywords": [
+          "smoked fresh",
+          "same-day"
+        ],
+        "anti_keywords": [
+          "pre-smoked",
+          "reheated"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c29-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not doing a fourth truck this year, even though a promoter keeps offering us a guaranteed festival slot if we bring another truck. Three is already stretching our commissary and staffing. I don't want to hear the pitch again this season.",
+        "tail_user_fragment": null,
+        "probe": "How should we handle high-demand festival requests we can't currently staff?",
+        "probes": [
+          "How should we handle high-demand festival requests we can't currently staff?",
+          "If a promoter wants more trucks than we have, what are our options?",
+          "What should we do about festival demand exceeding our truck count?",
+          "Suggest ways to handle overflow demand without adding a truck."
+        ],
+        "gold": "Suggests approaches like prioritizing higher-value events, rotating existing trucks more aggressively, or politely declining, while never proposing adding a fourth truck this year, ideally recalling the decision to stay at three.",
+        "keywords": [
+          "stay at three",
+          "this year"
+        ],
+        "anti_keywords": [
+          "fourth truck"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c29-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on commissary vendors, we already tried a shared kitchen called Foundry Commissary last spring, and their walk-in cooler kept failing during our overnight prep, we lost two full batches of brisket before we left. We are not going back to them.",
+        "tail_user_fragment": null,
+        "probe": "What should we look at for a commissary space as we add trucks?",
+        "probes": [
+          "What should we look at for a commissary space as we add trucks?",
+          "What commissary option should we consider for the fleet?",
+          "Given our needs, how should we source commissary kitchen space going forward?",
+          "What's a better option than what we already tried for commissary space?"
+        ],
+        "gold": "Anything except Foundry Commissary, e.g. a different shared kitchen with verified reliable refrigeration, or a dedicated leased prep space, ideally acknowledging Foundry was tried and rejected.",
+        "keywords": [
+          "walk-in cooler failing",
+          "lost brisket"
+        ],
+        "anti_keywords": [
+          "foundry commissary"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c29-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting, we used a permit expediting service called QuickPermit Co for our first out-of-city permit last year. They filed the wrong zoning category and it cost us three weeks of delay fixing it. Not using them again.",
+        "tail_user_fragment": null,
+        "probe": "Who should handle permitting for the new cities we're expanding into?",
+        "probes": [
+          "Who should handle permitting for the new cities we're expanding into?",
+          "How should we handle multi-city permitting given the earlier problems?",
+          "What's our path forward on permits for the new markets?",
+          "Who or what should handle the new city permit filings?"
+        ],
+        "gold": "Anything except QuickPermit Co, e.g. a different vetted permitting service, direct filing with in-house research, or a local permitting attorney, ideally acknowledging QuickPermit's zoning error was tried and rejected.",
+        "keywords": [
+          "wrong zoning category",
+          "three weeks delay"
+        ],
+        "anti_keywords": [
+          "quickpermit"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c29-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: the VIN for the new third truck is 1FDXE4FS9NDA55210, purchase closed April 9th. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": null,
+        "probe": "What is the VIN for the new third truck, and when did the purchase close?",
+        "probes": [
+          "What is the VIN for the new third truck, and when did the purchase close?",
+          "What's the VIN on the new truck?",
+          "When did we close on the third truck, and what's the VIN?",
+          "Remind me the VIN and purchase date for the new truck."
+        ],
+        "gold": "1FDXE4FS9NDA55210, purchase closed April 9th.",
+        "keywords": [
+          "1FDXE4FS9NDA55210",
+          "april 9"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c29-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total build-out budget for the new truck is capped at $97,500, full stop, that's everything after the chassis purchase. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total build-out budget for the new truck?",
+        "probes": [
+          "What is our total build-out budget for the new truck?",
+          "How much do we have for the new truck's build-out?",
+          "What's the cap on the new truck's build-out budget?",
+          "Remind me the build-out spend limit for the third truck."
+        ],
+        "gold": "$97,500 total.",
+        "keywords": [
+          "97,500"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c29-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our festival booking spreadsheet 'Mordor' from now on. Every internal message and shared doc should say Mordor instead of the actual file name, since promoters sometimes see our screens at events.",
+        "tail_user_fragment": "Is Mordor up to date with the new third truck's availability for next month's bookings?",
+        "probe": "What does 'Mordor' refer to in our project?",
+        "probes": [
+          "What does 'Mordor' refer to in our project?",
+          "If I mention Mordor again, what should you understand that to mean?",
+          "Remind me what we're calling Mordor internally.",
+          "What is Mordor a codename for?"
+        ],
+        "gold": "The festival booking spreadsheet.",
+        "keywords": [
+          "festival booking spreadsheet"
+        ],
+        "anti_keywords": [
+          "dark land",
+          "sauron",
+          "lord of the rings"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c29-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our new truck-lead training checklist 'Kelsier' in all future notes. It's just easier than typing out the full document name every time in shift-handoff texts.",
+        "tail_user_fragment": "Can you draft the first section of Kelsier so new truck leads know what to expect during ride-along week?",
+        "probe": "What does 'Kelsier' refer to in our conversation?",
+        "probes": [
+          "What does 'Kelsier' refer to in our conversation?",
+          "If I mention Kelsier later, what should you take that to mean?",
+          "What is Kelsier a codename for in our project?",
+          "Remind me what Kelsier refers to internally."
+        ],
+        "gold": "The new truck-lead training checklist.",
+        "keywords": [
+          "training checklist",
+          "truck-lead document"
+        ],
+        "anti_keywords": [
+          "mistborn",
+          "allomancer",
+          "sanderson character"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c30",
+    "title": "Specialty tea house expansion",
+    "system": "You are a helpful assistant experienced in specialty food and beverage retail, supporting an owner opening a second tea house location.",
+    "project": "The user is Lian Zhao, owner of Quiet Pour, a specialty tea house, opening a second location in a different neighborhood. Together with the assistant they are working through sourcing and importer relationships, tea blending and menu development, retail space design, staff training on brewing technique, and a loyalty and subscription program.",
+    "subtopics": [
+      "sourcing and importer relationships",
+      "tea blending and menu development",
+      "retail space design",
+      "staff brewing training",
+      "loyalty and subscription program"
+    ],
+    "early_user_turns": [
+      "Hi, I run Quiet Pour, a specialty tea house, and we're opening a second location in the Arbor Hill neighborhood. I want to use this chat to plan everything: sourcing, our blends and menu, the retail space design, staff brewing training, and a loyalty program. Can you help me work through all of it?",
+      "Let's start with sourcing since that underpins everything else. We currently work with two importers for our loose-leaf teas. What should I think about when deciding whether the second location shares the exact same supplier relationships or gets some of its own?"
+    ],
+    "middle_filler_user_turns": [
+      "On blending, we want two or three location-exclusive blends for Arbor Hill. What should guide picking a blend that's exclusive to one shop instead of just adding it everywhere?",
+      "For the retail space, we're considering an open brewing bar where customers can watch the pour. Is that worth the extra design cost for a tea shop specifically?",
+      "Staff training question, how long does it usually take to get someone brewing delicate teas like white or green consistently well versus something more forgiving like a robust black tea?",
+      "Loyalty program-wise, should punch-card-style loyalty work the same way at both locations, or does a second shop change the math?",
+      "Back to sourcing, how do minimum order quantities usually work with a small specialty importer, and should that change now that we're two locations?",
+      "For blending, how many test batches should I expect before a new exclusive blend is dialed in enough to put on the menu?",
+      "Staff training again, what's a fair way to test whether someone's actually ready to brew solo versus just going through the motions of the training?",
+      "Retail design follow-up, how much of the floor plan should go toward retail bagged tea versus actual seating for a shop this size?",
+      "Loyalty program follow-up, should a subscription box tie into the in-store loyalty program or run as something separate?",
+      "One more on sourcing, is it normal for importers to want exclusivity within a neighborhood, or is that unusual for tea specifically?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to staff training, how should pay differ during training weeks versus once someone's brewing solo?",
+      "For the retail space, what's a sane timeline between build-out finishing and a soft-open weekend?",
+      "On sourcing, should we lock in a full year's tea order now or buy in smaller batches through the season?",
+      "Loyalty-wise, what should go in the actual program terms so customers understand it clearly?",
+      "Last thing for today, what should the pre-opening checklist look like for the two weeks before Arbor Hill opens?"
+    ],
+    "plants": [
+      {
+        "id": "c30-referent-1",
+        "category": "referent",
+        "middle_user": "Importer decision time. We looked at three routes: (1) sticking with both of our current importers for Arbor Hill too, (2) bringing in a third importer who specializes in single-origin oolongs just for the new shop, or (3) dropping one current importer and replacing them with the oolong specialist at both shops. After talking to our tea buyer, we're going with the second option, adding the oolong specialist just for Arbor Hill.",
+        "tail_user_fragment": "On the importer decision we made, no need to walk through the options again. What should go in the new importer's onboarding paperwork?",
+        "probe": "Which importer arrangement did we decide on for Arbor Hill?",
+        "probes": [
+          "Which importer arrangement did we decide on for Arbor Hill?",
+          "Which of the three importer options did we end up choosing?",
+          "What did we settle on for Arbor Hill's tea sourcing?",
+          "Remind me which importer setup we committed to."
+        ],
+        "gold": "Adding a third importer specializing in single-origin oolongs just for the Arbor Hill location (the second of the three options), while keeping the existing two importers as-is for the original shop.",
+        "keywords": [
+          "oolong specialist",
+          "Arbor Hill only"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c30-referent-2",
+        "category": "referent",
+        "middle_user": "Marcus pitched an idea for staff brewing training. His proposal is a 'blind cupping test': every new hire has to correctly identify five teas by aroma and liquor color alone before they're allowed to brew for customers, no menu labels visible. He thinks it's the only way to confirm someone actually understands the tea, not just the steps. I'm adopting it for Arbor Hill.",
+        "tail_user_fragment": "On Marcus's blind cupping test idea, I'm already committed, don't re-explain it. How many attempts should a trainee get before we consider it a fail?",
+        "probe": "What exactly was Marcus's training proposal?",
+        "probes": [
+          "What exactly was Marcus's training proposal?",
+          "What did Marcus suggest for training new staff?",
+          "Describe the training format Marcus pitched that we're adopting.",
+          "What was Marcus's idea for testing new hires?"
+        ],
+        "gold": "A 'blind cupping test' where new hires must correctly identify five teas by aroma and liquor color alone, with no menu labels visible, before being allowed to brew for customers.",
+        "keywords": [
+          "blind cupping test",
+          "aroma and color"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c30-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the reserve' is overloaded on our team. Staff sometimes calls the back-office safe the reserve because that's where cash gets dropped, but when I say the reserve to you, I always mean our aged, limited-lot pu-erh selection we keep behind the counter, not the safe.",
+        "tail_user_fragment": "Should the reserve pu-erh selection be split evenly between both shops, or kept mostly at the original location?",
+        "probe": "When I said 'the reserve' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the reserve' in this conversation, what was I referring to?",
+          "Which of the two things called 'the reserve' did I mean here?",
+          "What does 'the reserve' refer to in our conversation?",
+          "If I mention the reserve again, what should you understand that to be?"
+        ],
+        "gold": "The aged, limited-lot pu-erh selection kept behind the counter, not the back-office cash safe that staff also nickname the reserve.",
+        "keywords": [
+          "aged pu-erh",
+          "limited-lot"
+        ],
+        "anti_keywords": [
+          "cash safe",
+          "back-office safe"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c30-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the tasting' from here on I mean the formal Saturday afternoon guided tea tasting we run for customers. I know staff also casually calls the staff's own end-of-shift tea sampling the tasting, but with you, the tasting always means the customer-facing Saturday event.",
+        "tail_user_fragment": "How many guests should the tasting accommodate once we're running it at both locations?",
+        "probe": "When I referred to 'the tasting' in this conversation, which event did I mean?",
+        "probes": [
+          "When I referred to 'the tasting' in this conversation, which event did I mean?",
+          "Which event did I mean when I said 'the tasting'?",
+          "What does 'the tasting' refer to in our conversation, the customer event or the staff sampling?",
+          "If I bring up the tasting again, what should you assume I'm talking about?"
+        ],
+        "gold": "The formal Saturday afternoon guided tea tasting for customers, not the staff's end-of-shift sampling.",
+        "keywords": [
+          "Saturday tasting",
+          "customer-facing"
+        ],
+        "anti_keywords": [
+          "staff sampling",
+          "end-of-shift"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c30-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule going forward: we will never sell flavored tea using artificial flavoring oils at either location, no matter how much easier it would make scaling the blend line. Only real fruit, flowers, and spices for any flavored blend. I will not budge on this even under wholesale pressure.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for expanding our flavored tea offerings at Arbor Hill?",
+        "probes": [
+          "What are some ideas for expanding our flavored tea offerings at Arbor Hill?",
+          "Give me three ways to grow the flavored tea line for the new shop.",
+          "How could we add more flavored blends without sacrificing quality?",
+          "Suggest ways to expand the flavored tea menu for the new location."
+        ],
+        "gold": "Suggests approaches like sourcing real dried fruit, edible flowers, or whole spices, or partnering with a local farm, while never proposing artificial flavoring oils, ideally recalling the real-ingredients-only commitment.",
+        "keywords": [
+          "real fruit and flowers",
+          "whole spices"
+        ],
+        "anti_keywords": [
+          "artificial flavoring",
+          "flavor oil"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c30-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not doing bubble tea at either shop, even though a supplier keeps pitching tapioca pearl equipment as an easy add-on. It's just not what Quiet Pour is about, and I don't want to hear that pitch again.",
+        "tail_user_fragment": null,
+        "probe": "What are some ways to bring in a younger customer crowd at Arbor Hill?",
+        "probes": [
+          "What are some ways to bring in a younger customer crowd at Arbor Hill?",
+          "How could we appeal to younger customers without changing our core identity?",
+          "What should we consider to attract a younger crowd at the new shop?",
+          "Suggest ways to broaden our customer base at Arbor Hill."
+        ],
+        "gold": "Suggests approaches like iced specialty tea drinks, social-media-friendly presentation, or student discount hours, while never proposing bubble tea, ideally recalling the rejection of tapioca pearl equipment.",
+        "keywords": [
+          "iced specialty tea",
+          "student discount"
+        ],
+        "anti_keywords": [
+          "bubble tea",
+          "tapioca pearl"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c30-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on POS systems, we already tried a system called TeaTrack POS at our first shop for about four months, and it kept losing loyalty point balances during software updates, customers were furious. We are not using it for Arbor Hill.",
+        "tail_user_fragment": null,
+        "probe": "What POS system should we look at for Arbor Hill?",
+        "probes": [
+          "What POS system should we look at for Arbor Hill?",
+          "What point-of-sale option should we consider for the new shop?",
+          "Given our needs, how should we handle POS for Arbor Hill going forward?",
+          "What's a better option than what we already tried for point of sale?"
+        ],
+        "gold": "Anything except TeaTrack POS, e.g. a different vetted POS system with reliable loyalty point persistence, ideally acknowledging TeaTrack was tried and rejected.",
+        "keywords": [
+          "lost loyalty points",
+          "software update"
+        ],
+        "anti_keywords": [
+          "teatrack"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c30-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting, we hired a design firm called Willow & Stone Interiors for our first shop's build-out. They blew through the timeline by two extra months and went 20 percent over their own estimate. Not hiring them again for Arbor Hill.",
+        "tail_user_fragment": null,
+        "probe": "Who should we hire for the Arbor Hill build-out design?",
+        "probes": [
+          "Who should we hire for the Arbor Hill build-out design?",
+          "How should we handle design for the new shop given the earlier problems?",
+          "What's our path forward on interior design for Arbor Hill?",
+          "Who or what should handle the new shop's design and build-out?"
+        ],
+        "gold": "Anything except Willow & Stone Interiors, e.g. a different vetted design firm with a track record of on-time delivery, ideally acknowledging Willow & Stone's overruns were tried and rejected.",
+        "keywords": [
+          "two months over",
+          "20 percent over budget"
+        ],
+        "anti_keywords": [
+          "willow and stone"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c30-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our commercial lease reference number for Arbor Hill is LR-40218, signed February 27th. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": null,
+        "probe": "What is our lease reference number for Arbor Hill, and when was it signed?",
+        "probes": [
+          "What is our lease reference number for Arbor Hill, and when was it signed?",
+          "What's the reference number for the Arbor Hill lease?",
+          "When did we sign the Arbor Hill lease, and what's the reference number?",
+          "Remind me the lease reference number and signing date."
+        ],
+        "gold": "LR-40218, signed February 27th.",
+        "keywords": [
+          "LR-40218",
+          "february 27"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c30-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total opening inventory budget for Arbor Hill's tea stock is capped at $32,400, full stop, that's separate from the build-out costs. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our opening tea inventory budget for Arbor Hill?",
+        "probes": [
+          "What is our opening tea inventory budget for Arbor Hill?",
+          "How much do we have for opening tea stock?",
+          "What's the cap on the Arbor Hill inventory budget?",
+          "Remind me the opening inventory spend limit we're working with."
+        ],
+        "gold": "$32,400 total.",
+        "keywords": [
+          "32,400"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c30-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our master blend recipe binder 'Lapras' from now on. Every internal doc and supplier email should say Lapras instead of the real binder name, since we sometimes reference it when talking to importers.",
+        "tail_user_fragment": "Does Lapras need a new section added before we finalize the Arbor Hill exclusive blends?",
+        "probe": "What does 'Lapras' refer to in our project?",
+        "probes": [
+          "What does 'Lapras' refer to in our project?",
+          "If I mention Lapras again, what should you understand that to mean?",
+          "Remind me what we're calling Lapras internally.",
+          "What is Lapras a codename for?"
+        ],
+        "gold": "The master blend recipe binder.",
+        "keywords": [
+          "blend recipe binder"
+        ],
+        "anti_keywords": [
+          "water pokemon",
+          "sea creature",
+          "ice dragon"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c30-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our Arbor Hill staff group chat 'Sazed' in all future notes. It's just easier than typing out the full chat name every time in shared planning docs.",
+        "tail_user_fragment": "Can you draft a pinned message for Sazed explaining the new brewing training schedule?",
+        "probe": "What does 'Sazed' refer to in our conversation?",
+        "probes": [
+          "What does 'Sazed' refer to in our conversation?",
+          "If I mention Sazed later, what should you take that to mean?",
+          "What is Sazed a codename for in our project?",
+          "Remind me what Sazed refers to internally."
+        ],
+        "gold": "The Arbor Hill staff group chat.",
+        "keywords": [
+          "staff group chat",
+          "Arbor Hill team"
+        ],
+        "anti_keywords": [
+          "mistborn",
+          "keeper",
+          "sanderson character"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c31",
+    "title": "Craft distillery tasting room expansion",
+    "system": "You are a helpful assistant experienced in beverage alcohol production and hospitality, supporting a distiller opening a tasting room.",
+    "project": "The user is Naomi Fitch, co-founder and head distiller at Salt Row Distillery, a small-batch gin and whiskey producer, opening the company's first public tasting room next to the production facility. Together with the assistant they are working through recipe and cask development, still and equipment upgrades, tasting room design, state alcohol licensing, and hiring tasting room staff.",
+    "subtopics": [
+      "recipe and cask development",
+      "still and equipment upgrades",
+      "tasting room design",
+      "state alcohol licensing",
+      "hiring tasting room staff"
+    ],
+    "early_user_turns": [
+      "Hey, so Salt Row is opening our first tasting room right next to the distillery, and it's a bigger lift than I expected. I want to use you as a planning partner across everything: the recipes and cask program, upgrading the still, tasting room design, state licensing, and hiring, over the next few months. Sound good?",
+      "Let's start with recipe and cask development since that's the product itself. We want one or two tasting-room-exclusive expressions that you can't buy in stores. What should I be thinking about when designing a spirit meant to only ever be sold on-site?"
+    ],
+    "middle_filler_user_turns": [
+      "On the still, we're deciding between adding a second column still or upgrading our current pot still's capacity. What's the general tradeoff there for a distillery our size?",
+      "For tasting room design, we want a bar that lets guests see into the barrel room. Is that worth the extra build cost compared to a closed design?",
+      "Licensing question, does opening a tasting room usually require a whole new alcohol license, or can we amend our existing distilling license?",
+      "Back to recipes, how many barrel samples should I realistically pull before a new cask-exclusive whiskey is ready to bottle and pour?",
+      "For hiring, we need our first-ever tasting room staff, people who've never worked here before. Where should I even start with training them on the product?",
+      "On the still, if we go with the capacity upgrade instead of a second still, what's a realistic timeline for the retrofit without shutting down production entirely?",
+      "Licensing follow-up, how far in advance of opening day should we start the tasting room permit application, given typical state board processing times?",
+      "Hiring again, what's a sane ratio of experienced bartenders to newly trained staff for a tasting room our size?",
+      "Tasting room design follow-up, how much of the budget usually goes to bar fixtures versus barrel-room viewing versus general seating, roughly?",
+      "One more on recipes, should the tasting-room-exclusive expressions rotate seasonally or stay fixed once we land on them?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to hiring, how should we structure the interview process so we're not just hiring people we already know?",
+      "For the still, is there anything besides capacity and cost I should double-check before committing to the upgrade?",
+      "On design, should the barrel-room viewing window be near the entrance or toward the back of the tasting room?",
+      "Licensing-wise, what should go in our internal tracker so we don't miss a state renewal deadline?",
+      "Last thing for today, what should go on the pre-opening checklist for the two weeks before the tasting room opens?"
+    ],
+    "plants": [
+      {
+        "id": "c31-referent-1",
+        "category": "referent",
+        "middle_user": "Still decision time. We looked at three options: (1) add a second column still dedicated to gin, (2) upgrade our current pot still to double its batch capacity, or (3) do a hybrid, keep the pot still as-is but add a smaller secondary pot still just for the exclusive expressions. After running the numbers with our production lead, we're going with the hybrid, the smaller secondary pot still.",
+        "tail_user_fragment": "On the still decision, no need to walk through it again, but what maintenance schedule should we line up before it arrives?",
+        "probe": "What did we decide on for the still upgrade?",
+        "probes": [
+          "What did we decide on for the still upgrade?",
+          "Which of the three still options did we end up choosing?",
+          "Remind me exactly what still setup we settled on.",
+          "What did we settle on for expanding our distilling capacity?"
+        ],
+        "gold": "The hybrid option: keeping the current pot still as-is and adding a smaller secondary pot still dedicated to the exclusive expressions (the third option), not a second column still or doubling the current pot still.",
+        "keywords": [
+          "secondary pot still",
+          "hybrid"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c31-referent-2",
+        "category": "referent",
+        "middle_user": "Theo had a good idea for the tasting-room-exclusive whiskey. His proposal is to finish it in a used cask from a local red wine producer for the final four months, rather than a standard bourbon barrel finish or no finishing barrel at all. He thinks the wine cask gives it a distinct enough character to justify the exclusivity. I'm doing it for the first batch.",
+        "tail_user_fragment": "On Theo's cask finishing idea, I'm already committed, don't re-explain it. How often should we sample during those four months?",
+        "probe": "What specifically was Theo's cask finishing proposal?",
+        "probes": [
+          "What specifically was Theo's cask finishing proposal?",
+          "What did Theo suggest for finishing the exclusive whiskey?",
+          "Describe the cask finishing approach Theo pitched that we're adopting.",
+          "What was Theo's idea about how to finish the whiskey?"
+        ],
+        "gold": "Finishing the whiskey in a used local red wine cask for the final four months, instead of a standard bourbon barrel finish or no additional finishing.",
+        "keywords": [
+          "red wine cask",
+          "four month finish"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c31-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us later: 'the barrel room' is overloaded on our team. Our finished-goods storage area is also nicknamed the barrel room by the warehouse staff, but when I say the barrel room to you, I always mean the actual aging warehouse where casks rest, the one with the viewing window planned for the tasting room.",
+        "tail_user_fragment": "Is the barrel room's humidity control good enough to leave the viewing window open to tasting room air, or should we seal it off?",
+        "probe": "When I said 'the barrel room' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the barrel room' in this conversation, what was I referring to?",
+          "Which of the two things called 'the barrel room' did I mean here?",
+          "What does 'the barrel room' refer to in our conversation?",
+          "If I mention the barrel room again, what should you understand that to be?"
+        ],
+        "gold": "The actual aging warehouse where casks rest and mature, not the finished-goods storage area that warehouse staff also nickname the barrel room.",
+        "keywords": [
+          "aging warehouse",
+          "casks rest"
+        ],
+        "anti_keywords": [
+          "finished-goods storage",
+          "warehouse staff nickname"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c31-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the flight' from here on I mean the guided five-pour tasting we'll sell to tasting room guests. I know the team also calls our internal QC sampling round the flight out of habit, but with you, the flight always means the guest-facing pour.",
+        "tail_user_fragment": "How many expressions should the flight include for opening weekend?",
+        "probe": "When I referred to 'the flight' in this conversation, which one did I mean?",
+        "probes": [
+          "When I referred to 'the flight' in this conversation, which one did I mean?",
+          "Which pour did I mean when I said 'the flight'?",
+          "What does 'the flight' refer to in our conversation, the guest tasting or internal QC?",
+          "If I bring up the flight again, what should you assume I'm talking about?"
+        ],
+        "gold": "The guided five-pour tasting sold to tasting room guests, not the internal QC sampling round.",
+        "keywords": [
+          "guided five-pour",
+          "guest tasting"
+        ],
+        "anti_keywords": [
+          "internal QC sampling"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c31-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for anything additive-related: Salt Row spirits never use artificial coloring or flavor additives, at the tasting room or in bottles, no matter how much it would smooth out batch-to-batch color consistency. Natural cask color only, full stop. I will not budge on this whatever the retail pressure looks like.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for keeping our whiskey color more consistent batch to batch?",
+        "probes": [
+          "What are some ideas for keeping our whiskey color more consistent batch to batch?",
+          "Give me three ways to improve color consistency across batches.",
+          "How could we tighten up color consistency as we scale?",
+          "Suggest ways to make batches look more uniform on the shelf."
+        ],
+        "gold": "Suggests approaches like tighter cask selection criteria, standardized aging times, or blending across barrels, while never proposing artificial coloring or flavor additives, ideally recalling the natural-cask-color-only commitment.",
+        "keywords": [
+          "natural cask color",
+          "no additives"
+        ],
+        "anti_keywords": [
+          "artificial coloring",
+          "flavor additive"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c31-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not doing a flavored vodka line, even though a distributor keeps pitching it as an easy volume add. It doesn't fit what Salt Row is about, gin and whiskey, and I don't want that pitch again.",
+        "tail_user_fragment": null,
+        "probe": "What are some ways to grow our product lineup for the tasting room?",
+        "probes": [
+          "What are some ways to grow our product lineup for the tasting room?",
+          "How could we expand our offerings without adding a new category?",
+          "What should we consider for growing volume at the tasting room?",
+          "Suggest ways to expand our lineup that fit what Salt Row already does."
+        ],
+        "gold": "Suggests approaches like additional cask-exclusive whiskey expressions, a barrel-strength gin, or seasonal botanical variations, while never proposing a flavored vodka line, ideally recalling the rejection of the distributor's pitch.",
+        "keywords": [
+          "gin and whiskey",
+          "cask-exclusive"
+        ],
+        "anti_keywords": [
+          "flavored vodka"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c31-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on bottle suppliers, we already tried a glass supplier called Cinderford Glassworks last year, and their bottle necks were inconsistent enough that our capping line jammed constantly, we lost half a shift fixing it. That supplier is dead to us.",
+        "tail_user_fragment": null,
+        "probe": "Who should we look at for a bottle supplier for the tasting-room-exclusive expressions?",
+        "probes": [
+          "Who should we look at for a bottle supplier for the tasting-room-exclusive expressions?",
+          "What glass supplier should we consider going forward?",
+          "Given our capping line issues, how should we source bottles now?",
+          "What's a better option than what we already tried for glass supply?"
+        ],
+        "gold": "Anything except Cinderford Glassworks, e.g. a different glass supplier with tighter neck tolerance specs, or a supplier offering sample runs before a full order, ideally acknowledging Cinderford was tried and rejected.",
+        "keywords": [
+          "inconsistent bottle necks",
+          "capping line jammed"
+        ],
+        "anti_keywords": [
+          "cinderford"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c31-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting, we hired a marketing consultant named Blakeley Reeves for our label redesign last year. The final labels didn't meet state alcohol label approval standards on the first two submissions and cost us a month of delay. Not hiring them again.",
+        "tail_user_fragment": null,
+        "probe": "Who should handle label design for the tasting-room-exclusive bottles?",
+        "probes": [
+          "Who should handle label design for the tasting-room-exclusive bottles?",
+          "How should we handle label design given the earlier problems?",
+          "What's our path forward on labels for the new expressions?",
+          "Who or what should handle the exclusive bottle label design?"
+        ],
+        "gold": "Anything except Blakeley Reeves, e.g. a different vetted label designer familiar with state alcohol label approval requirements, ideally acknowledging Blakeley Reeves' failed approvals were tried and rejected.",
+        "keywords": [
+          "failed label approval",
+          "month of delay"
+        ],
+        "anti_keywords": [
+          "blakeley reeves"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c31-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our state tasting room license application number is TR-88034, submitted May 19th. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": null,
+        "probe": "What is our state tasting room license application number, and when was it submitted?",
+        "probes": [
+          "What is our state tasting room license application number, and when was it submitted?",
+          "What's the tracking number for our tasting room license?",
+          "When did we submit the tasting room license application, and what's the reference number?",
+          "Remind me the license application number and submission date."
+        ],
+        "gold": "TR-88034, submitted May 19th.",
+        "keywords": [
+          "TR-88034",
+          "may 19"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c31-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total tasting room build-out budget is capped at $214,000, full stop, that's everything after the still upgrade costs. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total build-out budget for the tasting room?",
+        "probes": [
+          "What is our total build-out budget for the tasting room?",
+          "How much do we have left to spend on the tasting room build-out?",
+          "What's the cap on the tasting room budget?",
+          "Remind me the tasting room build-out spend limit we're working with."
+        ],
+        "gold": "$214,000 total.",
+        "keywords": [
+          "214,000"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c31-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our cask inventory tracking spreadsheet 'Arrakis' from now on. Every internal doc and email thread should say Arrakis instead of the real file name, since we sometimes share it with our state auditor's office.",
+        "tail_user_fragment": "Does Arrakis need a new column added before we log the wine-cask-finished batch?",
+        "probe": "What does 'Arrakis' refer to in our project?",
+        "probes": [
+          "What does 'Arrakis' refer to in our project?",
+          "If I mention Arrakis again, what should you understand that to mean?",
+          "Remind me what we're calling Arrakis internally.",
+          "What is Arrakis a codename for?"
+        ],
+        "gold": "The cask inventory tracking spreadsheet.",
+        "keywords": [
+          "cask inventory spreadsheet"
+        ],
+        "anti_keywords": [
+          "desert planet",
+          "spice",
+          "dune sandworm"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c31-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our tasting room staff training manual 'Gondor' in all future notes. It's just easier than typing out the full manual name every time in shift-handoff notes.",
+        "tail_user_fragment": "Can you draft the opening section of Gondor covering pour sizes and responsible service?",
+        "probe": "What does 'Gondor' refer to in our conversation?",
+        "probes": [
+          "What does 'Gondor' refer to in our conversation?",
+          "If I mention Gondor later, what should you take that to mean?",
+          "What is Gondor a codename for in our project?",
+          "Remind me what Gondor refers to internally."
+        ],
+        "gold": "The tasting room staff training manual.",
+        "keywords": [
+          "staff training manual",
+          "tasting room document"
+        ],
+        "anti_keywords": [
+          "kingdom of men",
+          "minas tirith",
+          "lord of the rings"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c32",
+    "title": "Event catering company expansion",
+    "system": "You are a helpful assistant experienced in event and hospitality business operations, supporting an owner scaling a catering company.",
+    "project": "The user is Dana Okafor, owner of Table & Thyme, a full-service event catering company, expanding to handle large corporate and wedding events after years of smaller private gatherings. Together with the assistant they are working through menu scaling for large events, vendor and rental partnerships, staffing and event-lead training, kitchen facility upgrades, and contract and deposit policy.",
+    "subtopics": [
+      "menu scaling for large events",
+      "vendor and rental partnerships",
+      "staffing and event-lead training",
+      "kitchen facility upgrades",
+      "contract and deposit policy"
+    ],
+    "early_user_turns": [
+      "Hi, I run Table & Thyme, an event catering company, and we're moving up into large corporate and wedding events after years of doing smaller private dinners. I want to use this chat to plan everything: scaling our menus, vendor and rental partnerships, staffing and training event leads, upgrading our kitchen, and our contract and deposit policy. Can you help me work through all of it?",
+      "Let's start with menu scaling since that's the core challenge. A lot of our signature dishes were designed for 20-person dinners. What should I think about first when adapting them for a 250-person wedding without losing what makes them good?"
+    ],
+    "middle_filler_user_turns": [
+      "On vendor partnerships, we need a reliable rental company for large events, tables, linens, that kind of thing. What should I look for besides just price when picking one to build a real partnership with?",
+      "Staffing question, how much authority should an event lead actually have on-site to make real-time call changes versus sticking strictly to the client's approved plan?",
+      "For the kitchen, we're deciding on a new combi oven to handle bigger batch cooking. What should I prioritize besides raw capacity?",
+      "Back to menu scaling, how do I keep plating quality consistent when we go from a 20-person dinner to a 250-person banquet?",
+      "For staffing, what's a fair trial event for a new event lead before I trust them to run a wedding solo?",
+      "On vendor partnerships, should we lock in an exclusive relationship with one rental company or keep working with a couple so we're not stuck if they're booked?",
+      "Kitchen follow-up, how much additional cold storage should we plan for once we're regularly doing events this size?",
+      "Staffing again, what's a sane ratio of experienced servers to newly trained servers for a 250-person event?",
+      "Contract question, how far out should the deposit be due relative to the event date for a booking this large?",
+      "One more on menu scaling, should large-event menus be fixed packages or still fully customizable like our smaller dinners?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to staffing, how should pay differ for an event lead versus a regular server on a large event?",
+      "For the kitchen, what's a sane timeline between the new equipment's install and our first large event using it?",
+      "On vendor partnerships, what should go in the actual partnership agreement so expectations are clear?",
+      "Contract-wise, what cancellation terms should we build in for events this size?",
+      "Last thing for today, what should the pre-event checklist look like for the week before a 250-person wedding?"
+    ],
+    "plants": [
+      {
+        "id": "c32-referent-1",
+        "category": "referent",
+        "middle_user": "Combi oven decision time. We looked at three options: (1) a new full-size combi oven with the largest available capacity, (2) two mid-size combi ovens instead of one large one, for redundancy, or (3) a used full-size combi oven from a restaurant that closed, at a much lower cost. After running the numbers with our accountant, we're going with two mid-size combi ovens for redundancy.",
+        "tail_user_fragment": "On the combi oven decision, no need to walk through the options again. What service contract should we line up before installation?",
+        "probe": "Which combi oven option did we decide on for the kitchen upgrade?",
+        "probes": [
+          "Which combi oven option did we decide on for the kitchen upgrade?",
+          "Which of the three oven options did we end up choosing?",
+          "What did we settle on for the kitchen's new oven setup?",
+          "Remind me which combi oven option we committed to."
+        ],
+        "gold": "Two mid-size combi ovens for redundancy (the second of the three options), not a single large new oven or a used full-size oven.",
+        "keywords": [
+          "two mid-size ovens",
+          "redundancy"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c32-referent-2",
+        "category": "referent",
+        "middle_user": "Felix pitched an idea for training event leads. His proposal is a 'shadow event': every new event lead spends their first full event just shadowing an experienced lead and taking notes, with zero decision-making authority, before running their own event in week two. He thinks it's the only way to build real judgment before someone's in charge on-site. I'm adopting it.",
+        "tail_user_fragment": "On Felix's shadow event idea, I'm already committed, don't re-explain it. What should the trainee be specifically watching for during that shadow event?",
+        "probe": "What exactly was Felix's training proposal?",
+        "probes": [
+          "What exactly was Felix's training proposal?",
+          "What did Felix suggest for training new event leads?",
+          "Describe the training format Felix pitched that we're adopting.",
+          "What was Felix's idea for onboarding new event leads?"
+        ],
+        "gold": "A 'shadow event' where new event leads spend their first full event only shadowing an experienced lead with zero decision-making authority, before running their own event in week two.",
+        "keywords": [
+          "shadow event",
+          "zero decision authority"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c32-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the run sheet' is overloaded on our team. Our kitchen prep staff also nicknames their internal batch cooking schedule the run sheet, but when I say the run sheet to you, I always mean the client-facing, minute-by-minute event timeline we hand to the on-site team, not the kitchen prep schedule.",
+        "tail_user_fragment": "Should the run sheet include buffer time between courses for a 250-person event, or keep it tight?",
+        "probe": "When I said 'the run sheet' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the run sheet' in this conversation, what was I referring to?",
+          "Which of the two things called 'the run sheet' did I mean here?",
+          "What does 'the run sheet' refer to in our conversation?",
+          "If I mention the run sheet again, what should you understand that to be?"
+        ],
+        "gold": "The client-facing, minute-by-minute event timeline handed to the on-site team, not the kitchen's internal batch cooking schedule that prep staff also call the run sheet.",
+        "keywords": [
+          "event timeline",
+          "on-site team"
+        ],
+        "anti_keywords": [
+          "kitchen prep schedule",
+          "batch cooking schedule"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c32-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the tasting' from here on I mean the formal pre-booking menu tasting we hold for prospective wedding clients. I know staff also casually calls our own internal recipe testing session the tasting, but with you, the tasting always means the client-facing pre-booking session.",
+        "tail_user_fragment": "How many courses should the tasting include for a prospective 250-person wedding client?",
+        "probe": "When I referred to 'the tasting' in this conversation, which session did I mean?",
+        "probes": [
+          "When I referred to 'the tasting' in this conversation, which session did I mean?",
+          "Which session did I mean when I said 'the tasting'?",
+          "What does 'the tasting' refer to in our conversation, the client session or internal recipe testing?",
+          "If I bring up the tasting again, what should you assume I'm talking about?"
+        ],
+        "gold": "The formal pre-booking menu tasting for prospective wedding clients, not the internal recipe testing session.",
+        "keywords": [
+          "pre-booking tasting",
+          "prospective clients"
+        ],
+        "anti_keywords": [
+          "internal recipe testing"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c32-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule going forward: we will never use pre-made, frozen banquet entrees for any event, no matter the headcount, no matter how much easier it would make scaling to 250-person weddings. Everything is scratch-cooked on-site or at our kitchen same-day. I will not budge on this even under large-event volume pressure.",
+        "tail_user_fragment": null,
+        "probe": "What are some ideas for making large-event cooking more efficient?",
+        "probes": [
+          "What are some ideas for making large-event cooking more efficient?",
+          "Give me three ways to streamline cooking for 250-person events.",
+          "How could we make large-event prep smoother without sacrificing quality?",
+          "Suggest ways to scale up event cooking without changing what we serve."
+        ],
+        "gold": "Suggests approaches like staggered batch cooking schedules, standardized prep timelines, or additional prep staff shifts, while never proposing pre-made frozen banquet entrees, ideally recalling the scratch-cooked-same-day commitment.",
+        "keywords": [
+          "scratch-cooked",
+          "same-day"
+        ],
+        "anti_keywords": [
+          "pre-made frozen",
+          "frozen banquet entree"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c32-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not taking on same-day rush bookings for events over 100 people, even though a venue keeps referring last-minute large groups our way. We've been burned before trying to scale a big menu with no lead time. I don't want to hear that pitch again.",
+        "tail_user_fragment": null,
+        "probe": "How should we handle a venue that keeps referring last-minute large event leads?",
+        "probes": [
+          "How should we handle a venue that keeps referring last-minute large event leads?",
+          "What should we do about a referral partner pushing rush bookings on us?",
+          "If a venue keeps sending large last-minute leads, what are our options?",
+          "Suggest ways to handle referral pressure without changing our booking policy."
+        ],
+        "gold": "Suggests approaches like politely declining and offering a smaller-scale alternative, requesting the venue give more lead time in future referrals, or redirecting to a waitlist, while never proposing accepting same-day rush bookings over 100 people, ideally recalling the earlier decision.",
+        "keywords": [
+          "lead time required",
+          "decline referral"
+        ],
+        "anti_keywords": [
+          "same-day rush booking"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c32-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on rental vendors, we already tried a company called Prestige Event Rentals last year, and half our linen order arrived the wrong color for a corporate gala, we had to scramble two hours before doors. We are not using them again.",
+        "tail_user_fragment": null,
+        "probe": "Who should we look at for a rental vendor for our large events?",
+        "probes": [
+          "Who should we look at for a rental vendor for our large events?",
+          "What rental company should we consider for large events?",
+          "Given our needs, how should we source rentals going forward?",
+          "What's a better option than what we already tried for event rentals?"
+        ],
+        "gold": "Anything except Prestige Event Rentals, e.g. a different vetted rental company with a verified order-accuracy track record, ideally acknowledging Prestige was tried and rejected.",
+        "keywords": [
+          "wrong color linens",
+          "corporate gala scramble"
+        ],
+        "anti_keywords": [
+          "prestige event rentals"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c32-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting, we hired a staffing agency called ShiftLine Staffing to supply extra servers for a big event last spring. Two of their servers no-showed and a third left mid-shift, we were scrambling all night. Not using them again.",
+        "tail_user_fragment": null,
+        "probe": "Who should we use for extra server staffing on large events?",
+        "probes": [
+          "Who should we use for extra server staffing on large events?",
+          "How should we handle staffing for large events given the earlier problems?",
+          "What's our path forward on extra staffing for big events?",
+          "Who or what should handle supplemental server staffing?"
+        ],
+        "gold": "Anything except ShiftLine Staffing, e.g. a different vetted staffing agency with reliability guarantees, or building an internal on-call server pool, ideally acknowledging ShiftLine's no-shows were tried and rejected.",
+        "keywords": [
+          "no-showed servers",
+          "left mid-shift"
+        ],
+        "anti_keywords": [
+          "shiftline"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c32-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our commercial kitchen expansion permit number is CK-63127, filed January 30th. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": null,
+        "probe": "What is our kitchen expansion permit number, and when was it filed?",
+        "probes": [
+          "What is our kitchen expansion permit number, and when was it filed?",
+          "What's the permit number for the kitchen expansion?",
+          "When did we file for the kitchen expansion permit, and what's the reference number?",
+          "Remind me the permit number and filing date."
+        ],
+        "gold": "CK-63127, filed January 30th.",
+        "keywords": [
+          "CK-63127",
+          "january 30"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c32-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: total kitchen equipment upgrade budget is capped at $128,750, full stop, that's everything after the rental deposit for the new space. Just parking that here.",
+        "tail_user_fragment": null,
+        "probe": "What is our total kitchen equipment upgrade budget?",
+        "probes": [
+          "What is our total kitchen equipment upgrade budget?",
+          "How much do we have for kitchen equipment upgrades?",
+          "What's the cap on the kitchen upgrade budget?",
+          "Remind me the equipment upgrade spend limit we're working with."
+        ],
+        "gold": "$128,750 total.",
+        "keywords": [
+          "128,750"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c32-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our master event booking calendar 'Charizard' from now on. Every internal doc and text thread should say Charizard instead of the actual calendar name, since we sometimes reference it in front of clients.",
+        "tail_user_fragment": "Is Charizard fully updated with the new 250-person wedding date before we confirm the vendor holds?",
+        "probe": "What does 'Charizard' refer to in our project?",
+        "probes": [
+          "What does 'Charizard' refer to in our project?",
+          "If I mention Charizard again, what should you understand that to mean?",
+          "Remind me what we're calling Charizard internally.",
+          "What is Charizard a codename for?"
+        ],
+        "gold": "The master event booking calendar.",
+        "keywords": [
+          "event booking calendar"
+        ],
+        "anti_keywords": [
+          "fire dragon",
+          "pokemon",
+          "flame creature"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c32-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our event-lead training manual 'Naboo' in all future notes. It's just easier than typing out the full document name every time in shift-handoff texts.",
+        "tail_user_fragment": "Can you draft the opening section of Naboo covering how to run the shadow event?",
+        "probe": "What does 'Naboo' refer to in our conversation?",
+        "probes": [
+          "What does 'Naboo' refer to in our conversation?",
+          "If I mention Naboo later, what should you take that to mean?",
+          "What is Naboo a codename for in our project?",
+          "Remind me what Naboo refers to internally."
+        ],
+        "gold": "The event-lead training manual.",
+        "keywords": [
+          "event-lead training manual"
+        ],
+        "anti_keywords": [
+          "star wars planet",
+          "queen amidala",
+          "galaxy"
+        ],
+        "distance": "near"
+      }
+    ]
+  }
+]

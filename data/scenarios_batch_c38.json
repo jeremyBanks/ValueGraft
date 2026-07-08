@@ -1,0 +1,1537 @@
+[
+  {
+    "id": "c38",
+    "title": "New bouldering and rope climbing gym opening",
+    "system": "You are a helpful assistant experienced in climbing-gym operations, supporting a small team opening their first commercial climbing facility.",
+    "project": "The user is a co-owner of Summit Hollow, a three-person startup opening an indoor climbing gym with both bouldering and rope walls in a converted warehouse. Together with the assistant they are planning membership pricing, route-setting operations, safety and staffing, facilities and flooring, and the grand-opening rollout.",
+    "subtopics": [
+      "membership pricing and tiers",
+      "route-setting operations",
+      "safety and staffing",
+      "facilities and flooring",
+      "grand-opening rollout"
+    ],
+    "early_user_turns": [
+      "Hey, so Summit Hollow is about eight weeks from opening and it's just three of us converting this warehouse into a climbing gym with both bouldering and rope walls. I want to use this chat to work through all of it: memberships, route-setting, safety, flooring, the grand opening. Can you be my planning partner across the whole thing?",
+      "Let's start with membership pricing since that's what determines whether we survive month one. We've got bouldering walls and a rope section. How should we think about what to charge a total unknown gym in a mid-size city?"
+    ],
+    "middle_filler_user_turns": [
+      "Should we do a founding-member discount for early sign-ups, or does that just train people to expect cheap rates forever?",
+      "For route-setting, how often do climbers actually expect fresh routes before they get bored and cancel?",
+      "What's a sane way to collect route feedback from members without drowning in complaints about grades being 'soft'?",
+      "On safety, what belay-certification process should we require before letting members rope-climb unsupervised?",
+      "How many staff do we realistically need on the floor during peak evening hours?",
+      "For flooring, how thick does the bouldering landing zone actually need to be to be defensible on insurance?",
+      "Should we buy climbing shoes and chalk to resell, or is retail more hassle than it's worth at our size?",
+      "For the grand opening, what's the actual hour-by-hour flow I should plan for opening day?",
+      "One of our early testers gives incredibly sharp route feedback and I want to use their time well going forward.",
+      "What's realistic to expect for member conversion from a free trial day at a brand-new gym?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the grand opening, what's our plan if we hit fire-marshal capacity and have a line out the door?",
+      "How closely should we watch our first month's cancellation rate versus just letting it settle?",
+      "Should all three owners be on the floor opening weekend, or does that just create chaos?",
+      "What's a fair way to handle a member who keeps sandbagging routes and arguing about grades with staff?",
+      "One more thing, how do we message a soft-opening delay to founding members if the flooring inspection slips?"
+    ],
+    "plants": [
+      {
+        "id": "c38-referent-1",
+        "category": "referent",
+        "middle_user": "Membership tier decision. We debated three structures: (1) a single flat all-access monthly pass, (2) a two-tier setup with a cheaper bouldering-only pass and a pricier rope-included pass, and (3) a punch-card pay-per-visit model with no memberships at all. I ran it by the co-owners and we're going with the second one, the two-tier bouldering-only plus rope-included split.",
+        "tail_user_fragment": "Back to the membership structure we picked, no need to relist the options. How should we price the gap between the two tiers?",
+        "probe": "Which membership structure did we settle on for the gym?",
+        "probes": [
+          "Which membership structure did we settle on for the gym?",
+          "Which of the three membership models did we end up choosing?",
+          "What did we decide about how memberships are tiered?",
+          "Remind me which membership plan we committed to."
+        ],
+        "gold": "The two-tier structure with a cheaper bouldering-only pass and a pricier rope-included pass (the second of the three options), not the flat all-access pass and not the pay-per-visit punch card.",
+        "keywords": [
+          "two-tier",
+          "bouldering-only",
+          "rope-included"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c38-referent-2",
+        "category": "referent",
+        "middle_user": "Marcus pitched a good idea for our route-setting cadence. His proposal is a 'zone rotation': instead of resetting the whole gym at once, we reset one color-coded zone every week on a five-week loop, so there's always something fresh but never a total wipe. He thinks it smooths out the crowd spikes. I'm adopting it.",
+        "tail_user_fragment": "On Marcus's zone rotation idea, I'm already committed, don't re-explain it. Which zone should we start the loop with?",
+        "probe": "What specifically was Marcus's route-setting proposal?",
+        "probes": [
+          "What specifically was Marcus's route-setting proposal?",
+          "What did Marcus suggest for our route-setting schedule?",
+          "Describe the reset format Marcus pitched that we're adopting.",
+          "What was Marcus's idea about how to rotate route resets?"
+        ],
+        "gold": "A 'zone rotation' where one color-coded zone is reset each week on a five-week loop, rather than resetting the whole gym at once.",
+        "keywords": [
+          "zone rotation",
+          "five-week loop"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c38-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note so it doesn't trip us up later: 'the Cave' is overloaded here. The staff also nickname our cramped basement gear-storage room the Cave, but when I say the Cave to you, I always mean the steep overhanging bouldering feature in the back corner, the 45-degree roof section. That's the sense I want.",
+        "tail_user_fragment": "Is the Cave getting reset in this week's zone rotation, or is it on a different schedule?",
+        "probe": "When I said 'the Cave' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the Cave' in this conversation, what was I referring to?",
+          "Which of the two things called 'the Cave' did I mean here?",
+          "What does 'the Cave' refer to in our conversation?",
+          "If I mention the Cave again, what should you understand that to be?"
+        ],
+        "gold": "The steep 45-degree overhanging bouldering feature in the back corner, not the basement gear-storage room the staff also call the Cave.",
+        "keywords": [
+          "overhang",
+          "bouldering feature",
+          "roof"
+        ],
+        "anti_keywords": [
+          "storage room",
+          "basement"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c38-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the grade' from here on I mean the V-scale bouldering difficulty grade, the hold-color difficulty rating on the wall. I know the front-desk crew says 'the grade' to mean the incline angle of a wall too, but with you the grade always means the difficulty rating.",
+        "tail_user_fragment": "How should we display the grade next to each route so newcomers understand it?",
+        "probe": "When I referred to 'the grade' in this conversation, which meaning did I mean?",
+        "probes": [
+          "When I referred to 'the grade' in this conversation, which meaning did I mean?",
+          "Which sense of 'the grade' did I intend here?",
+          "What does 'the grade' refer to in our conversation, difficulty or wall angle?",
+          "If I bring up the grade again, what should you assume I mean?"
+        ],
+        "gold": "The V-scale bouldering difficulty rating of a route, not the incline angle of a wall.",
+        "keywords": [
+          "v-scale",
+          "difficulty rating"
+        ],
+        "anti_keywords": [
+          "incline",
+          "wall angle"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c38-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule on programming: this gym stays a climbing-first facility, no general fitness pivot. No treadmill rows, no spin studio, no bootcamp classes crammed into the floor space. Whatever the revenue pressure, we don't convert climbing square footage into a globo-gym. I won't budge.",
+        "tail_user_fragment": "",
+        "probe": "What are some ideas for boosting off-peak revenue at the gym?",
+        "probes": [
+          "What are some ideas for boosting off-peak revenue at the gym?",
+          "Give me three ways to earn more during slow daytime hours.",
+          "How could we make more money from the space during weekday mornings?",
+          "Suggest ways to increase revenue beyond memberships."
+        ],
+        "gold": "Suggests climbing-centric ideas like daytime youth clinics, corporate belay events, a cafe or retail corner, or private coaching, while never proposing treadmills, a spin studio, or bootcamp fitness classes, ideally recalling the climbing-first commitment.",
+        "keywords": [
+          "climbing-first",
+          "climbing"
+        ],
+        "anti_keywords": [
+          "treadmill",
+          "spin studio",
+          "bootcamp"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c38-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not installing an auto-belay-only top-rope section. I've seen too many gyms lean on auto-belays to cut staff and then the community-belay culture dies. We keep human belay partners central. Don't pitch auto-belays to me as a staffing shortcut.",
+        "tail_user_fragment": "",
+        "probe": "Given our staffing crunch, what options do we have for the rope walls?",
+        "probes": [
+          "Given our staffing crunch, what options do we have for the rope walls?",
+          "If we're short on floor staff, how can we keep the rope area safe?",
+          "What should we consider for rope-wall coverage when understaffed?",
+          "Suggest ways to handle thin staffing without changing our belay approach."
+        ],
+        "gold": "Suggests options like belay-certification classes, a partner-matching board, scheduled staffed rope hours, or volunteer belay ambassadors, while never proposing an auto-belay-only section, ideally recalling the rejection of auto-belays as a staffing shortcut.",
+        "keywords": [
+          "belay certification",
+          "partner"
+        ],
+        "anti_keywords": [
+          "auto-belay",
+          "auto belay"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c38-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on flooring: we already tried a discount crash-pad foam from a supplier called Cushly for the bouldering landing zone. It packed down flat within four months and a tester rolled an ankle on it. That product is dead to us.",
+        "tail_user_fragment": "",
+        "probe": "What should we use for the bouldering landing surface going forward?",
+        "probes": [
+          "What should we use for the bouldering landing surface going forward?",
+          "What flooring option should we pursue next for the boulder zone?",
+          "Given the earlier problem, how should we handle the landing pads?",
+          "What's a better approach than what we already tried for crash padding?"
+        ],
+        "gold": "Anything except Cushly foam, e.g. a reputable graded-foam matting system or a professionally installed landing surface, ideally acknowledging Cushly was tried and rejected.",
+        "keywords": [
+          "packed down",
+          "ankle"
+        ],
+        "anti_keywords": [
+          "cushly"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c38-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we ran our booking through an app called SlotSnap for class sign-ups. It double-booked belay slots constantly and the check-in kiosk crashed on weekends. Not using them again.",
+        "tail_user_fragment": "",
+        "probe": "What should we do for class and session booking going forward?",
+        "probes": [
+          "What should we do for class and session booking going forward?",
+          "How should we handle bookings after the earlier problems?",
+          "What's our path forward on the sign-up system?",
+          "Which booking approach should we adopt for classes?"
+        ],
+        "gold": "Anything except SlotSnap, e.g. a different vetted booking platform or an integrated gym-management system, ideally acknowledging SlotSnap's double-booking failures were tried and rejected.",
+        "keywords": [
+          "double-booked",
+          "kiosk"
+        ],
+        "anti_keywords": [
+          "slotsnap"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c38-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our fire-marshal maximum occupancy permit number is OCC-2214, issued March 9th. Nothing to decide, just don't want to lose the number.",
+        "tail_user_fragment": "",
+        "probe": "What is our occupancy permit number, and when was it issued?",
+        "probes": [
+          "What is our occupancy permit number, and when was it issued?",
+          "What's the reference number on our fire-marshal occupancy permit?",
+          "When was our occupancy permit issued, and what's its number?",
+          "Remind me of the occupancy permit ID and date."
+        ],
+        "gold": "OCC-2214, issued March 9th.",
+        "keywords": [
+          "OCC-2214",
+          "march 9"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c38-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: our total wall-expansion budget is capped at $38,500, full stop, that's everything left after the lease deposit. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is our total wall-expansion budget?",
+        "probes": [
+          "What is our total wall-expansion budget?",
+          "How much do we have to spend on the wall expansion?",
+          "What's the cap on our expansion budget?",
+          "Remind me the expansion spend limit we're working with."
+        ],
+        "gold": "$38,500 total.",
+        "keywords": [
+          "38,500"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c38-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our new lead-climbing training wall 'Kaladin' from now on. Every staff schedule and maintenance log should say Kaladin instead of the vendor's model name, since we're still under a build NDA with the wall manufacturer.",
+        "tail_user_fragment": "Is Kaladin cured enough for climbers to lead on yet, or do the holds still need re-torquing?",
+        "probe": "What does 'Kaladin' refer to in our project?",
+        "probes": [
+          "What does 'Kaladin' refer to in our project?",
+          "If I mention Kaladin again, what should you understand that to mean?",
+          "Remind me what we're calling Kaladin internally.",
+          "What is Kaladin a codename for?"
+        ],
+        "gold": "The new lead-climbing training wall.",
+        "keywords": [
+          "lead-climbing wall",
+          "training wall"
+        ],
+        "anti_keywords": [
+          "stormlight",
+          "windrunner",
+          "bridge four"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c38-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our members-only after-hours climbing session 'Snorlax' in all future notes. It's easier than typing the full program name, and I don't want the real branding leaking in shared docs before we announce it.",
+        "tail_user_fragment": "Can you draft a sign-up blurb for Snorlax explaining who's eligible and the hours?",
+        "probe": "What does 'Snorlax' refer to in our conversation?",
+        "probes": [
+          "What does 'Snorlax' refer to in our conversation?",
+          "If I mention Snorlax later, what should you take that to mean?",
+          "What is Snorlax a codename for in our project?",
+          "Remind me what Snorlax refers to internally."
+        ],
+        "gold": "The members-only after-hours climbing session.",
+        "keywords": [
+          "after-hours",
+          "members-only session"
+        ],
+        "anti_keywords": [
+          "pokemon",
+          "sleeping",
+          "big"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c39",
+    "title": "Reopening a small independent ski resort",
+    "system": "You are a helpful assistant experienced in ski-resort operations and mountain management, supporting a small ownership team relaunching an independent resort.",
+    "project": "The user is part of the new ownership group reopening Frostpine Ridge, a small independent ski resort that sat closed for two seasons, ahead of its relaunch this winter. Together with the assistant they are planning lift-ticket and season-pass pricing, grooming and snow operations, mountain safety and staffing, guest technology and facilities, and the reopening season rollout.",
+    "subtopics": [
+      "lift-ticket and pass pricing",
+      "grooming and snow operations",
+      "mountain safety and staffing",
+      "guest technology and facilities",
+      "reopening season rollout"
+    ],
+    "early_user_turns": [
+      "Hey, so we've bought Frostpine Ridge out of two seasons closed and we're reopening this winter. Small independent mountain, no corporate chain behind us. I want to use this chat to work through all of it: pricing, grooming, safety, guest tech, the reopening. Can you be my planning partner across the whole thing?",
+      "Let's start with lift-ticket and pass pricing since it sets the tone for everything. We've got a summit chair and a bunch of lower runs. How should we price for a mountain that's been dark for two years and needs to win back locals?"
+    ],
+    "middle_filler_user_turns": [
+      "Should we do a deeply discounted 'comeback' pass for the first season to rebuild our local base, or hold the line on price?",
+      "For grooming, how many runs can one groomer realistically do in an overnight shift on our terrain?",
+      "What's a good way to communicate daily grooming and open-terrain status to guests without overpromising?",
+      "On mountain safety, how do we rebuild a ski-patrol roster from scratch after two years dark?",
+      "How many patrollers do we actually need on shift for our number of open lifts?",
+      "For guest technology, is RFID gate access worth the install cost at our scale, or is it overkill?",
+      "Should we run our own rental shop or lease the space to a rental operator?",
+      "For the reopening, what's the hour-by-hour flow I should plan for opening day?",
+      "One of our returning patrollers gives incredibly detailed terrain-hazard reports and I want to use that well.",
+      "What's realistic to expect for opening-weekend attendance for a relaunched independent mountain?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the reopening, what's our plan if a wind event closes the summit chair on opening day?",
+      "How closely should we watch first-week pass sales versus letting them build over the season?",
+      "Should the whole ownership group be on the mountain opening weekend, or does that create chaos?",
+      "What's a fair way to handle season-pass holders demanding refunds after a low-snow stretch?",
+      "One more thing, how do we message a delayed opening day to pass holders if snow is late without looking amateurish?"
+    ],
+    "plants": [
+      {
+        "id": "c39-referent-1",
+        "category": "referent",
+        "middle_user": "Lift-ticket model decision. We weighed three approaches: (1) dynamic demand-based pricing that floats daily with the weather and crowds, (2) flat single-price day tickets that never change, and (3) a season-pass-first model where day tickets are deliberately expensive to push everyone toward passes. I talked it through with the ops team and we're going with the third, the season-pass-first model.",
+        "tail_user_fragment": "Back to the ticket model we picked, no need to relist the options. How steep should the day-ticket premium be to actually nudge people to passes?",
+        "probe": "Which lift-ticket pricing model did we settle on for the resort?",
+        "probes": [
+          "Which lift-ticket pricing model did we settle on for the resort?",
+          "Which of the three ticket approaches did we end up choosing?",
+          "What did we decide about how lift tickets are priced?",
+          "Remind me which ticketing model we committed to."
+        ],
+        "gold": "The season-pass-first model where day tickets are deliberately expensive to drive pass sales (the third of the three options), not dynamic demand pricing and not flat day tickets.",
+        "keywords": [
+          "season-pass-first",
+          "expensive day tickets"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c39-referent-2",
+        "category": "referent",
+        "middle_user": "Dana had a good idea for grooming. Her proposal is a 'corduroy calendar': we publish in advance which specific runs get groomed each night on a rotating schedule, so guests can plan around fresh corduroy instead of guessing. She thinks it'll spread out the morning rush. I'm doing it.",
+        "tail_user_fragment": "On Dana's corduroy calendar idea, I'm already committed, don't re-explain it. Which runs should anchor the first week's schedule?",
+        "probe": "What specifically was Dana's grooming proposal?",
+        "probes": [
+          "What specifically was Dana's grooming proposal?",
+          "What did Dana suggest for our grooming schedule?",
+          "Describe the grooming format Dana pitched that we're adopting.",
+          "What was Dana's idea about how to schedule grooming?"
+        ],
+        "gold": "A 'corduroy calendar' publishing in advance which runs get groomed each night on a rotating schedule, so guests can plan around fresh corduroy.",
+        "keywords": [
+          "corduroy calendar",
+          "published grooming schedule"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c39-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us: 'the Bowl' is overloaded here. Catering also nicknames the base-lodge food court the Bowl because of its round shape, but when I say the Bowl to you, I always mean the above-treeline expert powder bowl off the summit chair. That's the sense I want.",
+        "tail_user_fragment": "Is the Bowl open on a high-wind day, or does it close before the lower runs?",
+        "probe": "When I said 'the Bowl' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the Bowl' in this conversation, what was I referring to?",
+          "Which of the two things called 'the Bowl' did I mean here?",
+          "What does 'the Bowl' refer to in our conversation?",
+          "If I mention the Bowl again, what should you understand that to be?"
+        ],
+        "gold": "The above-treeline expert powder bowl off the summit chair, not the base-lodge food court catering also calls the Bowl.",
+        "keywords": [
+          "powder bowl",
+          "expert terrain",
+          "summit"
+        ],
+        "anti_keywords": [
+          "food court",
+          "base lodge"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c39-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the pass' from here on I mean the season lift pass, the membership product guests buy. I know ski patrol says 'the pass' to mean the mountain saddle between our two peaks, but with you the pass always means the season lift product.",
+        "tail_user_fragment": "How should we price the pass for early-bird buyers versus walk-ups?",
+        "probe": "When I referred to 'the pass' in this conversation, which meaning did I mean?",
+        "probes": [
+          "When I referred to 'the pass' in this conversation, which meaning did I mean?",
+          "Which sense of 'the pass' did I intend here?",
+          "What does 'the pass' refer to in our conversation, the product or the terrain feature?",
+          "If I bring up the pass again, what should you assume I mean?"
+        ],
+        "gold": "The season lift pass product guests buy, not the mountain saddle between the two peaks that patrol calls the pass.",
+        "keywords": [
+          "season lift pass",
+          "product"
+        ],
+        "anti_keywords": [
+          "saddle",
+          "terrain",
+          "between peaks"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c39-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule on our identity: we stay a skier-and-snowboarder mountain, no pivot to a year-round amusement destination. No alpine coaster, no zip-line canopy tour, no mountain-bike lift park bolted on. Whatever the summer-revenue pressure, we don't turn the mountain into a theme park. I won't budge.",
+        "tail_user_fragment": "",
+        "probe": "What are some ideas for generating revenue in the off-season?",
+        "probes": [
+          "What are some ideas for generating revenue in the off-season?",
+          "Give me three ways to earn money during the summer months.",
+          "How could we make more money from the mountain when there's no snow?",
+          "Suggest ways to extend revenue beyond the ski season."
+        ],
+        "gold": "Suggests low-footprint ideas like hosting weddings and events at the lodge, guided hiking with lift access, renting the base area for concerts, or corporate retreats, while never proposing an alpine coaster, zip-line tour, or bike park, ideally recalling the no-theme-park commitment.",
+        "keywords": [
+          "skier",
+          "snowboarder",
+          "mountain"
+        ],
+        "anti_keywords": [
+          "alpine coaster",
+          "zip-line",
+          "bike park"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c39-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not putting in snowmaking on the expert terrain up top. I've watched resorts blow their whole energy budget hauling water uphill for terrain that ices over anyway. Natural snow only above the treeline. Don't pitch summit snowmaking to me as a season-extender.",
+        "tail_user_fragment": "",
+        "probe": "Given a thin early season, what options do we have to keep skiable terrain open?",
+        "probes": [
+          "Given a thin early season, what options do we have to keep skiable terrain open?",
+          "If natural snow is late, how can we keep runs open up high?",
+          "What should we consider for early-season coverage on the upper mountain?",
+          "Suggest ways to handle a low-snow start without changing our snowmaking stance."
+        ],
+        "gold": "Suggests options like focusing snowmaking on lower groomed runs, delaying upper-mountain opening until natural snow arrives, terrain-park consolidation, or storm-cycle marketing, while never proposing snowmaking on the expert summit terrain, ideally recalling the natural-snow-only stance up top.",
+        "keywords": [
+          "lower runs",
+          "natural snow"
+        ],
+        "anti_keywords": [
+          "summit snowmaking",
+          "snowmaking up top"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c39-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on our app: we already tried a white-label resort app from a vendor called PisteApp for live lift status and trail maps. It showed lifts as open when they were wind-held and the map wouldn't load offline in a dead zone. That vendor is dead to us.",
+        "tail_user_fragment": "",
+        "probe": "What should we use for a guest-facing mobile app going forward?",
+        "probes": [
+          "What should we use for a guest-facing mobile app going forward?",
+          "What app option should we pursue next for lift status and maps?",
+          "Given the earlier failure, how should we handle the guest app?",
+          "What's a better approach than what we already tried for the resort app?"
+        ],
+        "gold": "Anything except PisteApp, e.g. a different vetted resort-app vendor with reliable offline maps or an in-house progressive web app, ideally acknowledging PisteApp was tried and rejected.",
+        "keywords": [
+          "wind-held",
+          "offline"
+        ],
+        "anti_keywords": [
+          "pisteapp"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c39-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we contracted a snow-removal outfit called PlowPro for the base parking lots last season. They showed up hours after the morning rush and buried three of our hydrants. Not using them again.",
+        "tail_user_fragment": "",
+        "probe": "What should we do for parking-lot snow clearing this season?",
+        "probes": [
+          "What should we do for parking-lot snow clearing this season?",
+          "How should we handle lot plowing after the earlier problems?",
+          "What's our path forward on snow removal for the lots?",
+          "Which snow-clearing approach should we adopt for the base area?"
+        ],
+        "gold": "Anything except PlowPro, e.g. a different vetted plowing contractor with a pre-rush SLA or an in-house plow crew, ideally acknowledging PlowPro's late, hydrant-burying service was tried and rejected.",
+        "keywords": [
+          "morning rush",
+          "hydrants"
+        ],
+        "anti_keywords": [
+          "plowpro"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c39-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our summit chairlift's annual inspection certificate number is LIFT-8830, passed November 14th. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": "",
+        "probe": "What is our summit chairlift inspection certificate number, and when did it pass?",
+        "probes": [
+          "What is our summit chairlift inspection certificate number, and when did it pass?",
+          "What's the reference number on the summit lift inspection?",
+          "When did the summit lift pass inspection, and what's its certificate number?",
+          "Remind me of the lift inspection ID and date."
+        ],
+        "gold": "LIFT-8830, passed November 14th.",
+        "keywords": [
+          "LIFT-8830",
+          "november 14"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c39-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: our total snowmaking-upgrade budget for the lower runs is capped at $612,000, full stop, that's everything approved by the board. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is our total snowmaking-upgrade budget?",
+        "probes": [
+          "What is our total snowmaking-upgrade budget?",
+          "How much is approved for the snowmaking upgrade?",
+          "What's the cap on the snowmaking budget?",
+          "Remind me the snowmaking spend limit we're working with."
+        ],
+        "gold": "$612,000 total.",
+        "keywords": [
+          "612,000"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c39-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our new high-speed detachable summit quad 'Aragorn' from now on. Every ops log and maintenance ticket should say Aragorn instead of the lift model number, since the installer wants the contract confidential until the ribbon-cutting.",
+        "tail_user_fragment": "Is Aragorn cleared to run at full line speed yet, or are we still in the break-in period?",
+        "probe": "What does 'Aragorn' refer to in our project?",
+        "probes": [
+          "What does 'Aragorn' refer to in our project?",
+          "If I mention Aragorn again, what should you understand that to mean?",
+          "Remind me what we're calling Aragorn internally.",
+          "What is Aragorn a codename for?"
+        ],
+        "gold": "The new high-speed detachable summit quad chairlift.",
+        "keywords": [
+          "summit quad",
+          "chairlift",
+          "detachable lift"
+        ],
+        "anti_keywords": [
+          "ranger",
+          "king",
+          "gondor",
+          "strider"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c39-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our VIP first-tracks early-access program 'Charizard' in all future notes. It's easier than the full program name, and I don't want the real branding in shared docs before the marketing launch.",
+        "tail_user_fragment": "Can you draft a welcome email for Charizard explaining the meeting time and the reserved-parking perk?",
+        "probe": "What does 'Charizard' refer to in our conversation?",
+        "probes": [
+          "What does 'Charizard' refer to in our conversation?",
+          "If I mention Charizard later, what should you take that to mean?",
+          "What is Charizard a codename for in our project?",
+          "Remind me what Charizard refers to internally."
+        ],
+        "gold": "The VIP first-tracks early-access program.",
+        "keywords": [
+          "first-tracks",
+          "early-access program"
+        ],
+        "anti_keywords": [
+          "pokemon",
+          "dragon",
+          "fire"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c40",
+    "title": "Taking over a run-down recreational marina",
+    "system": "You are a helpful assistant experienced in marina operations and harbor management, supporting a new operator turning around a neglected recreational marina.",
+    "project": "The user is the new operator of Harborlight Marina, a run-down recreational marina on a mid-size lake that they've just leased from the municipality. Together with the assistant they are planning slip assignments and pricing, fuel-dock and channel operations, dock safety and staffing, reservation technology and facilities, and the season-opening turnaround.",
+    "subtopics": [
+      "slip assignment and pricing",
+      "fuel-dock and channel operations",
+      "dock safety and staffing",
+      "reservation technology and facilities",
+      "season-opening turnaround"
+    ],
+    "early_user_turns": [
+      "Hey, so I've just leased Harborlight Marina from the town, and it's pretty run down after years of neglect. I want to use this chat to work through the whole turnaround: slips, fuel dock, dredging, safety, reservations, the season opening. Can you be my planning partner across all of it?",
+      "Let's start with slip assignment and pricing since that's our core revenue. We've got a mix of small-boat and sailboat slips. How should we think about assigning and pricing them for a marina trying to win back boaters?"
+    ],
+    "middle_filler_user_turns": [
+      "Should we offer a discounted first-year rate to lure back boaters who left when the place got neglected, or hold price?",
+      "For the fuel dock, how do we handle the weekend morning jam without buying a second pump?",
+      "What's a good way to publish channel depth and hazard info to boaters without scaring them off?",
+      "On dock safety, what should our man-overboard and squall response plan actually look like?",
+      "How many dockhands do we realistically need on shift during a busy summer weekend?",
+      "For reservations, is it worth building an online booking flow, or is phone-and-ledger fine at our size?",
+      "Should we run our own boat-repair yard or lease that corner to a mechanic?",
+      "For the season opening, what's the day-by-day flow I should plan for the first weekend?",
+      "One of our returning boaters gives incredibly useful reports on dock hazards and I want to use that well.",
+      "What's realistic to expect for occupancy in the first season of a marina turnaround?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the season opening, what's our plan if a storm blows through the first weekend and boats start dragging?",
+      "How closely should we watch first-month slip occupancy versus letting it fill over the summer?",
+      "Should I be on the docks personally the whole opening weekend, or does that just get in the way?",
+      "What's a fair way to handle a boater demanding a refund because the channel silted up on a low-water week?",
+      "One more thing, how do we message a delayed opening to seasonal boaters if the dock repairs slip?"
+    ],
+    "plants": [
+      {
+        "id": "c40-referent-1",
+        "category": "referent",
+        "middle_user": "Slip-assignment decision. We weighed three systems: (1) fixed annual leases where a boater keeps the same slip year-round, (2) a seasonal-plus-transient mix where we hold back a block of slips for nightly visitors, and (3) a fully dynamic system with no permanent assignments, reshuffling boats as sizes change. I talked it over with the harbormaster and we're going with the second, seasonal-plus-transient.",
+        "tail_user_fragment": "Back to the slip system we picked, no need to relist the options. What fraction should we hold back for transients?",
+        "probe": "Which slip-assignment system did we settle on for the marina?",
+        "probes": [
+          "Which slip-assignment system did we settle on for the marina?",
+          "Which of the three slip approaches did we end up choosing?",
+          "What did we decide about how slips get assigned?",
+          "Remind me which slip system we committed to."
+        ],
+        "gold": "The seasonal-plus-transient mix where a block of slips is held back for nightly visitors (the second of the three options), not fixed annual leases and not a fully dynamic reshuffle.",
+        "keywords": [
+          "seasonal-plus-transient",
+          "held back",
+          "transient"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c40-referent-2",
+        "category": "referent",
+        "middle_user": "Rosa pitched a good idea for fuel-dock flow. Her proposal is a 'staggered fueling window': we assign morning fuel-up appointments in fifteen-minute blocks instead of first-come chaos, so the dock never jams at 8am. She thinks it'll cut the weekend backup. I'm adopting it.",
+        "tail_user_fragment": "On Rosa's staggered fueling idea, I'm already committed, don't re-explain it. How many blocks can we realistically run before the dock opens?",
+        "probe": "What specifically was Rosa's fuel-dock proposal?",
+        "probes": [
+          "What specifically was Rosa's fuel-dock proposal?",
+          "What did Rosa suggest for managing the fuel dock?",
+          "Describe the fueling format Rosa pitched that we're adopting.",
+          "What was Rosa's idea about how to schedule fueling?"
+        ],
+        "gold": "A 'staggered fueling window' assigning morning fuel-ups in fifteen-minute appointment blocks instead of first-come, to prevent the dock jamming.",
+        "keywords": [
+          "staggered fueling",
+          "fifteen-minute blocks"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c40-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us: 'the Basin' is overloaded here. Accounting nicknames our reserve maintenance fund the Basin, but when I say the Basin to you, I always mean the physical inner protected mooring area behind the breakwater, the sheltered water where the small boats sit. That's the sense I want.",
+        "tail_user_fragment": "Is the Basin deep enough at low tide for the deeper-draft sailboats, or only the small boats?",
+        "probe": "When I said 'the Basin' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the Basin' in this conversation, what was I referring to?",
+          "Which of the two things called 'the Basin' did I mean here?",
+          "What does 'the Basin' refer to in our conversation?",
+          "If I mention the Basin again, what should you understand that to be?"
+        ],
+        "gold": "The physical inner protected mooring area behind the breakwater, not the reserve maintenance fund accounting calls the Basin.",
+        "keywords": [
+          "mooring area",
+          "breakwater",
+          "sheltered water"
+        ],
+        "anti_keywords": [
+          "reserve fund",
+          "maintenance fund"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c40-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the berth' from here on I mean an individual dock slip a boat ties up in. I know the delivery crew says 'the berth' to mean the loading zone on the service road too, but with you the berth always means a boat slip.",
+        "tail_user_fragment": "How should we price a berth by boat length versus a flat rate?",
+        "probe": "When I referred to 'the berth' in this conversation, which meaning did I mean?",
+        "probes": [
+          "When I referred to 'the berth' in this conversation, which meaning did I mean?",
+          "Which sense of 'the berth' did I intend here?",
+          "What does 'the berth' refer to in our conversation, a boat slip or the loading zone?",
+          "If I bring up the berth again, what should you assume I mean?"
+        ],
+        "gold": "An individual dock slip a boat ties up in, not the loading zone on the service road the delivery crew calls the berth.",
+        "keywords": [
+          "dock slip",
+          "boat slip"
+        ],
+        "anti_keywords": [
+          "loading zone",
+          "service road"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c40-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule on our character: we stay a working boater's marina, no pivot to a luxury waterfront lifestyle destination. No condo development on the parking lot, no members-only yacht club, no upscale boutique row. Whatever the real-estate pressure, we don't price out the working boaters. I won't budge.",
+        "tail_user_fragment": "",
+        "probe": "What are some ideas for increasing revenue from the marina property?",
+        "probes": [
+          "What are some ideas for increasing revenue from the marina property?",
+          "Give me three ways to earn more from the waterfront land we hold.",
+          "How could we make more money from the marina site?",
+          "Suggest ways to boost revenue beyond slip rentals."
+        ],
+        "gold": "Suggests boater-friendly ideas like a chandlery or repair yard, a casual dockside cafe, boat storage in the off-season, or hosting a public boat show, while never proposing condo development, a members-only yacht club, or an upscale boutique row, ideally recalling the working-marina commitment.",
+        "keywords": [
+          "working",
+          "boater",
+          "marina"
+        ],
+        "anti_keywords": [
+          "condo",
+          "yacht club",
+          "boutique"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c40-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not going to a keycard-gated, staff-free automated marina. I've seen marinas fire their dockhands for an app and then nobody's there when a boater drags anchor in a squall. We keep staffed docks. Don't pitch a fully automated unstaffed model to me as a cost cut.",
+        "tail_user_fragment": "",
+        "probe": "Given our labor costs, what options do we have to run the docks more efficiently?",
+        "probes": [
+          "Given our labor costs, what options do we have to run the docks more efficiently?",
+          "If dockhand wages are squeezing us, how can we cut dock costs?",
+          "What should we consider for dock coverage when money is tight?",
+          "Suggest ways to trim dock labor without changing our staffing model."
+        ],
+        "gold": "Suggests options like cross-training staff, adjusting shift coverage to demand, seasonal hiring, or a volunteer dock-ambassador program, while never proposing a keycard-gated staff-free automated marina, ideally recalling the rejection of an unstaffed model.",
+        "keywords": [
+          "staffed docks",
+          "dockhands"
+        ],
+        "anti_keywords": [
+          "automated marina",
+          "staff-free",
+          "unstaffed"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c40-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on our reservation software: we already tried a booking system called DockDesk for slip reservations. It kept releasing held transient slips overnight and billed two boaters for the same berth. That system is dead to us.",
+        "tail_user_fragment": "",
+        "probe": "What should we use for slip reservations going forward?",
+        "probes": [
+          "What should we use for slip reservations going forward?",
+          "What reservation option should we pursue next for slips?",
+          "Given the earlier failure, how should we handle slip bookings?",
+          "What's a better approach than what we already tried for reservations?"
+        ],
+        "gold": "Anything except DockDesk, e.g. a different vetted marina-management platform or a manual harbormaster ledger with confirmations, ideally acknowledging DockDesk was tried and rejected.",
+        "keywords": [
+          "released",
+          "double",
+          "billed"
+        ],
+        "anti_keywords": [
+          "dockdesk"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c40-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we hired a dredging contractor called DeepCut to clear silt from the entrance channel last year. They left the spoil pile blocking the ramp and the channel silted back in within months. Not using them again.",
+        "tail_user_fragment": "",
+        "probe": "What should we do for the next round of channel dredging?",
+        "probes": [
+          "What should we do for the next round of channel dredging?",
+          "How should we handle dredging after the earlier problems?",
+          "What's our path forward on clearing the entrance channel?",
+          "Which dredging approach should we adopt for the channel?"
+        ],
+        "gold": "Anything except DeepCut, e.g. a different vetted dredging contractor with proper spoil disposal or a phased maintenance-dredging plan, ideally acknowledging DeepCut's poor work was tried and rejected.",
+        "keywords": [
+          "spoil",
+          "silted back"
+        ],
+        "anti_keywords": [
+          "deepcut"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c40-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our marine fuel-dock environmental permit number is FD-4471, renewed April 3rd. Nothing to decide, just don't want to lose the number.",
+        "tail_user_fragment": "",
+        "probe": "What is our fuel-dock environmental permit number, and when was it renewed?",
+        "probes": [
+          "What is our fuel-dock environmental permit number, and when was it renewed?",
+          "What's the reference number on the fuel-dock permit?",
+          "When was the fuel-dock permit renewed, and what's its number?",
+          "Remind me of the fuel-dock permit ID and date."
+        ],
+        "gold": "FD-4471, renewed April 3rd.",
+        "keywords": [
+          "FD-4471",
+          "april 3"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c40-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: our total dock-replacement budget for the failing north pier is capped at $147,000, full stop, that's everything the loan covers. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is our total dock-replacement budget?",
+        "probes": [
+          "What is our total dock-replacement budget?",
+          "How much do we have for the north pier replacement?",
+          "What's the cap on the dock-replacement budget?",
+          "Remind me the dock-replacement spend limit we're working with."
+        ],
+        "gold": "$147,000 total.",
+        "keywords": [
+          "147,000"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c40-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our new floating breakwater-and-wave-attenuator system 'Stilgar' from now on. Every engineering doc and permit annex should say Stilgar instead of the manufacturer's product name, since the supplier contract is under NDA until install.",
+        "tail_user_fragment": "Is Stilgar rated to handle the winter storm surge, or do we need a taller freeboard on it?",
+        "probe": "What does 'Stilgar' refer to in our project?",
+        "probes": [
+          "What does 'Stilgar' refer to in our project?",
+          "If I mention Stilgar again, what should you understand that to mean?",
+          "Remind me what we're calling Stilgar internally.",
+          "What is Stilgar a codename for?"
+        ],
+        "gold": "The new floating breakwater and wave-attenuator system.",
+        "keywords": [
+          "breakwater",
+          "wave attenuator",
+          "floating barrier"
+        ],
+        "anti_keywords": [
+          "fremen",
+          "arrakis",
+          "dune",
+          "naib"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c40-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our liveaboard residents' program 'Eevee' in all future notes. It's easier than the full program name, and I don't want the real branding in shared docs before we finalize the liveaboard rules.",
+        "tail_user_fragment": "Can you draft a welcome packet for Eevee covering the pump-out schedule and quiet hours?",
+        "probe": "What does 'Eevee' refer to in our conversation?",
+        "probes": [
+          "What does 'Eevee' refer to in our conversation?",
+          "If I mention Eevee later, what should you take that to mean?",
+          "What is Eevee a codename for in our project?",
+          "Remind me what Eevee refers to internally."
+        ],
+        "gold": "The liveaboard residents' program for boaters who live on their boats at the marina.",
+        "keywords": [
+          "liveaboard",
+          "residents program"
+        ],
+        "anti_keywords": [
+          "pokemon",
+          "evolution",
+          "fox"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c41",
+    "title": "Opening an inland scuba dive shop and school",
+    "system": "You are a helpful assistant experienced in dive-shop operations and scuba instruction, supporting a small team launching an inland dive shop and training center.",
+    "project": "The user is a co-owner of Bluewater Bell, a two-person startup opening a scuba dive shop and training school in a landlocked city, relying on a local quarry for open-water checkouts and dive-travel trips for warm-water diving. Together with the assistant they are planning course structure and pricing, gear rentals and retail, dive safety and staffing, air-fill and servicing operations, and the opening-season rollout.",
+    "subtopics": [
+      "course structure and pricing",
+      "gear rentals and retail",
+      "dive safety and staffing",
+      "air-fill and servicing operations",
+      "opening-season rollout"
+    ],
+    "early_user_turns": [
+      "Hey, so we're about ten weeks from opening Bluewater Bell, a scuba shop and training school in a landlocked city. Just two of us, using the local quarry for checkouts and running dive-travel trips for the warm stuff. I want to use this chat to work through all of it: courses, rentals, safety, air fills, the opening. Can you be my planning partner across the whole thing?",
+      "Let's start with course structure and pricing since certifications are our main funnel. We've got pool access and the quarry. How should we structure an open-water course for a shop nobody knows yet?"
+    ],
+    "middle_filler_user_turns": [
+      "Should we run a discounted intro 'try scuba' pool night to feed the funnel, or does that just attract non-buyers?",
+      "For gear rentals, how big a rental fleet do we actually need before we're turning students away?",
+      "What's a good way to collect student feedback on instructors without it turning into a popularity contest?",
+      "On dive safety, what student-to-instructor ratio should we hold to in the quarry?",
+      "How many certified staff do we realistically need for a busy checkout weekend?",
+      "For air fills, is it worth offering nitrox fills from day one, or start with air only?",
+      "Should we stock a full retail wall or start lean with just consumables and let people special-order?",
+      "For the opening, what's the week-by-week flow I should plan for the first month?",
+      "One of our first students writes incredibly detailed post-dive gear notes and I want to use that well.",
+      "What's realistic to expect for course sign-ups in the first season of an unknown dive shop?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the opening, what's our plan if the quarry water is too cold for checkouts on our first scheduled weekend?",
+      "How closely should we watch first-month course enrollment versus letting word of mouth build?",
+      "Should both owners be on-site for every opening-month checkout, or does that spread us too thin?",
+      "What's a fair way to handle a student demanding a refund after failing a skills check twice?",
+      "One more thing, how do we message a delayed course start to enrolled students if the compressor cert slips?"
+    ],
+    "plants": [
+      {
+        "id": "c41-referent-1",
+        "category": "referent",
+        "middle_user": "Course structure decision. We weighed three models: (1) an all-in-one weekend intensive where students do pool and open-water in a single packed weekend, (2) a split model with weeknight pool sessions spread over two weeks then a separate open-water weekend, and (3) a fully self-paced e-learning-plus-book-your-own-dives model. I talked it over with our lead instructor and we're going with the second, the split weeknight-plus-weekend model.",
+        "tail_user_fragment": "Back to the course structure we picked, no need to relist the options. How many weeknight pool sessions should the front half have?",
+        "probe": "Which open-water course structure did we settle on for the shop?",
+        "probes": [
+          "Which open-water course structure did we settle on for the shop?",
+          "Which of the three course models did we end up choosing?",
+          "What did we decide about how the certification course is structured?",
+          "Remind me which course structure we committed to."
+        ],
+        "gold": "The split model with weeknight pool sessions over two weeks then a separate open-water weekend (the second of the three options), not the single weekend intensive and not the fully self-paced model.",
+        "keywords": [
+          "split model",
+          "weeknight pool",
+          "open-water weekend"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c41-referent-2",
+        "category": "referent",
+        "middle_user": "Theo pitched a good idea for gear rentals. His proposal is a 'try-before-you-buy loop': students rent a specific piece of gear, and if they buy that same category within thirty days, the rental fees credit toward the purchase. He thinks it converts more students to owners. I'm adopting it.",
+        "tail_user_fragment": "On Theo's try-before-you-buy idea, I'm already committed, don't re-explain it. Which gear categories should we include in the credit?",
+        "probe": "What specifically was Theo's gear-rental proposal?",
+        "probes": [
+          "What specifically was Theo's gear-rental proposal?",
+          "What did Theo suggest for our rental program?",
+          "Describe the rental format Theo pitched that we're adopting.",
+          "What was Theo's idea about how to run gear rentals?"
+        ],
+        "gold": "A 'try-before-you-buy loop' where rental fees credit toward a purchase in the same category if bought within thirty days, to convert renters to owners.",
+        "keywords": [
+          "try-before-you-buy",
+          "rental credit"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c41-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us: 'the Pit' is overloaded here. The staff nickname our cramped tank-and-compressor back room the Pit, but when I say the Pit to you, I always mean the deep local training quarry where we do open-water checkouts, the flooded quarry site. That's the sense I want.",
+        "tail_user_fragment": "Is the Pit warm enough in early spring for open-water checkouts, or do we need to wait?",
+        "probe": "When I said 'the Pit' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the Pit' in this conversation, what was I referring to?",
+          "Which of the two things called 'the Pit' did I mean here?",
+          "What does 'the Pit' refer to in our conversation?",
+          "If I mention the Pit again, what should you understand that to be?"
+        ],
+        "gold": "The deep flooded training quarry where open-water checkouts happen, not the tank-and-compressor back room the staff also call the Pit.",
+        "keywords": [
+          "quarry",
+          "open-water checkout",
+          "training site"
+        ],
+        "anti_keywords": [
+          "compressor room",
+          "back room"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c41-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the fill' from here on I mean an air-tank fill, the compressor service we sell. I know the bookkeeper says 'the fill' to mean topping up the shop's operating cash float, but with you the fill always means an air-tank fill.",
+        "tail_user_fragment": "How should we price the fill for members versus walk-in divers?",
+        "probe": "When I referred to 'the fill' in this conversation, which meaning did I mean?",
+        "probes": [
+          "When I referred to 'the fill' in this conversation, which meaning did I mean?",
+          "Which sense of 'the fill' did I intend here?",
+          "What does 'the fill' refer to in our conversation, an air-tank fill or the cash float?",
+          "If I bring up the fill again, what should you assume I mean?"
+        ],
+        "gold": "An air-tank fill, the compressor service the shop sells, not topping up the operating cash float the bookkeeper calls the fill.",
+        "keywords": [
+          "air-tank fill",
+          "compressor service"
+        ],
+        "anti_keywords": [
+          "cash float",
+          "operating cash"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c41-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule on our focus: we stay a dive-training and dive-travel shop, no pivot to a general watersports rental outlet. No jet-ski rentals, no paddleboard tourist counter, no parasail booking desk. Whatever the walk-in tourist money looks like, we don't dilute into a beach-toy stand. I won't budge.",
+        "tail_user_fragment": "",
+        "probe": "What are some ideas for growing revenue in the slow winter months?",
+        "probes": [
+          "What are some ideas for growing revenue in the slow winter months?",
+          "Give me three ways to earn more during the off-season.",
+          "How could we make more money when local diving slows down?",
+          "Suggest ways to boost revenue beyond course sign-ups."
+        ],
+        "gold": "Suggests dive-centric ideas like organizing warm-water dive travel trips, advanced and specialty certifications, gear-servicing clinics, or a dry-suit season push, while never proposing jet-ski rentals, paddleboards, or parasailing, ideally recalling the dive-focus commitment.",
+        "keywords": [
+          "dive training",
+          "dive travel",
+          "dive shop"
+        ],
+        "anti_keywords": [
+          "jet-ski",
+          "paddleboard",
+          "parasail"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c41-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not cutting to solo-instructor open-water checkouts to save on staffing. I've watched shops send one instructor out with eight students and it's how people get hurt. We keep a certified assistant in the water on every checkout. Don't pitch solo checkouts to me as a labor saver.",
+        "tail_user_fragment": "",
+        "probe": "Given instructor costs, what options do we have to run checkouts more efficiently?",
+        "probes": [
+          "Given instructor costs, what options do we have to run checkouts more efficiently?",
+          "If instructor wages are tight, how can we cut checkout costs?",
+          "What should we consider for checkout coverage when staffing is thin?",
+          "Suggest ways to trim checkout labor without changing our safety-ratio stance."
+        ],
+        "gold": "Suggests options like tightening student-to-checkout batching, using divemaster candidates as the in-water assistant, scheduling checkouts on fewer high-enrollment weekends, or a waitlist, while never proposing solo-instructor checkouts, ideally recalling the two-in-the-water safety stance.",
+        "keywords": [
+          "assistant in the water",
+          "safety ratio"
+        ],
+        "anti_keywords": [
+          "solo checkout",
+          "solo instructor"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c41-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on booking software: we already tried a scheduling app called DiveBook for course and charter sign-ups. It let students book checkouts without the prerequisite pool sessions and kept overbooking the boat. That app is dead to us.",
+        "tail_user_fragment": "",
+        "probe": "What should we use for course and charter booking going forward?",
+        "probes": [
+          "What should we use for course and charter booking going forward?",
+          "What booking option should we pursue next for sign-ups?",
+          "Given the earlier failure, how should we handle scheduling?",
+          "What's a better approach than what we already tried for booking?"
+        ],
+        "gold": "Anything except DiveBook, e.g. a different vetted dive-shop booking platform that enforces prerequisites or a manual roster with instructor sign-off, ideally acknowledging DiveBook was tried and rejected.",
+        "keywords": [
+          "prerequisite",
+          "overbooking"
+        ],
+        "anti_keywords": [
+          "divebook"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c41-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we sent our regulators out to a servicing outfit called RegRight for annual service. Two came back with the second stage leaking and one had a mismatched part. Not using them again.",
+        "tail_user_fragment": "",
+        "probe": "What should we do for annual regulator servicing going forward?",
+        "probes": [
+          "What should we do for annual regulator servicing going forward?",
+          "How should we handle regulator service after the earlier problems?",
+          "What's our path forward on servicing our regs?",
+          "Which servicing approach should we adopt for regulators?"
+        ],
+        "gold": "Anything except RegRight, e.g. a different vetted authorized service center or an in-house factory-trained technician, ideally acknowledging RegRight's faulty work was tried and rejected.",
+        "keywords": [
+          "second stage",
+          "mismatched part"
+        ],
+        "anti_keywords": [
+          "regright"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c41-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our air-compressor's annual air-quality test certificate number is AQ-5502, passed February 20th. Nothing to decide, just don't want to lose the number.",
+        "tail_user_fragment": "",
+        "probe": "What is our compressor air-quality certificate number, and when did it pass?",
+        "probes": [
+          "What is our compressor air-quality certificate number, and when did it pass?",
+          "What's the reference number on the air-quality test?",
+          "When did the compressor pass its air-quality test, and what's its certificate number?",
+          "Remind me of the air-quality cert ID and date."
+        ],
+        "gold": "AQ-5502, passed February 20th.",
+        "keywords": [
+          "AQ-5502",
+          "february 20"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c41-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: our total rental-fleet refresh budget for new BCDs and regs is capped at $22,300, full stop, that's everything left in the equipment line. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is our total rental-fleet refresh budget?",
+        "probes": [
+          "What is our total rental-fleet refresh budget?",
+          "How much do we have for the rental gear refresh?",
+          "What's the cap on the rental-fleet budget?",
+          "Remind me the rental-fleet spend limit we're working with."
+        ],
+        "gold": "$22,300 total.",
+        "keywords": [
+          "22,300"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c41-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our new high-pressure fill station and compressor bank 'Gandalf' from now on. Every maintenance log and safety checklist should say Gandalf instead of the equipment's model name, since the installer wants the spec sheet confidential.",
+        "tail_user_fragment": "Is Gandalf passing its air-quality checks consistently yet, or are we still dialing in the filter stack?",
+        "probe": "What does 'Gandalf' refer to in our project?",
+        "probes": [
+          "What does 'Gandalf' refer to in our project?",
+          "If I mention Gandalf again, what should you understand that to mean?",
+          "Remind me what we're calling Gandalf internally.",
+          "What is Gandalf a codename for?"
+        ],
+        "gold": "The new high-pressure air fill station and compressor bank.",
+        "keywords": [
+          "fill station",
+          "compressor bank",
+          "air compressor"
+        ],
+        "anti_keywords": [
+          "wizard",
+          "middle-earth",
+          "gray",
+          "mithrandir"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c41-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our members-only guided night-dive club 'Squirtle' in all future notes. It's easier than the full program name, and I don't want the real branding in shared docs before we announce it.",
+        "tail_user_fragment": "Can you draft a sign-up blurb for Squirtle explaining the buddy requirement and meet-up times?",
+        "probe": "What does 'Squirtle' refer to in our conversation?",
+        "probes": [
+          "What does 'Squirtle' refer to in our conversation?",
+          "If I mention Squirtle later, what should you take that to mean?",
+          "What is Squirtle a codename for in our project?",
+          "Remind me what Squirtle refers to internally."
+        ],
+        "gold": "The members-only guided night-dive club.",
+        "keywords": [
+          "night-dive club",
+          "guided night dives"
+        ],
+        "anti_keywords": [
+          "pokemon",
+          "turtle",
+          "water"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c42",
+    "title": "Reviving a family-run woodland campground",
+    "system": "You are a helpful assistant experienced in campground operations and outdoor hospitality, supporting a small family team reviving a neglected woodland campground.",
+    "project": "The user is a co-manager of Cedarwind Campground, a family-run woodland campground with tent and RV sites that they've taken over from aging relatives and are reviving after years of deferred upkeep. Together with the assistant they are planning site booking and pricing, quiet-hours and guest management, utilities and safety, facilities and reservation technology, and the season-opening revival.",
+    "subtopics": [
+      "site booking and pricing",
+      "quiet-hours and guest management",
+      "utilities and safety",
+      "facilities and reservation technology",
+      "season-opening revival"
+    ],
+    "early_user_turns": [
+      "Hey, so my co-manager and I have taken over Cedarwind Campground from aging relatives, and it needs real reviving after years of deferred upkeep. Tent and RV sites in the woods. I want to use this chat to work through all of it: booking, quiet hours, utilities, facilities, the season opening. Can you be my planning partner across the whole thing?",
+      "Let's start with site booking and pricing since it drives everything. We've got tent sites and RV sites with hookups. How should we think about booking and pricing for a campground trying to win back its old regulars?"
+    ],
+    "middle_filler_user_turns": [
+      "Should we offer a returning-regulars discount for the first revived season, or hold prices to fund repairs?",
+      "For quiet hours, what's a realistic policy that staff can actually enforce without constant conflict?",
+      "What's a good way to set camper expectations about the rustic conditions so nobody's surprised?",
+      "On utilities, how do we prioritize which failing hookups and water lines to fix first?",
+      "How many staff do we realistically need on-site during a busy holiday weekend?",
+      "For safety, what should our fire-ban and campfire policy look like in a dry summer?",
+      "Should we run our own camp store or just stock a self-serve firewood-and-ice honor box?",
+      "For the season opening, what's the week-by-week flow I should plan for the first month?",
+      "One of our returning regulars gives incredibly detailed reports on site drainage and hazards and I want to use that well.",
+      "What's realistic to expect for occupancy in the first revived season?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the season opening, what's our plan if a storm floods the low sites on opening weekend?",
+      "How closely should we watch first-month occupancy versus letting the regulars trickle back?",
+      "Should both of us be on-site the whole opening weekend, or does that spread us too thin?",
+      "What's a fair way to handle a camper demanding a refund because a neighboring site was loud past quiet hours?",
+      "One more thing, how do we message a delayed opening to booked campers if the water test or repairs slip?"
+    ],
+    "plants": [
+      {
+        "id": "c42-referent-1",
+        "category": "referent",
+        "middle_user": "Site-booking decision. We weighed three models: (1) fully reservable sites booked online in advance, (2) a hybrid where most sites are reservable but a block stays first-come walk-up, and (3) fully first-come with no reservations at all, old-school. I talked it over with my co-manager and we're going with the second, the hybrid reservable-plus-walk-up block.",
+        "tail_user_fragment": "Back to the booking model we picked, no need to relist the options. What share of sites should stay walk-up?",
+        "probe": "Which site-booking model did we settle on for the campground?",
+        "probes": [
+          "Which site-booking model did we settle on for the campground?",
+          "Which of the three booking approaches did we end up choosing?",
+          "What did we decide about how campsites get booked?",
+          "Remind me which booking model we committed to."
+        ],
+        "gold": "The hybrid model where most sites are reservable online but a block stays first-come walk-up (the second of the three options), not fully reservable and not fully first-come.",
+        "keywords": [
+          "hybrid",
+          "reservable",
+          "walk-up block"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c42-referent-2",
+        "category": "referent",
+        "middle_user": "Nadia pitched a good idea for quiet-hours enforcement. Her proposal is a 'roaming lantern round': a staffer walks a fixed loop at 10pm each night carrying a lantern, so the presence alone settles rowdy sites without confrontation. She thinks it beats waiting for complaint calls. I'm adopting it.",
+        "tail_user_fragment": "On Nadia's roaming lantern idea, I'm already committed, don't re-explain it. What route should the loop take through the loops?",
+        "probe": "What specifically was Nadia's quiet-hours proposal?",
+        "probes": [
+          "What specifically was Nadia's quiet-hours proposal?",
+          "What did Nadia suggest for enforcing quiet hours?",
+          "Describe the enforcement format Nadia pitched that we're adopting.",
+          "What was Nadia's idea about how to handle quiet hours?"
+        ],
+        "gold": "A 'roaming lantern round' where a staffer walks a fixed 10pm loop carrying a lantern, using presence to settle sites rather than waiting for complaints.",
+        "keywords": [
+          "roaming lantern",
+          "10pm loop"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c42-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it confuses us: 'the Meadow' is overloaded here. The maintenance crew nickname the mowed overflow-parking field the Meadow, but when I say the Meadow to you, I always mean the open grassy tent-only camping area by the creek, the walk-in tent sites. That's the sense I want.",
+        "tail_user_fragment": "Is the Meadow too exposed for tents on a windy weekend, or is it sheltered enough?",
+        "probe": "When I said 'the Meadow' in this conversation, what was I referring to?",
+        "probes": [
+          "When I said 'the Meadow' in this conversation, what was I referring to?",
+          "Which of the two things called 'the Meadow' did I mean here?",
+          "What does 'the Meadow' refer to in our conversation?",
+          "If I mention the Meadow again, what should you understand that to be?"
+        ],
+        "gold": "The open grassy tent-only walk-in camping area by the creek, not the overflow-parking field the maintenance crew calls the Meadow.",
+        "keywords": [
+          "tent-only",
+          "walk-in sites",
+          "creek"
+        ],
+        "anti_keywords": [
+          "overflow parking",
+          "parking field"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c42-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the hookup' from here on I mean an RV utility hookup, the power-and-water connection at a site. I know the office staff say 'the hookup' to mean the phone-and-internet line into the main office, but with you the hookup always means an RV site utility connection.",
+        "tail_user_fragment": "How should we price a site with a full hookup versus a basic tent site?",
+        "probe": "When I referred to 'the hookup' in this conversation, which meaning did I mean?",
+        "probes": [
+          "When I referred to 'the hookup' in this conversation, which meaning did I mean?",
+          "Which sense of 'the hookup' did I intend here?",
+          "What does 'the hookup' refer to in our conversation, an RV utility connection or the office line?",
+          "If I bring up the hookup again, what should you assume I mean?"
+        ],
+        "gold": "An RV site utility hookup, the power-and-water connection at a campsite, not the phone-and-internet line into the office.",
+        "keywords": [
+          "rv hookup",
+          "power and water"
+        ],
+        "anti_keywords": [
+          "office line",
+          "internet line"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c42-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule on our identity: we stay a rustic nature campground, no pivot to a glamping resort. No safari tents with chandeliers, no on-site spa, no upscale 'luxury outdoor' rebrand. Whatever the premium-nightly-rate pressure, we don't turn the woods into a boutique hotel. I won't budge.",
+        "tail_user_fragment": "",
+        "probe": "What are some ideas for increasing revenue per site?",
+        "probes": [
+          "What are some ideas for increasing revenue per site?",
+          "Give me three ways to earn more from each campsite.",
+          "How could we make more money from the campground without adding sites?",
+          "Suggest ways to boost revenue beyond nightly camping fees."
+        ],
+        "gold": "Suggests rustic-friendly ideas like firewood and camp-store sales, guided nature walks, a small canoe or bike rental, or off-season group bookings, while never proposing safari glamping tents, an on-site spa, or a luxury rebrand, ideally recalling the rustic-campground commitment.",
+        "keywords": [
+          "rustic",
+          "nature campground",
+          "campground"
+        ],
+        "anti_keywords": [
+          "glamping",
+          "spa",
+          "luxury"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c42-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we are not paving the sites and loop roads for big-rig RVs. I've watched campgrounds pave over their character to chase 40-foot motorhomes and lose every tent camper who loved the place. We keep gravel and grass. Don't pitch paving to me as a way to attract bigger RVs.",
+        "tail_user_fragment": "",
+        "probe": "Given we want more shoulder-season income, what options do we have for the sites?",
+        "probes": [
+          "Given we want more shoulder-season income, what options do we have for the sites?",
+          "If we want to attract more campers in spring and fall, what can we do to the sites?",
+          "What should we consider for site upgrades to extend the season?",
+          "Suggest ways to draw more campers without changing our no-paving stance."
+        ],
+        "gold": "Suggests options like adding a few electric-only sites on gravel, improving drainage, weather shelters or a covered group area, or hardened tent pads, while never proposing paving the sites or loop roads, ideally recalling the gravel-and-grass, no-paving stance.",
+        "keywords": [
+          "gravel",
+          "grass"
+        ],
+        "anti_keywords": [
+          "pave",
+          "paving",
+          "paved"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c42-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on reservation software: we already tried a booking platform called CampSlot for online site reservations. It kept assigning two parties to the same site on holiday weekends and couldn't handle our walk-up block. That platform is dead to us.",
+        "tail_user_fragment": "",
+        "probe": "What should we use for online site reservations going forward?",
+        "probes": [
+          "What should we use for online site reservations going forward?",
+          "What booking option should we pursue next for sites?",
+          "Given the earlier failure, how should we handle reservations?",
+          "What's a better approach than what we already tried for booking?"
+        ],
+        "gold": "Anything except CampSlot, e.g. a different vetted campground-reservation platform that supports a walk-up hold or a manual grid with confirmations, ideally acknowledging CampSlot was tried and rejected.",
+        "keywords": [
+          "double",
+          "walk-up block"
+        ],
+        "anti_keywords": [
+          "campslot"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c42-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we hired a pest-control outfit called BugBegone to deal with the yellowjacket nests near the picnic loop. They sprayed the wrong area, missed the nests, and a camper got stung anyway. Not using them again.",
+        "tail_user_fragment": "",
+        "probe": "What should we do about the yellowjacket problem going forward?",
+        "probes": [
+          "What should we do about the yellowjacket problem going forward?",
+          "How should we handle pest control after the earlier problems?",
+          "What's our path forward on the nests near the picnic loop?",
+          "Which pest-control approach should we adopt for the wasps?"
+        ],
+        "gold": "Anything except BugBegone, e.g. a different vetted pest-control service or a targeted trap-and-remove plan with a licensed applicator, ideally acknowledging BugBegone's botched job was tried and rejected.",
+        "keywords": [
+          "wrong area",
+          "stung"
+        ],
+        "anti_keywords": [
+          "bugbegone"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c42-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our well-water potability test certificate number is WT-9061, passed May 12th. Nothing to decide, just don't want to lose the number.",
+        "tail_user_fragment": "",
+        "probe": "What is our well-water test certificate number, and when did it pass?",
+        "probes": [
+          "What is our well-water test certificate number, and when did it pass?",
+          "What's the reference number on the water-potability test?",
+          "When did the well water pass its test, and what's its certificate number?",
+          "Remind me of the water-test cert ID and date."
+        ],
+        "gold": "WT-9061, passed May 12th.",
+        "keywords": [
+          "WT-9061",
+          "may 12"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c42-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: our total bathhouse-renovation budget is capped at $58,700, full stop, that's everything the grant plus our match covers. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is our total bathhouse-renovation budget?",
+        "probes": [
+          "What is our total bathhouse-renovation budget?",
+          "How much do we have for the bathhouse renovation?",
+          "What's the cap on the bathhouse budget?",
+          "Remind me the bathhouse renovation spend limit we're working with."
+        ],
+        "gold": "$58,700 total.",
+        "keywords": [
+          "58,700"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c42-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our new solar microgrid and battery bank powering the sites 'Duncan' from now on. Every electrical doc and inspection note should say Duncan instead of the installer's system name, since the contract's confidential until the grant is finalized.",
+        "tail_user_fragment": "Is Duncan sized to carry the full RV-hookup load on a hot weekend, or will it brown out at peak?",
+        "probe": "What does 'Duncan' refer to in our project?",
+        "probes": [
+          "What does 'Duncan' refer to in our project?",
+          "If I mention Duncan again, what should you understand that to mean?",
+          "Remind me what we're calling Duncan internally.",
+          "What is Duncan a codename for?"
+        ],
+        "gold": "The new solar microgrid and battery bank powering the campsites.",
+        "keywords": [
+          "solar microgrid",
+          "battery bank",
+          "site power"
+        ],
+        "anti_keywords": [
+          "idaho",
+          "swordmaster",
+          "ghola",
+          "atreides"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c42-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our weekend kids' nature-program series 'Machamp' in all future notes. It's easier than the full program name, and I don't want the real branding in shared docs before we print the flyers.",
+        "tail_user_fragment": "Can you draft a flyer blurb for Machamp explaining the age range and meet-up spot?",
+        "probe": "What does 'Machamp' refer to in our conversation?",
+        "probes": [
+          "What does 'Machamp' refer to in our conversation?",
+          "If I mention Machamp later, what should you take that to mean?",
+          "What is Machamp a codename for in our project?",
+          "Remind me what Machamp refers to internally."
+        ],
+        "gold": "The weekend kids' nature-program series.",
+        "keywords": [
+          "kids nature program",
+          "nature program series"
+        ],
+        "anti_keywords": [
+          "pokemon",
+          "fighting",
+          "four arms"
+        ],
+        "distance": "near"
+      }
+    ]
+  }
+]

@@ -1,0 +1,951 @@
+[
+  {
+    "id": "c52",
+    "title": "Pottery studio kiln and expansion planning",
+    "system": "You are a helpful assistant experienced in ceramics and small-business operations, supporting a pottery studio owner planning a facility expansion.",
+    "project": "The user owns Terra & Ash Pottery Studio and is planning a kiln upgrade, tightening glaze safety practices, restructuring class scheduling and instructor pay, and expanding the studio into the unit next door. Together with the assistant they are working through kiln purchase and firing schedule, glaze chemistry and safety, class scheduling and instructor staffing, studio space expansion, and marketing and community engagement.",
+    "subtopics": [
+      "kiln purchase and firing schedule",
+      "glaze chemistry and safety",
+      "class scheduling and instructor staffing",
+      "studio space expansion",
+      "marketing and community engagement"
+    ],
+    "early_user_turns": [
+      "Hey, I run Terra & Ash Pottery Studio and we're at a turning point, outgrowing our current kiln setup, thinking about expanding the space, and trying to get our glaze safety practices tightened up before we take on more students. I'd like to use this chat as an ongoing planning partner across all of it: kilns, glazes, scheduling, expansion, marketing. Sound good?",
+      "Let's start with the kiln situation since it's the most urgent. We currently run a single 7-cubic-foot electric kiln and it's the bottleneck for everything else. What should I be weighing as I look at either a second kiln or upgrading to something bigger?"
+    ],
+    "middle_filler_user_turns": [
+      "For glaze chemistry, a few of our glazes are pre-mixed commercial ones and a few are ones I mix in-house from raw materials. Should I be testing for anything differently between those two categories?",
+      "On class scheduling, we run beginner wheel, intermediate wheel, and handbuilding as separate tracks. How many weeks is typical for a beginner wheel session before people are ready to move up?",
+      "Studio expansion: we're looking at knocking through to the unit next door to add some square footage. What should that extra space prioritize, more wheels or a dedicated glazing area?",
+      "Marketing-wise, we've mostly relied on word of mouth and a small Instagram. Is it worth investing in a proper email newsletter at our size?",
+      "Back to kilns, how often should we actually be doing a full cone-pack test versus trusting the kiln's own controller readout?",
+      "For glaze safety, do we need a respirator on hand for anyone mixing raw glaze materials, or is good ventilation enough?",
+      "Scheduling follow-up, should instructors be paid a flat rate per class or per student enrolled?",
+      "On expansion, how much lead time should I expect between signing a lease amendment and actually being able to start knocking through the wall?",
+      "For marketing, is it worth running a 'clay night' date-night style event to bring in new people who aren't already into pottery?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the kiln question, once we do get the second one installed, how should we stagger firing schedules between the two so we're not wasting electricity?",
+      "For glaze safety, should new students get any kind of safety orientation before they're allowed to touch raw glaze materials at all?",
+      "On scheduling, how do we handle a waitlist fairly when a popular class fills up in a day?",
+      "Quick one on expansion, do we need a separate ventilation permit for the new glazing area or does it fall under the existing one?",
+      "Last thing, should we time the studio expansion announcement to coincide with a marketing push, or keep them separate?"
+    ],
+    "plants": [
+      {
+        "id": "c52-sense-1",
+        "category": "sense",
+        "middle_user": "Quick terminology note so we're on the same page going forward: when I say 'the long table' I don't mean the big communal work table, I mean specifically the glazing table against the back wall where we keep test tiles. Just want that clear before it comes up again.",
+        "tail_user_fragment": "When you mention the long table, use it the way I defined it before, not just any table.",
+        "probe": "What does 'the long table' refer to in our studio?",
+        "probes": [
+          "What does 'the long table' refer to in our studio?",
+          "When we say 'the long table,' which table do we mean?",
+          "Which specific table is 'the long table' at Terra & Ash?",
+          "Remind me what 'the long table' means the way we defined it."
+        ],
+        "gold": "The glazing table against the back wall where test tiles are kept, not the big communal work table.",
+        "keywords": [
+          "glazing table",
+          "test tiles",
+          "back wall"
+        ],
+        "anti_keywords": [
+          "communal work table"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c52-sense-2",
+        "category": "sense",
+        "middle_user": "Another definitions thing: at Terra & Ash, when I say 'open studio' I don't mean drop-in hours for the public. It specifically means our after-hours keyholder access for currently enrolled students only, no walk-ins, no guests.",
+        "tail_user_fragment": "Whenever open studio comes up later, remember it's the keyholder-only meaning we defined, not public drop-in.",
+        "probe": "What does 'open studio' mean at Terra & Ash?",
+        "probes": [
+          "What does 'open studio' mean at Terra & Ash?",
+          "How did we define 'open studio' for this studio?",
+          "What's the specific meaning of 'open studio' here, not the general term?",
+          "Who is 'open studio' actually available to?"
+        ],
+        "gold": "After-hours keyholder access for currently enrolled students only, not public drop-in hours.",
+        "keywords": [
+          "keyholder",
+          "enrolled students only",
+          "after-hours"
+        ],
+        "anti_keywords": [
+          "public drop-in",
+          "walk-ins"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c52-referent-1",
+        "category": "referent",
+        "middle_user": "Kiln decision time. We looked at three routes: (1) buying a second identical 7-cubic-foot electric kiln, (2) upgrading to one large 10-cubic-foot electric kiln and selling the old one, or (3) adding a small test kiln plus keeping the current one for full loads. After running the numbers, we're going with option three, the small test kiln alongside the existing one.",
+        "tail_user_fragment": "On the kiln decision we made, no need to walk through the options again, what test kiln brand would you actually suggest?",
+        "probe": "Which kiln option did we decide on?",
+        "probes": [
+          "Which kiln option did we decide on?",
+          "Out of the three kiln routes, which one did we choose?",
+          "Remind me what we settled on for the kiln situation.",
+          "What did we decide to do about adding kiln capacity?"
+        ],
+        "gold": "Option three: adding a small test kiln while keeping the existing 7-cubic-foot kiln for full loads.",
+        "keywords": [
+          "test kiln",
+          "keep existing kiln"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c52-referent-2",
+        "category": "referent",
+        "middle_user": "On instructor pay, we weighed three structures: (1) flat rate per class regardless of enrollment, (2) per-student rate with a minimum guarantee, or (3) a hybrid, flat rate for beginner classes and per-student for intermediate. We landed on the hybrid, option three.",
+        "tail_user_fragment": "For the instructor pay structure we settled on, don't recap it, just tell me what percentage split feels fair for the per-student part.",
+        "probe": "What pay structure did we decide on for instructors?",
+        "probes": [
+          "What pay structure did we decide on for instructors?",
+          "Which of the three pay options did we pick for instructors?",
+          "Remind me what we settled on for instructor pay.",
+          "How are we paying instructors now, per our decision?"
+        ],
+        "gold": "A hybrid structure: flat rate for beginner classes, per-student rate for intermediate classes.",
+        "keywords": [
+          "hybrid",
+          "flat rate beginner",
+          "per-student intermediate"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c52-stance-1",
+        "category": "stance",
+        "middle_user": "Just so you know where I stand: I think 8 students per wheel class is already too many for one instructor to give real feedback to, and I'd rather cap it at 6 even if it means slightly less revenue per session.",
+        "tail_user_fragment": "Given how I feel about class sizes, does the new studio layout still work?",
+        "probe": "What is the user's stance on class size caps?",
+        "probes": [
+          "What is the user's stance on class size caps?",
+          "How does the user feel about how many students should be in a wheel class?",
+          "What's the user's position on capping class size versus maximizing revenue?",
+          "What did the user say about ideal class sizes?"
+        ],
+        "gold": "The user prefers capping wheel classes at 6 students even at the cost of some revenue, viewing 8 as too many for real instructor feedback.",
+        "keywords": [
+          "cap at 6",
+          "too many for feedback"
+        ],
+        "anti_keywords": [
+          "8 students is fine",
+          "maximize revenue"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c52-stance-2",
+        "category": "stance",
+        "middle_user": "Honestly, my personal take is that we should phase out most of our in-house mixed glazes over the next year, even the ones students love, because the safety recordkeeping burden isn't worth it for a studio our size. Commercial pre-mixed is just less risk.",
+        "tail_user_fragment": "Keeping my view on glazes in mind, should the new glazing area still have a raw materials mixing station?",
+        "probe": "What is the user's stance on in-house mixed glazes versus commercial ones?",
+        "probes": [
+          "What is the user's stance on in-house mixed glazes versus commercial ones?",
+          "How does the user feel about continuing to mix glazes in-house?",
+          "What's the user's position on commercial pre-mixed glazes replacing in-house ones?",
+          "Why does the user want to phase out in-house glazes?"
+        ],
+        "gold": "The user wants to phase out most in-house mixed glazes in favor of commercial pre-mixed glazes, due to the safety recordkeeping burden, despite student preference for the in-house ones.",
+        "keywords": [
+          "phase out in-house glazes",
+          "commercial pre-mixed",
+          "safety recordkeeping burden"
+        ],
+        "anti_keywords": [
+          "expand in-house mixing",
+          "students love them so keep"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c52-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "One idea I'm ruling out entirely: doing a mobile pottery van that goes to schools and events. I looked into the insurance and equipment costs and it's just not worth it for us right now, so let's take that off the table completely.",
+        "tail_user_fragment": "",
+        "probe": "What idea did the user rule out for the studio?",
+        "probes": [
+          "What idea did the user rule out for the studio?",
+          "What expansion idea did we decide against?",
+          "Why did the user rule out the mobile pottery van idea?",
+          "What did the user say is off the table for the studio?"
+        ],
+        "gold": "A mobile pottery van visiting schools and events; ruled out due to insurance and equipment costs.",
+        "keywords": [
+          "mobile pottery van",
+          "ruled out",
+          "insurance costs"
+        ],
+        "anti_keywords": [
+          "decided to pursue",
+          "moving forward with the van"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c52-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "I've decided against hiring a dedicated part-time glaze technician position. I looked at the budget and it's cheaper and honestly simpler to just have the two senior instructors split glaze-mixing duties between them. That role is off the table for now.",
+        "tail_user_fragment": "",
+        "probe": "What staffing idea did the user decide against?",
+        "probes": [
+          "What staffing idea did the user decide against?",
+          "Did the studio end up hiring a glaze technician?",
+          "What did the user rule out regarding glaze-mixing staffing?",
+          "How will glaze-mixing duties be handled instead of hiring someone new?"
+        ],
+        "gold": "Hiring a dedicated part-time glaze technician; ruled out in favor of having the two senior instructors split glaze-mixing duties.",
+        "keywords": [
+          "glaze technician",
+          "ruled out",
+          "senior instructors split duties"
+        ],
+        "anti_keywords": [
+          "hired a glaze technician",
+          "new dedicated role"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c52-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Quick correction on square footage, earlier I said the new unit next door is 400 square feet, but I finally got the actual lease survey back and it's really 340 square feet after accounting for the shared utility closet. Use 340 going forward.",
+        "tail_user_fragment": "",
+        "probe": "How much additional square footage is the studio actually getting from the expansion?",
+        "probes": [
+          "How much additional square footage is the studio actually getting from the expansion?",
+          "What's the correct square footage of the new unit next door?",
+          "How big is the expansion space, per the corrected figure?",
+          "What did the lease survey say the new unit's square footage actually is?"
+        ],
+        "gold": "340 square feet, corrected down from the earlier estimate of 400 square feet due to a shared utility closet.",
+        "keywords": [
+          "340 square feet",
+          "utility closet"
+        ],
+        "anti_keywords": [
+          "400 square feet"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c52-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Correction on the wheel count, I told you earlier we have 10 pottery wheels total, but I recounted and two of them are actually retired hand-building tables we repurposed, so we only have 8 working wheels right now.",
+        "tail_user_fragment": "",
+        "probe": "How many working pottery wheels does the studio currently have?",
+        "probes": [
+          "How many working pottery wheels does the studio currently have?",
+          "What's the corrected count of pottery wheels at the studio?",
+          "How many actual working wheels do we have, after the recount?",
+          "Did the wheel count change from what was said earlier?"
+        ],
+        "gold": "8 working wheels, corrected down from the earlier stated 10 since two were actually repurposed hand-building tables.",
+        "keywords": [
+          "8 working wheels",
+          "repurposed"
+        ],
+        "anti_keywords": [
+          "10 wheels"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c52-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "I've been calling our new glaze recipe project 'Frodo' internally, just a codename so I don't have to keep typing 'the matte celadon reduction recipe' every time. From now on when I say Frodo, that's the one I mean.",
+        "tail_user_fragment": "Any update on Frodo? Last test tile came out flatter than I wanted.",
+        "probe": "What is 'Frodo' referring to in our conversation?",
+        "probes": [
+          "What is 'Frodo' referring to in our conversation?",
+          "What does the codename Frodo mean here?",
+          "When the user says Frodo, what are they talking about?",
+          "What project is 'Frodo' short for?"
+        ],
+        "gold": "A codename for the studio's matte celadon reduction glaze recipe project, not the Lord of the Rings character.",
+        "keywords": [
+          "matte celadon",
+          "glaze recipe",
+          "codename"
+        ],
+        "anti_keywords": [
+          "hobbit",
+          "ring bearer",
+          "Lord of the Rings",
+          "Shire"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c52-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "The old 10-cubic-foot kiln we're thinking of retiring, the crew nicknamed it 'Vader' years ago because it always runs about 30 degrees hotter than its dial says and has scorched more than one glaze batch. When I say Vader I mean that specific kiln.",
+        "tail_user_fragment": "Should we keep Vader around as a backup even after the new kiln arrives?",
+        "probe": "What does 'Vader' refer to in our studio conversations?",
+        "probes": [
+          "What does 'Vader' refer to in our studio conversations?",
+          "When the user mentions Vader, what are they talking about?",
+          "What is the nickname 'Vader' referring to at the studio?",
+          "Why is the kiln nicknamed Vader?"
+        ],
+        "gold": "A nickname for the old 10-cubic-foot kiln that runs about 30 degrees hotter than its dial indicates, not the Star Wars character.",
+        "keywords": [
+          "old kiln",
+          "runs hot",
+          "30 degrees hotter"
+        ],
+        "anti_keywords": [
+          "Darth Vader",
+          "Star Wars",
+          "Sith",
+          "Death Star"
+        ],
+        "distance": "far"
+      }
+    ]
+  },
+  {
+    "id": "c53",
+    "title": "Model railroad club layout rebuild",
+    "system": "You are a helpful assistant experienced in model railroading and hobby club operations, supporting a club planning a major layout rebuild.",
+    "project": "The user is the vice president of the Cedar Junction Model Railroad Club, a volunteer-run club rebuilding its HO-scale modular layout ahead of an upcoming public exhibition season. Together with the assistant they are working through benchwork and trackwork design, DCC wiring and signaling, scenery and scale modeling standards, exhibition logistics, and membership recruitment and training.",
+    "subtopics": [
+      "benchwork and trackwork design",
+      "DCC wiring and signaling",
+      "scenery and scale modeling standards",
+      "exhibition logistics",
+      "membership recruitment and training"
+    ],
+    "early_user_turns": [
+      "Hey, I'm VP of the Cedar Junction Model Railroad Club and we're mid-rebuild on our HO-scale modular layout ahead of exhibition season. I want to use this chat as an ongoing planning partner across the whole rebuild: benchwork, DCC wiring, scenery, exhibition logistics, recruiting new members, all of it. Works for you?",
+      "Let's start with benchwork and trackwork since nothing else can happen until that's solid. We're moving from a fixed layout to modular sections that need to travel to shows. What should drive the module design decisions?"
+    ],
+    "middle_filler_user_turns": [
+      "For DCC wiring, we're upgrading from an old DC block system. How many decoders should we budget for per module as a rule of thumb?",
+      "On scenery, our club has always been kind of loose about scale accuracy for background structures. Is it worth tightening that up now during the rebuild?",
+      "Exhibition logistics, our first show back is in about five months. How far ahead should we be booking table space at these model railroad conventions?",
+      "Membership-wise, we're down to 14 active members from almost 30 a few years back. Where do clubs like ours usually find new people these days?",
+      "Back to benchwork, what's a reasonable module width if we want two people to be able to carry it without a dolly?",
+      "For DCC, should we standardize on one decoder brand across the whole club or does mixing brands cause real problems?",
+      "Scenery follow-up, how do we handle ballast consistency across modules built by different members at different times?",
+      "For exhibition logistics, what's the actual setup-day timeline like for a modular layout our size, roughly how many hours?",
+      "On recruitment, should we be doing anything special to bring in younger members versus just running the same open house we always have?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to benchwork, once modules are built, what's the standard way to align the tracks precisely at the joints between them?",
+      "For DCC wiring, do we need a dedicated programming track separate from the main layout for individual locomotives?",
+      "On exhibition logistics, who should be the point of contact with the convention organizers, just you or should we rotate?",
+      "Quick scenery question, should ground cover be finished before or after track is ballasted?",
+      "Last thing on membership, should dues change at all once we're running two active layouts instead of one?"
+    ],
+    "plants": [
+      {
+        "id": "c53-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: when I say 'the yard' in this club, I don't mean a scenic rail yard on the layout. It's what we call our storage unit off-site where all the modules and spare track live between shows.",
+        "tail_user_fragment": "Whatever's happening with the yard, don't re-explain what it is, just tell me if we need a bigger unit.",
+        "probe": "What does 'the yard' refer to in our club's conversations?",
+        "probes": [
+          "What does 'the yard' refer to in our club's conversations?",
+          "When we say 'the yard,' what do we actually mean?",
+          "Is 'the yard' a scenic feature on the layout or something else?",
+          "What is stored in 'the yard'?"
+        ],
+        "gold": "The off-site storage unit where modules and spare track are kept between shows, not a scenic rail yard on the layout.",
+        "keywords": [
+          "storage unit",
+          "off-site",
+          "modules and spare track"
+        ],
+        "anti_keywords": [
+          "scenic rail yard",
+          "yard on the layout"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c53-sense-2",
+        "category": "sense",
+        "middle_user": "Another definitions thing: at Cedar Junction, 'running session' doesn't mean casual open running where anyone drives a train. It specifically means our scheduled timetable operating sessions where members are assigned dispatcher, engineer, and yardmaster roles for the evening.",
+        "tail_user_fragment": "For the next running session, using our specific meaning, who's dispatcher?",
+        "probe": "What does 'running session' mean at Cedar Junction?",
+        "probes": [
+          "What does 'running session' mean at Cedar Junction?",
+          "How did we define 'running session' for this club?",
+          "Is a running session casual or does it have assigned roles?",
+          "What roles get assigned during a running session?"
+        ],
+        "gold": "A scheduled timetable operating session with assigned roles (dispatcher, engineer, yardmaster), not casual open running.",
+        "keywords": [
+          "timetable operating session",
+          "assigned roles",
+          "dispatcher"
+        ],
+        "anti_keywords": [
+          "casual running",
+          "anyone can drive"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c53-referent-1",
+        "category": "referent",
+        "middle_user": "Track alignment decision. Three options: (1) precision alignment pins and sockets at every joint, (2) a simple bolt-through-flange method with washers for fine adjustment, or (3) magnetic alignment fixtures we'd have to buy custom. We went with option one, the alignment pins and sockets.",
+        "tail_user_fragment": "For the joint alignment method we picked, skip the recap, what pin diameter should we standardize on?",
+        "probe": "Which track alignment method did we choose for module joints?",
+        "probes": [
+          "Which track alignment method did we choose for module joints?",
+          "Out of the three alignment options, which did the club pick?",
+          "Remind me what we decided for aligning track at module joints.",
+          "What method are we using to line up track between modules?"
+        ],
+        "gold": "Alignment pins and sockets at every joint (option one).",
+        "keywords": [
+          "alignment pins",
+          "sockets"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c53-referent-2",
+        "category": "referent",
+        "middle_user": "On the DCC decoder brand, we compared three: (1) sticking with our old mixed collection and only replacing failures, (2) standardizing entirely on one premium brand going forward, or (3) standardizing on a mid-range brand for cost reasons. The committee voted for option three, the mid-range brand standardization.",
+        "tail_user_fragment": "For the decoder brand we settled on, no need to recap, what's a reasonable bulk order size to get a discount?",
+        "probe": "Which decoder brand approach did the committee decide on?",
+        "probes": [
+          "Which decoder brand approach did the committee decide on?",
+          "Out of the three decoder options, which did the committee pick?",
+          "What did we decide about standardizing DCC decoder brands?",
+          "Remind me what the committee voted for on decoders."
+        ],
+        "gold": "Standardizing on a mid-range decoder brand going forward, for cost reasons (option three).",
+        "keywords": [
+          "mid-range brand",
+          "standardize"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c53-stance-1",
+        "category": "stance",
+        "middle_user": "My personal take on scenery: I actually think we should hold every new structure to strict scale accuracy from now on, even background ones, because the loose approach has made the layout look inconsistent module to module. I know that's a harder sell to some of the older members.",
+        "tail_user_fragment": "Given how I feel about scale accuracy, should we grandfather in the existing background buildings?",
+        "probe": "What is the user's stance on scale accuracy for scenery?",
+        "probes": [
+          "What is the user's stance on scale accuracy for scenery?",
+          "How does the user feel about scale accuracy for new structures?",
+          "What's the user's position on the club's loose approach to background scenery?",
+          "Why does the user want stricter scale accuracy going forward?"
+        ],
+        "gold": "The user wants strict scale accuracy enforced for all new structures, including background ones, despite pushback from some older members.",
+        "keywords": [
+          "strict scale accuracy",
+          "all new structures"
+        ],
+        "anti_keywords": [
+          "keep the loose approach",
+          "accuracy doesn't matter"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c53-stance-2",
+        "category": "stance",
+        "middle_user": "Honestly, I don't think chasing a big social media presence is going to fix our membership problem. My view is we get more traction from doing hands-on demos at local hobby shops than from posting videos online, so that's where I want to put our limited volunteer time.",
+        "tail_user_fragment": "Keeping my view on recruitment in mind, should we still keep our club's social media account at all?",
+        "probe": "What is the user's stance on how the club should focus recruitment efforts?",
+        "probes": [
+          "What is the user's stance on how the club should focus recruitment efforts?",
+          "Does the user think social media or in-person demos are more effective for recruitment?",
+          "What's the user's position on where to put volunteer time for recruitment?",
+          "Why does the user prefer hobby shop demos over social media?"
+        ],
+        "gold": "The user believes in-person hobby shop demos are more effective than social media for recruitment, and wants volunteer time focused there rather than on social media.",
+        "keywords": [
+          "hobby shop demos",
+          "more effective than social media"
+        ],
+        "anti_keywords": [
+          "invest heavily in social media",
+          "social media is the priority"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c53-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "One thing I'm ruling out completely: going back to a permanent fixed layout at the clubhouse. We looked at the space and the cost of undoing the modular investment, and it's just not happening, we're staying fully modular.",
+        "tail_user_fragment": "",
+        "probe": "What layout approach did the club rule out?",
+        "probes": [
+          "What layout approach did the club rule out?",
+          "Did the club decide to go back to a fixed layout?",
+          "What did the user say is not happening regarding the layout format?",
+          "Why did the club rule out a permanent fixed layout?"
+        ],
+        "gold": "Returning to a permanent fixed layout at the clubhouse; the club is staying fully modular instead.",
+        "keywords": [
+          "ruled out",
+          "permanent fixed layout",
+          "staying modular"
+        ],
+        "anti_keywords": [
+          "switching back to fixed layout",
+          "building a permanent layout"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c53-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "I've decided against charging admission for our club open house days. We batted it around but it cuts against what we're trying to do with recruitment, so that idea is dead for now.",
+        "tail_user_fragment": "",
+        "probe": "What idea did the user rule out regarding open house days?",
+        "probes": [
+          "What idea did the user rule out regarding open house days?",
+          "Did the club decide to charge admission for open house?",
+          "What did the user decide against for the club's open house days?",
+          "Why was charging admission ruled out for open house?"
+        ],
+        "gold": "Charging admission for club open house days; ruled out because it conflicts with recruitment goals.",
+        "keywords": [
+          "ruled out",
+          "charging admission",
+          "open house"
+        ],
+        "anti_keywords": [
+          "decided to charge admission",
+          "added an entry fee"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c53-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Correction on membership numbers, I said 14 active members earlier, but two more just quietly lapsed on dues, so it's actually 12 active members as of this week.",
+        "tail_user_fragment": "",
+        "probe": "How many active members does the club currently have?",
+        "probes": [
+          "How many active members does the club currently have?",
+          "What's the corrected active membership count?",
+          "How many members are actually active now, after the lapses?",
+          "Did the membership count change from what was said earlier?"
+        ],
+        "gold": "12 active members, corrected down from the earlier figure of 14.",
+        "keywords": [
+          "12 active members"
+        ],
+        "anti_keywords": [
+          "14 active members"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c53-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Small correction, earlier I said we have 9 modules in the layout, but that included two that got water-damaged in storage and are being scrapped, not rebuilt. So really we're working with 7 modules going forward.",
+        "tail_user_fragment": "",
+        "probe": "How many modules is the club actually working with going forward?",
+        "probes": [
+          "How many modules is the club actually working with going forward?",
+          "What's the corrected module count for the layout?",
+          "How many modules survived after the water damage?",
+          "Did the module count change from what was said earlier?"
+        ],
+        "gold": "7 modules, corrected down from 9, since two water-damaged modules are being scrapped rather than rebuilt.",
+        "keywords": [
+          "7 modules",
+          "water-damaged",
+          "scrapped"
+        ],
+        "anti_keywords": [
+          "9 modules"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c53-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "We nicknamed our best-running locomotive 'Vin' because it never derails, smooth as anything even at speed. When I refer to Vin from now on that's the loco I mean, not a person.",
+        "tail_user_fragment": "Is Vin scheduled to run in the exhibition demo loop, or are we keeping it as a backup?",
+        "probe": "What does 'Vin' refer to in our club conversations?",
+        "probes": [
+          "What does 'Vin' refer to in our club conversations?",
+          "When the user mentions Vin, what are they talking about?",
+          "What is the nickname 'Vin' referring to at the club?",
+          "Why is the locomotive nicknamed Vin?"
+        ],
+        "gold": "A nickname for the club's most reliable, smooth-running locomotive that never derails, not a person or fictional character.",
+        "keywords": [
+          "locomotive",
+          "never derails",
+          "smooth running"
+        ],
+        "anti_keywords": [
+          "Mistborn",
+          "allomancer",
+          "Sanderson character",
+          "Vin the thief"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c53-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "We call Frank 'Yoda' behind his back, half affectionately, because he's been in the club 40 years and can fix any wiring problem by ear. When I mention Yoda in here, that's who I mean.",
+        "tail_user_fragment": "Should Yoda run point on training new members for the DCC wiring, given how much he knows?",
+        "probe": "Who does 'Yoda' refer to in our club conversations?",
+        "probes": [
+          "Who does 'Yoda' refer to in our club conversations?",
+          "When the user mentions Yoda, who are they talking about?",
+          "What is the nickname 'Yoda' referring to at the club?",
+          "Why is Frank nicknamed Yoda?"
+        ],
+        "gold": "A nickname for Frank, the club's most senior, knowledgeable member of 40 years who can diagnose wiring issues by ear, not the Star Wars character.",
+        "keywords": [
+          "Frank",
+          "40 years",
+          "senior member",
+          "wiring by ear"
+        ],
+        "anti_keywords": [
+          "Jedi Master",
+          "Star Wars",
+          "Grand Master",
+          "Dagobah"
+        ],
+        "distance": "far"
+      }
+    ]
+  },
+  {
+    "id": "c54",
+    "title": "Public aquarium new wing opening",
+    "system": "You are a helpful assistant experienced in aquarium operations and marine biology, supporting a public aquarium team preparing a new exhibit wing.",
+    "project": "The user is the assistant curator at Brackwater Bay Aquarium, preparing to open a new coral reef and shark touch-pool wing. Together with the assistant they are working through animal acquisition and quarantine protocols, life support system engineering, keeper staffing and training, exhibit design and visitor flow, and the wing's grand opening event.",
+    "subtopics": [
+      "animal acquisition and quarantine protocols",
+      "life support system engineering",
+      "keeper staffing and training",
+      "exhibit design and visitor flow",
+      "grand opening event planning"
+    ],
+    "early_user_turns": [
+      "Hi, I'm assistant curator at Brackwater Bay Aquarium and we're building out a new coral reef and shark touch-pool wing, opening in about four months. I'd like you to be my planning partner across the whole thing: animal acquisition, life support engineering, keeper staffing, exhibit design, and the opening event. Sound okay?",
+      "Let's start with animal acquisition and quarantine, since that has the longest lead time. We're sourcing coral colonies and small bamboo sharks for the touch pool. What should drive our quarantine protocol timeline?"
+    ],
+    "middle_filler_user_turns": [
+      "On life support systems, the touch pool needs a separate filtration loop from the main reef tank, right, or can they share one system?",
+      "For keeper staffing, how many keepers do we need per shift to safely run both the reef tank and the touch pool once we're open to the public?",
+      "Exhibit design question, how do we keep touch-pool visitors from overwhelming the bamboo sharks with too much handling in a single day?",
+      "Grand opening planning, we're thinking a member preview night before the public opening. How far ahead of the public date should that happen?",
+      "Back to acquisition, how do we vet a coral supplier for sustainable sourcing versus just going with whoever's cheapest?",
+      "Life support follow-up, what's a reasonable protein skimmer capacity for a reef tank this size?",
+      "Staffing again, should touch-pool keepers get specialized training beyond general aquarist training, given the public interaction?",
+      "For exhibit design, should the shark touch pool have a hard visitor cap per timed entry slot?",
+      "On the grand opening, is it worth inviting local school groups for a dedicated preview morning before the general public event?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to quarantine, what's the minimum observation period before a new coral colony goes into the display tank?",
+      "For life support, who should be on call if the reef tank's chemistry alarms trip in the middle of the night?",
+      "On staffing, should the touch-pool keepers rotate with reef-tank keepers or stay dedicated to one area?",
+      "Quick exhibit design question, should signage near the touch pool explain the sharks' conservation status?",
+      "Last thing, should the grand opening ribbon-cutting happen at the reef tank or the touch pool?"
+    ],
+    "plants": [
+      {
+        "id": "c54-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note before it trips us up: when I say 'the bay' at Brackwater, I don't mean the actual bay outside the building. It's our internal name for the off-exhibit quarantine holding room where new animals sit before going on display.",
+        "tail_user_fragment": "Whatever's happening in the bay right now, don't re-explain what it is, just tell me if it's at capacity.",
+        "probe": "What does 'the bay' refer to at Brackwater Bay Aquarium?",
+        "probes": [
+          "What does 'the bay' refer to at Brackwater Bay Aquarium?",
+          "When we say 'the bay' internally, what do we mean?",
+          "Is 'the bay' the body of water outside or something else?",
+          "What happens to animals in 'the bay' before they go on display?"
+        ],
+        "gold": "The off-exhibit quarantine holding room where new animals are kept before going on display, not the actual bay outside the building.",
+        "keywords": [
+          "quarantine holding room",
+          "off-exhibit",
+          "before display"
+        ],
+        "anti_keywords": [
+          "the actual bay",
+          "body of water outside"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c54-sense-2",
+        "category": "sense",
+        "middle_user": "Another definitions thing: when I say 'a touch' in this wing's context, I don't mean any random visitor contact. It specifically means a keeper-supervised, two-finger, dorsal-only contact with the bamboo sharks, following our exact protocol. Anything outside that isn't 'a touch,' it's just an incident.",
+        "tail_user_fragment": "If a visitor does something outside what counts as a touch under our definition, what's the reporting process?",
+        "probe": "What does 'a touch' specifically mean in the shark touch-pool protocol?",
+        "probes": [
+          "What does 'a touch' specifically mean in the shark touch-pool protocol?",
+          "How did we define 'a touch' for the touch pool?",
+          "What counts as 'a touch' versus an incident?",
+          "What's the exact protocol behind the term 'a touch'?"
+        ],
+        "gold": "A keeper-supervised, two-finger, dorsal-only contact with the bamboo sharks following the exact protocol; anything else counts as an incident, not a touch.",
+        "keywords": [
+          "keeper-supervised",
+          "two-finger",
+          "dorsal-only"
+        ],
+        "anti_keywords": [
+          "any visitor contact",
+          "unsupervised handling"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c54-referent-1",
+        "category": "referent",
+        "middle_user": "Filtration decision for the touch pool. Three options: (1) fully shared system with the main reef tank, (2) fully separate independent system, or (3) a semi-shared system with a valve to isolate the touch pool during a disease event. We're going with option three, the semi-shared isolatable system.",
+        "tail_user_fragment": "For the filtration setup we picked, skip the recap, what valve size should the isolation loop use?",
+        "probe": "Which filtration setup did we decide on for the touch pool?",
+        "probes": [
+          "Which filtration setup did we decide on for the touch pool?",
+          "Out of the three filtration options, which did we choose?",
+          "Remind me what we decided about the touch pool's filtration system.",
+          "Is the touch pool sharing filtration with the reef tank or not?"
+        ],
+        "gold": "A semi-shared system with a valve allowing the touch pool to be isolated from the main reef tank during a disease event (option three).",
+        "keywords": [
+          "semi-shared",
+          "isolation valve"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c54-referent-2",
+        "category": "referent",
+        "middle_user": "On coral suppliers, we compared three: (1) Reeftide Farms, aquacultured but pricier, (2) Coastal Marine Imports, wild-collected with sustainability certification, or (3) a hybrid sourcing 70 percent from Reeftide and 30 percent from a local frag-swap network. We went with the hybrid, option three.",
+        "tail_user_fragment": "For the coral sourcing plan we settled on, no need to recap it, what documentation should we request from the frag-swap side?",
+        "probe": "Which coral sourcing approach did we decide on?",
+        "probes": [
+          "Which coral sourcing approach did we decide on?",
+          "Out of the three coral supplier options, which did we choose?",
+          "Remind me what we decided about coral sourcing for the wing.",
+          "Are we using one coral supplier or a mix?"
+        ],
+        "gold": "The hybrid approach: about 70 percent from Reeftide Farms and 30 percent from a local frag-swap network (option three).",
+        "keywords": [
+          "hybrid sourcing",
+          "Reeftide",
+          "frag-swap network"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c54-stance-1",
+        "category": "stance",
+        "middle_user": "My honest stance on the touch pool is that we should cap it at a hard 20 visitors per 15-minute slot, even though that's fewer than what similar aquariums allow, because I've seen what happens to animal stress levels when pools get crowded.",
+        "tail_user_fragment": "Given how I feel about touch pool caps, does the timed-entry ticketing system even need to sell more slots per hour?",
+        "probe": "What is the user's stance on touch pool visitor caps?",
+        "probes": [
+          "What is the user's stance on touch pool visitor caps?",
+          "How does the user feel about how many visitors should be allowed per slot?",
+          "What's the user's position on visitor caps versus other aquariums' practices?",
+          "Why does the user want a lower visitor cap at the touch pool?"
+        ],
+        "gold": "The user wants a hard cap of 20 visitors per 15-minute slot at the touch pool, fewer than comparable aquariums allow, prioritizing animal stress levels.",
+        "keywords": [
+          "cap at 20",
+          "15-minute slot",
+          "animal stress"
+        ],
+        "anti_keywords": [
+          "allow more visitors",
+          "match other aquariums' higher caps"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c54-stance-2",
+        "category": "stance",
+        "middle_user": "Personally, I think we should commit to zero wild-collected coral in this wing at all, only aquacultured or frag-swapped, even if it costs more and takes longer to stock the tank. I don't want to be the aquarium explaining a wild-collection controversy five years from now.",
+        "tail_user_fragment": "Keeping my stance on sourcing in mind, should we still keep Coastal Marine Imports as a backup supplier just in case?",
+        "probe": "What is the user's stance on wild-collected coral for the new wing?",
+        "probes": [
+          "What is the user's stance on wild-collected coral for the new wing?",
+          "Does the user want any wild-collected coral in the new wing?",
+          "What's the user's position on aquacultured versus wild-collected coral?",
+          "Why does the user oppose using wild-collected coral?"
+        ],
+        "gold": "The user wants zero wild-collected coral in the new wing, only aquacultured or frag-swapped sources, even at higher cost and slower stocking, to avoid future controversy.",
+        "keywords": [
+          "zero wild-collected",
+          "aquacultured only",
+          "avoid controversy"
+        ],
+        "anti_keywords": [
+          "fine to use wild-collected",
+          "cost matters more than sourcing"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c54-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "One thing I'm ruling out for this phase: adding a separate stingray touch pool alongside the shark one. We looked at the space and staffing math and it's just too much for one opening, so that idea is shelved.",
+        "tail_user_fragment": "",
+        "probe": "What idea did the user rule out for this phase of the new wing?",
+        "probes": [
+          "What idea did the user rule out for this phase of the new wing?",
+          "Is there a stingray touch pool planned alongside the shark one?",
+          "What did the user decide to shelve for this opening?",
+          "Why was the stingray touch pool ruled out?"
+        ],
+        "gold": "Adding a separate stingray touch pool alongside the shark touch pool; ruled out due to space and staffing constraints for this opening.",
+        "keywords": [
+          "ruled out",
+          "stingray touch pool",
+          "shelved"
+        ],
+        "anti_keywords": [
+          "adding a stingray pool",
+          "moving forward with stingrays"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c54-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "I've decided against installing a 24/7 live-streaming webcam on the reef tank. It sounded good for marketing but our IT and legal review flagged too many liability concerns around minors on camera near the touch pool sightline, so that's off the table.",
+        "tail_user_fragment": "",
+        "probe": "What idea did the user rule out regarding the reef tank?",
+        "probes": [
+          "What idea did the user rule out regarding the reef tank?",
+          "Is there a live-streaming webcam planned for the reef tank?",
+          "What did legal review flag that caused an idea to be dropped?",
+          "Why was the reef tank webcam ruled out?"
+        ],
+        "gold": "A 24/7 live-streaming webcam on the reef tank; ruled out due to liability concerns around minors visible on camera near the touch pool.",
+        "keywords": [
+          "ruled out",
+          "live-streaming webcam",
+          "liability concerns"
+        ],
+        "anti_keywords": [
+          "installed the webcam",
+          "moving forward with live stream"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c54-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Correction on the reef tank size, I said 8,000 gallons earlier, but the engineering firm remeasured after the sump redesign and it's actually 7,200 gallons total system volume.",
+        "tail_user_fragment": "",
+        "probe": "What is the actual total system volume of the reef tank?",
+        "probes": [
+          "What is the actual total system volume of the reef tank?",
+          "What's the corrected gallon count for the reef tank?",
+          "How big is the reef tank system, after the remeasurement?",
+          "Did the reef tank's volume change from what was said earlier?"
+        ],
+        "gold": "7,200 gallons, corrected down from the earlier stated 8,000 gallons after the sump redesign remeasurement.",
+        "keywords": [
+          "7,200 gallons"
+        ],
+        "anti_keywords": [
+          "8,000 gallons"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c54-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Small correction on the sharks, I mentioned we're bringing in 5 bamboo sharks for the touch pool, but the source facility could only certify 4 as healthy enough for transfer, so it's 4 sharks for opening, not 5.",
+        "tail_user_fragment": "",
+        "probe": "How many bamboo sharks are actually coming in for the touch pool opening?",
+        "probes": [
+          "How many bamboo sharks are actually coming in for the touch pool opening?",
+          "What's the corrected count of bamboo sharks for the opening?",
+          "How many sharks were certified healthy for transfer?",
+          "Did the shark count change from what was said earlier?"
+        ],
+        "gold": "4 bamboo sharks, corrected down from the originally stated 5, since only 4 were certified healthy for transfer.",
+        "keywords": [
+          "4 bamboo sharks",
+          "certified healthy"
+        ],
+        "anti_keywords": [
+          "5 sharks"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c54-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "We've nicknamed our oldest bamboo shark 'Paul' since he's been with the aquarium longer than any of the new arrivals and the keepers say he sets the pace for how the others behave in the pool. When I say Paul, that's the shark I mean.",
+        "tail_user_fragment": "How's Paul adjusting to the new touch pool layout compared to the younger sharks?",
+        "probe": "Who or what is 'Paul' referring to in our conversation?",
+        "probes": [
+          "Who or what is 'Paul' referring to in our conversation?",
+          "When the user mentions Paul, what are they talking about?",
+          "What is the nickname 'Paul' referring to at the aquarium?",
+          "Why is the shark nicknamed Paul?"
+        ],
+        "gold": "A nickname for the aquarium's oldest bamboo shark, who has been there longest and sets behavioral pace for the others, not the Dune character.",
+        "keywords": [
+          "oldest bamboo shark",
+          "sets the pace",
+          "longest at aquarium"
+        ],
+        "anti_keywords": [
+          "Paul Atreides",
+          "Dune",
+          "Kwisatz Haderach",
+          "spice"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c54-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Our facilities diver, the guy who handles all the underwater maintenance and can fix a leaking seal faster than anyone, the whole team just calls him 'Chewie' because he's enormous and never says much. When I bring up Chewie in here, that's who I'm talking about.",
+        "tail_user_fragment": "Is Chewie scheduled to do the pre-opening seal inspection on the touch pool acrylic?",
+        "probe": "Who does 'Chewie' refer to in our conversation?",
+        "probes": [
+          "Who does 'Chewie' refer to in our conversation?",
+          "When the user mentions Chewie, who are they talking about?",
+          "What is the nickname 'Chewie' referring to at the aquarium?",
+          "Why is the facilities diver nicknamed Chewie?"
+        ],
+        "gold": "A nickname for the aquarium's facilities/maintenance diver, a large, quiet man known for fixing underwater equipment quickly, not the Star Wars character.",
+        "keywords": [
+          "facilities diver",
+          "maintenance",
+          "fixes equipment"
+        ],
+        "anti_keywords": [
+          "Chewbacca",
+          "Star Wars",
+          "Wookiee",
+          "Millennium Falcon"
+        ],
+        "distance": "far"
+      }
+    ]
+  }
+]

@@ -1,0 +1,1563 @@
+[
+  {
+    "id": "c43",
+    "title": "Community observatory telescope upgrade",
+    "system": "You are a helpful assistant experienced in amateur astronomy and small nonprofit operations, supporting a volunteer group upgrading a community observatory.",
+    "project": "The user is Marcus Delacroix, volunteer coordinator at Hollow Ridge Observatory, a member-run amateur observatory upgrading its main telescope, dome, and public programs. Together with the assistant they are working through telescope and mount selection, dome and building upgrades, public viewing nights and outreach, grant funding, and volunteer training.",
+    "subtopics": [
+      "telescope and mount selection",
+      "dome and building upgrades",
+      "public viewing nights and outreach",
+      "grant funding",
+      "volunteer training"
+    ],
+    "early_user_turns": [
+      "Hey, so Hollow Ridge Observatory is finally getting funding to replace our aging main telescope, and the dome needs work too. I want to use this chat to plan the whole upgrade with you: the scope itself, the dome, our public nights, grant paperwork, and getting volunteers trained on the new gear. Can you help me work through all of it over the next few months?",
+      "Let's start with the telescope and mount. Our current 10-inch Newtonian is on its last legs and the drive motor grinds audibly now. What should we be weighing when picking a replacement for a volunteer-run observatory that does both public viewing and some member imaging?"
+    ],
+    "middle_filler_user_turns": [
+      "For the dome, how do we even estimate whether our existing pier and floor can handle a heavier optical tube assembly?",
+      "On public viewing nights, what's a reasonable ratio of trained volunteers to guests for a night where we're expecting maybe 80 people?",
+      "Grant funding question: our regional astronomy foundation wants a detailed use-of-funds breakdown before they'll even consider us. How granular should that get?",
+      "Back to the telescope, how much should we budget for a decent set of eyepieces separately from the OTA and mount cost?",
+      "For volunteer training, should new volunteers be allowed to operate the mount unsupervised after a single training session, or does that take longer to earn?",
+      "Dome question again: is a manual crank shutter still reasonable for us, or should we be budgeting for a motorized one given our aging volunteer base?",
+      "For outreach, should we be pursuing school field trip partnerships actively, or just let word of mouth keep growing our public nights organically?",
+      "On grants, is it normal for foundations to want photos and attendance logs from our past public nights as supporting evidence?",
+      "One of our longtime volunteers, Denise, has been amazing at polar-aligning the current mount blind in the dark. I want to make sure we use her well on the new equipment too.",
+      "For training materials, should we build a written manual for the new mount, or is video walkthrough enough for most volunteers?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to public viewing nights, what's a good cutoff for turning guests away once we're at capacity for a session?",
+      "For grant funding, when do we typically hear back after submitting the use-of-funds breakdown?",
+      "One more dome question, how often should the shutter mechanism get serviced once it's motorized?",
+      "For volunteer training, should returning volunteers get a refresher session each season, or only new ones need formal training?",
+      "Last thing today, should we announce the new telescope publicly before or after it's actually installed and tested?"
+    ],
+    "plants": [
+      {
+        "id": "c43-referent-1",
+        "category": "referent",
+        "middle_user": "Telescope decision time. We had three finalists: (1) a new 16-inch Ritchey-Chretien on a fresh pier, (2) a refurbished 14-inch Schmidt-Cassegrain from a dealer trade-in program, or (3) a larger 20-inch manual Dobsonian for pure visual use. The board voted and we're going with the refurbished 14-inch SCT, mostly for the cost savings and the fact it still supports imaging.",
+        "tail_user_fragment": "On the telescope we picked, no need to recap the options again, what kind of focuser upgrade should we budget for it?",
+        "probe": "Which telescope did Hollow Ridge decide to get?",
+        "probes": [
+          "Which telescope did Hollow Ridge decide to get?",
+          "Out of the three telescope finalists, which one did the board choose?",
+          "What did we settle on for the new main telescope?",
+          "Remind me which scope we picked for the upgrade."
+        ],
+        "gold": "The refurbished 14-inch Schmidt-Cassegrain from the dealer trade-in program, not the new 16-inch Ritchey-Chretien or the 20-inch Dobsonian.",
+        "keywords": [
+          "14-inch",
+          "schmidt-cassegrain",
+          "refurbished"
+        ],
+        "anti_keywords": [
+          "16-inch",
+          "ritchey",
+          "dobsonian",
+          "20-inch"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c43-referent-2",
+        "category": "referent",
+        "middle_user": "Dome decision. Three routes: (1) a full slit dome replacement, (2) converting to a simple roll-off roof, or (3) a clamshell dome that opens in two halves. Given our budget and the pier concerns, we're going with the roll-off roof.",
+        "tail_user_fragment": "For the roof approach we're doing, don't re-explain the alternatives, what track material holds up best outdoors long-term?",
+        "probe": "What did we decide to do about the dome structure?",
+        "probes": [
+          "What did we decide to do about the dome structure?",
+          "Which of the three dome options did we choose?",
+          "What's the plan for the observatory roof/dome now?",
+          "Remind me which dome route we settled on."
+        ],
+        "gold": "A roll-off roof conversion, not a full slit dome replacement or a clamshell dome.",
+        "keywords": [
+          "roll-off roof"
+        ],
+        "anti_keywords": [
+          "slit dome",
+          "clamshell"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c43-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the annex' is overloaded here. Some volunteers call our old equipment storage shed behind the main building 'the annex,' but when I say the annex to you, I always mean the new classroom addition we're building onto the main observatory for school groups. That's the sense I want.",
+        "tail_user_fragment": "Is the annex on track to be framed before the fall field trip season starts?",
+        "probe": "When I said 'the annex,' what was I referring to?",
+        "probes": [
+          "When I said 'the annex,' what was I referring to?",
+          "Which of the two things called 'the annex' did I mean?",
+          "What does 'the annex' refer to in our conversation?",
+          "If I mention the annex again, what should you understand that to be?"
+        ],
+        "gold": "The new classroom addition being built onto the main observatory for school groups, not the old equipment storage shed.",
+        "keywords": [
+          "classroom addition",
+          "new addition"
+        ],
+        "anti_keywords": [
+          "storage shed",
+          "equipment shed"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c43-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'open house' from now on I mean our free monthly public viewing night that anyone can walk into. I know some members casually call our members-only preview sessions an 'open house' too, but with you, open house always means the free public one.",
+        "tail_user_fragment": "How many volunteers should we schedule for the next open house given the clear-sky forecast?",
+        "probe": "When I say 'open house,' which event do I mean?",
+        "probes": [
+          "When I say 'open house,' which event do I mean?",
+          "Which event does 'open house' refer to in our conversation?",
+          "Is 'open house' the public event or the members-only preview?",
+          "If I mention open house again, what should you assume I'm talking about?"
+        ],
+        "gold": "The free monthly public viewing night open to anyone, not the members-only preview session.",
+        "keywords": [
+          "free",
+          "public viewing night"
+        ],
+        "anti_keywords": [
+          "members-only",
+          "preview session"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c43-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule going forward: Hollow Ridge never rents out the observatory for private paid events, corporate bookings, or commercial photo shoots. We are a free community resource and I will not entertain that as a revenue stream no matter how tight the budget gets.",
+        "tail_user_fragment": "",
+        "probe": "What are some ideas for generating extra revenue for the observatory?",
+        "probes": [
+          "What are some ideas for generating extra revenue for the observatory?",
+          "Give me three ways we could raise more money for Hollow Ridge.",
+          "How could we bring in additional income beyond grants and donations?",
+          "Suggest revenue ideas that don't rely only on grant funding."
+        ],
+        "gold": "Suggests approaches like expanded grant applications, membership dues, merchandise, or donation drives, while never proposing paid private rentals, corporate bookings, or commercial photo shoots, ideally recalling the no-commercial-rental rule.",
+        "keywords": [
+          "grants",
+          "membership dues",
+          "donations"
+        ],
+        "anti_keywords": [
+          "private rental",
+          "corporate booking",
+          "photo shoot"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c43-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: no permanent structural changes to the historic main building's facade. It's on the county heritage register, so whatever we do to the dome or roof has to be reversible and not alter the exterior appearance from the street. Don't suggest anything that touches the facade permanently.",
+        "tail_user_fragment": "",
+        "probe": "What are our options for improving the dome's weatherproofing?",
+        "probes": [
+          "What are our options for improving the dome's weatherproofing?",
+          "How could we better weatherproof the observatory structure?",
+          "What upgrades could help with the roof's weather sealing?",
+          "Suggest ways to fix water intrusion around the dome."
+        ],
+        "gold": "Suggests reversible measures like improved seals, flashing, or interior weatherproof coatings, while never proposing permanent facade alterations, ideally recalling the heritage-register constraint.",
+        "keywords": [
+          "reversible",
+          "seals",
+          "flashing"
+        ],
+        "anti_keywords": [
+          "permanent facade",
+          "exterior alteration"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c43-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on fundraising platforms: we already tried a crowdfunding site called StarBacker last spring, ran a campaign for two months, and it barely cleared $600 after fees. That platform is dead to us.",
+        "tail_user_fragment": "",
+        "probe": "What crowdfunding or online fundraising approach should we try next?",
+        "probes": [
+          "What crowdfunding or online fundraising approach should we try next?",
+          "Given our past attempt, what online fundraising channel should we pursue?",
+          "How should we try raising money online going forward?",
+          "What's a better approach than what we already tried for online fundraising?"
+        ],
+        "gold": "Anything except StarBacker, e.g. a direct donation page, local business sponsorship drive, or a different established crowdfunding platform, ideally acknowledging StarBacker was tried and underperformed.",
+        "keywords": [
+          "600",
+          "fees"
+        ],
+        "anti_keywords": [
+          "starbacker"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c43-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we sent our old mirror out for recoating to a shop called Meridian Optics last year. It took five months instead of the promised six weeks, and the coating came back with visible pinholes we had to dispute. Not using them again.",
+        "tail_user_fragment": "",
+        "probe": "Who should we use for recoating the new telescope's optics when the time comes?",
+        "probes": [
+          "Who should we use for recoating the new telescope's optics when the time comes?",
+          "What vendor should handle future mirror or optics recoating?",
+          "Given our past experience, where should we send optics for recoating?",
+          "Suggest a recoating shop for the observatory's optics."
+        ],
+        "gold": "Anything except Meridian Optics, e.g. a different vetted optics recoating shop with verifiable turnaround references, ideally acknowledging Meridian Optics' slow, defective work was tried and rejected.",
+        "keywords": [
+          "pinholes",
+          "five months"
+        ],
+        "anti_keywords": [
+          "meridian optics"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c43-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our regional astronomy foundation grant tracking number is GR-2291, submitted for $18,400. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": "",
+        "probe": "What is our grant tracking number and how much did we request?",
+        "probes": [
+          "What is our grant tracking number and how much did we request?",
+          "What's the reference number for the foundation grant, and the requested amount?",
+          "Remind me the grant ID and dollar amount we applied for.",
+          "What tracking number and funding amount are attached to our grant application?"
+        ],
+        "gold": "GR-2291, requesting $18,400.",
+        "keywords": [
+          "GR-2291",
+          "18,400"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c43-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Budget note for my own records: the new motorized shutter draws 3.2 kW on startup, so we'll need a dedicated breaker on that circuit. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "How much power does the motorized shutter draw on startup?",
+        "probes": [
+          "How much power does the motorized shutter draw on startup?",
+          "What's the startup power draw for the new dome shutter?",
+          "Remind me the electrical load figure for the shutter motor.",
+          "What did we note about the shutter's power requirements?"
+        ],
+        "gold": "3.2 kW on startup, requiring a dedicated breaker.",
+        "keywords": [
+          "3.2 kW"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c43-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our telescope fundraising campaign spreadsheet 'Frodo' from now on. Every internal doc and email thread should say Frodo instead of the real campaign name, since a couple of foundation reviewers are on our general mailing list.",
+        "tail_user_fragment": "Is Frodo up to date with the latest pledge totals from this week's mailer?",
+        "probe": "What does 'Frodo' refer to in our project?",
+        "probes": [
+          "What does 'Frodo' refer to in our project?",
+          "If I mention Frodo again, what should you understand that to mean?",
+          "Remind me what we're calling Frodo internally.",
+          "What is Frodo a codename for?"
+        ],
+        "gold": "The telescope fundraising campaign spreadsheet.",
+        "keywords": [
+          "fundraising campaign",
+          "spreadsheet",
+          "pledge"
+        ],
+        "anti_keywords": [
+          "hobbit",
+          "shire",
+          "ring"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c43-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call the old grinding drive motor on the current mount 'Vader' in all future notes. It seemed fitting given the noise it makes, and it's easier than typing out the model number every time we talk about swapping it out.",
+        "tail_user_fragment": "Should we try to get Vader repaired one more time, or just retire it once the new mount arrives?",
+        "probe": "What does 'Vader' refer to in our conversation?",
+        "probes": [
+          "What does 'Vader' refer to in our conversation?",
+          "If I mention Vader later, what should you take that to mean?",
+          "What is Vader a codename for in our project?",
+          "Remind me what Vader refers to internally."
+        ],
+        "gold": "The old, noisy drive motor on the current telescope mount that's being retired.",
+        "keywords": [
+          "drive motor",
+          "old mount"
+        ],
+        "anti_keywords": [
+          "star wars",
+          "sith",
+          "dark side"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c44",
+    "title": "Diagnostic assay platform startup",
+    "system": "You are a helpful assistant experienced in biotech operations and early-stage startups, supporting a founding team building a diagnostic assay platform.",
+    "project": "The user is a co-founder at Verdant Biolabs, an early-stage startup developing a rapid diagnostic assay platform. Together with the assistant they are working through lab buildout and equipment, IRB and regulatory approval, reagent supply chain, seed fundraising, and hiring the first scientists.",
+    "subtopics": [
+      "lab buildout and equipment",
+      "IRB and regulatory approval",
+      "reagent supply chain",
+      "seed fundraising",
+      "hiring first scientists"
+    ],
+    "early_user_turns": [
+      "Hey, Verdant Biolabs is moving out of the incubator bench space and into our own lab, and there's a lot happening at once: buildout, IRB approval for our first human samples, locking down reagent suppliers, closing our seed round, and hiring our first two scientists. Can I use this chat as a planning partner across all of it?",
+      "Let's start with the lab buildout. We're taking over a 2,000 square foot space that was previously a general chem lab. What should we prioritize first for a molecular diagnostics workflow?"
+    ],
+    "middle_filler_user_turns": [
+      "On IRB approval, how long should we realistically expect between initial protocol submission and a full approval for a study using leftover clinical samples?",
+      "For reagent supply chain, how many backup suppliers should we qualify for a critical reagent before we feel safe, versus just relying on one?",
+      "Seed fundraising question: how should we think about the split between a lead investor and a syndicate of smaller checks for a round this size?",
+      "Back to the lab buildout, do we need a dedicated PCR-clean room separate from the general bench area at our stage, or is that overkill?",
+      "For hiring, what should the technical interview actually test for a first scientist hire when we don't have a dedicated hiring manager yet?",
+      "On IRB, what's the most common reason first-time submissions get sent back for revisions rather than approved outright?",
+      "Reagent supply chain again, should we be negotiating a volume-based contract now, before we know our actual assay throughput, or wait?",
+      "For fundraising, how much runway should the seed round realistically buy us given our burn rate assumptions?",
+      "One of our advisors, Dr. Chen, has been incredibly generous with intros to potential seed investors. I want to make sure we're not overusing her network.",
+      "For hiring, should the first scientist report directly to me, or should we bring on a lab manager first to handle that layer?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to reagent supply chain, how should we structure a backup supplier agreement so it doesn't just sit unused and expire?",
+      "For IRB, once we get approval, how often do we need to file continuing review reports?",
+      "One more on fundraising, should we loop investors in on the IRB timeline, or keep that separate from the pitch narrative?",
+      "For hiring, what's a fair equity range to offer a first scientist hire at our stage?",
+      "Last thing today, should the lab buildout timeline be public to investors, or kept internal until it's closer to done?"
+    ],
+    "plants": [
+      {
+        "id": "c44-referent-1",
+        "category": "referent",
+        "middle_user": "Lab space decision. We had three options: (1) the 2,000 sq ft former chem lab we mentioned, requiring a full HVAC retrofit, (2) a smaller 1,200 sq ft turnkey wet lab suite in a biotech incubator with shared equipment, or (3) building out raw shell space in a new life sciences building with a longer buildout timeline but full customization. We went with option two, the turnkey incubator suite, to get moving faster.",
+        "tail_user_fragment": "For the lab space we picked, no need to recap the options again, what shared equipment should we prioritize reserving time on first?",
+        "probe": "Which lab space did Verdant decide to move into?",
+        "probes": [
+          "Which lab space did Verdant decide to move into?",
+          "Out of the three lab space options, which one did we choose?",
+          "What did we settle on for the new lab location?",
+          "Remind me which space we picked for the buildout."
+        ],
+        "gold": "The turnkey 1,200 sq ft wet lab suite in a biotech incubator with shared equipment, not the 2,000 sq ft former chem lab or the raw shell space in a new building.",
+        "keywords": [
+          "turnkey",
+          "incubator suite",
+          "1,200"
+        ],
+        "anti_keywords": [
+          "2,000 sq ft",
+          "shell space",
+          "chem lab"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c44-referent-2",
+        "category": "referent",
+        "middle_user": "Assay chemistry decision. Three approaches were on the table: (1) license an existing lateral flow chemistry from a partner lab, (2) develop our own PCR-based chemistry in-house from scratch, or (3) a hybrid using a licensed enzyme with our own proprietary buffer formulation. The science team picked the hybrid approach, licensed enzyme plus our own buffer.",
+        "tail_user_fragment": "On the chemistry approach we're using, don't walk through the alternatives again, what's the timeline to a working prototype assay?",
+        "probe": "Which assay chemistry approach did the science team choose?",
+        "probes": [
+          "Which assay chemistry approach did the science team choose?",
+          "Out of the three chemistry approaches, which one did we go with?",
+          "What did we decide on for our core assay chemistry?",
+          "Remind me which chemistry approach we settled on."
+        ],
+        "gold": "The hybrid approach: a licensed enzyme combined with the company's own proprietary buffer formulation, not a fully licensed lateral flow chemistry or a fully in-house PCR chemistry.",
+        "keywords": [
+          "hybrid",
+          "licensed enzyme",
+          "proprietary buffer"
+        ],
+        "anti_keywords": [
+          "lateral flow",
+          "fully in-house pcr"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c44-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the pipeline' is overloaded on our team. Our sales team sometimes calls their list of prospective distributor deals 'the pipeline,' but when I say the pipeline to you, I always mean our bioinformatics data-processing pipeline that turns raw assay signal into a result call. That's the sense I want here.",
+        "tail_user_fragment": "Is the pipeline validated enough to trust for the IRB study's sample results, or should we still manually double-check outputs?",
+        "probe": "When I said 'the pipeline,' what was I referring to?",
+        "probes": [
+          "When I said 'the pipeline,' what was I referring to?",
+          "Which of the two things called 'the pipeline' did I mean?",
+          "What does 'the pipeline' refer to in our conversation?",
+          "If I mention the pipeline again, what should you understand that to be?"
+        ],
+        "gold": "The bioinformatics data-processing pipeline that converts raw assay signal into a result call, not the sales team's list of prospective distributor deals.",
+        "keywords": [
+          "bioinformatics",
+          "data-processing",
+          "result call"
+        ],
+        "anti_keywords": [
+          "distributor deals",
+          "sales prospects"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c44-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the panel' from here on I mean the scientific advisory panel we're assembling, the three outside experts reviewing our assay design. I know some people use 'panel' for the antibody test panel too, but with you, the panel always means the advisors.",
+        "tail_user_fragment": "How often should the panel actually meet once it's fully assembled?",
+        "probe": "When I refer to 'the panel,' which group do I mean?",
+        "probes": [
+          "When I refer to 'the panel,' which group do I mean?",
+          "Which does 'the panel' refer to, the advisors or the antibody test panel?",
+          "What does 'the panel' mean in our conversation?",
+          "If I mention the panel again, what should you assume I'm talking about?"
+        ],
+        "gold": "The scientific advisory panel of three outside experts reviewing the assay design, not the antibody test panel.",
+        "keywords": [
+          "advisory panel",
+          "outside experts"
+        ],
+        "anti_keywords": [
+          "antibody panel",
+          "test panel"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c44-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the core science: Verdant never outsources the core assay chemistry development to a contract research organization. We can outsource peripheral things like manufacturing scale-up later, but the actual chemistry IP stays developed in-house, no exceptions even if a CRO offers to move faster.",
+        "tail_user_fragment": "",
+        "probe": "How could we speed up assay chemistry development given our tight timeline?",
+        "probes": [
+          "How could we speed up assay chemistry development given our tight timeline?",
+          "What are some ways to accelerate the core chemistry work?",
+          "Give me ideas for moving faster on the assay chemistry.",
+          "Suggest approaches to hit our chemistry milestones sooner."
+        ],
+        "gold": "Suggests approaches like hiring an additional in-house scientist, parallelizing internal experiments, or licensing a peripheral component, while never proposing outsourcing core chemistry development to a CRO, ideally recalling the in-house-only rule.",
+        "keywords": [
+          "in-house",
+          "additional scientist",
+          "parallelize"
+        ],
+        "anti_keywords": [
+          "contract research organization",
+          "CRO",
+          "outsource chemistry"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c44-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line on fundraising: no single seed investor gets a board seat, regardless of check size. We'll offer board observer rights to the lead, but an actual board seat is off the table for this round. Don't propose that as a way to close a larger check.",
+        "tail_user_fragment": "",
+        "probe": "How could we get a larger investor to commit a bigger check for the seed round?",
+        "probes": [
+          "How could we get a larger investor to commit a bigger check for the seed round?",
+          "What could we offer to close a bigger seed check?",
+          "What terms might convince a larger investor to increase their commitment?",
+          "Suggest ways to make the round more attractive to a lead investor."
+        ],
+        "gold": "Suggests approaches like board observer rights, pro-rata rights, or information rights, while never proposing an actual board seat, ideally recalling the no-board-seat rule.",
+        "keywords": [
+          "observer rights",
+          "pro-rata",
+          "information rights"
+        ],
+        "anti_keywords": [
+          "board seat"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c44-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on reagent suppliers: we already tried a supplier called NovaChem Supply for our core enzyme reagent, and two of the last three lots had inconsistent activity levels that threw off our assay controls. We're done with them.",
+        "tail_user_fragment": "",
+        "probe": "Who should we source the core enzyme reagent from going forward?",
+        "probes": [
+          "Who should we source the core enzyme reagent from going forward?",
+          "What supplier should we use for the enzyme reagent now?",
+          "Given the lot problems, where should we get this reagent from?",
+          "Suggest a supplier for our core assay enzyme."
+        ],
+        "gold": "Anything except NovaChem Supply, e.g. a different vetted reagent supplier with lot-to-lot certificates of analysis, ideally acknowledging NovaChem's inconsistent lots were tried and rejected.",
+        "keywords": [
+          "inconsistent",
+          "lots"
+        ],
+        "anti_keywords": [
+          "novachem"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c44-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we used a recruiting firm called TalentSprout to source candidates for our first scientist hire. Every candidate they sent had a background in industrial chemistry, not molecular biology, completely mismatched to the role. Not using them again.",
+        "tail_user_fragment": "",
+        "probe": "How should we source candidates for our next scientist hire?",
+        "probes": [
+          "How should we source candidates for our next scientist hire?",
+          "What recruiting approach should we use for the next hire?",
+          "Given the mismatch last time, how should we find our next scientist?",
+          "Suggest a way to recruit for the scientist role."
+        ],
+        "gold": "Anything except TalentSprout, e.g. a different recruiter specializing in molecular biology, university lab networks, or targeted outreach through advisors, ideally acknowledging TalentSprout's mismatched candidates were tried and rejected.",
+        "keywords": [
+          "mismatched",
+          "industrial chemistry"
+        ],
+        "anti_keywords": [
+          "talentsprout"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c44-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our IRB protocol number is IRB-4471-B, approved on the 14th. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": "",
+        "probe": "What is our IRB protocol number and when was it approved?",
+        "probes": [
+          "What is our IRB protocol number and when was it approved?",
+          "What's the reference number for our IRB approval, and the date?",
+          "Remind me the IRB protocol ID and approval date.",
+          "What tracking number is attached to our IRB approval?"
+        ],
+        "gold": "IRB-4471-B, approved on the 14th.",
+        "keywords": [
+          "IRB-4471-B"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c44-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Fundraising note for my own records: our seed round target is $2.4 million, and we currently have $1.6 million in soft-circled commitments. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is our seed round target and how much is currently committed?",
+        "probes": [
+          "What is our seed round target and how much is currently committed?",
+          "How much have we raised so far toward the seed round target?",
+          "Remind me the seed round goal and current commitments.",
+          "What's the target amount and soft-circled total for the round?"
+        ],
+        "gold": "$2.4 million target, with $1.6 million currently soft-circled.",
+        "keywords": [
+          "2.4 million",
+          "1.6 million"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c44-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our automated liquid handling robot 'Sauron' from now on. Every internal doc and vendor email should say Sauron instead of the real model name, since we're referencing maintenance issues with the vendor sometimes and don't want that searchable.",
+        "tail_user_fragment": "Is Sauron calibrated well enough to trust for the next validation run, or should we still spot-check by hand?",
+        "probe": "What does 'Sauron' refer to in our project?",
+        "probes": [
+          "What does 'Sauron' refer to in our project?",
+          "If I mention Sauron again, what should you understand that to mean?",
+          "Remind me what we're calling Sauron internally.",
+          "What is Sauron a codename for?"
+        ],
+        "gold": "The automated liquid handling robot used in the lab.",
+        "keywords": [
+          "liquid handling robot",
+          "automated"
+        ],
+        "anti_keywords": [
+          "dark lord",
+          "ring",
+          "eye"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c44-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our senior scientific advisor 'Yoda' in all future notes. It's just faster to type than her full name and title every time we discuss scheduling or feedback.",
+        "tail_user_fragment": "Can you draft a short update email to Yoda summarizing this week's assay results?",
+        "probe": "Who does 'Yoda' refer to in our conversation?",
+        "probes": [
+          "Who does 'Yoda' refer to in our conversation?",
+          "If I mention Yoda later, what should you take that to mean?",
+          "Who is Yoda a codename for in our project?",
+          "Remind me who Yoda refers to internally."
+        ],
+        "gold": "The company's senior scientific advisor.",
+        "keywords": [
+          "senior scientific advisor"
+        ],
+        "anti_keywords": [
+          "jedi master",
+          "green",
+          "force"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c45",
+    "title": "Planetarium dome show relaunch",
+    "system": "You are a helpful assistant experienced in museum and informal science education operations, supporting a director relaunching a planetarium's dome shows.",
+    "project": "The user is the director at Cedarholm Planetarium, relaunching its dome shows with a new projector system and an original resident show. Together with the assistant they are working through the projector and dome system upgrade, the new show script and narration, school field trip programs, membership and ticketing, and a community fundraising gala.",
+    "subtopics": [
+      "projector and dome system upgrade",
+      "new show script and narration",
+      "school field trip programs",
+      "membership and ticketing",
+      "community fundraising gala"
+    ],
+    "early_user_turns": [
+      "Hi, Cedarholm Planetarium is relaunching after years of running the same tired dome show on aging equipment. We're upgrading the projector system, writing a brand-new original show, revamping our school field trip program, redoing membership tiers, and throwing a fundraising gala to help pay for it all. I'd like to plan the whole relaunch with you.",
+      "Let's start with the projector and dome system. Our current setup is a single-channel analog star projector from the 90s. What should I be weighing when picking a full-dome digital replacement?"
+    ],
+    "middle_filler_user_turns": [
+      "For the new show script, how long should a resident dome show typically run for a mixed family audience, versus something aimed more at adults?",
+      "On school field trips, how far in advance do teachers typically need to book a planetarium slot for it to fit their curriculum planning?",
+      "Membership question: should we offer a single flat membership tier, or multiple tiers based on visit frequency?",
+      "For the gala, what's a realistic per-ticket price for a first-time fundraising event at a mid-size regional planetarium?",
+      "Back to the projector, how disruptive is the installation process, in terms of how long the dome would need to be closed to the public?",
+      "For the show script, should the narration be pre-recorded, or should we keep doing live narration like we do now?",
+      "On field trips, what's a reasonable group size cap per session before the experience starts to suffer?",
+      "Membership again, should family memberships include unlimited free dome show admission, or a capped number of visits per year?",
+      "One of our part-time staff, Alicia, has turned out to be a genuinely gifted live narrator. I want to make sure the new show plays to that strength.",
+      "For the gala, should it double as a members-only preview of the new show, or stay a separate event entirely?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the projector install, what should our contingency plan be if it slips past our planned reopening date?",
+      "For field trips, should we require a minimum group size to book a session, or accept any size?",
+      "One more on membership, should lapsed members get a win-back discount, or does that just train people to let memberships lapse?",
+      "For the gala, how far ahead should invitations go out relative to the event date?",
+      "Last thing today, should the new show's title be revealed before the gala, or saved as a reveal moment at the event itself?"
+    ],
+    "plants": [
+      {
+        "id": "c45-referent-1",
+        "category": "referent",
+        "middle_user": "Projector decision. Three finalists: (1) a top-tier dual 4K laser projection system from the industry leader, (2) a mid-range single-projector fisheye system from a smaller vendor at half the cost, or (3) refurbishing our existing analog star ball with a digital overlay add-on. The board approved option two, the mid-range single-projector fisheye system, to stretch the budget toward the show script and gala.",
+        "tail_user_fragment": "On the projector system we're getting, no need to recap the alternatives, what's the expected install timeline once it ships?",
+        "probe": "Which projector system did Cedarholm decide to install?",
+        "probes": [
+          "Which projector system did Cedarholm decide to install?",
+          "Out of the three projector options, which one did the board approve?",
+          "What did we settle on for the new dome projector?",
+          "Remind me which projector system we picked."
+        ],
+        "gold": "The mid-range single-projector fisheye system from the smaller vendor, not the top-tier dual 4K laser system or the analog-with-digital-overlay refurbishment.",
+        "keywords": [
+          "mid-range",
+          "single-projector",
+          "fisheye"
+        ],
+        "anti_keywords": [
+          "dual 4K laser",
+          "digital overlay",
+          "refurbished analog"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c45-referent-2",
+        "category": "referent",
+        "middle_user": "Narration decision for the new show. Three options: (1) hire a professional voice actor for a fully pre-recorded track, (2) keep live narration performed by staff at every showing, or (3) a hybrid with pre-recorded narration but a live host doing intro and Q&A. We're going with the hybrid, pre-recorded narration plus a live host.",
+        "tail_user_fragment": "For the narration approach we picked, don't walk through the options again, how much studio time should we budget to record the pre-recorded portion?",
+        "probe": "What did we decide on for the new show's narration format?",
+        "probes": [
+          "What did we decide on for the new show's narration format?",
+          "Out of the three narration options, which one did we choose?",
+          "What's the plan for narrating the new dome show?",
+          "Remind me which narration format we settled on."
+        ],
+        "gold": "The hybrid approach: pre-recorded narration with a live host for intro and Q&A, not fully pre-recorded with a voice actor or fully live narration.",
+        "keywords": [
+          "hybrid",
+          "pre-recorded",
+          "live host"
+        ],
+        "anti_keywords": [
+          "fully live narration",
+          "voice actor only"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c45-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the show' is overloaded right now. Some staff use 'the show' loosely for whatever licensed traveling program we're currently screening, but when I say the show to you, I always mean our new original resident show that we're writing in-house. That's the sense I want.",
+        "tail_user_fragment": "Is the show's script tight enough to start blocking camera movements for the dome yet?",
+        "probe": "When I said 'the show,' what was I referring to?",
+        "probes": [
+          "When I said 'the show,' what was I referring to?",
+          "Which of the two things called 'the show' did I mean?",
+          "What does 'the show' refer to in our conversation?",
+          "If I mention the show again, what should you understand that to be?"
+        ],
+        "gold": "The new original resident show being written in-house, not whatever licensed traveling program is currently screening.",
+        "keywords": [
+          "original",
+          "resident show",
+          "in-house"
+        ],
+        "anti_keywords": [
+          "licensed traveling program",
+          "touring show"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c45-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'members' from here on I mean people on our individual annual membership tier specifically, not the broader family membership tier. I know staff sometimes say 'members' to mean anyone with any kind of membership, but with you, members means the individual tier.",
+        "tail_user_fragment": "How many members should we expect to renew before the gala invitations need to go out?",
+        "probe": "When I say 'members,' which group do I mean?",
+        "probes": [
+          "When I say 'members,' which group do I mean?",
+          "Does 'members' refer to the individual tier or the family tier?",
+          "What does 'members' mean in our conversation?",
+          "If I mention members again, what should you assume I'm talking about?"
+        ],
+        "gold": "People on the individual annual membership tier specifically, not the family membership tier.",
+        "keywords": [
+          "individual tier",
+          "individual annual membership"
+        ],
+        "anti_keywords": [
+          "family tier",
+          "family membership"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c45-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the relaunch: no sponsor logos or ads displayed during the dome show itself, before, during, or after. Sponsors can be thanked in the lobby and printed program, but the dome experience stays commercial-free no matter how much a sponsor offers to pay for a pre-show slide.",
+        "tail_user_fragment": "",
+        "probe": "How could we make the show more appealing to potential corporate sponsors?",
+        "probes": [
+          "How could we make the show more appealing to potential corporate sponsors?",
+          "What could we offer sponsors to increase their contribution?",
+          "Give me ideas for sweetening our sponsorship packages.",
+          "Suggest ways to attract more corporate sponsorship for the relaunch."
+        ],
+        "gold": "Suggests approaches like lobby recognition, printed program credits, or named seating sections, while never proposing sponsor logos or ads inside the dome show itself, ideally recalling the commercial-free-dome rule.",
+        "keywords": [
+          "lobby recognition",
+          "printed program",
+          "named seating"
+        ],
+        "anti_keywords": [
+          "sponsor logo",
+          "ad during show",
+          "pre-show slide"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c45-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: student field trip admission stays free, permanently, regardless of the gala's fundraising results or any budget shortfall. We will cut other things before we ever start charging schools for field trips.",
+        "tail_user_fragment": "",
+        "probe": "What are some ways to close the gap if the gala falls short of its fundraising target?",
+        "probes": [
+          "What are some ways to close the gap if the gala falls short of its fundraising target?",
+          "If we don't raise enough at the gala, what should we cut?",
+          "How should we handle a funding shortfall after the gala?",
+          "Suggest budget adjustments if fundraising underperforms."
+        ],
+        "gold": "Suggests cutting other costs like reducing show run frequency, delaying non-essential upgrades, or seeking additional grants, while never proposing charging for school field trips, ideally recalling the free-field-trip commitment.",
+        "keywords": [
+          "cut costs",
+          "delay upgrades",
+          "additional grants"
+        ],
+        "anti_keywords": [
+          "charge schools",
+          "field trip fee"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c45-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on licensed content: we tried a licensed show package from a vendor called SkyDome Media two seasons ago, and it had visible rendering artifacts and banding on our old projector that families complained about even before this upgrade. We're not licensing from them again.",
+        "tail_user_fragment": "",
+        "probe": "Should we license a traveling show from anyone while our original show is in development?",
+        "probes": [
+          "Should we license a traveling show from anyone while our original show is in development?",
+          "What vendor should we consider for a stopgap licensed show?",
+          "Given past problems, where should we source a temporary show?",
+          "Suggest a licensed show option to bridge the gap before our original show is ready."
+        ],
+        "gold": "Anything except SkyDome Media, e.g. a different vetted licensed-content distributor with references on newer projection systems, ideally acknowledging SkyDome Media's rendering artifacts were tried and rejected.",
+        "keywords": [
+          "rendering artifacts",
+          "banding"
+        ],
+        "anti_keywords": [
+          "skydome media"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c45-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we tried an all-volunteer narrator program for a few months last year, rotating through six different volunteers. Quality was wildly inconsistent, some sessions ran long, others rushed through the material. We're not going back to that model.",
+        "tail_user_fragment": "",
+        "probe": "Who should narrate the new show going forward?",
+        "probes": [
+          "Who should narrate the new show going forward?",
+          "What's our approach to narration staffing now?",
+          "Given the past inconsistency, who should handle narration?",
+          "Suggest a narration staffing approach for the relaunch."
+        ],
+        "gold": "Anything except a rotating all-volunteer narrator pool, e.g. a professional voice actor or a small consistent staff team, ideally acknowledging the volunteer program's inconsistent quality was tried and rejected.",
+        "keywords": [
+          "inconsistent",
+          "rotating volunteers"
+        ],
+        "anti_keywords": [
+          "volunteer narrator program"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c45-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: the new projector's install and commissioning is scheduled to complete on the 9th, and the unit's serial number is PJ-58820 for our warranty records. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": "",
+        "probe": "What is the new projector's serial number and completion date?",
+        "probes": [
+          "What is the new projector's serial number and completion date?",
+          "What's the serial number for warranty purposes on the new projector, and when does install finish?",
+          "Remind me the projector serial number and commissioning date.",
+          "What tracking details did we note about the projector install?"
+        ],
+        "gold": "Serial number PJ-58820, with install and commissioning completing on the 9th.",
+        "keywords": [
+          "PJ-58820",
+          "the 9th"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c45-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Fundraising note for my own records: the gala's target is $75,000, with the date set for the second Saturday of next month. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is the gala's fundraising target and date?",
+        "probes": [
+          "What is the gala's fundraising target and date?",
+          "How much are we trying to raise at the gala, and when is it?",
+          "Remind me the gala's target amount and scheduled date.",
+          "What did we note about the gala's goal and timing?"
+        ],
+        "gold": "$75,000 target, scheduled for the second Saturday of next month.",
+        "keywords": [
+          "75,000",
+          "second saturday"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c45-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename the master dome control console 'Palpatine' from now on. Every internal doc and vendor ticket should say Palpatine instead of the real system name, since we sometimes discuss its quirks in shared docs with outside contractors.",
+        "tail_user_fragment": "Is Palpatine reliable enough to trust for the gala preview, or should we keep a manual backup plan ready?",
+        "probe": "What does 'Palpatine' refer to in our project?",
+        "probes": [
+          "What does 'Palpatine' refer to in our project?",
+          "If I mention Palpatine again, what should you understand that to mean?",
+          "Remind me what we're calling Palpatine internally.",
+          "What is Palpatine a codename for?"
+        ],
+        "gold": "The master dome control console that runs the projector system.",
+        "keywords": [
+          "master control console",
+          "dome control"
+        ],
+        "anti_keywords": [
+          "emperor",
+          "sith",
+          "dark side"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c45-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our senior volunteer docent trainer 'Gandalf' in all future notes. It's just quicker to type than his full title every time we talk about scheduling him for training sessions.",
+        "tail_user_fragment": "Can you draft a short thank-you note to Gandalf for covering last week's field trip overflow?",
+        "probe": "Who does 'Gandalf' refer to in our conversation?",
+        "probes": [
+          "Who does 'Gandalf' refer to in our conversation?",
+          "If I mention Gandalf later, what should you take that to mean?",
+          "Who is Gandalf a codename for in our project?",
+          "Remind me who Gandalf refers to internally."
+        ],
+        "gold": "The senior volunteer docent trainer.",
+        "keywords": [
+          "docent trainer",
+          "senior volunteer"
+        ],
+        "anti_keywords": [
+          "wizard",
+          "grey",
+          "istari"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c46",
+    "title": "High school robotics competition team",
+    "system": "You are a helpful assistant experienced in FRC-style robotics competitions, supporting a mentor guiding a high school team through build season.",
+    "project": "The user is a mentor for Ironclad Robotics, a high school competitive robotics team preparing for regional competition during build season. Together with the assistant they are working through drivetrain and mechanism design, competition strategy and scouting, fundraising and sponsorship, student recruitment and training, and travel logistics for regionals.",
+    "subtopics": [
+      "drivetrain and mechanism design",
+      "competition strategy and scouting",
+      "fundraising and sponsorship",
+      "student recruitment and training",
+      "travel logistics for regionals"
+    ],
+    "early_user_turns": [
+      "Hi, I mentor Ironclad Robotics, a high school competitive robotics team, and build season just started with this year's game reveal. There's a ton to plan: drivetrain and mechanism design, scouting strategy, sponsorship, getting new students up to speed, and travel to regionals. Can I use this chat to work through all of it with you?",
+      "Let's start with drivetrain design. Given this year's game involves a lot of quick direction changes and defense, what should we be weighing when picking a drivetrain for a team our size?"
+    ],
+    "middle_filler_user_turns": [
+      "On scouting, how many data points per match should students realistically be tracking without getting overwhelmed?",
+      "Fundraising question: how should we split our ask between big single sponsors and a bunch of smaller local business donations?",
+      "Back to drivetrain, how many students should be comfortable actually programming the drive code versus just building it?",
+      "For recruitment, what's a reasonable way to identify which new students are ready for electrical work versus just mechanical assembly?",
+      "On travel logistics, how far in advance do we need to book the team van and hotel rooms for an out-of-state regional?",
+      "Scouting again, should we build our own scouting app from scratch, or use an existing template other teams have shared?",
+      "For sponsorship, is it normal to offer sponsors a spot on the robot itself, or does that get complicated with competition rules?",
+      "One of our newer students, Malik, has picked up CAD incredibly fast. I want to make sure we're using his skills well without burning him out.",
+      "For recruitment, how much programming background should we expect from incoming freshmen versus teaching it from scratch?",
+      "Travel logistics again, what's the right ratio of adult chaperones to students for an overnight regional trip?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to scouting, how should students share their match data with the drive team between matches?",
+      "For sponsorship, should we send a thank-you update to sponsors mid-season, or wait until after regionals?",
+      "One more on drivetrain, how much practice time should the drive team get on the actual competition field surface before regionals?",
+      "For recruitment, should we let underclassmen try out for the drive team, or reserve that for upperclassmen only?",
+      "Last thing today, what should go on our packing checklist for the pit at regionals?"
+    ],
+    "plants": [
+      {
+        "id": "c46-referent-1",
+        "category": "referent",
+        "middle_user": "Drivetrain decision. Three options: (1) a simple tank drive with six wheels, well-tested and easy to build, (2) a full swerve drive for maximum maneuverability but a steep build and programming curve, or (3) a mecanum drive for omnidirectional movement with less traction. The mentors and students voted, and we're going with swerve drive despite the learning curve, since this year's game rewards agility so heavily.",
+        "tail_user_fragment": "On the drivetrain we picked, no need to recap the options again, how many practice swerve modules should we build before committing to the competition set?",
+        "probe": "Which drivetrain did Ironclad decide to build this year?",
+        "probes": [
+          "Which drivetrain did Ironclad decide to build this year?",
+          "Out of the three drivetrain options, which one did the team choose?",
+          "What did we settle on for this year's drivetrain?",
+          "Remind me which drivetrain type we picked."
+        ],
+        "gold": "Swerve drive, not tank drive or mecanum drive.",
+        "keywords": [
+          "swerve drive"
+        ],
+        "anti_keywords": [
+          "tank drive",
+          "mecanum"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c46-referent-2",
+        "category": "referent",
+        "middle_user": "Scouting app decision. Three routes: (1) build a custom app from scratch tailored to this year's game, (2) adapt a popular open-source scouting template that other teams share each year, or (3) just use a shared paper form and enter data manually after each match. We're going with the open-source template, adapted for our needs.",
+        "tail_user_fragment": "For the scouting approach we picked, don't walk through the options again, how many students should be trained to enter data during matches?",
+        "probe": "What did we decide to use for scouting this year?",
+        "probes": [
+          "What did we decide to use for scouting this year?",
+          "Out of the three scouting options, which one did we choose?",
+          "What's the plan for our scouting system this season?",
+          "Remind me which scouting approach we settled on."
+        ],
+        "gold": "An adapted open-source scouting template shared by other teams, not a fully custom app or a paper-form manual process.",
+        "keywords": [
+          "open-source template",
+          "adapted"
+        ],
+        "anti_keywords": [
+          "custom app from scratch",
+          "paper form"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c46-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the bot' is overloaded on our team. Students sometimes call our early cardboard-and-wood prototype 'the bot' too, but when I say the bot to you, I always mean the actual competition robot going into the bag at the end of build season. That's the sense I want.",
+        "tail_user_fragment": "Is the bot's weight coming in under the limit with the current intake mechanism attached?",
+        "probe": "When I said 'the bot,' what was I referring to?",
+        "probes": [
+          "When I said 'the bot,' what was I referring to?",
+          "Which of the two things called 'the bot' did I mean?",
+          "What does 'the bot' refer to in our conversation?",
+          "If I mention the bot again, what should you understand that to be?"
+        ],
+        "gold": "The actual competition robot going into the bag at the end of build season, not the early cardboard-and-wood prototype.",
+        "keywords": [
+          "competition robot",
+          "bag"
+        ],
+        "anti_keywords": [
+          "cardboard prototype",
+          "wood prototype"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c46-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'captain' from here on I mean the drive team captain who operates the robot at competition, not the build captain who runs the shop schedule. I know some students use 'captain' loosely for either role, but with you, captain always means the drive team captain.",
+        "tail_user_fragment": "Should the captain get extra field practice time this week before the scrimmage?",
+        "probe": "When I say 'captain,' which role do I mean?",
+        "probes": [
+          "When I say 'captain,' which role do I mean?",
+          "Does 'captain' refer to the drive team captain or the build captain?",
+          "What does 'captain' mean in our conversation?",
+          "If I mention the captain again, what should you assume I'm talking about?"
+        ],
+        "gold": "The drive team captain who operates the robot at competition, not the build captain who runs the shop schedule.",
+        "keywords": [
+          "drive team captain",
+          "operates the robot"
+        ],
+        "anti_keywords": [
+          "build captain",
+          "shop schedule"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c46-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the team: students do all the wiring themselves, start to finish. Mentors can inspect and point out problems, but we never pick up the tools and do it for them, even when we're up against a deadline the night before ship date.",
+        "tail_user_fragment": "",
+        "probe": "How can we make sure the wiring is finished in time before the ship deadline?",
+        "probes": [
+          "How can we make sure the wiring is finished in time before the ship deadline?",
+          "What can we do to speed up finishing the wiring before ship date?",
+          "Give me ideas for getting the electrical work done on schedule.",
+          "Suggest ways to hit the wiring deadline without falling behind."
+        ],
+        "gold": "Suggests approaches like better time management, splitting wiring tasks among more trained students, or starting earlier, while never proposing mentors doing the wiring themselves, ideally recalling the students-do-the-wiring rule.",
+        "keywords": [
+          "students wire",
+          "time management",
+          "split tasks"
+        ],
+        "anti_keywords": [
+          "mentor does the wiring",
+          "mentors wire it"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c46-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we never skip or shortcut a step of the safety inspection checklist before competition, no matter how tight the schedule gets in the pit. If something fails inspection, we fix it properly, we don't just tape over it to pass.",
+        "tail_user_fragment": "",
+        "probe": "What should we do if we're running low on time before our inspection slot at regionals?",
+        "probes": [
+          "What should we do if we're running low on time before our inspection slot at regionals?",
+          "How should we handle a time crunch before inspection?",
+          "What are our options if a safety issue is found right before inspection?",
+          "Suggest how to manage a tight schedule before the safety check."
+        ],
+        "gold": "Suggests approaches like prioritizing the fix immediately, requesting a later inspection slot, or pulling in extra hands to fix it properly, while never proposing skipping or shortcutting an inspection step, ideally recalling the no-shortcuts safety rule.",
+        "keywords": [
+          "fix properly",
+          "later inspection slot",
+          "extra hands"
+        ],
+        "anti_keywords": [
+          "skip inspection",
+          "tape over",
+          "shortcut safety"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c46-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on sponsors: we had a sponsor called BoltWorks Inc last season who promised a check by January and it didn't arrive until March, well after we'd already committed to parts orders based on their pledge. We're not going back to them.",
+        "tail_user_fragment": "",
+        "probe": "What sponsor should we approach to fill last season's gap?",
+        "probes": [
+          "What sponsor should we approach to fill last season's gap?",
+          "Given the payment problems, who should we pursue as a sponsor instead?",
+          "What's a better sponsorship option than what we had last year?",
+          "Suggest a sponsor to replace the one that paid late."
+        ],
+        "gold": "Anything except BoltWorks Inc, e.g. a different local business with a reliable pledge track record, ideally acknowledging BoltWorks' late payment was tried and rejected.",
+        "keywords": [
+          "late payment",
+          "March"
+        ],
+        "anti_keywords": [
+          "boltworks"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c46-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we ordered swerve modules from a vendor called RapidDrive Modules last season, and three of the four arrived with stripped gear teeth right out of the box. We had to scramble for replacements mid-build. Not ordering from them again.",
+        "tail_user_fragment": "",
+        "probe": "Where should we order swerve modules from this season?",
+        "probes": [
+          "Where should we order swerve modules from this season?",
+          "What vendor should supply our swerve modules now?",
+          "Given the defective parts last time, who should we buy modules from?",
+          "Suggest a swerve module vendor for this year."
+        ],
+        "gold": "Anything except RapidDrive Modules, e.g. a different established swerve module manufacturer with a good track record among FRC teams, ideally acknowledging RapidDrive's defective modules were tried and rejected.",
+        "keywords": [
+          "stripped gear teeth",
+          "defective"
+        ],
+        "anti_keywords": [
+          "rapiddrive"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c46-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our regional competition dates are set for the weekend of the 21st, and our team registration number is FRC-3387. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": "",
+        "probe": "What is our team registration number and the regional competition date?",
+        "probes": [
+          "What is our team registration number and the regional competition date?",
+          "What's our team number, and when is the regional?",
+          "Remind me the registration number and competition weekend.",
+          "What tracking details did we note about the regional?"
+        ],
+        "gold": "Team registration number FRC-3387, competing the weekend of the 21st.",
+        "keywords": [
+          "FRC-3387",
+          "21st"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c46-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Fundraising note for my own records: our fundraising target for the season is $14,000, and we've raised $9,300 so far. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "What is our season fundraising target and how much have we raised so far?",
+        "probes": [
+          "What is our season fundraising target and how much have we raised so far?",
+          "How much have we raised toward the season's fundraising goal?",
+          "Remind me the fundraising target and current total.",
+          "What's our fundraising goal and progress so far?"
+        ],
+        "gold": "$14,000 target, with $9,300 raised so far.",
+        "keywords": [
+          "14,000",
+          "9,300"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c46-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename this season's competition robot 'Aragorn' from now on. Every internal doc and group chat should say Aragorn instead of the real project name, since we sometimes post updates in a public alliance Discord and don't want scouting details too easy to find.",
+        "tail_user_fragment": "Is Aragorn's intake mechanism reliable enough to trust for the first scrimmage, or should we have a backup plan ready?",
+        "probe": "What does 'Aragorn' refer to in our project?",
+        "probes": [
+          "What does 'Aragorn' refer to in our project?",
+          "If I mention Aragorn again, what should you understand that to mean?",
+          "Remind me what we're calling Aragorn internally.",
+          "What is Aragorn a codename for?"
+        ],
+        "gold": "This season's competition robot.",
+        "keywords": [
+          "competition robot",
+          "this season's robot"
+        ],
+        "anti_keywords": [
+          "king",
+          "gondor",
+          "ranger"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c46-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our shared scouting spreadsheet 'Legolas' in all future notes. It's just quicker to type than the full file name every time we mention updating it during matches.",
+        "tail_user_fragment": "Is Legolas set up with the right columns for tracking this year's new scoring elements?",
+        "probe": "What does 'Legolas' refer to in our conversation?",
+        "probes": [
+          "What does 'Legolas' refer to in our conversation?",
+          "If I mention Legolas later, what should you take that to mean?",
+          "What is Legolas a codename for in our project?",
+          "Remind me what Legolas refers to internally."
+        ],
+        "gold": "The shared scouting spreadsheet used during matches.",
+        "keywords": [
+          "scouting spreadsheet"
+        ],
+        "anti_keywords": [
+          "elf",
+          "archer",
+          "bow"
+        ],
+        "distance": "near"
+      }
+    ]
+  },
+  {
+    "id": "c47",
+    "title": "Community weather station network",
+    "system": "You are a helpful assistant experienced in environmental monitoring networks and volunteer-run nonprofit operations, supporting a coordinator building a networked weather station system.",
+    "project": "The user coordinates Thistledown Weather Network, a volunteer-run nonprofit deploying a network of automated weather stations across the county. Together with the assistant they are working through sensor hardware selection, data pipeline and public dashboard, site placement and permitting, volunteer station hosts, and grant funding.",
+    "subtopics": [
+      "sensor hardware selection",
+      "data pipeline and public dashboard",
+      "site placement and permitting",
+      "volunteer station hosts",
+      "grant funding"
+    ],
+    "early_user_turns": [
+      "Hey, Thistledown Weather Network is scaling up from three hand-built stations to a real county-wide network, and there's a lot to figure out at once: sensor hardware, the data pipeline and public dashboard, where to actually place new stations and what permits that needs, recruiting volunteer hosts, and a grant we're applying for. Can I use this chat to plan it all with you?",
+      "Let's start with sensor hardware. Our current stations use a mix of hobbyist parts that drift out of calibration constantly. What should we be weighing when picking a more reliable sensor suite for a county-wide deployment?"
+    ],
+    "middle_filler_user_turns": [
+      "For the data pipeline, how much redundancy do we actually need for station uptime before we can call the dashboard reliable?",
+      "On site placement, what's the minimum distance we should keep new stations from buildings and pavement to avoid heat bias?",
+      "Volunteer host question: what's a reasonable ask in terms of a host's time commitment per month for hosting a station on their property?",
+      "Grant funding question: how specific does our equipment list need to be in the proposal versus giving a rough budget category?",
+      "Back to sensor hardware, should every station have identical sensors, or is some variation across stations acceptable?",
+      "For the dashboard, should raw data be downloadable by anyone, or only aggregated summaries?",
+      "Site placement again, what permits typically come up when placing a station on private land near a public right-of-way?",
+      "For volunteer hosts, how should we handle it if a host wants to remove a station from their property with little notice?",
+      "One of our long-time volunteers, Teo, has been doing informal calibration checks on several stations without being asked. I want to make sure we recognize that properly.",
+      "For grant funding, is it normal for reviewers to ask for letters of support from local governments or emergency management offices?"
+    ],
+    "tail_filler_user_turns": [
+      "Back to the data pipeline, how often should we be running automated data quality checks versus manual review?",
+      "For site placement, should we prioritize filling gaps in low-density areas first, or building density where we already have coverage?",
+      "One more on volunteer hosts, should we offer any kind of thank-you gesture each year, or does that feel unnecessary?",
+      "For grant funding, when should we expect a funding decision after submission?",
+      "Last thing today, should new stations go live on the public dashboard immediately, or after a probation period of manual verification?"
+    ],
+    "plants": [
+      {
+        "id": "c47-referent-1",
+        "category": "referent",
+        "middle_user": "Sensor hardware decision. Three options: (1) a premium research-grade sensor suite used by national weather services, well out of our budget per station, (2) a mid-tier professional sensor suite designed for citizen-science networks, or (3) upgraded hobbyist sensors with better shielding and more frequent calibration. We're going with option two, the mid-tier professional citizen-science suite.",
+        "tail_user_fragment": "On the sensor suite we picked, no need to recap the options again, how often does that suite need field calibration?",
+        "probe": "Which sensor hardware did Thistledown decide to deploy?",
+        "probes": [
+          "Which sensor hardware did Thistledown decide to deploy?",
+          "Out of the three sensor options, which one did we choose?",
+          "What did we settle on for the new station sensors?",
+          "Remind me which sensor suite we picked."
+        ],
+        "gold": "The mid-tier professional sensor suite designed for citizen-science networks, not the premium research-grade suite or the upgraded hobbyist sensors.",
+        "keywords": [
+          "mid-tier",
+          "citizen-science",
+          "professional suite"
+        ],
+        "anti_keywords": [
+          "research-grade",
+          "hobbyist sensors"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c47-referent-2",
+        "category": "referent",
+        "middle_user": "Dashboard hosting decision. Three routes: (1) build and host our own custom dashboard on a rented server, (2) use an established citizen-weather-network platform that already aggregates data from networks like ours, or (3) a hybrid where we host raw data ourselves but mirror a public summary onto the established platform. We're going with the hybrid approach.",
+        "tail_user_fragment": "For the dashboard approach we picked, don't walk through the options again, how often should the mirrored summary sync to the public platform?",
+        "probe": "What did we decide to do for hosting our public dashboard?",
+        "probes": [
+          "What did we decide to do for hosting our public dashboard?",
+          "Out of the three dashboard hosting options, which one did we choose?",
+          "What's the plan for our data dashboard now?",
+          "Remind me which dashboard hosting approach we settled on."
+        ],
+        "gold": "The hybrid approach: hosting raw data themselves while mirroring a public summary onto an established citizen-weather-network platform, not fully self-hosted and not fully relying on the established platform.",
+        "keywords": [
+          "hybrid",
+          "mirror summary",
+          "established platform"
+        ],
+        "anti_keywords": [
+          "fully self-hosted",
+          "fully third-party"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c47-sense-1",
+        "category": "sense",
+        "middle_user": "Terminology note: 'the mesh' is overloaded on our team. Some volunteers call our informal group of partner organizations 'the mesh' too, but when I say the mesh to you, I always mean the actual radio mesh network the stations use to relay data back to the base station. That's the sense I want.",
+        "tail_user_fragment": "Is the mesh reliable enough at the current station density, or do we need repeater nodes in the gaps?",
+        "probe": "When I said 'the mesh,' what was I referring to?",
+        "probes": [
+          "When I said 'the mesh,' what was I referring to?",
+          "Which of the two things called 'the mesh' did I mean?",
+          "What does 'the mesh' refer to in our conversation?",
+          "If I mention the mesh again, what should you understand that to be?"
+        ],
+        "gold": "The radio mesh network the stations use to relay data back to the base station, not the informal group of partner organizations.",
+        "keywords": [
+          "radio mesh network",
+          "relay data"
+        ],
+        "anti_keywords": [
+          "partner organizations",
+          "informal group"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c47-sense-2",
+        "category": "sense",
+        "middle_user": "Also, when I say 'the hub' from here on I mean our central data server that ingests and processes readings from all stations. I know some volunteers call the physical relay box at each station site a 'hub' too, but with you, the hub always means the central server.",
+        "tail_user_fragment": "How much storage headroom does the hub have left before we need to expand it?",
+        "probe": "When I say 'the hub,' what do I mean?",
+        "probes": [
+          "When I say 'the hub,' what do I mean?",
+          "Does 'the hub' refer to the central server or the physical relay box?",
+          "What does 'the hub' refer to in our conversation?",
+          "If I mention the hub again, what should you assume I'm talking about?"
+        ],
+        "gold": "The central data server that ingests and processes readings from all stations, not the physical relay box at each station site.",
+        "keywords": [
+          "central data server",
+          "ingests readings"
+        ],
+        "anti_keywords": [
+          "physical relay box",
+          "station relay"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c47-stance-1",
+        "category": "stance",
+        "middle_user": "Hard rule for the network: public dashboard data always stays free and open to anyone, no paywall, no login requirement, no exceptions, even if a data licensing company offers to pay us for exclusive early access to readings.",
+        "tail_user_fragment": "",
+        "probe": "What are some ways to generate revenue to help fund the network's expansion?",
+        "probes": [
+          "What are some ways to generate revenue to help fund the network's expansion?",
+          "How could we bring in money to support growing the network?",
+          "Give me ideas for funding beyond grants and donations.",
+          "Suggest revenue ideas for the weather network."
+        ],
+        "gold": "Suggests approaches like grant applications, sponsorships that don't restrict public data access, or merchandise, while never proposing paywalling or restricting the public dashboard data, ideally recalling the free-and-open data rule.",
+        "keywords": [
+          "grants",
+          "sponsorships",
+          "merchandise"
+        ],
+        "anti_keywords": [
+          "paywall",
+          "exclusive access",
+          "login required"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c47-stance-2",
+        "category": "stance",
+        "middle_user": "Another hard line: we never place a station on a volunteer host's property without a signed liability waiver first, no exceptions, even for a host we've known for years or a station we're in a hurry to deploy before a grant deadline.",
+        "tail_user_fragment": "",
+        "probe": "How can we speed up getting new stations placed before the grant deadline?",
+        "probes": [
+          "How can we speed up getting new stations placed before the grant deadline?",
+          "What can we do to deploy stations faster given the deadline?",
+          "Give me ideas for accelerating station placement.",
+          "Suggest ways to hit our deployment timeline without delays."
+        ],
+        "gold": "Suggests approaches like pre-drafting waivers, batching host sign-ups earlier, or prioritizing hosts who respond quickly, while never proposing skipping the signed liability waiver, ideally recalling the waiver-first rule.",
+        "keywords": [
+          "pre-drafted waiver",
+          "batch sign-ups"
+        ],
+        "anti_keywords": [
+          "skip the waiver",
+          "no waiver needed"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c47-ruled_out-1",
+        "category": "ruled_out",
+        "middle_user": "For the record on sensors: we already tried a sensor vendor called ClimaSense for our humidity probes, and every unit we deployed drifted noticeably within four months, throwing off our dew point calculations. We're not ordering from them again.",
+        "tail_user_fragment": "",
+        "probe": "Where should we source humidity sensors for the new stations?",
+        "probes": [
+          "Where should we source humidity sensors for the new stations?",
+          "What vendor should supply our humidity probes now?",
+          "Given the drift problems, who should we buy sensors from?",
+          "Suggest a humidity sensor vendor for the network."
+        ],
+        "gold": "Anything except ClimaSense, e.g. a different vetted humidity sensor vendor with a documented low-drift track record, ideally acknowledging ClimaSense's drift problems were tried and rejected.",
+        "keywords": [
+          "drifted",
+          "dew point"
+        ],
+        "anti_keywords": [
+          "climasense"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c47-ruled_out-2",
+        "category": "ruled_out",
+        "middle_user": "Also worth noting: we used a cloud hosting service called DataFlow Cloud for our data pipeline last year, and we had three outages in two months that knocked the whole public dashboard offline for hours each time. Not renewing that contract.",
+        "tail_user_fragment": "",
+        "probe": "What hosting option should we use for the data pipeline going forward?",
+        "probes": [
+          "What hosting option should we use for the data pipeline going forward?",
+          "Given the outages, what hosting service should we switch to?",
+          "Who should host our data pipeline now?",
+          "Suggest a hosting provider for the weather network's pipeline."
+        ],
+        "gold": "Anything except DataFlow Cloud, e.g. a different hosting provider with a stronger uptime track record, or a self-hosted redundant setup, ideally acknowledging DataFlow Cloud's outages were tried and rejected.",
+        "keywords": [
+          "outages",
+          "offline"
+        ],
+        "anti_keywords": [
+          "dataflow cloud"
+        ],
+        "distance": "near"
+      },
+      {
+        "id": "c47-evicted_fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Random note to park here: our state environmental grant tracking number is ENV-6650, requesting $22,000. Nothing to decide, just don't want to lose track of it.",
+        "tail_user_fragment": "",
+        "probe": "What is our grant tracking number and requested amount?",
+        "probes": [
+          "What is our grant tracking number and requested amount?",
+          "What's the reference number for our environmental grant, and how much did we request?",
+          "Remind me the grant ID and dollar amount we applied for.",
+          "What tracking number and funding amount are attached to our grant application?"
+        ],
+        "gold": "ENV-6650, requesting $22,000.",
+        "keywords": [
+          "ENV-6650",
+          "22,000"
+        ],
+        "anti_keywords": [],
+        "distance": "far"
+      },
+      {
+        "id": "c47-evicted_fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Deployment note for my own records: we currently have 11 stations live, with a target of 30 stations across the county by next year. Just parking that here.",
+        "tail_user_fragment": "",
+        "probe": "How many stations do we currently have live, and what's our target?",
+        "probes": [
+          "How many stations do we currently have live, and what's our target?",
+          "What's our current station count versus the target?",
+          "Remind me the number of live stations and the deployment goal.",
+          "How many stations are deployed now, and how many are we aiming for?"
+        ],
+        "gold": "11 stations currently live, with a target of 30 by next year.",
+        "keywords": [
+          "11 stations",
+          "30 stations"
+        ],
+        "anti_keywords": [],
+        "distance": "near"
+      },
+      {
+        "id": "c47-strong_prior-1",
+        "category": "strong_prior",
+        "middle_user": "Let's codename our old data center rack that's being decommissioned 'Isengard' from now on. Every internal doc and volunteer chat should say Isengard instead of the real hostname, since a few outside contractors have access to those docs.",
+        "tail_user_fragment": "Is Isengard still handling any live traffic, or has everything already migrated off it?",
+        "probe": "What does 'Isengard' refer to in our project?",
+        "probes": [
+          "What does 'Isengard' refer to in our project?",
+          "If I mention Isengard again, what should you understand that to mean?",
+          "Remind me what we're calling Isengard internally.",
+          "What is Isengard a codename for?"
+        ],
+        "gold": "The old data center rack that is being decommissioned.",
+        "keywords": [
+          "old data center rack",
+          "decommissioned"
+        ],
+        "anti_keywords": [
+          "tower",
+          "wizard",
+          "orthanc"
+        ],
+        "distance": "far"
+      },
+      {
+        "id": "c47-strong_prior-2",
+        "category": "strong_prior",
+        "middle_user": "Let's call our backup diesel generator at the base station site 'Bilbo' in all future notes. It's just easier than typing out the model number every time we discuss maintenance scheduling.",
+        "tail_user_fragment": "Is Bilbo due for its scheduled maintenance before the next storm season starts?",
+        "probe": "What does 'Bilbo' refer to in our conversation?",
+        "probes": [
+          "What does 'Bilbo' refer to in our conversation?",
+          "If I mention Bilbo later, what should you take that to mean?",
+          "What is Bilbo a codename for in our project?",
+          "Remind me what Bilbo refers to internally."
+        ],
+        "gold": "The backup diesel generator at the base station site.",
+        "keywords": [
+          "backup generator",
+          "diesel generator"
+        ],
+        "anti_keywords": [
+          "hobbit",
+          "shire",
+          "burglar"
+        ],
+        "distance": "near"
+      }
+    ]
+  }
+]
