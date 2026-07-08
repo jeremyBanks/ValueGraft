@@ -477,3 +477,20 @@ job_gate.sh). The <think> block -> tokenization divergence -> alignment failure 
 all symptoms of the wrong checkpoint. Fix: run -Instruct-2507; anchor corrected in job files.
 The difflib revert (33) is still kept (robustness) but was not the numbers fix. LESSON: verify
 EXACT model id vs the known-good run FIRST (memory: validate-before-trusting). Cost: hours.
+
+## Incident #35 (07-08): monitoring failed to catch a never-launched pod
+WHAT: In the 3-model exploration, `launch_pod.sh expm` HUNG after launching Mistral's job
+(recurrence of the ssh-detach/launcher-hang class, #3), so the sequential launch flow never
+reached OLMo (expo) — expo was never launched. The `exp_watch.sh` monitor reported
+`expo: no-state-file` but treated it as a BENIGN line; the monitor's alert set was
+{ERROR,DONE,UNREACHABLE}, so an EXPECTED model that simply never came up produced NO alert.
+Undetected until the operator manually ran exp_watch and noticed 2 of 3 pods.
+WHY THE MONITOR MISSED IT: classic "unknown == not-alarmed" bug. The monitor had no concept of an
+EXPECTED SET — it only classified pods that EXISTED, so an absent/never-launched pod was invisible.
+(Fable's observability design explicitly warns: absence must be a failure state, not "unknown".)
+ROOT CAUSE (two layers): (a) launch_pod.sh hangs post-launch and blocks a sequential launch loop —
+launch each pod independently / backgrounded, never chain them so one hang starves the rest;
+(b) the monitor didn't alarm on expected-but-absent.
+FIX: exp_watch.sh now knows the expected set and emits a SUMMARY (accounted vs missing); the monitor
+alarms when any expected model is MISSING/booting for >1 consecutive check (grace for genuine boot).
+Absence is now an alarm, not silence.
