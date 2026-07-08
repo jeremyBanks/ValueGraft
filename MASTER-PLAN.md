@@ -374,3 +374,13 @@ BREADTH (full corpus + champion): allenai/OLMo-2-0325-32B-Instruct, Qwen/Qwen3.6
 Qwen/Qwen3.6-27B, zai-org/GLM-4-32B-0414.
 All 10 return HTTP 200 on HF api. Assign across ~5 pods (2 each) after the gate passes.
 Own-summary experiment on anchors. Sign-regression over model_hparams.
+
+## MODEL LIST EXPANDED to 14 / 9 vendors (07-08, user wanted vendor diversity)
+Was Qwen-heavy (5/10). ADDED 4 vendor-diverse (HF-verified, ungated): openai/gpt-oss-20b
+(OpenAI MoE ~21B), microsoft/phi-4 (Microsoft dense ~14B, SCALE-FLAG), 01-ai/Yi-1.5-34B-Chat
+(01.ai dense ~34B), nvidia/Llama-3_3-Nemotron-Super-49B-v1 (NVIDIA dense ~49B, SCALE-FLAG,
+Llama-lineage). VENDORS now: Qwen, Mistral, Google, AllenAI, Zhipu/GLM, OpenAI, Microsoft,
+01.ai, NVIDIA. Anchors stay scale-clean (~30B); breadth tier tolerates scale variation ->
+logged as a COVARIATE (hidden_size/num_layers) in the sign-regression, not a hidden confound.
+Skipped: Llama-4-Scout (Meta-gated+large), Command-R (307). Llama-2 dropped (user OK; ancient/
+off-scale — MHA-geometry point noted as possible future).
