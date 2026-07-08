@@ -1,12 +1,10 @@
-_This shard covers naming the two ValueGraft variants, adding repo availability
-to the working draft, a long sequence of periodic read-only refreshes tracking
-the live E-track coding-agent experiment through a major data-invalidation
-incident, and an extended effort to fix the project's core K/V taxonomy._
+_This conversation covers naming the two ValueGraft variants, adding repo
+availability to the working draft, a long sequence of periodic read-only
+refreshes tracking the live E-track coding-agent experiment through a major
+data-invalidation incident, and an extended effort to fix the project's core K/V
+taxonomy._
 
-**Participants in this Conversation.**
-
-User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
-`0.142.5`).
+**Participants:** User and gpt-5.5-xhigh.
 
 **Naming and draft availability.** The two ValueGraft variants were named
 `ValueGraft-Pack` (renamed from `H-pack`) and `ValueGraft-Blend`, with a matched
@@ -24,7 +22,7 @@ via handoff files). The assistant affirmed readiness but stated it would require
 explicit approval before mutating files, spending money, or killing/restarting
 pods, and outlined a supervisor-loop shape (stabilize board → fix blockers →
 advance phases → checkpoint → stop cleanly). No such handoff was actually
-granted in this shard; work continued via periodic read-only refreshes.
+granted in this conversation; work continued via periodic read-only refreshes.
 
 **E-track coding-experiment trajectory (via repeated refreshes).** The project
 pivoted fully from LongMemEval (declared dead as a live path, kept only as a
@@ -63,7 +61,7 @@ harness-authored, not a standard benchmark) rows to stay, while unrun capacity
 shifts to real SWE-bench-Lite instances (`src/swebench_tasks.py`,
 `scripts/swb_filter.py`) contingent on a scouting pass, with a rule that
 analysis must stratify by task source rather than pooling synthetic and standard
-rows. At shard's end, endpoint health was poor (most matrix ports
+rows. At conversation's end, endpoint health was poor (most matrix ports
 unresponsive/timing out) and a further round of provenance-related documentation
 and A-arm solvability pre-screening for real tasks was underway. Throughout, no
 result set reached enough trusted rows to support any arm-comparison conclusion;

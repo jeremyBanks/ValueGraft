@@ -1,14 +1,11 @@
-_This shard traces the J-lens interpretability side-investigation from a
+_This conversation traces the J-lens interpretability side-investigation from a
 shell-tooling aside through a major methodological correction: an initial
 two-state (write-time vs. fresh) sweep was mistaken for evidence about the
 ValueGraft intervention itself, when no actual grafted condition had ever been
 captured, followed by repeated rounds of report rewrites, fact-checking, and a
 new stronger-scenario experiment plan._
 
-**Participants in this Conversation.**
-
-User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
-`0.142.5`).
+**Participants:** User and gpt-5.5-xhigh.
 
 **ShellCheck decision.** Early on, the assistant clarified that ShellCheck
 should only gate the team's own pod-launch job scripts (alongside existing
@@ -105,8 +102,8 @@ before each report push, and it caught real issues (a
 capitalization/table-normalization bug, and unlabeled filtered-excerpt tables
 presented as literal data).
 
-**New experiment plan at shard boundary.** The user requested a full new cycle:
-carefully plan, execute stronger experiments (using known higher-contrast
+**New experiment plan at conversation boundary.** The user requested a full new
+cycle: carefully plan, execute stronger experiments (using known higher-contrast
 scenarios), then repeat the full report/revision/fact-check process — explicitly
 asking for a considered plan before acting, and for any spun-up pod to be shut
 down when the work concludes (leaving it running between steps is fine). The
@@ -116,7 +113,7 @@ existing `boundary_probe.py` cache-surgery functions rather than reimplementing
 them, designed to run multiple stronger scenarios in one model load and rank
 examples by focus-span closure rather than raw token-level noise. After an A100
 capacity shortage, an H100 80GB pod (`u513d5hb7s4m3j`) was launched and the
-batch job started (remote PID 587); at the shard's end the assistant is
+batch job started (remote PID 587); at the conversation's end the assistant is
 mid-monitoring, having interrupted only the local hung launcher shell (not the
 remote job) and preparing to check the remote log directly via a separate
 connection. Pod termination is expected once artifacts are pulled and validated,

@@ -4,14 +4,7 @@ of infrastructure failures (an SSH-detach hang, a gate-token invalidation, and
 an unpinned-dependency break) is diagnosed and fixed, ending with the tier-1
 canary rule catching the last bug before any fleet-scale fan-out._
 
-**Participants in this Conversation.**
-
-User; `claude-opus-4-8` (Claude Code `2.1.200`); `<synthetic>` (Claude Code
-`2.1.200`).
-
-Assistant model sequence: `claude-opus-4-8` (Claude Code `2.1.200`) ->
-`<synthetic>` (Claude Code `2.1.200`) -> `claude-opus-4-8` (Claude Code
-`2.1.200`).
+**Participants:** User and claude-opus-4-8.
 
 ## Gated launcher verified end-to-end
 
@@ -29,7 +22,7 @@ signal at ~40 minutes instead of 3–5 hours).
 Prompted by a direct question about whether static analysis was in use, it was
 confirmed that scripts had only been syntax-checked (`bash -n`), which does not
 catch runtime-only failures like the `declare -A` bash-version issue from the
-prior shard. `shellcheck` was installed and run across all scripts. It
+prior conversation. `shellcheck` was installed and run across all scripts. It
 immediately caught a real bug in `pod_health.sh`: inside a `while read` loop, an
 `ssh` call was consuming the loop's piped stdin (SC2095), so the "watch every
 pod" health monitor was silently only ever processing the first pod in its list
@@ -93,5 +86,5 @@ pinned in all job scripts and committed. The tier-1 canary was then run as
 intended: w1 alone, redeployed with the pinned dependency, launched end-to-end
 before any further fan-out, to confirm both that the model loads and that the
 pipeline produces a sane probe result — this canary run was in progress and
-being watched at the end of this shard, with the health monitor (now fixed) as
-the mechanism reporting its outcome.
+being watched at the end of this conversation, with the health monitor (now
+fixed) as the mechanism reporting its outcome.

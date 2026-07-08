@@ -1,14 +1,12 @@
-_This shard covers the final stretch of paper-shipping followed by a serious
-mid-sweep validation crisis (positive control failure → traced to a
+_This conversation covers the final stretch of paper-shipping followed by a
+serious mid-sweep validation crisis (positive control failure → traced to a
 self-inflicted alignment bug), a major design-review pivot with Fable that
 reframed the cross-architecture sweep, and a substantial widening of the
 model/corpus scope — punctuated by an infrastructure mishap (killing a
 near-complete corpus-authoring subagent) that was reframed as a quality
 improvement._
 
-**Participants in this Conversation.**
-
-User; `claude-opus-4-8` (Claude Code `2.1.200`).
+**Participants:** User and claude-opus-4-8.
 
 ## Alignment "token matching" scare — resolved as non-issue
 
@@ -151,16 +149,16 @@ near-zero output-file size as "stalled," and killed the subagent — only to
 discover afterward that it had in fact nearly finished (reached c53/c54) but was
 holding its output in-context to write once at the end, so the file-size proxy
 was misleading. This was recorded as a durable lesson
-(`shard-and-verify-before-killing`): shard independent multi-item generation
-work across parallel subagents from the outset for consistency with sibling
-tasks, and never kill a subagent based on an indirect progress proxy like output
-file size — verify actual liveness/progress first, since destructive actions
-require a higher evidentiary bar than passive status checks. The user reframed
-the incident positively: forcing genuine parallel sharding (across Sonnet and
-Fable, in fresh contexts) likely produces a higher-quality, more diverse corpus
-than one fatigued single-context model would have produced writing all 27
-scenarios sequentially — sharding is a quality lever, not just a speed lever.
-Six parallel shards were relaunched to redo the authoring, unaffected by (and
+(`split-and-verify-before-killing`): independent multi-item generation work
+across parallel subagents from the outset for consistency with sibling tasks,
+and never kill a subagent based on an indirect progress proxy like output file
+size — verify actual liveness/progress first, since destructive actions require
+a higher evidentiary bar than passive status checks. The user reframed the
+incident positively: forcing genuine parallel batching (across Sonnet and Fable,
+in fresh contexts) likely produces a higher-quality, more diverse corpus than
+one fatigued single-context model would have produced writing all 27 scenarios
+sequentially — parallel batching is a quality lever, not just a speed lever. Six
+parallel batches were relaunched to redo the authoring, unaffected by (and
 running in parallel with) the ongoing alignment-bug debugging on the pod.
 
 ## Alignment bug re-discovered on self-generated summaries (the gate catches a real defect)
@@ -180,8 +178,8 @@ configuration, not a proxy configuration. A debugger subagent was dispatched
 with pod access (model cached, ~2 min per iteration) to find the root cause and
 prove the fix by reproducing the known +0.14 referent positive control —
 explicitly barred from a silent difflib fallback or skipping the failing
-conversation. At shard's end this fix was in progress (uncommitted edits to
-`arms_common.py`/`cross_arch_probe.py`), with a positive-control verification
+conversation. At conversation's end this fix was in progress (uncommitted edits
+to `arms_common.py`/`cross_arch_probe.py`), with a positive-control verification
 run (12 conversations, self-gen, Qwen3-30B) live on the GPU (47% utilization).
 
 The user's response to this failure was to request faster failure detection:
@@ -221,7 +219,7 @@ $1.15-1.30/model (dominated by ~20 min download+load plus self-gen compute), giv
 for the original 14-model/27-conversation plan, with corpus-doubling adding only
 ~$12-16 more since compute (not model loads) scales with test count.
 
-## Final model set (as of shard end)
+## Final model set (as of conversation end)
 
 Through several rounds of user pushback on vendor/version diversity (challenging
 an initial Qwen-heavy list, questioning the absence of Llama-2 — deliberately
@@ -243,19 +241,19 @@ UNSUPPORTED). The user directed that riskier/newer architectural gambles (e.g.,
 very recent releases) be run in a second wave after banking results from
 lower-risk, well-understood models first.
 
-## State at shard boundary
+## State at conversation boundary
 
 The wide sweep launch remains held pending: (1) the alignment-bug fix being
 verified via a reproduced +0.14 positive control on the pod (in progress), and
 (2) the corpus reaching its doubled target of 54 conversations via six
-freshly-relaunched parallel authoring shards (in progress, not yet merged into
+freshly-relaunched parallel authoring batches (in progress, not yet merged into
 `scenarios.json`). All pods apart from the single gate pod are currently down,
 avoiding idle burn during this build/debug phase. Numerous decisions, incidents,
-and lessons from this shard (the alignment scare resolution, the fixed-summary
-mechanism, the Fable design reframe, the champion-scan grand insight, the
-MLX-to-foundation-API switch, the sequential-vs-parallel-authoring incident, and
-the gate-catches-a-real-bug incident) have been recorded in the project's
-STATE/FINDINGS/DECISIONS/INCIDENTS tracking documents and, where transferable
-beyond this project, in persistent cross-session memory.
+and lessons from this conversation (the alignment scare resolution, the
+fixed-summary mechanism, the Fable design reframe, the champion-scan grand
+insight, the MLX-to-foundation-API switch, the sequential-vs-parallel-authoring
+incident, and the gate-catches-a-real-bug incident) have been recorded in the
+project's STATE/FINDINGS/DECISIONS/INCIDENTS tracking documents and, where
+transferable beyond this project, in persistent cross-session memory.
 
 ---

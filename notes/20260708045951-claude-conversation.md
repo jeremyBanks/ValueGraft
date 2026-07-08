@@ -3,24 +3,22 @@ positive-control failure — root-caused to a wrong model checkpoint, not the
 science — and pivots the sweep design to per-model-native rendering before the
 16-model wide sweep launches and exposes a new wave of infrastructure bugs._
 
-**Participants in this Conversation.**
-
-User; `claude-opus-4-8` (Claude Code `2.1.200`).
+**Participants:** User and claude-opus-4-8.
 
 ## Corpus recovery and freeze
 
-The shard opens mid-recovery from an earlier destructive `rm` that deleted six
-uncommitted corpus batch files. Recovery succeeded byte-identically by
-re-running the subagents' underlying generator scripts rather than re-authoring
-content. The corpus was merged (54 scenarios, 324 new plants, zero non-ASCII, no
-banned names), and all 27 new conversations (c28–c54) were rendered across six
-parallel shards and frozen — bringing the corpus to 54 conversations / 626
-plants total. A git-branch mishap also surfaced here: a debugger subagent had
-created `fix/selfgen-summary-think-alignment` and the working tree had drifted
-onto it, causing several commits to land off trunk. This was resolved with a
-fast-forward (`git branch -f trunk HEAD`, checkout, delete branch) and codified
-as a hard rule: **work only ever happens on trunk**, and any subagent that
-branches must be corrected immediately.
+The conversation opens mid-recovery from an earlier destructive `rm` that
+deleted six uncommitted corpus batch files. Recovery succeeded byte-identically
+by re-running the subagents' underlying generator scripts rather than
+re-authoring content. The corpus was merged (54 scenarios, 324 new plants, zero
+non-ASCII, no banned names), and all 27 new conversations (c28–c54) were
+rendered across six parallel batches and frozen — bringing the corpus to 54
+conversations / 626 plants total. A git-branch mishap also surfaced here: a
+debugger subagent had created `fix/selfgen-summary-think-alignment` and the
+working tree had drifted onto it, causing several commits to land off trunk.
+This was resolved with a fast-forward (`git branch -f trunk HEAD`, checkout,
+delete branch) and codified as a hard rule: **work only ever happens on trunk**,
+and any subagent that branches must be corrected immediately.
 
 ## The positive-control crisis and root cause
 
@@ -202,7 +200,7 @@ private memory, which subagents cannot see):
   assistant on job completion/failure rather than requiring the user to prompt
   for status — this is now the operating assumption for the wide sweep.
 
-## State at shard boundary
+## State at conversation boundary
 
 The core ValueGraft effect is confirmed real and specific (referent recovery
 ~~+0.10–0.12, correct dissociation, validated on the correct model with native

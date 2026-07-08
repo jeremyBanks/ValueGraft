@@ -1,23 +1,26 @@
 # AGENTS.md — orientation for any agent working in this repo
-> FINDINGS.md = the headline results (read for conclusions). INCIDENTS/DECISIONS = process.
+
+> FINDINGS.md = the headline results (read for conclusions). INCIDENTS/DECISIONS
+> = process.
 
 ## What this repo is
 
-A self-contained research project run by an autonomous coding agent on a
-32 GB Apple-Silicon MacBook: measuring whether KV-cache state written at
-generation time carries semantic meaning that re-encoding the same text
-loses, across LLM conversation-compaction boundaries.
+A self-contained research project run by an autonomous coding agent on a 32 GB
+Apple-Silicon MacBook: measuring whether KV-cache state written at generation
+time carries semantic meaning that re-encoding the same text loses, across LLM
+conversation-compaction boundaries.
 
 ## Read in this order
 
-0. `INCIDENTS.md` — what went wrong, KNOWN vs THEORY, and which data is VOID. Read before trusting ANY result.
+0. `INCIDENTS.md` — what went wrong, KNOWN vs THEORY, and which data is VOID.
+   Read before trusting ANY result.
 1. `STATE.md` — where things stand right now and what's queued. Start here.
-2. `DECISIONS.md` — every methodology decision, deviation, and verified
-   runtime fact. Non-negotiable reading before touching cache-surgery code.
+2. `DECISIONS.md` — every methodology decision, deviation, and verified runtime
+   fact. Non-negotiable reading before touching cache-surgery code.
 3. `semantic-continuity-experiment-brief.md` — the original experiment design
    (arms A–F, probe suite, build ladder).
-4. `amendments-from-external-review.md` — controls added after review
-   (B-causal, negative grafts, leakage classes, metric hierarchy).
+4. `amendments-from-external-review.md` — controls added after review (B-causal,
+   negative grafts, leakage classes, metric hierarchy).
 5. `followup-explorations-arms-GH.md`, `phase2-scaleup-and-coding-extension.md`
    — future work, only after the main analysis.
 
@@ -31,8 +34,8 @@ loses, across LLM conversation-compaction boundaries.
 - **Detach long jobs** (`nohup ... & disown`, PID file in scratchpad) —
   harness-tracked background shells have been killed mid-run. Use `python -u`,
   `tee` full output to a scratchpad log, monitor the log.
-- **Timestamps around long commands** (`date` before/after) to spot
-  pathological runtimes.
+- **Timestamps around long commands** (`date` before/after) to spot pathological
+  runtimes.
 - **Commit often** (snapshot-style, fine-grained). No large binaries — model
   weights live in the HF cache, never in the repo.
 - **Local subject model generates conversation text only.** All meta-work
@@ -45,18 +48,17 @@ loses, across LLM conversation-compaction boundaries.
 
 ## Quick technical map
 
-- Python via `uv run python src/<script>.py`; deps pinned in pyproject
-  (mlx-lm 0.31.3, transformers 5.0.0 — do not upgrade casually).
+- Python via `uv run python src/<script>.py`; deps pinned in pyproject (mlx-lm
+  0.31.3, transformers 5.0.0 — do not upgrade casually).
 - `src/kvlib.py` — cache serialize/rebuild, GappedKVCache (position counter
   decoupled from storage), teacher-forcing (batched; NEVER compare batched
   logits to stepwise logits — different kernels).
 - `src/arms.py` + `src/run_arms.py` — the experimental arms and driver.
 - Qwen3 chat-template trap: the final assistant message (and the assistant
-  message before a generation prompt) grows an empty `<think>` block, so
-  token prefixes are unstable across re-renders. Always use the canonical
-  non-final rendering (`canonical_ids` — dummy-user trick); locate message
-  boundaries by scanning `<|im_start|>` positions, never by re-tokenizing
-  prefixes.
+  message before a generation prompt) grows an empty `<think>` block, so token
+  prefixes are unstable across re-renders. Always use the canonical non-final
+  rendering (`canonical_ids` — dummy-user trick); locate message boundaries by
+  scanning `<|im_start|>` positions, never by re-tokenizing prefixes.
 - Data: `data/scenarios.json` (authored plants), `data/synthetic/`,
   `data/natural/` (composed conversations), `results/raw*/` (per-conversation
   arm outputs), `results/scores.json` (probe scoring).
@@ -68,70 +70,71 @@ loses, across LLM conversation-compaction boundaries.
   manifest. Small live-tail continuations are deferred by default; use
   `--force-small-continuations` only when you intentionally want to rewrite a
   note for a tiny recent exchange. Conversation notes include a generated
-  `Participants in this Conversation` block; it includes `User` only when user
-  messages are present, then assistant models sorted by contributed text volume.
-  Every model ID found in the raw conversation metadata must appear there.
+  `**Participants:** ...` paragraph; it includes `User` only when user messages
+  are present, then full assistant model identifiers sorted by contributed text
+  volume. If reasoning effort is present, append it to the model identifier with
+  a hyphen, such as `gpt-5.5-xhigh`. Every model ID found in the raw
+  conversation metadata must appear there.
 
 ## Source-control policy (07-05)
 
-- Committed: all docs, src/, small JSON experiment artifacts in results/
-  (the experiment record — keep them versioned). NOT committed: datasets
-  (*.parquet, HF caches), model weights, credentials (.gitignored), venv.
+- Committed: all docs, src/, small JSON experiment artifacts in results/ (the
+  experiment record — keep them versioned). NOT committed: datasets (*.parquet,
+  HF caches), model weights, credentials (.gitignored), venv.
 - A local pre-commit hook rejects staged files >4MB (.git/hooks/pre-commit —
   hooks do NOT travel with clones; recreate it from this note if absent).
 
 ## When stuck: invoke a different model family (user directive, 07-05)
 
-Both Claude and (per user) OpenAI Codex CLIs should be available on this
-machine (`claude` is on PATH; `codex` was NOT found on PATH as of 07-05 —
-check again / ask the user if needed). If you are hitting repeated
-obstacles — many attempts, little progress, or a diagnosis that keeps not
-paying off — you are STRONGLY ENCOURAGED to invoke an agent from a
-different model family for a fresh perspective:
+Both Claude and (per user) OpenAI Codex CLIs should be available on this machine
+(`claude` is on PATH; `codex` was NOT found on PATH as of 07-05 — check again /
+ask the user if needed). If you are hitting repeated obstacles — many attempts,
+little progress, or a diagnosis that keeps not paying off — you are STRONGLY
+ENCOURAGED to invoke an agent from a different model family for a fresh
+perspective:
 
 - Use the highest available model + reasoning-effort settings.
-- Point it at the relevant documents (STATE.md, DECISIONS.md, the
-  experiment briefs, the failing code/logs) so it builds real context, and
-  ask it to (a) explain what might be going wrong and (b) suggest what else
-  to try.
+- Point it at the relevant documents (STATE.md, DECISIONS.md, the experiment
+  briefs, the failing code/logs) so it builds real context, and ask it to (a)
+  explain what might be going wrong and (b) suggest what else to try.
 - If the CLI supports session resumption, resume the same session for an
   extended back-and-forth rather than one-shot queries.
-- Rationale (user): differently-trained models make different connections;
-  the value is the independent perspective, not raw capability. Getting
-  stuck is natural — treat cross-model consultation as a normal tool, not
-  a last resort.
+- Rationale (user): differently-trained models make different connections; the
+  value is the independent perspective, not raw capability. Getting stuck is
+  natural — treat cross-model consultation as a normal tool, not a last resort.
 
 ## Dual-agent convention (07-06)
 
-A second agent (different model) may read this repo and occasionally create
-its OWN new files/folders in non-conflicting paths, committing them
-directly (rare, user-requested). Rules for the primary agent: stage with
-explicit paths (avoid `git add -A` sweeps); unexpected new files are
-normal, not anomalies; commit-lock races are retry-safe. Second agent:
-never modify existing files, scripts, specs, state docs, or pods.
+A second agent (different model) may read this repo and occasionally create its
+OWN new files/folders in non-conflicting paths, committing them directly (rare,
+user-requested). Rules for the primary agent: stage with explicit paths (avoid
+`git add -A` sweeps); unexpected new files are normal, not anomalies;
+commit-lock races are retry-safe. Second agent: never modify existing files,
+scripts, specs, state docs, or pods.
 
 ## Results-in-repo rule (07-06, from a real gap)
 
-EVERY scored result must land in results/ and be committed, regardless of
-where the run executed (pod, scratchpad, local). The repo IS the
-scientific audit trail. Scratchpad is for working files (workspaces,
-logs, transcripts) only — a score file is never a working file.
-Contaminated/void results go to results/_QUARANTINE_* paths with READMEs,
-never deleted, never left outside the repo.
+EVERY scored result must land in results/ and be committed, regardless of where
+the run executed (pod, scratchpad, local). The repo IS the scientific audit
+trail. Scratchpad is for working files (workspaces, logs, transcripts) only — a
+score file is never a working file. Contaminated/void results go to
+results/_QUARANTINE_* paths with READMEs, never deleted, never left outside the
+repo.
 
 ## Stateful-change checklist (07-06, after incident #11 — MANDATORY)
 
-Any change adding/modifying retained state in a serving path must answer,
-IN THE COMMIT MESSAGE: (1) What state is retained, keyed by what? (2) What
-bounds its size, and where is that bound ASSERTED in code? (3) Who evicts
-it and when? (4) What is the correctness/equivalence proof? (5) Which
-probe gate exercises it before production traffic? Unanswered = do not
-deploy. Prose rules do not survive attention under pressure; forms do.
+Any change adding/modifying retained state in a serving path must answer, IN THE
+COMMIT MESSAGE: (1) What state is retained, keyed by what? (2) What bounds its
+size, and where is that bound ASSERTED in code? (3) Who evicts it and when? (4)
+What is the correctness/equivalence proof? (5) Which probe gate exercises it
+before production traffic? Unanswered = do not deploy. Prose rules do not
+survive attention under pressure; forms do.
 
 ## PUBLISHING: promote the best report to README.md (user 07-07)
+
 - The repo's landing page is **README.md**. NEVER edit README.md directly.
-- We always edit the WORKING report file (currently **REPORT.md**) — that's where
-  drafting, critics, and Fable passes happen.
+- We always edit the WORKING report file (currently **REPORT.md**) — that's
+  where drafting, critics, and Fable passes happen.
 - When a MAJOR update is finished and we're CONFIDENT in it, "publish" it by
   COPYING the working file over README.md (replacing the old published version):
   `cp REPORT.md README.md` — so the repo page shows the latest greatest.
@@ -139,118 +142,176 @@ deploy. Prose rules do not survive attention under pressure; forms do.
   diverge between promotions; re-promote after each major confident update.
 
 ## FINAL PAPER REVIEW: multi-perspective Fable passes (user 07-07)
-For the FINAL review of the FINAL paper (after all work done), IN ADDITION to the
-normal pipeline: run ~3 Fable subagent reviews, NO TOOLS (Fable is expensive —
-just reasoning over the text), each prompted from a DIFFERENT angle to get varied
-perspectives:
+
+For the FINAL review of the FINAL paper (after all work done), IN ADDITION to
+the normal pipeline: run ~3 Fable subagent reviews, NO TOOLS (Fable is expensive
+— just reasoning over the text), each prompted from a DIFFERENT angle to get
+varied perspectives:
+
 - (1) generic: "review this paper — what's good, what's not, structure, flow,
   suggestions to improve."
 - (2+3) slightly different framings (e.g. a skeptical-reviewer angle; a
-  first-time-reader/accessibility angle; a "what would make this stronger/publish-
-  ready" angle). Vary the prompt to surface different angles.
+  first-time-reader/accessibility angle; a "what would make this
+  stronger/publish- ready" angle). Vary the prompt to surface different angles.
 - Synthesize the three into the final revision. Tool-less to keep cost down.
 
 ## OUTPUT NAMING: unique, self-announcing (user 07-07, after a 30B run overwrote 27B)
+
 Experiment outputs MUST be uniquely named so a re-run NEVER overwrites a prior
 result (a 30B run silently clobbered the 27B summary.json at a shared path).
+
 - Output filename = <experiment>_<model-slug>_<UTC-timestamp>.json (unique by
   model AND time). Never a fixed shared "summary.json".
-- At PROCESS START, LOG the resolved model + the exact unique output path it will
-  write ("RUN <exp> model=<m> → results/.../<unique>.json"), so we know where to
-  look before it finishes.
+- At PROCESS START, LOG the resolved model + the exact unique output path it
+  will write ("RUN <exp> model=<m> → results/.../<unique>.json"), so we know
+  where to look before it finishes.
 - Also verify at launch (rule 26 extension): confirm the RIGHT MODEL loaded, not
-  just that work is happening — a run using the wrong/default model looks healthy
-  but answers the wrong question (the 30B run that was actually 27B).
+  just that work is happening — a run using the wrong/default model looks
+  healthy but answers the wrong question (the 30B run that was actually 27B).
 
 ## PAPER REVIEW — Codex/GPT-5.5 external review (user 07-08)
-For EACH MAJOR REVISION we might SHARE, get — AT LEAST ONCE (NOT repeatedly; it's
-heavy) — an external review from **Codex with GPT 5.5 on EXTRA-HIGH effort**. This
-complements (does not replace) the Fable multi-perspective passes + adversarial
-critics + terminology-consistency dimension. So the review stack for a shareable
-major revision = Fable ~3 tool-less angle passes + critics + terminology check +
-ONE Codex/GPT-5.5/xhigh review. INVOCATION (I run it myself — do NOT ask the user): codex CLI is installed
-(`~/.nvm/.../bin/codex`, add that nvm bin to PATH in the Bash call) and authed via
-the user's ChatGPT login. ~/.codex/config.toml ALREADY defaults model=gpt-5.5 +
-model_reasoning_effort=xhigh, so:
-  export PATH="/Users/jeb/.nvm/versions/node/v25.4.0/bin:$PATH"
-  codex exec -s read-only "Review /Users/jeb/experimentation/REPORT.md as a
-  skeptical peer reviewer: <focus>. Do not modify files."
-Use -s read-only for reviews (read the paper, don't edit). It runs autonomously
-(approval_policy=never). Capture its output into the review record. Gate: don't
-ship a shareable major revision without this Codex/GPT-5.5/xhigh review on record.
+
+For EACH MAJOR REVISION we might SHARE, get — AT LEAST ONCE (NOT repeatedly;
+it's heavy) — an external review from **Codex with GPT 5.5 on EXTRA-HIGH
+effort**. This complements (does not replace) the Fable multi-perspective
+passes + adversarial critics + terminology-consistency dimension. So the review
+stack for a shareable major revision = Fable ~3 tool-less angle passes +
+critics + terminology check + ONE Codex/GPT-5.5/xhigh review. INVOCATION (I run
+it myself — do NOT ask the user): codex CLI is installed
+(`~/.nvm/.../bin/codex`, add that nvm bin to PATH in the Bash call) and authed
+via the user's ChatGPT login. ~/.codex/config.toml ALREADY defaults
+model=gpt-5.5 + model_reasoning_effort=xhigh, so: export
+PATH="/Users/jeb/.nvm/versions/node/v25.4.0/bin:$PATH" codex exec -s read-only
+"Review /Users/jeb/experimentation/REPORT.md as a skeptical peer reviewer:
+<focus>. Do not modify files." Use -s read-only for reviews (read the paper,
+don't edit). It runs autonomously (approval_policy=never). Capture its output
+into the review record. Gate: don't ship a shareable major revision without this
+Codex/GPT-5.5/xhigh review on record.
 
 ## FABLE MUST HAVE CURRENT FACTS (user 07-08)
-The findings have evolved MASSIVELY (estimator bug → robust metric; keys neutral not
-hurting; fixed-summary suppresses graft → MECHANISTIC FINDING graft needs model's OWN
-summary; cross-arch map). ANY Fable writing/review/gut-check prompt MUST include or
-point to the CURRENT FINDINGS.md (not stale memory of earlier claims). Give Fable the
-up-to-date facts explicitly — it does NOT see FINDINGS unless the prompt provides it,
-and writing from stale facts would reintroduce corrected errors (the -0.31 stance, the
-'keys hurt', the fixed-summary numbers). Brief Fable on: the robust metric, the CI'd
-effect (referent significant/sense underpowered/stance null), keys-neutral, and the
-own-summary mechanism.
+
+The findings have evolved MASSIVELY (estimator bug → robust metric; keys neutral
+not hurting; fixed-summary suppresses graft → MECHANISTIC FINDING graft needs
+model's OWN summary; cross-arch map). ANY Fable writing/review/gut-check prompt
+MUST include or point to the CURRENT FINDINGS.md (not stale memory of earlier
+claims). Give Fable the up-to-date facts explicitly — it does NOT see FINDINGS
+unless the prompt provides it, and writing from stale facts would reintroduce
+corrected errors (the -0.31 stance, the 'keys hurt', the fixed-summary numbers).
+Brief Fable on: the robust metric, the CI'd effect (referent significant/sense
+underpowered/stance null), keys-neutral, and the own-summary mechanism.
 
 ## FABLE FREEDOM on paper title + intro (user 07-08)
+
 When Fable works on the PAPER writing/review, it has FULL FREEDOM to change the
-paper's TITLE and the opening few sentences (the forum-post intro blurb) to sound
-better — it's the strongest at making those land. Don't constrain it there; let it
-improve the title/opening. (Current title: "Value grafting: recovering lost semantic
-continuity when a conversation is compacted" — Fable may revise.)
+paper's TITLE and the opening few sentences (the forum-post intro blurb) to
+sound better — it's the strongest at making those land. Don't constrain it
+there; let it improve the title/opening. (Current title: "Value grafting:
+recovering lost semantic continuity when a conversation is compacted" — Fable
+may revise.)
 
 ## FINAL PAPER: consider letting FABLE do the INITIAL DRAFTING (user 07-07)
-For the FINAL version of the paper, we might let Fable write MOST of the initial draft
-itself — not just review it — PROVIDED we can give it the RIGHT INFORMATION (full current
-facts/findings, the results, the framing decisions, the honesty guardrails). It's the
-strongest writer here. Process is otherwise UNCHANGED: we still do the iterations + the
-full review stack, and I (main loop) still make whatever changes I judge necessary. So:
-Fable-initial-draft (with a thorough facts brief) → iterate/critique/terminology →
-Fable readability passes → Codex/GPT-5.5 → my edits → ship. Do this IF feasible (i.e. if
-we can brief it well enough that its draft is a real starting point, not a re-explain).
-Requires the [[fable-must-have-current-facts]] discipline taken to its fullest — a
-complete, current, structured brief. Fable also has full freedom on title + intro.
+
+For the FINAL version of the paper, we might let Fable write MOST of the initial
+draft itself — not just review it — PROVIDED we can give it the RIGHT
+INFORMATION (full current facts/findings, the results, the framing decisions,
+the honesty guardrails). It's the strongest writer here. Process is otherwise
+UNCHANGED: we still do the iterations + the full review stack, and I (main loop)
+still make whatever changes I judge necessary. So: Fable-initial-draft (with a
+thorough facts brief) → iterate/critique/terminology → Fable readability passes
+→ Codex/GPT-5.5 → my edits → ship. Do this IF feasible (i.e. if we can brief it
+well enough that its draft is a real starting point, not a re-explain). Requires
+the [[fable-must-have-current-facts]] discipline taken to its fullest — a
+complete, current, structured brief. Fable also has full freedom on title +
+intro.
 
 ## HARD RULES & LEARNINGS — every agent (main + subagents) MUST follow
-These are IN THE REPO on purpose so all agents can see them (private memory files can't be read by subagents).
+
+These are IN THE REPO on purpose so all agents can see them (private memory
+files can't be read by subagents).
 
 **Git**
-- Work ONLY on trunk. NEVER create/use branches. If a branch appears, fast-forward it into trunk and delete it (just moving refs, non-disruptive).
-- Commit AND push to origin/trunk after every unit of work. Never leave critical code/data uncommitted.
-- NEVER `rm`/delete/overwrite uncommitted work. Commit the thing before running anything that consumes or cleans it. A cleanup step must never run after a failed step (no unconditional `rm` after a merge/build).
+
+- Work ONLY on trunk. NEVER create/use branches. If a branch appears,
+  fast-forward it into trunk and delete it (just moving refs, non-disruptive).
+- Commit AND push to origin/trunk after every unit of work. Never leave critical
+  code/data uncommitted.
+- NEVER `rm`/delete/overwrite uncommitted work. Commit the thing before running
+  anything that consumes or cleans it. A cleanup step must never run after a
+  failed step (no unconditional `rm` after a merge/build).
 
 **Verify the boring things before anything clever or expensive**
-- Use the EXACT model id + config the known-good result used — not just the same family/size. (Cost us hours: ran thinking Qwen3-30B-A3B vs the non-thinking Instruct-2507 the +0.156 was measured on.)
-- Positive-control a pipeline on its ACTUAL production config, not a proxy. ("Equivalence-verified on fixed summaries" did NOT cover self-gen — twice.)
+
+- Use the EXACT model id + config the known-good result used — not just the same
+  family/size. (Cost us hours: ran thinking Qwen3-30B-A3B vs the non-thinking
+  Instruct-2507 the +0.156 was measured on.)
+- Positive-control a pipeline on its ACTUAL production config, not a proxy.
+  ("Equivalence-verified on fixed summaries" did NOT cover self-gen — twice.)
 - Read the actual NUMBER yourself. `status=OK` != correct.
-- If two independent apparatuses fail IDENTICALLY, the bug is in SHARED code / a shared input — look there first.
-- Don't harden/re-engineer correct code to soothe a misdiagnosed alarm; you'll introduce real brittleness.
+- If two independent apparatuses fail IDENTICALLY, the bug is in SHARED code / a
+  shared input — look there first.
+- Don't harden/re-engineer correct code to soothe a misdiagnosed alarm; you'll
+  introduce real brittleness.
 
 **Subagents & generation**
-- SHARD independent multi-item work across parallel subagents from the START (quality AND speed): author diversity + fresh attention per item. Don't run N items sequentially in one subagent.
-- Text/content generation → fast model mix (Fable/Opus/Sonnet/Codex), never a local model (MLX/Ollama) except quick sanity checks.
-- NEVER kill a subagent off a proxy signal (output-file size/mtime). Check real progress (recent activity, its last message) before any destructive action.
+
+- SHARD independent multi-item work across parallel subagents from the START
+  (quality AND speed): author diversity + fresh attention per item. Don't run N
+  items sequentially in one subagent.
+- Text/content generation → fast model mix (Fable/Opus/Sonnet/Codex), never a
+  local model (MLX/Ollama) except quick sanity checks.
+- NEVER kill a subagent off a proxy signal (output-file size/mtime). Check real
+  progress (recent activity, its last message) before any destructive action.
 
 **When stuck → consult Fable EARLY**
-- **The urge to stop and ask/report to the USER is the signal to consult FABLE instead — and keep working.** When stuck or uncertain, do NOT turn to the user for direction; that is offloading the thinking. Consult Fable autonomously (it's the resource for the thinking) and keep driving. Escalate to the user ONLY for decisions genuinely theirs — spend limits, scope, taste — never to resolve your own confusion. Fable first, then results; bring the user decisions and outcomes, not "here's where I'm confused, what do you think?"
-- The moment a fix hasn't converged in ~1-2 attempts, or a subagent is looping, or a result is confusing: STOP and consult Fable for the STRATEGIC/diagnostic view. Do NOT grind for hours first. Fable advises; it does not implement. (Fable caught the wrong-model class of bug and the nativeness confound that hours of narrow debugging missed.)
 
-**Record learnings IN THE REPO** (DECISIONS.md / INCIDENTS.md / FINDINGS.md / here) — not in private memory files agents can't see.
+- **The urge to stop and ask/report to the USER is the signal to consult FABLE
+  instead — and keep working.** When stuck or uncertain, do NOT turn to the user
+  for direction; that is offloading the thinking. Consult Fable autonomously
+  (it's the resource for the thinking) and keep driving. Escalate to the user
+  ONLY for decisions genuinely theirs — spend limits, scope, taste — never to
+  resolve your own confusion. Fable first, then results; bring the user
+  decisions and outcomes, not "here's where I'm confused, what do you think?"
+- The moment a fix hasn't converged in ~1-2 attempts, or a subagent is looping,
+  or a result is confusing: STOP and consult Fable for the STRATEGIC/diagnostic
+  view. Do NOT grind for hours first. Fable advises; it does not implement.
+  (Fable caught the wrong-model class of bug and the nativeness confound that
+  hours of narrow debugging missed.)
+
+**Record learnings IN THE REPO** (DECISIONS.md / INCIDENTS.md / FINDINGS.md /
+here) — not in private memory files agents can't see.
 
 ## PAPER: methods/provenance are a BLOCKING requirement
-Before the paper ships, it MUST satisfy every item in METHODS-PROVENANCE-REQUIREMENTS.md (data provenance = who/what generated each token, exact model ids, procedures, gates, design rationale, reproducibility). Every prior writeup omitted this; it makes the result un-reproducible. Brief Fable + critics + Codex to review the paper AGAINST that file. Provenance gaps = blocking failure.
+
+Before the paper ships, it MUST satisfy every item in
+METHODS-PROVENANCE-REQUIREMENTS.md (data provenance = who/what generated each
+token, exact model ids, procedures, gates, design rationale, reproducibility).
+Every prior writeup omitted this; it makes the result un-reproducible. Brief
+Fable + critics + Codex to review the paper AGAINST that file. Provenance gaps =
+blocking failure.
 
 ## Pod / RunPod ops (learned 07-08, hours lost to flaky pods)
-- LAUNCH detached jobs the PROVEN way: `scripts/launch_pod.sh <name> <job.sh>` (it does
-  `nohup bash job.sh > job.log 2>&1 &` and the ssh RETURNS) — this reliably detached all session.
-  Or a run_in_background Bash running an inline `nohup python … > log 2>&1 & echo PID` that returns
-  immediately. Do NOT use `setsid … &` or a foreground `bash script` held open by the ssh — on a
-  flaky pod the connection drop (exit 255) kills the job and no log is ever written.
-- A DEGRADED pod (API shows desiredStatus=RUNNING but runtime=None / uptime None) answers QUICK
-  commands (nvidia-smi, ls) but DROPS sustained connections and won't launch jobs. Do not fight it:
-  terminate + reprovision. Symptom = launches silently produce no log.
-- macOS has NO `timeout` command — never wrap ssh in `timeout N`; use ssh -o ConnectTimeout=15
-  -o ServerAliveInterval=5 -o ServerAliveCountMax=2 instead. (Also: pass ssh -o flags INLINE, not via
-  a shell variable — a `$O="-o …"` var expands wrong: "keyword stricthostkeychecking extra arguments".)
-- Community RunPod create 500s are TRANSIENT (availability fluctuates) — retry, don't conclude it's down.
-- Don't grind on infrastructure. If a pod degrades, terminate+reprovision; the science isn't the pod.
 
-- **RELIABILITY ([RELIABILITY.md](RELIABILITY.md)):** two hard rules — a fail-closed PRE-FLIGHT GATE before any scaled spend, and OBSERVABILITY (SRE: error reporting, health checks, metrics+anomaly detection, alerting) so failures self-report. These are solved problems; use the established patterns, not hacks.
+- LAUNCH detached jobs the PROVEN way: `scripts/launch_pod.sh <name> <job.sh>`
+  (it does `nohup bash job.sh > job.log 2>&1 &` and the ssh RETURNS) — this
+  reliably detached all session. Or a run_in_background Bash running an inline
+  `nohup python … > log 2>&1 & echo PID` that returns immediately. Do NOT use
+  `setsid … &` or a foreground `bash script` held open by the ssh — on a flaky
+  pod the connection drop (exit 255) kills the job and no log is ever written.
+- A DEGRADED pod (API shows desiredStatus=RUNNING but runtime=None / uptime
+  None) answers QUICK commands (nvidia-smi, ls) but DROPS sustained connections
+  and won't launch jobs. Do not fight it: terminate + reprovision. Symptom =
+  launches silently produce no log.
+- macOS has NO `timeout` command — never wrap ssh in `timeout N`; use ssh -o
+  ConnectTimeout=15 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 instead.
+  (Also: pass ssh -o flags INLINE, not via a shell variable — a `$O="-o …"` var
+  expands wrong: "keyword stricthostkeychecking extra arguments".)
+- Community RunPod create 500s are TRANSIENT (availability fluctuates) — retry,
+  don't conclude it's down.
+- Don't grind on infrastructure. If a pod degrades, terminate+reprovision; the
+  science isn't the pod.
+
+- **RELIABILITY ([RELIABILITY.md](RELIABILITY.md)):** two hard rules — a
+  fail-closed PRE-FLIGHT GATE before any scaled spend, and OBSERVABILITY (SRE:
+  error reporting, health checks, metrics+anomaly detection, alerting) so
+  failures self-report. These are solved problems; use the established patterns,
+  not hacks.

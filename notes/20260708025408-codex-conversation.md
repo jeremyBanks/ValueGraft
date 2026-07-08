@@ -1,14 +1,10 @@
-_This shard continues the transcript-summarization pipeline work: making the
-incremental updater less prone to churn on small live-tail continuations, adding
-a mechanically generated and validated "Participants" block (user presence plus
-assistant models ranked by contribution and sequenced by switch order) to every
+_This conversation continues the transcript-summarization pipeline work: making
+the incremental updater less prone to churn on small live-tail continuations,
+adding a mechanically generated and validated participant paragraph to every
 conversation note, and catching and fixing a regex bug that had truncated
 several older notes before it reached a commit._
 
-**Participants in this Conversation.**
-
-User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
-`0.142.5`).
+**Participants:** User and gpt-5.5-xhigh.
 
 **Live-tail deferral.** Repeated re-running of the updater during testing was
 rewriting the most recent notes for only a handful of new messages, forcing

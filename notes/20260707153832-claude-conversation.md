@@ -1,13 +1,11 @@
-_This shard covers the shipping of the ValueGraft synthesis paper (REPORT.md)
-through a multi-pass adversarial-critic and prose pipeline, the pivot into Phase
-2's K/V-axis exploration (key-grafting with RoPE re-rotation), a clean negative
-result on key-grafting, the design and hardening of a free-generation
-lens-divergence probe, and the start of a cross-check against another agent's
-conflicting referent-recovery findings._
+_This conversation covers the shipping of the ValueGraft synthesis paper
+(REPORT.md) through a multi-pass adversarial-critic and prose pipeline, the
+pivot into Phase 2's K/V-axis exploration (key-grafting with RoPE re-rotation),
+a clean negative result on key-grafting, the design and hardening of a
+free-generation lens-divergence probe, and the start of a cross-check against
+another agent's conflicting referent-recovery findings._
 
-**Participants in this Conversation.**
-
-User; `claude-opus-4-8` (Claude Code `2.1.200`).
+**Participants:** User and claude-opus-4-8.
 
 ## Model-routing correction and standing practice
 
@@ -17,39 +15,41 @@ Sonnet for cost reasons is backwards. **How to apply:** default subagents to
 Opus; use Sonnet only when a genuinely independent second perspective is wanted
 (e.g., critic panels, bake-offs); use Fable where its prose strength matters,
 fed clean context. This was saved to persistent memory
-(`model-selection-by-fitness.md`) and enforced throughout the rest of the shard
-— notably as a **hard, standing requirement** that Fable must review both final
-prose (readability) _and_ high-level conceptual framing/claims via subagent,
-specifically because the main loop kept getting filter-flipped back to Opus even
-when the user set Fable as the session model. This surfaced twice more late in
-the shard as an explicit reminder ("you're opus again").
+(`model-selection-by-fitness.md`) and enforced throughout the rest of the
+conversation — notably as a **hard, standing requirement** that Fable must
+review both final prose (readability) _and_ high-level conceptual framing/claims
+via subagent, specifically because the main loop kept getting filter-flipped
+back to Opus even when the user set Fable as the session model. This surfaced
+twice more late in the conversation as an explicit reminder ("you're opus
+again").
 
 ## Cross-method validation against the other agent's J-lens work
 
-Before this shard's writing effort, the assistant evaluated a separate agent's
-`intervention_probe_findings.md`, which used the _real_ Jacobian lens (J-lens,
-Gurnee et al., Qwen3.6-27B weights) rather than the assistant's own crude
-logit-lens readout. Their controls (alpha-zero, shifted-values) were judged
-rigorous. Three independent-method convergences emerged: full-strength (α=1.0)
-grafting is harmful and low α is best; alignment of grafted values to position
-matters; the effect is mitigation, not full reconstruction. Critically, their
-sparse-challenge negative exposed that the assistant's own "referent +10pp,
-recovers evicted decisions" framing was overstated — raw numbers (17%→26%) show
-referent recovery is weak on a heavily damaged baseline, not a genuine rescue.
-The assistant recommended reframing referent as "reduces reinterpretation error
-around facts still present in the summary" rather than "recovers omitted facts,"
-and flagged this as motivation for a future K/V-axis experiment.
+Before this conversation's writing effort, the assistant evaluated a separate
+agent's `intervention_probe_findings.md`, which used the _real_ Jacobian lens
+(J-lens, Gurnee et al., Qwen3.6-27B weights) rather than the assistant's own
+crude logit-lens readout. Their controls (alpha-zero, shifted-values) were
+judged rigorous. Three independent-method convergences emerged: full-strength
+(α=1.0) grafting is harmful and low α is best; alignment of grafted values to
+position matters; the effect is mitigation, not full reconstruction. Critically,
+their sparse-challenge negative exposed that the assistant's own "referent
++10pp, recovers evicted decisions" framing was overstated — raw numbers
+(17%→26%) show referent recovery is weak on a heavily damaged baseline, not a
+genuine rescue. The assistant recommended reframing referent as "reduces
+reinterpretation error around facts still present in the summary" rather than
+"recovers omitted facts," and flagged this as motivation for a future K/V-axis
+experiment.
 
 ## REPORT.md rewrite: process and outcome
 
-Responding to an earlier (pre-shard) rejection of a vague draft, the user gave a
-detailed, wide-ranging brief: grafting research must be the star (≈70% academic
-/ 30% blog), the J-lens is a secondary tool used to illuminate the research (not
-vice versa), real verbatim transcript exhibits are required, "compelling"
-examples should provide insight without requiring full technical understanding,
-and the coding-benchmark thread should be minimized to one honest paragraph
-since it never produced usable data. The assistant produced a written master
-plan (`REPORT2-PLAN.md`), inventoried the other agent's existing lens
+Responding to an earlier (before this conversation) rejection of a vague draft,
+the user gave a detailed, wide-ranging brief: grafting research must be the star
+(≈70% academic / 30% blog), the J-lens is a secondary tool used to illuminate
+the research (not vice versa), real verbatim transcript exhibits are required,
+"compelling" examples should provide insight without requiring full technical
+understanding, and the coding-benchmark thread should be minimized to one honest
+paragraph since it never produced usable data. The assistant produced a written
+master plan (`REPORT2-PLAN.md`), inventoried the other agent's existing lens
 infrastructure (finding it already implemented the user's "four key boundary
 points" sampling design), and identified a genuine gap: the other agent's own
 lens exhibits were weak because they used examples where facts were already
@@ -215,13 +215,13 @@ routine progress, speaking only on completion, error, or genuine state change �
 and applied immediately to the in-flight K/V and lens-probe watchers, which
 subsequently reported single clean completion pings instead of per-tick spam.
 
-## Handoff state at shard boundary
+## Handoff state at conversation boundary
 
 Phase 2's coarse and per-layer K/V results are both complete, negative, and
 recorded in FINDINGS.md as a strengthening conclusion ("value is the operative
 axis; keys don't help uniformly or at any single layer"). The free-generation
-lens probe is running on the 27B pod. At the very end of the shard, the user
-surfaced a new complication: another agent's
+lens probe is running on the 27B pod. At the very end of the conversation, the
+user surfaced a new complication: another agent's
 `referent_recovery_microtest_followup.md` (or similarly named file, outside this
 project's own files) reports prospecting evidence that key-grafting (or
 K/V-graft) _does_ help for a different task shape — short,
@@ -233,6 +233,6 @@ claims," creating a scale/rigor mismatch rather than a clean contradiction with
 the project's rigorous 30B negative. The user's final instruction was to have
 Fable read both the assistant's K/V conclusion and the other agent's microtest
 claims together and give its assessment — this cross-check was in progress, not
-yet resolved, at the shard's end.
+yet resolved, at the conversation's end.
 
 ---

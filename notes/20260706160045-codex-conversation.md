@@ -1,13 +1,10 @@
-_This shard covers the ValueGraft experiment's live monitoring routine, followed
-by a pivot into a substantial side investigation using Anthropic's Jacobian-lens
-(J-lens) interpretability tool, culminating in document-quality corrections and
-a methodological control study, before ending on a tooling question about
-shellcheck._
+_This conversation covers the ValueGraft experiment's live monitoring routine,
+followed by a pivot into a substantial side investigation using Anthropic's
+Jacobian-lens (J-lens) interpretability tool, culminating in document-quality
+corrections and a methodological control study, before ending on a tooling
+question about shellcheck._
 
-**Participants in this Conversation.**
-
-User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
-`0.142.5`).
+**Participants:** User and gpt-5.5-xhigh.
 
 ## Live-run monitoring and a self-diagnosed refresh failure
 
@@ -58,10 +55,10 @@ attractive as a future subject model but not a drop-in for the current
 KV-cache-surgery experiment, since much of its architecture lacks standard
 per-layer K/V tensors.
 
-**Model acquisition and isolated prototype.** Qwen3.6-27B (~~52GB, 15 safetensor
-shards) was downloaded into the local HF cache after repeated
-background-downloader failures (large-shard transfers died silently in detached
-processes; foreground/sequential per-shard transfers succeeded). A fully
+**Model acquisition and isolated prototype.** Qwen3.6-27B (~~52GB across 15
+safetensor files) was downloaded into the local HF cache after repeated
+background-downloader failures (large model-file transfers died silently in
+detached processes; foreground/sequential per-file transfers succeeded). A fully
 isolated prototype directory, `jlens_boundary_probe/`, was created to keep all
 exploratory work out of the live pipeline. Early work there used a RunPod A100
 (~~$1.39/hr): first pod was **terminated immediately after pulling results
@@ -152,15 +149,16 @@ committed and pushed in two visible, separately described increments (`37978b0`,
 comparison-based" bar the user expects for any writeup summarizing raw
 experimental output.
 
-## State at shard boundary
+## State at conversation boundary
 
 `trunk` was pushed to `origin` through commit `bcc9c1c` (and earlier `6421511`),
 containing: the J-lens boundary-probe toolkit and all its demo/control outputs
 under `jlens_boundary_probe/`, the next-token control report and its raw JSON,
 and the corrected/expanded `valuegraft-focused-draft.md`. The exploratory J-lens
-RunPod A100 instance was terminated. The last live topic before this shard ends
-is the user asking whether `shellcheck` should be integrated into script
-generation — the assistant had begun narrowing a repo search for what "generate"
-refers to (source/scripts vs. archived result corpus) when the shard closes.
+RunPod A100 instance was terminated. The last live topic before this
+conversation ends is the user asking whether `shellcheck` should be integrated
+into script generation — the assistant had begun narrowing a repo search for
+what "generate" refers to (source/scripts vs. archived result corpus) when the
+conversation closes.
 
 ---

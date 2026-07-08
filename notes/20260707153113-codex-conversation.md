@@ -1,14 +1,11 @@
-_This shard covers the tail of the ValueGraft J-lens intervention work
+_This conversation covers the tail of the ValueGraft J-lens intervention work
 (ordinary-batch and sparse-challenge grafting experiments, report drafting and
 review), a pivot into cheap referent-recovery microbenchmark design, a Tiananmen
 Square topic-sensitivity interpretability probe, and a repository-wide
 documentation reorganization culminating in a UTC-based archival naming
 convention._
 
-**Participants in this Conversation.**
-
-User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
-`0.142.5`).
+**Participants:** User and gpt-5.5-xhigh.
 
 ## J-lens intervention batches and report
 
@@ -80,8 +77,8 @@ implementation, the script had a real bug: `git log --follow --reverse`
 unreliably surfaces the true original creation commit for some rename chains
 through the docs-sweep commits, so the fix in progress is to collect all
 followed-commit dates and take the oldest, with an add-history title-based
-fallback when `--follow` still misses the origin. This was mid-fix at the shard
-boundary.
+fallback when `--follow` still misses the origin. This was mid-fix at the
+conversation boundary.
 
 Report authorship attribution was clarified twice at user request: footer of
 `REPORT.md` (promoted from `report-synthesis.md`, later itself promoted to
@@ -195,15 +192,15 @@ later user instruction, the entire `topic_sensitivity_probe/` working directory
 `docs/` with correct creation-time prefixes — this is the same disposal pattern
 applied to other working directories during the housekeeping pass.
 
-## Operational notes and state at shard boundary
+## Operational notes and state at conversation boundary
 
 Throughout, other concurrent work streams (cross-architecture generalization
 sweep: Qwen2.5-32B negative even under trusted-path checks, Mistral
 near-null/underpowered, Gemma errored, and a critical finding that the broader
 fixed-summary harness itself may be suspect since the Qwen3-30B positive control
 failed under fixed Sonnet-written summaries — motivating a decisive
-self-generated-summary rerun that was live at shard end) were left strictly
-untouched; dirty files like `scripts/job_cross_arch.sh` and
+self-generated-summary rerun that was live at conversation end) were left
+strictly untouched; dirty files like `scripts/job_cross_arch.sh` and
 `src/cross_arch_probe.py`, and untracked `results/` directories, were repeatedly
 identified and explicitly not touched across many turns. A GPU/pod-sharing
 discipline was maintained throughout: check for other active jobs before
@@ -214,8 +211,8 @@ concluding a hang. One RunPod pod (`w99udryqm0szp1`) was explicitly verified
 idle and terminated at user request at the end of the topic-sensitivity work;
 RunPod account-level pod listing was confirmed empty afterward.
 
-At the shard boundary, the docs-normalizer script rewrite (UTC full-timestamp
-convention, `git log --follow` unreliability fix using
+At the conversation boundary, the docs-normalizer script rewrite (UTC
+full-timestamp convention, `git log --follow` unreliability fix using
 oldest-of-all-followed-dates plus title-based add-history fallback) was
 mid-implementation, not yet applied or committed.
 

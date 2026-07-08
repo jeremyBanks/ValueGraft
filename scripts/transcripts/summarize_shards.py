@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Summarize transcript shards with a command-line model.
+"""Summarize transcript segments with a command-line model.
 
 The command is optional. Without --command this writes prompt files only.
 With --command, the prompt is sent to the command on stdin and stdout is saved
-as the shard summary.
+as the segment summary.
 """
 
 from __future__ import annotations
@@ -14,17 +14,18 @@ from pathlib import Path
 
 
 PROMPT_TEMPLATE = """\
-You are summarizing a contiguous shard of mainline project conversation.
+You are summarizing a contiguous segment of mainline project conversation.
 
 Write a concise but information-dense summary for a future agent. Capture:
 - ideas and hypotheses raised
 - methodology decisions and corrections
 - concrete results and caveats
 - operational lessons that affect future work
-- handoff-relevant state at the shard boundary
+- handoff-relevant state at the conversation boundary
 
 The first paragraph of your answer must be the italicized opening summary, or
-at most two short italicized sentences, summarizing what this shard is about. Do
+at most two short italicized sentences, summarizing what this conversation
+covers. Do
 not put any title, heading, bold label, or preamble before that first italicized
 paragraph. Then use short titled sections and prose paragraphs. Use bullets only
 for compact lists of named results, rules, arms, or open questions; do not turn
@@ -58,7 +59,7 @@ Do not try to preserve every message.
 
 {previous_context_block}
 
-Shard:
+Conversation segment:
 
 {shard_text}
 """

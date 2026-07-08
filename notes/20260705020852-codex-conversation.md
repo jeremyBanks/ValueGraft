@@ -1,17 +1,9 @@
-_This shard covers a shift from exploratory theory-review into a paper-writing
-and repo/paper-hygiene phase for the ValueGraft compaction-mitigation project,
-culminating in a private GitHub repo, a synthesis workspace with two paper
-drafts, and a naming/prior-art overhaul._
+_This conversation covers a shift from exploratory theory-review into a
+paper-writing and repo/paper-hygiene phase for the ValueGraft
+compaction-mitigation project, culminating in a private GitHub repo, a synthesis
+workspace with two paper drafts, and a naming/prior-art overhaul._
 
-**Participants in this Conversation.**
-
-User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
-`0.142.5`); `gpt-5.5` (provider `openai`; reasoning effort `high`; Codex CLI
-`0.142.5`).
-
-Assistant model sequence: `gpt-5.5` (provider `openai`; reasoning effort `high`;
-Codex CLI `0.142.5`) -> `gpt-5.5` (provider `openai`; reasoning effort `xhigh`;
-Codex CLI `0.142.5`).
+**Participants:** User, gpt-5.5-xhigh, and gpt-5.5-high.
 
 **Reframing consolidated.** Early messages settled the project's central
 framing: the claim "re-encoding retained text after compaction is not equivalent
@@ -135,15 +127,15 @@ experiment. This full analysis was written to a new document,
 - Authorship for the eventual paper: Jeremy Banks (first author), Claude Fable 5
   (second author), the GPT-5.5/Codex agent (third author).
 
-**Naming correction (open at shard boundary).** The final instruction of this
-shard: the names "H-pack" and "ValueGraft" read as unrelated concepts despite
-being closely related variants of the same idea, and "H-pack" reads like a
-leftover placeholder. The user wants "ValueGraft" to become the umbrella name
-for the overall approach, with the two current variants renamed as sibling
-methods/variants (e.g., lettered, numbered, or newly named) under that umbrella.
-This is a paper-writing-only change — the assistant may rename in the draft
-without touching source code or other repo files, and does not need to keep code
-and paper terminology in sync. This renaming was in progress, unresolved, at the
-end of the shard.
+**Naming correction (open at conversation boundary).** The final instruction of
+this conversation: the names "H-pack" and "ValueGraft" read as unrelated
+concepts despite being closely related variants of the same idea, and "H-pack"
+reads like a leftover placeholder. The user wants "ValueGraft" to become the
+umbrella name for the overall approach, with the two current variants renamed as
+sibling methods/variants (e.g., lettered, numbered, or newly named) under that
+umbrella. This is a paper-writing-only change — the assistant may rename in the
+draft without touching source code or other repo files, and does not need to
+keep code and paper terminology in sync. This renaming was in progress,
+unresolved, at the end of the conversation.
 
 ---

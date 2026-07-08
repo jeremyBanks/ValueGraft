@@ -47,7 +47,8 @@ DEFAULT_FORBID_REGEX = [
     r"\brpa_[A-Za-z0-9]{32,}\b",
     r"\bhf_[A-Za-z0-9]{20,}\b",
 ]
-PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
+PARTICIPANTS_PREFIX = "**Participants:**"
+OLD_PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
 OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
 
 SUMMARY_PROMPT = """\
@@ -60,7 +61,8 @@ writing form, such as paper-style, blog-style, article-style, or report-style,
 include that.
 
 The first paragraph of your answer must be the italicized opening summary, or
-at most two short italicized sentences, summarizing what this shard is about. Do
+at most two short italicized sentences, summarizing what this conversation
+covers. Do
 not put any title, heading, bold label, or preamble before that first italicized
 paragraph. Then use short titled sections and prose paragraphs. Use bullets only
 for compact lists of named results, rules, arms, or open questions; do not turn
@@ -83,10 +85,10 @@ changed; at most preserve the intended document style or a concrete repo
 workflow change. For transcript-note style discussions, record only the final
 durable style rule in general terms. Do not retell the cleanup episode, mention
 prohibited words, or quote examples of language to avoid. Return only the note
-body, with no title. The script adds a deterministic model roster from source
-metadata; do not invent model identifiers. If the transcript headings show a
-switch between assistant models, mention the switch at the relevant point in the
-summary flow.
+body, with no title. The script adds a deterministic participants paragraph from
+source metadata; do not invent model identifiers. If the transcript headings
+show a switch between assistant models, mention the switch at the relevant point
+in the summary flow.
 
 {previous_context_block}
 
@@ -114,7 +116,8 @@ established an intended writing form, such as paper-style, blog-style,
 article-style, or report-style, include that.
 
 The first paragraph of your answer must be the italicized opening summary, or
-at most two short italicized sentences, summarizing what this shard is about. Do
+at most two short italicized sentences, summarizing what this conversation
+covers. Do
 not put any title, heading, bold label, or preamble before that first italicized
 paragraph. Then use short titled sections and prose paragraphs. Use bullets only
 for compact lists of named results, rules, arms, or open questions; do not turn
@@ -136,10 +139,10 @@ changed; at most preserve the intended document style or a concrete repo
 workflow change. For transcript-note style discussions, record only the final
 durable style rule in general terms. Do not retell the cleanup episode, mention
 prohibited words, or quote examples of language to avoid. Return only the note
-body, with no title. The script adds a deterministic model roster from source
-metadata; do not invent model identifiers. If the transcript headings show a
-switch between assistant models, mention the switch at the relevant point in the
-summary flow.
+body, with no title. The script adds a deterministic participants paragraph from
+source metadata; do not invent model identifiers. If the transcript headings
+show a switch between assistant models, mention the switch at the relevant point
+in the summary flow.
 
 Existing summary:
 
@@ -329,23 +332,8 @@ def parse_heading_fields(heading_metadata: str) -> dict[str, str]:
     return fields
 
 
-def model_entry_from_fields(fields: dict[str, str]) -> str | None:
-    model = fields.get("model")
-    if not model:
-        return None
-    details: list[str] = []
-    if provider := fields.get("provider"):
-        details.append(f"provider `{provider}`")
-    if effort := fields.get("effort"):
-        details.append(f"reasoning effort `{effort}`")
-    if version := fields.get("claude_code_version"):
-        details.append(f"Claude Code `{version}`")
-    if version := fields.get("codex_cli"):
-        details.append(f"Codex CLI `{version}`")
-    entry = f"`{model}`"
-    if details:
-        entry += f" ({'; '.join(details)})"
-    return entry
+def is_real_model_id(model: str) -> bool:
+    return not (model.startswith("<") and model.endswith(">"))
 
 
 def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
@@ -353,11 +341,14 @@ def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
     for index, msg in enumerate(messages):
         if msg.role != "assistant":
             continue
-        entry = model_entry_from_fields(parse_heading_fields(msg.heading_metadata))
-        if entry is None:
+        fields = parse_heading_fields(msg.heading_metadata)
+        model = fields.get("model")
+        if not model or not is_real_model_id(model):
             continue
-        chars, first_index = stats.get(entry, (0, index))
-        stats[entry] = (chars + len(msg.text), first_index)
+        if effort := fields.get("effort"):
+            model = f"{model}-{effort}"
+        chars, first_index = stats.get(model, (0, index))
+        stats[model] = (chars + len(msg.text), first_index)
     return [
         entry
         for entry, (_chars, _first_index) in sorted(
@@ -377,19 +368,6 @@ def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]
     return entries
 
 
-def assistant_model_sequence_for_messages(messages: list[MessageRecord]) -> list[str]:
-    sequence: list[str] = []
-    for msg in messages:
-        if msg.role != "assistant":
-            continue
-        entry = model_entry_from_fields(parse_heading_fields(msg.heading_metadata))
-        if entry is None:
-            continue
-        if not sequence or sequence[-1] != entry:
-            sequence.append(entry)
-    return sequence
-
-
 def model_entries_for_ranges(
     segments: dict[tuple[str, str, int], list[MessageRecord]],
     ranges: list[SourceRange],
@@ -398,32 +376,38 @@ def model_entries_for_ranges(
 
 
 def required_model_ids(model_entries: list[str]) -> list[str]:
-    ids: list[str] = []
-    for entry in model_entries:
-        match = re.match(r"`([^`]+)`", entry)
-        if match:
-            ids.append(match.group(1))
-    return ids
+    return model_entries
+
+
+def format_english_list(items: list[str]) -> str:
+    if not items:
+        return ""
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return ", ".join(items[:-1]) + f", and {items[-1]}"
 
 
 def render_participants_block(messages: list[MessageRecord]) -> str:
-    participant_entries = participant_entries_for_messages(messages)
-    sequence = assistant_model_sequence_for_messages(messages)
-    lines = [PARTICIPANTS_SECTION_HEADING, "", "; ".join(participant_entries) + "."]
-    if len(sequence) > 1:
-        lines.extend(["", "Assistant model sequence: " + " -> ".join(sequence) + "."])
-    return "\n".join(lines)
+    return f"{PARTICIPANTS_PREFIX} {format_english_list(participant_entries_for_messages(messages))}."
 
 
 def insert_participants_block(summary: str, messages: list[MessageRecord]) -> str:
     summary = summary.strip()
-    for heading in (PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING):
+    for heading in (OLD_PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING):
         summary = re.sub(
             rf"\n\n{re.escape(heading)}\n.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
             "",
             summary,
             flags=re.S,
         )
+    summary = re.sub(
+        rf"\n\n{re.escape(PARTICIPANTS_PREFIX)}\s+.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
+        "",
+        summary,
+        flags=re.S,
+    )
     block = render_participants_block(messages)
     if "\n\n" not in summary:
         return f"{summary}\n\n{block}\n"
@@ -829,7 +813,7 @@ def update_notes(args: argparse.Namespace) -> None:
         prompt_path = args.work_dir / "prompts" / f"new-{note_path.name}"
         write_prompt(prompt_path, prompt)
         wrote_prompt = True
-        print(f"new shard: {note_path} ({len(messages)} messages)")
+        print(f"new conversation note: {note_path} ({len(messages)} messages)")
         print(f"prompt: {prompt_path}")
         if not args.command:
             continue
@@ -864,7 +848,7 @@ def update_notes(args: argparse.Namespace) -> None:
         changed_paths.append(note_path)
         if args.commit:
             iso = first_ts.isoformat().replace("+00:00", "Z")
-            git_commit([note_path], f"Archive conversation shard {prefix}", args.repo_root, iso)
+            git_commit([note_path], f"Archive conversation note {prefix}", args.repo_root, iso)
 
     if args.command and (changed_paths or manifest_changed):
         write_manifest(args.manifest, records)

@@ -25,7 +25,8 @@ from pathlib import Path
 from types import ModuleType
 
 
-PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
+PARTICIPANTS_PREFIX = "**Participants:**"
+OLD_PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
 OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
 
 
@@ -134,23 +135,8 @@ def parse_heading_fields(heading_metadata: str) -> dict[str, str]:
     return fields
 
 
-def model_entry_from_fields(fields: dict[str, str]) -> str | None:
-    model = fields.get("model")
-    if not model:
-        return None
-    details: list[str] = []
-    if provider := fields.get("provider"):
-        details.append(f"provider `{provider}`")
-    if effort := fields.get("effort"):
-        details.append(f"reasoning effort `{effort}`")
-    if version := fields.get("claude_code_version"):
-        details.append(f"Claude Code `{version}`")
-    if version := fields.get("codex_cli"):
-        details.append(f"Codex CLI `{version}`")
-    entry = f"`{model}`"
-    if details:
-        entry += f" ({'; '.join(details)})"
-    return entry
+def is_real_model_id(model: str) -> bool:
+    return not (model.startswith("<") and model.endswith(">"))
 
 
 def shard_messages(text: str) -> list[tuple[str, str, str]]:
@@ -169,11 +155,14 @@ def model_entries_from_shard_text(text: str) -> list[str]:
     for index, (role, metadata, body) in enumerate(shard_messages(text)):
         if role != "assistant":
             continue
-        entry = model_entry_from_fields(parse_heading_fields(metadata))
-        if entry is None:
+        fields = parse_heading_fields(metadata)
+        model = fields.get("model")
+        if not model or not is_real_model_id(model):
             continue
-        chars, first_index = stats.get(entry, (0, index))
-        stats[entry] = (chars + len(body), first_index)
+        if effort := fields.get("effort"):
+            model = f"{model}-{effort}"
+        chars, first_index = stats.get(model, (0, index))
+        stats[model] = (chars + len(body), first_index)
     return [
         entry
         for entry, (_chars, _first_index) in sorted(
@@ -193,37 +182,35 @@ def participant_entries_from_shard_text(text: str) -> list[str]:
     return entries
 
 
-def assistant_model_sequence_from_shard_text(text: str) -> list[str]:
-    sequence: list[str] = []
-    for role, metadata, _body in shard_messages(text):
-        if role != "assistant":
-            continue
-        entry = model_entry_from_fields(parse_heading_fields(metadata))
-        if entry is None:
-            continue
-        if not sequence or sequence[-1] != entry:
-            sequence.append(entry)
-    return sequence
+def format_english_list(items: list[str]) -> str:
+    if not items:
+        return ""
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return ", ".join(items[:-1]) + f", and {items[-1]}"
 
 
 def render_participants_block(shard_text: str) -> str:
-    participants = participant_entries_from_shard_text(shard_text)
-    sequence = assistant_model_sequence_from_shard_text(shard_text)
-    lines = [PARTICIPANTS_SECTION_HEADING, "", "; ".join(participants) + "."]
-    if len(sequence) > 1:
-        lines.extend(["", "Assistant model sequence: " + " -> ".join(sequence) + "."])
-    return "\n".join(lines)
+    return f"{PARTICIPANTS_PREFIX} {format_english_list(participant_entries_from_shard_text(shard_text))}."
 
 
 def insert_participants_block(summary: str, shard_text: str) -> str:
     summary = summary.strip()
-    for heading in (PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING):
+    for heading in (OLD_PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING):
         summary = re.sub(
             rf"\n\n{re.escape(heading)}\n.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
             "",
             summary,
             flags=re.S,
         )
+    summary = re.sub(
+        rf"\n\n{re.escape(PARTICIPANTS_PREFIX)}\s+.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
+        "",
+        summary,
+        flags=re.S,
+    )
     block = render_participants_block(shard_text)
     if "\n\n" not in summary:
         return f"{summary}\n\n{block}\n"
@@ -232,12 +219,7 @@ def insert_participants_block(summary: str, shard_text: str) -> str:
 
 
 def validate_model_mentions(summary: str, model_entries: list[str]) -> list[str]:
-    missing: list[str] = []
-    for entry in model_entries:
-        match = re.match(r"`([^`]+)`", entry)
-        if match and match.group(1) not in summary:
-            missing.append(match.group(1))
-    return missing
+    return [model_id for model_id in model_entries if model_id not in summary]
 
 
 def git_commit(path: Path, message: str, iso_date: str, cwd: Path) -> None:

@@ -1,5 +1,5 @@
-_This shard covers the SWE-bench real-task pivot's collapse and recovery: after
-finally launching real coding-agent episodes, the program discovers zero
+_This conversation covers the SWE-bench real-task pivot's collapse and recovery:
+after finally launching real coding-agent episodes, the program discovers zero
 completions, diagnoses the target model as incapable of the task (validated by a
 Sonnet control and by the vendor's own benchmark card), pivots through several
 fallback tiers (oracle retrieval, easier datasets, a custom "chain-of-exercises"
@@ -7,13 +7,7 @@ tier), and ends with a completed but scientifically null chain-tier result —
 confirming a tuning fix but finding no compaction damage to measure — leaving a
 stop-and-decide point with pods shut down to halt idle billing._
 
-**Participants in this Conversation.**
-
-User; `claude-fable-5` (Claude Code `2.1.200`); `claude-opus-4-8` (Claude Code
-`2.1.200`).
-
-Assistant model sequence: `claude-fable-5` (Claude Code `2.1.200`) ->
-`claude-opus-4-8` (Claude Code `2.1.200`).
+**Participants:** User, claude-fable-5, and claude-opus-4-8.
 
 ## Incremental caching withdrawal and rebuild (icache v1→v2)
 

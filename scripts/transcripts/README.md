@@ -6,10 +6,10 @@ These scripts reproduce the mainline conversation-summary workflow used for the
 The pipeline is intentionally plain:
 
 1. Extract mainline Claude Code and Codex messages from local JSONL stores.
-2. Build contiguous transcript shards sized for a summarizer, keeping Claude
+2. Build contiguous transcript segments sized for a summarizer, keeping Claude
    Code and Codex in separate source streams by default.
-3. Summarize each shard with a CLI model.
-4. Combine shard summaries if desired.
+3. Summarize each segment with a CLI model.
+4. Combine segment summaries if desired.
 5. Split a combined summary back into dated `notes/` files, with optional git
    commits whose author/committer dates match each file prefix.
 6. Keep a manifest of covered source-message ranges so future updates are
@@ -30,9 +30,11 @@ transcript files for this repo, writes prompts/candidates under
 updates `notes/*-claude-conversation.md` and `notes/*-codex-conversation.md`,
 runs `deno fmt` on generated Markdown files when Deno is available, and
 refreshes `scripts/transcripts/conversation-summary-manifest.json`. It also
-inserts a deterministic "Participants in this Conversation" block from raw
-transcript metadata: `User` when present, then assistant models sorted by
-contributed text volume, including effort/runtime details when available.
+inserts a deterministic `**Participants:** ...` paragraph from raw transcript
+metadata: `User` when present, then assistant models sorted by contributed text
+volume. If reasoning effort is present, it is appended to the model identifier
+with a hyphen, such as `gpt-5.5-xhigh`; provider names, app runtimes, and CLI
+versions are not included.
 
 Use `--no-command` to write prompts only, or pass `update --command ...` to use
 a different summarizer command. Small continuations of an existing note are
@@ -54,10 +56,10 @@ Conversation-note style:
 - name files as `YYYYMMDDHHMMSS-claude-conversation.md` or
   `YYYYMMDDHHMMSS-codex-conversation.md`
 - start with one italicized opening summary paragraph containing one sentence,
-  or at most two short sentences, describing the shard
-- include the generated `Participants in this Conversation` block immediately
-  after the opening summary; every source model ID for that note must appear
-  there
+  or at most two short sentences, describing the conversation
+- include the generated `**Participants:** ...` paragraph immediately after the
+  opening summary; every source model ID for that note must appear there, with
+  reasoning effort appended by hyphen when present
 - prefer short titled sections and prose paragraphs
 - use bullets only for compact lists of named results, rules, arms, or open
   questions
@@ -67,18 +69,11 @@ Conversation-note style:
 Style sketch:
 
 ```markdown
-_This shard covers the move from mixed transcript notes to source-specific
-Claude/Codex conversation summaries, plus the tooling needed to update them
-incrementally._
+_This conversation covers the move from mixed transcript notes to
+source-specific Claude/Codex conversation summaries, plus the tooling needed to
+update them incrementally._
 
-**Participants in this Conversation.**
-
-User; `claude-sonnet-4-20250514` (Claude Code `1.0.61`); `gpt-5.5-codex`
-(provider `openai`; reasoning effort `xhigh`; Codex CLI `0.42.0`).
-
-Assistant model sequence: `claude-sonnet-4-20250514` (Claude Code `1.0.61`) ->
-`gpt-5.5-codex` (provider `openai`; reasoning effort `xhigh`; Codex CLI
-`0.42.0`).
+**Participants:** User, claude-sonnet-4-20250514, and gpt-5.5-xhigh.
 
 **Pipeline Decisions.** The archive now treats Claude Code and Codex as separate
 conversation streams. Each note records the ideas, decisions, results, caveats,
@@ -123,7 +118,7 @@ python3 scripts/transcripts/combine_shard_summaries.py \
 ```
 
 To split a combined summary into separate notes and create one dated git commit
-per shard:
+per generated segment:
 
 ```bash
 python3 scripts/transcripts/split_summary_into_notes.py \

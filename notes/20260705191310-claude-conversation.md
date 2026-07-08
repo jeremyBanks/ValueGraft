@@ -1,14 +1,12 @@
-_This shard covers the RunPod-based cloud scale-up execution — parallelizing
-across up to five pods, discovering and validating a per-KV-slot tuning result
-before demoting it in favor of simplicity, running stage 1 (LongMemEval) to a
-damage-quantification conclusion, catching and correcting an evidence-quality
-mistake (citing an illustrative demo as data), redesigning the benchmark slate
-around continuation/behavioral metrics instead of fact-retrieval QA, and
-beginning the OpenHands end-to-end coding-agent track._
+_This conversation covers the RunPod-based cloud scale-up execution —
+parallelizing across up to five pods, discovering and validating a per-KV-slot
+tuning result before demoting it in favor of simplicity, running stage 1
+(LongMemEval) to a damage-quantification conclusion, catching and correcting an
+evidence-quality mistake (citing an illustrative demo as data), redesigning the
+benchmark slate around continuation/behavioral metrics instead of fact-retrieval
+QA, and beginning the OpenHands end-to-end coding-agent track._
 
-**Participants in this Conversation.**
-
-User; `claude-fable-5` (Claude Code `2.1.200`).
+**Participants:** User and claude-fable-5.
 
 ## Parallelization and infrastructure hardening
 
@@ -153,19 +151,19 @@ ladder retry) preempt starting the shim build, and called this out as the
 conversation "losing its spark." The assistant acknowledged the sequencing error
 plainly and started the E0 shim build as the uninterrupted priority, with the
 creative-probing mandate ("try many cheap evaluation angles in parallel, not
-execute one plan solemnly") written into the charter. By the shard's close, the
-E0 shim was committed, smoke-tested, and its pod (e1) was loading the 30B model;
-the runbook for interleaving B/E-mode tasks across additional shim pods was
-committed; and Gemma's pod (g1) had been relaunched with a properly scoped
-ladder after an earlier launch failure, with the hybrid-architecture rotation
-prerequisite recorded as a finding in its own right (compaction surgery on
-interleaved sliding-window/global-attention models requires layer-type-aware key
-rotation).
+execute one plan solemnly") written into the charter. By the conversation's
+close, the E0 shim was committed, smoke-tested, and its pod (e1) was loading the
+30B model; the runbook for interleaving B/E-mode tasks across additional shim
+pods was committed; and Gemma's pod (g1) had been relaunched with a properly
+scoped ladder after an earlier launch failure, with the hybrid-architecture
+rotation prerequisite recorded as a finding in its own right (compaction surgery
+on interleaved sliding-window/global-attention models requires layer-type-aware
+key rotation).
 
-## State at shard boundary
+## State at conversation boundary
 
 Running concurrently: pod-1/pod-2 finishing stage 1 (completed 350/350 by end of
-shard, then immediately handed stage-1b-mini and the bf16 honesty suite
+conversation, then immediately handed stage-1b-mini and the bf16 honesty suite
 respectively), pod-4 mid-4B-bf16 calibration block (queued next: slot-mask
 contamination guard, then Mistral pre-tuning), pod-g1 running the Gemma-3-4B
 identity ladder and profile sweep, and the new shim pod (e1) loading the 30B for
@@ -176,8 +174,8 @@ documents (STATE.md, DECISIONS.md, AGENTS.md, cloud-plan.md, and the newly
 created value-steering design-notes document) were kept current throughout,
 explicitly written for a cold-start successor agent, motivated by the user's
 disclosed risk of hitting a weekly usage quota and potentially handing off
-mid-run to a different model (GPT-5.5) via the documented state. The shard ends
-with the user checking in ("How is it going") as the assistant is mid-build on
-the E0 shim with five machines active.
+mid-run to a different model (GPT-5.5) via the documented state. The
+conversation ends with the user checking in ("How is it going") as the assistant
+is mid-build on the E0 shim with five machines active.
 
 ---

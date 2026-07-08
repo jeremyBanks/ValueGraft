@@ -1,13 +1,12 @@
-_This shard covers the aftermath of the mainline report-finalization push, an
-escalating measurement crisis in which the placebo-controlled effect-bound probe
-appeared to contradict the paper's headline grafting result, and the diagnosis
-and correction of a broken statistical estimator underlying the gap-closure
-metric — ending mid-investigation into an "alignment/token matching" mechanism
-the user flagged as alarming and possibly discarded long ago._
+_This conversation covers the aftermath of the mainline report-finalization
+push, an escalating measurement crisis in which the placebo-controlled
+effect-bound probe appeared to contradict the paper's headline grafting result,
+and the diagnosis and correction of a broken statistical estimator underlying
+the gap-closure metric — ending mid-investigation into an "alignment/token
+matching" mechanism the user flagged as alarming and possibly discarded long
+ago._
 
-**Participants in this Conversation.**
-
-User; `claude-opus-4-8` (Claude Code `2.1.200`).
+**Participants:** User and claude-opus-4-8.
 
 ## K/V question closed, lens thread bounded with a null
 
@@ -18,8 +17,8 @@ was isolated to short-identifier targets never tested in the main sweep, with
 the divergence itself statistically weak (winner's-curse from best-of-15-policy
 selection, tiny cells). The user then explicitly ordered a stop to further
 key-digging ("keys are a settled question, not something we need to investigate
-anymore") — this was reaffirmed later in the shard and recorded as a standing
-decision. The identifier-morphology follow-up task was dropped.
+anymore") — this was reaffirmed later in the conversation and recorded as a
+standing decision. The identifier-morphology follow-up task was dropped.
 
 A rigorous placebo-controlled "effect-bound" experiment (teacher-forced logprob
 lift over a fixed window, aligned graft vs. random-value graft, bootstrap CIs)
@@ -240,7 +239,7 @@ self-generated vs. fixed summary) was launched to distinguish the two, alongside
 a harness fix so that negative/null results are recorded as legitimate map
 datapoints rather than discarded as "unsupported."
 
-The shard ends as the user reacts with alarm to the assistant's passing
+The conversation ends as the user reacts with alarm to the assistant's passing
 description of the fixed-summary alignment mechanism as relying on "spurious
 exact-token matching" between Sonnet's paraphrased summary and the original
 conversation — the user states this "token matching" approach was explicitly
@@ -250,6 +249,6 @@ arrangement), and demands the assistant verify by reading the actual
 `build_alignment` code before concluding anything, explicitly flagging this as a
 potential source of contamination across prior results and asking whether Fable
 consultation is needed. The investigation into what `build_alignment` actually
-does was in progress and unresolved at the end of the shard.
+does was in progress and unresolved at the end of the conversation.
 
 ---

@@ -1,28 +1,21 @@
-_This shard tracks the report-writing arc from first delivery through a
+_This conversation tracks the report-writing arc from first delivery through a
 substantive content revision and multi-writer quality bake-off, punctuated by a
 documented accountability failure over false status claims and stale
 documentation, followed by a productive pivot that yielded the project's most
 durable finding._
 
-**Participants in this Conversation.**
-
-User; `claude-opus-4-8` (Claude Code `2.1.200`); `claude-fable-5` (Claude Code
-`2.1.200`); `<synthetic>` (Claude Code `2.1.200`).
-
-Assistant model sequence: `claude-opus-4-8` (Claude Code `2.1.200`) ->
-`claude-fable-5` (Claude Code `2.1.200`) -> `<synthetic>` (Claude Code
-`2.1.200`) -> `claude-fable-5` (Claude Code `2.1.200`) -> `claude-opus-4-8`
-(Claude Code `2.1.200`).
+**Participants:** User, claude-opus-4-8, and claude-fable-5.
 
 ## Tau2 integration collapse and pivot to reanalysis
 
-The shard opens with all pods terminated and the program paused, holding the
-completed-but-null chain-tier result from the prior shard as a stopping point
-pending user direction. The user, waking to find no tau2 result had been
-produced overnight despite a stated plan, corrected the agent's default: given a
-pre-designed next step and a standing "keep working autonomously" charter, the
-agent should proceed rather than pause-and-wait for explicit authorization. This
-was recorded as a self-imposed operating rule for the remainder of the session.
+The conversation opens with all pods terminated and the program paused, holding
+the completed-but-null chain-tier result from the prior conversation as a
+stopping point pending user direction. The user, waking to find no tau2 result
+had been produced overnight despite a stated plan, corrected the agent's
+default: given a pre-designed next step and a standing "keep working
+autonomously" charter, the agent should proceed rather than pause-and-wait for
+explicit authorization. This was recorded as a self-imposed operating rule for
+the remainder of the session.
 
 Tau2 integration then consumed most of a day through a chain of runtime-only
 failures that static code review had missed: wrong CLI entry point, a
@@ -208,7 +201,8 @@ apparatus that can check lens-derived hypotheses — a structural advantage most
 pure interpretability work lacks. The adopted policy: use the lens assertively
 for hypothesis generation, but tag every lens-derived claim as "lens-suggested,
 behaviorally confirmed/unconfirmed" so aggressive use stays self-correcting.
-This review remained explicitly queued rather than performed within this shard.
+This review remained explicitly queued rather than performed within this
+conversation.
 
 ## Report production process
 
@@ -267,10 +261,10 @@ snapshot to confirm neither drifted any fact, then merged by hand-picking the
 stronger phrasing from each writer per location, rather than choosing one
 version wholesale.
 
-## Handoff state at shard boundary
+## Handoff state at conversation boundary
 
-At the close of this shard, the merged, citation-complete, exhibit-rich report
-has passed integrity verification (numbers match snapshot, all exhibit
+At the close of this conversation, the merged, citation-complete, exhibit-rich
+report has passed integrity verification (numbers match snapshot, all exhibit
 blockquotes intact, citations and caveats present) and the agent is doing a
 final personal read-through of the highest-stakes sections (the §3 payoff
 exhibits and the related-work tail) before committing and pushing. Pod spend is
@@ -281,7 +275,7 @@ standing never-edit-history rule); the ~1,235 files under `results/` were
 deliberately left tracked as the intentional scientific audit trail. Model
 crediting for the project is now precise: Claude Fable 5, Claude Opus 4.8,
 Claude Sonnet 5, and GPT-5.5, with a corrected provenance record for the ~6-hour
-mislabeled commit window. The immediate next step, not yet executed at shard
-close, is committing and pushing the finalized report.
+mislabeled commit window. The immediate next step, not yet executed at the
+conversation close, is committing and pushing the finalized report.
 
 ---

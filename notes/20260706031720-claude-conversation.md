@@ -1,4 +1,4 @@
-_This shard covers a dense ~24-hour scale-up of the RunPod cloud program:
+_This conversation covers a dense ~24-hour scale-up of the RunPod cloud program:
 parallelizing to 5–7 pods for a coding-agent (OpenHands) matrix experiment,
 discovering and reflecting on repeated operational failures (silent crashes,
 session-state contamination, an unbounded-cache regression), and a hard pivot
@@ -6,19 +6,17 @@ from synthetic constraint-memory tasks to real SWE-bench-Lite instances after
 the user identified that the "real tasks" promise from the prior night had not
 actually been honored._
 
-**Participants in this Conversation.**
-
-User; `claude-fable-5` (Claude Code `2.1.200`).
+**Participants:** User and claude-fable-5.
 
 ## Monitoring and operational hardening
 
-A recurring failure pattern dominates this shard: jobs dying silently (wrong
-timeout commands on macOS, OOM from unbounded KV-cache snapshot cloning,
+A recurring failure pattern dominates this conversation: jobs dying silently
+(wrong timeout commands on macOS, OOM from unbounded KV-cache snapshot cloning,
 tokenizer template incompatibilities with Gemma across six escalating attempts,
 ssh-detach races on batched pod restarts) with detection lagging by up to an
 hour. The resulting requirement was that failures be caught automatically rather
 than requiring the user to notice and prompt a check. This produced a series of
-concrete fixes, converging on a philosophy shift late in the shard:
+concrete fixes, converging on a philosophy shift late in the conversation:
 **validity-at-the-source over reactive watchers** — e.g., making a dead shim
 produce _no_ score files (so incomplete rows simply re-run) rather than relying
 on a monitor to detect garbage output after the fact. Standing rules
@@ -137,7 +135,7 @@ the formal (α_K, α_V) terms, to be used in all future reporting.
 
 Explicitly re-verified and preserved throughout the incident response: Stage 1
 LongMemEval damage quantification (52.5% full-context vs. ~4% compacted, 350
-questions, fully judged) — completed in this shard on a rented H200 after
+questions, fully judged) — completed in this conversation on a rented H200 after
 discovering standard-protocol full haystacks (~110-120K tokens) physically
 exceed an 80GB A100's bf16 capacity; Stage 2 real-SWE-Gym-trajectory replay
 recovery (+0.0156, CI excluding zero, n=75); the
@@ -166,15 +164,15 @@ incident.
 
 ## Budget
 
-User added a $50 top-up mid-shard (total balance fluctuated ~$40-$101 across the
-shard, ending around $80). Explicit conditional-autonomy rule established: the
-agent may proceed without approval only if both pre-stated conditions hold
-(SWE-bench tasks genuinely exercise compaction with a sensitive Compacted-arm
-baseline, AND the paired contrast favors the graft under the pre-registered
-analysis); otherwise it must stop and report options. The user further permitted
-small-scale (single-pod) autonomous probing of alternatives even in the stop
-condition, reserving only full-scale commitment to a new direction for explicit
-approval.
+User added a $50 top-up mid-conversation (total balance fluctuated ~$40-$101
+across the conversation, ending around $80). Explicit conditional-autonomy rule
+established: the agent may proceed without approval only if both pre-stated
+conditions hold (SWE-bench tasks genuinely exercise compaction with a sensitive
+Compacted-arm baseline, AND the paired contrast favors the graft under the
+pre-registered analysis); otherwise it must stop and report options. The user
+further permitted small-scale (single-pod) autonomous probing of alternatives
+even in the stop condition, reserving only full-scale commitment to a new
+direction for explicit approval.
 
 ## Secondary/process metrics
 
@@ -189,13 +187,13 @@ or ceilings on real SWE-bench tasks (e.g., "grafted agents survive more
 productive steps before timeout" or "grafted agents pass with fewer
 steps/re-reads").
 
-## State at shard boundary
+## State at conversation boundary
 
-At the end of this shard, three lanes are running with hardened, bounded-state
-shims; the front of every lane's queue has been reordered so all 40 real
-SWE-bench-Lite rows (across pylint, flask, pytest, xarray, seaborn) run first,
-with dose-variant and remaining synthetic rows queued behind. Zero real-task
-episodes had completed as of message ~370; the first live episode
+At the end of this conversation, three lanes are running with hardened,
+bounded-state shims; the front of every lane's queue has been reordered so all
+40 real SWE-bench-Lite rows (across pylint, flask, pytest, xarray, seaborn) run
+first, with dose-variant and remaining synthetic rows queued behind. Zero
+real-task episodes had completed as of message ~370; the first live episode
 (`pylint-7080`, a real pylint issue about `--recursive` ignoring `ignore-paths`)
 was in progress (>35 minutes in) with no verdict yet. The central open
 scientific questions — whether SWE-bench-Lite instances are well-calibrated for
@@ -203,7 +201,7 @@ this model/harness (not too hard/too easy) and whether compaction pressure is
 genuinely exercised — remain unresolved and gate the next phase (confirm phase,
 champion promotion, sealed final eval) per the pre-registered autonomy and
 fit-verdict rules. The user's trust in status reporting was significantly
-damaged during this shard; the agent committed to always labeling task
+damaged during this conversation; the agent committed to always labeling task
 provenance (synthetic vs. real) inline in future results statements and to
 checking transcript/live-process state directly rather than reporting from
 memory when confronted with a factual dispute.

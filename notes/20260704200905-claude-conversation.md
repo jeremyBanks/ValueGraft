@@ -1,11 +1,9 @@
-_This shard covers autonomous execution of a local (MacBook/MLX)
+_This conversation covers autonomous execution of a local (MacBook/MLX)
 semantic-continuity compaction experiment from initial setup through two major
 refocusing pivots, culminating in approval and early execution of a cloud
 (RunPod A100) scale-up phase._
 
-**Participants in this Conversation.**
-
-User; `claude-fable-5` (Claude Code `2.1.200`).
+**Participants:** User and claude-fable-5.
 
 ## Initial setup and local pipeline (Arms A–E)
 
@@ -255,7 +253,7 @@ later added the second $50 immediately (bringing committed budget to $100) to
 avoid needing to compromise on the full plan, while keeping the further $100
 decision gated on results.
 
-## Cloud execution status at shard boundary
+## Cloud execution status at conversation boundary
 
 The assistant ported the surgery core to HuggingFace `transformers`/CUDA (full
 identity ladder re-validated and passing on the new stack) before spending any
@@ -266,14 +264,14 @@ completed successfully
 for stage 1 vs. ~$23 for the full 500). Stage 1 (350-question LongMemEval batch
 across all six question types, all six arms, on Qwen3-30B-A3B in bf16) was
 launched detached with a 30-minute watchdog cadence, ETA roughly 12 hours, and
-was still running as of the shard boundary. Partial/live results at 5 questions
-were explicitly flagged as too noisy to interpret. Coordination documents
-(`cloud-plan.md`, `STATE.md`, `DECISIONS.md`, `AGENTS.md`) were kept current
-with each pivot so a new agent could resume cold.
+was still running as of the conversation boundary. Partial/live results at 5
+questions were explicitly flagged as too noisy to interpret. Coordination
+documents (`cloud-plan.md`, `STATE.md`, `DECISIONS.md`, `AGENTS.md`) were kept
+current with each pivot so a new agent could resume cold.
 
-The shard ends with the user asking the assistant to **consider** (not yet act
-on) whether parallelizing tests could speed up completion of the overall cloud
-test plan without materially increasing total cost — a question left open for
-the next shard.
+The conversation ends with the user asking the assistant to **consider** (not
+yet act on) whether parallelizing tests could speed up completion of the overall
+cloud test plan without materially increasing total cost — a question left open
+for the next conversation.
 
 ---
