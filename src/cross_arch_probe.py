@@ -1867,12 +1867,19 @@ def main():
               file=sys.stderr)
         sys.exit(2)
 
-    # Prefer the shared FIXED summaries file (external, Sonnet-written,
-    # {conv_id: summary_text}). If absent, fall back to per-model self-generated
-    # summaries (a convenience for testing -- results are NOT cross-model
-    # comparable and are flagged as such in the output).
+    # SUMMARY SOURCE. The REDESIGNED sweep uses PER-MODEL SELF-GENERATED summaries
+    # (SC_SELFGEN=1): a FIXED foreign summary was found to SUPPRESS the graft to null
+    # -- the mechanism needs the model's OWN write-time summarization act. Self-gen
+    # is therefore the intended design, not a fallback; the per-model pre_graft_gap
+    # (A-B) is reported so the differing self-summary quality is accounted for, not
+    # confounded. Set SC_SELFGEN=1 (or delete the summaries file) to force self-gen;
+    # a fixed summaries file is only loaded when SC_SELFGEN is unset (legacy path).
+    force_selfgen = os.environ.get("SC_SELFGEN", "").strip() in ("1", "true", "yes")
     fixed_summaries = None
-    if summaries_path.exists():
+    if force_selfgen:
+        print("SC_SELFGEN=1 -> PER-MODEL SELF-GENERATED summaries (redesign default; "
+              "the graft needs the model's own summary).", flush=True)
+    elif summaries_path.exists():
         fixed_summaries = json.loads(summaries_path.read_text())
         # tolerate an optional "_summarizer" provenance key if present
         fixed_summaries = {k: v for k, v in fixed_summaries.items()
