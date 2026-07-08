@@ -185,6 +185,18 @@ def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
     path = (root / path).resolve() if not path.is_absolute() else path
     rel = path.relative_to(root).as_posix()
     try:
+        output = run_git(["log", "--follow", "--diff-filter=A", "--format=%cI", "--", rel], root)
+    except subprocess.CalledProcessError:
+        return None
+    values = [
+        datetime.fromisoformat(line.replace("Z", "+00:00")).astimezone(timezone.utc)
+        for line in output.splitlines()
+        if line
+    ]
+    if values:
+        return max(values)
+
+    try:
         output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)
     except subprocess.CalledProcessError:
         return None

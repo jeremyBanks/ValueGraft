@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
+import os
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -104,3 +106,42 @@ def test_normalizer_parses_git_z_timestamps() -> None:
     normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_git_ts_test")
     parsed = normalizer.parse_git_timestamp("2026-07-04T20:05:15Z")
     assert parsed == datetime(2026, 7, 4, 20, 5, 15, tzinfo=timezone.utc)
+
+
+def test_normalizer_uses_current_file_lifetime_add(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.check_call(["git", "init"], cwd=repo, stdout=subprocess.DEVNULL)
+    subprocess.check_call(["git", "config", "user.email", "test@example.com"], cwd=repo)
+    subprocess.check_call(["git", "config", "user.name", "Test User"], cwd=repo)
+    notes = repo / "notes"
+    notes.mkdir()
+    note = notes / "2026070801-reused-name.md"
+    note_rel = note.relative_to(repo).as_posix()
+
+    def commit(message: str, iso: str) -> None:
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_DATE": iso,
+            "GIT_COMMITTER_DATE": iso,
+        }
+        subprocess.check_call(["git", "add", "--", note_rel], cwd=repo)
+        subprocess.check_call(["git", "commit", "-m", message, "--", note_rel], cwd=repo, env=env)
+
+    note.write_text("old lifetime\n", encoding="utf-8")
+    commit("old add", "2026-07-08T04:59:51Z")
+    subprocess.check_call(["git", "rm", "--", note_rel], cwd=repo, stdout=subprocess.DEVNULL)
+    subprocess.check_call(
+        ["git", "commit", "-m", "delete old", "--", note_rel],
+        cwd=repo,
+        env={**os.environ, "GIT_AUTHOR_DATE": "2026-07-08T05:00:00Z", "GIT_COMMITTER_DATE": "2026-07-08T05:00:00Z"},
+    )
+    notes.mkdir(exist_ok=True)
+    note.write_text("new lifetime\n", encoding="utf-8")
+    commit("new add", "2026-07-08T14:10:08Z")
+
+    normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_reused_name_test")
+    timestamp = normalizer.git_creation_timestamp(note, repo)
+
+    assert timestamp is not None
+    assert timestamp.value == datetime(2026, 7, 8, 14, 10, 8, tzinfo=timezone.utc)

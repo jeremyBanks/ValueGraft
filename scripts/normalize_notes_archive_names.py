@@ -54,8 +54,8 @@ class Rename:
     reasons: tuple[str, ...]
 
 
-def run_git(args: list[str]) -> str:
-    return subprocess.check_output(["git", *args], text=True).strip()
+def run_git(args: list[str], cwd: Path | None = None) -> str:
+    return subprocess.check_output(["git", *args], cwd=cwd, text=True).strip()
 
 
 def git_root() -> Path:
@@ -69,7 +69,16 @@ def parse_git_timestamp(value: str) -> datetime:
 def git_creation_timestamp(path: Path, root: Path) -> TimestampInfo | None:
     rel = path.relative_to(root).as_posix()
     try:
-        output = run_git(["log", "--follow", "--format=%cI", "--", rel])
+        output = run_git(["log", "--follow", "--diff-filter=A", "--format=%cI", "--", rel], root)
+    except subprocess.CalledProcessError:
+        return None
+    lines = [line for line in output.splitlines() if line]
+    if lines:
+        timestamps = [parse_git_timestamp(line) for line in lines]
+        return TimestampInfo(max(timestamps), "git current-file lifetime")
+
+    try:
+        output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)
     except subprocess.CalledProcessError:
         return None
     lines = [line for line in output.splitlines() if line]
