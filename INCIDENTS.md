@@ -421,3 +421,14 @@ render augmented-corpus conversations. User: "using local MLX is insane." FIX: k
 it, committed the 3 MLX convs for posterity then removed them, regenerated via a MIX
 of Fable/Opus/Sonnet/Codex subagents (low-effort, specific goals, ~minutes, parallel,
 diverse) writing conversations directly + VERIFY each. Lesson memory: question-the-backend.
+
+## 32. Confidence GATE caught a self-gen alignment bug BEFORE the wide spend (07-08)
+job_gate.sh (Qwen3-30B-A3B, self-gen, c01) failed: build_alignment_direct raised
+"old span old_ids[8450:9349] (len 899) not found in new region b_ids[20:558] (len 538)
+-- tokenization diverged." The direct span-map (task 31) was equivalence-verified on
+FIXED summaries but NOT on SELF-GEN — and self-gen is the redesign's production path
+(fixed summary suppresses the graft). Write-time summary span (899 tok) != compacted B
+summary region (538) -> structural mismatch, not drift. THE GATE WORKED: this would have
+produced status=ERROR (or wrong numbers) on all 16 models. LESSON: verify apparatus
+equivalence on the ACTUAL production config, not a proxy (fixed-summary equivalence did
+NOT cover self-gen). Reinforces validate-before-trusting (positive control on the real path).
