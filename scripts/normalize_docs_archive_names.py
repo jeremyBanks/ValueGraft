@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normalize markdown filenames in docs/.
+"""Normalize archive-note filenames in docs/.
 
 Names become:
 
@@ -7,7 +7,7 @@ Names become:
 
 For tracked files, the timestamp is the first git commit timestamp for the file,
 following renames. For untracked files, it falls back to filesystem birth time
-when available, then mtime.
+when available, then mtime. Markdown-like .txt notes are converted to .md.
 """
 
 from __future__ import annotations
@@ -28,6 +28,7 @@ OLD_PREFIX_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-\d{2}-")
 SAFE_TITLE_RE = re.compile(r"[^a-z0-9-]+")
 HYPHENS_RE = re.compile(r"-+")
 RESERVED_DOC_NAMES = {"AGENTS.md", "README.md"}
+ARCHIVE_SUFFIXES = {".md", ".txt"}
 
 
 @dataclass(frozen=True)
@@ -97,15 +98,15 @@ def target_for(path: Path, root: Path) -> Path:
     created = timestamp_for(path, root)
     prefix = created.strftime("%Y%m%d%H%M%S")
     title = kebab_case(strip_known_prefix(path.stem))
-    return path.with_name(f"{prefix}-{title}{path.suffix.lower()}")
+    return path.with_name(f"{prefix}-{title}.md")
 
 
-def markdown_files(docs_dir: Path) -> list[Path]:
+def archive_files(docs_dir: Path) -> list[Path]:
     return sorted(
         path
         for path in docs_dir.iterdir()
         if path.is_file()
-        and path.suffix.lower() == ".md"
+        and path.suffix.lower() in ARCHIVE_SUFFIXES
         and path.name not in RESERVED_DOC_NAMES
     )
 
@@ -145,7 +146,7 @@ def main() -> int:
         "paths",
         nargs="*",
         type=Path,
-        help="specific markdown files to normalize; defaults to all docs/*.md",
+        help="specific archive-note files to normalize; defaults to docs/*.md and docs/*.txt",
     )
     parser.add_argument(
         "--docs-dir",
@@ -170,15 +171,15 @@ def main() -> int:
     if args.paths:
         paths = [(root / path).resolve() if not path.is_absolute() else path for path in args.paths]
     else:
-        paths = markdown_files(docs_dir)
+        paths = archive_files(docs_dir)
 
     for path in paths:
         if docs_dir not in path.parents:
             raise SystemExit(f"refusing to normalize file outside {docs_dir}: {path}")
         if path.name in RESERVED_DOC_NAMES:
             continue
-        if path.suffix.lower() != ".md":
-            raise SystemExit(f"not a markdown file: {path}")
+        if path.suffix.lower() not in ARCHIVE_SUFFIXES:
+            raise SystemExit(f"not an archive-note file: {path}")
 
     renames = plan_renames(paths, root)
     for rename in renames:
