@@ -65,16 +65,18 @@ conversation-compaction boundaries.
 - Conversation-summary archive: run
   `python3 scripts/transcripts/update_conversation_notes.py` from the repo root.
   With no arguments it uses the repo's default Claude/Codex transcript sources,
-  updates `notes/*-{claude,codex}-conversation.md`, runs the default summarizer,
-  formats generated Markdown with Deno when available, and refreshes the
-  manifest. Small live-tail continuations are deferred by default; use
+  updates `notes/*-conversation-*.md`, runs the default summarizer, formats
+  generated Markdown with Deno when available, and refreshes the manifest. Small
+  live-tail continuations are deferred by default; use
   `--force-small-continuations` only when you intentionally want to rewrite a
   note for a tiny recent exchange. Conversation notes include a generated
   `**Participants:** ...` paragraph; it includes `User` only when user messages
   are present, then full assistant model identifiers sorted by contributed text
   volume. If reasoning effort is present, append it to the model identifier with
   a hyphen, such as `gpt-5.5-xhigh`. Every model ID found in the raw
-  conversation metadata must appear there.
+  conversation metadata must appear there. Conversation filenames use compact
+  participant slugs such as `conversation-user-gpt55`; exact identifiers and
+  effort levels stay inside the note.
 
 ## Source-control policy (07-05)
 
@@ -317,13 +319,18 @@ blocking failure.
   not hacks.
 
 ## HARD RULES added from notes-audit (07-08) — were user directives but not written down
-- **NEVER rewrite/amend/rebase git history. Correct ADDITIVELY** (a dated correction note/commit).
-  When ~314 commits were found mislabeled (Fable vs Opus 4.8), the user's absolute rule was: never
-  edit history — add a dated PROVENANCE-CORRECTION note instead. A "cleanup" rebase would violate it.
-- **Keep sensitive/charged terms OUT of all file names, directory names, and job names.**
-  Standing user directive. This repo is pushed to GitHub — names are the exposure surface.
-  Archive+delete such working dirs when done, per the user.
-- **Credential handling risk (B5, flagged not fixed):** secret keys (.huggingface_key, .runpod_key,
-  .openrouter_key) are kept out of git via `.git/info/exclude`, which does NOT travel with clones and
-  is invisible to other agents. `git add -A` could stage them. Prefer a tracked `.gitignore` entry +
-  a pre-flight check that no key file is staged. (Do not `git add -A` — stage explicit paths.)
+
+- **NEVER rewrite/amend/rebase git history. Correct ADDITIVELY** (a dated
+  correction note/commit). When ~314 commits were found mislabeled (Fable vs
+  Opus 4.8), the user's absolute rule was: never edit history — add a dated
+  PROVENANCE-CORRECTION note instead. A "cleanup" rebase would violate it.
+- **Keep sensitive/charged terms OUT of all file names, directory names, and job
+  names.** Standing user directive. This repo is pushed to GitHub — names are
+  the exposure surface. Archive+delete such working dirs when done, per the
+  user.
+- **Credential handling risk (B5, flagged not fixed):** secret keys
+  (.huggingface_key, .runpod_key, .openrouter_key) are kept out of git via
+  `.git/info/exclude`, which does NOT travel with clones and is invisible to
+  other agents. `git add -A` could stage them. Prefer a tracked `.gitignore`
+  entry + a pre-flight check that no key file is staged. (Do not `git add -A` —
+  stage explicit paths.)

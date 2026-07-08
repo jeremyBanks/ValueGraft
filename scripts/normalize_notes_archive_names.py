@@ -3,30 +3,35 @@
 
 Names become:
 
-    YYYYMMDDHHMMSS-short-kebab-case-title.md
+    YYYYMMDDNN-short-kebab-case-title.md
 
-For tracked files, the timestamp is the first git commit timestamp for the file,
-following renames. For untracked files, it falls back to filesystem birth time
-when available, then mtime. Markdown-like .txt notes are converted to .md.
+The date is UTC. NN is a per-day counter assigned by canonical timestamp:
+01..99, then A0, A1, ... if a day ever exceeds 99 files. For tracked files, the
+canonical timestamp is the first git commit timestamp for the file, following
+renames. For migration from the older full-prefix scheme, untracked or
+history-less files may fall back to an existing YYYYMMDDHHMMSS filename prefix.
+Markdown-like .txt notes are converted to .md.
 """
 
 from __future__ import annotations
 
 import argparse
-import re
+import os
 import subprocess
 import sys
-import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from notes_archive_naming import (
+    COMPACT_PREFIX_RE,
+    FULL_PREFIX_RE,
+    compact_prefix,
+    kebab_case,
+    strip_known_prefix,
+    timestamp_from_full_prefix,
+)
 
-CURRENT_PREFIX_RE = re.compile(r"^\d{14}-")
-CURRENT_PREFIX_CAPTURE_RE = re.compile(r"^(\d{14})-")
-OLD_PREFIX_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-\d{2}-")
-SAFE_TITLE_RE = re.compile(r"[^a-z0-9-]+")
-HYPHENS_RE = re.compile(r"-+")
 RESERVED_DOC_NAMES = {"AGENTS.md", "README.md"}
 ARCHIVE_SUFFIXES = {".md", ".txt"}
 
@@ -42,6 +47,7 @@ class Rename:
     source: Path
     target: Path
     timestamp: TimestampInfo
+    day_index: int
     reasons: tuple[str, ...]
 
 
@@ -73,56 +79,13 @@ def filesystem_timestamp(path: Path) -> TimestampInfo:
     return TimestampInfo(datetime.fromtimestamp(stat.st_mtime, timezone.utc), "filesystem mtime")
 
 
-def timestamp_from_existing_prefix(path: Path) -> TimestampInfo | None:
-    match = CURRENT_PREFIX_CAPTURE_RE.match(path.name)
-    if not match:
-        return None
-    timestamp = datetime.strptime(match.group(1), "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc)
-    return TimestampInfo(timestamp, "existing filename prefix")
-
-
 def timestamp_for(path: Path, root: Path) -> TimestampInfo:
+    prefixed = timestamp_from_full_prefix(path.name)
     return (
         git_creation_timestamp(path, root)
-        or timestamp_from_existing_prefix(path)
+        or (TimestampInfo(prefixed, "existing full filename prefix") if prefixed else None)
         or filesystem_timestamp(path)
     )
-
-
-def strip_known_prefix(stem: str) -> str:
-    stem = CURRENT_PREFIX_RE.sub("", stem, count=1)
-    stem = OLD_PREFIX_RE.sub("", stem, count=1)
-    return stem
-
-
-def kebab_case(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text).encode("ascii", "ignore")
-    lowered = normalized.decode("ascii").lower()
-    lowered = lowered.replace("_", "-").replace(" ", "-")
-    lowered = SAFE_TITLE_RE.sub("-", lowered)
-    lowered = HYPHENS_RE.sub("-", lowered)
-    return lowered.strip("-") or "untitled"
-
-
-def target_for(path: Path, root: Path) -> tuple[Path, TimestampInfo, tuple[str, ...]]:
-    created = timestamp_for(path, root)
-    prefix = created.value.strftime("%Y%m%d%H%M%S")
-    title = kebab_case(strip_known_prefix(path.stem))
-    target = path.with_name(f"{prefix}-{title}.md")
-
-    reasons: list[str] = []
-    if not CURRENT_PREFIX_RE.match(path.name):
-        reasons.append("add UTC timestamp prefix")
-    elif not path.name.startswith(f"{prefix}-"):
-        reasons.append("correct UTC timestamp prefix")
-    if strip_known_prefix(path.stem) != title:
-        reasons.append("kebab-case title")
-    if path.suffix.lower() != ".md":
-        reasons.append("convert suffix to .md")
-    if path.name != target.name and not reasons:
-        reasons.append("normalize filename")
-
-    return target, created, tuple(reasons)
 
 
 def archive_files(notes_dir: Path) -> list[Path]:
@@ -135,36 +98,101 @@ def archive_files(notes_dir: Path) -> list[Path]:
     )
 
 
-def available_target(base_target: Path, claimed: set[Path], source: Path) -> Path:
-    if (not base_target.exists() or base_target == source) and base_target not in claimed:
-        return base_target
-
-    for index in range(2, 1000):
-        candidate = base_target.with_name(f"{base_target.stem}-{index}{base_target.suffix}")
-        if (not candidate.exists() or candidate == source) and candidate not in claimed:
-            return candidate
-    raise SystemExit(f"could not find an available collision suffix for {base_target}")
-
-
 def plan_renames(paths: list[Path], root: Path) -> list[Rename]:
+    items: list[tuple[Path, TimestampInfo, str]] = []
+    for source in paths:
+        timestamp = timestamp_for(source, root)
+        title = kebab_case(strip_known_prefix(source.stem))
+        items.append((source, timestamp, title))
+
+    day_groups: dict[str, list[tuple[Path, TimestampInfo, str]]] = {}
+    for item in items:
+        _source, timestamp, _title = item
+        day = timestamp.value.astimezone(timezone.utc).strftime("%Y%m%d")
+        day_groups.setdefault(day, []).append(item)
+
     planned: list[Rename] = []
     targets: set[Path] = set()
-    for source in paths:
-        base_target, timestamp, reasons = target_for(source, root)
-        target = available_target(base_target, targets, source)
-        if target != base_target:
-            reasons = (*reasons, f"avoid name collision with suffix {target.stem.removeprefix(base_target.stem)}")
-        if source == target:
+    for day in sorted(day_groups):
+        day_items = sorted(
+            day_groups[day],
+            key=lambda item: (item[1].value.astimezone(timezone.utc), item[0].name),
+        )
+        for day_index, (source, timestamp, title) in enumerate(day_items, 1):
+            prefix = compact_prefix(timestamp.value, day_index)
+            target = source.with_name(f"{prefix}-{title}.md")
+            if target in targets:
+                raise SystemExit(f"internal collision while planning target: {target}")
+            if target.exists() and target != source:
+                raise SystemExit(f"target already exists; refusing ambiguous rename order: {target}")
+
+            reasons: list[str] = []
+            if not COMPACT_PREFIX_RE.match(source.name):
+                if FULL_PREFIX_RE.match(source.name):
+                    reasons.append("replace full UTC timestamp prefix with compact day counter")
+                else:
+                    reasons.append("add compact UTC date/counter prefix")
+            elif not source.name.startswith(f"{prefix}-"):
+                reasons.append("correct compact day counter prefix")
+            if strip_known_prefix(source.stem) != title:
+                reasons.append("kebab-case title")
+            if source.suffix.lower() != ".md":
+                reasons.append("convert suffix to .md")
+            if source.name != target.name and not reasons:
+                reasons.append("normalize filename")
+
             targets.add(target)
-            continue
-        targets.add(target)
-        planned.append(Rename(source=source, target=target, timestamp=timestamp, reasons=reasons))
+            if source == target:
+                continue
+            planned.append(
+                Rename(
+                    source=source,
+                    target=target,
+                    timestamp=timestamp,
+                    day_index=day_index,
+                    reasons=tuple(reasons),
+                )
+            )
     return planned
 
 
-def apply_renames(renames: list[Rename]) -> None:
-    for rename in renames:
+def git_is_tracked(path: Path, root: Path) -> bool:
+    rel = path.relative_to(root).as_posix()
+    proc = subprocess.run(
+        ["git", "ls-files", "--error-unmatch", "--", rel],
+        cwd=root,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    return proc.returncode == 0
+
+
+def commit_rename(rename: Rename, root: Path) -> None:
+    source_rel = rename.source.relative_to(root).as_posix()
+    target_rel = rename.target.relative_to(root).as_posix()
+    if git_is_tracked(rename.source, root):
+        subprocess.check_call(["git", "mv", "--", source_rel, target_rel], cwd=root)
+        commit_paths = [source_rel, target_rel]
+    else:
         rename.source.rename(rename.target)
+        subprocess.check_call(["git", "add", "--", target_rel], cwd=root)
+        commit_paths = [target_rel]
+
+    iso = rename.timestamp.value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+    env = os.environ.copy()
+    env["GIT_AUTHOR_DATE"] = iso
+    env["GIT_COMMITTER_DATE"] = iso
+    subprocess.check_call(
+        ["git", "commit", "-m", f"Normalize note filename {rename.target.name}", "--", *commit_paths],
+        cwd=root,
+        env=env,
+    )
+
+
+def apply_renames(renames: list[Rename], root: Path) -> None:
+    for rename in renames:
+        commit_rename(rename, root)
 
 
 def print_plan(renames: list[Rename], root: Path, mode: str, scanned_count: int) -> None:
@@ -179,6 +207,7 @@ def print_plan(renames: list[Rename], root: Path, mode: str, scanned_count: int)
         print(f"{index}. {rename.source.relative_to(root)}")
         print(f"   -> {rename.target.relative_to(root)}")
         print(f"   timestamp: {timestamp} ({rename.timestamp.source})")
+        print(f"   day index: {rename.day_index}")
         print(f"   changes: {reasons}")
 
 
@@ -231,7 +260,7 @@ def main() -> int:
         print("Check failed: run without --check to apply these renames.")
         return 1
     if not args.dry_run:
-        apply_renames(renames)
+        apply_renames(renames, root)
         if renames:
             print(f"Applied {len(renames)} rename(s).")
     return 0

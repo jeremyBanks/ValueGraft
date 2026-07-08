@@ -1,7 +1,7 @@
 # Transcript Summary Pipeline
 
 These scripts reproduce the mainline conversation-summary workflow used for the
-`notes/*-conversation.md` files.
+`notes/*-conversation-*.md` files.
 
 The pipeline is intentionally plain:
 
@@ -10,8 +10,9 @@ The pipeline is intentionally plain:
    Code and Codex in separate source streams by default.
 3. Summarize each segment with a CLI model.
 4. Combine segment summaries if desired.
-5. Split a combined summary back into dated `notes/` files, with optional git
-   commits whose author/committer dates match each file prefix.
+5. Split a combined summary back into compact dated `notes/` files. Each created
+   note is committed individually with author/committer dates matching the first
+   source message it covers.
 6. Keep a manifest of covered source-message ranges so future updates are
    incremental.
 
@@ -27,14 +28,14 @@ python3 scripts/transcripts/update_conversation_notes.py
 With no arguments, the script defaults to the known local Claude Code and Codex
 transcript files for this repo, writes prompts/candidates under
 `/tmp/valuegraft_transcript_incremental`, runs `claude --print --model sonnet`,
-updates `notes/*-claude-conversation.md` and `notes/*-codex-conversation.md`,
-runs `deno fmt` on generated Markdown files when Deno is available, and
-refreshes `scripts/transcripts/conversation-summary-manifest.json`. It also
-inserts a deterministic `**Participants:** ...` paragraph from raw transcript
-metadata: `User` when present, then assistant models sorted by contributed text
-volume. If reasoning effort is present, it is appended to the model identifier
-with a hyphen, such as `gpt-5.5-xhigh`; provider names, app runtimes, and CLI
-versions are not included.
+updates `notes/*-conversation-*.md`, runs `deno fmt` on generated Markdown files
+when Deno is available, and refreshes
+`scripts/transcripts/conversation-summary-manifest.json`. It also inserts a
+deterministic `**Participants:** ...` paragraph from raw transcript metadata:
+`User` when present, then assistant models sorted by contributed text volume. If
+reasoning effort is present, it is appended to the model identifier with a
+hyphen, such as `gpt-5.5-xhigh`; provider names, app runtimes, and CLI versions
+are not included.
 
 Use `--no-command` to write prompts only, or pass `update --command ...` to use
 a different summarizer command. Small continuations of an existing note are
@@ -53,8 +54,9 @@ they directly affect repository workflow.
 
 Conversation-note style:
 
-- name files as `YYYYMMDDHHMMSS-claude-conversation.md` or
-  `YYYYMMDDHHMMSS-codex-conversation.md`
+- name files as `YYYYMMDDNN-conversation-<participants>.md`, where `NN` is the
+  per-day git-creation-time order and participant slugs are compact (`user`,
+  `fable5`, `opus48`, `sonnet5`, `gpt55`)
 - start with one italicized opening summary paragraph containing one sentence,
   or at most two short sentences, describing the conversation
 - include the generated `**Participants:** ...` paragraph immediately after the
@@ -117,7 +119,7 @@ python3 scripts/transcripts/combine_shard_summaries.py \
   "$WORK/summaries/mainline-full-conversation-summary-draft.md"
 ```
 
-To split a combined summary into separate notes and create one dated git commit
+To split a combined summary into separate notes, creating one dated git commit
 per generated segment:
 
 ```bash
@@ -126,8 +128,7 @@ python3 scripts/transcripts/split_summary_into_notes.py \
   --summary-shards-dir "$WORK/summary_shards" \
   --claude-jsonl ~/.claude/projects/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370.jsonl \
   --codex-jsonl ~/.codex/sessions/2026/07/04/rollout-2026-07-04T22-07-20-019f3007-bab0-7e50-b019-2625d1538f63.jsonl \
-  --notes-dir notes \
-  --commit
+  --notes-dir notes
 ```
 
 The note-generation scripts run `deno fmt` automatically on generated Markdown

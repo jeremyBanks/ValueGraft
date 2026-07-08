@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-"""Split a combined shard summary into dated conversation notes.
+"""Split a combined segment summary into dated conversation notes.
 
-The filename prefix for each shard is derived from the first raw message covered
-by the corresponding summary shard. With --commit, each created note is committed
-with matching author/committer dates so later git-history-based normalizers keep
-the files in the intended chronological position.
+Each created note is committed with author/committer dates matching the first
+raw message it covers, so git-history-based normalizers keep the files in the
+intended chronological position.
 
 Conversation summary notes are source-specific by default:
-`YYYYMMDDHHMMSS-claude-conversation.md` or
-`YYYYMMDDHHMMSS-codex-conversation.md`.
+`YYYYMMDDNN-conversation-<participants>.md`.
 """
 
 from __future__ import annotations
@@ -20,14 +18,19 @@ import re
 import shutil
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from types import ModuleType
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from notes_archive_naming import compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
 
 
 PARTICIPANTS_PREFIX = "**Participants:**"
 OLD_PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
 OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
+RESERVED_NOTE_NAMES = {"AGENTS.md", "README.md"}
+ARCHIVE_SUFFIXES = {".md", ".txt"}
 
 
 def load_module(path: Path, name: str) -> ModuleType:
@@ -71,14 +74,6 @@ def build_message_timestamp_index(
                 if message.ts is not None:
                     index[(platform, day, sequence, message_idx)] = message.ts
     return index
-
-
-def platform_slug(platform: str) -> str:
-    if platform == "claude-code":
-        return "claude"
-    if platform == "codex":
-        return "codex"
-    return "conversation"
 
 
 def shard_start_metadata(
@@ -182,6 +177,77 @@ def participant_entries_from_shard_text(text: str) -> list[str]:
     return entries
 
 
+def run_git(args: list[str], cwd: Path) -> str:
+    return subprocess.check_output(["git", *args], cwd=cwd, text=True).strip()
+
+
+def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
+    rel = path.relative_to(root).as_posix()
+    try:
+        output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)
+    except subprocess.CalledProcessError:
+        return None
+    values = [datetime.fromisoformat(line).astimezone(timezone.utc) for line in output.splitlines() if line]
+    if not values:
+        return None
+    return min(values)
+
+
+def filesystem_timestamp(path: Path) -> datetime:
+    stat = path.stat()
+    if hasattr(stat, "st_birthtime"):
+        return datetime.fromtimestamp(stat.st_birthtime, timezone.utc)
+    return datetime.fromtimestamp(stat.st_mtime, timezone.utc)
+
+
+def archive_timestamp(path: Path, root: Path) -> datetime:
+    return (
+        git_creation_timestamp(path, root)
+        or timestamp_from_full_prefix(path.name)
+        or filesystem_timestamp(path)
+    )
+
+
+def archive_note_files(notes_dir: Path) -> list[Path]:
+    if not notes_dir.exists():
+        return []
+    return sorted(
+        path
+        for path in notes_dir.iterdir()
+        if path.is_file()
+        and path.suffix.lower() in ARCHIVE_SUFFIXES
+        and path.name not in RESERVED_NOTE_NAMES
+    )
+
+
+def planned_conversation_paths(
+    notes_dir: Path,
+    repo_root: Path,
+    items: list[tuple[int, datetime, str]],
+) -> dict[int, Path]:
+    existing = [
+        ("existing", -1, archive_timestamp(path, repo_root), path.stem)
+        for path in archive_note_files(notes_dir)
+    ]
+    planned = [("new", shard_idx, ts.astimezone(timezone.utc), title) for shard_idx, ts, title in items]
+    by_day: dict[str, list[tuple[str, int, datetime, str]]] = {}
+    for item in [*existing, *planned]:
+        _kind, _idx, ts, _title = item
+        by_day.setdefault(ts.strftime("%Y%m%d"), []).append(item)
+
+    out: dict[int, Path] = {}
+    for day in sorted(by_day):
+        entries = sorted(by_day[day], key=lambda item: (item[2], item[0], item[3], item[1]))
+        for day_index, (kind, shard_idx, ts, title) in enumerate(entries, 1):
+            if kind != "new":
+                continue
+            path = notes_dir / f"{compact_prefix(ts, day_index)}-{title}.md"
+            if path.exists():
+                raise RuntimeError(f"Refusing to overwrite existing file: {path}")
+            out[shard_idx] = path
+    return out
+
+
 def format_english_list(items: list[str]) -> str:
     if not items:
         return ""
@@ -249,7 +315,6 @@ def main() -> None:
     parser.add_argument("--codex-jsonl", type=Path, required=True)
     parser.add_argument("--notes-dir", type=Path, required=True)
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
-    parser.add_argument("--commit", action="store_true")
     parser.add_argument("--delete-combined", action="store_true")
     args = parser.parse_args()
 
@@ -259,14 +324,21 @@ def main() -> None:
 
     created: list[Path] = []
     combined_text = args.combined.read_text(encoding="utf-8")
-    for shard_idx, body in split_combined_summary(combined_text):
-        platform, ts = shard_start_metadata(shard_idx, args.summary_shards_dir, timestamps)
+    summaries = split_combined_summary(combined_text)
+    planned_items: list[tuple[int, datetime, str]] = []
+    shard_inputs: dict[int, tuple[str, datetime, str, list[str], str]] = {}
+    for shard_idx, body in summaries:
+        _platform, ts = shard_start_metadata(shard_idx, args.summary_shards_dir, timestamps)
         shard_text = (args.summary_shards_dir / f"shard-{shard_idx:03d}.md").read_text(encoding="utf-8")
         model_entries = model_entries_from_shard_text(shard_text)
-        prefix = ts.strftime("%Y%m%d%H%M%S")
-        path = args.notes_dir / f"{prefix}-{platform_slug(platform)}-conversation.md"
-        if path.exists():
-            raise RuntimeError(f"Refusing to overwrite existing file: {path}")
+        title = conversation_title(participant_entries_from_shard_text(shard_text))
+        planned_items.append((shard_idx, ts, title))
+        shard_inputs[shard_idx] = (body, ts, shard_text, model_entries, title)
+
+    planned_paths = planned_conversation_paths(args.notes_dir, args.repo_root, planned_items)
+    for shard_idx, _body in summaries:
+        body, ts, shard_text, model_entries, _title = shard_inputs[shard_idx]
+        path = planned_paths[shard_idx]
         body = insert_participants_block(body, shard_text)
         path.write_text(body, encoding="utf-8")
         format_markdown([path], args.repo_root)
@@ -274,10 +346,9 @@ def main() -> None:
         if missing_models:
             raise RuntimeError(f"model roster missing required model ids in {path}: {missing_models}")
         created.append(path)
-        print(f"wrote shard {shard_idx:03d}: {path}")
-        if args.commit:
-            iso = ts.isoformat().replace("+00:00", "Z")
-            git_commit(path, f"Archive conversation shard {prefix}", iso, args.repo_root)
+        print(f"wrote conversation note {shard_idx:03d}: {path}")
+        iso = ts.isoformat().replace("+00:00", "Z")
+        git_commit(path, f"Archive conversation note {path.stem}", iso, args.repo_root)
 
     if args.delete_combined:
         args.combined.unlink()

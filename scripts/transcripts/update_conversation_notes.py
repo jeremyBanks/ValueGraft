@@ -2,7 +2,7 @@
 """Incrementally update conversation summary notes.
 
 This script keeps a manifest of which raw transcript message ranges are covered
-by each `notes/*-conversation.md` file. Future runs use the manifest to avoid
+by each `notes/*-conversation-*.md` file. Future runs use the manifest to avoid
 resummarizing already-covered material. If a covered conversation segment has
 continued, the script builds an update prompt containing the existing summary,
 the previously summarized messages, and the new messages after the cutoff.
@@ -20,10 +20,13 @@ import shutil
 import subprocess
 import sys
 from dataclasses import asdict, dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from types import ModuleType
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from notes_archive_naming import compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
 
 
 SOURCE_ORDER = {"claude-code": "0-claude", "codex": "1-codex"}
@@ -50,6 +53,8 @@ DEFAULT_FORBID_REGEX = [
 PARTICIPANTS_PREFIX = "**Participants:**"
 OLD_PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
 OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
+RESERVED_NOTE_NAMES = {"AGENTS.md", "README.md"}
+ARCHIVE_SUFFIXES = {".md", ".txt"}
 
 SUMMARY_PROMPT = """\
 You are summarizing mainline project conversation for a future agent.
@@ -259,19 +264,86 @@ def segment_sort_key(key: tuple[str, str, int]) -> tuple[str, int, str]:
     return (date, sequence, SOURCE_ORDER.get(platform, platform))
 
 
-def platform_slug(platform: str) -> str:
-    if platform == "claude-code":
-        return "claude"
-    if platform == "codex":
-        return "codex"
-    return "conversation"
+def run_git(args: list[str], cwd: Path) -> str:
+    return subprocess.check_output(["git", *args], cwd=cwd, text=True).strip()
 
 
-def note_name_for_ranges(prefix: str, ranges: list[SourceRange]) -> str:
-    platforms = {source_range.platform for source_range in ranges}
-    if len(platforms) != 1:
-        return f"{prefix}-conversation.md"
-    return f"{prefix}-{platform_slug(next(iter(platforms)))}-conversation.md"
+def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
+    rel = path.relative_to(root).as_posix()
+    try:
+        output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)
+    except subprocess.CalledProcessError:
+        return None
+    values = [datetime.fromisoformat(line).astimezone(timezone.utc) for line in output.splitlines() if line]
+    if not values:
+        return None
+    return min(values)
+
+
+def filesystem_timestamp(path: Path) -> datetime:
+    stat = path.stat()
+    if hasattr(stat, "st_birthtime"):
+        return datetime.fromtimestamp(stat.st_birthtime, timezone.utc)
+    return datetime.fromtimestamp(stat.st_mtime, timezone.utc)
+
+
+def archive_timestamp(path: Path, root: Path) -> datetime:
+    return (
+        git_creation_timestamp(path, root)
+        or timestamp_from_full_prefix(path.name)
+        or filesystem_timestamp(path)
+    )
+
+
+def archive_note_files(notes_dir: Path) -> list[Path]:
+    if not notes_dir.exists():
+        return []
+    return sorted(
+        path
+        for path in notes_dir.iterdir()
+        if path.is_file()
+        and path.suffix.lower() in ARCHIVE_SUFFIXES
+        and path.name not in RESERVED_NOTE_NAMES
+    )
+
+
+def compact_prefix_for_new_note(notes_dir: Path, root: Path, timestamp: datetime) -> str:
+    timestamp = timestamp.astimezone(timezone.utc)
+    same_day: list[datetime] = []
+    for path in archive_note_files(notes_dir):
+        existing = archive_timestamp(path, root)
+        if existing.date() != timestamp.date():
+            continue
+        if existing > timestamp:
+            raise RuntimeError(
+                f"new note timestamp {timestamp.isoformat()} would precede existing same-day note {path}; "
+                "run the archive normalizer/recreation workflow first"
+            )
+        same_day.append(existing)
+    return compact_prefix(timestamp, len(same_day) + 1)
+
+
+def note_name_for_messages(prefix: str, messages: list[MessageRecord]) -> str:
+    return f"{prefix}-{conversation_title(participant_entries_for_messages(messages))}.md"
+
+
+def existing_note_path_for_messages(
+    notes_dir: Path,
+    root: Path,
+    messages: list[MessageRecord],
+    first_timestamp: datetime,
+) -> Path:
+    title = conversation_title(participant_entries_for_messages(messages))
+    candidates = [
+        path
+        for path in archive_note_files(notes_dir)
+        if path.name.endswith(f"-{title}.md")
+        and archive_timestamp(path, root).date() == first_timestamp.astimezone(timezone.utc).date()
+    ]
+    if len(candidates) != 1:
+        names = ", ".join(str(path) for path in candidates) or "none"
+        raise RuntimeError(f"Expected exactly one existing note for {title}: {names}")
+    return candidates[0]
 
 
 def render_messages(messages: list[MessageRecord]) -> str:
@@ -515,14 +587,12 @@ def init_manifest(args: argparse.Namespace) -> None:
         shard_text = shard_path.read_text(encoding="utf-8")
         ranges = parse_shard_ranges(shard_text)
         first_ts, last_ts = timestamps_for_ranges(segments, ranges)
-        prefix = first_ts.replace("-", "").replace(":", "").split(".")[0].replace("T", "")
-        if prefix.endswith("Z"):
-            prefix = prefix[:-1]
-        note_path = args.notes_dir / note_name_for_ranges(prefix, ranges)
+        messages = all_messages_for_ranges(segments, ranges)
+        first_dt = datetime.fromisoformat(first_ts.replace("Z", "+00:00"))
+        note_path = existing_note_path_for_messages(args.notes_dir, args.repo_root, messages, first_dt)
         if not note_path.exists():
             raise RuntimeError(f"Expected note not found for {shard_path.name}: {note_path}")
         summary_text = note_path.read_text(encoding="utf-8")
-        messages = all_messages_for_ranges(segments, ranges)
         models = model_entries_for_messages(messages)
         records.append(
             NoteRecord(
@@ -806,8 +876,8 @@ def update_notes(args: argparse.Namespace) -> None:
             transcript=transcript,
         )
         first_ts = first_timestamp_for_ranges(segments, ranges)
-        prefix = first_ts.strftime("%Y%m%d%H%M%S")
-        note_path = args.notes_dir / note_name_for_ranges(prefix, ranges)
+        prefix = compact_prefix_for_new_note(args.notes_dir, args.repo_root, first_ts)
+        note_path = args.notes_dir / note_name_for_messages(prefix, messages)
         if note_path.exists():
             raise RuntimeError(f"Refusing to overwrite existing note: {note_path}")
         prompt_path = args.work_dir / "prompts" / f"new-{note_path.name}"
@@ -845,14 +915,14 @@ def update_notes(args: argparse.Namespace) -> None:
             )
         )
         manifest_changed = True
-        changed_paths.append(note_path)
-        if args.commit:
-            iso = first_ts.isoformat().replace("+00:00", "Z")
-            git_commit([note_path], f"Archive conversation note {prefix}", args.repo_root, iso)
+        iso = first_ts.isoformat().replace("+00:00", "Z")
+        git_commit([note_path], f"Archive conversation note {note_path.stem}", args.repo_root, iso)
 
     if args.command and (changed_paths or manifest_changed):
         write_manifest(args.manifest, records)
-        if args.commit:
+        if changed_paths:
+            git_commit(changed_paths, "Update conversation summary notes", args.repo_root)
+        if manifest_changed:
             git_commit([args.manifest], "Update conversation summary manifest", args.repo_root)
     elif not args.command:
         if wrote_prompt:
@@ -932,7 +1002,6 @@ def main() -> None:
         help="Carry this many chars from the previous same-source summary into a new summary prompt; 0 disables.",
     )
     update_parser.add_argument("--repo-root", type=Path, default=Path.cwd())
-    update_parser.add_argument("--commit", action="store_true")
     update_parser.add_argument(
         "--no-command",
         action="store_true",
