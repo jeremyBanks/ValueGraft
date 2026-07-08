@@ -49,7 +49,7 @@ conversation-compaction boundaries.
 ## Quick technical map
 
 - Python via `uv run python src/<script>.py`; deps pinned in pyproject (mlx-lm
-  0.31.3, transformers 5.0.0 — do not upgrade casually).
+  0.31.3, transformers 5.0.0 — do not upgrade casually). NOTE: that 5.0.x pin is the LOCAL/MLX env; the POD HF cross-arch jobs pin transformers<5 (4.57.1) because 5.x breaks AutoModelForCausalLM weight loading — see RELIABILITY.md + the fail-closed pin in scripts/job_sweep.sh. Two environments, both correct.
 - `src/kvlib.py` — cache serialize/rebuild, GappedKVCache (position counter
   decoupled from storage), teacher-forcing (batched; NEVER compare batched
   logits to stepwise logits — different kernels).
