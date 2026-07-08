@@ -488,7 +488,9 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         return doc
 
     try:
-        for conv, plants in specs:
+        for _ci, (conv, plants) in enumerate(specs):
+            print(f"  [progress] conv {_ci+1}/{len(specs)} ({conv['id']}) "
+                  f"n_plants_so_far={n_plants}", flush=True)
             msgs = conv["messages"][:-1]
             tsm = conv["sections"]["middle_end_msg"]
 
