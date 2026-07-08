@@ -428,3 +428,50 @@ candidates = more models/vendors (verify + add), MORE tests (triple corpus towar
 ~150/category), full controls (placebo/alpha) on ALL models not just anchors, the
 own-summary experiment across anchors, wider alpha grid, more pods for parallel speed.
 Cost scales but user has repeatedly chosen width. Decide exact scope at gate-green.
+
+## CROSS-ARCH DESIGN v2 — MATCHED-SCAFFOLD, MODEL-FILLED (Fable 07-08, owner realism reframe)
+CORE REFRAME (owner + Fable): nativeness is NOT (only) a confound — it is PART OF THE MECHANISM,
+and per-model-native is the ECOLOGICALLY CORRECT measurement. In deployment no model ever grafts
+FOREIGN KV. Native assistant turn -> confident clean value vectors of the referent; foreign turn ->
+encodes surprise -> re-injecting surprise recovers nothing (= the foreign-reply collapse we saw).
+So "measure each model on the conversations IT would actually have" is the right operationalization,
+not a compromise.
+
+THE DESIGN (matched-scaffold, model-filled = Fable Option 4 done right):
+- SHARE the semantic SCAFFOLD across all 16 models: user turns, referent/sense/stance plants, gold
+  targets, compaction structure (this is scenarios.json — we HAVE 54 scenarios).
+- Each MODEL generates ONLY its OWN assistant elaborations IN-CONTEXT (native fill) + its OWN self-gen
+  summary. Holds nativeness at CEILING for every model; the measured quantity (referent/sense/stance
+  recovery) is defined by the fixed scaffold -> comparable across models despite different surface text.
+- This is what the ORIGINAL compose.py did (in-context reply gen) — extend it PER-MODEL at runtime.
+
+INFERENCE (Fable):
+- PRIMARY weight on the two WITHIN-VENDOR dense/MoE pairs (Qwen3-30B-A3B vs Qwen3-32B; Gemma-4-26B-A4B
+  vs Gemma-4-31B) as PAIRED CONTRASTS — nativeness-controlled BY CONSTRUCTION (same vendor/tokenizer),
+  high power per pair.
+- The 16-model regression = CONFIRMATORY of ONE PRE-REGISTERED directional geometry hypothesis (e.g.
+  low n_kv_heads / high GQA -> harm) or a single composite geometry index — NOT a 5-predictor free-for-all
+  at n=16. PRE-REGISTER the hypothesis + exclusion rules BEFORE running the 16.
+- Predict SIGN (ordinal/binary), not magnitude. Report per-model nativeness (mean logprob of its corpus)
+  as a ROBUSTNESS COVARIATE (Option 3 layered on — NOT the primary fix; underpowered/collinear alone).
+STRONGER CLAIM: "Given each model operates on its OWN NATIVE context — as it always does in deployment —
+the SIGN of self-graft benefit is predicted by attention geometry."
+
+VALIDITY GUARDS (cheap, prevent silent failure):
+- Per-model CONTINUITY FLOOR check: report each model's baseline referent A-B gap BEFORE interpreting
+  raw_EB sign. No gap = nothing to recover = uninterpretable (floor, NOT "harm") -> flag/exclude.
+- GENERATION-QUALITY gate on the model-filled replies: weak models -> incoherent in-context fills ->
+  degenerate corpus -> floor. Coherence-screen the fills (nativeness sneaks back via incoherence).
+- PRE-REGISTER geometry hypothesis + exclusions before the 16-run.
+
+REJECTED: neutral/minimal replies (removes the signal -> floor); real human convs (still per-model
+likelihood gradient, no clean dissociation, impractical).
+
+MISTRAL CONTROL (running) = the fork: effect survives on Qwen-native c01-c12 -> nativeness is a gradient,
+per-model-native primary + shared-corpus replication BONUS; effect dies -> nativeness dominates,
+per-model-native MANDATORY. Either way per-model-native is the safe primary.
+
+IMPLEMENTATION: harness change — per-model IN-CONTEXT rendering (port compose.py's growing-cache reply
+gen into cross_arch's per-model loop, HF path). Scenarios (scaffold) = the asset (have it). Pre-rendered
+data/synthetic/*.json become per-model-regenerated. The doubled-corpus foreign-reply convs = obsolete
+(the scenarios remain useful as scaffold).
