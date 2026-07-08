@@ -302,12 +302,16 @@ def _corrupt_source_values(old_snap, old_idx, mode, seed):
     return out
 
 
-def detect_model_hparams(config) -> dict:
-    """Architecture hyper-parameters for the sign-of-graft regression (pure, no
-    torch). Reads the (possibly nested text_config) HF config, model-type
-    agnostic. ``qk_norm`` is detected from any of several config spellings used
-    across families; ``gqa_ratio`` = n_heads / n_kv (1.0 == full MHA, >1 == GQA,
-    == n_heads == MQA)."""
+def detect_model_hparams(config, model=None) -> dict:
+    """Architecture hyper-parameters for the sign-of-graft regression. Reads the
+    (possibly nested text_config) HF config, model-type agnostic. ``gqa_ratio`` =
+    n_heads / n_kv (1.0 == full MHA, >1 == GQA, == n_heads == MQA).
+
+    ``qk_norm``: config-key detection is UNRELIABLE (Qwen3/Gemma-3,4/OLMo-2 apply
+    QK-norm as q_norm/k_norm *modules* in the attention block, NOT a config flag).
+    When a loaded ``model`` is passed we detect it robustly from the module tree
+    (presence of a q_norm/k_norm/query|key-layernorm submodule); the config keys
+    are only a fallback for the no-model (pure) path."""
     cfg = _cfg_text(config)
     n_heads = getattr(cfg, "num_attention_heads", None)
     n_kv = getattr(cfg, "num_key_value_heads", None)
@@ -322,6 +326,17 @@ def detect_model_hparams(config) -> dict:
                "use_qk_layernorm", "attention_qk_norm", "query_key_layernorm")
     qk_norm = (any(bool(getattr(cfg, k, None)) for k in qk_keys)
                or any(bool(getattr(config, k, None)) for k in qk_keys))
+    qk_norm_source = "config" if qk_norm else None
+    # ROBUST: detect q_norm/k_norm modules on the loaded model (the real signal).
+    if model is not None:
+        _mod_names = ("q_norm", "k_norm", "query_layernorm", "key_layernorm",
+                      "query_norm", "key_norm")
+        for _n, _m in model.named_modules():
+            leaf = _n.rsplit(".", 1)[-1]
+            if leaf in _mod_names and _m is not None:
+                qk_norm = True
+                qk_norm_source = "module:" + leaf
+                break
     rope_theta = getattr(cfg, "rope_theta", None)
     if rope_theta is None:
         rope_theta = getattr(cfg, "rotary_emb_base", None)
@@ -334,6 +349,7 @@ def detect_model_hparams(config) -> dict:
         "head_dim": head_dim,
         "gqa_ratio": gqa,
         "qk_norm": bool(qk_norm),
+        "qk_norm_source": qk_norm_source,
         "rope_theta": rope_theta,
         "hidden_size": hidden,
         "vocab_size": getattr(cfg, "vocab_size", None)
@@ -1328,6 +1344,14 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             model_id, dtype=torch.bfloat16, device_map="auto",
             trust_remote_code=trust_remote_code)
         model.eval()
+        # ROBUST qk_norm: re-detect from the LOADED model's modules (config-key
+        # detection misses Qwen3/Gemma/OLMo-2 which use q_norm/k_norm submodules).
+        try:
+            _hp = detect_model_hparams(config, model)
+            doc["model_hparams"]["qk_norm"] = _hp["qk_norm"]
+            doc["model_hparams"]["qk_norm_source"] = _hp["qk_norm_source"]
+        except Exception:  # noqa: BLE001
+            pass
     except torch.cuda.OutOfMemoryError as e:  # noqa: BLE001
         doc.update(status="UNSUPPORTED", reason=f"OOM on load: {e}")
         return doc
