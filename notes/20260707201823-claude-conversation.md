@@ -5,6 +5,10 @@ and correction of a broken statistical estimator underlying the gap-closure
 metric — ending mid-investigation into an "alignment/token matching" mechanism
 the user flagged as alarming and possibly discarded long ago._
 
+**Participants in this Conversation.**
+
+User; `claude-opus-4-8` (Claude Code `2.1.200`).
+
 ## K/V question closed, lens thread bounded with a null
 
 The cross-check with the other agent's policy-registry microtest resolved

@@ -3,6 +3,11 @@ to the working draft, a long sequence of periodic read-only refreshes tracking
 the live E-track coding-agent experiment through a major data-invalidation
 incident, and an extended effort to fix the project's core K/V taxonomy._
 
+**Participants in this Conversation.**
+
+User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
+`0.142.5`).
+
 **Naming and draft availability.** The two ValueGraft variants were named
 `ValueGraft-Pack` (renamed from `H-pack`) and `ValueGraft-Blend`, with a matched
 fresh control renamed `FreshPack`; this was applied only to

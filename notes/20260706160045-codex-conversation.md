@@ -4,6 +4,11 @@ by a pivot into a substantial side investigation using Anthropic's Jacobian-lens
 a methodological control study, before ending on a tooling question about
 shellcheck._
 
+**Participants in this Conversation.**
+
+User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
+`0.142.5`).
+
 ## Live-run monitoring and a self-diagnosed refresh failure
 
 Through several "Refresh" cycles on 2026-07-06, the ValueGraft live run kept

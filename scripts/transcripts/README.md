@@ -29,7 +29,10 @@ transcript files for this repo, writes prompts/candidates under
 `/tmp/valuegraft_transcript_incremental`, runs `claude --print --model sonnet`,
 updates `notes/*-claude-conversation.md` and `notes/*-codex-conversation.md`,
 runs `deno fmt` on generated Markdown files when Deno is available, and
-refreshes `scripts/transcripts/conversation-summary-manifest.json`.
+refreshes `scripts/transcripts/conversation-summary-manifest.json`. It also
+inserts a deterministic "Participants in this Conversation" block from raw
+transcript metadata: `User` when present, then assistant models sorted by
+contributed text volume, including effort/runtime details when available.
 
 Use `--no-command` to write prompts only, or pass `update --command ...` to use
 a different summarizer command. Small continuations of an existing note are
@@ -52,6 +55,9 @@ Conversation-note style:
   `YYYYMMDDHHMMSS-codex-conversation.md`
 - start with one italicized opening summary paragraph containing one sentence,
   or at most two short sentences, describing the shard
+- include the generated `Participants in this Conversation` block immediately
+  after the opening summary; every source model ID for that note must appear
+  there
 - prefer short titled sections and prose paragraphs
 - use bullets only for compact lists of named results, rules, arms, or open
   questions
@@ -64,6 +70,15 @@ Style sketch:
 _This shard covers the move from mixed transcript notes to source-specific
 Claude/Codex conversation summaries, plus the tooling needed to update them
 incrementally._
+
+**Participants in this Conversation.**
+
+User; `claude-sonnet-4-20250514` (Claude Code `1.0.61`); `gpt-5.5-codex`
+(provider `openai`; reasoning effort `xhigh`; Codex CLI `0.42.0`).
+
+Assistant model sequence: `claude-sonnet-4-20250514` (Claude Code `1.0.61`) ->
+`gpt-5.5-codex` (provider `openai`; reasoning effort `xhigh`; Codex CLI
+`0.42.0`).
 
 **Pipeline Decisions.** The archive now treats Claude Code and Codex as separate
 conversation streams. Each note records the ideas, decisions, results, caveats,

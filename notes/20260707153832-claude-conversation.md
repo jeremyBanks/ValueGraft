@@ -5,6 +5,10 @@ result on key-grafting, the design and hardening of a free-generation
 lens-divergence probe, and the start of a cross-check against another agent's
 conflicting referent-recovery findings._
 
+**Participants in this Conversation.**
+
+User; `claude-opus-4-8` (Claude Code `2.1.200`).
+
 ## Model-routing correction and standing practice
 
 The user corrected a persistent misunderstanding: Sonnet should not be treated

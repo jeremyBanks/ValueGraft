@@ -5,6 +5,11 @@ Square topic-sensitivity interpretability probe, and a repository-wide
 documentation reorganization culminating in a UTC-based archival naming
 convention._
 
+**Participants in this Conversation.**
+
+User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
+`0.142.5`).
+
 ## J-lens intervention batches and report
 
 Two RunPod H100 runs produced the first real ValueGraft intervention data (as

@@ -6,6 +6,10 @@ model/corpus scope — punctuated by an infrastructure mishap (killing a
 near-complete corpus-authoring subagent) that was reframed as a quality
 improvement._
 
+**Participants in this Conversation.**
+
+User; `claude-opus-4-8` (Claude Code `2.1.200`).
+
 ## Alignment "token matching" scare — resolved as non-issue
 
 The user raised alarm that `build_alignment`'s use of `difflib.SequenceMatcher`

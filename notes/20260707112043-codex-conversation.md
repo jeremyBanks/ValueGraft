@@ -5,6 +5,11 @@ ValueGraft intervention itself, when no actual grafted condition had ever been
 captured, followed by repeated rounds of report rewrites, fact-checking, and a
 new stronger-scenario experiment plan._
 
+**Participants in this Conversation.**
+
+User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
+`0.142.5`).
+
 **ShellCheck decision.** Early on, the assistant clarified that ShellCheck
 should only gate the team's own pod-launch job scripts (alongside existing
 `bash -n` checks in `scripts/launch_pod.sh`), not generated SWE-Gym agent shell

@@ -6,6 +6,10 @@ mistake (citing an illustrative demo as data), redesigning the benchmark slate
 around continuation/behavioral metrics instead of fact-retrieval QA, and
 beginning the OpenHands end-to-end coding-agent track._
 
+**Participants in this Conversation.**
+
+User; `claude-fable-5` (Claude Code `2.1.200`).
+
 ## Parallelization and infrastructure hardening
 
 The user approved multi-pod parallelization with up to a 20% cost premium for

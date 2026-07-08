@@ -67,7 +67,10 @@ loses, across LLM conversation-compaction boundaries.
   formats generated Markdown with Deno when available, and refreshes the
   manifest. Small live-tail continuations are deferred by default; use
   `--force-small-continuations` only when you intentionally want to rewrite a
-  note for a tiny recent exchange.
+  note for a tiny recent exchange. Conversation notes include a generated
+  `Participants in this Conversation` block; it includes `User` only when user
+  messages are present, then assistant models sorted by contributed text volume.
+  Every model ID found in the raw conversation metadata must appear there.
 
 ## Source-control policy (07-05)
 

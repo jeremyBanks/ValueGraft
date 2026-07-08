@@ -6,6 +6,10 @@ from synthetic constraint-memory tasks to real SWE-bench-Lite instances after
 the user identified that the "real tasks" promise from the prior night had not
 actually been honored._
 
+**Participants in this Conversation.**
+
+User; `claude-fable-5` (Claude Code `2.1.200`).
+
 ## Monitoring and operational hardening
 
 A recurring failure pattern dominates this shard: jobs dying silently (wrong

@@ -4,6 +4,16 @@ documented accountability failure over false status claims and stale
 documentation, followed by a productive pivot that yielded the project's most
 durable finding._
 
+**Participants in this Conversation.**
+
+User; `claude-opus-4-8` (Claude Code `2.1.200`); `claude-fable-5` (Claude Code
+`2.1.200`); `<synthetic>` (Claude Code `2.1.200`).
+
+Assistant model sequence: `claude-opus-4-8` (Claude Code `2.1.200`) ->
+`claude-fable-5` (Claude Code `2.1.200`) -> `<synthetic>` (Claude Code
+`2.1.200`) -> `claude-fable-5` (Claude Code `2.1.200`) -> `claude-opus-4-8`
+(Claude Code `2.1.200`).
+
 ## Tau2 integration collapse and pivot to reanalysis
 
 The shard opens with all pods terminated and the program paused, holding the

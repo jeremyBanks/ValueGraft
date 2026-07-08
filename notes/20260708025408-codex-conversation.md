@@ -1,109 +1,78 @@
-_This shard covers completing and hardening the transcript-summarization
-pipeline: separating Claude Code and Codex conversation notes by source,
-building an incremental manifest-based updater with automatic revision of
-continued conversations, iterating on generation prompts and validation until
-output required minimal manual cleanup, executing a full source-split
-regeneration of the notes archive, and making the updater a single
-default-argument command._
+_This shard continues the transcript-summarization pipeline work: making the
+incremental updater less prone to churn on small live-tail continuations, adding
+a mechanically generated and validated "Participants" block (user presence plus
+assistant models ranked by contribution and sequenced by switch order) to every
+conversation note, and catching and fixing a regex bug that had truncated
+several older notes before it reached a commit._
 
-**Incremental update design.** To avoid resummarizing already-covered
-conversation history on every run, the pipeline uses a tracked manifest
-(`scripts/transcripts/conversation-summary-manifest.json`) recording, per note,
-the source stream, covered message range, input hash, output filename, and
-commit hash. Updates re-extract all mainline messages, sort them into canonical
-order, and compare against the manifest to find uncovered ranges. New ranges
-become new notes. When a source conversation continues past a note's previously
-recorded end, the updater passes the existing summary, the old covered messages,
-and the new messages to the summarizer with an explicit boundary marker, and
-asks for an updated version that extends rather than replaces the note. An edge
-case where a single note covers multiple source streams and more than one of
-those streams advances was found and fixed so continuations are grouped per note
-into one revision prompt rather than overwriting the same prompt path
-repeatedly.
+**Participants in this Conversation.**
 
-**Source separation and filenames.** Claude Code and Codex conversations were
-judged confusing when interleaved in a single note, so the pipeline's default
-was changed to always split by source application, even though the manifest
-format itself can support multi-source notes. Filenames became
-`notes/<UTC-prefix>-claude-conversation.md` and
-`notes/<UTC-prefix>-codex-conversation.md` (never a bare `-conversation.md`),
-applied both to the initial batch sharding and to incremental updates, with a
-legacy flag retained for the old packed behavior. Sequential per-source-stream
-summarization carries forward a short prior-context block derived from the
-previous note's opening summary paragraph, to aid interpretation without merging
-threads.
+User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
+`0.142.5`).
 
-**Style consistency pass.** Existing notes were inconsistent — some opened with
-a title, some used dense bullet ledgers, others were prose. The required target
-style was clarified: no top-level header, an opening italicized summary
-paragraph (a paragraph, not a single physical line — wrapping is fine;
-over-shortening these paragraphs to force one visual line was tried and
-explicitly rejected as incorrect), then short titled prose sections, with
-bullets reserved for compact lists of named items rather than one bullet per
-exchange. Priority/urgency from the original conversation should still be
-captured, but expressed as project priority, blocking status, or required
-follow-up rather than as participant mood — the tone rule is not meant to
-flatten emphasis into blandness. A default secret-shaped-string lint (AWS-style
-keys, OpenRouter keys, RunPod keys, Hugging Face tokens) was kept as a generic
-repository-safety default rather than a content-specific forbidden-terms list. A
-brief, concrete style example was added to both the transcript README and
-`notes/AGENTS.md` so future generation has a style target without becoming a
-rigid template. One internal naming choice used briefly in the tooling
-("capsule" for the opening paragraph) was judged an unnecessary term and
-replaced with plain wording ("opening summary paragraph"); this was a minor
-terminology fix, not a substantive change to the style rule, and did not warrant
-the exhaustive cleanup pass it initially received.
+**Live-tail deferral.** Repeated re-running of the updater during testing was
+rewriting the most recent notes for only a handful of new messages, forcing
+manual cleanup after nearly every run. This was identified as a sign that the
+tool's default behavior was wrong, not that manual touch-ups were an acceptable
+workflow: a well-behaved one-command updater should not need hand-editing after
+ordinary runs. The updater was changed to defer small continuations by default —
+a conversation only triggers a note revision once enough new material has
+accumulated, with an explicit force flag to override for deliberate runs — and
+the final status message was corrected so it accurately reports when work was
+deferred rather than implying prompts were written. The transcript README was
+updated to describe this deferral behavior. This work, plus the earlier
+manifest-coverage rollback fix and the resulting `notes/AGENTS.md` reference
+update, was committed as `2126663` ("Harden conversation summary updater") and
+pushed to `trunk`. One unrelated modified file,
+`results/cross_arch_wide/Qwen__Qwen3-30B-A3B-Instruct-2507.json`, was left
+unstaged throughout.
 
-**Generation iteration and validation.** Reaching output that needed minimal
-manual cleanup took several rounds of prompt tightening, discovered by
-generating samples and reading them rather than trusting the summarizer's
-compliance. The durable prompt guidance is to return only the note body, keep
-the opening-summary-plus-sections structure, preserve priority as project
-priority or required follow-up, omit side logistics unless they changed
-repository workflow, and avoid retelling the tooling's own cleanup process
-inside the archive notes. After each tightening, only the shards that had failed
-validation were regenerated, using the existing manifest and rolling context to
-avoid redundant work.
+**Model/participant provenance requirement.** A gap was identified: many
+existing notes did not name which models had taken part in the conversation,
+which is treated as required information going forward — every model that
+participated in a conversation must appear at least once in that conversation's
+note, ideally including provider and version. Because relying on summarizer
+prose compliance is unreliable, this was implemented as deterministic,
+tool-generated metadata rather than freeform summary content: a "Participants"
+heading is computed directly from the raw transcript's per-message model
+metadata (the same metadata already captured in transcript headings) and
+inserted into each note, independent of the summarizer. The design went through
+one revision during the conversation: an initial "Models" list was replaced with
+a "Participants" block per the following rules — `User` is listed only when the
+conversation actually contains user messages (some agent-only conversations may
+have none), followed by assistant models sorted in descending order by the
+volume of text each contributed, rendered as a single compact heading/sentence
+rather than a bulleted list. Separately, the summarizer prompt was updated to
+instruct the model to narrate switches between assistant models within the flow
+of the summary when more than one model participated, since the mechanical block
+only captures the roster and overall order, not when and why a switch mattered.
+This logic was implemented in both the incremental updater and the
+full-rebuild/splitter path, and a validation gate was added requiring every
+model ID recorded in the manifest for a note to actually appear in that note's
+text, so a summarizer omission is now caught mechanically instead of relying on
+manual review. Top-level and transcript-specific documentation (`AGENTS.md`,
+`notes/AGENTS.md`, `scripts/transcripts/README.md`) were updated with the new
+heading name and example shape.
 
-**Automation and defaults.** The updater script was set up so that running it
-with no subcommand performs the standard incremental update using known local
-transcript paths, `notes/`, the manifest, the default summarizer, and automatic
-`deno fmt` formatting of generated/updated notes before hashing and commit — so
-a future agent only needs to run one script with no required arguments for the
-common case, with explicit flags available for non-default runs.
-`notes/AGENTS.md` and the transcripts README were updated to lead with this
-single-command path rather than the full manual pipeline, and to include a brief
-concrete style example so a summarizing agent has something to steer toward
-beyond abstract rules. A minor CLI ordering bug in this convenience path was
-found and fixed before the default path was relied on.
+**Clarification on formatting.** A brief miscommunication was resolved during
+this work: an aside about `deno fmt` rewrapping an example paragraph was misread
+as describing wrapping itself as undesirable. It was clarified that paragraph
+wrapping is intended and correct; the actual issue was that the patch tool
+matches on exact surrounding text, so a patch built against pre-formatting
+content failed to apply after `deno fmt` had already rewrapped the paragraph — a
+tooling context-matching problem, not a style problem. No formatting behavior
+was changed as a result.
 
-**Full regeneration.** With the split-source, incremental, and style tooling in
-place, the entire notes archive was rebuilt from raw transcripts into a
-temporary directory: 17 Claude segments and 23 Codex segments packed into 16
-source-separated summary shards, run sequentially (single-threaded, to keep
-rolling per-source context meaningful) through the summarizer CLI. The run took
-several minutes per large shard; progress was tracked by polling output file
-counts rather than assuming silence meant failure. Two further
-validation-and-regeneration rounds were needed after the initial full run, each
-time regenerating only the shards that failed the style/content checks rather
-than the whole set. The resulting notes (10 Claude, 6 Codex) were validated
-against the style/secret lint before being copied over the old mixed-source
-conversation notes in the repository, with the manifest rebuilt against final
-repo paths and hashes. One incidental issue was caught and reverted: running
-`deno fmt` broadly against `notes/*-conversation.md` also reformatted an
-unrelated non-transcript note (the archived Pokemon demo), which was restored to
-its prior formatting since it is not a transcript-summary shard.
-
-**Post-regeneration currency check.** After the full regeneration, the archive
-was current only as of the rebuild's transcript snapshot. A prompt-only check
-subsequently showed two conversations (the latest Claude and Codex notes) had
-continued past that snapshot; the updater was run for real, producing revised
-notes for both and refreshing the manifest from the updater's current state. One
-intermediate manifest refresh mistakenly used the initial shard ranges, which
-would have rolled recorded coverage backward; this was caught before commit and
-corrected by rerunning the updater rather than reinitializing from scratch.
-
-Unrelated local source-file edits (e.g., `src/arms_common.py`,
-`src/cross_arch_probe.py`, `scripts/launch_pod.sh`, `scripts/preflight*`,
-`CLAUDE.md`, `results/cross_arch_wide/`) were repeatedly noted as out of scope
-and left untouched throughout this work.
+**Regex truncation bug caught before commit.** While inserting the new
+Participants block, a diff review ahead of staging revealed that several older
+notes had been drastically shortened. The cause was a block-removal regex that
+only recognized bold (`**`) headings as a stopping point when replacing the old
+inline block, so on notes using `##`-style Markdown headings it deleted body
+content after the insertion point along with the block it was meant to replace.
+This was caught before any commit was made. The fix restored the affected
+conversation notes and the manifest to their last known-good committed state,
+corrected the regex to stop at any Markdown heading rather than only bold text,
+and reran the mechanical sync so the Participants block could be reinserted
+without further data loss. The rerun was verified before commit: older notes
+retained their bodies, each source-specific note contains a Participants block,
+and every model ID recorded in the manifest appears in the corresponding note.

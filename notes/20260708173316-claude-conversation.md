@@ -1,139 +1,97 @@
-_This shard covers the resolution of the early-signal challenge (probe pass and
-bug fixes landing), a second instance of the same premature-conclusion pattern
-(multimodal models), a further root-cause reframing distinguishing
-"assumed-precondition scaling" from missing observability, construction of
-paired detection/prevention systems, a documentation-structure correction, and
-the operational recovery to a single clean gated relaunch._
+_The gated relaunch is verified working end-to-end, after which shellcheck is
+adopted project-wide and used to catch a real observability bug; a further round
+of infrastructure failures (an SSH-detach hang, a gate-token invalidation, and
+an unpinned-dependency break) is diagnosed and fixed, ending with the tier-1
+canary rule catching the last bug before any fleet-scale fan-out._
 
-## Probe pass and bug fixes land
+**Participants in this Conversation.**
 
-The two responses committed in the prior shard (log check, probe-pass mechanism)
-paid off within minutes: checking live pod logs found every running pod failing
-on `FileNotFoundError: data/scenarios.json`, confirming the concern that a
-systemic bug could otherwise have burned the full multi-hour, multi-pod compute
-budget before being noticed. Root cause was the same rsync fix from earlier — it
-moved `synthetic`/`natural` into `data/` but not the top-level
-`scenarios.json`/`model_geometry.json`, and rsync drops the `data/` prefix on
-top-level files, landing them outside the path the harness reads. This was
-fixed, and the probe-pass mechanism (score 3 conversations first, ~40 minutes)
-was implemented and committed so every future model run produces a real scored
-signal early rather than only at the 3-5 hour finish line. Already-provisioned
-pods were repaired (redeploy + restart, no re-provision needed) rather than
-terminated, since the models were already downloaded.
+User; `claude-opus-4-8` (Claude Code `2.1.200`); `<synthetic>` (Claude Code
+`2.1.200`).
 
-## Repeated premature-conclusion pattern on multimodal models
+Assistant model sequence: `claude-opus-4-8` (Claude Code `2.1.200`) ->
+`<synthetic>` (Claude Code `2.1.200`) -> `claude-opus-4-8` (Claude Code
+`2.1.200`).
 
-Verifying the repaired pods surfaced a second genuine early-signal catch:
-Mistral-Small-3.2-24B is a multimodal wrapper (`Mistral3Config`, not a causal
-LM), caught in ~2 minutes at model load rather than after a full render. It was
-swapped for the text-only Mistral-Small variant. Prompted by this, all 16
-planned model IDs were checked against HuggingFace configs, revealing 5 of 16
-are multimodal wrapper classes (`ForConditionalGeneration`), including both
-models in the Gemma-4 primary de-confound pair and both in the Qwen3.6 pair —
-since the harness loads via `AutoModelForCausalLM`, all 5 would return
-UNSUPPORTED, reducing the pre-registered two-pair design to one pair (Qwen3).
-This was routed to Fable as science-critical while the 11 confirmed
-text-loadable models continued on their own retry loop.
+## Gated launcher verified end-to-end
 
-Fable's recommendation was accepted: one confirmed pair (Qwen3) plus the
-11-model QK-norm regression is independently publishable; recovering Gemma-4
-(cross-vendor, higher value) via text-only loading is worth a time-boxed,
-positive-control-gated attempt; recovering Qwen3.6 (same-vendor, lower value) is
-not worth the effort. Report the exclusion as a dated, pre-outcome pre-reg
-deviation note.
+The single clean gated launch flow completed its first real cycle: w1 passed the
+pre-flight gate and launched successfully, and the launcher proceeded to walk
+sequentially through the 11 text models with no concurrent-launch churn, reusing
+the 3 already-live pods (w1/w2/w7) and provisioning the remaining 8 with
+retry-on-500. This confirmed all three reliability layers built earlier in the
+session were functioning together: the fail-closed pre-flight gate (prevention),
+the pod-health alerting monitor (detection), and the probe-pass mechanism (early
+signal at ~40 minutes instead of 3–5 hours).
 
-Acting on this recommendation exposed a repeat of the same failure mode already
-being addressed in the session: concluding the 5 multimodal models were
-categorically "UNSUPPORTED" from the class name alone, without testing whether
-they run in text-only mode. The correction: they very likely do run text-only,
-since the harness's `AutoModelForCausalLM` call simply doesn't auto-map the
-wrapper class — this is a loading-code fix, not a fundamental blocker. The one
-legitimate remaining risk is that the graft (which edits KV-cache tensors) needs
-a positive-control check to confirm it targets the correct text-decoder tensors
-inside the wrapper, which is a five-minute verification, not a blocker. Fable
-independently reached the same conclusion. The plan was corrected accordingly:
-actually load Gemma-4 text-only and verify the graft, rather than assuming it
-can't be used.
+## Shellcheck adopted as a mandatory hard rule
 
-## Root-cause reframing: assumed-precondition scaling and observability
+Prompted by a direct question about whether static analysis was in use, it was
+confirmed that scripts had only been syntax-checked (`bash -n`), which does not
+catch runtime-only failures like the `declare -A` bash-version issue from the
+prior shard. `shellcheck` was installed and run across all scripts. It
+immediately caught a real bug in `pod_health.sh`: inside a `while read` loop, an
+`ssh` call was consuming the loop's piped stdin (SC2095), so the "watch every
+pod" health monitor was silently only ever processing the first pod in its list
+— the monitoring tool was not covering what it claimed to cover. This was fixed,
+along with cd-guards, an unused variable, and quoting issues found in both live
+and defunct scripts across the repository. Shellcheck-clean was established as a
+non-optional requirement for all shell scripts, enforced via `scripts/lint.sh`,
+and recorded in RELIABILITY.md; the full lint pass was brought to green and
+committed.
 
-A subsequent attempt to verify the live pods were healthy found
-empty/inconsistent logs, traced to multiple concurrent launch mechanisms (retry
-loop, repair pass, manual relaunches) overwriting the same log files and racing
-— a recurrence of the earlier w1 stacking/racing incident. All concurrent
-launchers were stopped and pod state was read from the cloud API (source of
-truth) instead of local logs, revealing 3 pods freshly created by the retry
-loop's last round, not yet running jobs.
+## SSH-detach hang blocking the sequential launcher
 
-The recurring failure across the session was reframed: the issue is not
-insufficient upfront testing (which is inherently incomplete, since it can't
-anticipate every failure mode) but a missing observability layer — error
-reporting, health checks, metrics/anomaly detection, and alerting that fire
-automatically the moment something goes wrong in production, regardless of
-whether the failure mode was anticipated in advance. Fable separately named the
-specific root cause as "assumed-precondition scaling": treating a stated intent
-(e.g., "I fixed the path") as if it were verified effect, and treating a 16-pod
-launch as equivalent in risk to a 1-pod launch, so no check ever trips at the
-point where scale multiplies the cost of an unverified assumption.
+A health-check tick showed the launcher stuck on w1 (never advancing to w2) with
+w1 itself showing what initially looked like 3 racing processes and a stale
+UNSUPPORTED result. Investigation distinguished the two: the "3 procs" was a
+normal probe-run process tree, and the UNSUPPORTED result was stale from an
+earlier race already addressed. The actual bug was that `launch_pod.sh`'s final
+`nohup … &` SSH invocation was hanging because its stdin was not redirected,
+blocking the sequential launcher indefinitely on w1 and preventing it from ever
+reaching w2–w16. This is the same class of SSH-detach hang encountered earlier
+in the session. The fix (`</dev/null` on the SSH command plus `disown`) was
+applied, shellchecked, and verified to actually resolve the hang — the launcher
+was confirmed advancing all the way through w2–w16 without stalling.
 
-Two complementary systems were built in response:
+A side effect of editing `launch_pod.sh` after the pre-flight gate had already
+written its authorization token was that the fail-closed gate then correctly
+refused all subsequent launches ("not green"), since the launcher's fingerprint
+had changed. This was resolved by re-writing the gate token against the updated
+launcher; a single-model gate check was run in isolation to confirm it now
+passed (exit 0) rather than inferring success from ambiguous, partially-stale
+log tails.
 
-- **Detection (observability):** `pod_health.sh`, classifying each pod's state
-  (rendering / errored / stalled / died / GPU-idle / done), paired with a
-  standing alerting monitor that fires only on bad states and stays silent when
-  healthy.
-- **Prevention (fail-closed gate):** Fable's pre-flight gate
-  (`scripts/preflight.py` plus a launcher interlock) refusing any fleet-scale
-  launch unless a fresh check confirms every model loads as a real causal LM and
-  every required data file resolves at its expected path. Run against the 11
-  text models, the gate returned green in seconds; it also caught a separate
-  real bug, `job_gate.sh` having the wrong checkpoint hardcoded (thinking
-  variant of Qwen3-30B-A3B instead of Instruct-2507), matching an earlier costly
-  bug from prior sessions.
+## Pod-health monitor found to be silently blind on endpoints
 
-Both systems, plus the "assumed-precondition scaling" diagnosis, were committed
-and formalized as hard rules, expressed in standard SRE terminology (error
-reporting/tracking, liveness/readiness health checks, metrics and anomaly
-detection, alerting, canaries) and framed as solved problems the project should
-default to rather than reaching for ad hoc fixes.
+While confirming launches were completing, the health monitor was found to be
+misreporting live, reachable pods as still in INIT state. Root cause: it
+resolved pod endpoints from the raw cloud API, which was returning blank ports
+for these pods, while the pods were in fact reachable — the correct source of
+truth is the endpoint recorded in each pod's launch log. This was identified
+explicitly as a case where a monitoring tool giving false readings is worse than
+having no tool, since it produces false confidence. `pod_health.sh` was fixed to
+resolve endpoints from launch logs instead of the API, after which it correctly
+reported true per-pod state.
 
-## Documentation restructuring
+## Tier-1 canary catches an unpinned transformers major-version break
 
-The reliability/observability guidance was initially written into a CLAUDE.md
-file, which was identified as inconsistent with the project's actual
-conventions: the project uses AGENTS.md as its orientation document with
-purpose-specific docs for detailed content, not a single Claude-specific
-catch-all file. This was corrected: content moved to a new `RELIABILITY.md`,
-CLAUDE.md removed, and AGENTS.md now points to RELIABILITY.md. A `notes/`
-directory inadvertently swept into a broad `git add -A` during this cleanup was
-left untouched per explicit instruction, since it is unrelated user-managed
-content recoverable via history if needed.
+Once endpoint resolution was fixed, the health monitor immediately surfaced a
+genuine new failure: w1's model load began failing with a `RuntimeError` during
+weight loading. Reviewing this against the project's own recently-recorded
+tier-1-canary rule (verify one model produces a clean end-to-end result before
+fanning out to the full fleet) it was noted that the fan-out to 11 models had
+already been started without first confirming any single model against the
+freshly-repaired infrastructure — a violation of the rule the session had just
+written into RELIABILITY.md. The fan-out was paused to get the complete error.
 
-## Recovery to a single clean gated relaunch
-
-With detection and prevention systems committed, the reconciliation of the 3
-live pods (read via API rather than logs) confirmed they correspond to w1/w2/w7
-(Qwen3-30B-A3B, Qwen3-32B, Mistral text) and were reused; a single clean
-launcher script was written to provision the remaining 8 of the 11 text models
-sequentially through the pre-flight gate, avoiding the earlier pattern of
-concurrent/manual launch mechanisms racing each other.
-
-A pgrep check for lingering launcher processes initially returned matches that
-were confirmed to be false positives (the pgrep pattern matched its own
-command-line invocation, not an actual running launcher); a stricter check for
-real script invocations confirmed zero launchers running before relaunching.
-
-The first launch attempt through the new script failed at runtime: it had been
-syntax-checked but not runtime-tested, and used bash's `declare -A` (associative
-arrays), which is unsupported on macOS's default bash 3.2. This was identified
-as a distinct instance of not fully verifying a fix before relying on it. The
-script was corrected to rely on the existing grep-based dedup check alone (no
-associative array needed), the buggy background task was killed, and the fixed
-script was read in full before relaunching, rather than assumed correct. The
-corrected script — sequential gated launches per model with grep-based dedup,
-retry on HTTP 500s, and no concurrent launch churn — was committed and launched;
-jobs run in parallel once started. State at the end of this shard: this single
-clean gated launch flow is running and being verified in progress, with the
-health monitor as the intended sole source of truth going forward, and Gemma-4
-text-only load/graft recovery still pending as a time-boxed side task per
-Fable's guidance.
+Root cause: the job script's `pip install -U "transformers>=4.57.0"` had picked
+up **transformers 5.13.0**, a new major version with breaking changes
+("automatic conversion of the weights" error), rather than the 4.57.x line the
+model previously loaded under — an unpinned-dependency bug. `transformers<5` was
+pinned in all job scripts and committed. The tier-1 canary was then run as
+intended: w1 alone, redeployed with the pinned dependency, launched end-to-end
+before any further fan-out, to confirm both that the model loads and that the
+pipeline produces a sane probe result — this canary run was in progress and
+being watched at the end of this shard, with the health monitor (now fixed) as
+the mechanism reporting its outcome.

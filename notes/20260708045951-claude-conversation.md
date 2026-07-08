@@ -3,6 +3,10 @@ positive-control failure — root-caused to a wrong model checkpoint, not the
 science — and pivots the sweep design to per-model-native rendering before the
 16-model wide sweep launches and exposes a new wave of infrastructure bugs._
 
+**Participants in this Conversation.**
+
+User; `claude-opus-4-8` (Claude Code `2.1.200`).
+
 ## Corpus recovery and freeze
 
 The shard opens mid-recovery from an earlier destructive `rm` that deleted six

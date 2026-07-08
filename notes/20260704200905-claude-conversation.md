@@ -3,6 +3,10 @@ semantic-continuity compaction experiment from initial setup through two major
 refocusing pivots, culminating in approval and early execution of a cloud
 (RunPod A100) scale-up phase._
 
+**Participants in this Conversation.**
+
+User; `claude-fable-5` (Claude Code `2.1.200`).
+
 ## Initial setup and local pipeline (Arms A–E)
 
 The assistant (Claude Fable 5) was directed to autonomously drive a pre-written

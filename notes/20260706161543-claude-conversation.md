@@ -7,6 +7,14 @@ tier), and ends with a completed but scientifically null chain-tier result —
 confirming a tuning fix but finding no compaction damage to measure — leaving a
 stop-and-decide point with pods shut down to halt idle billing._
 
+**Participants in this Conversation.**
+
+User; `claude-fable-5` (Claude Code `2.1.200`); `claude-opus-4-8` (Claude Code
+`2.1.200`).
+
+Assistant model sequence: `claude-fable-5` (Claude Code `2.1.200`) ->
+`claude-opus-4-8` (Claude Code `2.1.200`).
+
 ## Incremental caching withdrawal and rebuild (icache v1→v2)
 
 The morning opened with a fresh incident: the incremental-KV-cache speed

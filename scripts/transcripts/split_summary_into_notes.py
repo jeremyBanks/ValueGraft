@@ -25,6 +25,10 @@ from pathlib import Path
 from types import ModuleType
 
 
+PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
+OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
+
+
 def load_module(path: Path, name: str) -> ModuleType:
     spec = importlib.util.spec_from_file_location(name, path)
     if spec is None or spec.loader is None:
@@ -114,6 +118,128 @@ def split_combined_summary(text: str) -> list[tuple[int, str]]:
     return out
 
 
+def parse_heading_fields(heading_metadata: str) -> dict[str, str]:
+    match = re.search(r"\[(?P<body>.*)\]\s*$", heading_metadata)
+    if not match:
+        return {}
+    fields: dict[str, str] = {}
+    for part in match.group("body").split(";"):
+        if "=" not in part:
+            continue
+        key, value = part.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if key and value:
+            fields[key] = value
+    return fields
+
+
+def model_entry_from_fields(fields: dict[str, str]) -> str | None:
+    model = fields.get("model")
+    if not model:
+        return None
+    details: list[str] = []
+    if provider := fields.get("provider"):
+        details.append(f"provider `{provider}`")
+    if effort := fields.get("effort"):
+        details.append(f"reasoning effort `{effort}`")
+    if version := fields.get("claude_code_version"):
+        details.append(f"Claude Code `{version}`")
+    if version := fields.get("codex_cli"):
+        details.append(f"Codex CLI `{version}`")
+    entry = f"`{model}`"
+    if details:
+        entry += f" ({'; '.join(details)})"
+    return entry
+
+
+def shard_messages(text: str) -> list[tuple[str, str, str]]:
+    messages: list[tuple[str, str, str]] = []
+    for match in re.finditer(
+        r"^## Message \d+ - (?P<role>user|assistant)(?P<meta>.*?)\n\n(?P<body>.*?)(?=^## Message \d+ - |\Z)",
+        text,
+        re.M | re.S,
+    ):
+        messages.append((match.group("role"), match.group("meta"), match.group("body").strip()))
+    return messages
+
+
+def model_entries_from_shard_text(text: str) -> list[str]:
+    stats: dict[str, tuple[int, int]] = {}
+    for index, (role, metadata, body) in enumerate(shard_messages(text)):
+        if role != "assistant":
+            continue
+        entry = model_entry_from_fields(parse_heading_fields(metadata))
+        if entry is None:
+            continue
+        chars, first_index = stats.get(entry, (0, index))
+        stats[entry] = (chars + len(body), first_index)
+    return [
+        entry
+        for entry, (_chars, _first_index) in sorted(
+            stats.items(),
+            key=lambda item: (-item[1][0], item[1][1], item[0]),
+        )
+    ]
+
+
+def participant_entries_from_shard_text(text: str) -> list[str]:
+    entries: list[str] = []
+    if any(role == "user" for role, _metadata, _body in shard_messages(text)):
+        entries.append("User")
+    entries.extend(model_entries_from_shard_text(text))
+    if not entries:
+        entries.append("No user or assistant model metadata found.")
+    return entries
+
+
+def assistant_model_sequence_from_shard_text(text: str) -> list[str]:
+    sequence: list[str] = []
+    for role, metadata, _body in shard_messages(text):
+        if role != "assistant":
+            continue
+        entry = model_entry_from_fields(parse_heading_fields(metadata))
+        if entry is None:
+            continue
+        if not sequence or sequence[-1] != entry:
+            sequence.append(entry)
+    return sequence
+
+
+def render_participants_block(shard_text: str) -> str:
+    participants = participant_entries_from_shard_text(shard_text)
+    sequence = assistant_model_sequence_from_shard_text(shard_text)
+    lines = [PARTICIPANTS_SECTION_HEADING, "", "; ".join(participants) + "."]
+    if len(sequence) > 1:
+        lines.extend(["", "Assistant model sequence: " + " -> ".join(sequence) + "."])
+    return "\n".join(lines)
+
+
+def insert_participants_block(summary: str, shard_text: str) -> str:
+    summary = summary.strip()
+    for heading in (PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING):
+        summary = re.sub(
+            rf"\n\n{re.escape(heading)}\n.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
+            "",
+            summary,
+            flags=re.S,
+        )
+    block = render_participants_block(shard_text)
+    if "\n\n" not in summary:
+        return f"{summary}\n\n{block}\n"
+    opening, rest = summary.split("\n\n", 1)
+    return f"{opening.strip()}\n\n{block}\n\n{rest.strip()}\n"
+
+
+def validate_model_mentions(summary: str, model_entries: list[str]) -> list[str]:
+    missing: list[str] = []
+    for entry in model_entries:
+        match = re.match(r"`([^`]+)`", entry)
+        if match and match.group(1) not in summary:
+            missing.append(match.group(1))
+    return missing
+
+
 def git_commit(path: Path, message: str, iso_date: str, cwd: Path) -> None:
     rel = str(path.relative_to(cwd))
     subprocess.check_call(["git", "add", "--", rel], cwd=cwd)
@@ -153,12 +279,18 @@ def main() -> None:
     combined_text = args.combined.read_text(encoding="utf-8")
     for shard_idx, body in split_combined_summary(combined_text):
         platform, ts = shard_start_metadata(shard_idx, args.summary_shards_dir, timestamps)
+        shard_text = (args.summary_shards_dir / f"shard-{shard_idx:03d}.md").read_text(encoding="utf-8")
+        model_entries = model_entries_from_shard_text(shard_text)
         prefix = ts.strftime("%Y%m%d%H%M%S")
         path = args.notes_dir / f"{prefix}-{platform_slug(platform)}-conversation.md"
         if path.exists():
             raise RuntimeError(f"Refusing to overwrite existing file: {path}")
+        body = insert_participants_block(body, shard_text)
         path.write_text(body, encoding="utf-8")
         format_markdown([path], args.repo_root)
+        missing_models = validate_model_mentions(path.read_text(encoding="utf-8"), model_entries)
+        if missing_models:
+            raise RuntimeError(f"model roster missing required model ids in {path}: {missing_models}")
         created.append(path)
         print(f"wrote shard {shard_idx:03d}: {path}")
         if args.commit:

@@ -3,6 +3,16 @@ and repo/paper-hygiene phase for the ValueGraft compaction-mitigation project,
 culminating in a private GitHub repo, a synthesis workspace with two paper
 drafts, and a naming/prior-art overhaul._
 
+**Participants in this Conversation.**
+
+User; `gpt-5.5` (provider `openai`; reasoning effort `xhigh`; Codex CLI
+`0.142.5`); `gpt-5.5` (provider `openai`; reasoning effort `high`; Codex CLI
+`0.142.5`).
+
+Assistant model sequence: `gpt-5.5` (provider `openai`; reasoning effort `high`;
+Codex CLI `0.142.5`) -> `gpt-5.5` (provider `openai`; reasoning effort `xhigh`;
+Codex CLI `0.142.5`).
+
 **Reframing consolidated.** Early messages settled the project's central
 framing: the claim "re-encoding retained text after compaction is not equivalent
 to preserving write-time cache state" is treated as self-evident and explicitly

@@ -19,7 +19,7 @@ import re
 import shutil
 import subprocess
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from types import ModuleType
@@ -47,6 +47,8 @@ DEFAULT_FORBID_REGEX = [
     r"\brpa_[A-Za-z0-9]{32,}\b",
     r"\bhf_[A-Za-z0-9]{20,}\b",
 ]
+PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
+OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
 
 SUMMARY_PROMPT = """\
 You are summarizing mainline project conversation for a future agent.
@@ -81,7 +83,10 @@ changed; at most preserve the intended document style or a concrete repo
 workflow change. For transcript-note style discussions, record only the final
 durable style rule in general terms. Do not retell the cleanup episode, mention
 prohibited words, or quote examples of language to avoid. Return only the note
-body, with no title.
+body, with no title. The script adds a deterministic model roster from source
+metadata; do not invent model identifiers. If the transcript headings show a
+switch between assistant models, mention the switch at the relevant point in the
+summary flow.
 
 {previous_context_block}
 
@@ -131,7 +136,10 @@ changed; at most preserve the intended document style or a concrete repo
 workflow change. For transcript-note style discussions, record only the final
 durable style rule in general terms. Do not retell the cleanup episode, mention
 prohibited words, or quote examples of language to avoid. Return only the note
-body, with no title.
+body, with no title. The script adds a deterministic model roster from source
+metadata; do not invent model identifiers. If the transcript headings show a
+switch between assistant models, mention the switch at the relevant point in the
+summary flow.
 
 Existing summary:
 
@@ -177,6 +185,7 @@ class NoteRecord:
     input_hash: str
     summary_hash: str
     mode: str = "summary"
+    models: list[str] = field(default_factory=list)
 
 
 def sha256_text(text: str) -> str:
@@ -304,6 +313,128 @@ def all_messages_for_ranges(
     return messages
 
 
+def parse_heading_fields(heading_metadata: str) -> dict[str, str]:
+    match = re.search(r"\[(?P<body>.*)\]\s*$", heading_metadata)
+    if not match:
+        return {}
+    fields: dict[str, str] = {}
+    for part in match.group("body").split(";"):
+        if "=" not in part:
+            continue
+        key, value = part.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if key and value:
+            fields[key] = value
+    return fields
+
+
+def model_entry_from_fields(fields: dict[str, str]) -> str | None:
+    model = fields.get("model")
+    if not model:
+        return None
+    details: list[str] = []
+    if provider := fields.get("provider"):
+        details.append(f"provider `{provider}`")
+    if effort := fields.get("effort"):
+        details.append(f"reasoning effort `{effort}`")
+    if version := fields.get("claude_code_version"):
+        details.append(f"Claude Code `{version}`")
+    if version := fields.get("codex_cli"):
+        details.append(f"Codex CLI `{version}`")
+    entry = f"`{model}`"
+    if details:
+        entry += f" ({'; '.join(details)})"
+    return entry
+
+
+def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
+    stats: dict[str, tuple[int, int]] = {}
+    for index, msg in enumerate(messages):
+        if msg.role != "assistant":
+            continue
+        entry = model_entry_from_fields(parse_heading_fields(msg.heading_metadata))
+        if entry is None:
+            continue
+        chars, first_index = stats.get(entry, (0, index))
+        stats[entry] = (chars + len(msg.text), first_index)
+    return [
+        entry
+        for entry, (_chars, _first_index) in sorted(
+            stats.items(),
+            key=lambda item: (-item[1][0], item[1][1], item[0]),
+        )
+    ]
+
+
+def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
+    entries: list[str] = []
+    if any(msg.role == "user" for msg in messages):
+        entries.append("User")
+    entries.extend(model_entries_for_messages(messages))
+    if not entries:
+        entries.append("No user or assistant model metadata found.")
+    return entries
+
+
+def assistant_model_sequence_for_messages(messages: list[MessageRecord]) -> list[str]:
+    sequence: list[str] = []
+    for msg in messages:
+        if msg.role != "assistant":
+            continue
+        entry = model_entry_from_fields(parse_heading_fields(msg.heading_metadata))
+        if entry is None:
+            continue
+        if not sequence or sequence[-1] != entry:
+            sequence.append(entry)
+    return sequence
+
+
+def model_entries_for_ranges(
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    ranges: list[SourceRange],
+) -> list[str]:
+    return model_entries_for_messages(all_messages_for_ranges(segments, ranges))
+
+
+def required_model_ids(model_entries: list[str]) -> list[str]:
+    ids: list[str] = []
+    for entry in model_entries:
+        match = re.match(r"`([^`]+)`", entry)
+        if match:
+            ids.append(match.group(1))
+    return ids
+
+
+def render_participants_block(messages: list[MessageRecord]) -> str:
+    participant_entries = participant_entries_for_messages(messages)
+    sequence = assistant_model_sequence_for_messages(messages)
+    lines = [PARTICIPANTS_SECTION_HEADING, "", "; ".join(participant_entries) + "."]
+    if len(sequence) > 1:
+        lines.extend(["", "Assistant model sequence: " + " -> ".join(sequence) + "."])
+    return "\n".join(lines)
+
+
+def insert_participants_block(summary: str, messages: list[MessageRecord]) -> str:
+    summary = summary.strip()
+    for heading in (PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING):
+        summary = re.sub(
+            rf"\n\n{re.escape(heading)}\n.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
+            "",
+            summary,
+            flags=re.S,
+        )
+    block = render_participants_block(messages)
+    if "\n\n" not in summary:
+        return f"{summary}\n\n{block}\n"
+    opening, rest = summary.split("\n\n", 1)
+    return f"{opening.strip()}\n\n{block}\n\n{rest.strip()}\n"
+
+
+def validate_model_mentions(summary: str, model_entries: list[str]) -> list[str]:
+    return [model_id for model_id in required_model_ids(model_entries) if model_id not in summary]
+
+
 def parse_shard_ranges(shard_text: str) -> list[SourceRange]:
     ranges: list[SourceRange] = []
     chunks = re.finditer(
@@ -359,6 +490,7 @@ def load_manifest(path: Path) -> list[NoteRecord]:
                 input_hash=row["input_hash"],
                 summary_hash=row["summary_hash"],
                 mode=row.get("mode", "summary"),
+                models=row.get("models", []),
             )
         )
     return records
@@ -406,6 +538,8 @@ def init_manifest(args: argparse.Namespace) -> None:
         if not note_path.exists():
             raise RuntimeError(f"Expected note not found for {shard_path.name}: {note_path}")
         summary_text = note_path.read_text(encoding="utf-8")
+        messages = all_messages_for_ranges(segments, ranges)
+        models = model_entries_for_messages(messages)
         records.append(
             NoteRecord(
                 note=str(note_path),
@@ -414,6 +548,7 @@ def init_manifest(args: argparse.Namespace) -> None:
                 last_timestamp=last_ts,
                 input_hash=sha256_text(shard_text),
                 summary_hash=sha256_text(summary_text),
+                models=models,
             )
         )
     write_manifest(args.manifest, records)
@@ -553,6 +688,40 @@ def git_commit(paths: list[Path], message: str, cwd: Path, iso_date: str | None 
     subprocess.check_call(["git", "commit", "-m", message, "--", *rels], cwd=cwd, env=env)
 
 
+def sync_model_blocks(
+    records: list[NoteRecord],
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    args: argparse.Namespace,
+) -> tuple[list[Path], bool]:
+    changed_paths: list[Path] = []
+    manifest_changed = False
+    for record in records:
+        note_path = Path(record.note)
+        if not note_path.exists():
+            continue
+        model_entries = model_entries_for_ranges(segments, record.source_ranges)
+        if record.models != model_entries:
+            record.models = model_entries
+            manifest_changed = True
+        original = note_path.read_text(encoding="utf-8")
+        messages = all_messages_for_ranges(segments, record.source_ranges)
+        updated = insert_participants_block(original, messages)
+        if updated != original:
+            note_path.write_text(updated, encoding="utf-8")
+            format_markdown([note_path], args.repo_root)
+            updated = note_path.read_text(encoding="utf-8")
+            changed_paths.append(note_path)
+            print(f"updated participant block: {note_path}")
+        missing = validate_model_mentions(updated, model_entries)
+        if missing:
+            raise RuntimeError(f"model roster missing required model ids in {note_path}: {missing}")
+        summary_hash = sha256_text(updated)
+        if record.summary_hash != summary_hash:
+            record.summary_hash = summary_hash
+            manifest_changed = True
+    return changed_paths, manifest_changed
+
+
 def update_notes(args: argparse.Namespace) -> None:
     records = load_manifest(args.manifest)
     segments = load_segments(args.claude_jsonl, args.codex_jsonl)
@@ -560,6 +729,12 @@ def update_notes(args: argparse.Namespace) -> None:
     args.work_dir.mkdir(parents=True, exist_ok=True)
 
     changed_paths: list[Path] = []
+    manifest_changed = False
+    if args.command and not args.no_model_block_sync:
+        synced_paths, synced_manifest = sync_model_blocks(records, segments, args)
+        changed_paths.extend(synced_paths)
+        manifest_changed = manifest_changed or synced_manifest
+
     wrote_prompt = False
     continuations: dict[int, list[tuple[tuple[str, str, int], int, int]]] = {}
     for key, (last_message, record_idx) in covered.items():
@@ -614,19 +789,27 @@ def update_notes(args: argparse.Namespace) -> None:
         warnings = validate_summary(candidate, args.forbid_regex)
         if warnings:
             raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
-        note_path.write_text(candidate, encoding="utf-8")
-        format_markdown([note_path], args.repo_root)
-        formatted_summary = note_path.read_text(encoding="utf-8")
         for key, _old_last, current_last in items:
             for source_range in record.source_ranges:
                 if (source_range.platform, source_range.date, source_range.sequence) == key:
                     source_range.last_message = current_last
                     break
+        messages = all_messages_for_ranges(segments, record.source_ranges)
+        model_entries = model_entries_for_messages(messages)
+        note_text = insert_participants_block(candidate, messages)
+        note_path.write_text(note_text, encoding="utf-8")
+        format_markdown([note_path], args.repo_root)
+        formatted_summary = note_path.read_text(encoding="utf-8")
+        missing_models = validate_model_mentions(formatted_summary, model_entries)
+        if missing_models:
+            raise RuntimeError(f"model roster missing required model ids in {note_path}: {missing_models}")
         first_ts, last_ts = timestamps_for_ranges(segments, record.source_ranges)
         record.first_timestamp = first_ts
         record.last_timestamp = last_ts
         record.input_hash = sha256_text(render_messages(all_messages_for_ranges(segments, record.source_ranges)))
         record.summary_hash = sha256_text(formatted_summary)
+        record.models = model_entries
+        manifest_changed = True
         changed_paths.append(note_path)
 
     new_shards = build_new_ranges(segments, covered, args.target_chars)
@@ -656,9 +839,15 @@ def update_notes(args: argparse.Namespace) -> None:
         warnings = validate_summary(candidate, args.forbid_regex)
         if warnings:
             raise RuntimeError(f"candidate failed summary lint {warnings}: {candidate_path}")
-        note_path.write_text(candidate, encoding="utf-8")
+        messages = all_messages_for_ranges(segments, ranges)
+        model_entries = model_entries_for_messages(messages)
+        note_text = insert_participants_block(candidate, messages)
+        note_path.write_text(note_text, encoding="utf-8")
         format_markdown([note_path], args.repo_root)
         formatted_summary = note_path.read_text(encoding="utf-8")
+        missing_models = validate_model_mentions(formatted_summary, model_entries)
+        if missing_models:
+            raise RuntimeError(f"model roster missing required model ids in {note_path}: {missing_models}")
         first, last = timestamps_for_ranges(segments, ranges)
         records.append(
             NoteRecord(
@@ -668,14 +857,16 @@ def update_notes(args: argparse.Namespace) -> None:
                 last_timestamp=last,
                 input_hash=sha256_text(transcript),
                 summary_hash=sha256_text(formatted_summary),
+                models=model_entries,
             )
         )
+        manifest_changed = True
         changed_paths.append(note_path)
         if args.commit:
             iso = first_ts.isoformat().replace("+00:00", "Z")
             git_commit([note_path], f"Archive conversation shard {prefix}", args.repo_root, iso)
 
-    if args.command and changed_paths:
+    if args.command and (changed_paths or manifest_changed):
         write_manifest(args.manifest, records)
         if args.commit:
             git_commit([args.manifest], "Update conversation summary manifest", args.repo_root)
@@ -744,6 +935,11 @@ def main() -> None:
         "--force-small-continuations",
         action="store_true",
         help="Revise existing notes even for tiny live-tail continuations.",
+    )
+    update_parser.add_argument(
+        "--no-model-block-sync",
+        action="store_true",
+        help="Skip deterministic model-roster block synchronization.",
     )
     update_parser.add_argument(
         "--rolling-context-chars",
