@@ -5,6 +5,6 @@
 #   BREADTH="google/gemma-3-27b-it ..." \
 #   bash scripts/preflight.sh scripts/job_sweep.sh
 set -uo pipefail
-cd /Users/jeb/experimentation
+cd /Users/jeb/experimentation || exit 1
 JOB="${1:-${SC_JOB:-}}"
 python3 scripts/preflight.py --job "$JOB" --launcher scripts/launch_pod.sh

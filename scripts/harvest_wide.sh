@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Pull results from all launched wide-sweep pods + print each model's referent sign.
-cd /Users/jeb/experimentation
+cd /Users/jeb/experimentation || exit 1
 S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
 K=$HOME/.ssh/id_ed25519_runpod
 OUT=results/cross_arch_wide
 mkdir -p "$OUT"
-DONE=0; RUNNING=0; FAILED=0
+DONE=0; RUNNING=0
 for lg in "$S"/launch_w*.log; do
   ep=$(grep -aoE "LAUNCHED w[0-9]+ at [0-9.]+:[0-9]+" "$lg" 2>/dev/null | tail -1 | awk '{print $4}')
   [ -z "$ep" ] && continue

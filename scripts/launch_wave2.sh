@@ -4,7 +4,7 @@
 # dense/MoE de-confound), gpt-oss (sliding-window + attention sinks), GLM (trust_remote).
 # 5 models across 4 pods; Gemma-4 dense/MoE pair split so each is observable.
 set -uo pipefail
-cd /Users/jeb/experimentation
+cd /Users/jeb/experimentation || exit 1
 declare -a ASSIGN=(
   "google/gemma-4-31B-it"          # gemma-4 dense (anchor-quality if it grafts)
   "google/gemma-4-26B-A4B-it"      # gemma-4 MoE   (anchor-quality if it grafts)

@@ -6,7 +6,7 @@
 # failed provision doesn't block the others. Re-run is idempotent per pod (state file).
 # ONLY run this after: gate PASS + doubled corpus frozen.
 set -uo pipefail
-cd /Users/jeb/experimentation
+cd /Users/jeb/experimentation || exit 1
 declare -a ASSIGN=(
   "Qwen/Qwen3-30B-A3B-Instruct-2507"                                                      # anchor solo
   "Qwen/Qwen3-32B"                                                          # anchor solo

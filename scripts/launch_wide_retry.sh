@@ -2,7 +2,7 @@
 # Resilient retry: keep trying to provision the wide-sweep pods that failed the community 500s,
 # a few at a time with backoff, until all up or the deadline. Each success launches its job.
 set -uo pipefail
-cd /Users/jeb/experimentation
+cd /Users/jeb/experimentation || exit 1
 S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
 # w-index : model : conv_limit   (w1 already reused)
 ENTRIES=(
@@ -14,7 +14,7 @@ ENTRIES=(
 )
 DEADLINE=$(( $(date +%s) + 3000 ))   # ~50 min of retrying
 ROUND=0
-while [ $(date +%s) -lt $DEADLINE ]; do
+while [ "$(date +%s)" -lt "$DEADLINE" ]; do
   ROUND=$((ROUND+1)); LAUNCHED=0; MISSING=0
   for e in "${ENTRIES[@]}"; do
     i=${e%%:*}; rest=${e#*:}; M=${rest%:*}; C=${rest##*:}

@@ -123,7 +123,6 @@ json.dump({"model": m, "status": "ERROR", "reason": f"hard timeout"},
           open(p / f"{slug}.json", "w"), indent=1)
 PY
   fi
-  torch_freed=1  # per-model process exit already frees the GPU
 done
 
 echo "== SWEEP SUMMARY $(date -Is)"
