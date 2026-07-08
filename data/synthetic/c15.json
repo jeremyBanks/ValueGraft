@@ -1,0 +1,542 @@
+{
+  "id": "c15",
+  "title": "Multi-year neuroscience research study",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant with research administration and neuroscience knowledge, supporting a principal investigator standing up a new funded study."
+    },
+    {
+      "role": "user",
+      "content": "Hi, I just got notice that our five-year R01 for Project Meridian came through, it's the hippocampal circuit and memory-consolidation study combining mouse imaging with a parallel human patient biomarker cohort. I want to use this chat to plan grant compliance, protocols, the data pipeline, and publications as we spin the whole thing up. Can you work through it with me piece by piece?"
+    },
+    {
+      "role": "assistant",
+      "content": "Congratulations on the award, happy to work through grant compliance, protocols, the data pipeline, and publications with you piece by piece as Project Meridian spins up."
+    },
+    {
+      "role": "user",
+      "content": "Let's start with grant compliance and budget. NIH modular budgets always have some fiscal-year quirk I forget. What should I be double-checking before we start spending against year one?"
+    },
+    {
+      "role": "assistant",
+      "content": "Before spending against year one, double-check your modular budget carryover rules and make sure salary caps and effort commitments for key personnel match what's actually in the notice of award, since mismatches there are the most common early compliance headache."
+    },
+    {
+      "role": "user",
+      "content": "For the mouse protocol, our current approved surgical numbers might be too low for the imaging cohort size we actually need. How do amendments to an existing IACUC protocol usually work timeline-wise?"
+    },
+    {
+      "role": "assistant",
+      "content": "Amendments to an approved IACUC protocol typically take four to eight weeks depending on your institution's committee schedule, so it's worth submitting as soon as you know the imaging cohort numbers are short."
+    },
+    {
+      "role": "user",
+      "content": "Imaging modality decision, finally made. We weighed three options: (1) two-photon calcium imaging through a chronic cranial window, (2) fiber photometry, and (3) miniscope calcium imaging in freely moving mice. Given that memory consolidation needs natural behavior, not head-fixation, we're going with the third one, miniscopes."
+    },
+    {
+      "role": "assistant",
+      "content": "That's the right call for a memory-consolidation study, freely moving imaging avoids the head-fixation confound that two-photon would introduce."
+    },
+    {
+      "role": "user",
+      "content": "What's a realistic way to train two new grad students on stereotaxic surgery without burning through our approved animal numbers on training alone?"
+    },
+    {
+      "role": "assistant",
+      "content": "Training grad students on stereotaxic surgery usually works best with a dedicated practice allocation of a small number of animals separate from your study cohort, so training attrition doesn't eat into your approved study numbers."
+    },
+    {
+      "role": "user",
+      "content": "Quick terminology flag before it causes confusion: the vet staff use 'the cohort' loosely for any batch of mice in the facility, but when I say 'the cohort' to you, I always mean the human biomarker patient cohort in the parallel arm, never the mice. Just keeping that straight between us."
+    },
+    {
+      "role": "assistant",
+      "content": "Understood, the cohort means the human biomarker patient cohort here, never the mice."
+    },
+    {
+      "role": "user",
+      "content": "For the human biomarker cohort, what's the right way to think about consent for long-term sample storage versus just the immediate blood draw?"
+    },
+    {
+      "role": "assistant",
+      "content": "Long-term storage consent should be framed as a separate, explicit opt-in from the immediate blood draw consent, since re-contacting participants later to expand storage permissions is much harder than asking upfront."
+    },
+    {
+      "role": "user",
+      "content": "Strong methodological line I won't cross: no imaging under anesthesia for the memory-consolidation sessions, ever. Anesthesia confounds the exact circuit dynamics we're trying to measure, and I've seen labs publish garbage because of it. Whatever imaging schedule you propose, it has to be awake, behaving animals only."
+    },
+    {
+      "role": "assistant",
+      "content": "Got it, awake behaving animals only for consolidation imaging sessions, anesthesia is off the table given the confound risk."
+    },
+    {
+      "role": "user",
+      "content": "How do we handle a participant who wants to withdraw consent after their sample's already been sequenced?"
+    },
+    {
+      "role": "assistant",
+      "content": "If a participant withdraws after sequencing, you generally destroy or de-identify remaining physical samples and stop any further analysis, but data already generated and irreversibly incorporated into published results usually can't be unwound, so your consent form should say that explicitly."
+    },
+    {
+      "role": "user",
+      "content": "For the record on power calculations: we already paid a vendor called NeuroMetrics Analytics to run our sample-size justification for the grant, and their numbers had a unit error that would have undersized the cohort by half. We caught it just before submission and we're not using them again."
+    },
+    {
+      "role": "assistant",
+      "content": "Noted, NeuroMetrics Analytics is done given that unit error, good thing it was caught before submission."
+    },
+    {
+      "role": "user",
+      "content": "Our imaging data volume is going to be enormous. What's a sane way to think about raw data retention versus processed data for a five-year study?"
+    },
+    {
+      "role": "assistant",
+      "content": "For a five-year study, keep raw imaging data only as long as needed to reproduce processed results, then archive it more cheaply, while keeping processed data more readily accessible for analysis and sharing."
+    },
+    {
+      "role": "user",
+      "content": "Filing this away so I don't have to dig for it later: our grant number is R01-NS128840, five years, and the notice of award came through last Tuesday. Nothing to decide, just parking the number here."
+    },
+    {
+      "role": "assistant",
+      "content": "Logged: R01-NS128840, five-year award."
+    },
+    {
+      "role": "user",
+      "content": "Let's codename our nightly imaging registration and QC pipeline 'Lucario.' Everyone on the team should use that name in Slack and in the shared docs, not the real repo name, since a couple of collaborators outside the lab will see references to it."
+    },
+    {
+      "role": "assistant",
+      "content": "Got it, Lucario refers to the nightly imaging registration and QC pipeline from here on."
+    },
+    {
+      "role": "user",
+      "content": "Dr. Achterberg had a great suggestion for the human arm. Her proposal is to recruit the biomarker cohort through the existing memory-clinic biobank partnership instead of recruiting de novo, since consented samples and longitudinal data already exist for a lot of eligible patients. It could cut a year or more off recruitment, and I want to go with it."
+    },
+    {
+      "role": "assistant",
+      "content": "Recruiting through the existing biobank partnership is a smart shortcut, leveraging already-consented longitudinal data should meaningfully cut your recruitment timeline."
+    },
+    {
+      "role": "user",
+      "content": "Should we build our own analysis pipeline in-house or adopt an existing open-source one and just customize it?"
+    },
+    {
+      "role": "assistant",
+      "content": "Adopting and customizing an existing open-source pipeline is usually the better call unless your imaging modality is unusual, since building in-house means maintaining infrastructure that isn't your core research contribution."
+    },
+    {
+      "role": "user",
+      "content": "Also, when I say 'the freezer' from here on, I mean specifically the dash-80 biorepository freezer, freezer 3, where the human samples live. I don't mean the general dash-20 reagent freezer that the rest of the lab also calls the freezer out of habit."
+    },
+    {
+      "role": "assistant",
+      "content": "Understood, the freezer means the dash-80 biorepository freezer, freezer 3, not the general dash-20 reagent freezer."
+    },
+    {
+      "role": "user",
+      "content": "How should we think about authorship order across two arms of the study when postdocs are contributing very differently to each?"
+    },
+    {
+      "role": "assistant",
+      "content": "Authorship order across two arms usually works best with a shared, explicit contribution rubric agreed on early, rather than defaulting to seniority, so postdocs know upfront what determines position."
+    },
+    {
+      "role": "user",
+      "content": "Non-negotiable data policy: human genomic raw data never touches a non-HIPAA-compliant commercial cloud bucket, period, no matter how convenient it would be for the pipeline. If a tool or storage option isn't compliant, it's simply not in consideration."
+    },
+    {
+      "role": "assistant",
+      "content": "Got it, no non-HIPAA-compliant commercial cloud storage for raw genomic data, period."
+    },
+    {
+      "role": "user",
+      "content": "What's the actual process if we need to rebudget more than 25 percent between categories mid-year?"
+    },
+    {
+      "role": "assistant",
+      "content": "Rebudgeting more than 25 percent between categories generally requires prior NIH program officer approval, not just notification, so build in lead time before you need to actually spend differently."
+    },
+    {
+      "role": "user",
+      "content": "Also worth flagging: we tried recruiting for the human arm through a platform called TrialSprout, and the leads were low quality, most didn't meet eligibility and the no-show rate for screening visits was over half. We're done with TrialSprout."
+    },
+    {
+      "role": "assistant",
+      "content": "Noted, TrialSprout is out for recruitment given the no-show rate and lead quality issues."
+    },
+    {
+      "role": "user",
+      "content": "What's the realistic timeline if USDA inspectors flag something during a routine facility inspection?"
+    },
+    {
+      "role": "assistant",
+      "content": "If USDA flags something during inspection, expect a written report with a corrective action timeline, usually 30 to 60 days, and documented follow-up, so treat any finding as something to close out promptly rather than let linger."
+    },
+    {
+      "role": "user",
+      "content": "One more thing to keep straight: the postdocs are counting on IRB approval no later than September 30th, that's the hard date everyone's planning around for recruitment to start on schedule."
+    },
+    {
+      "role": "assistant",
+      "content": "Logged: September 30th as the hard IRB approval deadline the postdocs are planning around."
+    },
+    {
+      "role": "user",
+      "content": "How paranoid should we be about de-identification given the human genomic data is technically re-identifiable in theory?"
+    },
+    {
+      "role": "assistant",
+      "content": "Given genomic data's re-identifiability risk, it's worth treating de-identified as a process rather than a permanent state, with access controls and data use agreements doing more of the real protective work than stripping identifiers alone."
+    },
+    {
+      "role": "user",
+      "content": "Let's call the old legacy MATLAB analysis codebase we're slowly phasing out 'Gyarados' in lab meetings, so everyone knows not to build new features on top of it while we migrate to the new pipeline."
+    },
+    {
+      "role": "assistant",
+      "content": "Got it, Gyarados refers to the legacy MATLAB analysis codebase being phased out."
+    },
+    {
+      "role": "user",
+      "content": "Back to the IACUC amendment, what's our fallback if it takes longer than expected and we're already recruiting postdocs who expect to start surgery training?"
+    },
+    {
+      "role": "assistant",
+      "content": "If the IACUC amendment slips, have the postdocs start on didactic and simulation-based surgery training that doesn't require live animal numbers yet, so their onboarding clock keeps running without touching your approved counts."
+    },
+    {
+      "role": "user",
+      "content": "On the imaging modality we picked, no need to re-argue it. What does that mean for the surgical numbers in the IACUC amendment?"
+    },
+    {
+      "role": "assistant",
+      "content": "With miniscopes chosen, the amendment should reflect a somewhat lower per-animal surgical burden than two-photon since you won't need chronic window implantation, which may help your numbers request."
+    },
+    {
+      "role": "user",
+      "content": "On Dr. Achterberg's proposal, I'm sold, don't re-explain it. What does it change about our IRB submission timeline?"
+    },
+    {
+      "role": "assistant",
+      "content": "That biobank pathway should let the IRB submission move faster too, since much of the consent language can build on the existing partnership's approved protocol rather than starting from scratch."
+    },
+    {
+      "role": "user",
+      "content": "How many people do we need in the cohort to hit our power calculation?"
+    },
+    {
+      "role": "assistant",
+      "content": "For that power calculation, it depends on your expected effect size, but a cohort in the low hundreds is typical for biomarker studies at this kind of design, worth running the formal calculation to confirm."
+    },
+    {
+      "role": "user",
+      "content": "Do we need a backup power alarm on the freezer given how much is riding on it now?"
+    },
+    {
+      "role": "assistant",
+      "content": "Given how much is riding on that freezer, yes, a backup power alarm with redundant monitoring is worth the modest cost."
+    },
+    {
+      "role": "user",
+      "content": "Is Lucario keeping up with the miniscope data volume, or do we need to rework the nightly run?"
+    },
+    {
+      "role": "assistant",
+      "content": "If Lucario is falling behind on the miniscope data volume, it's worth profiling where the bottleneck is before committing to a full rework, it might just need more parallelism in the nightly run."
+    },
+    {
+      "role": "user",
+      "content": "Does anything in Gyarados still need to run for the current grant year, or can we finally retire it?"
+    },
+    {
+      "role": "assistant",
+      "content": "If nothing in Gyarados is still load-bearing for this grant year's deliverables, it's a good time to retire it rather than let it linger as a maintenance burden."
+    },
+    {
+      "role": "user",
+      "content": "For the human cohort, how do we handle a delay in IRB approval without stalling out the postdocs who are ready to start recruiting?"
+    },
+    {
+      "role": "assistant",
+      "content": "For a collaborator wanting co-authorship without contributed data yet, it's reasonable to offer acknowledgment now with a clear, documented path to authorship once they've made a substantive contribution, rather than committing to authorship in advance."
+    }
+  ],
+  "sections": {
+    "early_end_msg": 5,
+    "middle_end_msg": 49
+  },
+  "plants": [
+    {
+      "id": "c15-referent-1",
+      "category": "referent",
+      "middle_user": "Imaging modality decision, finally made. We weighed three options: (1) two-photon calcium imaging through a chronic cranial window, (2) fiber photometry, and (3) miniscope calcium imaging in freely moving mice. Given that memory consolidation needs natural behavior, not head-fixation, we're going with the third one, miniscopes.",
+      "tail_user_fragment": "On the imaging modality we picked, no need to re-argue it. What does that mean for the surgical numbers in the IACUC amendment?",
+      "probe": "Which imaging modality did we settle on for Project Meridian's mouse arm?",
+      "probes": [
+        "Which imaging modality did we settle on for Project Meridian's mouse arm?",
+        "Which of the three imaging options did we choose?",
+        "What did we decide about how to image the mice?",
+        "Remind me which imaging modality we committed to."
+      ],
+      "gold": "Miniscope calcium imaging in freely moving mice (the third option), not two-photon through a cranial window or fiber photometry.",
+      "keywords": [
+        "miniscope",
+        "freely moving"
+      ],
+      "anti_keywords": [],
+      "distance": "far"
+    },
+    {
+      "id": "c15-referent-2",
+      "category": "referent",
+      "middle_user": "Dr. Achterberg had a great suggestion for the human arm. Her proposal is to recruit the biomarker cohort through the existing memory-clinic biobank partnership instead of recruiting de novo, since consented samples and longitudinal data already exist for a lot of eligible patients. It could cut a year or more off recruitment, and I want to go with it.",
+      "tail_user_fragment": "On Dr. Achterberg's proposal, I'm sold, don't re-explain it. What does it change about our IRB submission timeline?",
+      "probe": "What specifically was Dr. Achterberg's proposal for the human cohort?",
+      "probes": [
+        "What specifically was Dr. Achterberg's proposal for the human cohort?",
+        "What did Dr. Achterberg suggest for recruiting the human arm?",
+        "Describe the recruitment approach Dr. Achterberg proposed that we're adopting.",
+        "What was Dr. Achterberg's idea about the biomarker cohort?"
+      ],
+      "gold": "Recruiting the human biomarker cohort through the existing memory-clinic biobank partnership instead of recruiting participants from scratch.",
+      "keywords": [
+        "biobank",
+        "memory-clinic partnership"
+      ],
+      "anti_keywords": [],
+      "distance": "near"
+    },
+    {
+      "id": "c15-sense-1",
+      "category": "sense",
+      "middle_user": "Quick terminology flag before it causes confusion: the vet staff use 'the cohort' loosely for any batch of mice in the facility, but when I say 'the cohort' to you, I always mean the human biomarker patient cohort in the parallel arm, never the mice. Just keeping that straight between us.",
+      "tail_user_fragment": "How many people do we need in the cohort to hit our power calculation?",
+      "probe": "When I said 'the cohort' in this conversation, what was I referring to?",
+      "probes": [
+        "When I said 'the cohort' in this conversation, what was I referring to?",
+        "Which group did I mean when I said 'the cohort'?",
+        "What does 'the cohort' refer to in our conversation, the mice or the patients?",
+        "If I mention the cohort again, what should you assume I mean?"
+      ],
+      "gold": "The human biomarker patient cohort in the parallel arm of the study, not the mice.",
+      "keywords": [
+        "human",
+        "patient cohort"
+      ],
+      "anti_keywords": [
+        "mice",
+        "mouse cohort"
+      ],
+      "distance": "far"
+    },
+    {
+      "id": "c15-sense-2",
+      "category": "sense",
+      "middle_user": "Also, when I say 'the freezer' from here on, I mean specifically the dash-80 biorepository freezer, freezer 3, where the human samples live. I don't mean the general dash-20 reagent freezer that the rest of the lab also calls the freezer out of habit.",
+      "tail_user_fragment": "Do we need a backup power alarm on the freezer given how much is riding on it now?",
+      "probe": "When I referred to 'the freezer' in this conversation, which one did I mean?",
+      "probes": [
+        "When I referred to 'the freezer' in this conversation, which one did I mean?",
+        "Which freezer was I talking about when I said 'the freezer'?",
+        "What does 'the freezer' refer to in our conversation?",
+        "If I mention the freezer again, which one should you assume I mean?"
+      ],
+      "gold": "The dash-80 biorepository freezer (freezer 3) storing the human samples, not the general dash-20 reagent freezer.",
+      "keywords": [
+        "-80",
+        "freezer 3",
+        "biorepository"
+      ],
+      "anti_keywords": [
+        "-20",
+        "reagent freezer"
+      ],
+      "distance": "near"
+    },
+    {
+      "id": "c15-stance-1",
+      "category": "stance",
+      "middle_user": "Strong methodological line I won't cross: no imaging under anesthesia for the memory-consolidation sessions, ever. Anesthesia confounds the exact circuit dynamics we're trying to measure, and I've seen labs publish garbage because of it. Whatever imaging schedule you propose, it has to be awake, behaving animals only.",
+      "tail_user_fragment": null,
+      "probe": "What imaging session schedule would you propose for the consolidation experiments?",
+      "probes": [
+        "What imaging session schedule would you propose for the consolidation experiments?",
+        "Suggest an imaging schedule for the memory-consolidation sessions.",
+        "How should we structure the imaging sessions for this experiment?",
+        "Give me options for when and how to run the imaging sessions."
+      ],
+      "gold": "Proposes awake, freely-behaving imaging sessions, for example scheduled around natural sleep-wake cycles, while never proposing anesthetized or sedated imaging, ideally recalling the confound concern.",
+      "keywords": [
+        "awake",
+        "behaving"
+      ],
+      "anti_keywords": [
+        "anesthesia",
+        "anesthetized",
+        "sedated"
+      ],
+      "distance": "far"
+    },
+    {
+      "id": "c15-stance-2",
+      "category": "stance",
+      "middle_user": "Non-negotiable data policy: human genomic raw data never touches a non-HIPAA-compliant commercial cloud bucket, period, no matter how convenient it would be for the pipeline. If a tool or storage option isn't compliant, it's simply not in consideration.",
+      "tail_user_fragment": null,
+      "probe": "Where should we store the raw sequencing data as the pipeline scales?",
+      "probes": [
+        "Where should we store the raw sequencing data as the pipeline scales?",
+        "What storage options should we consider for the raw genomic data?",
+        "How should we handle storage as the sequencing data volume grows?",
+        "Suggest a storage plan for the raw human genomic data."
+      ],
+      "gold": "Suggests a HIPAA-compliant institutional server, a compliant enterprise cloud tier with a signed BAA, or on-prem storage, while never proposing a non-compliant consumer cloud bucket, ideally recalling the strict compliance policy.",
+      "keywords": [
+        "HIPAA-compliant",
+        "BAA"
+      ],
+      "anti_keywords": [
+        "non-compliant",
+        "consumer cloud"
+      ],
+      "distance": "near"
+    },
+    {
+      "id": "c15-ruled_out-1",
+      "category": "ruled_out",
+      "middle_user": "For the record on power calculations: we already paid a vendor called NeuroMetrics Analytics to run our sample-size justification for the grant, and their numbers had a unit error that would have undersized the cohort by half. We caught it just before submission and we're not using them again.",
+      "tail_user_fragment": null,
+      "probe": "Who should handle our statistical power calculations going forward?",
+      "probes": [
+        "Who should handle our statistical power calculations going forward?",
+        "What should we do for power calculations on future analyses?",
+        "Given the earlier error, how should we handle sample-size justification work?",
+        "Who should we use for statistics support now?"
+      ],
+      "gold": "Anything except NeuroMetrics Analytics, e.g. an in-house biostatistician, the university's statistics core, or careful in-lab review, ideally acknowledging NeuroMetrics's unit error was the reason they were dropped.",
+      "keywords": [
+        "unit error",
+        "undersized"
+      ],
+      "anti_keywords": [
+        "neurometrics"
+      ],
+      "distance": "far"
+    },
+    {
+      "id": "c15-ruled_out-2",
+      "category": "ruled_out",
+      "middle_user": "Also worth flagging: we tried recruiting for the human arm through a platform called TrialSprout, and the leads were low quality, most didn't meet eligibility and the no-show rate for screening visits was over half. We're done with TrialSprout.",
+      "tail_user_fragment": null,
+      "probe": "What should we do for recruiting the remaining participants in the human cohort?",
+      "probes": [
+        "What should we do for recruiting the remaining participants in the human cohort?",
+        "How should we recruit the rest of the cohort going forward?",
+        "Given the earlier problems, what's our path forward for recruitment?",
+        "What recruitment approach should we pursue now?"
+      ],
+      "gold": "Anything except TrialSprout, e.g. the memory-clinic biobank partnership, clinician referrals, or flyers at partner clinics, ideally acknowledging TrialSprout's poor lead quality and no-shows led to dropping it.",
+      "keywords": [
+        "no-show",
+        "low quality"
+      ],
+      "anti_keywords": [
+        "trialsprout"
+      ],
+      "distance": "near"
+    },
+    {
+      "id": "c15-evicted_fact-1",
+      "category": "evicted_fact",
+      "middle_user": "Filing this away so I don't have to dig for it later: our grant number is R01-NS128840, five years, and the notice of award came through last Tuesday. Nothing to decide, just parking the number here.",
+      "tail_user_fragment": null,
+      "probe": "What is our grant number for Project Meridian?",
+      "probes": [
+        "What is our grant number for Project Meridian?",
+        "What's the R01 number for this grant?",
+        "Remind me the grant identifier for the study.",
+        "What grant number needs to go on all our compliance paperwork?"
+      ],
+      "gold": "R01-NS128840.",
+      "keywords": [
+        "R01-NS128840"
+      ],
+      "anti_keywords": [],
+      "distance": "far"
+    },
+    {
+      "id": "c15-evicted_fact-2",
+      "category": "evicted_fact",
+      "middle_user": "One more thing to keep straight: the postdocs are counting on IRB approval no later than September 30th, that's the hard date everyone's planning around for recruitment to start on schedule.",
+      "tail_user_fragment": null,
+      "probe": "What is the hard deadline the postdocs are counting on for IRB approval?",
+      "probes": [
+        "What is the hard deadline the postdocs are counting on for IRB approval?",
+        "By when do we need IRB approval according to the postdocs' plan?",
+        "What's the date everyone is planning recruitment start around?",
+        "Remind me the IRB approval deadline we're targeting."
+      ],
+      "gold": "September 30th.",
+      "keywords": [
+        "september 30"
+      ],
+      "anti_keywords": [],
+      "distance": "near"
+    },
+    {
+      "id": "c15-strong_prior-1",
+      "category": "strong_prior",
+      "middle_user": "Let's codename our nightly imaging registration and QC pipeline 'Lucario.' Everyone on the team should use that name in Slack and in the shared docs, not the real repo name, since a couple of collaborators outside the lab will see references to it.",
+      "tail_user_fragment": "Is Lucario keeping up with the miniscope data volume, or do we need to rework the nightly run?",
+      "probe": "What does 'Lucario' refer to in our project?",
+      "probes": [
+        "What does 'Lucario' refer to in our project?",
+        "If I mention Lucario again, what should you understand that to mean?",
+        "What is Lucario a codename for?",
+        "Remind me what Lucario refers to internally."
+      ],
+      "gold": "The nightly imaging registration and quality-control pipeline.",
+      "keywords": [
+        "registration pipeline",
+        "QC pipeline",
+        "nightly"
+      ],
+      "anti_keywords": [
+        "pokemon",
+        "aura",
+        "jackal"
+      ],
+      "distance": "far"
+    },
+    {
+      "id": "c15-strong_prior-2",
+      "category": "strong_prior",
+      "middle_user": "Let's call the old legacy MATLAB analysis codebase we're slowly phasing out 'Gyarados' in lab meetings, so everyone knows not to build new features on top of it while we migrate to the new pipeline.",
+      "tail_user_fragment": "Does anything in Gyarados still need to run for the current grant year, or can we finally retire it?",
+      "probe": "What does 'Gyarados' refer to in our project?",
+      "probes": [
+        "What does 'Gyarados' refer to in our project?",
+        "If I mention Gyarados later, what should you take that to mean?",
+        "What is Gyarados a codename for in the lab?",
+        "Remind me what Gyarados refers to internally."
+      ],
+      "gold": "The old legacy MATLAB analysis codebase being phased out.",
+      "keywords": [
+        "legacy",
+        "MATLAB",
+        "codebase"
+      ],
+      "anti_keywords": [
+        "pokemon",
+        "dragon",
+        "water",
+        "fish"
+      ],
+      "distance": "near"
+    }
+  ],
+  "meta": {
+    "author": "sonnet"
+  }
+}

@@ -1,0 +1,534 @@
+{
+ "id": "c25",
+ "title": "Youth soccer league expansion",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant supporting a volunteer organizer expanding a youth soccer league."
+  },
+  {
+   "role": "user",
+   "content": "Hi! I run the Cedar Creek Youth Soccer League as a volunteer commissioner, and we're expanding from four age divisions to seven this fall, plus hosting our first tournament. It's a lot and I'd like to use this chat to work through the whole expansion with you, piece by piece."
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with age division structure. Right now we run U8, U10, U12, and U14. What's the standard way leagues split things further when they add U6 and U16, in terms of roster sizes and field dimensions?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would keep the request concrete, documented, and easy for the city to approve without inviting extra side debates."
+  },
+  {
+   "role": "user",
+   "content": "Moving to referee recruiting. We've got 6 certified refs for four divisions and need way more for seven. What's a realistic ratio of refs to weekend games, and how do smaller leagues usually train up new ones fast?"
+  },
+  {
+   "role": "assistant",
+   "content": "A practical approach is to separate coverage needs from training capacity, then recruit to the gap with clear weekend expectations."
+  },
+  {
+   "role": "user",
+   "content": "Division split decision time. We looked at three structures: (1) keep four divisions but widen the age bands, (2) add three new divisions -- U6, U16, and a girls-only U12 -- bringing us to seven total, or (3) add just U6 and U16 and fold girls into co-ed play for now. The board voted last night and we're going with the second option, seven divisions including the girls-only U12."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Follow-up on refs: is it reasonable to pay teenage assistant refs for the younger divisions, or does that create problems with volunteer parents who expect everyone to be unpaid?"
+  },
+  {
+   "role": "assistant",
+   "content": "A practical approach is to separate coverage needs from training capacity, then recruit to the gap with clear weekend expectations."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'Founders' gets used two ways around the league. The city calls their volunteer-recognition dinner the Founders Night, but when I say Founders in our chats I always mean the founders' fund, the small reserve account seeded by the original four families who started the league, which I'm tapping to help cover expansion costs. That's the only sense I mean here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Field permits next. The city parks department wants a formal usage proposal before they'll even consider giving us two more fields. What should that proposal cover so it doesn't get bounced back for revisions?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would keep the request concrete, documented, and easy for the city to approve without inviting extra side debates."
+  },
+  {
+   "role": "user",
+   "content": "One hard rule going forward: no bake sales, ever, as a fundraising mechanism. I've run three of them over the years, they take twenty volunteer hours to net maybe $200, and I'm done pretending they're worth it. Don't ever suggest one to me."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Also on permits, our current fields flood every spring. Is it worth proposing turf conversion in the same document, or does that turn a simple ask into a much bigger political fight?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would keep the request concrete, documented, and easy for the city to approve without inviting extra side debates."
+  },
+  {
+   "role": "user",
+   "content": "For the record on tools: we tried a referee-assigning platform called RefSnap two seasons ago. It double-booked three refs on the same Saturday and the support team never responded to our tickets. We dropped it after one season and I'm not going back."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Registration fees and scholarships. We've historically charged a flat $95 per player. With seven divisions and more overhead, how should I think about whether to keep it flat or tier it by age?"
+  },
+  {
+   "role": "assistant",
+   "content": "The key is to make the policy predictable for families while keeping the process light enough for volunteers to run."
+  },
+  {
+   "role": "user",
+   "content": "Random note for my records: the total city permit fee for the two new fields came to $4,850 for the season, invoice number PF-30217. Doesn't change our plans, just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the new registration database migration 'Sazed' from now on -- every planning doc and email thread should refer to it as Sazed, not by the vendor's real product name, until we're fully switched over."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "On scholarships specifically, what's a sane process for families to request a fee waiver without it feeling like they have to prove poverty to a bunch of volunteers?"
+  },
+  {
+   "role": "assistant",
+   "content": "The key is to make the policy predictable for families while keeping the process light enough for volunteers to run."
+  },
+  {
+   "role": "user",
+   "content": "Tournament format decision. Board considered: (1) single elimination bracket, one day, (2) round-robin pools over two days with a championship match, or (3) a festival format, no standings, everyone plays four guaranteed games. We ended up going with the second one, round-robin pools over two days."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Tournament hosting. We've never run one before. What's the biggest thing first-time host leagues get wrong logistically?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the waiver' in this chat I mean the fee waiver / scholarship request form for families, not the liability and medical waiver every player signs. Both exist, both matter, but they're not the same document."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "For the tournament, should we require every participating team to bring their own certified referee, or is that going to scare off smaller visiting clubs?"
+  },
+  {
+   "role": "assistant",
+   "content": "A practical approach is to separate coverage needs from training capacity, then recruit to the gap with clear weekend expectations."
+  },
+  {
+   "role": "user",
+   "content": "Strong preference for scheduling: nothing before 9am on weekends, not for any division. Parents revolted the one year we had 7:45am kickoffs for U8, half the teams showed up with three players. Never schedule that early again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Back to coaches for a second: what's a good structure for pairing first-time volunteer coaches with more experienced ones so nobody's flying blind for U6?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pairing structure matters most when the job is new, so I would make support visible before the season starts."
+  },
+  {
+   "role": "user",
+   "content": "Also, history on fields: we tried using the county fairgrounds fields for overflow games two years back. Parking was a nightmare, cars blocked the access road, and the fire marshal actually shut down one Saturday's games. We are never using the fairgrounds again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "One more on field permits: how far in advance should we be submitting next spring's permit requests given how competitive city fields are?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would keep the request concrete, documented, and easy for the city to approve without inviting extra side debates."
+  },
+  {
+   "role": "user",
+   "content": "Oh, and our new referee coordinator is a woman named Marguerite Osei, starting the first week of August, handling all the ref certification signups from here on."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Also, let's codename the equipment shed and gear inventory cleanup 'Snorlax' -- it's been sitting untouched for years and needs a full overhaul before the tournament. Use that name in any notes about it."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Let's wrap up on tournament hosting. What should the day-of command structure look like, who's actually in charge of what?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Back to the division structure we landed on -- don't re-explain it -- what jersey color scheme should we use to keep the new divisions visually distinct at a glance?"
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "For the tournament format we picked, no need to recap it, how many total games does that put on Saturday alone if we get 24 teams?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Realistically, how much of the Founders balance should I be willing to draw down for the tournament, versus keeping some cushion?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Should 'the waiver' ask for household income, or is that too invasive for volunteers to be reviewing?"
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "Any update needed on the Sazed timeline before we open registration for the new divisions?"
+  },
+  {
+   "role": "assistant",
+   "content": "The key is to make the policy predictable for families while keeping the process light enough for volunteers to run."
+  },
+  {
+   "role": "user",
+   "content": "Where are we on Snorlax? I want it done before the first tournament team arrives."
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "And insurance for the tournament, do we need anything beyond our normal season liability policy?"
+  },
+  {
+   "role": "assistant",
+   "content": "That gives us a clean next pass: confirm the operational owner, set the deadline, and keep the decision log current as plans change."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49
+ },
+ "plants": [
+  {
+   "id": "c25-referent-1",
+   "category": "referent",
+   "middle_user": "Division split decision time. We looked at three structures: (1) keep four divisions but widen the age bands, (2) add three new divisions -- U6, U16, and a girls-only U12 -- bringing us to seven total, or (3) add just U6 and U16 and fold girls into co-ed play for now. The board voted last night and we're going with the second option, seven divisions including the girls-only U12.",
+   "tail_user_fragment": "Back to the division structure we landed on -- don't re-explain it -- what jersey color scheme should we use to keep the new divisions visually distinct at a glance?",
+   "probe": "Which division structure did the board vote for?",
+   "probes": [
+    "Which division structure did the board vote for?",
+    "How many age divisions did we end up settling on, and what was added?",
+    "Remind me exactly what the board decided about splitting up the age groups."
+   ],
+   "gold": "Seven divisions total: adding U6, U16, and a girls-only U12 (the second of the three options).",
+   "keywords": [
+    "seven divisions",
+    "girls-only U12",
+    "U6",
+    "U16"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c25-referent-2",
+   "category": "referent",
+   "middle_user": "Tournament format decision. Board considered: (1) single elimination bracket, one day, (2) round-robin pools over two days with a championship match, or (3) a festival format, no standings, everyone plays four guaranteed games. We ended up going with the second one, round-robin pools over two days.",
+   "tail_user_fragment": "For the tournament format we picked, no need to recap it, how many total games does that put on Saturday alone if we get 24 teams?",
+   "probe": "Which tournament format did we settle on?",
+   "probes": [
+    "Which tournament format did we settle on?",
+    "What was the final decision on how the tournament brackets would work?",
+    "Out of the three tournament formats we compared, which one did the board choose?"
+   ],
+   "gold": "Round-robin pools over two days with a championship match (the second option).",
+   "keywords": [
+    "round-robin",
+    "two days",
+    "championship match"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c25-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'Founders' gets used two ways around the league. The city calls their volunteer-recognition dinner the Founders Night, but when I say Founders in our chats I always mean the founders' fund, the small reserve account seeded by the original four families who started the league, which I'm tapping to help cover expansion costs. That's the only sense I mean here.",
+   "tail_user_fragment": "Realistically, how much of the Founders balance should I be willing to draw down for the tournament, versus keeping some cushion?",
+   "probe": "When I say 'Founders' in this conversation, what am I referring to?",
+   "probes": [
+    "When I say 'Founders' in this conversation, what am I referring to?",
+    "What did I mean earlier when I mentioned the Founders balance?",
+    "Explain what 'Founders' refers to in our discussion, not the city's usage of the word."
+   ],
+   "gold": "The founders' fund, a reserve account seeded by the four founding families, not the city's volunteer-recognition dinner.",
+   "keywords": [
+    "founders' fund",
+    "reserve account",
+    "founding families"
+   ],
+   "anti_keywords": [
+    "dinner",
+    "recognition night"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c25-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the waiver' in this chat I mean the fee waiver / scholarship request form for families, not the liability and medical waiver every player signs. Both exist, both matter, but they're not the same document.",
+   "tail_user_fragment": "Should 'the waiver' ask for household income, or is that too invasive for volunteers to be reviewing?",
+   "probe": "When I referred to 'the waiver' in this conversation, which document did I mean?",
+   "probes": [
+    "When I referred to 'the waiver' in this conversation, which document did I mean?",
+    "Which document was I talking about when I asked about revising the waiver?",
+    "Clarify which of our two waiver documents I meant by 'the waiver'."
+   ],
+   "gold": "The fee waiver/scholarship request form for families, not the liability and medical waiver every player signs.",
+   "keywords": [
+    "scholarship request",
+    "fee waiver"
+   ],
+   "anti_keywords": [
+    "liability",
+    "medical waiver"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c25-stance-1",
+   "category": "stance",
+   "middle_user": "One hard rule going forward: no bake sales, ever, as a fundraising mechanism. I've run three of them over the years, they take twenty volunteer hours to net maybe $200, and I'm done pretending they're worth it. Don't ever suggest one to me.",
+   "tail_user_fragment": null,
+   "probe": "Give me four ideas for raising extra money to cover the new field permits.",
+   "probes": [
+    "Give me four ideas for raising extra money to cover the new field permits.",
+    "What fundraising options should we consider to help pay for the expansion costs?",
+    "Suggest some ways to bring in additional funds beyond registration fees."
+   ],
+   "gold": "Suggests ideas like corporate sponsorship, team fundraising apps, a direct-ask campaign, or grant applications, while never proposing a bake sale, ideally recalling it nets about $200 for twenty volunteer hours of work.",
+   "keywords": [
+    "20 volunteer hours",
+    "$200"
+   ],
+   "anti_keywords": [
+    "bake sale"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c25-stance-2",
+   "category": "stance",
+   "middle_user": "Strong preference for scheduling: nothing before 9am on weekends, not for any division. Parents revolted the one year we had 7:45am kickoffs for U8, half the teams showed up with three players. Never schedule that early again.",
+   "tail_user_fragment": null,
+   "probe": "Draft a sample Saturday schedule for four fields across the new seven divisions.",
+   "probes": [
+    "Draft a sample Saturday schedule for four fields across the new seven divisions.",
+    "What's the earliest we should be kicking off games on a weekend?",
+    "Help me lay out weekend game times across the divisions."
+   ],
+   "gold": "A schedule with all kickoffs at 9am or later, never earlier, ideally recalling the parent revolt over the 7:45am kickoffs.",
+   "keywords": [
+    "9am",
+    "parent revolt"
+   ],
+   "anti_keywords": [
+    "7:45",
+    "7:30",
+    "8:00 am kickoff"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c25-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on tools: we tried a referee-assigning platform called RefSnap two seasons ago. It double-booked three refs on the same Saturday and the support team never responded to our tickets. We dropped it after one season and I'm not going back.",
+   "tail_user_fragment": null,
+   "probe": "What should we use to manage referee assignments this season?",
+   "probes": [
+    "What should we use to manage referee assignments this season?",
+    "Recommend a system for scheduling and assigning referees this year.",
+    "How should we handle ref assignment logistics going forward?"
+   ],
+   "gold": "Anything except RefSnap, e.g. a shared spreadsheet, a different assigning app, or manual coordination by the referee coordinator, ideally acknowledging RefSnap was tried and failed due to double-booking.",
+   "keywords": [
+    "double-booked"
+   ],
+   "anti_keywords": [
+    "refsnap"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c25-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, history on fields: we tried using the county fairgrounds fields for overflow games two years back. Parking was a nightmare, cars blocked the access road, and the fire marshal actually shut down one Saturday's games. We are never using the fairgrounds again.",
+   "tail_user_fragment": null,
+   "probe": "What overflow field options should we explore for the new divisions?",
+   "probes": [
+    "What overflow field options should we explore for the new divisions?",
+    "Where else could we play overflow games besides our usual fields?",
+    "Suggest alternative venues for the extra games the expansion will require."
+   ],
+   "gold": "Anything except the county fairgrounds, e.g. school district fields, a partnership with a neighboring town, or a private sports complex, ideally acknowledging the fairgrounds were shut down by the fire marshal over parking.",
+   "keywords": [
+    "fire marshal",
+    "parking"
+   ],
+   "anti_keywords": [
+    "fairgrounds"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c25-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note for my records: the total city permit fee for the two new fields came to $4,850 for the season, invoice number PF-30217. Doesn't change our plans, just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What was the total city permit fee for the two new fields, and what's the invoice number?",
+   "probes": [
+    "What was the total city permit fee for the two new fields, and what's the invoice number?",
+    "How much did the city charge us for the new field permits, and what invoice was that under?",
+    "Remind me what we paid the city for the new fields this season."
+   ],
+   "gold": "$4,850 for the season, invoice number PF-30217.",
+   "keywords": [
+    "4,850",
+    "PF-30217"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c25-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, and our new referee coordinator is a woman named Marguerite Osei, starting the first week of August, handling all the ref certification signups from here on.",
+   "tail_user_fragment": null,
+   "probe": "Who is our new referee coordinator and when do they start?",
+   "probes": [
+    "Who is our new referee coordinator and when do they start?",
+    "What's the name of the person now handling referee certification, and their start date?",
+    "Remind me who I said would be coordinating referees going forward."
+   ],
+   "gold": "Marguerite Osei, starting the first week of August.",
+   "keywords": [
+    "Marguerite Osei",
+    "August"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c25-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the new registration database migration 'Sazed' from now on -- every planning doc and email thread should refer to it as Sazed, not by the vendor's real product name, until we're fully switched over.",
+   "tail_user_fragment": "Any update needed on the Sazed timeline before we open registration for the new divisions?",
+   "probe": "What does 'Sazed' refer to in our project?",
+   "probes": [
+    "What does 'Sazed' refer to in our project?",
+    "If I mention Sazed again later, what should you understand that to mean?",
+    "Remind me what we're calling Sazed internally -- what is it?"
+   ],
+   "gold": "The new registration database migration project.",
+   "keywords": [
+    "registration database",
+    "migration"
+   ],
+   "anti_keywords": [
+    "Mistborn",
+    "Stormlight Archive",
+    "Brandon Sanderson",
+    "Keeper",
+    "feruchemy",
+    "fantasy novel"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c25-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Also, let's codename the equipment shed and gear inventory cleanup 'Snorlax' -- it's been sitting untouched for years and needs a full overhaul before the tournament. Use that name in any notes about it.",
+   "tail_user_fragment": "Where are we on Snorlax? I want it done before the first tournament team arrives.",
+   "probe": "What does 'Snorlax' refer to in our project?",
+   "probes": [
+    "What does 'Snorlax' refer to in our project?",
+    "If I bring up Snorlax again, what should you take that to mean?",
+    "Remind me what Snorlax is code for in our planning."
+   ],
+   "gold": "The equipment shed and gear inventory cleanup project.",
+   "keywords": [
+    "equipment shed",
+    "gear inventory"
+   ],
+   "anti_keywords": [
+    "Pokemon",
+    "sleeping",
+    "Kanto",
+    "big blue"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "codex-gpt5.5"
+ }
+}

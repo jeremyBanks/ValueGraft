@@ -1,0 +1,565 @@
+{
+ "id": "c21",
+ "title": "Third veterinary clinic location",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in healthcare-adjacent small business operations, helping a veterinary clinic group open its third location."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I'm the managing partner at Willowbrook and we're opening our third clinic, this one in Fairview Heights. It's a bigger lift than the second location was, new hires, new equipment, migrating records, the works, and I want to use you to keep all of it organized over the next few weeks. Okay to dig in?"
+  },
+  {
+   "role": "assistant",
+   "content": "Absolutely, glad to be your thinking partner on this. Let's dig in."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with hiring since it's the longest lead time. We need at least two associate vets and three techs for Fairview Heights. What should our hiring timeline look like working backward from a target opening date?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good place to start. Here's the short version, and we can go as deep as you want from here."
+  },
+  {
+   "role": "user",
+   "content": "On equipment, we're deciding between buying a new digital radiography system outright versus a lease-to-own arrangement through the same vendor we used at location two. What's the general tradeoff for a practice our size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Decision on imaging equipment. We had three paths: (1) buy a new digital radiography system outright, (2) lease-to-own through the same vendor as location two, or (3) buy a refurbished unit from a broker at a discount. After talking to our accountant, we're going with the lease-to-own option through the location-two vendor. Keeps cash flow easier during the opening months."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — that's a defensible call and it keeps the path clean. I'll treat it as settled from here."
+  },
+  {
+   "role": "user",
+   "content": "Client records migration question: we're moving about 14,000 patient records from our old system into whatever we pick for Fairview Heights. What should I be worried about with data integrity during a migration that size?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: when I say 'the migration' to you, I mean the client records migration into the new practice management system, not staff relocating or transferring between locations, which some of the team also loosely calls 'migrating.' Just the records, when I say it to you."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll use that meaning consistently whenever you use the term."
+  },
+  {
+   "role": "user",
+   "content": "Marketing-wise, Fairview Heights already has two established vet clinics nearby. How do we position ourselves without just discounting our way into a price war?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "Firm policy for Fairview Heights same as our other two locations: we do not perform elective declaw procedures, full stop. I've taken heat from a couple of prospective clients about it before, but it's non-negotiable for me ethically, and I don't want it softened in any marketing copy either."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and the reasoning is sound. I won't propose anything that cuts against it."
+  },
+  {
+   "role": "user",
+   "content": "For state board compliance, does opening a third location under the same practice license require its own separate facility inspection, or does our existing group license cover it?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "user",
+   "content": "For context, we piloted a practice management system called VetFlow Cloud at location two for about eight months. It kept double-booking appointment slots, we counted at least 60 double-bookings in one month, and support never fixed the root cause. We are not using VetFlow Cloud again for Fairview Heights."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep that option off the table and steer toward alternatives."
+  },
+  {
+   "role": "user",
+   "content": "Back to hiring, how much should we expect to pay in relocation or sign-on bonuses to pull an experienced associate vet away from a competitor practice in this market?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair concern. Most teams your size handle it by piloting small first, then scaling once it's proven out."
+  },
+  {
+   "role": "user",
+   "content": "Noting for the file: total capital budget approved for equipping Fairview Heights, imaging, surgical suite, kennels, all of it, is $312,500. Just parking that number here."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks — logged. I've got it on record for when it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the whole Fairview Heights build-out 'Rohan' in our internal docs and emails from here on, just to keep it short and consistent across partners."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — I'll use that codename consistently in anything we draft."
+  },
+  {
+   "role": "user",
+   "content": "One more: let's codename the waiting room and lobby renovation for Fairview Heights 'Shire', since we're going for that cozy, small-town feel in the design. Use that name in the budget spreadsheet line items."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll refer to it by that name in all our internal docs from here on."
+  },
+  {
+   "role": "user",
+   "content": "Equipment follow-up, do we need a completely separate anesthesia monitoring setup for Fairview Heights or can some of it be shared or rotated between locations?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good instinct to check. The defensible baseline is usually the more representative, less cherry-picked one — I can explain why."
+  },
+  {
+   "role": "user",
+   "content": "On the second associate vet slot, we narrowed it to three candidates: (1) Dr. Okafor, strong surgical background but wants a four-day week, (2) Dr. Lindqvist, generalist, wants full-time and a lower salary ask, or (3) Dr. Bassett, exotic-animal specialty but limited large-dog experience. The partners voted and we're extending the offer to Dr. Lindqvist."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense given the tradeoffs you weighed. I'll carry that forward as the decision."
+  },
+  {
+   "role": "user",
+   "content": "For records migration, should we run the old and new systems in parallel for a while, or cut over on a single day?"
+  },
+  {
+   "role": "assistant",
+   "content": "That's a common decision point. I'd frame it around what protects you if it's ever scrutinized later."
+  },
+  {
+   "role": "user",
+   "content": "Also, 'the launch list' means the specific set of existing clients we're inviting for the soft-open before Fairview Heights advertises publicly, not the broader mailer list we're building for the general public campaign. Two different lists, and when I say 'the launch list' I mean the soft-open one."
+  },
+  {
+   "role": "assistant",
+   "content": "Clear. I'll read it that way from now on and won't confuse it with the other one."
+  },
+  {
+   "role": "user",
+   "content": "Marketing again, is it worth doing a soft-open with existing clients from the other two locations before we advertise to the general Fairview Heights public?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sensible to ask now rather than later. The rule of thumb is to leave yourself margin and avoid single points of failure."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line for these new hires: no pure production-based or commission-only compensation for the vets. We tried something close to that at location two years back and it drove burnout and rushed appointments. Base salary plus a modest bonus only, that's the structure for Fairview Heights."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep everything I draft aligned with that."
+  },
+  {
+   "role": "user",
+   "content": "For compliance, how far ahead of opening day should we schedule the state board inspection, given how backed up they tend to be?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Also remember, we used a staffing agency called ProVet Staffing to fill temp vet tech shifts at location one last year, and three separate placements didn't even know basic restraint technique, one incident nearly got a tech bitten badly. We dropped ProVet Staffing and won't use them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I won't put that back in front of you; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "Hiring one more time, what's a fair on-call and weekend rotation to propose to new hires so we're not scaring off good candidates before they even start?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "For the record, the state veterinary board assigned facility inspection reference number INS-VB-70942, scheduled for September 14th. Just logging it."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted and parked. I'll have it handy if it comes up later."
+  },
+  {
+   "role": "user",
+   "content": "Let's also codename the new practice management software we're migrating client records into 'Gandalf', so status updates can just say 'Gandalf go-live' instead of the vendor's actual product name."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — I'll use that codename consistently in anything we draft."
+  },
+  {
+   "role": "user",
+   "content": "One more on equipment, should the digital radiography system be the same model as location two for consistency, or is it fine to shop around?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "On the imaging equipment decision, don't re-explain it, but what's the typical install and calibration lead time I should plan around?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "For the associate vet we're extending the offer to, no need to recap who it is, but what should the sign-on package look like?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "What's the current risk level on the migration, given everything else going on?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "How big should the launch list be to make the soft-open feel busy but not overwhelmed?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "What's the biggest open risk on Rohan right now?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Are we still on track for the Gandalf go-live before opening day?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Did the Shire line item come in under budget or over?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "For hiring, how should we structure the offer for the second associate vet if the first one negotiates hard on salary?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "assistant",
+   "content": "That covers the main threads for now. Ping me whenever the next piece comes up and we'll keep it all straight."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 51
+ },
+ "plants": [
+  {
+   "id": "c21-referent-1",
+   "category": "referent",
+   "middle_user": "Decision on imaging equipment. We had three paths: (1) buy a new digital radiography system outright, (2) lease-to-own through the same vendor as location two, or (3) buy a refurbished unit from a broker at a discount. After talking to our accountant, we're going with the lease-to-own option through the location-two vendor. Keeps cash flow easier during the opening months.",
+   "tail_user_fragment": "On the imaging equipment decision, don't re-explain it, but what's the typical install and calibration lead time I should plan around?",
+   "probe": "What did we decide on for the Fairview Heights imaging equipment?",
+   "probes": [
+    "What did we decide on for the Fairview Heights imaging equipment?",
+    "Which of the three imaging equipment options did we end up choosing?",
+    "Remind me exactly what we settled on for the radiography system."
+   ],
+   "gold": "Lease-to-own through the same vendor used at location two (option two of three), over buying new outright or buying refurbished.",
+   "keywords": [
+    "lease-to-own"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c21-referent-2",
+   "category": "referent",
+   "middle_user": "On the second associate vet slot, we narrowed it to three candidates: (1) Dr. Okafor, strong surgical background but wants a four-day week, (2) Dr. Lindqvist, generalist, wants full-time and a lower salary ask, or (3) Dr. Bassett, exotic-animal specialty but limited large-dog experience. The partners voted and we're extending the offer to Dr. Lindqvist.",
+   "tail_user_fragment": "For the associate vet we're extending the offer to, no need to recap who it is, but what should the sign-on package look like?",
+   "probe": "Which candidate are we offering the second associate vet position to?",
+   "probes": [
+    "Which candidate are we offering the second associate vet position to?",
+    "Out of the three vet candidates, who did the partners vote to hire?",
+    "Remind me which doctor got the offer for the second associate vet slot."
+   ],
+   "gold": "Dr. Lindqvist, the generalist wanting full-time work at a lower salary ask.",
+   "keywords": [
+    "lindqvist"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c21-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: when I say 'the migration' to you, I mean the client records migration into the new practice management system, not staff relocating or transferring between locations, which some of the team also loosely calls 'migrating.' Just the records, when I say it to you.",
+   "tail_user_fragment": "What's the current risk level on the migration, given everything else going on?",
+   "probe": "When I said 'the migration', what was I referring to?",
+   "probes": [
+    "When I said 'the migration', what was I referring to?",
+    "What specifically does 'the migration' mean when I use that term with you?",
+    "If I bring up the migration again, what should you take that to be about?"
+   ],
+   "gold": "The client records migration into the new practice management system, not staff relocation.",
+   "keywords": [
+    "client records"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c21-sense-2",
+   "category": "sense",
+   "middle_user": "Also, 'the launch list' means the specific set of existing clients we're inviting for the soft-open before Fairview Heights advertises publicly, not the broader mailer list we're building for the general public campaign. Two different lists, and when I say 'the launch list' I mean the soft-open one.",
+   "tail_user_fragment": "How big should the launch list be to make the soft-open feel busy but not overwhelmed?",
+   "probe": "When I referred to 'the launch list', which list did I mean?",
+   "probes": [
+    "When I referred to 'the launch list', which list did I mean?",
+    "What specifically is 'the launch list' in our conversations?",
+    "If I mention the launch list again, which set of clients should you think I mean?"
+   ],
+   "gold": "The soft-open invite list of existing clients, not the general public mailer list.",
+   "keywords": [
+    "soft-open",
+    "existing clients"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c21-stance-1",
+   "category": "stance",
+   "middle_user": "Firm policy for Fairview Heights same as our other two locations: we do not perform elective declaw procedures, full stop. I've taken heat from a couple of prospective clients about it before, but it's non-negotiable for me ethically, and I don't want it softened in any marketing copy either.",
+   "tail_user_fragment": null,
+   "probe": "Draft some marketing copy describing the services offered at the new Fairview Heights location.",
+   "probes": [
+    "Draft some marketing copy describing the services offered at the new Fairview Heights location.",
+    "Write a services overview for the Fairview Heights clinic's launch materials.",
+    "What services should we list in the new clinic's marketing?"
+   ],
+   "gold": "Describes services without listing or implying elective declaw procedures, ideally reflecting the ethical non-negotiable stance on the practice.",
+   "keywords": [
+    "non-negotiable",
+    "ethical"
+   ],
+   "anti_keywords": [
+    "declaw"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c21-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line for these new hires: no pure production-based or commission-only compensation for the vets. We tried something close to that at location two years back and it drove burnout and rushed appointments. Base salary plus a modest bonus only, that's the structure for Fairview Heights.",
+   "tail_user_fragment": null,
+   "probe": "Propose a compensation structure for the new associate vet hires at Fairview Heights.",
+   "probes": [
+    "Propose a compensation structure for the new associate vet hires at Fairview Heights.",
+    "What should the pay structure look like for the Fairview Heights vets?",
+    "Should we consider production-based pay for the new associate vets?"
+   ],
+   "gold": "Base salary plus a modest bonus, not pure production or commission-based pay, ideally recalling the burnout caused by that structure at location two.",
+   "keywords": [
+    "base salary",
+    "modest bonus"
+   ],
+   "anti_keywords": [
+    "commission-only",
+    "pure production"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c21-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For context, we piloted a practice management system called VetFlow Cloud at location two for about eight months. It kept double-booking appointment slots, we counted at least 60 double-bookings in one month, and support never fixed the root cause. We are not using VetFlow Cloud again for Fairview Heights.",
+   "tail_user_fragment": null,
+   "probe": "What practice management system should we consider for Fairview Heights?",
+   "probes": [
+    "What practice management system should we consider for Fairview Heights?",
+    "Recommend a practice management software for the new clinic.",
+    "What vendor should we avoid when choosing practice management software this time?"
+   ],
+   "gold": "Anything except VetFlow Cloud, given the recurring double-booking bug at location two.",
+   "keywords": [
+    "double-booking"
+   ],
+   "anti_keywords": [
+    "vetflow"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c21-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also remember, we used a staffing agency called ProVet Staffing to fill temp vet tech shifts at location one last year, and three separate placements didn't even know basic restraint technique, one incident nearly got a tech bitten badly. We dropped ProVet Staffing and won't use them again.",
+   "tail_user_fragment": null,
+   "probe": "Who should we consider using for temporary vet tech staffing if we're short-handed at Fairview Heights?",
+   "probes": [
+    "Who should we consider using for temporary vet tech staffing if we're short-handed at Fairview Heights?",
+    "Which staffing agency should we use for temp techs at the new clinic?",
+    "Is there a staffing agency we should steer clear of for temp vet tech coverage?"
+   ],
+   "gold": "Anyone except ProVet Staffing, given the poorly trained placements and the near-injury incident.",
+   "keywords": [
+    "restraint technique"
+   ],
+   "anti_keywords": [
+    "provet staffing"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c21-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Noting for the file: total capital budget approved for equipping Fairview Heights, imaging, surgical suite, kennels, all of it, is $312,500. Just parking that number here.",
+   "tail_user_fragment": null,
+   "probe": "What is the total capital equipment budget approved for the Fairview Heights clinic?",
+   "probes": [
+    "What is the total capital equipment budget approved for the Fairview Heights clinic?",
+    "How much did the partners approve for equipping the new clinic in total?",
+    "Remind me the total dollar figure for the Fairview Heights equipment budget."
+   ],
+   "gold": "$312,500.",
+   "keywords": [
+    "312,500"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c21-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "For the record, the state veterinary board assigned facility inspection reference number INS-VB-70942, scheduled for September 14th. Just logging it.",
+   "tail_user_fragment": null,
+   "probe": "What is the state board's facility inspection reference number, and when is it scheduled?",
+   "probes": [
+    "What is the state board's facility inspection reference number, and when is it scheduled?",
+    "What reference number did the state board give our facility inspection, and what's the date?",
+    "Remind me the inspection case number and scheduled date for Fairview Heights."
+   ],
+   "gold": "INS-VB-70942, scheduled for September 14th.",
+   "keywords": [
+    "70942",
+    "september 14"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c21-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the whole Fairview Heights build-out 'Rohan' in our internal docs and emails from here on, just to keep it short and consistent across partners.",
+   "tail_user_fragment": "What's the biggest open risk on Rohan right now?",
+   "probe": "What does 'Rohan' refer to in this project?",
+   "probes": [
+    "What does 'Rohan' refer to in this project?",
+    "If I mention Rohan again, what should you take that to mean?",
+    "Remind me what Rohan is in our planning -- what does it stand for?"
+   ],
+   "gold": "The overall Fairview Heights third-clinic build-out project.",
+   "keywords": [
+    "Fairview Heights",
+    "build-out",
+    "third clinic"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "Tolkien",
+    "horse lords",
+    "Rohirrim",
+    "Middle-earth"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c21-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's also codename the new practice management software we're migrating client records into 'Gandalf', so status updates can just say 'Gandalf go-live' instead of the vendor's actual product name.",
+   "tail_user_fragment": "Are we still on track for the Gandalf go-live before opening day?",
+   "probe": "What does 'Gandalf' refer to in this project?",
+   "probes": [
+    "What does 'Gandalf' refer to in this project?",
+    "When I mention Gandalf later, what should you understand that to mean?",
+    "Remind me what Gandalf is in our planning."
+   ],
+   "gold": "The new practice management software system that client records are being migrated into.",
+   "keywords": [
+    "practice management software",
+    "go-live"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "wizard",
+    "Tolkien",
+    "Gandalf the Grey",
+    "Middle-earth"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c21-strong_prior-3",
+   "category": "strong_prior",
+   "middle_user": "One more: let's codename the waiting room and lobby renovation for Fairview Heights 'Shire', since we're going for that cozy, small-town feel in the design. Use that name in the budget spreadsheet line items.",
+   "tail_user_fragment": "Did the Shire line item come in under budget or over?",
+   "probe": "What does 'Shire' refer to in this project?",
+   "probes": [
+    "What does 'Shire' refer to in this project?",
+    "If I mention the Shire line item again, what should you understand that to be?",
+    "Remind me what Shire refers to in our budget spreadsheet."
+   ],
+   "gold": "The waiting room and lobby renovation budget line for the Fairview Heights clinic.",
+   "keywords": [
+    "waiting room",
+    "lobby renovation"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "hobbit",
+    "Tolkien",
+    "Bilbo",
+    "Frodo",
+    "Middle-earth"
+   ],
+   "distance": "far"
+  }
+ ],
+ "meta": {
+  "author": "fable"
+ }
+}

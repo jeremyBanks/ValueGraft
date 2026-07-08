@@ -1,0 +1,527 @@
+{
+ "id": "c27",
+ "title": "Museum traveling exhibit",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant with museum and curatorial experience, supporting a curator planning a new traveling exhibit."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I'm the curator at the Prescott Museum and I'm putting together our first traveling exhibit, a textile history show called Woven Worlds. It involves loans from four other institutions, real conservation requirements, and a grant application, and I'd like to use this chat to plan the whole thing with you."
+  },
+  {
+   "role": "assistant",
+   "content": "Start by making obligations explicit on both sides, especially approvals, custody, documentation, and escalation paths."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with loan agreements. I've never negotiated a multi-institution loan before. What are the core terms I need to nail down with each lender before I even get to a facilities report?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start by making obligations explicit on both sides, especially approvals, custody, documentation, and escalation paths."
+  },
+  {
+   "role": "user",
+   "content": "Moving to conservation and climate requirements. Some of these textiles are 200 years old. What climate parameters do lenders typically demand, and how far off are small museums like ours usually from meeting them?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start by making obligations explicit on both sides, especially approvals, custody, documentation, and escalation paths."
+  },
+  {
+   "role": "user",
+   "content": "Decision on the Ashworth Textile Collection loan. They offered three terms: (1) a straight 12-month loan with a flat facilities fee, (2) a reciprocal loan where we send them one of our own pieces in exchange, or (3) a shorter 6-month loan with a courier requirement for install and deinstall both times. Their registrar and I talked it through and we're going with the reciprocal option, sending our indigo shawl in exchange."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Follow-up: if our galleries can't hit the strictest humidity requirements, is there a standard workaround lenders will actually accept, or is that a dealbreaker?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start by making obligations explicit on both sides, especially approvals, custody, documentation, and escalation paths."
+  },
+  {
+   "role": "user",
+   "content": "Quick disambiguation: 'the report' has two meanings around here. Registrars call the building's environmental documentation the facilities report, but when I say 'the report' to you, I mean the condition report for each object, the item-by-item documentation of existing damage before it travels. That's always what I mean."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Exhibit design and layout next. I want the show to move chronologically but also let visitors wander. Is there a standard way to reconcile a linear narrative with an open floor plan?"
+  },
+  {
+   "role": "assistant",
+   "content": "The layout should support the visitor story while leaving enough operational room for object safety and flow."
+  },
+  {
+   "role": "user",
+   "content": "One hard line for this exhibit: no mannequins, anywhere in the show. I sat through a conservation disaster at another institution where mannequin pressure points distorted delicate weave structures permanently, and I will not risk that here. Whatever mounting solutions you suggest, mannequins are off the table."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Also on design, how much of the budget usually goes to case fabrication versus lighting versus didactics, roughly?"
+  },
+  {
+   "role": "assistant",
+   "content": "The layout should support the visitor story while leaving enough operational room for object safety and flow."
+  },
+  {
+   "role": "user",
+   "content": "For the record, we used a mount-making vendor called Substrate Studio for our last small exhibit. Their padded mounts were built to the wrong dimensions for three objects and we had to redo them in-house two weeks before opening. Not hiring them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Grant funding. I'm applying to a regional humanities grant for the first time. What actually makes an exhibit grant proposal competitive versus one that gets politely declined?"
+  },
+  {
+   "role": "assistant",
+   "content": "A strong proposal should show public value, feasibility, and candor about risks with a credible mitigation plan."
+  },
+  {
+   "role": "user",
+   "content": "Small note for my own tracking: the regional humanities grant application is due October 30th and the maximum award is $42,000. Doesn't change anything about our approach, just logging the number."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the custom shipping-crate fabrication project 'Roshar' from now on. Any invoice or note about the padded travel cases for the textiles should reference Roshar, not the fabricator's name."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "On the same grant, how honest should I be about our conservation gaps in the proposal itself, versus saving that conversation for after we're funded?"
+  },
+  {
+   "role": "assistant",
+   "content": "For fragile objects, the safest plan is to document the standard, the museum's actual capability, and the mitigation."
+  },
+  {
+   "role": "user",
+   "content": "Layout decision for the main gallery. Three options: (1) a strict chronological corridor, (2) four thematic clusters visitors can enter in any order, or (3) a hybrid, chronological spine with thematic alcoves branching off it. The design committee picked the third one, the hybrid spine-and-alcoves layout."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Member preview event. We've never done one for a traveling exhibit before. What's different about hosting a preview for lenders and major donors versus our normal member nights?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the opening' I mean the public press opening, not the member preview we talked about earlier, those are two separate events on two different nights. Just flagging it so we don't cross wires."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "For the preview, should the lending institutions' representatives get any kind of formal recognition during the event, or does that get complicated fast?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Another firm rule: I will not schedule any object courier travel between December and February, full stop. We had a crate delayed on an icy tarmac for six hours a few years back and I still think about what could have happened to the textiles inside. Whatever the install schedule looks like, no winter courier trips."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Back to loan agreements: how should I handle a lender who wants the right to inspect the objects mid-run, partway through the exhibit?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start by making obligations explicit on both sides, especially approvals, custody, documentation, and escalation paths."
+  },
+  {
+   "role": "user",
+   "content": "Also, insurance history: we went with a broker called Coverwell Fine Arts for a loan two years ago, and their claims process was so slow that a damaged frame sat unresolved for eight months, souring the lending institution on working with us again. We're not using Coverwell for this exhibit."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "One more on conservation: what's the standard light-level limit for textiles like this, in case a lender doesn't specify it themselves?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start by making obligations explicit on both sides, especially approvals, custody, documentation, and escalation paths."
+  },
+  {
+   "role": "user",
+   "content": "Oh, and the Ashworth Textile Collection's registrar handling our paperwork is named Odalys Ferreira, she's been very responsive so far. Just noting her name so I don't forget it later."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Also, let's codename the exhibit catalog publication 'Shallan' in any of our internal notes, since we'll be discussing print costs and the essay drafts a lot before this is done."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Let's finish with the member preview. What's a reasonable guest count for a first-time event like this given our gallery size?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "On the Ashworth loan terms we agreed to, no need to recap them, what should go in our own facilities report to reassure their registrar?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start by making obligations explicit on both sides, especially approvals, custody, documentation, and escalation paths."
+  },
+  {
+   "role": "user",
+   "content": "For the layout we picked, don't walk me through it again, how many linear feet of case space does that give us for the largest textiles?"
+  },
+  {
+   "role": "assistant",
+   "content": "The key is to make the policy predictable for families while keeping the process light enough for volunteers to run."
+  },
+  {
+   "role": "user",
+   "content": "Do we need a fresh version of the report before the objects go back to their home institutions at the end of the run?"
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "How many press outlets should we realistically invite to the opening?"
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "Where do things stand on Roshar? I need the crates ready well before the first courier pickup."
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "Any news on Shallan's print quote? I want that locked in before the grant funding comes through."
+  },
+  {
+   "role": "assistant",
+   "content": "A strong proposal should show public value, feasibility, and candor about risks with a credible mitigation plan."
+  },
+  {
+   "role": "user",
+   "content": "And should the preview happen before or after the official press opening?"
+  },
+  {
+   "role": "assistant",
+   "content": "That gives us a clean next pass: confirm the operational owner, set the deadline, and keep the decision log current as plans change."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49
+ },
+ "plants": [
+  {
+   "id": "c27-referent-1",
+   "category": "referent",
+   "middle_user": "Decision on the Ashworth Textile Collection loan. They offered three terms: (1) a straight 12-month loan with a flat facilities fee, (2) a reciprocal loan where we send them one of our own pieces in exchange, or (3) a shorter 6-month loan with a courier requirement for install and deinstall both times. Their registrar and I talked it through and we're going with the reciprocal option, sending our indigo shawl in exchange.",
+   "tail_user_fragment": "On the Ashworth loan terms we agreed to, no need to recap them, what should go in our own facilities report to reassure their registrar?",
+   "probe": "What loan terms did we agree to with the Ashworth Textile Collection?",
+   "probes": [
+    "What loan terms did we agree to with the Ashworth Textile Collection?",
+    "What did we end up settling on with Ashworth's registrar for the loan structure?",
+    "Remind me which of the three Ashworth loan options we chose."
+   ],
+   "gold": "A reciprocal loan: the Prescott sends the Ashworth Textile Collection its indigo shawl in exchange for the loaned pieces (the second of the three options).",
+   "keywords": [
+    "reciprocal",
+    "indigo shawl"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c27-referent-2",
+   "category": "referent",
+   "middle_user": "Layout decision for the main gallery. Three options: (1) a strict chronological corridor, (2) four thematic clusters visitors can enter in any order, or (3) a hybrid, chronological spine with thematic alcoves branching off it. The design committee picked the third one, the hybrid spine-and-alcoves layout.",
+   "tail_user_fragment": "For the layout we picked, don't walk me through it again, how many linear feet of case space does that give us for the largest textiles?",
+   "probe": "Which gallery layout did the design committee choose?",
+   "probes": [
+    "Which gallery layout did the design committee choose?",
+    "What was the final decision on how the main gallery would be organized?",
+    "Out of the three layout options, which one did we land on?"
+   ],
+   "gold": "The hybrid layout: a chronological spine with thematic alcoves branching off it (the third option).",
+   "keywords": [
+    "hybrid",
+    "spine",
+    "alcoves"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c27-sense-1",
+   "category": "sense",
+   "middle_user": "Quick disambiguation: 'the report' has two meanings around here. Registrars call the building's environmental documentation the facilities report, but when I say 'the report' to you, I mean the condition report for each object, the item-by-item documentation of existing damage before it travels. That's always what I mean.",
+   "tail_user_fragment": "Do we need a fresh version of the report before the objects go back to their home institutions at the end of the run?",
+   "probe": "When I refer to 'the report' in this conversation, what does it mean?",
+   "probes": [
+    "When I refer to 'the report' in this conversation, what does it mean?",
+    "Which report was I asking about when I mentioned needing a fresh version?",
+    "Clarify what 'the report' refers to in our discussion."
+   ],
+   "gold": "The condition report, the item-by-item documentation of existing damage on each object, not the building's facilities report.",
+   "keywords": [
+    "condition report",
+    "existing damage"
+   ],
+   "anti_keywords": [
+    "facilities report",
+    "environmental documentation of the building"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c27-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the opening' I mean the public press opening, not the member preview we talked about earlier, those are two separate events on two different nights. Just flagging it so we don't cross wires.",
+   "tail_user_fragment": "How many press outlets should we realistically invite to the opening?",
+   "probe": "When I mentioned 'the opening', which event was I referring to?",
+   "probes": [
+    "When I mentioned 'the opening', which event was I referring to?",
+    "Which event did I mean by 'the opening' earlier in this chat?",
+    "Clarify what 'the opening' refers to versus the member preview."
+   ],
+   "gold": "The public press opening, not the member preview event.",
+   "keywords": [
+    "press opening",
+    "public"
+   ],
+   "anti_keywords": [
+    "member preview"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c27-stance-1",
+   "category": "stance",
+   "middle_user": "One hard line for this exhibit: no mannequins, anywhere in the show. I sat through a conservation disaster at another institution where mannequin pressure points distorted delicate weave structures permanently, and I will not risk that here. Whatever mounting solutions you suggest, mannequins are off the table.",
+   "tail_user_fragment": null,
+   "probe": "What mounting approaches would you suggest for displaying the garments in this exhibit?",
+   "probes": [
+    "What mounting approaches would you suggest for displaying the garments in this exhibit?",
+    "How should we physically display the textiles in the gallery?",
+    "Suggest some ways to mount the garments for the show."
+   ],
+   "gold": "Suggests approaches like padded armatures, flat mounts, or angled boards, while never proposing mannequins, ideally recalling the pressure-point distortion concern from another institution's disaster.",
+   "keywords": [
+    "pressure points",
+    "distort"
+   ],
+   "anti_keywords": [
+    "mannequin"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c27-stance-2",
+   "category": "stance",
+   "middle_user": "Another firm rule: I will not schedule any object courier travel between December and February, full stop. We had a crate delayed on an icy tarmac for six hours a few years back and I still think about what could have happened to the textiles inside. Whatever the install schedule looks like, no winter courier trips.",
+   "tail_user_fragment": null,
+   "probe": "Draft a rough install and deinstall schedule for the exhibit run.",
+   "probes": [
+    "Draft a rough install and deinstall schedule for the exhibit run.",
+    "When should we schedule the courier trips for installing and deinstalling the show?",
+    "Help me lay out the timeline for object travel around this exhibit."
+   ],
+   "gold": "A schedule that avoids any courier travel in December, January, or February, ideally recalling the icy tarmac incident that delayed a crate for six hours.",
+   "keywords": [
+    "icy tarmac",
+    "six hours"
+   ],
+   "anti_keywords": [
+    "december",
+    "january",
+    "february"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c27-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record, we used a mount-making vendor called Substrate Studio for our last small exhibit. Their padded mounts were built to the wrong dimensions for three objects and we had to redo them in-house two weeks before opening. Not hiring them again.",
+   "tail_user_fragment": null,
+   "probe": "Who should we approach for mount-making on this exhibit?",
+   "probes": [
+    "Who should we approach for mount-making on this exhibit?",
+    "Who should we use to build the display mounts this time?",
+    "Recommend a mount-maker for the textiles in this show."
+   ],
+   "gold": "Anything except Substrate Studio, e.g. an in-house preparator, a different conservation mount-maker, or a vendor recommended by one of the lending institutions, ideally acknowledging Substrate Studio's dimension errors.",
+   "keywords": [
+    "wrong dimensions"
+   ],
+   "anti_keywords": [
+    "substrate studio"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c27-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, insurance history: we went with a broker called Coverwell Fine Arts for a loan two years ago, and their claims process was so slow that a damaged frame sat unresolved for eight months, souring the lending institution on working with us again. We're not using Coverwell for this exhibit.",
+   "tail_user_fragment": null,
+   "probe": "Who should we use for the exhibit's insurance coverage?",
+   "probes": [
+    "Who should we use for the exhibit's insurance coverage?",
+    "Which insurance broker should we go with for this show?",
+    "Recommend a fine-arts insurance option for Woven Worlds."
+   ],
+   "gold": "Anything except Coverwell Fine Arts, e.g. a different fine-arts insurance broker or the museum's existing general liability carrier if it covers fine art, ideally acknowledging Coverwell's slow eight-month claims process.",
+   "keywords": [
+    "slow claims",
+    "eight months"
+   ],
+   "anti_keywords": [
+    "coverwell"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c27-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Small note for my own tracking: the regional humanities grant application is due October 30th and the maximum award is $42,000. Doesn't change anything about our approach, just logging the number.",
+   "tail_user_fragment": null,
+   "probe": "When is the regional humanities grant due, and what's the maximum award?",
+   "probes": [
+    "When is the regional humanities grant due, and what's the maximum award?",
+    "Remind me the deadline and max funding amount for the grant we're applying to.",
+    "What are the key numbers for the humanities grant application?"
+   ],
+   "gold": "Due October 30th, with a maximum award of $42,000.",
+   "keywords": [
+    "October 30",
+    "42,000"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c27-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, and the Ashworth Textile Collection's registrar handling our paperwork is named Odalys Ferreira, she's been very responsive so far. Just noting her name so I don't forget it later.",
+   "tail_user_fragment": null,
+   "probe": "What is the name of the registrar handling our paperwork at the Ashworth Textile Collection?",
+   "probes": [
+    "What is the name of the registrar handling our paperwork at the Ashworth Textile Collection?",
+    "Remind me who our contact is at Ashworth for the loan paperwork.",
+    "What was the name of the Ashworth registrar I mentioned?"
+   ],
+   "gold": "Odalys Ferreira.",
+   "keywords": [
+    "Odalys Ferreira"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c27-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the custom shipping-crate fabrication project 'Roshar' from now on. Any invoice or note about the padded travel cases for the textiles should reference Roshar, not the fabricator's name.",
+   "tail_user_fragment": "Where do things stand on Roshar? I need the crates ready well before the first courier pickup.",
+   "probe": "What does 'Roshar' refer to in our project?",
+   "probes": [
+    "What does 'Roshar' refer to in our project?",
+    "If I mention Roshar again later, what should you understand that to mean?",
+    "Remind me what we're calling Roshar internally -- what is it?"
+   ],
+   "gold": "The custom shipping-crate fabrication project for the traveling textiles.",
+   "keywords": [
+    "shipping crate",
+    "fabrication"
+   ],
+   "anti_keywords": [
+    "Stormlight Archive",
+    "Brandon Sanderson",
+    "fantasy novel",
+    "Knights Radiant"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c27-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Also, let's codename the exhibit catalog publication 'Shallan' in any of our internal notes, since we'll be discussing print costs and the essay drafts a lot before this is done.",
+   "tail_user_fragment": "Any news on Shallan's print quote? I want that locked in before the grant funding comes through.",
+   "probe": "What does 'Shallan' refer to in our project?",
+   "probes": [
+    "What does 'Shallan' refer to in our project?",
+    "If I bring up Shallan again, what should you take that to mean?",
+    "Remind me what Shallan is code for in our planning."
+   ],
+   "gold": "The exhibit catalog publication project (print costs, essay drafts, etc.).",
+   "keywords": [
+    "catalog",
+    "publication"
+   ],
+   "anti_keywords": [
+    "artist",
+    "Lightweaver",
+    "Brandon Sanderson",
+    "Stormlight Archive"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "codex-gpt5.5"
+ }
+}

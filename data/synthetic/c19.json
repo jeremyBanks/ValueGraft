@@ -1,0 +1,529 @@
+{
+ "id": "c19",
+ "title": "Downtown rezoning and greenway project",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in municipal planning and public-sector project management, helping a city planner manage a downtown rezoning and greenway initiative."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I'm the lead planner on the Riverside District rezoning and greenway extension for the City of Ashcombe, and honestly the next four months are going to be a grind of public meetings, council votes, and contractor coordination. I'd like to use you as a thinking partner to keep everything straight. Sound okay?"
+  },
+  {
+   "role": "assistant",
+   "content": "Absolutely, glad to be your thinking partner on this. Let's dig in."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with the public comment process since it's the thing driving our timeline. We're required to hold three formal hearings before the planning commission can vote. What's the standard structure for running a hearing like that so we don't get steamrolled by one loud faction?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good place to start. Here's the short version, and we can go as deep as you want from here."
+  },
+  {
+   "role": "user",
+   "content": "On the zoning variance side, we've got four separate parcels along Elm requesting variances for building height. What's the general standard commissions use for granting a height variance versus rejecting it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Decision on the Elm corridor height variance. We had three paths: (1) grant the full 15-foot bonus to all four parcels, (2) grant it only to the two corner parcels facing the avenue and hold the interior two to base height, or (3) deny everyone and send them back to redesign. I talked it over with the deputy director and we're going with option two. Corner parcels get the bonus, interior two stay at base height."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — that's a defensible call and it keeps the path clean. I'll treat it as settled from here."
+  },
+  {
+   "role": "user",
+   "content": "Traffic impact study question: our consultant wants to run counts during a normal week versus during the farmers market week. Which one actually gives council a more defensible baseline?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: residents call the whole greenway trail 'the Loop' informally, but when I say 'the Loop' to you I specifically mean the elevated pedestrian bridge segment crossing the rail spur, the trickiest single piece of construction. Just the bridge, not the whole trail."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll use that meaning consistently whenever you use the term."
+  },
+  {
+   "role": "user",
+   "content": "For council budget approval, walk me through how a typical capital improvement line item moves from the planning department's ask to actually getting appropriated. I want to know where it can die."
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "Strong preference for how we present to council: absolutely no slide decks with bullet-point walls. Council has told us directly they tune out after slide three. Everything we bring should be a plain narrative memo with maybe one map or chart, never a slideshow."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and the reasoning is sound. I won't propose anything that cuts against it."
+  },
+  {
+   "role": "user",
+   "content": "Back to public comment: we've been getting a lot of form-letter submissions that look coordinated. Should those count the same as an individual, unique letter in the official record?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "user",
+   "content": "For context: we already tried an online comment platform called CivicVoice for a prior rezoning case. It got flooded with duplicate bot-submitted comments, something like 40 percent of the entries traced to the same handful of IP ranges, and legal made us throw out the whole batch. We are not using CivicVoice again."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep that option off the table and steer toward alternatives."
+  },
+  {
+   "role": "user",
+   "content": "Greenway design question: how wide should the multi-use path segment be if we're expecting both cyclists and pedestrians, plus occasional maintenance vehicle access?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair concern. Most teams your size handle it by piloting small first, then scaling once it's proven out."
+  },
+  {
+   "role": "user",
+   "content": "Bookkeeping note for later: the capital ask we're submitting for the greenway construction line item is $4,275,000 spread across two fiscal years. Just parking that number, doesn't change today's discussion."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks — logged. I've got it on record for when it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "Let's use 'Isengard' as the internal codename for the old parking garage demolition and equipment staging site -- every memo and email about clearing that site should say Isengard, not the address, since it's going to come up constantly over the next few months."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — I'll use that codename consistently in anything we draft."
+  },
+  {
+   "role": "user",
+   "content": "Another zoning one: parcel owners keep asking if they can bundle their variance requests into one joint application to save on fees. Is that normally allowed?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good instinct to check. The defensible baseline is usually the more representative, less cherry-picked one — I can explain why."
+  },
+  {
+   "role": "user",
+   "content": "Our traffic consultant gave us three mitigation packages for the Fifth and Riverside intersection: (1) a new signal with protected left turns, (2) a roundabout, or (3) just restriping plus a pedestrian refuge island. Council's transportation liaison and I reviewed it and we're recommending the roundabout to the full council. It handles the projected 2031 volumes best."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense given the tradeoffs you weighed. I'll carry that forward as the decision."
+  },
+  {
+   "role": "user",
+   "content": "For the traffic study, what's a reasonable threshold for a 'significant impact' finding that would trigger a mitigation requirement, roughly?"
+  },
+  {
+   "role": "assistant",
+   "content": "That's a common decision point. I'd frame it around what protects you if it's ever scrutinized later."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the packet' from here on, I mean the council briefing packet we assemble before each meeting, not the applicants' variance application packets, which are a different set of documents entirely."
+  },
+  {
+   "role": "assistant",
+   "content": "Clear. I'll read it that way from now on and won't confuse it with the other one."
+  },
+  {
+   "role": "user",
+   "content": "On the budget side, if council trims the requested amount by 15 percent, what's the first thing that usually gets cut from a greenway-scale project like this?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sensible to ask now rather than later. The rule of thumb is to leave yourself margin and avoid single points of failure."
+  },
+  {
+   "role": "user",
+   "content": "One more hard line: I won't run any of the three hearings as virtual-only. We tried that during a related utility project and half the neighborhood felt shut out and the record got challenged legally. In-person only, full stop, virtual can be an added option but never a replacement."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep everything I draft aligned with that."
+  },
+  {
+   "role": "user",
+   "content": "Back to public comment, how long do we legally have to keep the comment period open after the third hearing before the commission can vote?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Also worth remembering: we hired Vectranorth for traffic modeling on the last corridor project and their volume projections were off by almost half, they badly undercounted weekend farmers-market traffic and we had to redo the whole study with a different firm. Not hiring them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I won't put that back in front of you; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "For the greenway, what kind of lighting spec do we typically need along a path that runs behind residential backyards, given nighttime safety complaints elsewhere in the city?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "For the record, the formal rezoning case number is RZ-2026-0143, filed with the clerk on March 3rd. Just noting it here so it's written down somewhere."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted and parked. I'll have it handy if it comes up later."
+  },
+  {
+   "role": "user",
+   "content": "And let's codename the new public engagement dashboard, the one where residents can track hearing dates and submit comments online, 'Rivendell'. Use that name in all our internal planning, not the vendor's actual product name."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll refer to it by that name in all our internal docs from here on."
+  },
+  {
+   "role": "user",
+   "content": "One more on the traffic study: should we present the consultant's raw data to council or just the executive summary?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "For the Elm variance decision, no need to restate it, just tell me what our staff report should list as the key finding that supports it."
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "On the intersection mitigation we're recommending, don't re-explain it, but what's the rough construction cost range I should flag to council?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Any update needed on the Loop's structural review before we present next Tuesday?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft the cover memo for the packet? You know which one."
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Any update on the Isengard schedule I should mention at the next hearing?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Is Rivendell on track to launch before the third hearing?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "For the zoning variances, do we need a separate staff report for each of the four Elm parcels or can we combine them?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "assistant",
+   "content": "That covers the main threads for now. Ping me whenever the next piece comes up and we'll keep it all straight."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49
+ },
+ "plants": [
+  {
+   "id": "c19-referent-1",
+   "category": "referent",
+   "middle_user": "Decision on the Elm corridor height variance. We had three paths: (1) grant the full 15-foot bonus to all four parcels, (2) grant it only to the two corner parcels facing the avenue and hold the interior two to base height, or (3) deny everyone and send them back to redesign. I talked it over with the deputy director and we're going with option two. Corner parcels get the bonus, interior two stay at base height.",
+   "tail_user_fragment": "For the Elm variance decision, no need to restate it, just tell me what our staff report should list as the key finding that supports it.",
+   "probe": "What did we decide for the Elm corridor height variance?",
+   "probes": [
+    "What did we decide for the Elm corridor height variance?",
+    "Remind me exactly what the final ruling was on the four Elm parcels' height variance requests.",
+    "Which of the three Elm variance options did we end up going with?"
+   ],
+   "gold": "Grant the 15-foot height bonus only to the two corner parcels facing the avenue; the two interior parcels stay at base height (option two of three).",
+   "keywords": [
+    "corner parcels",
+    "base height"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c19-referent-2",
+   "category": "referent",
+   "middle_user": "Our traffic consultant gave us three mitigation packages for the Fifth and Riverside intersection: (1) a new signal with protected left turns, (2) a roundabout, or (3) just restriping plus a pedestrian refuge island. Council's transportation liaison and I reviewed it and we're recommending the roundabout to the full council. It handles the projected 2031 volumes best.",
+   "tail_user_fragment": "On the intersection mitigation we're recommending, don't re-explain it, but what's the rough construction cost range I should flag to council?",
+   "probe": "Which traffic mitigation option are we recommending for the Fifth and Riverside intersection?",
+   "probes": [
+    "Which traffic mitigation option are we recommending for the Fifth and Riverside intersection?",
+    "What did we settle on as our recommended fix for the Fifth and Riverside intersection?",
+    "Out of the three mitigation packages the consultant gave us, which one are we bringing to council?"
+   ],
+   "gold": "A roundabout (option two of three), over a signalized intersection with protected lefts or restriping plus a pedestrian refuge island.",
+   "keywords": [
+    "roundabout"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c19-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: residents call the whole greenway trail 'the Loop' informally, but when I say 'the Loop' to you I specifically mean the elevated pedestrian bridge segment crossing the rail spur, the trickiest single piece of construction. Just the bridge, not the whole trail.",
+   "tail_user_fragment": "Any update needed on the Loop's structural review before we present next Tuesday?",
+   "probe": "When I said 'the Loop' in this conversation, what specifically did I mean?",
+   "probes": [
+    "When I said 'the Loop' in this conversation, what specifically did I mean?",
+    "What exactly does 'the Loop' refer to when I use that term with you?",
+    "If I mention the Loop again, what part of the project should you understand that to be?"
+   ],
+   "gold": "The elevated pedestrian bridge segment crossing the rail spur, not the whole greenway trail.",
+   "keywords": [
+    "pedestrian bridge",
+    "rail spur"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c19-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the packet' from here on, I mean the council briefing packet we assemble before each meeting, not the applicants' variance application packets, which are a different set of documents entirely.",
+   "tail_user_fragment": "Can you draft the cover memo for the packet? You know which one.",
+   "probe": "When I referred to 'the packet', which document was I talking about?",
+   "probes": [
+    "When I referred to 'the packet', which document was I talking about?",
+    "What specifically is 'the packet' in our conversations?",
+    "If I ask you to work on the packet again, which set of documents should you think I mean?"
+   ],
+   "gold": "The council briefing packet assembled before each meeting, not the applicants' variance application packets.",
+   "keywords": [
+    "council briefing"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c19-stance-1",
+   "category": "stance",
+   "middle_user": "Strong preference for how we present to council: absolutely no slide decks with bullet-point walls. Council has told us directly they tune out after slide three. Everything we bring should be a plain narrative memo with maybe one map or chart, never a slideshow.",
+   "tail_user_fragment": null,
+   "probe": "Put together the presentation materials for next month's council session on the greenway budget.",
+   "probes": [
+    "Put together the presentation materials for next month's council session on the greenway budget.",
+    "Draft what we should bring to council for the next greenway budget discussion.",
+    "What format should the materials for the next council session take?"
+   ],
+   "gold": "Produces a plain narrative memo (with at most one map or chart), not a slide deck with bullet points, ideally recalling that council tunes out after slide three.",
+   "keywords": [
+    "narrative memo"
+   ],
+   "anti_keywords": [
+    "slide deck",
+    "powerpoint",
+    "bullets"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c19-stance-2",
+   "category": "stance",
+   "middle_user": "One more hard line: I won't run any of the three hearings as virtual-only. We tried that during a related utility project and half the neighborhood felt shut out and the record got challenged legally. In-person only, full stop, virtual can be an added option but never a replacement.",
+   "tail_user_fragment": null,
+   "probe": "What format should we use for the second public hearing?",
+   "probes": [
+    "What format should we use for the second public hearing?",
+    "How should we set up the format for the next of the three hearings?",
+    "Should the upcoming hearing be held virtually?"
+   ],
+   "gold": "An in-person hearing (virtual optionally offered alongside), never virtual-only, ideally recalling the backlash and challenged record from the prior utility project.",
+   "keywords": [
+    "in-person"
+   ],
+   "anti_keywords": [
+    "virtual-only",
+    "virtual only"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c19-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For context: we already tried an online comment platform called CivicVoice for a prior rezoning case. It got flooded with duplicate bot-submitted comments, something like 40 percent of the entries traced to the same handful of IP ranges, and legal made us throw out the whole batch. We are not using CivicVoice again.",
+   "tail_user_fragment": null,
+   "probe": "What platform should we use to collect online public comments for this project?",
+   "probes": [
+    "What platform should we use to collect online public comments for this project?",
+    "Recommend a tool for gathering public comments online this time around.",
+    "What should we avoid, and what should we use instead, for the online comment system?"
+   ],
+   "gold": "Anything except CivicVoice, e.g. a vetted municipal comment portal with verification, given the prior bot-flooding and thrown-out comment batch.",
+   "keywords": [
+    "bot"
+   ],
+   "anti_keywords": [
+    "civicvoice"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c19-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth remembering: we hired Vectranorth for traffic modeling on the last corridor project and their volume projections were off by almost half, they badly undercounted weekend farmers-market traffic and we had to redo the whole study with a different firm. Not hiring them again.",
+   "tail_user_fragment": null,
+   "probe": "Who should we consider for the traffic modeling firm on this project?",
+   "gold": "Anyone except Vectranorth, given their projections were off by roughly half on the last corridor project.",
+   "probes": [
+    "Who should we consider for the traffic modeling firm on this project?",
+    "Which traffic modeling consultants would you recommend for the Riverside project?",
+    "Any firm we should rule out before hiring a traffic consultant this time?"
+   ],
+   "keywords": [
+    "undercounted",
+    "off by"
+   ],
+   "anti_keywords": [
+    "vectranorth"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c19-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Bookkeeping note for later: the capital ask we're submitting for the greenway construction line item is $4,275,000 spread across two fiscal years. Just parking that number, doesn't change today's discussion.",
+   "tail_user_fragment": null,
+   "probe": "What is the capital budget ask for the greenway construction line item?",
+   "probes": [
+    "What is the capital budget ask for the greenway construction line item?",
+    "How much are we requesting from council for greenway construction, in total?",
+    "Remind me of the dollar figure we're asking council to appropriate for the greenway."
+   ],
+   "gold": "$4,275,000, spread across two fiscal years.",
+   "keywords": [
+    "4,275,000"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c19-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "For the record, the formal rezoning case number is RZ-2026-0143, filed with the clerk on March 3rd. Just noting it here so it's written down somewhere.",
+   "tail_user_fragment": null,
+   "probe": "What is the official rezoning case number and filing date?",
+   "probes": [
+    "What is the official rezoning case number and filing date?",
+    "What case number did the clerk assign to our rezoning filing, and when was it submitted?",
+    "Remind me of the RZ case reference number for this project."
+   ],
+   "gold": "RZ-2026-0143, filed March 3rd.",
+   "keywords": [
+    "0143",
+    "march 3"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c19-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's use 'Isengard' as the internal codename for the old parking garage demolition and equipment staging site -- every memo and email about clearing that site should say Isengard, not the address, since it's going to come up constantly over the next few months.",
+   "tail_user_fragment": "Any update on the Isengard schedule I should mention at the next hearing?",
+   "probe": "What does 'Isengard' refer to in this project?",
+   "probes": [
+    "What does 'Isengard' refer to in this project?",
+    "If I bring up Isengard again, what should you understand that to mean?",
+    "Remind me what we're calling Isengard internally -- what is it?"
+   ],
+   "gold": "The old parking garage demolition and equipment staging site.",
+   "keywords": [
+    "parking garage",
+    "demolition",
+    "staging"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "Tolkien",
+    "Saruman",
+    "tower",
+    "wizard",
+    "orcs"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c19-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "And let's codename the new public engagement dashboard, the one where residents can track hearing dates and submit comments online, 'Rivendell'. Use that name in all our internal planning, not the vendor's actual product name.",
+   "tail_user_fragment": "Is Rivendell on track to launch before the third hearing?",
+   "probe": "What is 'Rivendell' referring to in our project?",
+   "probes": [
+    "What is 'Rivendell' referring to in our project?",
+    "When I mention Rivendell later, what should you take that to mean?",
+    "Remind me what Rivendell is in this project -- what does it refer to?"
+   ],
+   "gold": "The public-facing engagement dashboard/portal for residents to track hearing dates and submit comments online.",
+   "keywords": [
+    "engagement dashboard",
+    "portal",
+    "residents"
+   ],
+   "anti_keywords": [
+    "elven refuge",
+    "Elrond",
+    "Imladris",
+    "valley",
+    "Tolkien",
+    "Lord of the Rings",
+    "Rivendale"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "fable"
+ }
+}

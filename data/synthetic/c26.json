@@ -1,0 +1,531 @@
+{
+ "id": "c26",
+ "title": "Wedding planning business scaling to a team",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant supporting a wedding and event planner scaling her solo business into a small team."
+  },
+  {
+   "role": "user",
+   "content": "Hi! I run Willowmere Weddings & Events, I've been the solo planner for five years and I'm finally scaling up to a small team this year. I want to use this chat to work through the whole transition with you: vendors, contracts, hiring, marketing, and our first showcase event."
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with the vendor network. Right now I have maybe a dozen vendors I trust across photography, florals, and catering. As we take on more weddings, how should I think about expanding that list without diluting quality?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would expand slowly, with explicit quality checks and a backup path before anyone is client-facing."
+  },
+  {
+   "role": "user",
+   "content": "Moving to hiring associate planners. I've never managed anyone before. What should I actually be testing for in an interview for someone who'll run weddings semi-independently?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would test judgment under pressure as much as style, because the role depends on calm independent decisions."
+  },
+  {
+   "role": "user",
+   "content": "Hiring structure decision. We looked at three models: (1) bring on associates as W-2 employees with salary plus benefits, (2) contract them as 1099 planners paid per wedding, or (3) a hybrid where one lead associate is W-2 and everyone else is 1099. After running the numbers with my accountant, we're going with the third one, the hybrid model."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Follow-up: should new associate planners shadow me on full weddings before taking their own, or is there a faster way to get them up to speed?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would test judgment under pressure as much as style, because the role depends on calm independent decisions."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the binder' means two things at Willowmere. The office keeps a master vendor binder with contracts and W-9s. But when I say 'the binder' to you, I always mean the client-facing wedding-day binder we hand each couple with the run-of-show and vendor contacts. That's the one I mean in this chat."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Contracts and deposits next. I've been using a pretty informal one-page agreement. What's actually missing that a real wedding-planning contract needs, especially around cancellations?"
+  },
+  {
+   "role": "assistant",
+   "content": "This is worth tightening now because clear terms protect both the business and the client relationship."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for the business going forward: we do not offer 'day-of coordination only' packages anymore. I did three of those early on and every single one turned into me firefighting someone else's badly planned wedding with zero authority to fix it. Never suggest bringing that package back."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "On deposits specifically, what's a fair deposit structure now that I'll have associates each juggling their own couples?"
+  },
+  {
+   "role": "assistant",
+   "content": "This is worth tightening now because clear terms protect both the business and the client relationship."
+  },
+  {
+   "role": "user",
+   "content": "For the record, we tried a vendor and contract management platform called Aisleform last year. It kept losing signed e-signatures in transit, twice a couple showed up thinking they'd never signed. We cancelled after four months and I won't touch it again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Marketing and portfolio. My Instagram is decent but my website portfolio hasn't been updated in two years. What should I actually prioritize refreshing first?"
+  },
+  {
+   "role": "assistant",
+   "content": "Prioritize assets that prove the work you actually want to sell next, not just the prettiest archive material."
+  },
+  {
+   "role": "user",
+   "content": "Random note for my own records: our standard deposit going forward is $1,250 per wedding, non-refundable after 14 days, we finalized that with my accountant this week. Doesn't change what we're discussing, just parking it here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our new client intake and CRM rollout 'Vin' from now on. Any internal note or email about switching couples' info over to the new system should just say Vin, not the vendor's real product name."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Also on marketing, is it worth paying for styled-shoot content with vendors versus just using real wedding photos? I've heard mixed things."
+  },
+  {
+   "role": "assistant",
+   "content": "I would expand slowly, with explicit quality checks and a backup path before anyone is client-facing."
+  },
+  {
+   "role": "user",
+   "content": "Showcase venue decision. Three options: (1) rent the botanical garden's event hall, (2) partner with one of our regular venues and host it there for free in exchange for exposure, or (3) do it at our own studio space. We're going with the second option, partnering with a regular venue."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "The seasonal showcase. I want to do an open-house style event for engaged couples to meet our vendor network in person. What's the actual planning timeline for something like that?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the walkthrough' I mean the final in-person venue walkthrough with the couple four weeks out, not the rehearsal walkthrough the night before. Two very different meetings and I keep conflating them out loud."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "For the showcase, should we charge attendees anything, or does that undercut the whole point of it being a lead-generation event?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "Another firm rule: I will not schedule Sunday weddings anymore, for me or any associate. We tried it a few times and it wrecked everyone's ability to recover before the next Friday's setup work. Whatever we do for scheduling, Sundays are off the table."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Back to vendors for a second: how do I evaluate a new photographer I haven't worked with before, before referring them to a couple?"
+  },
+  {
+   "role": "assistant",
+   "content": "I would expand slowly, with explicit quality checks and a backup path before anyone is client-facing."
+  },
+  {
+   "role": "user",
+   "content": "Also, marketing history: we paid for a premium listing on a directory called Vowfinder for eight months. It generated eleven leads total and only one booked, and that couple ghosted on the final payment anyway. Not renewing that, ever."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "One more on contracts: do associate planners need their own liability coverage, or does it fall under the business's policy?"
+  },
+  {
+   "role": "assistant",
+   "content": "This is worth tightening now because clear terms protect both the business and the client relationship."
+  },
+  {
+   "role": "user",
+   "content": "Oh, and I officially hired our first associate planner. Her name is Priya Nakashima, she starts the second week of September and she's already covered under our business's insurance umbrella policy."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Also, let's codename the studio office renovation 'Kelsier' -- new consultation space, sample table, the works. Use that name in anything you draft about it so we don't confuse it with client-facing stuff."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I'll use that as settled context in the planning without reopening the decision unless you ask."
+  },
+  {
+   "role": "user",
+   "content": "Let's close out on the showcase event. What's a realistic headcount to plan food and seating for if we invite our full email list?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "On the staffing structure we settled on, no need to walk through it again, how should we message that difference to couples so it doesn't look inconsistent?"
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "For the showcase venue we picked, don't re-explain it, what should we offer that venue in return beyond just exposure?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "What sections should we add to the binder before wedding season really picks up?"
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "What should be on the checklist for the walkthrough this time?"
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "How's the Vin timeline looking? I want it live before we onboard the next batch of couples."
+  },
+  {
+   "role": "assistant",
+   "content": "That is a good planning checkpoint; I would handle it by turning the constraint into a simple decision rule."
+  },
+  {
+   "role": "user",
+   "content": "Any update needed on Kelsier before the showcase, since clients will actually see the space that week?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a first version, define owners and decision points early so the event does not depend on last-minute improvisation."
+  },
+  {
+   "role": "user",
+   "content": "And how should we split roles between me and the associates on the day of the showcase itself?"
+  },
+  {
+   "role": "assistant",
+   "content": "That gives us a clean next pass: confirm the operational owner, set the deadline, and keep the decision log current as plans change."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49
+ },
+ "plants": [
+  {
+   "id": "c26-referent-1",
+   "category": "referent",
+   "middle_user": "Hiring structure decision. We looked at three models: (1) bring on associates as W-2 employees with salary plus benefits, (2) contract them as 1099 planners paid per wedding, or (3) a hybrid where one lead associate is W-2 and everyone else is 1099. After running the numbers with my accountant, we're going with the third one, the hybrid model.",
+   "tail_user_fragment": "On the staffing structure we settled on, no need to walk through it again, how should we message that difference to couples so it doesn't look inconsistent?",
+   "probe": "Which staffing structure did we decide on for associate planners?",
+   "probes": [
+    "Which staffing structure did we decide on for associate planners?",
+    "What did we end up deciding about how the associates get paid and classified?",
+    "Remind me which of the three hiring models the accountant and I landed on."
+   ],
+   "gold": "The hybrid model: a lead associate as a W-2 employee, with everyone else brought on as 1099 contract planners (the third option).",
+   "keywords": [
+    "hybrid",
+    "W-2",
+    "1099"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c26-referent-2",
+   "category": "referent",
+   "middle_user": "Showcase venue decision. Three options: (1) rent the botanical garden's event hall, (2) partner with one of our regular venues and host it there for free in exchange for exposure, or (3) do it at our own studio space. We're going with the second option, partnering with a regular venue.",
+   "tail_user_fragment": "For the showcase venue we picked, don't re-explain it, what should we offer that venue in return beyond just exposure?",
+   "probe": "Which venue option did we choose for the showcase?",
+   "probes": [
+    "Which venue option did we choose for the showcase?",
+    "Where did we decide to hold the showcase event?",
+    "Out of the three showcase venue options, which one won out?"
+   ],
+   "gold": "Partnering with one of our regular venues and hosting the showcase there for free in exchange for exposure (the second option).",
+   "keywords": [
+    "partner venue",
+    "exposure",
+    "for free"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c26-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the binder' means two things at Willowmere. The office keeps a master vendor binder with contracts and W-9s. But when I say 'the binder' to you, I always mean the client-facing wedding-day binder we hand each couple with the run-of-show and vendor contacts. That's the one I mean in this chat.",
+   "tail_user_fragment": "What sections should we add to the binder before wedding season really picks up?",
+   "probe": "When I refer to 'the binder' in this conversation, which one do I mean?",
+   "probes": [
+    "When I refer to 'the binder' in this conversation, which one do I mean?",
+    "Which binder was I talking about when I asked about adding sections?",
+    "Clarify which of our two binders I mean by 'the binder'."
+   ],
+   "gold": "The client-facing wedding-day binder with the run-of-show and vendor contacts, not the internal master vendor binder.",
+   "keywords": [
+    "client-facing",
+    "run-of-show"
+   ],
+   "anti_keywords": [
+    "master vendor binder",
+    "W-9"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c26-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the walkthrough' I mean the final in-person venue walkthrough with the couple four weeks out, not the rehearsal walkthrough the night before. Two very different meetings and I keep conflating them out loud.",
+   "tail_user_fragment": "What should be on the checklist for the walkthrough this time?",
+   "probe": "When I mentioned 'the walkthrough', which meeting was I referring to?",
+   "probes": [
+    "When I mentioned 'the walkthrough', which meeting was I referring to?",
+    "Which meeting did I mean by 'the walkthrough' earlier?",
+    "Clarify what 'the walkthrough' refers to in our planning."
+   ],
+   "gold": "The final in-person venue walkthrough with the couple, four weeks before the wedding, not the night-before rehearsal walkthrough.",
+   "keywords": [
+    "four weeks out",
+    "venue walkthrough"
+   ],
+   "anti_keywords": [
+    "rehearsal",
+    "night before"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c26-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for the business going forward: we do not offer 'day-of coordination only' packages anymore. I did three of those early on and every single one turned into me firefighting someone else's badly planned wedding with zero authority to fix it. Never suggest bringing that package back.",
+   "tail_user_fragment": null,
+   "probe": "What tiers of planning packages should we offer as we grow the team?",
+   "probes": [
+    "What tiers of planning packages should we offer as we grow the team?",
+    "Suggest a package lineup for the business now that we have associates.",
+    "How should we structure our service tiers going forward?"
+   ],
+   "gold": "Suggests tiers like full-service planning, partial planning, and real month-of coordination with genuine involvement, while never proposing a pure day-of-only package, ideally recalling the firefighting problem with zero authority.",
+   "keywords": [
+    "firefighting",
+    "zero authority"
+   ],
+   "anti_keywords": [
+    "day-of only",
+    "day-of coordination"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c26-stance-2",
+   "category": "stance",
+   "middle_user": "Another firm rule: I will not schedule Sunday weddings anymore, for me or any associate. We tried it a few times and it wrecked everyone's ability to recover before the next Friday's setup work. Whatever we do for scheduling, Sundays are off the table.",
+   "tail_user_fragment": null,
+   "probe": "Draft guidance for how we should structure the team's weekly booking calendar.",
+   "probes": [
+    "Draft guidance for how we should structure the team's weekly booking calendar.",
+    "What days should we be booking weddings on going forward?",
+    "Help me set a rule for which days of the week we accept bookings."
+   ],
+   "gold": "A calendar that avoids scheduling any Sunday weddings, ideally recalling the recovery/burnout reasoning tied to Friday setup work.",
+   "keywords": [
+    "recover",
+    "Friday setup"
+   ],
+   "anti_keywords": [
+    "Sunday wedding"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c26-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record, we tried a vendor and contract management platform called Aisleform last year. It kept losing signed e-signatures in transit, twice a couple showed up thinking they'd never signed. We cancelled after four months and I won't touch it again.",
+   "tail_user_fragment": null,
+   "probe": "What should we use to manage contracts and e-signatures going forward?",
+   "probes": [
+    "What should we use to manage contracts and e-signatures going forward?",
+    "Recommend a tool for handling our contract signatures.",
+    "How should we collect and store signed contracts from here on out?"
+   ],
+   "gold": "Anything except Aisleform, e.g. a different e-signature tool, DocuSign, or a manual signed-PDF process, ideally acknowledging Aisleform lost signatures in transit.",
+   "keywords": [
+    "lost",
+    "e-signatures"
+   ],
+   "anti_keywords": [
+    "aisleform"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c26-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, marketing history: we paid for a premium listing on a directory called Vowfinder for eight months. It generated eleven leads total and only one booked, and that couple ghosted on the final payment anyway. Not renewing that, ever.",
+   "tail_user_fragment": null,
+   "probe": "Where should we invest our marketing budget next to generate leads?",
+   "probes": [
+    "Where should we invest our marketing budget next to generate leads?",
+    "What lead-generation channels should we try instead going forward?",
+    "Suggest where the marketing budget should go this year."
+   ],
+   "gold": "Anything except a Vowfinder premium listing, e.g. referral partnerships, styled shoots, Instagram, or venue partnerships, ideally acknowledging Vowfinder only produced eleven leads and one booking that later ghosted.",
+   "keywords": [
+    "eleven leads",
+    "ghosted"
+   ],
+   "anti_keywords": [
+    "vowfinder"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c26-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note for my own records: our standard deposit going forward is $1,250 per wedding, non-refundable after 14 days, we finalized that with my accountant this week. Doesn't change what we're discussing, just parking it here.",
+   "tail_user_fragment": null,
+   "probe": "What's our standard deposit amount, and when does it become non-refundable?",
+   "probes": [
+    "What's our standard deposit amount, and when does it become non-refundable?",
+    "Remind me what deposit figure we finalized with the accountant.",
+    "How much is the new standard wedding deposit, and what's the refund window?"
+   ],
+   "gold": "$1,250 per wedding, non-refundable after 14 days.",
+   "keywords": [
+    "1,250",
+    "14 days"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c26-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, and I officially hired our first associate planner. Her name is Priya Nakashima, she starts the second week of September and she's already covered under our business's insurance umbrella policy.",
+   "tail_user_fragment": null,
+   "probe": "Who is our first associate planner and when does she start?",
+   "probes": [
+    "Who is our first associate planner and when does she start?",
+    "What's the name of the associate planner we hired, and her start date?",
+    "Remind me who I said we brought on as our first hire."
+   ],
+   "gold": "Priya Nakashima, starting the second week of September.",
+   "keywords": [
+    "Priya Nakashima",
+    "September"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c26-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our new client intake and CRM rollout 'Vin' from now on. Any internal note or email about switching couples' info over to the new system should just say Vin, not the vendor's real product name.",
+   "tail_user_fragment": "How's the Vin timeline looking? I want it live before we onboard the next batch of couples.",
+   "probe": "What does 'Vin' refer to in our project?",
+   "probes": [
+    "What does 'Vin' refer to in our project?",
+    "If I mention Vin again later, what should you understand that to mean?",
+    "Remind me what we're calling Vin internally -- what is it?"
+   ],
+   "gold": "The new client intake and CRM software rollout.",
+   "keywords": [
+    "CRM",
+    "client intake"
+   ],
+   "anti_keywords": [
+    "Mistborn",
+    "allomancer",
+    "Brandon Sanderson",
+    "thief",
+    "assassin"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c26-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Also, let's codename the studio office renovation 'Kelsier' -- new consultation space, sample table, the works. Use that name in anything you draft about it so we don't confuse it with client-facing stuff.",
+   "tail_user_fragment": "Any update needed on Kelsier before the showcase, since clients will actually see the space that week?",
+   "probe": "What does 'Kelsier' refer to in our project?",
+   "probes": [
+    "What does 'Kelsier' refer to in our project?",
+    "If I bring up Kelsier again, what should you take that to mean?",
+    "Remind me what Kelsier is code for in our planning."
+   ],
+   "gold": "The studio office renovation and buildout (new consultation space, sample table, etc.).",
+   "keywords": [
+    "office renovation",
+    "consultation space"
+   ],
+   "anti_keywords": [
+    "Mistborn",
+    "thief",
+    "assassin",
+    "Brandon Sanderson"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "codex-gpt5.5"
+ }
+}

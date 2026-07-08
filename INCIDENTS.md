@@ -414,3 +414,10 @@ FIXES: (a) SC_POD_DISK knob (pod.py) → provision 400G; (b) disk-headroom check
 after its run (rm /workspace/hf/hub/models--*) — 1-2 models resident, not 7;
 (d) smoke gate is the corrupt-download catch. Community pods unstable (this + the
 2 earlier deaths) — secure preferred but often out of capacity (500s).
+
+## 31. Used local 4B MLX to generate corpus filler text — slowest possible option (07-08, user)
+Reflexively reused compose.py (local 4-bit 4B MLX, token-by-token, ~7-8min/conv) to
+render augmented-corpus conversations. User: "using local MLX is insane." FIX: killed
+it, committed the 3 MLX convs for posterity then removed them, regenerated via a MIX
+of Fable/Opus/Sonnet/Codex subagents (low-effort, specific goals, ~minutes, parallel,
+diverse) writing conversations directly + VERIFY each. Lesson memory: question-the-backend.

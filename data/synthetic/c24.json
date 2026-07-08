@@ -1,0 +1,521 @@
+{
+ "id": "c24",
+ "title": "Bookstore launches a small press imprint",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant supporting an independent bookstore owner who is launching a small press publishing imprint."
+  },
+  {
+   "role": "user",
+   "content": "Hi, so after twelve years running Sparrow & Bell, I'm finally starting a small press imprint out of the shop, we're calling it Fieldstone Editions. It's just me and one part-time editor. I want to work through the whole launch with you, acquisitions, printing, distribution, all of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Absolutely, glad to be your thinking partner on this. Let's dig in."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with author acquisitions since nothing else matters without books to publish. What should my manuscript pipeline actually look like for a first-year imprint with no track record yet?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good place to start. Here's the short version, and we can go as deep as you want from here."
+  },
+  {
+   "role": "user",
+   "content": "On printing, walk me through the real tradeoffs between short-run digital printing and traditional offset for a first print run of a debut poetry collection."
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Printer decision time. We had it down to three: (1) Cobalt Print Co, a local short-run digital press, (2) Marrow Bindery, an offset printer better suited to larger runs, or (3) a print-on-demand distributor. I'm going with Cobalt Print Co for our first three titles, our runs are small enough that offset doesn't make sense yet and I want a local relationship I can walk into."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — that's a defensible call and it keeps the path clean. I'll treat it as settled from here."
+  },
+  {
+   "role": "user",
+   "content": "For distribution, how does a tiny imprint like ours even get into other independent bookstores without a big distributor relationship?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Quick terminology note: 'the List' is overloaded at the shop. The staff also call the daily new-arrivals shelf 'the list,' but when I say the List to you, I always mean the imprint's acquisitions list, the manuscripts currently under consideration for Fieldstone. That's the one I want your help managing."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll use that meaning consistently whenever you use the term."
+  },
+  {
+   "role": "user",
+   "content": "ISBN question broadly, do I need a different ISBN for the ebook edition versus the print edition of the same title?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "Also, 'the Spring catalog' is overloaded. Regular customers know it as the store's spring reading picks display up front, but when I say the Spring catalog to you, I always mean Fieldstone's slate of titles releasing in spring of next year. That's the one we're planning together."
+  },
+  {
+   "role": "assistant",
+   "content": "Clear. I'll read it that way from now on and won't confuse it with the other one."
+  },
+  {
+   "role": "user",
+   "content": "For author events, what's a realistic first-year events calendar look like if I'm doing this alongside running the store day-to-day?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "user",
+   "content": "For distribution history: we tried a distributor called Pageturn Wholesale on a trial basis. They were four months in arrears on royalty statements before we cut them loose, and I never got a straight answer about why. Not going back to Pageturn."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep that option off the table and steer toward alternatives."
+  },
+  {
+   "role": "user",
+   "content": "Also, we tried a print vendor called QuickBind Press for a proof run. Their binding glue failed and pages fell out of about 15 percent of an author copy run before we even got to the real print order. We're done with QuickBind."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I won't put that back in front of you; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the poetry chapbook sub-series 'Pikachu' from now on in our planning docs, since we haven't announced it publicly and I don't want authors we're courting for the main list to see it and feel like second choice."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — I'll use that codename consistently in anything we draft."
+  },
+  {
+   "role": "user",
+   "content": "Back to acquisitions, how do I handle an author who submits a manuscript that's great but way outside anything we've said we publish?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair concern. Most teams your size handle it by piloting small first, then scaling once it's proven out."
+  },
+  {
+   "role": "user",
+   "content": "Our agent contact Priya Nandan pitched a bundling idea I really like. Instead of releasing our three linked story collections one at a time over two years, she wants us to package all three into a single boxed set with shared cover art and release them together as a launch title. I've decided to go with her plan."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense given the tradeoffs you weighed. I'll carry that forward as the decision."
+  },
+  {
+   "role": "user",
+   "content": "On the budget side, what's a sane way to think about advance payments to debut authors when we have basically no revenue history to project against?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good instinct to check. The defensible baseline is usually the more representative, less cherry-picked one — I can explain why."
+  },
+  {
+   "role": "user",
+   "content": "Firm rule on contracts: I will not sign any author to an ebook-exclusive deal, ever. Print-first physical availability at launch is non-negotiable for me, it's the whole point of a small press tied to a physical shop."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and the reasoning is sound. I won't propose anything that cuts against it."
+  },
+  {
+   "role": "user",
+   "content": "For printing again, what proofing steps should I insist on before signing off on a full print run, beyond just reading the galley myself?"
+  },
+  {
+   "role": "assistant",
+   "content": "That's a common decision point. I'd frame it around what protects you if it's ever scrutinized later."
+  },
+  {
+   "role": "user",
+   "content": "Another one I feel strongly about: no author events at big-box or chain retailers, ever, even if they offer us a bigger room or a mailing list. Every launch event has to happen at an independent bookstore partner venue, that's the whole spirit of Fieldstone."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep everything I draft aligned with that."
+  },
+  {
+   "role": "user",
+   "content": "On rights, what should our standard author contract say about audiobook rights if we're not producing audio ourselves anytime soon?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sensible to ask now rather than later. The rule of thumb is to leave yourself margin and avoid single points of failure."
+  },
+  {
+   "role": "user",
+   "content": "Bookkeeping note while I think of it: we bought a block of 100 ISBNs from Bowker for $575. Doesn't change anything we're deciding today, just want it on record."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks — logged. I've got it on record for when it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "Oh, for the record, I've set aside $38,000 in seed capital from the store's reserve to fund Fieldstone's first year. That's the hard cap for now. Just parking that number here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted and parked. I'll have it handy if it comes up later."
+  },
+  {
+   "role": "user",
+   "content": "One more codename: we're calling the author royalty and accounting software migration project 'Shire' internally. It's tedious and boring but it has to happen before our first royalty statements go out, and I don't want it cluttering conversations with authors, so Shire it is."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll refer to it by that name in all our internal docs from here on."
+  },
+  {
+   "role": "user",
+   "content": "Given everything, sketch a one-page launch checklist for our very first title, start to finish."
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "For the printer we picked, don't re-explain it, just tell me what lead time I should quote authors for their first galley proof."
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "On Priya's bundling idea, I'm sold, don't re-describe it, just tell me how we should price the boxed set relative to buying the three separately."
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Should we bump the memoir manuscript up on the List given the agent's exclusivity deadline?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Is the poetry chapbook confirmed for the Spring catalog, or is it still a maybe?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Should Pikachu get its own ISBN prefix range, or just draw from our existing block?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Is Shire going to be done in time for the first royalty statements, or should we run one cycle manually as a backup?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "What's a reasonable print run size for a debut title from an unknown imprint, so we're not sitting on boxes of unsold stock?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "assistant",
+   "content": "That covers the main threads for now. Ping me whenever the next piece comes up and we'll keep it all straight."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 45
+ },
+ "plants": [
+  {
+   "id": "c24-referent-1",
+   "category": "referent",
+   "middle_user": "Printer decision time. We had it down to three: (1) Cobalt Print Co, a local short-run digital press, (2) Marrow Bindery, an offset printer better suited to larger runs, or (3) a print-on-demand distributor. I'm going with Cobalt Print Co for our first three titles, our runs are small enough that offset doesn't make sense yet and I want a local relationship I can walk into.",
+   "tail_user_fragment": "For the printer we picked, don't re-explain it, just tell me what lead time I should quote authors for their first galley proof.",
+   "probe": "Which printer did we decide on for the first three Fieldstone titles?",
+   "probes": [
+    "Which printer did we decide on for the first three Fieldstone titles?",
+    "What printing vendor did I choose out of the three options we compared?",
+    "Remind me which print shop we settled on for the imprint's early titles."
+   ],
+   "gold": "Cobalt Print Co, the local short-run digital press (the first of the three options).",
+   "keywords": [
+    "Cobalt Print",
+    "short-run digital"
+   ],
+   "anti_keywords": [
+    "Marrow Bindery",
+    "print-on-demand"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c24-referent-2",
+   "category": "referent",
+   "middle_user": "Our agent contact Priya Nandan pitched a bundling idea I really like. Instead of releasing our three linked story collections one at a time over two years, she wants us to package all three into a single boxed set with shared cover art and release them together as a launch title. I've decided to go with her plan.",
+   "tail_user_fragment": "On Priya's bundling idea, I'm sold, don't re-describe it, just tell me how we should price the boxed set relative to buying the three separately.",
+   "probe": "What specifically was Priya Nandan's proposal that we're going with?",
+   "probes": [
+    "What specifically was Priya Nandan's proposal that we're going with?",
+    "What did Priya suggest about how to release the three story collections?",
+    "Recap the bundling plan Priya pitched that we adopted."
+   ],
+   "gold": "Packaging the three linked story collections into a single boxed set with shared cover art and releasing them together as the launch title, instead of releasing them separately over two years.",
+   "keywords": [
+    "boxed set",
+    "shared cover art",
+    "together"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c24-sense-1",
+   "category": "sense",
+   "middle_user": "Quick terminology note: 'the List' is overloaded at the shop. The staff also call the daily new-arrivals shelf 'the list,' but when I say the List to you, I always mean the imprint's acquisitions list, the manuscripts currently under consideration for Fieldstone. That's the one I want your help managing.",
+   "tail_user_fragment": "Should we bump the memoir manuscript up on the List given the agent's exclusivity deadline?",
+   "probe": "When I refer to 'the List' in this conversation, what am I talking about?",
+   "probes": [
+    "When I refer to 'the List' in this conversation, what am I talking about?",
+    "What does 'the List' mean in our conversation specifically?",
+    "If I mention the List again, what should you take that to refer to?"
+   ],
+   "gold": "The imprint's acquisitions list of manuscripts under consideration for Fieldstone, not the store's daily new-arrivals shelf list.",
+   "keywords": [
+    "acquisitions",
+    "manuscripts under consideration"
+   ],
+   "anti_keywords": [
+    "new-arrivals",
+    "shelf"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c24-sense-2",
+   "category": "sense",
+   "middle_user": "Also, 'the Spring catalog' is overloaded. Regular customers know it as the store's spring reading picks display up front, but when I say the Spring catalog to you, I always mean Fieldstone's slate of titles releasing in spring of next year. That's the one we're planning together.",
+   "tail_user_fragment": "Is the poetry chapbook confirmed for the Spring catalog, or is it still a maybe?",
+   "probe": "When I say 'the Spring catalog' in this conversation, which one do I mean?",
+   "probes": [
+    "When I say 'the Spring catalog' in this conversation, which one do I mean?",
+    "What does 'the Spring catalog' refer to here specifically?",
+    "Clarify what the Spring catalog means in our discussion."
+   ],
+   "gold": "Fieldstone's slate of titles releasing next spring, not the store's front-table spring reading picks display.",
+   "keywords": [
+    "Fieldstone",
+    "slate of titles",
+    "next spring"
+   ],
+   "anti_keywords": [
+    "front-table",
+    "reading picks display"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c24-stance-1",
+   "category": "stance",
+   "middle_user": "Firm rule on contracts: I will not sign any author to an ebook-exclusive deal, ever. Print-first physical availability at launch is non-negotiable for me, it's the whole point of a small press tied to a physical shop.",
+   "tail_user_fragment": null,
+   "probe": "Draft three contract terms we could offer a debut author on format and release rights.",
+   "probes": [
+    "Draft three contract terms we could offer a debut author on format and release rights.",
+    "What format terms should our author contracts include?",
+    "Suggest release-format clauses for our standard author agreement."
+   ],
+   "gold": "Suggests print-first terms with simultaneous or later ebook availability, never an ebook-exclusive deal.",
+   "keywords": [
+    "print-first",
+    "physical availability"
+   ],
+   "anti_keywords": [
+    "ebook-exclusive",
+    "ebook-only"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c24-stance-2",
+   "category": "stance",
+   "middle_user": "Another one I feel strongly about: no author events at big-box or chain retailers, ever, even if they offer us a bigger room or a mailing list. Every launch event has to happen at an independent bookstore partner venue, that's the whole spirit of Fieldstone.",
+   "tail_user_fragment": null,
+   "probe": "Suggest three venues for our first title's launch event tour.",
+   "probes": [
+    "Suggest three venues for our first title's launch event tour.",
+    "Where should we hold events for the debut Fieldstone title?",
+    "What kind of venues should we book for the launch tour?"
+   ],
+   "gold": "Suggests independent bookstore partner venues, never chain or big-box retailer locations.",
+   "keywords": [
+    "independent bookstore",
+    "partner venue"
+   ],
+   "anti_keywords": [
+    "big-box",
+    "chain retailer"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c24-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For distribution history: we tried a distributor called Pageturn Wholesale on a trial basis. They were four months in arrears on royalty statements before we cut them loose, and I never got a straight answer about why. Not going back to Pageturn.",
+   "tail_user_fragment": null,
+   "probe": "What distributor should we look at for getting Fieldstone titles into other stores?",
+   "probes": [
+    "What distributor should we look at for getting Fieldstone titles into other stores?",
+    "Who should we approach for distribution now?",
+    "Suggest a distribution partner for the imprint."
+   ],
+   "gold": "Any distributor other than Pageturn Wholesale, ideally noting they were four months in arrears on royalty statements.",
+   "keywords": [
+    "four months",
+    "royalty statements"
+   ],
+   "anti_keywords": [
+    "Pageturn"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c24-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, we tried a print vendor called QuickBind Press for a proof run. Their binding glue failed and pages fell out of about 15 percent of an author copy run before we even got to the real print order. We're done with QuickBind.",
+   "tail_user_fragment": null,
+   "probe": "What print vendor should we use for the next proof run?",
+   "probes": [
+    "What print vendor should we use for the next proof run?",
+    "Who should we send the next proofing job to?",
+    "Suggest a printer for the upcoming galley proofs."
+   ],
+   "gold": "Any printer other than QuickBind Press, ideally noting their glue failure caused pages to fall out of about 15 percent of a run.",
+   "keywords": [
+    "glue failed",
+    "15 percent"
+   ],
+   "anti_keywords": [
+    "QuickBind"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c24-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Bookkeeping note while I think of it: we bought a block of 100 ISBNs from Bowker for $575. Doesn't change anything we're deciding today, just want it on record.",
+   "tail_user_fragment": null,
+   "probe": "How many ISBNs did we buy from Bowker, and what did the block cost?",
+   "probes": [
+    "How many ISBNs did we buy from Bowker, and what did the block cost?",
+    "Remind me the size and cost of our ISBN block purchase.",
+    "What did we spend on ISBNs and how many did we get?"
+   ],
+   "gold": "A block of 100 ISBNs from Bowker for $575.",
+   "keywords": [
+    "100",
+    "575"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c24-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, for the record, I've set aside $38,000 in seed capital from the store's reserve to fund Fieldstone's first year. That's the hard cap for now. Just parking that number here.",
+   "tail_user_fragment": null,
+   "probe": "How much seed capital did I set aside for Fieldstone's first year?",
+   "probes": [
+    "How much seed capital did I set aside for Fieldstone's first year?",
+    "What's the first-year budget cap I mentioned for the imprint?",
+    "Remind me the dollar figure I set aside from the store's reserve for the imprint."
+   ],
+   "gold": "$38,000 in seed capital from the store's reserve.",
+   "keywords": [
+    "38,000",
+    "seed capital"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c24-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the poetry chapbook sub-series 'Pikachu' from now on in our planning docs, since we haven't announced it publicly and I don't want authors we're courting for the main list to see it and feel like second choice.",
+   "tail_user_fragment": "Should Pikachu get its own ISBN prefix range, or just draw from our existing block?",
+   "probe": "What does 'Pikachu' refer to in our project?",
+   "probes": [
+    "What does 'Pikachu' refer to in our project?",
+    "If I mention Pikachu again later, what should you understand that to mean?",
+    "Remind me what we're calling Pikachu internally, what is it?"
+   ],
+   "gold": "The poetry chapbook sub-series under Fieldstone Editions.",
+   "keywords": [
+    "poetry chapbook",
+    "sub-series"
+   ],
+   "anti_keywords": [
+    "Pokemon",
+    "electric",
+    "yellow mouse"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c24-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "One more codename: we're calling the author royalty and accounting software migration project 'Shire' internally. It's tedious and boring but it has to happen before our first royalty statements go out, and I don't want it cluttering conversations with authors, so Shire it is.",
+   "tail_user_fragment": "Is Shire going to be done in time for the first royalty statements, or should we run one cycle manually as a backup?",
+   "probe": "What is 'Shire' the internal codename for?",
+   "probes": [
+    "What is 'Shire' the internal codename for?",
+    "What project does the name Shire refer to in this conversation?",
+    "Remind me what Shire actually is, the real workstream behind that name."
+   ],
+   "gold": "The author royalty and accounting software migration project.",
+   "keywords": [
+    "royalty",
+    "accounting software",
+    "migration"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "hobbit",
+    "Tolkien"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet"
+ }
+}

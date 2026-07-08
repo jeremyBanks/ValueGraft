@@ -1,0 +1,569 @@
+{
+ "id": "c20",
+ "title": "Second brewery taproom launch",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in hospitality and small-business operations, helping a craft brewery plan the opening of a second taproom."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so Hollow Oak is opening our second taproom, this time over in the Millbrook neighborhood, and it's a much bigger undertaking than I expected. I want to use you as a planning partner across everything, recipes, equipment, contracts, staffing, the works, over the next couple months. Cool?"
+  },
+  {
+   "role": "assistant",
+   "content": "Absolutely, glad to be your thinking partner on this. Let's dig in."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with recipe development since that's the fun part. We want two or three taproom-exclusive beers that aren't available at the original location. What should I be thinking about when designing beers meant to only ever be sold on-site at one spot?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good place to start. Here's the short version, and we can go as deep as you want from here."
+  },
+  {
+   "role": "user",
+   "content": "On equipment: we're deciding between buying a used 15-barrel brewhouse system or leasing a smaller 7-barrel system just for pilot batches at Millbrook, with the big batches still brewed at the original site and trucked over. What's the general tradeoff there?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Equipment decision time. We looked at three routes: (1) buy a used 15-barrel brewhouse outright, (2) lease a smaller 7-barrel pilot system and truck big batches over from the original site, or (3) do a hybrid where we buy a 10-barrel system used but finance it over five years. After running the numbers with our accountant, we're going with the hybrid, the financed 10-barrel system."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — that's a defensible call and it keeps the path clean. I'll treat it as settled from here."
+  },
+  {
+   "role": "user",
+   "content": "For the lease itself, the landlord wants a 7-year term with 3 percent annual escalation. Is that a normal ask for a taproom space or should we push back?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Quick clarification: when I say 'the flagship' to you, I always mean our core year-round IPA recipe, not the original taproom building, even though people around here sometimes call the first location 'the flagship location' too. Just the beer, when I say it to you."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll use that meaning consistently whenever you use the term."
+  },
+  {
+   "role": "user",
+   "content": "Distribution question: we're looking at getting Hollow Oak's core lineup into a regional distributor's network for the first time, beyond just our own taprooms. What should I know before signing anything?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "Hard preference on the exclusive lineup: absolutely nothing in the pastry-sour or fruited-smoothie-style category. I think they're a fad and they muddy our identity as a beer-forward brewery. I don't care how trendy they are at other taprooms, we're not doing one, ever."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and the reasoning is sound. I won't propose anything that cuts against it."
+  },
+  {
+   "role": "user",
+   "content": "Licensing-wise, does opening a second physical location usually require a whole new liquor license application, or can we amend our existing one somehow?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "user",
+   "content": "For context, we tried a point-of-sale system called TapLedger at the original taproom for about six months. It lost pour-count data twice during Friday rushes and support took four days to respond both times. We ripped it out and will never use TapLedger again."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep that option off the table and steer toward alternatives."
+  },
+  {
+   "role": "user",
+   "content": "Back to recipes, how many test batches should I realistically expect before a new taproom-exclusive recipe is dialed in and consistent enough to serve?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair concern. Most teams your size handle it by piloting small first, then scaling once it's proven out."
+  },
+  {
+   "role": "user",
+   "content": "Random note for the file: the Millbrook lease base rent is $8,950 a month before the 3 percent escalation kicks in year two. Just logging that, doesn't change what we're discussing."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks — logged. I've got it on record for when it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "Let's just codename the whole Millbrook taproom project 'Gondor' from here on, in every planning doc and email, so we're not typing the full address every time."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — I'll use that codename consistently in anything we draft."
+  },
+  {
+   "role": "user",
+   "content": "One more codename: let's call the small pilot lab space where we run R&D test batches 'Rivendell'. Keep that name in the brew log headers so we don't confuse pilot batches with production batches."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll refer to it by that name in all our internal docs from here on."
+  },
+  {
+   "role": "user",
+   "content": "For staffing, we need to hire basically a whole new front-of-house team plus at least one assistant brewer for Millbrook. Where should I even start?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good instinct to check. The defensible baseline is usually the more representative, less cherry-picked one — I can explain why."
+  },
+  {
+   "role": "user",
+   "content": "On distributors, we had three offers on the table: (1) Cascade Draft House with the 40-mile exclusivity ask, (2) Fernwood Beverage with no exclusivity but a smaller sales team, or (3) a self-distribution route just for the county for the first year. We talked it through with our sales rep and we're going with Fernwood, no exclusivity, even though their team is smaller."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense given the tradeoffs you weighed. I'll carry that forward as the decision."
+  },
+  {
+   "role": "user",
+   "content": "On the equipment side, if we go with the smaller pilot system, what's a reasonable batch size to plan a taproom-exclusive release around so we don't run dry mid-week?"
+  },
+  {
+   "role": "assistant",
+   "content": "That's a common decision point. I'd frame it around what protects you if it's ever scrutinized later."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the cellar' from now on, I mean the walk-in cold storage room where we keep kegs and finished product, not the barrel-aging program, which some of the staff also call 'the cellar program.' Two different things, and I only mean the room."
+  },
+  {
+   "role": "assistant",
+   "content": "Clear. I'll read it that way from now on and won't confuse it with the other one."
+  },
+  {
+   "role": "user",
+   "content": "Distribution follow-up: the distributor wants exclusivity in a 40-mile radius. Is that a red flag or fairly standard in this industry?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sensible to ask now rather than later. The rule of thumb is to leave yourself margin and avoid single points of failure."
+  },
+  {
+   "role": "user",
+   "content": "One more firm rule: no group cattle-call interviews where we process ten applicants in one room in an hour. We did that for the first taproom's opening and ended up with two hires who couldn't handle a Friday rush. One-on-one interviews only this time, even if it takes longer."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep everything I draft aligned with that."
+  },
+  {
+   "role": "user",
+   "content": "For licensing, how far in advance of opening day should we realistically start the application, given typical state board processing times?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Also, remember we sourced hops from Greenridge Hop Co for about a year and the alpha-acid consistency was all over the place, one shipment tested nearly 3 percent off spec and it wrecked a whole batch of the flagship. We dropped them and aren't going back."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I won't put that back in front of you; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "Staffing again, what's a sane ratio of trained cicerone-level staff to general front-of-house staff for a taproom our size?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "For the record, the liquor license amendment we filed with the state board has reference number LIC-A-55291, submitted on February 18th. Board says allow ten to twelve weeks."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted and parked. I'll have it handy if it comes up later."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the walk-in cooler and refrigeration install 'Mordor', since it's been the most miserable, behind-schedule part of the whole build-out. Use that name for it in any status update."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — I'll use that codename consistently in anything we draft."
+  },
+  {
+   "role": "user",
+   "content": "One more on distribution: should our lawyer review the distributor agreement before or after we negotiate the exclusivity radius?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "On the brewhouse decision, no need to walk through it again, but what maintenance contract should we line up before it arrives?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "For the distributor we picked, don't re-explain who it is, just tell me what onboarding paperwork they'll need from us first."
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Does the flagship need any recipe tweaks before we scale up production for Millbrook?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "How much capacity do we need in the cellar for opening week?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "What's still open on the Gondor punch list before we can set an opening date?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Any movement on Mordor this week, or is it still stuck?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Did the last test batch out of Rivendell match spec, or do we need another round?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "For staffing, how should we structure the interview process so we're not just hiring friends of friends again like last time?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "assistant",
+   "content": "That covers the main threads for now. Ping me whenever the next piece comes up and we'll keep it all straight."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 51
+ },
+ "plants": [
+  {
+   "id": "c20-referent-1",
+   "category": "referent",
+   "middle_user": "Equipment decision time. We looked at three routes: (1) buy a used 15-barrel brewhouse outright, (2) lease a smaller 7-barrel pilot system and truck big batches over from the original site, or (3) do a hybrid where we buy a 10-barrel system used but finance it over five years. After running the numbers with our accountant, we're going with the hybrid, the financed 10-barrel system.",
+   "tail_user_fragment": "On the brewhouse decision, no need to walk through it again, but what maintenance contract should we line up before it arrives?",
+   "probe": "What did we decide on for the Millbrook brewhouse equipment?",
+   "probes": [
+    "What did we decide on for the Millbrook brewhouse equipment?",
+    "Which of the three equipment routes did we end up choosing for Millbrook?",
+    "Remind me exactly what brewhouse setup we settled on."
+   ],
+   "gold": "The hybrid option: buying a used 10-barrel system financed over five years (option three of three).",
+   "keywords": [
+    "10-barrel",
+    "financed"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c20-referent-2",
+   "category": "referent",
+   "middle_user": "On distributors, we had three offers on the table: (1) Cascade Draft House with the 40-mile exclusivity ask, (2) Fernwood Beverage with no exclusivity but a smaller sales team, or (3) a self-distribution route just for the county for the first year. We talked it through with our sales rep and we're going with Fernwood, no exclusivity, even though their team is smaller.",
+   "tail_user_fragment": "For the distributor we picked, don't re-explain who it is, just tell me what onboarding paperwork they'll need from us first.",
+   "probe": "Which distributor did we decide to go with?",
+   "probes": [
+    "Which distributor did we decide to go with?",
+    "Out of the three distribution offers, which one did we accept?",
+    "Remind me which distributor we're signing with for Millbrook."
+   ],
+   "gold": "Fernwood Beverage (no exclusivity, smaller sales team), over Cascade Draft House or self-distribution.",
+   "keywords": [
+    "fernwood"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c20-sense-1",
+   "category": "sense",
+   "middle_user": "Quick clarification: when I say 'the flagship' to you, I always mean our core year-round IPA recipe, not the original taproom building, even though people around here sometimes call the first location 'the flagship location' too. Just the beer, when I say it to you.",
+   "tail_user_fragment": "Does the flagship need any recipe tweaks before we scale up production for Millbrook?",
+   "probe": "When I said 'the flagship', what was I referring to?",
+   "probes": [
+    "When I said 'the flagship', what was I referring to?",
+    "What does 'the flagship' mean when I use that term with you?",
+    "If I mention the flagship again, what should you take that to be?"
+   ],
+   "gold": "The core year-round IPA recipe, not the original taproom building.",
+   "keywords": [
+    "core",
+    "IPA",
+    "recipe"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c20-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the cellar' from now on, I mean the walk-in cold storage room where we keep kegs and finished product, not the barrel-aging program, which some of the staff also call 'the cellar program.' Two different things, and I only mean the room.",
+   "tail_user_fragment": "How much capacity do we need in the cellar for opening week?",
+   "probe": "When I referred to 'the cellar', which thing did I mean?",
+   "probes": [
+    "When I referred to 'the cellar', which thing did I mean?",
+    "What specifically is 'the cellar' in our conversations?",
+    "If I ask about the cellar again, what should you think I'm talking about?"
+   ],
+   "gold": "The walk-in cold storage room for kegs and finished product, not the barrel-aging program.",
+   "keywords": [
+    "cold storage",
+    "kegs"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c20-stance-1",
+   "category": "stance",
+   "middle_user": "Hard preference on the exclusive lineup: absolutely nothing in the pastry-sour or fruited-smoothie-style category. I think they're a fad and they muddy our identity as a beer-forward brewery. I don't care how trendy they are at other taprooms, we're not doing one, ever.",
+   "tail_user_fragment": null,
+   "probe": "Suggest three taproom-exclusive beer concepts for Millbrook's opening lineup.",
+   "probes": [
+    "Suggest three taproom-exclusive beer concepts for Millbrook's opening lineup.",
+    "What beers should we brew exclusively for the Millbrook opening?",
+    "Pitch me some ideas for the exclusive lineup at the new taproom."
+   ],
+   "gold": "Suggests concepts like a hazy IPA variant, a barrel-aged stout, or a crisp lager, never a pastry sour or fruited-smoothie-style beer, ideally recalling that the user called it a fad that muddies their beer-forward identity.",
+   "keywords": [
+    "beer-forward"
+   ],
+   "anti_keywords": [
+    "pastry sour",
+    "smoothie"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c20-stance-2",
+   "category": "stance",
+   "middle_user": "One more firm rule: no group cattle-call interviews where we process ten applicants in one room in an hour. We did that for the first taproom's opening and ended up with two hires who couldn't handle a Friday rush. One-on-one interviews only this time, even if it takes longer.",
+   "tail_user_fragment": null,
+   "probe": "How should we structure interviews for the Millbrook front-of-house hires?",
+   "probes": [
+    "How should we structure interviews for the Millbrook front-of-house hires?",
+    "What interview format should we use for the new front-of-house team?",
+    "Should we do group interviews to move faster on hiring for Millbrook?"
+   ],
+   "gold": "One-on-one interviews only, never group or cattle-call sessions, ideally recalling the bad hires from the first taproom's group interviews.",
+   "keywords": [
+    "one-on-one"
+   ],
+   "anti_keywords": [
+    "group interview",
+    "cattle-call",
+    "cattle call"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c20-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For context, we tried a point-of-sale system called TapLedger at the original taproom for about six months. It lost pour-count data twice during Friday rushes and support took four days to respond both times. We ripped it out and will never use TapLedger again.",
+   "tail_user_fragment": null,
+   "probe": "What POS system should we consider for the Millbrook taproom?",
+   "probes": [
+    "What POS system should we consider for the Millbrook taproom?",
+    "Recommend a point-of-sale system for the new location.",
+    "What should we avoid when picking a POS vendor for Millbrook?"
+   ],
+   "gold": "Anything except TapLedger, given it lost pour-count data twice and had slow support at the original location.",
+   "keywords": [
+    "pour-count"
+   ],
+   "anti_keywords": [
+    "tapledger"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c20-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, remember we sourced hops from Greenridge Hop Co for about a year and the alpha-acid consistency was all over the place, one shipment tested nearly 3 percent off spec and it wrecked a whole batch of the flagship. We dropped them and aren't going back.",
+   "tail_user_fragment": null,
+   "probe": "Who should we consider for a hop supplier for the Millbrook-exclusive recipes?",
+   "probes": [
+    "Who should we consider for a hop supplier for the Millbrook-exclusive recipes?",
+    "Which hop suppliers should we look at for the new taproom's beers?",
+    "Is there a supplier we should avoid when sourcing hops for Millbrook?"
+   ],
+   "gold": "Anyone except Greenridge Hop Co, given the inconsistent alpha-acid content that wrecked a batch of the flagship.",
+   "keywords": [
+    "alpha-acid",
+    "off spec"
+   ],
+   "anti_keywords": [
+    "greenridge"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c20-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note for the file: the Millbrook lease base rent is $8,950 a month before the 3 percent escalation kicks in year two. Just logging that, doesn't change what we're discussing.",
+   "tail_user_fragment": null,
+   "probe": "What is the base monthly rent for the Millbrook lease?",
+   "probes": [
+    "What is the base monthly rent for the Millbrook lease?",
+    "How much are we paying per month in base rent at Millbrook?",
+    "Remind me the starting rent figure before escalation for the new taproom lease."
+   ],
+   "gold": "$8,950 a month (before the year-two 3 percent escalation).",
+   "keywords": [
+    "8,950"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c20-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "For the record, the liquor license amendment we filed with the state board has reference number LIC-A-55291, submitted on February 18th. Board says allow ten to twelve weeks.",
+   "tail_user_fragment": null,
+   "probe": "What is the reference number for our liquor license amendment, and when was it filed?",
+   "probes": [
+    "What is the reference number for our liquor license amendment, and when was it filed?",
+    "What's the license amendment case number and filing date we noted earlier?",
+    "Remind me the reference number the state board gave our license amendment."
+   ],
+   "gold": "LIC-A-55291, filed February 18th.",
+   "keywords": [
+    "55291",
+    "february 18"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c20-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's just codename the whole Millbrook taproom project 'Gondor' from here on, in every planning doc and email, so we're not typing the full address every time.",
+   "tail_user_fragment": "What's still open on the Gondor punch list before we can set an opening date?",
+   "probe": "What does 'Gondor' refer to in this project?",
+   "probes": [
+    "What does 'Gondor' refer to in this project?",
+    "If I say Gondor later, what should you understand that to mean?",
+    "Remind me what Gondor is in our planning -- what does it stand for?"
+   ],
+   "gold": "The whole Millbrook second-taproom project.",
+   "keywords": [
+    "Millbrook taproom",
+    "second taproom",
+    "project"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "Tolkien",
+    "Minas Tirith",
+    "Aragorn",
+    "kingdom"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c20-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the walk-in cooler and refrigeration install 'Mordor', since it's been the most miserable, behind-schedule part of the whole build-out. Use that name for it in any status update.",
+   "tail_user_fragment": "Any movement on Mordor this week, or is it still stuck?",
+   "probe": "What does 'Mordor' refer to in this project?",
+   "probes": [
+    "What does 'Mordor' refer to in this project?",
+    "When I mention Mordor again, what should you take that to mean?",
+    "Remind me what we've been calling Mordor internally -- what is it?"
+   ],
+   "gold": "The walk-in cooler and refrigeration installation for the Millbrook taproom build-out.",
+   "keywords": [
+    "walk-in cooler",
+    "refrigeration"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "Sauron",
+    "Mount Doom",
+    "dark lord",
+    "Tolkien"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c20-strong_prior-3",
+   "category": "strong_prior",
+   "middle_user": "One more codename: let's call the small pilot lab space where we run R&D test batches 'Rivendell'. Keep that name in the brew log headers so we don't confuse pilot batches with production batches.",
+   "tail_user_fragment": "Did the last test batch out of Rivendell match spec, or do we need another round?",
+   "probe": "What does 'Rivendell' refer to in this project?",
+   "probes": [
+    "What does 'Rivendell' refer to in this project?",
+    "If I mention Rivendell later, what should you understand that to mean?",
+    "Remind me what Rivendell is in our brewing operation."
+   ],
+   "gold": "The small pilot lab space used for R&D test batches, distinct from the main production system.",
+   "keywords": [
+    "pilot lab",
+    "test batches",
+    "R&D"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "elves",
+    "Elrond",
+    "Tolkien",
+    "Middle-earth"
+   ],
+   "distance": "far"
+  }
+ ],
+ "meta": {
+  "author": "fable"
+ }
+}

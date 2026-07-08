@@ -9,10 +9,13 @@
 # crashes the sweep: an unsupported/gated/OOM model writes a status record with a
 # reason and we move on.
 #
-# FIXED SUMMARY (confound fix): the compaction summary TEXT is generated ONCE by
-# a single designated summarizer and fed verbatim to every model, so a model's
-# gap-closure is not confounded by its own summary quality. This script builds
-# the shared summaries FIRST, then runs the models.
+# FIXED SUMMARY (confound fix): the compaction summary TEXT is held IDENTICAL
+# across every model, so a model's gap-closure is not confounded by its own
+# summary quality. The shared summaries are produced EXTERNALLY (coordinator uses
+# Sonnet -- a realistic mid-tier summarizer; a frontier model would write an
+# unrealistically good summary and invalidate the test) as
+# data/fixed_summaries.json = {conv_id: summary_text}. If that file is absent,
+# this script builds one ONCE with a designated summarizer as a fallback.
 #
 # RUN ORDER: a 3-model PILOT runs first (dense-GQA baseline, a non-Qwen GQA, and
 # a sliding-window Gemma) -- those carry most of the evidential value. Set
@@ -83,16 +86,21 @@ fi
 
 echo "PLAN: ${#RUN[@]} models (summarizer=$SUMMARIZER, timeout=${MODEL_TIMEOUT}s each)"
 
-# ---- STEP 1: build the shared FIXED summaries ONCE (required input).
-if [ ! -f results/cross_arch/_summaries.json ]; then
-  echo "== build fixed summaries with $SUMMARIZER $(date -Is)"
+# ---- STEP 1: the shared FIXED summaries (data/fixed_summaries.json) are the
+# required input. Prefer the externally-provided (Sonnet-written) file; only
+# build one as a fallback if it is missing.
+FIXED=data/fixed_summaries.json
+if [ -f "$FIXED" ]; then
+  echo "== using external fixed summaries: $FIXED ($(python3 -c 'import json,sys;print(len(json.load(open("'"$FIXED"'"))))' 2>/dev/null || echo '?') convs)"
+else
+  echo "== $FIXED missing -> building fallback summaries with $SUMMARIZER $(date -Is)"
   slug="$(echo "$SUMMARIZER" | tr '/ ' '__')"
   SC_SUMMARIZER_MODEL="$SUMMARIZER" timeout "${MODEL_TIMEOUT}s" \
     python3 -u src/cross_arch_probe.py --make-summaries \
     2>&1 | tee "cross_arch_SUMMARIES_${slug}.log"
 fi
-if [ ! -f results/cross_arch/_summaries.json ]; then
-  echo "FATAL: fixed summaries were not built; cannot run the sweep" >&2
+if [ ! -f "$FIXED" ]; then
+  echo "FATAL: no fixed summaries available; cannot run the sweep" >&2
   exit 4
 fi
 

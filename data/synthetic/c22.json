@@ -1,0 +1,532 @@
+{
+ "id": "c22",
+ "title": "Second escape-room venue",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant supporting a small business owner opening a second escape-room and immersive-entertainment venue."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so we're opening Escape Hour Riverside in the old textile warehouse on Dunmore Street, our second location. I ran the downtown shop for four years but this is a bigger space and a bigger swing, and I want to think it through carefully with you over the next few weeks. Can you help me work through the whole plan?"
+  },
+  {
+   "role": "assistant",
+   "content": "Absolutely, glad to be your thinking partner on this. Let's dig in."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with puzzle design and room themes since that drives the build-out. Riverside has three rooms to fill and a much taller ceiling than downtown. What's the framework for picking themes that justify that scale, before we get into specific ideas?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good place to start. Here's the short version, and we can go as deep as you want from here."
+  },
+  {
+   "role": "user",
+   "content": "On prop fabrication broadly, how do we split work between building props in-house versus commissioning specialty vendors? Downtown we built almost everything ourselves, but Riverside's scope is bigger than our shop time allows."
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Okay, theme decision for Riverside's flagship room. We had it down to three: (1) a 1920s speakeasy heist, (2) an abandoned Antarctic research station gone quiet, or (3) a haunted Victorian asylum wing. I've decided on the second one, the Antarctic station. The tall ceilings let us do a two-story drilling rig set piece and our prop vendor already has cold-industrial set dressing in stock."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — that's a defensible call and it keeps the path clean. I'll treat it as settled from here."
+  },
+  {
+   "role": "user",
+   "content": "For actor and game-master staffing, what's a sane ratio of staff to concurrent room bookings for a three-room venue running six-day weeks?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the Vault' means two things around here. Staff also nickname our cash reserve account 'the vault,' but when I say the Vault to you specifically, I always mean the physical steel prop safe in the Antarctic room's final puzzle, the one guests crack open at the end. Just so we don't cross wires."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll use that meaning consistently whenever you use the term."
+  },
+  {
+   "role": "user",
+   "content": "How much should we pay game masters to run versus reset a room? I don't want reset time to feel like scut work that people burn out on."
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the Line' I mean the physical rope-and-post queue setup we're building in the lobby for walk-ins, not an actor's line as in memorized dialogue. Both terms float around the shop, but the Line in our conversation is always the lobby queue hardware."
+  },
+  {
+   "role": "assistant",
+   "content": "Clear. I'll read it that way from now on and won't confuse it with the other one."
+  },
+  {
+   "role": "user",
+   "content": "Switching to booking software for a second, what should the online booking flow actually show a customer before they commit, given we have three very different rooms now instead of one?"
+  },
+  {
+   "role": "assistant",
+   "content": "The usual guidance here is to start early and keep it simple. I can sketch a rough sequence if that helps."
+  },
+  {
+   "role": "user",
+   "content": "For prop-vendor history: we already tried a company called BrainForge Props for our magnetic locking mechanisms at the downtown shop. Their locks jammed on roughly 30 percent of stress-test runs, and twice a game master had to physically pry a door open mid-session. We are not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep that option off the table and steer toward alternatives."
+  },
+  {
+   "role": "user",
+   "content": "Also, we piloted a booking platform called QueueTrail for six months downtown. Its deposit and refund logic was broken, it double-refunded customers twice, and we ate four chargebacks before we dropped it. Not going back to QueueTrail for Riverside."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted. I won't put that back in front of you; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the UV-reactive hidden-ink puzzle mechanism 'Gengar' from now on, both in Slack and in any documents we share with the prop vendor before the reveal date. Nobody outside the build team should know it's the black-light ink system until opening night."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it — I'll use that codename consistently in anything we draft."
+  },
+  {
+   "role": "user",
+   "content": "Pricing question: should Riverside's three rooms be priced identically, or should the harder, longer room command a premium? I keep going back and forth."
+  },
+  {
+   "role": "assistant",
+   "content": "Fair concern. Most teams your size handle it by piloting small first, then scaling once it's proven out."
+  },
+  {
+   "role": "user",
+   "content": "Our lead actor Deshawn pitched a staffing structure I like. Instead of hiring separate actors and separate game masters, he wants to cross-train everyone as hybrid staff who both act in-room during peak hours and run the control booth during slower ones. I'm adopting his plan for Riverside."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense given the tradeoffs you weighed. I'll carry that forward as the decision."
+  },
+  {
+   "role": "user",
+   "content": "Back to fire-code stuff, what documentation does an inspector typically want to see before opening day for a themed attraction like this, beyond the standard occupancy paperwork?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good instinct to check. The defensible baseline is usually the more representative, less cherry-picked one — I can explain why."
+  },
+  {
+   "role": "user",
+   "content": "Firm rule for actor training: no physical contact with guests, ever, not even a light tap on the shoulder to redirect them. I've heard the horror stories from other venues and I will not have Riverside be one of them. Every scare and every redirect has to work without touching anyone."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and the reasoning is sound. I won't propose anything that cuts against it."
+  },
+  {
+   "role": "user",
+   "content": "For actor training, how long should onboarding take before someone runs a live group unsupervised? Downtown we rushed this and it showed."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a common decision point. I'd frame it around what protects you if it's ever scrutinized later."
+  },
+  {
+   "role": "user",
+   "content": "Another hard one: I don't want hint tablets mounted in the rooms, the little touchscreen things guests tap for a clue. I think they break immersion completely and guests end up staring at a screen instead of the room. Hints have to come through the walkie-talkie intercom voice, full stop."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood — I'll keep everything I draft aligned with that."
+  },
+  {
+   "role": "user",
+   "content": "One more prop question: for the room with the collapsing bookshelf gag, what's the standard way venues make something like that fail safely if a guest leans on it wrong?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sensible to ask now rather than later. The rule of thumb is to leave yourself margin and avoid single points of failure."
+  },
+  {
+   "role": "user",
+   "content": "Bookkeeping aside: the fire marshal set Riverside's occupancy at 42 people per floor, and the permit number on the paperwork is FP-2291. Doesn't affect anything we're discussing right now, just parking that here so it's on record."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks — logged. I've got it on record for when it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "On staffing again, should game masters double as front-desk check-in, or is that going to create bottlenecks during a full house?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The short answer is it depends on your risk tolerance, but for a project your size I'd lean toward the more defensible, conservative route. Want me to lay out the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Oh, and the build-out bid came back. Corrigan Build quoted us $184,500 for drywall and electrical across all three rooms, with a targeted completion date of the 22nd. Just noting it, nothing to decide right now."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted and parked. I'll have it handy if it comes up later."
+  },
+  {
+   "role": "user",
+   "content": "One more codename: we're calling the staff break room and green room renovation at Riverside 'Isengard' internally. Contractors and vendors should never see that name attached to invoices, but between us and the build crew, Isengard means that renovation."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll refer to it by that name in all our internal docs from here on."
+  },
+  {
+   "role": "user",
+   "content": "Given everything so far, sketch a one-page opening-week staffing schedule for Riverside assuming we're open Wednesday through Monday."
+  },
+  {
+   "role": "assistant",
+   "content": "There's a standard way to handle this. In brief, prioritize the option that's easiest to defend later and gives you the clearest paper trail. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "For the flagship room theme we landed on, don't re-explain it, just tell me what temperature and lighting cues would sell the atmosphere without frying the electronics."
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "On Deshawn's staffing structure, no need to re-describe it, just tell me how many hybrid staff we'd need on a Saturday with all three rooms booked back to back."
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Does the Vault need a backup unlock mechanism in case the primary combination wheel jams mid-session?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "How long should the Line be able to hold guests comfortably before it starts feeling like a bad wait at the DMV?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Any update needed on the Gengar rollout timeline given the vendor delay we just talked about?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "Is Isengard on track to be done before the soft-open weekend, or should we push staff breaks to the lobby that week?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+  },
+  {
+   "role": "user",
+   "content": "What's a reasonable per-room reset checklist length, in number of steps, before it starts costing us too much turnaround time between groups?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable thing to weigh. Generally you'll want to match the choice to how your costs and timeline actually scale, not just the upfront number."
+  },
+  {
+   "role": "assistant",
+   "content": "That covers the main threads for now. Ping me whenever the next piece comes up and we'll keep it all straight."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 47
+ },
+ "plants": [
+  {
+   "id": "c22-referent-1",
+   "category": "referent",
+   "middle_user": "Okay, theme decision for Riverside's flagship room. We had it down to three: (1) a 1920s speakeasy heist, (2) an abandoned Antarctic research station gone quiet, or (3) a haunted Victorian asylum wing. I've decided on the second one, the Antarctic station. The tall ceilings let us do a two-story drilling rig set piece and our prop vendor already has cold-industrial set dressing in stock.",
+   "tail_user_fragment": "For the flagship room theme we landed on, don't re-explain it, just tell me what temperature and lighting cues would sell the atmosphere without frying the electronics.",
+   "probes": [
+    "Which of the three flagship-room themes did we end up choosing for Riverside?",
+    "What theme did I settle on for Riverside's main room, out of the three options we discussed?",
+    "Remind me which flagship theme won out for the new venue."
+   ],
+   "probe": "Which of the three flagship-room themes did we end up choosing for Riverside?",
+   "gold": "The abandoned Antarctic research station theme (the second of the three options).",
+   "keywords": [
+    "Antarctic",
+    "research station"
+   ],
+   "anti_keywords": [
+    "speakeasy",
+    "asylum"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c22-referent-2",
+   "category": "referent",
+   "middle_user": "Our lead actor Deshawn pitched a staffing structure I like. Instead of hiring separate actors and separate game masters, he wants to cross-train everyone as hybrid staff who both act in-room during peak hours and run the control booth during slower ones. I'm adopting his plan for Riverside.",
+   "tail_user_fragment": "On Deshawn's staffing structure, no need to re-describe it, just tell me how many hybrid staff we'd need on a Saturday with all three rooms booked back to back.",
+   "probe": "What specifically was Deshawn's staffing proposal that I adopted?",
+   "probes": [
+    "What specifically was Deshawn's staffing proposal that I adopted?",
+    "What did Deshawn suggest about how we structure the acting and game-master roles?",
+    "Can you recap the staffing model Deshawn pitched that we're going with?"
+   ],
+   "gold": "Cross-training staff as hybrid actor/game-masters who act in-room during peak hours and run the control booth during slower ones, rather than hiring separate actors and separate game masters.",
+   "keywords": [
+    "cross-train",
+    "hybrid",
+    "actor and game-master"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c22-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the Vault' means two things around here. Staff also nickname our cash reserve account 'the vault,' but when I say the Vault to you specifically, I always mean the physical steel prop safe in the Antarctic room's final puzzle, the one guests crack open at the end. Just so we don't cross wires.",
+   "tail_user_fragment": "Does the Vault need a backup unlock mechanism in case the primary combination wheel jams mid-session?",
+   "probe": "When I say 'the Vault' in this conversation, what am I referring to?",
+   "probes": [
+    "When I say 'the Vault' in this conversation, what am I referring to?",
+    "What does 'the Vault' mean in our chats, specifically?",
+    "If I bring up the Vault again, what should you understand that to be?"
+   ],
+   "gold": "The physical steel prop safe in the Antarctic room's final puzzle, not the company's cash reserve account.",
+   "keywords": [
+    "prop safe",
+    "final puzzle"
+   ],
+   "anti_keywords": [
+    "cash reserve",
+    "bank account"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c22-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the Line' I mean the physical rope-and-post queue setup we're building in the lobby for walk-ins, not an actor's line as in memorized dialogue. Both terms float around the shop, but the Line in our conversation is always the lobby queue hardware.",
+   "tail_user_fragment": "How long should the Line be able to hold guests comfortably before it starts feeling like a bad wait at the DMV?",
+   "probe": "When I refer to 'the Line' in this conversation, what does it mean?",
+   "probes": [
+    "When I refer to 'the Line' in this conversation, what does it mean?",
+    "What is 'the Line' in our conversation referring to?",
+    "Clarify what I meant by the Line when I brought it up earlier."
+   ],
+   "gold": "The physical rope-and-post queue setup in the lobby for walk-ins, not an actor's memorized dialogue line.",
+   "keywords": [
+    "rope-and-post",
+    "queue",
+    "lobby"
+   ],
+   "anti_keywords": [
+    "dialogue",
+    "script"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c22-stance-1",
+   "category": "stance",
+   "middle_user": "Firm rule for actor training: no physical contact with guests, ever, not even a light tap on the shoulder to redirect them. I've heard the horror stories from other venues and I will not have Riverside be one of them. Every scare and every redirect has to work without touching anyone.",
+   "tail_user_fragment": null,
+   "probe": "Give me four ways an actor can redirect a guest who's wandering toward the wrong exit during a scene.",
+   "probes": [
+    "Give me four ways an actor can redirect a guest who's wandering toward the wrong exit during a scene.",
+    "How should actors handle a guest walking toward an off-limits area mid-scene?",
+    "What redirect techniques can actors use during a live room?"
+   ],
+   "gold": "Suggests non-contact redirect techniques (verbal cues, in-character prop gestures, sound/lighting cues, blocking with body position but no touching), never suggesting physical contact with guests.",
+   "keywords": [
+    "verbal",
+    "non-contact"
+   ],
+   "anti_keywords": [
+    "tap",
+    "touch the guest",
+    "physical contact"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c22-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard one: I don't want hint tablets mounted in the rooms, the little touchscreen things guests tap for a clue. I think they break immersion completely and guests end up staring at a screen instead of the room. Hints have to come through the walkie-talkie intercom voice, full stop.",
+   "tail_user_fragment": null,
+   "probe": "What are three good ways to deliver hints to a stuck group inside the Antarctic room?",
+   "probes": [
+    "What are three good ways to deliver hints to a stuck group inside the Antarctic room?",
+    "How should we handle giving clues to a group that's stuck on a puzzle?",
+    "Suggest a hint-delivery system for the new venue's rooms."
+   ],
+   "gold": "Suggests voice/walkie-talkie intercom hint delivery, sound or lighting cue hints, or in-room prop-based clues, never on-screen hint tablets.",
+   "keywords": [
+    "walkie-talkie",
+    "intercom"
+   ],
+   "anti_keywords": [
+    "tablet",
+    "touchscreen"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c22-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For prop-vendor history: we already tried a company called BrainForge Props for our magnetic locking mechanisms at the downtown shop. Their locks jammed on roughly 30 percent of stress-test runs, and twice a game master had to physically pry a door open mid-session. We are not using them again.",
+   "tail_user_fragment": null,
+   "probe": "What locking mechanism vendor should we consider for Riverside's puzzle doors?",
+   "probes": [
+    "What locking mechanism vendor should we consider for Riverside's puzzle doors?",
+    "Who should we source magnetic locks from for the new rooms?",
+    "Suggest a vendor for the puzzle door locking hardware."
+   ],
+   "gold": "Any vendor other than BrainForge Props, ideally acknowledging their locks jammed about 30 percent of the time and were already ruled out.",
+   "keywords": [
+    "jammed",
+    "30 percent"
+   ],
+   "anti_keywords": [
+    "BrainForge"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c22-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, we piloted a booking platform called QueueTrail for six months downtown. Its deposit and refund logic was broken, it double-refunded customers twice, and we ate four chargebacks before we dropped it. Not going back to QueueTrail for Riverside.",
+   "tail_user_fragment": null,
+   "probe": "What booking software should we evaluate for Riverside's online reservations?",
+   "probes": [
+    "What booking software should we evaluate for Riverside's online reservations?",
+    "Which platform should handle Riverside's booking and deposits?",
+    "Recommend a reservation system for the new venue."
+   ],
+   "gold": "Any booking platform other than QueueTrail, ideally noting QueueTrail's broken deposit/refund logic caused double-refunds and chargebacks.",
+   "keywords": [
+    "chargebacks",
+    "double-refunded"
+   ],
+   "anti_keywords": [
+    "QueueTrail"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c22-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Bookkeeping aside: the fire marshal set Riverside's occupancy at 42 people per floor, and the permit number on the paperwork is FP-2291. Doesn't affect anything we're discussing right now, just parking that here so it's on record.",
+   "tail_user_fragment": null,
+   "probe": "What's Riverside's per-floor occupancy limit and the associated fire permit number?",
+   "probes": [
+    "What's Riverside's per-floor occupancy limit and the associated fire permit number?",
+    "Remind me of the occupancy cap and permit number the fire marshal assigned us.",
+    "What numbers did the fire marshal give us for capacity and permit ID?"
+   ],
+   "gold": "42 people per floor, permit number FP-2291.",
+   "keywords": [
+    "42",
+    "FP-2291"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c22-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, and the build-out bid came back. Corrigan Build quoted us $184,500 for drywall and electrical across all three rooms, with a targeted completion date of the 22nd. Just noting it, nothing to decide right now.",
+   "tail_user_fragment": null,
+   "probe": "What was Corrigan Build's quote for the drywall and electrical work, and what's the target completion date?",
+   "probes": [
+    "What was Corrigan Build's quote for the drywall and electrical work, and what's the target completion date?",
+    "What did Corrigan Build bid for the build-out, and when do they expect to finish?",
+    "Remind me of the contractor's quote and completion date for the electrical and drywall work."
+   ],
+   "gold": "$184,500 from Corrigan Build, targeted completion on the 22nd.",
+   "keywords": [
+    "184,500",
+    "Corrigan"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c22-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the UV-reactive hidden-ink puzzle mechanism 'Gengar' from now on, both in Slack and in any documents we share with the prop vendor before the reveal date. Nobody outside the build team should know it's the black-light ink system until opening night.",
+   "tail_user_fragment": "Any update needed on the Gengar rollout timeline given the vendor delay we just talked about?",
+   "probe": "What does 'Gengar' refer to in our project?",
+   "probes": [
+    "What does 'Gengar' refer to in our project?",
+    "If I mention Gengar again later, what should you understand that to mean?",
+    "Remind me what we're calling Gengar internally, what is it?"
+   ],
+   "gold": "The UV-reactive black-light hidden-ink puzzle mechanism.",
+   "keywords": [
+    "UV",
+    "black-light",
+    "hidden-ink"
+   ],
+   "anti_keywords": [
+    "Pokemon",
+    "ghost",
+    "shadow"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c22-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "One more codename: we're calling the staff break room and green room renovation at Riverside 'Isengard' internally. Contractors and vendors should never see that name attached to invoices, but between us and the build crew, Isengard means that renovation.",
+   "tail_user_fragment": "Is Isengard on track to be done before the soft-open weekend, or should we push staff breaks to the lobby that week?",
+   "probe": "What is 'Isengard' the internal codename for?",
+   "probes": [
+    "What is 'Isengard' the internal codename for?",
+    "What project does the name Isengard refer to in this conversation?",
+    "Remind me what we've been calling Isengard, what's the actual workstream?"
+   ],
+   "gold": "The staff break room and green room renovation at Riverside.",
+   "keywords": [
+    "break room",
+    "green room",
+    "renovation"
+   ],
+   "anti_keywords": [
+    "Lord of the Rings",
+    "Saruman",
+    "tower",
+    "Tolkien"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet"
+ }
+}
