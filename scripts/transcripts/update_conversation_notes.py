@@ -857,7 +857,10 @@ def previous_context_for_new_range(
 
 
 def git_commit(paths: list[Path], message: str, cwd: Path, iso_date: str | None = None) -> None:
-    rels = [str(path.relative_to(cwd)) for path in paths]
+    rels = [
+        str(((cwd / path).resolve() if not path.is_absolute() else path).relative_to(cwd.resolve()))
+        for path in paths
+    ]
     subprocess.check_call(["git", "add", "--", *rels], cwd=cwd)
     env = os.environ.copy()
     if iso_date:
