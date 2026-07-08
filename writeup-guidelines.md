@@ -13,14 +13,11 @@ but I couldn't find it in my literature search — am I missing the right
 terminology, or is it so trivial/inconsequential that nobody wrote it up?
 Either way, here's what I observed."
 
-1. **Provenance (in the body, not the byline):** experiment design,
-   implementation, and most of the writing by Anthropic's Claude Fable 5,
-   directed by the user, who made scaling/budget decisions and commissioned
-   an adversarial review from OpenAI's GPT-5.5 (source of the external-review
-   amendments, the mitigation reframing, and the blog-post target framing).
-   "Designed and largely executed by Claude Fable 5, with adversarial review
-   by GPT-5.5, directed and sanity-checked by me." Be explicit about what the
-   user personally verified vs. couldn't.
+1. **Attribution (byline hierarchy — match the top of REPORT.md, keep it clean):**
+   Fable 5 and GPT-5.5 are the two MAIN AUTHORS; Jeremy Banks provides guidance /
+   direction / advising; the other models get a light "assistance from" thanks.
+   Do NOT itemize what each model did specifically. Do NOT mention funding (it reads
+   weird). Just the hierarchy, exactly as the report byline below.
 2. **Findability is the primary goal.** Front-load naive plain-language
    phrasings ("summary tokens lose their original activations after context
    compaction") in title/opening/README alongside proper terminology. Give
@@ -65,12 +62,18 @@ use canonical names by default.
 - internal "humane tier" → "production-calibrated compaction": compact_at
   12000, tail 6000, production-style summary, 2-6 recompactions/episode.
 
-## Provenance (updated 07-07 — models involved)
-- Claude Fable 5 — primary design + execution (majority of the work).
-- Claude Opus 4.8 — continuation as Fable quota exhausted (07-07 onward);
-  co-credit.
-- Claude Sonnet 5 — subagent work: judging, dataset/benchmark scouting,
-  task-adapter construction, difficulty probes.
-- GPT-5.5 (OpenAI) — adversarial review / independent second perspective
-  (e.g. the read-only pipeline refresh that caught the local-plumbing gap).
-- Directed, sanity-checked, and funded by the user (Jeremy Banks).
+## Attribution / byline (updated 07-08 — match the top of REPORT.md; do NOT itemize per model, do NOT mention funding)
+- MAIN AUTHORS: Anthropic Claude Fable 5 and OpenAI GPT 5.5.
+- GUIDANCE / direction / advising: Jeremy Banks.
+- ASSISTANCE (light thanks, NOT itemized by task): Anthropic Claude Opus 4.8,
+  Anthropic Claude Sonnet 5, Google Gemini Pro 3.1.
+- NO funding mention. NO per-model breakdown of who did what.
+
+The byline, exactly as it appears at the top of REPORT.md (this is the canonical form):
+"By Anthropic Claude Fable 5 and OpenAI GPT 5.5, with guidance from Jeremy Banks and
+assistance from Anthropic Claude Opus 4.8, Anthropic Claude Sonnet 5, and Google Gemini Pro 3.1."
+
+NOTE: this author-attribution byline is SEPARATE from the DATA-PROVENANCE methods
+documentation (METHODS-PROVENANCE-REQUIREMENTS.md) — that documents who/what generated
+each piece of experimental DATA and IS required in detail in the methods section. The
+byline is just the clean author hierarchy above; don't conflate the two.
