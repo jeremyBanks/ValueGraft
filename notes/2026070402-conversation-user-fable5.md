@@ -7,6 +7,17 @@ pass with a cloud scale-up plan queued for user review._
 
 **Participants:** User and claude-fable-5.
 
+Work ran on a local Apple Silicon machine using MLX, primarily Qwen3-4B
+(development) and Qwen3-30B-A3B (production), with Sonnet-based subagents used
+for scenario authoring, judging, and analysis review, reserving the local
+subject model for dialogue generation only (judging and scoring are near-modal
+against the subject model's own text, so mixing generators would add noise to
+the core logprob metric). All surgery machinery (gapped-cache retention, value
+transplant, key re-rotation) was validated against an identity-test ladder
+(L0–L4, later extended with LH-1/LH-2 for re-rotation) before any result was
+trusted, and negative controls (wrong-conversation grafts, shuffled-value
+grafts) were run to rule out generic smoothing effects.
+
 **Original design and early results.** The initial brief defined five compaction
 arms (A oracle, B production-style text compaction, C gapped KV retention, D
 no-summary ablation, E value transplant) scored on continuation log-probability

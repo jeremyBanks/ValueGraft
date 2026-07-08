@@ -8,6 +8,9 @@ holdout._
 
 **Participants:** User and claude-fable-5.
 
+Participants: the user and Claude (Fable 5, claude-code) working in the
+`/Users/jeb/experimentation` repository.
+
 **Incident and instrumentation.** The local Qwen3-30B benchmark batch had
 stalled roughly three hours due to a bad `pkill` pattern that left two model
 instances resident and thrashing swap; the user directly registered concern
