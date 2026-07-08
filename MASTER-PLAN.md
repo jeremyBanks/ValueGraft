@@ -510,3 +510,19 @@ correct -> THAT result IS the methods section.
 CLAIM: "Geometry predicts the DEPLOYMENT sign on each model's own realistic conversations, holding
 headroom and reply-content fixed." (A reviewer kills "geometry predicts sign on a fixed Qwen corpus" in
 one line — this version converts the confound into the ESTIMAND.)
+
+## NATIVE-RENDER SCALING (07-08) — the render is the wide-sweep bottleneck
+COST: native render = generating each model's own replies in-context = ~7K tokens/conv
+autoregressive (~22 replies x ~320 tok), ~10 min/conv on a 30B via the manual token loop.
+NOT a bug (re-prefill is minor); it's inherent generation cost. 12-conv verify ~= 2 hrs.
+Naively 24-54 convs x 16 models = many pod-hours.
+SCALING LEVERS (apply before/for the wide sweep):
+1. FEWER convs/model: deep (~24) only on the 4 paired-de-confound anchors (Qwen3-30B-A3B/
+   Qwen3-32B, Gemma-4-26B-A4B/Gemma-4-31B); ~12 on breadth. Power lives in the pairs.
+2. SHORTER replies: SC_NATIVE_MAX_REPLY 320 -> ~160 (halves generation; watch context thinness).
+3. FASTER generation: the manual per-token model() loop is slow; model.generate() or vLLM
+   would be much faster (complication: the canonical re-prefill handling — may be a no-op for
+   NON-THINKING models like Instruct-2507, so generate()+one canonical pass at end may suffice).
+4. HARD PARALLELIZE: one model per pod, many pods (width = wall-clock, not total cost).
+DECIDE the exact convs/model + reply length once the native-render VERIFY confirms the design
+(the referent number). Do NOT go wide before that number.
