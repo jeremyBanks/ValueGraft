@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -50,3 +51,31 @@ def test_scrub_forbidden_lines_deletes_matching_lines() -> None:
     scrubbed = mod.scrub_forbidden_lines(text, [r"furious"])
 
     assert scrubbed == "Keep this line.\nAlso keep this.\n"
+
+
+def test_new_note_prefix_reuses_deleted_same_day_gap(tmp_path: Path) -> None:
+    mod = load_update_module()
+    early = tmp_path / "2026070401-existing.md"
+    later = tmp_path / "2026070403-later.md"
+    early.write_text("early", encoding="utf-8")
+    later.write_text("later", encoding="utf-8")
+    fake_timestamps = {
+        early: datetime(2026, 7, 4, 20, 5, tzinfo=timezone.utc),
+        later: datetime(2026, 7, 4, 22, 19, tzinfo=timezone.utc),
+    }
+    original_archive_note_files = mod.archive_note_files
+    original_archive_timestamp = mod.archive_timestamp
+    try:
+        mod.archive_note_files = lambda _notes_dir: [early, later]
+        mod.archive_timestamp = lambda path, _root: fake_timestamps[path]
+
+        prefix = mod.compact_prefix_for_new_note(
+            tmp_path,
+            tmp_path,
+            datetime(2026, 7, 4, 20, 9, tzinfo=timezone.utc),
+        )
+    finally:
+        mod.archive_note_files = original_archive_note_files
+        mod.archive_timestamp = original_archive_timestamp
+
+    assert prefix == "2026070402"

@@ -335,13 +335,9 @@ def compact_prefix_for_new_note(notes_dir: Path, root: Path, timestamp: datetime
         existing = archive_timestamp(path, root)
         if existing.date() != timestamp.date():
             continue
-        if existing > timestamp:
-            raise RuntimeError(
-                f"new note timestamp {timestamp.isoformat()} would precede existing same-day note {path}; "
-                "run the archive normalizer/recreation workflow first"
-            )
         same_day.append(existing)
-    return compact_prefix(timestamp, len(same_day) + 1)
+    index = 1 + sum(existing <= timestamp for existing in same_day)
+    return compact_prefix(timestamp, index)
 
 
 def note_name_for_messages(prefix: str, messages: list[MessageRecord]) -> str:
