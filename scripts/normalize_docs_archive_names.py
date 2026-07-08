@@ -27,6 +27,7 @@ CURRENT_PREFIX_CAPTURE_RE = re.compile(r"^(\d{14})-")
 OLD_PREFIX_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-\d{2}-")
 SAFE_TITLE_RE = re.compile(r"[^a-z0-9-]+")
 HYPHENS_RE = re.compile(r"-+")
+RESERVED_DOC_NAMES = {"AGENTS.md", "README.md"}
 
 
 @dataclass(frozen=True)
@@ -103,7 +104,9 @@ def markdown_files(docs_dir: Path) -> list[Path]:
     return sorted(
         path
         for path in docs_dir.iterdir()
-        if path.is_file() and path.suffix.lower() == ".md" and path.name != "README.md"
+        if path.is_file()
+        and path.suffix.lower() == ".md"
+        and path.name not in RESERVED_DOC_NAMES
     )
 
 
@@ -172,7 +175,7 @@ def main() -> int:
     for path in paths:
         if docs_dir not in path.parents:
             raise SystemExit(f"refusing to normalize file outside {docs_dir}: {path}")
-        if path.name == "README.md":
+        if path.name in RESERVED_DOC_NAMES:
             continue
         if path.suffix.lower() != ".md":
             raise SystemExit(f"not a markdown file: {path}")
