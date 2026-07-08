@@ -52,8 +52,10 @@ compaction content is identical, so ARCHITECTURE is the only variable.
 REPORTING (ROBUST -- the mean-of-ratio (E-B)/(A-B) is Cauchy-unstable with small
 denominators and is NO LONGER the primary metric): the HEADLINE per-category
 quantity is now raw_EB = lp_E - lp_B (bounded: the graft's logprob lift over
-compaction) with a pure-Python percentile bootstrap 95% CI over the plants
-(N=10000, seed=42). We also report %_helped (fraction with raw_EB > 0) with its
+compaction) with a pure-Python percentile bootstrap 95% CI resampled over
+CONVERSATIONS (the honest inferential unit -- plants within a conversation are
+correlated, so a plant-level bootstrap is anti-conservative; the plant-level
+interval is retained only as raw_EB_ci_plant for reference) (N=10000, seed=42). We also report %_helped (fraction with raw_EB > 0) with its
 bootstrap CI, and -- as a scale-free SECONDARY only -- the MEDIAN of the ratio
 (E-B)/(A-B) CONDITIONED on |lp_A - lp_B| > 0.5 (tiny-denominator probes dropped;
 n_kept reported). The unconditioned mean ratio is retired/deprecated (kept only
@@ -520,11 +522,23 @@ def robust_category_stats(raw_eb_vals, ratio_gap_pairs, raw_eb_clusters=None):
         "pct_helped_ci": [ph["lo"], ph["hi"]],
         "median_ratio_cond": _median(cond),
         "n_cond": len(cond),
+        "raw_EB_ci_method": "plant-level",
     }
     if raw_eb_clusters is not None:
         cl = bootstrap_ci_95_cluster(
             raw_eb_clusters, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+        # PROMOTE the conversation-clustered CI to be the HEADLINE raw_EB_ci.
+        # Plants in one conversation share context + summary and are positively
+        # correlated, so the plant-level bootstrap treats correlated plants as
+        # independent and is ANTI-CONSERVATIVE (intervals too narrow -> false
+        # "excludes zero"). The honest inferential unit is the CONVERSATION.
+        # The plant-level interval is retained as raw_EB_ci_plant for reference;
+        # raw_EB_ci_cluster is kept as an explicit alias. raw_EB_mean (the point
+        # estimate) is unchanged -- only the CI resampling unit differs.
+        out["raw_EB_ci_plant"] = [eb["lo"], eb["hi"]]
         out["raw_EB_ci_cluster"] = [cl["lo"], cl["hi"]]
+        out["raw_EB_ci"] = [cl["lo"], cl["hi"]]
+        out["raw_EB_ci_method"] = "conversation-clustered"
         out["n_conversations"] = cl["n_clusters"]
     return out
 
@@ -1485,6 +1499,16 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
 
     try:
         family = detect_template_family(tok)
+        # LOUD provenance: name the resolved chat-template family and which
+        # message-boundary path it takes. "unknown" is NOT an error -- it routes
+        # to the template-agnostic prefix-rendering boundary detector (verified
+        # correct for OLMo-2, whose <|user|>/<|assistant|> role markers are
+        # multi-token and NOT special tokens, so the qwen <|im_start|> scan does
+        # not apply) -- but a SILENT "unknown" previously hid which path ran.
+        _boundary = ("qwen im_start scan" if family == "qwen"
+                     else "prefix-rendering (template-agnostic)")
+        print(f"  [template] family={family} boundary={_boundary} "
+              f"special_tokens={tok.all_special_tokens}", flush=True)
         rbase = rope_base(model)
     except Exception as e:  # noqa: BLE001
         doc.update(status="UNSUPPORTED",
@@ -1554,6 +1578,16 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     # accumulators
     per_cat: dict[str, list] = {c: [] for c in CATS}
     skipped_convs: list[str] = []
+    # DIAGNOSTIC breakdown of WHY plants may fail to score, so the terminal
+    # "no plants scored" ERROR names the ACTUAL cause instead of guessing
+    # "empty alignment?" (which conflates three unrelated drop reasons and sent a
+    # debugging effort chasing a non-existent OLMo-2 region-detection bug: the
+    # A<->B alignment is CPU-verified non-empty for OLMo-2's template; the real
+    # per-architecture trap is the ABSOLUTE task_lpa_floor excluding every plant
+    # when a model's gold logprobs sit on a lower scale). Defined BEFORE the try
+    # so they are readable in the terminal reason after the loop.
+    empty_align_convs: list[str] = []   # convs skipped: build_alignment -> no pairs
+    short_gold_drops = 0                 # plants dropped: gold continuation < 2 tok
     n_plants = 0
     alpha0_diffs: list[float] = []
     graft_diffs: list[float] = []       # |lp_E - lp_B|
@@ -1657,7 +1691,10 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             pairs = build_alignment(
                 b_ids, summ["old_ids"], set(tok.all_special_ids), regions)
             if not pairs:
-                # nothing to graft in this conv -> skip (not a model failure)
+                # nothing to graft in this conv -> skip (not a model failure).
+                # Recorded so the terminal reason can distinguish a genuine
+                # alignment miss from competence-gate exclusions.
+                empty_align_convs.append(conv["id"])
                 continue
 
             a_snap = force_prefill(ids)
@@ -1742,6 +1779,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 gold = str(pl["gold"]).strip()
                 tgt = tok(gold, add_special_tokens=False).input_ids[:max_gold_tok]
                 if len(tgt) < 2:
+                    short_gold_drops += 1
                     continue
 
                 def suffix(mm, probe_text):
@@ -1949,8 +1987,26 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
 
     # ---- smoke gate ----
     if not alpha0_diffs:
-        doc.update(status="ERROR",
-                   reason="no plants scored (all convs skipped / empty alignment?)")
+        # Report the ACTUAL cause instead of guessing "empty alignment?". The
+        # three ways every plant can fail to score are independent; naming which
+        # one dominated turns a dead-end ERROR into a self-diagnosing one. A run
+        # where task_excluded dominates is a COMPETENCE-FLOOR problem (the model's
+        # per-token gold logprobs sit below the ABSOLUTE task_lpa_floor), NOT an
+        # alignment/region-detection failure.
+        n_task_excl = sum(len(v) for v in task_excluded.values())
+        doc.update(
+            status="ERROR",
+            reason=(
+                "no plants scored -- breakdown: convs_seen=%d, "
+                "empty_alignment_convs=%d, short_gold_drops=%d, "
+                "task_excluded_plants=%d (task_lpa_floor=%s). If "
+                "task_excluded dominates, the model's gold logprobs are below the "
+                "ABSOLUTE competence floor (a per-architecture lp_A scale issue), "
+                "NOT an A<->B alignment failure."
+                % (len(specs), len(empty_align_convs), short_gold_drops,
+                   n_task_excl, task_lpa_floor)))
+        doc["empty_alignment_convs"] = empty_align_convs
+        doc["short_gold_drops"] = short_gold_drops
         return doc
     alpha0_max = max(alpha0_diffs)
     graft_max = max(graft_diffs)
@@ -1992,10 +2048,28 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     }
     doc["n_plants"] = n_plants
     doc["pre_graft_gap"] = bootstrap_ci_95(pre_gaps)
-    # PRIMARY aggregate metric: raw_EB = mean(lp_E - lp_B) over all plants, with
-    # the fixed robust bootstrap. graft_signed IS the per-plant raw_EB vector.
-    doc["raw_EB"] = bootstrap_ci_95(
+    # PRIMARY aggregate metric: raw_EB = mean(lp_E - lp_B) over all plants.
+    # The CI is CONVERSATION-CLUSTERED (resample whole conversations with
+    # replacement, pool their plants) -- the honest inferential unit, since plants
+    # within a conversation are correlated. The plant-level interval (which treats
+    # every plant as independent and is anti-conservative) is retained as
+    # ``ci_plant`` for reference. The point estimate (``mean``) is identical to
+    # the plant-level pooled mean -- only the interval width changes.
+    _agg_rows = [r for cat in CATS for r in per_cat[cat]]
+    _agg_clusters = _group_by_conv(_agg_rows)
+    _agg_plant = bootstrap_ci_95(
         graft_signed, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+    _agg_cluster = bootstrap_ci_95_cluster(
+        _agg_clusters, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+    doc["raw_EB"] = {
+        "mean": _agg_cluster["mean"],
+        "lo": _agg_cluster["lo"],
+        "hi": _agg_cluster["hi"],
+        "n": _agg_cluster["n"],                       # n plants pooled
+        "n_conversations": _agg_cluster["n_clusters"],
+        "ci_method": "conversation-clustered",
+        "ci_plant": [_agg_plant["lo"], _agg_plant["hi"]],  # reference only
+    }
 
     # ---- per-category robust block: ALWAYS populated whenever plants scored ----
     # (populated BEFORE the machinery gate so a negative/null effect -- or even a
@@ -2052,6 +2126,12 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "task_excluded": {c: task_excluded[c] for c in CATS
                           if task_excluded[c]},
         "n_task_excluded": sum(len(v) for v in task_excluded.values()),
+        # DIAGNOSTIC (audit trail on EVERY run, not just failures): how many
+        # convs were skipped for empty A<->B alignment vs plants dropped for a
+        # too-short gold. Lets a future zero-score run be attributed without a
+        # re-run (the ERROR-path reason mirrors these).
+        "empty_alignment_convs": empty_align_convs,
+        "short_gold_drops": short_gold_drops,
         "note": (
             "GATE #2 headroom = per-category mean(lp_A-lp_B); a floored category "
             "(headroom<headroom_floor) has no evicted meaning to recover -> "
@@ -2233,13 +2313,20 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         return 0
 
     eb = doc["raw_EB"]
-    agg_sign = _ci_sign(eb.get("lo"), eb.get("hi"), eb.get("n"))
+    # raw_EB CI is now conversation-clustered: guard the sign on the CLUSTER count
+    # (n_conversations), so a single-conversation model -- whose cluster CI
+    # degenerates to a zero-width point interval -- reads as null, not a spurious
+    # "excludes zero".
+    agg_sign = _ci_sign(eb.get("lo"), eb.get("hi"),
+                        eb.get("n_conversations", eb.get("n")))
     effect_sign = "positive" if agg_sign > 0 else "negative" if agg_sign < 0 else "null"
     doc["effect_sign"] = effect_sign
 
     def _cat_sign(block):
         lo, hi = block.get("raw_EB_ci", [None, None])
-        return _ci_sign(lo, hi, block.get("n", 0))
+        # conversation-clustered CI -> guard on n_conversations when present.
+        return _ci_sign(lo, hi,
+                        block.get("n_conversations", block.get("n", 0)))
 
     cat_signs = {c: _cat_sign(by_cat_robust.get(c, {})) for c in CATS}
     any_sig_cat = any(s != 0 for s in cat_signs.values())
@@ -2581,11 +2668,25 @@ def _self_test_controls() -> int:
                                raw_eb_clusters=_group_by_conv(rows))
     for k in ("n", "raw_EB_mean", "raw_EB_ci", "pct_helped", "pct_helped_ci",
               "median_ratio_cond", "n_cond", "raw_EB_ci_cluster",
-              "n_conversations"):
+              "raw_EB_ci_plant", "raw_EB_ci_method", "n_conversations"):
         assert k in st, f"robust_category_stats missing {k}"
     assert st["n_conversations"] == 2, "two distinct convs"
+    # the HEADLINE raw_EB_ci must now BE the conversation-clustered interval,
+    # and the point estimate must be unchanged (pooled plant mean).
+    assert st["raw_EB_ci_method"] == "conversation-clustered"
+    assert st["raw_EB_ci"] == st["raw_EB_ci_cluster"], \
+        "headline raw_EB_ci must be the conversation-clustered interval"
+    assert abs(st["raw_EB_mean"] - (0.4 + 0.5 - 0.2) / 3) < 1e-9, \
+        "point estimate must be the unchanged pooled plant mean"
+    # NOTE: the cluster CI is wider IN EXPECTATION for correlated data with
+    # adequate/balanced samples (demonstrated on the 15-probe/3-conv fixture
+    # above, ~2.5x wider); on a degenerate 3-plant/2-conv toy the discrete cluster
+    # resampling can be marginally narrower, so we do NOT assert width here.
+    w_cluster = st["raw_EB_ci_cluster"][1] - st["raw_EB_ci_cluster"][0]
+    w_plant = st["raw_EB_ci_plant"][1] - st["raw_EB_ci_plant"][0]
     print(f"  robust_category_stats: n_conversations={st['n_conversations']} "
-          f"cluster_ci={st['raw_EB_ci_cluster']} OK")
+          f"headline(cluster)_ci={st['raw_EB_ci']} plant_ci={st['raw_EB_ci_plant']} "
+          f"(width cluster={w_cluster:.4f} plant={w_plant:.4f}) OK")
 
     _self_test_native()
     _self_test_batched_decode()
