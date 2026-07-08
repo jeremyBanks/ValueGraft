@@ -157,7 +157,13 @@ heavy) — an external review from **Codex with GPT 5.5 on EXTRA-HIGH effort**. 
 complements (does not replace) the Fable multi-perspective passes + adversarial
 critics + terminology-consistency dimension. So the review stack for a shareable
 major revision = Fable ~3 tool-less angle passes + critics + terminology check +
-ONE Codex/GPT-5.5/xhigh review. Codex is an external tool → likely user-initiated
-(flag when a major revision is review-ready so the user runs it), unless an
-invocation path exists in-session. Gate: don't ship a shareable major revision
-without this external review on record.
+ONE Codex/GPT-5.5/xhigh review. INVOCATION (I run it myself — do NOT ask the user): codex CLI is installed
+(`~/.nvm/.../bin/codex`, add that nvm bin to PATH in the Bash call) and authed via
+the user's ChatGPT login. ~/.codex/config.toml ALREADY defaults model=gpt-5.5 +
+model_reasoning_effort=xhigh, so:
+  export PATH="/Users/jeb/.nvm/versions/node/v25.4.0/bin:$PATH"
+  codex exec -s read-only "Review /Users/jeb/experimentation/REPORT.md as a
+  skeptical peer reviewer: <focus>. Do not modify files."
+Use -s read-only for reviews (read the paper, don't edit). It runs autonomously
+(approval_policy=never). Capture its output into the review record. Gate: don't
+ship a shareable major revision without this Codex/GPT-5.5/xhigh review on record.
