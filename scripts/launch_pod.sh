@@ -34,7 +34,7 @@ if [ ! -f "$STATE" ]; then
   SC_POD_STATE=$STATE uv run python src/pod.py create "$GPU"
 fi
 # wait for ssh endpoint
-for i in $(seq 1 40); do
+for _ in $(seq 1 40); do
   IPP=$(SC_POD_STATE=$STATE uv run python src/pod.py status 2>/dev/null | \
     python3 -c "import json,sys; d=json.load(sys.stdin); print((d.get('publicIp') or '')+':'+str((d.get('portMappings') or {}).get('22','')))")
   IP=${IPP%%:*}; PORT=${IPP##*:}

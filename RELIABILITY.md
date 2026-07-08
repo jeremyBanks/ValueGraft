@@ -103,3 +103,15 @@ bolted on when the owner nags. **A run whose failures do not self-report is NOT 
 - Assuming a run is healthy because it "started".
 - Treating monitoring/alerting as optional or bolt-on. **It is part of building the run.**
 These are hacks. The professional move is **instrumented, automated fault detection.** Solved problem.
+
+---
+
+# HARD RULE: shellcheck EVERY shell script — NON-OPTIONAL (owner, 07-08)
+`bash -n` only checks syntax; it passes broken scripts (`declare -A` on macOS bash 3.2 ran;
+an `ssh` inside a `while read` loop silently ate stdin so the health check only saw ONE pod).
+**shellcheck is a standard linter that catches exactly these. Use it on every `*.sh`, always.**
+- Before committing ANY shell script: `scripts/lint.sh` (runs shellcheck --severity=warning on
+  all of scripts/*.sh; exits nonzero on any finding). Fix findings; do not commit dirty.
+- Do NOT hand-roll ad-hoc checks in place of the linter. Standard tooling over hacks — same
+  principle as the observability rule above. These are solved problems.
+- `bash -n` and a manual smoke run are NECESSARY but NOT SUFFICIENT; shellcheck is required too.

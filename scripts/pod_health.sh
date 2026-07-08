@@ -15,7 +15,7 @@
 #   INIT              pod has no SSH endpoint yet (still booting)
 #   UNREACHABLE       pod in API but SSH refused (degrading — watch)
 set -uo pipefail
-cd "$(dirname "$0")/.." 2>/dev/null || cd /Users/jeb/experimentation
+cd "$(dirname "$0")/.." 2>/dev/null || cd /Users/jeb/experimentation || exit 1
 K=$HOME/.ssh/id_ed25519_runpod
 STALL_MIN="${STALL_MIN:-8}"
 KEY=$(cat .runpod_key 2>/dev/null)
@@ -40,12 +40,11 @@ for pid in ids:
 
 [ -z "$PODS" ] && { echo "HEALTH: no pods (or API error)"; exit 0; }
 
-NOW=$(date +%s)
 echo "$PODS" | while read -r pid ep; do
   [ "$pid" = "APIERR" ] && { echo "  API-ERROR: $ep"; continue; }
   if [ "$ep" = "no-ssh" ]; then echo "  $pid  INIT (booting, no ssh yet)"; continue; fi
   ip=${ep%:*}; port=${ep#*:}
-  OUT=$(ssh -i "$K" -p "$port" -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 \
+  OUT=$(ssh -n -i "$K" -p "$port" -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 \
         -o ServerAliveInterval=5 -o ServerAliveCountMax=2 root@"$ip" '
     cd /workspace/exp 2>/dev/null || exit 7
     MODEL=$(grep -aoE "PLAN: [^ ]+" job.log 2>/dev/null | head -1 | cut -d" " -f2)
