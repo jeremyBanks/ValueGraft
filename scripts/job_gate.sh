@@ -33,7 +33,7 @@ python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingf
 # force SELF-GEN (redesign default); no fixed summaries
 rm -f data/fixed_summaries.json 2>/dev/null
 export SC_SELFGEN=1
-export SC_HF_MODEL="Qwen/Qwen3-30B-A3B"
+export SC_HF_MODEL="Qwen/Qwen3-30B-A3B-Instruct-2507"
 export SC_CONV_LIMIT="${SC_CONV_LIMIT:-12}"        # c01-c12 = positive-control convs
 export SC_GC_ALPHA="${SC_GC_ALPHA:-0.75}"
 export SC_PLACEBO="${SC_PLACEBO:-gauss}"           # placebo control in the same run

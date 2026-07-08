@@ -1,0 +1,61 @@
+# HARD RULE: PRE-FLIGHT GATE BEFORE ANY SCALED SPEND OR FAN-OUT
+
+## The named failure this prevents
+**Assumed-precondition scaling.** Scaling up (fan-out) or spending on a precondition
+that was *assumed* rather than *observed*. Two cognitive slips combine:
+1. **Intent filed as effect** — "I fixed the path" / "the model list is right" is stored
+   as if the fix *applied* and the file *arrived*. The loop is never closed with a real
+   read of the actual state.
+2. **Scale-blindness** — launching 16 pods *feels like the same single action* as
+   running one, so no threshold trips and no check fires.
+The symptoms (wrong checkpoint for hours, MLX for a corpus, killed at 25/27 off a size
+proxy, rsync dropped a path, 16 pods on unloadable ids) are all one shape: **clever /
+expensive move made while a boring precondition was unobserved.**
+
+## Why writing the lesson down has not worked
+The lesson lived as a *memory to recall*. Recall fails exactly under momentum. The fix is
+not willpower — it is a **fail-closed interlock in the execution path** that does not
+depend on remembering: the launcher physically refuses to run without a fresh GREEN token
+for the exact job + launcher + model set. See `scripts/preflight.py` /
+`scripts/launch_pod.sh` (`exit 5` when not green).
+
+## THE TRIGGER — when the gate is mandatory
+Run the gate GREEN first for **any action that crosses the "second unit" line**:
+- spawns **more than one** unit (pod / job / model / parallel worker), **or**
+- costs **more than ~$5**, **or**
+- is **hard to reverse** (destructive, or hours of compute you can't ctrl-C back).
+The **first unit is the gate**: one cheap/tiny/local round-trip that produces a real,
+finite number is the price of admission to units 2..N. If it's exactly one cheap unit,
+that unit *is* the probe — otherwise, gate first. When unsure, you are over the line.
+
+## THE PRE-FLIGHT GATE — what it asserts (all local, seconds, no GPU)
+Run: `MODELS=… ANCHORS=… BREADTH=… bash scripts/preflight.sh <job-script>`
+It exits nonzero on the first failure and only writes `.preflight_ok.json` when every
+check passes (valid 6h, pinned to this job+launcher fingerprint + the verified model set):
+- **B — models resolve & are loadable.** Every id downloads `config.json` from the hub
+  (catches typos / nonexistent checkpoints) and is a **text-only causal LM** (rejects
+  multimodal wrappers: `vision_config`, VL/ConditionalGeneration archs). *This alone would
+  have caught 5-of-16 multimodal + the unloadable model in minutes.*
+- **C — the launcher's rsync sources all exist locally.** rsync's `|| true` silently drops
+  a missing path; the gate makes that fail closed. *This is the "rsync dropped a path" /
+  "fix silently didn't apply" bug.*
+- **D — every `data/…` file the code opens exists at the read path.**
+- **E — the launch mechanism parses end-to-end** (job script + every `src/*.py`).
+- **F — secrets & state**: HF token present, ssh key present, git tree committed.
+
+## EARLY SIGNAL AS A DEFAULT (not a thing added when nagged)
+Every long/expensive run must surface a **real scored number early**, by construction:
+- **Tier 1 round-trip before fan-out:** launch **one** cheap unit (tiny model / few convs)
+  through the *full real mechanism* and confirm it yields a **sane finite number** — not
+  "it ran". Only then fan out to the rest.
+- The per-run **probe** (`SC_PROBE_CONVS`, already in `job_sweep.sh`) scores a few units
+  first so a broken/out-of-distribution run per architecture shows in ~40min, not 5h.
+Treat a run with no early-signal path as **not ready to launch.**
+
+## THE ONE MECHANISM THAT STOPS RECURRENCE
+`launch_pod.sh` fails closed: **no pod launches without a fresh green token matching this
+job+launcher whose verified set contains every model being launched.** An unverified model
+is rejected *even if a token exists* — you cannot sneak one into a fan-out. Override is a
+single explicit, logged escape hatch (`SC_SKIP_PREFLIGHT="reason"`) for a deliberate
+one-off. The interlock works when you are deep in momentum and *think* you already checked,
+because it re-reads the actual state instead of trusting your memory of it.

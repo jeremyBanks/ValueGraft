@@ -9,6 +9,23 @@
 # - registers pod in scratchpad/pods.list for the watchdog + auto-pull
 set -euo pipefail
 NAME=$1; JOB=$2; GPU="${3:-NVIDIA A100 80GB PCIe}"
+cd /Users/jeb/experimentation
+
+# ── FAIL-CLOSED PRE-FLIGHT GATE ────────────────────────────────────────────
+# No pod launches without a fresh GREEN token (scripts/preflight.py) whose
+# mechanism fingerprint matches THIS job+launcher and that verified the models
+# in $MODELS/$ANCHORS/$BREADTH. This interlock does NOT depend on anyone
+# remembering to check. Override only for a deliberate one-off (logged):
+#   SC_SKIP_PREFLIGHT="reason" launch_pod.sh ...
+if [ -n "${SC_SKIP_PREFLIGHT:-}" ]; then
+  echo "PRE-FLIGHT BYPASSED for $NAME — reason: $SC_SKIP_PREFLIGHT" >&2
+else
+  MODELS="${MODELS:-}" ANCHORS="${ANCHORS:-}" BREADTH="${BREADTH:-}" \
+    python3 scripts/preflight.py --verify --job "$JOB" --launcher scripts/launch_pod.sh \
+    || { echo "REFUSING to launch $NAME: pre-flight not green (see above)."; exit 5; }
+fi
+# ───────────────────────────────────────────────────────────────────────────
+
 K=$HOME/.ssh/id_ed25519_runpod
 S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
 STATE=".pod_${NAME}_state.json"
