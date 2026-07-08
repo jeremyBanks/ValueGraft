@@ -1,3 +1,10 @@
+>> ⛔ BLOCKING REQUIREMENT: the paper MUST fully document DATA PROVENANCE and experimental
+>> methodology per **METHODS-PROVENANCE-REQUIREMENTS.md** (who/what generated every piece of
+>> data — prompts authored, replies model-native, summary self-gen, gold from planted facts;
+>> exact model checkpoint ids; procedures; gates; design rationale). EVERY prior writeup FAILED
+>> this. A methods section that skips any item there is NOT DONE. This is a blocking review
+>> failure, not optional. Check the paper against that file with Fable + critics + Codex.
+
 # Write-up guidelines (final artifact: HuggingFace community blog post + repo)
 
 Target: HF community blog post + this GitHub repo — NOT an academic paper.

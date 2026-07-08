@@ -223,3 +223,6 @@ These are IN THE REPO on purpose so all agents can see them (private memory file
 - The moment a fix hasn't converged in ~1-2 attempts, or a subagent is looping, or a result is confusing: STOP and consult Fable for the STRATEGIC/diagnostic view. Do NOT grind for hours first. Fable advises; it does not implement. (Fable caught the wrong-model class of bug and the nativeness confound that hours of narrow debugging missed.)
 
 **Record learnings IN THE REPO** (DECISIONS.md / INCIDENTS.md / FINDINGS.md / here) — not in private memory files agents can't see.
+
+## PAPER: methods/provenance are a BLOCKING requirement
+Before the paper ships, it MUST satisfy every item in METHODS-PROVENANCE-REQUIREMENTS.md (data provenance = who/what generated each token, exact model ids, procedures, gates, design rationale, reproducibility). Every prior writeup omitted this; it makes the result un-reproducible. Brief Fable + critics + Codex to review the paper AGAINST that file. Provenance gaps = blocking failure.
