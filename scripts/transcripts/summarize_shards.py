@@ -23,12 +23,12 @@ Write a concise but information-dense summary for a future agent. Capture:
 - operational lessons that affect future work
 - handoff-relevant state at the shard boundary
 
-The first line of your answer must be the italicized capsule sentence, or at
-most two short italicized sentences, summarizing what this shard is about. Do not
-put any title, heading, bold label, or preamble before that first italicized
-line. Then use short titled sections and prose paragraphs. Use bullets only for
-compact lists of named results, rules, arms, or open questions; do not turn the
-whole conversation into a bullet ledger.
+The first paragraph of your answer must be the italicized opening summary, or
+at most two short italicized sentences, summarizing what this shard is about. Do
+not put any title, heading, bold label, or preamble before that first italicized
+paragraph. Then use short titled sections and prose paragraphs. Use bullets only
+for compact lists of named results, rules, arms, or open questions; do not turn
+the whole conversation into a bullet ledger.
 
 Use neutral, professional prose focused on what changed and why. Preserve
 priority and urgency when it affects future work, but express it as project

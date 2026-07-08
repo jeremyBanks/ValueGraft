@@ -242,4 +242,4 @@ Before the paper ships, it MUST satisfy every item in METHODS-PROVENANCE-REQUIRE
 - Community RunPod create 500s are TRANSIENT (availability fluctuates) — retry, don't conclude it's down.
 - Don't grind on infrastructure. If a pod degrades, terminate+reprovision; the science isn't the pod.
 
-- **RELIABILITY (CLAUDE.md):** two hard rules — a fail-closed PRE-FLIGHT GATE before any scaled spend, and OBSERVABILITY (SRE: error reporting, health checks, metrics+anomaly detection, alerting) so failures self-report. These are solved problems; use the established patterns, not hacks.
+- **RELIABILITY ([RELIABILITY.md](RELIABILITY.md)):** two hard rules — a fail-closed PRE-FLIGHT GATE before any scaled spend, and OBSERVABILITY (SRE: error reporting, health checks, metrics+anomaly detection, alerting) so failures self-report. These are solved problems; use the established patterns, not hacks.

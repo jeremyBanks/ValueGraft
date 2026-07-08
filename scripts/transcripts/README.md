@@ -28,8 +28,8 @@ Conversation-note style:
 
 - name files as `YYYYMMDDHHMMSS-claude-conversation.md` or
   `YYYYMMDDHHMMSS-codex-conversation.md`
-- start with one italicized capsule sentence, or at most two short italicized
-  sentences, describing the shard
+- start with one italicized capsule paragraph containing one sentence, or at
+  most two short sentences, describing the shard
 - prefer short titled sections and prose paragraphs
 - use bullets only for compact lists of named results, rules, arms, or open
   questions

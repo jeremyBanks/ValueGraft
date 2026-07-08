@@ -29,12 +29,12 @@ YYYYMMDDHHMMSS-codex-conversation.md
 ```
 
 Keep Claude Code and Codex conversations separate even when their dates
-interleave. Start each conversation summary with one italicized capsule
-sentence, or at most two short italicized sentences, then use short titled
-sections and prose paragraphs. Bullets are fine for compact lists of named
-results, rules, arms, or open questions, but avoid turning a whole conversation
-into a bullet ledger. Preserve priority when it affects future work, while
-describing it as project priority, blocking status, or required follow-up rather
-than participant mood. Do not flatten importance: if emphasis changes what a
-future agent should do first, keep that as a project fact or required next
-action.
+interleave. Start each conversation summary with one italicized opening summary
+paragraph, containing one sentence or at most two short sentences, then use
+short titled sections and prose paragraphs. Bullets are fine for compact lists
+of named results, rules, arms, or open questions, but avoid turning a whole
+conversation into a bullet ledger. Preserve priority when it affects future
+work, while describing it as project priority, blocking status, or required
+follow-up rather than participant mood. Do not flatten importance: if emphasis
+changes what a future agent should do first, keep that as a project fact or
+required next action.
