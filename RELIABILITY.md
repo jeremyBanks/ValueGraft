@@ -207,3 +207,16 @@ Do NOT terminate pods, kill processes, `rm`, or spend based on INFERENCE about w
 terminated a running pod the user had NOT told me to kill (right after they said "I don't want you
 to stop"). Inferring intent about their money/work/compute and acting on it is a top-severity
 failure. If not explicitly instructed: ASK, or WAIT. Reversibility does not excuse it.
+
+---
+
+# HARD RULE: a Fable-planned solution requires a Fable REVIEW of the implementation (owner, 07-08)
+When a solution is designed per a Fable plan/recommendation, then AFTER it is implemented a **fresh
+Fable review** must verify the implementation actually matches the plan and is correct — BEFORE the
+solution is trusted or relied on. Implementation-without-review of a Fable-planned solution is NOT done.
+- Use a FRESH Fable (independent eyes); the agent that implemented it self-certifying is insufficient
+  — that is exactly the implement-and-assume-correct / false-confidence gap this closes.
+- Give the reviewing Fable: the original plan, the ACTUAL diff/implementation (not a summary of it),
+  and current facts. Ask it to confirm the plan is faithfully + correctly implemented, and flag gaps.
+- Applies to: the holistic prevention system, the QK-norm ablation, any harness/monitor/gate change
+  built to a Fable design.
