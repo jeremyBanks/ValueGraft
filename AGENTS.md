@@ -219,6 +219,7 @@ These are IN THE REPO on purpose so all agents can see them (private memory file
 - NEVER kill a subagent off a proxy signal (output-file size/mtime). Check real progress (recent activity, its last message) before any destructive action.
 
 **When stuck → consult Fable EARLY**
+- **The urge to stop and ask/report to the USER is the signal to consult FABLE instead — and keep working.** When stuck or uncertain, do NOT turn to the user for direction; that is offloading the thinking. Consult Fable autonomously (it's the resource for the thinking) and keep driving. Escalate to the user ONLY for decisions genuinely theirs — spend limits, scope, taste — never to resolve your own confusion. Fable first, then results; bring the user decisions and outcomes, not "here's where I'm confused, what do you think?"
 - The moment a fix hasn't converged in ~1-2 attempts, or a subagent is looping, or a result is confusing: STOP and consult Fable for the STRATEGIC/diagnostic view. Do NOT grind for hours first. Fable advises; it does not implement. (Fable caught the wrong-model class of bug and the nativeness confound that hours of narrow debugging missed.)
 
 **Record learnings IN THE REPO** (DECISIONS.md / INCIDENTS.md / FINDINGS.md / here) — not in private memory files agents can't see.
