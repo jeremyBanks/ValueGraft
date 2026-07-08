@@ -100,7 +100,7 @@ The concept groups are heuristic. Singleton-token maxima create artifacts, and s
 
 ## Best Next Step
 
-Do not start the follow-up while another GPU job is active on the shared pod.
+No additional GPU follow-up is required for this narrow comparison. Future runs should still preserve the serial-GPU rule.
 
 The most valuable next redesign is to turn the case-specific scoring idea into a small, balanced suite: multiple paraphrases per category, matched first tokens where possible, and separate English/Chinese factual, official, refusal, and redirect categories.
 
