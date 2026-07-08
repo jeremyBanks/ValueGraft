@@ -226,3 +226,18 @@ These are IN THE REPO on purpose so all agents can see them (private memory file
 
 ## PAPER: methods/provenance are a BLOCKING requirement
 Before the paper ships, it MUST satisfy every item in METHODS-PROVENANCE-REQUIREMENTS.md (data provenance = who/what generated each token, exact model ids, procedures, gates, design rationale, reproducibility). Every prior writeup omitted this; it makes the result un-reproducible. Brief Fable + critics + Codex to review the paper AGAINST that file. Provenance gaps = blocking failure.
+
+## Pod / RunPod ops (learned 07-08, hours lost to flaky pods)
+- LAUNCH detached jobs the PROVEN way: `scripts/launch_pod.sh <name> <job.sh>` (it does
+  `nohup bash job.sh > job.log 2>&1 &` and the ssh RETURNS) — this reliably detached all session.
+  Or a run_in_background Bash running an inline `nohup python … > log 2>&1 & echo PID` that returns
+  immediately. Do NOT use `setsid … &` or a foreground `bash script` held open by the ssh — on a
+  flaky pod the connection drop (exit 255) kills the job and no log is ever written.
+- A DEGRADED pod (API shows desiredStatus=RUNNING but runtime=None / uptime None) answers QUICK
+  commands (nvidia-smi, ls) but DROPS sustained connections and won't launch jobs. Do not fight it:
+  terminate + reprovision. Symptom = launches silently produce no log.
+- macOS has NO `timeout` command — never wrap ssh in `timeout N`; use ssh -o ConnectTimeout=15
+  -o ServerAliveInterval=5 -o ServerAliveCountMax=2 instead. (Also: pass ssh -o flags INLINE, not via
+  a shell variable — a `$O="-o …"` var expands wrong: "keyword stricthostkeychecking extra arguments".)
+- Community RunPod create 500s are TRANSIENT (availability fluctuates) — retry, don't conclude it's down.
+- Don't grind on infrastructure. If a pod degrades, terminate+reprovision; the science isn't the pod.

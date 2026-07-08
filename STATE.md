@@ -1,6 +1,43 @@
 # STATE.md — session handoff / current state
 
-*Updated 07-08 ~afternoon by Opus 4.8. EFFECT CONFIRMED REAL. Wide spend GATED on the nativeness control.*
+*Updated 07-08 (late). DESIGN VALIDATED. Batched-render timing test running. Then: QK-norm fix + pre-reg finalize + go wide.*
+
+## CURRENT TRUTH (read first)
+- EFFECT REAL + DESIGN VALIDATED. Per-model NATIVE render (each model generates its OWN in-context
+  replies + own self-gen summary; SHARED gold continuation) reproduces referent +0.10 (CI [+0.012,
+  +0.195], excludes 0) on Qwen3-30B-A3B-Instruct-2507; dissociation holds; headroom gate correctly
+  FLOORS preserved-content categories (ruled_out). Two harnesses agreed on the pre-render +0.12 too.
+- THE MULTI-HOUR SAGA was a WRONG MODEL CHECKPOINT (thinking Qwen3-30B-A3B vs the non-thinking
+  Instruct-2507 the +0.156 was measured on) — incidents 33/34. NOT a science problem.
+- DESIGN = v2.1 "matched-scaffold, model-filled" (MASTER-PLAN): shared scenarios, native replies+summary
+  per model, shared gold (difference metric cancels target-nativeness), headroom+competence gates,
+  reply covariates. Nativeness is PART OF THE MECHANISM (owner insight), per-model-native = correct.
+- WHOLE 54-scenario set is USABLE via native render (the "c13-c54 bad" was a foreign-reply confound in
+  the OLD pre-render; native render regenerates replies for ALL — no a-priori good/bad split; gates decide).
+
+## BUILT + STATUS
+- src/cross_arch_probe.py: SC_NATIVE_RENDER (per-model in-context reply gen) + SC_BATCHED_RENDER (batched
+  decode across a model's convs, ~10x; render-once/replay-across-arms already present) + gates + covariates.
+  Batched decode CPU-VERIFIED byte-identical to per-token on real Qwen3-0.6B (only lp_sum covariate differs
+  ~1e-5). GPU timing test (job_batchtest.sh) RUNNING on a fresh pod (does batched reproduce +0.10 fast).
+- arms_common build_alignment = difflib (incident 33 revert). raw_EB point-estimate stores None (cosmetic
+  bug; CIs are the signal) — patch it.
+
+## REMAINING BEFORE WIDE (all clear, no science risk):
+1. Confirm batched-render timing (running) — CPU already proves reproduction.
+2. FIX QK-NORM detection (broken: config-key returns False for all; Qwen3/Gemma/OLMo-2 DO use it — detect
+   from LOADED MODEL modules). data/model_geometry.json has the rest (GQA 2-24, head_dim 64-256, etc).
+3. FINALIZE the single pre-registered geometry direction (PREREGISTRATION.md, w/ Fable) BEFORE the run.
+4. NATIVE-RENDER SCALING v2 (MASTER-PLAN, Fable): batched decode (done) + parallelize (1 model/pod);
+   24 convs on the 4 anchor pairs / 12 breadth; continuous-outcome + precision-weighted regression;
+   equal depth WITHIN each de-confound pair; avoid blanket reply-shortening.
+5. Provision fleet -> go wide (16 models, per-model-native).
+
+## PAPER: METHODS-PROVENANCE-REQUIREMENTS.md is BLOCKING (task 38). Attribution byline = clean hierarchy
+(writeup-guidelines): Fable5 + GPT-5.5 authors, Jeremy Banks guidance, light assistance thanks, NO funding.
+Operational rules = AGENTS.md "HARD RULES" + "Pod/RunPod ops".
+
+## ---- (older layers below, superseded) ----
 
 ## WHERE WE ARE NOW (07-08 afternoon)
 - EFFECT CONFIRMED REAL on the correct model (Qwen3-30B-A3B-Instruct-2507): referent +0.12,
