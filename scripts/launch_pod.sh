@@ -42,7 +42,11 @@ for _ in $(seq 1 40); do
   sleep 15
 done
 [ -z "$IP" ] && { echo "FAIL: no ssh endpoint for $NAME"; exit 1; }
-SSH="ssh -i $K -p $PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 root@$IP"
+# BOUNDED ssh (macOS has no `timeout`): ServerAliveInterval/CountMax make a STALLED
+# connection die in ~60s and return nonzero instead of HANGING FOREVER. This converts
+# the recurring launcher-hang class (incidents #3, #35 — a hang after launch that
+# blocked/starved later pods) into a bounded, LOUD, nonzero-exit failure the caller sees.
+SSH="ssh -i $K -p $PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 root@$IP"
 
 $SSH "apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync >/dev/null 2>&1; mkdir -p /workspace/exp/data; nvidia-smi --query-gpu=name --format=csv,noheader" || { echo "FAIL: bootstrap $NAME"; exit 1; }
 rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json swegym.parquet .huggingface_key root@$IP:/workspace/exp/ 2>/dev/null || true
@@ -53,6 +57,34 @@ bash -n "$JOB" || { echo "FAIL: job script syntax"; exit 1; }
 for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" || { echo "FAIL: $f syntax"; exit 1; }; done
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh
 echo "$NAME $PORT $IP" >> $S/pods.list
-# forward per-pod launch env (MODELS + conv limit) into the remote job execution
-$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' nohup bash job.sh </dev/null > job.log 2>&1 & disown; echo job-launched"
-echo "LAUNCHED $NAME at $IP:$PORT"
+# forward per-pod launch env (MODELS + conv limit) into the remote job execution.
+# VERIFIED-DETACH pattern (incident #3): nohup + all fds redirected + </dev/null +
+# disown so the job survives the ssh close. The ssh RETURNS immediately.
+$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' nohup bash job.sh </dev/null > job.log 2>&1 & disown; echo job-launched" \
+  || { echo "FAIL: launch ssh for $NAME did not return cleanly (hang/drop) — NOT trusting it"; exit 1; }
+
+# ── POST-LAUNCH REAL-WORK CHECK (incident #28: a 'launched' echo is NOT proof) ──
+# A job can abort on line 4 (bad cd / missing pkg) and bill the pod for nothing while
+# a grep of "launched" matches itself. Verify the detach actually took AND the job
+# advanced past bare setup. This is fast (a few s) and fails LOUD + nonzero so a
+# never-started pod can NOT be silently swallowed. (Full GPU-residency proof is the
+# job's own responsibility + the health monitor — it happens minutes later after load.)
+sleep 8
+CHK=$($SSH "cd /workspace/exp 2>/dev/null || exit 7
+  ALIVE=\$(pgrep -f 'job.sh|cross_arch_probe' | grep -v \$\$ | wc -l | tr -d ' ')
+  LINES=\$(wc -l < job.log 2>/dev/null | tr -d ' ')
+  CRASH=\$(grep -ciE 'FATAL|Traceback|No such file|command not found|cannot access' job.log 2>/dev/null || echo 0)
+  DONE=\$(grep -c 'WIDE SWEEP DONE' job.log 2>/dev/null || echo 0)
+  echo \"ALIVE=\$ALIVE LINES=\${LINES:-0} CRASH=\$CRASH DONE=\$DONE\"" 2>/dev/null) \
+  || { echo "FAIL: post-launch check ssh for $NAME hung/dropped — cannot confirm the job started"; exit 1; }
+ALIVE=$(echo "$CHK" | sed -n 's/.*ALIVE=\([0-9]*\).*/\1/p')
+CRASH=$(echo "$CHK" | sed -n 's/.*CRASH=\([0-9]*\).*/\1/p')
+LINES=$(echo "$CHK" | sed -n 's/.*LINES=\([0-9]*\).*/\1/p')
+DONE=$(echo "$CHK" | sed -n 's/.*DONE=\([0-9]*\).*/\1/p')
+if [ "${CRASH:-0}" -gt 0 ]; then
+  echo "FAIL: $NAME job CRASHED at launch (setup error in job.log) — pod would bill doing nothing."; exit 1
+fi
+if [ "${ALIVE:-0}" = "0" ] && [ "${DONE:-0}" = "0" ]; then
+  echo "FAIL: $NAME job is NOT running and not done ($CHK) — detach failed / aborted. Do NOT trust it."; exit 1
+fi
+echo "LAUNCHED $NAME at $IP:$PORT — verified: alive=$ALIVE log_lines=${LINES:-0} (real-work check passed)"

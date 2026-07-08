@@ -79,6 +79,36 @@ def check_models(models):
             print(f"  ok  model  {m:52s} type={mtype} arch={archs[0] if archs else '?'}")
 
 
+# ---- B2: checkpoint identity vs the known-good baseline (incident #34) ------
+# The multi-hour saga (incidents 33/34) was ONE boring miss: running the THINKING
+# Qwen3-30B-A3B instead of the non-thinking Instruct-2507 the +0.10/+0.156 baseline
+# was measured on. String-identical family, different checkpoint, hours lost. This is
+# a cheap, exact interlock: reject a known WRONG TWIN of a validated baseline. Add a
+# twin here the moment a checkpoint confusion bites. Deliberate use of a twin (e.g. a
+# thinking-model experiment) must set SC_ALLOW_CHECKPOINT="<id>:reason" to log the choice.
+KNOWN_WRONG_TWINS = {
+    "Qwen/Qwen3-30B-A3B":
+        "this is the THINKING checkpoint (emits <think> -> tokenization divergence -> "
+        "alignment crash + wrong numbers). The validated +0.10/+0.156 baseline was measured "
+        "on Qwen/Qwen3-30B-A3B-Instruct-2507 (non-thinking). incident #34 — cost hours. "
+        "Use -Instruct-2507, or set SC_ALLOW_CHECKPOINT to run the twin deliberately.",
+}
+
+
+def check_checkpoints(models):
+    allow = os.environ.get("SC_ALLOW_CHECKPOINT", "")
+    allowed_ids = {a.split(":", 1)[0].strip() for a in allow.split(",") if a.strip()}
+    for m in models:
+        if m in KNOWN_WRONG_TWINS:
+            if m in allowed_ids:
+                warn("B2", f"running known-wrong-twin {m} DELIBERATELY (SC_ALLOW_CHECKPOINT). "
+                           "confirm this is an intended thinking-model experiment.")
+            else:
+                fail("B2", f"WRONG CHECKPOINT: {m} — {KNOWN_WRONG_TWINS[m]}")
+        else:
+            print(f"  ok  ckpt   {m}")
+
+
 # ---- C: launcher rsync sources exist locally ------------------------------
 def check_manifest(launcher):
     p = ROOT / launcher
@@ -228,6 +258,7 @@ def main():
 
     print(f"PRE-FLIGHT  job={args.job or '-'}  models={len(models)}  {time.strftime('%FT%T')}")
     check_models(models)
+    check_checkpoints(models)
     check_manifest(args.launcher)
     check_code_reads(args.job)
     check_syntax(args.job)

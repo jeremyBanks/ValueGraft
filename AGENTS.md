@@ -310,11 +310,18 @@ blocking failure.
 - Don't grind on infrastructure. If a pod degrades, terminate+reprovision; the
   science isn't the pod.
 
-- **RELIABILITY ([RELIABILITY.md](RELIABILITY.md)):** two hard rules — a
-  fail-closed PRE-FLIGHT GATE before any scaled spend, and OBSERVABILITY (SRE:
-  error reporting, health checks, metrics+anomaly detection, alerting) so
-  failures self-report. These are solved problems; use the established patterns,
-  not hacks.
+- **RELIABILITY ([RELIABILITY.md](RELIABILITY.md)):** START at the **PREVENTION MAP**
+  at the top — the single table of "if you do X, this mechanism catches you," fail-closed.
+  The hard rules it indexes: (1) fail-closed PRE-FLIGHT GATE before any scaled spend
+  (`scripts/preflight.sh`; now also **check B2** = wrong-checkpoint interlock, incident #34);
+  (2) OBSERVABILITY / SRE so failures self-report; (3) **MONITOR TRUST GATE** — a monitor is
+  untrusted until `scripts/monitor_selftest.sh` prints "MONITOR CLEARED" (fault-injection incl.
+  happy-path); monitors SOURCE the pure `scripts/classify_pod.sh`, never re-implement state logic
+  inline; (4) **PROCESS TRIPWIRES** — concrete conditions (canary-before-fanout, verify-the-number,
+  consult-Fable at ≤2 failed attempts, commit/push hygiene, no false confidence) that replace the
+  fuzzy behavioral rules. `scripts/launch_pod.sh` now bounds its ssh (a hang → nonzero exit, not a
+  starve) and runs a **post-launch real-work check** (crash/never-started → `exit 1`, incident #28/#35).
+  These are solved problems; use the established patterns, not hacks.
 
 ## HARD RULES added from notes-audit (07-08) — were user directives but not written down
 - **NEVER rewrite/amend/rebase git history. Correct ADDITIVELY** (a dated correction note/commit).

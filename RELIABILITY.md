@@ -1,3 +1,86 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PREVENTION MAP — read this first. The disease on this project is "the rule
+     was WRITTEN but not APPLIED under momentum." Prose you must remember fails
+     exactly when you're moving fast. So every recurring failure class below is
+     now guarded by a MECHANISM that re-reads reality and FAILS CLOSED — not by a
+     paragraph you have to recall. If you try to do the wrong thing, the mechanism
+     stops you. Do not rely on remembering; rely on the interlock firing.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+# THE PREVENTION LAYER (docs + process + interlocks + monitoring as ONE system)
+
+| If you do this…                                   | …this MECHANISM catches you                                             | How it fails CLOSED                                              | Kills (incident)          |
+|---------------------------------------------------|------------------------------------------------------------------------|-----------------------------------------------------------------|---------------------------|
+| Launch >1 pod / spend >$5 / irreversible          | `launch_pod.sh` → `preflight.py --verify` (green token gate)            | `exit 5`, no pod launches without a fresh matching token        | assumed-precondition scaling |
+| Launch a model id that's a typo / multimodal      | preflight **check B** (hub resolve + text-only arch)                    | RED, `exit 1` before any spend                                  | 5-of-16 multimodal, unloadable id |
+| Launch the WRONG CHECKPOINT (right family)         | preflight **check B2** (known-wrong-twin registry)                      | RED unless `SC_ALLOW_CHECKPOINT="id:reason"` logged             | #34 thinking-vs-Instruct (hours) |
+| rsync a source path that doesn't exist            | preflight **check C** (manifest vs disk)                               | RED; kills rsync's silent `\|\| true` drop                       | "fix silently didn't apply" |
+| Trust a launch that hung / crashed at start       | `launch_pod.sh` **post-launch real-work check** + bounded ssh          | hang → nonzero exit; no-proc/crash → `exit 1`, loud            | #3, #28, #35 launcher hang |
+| Trust a monitor you never validated               | `monitor_selftest.sh` (fault-injection incl. happy-path)               | any wrong classification → `exit 1`, "MONITOR NOT CLEARED"      | #35, #36 + monitor quartet |
+| Call a pod healthy when it's absent/unparseable   | `classify_pod.sh` invariant 1 (**unknown == alarm**)                   | MISSING/UNREACHABLE/UNKNOWN all return PROBLEM (rc 1)          | #35 never-launched pod    |
+| Report the probe's result as the final run        | `classify_pod.sh` invariant 2 (**unique terminal marker only**)        | DONE requires `WIDE SWEEP DONE`; probe → INTERIM, n shown      | #36 probe-as-DONE         |
+| Miss an errored result because the log looked clean| `classify_pod.sh` invariant 3 (**result status is authoritative**)     | status=ERROR/UNSUPPORTED → ERROR regardless of log             | error-as-interim bug      |
+| Cry "stalled" on a slow render                    | `classify_pod.sh` invariant 4 (**stall is GPU-aware**)                 | quiet log + GPU busy → RENDERING; only idle-GPU alarms         | stall-false-positive bug  |
+| Commit a shell script with a latent bug           | `lint.sh` (shellcheck --severity=warning, all `*.sh`)                  | any finding → `exit 1`; do not commit dirty                    | `declare -A`, stdin-eating loop |
+| Scale before you have ONE real number             | early-signal probe (`SC_PROBE_CONVS`) + canary tripwire (below)        | a run with no early-signal path is NOT READY to launch          | 5h black-box fan-outs     |
+
+**The order of operations, every scaled run:** `preflight.sh` GREEN → `monitor_selftest.sh` CLEARED
+→ launch (auto post-launch check) → canary/probe yields a real number → fan out → monitor alarms on any PROBLEM.
+Each arrow is a mechanism, not a memory.
+
+---
+
+# HARD RULE: A MONITOR IS UNTRUSTED UNTIL IT PASSES FAULT-INJECTION (incl. happy-path)
+
+The most-repeated bug of the last sessions: monitors that LIE — built on unverified
+assumptions about how the system actually emits signals (endpoint-blind, stall on a quiet
+render, DONE on the probe's write, ERROR result read as interim; incidents #35/#36).
+**A monitor's classification logic may NOT be relied on until it has passed a fault-injection
+self-test that (a) produces NO false alert on the happy path AND (b) fires on every failure mode.**
+
+- The classifier is a PURE function with no I/O: `scripts/classify_pod.sh` (`classify_pod`).
+  Monitors (`exp_watch.sh`) SOURCE it — they must NOT re-implement state logic inline (that is
+  how every monitor bug was born; inline logic can't be fault-tested).
+- Before trusting a monitor: `bash scripts/monitor_selftest.sh` → must print "MONITOR CLEARED".
+  It drives `classify_pod` with a fixture for every state (row 0 = happy path = no alert) and
+  asserts the exact class; a wrong classification exits nonzero.
+- **Absence is an alarm. Unknown is an alarm. "It didn't say anything" is a failure state**, never
+  a benign line. Result STATUS (not just log grep) is authoritative for errors. A terminal
+  classification (DONE) requires a marker UNIQUE to termination. Adding a monitor signal = adding
+  a self-test case that proves it fires on the real emission before you trust it.
+
+---
+
+# HARD RULE: PROCESS TRIPWIRES — concrete conditions, not vibes
+
+The behavioral rules ("verify first", "consult Fable when stuck") failed because they were vibes.
+These are the checkable tripwires that replace them. When a tripwire condition is TRUE, the action
+is MANDATORY — it is not a judgement call.
+
+- **CANARY-BEFORE-FANOUT.** Tripwire: about to start unit #2. Action: unit #1 must first have
+  produced a real, finite scored number through the full mechanism (not "it ran"). No number → do
+  not fan out. (The probe `SC_PROBE_CONVS` is this by construction; honour it.)
+- **VERIFY-THE-NUMBER.** Tripwire: about to report/believe a result. Action: read the actual number
+  AND its `n` yourself (`status=OK` ≠ correct; n≈6 = probe, n≈48 = full run). A result that is "too
+  clean" or "too catastrophic" is an audit trigger, not a headline (rule 19).
+- **CONSULT-FABLE.** Tripwire: a fix has not converged in **≤2 attempts**, OR a subagent is looping,
+  OR a result is confusing, OR you feel the urge to stop and ask the USER for direction. Action:
+  consult Fable for the strategic/diagnostic view and KEEP working — do not grind for hours, do not
+  offload the thinking to the user. (Fable caught the wrong-model + nativeness classes narrow
+  debugging missed.) The user gets decisions/outcomes, not "here's where I'm confused."
+- **SHARED-CODE-FIRST.** Tripwire: two independent apparatuses fail IDENTICALLY. Action: look in the
+  shared code/input first, not either harness (would have found #33 in minutes).
+- **COMMIT/PUSH HYGIENE.** Tripwire: a unit of work is done. Action: commit AND push to origin/trunk
+  with EXPLICIT paths (never `git add -A` — it can stage secret keys). Trunk only; never rewrite
+  history (correct additively). Never `rm`/overwrite uncommitted work.
+- **NO FALSE CONFIDENCE.** Tripwire: about to write "works / fixed / robust / will work". Action:
+  don't. Report only what you OBSERVED (past tense) and name what you did NOT verify. Success is
+  declared retroactively from an observed number.
+- **NEVER ACT ON INFERENCE.** Tripwire: about to terminate a pod / kill / rm / spend without an
+  explicit instruction. Action: ASK or WAIT. Reversibility does not excuse it.
+
+---
+
 # HARD RULE: PRE-FLIGHT GATE BEFORE ANY SCALED SPEND OR FAN-OUT
 
 ## The named failure this prevents
