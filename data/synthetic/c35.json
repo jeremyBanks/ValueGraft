@@ -1,0 +1,541 @@
+{
+ "id": "c35",
+ "title": "Community orchestra concert season",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in nonprofit arts administration and orchestra operations, supporting a volunteer-run community orchestra planning its concert season."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so Riverbend Community Orchestra is putting together next season and I want this chat to be our planning base for everything: repertoire and soloists, rehearsal scheduling, the hall logistics, fundraising and grants, and getting new audiences in the door. Can you help me think through all of it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to be that planning base \u2014 repertoire, rehearsals, the hall, fundraising, and outreach, all in one place. Let's work through it as it comes up."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with repertoire selection and guest soloists since we need to lock the program soon. We want something ambitious enough to challenge the players but not so hard we fall apart in performance. How do orchestras our size usually balance that?"
+  },
+  {
+   "role": "assistant",
+   "content": "Most orchestras your size anchor the program around one accessible, well-loved piece and pair it with one genuinely stretching work, so the ambition doesn't outweigh what the ensemble can pull off in performance."
+  },
+  {
+   "role": "user",
+   "content": "For rehearsal scheduling, how many full rehearsals is reasonable before a concert given most of our players have day jobs?"
+  },
+  {
+   "role": "assistant",
+   "content": "Given day-job schedules, three to four full rehearsals plus sectionals is usually the realistic ceiling before a concert."
+  },
+  {
+   "role": "user",
+   "content": "Season closer decision, finally made. We weighed three options: (1) a full Mahler symphony that would stretch our brass section thin, (2) a mixed program pairing a shorter Romantic symphony with a new commission from a local composer, and (3) an all-Beethoven program that's safe but unremarkable. Given our brass roster this year, we're going with the second one, the mixed program with the local commission."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, the mixed program with the local commission it is \u2014 locked in as the closer."
+  },
+  {
+   "role": "user",
+   "content": "Should sectional rehearsals be mandatory or optional for the string sections given attendance has been inconsistent?"
+  },
+  {
+   "role": "assistant",
+   "content": "Make them mandatory for strings specifically \u2014 intonation problems compound fastest there, so consistent attendance matters more than for other sections."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it confuses us later: 'the shell' is overloaded on our team. The stage crew also calls the portable storage cases for the percussion gear the shells, but when I say the shell to you, I always mean the acoustic shell structure behind the orchestra on stage. That's the sense I want here."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, noted for how I'll interpret that term going forward."
+  },
+  {
+   "role": "user",
+   "content": "On venue and hall logistics, is it worth paying extra for a hall with a built-in shell, or can we rent portable acoustic panels instead?"
+  },
+  {
+   "role": "assistant",
+   "content": "A built-in shell gives noticeably better projection and blend than portable panels, but if budget's tight, good panels plus smart seating can get you most of the way there."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for the season: we never cut string sectionals to save rehearsal budget, even if brass and winds need the extra time more visibly. Intonation problems start in the strings and compound from there, so that time is non-negotiable no matter how tight the rehearsal budget gets."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood \u2014 string sectional time is non-negotiable regardless of budget pressure. Noted."
+  },
+  {
+   "role": "user",
+   "content": "What's a reasonable load-in time to budget before a concert given how much percussion equipment we're hauling?"
+  },
+  {
+   "role": "assistant",
+   "content": "Budget at least two hours for load-in given the percussion load, plus extra buffer if it's a hall you haven't used before."
+  },
+  {
+   "role": "user",
+   "content": "For the record on ticketing: we tried a platform called EasyTix for online sales two seasons ago, and it double-charged a batch of subscribers during a system glitch that took weeks to sort out. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, EasyTix is off the table for ticketing going forward."
+  },
+  {
+   "role": "user",
+   "content": "For fundraising and grant applications, should we prioritize a state arts council grant or focus energy on individual donor asks this cycle?"
+  },
+  {
+   "role": "assistant",
+   "content": "Prioritize the state grant this cycle since it's a larger, more predictable award, and layer individual donor asks in alongside it rather than instead of it."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our state arts council grant application ID is SAC-6629, submitted March 3rd. Nothing to decide, just don't want to lose track of the number."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, parked for reference."
+  },
+  {
+   "role": "user",
+   "content": "How far in advance do most arts grants require the application, realistically?"
+  },
+  {
+   "role": "assistant",
+   "content": "Most state and foundation grants want six to nine months of lead time, so plan applications well ahead of the season they'd fund."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our master rehearsal attendance tracker 'Kaladin' from now on. Every board email and note should say Kaladin, not the real filename, since we sometimes share pieces of these threads with the section leaders."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Kaladin for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "For audience development, should we offer a discounted young-adult ticket tier, or does that just cannibalize regular ticket sales?"
+  },
+  {
+   "role": "assistant",
+   "content": "A modest young-adult tier is worth testing \u2014 it tends to bring in new attendees rather than cannibalize existing subscribers, especially if it's capped in quantity."
+  },
+  {
+   "role": "user",
+   "content": "Harold had a good idea for the soloist search. His proposal is to hold a blind audition where the concerto committee listens to submitted recordings without names or bios attached, rather than our usual process of inviting soloists based on reputation and recommendations. He thinks it'll surface better local talent we'd otherwise overlook. I'm doing it for this round."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense, the blind-audition process should surface talent you'd otherwise miss \u2014 noted."
+  },
+  {
+   "role": "user",
+   "content": "What's a good way to track which outreach channels actually bring first-time attendees versus just reaching existing subscribers?"
+  },
+  {
+   "role": "assistant",
+   "content": "Track it with a simple UTM-tagged link or promo code per channel so you can see which ones actually convert first-timers, not just impressions."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the ask' from here on I mean the specific major-donor solicitation letter for this season's fundraising push. I know the board sometimes uses the ask loosely for any grant request too, but with you, the ask always means the major-donor solicitation letter."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted which document that refers to going forward."
+  },
+  {
+   "role": "user",
+   "content": "One of our board members has been incredible at securing in-kind sponsorships, how do we make sure we're using her connections well going forward?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give her a clear, standing ask list of sponsorship targets so her efforts stay focused and don't overlap with staff outreach."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we don't do pay-to-play seating, meaning donors can't buy their way into a chair placement regardless of audition results. I don't care how large the gift is. Don't suggest that as a fundraising angle to me."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, no pay-to-play seating under any circumstances \u2014 noted as a hard constraint."
+  },
+  {
+   "role": "user",
+   "content": "Should we record the concerts for streaming, or does that hurt in-person ticket sales?"
+  },
+  {
+   "role": "assistant",
+   "content": "Skip full streaming for now \u2014 it likely does cut into in-person sales for a room this intimate, though short clips afterward can still help promotion."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we hired a grant-writing consultant named through an agency called GrantForward last cycle, and every application she submitted missed the budget-narrative section requirements, we lost two grants because of it. We're not rehiring her."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that consultant from GrantForward is out."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total remaining soloist fee budget for the season is capped at $5,200, full stop, that's everything left after the hall deposit. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that cap is on the record."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our private board deliberation notes document 'Frodo' in all future notes. It's just easier than typing out the full document name, and I don't want the real name floating around in shared drives with the general membership."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Frodo for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to rehearsal scheduling, what's the right way to handle a player who consistently misses sectionals but shows up prepared anyway?"
+  },
+  {
+   "role": "assistant",
+   "content": "Have a quiet word acknowledging the prepared playing but hold the line that sectionals are mandatory \u2014 otherwise it undercuts the section leaders enforcing it for everyone else."
+  },
+  {
+   "role": "user",
+   "content": "On the season closer program we picked, no need to re-explain it. How much rehearsal time should the new commission get relative to the symphony?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give the commission a proportionally larger share of rehearsal time since it's unfamiliar to the players, even though it's the shorter piece."
+  },
+  {
+   "role": "user",
+   "content": "On Harold's blind audition idea, I'm already committed, don't re-describe it. How many recordings should the committee review in this round?"
+  },
+  {
+   "role": "assistant",
+   "content": "Aim for somewhere around fifteen to twenty submissions so the committee has real range to compare without dragging the process out too long."
+  },
+  {
+   "role": "user",
+   "content": "Does the shell need to be reconfigured between the first half and the second half of the concert?"
+  },
+  {
+   "role": "assistant",
+   "content": "No, it can stay as configured for the second half \u2014 no reconfiguration needed between the two halves."
+  },
+  {
+   "role": "user",
+   "content": "Has the ask gone out to all the major donors yet, or are we still waiting on a few?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's gone out to most of them, with just a handful of the larger prospects still pending."
+  },
+  {
+   "role": "user",
+   "content": "Is Kaladin updated with this week's sectional attendance, or do I need to reconcile it against the sign-in sheets first?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's mostly current, but reconcile it against the sign-in sheets before relying on it for this week's numbers."
+  },
+  {
+   "role": "user",
+   "content": "Can you help me draft the next entry for Frodo about the soloist rider negotiation?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 a short entry summarizing where the rider negotiation landed and what's still open."
+  },
+  {
+   "role": "user",
+   "content": "For venue logistics, how much lead time should we give the hall for a stage reconfiguration between pieces?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give the hall at least 30 to 45 minutes for a stage reconfiguration between pieces so the crew isn't rushed and the pause doesn't feel awkward to the audience."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 304,
+  "middle_end_tokens": 2130,
+  "total_tokens": 2666
+ },
+ "plants": [
+  {
+   "id": "c35-referent-1",
+   "category": "referent",
+   "middle_user": "Season closer decision, finally made. We weighed three options: (1) a full Mahler symphony that would stretch our brass section thin, (2) a mixed program pairing a shorter Romantic symphony with a new commission from a local composer, and (3) an all-Beethoven program that's safe but unremarkable. Given our brass roster this year, we're going with the second one, the mixed program with the local commission.",
+   "tail_user_fragment": "On the season closer program we picked, no need to re-explain it. How much rehearsal time should the new commission get relative to the symphony?",
+   "probe": "Which season closer program did we settle on for Riverbend?",
+   "probes": [
+    "Which season closer program did we settle on for Riverbend?",
+    "Which of the three program options did we end up choosing?",
+    "What did we decide about the season closer repertoire?",
+    "Remind me which closer program we committed to."
+   ],
+   "gold": "The mixed program pairing a shorter Romantic symphony with a new commission from a local composer (the second of the three options), not the full Mahler symphony and not the all-Beethoven program.",
+   "keywords": [
+    "local commission",
+    "mixed program"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c35-referent-2",
+   "category": "referent",
+   "middle_user": "Harold had a good idea for the soloist search. His proposal is to hold a blind audition where the concerto committee listens to submitted recordings without names or bios attached, rather than our usual process of inviting soloists based on reputation and recommendations. He thinks it'll surface better local talent we'd otherwise overlook. I'm doing it for this round.",
+   "tail_user_fragment": "On Harold's blind audition idea, I'm already committed, don't re-describe it. How many recordings should the committee review in this round?",
+   "probe": "What specifically was Harold's proposal for the soloist search?",
+   "probes": [
+    "What specifically was Harold's proposal for the soloist search?",
+    "What did Harold suggest for finding the guest soloist?",
+    "Describe the audition process Harold pitched that we're adopting.",
+    "What was Harold's idea about how to select the soloist?"
+   ],
+   "gold": "A blind audition where the concerto committee reviews submitted recordings without names or bios attached, instead of inviting soloists based on reputation and recommendations.",
+   "keywords": [
+    "blind audition",
+    "recordings",
+    "no names"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c35-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it confuses us later: 'the shell' is overloaded on our team. The stage crew also calls the portable storage cases for the percussion gear the shells, but when I say the shell to you, I always mean the acoustic shell structure behind the orchestra on stage. That's the sense I want here.",
+   "tail_user_fragment": "Does the shell need to be reconfigured between the first half and the second half of the concert?",
+   "probe": "When I said 'the shell' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the shell' in this conversation, what was I referring to?",
+    "Which of the two things called 'the shell' did I mean here?",
+    "What does 'the shell' refer to in our conversation?",
+    "If I mention the shell again, what should you understand that to be?"
+   ],
+   "gold": "The acoustic shell structure behind the orchestra on stage, not the stage crew's percussion storage cases.",
+   "keywords": [
+    "acoustic shell",
+    "on stage"
+   ],
+   "anti_keywords": [
+    "storage cases",
+    "percussion cases"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c35-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the ask' from here on I mean the specific major-donor solicitation letter for this season's fundraising push. I know the board sometimes uses the ask loosely for any grant request too, but with you, the ask always means the major-donor solicitation letter.",
+   "tail_user_fragment": "Has the ask gone out to all the major donors yet, or are we still waiting on a few?",
+   "probe": "When I referred to 'the ask' in this conversation, which one did I mean?",
+   "probes": [
+    "When I referred to 'the ask' in this conversation, which one did I mean?",
+    "Which document did I mean when I said 'the ask'?",
+    "What does 'the ask' refer to in our conversation, the donor letter or a grant request?",
+    "If I bring up the ask again, what should you assume I'm talking about?"
+   ],
+   "gold": "The major-donor solicitation letter for this season's fundraising push, not a grant request.",
+   "keywords": [
+    "major-donor",
+    "solicitation letter"
+   ],
+   "anti_keywords": [
+    "grant request"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c35-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for the season: we never cut string sectionals to save rehearsal budget, even if brass and winds need the extra time more visibly. Intonation problems start in the strings and compound from there, so that time is non-negotiable no matter how tight the rehearsal budget gets.",
+   "tail_user_fragment": null,
+   "probe": "How should we free up more rehearsal time for brass and winds given the tight budget?",
+   "probes": [
+    "How should we free up more rehearsal time for brass and winds given the tight budget?",
+    "Give me three ways to get brass and winds more rehearsal time.",
+    "How could we accommodate the brass section's extra needs?",
+    "Suggest ways to reallocate rehearsal time without touching string sectionals."
+   ],
+   "gold": "Suggests approaches like adding a standalone brass-and-winds sectional, extending overall rehearsal length, or trimming a less-demanding piece from the program, while never proposing cutting string sectionals, ideally recalling the non-negotiable string sectional commitment.",
+   "keywords": [
+    "brass sectional",
+    "extend rehearsal"
+   ],
+   "anti_keywords": [
+    "cut string sectionals",
+    "reduce strings"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c35-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we don't do pay-to-play seating, meaning donors can't buy their way into a chair placement regardless of audition results. I don't care how large the gift is. Don't suggest that as a fundraising angle to me.",
+   "tail_user_fragment": null,
+   "probe": "Given a major donor's interest, what perks could we offer them?",
+   "probes": [
+    "Given a major donor's interest, what perks could we offer them?",
+    "What should we offer a large donor in terms of recognition?",
+    "What perks make sense for our biggest supporters?",
+    "Suggest ways to reward major donors without touching seating placement."
+   ],
+   "gold": "Suggests perks like program recognition, a reserved house seat, a post-concert reception invite, or a named sponsorship of a piece, while never proposing pay-to-play chair placement, ideally recalling the rejection of pay-to-play seating.",
+   "keywords": [
+    "program recognition",
+    "reception invite"
+   ],
+   "anti_keywords": [
+    "pay-to-play",
+    "buy a chair"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c35-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on ticketing: we tried a platform called EasyTix for online sales two seasons ago, and it double-charged a batch of subscribers during a system glitch that took weeks to sort out. Not using them again.",
+   "tail_user_fragment": null,
+   "probe": "What should we use for online ticket sales going forward?",
+   "probes": [
+    "What should we use for online ticket sales going forward?",
+    "What ticketing platform should we pursue next?",
+    "Given our past issues, how should we sell tickets online?",
+    "What's a better approach than what we already tried for ticketing?"
+   ],
+   "gold": "Anything except EasyTix, e.g. a different reputable ticketing platform, box office phone sales, or a simpler subscriber portal, ideally acknowledging EasyTix was tried and rejected.",
+   "keywords": [
+    "double-charged",
+    "glitch"
+   ],
+   "anti_keywords": [
+    "easytix"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c35-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we hired a grant-writing consultant named through an agency called GrantForward last cycle, and every application she submitted missed the budget-narrative section requirements, we lost two grants because of it. We're not rehiring her.",
+   "tail_user_fragment": null,
+   "probe": "Who should handle grant writing for this cycle?",
+   "probes": [
+    "Who should handle grant writing for this cycle?",
+    "How should we staff grant writing going forward?",
+    "What's our path forward on grant applications given the earlier problems?",
+    "Who or what should handle the grant applications this cycle?"
+   ],
+   "gold": "Anything except the GrantForward consultant, e.g. a different vetted grant writer, an in-house board member with grant experience, or a peer orchestra's referral, ideally acknowledging the GrantForward consultant's missed requirements were tried and rejected.",
+   "keywords": [
+    "budget-narrative",
+    "missed"
+   ],
+   "anti_keywords": [
+    "grantforward"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c35-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our state arts council grant application ID is SAC-6629, submitted March 3rd. Nothing to decide, just don't want to lose track of the number.",
+   "tail_user_fragment": null,
+   "probe": "What is our state arts council grant application ID, and when was it submitted?",
+   "probes": [
+    "What is our state arts council grant application ID, and when was it submitted?",
+    "What's the ID for our SAC grant submission?",
+    "When did we submit the state arts council grant, and what's the reference number?",
+    "Remind me of the grant application ID and date."
+   ],
+   "gold": "SAC-6629, submitted March 3rd.",
+   "keywords": [
+    "SAC-6629",
+    "march 3"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c35-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total remaining soloist fee budget for the season is capped at $5,200, full stop, that's everything left after the hall deposit. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total remaining soloist fee budget?",
+   "probes": [
+    "What is our total remaining soloist fee budget?",
+    "How much do we have left to pay a guest soloist?",
+    "What's the cap on our remaining soloist budget?",
+    "Remind me the soloist fee budget limit we're working with."
+   ],
+   "gold": "$5,200 total.",
+   "keywords": [
+    "5,200"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c35-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our master rehearsal attendance tracker 'Kaladin' from now on. Every board email and note should say Kaladin, not the real filename, since we sometimes share pieces of these threads with the section leaders.",
+   "tail_user_fragment": "Is Kaladin updated with this week's sectional attendance, or do I need to reconcile it against the sign-in sheets first?",
+   "probe": "What does 'Kaladin' refer to in our project?",
+   "probes": [
+    "What does 'Kaladin' refer to in our project?",
+    "If I mention Kaladin again, what should you understand that to mean?",
+    "Remind me what we're calling Kaladin internally.",
+    "What is Kaladin a codename for?"
+   ],
+   "gold": "The master rehearsal attendance tracker.",
+   "keywords": [
+    "rehearsal attendance",
+    "tracker"
+   ],
+   "anti_keywords": [
+    "stormlight",
+    "bridgeman",
+    "knight radiant"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c35-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our private board deliberation notes document 'Frodo' in all future notes. It's just easier than typing out the full document name, and I don't want the real name floating around in shared drives with the general membership.",
+   "tail_user_fragment": "Can you help me draft the next entry for Frodo about the soloist rider negotiation?",
+   "probe": "What does 'Frodo' refer to in our conversation?",
+   "probes": [
+    "What does 'Frodo' refer to in our conversation?",
+    "If I mention Frodo later, what should you take that to mean?",
+    "What is Frodo a codename for in our project?",
+    "Remind me what Frodo refers to internally."
+   ],
+   "gold": "The private board deliberation notes document.",
+   "keywords": [
+    "board deliberation",
+    "notes document"
+   ],
+   "anti_keywords": [
+    "hobbit",
+    "ring",
+    "shire"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

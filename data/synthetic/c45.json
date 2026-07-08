@@ -1,0 +1,555 @@
+{
+ "id": "c45",
+ "title": "Planetarium dome show relaunch",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in museum and informal science education operations, supporting a director relaunching a planetarium's dome shows."
+  },
+  {
+   "role": "user",
+   "content": "Hi, Cedarholm Planetarium is relaunching after years of running the same tired dome show on aging equipment. We're upgrading the projector system, writing a brand-new original show, revamping our school field trip program, redoing membership tiers, and throwing a fundraising gala to help pay for it all. I'd like to plan the whole relaunch with you."
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "Let's start with the projector and dome system. Our current setup is a single-channel analog star projector from the 90s. What should I be weighing when picking a full-dome digital replacement?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Projector decision. Three finalists: (1) a top-tier dual 4K laser projection system from the industry leader, (2) a mid-range single-projector fisheye system from a smaller vendor at half the cost, or (3) refurbishing our existing analog star ball with a digital overlay add-on. The board approved option two, the mid-range single-projector fisheye system, to stretch the budget toward the show script and gala."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted, and I'll keep that in mind as we keep planning."
+  },
+  {
+   "role": "user",
+   "content": "For the new show script, how long should a resident dome show typically run for a mixed family audience, versus something aimed more at adults?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the show' is overloaded right now. Some staff use 'the show' loosely for whatever licensed traveling program we're currently screening, but when I say the show to you, I always mean our new original resident show that we're writing in-house. That's the sense I want."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I've locked that in on my end."
+  },
+  {
+   "role": "user",
+   "content": "On school field trips, how far in advance do teachers typically need to book a planetarium slot for it to fit their curriculum planning?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for the relaunch: no sponsor logos or ads displayed during the dome show itself, before, during, or after. Sponsors can be thanked in the lobby and printed program, but the dome experience stays commercial-free no matter how much a sponsor offers to pay for a pre-show slide."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks for the clarity, that's noted going forward."
+  },
+  {
+   "role": "user",
+   "content": "Membership question: should we offer a single flat membership tier, or multiple tiers based on visit frequency?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a sensible middle ground here. I'd avoid over-engineering it this early and set a baseline you can adjust. Let me know if you want specifics."
+  },
+  {
+   "role": "user",
+   "content": "For the record on licensed content: we tried a licensed show package from a vendor called SkyDome Media two seasons ago, and it had visible rendering artifacts and banding on our old projector that families complained about even before this upgrade. We're not licensing from them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense. I'll factor that into everything else we work through."
+  },
+  {
+   "role": "user",
+   "content": "For the gala, what's a realistic per-ticket price for a first-time fundraising event at a mid-size regional planetarium?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable to plan for this now. A light-touch process usually beats a heavy one at your stage. I can outline one if that helps."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: the new projector's install and commissioning is scheduled to complete on the 9th, and the unit's serial number is PJ-58820 for our warranty records. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and I'll respect that as we go."
+  },
+  {
+   "role": "user",
+   "content": "Back to the projector, how disruptive is the installation process, in terms of how long the dome would need to be closed to the public?"
+  },
+  {
+   "role": "assistant",
+   "content": "I'd treat that as a judgment call anchored to your actual constraints rather than a fixed rule. Want me to walk through the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the master dome control console 'Palpatine' from now on. Every internal doc and vendor ticket should say Palpatine instead of the real system name, since we sometimes discuss its quirks in shared docs with outside contractors."
+  },
+  {
+   "role": "assistant",
+   "content": "Good to have that on the record. I'll carry it forward."
+  },
+  {
+   "role": "user",
+   "content": "Narration decision for the new show. Three options: (1) hire a professional voice actor for a fully pre-recorded track, (2) keep live narration performed by staff at every showing, or (3) a hybrid with pre-recorded narration but a live host doing intro and Q&A. We're going with the hybrid, pre-recorded narration plus a live host."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted, and I'll keep that in mind as we keep planning."
+  },
+  {
+   "role": "user",
+   "content": "For the show script, should the narration be pre-recorded, or should we keep doing live narration like we do now?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair thing to nail down. Keep it proportional to your resources and don't gold-plate it yet. I can suggest a starting point."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'members' from here on I mean people on our individual annual membership tier specifically, not the broader family membership tier. I know staff sometimes say 'members' to mean anyone with any kind of membership, but with you, members means the individual tier."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I've locked that in on my end."
+  },
+  {
+   "role": "user",
+   "content": "On field trips, what's a reasonable group size cap per session before the experience starts to suffer?"
+  },
+  {
+   "role": "assistant",
+   "content": "That one rewards a bit of upfront planning. Set a clear default, document it, and stay flexible. Glad to expand."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: student field trip admission stays free, permanently, regardless of the gala's fundraising results or any budget shortfall. We will cut other things before we ever start charging schools for field trips."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks for the clarity, that's noted going forward."
+  },
+  {
+   "role": "user",
+   "content": "Membership again, should family memberships include unlimited free dome show admission, or a capped number of visits per year?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we tried an all-volunteer narrator program for a few months last year, rotating through six different volunteers. Quality was wildly inconsistent, some sessions ran long, others rushed through the material. We're not going back to that model."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense. I'll factor that into everything else we work through."
+  },
+  {
+   "role": "user",
+   "content": "One of our part-time staff, Alicia, has turned out to be a genuinely gifted live narrator. I want to make sure the new show plays to that strength."
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Fundraising note for my own records: the gala's target is $75,000, with the date set for the second Saturday of next month. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and I'll respect that as we go."
+  },
+  {
+   "role": "user",
+   "content": "For the gala, should it double as a members-only preview of the new show, or stay a separate event entirely?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a sensible middle ground here. I'd avoid over-engineering it this early and set a baseline you can adjust. Let me know if you want specifics."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our senior volunteer docent trainer 'Gandalf' in all future notes. It's just quicker to type than his full title every time we talk about scheduling him for training sessions."
+  },
+  {
+   "role": "assistant",
+   "content": "Good to have that on the record. I'll carry it forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to the projector install, what should our contingency plan be if it slips past our planned reopening date?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "On the projector system we're getting, no need to recap the alternatives, what's the expected install timeline once it ships?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "For the narration approach we picked, don't walk through the options again, how much studio time should we budget to record the pre-recorded portion?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a sensible middle ground here. I'd avoid over-engineering it this early and set a baseline you can adjust. Let me know if you want specifics."
+  },
+  {
+   "role": "user",
+   "content": "Is the show's script tight enough to start blocking camera movements for the dome yet?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable to plan for this now. A light-touch process usually beats a heavy one at your stage. I can outline one if that helps."
+  },
+  {
+   "role": "user",
+   "content": "How many members should we expect to renew before the gala invitations need to go out?"
+  },
+  {
+   "role": "assistant",
+   "content": "I'd treat that as a judgment call anchored to your actual constraints rather than a fixed rule. Want me to walk through the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Is Palpatine reliable enough to trust for the gala preview, or should we keep a manual backup plan ready?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair thing to nail down. Keep it proportional to your resources and don't gold-plate it yet. I can suggest a starting point."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft a short thank-you note to Gandalf for covering last week's field trip overflow?"
+  },
+  {
+   "role": "assistant",
+   "content": "That one rewards a bit of upfront planning. Set a clear default, document it, and stay flexible. Glad to expand."
+  },
+  {
+   "role": "user",
+   "content": "For field trips, should we require a minimum group size to book a session, or accept any size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 276,
+  "middle_end_tokens": 2070,
+  "total_tokens": 2612
+ },
+ "plants": [
+  {
+   "id": "c45-referent-1",
+   "category": "referent",
+   "middle_user": "Projector decision. Three finalists: (1) a top-tier dual 4K laser projection system from the industry leader, (2) a mid-range single-projector fisheye system from a smaller vendor at half the cost, or (3) refurbishing our existing analog star ball with a digital overlay add-on. The board approved option two, the mid-range single-projector fisheye system, to stretch the budget toward the show script and gala.",
+   "tail_user_fragment": "On the projector system we're getting, no need to recap the alternatives, what's the expected install timeline once it ships?",
+   "probe": "Which projector system did Cedarholm decide to install?",
+   "probes": [
+    "Which projector system did Cedarholm decide to install?",
+    "Out of the three projector options, which one did the board approve?",
+    "What did we settle on for the new dome projector?",
+    "Remind me which projector system we picked."
+   ],
+   "gold": "The mid-range single-projector fisheye system from the smaller vendor, not the top-tier dual 4K laser system or the analog-with-digital-overlay refurbishment.",
+   "keywords": [
+    "mid-range",
+    "single-projector",
+    "fisheye"
+   ],
+   "anti_keywords": [
+    "dual 4K laser",
+    "digital overlay",
+    "refurbished analog"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c45-referent-2",
+   "category": "referent",
+   "middle_user": "Narration decision for the new show. Three options: (1) hire a professional voice actor for a fully pre-recorded track, (2) keep live narration performed by staff at every showing, or (3) a hybrid with pre-recorded narration but a live host doing intro and Q&A. We're going with the hybrid, pre-recorded narration plus a live host.",
+   "tail_user_fragment": "For the narration approach we picked, don't walk through the options again, how much studio time should we budget to record the pre-recorded portion?",
+   "probe": "What did we decide on for the new show's narration format?",
+   "probes": [
+    "What did we decide on for the new show's narration format?",
+    "Out of the three narration options, which one did we choose?",
+    "What's the plan for narrating the new dome show?",
+    "Remind me which narration format we settled on."
+   ],
+   "gold": "The hybrid approach: pre-recorded narration with a live host for intro and Q&A, not fully pre-recorded with a voice actor or fully live narration.",
+   "keywords": [
+    "hybrid",
+    "pre-recorded",
+    "live host"
+   ],
+   "anti_keywords": [
+    "fully live narration",
+    "voice actor only"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c45-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the show' is overloaded right now. Some staff use 'the show' loosely for whatever licensed traveling program we're currently screening, but when I say the show to you, I always mean our new original resident show that we're writing in-house. That's the sense I want.",
+   "tail_user_fragment": "Is the show's script tight enough to start blocking camera movements for the dome yet?",
+   "probe": "When I said 'the show,' what was I referring to?",
+   "probes": [
+    "When I said 'the show,' what was I referring to?",
+    "Which of the two things called 'the show' did I mean?",
+    "What does 'the show' refer to in our conversation?",
+    "If I mention the show again, what should you understand that to be?"
+   ],
+   "gold": "The new original resident show being written in-house, not whatever licensed traveling program is currently screening.",
+   "keywords": [
+    "original",
+    "resident show",
+    "in-house"
+   ],
+   "anti_keywords": [
+    "licensed traveling program",
+    "touring show"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c45-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'members' from here on I mean people on our individual annual membership tier specifically, not the broader family membership tier. I know staff sometimes say 'members' to mean anyone with any kind of membership, but with you, members means the individual tier.",
+   "tail_user_fragment": "How many members should we expect to renew before the gala invitations need to go out?",
+   "probe": "When I say 'members,' which group do I mean?",
+   "probes": [
+    "When I say 'members,' which group do I mean?",
+    "Does 'members' refer to the individual tier or the family tier?",
+    "What does 'members' mean in our conversation?",
+    "If I mention members again, what should you assume I'm talking about?"
+   ],
+   "gold": "People on the individual annual membership tier specifically, not the family membership tier.",
+   "keywords": [
+    "individual tier",
+    "individual annual membership"
+   ],
+   "anti_keywords": [
+    "family tier",
+    "family membership"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c45-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for the relaunch: no sponsor logos or ads displayed during the dome show itself, before, during, or after. Sponsors can be thanked in the lobby and printed program, but the dome experience stays commercial-free no matter how much a sponsor offers to pay for a pre-show slide.",
+   "tail_user_fragment": "",
+   "probe": "How could we make the show more appealing to potential corporate sponsors?",
+   "probes": [
+    "How could we make the show more appealing to potential corporate sponsors?",
+    "What could we offer sponsors to increase their contribution?",
+    "Give me ideas for sweetening our sponsorship packages.",
+    "Suggest ways to attract more corporate sponsorship for the relaunch."
+   ],
+   "gold": "Suggests approaches like lobby recognition, printed program credits, or named seating sections, while never proposing sponsor logos or ads inside the dome show itself, ideally recalling the commercial-free-dome rule.",
+   "keywords": [
+    "lobby recognition",
+    "printed program",
+    "named seating"
+   ],
+   "anti_keywords": [
+    "sponsor logo",
+    "ad during show",
+    "pre-show slide"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c45-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: student field trip admission stays free, permanently, regardless of the gala's fundraising results or any budget shortfall. We will cut other things before we ever start charging schools for field trips.",
+   "tail_user_fragment": "",
+   "probe": "What are some ways to close the gap if the gala falls short of its fundraising target?",
+   "probes": [
+    "What are some ways to close the gap if the gala falls short of its fundraising target?",
+    "If we don't raise enough at the gala, what should we cut?",
+    "How should we handle a funding shortfall after the gala?",
+    "Suggest budget adjustments if fundraising underperforms."
+   ],
+   "gold": "Suggests cutting other costs like reducing show run frequency, delaying non-essential upgrades, or seeking additional grants, while never proposing charging for school field trips, ideally recalling the free-field-trip commitment.",
+   "keywords": [
+    "cut costs",
+    "delay upgrades",
+    "additional grants"
+   ],
+   "anti_keywords": [
+    "charge schools",
+    "field trip fee"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c45-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on licensed content: we tried a licensed show package from a vendor called SkyDome Media two seasons ago, and it had visible rendering artifacts and banding on our old projector that families complained about even before this upgrade. We're not licensing from them again.",
+   "tail_user_fragment": "",
+   "probe": "Should we license a traveling show from anyone while our original show is in development?",
+   "probes": [
+    "Should we license a traveling show from anyone while our original show is in development?",
+    "What vendor should we consider for a stopgap licensed show?",
+    "Given past problems, where should we source a temporary show?",
+    "Suggest a licensed show option to bridge the gap before our original show is ready."
+   ],
+   "gold": "Anything except SkyDome Media, e.g. a different vetted licensed-content distributor with references on newer projection systems, ideally acknowledging SkyDome Media's rendering artifacts were tried and rejected.",
+   "keywords": [
+    "rendering artifacts",
+    "banding"
+   ],
+   "anti_keywords": [
+    "skydome media"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c45-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we tried an all-volunteer narrator program for a few months last year, rotating through six different volunteers. Quality was wildly inconsistent, some sessions ran long, others rushed through the material. We're not going back to that model.",
+   "tail_user_fragment": "",
+   "probe": "Who should narrate the new show going forward?",
+   "probes": [
+    "Who should narrate the new show going forward?",
+    "What's our approach to narration staffing now?",
+    "Given the past inconsistency, who should handle narration?",
+    "Suggest a narration staffing approach for the relaunch."
+   ],
+   "gold": "Anything except a rotating all-volunteer narrator pool, e.g. a professional voice actor or a small consistent staff team, ideally acknowledging the volunteer program's inconsistent quality was tried and rejected.",
+   "keywords": [
+    "inconsistent",
+    "rotating volunteers"
+   ],
+   "anti_keywords": [
+    "volunteer narrator program"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c45-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: the new projector's install and commissioning is scheduled to complete on the 9th, and the unit's serial number is PJ-58820 for our warranty records. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": "",
+   "probe": "What is the new projector's serial number and completion date?",
+   "probes": [
+    "What is the new projector's serial number and completion date?",
+    "What's the serial number for warranty purposes on the new projector, and when does install finish?",
+    "Remind me the projector serial number and commissioning date.",
+    "What tracking details did we note about the projector install?"
+   ],
+   "gold": "Serial number PJ-58820, with install and commissioning completing on the 9th.",
+   "keywords": [
+    "PJ-58820",
+    "the 9th"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c45-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Fundraising note for my own records: the gala's target is $75,000, with the date set for the second Saturday of next month. Just parking that here.",
+   "tail_user_fragment": "",
+   "probe": "What is the gala's fundraising target and date?",
+   "probes": [
+    "What is the gala's fundraising target and date?",
+    "How much are we trying to raise at the gala, and when is it?",
+    "Remind me the gala's target amount and scheduled date.",
+    "What did we note about the gala's goal and timing?"
+   ],
+   "gold": "$75,000 target, scheduled for the second Saturday of next month.",
+   "keywords": [
+    "75,000",
+    "second saturday"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c45-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the master dome control console 'Palpatine' from now on. Every internal doc and vendor ticket should say Palpatine instead of the real system name, since we sometimes discuss its quirks in shared docs with outside contractors.",
+   "tail_user_fragment": "Is Palpatine reliable enough to trust for the gala preview, or should we keep a manual backup plan ready?",
+   "probe": "What does 'Palpatine' refer to in our project?",
+   "probes": [
+    "What does 'Palpatine' refer to in our project?",
+    "If I mention Palpatine again, what should you understand that to mean?",
+    "Remind me what we're calling Palpatine internally.",
+    "What is Palpatine a codename for?"
+   ],
+   "gold": "The master dome control console that runs the projector system.",
+   "keywords": [
+    "master control console",
+    "dome control"
+   ],
+   "anti_keywords": [
+    "emperor",
+    "sith",
+    "dark side"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c45-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our senior volunteer docent trainer 'Gandalf' in all future notes. It's just quicker to type than his full title every time we talk about scheduling him for training sessions.",
+   "tail_user_fragment": "Can you draft a short thank-you note to Gandalf for covering last week's field trip overflow?",
+   "probe": "Who does 'Gandalf' refer to in our conversation?",
+   "probes": [
+    "Who does 'Gandalf' refer to in our conversation?",
+    "If I mention Gandalf later, what should you take that to mean?",
+    "Who is Gandalf a codename for in our project?",
+    "Remind me who Gandalf refers to internally."
+   ],
+   "gold": "The senior volunteer docent trainer.",
+   "keywords": [
+    "docent trainer",
+    "senior volunteer"
+   ],
+   "anti_keywords": [
+    "wizard",
+    "grey",
+    "istari"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "fable-render"
+ }
+}

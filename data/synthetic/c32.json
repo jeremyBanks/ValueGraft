@@ -1,0 +1,561 @@
+{
+ "id": "c32",
+ "title": "Event catering company expansion",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in event and hospitality business operations, supporting an owner scaling a catering company."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I run Table & Thyme, an event catering company, and we're moving up into large corporate and wedding events after years of doing smaller private dinners. I want to use this chat to plan everything: scaling our menus, vendor and rental partnerships, staffing and training event leads, upgrading our kitchen, and our contract and deposit policy. Can you help me work through all of it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to help \u2014 let's work through menu scaling, vendors, staffing, the kitchen, and contracts in whatever order helps most."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with menu scaling since that's the core challenge. A lot of our signature dishes were designed for 20-person dinners. What should I think about first when adapting them for a 250-person wedding without losing what makes them good?"
+  },
+  {
+   "role": "assistant",
+   "content": "Focus on which components hold up in large-batch cooking without losing texture, and rework the ones that don't rather than force-scaling everything."
+  },
+  {
+   "role": "user",
+   "content": "Combi oven decision time. We looked at three options: (1) a new full-size combi oven with the largest available capacity, (2) two mid-size combi ovens instead of one large one, for redundancy, or (3) a used full-size combi oven from a restaurant that closed, at a much lower cost. After running the numbers with our accountant, we're going with two mid-size combi ovens for redundancy."
+  },
+  {
+   "role": "assistant",
+   "content": "That redundancy protects you if one unit goes down mid-event, which matters a lot at this scale."
+  },
+  {
+   "role": "user",
+   "content": "On vendor partnerships, we need a reliable rental company for large events, tables, linens, that kind of thing. What should I look for besides just price when picking one to build a real partnership with?"
+  },
+  {
+   "role": "assistant",
+   "content": "Look at their reliability track record on order accuracy and how flexible they are with last-minute changes."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the run sheet' is overloaded on our team. Our kitchen prep staff also nicknames their internal batch cooking schedule the run sheet, but when I say the run sheet to you, I always mean the client-facing, minute-by-minute event timeline we hand to the on-site team, not the kitchen prep schedule."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, the run sheet means the client-facing event timeline, not the kitchen's prep schedule."
+  },
+  {
+   "role": "user",
+   "content": "Staffing question, how much authority should an event lead actually have on-site to make real-time call changes versus sticking strictly to the client's approved plan?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give leads authority over minor logistics calls on-site, but keep anything affecting the client's approved menu or budget escalated to you."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule going forward: we will never use pre-made, frozen banquet entrees for any event, no matter the headcount, no matter how much easier it would make scaling to 250-person weddings. Everything is scratch-cooked on-site or at our kitchen same-day. I will not budge on this even under large-event volume pressure."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, scratch-cooked same-day only, no exceptions as you scale headcount."
+  },
+  {
+   "role": "user",
+   "content": "For the kitchen, we're deciding on a new combi oven to handle bigger batch cooking. What should I prioritize besides raw capacity?"
+  },
+  {
+   "role": "assistant",
+   "content": "Prioritize recovery time between batches and reliability, since downtime mid-event is far costlier than raw capacity."
+  },
+  {
+   "role": "user",
+   "content": "For the record on rental vendors, we already tried a company called Prestige Event Rentals last year, and half our linen order arrived the wrong color for a corporate gala, we had to scramble two hours before doors. We are not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that rental company's off the list for good."
+  },
+  {
+   "role": "user",
+   "content": "Back to menu scaling, how do I keep plating quality consistent when we go from a 20-person dinner to a 250-person banquet?"
+  },
+  {
+   "role": "assistant",
+   "content": "Standardize plating templates and train staff on them specifically for large-batch service, not just scaled-up versions of your dinner plating."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our commercial kitchen expansion permit number is CK-63127, filed January 30th. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, filed away for reference."
+  },
+  {
+   "role": "user",
+   "content": "For staffing, what's a fair trial event for a new event lead before I trust them to run a wedding solo?"
+  },
+  {
+   "role": "assistant",
+   "content": "Keep at least two active relationships so you're not stuck if one partner is booked during peak wedding season."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our master event booking calendar 'Charizard' from now on. Every internal doc and text thread should say Charizard instead of the actual calendar name, since we sometimes reference it in front of clients."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Charizard it is for the booking calendar."
+  },
+  {
+   "role": "user",
+   "content": "Felix pitched an idea for training event leads. His proposal is a 'shadow event': every new event lead spends their first full event just shadowing an experienced lead and taking notes, with zero decision-making authority, before running their own event in week two. He thinks it's the only way to build real judgment before someone's in charge on-site. I'm adopting it."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a sound way to build judgment before anyone's making real calls on-site."
+  },
+  {
+   "role": "user",
+   "content": "On vendor partnerships, should we lock in an exclusive relationship with one rental company or keep working with a couple so we're not stuck if they're booked?"
+  },
+  {
+   "role": "assistant",
+   "content": "Plan for meaningfully more cold storage than feels intuitive, since 250-person events compress prep timing."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the tasting' from here on I mean the formal pre-booking menu tasting we hold for prospective wedding clients. I know staff also casually calls our own internal recipe testing session the tasting, but with you, the tasting always means the client-facing pre-booking session."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, the tasting means the client-facing pre-booking session, not internal recipe testing."
+  },
+  {
+   "role": "user",
+   "content": "Kitchen follow-up, how much additional cold storage should we plan for once we're regularly doing events this size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Have them co-lead a mid-size event with an experienced lead present before trusting them fully solo."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not taking on same-day rush bookings for events over 100 people, even though a venue keeps referring last-minute large groups our way. We've been burned before trying to scale a big menu with no lead time. I don't want to hear that pitch again."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, no rush bookings over 100 guests, that referral pitch is closed."
+  },
+  {
+   "role": "user",
+   "content": "Staffing again, what's a sane ratio of experienced servers to newly trained servers for a 250-person event?"
+  },
+  {
+   "role": "assistant",
+   "content": "A common ratio is roughly one server per 15-20 guests, adjusted for service style."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting, we hired a staffing agency called ShiftLine Staffing to supply extra servers for a big event last spring. Two of their servers no-showed and a third left mid-shift, we were scrambling all night. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that staffing agency's out for future events."
+  },
+  {
+   "role": "user",
+   "content": "Contract question, how far out should the deposit be due relative to the event date for a booking this large?"
+  },
+  {
+   "role": "assistant",
+   "content": "A deposit due well before the event, with a second payment closer to the date, is standard for bookings this size."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total kitchen equipment upgrade budget is capped at $128,750, full stop, that's everything after the rental deposit for the new space. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted for the equipment tracking."
+  },
+  {
+   "role": "user",
+   "content": "One more on menu scaling, should large-event menus be fixed packages or still fully customizable like our smaller dinners?"
+  },
+  {
+   "role": "assistant",
+   "content": "Offer a few structured packages as a base, with limited customization options rather than fully open menus for large events."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our event-lead training manual 'Naboo' in all future notes. It's just easier than typing out the full document name every time in shift-handoff texts."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Naboo it is for the training manual."
+  },
+  {
+   "role": "user",
+   "content": "Back to staffing, how should pay differ for an event lead versus a regular server on a large event?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pay leads a flat premium over server rate, plus a bonus for events they run fully solo."
+  },
+  {
+   "role": "user",
+   "content": "On the combi oven decision, no need to walk through the options again. What service contract should we line up before installation?"
+  },
+  {
+   "role": "assistant",
+   "content": "Get a service contract covering both units with guaranteed response time, since redundancy only helps if repairs are fast too."
+  },
+  {
+   "role": "user",
+   "content": "On Felix's shadow event idea, I'm already committed, don't re-explain it. What should the trainee be specifically watching for during that shadow event?"
+  },
+  {
+   "role": "assistant",
+   "content": "Have them focus on timing decisions, vendor coordination, and how the lead handles unexpected changes."
+  },
+  {
+   "role": "user",
+   "content": "Should the run sheet include buffer time between courses for a 250-person event, or keep it tight?"
+  },
+  {
+   "role": "assistant",
+   "content": "Build in buffer time, since larger events almost always run behind on course transitions."
+  },
+  {
+   "role": "user",
+   "content": "How many courses should the tasting include for a prospective 250-person wedding client?"
+  },
+  {
+   "role": "assistant",
+   "content": "Three or four representative courses is usually enough to showcase range without overwhelming the client."
+  },
+  {
+   "role": "user",
+   "content": "Is Charizard fully updated with the new 250-person wedding date before we confirm the vendor holds?"
+  },
+  {
+   "role": "assistant",
+   "content": "Worth double-checking now, since vendor holds should be confirmed against the calendar before anything's locked in."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft the opening section of Naboo covering how to run the shadow event?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 cover what to observe, how notes should be structured, and the sign-off process before week two."
+  },
+  {
+   "role": "user",
+   "content": "For the kitchen, what's a sane timeline between the new equipment's install and our first large event using it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give yourself at least a couple of weeks to test the new equipment under full load before relying on it for a live event."
+  },
+  {
+   "role": "user",
+   "content": "On vendor partnerships, what should go in the actual partnership agreement so expectations are clear?"
+  },
+  {
+   "role": "assistant",
+   "content": "Cover order lead times, damage or shortage policies, pricing terms, and delivery windows for large events."
+  },
+  {
+   "role": "user",
+   "content": "Contract-wise, what cancellation terms should we build in for events this size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Use a tiered refund schedule based on how close to the event date the cancellation occurs."
+  },
+  {
+   "role": "user",
+   "content": "Last thing for today, what should the pre-event checklist look like for the week before a 250-person wedding?"
+  },
+  {
+   "role": "assistant",
+   "content": "Final headcount confirmation, vendor deliveries scheduled, staff briefing held, and a full run-through of the run sheet."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 289,
+  "middle_end_tokens": 2089,
+  "total_tokens": 2736
+ },
+ "plants": [
+  {
+   "id": "c32-referent-1",
+   "category": "referent",
+   "middle_user": "Combi oven decision time. We looked at three options: (1) a new full-size combi oven with the largest available capacity, (2) two mid-size combi ovens instead of one large one, for redundancy, or (3) a used full-size combi oven from a restaurant that closed, at a much lower cost. After running the numbers with our accountant, we're going with two mid-size combi ovens for redundancy.",
+   "tail_user_fragment": "On the combi oven decision, no need to walk through the options again. What service contract should we line up before installation?",
+   "probe": "Which combi oven option did we decide on for the kitchen upgrade?",
+   "probes": [
+    "Which combi oven option did we decide on for the kitchen upgrade?",
+    "Which of the three oven options did we end up choosing?",
+    "What did we settle on for the kitchen's new oven setup?",
+    "Remind me which combi oven option we committed to."
+   ],
+   "gold": "Two mid-size combi ovens for redundancy (the second of the three options), not a single large new oven or a used full-size oven.",
+   "keywords": [
+    "two mid-size ovens",
+    "redundancy"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c32-referent-2",
+   "category": "referent",
+   "middle_user": "Felix pitched an idea for training event leads. His proposal is a 'shadow event': every new event lead spends their first full event just shadowing an experienced lead and taking notes, with zero decision-making authority, before running their own event in week two. He thinks it's the only way to build real judgment before someone's in charge on-site. I'm adopting it.",
+   "tail_user_fragment": "On Felix's shadow event idea, I'm already committed, don't re-explain it. What should the trainee be specifically watching for during that shadow event?",
+   "probe": "What exactly was Felix's training proposal?",
+   "probes": [
+    "What exactly was Felix's training proposal?",
+    "What did Felix suggest for training new event leads?",
+    "Describe the training format Felix pitched that we're adopting.",
+    "What was Felix's idea for onboarding new event leads?"
+   ],
+   "gold": "A 'shadow event' where new event leads spend their first full event only shadowing an experienced lead with zero decision-making authority, before running their own event in week two.",
+   "keywords": [
+    "shadow event",
+    "zero decision authority"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c32-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the run sheet' is overloaded on our team. Our kitchen prep staff also nicknames their internal batch cooking schedule the run sheet, but when I say the run sheet to you, I always mean the client-facing, minute-by-minute event timeline we hand to the on-site team, not the kitchen prep schedule.",
+   "tail_user_fragment": "Should the run sheet include buffer time between courses for a 250-person event, or keep it tight?",
+   "probe": "When I said 'the run sheet' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the run sheet' in this conversation, what was I referring to?",
+    "Which of the two things called 'the run sheet' did I mean here?",
+    "What does 'the run sheet' refer to in our conversation?",
+    "If I mention the run sheet again, what should you understand that to be?"
+   ],
+   "gold": "The client-facing, minute-by-minute event timeline handed to the on-site team, not the kitchen's internal batch cooking schedule that prep staff also call the run sheet.",
+   "keywords": [
+    "event timeline",
+    "on-site team"
+   ],
+   "anti_keywords": [
+    "kitchen prep schedule",
+    "batch cooking schedule"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c32-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the tasting' from here on I mean the formal pre-booking menu tasting we hold for prospective wedding clients. I know staff also casually calls our own internal recipe testing session the tasting, but with you, the tasting always means the client-facing pre-booking session.",
+   "tail_user_fragment": "How many courses should the tasting include for a prospective 250-person wedding client?",
+   "probe": "When I referred to 'the tasting' in this conversation, which session did I mean?",
+   "probes": [
+    "When I referred to 'the tasting' in this conversation, which session did I mean?",
+    "Which session did I mean when I said 'the tasting'?",
+    "What does 'the tasting' refer to in our conversation, the client session or internal recipe testing?",
+    "If I bring up the tasting again, what should you assume I'm talking about?"
+   ],
+   "gold": "The formal pre-booking menu tasting for prospective wedding clients, not the internal recipe testing session.",
+   "keywords": [
+    "pre-booking tasting",
+    "prospective clients"
+   ],
+   "anti_keywords": [
+    "internal recipe testing"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c32-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule going forward: we will never use pre-made, frozen banquet entrees for any event, no matter the headcount, no matter how much easier it would make scaling to 250-person weddings. Everything is scratch-cooked on-site or at our kitchen same-day. I will not budge on this even under large-event volume pressure.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for making large-event cooking more efficient?",
+   "probes": [
+    "What are some ideas for making large-event cooking more efficient?",
+    "Give me three ways to streamline cooking for 250-person events.",
+    "How could we make large-event prep smoother without sacrificing quality?",
+    "Suggest ways to scale up event cooking without changing what we serve."
+   ],
+   "gold": "Suggests approaches like staggered batch cooking schedules, standardized prep timelines, or additional prep staff shifts, while never proposing pre-made frozen banquet entrees, ideally recalling the scratch-cooked-same-day commitment.",
+   "keywords": [
+    "scratch-cooked",
+    "same-day"
+   ],
+   "anti_keywords": [
+    "pre-made frozen",
+    "frozen banquet entree"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c32-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not taking on same-day rush bookings for events over 100 people, even though a venue keeps referring last-minute large groups our way. We've been burned before trying to scale a big menu with no lead time. I don't want to hear that pitch again.",
+   "tail_user_fragment": null,
+   "probe": "How should we handle a venue that keeps referring last-minute large event leads?",
+   "probes": [
+    "How should we handle a venue that keeps referring last-minute large event leads?",
+    "What should we do about a referral partner pushing rush bookings on us?",
+    "If a venue keeps sending large last-minute leads, what are our options?",
+    "Suggest ways to handle referral pressure without changing our booking policy."
+   ],
+   "gold": "Suggests approaches like politely declining and offering a smaller-scale alternative, requesting the venue give more lead time in future referrals, or redirecting to a waitlist, while never proposing accepting same-day rush bookings over 100 people, ideally recalling the earlier decision.",
+   "keywords": [
+    "lead time required",
+    "decline referral"
+   ],
+   "anti_keywords": [
+    "same-day rush booking"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c32-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on rental vendors, we already tried a company called Prestige Event Rentals last year, and half our linen order arrived the wrong color for a corporate gala, we had to scramble two hours before doors. We are not using them again.",
+   "tail_user_fragment": null,
+   "probe": "Who should we look at for a rental vendor for our large events?",
+   "probes": [
+    "Who should we look at for a rental vendor for our large events?",
+    "What rental company should we consider for large events?",
+    "Given our needs, how should we source rentals going forward?",
+    "What's a better option than what we already tried for event rentals?"
+   ],
+   "gold": "Anything except Prestige Event Rentals, e.g. a different vetted rental company with a verified order-accuracy track record, ideally acknowledging Prestige was tried and rejected.",
+   "keywords": [
+    "wrong color linens",
+    "corporate gala scramble"
+   ],
+   "anti_keywords": [
+    "prestige event rentals"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c32-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting, we hired a staffing agency called ShiftLine Staffing to supply extra servers for a big event last spring. Two of their servers no-showed and a third left mid-shift, we were scrambling all night. Not using them again.",
+   "tail_user_fragment": null,
+   "probe": "Who should we use for extra server staffing on large events?",
+   "probes": [
+    "Who should we use for extra server staffing on large events?",
+    "How should we handle staffing for large events given the earlier problems?",
+    "What's our path forward on extra staffing for big events?",
+    "Who or what should handle supplemental server staffing?"
+   ],
+   "gold": "Anything except ShiftLine Staffing, e.g. a different vetted staffing agency with reliability guarantees, or building an internal on-call server pool, ideally acknowledging ShiftLine's no-shows were tried and rejected.",
+   "keywords": [
+    "no-showed servers",
+    "left mid-shift"
+   ],
+   "anti_keywords": [
+    "shiftline"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c32-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our commercial kitchen expansion permit number is CK-63127, filed January 30th. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": null,
+   "probe": "What is our kitchen expansion permit number, and when was it filed?",
+   "probes": [
+    "What is our kitchen expansion permit number, and when was it filed?",
+    "What's the permit number for the kitchen expansion?",
+    "When did we file for the kitchen expansion permit, and what's the reference number?",
+    "Remind me the permit number and filing date."
+   ],
+   "gold": "CK-63127, filed January 30th.",
+   "keywords": [
+    "CK-63127",
+    "january 30"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c32-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total kitchen equipment upgrade budget is capped at $128,750, full stop, that's everything after the rental deposit for the new space. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total kitchen equipment upgrade budget?",
+   "probes": [
+    "What is our total kitchen equipment upgrade budget?",
+    "How much do we have for kitchen equipment upgrades?",
+    "What's the cap on the kitchen upgrade budget?",
+    "Remind me the equipment upgrade spend limit we're working with."
+   ],
+   "gold": "$128,750 total.",
+   "keywords": [
+    "128,750"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c32-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our master event booking calendar 'Charizard' from now on. Every internal doc and text thread should say Charizard instead of the actual calendar name, since we sometimes reference it in front of clients.",
+   "tail_user_fragment": "Is Charizard fully updated with the new 250-person wedding date before we confirm the vendor holds?",
+   "probe": "What does 'Charizard' refer to in our project?",
+   "probes": [
+    "What does 'Charizard' refer to in our project?",
+    "If I mention Charizard again, what should you understand that to mean?",
+    "Remind me what we're calling Charizard internally.",
+    "What is Charizard a codename for?"
+   ],
+   "gold": "The master event booking calendar.",
+   "keywords": [
+    "event booking calendar"
+   ],
+   "anti_keywords": [
+    "fire dragon",
+    "pokemon",
+    "flame creature"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c32-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our event-lead training manual 'Naboo' in all future notes. It's just easier than typing out the full document name every time in shift-handoff texts.",
+   "tail_user_fragment": "Can you draft the opening section of Naboo covering how to run the shadow event?",
+   "probe": "What does 'Naboo' refer to in our conversation?",
+   "probes": [
+    "What does 'Naboo' refer to in our conversation?",
+    "If I mention Naboo later, what should you take that to mean?",
+    "What is Naboo a codename for in our project?",
+    "Remind me what Naboo refers to internally."
+   ],
+   "gold": "The event-lead training manual.",
+   "keywords": [
+    "event-lead training manual"
+   ],
+   "anti_keywords": [
+    "star wars planet",
+    "queen amidala",
+    "galaxy"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

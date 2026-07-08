@@ -1,0 +1,543 @@
+{
+ "id": "c36",
+ "title": "Independent comic book shop relaunch",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in independent retail and comic book industry operations, supporting a comic shop owner relaunching the store after a move."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so Panel & Pulp just relocated to a bigger space and I want this chat to be our home base for the relaunch: new-comics-day operations, the back issue inventory, conventions, pull lists, and community events. Can you help me work through all of it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to be that home base for the relaunch \u2014 new-comics-day, back issues, conventions, pull lists, and events, all in one thread."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with new-comics-day operations since Wednesday is our biggest revenue day. What's a good way for a shop our size to handle the rush without the line backing up out the door?"
+  },
+  {
+   "role": "assistant",
+   "content": "Stagger arrivals with a clear line path and have registers pre-loaded with the week's hot titles bagged and ready, so the rush moves through checkout fast instead of backing up at the wall."
+  },
+  {
+   "role": "user",
+   "content": "For back issue and long box inventory, is it worth grading and bagging everything, or just the higher-value books?"
+  },
+  {
+   "role": "assistant",
+   "content": "Grade and bag only the higher-value books \u2014 for the bulk of back stock, plain sleeves are enough and save a lot of labor."
+  },
+  {
+   "role": "user",
+   "content": "Store layout decision, finally made. We weighed three options: (1) keeping new comics right at the front entrance like our old store, (2) putting new comics in the center of the store with back issues wrapping the perimeter, and (3) splitting new comics into two smaller displays on either side of the entrance. Given the bigger footprint, we're going with the second one, new comics in the center with back issues around the perimeter."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, new comics in the center with back issues around the perimeter it is \u2014 locked in as the layout."
+  },
+  {
+   "role": "user",
+   "content": "How should we price long box dollar bins so they move volume without undercutting our better-condition stock?"
+  },
+  {
+   "role": "assistant",
+   "content": "Price dollar bins low enough to move real volume, but keep anything above low-grade common out of the bins entirely so it doesn't undercut your priced stock."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it confuses us later: 'the wall' is overloaded on our team. Staff also call the corkboard where we post con flyers the wall, but when I say the wall to you, I always mean the graded slab display case along the back of the store. That's the sense I want here."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, noted for how I'll interpret that term going forward."
+  },
+  {
+   "role": "user",
+   "content": "On convention presence, is it worth a table at a regional con if we're mostly known for the shop rather than original art sales?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's worth a table if you use it to promote the shop and build local awareness, even without strong original-art sales \u2014 treat it as marketing, not a standalone revenue line."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for the relaunch: no speculator-driven variant chasing as a business strategy, meaning we don't overorder ratio variants hoping to flip them for a markup. It burned us badly before with dead stock. I will not budge on this even if a hyped variant looks like easy money."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood \u2014 no overordering ratio variants to flip, regardless of hype. Noted."
+  },
+  {
+   "role": "user",
+   "content": "What's a reasonable con inventory mix between back issues, new releases, and merch?"
+  },
+  {
+   "role": "assistant",
+   "content": "Lean toward back issues and merch for a con mix, with just a light selection of new releases, since con crowds skew toward collectibles."
+  },
+  {
+   "role": "user",
+   "content": "For the record on distributors: we tried ordering a batch of back issues through a wholesaler called ValueBoxSupply last year, and half the books arrived with water damage they hadn't disclosed. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, ValueBoxSupply is off the table for back issue sourcing going forward."
+  },
+  {
+   "role": "user",
+   "content": "For pull-list management, should we cap how many titles a single customer can have on their pull list?"
+  },
+  {
+   "role": "assistant",
+   "content": "A cap of a reasonable number of ongoing titles per customer keeps the list manageable and prevents a few customers from crowding out shelf stock for others."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our new business license number for the relocated storefront is BL-30847, issued February 11th. Nothing to decide, just don't want to lose track of the number."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, parked for reference."
+  },
+  {
+   "role": "user",
+   "content": "What's a fair grace period before we release someone's pulled books back to shelf stock if they don't pick up?"
+  },
+  {
+   "role": "assistant",
+   "content": "A one to two week grace period is fair before releasing pulled books back to shelf stock."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our master back issue valuation spreadsheet 'Palpatine' from now on. Every note and email should say Palpatine, not the real filename, since we sometimes show pieces of these threads to visiting appraisers."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Palpatine for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "For community and creator events, should signings be ticketed or walk-in given how unpredictable turnout has been?"
+  },
+  {
+   "role": "assistant",
+   "content": "Ticket smaller signings to gauge real interest, and keep bigger, established-name events walk-in since turnout there tends to be more reliable."
+  },
+  {
+   "role": "user",
+   "content": "Theo had a good idea for the relaunch pull-list migration. His proposal is to manually call every subscriber on the old pull list individually to confirm their titles before the move, rather than just mass-emailing everyone and hoping they respond. He thinks it'll catch outdated pulls we'd otherwise carry forward by mistake. I'm doing it for the migration."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense, calling every subscriber individually should catch stale pulls before the move \u2014 noted."
+  },
+  {
+   "role": "user",
+   "content": "How far in advance should we announce a creator signing to actually build a crowd?"
+  },
+  {
+   "role": "assistant",
+   "content": "Announce at least three to four weeks ahead for a signing to build a real crowd."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the list' from here on I mean the master customer pull list spreadsheet we're migrating to the new store. I know staff sometimes call the want-list binder at the counter the list too, but with you, the list always means the pull list spreadsheet."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted which document that refers to going forward."
+  },
+  {
+   "role": "user",
+   "content": "One of our regulars has been incredible about recommending us to his local gaming group, how should we make sure we're nurturing that relationship?"
+  },
+  {
+   "role": "assistant",
+   "content": "Send him toward store credit or exclusive early access as thanks, and keep an eye out for a natural way to formalize the referral relationship."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we don't do store credit only returns, meaning customers with a legitimate return get real cash or card refunds, not just store credit. I've seen too many shops lose trust doing store-credit-only policies. Don't suggest that as a way to protect margin."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, real refunds only, no store-credit-only returns \u2014 noted as a hard constraint."
+  },
+  {
+   "role": "user",
+   "content": "Should we run a free comic book day event, or does the foot traffic mostly just clog the store without buying anything?"
+  },
+  {
+   "role": "assistant",
+   "content": "Free Comic Book Day is worth running if you staff it well and use it to convert browsers into pull-list customers, rather than treating it as a standalone sales day."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we used a point-of-sale system called RingerPOS at the old location, and it crashed during nearly every Wednesday rush, losing transaction data twice. We're not bringing it to the new store."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, RingerPOS is out for the new store."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total remaining relaunch fixture budget is capped at $3,750, full stop, that's everything left after the new shelving order. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that cap is on the record."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our private staff scheduling group chat 'Moraine' in all future notes. It's just easier than typing out the full chat name, and I don't want the real name floating around in shared docs with vendors."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Moraine for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to new-comics-day operations, what's the best way to handle a shipment that arrives short on a hyped issue?"
+  },
+  {
+   "role": "assistant",
+   "content": "Cap the hyped issue at the register per customer, hold back a small reserve for pull-list customers who paid ahead, and communicate the shortage early rather than letting people find out at checkout."
+  },
+  {
+   "role": "user",
+   "content": "On the store layout we picked, no need to re-explain it. How much shelf space does that leave for the graphic novel section?"
+  },
+  {
+   "role": "assistant",
+   "content": "That layout should still leave a solid dedicated run for graphic novels along one side wall, roughly what you had at the old store or a bit more."
+  },
+  {
+   "role": "user",
+   "content": "On Theo's call-everyone idea, I'm already committed, don't re-describe it. How many calls a day is realistic for one staffer to make?"
+  },
+  {
+   "role": "assistant",
+   "content": "Ten to fifteen calls a day is realistic for one staffer without it eating the whole shift."
+  },
+  {
+   "role": "user",
+   "content": "Does the wall have room for the new slabs coming in next week, or do we need to rotate something out first?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's room for a few new slabs, but you'll want to rotate a couple of the slower-moving pieces out first."
+  },
+  {
+   "role": "user",
+   "content": "Has the list been fully migrated to the new register system yet, or are some entries still missing?"
+  },
+  {
+   "role": "assistant",
+   "content": "Not fully \u2014 a handful of entries are still missing from the new register system, worth double-checking before go-live."
+  },
+  {
+   "role": "user",
+   "content": "Is Palpatine updated with this week's grading results, or do I need to reconcile it against the intake sheets first?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's current through this week's grading, but reconcile it against the intake sheets before trusting the newest entries."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft a short message for Moraine about the new-comics-day shift swap?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 a short message noting the shift swap and asking for a quick thumbs-up from whoever's picking it up."
+  },
+  {
+   "role": "user",
+   "content": "For pull lists, how should we notify customers when a title gets cancelled by the publisher mid-run?"
+  },
+  {
+   "role": "assistant",
+   "content": "Send an automatic notice as soon as you get the cancellation word from the distributor, along with a note that the pull slot will default to the next comparable title unless they say otherwise."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 257,
+  "middle_end_tokens": 2037,
+  "total_tokens": 2582
+ },
+ "plants": [
+  {
+   "id": "c36-referent-1",
+   "category": "referent",
+   "middle_user": "Store layout decision, finally made. We weighed three options: (1) keeping new comics right at the front entrance like our old store, (2) putting new comics in the center of the store with back issues wrapping the perimeter, and (3) splitting new comics into two smaller displays on either side of the entrance. Given the bigger footprint, we're going with the second one, new comics in the center with back issues around the perimeter.",
+   "tail_user_fragment": "On the store layout we picked, no need to re-explain it. How much shelf space does that leave for the graphic novel section?",
+   "probe": "Which store layout option did we settle on for Panel & Pulp?",
+   "probes": [
+    "Which store layout option did we settle on for Panel & Pulp?",
+    "Which of the three layout options did we end up choosing?",
+    "What did we decide about the new store layout?",
+    "Remind me which layout we committed to."
+   ],
+   "gold": "New comics placed in the center of the store with back issues wrapping the perimeter (the second of the three options), not new comics at the entrance and not splitting new comics into two displays.",
+   "keywords": [
+    "center",
+    "perimeter",
+    "back issues"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c36-referent-2",
+   "category": "referent",
+   "middle_user": "Theo had a good idea for the relaunch pull-list migration. His proposal is to manually call every subscriber on the old pull list individually to confirm their titles before the move, rather than just mass-emailing everyone and hoping they respond. He thinks it'll catch outdated pulls we'd otherwise carry forward by mistake. I'm doing it for the migration.",
+   "tail_user_fragment": "On Theo's call-everyone idea, I'm already committed, don't re-describe it. How many calls a day is realistic for one staffer to make?",
+   "probe": "What specifically was Theo's proposal for the pull-list migration?",
+   "probes": [
+    "What specifically was Theo's proposal for the pull-list migration?",
+    "What did Theo suggest for migrating the pull lists?",
+    "Describe the migration approach Theo pitched that we're adopting.",
+    "What was Theo's idea about how to handle the pull-list move?"
+   ],
+   "gold": "Manually calling every subscriber individually to confirm their titles before the move, instead of mass-emailing everyone.",
+   "keywords": [
+    "call",
+    "individually",
+    "confirm titles"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c36-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it confuses us later: 'the wall' is overloaded on our team. Staff also call the corkboard where we post con flyers the wall, but when I say the wall to you, I always mean the graded slab display case along the back of the store. That's the sense I want here.",
+   "tail_user_fragment": "Does the wall have room for the new slabs coming in next week, or do we need to rotate something out first?",
+   "probe": "When I said 'the wall' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the wall' in this conversation, what was I referring to?",
+    "Which of the two things called 'the wall' did I mean here?",
+    "What does 'the wall' refer to in our conversation?",
+    "If I mention the wall again, what should you understand that to be?"
+   ],
+   "gold": "The graded slab display case along the back of the store, not the corkboard for con flyers.",
+   "keywords": [
+    "graded slab",
+    "display case"
+   ],
+   "anti_keywords": [
+    "corkboard",
+    "flyers"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c36-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the list' from here on I mean the master customer pull list spreadsheet we're migrating to the new store. I know staff sometimes call the want-list binder at the counter the list too, but with you, the list always means the pull list spreadsheet.",
+   "tail_user_fragment": "Has the list been fully migrated to the new register system yet, or are some entries still missing?",
+   "probe": "When I referred to 'the list' in this conversation, which one did I mean?",
+   "probes": [
+    "When I referred to 'the list' in this conversation, which one did I mean?",
+    "Which document did I mean when I said 'the list'?",
+    "What does 'the list' refer to in our conversation, the pull list or the want-list binder?",
+    "If I bring up the list again, what should you assume I'm talking about?"
+   ],
+   "gold": "The master customer pull list spreadsheet being migrated to the new store, not the want-list binder at the counter.",
+   "keywords": [
+    "pull list",
+    "spreadsheet"
+   ],
+   "anti_keywords": [
+    "want-list binder",
+    "counter"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c36-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for the relaunch: no speculator-driven variant chasing as a business strategy, meaning we don't overorder ratio variants hoping to flip them for a markup. It burned us badly before with dead stock. I will not budge on this even if a hyped variant looks like easy money.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for boosting margins on new comics day?",
+   "probes": [
+    "What are some ideas for boosting margins on new comics day?",
+    "Give me three ways to increase new-comics-day revenue.",
+    "How could we make more money off Wednesday releases?",
+    "Suggest ways to improve new-comics-day profitability without changing our ordering philosophy."
+   ],
+   "gold": "Suggests approaches like better core-title order quantities based on actual sell-through, bundling with back issues or merch, or a loyalty program, while never proposing overordering ratio variants to flip, ideally recalling the rejection of speculator-driven variant chasing.",
+   "keywords": [
+    "sell-through",
+    "loyalty program"
+   ],
+   "anti_keywords": [
+    "ratio variants",
+    "speculator",
+    "flip"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c36-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we don't do store credit only returns, meaning customers with a legitimate return get real cash or card refunds, not just store credit. I've seen too many shops lose trust doing store-credit-only policies. Don't suggest that as a way to protect margin.",
+   "tail_user_fragment": null,
+   "probe": "How should we handle the cost impact of frequent returns?",
+   "probes": [
+    "How should we handle the cost impact of frequent returns?",
+    "What should we do to reduce the financial hit from returns?",
+    "How do we manage return costs without upsetting customers?",
+    "Suggest ways to control return-related losses without changing our refund policy."
+   ],
+   "gold": "Suggests approaches like a clear condition-based return window, restocking review for damaged goods, or better in-store quality checks before sale, while never proposing store-credit-only returns, ideally recalling the rejection of that policy.",
+   "keywords": [
+    "return window",
+    "quality check"
+   ],
+   "anti_keywords": [
+    "store credit only"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c36-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on distributors: we tried ordering a batch of back issues through a wholesaler called ValueBoxSupply last year, and half the books arrived with water damage they hadn't disclosed. Not using them again.",
+   "tail_user_fragment": null,
+   "probe": "Where should we source back issue restocks going forward?",
+   "probes": [
+    "Where should we source back issue restocks going forward?",
+    "What wholesaler option should we pursue for back issues?",
+    "Given the past problem, how should we restock back issues?",
+    "What's a better approach than what we already tried for back issue sourcing?"
+   ],
+   "gold": "Anything except ValueBoxSupply, e.g. a different vetted wholesaler with condition guarantees, buying collections directly from sellers, or attending regional back-issue auctions, ideally acknowledging ValueBoxSupply was tried and rejected.",
+   "keywords": [
+    "water damage",
+    "undisclosed"
+   ],
+   "anti_keywords": [
+    "valueboxsupply"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c36-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we used a point-of-sale system called RingerPOS at the old location, and it crashed during nearly every Wednesday rush, losing transaction data twice. We're not bringing it to the new store.",
+   "tail_user_fragment": null,
+   "probe": "What point-of-sale system should we use at the new store?",
+   "probes": [
+    "What point-of-sale system should we use at the new store?",
+    "How should we handle checkout at the new location?",
+    "What's our path forward on POS given the earlier problems?",
+    "What system should replace what we used before for checkout?"
+   ],
+   "gold": "Anything except RingerPOS, e.g. a different reliable comic-shop-specific POS system, a more established general retail POS, or a system with offline transaction backup, ideally acknowledging RingerPOS's crashes were tried and rejected.",
+   "keywords": [
+    "crashed",
+    "lost transaction data"
+   ],
+   "anti_keywords": [
+    "ringerpos"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c36-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our new business license number for the relocated storefront is BL-30847, issued February 11th. Nothing to decide, just don't want to lose track of the number.",
+   "tail_user_fragment": null,
+   "probe": "What is our new business license number, and when was it issued?",
+   "probes": [
+    "What is our new business license number, and when was it issued?",
+    "What's the license number for the new storefront?",
+    "When was the new license issued, and what's the reference number?",
+    "Remind me of the business license number and date."
+   ],
+   "gold": "BL-30847, issued February 11th.",
+   "keywords": [
+    "BL-30847",
+    "february 11"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c36-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total remaining relaunch fixture budget is capped at $3,750, full stop, that's everything left after the new shelving order. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total remaining relaunch fixture budget?",
+   "probes": [
+    "What is our total remaining relaunch fixture budget?",
+    "How much do we have left for store fixtures?",
+    "What's the cap on our remaining fixture budget?",
+    "Remind me the fixture budget limit we're working with."
+   ],
+   "gold": "$3,750 total.",
+   "keywords": [
+    "3,750"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c36-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our master back issue valuation spreadsheet 'Palpatine' from now on. Every note and email should say Palpatine, not the real filename, since we sometimes show pieces of these threads to visiting appraisers.",
+   "tail_user_fragment": "Is Palpatine updated with this week's grading results, or do I need to reconcile it against the intake sheets first?",
+   "probe": "What does 'Palpatine' refer to in our project?",
+   "probes": [
+    "What does 'Palpatine' refer to in our project?",
+    "If I mention Palpatine again, what should you understand that to mean?",
+    "Remind me what we're calling Palpatine internally.",
+    "What is Palpatine a codename for?"
+   ],
+   "gold": "The master back issue valuation spreadsheet.",
+   "keywords": [
+    "back issue valuation",
+    "spreadsheet"
+   ],
+   "anti_keywords": [
+    "sith",
+    "star wars",
+    "emperor"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c36-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our private staff scheduling group chat 'Moraine' in all future notes. It's just easier than typing out the full chat name, and I don't want the real name floating around in shared docs with vendors.",
+   "tail_user_fragment": "Can you draft a short message for Moraine about the new-comics-day shift swap?",
+   "probe": "What does 'Moraine' refer to in our conversation?",
+   "probes": [
+    "What does 'Moraine' refer to in our conversation?",
+    "If I mention Moraine later, what should you take that to mean?",
+    "What is Moraine a codename for in our project?",
+    "Remind me what Moraine refers to internally."
+   ],
+   "gold": "The private staff scheduling group chat.",
+   "keywords": [
+    "staff scheduling",
+    "group chat"
+   ],
+   "anti_keywords": [
+    "wheel of time",
+    "aes sedai",
+    "two rivers"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

@@ -1,0 +1,530 @@
+{
+ "id": "c48",
+ "title": "Boutique law firm expansion planning",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in law-firm operations and legal practice management, helping the partners of a small boutique firm plan a strategic expansion."
+  },
+  {
+   "role": "user",
+   "content": "Hi, so Okafor & Vance is finally big enough that we're planning a real expansion, a new practice area, a second office, some lateral hires, the whole thing, over the next quarter. I'd like to use you as a planning partner across all of it. Sound good?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sounds good \u2014 happy to be your planning partner across the whole expansion. Let's take it piece by piece, starting wherever you'd like."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with the practice-area question since it drives everything else. We're an IP-and-startup boutique thinking about adding a formal employment-law practice. What should we be weighing before we commit to standing up a whole new group?"
+  },
+  {
+   "role": "assistant",
+   "content": "Weigh demand and referral pipeline, staffing and conflicts risk against existing IP clients, upfront investment versus billable ramp-up time, and whether a lateral hire or ground-up build makes more sense before committing."
+  },
+  {
+   "role": "user",
+   "content": "On the office side, we're deciding between a full second office downtown or just taking an extra floor in our current building. What's the general tradeoff for a firm our size?"
+  },
+  {
+   "role": "assistant",
+   "content": "A full second office signals commitment but costs more upfront in buildout and lease term; an extra floor is cheaper and faster but may cap your growth and blur the two practices together."
+  },
+  {
+   "role": "user",
+   "content": "Quick clarification: when I say 'the practice' to you, I always mean the new employment-law group we're standing up, not the firm as a whole, even though people here casually call the whole firm 'the practice' too. Just the new group, when I say it to you."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll keep that scoped correctly going forward."
+  },
+  {
+   "role": "user",
+   "content": "For lateral hires, is it smarter to recruit one senior partner with a book of business or two mid-level associates who are cheaper but bring no clients?"
+  },
+  {
+   "role": "assistant",
+   "content": "A senior partner with a book de-risks revenue faster but costs more in comp and integration friction; two associates are cheaper but you're betting on organic growth."
+  },
+  {
+   "role": "user",
+   "content": "Office decision time. We looked at three routes: (1) take a full second office downtown, (2) just lease an extra floor in our current building, or (3) a hybrid where we keep our current floor and add a small satellite suite near the courthouse for litigation staff. After running the numbers with our accountant, we're going with the hybrid, current floor plus the small courthouse satellite."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a sensible way to balance cost and litigation convenience \u2014 good call."
+  },
+  {
+   "role": "user",
+   "content": "Malpractice insurance renews in ninety days. Does adding an employment-law practice usually spike the premium a lot?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yes, adding a new litigation-adjacent practice area almost always bumps the premium, sometimes meaningfully, so get quotes early rather than after you've committed headcount."
+  },
+  {
+   "role": "user",
+   "content": "Hard preference on the employment practice: absolutely no contingency-fee plaintiff-side cases. I think they'd conflict with our management-side corporate clients and blow up our reputation with the exact companies we serve. I don't care how lucrative a big case looks, we are not taking contingency plaintiff work, ever."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll keep that boundary in mind for everything we plan around the new group."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the vault' from now on, I mean the physical secured file room where we keep original signed client documents, not the encrypted digital document archive, which some of the associates also call 'the vault.' Two different things, and I only mean the physical room."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted the distinction."
+  },
+  {
+   "role": "user",
+   "content": "On case management, our current system is creaking. What features matter most when a boutique firm shops for a new platform?"
+  },
+  {
+   "role": "assistant",
+   "content": "Conflict checking, document assembly, and calendaring/deadline tracking tend to matter most for a boutique firm, more than flashy reporting dashboards."
+  },
+  {
+   "role": "user",
+   "content": "For context, we tried a case-management platform called CaseHelm for about eight months two years ago. It corrupted a document index twice and their support took a week to respond both times. We ripped it out and will never use CaseHelm again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, I'll steer clear of that option in anything I suggest."
+  },
+  {
+   "role": "user",
+   "content": "On laterals, we had three candidates on the table: (1) Marisol Reyes, a senior partner with a large employment book, (2) two mid-level associates from a regional firm with no portable clients, or (3) a semi-retired judge willing to come on of counsel part-time. We talked it through and we're going with Marisol Reyes, the senior partner with the book."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense given the book of business she brings."
+  },
+  {
+   "role": "user",
+   "content": "Back to the employment practice, how many attorneys do we realistically need on day one to service it credibly?"
+  },
+  {
+   "role": "assistant",
+   "content": "Realistically two to three attorneys, at least one senior enough to originate and supervise, so you're not fielding client matters solo on day one."
+  },
+  {
+   "role": "user",
+   "content": "Random note for the file: the courthouse satellite suite base rent is $6,400 a month before any escalation. Just logging that, doesn't change what we're discussing."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged, thanks for the note."
+  },
+  {
+   "role": "user",
+   "content": "One more firm rule: no billing our startup clients in six-minute increments for quick emails and calls. We did nickel-and-dime billing at my old firm and it torched client relationships. Flat monthly retainers for the startup clients only, even if we technically leave money on the table."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted \u2014 that'll shape how we structure engagement letters for those clients."
+  },
+  {
+   "role": "user",
+   "content": "For the lease, the landlord wants a ten-year term with a personal guaranty from the partners. Is a personal guaranty a normal ask?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's common, especially for a firm without a long financial track record, but you can often negotiate it down to a declining guaranty over the lease term."
+  },
+  {
+   "role": "user",
+   "content": "Let's just codename the whole employment-practice launch 'Elantris' from here on, in every planning doc and email, so we're not spelling it out every time."
+  },
+  {
+   "role": "assistant",
+   "content": "Works for me \u2014 I'll use that name going forward."
+  },
+  {
+   "role": "user",
+   "content": "Also, remember we used a legal-recruiting agency called Bright & Marlow for our last two searches and both placements left within a year, plus they double-billed us on a fee once. We dropped them and aren't going back."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, that vendor's off the table."
+  },
+  {
+   "role": "user",
+   "content": "On recruiting, what's a reasonable timeline to land a quality lateral partner from first conversation to start date?"
+  },
+  {
+   "role": "assistant",
+   "content": "Three to six months is typical from serious first conversation to start date once you factor in notice periods and diligence on the book of business."
+  },
+  {
+   "role": "user",
+   "content": "For the record, our malpractice renewal quote came in under policy number MAL-2026-77413, with the binder due back by March 9th. Just logging it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, thanks for flagging."
+  },
+  {
+   "role": "user",
+   "content": "For insurance, should we increase our per-claim limit before or after we take on the new practice area?"
+  },
+  {
+   "role": "assistant",
+   "content": "I'd increase the limit before you take on the new practice, since retroactive coverage gaps are painful and insurers price prospective risk more predictably."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the case-management software migration 'Scadrial', since it's the messiest, most behind-schedule part of the whole expansion. Use that name for it in any status update."
+  },
+  {
+   "role": "assistant",
+   "content": "Sounds good, I'll refer to it that way in updates."
+  },
+  {
+   "role": "user",
+   "content": "On technology, how important is it that the new case-management system integrates with our existing document-management setup?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fairly important \u2014 re-keying documents between two systems creates exactly the kind of friction and error risk a growing firm can't absorb."
+  },
+  {
+   "role": "user",
+   "content": "For the buildout, how much should we budget for conference-room and privacy improvements in a legal office specifically?"
+  },
+  {
+   "role": "assistant",
+   "content": "Budget generously for sound-isolated conference rooms and at least one private call room; privacy is a differentiator for both IP and employment clients."
+  },
+  {
+   "role": "user",
+   "content": "One more on recruiting: should we use a legal-recruiting firm or try to source laterals through our own network first?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start with your own network for speed and lower cost, and only bring in a recruiting firm if that search stalls after six to eight weeks."
+  },
+  {
+   "role": "user",
+   "content": "Does the practice need its own separate intake process before we open the second office?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yes, I'd stand up a lightweight standalone intake so new matters get properly conflict-checked before they mix with existing files."
+  },
+  {
+   "role": "user",
+   "content": "How much shelving capacity do we need in the vault after we merge the two client bases?"
+  },
+  {
+   "role": "assistant",
+   "content": "Plan for growth room beyond the current volume \u2014 enough shelving to comfortably hold both client bases plus a buffer for a few years."
+  },
+  {
+   "role": "user",
+   "content": "On the office decision, no need to walk through it again, but what signage do we need to order for it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Order directional signage for the satellite entrance and a small lobby placard; keep the primary office signage as-is."
+  },
+  {
+   "role": "user",
+   "content": "For the lateral we picked, don't re-explain who it is, just tell me what the standard onboarding conflict check involves."
+  },
+  {
+   "role": "assistant",
+   "content": "It's a standard cross-check against her prior clients and matters for conflicts before she can open a new file with you."
+  },
+  {
+   "role": "user",
+   "content": "What's still open on the Elantris punch list before we can announce the new group?"
+  },
+  {
+   "role": "assistant",
+   "content": "Mainly finalizing the practice group's engagement-letter templates and locking the malpractice endorsement \u2014 both are close but not signed off yet."
+  },
+  {
+   "role": "user",
+   "content": "Any movement on Scadrial this week, or is it still stalled?"
+  },
+  {
+   "role": "assistant",
+   "content": "Still stalled \u2014 the vendor's data-migration step hasn't cleared, so no real movement since last week."
+  },
+  {
+   "role": "user",
+   "content": "For the lease, besides term length and the guaranty, what else should I be scrutinizing before we sign?"
+  },
+  {
+   "role": "assistant",
+   "content": "Scrutinize the escalation clause, exclusivity/non-compete language, and your termination and subletting rights before signing."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 285,
+  "middle_end_tokens": 2102,
+  "total_tokens": 2599
+ },
+ "plants": [
+  {
+   "id": "c48-sense-1",
+   "category": "sense",
+   "middle_user": "Quick clarification: when I say 'the practice' to you, I always mean the new employment-law group we're standing up, not the firm as a whole, even though people here casually call the whole firm 'the practice' too. Just the new group, when I say it to you.",
+   "tail_user_fragment": "Does the practice need its own separate intake process before we open the second office?",
+   "probe": "When I said 'the practice', what was I referring to?",
+   "probes": [
+    "When I said 'the practice', what was I referring to?",
+    "What does 'the practice' mean when I use that term with you?",
+    "If I mention the practice again, what should you take that to be?"
+   ],
+   "gold": "The new employment-law group being stood up, not the firm as a whole.",
+   "keywords": [
+    "employment-law",
+    "group"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c48-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the vault' from now on, I mean the physical secured file room where we keep original signed client documents, not the encrypted digital document archive, which some of the associates also call 'the vault.' Two different things, and I only mean the physical room.",
+   "tail_user_fragment": "How much shelving capacity do we need in the vault after we merge the two client bases?",
+   "probe": "When I referred to 'the vault', which thing did I mean?",
+   "probes": [
+    "When I referred to 'the vault', which thing did I mean?",
+    "What specifically is 'the vault' in our conversations?",
+    "If I ask about the vault again, what should you think I'm talking about?"
+   ],
+   "gold": "The physical secured file room for original signed client documents, not the encrypted digital archive.",
+   "keywords": [
+    "physical",
+    "file room",
+    "original"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c48-referent-1",
+   "category": "referent",
+   "middle_user": "Office decision time. We looked at three routes: (1) take a full second office downtown, (2) just lease an extra floor in our current building, or (3) a hybrid where we keep our current floor and add a small satellite suite near the courthouse for litigation staff. After running the numbers with our accountant, we're going with the hybrid, current floor plus the small courthouse satellite.",
+   "tail_user_fragment": "On the office decision, no need to walk through it again, but what signage do we need to order for it?",
+   "probe": "What did we decide on for the office expansion?",
+   "probes": [
+    "What did we decide on for the office expansion?",
+    "Which of the three office routes did we end up choosing?",
+    "Remind me exactly what office setup we settled on."
+   ],
+   "gold": "The hybrid option: keeping the current floor and adding a small courthouse-area satellite suite (option three of three).",
+   "keywords": [
+    "hybrid",
+    "courthouse satellite"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c48-referent-2",
+   "category": "referent",
+   "middle_user": "On laterals, we had three candidates on the table: (1) Marisol Reyes, a senior partner with a large employment book, (2) two mid-level associates from a regional firm with no portable clients, or (3) a semi-retired judge willing to come on of counsel part-time. We talked it through and we're going with Marisol Reyes, the senior partner with the book.",
+   "tail_user_fragment": "For the lateral we picked, don't re-explain who it is, just tell me what the standard onboarding conflict check involves.",
+   "probe": "Which lateral hire did we decide to go with?",
+   "probes": [
+    "Which lateral hire did we decide to go with?",
+    "Out of the three candidates, which one did we choose?",
+    "Remind me which lateral we're bringing on."
+   ],
+   "gold": "Marisol Reyes, the senior partner with the large employment book, over the two mid-level associates or the of-counsel judge.",
+   "keywords": [
+    "marisol",
+    "reyes"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c48-stance-1",
+   "category": "stance",
+   "middle_user": "Hard preference on the employment practice: absolutely no contingency-fee plaintiff-side cases. I think they'd conflict with our management-side corporate clients and blow up our reputation with the exact companies we serve. I don't care how lucrative a big case looks, we are not taking contingency plaintiff work, ever.",
+   "tail_user_fragment": "",
+   "probe": "What kinds of employment cases should the new practice pursue first?",
+   "probes": [
+    "What kinds of employment cases should the new practice pursue first?",
+    "What sort of employment matters should we take on to build the practice?",
+    "Should we chase big contingency plaintiff cases to grow the employment group fast?"
+   ],
+   "gold": "Management-side / defense employment work, never contingency-fee plaintiff-side cases, ideally recalling that the user said those conflict with their corporate clients.",
+   "keywords": [
+    "management-side"
+   ],
+   "anti_keywords": [
+    "contingency",
+    "plaintiff-side",
+    "plaintiff side"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c48-stance-2",
+   "category": "stance",
+   "middle_user": "One more firm rule: no billing our startup clients in six-minute increments for quick emails and calls. We did nickel-and-dime billing at my old firm and it torched client relationships. Flat monthly retainers for the startup clients only, even if we technically leave money on the table.",
+   "tail_user_fragment": "",
+   "probe": "How should we bill the startup clients under the expanded firm?",
+   "probes": [
+    "How should we bill the startup clients under the expanded firm?",
+    "What billing model should we use for our startup clients?",
+    "Should we switch the startups to detailed hourly billing to capture more revenue?"
+   ],
+   "gold": "Flat monthly retainers for startup clients, never six-minute-increment hourly billing, ideally recalling the user's bad experience with nickel-and-dime billing at their old firm.",
+   "keywords": [
+    "flat retainer",
+    "monthly retainer"
+   ],
+   "anti_keywords": [
+    "six-minute",
+    "hourly",
+    "nickel"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c48-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For context, we tried a case-management platform called CaseHelm for about eight months two years ago. It corrupted a document index twice and their support took a week to respond both times. We ripped it out and will never use CaseHelm again.",
+   "tail_user_fragment": "",
+   "probe": "What case-management platform should we consider for the expanded firm?",
+   "probes": [
+    "What case-management platform should we consider for the expanded firm?",
+    "Recommend a case-management system for us.",
+    "What should we avoid when picking a case-management vendor?"
+   ],
+   "gold": "Anything except CaseHelm, given it corrupted the document index twice and had slow support.",
+   "keywords": [
+    "document index"
+   ],
+   "anti_keywords": [
+    "casehelm"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c48-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, remember we used a legal-recruiting agency called Bright & Marlow for our last two searches and both placements left within a year, plus they double-billed us on a fee once. We dropped them and aren't going back.",
+   "tail_user_fragment": "",
+   "probe": "Which recruiting approach should we use to source the lateral hires?",
+   "probes": [
+    "Which recruiting approach should we use to source the lateral hires?",
+    "What recruiter or method should we use for laterals?",
+    "Is there a recruiting agency we should steer clear of?"
+   ],
+   "gold": "Any approach except Bright & Marlow, given the two placements that left within a year and the double-billing.",
+   "keywords": [
+    "double-billed",
+    "placements left"
+   ],
+   "anti_keywords": [
+    "bright & marlow",
+    "bright and marlow"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c48-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note for the file: the courthouse satellite suite base rent is $6,400 a month before any escalation. Just logging that, doesn't change what we're discussing.",
+   "tail_user_fragment": "",
+   "probe": "What is the base monthly rent for the courthouse satellite suite?",
+   "probes": [
+    "What is the base monthly rent for the courthouse satellite suite?",
+    "How much are we paying per month for the satellite suite?",
+    "Remind me the starting rent figure for the satellite office."
+   ],
+   "gold": "$6,400 a month before escalation.",
+   "keywords": [
+    "6,400"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c48-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "For the record, our malpractice renewal quote came in under policy number MAL-2026-77413, with the binder due back by March 9th. Just logging it.",
+   "tail_user_fragment": "",
+   "probe": "What is our malpractice renewal policy number, and when is the binder due?",
+   "probes": [
+    "What is our malpractice renewal policy number, and when is the binder due?",
+    "What's the malpractice policy number and deadline we noted earlier?",
+    "Remind me the reference number on our malpractice renewal quote."
+   ],
+   "gold": "Policy number MAL-2026-77413, binder due back by March 9th.",
+   "keywords": [
+    "77413",
+    "march 9"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c48-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's just codename the whole employment-practice launch 'Elantris' from here on, in every planning doc and email, so we're not spelling it out every time.",
+   "tail_user_fragment": "What's still open on the Elantris punch list before we can announce the new group?",
+   "probe": "What does 'Elantris' refer to in this project?",
+   "probes": [
+    "What does 'Elantris' refer to in this project?",
+    "If I say Elantris later, what should you understand that to mean?",
+    "Remind me what Elantris is in our planning -- what does it stand for?"
+   ],
+   "gold": "The whole employment-law practice launch.",
+   "keywords": [
+    "employment-practice",
+    "launch",
+    "new group"
+   ],
+   "anti_keywords": [
+    "Sanderson",
+    "fallen city",
+    "AonDor",
+    "Shai",
+    "fantasy"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c48-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the case-management software migration 'Scadrial', since it's the messiest, most behind-schedule part of the whole expansion. Use that name for it in any status update.",
+   "tail_user_fragment": "Any movement on Scadrial this week, or is it still stalled?",
+   "probe": "What does 'Scadrial' refer to in this project?",
+   "probes": [
+    "What does 'Scadrial' refer to in this project?",
+    "When I mention Scadrial again, what should you take that to mean?",
+    "Remind me what we've been calling Scadrial internally -- what is it?"
+   ],
+   "gold": "The case-management software migration for the expanded firm.",
+   "keywords": [
+    "case-management",
+    "software migration"
+   ],
+   "anti_keywords": [
+    "Sanderson",
+    "Mistborn",
+    "planet",
+    "Allomancy",
+    "Preservation"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

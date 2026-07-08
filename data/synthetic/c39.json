@@ -1,0 +1,547 @@
+{
+ "id": "c39",
+ "title": "Reopening a small independent ski resort",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in ski-resort operations and mountain management, supporting a small ownership team relaunching an independent resort."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so we've bought Frostpine Ridge out of two seasons closed and we're reopening this winter. Small independent mountain, no corporate chain behind us. I want to use this chat to work through all of it: pricing, grooming, safety, guest tech, the reopening. Can you be my planning partner across the whole thing?"
+  },
+  {
+   "role": "assistant",
+   "content": "Absolutely, I'd be glad to be your planning partner across all of it. Let's take the pieces one at a time and build a plan you feel confident in."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with lift-ticket and pass pricing since it sets the tone for everything. We've got a summit chair and a bunch of lower runs. How should we price for a mountain that's been dark for two years and needs to win back locals?"
+  },
+  {
+   "role": "assistant",
+   "content": "Great place to start. The main things to weigh are fit for your scale, upfront cost versus long-term upkeep, and how each option shapes the day-to-day experience - let's work through them."
+  },
+  {
+   "role": "user",
+   "content": "Lift-ticket model decision. We weighed three approaches: (1) dynamic demand-based pricing that floats daily with the weather and crowds, (2) flat single-price day tickets that never change, and (3) a season-pass-first model where day tickets are deliberately expensive to push everyone toward passes. I talked it through with the ops team and we're going with the third, the season-pass-first model."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it - noting that, and I'll keep it in mind as we plan."
+  },
+  {
+   "role": "user",
+   "content": "Should we do a deeply discounted 'comeback' pass for the first season to rebuild our local base, or hold the line on price?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. I'd lean conservative to start and adjust once you have real numbers, rather than over-committing up front."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it confuses us: 'the Bowl' is overloaded here. Catering also nicknames the base-lodge food court the Bowl because of its round shape, but when I say the Bowl to you, I always mean the above-treeline expert powder bowl off the summit chair. That's the sense I want."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. That's a useful anchor for the rest of the plan."
+  },
+  {
+   "role": "user",
+   "content": "For grooming, how many runs can one groomer realistically do in an overnight shift on our terrain?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: build in more buffer than feels necessary, since first-time estimates almost always run optimistic."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule on our identity: we stay a skier-and-snowboarder mountain, no pivot to a year-round amusement destination. No alpine coaster, no zip-line canopy tour, no mountain-bike lift park bolted on. Whatever the summer-revenue pressure, we don't turn the mountain into a theme park. I won't budge."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks, logged. We can build the rest around that."
+  },
+  {
+   "role": "user",
+   "content": "What's a good way to communicate daily grooming and open-terrain status to guests without overpromising?"
+  },
+  {
+   "role": "assistant",
+   "content": "It depends on your capacity, but a sensible default is to pilot small, measure, then scale what actually works."
+  },
+  {
+   "role": "user",
+   "content": "For the record on our app: we already tried a white-label resort app from a vendor called PisteApp for live lift status and trail maps. It showed lifts as open when they were wind-held and the map wouldn't load offline in a dead zone. That vendor is dead to us."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense - I'll factor that in going forward."
+  },
+  {
+   "role": "user",
+   "content": "On mountain safety, how do we rebuild a ski-patrol roster from scratch after two years dark?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable to keep it simple at first; you can always add complexity once the basics are proven out."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our summit chairlift's annual inspection certificate number is LIFT-8830, passed November 14th. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted clearly; that'll shape a few of the downstream calls."
+  },
+  {
+   "role": "user",
+   "content": "How many patrollers do we actually need on shift for our number of open lifts?"
+  },
+  {
+   "role": "assistant",
+   "content": "I'd treat that as a judgment call tied to your resources, and revisit it after your first full cycle."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our new high-speed detachable summit quad 'Aragorn' from now on. Every ops log and maintenance ticket should say Aragorn instead of the lift model number, since the installer wants the contract confidential until the ribbon-cutting."
+  },
+  {
+   "role": "assistant",
+   "content": "Good to have that pinned down. I'll keep it consistent from here."
+  },
+  {
+   "role": "user",
+   "content": "Dana had a good idea for grooming. Her proposal is a 'corduroy calendar': we publish in advance which specific runs get groomed each night on a rotating schedule, so guests can plan around fresh corduroy instead of guessing. She thinks it'll spread out the morning rush. I'm doing it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it - noting that, and I'll keep it in mind as we plan."
+  },
+  {
+   "role": "user",
+   "content": "For guest technology, is RFID gate access worth the install cost at our scale, or is it overkill?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair thing to weigh. The trade-off usually comes down to cost now versus flexibility later, so match it to your priorities."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the pass' from here on I mean the season lift pass, the membership product guests buy. I know ski patrol says 'the pass' to mean the mountain saddle between our two peaks, but with you the pass always means the season lift product."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. That's a useful anchor for the rest of the plan."
+  },
+  {
+   "role": "user",
+   "content": "Should we run our own rental shop or lease the space to a rental operator?"
+  },
+  {
+   "role": "assistant",
+   "content": "Worth planning for deliberately rather than leaving to chance; a light written standard tends to pay off here."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not putting in snowmaking on the expert terrain up top. I've watched resorts blow their whole energy budget hauling water uphill for terrain that ices over anyway. Natural snow only above the treeline. Don't pitch summit snowmaking to me as a season-extender."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks, logged. We can build the rest around that."
+  },
+  {
+   "role": "user",
+   "content": "For the reopening, what's the hour-by-hour flow I should plan for opening day?"
+  },
+  {
+   "role": "assistant",
+   "content": "That's a solid instinct. Keep the first pass minimal and let real usage tell you where to invest more."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we contracted a snow-removal outfit called PlowPro for the base parking lots last season. They showed up hours after the morning rush and buried three of our hydrants. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense - I'll factor that in going forward."
+  },
+  {
+   "role": "user",
+   "content": "One of our returning patrollers gives incredibly detailed terrain-hazard reports and I want to use that well."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and a good thing to nail down early so it doesn't cause friction downstream."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: our total snowmaking-upgrade budget for the lower runs is capped at $612,000, full stop, that's everything approved by the board. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted clearly; that'll shape a few of the downstream calls."
+  },
+  {
+   "role": "user",
+   "content": "What's realistic to expect for opening-weekend attendance for a relaunched independent mountain?"
+  },
+  {
+   "role": "assistant",
+   "content": "I'd size that to your team's bandwidth and keep it reviewable, so you can course-correct without much pain."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our VIP first-tracks early-access program 'Charizard' in all future notes. It's easier than the full program name, and I don't want the real branding in shared docs before the marketing launch."
+  },
+  {
+   "role": "assistant",
+   "content": "Good to have that pinned down. I'll keep it consistent from here."
+  },
+  {
+   "role": "user",
+   "content": "Back to the reopening, what's our plan if a wind event closes the summit chair on opening day?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good one to check. At a high level, here are the main things I'd watch for and test before you're locked in."
+  },
+  {
+   "role": "user",
+   "content": "Back to the ticket model we picked, no need to relist the options. How steep should the day-ticket premium be to actually nudge people to passes?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short answer: plan for the common edge cases first, then the rare ones, so nothing surprises you late."
+  },
+  {
+   "role": "user",
+   "content": "On Dana's corduroy calendar idea, I'm already committed, don't re-explain it. Which runs should anchor the first week's schedule?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to help there. I'd keep the approach simple and make sure it's easy to adjust if conditions change."
+  },
+  {
+   "role": "user",
+   "content": "Is the Bowl open on a high-wind day, or does it close before the lower runs?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sensible to think this through now. A little upfront planning here saves a lot of scramble later."
+  },
+  {
+   "role": "user",
+   "content": "How should we price the pass for early-bird buyers versus walk-ups?"
+  },
+  {
+   "role": "assistant",
+   "content": "Here's the quick take, with the trade-offs called out so you can decide what fits your situation best."
+  },
+  {
+   "role": "user",
+   "content": "Is Aragorn cleared to run at full line speed yet, or are we still in the break-in period?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good timing to sort this. I'd prioritize the pieces that are hardest to undo and handle the rest as you go."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft a welcome email for Charizard explaining the meeting time and the reserved-parking perk?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable question. Keep it lightweight for now and tighten it once you see how things play out."
+  },
+  {
+   "role": "user",
+   "content": "How closely should we watch first-week pass sales versus letting them build over the season?"
+  },
+  {
+   "role": "assistant",
+   "content": "That's a solid stopping point for today. You've got clear decisions on the big pieces and a short list of next actions to run down - ping me whenever you want to pick the next thread back up."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 290,
+  "middle_end_tokens": 1910,
+  "total_tokens": 2387
+ },
+ "plants": [
+  {
+   "id": "c39-referent-1",
+   "category": "referent",
+   "middle_user": "Lift-ticket model decision. We weighed three approaches: (1) dynamic demand-based pricing that floats daily with the weather and crowds, (2) flat single-price day tickets that never change, and (3) a season-pass-first model where day tickets are deliberately expensive to push everyone toward passes. I talked it through with the ops team and we're going with the third, the season-pass-first model.",
+   "tail_user_fragment": "Back to the ticket model we picked, no need to relist the options. How steep should the day-ticket premium be to actually nudge people to passes?",
+   "probe": "Which lift-ticket pricing model did we settle on for the resort?",
+   "probes": [
+    "Which lift-ticket pricing model did we settle on for the resort?",
+    "Which of the three ticket approaches did we end up choosing?",
+    "What did we decide about how lift tickets are priced?",
+    "Remind me which ticketing model we committed to."
+   ],
+   "gold": "The season-pass-first model where day tickets are deliberately expensive to drive pass sales (the third of the three options), not dynamic demand pricing and not flat day tickets.",
+   "keywords": [
+    "season-pass-first",
+    "expensive day tickets"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c39-referent-2",
+   "category": "referent",
+   "middle_user": "Dana had a good idea for grooming. Her proposal is a 'corduroy calendar': we publish in advance which specific runs get groomed each night on a rotating schedule, so guests can plan around fresh corduroy instead of guessing. She thinks it'll spread out the morning rush. I'm doing it.",
+   "tail_user_fragment": "On Dana's corduroy calendar idea, I'm already committed, don't re-explain it. Which runs should anchor the first week's schedule?",
+   "probe": "What specifically was Dana's grooming proposal?",
+   "probes": [
+    "What specifically was Dana's grooming proposal?",
+    "What did Dana suggest for our grooming schedule?",
+    "Describe the grooming format Dana pitched that we're adopting.",
+    "What was Dana's idea about how to schedule grooming?"
+   ],
+   "gold": "A 'corduroy calendar' publishing in advance which runs get groomed each night on a rotating schedule, so guests can plan around fresh corduroy.",
+   "keywords": [
+    "corduroy calendar",
+    "published grooming schedule"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c39-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it confuses us: 'the Bowl' is overloaded here. Catering also nicknames the base-lodge food court the Bowl because of its round shape, but when I say the Bowl to you, I always mean the above-treeline expert powder bowl off the summit chair. That's the sense I want.",
+   "tail_user_fragment": "Is the Bowl open on a high-wind day, or does it close before the lower runs?",
+   "probe": "When I said 'the Bowl' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the Bowl' in this conversation, what was I referring to?",
+    "Which of the two things called 'the Bowl' did I mean here?",
+    "What does 'the Bowl' refer to in our conversation?",
+    "If I mention the Bowl again, what should you understand that to be?"
+   ],
+   "gold": "The above-treeline expert powder bowl off the summit chair, not the base-lodge food court catering also calls the Bowl.",
+   "keywords": [
+    "powder bowl",
+    "expert terrain",
+    "summit"
+   ],
+   "anti_keywords": [
+    "food court",
+    "base lodge"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c39-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the pass' from here on I mean the season lift pass, the membership product guests buy. I know ski patrol says 'the pass' to mean the mountain saddle between our two peaks, but with you the pass always means the season lift product.",
+   "tail_user_fragment": "How should we price the pass for early-bird buyers versus walk-ups?",
+   "probe": "When I referred to 'the pass' in this conversation, which meaning did I mean?",
+   "probes": [
+    "When I referred to 'the pass' in this conversation, which meaning did I mean?",
+    "Which sense of 'the pass' did I intend here?",
+    "What does 'the pass' refer to in our conversation, the product or the terrain feature?",
+    "If I bring up the pass again, what should you assume I mean?"
+   ],
+   "gold": "The season lift pass product guests buy, not the mountain saddle between the two peaks that patrol calls the pass.",
+   "keywords": [
+    "season lift pass",
+    "product"
+   ],
+   "anti_keywords": [
+    "saddle",
+    "terrain",
+    "between peaks"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c39-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule on our identity: we stay a skier-and-snowboarder mountain, no pivot to a year-round amusement destination. No alpine coaster, no zip-line canopy tour, no mountain-bike lift park bolted on. Whatever the summer-revenue pressure, we don't turn the mountain into a theme park. I won't budge.",
+   "tail_user_fragment": "",
+   "probe": "What are some ideas for generating revenue in the off-season?",
+   "probes": [
+    "What are some ideas for generating revenue in the off-season?",
+    "Give me three ways to earn money during the summer months.",
+    "How could we make more money from the mountain when there's no snow?",
+    "Suggest ways to extend revenue beyond the ski season."
+   ],
+   "gold": "Suggests low-footprint ideas like hosting weddings and events at the lodge, guided hiking with lift access, renting the base area for concerts, or corporate retreats, while never proposing an alpine coaster, zip-line tour, or bike park, ideally recalling the no-theme-park commitment.",
+   "keywords": [
+    "skier",
+    "snowboarder",
+    "mountain"
+   ],
+   "anti_keywords": [
+    "alpine coaster",
+    "zip-line",
+    "bike park"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c39-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not putting in snowmaking on the expert terrain up top. I've watched resorts blow their whole energy budget hauling water uphill for terrain that ices over anyway. Natural snow only above the treeline. Don't pitch summit snowmaking to me as a season-extender.",
+   "tail_user_fragment": "",
+   "probe": "Given a thin early season, what options do we have to keep skiable terrain open?",
+   "probes": [
+    "Given a thin early season, what options do we have to keep skiable terrain open?",
+    "If natural snow is late, how can we keep runs open up high?",
+    "What should we consider for early-season coverage on the upper mountain?",
+    "Suggest ways to handle a low-snow start without changing our snowmaking stance."
+   ],
+   "gold": "Suggests options like focusing snowmaking on lower groomed runs, delaying upper-mountain opening until natural snow arrives, terrain-park consolidation, or storm-cycle marketing, while never proposing snowmaking on the expert summit terrain, ideally recalling the natural-snow-only stance up top.",
+   "keywords": [
+    "lower runs",
+    "natural snow"
+   ],
+   "anti_keywords": [
+    "summit snowmaking",
+    "snowmaking up top"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c39-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on our app: we already tried a white-label resort app from a vendor called PisteApp for live lift status and trail maps. It showed lifts as open when they were wind-held and the map wouldn't load offline in a dead zone. That vendor is dead to us.",
+   "tail_user_fragment": "",
+   "probe": "What should we use for a guest-facing mobile app going forward?",
+   "probes": [
+    "What should we use for a guest-facing mobile app going forward?",
+    "What app option should we pursue next for lift status and maps?",
+    "Given the earlier failure, how should we handle the guest app?",
+    "What's a better approach than what we already tried for the resort app?"
+   ],
+   "gold": "Anything except PisteApp, e.g. a different vetted resort-app vendor with reliable offline maps or an in-house progressive web app, ideally acknowledging PisteApp was tried and rejected.",
+   "keywords": [
+    "wind-held",
+    "offline"
+   ],
+   "anti_keywords": [
+    "pisteapp"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c39-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we contracted a snow-removal outfit called PlowPro for the base parking lots last season. They showed up hours after the morning rush and buried three of our hydrants. Not using them again.",
+   "tail_user_fragment": "",
+   "probe": "What should we do for parking-lot snow clearing this season?",
+   "probes": [
+    "What should we do for parking-lot snow clearing this season?",
+    "How should we handle lot plowing after the earlier problems?",
+    "What's our path forward on snow removal for the lots?",
+    "Which snow-clearing approach should we adopt for the base area?"
+   ],
+   "gold": "Anything except PlowPro, e.g. a different vetted plowing contractor with a pre-rush SLA or an in-house plow crew, ideally acknowledging PlowPro's late, hydrant-burying service was tried and rejected.",
+   "keywords": [
+    "morning rush",
+    "hydrants"
+   ],
+   "anti_keywords": [
+    "plowpro"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c39-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our summit chairlift's annual inspection certificate number is LIFT-8830, passed November 14th. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": "",
+   "probe": "What is our summit chairlift inspection certificate number, and when did it pass?",
+   "probes": [
+    "What is our summit chairlift inspection certificate number, and when did it pass?",
+    "What's the reference number on the summit lift inspection?",
+    "When did the summit lift pass inspection, and what's its certificate number?",
+    "Remind me of the lift inspection ID and date."
+   ],
+   "gold": "LIFT-8830, passed November 14th.",
+   "keywords": [
+    "LIFT-8830",
+    "november 14"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c39-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: our total snowmaking-upgrade budget for the lower runs is capped at $612,000, full stop, that's everything approved by the board. Just parking that here.",
+   "tail_user_fragment": "",
+   "probe": "What is our total snowmaking-upgrade budget?",
+   "probes": [
+    "What is our total snowmaking-upgrade budget?",
+    "How much is approved for the snowmaking upgrade?",
+    "What's the cap on the snowmaking budget?",
+    "Remind me the snowmaking spend limit we're working with."
+   ],
+   "gold": "$612,000 total.",
+   "keywords": [
+    "612,000"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c39-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our new high-speed detachable summit quad 'Aragorn' from now on. Every ops log and maintenance ticket should say Aragorn instead of the lift model number, since the installer wants the contract confidential until the ribbon-cutting.",
+   "tail_user_fragment": "Is Aragorn cleared to run at full line speed yet, or are we still in the break-in period?",
+   "probe": "What does 'Aragorn' refer to in our project?",
+   "probes": [
+    "What does 'Aragorn' refer to in our project?",
+    "If I mention Aragorn again, what should you understand that to mean?",
+    "Remind me what we're calling Aragorn internally.",
+    "What is Aragorn a codename for?"
+   ],
+   "gold": "The new high-speed detachable summit quad chairlift.",
+   "keywords": [
+    "summit quad",
+    "chairlift",
+    "detachable lift"
+   ],
+   "anti_keywords": [
+    "ranger",
+    "king",
+    "gondor",
+    "strider"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c39-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our VIP first-tracks early-access program 'Charizard' in all future notes. It's easier than the full program name, and I don't want the real branding in shared docs before the marketing launch.",
+   "tail_user_fragment": "Can you draft a welcome email for Charizard explaining the meeting time and the reserved-parking perk?",
+   "probe": "What does 'Charizard' refer to in our conversation?",
+   "probes": [
+    "What does 'Charizard' refer to in our conversation?",
+    "If I mention Charizard later, what should you take that to mean?",
+    "What is Charizard a codename for in our project?",
+    "Remind me what Charizard refers to internally."
+   ],
+   "gold": "The VIP first-tracks early-access program.",
+   "keywords": [
+    "first-tracks",
+    "early-access program"
+   ],
+   "anti_keywords": [
+    "pokemon",
+    "dragon",
+    "fire"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "opus-render"
+ }
+}

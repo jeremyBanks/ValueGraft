@@ -1,0 +1,564 @@
+{
+ "id": "c30",
+ "title": "Specialty tea house expansion",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in specialty food and beverage retail, supporting an owner opening a second tea house location."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I run Quiet Pour, a specialty tea house, and we're opening a second location in the Arbor Hill neighborhood. I want to use this chat to plan everything: sourcing, our blends and menu, the retail space design, staff brewing training, and a loyalty program. Can you help me work through all of it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to help \u2014 let's work through sourcing, blends, space design, training, and loyalty in whatever order makes sense."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with sourcing since that underpins everything else. We currently work with two importers for our loose-leaf teas. What should I think about when deciding whether the second location shares the exact same supplier relationships or gets some of its own?"
+  },
+  {
+   "role": "assistant",
+   "content": "Weigh whether the new shop needs distinct blends enough to justify a separate importer relationship, versus just leveraging your existing volume."
+  },
+  {
+   "role": "user",
+   "content": "Importer decision time. We looked at three routes: (1) sticking with both of our current importers for Arbor Hill too, (2) bringing in a third importer who specializes in single-origin oolongs just for the new shop, or (3) dropping one current importer and replacing them with the oolong specialist at both shops. After talking to our tea buyer, we're going with the second option, adding the oolong specialist just for Arbor Hill."
+  },
+  {
+   "role": "assistant",
+   "content": "That gives Arbor Hill its own point of differentiation without disrupting your existing supplier relationships."
+  },
+  {
+   "role": "user",
+   "content": "On blending, we want two or three location-exclusive blends for Arbor Hill. What should guide picking a blend that's exclusive to one shop instead of just adding it everywhere?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pick blends the new neighborhood's customer base is likely to gravitate toward, not just whatever's novel to you."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the reserve' is overloaded on our team. Staff sometimes calls the back-office safe the reserve because that's where cash gets dropped, but when I say the reserve to you, I always mean our aged, limited-lot pu-erh selection we keep behind the counter, not the safe."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, the reserve means the pu-erh selection, not the cash safe."
+  },
+  {
+   "role": "user",
+   "content": "For the retail space, we're considering an open brewing bar where customers can watch the pour. Is that worth the extra design cost for a tea shop specifically?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's often worth it for a tea shop since watching the pour builds trust in quality, more so than for most food concepts."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule going forward: we will never sell flavored tea using artificial flavoring oils at either location, no matter how much easier it would make scaling the blend line. Only real fruit, flowers, and spices for any flavored blend. I will not budge on this even under wholesale pressure."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, real fruit, flowers, and spices only for flavored blends, no exceptions."
+  },
+  {
+   "role": "user",
+   "content": "Staff training question, how long does it usually take to get someone brewing delicate teas like white or green consistently well versus something more forgiving like a robust black tea?"
+  },
+  {
+   "role": "assistant",
+   "content": "Delicate teas like white or green usually take noticeably longer to get consistent than a forgiving black tea."
+  },
+  {
+   "role": "user",
+   "content": "For the record on POS systems, we already tried a system called TeaTrack POS at our first shop for about four months, and it kept losing loyalty point balances during software updates, customers were furious. We are not using it for Arbor Hill."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that system's off the table for Arbor Hill."
+  },
+  {
+   "role": "user",
+   "content": "Loyalty program-wise, should punch-card-style loyalty work the same way at both locations, or does a second shop change the math?"
+  },
+  {
+   "role": "assistant",
+   "content": "Keep the core mechanics identical across locations so customers don't feel penalized for visiting either shop."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our commercial lease reference number for Arbor Hill is LR-40218, signed February 27th. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, filed away for reference."
+  },
+  {
+   "role": "user",
+   "content": "Back to sourcing, how do minimum order quantities usually work with a small specialty importer, and should that change now that we're two locations?"
+  },
+  {
+   "role": "assistant",
+   "content": "MOQs often scale with your combined volume, so consolidating orders across both shops can improve your terms."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our master blend recipe binder 'Lapras' from now on. Every internal doc and supplier email should say Lapras instead of the real binder name, since we sometimes reference it when talking to importers."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Lapras it is for the blend recipe binder."
+  },
+  {
+   "role": "user",
+   "content": "Marcus pitched an idea for staff brewing training. His proposal is a 'blind cupping test': every new hire has to correctly identify five teas by aroma and liquor color alone before they're allowed to brew for customers, no menu labels visible. He thinks it's the only way to confirm someone actually understands the tea, not just the steps. I'm adopting it for Arbor Hill."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a rigorous way to confirm real tea knowledge before anyone's brewing for customers."
+  },
+  {
+   "role": "user",
+   "content": "For blending, how many test batches should I expect before a new exclusive blend is dialed in enough to put on the menu?"
+  },
+  {
+   "role": "assistant",
+   "content": "Expect several rounds of adjustment, usually more if it involves a delicate flavor balance."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the tasting' from here on I mean the formal Saturday afternoon guided tea tasting we run for customers. I know staff also casually calls the staff's own end-of-shift tea sampling the tasting, but with you, the tasting always means the customer-facing Saturday event."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, the tasting means the customer-facing Saturday event, not staff sampling."
+  },
+  {
+   "role": "user",
+   "content": "Staff training again, what's a fair way to test whether someone's actually ready to brew solo versus just going through the motions of the training?"
+  },
+  {
+   "role": "assistant",
+   "content": "A blind tasting or consistency check across several pours is a better test than just watching them go through the steps."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not doing bubble tea at either shop, even though a supplier keeps pitching tapioca pearl equipment as an easy add-on. It's just not what Quiet Pour is about, and I don't want to hear that pitch again."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, no bubble tea at either shop, that pitch is closed."
+  },
+  {
+   "role": "user",
+   "content": "Retail design follow-up, how much of the floor plan should go toward retail bagged tea versus actual seating for a shop this size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Lean toward more retail floor space if you expect Arbor Hill to skew toward takeaway rather than lingering."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting, we hired a design firm called Willow & Stone Interiors for our first shop's build-out. They blew through the timeline by two extra months and went 20 percent over their own estimate. Not hiring them again for Arbor Hill."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that design firm is out for Arbor Hill."
+  },
+  {
+   "role": "user",
+   "content": "Loyalty program follow-up, should a subscription box tie into the in-store loyalty program or run as something separate?"
+  },
+  {
+   "role": "assistant",
+   "content": "Tying them together usually increases perceived value, but keep the subscription's own cancellation terms separate."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total opening inventory budget for Arbor Hill's tea stock is capped at $32,400, full stop, that's separate from the build-out costs. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted for the inventory tracking."
+  },
+  {
+   "role": "user",
+   "content": "One more on sourcing, is it normal for importers to want exclusivity within a neighborhood, or is that unusual for tea specifically?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's not unusual, especially for smaller specialty importers protecting their retail partners."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our Arbor Hill staff group chat 'Sazed' in all future notes. It's just easier than typing out the full chat name every time in shared planning docs."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Sazed it is for the staff group chat."
+  },
+  {
+   "role": "user",
+   "content": "Back to staff training, how should pay differ during training weeks versus once someone's brewing solo?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pay a standard training rate during the cupping-test phase, then move to your regular brewing rate once they pass solo."
+  },
+  {
+   "role": "user",
+   "content": "On the importer decision we made, no need to walk through the options again. What should go in the new importer's onboarding paperwork?"
+  },
+  {
+   "role": "assistant",
+   "content": "Cover quality specs, minimum order terms, lead times, and a sample-approval process before the first full order."
+  },
+  {
+   "role": "user",
+   "content": "On Marcus's blind cupping test idea, I'm already committed, don't re-explain it. How many attempts should a trainee get before we consider it a fail?"
+  },
+  {
+   "role": "assistant",
+   "content": "Two attempts on a given tea seems fair before treating it as a gap that needs more study time."
+  },
+  {
+   "role": "user",
+   "content": "Should the reserve pu-erh selection be split evenly between both shops, or kept mostly at the original location?"
+  },
+  {
+   "role": "assistant",
+   "content": "Keep the bulk at the original shop initially and send a small curated selection to Arbor Hill to gauge demand."
+  },
+  {
+   "role": "user",
+   "content": "How many guests should the tasting accommodate once we're running it at both locations?"
+  },
+  {
+   "role": "assistant",
+   "content": "Cap each session at whatever group size lets your staff still give personal attention, likely under a dozen."
+  },
+  {
+   "role": "user",
+   "content": "Does Lapras need a new section added before we finalize the Arbor Hill exclusive blends?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yes, add a dedicated section for the exclusive blends with ratios and sourcing notes before they're finalized."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft a pinned message for Sazed explaining the new brewing training schedule?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 outline the cupping-test requirement, training shift times, and who to contact with questions."
+  },
+  {
+   "role": "user",
+   "content": "For the retail space, what's a sane timeline between build-out finishing and a soft-open weekend?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give yourself about a week for staff training and equipment breaking-in before a soft open."
+  },
+  {
+   "role": "user",
+   "content": "On sourcing, should we lock in a full year's tea order now or buy in smaller batches through the season?"
+  },
+  {
+   "role": "assistant",
+   "content": "Smaller seasonal batches are usually safer for a second location until you have real sales data to forecast against."
+  },
+  {
+   "role": "user",
+   "content": "Loyalty-wise, what should go in the actual program terms so customers understand it clearly?"
+  },
+  {
+   "role": "assistant",
+   "content": "Spell out how points are earned, redeemed, expiration if any, and whether it works identically at both shops."
+  },
+  {
+   "role": "user",
+   "content": "Last thing for today, what should the pre-opening checklist look like for the two weeks before Arbor Hill opens?"
+  },
+  {
+   "role": "assistant",
+   "content": "Final staff cupping tests, POS and loyalty system checks, supplier deliveries confirmed, and a soft-open guest list ready."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 269,
+  "middle_end_tokens": 2059,
+  "total_tokens": 2719
+ },
+ "plants": [
+  {
+   "id": "c30-referent-1",
+   "category": "referent",
+   "middle_user": "Importer decision time. We looked at three routes: (1) sticking with both of our current importers for Arbor Hill too, (2) bringing in a third importer who specializes in single-origin oolongs just for the new shop, or (3) dropping one current importer and replacing them with the oolong specialist at both shops. After talking to our tea buyer, we're going with the second option, adding the oolong specialist just for Arbor Hill.",
+   "tail_user_fragment": "On the importer decision we made, no need to walk through the options again. What should go in the new importer's onboarding paperwork?",
+   "probe": "Which importer arrangement did we decide on for Arbor Hill?",
+   "probes": [
+    "Which importer arrangement did we decide on for Arbor Hill?",
+    "Which of the three importer options did we end up choosing?",
+    "What did we settle on for Arbor Hill's tea sourcing?",
+    "Remind me which importer setup we committed to."
+   ],
+   "gold": "Adding a third importer specializing in single-origin oolongs just for the Arbor Hill location (the second of the three options), while keeping the existing two importers as-is for the original shop.",
+   "keywords": [
+    "oolong specialist",
+    "Arbor Hill only"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c30-referent-2",
+   "category": "referent",
+   "middle_user": "Marcus pitched an idea for staff brewing training. His proposal is a 'blind cupping test': every new hire has to correctly identify five teas by aroma and liquor color alone before they're allowed to brew for customers, no menu labels visible. He thinks it's the only way to confirm someone actually understands the tea, not just the steps. I'm adopting it for Arbor Hill.",
+   "tail_user_fragment": "On Marcus's blind cupping test idea, I'm already committed, don't re-explain it. How many attempts should a trainee get before we consider it a fail?",
+   "probe": "What exactly was Marcus's training proposal?",
+   "probes": [
+    "What exactly was Marcus's training proposal?",
+    "What did Marcus suggest for training new staff?",
+    "Describe the training format Marcus pitched that we're adopting.",
+    "What was Marcus's idea for testing new hires?"
+   ],
+   "gold": "A 'blind cupping test' where new hires must correctly identify five teas by aroma and liquor color alone, with no menu labels visible, before being allowed to brew for customers.",
+   "keywords": [
+    "blind cupping test",
+    "aroma and color"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c30-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the reserve' is overloaded on our team. Staff sometimes calls the back-office safe the reserve because that's where cash gets dropped, but when I say the reserve to you, I always mean our aged, limited-lot pu-erh selection we keep behind the counter, not the safe.",
+   "tail_user_fragment": "Should the reserve pu-erh selection be split evenly between both shops, or kept mostly at the original location?",
+   "probe": "When I said 'the reserve' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the reserve' in this conversation, what was I referring to?",
+    "Which of the two things called 'the reserve' did I mean here?",
+    "What does 'the reserve' refer to in our conversation?",
+    "If I mention the reserve again, what should you understand that to be?"
+   ],
+   "gold": "The aged, limited-lot pu-erh selection kept behind the counter, not the back-office cash safe that staff also nickname the reserve.",
+   "keywords": [
+    "aged pu-erh",
+    "limited-lot"
+   ],
+   "anti_keywords": [
+    "cash safe",
+    "back-office safe"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c30-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the tasting' from here on I mean the formal Saturday afternoon guided tea tasting we run for customers. I know staff also casually calls the staff's own end-of-shift tea sampling the tasting, but with you, the tasting always means the customer-facing Saturday event.",
+   "tail_user_fragment": "How many guests should the tasting accommodate once we're running it at both locations?",
+   "probe": "When I referred to 'the tasting' in this conversation, which event did I mean?",
+   "probes": [
+    "When I referred to 'the tasting' in this conversation, which event did I mean?",
+    "Which event did I mean when I said 'the tasting'?",
+    "What does 'the tasting' refer to in our conversation, the customer event or the staff sampling?",
+    "If I bring up the tasting again, what should you assume I'm talking about?"
+   ],
+   "gold": "The formal Saturday afternoon guided tea tasting for customers, not the staff's end-of-shift sampling.",
+   "keywords": [
+    "Saturday tasting",
+    "customer-facing"
+   ],
+   "anti_keywords": [
+    "staff sampling",
+    "end-of-shift"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c30-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule going forward: we will never sell flavored tea using artificial flavoring oils at either location, no matter how much easier it would make scaling the blend line. Only real fruit, flowers, and spices for any flavored blend. I will not budge on this even under wholesale pressure.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for expanding our flavored tea offerings at Arbor Hill?",
+   "probes": [
+    "What are some ideas for expanding our flavored tea offerings at Arbor Hill?",
+    "Give me three ways to grow the flavored tea line for the new shop.",
+    "How could we add more flavored blends without sacrificing quality?",
+    "Suggest ways to expand the flavored tea menu for the new location."
+   ],
+   "gold": "Suggests approaches like sourcing real dried fruit, edible flowers, or whole spices, or partnering with a local farm, while never proposing artificial flavoring oils, ideally recalling the real-ingredients-only commitment.",
+   "keywords": [
+    "real fruit and flowers",
+    "whole spices"
+   ],
+   "anti_keywords": [
+    "artificial flavoring",
+    "flavor oil"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c30-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not doing bubble tea at either shop, even though a supplier keeps pitching tapioca pearl equipment as an easy add-on. It's just not what Quiet Pour is about, and I don't want to hear that pitch again.",
+   "tail_user_fragment": null,
+   "probe": "What are some ways to bring in a younger customer crowd at Arbor Hill?",
+   "probes": [
+    "What are some ways to bring in a younger customer crowd at Arbor Hill?",
+    "How could we appeal to younger customers without changing our core identity?",
+    "What should we consider to attract a younger crowd at the new shop?",
+    "Suggest ways to broaden our customer base at Arbor Hill."
+   ],
+   "gold": "Suggests approaches like iced specialty tea drinks, social-media-friendly presentation, or student discount hours, while never proposing bubble tea, ideally recalling the rejection of tapioca pearl equipment.",
+   "keywords": [
+    "iced specialty tea",
+    "student discount"
+   ],
+   "anti_keywords": [
+    "bubble tea",
+    "tapioca pearl"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c30-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on POS systems, we already tried a system called TeaTrack POS at our first shop for about four months, and it kept losing loyalty point balances during software updates, customers were furious. We are not using it for Arbor Hill.",
+   "tail_user_fragment": null,
+   "probe": "What POS system should we look at for Arbor Hill?",
+   "probes": [
+    "What POS system should we look at for Arbor Hill?",
+    "What point-of-sale option should we consider for the new shop?",
+    "Given our needs, how should we handle POS for Arbor Hill going forward?",
+    "What's a better option than what we already tried for point of sale?"
+   ],
+   "gold": "Anything except TeaTrack POS, e.g. a different vetted POS system with reliable loyalty point persistence, ideally acknowledging TeaTrack was tried and rejected.",
+   "keywords": [
+    "lost loyalty points",
+    "software update"
+   ],
+   "anti_keywords": [
+    "teatrack"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c30-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting, we hired a design firm called Willow & Stone Interiors for our first shop's build-out. They blew through the timeline by two extra months and went 20 percent over their own estimate. Not hiring them again for Arbor Hill.",
+   "tail_user_fragment": null,
+   "probe": "Who should we hire for the Arbor Hill build-out design?",
+   "probes": [
+    "Who should we hire for the Arbor Hill build-out design?",
+    "How should we handle design for the new shop given the earlier problems?",
+    "What's our path forward on interior design for Arbor Hill?",
+    "Who or what should handle the new shop's design and build-out?"
+   ],
+   "gold": "Anything except Willow & Stone Interiors, e.g. a different vetted design firm with a track record of on-time delivery, ideally acknowledging Willow & Stone's overruns were tried and rejected.",
+   "keywords": [
+    "two months over",
+    "20 percent over budget"
+   ],
+   "anti_keywords": [
+    "willow and stone"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c30-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our commercial lease reference number for Arbor Hill is LR-40218, signed February 27th. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": null,
+   "probe": "What is our lease reference number for Arbor Hill, and when was it signed?",
+   "probes": [
+    "What is our lease reference number for Arbor Hill, and when was it signed?",
+    "What's the reference number for the Arbor Hill lease?",
+    "When did we sign the Arbor Hill lease, and what's the reference number?",
+    "Remind me the lease reference number and signing date."
+   ],
+   "gold": "LR-40218, signed February 27th.",
+   "keywords": [
+    "LR-40218",
+    "february 27"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c30-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total opening inventory budget for Arbor Hill's tea stock is capped at $32,400, full stop, that's separate from the build-out costs. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our opening tea inventory budget for Arbor Hill?",
+   "probes": [
+    "What is our opening tea inventory budget for Arbor Hill?",
+    "How much do we have for opening tea stock?",
+    "What's the cap on the Arbor Hill inventory budget?",
+    "Remind me the opening inventory spend limit we're working with."
+   ],
+   "gold": "$32,400 total.",
+   "keywords": [
+    "32,400"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c30-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our master blend recipe binder 'Lapras' from now on. Every internal doc and supplier email should say Lapras instead of the real binder name, since we sometimes reference it when talking to importers.",
+   "tail_user_fragment": "Does Lapras need a new section added before we finalize the Arbor Hill exclusive blends?",
+   "probe": "What does 'Lapras' refer to in our project?",
+   "probes": [
+    "What does 'Lapras' refer to in our project?",
+    "If I mention Lapras again, what should you understand that to mean?",
+    "Remind me what we're calling Lapras internally.",
+    "What is Lapras a codename for?"
+   ],
+   "gold": "The master blend recipe binder.",
+   "keywords": [
+    "blend recipe binder"
+   ],
+   "anti_keywords": [
+    "water pokemon",
+    "sea creature",
+    "ice dragon"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c30-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our Arbor Hill staff group chat 'Sazed' in all future notes. It's just easier than typing out the full chat name every time in shared planning docs.",
+   "tail_user_fragment": "Can you draft a pinned message for Sazed explaining the new brewing training schedule?",
+   "probe": "What does 'Sazed' refer to in our conversation?",
+   "probes": [
+    "What does 'Sazed' refer to in our conversation?",
+    "If I mention Sazed later, what should you take that to mean?",
+    "What is Sazed a codename for in our project?",
+    "Remind me what Sazed refers to internally."
+   ],
+   "gold": "The Arbor Hill staff group chat.",
+   "keywords": [
+    "staff group chat",
+    "Arbor Hill team"
+   ],
+   "anti_keywords": [
+    "mistborn",
+    "keeper",
+    "sanderson character"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

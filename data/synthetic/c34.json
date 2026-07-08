@@ -1,0 +1,541 @@
+{
+ "id": "c34",
+ "title": "Independent jazz club season programming",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in live music venue operations and booking, supporting an independent jazz club planning its upcoming season."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so The Blue Hour is planning its next season and I want this chat to be our home base for it: booking, sound and stage, pricing and membership, late-night sets, and getting press and the community engaged. Can you help me work through all of it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to be that home base \u2014 booking, sound, pricing, late-night, and press, all in one thread. Let's work through them as they come up."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with artist booking and lineup curation since contracts need to go out soon. We want a mix of touring names and local players without the local sets feeling like filler. How do venues our size usually balance that ratio across a season?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a room your size, aim for roughly two touring names for every local slot, and give the local sets real curation and framing rather than treating them as filler between bigger names."
+  },
+  {
+   "role": "user",
+   "content": "For sound and stage setup, is it worth investing in a proper drum shield for the smaller upright bass trios, or does that kill the room's natural sound?"
+  },
+  {
+   "role": "assistant",
+   "content": "A drum shield is worth it for louder ensembles, but for upright bass trios it usually costs you more natural warmth than it saves \u2014 better to manage stage volume with placement instead."
+  },
+  {
+   "role": "user",
+   "content": "Stage layout decision, finally made. We weighed three options: (1) keeping the small elevated stage exactly where it is against the back wall, (2) moving the stage to the center of the room with seating arranged in the round, and (3) building a slightly larger stage extension into the side alcove. Given the room's sightlines, we're going with the third one, extending into the side alcove."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, the side-alcove stage extension it is \u2014 locked in as the layout going forward."
+  },
+  {
+   "role": "user",
+   "content": "How often should we actually recalibrate the room's EQ, given how much the crowd size changes the acoustics night to night?"
+  },
+  {
+   "role": "assistant",
+   "content": "Recalibrate at the top of the night once the room's near capacity, since body absorption changes the acoustics more than anything else \u2014 nightly tweaks beyond that are rarely worth it."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it confuses us later: 'the late set' is overloaded on our team. The bar staff use the late set to mean anything after 10pm generally, but when I say the late set to you, I always mean specifically the post-midnight jam session slot, not the regular second set of the night. That's the sense I want here."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, noted for how I'll interpret that term going forward."
+  },
+  {
+   "role": "user",
+   "content": "On membership and door pricing, should members get a flat discount on every show or just priority seating?"
+  },
+  {
+   "role": "assistant",
+   "content": "Priority seating tends to feel more valuable than a flat discount and protects your per-ticket revenue better."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for the season: no talking during sets, ever, and we enforce it by asking chatty tables to step to the bar area. I don't care if it's a big-name touring artist packing the room, we are not becoming a background-music room. I will not budge on this no matter how much revenue pressure the bar side puts on us."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood \u2014 no talking during sets, full stop, regardless of who's on stage. Noted."
+  },
+  {
+   "role": "user",
+   "content": "What's a fair way to price a membership tier that includes reserved tables versus general admission?"
+  },
+  {
+   "role": "assistant",
+   "content": "Price the reserved-table tier at a real premium over general admission \u2014 enough to cover the lost table turns, not just a token bump."
+  },
+  {
+   "role": "user",
+   "content": "For the record on ticketing: we tried a platform called QuickStub for online sales last season, and their fees ate almost 15% of every ticket plus the checkout flow confused half our older members. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, QuickStub is off the table for ticketing going forward."
+  },
+  {
+   "role": "user",
+   "content": "For late-night programming, is a post-midnight jam session worth the extra staffing cost on weekends?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's worth it if you can staff it without cutting into your main bar team, since a good late set builds loyalty among your most engaged regulars."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our liquor license renewal confirmation number is LL-50472, filed April 9th. Nothing to decide, just don't want to lose track of the number."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, parked for reference."
+  },
+  {
+   "role": "user",
+   "content": "How do we keep a late-night jam from turning into an unpaid open mic that annoys the paying early crowd?"
+  },
+  {
+   "role": "assistant",
+   "content": "Set a clear, ticketed structure or a house-curated lineup for the jam so it stays a booked set rather than an open floor."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our master booking contract spreadsheet 'Shadowfax' from now on. Every email thread and note should say Shadowfax, not the real filename, since we sometimes forward pieces of these threads to visiting agents."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Shadowfax for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "For press and community outreach, should we pitch the local alt-weekly directly or work through a publicist for the season opener?"
+  },
+  {
+   "role": "assistant",
+   "content": "Go through a publicist for the opener specifically \u2014 it's the highest-visibility date and worth the fee to get it placed well."
+  },
+  {
+   "role": "user",
+   "content": "Denise had a good idea for the season opener. Her proposal is to pair a touring headliner with a short local opening set from a high school jazz ensemble, rather than the usual local-professional opener, to build community buy-in early. I'm doing it for the opener."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense, pairing the headliner with the student ensemble opener should build real community buy-in \u2014 noted."
+  },
+  {
+   "role": "user",
+   "content": "What's a realistic lead time before a show to get a decent preview write-up placed?"
+  },
+  {
+   "role": "assistant",
+   "content": "Aim for at least three to four weeks of lead time to get a solid preview placed rather than a last-minute mention."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the door list' from here on I mean the guest-and-comp list handled at the entrance for each show. I know our booking software also has something it labels a door list for member check-ins, but with you, the door list always means the guest-and-comp entry list."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted which list that refers to going forward."
+  },
+  {
+   "role": "user",
+   "content": "One of our regular sidemen has been incredible about filling in on short notice, how should we make sure we're using him well going forward?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give him first right of refusal on high-value sub slots and make sure he's paid at a rate that reflects how reliable he's been."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we don't book cover bands or tribute acts, period, even the ones that could sell out fast. This club exists for original and improvisational jazz, not nostalgia acts. Don't suggest a tribute booking to me as a quick revenue fix."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, no cover or tribute bookings under any circumstances \u2014 noted as a hard constraint."
+  },
+  {
+   "role": "user",
+   "content": "Should we livestream any of the shows, or does that undercut the whole reason people come out for a room this small?"
+  },
+  {
+   "role": "assistant",
+   "content": "Skip streaming the shows themselves \u2014 a room this size sells on the in-person experience, but short highlight clips afterward can still help promotion."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we hired a sound engineer from a contracting agency called AudioReach for a few shows last spring, and he consistently over-compressed the bass on every mix regardless of what we asked for. We stopped requesting him."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that engineer from AudioReach is out."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total remaining season booking budget is capped at $18,400, full stop, that's everything left after the deposit on the opener. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that cap is on the record."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our private members-only text list 'Chewbacca' in all future notes. It's just easier than typing out the full list name, and I don't want the real name floating around in shared docs with vendors."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Chewbacca for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to sound and stage setup, what's the right way to mic a piano trio in a room this size without it feeling too hot up front?"
+  },
+  {
+   "role": "assistant",
+   "content": "Mic it with a single well-placed overhead condenser for the piano plus a close mic on bass, and keep the front row far enough back that the direct piano sound doesn't overwhelm the mix."
+  },
+  {
+   "role": "user",
+   "content": "On the stage layout we settled on, no need to re-explain it. How much seating capacity does that extension actually cost us?"
+  },
+  {
+   "role": "assistant",
+   "content": "It'll cost you a few seats in the first couple of rows, but the improved sightlines should be worth that trade for most shows."
+  },
+  {
+   "role": "user",
+   "content": "On Denise's opener idea, I'm already committed, don't re-describe it. How much rehearsal time should we offer the student ensemble beforehand?"
+  },
+  {
+   "role": "assistant",
+   "content": "A single rehearsal with the house sound person a few days before the show should be enough for a short ensemble set."
+  },
+  {
+   "role": "user",
+   "content": "Does the late set need its own separate door charge, or is it covered by the regular admission?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's covered by the regular admission \u2014 no separate charge needed for that slot."
+  },
+  {
+   "role": "user",
+   "content": "Who's currently on the door list for Saturday's show?"
+  },
+  {
+   "role": "assistant",
+   "content": "Right now it's just the two names you added yesterday plus the touring artist's plus-one."
+  },
+  {
+   "role": "user",
+   "content": "Is Shadowfax updated with this week's signed contracts, or do I need to reconcile it against the email confirmations first?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's up to date through this week, but check it against the email confirmations before Saturday just to be safe."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft a short message for Chewbacca announcing the season opener date?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 something short and warm announcing the date and encouraging people to grab tickets early."
+  },
+  {
+   "role": "user",
+   "content": "For membership pricing, how do we handle a member who wants to gift their membership to a friend for a month?"
+  },
+  {
+   "role": "assistant",
+   "content": "Handle it case by case with a simple transfer form so the gift is tracked and doesn't complicate your renewal records."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 271,
+  "middle_end_tokens": 2054,
+  "total_tokens": 2551
+ },
+ "plants": [
+  {
+   "id": "c34-referent-1",
+   "category": "referent",
+   "middle_user": "Stage layout decision, finally made. We weighed three options: (1) keeping the small elevated stage exactly where it is against the back wall, (2) moving the stage to the center of the room with seating arranged in the round, and (3) building a slightly larger stage extension into the side alcove. Given the room's sightlines, we're going with the third one, extending into the side alcove.",
+   "tail_user_fragment": "On the stage layout we settled on, no need to re-explain it. How much seating capacity does that extension actually cost us?",
+   "probe": "Which stage layout option did we settle on for The Blue Hour?",
+   "probes": [
+    "Which stage layout option did we settle on for The Blue Hour?",
+    "Which of the three stage options did we end up choosing?",
+    "What did we decide about the stage layout?",
+    "Remind me which stage configuration we committed to."
+   ],
+   "gold": "Building a slightly larger stage extension into the side alcove (the third of the three options), not keeping the current back-wall stage and not moving to a center-in-the-round layout.",
+   "keywords": [
+    "side alcove",
+    "stage extension"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c34-referent-2",
+   "category": "referent",
+   "middle_user": "Denise had a good idea for the season opener. Her proposal is to pair a touring headliner with a short local opening set from a high school jazz ensemble, rather than the usual local-professional opener, to build community buy-in early. I'm doing it for the opener.",
+   "tail_user_fragment": "On Denise's opener idea, I'm already committed, don't re-describe it. How much rehearsal time should we offer the student ensemble beforehand?",
+   "probe": "What specifically was Denise's proposal for the season opener?",
+   "probes": [
+    "What specifically was Denise's proposal for the season opener?",
+    "What did Denise suggest for the opening night lineup?",
+    "Describe the opener format Denise pitched that we're adopting.",
+    "What was Denise's idea about who should open the season?"
+   ],
+   "gold": "Pairing the touring headliner with a short opening set from a high school jazz ensemble, instead of the usual local-professional opener.",
+   "keywords": [
+    "high school jazz ensemble",
+    "opener"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c34-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it confuses us later: 'the late set' is overloaded on our team. The bar staff use the late set to mean anything after 10pm generally, but when I say the late set to you, I always mean specifically the post-midnight jam session slot, not the regular second set of the night. That's the sense I want here.",
+   "tail_user_fragment": "Does the late set need its own separate door charge, or is it covered by the regular admission?",
+   "probe": "When I said 'the late set' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the late set' in this conversation, what was I referring to?",
+    "Which of the two things called 'the late set' did I mean here?",
+    "What does 'the late set' refer to in our conversation?",
+    "If I mention the late set again, what should you understand that to be?"
+   ],
+   "gold": "Specifically the post-midnight jam session slot, not the regular second set of the evening.",
+   "keywords": [
+    "post-midnight",
+    "jam session"
+   ],
+   "anti_keywords": [
+    "second set",
+    "10pm"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c34-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the door list' from here on I mean the guest-and-comp list handled at the entrance for each show. I know our booking software also has something it labels a door list for member check-ins, but with you, the door list always means the guest-and-comp entry list.",
+   "tail_user_fragment": "Who's currently on the door list for Saturday's show?",
+   "probe": "When I referred to 'the door list' in this conversation, which one did I mean?",
+   "probes": [
+    "When I referred to 'the door list' in this conversation, which one did I mean?",
+    "Which list did I mean when I said 'the door list'?",
+    "What does 'the door list' refer to in our conversation, the guest-comp list or the member check-in list?",
+    "If I bring up the door list again, what should you assume I'm talking about?"
+   ],
+   "gold": "The guest-and-comp entry list handled at the entrance for each show, not the booking software's member check-in list.",
+   "keywords": [
+    "guest",
+    "comp list"
+   ],
+   "anti_keywords": [
+    "member check-in",
+    "booking software"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c34-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for the season: no talking during sets, ever, and we enforce it by asking chatty tables to step to the bar area. I don't care if it's a big-name touring artist packing the room, we are not becoming a background-music room. I will not budge on this no matter how much revenue pressure the bar side puts on us.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for making the bar area feel more lively and social during shows?",
+   "probes": [
+    "What are some ideas for making the bar area feel more lively and social during shows?",
+    "Give me three ways to boost bar revenue during performances.",
+    "How could we make the room feel more welcoming to casual groups?",
+    "Suggest ways to increase bar-side energy without changing how the main room runs."
+   ],
+   "gold": "Suggests approaches like a designated lounge area near the bar for conversation, pre-show or between-set social time, or a separate casual happy-hour night, while never proposing allowing talking during sets in the main room, ideally recalling the no-talking-during-sets policy.",
+   "keywords": [
+    "bar lounge area",
+    "between sets"
+   ],
+   "anti_keywords": [
+    "talking during sets",
+    "background music"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c34-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we don't book cover bands or tribute acts, period, even the ones that could sell out fast. This club exists for original and improvisational jazz, not nostalgia acts. Don't suggest a tribute booking to me as a quick revenue fix.",
+   "tail_user_fragment": null,
+   "probe": "Given a slow midweek slot, what kind of booking should fill it?",
+   "probes": [
+    "Given a slow midweek slot, what kind of booking should fill it?",
+    "If a weeknight is underbooked, what should we put there?",
+    "What should we consider to fill a quiet night in the schedule?",
+    "Suggest ways to fill a weak slot without changing what kind of acts we book."
+   ],
+   "gold": "Suggests booking an emerging local combo, a themed improvisational night, or a double bill of lesser-known original acts, while never proposing a cover band or tribute act, ideally recalling the rejection of tribute bookings.",
+   "keywords": [
+    "local combo",
+    "original jazz"
+   ],
+   "anti_keywords": [
+    "cover band",
+    "tribute act"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c34-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on ticketing: we tried a platform called QuickStub for online sales last season, and their fees ate almost 15% of every ticket plus the checkout flow confused half our older members. Not using them again.",
+   "tail_user_fragment": null,
+   "probe": "What should we use for online ticket sales going forward?",
+   "probes": [
+    "What should we use for online ticket sales going forward?",
+    "What ticketing platform should we pursue next?",
+    "Given our fee concerns, how should we sell tickets online?",
+    "What's a better approach than what we already tried for ticketing?"
+   ],
+   "gold": "Anything except QuickStub, e.g. a lower-fee ticketing platform, direct phone and door reservations, or a simpler member-portal checkout, ideally acknowledging QuickStub was tried and rejected.",
+   "keywords": [
+    "15%",
+    "fees"
+   ],
+   "anti_keywords": [
+    "quickstub"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c34-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we hired a sound engineer from a contracting agency called AudioReach for a few shows last spring, and he consistently over-compressed the bass on every mix regardless of what we asked for. We stopped requesting him.",
+   "tail_user_fragment": null,
+   "probe": "Who should handle sound engineering for the upcoming season?",
+   "probes": [
+    "Who should handle sound engineering for the upcoming season?",
+    "How should we staff sound engineering going forward?",
+    "What's our path forward on sound engineers given the earlier problems?",
+    "Who or what should handle mixing for the season's shows?"
+   ],
+   "gold": "Anything except the AudioReach engineer, e.g. a different vetted freelance engineer with a trial show, hiring a dedicated in-house engineer, or getting referrals from touring artists, ideally acknowledging the AudioReach engineer's over-compression was tried and rejected.",
+   "keywords": [
+    "over-compressed",
+    "bass"
+   ],
+   "anti_keywords": [
+    "audioreach"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c34-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our liquor license renewal confirmation number is LL-50472, filed April 9th. Nothing to decide, just don't want to lose track of the number.",
+   "tail_user_fragment": null,
+   "probe": "What is our liquor license renewal confirmation number, and when was it filed?",
+   "probes": [
+    "What is our liquor license renewal confirmation number, and when was it filed?",
+    "What's the confirmation number for our license renewal?",
+    "When did we file the renewal, and what's the reference number?",
+    "Remind me of the liquor license renewal number and date."
+   ],
+   "gold": "LL-50472, filed April 9th.",
+   "keywords": [
+    "LL-50472",
+    "april 9"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c34-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total remaining season booking budget is capped at $18,400, full stop, that's everything left after the deposit on the opener. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total remaining season booking budget?",
+   "probes": [
+    "What is our total remaining season booking budget?",
+    "How much do we have left to book artists for the season?",
+    "What's the cap on our remaining booking budget?",
+    "Remind me the booking budget limit we're working with."
+   ],
+   "gold": "$18,400 total.",
+   "keywords": [
+    "18,400"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c34-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our master booking contract spreadsheet 'Shadowfax' from now on. Every email thread and note should say Shadowfax, not the real filename, since we sometimes forward pieces of these threads to visiting agents.",
+   "tail_user_fragment": "Is Shadowfax updated with this week's signed contracts, or do I need to reconcile it against the email confirmations first?",
+   "probe": "What does 'Shadowfax' refer to in our project?",
+   "probes": [
+    "What does 'Shadowfax' refer to in our project?",
+    "If I mention Shadowfax again, what should you understand that to mean?",
+    "Remind me what we're calling Shadowfax internally.",
+    "What is Shadowfax a codename for?"
+   ],
+   "gold": "The master booking contract spreadsheet.",
+   "keywords": [
+    "booking contract",
+    "spreadsheet"
+   ],
+   "anti_keywords": [
+    "horse",
+    "lord of the rings",
+    "gandalf"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c34-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our private members-only text list 'Chewbacca' in all future notes. It's just easier than typing out the full list name, and I don't want the real name floating around in shared docs with vendors.",
+   "tail_user_fragment": "Can you draft a short message for Chewbacca announcing the season opener date?",
+   "probe": "What does 'Chewbacca' refer to in our conversation?",
+   "probes": [
+    "What does 'Chewbacca' refer to in our conversation?",
+    "If I mention Chewbacca later, what should you take that to mean?",
+    "What is Chewbacca a codename for in our project?",
+    "Remind me what Chewbacca refers to internally."
+   ],
+   "gold": "The private members-only text list.",
+   "keywords": [
+    "members-only",
+    "text list"
+   ],
+   "anti_keywords": [
+    "wookiee",
+    "star wars",
+    "co-pilot"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

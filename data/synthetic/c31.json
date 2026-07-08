@@ -1,0 +1,562 @@
+{
+ "id": "c31",
+ "title": "Craft distillery tasting room expansion",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in beverage alcohol production and hospitality, supporting a distiller opening a tasting room."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so Salt Row is opening our first tasting room right next to the distillery, and it's a bigger lift than I expected. I want to use you as a planning partner across everything: the recipes and cask program, upgrading the still, tasting room design, state licensing, and hiring, over the next few months. Sound good?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to help \u2014 let's work through the recipes, the still, tasting room design, licensing, and hiring as they come up."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with recipe and cask development since that's the product itself. We want one or two tasting-room-exclusive expressions that you can't buy in stores. What should I be thinking about when designing a spirit meant to only ever be sold on-site?"
+  },
+  {
+   "role": "assistant",
+   "content": "Think about what makes it genuinely unrepeatable \u2014 a unique cask, a small-batch mash bill \u2014 so it justifies being on-site only."
+  },
+  {
+   "role": "user",
+   "content": "Still decision time. We looked at three options: (1) add a second column still dedicated to gin, (2) upgrade our current pot still to double its batch capacity, or (3) do a hybrid, keep the pot still as-is but add a smaller secondary pot still just for the exclusive expressions. After running the numbers with our production lead, we're going with the hybrid, the smaller secondary pot still."
+  },
+  {
+   "role": "assistant",
+   "content": "That gives you dedicated capacity for the exclusives without disrupting your main production line."
+  },
+  {
+   "role": "user",
+   "content": "On the still, we're deciding between adding a second column still or upgrading our current pot still's capacity. What's the general tradeoff there for a distillery our size?"
+  },
+  {
+   "role": "assistant",
+   "content": "A second still adds parallel capacity and flexibility, while upgrading your pot still is usually cheaper but leaves you with a single point of failure."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it confuses us later: 'the barrel room' is overloaded on our team. Our finished-goods storage area is also nicknamed the barrel room by the warehouse staff, but when I say the barrel room to you, I always mean the actual aging warehouse where casks rest, the one with the viewing window planned for the tasting room."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, the barrel room means the aging warehouse, not finished-goods storage."
+  },
+  {
+   "role": "user",
+   "content": "For tasting room design, we want a bar that lets guests see into the barrel room. Is that worth the extra build cost compared to a closed design?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's often worth it for a distillery specifically, since the aging process is part of the story guests are paying to see."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for anything additive-related: Salt Row spirits never use artificial coloring or flavor additives, at the tasting room or in bottles, no matter how much it would smooth out batch-to-batch color consistency. Natural cask color only, full stop. I will not budge on this whatever the retail pressure looks like."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, natural cask color only, no additives regardless of retail pressure."
+  },
+  {
+   "role": "user",
+   "content": "Licensing question, does opening a tasting room usually require a whole new alcohol license, or can we amend our existing distilling license?"
+  },
+  {
+   "role": "assistant",
+   "content": "Most states let you amend an existing distilling license for on-site sales, but it varies enough that it's worth confirming with your state board directly."
+  },
+  {
+   "role": "user",
+   "content": "For the record on bottle suppliers, we already tried a glass supplier called Cinderford Glassworks last year, and their bottle necks were inconsistent enough that our capping line jammed constantly, we lost half a shift fixing it. That supplier is dead to us."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that glass supplier's off the list for good."
+  },
+  {
+   "role": "user",
+   "content": "Back to recipes, how many barrel samples should I realistically pull before a new cask-exclusive whiskey is ready to bottle and pour?"
+  },
+  {
+   "role": "assistant",
+   "content": "Expect to pull samples every few weeks over several months before a cask-exclusive whiskey is truly ready."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our state tasting room license application number is TR-88034, submitted May 19th. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, filed away for reference."
+  },
+  {
+   "role": "user",
+   "content": "For hiring, we need our first-ever tasting room staff, people who've never worked here before. Where should I even start with training them on the product?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start with structured tastings of your own product before anything customer-facing, so they can speak to it honestly."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our cask inventory tracking spreadsheet 'Arrakis' from now on. Every internal doc and email thread should say Arrakis instead of the real file name, since we sometimes share it with our state auditor's office."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Arrakis it is for the cask inventory spreadsheet."
+  },
+  {
+   "role": "user",
+   "content": "Theo had a good idea for the tasting-room-exclusive whiskey. His proposal is to finish it in a used cask from a local red wine producer for the final four months, rather than a standard bourbon barrel finish or no finishing barrel at all. He thinks the wine cask gives it a distinct enough character to justify the exclusivity. I'm doing it for the first batch."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a distinctive enough finish to genuinely set the exclusive apart."
+  },
+  {
+   "role": "user",
+   "content": "On the still, if we go with the capacity upgrade instead of a second still, what's a realistic timeline for the retrofit without shutting down production entirely?"
+  },
+  {
+   "role": "assistant",
+   "content": "Plan for a multi-week retrofit window, ideally scheduled around your slower production periods."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the flight' from here on I mean the guided five-pour tasting we'll sell to tasting room guests. I know the team also calls our internal QC sampling round the flight out of habit, but with you, the flight always means the guest-facing pour."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, the flight means the guest-facing five-pour tasting, not internal QC sampling."
+  },
+  {
+   "role": "user",
+   "content": "Licensing follow-up, how far in advance of opening day should we start the tasting room permit application, given typical state board processing times?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start the application several months ahead given typical state board processing times."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not doing a flavored vodka line, even though a distributor keeps pitching it as an easy volume add. It doesn't fit what Salt Row is about, gin and whiskey, and I don't want that pitch again."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, staying with gin and whiskey, that pitch is closed."
+  },
+  {
+   "role": "user",
+   "content": "Hiring again, what's a sane ratio of experienced bartenders to newly trained staff for a tasting room our size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Aim for at least one experienced bartender per couple of newly trained staff on any given shift early on."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting, we hired a marketing consultant named Blakeley Reeves for our label redesign last year. The final labels didn't meet state alcohol label approval standards on the first two submissions and cost us a month of delay. Not hiring them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that designer's out for future label work."
+  },
+  {
+   "role": "user",
+   "content": "Tasting room design follow-up, how much of the budget usually goes to bar fixtures versus barrel-room viewing versus general seating, roughly?"
+  },
+  {
+   "role": "assistant",
+   "content": "Bar fixtures and the barrel-room viewing element usually take the largest share, with seating filled in around what's left."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total tasting room build-out budget is capped at $214,000, full stop, that's everything after the still upgrade costs. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted for the build-out tracking."
+  },
+  {
+   "role": "user",
+   "content": "One more on recipes, should the tasting-room-exclusive expressions rotate seasonally or stay fixed once we land on them?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fixed exclusives build brand recognition faster, but a seasonal rotation can drive repeat visits from locals."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our tasting room staff training manual 'Gondor' in all future notes. It's just easier than typing out the full manual name every time in shift-handoff notes."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Gondor it is for the training manual."
+  },
+  {
+   "role": "user",
+   "content": "Back to hiring, how should we structure the interview process so we're not just hiring people we already know?"
+  },
+  {
+   "role": "assistant",
+   "content": "Add a structured tasting-knowledge question and a role-play pour scenario so candidates outside your network get a fair shot."
+  },
+  {
+   "role": "user",
+   "content": "On the still decision, no need to walk through it again, but what maintenance schedule should we line up before it arrives?"
+  },
+  {
+   "role": "assistant",
+   "content": "Set up a routine cleaning and seal-inspection schedule matched to your production cadence before the new still even arrives."
+  },
+  {
+   "role": "user",
+   "content": "On Theo's cask finishing idea, I'm already committed, don't re-explain it. How often should we sample during those four months?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pull a sample roughly every two to three weeks so you can catch the finish at its peak."
+  },
+  {
+   "role": "user",
+   "content": "Is the barrel room's humidity control good enough to leave the viewing window open to tasting room air, or should we seal it off?"
+  },
+  {
+   "role": "assistant",
+   "content": "Seal it with glass rather than an open window, since tasting room air will fight your humidity control."
+  },
+  {
+   "role": "user",
+   "content": "How many expressions should the flight include for opening weekend?"
+  },
+  {
+   "role": "assistant",
+   "content": "Five pours feels right for opening weekend, mixing core products with at least one exclusive."
+  },
+  {
+   "role": "user",
+   "content": "Does Arrakis need a new column added before we log the wine-cask-finished batch?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yes, add a column for cask source and finish duration before you start logging that batch."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft the opening section of Gondor covering pour sizes and responsible service?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 cover standard pour measurements, spacing between flights, and cutoff cues for responsible service."
+  },
+  {
+   "role": "user",
+   "content": "For the still, is there anything besides capacity and cost I should double-check before committing to the upgrade?"
+  },
+  {
+   "role": "assistant",
+   "content": "Check installation footprint, utility hookups, and whether your current ventilation can handle the added output."
+  },
+  {
+   "role": "user",
+   "content": "On design, should the barrel-room viewing window be near the entrance or toward the back of the tasting room?"
+  },
+  {
+   "role": "assistant",
+   "content": "Near the entrance tends to work better, since it hooks guests' curiosity right as they walk in."
+  },
+  {
+   "role": "user",
+   "content": "Licensing-wise, what should go in our internal tracker so we don't miss a state renewal deadline?"
+  },
+  {
+   "role": "assistant",
+   "content": "Track renewal dates, required documents, and the state contact for each license in one shared calendar."
+  },
+  {
+   "role": "user",
+   "content": "Last thing for today, what should go on the pre-opening checklist for the two weeks before the tasting room opens?"
+  },
+  {
+   "role": "assistant",
+   "content": "Final staff tastings, POS and pour-tracking setup tested, licenses posted, and a soft-open guest list confirmed."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 266,
+  "middle_end_tokens": 2081,
+  "total_tokens": 2728
+ },
+ "plants": [
+  {
+   "id": "c31-referent-1",
+   "category": "referent",
+   "middle_user": "Still decision time. We looked at three options: (1) add a second column still dedicated to gin, (2) upgrade our current pot still to double its batch capacity, or (3) do a hybrid, keep the pot still as-is but add a smaller secondary pot still just for the exclusive expressions. After running the numbers with our production lead, we're going with the hybrid, the smaller secondary pot still.",
+   "tail_user_fragment": "On the still decision, no need to walk through it again, but what maintenance schedule should we line up before it arrives?",
+   "probe": "What did we decide on for the still upgrade?",
+   "probes": [
+    "What did we decide on for the still upgrade?",
+    "Which of the three still options did we end up choosing?",
+    "Remind me exactly what still setup we settled on.",
+    "What did we settle on for expanding our distilling capacity?"
+   ],
+   "gold": "The hybrid option: keeping the current pot still as-is and adding a smaller secondary pot still dedicated to the exclusive expressions (the third option), not a second column still or doubling the current pot still.",
+   "keywords": [
+    "secondary pot still",
+    "hybrid"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c31-referent-2",
+   "category": "referent",
+   "middle_user": "Theo had a good idea for the tasting-room-exclusive whiskey. His proposal is to finish it in a used cask from a local red wine producer for the final four months, rather than a standard bourbon barrel finish or no finishing barrel at all. He thinks the wine cask gives it a distinct enough character to justify the exclusivity. I'm doing it for the first batch.",
+   "tail_user_fragment": "On Theo's cask finishing idea, I'm already committed, don't re-explain it. How often should we sample during those four months?",
+   "probe": "What specifically was Theo's cask finishing proposal?",
+   "probes": [
+    "What specifically was Theo's cask finishing proposal?",
+    "What did Theo suggest for finishing the exclusive whiskey?",
+    "Describe the cask finishing approach Theo pitched that we're adopting.",
+    "What was Theo's idea about how to finish the whiskey?"
+   ],
+   "gold": "Finishing the whiskey in a used local red wine cask for the final four months, instead of a standard bourbon barrel finish or no additional finishing.",
+   "keywords": [
+    "red wine cask",
+    "four month finish"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c31-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it confuses us later: 'the barrel room' is overloaded on our team. Our finished-goods storage area is also nicknamed the barrel room by the warehouse staff, but when I say the barrel room to you, I always mean the actual aging warehouse where casks rest, the one with the viewing window planned for the tasting room.",
+   "tail_user_fragment": "Is the barrel room's humidity control good enough to leave the viewing window open to tasting room air, or should we seal it off?",
+   "probe": "When I said 'the barrel room' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the barrel room' in this conversation, what was I referring to?",
+    "Which of the two things called 'the barrel room' did I mean here?",
+    "What does 'the barrel room' refer to in our conversation?",
+    "If I mention the barrel room again, what should you understand that to be?"
+   ],
+   "gold": "The actual aging warehouse where casks rest and mature, not the finished-goods storage area that warehouse staff also nickname the barrel room.",
+   "keywords": [
+    "aging warehouse",
+    "casks rest"
+   ],
+   "anti_keywords": [
+    "finished-goods storage",
+    "warehouse staff nickname"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c31-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the flight' from here on I mean the guided five-pour tasting we'll sell to tasting room guests. I know the team also calls our internal QC sampling round the flight out of habit, but with you, the flight always means the guest-facing pour.",
+   "tail_user_fragment": "How many expressions should the flight include for opening weekend?",
+   "probe": "When I referred to 'the flight' in this conversation, which one did I mean?",
+   "probes": [
+    "When I referred to 'the flight' in this conversation, which one did I mean?",
+    "Which pour did I mean when I said 'the flight'?",
+    "What does 'the flight' refer to in our conversation, the guest tasting or internal QC?",
+    "If I bring up the flight again, what should you assume I'm talking about?"
+   ],
+   "gold": "The guided five-pour tasting sold to tasting room guests, not the internal QC sampling round.",
+   "keywords": [
+    "guided five-pour",
+    "guest tasting"
+   ],
+   "anti_keywords": [
+    "internal QC sampling"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c31-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for anything additive-related: Salt Row spirits never use artificial coloring or flavor additives, at the tasting room or in bottles, no matter how much it would smooth out batch-to-batch color consistency. Natural cask color only, full stop. I will not budge on this whatever the retail pressure looks like.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for keeping our whiskey color more consistent batch to batch?",
+   "probes": [
+    "What are some ideas for keeping our whiskey color more consistent batch to batch?",
+    "Give me three ways to improve color consistency across batches.",
+    "How could we tighten up color consistency as we scale?",
+    "Suggest ways to make batches look more uniform on the shelf."
+   ],
+   "gold": "Suggests approaches like tighter cask selection criteria, standardized aging times, or blending across barrels, while never proposing artificial coloring or flavor additives, ideally recalling the natural-cask-color-only commitment.",
+   "keywords": [
+    "natural cask color",
+    "no additives"
+   ],
+   "anti_keywords": [
+    "artificial coloring",
+    "flavor additive"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c31-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not doing a flavored vodka line, even though a distributor keeps pitching it as an easy volume add. It doesn't fit what Salt Row is about, gin and whiskey, and I don't want that pitch again.",
+   "tail_user_fragment": null,
+   "probe": "What are some ways to grow our product lineup for the tasting room?",
+   "probes": [
+    "What are some ways to grow our product lineup for the tasting room?",
+    "How could we expand our offerings without adding a new category?",
+    "What should we consider for growing volume at the tasting room?",
+    "Suggest ways to expand our lineup that fit what Salt Row already does."
+   ],
+   "gold": "Suggests approaches like additional cask-exclusive whiskey expressions, a barrel-strength gin, or seasonal botanical variations, while never proposing a flavored vodka line, ideally recalling the rejection of the distributor's pitch.",
+   "keywords": [
+    "gin and whiskey",
+    "cask-exclusive"
+   ],
+   "anti_keywords": [
+    "flavored vodka"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c31-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on bottle suppliers, we already tried a glass supplier called Cinderford Glassworks last year, and their bottle necks were inconsistent enough that our capping line jammed constantly, we lost half a shift fixing it. That supplier is dead to us.",
+   "tail_user_fragment": null,
+   "probe": "Who should we look at for a bottle supplier for the tasting-room-exclusive expressions?",
+   "probes": [
+    "Who should we look at for a bottle supplier for the tasting-room-exclusive expressions?",
+    "What glass supplier should we consider going forward?",
+    "Given our capping line issues, how should we source bottles now?",
+    "What's a better option than what we already tried for glass supply?"
+   ],
+   "gold": "Anything except Cinderford Glassworks, e.g. a different glass supplier with tighter neck tolerance specs, or a supplier offering sample runs before a full order, ideally acknowledging Cinderford was tried and rejected.",
+   "keywords": [
+    "inconsistent bottle necks",
+    "capping line jammed"
+   ],
+   "anti_keywords": [
+    "cinderford"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c31-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting, we hired a marketing consultant named Blakeley Reeves for our label redesign last year. The final labels didn't meet state alcohol label approval standards on the first two submissions and cost us a month of delay. Not hiring them again.",
+   "tail_user_fragment": null,
+   "probe": "Who should handle label design for the tasting-room-exclusive bottles?",
+   "probes": [
+    "Who should handle label design for the tasting-room-exclusive bottles?",
+    "How should we handle label design given the earlier problems?",
+    "What's our path forward on labels for the new expressions?",
+    "Who or what should handle the exclusive bottle label design?"
+   ],
+   "gold": "Anything except Blakeley Reeves, e.g. a different vetted label designer familiar with state alcohol label approval requirements, ideally acknowledging Blakeley Reeves' failed approvals were tried and rejected.",
+   "keywords": [
+    "failed label approval",
+    "month of delay"
+   ],
+   "anti_keywords": [
+    "blakeley reeves"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c31-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our state tasting room license application number is TR-88034, submitted May 19th. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": null,
+   "probe": "What is our state tasting room license application number, and when was it submitted?",
+   "probes": [
+    "What is our state tasting room license application number, and when was it submitted?",
+    "What's the tracking number for our tasting room license?",
+    "When did we submit the tasting room license application, and what's the reference number?",
+    "Remind me the license application number and submission date."
+   ],
+   "gold": "TR-88034, submitted May 19th.",
+   "keywords": [
+    "TR-88034",
+    "may 19"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c31-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total tasting room build-out budget is capped at $214,000, full stop, that's everything after the still upgrade costs. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total build-out budget for the tasting room?",
+   "probes": [
+    "What is our total build-out budget for the tasting room?",
+    "How much do we have left to spend on the tasting room build-out?",
+    "What's the cap on the tasting room budget?",
+    "Remind me the tasting room build-out spend limit we're working with."
+   ],
+   "gold": "$214,000 total.",
+   "keywords": [
+    "214,000"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c31-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our cask inventory tracking spreadsheet 'Arrakis' from now on. Every internal doc and email thread should say Arrakis instead of the real file name, since we sometimes share it with our state auditor's office.",
+   "tail_user_fragment": "Does Arrakis need a new column added before we log the wine-cask-finished batch?",
+   "probe": "What does 'Arrakis' refer to in our project?",
+   "probes": [
+    "What does 'Arrakis' refer to in our project?",
+    "If I mention Arrakis again, what should you understand that to mean?",
+    "Remind me what we're calling Arrakis internally.",
+    "What is Arrakis a codename for?"
+   ],
+   "gold": "The cask inventory tracking spreadsheet.",
+   "keywords": [
+    "cask inventory spreadsheet"
+   ],
+   "anti_keywords": [
+    "desert planet",
+    "spice",
+    "dune sandworm"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c31-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our tasting room staff training manual 'Gondor' in all future notes. It's just easier than typing out the full manual name every time in shift-handoff notes.",
+   "tail_user_fragment": "Can you draft the opening section of Gondor covering pour sizes and responsible service?",
+   "probe": "What does 'Gondor' refer to in our conversation?",
+   "probes": [
+    "What does 'Gondor' refer to in our conversation?",
+    "If I mention Gondor later, what should you take that to mean?",
+    "What is Gondor a codename for in our project?",
+    "Remind me what Gondor refers to internally."
+   ],
+   "gold": "The tasting room staff training manual.",
+   "keywords": [
+    "staff training manual",
+    "tasting room document"
+   ],
+   "anti_keywords": [
+    "kingdom of men",
+    "minas tirith",
+    "lord of the rings"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

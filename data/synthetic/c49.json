@@ -1,0 +1,529 @@
+{
+ "id": "c49",
+ "title": "Community archive digitization and relocation",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in archival science and nonprofit operations, helping a small community archive plan a major digitization and relocation effort."
+  },
+  {
+   "role": "user",
+   "content": "Hi, so the Riverbend Community Archive is taking on its biggest project ever, digitizing the photo collection, moving to a climate-controlled building, and chasing a preservation grant, all over the next few months. I'd love to use you as a planning partner across the whole thing. Okay?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to help across all of it \u2014 let's tackle each piece in turn, starting with digitization."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with digitization since it's the heart of it. We have thousands of unsorted historical photographs. What should we be thinking about before we start scanning a collection this size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Prioritize a sampling pass to gauge condition and duplication, settle on metadata fields up front, and decide handling protocols for fragile prints before mass scanning begins."
+  },
+  {
+   "role": "user",
+   "content": "On the move, we're deciding between a former bank building with a real vault or a newer storefront that would need climate control installed. What's the general tradeoff for an archive?"
+  },
+  {
+   "role": "assistant",
+   "content": "The bank vault gives you built-in security and thermal mass at lower ongoing cost; the storefront is more flexible and central but you're paying to install climate control from scratch."
+  },
+  {
+   "role": "user",
+   "content": "Quick clarification: when I say 'the collection' to you, I always mean the historical photograph collection specifically, not our entire holdings including papers and objects, even though the board sometimes calls everything 'the collection.' Just the photographs, when I say it to you."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll keep that scoped correctly going forward."
+  },
+  {
+   "role": "user",
+   "content": "For the grant, is it smarter to apply for one large preservation grant or several smaller targeted ones?"
+  },
+  {
+   "role": "assistant",
+   "content": "Several smaller targeted grants usually diversify risk and match funder priorities better than betting everything on one large award, though it's more application work."
+  },
+  {
+   "role": "user",
+   "content": "Building decision time. We looked at three routes: (1) the former bank building with the existing vault, (2) the newer storefront that needs climate control installed, or (3) a hybrid where we lease the storefront but split the collection and keep the most fragile items in a rented off-site climate unit. After talking with our conservator, we're going with the hybrid, the storefront plus the off-site unit for fragile items."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a smart way to balance flexibility with protecting the most vulnerable items."
+  },
+  {
+   "role": "user",
+   "content": "On volunteers, most of ours are retirees. How do we recruit some younger people who can handle the scanning tech?"
+  },
+  {
+   "role": "assistant",
+   "content": "Partner with local schools or maker spaces for tech-savvy volunteers, and pair them with your retirees so institutional knowledge transfers both ways."
+  },
+  {
+   "role": "user",
+   "content": "Hard preference on digitization: absolutely no auto-enhancement or AI colorization of the historical photos. I think altering originals betrays the archive's duty to preserve them as they actually are. I don't care how appealing a colorized version looks to donors, we scan them faithfully and leave them be, always."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll keep that principle in mind for everything digitization-related."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the reading room' from now on, I mean the physical public research room where visitors view originals, not the online digital access portal, which a couple of volunteers have started calling 'the virtual reading room.' Two different things, and I only mean the physical room."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted the distinction."
+  },
+  {
+   "role": "user",
+   "content": "For collection management, what features matter most when a small archive picks cataloging software?"
+  },
+  {
+   "role": "assistant",
+   "content": "Look for flexible metadata schemas, easy bulk import/export, and a manageable learning curve \u2014 over-featured enterprise systems tend to overwhelm small teams."
+  },
+  {
+   "role": "user",
+   "content": "For context, we bought a batch of archival storage boxes from a supplier called Everlong Storage a few years back and the boxes turned out to be acidic and started yellowing photos at the edges. We threw them out and will never buy from Everlong Storage again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, I'll steer clear of that supplier in anything I suggest."
+  },
+  {
+   "role": "user",
+   "content": "On software, we had three options on the table: (1) CollectiveAccess, an open-source system we'd self-host, (2) a hosted commercial platform called ArchiveDesk, or (3) sticking with our current spreadsheets but adding a shared database front end. We talked it through and we're going with CollectiveAccess, the open-source self-hosted option."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense given the control and cost benefits of self-hosting."
+  },
+  {
+   "role": "user",
+   "content": "Back to digitization, what scanning resolution is actually appropriate for fragile historical prints?"
+  },
+  {
+   "role": "assistant",
+   "content": "For fragile historical prints, 600-800 dpi archival TIFF captures is generally the sweet spot without over-processing the originals."
+  },
+  {
+   "role": "user",
+   "content": "Random note for the file: the off-site climate unit costs $310 a month. Just logging that, doesn't change what we're discussing."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged, thanks for the note."
+  },
+  {
+   "role": "user",
+   "content": "One more firm rule: no charging researchers a fee to access the collection. We tried access fees years ago and it drove away exactly the local families whose history this is. Free public access always, even if it means we fundraise harder elsewhere."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted \u2014 that'll shape how we think about sustainability elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "For the new space, how tightly do we really need to control temperature and humidity for photographic material?"
+  },
+  {
+   "role": "assistant",
+   "content": "Photographic material wants steady temperature in the high-60s Fahrenheit and relative humidity in the 30-40% range, with minimal fluctuation being more important than hitting an exact number."
+  },
+  {
+   "role": "user",
+   "content": "Let's just codename the whole digitization-and-move project 'Tatooine' from here on, in every planning doc and email, so we're not typing it all out every time."
+  },
+  {
+   "role": "assistant",
+   "content": "Works for me \u2014 I'll use that name going forward."
+  },
+  {
+   "role": "user",
+   "content": "Also, remember we hired a moving company called Halden Movers for a small relocation before and they stacked fragile boxes flat and cracked several framed items. We aren't using Halden Movers again."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, that mover's off the table."
+  },
+  {
+   "role": "user",
+   "content": "On the grant, how much detail do funders expect in the preservation plan section of the application?"
+  },
+  {
+   "role": "assistant",
+   "content": "Funders typically want specifics: named staff responsible, a timeline, and how you'll sustain the work after grant funds run out."
+  },
+  {
+   "role": "user",
+   "content": "For the record, our preservation grant application is filed under reference GRT-PH-40928, submitted on April 3rd, with a decision expected in eight to ten weeks. Just logging it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, thanks for flagging."
+  },
+  {
+   "role": "user",
+   "content": "For volunteers, what's a sane ratio of trained supervisors to general volunteers during a big scanning push?"
+  },
+  {
+   "role": "assistant",
+   "content": "One trained supervisor per four or five general volunteers tends to keep quality control tight without bottlenecking the workflow."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the climate-control installation 'Naboo', since it's the trickiest and most delayed part of the whole move. Use that name for it in any status update."
+  },
+  {
+   "role": "assistant",
+   "content": "Sounds good, I'll refer to it that way in updates."
+  },
+  {
+   "role": "user",
+   "content": "On software, how important is it that the cataloging system can export to standard archival metadata formats?"
+  },
+  {
+   "role": "assistant",
+   "content": "Very important \u2014 being able to export to something like Dublin Core or EAD keeps you portable and interoperable with regional archive networks."
+  },
+  {
+   "role": "user",
+   "content": "For the move itself, what's the safest way to physically transport fragile boxed collections across town?"
+  },
+  {
+   "role": "assistant",
+   "content": "Use a padded vehicle with fixed shelving, move boxes upright in their original orientation, and never stack loose boxes on top of each other."
+  },
+  {
+   "role": "user",
+   "content": "One more on the grant: should we get a letter of support from the city before or after we draft the budget?"
+  },
+  {
+   "role": "assistant",
+   "content": "Get the letter after the budget is drafted, so the ask is concrete and the city can point to specific numbers."
+  },
+  {
+   "role": "user",
+   "content": "Does the collection need to be fully inventoried before we start scanning?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yes, a full inventory pass first will save you from re-handling items twice during the scanning workflow."
+  },
+  {
+   "role": "user",
+   "content": "How many seats should the reading room have in the new building?"
+  },
+  {
+   "role": "assistant",
+   "content": "Plan for enough seats to comfortably host a small class or research group, so figure eight to twelve depending on the room's footprint."
+  },
+  {
+   "role": "user",
+   "content": "On the building decision, no need to walk through it again, but what insurance rider does it require?"
+  },
+  {
+   "role": "assistant",
+   "content": "It'll likely need a fine-arts or collections rider covering the off-site unit specifically, since a standard policy may not extend there automatically."
+  },
+  {
+   "role": "user",
+   "content": "For the software we picked, don't re-explain what it is, just tell me what server we need to host it."
+  },
+  {
+   "role": "assistant",
+   "content": "You'll want a modest Linux server with a database backend; nothing exotic, just reliable uptime and regular backups."
+  },
+  {
+   "role": "user",
+   "content": "What's still open on the Tatooine punch list before we can start scanning?"
+  },
+  {
+   "role": "assistant",
+   "content": "Mainly finalizing the volunteer training schedule and the box-transport plan \u2014 both are close but not locked yet."
+  },
+  {
+   "role": "user",
+   "content": "Any movement on Naboo this week, or is the HVAC still stuck?"
+  },
+  {
+   "role": "assistant",
+   "content": "Still stuck \u2014 the contractor is waiting on a part, so no real progress since last week."
+  },
+  {
+   "role": "user",
+   "content": "For volunteers, how should we structure training so newcomers don't damage originals in their first week?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start newcomers on non-fragile, well-documented items and pair them with a supervisor for their first several sessions before touching anything sensitive."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 256,
+  "middle_end_tokens": 2024,
+  "total_tokens": 2488
+ },
+ "plants": [
+  {
+   "id": "c49-sense-1",
+   "category": "sense",
+   "middle_user": "Quick clarification: when I say 'the collection' to you, I always mean the historical photograph collection specifically, not our entire holdings including papers and objects, even though the board sometimes calls everything 'the collection.' Just the photographs, when I say it to you.",
+   "tail_user_fragment": "Does the collection need to be fully inventoried before we start scanning?",
+   "probe": "When I said 'the collection', what was I referring to?",
+   "probes": [
+    "When I said 'the collection', what was I referring to?",
+    "What does 'the collection' mean when I use that term with you?",
+    "If I mention the collection again, what should you take that to be?"
+   ],
+   "gold": "The historical photograph collection specifically, not the archive's entire holdings.",
+   "keywords": [
+    "photograph",
+    "photographs"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c49-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the reading room' from now on, I mean the physical public research room where visitors view originals, not the online digital access portal, which a couple of volunteers have started calling 'the virtual reading room.' Two different things, and I only mean the physical room.",
+   "tail_user_fragment": "How many seats should the reading room have in the new building?",
+   "probe": "When I referred to 'the reading room', which thing did I mean?",
+   "probes": [
+    "When I referred to 'the reading room', which thing did I mean?",
+    "What specifically is 'the reading room' in our conversations?",
+    "If I ask about the reading room again, what should you think I'm talking about?"
+   ],
+   "gold": "The physical public research room where visitors view originals, not the online digital access portal.",
+   "keywords": [
+    "physical",
+    "research room"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c49-referent-1",
+   "category": "referent",
+   "middle_user": "Building decision time. We looked at three routes: (1) the former bank building with the existing vault, (2) the newer storefront that needs climate control installed, or (3) a hybrid where we lease the storefront but split the collection and keep the most fragile items in a rented off-site climate unit. After talking with our conservator, we're going with the hybrid, the storefront plus the off-site unit for fragile items.",
+   "tail_user_fragment": "On the building decision, no need to walk through it again, but what insurance rider does it require?",
+   "probe": "What did we decide on for the new archive space?",
+   "probes": [
+    "What did we decide on for the new archive space?",
+    "Which of the three building routes did we end up choosing?",
+    "Remind me exactly what space arrangement we settled on."
+   ],
+   "gold": "The hybrid option: leasing the storefront and keeping the most fragile items in a rented off-site climate unit (option three of three).",
+   "keywords": [
+    "hybrid",
+    "off-site"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c49-referent-2",
+   "category": "referent",
+   "middle_user": "On software, we had three options on the table: (1) CollectiveAccess, an open-source system we'd self-host, (2) a hosted commercial platform called ArchiveDesk, or (3) sticking with our current spreadsheets but adding a shared database front end. We talked it through and we're going with CollectiveAccess, the open-source self-hosted option.",
+   "tail_user_fragment": "For the software we picked, don't re-explain what it is, just tell me what server we need to host it.",
+   "probe": "Which collection-management software did we decide to go with?",
+   "probes": [
+    "Which collection-management software did we decide to go with?",
+    "Out of the three software options, which one did we choose?",
+    "Remind me which cataloging system we're adopting."
+   ],
+   "gold": "CollectiveAccess, the open-source self-hosted option, over ArchiveDesk or the spreadsheet-plus-database route.",
+   "keywords": [
+    "collectiveaccess"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c49-stance-1",
+   "category": "stance",
+   "middle_user": "Hard preference on digitization: absolutely no auto-enhancement or AI colorization of the historical photos. I think altering originals betrays the archive's duty to preserve them as they actually are. I don't care how appealing a colorized version looks to donors, we scan them faithfully and leave them be, always.",
+   "tail_user_fragment": "",
+   "probe": "How should we handle image processing when we digitize the historical photos?",
+   "probes": [
+    "How should we handle image processing when we digitize the historical photos?",
+    "What should our image-processing approach be for the scans?",
+    "Should we colorize or auto-enhance the old photos to make them more appealing?"
+   ],
+   "gold": "Faithful scans with no auto-enhancement or AI colorization, ideally recalling that the user considers altering originals a betrayal of the archive's preservation duty.",
+   "keywords": [
+    "faithful",
+    "preserve as-is"
+   ],
+   "anti_keywords": [
+    "colorization",
+    "colorize",
+    "auto-enhance"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c49-stance-2",
+   "category": "stance",
+   "middle_user": "One more firm rule: no charging researchers a fee to access the collection. We tried access fees years ago and it drove away exactly the local families whose history this is. Free public access always, even if it means we fundraise harder elsewhere.",
+   "tail_user_fragment": "",
+   "probe": "How should we handle researcher access to the collection in the new space?",
+   "probes": [
+    "How should we handle researcher access to the collection in the new space?",
+    "What access policy should we set for researchers?",
+    "Should we charge researchers an access fee to help cover costs?"
+   ],
+   "gold": "Free public access, never charging researchers an access fee, ideally recalling that fees previously drove away local families.",
+   "keywords": [
+    "free access",
+    "free public"
+   ],
+   "anti_keywords": [
+    "access fee",
+    "charge researchers"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c49-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For context, we bought a batch of archival storage boxes from a supplier called Everlong Storage a few years back and the boxes turned out to be acidic and started yellowing photos at the edges. We threw them out and will never buy from Everlong Storage again.",
+   "tail_user_fragment": "",
+   "probe": "Where should we source archival storage boxes for the new space?",
+   "probes": [
+    "Where should we source archival storage boxes for the new space?",
+    "Recommend a supplier for archival boxes.",
+    "Is there a storage-supply vendor we should avoid?"
+   ],
+   "gold": "Any supplier except Everlong Storage, given their acidic boxes that yellowed photos.",
+   "keywords": [
+    "acidic",
+    "yellowing"
+   ],
+   "anti_keywords": [
+    "everlong"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c49-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, remember we hired a moving company called Halden Movers for a small relocation before and they stacked fragile boxes flat and cracked several framed items. We aren't using Halden Movers again.",
+   "tail_user_fragment": "",
+   "probe": "Who should we consider to physically move the collection?",
+   "probes": [
+    "Who should we consider to physically move the collection?",
+    "Which mover should we look at for the relocation?",
+    "Is there a moving company we should steer clear of?"
+   ],
+   "gold": "Any mover except Halden Movers, given they stacked fragile boxes and cracked framed items.",
+   "keywords": [
+    "stacked",
+    "cracked"
+   ],
+   "anti_keywords": [
+    "halden"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c49-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note for the file: the off-site climate unit costs $310 a month. Just logging that, doesn't change what we're discussing.",
+   "tail_user_fragment": "",
+   "probe": "What is the monthly cost of the off-site climate unit?",
+   "probes": [
+    "What is the monthly cost of the off-site climate unit?",
+    "How much are we paying per month for the off-site storage unit?",
+    "Remind me the monthly figure for the fragile-items climate unit."
+   ],
+   "gold": "$310 a month.",
+   "keywords": [
+    "310"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c49-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "For the record, our preservation grant application is filed under reference GRT-PH-40928, submitted on April 3rd, with a decision expected in eight to ten weeks. Just logging it.",
+   "tail_user_fragment": "",
+   "probe": "What is the reference number for our grant application, and when was it submitted?",
+   "probes": [
+    "What is the reference number for our grant application, and when was it submitted?",
+    "What's the grant application number and filing date we noted earlier?",
+    "Remind me the reference number on our preservation grant."
+   ],
+   "gold": "GRT-PH-40928, submitted April 3rd.",
+   "keywords": [
+    "40928",
+    "april 3"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c49-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's just codename the whole digitization-and-move project 'Tatooine' from here on, in every planning doc and email, so we're not typing it all out every time.",
+   "tail_user_fragment": "What's still open on the Tatooine punch list before we can start scanning?",
+   "probe": "What does 'Tatooine' refer to in this project?",
+   "probes": [
+    "What does 'Tatooine' refer to in this project?",
+    "If I say Tatooine later, what should you understand that to mean?",
+    "Remind me what Tatooine is in our planning -- what does it stand for?"
+   ],
+   "gold": "The whole digitization-and-relocation project.",
+   "keywords": [
+    "digitization",
+    "move",
+    "project"
+   ],
+   "anti_keywords": [
+    "Star Wars",
+    "desert planet",
+    "Luke Skywalker",
+    "twin suns",
+    "Jawa"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c49-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the climate-control installation 'Naboo', since it's the trickiest and most delayed part of the whole move. Use that name for it in any status update.",
+   "tail_user_fragment": "Any movement on Naboo this week, or is the HVAC still stuck?",
+   "probe": "What does 'Naboo' refer to in this project?",
+   "probes": [
+    "What does 'Naboo' refer to in this project?",
+    "When I mention Naboo again, what should you take that to mean?",
+    "Remind me what we've been calling Naboo internally -- what is it?"
+   ],
+   "gold": "The climate-control (HVAC) installation for the new archive space.",
+   "keywords": [
+    "climate-control",
+    "HVAC",
+    "installation"
+   ],
+   "anti_keywords": [
+    "Star Wars",
+    "Padme",
+    "Queen Amidala",
+    "Gungan",
+    "planet"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

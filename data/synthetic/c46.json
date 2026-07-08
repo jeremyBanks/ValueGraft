@@ -1,0 +1,549 @@
+{
+ "id": "c46",
+ "title": "High school robotics competition team",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in FRC-style robotics competitions, supporting a mentor guiding a high school team through build season."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I mentor Ironclad Robotics, a high school competitive robotics team, and build season just started with this year's game reveal. There's a ton to plan: drivetrain and mechanism design, scouting strategy, sponsorship, getting new students up to speed, and travel to regionals. Can I use this chat to work through all of it with you?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "Let's start with drivetrain design. Given this year's game involves a lot of quick direction changes and defense, what should we be weighing when picking a drivetrain for a team our size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Drivetrain decision. Three options: (1) a simple tank drive with six wheels, well-tested and easy to build, (2) a full swerve drive for maximum maneuverability but a steep build and programming curve, or (3) a mecanum drive for omnidirectional movement with less traction. The mentors and students voted, and we're going with swerve drive despite the learning curve, since this year's game rewards agility so heavily."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted, and I'll keep that in mind as we keep planning."
+  },
+  {
+   "role": "user",
+   "content": "On scouting, how many data points per match should students realistically be tracking without getting overwhelmed?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the bot' is overloaded on our team. Students sometimes call our early cardboard-and-wood prototype 'the bot' too, but when I say the bot to you, I always mean the actual competition robot going into the bag at the end of build season. That's the sense I want."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I've locked that in on my end."
+  },
+  {
+   "role": "user",
+   "content": "Fundraising question: how should we split our ask between big single sponsors and a bunch of smaller local business donations?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for the team: students do all the wiring themselves, start to finish. Mentors can inspect and point out problems, but we never pick up the tools and do it for them, even when we're up against a deadline the night before ship date."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks for the clarity, that's noted going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to drivetrain, how many students should be comfortable actually programming the drive code versus just building it?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a sensible middle ground here. I'd avoid over-engineering it this early and set a baseline you can adjust. Let me know if you want specifics."
+  },
+  {
+   "role": "user",
+   "content": "For the record on sponsors: we had a sponsor called BoltWorks Inc last season who promised a check by January and it didn't arrive until March, well after we'd already committed to parts orders based on their pledge. We're not going back to them."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense. I'll factor that into everything else we work through."
+  },
+  {
+   "role": "user",
+   "content": "For recruitment, what's a reasonable way to identify which new students are ready for electrical work versus just mechanical assembly?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable to plan for this now. A light-touch process usually beats a heavy one at your stage. I can outline one if that helps."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our regional competition dates are set for the weekend of the 21st, and our team registration number is FRC-3387. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and I'll respect that as we go."
+  },
+  {
+   "role": "user",
+   "content": "On travel logistics, how far in advance do we need to book the team van and hotel rooms for an out-of-state regional?"
+  },
+  {
+   "role": "assistant",
+   "content": "I'd treat that as a judgment call anchored to your actual constraints rather than a fixed rule. Want me to walk through the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Let's codename this season's competition robot 'Aragorn' from now on. Every internal doc and group chat should say Aragorn instead of the real project name, since we sometimes post updates in a public alliance Discord and don't want scouting details too easy to find."
+  },
+  {
+   "role": "assistant",
+   "content": "Good to have that on the record. I'll carry it forward."
+  },
+  {
+   "role": "user",
+   "content": "Scouting app decision. Three routes: (1) build a custom app from scratch tailored to this year's game, (2) adapt a popular open-source scouting template that other teams share each year, or (3) just use a shared paper form and enter data manually after each match. We're going with the open-source template, adapted for our needs."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted, and I'll keep that in mind as we keep planning."
+  },
+  {
+   "role": "user",
+   "content": "Scouting again, should we build our own scouting app from scratch, or use an existing template other teams have shared?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair thing to nail down. Keep it proportional to your resources and don't gold-plate it yet. I can suggest a starting point."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'captain' from here on I mean the drive team captain who operates the robot at competition, not the build captain who runs the shop schedule. I know some students use 'captain' loosely for either role, but with you, captain always means the drive team captain."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I've locked that in on my end."
+  },
+  {
+   "role": "user",
+   "content": "For sponsorship, is it normal to offer sponsors a spot on the robot itself, or does that get complicated with competition rules?"
+  },
+  {
+   "role": "assistant",
+   "content": "That one rewards a bit of upfront planning. Set a clear default, document it, and stay flexible. Glad to expand."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we never skip or shortcut a step of the safety inspection checklist before competition, no matter how tight the schedule gets in the pit. If something fails inspection, we fix it properly, we don't just tape over it to pass."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks for the clarity, that's noted going forward."
+  },
+  {
+   "role": "user",
+   "content": "One of our newer students, Malik, has picked up CAD incredibly fast. I want to make sure we're using his skills well without burning him out."
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we ordered swerve modules from a vendor called RapidDrive Modules last season, and three of the four arrived with stripped gear teeth right out of the box. We had to scramble for replacements mid-build. Not ordering from them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense. I'll factor that into everything else we work through."
+  },
+  {
+   "role": "user",
+   "content": "For recruitment, how much programming background should we expect from incoming freshmen versus teaching it from scratch?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "Fundraising note for my own records: our fundraising target for the season is $14,000, and we've raised $9,300 so far. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, and I'll respect that as we go."
+  },
+  {
+   "role": "user",
+   "content": "Travel logistics again, what's the right ratio of adult chaperones to students for an overnight regional trip?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a sensible middle ground here. I'd avoid over-engineering it this early and set a baseline you can adjust. Let me know if you want specifics."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our shared scouting spreadsheet 'Legolas' in all future notes. It's just quicker to type than the full file name every time we mention updating it during matches."
+  },
+  {
+   "role": "assistant",
+   "content": "Good to have that on the record. I'll carry it forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to scouting, how should students share their match data with the drive team between matches?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  },
+  {
+   "role": "user",
+   "content": "On the drivetrain we picked, no need to recap the options again, how many practice swerve modules should we build before committing to the competition set?"
+  },
+  {
+   "role": "assistant",
+   "content": "Short version: aim for the simplest approach that still gives you a safety margin, then revisit once you have real data. Happy to go deeper."
+  },
+  {
+   "role": "user",
+   "content": "For the scouting approach we picked, don't walk through the options again, how many students should be trained to enter data during matches?"
+  },
+  {
+   "role": "assistant",
+   "content": "There's a sensible middle ground here. I'd avoid over-engineering it this early and set a baseline you can adjust. Let me know if you want specifics."
+  },
+  {
+   "role": "user",
+   "content": "Is the bot's weight coming in under the limit with the current intake mechanism attached?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable to plan for this now. A light-touch process usually beats a heavy one at your stage. I can outline one if that helps."
+  },
+  {
+   "role": "user",
+   "content": "Should the captain get extra field practice time this week before the scrimmage?"
+  },
+  {
+   "role": "assistant",
+   "content": "I'd treat that as a judgment call anchored to your actual constraints rather than a fixed rule. Want me to walk through the tradeoffs?"
+  },
+  {
+   "role": "user",
+   "content": "Is Aragorn's intake mechanism reliable enough to trust for the first scrimmage, or should we have a backup plan ready?"
+  },
+  {
+   "role": "assistant",
+   "content": "Fair thing to nail down. Keep it proportional to your resources and don't gold-plate it yet. I can suggest a starting point."
+  },
+  {
+   "role": "user",
+   "content": "Is Legolas set up with the right columns for tracking this year's new scoring elements?"
+  },
+  {
+   "role": "assistant",
+   "content": "That one rewards a bit of upfront planning. Set a clear default, document it, and stay flexible. Glad to expand."
+  },
+  {
+   "role": "user",
+   "content": "For sponsorship, should we send a thank-you update to sponsors mid-season, or wait until after regionals?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. The honest answer is it depends on your scale, but I'd start conservative and tighten as you learn. Want me to sketch a rough default?"
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 267,
+  "middle_end_tokens": 2029,
+  "total_tokens": 2577
+ },
+ "plants": [
+  {
+   "id": "c46-referent-1",
+   "category": "referent",
+   "middle_user": "Drivetrain decision. Three options: (1) a simple tank drive with six wheels, well-tested and easy to build, (2) a full swerve drive for maximum maneuverability but a steep build and programming curve, or (3) a mecanum drive for omnidirectional movement with less traction. The mentors and students voted, and we're going with swerve drive despite the learning curve, since this year's game rewards agility so heavily.",
+   "tail_user_fragment": "On the drivetrain we picked, no need to recap the options again, how many practice swerve modules should we build before committing to the competition set?",
+   "probe": "Which drivetrain did Ironclad decide to build this year?",
+   "probes": [
+    "Which drivetrain did Ironclad decide to build this year?",
+    "Out of the three drivetrain options, which one did the team choose?",
+    "What did we settle on for this year's drivetrain?",
+    "Remind me which drivetrain type we picked."
+   ],
+   "gold": "Swerve drive, not tank drive or mecanum drive.",
+   "keywords": [
+    "swerve drive"
+   ],
+   "anti_keywords": [
+    "tank drive",
+    "mecanum"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c46-referent-2",
+   "category": "referent",
+   "middle_user": "Scouting app decision. Three routes: (1) build a custom app from scratch tailored to this year's game, (2) adapt a popular open-source scouting template that other teams share each year, or (3) just use a shared paper form and enter data manually after each match. We're going with the open-source template, adapted for our needs.",
+   "tail_user_fragment": "For the scouting approach we picked, don't walk through the options again, how many students should be trained to enter data during matches?",
+   "probe": "What did we decide to use for scouting this year?",
+   "probes": [
+    "What did we decide to use for scouting this year?",
+    "Out of the three scouting options, which one did we choose?",
+    "What's the plan for our scouting system this season?",
+    "Remind me which scouting approach we settled on."
+   ],
+   "gold": "An adapted open-source scouting template shared by other teams, not a fully custom app or a paper-form manual process.",
+   "keywords": [
+    "open-source template",
+    "adapted"
+   ],
+   "anti_keywords": [
+    "custom app from scratch",
+    "paper form"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c46-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the bot' is overloaded on our team. Students sometimes call our early cardboard-and-wood prototype 'the bot' too, but when I say the bot to you, I always mean the actual competition robot going into the bag at the end of build season. That's the sense I want.",
+   "tail_user_fragment": "Is the bot's weight coming in under the limit with the current intake mechanism attached?",
+   "probe": "When I said 'the bot,' what was I referring to?",
+   "probes": [
+    "When I said 'the bot,' what was I referring to?",
+    "Which of the two things called 'the bot' did I mean?",
+    "What does 'the bot' refer to in our conversation?",
+    "If I mention the bot again, what should you understand that to be?"
+   ],
+   "gold": "The actual competition robot going into the bag at the end of build season, not the early cardboard-and-wood prototype.",
+   "keywords": [
+    "competition robot",
+    "bag"
+   ],
+   "anti_keywords": [
+    "cardboard prototype",
+    "wood prototype"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c46-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'captain' from here on I mean the drive team captain who operates the robot at competition, not the build captain who runs the shop schedule. I know some students use 'captain' loosely for either role, but with you, captain always means the drive team captain.",
+   "tail_user_fragment": "Should the captain get extra field practice time this week before the scrimmage?",
+   "probe": "When I say 'captain,' which role do I mean?",
+   "probes": [
+    "When I say 'captain,' which role do I mean?",
+    "Does 'captain' refer to the drive team captain or the build captain?",
+    "What does 'captain' mean in our conversation?",
+    "If I mention the captain again, what should you assume I'm talking about?"
+   ],
+   "gold": "The drive team captain who operates the robot at competition, not the build captain who runs the shop schedule.",
+   "keywords": [
+    "drive team captain",
+    "operates the robot"
+   ],
+   "anti_keywords": [
+    "build captain",
+    "shop schedule"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c46-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for the team: students do all the wiring themselves, start to finish. Mentors can inspect and point out problems, but we never pick up the tools and do it for them, even when we're up against a deadline the night before ship date.",
+   "tail_user_fragment": "",
+   "probe": "How can we make sure the wiring is finished in time before the ship deadline?",
+   "probes": [
+    "How can we make sure the wiring is finished in time before the ship deadline?",
+    "What can we do to speed up finishing the wiring before ship date?",
+    "Give me ideas for getting the electrical work done on schedule.",
+    "Suggest ways to hit the wiring deadline without falling behind."
+   ],
+   "gold": "Suggests approaches like better time management, splitting wiring tasks among more trained students, or starting earlier, while never proposing mentors doing the wiring themselves, ideally recalling the students-do-the-wiring rule.",
+   "keywords": [
+    "students wire",
+    "time management",
+    "split tasks"
+   ],
+   "anti_keywords": [
+    "mentor does the wiring",
+    "mentors wire it"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c46-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we never skip or shortcut a step of the safety inspection checklist before competition, no matter how tight the schedule gets in the pit. If something fails inspection, we fix it properly, we don't just tape over it to pass.",
+   "tail_user_fragment": "",
+   "probe": "What should we do if we're running low on time before our inspection slot at regionals?",
+   "probes": [
+    "What should we do if we're running low on time before our inspection slot at regionals?",
+    "How should we handle a time crunch before inspection?",
+    "What are our options if a safety issue is found right before inspection?",
+    "Suggest how to manage a tight schedule before the safety check."
+   ],
+   "gold": "Suggests approaches like prioritizing the fix immediately, requesting a later inspection slot, or pulling in extra hands to fix it properly, while never proposing skipping or shortcutting an inspection step, ideally recalling the no-shortcuts safety rule.",
+   "keywords": [
+    "fix properly",
+    "later inspection slot",
+    "extra hands"
+   ],
+   "anti_keywords": [
+    "skip inspection",
+    "tape over",
+    "shortcut safety"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c46-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on sponsors: we had a sponsor called BoltWorks Inc last season who promised a check by January and it didn't arrive until March, well after we'd already committed to parts orders based on their pledge. We're not going back to them.",
+   "tail_user_fragment": "",
+   "probe": "What sponsor should we approach to fill last season's gap?",
+   "probes": [
+    "What sponsor should we approach to fill last season's gap?",
+    "Given the payment problems, who should we pursue as a sponsor instead?",
+    "What's a better sponsorship option than what we had last year?",
+    "Suggest a sponsor to replace the one that paid late."
+   ],
+   "gold": "Anything except BoltWorks Inc, e.g. a different local business with a reliable pledge track record, ideally acknowledging BoltWorks' late payment was tried and rejected.",
+   "keywords": [
+    "late payment",
+    "March"
+   ],
+   "anti_keywords": [
+    "boltworks"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c46-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we ordered swerve modules from a vendor called RapidDrive Modules last season, and three of the four arrived with stripped gear teeth right out of the box. We had to scramble for replacements mid-build. Not ordering from them again.",
+   "tail_user_fragment": "",
+   "probe": "Where should we order swerve modules from this season?",
+   "probes": [
+    "Where should we order swerve modules from this season?",
+    "What vendor should supply our swerve modules now?",
+    "Given the defective parts last time, who should we buy modules from?",
+    "Suggest a swerve module vendor for this year."
+   ],
+   "gold": "Anything except RapidDrive Modules, e.g. a different established swerve module manufacturer with a good track record among FRC teams, ideally acknowledging RapidDrive's defective modules were tried and rejected.",
+   "keywords": [
+    "stripped gear teeth",
+    "defective"
+   ],
+   "anti_keywords": [
+    "rapiddrive"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c46-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our regional competition dates are set for the weekend of the 21st, and our team registration number is FRC-3387. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": "",
+   "probe": "What is our team registration number and the regional competition date?",
+   "probes": [
+    "What is our team registration number and the regional competition date?",
+    "What's our team number, and when is the regional?",
+    "Remind me the registration number and competition weekend.",
+    "What tracking details did we note about the regional?"
+   ],
+   "gold": "Team registration number FRC-3387, competing the weekend of the 21st.",
+   "keywords": [
+    "FRC-3387",
+    "21st"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c46-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Fundraising note for my own records: our fundraising target for the season is $14,000, and we've raised $9,300 so far. Just parking that here.",
+   "tail_user_fragment": "",
+   "probe": "What is our season fundraising target and how much have we raised so far?",
+   "probes": [
+    "What is our season fundraising target and how much have we raised so far?",
+    "How much have we raised toward the season's fundraising goal?",
+    "Remind me the fundraising target and current total.",
+    "What's our fundraising goal and progress so far?"
+   ],
+   "gold": "$14,000 target, with $9,300 raised so far.",
+   "keywords": [
+    "14,000",
+    "9,300"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c46-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename this season's competition robot 'Aragorn' from now on. Every internal doc and group chat should say Aragorn instead of the real project name, since we sometimes post updates in a public alliance Discord and don't want scouting details too easy to find.",
+   "tail_user_fragment": "Is Aragorn's intake mechanism reliable enough to trust for the first scrimmage, or should we have a backup plan ready?",
+   "probe": "What does 'Aragorn' refer to in our project?",
+   "probes": [
+    "What does 'Aragorn' refer to in our project?",
+    "If I mention Aragorn again, what should you understand that to mean?",
+    "Remind me what we're calling Aragorn internally.",
+    "What is Aragorn a codename for?"
+   ],
+   "gold": "This season's competition robot.",
+   "keywords": [
+    "competition robot",
+    "this season's robot"
+   ],
+   "anti_keywords": [
+    "king",
+    "gondor",
+    "ranger"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c46-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our shared scouting spreadsheet 'Legolas' in all future notes. It's just quicker to type than the full file name every time we mention updating it during matches.",
+   "tail_user_fragment": "Is Legolas set up with the right columns for tracking this year's new scoring elements?",
+   "probe": "What does 'Legolas' refer to in our conversation?",
+   "probes": [
+    "What does 'Legolas' refer to in our conversation?",
+    "If I mention Legolas later, what should you take that to mean?",
+    "What is Legolas a codename for in our project?",
+    "Remind me what Legolas refers to internally."
+   ],
+   "gold": "The shared scouting spreadsheet used during matches.",
+   "keywords": [
+    "scouting spreadsheet"
+   ],
+   "anti_keywords": [
+    "elf",
+    "archer",
+    "bow"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "fable-render"
+ }
+}

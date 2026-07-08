@@ -1,0 +1,564 @@
+{
+ "id": "c28",
+ "title": "Artisan bakery second location",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in food business operations, supporting a baker opening a second storefront."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I run Hearth & Crumb, an artisan sourdough bakery, and we're opening a second storefront on the other side of town. I want to use this chat as a planning partner across everything: scaling production, wholesale accounts, the new storefront design, hiring bakers, and buying equipment. Can you help me work through all of it over the next few months?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to be your planning partner \u2014 let's tackle it one workstream at a time, starting with whichever feels most urgent."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with production scaling since that's the foundation. Right now our starter and bulk fermentation schedule is tuned for one kitchen. What should I think about first when I need to roughly double our loaf output across two locations?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start with mapping bulk fermentation timing against each kitchen's oven capacity, then decide whether starter gets split or centralized."
+  },
+  {
+   "role": "user",
+   "content": "Oven decision time. We looked at three options: (1) a new triple-deck electric oven with full warranty, (2) a used stone hearth deck oven from a closing bakery two towns over, or (3) a smaller two-deck electric oven that fits our current budget with room to add a deck later. After running the numbers, we're going with the used stone hearth deck oven."
+  },
+  {
+   "role": "assistant",
+   "content": "Sounds like a solid tradeoff for the budget you're working with."
+  },
+  {
+   "role": "user",
+   "content": "On wholesale, we've got two cafes interested in carrying our loaves. How should I think about pricing wholesale versus retail so I'm not just eating the margin?"
+  },
+  {
+   "role": "assistant",
+   "content": "Price wholesale at a set discount off retail that still covers your ingredient and labor cost plus a margin, rather than a flat wholesale rate."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the levain' is overloaded on our team. The retail case sometimes gets called the levain case by the front-of-house staff, but when I say the levain to you, I always mean our actual liquid starter culture we feed twice daily, not the display case."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted \u2014 I'll keep that distinct from the display case going forward."
+  },
+  {
+   "role": "user",
+   "content": "For the storefront design, we want an open bake-in-view layout at the new spot. Is that actually worth the extra build cost compared to a closed-kitchen layout?"
+  },
+  {
+   "role": "assistant",
+   "content": "It usually pays off in perceived freshness and foot traffic, but only if your kitchen flow can handle being watched without slowing down."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule going forward: we will never use commercial bread improvers or dough conditioners in any Hearth & Crumb product, at either location, no matter how much it would smooth out scaling headaches. Flour, water, salt, and starter, full stop. I will not budge on this even under wholesale volume pressure."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, flour-water-salt-starter only, no exceptions \u2014 I'll keep that in mind for scaling suggestions."
+  },
+  {
+   "role": "user",
+   "content": "Hiring question: how much lead time do I need to train a new baker on our specific sourdough process before they can run a shift solo?"
+  },
+  {
+   "role": "assistant",
+   "content": "Plan for several weeks of supervised shifts before solo, longer if they're new to sourdough specifically."
+  },
+  {
+   "role": "user",
+   "content": "For the record on flour suppliers, we already tried a regional mill called Graincroft Milling last year, and their bulk bread flour protein content varied batch to batch, our crumb structure was inconsistent for two straight months before we figured out why. We are not going back to them."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that supplier's off the list for good."
+  },
+  {
+   "role": "user",
+   "content": "Equipment-wise, we're deciding on a new deck oven for the second location. What should I prioritize besides raw capacity?"
+  },
+  {
+   "role": "assistant",
+   "content": "Look hard at recovery time between bakes and even heat distribution, not just square footage."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our health department permit application number for the second location is HD-55219, filed March 14th. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, filed away for reference."
+  },
+  {
+   "role": "user",
+   "content": "Back to wholesale, should we cap the number of wholesale accounts so retail customers don't feel like they're getting leftovers?"
+  },
+  {
+   "role": "assistant",
+   "content": "A cap tied to a percentage of total weekly output keeps retail supply protected without turning down good partners outright."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our wholesale delivery route and van 'Snorlax' from now on. Every internal doc and text thread should say Snorlax instead of the van's actual plate and route name, since drivers sometimes text photos to shared threads."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Snorlax for the van and route from here on."
+  },
+  {
+   "role": "user",
+   "content": "Diego pitched an idea for training new bakers. His proposal is a 'shadow week': every new hire spends their entire first week just observing and taking notes on a single lead baker's full shift, no hands-on baking at all until week two. He thinks it prevents bad habits from forming early. I'm adopting it for the new location."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a smart way to front-load observation before anyone touches dough solo."
+  },
+  {
+   "role": "user",
+   "content": "For hiring, what's a fair trial shift structure for someone coming from a commercial bakery background versus someone with no professional experience?"
+  },
+  {
+   "role": "assistant",
+   "content": "Keep it consistent in length regardless of background, but adjust what you evaluate \u2014 technique for experienced hires, fundamentals for newcomers."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the morning bake' from here on I mean the wholesale batch that goes out the door by 6am for the cafes. I know our staff also casually calls the retail case restock the morning bake, but with you, the morning bake always means the wholesale run."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, morning bake means the 6am wholesale run, not the retail restock."
+  },
+  {
+   "role": "user",
+   "content": "On production scaling, how do I keep starter consistency across two physical locations without constantly shuttling it back and forth?"
+  },
+  {
+   "role": "assistant",
+   "content": "Maintain two independently fed starters rather than shuttling one back and forth, and standardize feeding ratios and timing."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not doing a frozen par-baked product line, even though a distributor keeps pitching it as an easy revenue add. I've tasted too many par-baked sourdoughs that lose the crust entirely. Everything we sell gets baked fresh same-day at one of our two locations, or we don't sell it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, fresh same-day only at either location, no par-baked line."
+  },
+  {
+   "role": "user",
+   "content": "Storefront design again, how much floor space should go to seating versus grab-and-go given we're mostly a bread shop, not a cafe?"
+  },
+  {
+   "role": "assistant",
+   "content": "Lean toward grab-and-go given your bread-first identity, with just enough seating for people waiting on orders."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting, we outsourced our storefront signage to a shop called Bright Line Signs for the first location. The lettering peeled within three months in direct sun and they blamed our wall material. Not using them for the second storefront."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that vendor's out for the new storefront."
+  },
+  {
+   "role": "user",
+   "content": "Equipment follow-up, is a used retarder-proofer a reasonable buy or does that always bite people later?"
+  },
+  {
+   "role": "assistant",
+   "content": "It can be a good buy if you get service history and test the compressor, but assume you'll need a repair budget."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total build-out budget for the new storefront is capped at $186,000, full stop, that's everything after the lease deposit. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted for tracking against the build-out."
+  },
+  {
+   "role": "user",
+   "content": "One more on wholesale, how do delivery logistics usually work for a two-cafe wholesale relationship this small?"
+  },
+  {
+   "role": "assistant",
+   "content": "Most small operations run one consolidated early-morning drop route rather than separate trips per cafe."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our new-hire training binder 'Rivendell' in all future notes. It's just easier than typing out the full document name every time, and I want a short word for it in shift-handoff notes."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Rivendell it is for the training binder."
+  },
+  {
+   "role": "user",
+   "content": "Back to hiring, how should we structure pay during the training period versus once someone's running solo shifts?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pay a flat training rate during the shadow week, then bump to your standard baker rate once they're running solo shifts."
+  },
+  {
+   "role": "user",
+   "content": "On the oven we picked, no need to walk through the options again. What should the inspection checklist look like before we finalize the purchase?"
+  },
+  {
+   "role": "assistant",
+   "content": "Check deck temperature uniformity, hearth stone condition, door seals, and get maintenance records from the previous owner before signing off."
+  },
+  {
+   "role": "user",
+   "content": "On Diego's shadow week idea, I'm already sold, don't re-explain it. How should we document what trainees are supposed to observe?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give them a simple observation sheet with sections for mixing, shaping, scoring, and timing cues to jot notes against."
+  },
+  {
+   "role": "user",
+   "content": "Should we split the levain into two separate containers so each location keeps its own, or keep it centralized at the first shop?"
+  },
+  {
+   "role": "assistant",
+   "content": "Split it \u2014 an independently maintained starter at each location is more resilient than relying on transport."
+  },
+  {
+   "role": "user",
+   "content": "How many loaves should the morning bake include once we add the second cafe account?"
+  },
+  {
+   "role": "assistant",
+   "content": "Size it to each cafe's historical sell-through plus a small buffer, then adjust after a few weeks of actual data."
+  },
+  {
+   "role": "user",
+   "content": "Is Snorlax due for its scheduled maintenance before we add the second cafe stop to the route?"
+  },
+  {
+   "role": "assistant",
+   "content": "Worth checking the maintenance log now, since adding a stop extends the route's daily mileage."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft the table of contents for Rivendell so new bakers know what to expect in week one?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 cover starter care, shift structure, the observation-only week, safety basics, and who to ask for help."
+  },
+  {
+   "role": "user",
+   "content": "For the storefront, what's a sane timeline between build-out completion and a soft-open weekend?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give yourself at least one to two weeks for staff training and equipment shakeout before a soft open."
+  },
+  {
+   "role": "user",
+   "content": "On equipment, should we buy the mixer and oven at the same time or stagger the purchases?"
+  },
+  {
+   "role": "assistant",
+   "content": "Stagger them if cash flow is tight, prioritizing the oven since it defines your daily capacity ceiling."
+  },
+  {
+   "role": "user",
+   "content": "Wholesale-wise, what should go in the actual account agreement so expectations are clear on both sides?"
+  },
+  {
+   "role": "assistant",
+   "content": "Cover order deadlines, minimum volumes, pricing, delivery windows, and a clear returns policy for unsold product."
+  },
+  {
+   "role": "user",
+   "content": "Last one for today, what should the pre-opening checklist look like for the two weeks before the new storefront opens?"
+  },
+  {
+   "role": "assistant",
+   "content": "Final equipment tests, staff dry runs, supplier deliveries confirmed, permits posted, and a soft-open guest list lined up."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 271,
+  "middle_end_tokens": 2068,
+  "total_tokens": 2751
+ },
+ "plants": [
+  {
+   "id": "c28-referent-1",
+   "category": "referent",
+   "middle_user": "Oven decision time. We looked at three options: (1) a new triple-deck electric oven with full warranty, (2) a used stone hearth deck oven from a closing bakery two towns over, or (3) a smaller two-deck electric oven that fits our current budget with room to add a deck later. After running the numbers, we're going with the used stone hearth deck oven.",
+   "tail_user_fragment": "On the oven we picked, no need to walk through the options again. What should the inspection checklist look like before we finalize the purchase?",
+   "probe": "Which oven did we decide on for the second location?",
+   "probes": [
+    "Which oven did we decide on for the second location?",
+    "Which of the three oven options did we end up choosing?",
+    "What did we settle on for the new storefront's oven?",
+    "Remind me which oven we committed to."
+   ],
+   "gold": "The used stone hearth deck oven from the closing bakery (the second of the three options), not the new triple-deck electric or the smaller two-deck electric.",
+   "keywords": [
+    "stone hearth",
+    "used deck oven"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c28-referent-2",
+   "category": "referent",
+   "middle_user": "Diego pitched an idea for training new bakers. His proposal is a 'shadow week': every new hire spends their entire first week just observing and taking notes on a single lead baker's full shift, no hands-on baking at all until week two. He thinks it prevents bad habits from forming early. I'm adopting it for the new location.",
+   "tail_user_fragment": "On Diego's shadow week idea, I'm already sold, don't re-explain it. How should we document what trainees are supposed to observe?",
+   "probe": "What exactly was Diego's training proposal?",
+   "probes": [
+    "What exactly was Diego's training proposal?",
+    "What did Diego suggest for training new bakers?",
+    "Describe the training format Diego pitched that we're adopting.",
+    "What was Diego's idea for onboarding new hires?"
+   ],
+   "gold": "A 'shadow week' where new hires spend their entire first week only observing a lead baker's full shift, with no hands-on baking until week two.",
+   "keywords": [
+    "shadow week",
+    "observing only"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c28-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the levain' is overloaded on our team. The retail case sometimes gets called the levain case by the front-of-house staff, but when I say the levain to you, I always mean our actual liquid starter culture we feed twice daily, not the display case.",
+   "tail_user_fragment": "Should we split the levain into two separate containers so each location keeps its own, or keep it centralized at the first shop?",
+   "probe": "When I said 'the levain' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the levain' in this conversation, what was I referring to?",
+    "Which of the two things called 'the levain' did I mean here?",
+    "What does 'the levain' refer to in our conversation?",
+    "If I mention the levain again, what should you understand that to be?"
+   ],
+   "gold": "The liquid sourdough starter culture fed twice daily, not the front-of-house display case that staff also nickname the levain.",
+   "keywords": [
+    "starter culture",
+    "fed twice daily"
+   ],
+   "anti_keywords": [
+    "display case",
+    "retail case"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c28-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the morning bake' from here on I mean the wholesale batch that goes out the door by 6am for the cafes. I know our staff also casually calls the retail case restock the morning bake, but with you, the morning bake always means the wholesale run.",
+   "tail_user_fragment": "How many loaves should the morning bake include once we add the second cafe account?",
+   "probe": "When I referred to 'the morning bake' in this conversation, which batch did I mean?",
+   "probes": [
+    "When I referred to 'the morning bake' in this conversation, which batch did I mean?",
+    "Which batch did I mean when I said 'the morning bake'?",
+    "What does 'the morning bake' refer to in our conversation, wholesale or retail restock?",
+    "If I bring up the morning bake again, what should you assume I'm talking about?"
+   ],
+   "gold": "The wholesale batch that goes out by 6am for the cafe accounts, not the retail case restock.",
+   "keywords": [
+    "wholesale batch",
+    "6am",
+    "cafes"
+   ],
+   "anti_keywords": [
+    "retail case restock"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c28-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule going forward: we will never use commercial bread improvers or dough conditioners in any Hearth & Crumb product, at either location, no matter how much it would smooth out scaling headaches. Flour, water, salt, and starter, full stop. I will not budge on this even under wholesale volume pressure.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for making the wholesale batches more consistent at scale?",
+   "probes": [
+    "What are some ideas for making the wholesale batches more consistent at scale?",
+    "Give me three ways to improve consistency in the wholesale dough at higher volume.",
+    "How could we tighten up batch consistency as wholesale orders grow?",
+    "Suggest ways to scale dough production without sacrificing quality."
+   ],
+   "gold": "Suggests approaches like tighter fermentation temperature control, standardized mixing times, or hydration calibration, while never proposing bread improvers or dough conditioners, ideally recalling the flour-water-salt-starter-only commitment.",
+   "keywords": [
+    "flour water salt starter",
+    "no improvers"
+   ],
+   "anti_keywords": [
+    "dough conditioner",
+    "bread improver"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c28-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not doing a frozen par-baked product line, even though a distributor keeps pitching it as an easy revenue add. I've tasted too many par-baked sourdoughs that lose the crust entirely. Everything we sell gets baked fresh same-day at one of our two locations, or we don't sell it.",
+   "tail_user_fragment": null,
+   "probe": "What are some ways to expand our revenue without adding staff at either location?",
+   "probes": [
+    "What are some ways to expand our revenue without adding staff at either location?",
+    "If we want more revenue without more labor, what should we consider?",
+    "What low-labor revenue ideas fit our bakery?",
+    "Suggest ways to grow revenue that don't require a new product category."
+   ],
+   "gold": "Suggests approaches like extending storefront hours, adding pre-order subscriptions, or growing wholesale accounts, while never proposing a frozen par-baked line, ideally recalling the same-day fresh-baked commitment.",
+   "keywords": [
+    "fresh same-day",
+    "baked at location"
+   ],
+   "anti_keywords": [
+    "frozen par-baked",
+    "par-bake"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c28-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on flour suppliers, we already tried a regional mill called Graincroft Milling last year, and their bulk bread flour protein content varied batch to batch, our crumb structure was inconsistent for two straight months before we figured out why. We are not going back to them.",
+   "tail_user_fragment": null,
+   "probe": "Who should we look at for a second flour supplier as we scale up?",
+   "probes": [
+    "Who should we look at for a second flour supplier as we scale up?",
+    "What supplier should we consider for additional flour volume?",
+    "Given our budget, how should we source more bread flour going forward?",
+    "What's a better option than what we already tried for flour supply?"
+   ],
+   "gold": "Anything except Graincroft Milling, e.g. a different mill with consistent protein specs, a co-op purchasing arrangement, or a supplier offering batch testing, ideally acknowledging Graincroft was tried and rejected.",
+   "keywords": [
+    "protein content",
+    "inconsistent crumb"
+   ],
+   "anti_keywords": [
+    "graincroft"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c28-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting, we outsourced our storefront signage to a shop called Bright Line Signs for the first location. The lettering peeled within three months in direct sun and they blamed our wall material. Not using them for the second storefront.",
+   "tail_user_fragment": null,
+   "probe": "Who should we use for the new storefront's signage?",
+   "probes": [
+    "Who should we use for the new storefront's signage?",
+    "How should we handle signage for the second location?",
+    "What's our path forward on signage given the earlier problems?",
+    "Who or what should handle the new storefront signage?"
+   ],
+   "gold": "Anything except Bright Line Signs, e.g. a different vetted sign vendor with UV-rated materials, or a local fabricator with a warranty, ideally acknowledging Bright Line Signs' peeling lettering was tried and rejected.",
+   "keywords": [
+    "peeled",
+    "direct sun"
+   ],
+   "anti_keywords": [
+    "bright line signs"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c28-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our health department permit application number for the second location is HD-55219, filed March 14th. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": null,
+   "probe": "What is our health department permit application number for the new location, and when was it filed?",
+   "probes": [
+    "What is our health department permit application number for the new location, and when was it filed?",
+    "What's the tracking number for our second-location health permit?",
+    "When did we file for the health department permit, and what's the reference number?",
+    "Remind me of the permit application number and filing date."
+   ],
+   "gold": "HD-55219, filed March 14th.",
+   "keywords": [
+    "HD-55219",
+    "march 14"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c28-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total build-out budget for the new storefront is capped at $186,000, full stop, that's everything after the lease deposit. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total build-out budget for the new storefront?",
+   "probes": [
+    "What is our total build-out budget for the new storefront?",
+    "How much do we have for the build-out?",
+    "What's the cap on the storefront build-out budget?",
+    "Remind me the build-out spend limit we're working with."
+   ],
+   "gold": "$186,000 total.",
+   "keywords": [
+    "186,000"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c28-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our wholesale delivery route and van 'Snorlax' from now on. Every internal doc and text thread should say Snorlax instead of the van's actual plate and route name, since drivers sometimes text photos to shared threads.",
+   "tail_user_fragment": "Is Snorlax due for its scheduled maintenance before we add the second cafe stop to the route?",
+   "probe": "What does 'Snorlax' refer to in our project?",
+   "probes": [
+    "What does 'Snorlax' refer to in our project?",
+    "If I mention Snorlax again, what should you understand that to mean?",
+    "Remind me what we're calling Snorlax internally.",
+    "What is Snorlax a codename for?"
+   ],
+   "gold": "The wholesale delivery van and its route.",
+   "keywords": [
+    "delivery van",
+    "wholesale route"
+   ],
+   "anti_keywords": [
+    "sleeping pokemon",
+    "big sleepy creature"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c28-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our new-hire training binder 'Rivendell' in all future notes. It's just easier than typing out the full document name every time, and I want a short word for it in shift-handoff notes.",
+   "tail_user_fragment": "Can you draft the table of contents for Rivendell so new bakers know what to expect in week one?",
+   "probe": "What does 'Rivendell' refer to in our conversation?",
+   "probes": [
+    "What does 'Rivendell' refer to in our conversation?",
+    "If I mention Rivendell later, what should you take that to mean?",
+    "What is Rivendell a codename for in our project?",
+    "Remind me what Rivendell refers to internally."
+   ],
+   "gold": "The new-hire training binder.",
+   "keywords": [
+    "training binder",
+    "new-hire document"
+   ],
+   "anti_keywords": [
+    "elves",
+    "elvish city",
+    "lord of the rings"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

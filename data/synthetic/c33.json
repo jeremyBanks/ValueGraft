@@ -1,0 +1,544 @@
+{
+ "id": "c33",
+ "title": "2D animated series pilot production",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in animation production and studio operations, supporting a small 2D animation studio producing an original series pilot."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so Moonlit Ferry's pilot is deep in production at Inkwell and I want this chat to be our planning hub for everything left: storyboards and animatics, voice casting, the ink-and-paint pipeline, festival strategy, and wrangling our freelancers. Can you help me think through all of it as we go?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to be your planning hub for all of it \u2014 storyboards, casting, ink-and-paint, festivals, and freelancers. Let's tackle them one at a time as they come up."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with the storyboard and animatic pipeline since it's the bottleneck right now. We've got hand-drawn boards but the animatic timing keeps drifting from the script. What's a sane way for a small team to keep boards and animatic timing in sync without a dedicated editor?"
+  },
+  {
+   "role": "assistant",
+   "content": "Without an editor, the fix is to stop treating the boards and the animatic as separate artifacts: time the boards directly in an edit timeline against a locked scratch track, and re-lock timing the moment a board changes rather than batching fixes."
+  },
+  {
+   "role": "user",
+   "content": "For voice casting, should we hold open auditions or go straight to agents for our two lead characters?"
+  },
+  {
+   "role": "assistant",
+   "content": "For two leads carrying the show, go straight to agents for a shortlist, then hold a small open call for the smaller roles \u2014 it saves time without losing access to strong talent."
+  },
+  {
+   "role": "user",
+   "content": "Animatic timing decision, finally made. We weighed three options: (1) sticking with hand-timed boards reviewed frame by frame in a screening room, (2) importing boards into an editing timeline with scratch audio and letting the software drive pacing, and (3) hiring an outside editor just for timing passes. Given our budget, we're going with the second one, importing into an editing timeline with scratch audio."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, importing into an editing timeline with scratch audio it is \u2014 locked in as the approach going forward."
+  },
+  {
+   "role": "user",
+   "content": "How many callback rounds is reasonable before we lock a voice cast, given we're paying out of pocket?"
+  },
+  {
+   "role": "assistant",
+   "content": "Two callback rounds is usually plenty for a small pilot budget: one to narrow the field, one to test chemistry between finalists."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it confuses us later: 'the reel' is overloaded on our team. The compositors call the daily render output the reel too, but when I say the reel to you, I always mean the festival submission showreel we're cutting from finished shots. That's the sense I want here."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, noted for how I'll interpret that term in our conversation."
+  },
+  {
+   "role": "user",
+   "content": "On the ink-and-paint side, how do we keep line quality consistent across four different inkers working on the same episode?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give every inker the same locked line-weight reference and a single QC pass before compositing, so drift gets caught at handoff rather than downstream."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for the whole pilot: everything is hand-drawn and hand-inked, frame by frame. No AI-assisted in-betweening, no AI upscaling of rough passes, nothing like that anywhere in the pipeline, even if it would save us weeks. I will not budge on this regardless of how tight the schedule gets."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood \u2014 fully hand-drawn and hand-inked, no AI tooling anywhere in the pipeline. Noted."
+  },
+  {
+   "role": "user",
+   "content": "What's a good QC checklist before a scene goes from ink-and-paint to compositing?"
+  },
+  {
+   "role": "assistant",
+   "content": "Check line weight consistency, closed paint fills with no gaps, correct color model per shot, and clean layer separation before anything moves to compositing."
+  },
+  {
+   "role": "user",
+   "content": "For the record on outsourcing: we tried sending overflow ink-and-paint shots to a studio called BrightLine Overseas last quarter, and half the shots came back with off-model line weight, we had to redo most of them in-house anyway. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, BrightLine Overseas is off the table for overflow work going forward."
+  },
+  {
+   "role": "user",
+   "content": "For festival submission strategy, should we submit the pilot to genre-specific festivals first or go broad with the big animation festivals?"
+  },
+  {
+   "role": "assistant",
+   "content": "Go genre-specific first \u2014 smaller festivals give you screening data and audience reaction you can use to strengthen the pitch to the bigger ones."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our festival submission tracking number for the Ottawa animation festival is OIAF-22981, submitted May 14th. Nothing to decide, just don't want to lose track of the number."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, parked for reference."
+  },
+  {
+   "role": "user",
+   "content": "How far in advance of a festival deadline should a submission cut actually be locked?"
+  },
+  {
+   "role": "assistant",
+   "content": "Lock the submission cut at least three weeks before the deadline so you have buffer for last-minute technical fixes and export issues."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our internal shot-tracking spreadsheet 'Frodo' from now on. Every note and email thread should say Frodo, not the real filename, since we're sharing bits of these threads with a prospective distributor sometimes."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Frodo for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "For freelancer contracts, what's a fair way to structure per-episode pay versus per-shot pay for background painters?"
+  },
+  {
+   "role": "assistant",
+   "content": "Per-shot pay tends to be fairer for background painters since shot complexity varies a lot episode to episode; per-episode only works if shot counts are steady."
+  },
+  {
+   "role": "user",
+   "content": "Marcus had a good idea for voice recording. His proposal is to record our two leads together in the same booth for banter-heavy scenes instead of recording each actor separately and cutting the performances together afterward. He thinks the timing reads far more natural that way, and I'm doing it for the remaining sessions."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense, joint booth recording for the banter scenes should read much more natural \u2014 noted."
+  },
+  {
+   "role": "user",
+   "content": "How should we handle a freelancer who consistently delivers late but the work quality is excellent?"
+  },
+  {
+   "role": "assistant",
+   "content": "Keep them, but build in a buffer specifically around their delivery and be upfront that consistent lateness affects how much overflow work they get offered."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the model sheet' from here on I mean the approved final character turnaround sheet locked for production. I know some of the freelance inkers still call their rough early sketches model sheets too, but with you, the model sheet always means the locked, approved version."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted which version that term refers to going forward."
+  },
+  {
+   "role": "user",
+   "content": "What's a reasonable turnaround time to promise freelance colorists before we start missing our own internal deadlines?"
+  },
+  {
+   "role": "assistant",
+   "content": "Promise turnaround with a built-in cushion \u2014 something you know you can hit even on a bad week \u2014 rather than your best-case estimate."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not doing a Kickstarter or any crowdfunding campaign for this pilot. I've seen too many small studios burn goodwill promising rewards they can't deliver on time. We finish this on our own budget or we cut scope, full stop."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, no crowdfunding under any circumstances \u2014 noted as a hard constraint."
+  },
+  {
+   "role": "user",
+   "content": "Should the animatic include temp voice performances from the team, or just scratch dialogue read flatly?"
+  },
+  {
+   "role": "assistant",
+   "content": "Recorded scratch dialogue from the team is worth it for comic timing and reaction beats; flat placeholder reads make the animatic harder to judge."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we tried a scheduling tool called TaskFerry for tracking freelancer deliverables, and nobody on the team actually updated it, so it was constantly out of date and misleading. We dropped it after a month."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, TaskFerry is out as a tracking option."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total remaining freelancer budget for the pilot is capped at $6,300, full stop, that's everything left after paying the voice cast. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that cap is on the record."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our private freelancer feedback channel 'Vader' in all future notes. It's just easier than typing out the full channel name, and I don't want the real name floating around in shared docs with outside collaborators."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Vader for that going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to the ink-and-paint workflow, what's the best way to onboard a new inker mid-episode without breaking consistency?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pair the new inker with your most consistent existing inker for the first few shots and have them work directly off the locked model sheet rather than reverse-engineering style from finished frames."
+  },
+  {
+   "role": "user",
+   "content": "On the animatic timing approach we picked, no need to re-explain it. How soon can we get the next sequence into that timeline?"
+  },
+  {
+   "role": "assistant",
+   "content": "You could realistically get the next sequence in within a couple of days once the boards are locked, since the pipeline's already set up for it."
+  },
+  {
+   "role": "user",
+   "content": "On Marcus's joint-recording idea, I'm already sold, don't re-describe it. What booth setup do we need to make that work with two mics?"
+  },
+  {
+   "role": "assistant",
+   "content": "You'll want two matched mics on separate booms with enough isolation between them, plus a shared monitor mix so both actors can hear each other clearly."
+  },
+  {
+   "role": "user",
+   "content": "Is the reel long enough yet for a first festival cut, or do we need more finished shots first?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's close \u2014 a few more finished shots and you'd have enough for a solid first festival cut."
+  },
+  {
+   "role": "user",
+   "content": "Has the model sheet been sent to every inker yet, or is someone still working off an older draft?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's out to everyone as of the latest send, but worth double-checking with the newest inker specifically since they joined after that round."
+  },
+  {
+   "role": "user",
+   "content": "Is Frodo up to date with this week's shot statuses, or do I need to reconcile it against the review notes first?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's mostly current, but reconcile it against this week's review notes before you rely on it \u2014 a couple of shots look stale."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft a short message for Vader reminding freelancers about the revision-notes format?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 something short reminding freelancers to use the standard revision-notes template and flag any ambiguous notes before starting a pass."
+  },
+  {
+   "role": "user",
+   "content": "For freelancer scheduling, how much buffer should we build in before a hard delivery date for outsourced backgrounds?"
+  },
+  {
+   "role": "assistant",
+   "content": "Build in at least a week of buffer before a hard delivery date for outsourced backgrounds \u2014 enough room to catch and fix a bad batch without touching your own schedule."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 320,
+  "middle_end_tokens": 2143,
+  "total_tokens": 2718
+ },
+ "plants": [
+  {
+   "id": "c33-referent-1",
+   "category": "referent",
+   "middle_user": "Animatic timing decision, finally made. We weighed three options: (1) sticking with hand-timed boards reviewed frame by frame in a screening room, (2) importing boards into an editing timeline with scratch audio and letting the software drive pacing, and (3) hiring an outside editor just for timing passes. Given our budget, we're going with the second one, importing into an editing timeline with scratch audio.",
+   "tail_user_fragment": "On the animatic timing approach we picked, no need to re-explain it. How soon can we get the next sequence into that timeline?",
+   "probe": "Which animatic timing approach did we settle on for Moonlit Ferry?",
+   "probes": [
+    "Which animatic timing approach did we settle on for Moonlit Ferry?",
+    "Which of the three timing options did we end up choosing?",
+    "What did we decide about how to time the animatic?",
+    "Remind me which animatic timing method we committed to."
+   ],
+   "gold": "Importing boards into an editing timeline with scratch audio and letting the software drive pacing (the second of the three options), not hand-timing in a screening room and not hiring an outside editor.",
+   "keywords": [
+    "editing timeline",
+    "scratch audio"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c33-referent-2",
+   "category": "referent",
+   "middle_user": "Marcus had a good idea for voice recording. His proposal is to record our two leads together in the same booth for banter-heavy scenes instead of recording each actor separately and cutting the performances together afterward. He thinks the timing reads far more natural that way, and I'm doing it for the remaining sessions.",
+   "tail_user_fragment": "On Marcus's joint-recording idea, I'm already sold, don't re-describe it. What booth setup do we need to make that work with two mics?",
+   "probe": "What specifically was Marcus's proposal for voice recording?",
+   "probes": [
+    "What specifically was Marcus's proposal for voice recording?",
+    "What did Marcus suggest for recording the two leads?",
+    "Describe the recording approach Marcus pitched that we adopted.",
+    "What was Marcus's idea about how to record the banter scenes?"
+   ],
+   "gold": "Recording the two lead actors together in the same booth for banter-heavy scenes, instead of recording each separately and cutting the performances together afterward.",
+   "keywords": [
+    "same booth",
+    "together",
+    "leads"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c33-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it confuses us later: 'the reel' is overloaded on our team. The compositors call the daily render output the reel too, but when I say the reel to you, I always mean the festival submission showreel we're cutting from finished shots. That's the sense I want here.",
+   "tail_user_fragment": "Is the reel long enough yet for a first festival cut, or do we need more finished shots first?",
+   "probe": "When I said 'the reel' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the reel' in this conversation, what was I referring to?",
+    "Which of the two things called 'the reel' did I mean here?",
+    "What does 'the reel' refer to in our conversation?",
+    "If I mention the reel again, what should you understand that to be?"
+   ],
+   "gold": "The festival submission showreel cut from finished shots, not the compositors' daily render output.",
+   "keywords": [
+    "festival submission",
+    "showreel"
+   ],
+   "anti_keywords": [
+    "daily render",
+    "compositors' output"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c33-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the model sheet' from here on I mean the approved final character turnaround sheet locked for production. I know some of the freelance inkers still call their rough early sketches model sheets too, but with you, the model sheet always means the locked, approved version.",
+   "tail_user_fragment": "Has the model sheet been sent to every inker yet, or is someone still working off an older draft?",
+   "probe": "When I referred to 'the model sheet' in this conversation, which one did I mean?",
+   "probes": [
+    "When I referred to 'the model sheet' in this conversation, which one did I mean?",
+    "Which version did I mean when I said 'the model sheet'?",
+    "What does 'the model sheet' refer to in our conversation, the locked one or the rough sketches?",
+    "If I bring up the model sheet again, what should you assume I'm talking about?"
+   ],
+   "gold": "The approved final character turnaround sheet locked for production, not the freelance inkers' rough early sketches.",
+   "keywords": [
+    "approved",
+    "locked",
+    "final turnaround"
+   ],
+   "anti_keywords": [
+    "rough sketches",
+    "early draft"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c33-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for the whole pilot: everything is hand-drawn and hand-inked, frame by frame. No AI-assisted in-betweening, no AI upscaling of rough passes, nothing like that anywhere in the pipeline, even if it would save us weeks. I will not budge on this regardless of how tight the schedule gets.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for speeding up the in-betweening work given our tight schedule?",
+   "probes": [
+    "What are some ideas for speeding up the in-betweening work given our tight schedule?",
+    "Give me three ways to accelerate in-betweening for the pilot.",
+    "How could we get through the remaining animation faster?",
+    "Suggest ways to compress the animation timeline without changing the process."
+   ],
+   "gold": "Suggests approaches like bringing on additional human in-betweeners, simplifying certain background shots, or renegotiating scope, while never proposing AI-assisted in-betweening or AI upscaling, ideally recalling the hand-drawn commitment.",
+   "keywords": [
+    "hand-drawn",
+    "human in-betweeners"
+   ],
+   "anti_keywords": [
+    "ai-assisted",
+    "ai upscaling"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c33-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not doing a Kickstarter or any crowdfunding campaign for this pilot. I've seen too many small studios burn goodwill promising rewards they can't deliver on time. We finish this on our own budget or we cut scope, full stop.",
+   "tail_user_fragment": null,
+   "probe": "Given the budget crunch, what funding options should we consider?",
+   "probes": [
+    "Given the budget crunch, what funding options should we consider?",
+    "If money runs tight before the pilot's done, what are our options?",
+    "What should we consider if the budget doesn't stretch far enough?",
+    "Suggest ways to handle a funding shortfall without launching a public campaign."
+   ],
+   "gold": "Suggests cutting scope, seeking a private investor or grant, or delaying delivery, while never proposing Kickstarter or crowdfunding, ideally recalling the user's rejection of crowdfunding.",
+   "keywords": [
+    "cut scope",
+    "private funding",
+    "grant"
+   ],
+   "anti_keywords": [
+    "kickstarter",
+    "crowdfunding"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c33-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on outsourcing: we tried sending overflow ink-and-paint shots to a studio called BrightLine Overseas last quarter, and half the shots came back with off-model line weight, we had to redo most of them in-house anyway. Not using them again.",
+   "tail_user_fragment": null,
+   "probe": "What should we do about overflow ink-and-paint work going forward?",
+   "probes": [
+    "What should we do about overflow ink-and-paint work going forward?",
+    "What outsourcing option should we pursue for overflow shots?",
+    "Given our capacity, how should we handle extra ink-and-paint work?",
+    "What's a better approach than what we already tried for overflow shots?"
+   ],
+   "gold": "Anything except BrightLine Overseas, e.g. a different vetted studio with a trial batch, bringing on additional freelance inkers directly, or trimming shot count, ideally acknowledging BrightLine was tried and rejected.",
+   "keywords": [
+    "off-model",
+    "redo"
+   ],
+   "anti_keywords": [
+    "brightline"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c33-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we tried a scheduling tool called TaskFerry for tracking freelancer deliverables, and nobody on the team actually updated it, so it was constantly out of date and misleading. We dropped it after a month.",
+   "tail_user_fragment": null,
+   "probe": "What should we use to track freelancer deliverables going forward?",
+   "probes": [
+    "What should we use to track freelancer deliverables going forward?",
+    "How should we track freelancer deadlines now?",
+    "What's our path forward on scheduling given the earlier problems?",
+    "What tool or process should replace what we tried before for tracking deliverables?"
+   ],
+   "gold": "Anything except TaskFerry, e.g. a simpler shared spreadsheet with a designated owner, a lightweight kanban board, or manual weekly check-ins, ideally acknowledging TaskFerry's abandonment was tried and rejected.",
+   "keywords": [
+    "out of date",
+    "dropped"
+   ],
+   "anti_keywords": [
+    "taskferry"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c33-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our festival submission tracking number for the Ottawa animation festival is OIAF-22981, submitted May 14th. Nothing to decide, just don't want to lose track of the number.",
+   "tail_user_fragment": null,
+   "probe": "What is our Ottawa festival submission tracking number, and when was it submitted?",
+   "probes": [
+    "What is our Ottawa festival submission tracking number, and when was it submitted?",
+    "What's the reference number for our OIAF submission?",
+    "When did we submit to Ottawa, and what's the tracking ID?",
+    "Remind me of the Ottawa festival submission number and date."
+   ],
+   "gold": "OIAF-22981, submitted May 14th.",
+   "keywords": [
+    "OIAF-22981",
+    "may 14"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c33-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total remaining freelancer budget for the pilot is capped at $6,300, full stop, that's everything left after paying the voice cast. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total remaining freelancer budget?",
+   "probes": [
+    "What is our total remaining freelancer budget?",
+    "How much do we have left to pay freelancers?",
+    "What's the cap on our remaining freelancer spend?",
+    "Remind me the freelancer budget limit we're working with."
+   ],
+   "gold": "$6,300 total.",
+   "keywords": [
+    "6,300"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c33-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our internal shot-tracking spreadsheet 'Frodo' from now on. Every note and email thread should say Frodo, not the real filename, since we're sharing bits of these threads with a prospective distributor sometimes.",
+   "tail_user_fragment": "Is Frodo up to date with this week's shot statuses, or do I need to reconcile it against the review notes first?",
+   "probe": "What does 'Frodo' refer to in our project?",
+   "probes": [
+    "What does 'Frodo' refer to in our project?",
+    "If I mention Frodo again, what should you understand that to mean?",
+    "Remind me what we're calling Frodo internally.",
+    "What is Frodo a codename for?"
+   ],
+   "gold": "The internal shot-tracking spreadsheet.",
+   "keywords": [
+    "shot-tracking",
+    "spreadsheet"
+   ],
+   "anti_keywords": [
+    "hobbit",
+    "ring",
+    "shire"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c33-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our private freelancer feedback channel 'Vader' in all future notes. It's just easier than typing out the full channel name, and I don't want the real name floating around in shared docs with outside collaborators.",
+   "tail_user_fragment": "Can you draft a short message for Vader reminding freelancers about the revision-notes format?",
+   "probe": "What does 'Vader' refer to in our conversation?",
+   "probes": [
+    "What does 'Vader' refer to in our conversation?",
+    "If I mention Vader later, what should you take that to mean?",
+    "What is Vader a codename for in our project?",
+    "Remind me what Vader refers to internally."
+   ],
+   "gold": "The private freelancer feedback channel.",
+   "keywords": [
+    "freelancer feedback",
+    "channel"
+   ],
+   "anti_keywords": [
+    "sith",
+    "star wars",
+    "dark side"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}

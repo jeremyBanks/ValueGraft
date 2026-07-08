@@ -1,0 +1,594 @@
+{
+ "id": "c54",
+ "title": "Public aquarium new wing opening",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in aquarium operations and marine biology, supporting a public aquarium team preparing a new exhibit wing."
+  },
+  {
+   "role": "user",
+   "content": "Hi, I'm assistant curator at Brackwater Bay Aquarium and we're building out a new coral reef and shark touch-pool wing, opening in about four months. I'd like you to be my planning partner across the whole thing: animal acquisition, life support engineering, keeper staffing, exhibit design, and the opening event. Sound okay?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. Let me lay out the main considerations."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with animal acquisition and quarantine, since that has the longest lead time. We're sourcing coral colonies and small bamboo sharks for the touch pool. What should drive our quarantine protocol timeline?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to dig into that. Here's the short version."
+  },
+  {
+   "role": "user",
+   "content": "On life support systems, the touch pool needs a separate filtration loop from the main reef tank, right, or can they share one system?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure, a few things are worth weighing there."
+  },
+  {
+   "role": "user",
+   "content": "Another definitions thing: when I say 'a touch' in this wing's context, I don't mean any random visitor contact. It specifically means a keeper-supervised, two-finger, dorsal-only contact with the bamboo sharks, following our exact protocol. Anything outside that isn't 'a touch,' it's just an incident."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll keep that in mind as we plan."
+  },
+  {
+   "role": "user",
+   "content": "For keeper staffing, how many keepers do we need per shift to safely run both the reef tank and the touch pool once we're open to the public?"
+  },
+  {
+   "role": "assistant",
+   "content": "Let's think that through. There are a couple of angles."
+  },
+  {
+   "role": "user",
+   "content": "On coral suppliers, we compared three: (1) Reeftide Farms, aquacultured but pricier, (2) Coastal Marine Imports, wild-collected with sustainability certification, or (3) a hybrid sourcing 70 percent from Reeftide and 30 percent from a local frag-swap network. We went with the hybrid, option three."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. That's a useful constraint to work within."
+  },
+  {
+   "role": "user",
+   "content": "Exhibit design question, how do we keep touch-pool visitors from overwhelming the bamboo sharks with too much handling in a single day?"
+  },
+  {
+   "role": "assistant",
+   "content": "Great thing to nail down early. Here's how I'd approach it."
+  },
+  {
+   "role": "user",
+   "content": "Personally, I think we should commit to zero wild-collected coral in this wing at all, only aquacultured or frag-swapped, even if it costs more and takes longer to stock the tank. I don't want to be the aquarium explaining a wild-collection controversy five years from now."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, thanks for flagging it clearly."
+  },
+  {
+   "role": "user",
+   "content": "Grand opening planning, we're thinking a member preview night before the public opening. How far ahead of the public date should that happen?"
+  },
+  {
+   "role": "assistant",
+   "content": "Worth pausing on. The key tradeoffs are pretty clear."
+  },
+  {
+   "role": "user",
+   "content": "I've decided against installing a 24/7 live-streaming webcam on the reef tank. It sounded good for marketing but our IT and legal review flagged too many liability concerns around minors on camera near the touch pool sightline, so that's off the table."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense. I'll factor that in going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to acquisition, how do we vet a coral supplier for sustainable sourcing versus just going with whoever's cheapest?"
+  },
+  {
+   "role": "assistant",
+   "content": "Let me give you a practical take on that."
+  },
+  {
+   "role": "user",
+   "content": "Small correction on the sharks, I mentioned we're bringing in 5 bamboo sharks for the touch pool, but the source facility could only certify 4 as healthy enough for transfer, so it's 4 sharks for opening, not 5."
+  },
+  {
+   "role": "assistant",
+   "content": "Clear enough, I'll hold to that."
+  },
+  {
+   "role": "user",
+   "content": "Our facilities diver, the guy who handles all the underwater maintenance and can fix a leaking seal faster than anyone, the whole team just calls him 'Chewie' because he's enormous and never says much. When I bring up Chewie in here, that's who I'm talking about."
+  },
+  {
+   "role": "assistant",
+   "content": "Good to have that pinned down. Noted."
+  },
+  {
+   "role": "user",
+   "content": "Life support follow-up, what's a reasonable protein skimmer capacity for a reef tank this size?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable question, and the answer depends on a couple of factors."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it trips us up: when I say 'the bay' at Brackwater, I don't mean the actual bay outside the building. It's our internal name for the off-exhibit quarantine holding room where new animals sit before going on display."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll keep it straight from here on."
+  },
+  {
+   "role": "user",
+   "content": "Staffing again, should touch-pool keepers get specialized training beyond general aquarist training, given the public interaction?"
+  },
+  {
+   "role": "assistant",
+   "content": "Here's how I'd frame it for a shop your size."
+  },
+  {
+   "role": "user",
+   "content": "Filtration decision for the touch pool. Three options: (1) fully shared system with the main reef tank, (2) fully separate independent system, or (3) a semi-shared system with a valve to isolate the touch pool during a disease event. We're going with option three, the semi-shared isolatable system."
+  },
+  {
+   "role": "assistant",
+   "content": "Thanks for the clarity, that helps the planning."
+  },
+  {
+   "role": "user",
+   "content": "For exhibit design, should the shark touch pool have a hard visitor cap per timed entry slot?"
+  },
+  {
+   "role": "assistant",
+   "content": "Solid one to sort out now rather than later."
+  },
+  {
+   "role": "user",
+   "content": "My honest stance on the touch pool is that we should cap it at a hard 20 visitors per 15-minute slot, even though that's fewer than what similar aquariums allow, because I've seen what happens to animal stress levels when pools get crowded."
+  },
+  {
+   "role": "assistant",
+   "content": "Right, I'll treat that as settled."
+  },
+  {
+   "role": "user",
+   "content": "On the grand opening, is it worth inviting local school groups for a dedicated preview morning before the general public event?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. Let me lay out the main considerations."
+  },
+  {
+   "role": "user",
+   "content": "One thing I'm ruling out for this phase: adding a separate stingray touch pool alongside the shark one. We looked at the space and staffing math and it's just too much for one opening, so that idea is shelved."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted and locked in on my end."
+  },
+  {
+   "role": "user",
+   "content": "Correction on the reef tank size, I said 8,000 gallons earlier, but the engineering firm remeasured after the sump redesign and it's actually 7,200 gallons total system volume."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll keep that in mind as we plan."
+  },
+  {
+   "role": "user",
+   "content": "We've nicknamed our oldest bamboo shark 'Paul' since he's been with the aquarium longer than any of the new arrivals and the keepers say he sets the pace for how the others behave in the pool. When I say Paul, that's the shark I mean."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. That's a useful constraint to work within."
+  },
+  {
+   "role": "user",
+   "content": "Back to quarantine, what's the minimum observation period before a new coral colony goes into the display tank?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to dig into that. Here's the short version."
+  },
+  {
+   "role": "user",
+   "content": "Whatever's happening in the bay right now, don't re-explain what it is, just tell me if it's at capacity."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, thanks for flagging it clearly."
+  },
+  {
+   "role": "user",
+   "content": "If a visitor does something outside what counts as a touch under our definition, what's the reporting process?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure, a few things are worth weighing there."
+  },
+  {
+   "role": "user",
+   "content": "For the filtration setup we picked, skip the recap, what valve size should the isolation loop use?"
+  },
+  {
+   "role": "assistant",
+   "content": "Let's think that through. There are a couple of angles."
+  },
+  {
+   "role": "user",
+   "content": "For the coral sourcing plan we settled on, no need to recap it, what documentation should we request from the frag-swap side?"
+  },
+  {
+   "role": "assistant",
+   "content": "Great thing to nail down early. Here's how I'd approach it."
+  },
+  {
+   "role": "user",
+   "content": "Given how I feel about touch pool caps, does the timed-entry ticketing system even need to sell more slots per hour?"
+  },
+  {
+   "role": "assistant",
+   "content": "Worth pausing on. The key tradeoffs are pretty clear."
+  },
+  {
+   "role": "user",
+   "content": "Keeping my stance on sourcing in mind, should we still keep Coastal Marine Imports as a backup supplier just in case?"
+  },
+  {
+   "role": "assistant",
+   "content": "Let me give you a practical take on that."
+  },
+  {
+   "role": "user",
+   "content": "How's Paul adjusting to the new touch pool layout compared to the younger sharks?"
+  },
+  {
+   "role": "assistant",
+   "content": "Reasonable question, and the answer depends on a couple of factors."
+  },
+  {
+   "role": "user",
+   "content": "Is Chewie scheduled to do the pre-opening seal inspection on the touch pool acrylic?"
+  },
+  {
+   "role": "assistant",
+   "content": "Here's how I'd frame it for a shop your size."
+  },
+  {
+   "role": "user",
+   "content": "For life support, who should be on call if the reef tank's chemistry alarms trip in the middle of the night?"
+  },
+  {
+   "role": "assistant",
+   "content": "Solid one to sort out now rather than later."
+  },
+  {
+   "role": "user",
+   "content": "On staffing, should the touch-pool keepers rotate with reef-tank keepers or stay dedicated to one area?"
+  },
+  {
+   "role": "assistant",
+   "content": "Good question. Let me lay out the main considerations."
+  },
+  {
+   "role": "user",
+   "content": "Quick exhibit design question, should signage near the touch pool explain the sharks' conservation status?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to dig into that. Here's the short version."
+  },
+  {
+   "role": "user",
+   "content": "Last thing, should the grand opening ribbon-cutting happen at the reef tank or the touch pool?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure, a few things are worth weighing there."
+  },
+  {
+   "role": "assistant",
+   "content": "That covers the ground we set out to. Happy to pick any thread back up whenever you're ready."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 47,
+  "early_end_tokens": 221,
+  "middle_end_tokens": 1643,
+  "total_tokens": 2229
+ },
+ "plants": [
+  {
+   "id": "c54-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it trips us up: when I say 'the bay' at Brackwater, I don't mean the actual bay outside the building. It's our internal name for the off-exhibit quarantine holding room where new animals sit before going on display.",
+   "tail_user_fragment": "Whatever's happening in the bay right now, don't re-explain what it is, just tell me if it's at capacity.",
+   "probe": "What does 'the bay' refer to at Brackwater Bay Aquarium?",
+   "probes": [
+    "What does 'the bay' refer to at Brackwater Bay Aquarium?",
+    "When we say 'the bay' internally, what do we mean?",
+    "Is 'the bay' the body of water outside or something else?",
+    "What happens to animals in 'the bay' before they go on display?"
+   ],
+   "gold": "The off-exhibit quarantine holding room where new animals are kept before going on display, not the actual bay outside the building.",
+   "keywords": [
+    "quarantine holding room",
+    "off-exhibit",
+    "before display"
+   ],
+   "anti_keywords": [
+    "the actual bay",
+    "body of water outside"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c54-sense-2",
+   "category": "sense",
+   "middle_user": "Another definitions thing: when I say 'a touch' in this wing's context, I don't mean any random visitor contact. It specifically means a keeper-supervised, two-finger, dorsal-only contact with the bamboo sharks, following our exact protocol. Anything outside that isn't 'a touch,' it's just an incident.",
+   "tail_user_fragment": "If a visitor does something outside what counts as a touch under our definition, what's the reporting process?",
+   "probe": "What does 'a touch' specifically mean in the shark touch-pool protocol?",
+   "probes": [
+    "What does 'a touch' specifically mean in the shark touch-pool protocol?",
+    "How did we define 'a touch' for the touch pool?",
+    "What counts as 'a touch' versus an incident?",
+    "What's the exact protocol behind the term 'a touch'?"
+   ],
+   "gold": "A keeper-supervised, two-finger, dorsal-only contact with the bamboo sharks following the exact protocol; anything else counts as an incident, not a touch.",
+   "keywords": [
+    "keeper-supervised",
+    "two-finger",
+    "dorsal-only"
+   ],
+   "anti_keywords": [
+    "any visitor contact",
+    "unsupervised handling"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c54-referent-1",
+   "category": "referent",
+   "middle_user": "Filtration decision for the touch pool. Three options: (1) fully shared system with the main reef tank, (2) fully separate independent system, or (3) a semi-shared system with a valve to isolate the touch pool during a disease event. We're going with option three, the semi-shared isolatable system.",
+   "tail_user_fragment": "For the filtration setup we picked, skip the recap, what valve size should the isolation loop use?",
+   "probe": "Which filtration setup did we decide on for the touch pool?",
+   "probes": [
+    "Which filtration setup did we decide on for the touch pool?",
+    "Out of the three filtration options, which did we choose?",
+    "Remind me what we decided about the touch pool's filtration system.",
+    "Is the touch pool sharing filtration with the reef tank or not?"
+   ],
+   "gold": "A semi-shared system with a valve allowing the touch pool to be isolated from the main reef tank during a disease event (option three).",
+   "keywords": [
+    "semi-shared",
+    "isolation valve"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c54-referent-2",
+   "category": "referent",
+   "middle_user": "On coral suppliers, we compared three: (1) Reeftide Farms, aquacultured but pricier, (2) Coastal Marine Imports, wild-collected with sustainability certification, or (3) a hybrid sourcing 70 percent from Reeftide and 30 percent from a local frag-swap network. We went with the hybrid, option three.",
+   "tail_user_fragment": "For the coral sourcing plan we settled on, no need to recap it, what documentation should we request from the frag-swap side?",
+   "probe": "Which coral sourcing approach did we decide on?",
+   "probes": [
+    "Which coral sourcing approach did we decide on?",
+    "Out of the three coral supplier options, which did we choose?",
+    "Remind me what we decided about coral sourcing for the wing.",
+    "Are we using one coral supplier or a mix?"
+   ],
+   "gold": "The hybrid approach: about 70 percent from Reeftide Farms and 30 percent from a local frag-swap network (option three).",
+   "keywords": [
+    "hybrid sourcing",
+    "Reeftide",
+    "frag-swap network"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c54-stance-1",
+   "category": "stance",
+   "middle_user": "My honest stance on the touch pool is that we should cap it at a hard 20 visitors per 15-minute slot, even though that's fewer than what similar aquariums allow, because I've seen what happens to animal stress levels when pools get crowded.",
+   "tail_user_fragment": "Given how I feel about touch pool caps, does the timed-entry ticketing system even need to sell more slots per hour?",
+   "probe": "What is the user's stance on touch pool visitor caps?",
+   "probes": [
+    "What is the user's stance on touch pool visitor caps?",
+    "How does the user feel about how many visitors should be allowed per slot?",
+    "What's the user's position on visitor caps versus other aquariums' practices?",
+    "Why does the user want a lower visitor cap at the touch pool?"
+   ],
+   "gold": "The user wants a hard cap of 20 visitors per 15-minute slot at the touch pool, fewer than comparable aquariums allow, prioritizing animal stress levels.",
+   "keywords": [
+    "cap at 20",
+    "15-minute slot",
+    "animal stress"
+   ],
+   "anti_keywords": [
+    "allow more visitors",
+    "match other aquariums' higher caps"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c54-stance-2",
+   "category": "stance",
+   "middle_user": "Personally, I think we should commit to zero wild-collected coral in this wing at all, only aquacultured or frag-swapped, even if it costs more and takes longer to stock the tank. I don't want to be the aquarium explaining a wild-collection controversy five years from now.",
+   "tail_user_fragment": "Keeping my stance on sourcing in mind, should we still keep Coastal Marine Imports as a backup supplier just in case?",
+   "probe": "What is the user's stance on wild-collected coral for the new wing?",
+   "probes": [
+    "What is the user's stance on wild-collected coral for the new wing?",
+    "Does the user want any wild-collected coral in the new wing?",
+    "What's the user's position on aquacultured versus wild-collected coral?",
+    "Why does the user oppose using wild-collected coral?"
+   ],
+   "gold": "The user wants zero wild-collected coral in the new wing, only aquacultured or frag-swapped sources, even at higher cost and slower stocking, to avoid future controversy.",
+   "keywords": [
+    "zero wild-collected",
+    "aquacultured only",
+    "avoid controversy"
+   ],
+   "anti_keywords": [
+    "fine to use wild-collected",
+    "cost matters more than sourcing"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c54-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "One thing I'm ruling out for this phase: adding a separate stingray touch pool alongside the shark one. We looked at the space and staffing math and it's just too much for one opening, so that idea is shelved.",
+   "tail_user_fragment": "",
+   "probe": "What idea did the user rule out for this phase of the new wing?",
+   "probes": [
+    "What idea did the user rule out for this phase of the new wing?",
+    "Is there a stingray touch pool planned alongside the shark one?",
+    "What did the user decide to shelve for this opening?",
+    "Why was the stingray touch pool ruled out?"
+   ],
+   "gold": "Adding a separate stingray touch pool alongside the shark touch pool; ruled out due to space and staffing constraints for this opening.",
+   "keywords": [
+    "ruled out",
+    "stingray touch pool",
+    "shelved"
+   ],
+   "anti_keywords": [
+    "adding a stingray pool",
+    "moving forward with stingrays"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c54-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "I've decided against installing a 24/7 live-streaming webcam on the reef tank. It sounded good for marketing but our IT and legal review flagged too many liability concerns around minors on camera near the touch pool sightline, so that's off the table.",
+   "tail_user_fragment": "",
+   "probe": "What idea did the user rule out regarding the reef tank?",
+   "probes": [
+    "What idea did the user rule out regarding the reef tank?",
+    "Is there a live-streaming webcam planned for the reef tank?",
+    "What did legal review flag that caused an idea to be dropped?",
+    "Why was the reef tank webcam ruled out?"
+   ],
+   "gold": "A 24/7 live-streaming webcam on the reef tank; ruled out due to liability concerns around minors visible on camera near the touch pool.",
+   "keywords": [
+    "ruled out",
+    "live-streaming webcam",
+    "liability concerns"
+   ],
+   "anti_keywords": [
+    "installed the webcam",
+    "moving forward with live stream"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c54-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Correction on the reef tank size, I said 8,000 gallons earlier, but the engineering firm remeasured after the sump redesign and it's actually 7,200 gallons total system volume.",
+   "tail_user_fragment": "",
+   "probe": "What is the actual total system volume of the reef tank?",
+   "probes": [
+    "What is the actual total system volume of the reef tank?",
+    "What's the corrected gallon count for the reef tank?",
+    "How big is the reef tank system, after the remeasurement?",
+    "Did the reef tank's volume change from what was said earlier?"
+   ],
+   "gold": "7,200 gallons, corrected down from the earlier stated 8,000 gallons after the sump redesign remeasurement.",
+   "keywords": [
+    "7,200 gallons"
+   ],
+   "anti_keywords": [
+    "8,000 gallons"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c54-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Small correction on the sharks, I mentioned we're bringing in 5 bamboo sharks for the touch pool, but the source facility could only certify 4 as healthy enough for transfer, so it's 4 sharks for opening, not 5.",
+   "tail_user_fragment": "",
+   "probe": "How many bamboo sharks are actually coming in for the touch pool opening?",
+   "probes": [
+    "How many bamboo sharks are actually coming in for the touch pool opening?",
+    "What's the corrected count of bamboo sharks for the opening?",
+    "How many sharks were certified healthy for transfer?",
+    "Did the shark count change from what was said earlier?"
+   ],
+   "gold": "4 bamboo sharks, corrected down from the originally stated 5, since only 4 were certified healthy for transfer.",
+   "keywords": [
+    "4 bamboo sharks",
+    "certified healthy"
+   ],
+   "anti_keywords": [
+    "5 sharks"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c54-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "We've nicknamed our oldest bamboo shark 'Paul' since he's been with the aquarium longer than any of the new arrivals and the keepers say he sets the pace for how the others behave in the pool. When I say Paul, that's the shark I mean.",
+   "tail_user_fragment": "How's Paul adjusting to the new touch pool layout compared to the younger sharks?",
+   "probe": "Who or what is 'Paul' referring to in our conversation?",
+   "probes": [
+    "Who or what is 'Paul' referring to in our conversation?",
+    "When the user mentions Paul, what are they talking about?",
+    "What is the nickname 'Paul' referring to at the aquarium?",
+    "Why is the shark nicknamed Paul?"
+   ],
+   "gold": "A nickname for the aquarium's oldest bamboo shark, who has been there longest and sets behavioral pace for the others, not the Dune character.",
+   "keywords": [
+    "oldest bamboo shark",
+    "sets the pace",
+    "longest at aquarium"
+   ],
+   "anti_keywords": [
+    "Paul Atreides",
+    "Dune",
+    "Kwisatz Haderach",
+    "spice"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c54-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Our facilities diver, the guy who handles all the underwater maintenance and can fix a leaking seal faster than anyone, the whole team just calls him 'Chewie' because he's enormous and never says much. When I bring up Chewie in here, that's who I'm talking about.",
+   "tail_user_fragment": "Is Chewie scheduled to do the pre-opening seal inspection on the touch pool acrylic?",
+   "probe": "Who does 'Chewie' refer to in our conversation?",
+   "probes": [
+    "Who does 'Chewie' refer to in our conversation?",
+    "When the user mentions Chewie, who are they talking about?",
+    "What is the nickname 'Chewie' referring to at the aquarium?",
+    "Why is the facilities diver nicknamed Chewie?"
+   ],
+   "gold": "A nickname for the aquarium's facilities/maintenance diver, a large, quiet man known for fixing underwater equipment quickly, not the Star Wars character.",
+   "keywords": [
+    "facilities diver",
+    "maintenance",
+    "fixes equipment"
+   ],
+   "anti_keywords": [
+    "Chewbacca",
+    "Star Wars",
+    "Wookiee",
+    "Millennium Falcon"
+   ],
+   "distance": "far"
+  }
+ ],
+ "meta": {
+  "author": "opus-render"
+ }
+}

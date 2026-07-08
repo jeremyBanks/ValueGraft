@@ -1,0 +1,562 @@
+{
+ "id": "c29",
+ "title": "Food-truck fleet expansion",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in mobile food business operations, supporting an operator scaling a food-truck fleet."
+  },
+  {
+   "role": "user",
+   "content": "Hey, so Rolling Ember is going from one truck to three, and I need to plan this whole expansion out: routes and event bookings, the shared commissary kitchen, permits across a few different cities, hiring truck leads, and building out the new trucks. Can you be my planning partner across all of it over the next couple months?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to help \u2014 let's work through routes, commissary, permitting, staffing, and the build in order of urgency."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with route and event scheduling since that's where the money actually gets made. With three trucks, how should I think about splitting up weekday lunch routes versus weekend festival bookings so we're not double-booking staff?"
+  },
+  {
+   "role": "assistant",
+   "content": "Anchor each truck to a fixed weekday route first, then layer weekend festival bookings around whichever truck has the lightest weekday load."
+  },
+  {
+   "role": "user",
+   "content": "Generator decision time. We looked at three options: (1) a diesel generator matched exactly to peak equipment wattage, (2) a larger diesel generator with 40 percent headroom for future equipment, or (3) a hybrid battery-plus-small-generator setup to cut fuel costs. After running the numbers with our mechanic, we're going with the larger diesel generator with headroom."
+  },
+  {
+   "role": "assistant",
+   "content": "That headroom will pay off once you add more equipment down the line."
+  },
+  {
+   "role": "user",
+   "content": "For the commissary kitchen, we're going to share one prep space across all three trucks. What's the biggest logistical headache people run into with a shared commissary at this scale?"
+  },
+  {
+   "role": "assistant",
+   "content": "The biggest one is usually walk-in and prep-station contention when all three trucks try to load out around the same time."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the smoker' is overloaded on our team. Truck two's staff also nicknames their whole prep line the smoker because it runs hot in summer, but when I say the smoker to you, I always mean our actual offset smoker unit we haul on the trailer to festivals, not the prep line."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, the smoker means the trailer unit, not truck two's prep line."
+  },
+  {
+   "role": "user",
+   "content": "Permitting question: is it usually cheaper to get one truck permitted in three cities, or three separate trucks each permitted in one city?"
+  },
+  {
+   "role": "assistant",
+   "content": "Permitting one truck in three cities is usually cheaper than permitting three trucks in one city, since most fees are per-truck."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule going forward: no truck ever serves pre-smoked, reheated-only meat, at any location, no matter how much it would simplify multi-truck logistics. Everything gets smoked fresh on-site or on the trailer same-day. I will not budge on this even as we scale to three trucks."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, everything smoked fresh same-day, no exceptions as you scale."
+  },
+  {
+   "role": "user",
+   "content": "Staffing-wise, how much authority should a truck lead actually have over daily menu tweaks versus sticking to a fixed script from me?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give leads authority over small tweaks like sides or specials, but keep core menu items and pricing fixed from you."
+  },
+  {
+   "role": "user",
+   "content": "For the record on commissary vendors, we already tried a shared kitchen called Foundry Commissary last spring, and their walk-in cooler kept failing during our overnight prep, we lost two full batches of brisket before we left. We are not going back to them."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that commissary's off the list for good."
+  },
+  {
+   "role": "user",
+   "content": "For the new truck build-out, we're deciding on generator sizing. What should drive that decision besides just equipment wattage?"
+  },
+  {
+   "role": "assistant",
+   "content": "Factor in noise limits at venues, run-time between refuels, and how much idle headroom you want for hot days."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: the VIN for the new third truck is 1FDXE4FS9NDA55210, purchase closed April 9th. Nothing to decide, just don't want to lose track of it."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, logged for reference."
+  },
+  {
+   "role": "user",
+   "content": "Back to scheduling, how far in advance do festival organizers usually want a signed vendor agreement before the event?"
+  },
+  {
+   "role": "assistant",
+   "content": "Most organizers want a signed agreement 60-90 days out, sometimes longer for marquee festivals."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our festival booking spreadsheet 'Mordor' from now on. Every internal message and shared doc should say Mordor instead of the actual file name, since promoters sometimes see our screens at events."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, I'll use Mordor for the booking spreadsheet from here on."
+  },
+  {
+   "role": "user",
+   "content": "Renata pitched an idea for truck-lead training. Her proposal is a 'ride-along week': every new truck lead spends their first week riding along on someone else's truck doing every station rotation, no running their own truck at all until week two. She thinks it's the only way to build real judgment before someone's alone on a truck. I'm adopting it."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a solid way to build judgment before anyone's running a truck alone."
+  },
+  {
+   "role": "user",
+   "content": "For staffing, what's a fair trial period for a new truck lead before I hand them a truck solo for a weekend festival?"
+  },
+  {
+   "role": "assistant",
+   "content": "A few solo-supervised shifts plus one full festival day is a reasonable bar before handing over a truck."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the route' from here on I mean the fixed weekday lunch circuit through the business district. I know staff also casually calls a one-off festival booking a route, but with you, the route always means the fixed weekday circuit."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, the route means the fixed weekday circuit, not a one-off festival booking."
+  },
+  {
+   "role": "user",
+   "content": "On the commissary, how should we handle inventory so three trucks aren't accidentally grabbing from the same prep batch and running short?"
+  },
+  {
+   "role": "assistant",
+   "content": "Assign each truck its own labeled prep bins and a shared logbook so nobody grabs from another truck's allocation."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not doing a fourth truck this year, even though a promoter keeps offering us a guaranteed festival slot if we bring another truck. Three is already stretching our commissary and staffing. I don't want to hear the pitch again this season."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, staying at three trucks for the year, no exceptions on that pitch."
+  },
+  {
+   "role": "user",
+   "content": "Build-out again, should the new truck's service window be on the same side as the current two trucks or does that not matter?"
+  },
+  {
+   "role": "assistant",
+   "content": "It matters less than site layout at each event, but matching your existing trucks simplifies staff training."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting, we used a permit expediting service called QuickPermit Co for our first out-of-city permit last year. They filed the wrong zoning category and it cost us three weeks of delay fixing it. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, that service is out for future filings."
+  },
+  {
+   "role": "user",
+   "content": "Permitting follow-up, how do health inspections typically work when a truck moves between cities on a rotating schedule?"
+  },
+  {
+   "role": "assistant",
+   "content": "Expect each city to inspect independently on its own schedule, so keep a rolling compliance calendar."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total build-out budget for the new truck is capped at $97,500, full stop, that's everything after the chassis purchase. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, noted for the build-out tracking."
+  },
+  {
+   "role": "user",
+   "content": "One more on scheduling, what's a sane cancellation policy to have in our vendor agreements for weather-related event cancellations?"
+  },
+  {
+   "role": "assistant",
+   "content": "Build in a tiered refund or credit based on how close to the event date the cancellation happens."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our new truck-lead training checklist 'Kelsier' in all future notes. It's just easier than typing out the full document name every time in shift-handoff texts."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Kelsier it is for the training checklist."
+  },
+  {
+   "role": "user",
+   "content": "Back to staffing, how should we structure pay differently for a truck lead versus a regular line cook?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pay leads a flat premium over line cook rate, plus a small per-event bonus for solo-run festivals."
+  },
+  {
+   "role": "user",
+   "content": "On the generator we picked, no need to walk through the options again. What maintenance interval should we plan around for it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Plan on oil and filter changes roughly every 100-150 operating hours, plus a seasonal full inspection."
+  },
+  {
+   "role": "user",
+   "content": "On Renata's ride-along week idea, I'm already committed, don't re-explain it. How should we track what a trainee has rotated through?"
+  },
+  {
+   "role": "assistant",
+   "content": "A simple station checklist they and the lead both sign off on after each rotation works well."
+  },
+  {
+   "role": "user",
+   "content": "Should the smoker travel with truck one or stay dedicated to the trailer for festival weekends?"
+  },
+  {
+   "role": "assistant",
+   "content": "Keep it dedicated to the trailer so it's always festival-ready without disrupting truck one's daily route."
+  },
+  {
+   "role": "user",
+   "content": "How many stops should the route include once we add the third truck to it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Add one or two new stops informed by foot traffic data rather than splitting the existing stops three ways."
+  },
+  {
+   "role": "user",
+   "content": "Is Mordor up to date with the new third truck's availability for next month's bookings?"
+  },
+  {
+   "role": "assistant",
+   "content": "Worth a quick pass to confirm the new truck's open dates are reflected before you confirm any more bookings."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft the first section of Kelsier so new truck leads know what to expect during ride-along week?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 cover the station rotation order, what to note at each station, and who they're shadowing."
+  },
+  {
+   "role": "user",
+   "content": "For the build-out, what's a sane timeline between the new truck's delivery and its first live event?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give yourself two to three weeks for equipment shakedown and staff familiarization before the first live event."
+  },
+  {
+   "role": "user",
+   "content": "On the commissary, should we stagger prep shifts across the three trucks or do one big shared prep block?"
+  },
+  {
+   "role": "assistant",
+   "content": "Stagger them so each truck gets dedicated station time instead of competing for the same equipment at once."
+  },
+  {
+   "role": "user",
+   "content": "Permitting-wise, what should go in our internal tracker so we don't miss a renewal in any of the cities?"
+  },
+  {
+   "role": "assistant",
+   "content": "Track renewal dates, contact info per city office, and required documents so nothing slips through unnoticed."
+  },
+  {
+   "role": "user",
+   "content": "Last thing for today, what should the pre-launch checklist look like for the new truck's first two weeks on the road?"
+  },
+  {
+   "role": "assistant",
+   "content": "Confirm permits posted, equipment tested under full load, staff trained on the new layout, and a soft-launch route lined up."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 263,
+  "middle_end_tokens": 1983,
+  "total_tokens": 2630
+ },
+ "plants": [
+  {
+   "id": "c29-referent-1",
+   "category": "referent",
+   "middle_user": "Generator decision time. We looked at three options: (1) a diesel generator matched exactly to peak equipment wattage, (2) a larger diesel generator with 40 percent headroom for future equipment, or (3) a hybrid battery-plus-small-generator setup to cut fuel costs. After running the numbers with our mechanic, we're going with the larger diesel generator with headroom.",
+   "tail_user_fragment": "On the generator we picked, no need to walk through the options again. What maintenance interval should we plan around for it?",
+   "probe": "Which generator option did we decide on for the new truck?",
+   "probes": [
+    "Which generator option did we decide on for the new truck?",
+    "Which of the three generator options did we end up choosing?",
+    "What did we settle on for the new truck's power setup?",
+    "Remind me which generator we committed to."
+   ],
+   "gold": "The larger diesel generator with 40 percent headroom (the second of the three options), not the exactly-matched generator or the hybrid battery setup.",
+   "keywords": [
+    "diesel generator",
+    "40 percent headroom"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c29-referent-2",
+   "category": "referent",
+   "middle_user": "Renata pitched an idea for truck-lead training. Her proposal is a 'ride-along week': every new truck lead spends their first week riding along on someone else's truck doing every station rotation, no running their own truck at all until week two. She thinks it's the only way to build real judgment before someone's alone on a truck. I'm adopting it.",
+   "tail_user_fragment": "On Renata's ride-along week idea, I'm already committed, don't re-explain it. How should we track what a trainee has rotated through?",
+   "probe": "What exactly was Renata's training proposal?",
+   "probes": [
+    "What exactly was Renata's training proposal?",
+    "What did Renata suggest for training new truck leads?",
+    "Describe the training format Renata pitched that we're adopting.",
+    "What was Renata's idea for onboarding new truck leads?"
+   ],
+   "gold": "A 'ride-along week' where new truck leads spend their entire first week rotating through every station on someone else's truck, with no running their own truck until week two.",
+   "keywords": [
+    "ride-along week",
+    "station rotation"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c29-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the smoker' is overloaded on our team. Truck two's staff also nicknames their whole prep line the smoker because it runs hot in summer, but when I say the smoker to you, I always mean our actual offset smoker unit we haul on the trailer to festivals, not the prep line.",
+   "tail_user_fragment": "Should the smoker travel with truck one or stay dedicated to the trailer for festival weekends?",
+   "probe": "When I said 'the smoker' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the smoker' in this conversation, what was I referring to?",
+    "Which of the two things called 'the smoker' did I mean here?",
+    "What does 'the smoker' refer to in our conversation?",
+    "If I mention the smoker again, what should you understand that to be?"
+   ],
+   "gold": "The actual offset smoker unit hauled on the trailer to festivals, not truck two's prep line that staff also nickname the smoker.",
+   "keywords": [
+    "offset smoker unit",
+    "trailer"
+   ],
+   "anti_keywords": [
+    "prep line",
+    "truck two's line"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c29-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the route' from here on I mean the fixed weekday lunch circuit through the business district. I know staff also casually calls a one-off festival booking a route, but with you, the route always means the fixed weekday circuit.",
+   "tail_user_fragment": "How many stops should the route include once we add the third truck to it?",
+   "probe": "When I referred to 'the route' in this conversation, which schedule did I mean?",
+   "probes": [
+    "When I referred to 'the route' in this conversation, which schedule did I mean?",
+    "Which schedule did I mean when I said 'the route'?",
+    "What does 'the route' refer to in our conversation, the weekday circuit or a festival booking?",
+    "If I bring up the route again, what should you assume I'm talking about?"
+   ],
+   "gold": "The fixed weekday lunch circuit through the business district, not a one-off festival booking.",
+   "keywords": [
+    "weekday lunch circuit",
+    "business district"
+   ],
+   "anti_keywords": [
+    "one-off festival booking"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c29-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule going forward: no truck ever serves pre-smoked, reheated-only meat, at any location, no matter how much it would simplify multi-truck logistics. Everything gets smoked fresh on-site or on the trailer same-day. I will not budge on this even as we scale to three trucks.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for making meat prep more efficient across three trucks?",
+   "probes": [
+    "What are some ideas for making meat prep more efficient across three trucks?",
+    "Give me three ways to streamline meat prep as we add trucks.",
+    "How could we make prep logistics smoother with three trucks running?",
+    "Suggest ways to scale up meat prep without sacrificing quality."
+   ],
+   "gold": "Suggests approaches like staggered commissary prep shifts, standardized rub batching, or trailer-smoker scheduling, while never proposing pre-smoked reheated meat, ideally recalling the smoked-fresh-same-day commitment.",
+   "keywords": [
+    "smoked fresh",
+    "same-day"
+   ],
+   "anti_keywords": [
+    "pre-smoked",
+    "reheated"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c29-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not doing a fourth truck this year, even though a promoter keeps offering us a guaranteed festival slot if we bring another truck. Three is already stretching our commissary and staffing. I don't want to hear the pitch again this season.",
+   "tail_user_fragment": null,
+   "probe": "How should we handle high-demand festival requests we can't currently staff?",
+   "probes": [
+    "How should we handle high-demand festival requests we can't currently staff?",
+    "If a promoter wants more trucks than we have, what are our options?",
+    "What should we do about festival demand exceeding our truck count?",
+    "Suggest ways to handle overflow demand without adding a truck."
+   ],
+   "gold": "Suggests approaches like prioritizing higher-value events, rotating existing trucks more aggressively, or politely declining, while never proposing adding a fourth truck this year, ideally recalling the decision to stay at three.",
+   "keywords": [
+    "stay at three",
+    "this year"
+   ],
+   "anti_keywords": [
+    "fourth truck"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c29-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on commissary vendors, we already tried a shared kitchen called Foundry Commissary last spring, and their walk-in cooler kept failing during our overnight prep, we lost two full batches of brisket before we left. We are not going back to them.",
+   "tail_user_fragment": null,
+   "probe": "What should we look at for a commissary space as we add trucks?",
+   "probes": [
+    "What should we look at for a commissary space as we add trucks?",
+    "What commissary option should we consider for the fleet?",
+    "Given our needs, how should we source commissary kitchen space going forward?",
+    "What's a better option than what we already tried for commissary space?"
+   ],
+   "gold": "Anything except Foundry Commissary, e.g. a different shared kitchen with verified reliable refrigeration, or a dedicated leased prep space, ideally acknowledging Foundry was tried and rejected.",
+   "keywords": [
+    "walk-in cooler failing",
+    "lost brisket"
+   ],
+   "anti_keywords": [
+    "foundry commissary"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c29-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting, we used a permit expediting service called QuickPermit Co for our first out-of-city permit last year. They filed the wrong zoning category and it cost us three weeks of delay fixing it. Not using them again.",
+   "tail_user_fragment": null,
+   "probe": "Who should handle permitting for the new cities we're expanding into?",
+   "probes": [
+    "Who should handle permitting for the new cities we're expanding into?",
+    "How should we handle multi-city permitting given the earlier problems?",
+    "What's our path forward on permits for the new markets?",
+    "Who or what should handle the new city permit filings?"
+   ],
+   "gold": "Anything except QuickPermit Co, e.g. a different vetted permitting service, direct filing with in-house research, or a local permitting attorney, ideally acknowledging QuickPermit's zoning error was tried and rejected.",
+   "keywords": [
+    "wrong zoning category",
+    "three weeks delay"
+   ],
+   "anti_keywords": [
+    "quickpermit"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c29-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: the VIN for the new third truck is 1FDXE4FS9NDA55210, purchase closed April 9th. Nothing to decide, just don't want to lose track of it.",
+   "tail_user_fragment": null,
+   "probe": "What is the VIN for the new third truck, and when did the purchase close?",
+   "probes": [
+    "What is the VIN for the new third truck, and when did the purchase close?",
+    "What's the VIN on the new truck?",
+    "When did we close on the third truck, and what's the VIN?",
+    "Remind me the VIN and purchase date for the new truck."
+   ],
+   "gold": "1FDXE4FS9NDA55210, purchase closed April 9th.",
+   "keywords": [
+    "1FDXE4FS9NDA55210",
+    "april 9"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c29-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total build-out budget for the new truck is capped at $97,500, full stop, that's everything after the chassis purchase. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total build-out budget for the new truck?",
+   "probes": [
+    "What is our total build-out budget for the new truck?",
+    "How much do we have for the new truck's build-out?",
+    "What's the cap on the new truck's build-out budget?",
+    "Remind me the build-out spend limit for the third truck."
+   ],
+   "gold": "$97,500 total.",
+   "keywords": [
+    "97,500"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c29-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our festival booking spreadsheet 'Mordor' from now on. Every internal message and shared doc should say Mordor instead of the actual file name, since promoters sometimes see our screens at events.",
+   "tail_user_fragment": "Is Mordor up to date with the new third truck's availability for next month's bookings?",
+   "probe": "What does 'Mordor' refer to in our project?",
+   "probes": [
+    "What does 'Mordor' refer to in our project?",
+    "If I mention Mordor again, what should you understand that to mean?",
+    "Remind me what we're calling Mordor internally.",
+    "What is Mordor a codename for?"
+   ],
+   "gold": "The festival booking spreadsheet.",
+   "keywords": [
+    "festival booking spreadsheet"
+   ],
+   "anti_keywords": [
+    "dark land",
+    "sauron",
+    "lord of the rings"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c29-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our new truck-lead training checklist 'Kelsier' in all future notes. It's just easier than typing out the full document name every time in shift-handoff texts.",
+   "tail_user_fragment": "Can you draft the first section of Kelsier so new truck leads know what to expect during ride-along week?",
+   "probe": "What does 'Kelsier' refer to in our conversation?",
+   "probes": [
+    "What does 'Kelsier' refer to in our conversation?",
+    "If I mention Kelsier later, what should you take that to mean?",
+    "What is Kelsier a codename for in our project?",
+    "Remind me what Kelsier refers to internally."
+   ],
+   "gold": "The new truck-lead training checklist.",
+   "keywords": [
+    "training checklist",
+    "truck-lead document"
+   ],
+   "anti_keywords": [
+    "mistborn",
+    "allomancer",
+    "sanderson character"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet-render"
+ }
+}
