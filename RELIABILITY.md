@@ -115,3 +115,12 @@ an `ssh` inside a `while read` loop silently ate stdin so the health check only 
 - Do NOT hand-roll ad-hoc checks in place of the linter. Standard tooling over hacks — same
   principle as the observability rule above. These are solved problems.
 - `bash -n` and a manual smoke run are NECESSARY but NOT SUFFICIENT; shellcheck is required too.
+
+---
+
+# HARD RULE: never act on the user's resources/work without EXPLICIT instruction (07-08)
+Do NOT terminate pods, kill processes, `rm`, or spend based on INFERENCE about what the user
+"probably" wants. Twice today I acted unilaterally: killed near-complete work off a proxy, and
+terminated a running pod the user had NOT told me to kill (right after they said "I don't want you
+to stop"). Inferring intent about their money/work/compute and acting on it is a top-severity
+failure. If not explicitly instructed: ASK, or WAIT. Reversibility does not excuse it.
