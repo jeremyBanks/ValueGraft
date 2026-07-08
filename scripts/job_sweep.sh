@@ -28,6 +28,14 @@ export SC_TRUST_REMOTE=1
 pkill -9 -f cross_arch_probe 2>/dev/null; sleep 3  # no GPU-sharing races on re-run
 MODEL_TIMEOUT="${MODEL_TIMEOUT:-$(( ${SC_CONV_LIMIT:-12} * 900 + 1800 ))}"
 ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B-Instruct-2507 Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct google/gemma-4-31B-it google/gemma-4-26B-A4B-it}"
+# FULL-DEPTH mode: run the complete assessment (placebo + alpha dose-response + champion scan)
+# on EVERY model, at whatever SC_CONV_LIMIT is set (use 24 for confirm-capable CIs).
+if [ "${SC_FULL_DEPTH:-0}" = "1" ]; then
+  export SC_PLACEBO="${SC_PLACEBO:-gauss}"
+  export SC_ALPHA_SWEEP="${SC_ALPHA_SWEEP:-1}"
+  export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-6}"
+  echo "FULL-DEPTH: placebo=$SC_PLACEBO alpha_sweep=$SC_ALPHA_SWEEP champion=$SC_CHAMPION_SCAN conv=$SC_CONV_LIMIT"
+fi
 
 echo "WIDE SWEEP START $(date -Is)"; nvidia-smi || true
 for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key /workspace/.huggingface_key; do
@@ -58,10 +66,10 @@ for M in $MODELS; do
   slug="$(echo "$M" | tr '/ ' '__')"; log="cross_arch_${slug}.log"
   # anchor? -> add placebo + alpha dose-response
   if echo " $ANCHORS " | grep -q " $M "; then
-    unset SC_PLACEBO; unset SC_ALPHA_SWEEP  # core sign-map first; controls are a cheap follow-up
+    [ "${SC_FULL_DEPTH:-0}" = "1" ] || { unset SC_PLACEBO; unset SC_ALPHA_SWEEP; }  # core-only unless full-depth
     echo "== ANCHOR $M (self-gen + champion + placebo + alpha) $(date -Is) -> $log"
   else
-    unset SC_PLACEBO; unset SC_ALPHA_SWEEP
+    [ "${SC_FULL_DEPTH:-0}" = "1" ] || { unset SC_PLACEBO; unset SC_ALPHA_SWEEP; }
     echo "== MODEL  $M (self-gen + champion) $(date -Is) -> $log"
   fi
   # EARLY-SIGNAL PROBE: score a few convs FIRST so a real scored result (sign + sanity)
