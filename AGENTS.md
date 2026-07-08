@@ -178,3 +178,10 @@ and writing from stale facts would reintroduce corrected errors (the -0.31 stanc
 'keys hurt', the fixed-summary numbers). Brief Fable on: the robust metric, the CI'd
 effect (referent significant/sense underpowered/stance null), keys-neutral, and the
 own-summary mechanism.
+
+## FABLE FREEDOM on paper title + intro (user 07-08)
+When Fable works on the PAPER writing/review, it has FULL FREEDOM to change the
+paper's TITLE and the opening few sentences (the forum-post intro blurb) to sound
+better — it's the strongest at making those land. Don't constrain it there; let it
+improve the title/opening. (Current title: "Value grafting: recovering lost semantic
+continuity when a conversation is compacted" — Fable may revise.)
