@@ -74,8 +74,7 @@ def git_creation_timestamp(path: Path, root: Path) -> TimestampInfo | None:
         return None
     lines = [line for line in output.splitlines() if line]
     if lines:
-        timestamps = [parse_git_timestamp(line) for line in lines]
-        return TimestampInfo(max(timestamps), "git current-file lifetime")
+        return TimestampInfo(parse_git_timestamp(lines[0]), "git current-file lifetime")
 
     try:
         output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)

@@ -194,7 +194,7 @@ def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
         if line
     ]
     if values:
-        return max(values)
+        return values[0]
 
     try:
         output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)

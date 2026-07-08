@@ -129,12 +129,12 @@ def test_normalizer_uses_current_file_lifetime_add(tmp_path: Path) -> None:
         subprocess.check_call(["git", "commit", "-m", message, "--", note_rel], cwd=repo, env=env)
 
     note.write_text("old lifetime\n", encoding="utf-8")
-    commit("old add", "2026-07-08T04:59:51Z")
+    commit("old add", "2026-07-08T18:59:51Z")
     subprocess.check_call(["git", "rm", "--", note_rel], cwd=repo, stdout=subprocess.DEVNULL)
     subprocess.check_call(
         ["git", "commit", "-m", "delete old", "--", note_rel],
         cwd=repo,
-        env={**os.environ, "GIT_AUTHOR_DATE": "2026-07-08T05:00:00Z", "GIT_COMMITTER_DATE": "2026-07-08T05:00:00Z"},
+        env={**os.environ, "GIT_AUTHOR_DATE": "2026-07-08T19:00:00Z", "GIT_COMMITTER_DATE": "2026-07-08T19:00:00Z"},
     )
     notes.mkdir(exist_ok=True)
     note.write_text("new lifetime\n", encoding="utf-8")
