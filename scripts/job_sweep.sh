@@ -23,6 +23,10 @@ export SC_CONV_LIMIT="${SC_CONV_LIMIT:-12}"     # per-pod override (24 anchors /
 export SC_GC_ALPHA="${SC_GC_ALPHA:-0.75}"
 export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-0}"  # OFF for the core sign-map run (cost); champion = cheap follow-up
 export SC_TRUST_REMOTE=1
+# WITHIN-MODEL QK-NORM ABLATION (default off): SC_ABLATE_QK_NORM=1 disables QK-norm
+# after load (clean causal H1 test). Explicit passthrough so it reaches the python
+# run; the harness FAILs LOUD if a model has no QK-norm modules to ablate.
+export SC_ABLATE_QK_NORM="${SC_ABLATE_QK_NORM:-0}"
 # per-token native render is ~750-900s/conv; scale the timeout with the conv count
 # (24 convs -> ~6.5h, 12 convs -> ~3.5h) so anchors don't get killed mid-render.
 pkill -9 -f cross_arch_probe 2>/dev/null; sleep 3  # no GPU-sharing races on re-run
@@ -103,6 +107,7 @@ for f in sorted(glob.glob("results/cross_arch/*.json")):
     hp=d.get("model_hparams",{}) or {}
     print(f"  {d.get('architecture', d.get('model','?')):28s} {d.get('status','?'):11s} "
           f"ref_rawEB={ref.get('raw_EB')} ci={ref.get('raw_EB_ci')} "
-          f"kv_heads={hp.get('num_key_value_heads')} gqa={hp.get('gqa_ratio')} qk_norm={hp.get('qk_norm')}")
+          f"kv_heads={hp.get('num_key_value_heads')} gqa={hp.get('gqa_ratio')} qk_norm={hp.get('qk_norm')} "
+          f"qk_ablated={d.get('qk_norm_ablated')}/{d.get('n_qk_modules_ablated')}")
 PY
 echo "WIDE SWEEP DONE $(date -Is)"

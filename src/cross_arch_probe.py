@@ -79,6 +79,12 @@ Env:
                         regions (0=off default; >=2 sets N; else uses default 6)
   SC_CHAMPION_REGIONS : FEATURE #3 rescue test -- comma-separated region indices
                         to graft together, e.g. "4,5" (alpha=0 elsewhere)
+  SC_ABLATE_QK_NORM   : "1"/"0" WITHIN-MODEL QK-NORM ABLATION (default 0). When 1,
+                        after load every QK-norm module (q_norm/k_norm/query|key
+                        layernorm|norm) is replaced with Identity so the forward
+                        pass runs WITHOUT QK-norm -- the clean causal H1 test.
+                        FAILs LOUD (status=ERROR) if no QK-norm modules are found.
+                        Everything else stays IDENTICAL (within-model comparison).
 
 FEATURE #1 (multi-probe averaging) is ALWAYS ON: each plant's raw_EB is the MEAN
 over its paraphrased ``probes`` of the teacher-forced gold lift (de-noises probe
@@ -302,6 +308,38 @@ def _corrupt_source_values(old_snap, old_idx, mode, seed):
     return out
 
 
+# Leaf module names that implement QK-norm in the attention block (Qwen3/OLMo-2/
+# Gemma use q_norm/k_norm; other families name them query/key layernorm|norm).
+# SHARED by detect_model_hparams (detection) and ablate_qk_norm (removal) so the
+# two can never drift apart.
+_QK_NORM_LEAF_NAMES = ("q_norm", "k_norm", "query_layernorm", "key_layernorm",
+                       "query_norm", "key_norm")
+
+
+def ablate_qk_norm(model) -> tuple:
+    """WITHIN-MODEL QK-NORM ABLATION (SC_ABLATE_QK_NORM) -- the clean causal test
+    of H1 (QK-norm presence -> positive referent graft sign). Replaces every
+    QK-norm submodule (matching the SAME leaf names detect_model_hparams detects,
+    ``_QK_NORM_LEAF_NAMES``) in the attention blocks with ``torch.nn.Identity()``
+    so the forward pass runs WITHOUT QK-norm, holding everything else fixed.
+
+    Returns ``(n_ablated, sorted_module_names)``. Already-Identity modules are not
+    counted (idempotent). The CALLER is responsible for FAILing LOUD when
+    ``n_ablated == 0`` (ablation requested but no QK-norm modules found) -- this
+    function does not decide policy, it just reports what it changed."""
+    import torch  # noqa: PLC0415
+    # Collect FIRST, then mutate -- do not mutate the module tree while iterating.
+    targets = [n for n, m in model.named_modules()
+               if n.rsplit(".", 1)[-1] in _QK_NORM_LEAF_NAMES
+               and m is not None
+               and not isinstance(m, torch.nn.Identity)]
+    for name in targets:
+        parent_name, _, leaf = name.rpartition(".")
+        parent = model.get_submodule(parent_name) if parent_name else model
+        setattr(parent, leaf, torch.nn.Identity())
+    return len(targets), sorted(targets)
+
+
 def detect_model_hparams(config, model=None) -> dict:
     """Architecture hyper-parameters for the sign-of-graft regression. Reads the
     (possibly nested text_config) HF config, model-type agnostic. ``gqa_ratio`` =
@@ -329,11 +367,9 @@ def detect_model_hparams(config, model=None) -> dict:
     qk_norm_source = "config" if qk_norm else None
     # ROBUST: detect q_norm/k_norm modules on the loaded model (the real signal).
     if model is not None:
-        _mod_names = ("q_norm", "k_norm", "query_layernorm", "key_layernorm",
-                      "query_norm", "key_norm")
         for _n, _m in model.named_modules():
             leaf = _n.rsplit(".", 1)[-1]
-            if leaf in _mod_names and _m is not None:
+            if leaf in _QK_NORM_LEAF_NAMES and _m is not None:
                 qk_norm = True
                 qk_norm_source = "module:" + leaf
                 break
@@ -1312,7 +1348,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               native_max_reply: int = NATIVE_MAX_REPLY_DEFAULT,
               native_temp: float = NATIVE_TEMP_DEFAULT,
               headroom_floor: float = HEADROOM_FLOOR_DEFAULT,
-              task_lpa_floor: float = TASK_LPA_FLOOR_DEFAULT) -> dict:
+              task_lpa_floor: float = TASK_LPA_FLOOR_DEFAULT,
+              ablate_qk_norm_flag: bool = False) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
     was present and we fall back to per-model self-generated summaries (results
@@ -1362,6 +1399,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "gates": None,             # v2.1 gate summary (headroom / task-competence)
         "skipped_convs": [],
         "n_plants": 0,
+        "qk_norm_ablated": False,       # SC_ABLATE_QK_NORM: was QK-norm removed?
+        "n_qk_modules_ablated": 0,      # how many q_norm/k_norm modules replaced
         "kv_geometry": None,
         "pre_graft_gap": None,     # mean lp_A - lp_B (meaning lost to compaction)
         "raw_EB": None,            # PRIMARY aggregate: mean(lp_E-lp_B) + boot CI
@@ -1415,6 +1454,28 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             doc["model_hparams"]["qk_norm_source"] = _hp["qk_norm_source"]
         except Exception:  # noqa: BLE001
             pass
+        # WITHIN-MODEL QK-NORM ABLATION (SC_ABLATE_QK_NORM) -- clean causal H1 test.
+        # Run a QK-norm model with QK-norm DISABLED, everything else IDENTICAL.
+        if ablate_qk_norm_flag:
+            n_ablated, ablated_names = ablate_qk_norm(model)
+            if n_ablated == 0:
+                doc.update(
+                    status="ERROR",
+                    reason="ablation requested but no QK-norm modules found "
+                           "(SC_ABLATE_QK_NORM=1 on a model with no "
+                           "q_norm/k_norm/query|key layernorm modules); refusing "
+                           "to silently run un-ablated")
+                return doc
+            doc["qk_norm_ablated"] = True
+            doc["n_qk_modules_ablated"] = n_ablated
+            # After ablation the forward pass has NO QK-norm; reflect that in
+            # hparams but keep the distinct qk_norm_ablated flag so an ablated
+            # run is unambiguous vs a natively-no-QK-norm model.
+            doc["model_hparams"]["qk_norm"] = False
+            doc["model_hparams"]["qk_norm_source"] = "ablated"
+            print(f"SC_ABLATE_QK_NORM=1 -> ablated {n_ablated} QK-norm modules "
+                  f"(replaced with Identity); e.g. {ablated_names[:3]} ... "
+                  f"forward pass now runs WITHOUT QK-norm.", flush=True)
     except torch.cuda.OutOfMemoryError as e:  # noqa: BLE001
         doc.update(status="UNSUPPORTED", reason=f"OOM on load: {e}")
         return doc
@@ -2528,8 +2589,102 @@ def _self_test_controls() -> int:
 
     _self_test_native()
     _self_test_batched_decode()
+    _self_test_qk_ablation()
 
     print("\nSELF-TEST OK")
+    return 0
+
+
+def _self_test_qk_ablation() -> int:
+    """CPU test for WITHIN-MODEL QK-NORM ABLATION (SC_ABLATE_QK_NORM, H1).
+
+    On a TINY model that HAS q_norm/k_norm (Qwen3): (a) ablation replaces every
+    QK-norm module with torch.nn.Identity (verified by module type), (b) the
+    forward pass runs and produces DIFFERENT logits than the non-ablated model
+    (proving the ablation actually changes computation), and (c) the
+    zero-modules-found case (a model with NO QK-norm) returns count 0 so the
+    caller can FAIL LOUD. Skips cleanly if torch/Qwen3 are unavailable."""
+    print("\n== QK-NORM ABLATION self-test (tiny Qwen3, CPU) ==")
+    try:
+        import torch  # noqa: PLC0415
+        from transformers import (  # noqa: PLC0415
+            LlamaConfig,
+            LlamaForCausalLM,
+            Qwen3Config,
+            Qwen3ForCausalLM,
+        )
+    except Exception as e:  # noqa: BLE001
+        print(f"  [skip] no torch/Qwen3 available: {type(e).__name__}: {e}")
+        return 0
+
+    torch.manual_seed(0)
+    cfg = Qwen3Config(vocab_size=64, hidden_size=32, intermediate_size=64,
+                      num_hidden_layers=2, num_attention_heads=4,
+                      num_key_value_heads=2, head_dim=8,
+                      max_position_embeddings=128)
+    model = Qwen3ForCausalLM(cfg).eval()
+    # Give the QK-norm RMSNorm weights a non-identity scale so removing them
+    # actually changes the computation (fresh weights init to 1.0 -> RMSNorm
+    # still normalizes, so it is NOT a no-op even at unit weight).
+    with torch.no_grad():
+        for n, m in model.named_modules():
+            if n.rsplit(".", 1)[-1] in ("q_norm", "k_norm"):
+                m.weight.add_(torch.randn_like(m.weight) * 0.5)
+
+    ids = torch.tensor([[3, 5, 7, 9, 11]])
+    with torch.no_grad():
+        logits_before = model(ids).logits.clone()
+
+    # detect_model_hparams must see QK-norm on the loaded (un-ablated) model.
+    hp_before = detect_model_hparams(cfg, model)
+    assert hp_before["qk_norm"] is True, \
+        "tiny Qwen3 must be detected as having QK-norm before ablation"
+    assert str(hp_before["qk_norm_source"]).startswith("module:"), \
+        f"qk_norm_source should be module:* , got {hp_before['qk_norm_source']}"
+
+    # (a) ablation replaces the modules with Identity.
+    n_ablated, names = ablate_qk_norm(model)
+    assert n_ablated == 4, f"expected 4 QK-norm modules ablated, got {n_ablated}"
+    for name in names:
+        parent_name, _, leaf = name.rpartition(".")
+        parent = model.get_submodule(parent_name)
+        assert isinstance(getattr(parent, leaf), torch.nn.Identity), \
+            f"{name} was not replaced with Identity"
+    # After ablation detect_model_hparams no longer sees QK-norm (Identity leaves
+    # named q_norm/k_norm are still present, so hparams source stays module:*, but
+    # the CALLER sets qk_norm=False + qk_norm_ablated=True; we assert the module
+    # objects are now Identity, which is the load-bearing fact).
+    print(f"  (a) ablated {n_ablated} modules -> all torch.nn.Identity OK")
+
+    # (b) forward pass runs and logits DIFFER (ablation changed computation).
+    with torch.no_grad():
+        logits_after = model(ids).logits
+    max_abs_diff = (logits_after - logits_before).abs().max().item()
+    assert max_abs_diff > 1e-4, \
+        f"ablation did not change logits (max|Δ|={max_abs_diff:.2e}) -- QK-norm " \
+        "was not actually removed from the forward pass"
+    print(f"  (b) forward pass runs; logits DIFFER (max|Δ|={max_abs_diff:.3e}) OK")
+
+    # (b2) idempotent: re-ablating finds nothing left to replace.
+    n_again, _ = ablate_qk_norm(model)
+    assert n_again == 0, f"re-ablation must find 0 (idempotent), got {n_again}"
+    print("  (b2) re-ablation finds 0 (idempotent) OK")
+
+    # (c) zero-modules-found case: a model with NO QK-norm returns count 0 so the
+    # caller FAILs LOUD. Tiny Llama has no q_norm/k_norm modules.
+    lcfg = LlamaConfig(vocab_size=64, hidden_size=32, intermediate_size=64,
+                       num_hidden_layers=2, num_attention_heads=4,
+                       num_key_value_heads=2, max_position_embeddings=128,
+                       rope_theta=10000.0)
+    llama = LlamaForCausalLM(lcfg).eval()
+    assert detect_model_hparams(lcfg, llama)["qk_norm"] is False, \
+        "tiny Llama must have no QK-norm"
+    n_none, names_none = ablate_qk_norm(llama)
+    assert n_none == 0 and names_none == [], \
+        f"no-QK-norm model must ablate 0 modules, got {n_none}"
+    print("  (c) no-QK-norm model -> ablate count 0 (caller fails loud) OK")
+
+    print("  QK-NORM ABLATION OK")
     return 0
 
 
@@ -3039,6 +3194,17 @@ def main():
                     action="store_false",
                     help="use PRE-RENDERED data/synthetic convs (validated legacy "
                          "path; SC_NATIVE_RENDER=0)")
+    ap.add_argument("--ablate-qk-norm", dest="ablate_qk_norm",
+                    action="store_true",
+                    default=os.environ.get("SC_ABLATE_QK_NORM", "0")
+                    not in ("0", "", "false", "False"),
+                    help="WITHIN-MODEL QK-NORM ABLATION (SC_ABLATE_QK_NORM=1, "
+                         "default OFF): after load, replace every QK-norm module "
+                         "(q_norm/k_norm/query|key layernorm|norm) with Identity "
+                         "so the forward pass runs WITHOUT QK-norm -- the clean "
+                         "causal test of H1. FAILs LOUD (status=ERROR) if the "
+                         "model has no QK-norm modules to ablate. Everything else "
+                         "stays IDENTICAL for a clean within-model comparison.")
     ap.add_argument("--scenarios",
                     default=os.environ.get(
                         "SC_SCENARIOS",
@@ -3167,7 +3333,8 @@ def main():
             champion_scan=args.champion_scan, champion_regions=champion_regions,
             native_render=args.native_render, scenarios=scenarios,
             native_max_reply=args.native_max_reply, native_temp=args.native_temp,
-            headroom_floor=args.headroom_floor, task_lpa_floor=args.task_lpa_floor)
+            headroom_floor=args.headroom_floor, task_lpa_floor=args.task_lpa_floor,
+            ablate_qk_norm_flag=args.ablate_qk_norm)
     except SystemExit:
         raise
     except BaseException as e:  # noqa: BLE001
