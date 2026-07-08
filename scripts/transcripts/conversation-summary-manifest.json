@@ -9,7 +9,7 @@
       "models": [
         "claude-fable-5"
       ],
-      "note": "notes/20260704200905-claude-conversation.md",
+      "note": "notes/2026070402-conversation-user-fable5.md",
       "source_ranges": [
         {
           "date": "2026-07-04",
@@ -40,7 +40,7 @@
           "sequence": 3
         }
       ],
-      "summary_hash": "465e509811bdd4bb662430e44bc8acfa54f8ad2ee913744304bc81973563e64a"
+      "summary_hash": "e3f70130be0c488492cbfc5d3abe26ca8588579b1bea8a86a4db73f662836d74"
     },
     {
       "first_timestamp": "2026-07-05T19:13:10.304000Z",
@@ -50,7 +50,7 @@
       "models": [
         "claude-fable-5"
       ],
-      "note": "notes/20260705191310-claude-conversation.md",
+      "note": "notes/2026070516-conversation-user-fable5.md",
       "source_ranges": [
         {
           "date": "2026-07-05",
@@ -74,7 +74,7 @@
           "sequence": 1
         }
       ],
-      "summary_hash": "b12951c2753b789c991ce7798554437fe11f33cbffb237a2d4a1db70ab07892c"
+      "summary_hash": "252b0814c0be2d739d7194c4179e83aed20f7a6d9c0a464526fba0693aaa582b"
     },
     {
       "first_timestamp": "2026-07-06T03:17:20.247000Z",
@@ -84,7 +84,7 @@
       "models": [
         "claude-fable-5"
       ],
-      "note": "notes/20260706031720-claude-conversation.md",
+      "note": "notes/2026070608-conversation-user-fable5.md",
       "source_ranges": [
         {
           "date": "2026-07-06",
@@ -94,7 +94,7 @@
           "sequence": 1
         }
       ],
-      "summary_hash": "74eef7841013184fa3cbdfb692bbee7878b3cae5e0193b6a209f44829adcc32f"
+      "summary_hash": "1b64508355b0c8a8165bf37fa13a9fe7c84a6d18594b46023fe68937441cbaae"
     },
     {
       "first_timestamp": "2026-07-06T16:15:43.053000Z",
@@ -105,7 +105,7 @@
         "claude-fable-5",
         "claude-opus-4-8"
       ],
-      "note": "notes/20260706161543-claude-conversation.md",
+      "note": "notes/2026070619-conversation-user-fable5-opus48.md",
       "source_ranges": [
         {
           "date": "2026-07-06",
@@ -157,7 +157,7 @@
           "sequence": 6
         }
       ],
-      "summary_hash": "7b5ab42da538f25f368ee2805d8a1b4e3428401f2301a63a1a4d84be075d10cd"
+      "summary_hash": "c376cafd0f918bce1d3d15c3b5e4c60c26974698574560dd6e75eb1c26f7528f"
     },
     {
       "first_timestamp": "2026-07-07T08:10:36.214000Z",
@@ -168,7 +168,7 @@
         "claude-opus-4-8",
         "claude-fable-5"
       ],
-      "note": "notes/20260707081036-claude-conversation.md",
+      "note": "notes/2026070707-conversation-user-opus48-fable5.md",
       "source_ranges": [
         {
           "date": "2026-07-07",
@@ -192,7 +192,7 @@
           "sequence": 8
         }
       ],
-      "summary_hash": "fccb127ee9cce718707c6583cbd4ab366cb13a0e163696a9df4dc80c4e6832cf"
+      "summary_hash": "0fee0af1b5869ba54f3c89829be0979f6b0c0c692ae086b3fd38d9e5fbd20fa8"
     },
     {
       "first_timestamp": "2026-07-07T15:38:32.822000Z",
@@ -202,7 +202,7 @@
       "models": [
         "claude-opus-4-8"
       ],
-      "note": "notes/20260707153832-claude-conversation.md",
+      "note": "notes/2026070724-conversation-user-opus48.md",
       "source_ranges": [
         {
           "date": "2026-07-07",
@@ -212,7 +212,7 @@
           "sequence": 8
         }
       ],
-      "summary_hash": "631f63fb1da913bb428b1eae046e180b0dbb2cf4954b6ae61e033c7558a323d4"
+      "summary_hash": "6c71405cbc2d0bc73a18bbafbe15b0bad5aa13e75bbf182f141e5c5365b6be28"
     },
     {
       "first_timestamp": "2026-07-07T20:18:23.074000Z",
@@ -222,7 +222,7 @@
       "models": [
         "claude-opus-4-8"
       ],
-      "note": "notes/20260707201823-claude-conversation.md",
+      "note": "notes/2026070736-conversation-user-opus48.md",
       "source_ranges": [
         {
           "date": "2026-07-07",
@@ -239,7 +239,7 @@
           "sequence": 1
         }
       ],
-      "summary_hash": "872c0484f909c14dafa9c5c5cb40ec6ef30caad89d534ae44860c9a898891750"
+      "summary_hash": "8975dc2e30432edeef8d7d830fa314c39c460d5dd766c24eec9148961205190a"
     },
     {
       "first_timestamp": "2026-07-08T01:17:53.788000Z",
@@ -249,7 +249,7 @@
       "models": [
         "claude-opus-4-8"
       ],
-      "note": "notes/20260708011753-claude-conversation.md",
+      "note": "notes/2026070806-conversation-user-opus48.md",
       "source_ranges": [
         {
           "date": "2026-07-08",
@@ -259,7 +259,7 @@
           "sequence": 1
         }
       ],
-      "summary_hash": "286e455013b04a63f373556d8bca440e5d335ac5544c936d534caa1863042044"
+      "summary_hash": "b75e694aae37c2eab159e6aa745fcf0fa8adc88f2ea66c69f4b9c2f0002deaea"
     },
     {
       "first_timestamp": "2026-07-08T04:59:51.063000Z",
@@ -269,7 +269,7 @@
       "models": [
         "claude-opus-4-8"
       ],
-      "note": "notes/20260708045951-claude-conversation.md",
+      "note": "notes/2026070808-conversation-user-opus48.md",
       "source_ranges": [
         {
           "date": "2026-07-08",
@@ -293,7 +293,7 @@
           "sequence": 3
         }
       ],
-      "summary_hash": "0b63e9ea9f8f11735defc8bc88d913e209a4aaca9933fd1110f2e61821fc01c1"
+      "summary_hash": "97b358389effd1267463e5b741797be0a702efeba5a78c9474688d12bae89fd0"
     },
     {
       "first_timestamp": "2026-07-08T17:33:16.131000Z",
@@ -303,7 +303,7 @@
       "models": [
         "claude-opus-4-8"
       ],
-      "note": "notes/20260708173316-claude-conversation.md",
+      "note": "notes/2026070809-conversation-user-opus48.md",
       "source_ranges": [
         {
           "date": "2026-07-08",
@@ -313,7 +313,7 @@
           "sequence": 3
         }
       ],
-      "summary_hash": "78d7491668d3995163f6e2f5502f66d193e4d0cb6e542ee5cd55a6d108c89764"
+      "summary_hash": "93f695f593192eb2efce81f0583cdc8fbda96c27a8ec7b04af7d0b4548f476fe"
     },
     {
       "first_timestamp": "2026-07-05T02:08:52.348000Z",
@@ -324,7 +324,7 @@
         "gpt-5.5-xhigh",
         "gpt-5.5-high"
       ],
-      "note": "notes/20260705020852-codex-conversation.md",
+      "note": "notes/2026070502-conversation-user-gpt55.md",
       "source_ranges": [
         {
           "date": "2026-07-05",
@@ -390,7 +390,7 @@
           "sequence": 2
         }
       ],
-      "summary_hash": "f3823cc8a975dd598cfa3b29cb9fb7e359843626036acf800810103e8f5febb3"
+      "summary_hash": "8678ce6bca0a8f77dca50385e5433561f37a4c2c08d5e78e1ef74a787a14962b"
     },
     {
       "first_timestamp": "2026-07-06T03:01:21.569000Z",
@@ -400,7 +400,7 @@
       "models": [
         "gpt-5.5-xhigh"
       ],
-      "note": "notes/20260706030121-codex-conversation.md",
+      "note": "notes/2026070607-conversation-user-gpt55.md",
       "source_ranges": [
         {
           "date": "2026-07-06",
@@ -438,7 +438,7 @@
           "sequence": 6
         }
       ],
-      "summary_hash": "dc19d644d6ce40978c5c06851f39b83dd581226cd81240954ba6532e68373469"
+      "summary_hash": "cc6a6d51888c362fe7bda21b5fc18bc8ae67972d5561bc1167bcffe929ddb569"
     },
     {
       "first_timestamp": "2026-07-06T16:00:45.420000Z",
@@ -448,7 +448,7 @@
       "models": [
         "gpt-5.5-xhigh"
       ],
-      "note": "notes/20260706160045-codex-conversation.md",
+      "note": "notes/2026070618-conversation-user-gpt55.md",
       "source_ranges": [
         {
           "date": "2026-07-06",
@@ -493,7 +493,7 @@
           "sequence": 3
         }
       ],
-      "summary_hash": "ca3ecaed1cbfecf8b378ac0237f16c459b104498dd92293d51fece12951f861e"
+      "summary_hash": "65e568c651db6b2c5491e1b69b9de65eb2b0600b327958a0c206743d6f1e5e47"
     },
     {
       "first_timestamp": "2026-07-07T11:20:43.256000Z",
@@ -503,7 +503,7 @@
       "models": [
         "gpt-5.5-xhigh"
       ],
-      "note": "notes/20260707112043-codex-conversation.md",
+      "note": "notes/2026070709-conversation-user-gpt55.md",
       "source_ranges": [
         {
           "date": "2026-07-07",
@@ -513,7 +513,7 @@
           "sequence": 3
         }
       ],
-      "summary_hash": "9144ac09041266a51715263cccce63d8d806665a7db5480d23b3adba650dd394"
+      "summary_hash": "488bd20a7a0ba92f1b379e93eb05e23b8a2a608955b8a6c8b538ff98adea0e96"
     },
     {
       "first_timestamp": "2026-07-07T15:31:13.841000Z",
@@ -523,7 +523,7 @@
       "models": [
         "gpt-5.5-xhigh"
       ],
-      "note": "notes/20260707153113-codex-conversation.md",
+      "note": "notes/2026070722-conversation-user-gpt55.md",
       "source_ranges": [
         {
           "date": "2026-07-07",
@@ -554,7 +554,7 @@
           "sequence": 1
         }
       ],
-      "summary_hash": "07711a2ff70e5a5ebe15d921e4e0dd82e605fb5afd238f755249d7b0fc6e947a"
+      "summary_hash": "eba043cfb8581ad7753976a7c3544f09644f13d44b6a218d9842e8926da881fe"
     },
     {
       "first_timestamp": "2026-07-08T02:54:08.274000Z",
@@ -564,7 +564,7 @@
       "models": [
         "gpt-5.5-xhigh"
       ],
-      "note": "notes/20260708025408-codex-conversation.md",
+      "note": "notes/2026070807-conversation-user-gpt55.md",
       "source_ranges": [
         {
           "date": "2026-07-08",
@@ -588,7 +588,7 @@
           "sequence": 3
         }
       ],
-      "summary_hash": "68f7828a2b360da96c0832d9414407ca19992639aae012ee9c23d5ffd5f1b4a0"
+      "summary_hash": "6c0483deca27d56c79954e587dc7a6cabc21bc98b420f1489f64767f5e10f59c"
     }
   ],
   "version": 1
