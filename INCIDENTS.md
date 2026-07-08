@@ -432,3 +432,20 @@ summary region (538) -> structural mismatch, not drift. THE GATE WORKED: this wo
 produced status=ERROR (or wrong numbers) on all 16 models. LESSON: verify apparatus
 equivalence on the ACTUAL production config, not a proxy (fixed-summary equivalence did
 NOT cover self-gen). Reinforces validate-before-trusting (positive control on the real path).
+
+## 32b. Positive-control regression diagnosis (Fable, 07-08) — decisive test in flight
+After the think-block alignment fix, the Qwen3-30B-A3B self-gen positive control FAILED:
+referent ~null (was +0.136), all categories negative. Fable's mechanistic insight: a value
+vector v_i = W_v·x_i where x_i is built by attention over ALL prior tokens — so answer-token
+values computed WITH <think> in context already ENCODE the reasoning (smeared forward via
+attention). The reasoning does NOT need its own landing positions in B; it rides inside the
+answer values IFF you compute them with think present. DECISIVE O(1) TEST (Fable): NULL
+SELF-GRAFT (E:=B, graft B's values onto B's own positions) MUST be ~0 by construction — if
+not ~0, the refactor broke the plumbing (index/position/lp); if ~0, negatives are real ->
+substance-loss. My code trace: the prefill IS on the full think-included summary (design is
+correct), so a PLUMBING BUG is the leading hypothesis (prime suspect: the summary_token_layout
+FALLBACK that reconstructs old_ids from separately-tokenized pieces -> prefill on wrong tokens).
+Debugger running the null self-graft. Gate RED until referent reproduces ~+0.136.
+POTENTIAL PAPER FINDING (regardless): for THINKING models, grafting must snapshot with the
+reasoning present — the summarization "act" the mechanism needs lives in the reasoning-informed
+answer values, not the terse answer alone.
