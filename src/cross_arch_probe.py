@@ -868,6 +868,185 @@ def build_token_context(tok, family, msgs, summary_text, tsm):
 # The heavy path (torch/transformers) lives entirely below, imported lazily so
 # --dry-run runs on a CPU-only box with no ML deps.
 # ===========================================================================
+# Native-render generation defaults (CROSS-ARCH DESIGN v2). Reply gen is GREEDY
+# by default (temp 0) so the corpus is REPRODUCIBLE and each reply is the model's
+# most-likely = maximally-native elaboration; low-temp sampling is available via
+# SC_NATIVE_TEMP for diversity if wanted.
+NATIVE_MAX_REPLY_DEFAULT = 320
+NATIVE_TEMP_DEFAULT = 0.0
+NATIVE_TOP_P = 0.8
+
+
+def native_render_specs(model, tok, family, scenarios, conv_limit, *,
+                        max_reply_tokens, temp, seed_base):
+    """PER-MODEL IN-CONTEXT (NATIVE) RENDER of the shared scaffold (design v2).
+
+    GPU path (torch). For each of the first ``conv_limit`` scaffold scenarios,
+    grow ONE KV cache and have the TEST MODEL generate its OWN assistant reply
+    after every scaffold user turn (early / middle-plant+filler / tail), producing
+    a conversation NATIVE to this model. Returns:
+      (specs, reply_records)
+    where ``specs`` is [(conv_dict, plants), ...] in the EXACT shape collect_specs
+    returns (so the rest of run_model is unchanged) and ``reply_records`` is the
+    flat per-reply [{n_tokens, logprob_sum}] list for reply_covariates().
+
+    LOAD-BEARING: conv_dict["plants"] = scenario["plants"] VERBATIM -> select_plants
+    pulls each plant's SHARED ``gold`` continuation from the scaffold, never from
+    generated text. Only the assistant elaboration turns are model-filled.
+
+    This is a direct port of compose.py's ConversationBuilder onto HF primitives,
+    including the Qwen canonical-prefix handling: after each sampled/greedy reply
+    the growing cache is truncated back to the canonical (user-final) prefix and
+    the assistant block is re-prefilled in its canonical (think-free, non-final)
+    form, so the stored value vectors match the compacted rendering the graft will
+    later align against. GPU-UNVERIFIED (no pod run here)."""
+    import torch  # noqa: PLC0415
+    from transformers import DynamicCache  # noqa: PLC0415
+
+    from kvlib_hf import (  # noqa: PLC0415
+        prefill,
+        rebuild_cache,
+        snapshot_cache,
+    )
+
+    eos = model.config.eos_token_id
+    eos_ids = {eos} if isinstance(eos, int) else set(eos)
+    dev = model.device
+
+    def _ids(seq):
+        return torch.tensor([list(seq)], device=dev)
+
+    def _pos(lo, hi):
+        return torch.arange(lo, hi, device=dev)[None]
+
+    def _truncate(cache, keep):
+        snap = snapshot_cache(cache)
+        sl = [(k[..., :keep, :].contiguous(), v[..., :keep, :].contiguous())
+              for k, v in snap]
+        return rebuild_cache(sl, DynamicCache)
+
+    def _generate(cache, first_logits, next_position, seed):
+        """Greedy (temp 0) / seeded-nucleus decode; returns (reply_ids, lp_sum)
+        where lp_sum is the SUM of the chosen tokens' write-time logprobs (the
+        info-content covariate). EOS is excluded from both the ids and lp_sum."""
+        gen = torch.Generator(device="cpu")
+        if seed is not None:
+            gen.manual_seed(seed)
+        toks: list[int] = []
+        lp_sum = 0.0
+        logits = first_logits
+        pos = next_position
+        for _ in range(max_reply_tokens):
+            logp = torch.log_softmax(logits.float(), dim=-1)[0]
+            if temp and temp > 0:
+                probs = torch.softmax(logits.float() / temp, dim=-1)[0]
+                sp, si = torch.sort(probs, descending=True)
+                keep = torch.cumsum(sp, 0) - sp < NATIVE_TOP_P
+                keep[0] = True
+                sp, si = sp[keep], si[keep]
+                t = int(si[torch.multinomial(
+                    sp.cpu() / sp.sum().cpu(), 1, generator=gen)].item())
+            else:
+                t = int(torch.argmax(logits, dim=-1).item())
+            if t in eos_ids:
+                break
+            lp_sum += float(logp[t].item())
+            toks.append(t)
+            with torch.no_grad():
+                out = model(input_ids=_ids([t]), past_key_values=cache,
+                            position_ids=_pos(pos, pos + 1), use_cache=True)
+            logits = out.logits[:, -1, :]
+            pos += 1
+        return toks, lp_sum
+
+    specs: list = []
+    reply_records: list = []
+    for i, scenario in enumerate(scenarios[:conv_limit]):
+        plan = scenario_turn_plan(scenario, seed=seed_base + i)
+        conv_seed = seed_base + i
+        msgs = [{"role": "system", "content": scenario["system"]}]
+        cache = DynamicCache()
+        stream: list[int] = []
+        truncated = 0
+        empty = 0
+        early_tokens = middle_tokens = 0
+
+        for ti, turn in enumerate(plan["turns"]):
+            msgs.append({"role": "user", "content": turn["text"]})
+            # canonical prefix THROUGH the user turn (plain render is canonical
+            # here -- the final message is a USER, no think injection). Mirrors
+            # compose.py's r_canon.
+            r_canon_user = render_hf(tok, msgs, False)
+            r_gen = render_hf(tok, msgs, True)
+            assert r_gen[: len(stream)] == stream, \
+                f"{scenario['id']} turn {ti}: canonical prefix broke (gen)"
+            assert r_gen[: len(r_canon_user)] == r_canon_user, \
+                f"{scenario['id']} turn {ti}: gen render doesn't extend canonical"
+
+            new_ids = r_gen[len(stream):]
+            cache, logits = prefill(model, _ids(new_ids), past=cache,
+                                    position_ids=_pos(len(stream), len(r_gen)))
+            reply_ids, lp_sum = _generate(cache, logits, len(r_gen), conv_seed)
+            capped = len(reply_ids) >= max_reply_tokens
+            reply_text = tok.decode(reply_ids).strip()
+            if capped:
+                truncated += 1
+                reply_text = trim_capped_reply(reply_text)
+            if not reply_text:
+                empty += 1
+            reply_records.append({"n_tokens": len(reply_ids),
+                                  "logprob_sum": lp_sum})
+            msgs.append({"role": "assistant", "content": reply_text})
+
+            # re-canonicalize the cache: truncate back to the user-final prefix,
+            # re-prefill the assistant block in canonical (non-final) form so the
+            # stored values match what the graft alignment will later see.
+            r_new = canonical_ids_any(tok, msgs, render_hf)
+            assert r_new[: len(r_canon_user)] == r_canon_user, \
+                f"{scenario['id']} turn {ti}: assistant block changed the prefix"
+            cache = _truncate(cache, len(r_canon_user))
+            if len(r_new) > len(r_canon_user):
+                cache, _ = prefill(
+                    model, _ids(r_new[len(r_canon_user):]), past=cache,
+                    position_ids=_pos(len(r_canon_user), len(r_new)))
+            stream = r_new
+
+            if ti + 1 == plan["n_early"]:
+                early_tokens = len(stream)
+            if ti + 1 == plan["n_early"] + plan["n_middle"]:
+                middle_tokens = len(stream)
+
+        del cache
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+        conv = {
+            "id": scenario["id"],
+            "title": scenario.get("title"),
+            "messages": msgs,
+            "sections": {
+                "early_end_msg": plan["early_end_msg"],
+                "middle_end_msg": plan["middle_end_msg"],
+                "early_end_tokens": early_tokens,
+                "middle_end_tokens": middle_tokens,
+                "total_tokens": len(stream),
+            },
+            "plants": scenario["plants"],
+            "meta": {"native_render": True, "seed": conv_seed, "temp": temp,
+                     "truncated_replies": truncated, "empty_replies": empty},
+        }
+        plants = select_plants(conv)
+        assert len(msgs) == plan["n_messages"], \
+            f"{scenario['id']}: built {len(msgs)} msgs != planned {plan['n_messages']}"
+        print(f"  [native] {scenario['id']}: {len(msgs)} msgs, "
+              f"{len(stream)} tokens (early {early_tokens}, middle "
+              f"{middle_tokens}), truncated={truncated} empty={empty}, "
+              f"{len(plants)} usable plants", flush=True)
+        if plants:
+            specs.append((conv, plants))
+    return specs, reply_records
+
+
 def run_model(model_id: str, data_dir: Path, out_dir: Path,
               fixed_summaries: dict | None, *,
               conv_limit: int, alpha_v: float, alpha0_tol: float,
