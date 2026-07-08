@@ -266,9 +266,9 @@ def write_report(path: Path, doc: dict[str, Any]) -> None:
         "",
         "## Short Interpretation",
         "",
-        "Raw logit lens can recover some coarse lexical associations, especially name pieces and place words. J-lens is cleaner for the specific observation we care about here: the phrase-final Chinese prompt token surfaces event/protest-style associations even when the generated answer redirects to reform/development language.",
+        "Raw logit lens already recovers much of the key signal: the phrase-final Chinese prompt token surfaces event/what-happened associations in later layers even though the generated answer redirects to reform/development language. J-lens is not uniquely necessary here, but it makes the signal cleaner and easier to explain, especially where it surfaces protest/event terms directly rather than requiring concept grouping over noisier raw readouts.",
         "",
-        "So this is not a result that only exists because of J-lens, but J-lens makes the contrast easier to see and explain.",
+        "The safer conclusion is comparative: behavior and candidate scores show redirection rather than refusal; raw lens and J-lens both show latent referent availability; J-lens is a clearer illustration of that knowledge-vs-routing distinction, not proof of censorship, panic, or a causal mechanism.",
     ])
     path.write_text("\n".join(lines) + "\n")
 

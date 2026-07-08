@@ -63,3 +63,16 @@ The first case-specific scoring pass was run after the static repair and wrote:
 - `outputs/case_specific_scores.json`
 
 The key result is that the Chinese 1989 prompt prefers the reform/development redirect over both official/stability and direct factual event continuations. English 1989 prefers official/stability over direct factual, while June Fourth, Tank Man, and the Kent State control prefer direct factual continuations. This supports a narrative-redirection interpretation more than a simple refusal interpretation.
+
+### Raw Logit-Lens and Similarity Follow-up
+
+The raw/J-lens comparison wrote:
+
+- `outputs/raw_logit_compare.md`
+- `outputs/raw_logit_compare.json`
+
+This pass compares raw logit lens and J-lens on the same prompt-token positions, with small concept-category rankings and phrase-final English/Chinese similarity checks.
+
+Important result: raw logit lens already recovers much of the Chinese final-token event signal in later layers. J-lens is cleaner and more legible, but not uniquely necessary. Frame this as "J-lens makes the knowledge-vs-routing distinction easier to see" rather than "J-lens reveals an otherwise inaccessible fact."
+
+The English 1989 and Chinese 1989 phrase-final states are more similar than most controls in late layers, especially in the J-lens transported space, but the control separation is not absolute. Do not claim a single shared representation.

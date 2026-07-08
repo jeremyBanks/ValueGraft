@@ -49,6 +49,21 @@ The phrase-final token is much more interpretable than the first subword token:
 
 This does not prove "panic" or a specific safety mechanism. It does suggest a useful distinction: at the prompt-token level, the model has internally available associations for the sensitive referents, while the generated answer can route toward a safer or more official-sounding surface form depending on language and framing.
 
+## Raw Logit-Lens Comparison
+
+We also ran a conventional raw logit-lens comparison on the same prompt-token positions. This is the right older-technique baseline for the J-lens observation.
+
+The result is nuanced. Raw logit lens does recover much of the key signal. At the final Chinese `广场` token, late raw readouts surface `发生`, `事件`, `events`, and related "what happened" tokens. So the knowledge-vs-routing distinction is not something only J-lens can expose.
+
+J-lens still adds value as a clearer illustration. At the same token and layers, it tends to produce cleaner event/protest readouts such as `事件`, `protests`, `events`, `demonstrations`, `riots`, and `发生了什么`, while the raw lens often needs concept grouping to see past noisier lexical or relational tokens. The fair framing is therefore: J-lens is not uniquely necessary here, but it makes the internal referent signal easier to see and explain.
+
+We also compared phrase-final internal similarity across English and Chinese prompts. In late layers, English 1989 vs Chinese 1989 has higher cosine similarity than most controls:
+
+- raw residual cosine mean over layers 55/58/60/62: about `0.67`;
+- J-lens transported cosine mean over those layers: about `0.73`.
+
+The comparison is not perfectly clean. Trafalgar Square retains non-trivial similarity to the Chinese prompt, probably because both are public-square/place prompts, and June Fourth/Tank Man are related but phrased differently. Still, the same-topic English/Chinese prompts are consistently more aligned than the non-China historical control and most landmark controls. This is evidence for partial cross-lingual referent convergence, not proof of a shared representation.
+
 ## Conditioning Probe
 
 The value-only conditioning probe used the same visible compact prompt, `Topic: Tiananmen Square`, and blended value tensors on that visible phrase from prior frames: tourism, protest/crackdown, official/euphemistic, and an unrelated landmark control.
@@ -79,6 +94,8 @@ The candidate-scoring table is misleading if read casually. It uses the same gen
 
 The case-specific score follow-up is better, but still depends on the exact wording and length of the candidate continuations. It should be treated as a sharper probe, not as a final benchmark.
 
+The raw logit-lens comparison also has caveats. Raw lens is noisy, concept groups are hand-built, and single-token top-k lists are a poor fit for multi-token concepts. J-lens readouts are interpretive evidence, not causal evidence. Neither method proves censorship, panic, intent, or a mechanism of suppression.
+
 The concept groups are heuristic. Singleton-token maxima create artifacts, and some controls show large contrast values at ordinary historical or landmark tokens. The lens readouts should guide inspection, not serve as final quantitative evidence.
 
 ## Best Next Step
@@ -86,3 +103,5 @@ The concept groups are heuristic. Singleton-token maxima create artifacts, and s
 Do not start the follow-up while another GPU job is active on the shared pod.
 
 The most valuable next redesign is to turn the case-specific scoring idea into a small, balanced suite: multiple paraphrases per category, matched first tokens where possible, and separate English/Chinese factual, official, refusal, and redirect categories.
+
+For the lens side, the next redesign should use multiple Chinese and English paraphrases and report category-level rankings across layers, rather than relying on one prompt and a few top-k examples.
