@@ -409,3 +409,14 @@ ANCHORS (deep: placebo+alpha+champion) NOW 5 = Qwen3-30B-A3B(MoE)/Qwen3-32B(dens
 FULL 16: [anchors 5] + Mixtral, Mistral-Small-3.2-2506, gemma-3-27b-it, OLMo-2-32B,
 Qwen3.6-35B-A3B, Qwen3.6-27B, GLM-4-32B-0414, gpt-oss-20b, phi-4, Yi-1.5-34B, Nemotron-49B-v1_5.
 Vendors: Qwen, Mistral, Google, AllenAI, Zhipu, OpenAI, Microsoft, 01.ai, NVIDIA.
+
+## LAUNCH ORDER — two waves by risk (07-08, user: do higher-risk later)
+WAVE 1 (LOW RISK, run FIRST on gate-pass — standard GQA + DynamicCache, confident):
+  Qwen3-30B-A3B, Qwen3-32B, Qwen2.5-32B (Qwen anchor de-confound), Mixtral,
+  Mistral-Small-3.2-2506, OLMo-2-32B, Qwen3.6-35B-A3B, Qwen3.6-27B, Yi-1.5-34B, phi-4,
+  Nemotron-49B-v1_5. (~11 models -> banks the reliable sign-map + Qwen de-confound.)
+WAVE 2 (HIGHER RISK, run LATER — may skip-with-reason):
+  gemma-3-27b-it, gemma-4-31B-it, gemma-4-26B-A4B-it (SLIDING-WINDOW/HybridCache),
+  gpt-oss-20b (sliding-window+attention-sinks), GLM-4-32B-0414 (trust_remote_code).
+  If Gemma works -> bonus 2nd dense/MoE de-confound; if UNSUPPORTED -> Qwen de-confound stands.
+Rationale: get confident results locked before spending on architectures that may not graft.
