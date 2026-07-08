@@ -38,13 +38,25 @@ should not determine the value-graft sign). A sign FLIP within a pair falsifies 
 `referent_sign ~ geometry + headroom + reply_infocontent + reply_length`, geometry =
 {n_kv_heads, head_dim, GQA ratio, QK-norm presence, RoPE theta, n_layers}. Report that geometry
 survives the controls. n=16 is UNDERPOWERED for 5 free predictors, so:
-- PRE-REGISTER ONE DIRECTIONAL HYPOTHESIS (a single named geometry variable or a single
-  composite index), predicted BEFORE the sweep. **[TO FINALIZE before the run — via Fable
-  mechanistic reasoning + the actual per-model geometry table; the leading candidate is
-  QK-norm presence and/or GQA ratio, since QK-norm is the sharpest attention-geometry
-  difference between the known-positive Qwen3 and the (earlier) negative Qwen2.5. This line
-  MUST be replaced with the single committed directional prediction + its mechanistic
-  rationale before the 16-run; committing it is the last pre-reg step.]**
+- **COMMITTED DIRECTIONAL HYPOTHESIS (frozen before results, 07-08):**
+  **H1: QK-norm presence predicts the SIGN of referent value-graft recovery — models WITH
+  per-head QK-norm (q_norm/k_norm modules) have referent raw_EB ≥ 0 (help); models WITHOUT
+  trend ≤ 0 (harm/null).** Direction: QK-norm present → positive.
+  - Mechanistic rationale: QK-norm re-normalizes each head's query/key before the attention
+    dot-product, which stabilizes the attention distribution over positions. A grafted
+    write-time VALUE vector is only useful if the compacted-context query still attends to
+    the grafted slot with the write-time geometry; QK-norm makes that attention pattern more
+    scale-invariant / transferable across the A→B context change, so the re-injected value is
+    read out constructively rather than mis-weighted. It is also the SHARPEST attention-geometry
+    difference between the known-positive Qwen3 family (QK-norm) and the (earlier) negative
+    Qwen2.5 (no QK-norm) — an existing, non-fitted contrast.
+  - Test: one-sided; QK-norm coefficient on referent_sign has the predicted (positive) sign
+    after the reply-content + headroom controls.
+  - **BACKUP reliably-measured predictor (reported alongside, NOT the primary): GQA ratio**
+    (n_heads/n_kv_heads) — reported as a secondary direction in case QK-norm module-detection
+    (newly fixed 07-08; see below) proves unreliable on any family. If QK-norm detection is
+    confirmed clean across the 16 (qk_norm_source = "module:*"), H1 is the primary; if detection
+    is ambiguous for some models, fall back to GQA and report the switch as a deviation.
 - Nativeness (mean logprob of each model's own corpus under itself) reported as a robustness
   covariate only — NOT the primary fix (collinear/underpowered alone).
 
