@@ -31,7 +31,7 @@ $SSH "apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync >/dev/null 
 rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json swegym.parquet .huggingface_key root@$IP:/workspace/exp/ 2>/dev/null || true
 LME=/Users/jeb/.cache/huggingface/hub/datasets--xiaowu0162--longmemeval-cleaned/snapshots/98d7416c24c778c2fee6e6f3006e7a073259d48f/longmemeval_s_cleaned.json
 rsync -azL -e "ssh -i $K -p $PORT" "$LME" root@$IP:/workspace/exp/longmemeval_s_cleaned.json
-$SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural data/ 2>/dev/null; true"
+$SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural scenarios.json model_geometry.json data/ 2>/dev/null; true"
 bash -n "$JOB" || { echo "FAIL: job script syntax"; exit 1; }
 for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" || { echo "FAIL: $f syntax"; exit 1; }; done
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh

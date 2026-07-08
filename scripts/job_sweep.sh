@@ -55,6 +55,14 @@ for M in $MODELS; do
     unset SC_PLACEBO; unset SC_ALPHA_SWEEP
     echo "== MODEL  $M (self-gen + champion) $(date -Is) -> $log"
   fi
+  # EARLY-SIGNAL PROBE: score a few convs FIRST so a real scored result (sign + sanity)
+  # lands in ~40min instead of a 5h black box. Writes the same result json; the full run
+  # overwrites it. Catches a broken/out-of-distribution render per architecture fast.
+  PROBE="${SC_PROBE_CONVS:-3}"
+  if [ "$PROBE" -gt 0 ] && [ "$PROBE" -lt "${SC_CONV_LIMIT:-12}" ]; then
+    echo "== PROBE $M ($PROBE convs, EARLY SIGNAL) $(date -Is)"
+    SC_HF_MODEL="$M" SC_CONV_LIMIT="$PROBE" timeout 3000s python3 -u src/cross_arch_probe.py 2>&1 | tail -25
+  fi
   SC_HF_MODEL="$M" timeout "${MODEL_TIMEOUT}s" python3 -u src/cross_arch_probe.py 2>&1 | tee "$log"
   rc=${PIPESTATUS[0]}
   if [ "$rc" = "124" ]; then
