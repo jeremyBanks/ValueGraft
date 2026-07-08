@@ -47,8 +47,8 @@ span-aware rerun.
 
 The probe now does three things to reduce that failure mode:
 
-- The summary request says explicitly that this is not a request to continue
-  the task.
+- The summary request says explicitly that this is not a request to continue the
+  task.
 - The prompt pre-fills `Summary:` before generation.
 - The generated text is trimmed at tool/chat markers such as `<function=`,
   `<parameter=`, and `<think>`.
@@ -59,7 +59,8 @@ next action, the readout comparison is contaminated.
 
 ## Trajectory 1: getmoto File View
 
-Clean output: `outputs/qwen36_swegym_next_action_probe_cleanprompt_t0001_t0004.json`
+Clean output:
+`outputs/qwen36_swegym_next_action_probe_cleanprompt_t0001_t0004.json`
 
 Target action:
 
@@ -71,12 +72,12 @@ Target action:
 </function>
 ```
 
-The compact summary is proper prose. It describes the RDS
-`describe_db_clusters` issue, the getmoto repository, inspected files, and the
-relevant lines in `moto/rds/models.py` and `moto/rds/responses.py`.
+The compact summary is proper prose. It describes the RDS `describe_db_clusters`
+issue, the getmoto repository, inspected files, and the relevant lines in
+`moto/rds/models.py` and `moto/rds/responses.py`.
 
-The span readout now correctly captures the path even though tokenization
-merges the preceding `>` with `/workspace`. Useful spans:
+The span readout now correctly captures the path even though tokenization merges
+the preceding `>` with `/workspace`. Useful spans:
 
 - `str_replace_editor`: mean span divergence 0.651.
 - `/workspace/getmoto__moto__4.1/moto/rds/responses.py`: mean 0.561.
@@ -84,8 +85,8 @@ merges the preceding `>` with `/workspace`. Useful spans:
 - `[584, 600]`: mean 0.407.
 
 This is a good example of the probe landing on the actual next-action object:
-not just "view some file", but this file and this line range. It is still
-noisy, but it has the right shape.
+not just "view some file", but this file and this line range. It is still noisy,
+but it has the right shape.
 
 ## Trajectory 4: Dask Grep
 
@@ -107,8 +108,8 @@ for Enum types in Dask tokenization, notes that `dask/base.py` contains
 Useful spans:
 
 - `execute_bash`: mean span divergence 0.579.
-- `grep -n 'normalize_token' /workspace/dask__dask__2022.6/dask/base.py`:
-  mean 0.536.
+- `grep -n 'normalize_token' /workspace/dask__dask__2022.6/dask/base.py`: mean
+  0.536.
 - `/workspace/dask__dask__2022.6/dask/base.py`: mean 0.548.
 - `base.py`: mean 0.413.
 
@@ -141,16 +142,16 @@ Useful spans from the later span-aware diagnostic run:
 
 The strongest human-readable differences are around the path and verification
 script tokens. Around `/workspace`, the later-layer readout in both contexts
-still knows it is a path, but the full-context side is more tied to the
-specific repository/action continuation, while the compacted side is more
-generic path/project syntax. Around `reproduce_error.py`, both contexts decode
-the filename structure, but the full-context path shows more test/debug
-associations in middle layers and less generic completion/end-marker pressure.
+still knows it is a path, but the full-context side is more tied to the specific
+repository/action continuation, while the compacted side is more generic
+path/project syntax. Around `reproduce_error.py`, both contexts decode the
+filename structure, but the full-context path shows more test/debug associations
+in middle layers and less generic completion/end-marker pressure.
 
 This is not as clean as the Pokemon and block-party examples. Tool syntax and
-path fragments introduce lots of punctuation and tokenization noise. Still,
-the probe is doing the right kind of thing: it found the exact operational
-tokens in the next action and exposed measurable readout differences on them.
+path fragments introduce lots of punctuation and tokenization noise. Still, the
+probe is doing the right kind of thing: it found the exact operational tokens in
+the next action and exposed measurable readout differences on them.
 
 ## Immediate Takeaway
 

@@ -1,9 +1,9 @@
 _This conversation covers the tail of the ValueGraft J-lens intervention work
 (ordinary-batch and sparse-challenge grafting experiments, report drafting and
-review), a pivot into cheap referent-recovery microbenchmark design, a Tiananmen
-Square topic-sensitivity interpretability probe, and a repository-wide
-documentation reorganization culminating in a UTC-based archival naming
-convention._
+review), a pivot into cheap referent-recovery microbenchmark design, a
+topic-sensitivity interpretability probe around a sensitive geopolitical topic,
+and a repository-wide documentation reorganization culminating in a UTC-based
+archival naming convention._
 
 **Participants:** User and gpt-5.5-xhigh.
 
@@ -134,16 +134,16 @@ transform-registry shape is a narrower but more interesting K-sensitive lane
 strong K-only wins). This is treated as a starting map for further scaled
 experiment design, not final evidence.
 
-## Topic-sensitivity (Tiananmen Square) interpretability probe
+## Topic-sensitivity probe (a sensitive geopolitical topic)
 
 The user requested testing whether Qwen exhibits unusual internal behavior
-("panicking") when asked about Tiananmen Square, explicitly reframed away from
-"bypass the filter" toward "where internally does refusal/sensitivity/history
-routing show up, scanned broadly across layers and generation steps." Per user
-instruction, sensitive terms were kept out of all file/directory/job names (only
-in file contents) — the workspace was renamed from an initial Tiananmen-named
-path to neutral `topic_sensitivity_probe/` / `qwen_topic_probe` names before any
-pod work.
+("panicking") when asked about a politically sensitive geopolitical topic,
+explicitly reframed away from "bypass the filter" toward "where internally does
+refusal/sensitivity/history routing show up, scanned broadly across layers and
+generation steps." Per user instruction, sensitive terms were kept out of all
+file/directory/job names (only in file contents) — the workspace was renamed
+from an initial topic-named path to neutral `topic_sensitivity_probe/` /
+`qwen_topic_probe` names before any pod work.
 
 Using one shared RunPod A100 (reused across jobs, never run in parallel with
 other active experiments, and per explicit user instruction not shut down
@@ -166,10 +166,10 @@ a reform/development narrative. A follow-up case-specific candidate-continuation
 probability scorer (replacing a misleading generic top-candidate table)
 confirmed this quantitatively: the reform/development redirect is the model's
 highest-probability continuation for the Chinese prompt, while direct-factual
-continuations are preferred for English "Tank Man," "June Fourth," and a Kent
-State control; refusal is low-probability across the board. This supports
-"topic/language-dependent narrative routing" rather than simple refusal or lack
-of internal recognition.
+continuations are preferred for the other sensitive-topic prompt variants and an
+unrelated paired control; refusal is low-probability across the board. This
+supports "topic/language-dependent narrative routing" rather than simple refusal
+or lack of internal recognition.
 
 Per user request to check whether this holds with older, non-proprietary
 techniques ("does J-lens give insight we couldn't get more naively?"), a

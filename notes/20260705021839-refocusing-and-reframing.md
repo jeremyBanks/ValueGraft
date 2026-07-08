@@ -9,14 +9,14 @@ sees different histories.
 
 The more valuable framing is mitigation-first:
 
-> Can a compacted conversation preserve more of the model's prior
-> interpretation by retaining or transplanting a small amount of write-time KV
-> state, instead of relying only on a text summary?
+> Can a compacted conversation preserve more of the model's prior interpretation
+> by retaining or transplanting a small amount of write-time KV state, instead
+> of relying only on a text summary?
 
 Under this reframing, the project is not mainly a philosophical demonstration
-that "meaning lives in KV." It is an intervention study: can cache-state
-methods reduce the semantic damage caused by conversation compaction, under
-controlled leakage checks and negative controls?
+that "meaning lives in KV." It is an intervention study: can cache-state methods
+reduce the semantic damage caused by conversation compaction, under controlled
+leakage checks and negative controls?
 
 ## Why refocus
 
@@ -44,12 +44,12 @@ That version is more testable, less metaphysical, and more useful.
 
 ## Revised research questions
 
-1. Does standard text-summary compaction degrade the model's behavior on
-   probes whose answers depend on context-dependent interpretation rather than
-   visible text alone?
+1. Does standard text-summary compaction degrade the model's behavior on probes
+   whose answers depend on context-dependent interpretation rather than visible
+   text alone?
 
-2. Can retaining or transplanting a small amount of write-time state reduce
-   that degradation compared with a text-only compacted baseline?
+2. Can retaining or transplanting a small amount of write-time state reduce that
+   degradation compared with a text-only compacted baseline?
 
 3. Which part of the retained state carries useful mitigation signal?
 
@@ -83,8 +83,8 @@ Evidence that would support it:
 - `E-post` at a low alpha beats `B` on clean probes.
 - `H-gap` or a later `H-pack` beats `B-min` on clean probes.
 - Gains are not reproduced by `E-shuffled` or `E-wrongconv`.
-- The effect appears in categories such as referent, sense, stance, or
-  ruled-out decisions, not only in continuation fluency.
+- The effect appears in categories such as referent, sense, stance, or ruled-out
+  decisions, not only in continuation fluency.
 
 ### Secondary claim: mechanism
 
@@ -93,16 +93,16 @@ The mechanism claim should be phrased carefully:
 > Some write-time value states carry context-conditioned information useful for
 > later interpretation of compacted conversations.
 
-This is stronger than "activations differ" but weaker and cleaner than
-"meaning lives in values."
+This is stronger than "activations differ" but weaker and cleaner than "meaning
+lives in values."
 
 Evidence that would support it:
 
 - Low-alpha value grafting improves clean probe behavior.
 - K+V or gapped retention behaves differently from value-only grafting.
 - Wrong-content and shuffled grafts fail.
-- The micro-sense experiment shows that value swaps shift disambiguation
-  margins in the expected direction.
+- The micro-sense experiment shows that value swaps shift disambiguation margins
+  in the expected direction.
 
 ### Boundary claim: limits and costs
 
@@ -119,23 +119,23 @@ stories and clarifies what simple methods cannot do.
 
 The arms should be presented as mitigation tests, not just ontology probes.
 
-| Arm or contrast | Reframed purpose |
-|---|---|
-| `A` | Oracle: no compaction damage. |
-| `B` | Production text-summary baseline. |
-| `B-causal` | Text-only control matching `C`'s tail-then-summary order. |
-| `E-post` | Practical value-state mitigation with fresh keys and contiguous cache layout. |
-| `E-inter` | More invasive value-state mitigation; useful if post-prefill grafting is too weak. |
-| `H` vs `B-min` | Cleanest tiny-state test: same summary text, different write-time encoding. |
-| `C` | Upper-bound-ish retained-cache comparison, but confounded by gapped positions and old keys. |
-| `D` | Tests whether retained tail state alone carries signal without summary state. |
-| `E-shuffled` | Negative control: alignment should matter. |
-| `E-wrongconv` | Negative control: content should matter. |
-| Future `G` | Generalizes value grafting when compacted text paraphrases rather than repeats. |
+| Arm or contrast | Reframed purpose                                                                            |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| `A`             | Oracle: no compaction damage.                                                               |
+| `B`             | Production text-summary baseline.                                                           |
+| `B-causal`      | Text-only control matching `C`'s tail-then-summary order.                                   |
+| `E-post`        | Practical value-state mitigation with fresh keys and contiguous cache layout.               |
+| `E-inter`       | More invasive value-state mitigation; useful if post-prefill grafting is too weak.          |
+| `H` vs `B-min`  | Cleanest tiny-state test: same summary text, different write-time encoding.                 |
+| `C`             | Upper-bound-ish retained-cache comparison, but confounded by gapped positions and old keys. |
+| `D`             | Tests whether retained tail state alone carries signal without summary state.               |
+| `E-shuffled`    | Negative control: alignment should matter.                                                  |
+| `E-wrongconv`   | Negative control: content should matter.                                                    |
+| Future `G`      | Generalizes value grafting when compacted text paraphrases rather than repeats.             |
 
-The center of gravity should move toward `E`, `H`, and negative controls. `C`
-is still informative, but it should not carry the main practical claim because
-it is harder to deploy and varies more factors at once.
+The center of gravity should move toward `E`, `H`, and negative controls. `C` is
+still informative, but it should not carry the main practical claim because it
+is harder to deploy and varies more factors at once.
 
 ## Metrics under the new framing
 
@@ -178,13 +178,12 @@ relative to:
 - correct graft vs wrong-conversation graft
 - preferably low alpha vs high alpha curves
 
-If wrong or shuffled grafts improve too, the result is not a semantic
-continuity mitigation result.
+If wrong or shuffled grafts improve too, the result is not a semantic continuity
+mitigation result.
 
 ## Practical deployment story
 
-A mitigation-first paper or memo should explain what a system might actually
-do.
+A mitigation-first paper or memo should explain what a system might actually do.
 
 ### Path 1: SelfGist
 
@@ -195,8 +194,8 @@ Why it matters:
 
 - It is simple.
 - It requires retaining only summary tokens, not the whole conversation.
-- `H` vs `B-min` is a clean test of whether the same summary is more useful
-  when encoded in-context.
+- `H` vs `B-min` is a clean test of whether the same summary is more useful when
+  encoded in-context.
 
 Main risk:
 
@@ -238,20 +237,19 @@ Main risk:
 
 ## Suggested revised abstract
 
-Long-running LLM conversations are often compacted by replacing old history
-with a text summary and re-encoding the retained turns from scratch. This
-changes not only what text is visible, but also the model's internal
-interpretation of retained text whose meaning depended on the discarded
-history. We study whether this compaction damage can be reduced by preserving
-small amounts of write-time KV cache state. Across controlled conversation
-probes, we compare standard text-summary compaction with cache-state
-interventions: retaining in-context summary states, transplanting old value
-states onto freshly keyed compacted contexts, and gapped retention of original
-cache entries. Negative controls use shuffled and wrong-conversation grafts,
-and all probe results are stratified by summary leakage. The goal is not
-merely to show that hidden states differ after compaction, but to test whether
-write-time state provides a practical, compact mitigation for semantic
-continuity loss.
+Long-running LLM conversations are often compacted by replacing old history with
+a text summary and re-encoding the retained turns from scratch. This changes not
+only what text is visible, but also the model's internal interpretation of
+retained text whose meaning depended on the discarded history. We study whether
+this compaction damage can be reduced by preserving small amounts of write-time
+KV cache state. Across controlled conversation probes, we compare standard
+text-summary compaction with cache-state interventions: retaining in-context
+summary states, transplanting old value states onto freshly keyed compacted
+contexts, and gapped retention of original cache entries. Negative controls use
+shuffled and wrong-conversation grafts, and all probe results are stratified by
+summary leakage. The goal is not merely to show that hidden states differ after
+compaction, but to test whether write-time state provides a practical, compact
+mitigation for semantic continuity loss.
 
 ## Suggested revised title options
 
@@ -302,8 +300,8 @@ finish the current pilot cleanly:
 1. Repair missing `B-causal` continuation scores.
 2. Complete external judging and paraphrase leakage checks.
 3. Aggregate probe accuracy by category, arm, and leakage class.
-4. Put `H` vs `B-min`, low-alpha `E` vs `B`, and negative controls at the
-   center of the interpretation.
+4. Put `H` vs `B-min`, low-alpha `E` vs `B`, and negative controls at the center
+   of the interpretation.
 5. Treat 30B or future `G` runs as follow-ups only if the clean pilot result
    shows a mitigation signal.
 

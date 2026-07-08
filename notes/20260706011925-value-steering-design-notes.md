@@ -1,126 +1,125 @@
 # Value-steering configuration: design decisions and rationale
 
-*Product of a design discussion (user + Claude), 2026-07-05 night. This
-document is the reference for how graft/steering configurations are chosen,
-reported, and explored going forward.*
+_Product of a design discussion (user + Claude), 2026-07-05 night. This document
+is the reference for how graft/steering configurations are chosen, reported, and
+explored going forward._
 
 ## Decisions
 
-1. **Primary approach stays simple: one global α per model** (currently
-   mid-band α=0.25 at 4B; global α=0.75 at 30B, both holdout-validated).
-   The headline claims ride on this and only this. Rationale: the core
-   effect must be demonstrable with an intervention that fits in one
-   sentence; anything cleverer invites "how was that chosen?" and carries
-   overfitting risk that the primary result does not need.
+1. **Primary approach stays simple: one global α per model** (currently mid-band
+   α=0.25 at 4B; global α=0.75 at 30B, both holdout-validated). The headline
+   claims ride on this and only this. Rationale: the core effect must be
+   demonstrable with an intervention that fits in one sentence; anything
+   cleverer invites "how was that chosen?" and carries overfitting risk that the
+   primary result does not need.
 
 2. **The 57-slot mask (posslots) is demoted to an exploration section** —
-   despite beating the incumbent on holdout (+0.038 vs +0.024, 10/10 wins).
-   It is 192 validation-derived binary choices fished from a profile matrix
-   that is ~70% unstructured (and partly noise at n=10); it has not yet
-   passed its wrong-conversation contamination guard; and it complicates
-   the story disproportionately to its contribution. It gets reported
-   honestly (including the guard outcome) as "per-slot calibration looks
-   promising," not adopted as the method.
+   despite beating the incumbent on holdout (+0.038 vs +0.024, 10/10 wins). It
+   is 192 validation-derived binary choices fished from a profile matrix that is
+   ~70% unstructured (and partly noise at n=10); it has not yet passed its
+   wrong-conversation contamination guard; and it complicates the story
+   disproportionately to its contribution. It gets reported honestly (including
+   the guard outcome) as "per-slot calibration looks promising," not adopted as
+   the method.
 
-3. **The calibration interface for new models is the factored form:**
-   α(layer, head) = a_layer × m_head, head factors normalized to mean 1.0.
-   - Costs nothing beyond the profile pass we already run (rank-1 / additive
-     fit of the measured 48×n_kv effect matrix).
+3. **The calibration interface for new models is the factored form:** α(layer,
+   head) = a_layer × m_head, head factors normalized to mean 1.0.
+   - Costs nothing beyond the profile pass we already run (rank-1 / additive fit
+     of the measured 48×n_kv effect matrix).
    - On head-homogeneous models it self-collapses to per-layer tuning
-     (empirically true for every Qwen tested: head means explain 1.4% of
-     slot variance at 30B).
+     (empirically true for every Qwen tested: head means explain 1.4% of slot
+     variance at 30B).
    - Its expressiveness limit (no layer×head interactions) is a deliberate
-     inductive bias: interactions are precisely where our overfitting
-     occurred (4B "head 2" story died on holdout).
-   - It travels to head-heterogeneous architectures (Gemma-class) where the
-     head factors get their first real content; the sliding-window layer
-     problem there is separate (cache semantics, not head structure).
+     inductive bias: interactions are precisely where our overfitting occurred
+     (4B "head 2" story died on holdout).
+   - It travels to head-heterogeneous architectures (Gemma-class) where the head
+     factors get their first real content; the sliding-window layer problem
+     there is separate (cache semantics, not head structure).
 
-4. **Negative coefficients: bounded exploration, not primary.** The
-   experiment ladder for the exploration section, all evaluated once on
-   holdout: (a) marginal per-slot profile [done]; (b) clamped joint fit
-   (α ≥ 0, trust-region bounded); (c) signed joint fit, ridge-regularized
-   and bounded (e.g. α ∈ [−0.25, 1.25]). Comparing (b) vs (c) measures
-   whether negative degrees of freedom carry real value at our sample
-   sizes. Cheap enough to run locally at 4B.
+4. **Negative coefficients: bounded exploration, not primary.** The experiment
+   ladder for the exploration section, all evaluated once on holdout: (a)
+   marginal per-slot profile [done]; (b) clamped joint fit (α ≥ 0, trust-region
+   bounded); (c) signed joint fit, ridge-regularized and bounded (e.g. α ∈
+   [−0.25, 1.25]). Comparing (b) vs (c) measures whether negative degrees of
+   freedom carry real value at our sample sizes. Cheap enough to run locally at
+   4B.
 
-5. **Marginal ≠ joint caveat** goes in the write-up: per-slot profiles
-   measure each slot grafted alone; slots write to overlapping residual
-   subspaces, so joint behavior can differ. The mask's holdout success
-   suggests weak interference at this dose, but joint fits are the honest
-   instrument for any serious per-slot claim.
+5. **Marginal ≠ joint caveat** goes in the write-up: per-slot profiles measure
+   each slot grafted alone; slots write to overlapping residual subspaces, so
+   joint behavior can differ. The mask's holdout success suggests weak
+   interference at this dose, but joint fits are the honest instrument for any
+   serious per-slot claim.
 
 ## Context: the discussion behind decisions 4-5
 
 **The user's argument (paraphrased, not verbatim).** The per-slot blend
-coefficients don't act independently — they scale directions in a shared
-system, and those directions may be correlated rather than orthogonal. In a
-correlated linear system, reaching the right point can *require* some
-coefficients to be strongly negative (the classic case: two nearly-parallel
-directions whose difference is what's needed). A coefficient that looks
-nonsensical in isolation ("why would you ever blend negatively?") can be
-exactly what the joint solution needs. Therefore clamping coefficients at
-zero — however sensible it looks slot-by-slot — restricts the reachable
-space and could distort the overall solution more than the seemingly
-nonsensical negative values would.
+coefficients don't act independently — they scale directions in a shared system,
+and those directions may be correlated rather than orthogonal. In a correlated
+linear system, reaching the right point can _require_ some coefficients to be
+strongly negative (the classic case: two nearly-parallel directions whose
+difference is what's needed). A coefficient that looks nonsensical in isolation
+("why would you ever blend negatively?") can be exactly what the joint solution
+needs. Therefore clamping coefficients at zero — however sensible it looks
+slot-by-slot — restricts the reachable space and could distort the overall
+solution more than the seemingly nonsensical negative values would.
 
-**Assessment: geometrically correct.** Linearizing the intervention, each
-slot's α scales a direction (v_old − v_fresh) whose downstream effect passes
-through the output projection into the shared residual stream; heads
-demonstrably write into overlapping subspaces. Optimal coefficients over
-non-orthogonal directions routinely include negative entries; clamping
-restricts solutions to the directions' convex cone rather than their span,
-and if the ideal correction lies outside that cone, clamping strictly
-worsens the achievable fit. Supporting evidence that the negative half-space
-is *meaningful* (not just noise): inverted steering (α=−1) produces
-systematic away-from-context interpretations (the Pokémon demo), i.e.
-coherent motion along these directions in both signs.
+**Assessment: geometrically correct.** Linearizing the intervention, each slot's
+α scales a direction (v_old − v_fresh) whose downstream effect passes through
+the output projection into the shared residual stream; heads demonstrably write
+into overlapping subspaces. Optimal coefficients over non-orthogonal directions
+routinely include negative entries; clamping restricts solutions to the
+directions' convex cone rather than their span, and if the ideal correction lies
+outside that cone, clamping strictly worsens the achievable fit. Supporting
+evidence that the negative half-space is _meaningful_ (not just noise): inverted
+steering (α=−1) produces systematic away-from-context interpretations (the
+Pokémon demo), i.e. coherent motion along these directions in both signs.
 
-**Why we nonetheless don't adopt unconstrained negatives (the
-counter-argument that carried the decision):**
-- *Nonlinearity bounds everything.* The linear picture holds only near the
-  operating point; every measured α-curve degrades beyond moderate |α|
-  (4B collapses past ~0.35; 30B declines past ~1.0). Downstream layernorms
-  and attention softmaxes do not tolerate values far off the training
-  manifold. Whatever the unconstrained geometry requests, admissible
-  solutions live in a small trust region.
-- *Correlated directions are exactly where estimation variance explodes.*
-  Collinearity produces huge canceling coefficient pairs that fit the
-  profiling sample and generalize terribly — and we fit from ~10
-  conversations. Clamping (NNLS-style) is a standard, effective variance
-  control precisely in this regime. The statistical argument overrides the
-  geometric one at our sample sizes.
-- The compromise adopted: signed fits are explored, but *bounded and
-  regularized*, and only within the exploration section (decision 4). If
-  (c) beats (b) on holdout, the geometry argument wins in practice and the
-  write-up says so.
+**Why we nonetheless don't adopt unconstrained negatives (the counter-argument
+that carried the decision):**
+
+- _Nonlinearity bounds everything._ The linear picture holds only near the
+  operating point; every measured α-curve degrades beyond moderate |α| (4B
+  collapses past ~0.35; 30B declines past ~1.0). Downstream layernorms and
+  attention softmaxes do not tolerate values far off the training manifold.
+  Whatever the unconstrained geometry requests, admissible solutions live in a
+  small trust region.
+- _Correlated directions are exactly where estimation variance explodes._
+  Collinearity produces huge canceling coefficient pairs that fit the profiling
+  sample and generalize terribly — and we fit from ~10 conversations. Clamping
+  (NNLS-style) is a standard, effective variance control precisely in this
+  regime. The statistical argument overrides the geometric one at our sample
+  sizes.
+- The compromise adopted: signed fits are explored, but _bounded and
+  regularized_, and only within the exploration section (decision 4). If (c)
+  beats (b) on holdout, the geometry argument wins in practice and the write-up
+  says so.
 
 ## Evidence-grading rule (user, 07-05 night)
 
-Small-model / 4-bit / local results are exploratory only: they can
-demonstrate that something is POSSIBLE (existence proofs, candidate
-generators) but are never evidence that something is impossible or absent —
-the models are too small and unrepresentative for nulls to transfer.
-Empirical support for the asymmetry within this project: the α dose-response
-INVERTED between 4B and 30B; older-family small models showed nothing at any
-α. Claims are earned at 30B-bf16 on standard data (or larger); small-scale
-positives are promoted for validation there; small-scale negatives prune
-nothing at larger scale (applies to Gemma head factors too).
+Small-model / 4-bit / local results are exploratory only: they can demonstrate
+that something is POSSIBLE (existence proofs, candidate generators) but are
+never evidence that something is impossible or absent — the models are too small
+and unrepresentative for nulls to transfer. Empirical support for the asymmetry
+within this project: the α dose-response INVERTED between 4B and 30B;
+older-family small models showed nothing at any α. Claims are earned at 30B-bf16
+on standard data (or larger); small-scale positives are promoted for validation
+there; small-scale negatives prune nothing at larger scale (applies to Gemma
+head factors too).
 
 ## Outcome of the (b)-vs-(c) ladder at 4B (07-05 night)
 
 Holdout: factored CLAMPED +0.0074 (10/10) vs factored SIGNED +0.0036 (6/10);
 hand-tuned mid-band reference +0.0173 (10/10). At this scale/sample size the
-statistical counter-argument won: negative degrees of freedom halved the
-effect and broke consistency (collinearity variance), and the factored fit
-itself underperforms the simple band rule (profile matrix ≈ noise + band).
-Per the evidence-grading rule this does NOT close the question for
-30B-bf16 / richer profiles; it does establish signed fits aren't free money.
+statistical counter-argument won: negative degrees of freedom halved the effect
+and broke consistency (collinearity variance), and the factored fit itself
+underperforms the simple band rule (profile matrix ≈ noise + band). Per the
+evidence-grading rule this does NOT close the question for 30B-bf16 / richer
+profiles; it does establish signed fits aren't free money.
 
-*Process note (user-requested): the geometry argument was proposed by the
-user from first principles, assessed as formally correct, prioritized for
-empirical test the same evening, and decisively lost on holdout within
-hours — which is the collaboration working as intended. Arguments here earn
-their tests, and losing an empirical test is a result, not an error; the
-argument's correctness-in-principle stands recorded above alongside its
-defeat-in-practice at this scale.*
+_Process note (user-requested): the geometry argument was proposed by the user
+from first principles, assessed as formally correct, prioritized for empirical
+test the same evening, and decisively lost on holdout within hours — which is
+the collaboration working as intended. Arguments here earn their tests, and
+losing an empirical test is a result, not an error; the argument's
+correctness-in-principle stands recorded above alongside its defeat-in-practice
+at this scale._

@@ -42,8 +42,8 @@ interfaces clearly support server-managed state and opaque reasoning continuity.
 Open source currently shows abstraction and round-tripping around provider
 compaction items, not a clear public implementation of summary-boundary
 KV/value-state preservation. The most relevant open-source item I found was
-`lmctx`, which preserves OpenAI/Anthropic compaction artifacts as typed parts and
-provider-raw blobs so they can be passed back correctly.
+`lmctx`, which preserves OpenAI/Anthropic compaction artifacts as typed parts
+and provider-raw blobs so they can be passed back correctly.
 
 The literature overlap is stronger than our earlier notes suggested. In
 particular, "Models Take Notes at Prefill" establishes editable and composable
@@ -59,8 +59,7 @@ The safest contribution claim is something like:
 > project isolates a specific compaction-boundary question: when a conversation
 > is reduced to a visible summary plus retained tail, can preserving or
 > reconstructing write-time cached attention value state associated with the
-> compacted representation reduce the behavioral damage of text-only
-> compaction?
+> compacted representation reduce the behavioral damage of text-only compaction?
 
 ## What counts as fact vs inference
 
@@ -94,8 +93,8 @@ OpenAI Responses now has explicit compaction support:
 - The docs describe the compaction item as carrying prior state and reasoning
   forward with fewer tokens.
 - The SDK has generated types such as `ResponseCompactionItem`,
-  `ResponseCompactionItemParam`, `CompactedResponse`, and a
-  `compaction_trigger` input item.
+  `ResponseCompactionItemParam`, `CompactedResponse`, and a `compaction_trigger`
+  input item.
 
 OpenAI also has adjacent opaque-state machinery:
 
@@ -171,8 +170,8 @@ needed, but they are not themselves compaction artifacts.
 
 I did not find public evidence that Anthropic's compaction block contains hidden
 KV-like latent state beyond the summary content. It may still do internal work
-that is not visible in the transcript, especially when server-side state is used,
-but the public docs do not establish that.
+that is not visible in the transcript, especially when server-side state is
+used, but the public docs do not establish that.
 
 ### Google / Gemini
 
@@ -206,17 +205,17 @@ documentation connecting Gemini compaction to KV tensors.
 
 ## Provider-surface comparison
 
-| Provider | Public compaction surface | Opaque state in transcript? | Public KV link? | What we can safely say |
-| --- | --- | --- | --- | --- |
-| OpenAI | Responses automatic compaction and `/responses/compact` | Yes, encrypted `compaction` item | Prompt caching docs explicitly discuss KV tensors, but not compaction internals | Very close to our proposed production interface; mechanism unknown |
-| Anthropic | Beta `compact_20260112` context edit producing compaction block | Thinking signatures are opaque; compaction block itself appears summary-shaped | Prompt caching docs discuss KV representations | Product compaction exists; opaque state exists elsewhere; hidden compaction state not documented |
-| Gemini | Managed Agents automatic compaction; Live API compression; implicit caching | Thought signatures and session handles | Context caching implied, but I did not find public KV details for compaction | Strong adjacent state-management primitives; no general compact endpoint found |
+| Provider  | Public compaction surface                                                   | Opaque state in transcript?                                                    | Public KV link?                                                                 | What we can safely say                                                                           |
+| --------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| OpenAI    | Responses automatic compaction and `/responses/compact`                     | Yes, encrypted `compaction` item                                               | Prompt caching docs explicitly discuss KV tensors, but not compaction internals | Very close to our proposed production interface; mechanism unknown                               |
+| Anthropic | Beta `compact_20260112` context edit producing compaction block             | Thinking signatures are opaque; compaction block itself appears summary-shaped | Prompt caching docs discuss KV representations                                  | Product compaction exists; opaque state exists elsewhere; hidden compaction state not documented |
+| Gemini    | Managed Agents automatic compaction; Live API compression; implicit caching | Thought signatures and session handles                                         | Context caching implied, but I did not find public KV details for compaction    | Strong adjacent state-management primitives; no general compact endpoint found                   |
 
 ## Implications for our production-shape idea
 
 The "summary plus opaque handle" idea is viable, but it is not purely
-speculative anymore. OpenAI has essentially validated the external pattern:
-a compaction operation can produce an opaque item that travels with a compacted
+speculative anymore. OpenAI has essentially validated the external pattern: a
+compaction operation can produce an opaque item that travels with a compacted
 conversation and lets a later request continue with less visible text.
 
 That changes the tone of our writeup. We should not pitch the interface itself
@@ -283,8 +282,8 @@ The main relevant non-provider project I found was `lmctx`:
 - For Anthropic, it supports the beta compaction edit flow.
 
 This is meaningful interface prior art. It shows that external tooling is
-already adapting to provider compaction artifacts as first-class state. But I did
-not see evidence that `lmctx` implements KV surgery, value-vector blending,
+already adapting to provider compaction artifacts as first-class state. But I
+did not see evidence that `lmctx` implements KV surgery, value-vector blending,
 summary write-time value preservation, or an open-model equivalent of our arms.
 
 The official OpenAI and Anthropic SDKs also matter here. They are not research
@@ -337,9 +336,9 @@ Implication for us:
 - It is especially relevant to any per-head alpha or nonuniform blending idea,
   because it treats attention behavior at the head level.
 - It compares against token-space summarization as a lossy deployment baseline.
-- It does not appear to focus on the same visible-summary-plus-tail
-  conversation boundary or on preserving the write-time state of the summary
-  representation generated under the full old context.
+- It does not appear to focus on the same visible-summary-plus-tail conversation
+  boundary or on preserving the write-time state of the summary representation
+  generated under the full old context.
 
 In a writeup, this should be cited as a close method neighbor and a reason to be
 precise: our method is not "KV compaction" in the broadest sense. It is a
@@ -509,10 +508,8 @@ Provider docs and SDKs:
   <https://platform.claude.com/docs/en/build-with-claude/prompt-caching.md>
 - Anthropic extended thinking:
   <https://platform.claude.com/docs/en/build-with-claude/extended-thinking.md>
-- Gemini caching:
-  <https://ai.google.dev/gemini-api/docs/caching>
-- Gemini thinking:
-  <https://ai.google.dev/gemini-api/docs/thinking>
+- Gemini caching: <https://ai.google.dev/gemini-api/docs/caching>
+- Gemini thinking: <https://ai.google.dev/gemini-api/docs/thinking>
 - Gemini Managed Agents quickstart:
   <https://ai.google.dev/gemini-api/docs/managed-agents-quickstart>
 - Gemini Live API session management:
@@ -520,15 +517,13 @@ Provider docs and SDKs:
 
 Open source:
 
-- lmctx:
-  <https://github.com/Yuki-Imajuku/lmctx>
+- lmctx: <https://github.com/Yuki-Imajuku/lmctx>
 
 Papers:
 
 - Models Take Notes at Prefill: KV Cache Can Be Editable and Composable:
   <https://arxiv.org/abs/2606.17107>
-- Fast KV Compaction via Attention Matching:
-  <https://arxiv.org/abs/2602.16284>
+- Fast KV Compaction via Attention Matching: <https://arxiv.org/abs/2602.16284>
 - Parallel Context Compaction for Long-Horizon LLM Agent Serving:
   <https://arxiv.org/abs/2605.23296>
 - KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse:

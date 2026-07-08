@@ -1,13 +1,14 @@
 # Full-Layer J-Lens Sweep Handoff
 
-Date: 2026-07-07  
-Status: broad sweep completed; raw artifact kept local/ignored; compact summary committed.
+Date: 2026-07-07\
+Status: broad sweep completed; raw artifact kept local/ignored; compact summary
+committed.
 
 ## Purpose
 
-The earlier J-lens examples were useful but too hand-picked. They mostly
-sampled named anchors such as `Dex`, `Maple`, `B-410`, and `Crane`, and most
-scripts sampled only four heuristic layers: `16, 32, 48, 62`.
+The earlier J-lens examples were useful but too hand-picked. They mostly sampled
+named anchors such as `Dex`, `Maple`, `B-410`, and `Crane`, and most scripts
+sampled only four heuristic layers: `16, 32, 48, 62`.
 
 The current goal is to get a broader view:
 
@@ -24,9 +25,9 @@ This should let us distinguish three things:
 - raw high-change rows, including punctuation and formatting noise;
 - human-useful semantic rows after filtering/grouping.
 
-The point is not to replace the quantitative ValueGraft experiments. This is
-an interpretability support probe: it helps us see where write-time summary
-state differs from fresh re-encoding, and how that difference changes by layer.
+The point is not to replace the quantitative ValueGraft experiments. This is an
+interpretability support probe: it helps us see where write-time summary state
+differs from fresh re-encoding, and how that difference changes by layer.
 
 ## Current Files
 
@@ -47,16 +48,16 @@ python3 -m py_compile jlens_boundary_probe/full_layer_sweep.py
 bash -n jlens_boundary_probe/job_qwen36_full_layer_sweep.sh
 ```
 
-ShellCheck was requested as a good preflight idea for pod scripts, but it is
-not installed locally on this machine at the time of writing.
+ShellCheck was requested as a good preflight idea for pod scripts, but it is not
+installed locally on this machine at the time of writing.
 
 ## Pod/Run State
 
 An A100 80 GB PCIe pod was unavailable, so the sweep used A100-SXM4-80GB pods.
 The first completed run produced the expected remote JSON, but the local pull
-was accidentally started in parallel with pod termination, which cut off
-`rsync` before the file landed. The sweep was rerun from the committed script,
-then pulled and JSON-validated before termination.
+was accidentally started in parallel with pod termination, which cut off `rsync`
+before the file landed. The sweep was rerun from the committed script, then
+pulled and JSON-validated before termination.
 
 ```text
 first pod id: 2vasci152rpelv (completed, artifact lost during pull/terminate race)
@@ -75,8 +76,8 @@ raw output: outputs/qwen36_full_layer_sweep.json, 63 MB, valid JSON, local/ignor
 committed output: outputs/qwen36_full_layer_sweep_summary.json, 1.9 MB
 ```
 
-The full raw file is ignored because the repository blocks files over 4 MB.
-The committed summary preserves full layer aggregates, per-demo aggregates, and
+The full raw file is ignored because the repository blocks files over 4 MB. The
+committed summary preserves full layer aggregates, per-demo aggregates, and
 compact top-token/top-row details for analysis.
 
 ## What The Script Records
@@ -139,10 +140,10 @@ fitted layers.
 
 - Which layers have the largest write-time/fresh divergence on average?
 - Are semantic rows concentrated in a layer band, or are they scattered?
-- Do named-entity and identifier tokens behave differently from ordinary
-  words, punctuation, and table/JSON syntax?
+- Do named-entity and identifier tokens behave differently from ordinary words,
+  punctuation, and table/JSON syntax?
 - How often are high-change J-lens rows also high-overlap with next-token
   logits?
-- Does the sweep recover the known examples (`B-410`, `Dex`, `Maple`,
-  `Crane`) without hand selection?
+- Does the sweep recover the known examples (`B-410`, `Dex`, `Maple`, `Crane`)
+  without hand selection?
 - Are there new examples that are better than the previous hand-picked ones?

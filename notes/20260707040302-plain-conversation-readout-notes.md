@@ -20,8 +20,7 @@ thread. The old context establishes several private meanings:
 The useful comparison is again the matched-wrapper state in
 `outputs/qwen36_plain_probe.json`:
 
-- `write_time_matched_summary_anchors`: summary after the full old
-  conversation.
+- `write_time_matched_summary_anchors`: summary after the full old conversation.
 - `fresh_matched_summary_anchors`: the same literal summary in the same local
   wrapper, but without the old conversation.
 
@@ -34,23 +33,23 @@ at layers 16, 32, 48, and 62.
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
-| write-time | `refers`, `=`, `referring`, `denotes` | `=`, `refers`, `is`, `means` |
-| fresh | `Street`, `street`, `neighborhood`, `park`, `town`, `City` | `Street`, `Ave`, `Avenue`, `St`, `Streets` |
+| State      | Layer 48 top readouts                                      | Layer 62 top readouts                      |
+| ---------- | ---------------------------------------------------------- | ------------------------------------------ |
+| write-time | `refers`, `=`, `referring`, `denotes`                      | `=`, `refers`, `is`, `means`               |
+| fresh      | `Street`, `street`, `neighborhood`, `park`, `town`, `City` | `Street`, `Ave`, `Avenue`, `St`, `Streets` |
 
-This is a strong ordinary-language analogue of the Pokemon `Vacuum` effect.
-With old context, `Maple` is interpreted as a local label whose meaning has
-been defined. Freshly encoded, it drifts toward a generic place/street name.
+This is a strong ordinary-language analogue of the Pokemon `Vacuum` effect. With
+old context, `Maple` is interpreted as a local label whose meaning has been
+defined. Freshly encoded, it drifts toward a generic place/street name.
 
 ### Robin
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
-| write-time | `is`, `aka`, parenthetical/person-ish continuations | `is`, `volunteers`, `volunteer`, `person` |
-| fresh | `Robin`, `Mary`, `Emily`, `Rose`, `Green`, `volunteer`, `Oak` | `Hood`, `Robin`, `Oak`, `handles`, `manages` |
+| State      | Layer 48 top readouts                                         | Layer 62 top readouts                        |
+| ---------- | ------------------------------------------------------------- | -------------------------------------------- |
+| write-time | `is`, `aka`, parenthetical/person-ish continuations           | `is`, `volunteers`, `volunteer`, `person`    |
+| fresh      | `Robin`, `Mary`, `Emily`, `Rose`, `Green`, `volunteer`, `Oak` | `Hood`, `Robin`, `Oak`, `handles`, `manages` |
 
 The old-context state points toward the human volunteer role. Fresh encoding
 partly keeps the name/person framing, but also drifts into generic `Robin Hood`
@@ -60,23 +59,23 @@ and name-list associations.
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
-| write-time | `approved`, `option`, local decision punctuation | `chosen`, `chose`, `selected` |
-| fresh | `Blue`, `tents`, `Rain`, `blue`, `Flag` | `tarp`, `tents`, `Tent`, `tent`, `Zone` |
+| State      | Layer 48 top readouts                            | Layer 62 top readouts                   |
+| ---------- | ------------------------------------------------ | --------------------------------------- |
+| write-time | `approved`, `option`, local decision punctuation | `chosen`, `chose`, `selected`           |
+| fresh      | `Blue`, `tents`, `Rain`, `blue`, `Flag`          | `tarp`, `tents`, `Tent`, `tent`, `Zone` |
 
 Write-time `Blue` carries the chosen-plan decision. Fresh `Blue` moves toward
-rain-event objects and color-plan associations. It is still in the event
-domain, but the decision status is weaker.
+rain-event objects and color-plan associations. It is still in the event domain,
+but the decision status is weaker.
 
 ### Green
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
+| State      | Layer 48 top readouts                                      | Layer 62 top readouts                 |
+| ---------- | ---------------------------------------------------------- | ------------------------------------- |
 | write-time | `rejected`, `failed`, `refused`, `unacceptable`, `because` | `rejected`, `tents`, `meant`, `means` |
-| fresh | `Green`, `green`, `cancelled`, `option`, `would` | `means`, `canc...`, `would`, `was` |
+| fresh      | `Green`, `green`, `cancelled`, `option`, `would`           | `means`, `canc...`, `would`, `was`    |
 
 This is less dramatic than `Blue`, but still useful: the old-context state
 emphasizes rejection, while the fresh state is closer to generic option
@@ -86,10 +85,10 @@ semantics.
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
+| State      | Layer 48 top readouts                           | Layer 62 top readouts              |
+| ---------- | ----------------------------------------------- | ---------------------------------- |
 | write-time | `obsolete`, `outdated`, `deprecated`, `expired` | permit-code continuation fragments |
-| fresh | `municipal`, `City`, `city`, `Civic`, `Town` | code/number continuations |
+| fresh      | `municipal`, `City`, `city`, `Civic`, `Town`    | code/number continuations          |
 
 The stale-number fact is visible in the write-time state. Fresh encoding knows
 it is a civic/permit-ish code, but the stale/obsolete meaning is much weaker.
@@ -98,22 +97,22 @@ it is a civic/permit-ish code, but the stale/obsolete meaning is much weaker.
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
+| State      | Layer 48 top readouts                    | Layer 62 top readouts       |
+| ---------- | ---------------------------------------- | --------------------------- |
 | write-time | `new`, `newly`, `new`-like continuations | code continuation fragments |
-| fresh | `ID`, `PX`, `PN`, code-like fragments | code continuation fragments |
+| fresh      | `ID`, `PX`, `PN`, code-like fragments    | code continuation fragments |
 
-The current-number side is subtler than the stale-number side. Write-time
-leans toward new/current; fresh mostly sees an identifier.
+The current-number side is subtler than the stale-number side. Write-time leans
+toward new/current; fresh mostly sees an identifier.
 
 ### Orchid
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
-| write-time | `refers`, `represents`, company/customer-ish meanings | `is`, `refers`, `means` |
-| fresh | `Orchestra`, `Music`, `Dance`, `music`, `orchestr...` | name/wordpiece continuations |
+| State      | Layer 48 top readouts                                 | Layer 62 top readouts        |
+| ---------- | ----------------------------------------------------- | ---------------------------- |
+| write-time | `refers`, `represents`, company/customer-ish meanings | `is`, `refers`, `means`      |
+| fresh      | `Orchestra`, `Music`, `Dance`, `music`, `orchestr...` | name/wordpiece continuations |
 
 This one is delightfully weird. Because the tokenization starts with `Orch`,
 fresh encoding drifts into orchestra/music associations rather than the dessert
@@ -123,10 +122,10 @@ vendor. Old context pulls it toward a defined local referent.
 
 Canonical summary, matched wrapper:
 
-| State | Layer 62 top readouts |
-| --- | --- |
-| write-time | `oak`, `Oak`, `oval`, `owl`, `ark` |
-| fresh | `screen`, `cooler`, `tent`, `tarp`, `banner`, `oak` |
+| State      | Layer 62 top readouts                               |
+| ---------- | --------------------------------------------------- |
+| write-time | `oak`, `Oak`, `oval`, `owl`, `ark`                  |
+| fresh      | `screen`, `cooler`, `tent`, `tarp`, `banner`, `oak` |
 
 This is noisier, but the probe-question state was clearer: when asked
 `Should we use the big table?`, both full and compacted contexts pull toward
@@ -137,10 +136,10 @@ useful as a summary-anchor example than as a probe-token example.
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
-| write-time | `solely`, `ONLY`, `only`, `weekday`, `Friday` | `is`, `deadline`, `separate` |
-| fresh | `Friday`, `Monday`, `Tuesday`, `weekend`, `Thursday`, `Saturday` | `timeline`, `night`, `schedule`, `deadline` |
+| State      | Layer 48 top readouts                                            | Layer 62 top readouts                       |
+| ---------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| write-time | `solely`, `ONLY`, `only`, `weekday`, `Friday`                    | `is`, `deadline`, `separate`                |
+| fresh      | `Friday`, `Monday`, `Tuesday`, `weekend`, `Thursday`, `Saturday` | `timeline`, `night`, `schedule`, `deadline` |
 
 Write-time carries the "Friday is only the deadline, keep it separate" warning.
 Fresh encoding mostly sees an ordinary day/schedule token, with some deadline
@@ -150,10 +149,10 @@ signal still present from local text.
 
 Canonical summary, matched wrapper:
 
-| State | Layer 48 top readouts | Layer 62 top readouts |
-| --- | --- | --- |
-| write-time | `is`, `refers`, `represents`, `hired` | `is`, `refers`, `means`, `Stage`, `stage`, `delivers` |
-| fresh | `crane`, `Crane`, `trucks`, `contractor`, `tower`, `hire` | `rental`, `operator`, `schedule`, `lease`, `license` |
+| State      | Layer 48 top readouts                                     | Layer 62 top readouts                                 |
+| ---------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| write-time | `is`, `refers`, `represents`, `hired`                     | `is`, `refers`, `means`, `Stage`, `stage`, `delivers` |
+| fresh      | `crane`, `Crane`, `trucks`, `contractor`, `tower`, `hire` | `rental`, `operator`, `schedule`, `lease`, `license`  |
 
 The fresh state is not wrong exactly, but it is more generic: rental/equipment
 operator semantics. Write-time better preserves the local company/stage-rental
@@ -166,16 +165,16 @@ appears in ordinary planning text:
 
 - private local labels (`Maple`, `Orchid`, `Crane`) drift toward generic named
   entities or common senses when freshly encoded;
-- old-context state more often carries local definition words such as
-  `refers`, `means`, `is`, `chosen`, `rejected`, `deadline`, or `obsolete`;
+- old-context state more often carries local definition words such as `refers`,
+  `means`, `is`, `chosen`, `rejected`, `deadline`, or `obsolete`;
 - locally explicit phrases like `P-771` remain mostly code-like in both states,
   but old-context state better reflects whether the code is current or stale.
 
 The qualitative story is now broader:
 
 - Pokemon shows vivid referent/sense traps with memorable private meanings.
-- The block-party probe shows a mundane summarization setting with the same
-  kind of context-conditioned semantic drift.
+- The block-party probe shows a mundane summarization setting with the same kind
+  of context-conditioned semantic drift.
 
 Neither is evidence by itself. Together, they are useful explanatory artifacts:
 they make the hypothesized mechanism easier to see before showing quantitative

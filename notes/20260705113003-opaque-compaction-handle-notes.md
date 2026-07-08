@@ -1,17 +1,17 @@
 # Opaque Compaction Handle Notes
 
-These are deployment-framing notes, not a prescriptive design. The point is
-to describe one way to think about the practical overhead of retaining
-summary KV/state after compaction.
+These are deployment-framing notes, not a prescriptive design. The point is to
+describe one way to think about the practical overhead of retaining summary
+KV/state after compaction.
 
 ## The practical tension
 
-SelfGist / H-pack-style compaction is not purely stateless. It preserves a
-small piece of model-native state: the KV entries for the summary tokens as
-they were written while the full conversation was still present.
+SelfGist / H-pack-style compaction is not purely stateless. It preserves a small
+piece of model-native state: the KV entries for the summary tokens as they were
+written while the full conversation was still present.
 
-That is much smaller than preserving the full old context cache, but it is
-still large compared with plain text.
+That is much smaller than preserving the full old context cache, but it is still
+large compared with plain text.
 
 For the 30B Qwen3-A3B model, rough fp16 KV size is:
 
@@ -30,9 +30,9 @@ So a summary-state sidecar costs roughly:
 700 summary tokens  ≈ 66 MiB
 ```
 
-That is tiny compared with a full 12K-token KV cache, but huge compared with
-the text summary itself. As a raw client-uploaded blob, this is probably not
-an attractive stateless API payload.
+That is tiny compared with a full 12K-token KV cache, but huge compared with the
+text summary itself. As a raw client-uploaded blob, this is probably not an
+attractive stateless API payload.
 
 ## Opaque handle framing
 
@@ -49,10 +49,9 @@ provider stores the compacted state server-side
 client receives and later presents an opaque handle
 ```
 
-This resembles existing API patterns such as prompt-cache handles,
-server-side session IDs, or opaque reasoning/thinking tokens: the client does
-not inspect or transport the internal state directly, but can refer to it in
-later calls.
+This resembles existing API patterns such as prompt-cache handles, server-side
+session IDs, or opaque reasoning/thinking tokens: the client does not inspect or
+transport the internal state directly, but can refer to it in later calls.
 
 One possible lifecycle:
 
@@ -80,9 +79,9 @@ the model-native state associated with that summary.
 ## Harness/API primitive framing
 
 Another way to phrase this is that compaction should be an explicit operation
-the harness can call, not a hidden transport detail. The harness already
-decides when to summarize or truncate context; an opaque-state version could
-fit into that existing control point.
+the harness can call, not a hidden transport detail. The harness already decides
+when to summarize or truncate context; an opaque-state version could fit into
+that existing control point.
 
 For example:
 
@@ -123,8 +122,8 @@ compaction boundary.
 It could be represented as a special cache handle attached to the summary
 message, or as a synthetic opaque token placed immediately after the summary.
 The exact surface is a product/API choice. The important point is that the
-harness does not need to inspect tensors; it only needs to preserve and pass
-the handle in the compacted context.
+harness does not need to inspect tensors; it only needs to preserve and pass the
+handle in the compacted context.
 
 This also gives a natural fallback story. If a provider or model does not
 support latent compaction handles, the harness simply keeps `summary_text` and
@@ -145,16 +144,16 @@ the handle plus ordinary text.
 
 ### Server storage
 
-The provider pays storage for the retained summary state. For 30B fp16 KV,
-this is roughly tens of MiB per compacted conversation checkpoint, depending
-on summary length.
+The provider pays storage for the retained summary state. For 30B fp16 KV, this
+is roughly tens of MiB per compacted conversation checkpoint, depending on
+summary length.
 
 This is still far less than storing the entire long-context KV cache.
 
 ### Compute
 
-At compaction time, the provider must generate the summary while full history
-is present and retain/pack the summary state.
+At compaction time, the provider must generate the summary while full history is
+present and retain/pack the summary state.
 
 On later turns, the provider can recompute the recent tail normally and attach
 the stored summary state. This may be cheaper than reprocessing the full old
@@ -183,12 +182,12 @@ like prompt caching. It may be useful only for a bounded session window.
 This should be presented as a bounded deployment possibility, not a solved
 interface design:
 
-> Raw summary KV is too large to ship as a normal stateless request payload.
-> But if an API already supports provider-side cached prefixes, session
-> continuation, or opaque reasoning/cache tokens, then SelfGist-like
-> compaction could be exposed as an opaque compaction handle: the summary
-> remains visible text, while the provider stores a compact model-native state
-> object for that summary.
+> Raw summary KV is too large to ship as a normal stateless request payload. But
+> if an API already supports provider-side cached prefixes, session
+> continuation, or opaque reasoning/cache tokens, then SelfGist-like compaction
+> could be exposed as an opaque compaction handle: the summary remains visible
+> text, while the provider stores a compact model-native state object for that
+> summary.
 
 The useful comparison is:
 
@@ -207,9 +206,9 @@ created at compaction time.
 For agent harnesses, the practical description might be:
 
 > When context gets too long, the harness asks the provider to compact from a
-> chosen boundary. The provider returns a human-readable summary plus an
-> opaque compaction token. The harness inserts both where it would normally
-> insert a summary, keeps the recent tail as text, and continues. The
-> experiment's in-memory cache surgery is testing whether such a token would
-> be worth having; serialization, expiration, and handle transport follow
-> established cached-state API patterns.
+> chosen boundary. The provider returns a human-readable summary plus an opaque
+> compaction token. The harness inserts both where it would normally insert a
+> summary, keeps the recent tail as text, and continues. The experiment's
+> in-memory cache surgery is testing whether such a token would be worth having;
+> serialization, expiration, and handle transport follow established
+> cached-state API patterns.

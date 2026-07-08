@@ -1,8 +1,8 @@
 # ValueGraft: Preserving Write-Time Attention State Across Conversation Compaction
 
 **Status:** focused second draft. The broader synthesis remains preserved in
-`valuegraft-paper-draft.md`.  
-**Date:** 2026-07-07  
+`valuegraft-paper-draft.md`.\
+**Date:** 2026-07-07\
 **Authors:** Jeremy Banks; Anthropic Claude Fable 5; OpenAI GPT-5.5
 
 ## Abstract
@@ -80,10 +80,10 @@ KV-Graft:         write-time K, write-time V
 The natural parameterization is `(alpha_K, alpha_V)`, where each value controls
 how much of the write-time key or value side is used at aligned positions. In
 the current V-Graft experiments, `alpha_K = 0` and `alpha_V` is tuned. In the
-current KV-Graft experiments, the packed summary branch uses write-time keys
-and values, with key re-rotation to account for the new packed positions. A
-future controlled K-only branch would set `alpha_K = 1, alpha_V = 0` under the
-same summary and layout controls.
+current KV-Graft experiments, the packed summary branch uses write-time keys and
+values, with key re-rotation to account for the new packed positions. A future
+controlled K-only branch would set `alpha_K = 1, alpha_V = 0` under the same
+summary and layout controls.
 
 Across the current evidence, these interventions do not restore facts that were
 only present in the evicted history. Their measurable benefits are concentrated
@@ -120,14 +120,14 @@ Several nearby literatures already establish that cached attention state can be
 useful beyond speed. Li (2026) argues that prefill writes conclusions into
 downstream cached state and that those cached blocks can be edited or composed.
 Zweiger et al. (2026) study latent-space KV compaction directly by constructing
-smaller keys and values that reproduce attention behavior. KV reuse systems
-such as KVLink (Yang et al., 2025), CacheBlend (Yao et al., 2025), LMCache
-(LMCache contributors, 2024), and SamKV (Cao et al., 2025) reuse or mix cache
-state for independently encoded chunks. Learned compression methods such as
-gist tokens (Mu et al., 2023), AutoCompressor (Chevalier et al., 2023), ICAE
-(Ge et al., 2024), Activation Beacon (Zhang et al., 2024), Compressed Context
-Memory (Kim et al., 2023), and Cartridges (Eyuboglu et al., 2025) explore
-non-textual ways to carry context.
+smaller keys and values that reproduce attention behavior. KV reuse systems such
+as KVLink (Yang et al., 2025), CacheBlend (Yao et al., 2025), LMCache (LMCache
+contributors, 2024), and SamKV (Cao et al., 2025) reuse or mix cache state for
+independently encoded chunks. Learned compression methods such as gist tokens
+(Mu et al., 2023), AutoCompressor (Chevalier et al., 2023), ICAE (Ge et al.,
+2024), Activation Beacon (Zhang et al., 2024), Compressed Context Memory (Kim et
+al., 2023), and Cartridges (Eyuboglu et al., 2025) explore non-textual ways to
+carry context.
 
 The narrower setting here is conversation compaction: old dialogue is replaced
 by a generated text summary and the system continues from a compacted
@@ -138,16 +138,16 @@ compacted text from scratch.
 
 Hosted provider APIs now expose related product surfaces. OpenAI Responses
 supports server-side compaction through `context_management` with
-`compact_threshold`, plus a standalone `/responses/compact` endpoint; the
-public docs describe an encrypted, opaque compaction item that carries prior
-state and reasoning forward (OpenAI, 2026a). OpenAI prompt caching also
-explicitly discusses persisted key/value tensors as attention-layer prefill
-representations (OpenAI, 2026b). Anthropic exposes beta server-side compaction
-as a typed `compaction` block containing a summary that must be passed back on
-later requests (Anthropic, 2026). Gemini exposes context caching and encrypted
-thought signatures for carrying reasoning context across API calls (Google AI
-for Developers, 2026a, 2026b). These interfaces show that production APIs can
-carry non-textual or semi-opaque continuation state. They do not show whether
+`compact_threshold`, plus a standalone `/responses/compact` endpoint; the public
+docs describe an encrypted, opaque compaction item that carries prior state and
+reasoning forward (OpenAI, 2026a). OpenAI prompt caching also explicitly
+discusses persisted key/value tensors as attention-layer prefill representations
+(OpenAI, 2026b). Anthropic exposes beta server-side compaction as a typed
+`compaction` block containing a summary that must be passed back on later
+requests (Anthropic, 2026). Gemini exposes context caching and encrypted thought
+signatures for carrying reasoning context across API calls (Google AI for
+Developers, 2026a, 2026b). These interfaces show that production APIs can carry
+non-textual or semi-opaque continuation state. They do not show whether
 providers use a ValueGraft-like mechanism internally.
 
 Our qualitative readout work uses the Jacobian lens introduced by Gurnee et al.
@@ -178,11 +178,10 @@ continuation. The cache snapshot from this generation run is saved. It contains
 the key/value tensors written for the original conversation, the summary
 request, and the summary tokens as they were generated under full context.
 
-The production text-compaction baseline then constructs a new transcript:
-system message, assistant context note containing the summary, and the retained
-tail messages. That transcript is freshly encoded from scratch. The
-interventions differ only in which cached attention state is carried across
-this boundary.
+The production text-compaction baseline then constructs a new transcript: system
+message, assistant context note containing the summary, and the retained tail
+messages. That transcript is freshly encoded from scratch. The interventions
+differ only in which cached attention state is carried across this boundary.
 
 ### 4.2 Arms, Controls, and Public Names
 
@@ -219,22 +218,22 @@ cache. For Qwen3 in this stack, keys are stored after RoPE rotation and values
 are unrotated. To make the retained summary cache contiguous and prefix-shaped,
 we move the summary span immediately after the four sink tokens. The summary
 keys are re-rotated by the positional offset between their write-time positions
-and their packed positions; the values are copied unchanged. The resulting
-cache contains only the sinks and summary entries, with the cache offset set to
-the end of the packed summary.
+and their packed positions; the values are copied unchanged. The resulting cache
+contains only the sinks and summary entries, with the cache offset set to the
+end of the packed summary.
 
 The Fresh-KV Control is the matched text-only control for this operation. It
 uses the same sink tokens and the same summary token ids at the same packed
-positions, but obtains their key/value tensors by an ordinary fresh prefill.
-Any KV-Graft vs Fresh-KV Control difference is therefore not due to summary
-wording, token count, or packed position layout.
+positions, but obtains their key/value tensors by an ordinary fresh prefill. Any
+KV-Graft vs Fresh-KV Control difference is therefore not due to summary wording,
+token count, or packed position layout.
 
 ### 4.4 V-Graft Construction
 
-V-Graft starts from the production text-compaction baseline B. We first
-freshly prefill the compacted transcript, preserving its ordinary contiguous
-positions and its fresh keys. We then align tokens from the compacted transcript
-to tokens from the old full-context summary-generation run.
+V-Graft starts from the production text-compaction baseline B. We first freshly
+prefill the compacted transcript, preserving its ordinary contiguous positions
+and its fresh keys. We then align tokens from the compacted transcript to tokens
+from the old full-context summary-generation run.
 
 Alignment is exact-token matching, not semantic retrieval. The summary region
 and tail region are matched separately because B places the summary before the
@@ -250,28 +249,28 @@ V_final[layer, new_pos] =
   + alpha_V       * V_old[layer, old_pos]
 ```
 
-The reported V-Graft arm is the post-prefill version: blending happens after
-B's compacted transcript has been encoded. Earlier exploratory arms also tried
+The reported V-Graft arm is the post-prefill version: blending happens after B's
+compacted transcript has been encoded. Earlier exploratory arms also tried
 interleaving the blend during prefill, but the current headline comparison uses
 fresh keys and post-prefill blended values. The 4B setting used a mid-layer-band
-gate with `alpha_V = 0.25`; the 30B setting used a global `alpha_V = 0.75`,
-both selected on validation continuation likelihood before holdout evaluation.
+gate with `alpha_V = 0.25`; the 30B setting used a global `alpha_V = 0.75`, both
+selected on validation continuation likelihood before holdout evaluation.
 
 This V-Graft branch should not be described as "the replace arm." A constant
-`alpha_V = 1` is one point in the V-Graft family; `alpha_V = 0` is equivalent
-to no value grafting. Current results primarily evaluate tuned intermediate
+`alpha_V = 1` is one point in the V-Graft family; `alpha_V = 0` is equivalent to
+no value grafting. Current results primarily evaluate tuned intermediate
 settings.
 
 ### 4.5 Validation
 
 Because cache surgery is sensitive to position, template, and kernel details,
 every reported configuration had to pass identity tests before its results
-counted. The ladder verifies cache
-serialization, null surgery, V-Graft `alpha_V = 0` equivalence to B,
-old-context-equals-new-context equivalence to A, tokenization stability, and
-key re-rotation for packed KV-Graft. Runtime traps found during the work
-include Qwen chat-template instability, batched-vs-stepwise logit differences,
-and sequence-length-dependent 4-bit kernel behavior.
+counted. The ladder verifies cache serialization, null surgery, V-Graft
+`alpha_V = 0` equivalence to B, old-context-equals-new-context equivalence to A,
+tokenization stability, and key re-rotation for packed KV-Graft. Runtime traps
+found during the work include Qwen chat-template instability,
+batched-vs-stepwise logit differences, and sequence-length-dependent 4-bit
+kernel behavior.
 
 Negative controls check whether gains can be explained by generic smoothing or
 odd cache perturbations. Shuffled-value grafts use the correct conversation's
@@ -298,10 +297,11 @@ The evidence comes from four sources:
 
 Probe-style tasks append a user question to each arm and greedily generate an
 answer at temperature 0. Continuation and coding-trajectory tasks teacher-force
-the held-out continuation or next assistant action and report mean per-token
-log likelihood. Where possible, results are paired by conversation and reported
-with wins, bootstrap confidence intervals, and gap closure `(arm - B) / (A -
-B)`. Local 4B results are 4-bit MLX; cloud 30B results are bf16
+the held-out continuation or next assistant action and report mean per-token log
+likelihood. Where possible, results are paired by conversation and reported with
+wins, bootstrap confidence intervals, and gap closure `(arm - B) / (A -
+B)`.
+Local 4B results are 4-bit MLX; cloud 30B results are bf16
 HuggingFace/Transformers unless otherwise stated.
 
 ## 5. Results
@@ -315,25 +315,25 @@ recall.
 
 For calibration, the early LongMemEval-S runs show full context at 71-81%
 correct while compacted variants fall to at most 11%. The later 30B-bf16
-aggregate gives a larger standard-data estimate: 52.5% correct with full
-context vs 4.1% with text compaction over n=320. On SWE-Gym/OpenHands
-next-action prediction, the full-context vs compacted gap is 0.164 nats/token.
-The reported intervention effects are measured against these gaps.
+aggregate gives a larger standard-data estimate: 52.5% correct with full context
+vs 4.1% with text compaction over n=320. On SWE-Gym/OpenHands next-action
+prediction, the full-context vs compacted gap is 0.164 nats/token. The reported
+intervention effects are measured against these gaps.
 
 ### 5.2 Same Text, Different State
 
 The same summary text behaves differently depending on whether its cache entries
 were written under full context. In an earlier gapped KV-Graft pilot, the
-write-time cache variant beats a fresh-encoded minimal summary control by
-+0.093 nats on the 4B pilot, winning 10/12 conversations. At 30B the contrast
-grows to +0.128 nats, winning 12/12 conversations, CI [0.097, 0.158].
+write-time cache variant beats a fresh-encoded minimal summary control by +0.093
+nats on the 4B pilot, winning 10/12 conversations. At 30B the contrast grows to
++0.128 nats, winning 12/12 conversations, CI [0.097, 0.158].
 
 A separate micro-sense experiment isolates the mechanism. A sentence with
-identical tokens and positions is evaluated with and without a
-disambiguating context. The bare-context sense margin is -0.23 nats.
-Transplanting only value vectors moves it to +0.84; transplanting K+V moves it
-to +1.95; full context is +3.81. Cached value tensors therefore carry
-context-conditioned interpretation in this controlled setting.
+identical tokens and positions is evaluated with and without a disambiguating
+context. The bare-context sense margin is -0.23 nats. Transplanting only value
+vectors moves it to +0.84; transplanting K+V moves it to +1.95; full context is
++3.81. Cached value tensors therefore carry context-conditioned interpretation
+in this controlled setting.
 
 Wrong-conversation and shuffled-value grafts degrade performance rather than
 improve it, arguing against a generic smoothing explanation.
@@ -347,52 +347,52 @@ component, especially at 30B.
 
 Fabricated:admitted counts on Phase 2 synthetic/decoy probes:
 
-| Arm | 30B decoys | 30B evicted facts | 4B decoys | 4B evicted facts |
-| --- | --- | --- | --- | --- |
-| B, production compaction | 19:5 | 16:8 | 18:6 | 15:9 |
-| Fresh-KV Control, fresh packed summary | 10:14 | 5:19 | 4:20 | 6:18 |
-| KV-Graft, write-time packed summary | **3:21** | **1:23** | **3:21** | **2:22** |
+| Arm                                    | 30B decoys | 30B evicted facts | 4B decoys | 4B evicted facts |
+| -------------------------------------- | ---------- | ----------------- | --------- | ---------------- |
+| B, production compaction               | 19:5       | 16:8              | 18:6      | 15:9             |
+| Fresh-KV Control, fresh packed summary | 10:14      | 5:19              | 4:20      | 6:18             |
+| KV-Graft, write-time packed summary    | **3:21**   | **1:23**          | **3:21**  | **2:22**         |
 
 The matched comparison is KV-Graft vs the Fresh-KV Control. At 30B, write-time
 state reduces decoy fabrication from 10 to 3. At 4B the matched difference is
 small; most of the effect is already produced by the packed minimal layout.
 
-The same distinction explains why the standard benchmark result is weaker. In 30B
-LongMemEval personal-QA framing, the compacted baseline already tends to admit
-missing history. The larger n=320 run confirms that honesty is flat across
+The same distinction explains why the standard benchmark result is weaker. In
+30B LongMemEval personal-QA framing, the compacted baseline already tends to
+admit missing history. The larger n=320 run confirms that honesty is flat across
 arms, and grafting does not increase fabrication. The honesty effect therefore
 appears frame-dependent: it matters most when the compacted context invites the
 model to continue acting as a task participant.
 
 ### 5.4 V-Graft Recovers a Small Continuation Signal
 
-V-Graft improves continuation likelihood by small but consistent
-amounts when tuned on a validation split and evaluated once on holdout.
+V-Graft improves continuation likelihood by small but consistent amounts when
+tuned on a validation split and evaluated once on holdout.
 
-| Scale | Setting | Holdout gain vs B | Wins | CI | Gap closure |
-| --- | --- | --- | --- | --- | --- |
-| 4B | mid-band `alpha_V = 0.25` | +0.017 nats | 10/10 | [0.012, 0.024] | ~10% |
-| 30B | global `alpha_V = 0.75` | +0.033 nats | 9/10 | [0.014, 0.057] | ~24% |
+| Scale | Setting                   | Holdout gain vs B | Wins  | CI             | Gap closure |
+| ----- | ------------------------- | ----------------- | ----- | -------------- | ----------- |
+| 4B    | mid-band `alpha_V = 0.25` | +0.017 nats       | 10/10 | [0.012, 0.024] | ~10%        |
+| 30B   | global `alpha_V = 0.75`   | +0.033 nats       | 9/10  | [0.014, 0.057] | ~24%        |
 
-The dose response changes with scale. At 4B, high `alpha_V` is harmful and
-layer gating helps. At 30B, a global `alpha_V` around 0.75 works best, and
-`alpha_V` above 1.0 declines smoothly rather than failing immediately. Per-slot
-tuning produced a promising 30B holdout result, but it is not yet robust enough
-to be a headline method.
+The dose response changes with scale. At 4B, high `alpha_V` is harmful and layer
+gating helps. At 30B, a global `alpha_V` around 0.75 works best, and `alpha_V`
+above 1.0 declines smoothly rather than failing immediately. Per-slot tuning
+produced a promising 30B holdout result, but it is not yet robust enough to be a
+headline method.
 
-In the closest coding-domain check so far, on 75 OpenHands SWE-Gym traces,
-tuned V-Graft improves true next-action likelihood by +0.0156 nats/token, wins
-45/75, CI [0.005, 0.027], and recovers about 10% of the full-context vs
-compacted gap. This remains an offline proxy rather than an end-to-end
-task-success result, but it places the effect on real agent trajectories.
+In the closest coding-domain check so far, on 75 OpenHands SWE-Gym traces, tuned
+V-Graft improves true next-action likelihood by +0.0156 nats/token, wins 45/75,
+CI [0.005, 0.027], and recovers about 10% of the full-context vs compacted gap.
+This remains an offline proxy rather than an end-to-end task-success result, but
+it places the effect on real agent trajectories.
 
 ### 5.5 Qualitative J-Lens Readouts
 
 To make the phrase "lost context-conditioned state" less abstract, we ran
 Jacobian-lens readouts on Qwen3.6-27B residual-stream states using the public
 Neuronpedia/Qwen J-lens tooling and weights (Gurnee et al., 2026; Neuronpedia,
-2026; Qwen Team, 2026). These probes are not scored as behavioral evidence.
-They are a qualitative view into the state ValueGraft tries to preserve.
+2026; Qwen Team, 2026). These probes are not scored as behavioral evidence. They
+are a qualitative view into the state ValueGraft tries to preserve.
 
 The readout compares the same literal summary tokens in two paths:
 
@@ -408,25 +408,25 @@ situated role in the original conversation; in the fresh-summary path, the same
 visible token often decodes toward ordinary lexical priors.
 
 The important comparison is not whether the summary text contains the right
-words. In these examples it does. The comparison is whether the cached state
-for those words still carries the private interpretation established by the old
+words. In these examples it does. The comparison is whether the cached state for
+those words still carries the private interpretation established by the old
 conversation. The tables below therefore include the visible text, the two
 readout columns, and the human interpretation of the contrast. The readout
 columns are top vocabulary items from the same anchored token under write-time
 versus fresh encoding. They should be read as a noisy lens view, not as
 generated answers.
 
-We also ran a next-token control for five of these anchors, comparing the
-J-lens top-20 readout with the model's ordinary next-token top-20 distribution
-at the same token position. The mean top-20 Jaccard overlap was 0.256 overall,
-with a large layer split: 0.076 at layer 48 and 0.436 at layer 62. This means
-late-layer readouts can resemble continuation probabilities, especially when
-the next literal word is locally predictable. The intermediate-layer examples
-remain more distinct. The clearest control case is `B-410`: at the `B` token,
-next-token logits mostly predict the hyphen/code continuation, while
-write-time layer-48 J-lens reads out `obsolete`, `outdated`, `deprecated`, and
-`expired`. We therefore present J-lens as an interpretability aid, not as an
-independent behavioral metric.
+We also ran a next-token control for five of these anchors, comparing the J-lens
+top-20 readout with the model's ordinary next-token top-20 distribution at the
+same token position. The mean top-20 Jaccard overlap was 0.256 overall, with a
+large layer split: 0.076 at layer 48 and 0.436 at layer 62. This means
+late-layer readouts can resemble continuation probabilities, especially when the
+next literal word is locally predictable. The intermediate-layer examples remain
+more distinct. The clearest control case is `B-410`: at the `B` token,
+next-token logits mostly predict the hyphen/code continuation, while write-time
+layer-48 J-lens reads out `obsolete`, `outdated`, `deprecated`, and `expired`.
+We therefore present J-lens as an interpretability aid, not as an independent
+behavioral metric.
 
 **Pokemon planning summary.** The old conversation establishes several private
 labels: `Vacuum` is a Zigzagoon with Pickup; `Dex` is a person/trade obligation,
@@ -441,10 +441,10 @@ not a Pokedex progress tracker. The summary text says:
 
 Matched-wrapper J-lens readouts from the Pokemon notes:
 
-| Anchor token | Write-time readout | Fresh-summary readout | Human reading |
-| --- | --- | --- | --- |
-| `Vacuum` | layer 62: `is`, `nickname`, `nick`, `Zig`, `nicknamed`, `/Z` | layer 62: `Cleaner`, `cleaner`, `Clean`, `cleaned`, `cleaners` | With old context, the token points at the run-specific nickname; fresh encoding falls back toward the ordinary appliance sense. |
-| `Dex` | layer 62: `owes`, `owed`, `owe`, `trade`, `traded`, `trades` | layer 62: `Nav`, `nav`, `completion`, `dex`, `navigation`, `entry` | With old context, `Dex` is an agent in an owed trade; fresh encoding drifts toward Pokedex/DexNav/progress semantics. |
+| Anchor token | Write-time readout                                           | Fresh-summary readout                                              | Human reading                                                                                                                   |
+| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `Vacuum`     | layer 62: `is`, `nickname`, `nick`, `Zig`, `nicknamed`, `/Z` | layer 62: `Cleaner`, `cleaner`, `Clean`, `cleaned`, `cleaners`     | With old context, the token points at the run-specific nickname; fresh encoding falls back toward the ordinary appliance sense. |
+| `Dex`        | layer 62: `owes`, `owed`, `owe`, `trade`, `traded`, `trades` | layer 62: `Nav`, `nav`, `completion`, `dex`, `navigation`, `entry` | With old context, `Dex` is an agent in an owed trade; fresh encoding drifts toward Pokedex/DexNav/progress semantics.           |
 
 This is the phenomenon ValueGraft is meant to preserve. The summary already
 contains the right words. The difference is that write-time state still exposes
@@ -465,11 +465,11 @@ current, and `Crane` is a stage-rental company. The summary text says:
 
 Matched-wrapper J-lens readouts from the block-party notes:
 
-| Anchor token | Write-time readout | Fresh-summary readout | Human reading |
-| --- | --- | --- | --- |
-| `Maple` | layer 48: `refers`, `=`, `referring`, `denotes`; layer 62: `=`, `refers`, `is`, `means` | layer 48: `Street`, `street`, `neighborhood`, `park`, `town`, `City`; layer 62: `Street`, `Ave`, `Avenue`, `St`, `Streets` | With old context, `Maple` behaves like a locally defined label; fresh encoding treats it like a generic place/street name. |
-| `B-410` | layer 48: `obsolete`, `outdated`, `deprecated`, `expired` | layer 48: `municipal`, `City`, `city`, `Civic`, `Town` | With old context, the stale-number warning is prominent; fresh encoding mostly sees a civic permit-like identifier. |
-| `Crane` | layer 62: `is`, `refers`, `means`, `Stage`, `stage`, `delivers` | layer 62: `rental`, `operator`, `schedule`, `lease`, `license` | Fresh encoding is not nonsensical, but it is more generic; write-time state better preserves the local company/stage referent. |
+| Anchor token | Write-time readout                                                                      | Fresh-summary readout                                                                                                      | Human reading                                                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `Maple`      | layer 48: `refers`, `=`, `referring`, `denotes`; layer 62: `=`, `refers`, `is`, `means` | layer 48: `Street`, `street`, `neighborhood`, `park`, `town`, `City`; layer 62: `Street`, `Ave`, `Avenue`, `St`, `Streets` | With old context, `Maple` behaves like a locally defined label; fresh encoding treats it like a generic place/street name.     |
+| `B-410`      | layer 48: `obsolete`, `outdated`, `deprecated`, `expired`                               | layer 48: `municipal`, `City`, `city`, `Civic`, `Town`                                                                     | With old context, the stale-number warning is prominent; fresh encoding mostly sees a civic permit-like identifier.            |
+| `Crane`      | layer 62: `is`, `refers`, `means`, `Stage`, `stage`, `delivers`                         | layer 62: `rental`, `operator`, `schedule`, `lease`, `license`                                                             | Fresh encoding is not nonsensical, but it is more generic; write-time state better preserves the local company/stage referent. |
 
 **Coding next-action readout.** The SWE-Gym examples are less clean as semantic
 demos because tool-call syntax, file paths, and subword fragments dominate raw
@@ -495,10 +495,9 @@ agent trajectory: tool name, command, file path, and line range.
 The raw artifacts for these qualitative examples are
 `jlens_boundary_probe/pokemon_readout_notes.md`,
 `jlens_boundary_probe/plain_conversation_readout_notes.md`, and
-`jlens_boundary_probe/swegym_next_action_readout_notes.md`, plus the
-next-token control report
-`jlens_boundary_probe/next_token_readout_control_report.md`, with JSON outputs
-under `jlens_boundary_probe/outputs/`.
+`jlens_boundary_probe/swegym_next_action_readout_notes.md`, plus the next-token
+control report `jlens_boundary_probe/next_token_readout_control_report.md`, with
+JSON outputs under `jlens_boundary_probe/outputs/`.
 
 The J-lens evidence has a narrower role than the likelihood and probe metrics.
 It supplies a mechanistic readout for one local substrate: the same summary text
@@ -534,9 +533,9 @@ it is pointed at a relevant failure surface.
 
 ## 7. Limitations
 
-The evidence is narrow. Most results are from one model family. The 4B local
-and 30B cloud runs differ in scale and precision. Synthetic probes are clean but
-not representative of all agent failures. LongMemEval shows that prompt frame
+The evidence is narrow. Most results are from one model family. The 4B local and
+30B cloud runs differ in scale and precision. Synthetic probes are clean but not
+representative of all agent failures. LongMemEval shows that prompt frame
 matters: in personal-QA framing, 30B already admits missing history and the
 honesty intervention has little room to help. The coding evidence is offline
 next-action prediction, not end-to-end task completion.
@@ -555,10 +554,10 @@ interpretability evidence rather than task-performance evidence.
 The next experimental step is to make the K/V taxonomy fully controlled. Using
 the same summary text, same compact layout, and same scoring set, compare
 `(alpha_K, alpha_V)` settings that isolate value-only, key-only, and K+V
-effects. In public terms, this means keeping V-Graft, adding a controlled
-K-only branch, and re-running KV-Graft only where its summary and layout
-controls match. This avoids treating unrelated implementation choices as if
-they were scientific variables.
+effects. In public terms, this means keeping V-Graft, adding a controlled K-only
+branch, and re-running KV-Graft only where its summary and layout controls
+match. This avoids treating unrelated implementation choices as if they were
+scientific variables.
 
 The strongest practical test remains coding. The current SWE-Gym result is a
 next-action likelihood proxy; an end-to-end agent run would test whether the
@@ -584,38 +583,119 @@ interpreted it may also be worth preserving.
 
 ## Code Availability
 
-Code, experiment scripts, draft analysis, and reproducibility notes are available
-at <https://github.com/jeremyBanks/ValueGraft>.
+Code, experiment scripts, draft analysis, and reproducibility notes are
+available at <https://github.com/jeremyBanks/ValueGraft>.
 
 ## References
 
-- Anthropic. 2026. [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction). Claude Platform Docs. Accessed 2026-07-07.
-- Belrose, Nora, Igor Ostrovsky, Lev McKinney, Zach Furman, Logan Smith, Danny Halawi, Stella Biderman, and Jacob Steinhardt. 2023. [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112). arXiv:2303.08112. DOI: [10.48550/arXiv.2303.08112](https://doi.org/10.48550/arXiv.2303.08112).
-- Cao, Ziyi, Qingyi Si, Jingbin Zhang, and Bingquan Liu. 2025. [Sparse Attention across Multiple-context KV Cache](https://arxiv.org/abs/2508.11661). arXiv:2508.11661. DOI: [10.48550/arXiv.2508.11661](https://doi.org/10.48550/arXiv.2508.11661).
-- Chevalier, Alexis, Alexander Wettig, Anirudh Ajith, and Danqi Chen. 2023. [Adapting Language Models to Compress Contexts](https://aclanthology.org/2023.emnlp-main.232/). In *Proceedings of EMNLP 2023*, pages 3829-3846. DOI: [10.18653/v1/2023.emnlp-main.232](https://doi.org/10.18653/v1/2023.emnlp-main.232).
-- Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley, Emily Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and Christopher Re. 2025. [Cartridges: Lightweight and general-purpose long context representations via self-study](https://arxiv.org/abs/2506.06266). arXiv:2506.06266. DOI: [10.48550/arXiv.2506.06266](https://doi.org/10.48550/arXiv.2506.06266).
-- Ge, Tao, Jing Hu, Lei Wang, Xun Wang, Si-Qing Chen, and Furu Wei. 2024. [In-context Autoencoder for Context Compression in a Large Language Model](https://arxiv.org/abs/2307.06945). ICLR 2024; arXiv:2307.06945. DOI: [10.48550/arXiv.2307.06945](https://doi.org/10.48550/arXiv.2307.06945).
-- Google AI for Developers. 2026a. [Gemini 3 Developer Guide](https://ai.google.dev/gemini-api/docs/gemini-3). Accessed 2026-07-07.
-- Google AI for Developers. 2026b. [Context caching](https://ai.google.dev/gemini-api/docs/caching). Accessed 2026-07-07.
-- Gurnee, Wes, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski, Isaac Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang, Ben Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen, Joshua Batson, and Jack Lindsey. 2026. [Verbalizable Representations Form a Global Workspace in Language Models](https://transformer-circuits.pub/2026/workspace/index.html). Transformer Circuits Thread.
-- Kim, Jang-Hyun, Junyoung Yeom, Sangdoo Yun, and Hyun Oh Song. 2023. [Compressed Context Memory For Online Language Model Interaction](https://arxiv.org/abs/2312.03414). ICLR 2024; arXiv:2312.03414. DOI: [10.48550/arXiv.2312.03414](https://doi.org/10.48550/arXiv.2312.03414).
-- Li, Bojie. 2026. [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107). arXiv:2606.17107. DOI: [10.48550/arXiv.2606.17107](https://doi.org/10.48550/arXiv.2606.17107).
-- LMCache contributors. 2024. [LMCache](https://github.com/LMCache/LMCache) and [CacheBlend documentation](https://docs.lmcache.ai/kv_cache_optimizations/blending.html). Accessed 2026-07-07.
-- Mu, Jesse, Xiang Lisa Li, and Noah Goodman. 2023. [Learning to Compress Prompts with Gist Tokens](https://arxiv.org/abs/2304.08467). NeurIPS 2023; arXiv:2304.08467. DOI: [10.48550/arXiv.2304.08467](https://doi.org/10.48550/arXiv.2304.08467).
-- Neuronpedia. 2026. [Jacobian Lens - Qwen3.6-27B](https://www.neuronpedia.org/qwen3.6-27b/jlens). Accessed 2026-07-07.
-- nostalgebraist. 2020. [Interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens). LessWrong.
-- OpenAI. 2026a. [Compaction](https://developers.openai.com/api/docs/guides/compaction) and [Compact a response](https://developers.openai.com/api/reference/resources/responses/methods/compact). OpenAI API documentation. Accessed 2026-07-07.
-- OpenAI. 2026b. [Prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching). OpenAI API documentation. Accessed 2026-07-07.
-- Pan, Jiayi, Xingyao Wang, Graham Neubig, Navdeep Jaitly, Heng Ji, Alane Suhr, and Yizhe Zhang. 2025. [Training Software Engineering Agents and Verifiers with SWE-Gym](https://arxiv.org/abs/2412.21139). arXiv:2412.21139. DOI: [10.48550/arXiv.2412.21139](https://doi.org/10.48550/arXiv.2412.21139).
-- Qwen Team. 2025a. [Qwen3-4B-Instruct-2507 model card](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507). Hugging Face. Accessed 2026-07-07.
-- Qwen Team. 2025b. [Qwen3-30B-A3B-Instruct-2507 model card](https://huggingface.co/Qwen/Qwen3-30B-A3B-Instruct-2507). Hugging Face. Accessed 2026-07-07.
-- Qwen Team. 2026. [Qwen3.6-27B model card](https://huggingface.co/Qwen/Qwen3.6-27B). Hugging Face. Accessed 2026-07-07.
-- Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017. [Attention Is All You Need](https://arxiv.org/abs/1706.03762). NeurIPS 2017; arXiv:1706.03762. DOI: [10.48550/arXiv.1706.03762](https://doi.org/10.48550/arXiv.1706.03762).
-- Wu, Di, Hongwei Wang, Wenhao Yu, Yuwei Zhang, Kai-Wei Chang, and Dong Yu. 2024. [LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory](https://arxiv.org/abs/2410.10813). arXiv:2410.10813. DOI: [10.48550/arXiv.2410.10813](https://doi.org/10.48550/arXiv.2410.10813).
-- Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025. [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002). arXiv:2502.16002. DOI: [10.48550/arXiv.2502.16002](https://doi.org/10.48550/arXiv.2502.16002).
-- Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang, Kuntai Du, Shan Lu, and Junchen Jiang. 2025. [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444). *EuroSys 2025*; arXiv:2405.16444. DOI: [10.48550/arXiv.2405.16444](https://doi.org/10.48550/arXiv.2405.16444).
-- Zhang, Peitian, Zheng Liu, Shitao Xiao, Ninglu Shao, Qiwei Ye, and Zhicheng Dou. 2024. [Long Context Compression with Activation Beacon](https://arxiv.org/abs/2401.03462). arXiv:2401.03462. DOI: [10.48550/arXiv.2401.03462](https://doi.org/10.48550/arXiv.2401.03462).
-- Zweiger, Adam, Xinghong Fu, Han Guo, and Yoon Kim. 2026. [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284). arXiv:2602.16284. DOI: [10.48550/arXiv.2602.16284](https://doi.org/10.48550/arXiv.2602.16284).
+- Anthropic. 2026.
+  [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction).
+  Claude Platform Docs. Accessed 2026-07-07.
+- Belrose, Nora, Igor Ostrovsky, Lev McKinney, Zach Furman, Logan Smith, Danny
+  Halawi, Stella Biderman, and Jacob Steinhardt. 2023.
+  [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112).
+  arXiv:2303.08112. DOI:
+  [10.48550/arXiv.2303.08112](https://doi.org/10.48550/arXiv.2303.08112).
+- Cao, Ziyi, Qingyi Si, Jingbin Zhang, and Bingquan Liu. 2025.
+  [Sparse Attention across Multiple-context KV Cache](https://arxiv.org/abs/2508.11661).
+  arXiv:2508.11661. DOI:
+  [10.48550/arXiv.2508.11661](https://doi.org/10.48550/arXiv.2508.11661).
+- Chevalier, Alexis, Alexander Wettig, Anirudh Ajith, and Danqi Chen. 2023.
+  [Adapting Language Models to Compress Contexts](https://aclanthology.org/2023.emnlp-main.232/).
+  In _Proceedings of EMNLP 2023_, pages 3829-3846. DOI:
+  [10.18653/v1/2023.emnlp-main.232](https://doi.org/10.18653/v1/2023.emnlp-main.232).
+- Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley, Emily
+  Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and Christopher
+  Re. 2025.
+  [Cartridges: Lightweight and general-purpose long context representations via self-study](https://arxiv.org/abs/2506.06266).
+  arXiv:2506.06266. DOI:
+  [10.48550/arXiv.2506.06266](https://doi.org/10.48550/arXiv.2506.06266).
+- Ge, Tao, Jing Hu, Lei Wang, Xun Wang, Si-Qing Chen, and Furu Wei. 2024.
+  [In-context Autoencoder for Context Compression in a Large Language Model](https://arxiv.org/abs/2307.06945).
+  ICLR 2024; arXiv:2307.06945. DOI:
+  [10.48550/arXiv.2307.06945](https://doi.org/10.48550/arXiv.2307.06945).
+- Google AI for Developers. 2026a.
+  [Gemini 3 Developer Guide](https://ai.google.dev/gemini-api/docs/gemini-3).
+  Accessed 2026-07-07.
+- Google AI for Developers. 2026b.
+  [Context caching](https://ai.google.dev/gemini-api/docs/caching). Accessed
+  2026-07-07.
+- Gurnee, Wes, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski, Isaac
+  Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang, Ben
+  Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen, Joshua Batson,
+  and Jack Lindsey. 2026.
+  [Verbalizable Representations Form a Global Workspace in Language Models](https://transformer-circuits.pub/2026/workspace/index.html).
+  Transformer Circuits Thread.
+- Kim, Jang-Hyun, Junyoung Yeom, Sangdoo Yun, and Hyun Oh Song. 2023.
+  [Compressed Context Memory For Online Language Model Interaction](https://arxiv.org/abs/2312.03414).
+  ICLR 2024; arXiv:2312.03414. DOI:
+  [10.48550/arXiv.2312.03414](https://doi.org/10.48550/arXiv.2312.03414).
+- Li, Bojie. 2026.
+  [Models Take Notes at Prefill: KV Cache Can Be Editable and Composable](https://arxiv.org/abs/2606.17107).
+  arXiv:2606.17107. DOI:
+  [10.48550/arXiv.2606.17107](https://doi.org/10.48550/arXiv.2606.17107).
+- LMCache contributors. 2024. [LMCache](https://github.com/LMCache/LMCache) and
+  [CacheBlend documentation](https://docs.lmcache.ai/kv_cache_optimizations/blending.html).
+  Accessed 2026-07-07.
+- Mu, Jesse, Xiang Lisa Li, and Noah Goodman. 2023.
+  [Learning to Compress Prompts with Gist Tokens](https://arxiv.org/abs/2304.08467).
+  NeurIPS 2023; arXiv:2304.08467. DOI:
+  [10.48550/arXiv.2304.08467](https://doi.org/10.48550/arXiv.2304.08467).
+- Neuronpedia. 2026.
+  [Jacobian Lens - Qwen3.6-27B](https://www.neuronpedia.org/qwen3.6-27b/jlens).
+  Accessed 2026-07-07.
+- nostalgebraist. 2020.
+  [Interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens).
+  LessWrong.
+- OpenAI. 2026a.
+  [Compaction](https://developers.openai.com/api/docs/guides/compaction) and
+  [Compact a response](https://developers.openai.com/api/reference/resources/responses/methods/compact).
+  OpenAI API documentation. Accessed 2026-07-07.
+- OpenAI. 2026b.
+  [Prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching).
+  OpenAI API documentation. Accessed 2026-07-07.
+- Pan, Jiayi, Xingyao Wang, Graham Neubig, Navdeep Jaitly, Heng Ji, Alane Suhr,
+  and Yizhe Zhang. 2025.
+  [Training Software Engineering Agents and Verifiers with SWE-Gym](https://arxiv.org/abs/2412.21139).
+  arXiv:2412.21139. DOI:
+  [10.48550/arXiv.2412.21139](https://doi.org/10.48550/arXiv.2412.21139).
+- Qwen Team. 2025a.
+  [Qwen3-4B-Instruct-2507 model card](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507).
+  Hugging Face. Accessed 2026-07-07.
+- Qwen Team. 2025b.
+  [Qwen3-30B-A3B-Instruct-2507 model card](https://huggingface.co/Qwen/Qwen3-30B-A3B-Instruct-2507).
+  Hugging Face. Accessed 2026-07-07.
+- Qwen Team. 2026.
+  [Qwen3.6-27B model card](https://huggingface.co/Qwen/Qwen3.6-27B). Hugging
+  Face. Accessed 2026-07-07.
+- Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017.
+  [Attention Is All You Need](https://arxiv.org/abs/1706.03762). NeurIPS 2017;
+  arXiv:1706.03762. DOI:
+  [10.48550/arXiv.1706.03762](https://doi.org/10.48550/arXiv.1706.03762).
+- Wu, Di, Hongwei Wang, Wenhao Yu, Yuwei Zhang, Kai-Wei Chang, and Dong
+  Yu. 2024.
+  [LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory](https://arxiv.org/abs/2410.10813).
+  arXiv:2410.10813. DOI:
+  [10.48550/arXiv.2410.10813](https://doi.org/10.48550/arXiv.2410.10813).
+- Yang, Jingbo, Bairu Hou, Wei Wei, Yujia Bao, and Shiyu Chang. 2025.
+  [KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse](https://arxiv.org/abs/2502.16002).
+  arXiv:2502.16002. DOI:
+  [10.48550/arXiv.2502.16002](https://doi.org/10.48550/arXiv.2502.16002).
+- Yao, Jiayi, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang,
+  Kuntai Du, Shan Lu, and Junchen Jiang. 2025.
+  [CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion](https://arxiv.org/abs/2405.16444).
+  _EuroSys 2025_; arXiv:2405.16444. DOI:
+  [10.48550/arXiv.2405.16444](https://doi.org/10.48550/arXiv.2405.16444).
+- Zhang, Peitian, Zheng Liu, Shitao Xiao, Ninglu Shao, Qiwei Ye, and Zhicheng
+  Dou. 2024.
+  [Long Context Compression with Activation Beacon](https://arxiv.org/abs/2401.03462).
+  arXiv:2401.03462. DOI:
+  [10.48550/arXiv.2401.03462](https://doi.org/10.48550/arXiv.2401.03462).
+- Zweiger, Adam, Xinghong Fu, Han Guo, and Yoon Kim. 2026.
+  [Fast KV Compaction via Attention Matching](https://arxiv.org/abs/2602.16284).
+  arXiv:2602.16284. DOI:
+  [10.48550/arXiv.2602.16284](https://doi.org/10.48550/arXiv.2602.16284).
 
 ## Author Contributions and Provenance
 

@@ -41,18 +41,18 @@ Policies tested:
 
 From `outputs/problem_shape_exploration.md`:
 
-| family | cases | A>B | mean best E-B | mean best gap closure | positive cases |
-|---|---:|---:|---:|---:|---:|
-| policy choice | 4 | 4 | +0.462 | +0.064 | 4 |
-| low-entropy transform | 4 | 4 | +0.157 | +0.058 | 3 |
-| format order | 2 | 2 | +0.039 | +0.006 | 2 |
-| sense label | 2 | 2 | +0.003 | +0.001 | 1 |
-| bug fix | 2 | 2 | -0.048 | -0.010 | 1 |
+| family                | cases | A>B | mean best E-B | mean best gap closure | positive cases |
+| --------------------- | ----: | --: | ------------: | --------------------: | -------------: |
+| policy choice         |     4 |   4 |        +0.462 |                +0.064 |              4 |
+| low-entropy transform |     4 |   4 |        +0.157 |                +0.058 |              3 |
+| format order          |     2 |   2 |        +0.039 |                +0.006 |              2 |
+| sense label           |     2 |   2 |        +0.003 |                +0.001 |              1 |
+| bug fix               |     2 |   2 |        -0.048 |                -0.010 |              1 |
 
 ## Read
 
-The best shape so far is **private policy label -> familiar action phrase**.
-It created a strong full-vs-compacted gap and grafting helped in all four small
+The best shape so far is **private policy label -> familiar action phrase**. It
+created a strong full-vs-compacted gap and grafting helped in all four small
 cases. The useful policy was V-only, usually at `alpha_V = 0.25`, with one case
 preferring `alpha_V = 0.05`. This looks like the cleanest candidate for a larger
 synthetic harness if we want a low-cost behavioral proxy for value-graft
@@ -106,4 +106,3 @@ For a K-focused companion, use a **Named Transform Registry**:
   semantic anchor beyond a bare label.
 - High-alpha sweeps as the first pass; `0.50` was often harmful, and `0.05` was
   often the least bad or best low-dose setting.
-

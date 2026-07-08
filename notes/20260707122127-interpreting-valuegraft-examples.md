@@ -1,9 +1,8 @@
 # Seeing What ValueGraft Is Trying To Preserve
 
-Status: standalone explanatory draft
-Date: 2026-07-07
-Audience: readers who know the basics of transformer attention, but not the
-details of this repository or mechanistic interpretability
+Status: standalone explanatory draft Date: 2026-07-07 Audience: readers who know
+the basics of transformer attention, but not the details of this repository or
+mechanistic interpretability
 
 ## The Idea In One Example
 
@@ -44,26 +43,26 @@ We inspect the token `B` in `B-410` under two paths:
 
 The ordinary next-token candidates mostly continue the code:
 
-| Path | Top next-token candidates after `B` |
-| --- | --- |
-| old-context | `-`, `4`, `-st`, punctuation |
-| fresh | `-`, `2`, `PD`, `1`, `3`, `4` |
+| Path        | Top next-token candidates after `B` |
+| ----------- | ----------------------------------- |
+| old-context | `-`, `4`, `-st`, punctuation        |
+| fresh       | `-`, `2`, `PD`, `1`, `3`, `4`       |
 
 At layer 48, the Jacobian-lens readout looks very different:
 
-| Path | J-lens readout near `B` |
-| --- | --- |
-| old-context | `obsolete`, `outdated`, `deprecated`, `expired` |
-| fresh | `municipal`, `City`, `Civic`, `License`, `permit` |
+| Path        | J-lens readout near `B`                           |
+| ----------- | ------------------------------------------------- |
+| old-context | `obsolete`, `outdated`, `deprecated`, `expired`   |
+| fresh       | `municipal`, `City`, `Civic`, `License`, `permit` |
 
 The printed text is unchanged. What changes is the readout around the
-identifier: the old-context path points to stale/obsolete status; the fresh
-path points to default civic-code associations. ValueGraft asks whether
-compaction can carry some of that old-context state forward, rather than asking
-a later model pass to reconstruct everything from text.
+identifier: the old-context path points to stale/obsolete status; the fresh path
+points to default civic-code associations. ValueGraft asks whether compaction
+can carry some of that old-context state forward, rather than asking a later
+model pass to reconstruct everything from text.
 
-This example is a qualitative readout rather than a behavioral result. Its
-value is that it makes the target of the intervention concrete.
+This example is a qualitative readout rather than a behavioral result. Its value
+is that it makes the target of the intervention concrete.
 
 ## What ValueGraft Means Here
 
@@ -132,8 +131,8 @@ When the same summary token is evaluated in old-context and fresh paths,
 do the residual-stream readouts point to different concepts?
 ```
 
-This is one step downstream of the KV-cache hypothesis. The J-lens does not
-open the cache and label individual key or value vectors. Instead, it reads the
+This is one step downstream of the KV-cache hypothesis. The J-lens does not open
+the cache and label individual key or value vectors. Instead, it reads the
 residual-stream representation that results after the model has processed a
 token in a particular context. If old-context cache state helps bind `B-410` to
 "stale permit" during summary writing, and fresh re-encoding binds it more
@@ -162,8 +161,8 @@ not a claim that each displayed summary was freshly sampled during the sweep.
 
 The readout becomes interesting only when it differs from ordinary continuation
 pressure. The B-410 row is strong because the top next-token candidates are
-mainly about completing an identifier, while the layer-48 J-lens candidates
-name the identifier's old-context status.
+mainly about completing an identifier, while the layer-48 J-lens candidates name
+the identifier's old-context status.
 
 Other rows are weaker and should be described that way. In the `Maple` example
 below, the local text says `Maple means...`, so next-token prediction already
@@ -171,22 +170,22 @@ sees a definition cue. That row still shows old/fresh state contrast, with a
 less clean next-token control.
 
 This distinction should stay visible in any public figure: show next-token
-candidates beside J-lens candidates. Otherwise it is too easy to mistake a
-plain continuation effect for an internal-state readout.
+candidates beside J-lens candidates. Otherwise it is too easy to mistake a plain
+continuation effect for an internal-state readout.
 
 ## How To Read The Example Tables
 
 The tables normalize away leading whitespace in displayed tokens and omit a few
-non-English or formatting-heavy tokens when they do not help the reader. The
-raw artifacts keep the full token lists.
+non-English or formatting-heavy tokens when they do not help the reader. The raw
+artifacts keep the full token lists.
 
-| Field | Meaning |
-| --- | --- |
-| Visible snippet | The literal summary text around the inspected token or span. |
-| Anchor | The token or short span being inspected. |
-| Next-token candidates | Ordinary top continuations after the anchor. |
-| J-lens readout | Vocabulary tokens from the residual-stream readout. |
-| Interpretation | What the contrast suggests, including any example-specific caveat. |
+| Field                 | Meaning                                                            |
+| --------------------- | ------------------------------------------------------------------ |
+| Visible snippet       | The literal summary text around the inspected token or span.       |
+| Anchor                | The token or short span being inspected.                           |
+| Next-token candidates | Ordinary top continuations after the anchor.                       |
+| J-lens readout        | Vocabulary tokens from the residual-stream readout.                |
+| Interpretation        | What the contrast suggests, including any example-specific caveat. |
 
 ## Example 1: `B-410`, A Stale Permit Code
 
@@ -197,14 +196,12 @@ Visible snippet:
 - Permit: B-410 is stale. Use P-771.
 ```
 
-Anchor: `B` in `B-410`
-Layer: 48
-Actual next token: `-`
+Anchor: `B` in `B-410` Layer: 48 Actual next token: `-`
 
-| Path | Next-token candidates | J-lens readout |
-| --- | --- | --- |
-| old-context | `-`, `4`, `-st`, punctuation | `obsolete`, `outdated`, `deprecated`, `expired` |
-| fresh | `-`, `2`, `PD`, `1`, `3`, `4` | `municipal`, `City`, `Civic`, `License`, `permit` |
+| Path        | Next-token candidates         | J-lens readout                                    |
+| ----------- | ----------------------------- | ------------------------------------------------- |
+| old-context | `-`, `4`, `-st`, punctuation  | `obsolete`, `outdated`, `deprecated`, `expired`   |
+| fresh       | `-`, `2`, `PD`, `1`, `3`, `4` | `municipal`, `City`, `Civic`, `License`, `permit` |
 
 The next-token lists are doing local syntax. Both paths mostly know that the
 next character should continue a code. The J-lens readout is doing something
@@ -225,21 +222,19 @@ Riverside block party state:
 - Maple means the library's Maple Room for storage and volunteer check-in.
 ```
 
-Anchor: first `Maple`
-Layer: 48
-Actual next token: `means`
+Anchor: first `Maple` Layer: 48 Actual next token: `means`
 
-| Path | Next-token candidates | J-lens readout |
-| --- | --- | --- |
-| old-context | `=`, `is`, `refers`, `means`, `Room` | `refers`, `=`, `referring`, `denotes` |
-| fresh | `Street`, `St`, `Ave`, `street`, `Drive` | `Street`, `street`, `neighborhood`, `park`, `City` |
+| Path        | Next-token candidates                    | J-lens readout                                     |
+| ----------- | ---------------------------------------- | -------------------------------------------------- |
+| old-context | `=`, `is`, `refers`, `means`, `Room`     | `refers`, `=`, `referring`, `denotes`              |
+| fresh       | `Street`, `St`, `Ave`, `street`, `Drive` | `Street`, `street`, `neighborhood`, `park`, `City` |
 
 The old-context path treats `Maple` as a local defined referent. The fresh path
 leans toward ordinary named-place priors: streets, parks, neighborhoods, city
 names.
 
-Because the text says `Maple means`, the ordinary next-token list already has
-a definition cue. The row is best read as a state-contrast example: the
+Because the text says `Maple means`, the ordinary next-token list already has a
+definition cue. The row is best read as a state-contrast example: the
 old-context readout is about local reference; the fresh readout is about the
 model's default associations for `Maple` outside this conversation.
 
@@ -251,22 +246,21 @@ Visible snippet:
 - Dex trade: spare Makuhita for Dex's Castform.
 ```
 
-Anchor: `Dex`
-Layer: 48
+Anchor: `Dex` Layer: 48
 
-| Path | Next-token candidates | J-lens readout |
-| --- | --- | --- |
-| old-context | `owes`, `trade`, `owed`, local trade words | `promised`, `partnered`, `promise`, `exchange` |
-| fresh | `Nav`, `entry`, `completion`, tracker words | `completion`, `tracker`, `stats`, `bonus`, `Collector` |
+| Path        | Next-token candidates                       | J-lens readout                                         |
+| ----------- | ------------------------------------------- | ------------------------------------------------------ |
+| old-context | `owes`, `trade`, `owed`, local trade words  | `promised`, `partnered`, `promise`, `exchange`         |
+| fresh       | `Nav`, `entry`, `completion`, tracker words | `completion`, `tracker`, `stats`, `bonus`, `Collector` |
 
-The old-context path treats `Dex` as a person involved in an exchange. The
-fresh path drifts toward Pokemon-interface meanings: Pokedex progress, DexNav,
+The old-context path treats `Dex` as a person involved in an exchange. The fresh
+path drifts toward Pokemon-interface meanings: Pokedex progress, DexNav,
 completion tracking.
 
-This row has a clear caveat. The visible snippet itself contains `trade`, so
-the next-token list already carries some of the intended meaning. The J-lens
-contrast is still helpful because it separates "Dex as trade partner" from
-"Dex as game progress system," but it should be a secondary example.
+This row has a clear caveat. The visible snippet itself contains `trade`, so the
+next-token list already carries some of the intended meaning. The J-lens
+contrast is still helpful because it separates "Dex as trade partner" from "Dex
+as game progress system," but it should be a secondary example.
 
 ## Example 4: Ordinary Planning Labels
 
@@ -283,11 +277,11 @@ Visible snippets:
 
 Selected rows from the full-layer sweep:
 
-| Anchor | Layer | Old-context J-lens | Fresh J-lens | Reading |
-| --- | ---: | --- | --- | --- |
-| `Delta` | 47 | `refers`, `=`, `represents`, `means` | `Delta`, `airport`, `airline`, `Sky`, `River` | Local route label vs airline/name priors. |
-| `Orange` | 50 | `refers`, `signifies`, `represents`, `symbol`, `denotes` | `Orange`, `orange`, `citrus`, `color`, `Juice` | Local tag role vs ordinary color/fruit priors. |
-| `cooler` | 36 | `canceled`, `replaced`, `rejected`, `failed`, `refused` | `freezer`, `fridge`, `camping`, `cooler` | Stale instruction vs generic object semantics. |
+| Anchor   | Layer | Old-context J-lens                                       | Fresh J-lens                                   | Reading                                        |
+| -------- | ----: | -------------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
+| `Delta`  |    47 | `refers`, `=`, `represents`, `means`                     | `Delta`, `airport`, `airline`, `Sky`, `River`  | Local route label vs airline/name priors.      |
+| `Orange` |    50 | `refers`, `signifies`, `represents`, `symbol`, `denotes` | `Orange`, `orange`, `citrus`, `color`, `Juice` | Local tag role vs ordinary color/fruit priors. |
+| `cooler` |    36 | `canceled`, `replaced`, `rejected`, `failed`, `refused`  | `freezer`, `fridge`, `camping`, `cooler`       | Stale instruction vs generic object semantics. |
 
 These are the kinds of meanings conversation summaries are full of: aliases,
 exceptions, stale plans, and compact labels whose real meaning was established
@@ -305,10 +299,10 @@ Visible snippet:
 
 Selected rows from the full-layer sweep:
 
-| Anchor | Layer | Old-context J-lens | Fresh J-lens | Reading |
-| --- | ---: | --- | --- | --- |
-| `Falcon` | 43 | `rejected`, `obsolete`, `deprecated`, `failed`, `outdated` | `Falcon`, `Flight`, `Aviation`, `eagle`, `Aerospace` | Rejected branch status vs bird/aviation priors. |
-| `Patch 17` span | 41 | `outdated`, `obsolete`, `old`, `expired`, `legacy` | `patch`, `repair`, `fixes`, `revision`, `testing` | Stale label vs generic patch/version semantics. |
+| Anchor          | Layer | Old-context J-lens                                         | Fresh J-lens                                         | Reading                                         |
+| --------------- | ----: | ---------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------- |
+| `Falcon`        |    43 | `rejected`, `obsolete`, `deprecated`, `failed`, `outdated` | `Falcon`, `Flight`, `Aviation`, `eagle`, `Aerospace` | Rejected branch status vs bird/aviation priors. |
+| `Patch 17` span |    41 | `outdated`, `obsolete`, `old`, `expired`, `legacy`         | `patch`, `repair`, `fixes`, `revision`, `testing`    | Stale label vs generic patch/version semantics. |
 
 This is the bridge to coding agents. Real coding work is packed with compact
 operational labels: branch names, issue IDs, file paths, commands, patch
@@ -317,9 +311,9 @@ often the status of those labels: current, rejected, failed, stale, already
 tried, next to inspect.
 
 The Markdown table also exposes a reporting hazard. Some high-divergence rows
-are punctuation, spaces, table separators, or subword fragments. Public
-examples should group tokens into spans such as `Patch 17`; raw token rows are
-too noisy for humans.
+are punctuation, spaces, table separators, or subword fragments. Public examples
+should group tokens into spans such as `Patch 17`; raw token rows are too noisy
+for humans.
 
 ## Short Sidebar: `Ghost2`
 
@@ -329,17 +323,16 @@ Visible snippet:
 Replacement Ralts Ghost2 is alive and made it to Victory Road.
 ```
 
-Anchor: `2` in `Ghost2`
-Layer: 44
+Anchor: `2` in `Ghost2` Layer: 44
 
-| Path | Next-token candidates | J-lens readout |
-| --- | --- | --- |
-| old-context | `survived`, `is`, `made`, `survives`, `has` | `survived`, `successfully`, `surviving`, `survives`, `retained` |
-| fresh | `is`, `was`, `joined`, `started`, `replaced` | `replacement`, `replaced`, `aka`, `renamed`, `second` |
+| Path        | Next-token candidates                        | J-lens readout                                                  |
+| ----------- | -------------------------------------------- | --------------------------------------------------------------- |
+| old-context | `survived`, `is`, `made`, `survives`, `has`  | `survived`, `successfully`, `surviving`, `survives`, `retained` |
+| fresh       | `is`, `was`, `joined`, `started`, `replaced` | `replacement`, `replaced`, `aka`, `renamed`, `second`           |
 
-The old-context path carries survival. The fresh path emphasizes replacement
-and naming. This is intuitive and memorable, which makes it useful for
-explaining the phenomenon.
+The old-context path carries survival. The fresh path emphasizes replacement and
+naming. This is intuitive and memorable, which makes it useful for explaining
+the phenomenon.
 
 The local phrase says `Ghost2 is alive`, so ordinary next-token prediction
 already sees survival language. This is a vivid illustration of the same
@@ -357,19 +350,19 @@ In one getmoto trajectory, the true next action was:
 str_replace_editor view /workspace/getmoto__moto__4.1/moto/rds/responses.py [584, 600]
 ```
 
-The span-aware probe found notable full-context vs compacted-context
-divergence on:
+The span-aware probe found notable full-context vs compacted-context divergence
+on:
 
-| Span | Mean span divergence |
-| --- | ---: |
-| `str_replace_editor` | 0.651 |
-| `/workspace/getmoto__moto__4.1/moto/rds/responses.py` | 0.561 |
-| `responses.py` | 0.568 |
-| `[584, 600]` | 0.407 |
+| Span                                                  | Mean span divergence |
+| ----------------------------------------------------- | -------------------: |
+| `str_replace_editor`                                  |                0.651 |
+| `/workspace/getmoto__moto__4.1/moto/rds/responses.py` |                0.561 |
+| `responses.py`                                        |                0.568 |
+| `[584, 600]`                                          |                0.407 |
 
-Here, mean span divergence is a top-k readout-change score averaged over a
-span. Higher means the old-context and compacted readout lists differ more; it
-is a comparative readout score, not task accuracy.
+Here, mean span divergence is a top-k readout-change score averaged over a span.
+Higher means the old-context and compacted readout lists differ more; it is a
+comparative readout score, not task accuracy.
 
 In a Dask trajectory, the true next action was:
 
@@ -379,21 +372,21 @@ execute_bash grep -n 'normalize_token' /workspace/dask__dask__2022.6/dask/base.p
 
 The probe found divergence on:
 
-| Span | Mean span divergence |
-| --- | ---: |
-| `execute_bash` | 0.603 |
-| `grep -n 'normalize_token' /workspace/dask__dask__2022.6/dask/base.py` | 0.600 |
-| `/workspace/dask__dask__2022.6/dask/base.py` | 0.624 |
-| `base.py` | 0.538 |
+| Span                                                                   | Mean span divergence |
+| ---------------------------------------------------------------------- | -------------------: |
+| `execute_bash`                                                         |                0.603 |
+| `grep -n 'normalize_token' /workspace/dask__dask__2022.6/dask/base.py` |                0.600 |
+| `/workspace/dask__dask__2022.6/dask/base.py`                           |                0.624 |
+| `base.py`                                                              |                0.538 |
 
 This is promising mainly as a pointer to the right unit of analysis. Coding
 examples should be span-first: full file paths, tool names, commands, symbols,
 line ranges, and named tests. Token-level examples are often unreadable because
 paths and tool-call formats split into many pieces.
 
-These rows do not show that ValueGraft improves agent coding. They show that
-the readout method can localize differences on operational spans that matter
-for agent actions.
+These rows do not show that ValueGraft improves agent coding. They show that the
+readout method can localize differences on operational spans that matter for
+agent actions.
 
 ## What This Does And Does Not Show
 
@@ -406,17 +399,16 @@ neighborhoods.
 ```
 
 In the best examples, the old-context readout points toward the local status or
-role of an identifier, while the fresh readout points toward the model's
-default associations outside the conversation. That is compatible with the kind
-of state ValueGraft is designed to preserve.
+role of an identifier, while the fresh readout points toward the model's default
+associations outside the conversation. That is compatible with the kind of state
+ValueGraft is designed to preserve.
 
 This is the intended relationship to the KV work: ValueGraft proposes a way to
 carry selected old-context key/value state across compaction; the J-lens
 examples make it easier to see why such state might matter by showing how the
-same visible summary text can land in different readable internal
-neighborhoods. The lens work demonstrates the potential target of preservation,
-while the arm experiments decide whether preserving it actually improves model
-behavior.
+same visible summary text can land in different readable internal neighborhoods.
+The lens work demonstrates the potential target of preservation, while the arm
+experiments decide whether preserving it actually improves model behavior.
 
 The examples do not settle the behavioral question. For that, the main
 experiment still needs arm comparisons, guardrails, held-out tasks, and clear
@@ -475,40 +467,39 @@ boundary; the KV-cache work constrains what can be claimed as new.
 
 The logit lens is the simplest ancestor of the J-lens used here. It projects an
 intermediate residual-stream vector through the model's final unembedding and
-asks which vocabulary tokens are already linearly accessible at that layer.
-This is useful because it gives an immediate vocabulary-shaped view into hidden
+asks which vocabulary tokens are already linearly accessible at that layer. This
+is useful because it gives an immediate vocabulary-shaped view into hidden
 states, but it is crude: intermediate layers are not naturally in the final
 layer's basis, and late-layer next-token pressure can dominate the readout.
 
-The tuned lens improves on that idea by learning layer-specific translators
-from intermediate residual states to the final prediction space. It is a better
-tool for reading latent next-token predictions, but it is still primarily a
-vocabulary-projection method. It does not directly read KV-cache entries, and
-it does not by itself establish whether a readout is causally responsible for a
+The tuned lens improves on that idea by learning layer-specific translators from
+intermediate residual states to the final prediction space. It is a better tool
+for reading latent next-token predictions, but it is still primarily a
+vocabulary-projection method. It does not directly read KV-cache entries, and it
+does not by itself establish whether a readout is causally responsible for a
 behavioral difference.
 
 The Jacobian lens, introduced by Gurnee et al. (2026), transports a
-residual-stream vector into the final-layer basis using an averaged
-input-output Jacobian, then decodes through the model's unembedding. The
-associated Anthropic paper frames these transported, verbalizable directions as
-a functional "workspace" for concepts the model can report or use across
-contexts. For our purposes, the important part is narrower: the J-lens provides
-a principled vocabulary readout for residual-stream states at specific layers
-and positions.
+residual-stream vector into the final-layer basis using an averaged input-output
+Jacobian, then decodes through the model's unembedding. The associated Anthropic
+paper frames these transported, verbalizable directions as a functional
+"workspace" for concepts the model can report or use across contexts. For our
+purposes, the important part is narrower: the J-lens provides a principled
+vocabulary readout for residual-stream states at specific layers and positions.
 
 This project uses the public Neuronpedia/Anthropic J-lens weights for
 Qwen3.6-27B. That choice matters: the examples in this document are not
-model-general evidence, and they are not measurements from the main
-ValueGraft behavioral model. They are qualitative readouts from a side probe
-whose role is to make the state-preservation hypothesis easier to inspect.
+model-general evidence, and they are not measurements from the main ValueGraft
+behavioral model. They are qualitative readouts from a side probe whose role is
+to make the state-preservation hypothesis easier to inspect.
 
 The J-lens also inherits real limitations. It works best for concepts that can
 be named by single vocabulary tokens or short token neighborhoods; paths,
 commands, and multi-token relations need span-level grouping. Its false-positive
 rate is not fully characterized, so lens-visible differences should be treated
 as hypotheses or qualitative support until paired with behavioral validation.
-That is why this document keeps next-token candidates beside the J-lens
-readouts and avoids treating the readout as proof.
+That is why this document keeps next-token candidates beside the J-lens readouts
+and avoids treating the readout as proof.
 
 ### KV Cache, Latent Context, And Compaction
 
@@ -530,8 +521,8 @@ ordinary text-summary compaction.
 
 "Fast KV Compaction via Attention Matching" is the closest latent-compaction
 neighbor. Zweiger et al. (2026) construct shorter keys and values that preserve
-attention behavior, with per-KV-head matching and efficient subproblems. This
-is directly relevant to any future per-layer or per-head `alpha_K`/`alpha_V`
+attention behavior, with per-KV-head matching and efficient subproblems. This is
+directly relevant to any future per-layer or per-head `alpha_K`/`alpha_V`
 tuning, because it treats compaction at the attention-head level rather than as
 a single global operation. The difference is that Attention Matching creates a
 compact latent cache, while ValueGraft keeps a visible natural-language summary
@@ -543,21 +534,21 @@ precomputes document caches independently, adjusts positions at inference, and
 uses trainable link tokens to help independently encoded chunks interact.
 CacheBlend reuses precomputed chunk caches even when they are not simple
 prefixes, selectively recomputing a small subset of tokens to recover
-cross-chunk conditioning. These systems weaken broad novelty claims about
-cache reuse, RoPE/position adjustment, and blending. They mostly target RAG or
-document-chunk reuse, not conversation-summary replacement after a long
-dialogue has been condensed.
+cross-chunk conditioning. These systems weaken broad novelty claims about cache
+reuse, RoPE/position adjustment, and blending. They mostly target RAG or
+document-chunk reuse, not conversation-summary replacement after a long dialogue
+has been condensed.
 
-Learned latent-compression methods form another nearby family. Gist tokens
-train models to compress prompts into reusable special tokens. AutoCompressors
-train models to turn long contexts into compact summary vectors used as soft
-prompts. Compressed Context Memory continually compresses accumulating
-key/value context for online interaction. Cartridges train a small offline KV
-cache for a corpus using self-study, then reuse that cache for many later
-queries. These systems all show that models can be trained or adapted to carry
-context through nonstandard latent forms. ValueGraft is different because it is
-training-free and centered on the existing production pattern of replacing old
-dialogue with a human-readable summary.
+Learned latent-compression methods form another nearby family. Gist tokens train
+models to compress prompts into reusable special tokens. AutoCompressors train
+models to turn long contexts into compact summary vectors used as soft prompts.
+Compressed Context Memory continually compresses accumulating key/value context
+for online interaction. Cartridges train a small offline KV cache for a corpus
+using self-study, then reuse that cache for many later queries. These systems
+all show that models can be trained or adapted to carry context through
+nonstandard latent forms. ValueGraft is different because it is training-free
+and centered on the existing production pattern of replacing old dialogue with a
+human-readable summary.
 
 Hosted APIs now expose product surfaces in the same broad area. OpenAI's
 Responses compaction returns a compacted window that includes an encrypted
@@ -565,9 +556,9 @@ opaque compaction item carrying prior state forward. Anthropic exposes
 server-side compaction as a typed compaction block containing a summary. Gemini
 has context-caching and encrypted thought-signature mechanisms that preserve
 reasoning continuity across calls. These public interfaces do not show that any
-provider is doing ValueGraft internally. They do show that opaque or
-semi-opaque state-carrying artifacts are a natural extension of current API
-design, rather than an exotic deployment shape.
+provider is doing ValueGraft internally. They do show that opaque or semi-opaque
+state-carrying artifacts are a natural extension of current API design, rather
+than an exotic deployment shape.
 
 ### What Remains Distinct
 
@@ -583,8 +574,8 @@ conversation behave more like the original long-context conversation?
 ```
 
 The J-lens work in this directory is a qualitative companion to that behavioral
-question. It gives concrete examples of what context-conditioned information
-may be present around summary tokens before and after fresh re-encoding.
+question. It gives concrete examples of what context-conditioned information may
+be present around summary tokens before and after fresh re-encoding.
 
 ### References
 
@@ -594,14 +585,14 @@ may be present around summary tokens before and after fresh re-encoding.
 - nostalgebraist. 2020.
   [Interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens).
   LessWrong.
-- Belrose, Nora, Igor Ostrovsky, Lev McKinney, Zach Furman, Logan Smith,
-  Danny Halawi, Stella Biderman, and Jacob Steinhardt. 2023.
+- Belrose, Nora, Igor Ostrovsky, Lev McKinney, Zach Furman, Logan Smith, Danny
+  Halawi, Stella Biderman, and Jacob Steinhardt. 2023.
   [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112).
   arXiv:2303.08112.
-- Gurnee, Wes, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski,
-  Isaac Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang,
-  Ben Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen,
-  Joshua Batson, and Jack Lindsey. 2026.
+- Gurnee, Wes, Nicholas Sofroniew, Adam Pearce, Mateusz Piotrowski, Isaac
+  Kauvar, Runjin Chen, Anna Soligo, Paul Bogdan, Euan Ong, Rowan Wang, Ben
+  Thompson, David Abrahams, Subhash Kantamneni, Emmanuel Ameisen, Joshua Batson,
+  and Jack Lindsey. 2026.
   [Verbalizable Representations Form a Global Workspace in Language Models](https://transformer-circuits.pub/2026/workspace/).
   Transformer Circuits Thread.
 - Anthropic. 2026.
@@ -630,14 +621,14 @@ may be present around summary tokens before and after fresh re-encoding.
 - Kim, Jang-Hyun, Junyoung Yeom, Sangdoo Yun, and Hyun Oh Song. 2023.
   [Compressed Context Memory For Online Language Model Interaction](https://arxiv.org/abs/2312.03414).
   ICLR 2024.
-- Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley,
-  Emily Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and
-  Christopher Re. 2025.
+- Eyuboglu, Sabri, Ryan Ehrlich, Simran Arora, Neel Guha, Dylan Zinsley, Emily
+  Liu, Will Tennien, Atri Rudra, James Zou, Azalia Mirhoseini, and Christopher
+  Re. 2025.
   [Cartridges: Lightweight and general-purpose long context representations via self-study](https://arxiv.org/abs/2506.06266).
   arXiv:2506.06266.
 - OpenAI. 2026.
-  [Compaction](https://developers.openai.com/api/docs/guides/compaction).
-  OpenAI API documentation.
+  [Compaction](https://developers.openai.com/api/docs/guides/compaction). OpenAI
+  API documentation.
 - Anthropic. 2026.
   [Compaction](https://platform.claude.com/docs/en/build-with-claude/compaction).
   Claude Platform documentation.

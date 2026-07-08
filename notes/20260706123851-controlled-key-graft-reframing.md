@@ -2,8 +2,8 @@
 
 This note records the revised terminology and experimental-control rule for
 ValueGraft-style interventions. The purpose is to make future comparisons
-scientifically interpretable while preserving the meaning of experiments
-already in flight.
+scientifically interpretable while preserving the meaning of experiments already
+in flight.
 
 ## Core Model
 
@@ -20,38 +20,37 @@ V(alpha_V) = (1 - alpha_V) * V_fresh
              + alpha_V * V_write_time
 ```
 
-`K_fresh` and `V_fresh` come from ordinary re-encoding of the compacted
-context. `K_write_time_rerotated` and `V_write_time` come from the state the
-model wrote when the summary token was generated. If a write-time key is used
-at a different position, it must first be re-rotated into the compacted
-position.
+`K_fresh` and `V_fresh` come from ordinary re-encoding of the compacted context.
+`K_write_time_rerotated` and `V_write_time` come from the state the model wrote
+when the summary token was generated. If a write-time key is used at a different
+position, it must first be re-rotated into the compacted position.
 
 `alpha_K` and `alpha_V` may be constants or structured policies, including
 per-layer, per-head, token/span-dependent, or tuned matrices. A bare `alpha`
 should only be used when it is clear from context that the same setting applies
-to both K and V, or when the experiment only has one active alpha parameter.
-For new design notes, prefer explicit `alpha_K` and `alpha_V`.
+to both K and V, or when the experiment only has one active alpha parameter. For
+new design notes, prefer explicit `alpha_K` and `alpha_V`.
 
 ## Named Regions
 
 These are not separate algorithms so much as regions of the same parameter
 space:
 
-| Name | Key policy | Value policy |
-|---|---|---|
-| Plain Summary Compaction | `alpha_K = 0` | `alpha_V = 0` |
-| V-only Graft | `alpha_K = 0` | `alpha_V` varied or tuned |
-| K-only Graft | `alpha_K` varied or tuned | `alpha_V = 0` |
-| KV-Graft | `alpha_K` varied or tuned | `alpha_V` varied or tuned |
-| Coupled KV-Graft | `alpha_K = alpha_V = alpha` | same shared alpha |
+| Name                     | Key policy                  | Value policy              |
+| ------------------------ | --------------------------- | ------------------------- |
+| Plain Summary Compaction | `alpha_K = 0`               | `alpha_V = 0`             |
+| V-only Graft             | `alpha_K = 0`               | `alpha_V` varied or tuned |
+| K-only Graft             | `alpha_K` varied or tuned   | `alpha_V = 0`             |
+| KV-Graft                 | `alpha_K` varied or tuned   | `alpha_V` varied or tuned |
+| Coupled KV-Graft         | `alpha_K = alpha_V = alpha` | same shared alpha         |
 
 `alpha = 1` is not a separate method. It is the parameter setting where that
 side uses write-time state exactly. `alpha = 0` means that side uses fresh
 compacted-context state exactly. Values above 1 are extrapolation settings and
 should be described as such.
 
-Do not introduce a separate method name for the `alpha = 1` case. If needed,
-say `alpha_V = 1`, `alpha_K = 1`, or `alpha_K = alpha_V = 1`.
+Do not introduce a separate method name for the `alpha = 1` case. If needed, say
+`alpha_V = 1`, `alpha_K = 1`, or `alpha_K = alpha_V = 1`.
 
 ## Current Experiment State
 
@@ -68,14 +67,14 @@ identifiers, specs, result directories, and logs should remain stable for
 provenance. In reports, translate them into the clearer conceptual vocabulary.
 
 The historical `H-pack` arm should be interpreted as a packed/minimal-layout
-KV-retention experiment, not as the clean V-only versus KV comparison. It used
-a packed layout with sinks plus summary-token state, while the live coding
-setup uses a production-shaped compacted context with summary plus recent tail.
-That layout/tail difference is a confound for claims about key policy.
+KV-retention experiment, not as the clean V-only versus KV comparison. It used a
+packed layout with sinks plus summary-token state, while the live coding setup
+uses a production-shaped compacted context with summary plus recent tail. That
+layout/tail difference is a confound for claims about key policy.
 
-The historical packed arms are still useful evidence about the behavior of
-that packed layout. They should not be used as if they isolate the effect of
-fresh keys versus write-time keys in the same compacted context.
+The historical packed arms are still useful evidence about the behavior of that
+packed layout. They should not be used as if they isolate the effect of fresh
+keys versus write-time keys in the same compacted context.
 
 ## Controlled Comparisons
 
@@ -161,13 +160,13 @@ This framing lets us ask cleaner questions:
 
 Use method names that describe the active policy:
 
-| Historical name | Recommended report name |
-|---|---|
-| `B` | Plain Summary Compaction |
-| `E` / `E:a...` | V-only Graft, with stated `alpha_V` policy |
-| `E:cfg=layers` | Layer-tuned V-only Graft |
-| `B-min-pack` | Packed Fresh-KV Control |
-| `H-pack` | Packed KV-Graft, auxiliary layout experiment |
+| Historical name | Recommended report name                      |
+| --------------- | -------------------------------------------- |
+| `B`             | Plain Summary Compaction                     |
+| `E` / `E:a...`  | V-only Graft, with stated `alpha_V` policy   |
+| `E:cfg=layers`  | Layer-tuned V-only Graft                     |
+| `B-min-pack`    | Packed Fresh-KV Control                      |
+| `H-pack`        | Packed KV-Graft, auxiliary layout experiment |
 
 Do not reuse `H-pack` for a future matched-context key experiment if the
 packed/minimal-layout implementation detail has been removed. That future arm

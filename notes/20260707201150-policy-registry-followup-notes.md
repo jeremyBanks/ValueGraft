@@ -1,9 +1,9 @@
 # Policy Registry Follow-Up Notes
 
-This note records the second cheap local screen for synthetic
-referent-recovery task shapes. It uses `Qwen/Qwen3-0.6B` on MPS, so the
-numbers are prospecting data only. The purpose is to find regions worth
-testing more carefully, not to support a paper claim.
+This note records the second cheap local screen for synthetic referent-recovery
+task shapes. It uses `Qwen/Qwen3-0.6B` on MPS, so the numbers are prospecting
+data only. The purpose is to find regions worth testing more carefully, not to
+support a paper claim.
 
 ## What Changed From The First Screen
 
@@ -30,18 +30,17 @@ For each case, the runner measures:
   the same summary-token positions.
 
 The sweep included V-only, K-only, coupled K/V, and small mixed policies. The
-runner writes the complete output to
-`outputs/policy_registry_followup.json` and a compact table report to
-`outputs/policy_registry_followup.md`.
+runner writes the complete output to `outputs/policy_registry_followup.json` and
+a compact table report to `outputs/policy_registry_followup.md`.
 
 ## Main Results
 
 Full run: 46 cases in 68 seconds.
 
-| family | cases | usable A>B | positive best graft | mean best E-B | mean best gap closure |
-|---|---:|---:|---:|---:|---:|
-| policy choice | 30 | 30 | 28 | +0.265 | +0.036 |
-| low-entropy transform | 16 | 15 | 12 | +0.454 | +0.206 |
+| family                | cases | usable A>B | positive best graft | mean best E-B | mean best gap closure |
+| --------------------- | ----: | ---------: | ------------------: | ------------: | --------------------: |
+| policy choice         |    30 |         30 |                  28 |        +0.265 |                +0.036 |
+| low-entropy transform |    16 |         15 |                  12 |        +0.454 |                +0.206 |
 
 The policy family is the stable lane. Every policy case had `A > B`, and 28 of
 30 had at least one graft policy improve over `B`. The signal is small as a
@@ -60,8 +59,8 @@ The policy family mostly prefers low-dose V-only grafting:
   average.
 - K-only is generally not useful for the policy family.
 
-This makes the policy registry a good candidate for a robust behavioral gate:
-it is cheap, creates a clear full-vs-compacted gap, and usually shows a small
+This makes the policy registry a good candidate for a robust behavioral gate: it
+is cheap, creates a clear full-vs-compacted gap, and usually shows a small
 positive graft effect.
 
 The best policy categories in this tiny screen were privacy/export,
@@ -74,13 +73,13 @@ The transform family is the better K-focused search area. The global K-only
 average is negative, but several specific transform categories strongly prefer
 K-only:
 
-| case | gold | best policy | E-B | gap closure |
-|---|---|---|---:|---:|
-| `transform-typed-iris` | `user_profile_card` | `k020` | +1.385 | 0.763 |
-| `transform-typed-azure` | `UTC` | `k020` | +1.360 | 0.811 |
-| `transform-label_only-iris` | `user_profile_card` | `k020` | +1.034 | 0.602 |
-| `transform-label_only-coral` | `userName` | `k010` | +0.792 | 0.109 |
-| `transform-label_only-azure` | `UTC` | `k010` | +0.683 | 0.548 |
+| case                         | gold                | best policy |    E-B | gap closure |
+| ---------------------------- | ------------------- | ----------- | -----: | ----------: |
+| `transform-typed-iris`       | `user_profile_card` | `k020`      | +1.385 |       0.763 |
+| `transform-typed-azure`      | `UTC`               | `k020`      | +1.360 |       0.811 |
+| `transform-label_only-iris`  | `user_profile_card` | `k020`      | +1.034 |       0.602 |
+| `transform-label_only-coral` | `userName`          | `k010`      | +0.792 |       0.109 |
+| `transform-label_only-azure` | `UTC`               | `k010`      | +0.683 |       0.548 |
 
 That pattern is narrow, but interesting. Identifier transforms and timezone
 normalization are the clearest local hits. Privacy redaction did not work in
@@ -96,16 +95,16 @@ Typed summaries helped slightly. A typed summary keeps labels plus coarse
 categories while omitting the exact relation. It made all policy cases positive
 and improved the transform family mean.
 
-That suggests the sparse summary should preserve a semantic anchor. A bare
-label list may be too under-conditioned for some cases; a full relation would
-make the task trivial. The useful middle is "label plus type, relation omitted."
+That suggests the sparse summary should preserve a semantic anchor. A bare label
+list may be too under-conditioned for some cases; a full relation would make the
+task trivial. The useful middle is "label plus type, relation omitted."
 
 ## Recommended Next Step
 
 Use a two-lane synthetic harness:
 
-1. **Policy lane:** 30-50 private labels mapped to familiar policy actions.
-   Use this as the stable V-sensitive gate. Sweep low-dose V-only and low-dose
+1. **Policy lane:** 30-50 private labels mapped to familiar policy actions. Use
+   this as the stable V-sensitive gate. Sweep low-dose V-only and low-dose
    coupled policies first.
 2. **Transform lane:** 30-50 labels concentrated around identifier/case
    conversion, filename normalization, timezone normalization, and simple unit
@@ -128,4 +127,3 @@ so runtime generation variance is not mixed into the graft measurement.
 - The current table records best-of-policy outcomes, so the next serious run
   should pre-register the policy sweep and report the full surface, not only
   winners.
-

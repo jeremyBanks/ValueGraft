@@ -1,6 +1,6 @@
 # Intervention Batch Run Note
 
-Status: run plan and interpretation contract  
+Status: run plan and interpretation contract\
 Started: 2026-07-07
 
 This batch is a correction to the earlier two-state lens exploration. The
@@ -19,8 +19,8 @@ The batch artifact must therefore include at least these states for each case:
   compacted cache.
 - **Shifted graft control**: the same visible text as fresh compacted, with the
   same old value entries shifted to the wrong summary-token positions.
-- **Alpha controls**: at minimum alpha-zero, intermediate values, and
-  alpha-one, so any effect is not reported as a single arbitrary setting.
+- **Alpha controls**: at minimum alpha-zero, intermediate values, and alpha-one,
+  so any effect is not reported as a single arbitrary setting.
 
 The current implementation is V-only. It leaves fresh keys and the rest of the
 fresh compacted state in place. That makes this narrower than the full
@@ -37,8 +37,8 @@ The strongest qualitative evidence would combine all of the following:
   obviously less coherent direction.
 - The readout difference is visible on content-bearing spans, not only
   punctuation, whitespace, path separators, or local continuation syntax.
-- The example can be explained using the scenario text without special
-  pleading or hidden filtering.
+- The example can be explained using the scenario text without special pleading
+  or hidden filtering.
 - Ordinary next-token candidates do not already explain the whole effect.
 
 ## What Would Count As A Useful Null
@@ -54,9 +54,9 @@ A null or weak result is still informative if it is clean:
 - The retained tail or summary text already contains the answer so clearly that
   there is little semantic state left for the graft to reveal.
 
-In that case, the honest conclusion is not that ValueGraft has no effect. It
-is that this J-lens setup did not find a strong, shareable mechanistic example
-for the effect under the tested conditions.
+In that case, the honest conclusion is not that ValueGraft has no effect. It is
+that this J-lens setup did not find a strong, shareable mechanistic example for
+the effect under the tested conditions.
 
 ## Reporting Rules
 
@@ -64,6 +64,6 @@ for the effect under the tested conditions.
 - Do not hide shifted-control failures or alpha settings that look worse.
 - Do not overfocus on single-token argmax rescues; use them only beside the
   forced-token lens readouts.
-- Quote enough scenario and target text for a reader to understand each
-  example without reading the raw JSON.
+- Quote enough scenario and target text for a reader to understand each example
+  without reading the raw JSON.
 - Prefer fewer, better examples over many near-identical tables.

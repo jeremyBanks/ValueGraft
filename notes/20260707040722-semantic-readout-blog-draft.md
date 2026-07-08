@@ -2,35 +2,35 @@
 
 This note describes a qualitative probe for the ValueGraft project: use a
 Jacobian-lens readout to inspect what a model's internal state "thinks" a
-summary token means when the summary is written after the full conversation,
-and compare that to what the same summary token means when the summary is read
-back in a clean compacted context.
+summary token means when the summary is written after the full conversation, and
+compare that to what the same summary token means when the summary is read back
+in a clean compacted context.
 
-The probe is not a replacement for the experimental metrics. It is a way to
-look at the mechanism. It gives us concrete examples where the same visible
-summary text has different internal semantics depending on whether it was
-produced in the old conversation state or freshly re-encoded from text.
+The probe is not a replacement for the experimental metrics. It is a way to look
+at the mechanism. It gives us concrete examples where the same visible summary
+text has different internal semantics depending on whether it was produced in
+the old conversation state or freshly re-encoded from text.
 
 ## The Basic Test
 
 For each demo, we build two matched prompts:
 
-1. Full-context summary path: the model reads the original conversation and
-   then sees or emits the summary.
+1. Full-context summary path: the model reads the original conversation and then
+   sees or emits the summary.
 2. Fresh-summary path: the model sees only the compacted summary in the same
    local wrapper.
 
 The summary tokens are aligned literally. At each aligned summary-token
 position, we record the residual stream at selected model layers and decode it
 through the downloaded Jacobian lens for `Qwen3.6-27B`. For each position and
-layer, we ask for the top-k vocabulary readout. Then we compare the readout
-sets between the full-context and fresh-summary paths.
+layer, we ask for the top-k vocabulary readout. Then we compare the readout sets
+between the full-context and fresh-summary paths.
 
-The first demos sampled hand-selected anchor tokens such as `Ghost`,
-`Vacuum`, `Maple`, and `B-410`. The later scan sampled every token in each
-summary, then ranked the positions with the largest readout divergence. That
-full scan is useful because it discovers examples without us deciding in
-advance where the interesting boundary should be.
+The first demos sampled hand-selected anchor tokens such as `Ghost`, `Vacuum`,
+`Maple`, and `B-410`. The later scan sampled every token in each summary, then
+ranked the positions with the largest readout divergence. That full scan is
+useful because it discovers examples without us deciding in advance where the
+interesting boundary should be.
 
 Raw files:
 
@@ -71,8 +71,8 @@ associations.
 
 `Ghost2` is a surviving replacement, while the original `Ghost` died. In the
 full-context path, the readout around the `2` token contains `survived`,
-`survives`, `alive`, and `made`. In the fresh-summary path, it becomes more
-like a plain number or replacement marker, with weaker access to the specific
+`survives`, `alive`, and `made`. In the fresh-summary path, it becomes more like
+a plain number or replacement marker, with weaker access to the specific
 survival contrast.
 
 `Hariyama` is ruled out. In the full-context path, readouts include `ruled`,
@@ -96,20 +96,20 @@ full-context path, the readout around `Maple` contains `Room`, `means`,
 `refers`, and equality-like mapping tokens. In the fresh-summary path, it leans
 toward `Street`, `Ave`, `Avenue`, `St`, and other generic place-name priors.
 
-`Robin` is the human volunteer coordinator with van keys and vendor contacts.
-In the full-context path, readouts include `volunteer`, `coordinates`, `holds`,
-and role-mapping tokens. In the fresh-summary path, they drift toward generic
-name associations such as `Hood`, `Robin`, and unrelated person-name priors.
+`Robin` is the human volunteer coordinator with van keys and vendor contacts. In
+the full-context path, readouts include `volunteer`, `coordinates`, `holds`, and
+role-mapping tokens. In the fresh-summary path, they drift toward generic name
+associations such as `Hood`, `Robin`, and unrelated person-name priors.
 
 `B-410` is stale, while `P-771` is current. In the full-context path, the
-readout around `B-410` includes `obsolete`, `outdated`, `deprecated`,
-`expired`, and `stale`. In the fresh-summary path, the readout becomes more
-like a generic permit or civic identifier.
+readout around `B-410` includes `obsolete`, `outdated`, `deprecated`, `expired`,
+and `stale`. In the fresh-summary path, the readout becomes more like a generic
+permit or civic identifier.
 
 `Crane` is a stage-rental company delivering risers, not a machine. In the
 full-context path, readouts include `stage`, `delivers`, `delivery`, and
-company-role language. In the fresh-summary path, readouts drift toward
-`crane`, `tower`, `truck`, `operator`, and equipment associations.
+company-role language. In the fresh-summary path, readouts drift toward `crane`,
+`tower`, `truck`, `operator`, and equipment associations.
 
 ## Different Summary Shapes
 
@@ -122,9 +122,9 @@ The full scan used multiple summary formats:
 - A JSON-like support-ticket summary.
 
 The broad pattern appears across formats. The table, checklist, and JSON cases
-also show a practical limitation: structural tokens can dominate raw
-divergence rankings. A useful automatic version should rank or filter for
-semantic targets, not merely the largest change in top-k readout.
+also show a practical limitation: structural tokens can dominate raw divergence
+rankings. A useful automatic version should rank or filter for semantic targets,
+not merely the largest change in top-k readout.
 
 Still, the format variation is encouraging. The effect is not limited to one
 pretty summary template.
@@ -137,10 +137,10 @@ semantic view. The control in `next_token_readout_control_report.md` does this
 for five summary anchors from the Pokemon and block-party demos.
 
 Across anchors, states, and sampled layers, the mean top-20 Jaccard overlap
-between J-lens readouts and next-token logits was `0.256`. The split by layer
-is the important part: layer 48 averaged `0.076`, while layer 62 averaged
-`0.436`. Late layers are closer to continuation behavior; intermediate layers
-more often expose a different semantic neighborhood.
+between J-lens readouts and next-token logits was `0.256`. The split by layer is
+the important part: layer 48 averaged `0.076`, while layer 62 averaged `0.436`.
+Late layers are closer to continuation behavior; intermediate layers more often
+expose a different semantic neighborhood.
 
 This changes how the examples should be presented. Some anchors, such as the
 sampled `Vacuum never...` occurrence, are mostly continuation-dominated and
@@ -149,9 +149,9 @@ signal. The clearest current case is `B-410`: at the `B` token, next-token
 logits mostly predict the hyphen/code continuation, while write-time layer-48
 J-lens reads out `obsolete`, `outdated`, `deprecated`, and `expired`.
 
-For future figures, the report should show local context, the actual next
-token, next-token candidates, write-time J-lens candidates, fresh J-lens
-candidates, and top-k overlap side by side.
+For future figures, the report should show local context, the actual next token,
+next-token candidates, write-time J-lens candidates, fresh J-lens candidates,
+and top-k overlap side by side.
 
 ## Software Incident Table
 
@@ -169,9 +169,9 @@ operational labels:
 The strongest target examples are status labels. For `Patch 17`, the
 full-context path surfaces `obsolete`, `outdated`, `old`, `expired`, and
 `deprecated`; the fresh-summary path mainly treats the token as a patch/version
-number. For `R3`, the full-context path surfaces `latest`, `official`,
-`newest`, `current`, and `live`; the fresh-summary path mostly decodes the
-digit or generic identifier shape.
+number. For `R3`, the full-context path surfaces `latest`, `official`, `newest`,
+`current`, and `live`; the fresh-summary path mostly decodes the digit or
+generic identifier shape.
 
 This suggested a natural next probe for SWE-style tasks: align on tokens in the
 true next action, such as the file path, tool name, function call, branch name,
@@ -205,8 +205,8 @@ Three small examples:
   `python3 /workspace/Project-MONAI__MONAI__0.8/reproduce_error.py`.
 
 The readout does find the operational spans. In the getmoto case, span-level
-divergence lands on `str_replace_editor`, the exact `responses.py` path, and
-the `[584, 600]` range. In the Dask case, it lands on `execute_bash`, the
+divergence lands on `str_replace_editor`, the exact `responses.py` path, and the
+`[584, 600]` range. In the Dask case, it lands on `execute_bash`, the
 `grep -n 'normalize_token' .../base.py` command, and the `base.py` path. In the
 MONAI case, it lands on the `python3` command and `reproduce_error.py` path.
 
@@ -225,9 +225,8 @@ contain the next action, which contaminates the comparison.
 
 ## Why This Is Useful
 
-The readout gives us a concrete way to talk about the otherwise slippery
-phrase "lost context-conditioned state." We can point at the same visible text
-and say:
+The readout gives us a concrete way to talk about the otherwise slippery phrase
+"lost context-conditioned state." We can point at the same visible text and say:
 
 - Here is what the token looks like when the model wrote it under the original
   conversation.
@@ -250,8 +249,8 @@ The next version should make the SWE-Gym probe span-first from the start:
 - Keep raw token rows as drill-down data, not as the main presentation.
 
 That connects the qualitative method directly to the strongest use case: not
-whether the model can remember a trivia label, but whether compacted state
-keeps enough situated meaning to choose the next useful coding move.
+whether the model can remember a trivia label, but whether compacted state keeps
+enough situated meaning to choose the next useful coding move.
 
 ## Interpretation Boundary
 
@@ -259,7 +258,7 @@ This probe should not be overclaimed. A top-k lens readout is an interpretive
 view of a residual-stream state, not a direct dump of the model's beliefs. It
 can be noisy, layer-dependent, and sensitive to tokenization.
 
-Even with that caveat, the examples are valuable. They repeatedly show the
-same qualitative shape: write-time summary tokens carry richer situated
-semantics than freshly re-encoded summary tokens. That is the local mechanism
-ValueGraft is trying to preserve.
+Even with that caveat, the examples are valuable. They repeatedly show the same
+qualitative shape: write-time summary tokens carry richer situated semantics
+than freshly re-encoded summary tokens. That is the local mechanism ValueGraft
+is trying to preserve.

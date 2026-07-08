@@ -15,10 +15,9 @@ where `alpha` is the same everywhere for a given run, such as `0.25`, `0.5`,
 `0.75`, or `1.0`.
 
 That tests whether old write-time values help at all, but it is crude. Full
-replacement can be harmful because old values may be partially incompatible
-with the freshly encoded compacted context. Low-alpha blending helps preserve
-the fresh context while allowing some old interpretation to influence the
-model.
+replacement can be harmful because old values may be partially incompatible with
+the freshly encoded compacted context. Low-alpha blending helps preserve the
+fresh context while allowing some old interpretation to influence the model.
 
 The refinement is adaptive blending:
 
@@ -40,8 +39,8 @@ where `gate_i` varies by token, layer, head, or position.
 
 ### Exact-span confidence
 
-Use more old value when the new token belongs to a long exact-matching span
-from the old conversation. Use little or none for short/common matches.
+Use more old value when the new token belongs to a long exact-matching span from
+the old conversation. Use little or none for short/common matches.
 
 This is closest to the current E-post setup, but makes alpha local instead of
 global.
@@ -49,8 +48,8 @@ global.
 ### Attention confidence
 
 Use the model's own attention as the correspondence signal. For a compacted
-token, score its query against old keys. If attention sharply points to one
-old region, blend more. If attention is diffuse, blend less.
+token, score its query against old keys. If attention sharply points to one old
+region, blend more. If attention is diffuse, blend less.
 
 This avoids treating raw value-vector cosine distance as meaningful. QK
 attention is the model's trained retrieval mechanism.
@@ -62,8 +61,8 @@ Blend less when many old positions look similarly plausible.
 
 ### Head or layer agreement
 
-Blend more when multiple heads or layers retrieve the same old span. Blend
-less when they disagree.
+Blend more when multiple heads or layers retrieve the same old span. Blend less
+when they disagree.
 
 ### Layer gating
 
@@ -89,8 +88,8 @@ closest to the planned G / SoftGraft direction.
 
 ## Better framing
 
-The practical question is not whether old KV state differs from fresh KV
-state. The practical question is whether we can use a small, deployable cache
+The practical question is not whether old KV state differs from fresh KV state.
+The practical question is whether we can use a small, deployable cache
 intervention to reduce compaction damage.
 
 Adaptive blending is one possible route:
@@ -102,6 +101,6 @@ Adaptive blending is one possible route:
 ## Caution
 
 Avoid using raw cosine similarity in value space as the main notion of
-"closeness." Value space does not necessarily have an interpretable geometry
-on its own. Attention scores are a safer starting point because they are part
-of the model's learned retrieval machinery.
+"closeness." Value space does not necessarily have an interpretable geometry on
+its own. Attention scores are a safer starting point because they are part of
+the model's learned retrieval machinery.

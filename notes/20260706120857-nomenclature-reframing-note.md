@@ -31,8 +31,8 @@ versus preserved from write time.
 
 Use the shorthand:
 
-- **K / keys:** attention addresses. They affect whether later tokens attend
-  to a prior token. In RoPE models, cached keys include positional rotation.
+- **K / keys:** attention addresses. They affect whether later tokens attend to
+  a prior token. In RoPE models, cached keys include positional rotation.
 - **V / values:** attention payloads. They determine what information is read
   out if a later token attends to that prior token.
 
@@ -48,31 +48,31 @@ fresh key              = RoPE(q) * W_k(h_fresh_compact_context)
 These are not equivalent unless the write-time hidden state and the fresh
 compact-context hidden state are identical. The whole hypothesis is that they
 are often not identical. Key rotation is therefore not just an implementation
-detail; it is the operation that lets us preserve a write-time key while
-placing it in a new packed layout.
+detail; it is the operation that lets us preserve a write-time key while placing
+it in a new packed layout.
 
 Values do not need RoPE re-rotation. Blending or replacing values is literally
 changing the value payload while leaving the key/address side alone.
 
 ## Recommended Names
 
-Use **ValueGraft** as the umbrella for methods that preserve or reuse
-write-time KV state across a compaction boundary. Within that family, name the
-variants by which parts of KV state they preserve.
+Use **ValueGraft** as the umbrella for methods that preserve or reuse write-time
+KV state across a compaction boundary. Within that family, name the variants by
+which parts of KV state they preserve.
 
-| Historical name | Recommended name | Keys | Values | Layout |
-|---|---|---|---|---|
-| `A` | Full-Context Oracle | fresh from full context | fresh from full context | full context |
-| `B` | Plain Summary Compaction | fresh | fresh | compact summary + tail |
-| `E` / `E-tuned` | V-Graft | fresh | blended write-time V | compact summary + tail |
-| `E:a0.75` | V-Graft Blend | fresh | interpolated write-time V | compact summary + tail |
-| `E:a1.0` | V-Graft Replace | fresh | write-time V | compact summary + tail |
-| `E:cfg=layers` | Layer-Tuned V-Graft | fresh | layer-tuned write-time V | compact summary + tail |
-| `E:cfg=posslots` | Slot-Masked V-Graft | fresh | slot-masked write-time V | compact summary + tail |
-| `B-min-pack` | Fresh-KV Control | fresh | fresh | packed summary |
-| `H-pack` | KV-Graft | write-time K, re-rotated | write-time V | packed summary |
-| `H-gap` | Gapped KV-Graft | write-time K | write-time V | gapped summary |
-| `H-pack-wrongS` | Wrong-Source KV-Graft Control | wrong-source write-time K, re-rotated | wrong-source write-time V | packed summary |
+| Historical name  | Recommended name              | Keys                                  | Values                    | Layout                 |
+| ---------------- | ----------------------------- | ------------------------------------- | ------------------------- | ---------------------- |
+| `A`              | Full-Context Oracle           | fresh from full context               | fresh from full context   | full context           |
+| `B`              | Plain Summary Compaction      | fresh                                 | fresh                     | compact summary + tail |
+| `E` / `E-tuned`  | V-Graft                       | fresh                                 | blended write-time V      | compact summary + tail |
+| `E:a0.75`        | V-Graft Blend                 | fresh                                 | interpolated write-time V | compact summary + tail |
+| `E:a1.0`         | V-Graft Replace               | fresh                                 | write-time V              | compact summary + tail |
+| `E:cfg=layers`   | Layer-Tuned V-Graft           | fresh                                 | layer-tuned write-time V  | compact summary + tail |
+| `E:cfg=posslots` | Slot-Masked V-Graft           | fresh                                 | slot-masked write-time V  | compact summary + tail |
+| `B-min-pack`     | Fresh-KV Control              | fresh                                 | fresh                     | packed summary         |
+| `H-pack`         | KV-Graft                      | write-time K, re-rotated              | write-time V              | packed summary         |
+| `H-gap`          | Gapped KV-Graft               | write-time K                          | write-time V              | gapped summary         |
+| `H-pack-wrongS`  | Wrong-Source KV-Graft Control | wrong-source write-time K, re-rotated | wrong-source write-time V | packed summary         |
 
 ## Why `Pack` Should Not Be the Headline Name
 
@@ -83,8 +83,8 @@ shared by both sides of the important contrast:
 - `B-min-pack` uses packed layout with freshly encoded K/V.
 - `H-pack` uses the same packed layout with write-time K/V.
 
-So `H-pack` should not be explained as "the packed one". The clearer
-explanation is:
+So `H-pack` should not be explained as "the packed one". The clearer explanation
+is:
 
 > **KV-Graft** preserves both keys and values from the summary's write-time
 > state. Because those keys were written at their original positions, they are
@@ -114,9 +114,9 @@ More concretely:
 - **Fresh-KV Control** uses the same packed summary layout as KV-Graft, but
   obtains both K and V by ordinary fresh re-encoding.
 
-This taxonomy avoids the earlier confusion where `H-pack` sounded like a
-layout variant of `V-Graft`. It is not. It is the K+V preservation branch of
-the family.
+This taxonomy avoids the earlier confusion where `H-pack` sounded like a layout
+variant of `V-Graft`. It is not. It is the K+V preservation branch of the
+family.
 
 ## Suggested Prose
 
@@ -124,16 +124,16 @@ Use something close to this:
 
 > We use **ValueGraft** for a family of training-free cache-state interventions
 > across compaction boundaries. **V-Graft** preserves write-time value state
-> while leaving freshly computed keys in place. **KV-Graft** preserves both
-> keys and values from the summary's write-time state; when evaluated in a
-> compact layout, its keys are re-rotated to the packed positions. The
-> **Fresh-KV Control** uses the same summary text and packed layout as
-> KV-Graft, but recomputes both keys and values from the compact context.
+> while leaving freshly computed keys in place. **KV-Graft** preserves both keys
+> and values from the summary's write-time state; when evaluated in a compact
+> layout, its keys are re-rotated to the packed positions. The **Fresh-KV
+> Control** uses the same summary text and packed layout as KV-Graft, but
+> recomputes both keys and values from the compact context.
 
 ## Cautions
 
-- Do not rename code paths, existing result files, or historical logs while
-  the experiment is still active.
+- Do not rename code paths, existing result files, or historical logs while the
+  experiment is still active.
 - Do not let the naming imply that every variant succeeded. In particular,
   Slot-Masked V-Graft failed its wrong-conversation contamination guard and
   should be described as an exploratory variant/control, not as a headline
