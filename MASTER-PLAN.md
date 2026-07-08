@@ -333,3 +333,6 @@ per-model per-referent baseline prior-strength.
 BUILD SEQUENCE (all before the spend): augment corpus (freeze) → harness controls
 (placebo/identity/alpha/traces/hyperparams/conv-bootstrap/prior-strength) → add Qwen3-32B →
 FREEZE → provision pods → deep-anchors+wide-shallow sweep + own-summary experiment.
+
+## PAPER FRAMING GUARDRAIL — champion results (user 07-08)
+The inline champion-scan numbers are WEAK/TENTATIVE/non-exhaustive/non-comparable (quick free scan). In the paper frame them as a humble "quick scan hints at possible per-layer improvement, future work" — NOT a champion optimization or cross-model comparison. Brief Fable + critics on this so it is NOT overclaimed.
