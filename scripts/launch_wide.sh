@@ -4,7 +4,7 @@
 set -uo pipefail
 cd /Users/jeb/experimentation
 ANCHORS="Qwen/Qwen3-30B-A3B-Instruct-2507 Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct google/gemma-4-31B-it google/gemma-4-26B-A4B-it"
-BREADTH="mistralai/Mixtral-8x7B-Instruct-v0.1 mistralai/Mistral-Small-3.2-24B-Instruct-2506 google/gemma-3-27b-it allenai/OLMo-2-0325-32B-Instruct Qwen/Qwen3.6-35B-A3B Qwen/Qwen3.6-27B zai-org/GLM-4-32B-0414 openai/gpt-oss-20b microsoft/phi-4 01-ai/Yi-1.5-34B-Chat nvidia/Llama-3_3-Nemotron-Super-49B-v1_5"
+BREADTH="mistralai/Mixtral-8x7B-Instruct-v0.1 mistralai/Mistral-Small-24B-Instruct-2501 google/gemma-3-27b-it allenai/OLMo-2-0325-32B-Instruct Qwen/Qwen3.6-35B-A3B Qwen/Qwen3.6-27B zai-org/GLM-4-32B-0414 openai/gpt-oss-20b microsoft/phi-4 01-ai/Yi-1.5-34B-Chat nvidia/Llama-3_3-Nemotron-Super-49B-v1_5"
 S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
 i=1
 for M in $ANCHORS; do
