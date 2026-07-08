@@ -197,3 +197,28 @@ Fable readability passes → Codex/GPT-5.5 → my edits → ship. Do this IF fea
 we can brief it well enough that its draft is a real starting point, not a re-explain).
 Requires the [[fable-must-have-current-facts]] discipline taken to its fullest — a
 complete, current, structured brief. Fable also has full freedom on title + intro.
+
+## HARD RULES & LEARNINGS — every agent (main + subagents) MUST follow
+These are IN THE REPO on purpose so all agents can see them (private memory files can't be read by subagents).
+
+**Git**
+- Work ONLY on trunk. NEVER create/use branches. If a branch appears, fast-forward it into trunk and delete it (just moving refs, non-disruptive).
+- Commit AND push to origin/trunk after every unit of work. Never leave critical code/data uncommitted.
+- NEVER `rm`/delete/overwrite uncommitted work. Commit the thing before running anything that consumes or cleans it. A cleanup step must never run after a failed step (no unconditional `rm` after a merge/build).
+
+**Verify the boring things before anything clever or expensive**
+- Use the EXACT model id + config the known-good result used — not just the same family/size. (Cost us hours: ran thinking Qwen3-30B-A3B vs the non-thinking Instruct-2507 the +0.156 was measured on.)
+- Positive-control a pipeline on its ACTUAL production config, not a proxy. ("Equivalence-verified on fixed summaries" did NOT cover self-gen — twice.)
+- Read the actual NUMBER yourself. `status=OK` != correct.
+- If two independent apparatuses fail IDENTICALLY, the bug is in SHARED code / a shared input — look there first.
+- Don't harden/re-engineer correct code to soothe a misdiagnosed alarm; you'll introduce real brittleness.
+
+**Subagents & generation**
+- SHARD independent multi-item work across parallel subagents from the START (quality AND speed): author diversity + fresh attention per item. Don't run N items sequentially in one subagent.
+- Text/content generation → fast model mix (Fable/Opus/Sonnet/Codex), never a local model (MLX/Ollama) except quick sanity checks.
+- NEVER kill a subagent off a proxy signal (output-file size/mtime). Check real progress (recent activity, its last message) before any destructive action.
+
+**When stuck → consult Fable EARLY**
+- The moment a fix hasn't converged in ~1-2 attempts, or a subagent is looping, or a result is confusing: STOP and consult Fable for the STRATEGIC/diagnostic view. Do NOT grind for hours first. Fable advises; it does not implement. (Fable caught the wrong-model class of bug and the nativeness confound that hours of narrow debugging missed.)
+
+**Record learnings IN THE REPO** (DECISIONS.md / INCIDENTS.md / FINDINGS.md / here) — not in private memory files agents can't see.
