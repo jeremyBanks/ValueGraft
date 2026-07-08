@@ -9,12 +9,14 @@ Markdown archive files must use UTC, sortable, kebab-case names:
 YYYYMMDDNN-short-kebab-case-title.md
 ```
 
-`YYYYMMDD` is the UTC date. `NN` is a per-day counter assigned by each file's
-git creation timestamp: `01` through `99`, then `A0`, `A1`, etc. if needed. The
-full timestamp belongs in git history, not the filename. If a note is created or
-renamed, that file must be introduced in its own commit with author and
-committer dates set to the note's canonical timestamp. Existing-path edits do
-not need special timestamp handling.
+`YYYYMMDD` is the UTC date. `NN` is assigned by each file's git creation
+timestamp and normally continues across day boundaries. If carrying the prior
+day's suffix forward would push a day past `99`, that day starts at the same
+trailing digit in the `01` through `10` range instead. The full timestamp
+belongs in git history, not the filename. If a note is created or renamed, that
+file must be introduced in its own commit with author and committer dates set to
+the note's canonical timestamp. Existing-path edits do not need special
+timestamp handling.
 
 ```bash
 python3 scripts/normalize_notes_archive_names.py

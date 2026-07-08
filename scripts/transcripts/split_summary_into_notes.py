@@ -23,7 +23,7 @@ from pathlib import Path
 from types import ModuleType
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from notes_archive_naming import compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
+from notes_archive_naming import archive_day_start, compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
 
 
 PARTICIPANTS_PREFIX = "**Participants:**"
@@ -241,15 +241,19 @@ def planned_conversation_paths(
         by_day.setdefault(ts.strftime("%Y%m%d"), []).append(item)
 
     out: dict[int, Path] = {}
+    next_day_index = 1
     for day in sorted(by_day):
         entries = sorted(by_day[day], key=lambda item: (item[2], item[0], item[3], item[1]))
-        for day_index, (kind, shard_idx, ts, title) in enumerate(entries, 1):
+        day_start = archive_day_start(next_day_index, len(entries))
+        for offset, (kind, shard_idx, ts, title) in enumerate(entries):
             if kind != "new":
                 continue
+            day_index = day_start + offset
             path = notes_dir / f"{compact_prefix(ts, day_index)}-{title}.md"
             if path.exists():
                 raise RuntimeError(f"Refusing to overwrite existing file: {path}")
             out[shard_idx] = path
+        next_day_index = day_start + len(entries)
     return out
 
 

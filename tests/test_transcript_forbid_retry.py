@@ -79,3 +79,33 @@ def test_new_note_prefix_reuses_deleted_same_day_gap(tmp_path: Path) -> None:
         mod.archive_timestamp = original_archive_timestamp
 
     assert prefix == "2026070402"
+
+
+def test_new_note_prefix_carries_suffix_from_prior_days(tmp_path: Path) -> None:
+    mod = load_update_module()
+    first = tmp_path / "2026070401-first.md"
+    second = tmp_path / "2026070402-second.md"
+    third = tmp_path / "2026070504-later.md"
+    for path in (first, second, third):
+        path.write_text(path.stem, encoding="utf-8")
+    fake_timestamps = {
+        first: datetime(2026, 7, 4, 10, 0, tzinfo=timezone.utc),
+        second: datetime(2026, 7, 4, 11, 0, tzinfo=timezone.utc),
+        third: datetime(2026, 7, 5, 12, 0, tzinfo=timezone.utc),
+    }
+    original_archive_note_files = mod.archive_note_files
+    original_archive_timestamp = mod.archive_timestamp
+    try:
+        mod.archive_note_files = lambda _notes_dir: [first, second, third]
+        mod.archive_timestamp = lambda path, _root: fake_timestamps[path]
+
+        prefix = mod.compact_prefix_for_new_note(
+            tmp_path,
+            tmp_path,
+            datetime(2026, 7, 5, 9, 0, tzinfo=timezone.utc),
+        )
+    finally:
+        mod.archive_note_files = original_archive_note_files
+        mod.archive_timestamp = original_archive_timestamp
+
+    assert prefix == "2026070503"

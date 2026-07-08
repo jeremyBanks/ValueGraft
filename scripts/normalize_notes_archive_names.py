@@ -5,11 +5,13 @@ Names become:
 
     YYYYMMDDNN-short-kebab-case-title.md
 
-The date is UTC. NN is a per-day counter assigned by canonical timestamp:
-01..99, then A0, A1, ... if a day ever exceeds 99 files. For tracked files, the
-canonical timestamp is the first git commit timestamp for the file, following
-renames. For migration from the older full-prefix scheme, untracked or
-history-less files may fall back to an existing YYYYMMDDHHMMSS filename prefix.
+The date is UTC. NN is assigned by canonical timestamp and normally continues
+across day boundaries. If carrying the prior day's suffix forward would push a
+day past 99, that day starts at the corresponding 01..10 trailing digit instead.
+For tracked files, the canonical timestamp is the first git commit timestamp for
+the file, following renames. For migration from the older full-prefix scheme,
+untracked or history-less files may fall back to an existing YYYYMMDDHHMMSS
+filename prefix.
 Markdown-like .txt notes are converted to .md.
 """
 
@@ -26,6 +28,7 @@ from pathlib import Path
 from notes_archive_naming import (
     COMPACT_PREFIX_RE,
     FULL_PREFIX_RE,
+    archive_day_start,
     compact_prefix,
     kebab_case,
     strip_known_prefix,
@@ -117,12 +120,15 @@ def plan_renames(paths: list[Path], root: Path) -> list[Rename]:
 
     planned: list[Rename] = []
     targets: set[Path] = set()
+    next_day_index = 1
     for day in sorted(day_groups):
         day_items = sorted(
             day_groups[day],
             key=lambda item: (item[1].value.astimezone(timezone.utc), item[0].name),
         )
-        for day_index, (source, timestamp, title) in enumerate(day_items, 1):
+        day_start = archive_day_start(next_day_index, len(day_items))
+        for offset, (source, timestamp, title) in enumerate(day_items):
+            day_index = day_start + offset
             prefix = compact_prefix(timestamp.value, day_index)
             target = source.with_name(f"{prefix}-{title}.md")
             if target in targets:
@@ -133,11 +139,11 @@ def plan_renames(paths: list[Path], root: Path) -> list[Rename]:
             reasons: list[str] = []
             if not COMPACT_PREFIX_RE.match(source.name):
                 if FULL_PREFIX_RE.match(source.name):
-                    reasons.append("replace full UTC timestamp prefix with compact day counter")
+                    reasons.append("replace full UTC timestamp prefix with compact archive counter")
                 else:
-                    reasons.append("add compact UTC date/counter prefix")
+                    reasons.append("add compact UTC date/archive counter prefix")
             elif not source.name.startswith(f"{prefix}-"):
-                reasons.append("correct compact day counter prefix")
+                reasons.append("correct compact archive counter prefix")
             if strip_known_prefix(source.stem) != title:
                 reasons.append("kebab-case title")
             if source.suffix.lower() != ".md":
@@ -157,6 +163,7 @@ def plan_renames(paths: list[Path], root: Path) -> list[Rename]:
                     reasons=tuple(reasons),
                 )
             )
+        next_day_index = day_start + len(day_items)
     return planned
 
 

@@ -12,6 +12,7 @@ sys.path.insert(0, str(SCRIPT_DIR))
 
 from notes_archive_naming import (  # noqa: E402
     archive_counter,
+    archive_day_start,
     compact_prefix,
     conversation_title,
     kebab_case,
@@ -37,6 +38,13 @@ def test_archive_counter_rollover() -> None:
     assert archive_counter(101) == "A1"
     assert archive_counter(110) == "AA"
     assert archive_counter(136) == "B0"
+
+
+def test_archive_day_start_continues_across_days_and_resets_before_99() -> None:
+    assert archive_day_start(1, 3) == 1
+    assert archive_day_start(8, 2) == 8
+    assert archive_day_start(95, 6) == 5
+    assert archive_day_start(100, 1) == 10
 
 
 def test_compact_prefix_uses_utc_date_and_counter() -> None:
@@ -70,6 +78,26 @@ def test_normalizer_assigns_per_day_indexes(tmp_path: Path) -> None:
     renames = normalizer.plan_renames([first, second], tmp_path)
     targets = [rename.target.name for rename in renames]
     assert targets == ["2026070501-alpha-note.md", "2026070502-beta-note.md"]
+
+
+def test_normalizer_carries_indexes_across_days(tmp_path: Path) -> None:
+    normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_cross_day_test")
+    notes = tmp_path / "notes"
+    notes.mkdir()
+    first = notes / "20260704010000-first-note.md"
+    second = notes / "20260704020000-second-note.md"
+    third = notes / "20260705010000-third-note.md"
+    for path in (first, second, third):
+        path.write_text(path.stem, encoding="utf-8")
+
+    renames = normalizer.plan_renames([first, second, third], tmp_path)
+    targets = [rename.target.name for rename in renames]
+
+    assert targets == [
+        "2026070401-first-note.md",
+        "2026070402-second-note.md",
+        "2026070503-third-note.md",
+    ]
 
 
 def test_normalizer_parses_git_z_timestamps() -> None:

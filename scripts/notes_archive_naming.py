@@ -31,6 +31,22 @@ def archive_counter(index: int) -> str:
     return BASE36[high] + BASE36[low]
 
 
+def archive_day_start(next_index: int, day_count: int) -> int:
+    """Choose the first suffix index for a UTC day.
+
+    The suffix normally continues from the previous day's final suffix. If that
+    would push this day's suffixes past 99, reset only the tens place by mapping
+    the desired start into 01..10 while preserving the trailing digit.
+    """
+    if next_index < 1:
+        raise ValueError(f"archive suffix indexes are 1-based, got {next_index}")
+    if day_count < 1:
+        raise ValueError(f"archive day counts are positive, got {day_count}")
+    if next_index + day_count - 1 <= 99:
+        return next_index
+    return ((next_index - 1) % 10) + 1
+
+
 def compact_prefix(timestamp: datetime, index: int) -> str:
     return timestamp.astimezone(timezone.utc).strftime("%Y%m%d") + archive_counter(index)
 

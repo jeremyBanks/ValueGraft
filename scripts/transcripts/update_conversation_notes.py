@@ -26,7 +26,7 @@ from types import ModuleType
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from notes_archive_naming import compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
+from notes_archive_naming import archive_day_start, compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
 
 
 SOURCE_ORDER = {"claude-code": "0-claude", "codex": "1-codex"}
@@ -330,13 +330,24 @@ def archive_note_files(notes_dir: Path) -> list[Path]:
 
 def compact_prefix_for_new_note(notes_dir: Path, root: Path, timestamp: datetime) -> str:
     timestamp = timestamp.astimezone(timezone.utc)
-    same_day: list[datetime] = []
+    by_day: dict[str, list[datetime]] = {}
     for path in archive_note_files(notes_dir):
         existing = archive_timestamp(path, root)
-        if existing.date() != timestamp.date():
-            continue
-        same_day.append(existing)
-    index = 1 + sum(existing <= timestamp for existing in same_day)
+        by_day.setdefault(existing.astimezone(timezone.utc).strftime("%Y%m%d"), []).append(existing)
+    by_day.setdefault(timestamp.strftime("%Y%m%d"), []).append(timestamp)
+
+    next_day_index = 1
+    index: int | None = None
+    for day in sorted(by_day):
+        entries = sorted(by_day[day])
+        day_start = archive_day_start(next_day_index, len(entries))
+        if day == timestamp.strftime("%Y%m%d"):
+            offset = sum(existing <= timestamp for existing in entries) - 1
+            index = day_start + offset
+            break
+        next_day_index = day_start + len(entries)
+    if index is None:
+        raise RuntimeError(f"Could not allocate archive prefix for {timestamp.isoformat()}")
     return compact_prefix(timestamp, index)
 
 
