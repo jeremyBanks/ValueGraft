@@ -210,3 +210,11 @@ The "gate-first" discipline (Fable) governs whether to PROVISION NEW spend ahead
 it does NOT justify leaving already-running pods idle. Data from any queue model is informative
 regardless of how the gate lands. OPERATING RULE: keep every running pod busy with queue work; when
 a run finishes/errors, harvest its result and immediately relaunch the next model on that pod.
+
+## Pod-allocation priority (owner, 07-08): MODEL DIVERSITY over same-model aspects
+When allocating a free pod, PREFER a NEW model (different vendor/architecture) over another aspect
+(ablation / placebo / alpha-sweep / champion) of a model already run. The cross-arch result lives in
+breadth across DISTINCT architectures, not in depth on one. Same-model aspects (incl. the QK-norm
+ablation, controls) are fill-in for spare capacity AFTER the diverse model set is covered — NOT a
+reason to occupy a pod a new model could use. Do NOT interrupt a run already in progress to apply this;
+it governs the NEXT free pod. (Refines the throughput policy above.)
