@@ -1,0 +1,532 @@
+{
+ "id": "c18",
+ "title": "Regional restaurant chain expansion",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant supporting the owner-operator of a small regional restaurant chain planning expansion."
+  },
+  {
+   "role": "user",
+   "content": "Hey, I run Millhouse Kitchen, we've got two locations doing about $2.1 million combined in revenue last year, and I'm finally ready to seriously plan a third, maybe a fourth if the numbers work. It's me and one ops manager trying to figure this all out, so I'd like to use this chat to work through the whole expansion plan."
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to work the whole expansion through with you \u2014 menu, supply chain, staffing, real estate, and the franchise question \u2014 for a third and maybe fourth Millhouse."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with menu strategy since it touches everything else. Should the third location run the exact same menu as our first two, or is there a case for regional tweaks based on the new neighborhood?"
+  },
+  {
+   "role": "assistant",
+   "content": "Start the third on your proven menu, then earn regional tweaks with data. A near-identical menu protects your systems; save neighborhood variation for a few deliberate items."
+  },
+  {
+   "role": "user",
+   "content": "Moving to supply chain. Right now our two locations each order directly from separate local vendors. Does a third location change that math, or is it still too early to centralize purchasing?"
+  },
+  {
+   "role": "assistant",
+   "content": "A third location shifts the math toward at least partial centralizing \u2014 volume starts to earn better pricing \u2014 but keep produce and anything freshness-sensitive local for now."
+  },
+  {
+   "role": "user",
+   "content": "Real estate decision. Down to three sites for location three: (1) a high-visibility strip-mall spot in Brookhaven with $38/sqft rent and heavy car traffic, (2) a smaller walkable spot in the Elm District at $29/sqft with lower visibility but a dense lunch crowd, or (3) a former bakery space downtown at $44/sqft that would need a full kitchen buildout. I'm going with the Elm District spot. The lunch crowd density makes up for the visibility we'd lose."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense \u2014 that's the option that best fits how your constraints line up. I'll treat it as decided and we'll plan the rest around it."
+  },
+  {
+   "role": "user",
+   "content": "Related: how do we think about switching to a single regional distributor versus keeping some local vendor relationships for things like produce?"
+  },
+  {
+   "role": "assistant",
+   "content": "Think of it as tiers: centralize dry goods and proteins where consistency and price win, keep produce local where quality and flexibility matter more than a few points of margin."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'Unit Three' is overloaded around here. The construction crew uses it for a literal HVAC unit they're installing, but when I say 'Unit Three' in our conversations I always mean the third restaurant location itself, the whole site, not any piece of equipment."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it \u2014 I'll use that meaning consistently whenever the term comes up from now on."
+  },
+  {
+   "role": "user",
+   "content": "Staffing question. Our two existing locations are chronically short two or three line cooks each. Is that a hiring problem or a retention problem, and how do I tell the difference?"
+  },
+  {
+   "role": "assistant",
+   "content": "Chronic two-to-three cook shortfalls at both sites usually reads as retention, not hiring \u2014 if you can fill but can't keep, the leak is culture, pay, or scheduling."
+  },
+  {
+   "role": "user",
+   "content": "Firm rule for the new location: I will not do a soft-open with free food for the whole first week. We did that at location two, got slammed by people who never came back once they had to pay, and burned through two weeks of food cost for nothing. Never suggest a free soft-open again."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood \u2014 I'll treat that as a hard rule and won't suggest otherwise."
+  },
+  {
+   "role": "user",
+   "content": "Follow-up: should the new location's kitchen manager be promoted internally from one of our two spots, or hired fresh so they're not carrying old habits into a new site?"
+  },
+  {
+   "role": "assistant",
+   "content": "Promote internally if you have someone ready \u2014 they carry your standards \u2014 but only if you can backfill their old kitchen cleanly; otherwise a strong outside hire is fine."
+  },
+  {
+   "role": "user",
+   "content": "For the record on point-of-sale systems: we tried switching both locations to a system called TillRun last year. It went down twice during Saturday dinner rush and support took six hours to respond both times. We reverted back to our old system after five weeks. Not touching TillRun again for the new location."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted \u2014 I'll keep that off the table and steer us toward options that fit better."
+  },
+  {
+   "role": "user",
+   "content": "Real estate. We're looking at two very different neighborhoods for the third spot. How much weight should foot traffic get versus rent per square foot in that decision?"
+  },
+  {
+   "role": "assistant",
+   "content": "Weight foot traffic and daypart fit above raw rent-per-square-foot; a cheaper space with the wrong traffic pattern is the more expensive mistake."
+  },
+  {
+   "role": "user",
+   "content": "Random bookkeeping note: total buildout budget for location three is capped at $410,000, that's what the bank approved and it won't move. Doesn't change our planning, just logging it here."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged \u2014 I'll keep that on hand for whenever it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the franchise-readiness workstream 'Kholin' -- that's the internal effort to get our systems, training manuals, and financials audit-ready in case we franchise after location four. Use that name in anything you draft instead of spelling it out every time."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it \u2014 I'll use that codename in anything I draft for you from here on."
+  },
+  {
+   "role": "user",
+   "content": "Related real estate question: how long a lease should we sign for a third location when we're still not 100 percent sure the concept scales past two units?"
+  },
+  {
+   "role": "assistant",
+   "content": "At two units with an unproven third, favor a shorter term with renewal options over a long lock-in \u2014 you want an exit if the concept doesn't scale."
+  },
+  {
+   "role": "user",
+   "content": "Supply chain decision on distribution. Three options: (1) stay fully local-vendor per location, (2) move everything to one regional distributor, Castellan Foods, for consistency and better pricing, or (3) a hybrid where proteins and dry goods go through Castellan but produce stays local per site. I'm picking the hybrid. Produce quality dropped too much in our test order from Castellan."
+  },
+  {
+   "role": "assistant",
+   "content": "Good call. I'll lock that in as our direction and we can build everything else on top of it."
+  },
+  {
+   "role": "user",
+   "content": "Franchise versus company-owned. A few people have suggested franchising once we hit three units. What actually has to be true operationally before franchising is even a responsible option?"
+  },
+  {
+   "role": "assistant",
+   "content": "Before franchising is responsible you need documented, repeatable systems, clean unit economics across multiple sites, and training that works without you in the room."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the launch list' I mean the shortlist of menu items we're planning to feature specifically for location three's opening month, not our year-round core menu, which is a totally separate list we're not touching."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll keep those two straight and default to the one you mean."
+  },
+  {
+   "role": "user",
+   "content": "Follow-up on that: if we stayed company-owned instead, what's the realistic ceiling on units before the founder-in-every-kitchen model just breaks?"
+  },
+  {
+   "role": "assistant",
+   "content": "Company-owned, the founder-in-every-kitchen model usually strains around four or five units \u2014 past that you're managing managers, which is a different job."
+  },
+  {
+   "role": "user",
+   "content": "Another hard one: I refuse to negotiate a lease with a percentage-of-sales rent clause, ever again. We had one at a spot we almost opened years ago and it made every good month feel like it was being taxed. Fixed rent only, no exceptions, whatever the landlord says the market rate is."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted as a firm rule; I won't put that in front of you again."
+  },
+  {
+   "role": "user",
+   "content": "Back to menu strategy for a second. Should we drop our worst-performing 20 percent of menu items chain-wide before opening a third location, or is that a distraction from the real decision?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pruning the worst 20% chain-wide before opening is worth doing \u2014 it simplifies training and supply for the new site \u2014 as long as it doesn't stall the opening."
+  },
+  {
+   "role": "user",
+   "content": "Also, staffing history: we used a staffing agency called Prime Shift Staffing to fill line cook gaps at location two. Half the placements no-showed their first shift and the ones who didn't needed more retraining than a hire off Craigslist would have. We cut ties with them in the spring."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, that one's ruled out; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "One more supply chain question. How do we build in contingency if our main protein vendor has a bad month, without keeping so much backup inventory that it hurts margins?"
+  },
+  {
+   "role": "assistant",
+   "content": "Build contingency with a qualified backup vendor and a small standing safety stock on your key protein, rather than carrying broad excess inventory that erodes margin."
+  },
+  {
+   "role": "user",
+   "content": "Oh, and our liquor license application for the new site got a case number: LIC-77042-B, filed January 22nd. County says expect eight to ten weeks."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted for the record; parked and ready when we need it."
+  },
+  {
+   "role": "user",
+   "content": "From now on call our new inventory-tracking spreadsheet system 'Sazed' in any notes -- it's the shared tracker the ops manager and I use across all locations to reconcile weekly counts against POS numbers. Shorter than describing it every time."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll refer to it by that name going forward."
+  },
+  {
+   "role": "user",
+   "content": "Let's close out real estate. What contingencies should absolutely be in the letter of intent before we sign anything for the third site?"
+  },
+  {
+   "role": "assistant",
+   "content": "In the LOI, nail down build-out responsibilities, a co-tenancy or exclusivity clause, renewal options, and a clear out if permits or licensing fall through."
+  },
+  {
+   "role": "user",
+   "content": "For the site we picked, and you don't need to re-describe it, what should be our top three lease negotiation points?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 working from that choice, here's the main thing to focus on."
+  },
+  {
+   "role": "user",
+   "content": "Given the distribution setup we landed on, no need to restate it, what should our backup plan be if Castellan has a bad delivery week?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 working from that choice, here's the main thing to focus on."
+  },
+  {
+   "role": "user",
+   "content": "What's the biggest open risk for Unit Three right now?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yep, keeping that meaning in mind \u2014 here's where things stand."
+  },
+  {
+   "role": "user",
+   "content": "Is the launch list finalized yet, or still in draft?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yep, keeping that meaning in mind \u2014 here's where things stand."
+  },
+  {
+   "role": "user",
+   "content": "What's still missing before Kholin could realistically wrap up?"
+  },
+  {
+   "role": "assistant",
+   "content": "On it \u2014 here's a quick take using that name."
+  },
+  {
+   "role": "user",
+   "content": "Is Sazed catching the discrepancies at location two yet, or does it still need tuning?"
+  },
+  {
+   "role": "assistant",
+   "content": "On it \u2014 here's a quick take using that name."
+  },
+  {
+   "role": "user",
+   "content": "On staffing, one more thing: what's a fair signing bonus structure for line cooks in a market this tight, without blowing up pay equity with existing staff?"
+  },
+  {
+   "role": "assistant",
+   "content": "Structure a signing bonus as a milestone payout, say after 90 days, and quietly true-up existing staff so it doesn't blow up internal pay equity."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 273,
+  "middle_end_tokens": 2396,
+  "total_tokens": 2801
+ },
+ "plants": [
+  {
+   "id": "c18-referent-1",
+   "category": "referent",
+   "middle_user": "Real estate decision. Down to three sites for location three: (1) a high-visibility strip-mall spot in Brookhaven with $38/sqft rent and heavy car traffic, (2) a smaller walkable spot in the Elm District at $29/sqft with lower visibility but a dense lunch crowd, or (3) a former bakery space downtown at $44/sqft that would need a full kitchen buildout. I'm going with the Elm District spot. The lunch crowd density makes up for the visibility we'd lose.",
+   "tail_user_fragment": "For the site we picked, and you don't need to re-describe it, what should be our top three lease negotiation points?",
+   "probe": "Which of the three sites did we decide on for the third location?",
+   "probes": [
+    "Which of the three sites did we decide on for the third location?",
+    "Out of the three real estate options we compared, which one did I choose?",
+    "Remind me which neighborhood we picked for location three and why."
+   ],
+   "gold": "The Elm District spot at $29/sqft (the second option), chosen for its dense lunch crowd despite lower visibility, over the Brookhaven strip mall and the downtown former bakery space.",
+   "keywords": [
+    "Elm District",
+    "29"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c18-referent-2",
+   "category": "referent",
+   "middle_user": "Supply chain decision on distribution. Three options: (1) stay fully local-vendor per location, (2) move everything to one regional distributor, Castellan Foods, for consistency and better pricing, or (3) a hybrid where proteins and dry goods go through Castellan but produce stays local per site. I'm picking the hybrid. Produce quality dropped too much in our test order from Castellan.",
+   "tail_user_fragment": "Given the distribution setup we landed on, no need to restate it, what should our backup plan be if Castellan has a bad delivery week?",
+   "probe": "Which supply chain/distribution approach did we settle on?",
+   "probes": [
+    "Which supply chain/distribution approach did we settle on?",
+    "Of the three distribution options we discussed, which one did we choose?",
+    "Remind me how we decided to split our supply chain between vendors."
+   ],
+   "gold": "The hybrid approach: proteins and dry goods through Castellan Foods, produce sourced locally per site (the third option), not fully local or fully centralized through Castellan.",
+   "keywords": [
+    "hybrid",
+    "Castellan",
+    "produce local"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c18-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'Unit Three' is overloaded around here. The construction crew uses it for a literal HVAC unit they're installing, but when I say 'Unit Three' in our conversations I always mean the third restaurant location itself, the whole site, not any piece of equipment.",
+   "tail_user_fragment": "What's the biggest open risk for Unit Three right now?",
+   "probe": "When I say 'Unit Three' in this conversation, what am I referring to?",
+   "probes": [
+    "When I say 'Unit Three' in this conversation, what am I referring to?",
+    "What does 'Unit Three' mean in the context of our talks?",
+    "If I bring up Unit Three again, what should you assume I mean?"
+   ],
+   "gold": "The third restaurant location/site itself, not an HVAC equipment unit.",
+   "keywords": [
+    "third restaurant location",
+    "third site"
+   ],
+   "anti_keywords": [
+    "HVAC",
+    "equipment unit"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c18-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the launch list' I mean the shortlist of menu items we're planning to feature specifically for location three's opening month, not our year-round core menu, which is a totally separate list we're not touching.",
+   "tail_user_fragment": "Is the launch list finalized yet, or still in draft?",
+   "probe": "What does 'the launch list' refer to in this conversation?",
+   "probes": [
+    "What does 'the launch list' refer to in this conversation?",
+    "Which menu list does 'the launch list' mean here?",
+    "Remind me what the launch list is, specifically."
+   ],
+   "gold": "The shortlist of menu items planned to feature during location three's opening month, not the year-round core menu.",
+   "keywords": [
+    "opening month",
+    "shortlist"
+   ],
+   "anti_keywords": [
+    "core menu",
+    "year-round menu"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c18-stance-1",
+   "category": "stance",
+   "middle_user": "Firm rule for the new location: I will not do a soft-open with free food for the whole first week. We did that at location two, got slammed by people who never came back once they had to pay, and burned through two weeks of food cost for nothing. Never suggest a free soft-open again.",
+   "tail_user_fragment": null,
+   "probe": "What are three ways we could build buzz for the opening month of the new location?",
+   "probes": [
+    "What are three ways we could build buzz for the opening month of the new location?",
+    "How should we generate excitement for the new location's launch?",
+    "Give me some opening-month promotion ideas for location three."
+   ],
+   "gold": "Suggests approaches like a paid limited-time-offer discount, an invite-only preview night, or local press/influencer tastings, while never suggesting a free soft-open week, ideally referencing what happened at location two.",
+   "keywords": [
+    "location two",
+    "burned through"
+   ],
+   "anti_keywords": [
+    "free soft-open",
+    "free week",
+    "soft opening free"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c18-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard one: I refuse to negotiate a lease with a percentage-of-sales rent clause, ever again. We had one at a spot we almost opened years ago and it made every good month feel like it was being taxed. Fixed rent only, no exceptions, whatever the landlord says the market rate is.",
+   "tail_user_fragment": null,
+   "probe": "What lease terms should we prioritize going into negotiations for the new site?",
+   "probes": [
+    "What lease terms should we prioritize going into negotiations for the new site?",
+    "How should we approach the rent structure in lease negotiations for the new location?",
+    "What should we push for on the rent clause in the new lease?"
+   ],
+   "gold": "Recommends prioritizing fixed base rent, favorable renewal options, and tenant improvement allowances, while never proposing or accepting a percentage-of-sales rent clause.",
+   "keywords": [
+    "fixed rent"
+   ],
+   "anti_keywords": [
+    "percentage of sales",
+    "percentage-rent"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c18-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on point-of-sale systems: we tried switching both locations to a system called TillRun last year. It went down twice during Saturday dinner rush and support took six hours to respond both times. We reverted back to our old system after five weeks. Not touching TillRun again for the new location.",
+   "tail_user_fragment": null,
+   "probe": "What should we look at for point-of-sale at the new location?",
+   "probes": [
+    "What should we look at for point-of-sale at the new location?",
+    "What POS system should we consider for the third location?",
+    "How should we handle point-of-sale for the new site given our history?"
+   ],
+   "gold": "Anything other than TillRun, e.g. staying on the current POS system, or evaluating a different established vendor with better support response times, ideally noting TillRun already failed.",
+   "keywords": [
+    "went down",
+    "six hours"
+   ],
+   "anti_keywords": [
+    "tillrun"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c18-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, staffing history: we used a staffing agency called Prime Shift Staffing to fill line cook gaps at location two. Half the placements no-showed their first shift and the ones who didn't needed more retraining than a hire off Craigslist would have. We cut ties with them in the spring.",
+   "tail_user_fragment": null,
+   "probe": "What should we do differently to fill line cook positions at the new location?",
+   "probes": [
+    "What should we do differently to fill line cook positions at the new location?",
+    "How should we approach hiring line cooks for the new location?",
+    "What's our plan for filling kitchen staff gaps at the third site?"
+   ],
+   "gold": "Anything other than Prime Shift Staffing, e.g. direct hiring, culinary school partnerships, or internal referral bonuses, ideally noting Prime Shift already failed.",
+   "keywords": [
+    "no-showed",
+    "retraining"
+   ],
+   "anti_keywords": [
+    "prime shift"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c18-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random bookkeeping note: total buildout budget for location three is capped at $410,000, that's what the bank approved and it won't move. Doesn't change our planning, just logging it here.",
+   "tail_user_fragment": null,
+   "probe": "What is the total buildout budget approved for location three?",
+   "probes": [
+    "What is the total buildout budget approved for location three?",
+    "Remind me the bank-approved buildout budget for the new location.",
+    "How much total buildout budget do we have for location three?"
+   ],
+   "gold": "$410,000.",
+   "keywords": [
+    "410,000"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c18-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, and our liquor license application for the new site got a case number: LIC-77042-B, filed January 22nd. County says expect eight to ten weeks.",
+   "tail_user_fragment": null,
+   "probe": "What is the liquor license case number for the new location, and when was it filed?",
+   "probes": [
+    "What is the liquor license case number for the new location, and when was it filed?",
+    "Remind me the case number and filing date for the liquor license.",
+    "What number did the county assign our liquor license application, and when did we file it?"
+   ],
+   "gold": "LIC-77042-B, filed January 22nd.",
+   "keywords": [
+    "77042",
+    "january 22"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c18-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the franchise-readiness workstream 'Kholin' -- that's the internal effort to get our systems, training manuals, and financials audit-ready in case we franchise after location four. Use that name in anything you draft instead of spelling it out every time.",
+   "tail_user_fragment": "What's still missing before Kholin could realistically wrap up?",
+   "probe": "What does 'Kholin' refer to in this conversation?",
+   "probes": [
+    "What does 'Kholin' refer to in this conversation?",
+    "If I mention Kholin again, what should you understand that to mean?",
+    "Remind me what Kholin is, in the context of our expansion plan."
+   ],
+   "gold": "The franchise-readiness workstream (getting systems, training manuals, and financials audit-ready for potential franchising).",
+   "keywords": [
+    "franchise-readiness",
+    "audit-ready"
+   ],
+   "anti_keywords": [
+    "fantasy novel",
+    "Brandon Sanderson",
+    "Stormlight Archive",
+    "highprince"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c18-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "From now on call our new inventory-tracking spreadsheet system 'Sazed' in any notes -- it's the shared tracker the ops manager and I use across all locations to reconcile weekly counts against POS numbers. Shorter than describing it every time.",
+   "tail_user_fragment": "Is Sazed catching the discrepancies at location two yet, or does it still need tuning?",
+   "probe": "What does 'Sazed' refer to in this conversation?",
+   "probes": [
+    "What does 'Sazed' refer to in this conversation?",
+    "If I bring up Sazed again, what should you take that to mean?",
+    "Remind me what Sazed is."
+   ],
+   "gold": "The shared inventory-tracking spreadsheet/system used to reconcile weekly counts against POS numbers across locations.",
+   "keywords": [
+    "inventory-tracking",
+    "reconcile"
+   ],
+   "anti_keywords": [
+    "fantasy novel",
+    "Brandon Sanderson",
+    "Mistborn",
+    "keeper"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "opus"
+ }
+}

@@ -1,542 +1,545 @@
 {
-  "id": "c14",
-  "title": "Consumer drone hardware launch",
-  "messages": [
-    {
-      "role": "system",
-      "content": "You are a helpful assistant experienced in consumer hardware and firmware development, supporting a drone startup preparing for retail launch."
-    },
-    {
-      "role": "user",
-      "content": "Hey, so Corvid Dynamics is finally close to shipping the Talon, our first consumer camera drone, and we just wrapped a $340,000 Kickstarter. I want to use this chat as command central for firmware, certification, supply chain, fulfillment, and the retail launch. Can you help me think through all of it as we go?"
-    },
-    {
-      "role": "assistant",
-      "content": "Happy to be command central for all of it, firmware, cert, supply chain, fulfillment, and retail. Let's tackle these one at a time so the launch stays on track."
-    },
-    {
-      "role": "user",
-      "content": "Let's start with firmware and flight control. Our obstacle-avoidance stack is still finicky in low light. What's the standard way small hardware teams prioritize firmware bugs against a hard shipping date without shipping something dangerous?"
-    },
-    {
-      "role": "assistant",
-      "content": "For prioritizing firmware bugs against a hard date, small teams usually triage by severity to actual physical safety first, then core flight stability, then everything else gets a fix-or-ship-with-known-issue call, so low-light obstacle avoidance needs an honest look at whether it's a safety issue or just an annoyance."
-    },
-    {
-      "role": "user",
-      "content": "Should we lock firmware updates behind a companion app login, or let the drone update standalone over wifi?"
-    },
-    {
-      "role": "assistant",
-      "content": "Standalone wifi updates are safer for a hardware product like this, since gating firmware behind an app login risks stranding units if the login service ever has an outage during a critical safety fix."
-    },
-    {
-      "role": "user",
-      "content": "Sensor suite decision, finally locked. We compared three options: (1) stereo vision cameras only, (2) stereo vision plus a downward optical flow sensor for altitude hold, and (3) stereo vision plus a small LiDAR module. Given weight and battery budget, we're going with the second one, stereo vision plus downward optical flow."
-    },
-    {
-      "role": "assistant",
-      "content": "That's a solid tradeoff, stereo vision plus optical flow keeps weight and power draw manageable while still giving you reliable altitude hold."
-    },
-    {
-      "role": "user",
-      "content": "Walk me through what actually happens during FCC Part 15 testing, I've never done this before and the lab's timeline is vague."
-    },
-    {
-      "role": "assistant",
-      "content": "Part 15 testing usually involves an initial pre-scan, then formal radiated and conducted emissions testing, with the lab often needing a week or two of internal processing after the physical test day before you get a report."
-    },
-    {
-      "role": "user",
-      "content": "Naming collision to flag: 'Falcon' means two things around here. Marketing uses Falcon as the codename for the pro-tier accessory kit, but when I say Falcon with you, I always mean the flight-control firmware branch, the one with the new PID tuning. That's the only sense I'll use in this chat."
-    },
-    {
-      "role": "assistant",
-      "content": "Understood, Falcon means the flight-control firmware branch with the new PID tuning here, not the accessory kit."
-    },
-    {
-      "role": "user",
-      "content": "Do we need separate certification for the EU market, or does our FCC work carry over at all?"
-    },
-    {
-      "role": "assistant",
-      "content": "FCC doesn't automatically cover the EU, you'll separately need CE marking and likely a Declaration of Conformity, though some of your test data and design work can carry over and save time."
-    },
-    {
-      "role": "user",
-      "content": "Firm product principle: footage must always come off the drone via the SD card with zero subscription requirement, full stop. I will not ship any feature that gates footage retrieval behind a cloud subscription, even an optional one that's 'just for convenience.' Whatever monetization ideas you suggest, that's off the table permanently."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, SD card retrieval with zero subscription gate, permanently off the table for any monetization ideas."
-    },
-    {
-      "role": "user",
-      "content": "Our motor supplier in Shenzhen quoted a 6-week lead time increase out of nowhere. How do small hardware companies usually handle a surprise like that without blowing the whole schedule?"
-    },
-    {
-      "role": "assistant",
-      "content": "A sudden six-week supplier slip like that usually gets absorbed by re-sequencing your critical path, pulling forward tasks that don't depend on the motors and pushing softer deadlines like packaging finalization."
-    },
-    {
-      "role": "user",
-      "content": "History note on batteries: we already sourced our first batch of cells from a supplier called Voltrex, and about 4 percent of the batch showed swelling within two weeks of cycling. We dropped them immediately and ate the cost. Not going back to Voltrex."
-    },
-    {
-      "role": "assistant",
-      "content": "Noted, Voltrex is done given that swelling rate, good call dropping them before it became a bigger issue."
-    },
-    {
-      "role": "user",
-      "content": "Should we dual-source the flight controller chips given the shortages everyone talks about, or is that overkill for our volume?"
-    },
-    {
-      "role": "assistant",
-      "content": "Dual-sourcing flight controller chips is usually worth it at even modest volumes given how volatile that supply chain has been, since a single-source stockout can halt production entirely."
-    },
-    {
-      "role": "user",
-      "content": "Noting this so I don't lose it: our first production PO with the Shenzhen factory is PO-33087, for 4,000 units, and we already wired a $186,000 deposit. Just filing that away."
-    },
-    {
-      "role": "assistant",
-      "content": "Logged: PO-33087, 4,000 units, $186,000 deposit wired."
-    },
-    {
-      "role": "user",
-      "content": "Let's codename the EU customs bonded-warehouse holding process 'Snorlax' from now on. Anytime it shows up in notes or Slack, that's what it means, not the real warehouse name, since we reference it in emails with the freight broker sometimes."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, Snorlax refers to the EU customs bonded-warehouse holding process from here on."
-    },
-    {
-      "role": "user",
-      "content": "Dax proposed something smart for international fulfillment. His idea is to consolidate all EU-bound units at a regional hub in Germany and ship locally from there, instead of shipping each backer's drone individually from our US warehouse. It should cut customs delays a lot, and I'm adopting it."
-    },
-    {
-      "role": "assistant",
-      "content": "Consolidating at a German hub is a smart way to cut per-unit customs friction compared to individual shipments from the US."
-    },
-    {
-      "role": "user",
-      "content": "For crowdfunding fulfillment, how do we sequence shipping to backers by pledge tier without the highest tiers feeling like they waited forever?"
-    },
-    {
-      "role": "assistant",
-      "content": "Sequence shipping to backers by pledge tier in waves with clear ETAs per wave, and communicate proactively rather than shipping silently, since backers tolerate waiting much better when they know where they stand."
-    },
-    {
-      "role": "user",
-      "content": "One more disambiguation: when I say 'the cert' in this chat, I always mean the FCC Part 15 certification, not the separate FAA remote-ID compliance work, even though people around the office use 'the cert' loosely for both."
-    },
-    {
-      "role": "assistant",
-      "content": "Understood, the cert means FCC Part 15 here, not the FAA remote-ID compliance work."
-    },
-    {
-      "role": "user",
-      "content": "What's a realistic way to handle backers who want to change their shipping address three months after the campaign closed?"
-    },
-    {
-      "role": "assistant",
-      "content": "Give backers a hard cutoff date for address changes tied to your production batches, since chasing changes after a batch has shipped creates far more support burden than a firm early deadline."
-    },
-    {
-      "role": "user",
-      "content": "Also a hard boundary: no more stretch-goal style scope additions after the campaign closed. We got burned last time promising extra features mid-campaign and it delayed everything by two months. Whatever comes up for the retail launch, we are not adding new hardware features at this point."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, no new scope additions post-campaign, noted given the two-month delay that caused last time."
-    },
-    {
-      "role": "user",
-      "content": "For the retail launch, should we go direct-to-consumer first or try to land a retailer like Best Buy out of the gate?"
-    },
-    {
-      "role": "assistant",
-      "content": "Going direct-to-consumer first usually makes sense for a first hardware launch, since it lets you control messaging and margins before taking on a retailer's return and chargeback policies."
-    },
-    {
-      "role": "user",
-      "content": "Also for the record: we paid an outside lab called Praxis Labs to do FCC pre-testing, and their results didn't match what the actual accredited test house found at all, we basically wasted three weeks and $2,600 trusting bad data. Not using Praxis again."
-    },
-    {
-      "role": "assistant",
-      "content": "Noted, Praxis Labs is out for pre-testing given how far off their results were from the accredited lab."
-    },
-    {
-      "role": "user",
-      "content": "How do we handle the inevitable app store review delay for the companion app so it doesn't block the hardware ship date?"
-    },
-    {
-      "role": "assistant",
-      "content": "Submit the companion app for review well before the hardware ship date and treat any review delay as expected buffer, since app store timelines are outside your control but rarely block a hardware-only launch if you plan for it."
-    },
-    {
-      "role": "user",
-      "content": "Small detail to keep straight: the firmware version going through FCC testing is locked as v0.9.4, frozen as of February 11th. Nothing changes in that build until testing's done."
-    },
-    {
-      "role": "assistant",
-      "content": "Logged: firmware v0.9.4, frozen February 11th for FCC testing."
-    },
-    {
-      "role": "user",
-      "content": "What's a sane return policy for a drone, given people will absolutely crash them and try to return it anyway?"
-    },
-    {
-      "role": "assistant",
-      "content": "A sane return policy usually excludes obvious crash damage but still offers a short no-questions window for genuine defects, since being too strict invites chargebacks and being too loose invites abuse."
-    },
-    {
-      "role": "user",
-      "content": "Let's codename our four-station final QA test rig at the factory 'Machamp.' It's the rig that checks props, calibration, camera, and battery in a single pass before a unit gets boxed. Use that name in all the factory-facing notes."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, Machamp refers to the four-station final QA rig at the factory going forward."
-    },
-    {
-      "role": "user",
-      "content": "Back on FCC, what do we do if the lab finds an issue two weeks before our promised ship date?"
-    },
-    {
-      "role": "assistant",
-      "content": "If the lab flags an issue two weeks out, get the fix scoped and re-tested immediately and ask the lab about expedited re-scan options, since a full re-submission slot is usually the real risk to your ship date."
-    },
-    {
-      "role": "user",
-      "content": "On the sensor suite we locked in, no need to re-explain it. What firmware changes does it require before we can start bench testing obstacle avoidance?"
-    },
-    {
-      "role": "assistant",
-      "content": "With that sensor suite locked, plan firmware work around fusing the optical flow altitude signal with the stereo depth data, plus recalibrating your obstacle-avoidance thresholds for the new sensor mix."
-    },
-    {
-      "role": "user",
-      "content": "On Dax's fulfillment idea, I'm already sold, don't re-describe it. What lead time should we tell EU backers given that setup?"
-    },
-    {
-      "role": "assistant",
-      "content": "Given the German hub, you can probably promise EU backers a realistic multi-week window from campaign-close-adjusted timing rather than the longer individual-shipment estimate."
-    },
-    {
-      "role": "user",
-      "content": "Is Falcon stable enough to merge into the release branch before the cert build gets cut?"
-    },
-    {
-      "role": "assistant",
-      "content": "If Falcon is passing your PID stability tests consistently, it should be safe to merge before the cert build gets cut, just make sure the merge happens with buffer before the freeze."
-    },
-    {
-      "role": "user",
-      "content": "Once the cert clears, how soon can we tell backers a firm ship date?"
-    },
-    {
-      "role": "assistant",
-      "content": "Once the cert clears, you can usually commit to a firm ship date within a couple of weeks, mostly bounded by remaining manufacturing lead time."
-    },
-    {
-      "role": "user",
-      "content": "Is Snorlax adding more than a week to EU delivery right now, or has it settled down?"
-    },
-    {
-      "role": "assistant",
-      "content": "If Snorlax is still adding meaningful delay, it's worth pushing your freight broker on it now rather than assuming it'll resolve on its own before the retail push."
-    },
-    {
-      "role": "user",
-      "content": "Is Machamp actually catching the swelling issue we had before, or do we need an extra manual battery check?"
-    },
-    {
-      "role": "assistant",
-      "content": "Machamp should be catching most swelling-related issues if the battery check is part of its pass, but it's worth confirming that check has the same sensitivity as your original manual inspection."
-    },
-    {
-      "role": "user",
-      "content": "How should we prioritize the backlog of firmware bugs in these last few weeks before mass production starts?"
-    },
-    {
-      "role": "assistant",
-      "content": "For a batch that fails final QA, quarantine it immediately, root-cause the failure mode before touching the next batch, and don't let production keep running on an unresolved defect just to hit volume targets."
-    }
-  ],
-  "sections": {
-    "early_end_msg": 5,
-    "middle_end_msg": 49
+ "id": "c14",
+ "title": "Consumer drone hardware launch",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in consumer hardware and firmware development, supporting a drone startup preparing for retail launch."
   },
-  "plants": [
-    {
-      "id": "c14-referent-1",
-      "category": "referent",
-      "middle_user": "Sensor suite decision, finally locked. We compared three options: (1) stereo vision cameras only, (2) stereo vision plus a downward optical flow sensor for altitude hold, and (3) stereo vision plus a small LiDAR module. Given weight and battery budget, we're going with the second one, stereo vision plus downward optical flow.",
-      "tail_user_fragment": "On the sensor suite we locked in, no need to re-explain it. What firmware changes does it require before we can start bench testing obstacle avoidance?",
-      "probe": "Which sensor suite configuration did we settle on for the Talon?",
-      "probes": [
-        "Which sensor suite configuration did we settle on for the Talon?",
-        "Which of the three sensor options did we choose?",
-        "What did we decide about the drone's obstacle-avoidance sensor setup?",
-        "Remind me which sensor configuration we locked in."
-      ],
-      "gold": "Stereo vision cameras plus a downward optical flow sensor for altitude hold (the second of the three options), not LiDAR.",
-      "keywords": [
-        "stereo vision",
-        "optical flow"
-      ],
-      "anti_keywords": [],
-      "distance": "far"
-    },
-    {
-      "id": "c14-referent-2",
-      "category": "referent",
-      "middle_user": "Dax proposed something smart for international fulfillment. His idea is to consolidate all EU-bound units at a regional hub in Germany and ship locally from there, instead of shipping each backer's drone individually from our US warehouse. It should cut customs delays a lot, and I'm adopting it.",
-      "tail_user_fragment": "On Dax's fulfillment idea, I'm already sold, don't re-describe it. What lead time should we tell EU backers given that setup?",
-      "probe": "What specifically was Dax's proposal for international fulfillment?",
-      "probes": [
-        "What specifically was Dax's proposal for international fulfillment?",
-        "What did Dax suggest for shipping to EU backers?",
-        "Describe the fulfillment change Dax proposed that we adopted.",
-        "What was Dax's idea about handling international shipments?"
-      ],
-      "gold": "Consolidating all EU-bound units at a regional hub in Germany and shipping locally from there instead of shipping individually from the US warehouse.",
-      "keywords": [
-        "Germany",
-        "regional hub",
-        "consolidate"
-      ],
-      "anti_keywords": [],
-      "distance": "near"
-    },
-    {
-      "id": "c14-sense-1",
-      "category": "sense",
-      "middle_user": "Naming collision to flag: 'Falcon' means two things around here. Marketing uses Falcon as the codename for the pro-tier accessory kit, but when I say Falcon with you, I always mean the flight-control firmware branch, the one with the new PID tuning. That's the only sense I'll use in this chat.",
-      "tail_user_fragment": "Is Falcon stable enough to merge into the release branch before the cert build gets cut?",
-      "probe": "When I said Falcon in this conversation, what was I referring to?",
-      "probes": [
-        "When I said Falcon in this conversation, what was I referring to?",
-        "Which of the two 'Falcon' meanings did I intend here?",
-        "What does Falcon refer to in our conversation?",
-        "If I mention Falcon again, what should you take that to mean?"
-      ],
-      "gold": "The flight-control firmware branch with the new PID tuning, not marketing's pro-tier accessory kit.",
-      "keywords": [
-        "firmware branch",
-        "PID tuning"
-      ],
-      "anti_keywords": [
-        "accessory kit",
-        "pro-tier"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c14-sense-2",
-      "category": "sense",
-      "middle_user": "One more disambiguation: when I say 'the cert' in this chat, I always mean the FCC Part 15 certification, not the separate FAA remote-ID compliance work, even though people around the office use 'the cert' loosely for both.",
-      "tail_user_fragment": "Once the cert clears, how soon can we tell backers a firm ship date?",
-      "probe": "When I referred to 'the cert' in this conversation, which certification did I mean?",
-      "probes": [
-        "When I referred to 'the cert' in this conversation, which certification did I mean?",
-        "Which certification was I referring to when I said 'the cert'?",
-        "What does 'the cert' mean in our conversation, FCC or FAA?",
-        "If I mention the cert again, which approval should you assume I mean?"
-      ],
-      "gold": "FCC Part 15 certification, not the FAA remote-ID compliance work.",
-      "keywords": [
-        "FCC",
-        "Part 15"
-      ],
-      "anti_keywords": [
-        "FAA",
-        "remote-id"
-      ],
-      "distance": "near"
-    },
-    {
-      "id": "c14-stance-1",
-      "category": "stance",
-      "middle_user": "Firm product principle: footage must always come off the drone via the SD card with zero subscription requirement, full stop. I will not ship any feature that gates footage retrieval behind a cloud subscription, even an optional one that's 'just for convenience.' Whatever monetization ideas you suggest, that's off the table permanently.",
-      "tail_user_fragment": null,
-      "probe": "What are some ideas for a recurring revenue stream post-launch?",
-      "probes": [
-        "What are some ideas for a recurring revenue stream post-launch?",
-        "Give me three ideas for ongoing revenue after the Talon ships.",
-        "How could we generate recurring revenue from Talon owners?",
-        "Suggest post-launch monetization ideas for the drone."
-      ],
-      "gold": "Suggests approaches like a premium accessory line, an optional pro companion app with paid editing features unrelated to footage retrieval, or extended warranties, while never proposing subscription-gated footage or cloud storage access, ideally recalling the SD-card commitment.",
-      "keywords": [
-        "SD card",
-        "offline"
-      ],
-      "anti_keywords": [
-        "subscription",
-        "cloud storage gate"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c14-stance-2",
-      "category": "stance",
-      "middle_user": "Also a hard boundary: no more stretch-goal style scope additions after the campaign closed. We got burned last time promising extra features mid-campaign and it delayed everything by two months. Whatever comes up for the retail launch, we are not adding new hardware features at this point.",
-      "tail_user_fragment": null,
-      "probe": "What could we do to make the retail launch feel more exciting?",
-      "probes": [
-        "What could we do to make the retail launch feel more exciting?",
-        "Suggest three ways to generate excitement for the retail launch.",
-        "How can we make the retail release feel special without changing the product?",
-        "Give me ideas to boost retail launch appeal."
-      ],
-      "gold": "Suggests approaches like bundling, unboxing experience, marketing content, or launch-week promotions, while never proposing new hardware features or scope additions, ideally recalling the two-month delay from stretch goals.",
-      "keywords": [
-        "bundle",
-        "unboxing"
-      ],
-      "anti_keywords": [
-        "new feature",
-        "stretch goal"
-      ],
-      "distance": "near"
-    },
-    {
-      "id": "c14-ruled_out-1",
-      "category": "ruled_out",
-      "middle_user": "History note on batteries: we already sourced our first batch of cells from a supplier called Voltrex, and about 4 percent of the batch showed swelling within two weeks of cycling. We dropped them immediately and ate the cost. Not going back to Voltrex.",
-      "tail_user_fragment": null,
-      "probe": "What should we do for our battery cell sourcing going forward?",
-      "probes": [
-        "What should we do for our battery cell sourcing going forward?",
-        "Who should we source battery cells from now?",
-        "Given the earlier problem, what's our path forward on batteries?",
-        "What supplier approach should we pursue for cells?"
-      ],
-      "gold": "Anything except Voltrex, e.g. a different vetted cell manufacturer with better QC or a supplier with in-house swell testing, ideally acknowledging Voltrex's swelling issue was the reason they were dropped.",
-      "keywords": [
-        "swelling",
-        "4 percent"
-      ],
-      "anti_keywords": [
-        "voltrex"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c14-ruled_out-2",
-      "category": "ruled_out",
-      "middle_user": "Also for the record: we paid an outside lab called Praxis Labs to do FCC pre-testing, and their results didn't match what the actual accredited test house found at all, we basically wasted three weeks and $2,600 trusting bad data. Not using Praxis again.",
-      "tail_user_fragment": null,
-      "probe": "Who should handle our pre-testing before the formal FCC submission?",
-      "probes": [
-        "Who should handle our pre-testing before the formal FCC submission?",
-        "What should we do for pre-compliance testing going forward?",
-        "Given the earlier issue, how should we handle FCC pre-testing?",
-        "What's our path forward for pre-submission testing?"
-      ],
-      "gold": "Anything except Praxis Labs, e.g. using the accredited test house directly for pre-scans or a different reputable pre-compliance lab, ideally acknowledging Praxis's inaccurate results were tried and rejected.",
-      "keywords": [
-        "3 weeks",
-        "2,600"
-      ],
-      "anti_keywords": [
-        "praxis"
-      ],
-      "distance": "near"
-    },
-    {
-      "id": "c14-evicted_fact-1",
-      "category": "evicted_fact",
-      "middle_user": "Noting this so I don't lose it: our first production PO with the Shenzhen factory is PO-33087, for 4,000 units, and we already wired a $186,000 deposit. Just filing that away.",
-      "tail_user_fragment": null,
-      "probe": "What is our first production PO number, and what deposit did we wire for it?",
-      "probes": [
-        "What is our first production PO number, and what deposit did we wire for it?",
-        "What's the PO number for the first production run, and how much was the deposit?",
-        "Remind me the production order details, quantity and deposit.",
-        "What did we commit to with the Shenzhen factory for the first batch?"
-      ],
-      "gold": "PO-33087 for 4,000 units, with a $186,000 deposit already wired.",
-      "keywords": [
-        "PO-33087",
-        "186,000"
-      ],
-      "anti_keywords": [],
-      "distance": "far"
-    },
-    {
-      "id": "c14-evicted_fact-2",
-      "category": "evicted_fact",
-      "middle_user": "Small detail to keep straight: the firmware version going through FCC testing is locked as v0.9.4, frozen as of February 11th. Nothing changes in that build until testing's done.",
-      "tail_user_fragment": null,
-      "probe": "Which firmware version is locked for FCC testing, and when was it frozen?",
-      "probes": [
-        "Which firmware version is locked for FCC testing, and when was it frozen?",
-        "What firmware version did we freeze for certification?",
-        "When was the FCC test firmware locked, and what version is it?",
-        "Remind me the firmware version and freeze date for cert."
-      ],
-      "gold": "v0.9.4, frozen as of February 11th.",
-      "keywords": [
-        "v0.9.4",
-        "february 11"
-      ],
-      "anti_keywords": [],
-      "distance": "near"
-    },
-    {
-      "id": "c14-strong_prior-1",
-      "category": "strong_prior",
-      "middle_user": "Let's codename the EU customs bonded-warehouse holding process 'Snorlax' from now on. Anytime it shows up in notes or Slack, that's what it means, not the real warehouse name, since we reference it in emails with the freight broker sometimes.",
-      "tail_user_fragment": "Is Snorlax adding more than a week to EU delivery right now, or has it settled down?",
-      "probe": "What does 'Snorlax' refer to in our project?",
-      "probes": [
-        "What does 'Snorlax' refer to in our project?",
-        "If I mention Snorlax again, what should you understand that to mean?",
-        "What is Snorlax a codename for?",
-        "Remind me what we're calling Snorlax internally."
-      ],
-      "gold": "The EU customs bonded-warehouse holding process for incoming units.",
-      "keywords": [
-        "customs",
-        "bonded warehouse",
-        "EU"
-      ],
-      "anti_keywords": [
-        "pokemon",
-        "sleep",
-        "big"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c14-strong_prior-2",
-      "category": "strong_prior",
-      "middle_user": "Let's codename our four-station final QA test rig at the factory 'Machamp.' It's the rig that checks props, calibration, camera, and battery in a single pass before a unit gets boxed. Use that name in all the factory-facing notes.",
-      "tail_user_fragment": "Is Machamp actually catching the swelling issue we had before, or do we need an extra manual battery check?",
-      "probe": "What does 'Machamp' refer to in our project?",
-      "probes": [
-        "What does 'Machamp' refer to in our project?",
-        "If I mention Machamp later, what should you take that to mean?",
-        "What is Machamp a codename for at the factory?",
-        "Remind me what Machamp refers to internally."
-      ],
-      "gold": "The four-station final QA test rig that checks props, calibration, camera, and battery before boxing.",
-      "keywords": [
-        "QA test rig",
-        "four-station",
-        "final QA"
-      ],
-      "anti_keywords": [
-        "pokemon",
-        "fighting",
-        "four arms"
-      ],
-      "distance": "near"
-    }
-  ],
-  "meta": {
-    "author": "sonnet"
+  {
+   "role": "user",
+   "content": "Hey, so Corvid Dynamics is finally close to shipping the Talon, our first consumer camera drone, and we just wrapped a $340,000 Kickstarter. I want to use this chat as command central for firmware, certification, supply chain, fulfillment, and the retail launch. Can you help me think through all of it as we go?"
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to be command central for all of it, firmware, cert, supply chain, fulfillment, and retail. Let's tackle these one at a time so the launch stays on track."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with firmware and flight control. Our obstacle-avoidance stack is still finicky in low light. What's the standard way small hardware teams prioritize firmware bugs against a hard shipping date without shipping something dangerous?"
+  },
+  {
+   "role": "assistant",
+   "content": "For prioritizing firmware bugs against a hard date, small teams usually triage by severity to actual physical safety first, then core flight stability, then everything else gets a fix-or-ship-with-known-issue call, so low-light obstacle avoidance needs an honest look at whether it's a safety issue or just an annoyance."
+  },
+  {
+   "role": "user",
+   "content": "Should we lock firmware updates behind a companion app login, or let the drone update standalone over wifi?"
+  },
+  {
+   "role": "assistant",
+   "content": "Standalone wifi updates are safer for a hardware product like this, since gating firmware behind an app login risks stranding units if the login service ever has an outage during a critical safety fix."
+  },
+  {
+   "role": "user",
+   "content": "Sensor suite decision, finally locked. We compared three options: (1) stereo vision cameras only, (2) stereo vision plus a downward optical flow sensor for altitude hold, and (3) stereo vision plus a small LiDAR module. Given weight and battery budget, we're going with the second one, stereo vision plus downward optical flow."
+  },
+  {
+   "role": "assistant",
+   "content": "That's a solid tradeoff, stereo vision plus optical flow keeps weight and power draw manageable while still giving you reliable altitude hold."
+  },
+  {
+   "role": "user",
+   "content": "Walk me through what actually happens during FCC Part 15 testing, I've never done this before and the lab's timeline is vague."
+  },
+  {
+   "role": "assistant",
+   "content": "Part 15 testing usually involves an initial pre-scan, then formal radiated and conducted emissions testing, with the lab often needing a week or two of internal processing after the physical test day before you get a report."
+  },
+  {
+   "role": "user",
+   "content": "Naming collision to flag: 'Falcon' means two things around here. Marketing uses Falcon as the codename for the pro-tier accessory kit, but when I say Falcon with you, I always mean the flight-control firmware branch, the one with the new PID tuning. That's the only sense I'll use in this chat."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, Falcon means the flight-control firmware branch with the new PID tuning here, not the accessory kit."
+  },
+  {
+   "role": "user",
+   "content": "Do we need separate certification for the EU market, or does our FCC work carry over at all?"
+  },
+  {
+   "role": "assistant",
+   "content": "FCC doesn't automatically cover the EU, you'll separately need CE marking and likely a Declaration of Conformity, though some of your test data and design work can carry over and save time."
+  },
+  {
+   "role": "user",
+   "content": "Firm product principle: footage must always come off the drone via the SD card with zero subscription requirement, full stop. I will not ship any feature that gates footage retrieval behind a cloud subscription, even an optional one that's 'just for convenience.' Whatever monetization ideas you suggest, that's off the table permanently."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, SD card retrieval with zero subscription gate, permanently off the table for any monetization ideas."
+  },
+  {
+   "role": "user",
+   "content": "Our motor supplier in Shenzhen quoted a 6-week lead time increase out of nowhere. How do small hardware companies usually handle a surprise like that without blowing the whole schedule?"
+  },
+  {
+   "role": "assistant",
+   "content": "A sudden six-week supplier slip like that usually gets absorbed by re-sequencing your critical path, pulling forward tasks that don't depend on the motors and pushing softer deadlines like packaging finalization."
+  },
+  {
+   "role": "user",
+   "content": "History note on batteries: we already sourced our first batch of cells from a supplier called Voltrex, and about 4 percent of the batch showed swelling within two weeks of cycling. We dropped them immediately and ate the cost. Not going back to Voltrex."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, Voltrex is done given that swelling rate, good call dropping them before it became a bigger issue."
+  },
+  {
+   "role": "user",
+   "content": "Should we dual-source the flight controller chips given the shortages everyone talks about, or is that overkill for our volume?"
+  },
+  {
+   "role": "assistant",
+   "content": "Dual-sourcing flight controller chips is usually worth it at even modest volumes given how volatile that supply chain has been, since a single-source stockout can halt production entirely."
+  },
+  {
+   "role": "user",
+   "content": "Noting this so I don't lose it: our first production PO with the Shenzhen factory is PO-33087, for 4,000 units, and we already wired a $186,000 deposit. Just filing that away."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged: PO-33087, 4,000 units, $186,000 deposit wired."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the EU customs bonded-warehouse holding process 'Snorlax' from now on. Anytime it shows up in notes or Slack, that's what it means, not the real warehouse name, since we reference it in emails with the freight broker sometimes."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Snorlax refers to the EU customs bonded-warehouse holding process from here on."
+  },
+  {
+   "role": "user",
+   "content": "Dax proposed something smart for international fulfillment. His idea is to consolidate all EU-bound units at a regional hub in Germany and ship locally from there, instead of shipping each backer's drone individually from our US warehouse. It should cut customs delays a lot, and I'm adopting it."
+  },
+  {
+   "role": "assistant",
+   "content": "Consolidating at a German hub is a smart way to cut per-unit customs friction compared to individual shipments from the US."
+  },
+  {
+   "role": "user",
+   "content": "For crowdfunding fulfillment, how do we sequence shipping to backers by pledge tier without the highest tiers feeling like they waited forever?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sequence shipping to backers by pledge tier in waves with clear ETAs per wave, and communicate proactively rather than shipping silently, since backers tolerate waiting much better when they know where they stand."
+  },
+  {
+   "role": "user",
+   "content": "One more disambiguation: when I say 'the cert' in this chat, I always mean the FCC Part 15 certification, not the separate FAA remote-ID compliance work, even though people around the office use 'the cert' loosely for both."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, the cert means FCC Part 15 here, not the FAA remote-ID compliance work."
+  },
+  {
+   "role": "user",
+   "content": "What's a realistic way to handle backers who want to change their shipping address three months after the campaign closed?"
+  },
+  {
+   "role": "assistant",
+   "content": "Give backers a hard cutoff date for address changes tied to your production batches, since chasing changes after a batch has shipped creates far more support burden than a firm early deadline."
+  },
+  {
+   "role": "user",
+   "content": "Also a hard boundary: no more stretch-goal style scope additions after the campaign closed. We got burned last time promising extra features mid-campaign and it delayed everything by two months. Whatever comes up for the retail launch, we are not adding new hardware features at this point."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, no new scope additions post-campaign, noted given the two-month delay that caused last time."
+  },
+  {
+   "role": "user",
+   "content": "For the retail launch, should we go direct-to-consumer first or try to land a retailer like Best Buy out of the gate?"
+  },
+  {
+   "role": "assistant",
+   "content": "Going direct-to-consumer first usually makes sense for a first hardware launch, since it lets you control messaging and margins before taking on a retailer's return and chargeback policies."
+  },
+  {
+   "role": "user",
+   "content": "Also for the record: we paid an outside lab called Praxis Labs to do FCC pre-testing, and their results didn't match what the actual accredited test house found at all, we basically wasted three weeks and $2,600 trusting bad data. Not using Praxis again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, Praxis Labs is out for pre-testing given how far off their results were from the accredited lab."
+  },
+  {
+   "role": "user",
+   "content": "How do we handle the inevitable app store review delay for the companion app so it doesn't block the hardware ship date?"
+  },
+  {
+   "role": "assistant",
+   "content": "Submit the companion app for review well before the hardware ship date and treat any review delay as expected buffer, since app store timelines are outside your control but rarely block a hardware-only launch if you plan for it."
+  },
+  {
+   "role": "user",
+   "content": "Small detail to keep straight: the firmware version going through FCC testing is locked as v0.9.4, frozen as of February 11th. Nothing changes in that build until testing's done."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged: firmware v0.9.4, frozen February 11th for FCC testing."
+  },
+  {
+   "role": "user",
+   "content": "What's a sane return policy for a drone, given people will absolutely crash them and try to return it anyway?"
+  },
+  {
+   "role": "assistant",
+   "content": "A sane return policy usually excludes obvious crash damage but still offers a short no-questions window for genuine defects, since being too strict invites chargebacks and being too loose invites abuse."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our four-station final QA test rig at the factory 'Machamp.' It's the rig that checks props, calibration, camera, and battery in a single pass before a unit gets boxed. Use that name in all the factory-facing notes."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Machamp refers to the four-station final QA rig at the factory going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back on FCC, what do we do if the lab finds an issue two weeks before our promised ship date?"
+  },
+  {
+   "role": "assistant",
+   "content": "If the lab flags an issue two weeks out, get the fix scoped and re-tested immediately and ask the lab about expedited re-scan options, since a full re-submission slot is usually the real risk to your ship date."
+  },
+  {
+   "role": "user",
+   "content": "On the sensor suite we locked in, no need to re-explain it. What firmware changes does it require before we can start bench testing obstacle avoidance?"
+  },
+  {
+   "role": "assistant",
+   "content": "With that sensor suite locked, plan firmware work around fusing the optical flow altitude signal with the stereo depth data, plus recalibrating your obstacle-avoidance thresholds for the new sensor mix."
+  },
+  {
+   "role": "user",
+   "content": "On Dax's fulfillment idea, I'm already sold, don't re-describe it. What lead time should we tell EU backers given that setup?"
+  },
+  {
+   "role": "assistant",
+   "content": "Given the German hub, you can probably promise EU backers a realistic multi-week window from campaign-close-adjusted timing rather than the longer individual-shipment estimate."
+  },
+  {
+   "role": "user",
+   "content": "Is Falcon stable enough to merge into the release branch before the cert build gets cut?"
+  },
+  {
+   "role": "assistant",
+   "content": "If Falcon is passing your PID stability tests consistently, it should be safe to merge before the cert build gets cut, just make sure the merge happens with buffer before the freeze."
+  },
+  {
+   "role": "user",
+   "content": "Once the cert clears, how soon can we tell backers a firm ship date?"
+  },
+  {
+   "role": "assistant",
+   "content": "Once the cert clears, you can usually commit to a firm ship date within a couple of weeks, mostly bounded by remaining manufacturing lead time."
+  },
+  {
+   "role": "user",
+   "content": "Is Snorlax adding more than a week to EU delivery right now, or has it settled down?"
+  },
+  {
+   "role": "assistant",
+   "content": "If Snorlax is still adding meaningful delay, it's worth pushing your freight broker on it now rather than assuming it'll resolve on its own before the retail push."
+  },
+  {
+   "role": "user",
+   "content": "Is Machamp actually catching the swelling issue we had before, or do we need an extra manual battery check?"
+  },
+  {
+   "role": "assistant",
+   "content": "Machamp should be catching most swelling-related issues if the battery check is part of its pass, but it's worth confirming that check has the same sensitivity as your original manual inspection."
+  },
+  {
+   "role": "user",
+   "content": "How should we prioritize the backlog of firmware bugs in these last few weeks before mass production starts?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a batch that fails final QA, quarantine it immediately, root-cause the failure mode before touching the next batch, and don't let production keep running on an unresolved defect just to hit volume targets."
   }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 329,
+  "middle_end_tokens": 2443,
+  "total_tokens": 3088
+ },
+ "plants": [
+  {
+   "id": "c14-referent-1",
+   "category": "referent",
+   "middle_user": "Sensor suite decision, finally locked. We compared three options: (1) stereo vision cameras only, (2) stereo vision plus a downward optical flow sensor for altitude hold, and (3) stereo vision plus a small LiDAR module. Given weight and battery budget, we're going with the second one, stereo vision plus downward optical flow.",
+   "tail_user_fragment": "On the sensor suite we locked in, no need to re-explain it. What firmware changes does it require before we can start bench testing obstacle avoidance?",
+   "probe": "Which sensor suite configuration did we settle on for the Talon?",
+   "probes": [
+    "Which sensor suite configuration did we settle on for the Talon?",
+    "Which of the three sensor options did we choose?",
+    "What did we decide about the drone's obstacle-avoidance sensor setup?",
+    "Remind me which sensor configuration we locked in."
+   ],
+   "gold": "Stereo vision cameras plus a downward optical flow sensor for altitude hold (the second of the three options), not LiDAR.",
+   "keywords": [
+    "stereo vision",
+    "optical flow"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c14-referent-2",
+   "category": "referent",
+   "middle_user": "Dax proposed something smart for international fulfillment. His idea is to consolidate all EU-bound units at a regional hub in Germany and ship locally from there, instead of shipping each backer's drone individually from our US warehouse. It should cut customs delays a lot, and I'm adopting it.",
+   "tail_user_fragment": "On Dax's fulfillment idea, I'm already sold, don't re-describe it. What lead time should we tell EU backers given that setup?",
+   "probe": "What specifically was Dax's proposal for international fulfillment?",
+   "probes": [
+    "What specifically was Dax's proposal for international fulfillment?",
+    "What did Dax suggest for shipping to EU backers?",
+    "Describe the fulfillment change Dax proposed that we adopted.",
+    "What was Dax's idea about handling international shipments?"
+   ],
+   "gold": "Consolidating all EU-bound units at a regional hub in Germany and shipping locally from there instead of shipping individually from the US warehouse.",
+   "keywords": [
+    "Germany",
+    "regional hub",
+    "consolidate"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c14-sense-1",
+   "category": "sense",
+   "middle_user": "Naming collision to flag: 'Falcon' means two things around here. Marketing uses Falcon as the codename for the pro-tier accessory kit, but when I say Falcon with you, I always mean the flight-control firmware branch, the one with the new PID tuning. That's the only sense I'll use in this chat.",
+   "tail_user_fragment": "Is Falcon stable enough to merge into the release branch before the cert build gets cut?",
+   "probe": "When I said Falcon in this conversation, what was I referring to?",
+   "probes": [
+    "When I said Falcon in this conversation, what was I referring to?",
+    "Which of the two 'Falcon' meanings did I intend here?",
+    "What does Falcon refer to in our conversation?",
+    "If I mention Falcon again, what should you take that to mean?"
+   ],
+   "gold": "The flight-control firmware branch with the new PID tuning, not marketing's pro-tier accessory kit.",
+   "keywords": [
+    "firmware branch",
+    "PID tuning"
+   ],
+   "anti_keywords": [
+    "accessory kit",
+    "pro-tier"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c14-sense-2",
+   "category": "sense",
+   "middle_user": "One more disambiguation: when I say 'the cert' in this chat, I always mean the FCC Part 15 certification, not the separate FAA remote-ID compliance work, even though people around the office use 'the cert' loosely for both.",
+   "tail_user_fragment": "Once the cert clears, how soon can we tell backers a firm ship date?",
+   "probe": "When I referred to 'the cert' in this conversation, which certification did I mean?",
+   "probes": [
+    "When I referred to 'the cert' in this conversation, which certification did I mean?",
+    "Which certification was I referring to when I said 'the cert'?",
+    "What does 'the cert' mean in our conversation, FCC or FAA?",
+    "If I mention the cert again, which approval should you assume I mean?"
+   ],
+   "gold": "FCC Part 15 certification, not the FAA remote-ID compliance work.",
+   "keywords": [
+    "FCC",
+    "Part 15"
+   ],
+   "anti_keywords": [
+    "FAA",
+    "remote-id"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c14-stance-1",
+   "category": "stance",
+   "middle_user": "Firm product principle: footage must always come off the drone via the SD card with zero subscription requirement, full stop. I will not ship any feature that gates footage retrieval behind a cloud subscription, even an optional one that's 'just for convenience.' Whatever monetization ideas you suggest, that's off the table permanently.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for a recurring revenue stream post-launch?",
+   "probes": [
+    "What are some ideas for a recurring revenue stream post-launch?",
+    "Give me three ideas for ongoing revenue after the Talon ships.",
+    "How could we generate recurring revenue from Talon owners?",
+    "Suggest post-launch monetization ideas for the drone."
+   ],
+   "gold": "Suggests approaches like a premium accessory line, an optional pro companion app with paid editing features unrelated to footage retrieval, or extended warranties, while never proposing subscription-gated footage or cloud storage access, ideally recalling the SD-card commitment.",
+   "keywords": [
+    "SD card",
+    "offline"
+   ],
+   "anti_keywords": [
+    "subscription",
+    "cloud storage gate"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c14-stance-2",
+   "category": "stance",
+   "middle_user": "Also a hard boundary: no more stretch-goal style scope additions after the campaign closed. We got burned last time promising extra features mid-campaign and it delayed everything by two months. Whatever comes up for the retail launch, we are not adding new hardware features at this point.",
+   "tail_user_fragment": null,
+   "probe": "What could we do to make the retail launch feel more exciting?",
+   "probes": [
+    "What could we do to make the retail launch feel more exciting?",
+    "Suggest three ways to generate excitement for the retail launch.",
+    "How can we make the retail release feel special without changing the product?",
+    "Give me ideas to boost retail launch appeal."
+   ],
+   "gold": "Suggests approaches like bundling, unboxing experience, marketing content, or launch-week promotions, while never proposing new hardware features or scope additions, ideally recalling the two-month delay from stretch goals.",
+   "keywords": [
+    "bundle",
+    "unboxing"
+   ],
+   "anti_keywords": [
+    "new feature",
+    "stretch goal"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c14-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "History note on batteries: we already sourced our first batch of cells from a supplier called Voltrex, and about 4 percent of the batch showed swelling within two weeks of cycling. We dropped them immediately and ate the cost. Not going back to Voltrex.",
+   "tail_user_fragment": null,
+   "probe": "What should we do for our battery cell sourcing going forward?",
+   "probes": [
+    "What should we do for our battery cell sourcing going forward?",
+    "Who should we source battery cells from now?",
+    "Given the earlier problem, what's our path forward on batteries?",
+    "What supplier approach should we pursue for cells?"
+   ],
+   "gold": "Anything except Voltrex, e.g. a different vetted cell manufacturer with better QC or a supplier with in-house swell testing, ideally acknowledging Voltrex's swelling issue was the reason they were dropped.",
+   "keywords": [
+    "swelling",
+    "4 percent"
+   ],
+   "anti_keywords": [
+    "voltrex"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c14-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also for the record: we paid an outside lab called Praxis Labs to do FCC pre-testing, and their results didn't match what the actual accredited test house found at all, we basically wasted three weeks and $2,600 trusting bad data. Not using Praxis again.",
+   "tail_user_fragment": null,
+   "probe": "Who should handle our pre-testing before the formal FCC submission?",
+   "probes": [
+    "Who should handle our pre-testing before the formal FCC submission?",
+    "What should we do for pre-compliance testing going forward?",
+    "Given the earlier issue, how should we handle FCC pre-testing?",
+    "What's our path forward for pre-submission testing?"
+   ],
+   "gold": "Anything except Praxis Labs, e.g. using the accredited test house directly for pre-scans or a different reputable pre-compliance lab, ideally acknowledging Praxis's inaccurate results were tried and rejected.",
+   "keywords": [
+    "3 weeks",
+    "2,600"
+   ],
+   "anti_keywords": [
+    "praxis"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c14-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Noting this so I don't lose it: our first production PO with the Shenzhen factory is PO-33087, for 4,000 units, and we already wired a $186,000 deposit. Just filing that away.",
+   "tail_user_fragment": null,
+   "probe": "What is our first production PO number, and what deposit did we wire for it?",
+   "probes": [
+    "What is our first production PO number, and what deposit did we wire for it?",
+    "What's the PO number for the first production run, and how much was the deposit?",
+    "Remind me the production order details, quantity and deposit.",
+    "What did we commit to with the Shenzhen factory for the first batch?"
+   ],
+   "gold": "PO-33087 for 4,000 units, with a $186,000 deposit already wired.",
+   "keywords": [
+    "PO-33087",
+    "186,000"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c14-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Small detail to keep straight: the firmware version going through FCC testing is locked as v0.9.4, frozen as of February 11th. Nothing changes in that build until testing's done.",
+   "tail_user_fragment": null,
+   "probe": "Which firmware version is locked for FCC testing, and when was it frozen?",
+   "probes": [
+    "Which firmware version is locked for FCC testing, and when was it frozen?",
+    "What firmware version did we freeze for certification?",
+    "When was the FCC test firmware locked, and what version is it?",
+    "Remind me the firmware version and freeze date for cert."
+   ],
+   "gold": "v0.9.4, frozen as of February 11th.",
+   "keywords": [
+    "v0.9.4",
+    "february 11"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c14-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the EU customs bonded-warehouse holding process 'Snorlax' from now on. Anytime it shows up in notes or Slack, that's what it means, not the real warehouse name, since we reference it in emails with the freight broker sometimes.",
+   "tail_user_fragment": "Is Snorlax adding more than a week to EU delivery right now, or has it settled down?",
+   "probe": "What does 'Snorlax' refer to in our project?",
+   "probes": [
+    "What does 'Snorlax' refer to in our project?",
+    "If I mention Snorlax again, what should you understand that to mean?",
+    "What is Snorlax a codename for?",
+    "Remind me what we're calling Snorlax internally."
+   ],
+   "gold": "The EU customs bonded-warehouse holding process for incoming units.",
+   "keywords": [
+    "customs",
+    "bonded warehouse",
+    "EU"
+   ],
+   "anti_keywords": [
+    "pokemon",
+    "sleep",
+    "big"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c14-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our four-station final QA test rig at the factory 'Machamp.' It's the rig that checks props, calibration, camera, and battery in a single pass before a unit gets boxed. Use that name in all the factory-facing notes.",
+   "tail_user_fragment": "Is Machamp actually catching the swelling issue we had before, or do we need an extra manual battery check?",
+   "probe": "What does 'Machamp' refer to in our project?",
+   "probes": [
+    "What does 'Machamp' refer to in our project?",
+    "If I mention Machamp later, what should you take that to mean?",
+    "What is Machamp a codename for at the factory?",
+    "Remind me what Machamp refers to internally."
+   ],
+   "gold": "The four-station final QA test rig that checks props, calibration, camera, and battery before boxing.",
+   "keywords": [
+    "QA test rig",
+    "four-station",
+    "final QA"
+   ],
+   "anti_keywords": [
+    "pokemon",
+    "fighting",
+    "four arms"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet"
+ }
 }

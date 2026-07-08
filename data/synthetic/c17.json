@@ -1,0 +1,531 @@
+{
+ "id": "c17",
+ "title": "Independent film production",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant supporting an independent film producer running a low-budget feature production."
+  },
+  {
+   "role": "user",
+   "content": "Hey, I'm producing Low Tide, a low-budget indie feature, think $380,000 all-in, and we're deep in pre-production with a fall shoot date. It's basically me and one line producer keeping all the plates spinning. I want to use this chat to work through the whole production plan piece by piece."
+  },
+  {
+   "role": "assistant",
+   "content": "Glad to work through Low Tide end to end with you \u2014 casting, locations, financing, post, and festivals. Let's keep it concrete for a $380k picture."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with casting since it drives our schedule. We're not using a casting director, just me and the director doing tape reviews. What's the framework for prioritizing which roles to cast first when you've got a tight name-actor budget?"
+  },
+  {
+   "role": "assistant",
+   "content": "Casting-first is the right instinct since it gates scheduling and sales. The framework is: cast the roles that unlock financing or availability constraints first, then fill around them."
+  },
+  {
+   "role": "user",
+   "content": "Moving to location scouting. We need a coastal diner set and a rundown boat dock, both within an hour of each other ideally. What should I actually be checking on a scout visit that a photo can't tell me?"
+  },
+  {
+   "role": "assistant",
+   "content": "On a scout, check what a photo hides: sound (traffic, tides, HVAC), power access, load-in paths, sun direction by hour, and whether you can actually control the space for your window."
+  },
+  {
+   "role": "user",
+   "content": "Financing decision. Three paths on the table: (1) close out the equity round at $380k and shoot as planned, (2) take a bridge loan against the tax incentive to shoot bigger and worry about the gap later, or (3) trim the budget to $310k and shoot without the incentive risk at all. I've decided on the third option, trimming to $310k. I don't want the incentive contingency hanging over the shoot."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense \u2014 that's the option that best fits how your constraints line up. I'll treat it as decided and we'll plan the rest around it."
+  },
+  {
+   "role": "user",
+   "content": "Related: how much should we budget for location fees as a percentage of an indie feature this size, roughly?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a feature this size, location fees typically land around 2-4% of budget, but the bigger risk is permits and overtime, not the base fee."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note: 'the Boat' is overloaded on this shoot. The camera department uses it for the dolly rig, but when I say 'the Boat' in our conversations I mean the actual boat-dock location and everything tied to permitting and access there, not the equipment."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it \u2014 I'll use that meaning consistently whenever the term comes up from now on."
+  },
+  {
+   "role": "user",
+   "content": "Financing question. We've got a mix of equity investors and a state tax incentive we're trying to qualify for. What's the biggest way productions our size blow the incentive qualification without realizing it?"
+  },
+  {
+   "role": "assistant",
+   "content": "The classic way to blow incentive qualification is missing the local-spend or local-hire thresholds, or sloppy documentation \u2014 the money's real only if the paperwork is airtight."
+  },
+  {
+   "role": "user",
+   "content": "Firm rule: I will not do a crowdfunding campaign for this film, under any circumstances. I ran one for my last short, it consumed two months I didn't have and raised barely enough to cover its own perks. Please never suggest it as a financing option again."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood \u2014 I'll treat that as a hard rule and won't suggest otherwise."
+  },
+  {
+   "role": "user",
+   "content": "Also on financing: how do you structure investor updates so people who put in $10k don't feel like they're getting the same generic email as the person who put in $150k?"
+  },
+  {
+   "role": "assistant",
+   "content": "Segment your updates by check size: a short shared core plus a tailored paragraph for larger investors makes everyone feel seen without writing five versions."
+  },
+  {
+   "role": "user",
+   "content": "For the record on financing platforms: we tried listing on an equity crowdfunding portal called Reelfund Capital earlier this year. Compliance review alone took ten weeks, and we only ever got two small checks totaling $8,000 before we pulled the listing. Not going back to that platform."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted \u2014 I'll keep that off the table and steer us toward options that fit better."
+  },
+  {
+   "role": "user",
+   "content": "Post-production. We're planning a pretty aggressive edit-to-lock timeline. What's realistic for a 90-minute drama with one editor, given we want to hit festival deadlines?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a 90-minute drama with one editor, plan roughly 10-14 weeks to a locked picture if you protect the editor's time; festival deadlines will pull it tighter, so build a buffer."
+  },
+  {
+   "role": "user",
+   "content": "Random bookkeeping note: our completion bond premium came in at $14,750 flat, already wired to the bonding company. Doesn't change any of our planning, just logging it here."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged \u2014 I'll keep that on hand for whenever it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename the investor financing deck 'Mistborn' from here on in any emails or notes you draft for me -- it's the pitch deck we send to prospective equity investors, not anything actor- or script-related. Keep using that name so we're not spelling out 'investor deck' in every subject line."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it \u2014 I'll use that codename in anything I draft for you from here on."
+  },
+  {
+   "role": "user",
+   "content": "Follow-up: should color and sound mix happen in parallel with picture lock still being finalized, or does that just create rework?"
+  },
+  {
+   "role": "assistant",
+   "content": "Do sound design in parallel, but hold the final mix and final color until picture is genuinely locked \u2014 pre-lock changes are exactly what creates expensive rework."
+  },
+  {
+   "role": "user",
+   "content": "Casting call on the female lead. We're down to three actors: (1) a well-known TV actress who'd help sales but wants $40k over our offer, (2) a strong stage actress with festival buzz from a short film but zero name recognition, or (3) a mid-tier actress with one prior festival lead who's exactly on budget. I'm going with the third one, the mid-tier actress on budget. The math on the TV actress just doesn't work."
+  },
+  {
+   "role": "assistant",
+   "content": "Good call. I'll lock that in as our direction and we can build everything else on top of it."
+  },
+  {
+   "role": "user",
+   "content": "Festival strategy. Everyone says premiere status matters enormously. How do we actually decide which festival to submit to first without guessing?"
+  },
+  {
+   "role": "assistant",
+   "content": "Decide by fit, not prestige: match your film's genre and profile to festivals that have championed similar titles, and rank by premiere value versus realistic odds."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the cut' by itself, I mean the festival submission cut we're targeting for deadlines, not the director's extended cut he keeps threatening to make for a future re-release. Two very different timelines, please keep them straight."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll keep those two straight and default to the one you mean."
+  },
+  {
+   "role": "user",
+   "content": "Related: how many festivals should we realistically budget submission fees for, given we're not swimming in cash post-shoot?"
+  },
+  {
+   "role": "assistant",
+   "content": "Budget submission fees for maybe 8-12 well-chosen festivals, front-loading the tier-one targets and using waivers where you can."
+  },
+  {
+   "role": "user",
+   "content": "Another hard one: no test screenings with a paid audience-recruitment service. We want genuine friends-of-friends and community screenings only. Paid recruits skew the feedback toward people who show up for the free popcorn, not people who'll actually react honestly."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted as a firm rule; I won't put that in front of you again."
+  },
+  {
+   "role": "user",
+   "content": "Back to casting for a second. For our two leads, should we be doing chemistry reads in person even if it means flying someone in, or is a video chemistry read good enough at our budget level?"
+  },
+  {
+   "role": "assistant",
+   "content": "For your two leads, an in-person chemistry read is worth the flight \u2014 screen chemistry is too central to risk on a laggy video call at this budget."
+  },
+  {
+   "role": "user",
+   "content": "Also, location history: we scouted a warehouse space through a broker called Dockside Locations for our interior set. Turned out they didn't actually have exclusive rights to the building, the real owner showed up mid-scout, and it fell apart on the spot. Done working with that broker."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, that one's ruled out; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "One more on location scouting. If a location we love falls through two weeks before the shoot, what's the actual playbook, not just 'have a backup'?"
+  },
+  {
+   "role": "assistant",
+   "content": "The real playbook is a pre-vetted second location you've already permitted and scouted, plus a scene-rewrite fallback so the story survives losing the space."
+  },
+  {
+   "role": "user",
+   "content": "Oh, and our copyright registration for the screenplay went through: reference PA-2-198663, filed February 11th. Nothing to do now but wait for the certificate."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted for the record; parked and ready when we need it."
+  },
+  {
+   "role": "user",
+   "content": "From now on call our backup shooting schedule 'Vin' in anything you draft -- it's the contingency day-by-day schedule we fall back to if we lose more than two shoot days to weather. Real term is a mouthful, this is shorter."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll refer to it by that name going forward."
+  },
+  {
+   "role": "user",
+   "content": "Let's wrap up festival strategy. If we get into a smaller regional festival before we hear from the big ones, do we take it, or hold out?"
+  },
+  {
+   "role": "assistant",
+   "content": "If a strong regional slot comes before you hear from the majors, weigh whether it burns your premiere status \u2014 often better to hold if a top festival is realistically in play."
+  },
+  {
+   "role": "user",
+   "content": "Given the budget path we picked, and you don't need to restate it, where's the first place we should look to trim?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 working from that choice, here's the main thing to focus on."
+  },
+  {
+   "role": "user",
+   "content": "For the lead we cast, no need to walk me through who she is again, when should we lock her for chemistry reads with the male lead?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 working from that choice, here's the main thing to focus on."
+  },
+  {
+   "role": "user",
+   "content": "Any updates needed on the Boat before we finalize the shoot schedule?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yep, keeping that meaning in mind \u2014 here's where things stand."
+  },
+  {
+   "role": "user",
+   "content": "Is the cut on track for the deadline we talked about?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yep, keeping that meaning in mind \u2014 here's where things stand."
+  },
+  {
+   "role": "user",
+   "content": "Add a slide to Mistborn covering the festival strategy timeline."
+  },
+  {
+   "role": "assistant",
+   "content": "On it \u2014 here's a quick take using that name."
+  },
+  {
+   "role": "user",
+   "content": "Does Vin still hold up if we lose a third day, or does it need reworking?"
+  },
+  {
+   "role": "assistant",
+   "content": "On it \u2014 here's a quick take using that name."
+  },
+  {
+   "role": "user",
+   "content": "On post-production, one more thing: what's a sane number of feedback screenings to run before we lock picture, so we're not just endlessly re-cutting?"
+  },
+  {
+   "role": "assistant",
+   "content": "Two or three feedback screenings is usually plenty; more than that and you're chasing noise instead of locking the film."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 272,
+  "middle_end_tokens": 2330,
+  "total_tokens": 2731
+ },
+ "plants": [
+  {
+   "id": "c17-referent-1",
+   "category": "referent",
+   "middle_user": "Financing decision. Three paths on the table: (1) close out the equity round at $380k and shoot as planned, (2) take a bridge loan against the tax incentive to shoot bigger and worry about the gap later, or (3) trim the budget to $310k and shoot without the incentive risk at all. I've decided on the third option, trimming to $310k. I don't want the incentive contingency hanging over the shoot.",
+   "tail_user_fragment": "Given the budget path we picked, and you don't need to restate it, where's the first place we should look to trim?",
+   "probe": "Which of the three financing paths did we decide to go with?",
+   "probes": [
+    "Which of the three financing paths did we decide to go with?",
+    "Out of the funding options we weighed, which one did I choose?",
+    "Remind me which financing route we settled on for the shoot."
+   ],
+   "gold": "Trimming the budget to $310k and shooting without relying on the tax incentive (the third option), rather than closing the equity round at $380k or taking a bridge loan against the incentive.",
+   "keywords": [
+    "310k",
+    "trim"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c17-referent-2",
+   "category": "referent",
+   "middle_user": "Casting call on the female lead. We're down to three actors: (1) a well-known TV actress who'd help sales but wants $40k over our offer, (2) a strong stage actress with festival buzz from a short film but zero name recognition, or (3) a mid-tier actress with one prior festival lead who's exactly on budget. I'm going with the third one, the mid-tier actress on budget. The math on the TV actress just doesn't work.",
+   "tail_user_fragment": "For the lead we cast, no need to walk me through who she is again, when should we lock her for chemistry reads with the male lead?",
+   "probe": "Which of the three candidates did we cast for the female lead?",
+   "probes": [
+    "Which of the three candidates did we cast for the female lead?",
+    "Which actress did we end up going with for the lead role, out of the three we discussed?",
+    "Remind me who we chose for the female lead and why."
+   ],
+   "gold": "The mid-tier actress with one prior festival lead who was exactly on budget (the third option), not the well-known TV actress or the stage actress with festival buzz.",
+   "keywords": [
+    "mid-tier",
+    "on budget"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c17-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note: 'the Boat' is overloaded on this shoot. The camera department uses it for the dolly rig, but when I say 'the Boat' in our conversations I mean the actual boat-dock location and everything tied to permitting and access there, not the equipment.",
+   "tail_user_fragment": "Any updates needed on the Boat before we finalize the shoot schedule?",
+   "probe": "When I refer to 'the Boat' in this conversation, what do I mean?",
+   "probes": [
+    "When I refer to 'the Boat' in this conversation, what do I mean?",
+    "What does 'the Boat' mean specifically in the context of our talks?",
+    "If I bring up the Boat again, which thing should you assume I mean?"
+   ],
+   "gold": "The boat-dock location and its permitting/access, not the camera dolly rig.",
+   "keywords": [
+    "boat-dock location",
+    "permitting"
+   ],
+   "anti_keywords": [
+    "dolly",
+    "camera rig"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c17-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the cut' by itself, I mean the festival submission cut we're targeting for deadlines, not the director's extended cut he keeps threatening to make for a future re-release. Two very different timelines, please keep them straight.",
+   "tail_user_fragment": "Is the cut on track for the deadline we talked about?",
+   "probe": "When I refer to 'the cut' in this conversation, which edit am I talking about?",
+   "probes": [
+    "When I refer to 'the cut' in this conversation, which edit am I talking about?",
+    "Which version of the film does 'the cut' refer to here?",
+    "Remind me what 'the cut' means when I bring it up."
+   ],
+   "gold": "The festival submission cut being targeted for deadlines, not the director's extended re-release cut.",
+   "keywords": [
+    "festival submission cut"
+   ],
+   "anti_keywords": [
+    "extended cut",
+    "director's cut"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c17-stance-1",
+   "category": "stance",
+   "middle_user": "Firm rule: I will not do a crowdfunding campaign for this film, under any circumstances. I ran one for my last short, it consumed two months I didn't have and raised barely enough to cover its own perks. Please never suggest it as a financing option again.",
+   "tail_user_fragment": null,
+   "probe": "What are three ways we could close the remaining financing gap before the shoot?",
+   "probes": [
+    "What are three ways we could close the remaining financing gap before the shoot?",
+    "How should we raise the last bit of money we need before production starts?",
+    "Give me some options for covering our remaining budget shortfall."
+   ],
+   "gold": "Suggests options like additional equity investors, a completion-bond-backed loan, or a strategic pre-sale, while never suggesting crowdfunding, ideally referencing the bad prior experience.",
+   "keywords": [
+    "previous",
+    "short film"
+   ],
+   "anti_keywords": [
+    "crowdfund",
+    "kickstarter",
+    "indiegogo"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c17-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard one: no test screenings with a paid audience-recruitment service. We want genuine friends-of-friends and community screenings only. Paid recruits skew the feedback toward people who show up for the free popcorn, not people who'll actually react honestly.",
+   "tail_user_fragment": null,
+   "probe": "How should we organize our next round of feedback screenings before picture lock?",
+   "probes": [
+    "How should we organize our next round of feedback screenings before picture lock?",
+    "What's the best way to recruit an audience for our test screening?",
+    "Give me a plan for our next feedback screening's audience."
+   ],
+   "gold": "Recommends organic/community or friends-of-friends recruitment for screenings, never a paid audience-recruitment service.",
+   "keywords": [
+    "community",
+    "friends-of-friends"
+   ],
+   "anti_keywords": [
+    "paid recruitment",
+    "paid audience"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c17-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on financing platforms: we tried listing on an equity crowdfunding portal called Reelfund Capital earlier this year. Compliance review alone took ten weeks, and we only ever got two small checks totaling $8,000 before we pulled the listing. Not going back to that platform.",
+   "tail_user_fragment": null,
+   "probe": "What should we look at if we want to raise a bit more equity before the shoot?",
+   "probes": [
+    "What should we look at if we want to raise a bit more equity before the shoot?",
+    "What's our next option for raising a little more equity financing?",
+    "How should we approach raising the last piece of equity capital?"
+   ],
+   "gold": "Anything other than Reelfund Capital, e.g. direct outreach to known investors, a smaller SPV, or a producer's rep introduction, ideally noting Reelfund already failed.",
+   "keywords": [
+    "ten weeks",
+    "8,000"
+   ],
+   "anti_keywords": [
+    "reelfund"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c17-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, location history: we scouted a warehouse space through a broker called Dockside Locations for our interior set. Turned out they didn't actually have exclusive rights to the building, the real owner showed up mid-scout, and it fell apart on the spot. Done working with that broker.",
+   "tail_user_fragment": null,
+   "probe": "What should we do differently for finding our interior warehouse set?",
+   "probes": [
+    "What should we do differently for finding our interior warehouse set?",
+    "How should we approach finding a new warehouse interior location?",
+    "What's our next move for the warehouse set now that the last one fell through?"
+   ],
+   "gold": "Anything other than working with Dockside Locations, e.g. verifying ownership/title directly, using a different location scout, or going through a film office, ideally noting Dockside already fell through.",
+   "keywords": [
+    "exclusive rights",
+    "fell apart"
+   ],
+   "anti_keywords": [
+    "dockside"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c17-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random bookkeeping note: our completion bond premium came in at $14,750 flat, already wired to the bonding company. Doesn't change any of our planning, just logging it here.",
+   "tail_user_fragment": null,
+   "probe": "What did the completion bond premium end up costing?",
+   "probes": [
+    "What did the completion bond premium end up costing?",
+    "Remind me the amount we paid for the completion bond.",
+    "How much was the completion bond premium?"
+   ],
+   "gold": "$14,750.",
+   "keywords": [
+    "14,750"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c17-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, and our copyright registration for the screenplay went through: reference PA-2-198663, filed February 11th. Nothing to do now but wait for the certificate.",
+   "tail_user_fragment": null,
+   "probe": "What is the copyright registration reference number for the screenplay, and when was it filed?",
+   "probes": [
+    "What is the copyright registration reference number for the screenplay, and when was it filed?",
+    "Remind me the copyright reference number and filing date for the script.",
+    "What number and date should be on file for the screenplay's copyright registration?"
+   ],
+   "gold": "PA-2-198663, filed February 11th.",
+   "keywords": [
+    "198663",
+    "february 11"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c17-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename the investor financing deck 'Mistborn' from here on in any emails or notes you draft for me -- it's the pitch deck we send to prospective equity investors, not anything actor- or script-related. Keep using that name so we're not spelling out 'investor deck' in every subject line.",
+   "tail_user_fragment": "Add a slide to Mistborn covering the festival strategy timeline.",
+   "probe": "What does 'Mistborn' refer to in this conversation?",
+   "probes": [
+    "What does 'Mistborn' refer to in this conversation?",
+    "If I mention Mistborn again later, what should you understand that to mean?",
+    "Remind me what we're calling Mistborn internally."
+   ],
+   "gold": "The investor/equity pitch deck for the film.",
+   "keywords": [
+    "investor deck",
+    "pitch deck"
+   ],
+   "anti_keywords": [
+    "fantasy novel",
+    "Brandon Sanderson",
+    "magic system",
+    "allomancy"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c17-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "From now on call our backup shooting schedule 'Vin' in anything you draft -- it's the contingency day-by-day schedule we fall back to if we lose more than two shoot days to weather. Real term is a mouthful, this is shorter.",
+   "tail_user_fragment": "Does Vin still hold up if we lose a third day, or does it need reworking?",
+   "probe": "What does 'Vin' refer to in this conversation?",
+   "probes": [
+    "What does 'Vin' refer to in this conversation?",
+    "If I bring up Vin again, what should you take that to mean?",
+    "Remind me what Vin is, in the context of our production."
+   ],
+   "gold": "The contingency/backup shooting schedule used if more than two shoot days are lost to weather.",
+   "keywords": [
+    "backup shooting schedule",
+    "contingency schedule"
+   ],
+   "anti_keywords": [
+    "Mistborn",
+    "fantasy novel",
+    "Brandon Sanderson",
+    "protagonist"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "opus"
+ }
+}

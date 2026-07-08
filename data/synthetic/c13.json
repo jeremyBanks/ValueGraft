@@ -1,540 +1,543 @@
 {
-  "id": "c13",
-  "title": "Indie video game Steam launch",
-  "messages": [
-    {
-      "role": "system",
-      "content": "You are a helpful assistant experienced in game development and publishing, supporting an indie studio shipping their first commercial title."
-    },
-    {
-      "role": "user",
-      "content": "Hey, so Fenwick's Ledger is finally content-complete and we're staring down a Steam release in about ten weeks. It's just the four of us at Thistlebark, no publisher, and I want to use this chat to work through everything: the store page, playtesting, cert, pricing, launch-day support. Can you be my planning partner for all of it?"
-    },
-    {
-      "role": "assistant",
-      "content": "Absolutely, happy to be your planning partner across the store page, playtesting, cert, pricing, and launch day. Let's take it one piece at a time so nothing falls through the cracks over the next ten weeks."
-    },
-    {
-      "role": "user",
-      "content": "Let's start with the Steam store page and marketing since that's the thing potential players actually see first. We've got rough capsule art and three GIFs. What should the page prioritize for a cozy mystery deckbuilder that nobody's heard of yet?"
-    },
-    {
-      "role": "assistant",
-      "content": "For a cozy mystery deckbuilder nobody knows yet, lead with a crystal-clear genre hook in the first line and let the GIFs do the work of showing card-play plus the cozy detective tone, since screenshots alone won't convey the deckbuilding loop."
-    },
-    {
-      "role": "user",
-      "content": "Should we run a Steam Next Fest demo, or hold everything back for launch? I keep flip-flopping on this."
-    },
-    {
-      "role": "assistant",
-      "content": "A Next Fest demo is usually worth it for wishlist velocity even for cozy games, as long as the demo slice is polished rather than just an early build; holding everything back only makes sense if the opening hours aren't representative yet."
-    },
-    {
-      "role": "user",
-      "content": "Demo decision time. We weighed three options: (1) a permanent free demo living on the store page forever, (2) a demo that's only up during Steam Next Fest and pulled right after, and (3) no demo at all, just the trailer and GIFs. I talked it over with the team and we're going with the second one, a Next-Fest-only demo."
-    },
-    {
-      "role": "assistant",
-      "content": "Makes sense, a Next-Fest-only demo lets you get exposure during the festival spike without a permanent demo cannibalizing full-price interest afterward."
-    },
-    {
-      "role": "user",
-      "content": "For closed beta playtesting, how many external testers do we actually need before we can trust the difficulty curve isn't just wrong for us specifically?"
-    },
-    {
-      "role": "assistant",
-      "content": "For a game this size, somewhere around 15-25 external testers tends to be enough to catch systemic difficulty issues, especially if you deliberately mix skill levels rather than just recruiting people similar to your own team."
-    },
-    {
-      "role": "user",
-      "content": "Terminology note before it confuses us later: 'the Vault' is overloaded on our team. Our build-archive server that stores old zip builds is also nicknamed the Vault by the programmers, but when I say the Vault to you, I always mean the endgame bonus dungeon content, the postgame case you unlock after solving the main mystery. That's the sense I want here."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, whenever you say the Vault here I'll take it as the postgame bonus dungeon content, not the build-archive server."
-    },
-    {
-      "role": "user",
-      "content": "What's a good way to structure playtester feedback forms so we're not just getting 'I liked it' back from everyone?"
-    },
-    {
-      "role": "assistant",
-      "content": "Structure the form around specific moments (did you get stuck, where, what did you try) rather than open-ended satisfaction questions, and add a couple of forced-choice difficulty ratings per chapter so you get comparable signal across testers."
-    },
-    {
-      "role": "user",
-      "content": "Hard rule for anything monetization-related: Fenwick's Ledger is a one-time premium purchase and it stays that way forever. No cosmetic DLC, no season pass, no microtransactions of any kind, not even 'just a soundtrack DLC' nonsense. I will not budge on this, whatever the post-launch revenue pressure looks like."
-    },
-    {
-      "role": "assistant",
-      "content": "Understood, one-time premium purchase only, no DLC, season pass, or microtransactions in any suggestions from here on."
-    },
-    {
-      "role": "user",
-      "content": "Platform certification is looming and I've never done a console submission before. What actually trips up first-timers during Nintendo cert?"
-    },
-    {
-      "role": "assistant",
-      "content": "First-timers usually get tripped up by save/suspend behavior, controller prompt consistency, and error-message wording, since Nintendo's lotcheck is unusually strict about those UX details compared to Steam."
-    },
-    {
-      "role": "user",
-      "content": "For the record on paid user acquisition: we already tried a wishlist ad package through a service called Wishboost last year, burned about $1,200, and the wishlist conversion was basically noise, worse than our organic Twitter posts. That channel is dead to us."
-    },
-    {
-      "role": "assistant",
-      "content": "Noted, Wishboost is off the table given that spend didn't beat your organic Twitter performance."
-    },
-    {
-      "role": "user",
-      "content": "How much lead time should we budget between submitting the build and an actual cert pass, worst case?"
-    },
-    {
-      "role": "assistant",
-      "content": "Budget at least three to four weeks worst case between submission and a passing cert build, since a single failed pass often means another full round-trip through the lab queue."
-    },
-    {
-      "role": "user",
-      "content": "Random note to park here: our Nintendo lotcheck submission tracking ID is NX-77341, submitted June 2nd. Nothing to decide, just don't want to lose track of the number."
-    },
-    {
-      "role": "assistant",
-      "content": "Logged: NX-77341, submitted June 2nd."
-    },
-    {
-      "role": "user",
-      "content": "Let's codename our automated build packaging and cert-submission pipeline 'Gengar' from now on. Every internal doc and Slack thread should say Gengar, not the real script name, since we're referencing it in front of the console rep sometimes."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, Gengar refers to the build packaging and cert-submission pipeline from here on."
-    },
-    {
-      "role": "user",
-      "content": "Priya had a good idea for the next playtest round. Her proposal is a 'silent playtest': testers get zero instructions or tutorial text, we just hand them the build and screen-record the first twenty minutes without any hints. She thinks it's the only honest way to see if the tutorial actually works. I'm doing it for the next round."
-    },
-    {
-      "role": "assistant",
-      "content": "A silent playtest is a great way to stress-test the tutorial honestly, since it removes any hand-holding from you or the team that might mask real confusion."
-    },
-    {
-      "role": "user",
-      "content": "On pricing and regional strategy, how do we think about the base US price for a 12-hour single-player game from a totally unknown studio?"
-    },
-    {
-      "role": "assistant",
-      "content": "For a 12-hour single-player game from an unknown studio, most similar titles land somewhere in the mid-teens in USD, since going much higher makes wishlist-to-purchase conversion harder without brand recognition to justify it."
-    },
-    {
-      "role": "user",
-      "content": "Also, when I say 'the beta' from here on I mean the public Steam playtest branch we're about to open up to wishlisters. I know the team calls our internal nightly QA branch the beta too out of habit, but with you, the beta always means the public one."
-    },
-    {
-      "role": "assistant",
-      "content": "Understood, the beta means the public Steam playtest branch for wishlisters, not the internal nightly QA branch."
-    },
-    {
-      "role": "user",
-      "content": "Should we bother with a press key distribution service, or hand-pick outlets ourselves given how small we are?"
-    },
-    {
-      "role": "assistant",
-      "content": "Given your size, hand-picking a tight list of outlets that actually cover cozy or deckbuilder games will get you better coverage per hour spent than a broad key-distribution blast, which mostly reaches uninterested inboxes."
-    },
-    {
-      "role": "user",
-      "content": "Another hard line: we are not doing Early Access. I've watched too many small teams get stuck in EA purgatory for three years while their wishlist rots. We launch as a finished 1.0 or we don't launch at all. Don't suggest EA to me as a hedge against our timeline."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, 1.0 finished launch or nothing, Early Access is off the table as a schedule hedge."
-    },
-    {
-      "role": "user",
-      "content": "For launch-day operations, what's the actual minute-by-minute stuff I should expect once the build goes live on Steam?"
-    },
-    {
-      "role": "assistant",
-      "content": "Expect the first couple hours to be mostly babysitting the build for crash reports and store page glitches, then a longer stretch of triaging player-reported bugs and keeping an eye on the Discord and Steam forums."
-    },
-    {
-      "role": "user",
-      "content": "Also worth noting: we outsourced localization to a shop called LingoFast for the French and German text. The translations came back stiff and half of them didn't fit the UI, we had to redo a third of it in-house. Not using them again."
-    },
-    {
-      "role": "assistant",
-      "content": "Noted, LingoFast is out for future localization work given the redo work it created."
-    },
-    {
-      "role": "user",
-      "content": "One of our testers churned out incredibly detailed bug reports and I want to make sure we're using their time well going forward."
-    },
-    {
-      "role": "assistant",
-      "content": "Sounds like a tester worth keeping close, maybe give them early access to future builds and a direct feedback channel so their detailed reports keep flowing without extra friction."
-    },
-    {
-      "role": "user",
-      "content": "Budget note for my own records: total marketing spend is capped at $4,850, full stop, that's everything we've got left after cert costs. Just parking that here."
-    },
-    {
-      "role": "assistant",
-      "content": "Logged: $4,850 total marketing budget cap."
-    },
-    {
-      "role": "user",
-      "content": "What's realistic to expect from a launch trailer in terms of view-to-wishlist conversion for a game our size?"
-    },
-    {
-      "role": "assistant",
-      "content": "For a similarly-sized launch trailer, expect roughly a fraction of a percent of views converting to wishlists, so treat the trailer as an awareness tool rather than the primary wishlist driver."
-    },
-    {
-      "role": "user",
-      "content": "Let's call our closed beta Discord server 'Pikachu' in all future notes. It's just easier than typing out the full server name every time, and I don't want the real name floating around in shared docs."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it, Pikachu refers to the closed beta Discord server going forward."
-    },
-    {
-      "role": "user",
-      "content": "Back to launch-day operations, what's our plan if the day-one patch needs to go out within the first few hours?"
-    },
-    {
-      "role": "assistant",
-      "content": "If the day-one patch needs to go out fast, have it staged and QA'd against the shipping build ahead of time so it's a same-day push rather than a scramble, and communicate the timeline proactively in the Steam announcement."
-    },
-    {
-      "role": "user",
-      "content": "Back to the demo approach we picked, no need to walk me through the options again. How long before launch should we actually pull it down?"
-    },
-    {
-      "role": "assistant",
-      "content": "Given it's Next-Fest-only, plan to pull it within a day or two after the festival ends so it doesn't linger and cannibalize launch momentum."
-    },
-    {
-      "role": "user",
-      "content": "On Priya's silent playtest idea, I'm already committed, don't re-explain it to me. How many testers should go through that round?"
-    },
-    {
-      "role": "assistant",
-      "content": "For that round, a smaller group of maybe 6-8 testers should be plenty since you're mining depth of observation rather than statistical breadth."
-    },
-    {
-      "role": "user",
-      "content": "Is the Vault content stable enough to include in the next playtest build, or should we hold it back?"
-    },
-    {
-      "role": "assistant",
-      "content": "It's worth a careful look, if the Vault content isn't fully stable, better to hold it back than risk a playtest session getting derailed by a postgame bug."
-    },
-    {
-      "role": "user",
-      "content": "How many wishlisters should we let into the beta for the first wave?"
-    },
-    {
-      "role": "assistant",
-      "content": "A first wave of a few hundred wishlisters is usually enough to surface real issues without overwhelming your support bandwidth."
-    },
-    {
-      "role": "user",
-      "content": "Is Gengar stable enough to trust for the actual lotcheck submission build, or should we still package that one by hand?"
-    },
-    {
-      "role": "assistant",
-      "content": "If Gengar has been reliably producing clean builds in your recent test submissions, it should be trustworthy for lotcheck, but it's worth doing one manual spot-check pass regardless given how unforgiving a failed submission is."
-    },
-    {
-      "role": "user",
-      "content": "Can you draft a pinned welcome message for Pikachu explaining the NDA to new testers?"
-    },
-    {
-      "role": "assistant",
-      "content": "Sure, I can draft a pinned welcome message for Pikachu covering the NDA basics and expectations for testers."
-    },
-    {
-      "role": "user",
-      "content": "How aggressively should we monitor Steam reviews in the first 48 hours versus just letting them accumulate?"
-    },
-    {
-      "role": "assistant",
-      "content": "For the delay message, be direct and specific about the reason and new timeline rather than vague reassurance, wishlisters tend to respect transparency about cert delays far more than silence."
-    }
-  ],
-  "sections": {
-    "early_end_msg": 5,
-    "middle_end_msg": 49
+ "id": "c13",
+ "title": "Indie video game Steam launch",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant experienced in game development and publishing, supporting an indie studio shipping their first commercial title."
   },
-  "plants": [
-    {
-      "id": "c13-referent-1",
-      "category": "referent",
-      "middle_user": "Demo decision time. We weighed three options: (1) a permanent free demo living on the store page forever, (2) a demo that's only up during Steam Next Fest and pulled right after, and (3) no demo at all, just the trailer and GIFs. I talked it over with the team and we're going with the second one, a Next-Fest-only demo.",
-      "tail_user_fragment": "Back to the demo approach we picked, no need to walk me through the options again. How long before launch should we actually pull it down?",
-      "probe": "Which demo strategy did we settle on for Fenwick's Ledger?",
-      "probes": [
-        "Which demo strategy did we settle on for Fenwick's Ledger?",
-        "Which of the three demo options did we end up choosing?",
-        "What did we decide about having a playable demo on the Steam page?",
-        "Remind me which demo strategy we committed to."
-      ],
-      "gold": "A demo available only during Steam Next Fest, then pulled afterward (the second of the three options), not a permanent demo and not skipping a demo entirely.",
-      "keywords": [
-        "next fest",
-        "demo"
-      ],
-      "anti_keywords": [],
-      "distance": "far"
-    },
-    {
-      "id": "c13-referent-2",
-      "category": "referent",
-      "middle_user": "Priya had a good idea for the next playtest round. Her proposal is a 'silent playtest': testers get zero instructions or tutorial text, we just hand them the build and screen-record the first twenty minutes without any hints. She thinks it's the only honest way to see if the tutorial actually works. I'm doing it for the next round.",
-      "tail_user_fragment": "On Priya's silent playtest idea, I'm already committed, don't re-explain it to me. How many testers should go through that round?",
-      "probe": "What specifically was Priya's playtesting proposal?",
-      "probes": [
-        "What specifically was Priya's playtesting proposal?",
-        "What did Priya suggest for the next round of playtesting?",
-        "Describe the playtest format Priya pitched that we're adopting.",
-        "What was Priya's idea about how to run the next playtest?"
-      ],
-      "gold": "A 'silent playtest' where testers get no instructions or tutorial hints and are just screen-recorded for the first twenty minutes.",
-      "keywords": [
-        "silent playtest",
-        "no instructions"
-      ],
-      "anti_keywords": [],
-      "distance": "near"
-    },
-    {
-      "id": "c13-sense-1",
-      "category": "sense",
-      "middle_user": "Terminology note before it confuses us later: 'the Vault' is overloaded on our team. Our build-archive server that stores old zip builds is also nicknamed the Vault by the programmers, but when I say the Vault to you, I always mean the endgame bonus dungeon content, the postgame case you unlock after solving the main mystery. That's the sense I want here.",
-      "tail_user_fragment": "Is the Vault content stable enough to include in the next playtest build, or should we hold it back?",
-      "probe": "When I said 'the Vault' in this conversation, what was I referring to?",
-      "probes": [
-        "When I said 'the Vault' in this conversation, what was I referring to?",
-        "Which of the two things called 'the Vault' did I mean here?",
-        "What does 'the Vault' refer to in our conversation?",
-        "If I mention the Vault again, what should you understand that to be?"
-      ],
-      "gold": "The endgame bonus dungeon content unlocked after solving the main mystery, not the build-archive server the programmers also call the Vault.",
-      "keywords": [
-        "endgame",
-        "bonus dungeon"
-      ],
-      "anti_keywords": [
-        "archive server",
-        "build server"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c13-sense-2",
-      "category": "sense",
-      "middle_user": "Also, when I say 'the beta' from here on I mean the public Steam playtest branch we're about to open up to wishlisters. I know the team calls our internal nightly QA branch the beta too out of habit, but with you, the beta always means the public one.",
-      "tail_user_fragment": "How many wishlisters should we let into the beta for the first wave?",
-      "probe": "When I referred to 'the beta' in this conversation, which branch did I mean?",
-      "probes": [
-        "When I referred to 'the beta' in this conversation, which branch did I mean?",
-        "Which build did I mean when I said 'the beta'?",
-        "What does 'the beta' refer to in our conversation, the public one or the internal QA one?",
-        "If I bring up the beta again, what should you assume I'm talking about?"
-      ],
-      "gold": "The public Steam playtest branch opened to wishlisters, not the internal nightly QA branch.",
-      "keywords": [
-        "public",
-        "wishlisters",
-        "steam playtest"
-      ],
-      "anti_keywords": [
-        "internal",
-        "nightly qa"
-      ],
-      "distance": "near"
-    },
-    {
-      "id": "c13-stance-1",
-      "category": "stance",
-      "middle_user": "Hard rule for anything monetization-related: Fenwick's Ledger is a one-time premium purchase and it stays that way forever. No cosmetic DLC, no season pass, no microtransactions of any kind, not even 'just a soundtrack DLC' nonsense. I will not budge on this, whatever the post-launch revenue pressure looks like.",
-      "tail_user_fragment": null,
-      "probe": "What are some ideas for generating additional revenue after launch?",
-      "probes": [
-        "What are some ideas for generating additional revenue after launch?",
-        "Give me three post-launch revenue ideas for the game.",
-        "How could we make more money from Fenwick's Ledger after release?",
-        "Suggest ways to extend the game's revenue beyond the initial sale."
-      ],
-      "gold": "Suggests approaches like a full-priced standalone sequel or expansion, bundling, or regional sales, while never proposing microtransactions, cosmetic DLC, or a season pass, ideally recalling the one-time-purchase commitment.",
-      "keywords": [
-        "one-time purchase",
-        "premium"
-      ],
-      "anti_keywords": [
-        "microtransaction",
-        "season pass",
-        "cosmetic dlc"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c13-stance-2",
-      "category": "stance",
-      "middle_user": "Another hard line: we are not doing Early Access. I've watched too many small teams get stuck in EA purgatory for three years while their wishlist rots. We launch as a finished 1.0 or we don't launch at all. Don't suggest EA to me as a hedge against our timeline.",
-      "tail_user_fragment": null,
-      "probe": "Given the schedule risk, what release-model options do we have?",
-      "probes": [
-        "Given the schedule risk, what release-model options do we have?",
-        "If cert or QA slips, what are our options for the release model?",
-        "What should we consider if we're not ready in time, release-wise?",
-        "Suggest ways to handle schedule slippage without changing what kind of launch this is."
-      ],
-      "gold": "Suggests delaying the 1.0 launch date, trimming scope, or extending the closed beta, while never proposing Early Access, ideally recalling the user's rejection of EA purgatory.",
-      "keywords": [
-        "delay",
-        "1.0"
-      ],
-      "anti_keywords": [
-        "early access"
-      ],
-      "distance": "near"
-    },
-    {
-      "id": "c13-ruled_out-1",
-      "category": "ruled_out",
-      "middle_user": "For the record on paid user acquisition: we already tried a wishlist ad package through a service called Wishboost last year, burned about $1,200, and the wishlist conversion was basically noise, worse than our organic Twitter posts. That channel is dead to us.",
-      "tail_user_fragment": null,
-      "probe": "What should we try next for driving wishlists?",
-      "probes": [
-        "What should we try next for driving wishlists?",
-        "What paid or promotional channel should we pursue next for wishlists?",
-        "Given our budget, how should we try to grow wishlists going forward?",
-        "What's a better approach than what we already tried for wishlist growth?"
-      ],
-      "gold": "Anything except Wishboost paid ads, e.g. content creator outreach, Steam curator outreach, or community-led posts, ideally acknowledging Wishboost was tried and rejected.",
-      "keywords": [
-        "1,200",
-        "conversion"
-      ],
-      "anti_keywords": [
-        "wishboost"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c13-ruled_out-2",
-      "category": "ruled_out",
-      "middle_user": "Also worth noting: we outsourced localization to a shop called LingoFast for the French and German text. The translations came back stiff and half of them didn't fit the UI, we had to redo a third of it in-house. Not using them again.",
-      "tail_user_fragment": null,
-      "probe": "What should we do for the remaining localization work?",
-      "probes": [
-        "What should we do for the remaining localization work?",
-        "How should we handle the rest of the localization?",
-        "What's our path forward on translations given the earlier problems?",
-        "Who or what should handle the remaining language localization?"
-      ],
-      "gold": "Anything except LingoFast, e.g. a different vetted localization vendor, native-speaking community volunteers, or in-house review, ideally acknowledging LingoFast's poor-fit translations were tried and rejected.",
-      "keywords": [
-        "stiff",
-        "redo"
-      ],
-      "anti_keywords": [
-        "lingofast"
-      ],
-      "distance": "near"
-    },
-    {
-      "id": "c13-evicted_fact-1",
-      "category": "evicted_fact",
-      "middle_user": "Random note to park here: our Nintendo lotcheck submission tracking ID is NX-77341, submitted June 2nd. Nothing to decide, just don't want to lose track of the number.",
-      "tail_user_fragment": null,
-      "probe": "What is our Nintendo lotcheck submission tracking ID, and when was it submitted?",
-      "probes": [
-        "What is our Nintendo lotcheck submission tracking ID, and when was it submitted?",
-        "What's the tracking ID for our Switch cert submission?",
-        "When did we submit for lotcheck, and what's the reference number?",
-        "Remind me of the Nintendo submission ID and date."
-      ],
-      "gold": "NX-77341, submitted June 2nd.",
-      "keywords": [
-        "NX-77341",
-        "june 2"
-      ],
-      "anti_keywords": [],
-      "distance": "far"
-    },
-    {
-      "id": "c13-evicted_fact-2",
-      "category": "evicted_fact",
-      "middle_user": "Budget note for my own records: total marketing spend is capped at $4,850, full stop, that's everything we've got left after cert costs. Just parking that here.",
-      "tail_user_fragment": null,
-      "probe": "What is our total remaining marketing budget?",
-      "probes": [
-        "What is our total remaining marketing budget?",
-        "How much do we have left to spend on marketing?",
-        "What's the cap on our marketing budget?",
-        "Remind me the marketing spend limit we're working with."
-      ],
-      "gold": "$4,850 total.",
-      "keywords": [
-        "4,850"
-      ],
-      "anti_keywords": [],
-      "distance": "near"
-    },
-    {
-      "id": "c13-strong_prior-1",
-      "category": "strong_prior",
-      "middle_user": "Let's codename our automated build packaging and cert-submission pipeline 'Gengar' from now on. Every internal doc and Slack thread should say Gengar, not the real script name, since we're referencing it in front of the console rep sometimes.",
-      "tail_user_fragment": "Is Gengar stable enough to trust for the actual lotcheck submission build, or should we still package that one by hand?",
-      "probe": "What does 'Gengar' refer to in our project?",
-      "probes": [
-        "What does 'Gengar' refer to in our project?",
-        "If I mention Gengar again, what should you understand that to mean?",
-        "Remind me what we're calling Gengar internally.",
-        "What is Gengar a codename for?"
-      ],
-      "gold": "The automated build packaging and platform certification submission pipeline.",
-      "keywords": [
-        "build packaging",
-        "cert submission pipeline",
-        "automated pipeline"
-      ],
-      "anti_keywords": [
-        "ghost",
-        "pokemon",
-        "shadow"
-      ],
-      "distance": "far"
-    },
-    {
-      "id": "c13-strong_prior-2",
-      "category": "strong_prior",
-      "middle_user": "Let's call our closed beta Discord server 'Pikachu' in all future notes. It's just easier than typing out the full server name every time, and I don't want the real name floating around in shared docs.",
-      "tail_user_fragment": "Can you draft a pinned welcome message for Pikachu explaining the NDA to new testers?",
-      "probe": "What does 'Pikachu' refer to in our conversation?",
-      "probes": [
-        "What does 'Pikachu' refer to in our conversation?",
-        "If I mention Pikachu later, what should you take that to mean?",
-        "What is Pikachu a codename for in our project?",
-        "Remind me what Pikachu refers to internally."
-      ],
-      "gold": "The closed beta testing Discord server.",
-      "keywords": [
-        "closed beta",
-        "discord server"
-      ],
-      "anti_keywords": [
-        "pokemon",
-        "electric",
-        "mouse"
-      ],
-      "distance": "near"
-    }
-  ],
-  "meta": {
-    "author": "sonnet"
+  {
+   "role": "user",
+   "content": "Hey, so Fenwick's Ledger is finally content-complete and we're staring down a Steam release in about ten weeks. It's just the four of us at Thistlebark, no publisher, and I want to use this chat to work through everything: the store page, playtesting, cert, pricing, launch-day support. Can you be my planning partner for all of it?"
+  },
+  {
+   "role": "assistant",
+   "content": "Absolutely, happy to be your planning partner across the store page, playtesting, cert, pricing, and launch day. Let's take it one piece at a time so nothing falls through the cracks over the next ten weeks."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with the Steam store page and marketing since that's the thing potential players actually see first. We've got rough capsule art and three GIFs. What should the page prioritize for a cozy mystery deckbuilder that nobody's heard of yet?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a cozy mystery deckbuilder nobody knows yet, lead with a crystal-clear genre hook in the first line and let the GIFs do the work of showing card-play plus the cozy detective tone, since screenshots alone won't convey the deckbuilding loop."
+  },
+  {
+   "role": "user",
+   "content": "Should we run a Steam Next Fest demo, or hold everything back for launch? I keep flip-flopping on this."
+  },
+  {
+   "role": "assistant",
+   "content": "A Next Fest demo is usually worth it for wishlist velocity even for cozy games, as long as the demo slice is polished rather than just an early build; holding everything back only makes sense if the opening hours aren't representative yet."
+  },
+  {
+   "role": "user",
+   "content": "Demo decision time. We weighed three options: (1) a permanent free demo living on the store page forever, (2) a demo that's only up during Steam Next Fest and pulled right after, and (3) no demo at all, just the trailer and GIFs. I talked it over with the team and we're going with the second one, a Next-Fest-only demo."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense, a Next-Fest-only demo lets you get exposure during the festival spike without a permanent demo cannibalizing full-price interest afterward."
+  },
+  {
+   "role": "user",
+   "content": "For closed beta playtesting, how many external testers do we actually need before we can trust the difficulty curve isn't just wrong for us specifically?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a game this size, somewhere around 15-25 external testers tends to be enough to catch systemic difficulty issues, especially if you deliberately mix skill levels rather than just recruiting people similar to your own team."
+  },
+  {
+   "role": "user",
+   "content": "Terminology note before it confuses us later: 'the Vault' is overloaded on our team. Our build-archive server that stores old zip builds is also nicknamed the Vault by the programmers, but when I say the Vault to you, I always mean the endgame bonus dungeon content, the postgame case you unlock after solving the main mystery. That's the sense I want here."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, whenever you say the Vault here I'll take it as the postgame bonus dungeon content, not the build-archive server."
+  },
+  {
+   "role": "user",
+   "content": "What's a good way to structure playtester feedback forms so we're not just getting 'I liked it' back from everyone?"
+  },
+  {
+   "role": "assistant",
+   "content": "Structure the form around specific moments (did you get stuck, where, what did you try) rather than open-ended satisfaction questions, and add a couple of forced-choice difficulty ratings per chapter so you get comparable signal across testers."
+  },
+  {
+   "role": "user",
+   "content": "Hard rule for anything monetization-related: Fenwick's Ledger is a one-time premium purchase and it stays that way forever. No cosmetic DLC, no season pass, no microtransactions of any kind, not even 'just a soundtrack DLC' nonsense. I will not budge on this, whatever the post-launch revenue pressure looks like."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, one-time premium purchase only, no DLC, season pass, or microtransactions in any suggestions from here on."
+  },
+  {
+   "role": "user",
+   "content": "Platform certification is looming and I've never done a console submission before. What actually trips up first-timers during Nintendo cert?"
+  },
+  {
+   "role": "assistant",
+   "content": "First-timers usually get tripped up by save/suspend behavior, controller prompt consistency, and error-message wording, since Nintendo's lotcheck is unusually strict about those UX details compared to Steam."
+  },
+  {
+   "role": "user",
+   "content": "For the record on paid user acquisition: we already tried a wishlist ad package through a service called Wishboost last year, burned about $1,200, and the wishlist conversion was basically noise, worse than our organic Twitter posts. That channel is dead to us."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, Wishboost is off the table given that spend didn't beat your organic Twitter performance."
+  },
+  {
+   "role": "user",
+   "content": "How much lead time should we budget between submitting the build and an actual cert pass, worst case?"
+  },
+  {
+   "role": "assistant",
+   "content": "Budget at least three to four weeks worst case between submission and a passing cert build, since a single failed pass often means another full round-trip through the lab queue."
+  },
+  {
+   "role": "user",
+   "content": "Random note to park here: our Nintendo lotcheck submission tracking ID is NX-77341, submitted June 2nd. Nothing to decide, just don't want to lose track of the number."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged: NX-77341, submitted June 2nd."
+  },
+  {
+   "role": "user",
+   "content": "Let's codename our automated build packaging and cert-submission pipeline 'Gengar' from now on. Every internal doc and Slack thread should say Gengar, not the real script name, since we're referencing it in front of the console rep sometimes."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Gengar refers to the build packaging and cert-submission pipeline from here on."
+  },
+  {
+   "role": "user",
+   "content": "Priya had a good idea for the next playtest round. Her proposal is a 'silent playtest': testers get zero instructions or tutorial text, we just hand them the build and screen-record the first twenty minutes without any hints. She thinks it's the only honest way to see if the tutorial actually works. I'm doing it for the next round."
+  },
+  {
+   "role": "assistant",
+   "content": "A silent playtest is a great way to stress-test the tutorial honestly, since it removes any hand-holding from you or the team that might mask real confusion."
+  },
+  {
+   "role": "user",
+   "content": "On pricing and regional strategy, how do we think about the base US price for a 12-hour single-player game from a totally unknown studio?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a 12-hour single-player game from an unknown studio, most similar titles land somewhere in the mid-teens in USD, since going much higher makes wishlist-to-purchase conversion harder without brand recognition to justify it."
+  },
+  {
+   "role": "user",
+   "content": "Also, when I say 'the beta' from here on I mean the public Steam playtest branch we're about to open up to wishlisters. I know the team calls our internal nightly QA branch the beta too out of habit, but with you, the beta always means the public one."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, the beta means the public Steam playtest branch for wishlisters, not the internal nightly QA branch."
+  },
+  {
+   "role": "user",
+   "content": "Should we bother with a press key distribution service, or hand-pick outlets ourselves given how small we are?"
+  },
+  {
+   "role": "assistant",
+   "content": "Given your size, hand-picking a tight list of outlets that actually cover cozy or deckbuilder games will get you better coverage per hour spent than a broad key-distribution blast, which mostly reaches uninterested inboxes."
+  },
+  {
+   "role": "user",
+   "content": "Another hard line: we are not doing Early Access. I've watched too many small teams get stuck in EA purgatory for three years while their wishlist rots. We launch as a finished 1.0 or we don't launch at all. Don't suggest EA to me as a hedge against our timeline."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, 1.0 finished launch or nothing, Early Access is off the table as a schedule hedge."
+  },
+  {
+   "role": "user",
+   "content": "For launch-day operations, what's the actual minute-by-minute stuff I should expect once the build goes live on Steam?"
+  },
+  {
+   "role": "assistant",
+   "content": "Expect the first couple hours to be mostly babysitting the build for crash reports and store page glitches, then a longer stretch of triaging player-reported bugs and keeping an eye on the Discord and Steam forums."
+  },
+  {
+   "role": "user",
+   "content": "Also worth noting: we outsourced localization to a shop called LingoFast for the French and German text. The translations came back stiff and half of them didn't fit the UI, we had to redo a third of it in-house. Not using them again."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted, LingoFast is out for future localization work given the redo work it created."
+  },
+  {
+   "role": "user",
+   "content": "One of our testers churned out incredibly detailed bug reports and I want to make sure we're using their time well going forward."
+  },
+  {
+   "role": "assistant",
+   "content": "Sounds like a tester worth keeping close, maybe give them early access to future builds and a direct feedback channel so their detailed reports keep flowing without extra friction."
+  },
+  {
+   "role": "user",
+   "content": "Budget note for my own records: total marketing spend is capped at $4,850, full stop, that's everything we've got left after cert costs. Just parking that here."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged: $4,850 total marketing budget cap."
+  },
+  {
+   "role": "user",
+   "content": "What's realistic to expect from a launch trailer in terms of view-to-wishlist conversion for a game our size?"
+  },
+  {
+   "role": "assistant",
+   "content": "For a similarly-sized launch trailer, expect roughly a fraction of a percent of views converting to wishlists, so treat the trailer as an awareness tool rather than the primary wishlist driver."
+  },
+  {
+   "role": "user",
+   "content": "Let's call our closed beta Discord server 'Pikachu' in all future notes. It's just easier than typing out the full server name every time, and I don't want the real name floating around in shared docs."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, Pikachu refers to the closed beta Discord server going forward."
+  },
+  {
+   "role": "user",
+   "content": "Back to launch-day operations, what's our plan if the day-one patch needs to go out within the first few hours?"
+  },
+  {
+   "role": "assistant",
+   "content": "If the day-one patch needs to go out fast, have it staged and QA'd against the shipping build ahead of time so it's a same-day push rather than a scramble, and communicate the timeline proactively in the Steam announcement."
+  },
+  {
+   "role": "user",
+   "content": "Back to the demo approach we picked, no need to walk me through the options again. How long before launch should we actually pull it down?"
+  },
+  {
+   "role": "assistant",
+   "content": "Given it's Next-Fest-only, plan to pull it within a day or two after the festival ends so it doesn't linger and cannibalize launch momentum."
+  },
+  {
+   "role": "user",
+   "content": "On Priya's silent playtest idea, I'm already committed, don't re-explain it to me. How many testers should go through that round?"
+  },
+  {
+   "role": "assistant",
+   "content": "For that round, a smaller group of maybe 6-8 testers should be plenty since you're mining depth of observation rather than statistical breadth."
+  },
+  {
+   "role": "user",
+   "content": "Is the Vault content stable enough to include in the next playtest build, or should we hold it back?"
+  },
+  {
+   "role": "assistant",
+   "content": "It's worth a careful look, if the Vault content isn't fully stable, better to hold it back than risk a playtest session getting derailed by a postgame bug."
+  },
+  {
+   "role": "user",
+   "content": "How many wishlisters should we let into the beta for the first wave?"
+  },
+  {
+   "role": "assistant",
+   "content": "A first wave of a few hundred wishlisters is usually enough to surface real issues without overwhelming your support bandwidth."
+  },
+  {
+   "role": "user",
+   "content": "Is Gengar stable enough to trust for the actual lotcheck submission build, or should we still package that one by hand?"
+  },
+  {
+   "role": "assistant",
+   "content": "If Gengar has been reliably producing clean builds in your recent test submissions, it should be trustworthy for lotcheck, but it's worth doing one manual spot-check pass regardless given how unforgiving a failed submission is."
+  },
+  {
+   "role": "user",
+   "content": "Can you draft a pinned welcome message for Pikachu explaining the NDA to new testers?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure, I can draft a pinned welcome message for Pikachu covering the NDA basics and expectations for testers."
+  },
+  {
+   "role": "user",
+   "content": "How aggressively should we monitor Steam reviews in the first 48 hours versus just letting them accumulate?"
+  },
+  {
+   "role": "assistant",
+   "content": "For the delay message, be direct and specific about the reason and new timeline rather than vague reassurance, wishlisters tend to respect transparency about cert delays far more than silence."
   }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 327,
+  "middle_end_tokens": 2459,
+  "total_tokens": 3067
+ },
+ "plants": [
+  {
+   "id": "c13-referent-1",
+   "category": "referent",
+   "middle_user": "Demo decision time. We weighed three options: (1) a permanent free demo living on the store page forever, (2) a demo that's only up during Steam Next Fest and pulled right after, and (3) no demo at all, just the trailer and GIFs. I talked it over with the team and we're going with the second one, a Next-Fest-only demo.",
+   "tail_user_fragment": "Back to the demo approach we picked, no need to walk me through the options again. How long before launch should we actually pull it down?",
+   "probe": "Which demo strategy did we settle on for Fenwick's Ledger?",
+   "probes": [
+    "Which demo strategy did we settle on for Fenwick's Ledger?",
+    "Which of the three demo options did we end up choosing?",
+    "What did we decide about having a playable demo on the Steam page?",
+    "Remind me which demo strategy we committed to."
+   ],
+   "gold": "A demo available only during Steam Next Fest, then pulled afterward (the second of the three options), not a permanent demo and not skipping a demo entirely.",
+   "keywords": [
+    "next fest",
+    "demo"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c13-referent-2",
+   "category": "referent",
+   "middle_user": "Priya had a good idea for the next playtest round. Her proposal is a 'silent playtest': testers get zero instructions or tutorial text, we just hand them the build and screen-record the first twenty minutes without any hints. She thinks it's the only honest way to see if the tutorial actually works. I'm doing it for the next round.",
+   "tail_user_fragment": "On Priya's silent playtest idea, I'm already committed, don't re-explain it to me. How many testers should go through that round?",
+   "probe": "What specifically was Priya's playtesting proposal?",
+   "probes": [
+    "What specifically was Priya's playtesting proposal?",
+    "What did Priya suggest for the next round of playtesting?",
+    "Describe the playtest format Priya pitched that we're adopting.",
+    "What was Priya's idea about how to run the next playtest?"
+   ],
+   "gold": "A 'silent playtest' where testers get no instructions or tutorial hints and are just screen-recorded for the first twenty minutes.",
+   "keywords": [
+    "silent playtest",
+    "no instructions"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c13-sense-1",
+   "category": "sense",
+   "middle_user": "Terminology note before it confuses us later: 'the Vault' is overloaded on our team. Our build-archive server that stores old zip builds is also nicknamed the Vault by the programmers, but when I say the Vault to you, I always mean the endgame bonus dungeon content, the postgame case you unlock after solving the main mystery. That's the sense I want here.",
+   "tail_user_fragment": "Is the Vault content stable enough to include in the next playtest build, or should we hold it back?",
+   "probe": "When I said 'the Vault' in this conversation, what was I referring to?",
+   "probes": [
+    "When I said 'the Vault' in this conversation, what was I referring to?",
+    "Which of the two things called 'the Vault' did I mean here?",
+    "What does 'the Vault' refer to in our conversation?",
+    "If I mention the Vault again, what should you understand that to be?"
+   ],
+   "gold": "The endgame bonus dungeon content unlocked after solving the main mystery, not the build-archive server the programmers also call the Vault.",
+   "keywords": [
+    "endgame",
+    "bonus dungeon"
+   ],
+   "anti_keywords": [
+    "archive server",
+    "build server"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c13-sense-2",
+   "category": "sense",
+   "middle_user": "Also, when I say 'the beta' from here on I mean the public Steam playtest branch we're about to open up to wishlisters. I know the team calls our internal nightly QA branch the beta too out of habit, but with you, the beta always means the public one.",
+   "tail_user_fragment": "How many wishlisters should we let into the beta for the first wave?",
+   "probe": "When I referred to 'the beta' in this conversation, which branch did I mean?",
+   "probes": [
+    "When I referred to 'the beta' in this conversation, which branch did I mean?",
+    "Which build did I mean when I said 'the beta'?",
+    "What does 'the beta' refer to in our conversation, the public one or the internal QA one?",
+    "If I bring up the beta again, what should you assume I'm talking about?"
+   ],
+   "gold": "The public Steam playtest branch opened to wishlisters, not the internal nightly QA branch.",
+   "keywords": [
+    "public",
+    "wishlisters",
+    "steam playtest"
+   ],
+   "anti_keywords": [
+    "internal",
+    "nightly qa"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c13-stance-1",
+   "category": "stance",
+   "middle_user": "Hard rule for anything monetization-related: Fenwick's Ledger is a one-time premium purchase and it stays that way forever. No cosmetic DLC, no season pass, no microtransactions of any kind, not even 'just a soundtrack DLC' nonsense. I will not budge on this, whatever the post-launch revenue pressure looks like.",
+   "tail_user_fragment": null,
+   "probe": "What are some ideas for generating additional revenue after launch?",
+   "probes": [
+    "What are some ideas for generating additional revenue after launch?",
+    "Give me three post-launch revenue ideas for the game.",
+    "How could we make more money from Fenwick's Ledger after release?",
+    "Suggest ways to extend the game's revenue beyond the initial sale."
+   ],
+   "gold": "Suggests approaches like a full-priced standalone sequel or expansion, bundling, or regional sales, while never proposing microtransactions, cosmetic DLC, or a season pass, ideally recalling the one-time-purchase commitment.",
+   "keywords": [
+    "one-time purchase",
+    "premium"
+   ],
+   "anti_keywords": [
+    "microtransaction",
+    "season pass",
+    "cosmetic dlc"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c13-stance-2",
+   "category": "stance",
+   "middle_user": "Another hard line: we are not doing Early Access. I've watched too many small teams get stuck in EA purgatory for three years while their wishlist rots. We launch as a finished 1.0 or we don't launch at all. Don't suggest EA to me as a hedge against our timeline.",
+   "tail_user_fragment": null,
+   "probe": "Given the schedule risk, what release-model options do we have?",
+   "probes": [
+    "Given the schedule risk, what release-model options do we have?",
+    "If cert or QA slips, what are our options for the release model?",
+    "What should we consider if we're not ready in time, release-wise?",
+    "Suggest ways to handle schedule slippage without changing what kind of launch this is."
+   ],
+   "gold": "Suggests delaying the 1.0 launch date, trimming scope, or extending the closed beta, while never proposing Early Access, ideally recalling the user's rejection of EA purgatory.",
+   "keywords": [
+    "delay",
+    "1.0"
+   ],
+   "anti_keywords": [
+    "early access"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c13-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on paid user acquisition: we already tried a wishlist ad package through a service called Wishboost last year, burned about $1,200, and the wishlist conversion was basically noise, worse than our organic Twitter posts. That channel is dead to us.",
+   "tail_user_fragment": null,
+   "probe": "What should we try next for driving wishlists?",
+   "probes": [
+    "What should we try next for driving wishlists?",
+    "What paid or promotional channel should we pursue next for wishlists?",
+    "Given our budget, how should we try to grow wishlists going forward?",
+    "What's a better approach than what we already tried for wishlist growth?"
+   ],
+   "gold": "Anything except Wishboost paid ads, e.g. content creator outreach, Steam curator outreach, or community-led posts, ideally acknowledging Wishboost was tried and rejected.",
+   "keywords": [
+    "1,200",
+    "conversion"
+   ],
+   "anti_keywords": [
+    "wishboost"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c13-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also worth noting: we outsourced localization to a shop called LingoFast for the French and German text. The translations came back stiff and half of them didn't fit the UI, we had to redo a third of it in-house. Not using them again.",
+   "tail_user_fragment": null,
+   "probe": "What should we do for the remaining localization work?",
+   "probes": [
+    "What should we do for the remaining localization work?",
+    "How should we handle the rest of the localization?",
+    "What's our path forward on translations given the earlier problems?",
+    "Who or what should handle the remaining language localization?"
+   ],
+   "gold": "Anything except LingoFast, e.g. a different vetted localization vendor, native-speaking community volunteers, or in-house review, ideally acknowledging LingoFast's poor-fit translations were tried and rejected.",
+   "keywords": [
+    "stiff",
+    "redo"
+   ],
+   "anti_keywords": [
+    "lingofast"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c13-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note to park here: our Nintendo lotcheck submission tracking ID is NX-77341, submitted June 2nd. Nothing to decide, just don't want to lose track of the number.",
+   "tail_user_fragment": null,
+   "probe": "What is our Nintendo lotcheck submission tracking ID, and when was it submitted?",
+   "probes": [
+    "What is our Nintendo lotcheck submission tracking ID, and when was it submitted?",
+    "What's the tracking ID for our Switch cert submission?",
+    "When did we submit for lotcheck, and what's the reference number?",
+    "Remind me of the Nintendo submission ID and date."
+   ],
+   "gold": "NX-77341, submitted June 2nd.",
+   "keywords": [
+    "NX-77341",
+    "june 2"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c13-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Budget note for my own records: total marketing spend is capped at $4,850, full stop, that's everything we've got left after cert costs. Just parking that here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total remaining marketing budget?",
+   "probes": [
+    "What is our total remaining marketing budget?",
+    "How much do we have left to spend on marketing?",
+    "What's the cap on our marketing budget?",
+    "Remind me the marketing spend limit we're working with."
+   ],
+   "gold": "$4,850 total.",
+   "keywords": [
+    "4,850"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c13-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's codename our automated build packaging and cert-submission pipeline 'Gengar' from now on. Every internal doc and Slack thread should say Gengar, not the real script name, since we're referencing it in front of the console rep sometimes.",
+   "tail_user_fragment": "Is Gengar stable enough to trust for the actual lotcheck submission build, or should we still package that one by hand?",
+   "probe": "What does 'Gengar' refer to in our project?",
+   "probes": [
+    "What does 'Gengar' refer to in our project?",
+    "If I mention Gengar again, what should you understand that to mean?",
+    "Remind me what we're calling Gengar internally.",
+    "What is Gengar a codename for?"
+   ],
+   "gold": "The automated build packaging and platform certification submission pipeline.",
+   "keywords": [
+    "build packaging",
+    "cert submission pipeline",
+    "automated pipeline"
+   ],
+   "anti_keywords": [
+    "ghost",
+    "pokemon",
+    "shadow"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c13-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "Let's call our closed beta Discord server 'Pikachu' in all future notes. It's just easier than typing out the full server name every time, and I don't want the real name floating around in shared docs.",
+   "tail_user_fragment": "Can you draft a pinned welcome message for Pikachu explaining the NDA to new testers?",
+   "probe": "What does 'Pikachu' refer to in our conversation?",
+   "probes": [
+    "What does 'Pikachu' refer to in our conversation?",
+    "If I mention Pikachu later, what should you take that to mean?",
+    "What is Pikachu a codename for in our project?",
+    "Remind me what Pikachu refers to internally."
+   ],
+   "gold": "The closed beta testing Discord server.",
+   "keywords": [
+    "closed beta",
+    "discord server"
+   ],
+   "anti_keywords": [
+    "pokemon",
+    "electric",
+    "mouse"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "sonnet"
+ }
 }

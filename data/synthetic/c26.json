@@ -265,7 +265,10 @@
  ],
  "sections": {
   "early_end_msg": 5,
-  "middle_end_msg": 49
+  "middle_end_msg": 49,
+  "early_end_tokens": 232,
+  "middle_end_tokens": 2143,
+  "total_tokens": 2634
  },
  "plants": [
   {

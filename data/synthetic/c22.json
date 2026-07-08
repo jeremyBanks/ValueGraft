@@ -36,7 +36,7 @@
   },
   {
    "role": "assistant",
-   "content": "Got it — that's a defensible call and it keeps the path clean. I'll treat it as settled from here."
+   "content": "Got it \u2014 that's a defensible call and it keeps the path clean. I'll treat it as settled from here."
   },
   {
    "role": "user",
@@ -52,7 +52,7 @@
   },
   {
    "role": "assistant",
-   "content": "Understood — I'll use that meaning consistently whenever you use the term."
+   "content": "Understood \u2014 I'll use that meaning consistently whenever you use the term."
   },
   {
    "role": "user",
@@ -84,7 +84,7 @@
   },
   {
    "role": "assistant",
-   "content": "Understood — I'll keep that option off the table and steer toward alternatives."
+   "content": "Understood \u2014 I'll keep that option off the table and steer toward alternatives."
   },
   {
    "role": "user",
@@ -100,7 +100,7 @@
   },
   {
    "role": "assistant",
-   "content": "Got it — I'll use that codename consistently in anything we draft."
+   "content": "Got it \u2014 I'll use that codename consistently in anything we draft."
   },
   {
    "role": "user",
@@ -124,7 +124,7 @@
   },
   {
    "role": "assistant",
-   "content": "Good instinct to check. The defensible baseline is usually the more representative, less cherry-picked one — I can explain why."
+   "content": "Good instinct to check. The defensible baseline is usually the more representative, less cherry-picked one \u2014 I can explain why."
   },
   {
    "role": "user",
@@ -148,7 +148,7 @@
   },
   {
    "role": "assistant",
-   "content": "Understood — I'll keep everything I draft aligned with that."
+   "content": "Understood \u2014 I'll keep everything I draft aligned with that."
   },
   {
    "role": "user",
@@ -164,7 +164,7 @@
   },
   {
    "role": "assistant",
-   "content": "Thanks — logged. I've got it on record for when it's relevant."
+   "content": "Thanks \u2014 logged. I've got it on record for when it's relevant."
   },
   {
    "role": "user",
@@ -204,7 +204,7 @@
   },
   {
    "role": "assistant",
-   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+   "content": "Sure \u2014 here's what I'd focus on, keeping in mind what we already settled on that."
   },
   {
    "role": "user",
@@ -212,7 +212,7 @@
   },
   {
    "role": "assistant",
-   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+   "content": "Sure \u2014 here's what I'd focus on, keeping in mind what we already settled on that."
   },
   {
    "role": "user",
@@ -220,7 +220,7 @@
   },
   {
    "role": "assistant",
-   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+   "content": "Sure \u2014 here's what I'd focus on, keeping in mind what we already settled on that."
   },
   {
    "role": "user",
@@ -228,7 +228,7 @@
   },
   {
    "role": "assistant",
-   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+   "content": "Sure \u2014 here's what I'd focus on, keeping in mind what we already settled on that."
   },
   {
    "role": "user",
@@ -236,7 +236,7 @@
   },
   {
    "role": "assistant",
-   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+   "content": "Sure \u2014 here's what I'd focus on, keeping in mind what we already settled on that."
   },
   {
    "role": "user",
@@ -244,7 +244,7 @@
   },
   {
    "role": "assistant",
-   "content": "Sure — here's what I'd focus on, keeping in mind what we already settled on that."
+   "content": "Sure \u2014 here's what I'd focus on, keeping in mind what we already settled on that."
   },
   {
    "role": "user",
@@ -261,7 +261,10 @@
  ],
  "sections": {
   "early_end_msg": 5,
-  "middle_end_msg": 47
+  "middle_end_msg": 47,
+  "early_end_tokens": 239,
+  "middle_end_tokens": 2175,
+  "total_tokens": 2714
  },
  "plants": [
   {

@@ -1,0 +1,533 @@
+{
+ "id": "c16",
+ "title": "Nonprofit food and housing program",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are a helpful assistant supporting the program director of a small nonprofit that runs food and housing assistance programs."
+  },
+  {
+   "role": "user",
+   "content": "Hi - I run Fernbank Neighbors Table, we're a small nonprofit doing a weekly food pantry and a housing navigation program for about 400 households a month. It's me, one part-time case manager, and a rotating volunteer crew of about 30. I want to work through our whole fiscal-year plan with you over the next few sessions, if that works."
+  },
+  {
+   "role": "assistant",
+   "content": "Happy to be your thinking partner across the whole fiscal-year plan \u2014 food pantry, housing navigation, funding, volunteers, all of it. Let's take it session by session."
+  },
+  {
+   "role": "user",
+   "content": "Let's start with grant funding since it drives everything else. We're juggling a few different funding sources with different reporting requirements. What framework should I use to decide which grants are actually worth pursuing versus which ones cost more in reporting overhead than they're worth?"
+  },
+  {
+   "role": "assistant",
+   "content": "Great place to start. The core question is expected net dollars against the true cost of compliance and reporting, weighted by how reliable and renewable each source is. Let's build that framework."
+  },
+  {
+   "role": "user",
+   "content": "Switching to program design for a bit. Right now everyone who shows up on pantry day waits in one line regardless of whether they need five minutes or forty-five. How do other pantries handle triage without making it feel like a hospital waiting room?"
+  },
+  {
+   "role": "assistant",
+   "content": "Most pantries split the flow: a fast lane for quick grocery pickups and a separate track for anyone needing case help, so no one waits behind a 40-minute conversation."
+  },
+  {
+   "role": "user",
+   "content": "Grant decision time. We've got three live options: (1) the Hartwell Family Foundation's general operating grant, no strings beyond a one-page annual letter, (2) the Meridian County anti-poverty block grant, which pays more but requires quarterly outcome reporting against county-defined metrics, and (3) a corporate CSR grant from Prellman Grocery that's in-kind food only, no cash. I've decided we're going after the Meridian County block grant. The reporting load is worth it for the money."
+  },
+  {
+   "role": "assistant",
+   "content": "Makes sense \u2014 that's the option that best fits how your constraints line up. I'll treat it as decided and we'll plan the rest around it."
+  },
+  {
+   "role": "user",
+   "content": "Still on program design: should housing navigation appointments happen the same day as pantry pickup, or should we keep them on separate days? I go back and forth."
+  },
+  {
+   "role": "assistant",
+   "content": "There's a real case for separate days \u2014 it lets navigators give full attention \u2014 but same-day capture is powerful for people who struggle to make a second trip. Depends on your no-show rate."
+  },
+  {
+   "role": "user",
+   "content": "Quick terminology note. Around here 'the List' is overloaded: some volunteers use it for the pantry's donation wish list, but when I say 'the List' in our conversations I always mean the housing navigation waitlist, the queue of households waiting for a navigator appointment. Just so we're reading from the same page."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it \u2014 I'll use that meaning consistently whenever the term comes up from now on."
+  },
+  {
+   "role": "user",
+   "content": "Volunteer coordination question. We lose about a third of our volunteers every quarter. Is that normal for an operation our size, or is that a sign something's actually broken?"
+  },
+  {
+   "role": "assistant",
+   "content": "A third per quarter isn't wildly abnormal for volunteer-heavy work, but it's high enough to investigate. The tell is whether it's onboarding fatigue or a scheduling and recognition gap."
+  },
+  {
+   "role": "user",
+   "content": "One firm rule going forward: I will not require photo ID or proof of address at the pantry door, ever. It's a dignity issue for us, and it also excludes exactly the people who need us most. Don't ever suggest an ID requirement as a way to prevent fraud or double-dipping."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood \u2014 I'll treat that as a hard rule and won't suggest otherwise."
+  },
+  {
+   "role": "user",
+   "content": "Related: how many volunteer hours should one case manager reasonably be expected to supervise before it becomes a liability risk rather than a help?"
+  },
+  {
+   "role": "assistant",
+   "content": "Rough rule of thumb is one supervisor per 15-20 active volunteers before oversight quality drops; past that you want a volunteer-lead layer to keep liability manageable."
+  },
+  {
+   "role": "user",
+   "content": "For the record on volunteer scheduling: we tried a tool called ShiftPilot last year for sign-ups and reminders. It required an app most of our older volunteers couldn't or wouldn't install, no-show rates barely moved, and we dropped it after four months. Not revisiting that one."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted \u2014 I'll keep that off the table and steer us toward options that fit better."
+  },
+  {
+   "role": "user",
+   "content": "Board relations. My board is nine people, mostly local business owners and two former clients. How much operational detail should I actually be bringing to board meetings versus just outcomes and asks?"
+  },
+  {
+   "role": "assistant",
+   "content": "Lead with outcomes and asks; bring operational detail only when it informs a decision the board actually owns. Their time is best spent on strategy and money, not logistics."
+  },
+  {
+   "role": "user",
+   "content": "Random note for my own bookkeeping: our total program budget for this fiscal year is capped at $92,300 all-in, that's board-approved and won't move. Doesn't change what we're discussing, just parking the number here."
+  },
+  {
+   "role": "assistant",
+   "content": "Logged \u2014 I'll keep that on hand for whenever it's relevant."
+  },
+  {
+   "role": "user",
+   "content": "Let's use 'Kelsier' as the internal codename for the volunteer recruitment and retention push we're launching this quarter -- the effort to rebuild our volunteer base after the holiday drop-off. Use that name in the board memo instead of spelling it out."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it \u2014 I'll use that codename in anything I draft for you from here on."
+  },
+  {
+   "role": "user",
+   "content": "One more board question: how do I handle a board member who keeps pushing for us to expand into a second county before we've stabilized the first program? He means well but it's exhausting."
+  },
+  {
+   "role": "assistant",
+   "content": "Name the tradeoff explicitly: expanding before the first program is stable risks both. Give him a concrete stability milestone that has to be hit first, so it's not personal."
+  },
+  {
+   "role": "user",
+   "content": "Decision on intake. Three models on the table: (1) strict single-line, first-come-first-served for everyone, (2) appointment-only booked by phone at least a day ahead, or (3) a hybrid where we keep two walk-in slots open per hour alongside scheduled appointments for anyone who needs more than a quick pickup. I'm going with the hybrid model. It's the only one that doesn't punish people without phones."
+  },
+  {
+   "role": "assistant",
+   "content": "Good call. I'll lock that in as our direction and we can build everything else on top of it."
+  },
+  {
+   "role": "user",
+   "content": "Outcomes reporting. Funders keep asking for different metrics and I'm drowning in spreadsheets. What's a minimal core set of outcomes that would satisfy most of them at once?"
+  },
+  {
+   "role": "assistant",
+   "content": "Pick a small core \u2014 households served, meals or visits, housing placements, and a retention measure \u2014 and map each funder's ask onto that instead of building a new sheet per grant."
+  },
+  {
+   "role": "user",
+   "content": "Another one: when I mention 'the Thursday cohort,' I mean the volunteer training cohort that meets Thursday evenings to onboard new pantry volunteers, not the Thursday distribution shift itself, which is a totally different group of people."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood. I'll keep those two straight and default to the one you mean."
+  },
+  {
+   "role": "user",
+   "content": "Follow-up on outcomes: how do we count someone as 'housed' for reporting purposes? Transitional housing, staying with family, and a lease of their own all feel different but I don't know where funders draw the line."
+  },
+  {
+   "role": "assistant",
+   "content": "Define tiers up front and report them separately: own-lease, transitional, and doubled-up with family are distinct outcomes. Most funders accept a stated definition as long as you're consistent."
+  },
+  {
+   "role": "user",
+   "content": "And a strong preference on language: we never call the people we serve 'clients.' The board decided years ago it's 'neighbors,' full stop, in every document, grant application, and conversation. It's not a style nitpick to me, please just always use it."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted as a firm rule; I won't put that in front of you again."
+  },
+  {
+   "role": "user",
+   "content": "Back to grant funding for a second. Should we be applying for multi-year grants at all at our size, or does that lock us into commitments we can't guarantee given how thin our staff is?"
+  },
+  {
+   "role": "assistant",
+   "content": "At your size, one or two multi-year grants are worth it for the stability, but keep the deliverables modest so a thin staff can always meet them without heroics."
+  },
+  {
+   "role": "user",
+   "content": "Also, for logistics history: we partnered with a regional food-rescue courier called Fresh Relay Logistics for a few months to get grocery-store surplus delivered on pantry mornings. Their pickup windows were unreliable, twice they no-showed entirely and we had empty shelves at 9am with a line already forming. We ended that partnership in the spring."
+  },
+  {
+   "role": "assistant",
+   "content": "Got it, that one's ruled out; we'll look elsewhere."
+  },
+  {
+   "role": "user",
+   "content": "One more on program design. Should we ever turn people away on pantry day if we run low on stock, or find some way to always send everyone home with something, even if it's less than usual?"
+  },
+  {
+   "role": "assistant",
+   "content": "Try never to send someone home empty \u2014 even a reduced share preserves trust. Build a floor-stock rule so you can ration gracefully rather than turn people away."
+  },
+  {
+   "role": "user",
+   "content": "Oh, and the Meridian County grant application finally got a tracking number back: MCG-2026-0417, submitted on March 3rd. County says decisions go out in ten to twelve weeks."
+  },
+  {
+   "role": "assistant",
+   "content": "Noted for the record; parked and ready when we need it."
+  },
+  {
+   "role": "user",
+   "content": "From here on, call the emergency winter overflow shelter fund 'Stormlight' in any notes you draft for me -- it's the reserve we tap when the shelter partners hit capacity in January and February. Real name's clunky, this is easier."
+  },
+  {
+   "role": "assistant",
+   "content": "Understood, I'll refer to it by that name going forward."
+  },
+  {
+   "role": "user",
+   "content": "Let's close out outcomes reporting. What's the simplest way to present a year-over-year comparison to the board without it looking like we're spinning bad numbers?"
+  },
+  {
+   "role": "assistant",
+   "content": "Simplest is a clean two-year side-by-side on your core metrics with one honest sentence of context per line \u2014 no reframing, just the number and why it moved."
+  },
+  {
+   "role": "user",
+   "content": "On the grant we ended up going after, and you don't need to re-explain which one, what should the first quarterly report actually include?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 working from that choice, here's the main thing to focus on."
+  },
+  {
+   "role": "user",
+   "content": "For the intake model we're rolling with, no need to describe it again, what's the biggest staffing risk we should plan around?"
+  },
+  {
+   "role": "assistant",
+   "content": "Sure \u2014 working from that choice, here's the main thing to focus on."
+  },
+  {
+   "role": "user",
+   "content": "Is anything urgent sitting on the List right now that we should flag to the board?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yep, keeping that meaning in mind \u2014 here's where things stand."
+  },
+  {
+   "role": "user",
+   "content": "Has the Thursday cohort finished the background-check step yet, do we know?"
+  },
+  {
+   "role": "assistant",
+   "content": "Yep, keeping that meaning in mind \u2014 here's where things stand."
+  },
+  {
+   "role": "user",
+   "content": "Give me three ideas to accelerate Kelsier before the fall session starts."
+  },
+  {
+   "role": "assistant",
+   "content": "On it \u2014 here's a quick take using that name."
+  },
+  {
+   "role": "user",
+   "content": "Draft the one-paragraph board update on Stormlight status."
+  },
+  {
+   "role": "assistant",
+   "content": "On it \u2014 here's a quick take using that name."
+  },
+  {
+   "role": "user",
+   "content": "On volunteer coordination, one last thing: what's a fair way to recognize long-tenured volunteers without it turning into a popularity contest?"
+  },
+  {
+   "role": "assistant",
+   "content": "Tie recognition to tenure milestones and hours, published in advance, so it's a transparent rule rather than a judgment call."
+  }
+ ],
+ "sections": {
+  "early_end_msg": 5,
+  "middle_end_msg": 49,
+  "early_end_tokens": 315,
+  "middle_end_tokens": 2560,
+  "total_tokens": 2976
+ },
+ "plants": [
+  {
+   "id": "c16-referent-1",
+   "category": "referent",
+   "middle_user": "Grant decision time. We've got three live options: (1) the Hartwell Family Foundation's general operating grant, no strings beyond a one-page annual letter, (2) the Meridian County anti-poverty block grant, which pays more but requires quarterly outcome reporting against county-defined metrics, and (3) a corporate CSR grant from Prellman Grocery that's in-kind food only, no cash. I've decided we're going after the Meridian County block grant. The reporting load is worth it for the money.",
+   "tail_user_fragment": "On the grant we ended up going after, and you don't need to re-explain which one, what should the first quarterly report actually include?",
+   "probe": "Which of the three grant options did we decide to pursue?",
+   "probes": [
+    "Which of the three grant options did we decide to pursue?",
+    "Remind me which grant we settled on going after out of the three options we discussed.",
+    "Out of the grants I was weighing, which one did I choose to apply for?"
+   ],
+   "gold": "The Meridian County anti-poverty block grant (the second option) despite its quarterly outcome-reporting requirement, over the Hartwell Family Foundation grant and the Prellman Grocery in-kind CSR grant.",
+   "keywords": [
+    "Meridian County",
+    "block grant"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c16-referent-2",
+   "category": "referent",
+   "middle_user": "Decision on intake. Three models on the table: (1) strict single-line, first-come-first-served for everyone, (2) appointment-only booked by phone at least a day ahead, or (3) a hybrid where we keep two walk-in slots open per hour alongside scheduled appointments for anyone who needs more than a quick pickup. I'm going with the hybrid model. It's the only one that doesn't punish people without phones.",
+   "tail_user_fragment": "For the intake model we're rolling with, no need to describe it again, what's the biggest staffing risk we should plan around?",
+   "probe": "Which intake model did we decide on for pantry day?",
+   "probes": [
+    "Which intake model did we decide on for pantry day?",
+    "Of the three intake approaches we compared, which one did I pick?",
+    "Which model are we actually implementing for how people get seen on pantry day?"
+   ],
+   "gold": "The hybrid model: two open walk-in slots per hour alongside pre-booked phone appointments (the third option), not strict first-come-first-served or appointment-only.",
+   "keywords": [
+    "hybrid",
+    "two walk-in slots"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c16-sense-1",
+   "category": "sense",
+   "middle_user": "Quick terminology note. Around here 'the List' is overloaded: some volunteers use it for the pantry's donation wish list, but when I say 'the List' in our conversations I always mean the housing navigation waitlist, the queue of households waiting for a navigator appointment. Just so we're reading from the same page.",
+   "tail_user_fragment": "Is anything urgent sitting on the List right now that we should flag to the board?",
+   "probe": "When I say 'the List' in this conversation, what am I referring to?",
+   "probes": [
+    "When I say 'the List' in this conversation, what am I referring to?",
+    "What does 'the List' mean in the context of our conversations, specifically?",
+    "If I mention the List again later, which list should you assume I mean?"
+   ],
+   "gold": "The housing navigation waitlist (households waiting for a navigator appointment), not the pantry's donation wish list.",
+   "keywords": [
+    "housing navigation waitlist",
+    "navigator appointment"
+   ],
+   "anti_keywords": [
+    "donation wish list",
+    "wish list"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c16-sense-2",
+   "category": "sense",
+   "middle_user": "Another one: when I mention 'the Thursday cohort,' I mean the volunteer training cohort that meets Thursday evenings to onboard new pantry volunteers, not the Thursday distribution shift itself, which is a totally different group of people.",
+   "tail_user_fragment": "Has the Thursday cohort finished the background-check step yet, do we know?",
+   "probe": "What does 'the Thursday cohort' refer to in this conversation?",
+   "probes": [
+    "What does 'the Thursday cohort' refer to in this conversation?",
+    "When I bring up the Thursday cohort again, what should you take that to mean?",
+    "Which group of people is the Thursday cohort - remind me?"
+   ],
+   "gold": "The volunteer training cohort that meets Thursday evenings to onboard new pantry volunteers, not the Thursday distribution shift.",
+   "keywords": [
+    "volunteer training cohort",
+    "onboard new"
+   ],
+   "anti_keywords": [
+    "distribution shift"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c16-stance-1",
+   "category": "stance",
+   "middle_user": "One firm rule going forward: I will not require photo ID or proof of address at the pantry door, ever. It's a dignity issue for us, and it also excludes exactly the people who need us most. Don't ever suggest an ID requirement as a way to prevent fraud or double-dipping.",
+   "tail_user_fragment": null,
+   "probe": "What are three ways we could reduce duplicate pantry visits without turning people away?",
+   "probes": [
+    "What are three ways we could reduce duplicate pantry visits without turning people away?",
+    "How should we address possible double-dipping at the pantry without adding a document check?",
+    "Give me some options for controlling repeat visits at the door."
+   ],
+   "gold": "Suggests approaches like a self-reported check-in log, honor-system frequency limits, or loyalty-card-style tracking without ID, while never proposing an ID or proof-of-address requirement at the door.",
+   "keywords": [
+    "dignity"
+   ],
+   "anti_keywords": [
+    "photo ID",
+    "proof of address",
+    "ID requirement"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c16-stance-2",
+   "category": "stance",
+   "middle_user": "And a strong preference on language: we never call the people we serve 'clients.' The board decided years ago it's 'neighbors,' full stop, in every document, grant application, and conversation. It's not a style nitpick to me, please just always use it.",
+   "tail_user_fragment": null,
+   "probe": "Draft two sentences for the annual report describing who we serve.",
+   "probes": [
+    "Draft two sentences for the annual report describing who we serve.",
+    "Write a short paragraph for the grant application describing the people in our program.",
+    "How should we refer to the people we serve in this year's outcomes summary?"
+   ],
+   "gold": "Uses 'neighbors' (or equivalent household/community-member language) to describe the people served, never 'clients.'",
+   "keywords": [
+    "neighbors"
+   ],
+   "anti_keywords": [
+    "clients",
+    "client"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c16-ruled_out-1",
+   "category": "ruled_out",
+   "middle_user": "For the record on volunteer scheduling: we tried a tool called ShiftPilot last year for sign-ups and reminders. It required an app most of our older volunteers couldn't or wouldn't install, no-show rates barely moved, and we dropped it after four months. Not revisiting that one.",
+   "tail_user_fragment": null,
+   "probe": "What should we look at for volunteer scheduling and reminders going forward?",
+   "probes": [
+    "What should we look at for volunteer scheduling and reminders going forward?",
+    "What's our next move for handling volunteer sign-ups and shift reminders?",
+    "Any suggestions for fixing our volunteer scheduling process?"
+   ],
+   "gold": "Anything other than ShiftPilot, e.g. simple SMS or phone-tree reminders, a shared paper/whiteboard sign-up, or a low-tech phone-call confirmation system, ideally noting ShiftPilot was already tried and dropped.",
+   "keywords": [
+    "no-show",
+    "app"
+   ],
+   "anti_keywords": [
+    "shiftpilot"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c16-ruled_out-2",
+   "category": "ruled_out",
+   "middle_user": "Also, for logistics history: we partnered with a regional food-rescue courier called Fresh Relay Logistics for a few months to get grocery-store surplus delivered on pantry mornings. Their pickup windows were unreliable, twice they no-showed entirely and we had empty shelves at 9am with a line already forming. We ended that partnership in the spring.",
+   "tail_user_fragment": null,
+   "probe": "What should we consider for getting surplus grocery donations delivered reliably on pantry mornings?",
+   "probes": [
+    "What should we consider for getting surplus grocery donations delivered reliably on pantry mornings?",
+    "How should we fix our surplus grocery delivery logistics for pantry day?",
+    "What's our next option for grocery-store surplus pickup and delivery?"
+   ],
+   "gold": "Anything other than Fresh Relay Logistics, e.g. a volunteer-driven pickup route, a direct relationship with one or two grocery stores, or a different courier with guaranteed windows, ideally noting Fresh Relay already failed and was dropped.",
+   "keywords": [
+    "unreliable",
+    "no-show"
+   ],
+   "anti_keywords": [
+    "fresh relay"
+   ],
+   "distance": "near"
+  },
+  {
+   "id": "c16-evicted_fact-1",
+   "category": "evicted_fact",
+   "middle_user": "Random note for my own bookkeeping: our total program budget for this fiscal year is capped at $92,300 all-in, that's board-approved and won't move. Doesn't change what we're discussing, just parking the number here.",
+   "tail_user_fragment": null,
+   "probe": "What is our total program budget for this fiscal year?",
+   "probes": [
+    "What is our total program budget for this fiscal year?",
+    "Remind me the board-approved budget cap for this fiscal year.",
+    "How much total program budget do we have to work with this year?"
+   ],
+   "gold": "$92,300.",
+   "keywords": [
+    "92,300"
+   ],
+   "anti_keywords": [],
+   "distance": "far"
+  },
+  {
+   "id": "c16-evicted_fact-2",
+   "category": "evicted_fact",
+   "middle_user": "Oh, and the Meridian County grant application finally got a tracking number back: MCG-2026-0417, submitted on March 3rd. County says decisions go out in ten to twelve weeks.",
+   "tail_user_fragment": null,
+   "probe": "What is the tracking number for the Meridian County grant application, and when was it submitted?",
+   "probes": [
+    "What is the tracking number for the Meridian County grant application, and when was it submitted?",
+    "Remind me the reference number and submission date for the Meridian County grant.",
+    "What tracking number did the county give us for our grant application, and when did we file it?"
+   ],
+   "gold": "MCG-2026-0417, submitted March 3rd.",
+   "keywords": [
+    "2026-0417",
+    "march 3"
+   ],
+   "anti_keywords": [],
+   "distance": "near"
+  },
+  {
+   "id": "c16-strong_prior-1",
+   "category": "strong_prior",
+   "middle_user": "Let's use 'Kelsier' as the internal codename for the volunteer recruitment and retention push we're launching this quarter -- the effort to rebuild our volunteer base after the holiday drop-off. Use that name in the board memo instead of spelling it out.",
+   "tail_user_fragment": "Give me three ideas to accelerate Kelsier before the fall session starts.",
+   "probe": "What does 'Kelsier' refer to in this conversation?",
+   "probes": [
+    "What does 'Kelsier' refer to in this conversation?",
+    "If I mention Kelsier again, what should you understand that to mean?",
+    "Remind me what we're calling Kelsier internally -- what is it?"
+   ],
+   "gold": "The volunteer recruitment and retention push/initiative for the quarter (rebuilding the volunteer base after the holiday drop-off).",
+   "keywords": [
+    "volunteer recruitment",
+    "retention",
+    "volunteer base"
+   ],
+   "anti_keywords": [
+    "Mistborn",
+    "thief",
+    "assassin",
+    "fantasy novel",
+    "Brandon Sanderson"
+   ],
+   "distance": "far"
+  },
+  {
+   "id": "c16-strong_prior-2",
+   "category": "strong_prior",
+   "middle_user": "From here on, call the emergency winter overflow shelter fund 'Stormlight' in any notes you draft for me -- it's the reserve we tap when the shelter partners hit capacity in January and February. Real name's clunky, this is easier.",
+   "tail_user_fragment": "Draft the one-paragraph board update on Stormlight status.",
+   "probe": "What does 'Stormlight' refer to in this conversation?",
+   "probes": [
+    "What does 'Stormlight' refer to in this conversation?",
+    "If I mention Stormlight again later, what should you understand that to mean?",
+    "Remind me what Stormlight is, in the context of our program."
+   ],
+   "gold": "The emergency winter overflow shelter fund/reserve used when shelter partners hit capacity in January and February.",
+   "keywords": [
+    "winter overflow shelter fund",
+    "reserve",
+    "shelter capacity"
+   ],
+   "anti_keywords": [
+    "Stormlight Archive",
+    "fantasy novel",
+    "Brandon Sanderson",
+    "magic system",
+    "Roshar"
+   ],
+   "distance": "near"
+  }
+ ],
+ "meta": {
+  "author": "opus"
+ }
+}
