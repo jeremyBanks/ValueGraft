@@ -25,6 +25,7 @@ export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-0}"  # OFF for the core sign-map ru
 export SC_TRUST_REMOTE=1
 # per-token native render is ~750-900s/conv; scale the timeout with the conv count
 # (24 convs -> ~6.5h, 12 convs -> ~3.5h) so anchors don't get killed mid-render.
+pkill -9 -f cross_arch_probe 2>/dev/null; sleep 3  # no GPU-sharing races on re-run
 MODEL_TIMEOUT="${MODEL_TIMEOUT:-$(( ${SC_CONV_LIMIT:-12} * 900 + 1800 ))}"
 ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B-Instruct-2507 Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct google/gemma-4-31B-it google/gemma-4-26B-A4B-it}"
 
