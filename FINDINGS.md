@@ -352,3 +352,20 @@ NEXT: (1) recompute paper table on robust metrics (both runs, side by side, no G
 (2) T1 fixed-summary 2-run determinism floor; (3) T2 N=5 → mean±CI; (4) cross-arch
 uses raw E−B not mean-ratio. Effect-bound probe uses a DIFFERENT teacher-forcing
 (raw E−B negative there) — retire it, trust gap_closure_cat.
+
+## PRIMARY EFFECT with proper CONFIDENCE (bootstrap CIs over probes, raw E-B, live/5.13) — 07-07
+Apparatus is DETERMINISTIC within-env (live1==live2 exact) → confidence = bootstrap
+over the PROBE SAMPLE (n=21-24/cat), N=10000:
+- referent: +0.125 CI[+0.030,+0.218] EXCLUDES 0 → REAL significant effect. 71% helped.
+- sense:    +0.047 CI[−0.038,+0.131] SPANS 0 → suggestive but UNDERPOWERED (n=22).
+- stance:   +0.002 CI[−0.036,+0.049] SPANS 0 → genuinely NULL (as claimed).
+HONEST: effect REAL for referent (significant), suggestive-underpowered for sense
+(logprob metric; judged +12pp carries it), null for stance. The clean "sense+referent
+recovered" dissociation is MORE NUANCED on the logprob metric than the paper implies —
+only referent is significant there. n=21-24/cat is TOO SMALL for tight CIs = the real
+limitation, FIXABLE by more probes.
+STANDARD METRIC GOING FORWARD: raw E-B (bounded) + %-helped + bootstrap 95% CI over
+probes. Never bare mean-ratio. The JUDGED +12pp is now load-bearing for sense →
+needs its own bootstrap CIs (next audit).
+EXTENDED PLAN now has statistical PURPOSE: more probes/scenarios to POWER the effect
+(esp. sense), CIs throughout. Cross-arch, champion-tune, judged-audit all on this footing.
