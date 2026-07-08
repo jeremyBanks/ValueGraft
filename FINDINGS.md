@@ -460,3 +460,35 @@ CAVEAT: new convs c13+ show WEAKER referent (+0.009 ~null), sense +0.083, stance
 the doubled corpus DILUTES rather than strengthens on referent. Checking pre_graft_gap (A-B)
 on new convs to decide: small gap = effect-tracks-damage (fine); large unrecovered gap =
 new convs are lower-quality rendering (fix before wide).
+
+## ⚠️ NATIVENESS CONFOUND (Fable, 07-08) — potentially paper-fatal, test BEFORE wide spend
+Fable's general read caught a confound one level up from the wrong-model: the +0.1246 positive
+control on c01-c12 may be reliable BECAUSE the original corpus was generated IN-CONTEXT by a
+Qwen-family model (old MLX pipeline = Qwen3-4B). So c01-c12 is NATIVE to Qwen, FOREIGN to
+everyone else — the SAME condition that killed the new convs (foreign replies -> under-recover).
+IF SO: +0.1246 is a Qwen-native artifact, and on a fixed shared corpus the cross-arch "SIGN"
+would track PER-MODEL NATIVENESS, not attention geometry -> a gorgeous sign-map that's really a
+NATIVENESS map. Same ghost class as the wrong-model, one level up.
+DECISIVE PRE-SPEND TEST: run the c01-c12 referent positive control on ONE non-Qwen arch
+(Mistral/Llama). If raw_EB COLLAPSES there like the new convs did -> nativeness dominates ->
+redesign before spending on 16. One model, existing corpus, hours not days.
+MECHANISM REFINEMENT: my "foreign write-side" hypothesis is the WEAKER half; the DOMINANT term
+is likely the TARGET side — E's continuation is ALSO foreign, and the graft has no reason to
+raise the probability of text the model wouldn't produce. Also can't yet exclude: the 1.12 new-conv
+A-B gap is generic distributional surprise (foreign text lower-prob), NOT graft-shaped continuity.
+CHEAP DISTINGUISHERS (data in hand): (1) nativeness regression — score each conv by mean per-token
+logprob of its assistant replies under the test model, regress raw_EB on it; (2) dissociation
+decomposition — does the new-conv A-B gap have the referent>sense>stance signature? if flat, it's a
+different non-graftable gap.
+OTHER RED FLAGS (Fable): per-arch value-graft INDEX ALIGNMENT must be re-verified PER MODEL (differs
+by tokenizer/arch; silent misalignment = plausible garbage — what crashed before). NOISE FLOOR:
+stance +0.002, new +0.009 -> sign resolution near zero is marginal at n=12; a sign inside the noise
+band isn't a sign (need per-conv bootstrap CIs). Attention-geometry predictor must be computed
+INDEPENDENTLY of the outcome (pre-register) or it's post-hoc fitting.
+PATH (Fable): run wide on reliable c01-c12 BUT gate on (i) the one non-Qwen nativeness control +
+(ii) the ~free nativeness/dissociation analysis FIRST. REJECT re-rendering the corpus per-model
+(16 native corpora = new confound). If nativeness dominates, the honest strong paper is the
+mechanism + dissociation + the SCOPE CONDITION itself (recovery needs self-native context).
+STRONGEST PAPER (Fable): "A model's own write-time value vectors can be re-injected to recover
+evicted semantic continuity — specifically referent binding — but only for on-distribution
+context, and the sign of recovery is predicted by attention geometry across architectures."
