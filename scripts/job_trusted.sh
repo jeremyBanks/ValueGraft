@@ -13,7 +13,7 @@ for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key; do
 done
 python3 -c "import torch,sys; print('cuda',torch.cuda.is_available()); sys.exit(0 if torch.cuda.is_available() else 1)" || exit 1
 python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
-export SC_HF_MODEL="Qwen/Qwen3-30B-A3B"
+export SC_HF_MODEL="Qwen/Qwen3-30B-A3B-Instruct-2507"  # CORRECT non-thinking checkpoint (+0.156 model)
 echo "== running trusted gap_closure_cat (self-gen, difflib) $(date -Is)"
 python3 -u src/gap_closure_cat.py 2>&1 | tee gcc_trusted.log
 echo "== TRUSTED SUMMARY: per-category effect across convs =="
