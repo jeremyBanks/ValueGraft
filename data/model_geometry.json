@@ -1,0 +1,162 @@
+[
+ {
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "L": 48,
+  "H": 32,
+  "KV": 4,
+  "gqa": 8.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 10000000
+ },
+ {
+  "model": "Qwen/Qwen3-32B",
+  "L": 64,
+  "H": 64,
+  "KV": 8,
+  "gqa": 8.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 1000000
+ },
+ {
+  "model": "Qwen/Qwen2.5-32B-Instruct",
+  "L": 64,
+  "H": 40,
+  "KV": 8,
+  "gqa": 5.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 1000000.0
+ },
+ {
+  "model": "google/gemma-4-26B-A4B-it",
+  "L": 30,
+  "H": 16,
+  "KV": 8,
+  "gqa": 2.0,
+  "head_dim": 256,
+  "qk_norm": false,
+  "rope_theta": null
+ },
+ {
+  "model": "google/gemma-4-31B-it",
+  "L": 60,
+  "H": 32,
+  "KV": 16,
+  "gqa": 2.0,
+  "head_dim": 256,
+  "qk_norm": false,
+  "rope_theta": null
+ },
+ {
+  "model": "google/gemma-3-27b-it",
+  "L": 62,
+  "H": 32,
+  "KV": 16,
+  "gqa": 2.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": null
+ },
+ {
+  "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+  "L": 32,
+  "H": 32,
+  "KV": 8,
+  "gqa": 4.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 1000000.0
+ },
+ {
+  "model": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+  "L": 40,
+  "H": 32,
+  "KV": 8,
+  "gqa": 4.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 1000000000.0
+ },
+ {
+  "model": "allenai/OLMo-2-0325-32B-Instruct",
+  "L": 64,
+  "H": 40,
+  "KV": 8,
+  "gqa": 5.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 500000
+ },
+ {
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "L": 40,
+  "H": 16,
+  "KV": 2,
+  "gqa": 8.0,
+  "head_dim": 256,
+  "qk_norm": false,
+  "rope_theta": null
+ },
+ {
+  "model": "Qwen/Qwen3.6-27B",
+  "L": 64,
+  "H": 24,
+  "KV": 4,
+  "gqa": 6.0,
+  "head_dim": 256,
+  "qk_norm": false,
+  "rope_theta": null
+ },
+ {
+  "model": "zai-org/GLM-4-32B-0414",
+  "L": 61,
+  "H": 48,
+  "KV": 2,
+  "gqa": 24.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 10000.0
+ },
+ {
+  "model": "openai/gpt-oss-20b",
+  "L": 24,
+  "H": 64,
+  "KV": 8,
+  "gqa": 8.0,
+  "head_dim": 64,
+  "qk_norm": false,
+  "rope_theta": 150000
+ },
+ {
+  "model": "microsoft/phi-4",
+  "L": 40,
+  "H": 40,
+  "KV": 10,
+  "gqa": 4.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 250000
+ },
+ {
+  "model": "01-ai/Yi-1.5-34B-Chat",
+  "L": 60,
+  "H": 56,
+  "KV": 8,
+  "gqa": 7.0,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 5000000.0
+ },
+ {
+  "model": "nvidia/Llama-3_3-Nemotron-Super-49B-v1_5",
+  "L": 80,
+  "H": 64,
+  "KV": null,
+  "gqa": null,
+  "head_dim": 128,
+  "qk_norm": false,
+  "rope_theta": 500000.0
+ }
+]

@@ -60,3 +60,13 @@ be weaker/less-realistic than the native-per-model primary.
   direction fails after controls.
 - INCONCLUSIVE (report honestly): too many models floored/excluded, or the sign sits inside
   the bootstrap noise band near zero.
+
+## GEOMETRY TABLE + a data-quality note (07-08)
+Gathered data/model_geometry.json for all 16. Reliable varying predictors: GQA ratio (2..24),
+head_dim (64..256), rope_theta (1e4..1e9), n_layers (24..80).
+⚠️ QK-NORM DETECTION IS BROKEN: config-key detection returns False for ALL models, but Qwen3
+family / Gemma-3,4 / OLMo-2 DO use QK-norm. It's an architectural feature, not a reliable config
+flag. MUST detect from the LOADED MODEL's modules (presence of q_norm/k_norm layers) — the harness
+model_hparams.qk_norm has the same bug and must be fixed before qk_norm is used as a predictor.
+Until fixed, do NOT pre-register on qk_norm; either fix detection first, or pre-register on a
+reliably-measured predictor (GQA ratio / head_dim / a composite). Finalize with Fable.
