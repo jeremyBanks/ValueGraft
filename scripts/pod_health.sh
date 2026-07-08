@@ -18,25 +18,16 @@ set -uo pipefail
 cd "$(dirname "$0")/.." 2>/dev/null || cd /Users/jeb/experimentation || exit 1
 K=$HOME/.ssh/id_ed25519_runpod
 STALL_MIN="${STALL_MIN:-8}"
-KEY=$(cat .runpod_key 2>/dev/null)
 
-# 1. live pods + endpoints (per-pod query; list API omits ports)
-PODS=$(uv run python -c "
-import json,urllib.request as u
-k='''$KEY'''.strip()
-try:
-    ids=[p['id'] for p in json.load(u.urlopen(u.Request('https://rest.runpod.io/v1/pods',headers={'Authorization':f'Bearer {k}','User-Agent':'x'})))]
-except Exception as e:
-    print('APIERR',e); raise SystemExit
-for pid in ids:
-    try:
-        d=json.load(u.urlopen(u.Request(f'https://rest.runpod.io/v1/pods/{pid}',headers={'Authorization':f'Bearer {k}','User-Agent':'x'})))
-        rt=d.get('runtime') or {}; ports=rt.get('ports') or []
-        ssh=[x for x in ports if x.get('privatePort')==22]
-        ep=f\"{ssh[0]['ip']}:{ssh[0]['publicPort']}\" if ssh else 'no-ssh'
-        print(pid, ep)
-    except Exception: print(pid,'no-ssh')
-" 2>/dev/null)
+# 1. pods + endpoints from the LAUNCH LOGS (the RunPod API returns blank ports for these
+# pods; the launch logs record the real 'LAUNCHED w<N> at <ip>:<port>' endpoint — reliable).
+SCR=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
+PODS=$(for lg in "$SCR"/launch_w*.log; do
+  [ -f "$lg" ] || continue
+  ep=$(grep -aoE "LAUNCHED w[0-9]+ at [0-9.]+:[0-9]+" "$lg" 2>/dev/null | tail -1 | awk '{print $4}')
+  w=$(grep -aoE "LAUNCHED w[0-9]+" "$lg" 2>/dev/null | tail -1 | sed 's/LAUNCHED //')
+  [ -n "$ep" ] && echo "$w $ep"
+done | sort -u)
 
 [ -z "$PODS" ] && { echo "HEALTH: no pods (or API error)"; exit 0; }
 
