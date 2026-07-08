@@ -901,6 +901,14 @@ NATIVE_TOP_P = 0.8
 # (default on); SC_BATCHED_RENDER=0 falls back to the validated per-token path.
 NATIVE_BATCHED_RENDER_DEFAULT = (
     os.environ.get("SC_BATCHED_RENDER", "1") not in ("0", "false", "False"))
+# MEMORY CAP (07-08): turn-major batching keeps EVERY conv's KV cache alive at
+# once -- on a 30B model that busts an 80GB A100. So decode the model's convs in
+# CHUNKS of SC_NATIVE_BATCH (default 4): each chunk of <=N convs renders fully
+# (its caches freed) before the next starts, bounding peak memory to N conv-caches
+# + the model, not all convs. If a chunk still OOMs, _native_render_group catches
+# it, splits the chunk in half, and retries (deterministic greedy -> identical
+# output regardless of chunk boundaries), degrading gracefully instead of failing.
+NATIVE_BATCH_DEFAULT = max(1, int(os.environ.get("SC_NATIVE_BATCH", "4")))
 
 
 def _native_pick_token(logits_row, temp, gen):
@@ -1035,7 +1043,8 @@ def _native_batched_decode(model, caches, first_logits_list, next_positions, *,
 
 def native_render_specs(model, tok, family, scenarios, conv_limit, *,
                         max_reply_tokens, temp, seed_base,
-                        batched_render=NATIVE_BATCHED_RENDER_DEFAULT):
+                        batched_render=NATIVE_BATCHED_RENDER_DEFAULT,
+                        native_batch=NATIVE_BATCH_DEFAULT):
     """PER-MODEL IN-CONTEXT (NATIVE) RENDER of the shared scaffold (design v2).
 
     GPU path (torch). For each of the first ``conv_limit`` scaffold scenarios,
@@ -1067,7 +1076,15 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
     BYTE-IDENTICAL to the per-token path -- the batched decode's KV is discarded
     and the reply re-prefilled canonically, so batching only has to reproduce the
     same reply TOKEN IDS, and it does (CPU-verified, _self_test_batched_decode).
-    SC_BATCHED_RENDER=0 restores the validated per-token, conv-major path."""
+    SC_BATCHED_RENDER=0 restores the validated per-token, conv-major path.
+
+    MEMORY CAP (``native_batch`` / SC_NATIVE_BATCH, default 4): because turn-major
+    batching keeps EVERY conv's KV cache alive at once, the convs are processed in
+    CHUNKS of ``native_batch`` -- each chunk of <=N convs renders fully (its caches
+    freed) before the next, so peak memory is N conv-caches + the model, not all
+    convs. Chunk boundaries do NOT affect any conv's output (each row's decode is
+    independent of batch composition). If a chunk still OOMs, it is split in half
+    and retried, so a large model degrades to smaller batches instead of failing."""
     import torch  # noqa: PLC0415
     from transformers import DynamicCache  # noqa: PLC0415
 
@@ -1097,18 +1114,23 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
         return rebuild_cache(sl, DynamicCache)
 
     # ---- per-conv mutable state (both paths share the per-turn bookkeeping) ----
-    states = []
-    for i, scenario in enumerate(scenarios[:conv_limit]):
-        states.append({
+    # Results are collected by scenario index so a chunk can be rebuilt fresh on
+    # OOM-retry without disturbing already-finished convs.
+    results_by_idx: dict = {}          # idx -> (conv, plants)
+    reply_records_by_idx: dict = {}    # idx -> [reply record, ...]
+
+    def _build_state(idx, scenario):
+        return {
+            "idx": idx,
             "scenario": scenario,
-            "plan": scenario_turn_plan(scenario, seed=seed_base + i),
-            "conv_seed": seed_base + i,
+            "plan": scenario_turn_plan(scenario, seed=seed_base + idx),
+            "conv_seed": seed_base + idx,
             "msgs": [{"role": "system", "content": scenario["system"]}],
             "cache": DynamicCache(),
             "stream": [],
             "truncated": 0, "empty": 0, "early_tokens": 0, "middle_tokens": 0,
             "reply_records": [], "result": None,
-        })
+        }
 
     def _prefill_user_turn(st, ti):
         """Append user turn ``ti``, prefill its (user + generation-prompt) block
@@ -1198,11 +1220,14 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
               f"empty={st['empty']}, {len(plants)} usable plants", flush=True)
         st["result"] = (conv, plants)
 
-    if batched_render:
-        # TURN-MAJOR: decode all active convs' replies for a turn concurrently.
-        max_turns = max(len(st["plan"]["turns"]) for st in states)
+    def _decode_group_turnmajor(group):
+        """TURN-MAJOR batched render of ONE chunk of convs (their caches are alive
+        together). At each turn index, every still-active conv in the chunk
+        prefills its user block, then all active convs decode concurrently in one
+        batched forward per token. Concurrency == len(group) <= native_batch."""
+        max_turns = max(len(st["plan"]["turns"]) for st in group)
         for ti in range(max_turns):
-            active = [st for st in states if ti < len(st["plan"]["turns"])]
+            active = [st for st in group if ti < len(st["plan"]["turns"])]
             caches, firsts, nps, seeds = [], [], [], []
             for st in active:
                 c, l, npos = _prefill_user_turn(st, ti)
@@ -1213,24 +1238,62 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
                 temp=temp, eos_ids=eos_ids, seeds=seeds, dev=dev, pad_id=pad_id)
             for st, (reply_ids, lp_sum) in zip(active, results):
                 _finalize_reply(st, ti, reply_ids, lp_sum)
-            print(f"  [native-batched] turn {ti + 1}/{max_turns}: "
+            print(f"  [native-batched] chunk turn {ti + 1}/{max_turns}: "
                   f"{len(active)} convs decoded", flush=True)
+
+    def _render_chunk(items):
+        """Render one chunk (list of (idx, scenario)) as ONE alive-together group.
+        On CUDA OOM, free the partial group, split the chunk in half, and render
+        each half sequentially (fewer caches alive). Greedy decode is deterministic
+        and each conv is independent, so splitting a chunk yields IDENTICAL output.
+        A single-conv chunk that OOMs re-raises (surfaced UNSUPPORTED upstream)."""
+        group: list = []
+        try:
+            group = [_build_state(idx, sc) for idx, sc in items]
+            _decode_group_turnmajor(group)
+            for st in group:
+                results_by_idx[st["idx"]] = st["result"]
+                reply_records_by_idx[st["idx"]] = st["reply_records"]
+        except torch.cuda.OutOfMemoryError:
+            if len(items) <= 1:
+                raise
+            for st in group:                       # drop partial caches, reclaim
+                st["cache"] = None
+            del group
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            mid = (len(items) + 1) // 2
+            print(f"  [native-batched] OOM on chunk of {len(items)} convs -> "
+                  f"splitting into {mid} + {len(items) - mid} and retrying",
+                  flush=True)
+            _render_chunk(items[:mid])
+            _render_chunk(items[mid:])
+
+    items = list(enumerate(scenarios[:conv_limit]))
+    if batched_render:
+        # Process convs in CHUNKS of native_batch so peak memory is bounded by N
+        # conv-caches + the model (not all convs); each chunk frees before the next.
+        for lo in range(0, len(items), native_batch):
+            _render_chunk(items[lo: lo + native_batch])
     else:
-        # CONV-MAJOR per-token fallback (the validated path).
-        for st in states:
+        # CONV-MAJOR per-token fallback (the validated path; one cache at a time).
+        for idx, scenario in items:
+            st = _build_state(idx, scenario)
             for ti in range(len(st["plan"]["turns"])):
                 c, l, npos = _prefill_user_turn(st, ti)
                 reply_ids, lp_sum = _native_per_token_decode(
                     model, c, l, npos, max_reply_tokens=max_reply_tokens,
                     temp=temp, eos_ids=eos_ids, seed=st["conv_seed"], dev=dev)
                 _finalize_reply(st, ti, reply_ids, lp_sum)
+            results_by_idx[idx] = st["result"]
+            reply_records_by_idx[idx] = st["reply_records"]
 
     # assemble in scenario order (stats are order-independent, but keep it stable)
     specs: list = []
     reply_records: list = []
-    for st in states:
-        reply_records.extend(st["reply_records"])
-        conv, plants = st["result"]
+    for idx, _scenario in items:
+        reply_records.extend(reply_records_by_idx[idx])
+        conv, plants = results_by_idx[idx]
         if plants:
             specs.append((conv, plants))
     return specs, reply_records
@@ -2544,6 +2607,35 @@ def _self_test_batched_decode() -> int:
     assert all(len(b[0]) == maxt for b in bat), "no-EOS run must be length-capped"
     print(f"  (1a) no-EOS greedy: {len(seqs)} convs, lens={[len(b[0]) for b in bat]}"
           f" -> batched == per-token (ids + lp_sum) OK")
+
+    # (1c) CHUNKED decode (SC_NATIVE_BATCH cap): decoding the convs in sub-batches
+    # of 2 must not change ANY conv's output vs decoding all at once / per-token.
+    def run_chunked(eos_ids, chunk):
+        cs, fs, ns = [], [], []
+        for s in seqs:
+            c, lg = fresh_prefill(s)
+            cs.append(c); fs.append(lg); ns.append(len(s))
+        out = []
+        for i in range(0, len(seqs), chunk):       # separate batched call / chunk
+            out += _native_batched_decode(
+                model, cs[i:i + chunk], fs[i:i + chunk], ns[i:i + chunk],
+                max_reply_tokens=maxt, temp=0.0, eos_ids=eos_ids,
+                seeds=[0] * len(cs[i:i + chunk]), dev=dev, pad_id=0)
+        ref = [_native_per_token_decode(
+            model, c, lg, n, max_reply_tokens=maxt, temp=0.0,
+            eos_ids=eos_ids, seed=0, dev=dev)
+            for c, lg, n in zip(cs, fs, ns)]
+        return out, ref
+
+    chk, refc = run_chunked(set(), 2)
+    assert [c[0] for c in chk] == [r[0] for r in refc], \
+        "chunk-size-2 tokens differ from per-token (chunk boundary changed output!)"
+    assert all(abs(c[1] - r[1]) < 1e-6 for c, r in zip(chk, refc)), \
+        "chunk-size-2 lp_sum differs from per-token"
+    assert chk[0][0] == [b[0] for b in bat][0], \
+        "chunk-size-2 conv 0 differs from all-at-once conv 0"
+    print(f"  (1c) chunk-size-2 (3 convs -> [2]+[1]): batched == per-token "
+          f"(ids + lp_sum), boundary-independent OK")
 
     # (1b) EOS fires mid-decode for conv 0 -> per-sequence stopping.
     eos_tok = ref[0][0][3]                 # 4th greedy token of conv 0
