@@ -475,3 +475,38 @@ IMPLEMENTATION: harness change — per-model IN-CONTEXT rendering (port compose.
 gen into cross_arch's per-model loop, HF path). Scenarios (scaffold) = the asset (have it). Pre-rendered
 data/synthetic/*.json become per-model-regenerated. The doubled-corpus foreign-reply convs = obsolete
 (the scenarios remain useful as scaffold).
+
+## CROSS-ARCH DESIGN v2.1 — refinements (Fable 07-08, second pass)
+KEY INSIGHT (the metric already protects us): raw_EB = lp_E(graft) - lp_B(compacted), BOTH on the
+SAME shared gold continuation, SAME model. Any per-model stylistic offset in how much a model "likes"
+the target continuation appears in BOTH terms and CANCELS. So the shared gold continuation being
+"foreign" to some models is NOT a problem — the scariest nativeness axis subtracts out. KEEP THE GOLD
+CONTINUATION SHARED, defined by the planted facts, not any model's replies. LOAD-BEARING — protect it.
+=> the SIGN rides on a difference metric over a shared target -> more robust than magnitude ->
+nativeness is likely a MAGNITUDE nuisance, NOT a sign-flipper.
+
+WHAT DOESN'T CANCEL = the residual (nativeness in the grafted KV content + the compacted baseline).
+Three residual confounds, NET EACH OUT AS A COVARIATE/GATE:
+1. REPLY/SUMMARY CONTENT co-varies with CAPABILITY (biggest): stronger model entrenches referent harder
+   -> richer VALUE payload; weaker -> thinner. Capability correlates with size correlates with geometry.
+   NET OUT: measure per-model reply info-content + length; sign ~ geometry + reply_infocontent + length.
+2. HEADROOM (definitional, MUST-FIX): if a model's native summary PRESERVES the referent -> no A-B gap
+   -> graft does nothing = CEILING artifact, NOT "geometry says harm." NET OUT: measure per-model
+   headroom = referent A-B gap; GATE inclusion on headroom>threshold; NORMALIZE raw_EB by headroom.
+3. TASK-COMPETENCE GATE: weak model whose native replies never establish the referent (low lp_A) ->
+   degenerate. NET OUT: require adequate lp_A (full-context solves the task) as per-model inclusion.
+With 1-3 handled BY CONSTRUCTION, the nativeness-covariate is far less collinear (residual cleanup only).
+
+METRIC: raw_EB on the SHARED continuation, NORMALIZED by per-model headroom.
+REGRESSION: sign ~ geometry(n_kv_heads,head_dim,GQA,QK-norm,RoPE) + headroom + reply_infocontent +
+reply_length. Report geometry SURVIVES controls.
+SUPPLEMENT ARM: a small SHARED-FIXED-CORPUS arm on ~4-6 models (everyone on IDENTICAL replies) for the
+PURE-MECHANISM causal claim ("holding context fixed, does geometry flip the sign?"). Supplement to the
+native-per-model primary, NOT instead. The within-vendor dense/MoE pairs (Qwen3, Gemma-4) are the
+strongest single sign-flip demos — FEATURE them.
+MISTRAL CONTROL fork restated: survives on Qwen c01-c12 -> sign-map viable + shared-corpus replication.
+If ~0 on Qwen replies but POSITIVE on Mistral's OWN native replies -> cleanest proof native-per-model is
+correct -> THAT result IS the methods section.
+CLAIM: "Geometry predicts the DEPLOYMENT sign on each model's own realistic conversations, holding
+headroom and reply-content fixed." (A reviewer kills "geometry predicts sign on a fixed Qwen corpus" in
+one line — this version converts the confound into the ESTIMAND.)
