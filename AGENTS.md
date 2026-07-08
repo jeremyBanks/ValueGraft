@@ -185,3 +185,15 @@ paper's TITLE and the opening few sentences (the forum-post intro blurb) to soun
 better — it's the strongest at making those land. Don't constrain it there; let it
 improve the title/opening. (Current title: "Value grafting: recovering lost semantic
 continuity when a conversation is compacted" — Fable may revise.)
+
+## FINAL PAPER: consider letting FABLE do the INITIAL DRAFTING (user 07-07)
+For the FINAL version of the paper, we might let Fable write MOST of the initial draft
+itself — not just review it — PROVIDED we can give it the RIGHT INFORMATION (full current
+facts/findings, the results, the framing decisions, the honesty guardrails). It's the
+strongest writer here. Process is otherwise UNCHANGED: we still do the iterations + the
+full review stack, and I (main loop) still make whatever changes I judge necessary. So:
+Fable-initial-draft (with a thorough facts brief) → iterate/critique/terminology →
+Fable readability passes → Codex/GPT-5.5 → my edits → ship. Do this IF feasible (i.e. if
+we can brief it well enough that its draft is a real starting point, not a re-explain).
+Requires the [[fable-must-have-current-facts]] discipline taken to its fullest — a
+complete, current, structured brief. Fable also has full freedom on title + intro.
