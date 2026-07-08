@@ -109,3 +109,57 @@ def test_new_note_prefix_carries_suffix_from_prior_days(tmp_path: Path) -> None:
         mod.archive_timestamp = original_archive_timestamp
 
     assert prefix == "2026070503"
+
+
+def make_message(mod, platform: str, date: str, sequence: int, timestamp: str, text: str):
+    return mod.MessageRecord(
+        platform=platform,
+        date=date,
+        sequence=sequence,
+        message_index=1,
+        timestamp=timestamp,
+        role="user",
+        heading_metadata="",
+        text=text,
+        source_line=1,
+    )
+
+
+def test_build_new_ranges_respects_two_hour_coalescing_gap() -> None:
+    mod = load_update_module()
+    segments = {
+        ("codex", "2026-07-05", 1): [
+            make_message(mod, "codex", "2026-07-05", 1, "2026-07-05T23:50:00Z", "first")
+        ],
+        ("codex", "2026-07-06", 1): [
+            make_message(mod, "codex", "2026-07-06", 1, "2026-07-06T00:30:00Z", "cross day")
+        ],
+        ("codex", "2026-07-06", 2): [
+            make_message(mod, "codex", "2026-07-06", 2, "2026-07-06T03:00:01Z", "too late")
+        ],
+    }
+
+    ranges = mod.build_new_ranges(segments, {}, 1_000_000, 2.0)
+
+    assert [[(source.date, source.sequence) for source in shard] for shard in ranges] == [
+        [("2026-07-05", 1), ("2026-07-06", 1)],
+        [("2026-07-06", 2)],
+    ]
+
+
+def test_build_new_ranges_can_disable_gap_boundary() -> None:
+    mod = load_update_module()
+    segments = {
+        ("codex", "2026-07-05", 1): [
+            make_message(mod, "codex", "2026-07-05", 1, "2026-07-05T00:00:00Z", "first")
+        ],
+        ("codex", "2026-07-05", 2): [
+            make_message(mod, "codex", "2026-07-05", 2, "2026-07-05T09:00:00Z", "later")
+        ],
+    }
+
+    ranges = mod.build_new_ranges(segments, {}, 1_000_000, None)
+
+    assert [[(source.date, source.sequence) for source in shard] for shard in ranges] == [
+        [("2026-07-05", 1), ("2026-07-05", 2)]
+    ]

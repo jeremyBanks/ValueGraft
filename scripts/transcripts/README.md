@@ -37,6 +37,12 @@ reasoning effort is present, it is appended to the model identifier with a
 hyphen, such as `gpt-5.5-xhigh`; provider names, app runtimes, and CLI versions
 are not included.
 
+Raw transcript extraction splits at UTC day boundaries and at gaps over one
+hour. The update workflow may coalesce adjacent raw segments into one note, but
+only within a source stream and only when the inter-segment gap is at most
+`--max-coalesce-gap-hours`, default `2.0`. Crossing a UTC day boundary is allowed
+when that gap condition is still satisfied.
+
 Use `--no-command` to write prompts only, or pass `update --command ...` to use
 a different summarizer command. Small continuations of an existing note are
 deferred by default so the script does not keep rewriting the latest note for

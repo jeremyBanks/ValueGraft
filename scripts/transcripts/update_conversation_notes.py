@@ -666,11 +666,13 @@ def build_new_ranges(
     segments: dict[tuple[str, str, int], list[MessageRecord]],
     covered: dict[tuple[str, str, int], tuple[int, int]],
     target_chars: int,
+    max_coalesce_gap_hours: float | None,
 ) -> list[list[SourceRange]]:
     shards: list[list[SourceRange]] = []
     for platform in sorted({key[0] for key in segments}, key=lambda value: SOURCE_ORDER.get(value, value)):
         current: list[SourceRange] = []
         current_size = 0
+        current_last_ts: datetime | None = None
         keys = [key for key in segments if key[0] == platform]
         for key in sorted(keys, key=segment_sort_key):
             if key in covered:
@@ -679,10 +681,18 @@ def build_new_ranges(
             if not messages:
                 continue
             rendered = render_messages(messages)
-            if current and current_size + len(rendered) > target_chars:
+            first_ts = datetime.fromisoformat(messages[0].timestamp.replace("Z", "+00:00")).astimezone(timezone.utc)
+            last_ts = datetime.fromisoformat(messages[-1].timestamp.replace("Z", "+00:00")).astimezone(timezone.utc)
+            gap_too_large = (
+                max_coalesce_gap_hours is not None
+                and current_last_ts is not None
+                and (first_ts - current_last_ts).total_seconds() > max_coalesce_gap_hours * 3600
+            )
+            if current and (current_size + len(rendered) > target_chars or gap_too_large):
                 shards.append(current)
                 current = []
                 current_size = 0
+                current_last_ts = None
             _platform, date, sequence = key
             current.append(
                 SourceRange(
@@ -694,6 +704,7 @@ def build_new_ranges(
                 )
             )
             current_size += len(rendered)
+            current_last_ts = last_ts
         if current:
             shards.append(current)
     return shards
@@ -1020,7 +1031,10 @@ def update_notes(args: argparse.Namespace) -> None:
         manifest_changed = True
         changed_paths.append(note_path)
 
-    new_shards = build_new_ranges(segments, covered, args.target_chars)
+    max_coalesce_gap_hours = (
+        None if args.max_coalesce_gap_hours is not None and args.max_coalesce_gap_hours < 0 else args.max_coalesce_gap_hours
+    )
+    new_shards = build_new_ranges(segments, covered, args.target_chars, max_coalesce_gap_hours)
     for shard_idx, ranges in enumerate(new_shards, 1):
         messages = all_messages_for_ranges(segments, ranges)
         transcript = render_messages(messages)
@@ -1131,6 +1145,16 @@ def main() -> None:
     update_parser.add_argument("--codex-jsonl", type=Path, default=DEFAULT_CODEX_JSONL)
     update_parser.add_argument("--work-dir", type=Path, default=DEFAULT_WORK_DIR)
     update_parser.add_argument("--target-chars", type=int, default=180_000)
+    update_parser.add_argument(
+        "--max-coalesce-gap-hours",
+        type=float,
+        default=2.0,
+        help=(
+            "Start a new conversation note when adjacent raw transcript segments "
+            "are separated by more than this many hours; use a negative value to "
+            "disable this boundary."
+        ),
+    )
     update_parser.add_argument(
         "--min-continuation-messages",
         type=int,
