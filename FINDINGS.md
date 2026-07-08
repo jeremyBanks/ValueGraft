@@ -408,3 +408,27 @@ REVERSE — strong evidence it's a real mechanism, NOT a generic artifact (an
 artifact wouldn't flip sign by architecture). Map entry: Qwen3-MoE +, Qwen2.5-dense −.
 Keep exploring (Gemma next, parallel pod2). Note: Qwen2.5 vs Qwen3 differ in
 dense-vs-MoE AND generation — cause of the reversal is open (n=2).
+
+## 🚨 NOTABLE: cross-arch POSITIVE CONTROL FAILED — fixed-summary suspected of breaking the graft (07-08)
+Ran Qwen3-30B-A3B (our F1 model, known +0.156 referent / +0.062 sense via
+gap_closure_cat) through the CROSS-ARCH HARNESS with the FIXED SONNET summary.
+RESULT: referent +0.004 (CI spans 0), sense −0.147 (CI EXCLUDES 0, NEGATIVE),
+agg −0.073. pre_gap +0.51 (compaction did damage, valid). The harness does NOT
+reproduce the known positive — it's null-to-negative.
+THE ONLY DIFFERENCE from F1: summary source. F1 = model's OWN GENERATED summary;
+cross-arch = FIXED SONNET (foreign) summary. STRONG SUSPICION: the fixed-summary
+design SUPPRESSES the graft. MECHANISTIC FIT: the graft re-injects the model's
+write-time state from GENERATING its own summary (its own compression act) — a
+foreign summary the model merely READ may not carry that continuity. Would mean
+the fixed-summary sweep is BIASED toward null/negative → understates the effect →
+Qwen2.5's "architecture" negative is partly suspect (though Qwen2.5 was ALSO
+negative on the trusted model-gen path, so that one may be real).
+ISOLATION TEST RUNNING: cross-arch harness SELF-GEN summary on Qwen3-30B. If ~+0.156
+→ harness OK, FIXED SUMMARY is the culprit → switch whole sweep to self-gen (accept
+Fable's summary-quality confound, handle via pre-gap normalization). If still null →
+deeper harness bug. IMPLICATIONS: (a) Mistral currently running on FIXED summary =
+biased, needs self-gen re-run; (b) all fixed-summary sweep numbers suspect until
+resolved; (c) POSSIBLE MECHANISTIC FINDING: graft needs the model's OWN summary
+(would be a real insight about how ValueGraft works, pending confirmation).
+LESSON: always run a POSITIVE control (reproduce a known result) before trusting a
+new harness — the negative-agreement (Qwen2.5) was NOT sufficient validation.
