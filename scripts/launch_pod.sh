@@ -54,5 +54,5 @@ for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" 
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh
 echo "$NAME $PORT $IP" >> $S/pods.list
 # forward per-pod launch env (MODELS + conv limit) into the remote job execution
-$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' nohup bash job.sh > job.log 2>&1 & echo job-launched"
+$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' nohup bash job.sh </dev/null > job.log 2>&1 & disown; echo job-launched"
 echo "LAUNCHED $NAME at $IP:$PORT"
