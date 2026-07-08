@@ -26,6 +26,23 @@
 3. Finalize the pre-registered geometry direction (can happen alongside the first models running).
 Balance: Fable-review-for-tweaks BUT don''t let render-perfectionism block the wide data collection.
 
+
+
+## LIVE STATUS (07-08, sweep launched):
+- WIDE SWEEP FIRING: 16 models, per-token native render, 1 model/pod, 24 anchors/12 breadth, core
+  sign-map. Pre-registration FROZEN before results (H1 = QK-norm presence -> positive referent sign).
+- PROVISIONING THROTTLED: community A100 80GB capacity exhausted (persistent create 500s). Only w1
+  (Qwen3-30B-A3B anchor, cached pod) up + running per-token. Resilient retry loop (launch_wide_retry.sh)
+  retrying the other 15 w/ backoff for ~50min as capacity frees. If it stalls hard -> widen GPU types
+  or flag the user (infra+budget blocker, NOT science; Fable is for science).
+- FIXED this session: launch_pod.sh now forwards MODELS/SC_CONV_LIMIT env to the remote job (was dying
+  "MODELS env required"). QK-norm detect from modules. job_sweep native per-token core.
+- MONITORS: results+provisioning monitor (b29tpap7i) harvests + notifies on each new model result ->
+  push scientific-significance summary to user + update STATE. Harvester = scripts/harvest_wide.sh.
+- OWNER WANTS: push notifications of SCIENTIFIC SIGNIFICANCE as results land (sign hold/flip across arch,
+  QK-norm prediction, dissociation reproducing) — not raw numbers. Consult Fable on any SCIENCE problem.
+- Balance ~$65-70 / $80 cap; full sweep ~$60 — monitor spend, hard-stop before cap.
+
 ## BUILT + STATUS
 - src/cross_arch_probe.py: SC_NATIVE_RENDER (per-model in-context reply gen) + SC_BATCHED_RENDER (batched
   decode across a model's convs, ~10x; render-once/replay-across-arms already present) + gates + covariates.
