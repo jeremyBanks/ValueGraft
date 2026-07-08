@@ -327,3 +327,13 @@ blocking failure.
   .openrouter_key) are kept out of git via `.git/info/exclude`, which does NOT travel with clones and
   is invisible to other agents. `git add -A` could stage them. Prefer a tracked `.gitignore` entry +
   a pre-flight check that no key file is staged. (Do not `git add -A` — stage explicit paths.)
+
+## Behavioral hard rules (07-08 — trust-critical)
+
+- **Report ONLY what you have OBSERVED (past tense); explicitly name what you have NOT verified.**
+  No predictions; no "it works / is fixed / is robust / will work." Those claims were false many
+  times and destroyed the user's trust. Success is declared retroactively from an observed number,
+  never in advance.
+- **NEVER act on the user's resources or work — terminate pods, kill, rm, spend — on INFERENCE.**
+  Only on explicit instruction. Do not infer "they probably want me to stop." If unsure, ASK or WAIT.
+  (Also in RELIABILITY.md.)
