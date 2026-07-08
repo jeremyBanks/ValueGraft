@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# WIDE cross-architecture value-graft sweep (REDESIGNED) — self-gen summaries,
+# attention-geometry-predicts-SIGN. Runs a MODELS list on ONE pod; launch several
+# pods with disjoint MODELS subsets for parallel width. Never aborts on one model.
+#
+# SELF-GEN (SC_SELFGEN=1): each model summarizes with ITSELF (the graft needs the
+# model's own write-time summary; a fixed foreign summary suppresses it). Per-model
+# pre_graft_gap (A-B) is reported so differing self-summary quality is accounted for.
+#
+# EVERY model: full corpus (27 convs), champion scan (fingerprint of WHERE the
+# graftable signal lives + per-layer value-alignment + region=all sanity + overhead).
+# ANCHORS additionally: placebo (gauss) + alpha dose-response (the sign-mechanism core).
+#
+# Env: MODELS="repo1 repo2" (required, per-pod subset). ANCHORS default set below;
+# a model in ANCHORS gets placebo+alpha. MODEL_TIMEOUT (default 3600s).
+set -uo pipefail
+cd /workspace/exp 2>/dev/null || cd "$(dirname "$0")/.." || exit 1
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+export SC_SELFGEN=1
+export SC_CONV_LIMIT="${SC_CONV_LIMIT:-27}"     # full frozen corpus
+export SC_GC_ALPHA="${SC_GC_ALPHA:-0.75}"
+export SC_CHAMPION_SCAN="${SC_CHAMPION_SCAN:-6}"  # fingerprint on every model
+export SC_TRUST_REMOTE=1
+MODEL_TIMEOUT="${MODEL_TIMEOUT:-3600}"
+ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct}"
+
+echo "WIDE SWEEP START $(date -Is)"; nvidia-smi || true
+for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key /workspace/.huggingface_key; do
+  [ -f "$f" ] && { export HF_TOKEN; HF_TOKEN="$(tr -d '[:space:]' < "$f")"; break; }
+done
+python3 - <<'PY' || exit 1
+import sys, torch
+print("torch", torch.__version__, "cuda", torch.cuda.is_available())
+sys.exit(0 if torch.cuda.is_available() else 1)
+PY
+python3 -m pip uninstall -y torchvision 2>/dev/null
+python3 -m pip install -U "transformers>=4.57.0" accelerate safetensors huggingface_hub >/dev/null 2>&1 || true
+rm -f data/fixed_summaries.json 2>/dev/null   # enforce self-gen
+
+[ -z "${MODELS:-}" ] && { echo "FATAL: MODELS env required"; exit 2; }
+echo "PLAN: $MODELS  (anchors get placebo+alpha)"
+
+for M in $MODELS; do
+  slug="$(echo "$M" | tr '/ ' '__')"; log="cross_arch_${slug}.log"
+  # anchor? -> add placebo + alpha dose-response
+  if echo " $ANCHORS " | grep -q " $M "; then
+    export SC_PLACEBO=gauss; export SC_ALPHA_SWEEP=1
+    echo "== ANCHOR $M (self-gen + champion + placebo + alpha) $(date -Is) -> $log"
+  else
+    unset SC_PLACEBO; unset SC_ALPHA_SWEEP
+    echo "== MODEL  $M (self-gen + champion) $(date -Is) -> $log"
+  fi
+  SC_HF_MODEL="$M" timeout "${MODEL_TIMEOUT}s" python3 -u src/cross_arch_probe.py 2>&1 | tee "$log"
+  rc=${PIPESTATUS[0]}
+  if [ "$rc" = "124" ]; then
+    echo "  TIMEOUT ${MODEL_TIMEOUT}s -- record + move on"
+    python3 - "$M" <<'PY'
+import json,sys; from pathlib import Path
+m=sys.argv[1]; slug=m.replace("/","__").replace(" ","_")
+p=Path("results/cross_arch"); p.mkdir(parents=True,exist_ok=True)
+json.dump({"model":m,"status":"ERROR","reason":"hard timeout"},open(p/f"{slug}.json","w"),indent=1)
+PY
+  fi
+done
+
+echo "== SWEEP SUMMARY $(date -Is)"
+python3 - <<'PY'
+import json,glob,os
+for f in sorted(glob.glob("results/cross_arch/*.json")):
+    if os.path.basename(f).startswith("_"): continue
+    d=json.load(open(f))
+    ref=(d.get("by_category_robust",{}) or {}).get("referent",{}) or {}
+    hp=d.get("model_hparams",{}) or {}
+    print(f"  {d.get('architecture', d.get('model','?')):28s} {d.get('status','?'):11s} "
+          f"ref_rawEB={ref.get('raw_EB')} ci={ref.get('raw_EB_ci')} "
+          f"kv_heads={hp.get('num_key_value_heads')} gqa={hp.get('gqa_ratio')} qk_norm={hp.get('qk_norm')}")
+PY
+echo "WIDE SWEEP DONE $(date -Is)"
