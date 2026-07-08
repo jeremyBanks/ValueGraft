@@ -320,9 +320,9 @@ blocking failure.
 - **NEVER rewrite/amend/rebase git history. Correct ADDITIVELY** (a dated correction note/commit).
   When ~314 commits were found mislabeled (Fable vs Opus 4.8), the user's absolute rule was: never
   edit history — add a dated PROVENANCE-CORRECTION note instead. A "cleanup" rebase would violate it.
-- **Keep sensitive/topic-charged terms OUT of all file names, directory names, and job names**
-  (contents only). User directive during the topic-sensitivity probe. This repo is pushed to GitHub —
-  names are the exposure surface. Archive+delete such working dirs when done, per the user.
+- **Keep sensitive/charged terms OUT of all file names, directory names, and job names.**
+  Standing user directive. This repo is pushed to GitHub — names are the exposure surface.
+  Archive+delete such working dirs when done, per the user.
 - **Credential handling risk (B5, flagged not fixed):** secret keys (.huggingface_key, .runpod_key,
   .openrouter_key) are kept out of git via `.git/info/exclude`, which does NOT travel with clones and
   is invisible to other agents. `git add -A` could stage them. Prefer a tracked `.gitignore` entry +
