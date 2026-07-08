@@ -420,3 +420,11 @@ WAVE 2 (HIGHER RISK, run LATER — may skip-with-reason):
   gpt-oss-20b (sliding-window+attention-sinks), GLM-4-32B-0414 (trust_remote_code).
   If Gemma works -> bonus 2nd dense/MoE de-confound; if UNSUPPORTED -> Qwen de-confound stands.
 Rationale: get confident results locked before spending on architectures that may not graft.
+
+## GO EXTRA WIDE once validated (user 07-08)
+Once the positive control validates (gate green: referent ~+0.136, null-self-graft ~0),
+go EXTRA wide — beyond the 16 models / 54 convs. Scope the maximal version at validation:
+candidates = more models/vendors (verify + add), MORE tests (triple corpus toward
+~150/category), full controls (placebo/alpha) on ALL models not just anchors, the
+own-summary experiment across anchors, wider alpha grid, more pods for parallel speed.
+Cost scales but user has repeatedly chosen width. Decide exact scope at gate-green.
