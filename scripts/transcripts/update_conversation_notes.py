@@ -274,7 +274,11 @@ def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
         output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)
     except subprocess.CalledProcessError:
         return None
-    values = [datetime.fromisoformat(line).astimezone(timezone.utc) for line in output.splitlines() if line]
+    values = [
+        datetime.fromisoformat(line.replace("Z", "+00:00")).astimezone(timezone.utc)
+        for line in output.splitlines()
+        if line
+    ]
     if not values:
         return None
     return min(values)

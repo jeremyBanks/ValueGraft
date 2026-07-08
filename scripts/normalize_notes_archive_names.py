@@ -59,6 +59,10 @@ def git_root() -> Path:
     return Path(run_git(["rev-parse", "--show-toplevel"]))
 
 
+def parse_git_timestamp(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
+
+
 def git_creation_timestamp(path: Path, root: Path) -> TimestampInfo | None:
     rel = path.relative_to(root).as_posix()
     try:
@@ -68,7 +72,7 @@ def git_creation_timestamp(path: Path, root: Path) -> TimestampInfo | None:
     lines = [line for line in output.splitlines() if line]
     if not lines:
         return None
-    timestamps = [datetime.fromisoformat(line).astimezone(timezone.utc) for line in lines]
+    timestamps = [parse_git_timestamp(line) for line in lines]
     return TimestampInfo(min(timestamps), "git history")
 
 

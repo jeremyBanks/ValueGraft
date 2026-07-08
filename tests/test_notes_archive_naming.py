@@ -70,3 +70,9 @@ def test_normalizer_assigns_per_day_indexes(tmp_path: Path) -> None:
     renames = normalizer.plan_renames([first, second], tmp_path)
     targets = [rename.target.name for rename in renames]
     assert targets == ["2026070501-alpha-note.md", "2026070502-beta-note.md"]
+
+
+def test_normalizer_parses_git_z_timestamps() -> None:
+    normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_git_ts_test")
+    parsed = normalizer.parse_git_timestamp("2026-07-04T20:05:15Z")
+    assert parsed == datetime(2026, 7, 4, 20, 5, 15, tzinfo=timezone.utc)
