@@ -369,3 +369,18 @@ probes. Never bare mean-ratio. The JUDGED +12pp is now load-bearing for sense �
 needs its own bootstrap CIs (next audit).
 EXTENDED PLAN now has statistical PURPOSE: more probes/scenarios to POWER the effect
 (esp. sense), CIs throughout. Cross-arch, champion-tune, judged-audit all on this footing.
+
+## ⚠️ K/V conclusion ALSO used the broken ratio metric (user caught it, 07-07)
+kv_layer_probe.py line 19: gap_closure=(E-B)/(A-B) — SAME unstable mean-ratio.
+So "K-only hurts all categories (sense −0.283, referent −0.096, stance −0.211)"
+and "per-layer negative" are RATIO-INFLATED artifacts. Recomputed on RAW E-B:
+- v_only referent: +0.120 CI[−0.001,+0.228] — REAL value effect (matches F1 +0.125).
+- k_only per-layer: ALL near-zero (−0.020..+0.016), tiny — keys are ~NEUTRAL,
+  NOT dramatically harmful. The dramatic "keys hurt −0.28" was the estimator.
+CORRECTED K/V read: "value is THE operative axis" HOLDS (value positive, keys
+don't HELP), BUT "keys actively hurt" is FALSE on robust metric — keys ~neutral.
+Per-layer negatives are real but tiny perturbations, not impossible.
+ACTION: the paper §10 K/V section needs the SAME robust-metric correction as F1 —
+replace ratio numbers (−0.283 etc.) with raw E-B; reframe "K-only hurts" →
+"keys ~neutral, don't help". Add to task 29 (paper correction). GENERAL LESSON:
+EVERY result using (E-B)/(A-B) mean-ratio is suspect — audit all of them on raw E-B.
