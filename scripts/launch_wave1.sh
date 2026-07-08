@@ -8,7 +8,7 @@
 set -uo pipefail
 cd /Users/jeb/experimentation
 declare -a ASSIGN=(
-  "Qwen/Qwen3-30B-A3B"                                                      # anchor solo
+  "Qwen/Qwen3-30B-A3B-Instruct-2507"                                                      # anchor solo
   "Qwen/Qwen3-32B"                                                          # anchor solo
   "Qwen/Qwen2.5-32B-Instruct"                                              # anchor solo
   "mistralai/Mixtral-8x7B-Instruct-v0.1 mistralai/Mistral-Small-3.2-24B-Instruct-2506"
