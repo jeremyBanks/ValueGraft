@@ -430,10 +430,32 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         Mirrors arms_hf.generate_summary_hf's layout, but the summary tokens are
         the shared fixed text (teacher-forced, NOT model-generated), so the
         compaction content is identical across models. Returns the same dict
-        shape the alignment/graft code expects."""
+        shape the alignment/graft code expects.
+
+        Family-aware (``family`` captured from run_model's enclosing scope,
+        detect_template_family(tok) @ ~L390): the qwen/mistral path is
+        unchanged; gemma needs an alternation-safe [conversation +
+        summary-request] because Gemma's template (a) has no system role
+        (the template folds system into the first user turn) and (b) forbids
+        consecutive same-role messages. If the conversation already ends in a
+        user turn, appending the user summary-request directly raises
+        TemplateError ("roles must alternate"); we insert a minimal assistant
+        turn first (mirroring build_b_messages_gemma's user-note/assistant-ack
+        structure). Prefix-stability (verified for gemma via
+        message_token_starts_prefix) keeps conv_ids a prefix of req_ids, and
+        the summary tokens still land in a contiguous span [s_start, s_end) at
+        the very end (summ_ids appended after req_ids exactly as before)."""
         conv_ids = canonical_ids_any(tok, msgs, render_hf)
-        req_ids = render_hf(
-            tok, msgs + [{"role": "user", "content": _REQ}], True)
+        if family == "gemma":
+            req_msgs = list(msgs)
+            if req_msgs and req_msgs[-1]["role"] == "user":
+                req_msgs = req_msgs + [
+                    {"role": "assistant", "content": "Understood."}]
+            req_msgs = req_msgs + [{"role": "user", "content": _REQ}]
+            req_ids = render_hf(tok, req_msgs, True)
+        else:
+            req_ids = render_hf(
+                tok, msgs + [{"role": "user", "content": _REQ}], True)
         if req_ids[:len(conv_ids)] != conv_ids:
             raise Unsupported("summary-request render is not a prefix of conv "
                               "(template not prefix-stable)")
