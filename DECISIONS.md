@@ -186,3 +186,19 @@ Agent has discretion to pick per-situation.
   spend the full queue on correlational cross-vendor evidence alone.
 - Do NOT change the metric mid-cross-arch (raw_EB, shared gold, bootstrap-over-convs, native+self-gen) —
   changing it loses comparability to the validated +0.10.
+
+## Analysis-allocation strategy (owner, 07-08): stratify by the QK-norm theory
+Use H1 (+ the ablation's causal verdict) to decide WHERE to spend deep analysis, instead of going
+full-depth on every model:
+- DEEP (24-conv + placebo/alpha/champion + ablation) on QK-norm-PRESENT models — the positive effect
+  + the causal test live there (text-loadable: Qwen3-30B-A3B, Qwen3-32B, OLMo-2).
+- THE ABLATION IS THE LEVER: if removing QK-norm from a QK-norm model kills/flips the graft, the
+  mechanism is CAUSALLY established → the no-QK-norm category is predicted null BY PROOF, not a fit.
+- PREDICTED-NULL category (no-QK-norm: Qwen2.5, Mistral, Mixtral, phi-4, Yi, GLM/gpt-oss/Nemotron):
+  do ONE deep validation (Mistral) to confirm the category behaves as predicted, then only SHALLOW
+  sign-checks on the rest to confirm null — cheap breadth confirmation, NOT full-depth on each. Don't
+  waste deep analysis on a category we expect + have validated to be null.
+- CONTINGENT on the current 3-model full-depth + ablation confirming the theory. If the theory does
+  NOT hold (ablation changes nothing, or no-QK-norm shows positive), fall back to broader deep coverage.
+- The current deep set (Qwen3+OLMo QK-norm, Mistral no-QK-norm, + ablation) already tests both
+  categories, so it's the decision basis for the allocation above.
