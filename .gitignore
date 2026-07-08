@@ -18,3 +18,4 @@ jlens_boundary_probe/outputs/qwen36_ordinary_lens.json
 .pod2_addr
 .pod*_addr
 jlens_boundary_probe/outputs/qwen36_free_divergence.json
+scratch_align_equiv.py

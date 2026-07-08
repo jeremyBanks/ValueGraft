@@ -16,7 +16,8 @@ Arms:
      original positions kept, position counter continues from S's end
   D  ablation: C without the S entries
   E  Arm B context prefilled fresh, then V <- (1-a)*V_fresh + a*V_old at
-     exact-twin positions (difflib matching blocks >= MIN_BLOCK tokens)
+     exact-twin positions (direct 1:1 exact-span map as of 2026-07-07;
+     previously difflib matching blocks >= MIN_BLOCK tokens)
 """
 
 import difflib
@@ -184,7 +185,25 @@ def gapped_cache_from(c_snap):
 
 # ---------------------------------------------------------------- alignment
 
-def build_alignment(b_ids, old_ids, special_ids, regions):
+def _find_exact_subblock(hay, needle):
+    """Offset of the first exact contiguous occurrence of `needle` in `hay`,
+    or None. The blocks here are the same text on both sides so the match is
+    found immediately."""
+    m = len(needle)
+    if m == 0:
+        return 0
+    if m > len(hay):
+        return None
+    first = needle[0]
+    for start in range(len(hay) - m + 1):
+        if hay[start] != first:
+            continue
+        if hay[start:start + m] == needle:
+            return start
+    return None
+
+
+def build_alignment_difflib(b_ids, old_ids, special_ids, regions):
     """Exact-twin (new_pos, old_pos) pairs via per-region difflib matching.
 
     regions: list of ((new_lo, new_hi), (old_lo, old_hi)) span pairs to align
@@ -194,7 +213,10 @@ def build_alignment(b_ids, old_ids, special_ids, regions):
     global matching silently drops one of the two regions.
 
     Blocks shorter than MIN_BLOCK are ignored (spurious matches of common
-    tokens). Sink positions and special tokens are excluded."""
+    tokens). Sink positions and special tokens are excluded.
+
+    LEGACY (pre 2026-07-07): retained for reference / equivalence checks. The
+    active build_alignment is build_alignment_direct."""
     pairs = []
     for (nlo, nhi), (olo, ohi) in regions:
         sm = difflib.SequenceMatcher(
@@ -209,6 +231,55 @@ def build_alignment(b_ids, old_ids, special_ids, regions):
                     continue
                 pairs.append((npos, opos))
     return pairs
+
+
+def build_alignment_direct(b_ids, old_ids, special_ids, regions):
+    """Exact-twin (new_pos, old_pos) pairs via a direct 1:1 span map.
+
+    Same signature/return as build_alignment_difflib. For each region
+    ((nlo,nhi),(olo,ohi)) the OLD span old_ids[olo:ohi] is the summary/tail
+    token block (the "needle"); it appears verbatim inside the NEW region
+    b_ids[nlo:nhi] (the "haystack"), possibly offset by a message-wrapper
+    prefix (e.g. the "[Context note] ..." preamble in front of the summary).
+    We locate that exact contiguous block and map 1:1 by offset:
+        (nlo + found_offset + i, olo + i)  for i in range(len(old_block))
+    skipping sink positions (< N_SINK) and special tokens, exactly as the
+    difflib version did.
+
+    Because both sides carry the SAME text, the correct alignment is a direct
+    positional map; difflib was overkill and silently dropped any run shorter
+    than MIN_BLOCK on a tokenization divergence. Here a divergence (old block
+    not found verbatim in the new region) is a LOUD failure.
+
+    Introduced 2026-07-07 as the replacement for the difflib matcher; verified
+    pair-for-pair equivalent on the synthetic corpus + fixed summaries."""
+    pairs = []
+    for (nlo, nhi), (olo, ohi) in regions:
+        old_block = old_ids[olo:ohi]
+        hay = b_ids[nlo:nhi]
+        off = _find_exact_subblock(hay, old_block)
+        if off is None:
+            raise ValueError(
+                "build_alignment_direct: old span old_ids[%d:%d] (len %d) not "
+                "found as an exact contiguous subsequence of new region "
+                "b_ids[%d:%d] (len %d) -- tokenization diverged between the "
+                "write-time and compacted renderings of the same text."
+                % (olo, ohi, len(old_block), nlo, nhi, len(hay))
+            )
+        for i in range(len(old_block)):
+            npos, opos = nlo + off + i, olo + i
+            if npos < N_SINK or b_ids[npos] in special_ids:
+                continue
+            pairs.append((npos, opos))
+    return pairs
+
+
+# Active alignment: direct 1:1 exact-span map. Method changed from difflib
+# SequenceMatcher to direct exact-subblock search on 2026-07-07; equivalence
+# verified pair-for-pair (12/12 synthetic convs + fixed_summaries, Qwen tok).
+# build_alignment_difflib retained above for reference.
+def build_alignment(b_ids, old_ids, special_ids, regions):
+    return build_alignment_direct(b_ids, old_ids, special_ids, regions)
 
 
 def arm_h_pack_snapshot(summary, rope_base, pack_offset=None):
