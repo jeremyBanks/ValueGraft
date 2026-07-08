@@ -182,6 +182,7 @@ def run_git(args: list[str], cwd: Path) -> str:
 
 
 def git_creation_timestamp(path: Path, root: Path) -> datetime | None:
+    path = (root / path).resolve() if not path.is_absolute() else path
     rel = path.relative_to(root).as_posix()
     try:
         output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)
