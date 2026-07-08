@@ -19,15 +19,17 @@ for n in $EXPECTED; do
     G=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -1)
     T=$(python3 -c "import transformers;print(transformers.__version__)" 2>/dev/null)
     L=$(tr "\r" "\n" < job.log 2>/dev/null | grep -aiE "native] c[0-9]|PROBE|render.graft took|FATAL|WROTE .*status=|RuntimeError|model load failed" | tail -1)
+    D=$(grep -c "WIDE SWEEP DONE" job.log 2>/dev/null || echo 0)
     R=""
-    for f in results/cross_arch/*.json; do [ -f "$f" ] && [ "$(basename "$f"|cut -c1)" != "_" ] && R=$(python3 -c "import json;d=json.load(open(\"$f\"));b=d.get(\"by_category_robust\",{}) or {};r=(b.get(\"referent\",{}) or {});print(d.get(\"status\"),\"ref_ci\",r.get(\"raw_EB_ci\"))" 2>/dev/null); done
-    printf "P=%s|G=%s|T=%s|L=%s|R=%s\n" "$P" "$G" "$T" "$L" "$R"' 2>/dev/null)
+    for f in results/cross_arch/*.json; do [ -f "$f" ] && [ "$(basename "$f"|cut -c1)" != "_" ] && R=$(python3 -c "import json;d=json.load(open(\"$f\"));b=d.get(\"by_category_robust\",{}) or {};r=(b.get(\"referent\",{}) or {});print(d.get(\"status\"),\"ref_ci\",r.get(\"raw_EB_ci\"),\"n\",r.get(\"n\"))" 2>/dev/null); done
+    printf "P=%s|G=%s|T=%s|D=%s|L=%s|R=%s\n" "$P" "$G" "$T" "$D" "$L" "$R"' 2>/dev/null)
   if [ -z "$OUT" ]; then echo "$n ($ep): UNREACHABLE (ssh refused)"; n_problem=$((n_problem+1)); continue; fi
   p=$(echo "$OUT" | sed -n 's/.*P=\([0-9]*\).*/\1/p'); g=$(echo "$OUT" | sed -n 's/.*G=\([0-9]*\).*/\1/p')
-  t=$(echo "$OUT" | sed -n 's/.*T=\([^|]*\).*/\1/p'); l=$(echo "$OUT" | sed -n 's/.*L=\([^|]*\).*/\1/p'); r=$(echo "$OUT" | sed -n 's/.*R=//p')
+  t=$(echo "$OUT" | sed -n 's/.*T=\([^|]*\).*/\1/p'); dd=$(echo "$OUT" | sed -n 's/.*D=\([0-9]*\).*/\1/p'); l=$(echo "$OUT" | sed -n 's/.*L=\([^|]*\).*/\1/p'); r=$(echo "$OUT" | sed -n 's/.*R=//p')
   if echo "$l" | grep -qiE "FATAL|RuntimeError|model load failed"; then echo "$n: ERROR — $l"; n_problem=$((n_problem+1))
-  elif echo "$l" | grep -qiE "WROTE .*status="; then echo "$n: DONE — $r"; n_done=$((n_done+1))
-  elif [ "${p:-0}" = "0" ]; then echo "$n: NO-PROC (died or between phases) — R=$r L=$l"; n_problem=$((n_problem+1))
+  elif [ "${dd:-0}" -gt 0 ]; then echo "$n: DONE(full) — $r"; n_done=$((n_done+1))
+  elif echo "$r" | grep -q "ref_ci"; then echo "$n: SCORED-INTERIM (probe/partial, still running) — $r"; n_ok=$((n_ok+1))
+  elif [ "${p:-0}" = "0" ]; then echo "$n: NO-PROC (died, no WIDE SWEEP DONE) — R=$r L=$l"; n_problem=$((n_problem+1))
   else echo "$n: rendering gpu=${g}% tv=${t} — $l"; n_ok=$((n_ok+1)); fi
 done
 n_exp=$(echo "$EXPECTED" | wc -w | tr -d " ")

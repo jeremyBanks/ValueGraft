@@ -494,3 +494,22 @@ launch each pod independently / backgrounded, never chain them so one hang starv
 FIX: exp_watch.sh now knows the expected set and emits a SUMMARY (accounted vs missing); the monitor
 alarms when any expected model is MISSING/booting for >1 consecutive check (grace for genuine boot).
 Absence is now an alarm, not silence.
+
+## Incident #36 (07-08): monitor mislabeled the PROBE result as the final DONE
+WHAT: exp_watch keyed "DONE" on the log signal `WROTE ...status=`. But the job writes that marker
+TWICE — once for the 3-conv PROBE, once for the full 24-conv run. So the monitor saw the probe's
+write, declared canary "DONE", and surfaced the probe's n=6 CI ([-0.207,+0.066]) AS IF it were the
+24-conv replication-gate result. Caught only by manually checking the result's n (=6 → probe, not
+the ~48 of a 24-conv run) and the log (full 24-conv was still rendering). The monitor was wrong;
+the verify-the-number discipline caught it, not the monitor.
+ROOT: keyed a "terminal" classification on a signal that is NOT unique to termination (WROTE fires
+on the probe too). Same class as #35 and the stall/endpoint bugs: a monitor signal built on an
+UNVERIFIED assumption about how the system actually emits it.
+FIX: DONE now requires the unambiguous end-marker `WIDE SWEEP DONE` (printed only after the full run);
+intermediate writes are reported as SCORED-INTERIM; the referent `n` is always shown so probe(≈6) vs
+full(≈48) is unmistakable. shellcheck clean.
+META-LESSON (3rd monitor bug in a row — endpoint-blind, stall-false-positive, done-false-positive):
+I keep trusting monitors I never validated against real signal behavior. BEFORE trusting any monitor:
+run the fault-injection/behavior check INCLUDING the happy path (RELIABILITY.md row 0: a correct run
+must produce NO false alert). A monitor that fires on the wrong thing is as bad as one that never
+fires. Do not trust a monitor's classification until its signals are validated against actual emission.
