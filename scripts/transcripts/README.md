@@ -153,6 +153,11 @@ python3 scripts/transcripts/split_summary_into_notes.py \
 The note-generation scripts run `deno fmt` automatically on generated Markdown
 files when Deno is available.
 
+If generated conversation notes are later renamed by
+`scripts/normalize_notes_archive_names.py`, the normalizer updates
+`conversation-summary-manifest.json` itself. Do not hand-edit manifest paths
+after note renames.
+
 ## Incremental Updates
 
 After the initial notes exist, initialize a manifest once:

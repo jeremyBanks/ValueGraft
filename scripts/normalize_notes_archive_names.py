@@ -18,6 +18,7 @@ Markdown-like .txt notes are converted to .md.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -37,6 +38,7 @@ from notes_archive_naming import (
 
 RESERVED_DOC_NAMES = {"AGENTS.md", "README.md"}
 ARCHIVE_SUFFIXES = {".md", ".txt"}
+DEFAULT_MANIFEST = Path("scripts/transcripts/conversation-summary-manifest.json")
 
 
 @dataclass(frozen=True)
@@ -52,6 +54,12 @@ class Rename:
     timestamp: TimestampInfo
     day_index: int
     reasons: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class ManifestPathUpdate:
+    source: str
+    target: str
 
 
 def run_git(args: list[str], cwd: Path | None = None) -> str:
@@ -214,6 +222,54 @@ def apply_renames(renames: list[Rename], root: Path) -> None:
         commit_rename(rename, root)
 
 
+def resolve_manifest_path(path: Path, root: Path) -> Path:
+    return (root / path).resolve() if not path.is_absolute() else path
+
+
+def manifest_path_updates(
+    renames: list[Rename],
+    root: Path,
+    manifest_path: Path,
+) -> list[ManifestPathUpdate]:
+    manifest_path = resolve_manifest_path(manifest_path, root)
+    if not renames or not manifest_path.exists():
+        return []
+    rename_map = {
+        rename.source.relative_to(root).as_posix(): rename.target.relative_to(root).as_posix()
+        for rename in renames
+    }
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    updates: list[ManifestPathUpdate] = []
+    for row in data.get("notes", []):
+        note = row.get("note")
+        if note in rename_map:
+            updates.append(ManifestPathUpdate(note, rename_map[note]))
+    return updates
+
+
+def apply_manifest_path_updates(
+    updates: list[ManifestPathUpdate],
+    root: Path,
+    manifest_path: Path,
+) -> None:
+    if not updates:
+        return
+    manifest_path = resolve_manifest_path(manifest_path, root)
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    update_map = {update.source: update.target for update in updates}
+    for row in data.get("notes", []):
+        note = row.get("note")
+        if note in update_map:
+            row["note"] = update_map[note]
+    manifest_path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    manifest_rel = manifest_path.relative_to(root).as_posix()
+    subprocess.check_call(["git", "add", "--", manifest_rel], cwd=root)
+    subprocess.check_call(
+        ["git", "commit", "-m", "Update conversation manifest after note renames", "--", manifest_rel],
+        cwd=root,
+    )
+
+
 def print_plan(renames: list[Rename], root: Path, mode: str, scanned_count: int) -> None:
     print(f"notes archive normalizer: mode={mode} scanned={scanned_count} planned={len(renames)}")
     if not renames:
@@ -230,6 +286,13 @@ def print_plan(renames: list[Rename], root: Path, mode: str, scanned_count: int)
         print(f"   changes: {reasons}")
 
 
+def print_manifest_plan(updates: list[ManifestPathUpdate], manifest_path: Path, root: Path) -> None:
+    manifest_rel = resolve_manifest_path(manifest_path, root).relative_to(root)
+    print(f"manifest path updates: {manifest_rel} planned={len(updates)}")
+    for update in updates:
+        print(f"   {update.source} -> {update.target}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -243,6 +306,12 @@ def main() -> int:
         type=Path,
         default=Path("notes"),
         help="notes archive directory; default: notes",
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=DEFAULT_MANIFEST,
+        help="conversation summary manifest to keep in sync; default: scripts/transcripts/conversation-summary-manifest.json",
     )
     parser.add_argument(
         "--dry-run",
@@ -274,12 +343,16 @@ def main() -> int:
     renames = plan_renames(paths, root)
     mode = "check" if args.check else "dry-run" if args.dry_run else "apply"
     print_plan(renames, root, mode, len(paths))
+    manifest_updates = manifest_path_updates(renames, root, args.manifest)
+    if renames or manifest_updates:
+        print_manifest_plan(manifest_updates, args.manifest, root)
 
     if args.check and renames:
         print("Check failed: run without --check to apply these renames.")
         return 1
     if not args.dry_run:
         apply_renames(renames, root)
+        apply_manifest_path_updates(manifest_updates, root, args.manifest)
         if renames:
             print(f"Applied {len(renames)} rename(s).")
     return 0

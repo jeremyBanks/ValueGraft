@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -145,3 +146,47 @@ def test_normalizer_uses_current_file_lifetime_add(tmp_path: Path) -> None:
 
     assert timestamp is not None
     assert timestamp.value == datetime(2026, 7, 8, 14, 10, 8, tzinfo=timezone.utc)
+
+
+def test_normalizer_updates_manifest_paths_for_renamed_notes(tmp_path: Path) -> None:
+    normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_manifest_test")
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    notes = repo / "notes"
+    notes.mkdir()
+    manifest = repo / "scripts" / "transcripts" / "conversation-summary-manifest.json"
+    manifest.parent.mkdir(parents=True)
+    old = notes / "2026070891-conversation-user-gpt55.md"
+    new = notes / "2026070801-conversation-user-gpt55.md"
+    old.write_text("summary\n", encoding="utf-8")
+    manifest.write_text(
+        json.dumps(
+            {
+                "notes": [
+                    {"note": old.relative_to(repo).as_posix()},
+                    {"note": "notes/unchanged.md"},
+                ]
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    rename = normalizer.Rename(
+        source=old,
+        target=new,
+        timestamp=normalizer.TimestampInfo(
+            datetime(2026, 7, 8, 0, 2, 38, tzinfo=timezone.utc),
+            "test",
+        ),
+        day_index=1,
+        reasons=("test",),
+    )
+
+    updates = normalizer.manifest_path_updates([rename], repo, manifest)
+    assert updates == [
+        normalizer.ManifestPathUpdate(
+            "notes/2026070891-conversation-user-gpt55.md",
+            "notes/2026070801-conversation-user-gpt55.md",
+        )
+    ]

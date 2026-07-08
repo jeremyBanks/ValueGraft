@@ -25,8 +25,9 @@ python3 scripts/normalize_notes_archive_names.py
 Usual workflow: drop a note into `notes/`, run the normalizer, and let it commit
 any required per-file rename. Use `--dry-run` first when reviewing planned
 changes. The normalizer accepts `.md` and markdown-like `.txt` notes, and
-outputs `.md`. `AGENTS.md` is the intentional unprefixed instruction file in
-this directory.
+outputs `.md`. When conversation-summary notes are renamed, the normalizer also
+updates and commits the corresponding manifest path changes. `AGENTS.md` is the
+intentional unprefixed instruction file in this directory.
 
 Conversation-summary notes use participant-based names:
 
