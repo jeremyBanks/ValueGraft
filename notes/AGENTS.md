@@ -52,7 +52,10 @@ avoid turning a whole conversation into a bullet ledger. Preserve priority when
 it affects future work, while describing it as project priority, blocking
 status, or required follow-up rather than participant mood. Do not flatten
 importance: if emphasis changes what a future agent should do first, keep that
-as a project fact or required next action.
+as a project fact or required next action. Preserve concrete ETAs, deadlines,
+durations, recurring check-back cadences, and expected completion windows as
+handoff facts, including later revisions or cancellations. Do not infer
+timestamps or convert relative timing into false precision.
 
 Preferred shape:
 

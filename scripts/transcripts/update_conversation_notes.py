@@ -77,9 +77,9 @@ You are summarizing mainline project conversation for a future agent.
 
 Write a concise but information-dense note body. Capture ideas, hypotheses,
 methodology decisions, corrections, concrete results, caveats, operational
-lessons, and handoff-relevant state. If the conversation established an intended
-writing form, such as paper-style, blog-style, article-style, or report-style,
-include that.
+lessons, explicit timeline commitments, and handoff-relevant state. If the
+conversation established an intended writing form, such as paper-style,
+blog-style, article-style, or report-style, include that.
 
 The first paragraph of your answer must be the italicized opening summary, or
 at most two short italicized sentences, summarizing what this conversation
@@ -112,6 +112,14 @@ source metadata; do not invent model identifiers. If the transcript headings
 show a switch between assistant models, mention the switch at the relevant point
 in the summary flow.
 
+Preserve explicit scheduling commitments as handoff facts. If an agent or user
+commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
+or expected completion window, record what was expected to happen and the
+stated timing. If later messages revise, invalidate, or cancel that estimate,
+record the update too. Do not infer timestamps or convert vague timing into
+false precision; keep relative timing relative when that is all the transcript
+provides.
+
 {previous_context_block}
 
 Transcript to summarize:
@@ -133,9 +141,9 @@ existing summary, add the new material after the cutoff, and remove stale wordin
 if the new material changes the interpretation.
 
 Focus on ideas, hypotheses, methodology decisions, corrections, concrete results,
-caveats, operational lessons, and handoff-relevant state. If the conversation
-established an intended writing form, such as paper-style, blog-style,
-article-style, or report-style, include that.
+caveats, operational lessons, explicit timeline commitments, and handoff-relevant
+state. If the conversation established an intended writing form, such as
+paper-style, blog-style, article-style, or report-style, include that.
 
 The first paragraph of your answer must be the italicized opening summary, or
 at most two short italicized sentences, summarizing what this conversation
@@ -166,6 +174,14 @@ body, with no title. The script adds a deterministic participants paragraph from
 source metadata; do not invent model identifiers. If the transcript headings
 show a switch between assistant models, mention the switch at the relevant point
 in the summary flow.
+
+Preserve explicit scheduling commitments as handoff facts. If an agent or user
+commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
+or expected completion window, record what was expected to happen and the
+stated timing. If later messages revise, invalidate, or cancel that estimate,
+record the update too. Do not infer timestamps or convert vague timing into
+false precision; keep relative timing relative when that is all the transcript
+provides.
 
 Existing summary:
 

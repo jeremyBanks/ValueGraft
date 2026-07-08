@@ -57,13 +57,17 @@ forbidden matches and asks for vaguer language around those topics. After
 scrub.
 
 The summaries should focus on ideas, decisions, methodology, results, caveats,
-and handoff state. If a discussion established an intended writing form, such as
-paper-style, blog-style, article-style, or report-style, capture that. Preserve
-priority when it affects future work, but describe it as project priority,
-blocking status, or required follow-up rather than participant mood. Do not
-flatten importance: if emphasis changes what a future agent should do first,
-keep that as a project fact or required next action. Avoid side logistics unless
-they directly affect repository workflow.
+explicit timeline commitments, and handoff state. If a discussion established an
+intended writing form, such as paper-style, blog-style, article-style, or
+report-style, capture that. Preserve priority when it affects future work, but
+describe it as project priority, blocking status, or required follow-up rather
+than participant mood. Do not flatten importance: if emphasis changes what a
+future agent should do first, keep that as a project fact or required next
+action. Preserve concrete ETAs, deadlines, durations, recurring check-back
+cadences, and expected completion windows as handoff facts, including later
+revisions or cancellations. Do not infer timestamps or convert relative timing
+into false precision. Avoid side logistics unless they directly affect
+repository workflow.
 
 Conversation-note style:
 
