@@ -1,42 +1,45 @@
 # STATE.md — session handoff notes
 
-*Updated 07-08 ~03:15 by Opus 4.8. OVERNIGHT AUTONOMOUS RUN — user asleep, go wide+fast once confident.*
+*Updated 07-08 ~05:30 by Opus 4.8. BUILD COMPLETE. Gate running. Wide staged (16 models, doubling corpus).*
 
-## 🌙 OVERNIGHT MANDATE (user going to sleep 07-08)
-Run responsibly + autonomously. Sequence:
-1. FINISH BUILD (CPU/local, pods down): corpus render c14-c27 done → RE-RENDER c19
-   CLEAN (name swapped in scenarios.json, verify rendered c19 has 0 occurrences) →
-   FREEZE corpus. Then wire 2 corpus-dependent harness bits: (a) STRONG-PRIOR
-   signed-disambiguation readout P(prior meaning) vs P(conv meaning) using
-   keywords/anti_keywords; (b) MULTI-PROBE averaging (corpus has probes[] 2-4/plant).
-   Add Qwen3-32B (dense de-confound) to model set. FREEZE everything.
-2. CONFIDENCE GATE before wide spend: on a pod, validate anchors — identity-check
-   passes, positive control Qwen3-30B self-gen reproduces ~+0.14 referent, placebo <
-   real graft, smoke passes. If PASS → confident. If FAIL → diagnose, don't blast wide.
-3. GO WIDE + FAST (user: this dragged out, move quick once confident): provision MANY
-   pods in parallel, run full sweep — deep anchors (Qwen3-30B-A3B/Qwen3-32B/Qwen2.5-32B
-   ~100-150 probes/cat) + wide-shallow breadth (Qwen3.6-35B/27B, Gemma-3, Mistral,
-   Mixtral, GLM, OLMo), self-gen summaries, all 6 categories, + PLACEBO + ALPHA-SWEEP on
-   anchors, + OWN-SUMMARY experiment (own/other/fixed/degraded/paraphrased-own). Cost-
-   responsible: terminate each pod as it drains, idle-watchdog live, ~$10-15 total, keep
-   runway (~$74 now).
-4. ANALYZE: regress effect-SIGN on attention hyperparams (n_kv_heads/head_dim/GQA/
-   QK-norm/RoPE/layers) — that's the paper's mechanism ("attention geometry predicts
-   sign", NOT MoE — W_V untouched by FFN). The signed strong-prior mass-shift is the
-   money figure. Distance-recovery curve. Full dissociation per model. → FINDINGS.
-5. PAPER (the deliverable): rebalance (grafting PRIMARY, lens proportionate); ROBUST-
-   METRIC corrections (audit ALL ratio numbers → raw E-B + CIs; keys neutral not hurt);
-   fix overloaded "lens"; add cross-arch mechanism + own-summary + more EXAMPLES (mine
-   existing data, no misleading). FULL REVIEW STACK: Fable conceptual gut-check (WITH
-   CURRENT FINDINGS — facts evolved hugely) → adversarial critics → terminology-
-   consistency → Fable readability 3 tool-less multi-angle passes → Codex/GPT-5.5/xhigh
-   (`codex exec -s read-only`, I run it) → my final read → re-promote REPORT.md→README.
+## 🟢 WHERE WE ARE (07-08, overnight autonomous)
+BUILD IS COMPLETE; waiting on the confidence GATE + corpus doubling, then GO WIDE.
 
-## PROCESS DISCIPLINE (standing): check in with FABLE for major decisions (brief on
-CURRENT facts always); capture EVERYTHING (STATE/FINDINGS/DECISIONS/INCIDENTS current in
-near-real-time); truthful, no misleading; examples-rich; nice through-line; cost-
-responsible (idle pods DOWN, one clean spend); NEVER edit git history; unique output
-names; launch-verify real-work+right-model; positive-control before trusting a pipeline.
+CONFIDENCE GATE (running): pod 96yjg965q8fnhi @ 104.255.9.187:11583 (community A100 80GB,
+400G disk). job_gate.sh = Qwen3-30B-A3B self-gen positive control on c01-c12 (target
+referent raw_EB ~+0.14) + identity-check + placebo(gauss) + champion overhead (calibrates
+the <25% inline-champion budget). Monitor b4xqfound alerts on PASS/FAIL. On PASS -> provision
+~7-8 pods, split the 16 models (2 each), launch job_sweep.sh. On FAIL -> diagnose, DON'T spend.
+
+CORPUS DOUBLING (running): scenario-author subagent writing c28-c54 (27 more convs -> 54 total,
+~100 plants/category = Fable anchor target). Then render via Fable/Opus/Sonnet/Codex mix +
+verify + re-freeze. c01-c27 already frozen+verified (297 plants).
+
+FROZEN 16-MODEL / 9-VENDOR LIST (all HF-verified). ANCHORS (deep: placebo+alpha+champion) = 5,
+with TWO independent within-vendor dense/MoE de-confounds:
+  Qwen3-30B-A3B(MoE) / Qwen3-32B(dense) / Qwen2.5-32B(dense) / gemma-4-31B(dense) / gemma-4-26B-A4B(MoE)
+GEMMA axis (3): gemma-3-27b-it(v3 sliding-window) / gemma-4-31B-it / gemma-4-26B-A4B-it
+  (Gemma3-vs-4 major-version AND the Gemma-4 internal dense/MoE pair). ⚠️ Gemma sliding-window
+  (HybridCache) MAY be UNSUPPORTED (padded snapshot) — harness flags with reason; Qwen de-confound
+  stands regardless.
+BREADTH (full corpus + champion): Mixtral, Mistral-Small-3.2-2506, OLMo-2-32B, Qwen3.6-35B-A3B,
+  Qwen3.6-27B, GLM-4-32B-0414, gpt-oss-20b(OpenAI), phi-4(Microsoft), Yi-1.5-34B(01.ai),
+  Nemotron-49B-v1_5(NVIDIA). phi-4/Nemotron off-band -> scale logged as regression COVARIATE.
+
+HARNESS COMPLETE (src/cross_arch_probe.py, all CPU self-tested, committed): SC_SELFGEN=1 (redesign
+default; fixed summary suppresses graft); placebo, identity-check (gates status), alpha dose-response,
+raw traces, model_hparams (sign-regression), cluster(conv)-bootstrap, multi-probe averaging,
+strong-prior SIGNED mass-shift (P(conv)vs P(prior)+baseline covariate), champion scan (fractional-depth
+regions, arbitrary-region-set/RESCUE-TEST, region=all sanity, per-layer value-alignment cosine, <25% timing).
+
+## ANALYSIS PLAN (post-sweep): regress effect-SIGN on attn hparams (n_kv_heads/head_dim/GQA/QK-norm/
+RoPE/layers) = "attention-geometry predicts sign" (NOT MoE — W_V untouched by FFN). RESCUE TEST on a
+negative anchor (graft only +regions -> if flips + proves sign=depth-composition). Strong-prior mass-shift
+= money figure. Distance-recovery curve. Champion = WEAK/tentative framing (guardrail in MASTER-PLAN).
+Own-summary experiment on anchors. Then PAPER (full review stack incl Codex; Fable may do initial draft).
+
+## KEY DOCS: MASTER-PLAN.md (cross-arch redesign + all model/corpus/champion decisions), DECISIONS.md,
+FINDINGS.md, INCIDENTS.md (31 = MLX-for-corpus). Memories: question-the-backend, validate-before-trusting.
 
 ## ## ⚡ DESIGN IN FLUX (07-08) — do NOT blast the wide sweep until settled
 Fable design consult REFRAMED the cross-arch experiment (recorded MASTER-PLAN
