@@ -20,7 +20,10 @@
 | Call a pod healthy when it's absent/unparseable   | `classify_pod.sh` invariant 1 (**unknown == alarm**)                   | MISSING/UNREACHABLE/UNKNOWN all return PROBLEM (rc 1)          | #35 never-launched pod    |
 | Report the probe's result as the final run        | `classify_pod.sh` invariant 2 (**unique terminal marker only**)        | DONE requires `WIDE SWEEP DONE`; probe → INTERIM, n shown      | #36 probe-as-DONE         |
 | Miss an errored result because the log looked clean| `classify_pod.sh` invariant 3 (**result status is authoritative**)     | status=ERROR/UNSUPPORTED → ERROR regardless of log             | error-as-interim bug      |
-| Cry "stalled" on a slow render                    | `classify_pod.sh` invariant 4 (**stall is GPU-aware**)                 | quiet log + GPU busy → RENDERING; only idle-GPU alarms         | stall-false-positive bug  |
+| Cry "stalled" on a slow render                    | `classify_pod.sh` invariant 4 (**stall is GPU-aware**)                 | GPU busy → RENDERING regardless of log; only idle-GPU+stale-log → STALLED, idle-GPU → alarm | stall-false-positive bug  |
+| Call a pod healthy after losing ONE key signal    | `classify_pod.sh` invariant 6 (**partial signal-loss == alarm**)       | reachable but proc OR gpu unreadable → SIGNAL-LOSS (rc 1)      | GPU-signal-loss read as "rendering" |
+| Let a blind/blank endpoint sit SILENT forever     | `exp_watch.sh` boot-persistence → `classify_pod.sh` BOOT-TIMEOUT       | BOOTING past the grace window (state file) → PROBLEM (rc 1)    | endpoint-blind never alarmed |
+| Feed the classifier a grep narrower than its own  | monitors build the remote error grep from `PC_ERROR_SIGNATURES`        | single-source pattern; self-test asserts monitors interpolate it | Traceback/OOM/CUDA-error never reached classifier |
 | Commit a shell script with a latent bug           | `lint.sh` (shellcheck --severity=warning, all `*.sh`)                  | any finding → `exit 1`; do not commit dirty                    | `declare -A`, stdin-eating loop |
 | Scale before you have ONE real number             | early-signal probe (`SC_PROBE_CONVS`) + canary tripwire (below)        | a run with no early-signal path is NOT READY to launch          | 5h black-box fan-outs     |
 
@@ -176,9 +179,15 @@ essentially every failure mode this project has hit. Use their real names; reach
 Before ANY scaled or unattended run, the **observability is built FIRST, by construction** — not
 bolted on when the owner nags. **A run whose failures do not self-report is NOT READY to launch.**
 - Every job self-reports structured status (OK/ERROR/UNSUPPORTED + reason).
-- A standing **health monitor watches EVERY unit and ALERTS on any bad state**
-  (`scripts/pod_health.sh` + the health/alerting monitor): crashed, errored, stalled, idle-GPU,
-  died, unreachable — silent when healthy.
+- A standing **health monitor watches EVERY unit and ALERTS on any bad state**: crashed, errored,
+  stalled, idle-GPU, died, unreachable, signal-loss, stuck-booting — silent when healthy. BOTH
+  monitors — `scripts/exp_watch.sh` (expected-set) and `scripts/pod_health.sh` (self-discovering) —
+  **SOURCE the fault-tested pure classifier `scripts/classify_pod.sh`; neither classifies inline**
+  (inline logic is how every monitor lied and cannot be fault-tested). Both build their remote error
+  grep from the classifier's single-source `PC_ERROR_SIGNATURES`, both feed log-age for GPU-aware
+  stall, and both are covered by `scripts/monitor_selftest.sh`. `exp_watch.sh` additionally persists
+  per-pod BOOTING duration so a never-resolving blind endpoint escalates to an alarm (does not sit
+  silent). Trust neither until `monitor_selftest.sh` prints "MONITOR CLEARED".
 - The owner learns of a failure from an **alert**, NEVER by having to ask "is it broken?".
 
 ## The anti-pattern (what NOT to do — this is the pattern the owner keeps catching)
