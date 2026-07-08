@@ -119,7 +119,7 @@ DEFAULT_SUMMARIES = str(
 DEFAULT_SUMMARIZER = "Qwen/Qwen3.6-27B"
 
 # SUBSET for speed: sense + referent plants only (skip stance + contaminated).
-CATS = ("sense", "referent")
+CATS = ("sense", "referent", "stance")  # stance = null control (full dissociation)
 
 INTERPRETATION = (
     "PRIMARY metric is raw_EB = lp_E - lp_B (bounded logprob lift of the graft "
