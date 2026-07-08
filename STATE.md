@@ -1,8 +1,44 @@
 # STATE.md — session handoff notes
 
-*Updated 07-08 ~02:30 by Opus 4.8. CROSS-ARCH REDESIGN IN FLUX (Fable) — wide sweep HELD.*
+*Updated 07-08 ~03:15 by Opus 4.8. OVERNIGHT AUTONOMOUS RUN — user asleep, go wide+fast once confident.*
 
-## ⚡ DESIGN IN FLUX (07-08) — do NOT blast the wide sweep until settled
+## 🌙 OVERNIGHT MANDATE (user going to sleep 07-08)
+Run responsibly + autonomously. Sequence:
+1. FINISH BUILD (CPU/local, pods down): corpus render c14-c27 done → RE-RENDER c19
+   CLEAN (name swapped in scenarios.json, verify rendered c19 has 0 occurrences) →
+   FREEZE corpus. Then wire 2 corpus-dependent harness bits: (a) STRONG-PRIOR
+   signed-disambiguation readout P(prior meaning) vs P(conv meaning) using
+   keywords/anti_keywords; (b) MULTI-PROBE averaging (corpus has probes[] 2-4/plant).
+   Add Qwen3-32B (dense de-confound) to model set. FREEZE everything.
+2. CONFIDENCE GATE before wide spend: on a pod, validate anchors — identity-check
+   passes, positive control Qwen3-30B self-gen reproduces ~+0.14 referent, placebo <
+   real graft, smoke passes. If PASS → confident. If FAIL → diagnose, don't blast wide.
+3. GO WIDE + FAST (user: this dragged out, move quick once confident): provision MANY
+   pods in parallel, run full sweep — deep anchors (Qwen3-30B-A3B/Qwen3-32B/Qwen2.5-32B
+   ~100-150 probes/cat) + wide-shallow breadth (Qwen3.6-35B/27B, Gemma-3, Mistral,
+   Mixtral, GLM, OLMo), self-gen summaries, all 6 categories, + PLACEBO + ALPHA-SWEEP on
+   anchors, + OWN-SUMMARY experiment (own/other/fixed/degraded/paraphrased-own). Cost-
+   responsible: terminate each pod as it drains, idle-watchdog live, ~$10-15 total, keep
+   runway (~$74 now).
+4. ANALYZE: regress effect-SIGN on attention hyperparams (n_kv_heads/head_dim/GQA/
+   QK-norm/RoPE/layers) — that's the paper's mechanism ("attention geometry predicts
+   sign", NOT MoE — W_V untouched by FFN). The signed strong-prior mass-shift is the
+   money figure. Distance-recovery curve. Full dissociation per model. → FINDINGS.
+5. PAPER (the deliverable): rebalance (grafting PRIMARY, lens proportionate); ROBUST-
+   METRIC corrections (audit ALL ratio numbers → raw E-B + CIs; keys neutral not hurt);
+   fix overloaded "lens"; add cross-arch mechanism + own-summary + more EXAMPLES (mine
+   existing data, no misleading). FULL REVIEW STACK: Fable conceptual gut-check (WITH
+   CURRENT FINDINGS — facts evolved hugely) → adversarial critics → terminology-
+   consistency → Fable readability 3 tool-less multi-angle passes → Codex/GPT-5.5/xhigh
+   (`codex exec -s read-only`, I run it) → my final read → re-promote REPORT.md→README.
+
+## PROCESS DISCIPLINE (standing): check in with FABLE for major decisions (brief on
+CURRENT facts always); capture EVERYTHING (STATE/FINDINGS/DECISIONS/INCIDENTS current in
+near-real-time); truthful, no misleading; examples-rich; nice through-line; cost-
+responsible (idle pods DOWN, one clean spend); NEVER edit git history; unique output
+names; launch-verify real-work+right-model; positive-control before trusting a pipeline.
+
+## ## ⚡ DESIGN IN FLUX (07-08) — do NOT blast the wide sweep until settled
 Fable design consult REFRAMED the cross-arch experiment (recorded MASTER-PLAN
 "CROSS-ARCH REDESIGN"). KEY DECISIONS PENDING:
 - REFRAME (paper-saver): value vectors come from the ATTENTION block; MoE is FFN →
