@@ -19,11 +19,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import subprocess
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import timezone
 from pathlib import Path
 
 from notes_archive_naming import (
@@ -35,16 +34,18 @@ from notes_archive_naming import (
     strip_known_prefix,
     timestamp_from_full_prefix,
 )
+from notes_archive_timestamps import (
+    DEFAULT_TIMESTAMP_CACHE,
+    ArchiveTimestampCache,
+    TimestampInfo,
+    git_creation_timestamp,
+    parse_git_timestamp,
+    run_git,
+)
 
 RESERVED_DOC_NAMES = {"AGENTS.md", "README.md"}
 ARCHIVE_SUFFIXES = {".md", ".txt"}
 DEFAULT_MANIFEST = Path("scripts/transcripts/conversation-summary-manifest.json")
-
-
-@dataclass(frozen=True)
-class TimestampInfo:
-    value: datetime
-    source: str
 
 
 @dataclass(frozen=True)
@@ -62,52 +63,18 @@ class ManifestPathUpdate:
     target: str
 
 
-def run_git(args: list[str], cwd: Path | None = None) -> str:
-    return subprocess.check_output(["git", *args], cwd=cwd, text=True).strip()
-
-
 def git_root() -> Path:
     return Path(run_git(["rev-parse", "--show-toplevel"]))
 
 
-def parse_git_timestamp(value: str) -> datetime:
-    return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
-
-
-def git_creation_timestamp(path: Path, root: Path) -> TimestampInfo | None:
-    rel = path.relative_to(root).as_posix()
-    try:
-        output = run_git(["log", "--follow", "--diff-filter=A", "--format=%cI", "--", rel], root)
-    except subprocess.CalledProcessError:
-        return None
-    lines = [line for line in output.splitlines() if line]
-    if lines:
-        return TimestampInfo(parse_git_timestamp(lines[0]), "git current-file lifetime")
-
-    try:
-        output = run_git(["log", "--follow", "--format=%cI", "--", rel], root)
-    except subprocess.CalledProcessError:
-        return None
-    lines = [line for line in output.splitlines() if line]
-    if not lines:
-        return None
-    timestamps = [parse_git_timestamp(line) for line in lines]
-    return TimestampInfo(min(timestamps), "git history")
-
-
-def filesystem_timestamp(path: Path) -> TimestampInfo:
-    stat = path.stat()
-    if hasattr(stat, "st_birthtime"):
-        return TimestampInfo(datetime.fromtimestamp(stat.st_birthtime, timezone.utc), "filesystem birth time")
-    return TimestampInfo(datetime.fromtimestamp(stat.st_mtime, timezone.utc), "filesystem mtime")
-
-
-def timestamp_for(path: Path, root: Path) -> TimestampInfo:
+def timestamp_for(path: Path, root: Path, cache: ArchiveTimestampCache | None = None) -> TimestampInfo:
+    if cache is not None:
+        return cache.timestamp_for(path)
     prefixed = timestamp_from_full_prefix(path.name)
     return (
         git_creation_timestamp(path, root)
         or (TimestampInfo(prefixed, "existing full filename prefix") if prefixed else None)
-        or filesystem_timestamp(path)
+        or ArchiveTimestampCache(root).timestamp_for(path)
     )
 
 
@@ -121,10 +88,12 @@ def archive_files(notes_dir: Path) -> list[Path]:
     )
 
 
-def plan_renames(paths: list[Path], root: Path) -> list[Rename]:
+def plan_renames(paths: list[Path], root: Path, cache: ArchiveTimestampCache | None = None) -> list[Rename]:
+    if cache is not None:
+        cache.prepare(paths)
     items: list[tuple[Path, TimestampInfo, str]] = []
     for source in paths:
-        timestamp = timestamp_for(source, root)
+        timestamp = timestamp_for(source, root, cache)
         title = kebab_case(strip_known_prefix(source.stem))
         items.append((source, timestamp, title))
 
@@ -195,31 +164,25 @@ def git_is_tracked(path: Path, root: Path) -> bool:
     return proc.returncode == 0
 
 
-def commit_rename(rename: Rename, root: Path) -> None:
+def stage_rename(rename: Rename, root: Path) -> list[Path]:
     source_rel = rename.source.relative_to(root).as_posix()
     target_rel = rename.target.relative_to(root).as_posix()
     if git_is_tracked(rename.source, root):
         subprocess.check_call(["git", "mv", "--", source_rel, target_rel], cwd=root)
-        commit_paths = [source_rel, target_rel]
+        return [rename.source, rename.target]
     else:
         rename.source.rename(rename.target)
         subprocess.check_call(["git", "add", "--", target_rel], cwd=root)
-        commit_paths = [target_rel]
-
-    iso = rename.timestamp.value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
-    env = os.environ.copy()
-    env["GIT_AUTHOR_DATE"] = iso
-    env["GIT_COMMITTER_DATE"] = iso
-    subprocess.check_call(
-        ["git", "commit", "-m", f"Normalize note filename {rename.target.name}", "--", *commit_paths],
-        cwd=root,
-        env=env,
-    )
+        return [rename.target]
 
 
-def apply_renames(renames: list[Rename], root: Path) -> None:
+def apply_renames(renames: list[Rename], root: Path, cache: ArchiveTimestampCache | None = None) -> list[Path]:
+    changed_paths: list[Path] = []
     for rename in renames:
-        commit_rename(rename, root)
+        changed_paths.extend(stage_rename(rename, root))
+        if cache is not None:
+            cache.record_rename(rename.source, rename.target, rename.timestamp)
+    return changed_paths
 
 
 def resolve_manifest_path(path: Path, root: Path) -> Path:
@@ -251,9 +214,9 @@ def apply_manifest_path_updates(
     updates: list[ManifestPathUpdate],
     root: Path,
     manifest_path: Path,
-) -> None:
+) -> Path | None:
     if not updates:
-        return
+        return None
     manifest_path = resolve_manifest_path(manifest_path, root)
     data = json.loads(manifest_path.read_text(encoding="utf-8"))
     update_map = {update.source: update.target for update in updates}
@@ -264,10 +227,22 @@ def apply_manifest_path_updates(
     manifest_path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     manifest_rel = manifest_path.relative_to(root).as_posix()
     subprocess.check_call(["git", "add", "--", manifest_rel], cwd=root)
-    subprocess.check_call(
-        ["git", "commit", "-m", "Update conversation manifest after note renames", "--", manifest_rel],
-        cwd=root,
-    )
+    return manifest_path
+
+
+def commit_paths(paths: list[Path], root: Path, message: str) -> None:
+    rels: list[str] = []
+    seen: set[str] = set()
+    for path in paths:
+        resolved = (root / path).resolve() if not path.is_absolute() else path.resolve()
+        rel = resolved.relative_to(root).as_posix()
+        if rel in seen:
+            continue
+        seen.add(rel)
+        rels.append(rel)
+    if not rels:
+        return
+    subprocess.check_call(["git", "commit", "-m", message, "--", *rels], cwd=root)
 
 
 def print_plan(renames: list[Rename], root: Path, mode: str, scanned_count: int) -> None:
@@ -314,6 +289,12 @@ def main() -> int:
         help="conversation summary manifest to keep in sync; default: scripts/transcripts/conversation-summary-manifest.json",
     )
     parser.add_argument(
+        "--timestamp-cache",
+        type=Path,
+        default=DEFAULT_TIMESTAMP_CACHE,
+        help="path/blob keyed archive timestamp cache; default: scripts/notes-archive-timestamps.json",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="print planned renames without changing the filesystem",
@@ -340,7 +321,8 @@ def main() -> int:
         if path.suffix.lower() not in ARCHIVE_SUFFIXES:
             raise SystemExit(f"not an archive-note file: {path}")
 
-    renames = plan_renames(paths, root)
+    cache = ArchiveTimestampCache.load(root, args.timestamp_cache)
+    renames = plan_renames(paths, root, cache)
     mode = "check" if args.check else "dry-run" if args.dry_run else "apply"
     print_plan(renames, root, mode, len(paths))
     manifest_updates = manifest_path_updates(renames, root, args.manifest)
@@ -351,8 +333,19 @@ def main() -> int:
         print("Check failed: run without --check to apply these renames.")
         return 1
     if not args.dry_run:
-        apply_renames(renames, root)
-        apply_manifest_path_updates(manifest_updates, root, args.manifest)
+        changed_paths = apply_renames(renames, root, cache)
+        manifest_path = apply_manifest_path_updates(manifest_updates, root, args.manifest)
+        if manifest_path is not None:
+            changed_paths.append(manifest_path)
+        final_paths = archive_files(notes_dir)
+        cache.prepare(final_paths)
+        cache.prune(final_paths)
+        for path in final_paths:
+            cache.record_path(path)
+        if cache.save():
+            subprocess.check_call(["git", "add", "--", cache.cache_path.relative_to(root).as_posix()], cwd=root)
+            changed_paths.append(cache.cache_path)
+        commit_paths(changed_paths, root, "Normalize note archive filenames")
         if renames:
             print(f"Applied {len(renames)} rename(s).")
     return 0

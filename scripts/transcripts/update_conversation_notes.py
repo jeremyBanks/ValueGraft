@@ -27,6 +27,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from notes_archive_naming import archive_day_start, compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
+from notes_archive_timestamps import ArchiveTimestampCache, TimestampInfo  # noqa: E402
 
 
 SOURCE_ORDER = {"claude-code": "0-claude", "codex": "1-codex"}
@@ -364,6 +365,12 @@ def archive_timestamp(path: Path, root: Path) -> datetime:
     )
 
 
+def cached_archive_timestamp(path: Path, root: Path, cache: ArchiveTimestampCache | None = None) -> datetime:
+    if cache is not None:
+        return cache.timestamp_for(path).value
+    return archive_timestamp(path, root)
+
+
 def archive_note_files(notes_dir: Path) -> list[Path]:
     if not notes_dir.exists():
         return []
@@ -376,11 +383,19 @@ def archive_note_files(notes_dir: Path) -> list[Path]:
     )
 
 
-def compact_prefix_for_new_note(notes_dir: Path, root: Path, timestamp: datetime) -> str:
+def compact_prefix_for_new_note(
+    notes_dir: Path,
+    root: Path,
+    timestamp: datetime,
+    cache: ArchiveTimestampCache | None = None,
+) -> str:
     timestamp = timestamp.astimezone(timezone.utc)
     by_day: dict[str, list[datetime]] = {}
-    for path in archive_note_files(notes_dir):
-        existing = archive_timestamp(path, root)
+    existing_paths = archive_note_files(notes_dir)
+    if cache is not None:
+        cache.prepare(existing_paths)
+    for path in existing_paths:
+        existing = cached_archive_timestamp(path, root, cache)
         by_day.setdefault(existing.astimezone(timezone.utc).strftime("%Y%m%d"), []).append(existing)
     by_day.setdefault(timestamp.strftime("%Y%m%d"), []).append(timestamp)
 
@@ -419,11 +434,14 @@ def existing_note_path_for_messages(
     first_timestamp: datetime,
 ) -> Path:
     title = conversation_title(participant_entries_for_messages(messages))
+    cache = ArchiveTimestampCache.load(root)
+    paths = archive_note_files(notes_dir)
+    cache.prepare(paths)
     candidates = [
         path
-        for path in archive_note_files(notes_dir)
+        for path in paths
         if path.name.endswith(f"-{title}.md")
-        and archive_timestamp(path, root).date() == first_timestamp.astimezone(timezone.utc).date()
+        and cached_archive_timestamp(path, root, cache).date() == first_timestamp.astimezone(timezone.utc).date()
     ]
     if len(candidates) != 1:
         names = ", ".join(str(path) for path in candidates) or "none"
@@ -1228,6 +1246,7 @@ def update_notes(args: argparse.Namespace) -> None:
         return
     covered = covered_segments(records)
     args.work_dir.mkdir(parents=True, exist_ok=True)
+    timestamp_cache = ArchiveTimestampCache.load(args.repo_root)
 
     changed_paths: list[Path] = []
     manifest_changed = False
@@ -1343,7 +1362,7 @@ def update_notes(args: argparse.Namespace) -> None:
             transcript=transcript,
         )
         first_ts = first_timestamp_for_ranges(segments, ranges)
-        prefix = compact_prefix_for_new_note(args.notes_dir, args.repo_root, first_ts)
+        prefix = compact_prefix_for_new_note(args.notes_dir, args.repo_root, first_ts, timestamp_cache)
         note_path = args.notes_dir / note_name_for_messages(prefix, messages)
         if note_path.exists():
             provisional = provisional_note_path_for_messages(args.notes_dir, messages, first_ts)
@@ -1394,6 +1413,7 @@ def update_notes(args: argparse.Namespace) -> None:
         manifest_changed = True
         iso = first_ts.isoformat().replace("+00:00", "Z")
         git_commit([note_path], f"Archive conversation note {note_path.stem}", args.repo_root, iso)
+        timestamp_cache.record_path(note_path, TimestampInfo(first_ts, "conversation note first message"))
 
     if args.command and (changed_paths or manifest_changed):
         write_manifest(args.manifest, records)

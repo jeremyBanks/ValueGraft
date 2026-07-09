@@ -190,3 +190,34 @@ def test_normalizer_updates_manifest_paths_for_renamed_notes(tmp_path: Path) -> 
             "notes/2026070801-conversation-user-gpt55.md",
         )
     ]
+
+
+def test_timestamp_cache_reuses_matching_blob_entry(tmp_path: Path) -> None:
+    normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_cache_test")
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.check_call(["git", "init"], cwd=repo, stdout=subprocess.DEVNULL)
+    subprocess.check_call(["git", "config", "user.email", "test@example.com"], cwd=repo)
+    subprocess.check_call(["git", "config", "user.name", "Test User"], cwd=repo)
+    notes = repo / "notes"
+    notes.mkdir()
+    note = notes / "20260704010000-cache-note.md"
+    note.write_text("cache me\n", encoding="utf-8")
+    rel = note.relative_to(repo).as_posix()
+    env = {
+        **os.environ,
+        "GIT_AUTHOR_DATE": "2026-07-04T01:00:00Z",
+        "GIT_COMMITTER_DATE": "2026-07-04T01:00:00Z",
+    }
+    subprocess.check_call(["git", "add", "--", rel], cwd=repo)
+    subprocess.check_call(["git", "commit", "-m", "add note", "--", rel], cwd=repo, env=env)
+
+    cache = normalizer.ArchiveTimestampCache.load(repo, repo / "cache.json")
+    first = normalizer.timestamp_for(note, repo, cache)
+    assert first.value == datetime(2026, 7, 4, 1, 0, tzinfo=timezone.utc)
+    assert cache.save()
+
+    reloaded = normalizer.ArchiveTimestampCache.load(repo, repo / "cache.json")
+    second = normalizer.timestamp_for(note, repo, reloaded)
+
+    assert second == first
