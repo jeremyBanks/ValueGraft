@@ -109,10 +109,12 @@ from single-method to two-method-directionally-consistent.
 
 ---
 
-## F2. Honesty effect (banked, strong). Compaction makes the model fabricate about lost content; write-time KV retention makes it appropriately uncertain.
-Decoy fabrication: Compacted 83% vs write-time-KV (H-pack) 17%; on evicted
-facts H-pack both most accurate (38/48) and least fabricating (4%).
-Replicated 4-bit→bf16 and 4B→30B. (Details: DECISIONS 07-06; honesty runs.)
+## F2. Honesty effect (banked, strong — the paper's PRIMARY POSITIVE). Compaction makes the model fabricate about lost content; write-time KV retention converts fabrication into honest admission.
+**CORRECTED SHIPPABLE CLAIM (2026-07-09, recomputed from results/phase2_30b_scored.json):**
+write-time KV retention (H-pack) buys **honesty, not recall**: on evicted facts it converts
+fabrication **67% → admission 96%** (fabrication 4%) but recalls **0/24** — it does NOT restore
+accuracy (only the full-context arm is accurate). Decoy-fact fabrication: Compacted **79%** → H-pack **12%**.
+Replicated 4-bit→bf16 and 4B→30B. **The old "38/48 = 79% most accurate" phrasing is a DEAD OVERCLAIM — never ship it** (CLAIMS.md F2-2). (Details: DECISIONS 07-06; honesty runs.)
 > **⚠ RECONCILE before ship (2026-07-09, recomputed from results/phase2_30b_scored.json, n=24/arm):**
 > decoy fabrication recomputes to B **79%** / H-pack **12%** (not 83/17 — same story). BUT the
 > "H-pack most accurate 38/48" evicted claim does NOT reproduce: H-pack recalls **0/24** evicted facts
