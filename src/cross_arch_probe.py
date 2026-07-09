@@ -1790,7 +1790,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               task_competence_k: float = TASK_COMPETENCE_K_DEFAULT,
               ablate_qk_norm_flag: bool = False,
               ablate_lambda_values: list | None = None,
-              champion_cfg: dict | None = None) -> dict:
+              champion_cfg: dict | None = None,
+              selfgen_declared: bool = False) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
     was present and we fall back to per-model self-generated summaries (results
@@ -1831,12 +1832,22 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "conv_limit": conv_limit,
         "conv_start": conv_start,   # HELD-OUT offset into the corpus (0 == first-N)
         "native_render": native_render,   # DESIGN v2: per-model in-context corpus
+        # summary_source MUST distinguish DECLARED self-gen (SC_SELFGEN=1, the
+        # redesign default -- a fixed foreign summary was found to SUPPRESS the
+        # graft to null; FINDINGS 07-08) from the ACCIDENTAL missing-file fallback.
+        # Both leave fixed_summaries=None, so the flag is threaded in explicitly --
+        # otherwise an intended self-gen run mislabels itself "fallback NOT
+        # comparable" (which is exactly what confused the champion-validation read).
         "summary_source": (
             "PER-MODEL SELF-GEN on NATIVE in-context corpus (design v2)"
             if native_render else
+            "PER-MODEL SELF-GEN summary (DECLARED SC_SELFGEN=1; redesign default -- "
+            "a fixed foreign summary suppresses the graft)"
+            if selfgen_declared else
             "FIXED external (shared across models)"
             if fixed_summaries is not None
-            else "PER-MODEL fallback (NOT cross-model comparable)"),
+            else "PER-MODEL fallback (NO fixed_summaries file AND SC_SELFGEN unset "
+                 "-- ACCIDENTAL self-gen, NOT cross-model comparable)"),
         "reply_covariates": None,  # v2.1 covariate: reply length + info-content
         "gates": None,             # v2.1 gate summary (headroom / task-competence)
         "skipped_convs": [],
@@ -2002,10 +2013,16 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         },
         metric=prov.METRIC_CHAT_RAW_EB,
         condition={
-            "summary_kind": ("self-gen (SUMMARY_REQUEST)" if native_render
+            # SUMMARY_REQUEST = "thorough context note, ~300-500 words" =>
+            # REALISTIC-LENGTH (moderate) compression, NOT the aggressive/lossy
+            # BRIEF request the SWE-Gym +0.0156 and judged +12pp headlines used.
+            "summary_kind": ("self-gen SUMMARY_REQUEST (realistic ~300-500w)"
+                             if (native_render or selfgen_declared)
                              else doc["summary_source"]),
             "summary_request_sha256": prov.sha256_text(_REQ),
             "summary_source": doc["summary_source"],
+            "summary_selfgen_declared": bool(selfgen_declared or native_render),
+            "summary_compression_regime": "realistic-length (SUMMARY_REQUEST, ~300-500 words)",
         },
         corpus={
             "name": ("native in-context render (design v2)" if native_render
@@ -4830,7 +4847,8 @@ def main():
             task_competence_k=args.task_competence_k,
             ablate_qk_norm_flag=args.ablate_qk_norm,
             ablate_lambda_values=lambda_values,
-            champion_cfg=champion_cfg)
+            champion_cfg=champion_cfg,
+            selfgen_declared=force_selfgen)
     except SystemExit:
         raise
     except BaseException as e:  # noqa: BLE001

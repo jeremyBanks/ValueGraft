@@ -110,3 +110,96 @@ is the authoritative provenance in the interim.
   it in the paper's reproducibility section (pin by repo id + the date-stamped checkpoint).
 - **prod-summary SWE-Gym cell = NONE on disk.** See the controlled matrix (§ deliverable 4)
   and the born-annotated launch command (returned to the owner).
+
+---
+
+## 5. Self-gen vs fixed summaries — authoritative design history + compression regime (2026-07-09 follow-up)
+
+**Trigger:** the bf16 per-layer champion validation (pod champbf16) came back null
+(raw_EB CI [-0.041,+0.043], "null/underpowered") and its result recorded
+`summary_source: "PER-MODEL fallback (NOT cross-model comparable)"`, which read like an
+accidental missing-file fallback. Authoritative reconstruction from the design docs +
+code follows.
+
+### Q1 — Was PER-MODEL SELF-GEN the FINAL intended design? YES, decisively.
+Fixed/shared summaries were abandoned ON PURPOSE for this mechanism/champion work.
+- **FINDINGS.md "✅✅ RESOLVED + MECHANISTIC FINDING: graft needs the model's OWN summary
+  (07-08)"** (lines 483-503): same model + harness, only summary source differs —
+  FIXED Sonnet summary → referent **+0.004 (null)**, POSITIVE CONTROL FAILED; SELF-GEN →
+  referent **+0.136 CI[+0.034,+0.23]**, SIGNIFICANT. Explicit conclusions: *"(2)
+  FIXED-SUMMARY DESIGN BROKEN → sweep switches to SELF-GEN summaries. (3) MECHANISTIC
+  FINDING … ValueGraft re-injects the write-time state of the model's OWN summarization
+  ACT — a summary the model merely READ doesn't carry the recoverable continuity."*
+- **DECISIONS.md 2026-07-08** (line 187): *"Do NOT change the metric mid-cross-arch
+  (raw_EB, shared gold, bootstrap-over-convs, **native+self-gen**) — changing it loses
+  comparability to the validated +0.10."* → native + self-gen is the LOCKED design.
+- **INCIDENTS.md #32/#33** (lines 425-464): self-gen is named *"the redesign's PRODUCTION
+  path (fixed summary suppresses the graft)."*
+- History (why fixed ever existed): DECISIONS 2026-07-07 21:00 (line 144) introduced ONE
+  shared Sonnet summary purely as a **cross-model confound control** (different models
+  write different-quality summaries → baseline gap varies). That control turned out to
+  BREAK the mechanism, so it was retired. It was never the intended final condition — and
+  for a **single-model** champion validation the cross-model-comparability rationale does
+  not even apply, so self-gen is doubly correct here.
+
+**Answer:** self-gen is the final intended design; there is NO reason a shared/fixed
+summary should have been used for the champion validation. The `"NOT cross-model
+comparable"` clause in the label is irrelevant to a within-model E-vs-placebo test.
+
+### Q2 — Was self-gen reached correctly, or via a fragile missing-file path?
+**Reached CORRECTLY, by explicit declaration — the coordinator's missing-file hypothesis
+is NOT what happened.** The code DOES read `SC_SELFGEN` (`cross_arch_probe.py:4765`), and
+BOTH jobs set `SC_SELFGEN=1` (`job_champion_bf16.sh:47`, `job_headscan_bf16.sh:112`). The
+`force_selfgen` branch (line 4793) short-circuits BEFORE the fixed-file load — so whether
+`data/fixed_summaries.json` was rsynced to the pod is IRRELEVANT; self-gen was declared.
+
+The real defect was **PROVENANCE LABELING**: `summary_source` was computed only from
+`native_render` + `fixed_summaries is not None`, so a DECLARED self-gen run
+(fixed_summaries forced None) fell through to the last branch and mislabeled itself
+`"PER-MODEL fallback (NOT cross-model comparable)"` — indistinguishable from the genuine
+missing-file accident. That mislabel is what made a correct, intended run look accidental.
+
+**Hardening applied (committed):** `run_model` now takes `selfgen_declared` (threaded from
+`force_selfgen`) and labels declared self-gen as *"PER-MODEL SELF-GEN summary (DECLARED
+SC_SELFGEN=1; redesign default)"*, reserving the "ACCIDENTAL … NOT comparable" wording for
+the true `native_render=0 AND SC_SELFGEN unset AND no fixed file` path (which already emits
+a loud stderr warning). The provenance manifest now records
+`condition.summary_selfgen_declared: true` and `condition.summary_compression_regime`. The
+jobs ALREADY declare `SC_SELFGEN=1` (no job edit needed); the fix makes the DECLARATION
+visible in every result + manifest instead of masquerading as a fallback.
+
+### Q3 — Which compression regime is the null in? REALISTIC-LENGTH (moderate), not aggressive.
+The cross_arch self-gen summary uses **`SUMMARY_REQUEST`** (`cross_arch_probe.py:1815`) =
+*"a thorough context note … roughly 300-500 words"* — the **realistic-length** regime. The
+champion-validation null therefore lives under MODERATE compression, NOT the aggressive
+lossy regime. This is a first-class axis because the POSITIVE headlines live in a DIFFERENT
+regime:
+
+| Result | Summary request | Compression regime | Summary source | Outcome |
+|---|---|---|---|---|
+| SWE-Gym +0.0156 anchor | `SUMMARY_REQUEST_BRIEF` (3-5 sentences, no details) | **AGGRESSIVE / lossy (handicapped)** | self-gen | POSITIVE |
+| Judged +12pp (sense) | BRIEF | AGGRESSIVE / lossy | self-gen (MLX 4-bit) | POSITIVE (render-fragile, CLAIMS REC-5) |
+| Logprob referent +0.125/+0.136 | `SUMMARY_REQUEST` (~300-500w) | realistic-length | self-gen | POSITIVE (referent), sense underpowered |
+| **Per-layer champion validation (bf16)** | `SUMMARY_REQUEST` (~300-500w) | **realistic-length** | self-gen (**declared**) | **NULL / underpowered** (agg raw_EB CI spans 0, held-out c07-24) |
+
+Caveat against over-reading: the +0.136 referent effect was ALSO under realistic-length
+`SUMMARY_REQUEST` self-gen, so "realistic summary" alone does not kill the raw effect. The
+champion null is a HARDER, aggregate, held-out content-specificity test (E-champion vs
+placebo on c07-24), and is underpowered — distinct from the raw referent lift. The clean
+open question worth fleshing out (separate thread): does the graft benefit CONCENTRATE
+under aggressive compaction (BRIEF), where more meaning is evicted (larger A-B headroom to
+recover)? A `summary_request × compression-level` sweep (BRIEF vs SUMMARY_REQUEST vs PROD)
+at matched N would answer it. Recorded here so the matrix carries the axis.
+
+### Controlled-matrix addition — summary source × compression regime
+| Summary source \\ regime | AGGRESSIVE (BRIEF) | REALISTIC (SUMMARY_REQUEST ~300-500w) | FAITHFUL (PROD, OpenHands-style) |
+|---|---|---|---|
+| **self-gen (own)** — REQUIRED by mechanism | HAVE: swegym +0.0156, judged +12pp (POSITIVE) | HAVE: logprob referent +0.125/+0.136 POSITIVE; **champion validation NULL/underpowered** | **NEED** (prod SWE-Gym cell; born-annotated cmd in report) |
+| **fixed/foreign (Sonnet)** — retired, SUPPRESSES graft | (isolation test) | referent +0.004 null (FINDINGS 07-08) | n/a — abandoned by design |
+
+**Bottom line for the owner:** the champion validation used the RIGHT condition
+(self-gen, declared) in the REALISTIC-length regime; the "fallback NOT comparable" label
+was a provenance bug, now fixed. The null is a real, honestly-reportable
+underpowered-aggregate result in the moderate-compression regime; the positive headlines
+sit under aggressive-compaction (BRIEF). Whether the effect is compaction-severity-gated is
+a clean, worthwhile follow-up, not a contradiction.
