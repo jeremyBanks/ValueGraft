@@ -207,6 +207,7 @@ class MessageRecord:
     heading_metadata: str
     text: str
     source_line: int
+    transcript_scaffolding: bool = False
 
 
 @dataclass
@@ -275,9 +276,9 @@ def load_segments(claude_jsonl: Path, codex_jsonl: Path) -> dict[tuple[str, str,
     ]
     for platform, mod, source in sources:
         if platform == "codex":
-            _thread_id, _cwd, messages = mod.iter_messages(source)
+            _thread_id, _cwd, messages = mod.iter_messages(source, include_transcript_scaffolding=True)
         else:
-            messages = mod.iter_messages(source)
+            messages = mod.iter_messages(source, include_transcript_scaffolding=True)
         per_day: dict[str, int] = {}
         for segment in mod.split_segments(messages):
             start = next((m.ts for m in segment if m.ts), None)
@@ -303,6 +304,7 @@ def load_segments(claude_jsonl: Path, codex_jsonl: Path) -> dict[tuple[str, str,
                         heading_metadata=heading_metadata,
                         text=msg.text,
                         source_line=msg.source_line,
+                        transcript_scaffolding=getattr(msg, "transcript_scaffolding", False),
                     )
                 )
             segments[key] = records
@@ -435,6 +437,8 @@ def render_messages(messages: list[MessageRecord]) -> str:
     parts: list[str] = []
     current: tuple[str, str, int] | None = None
     for msg in messages:
+        if msg.transcript_scaffolding:
+            continue
         key = (msg.platform, msg.date, msg.sequence)
         if key != current:
             current = key
@@ -446,7 +450,7 @@ def render_messages(messages: list[MessageRecord]) -> str:
             f"## Message {msg.message_index:03d} - {msg.role}{msg.heading_metadata}\n\n"
             f"{msg.text.strip()}\n"
         )
-    return "\n".join(parts).strip() + "\n"
+    return ("\n".join(parts).strip() + "\n") if parts else ""
 
 
 def messages_for_range(
@@ -504,6 +508,8 @@ def is_real_model_id(model: str) -> bool:
 def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
     stats: dict[str, tuple[int, int]] = {}
     for index, msg in enumerate(messages):
+        if msg.transcript_scaffolding:
+            continue
         if msg.role != "assistant":
             continue
         fields = parse_heading_fields(msg.heading_metadata)
@@ -525,9 +531,10 @@ def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
 
 def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
     entries: list[str] = []
-    if any(msg.role == "user" for msg in messages):
+    visible_messages = [msg for msg in messages if not msg.transcript_scaffolding]
+    if any(msg.role == "user" for msg in visible_messages):
         entries.append("User")
-    entries.extend(model_entries_for_messages(messages))
+    entries.extend(model_entries_for_messages(visible_messages))
     if not entries:
         entries.append("No user or assistant model metadata found.")
     return entries

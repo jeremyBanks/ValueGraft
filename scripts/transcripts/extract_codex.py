@@ -14,6 +14,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 
 GAP_SECONDS = 60 * 60
@@ -29,6 +30,7 @@ class Message:
     model_provider: str | None = None
     agent_runtime_version: str | None = None
     reasoning_effort: str | None = None
+    transcript_scaffolding: bool = False
 
 
 def parse_ts(value: str | None) -> datetime | None:
@@ -87,7 +89,25 @@ def is_noise_text(text: str) -> bool:
     return any(marker in stripped for marker in noise_markers)
 
 
-def iter_messages(path: Path) -> tuple[str, str | None, list[Message]]:
+def is_compaction_record(row: dict[str, Any]) -> bool:
+    if row.get("type") == "compacted":
+        return True
+    payload = row.get("payload")
+    if not isinstance(payload, dict):
+        return False
+    return payload.get("type") in {"context_compacted", "compaction"}
+
+
+def is_transcript_scaffolding_record(row: dict[str, Any]) -> bool:
+    if row.get("isCompactSummary") or row.get("isVisibleInTranscriptOnly"):
+        return True
+    payload = row.get("payload")
+    return isinstance(payload, dict) and bool(
+        payload.get("isCompactSummary") or payload.get("isVisibleInTranscriptOnly")
+    )
+
+
+def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -> tuple[str, str | None, list[Message]]:
     thread_id = path.stem.rsplit("-", 1)[-1]
     cwd: str | None = None
     model_provider: str | None = None
@@ -102,6 +122,11 @@ def iter_messages(path: Path) -> tuple[str, str | None, list[Message]]:
             except json.JSONDecodeError:
                 continue
 
+            if is_compaction_record(row):
+                continue
+            transcript_scaffolding = is_transcript_scaffolding_record(row)
+            if transcript_scaffolding and not include_transcript_scaffolding:
+                continue
             if row.get("type") == "session_meta":
                 payload = row.get("payload") or {}
                 thread_id = payload.get("id") or payload.get("session_id") or thread_id
@@ -149,6 +174,7 @@ def iter_messages(path: Path) -> tuple[str, str | None, list[Message]]:
                     model_provider=model_provider,
                     agent_runtime_version=agent_runtime_version,
                     reasoning_effort=current_effort,
+                    transcript_scaffolding=transcript_scaffolding,
                 )
             )
     out = sorted(out, key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line))
@@ -202,6 +228,7 @@ def heading_metadata(msg: Message) -> str:
 
 
 def write_segment(path: Path, thread_id: str, cwd: str | None, date: str, sequence_in_date: int, segment: list[Message]) -> None:
+    visible_segment = [msg for msg in segment if not msg.transcript_scaffolding]
     lines = [
         "---",
         "platform: codex",
@@ -209,12 +236,12 @@ def write_segment(path: Path, thread_id: str, cwd: str | None, date: str, sequen
         f"cwd: {cwd or 'unknown'}",
         f"date_utc: {date}",
         f"sequence_in_date: {sequence_in_date:03d}",
-        f"messages: {len(segment)}",
+        f"messages: {len(visible_segment)}",
         "assistant_metadata: model, provider, Codex CLI version, and reasoning effort are included on assistant headings when present in the source JSONL.",
         "---",
         "",
     ]
-    for message_idx, msg in enumerate(segment, 1):
+    for message_idx, msg in enumerate(visible_segment, 1):
         lines.append(f"## Message {message_idx:03d} - {msg.role}{heading_metadata(msg)}")
         lines.append("")
         lines.append(msg.text)

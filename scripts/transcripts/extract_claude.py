@@ -27,6 +27,7 @@ class Message:
     source_line: int
     model: str | None = None
     agent_runtime_version: str | None = None
+    transcript_scaffolding: bool = False
 
 
 def parse_ts(value: str | None) -> datetime | None:
@@ -89,6 +90,10 @@ def is_noise_text(text: str) -> bool:
     return any(marker in stripped for marker in noise_markers)
 
 
+def is_transcript_scaffolding_row(row: dict[str, Any]) -> bool:
+    return bool(row.get("isCompactSummary") or row.get("isVisibleInTranscriptOnly"))
+
+
 def text_from_content(content: Any) -> str:
     if isinstance(content, str):
         return content
@@ -107,7 +112,7 @@ def text_from_content(content: Any) -> str:
     return ""
 
 
-def iter_messages(path: Path) -> list[Message]:
+def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -> list[Message]:
     out: list[Message] = []
     with path.open("r", encoding="utf-8") as handle:
         for line_no, line in enumerate(handle, 1):
@@ -117,6 +122,9 @@ def iter_messages(path: Path) -> list[Message]:
                 continue
 
             if row.get("isSidechain"):
+                continue
+            transcript_scaffolding = is_transcript_scaffolding_row(row)
+            if transcript_scaffolding and not include_transcript_scaffolding:
                 continue
             if row.get("type") not in {"user", "assistant"}:
                 continue
@@ -145,6 +153,7 @@ def iter_messages(path: Path) -> list[Message]:
                     line_no,
                     model=msg.get("model") if isinstance(msg.get("model"), str) else None,
                     agent_runtime_version=row.get("version") if isinstance(row.get("version"), str) else None,
+                    transcript_scaffolding=transcript_scaffolding,
                 )
             )
     return sorted(out, key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line))
@@ -193,18 +202,19 @@ def heading_metadata(msg: Message) -> str:
 
 
 def write_segment(path: Path, session_id: str, date: str, sequence_in_date: int, segment: list[Message]) -> None:
+    visible_segment = [msg for msg in segment if not msg.transcript_scaffolding]
     lines = [
         "---",
         "platform: claude-code",
         f"session_id: {session_id}",
         f"date_utc: {date}",
         f"sequence_in_date: {sequence_in_date:03d}",
-        f"messages: {len(segment)}",
+        f"messages: {len(visible_segment)}",
         "assistant_metadata: model and Claude Code version are included on assistant headings when present in the source JSONL.",
         "---",
         "",
     ]
-    for message_idx, msg in enumerate(segment, 1):
+    for message_idx, msg in enumerate(visible_segment, 1):
         lines.append(f"## Message {message_idx:03d} - {msg.role}{heading_metadata(msg)}")
         lines.append("")
         lines.append(msg.text)
