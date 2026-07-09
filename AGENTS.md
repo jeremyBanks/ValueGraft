@@ -232,6 +232,18 @@ corrected errors (the -0.31 stance, the 'keys hurt', the fixed-summary numbers).
 Brief Fable on: the robust metric, the CI'd effect (referent significant/sense
 underpowered/stance null), keys-neutral, and the own-summary mechanism.
 
+## FABLE WRITES TO A NOTES FILE — every serious consult (owner 07-09)
+
+Fable's major outputs (verdicts, assessments, trajectory reviews, experiment
+designs) were living only in agent-to-agent replies and GETTING LOST. New standing
+practice for EVERY serious Fable consultation: **I create an empty `notes/` file**
+(naming convention `YYYYMMDD<counter>-slug.md`, next counter after the latest),
+pass Fable a **ton of context** in the prompt, and instruct it to **write/edit its
+assessment directly into that file itself** (it owns the file), returning only the
+path + a short topline. This preserves Fable's reasoning for posterity and for the
+paper. Combine with the un-anchored rule (don't lead the prompt) and CURRENT FACTS
+above. Default this going forward; don't let a serious Fable result be chat-only.
+
 ## FRAMING PROVENANCE (owner 07-09): mitigation-first was the owner's intent ALL ALONG
 
 The daily summaries narrate the 07-05 mitigation-first "reframing" as an external-review
