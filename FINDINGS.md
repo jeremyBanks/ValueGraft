@@ -554,3 +554,16 @@ CAVEATS: PRELIMINARY — gated behind the fresh-conv reproduction of the +0.10 a
 doesn't reproduce on held-out convs, the map is built on sand). One dense model; Mistral (dense,
 no-QK-norm) was referent+, so NOT "dense=negative" — it's model/architecture-specific, not a clean
 dense/MoE law. n=24. Renders NOT banked (old-harness run, pre-checkpointing).
+
+## Arch pole: Qwen2.5-32B (dense, no-QK-norm) — graft STRONGLY HARMFUL; the map skews MoE-positive / dense-negative (2026-07-09)
+Qwen2.5-32B, n=24 conv, conv-clustered, smoke passes: referent [-0.303,-0.157] STRONG NEG · sense
+[-0.531,-0.317] very strong NEG · stance [-0.223,-0.133] NEG. The graft is HARMFUL across the board.
+ARCHITECTURE MAP SO FAR: clearly POSITIVE only on the MoE anchor (Qwen3-30B-A3B +0.10) + a weak
+Mistral referent (+0.035); NULL-to-STRONGLY-NEGATIVE on the dense models (Qwen3-32B null/neg,
+Qwen2.5 strong-neg, phi-4 null). The graft ranges strongly-positive (MoE) → strongly-negative (dense)
+— a dramatic architecture-specific reversal.
+⚠ ROBUSTNESS FLAG: the effect is clearly positive mainly on the ONE model it was developed on. This
+makes the FRESH-CONV REPRODUCTION of the anchor CRITICAL — if +0.10 doesn't hold on held-out convs,
+the effect is fragile/model-specific rather than a real recover-meaning phenomenon. The reproduction
+(b0/b1/b2, running) is the disambiguator. Do NOT over-sell "architecture-specific reversal" until the
+anchor reproduces.
