@@ -563,3 +563,21 @@ FIX (in progress): restore per-conv incremental checkpointing to the harness (de
 Fable-reviewed, NOT a panic addition) BEFORE the re-run; add a probe-based budget-headroom gate
 (project per-conv render time * n vs MODEL_TIMEOUT, fail closed); separate render-timeout from
 score-timeout. MODEL_TIMEOUT formula already patched (convs*1200+5400).
+FIX LANDED (07-09, commit 930bf4a, PENDING Fable review): per-conv checkpointing is IN src/
+cross_arch_probe.py. Each conv writes results/cross_arch/<slug>/conv_<NNN>__<cid>.json ATOMICALLY
+(tmp+fsync+os.replace) as soon as it is rendered AND scored, BEFORE the next conv -> interruption
+loses <=1 conv. Each file is a COMPLETE REUSABLE render artifact (~36KB text): the native conversation
+TEXT (generated replies) + self-gen summary TEXT + per-plant traces/raw_EB + scan_lpa + accumulator
+deltas. TWO fingerprints: `fingerprint` (all scoring params) gates EXACT score replay/resume;
+`render_fingerprint` (generation params only) gates render+summary REUSE across DIFFERENT scoring
+configs -> a future per-layer/champion/alpha/region run reuses the expensive generation and only
+forward-passes to re-score. Final <slug>.json is a pure function of the per-conv files (pool ==
+in-memory); cross-pod split = pool the union (block_analysis.py reads traces). SC_CHECKPOINT_FRESH=1
+forces fresh. Scoring code UNTOUCHED (a snapshot/delta/replay wrapper only OBSERVES + REPLAYS it).
+CPU-VALIDATED (Qwen3-0.6B, no GPU, scratchpad/validate_ckpt.py) byte-identical: (a) OLD pre-checkpoint
+== NEW fresh, (b/c) resume/pool == in-memory (0 summary regens), (d) render-reuse re-scores from saved
+text with ZERO generation == fresh, (e) kill-sim re-render+re-score of a lost conv == uninterrupted --
+all exact under SC_BATCHED_RENDER=0. NOTE: under batched decode a PARTIALLY-lost render chunk can
+differ at the token level (pre-existing batched-greedy composition sensitivity, documented in code);
+checkpointed convs are always byte-stable, and whole-chunk re-render is composition-stable. STILL TODO
+before the re-run: budget-headroom gate + render/score timeout split.
