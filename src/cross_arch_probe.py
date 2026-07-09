@@ -69,7 +69,13 @@ the output (``interpretation`` field).
 Env:
   SC_HF_MODEL         : HF repo id (REQUIRED for the real run)
   SC_SUMMARIZER_MODEL : model used by --make-summaries (default Qwen/Qwen3.6-27B)
-  SC_CONV_LIMIT       : first N conversations (default 4)
+  SC_CONV_LIMIT       : N conversations to score (default 4)
+  SC_CONV_START       : 0-based OFFSET into the sorted conversation list; the run
+                        scores convs [SC_CONV_START : SC_CONV_START+SC_CONV_LIMIT]
+                        (default 0 == the legacy first-N slice, byte-identical).
+                        e.g. SC_CONV_START=12 SC_CONV_LIMIT=24 -> the held-out set
+                        c13..c36 (fresh convs the effect was never tuned on). True
+                        conv ids are preserved in every result/label.
   SC_GC_ALPHA         : value-graft strength alpha_V (default 0.75)
   SC_ALPHA0_TOL       : max |lp_E0 - lp_B| for smoke (a) (default 5e-3, TIGHT)
   SC_CHANGE_TOL       : min max|lp_E - lp_B| for smoke (b) (default 1e-3)
@@ -600,11 +606,18 @@ def select_plants(conv: dict) -> list[dict]:
     return out
 
 
-def collect_specs(data_dir: Path, conv_limit: int):
-    """(conv_dict, [plant,...]) for the first ``conv_limit`` convs that have >=1
-    usable plant. Pure -- no tokenizer, no torch."""
+def collect_specs(data_dir: Path, conv_limit: int, conv_start: int = 0):
+    """(conv_dict, [plant,...]) for the ``conv_limit`` convs starting at OFFSET
+    ``conv_start`` (default 0 == the first ``conv_limit``) that have >=1 usable
+    plant. Pure -- no tokenizer, no torch.
+
+    ``conv_start`` selects a HELD-OUT window of the corpus: e.g. conv_start=12,
+    conv_limit=24 selects convs c13..c36 (0-based offset into the sorted
+    conversation_paths list). conv_start=0 reproduces the legacy first-N slice
+    byte-for-byte. The TRUE conv ids (from each file) are preserved -- nothing is
+    relabeled to c01."""
     specs = []
-    for p in conversation_paths(data_dir)[:conv_limit]:
+    for p in conversation_paths(data_dir)[conv_start: conv_start + conv_limit]:
         conv = json.loads(p.read_text())
         plants = select_plants(conv)
         if plants:
@@ -1132,7 +1145,7 @@ def _native_batched_decode(model, caches, first_logits_list, next_positions, *,
 
 
 def native_render_specs(model, tok, family, scenarios, conv_limit, *,
-                        max_reply_tokens, temp, seed_base,
+                        max_reply_tokens, temp, seed_base, conv_start=0,
                         batched_render=NATIVE_BATCHED_RENDER_DEFAULT,
                         native_batch=NATIVE_BATCH_DEFAULT):
     """PER-MODEL IN-CONTEXT (NATIVE) RENDER of the shared scaffold (design v2).
@@ -1359,7 +1372,14 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
             _render_chunk(items[:mid])
             _render_chunk(items[mid:])
 
-    items = list(enumerate(scenarios[:conv_limit]))
+    # HELD-OUT window: select ``conv_limit`` scenarios starting at OFFSET
+    # ``conv_start`` (conv_start=0 == the legacy first-N slice, byte-identical).
+    # enumerate() re-bases idx to 0..N-1 over the SELECTED window, so the per-conv
+    # seed (seed_base + idx) is POSITION-based -- the held-out window is a
+    # structural mirror of the tuned window (c13-as-first gets the same seed c01
+    # got), and start=0 is unchanged. The true conv id (scenario["id"]) is what
+    # flows into every result/label, never this positional idx.
+    items = list(enumerate(scenarios[conv_start: conv_start + conv_limit]))
     if batched_render:
         # Process convs in CHUNKS of native_batch so peak memory is bounded by N
         # conv-caches + the model (not all convs); each chunk frees before the next.
@@ -1393,7 +1413,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               fixed_summaries: dict | None, *,
               conv_limit: int, alpha_v: float, alpha0_tol: float,
               change_tol: float, max_gold_tok: int,
-              trust_remote_code: bool,
+              trust_remote_code: bool, conv_start: int = 0,
               placebo_mode: str | None = None, alpha_sweep: bool = False,
               seed: int = ROBUST_SEED,
               strong_prior: bool = True, champion_scan: int = 0,
@@ -1444,6 +1464,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "reason": None,
         "alpha_v": alpha_v,
         "conv_limit": conv_limit,
+        "conv_start": conv_start,   # HELD-OUT offset into the corpus (0 == first-N)
         "native_render": native_render,   # DESIGN v2: per-model in-context corpus
         "summary_source": (
             "PER-MODEL SELF-GEN on NATIVE in-context corpus (design v2)"
@@ -1674,13 +1695,16 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         # summaries file in native mode.
         fixed_summaries = None
         try:
-            print(f"  [native-render] rendering {conv_limit} scaffold scenarios "
-                  f"in-context (temp={native_temp}, max_reply={native_max_reply})",
+            _sel = scenarios[conv_start: conv_start + conv_limit]
+            _sel_ids = [s.get("id") for s in _sel]
+            print(f"  [native-render] rendering {len(_sel)} scaffold scenarios "
+                  f"in-context (conv_start={conv_start}, ids={_sel_ids}; "
+                  f"temp={native_temp}, max_reply={native_max_reply})",
                   flush=True)
             specs, reply_records = native_render_specs(
                 model, tok, family, scenarios, conv_limit,
                 max_reply_tokens=native_max_reply, temp=native_temp,
-                seed_base=1000)
+                seed_base=1000, conv_start=conv_start)
         except torch.cuda.OutOfMemoryError as e:  # noqa: BLE001
             doc.update(status="UNSUPPORTED", reason=f"OOM during native render: {e}")
             return doc
@@ -1691,7 +1715,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             return doc
         doc["reply_covariates"] = reply_covariates(reply_records)
     else:
-        specs = collect_specs(data_dir, conv_limit)
+        specs = collect_specs(data_dir, conv_limit, conv_start=conv_start)
     if not specs:
         doc.update(status="ERROR", reason="no usable plants in corpus subset")
         return doc
@@ -2491,17 +2515,27 @@ class _FakeCfg:
             setattr(self, k, v)
 
 
-def _dry_run(data_dir: Path, conv_limit: int) -> int:
+def _dry_run(data_dir: Path, conv_limit: int, conv_start: int = 0) -> int:
     print("== cross_arch_probe --dry-run (no torch / no model) ==")
-    print(f"data_dir={data_dir}  SC_CONV_LIMIT={conv_limit}  categories={CATS}")
+    print(f"data_dir={data_dir}  SC_CONV_START={conv_start}  "
+          f"SC_CONV_LIMIT={conv_limit}  categories={CATS}")
 
-    specs = collect_specs(data_dir, conv_limit)
+    # Show the FULL sorted corpus window that will be selected (true ids), so the
+    # held-out selection is auditable even for convs with 0 usable plants.
+    all_paths = conversation_paths(data_dir)
+    window = all_paths[conv_start: conv_start + conv_limit]
+    window_ids = [p.stem for p in window]
+    print(f"SELECTED WINDOW ({len(window_ids)} convs, offset {conv_start}): "
+          f"{window_ids}")
+
+    specs = collect_specs(data_dir, conv_limit, conv_start=conv_start)
     total = 0
     for conv, plants in specs:
         print(f"  {conv['id']}: {len(plants)} usable plants "
               f"({', '.join(p['id'] for p in plants)})")
         total += len(plants)
-    print(f"TOTAL usable sense+referent plants in first {conv_limit} convs: {total}")
+    print(f"TOTAL usable sense+referent plants in convs "
+          f"[{conv_start}:{conv_start + conv_limit}]: {total}")
     assert total > 0, "dry-run found no plants -- corpus/selection broken"
 
     # config-based geometry detection across several architecture families,
@@ -3322,7 +3356,7 @@ def _smoke_align(data_dir: Path, tokenizer_ids) -> int:
 
 
 def make_summaries(summarizer: str, data_dir: Path, summaries_path: Path,
-                   conv_limit: int, trust_remote_code: bool):
+                   conv_limit: int, trust_remote_code: bool, conv_start: int = 0):
     """Generate the SHARED fixed summary text ONCE with a single designated
     summarizer, write {conv_id: text, _summarizer: id} to summaries_path. This
     file is then a required INPUT to every per-model run so the compaction
@@ -3333,7 +3367,8 @@ def make_summaries(summarizer: str, data_dir: Path, summaries_path: Path,
     from arms_common import SUMMARY_REQUEST  # noqa: PLC0415
     from arms_hf import generate_summary_hf  # noqa: PLC0415
 
-    print(f"MAKE_SUMMARIES summarizer={summarizer} limit={conv_limit}", flush=True)
+    print(f"MAKE_SUMMARIES summarizer={summarizer} start={conv_start} "
+          f"limit={conv_limit}", flush=True)
     tok = AutoTokenizer.from_pretrained(summarizer, trust_remote_code=trust_remote_code)
     model = AutoModelForCausalLM.from_pretrained(
         summarizer, dtype=torch.bfloat16, device_map="auto",
@@ -3345,7 +3380,7 @@ def make_summaries(summarizer: str, data_dir: Path, summaries_path: Path,
     if summaries_path.exists():
         out.update(json.loads(summaries_path.read_text()))
         out["_summarizer"] = summarizer
-    for conv, _plants in collect_specs(data_dir, conv_limit):
+    for conv, _plants in collect_specs(data_dir, conv_limit, conv_start=conv_start):
         cid = conv["id"]
         if out.get(cid):
             print(f"  {cid}: cached", flush=True)
@@ -3372,6 +3407,14 @@ def main():
                     help="generate the shared fixed summaries ONCE, then exit")
     ap.add_argument("--conv-limit", type=int,
                     default=int(os.environ.get("SC_CONV_LIMIT", "4")))
+    ap.add_argument("--conv-start", type=int,
+                    default=int(os.environ.get("SC_CONV_START", "0")),
+                    help="HELD-OUT selector: 0-based OFFSET into the sorted "
+                         "conversation list; the run scores convs "
+                         "[conv_start : conv_start+conv_limit]. Default 0 == the "
+                         "legacy first-N slice (byte-identical). e.g. "
+                         "SC_CONV_START=12 SC_CONV_LIMIT=24 selects c13..c36 (the "
+                         "fresh/held-out set the effect was never tuned on).")
     ap.add_argument("--alpha-v", type=float,
                     default=float(os.environ.get("SC_GC_ALPHA", "0.75")))
     ap.add_argument("--alpha0-tol", type=float,
@@ -3496,7 +3539,7 @@ def main():
 
     data_dir = Path(args.data_dir)
     if args.dry_run:
-        sys.exit(_dry_run(data_dir, args.conv_limit))
+        sys.exit(_dry_run(data_dir, args.conv_limit, conv_start=args.conv_start))
 
     if args.smoke_align:
         toks = (tuple(t.strip() for t in args.smoke_tokenizers.split(",")
@@ -3509,7 +3552,7 @@ def main():
 
     if args.make_summaries:
         make_summaries(args.summarizer, data_dir, summaries_path,
-                       args.conv_limit, trust)
+                       args.conv_limit, trust, conv_start=args.conv_start)
         print("CROSS_ARCH_DONE", flush=True)
         return
 
@@ -3566,7 +3609,8 @@ def main():
     try:
         doc = run_model(
             args.model, data_dir, out_dir, fixed_summaries,
-            conv_limit=args.conv_limit, alpha_v=args.alpha_v,
+            conv_limit=args.conv_limit, conv_start=args.conv_start,
+            alpha_v=args.alpha_v,
             alpha0_tol=args.alpha0_tol, change_tol=args.change_tol,
             max_gold_tok=args.max_gold_tok, trust_remote_code=trust,
             placebo_mode=args.placebo, alpha_sweep=args.alpha_sweep,
