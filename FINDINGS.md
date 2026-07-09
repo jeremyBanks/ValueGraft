@@ -567,3 +567,18 @@ makes the FRESH-CONV REPRODUCTION of the anchor CRITICAL — if +0.10 doesn't ho
 the effect is fragile/model-specific rather than a real recover-meaning phenomenon. The reproduction
 (b0/b1/b2, running) is the disambiguator. Do NOT over-sell "architecture-specific reversal" until the
 anchor reproduces.
+
+## ⚠ Fresh-conv reproduction (first block read, n=12): POSITIVE CONTROL FAILED — +0.10 did NOT reproduce (2026-07-09)
+Block design, Qwen3-30B-A3B, native render, per-token, RELATIVE floor, conv-clustered, CENTRAL pooled floor
+(scripts/block_analysis.py over b0=c01-c12 + b1=c13-c24):
+- BASELINE (c01-c12, POSITIVE CONTROL): referent +0.012, CI [-0.070,+0.091] — FAIL, spans 0. The +0.10
+  (original CI [+0.012,+0.195]) did NOT reproduce on its OWN convs. block_analysis verdict: "RUN IS SUSPECT."
+- FRESH (c13-c24, held-out): referent -0.021, CI [-0.082,+0.041] — NULL, and at HIGH headroom (damage
+  present, graft doesn't recover it = a real null, not a "nothing to recover" artifact). All fresh
+  categories null. Morphology 100% sem_phrase both cells (not a drift artifact).
+INTERPRETATION OPEN — for Fable un-anchored: (a) the +0.10 was FRAGILE/noisy and doesn't reproduce
+(honest, sobering — headline not robust), OR (b) a RECENT HARNESS CHANGE (relative floor / OLMo-fix /
+checkpointing / conv-CI) altered the apparatus vs the original run = a REGRESSION to find + fix. MoE
+render is hardware-nondeterministic (adds noise). Positive-control failure => CANNOT trust the fresh read
+until resolved. b2 (c25-c36) rendering for n=24 but MOOT if the apparatus is suspect. DO NOT conclude
+"effect fragile" until Fable adjudicates regression-vs-fragile.
