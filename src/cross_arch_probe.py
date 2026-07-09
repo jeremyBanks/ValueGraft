@@ -123,7 +123,27 @@ constructs every case, prints N plants for SC_CONV_LIMIT, exercises the
 config-based KV-geometry detection on synthetic configs of several families, and
 asserts the generic snapshot/graft code paths are model-type-agnostic.
 
-Out: results/cross_arch/<model-slug>.json
+Out: results/cross_arch/<model-slug>.json  (the pooled per-model result), AND
+     PER-CONVERSATION CHECKPOINTS results/cross_arch/<model-slug>/conv_<NNN>__<cid>.json
+     (incident #38). Each per-conv file is a COMPLETE, REUSABLE render artifact,
+     written atomically (tmp + os.replace) as the conv is rendered+scored, BEFORE
+     the next conv -- so an interruption loses <=1 conversation and the render
+     (the expensive generation) is never redone. The final <slug>.json is a pure
+     function of these files (pool -> identical numbers). Cross-pod SPLITTING =
+     pool the union (scripts/block_analysis.py reads the traces). Schema:
+       schema, stage("rendered"|"scored"), window_pos, conv_id,
+       fingerprint          : all SCORING params -> gates EXACT score replay/resume,
+       render_fingerprint   : GENERATION params only -> gates render+summary REUSE
+                              across DIFFERENT scoring configs (alpha/region/floor);
+                              a future run reuses the saved text, forward-passes to
+                              rebuild KV, and re-grafts/re-scores with NO generation,
+       render{conv,plants,reply_records} : the native in-context conversation TEXT
+                              (the model's generated replies = the write-time KV),
+       summary_text         : the self-gen compaction summary (TEXT),
+       scan_lpa             : per-plant lp_A for the pooled relative competence floor,
+       payload              : this conv's per-plant traces + raw_EB + every
+                              accumulator delta needed to reconstruct the result.
+     SC_CHECKPOINT_FRESH=1 ignores + overwrites existing checkpoints (force fresh).
 """
 from __future__ import annotations
 
@@ -988,6 +1008,141 @@ def write_result(out_dir: Path, model: str, doc: dict):
     return of
 
 
+# ---------------------------------------------------------------------------
+# PER-CONVERSATION INCREMENTAL CHECKPOINTING (incident #38 fix).
+#
+# The cross-arch harness used to render ALL conversations in memory and write
+# ONE final result JSON at the very end -- any interruption (timeout, OOM, pod
+# death, ssh drop) lost the whole multi-hour render. This restores the earlier
+# phases' incremental-save discipline (AGENTS.md "Results-in-repo rule"): as soon
+# as a conversation is fully RENDERED and SCORED, its full contribution is written
+# to a durable per-conversation file BEFORE the next conversation starts. The
+# final per-model result is then re-assembled by POOLING those per-conv files, so
+# it is a pure function of the checkpoints (byte-identical to the all-in-memory
+# path). A killed run RESUMES from the checkpoints, losing <=1 conversation of
+# scoring. This also makes cross-pod SPLITTING trivial (each pod checkpoints its
+# conv range; pool the union), consistent with scripts/block_analysis.py.
+#
+# ATOMICITY: each checkpoint is written to a same-directory tmp file and
+# os.replace()d into place (atomic rename on POSIX), so a crash mid-write can
+# never leave a torn/partial checkpoint -- either the old file or the fully
+# written new one is present, never a mix.
+# ---------------------------------------------------------------------------
+CHECKPOINT_SCHEMA = 1
+
+
+def _atomic_write_json(path: Path, obj: dict) -> None:
+    """Write ``obj`` as JSON to ``path`` atomically (tmp in the SAME directory +
+    os.replace, so the rename is atomic and never crosses a filesystem)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f".{path.name}.tmp.{os.getpid()}")
+    with open(tmp, "w") as fh:
+        json.dump(obj, fh)
+        fh.flush()
+        os.fsync(fh.fileno())
+    os.replace(tmp, path)
+
+
+def checkpoint_dir(out_dir: Path, model: str) -> Path:
+    """Per-model checkpoint directory: results/cross_arch/<slug>/."""
+    return out_dir / _slug(model)
+
+
+def checkpoint_path(out_dir: Path, model: str, window_pos: int,
+                    conv_id: str) -> Path:
+    """Per-conversation checkpoint file. Keyed by BOTH the 0-based window position
+    (for deterministic ordering + the position-based render seed) AND the true
+    conversation id (audit-legible, stable across conv_limit changes)."""
+    return (checkpoint_dir(out_dir, model)
+            / f"conv_{window_pos:03d}__{_slug(str(conv_id))}.json")
+
+
+def render_fingerprint(model_id: str, *, conv_start: int, native_render: bool,
+                       native_max_reply: int, native_temp: float) -> dict:
+    """Only the parameters that determine the GENERATED TEXT of a conversation --
+    the native in-context replies AND (deterministically, fixed seed) the self-gen
+    summary. A checkpoint's saved render (messages + summary) is REUSABLE by any
+    future run whose render_fingerprint matches, EVEN IF its scoring params (alpha,
+    graft region, floor, controls) differ -- that future run skips ALL generation
+    and only forward-passes the saved text to rebuild KV + re-graft/re-score. This
+    is the expensive part (generation ~16 min/conv); scoring is seconds."""
+    return {
+        "schema": CHECKPOINT_SCHEMA,
+        "model": model_id,
+        "conv_start": conv_start,
+        "native_render": native_render,
+        "native_max_reply": native_max_reply,
+        "native_temp": native_temp,
+    }
+
+
+def run_fingerprint(model_id: str, *, conv_start: int, alpha_v: float, seed: int,
+                    native_render: bool, native_max_reply: int,
+                    native_temp: float, max_gold_tok: int,
+                    task_competence_mode: str, task_competence_k: float,
+                    task_lpa_floor: float, headroom_floor: float,
+                    placebo_mode, alpha_sweep: bool, strong_prior: bool,
+                    champion_scan: int, champion_regions,
+                    ablate_qk_norm_flag: bool, ablate_lambda_values,
+                    alpha0_tol: float, change_tol: float) -> dict:
+    """Every parameter that can change a per-conversation NUMBER. A checkpoint is
+    only reused when its fingerprint matches the current run's -- so a run with a
+    different alpha / seed / gate / control config never silently pools stale or
+    incompatible per-conv results (the checkpoint is recomputed instead)."""
+    return {
+        "schema": CHECKPOINT_SCHEMA,
+        "model": model_id,
+        "conv_start": conv_start,
+        "alpha_v": alpha_v,
+        "seed": seed,
+        "native_render": native_render,
+        "native_max_reply": native_max_reply,
+        "native_temp": native_temp,
+        "max_gold_tok": max_gold_tok,
+        "task_competence_mode": task_competence_mode,
+        "task_competence_k": task_competence_k,
+        "task_lpa_floor": task_lpa_floor,
+        "headroom_floor": headroom_floor,
+        "placebo_mode": placebo_mode,
+        "alpha_sweep": bool(alpha_sweep),
+        "strong_prior": bool(strong_prior),
+        "champion_scan": int(champion_scan or 0),
+        "champion_regions": list(champion_regions) if champion_regions else None,
+        "ablate_qk_norm_flag": bool(ablate_qk_norm_flag),
+        "ablate_lambda_values": (list(ablate_lambda_values)
+                                 if ablate_lambda_values else None),
+        "alpha0_tol": alpha0_tol,
+        "change_tol": change_tol,
+    }
+
+
+def _load_checkpoint(path: Path, fingerprint: dict, want_stage: str,
+                     fp_key: str = "fingerprint"):
+    """Return a loaded checkpoint dict iff it exists, parses, the requested
+    fingerprint (``fp_key`` = "fingerprint" for exact SCORE reuse, or
+    "render_fingerprint" for GENERATION-only reuse across differing scoring
+    params) matches, and its stage is at least ``want_stage`` ("rendered" or
+    "scored"). Any mismatch/corruption -> None (recompute), printed loudly. A torn
+    tmp file is never seen here (atomic rename)."""
+    if not path.exists():
+        return None
+    try:
+        with open(path) as fh:
+            ck = json.load(fh)
+    except Exception as e:  # noqa: BLE001
+        print(f"  [checkpoint] IGNORING unreadable {path.name}: "
+              f"{type(e).__name__}: {e}", flush=True)
+        return None
+    if ck.get(fp_key) != fingerprint:
+        print(f"  [checkpoint] IGNORING {path.name} for {fp_key}: mismatch "
+              f"-> will recompute", flush=True)
+        return None
+    stage_rank = {"rendered": 1, "scored": 2}
+    if stage_rank.get(ck.get("stage"), 0) < stage_rank[want_stage]:
+        return None
+    return ck
+
+
 class Unsupported(Exception):
     """Graceful bail-out: model can't be handled; record reason, don't crash."""
 
@@ -1263,7 +1418,8 @@ def _native_batched_decode(model, caches, first_logits_list, next_positions, *,
 def native_render_specs(model, tok, family, scenarios, conv_limit, *,
                         max_reply_tokens, temp, seed_base, conv_start=0,
                         batched_render=NATIVE_BATCHED_RENDER_DEFAULT,
-                        native_batch=NATIVE_BATCH_DEFAULT):
+                        native_batch=NATIVE_BATCH_DEFAULT,
+                        only_positions=None, on_conv_rendered=None):
     """PER-MODEL IN-CONTEXT (NATIVE) RENDER of the shared scaffold (design v2).
 
     GPU path (torch). For each of the first ``conv_limit`` scaffold scenarios,
@@ -1496,11 +1652,32 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
     # got), and start=0 is unchanged. The true conv id (scenario["id"]) is what
     # flows into every result/label, never this positional idx.
     items = list(enumerate(scenarios[conv_start: conv_start + conv_limit]))
+    # INCREMENTAL CHECKPOINTING / RESUME: render only the requested window
+    # positions (``only_positions`` = set of 0-based idx into the window). idx is
+    # preserved from the FULL enumeration so the position-based seed (seed_base +
+    # idx) is UNCHANGED -- rendering a subset yields byte-identical output for each
+    # rendered conv (greedy temp-0 decode is independent of batch composition).
+    all_items = items
+    if only_positions is not None:
+        want = set(only_positions)
+        items = [(idx, sc) for idx, sc in items if idx in want]
+
+    def _emit_rendered(idx):
+        """Persist/notify one freshly rendered conv (checkpoint stage=rendered) so
+        a crash after this conv never re-renders it. Bounds render-loss to the
+        in-flight chunk (<= native_batch)."""
+        if on_conv_rendered is not None:
+            conv, plants = results_by_idx[idx]
+            on_conv_rendered(idx, conv, plants, reply_records_by_idx[idx])
+
     if batched_render:
         # Process convs in CHUNKS of native_batch so peak memory is bounded by N
         # conv-caches + the model (not all convs); each chunk frees before the next.
         for lo in range(0, len(items), native_batch):
-            _render_chunk(items[lo: lo + native_batch])
+            chunk = items[lo: lo + native_batch]
+            _render_chunk(chunk)
+            for idx, _sc in chunk:               # checkpoint each conv as rendered
+                _emit_rendered(idx)
     else:
         # CONV-MAJOR per-token fallback (the validated path; one cache at a time).
         for idx, scenario in items:
@@ -1513,16 +1690,22 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
                 _finalize_reply(st, ti, reply_ids, lp_sum)
             results_by_idx[idx] = st["result"]
             reply_records_by_idx[idx] = st["reply_records"]
+            _emit_rendered(idx)
 
-    # assemble in scenario order (stats are order-independent, but keep it stable)
+    # assemble in scenario order (stats are order-independent, but keep it stable).
+    # Only the rendered positions are returned here; the caller merges these with
+    # any convs loaded from checkpoints. results_by_idx / reply_records_by_idx are
+    # returned position-keyed so the caller can order + pool across both sources.
     specs: list = []
     reply_records: list = []
-    for idx, _scenario in items:
+    for idx, _scenario in all_items:
+        if idx not in results_by_idx:
+            continue                             # not rendered this run (resumed)
         reply_records.extend(reply_records_by_idx[idx])
         conv, plants = results_by_idx[idx]
         if plants:
             specs.append((conv, plants))
-    return specs, reply_records
+    return specs, reply_records, results_by_idx, reply_records_by_idx
 
 
 def run_model(model_id: str, data_dir: Path, out_dir: Path,
@@ -1839,6 +2022,52 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     uniform_seconds = 0.0     # wall time of the standard uniform-alpha scoring
     champion_seconds = 0.0    # wall time of the per-config re-blend + scoring
 
+    # ---- INCREMENTAL CHECKPOINTING config (incident #38 fix) ------------------
+    # resume_enabled (default): reuse any valid per-conv checkpoints and only
+    # render/score the MISSING convs. SC_CHECKPOINT_FRESH=1 forces a fresh run
+    # (ignore + overwrite existing checkpoints). The fingerprint gates reuse to
+    # runs with byte-identical numeric params; shuffle_probe placebo carries live
+    # cross-conv state so resume-SKIP is disabled for it (checkpoints still written).
+    checkpoint_fresh = os.environ.get("SC_CHECKPOINT_FRESH", "0") in (
+        "1", "true", "True", "yes")
+    resume_enabled = not checkpoint_fresh
+    ck_fp = run_fingerprint(
+        model_id, conv_start=conv_start, alpha_v=alpha_v, seed=seed,
+        native_render=native_render, native_max_reply=native_max_reply,
+        native_temp=native_temp, max_gold_tok=max_gold_tok,
+        task_competence_mode=task_competence_mode,
+        task_competence_k=task_competence_k, task_lpa_floor=task_lpa_floor,
+        headroom_floor=headroom_floor, placebo_mode=placebo_mode,
+        alpha_sweep=alpha_sweep, strong_prior=strong_prior,
+        champion_scan=champion_scan, champion_regions=champion_regions,
+        ablate_qk_norm_flag=ablate_qk_norm_flag,
+        ablate_lambda_values=ablate_lambda_values,
+        alpha0_tol=alpha0_tol, change_tol=change_tol)
+    # RENDER fingerprint (generated TEXT only) -- a checkpoint's saved render +
+    # self-gen summary is REUSED whenever THIS matches, even if the SCORE
+    # fingerprint (ck_fp: alpha/region/floor/controls) differs. So a future run
+    # with a different alpha or graft region reuses the expensive generation and
+    # only re-forward-passes to re-score. ck_fp gates the exact SCORE replay.
+    render_fp = render_fingerprint(
+        model_id, conv_start=conv_start, native_render=native_render,
+        native_max_reply=native_max_reply, native_temp=native_temp)
+    resume_skip_ok = resume_enabled and placebo_mode != "shuffle_probe"
+    # self-gen summaries reused from checkpoints (keyed by conv id) so a resumed /
+    # render-reusing run regenerates NO summary. Populated during render assembly
+    # and the relative pre-scan; consumed by _process_conv (which regenerates only
+    # on a cache miss). Deterministic (fixed seed) so reuse is byte-identical.
+    summary_cache: dict = {}
+
+    def _ckpath(pos, cid):
+        return checkpoint_path(out_dir, model_id, pos, cid)
+
+    # spec_positions[i] = the 0-based WINDOW position of specs[i]. The window
+    # position keys the checkpoint file + (in native mode) the render seed; it is
+    # DISTINCT from the enumerate index _ci over specs (which drives the placebo
+    # per-conv seed and MUST stay 0..len(specs)-1, unchanged, for numeric identity).
+    spec_positions: list[int] = []
+    reply_records_by_pos: dict[int, list] = {}
+
     # ---- corpus: per-model NATIVE in-context render (design v2) or pre-rendered
     reply_records: list = []
     if native_render:
@@ -1849,17 +2078,62 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         # the graft needs THIS model's own write-time summary -> ignore any fixed
         # summaries file in native mode.
         fixed_summaries = None
+        _window = scenarios[conv_start: conv_start + conv_limit]
+        _n_window = len(_window)
+        # RESUME / RENDER-REUSE: which window positions already have a durable
+        # checkpoint whose RENDER fingerprint matches? Those skip ALL generation
+        # (native replies AND self-gen summary) -- we reuse the saved conversation
+        # text + summary and only re-forward-pass to score. Matching is on
+        # render_fp (NOT ck_fp), so a differing alpha/region still reuses the
+        # render.
+        rendered_ck: dict[int, dict] = {}
+        missing_positions: list[int] = []
+        for _pos in range(_n_window):
+            _cid = _window[_pos].get("id")
+            _ck = (_load_checkpoint(_ckpath(_pos, _cid), render_fp, "rendered",
+                                    fp_key="render_fingerprint")
+                   if resume_enabled else None)
+            if _ck is not None:
+                rendered_ck[_pos] = _ck
+                if _ck.get("summary_text") is not None:   # reuse self-gen summary
+                    summary_cache[_cid] = _ck["summary_text"]
+            else:
+                missing_positions.append(_pos)
+        print(f"  [native-render] window={_n_window} convs "
+              f"(conv_start={conv_start}); {len(rendered_ck)} render(s) reused "
+              f"from checkpoints ({sum(1 for p in rendered_ck.values() if p.get('summary_text') is not None)} "
+              f"with saved summary), {len(missing_positions)} to generate "
+              f"(temp={native_temp}, max_reply={native_max_reply}, "
+              f"resume={resume_enabled})", flush=True)
+
+        # NOTE on byte-identity of RE-rendered convs (batched decode): a conv that
+        # ALREADY has a checkpoint is reused from its saved TEXT -> byte-identical
+        # forever. A conv LOST before its rendered checkpoint is re-generated on
+        # resume; under batched decode (SC_BATCHED_RENDER=1) greedy token ids can
+        # depend on a chunk's batch COMPOSITION (padding/accumulation), so a
+        # re-render only matches the original if the SAME conv-set renders together
+        # (whole-chunk loss -> same grouping -> identical; a partial-chunk loss can
+        # differ at the token level). Set SC_BATCHED_RENDER=0 for byte-exact resume
+        # of a partially-lost chunk. Checkpointing itself is exact regardless
+        # (CPU-validated: unbatched resume/re-render/pool are byte-identical).
+        def _on_rendered(idx, conv, plants, rr):
+            """Persist one freshly rendered conv as stage=rendered BEFORE the next
+            chunk, so a crash never re-renders it (render-loss bound = 1 chunk).
+            Carries BOTH fingerprints so it is reusable for render (any scoring
+            config) and, once upgraded to scored, for exact score replay."""
+            _atomic_write_json(_ckpath(idx, conv.get("id")), {
+                "schema": CHECKPOINT_SCHEMA, "stage": "rendered",
+                "fingerprint": ck_fp, "render_fingerprint": render_fp,
+                "window_pos": idx, "conv_id": conv.get("id"),
+                "render": {"conv": conv, "plants": plants, "reply_records": rr}})
+
         try:
-            _sel = scenarios[conv_start: conv_start + conv_limit]
-            _sel_ids = [s.get("id") for s in _sel]
-            print(f"  [native-render] rendering {len(_sel)} scaffold scenarios "
-                  f"in-context (conv_start={conv_start}, ids={_sel_ids}; "
-                  f"temp={native_temp}, max_reply={native_max_reply})",
-                  flush=True)
-            specs, reply_records = native_render_specs(
+            (_r_specs, _r_reply, r_results_by_idx,
+             r_reply_by_idx) = native_render_specs(
                 model, tok, family, scenarios, conv_limit,
                 max_reply_tokens=native_max_reply, temp=native_temp,
-                seed_base=1000, conv_start=conv_start)
+                seed_base=1000, conv_start=conv_start,
+                only_positions=missing_positions, on_conv_rendered=_on_rendered)
         except torch.cuda.OutOfMemoryError as e:  # noqa: BLE001
             doc.update(status="UNSUPPORTED", reason=f"OOM during native render: {e}")
             return doc
@@ -1868,9 +2142,29 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                        reason=f"native render failed: {type(e).__name__}: {e}\n"
                               f"{traceback.format_exc()}")
             return doc
+        # Assemble the FULL corpus in window-position order, merging freshly
+        # rendered convs with checkpoint-loaded ones. reply_records pools ALL
+        # positions (incl. 0-plant convs) so reply_covariates is byte-identical.
+        specs = []
+        for _pos in range(_n_window):
+            if _pos in r_results_by_idx:
+                conv, plants = r_results_by_idx[_pos]
+                rr = r_reply_by_idx[_pos]
+            else:
+                _ck = rendered_ck[_pos]
+                conv = _ck["render"]["conv"]
+                plants = _ck["render"]["plants"]
+                rr = _ck["render"]["reply_records"]
+            reply_records.extend(rr)
+            reply_records_by_pos[_pos] = rr
+            if plants:
+                specs.append((conv, plants))
+                spec_positions.append(_pos)
         doc["reply_covariates"] = reply_covariates(reply_records)
     else:
         specs = collect_specs(data_dir, conv_limit, conv_start=conv_start)
+        # pre-rendered corpus: window position == enumerate index (all have plants).
+        spec_positions = list(range(len(specs)))
     if not specs:
         doc.update(status="ERROR", reason="no usable plants in corpus subset")
         return doc
@@ -1885,21 +2179,39 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     # floor (median - k*MADN). lp_A depends ONLY on the FULL-context A snapshot
     # (NOT on the summary or the graft), so the scan is well-defined and the value
     # it sees is byte-identical to the one the gate sees in the main loop below.
-    # summary_cache carries the (once-computed) per-conv summary into the main loop
-    # so it is not regenerated. ABSOLUTE mode (default) runs NO pre-scan -> the
-    # existing code path and every already-scored number are byte-unchanged.
-    summary_cache: dict = {}
+    # summary_cache carries the (checkpoint-reused or once-computed) per-conv
+    # summary into the main loop so it is not regenerated. ABSOLUTE mode (default)
+    # runs NO pre-scan -> the existing code path and every already-scored number
+    # are byte-unchanged. (summary_cache was initialized above so render-reused
+    # summaries are already present for both the pre-scan and the main loop.)
     active_floor = task_lpa_floor
     if task_competence_mode == "relative":
         scan_lpa: list = []
-        for _cv, _pls in specs:
+        for _si, (_cv, _pls) in enumerate(specs):
+            # RESUME: a scored checkpoint already carries this conv's per-plant
+            # lp_A (== what the prescan would recompute -- lp_A is deterministic
+            # and independent of the summary); reuse it so a resumed run does not
+            # re-render/re-score done convs just to rebuild the pooled floor. The
+            # POOLED floor is therefore identical whether or not any conv resumed.
+            _psck = (_load_checkpoint(_ckpath(spec_positions[_si], _cv["id"]),
+                                      ck_fp, "scored") if resume_skip_ok else None)
+            if _psck is not None:
+                scan_lpa.extend(_psck.get("scan_lpa") or [])
+                continue
             _msgs = _cv["messages"][:-1]
             _tsm = _cv["sections"]["middle_end_msg"]
-            _st = fixed_summaries.get(_cv["id"]) if fixed_summaries else None
-            if fixed_summaries is not None and not _st:
-                continue                       # skip logged by the main loop
+            # RENDER-REUSE: a checkpoint's saved self-gen summary is already in
+            # summary_cache -> reuse it (regenerate NO summary). The summary is
+            # deterministic (fixed seed), so reuse is byte-identical to a fresh
+            # generation; lp_A does not depend on it either way.
+            _st = summary_cache.get(_cv["id"])
             if _st is None:
-                _st = generate_summary_hf(model, tok, _msgs, request=_REQ)["text"]
+                _st = fixed_summaries.get(_cv["id"]) if fixed_summaries else None
+                if fixed_summaries is not None and not _st:
+                    continue                   # skip logged by the main loop
+                if _st is None:
+                    _st = generate_summary_hf(
+                        model, tok, _msgs, request=_REQ)["text"]
             summary_cache[_cv["id"]] = _st
             _ctx = build_token_context(tok, family, _msgs, _st, _tsm)
             _ids = _ctx["ids"]
@@ -1926,8 +2238,150 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               f"floor keeps high-lp_A models' plant sets intact, adapts to "
               f"low-lp_A models (e.g. OLMo).", flush=True)
 
+    # ---- PER-CONVERSATION CHECKPOINT machinery (incident #38) -----------------
+    # Every accumulator below is an append-only list (per conv) or a scalar
+    # counter, so ONE conversation's entire contribution is the SLICE appended /
+    # the amount incremented during its iteration. _snap() records the pre-conv
+    # state; _delta() extracts exactly this conv's contribution; _replay_conv()
+    # re-applies a loaded contribution WITHOUT re-computing. The scoring code
+    # itself is UNTOUCHED -- these only OBSERVE and REPLAY it -- so a resumed /
+    # pooled run is byte-identical to the all-in-memory run.
+    def _snap():
+        return {
+            "per_cat": {c: len(per_cat[c]) for c in CATS},
+            "task_excluded": {c: len(task_excluded[c]) for c in CATS},
+            "placebo": {c: len(per_cat_placebo[c]) for c in CATS},
+            "alpha": {a: {c: len(per_cat_alpha[a][c]) for c in CATS}
+                      for a in per_cat_alpha},
+            "lambda": {lam: len(per_lambda_rows[lam]) for lam in per_lambda_rows},
+            "config": {lbl: len(per_config_rows[lbl]) for lbl in per_config_rows},
+            "traces": len(traces), "alpha0_diffs": len(alpha0_diffs),
+            "graft_diffs": len(graft_diffs), "graft_signed": len(graft_signed),
+            "pre_gaps": len(pre_gaps), "all_gc": len(all_gc),
+            "identity_diffs": len(identity_diffs),
+            "strong_prior_rows": len(strong_prior_rows),
+            "skipped_convs": len(skipped_convs),
+            "empty_align_convs": len(empty_align_convs),
+            "n_plants": n_plants, "short_gold_drops": short_gold_drops,
+            "value_align_cnt": value_align_cnt,
+            "uniform_seconds": uniform_seconds,
+            "champion_seconds": champion_seconds,
+            "value_align_sum": (list(value_align_sum)
+                                if value_align_sum is not None else None),
+            "champion_set": champion_region_layers is not None,
+        }
+
+    def _delta(b):
+        d = {
+            "per_cat": {c: per_cat[c][b["per_cat"][c]:] for c in CATS},
+            "task_excluded": {c: task_excluded[c][b["task_excluded"][c]:]
+                              for c in CATS},
+            "traces": traces[b["traces"]:],
+            "alpha0_diffs": alpha0_diffs[b["alpha0_diffs"]:],
+            "graft_diffs": graft_diffs[b["graft_diffs"]:],
+            "graft_signed": graft_signed[b["graft_signed"]:],
+            "pre_gaps": pre_gaps[b["pre_gaps"]:],
+            "all_gc": all_gc[b["all_gc"]:],
+            "identity_diffs": identity_diffs[b["identity_diffs"]:],
+            "strong_prior_rows": strong_prior_rows[b["strong_prior_rows"]:],
+            "skipped_convs": skipped_convs[b["skipped_convs"]:],
+            "empty_align_convs": empty_align_convs[b["empty_align_convs"]:],
+            "n_plants": n_plants - b["n_plants"],
+            "short_gold_drops": short_gold_drops - b["short_gold_drops"],
+            "value_align_cnt": value_align_cnt - b["value_align_cnt"],
+            "uniform_seconds": uniform_seconds - b["uniform_seconds"],
+            "champion_seconds": champion_seconds - b["champion_seconds"],
+        }
+        if placebo_mode is not None:
+            d["placebo"] = {c: per_cat_placebo[c][b["placebo"][c]:] for c in CATS}
+        if alpha_sweep:
+            d["alpha"] = {str(a): {c: per_cat_alpha[a][c][b["alpha"][a][c]:]
+                                   for c in CATS} for a in per_cat_alpha}
+        if lambda_values:
+            d["lambda"] = {str(lam): per_lambda_rows[lam][b["lambda"][lam]:]
+                           for lam in per_lambda_rows}
+        cfg = {lbl: per_config_rows[lbl][b["config"].get(lbl, 0):]
+               for lbl in per_config_rows}
+        if any(cfg.values()):
+            d["config"] = cfg
+        if (value_align_cnt - b["value_align_cnt"]) > 0 and value_align_sum:
+            d["value_align"] = ([value_align_sum[i] - b["value_align_sum"][i]
+                                 for i in range(len(value_align_sum))]
+                                if b["value_align_sum"] is not None
+                                else list(value_align_sum))
+        if champion_region_layers is not None and not b["champion_set"]:
+            d["champion_region_layers"] = [list(r) for r in champion_region_layers]
+            d["champion_configs"] = [[lbl, sorted(rset)]
+                                     for lbl, rset in champion_configs]
+        return d
+
+    def _replay_conv(p):
+        nonlocal n_plants, short_gold_drops, value_align_cnt
+        nonlocal uniform_seconds, champion_seconds, value_align_sum
+        nonlocal champion_configs, champion_region_layers, per_config_rows
+        for c in CATS:
+            per_cat[c].extend(p["per_cat"][c])
+            task_excluded[c].extend(p["task_excluded"][c])
+        traces.extend(p["traces"])
+        alpha0_diffs.extend(p["alpha0_diffs"])
+        graft_diffs.extend(p["graft_diffs"])
+        graft_signed.extend(p["graft_signed"])
+        pre_gaps.extend(p["pre_gaps"])
+        all_gc.extend(p["all_gc"])
+        identity_diffs.extend(p["identity_diffs"])
+        strong_prior_rows.extend(p["strong_prior_rows"])
+        skipped_convs.extend(p["skipped_convs"])
+        empty_align_convs.extend(p["empty_align_convs"])
+        n_plants += p["n_plants"]
+        short_gold_drops += p["short_gold_drops"]
+        value_align_cnt += p["value_align_cnt"]
+        uniform_seconds += p["uniform_seconds"]
+        champion_seconds += p["champion_seconds"]
+        if placebo_mode is not None and "placebo" in p:
+            for c in CATS:
+                per_cat_placebo[c].extend(p["placebo"][c])
+        if alpha_sweep and "alpha" in p:
+            for a in per_cat_alpha:
+                for c in CATS:
+                    per_cat_alpha[a][c].extend(p["alpha"][str(a)][c])
+        if lambda_values and "lambda" in p:
+            for lam in per_lambda_rows:
+                per_lambda_rows[lam].extend(p["lambda"][str(lam)])
+        if "champion_region_layers" in p and champion_region_layers is None:
+            champion_region_layers = [tuple(r)
+                                      for r in p["champion_region_layers"]]
+            champion_configs = [(lbl, frozenset(rset))
+                                for lbl, rset in p["champion_configs"]]
+            per_config_rows = {lbl: [] for lbl, _ in champion_configs}
+        for lbl, rows in p.get("config", {}).items():
+            per_config_rows.setdefault(lbl, []).extend(rows)
+        if p.get("value_align") is not None:
+            if value_align_sum is None:
+                value_align_sum = list(p["value_align"])
+            else:
+                for i in range(len(value_align_sum)):
+                    value_align_sum[i] += p["value_align"][i]
+
+    def _write_scored_ck(pos, cid, conv, plants, summary_text, base):
+        """Atomically persist this conv's FULL contribution (render spec +
+        self-gen summary + per-plant lp_A for the pooled floor + the accumulator
+        delta) as stage=scored, BEFORE the next conv starts."""
+        payload = _delta(base)
+        scan = ([r["lp_A"] for c in CATS for r in payload["per_cat"][c]]
+                + [r["lp_A"] for c in CATS for r in payload["task_excluded"][c]])
+        _atomic_write_json(_ckpath(pos, cid), {
+            "schema": CHECKPOINT_SCHEMA, "stage": "scored", "fingerprint": ck_fp,
+            "render_fingerprint": render_fp, "window_pos": pos, "conv_id": cid,
+            "render": {"conv": conv, "plants": plants,
+                       "reply_records": reply_records_by_pos.get(pos, [])},
+            "summary_text": summary_text, "scan_lpa": scan, "payload": payload})
+
     try:
-        for _ci, (conv, plants) in enumerate(specs):
+        def _process_conv(conv, plants, _ci):
+            nonlocal n_plants, short_gold_drops, value_align_cnt
+            nonlocal uniform_seconds, champion_seconds, value_align_sum
+            nonlocal champion_configs, champion_region_layers, per_config_rows
+            nonlocal prev_summ_snap, prev_old_idx
             print(f"  [progress] conv {_ci+1}/{len(specs)} ({conv['id']}) "
                   f"n_plants_so_far={n_plants}", flush=True)
             msgs = conv["messages"][:-1]
@@ -1946,7 +2400,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                     skipped_convs.append(conv["id"])
                     print(f"  SKIP {conv['id']}: no entry in fixed summaries file",
                           flush=True)
-                    continue
+                    return summary_text          # conv-level: checkpoint + next
                 if summary_text is None:
                     # No fixed file at all: per-model fallback (non-comparable).
                     summary_text = generate_summary_hf(
@@ -1970,7 +2424,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 # Recorded so the terminal reason can distinguish a genuine
                 # alignment miss from competence-gate exclusions.
                 empty_align_convs.append(conv["id"])
-                continue
+                return summary_text              # conv-level: checkpoint + next
 
             a_snap = force_prefill(ids)
             b_snap = force_prefill(b_ids)
@@ -2278,6 +2732,28 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             del id_snap, e_placebo_snap, e_alpha_snaps, config_snaps
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
+            return summary_text
+
+        # ---- resume-aware per-conversation loop ----
+        # For each conv: if a matching SCORED checkpoint exists (and resume-skip is
+        # allowed), REPLAY it (no re-score); otherwise snapshot -> score -> write
+        # its checkpoint atomically BEFORE moving on. Loss on any interruption is
+        # thus <= 1 conversation of scoring (the render loss is bounded to 1 chunk
+        # by native_render_specs's per-conv rendered checkpoints).
+        for _ci, (conv, plants) in enumerate(specs):
+            _pos = spec_positions[_ci]
+            _cid = conv["id"]
+            if resume_skip_ok:
+                _sck = _load_checkpoint(_ckpath(_pos, _cid), ck_fp, "scored")
+                if _sck is not None:
+                    _replay_conv(_sck["payload"])
+                    print(f"  [checkpoint] conv {_ci+1}/{len(specs)} ({_cid}) "
+                          f"RESUMED from {_ckpath(_pos, _cid).name} "
+                          f"(n_plants now {n_plants})", flush=True)
+                    continue
+            _base = _snap()
+            _summary_used = _process_conv(conv, plants, _ci)
+            _write_scored_ck(_pos, _cid, conv, plants, _summary_used, _base)
     except Unsupported as e:
         doc.update(status="UNSUPPORTED", reason=str(e))
         return doc
@@ -3080,11 +3556,77 @@ def _self_test_controls() -> int:
           f"(width cluster={w_cluster:.4f} plant={w_plant:.4f}) OK")
 
     _self_test_native()
+    _self_test_checkpoint()
     _self_test_batched_decode()
     _self_test_qk_ablation()
     _self_test_qk_lambda()
 
     print("\nSELF-TEST OK")
+    return 0
+
+
+def _self_test_checkpoint() -> int:
+    """CPU/torch-free unit test of the per-conv checkpoint PRIMITIVES (incident
+    #38): atomic write round-trip, path/slug naming, fingerprint gating (score vs
+    render), and stage gating. The full numbers-identical / resume / render-reuse
+    proof is the model-level validation (scratchpad validate_ckpt.py on
+    Qwen3-0.6B); this guards the plumbing so a regression fails fast + offline."""
+    import tempfile  # noqa: PLC0415
+    print("\n== PER-CONV CHECKPOINT primitives self-test (no torch) ==")
+    with tempfile.TemporaryDirectory() as td:
+        out = Path(td)
+        model = "Vendor/Some-Model-30B"
+        # path + slug: keyed by window position AND conv id, under <slug>/.
+        p = checkpoint_path(out, model, 7, "c13")
+        assert p.parent == checkpoint_dir(out, model) == out / _slug(model)
+        assert p.name == "conv_007__c13.json", p.name
+        # atomic write is durable + parseable; no leftover tmp file.
+        obj = {"stage": "scored", "payload": {"x": [1, 2, 3]}, "u": None}
+        _atomic_write_json(p, obj)
+        assert json.loads(p.read_text()) == obj
+        assert not list(p.parent.glob(".*tmp*")), "atomic tmp file leaked"
+        print(f"  path={p.name} atomic-write round-trip OK (no tmp leak)")
+
+        full = run_fingerprint(
+            model, conv_start=0, alpha_v=0.75, seed=42, native_render=True,
+            native_max_reply=320, native_temp=0.0, max_gold_tok=80,
+            task_competence_mode="relative", task_competence_k=3.0,
+            task_lpa_floor=-8.0, headroom_floor=0.3, placebo_mode=None,
+            alpha_sweep=False, strong_prior=True, champion_scan=0,
+            champion_regions=None, ablate_qk_norm_flag=False,
+            ablate_lambda_values=None, alpha0_tol=5e-3, change_tol=1e-3)
+        rend = render_fingerprint(
+            model, conv_start=0, native_render=True, native_max_reply=320,
+            native_temp=0.0)
+        ck = {"stage": "scored", "fingerprint": full, "render_fingerprint": rend}
+        _atomic_write_json(p, ck)
+        # exact score-fingerprint match loads; a changed SCORING param does not
+        # (score replay must be exact) ...
+        assert _load_checkpoint(p, full, "scored") is not None
+        full_a = dict(full, alpha_v=0.5)
+        assert _load_checkpoint(p, full_a, "scored") is None
+        # ... but the SAME conv reused for a DIFFERENT alpha still matches on the
+        # RENDER fingerprint (generation is reusable across scoring configs).
+        assert _load_checkpoint(p, rend, "rendered",
+                                fp_key="render_fingerprint") is not None
+        # stage gating: a rendered-only checkpoint is not accepted as scored.
+        _atomic_write_json(p, {"stage": "rendered", "fingerprint": full,
+                               "render_fingerprint": rend})
+        assert _load_checkpoint(p, full, "scored") is None
+        assert _load_checkpoint(p, rend, "rendered",
+                                fp_key="render_fingerprint") is not None
+        # missing / corrupt file -> None (recompute), never raises.
+        assert _load_checkpoint(out / "nope.json", full, "scored") is None
+        (out / "bad.json").write_text("{not json")
+        assert _load_checkpoint(out / "bad.json", full, "scored") is None
+        # render fingerprint is independent of scoring params (alpha change ->
+        # SAME render fp, DIFFERENT score fp).
+        assert render_fingerprint(model, conv_start=0, native_render=True,
+                                  native_max_reply=320, native_temp=0.0) == rend
+        assert full_a != full
+        print("  fingerprint gating (score-exact vs render-reusable) + stage "
+              "gating + corrupt/missing tolerance OK")
+    print("  PER-CONV CHECKPOINT primitives OK")
     return 0
 
 
