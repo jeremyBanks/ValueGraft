@@ -1065,7 +1065,14 @@ def render_fingerprint(model_id: str, *, conv_start: int, native_render: bool,
     future run whose render_fingerprint matches, EVEN IF its scoring params (alpha,
     graft region, floor, controls) differ -- that future run skips ALL generation
     and only forward-passes the saved text to rebuild KV + re-graft/re-score. This
-    is the expensive part (generation ~16 min/conv); scoring is seconds."""
+    is the expensive part (generation ~16 min/conv); scoring is seconds.
+
+    RANK-3 CAVEAT (Fable review 07-09, note-only while the design-v2 scaffold is
+    FROZEN): this hashes the generation PARAMS but NOT the scaffold scenario
+    CONTENT. If a scenario's text were edited under a STABLE id, a render-reuse
+    would serve the STALE saved conversation. Safe today (scaffold frozen); before
+    ANY champion/tuning render-reuse across scaffold edits, add a per-conv content
+    hash (scenario system+turns+plants) to this fingerprint."""
     return {
         "schema": CHECKPOINT_SCHEMA,
         "model": model_id,
@@ -2057,6 +2064,16 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     # and the relative pre-scan; consumed by _process_conv (which regenerates only
     # on a cache miss). Deterministic (fixed seed) so reuse is byte-identical.
     summary_cache: dict = {}
+    # RELATIVE-mode pooled-floor correctness (Fable review, 07-09): the relative
+    # pre-scan computes lp_A for EVERY plant of EVERY conv INCLUDING empty-alignment
+    # convs (it never builds A<->B pairs), but the main loop returns EARLY on an
+    # empty-align conv so it contributes ZERO per_cat/task_excluded rows. Deriving a
+    # checkpoint's scan_lpa from those rows would therefore DROP empty-align convs'
+    # lp_A on resume -> a drifted median-k*MADN floor -> silently different plant
+    # gating -> changed raw_EB/CI. So the checkpoint stores the PRE-SCAN's OWN
+    # per-conv lp_A here (keyed by window position), independent of the scoring
+    # rows, making the resumed floor pool byte-identical to the fresh pool.
+    prescan_lpa_by_pos: dict[int, list] = {}
 
     def _ckpath(pos, cid):
         return checkpoint_path(out_dir, model_id, pos, cid)
@@ -2193,10 +2210,13 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             # and independent of the summary); reuse it so a resumed run does not
             # re-render/re-score done convs just to rebuild the pooled floor. The
             # POOLED floor is therefore identical whether or not any conv resumed.
-            _psck = (_load_checkpoint(_ckpath(spec_positions[_si], _cv["id"]),
+            _pos_si = spec_positions[_si]
+            _psck = (_load_checkpoint(_ckpath(_pos_si, _cv["id"]),
                                       ck_fp, "scored") if resume_skip_ok else None)
             if _psck is not None:
-                scan_lpa.extend(_psck.get("scan_lpa") or [])
+                _conv_lpa = list(_psck.get("scan_lpa") or [])
+                scan_lpa.extend(_conv_lpa)
+                prescan_lpa_by_pos[_pos_si] = _conv_lpa
                 continue
             _msgs = _cv["messages"][:-1]
             _tsm = _cv["sections"]["middle_end_msg"]
@@ -2216,6 +2236,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             _ctx = build_token_context(tok, family, _msgs, _st, _tsm)
             _ids = _ctx["ids"]
             _a_snap = force_prefill(_ids)
+            _conv_lpa = []
             for _pl in _pls:
                 _tgt = tok(str(_pl["gold"]).strip(),
                            add_special_tokens=False).input_ids[:max_gold_tok]
@@ -2228,7 +2249,12 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                     _cn = canonical_ids_any(tok, _msgs, render_hf)
                     _per.append(tf(_a_snap, _full[len(_cn):] + _tgt[:-1],
                                    _tgt, len(_ids)))
-                scan_lpa.append(_mean(_per))
+                _conv_lpa.append(_mean(_per))
+            # store THIS conv's own pre-scan lp_A (all non-short-gold plants,
+            # empty-align convs included) so its checkpoint's scan_lpa == the fresh
+            # floor contribution -- see prescan_lpa_by_pos note above.
+            scan_lpa.extend(_conv_lpa)
+            prescan_lpa_by_pos[_pos_si] = _conv_lpa
         _rel = relative_competence_floor(scan_lpa, k=task_competence_k)
         if _rel is not None:
             active_floor = _rel
@@ -2367,8 +2393,14 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         self-gen summary + per-plant lp_A for the pooled floor + the accumulator
         delta) as stage=scored, BEFORE the next conv starts."""
         payload = _delta(base)
-        scan = ([r["lp_A"] for c in CATS for r in payload["per_cat"][c]]
-                + [r["lp_A"] for c in CATS for r in payload["task_excluded"][c]])
+        # scan_lpa = the RELATIVE pre-scan's OWN per-conv lp_A (all non-short-gold
+        # plants, INCLUDING empty-align convs whose main-loop early-return leaves
+        # per_cat/task_excluded empty). Deriving from those rows would silently drop
+        # empty-align convs from the resumed floor pool (Fable review 07-09). In
+        # ABSOLUTE mode there is no pre-scan and scan_lpa is never read on resume,
+        # so [] is correct there. For NON-empty-align convs the pre-scan lp_A equals
+        # the main-loop la, so this is byte-identical for them.
+        scan = list(prescan_lpa_by_pos.get(pos, []))
         _atomic_write_json(_ckpath(pos, cid), {
             "schema": CHECKPOINT_SCHEMA, "stage": "scored", "fingerprint": ck_fp,
             "render_fingerprint": render_fp, "window_pos": pos, "conv_id": cid,
