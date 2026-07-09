@@ -1,0 +1,4478 @@
+{
+ "model": "Qwen/Qwen3-32B",
+ "architecture": "qwen3",
+ "status": "OK",
+ "reason": null,
+ "alpha_v": 0.75,
+ "conv_limit": 12,
+ "conv_start": 0,
+ "native_render": true,
+ "summary_source": "PER-MODEL SELF-GEN on NATIVE in-context corpus (design v2)",
+ "reply_covariates": {
+  "n_replies": 264,
+  "total_reply_tokens": 84287,
+  "mean_reply_len_tokens": 319.2689393939394,
+  "mean_reply_logprob_per_token": -0.32762028822773903,
+  "n_replies_with_logprob": 264
+ },
+ "gates": {
+  "headroom_floor": 0.3,
+  "task_lpa_floor": -8.0,
+  "task_competence_mode": "absolute",
+  "task_competence_k": 3.0,
+  "task_competence_active_floor": -8.0,
+  "floored_categories": [
+   "ruled_out"
+  ],
+  "task_excluded": {
+   "evicted_fact": [
+    {
+     "plant_id": "c02-evicted-fact-2",
+     "conversation_id": "c02",
+     "lp_A": -9.193057183038036
+    }
+   ]
+  },
+  "n_task_excluded": 1,
+  "empty_alignment_convs": [],
+  "short_gold_drops": 0,
+  "note": "GATE #2 headroom = per-category mean(lp_A-lp_B); a floored category (headroom<headroom_floor) has no evicted meaning to recover -> uninterpretable, EXCLUDED from the sign verdict (NOT counted as harm); raw_EB_normalized = raw_EB/max(headroom,eps). GATE #3 task-competence: plants with lp_A per-token < task_competence_active_floor were dropped from all aggregates (model can't do the task even with full context); mode='absolute' uses the fixed task_lpa_floor, mode='relative' uses the pre-registered per-model median-k*MADN robust-outlier floor."
+ },
+ "skipped_convs": [],
+ "n_plants": 119,
+ "qk_norm_ablated": false,
+ "n_qk_modules_ablated": 0,
+ "ablate_lambda": null,
+ "kv_geometry": {
+  "model_type": "qwen3",
+  "num_attention_heads": 64,
+  "num_key_value_heads": 8,
+  "head_dim": 128
+ },
+ "pre_graft_gap": {
+  "mean": 0.6971611885314325,
+  "lo": 0.5707665005487531,
+  "hi": 0.8343801763128674,
+  "n": 119
+ },
+ "raw_EB": {
+  "mean": -0.05267235239476425,
+  "lo": -0.07229494203040758,
+  "hi": -0.032300614218850186,
+  "n": 119,
+  "n_conversations": 12,
+  "ci_method": "conversation-clustered",
+  "ci_plant": [
+   -0.08360568101606809,
+   -0.022159997352264104
+  ]
+ },
+ "gap_closure": {
+  "mean": 0.8329779049309397,
+  "lo": -0.8932842506079831,
+  "hi": 3.3476329046803976,
+  "n": 119
+ },
+ "by_category": {
+  "sense": {
+   "mean_gc_UNSTABLE_DEPRECATED": -0.06872716934013778,
+   "gc_ci95_UNSTABLE_DEPRECATED": [
+    -0.19775445617623877,
+    0.05674297710813344
+   ],
+   "pct_helped": 45.833333333333336,
+   "mean_pre_graft_gap": 0.9237321553493424,
+   "n": 24
+  },
+  "referent": {
+   "mean_gc_UNSTABLE_DEPRECATED": -0.013732954326414052,
+   "gc_ci95_UNSTABLE_DEPRECATED": [
+    -0.1005575992668183,
+    0.060965895427908624
+   ],
+   "pct_helped": 54.166666666666664,
+   "mean_pre_graft_gap": 0.9271864812275522,
+   "n": 24
+  },
+  "stance": {
+   "mean_gc_UNSTABLE_DEPRECATED": 0.10670652484363179,
+   "gc_ci95_UNSTABLE_DEPRECATED": [
+    -0.4868544830835364,
+    0.9128434006867755
+   ],
+   "pct_helped": 33.333333333333336,
+   "mean_pre_graft_gap": 0.367621729375415,
+   "n": 24
+  },
+  "ruled_out": {
+   "mean_gc_UNSTABLE_DEPRECATED": 5.853342245016388,
+   "gc_ci95_UNSTABLE_DEPRECATED": [
+    -0.002570623651242887,
+    16.509078749294048
+   ],
+   "pct_helped": 54.166666666666664,
+   "mean_pre_graft_gap": 0.2676530209297408,
+   "n": 24
+  },
+  "evicted_fact": {
+   "mean_gc_UNSTABLE_DEPRECATED": -1.8233807313852803,
+   "gc_ci95_UNSTABLE_DEPRECATED": [
+    -6.134086496328931,
+    0.5627953022059199
+   ],
+   "pct_helped": 30.434782608695652,
+   "mean_pre_graft_gap": 1.0127626152204885,
+   "n": 23
+  },
+  "strong_prior": {
+   "mean_gc_UNSTABLE_DEPRECATED": null,
+   "gc_ci95_UNSTABLE_DEPRECATED": [
+    null,
+    null
+   ],
+   "pct_helped": null,
+   "mean_pre_graft_gap": null,
+   "n": 0
+  }
+ },
+ "by_category_robust": {
+  "sense": {
+   "n": 24,
+   "raw_EB_mean": -0.019523538037583093,
+   "raw_EB_ci": [
+    -0.07472320731532618,
+    0.030299287482102866
+   ],
+   "pct_helped": 0.5,
+   "pct_helped_ci": [
+    0.2916666666666667,
+    0.7083333333333334
+   ],
+   "median_ratio_cond": 0.0024908193016603556,
+   "n_cond": 18,
+   "raw_EB_ci_method": "conversation-clustered",
+   "raw_EB_ci_plant": [
+    -0.07884765031320501,
+    0.03956778866151173
+   ],
+   "raw_EB_ci_cluster": [
+    -0.07472320731532618,
+    0.030299287482102866
+   ],
+   "n_conversations": 12,
+   "headroom": 0.9237321553493424,
+   "raw_EB_normalized": -0.02113549682613308,
+   "floor": false,
+   "floor_threshold": 0.3
+  },
+  "referent": {
+   "n": 24,
+   "raw_EB_mean": -0.0029601297174069083,
+   "raw_EB_ci": [
+    -0.05871451514050061,
+    0.054708353503315786
+   ],
+   "pct_helped": 0.5416666666666666,
+   "pct_helped_ci": [
+    0.3333333333333333,
+    0.75
+   ],
+   "median_ratio_cond": 0.03324775050464663,
+   "n_cond": 20,
+   "raw_EB_ci_method": "conversation-clustered",
+   "raw_EB_ci_plant": [
+    -0.06861268617433441,
+    0.05865888719131448
+   ],
+   "raw_EB_ci_cluster": [
+    -0.05871451514050061,
+    0.054708353503315786
+   ],
+   "n_conversations": 12,
+   "headroom": 0.9271864812275522,
+   "raw_EB_normalized": -0.003192593698613717,
+   "floor": false,
+   "floor_threshold": 0.3
+  },
+  "stance": {
+   "n": 24,
+   "raw_EB_mean": -0.07911124321089265,
+   "raw_EB_ci": [
+    -0.134806830807732,
+    -0.01866470610576813
+   ],
+   "pct_helped": 0.25,
+   "pct_helped_ci": [
+    0.08333333333333333,
+    0.4166666666666667
+   ],
+   "median_ratio_cond": -0.03664025213869152,
+   "n_cond": 7,
+   "raw_EB_ci_method": "conversation-clustered",
+   "raw_EB_ci_plant": [
+    -0.13129707397612975,
+    -0.023583114334503257
+   ],
+   "raw_EB_ci_cluster": [
+    -0.134806830807732,
+    -0.01866470610576813
+   ],
+   "n_conversations": 12,
+   "headroom": 0.367621729375415,
+   "raw_EB_normalized": -0.21519740779551233,
+   "floor": false,
+   "floor_threshold": 0.3
+  },
+  "ruled_out": {
+   "n": 24,
+   "raw_EB_mean": -0.09426431756550857,
+   "raw_EB_ci": [
+    -0.1387187680936892,
+    -0.042772319310817986
+   ],
+   "pct_helped": 0.20833333333333334,
+   "pct_helped_ci": [
+    0.08333333333333333,
+    0.375
+   ],
+   "median_ratio_cond": -0.17103735728553432,
+   "n_cond": 7,
+   "raw_EB_ci_method": "conversation-clustered",
+   "raw_EB_ci_plant": [
+    -0.13070338261121242,
+    -0.05513329182988003
+   ],
+   "raw_EB_ci_cluster": [
+    -0.1387187680936892,
+    -0.042772319310817986
+   ],
+   "n_conversations": 12,
+   "headroom": 0.2676530209297408,
+   "raw_EB_normalized": -0.35218850599206597,
+   "floor": true,
+   "floor_threshold": 0.3
+  },
+  "evicted_fact": {
+   "n": 23,
+   "raw_EB_mean": -0.06814732392276335,
+   "raw_EB_ci": [
+    -0.1357148202090379,
+    0.0010153896310053706
+   ],
+   "pct_helped": 0.391304347826087,
+   "pct_helped_ci": [
+    0.21739130434782608,
+    0.6086956521739131
+   ],
+   "median_ratio_cond": -0.10071122847619846,
+   "n_cond": 14,
+   "raw_EB_ci_method": "conversation-clustered",
+   "raw_EB_ci_plant": [
+    -0.17379461705707416,
+    0.03247677327356177
+   ],
+   "raw_EB_ci_cluster": [
+    -0.1357148202090379,
+    0.0010153896310053706
+   ],
+   "n_conversations": 12,
+   "headroom": 1.0127626152204885,
+   "raw_EB_normalized": -0.06728854610014115,
+   "floor": false,
+   "floor_threshold": 0.3
+  },
+  "strong_prior": {
+   "n": 0,
+   "raw_EB_mean": null,
+   "raw_EB_ci": [
+    null,
+    null
+   ],
+   "pct_helped": null,
+   "pct_helped_ci": [
+    null,
+    null
+   ],
+   "median_ratio_cond": null,
+   "n_cond": 0,
+   "raw_EB_ci_method": "conversation-clustered",
+   "raw_EB_ci_plant": [
+    null,
+    null
+   ],
+   "raw_EB_ci_cluster": [
+    null,
+    null
+   ],
+   "n_conversations": 0,
+   "headroom": null,
+   "raw_EB_normalized": null,
+   "floor": false,
+   "floor_threshold": 0.3
+  }
+ },
+ "verdict": "SIGNIFICANT_NEGATIVE",
+ "interpretation": "PRIMARY metric is raw_EB = lp_E - lp_B (bounded logprob lift of the graft over compaction) with a bootstrap 95% CI -- NOT the mean of the ratio (E-B)/(A-B), which is Cauchy-unstable with small denominators. The ratio is reported only as a scale-free SECONDARY, as a MEDIAN conditioned on |lp_A-lp_B| > 0.5. Per-model results are DIRECTIONAL only: the sense+referent subset is small, so the raw_EB CI will often straddle 0 -- do NOT read a single model's overlap-with-0 as a 'null' (see verdict). The inferential claim is the AGGREGATE across models. Read raw_EB together with pre_graft_gap (lp_A-lp_B): a small lift on a small available gap is not the same as a graft failure.",
+ "model_hparams": {
+  "model_type": "qwen3",
+  "num_hidden_layers": 64,
+  "num_attention_heads": 64,
+  "num_key_value_heads": 8,
+  "head_dim": 128,
+  "gqa_ratio": 8.0,
+  "qk_norm": true,
+  "qk_norm_source": "module:q_norm",
+  "rope_theta": 1000000,
+  "hidden_size": 5120,
+  "vocab_size": 151936
+ },
+ "traces": [
+  {
+   "plant_id": "c01-referent-1",
+   "conversation_id": "c01",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.139598345359142,
+   "lp_B": -3.1651445530587807,
+   "lp_E": -3.162686968319273,
+   "raw_EB": 0.0024575847395076345,
+   "gold": "Usage-based metering where customers prepay for credits and draw them down per query (the second of the three options).",
+   "n_gold_tokens": 24,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.0024575847395076345
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-referent-2",
+   "conversation_id": "c01",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.7540123015731717,
+   "lp_B": -3.2997377316574923,
+   "lp_E": -3.233341947466565,
+   "raw_EB": 0.06639578419092729,
+   "gold": "An invite-only beta with roughly thirty design partners before the public launch, opening up only once each partner had shipped a real report.",
+   "n_gold_tokens": 26,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.06639578419092729
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-sense-1",
+   "conversation_id": "c01",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.2756857278824705,
+   "lp_B": -4.178474674819275,
+   "lp_E": -4.1746841665531935,
+   "raw_EB": 0.003790508266081183,
+   "gold": "The self-serve signup funnel work (landing page to first login), not the cloud-hosting migration.",
+   "n_gold_tokens": 21,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.003790508266081183
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-sense-2",
+   "conversation_id": "c01",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.726036025729627,
+   "lp_B": -4.139811748987995,
+   "lp_E": -4.353242455166765,
+   "raw_EB": -0.21343070617876947,
+   "gold": "The investor update deck owed to the seed backers, not the sales pitch deck.",
+   "n_gold_tokens": 16,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.21343070617876947
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-stance-1",
+   "conversation_id": "c01",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -5.093187885185115,
+   "lp_B": -5.053882142719683,
+   "lp_E": -5.344612941326988,
+   "raw_EB": -0.29073079860730466,
+   "gold": "Suggests urgency tactics (limited beta seats, launch-week bonus, expiring intro price, etc.) while avoiding countdown timers entirely, ideally noting the user finds them scammy.",
+   "n_gold_tokens": 36,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.29073079860730466
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-stance-2",
+   "conversation_id": "c01",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.7273568454547785,
+   "lp_B": -5.174875725849258,
+   "lp_E": -5.218229864930952,
+   "raw_EB": -0.04335413908169361,
+   "gold": "Suggests formats like short videos, interactive demos, written guides, or office-hours chats, while never proposing a webinar, ideally recalling the user called them a snoozefest.",
+   "n_gold_tokens": 37,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.04335413908169361
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-ruled-out-1",
+   "conversation_id": "c01",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.670251854150967,
+   "lp_B": -5.3031757859622735,
+   "lp_E": -5.360439171466758,
+   "raw_EB": -0.05726338550448418,
+   "gold": "Anything except cold-email via Prospexo, e.g. warm intros, founder-led community engagement, or partner referrals, ideally acknowledging cold email was already tried and rejected.",
+   "n_gold_tokens": 34,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.05726338550448418
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-ruled-out-2",
+   "conversation_id": "c01",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.19480958512748,
+   "lp_B": -4.136181859600851,
+   "lp_E": -4.306998058807735,
+   "raw_EB": -0.17081619920688418,
+   "gold": "Anything except the Guidely in-app tour, e.g. templates, sample data, checklists, or human onboarding, ideally acknowledging the tour was tried and rejected.",
+   "n_gold_tokens": 34,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.17081619920688418
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-evicted-fact-1",
+   "conversation_id": "c01",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -3.4085092348820276,
+   "lp_B": -5.206690188549045,
+   "lp_E": -5.110639023284118,
+   "raw_EB": 0.09605116526492719,
+   "gold": "$6,410 per month.",
+   "n_gold_tokens": 9,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.09605116526492719
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c01-evicted-fact-2",
+   "conversation_id": "c01",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -2.3395286007809255,
+   "lp_B": -4.200081029175116,
+   "lp_E": -4.383150121596243,
+   "raw_EB": -0.18306909242112734,
+   "gold": "TM-88214, submitted April 9th.",
+   "n_gold_tokens": 14,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 292,
+   "grafted_layer_count": 64,
+   "n_pairs": 2029,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.18306909242112734
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-referent-1",
+   "conversation_id": "c02",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.9113936497287796,
+   "lp_B": -3.038698991716956,
+   "lp_E": -3.0201722699566744,
+   "raw_EB": 0.01852672176028136,
+   "gold": "Boxed lunches from the worker co-op bakery on Fifth (the third option).",
+   "n_gold_tokens": 16,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.01852672176028136
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-referent-2",
+   "conversation_id": "c02",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -1.724887105157033,
+   "lp_B": -2.9169410855168585,
+   "lp_E": -2.9320866816515263,
+   "raw_EB": -0.015145596134667816,
+   "gold": "Splitting the 60-minute keynote into two 25-minute morning talks by different speakers, back to back.",
+   "n_gold_tokens": 24,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.015145596134667816
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-sense-1",
+   "conversation_id": "c02",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.3400650305737143,
+   "lp_B": -3.716470058300183,
+   "lp_E": -3.7899687932236703,
+   "raw_EB": -0.07349873492348724,
+   "gold": "The mentorship track pairing first-time speakers with veterans for talk prep, not the sponsor networking lounge.",
+   "n_gold_tokens": 20,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.07349873492348724
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-sense-2",
+   "conversation_id": "c02",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.147050699497054,
+   "lp_B": -3.4953073354949513,
+   "lp_E": -3.3635423168367127,
+   "raw_EB": 0.13176501865823864,
+   "gold": "The smaller annex room on the east side, labeled Hall B, not the main auditorium.",
+   "n_gold_tokens": 19,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.13176501865823864
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-stance-1",
+   "conversation_id": "c02",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.920473582821454,
+   "lp_B": -5.61919171545271,
+   "lp_E": -5.820131625259391,
+   "raw_EB": -0.20093990980668064,
+   "gold": "Suggests engagement ideas like hallway-track prompts, lightning talks, or sticker quests, while never proposing a raffle, ideally recalling the user called them a cash grab.",
+   "n_gold_tokens": 34,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.20093990980668064
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-stance-2",
+   "conversation_id": "c02",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -5.319874064431815,
+   "lp_B": -5.248239396214103,
+   "lp_E": -5.47415639318001,
+   "raw_EB": -0.22591699696590695,
+   "gold": "Suggests placements like stage signage, charging stations, or coffee sponsorship, while never proposing branded lanyards, ideally recalling the user found them tacky.",
+   "n_gold_tokens": 32,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.22591699696590695
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-ruled-out-1",
+   "conversation_id": "c02",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.63239738655587,
+   "lp_B": -4.6438530845052535,
+   "lp_E": -4.536517961890874,
+   "raw_EB": 0.10733512261437905,
+   "gold": "Anything except the fairgrounds pavilion, e.g. a brewery, restaurant buyout, or the venue courtyard, ideally acknowledging the pavilion was tried and rejected.",
+   "n_gold_tokens": 33,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.10733512261437905
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-ruled-out-2",
+   "conversation_id": "c02",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -3.830387088782219,
+   "lp_B": -4.94751128098273,
+   "lp_E": -4.83025970971999,
+   "raw_EB": 0.11725157126273977,
+   "gold": "Anything except stepped early-bird tiers via Tixaroo, e.g. flat pricing, sliding scale, or scholarship codes, ideally acknowledging the tiered approach was tried and rejected.",
+   "n_gold_tokens": 36,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.11725157126273977
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c02-evicted-fact-1",
+   "conversation_id": "c02",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -2.196605797036877,
+   "lp_B": -3.920398964342894,
+   "lp_E": -3.9766725401776575,
+   "raw_EB": -0.056273575834763445,
+   "gold": "$3,275, paid January 17th.",
+   "n_gold_tokens": 14,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 412,
+   "grafted_layer_count": 64,
+   "n_pairs": 1948,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.056273575834763445
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-referent-1",
+   "conversation_id": "c03",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -3.0571379448902007,
+   "lp_B": -3.7601052968821023,
+   "lp_E": -4.013127272020938,
+   "raw_EB": -0.25302197513883584,
+   "gold": "The gesture-first layout with a floating action button for logging (the third option).",
+   "n_gold_tokens": 16,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.25302197513883584
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-referent-2",
+   "conversation_id": "c03",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.533712319550485,
+   "lp_B": -2.9283341582357774,
+   "lp_E": -2.8720004137674766,
+   "raw_EB": 0.05633374446830075,
+   "gold": "A deep slate background with a coral accent color and rounded 16px cards.",
+   "n_gold_tokens": 17,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.05633374446830075
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-sense-1",
+   "conversation_id": "c03",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.089989298863854,
+   "lp_B": -4.162018003347128,
+   "lp_E": -4.139544881556345,
+   "raw_EB": 0.022473121790782535,
+   "gold": "The first-run experience rework, the new plant-setup wizard for fresh installs, not the Android tablet layout project.",
+   "n_gold_tokens": 23,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.022473121790782535
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-sense-2",
+   "conversation_id": "c03",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -1.9106374851654981,
+   "lp_B": -2.7450371418939903,
+   "lp_E": -2.6884509326494297,
+   "raw_EB": 0.05658620924456059,
+   "gold": "The design-to-engineering handoff in Figma (specs and redlines), not the support-ticket handoff between shifts.",
+   "n_gold_tokens": 25,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.05658620924456059
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-stance-1",
+   "conversation_id": "c03",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -5.108357331495629,
+   "lp_B": -5.448777784076002,
+   "lp_E": -5.44798948450221,
+   "raw_EB": 0.0007882995737924503,
+   "gold": "Suggests approaches like a single featured banner, an inline feed section, or contextual cards, while never proposing a carousel, ideally recalling that nobody swipes past the first card.",
+   "n_gold_tokens": 36,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.0007882995737924503
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-stance-2",
+   "conversation_id": "c03",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -5.626104360884655,
+   "lp_B": -5.9464672909393395,
+   "lp_E": -5.853862804403021,
+   "raw_EB": 0.09260448653631848,
+   "gold": "Suggests approaches like smart reminders, plant-health feedback, or gentle scheduling, while never proposing badges or gamification, ideally recalling the user found badges condescending.",
+   "n_gold_tokens": 33,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.09260448653631848
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-ruled-out-1",
+   "conversation_id": "c03",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.843942677311134,
+   "lp_B": -5.776900387229398,
+   "lp_E": -5.936471008392982,
+   "raw_EB": -0.15957062116358411,
+   "gold": "Anything except in-app rating prompts via Nudgekit, e.g. improving the experience first, asking after positive moments via support, or responding to reviews, ideally acknowledging the prompts were tried and rejected.",
+   "n_gold_tokens": 40,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.15957062116358411
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-ruled-out-2",
+   "conversation_id": "c03",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.214013441918521,
+   "lp_B": -4.111328651481825,
+   "lp_E": -4.21498928237189,
+   "raw_EB": -0.10366063089006516,
+   "gold": "Anything except the PanelPro paid panel, e.g. recruiting from our own engaged users, community forums, or a waitlist, ideally acknowledging the paid panel was tried and rejected.",
+   "n_gold_tokens": 36,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10366063089006516
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-evicted-fact-1",
+   "conversation_id": "c03",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -4.395729451465221,
+   "lp_B": -4.803145321368772,
+   "lp_E": -5.048531305809904,
+   "raw_EB": -0.2453859844411319,
+   "gold": "99.62 percent.",
+   "n_gold_tokens": 7,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.2453859844411319
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c03-evicted-fact-2",
+   "conversation_id": "c03",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -2.215227827990713,
+   "lp_B": -3.0671443248769115,
+   "lp_E": -3.277505763303322,
+   "raw_EB": -0.21036143842641053,
+   "gold": "It expires August 23rd; the renewal quote was $1,140 a year.",
+   "n_gold_tokens": 21,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 451,
+   "grafted_layer_count": 64,
+   "n_pairs": 2221,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.21036143842641053
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-referent-1",
+   "conversation_id": "c04",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -3.908236362149702,
+   "lp_B": -4.917376982754702,
+   "lp_E": -4.828891392856219,
+   "raw_EB": 0.08848558989848243,
+   "gold": "The EMNLP findings track (the second of the three options).",
+   "n_gold_tokens": 14,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.08848558989848243
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-referent-2",
+   "conversation_id": "c04",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -1.626303634890242,
+   "lp_B": -3.619457104418569,
+   "lp_E": -3.9750155294789336,
+   "raw_EB": -0.3555584250603645,
+   "gold": "Adding a small human evaluation with 36 raters comparing our summaries against the strongest neural system on faithfulness.",
+   "n_gold_tokens": 23,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.3555584250603645
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-sense-1",
+   "conversation_id": "c04",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -4.03530836122809,
+   "lp_B": -4.238891823090274,
+   "lp_E": -4.085917043541982,
+   "raw_EB": 0.15297477954829208,
+   "gold": "The multi-task comparison model, not the GPU cluster.",
+   "n_gold_tokens": 11,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.15297477954829208
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-sense-2",
+   "conversation_id": "c04",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.08760534720996,
+   "lp_B": -2.789599317370465,
+   "lp_E": -2.8220160518731423,
+   "raw_EB": -0.03241673450267735,
+   "gold": "The internal full-draft deadline set by Dr. Okafor, ten days before the official submission cutoff.",
+   "n_gold_tokens": 22,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.03241673450267735
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-stance-1",
+   "conversation_id": "c04",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.507816577231279,
+   "lp_B": -4.615229983626341,
+   "lp_E": -4.774557025641843,
+   "raw_EB": -0.1593270420155024,
+   "gold": "Suggests options like lab-group reviews, trusted colleagues at other institutions, or a practice talk, while never suggesting posting a preprint or arXiv upload, ideally recalling the scooping concern.",
+   "n_gold_tokens": 40,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.1593270420155024
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-stance-2",
+   "conversation_id": "c04",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.537688012718458,
+   "lp_B": -4.745204040413747,
+   "lp_E": -4.86478423101341,
+   "raw_EB": -0.11958019059966318,
+   "gold": "Suggests bar charts, stacked bars, or tables, while never proposing a pie chart, ideally recalling the user finds them unreadable.",
+   "n_gold_tokens": 28,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.11958019059966318
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-ruled-out-1",
+   "conversation_id": "c04",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -3.949038522755869,
+   "lp_B": -3.9636644568168915,
+   "lp_E": -4.029258031642828,
+   "raw_EB": -0.06559357482593686,
+   "gold": "Anything except LLM-generated synthetic augmentation, e.g. cross-lingual transfer, weak labeling of real dialogues, or annotating more data, ideally acknowledging synthetic data was tried and rejected.",
+   "n_gold_tokens": 39,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.06559357482593686
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-ruled-out-2",
+   "conversation_id": "c04",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.58860091620154,
+   "lp_B": -5.104011447628727,
+   "lp_E": -5.255551923895109,
+   "raw_EB": -0.15154047626638256,
+   "gold": "Anything except the university statistics consulting office, e.g. a statistician labmate, standard bootstrap tooling, or online methods resources, ideally acknowledging the office was tried and rejected due to its wait.",
+   "n_gold_tokens": 40,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.15154047626638256
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-evicted-fact-1",
+   "conversation_id": "c04",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -3.082831608256873,
+   "lp_B": -3.66513528403117,
+   "lp_E": -3.3273959686471657,
+   "raw_EB": 0.33773931538400426,
+   "gold": "NSF-2214807.",
+   "n_gold_tokens": 11,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.33773931538400426
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c04-evicted-fact-2",
+   "conversation_id": "c04",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -5.093887164529103,
+   "lp_B": -5.101714601817851,
+   "lp_E": -5.46907423545296,
+   "raw_EB": -0.36735963363510926,
+   "gold": "$795 total.",
+   "n_gold_tokens": 6,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 406,
+   "grafted_layer_count": 64,
+   "n_pairs": 2131,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.36735963363510926
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-referent-1",
+   "conversation_id": "c05",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -3.424582606038725,
+   "lp_B": -4.514015509842807,
+   "lp_E": -4.444183803776358,
+   "raw_EB": 0.06983170606644862,
+   "gold": "A cold open pulling the juiciest clip from the interview (the first option).",
+   "n_gold_tokens": 17,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.06983170606644862
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-referent-2",
+   "conversation_id": "c05",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.1045872075483203,
+   "lp_B": -3.82854238101503,
+   "lp_E": -3.5282914722116576,
+   "raw_EB": 0.30025090880337224,
+   "gold": "A rotating guest-host seat where each month a past interviewee returns to co-interview the next guest.",
+   "n_gold_tokens": 21,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.30025090880337224
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-sense-1",
+   "conversation_id": "c05",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.144768793648981,
+   "lp_B": -2.7519582720203535,
+   "lp_E": -2.6430167311555124,
+   "raw_EB": 0.10894154086484109,
+   "gold": "The three-episode mini-arc about founders who left tech for trades, not Sylvie's mastering preset.",
+   "n_gold_tokens": 22,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.10894154086484109
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-sense-2",
+   "conversation_id": "c05",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -3.0266068491663853,
+   "lp_B": -3.9532645118351164,
+   "lp_E": -3.953790618500744,
+   "raw_EB": -0.0005261066656276903,
+   "gold": "The private supporters-only Patreon feed, not the public RSS feed.",
+   "n_gold_tokens": 13,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.0005261066656276903
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-stance-1",
+   "conversation_id": "c05",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.6725518625774765,
+   "lp_B": -4.955817132007058,
+   "lp_E": -5.120194153269616,
+   "raw_EB": -0.16437702126255793,
+   "gold": "Suggests options like listener support tiers, a single tasteful pre-roll sponsor, merch, or live events, while never proposing mid-roll or dynamic ad insertion, ideally recalling the user finds interruptions gross.",
+   "n_gold_tokens": 41,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.16437702126255793
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-stance-2",
+   "conversation_id": "c05",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.2463148447076,
+   "lp_B": -4.38407357274077,
+   "lp_E": -4.612974586451832,
+   "raw_EB": -0.22890101371106208,
+   "gold": "Suggests guests like a firefighter-turned-financial-planner, a laid-off banker who opened a bakery, etc., while never proposing a crypto founder, ideally recalling the user was burned before.",
+   "n_gold_tokens": 39,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.22890101371106208
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-ruled-out-1",
+   "conversation_id": "c05",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.739823673015861,
+   "lp_B": -5.11390385300695,
+   "lp_E": -5.310542971582133,
+   "raw_EB": -0.1966391185751828,
+   "gold": "Anything except twice-weekly publishing, e.g. weekly or biweekly with seasons, ideally acknowledging twice-weekly was tried and rejected.",
+   "n_gold_tokens": 27,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.1966391185751828
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-ruled-out-2",
+   "conversation_id": "c05",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.694492583454121,
+   "lp_B": -5.212194888235535,
+   "lp_E": -5.407877794507658,
+   "raw_EB": -0.19568290627212281,
+   "gold": "Anything except plain video-call audio capture, e.g. a double-ender setup, a dedicated remote recording studio tool, or mailing guests a mic, ideally acknowledging call-app audio was tried and rejected.",
+   "n_gold_tokens": 40,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.19568290627212281
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-evicted-fact-1",
+   "conversation_id": "c05",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -4.051207637964075,
+   "lp_B": -4.125643847105999,
+   "lp_E": -3.809055435199601,
+   "raw_EB": 0.31658841190639775,
+   "gold": "$23.50 a month.",
+   "n_gold_tokens": 9,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.31658841190639775
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c05-evicted-fact-2",
+   "conversation_id": "c05",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -7.549465193907963,
+   "lp_B": -12.253189849853516,
+   "lp_E": -12.977282953262328,
+   "raw_EB": -0.724093103408812,
+   "gold": "Ottoline Marsh.",
+   "n_gold_tokens": 5,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 387,
+   "grafted_layer_count": 64,
+   "n_pairs": 2133,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.724093103408812
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-referent-1",
+   "conversation_id": "c06",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -3.336191084520159,
+   "lp_B": -4.2997639301505,
+   "lp_E": -4.127568194657495,
+   "raw_EB": 0.1721957354930055,
+   "gold": "Rain barrels feeding soaker hoses by gravity (the third option).",
+   "n_gold_tokens": 13,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.1721957354930055
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-referent-2",
+   "conversation_id": "c06",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.0113871928954903,
+   "lp_B": -2.531841803390125,
+   "lp_E": -2.440269975900301,
+   "raw_EB": 0.09157182748982429,
+   "gold": "Reserving the two sunniest beds by the south fence for a children's pollinator patch run with the nearby elementary school.",
+   "n_gold_tokens": 25,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.09157182748982429
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-sense-1",
+   "conversation_id": "c06",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -1.9782945247293706,
+   "lp_B": -2.8797565678967376,
+   "lp_E": -2.9506537969886826,
+   "raw_EB": -0.07089722909194496,
+   "gold": "The expansion onto the vacant lot on Delling Street being negotiated with the city, not the wildflower strip along the west fence.",
+   "n_gold_tokens": 26,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.07089722909194496
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-sense-2",
+   "conversation_id": "c06",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -1.897131795297983,
+   "lp_B": -2.2476758916749358,
+   "lp_E": -2.3283325396169814,
+   "raw_EB": -0.08065664794204563,
+   "gold": "The big three-bay composting structure by the gate, not the plastic storage bins in the shed.",
+   "n_gold_tokens": 21,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.08065664794204563
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-stance-1",
+   "conversation_id": "c06",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.2897344569104865,
+   "lp_B": -4.467642590882962,
+   "lp_E": -4.5973099012068515,
+   "raw_EB": -0.12966731032388967,
+   "gold": "Suggests non-spray methods like row covers, hand-picking, trap crops, or timing adjustments, while never proposing pesticides or sprays, ideally recalling the runoff concern.",
+   "n_gold_tokens": 36,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.12966731032388967
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-stance-2",
+   "conversation_id": "c06",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.393830608291966,
+   "lp_B": -5.12526771123521,
+   "lp_E": -5.357786965582313,
+   "raw_EB": -0.2325192543471024,
+   "gold": "Suggests ideas like a plant-start sale, local business sponsorship, or a crowdfunding drive, while never proposing a bake sale, ideally recalling that they net peanuts for the effort.",
+   "n_gold_tokens": 36,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.2325192543471024
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-ruled-out-1",
+   "conversation_id": "c06",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.49348658412744,
+   "lp_B": -5.143810363878545,
+   "lp_E": -5.109807838532633,
+   "raw_EB": 0.03400252534591264,
+   "gold": "Anything except the shed sign-up whiteboard, e.g. a shared online calendar, a group-chat bot, or paired bed-buddy assignments, ideally acknowledging the board was tried and rejected.",
+   "n_gold_tokens": 38,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.03400252534591264
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-ruled-out-2",
+   "conversation_id": "c06",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -3.6892409487014732,
+   "lp_B": -4.185347418901266,
+   "lp_E": -4.174794538706345,
+   "raw_EB": 0.010552880194921066,
+   "gold": "Anything except the city's free wood chips, e.g. purchased arborist chips from a known source, gravel, or pavers, ideally acknowledging the free pile was tried and rejected.",
+   "n_gold_tokens": 38,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.010552880194921066
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-evicted-fact-1",
+   "conversation_id": "c06",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -4.538678132731418,
+   "lp_B": -5.166809210429035,
+   "lp_E": -5.269827243921879,
+   "raw_EB": -0.10301803349284455,
+   "gold": "$184 a year.",
+   "n_gold_tokens": 7,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10301803349284455
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c06-evicted-fact-2",
+   "conversation_id": "c06",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -5.303649795385094,
+   "lp_B": -6.889843612909317,
+   "lp_E": -6.789932568158422,
+   "raw_EB": 0.09991104475089507,
+   "gold": "WP-5521.",
+   "n_gold_tokens": 7,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 604,
+   "grafted_layer_count": 64,
+   "n_pairs": 1871,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.09991104475089507
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-referent-1",
+   "conversation_id": "c07",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -3.0710569398615917,
+   "lp_B": -3.405007728806595,
+   "lp_E": -3.5087543417876077,
+   "raw_EB": -0.10374661298101273,
+   "gold": "The standard box with punchboard tokens and a folding board (the second option).",
+   "n_gold_tokens": 16,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10374661298101273
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-referent-2",
+   "conversation_id": "c07",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -1.5254929310256187,
+   "lp_B": -3.007616118822221,
+   "lp_E": -2.8025499437787436,
+   "raw_EB": 0.20506617504347746,
+   "gold": "A bustling night-market scene lit by paper lanterns, with the game's twin foxes bartering at a stall in the foreground.",
+   "n_gold_tokens": 27,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.20506617504347746
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-sense-1",
+   "conversation_id": "c07",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.8176489108060006,
+   "lp_B": -3.3862869833453595,
+   "lp_E": -3.1839652952315336,
+   "raw_EB": 0.2023216881138259,
+   "gold": "The official two-player duel variant the user designed, not the fan-made solo automa mode.",
+   "n_gold_tokens": 19,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.2023216881138259
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-sense-2",
+   "conversation_id": "c07",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.8477915943981316,
+   "lp_B": -4.911535117630592,
+   "lp_E": -4.853596983981333,
+   "raw_EB": 0.057938133649258816,
+   "gold": "The bulk retailer pledge level for game stores, not backer pledges in general.",
+   "n_gold_tokens": 16,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.057938133649258816
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-stance-1",
+   "conversation_id": "c07",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.890689758093734,
+   "lp_B": -5.585201453613608,
+   "lp_E": -5.610648537250726,
+   "raw_EB": -0.02544708363711834,
+   "gold": "Suggests stretch goals like upgraded components, extra content added for everyone, or art upgrades, while never proposing campaign-exclusive items, ideally recalling the user considers exclusives hostile to late buyers.",
+   "n_gold_tokens": 38,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.02544708363711834
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-stance-2",
+   "conversation_id": "c07",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.4508770912911935,
+   "lp_B": -4.788244682841185,
+   "lp_E": -4.710746687518933,
+   "raw_EB": 0.07749799532225232,
+   "gold": "Suggests options like simplifying the art style, reusing motifs, staggering commissions, or finding a second human artist, while never proposing AI-generated art, ideally recalling the user called it soulless.",
+   "n_gold_tokens": 41,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.07749799532225232
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-ruled-out-1",
+   "conversation_id": "c07",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.019225566987981,
+   "lp_B": -4.210444897140757,
+   "lp_E": -4.175122685218441,
+   "raw_EB": 0.035322211922315994,
+   "gold": "Anywhere except PrintForge, e.g. another print-on-demand prototype shop or the eventual manufacturer's sampling service, ideally acknowledging PrintForge was tried and rejected.",
+   "n_gold_tokens": 31,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.035322211922315994
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-ruled-out-2",
+   "conversation_id": "c07",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -5.185628704437665,
+   "lp_B": -5.684573694357071,
+   "lp_E": -5.7551659416760605,
+   "raw_EB": -0.07059224731898972,
+   "gold": "Anything except paid banner ads, e.g. reviewer preview copies, convention demos, or content marketing, ideally acknowledging banner ads were tried and rejected.",
+   "n_gold_tokens": 29,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.07059224731898972
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-evicted-fact-1",
+   "conversation_id": "c07",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -4.111976080833431,
+   "lp_B": -6.224068420273917,
+   "lp_E": -6.58925553730556,
+   "raw_EB": -0.36518711703164275,
+   "gold": "$4,860.",
+   "n_gold_tokens": 7,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.36518711703164275
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c07-evicted-fact-2",
+   "conversation_id": "c07",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -3.523279019481379,
+   "lp_B": -3.380887897513958,
+   "lp_E": -3.3626198084675707,
+   "raw_EB": 0.018268089046387104,
+   "gold": "0863921.",
+   "n_gold_tokens": 8,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 418,
+   "grafted_layer_count": 64,
+   "n_pairs": 2155,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.018268089046387104
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-referent-1",
+   "conversation_id": "c08",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.9798248370271825,
+   "lp_B": -4.0165447039180435,
+   "lp_E": -4.024767659646589,
+   "raw_EB": -0.008222955728545145,
+   "gold": "A parallel run with traffic gradually shifted between the old and new platforms (the third option).",
+   "n_gold_tokens": 18,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.008222955728545145
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-referent-2",
+   "conversation_id": "c08",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -1.7659468180208933,
+   "lp_B": -2.389932613647543,
+   "lp_E": -2.321175892262254,
+   "raw_EB": 0.06875672138528888,
+   "gold": "A thin middleware shim that translates legacy order IDs to the new format on the fly, keeping old confirmation emails and bookmarks working.",
+   "n_gold_tokens": 25,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.06875672138528888
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-sense-1",
+   "conversation_id": "c08",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -3.6597230660340405,
+   "lp_B": -3.301777296585407,
+   "lp_E": -3.2840909500603,
+   "raw_EB": 0.0176863465251067,
+   "gold": "The internal rebuilt checkout service, not the fraud-screening vendor.",
+   "n_gold_tokens": 13,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.0176863465251067
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-sense-2",
+   "conversation_id": "c08",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.5838687784271315,
+   "lp_B": -3.703320164140314,
+   "lp_E": -3.6999734988901762,
+   "raw_EB": 0.0033466652501377148,
+   "gold": "The content freeze on product descriptions and imagery observed by merchandising, not the engineering code freeze.",
+   "n_gold_tokens": 20,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.0033466652501377148
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-stance-1",
+   "conversation_id": "c08",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.814007778408842,
+   "lp_B": -5.122967445389517,
+   "lp_E": -4.844060435740343,
+   "raw_EB": 0.27890700964917414,
+   "gold": "Suggests URL structures all on the root domain (path-based approaches, preserved slugs, etc.), while never proposing a subdomain, ideally recalling the user has repeatedly vetoed it.",
+   "n_gold_tokens": 38,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.27890700964917414
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-stance-2",
+   "conversation_id": "c08",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.884931251706754,
+   "lp_B": -5.1713765556981075,
+   "lp_E": -5.303996058116674,
+   "raw_EB": -0.13261950241856635,
+   "gold": "Proposes a zero-downtime approach (low TTLs, gradual shift, both stacks serving), while never proposing a maintenance window or planned downtime, ideally recalling the costly past outage.",
+   "n_gold_tokens": 37,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.13261950241856635
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-ruled-out-1",
+   "conversation_id": "c08",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -3.9043698262122883,
+   "lp_B": -4.404851244607873,
+   "lp_E": -4.506350489245545,
+   "raw_EB": -0.10149924463767146,
+   "gold": "Anything except Querybird, e.g. another hosted search vendor, the platform's native search, or an open-source engine, ideally acknowledging Querybird was piloted and rejected.",
+   "n_gold_tokens": 35,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10149924463767146
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-ruled-out-2",
+   "conversation_id": "c08",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.211912130166638,
+   "lp_B": -4.054061629727357,
+   "lp_E": -4.2186266790841955,
+   "raw_EB": -0.16456504935683824,
+   "gold": "Anything except CSV flat-file export/import, e.g. API-based transfer or a proper ETL pipeline with encoding validation, ideally acknowledging CSV was tried and rejected.",
+   "n_gold_tokens": 32,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.16456504935683824
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-evicted-fact-1",
+   "conversation_id": "c08",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -3.5965238066430376,
+   "lp_B": -3.2713676590061973,
+   "lp_E": -3.2429909312704694,
+   "raw_EB": 0.028376727735727858,
+   "gold": "48,912 SKUs.",
+   "n_gold_tokens": 9,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.028376727735727858
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c08-evicted-fact-2",
+   "conversation_id": "c08",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -6.206391268522566,
+   "lp_B": -5.549025331177593,
+   "lp_E": -5.454226371628465,
+   "raw_EB": 0.09479895954912809,
+   "gold": "October 12th.",
+   "n_gold_tokens": 6,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 548,
+   "grafted_layer_count": 64,
+   "n_pairs": 2271,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.09479895954912809
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-referent-1",
+   "conversation_id": "c09",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.402323836549575,
+   "lp_B": -3.68022250844838,
+   "lp_E": -3.9752883274680166,
+   "raw_EB": -0.2950658190196367,
+   "gold": "A 1920s speakeasy evening with a live jazz trio (the second option).",
+   "n_gold_tokens": 21,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.2950658190196367
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-referent-2",
+   "conversation_id": "c09",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -1.3617448723171643,
+   "lp_B": -2.153135178267742,
+   "lp_E": -2.155402658172079,
+   "raw_EB": -0.0022674799043369553,
+   "gold": "75 lapsed donors who each gave $500 or more at some point but nothing in the last three years, targeted for reactivation.",
+   "n_gold_tokens": 30,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.0022674799043369553
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-sense-1",
+   "conversation_id": "c09",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.8465960300396547,
+   "lp_B": -2.99727551011844,
+   "lp_E": -3.118772563456029,
+   "raw_EB": -0.12149705333758876,
+   "gold": "The new monthly-giving program, not the community orchard volunteer project.",
+   "n_gold_tokens": 15,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.12149705333758876
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-sense-2",
+   "conversation_id": "c09",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.081433832164395,
+   "lp_B": -2.3041120564755855,
+   "lp_E": -2.3265185538087585,
+   "raw_EB": -0.022406497333173014,
+   "gold": "Board member Elaine's dollar-for-dollar matching pledge, not the volunteer table-matching spreadsheet.",
+   "n_gold_tokens": 18,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.022406497333173014
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-stance-1",
+   "conversation_id": "c09",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.541533540414197,
+   "lp_B": -4.86832357640004,
+   "lp_E": -4.967995301376504,
+   "raw_EB": -0.09967172497646448,
+   "gold": "Suggests events like a spelling bee, author talk, or community read-a-thon, while never proposing a golf tournament, ideally recalling the user finds them exclusionary.",
+   "n_gold_tokens": 35,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.09967172497646448
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-stance-2",
+   "conversation_id": "c09",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -3.410853643328883,
+   "lp_B": -4.315164327688981,
+   "lp_E": -4.2263753149146215,
+   "raw_EB": 0.08878901277435958,
+   "gold": "Writes an opening that frames learners with dignity as capable adults, avoiding pity or tragic framing, consistent with the stated copy standard.",
+   "n_gold_tokens": 25,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.08878901277435958
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-ruled-out-1",
+   "conversation_id": "c09",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -3.8749160077169087,
+   "lp_B": -3.7520304251842522,
+   "lp_E": -3.9181811325566165,
+   "raw_EB": -0.16615070737236426,
+   "gold": "Anything except the Givly text-to-give platform, e.g. simple pledge cards, QR codes to our own donation page, or card readers, ideally acknowledging Givly was tried and rejected.",
+   "n_gold_tokens": 41,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.16615070737236426
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-ruled-out-2",
+   "conversation_id": "c09",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -3.745704766072688,
+   "lp_B": -3.7448272037772545,
+   "lp_E": -3.8526571942243986,
+   "raw_EB": -0.10782999044714403,
+   "gold": "Anything except pursuing celebrity emcees through agents, e.g. a beloved local radio host, a board member with stage presence, or a program alum, ideally acknowledging the celebrity route was tried and rejected.",
+   "n_gold_tokens": 41,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10782999044714403
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-evicted-fact-1",
+   "conversation_id": "c09",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -3.568165645323461,
+   "lp_B": -5.275040380656719,
+   "lp_E": -5.497198734432459,
+   "raw_EB": -0.22215835377573967,
+   "gold": "$61,230.",
+   "n_gold_tokens": 8,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.22215835377573967
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c09-evicted-fact-2",
+   "conversation_id": "c09",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -4.810767938469326,
+   "lp_B": -7.049069136381149,
+   "lp_E": -7.2796755731105804,
+   "raw_EB": -0.23060643672943115,
+   "gold": "AU-77031.",
+   "n_gold_tokens": 8,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 520,
+   "grafted_layer_count": 64,
+   "n_pairs": 2249,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.23060643672943115
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-referent-1",
+   "conversation_id": "c10",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.9337407590604068,
+   "lp_B": -4.145635056154181,
+   "lp_E": -4.27365680221313,
+   "raw_EB": -0.12802174605894834,
+   "gold": "The L-shape with a center island where the dining door was (the second scheme).",
+   "n_gold_tokens": 18,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.12802174605894834
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-referent-2",
+   "conversation_id": "c10",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.8053087508912067,
+   "lp_B": -3.7562591938066445,
+   "lp_E": -3.78863841959653,
+   "raw_EB": -0.03237922578988561,
+   "gold": "A quartz composite that mimics marble veining but resists wine and lemon juice, instead of real marble.",
+   "n_gold_tokens": 22,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.03237922578988561
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-sense-1",
+   "conversation_id": "c10",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -3.0755472939017636,
+   "lp_B": -4.779182391212089,
+   "lp_E": -4.473810098577815,
+   "raw_EB": 0.30537229263427434,
+   "gold": "The back deck rebuild bundled into the remodel, not the cedar closet lining idea.",
+   "n_gold_tokens": 16,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.30537229263427434
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-sense-2",
+   "conversation_id": "c10",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -3.27588717278169,
+   "lp_B": -4.104715025511333,
+   "lp_E": -4.4412227803056465,
+   "raw_EB": -0.3365077547943134,
+   "gold": "The electrical subcontractor Bogdan brought in, not the subfloor.",
+   "n_gold_tokens": 14,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.3365077547943134
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-stance-1",
+   "conversation_id": "c10",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.1088328338339695,
+   "lp_B": -4.875906248187723,
+   "lp_E": -4.973780014868704,
+   "raw_EB": -0.0978737666809808,
+   "gold": "Suggests closed-storage solutions like corner drawers, a lazy susan cabinet, or a pull-out pantry, while never proposing open shelving, ideally recalling the user refuses to dust dishes.",
+   "n_gold_tokens": 38,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.0978737666809808
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-stance-2",
+   "conversation_id": "c10",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.280626386721381,
+   "lp_B": -4.717958724696543,
+   "lp_E": -4.823982662493784,
+   "raw_EB": -0.10602393779724117,
+   "gold": "Suggests options like cutting scope, phasing later items, or the existing fixed loan and savings, while never proposing a HELOC, ideally recalling the user's aversion to variable rates.",
+   "n_gold_tokens": 39,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10602393779724117
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-ruled-out-1",
+   "conversation_id": "c10",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.75297320274755,
+   "lp_B": -5.183404995490694,
+   "lp_E": -5.273683863898138,
+   "raw_EB": -0.09027886840744426,
+   "gold": "Anything except bringing in Hartwell Builders, e.g. Bogdan's own network, staggering the side projects, or adjusting the schedule, ideally acknowledging Hartwell was considered and rejected.",
+   "n_gold_tokens": 36,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.09027886840744426
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-ruled-out-2",
+   "conversation_id": "c10",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.234052037182445,
+   "lp_B": -4.363816710835291,
+   "lp_E": -4.470062422402532,
+   "raw_EB": -0.10624571156724105,
+   "gold": "Anything except luxury vinyl plank, e.g. engineered hardwood, site-finished oak, or tile, ideally acknowledging vinyl plank was tried and rejected.",
+   "n_gold_tokens": 29,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10624571156724105
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-evicted-fact-1",
+   "conversation_id": "c10",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -2.874337220651796,
+   "lp_B": -3.374256946670357,
+   "lp_E": -3.1862464647512585,
+   "raw_EB": 0.18801048191909864,
+   "gold": "$342, filed February 6th.",
+   "n_gold_tokens": 11,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.18801048191909864
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c10-evicted-fact-2",
+   "conversation_id": "c10",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -2.4527279418213697,
+   "lp_B": -2.645835063840003,
+   "lp_E": -2.8024529374401586,
+   "raw_EB": -0.15661787360015555,
+   "gold": "3.5 by 11.875 inches.",
+   "n_gold_tokens": 13,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 459,
+   "grafted_layer_count": 64,
+   "n_pairs": 1907,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.15661787360015555
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-referent-1",
+   "conversation_id": "c11",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -3.667604748375847,
+   "lp_B": -4.066015980642987,
+   "lp_E": -4.334902049507946,
+   "raw_EB": -0.26888606886495836,
+   "gold": "A live 6-week cohort with weekly deadlines (the first option).",
+   "n_gold_tokens": 14,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.26888606886495836
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-referent-2",
+   "conversation_id": "c11",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -2.6176380523648133,
+   "lp_B": -3.806953362451333,
+   "lp_E": -3.6797371103703798,
+   "raw_EB": 0.12721625208095322,
+   "gold": "Tight jump-cuts on talking-head segments with keystrokes overlaid as floating captions during query-editor screens.",
+   "n_gold_tokens": 22,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.12721625208095322
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-sense-1",
+   "conversation_id": "c11",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.320658811723305,
+   "lp_B": -3.868790829895854,
+   "lp_E": -3.819063791355407,
+   "raw_EB": 0.04972703854044713,
+   "gold": "The capstone project spec, the end-of-course analysis on a messy real dataset, not the welcome email sequence.",
+   "n_gold_tokens": 23,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.04972703854044713
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-sense-2",
+   "conversation_id": "c11",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.3467463664233543,
+   "lp_B": -2.8580030037297144,
+   "lp_E": -2.9884380027134387,
+   "raw_EB": -0.13043499898372435,
+   "gold": "The shared database environment where students run practice queries, not the platform's sandbox billing tier.",
+   "n_gold_tokens": 18,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.13043499898372435
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-stance-1",
+   "conversation_id": "c11",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.9052592798319115,
+   "lp_B": -5.499829572858289,
+   "lp_E": -5.369469913926774,
+   "raw_EB": 0.13035965893151502,
+   "gold": "Suggests structures like per-run enrollment, annual access, or tiered packages, while never proposing lifetime access, ideally recalling it wrecks the user's motivation to update.",
+   "n_gold_tokens": 35,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.13035965893151502
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-stance-2",
+   "conversation_id": "c11",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.233422963248033,
+   "lp_B": -4.85020108725543,
+   "lp_E": -4.872561502827531,
+   "raw_EB": -0.02236041557210111,
+   "gold": "Proposes teaching through live screen-share demos in the actual tools with worked examples, never proposing a slide deck, consistent with the stated conviction.",
+   "n_gold_tokens": 28,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.02236041557210111
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-ruled-out-1",
+   "conversation_id": "c11",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.54772322916904,
+   "lp_B": -4.21924505611202,
+   "lp_E": -4.489351063175442,
+   "raw_EB": -0.270106007063422,
+   "gold": "Anything except Coursemint, e.g. trialing other hosted platforms with better global delivery or a self-hosted stack with a solid CDN, ideally acknowledging Coursemint was tried and rejected.",
+   "n_gold_tokens": 37,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.270106007063422
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-ruled-out-2",
+   "conversation_id": "c11",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.427223962958197,
+   "lp_B": -4.743410069193389,
+   "lp_E": -4.849482303334249,
+   "raw_EB": -0.10607223414086064,
+   "gold": "Anything except a free YouTube mini-course, e.g. a downloadable SQL cheat-sheet, guest posts in analytics newsletters, or workshop partnerships, ideally acknowledging the YouTube route was tried and rejected.",
+   "n_gold_tokens": 37,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.10607223414086064
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-evicted-fact-1",
+   "conversation_id": "c11",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -4.715280793192505,
+   "lp_B": -5.5135293525943,
+   "lp_E": -5.583076990242781,
+   "raw_EB": -0.0695476376484816,
+   "gold": "$288 a year.",
+   "n_gold_tokens": 7,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.0695476376484816
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c11-evicted-fact-2",
+   "conversation_id": "c11",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -5.517814349828693,
+   "lp_B": -8.345836218756935,
+   "lp_E": -8.479204621476432,
+   "raw_EB": -0.13336840271949768,
+   "gold": "Wilhelmina Choo.",
+   "n_gold_tokens": 6,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 456,
+   "grafted_layer_count": 64,
+   "n_pairs": 2188,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.13336840271949768
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-referent-1",
+   "conversation_id": "c12",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -3.4974046660161764,
+   "lp_B": -4.379494757864878,
+   "lp_E": -4.2491132376633365,
+   "raw_EB": 0.13038152020154126,
+   "gold": "The secondhand swerve modules Ms. Whitfield helped source (the third option).",
+   "n_gold_tokens": 17,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.13038152020154126
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-referent-2",
+   "conversation_id": "c12",
+   "category": "referent",
+   "distance": null,
+   "lp_A": -1.6714784955875075,
+   "lp_B": -2.4572942793904358,
+   "lp_E": -2.4634917595484205,
+   "raw_EB": -0.006197480157984714,
+   "gold": "Scores both preloaded game pieces in the high goal, then backs onto the ramp for the parking bonus, in under twelve seconds.",
+   "n_gold_tokens": 26,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.006197480157984714
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-sense-1",
+   "conversation_id": "c12",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -2.388340759227982,
+   "lp_B": -2.6070445556833874,
+   "lp_E": -2.79313649070345,
+   "raw_EB": -0.1860919350200625,
+   "gold": "The practice robot, the duplicate chassis built for driver training, not the Titan Valley Regional event.",
+   "n_gold_tokens": 19,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.1860919350200625
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-sense-2",
+   "conversation_id": "c12",
+   "category": "sense",
+   "distance": null,
+   "lp_A": -3.3849831455024995,
+   "lp_B": -4.337669147747672,
+   "lp_E": -4.6507930049620985,
+   "raw_EB": -0.3131238572144266,
+   "gold": "The assigned pit station workspace at competitions, not the foam drop-test pit at the shop.",
+   "n_gold_tokens": 18,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.3131238572144266
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-stance-1",
+   "conversation_id": "c12",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -5.118027533404529,
+   "lp_B": -5.156133603537455,
+   "lp_E": -5.209447112400085,
+   "raw_EB": -0.05331350886262953,
+   "gold": "Suggests ideas like sponsor letters, a robot demo night, or a car wash, while never proposing candy or snack sales, ideally recalling the school ban.",
+   "n_gold_tokens": 32,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.05331350886262953
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-stance-2",
+   "conversation_id": "c12",
+   "category": "stance",
+   "distance": null,
+   "lp_A": -4.090545501314557,
+   "lp_B": -4.259843134994593,
+   "lp_E": -4.494835818176964,
+   "raw_EB": -0.23499268318237032,
+   "gold": "Suggests approaches like swapping to lighter materials, removing non-structural extras, or redesigning brackets, while never proposing drilling holes in structural plates, ideally recalling the cracked chassis incident.",
+   "n_gold_tokens": 37,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.23499268318237032
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-ruled-out-1",
+   "conversation_id": "c12",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -3.6837226966198147,
+   "lp_B": -3.571127902123577,
+   "lp_E": -3.6925976113244507,
+   "raw_EB": -0.12146970920087385,
+   "gold": "Anything except the OptiTrak sensor, e.g. odometry-based dead reckoning, a different vision pipeline, or simple encoders with known positions, ideally acknowledging OptiTrak was tried and rejected.",
+   "n_gold_tokens": 43,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.12146970920087385
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-ruled-out-2",
+   "conversation_id": "c12",
+   "category": "ruled_out",
+   "distance": null,
+   "lp_A": -4.120877121033845,
+   "lp_B": -4.098809708941554,
+   "lp_E": -4.260040959636536,
+   "raw_EB": -0.161231250694982,
+   "gold": "Anything except brushed motors, e.g. brushless motors with proper gearing and current limits, ideally acknowledging brushed motors were tried and rejected for overheating.",
+   "n_gold_tokens": 30,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.161231250694982
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-evicted-fact-1",
+   "conversation_id": "c12",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -5.677209685917478,
+   "lp_B": -5.302742899442092,
+   "lp_E": -5.431012547691353,
+   "raw_EB": -0.1282696482492609,
+   "gold": "8472.",
+   "n_gold_tokens": 5,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    -0.1282696482492609
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  },
+  {
+   "plant_id": "c12-evicted-fact-2",
+   "conversation_id": "c12",
+   "category": "evicted_fact",
+   "distance": null,
+   "lp_A": -6.019065228290856,
+   "lp_B": -6.210944033204578,
+   "lp_E": -5.762760347570293,
+   "raw_EB": 0.44818368563428557,
+   "gold": "$137.",
+   "n_gold_tokens": 5,
+   "alpha": 0.75,
+   "seed": 42,
+   "summary_len_tokens": 593,
+   "grafted_layer_count": 64,
+   "n_pairs": 2372,
+   "n_probes": 1,
+   "per_probe_raw_EB": [
+    0.44818368563428557
+   ],
+   "placebo_mode": null,
+   "placebo_raw_EB": null,
+   "alpha_sweep_raw_EB": null,
+   "strong_prior_signed": null
+  }
+ ],
+ "placebo": null,
+ "alpha_sweep": null,
+ "strong_prior_signed": null,
+ "champion_scan": {
+  "n_configs": 6,
+  "region_layers": [
+   [
+    0,
+    10
+   ],
+   [
+    10,
+    21
+   ],
+   [
+    21,
+    32
+   ],
+   [
+    32,
+    42
+   ],
+   [
+    42,
+    53
+   ],
+   [
+    53,
+    64
+   ]
+  ],
+  "regions": [
+   {
+    "region_index": 0,
+    "depth_fraction": [
+     0.0,
+     0.16666666666666666
+    ],
+    "region_layers": [
+     0,
+     10
+    ],
+    "n_layers": 10,
+    "raw_EB": {
+     "mean": -0.003049450120210732,
+     "lo": -0.007805846238509567,
+     "hi": 0.0015657605997434637,
+     "n": 119
+    },
+    "raw_EB_per_layer": -0.0003049450120210732,
+    "by_category_robust": {
+     "sense": {
+      "n": 24,
+      "raw_EB_mean": 0.0020232194902793377,
+      "raw_EB_ci": [
+       -0.004234844986541346,
+       0.007423894650482006
+      ],
+      "pct_helped": 0.5416666666666666,
+      "pct_helped_ci": [
+       0.3333333333333333,
+       0.75
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.003727974645166036,
+       0.00775537432591646
+      ],
+      "raw_EB_ci_cluster": [
+       -0.004234844986541346,
+       0.007423894650482006
+      ],
+      "n_conversations": 12
+     },
+     "referent": {
+      "n": 24,
+      "raw_EB_mean": -0.0037500799434676177,
+      "raw_EB_ci": [
+       -0.00938608575309117,
+       0.0016553121604556131
+      ],
+      "pct_helped": 0.375,
+      "pct_helped_ci": [
+       0.16666666666666666,
+       0.5833333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.012781569550282793,
+       0.005201734778814897
+      ],
+      "raw_EB_ci_cluster": [
+       -0.00938608575309117,
+       0.0016553121604556131
+      ],
+      "n_conversations": 12
+     },
+     "stance": {
+      "n": 24,
+      "raw_EB_mean": -0.003095388819047066,
+      "raw_EB_ci": [
+       -0.01770147434760853,
+       0.010654534304797866
+      ],
+      "pct_helped": 0.5,
+      "pct_helped_ci": [
+       0.2916666666666667,
+       0.7083333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.01759085375908409,
+       0.01008348479530711
+      ],
+      "raw_EB_ci_cluster": [
+       -0.01770147434760853,
+       0.010654534304797866
+      ],
+      "n_conversations": 12
+     },
+     "ruled_out": {
+      "n": 24,
+      "raw_EB_mean": -0.002936857105849844,
+      "raw_EB_ci": [
+       -0.006942588470525572,
+       0.0013156873606317936
+      ],
+      "pct_helped": 0.5,
+      "pct_helped_ci": [
+       0.2916666666666667,
+       0.7083333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.008293655607450767,
+       0.002655836624736063
+      ],
+      "raw_EB_ci_cluster": [
+       -0.006942588470525572,
+       0.0013156873606317936
+      ],
+      "n_conversations": 12
+     },
+     "evicted_fact": {
+      "n": 23,
+      "raw_EB_mean": -0.007681130923088371,
+      "raw_EB_ci": [
+       -0.019528701815981445,
+       0.004297796554356873
+      ],
+      "pct_helped": 0.391304347826087,
+      "pct_helped_ci": [
+       0.21739130434782608,
+       0.6086956521739131
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.022556837288958756,
+       0.007057001067323403
+      ],
+      "raw_EB_ci_cluster": [
+       -0.019528701815981445,
+       0.004297796554356873
+      ],
+      "n_conversations": 12
+     },
+     "strong_prior": {
+      "n": 0,
+      "raw_EB_mean": null,
+      "raw_EB_ci": [
+       null,
+       null
+      ],
+      "pct_helped": null,
+      "pct_helped_ci": [
+       null,
+       null
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       null,
+       null
+      ],
+      "raw_EB_ci_cluster": [
+       null,
+       null
+      ],
+      "n_conversations": 0
+     }
+    }
+   },
+   {
+    "region_index": 1,
+    "depth_fraction": [
+     0.16666666666666666,
+     0.3333333333333333
+    ],
+    "region_layers": [
+     10,
+     21
+    ],
+    "n_layers": 11,
+    "raw_EB": {
+     "mean": 0.007683672869359489,
+     "lo": 0.0003108630265741646,
+     "hi": 0.015220459251777486,
+     "n": 119
+    },
+    "raw_EB_per_layer": 0.0006985157153963172,
+    "by_category_robust": {
+     "sense": {
+      "n": 24,
+      "raw_EB_mean": 0.0003831203014844631,
+      "raw_EB_ci": [
+       -0.009650206610671416,
+       0.01073368619017582
+      ],
+      "pct_helped": 0.5,
+      "pct_helped_ci": [
+       0.2916666666666667,
+       0.7083333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.009244761734204835,
+       0.010937714514814642
+      ],
+      "raw_EB_ci_cluster": [
+       -0.009650206610671416,
+       0.01073368619017582
+      ],
+      "n_conversations": 12
+     },
+     "referent": {
+      "n": 24,
+      "raw_EB_mean": 0.0019789190477305096,
+      "raw_EB_ci": [
+       -0.00711335559116814,
+       0.010854009729421446
+      ],
+      "pct_helped": 0.5,
+      "pct_helped_ci": [
+       0.2916666666666667,
+       0.7083333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.007563097829908309,
+       0.01179778183009709
+      ],
+      "raw_EB_ci_cluster": [
+       -0.00711335559116814,
+       0.010854009729421446
+      ],
+      "n_conversations": 12
+     },
+     "stance": {
+      "n": 24,
+      "raw_EB_mean": 0.021134056669640338,
+      "raw_EB_ci": [
+       0.008192293496970815,
+       0.035788723037858405
+      ],
+      "pct_helped": 0.75,
+      "pct_helped_ci": [
+       0.5833333333333334,
+       0.9166666666666666
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       0.006634504646190309,
+       0.038670248056532665
+      ],
+      "raw_EB_ci_cluster": [
+       0.008192293496970815,
+       0.035788723037858405
+      ],
+      "n_conversations": 12
+     },
+     "ruled_out": {
+      "n": 24,
+      "raw_EB_mean": 0.009500292585401785,
+      "raw_EB_ci": [
+       0.002447691332730243,
+       0.01671302956021259
+      ],
+      "pct_helped": 0.7916666666666666,
+      "pct_helped_ci": [
+       0.625,
+       0.9583333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       0.002569486551838344,
+       0.016457288487551236
+      ],
+      "raw_EB_ci_cluster": [
+       0.002447691332730243,
+       0.01671302956021259
+      ],
+      "n_conversations": 12
+     },
+     "evicted_fact": {
+      "n": 23,
+      "raw_EB_mean": 0.005323641084852562,
+      "raw_EB_ci": [
+       -0.02513323049688703,
+       0.039284386689690136
+      ],
+      "pct_helped": 0.5217391304347826,
+      "pct_helped_ci": [
+       0.30434782608695654,
+       0.7391304347826086
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.025753363815427303,
+       0.03506158177506404
+      ],
+      "raw_EB_ci_cluster": [
+       -0.02513323049688703,
+       0.039284386689690136
+      ],
+      "n_conversations": 12
+     },
+     "strong_prior": {
+      "n": 0,
+      "raw_EB_mean": null,
+      "raw_EB_ci": [
+       null,
+       null
+      ],
+      "pct_helped": null,
+      "pct_helped_ci": [
+       null,
+       null
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       null,
+       null
+      ],
+      "raw_EB_ci_cluster": [
+       null,
+       null
+      ],
+      "n_conversations": 0
+     }
+    }
+   },
+   {
+    "region_index": 2,
+    "depth_fraction": [
+     0.3333333333333333,
+     0.5
+    ],
+    "region_layers": [
+     21,
+     32
+    ],
+    "n_layers": 11,
+    "raw_EB": {
+     "mean": -0.00179582944962699,
+     "lo": -0.011973932283394583,
+     "hi": 0.008291588854973575,
+     "n": 119
+    },
+    "raw_EB_per_layer": -0.00016325722269336273,
+    "by_category_robust": {
+     "sense": {
+      "n": 24,
+      "raw_EB_mean": -0.011194193358659862,
+      "raw_EB_ci": [
+       -0.02872653187505712,
+       0.003919410843989428
+      ],
+      "pct_helped": 0.4166666666666667,
+      "pct_helped_ci": [
+       0.20833333333333334,
+       0.625
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.024962173600723687,
+       0.0013821598676735565
+      ],
+      "raw_EB_ci_cluster": [
+       -0.02872653187505712,
+       0.003919410843989428
+      ],
+      "n_conversations": 12
+     },
+     "referent": {
+      "n": 24,
+      "raw_EB_mean": -0.00620577899624943,
+      "raw_EB_ci": [
+       -0.01985232320321077,
+       0.008438285674981469
+      ],
+      "pct_helped": 0.375,
+      "pct_helped_ci": [
+       0.20833333333333334,
+       0.5833333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.021463346834882675,
+       0.009684571009816234
+      ],
+      "raw_EB_ci_cluster": [
+       -0.01985232320321077,
+       0.008438285674981469
+      ],
+      "n_conversations": 12
+     },
+     "stance": {
+      "n": 24,
+      "raw_EB_mean": 0.013604257407312229,
+      "raw_EB_ci": [
+       0.0022373164069741844,
+       0.02738214336564367
+      ],
+      "pct_helped": 0.7083333333333334,
+      "pct_helped_ci": [
+       0.5,
+       0.875
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.00198146344651647,
+       0.030592583954796842
+      ],
+      "raw_EB_ci_cluster": [
+       0.0022373164069741844,
+       0.02738214336564367
+      ],
+      "n_conversations": 12
+     },
+     "ruled_out": {
+      "n": 24,
+      "raw_EB_mean": -0.00017204552284222352,
+      "raw_EB_ci": [
+       -0.011117891327012575,
+       0.01054961157202868
+      ],
+      "pct_helped": 0.625,
+      "pct_helped_ci": [
+       0.4166666666666667,
+       0.7916666666666666
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.01075714567777497,
+       0.00979811734673608
+      ],
+      "raw_EB_ci_cluster": [
+       -0.011117891327012575,
+       0.01054961157202868
+      ],
+      "n_conversations": 12
+     },
+     "evicted_fact": {
+      "n": 23,
+      "raw_EB_mean": -0.005151193618046477,
+      "raw_EB_ci": [
+       -0.01837535553257143,
+       0.00867442512738106
+      ],
+      "pct_helped": 0.34782608695652173,
+      "pct_helped_ci": [
+       0.17391304347826086,
+       0.5652173913043478
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.04958854645911632,
+       0.03627978982254324
+      ],
+      "raw_EB_ci_cluster": [
+       -0.01837535553257143,
+       0.00867442512738106
+      ],
+      "n_conversations": 12
+     },
+     "strong_prior": {
+      "n": 0,
+      "raw_EB_mean": null,
+      "raw_EB_ci": [
+       null,
+       null
+      ],
+      "pct_helped": null,
+      "pct_helped_ci": [
+       null,
+       null
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       null,
+       null
+      ],
+      "raw_EB_ci_cluster": [
+       null,
+       null
+      ],
+      "n_conversations": 0
+     }
+    }
+   },
+   {
+    "region_index": 3,
+    "depth_fraction": [
+     0.5,
+     0.6666666666666666
+    ],
+    "region_layers": [
+     32,
+     42
+    ],
+    "n_layers": 10,
+    "raw_EB": {
+     "mean": 0.02014734084804166,
+     "lo": 0.010330984376102166,
+     "hi": 0.030766055359316345,
+     "n": 119
+    },
+    "raw_EB_per_layer": 0.002014734084804166,
+    "by_category_robust": {
+     "sense": {
+      "n": 24,
+      "raw_EB_mean": 0.04013219376770714,
+      "raw_EB_ci": [
+       0.019720807078955738,
+       0.06341198642328542
+      ],
+      "pct_helped": 0.8333333333333334,
+      "pct_helped_ci": [
+       0.6666666666666666,
+       0.9583333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       0.021211084303664918,
+       0.059378605253939565
+      ],
+      "raw_EB_ci_cluster": [
+       0.019720807078955738,
+       0.06341198642328542
+      ],
+      "n_conversations": 12
+     },
+     "referent": {
+      "n": 24,
+      "raw_EB_mean": 0.015706166541149185,
+      "raw_EB_ci": [
+       -0.00390611900534484,
+       0.03815309643305561
+      ],
+      "pct_helped": 0.625,
+      "pct_helped_ci": [
+       0.4166666666666667,
+       0.7916666666666666
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.003385895538167575,
+       0.03528911597445694
+      ],
+      "raw_EB_ci_cluster": [
+       -0.00390611900534484,
+       0.03815309643305561
+      ],
+      "n_conversations": 12
+     },
+     "stance": {
+      "n": 24,
+      "raw_EB_mean": 0.029546061211391916,
+      "raw_EB_ci": [
+       0.009961807756647826,
+       0.051679574396113113
+      ],
+      "pct_helped": 0.625,
+      "pct_helped_ci": [
+       0.4166666666666667,
+       0.7916666666666666
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       0.00930884692364505,
+       0.05264437435833406
+      ],
+      "raw_EB_ci_cluster": [
+       0.009961807756647826,
+       0.051679574396113113
+      ],
+      "n_conversations": 12
+     },
+     "ruled_out": {
+      "n": 24,
+      "raw_EB_mean": 0.000665372839410335,
+      "raw_EB_ci": [
+       -0.014809665363966587,
+       0.014965201692317834
+      ],
+      "pct_helped": 0.5416666666666666,
+      "pct_helped_ci": [
+       0.3333333333333333,
+       0.75
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.012759308422226464,
+       0.013224950628146622
+      ],
+      "raw_EB_ci_cluster": [
+       -0.014809665363966587,
+       0.014965201692317834
+      ],
+      "n_conversations": 12
+     },
+     "evicted_fact": {
+      "n": 23,
+      "raw_EB_mean": 0.014449499838484856,
+      "raw_EB_ci": [
+       -0.007177761263851372,
+       0.03665289655955143
+      ],
+      "pct_helped": 0.4782608695652174,
+      "pct_helped_ci": [
+       0.2608695652173913,
+       0.6956521739130435
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.016715413067627964,
+       0.049291697486526086
+      ],
+      "raw_EB_ci_cluster": [
+       -0.007177761263851372,
+       0.03665289655955143
+      ],
+      "n_conversations": 12
+     },
+     "strong_prior": {
+      "n": 0,
+      "raw_EB_mean": null,
+      "raw_EB_ci": [
+       null,
+       null
+      ],
+      "pct_helped": null,
+      "pct_helped_ci": [
+       null,
+       null
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       null,
+       null
+      ],
+      "raw_EB_ci_cluster": [
+       null,
+       null
+      ],
+      "n_conversations": 0
+     }
+    }
+   },
+   {
+    "region_index": 4,
+    "depth_fraction": [
+     0.6666666666666666,
+     0.8333333333333334
+    ],
+    "region_layers": [
+     42,
+     53
+    ],
+    "n_layers": 11,
+    "raw_EB": {
+     "mean": -0.07426383299024504,
+     "lo": -0.09500521476398668,
+     "hi": -0.0537377370660572,
+     "n": 119
+    },
+    "raw_EB_per_layer": -0.006751257544567731,
+    "by_category_robust": {
+     "sense": {
+      "n": 24,
+      "raw_EB_mean": -0.051439993600379395,
+      "raw_EB_ci": [
+       -0.09701745436567587,
+       -0.0004921568044016963
+      ],
+      "pct_helped": 0.25,
+      "pct_helped_ci": [
+       0.08333333333333333,
+       0.4166666666666667
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.10021020326072332,
+       -0.004050486626083094
+      ],
+      "raw_EB_ci_cluster": [
+       -0.09701745436567587,
+       -0.0004921568044016963
+      ],
+      "n_conversations": 12
+     },
+     "referent": {
+      "n": 24,
+      "raw_EB_mean": -0.038712398400209846,
+      "raw_EB_ci": [
+       -0.07821566082532427,
+       0.0033773092544934213
+      ],
+      "pct_helped": 0.375,
+      "pct_helped_ci": [
+       0.16666666666666666,
+       0.5833333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.08866353496314394,
+       0.008807245082964174
+      ],
+      "raw_EB_ci_cluster": [
+       -0.07821566082532427,
+       0.0033773092544934213
+      ],
+      "n_conversations": 12
+     },
+     "stance": {
+      "n": 24,
+      "raw_EB_mean": -0.11472550292689306,
+      "raw_EB_ci": [
+       -0.15054876830259797,
+       -0.07643369334726298
+      ],
+      "pct_helped": 0.08333333333333333,
+      "pct_helped_ci": [
+       0.0,
+       0.20833333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.14755645014694604,
+       -0.08018345589080204
+      ],
+      "raw_EB_ci_cluster": [
+       -0.15054876830259797,
+       -0.07643369334726298
+      ],
+      "n_conversations": 12
+     },
+     "ruled_out": {
+      "n": 24,
+      "raw_EB_mean": -0.07443190795243225,
+      "raw_EB_ci": [
+       -0.10568269110170751,
+       -0.04222811247166162
+      ],
+      "pct_helped": 0.16666666666666666,
+      "pct_helped_ci": [
+       0.041666666666666664,
+       0.3333333333333333
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.10044662664442588,
+       -0.04872516232558181
+      ],
+      "raw_EB_ci_cluster": [
+       -0.10568269110170751,
+       -0.04222811247166162
+      ],
+      "n_conversations": 12
+     },
+     "evicted_fact": {
+      "n": 23,
+      "raw_EB_mean": -0.09278090681396566,
+      "raw_EB_ci": [
+       -0.14551528948601486,
+       -0.03915347861987164
+      ],
+      "pct_helped": 0.34782608695652173,
+      "pct_helped_ci": [
+       0.17391304347826086,
+       0.5652173913043478
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.1563010505162307,
+       -0.03319102159795935
+      ],
+      "raw_EB_ci_cluster": [
+       -0.14551528948601486,
+       -0.03915347861987164
+      ],
+      "n_conversations": 12
+     },
+     "strong_prior": {
+      "n": 0,
+      "raw_EB_mean": null,
+      "raw_EB_ci": [
+       null,
+       null
+      ],
+      "pct_helped": null,
+      "pct_helped_ci": [
+       null,
+       null
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       null,
+       null
+      ],
+      "raw_EB_ci_cluster": [
+       null,
+       null
+      ],
+      "n_conversations": 0
+     }
+    }
+   },
+   {
+    "region_index": 5,
+    "depth_fraction": [
+     0.8333333333333334,
+     1.0
+    ],
+    "region_layers": [
+     53,
+     64
+    ],
+    "n_layers": 11,
+    "raw_EB": {
+     "mean": -0.010811730561337052,
+     "lo": -0.019333397185843152,
+     "hi": -0.0026153738205375613,
+     "n": 119
+    },
+    "raw_EB_per_layer": -0.0009828845964851866,
+    "by_category_robust": {
+     "sense": {
+      "n": 24,
+      "raw_EB_mean": 0.00941976048761393,
+      "raw_EB_ci": [
+       -0.005438471256942042,
+       0.022452532886754212
+      ],
+      "pct_helped": 0.625,
+      "pct_helped_ci": [
+       0.4166666666666667,
+       0.7916666666666666
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.011212848927474576,
+       0.029855335048262155
+      ],
+      "raw_EB_ci_cluster": [
+       -0.005438471256942042,
+       0.022452532886754212
+      ],
+      "n_conversations": 12
+     },
+     "referent": {
+      "n": 24,
+      "raw_EB_mean": -0.006197174258035861,
+      "raw_EB_ci": [
+       -0.0146020216128712,
+       0.0020734912595402797
+      ],
+      "pct_helped": 0.4166666666666667,
+      "pct_helped_ci": [
+       0.20833333333333334,
+       0.625
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.019058110764271868,
+       0.006917921285468975
+      ],
+      "raw_EB_ci_cluster": [
+       -0.0146020216128712,
+       0.0020734912595402797
+      ],
+      "n_conversations": 12
+     },
+     "stance": {
+      "n": 24,
+      "raw_EB_mean": -0.012329734218541777,
+      "raw_EB_ci": [
+       -0.022894992568588807,
+       -0.0003625730663805819
+      ],
+      "pct_helped": 0.25,
+      "pct_helped_ci": [
+       0.08333333333333333,
+       0.4166666666666667
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.022738880355510565,
+       0.0007675590699794584
+      ],
+      "raw_EB_ci_cluster": [
+       -0.022894992568588807,
+       -0.0003625730663805819
+      ],
+      "n_conversations": 12
+     },
+     "ruled_out": {
+      "n": 24,
+      "raw_EB_mean": -0.028655867670783725,
+      "raw_EB_ci": [
+       -0.03715403607919846,
+       -0.02035448167929225
+      ],
+      "pct_helped": 0.08333333333333333,
+      "pct_helped_ci": [
+       0.0,
+       0.20833333333333334
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.03699142648789958,
+       -0.019802875087723548
+      ],
+      "raw_EB_ci_cluster": [
+       -0.03715403607919846,
+       -0.02035448167929225
+      ],
+      "n_conversations": 12
+     },
+     "evicted_fact": {
+      "n": 23,
+      "raw_EB_mean": -0.016534067868050898,
+      "raw_EB_ci": [
+       -0.03696612618548755,
+       0.004542247031062892
+      ],
+      "pct_helped": 0.391304347826087,
+      "pct_helped_ci": [
+       0.21739130434782608,
+       0.6086956521739131
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       -0.0471552957740145,
+       0.011440085516492449
+      ],
+      "raw_EB_ci_cluster": [
+       -0.03696612618548755,
+       0.004542247031062892
+      ],
+      "n_conversations": 12
+     },
+     "strong_prior": {
+      "n": 0,
+      "raw_EB_mean": null,
+      "raw_EB_ci": [
+       null,
+       null
+      ],
+      "pct_helped": null,
+      "pct_helped_ci": [
+       null,
+       null
+      ],
+      "median_ratio_cond": null,
+      "n_cond": 0,
+      "raw_EB_ci_method": "conversation-clustered",
+      "raw_EB_ci_plant": [
+       null,
+       null
+      ],
+      "raw_EB_ci_cluster": [
+       null,
+       null
+      ],
+      "n_conversations": 0
+     }
+    }
+   }
+  ],
+  "champion_all_regions_raw_EB": {
+   "mean": -0.05267235239476425,
+   "lo": -0.08360568101606809,
+   "hi": -0.022159997352264104,
+   "n": 119
+  },
+  "uniform_raw_EB": {
+   "mean": -0.05267235239476425,
+   "lo": -0.07229494203040758,
+   "hi": -0.032300614218850186,
+   "n": 119,
+   "n_conversations": 12,
+   "ci_method": "conversation-clustered",
+   "ci_plant": [
+    -0.08360568101606809,
+    -0.022159997352264104
+   ]
+  },
+  "value_alignment_per_layer": [
+   0.9999977399905523,
+   0.9891534099976221,
+   0.9795744915803274,
+   0.9825109789768854,
+   0.9793924540281296,
+   0.9756231506665548,
+   0.9735273172458013,
+   0.9809241741895676,
+   0.9807329028844833,
+   0.9850200563669205,
+   0.9829889535903931,
+   0.9817681759595871,
+   0.9804239471753439,
+   0.9741718371709188,
+   0.9667521715164185,
+   0.9747121383746465,
+   0.9616272350152334,
+   0.9661337981621424,
+   0.9572737316290537,
+   0.9441696653763453,
+   0.9304695477088293,
+   0.9412283400694529,
+   0.9330897082885107,
+   0.9178888549407324,
+   0.9265184899171194,
+   0.9133230348428091,
+   0.923011064529419,
+   0.9307846575975418,
+   0.9387330959240595,
+   0.9344508846600851,
+   0.9377684444189072,
+   0.9319142599900564,
+   0.9409778912862142,
+   0.951885903875033,
+   0.9370707273483276,
+   0.926667258143425,
+   0.9234006951252619,
+   0.9075983862082163,
+   0.9061580350001653,
+   0.9135245333115259,
+   0.8969262490669886,
+   0.9020881503820419,
+   0.8786383271217346,
+   0.8652061025301615,
+   0.8438872545957565,
+   0.8567724078893661,
+   0.8571867992480596,
+   0.856870507200559,
+   0.8570897479852041,
+   0.8577440977096558,
+   0.8766479144493738,
+   0.8868170827627182,
+   0.9111587405204773,
+   0.9013283600409826,
+   0.8963857541481653,
+   0.9025891770919164,
+   0.9142128725846609,
+   0.9190946171681086,
+   0.9213592211405436,
+   0.9276018192370733,
+   0.8969278981288274,
+   0.917941744128863,
+   0.8966483175754547,
+   0.8860920667648315
+  ],
+  "champion_scan_seconds": 73.97558537404984,
+  "uniform_sweep_seconds": 51.93766215723008,
+  "overhead_pct": 142.4314886374837,
+  "note": "Fractional-depth region scan: raw_EB when alpha_V is grafted ONLY within a contiguous relative-depth region (alpha=0 elsewhere), reusing the cached A/B snapshots. region_layers is the ACTUAL per-model layer range for each [k/N,(k+1)/N) depth bin; raw_EB_per_layer normalizes by layers grafted. DESCRIPTIVE (which layers carry the signal), not an optimization -- no best config is chosen. 'all' MUST reproduce the uniform raw_EB (miswiring check); the single-region raw_EBs do NOT sum to it (nonlinear composition over depth) and that is EXPECTED. value_alignment_per_layer = per-layer mean cosine similarity of grafted write-time vs co-located read-time value vectors -- the candidate geometric cause. overhead_pct = champion_scan_seconds/uniform_sweep_seconds; enable only if < 25%."
+ },
+ "smoke": {
+  "alpha0_ok": true,
+  "graft_changes_output": true,
+  "graft_direction_ok": false,
+  "alpha0_max_abs_diff": 0.0,
+  "graft_max_abs_diff": 0.724093103408812,
+  "graft_mean_signed_diff": -0.05267235239476425,
+  "identity_ok": true,
+  "identity_max_abs_diff": 0.0,
+  "alpha0_tol": 0.005,
+  "change_tol": 0.001
+ },
+ "effect_sign": "negative",
+ "interpretable_cat_signs": {
+  "sense": 0,
+  "referent": 0,
+  "stance": -1,
+  "evicted_fact": 0,
+  "strong_prior": 0
+ },
+ "floored_categories": [
+  "ruled_out"
+ ],
+ "verdict_note": "aggregate raw_EB CI [-0.07229494203040758, -0.032300614218850186] -> effect_sign=negative. per-category CI-excludes-0: {'sense': 0, 'referent': 0, 'stance': -1, 'ruled_out': -1, 'evicted_fact': 0, 'strong_prior': 0} (referent/sense any-significant=True). FLOORED (headroom<0.3, EXCLUDED from sign): ['ruled_out']; interpretable per-category signs: {'sense': 0, 'referent': 0, 'stance': -1, 'evicted_fact': 0, 'strong_prior': 0}. n is small so the per-model verdict is DIRECTIONAL; the cross-model aggregate is the inferential claim. A SIGNIFICANT_NEGATIVE is a VALID result, not a discard."
+}
