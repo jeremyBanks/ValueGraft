@@ -541,3 +541,16 @@ SIGNIFICANCE FLIPS BY METRIC: logprob/gap-closure metric = REFERENT significant,
 JUDGED metric = SENSE significant, referent not. So each dissociation arm is significant on ONE metric,
 not both — real but metric-dependent, NOT a clean "both instruments agree." The paper must state this
 honestly. Reproducible: scripts/judged_bootstrap.py.
+
+## Arch pole: Qwen3-32B (dense, QK-norm) — graft NULL-to-HARMFUL; strong within-Qwen MoE-vs-dense reversal (2026-07-09)
+Qwen3-32B, n=24 conv, conv-clustered, smoke identity_ok/alpha0_ok pass (valid):
+- referent [-0.063,+0.010] NULL · sense [-0.091,-0.008] NEG · stance [-0.139,-0.051] NEG ·
+  ruled_out [-0.130,-0.063] NEG · evicted_fact [-0.099,-0.017] NEG.
+The graft is null-to-HARMFUL across the board on dense Qwen3-32B — the OPPOSITE of Qwen3-30B-A3B (MoE:
+referent +0.10, sense+). The primary pre-registered de-confound (same vendor, same QK-norm, MoE vs
+dense) shows a STRIKING reversal: MoE recovers meaning, dense is harmed. Architecture-specificity is
+real + strong — likely the paper's headline mechanism finding.
+CAVEATS: PRELIMINARY — gated behind the fresh-conv reproduction of the +0.10 anchor (if the anchor
+doesn't reproduce on held-out convs, the map is built on sand). One dense model; Mistral (dense,
+no-QK-norm) was referent+, so NOT "dense=negative" — it's model/architecture-specific, not a clean
+dense/MoE law. n=24. Renders NOT banked (old-harness run, pre-checkpointing).
