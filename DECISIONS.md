@@ -310,3 +310,13 @@ Multimodal architecture reminder: wrapper (e.g. Gemma3ForConditionalGeneration) 
 normal text decoder we CAN graft) + .vision_tower + projector. Our AutoModelForCausalLM path fails only
 because multimodal repos register under a different auto-class — the decoder inside is standard.
 Cheap load-smoke gates each (minutes not dollars); render only winners.
+
+## Budget top-up +$50 (owner, 07-09) → enrichment funded to ~8-12 models
+Owner adding $50 → ~$100 total working budget. Allocation, in strict priority (rigor gates every dollar):
+1. CORE reproduction (interruptible block re-run, once checkpointing lands) — ~$15-20. GATES everything.
+2. Arch poles finish (expo=Qwen3-32B, w6=Qwen2.5) — already running, ~$10.
+3. ENRICHMENT (only after core is solid) — ~$60-70 → render-once ~$5-9/model = ~8-12 NEW models,
+   each a PERMANENT reusable asset (render banked → champion scan/re-graft/reproduce all free later).
+   Spend TOP-DOWN Tier-A (new vendors meta/allenai/google/ibm/cohere/tii/deepseek), cheap load-smoke
+   gating each (minutes not dollars), then Tier-B. Target: 6-8 new vendors on the architecture map.
+Rigor is the gate; the +$50 buys lasting breadth once the reproduction passes. Never breadth before rigor.
