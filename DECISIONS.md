@@ -348,3 +348,20 @@ recorded BEFORE writing with: exact number, source result file, the exact recomp
 ID — so we never second-guess a claim mid-flight (we re-derived bf16-vs-4bit / brief-vs-std / 79-vs-83 twice
 today). Building paper/CLAIMS.md as the single source of truth the paper is assembled from; each entry
 RECOMPUTED from disk (not copied from prose). FINDINGS.md stays the narrative; CLAIMS.md is the audited ledger.
+
+- 2026-07-09 — **STD/PRODUCTION-FAITHFUL SUMMARY ARM = TOP PRIORITY (owner, agreeing with Fable's #1):**
+both marquee positives (judged sense +12pp, SWE-Gym +0.0156) ran under the BRIEF (baseline-handicapping)
+summary; there is NO positive on record under a production-faithful summary — the reviewer's easiest kill.
+Owner: ADD the realistic-summary condition as ENRICHMENT, keeping BOTH (the brief synthetic extreme is
+valuable; prod makes it credible). Applies across conditions: judged metric (run_arms.py default =
+SUMMARY_REQUEST std; brief was the restored knob) and SWE-Gym (run_swegym_hf.py now SC_SUMMARY, default
+SUMMARY_REQUEST_PROD; brief reproduces +0.0156). Prod SWE-Gym on the 30B anchor LAUNCHED (cs30b, warm).
+Std judged arm queues locally after the brief decider.
+
+- 2026-07-09 — **SWE-Gym cross-model = CAPTURE cheaply on warm pods (owner OVERRIDES Fable's "don't"):**
+Fable recommended against SWE-Gym breadth, but owner notes model load/switch time dominates cost — running
+gym on a model that is ALREADY LOADED (the champion pods) is low marginal cost, so capture the cross-model
+gym data "for the sake of having it." Plan: after each champion pod finishes, run prod SWE-Gym on that warm
+model before shutdown. LET THE 4 IN-FLIGHT CHAMPION PODS COMPLETE (render+bank+champion) — don't kill them.
+Going forward, prioritize resources per Fable (std-summary arm) EXCEPT capture gym where marginal cost is low.
+Capture everything very well (owner).
