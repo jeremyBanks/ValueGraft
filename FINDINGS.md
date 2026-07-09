@@ -21,11 +21,18 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 >    production-faithful (std/prod summary) number is a separate, arguably more decision-relevant result.
 > 3. **The brief knob had been dropped from `run_arms.py`** (it silently only did std); restored as
 >    `SC_SUMMARY=brief` (positive control: c01 brief summary = 543 chars, exactly matching the committed brief).
-> 4. **LIVE TEST (the decider, per Fable's un-anchored verdict).** Reproducing the judged metric under a
->    clean current-code brief pipeline for BOTH a fresh baseline (c01–c12, does +12pp even reproduce?) and
->    the held-out cell (c13–c24, does it survive out-of-sample?). Until that lands, **F1's sense/referent
->    recovery numbers are UNCONFIRMED on held-out data and are the one metric the whole positive story
->    rests on.** Do not write the headline around them yet.
+> 4. **DECIDER RESULT (2026-07-09) — THE JUDGED SENSE +12pp IS RENDER-FRAGILE; POSITIVE CONTROL FAILED.**
+>    Regenerated c01–c12 under a clean current-code BRIEF pipeline (results/raw_brief_repro) and judged with a
+>    single consistent Sonnet judge. Same judge, across renders: sense **+8.7 [0.0,17.7]** on the ORIGINAL
+>    render → **+1.0 [−5.2,+7.3]** on the clean re-render (referent +9.7→+5.2, both span 0; stance
+>    judge-unstable). The +12.0→+8.7 gap is judge calibration; the **+8.7→+1.0 collapse is the RENDER** (MoE
+>    hardware-nondeterminism at n=12, render-noise SD ≈ effect). CONCLUSION: **BOTH positive headlines — the
+>    referent logprob AND the judged sense — are render-fragile and do NOT reproduce on an independent render.**
+>    The graft's meaning-recovery effect is not a robust, reproducible finding. The paper CANNOT be led by a
+>    stable recovery claim (Fable's holistic assessment predicted exactly this). Lead with the robust banked
+>    results (F2 honesty, compaction-damage characterization, methodology traps + the render-fragility finding
+>    itself); report graft-recovery honestly as fragile/render-dependent. Evidence: results/judge_semantic_brief_base/,
+>    results/judge_semantic{,_base}/reverdict_*.json; recompute via scripts/judged_bootstrap.py --graft-glob/--base-glob.
 
 ---
 

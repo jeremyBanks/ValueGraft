@@ -1,0 +1,18 @@
+{
+ "sem|c11|A|c11-stance-1": "RECOVERED",
+ "sem|c11|B|c11-stance-1": "RECOVERED",
+ "sem|c11|A|c11-stance-2": "RECOVERED",
+ "sem|c11|B|c11-stance-2": "RECOVERED",
+ "sem|c12|A|c12-referent-1": "RECOVERED",
+ "sem|c12|B|c12-referent-1": "MISSED",
+ "sem|c12|A|c12-referent-2": "RECOVERED",
+ "sem|c12|B|c12-referent-2": "MISSED",
+ "sem|c12|A|c12-sense-1": "RECOVERED",
+ "sem|c12|B|c12-sense-1": "MISSED",
+ "sem|c12|A|c12-sense-2": "RECOVERED",
+ "sem|c12|B|c12-sense-2": "RECOVERED",
+ "sem|c12|A|c12-stance-1": "RECOVERED",
+ "sem|c12|B|c12-stance-1": "RECOVERED",
+ "sem|c12|A|c12-stance-2": "RECOVERED",
+ "sem|c12|B|c12-stance-2": "RECOVERED"
+}

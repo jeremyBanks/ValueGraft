@@ -1,0 +1,18 @@
+{
+ "sem|c11|E-post-a0.25|c11-stance-1": "RECOVERED",
+ "sem|c11|E-post-a1.0|c11-stance-1": "RECOVERED",
+ "sem|c11|E-post-a0.25|c11-stance-2": "RECOVERED",
+ "sem|c11|E-post-a1.0|c11-stance-2": "RECOVERED",
+ "sem|c12|E-post-a0.25|c12-referent-1": "MISSED",
+ "sem|c12|E-post-a1.0|c12-referent-1": "MISSED",
+ "sem|c12|E-post-a0.25|c12-referent-2": "MISSED",
+ "sem|c12|E-post-a1.0|c12-referent-2": "MISSED",
+ "sem|c12|E-post-a0.25|c12-sense-1": "MISSED",
+ "sem|c12|E-post-a1.0|c12-sense-1": "MISSED",
+ "sem|c12|E-post-a0.25|c12-sense-2": "RECOVERED",
+ "sem|c12|E-post-a1.0|c12-sense-2": "RECOVERED",
+ "sem|c12|E-post-a0.25|c12-stance-1": "RECOVERED",
+ "sem|c12|E-post-a1.0|c12-stance-1": "RECOVERED",
+ "sem|c12|E-post-a0.25|c12-stance-2": "RECOVERED",
+ "sem|c12|E-post-a1.0|c12-stance-2": "RECOVERED"
+}
