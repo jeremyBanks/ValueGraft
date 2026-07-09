@@ -30,10 +30,18 @@ NOT carry it on the old render (~+0.009); "native render fixes it" was ASSERTED 
 - Methodology: CI now CONVERSATION-clustered (was plant = anti-conservative); competence floor now
   per-model RELATIVE median-3*MADN (pre-registered) — OLMo "empty alignment" was a floor misdiagnosis.
 
-**LIVE PODS (2, ~$2.78/hr):** expo=pair-B Qwen3-32B @24, w6=Qwen2.5-32B @24 (arch poles, running).
-The block pods (canary c01-c24, expm) TIMED OUT and were terminated — INCIDENT #38: non-durable
-in-memory render lost 6.3h. Block re-run PENDING: restore per-conv incremental checkpointing (being
-built + Fable-reviewed) → fresh clean pods → re-run interruptibly.
+**ALL PODS OFF (2026-07-09, balance ~$25/$80 cap).** The block reproduction resolved (Fable verdict:
+referent headline FRAGILE, not a regression; renders banked to results/redraw_harvest/). The DECIDER is
+now a LOCAL, $0 job — no pods needed.
+
+**CURRENT DECIDER (running locally, brief condition):** Fable's un-anchored verdict = the whole positive
+story rests on the judged SENSE +12pp, which exists ONLY for c01-c12 and was NEVER tested held-out.
+Reproducing it under a clean current-code pipeline for c01-c12 (baseline: does +12pp reproduce?) AND
+c13-c24 (held-out: does it survive?), then judge+bootstrap+compare. PROVENANCE CORRECTION (see FINDINGS
+banner): judged answers are 4-bit MLX (not bf16) under the BRIEF summary condition (mechanism-isolation,
+B-handicapped) — restored the dropped SC_SUMMARY=brief knob in run_arms.py (c01 positive control: 543-char
+brief summary reproduced exactly). Builder: scripts/build_judge_batches.py (validated vs committed).
+Std/production-faithful held-out = planned second arm. Paper draft (framing-independent) in paper/DRAFT.md.
 
 **PLAN (ordered):** block read (baseline reproduces? fresh carries?) → full n=24 fresh → arch poles →
 FABLE UN-ANCHORED trajectory review → pick honest framing → robust-metric audit (#29) → PODS OFF →

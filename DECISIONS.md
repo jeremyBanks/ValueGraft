@@ -331,3 +331,20 @@ context + self-gen summary). Survives on foreign coherent text -> effect is abou
 collapses -> genuinely self-native (reinforces the scope boundary). Modest but real + relevant, not pure
 tangent. CHEAP: reuse A's saved render, forward-pass B, graft+score = analysis passes on the archive.
 SCOPE: a HANDFUL of cells (not full NxN — diminishing returns). STRICTLY end-of-list, after core + enrichment.
+
+- 2026-07-09 — **Champion scan (OWNER OVERRIDE of Fable's "hold"):** Fable's un-anchored verdict gated the
+champion scan behind reproduction; owner explicitly overrode — wants ~3 pod-hours of champion scanning now,
+in parallel with the local judged decider. THREE models: (1) Qwen3-30B-A3B MoE — REUSE banked renders
+(redraw_harvest, scoring-only, cheap); (2) Qwen3-32B dense sibling — FRESH render + champion (clean
+MoE-vs-dense same-family contrast); (3) Mistral-Small-24B — FRESH render + champion (vendor variety; it
+showed the referent+/sense− reversal). Reason for the fresh renders: we never banked renders for 32B/Mistral
+(checkpointing postdates those runs); owner notes the render is a permanent reproducibility asset we should
+have anyway, so scan+bank are one action. Champion scan = FEATURE #3 (per-fractional-depth-region raw_EB;
+region_k singles + 'all' miswiring check), never run before today. launch_pod.sh env-forwarding gap fixed
+(now forwards SC_CHAMPION_SCAN/SC_CHAMPION_REGIONS/SC_GC_ALPHA/SC_FULL_DEPTH). Renders harvested + banked after.
+
+- 2026-07-09 — **CLAIMS LEDGER (owner directive — stop ad-hoc provenance-chasing):** every paper claim must be
+recorded BEFORE writing with: exact number, source result file, the exact recompute command, and the commit
+ID — so we never second-guess a claim mid-flight (we re-derived bf16-vs-4bit / brief-vs-std / 79-vs-83 twice
+today). Building paper/CLAIMS.md as the single source of truth the paper is assembled from; each entry
+RECOMPUTED from disk (not copied from prose). FINDINGS.md stays the narrative; CLAIMS.md is the audited ledger.

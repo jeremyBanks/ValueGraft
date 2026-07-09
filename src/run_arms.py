@@ -33,6 +33,7 @@ from arms import (
     generate_summary,
     message_token_starts,
     render,
+    SUMMARY_REQUEST_BRIEF,
 )
 from kvlib import (
     batched_teacher_forced,
@@ -51,6 +52,11 @@ E_POST_ALPHAS = [float(x) for x in os.environ.get("SC_E_POST", "0.25,0.5,0.75,1.
 E_INTER_ALPHAS = [float(x) for x in os.environ.get("SC_E_INTER", "0.5,1.0").split(",") if x]
 OUTDIR = os.environ.get("SC_OUTDIR", "results/raw")
 PROBE_MAX_TOKENS = 160
+# Summary condition (restored knob): SC_SUMMARY=brief uses the terse 3-5 sentence
+# mechanism-isolation summary (the condition the judged +12pp metric ran under);
+# default "prod" uses the full production-style summary (ArmSet default -> None ->
+# SUMMARY_REQUEST). See DECISIONS.md 2026-07-06 17:40 for the brief-vs-prod caveat.
+SUMM_REQ = SUMMARY_REQUEST_BRIEF if os.environ.get("SC_SUMMARY") == "brief" else None
 
 
 def clear(*objs):
@@ -168,7 +174,7 @@ def continue_from(model, tokenizer, make_cache, ctx_ids, suffix_ids):
 def run_cont_mode(model, tokenizer, msgs, tail_start_msg, cont_text):
     """Teacher-forced scoring of the held-out continuation under each arm."""
     ctx = msgs
-    aset = ArmSet(model, tokenizer, ctx, tail_start_msg)
+    aset = ArmSet(model, tokenizer, ctx, tail_start_msg, summary_request=SUMM_REQ)
     aset.prepare_a()
 
     cont_ids = tokenizer.encode(cont_text, add_special_tokens=False)
@@ -199,7 +205,7 @@ def run_cont_mode(model, tokenizer, msgs, tail_start_msg, cont_text):
 def run_probe_mode(model, tokenizer, msgs, tail_start_msg, plants,
                    arm_filter=None):
     """Greedy probe answers under each arm."""
-    aset = ArmSet(model, tokenizer, msgs, tail_start_msg)
+    aset = ArmSet(model, tokenizer, msgs, tail_start_msg, summary_request=SUMM_REQ)
     aset.prepare_a()
     eos_ids = set(tokenizer.eos_token_ids or [tokenizer.eos_token_id])
     out = {"stats": aset.stats, "arms": {}}

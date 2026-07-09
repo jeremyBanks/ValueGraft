@@ -118,14 +118,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--nboot", type=int, default=20000)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--graft-glob", default=GRAFT_GLOB,
+                    help="verdicts glob for graft arms (default: c01-c12 committed)")
+    ap.add_argument("--base-glob", default=BASE_GLOB,
+                    help="verdicts glob for base arms (default: c01-c12 committed)")
+    ap.add_argument("--label", default="Qwen3-30B-A3B 4bit MLX, BRIEF summary",
+                    help="run label (the committed c01-c12 metric is 4bit MLX / brief, NOT bf16)")
     args = ap.parse_args()
     rng = random.Random(args.seed)
 
-    graft = load_verdicts(GRAFT_GLOB)
-    base = load_verdicts(BASE_GLOB)
+    graft = load_verdicts(args.graft_glob)
+    base = load_verdicts(args.base_glob)
     data, plants, convs = collect(graft, base)
 
-    print(f"JUDGED meaning-recovery metric | Qwen3-30B-A3B bf16 | Sonnet 5 judge")
+    print(f"JUDGED meaning-recovery metric | {args.label} | Sonnet 5 judge")
     print(f"score: RECOVERED=1, PARTIAL=0.5, MISSED=0 | graft=pooled(E-post-a0.25,a1.0)")
     print(f"baseline=Compacted(arm B) | conversation-clustered bootstrap, "
           f"nboot={args.nboot} seed={args.seed}")

@@ -6,6 +6,29 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 
 ---
 
+> ## ⚠ PROVENANCE CORRECTION + LIVE STATUS (2026-07-09) — read before trusting F1's numbers
+>
+> Verified by rebuilding the judge batches from disk and diffing (`scripts/build_judge_batches.py --validate`):
+>
+> 1. **Model mislabel.** The judged meaning-recovery answers (F1's +12pp/+10pp) were generated on
+>    **4-bit MLX locally** (`mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit`), **NOT bf16**. The "bf16"
+>    label in F1 and in `judged_bootstrap.py`'s header is wrong for this metric (bf16 pods ran different
+>    workloads). Confirmed: committed batch answers match `results/raw_30b_brief` (126/128), not `raw_30b`.
+> 2. **Condition = BRIEF (mechanism-isolation), not production-faithful.** The judged answers used the
+>    terse 3–5-sentence `SUMMARY_REQUEST_BRIEF` summary — a condition *designed to starve the text channel
+>    and handicap the Compacted baseline* (DECISIONS.md 2026-07-06 17:40). So the flagship +12pp lives
+>    under the condition most favorable to a graft effect. This MUST be stated plainly in the paper; the
+>    production-faithful (std/prod summary) number is a separate, arguably more decision-relevant result.
+> 3. **The brief knob had been dropped from `run_arms.py`** (it silently only did std); restored as
+>    `SC_SUMMARY=brief` (positive control: c01 brief summary = 543 chars, exactly matching the committed brief).
+> 4. **LIVE TEST (the decider, per Fable's un-anchored verdict).** Reproducing the judged metric under a
+>    clean current-code brief pipeline for BOTH a fresh baseline (c01–c12, does +12pp even reproduce?) and
+>    the held-out cell (c13–c24, does it survive out-of-sample?). Until that lands, **F1's sense/referent
+>    recovery numbers are UNCONFIRMED on held-out data and are the one metric the whole positive story
+>    rests on.** Do not write the headline around them yet.
+
+---
+
 ## F1. Grafting recovers compaction damage in proportion to how semantic (vs factual) the lost content is — the "recovers sense, not trivia" dissociation
 
 **Claim.** When a conversation is compacted (older turns replaced by a
@@ -83,6 +106,12 @@ from single-method to two-method-directionally-consistent.
 Decoy fabrication: Compacted 83% vs write-time-KV (H-pack) 17%; on evicted
 facts H-pack both most accurate (38/48) and least fabricating (4%).
 Replicated 4-bit→bf16 and 4B→30B. (Details: DECISIONS 07-06; honesty runs.)
+> **⚠ RECONCILE before ship (2026-07-09, recomputed from results/phase2_30b_scored.json, n=24/arm):**
+> decoy fabrication recomputes to B **79%** / H-pack **12%** (not 83/17 — same story). BUT the
+> "H-pack most accurate 38/48" evicted claim does NOT reproduce: H-pack recalls **0/24** evicted facts
+> (= Compacted; only full-context arm A is accurate). H-pack's real effect on evicted facts is
+> fabrication 67%→**admission** 96% (4% fab). CORRECTED claim: write-time-KV **suppresses fabrication /
+> induces admission**, does NOT restore recall. Trace the 38/48 source; likely an overclaim or different corpus.
 
 ## F3. Tuning finding (banked). Naive full-strength grafting (alpha=1) can
 catastrophically break a task (chain s1: 0/4 where all else 4/4); per-layer
