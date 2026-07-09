@@ -651,6 +651,11 @@
       "object_id": "ddee47b99e426236d7baa0f93f0e4eee3d06b7cd",
       "archive_timestamp_utc": "2026-07-09T17:44:46.290000Z",
       "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026070981-champion-validation-experiment.md": {
+      "object_id": "23730c06c36d9df3c6036b64d9239cfca8325185",
+      "archive_timestamp_utc": "2026-07-09T17:47:47.897907Z",
+      "timestamp_source": "filesystem birth time"
     }
   }
 }
