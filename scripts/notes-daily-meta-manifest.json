@@ -143,8 +143,9 @@
         "210d3788f015d6e015f0fb22aad78566a98dd060",
         "241933497312b0c6766e12a1f226122b8f865edb",
         "2c61e6e9464e618864b1d8a712927e590f976e40",
+        "2ffc655f25c4049831c77a052eb12a91f8e6d36f",
         "38969ddc5aae214bfb6549a737065aec5b31f5ad",
-        "3b169424cee0b562cd06d29b49d22ff8b37d3dd0",
+        "3b113ca6d23111d5185283b6e49b6df286061f4a",
         "3fef0eacb83b68b2fb7949fdd1cecf6b51ca0bfa",
         "4086d6bd711afe603aef0573989d47dc0ffe2410",
         "43a9db4f2ec88124588e22a4d2cc787d3818d834",
@@ -163,7 +164,6 @@
         "8875608d6dd17bc92e1f4ce5dafc22883588685b",
         "8dfac11686f30d71fbbcb4066bb4308e3d981726",
         "94d3115ba8597d46a8ee50e218f449dc53a7f548",
-        "9897b8384c72db82ef496df0bf2190046ea82ee4",
         "992f09baec70830ae92162333cd043b34f136d72",
         "a362abf20336fd2b9f1884556749c15b081d55ca",
         "a760b8e66059b862049b8c997d6c1f35408bb171",
@@ -184,7 +184,7 @@
         "fa5d20f22befa04dedadb2d118a96b5bfe6bc1e0",
         "ffbd283e5a36f4cb98605245ab7422d620c7fc4a"
       ],
-      "summary_hash": "b23a197424d24849a5f7a1c1cd032e7f2e03acc061154f30176208217d47b447",
+      "summary_hash": "8c7335f783897fea8ccea1c478b24183542588be5547e157d2bf3c41ea1c7a96",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -196,14 +196,24 @@
     },
     "20260709": {
       "note": "notes/20260709.md",
-      "source_count": 4,
+      "source_count": 14,
       "source_blob_ids": [
-        "08d310e370681d22621ddc43619be326d8a5627b",
-        "3b179d5e2114e767a7059d95056f563787235b1e",
+        "09a73b86d2e736925bac240dc115ab2b60cc5c35",
+        "139c047e72d6b01322bf65c9a79ea456f8333f2d",
+        "1a1d4046722a59154501512fd0de5f045f7f621a",
+        "23730c06c36d9df3c6036b64d9239cfca8325185",
+        "3f605e5bb61d7043430c2a411de7924f0e5afa0b",
+        "49b44e8a741ad3bb507be991a56ec0b6ae1f84a0",
+        "532d5974a63a88c3d3ff19e054baab17718561d8",
         "8532de743ff17027251819665e9c70a242620096",
-        "d29e1d2547e03c0c3f20963261cf1be0092b1be8"
+        "9e6462bc1f6d431604d7bae87e0a08aeab6936ae",
+        "b2f2aaeba0b5154c097d23f4f8ea81b21a15f554",
+        "b4d568741709658d88b9bd03255b6c971e227256",
+        "d29e1d2547e03c0c3f20963261cf1be0092b1be8",
+        "ddee47b99e426236d7baa0f93f0e4eee3d06b7cd",
+        "e4d1fed4d805ecd0e9329774df5562cf03ab42de"
       ],
-      "summary_hash": "e91413c1c06935f223f587175727c31e1036c6c550410e7c8eac7c4c7de0f644",
+      "summary_hash": "5e7f3d32b55cd27e83d4c8515881c1ee045996286a9fba8dba1806192d71bc55",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
