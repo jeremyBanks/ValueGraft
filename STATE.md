@@ -5,6 +5,25 @@ REPRODUCTION of the headline. Everything below the "SUPERSEDED" marker is histor
 
 ## CURRENT TRUTH (2026-07-09) — read first
 
+### ⭐ STANDING GUIDANCE + OPEN DIRECTIVES (owner, 2026-07-09) — DO NOT LOSE THESE
+1. **Fable writes to a notes/ file for EVERY serious consult** — I pre-create the empty file, pass rich
+   context, Fable writes its own assessment there, returns the path. (AGENTS.md "FABLE WRITES TO A NOTES FILE").
+   Don't blindly follow Fable — get its perspective, owner decides.
+2. **CLAIMS.md is the audited single-source-of-truth** — every shippable number recomputed from disk with
+   file + exact command + commit + status. Assemble the paper FROM it. Never second-guess a claim ad-hoc again.
+3. **NATIVE/SELF-RENDER PREMISE must be VERIFIED before the paper implies it's a requirement.** Readers will
+   infer self-rendering is required; it's NOT a problem if it turns out only helpful (still more robust/interesting)
+   — but we must interrogate it, not assert it. Verification experiment being designed (Fable). Capture + reflect.
+4. **RE-RENDER + BANK every key model's conversations** for reproducibility, each tagged with model ID +
+   quantization + size. Fleet banks 32B/Mistral/Qwen2.5/phi-4 (never banked before). 30B already banked.
+5. **Champion scans** (owner override of Fable's hold): mechanism map per model; bank the renders.
+6. **BRIEF-CONDITION CAVEAT is load-bearing:** the judged +12pp AND SWE-Gym +0.0156 both ran under the
+   brief (mechanism-isolation, baseline-handicapping) summary. Fable's #1 recommendation: get a
+   **production-faithful (std-summary) arm** for the headline — currently NO positive result exists under std.
+7. **Push-notify major results.** SWE-Gym cross-model = cheap warm-pod add-on (LOWER priority).
+8. Fable holistic assessment (2026-07-09): notes/2026070972-fable-holistic-assessment.md — argues honesty-led
+   may be safer than sense-led (degrades gracefully); std-summary arm is highest-leverage missing piece.
+
 **THE PIVOT (incident #37, from re-asking Fable UN-ANCHORED):** the cross-arch QK-norm thesis (H1) is
 DROPPED — empirically FALSIFIED (Mistral no-QK-norm referent +0.035, CI [+0.005,+0.066] excludes 0 =
 the OPPOSITE of H1) and the within-model ablation BROKE the model (removing QK-norm → dead generation).

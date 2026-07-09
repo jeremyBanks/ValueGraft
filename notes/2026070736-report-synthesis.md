@@ -1,4 +1,4 @@
-# The sense a model builds up doesn't live in the summary
+# ValueGraft — report synthesis (2026-07-07, historical draft)
 
 _When an AI conversation is compacted, the model loses something a good summary
 should have kept. This is a report on what that something is, where it lives,

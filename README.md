@@ -1,4 +1,4 @@
-# The sense a model builds up doesn't live in the summary
+# ValueGraft
 
 ### Value grafting: re-injecting write-time KV state where a conversation was compacted — a working report
 
