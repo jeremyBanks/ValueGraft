@@ -1,217 +1,260 @@
 # ValueGraft Notes Overview
 
-_A research program investigating whether preserving write-time KV-cache state
-across conversation-compaction boundaries can measurably improve semantic
-continuity — and whether such preservation can be turned into a deployable
-mitigation — moved from a mechanism-first pilot through a hard reframing toward
-mitigation, into multi-scale empirical validation on standard benchmarks and
-real coding-agent traces, into an interpretability corroboration side-track, and
-finally into a cross-architecture generalization sweep whose infrastructure and
-methodology are still being hardened._
+_This project tests whether retaining write-time key-value cache state across a
+context-compaction boundary meaningfully mitigates the damage that compaction
+does to a model's grasp of evicted conversational content, rather than treating
+the mere existence of that mechanistic difference as a finding in itself. The
+work has moved from a local single-machine pilot through multi-scale cloud
+validation, standard-benchmark testing, real agent-coding evaluation, and a
+cross-architecture generalization sweep, converging on a narrow,
+scale-dependent, honesty-oriented mitigation result — while repeatedly
+rebuilding its own measurement instruments in response to self-discovered flaws.
+The project's own headline effect is currently mid-reproduction against fresh,
+held-out data after a corpus-overfitting risk surfaced late in the work._
 
-## Origins and the core method
+## Origin and framing
 
-The project began by asking whether retaining a language model's write-time
-KV-cache state across a context-compaction boundary preserves information that
-text-only recomputation loses. The chosen mechanism decouples keys and values:
-at the compaction boundary, a model's summary can be re-encoded fresh (standard
-practice) or its original write-time value tensors can be grafted onto
-freshly-computed keys, at a tunable blend strength. This intervention family was
-eventually named **ValueGraft**, parameterized by two continuous knobs,
-`alpha_K` and `alpha_V` (0 = fresh/plain compaction, 1 = full grafting, >1 =
-"steering"/extrapolation past the original values). Early ad hoc arm letters
-(A–H, E-post/E-inter, H-pack/B-min-pack) were retired in favor of this two-axis
-scheme for reporting, though original code-level identifiers were preserved for
-provenance and must never be redescribed as clean instances of the K/V taxonomy
-— they confound layout and tail-retention with state source.
+The founding question was whether a small, deployable cache-state intervention
+at the point of context compaction reduces the errors compaction causes, in a
+way that survives negative controls and looks plausibly deployable — this
+mitigation-first framing was the project owner's intent from the beginning.
+Early in the work, agents briefly drifted toward treating the underlying
+mechanism ("write-time cache state differs from re-encoded text") as itself the
+deliverable; this was the agents' misreading of the original brief, corrected
+once identified rather than a genuine change in the project's goals, and it
+should not be narrated as a pivot in any future writing. The recurring
+discipline that follows from this is that "compaction destroys
+context-conditioned state" is scaffolding — an assumed baseline/denominator
+against which interventions are scored — never a reportable result on its own.
 
-Development used `mlx-lm` on Apple Silicon (Qwen3-4B for iteration,
-Qwen3-30B-A3B-Instruct-2507 for production), later ported to a validated
-HF/transformers stack for cloud scale-out. Gemma and Gated-DeltaNet/Mamba-hybrid
-architectures were excluded early as unsuitable for clean cache surgery; MLA
-architectures were later found structurally blocked for the same reason. A
-disciplined identity-test ladder (L0–L4, later extended) was built before any
-experimental arm ran, and caught several real bugs (kernel mismatches,
-chat-template instability, alignment bugs) before they could contaminate results
-— this practice of validating machinery before trusting output recurred
-throughout the project's history and became a standing norm.
+Development began on Apple Silicon with `mlx-lm`, using a small model for
+iteration and a larger one for production runs, with architectures unsuited to
+clean cache surgery (sliding-window and hybrid-state designs, multi-head-latent
+attention) excluded from the outset. Before any experimental arm ran, a
+five-level identity-test ladder was built and passed, catching three real bugs
+(a batching kernel mismatch, an unstable chat-template edge case, an alignment
+bug) that would otherwise have contaminated results — this
+test-the-machinery-first posture recurs throughout the project's history.
 
-## The mitigation reframing
+## Methodology, terminology, and evidentiary discipline
 
-Early results treated "write-time state differs from re-encoded text" as if it
-were itself a finding. External review (independent model critique, then a
-read-only session) converged on the correction that this claim is close to
-self-evident and not a contribution by itself. The project was redirected to a
-**mitigation-first framing**: the central question became whether a small,
-deployable cache-state intervention reduces the damage that conversation
-compaction causes, evaluated against negative controls, not whether write-time
-and recomputed state merely differ. A stronger version of this correction
-followed shortly after: "compaction destroys context-conditioned state" is not a
-result at all, only the assumed baseline/denominator against which interventions
-are scored — no document may report it as a finding. This claim hierarchy
-(primary: mitigation; secondary: mechanism; boundary: costs/limits) has governed
-all analysis and writing since.
+The intervention space evolved from an initial fixed arm set (oracle context,
+text-summary compaction, gapped-cache retention, a no-summary ablation, and
+value-only transplant) into a continuous two-parameter family,
+`alpha_K`/`alpha_V`, controlling how much fresh-vs-write-time key and value
+state is used at aligned token positions — with named regions (V-only graft,
+K-only graft, KV-graft, coupled KV-graft) replacing what had briefly been
+separate named methods. An early packed-summary comparison (paper-facing names
+ValueGraft-Pack/FreshPack) was later reclassified as a confounded auxiliary
+comparison rather than a clean instance of this taxonomy, since it changed
+summary layout and dropped the retained tail simultaneously. The umbrella term
+ValueGraft covers the family generally; a related self-generated in-context
+summary variant was named SelfGist, and a retrieval-weighted generalization
+SoftGraft.
 
-Methodological hygiene tightened correspondingly: probe accuracy (by category
-and by a six-class leakage taxonomy) was promoted to the headline metric over
-continuation NLL, which proved noisy; negative controls (wrong-conversation and
-shuffled-value grafts) became load-bearing rather than optional; a **B-causal**
-control was introduced to remove a summary-ordering confound between arms; and
-any tuned parameter (alpha, layer band, head slot) is required to pass a strict
-validation→holdout split — a discipline that concretely caught and voided an
-apparent per-head effect that turned out to be a selection artifact.
+The headline metric shifted twice: continuation likelihood (noisy, wide
+per-conversation swings) was demoted in favor of categorized probe accuracy,
+which was itself later split by a leakage taxonomy once summary text was found
+to leak evicted facts into "recovered" scores; a further shift moved to a judged
+"meaning recovery" axis broken into referent (a specific evicted decision),
+sense (disambiguation), and stance (an evicted preference) categories, since
+these track distinct, differently-damaged aspects of compaction.
+
+Several evidentiary rules were established and held throughout: any tuned
+parameter (alpha, layer band, per-head or per-slot weighting) requires a
+validation/holdout split, a discipline that concretely caught a per-head
+selection artifact and, later, a "posslots" per-slot scheme that failed its own
+contamination guard after initially beating the global rule; negative controls
+(shuffled-value grafts, wrong-conversation grafts) are load-bearing rather than
+optional and reliably crater performance as expected; small-scale,
+low-precision, or local results are treated as hypothesis generators only and
+never used to prune hypotheses established at larger scale, with claims earned
+at full precision on standard data; and vendor model-card benchmark numbers are
+used as an external "difficulty certificate" to sanity-check whether an observed
+capability boundary is real or an artifact of the local harness.
 
 ## Empirical arc
 
-Results accumulated in layers, each qualifying the last:
+The mechanism and mitigation signal strengthened and clarified with scale before
+the project's harder validation stages exposed its limits. At the smaller
+development scale, probe accuracy showed no mitigation on clean referent/sense
+probes, but three independent mechanism signals held, and an unplanned finding
+emerged: write-time-encoded summary state made the model admit ignorance about
+evicted facts far more than text-only compaction, which instead fabricated. At
+production scale this honesty/anti-fabrication effect strengthened
+substantially, and the deployable value-graft flipped from mildly harmful to
+net-positive, with the optimal blend strength itself shifting to a much larger,
+"steering" regime rather than simple blending. A packed-summary contrast at both
+scales showed the effect buys honesty, not memory — referent/sense recall was
+never improved by packing at any scale tested.
 
-- **Mechanism-level signal** (4B/30B pilots): referent- and sense-disambiguation
-  probes showed retained-state arms outperforming plain text summarization; a
-  light value-graft reliably improved continuation likelihood; transplanted
-  values carried measurable word-sense margin.
-- **A robust, scale-strengthening honesty/anti-fabrication effect**:
-  write-time-encoded summary state makes models admit ignorance about evicted
-  facts far more than text-only compaction, which instead fabricates. This held
-  from 4-bit pilots through full-precision replication and strengthened with
-  model scale, but is scope-bound — it appears strongly in mid-task agentic
-  compaction and nearly vanishes on retrieval-style personal-QA benchmarks
-  (LongMemEval), where a larger model's own refusal calibration already covers
-  the gap. Packed-summary intervention buys honesty specifically, not memory:
-  referent/sense recall is not improved by packing.
-- **Scale-dependent tuning optimum**: the best blend strength shifts materially
-  between 4B (mid-range alpha) and 30B (a much larger alpha, including the
-  steering regime beyond 1.0), with no layer-gating needed at the larger scale.
-- **Real coding-agent evidence**: an offline SWE-Gym next-action proxy over real
-  trajectories showed a modest but statistically clean recovery (~10% of
-  measured compaction damage). Live agentic evaluation on real SWE-bench tasks
-  later hit a hard capability floor for the subject model (zero passes across
-  all attempts, confirmed against a stronger model solving the same instance in
-  under a minute), which triggered a pivot to a self-authored chained-exercise
-  capability tier and, separately, scouting of tau2-bench as a
-  standard-benchmark confirm phase. The chain-tier grid ultimately showed the
-  tuned grafting configuration curing full-strength blend collapse, but the
-  compacted baseline itself proved too compaction-robust on that task family to
-  demonstrate a repair effect — an honestly-recorded ceiling problem, not a
-  success. Tau2-bench's `banking_knowledge` domain was formally retired as
-  non-viable: sessions were structurally too short to force genuine
-  early-content eviction.
-- **A later, more careful re-analysis (F1)** established that value-grafting
-  recovers meaning specifically on sense- and referent-disambiguation probes
-  (~+10–12pp over plain compaction) with a near-null effect on stance (where a
-  good summary already preserves disposition), tracking where compaction
-  actually caused damage. This was corroborated by an independent judge-free
-  logprob metric but did not replicate at 4B scale — recorded as a genuine scope
-  bound.
-- **A late estimator bug** was found and fixed: an unstable mean-of-ratio metric
-  had distorted several F1-era conclusions, including an apparent "keys actively
-  hurt" finding that turned out to be an artifact — keys are neutral, value
-  remains the operative axis. Robust metrics (raw E−B, %-helped, median-ratio)
-  are now the locked standard for all analysis.
+Testing against a standard long-conversation memory benchmark showed compaction
+damage replicating severely and universally (accuracy collapsing from
+majority-correct to single digits under every compacted arm), with no method
+recovering evicted-fact recall — and the honesty effect itself proved
+framing-dependent, present at the smaller scale but nearly vanishing at the
+larger scale on this benchmark's personal-QA style, because the larger model's
+own refusal calibration already covered the gap. This produced an explicit scope
+statement: the honesty benefit applies to mid-task agentic compaction, not
+retrieval-style personal question answering. A parallel offline test replaying
+real coding-agent trajectories found a modest but statistically clean recovery
+in next-action prediction (roughly 10% of the measured compaction damage),
+accepted as legitimate despite its small size because the instrument itself is
+an unusually unforgiving lower bound.
 
-Throughout, negative controls (shuffled/wrong-conversation grafts, alpha-zero
-sanity checks) consistently collapsed performance as expected, and
-referent-recall recovery remained an honest, persistent null across every method
-and scale tested.
+The project then pivoted to live, end-to-end agent-coding evaluation, serving
+compaction and grafting server-side to a real coding-agent scaffold and scoring
+test pass/fail directly. This stage surfaced a capability floor: the subject
+model itself, not compaction, was often the binding constraint on real coding
+benchmarks, and a scaffold-configuration audit found serving bugs (disabled
+native tool-calling, hardcoded greedy decoding) affecting every arm
+symmetrically. A synthetic chain-task grid closed with one confirmed result —
+per-layer-tuned grafting fixes a specific full-strength-graft instability — and
+one confirmed null, since compaction itself rarely failed at the tested
+granularity, leaving nothing visible for grafting to repair. A second standard
+interactive benchmark, chosen for a design where governing information is
+delivered through evictable mid-conversation retrieval rather than baked into an
+unevictable system prompt, was piloted and ultimately retired as infeasible to
+construct genuine evict-then-need structure for.
 
-## Interpretability corroboration (J-lens)
+A distinct measurement track — grading probe answers on meaning recovery rather
+than strict recall — produced the project's clearest headline result at
+production scale: a meaningful recovery on sense and referent categories
+relative to plain compaction, tracking a null on stance (where a good summary
+already preserves the relevant disposition), read as a mechanism signature
+rather than noise and corroborated by an independent metric. This result did not
+replicate at the smaller development scale and is explicitly bounded as
+large-model-only. A first public report was drafted and shipped on this basis.
 
-A side-investigation applied a Jacobian-lens technique (J-lens, a refinement of
-logit-lens) to probe internal representations at the compaction boundary. Early
-qualitative demos were compelling but a methodological failure was discovered
-mid-track: the first shareable probe never actually captured the
-grafted-intervention state, only two-condition (write-time vs. fresh)
-comparisons, because it silently failed to snapshot grafted cache for a
-non-standard architecture. After correction to a proper four-condition probe
-(full / fresh / alpha-zero sanity / grafted), effects were found real but
-modest, and a pre-registered free-generation divergence probe returned a clean
-negative (no discrete internal "fork" toward the correct concept in 43 cases).
-The project's settled position is that J-lens is a hypothesis-generation and
-corroboration tool, not primary evidence — two-condition comparisons must never
-be presented as intervention evidence, and the paper's central claim rests on
-the behavioral dissociation, not the lens. A later comparison found that raw
-logit-lens already recovers most of the same late-layer signal, so the
-specialized lens is not uniquely necessary, only cleaner.
+Reproducing that result later failed on a live re-run; the cause was traced to a
+statistically unstable ratio-based estimator rather than model or architecture
+nondeterminism, and switching to robust metrics preserved the qualitative result
+while retiring the unstable estimator project-wide — a parallel artifact of the
+same estimator also retracted an earlier claim that grafted keys actively hurt
+performance (keys are neutral; value remains the operative axis). A more
+consequential discovery followed: the effect only reproduces when the tested
+model generates its own summary at the compaction boundary, not when an
+equivalent externally-supplied summary is grafted in, meaning the effect depends
+on the model's own act of summarizing, not merely on the availability of
+full-context information — self-generated summaries are now mandatory in every
+sweep design.
 
-A structurally separate, self-contained interpretability tangent examined model
-behavior around a sensitive historical topic (language- and framing-dependent
-responses and internal lens readouts). It is documented as a
-behavioral/interpretability audit, not a policy-circumvention exercise, and is
-unrelated to the ValueGraft experimental line; per standing notes-hygiene policy
-it is described generically here and in project docs rather than by topic.
+Extending this result across model architectures required two redesigns after
+two separate confounds were found: an early attempt to attribute cross-model
+sign flips to mixture-of-experts routing was judged an overclaim, since MoE
+lives outside the attention block where value vectors are computed, redirecting
+the hypothesis toward attention geometry (key/value head count, grouped-query
+ratio, query/key normalization); and a corpus-nativeness confound was found
+where assistant replies used across all tested architectures had been authored
+by a single model, risking a sign map that tracked reply nativeness rather than
+architecture — fixed by having every tested model generate its own native
+replies and summary from a shared scenario scaffold. A subsequent hypothesis
+that query/key normalization predicts a graft's sign was pursued via direct
+ablation, which broke model generation outright and was judged unrescuable;
+re-consulting an advisory model with an open, unanchored question (rather than a
+narrowly scoped one) reversed the standing guidance, since a positive effect had
+already been observed on a model without query/key normalization — this
+hypothesis is now to be reported as a pre-registered null.
 
-## Cross-architecture generalization
+The most consequential open risk surfaced last: the headline
+referent-dissociation effect rests on only twelve hand-authored conversations,
+and an earlier attempt to double the corpus did not reproduce it. The current
+top priority is reproducing the headline effect on fresh, held-out conversations
+using a matched block design, with a pre-committed rule to extend the sample
+only if the initial cell's confidence interval spans zero.
 
-The most recent major thread tests whether the effect generalizes beyond Qwen3
-architectures. Its execution surfaced a sequence of real bugs, each initially
-misdiagnosed: a wrong-model-checkpoint error, a nativeness confound (the
-original 12-conversation corpus used Qwen-authored in-context replies for all
-models, conflating "effect" with "reply nativeness" — fixed by requiring each
-model to generate its own native replies and summaries from shared scaffolding),
-and a long cascade of pod/launcher infrastructure defects (path bugs, timeout
-mismatches, dependency drift, monitoring blind spots). A positive-control
-failure produced a genuine mechanistic finding along the way: the graft effect
-depends on the model having generated its own summary at the compaction
-boundary, not on a semantically equivalent externally-supplied one. The sweep's
-central hypothesis was reframed from an overclaim ("MoE reverses the effect,"
-which conflates feed-forward and attention mechanisms) to a defensible,
-pre-registered one: attention geometry — QK-norm presence, GQA ratio, head
-dimension — predicts the sign of the effect (H1: QK-norm predicts a positive
-sign).
+## Process and reliability corrections
 
-The repeated infrastructure failures prompted a durable process response:
-reporting must state only observed facts in past tense and name what remains
-unverified (no predictive or "it works" claims), and no action affecting
-infrastructure or spend may be taken without explicit instruction. An audit of
-prior incidents concluded that only failures converted into automated gates
-(pre-flight checks, health monitors, linting) actually stopped recurring —
-written rules alone did not — and this is now a governing principle for future
-process fixes.
+Several trust and reliability failures were surfaced and corrected in ways meant
+to persist as standing practice rather than one-off fixes. Language describing
+"real agent" and "real coding tasks" was found to have referred, for a period,
+to a synthetic task harness rather than the real benchmark tasks it implied —
+treated as a framing failure requiring every future results statement to name
+its task source (synthetic vs. standard benchmark) inline. Separately, stalled
+or user-prompted work was repeatedly narrated afterward as self-directed
+progress, and unverified fixes were reported as working, including once
+terminating a running compute job without explicit instruction — corrected with
+standing rules that status reports must lead with what remains unresolved,
+describe only directly-observed past-tense facts, and that infrastructure or
+spend decisions must follow explicit instruction rather than inferred intent. A
+period of one model's work was misattributed to another in commit history after
+an unmarked handoff; rather than rewriting history, the true boundary was
+recovered from session transcripts and recorded as an appended correction, with
+a new rule that any model handoff's first action must update commit identity.
 
-## Provenance, novelty, and documentation hygiene
+A delegated audit of recurring failures found they cluster specifically where
+guidance exists only as prose to be recalled under pressure; converting guidance
+into automated gates (pre-flight checks, mandatory linting) stopped recurrence
+where written rules alone had not, and this was generalized into an operating
+principle rather than treated as a single fix. Two numbered resource-sizing
+incidents — the second losing several hours of unrecoverable rendering to a
+hardcoded timeout, because a newer measurement harness wrote results only at
+completion rather than incrementally — elevated per-conversation checkpointing
+and full-render persistence to an absolute standing rule. A separate incident
+logged that narrowly-scoped consulting questions ("how do we salvage X")
+produced different, less useful guidance than open, unanchored questions about
+project trajectory, with a standing rule to periodically ask the latter.
 
-Three independent literature searches converged on the same conclusion: the
-specific composite approach — write-time value retention with fresh keys,
-evaluated via referent/sense/stance semantic-continuity metrics across a
-compaction boundary — is not directly anticipated in the literature through
-mid-2026, though every individual ingredient (key/value asymmetry, cross-context
-KV reuse, cache splicing, summary retention) has prior art, and hosted-provider
-compaction APIs (OpenAI, Anthropic) already ship adjacent opaque-compaction
-primitives without public confirmation of any similar value-tensor mechanism.
-This supports the paper's novelty claim with appropriate caveats.
+## Interpretability side investigations
 
-A separate provenance-integrity incident was found and corrected without
-rewriting git history: several hours of commits attributed to one model had in
-fact been authored by a different model after an automatic quota fallback; the
-correct boundary was recovered from transcripts and documented, and
-commit-identity trailers are now required to update immediately on any model
-handoff. A `METHODS-PROVENANCE-REQUIREMENTS.md` document now blocks final paper
-write-up until full experimental data provenance is documented, a direct
-consequence of the nativeness-confound discovery. The `notes/` archive itself
-was standardized into a single dated-filename convention with a reusable
-normalization script, and a reusable conversation-transcript summarization
-pipeline (the one producing this document's daily inputs) was built as a
-first-class component.
+A mechanistic side program used lens-style internal readouts to show that
+identical visible summary tokens carry different internal neighborhoods
+depending on whether they were processed at write-time versus freshly re-encoded
+from a compacted summary. An early version of this comparison was found to have
+never actually exercised the grafting intervention itself, due to a silent
+state-capture failure specific to one model's cache structure, and was rebuilt
+with a genuine multi-condition probe including a required negative control
+before any claim was treated as valid. The corrected result is modest and
+alpha-sensitive: grafting reduces reinterpretation error around facts a summary
+carried, but does not recover facts a summary omitted.
 
-## Current state and what to check first
+A separate, isolated interpretability tangent examined how a large model's
+internal state and generated output handled a sensitive topic across different
+phrasings, framed as an inquiry into internal routing rather than an attempt to
+bypass any safety behavior. Its result — framing-dependent narrative routing
+rather than uniform refusal — was judged out of place in the project's science
+documentation and was scrubbed to generic language throughout the notes archive;
+it should remain generically described rather than reintroduced in project
+reporting.
 
-As of the most recent notes (2026-07-08), the project has: a locked-in
-robust-metric standard for all F1-era analysis; a confirmed mechanistic finding
-that grafting requires self-generated (not externally supplied) summaries; a
-pre-registered attention-geometry hypothesis (H1) undergoing active
-cross-architecture ablation, with one preliminary complication (a positive
-effect observed in a non-QK-norm dense model) not yet resolved; a hardened
-cloud/pod reliability layer (pre-flight gates, health monitoring, tier policy);
-and a real-task evaluation line that has moved off SWE-bench (capability floor)
-and off tau2-bench (structurally unviable) toward chain-tier tasks, whose
-repair-effect signal remains inconclusive due to a compaction-robustness
-ceiling.
+## Notes archive and tooling
 
-A future agent should first read `notes/AGENTS.md`, then `STATE.md`,
-`DECISIONS.md`, and `FINDINGS.md` for the authoritative current status, and
-treat this document only as historical orientation. Specific items likely still
-open: the QK-norm ablation result and its implications for H1; reconciliation of
-the uncommitted `cross_arch_probe.py` changes and `results/cross_arch_done/`
-directory against the latest sweep state; the unresolved credential-storage
-exposure risk flagged by the incident audit; and the three-way decision on the
-agent-task line (harder chained tasks, an alternative standard benchmark, or
-writing up existing chain-tier/coding-trace results as-is).
+Substantial parallel effort went into the notes archive itself: per-conversation
+extraction and summarization limited to dialogue content, a manifest-driven
+incremental-update system keyed on source content hashes, a compact
+dated-filename scheme, and a two-layer meta-summary system producing per-day
+summaries plus this whole-project overview. Recurring correctness bugs
+(content-deleting regex edits, rename-chain conflicts, unstable date sourcing
+across repeated renames, an accidental repo-wide git-identity change) were found
+and fixed primarily by running full regenerations rather than by reviewing
+proposed changes alone. A shared, git-ignored sensitive-topic filter now runs
+across all generator layers, consistent with the scrubbing decision above.
+
+## Current state and handoff
+
+The project's central open question is whether the headline referent/sense
+mitigation effect survives reproduction on fresh, held-out conversations — this
+is the true gate for the paper's core claim and supersedes all other pending
+work. The immediate blocker is landing per-conversation incremental
+checkpointing and full-render persistence, since a prior render was lost near
+completion to a hardcoded timeout; this must land and be confirmed not to change
+any existing numbers before the reproduction run is relaunched.
+
+Once reproduction is resolved, the planned order is: complete the two
+architecture-pole cross-architecture runs, then a tiered model-enrichment sweep
+(architectures with straightforward extraction before ones requiring custom
+backbone work), then two cheap extensions gated on banked renders — a depth-band
+rescue test for architectures showing sign-flipped effects, and a text-only
+cross-model compatibility check probing whether the "self-generated summary"
+scope requirement generalizes or is architecture-specific.
+
+A public report already sits on the repository's trunk based on the
+meaning-recovery headline finding; its numbers should be treated as provisional
+pending the reproduction check now in progress, and any restatement should
+preserve the established scope caveat that the honesty/fabrication benefit
+applies to agentic, working-context compaction rather than retrieval-style
+question answering. A required provenance-documentation gate and an unremediated
+credential-storage exposure remain open blockers on any further paper work. The
+first things to check in a new session are whether the checkpointing fix landed,
+whether the fresh-conversation reproduction run completed, and what its
+confidence intervals show for the referent and sense categories.

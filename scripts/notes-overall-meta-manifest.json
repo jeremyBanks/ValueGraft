@@ -3,7 +3,7 @@
   "description": "Overall notes meta-summary manifest. Staleness is keyed by ordered daily-summary git blob IDs.",
   "summary": {
     "note": "notes/README.md",
-    "source_count": 5,
+    "source_count": 6,
     "sources": [
       {
         "day": "20260704",
@@ -18,19 +18,24 @@
       {
         "day": "20260706",
         "note": "notes/20260706.md",
-        "blob_id": "d1922749d23744909d9a4ce1fff5315909918438"
+        "blob_id": "d03751f39945d30de542f34040677eadd8ca9c5a"
       },
       {
         "day": "20260707",
         "note": "notes/20260707.md",
-        "blob_id": "cdf9d1a148e073f132d411d31b3133b0062f2328"
+        "blob_id": "f2332b0b5a5ce7f14cad7c726974f269c41fe5f4"
       },
       {
         "day": "20260708",
         "note": "notes/20260708.md",
-        "blob_id": "0980e780ea9db56be8496cfb54b64bf2beaf18bd"
+        "blob_id": "5fefc188e3618d15ec5abdbfce18f98337d3c9a0"
+      },
+      {
+        "day": "20260709",
+        "note": "notes/20260709.md",
+        "blob_id": "187afde5f419c44352544252ab7e3b27504a108f"
       }
     ],
-    "summary_hash": "ab1edc6d9dbfa5956b64d69cd5ba2ec0666d50eaeef88f4dab98dcc792090d81"
+    "summary_hash": "1a77c4f76a2f98754d9f3be9730a87e9506f5f6438ebab71b8092d9b2cab6b09"
   }
 }

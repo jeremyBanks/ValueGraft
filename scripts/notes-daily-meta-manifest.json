@@ -4,12 +4,14 @@
   "days": {
     "20260708": {
       "note": "notes/20260708.md",
-      "source_count": 12,
+      "source_count": 14,
       "source_blob_ids": [
         "1276966f38bf0d9449023c05e58a242e0debe94e",
+        "2252b6fc462f1fe29c5f664ac817664a425748d4",
         "440a9ff5c07e5ab5c1ea0c8b26b232307e48c802",
         "464f09e40227f6b7b607591dbc31a3c6139357d5",
         "523cbdf9b7910fa837b5d23ff753b624dba62465",
+        "67e0c5207dc10a7ee3670d86c45ddd44b2ce71e1",
         "7b676caa7883faa0956c39bbf77921bd814ed25a",
         "a45694310f6c3a84ed1ffd950b17a62eb5babefa",
         "c66c58ea58c4f2f695d908fe13575b00bcbb5718",
@@ -19,7 +21,7 @@
         "d769f79a45267bfa5c573f2727d6bea00c4b6f8d",
         "ea82f783ed4e1e2726e798589cc3abc005661cf6"
       ],
-      "summary_hash": "a32fbd67d8427a63a146a0f231441897f7ca49494a991401e2c9adbf4dc9c9d4",
+      "summary_hash": "063cdcc8ae249cbe255e1420eb831000a7e335f95da5897a8c0d98efe45f7651",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -89,7 +91,7 @@
     },
     "20260706": {
       "note": "notes/20260706.md",
-      "source_count": 27,
+      "source_count": 28,
       "source_blob_ids": [
         "052ec4722bdb61f305364aedf5b99b5a872d12f5",
         "0c14cc21dc45345577797de905e58e767badf653",
@@ -109,6 +111,7 @@
         "8a56909b0b71c4718c975f68f9b959f51f3ac9c9",
         "98d208af739faa8d7d568bfaf1e5e609e70eb0c8",
         "9f693a8a55f8f7f8c7bd77f39fee45ef91acb05d",
+        "a51e79f6c9cd1f6b77c608d08a83c558ddcd2a21",
         "acc3ef1b057589c446fc728985f4f3e46a440d85",
         "b3bd10856ddc62b0fca585548ca8b365c4ab2159",
         "bbcf4565acf7b67858f34e5cc546cc4e0d22a857",
@@ -119,7 +122,7 @@
         "f3094c26323f69568b8b4746ca4950590d5d17e1",
         "f516fe12d3e7a39c1c7f1ef847a1e388e3fe3a43"
       ],
-      "summary_hash": "5bcf58dea6bd3e679704c88cc7b45f513a7bc379c98baaedf3ad44f29cdeb3c6",
+      "summary_hash": "d5013006b48e3ca743b189aff0c6b8f88bdf0cac462fe482ec4fdcc089d409c7",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -131,7 +134,7 @@
     },
     "20260707": {
       "note": "notes/20260707.md",
-      "source_count": 45,
+      "source_count": 47,
       "source_blob_ids": [
         "15e75d186f1c1c7a528e211c38142d2888a25f61",
         "16b5663e1c580ee04762f3279acd3e1ba3705cb3",
@@ -148,6 +151,7 @@
         "55bf34c91bd2b81e3c5bf3f0fdb23909565935f9",
         "5618ec6950589b0927090b0a913fe6483dec76dd",
         "57d0eb4617bbfd81b5cbae24ea2c5365c69d0d4a",
+        "602354211e2e5f05f8f476ea474cbb38c4d1e4b9",
         "658aaea917f0f070146bb5f9f90bb53b8712e3e6",
         "660a66ae7e277236c64112c83ad93da11bb38c5f",
         "66e62bae5184d54722553017aff9ff0946f8f8c5",
@@ -170,6 +174,7 @@
         "cecf3c33da951cad68eae7f1b468487958ac6471",
         "d1c1d77772679636f914a32a7e2477b2aaded03c",
         "d927edac73b1564b53bc2e52c863a1df9a9cd815",
+        "dbb21a3206720e0041127bb1593614df8a27bfb2",
         "dc1dcd7547863085ac32c342ed813dc85867ed1d",
         "debb5b484f5f4819928da2f604613df44225495f",
         "e4fa77a9585f3e35717af90ff23fdf393d3e38fa",
@@ -179,7 +184,25 @@
         "fa5d20f22befa04dedadb2d118a96b5bfe6bc1e0",
         "ffbd283e5a36f4cb98605245ab7422d620c7fc4a"
       ],
-      "summary_hash": "c0efbc39812114476e53db6c3db666fff31e8bd39af398d1635492f0eb09389f",
+      "summary_hash": "b23a197424d24849a5f7a1c1cd032e7f2e03acc061154f30176208217d47b447",
+      "input_policy": {
+        "ordinary_threshold_chars": 8192,
+        "ordinary_head_chars": 6144,
+        "ordinary_tail_chars": 2048,
+        "conversation_threshold_chars": 16384,
+        "conversation_head_chars": 12288,
+        "conversation_tail_chars": 4096
+      }
+    },
+    "20260709": {
+      "note": "notes/20260709.md",
+      "source_count": 3,
+      "source_blob_ids": [
+        "4259f3072784157159f4c68e5b2c8bce6da71e15",
+        "8532de743ff17027251819665e9c70a242620096",
+        "defb02227c0c2313b68d22e2ccc05aa1538710aa"
+      ],
+      "summary_hash": "734db4944fe52b91a7bca5b99239859a12a55125b22f0a2f7d6bdf8d5e5a1d94",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
