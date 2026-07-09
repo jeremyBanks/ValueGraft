@@ -4364,9 +4364,9 @@ def main():
     ap.add_argument("--make-summaries", action="store_true",
                     help="generate the shared fixed summaries ONCE, then exit")
     ap.add_argument("--conv-limit", type=int,
-                    default=int(os.environ.get("SC_CONV_LIMIT", "4")))
+                    default=int(os.environ.get("SC_CONV_LIMIT") or "4"))
     ap.add_argument("--conv-start", type=int,
-                    default=int(os.environ.get("SC_CONV_START", "0")),
+                    default=int(os.environ.get("SC_CONV_START") or "0"),
                     help="HELD-OUT selector: 0-based OFFSET into the sorted "
                          "conversation list; the run scores convs "
                          "[conv_start : conv_start+conv_limit]. Default 0 == the "
@@ -4374,7 +4374,7 @@ def main():
                          "SC_CONV_START=12 SC_CONV_LIMIT=24 selects c13..c36 (the "
                          "fresh/held-out set the effect was never tuned on).")
     ap.add_argument("--alpha-v", type=float,
-                    default=float(os.environ.get("SC_GC_ALPHA", "0.75")))
+                    default=float(os.environ.get("SC_GC_ALPHA") or "0.75"))
     ap.add_argument("--alpha0-tol", type=float,
                     default=float(os.environ.get("SC_ALPHA0_TOL", "5e-3")))
     ap.add_argument("--change-tol", type=float,
@@ -4401,7 +4401,7 @@ def main():
                     action="store_false",
                     help="disable FEATURE #2 strong-prior signed readout")
     ap.add_argument("--champion-scan", type=int,
-                    default=int(os.environ.get("SC_CHAMPION_SCAN", "0")),
+                    default=int(os.environ.get("SC_CHAMPION_SCAN") or "0"),
                     help="FEATURE #3: per-layer champion scan into N "
                          "fractional-depth regions (0=off; a value >=2 sets N; "
                          f"any other positive value uses the default "
