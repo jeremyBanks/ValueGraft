@@ -1,9 +1,14 @@
-_This conversation covers regeneration and restructuring of the notes/
-conversation-archive tooling: enforcing a 6-hour note-duration policy, filtering
-compaction scaffolding out of summarizer inputs, fixing archive-naming gaps via
-bulk renames with a date cache, and building a new two-layer meta-summary system
-(daily summaries plus an overall notes/README.md), followed by a git-identity
-misconfiguration and its correction._
+_This conversation covers regeneration and restructuring of the
+notes/conversation-archive tooling: enforcing a 6-hour note-duration policy,
+filtering compaction scaffolding out of summarizer inputs, fixing archive-naming
+gaps via bulk renames with a date cache, and building a two-layer meta-summary
+system (daily summaries plus an overall notes/README.md), followed by a
+git-identity misconfiguration and its correction._ _It concludes with a
+live-tail regeneration run that uncovered and fixed two further tooling bugs — a
+participant-block sync regex that could delete note content, and unstable
+archive renaming caused by unreliable git-history dates — while the underlying
+transcripts continued to grow concurrently, leaving a final note revision and
+the previously-requested commit/push still in progress._
 
 **Participants:** User and gpt-5.5-xhigh.
 
@@ -155,16 +160,69 @@ altered by either the setting or its removal. Going forward, any Codex-specific
 attribution should use per-command author/committer environment variables or
 commit trailers rather than repo-level git config.
 
-At the point this chunk ends, the user had asked to update conversation
-summaries including the current live tail and regenerate all meta-summaries. The
+The user then asked to update conversation summaries including the current live
+tail and regenerate all meta-summaries, and separately reiterated that once
+everything looked sane the resulting work should be committed and pushed. The
 assistant located the intended entry point (`update_conversation_notes.py`),
 confirmed the README documents that the default updater intentionally defers
-tiny live-tail continuations, and planned to use `--force-small-continuations`
-per the explicit request to include the live tail. A dry run showed no
-existing-note continuations but seven new conversation notes uncovered,
-including the current 2026-07-09 live tail for both Claude Code and Codex
-sessions. The assistant confirmed the updater would commit each new note
-individually plus a manifest commit, using the established local forbid-regex
-filter (kept out of committed config), and intended to follow with the
-daily/overall meta-summary layer to refresh 2026-07-09 and the overall README —
-this run had not yet completed as the chunk closes.
+tiny live-tail continuations, and used `--force-small-continuations` per the
+explicit request to include the live tail. A dry run showed no existing-note
+continuations but seven new conversation notes uncovered, including the current
+2026-07-09 live tail for both Claude Code and Codex sessions, plus backfilled
+older uncovered chunks (e.g., an older 2026-07-06 Codex chunk). The updater ran
+and committed new notes one at a time, including one long pass (a 558-message
+2026-07-08 Codex segment) that was confirmed alive via a read-only process check
+rather than interrupted.
+
+After the updater finished, its automatic participant-block sync step turned out
+to be buggy: the regex used to insert/update the `**Participants:**` paragraph
+could delete everything following it when that paragraph was followed by plain
+prose rather than a roster list. This corrupted a batch of existing conversation
+notes (a sync commit reporting roughly 1,568 deleted lines) and also produced
+one severely truncated new note (7 lines instead of the expected ~10 KB). The
+assistant fixed the regex to remove only roster paragraphs, added a regression
+test for the participants-followed-by-prose case, reverted the damaging sync
+commit, and repaired the affected notes: the truncated new note was
+reconstructed from its already-generated candidate output (recomputing the
+manifest hash) rather than re-invoking the summarizer, avoiding redundant LLM
+calls. This repair was committed as `af94c11`.
+
+Running the archive normalizer over the resulting backfilled/renamed notes
+exposed a second tooling gap: rename planning failed when a target path was
+occupied by another file that was itself being renamed away in the same batch (a
+rename chain/swap). The assistant patched the normalizer to route such chains
+through temporary paths, added a regression test, and applied the resulting
+large-but-expected rename batch (backfilling older notes shifts later archive
+counters, including across day boundaries) — committed as `b51af30` and
+`78b3007`/`9937f64`. Renaming was not immediately stable: a residual chain of
+files (five, then three) kept rotating between successive normalizer runs. Root
+cause: git rename history is an unreliable date source once a note has been
+renamed multiple times in a chain, whereas the conversation-note manifest
+already stores each note's canonical first-message date. The fix seeds the
+normalizer's date cache from the conversation manifest for conversation notes
+(falling back to git history only for non-conversation files) instead of relying
+on git rename history, resolving the oscillation.
+
+Mid-task, the user noted another agent was concurrently active in the
+repository; the assistant paused non-essential file changes and reported a
+read-only status snapshot: `trunk` was 4 local commits ahead of `origin/trunk`
+(participant-block repair, chained-rename handling, and two normalization
+commits), one normalizer patch (the manifest-seeded date-cache fix) was still
+uncommitted, and the pre-existing unrelated cross-arch files remained dirty;
+nothing had been pushed yet. The user clarified that the other agent's activity
+had not touched the notes directory itself, but that the underlying live
+transcript sources (the original per-agent conversation transcripts) could still
+be growing concurrently. The assistant treated this as a live/moving source
+rather than a frozen snapshot and planned to re-run the conversation-updater dry
+run at the end of the normalization work to catch any newly appended transcript
+messages.
+
+The assistant then completed the manifest-seeded date-source fix, applied the
+remaining renames, and confirmed archive naming and the conversation manifest
+were stable. A final dry run confirmed the live transcript tail had in fact
+moved during the session: two existing 2026-07-09 conversation notes had
+accumulated substantial new content requiring revision, with no new note files
+needed. The assistant began revising those two notes using the established local
+forbid-regex filter; this revision, its validation, and the previously-requested
+commit-and-push of the full summary refresh had not yet completed as this
+excerpt ends.
