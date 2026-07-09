@@ -125,6 +125,20 @@ score file is never a working file. Contaminated/void results go to
 results/_QUARANTINE_* paths with READMEs, never deleted, never left outside the
 repo.
 
+## SAVE EVERY RENDER — absolute MUST (user 07-09, after incident #38)
+The GENERATION of a render (native conversation replies + self-gen summary, ~16 min/conv) is the single
+most expensive thing we do. **SAVE EVERY RENDER to disk as TEXT and COMMIT it — always, for ALL harness
+work from here on. NON-NEGOTIABLE.** A harness that generates without persisting the generation is broken
+by default. Why:
+1. **Cheap re-testing forever:** any future test (per-layer tuning, champion/depth scan, rescue test,
+   different alpha/region, a "crazy idea") reuses a saved render via a fast forward-pass — seconds, not
+   minutes, near-zero GPU. The generation is done ONCE; everything after is cheap.
+2. **Reproducibility:** the render IS the experimental artifact — saving it lets anyone reproduce/re-score.
+Renders are small as text (~30-50 KB/conv) so they commit cleanly (well under the 4 MB hook limit).
+NOT saving renders is EXACTLY incident #38 — a 6.3h render lost because it lived only in memory. This
+extends the Results-in-repo rule from scored results to the (far more expensive) generation that produced
+them. Every per-conv checkpoint = {rendered conversation, self-gen summary, traces, raw_EB, config}.
+
 ## Stateful-change checklist (07-06, after incident #11 — MANDATORY)
 
 Any change adding/modifying retained state in a serving path must answer, IN THE
