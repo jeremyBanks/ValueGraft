@@ -539,3 +539,27 @@ to a sub-agent — arguably worse, because the sub-agent's competence makes the 
 convincing.
 SEVERITY: potentially catastrophic — would have burned the whole runway on a dead claim AND shipped
 a paper whose headline had an unexamined fatal hole (fresh-conv non-reproduction).
+
+## Incident #38 (07-09): the flagship result lost to a hard timeout — but the REAL defect is a LOST PRINCIPLE (non-durable render)
+WHAT: the headline block-reproduction run (Qwen3-30B-A3B c01-c24) rendered all 24 convs over ~6.3h,
+then was KILLED ~10min into scoring by MODEL_TIMEOUT (formula convs*900+1800=6.5h assumed ~15min/conv;
+the FRESH convs are ~16min each). Result = ERROR "hard timeout". ~6.3h compute + ~$9 + the flagship
+result LOST. I then compounded it with a hasty raw-ssh split re-launch (bypassing launch_pod.sh — the
+#3/#28/#35 class — right after a loss, the worst moment to bypass an interlock).
+ROOT (owner + Fable, converged): the timeout was just the TRIGGER. The real defect: the cross-arch
+harness renders ALL convs in-memory and writes ONE final JSON — ZERO durable intermediate state. ANY
+interruption (timeout, OOM, pod death, ssh drop) loses the WHOLE render. This is a LOST PRINCIPLE: the
+earlier phases wrote per-conv result files + watchdog auto-pull (data-loss window <=30min); the
+Results-in-repo + incremental-save discipline is IN AGENTS.md. The newer cross-arch harness silently
+abandoned it. Also our SECOND resource-sizing incident (#30 = disk; this = time): we funded failure-
+DETECTION heavily (monitors, gates — the monitor correctly flagged this ERROR, it did not lie) but
+funded CAPACITY-PLANNING and CHECKPOINTING at zero.
+DURABLE LESSON: (1) every bounded resource (time/mem/disk/$) must have projected consumption MEASURED
+on one small unit and checked against the budget FAIL-CLOSED before committing the full run; (2) any
+irreplaceable multi-hour computation must CHECKPOINT so the unit of loss is one item, not the whole
+run; (3) "just lost something expensive" is itself a tripwire -> STOP, go back through the gate, never
+hand-ssh a panic recovery. Detection of failure != prevention of waste.
+FIX (in progress): restore per-conv incremental checkpointing to the harness (deliberate + validated +
+Fable-reviewed, NOT a panic addition) BEFORE the re-run; add a probe-based budget-headroom gate
+(project per-conv render time * n vs MODEL_TIMEOUT, fail closed); separate render-timeout from
+score-timeout. MODEL_TIMEOUT formula already patched (convs*1200+5400).
