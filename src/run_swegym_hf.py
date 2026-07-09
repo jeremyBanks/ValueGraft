@@ -29,6 +29,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, DynamicCache
 sys.path.insert(0, "src")
 from arms_common import (
     SUMMARY_REQUEST_BRIEF,
+    SUMMARY_REQUEST_PROD,
     build_alignment,
     build_b_messages,
     bmin_pack_ids,
@@ -50,6 +51,12 @@ MODEL = os.environ.get("SC_HF_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
 TAG = os.environ.get("SC_SWE_TAG", "30b_bf16")
 N_TRAJ = int(os.environ.get("SC_SWE_N", "75"))
 E_ALPHA = float(os.environ.get("SC_E_ALPHA", "0.75"))
+# Summary condition: SC_SUMMARY=brief -> terse mechanism-isolation summary (the
+# condition the +0.0156 anchor result used); default -> SUMMARY_REQUEST_PROD, the
+# production-faithful OpenHands-condenser-style summary (task/state/paths/decisions,
+# 300-500w) — the std arm we now want as first-class enrichment (Fable's #1).
+SUMM_REQ = SUMMARY_REQUEST_BRIEF if os.environ.get("SC_SUMMARY") == "brief" else SUMMARY_REQUEST_PROD
+SUMM_TAG = "brief" if os.environ.get("SC_SUMMARY") == "brief" else "prod"
 _shard = os.environ.get("SC_SHARD", "0/1")
 SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
 PARQUET = os.environ.get("SC_SWE_DATA", "swegym.parquet")
@@ -107,7 +114,7 @@ def main():
     base = rope_base(model)
 
     trajs = load_trajectories()
-    outdir = Path(f"results/swegym_{TAG}")
+    outdir = Path(f"results/swegym_{TAG}_{SUMM_TAG}")
     outdir.mkdir(parents=True, exist_ok=True)
     done = 0
     for idx in range(SHARD_K, len(trajs), SHARD_N):
@@ -131,7 +138,7 @@ def main():
         t0 = time.time()
         try:
             summary = generate_summary_hf(model, tokenizer, ctx,
-                                          request=SUMMARY_REQUEST_BRIEF)
+                                          request=SUMM_REQ)
         except AssertionError as e:
             print(f"t{idx}: summary failed ({e})", flush=True); continue
         ctx_ids = canonical_ids(tokenizer, ctx, renderer=render_hf)
