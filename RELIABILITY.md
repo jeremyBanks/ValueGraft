@@ -210,12 +210,17 @@ an `ssh` inside a `while read` loop silently ate stdin so the health check only 
 
 ---
 
-# HARD RULE: never act on the user's resources/work without EXPLICIT instruction (07-08)
-Do NOT terminate pods, kill processes, `rm`, or spend based on INFERENCE about what the user
-"probably" wants. Twice today I acted unilaterally: killed near-complete work off a proxy, and
-terminated a running pod the user had NOT told me to kill (right after they said "I don't want you
-to stop"). Inferring intent about their money/work/compute and acting on it is a top-severity
-failure. If not explicitly instructed: ASK, or WAIT. Reversibility does not excuse it.
+# HARD RULE: don't act on the user's WORK/INTENT by INFERENCE — but operational pod hygiene IS yours (07-08, refined 07-08)
+Do NOT kill/abandon WANTED WORK, `rm`, or spend, based on INFERENCE about what the user "probably"
+wants for their experiment. The failure: I killed near-complete work off a proxy, and terminated a
+running pod right after the user said "I don't want you to stop" — inferring they'd changed their
+mind. Inferring intent about their work/money and acting on it is top-severity: ASK or WAIT.
+THIS IS NOT A BLANKET BAN ON TERMINATING PODS. Terminating an IDLE / SURPLUS / FAILED / DEGRADED pod
+for a CLEAR OPERATIONAL reason (budget, waste-avoidance, reprovision) is squarely your judgment —
+that's hygiene, not intent-inference; over-rigidity ("I can never terminate a pod") is ALSO wrong.
+THE TEST: am I guessing the user changed their mind about the WORK (→ ask/wait), or acting on a
+defensible operational fact independent of their wishes (→ decide and do it)? Reversibility doesn't
+excuse the former; fear doesn't excuse failing to do the latter.
 
 ---
 

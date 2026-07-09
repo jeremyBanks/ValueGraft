@@ -346,6 +346,9 @@ blocking failure.
   No predictions; no "it works / is fixed / is robust / will work." Those claims were false many
   times and destroyed the user's trust. Success is declared retroactively from an observed number,
   never in advance.
-- **NEVER act on the user's resources or work — terminate pods, kill, rm, spend — on INFERENCE.**
-  Only on explicit instruction. Do not infer "they probably want me to stop." If unsure, ASK or WAIT.
-  (Also in RELIABILITY.md.)
+- **Don't kill WANTED WORK / rm / spend by INFERENCE about what the user wants for their experiment.**
+  Do not infer "they probably want me to stop" and act on it — if unsure about their INTENT, ASK or WAIT.
+  BUT this is NOT a ban on pod lifecycle management: terminating an idle / surplus / failed / degraded
+  pod for a clear OPERATIONAL reason (budget, waste) is your judgment — over-rigidity is also a failure.
+  Test: guessing they changed their mind about the work (→ ask) vs. an operational fact (→ decide).
+  (Full rule in RELIABILITY.md.)
