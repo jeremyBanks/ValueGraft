@@ -218,3 +218,21 @@ breadth across DISTINCT architectures, not in depth on one. Same-model aspects (
 ablation, controls) are fill-in for spare capacity AFTER the diverse model set is covered — NOT a
 reason to occupy a pod a new model could use. Do NOT interrupt a run already in progress to apply this;
 it governs the NEXT free pod. (Refines the throughput policy above.)
+
+## RECONCILED SCOPE (owner accepts Fable, 07-08): causal-core plan; cut items = opportunistic tail
+Fable's budget call ($45 top-up) is the plan, and it SUPERSEDES the "model-diversity-first" entry above
+where they conflict (Mistral demonstrated wide breadth = scatter, not resolution, so the gate-first /
+causal-core discipline wins). Priority order:
+  1. Land the 5 in-flight 24-conv runs (waste-avoidance).
+  2. QK-norm ABLATION to completion + ONE replication substrate (the go/no-go on the whole QK-norm thesis;
+     highest-value dollar). Free pods go to CAUSAL DEPTH (2nd ablation), NOT breadth.
+  3. Pair-B (Qwen3-32B) + Qwen2.5-32B @24 (load-bearing de-confounds).
+  4. OLMo re-run: GATED on resolving the competence floor ON-DISK first (no GPU); it's a QK-norm-present
+     model (only 3 exist) so worth unblocking — but resolve the floor rule before spending.
+OPPORTUNISTIC TAIL (do NOT plan around; only if everything above is done AND funds remain):
+  - Wave 3 (GLM / gpt-oss / Nemotron) — risky archs, maximally confounded.
+  - Wide breadth beyond idle-fill (extra Yi/phi/Mixtral points).
+  Yi/phi/Mixtral already launched run as shallow 12-conv fill; fine to finish, but no NEW pods for breadth.
+PAPER REFRAME (Fable): headline (+0.10 dissociation) untouched; DROP "QK-norm predicts the sign" as the
+cross-arch headline; LEAD with "effect is real, architecture-specific, can reverse (Qwen2.5 neg, Mistral
+pos), self-native-scoped" + (if ablation confirms) QK-norm causally implicated via WITHIN-MODEL ablation.
