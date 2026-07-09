@@ -30,7 +30,10 @@ export SC_ABLATE_QK_NORM="${SC_ABLATE_QK_NORM:-0}"
 # per-token native render is ~750-900s/conv; scale the timeout with the conv count
 # (24 convs -> ~6.5h, 12 convs -> ~3.5h) so anchors don't get killed mid-render.
 pkill -9 -f cross_arch_probe 2>/dev/null; sleep 3  # no GPU-sharing races on re-run
-MODEL_TIMEOUT="${MODEL_TIMEOUT:-$(( ${SC_CONV_LIMIT:-12} * 900 + 1800 ))}"
+# per-conv budget must cover the RENDER (big fresh convs run ~1000s/conv, not 900) AND the
+# scoring pass (~120s/conv) — the 900+1800 formula timed the canary out mid-scoring (24 big
+# convs: ~6.3h render left only ~10min before the 6.5h cap). Generous: 1200/conv + 90min buffer.
+MODEL_TIMEOUT="${MODEL_TIMEOUT:-$(( ${SC_CONV_LIMIT:-12} * 1200 + 5400 ))}"
 ANCHORS="${ANCHORS:-Qwen/Qwen3-30B-A3B-Instruct-2507 Qwen/Qwen3-32B Qwen/Qwen2.5-32B-Instruct google/gemma-4-31B-it google/gemma-4-26B-A4B-it}"
 # FULL-DEPTH mode: run the complete assessment (placebo + alpha dose-response + champion scan)
 # on EVERY model, at whatever SC_CONV_LIMIT is set (use 24 for confirm-capable CIs).
