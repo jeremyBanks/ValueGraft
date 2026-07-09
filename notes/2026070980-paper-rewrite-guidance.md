@@ -31,3 +31,12 @@ result; then the paper's shape is determined:
   **academic-paper expectations and style**. Add a dedicated fresh-eyes readability/flow/focus review
   (prompted for exactly that, minimal project bias) to the review stack, distinct from the
   adversarial-honesty and numeric-verification passes.
+
+## Paper-WRITING process (owner, reinforced 2026-07-09)
+- **FABLE WRITES THE PAPER**, heavily involved — quite possibly the sole author of the prose. I (Claude)
+  provide Fable ALL the information, pointers, guidance, and a *suggestion* for framing — but give it
+  **FULL LATITUDE on how to frame it in every aspect**; it has full freedom to write whatever it wants.
+- **Iterate many times for COHERENCE** — make sure the paper explains itself and hangs together; re-pass
+  repeatedly, don't one-shot.
+- **Multiple distinct Fable review roles at the END**: an adversarial pure reviewer, a proofreader, a
+  readability/flow/focus reviewer, etc. — lots of separate passes, each with a single clear lens.
