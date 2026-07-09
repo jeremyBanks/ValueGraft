@@ -320,3 +320,14 @@ Owner adding $50 → ~$100 total working budget. Allocation, in strict priority 
    Spend TOP-DOWN Tier-A (new vendors meta/allenai/google/ibm/cohere/tii/deepseek), cheap load-smoke
    gating each (minutes not dollars), then Tier-B. Target: 6-8 new vendors on the architecture map.
 Rigor is the gate; the +$50 buys lasting breadth once the reproduction passes. Never breadth before rigor.
+
+## End-of-list fun exploration (owner idea, 07-09): cross-model RENDER-TRANSFER compatibility matrix
+Idea: feed model B the conversation TEXT model A rendered (A's native replies + summary), run B's graft
+on it; map a few (source A, target B) cells. NOT vector transfer (KV/values can't cross architectures —
+different dims/tokenizers/layers); it's TEXT transfer (B recomputes its own write-time values over A's
+foreign text). Diagonal = native baseline; off-diagonal = graft-on-another-model's-conversation.
+VALUE: a clean cross-model probe of the NATIVENESS mechanism we already claim (graft needs own-native
+context + self-gen summary). Survives on foreign coherent text -> effect is about coherent context;
+collapses -> genuinely self-native (reinforces the scope boundary). Modest but real + relevant, not pure
+tangent. CHEAP: reuse A's saved render, forward-pass B, graft+score = analysis passes on the archive.
+SCOPE: a HANDFUL of cells (not full NxN — diminishing returns). STRICTLY end-of-list, after core + enrichment.
