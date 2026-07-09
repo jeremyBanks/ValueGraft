@@ -60,7 +60,7 @@ echo "$NAME $PORT $IP" >> $S/pods.list
 # forward per-pod launch env (MODELS + conv limit) into the remote job execution.
 # VERIFIED-DETACH pattern (incident #3): nohup + all fds redirected + </dev/null +
 # disown so the job survives the ssh close. The ssh RETURNS immediately.
-$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' nohup bash job.sh </dev/null > job.log 2>&1 & disown; echo job-launched" \
+$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_CONV_START='${SC_CONV_START:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' SC_TASK_COMPETENCE_MODE='${SC_TASK_COMPETENCE_MODE:-}' SC_PROBE_CONVS='${SC_PROBE_CONVS:-}' SC_ABLATE_QK_NORM='${SC_ABLATE_QK_NORM:-}' nohup bash job.sh </dev/null > job.log 2>&1 & disown; echo job-launched" \
   || { echo "FAIL: launch ssh for $NAME did not return cleanly (hang/drop) — NOT trusting it"; exit 1; }
 
 # ── POST-LAUNCH REAL-WORK CHECK (incident #28: a 'launched' echo is NOT proof) ──
