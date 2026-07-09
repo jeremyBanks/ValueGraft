@@ -2,6 +2,10 @@
 
 > FINDINGS.md = the headline results (read for conclusions). INCIDENTS/DECISIONS
 > = process.
+>
+> `notes/` now contains GENERATED daily + overall SUMMARIES — start at `notes/README.md`.
+> Worth reading for trajectory, context, and background on how we got here (esp. before a
+> strategic decision or when picking up cold).
 
 ## What this repo is
 
