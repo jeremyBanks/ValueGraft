@@ -148,7 +148,11 @@ def build_prompt(day: str, sources: list[SourceNote], root: Path) -> str:
 
 Input: every ordinary Markdown note whose archive filename begins with {day}. Conversation-summary notes are included in full unless unusually large. Other long notes are included as explicitly marked head/tail excerpts. Treat excerpts as incomplete source material and avoid overclaiming from omitted regions.
 
-Output: a standalone Markdown daily meta-summary for a future project agent. Aim for synthesis, not a ledger. Include:
+Output: the standalone Markdown body for a future project agent. The caller will
+write your response to notes/{day}.md. Return only the Markdown document
+content: no preamble, no code fence, no tool-call syntax, no file-writing
+description, and no closing status note. Aim for synthesis, not a ledger.
+Include:
 
 - an italicized opening paragraph summarizing the UTC day in one or two sentences;
 - the main research/workflow developments;
