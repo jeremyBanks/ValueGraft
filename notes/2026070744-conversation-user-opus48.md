@@ -12,6 +12,8 @@ work on hold pending a live reproduction check._
 
 **Participants:** User and claude-opus-4-8.
 
+Participants: user and Claude (Opus 4.8), Claude Code CLI.
+
 **Paper finalization.** The free-generation lens probe (N=43) completed with a
 clean negative: 0 FORK_TOWARD_A, 17 SUBTLE_LEAN, 26 DISCONFIRMING — no clean
 internal fork toward the correct concept, even under the sharper free-generation

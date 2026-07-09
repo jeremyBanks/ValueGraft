@@ -6,6 +6,11 @@ plan requested for the user's return._
 
 **Participants:** User and claude-fable-5.
 
+The prior session's full research program (SelfGist compaction mitigation, tuned
+ValueGraft, literature verification, blog draft) was already complete and
+committed before a compute interruption; on resuming, nothing was lost since all
+GPU work and Phase 2/sweep results had finished and been committed beforehand.
+
 **Continuation gap, defined.** Per user request, the metric was clarified: hold
 out a genuine next reply in a conversation, teacher-force it, and measure mean
 per-token log-probability under (A) the full uncompacted conversation vs. (B)

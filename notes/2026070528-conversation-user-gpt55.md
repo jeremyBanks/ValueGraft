@@ -8,6 +8,9 @@ by a repo-state refresh describing active E1 coding-agent infrastructure._
 
 **Participants:** User and gpt-5.5-xhigh.
 
+Participants in this chunk were Jeremy Banks (user) and Codex CLI (assistant,
+model gpt-5.5, provider openai, codex_cli 0.142.5, effort xhigh) throughout.
+
 **Interim results interpretation.** Early in the chunk, a per-trace Stage 2
 result was reviewed: tuned ValueGraft improved SWE-Gym next-action prediction by
 roughly +0.0156 nats across 75/75 traces, winning 45/75, CI approximately [.005,

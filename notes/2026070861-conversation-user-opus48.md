@@ -9,6 +9,9 @@ shellcheck) before finally launching a single-model canary run._
 
 **Participants:** User and claude-opus-4-8.
 
+Participants: user (Franklin) and Claude Opus 4.8 (claude-opus-4-8) via Claude
+Code.
+
 **Consultation discipline.** Early in the chunk the user flagged that a scaling
 decision (conv counts, reply length, deep/shallow split) had been made without
 consulting Fable, repeating a pattern already documented as a hard rule. The
