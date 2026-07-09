@@ -619,6 +619,54 @@ def _champion_configs(n_regions, custom_regions=None):
     return cfgs
 
 
+def load_champion_graft_cfg(path):
+    """CHAMPION-VALIDATION wiring (per-layer / per-head tuned value graft).
+
+    Loads a champion value-graft config so the SAME placebo-controlled estimator
+    that runs at scalar alpha can instead apply the tuned per-LAYER alpha-map (or
+    per-HEAD slot mask) to BOTH the real graft E and the placebo graft -- i.e.
+    E_champion vs placebo_champion at the SAME layers/positions/alpha. VALUE-ONLY
+    by construction: blend_values only ever rewrites V rows (keys untouched), so
+    alpha_K=0 is guaranteed regardless of this config.
+
+    Canonical JSON schema (exactly one of alpha_map / head_map):
+        {"label": "...",
+         "alpha_map": {"3": 0.75, "4": 1.0, ...}}   # per-LAYER alpha (all heads)
+      or
+        {"label": "...",
+         "alpha": 1.0,
+         "head_map":  {"4": [0,1], "25": [3], ...}}  # per-LAYER kv-head subset
+
+    Returns the resolved dict (int-keyed maps) or None when ``path`` is falsy.
+    """
+    if not path:
+        return None
+    cfg = json.loads(Path(path).read_text())
+    label = cfg.get("label") or Path(path).stem
+    amap = cfg.get("alpha_map")
+    hmap = cfg.get("head_map")
+    if amap and hmap:
+        raise ValueError(
+            f"champion config {path}: give alpha_map OR head_map, not both "
+            "(per-layer and per-head tuning are distinct champion families).")
+    if amap:
+        graft_alpha = {int(k): float(v) for k, v in amap.items()
+                       if float(v) != 0.0}
+        if not graft_alpha:
+            raise ValueError(
+                f"champion config {path}: alpha_map has no nonzero layers.")
+        return {"label": label, "alpha_map": graft_alpha}
+    if hmap:
+        graft_head_map = {int(k): [int(h) for h in v]
+                          for k, v in hmap.items() if v}
+        if not graft_head_map:
+            raise ValueError(f"champion config {path}: head_map is empty.")
+        return {"label": label, "alpha": float(cfg.get("alpha", 1.0)),
+                "head_map": graft_head_map}
+    raise ValueError(
+        f"champion config {path}: needs an alpha_map or a head_map.")
+
+
 def _median(values):
     """Median (pure python, no numpy). Returns None on empty input."""
     vals = sorted(v for v in values if v is not None)
@@ -1091,7 +1139,8 @@ def run_fingerprint(model_id: str, *, conv_start: int, alpha_v: float, seed: int
                     placebo_mode, alpha_sweep: bool, strong_prior: bool,
                     champion_scan: int, champion_regions,
                     ablate_qk_norm_flag: bool, ablate_lambda_values,
-                    alpha0_tol: float, change_tol: float) -> dict:
+                    alpha0_tol: float, change_tol: float,
+                    champion_cfg=None) -> dict:
     """Every parameter that can change a per-conversation NUMBER. A checkpoint is
     only reused when its fingerprint matches the current run's -- so a run with a
     different alpha / seed / gate / control config never silently pools stale or
@@ -1120,6 +1169,14 @@ def run_fingerprint(model_id: str, *, conv_start: int, alpha_v: float, seed: int
                                  if ablate_lambda_values else None),
         "alpha0_tol": alpha0_tol,
         "change_tol": change_tol,
+        # CHAMPION config changes the per-plant SCORE (which layers/heads/alpha
+        # are grafted) but NOT the render/summary -> included in the SCORE
+        # fingerprint only (never the render fingerprint), so a champion run
+        # reuses the expensive render but never pools uniform-alpha scored rows.
+        # Canonicalized as a sorted-key JSON string so it is stable across the
+        # save/reload round-trip (int map keys -> str on disk).
+        "champion_cfg": (json.dumps(champion_cfg, sort_keys=True)
+                         if champion_cfg else None),
     }
 
 
@@ -1732,7 +1789,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               task_competence_mode: str = TASK_COMPETENCE_MODE_DEFAULT,
               task_competence_k: float = TASK_COMPETENCE_K_DEFAULT,
               ablate_qk_norm_flag: bool = False,
-              ablate_lambda_values: list | None = None) -> dict:
+              ablate_lambda_values: list | None = None,
+              champion_cfg: dict | None = None) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
     was present and we fall back to per-model self-generated summaries (results
@@ -1824,11 +1882,20 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         return doc
 
     # ---- load model
+    # SC_LOAD_DTYPE (default bfloat16): compute/activation dtype. For a
+    # PRE-QUANTIZED 4-bit repo (GPTQ/AWX/AutoRound) transformers reads the repo's
+    # quantization_config and keeps int4 weights; this dtype is only the
+    # activation dtype and normally coexists with 4-bit fine. If a specific quant
+    # integration rejects an explicit dtype, set SC_LOAD_DTYPE=auto. The KV cache
+    # (the graft surface) stays bf16/fp16 regardless -> the value graft is
+    # quant-agnostic. VRAM residency is the load positive-control (printed below).
+    _load_dtype_env = os.environ.get("SC_LOAD_DTYPE", "bfloat16")
+    _load_dtype = torch.bfloat16 if _load_dtype_env == "bfloat16" else _load_dtype_env
     try:
         tok = AutoTokenizer.from_pretrained(
             model_id, trust_remote_code=trust_remote_code)
         model = AutoModelForCausalLM.from_pretrained(
-            model_id, dtype=torch.bfloat16, device_map="auto",
+            model_id, dtype=_load_dtype, device_map="auto",
             trust_remote_code=trust_remote_code)
         model.eval()
         # ROBUST qk_norm: re-detect from the LOADED model's modules (config-key
@@ -2049,7 +2116,33 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         champion_scan=champion_scan, champion_regions=champion_regions,
         ablate_qk_norm_flag=ablate_qk_norm_flag,
         ablate_lambda_values=ablate_lambda_values,
-        alpha0_tol=alpha0_tol, change_tol=change_tol)
+        alpha0_tol=alpha0_tol, change_tol=change_tol,
+        champion_cfg=champion_cfg)
+
+    # ---- CHAMPION graft config (per-layer alpha-map OR per-head slot mask) ----
+    # Resolve the tuned config ONCE into the exact args blend_values takes. When
+    # no champion config is given this is the historical scalar-alpha behaviour
+    # (graft_alpha=alpha_v, graft_head_map=None). VALUE-ONLY either way (keys
+    # never touched by blend_values => alpha_K=0). Applied IDENTICALLY to the
+    # real graft E and the placebo graft below, so E_champion and
+    # placebo_champion differ ONLY in the SOURCE values, never the slots/alpha.
+    graft_alpha = alpha_v
+    graft_head_map = None
+    if champion_cfg:
+        if "alpha_map" in champion_cfg:
+            graft_alpha = {int(k): float(v)
+                           for k, v in champion_cfg["alpha_map"].items()}
+            graft_head_map = None
+        elif "head_map" in champion_cfg:
+            graft_alpha = float(champion_cfg.get("alpha", alpha_v))
+            graft_head_map = {int(k): [int(h) for h in v]
+                              for k, v in champion_cfg["head_map"].items()}
+        doc["champion_cfg"] = champion_cfg
+        doc["champion_label"] = champion_cfg.get("label")
+        print(f"CHAMPION graft ACTIVE: label={champion_cfg.get('label')} "
+              f"mode={'alpha_map' if 'alpha_map' in champion_cfg else 'head_map'} "
+              f"(value-only, alpha_K=0); applied to E and placebo alike.",
+              flush=True)
     # RENDER fingerprint (generated TEXT only) -- a checkpoint's saved render +
     # self-gen summary is REUSED whenever THIS matches, even if the SCORE
     # fingerprint (ck_fp: alpha/region/floor/controls) differs. So a future run
@@ -2463,7 +2556,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
 
             # E (treatment) and E0 (alpha=0 plumbing check) grafts, shared by all
             # plants in this conv.
-            e_snap = blend_values(b_snap, summ["snapshot"], pairs, alpha_v)
+            e_snap = blend_values(b_snap, summ["snapshot"], pairs, graft_alpha,
+                                  head_map=graft_head_map)
             e0_snap = blend_values(b_snap, summ["snapshot"], pairs, 0.0)
 
             new_list = [n for n, _ in pairs]
@@ -2496,7 +2590,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                     pl_source = _corrupt_source_values(
                         summ["snapshot"], old_list, placebo_mode, seed + _ci)
                     pl_pairs = pairs
-                e_placebo_snap = blend_values(b_snap, pl_source, pl_pairs, alpha_v)
+                e_placebo_snap = blend_values(b_snap, pl_source, pl_pairs,
+                                              graft_alpha, head_map=graft_head_map)
 
             # ---- CONTROL #3: alpha dose-response snapshots (opt-in) ----
             e_alpha_snaps = ({a: (e_snap if a == alpha_v
@@ -2985,6 +3080,46 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             "raw_EB": bootstrap_ci_95(
                 all_placebo, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED),
             "by_category_robust": placebo_by_cat,
+        }
+
+        # ---- DECISIVE CONTRAST: E - placebo, PAIRED, conversation-clustered ----
+        # The champion-validation headline. Per plant the difference is
+        #   (lp_E - lp_B) - (lp_E_placebo - lp_B) = lp_E - lp_E_placebo,
+        # i.e. the lift attributable to the REAL write-time CONTENT over a graft
+        # that used the SAME champion slots/alpha but CORRUPTED source values.
+        # Paired within plant (cancels the plant/gold difficulty), then resampled
+        # over CONVERSATIONS (honest clustered CI). raw_EB (E-B) and
+        # placebo_raw_EB (E_placebo-B) are stored index-aligned per scored plant
+        # in ``traces`` (resume-safe: traces are restored from checkpoints).
+        # CONFIRM: e_minus_placebo CI lower bound > 0 => the tuned champion carries
+        # genuine CONTENT-SPECIFIC state. REFUTE: CI spans 0 => the tuning only
+        # amplifies the content-INDEPENDENT (generic/regularizer) effect and the
+        # placebo-controlled null stands.
+        cs_pairs = [t for t in traces
+                    if t.get("placebo_raw_EB") is not None
+                    and t.get("raw_EB") is not None]
+
+        def _cs_ci(rows):
+            clusters = _group_by_conv(
+                [{"conversation_id": t["conversation_id"],
+                  "raw_EB": t["raw_EB"] - t["placebo_raw_EB"]} for t in rows])
+            return bootstrap_ci_95_cluster(
+                clusters, n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+
+        doc["content_specificity"] = {
+            "mode": placebo_mode,
+            "champion_label": (champion_cfg or {}).get("label"),
+            "note": ("PAIRED champion-vs-placebo contrast per plant "
+                     "(lp_E - lp_E_placebo), conversation-clustered bootstrap "
+                     "95% CI. Same champion layers/positions/alpha for E and "
+                     "placebo; only the source values differ. CI lower bound > 0 "
+                     "=> content-SPECIFIC champion effect (CONFIRM). CI includes 0 "
+                     "=> tuning amplifies the generic effect; null stands (REFUTE)."),
+            "e_minus_placebo": _cs_ci(cs_pairs),
+            "by_category": {cat: _cs_ci([t for t in cs_pairs
+                                         if t.get("category") == cat])
+                            for cat in CATS},
+            "n_pairs": len(cs_pairs),
         }
 
     # ---- CONTROL #3: alpha dose-response report ----
@@ -4410,6 +4545,15 @@ def main():
                     default=(os.environ.get("SC_CHAMPION_REGIONS") or None),
                     help="FEATURE #3 rescue test: comma-separated region indices "
                          "to graft TOGETHER (e.g. '4,5'); alpha=0 elsewhere")
+    ap.add_argument("--champion-config",
+                    default=(os.environ.get("SC_CHAMPION_CONFIG") or None),
+                    help="CHAMPION VALIDATION: path to a canonical champion "
+                         "value-graft config JSON (per-layer alpha_map OR "
+                         "per-head head_map+alpha). When set, the REAL graft E "
+                         "and the placebo graft both use this tuned config "
+                         "(same layers/positions/alpha) instead of the scalar "
+                         "--alpha, so E_champion vs placebo_champion vs B is the "
+                         "content-specificity test. Value-only (alpha_K=0).")
     # ---- CROSS-ARCH DESIGN v2: per-model in-context (native) render ----
     ap.add_argument("--native-render", dest="native_render",
                     action="store_true",
@@ -4532,6 +4676,14 @@ def main():
               file=sys.stderr)
         sys.exit(2)
 
+    # CHAMPION VALIDATION: resolve the tuned graft config (per-layer alpha-map or
+    # per-head slot mask) up front so a bad config fails LOUD before model load.
+    champion_cfg = load_champion_graft_cfg(args.champion_config)
+    if champion_cfg is not None:
+        print(f"RUN champion-validation: config={args.champion_config} "
+              f"label={champion_cfg.get('label')} "
+              f"placebo={args.placebo} model={args.model}", flush=True)
+
     # CORPUS + SUMMARY SOURCE.
     # DESIGN v2 (SC_NATIVE_RENDER=1, default): the corpus is rendered IN-CONTEXT by
     # THIS model from the shared data/scenarios.json scaffold, and the summary is
@@ -4607,7 +4759,8 @@ def main():
             task_competence_mode=args.task_competence_mode,
             task_competence_k=args.task_competence_k,
             ablate_qk_norm_flag=args.ablate_qk_norm,
-            ablate_lambda_values=lambda_values)
+            ablate_lambda_values=lambda_values,
+            champion_cfg=champion_cfg)
     except SystemExit:
         raise
     except BaseException as e:  # noqa: BLE001

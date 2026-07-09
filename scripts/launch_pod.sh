@@ -49,10 +49,10 @@ done
 SSH="ssh -i $K -p $PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 root@$IP"
 
 $SSH "apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync >/dev/null 2>&1; mkdir -p /workspace/exp/data; nvidia-smi --query-gpu=name --format=csv,noheader" || { echo "FAIL: bootstrap $NAME"; exit 1; }
-rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json swegym.parquet .huggingface_key root@$IP:/workspace/exp/ 2>/dev/null || true
+rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json tune_rules.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json data/champion_configs swegym.parquet .huggingface_key root@$IP:/workspace/exp/ 2>/dev/null || true
 LME=/Users/jeb/.cache/huggingface/hub/datasets--xiaowu0162--longmemeval-cleaned/snapshots/98d7416c24c778c2fee6e6f3006e7a073259d48f/longmemeval_s_cleaned.json
 rsync -azL -e "ssh -i $K -p $PORT" "$LME" root@$IP:/workspace/exp/longmemeval_s_cleaned.json
-$SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural scenarios.json model_geometry.json data/ 2>/dev/null; true"
+$SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural scenarios.json model_geometry.json champion_configs data/ 2>/dev/null; true"
 bash -n "$JOB" || { echo "FAIL: job script syntax"; exit 1; }
 for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" || { echo "FAIL: $f syntax"; exit 1; }; done
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh
@@ -60,7 +60,7 @@ echo "$NAME $PORT $IP" >> $S/pods.list
 # forward per-pod launch env (MODELS + conv limit) into the remote job execution.
 # VERIFIED-DETACH pattern (incident #3): nohup + all fds redirected + </dev/null +
 # disown so the job survives the ssh close. The ssh RETURNS immediately.
-$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_CONV_START='${SC_CONV_START:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' SC_TASK_COMPETENCE_MODE='${SC_TASK_COMPETENCE_MODE:-}' SC_PROBE_CONVS='${SC_PROBE_CONVS:-}' SC_ABLATE_QK_NORM='${SC_ABLATE_QK_NORM:-}' SC_CHAMPION_SCAN='${SC_CHAMPION_SCAN:-}' SC_CHAMPION_REGIONS='${SC_CHAMPION_REGIONS:-}' SC_GC_ALPHA='${SC_GC_ALPHA:-}' SC_FULL_DEPTH='${SC_FULL_DEPTH:-}' nohup bash job.sh </dev/null > job.log 2>&1 & disown; echo job-launched" \
+$SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_CONV_START='${SC_CONV_START:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' SC_TASK_COMPETENCE_MODE='${SC_TASK_COMPETENCE_MODE:-}' SC_PROBE_CONVS='${SC_PROBE_CONVS:-}' SC_ABLATE_QK_NORM='${SC_ABLATE_QK_NORM:-}' SC_CHAMPION_SCAN='${SC_CHAMPION_SCAN:-}' SC_CHAMPION_REGIONS='${SC_CHAMPION_REGIONS:-}' SC_CHAMPION_CONFIG='${SC_CHAMPION_CONFIG:-}' SC_LOAD_DTYPE='${SC_LOAD_DTYPE:-}' SC_TUNE_TAG='${SC_TUNE_TAG:-}' SC_GC_ALPHA='${SC_GC_ALPHA:-}' SC_FULL_DEPTH='${SC_FULL_DEPTH:-}' nohup bash job.sh</dev/null > job.log 2>&1 & disown; echo job-launched" \
   || { echo "FAIL: launch ssh for $NAME did not return cleanly (hang/drop) — NOT trusting it"; exit 1; }
 
 # ── POST-LAUNCH REAL-WORK CHECK (incident #28: a 'launched' echo is NOT proof) ──

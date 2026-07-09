@@ -150,8 +150,14 @@ def score(model, snap, feed, targets, next_pos):
 
 def main():
     tokenizer = AutoTokenizer.from_pretrained(MODEL)
+    # SC_LOAD_DTYPE (default bfloat16): activation/compute dtype. For a
+    # pre-quantized 4-bit model set SC_LOAD_DTYPE=auto so transformers honors the
+    # repo's quantization_config; the KV cache stays bf16/fp16 (graft is
+    # quant-agnostic). Positive-control the load with nvidia-smi VRAM.
+    _ld = os.environ.get("SC_LOAD_DTYPE", "bfloat16")
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL, dtype=torch.bfloat16, device_map="auto")
+        MODEL, dtype=(torch.bfloat16 if _ld == "bfloat16" else _ld),
+        device_map="auto")
     model.eval()
     _tcfg = getattr(model.config, "text_config", model.config)
     n_layers = _tcfg.num_hidden_layers
