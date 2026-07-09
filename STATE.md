@@ -30,8 +30,10 @@ NOT carry it on the old render (~+0.009); "native render fixes it" was ASSERTED 
 - Methodology: CI now CONVERSATION-clustered (was plant = anti-conservative); competence floor now
   per-model RELATIVE median-3*MADN (pre-registered) — OLMo "empty alignment" was a floor misdiagnosis.
 
-**LIVE PODS (4, ~$5.56/hr, balance ~$70):** canary=block experiment c01-c24 (scoring, read imminent);
-expm=c25-c36 (fresh other half); expo=pair-B Qwen3-32B @24; w6=Qwen2.5-32B @24 (arch poles).
+**LIVE PODS (2, ~$2.78/hr):** expo=pair-B Qwen3-32B @24, w6=Qwen2.5-32B @24 (arch poles, running).
+The block pods (canary c01-c24, expm) TIMED OUT and were terminated — INCIDENT #38: non-durable
+in-memory render lost 6.3h. Block re-run PENDING: restore per-conv incremental checkpointing (being
+built + Fable-reviewed) → fresh clean pods → re-run interruptibly.
 
 **PLAN (ordered):** block read (baseline reproduces? fresh carries?) → full n=24 fresh → arch poles →
 FABLE UN-ANCHORED trajectory review → pick honest framing → robust-metric audit (#29) → PODS OFF →
