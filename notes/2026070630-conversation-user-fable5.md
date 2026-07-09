@@ -9,9 +9,6 @@ Codex-driven agent._
 
 **Participants:** User and claude-fable-5.
 
-Participants: the user and an assistant identified in the transcript as
-claude-fable-5 (Claude Code, version 2.1.200) throughout.
-
 **Extrapolation and incoherence characterization.** The extended α bracket
 ({1.0,1.25,1.5,2.0,3.0}) was queued on pod-4 and later confirmed a smooth
 decline from the 0.75 peak with no cliff. Incoherence from corrupted cache

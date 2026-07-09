@@ -7,8 +7,6 @@ fail-silent data integrity guarantees._
 
 **Participants:** User and claude-fable-5.
 
-Participants: user and claude-fable-5 (Claude Code CLI).
-
 **Contamination discovery and remediation.** Overnight agent runs (~96 episodes)
 on the compaction/value-graft experiment surfaced a session-state leak in the
 shim: it was built assuming one task per pod, and scaling to shared lanes let
