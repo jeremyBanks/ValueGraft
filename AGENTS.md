@@ -169,9 +169,12 @@ survive attention under pressure; forms do.
 - **PAPER = HEAVY-FABLE collaboration (user 07-08):** written by owner + Fable + me, with HEAVY
   emphasis on Fable (as valuable drafting the paper as it's been everywhere else), holding the line
   on the stated requirements + the prior draft's good aspects. Written FRESH per current requirements.
-- **PUBLISHING BOUNDARY (user 07-08):** writing the paper, putting it in the REPO, and promoting to
-  README when GENUINELY confident = AUTONOMOUS (owner wants this done). Publishing EXTERNALLY to the
-  internet (HF community post / broader publication) = NOT autonomous — the owner must be involved.
+- **PUBLISHING BOUNDARY (user 07-08, reaffirmed + sharpened 07-09):** writing the paper, putting it in
+  the REPO, promoting to README when GENUINELY confident (after the full meticulous review stack —
+  Fable multi-angle passes, readability, focus), committing, and **`git push`ing to the repo remote** =
+  AUTONOMOUS and explicitly authorized ("feel free when you're all done to promote it to readme and push").
+  The ONLY thing held for the owner is anything OUTSIDE the repository — the HF community blog post / any
+  public posting. "Inside the repo" (incl. git push) = go; "outside the repo" = needs the owner.
 
 ## FINAL PAPER REVIEW: multi-perspective Fable passes (user 07-07)
 
