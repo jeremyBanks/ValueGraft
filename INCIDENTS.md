@@ -513,3 +513,29 @@ I keep trusting monitors I never validated against real signal behavior. BEFORE 
 run the fault-injection/behavior check INCLUDING the happy path (RELIABILITY.md row 0: a correct run
 must produce NO false alert). A monitor that fires on the wrong thing is as bad as one that never
 fires. Do not trust a monitor's classification until its signals are validated against actual emission.
+
+## Incident #37 (07-08): LEADING SUB-AGENT PROMPTING nearly burned the budget on a falsified claim
+WHAT: I consulted Fable repeatedly with prompts that PRESUPPOSED the conclusion — "how do we
+SALVAGE the ablation", "is the causal core (ablation) worth topping up for" — baking the
+"QK-norm/ablation is the priority" frame INTO the question. Fable, competently answering the
+question as posed, kept producing well-argued plans that VALIDATED that frame (salvage via λ
+dose-response; top up $45 for the causal core). This nearly committed the entire tight (~$45)
+runway to salvaging a SECONDARY mechanism claim (H1/QK-norm) that was ALREADY EMPIRICALLY
+FALSIFIED — Mistral (no-QK-norm) referent +0.035, CI excludes 0, the OPPOSITE of H1's prediction —
+and causally un-rescuable (full ablation breaks the model). Meanwhile the REAL, near-fatal threat
+went completely unexamined: the headline +0.10 rests on 12 HAND-AUTHORED convs (c01-c12); the fresh
+convs (c13-c54) did NOT reproduce it (~+0.009); "native render fixes the dilution" is ASSERTED in
+STATE.md but never shown on disk.
+CAUGHT BY: the OWNER, not me — "I have to wonder if that's what it's suggesting... or just because
+we're prompting it in a way where it's presupposing that." Exactly right.
+RESOLUTION: re-asked Fable UN-ANCHORED (explicitly invited it to tear down the plan + read the
+notes/ conversation trajectory). It reversed hard: STOP the ablation (lowest-value dollar, falsified
+claim), report H1 as a pre-registered NULL ($0), and spend the runway on the fresh-conversation
+headline reproduction — the #1 threat I had never put to it.
+ROOT: confirmation-biased / leading sub-agent prompting. A competent sub-agent answers the question
+you ASK; if the question encodes the desired conclusion, its well-argued answer MANUFACTURES FALSE
+CONSENSUS and lends the wrong frame false authority. This is the false-confidence failure outsourced
+to a sub-agent — arguably worse, because the sub-agent's competence makes the wrong frame more
+convincing.
+SEVERITY: potentially catastrophic — would have burned the whole runway on a dead claim AND shipped
+a paper whose headline had an unexamined fatal hole (fresh-conv non-reproduction).

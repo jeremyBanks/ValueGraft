@@ -229,3 +229,17 @@ solution is trusted or relied on. Implementation-without-review of a Fable-plann
   and current facts. Ask it to confirm the plan is faithfully + correctly implemented, and flag gaps.
 - Applies to: the holistic prevention system, the QK-norm ablation, any harness/monitor/gate change
   built to a Fable design.
+
+---
+
+# HARD RULE: un-anchored sub-agent consulting on DECISIONS (owner, incident #37)
+When consulting a sub-agent (esp. Fable) on a DECISION — not a mechanical task — you MUST NOT bake the
+conclusion into the prompt. A competent agent answers the question as posed; a leading question
+("how do we salvage X", "is X worth funding") manufactures false consensus for X.
+- Ask the OPEN question ("what is the highest-value next thing — do NOT presuppose it is X; if X is
+  wrong, say so and say what IS right"), give FULL context + point at notes/ trajectory ([[fable-full-context]]),
+  and EXPLICITLY invite the agent to challenge the framing and declare the current plan wrong.
+- Periodically RE-ASK strategic questions un-anchored, to detect a self-reinforcing frame you've been
+  feeding it across turns.
+- A well-argued sub-agent answer to a leading question is NOT validation — it is your own bias reflected
+  back with borrowed authority. Treat it as such.
