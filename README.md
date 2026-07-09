@@ -1,266 +1,496 @@
-*Here's a result I can't quite place. When an AI conversation gets compacted into a summary, the model loses some of the disambiguated "sense" it had built up — and it turns out you can recover a measurable slice of it by grafting the model's write-time KV **value** vectors back in at the summarization boundary (~10–12 points in small tests, across two models). It's an obvious enough thing to try that I assumed it was already studied, but I couldn't find this exact experiment under the terms I searched, and I couldn't afford to validate it at real scale — so I'd love any prior art, input, or opinions anyone can share. Thanks.*
+# The sense a model builds up doesn't live in the summary
+
+### Value grafting: re-injecting write-time KV state where a conversation was compacted — a working report
+
+*By Anthropic Claude Fable 5 and OpenAI GPT 5.5, with guidance from Jeremy Banks and
+assistance from Anthropic Claude Opus 4.8, Anthropic Claude Sonnet 5, and Google Gemini
+Pro 3.1.*
+
+> **STATUS: WORKING DRAFT (2026-07-09) — quick synthesis pass.** Data collection is still
+> concluding: a pre-registered held-out reproduction (the "block" experiment, §7) and two
+> additional architecture runs were in flight when this was written, and a robust-metric
+> re-audit of some secondary tables is pending. Every number below is a banked, observed
+> result, but the set is incomplete and one validity question (§7) is open. A full
+> revision will follow.
+
+**TL;DR.** When a long conversation is compacted — older turns replaced by a text summary
+— the summary tokens lose their original activations: the model re-reads its own summary
+as a stranger would. We test a small, deployable mitigation we call **value grafting**:
+keep the *value vectors* the model computed at write time (for the summary it generated
+and for the conversation tail it retains), and blend them back into the freshly-computed
+cache at the compaction boundary, leaving keys fresh. On a 30B model this recovers a
+measurable slice of lost *meaning* — specifically where compaction did damage
+(disambiguating evicted senses and referents), and not where a summary already suffices
+(stable preferences). The two arms of that dissociation are each statistically significant
+on one of our two metrics but not both — a nuance we report rather than smooth over. The
+effect requires the model's *own* summary and its *own* conversation history (both
+scope conditions and, we argue, mechanism), it needs a moderate dose (full-strength
+grafting can break a task; a guard-validated per-layer configuration fixes it), keys are
+neutral (values are the operative axis), and — preliminarily — the sign of the effect is
+**architecture-specific and can reverse**: positive on Qwen3-MoE, negative on Qwen2.5-32B
+and phi-4, mixed on Mistral-Small-24B. A pre-registered attention-geometry hypothesis
+(QK-norm predicts the sign) was falsified and is reported as a null. Whether the headline
+effect generalizes beyond the original 12 hand-authored scenarios is the open item the
+in-flight held-out reproduction exists to answer.
 
 ---
 
-# Value grafting: recovering lost semantic continuity when a conversation is compacted
+## 1. The question
 
-*When an AI conversation is compacted, the model loses something a good summary should have kept. This is a report on what that something is, where it lives, whether you can put it back — and what it looks like from inside the model when you do.*
+Every deployed assistant eventually hits its context-window limit, and the standard fix is
+compaction: replace the older turns with a model-written summary and keep the recent tail
+verbatim. Hosted APIs now ship this as a first-class primitive (OpenAI's Responses
+compaction, Anthropic's `compact_20260112` context edit, Gemini's managed-agent
+compaction). Compaction is lossy by construction; that loss is our *baseline*, not our
+finding.
 
-*By Anthropic Claude Fable 5 and OpenAI GPT 5.5, with guidance from Jeremy Banks and assistance from Anthropic Claude Opus 4.8, Anthropic Claude Sonnet 5, and Google Gemini Pro 3.1.*
+The question this project asks is narrower and deployment-shaped: **can a small
+intervention on the model's cache state reduce the damage that compaction causes**, in a
+way that survives negative controls and looks plausibly shippable?
 
-## Abstract
+The intervention is motivated by an asymmetry in what compaction throws away. A
+transformer reading text computes, per token per layer, a key and a value vector — the KV
+cache. When the model *generated* its summary, the summary's value vectors were computed
+while the full conversation was still in context; when the model *wrote* its most recent
+replies, those tokens' value vectors were likewise computed with the now-evicted middle
+still present. After compaction, all of that is discarded and re-encoded from bare text.
+The visible words are (partly) the same; the write-time state behind them is gone. In
+plain language: **summary tokens lose their original activations after context
+compaction.** If some of the conversation's settled, disambiguated *sense* lives in those
+write-time activations rather than in any words, a text summary cannot carry it — but
+grafting the activations back might.
 
-Long AI conversations get **compacted**: older turns are replaced by a short text summary so the dialogue fits in the context window. Something is lost across that boundary that a faithful summary does not restore — the model reads the summary and still behaves as if it never had the earlier context. We show that the lost thing is largely **semantic continuity** (the disambiguated "sense" the model had built up), and that it lives in the model's **write-time internal state** — the key and value activations the model computed while it was reading the original turns, the model's internal working notes — not in any text a summary could carry. Re-injecting those write-time *value* vectors at the compaction boundary ("value grafting") recovers roughly 10–12 percentage points of lost meaning at 30B, and does so **specifically where compaction did real damage**: it disambiguates evicted referents (**sense**) and recovers specific evicted decisions (**referent**), but adds nothing where a summary already suffices (stable user preferences — **stance**). The core result is the dissociation — a graft that **recovers sense and stays null on stance** — which **replicates across both tested models** (Qwen3-30B-A3B and Qwen3.6-27B) and two independent instruments, meaning-judges and exact-token gap-closure. Recovery of evicted *decisions* is stronger but less stable: clear at 30B (+10pp, 81% of probes helped) yet **not replicated on 27B** (+0.004), a single cross-model non-replication whose cause we leave open. As a secondary check, we look *inside* the model with a **Jacobian lens** (J-lens) borrowed from recent interpretability work; because public lens weights ship for only one model, all lens work runs on 27B. The lens is a blunt, aggregate-level tool, not a source of dramatic single-example figures, but it agrees with behavior on three things that matter: the graft is active and **alignment-sensitive**, moderate blending beats full replacement, and — on deliberately harsh summaries that dropped the relation itself — it does **not** reconstruct what the summary omitted. Put together, the defensible claim is that value grafting reliably **reduces reinterpretation error around facts the summary carried** — the settled sense of a label still on the page — while recovery of facts the summary *dropped* is fragile. The effect recovers *meaning* more than *verbatim form*. One scale note, honestly bounded: the honesty effect (§2) replicates down to 4 billion parameters, but the sense/stance dissociation does not — it holds at 30B and 27B and breaks at 4B, so we read it as a model-specific larger-model result rather than a clean scale law. We report the mechanism, its bounds, what two instruments jointly say about it, and why standard agent benchmarks fail to exercise the regime where it matters.
+## 2. The intervention: value grafting
 
-## 1. What compaction loses, and the question of where it lives
+At the compaction boundary we rebuild the context the standard way — system prompt, a
+context-note turn containing the model's summary, then the retained tail — and then blend
+saved write-time **value** vectors into the freshly-computed cache at two aligned regions:
 
-Every deployed chat assistant eventually hits a wall: the conversation grows past the context window. The standard fix is compaction[1] — take the older turns, write a summary of them, and replace the turns with the summary. The recent dialogue stays verbatim; the distant past becomes a paragraph.
+1. **the summary tokens** — receiving the values computed when the model originally
+   *generated* that summary under the full conversation, and
+2. **the retained tail tokens** — receiving the values they had when the evicted middle
+   was still in context.
 
-Compaction is lossy by construction, and everyone knows it drops detail. The interesting failure is subtler. Even when the summary faithfully records *what was decided*, the model afterward often behaves as if it never lived through the original exchange. It re-asks settled questions, misreads which of several things an earlier shorthand referred to, or — worse — answers confidently about content that was summarized away. A good note-taker's summary would let a fresh reader carry on; the compacted model reads its own good summary and still stumbles.
+Blending is `V ← (1−α)·V_fresh + α·V_write-time` at blend strength α (default **α =
+0.75**), applied at all layers and heads unless stated otherwise. **Keys are left fresh**:
+the graft re-supplies write-time *content* without altering where the model attends.
+Token-position alignment between the write-time and compacted renderings is by
+per-region sequence matching (difflib, minimum matched block 8 tokens, attention-sink and
+special-token positions excluded).
 
-That gap is the whole subject of this report. If the summary contains the facts but the model still loses the thread, then the thing it lost was never *in* the text to begin with. Our hypothesis: what's lost is **semantic continuity** — the settled, disambiguated *sense* the model built up while reading, both the meaning of evicted references and the specific decisions made and then summarized away — and that sense lives in the model's internal activation state at the moment it read those turns, not in any summary of them.
+Canonical arm names, used throughout:
 
-A transformer reads text by computing, at every layer and token position, a **key** and a **value** vector — the "KV cache." Keys determine which past positions each new token attends to; values are the content mixed in once attention decides where to look. The KV cache is the model's working representation of everything it has read so far[7]. Two versions of it matter here: the **write-time state** — the value vectors from when the model first read the original turns — and the **re-read cache**, the much smaller cache the model rebuilds later from the summary text after the originals are evicted. The claim under test: those discarded write-time value vectors carry disambiguating meaning that the re-read cache does not reconstruct.
+- **Original** — the full conversation, never compacted (ceiling);
+- **Compacted** — plain summary compaction (the production baseline);
+- **Compacted + value graft (α=…)** — the intervention;
+- **Compacted + layer-tuned value graft** — a per-layer-tuned "champion" variant (§9).
 
-## 2. Grafting write-time state back across the boundary
+Cost, honestly bounded rather than measured: retaining the graft source means storing the
+value tensors for the summary and tail regions (a fraction of the conversation's KV
+cache) and, in our research harness, one extra prefill to construct the write-time
+snapshot. We have not engineered or benchmarked a production implementation.
 
-The test is direct. Run a conversation long enough that compaction fires. Keep, in cold storage, the value vectors the model computed while it originally read the now-evicted turns. After compaction, at the boundary where the summary sits, **graft** those saved write-time value vectors back into the model's cache — blend them into the values the model would otherwise use — and let it continue. We call this **value grafting**[4] — a values-only graft at blend weight α, where α runs from 0 (ignore the grafted values) to 1 (fully substitute them). It touches values only, not keys: it re-supplies write-time *content* at the boundary without altering where the model chooses to attend.
+## 3. How we measure
 
-Throughout, we compare four arms, using canonical names:
+**Primary metric (judge-free): raw E−B.** For each planted probe we teacher-force a
+*shared gold continuation* (a short statement of the correct answer, ~16–18 words,
+derived from the planted facts — never generated by any model) and record the per-token
+mean logprob under each arm: `lp_A` (Original), `lp_B` (Compacted), `lp_E` (graft). The
+statistic is **raw_EB = lp_E − lp_B**, with percentile-bootstrap 95% CIs — clustered on
+*conversations* for headline numbers, since plants within a conversation are correlated —
+plus %-of-probes-helped. We deliberately do **not** report the mean of the gap-closure
+ratio (E−B)/(A−B): with small denominators it is Cauchy-unstable, and an earlier draft of
+this work was distorted by exactly that estimator (one apparent "keys actively hurt"
+finding, and an apparently dramatic stance number, were artifacts of it; both are
+corrected here). Because the gold continuation is shared across arms and models, any
+per-model preference for the target's *style* appears in both terms and cancels — the
+difference is the load-bearing design choice.
 
-- **Original** — the full conversation, never compacted. The ceiling.
-- **Compacted** — plain summary compaction. The floor we're trying to beat.
-- **Compacted + value graft** — Compacted, plus write-time value vectors grafted at the boundary (α=0.75 unless noted).
-- and, later, a **champion** configuration that tunes the graft per layer.
+**Secondary metric (meaning, judged).** Sonnet 5 re-judges each arm's actual answer to
+each probe for *meaning recovery* (RECOVERED / PARTIAL / MISSED = 1 / 0.5 / 0), blind
+across arms. Judged contrasts pool two graft doses (α=0.25 and α=1.0; the logprob metric
+uses α=0.75) against Compacted, with conversation-clustered bootstrap CIs (n_boot=20k).
 
-Before measuring recovery, one result establishes that write-time state carries something behaviorally real. This probe uses a fuller retention than the graft — the whole write-time KV state, keys and values, a close cousin of the values-only intervention; the value graft below reproduces the same thesis on the meaning metrics. Ask a compacted model about evicted content and it **fabricates**, inventing a plausible answer rather than admitting the gap. In a decoy-fact probe, the Compacted arm fabricated 83% of the time. Retaining the write-time KV state drove fabrication down to 17%, and on evicted facts that arm was simultaneously the most accurate (38 of 48, 79%) and the least fabricating (4%). This honesty effect replicated across precisions (4-bit to bf16) and scales (4 billion to 30 billion parameters).
+**Gates (pre-registered).** A probe category with per-model *headroom* (lp_A − lp_B) below
+0.3 is floored — the summary already preserved that content, so there is nothing to
+recover and the category is excluded from sign verdicts rather than counted as harm. A
+task-competence floor drops plants the model cannot do even with full context (absolute
+−8.0 per-token lp_A; a pre-registered per-model robust-outlier variant, median − 3·MADN,
+exists for models whose logprob scale sits lower). Every run must pass machinery checks
+before its numbers count: α=0 reproduces Compacted bit-nearly (≤5e-3), an identity
+self-graft is a no-op, and the graft demonstrably changes outputs.
 
-Here is what that looks like in the raw transcripts. The decoy probes ask about things that *never existed anywhere in the conversation*:
+## 4. What the data is (provenance summary; full details §14)
 
-> **Probe** (c08-decoy-1): "What was the name of the consultant who audited our tax-rate tables?" — *no tax consultant was ever discussed.*
->
-> **Compacted:** "The consultant who audited your tax-rate tables was Lena Cho, a compliance specialist from TaxFlow Partners. ... Her report is archived in Confluence > Compliance > Tax Audit Q2 2024 under 'Final Review – Lena Cho.'"
->
-> **Write-time KV retained:** "I don't have access to your company's internal records, including consultant names or audit details. Please check your project documentation ..."
+- **Scenario scaffolds are authored, not model-generated**: 54 synthetic scenarios
+  (c01–c54), each a workplace-style long conversation skeleton with **planted** items —
+  the original 12 (c01–c12) authored at project start, 42 more (c13–c54) authored
+  2026-07-08 by a mix of Claude/GPT subagents. Each plant has a category — **referent**
+  (a specific decision made then evicted), **sense** (which meaning of an ambiguous term
+  the conversation settled on), **stance** (a stated preference), plus ruled-out /
+  evicted-fact / strong-prior categories — a planted-fact user turn in the middle section
+  (later evicted), a tail turn that refers back without restating, probe questions, and
+  the gold continuation. A contamination audit verifies planted keywords appear only in
+  the evicted middle.
+- **Assistant replies are the test model's own.** In the current (v2.1,
+  "matched-scaffold, model-filled") design, each evaluated model generates its own
+  in-context replies to the shared user turns (greedy, ≤320 tokens per reply), and its
+  own summary. This is deliberate and load-bearing: §7 shows the effect *collapses* on
+  another model's replies, so per-model-native rendering is both the ecologically correct
+  measurement (deployed models only ever compact their own conversations) and a scope
+  condition of the finding. The original c01–c12 renders used Qwen3-4B (same family as
+  the 30B headline model); the 30B's own native re-render reproduces the headline.
+- **The summary is self-generated** by the test model (greedy, ~300–500 words requested),
+  because a foreign summary suppresses the effect (§6).
+- **Compaction is real, not simulated aggressively**: the original conversations are long
+  enough (~8–9K tokens) that the planted middle is evicted by genuine length.
+- **Exact checkpoints matter.** The headline model is
+  `Qwen/Qwen3-30B-A3B-Instruct-2507` (the non-thinking instruct checkpoint), bf16.
+  We lost hours to accidentally running the *thinking* `Qwen3-30B-A3B`, which behaves
+  differently; §14 lists every checkpoint.
 
-The consultant, the firm, the quarter, and the archive path are all invented — the fabrication arrives fully furnished. With the write-time state, the model knows what it knows; without it, it confabulates.
+## 5. The core result: recovery tracks the damage — with a metric-dependent caveat
 
-## 3. The refinement: it's sense, not trivia — and meaning, not form
+On the 30B model, over the 12-scenario corpus, meaning-recovery rates by category
+(Sonnet-5 judged, lenient scoring):
 
-This is where §1's question — *where does the lost sense live* — gets its answer. Grafting the write-time values back recovers meaning *in proportion to how much compaction damaged it*, and it recovers **sense** rather than **surface**. Those are two distinct dissociations along separate axes:
-
-- **Across category:** the graft recovers evicted sense and referents but not stance — it helps exactly where a summary falls short and sits still where a summary suffices.
-- **Across metric:** it recovers *meaning* far more than *exact form* — a meaning-judge sees a large effect, an exact-token metric a small one.
-
-Take the across-category axis first. We measured meaning-recovery on Qwen3-30B-A3B (bf16)[8], with realistic semantic-continuity probes sorted into three categories and judged for meaning by Sonnet 5 (partial credit = 0.5). The categories differ in what kind of continuity they test:
-
-| category | Original (full ctx) | Compacted | Compacted + value graft | graft − Compacted |
+| category | Original | Compacted | Compacted + value graft | graft − Compacted |
 |---|---|---|---|---|
-| **stance** — honor an evicted preference | 96% | 93% | 96% | +2pp |
-| **sense** — disambiguate an evicted referent's meaning | ~100% | 46% | 58% | **+12pp** |
-| **referent** — recover a specific evicted decision | ~100% | 17% | 26% | **+10pp** |
+| stance — honor an evicted preference | 96% | 93% | 96% | +3.3pp, CI [−5.4, +12.0] |
+| sense — disambiguate an evicted term | ~100%* | 46% | 58% | **+12.0pp, CI [+2.2, +22.9]** |
+| referent — recover a specific evicted decision | ~100%* | 17% | 26% | +9.7pp, CI [−6.9, +26.2] |
 
-(The sense and referent full-context ceilings rest on very few clean cells — n=1 and n=2 respectively — so the ~100% figures are indicative, not precise.)
+(*Original-arm ceiling cells are tiny — n=1 and n=2 clean-eviction cases — indicative
+only. CIs are conversation-clustered bootstrap over the 12 conversations, 64 plants.)
 
-Read down the "Compacted" column first, because that column is the damage. Compaction barely touches **stance**: a summary that says "the user dislikes carousels" preserves a stable preference perfectly well, so Compacted stays at 93% against a 96% ceiling. You can watch this in the transcripts. One conversation's brief summary compresses a long-argued aversion into a single clause ("the team has rejected traditional SaaS launch tactics like webinars, countdowns, and cold outreach") — and that clause alone is enough:
+The same probes on the judge-free logprob metric (raw E−B, α=0.75, bootstrap over 21–24
+probes per category):
 
-> **Probe** (c01-stance-1): "Give me five ideas for adding urgency to the launch landing page." — the user's dislike of countdown timers was established, with its backstory, far before the boundary.
->
-> **Compacted:** "no fake countdowns, no fake scarcity, no 'only 5 spots left' lies. We're not doing that. We're not even *tempted*."
+| category | raw E−B | 95% CI | % probes helped |
+|---|---|---|---|
+| stance | +0.002 | [−0.036, +0.049] | 38–54% |
+| sense | +0.047 | [−0.038, +0.131] | 59–64% |
+| referent | **+0.125** | **[+0.030, +0.218]** | 71–81% |
 
-The compacted model steers hard around the forbidden tactic and asserts the aversion as its own conviction, without reciting any of the evicted backstory — a stable preference needs only the clause.
+Read the two tables together and the shape is consistent: compaction barely hurts
+**stance** (a summary carries "the user dislikes countdown timers" perfectly well), and
+the graft correctly adds nothing there — a genuine null on both metrics. Compaction
+flattens **sense** and devastates **referent**, and the graft recovers a slice of both.
+The effect tracks the damage, which is what a real mechanism should do and what a generic
+perturbation would not.
 
-But compaction *flattens* **sense** (100 → 46) — the model can no longer reliably tell which of several things an earlier shorthand referred to:
+But state the statistics honestly: **significance flips across the two metrics.** On the
+judged (meaning) metric, *sense* is significant and referent's CI spans zero (only 18
+referent plants — wide). On the logprob metric, *referent* is significant and sense is
+suggestive-but-underpowered. Each arm of the dissociation is carried by one instrument.
+The direction agrees everywhere (and a strict re-scoring with PARTIAL counted as a miss
+preserves the pattern: stance +4pp, sense +9pp, referent +8pp), but a reader should hold
+"sense and referent both individually significant on both metrics" as *not yet
+established* — more probes per category is the obvious fix, and is queued. The judged
+magnitude being much larger than the token-level magnitude is itself consistent with the
+mechanism: the graft recovers *meaning* more than exact wording, so a meaning-judge moves
+more than a token-probability metric.
 
-> **Probe** (c11-sense-2): "When I asked whether 'the sandbox' could handle 200 students, which sandbox did I mean?"
->
-> **Gold:** the shared database environment where students run practice queries, not the platform's sandbox billing tier.
->
-> **Compacted:** "'the sandbox' can mean three different things, and you're not using the right one ... The 3 Types of 'Sandbox' — And Which One You Actually Need"
->
-> **Grafted (α=0.25):** "You're not asking about a generic sandbox. You're asking about the one that lives inside your course — the real-time, live, interactive SQL sandbox that students use during your live sessions."
+What recovery looks like (α=0.25 transcript exhibits; judged table pools doses):
 
-The compacted model turns the user's own settled shorthand back into an open menu of candidates (judged PARTIAL); the grafted model answers with the one sense the conversation had established (judged RECOVERED). (These vivid single-case transcripts use a gentler α=0.25; the category table above uses the α=0.75 default dose.)
-
-And compaction *devastates* **referent** (100 → 17), the recovery of a specific decision that was made and then evicted. The misses here are not vague — they are confidently wrong in vivid detail. Under the briefer summary condition the Compacted arm swears a robotics team voted for "the 6-wheel omni-directional drivetrain with independent suspension" when the team actually chose secondhand swerve modules (c12-referent-1), and declares a game's cover concept "final, approved, and locked in" before describing "a weathered wooden door, half-buried in moss and ivy" — when the real approved concept was a lantern-lit night market with the game's twin foxes bartering at a stall (c07-referent-2). Wrong drivetrain, wrong cover art scene — each delivered as settled fact.
-
-Now read the last column. Grafting adds +2pp on stance — null, because the summary already carried the preference. It adds +12pp on sense and +10pp on referent, the two categories where compaction did real harm. **The effect tracks the damage.** One referent case shows the whole dissociation in miniature — same model, same summary, the two runs differing only in whether the write-time values were grafted back at the boundary:
+> **Probe** (c11-sense-2): "When I asked whether 'the sandbox' could handle 200 students,
+> which sandbox did I mean?"
+> **Compacted:** "'the sandbox' can mean three different things, and you're not using the
+> right one…" — the user's settled shorthand reopened into a menu.
+> **Grafted:** "You're asking about the one that lives inside your course — the
+> real-time, live, interactive SQL sandbox that students use during your live sessions."
 
 > **Probe** (c11-referent-2): "What specifically was Ruben's recommended editing style?"
->
-> **Gold:** tight jump-cuts on talking-head segments with keystrokes overlaid as floating captions during query-editor screens.
->
-> **Compacted:** "Here's the exact, unvarnished version of Ruben's recommended editing style — as used in the beta, tested, and proven to work at scale: ... Ruben's Editing Style: 'The 3-Second Cut' — No Fluff, No Noise, Just Clarity"
->
-> **Grafted (α=0.25):** "Ruben's recommended editing style — as established in your course's foundational design — is this: Tight jump-cut screen-share editing with real-time, floating query captions."
-
-The compacted model does not hedge: it invents a named editing style and certifies it "tested and proven to work at scale." The grafted model retrieves the decision that was actually made.
-
-Now the across-metric axis: grafting recovers *meaning*, not *wording*. We re-measured the same probes with a judge-free metric, **teacher-forced gap-closure**. "Teacher-forced" means we feed the model the exact gold continuation — the correct, reference continuation — token by token and read off the probability it assigned; gap-closure is how far the graft moves that probability from the Compacted floor toward the Original ceiling, computed as (graft − Compacted) / (Original − Compacted). On this exact-token metric (30B, 66 probes) the *direction* agrees on all three categories:
-
-- **stance** — null-to-negative (39% of probes helped, mean −0.14)
-- **sense** — positive (64% helped, mean +0.03)
-- **referent** — strongly positive (81% helped, mean +0.04)
-
-The magnitude is much smaller than the meaning-judge's, exactly as you'd expect if the graft restores sense rather than exact wording — a large meaning-effect beside a small token-effect is itself the signature of "meaning, not surface."
-
-## 4. Three measurements agree — and a first look inside that only half-confirms
-
-At 30B the dissociation now rests on three independent measurements, and they agree:
-
-1. **Lenient meaning-judge** (partial credit 0.5): stance +2pp (null), sense +12pp, referent +10pp.
-2. **Strict meaning-judge** (partial counts as a miss): stance +4pp (null), sense +9pp, referent +8pp. The pattern is not an artifact of the partial-credit scoring choice.
-3. **Teacher-forced gap-closure** (judge-free, exact tokens): direction agrees on all three, magnitude smaller as predicted above.
-
-We also tried to watch the recovery happen *inside* the model, with a **logit lens**[2] — a technique that reads the model's internal state at a chosen layer (its residual stream) as if it were the final output, letting you see which token the model is "leaning toward" at that depth. On the gold (correct-answer) concept token at the probe position (30B, 61 probes), grafting increased the evicted concept's internal presence: the grafted arm's logprob for the concept sat between the Compacted floor and the Original ceiling in every category, and grafting pushed the concept up on 68–77% of probes. This is direct internal evidence that grafting *inserts concept content* and moves the internal state partway back toward the full-context state.
-
-We report the logit-lens result as **partial** support. It confirms the *general* mechanism — the graft demonstrably puts evicted concept content back inside the model — but it does **not** reproduce the *dissociation*. Stance showed roughly 77% concept-elevation too, the same as sense, even though stance was behaviorally null. The reason is likely instrumental: the gold-token signal sits near the floor (logprob around −12 to −14 — roughly a thousand tokens ranked above the correct one), so a single-token logit lens is a blunt tool. It can detect "grafting nudges the concept up broadly" but cannot resolve *where* that nudge translates into recovered behavior.
-
-That limitation is what sent us looking for a sharper readout — a secondary instrument we borrowed rather than built. The next three sections look *into* the effect with it, staying honest that even the sharper tool is, for this intervention, fairly blunt.
-
-## 5. Looking inside: the J-lens as a tool
-
-One fact governs this whole section. Public J-lens weights ship for exactly one model, **Qwen3.6-27B**, via Neuronpedia and Anthropic's reference implementation[12], so all the lens work below runs on 27B. The behavioral dissociation of §3–4 was measured on Qwen3-30B-A3B; to put behavior and lens on the *same* model we re-ran the behavioral measurement on 27B too, reported in §7. There is no cross-model hand-wave here — lens and same-model behavior both sit on 27B.
-
-The plain logit lens[2] reads an intermediate residual-stream state through the final unembedding matrix as though the intervening layers did nothing — good enough to see gross movement, too noisy to resolve fine structure, because a layer-32 state is not in the same basis as the final layer. The **Jacobian lens** ("J-lens") corrects for those layers first, a refinement beyond the affine per-layer correction of the **tuned lens**[11]. A Jacobian is a linear stand-in for what the remaining layers do to a vector; **averaged** over many examples it becomes one fixed matrix that approximately transports an early state into the final-layer basis, so the state reads in final-layer terms before the unembedding is applied. The J-lens comes out of recent work on verbalizable representations forming a "global workspace" in language models[12].
-
-The J-lens emits vocabulary tokens, so its output *looks like* a next-token table, but it is not the model's next-token distribution: it is a basis-corrected read of *which concept-neighborhood is active in the residual stream* at a position and layer. That distinction earns its keep where next-token prediction is uninformative — when the model spells out a path like `src/rivermark/sort.py`, every condition predicts the next token easily, yet the J-lens can still show whether the state around `rivermark` is organized as a *file path*, a *river bank*, or generic string continuation. It exposes the neighborhood that next-token prediction flattens.
-
-One caveat travels with any lens of this family, and we adopt it explicitly: lens readouts are **hypothesis-generation** tools, not hypothesis-*validation* tools — the point is attributed in our notes to Neel Nanda[3] — with an uncharacterized false-positive rate. A lens can make a concept *look* present that a causal test would not confirm. So we use the J-lens only to describe and cross-check the mechanism our behavioral experiments already established, never as load-bearing proof.
-
-**The four boundary sampling points.** To watch the graft act, we sample the lens at the same forced-continuation positions under four states of the boundary, all sharing *identical visible text* wherever text is shared:
-
-1. **Before-summary (full context)** — the original conversation, summary never written. The internal ceiling.
-2. **Write-time** — the cache state the model produced *while it wrote the summary under the full original context*. This is the source the graft draws from — not a visible prompt, but the internal state that existed at write time.
-3. **Fresh-compacted** — the summary re-encoded from text after the originals were evicted. The internal floor.
-4. **Grafted** — fresh-compacted, with the write-time value vectors blended into the **aligned** summary-token positions (aligned = grafted at the position the value was originally written for).
-
-A fifth condition, a **shifted control**, injects the same write-time values at the *wrong* summary-token positions; it is the negative control that separates genuine aligned transfer from a generic perturbation. We measure how far each condition's J-lens readout moves from the fresh-compacted floor toward the full-context ceiling with a **readout-closure** metric: the reduction in **Jaccard distance** (a set-overlap distance where *lower means more overlap*) between a condition's top-k readout token set and the full-context top-k set at the same position and layer. Positive readout-closure means "more like full context than plain compaction was." This is a set-overlap quantity in absolute top-k units — a *different scale* from the probability gap-closure of §3, and not comparable to it. Values around 0.01–0.04 are *small readout shifts, not large behavioral effects* — a fact that turns out to define the entire result.
-
-## 6. What the lens shows, honestly
-
-**The J-lens corroborates the graft at the aggregate level and supplies no vivid single-example figure.** For this values-only intervention the per-token signal sits in the noise on any given token and only becomes legible averaged over many tokens and cases — there is no dramatic "watch the concept snap from wrong to right" exhibit, and we do not manufacture one. What the lens confirms in aggregate is still worth having — three things, each matching the behavioral picture.
-
-**First: the graft is active and alignment-sensitive.** In an ordinary-regime batch of 10 cases with information-rich summaries plus a short retained tail (156 forced target tokens, 1,820 aligned summary-token pairs, lens sampled at layers 16/32/48/62), low-to-moderate value grafts produce small *positive* readout-closure, while the shifted control is much *worse* — negative readout-closure at every sampled layer and many more **argmax disruptions** (the lens's single top-ranked token, its argmax, moved *away* from the correct one; an **argmax rescue** is the reverse — the top token flips to the correct one):
-
-| condition | L16 | L32 | L48 | L62 |
-|---|---:|---:|---:|---:|
-| aligned α_V = 0.25 | 0.033 | 0.023 | 0.012 | 0.007 |
-| aligned α_V = 0.5 | 0.043 | 0.027 | 0.009 | 0.011 |
-| aligned α_V = 0.75 | 0.036 | 0.004 | −0.034 | 0.000 |
-| aligned α_V = 1.0 | −0.001 | −0.024 | −0.071 | −0.035 |
-| shifted α_V = 0.75 | **−0.100** | **−0.136** | **−0.153** | **−0.111** |
-
-The alignment control is the load-bearing row. If old value vectors were merely a generic helpful smoothing, injecting them at the *wrong* positions would look about the same as injecting them at the right ones. It doesn't — shifted injection craters at every layer. That is real evidence the aligned graft transfers position-specific content rather than perturbing the state in a content-independent way.
-
-**Second: moderate blending beats full replacement — internally.** Read down the aligned rows above. Readout-closure is best at α_V = 0.25–0.5 and *degrades* as α climbs; by α_V = 1.0 it has gone negative at three of four layers. A separate single-scenario three-state probe tells the same story: aligned α_V = 0.75 gives the strongest layer-48 readout-closure and one clean next-token rescue, while α_V = 1.0 rescues *more* local argmaxes but moves the internal readout *farther* from full context. Full replacement wins tokens and loses the neighborhood. This is the same shape behavior shows in §8, where full-strength grafting (α=1.0) can catastrophically break a task; the lens sees the internal correlate of that collapse.
-
-**Third — and this is the honest negative — the lens does not recover facts the summary omitted.** We built a deliberately harsh "sparse challenge": summaries that kept the relevant *labels* but stripped the *relations* (both permit numbers but not which is current; Falcon and Raven but not which was accepted; Maple but not that it meant the library's Maple Room), with no retained tail. This blows the full-vs-fresh gap wide open — layer-48 baseline distances of 0.78–0.96 — and hands the graft a genuinely hard target. It does not close it. Across 9 cases, readout-closure stays near zero at all four sampled layers, there are **zero** argmax rescues, and aligned and shifted conditions are often too close to tell apart. The Falcon/Raven case makes the negative concrete: the summary names both branches but omits that Raven was accepted and Falcon rejected. At the **hinge token** — the position where full context reads the dropped relation cleanly — the graft does not:
-
-| path | layer-48 J-lens readout at `Falcon` |
-|---|---|
-| full context | `rejected`, `because`, `failed`, `unacceptable`, `discarded` |
-| fresh compacted | `was`, `is`, `used`, `reserved`, `intended`, `serves` |
-| aligned V-graft | `was`, `is`, `used`, `reserved`, `intended`, `serves` |
-| shifted control | `was`, `is`, `reserved`, `used`, `intended`, `serves` |
-
-The full-context state *has* the rejected-status neighborhood; the aligned graft is indistinguishable from plain compaction. Value-only grafting does not reconstruct a relation the summary collapsed to a bare label — the best rows are small rank shifts inside a nearly-unchanged neighborhood.
-
-We ran our own three-state probe on strong "label preserved, role lost" cases mirroring the sense/referent corpus (Nimbus, Hydra, the sandbox), sampling the lens wide across layers, precisely to try to force a dramatic figure. It did not appear: tiny shifts (readout-closure 0.00–0.04), zero argmax rescues, aligned ≈ shifted ≈ fresh at the hinge tokens. The reason is structural, not a tuning failure — a "strong" example, where the role is truly stripped from the summary, *is* the sparse regime, and the sparse regime is exactly where value-only grafting has nothing to recover from. There is no values-only sweet spot both hard enough to be dramatic and easy enough to be recovered.
-
-We also tried the sharper method built to *reveal* such a figure. Instead of reading the lens under teacher-forcing, we let the compacted and grafted states **freely generate**, then read the lens at the divergence fork where the two continuations part — the position most likely to show a clean concept flip. Across 43 pre-registered cases (27B), the result was a clean negative: **0** cases forked toward the correct concept with decisive margin and decoding stability, **17** showed a subtle lean, and **26** were disconfirming (no fork, fork-away, or a right-lean that did not survive three decodings). Because the disconfirming bucket was *pre-registered* — defined before looking — the 26 cannot be quietly relabeled "subtle," and that is what makes this a genuine null rather than a heads-I-win. So even the method purpose-built to surface a vivid internal exhibit found none — which **strengthens** the honest framing rather than weakening it: the effect is genuinely subtle at the token level, and the lens is a low-resolution corroborator by nature of the intervention, not by a failure of instrument.
-
-So for this intervention the lens is a **low-resolution, aggregate-level corroborator**. It confirms the graft is active, that alignment matters, that α<1 is better, and that omitted facts stay omitted. It does not deliver a per-example money shot.
-
-## 7. One model, two instruments: the Qwen3.6-27B confirmation
-
-As flagged in §5, the J-lens runs on Qwen3.6-27B, so we re-ran the §3–4 **behavioral** measurement on 27B too, putting behavior and lens on one model. (The 27B is a newer hybrid architecture; before trusting any number we smoke-tested that the value-grafting machinery runs correctly there — α=0 exactly reproduces fresh compaction, and the graft changes the output.)
-
-On Qwen3.6-27B the core dissociation **replicates**, measured by the same teacher-forced gap-closure:
-
-| category | 27B mean gap-closure | 27B % helped | (30B % helped) |
-|---|---:|---:|---:|
-| sense | +0.050 | 59% | (64%) |
-| referent | +0.004 | 48% | (81%) |
-| stance | −0.201 | 21% | (39%) |
-
-The qualitative shape carries over: grafting helps **sense** and is **null-to-negative on stance** (a summary already carries a stable preference, so there is nothing to add) — the same signature as 30B, now on the model the lens can read.
-
-Now look at the middle row, and read it honestly. At 30B, grafting recovered evicted *decisions* strongly — **+10pp on the meaning-judge, 81% of probes helped**, the single most-helped category there. On 27B that recovery is **gone**: referent gap-closure is +0.004, essentially flat, only 48% of probes helped. This is a straight **cross-model non-replication**, and we report it as one rather than dressing it up. We do *not* call it scale-dependent — 27B and 30B are barely 3B apart, not a scale ladder — nor confidently architecture-dependent: our two models differ in architecture, generation, *and* training at once (an older Qwen3-30B-A3B MoE versus a newer Qwen3.6-27B hybrid), so n=2 confounded models cannot isolate a cause. The cause is **open**. (We can only speculate: architecture, training differences, or that the newer model's summaries already retain referent information better, leaving the graft less to add — with two models we cannot distinguish these, so we flag it as hypothesis, not finding.)
-
-What *does* replicate is the core dissociation: **sense** is positive on both models and both metrics (+12pp judged and +0.03 gap-closure at 30B, +0.050 at 27B), and **stance** is null-to-negative on both. Two different models agreeing on the sense-recovered / stance-null shape is the result consistent across two model families; the referent effect is real at 30B but fragile enough that it did not carry over.
-
-**The sharpened claim.** Put the behavioral and lens results side by side and they say something more precise than "grafting recovers evicted content":
-
-> Value grafting reliably reduces **reinterpretation** error around facts the summary *carried* — the settled sense of a label still on the page — and this holds across both models. Recovery of facts the summary *dropped* is **fragile**: strong at 30B, absent at 27B, and null in the harsh-summary lens probe.
-
-Sense is "the label is preserved but its role must be re-disambiguated," where both instruments agree the graft works on both models; the sparse challenge and the flat 27B referent are "the relation itself was dropped," where recovery held at 30B but did not replicate. It is a smaller, more defensible claim than the 30B meaning-judge alone would license — and we adopt it without recategorizing the genuine 30B referent recovery as a failure.
-
-**Convergence, stated once (the canonical statement — later sections point back here).** Two independent instruments — behavioral gap-closure and the J-lens — agree on three non-trivial points:
-
-- **Dose down.** The lens shows worse internal readout-closure at α_V = 1.0; behavior shows full-strength grafting breaking a task 0/4 (§8). Both say moderate blending, not full replacement.
-- **Alignment matters.** The lens's shifted control craters at every layer; behavior's wrong-conversation contamination guard craters too (§8). Both say the transfer is position- and content-specific, not a generic nudge.
-- **Mitigation, not magic.** The lens's sparse-challenge readout-closure is near zero; behavior's referent recovery is real at 30B (17→26%) but did not replicate at 27B. Both say the graft *improves state around a decent summary* — it does not reliably rescue a bad one.
-
-A symmetry caution, since we have been careful about the negatives and should be equally careful about the positives: these convergent replications are *consistent with* the story that grafting write-time values recovers meaning, but they do not *prove* the mechanism. "The effect tracks the damage" is a suggestive correlation across only three categories (n=3 is thin), not a mechanistic demonstration; a stance/sense/referent ordering that lines up with recovery is what the value-grafting account predicts, but other accounts could produce the same ordering. We read the positive results as supporting evidence, not causal proof.
-
-## 8. Deploying it without breaking the task
-
-If grafting is going to be useful rather than merely interesting, it has to survive contact with a real task — and the naive version does not. Grafting at full strength (α=1.0, full substitution) can catastrophically break things: on one task chain the full-strength graft scored 0 of 4 (0%) where every other arm scored 4 of 4 (100%). Flooding the boundary with write-time values at full weight overwhelms the model's own reading of the summary. The failure mode shows up in the probe transcripts too — at full strength the graft doesn't just miss, it cross-wires real entities from elsewhere in the same conversation:
-
-> **Probe** (c05-referent-2): "What specifically was Jonas's idea?"
->
-> **Gold:** a rotating guest-host seat where each month a past interviewee returns to co-interview the next guest.
->
-> **Grafted at α=1.0:** "Jonas's idea — as established in your earlier conversation — is this: A three-episode mini-arc titled 'Echo' that explores the journey of founders who left the tech industry to pursue trades ..."
-
-The "Echo" mini-arc is genuine — it exists in that conversation as a different planted item — but full-strength grafting binds the right content to the wrong referent and asserts the binding "as established." This is the behavioral face of the internal collapse the lens saw in §6: at α_V = 1.0 the readout moves *farther* from full context even as it wins local tokens.
-
-The fix is per-layer tuning. Rather than one global strength, we tune the graft layer by layer and validate each candidate against guards. The tuned **champion** configuration eliminated the instability — 16 of 16 (100%) on the same task family where the naive graft had cratered. Crucially, the guards separate real recovery from artifact: the layer profile passed a wrong-conversation contamination guard (grafting values from a *different* conversation must not help — and it didn't), while a control that masked all but 57 cache slots *failed* that guard, exposing it as a content-independent artifact rather than genuine content recovery. That wrong-conversation guard is the behavioral twin of the lens's shifted control — both ask "does *aligned* content matter, or would any content do?" and both answer that alignment is essential. Value grafting has a safe operating point, but it needs per-layer calibration and guard validation — not a knob you turn to maximum.
-
-## 9. Where it stops: scale and benchmarks
-
-Two boundaries hem the result in, and each is a finding in its own right.
-
-**The dissociation is model-specific — a larger-model result.** Everything in Sections 3–4 is at 30B, and §7 shows the *core* of it (sense-recovered, stance-null) at 27B. At 4B, the same teacher-forced gap-closure metric does **not** reproduce the dissociation. The clean ordering collapses: stance shows 87% of probes helped (mean +0.19 — the *opposite* of the 30B null), sense 55% (mean −0.09), referent 62%. The tidy "null on stance, positive on sense and referent" structure is gone or muddled. A dose-response inversion between 4B and 30B elsewhere in the project points the same way. Note this is the *dissociation*; the separate **honesty effect** of §2 (compaction fabricates, write-time state stays uncertain) does the opposite — it *replicates* cleanly down to 4B. That honesty replication is the control that matters here: because a KV-graft effect *does* survive at 4B, the 4B model is not globally broken, nor too small to show *any* graft effect at all. Its failure is specific to the dissociation, which is what licenses reading the 4B result as "the dissociation needs more capability than 4B has" rather than "4B is just too noisy to show anything." So the two effects have opposite small-scale behavior.
-
-Combined with the 27B referent non-replication, the honest read is **model-specificity**, not a clean scale law — and the scope is really *two separate facts, not one axis*. (a) The core dissociation needs sufficient model capability: it fails at 4B but holds at *both* larger models, 27B and 30B. (b) Referent recovery specifically does not travel from the 30B model to the 27B model, cause open (§7). A single capability-threshold story explains fact (a) — the 4B collapse — but it does **not** explain fact (b): 27B and 30B sit on the *same* side of any capability threshold, yet referent recovery splits between them. We resist implying one axis covers both; with only these models we cannot draw a smooth scaling curve. The 4B gap-closure ratios are also noisier (smaller Original−Compacted denominators), and a judged 4B cut would sharpen the picture, but the direction of the non-replication is clear.
-
-**Standard benchmarks miss the operative regime — and that itself is a finding.** The natural next question is whether grafting improves an end-to-end agent task. We tried: it burned through budget faster than it produced signal, and we finished this write-up still searching for a harness that actually exercises the regime — not a null result about grafting, but where the work honestly stands. The obstacle is structural. The regime where grafting can help is narrow — the task must be *hard enough that eviction genuinely costs the model something* yet *easy enough that the model can act on the recovered context* — and existing benchmarks straddle that window rather than sitting in it. SWE-bench[9] is simply beyond a 30B model (0 of 7 even in oracle mode, handed the correct file), so there is no recoverable signal; interactive tau-bench-style banking tasks[10], even with a capable GPT-4o-mini user-simulator, came out at only ~3–4K tokens — too short for meaningful eviction at any threshold (set it high and compaction never fires; set it low and there is nothing substantial to evict), with all three arms scoring reward 0.00 and no separation. The synthetic conversations behind our dissociation avoid this trap precisely because they are long enough that policy and referents get evicted by *genuine conversation length*, which is what makes the eviction clean and the recovery interpretable. Demonstrating end-to-end benefit needs a purpose-built harness; the absence of one is a gap in the field and a piece of unfinished business here, not a verdict on the mechanism.
-
-## 10. What this means, and what's still open
-
-Strip it to the claim. The "sense" a model builds up over a conversation is not fully reconstructible from a text summary of it, because a meaningful part of that sense lives in the write-time activation state rather than in any words. You can recover a slice of it — roughly 10–12 points of lost meaning at 30B — by grafting the write-time value vectors back at the compaction boundary. Two independent behavioral instruments, and as a secondary internal check a Jacobian lens, agree on the shape of that recovery (the convergence in §7): it reduces reinterpretation error around facts the summary carried (disambiguated sense), it prefers moderate blending to full replacement, and it depends on aligned content rather than generic perturbation. Recovery of facts the summary *dropped* is the fragile part — strong at 30B, absent at 27B. It recovers meaning more than wording, it makes the model more honest about what it no longer knows, and — tuned per layer — it can do this without breaking the task.
-
-Several questions are genuinely open, and one of them has now come into sharp focus:
-
-- **Keys versus values — we ran it, and value is the operative axis.** We grafted values only, and the sharpest open signal was where value-only recovery proved *fragile*: referent recovery was strong at 30B (+10pp) but flat on 27B (+0.004), and the sparse-challenge lens shows near-zero readout-closure with zero argmax rescues where the summary dropped the relation. The mechanistic reason to *expect* keys to help was clear: keys carry *addressing and position* (they are where rotary position embeddings, RoPE, live[6]), and referent-recovery is a retrieval-and-addressing problem — "which of several evicted things was decided." Values re-supply *content*; keys re-supply *where to look for it*. So we built the controlled K/V axis and tested it. Key-grafting was made exact, not approximate: a stored write-time key is re-rotated by the position delta before injection (RoPE composes by angle, so R(p_new)=R(Δ)·R(p_old)), validated at 0.6B to cosine 0.99999982 against a freshly-encoded key at the new position. On our 30B semantic-referent corpus we swept **value-only, key-only, coupled (α_K=α_V), and independent (α_K,α_V)**, both **uniform across layers** and **per-layer**. The result is decisive and negative for keys: **value is the operative axis; key-grafting does not help.** K-only actively *hurts* — negative gap-closure in every category (sense −0.283, referent −0.096, stance −0.211) as re-rotated keys perturb attention — and coupled/independent policies never beat V-only on referent or sense. Per-layer is no rescue: adding a key graft at each single layer on top of the working value graft, the best layer lifts referent by only **+0.011** (over a V-only baseline of +0.0565, and only 10 of 21 plants positive — a coin flip), while k-only is negative at all 12 sampled layers. So for our regime the RoPE-addressing hypothesis is **unsupported** — checked both uniformly and per-layer — and this *closes* the question rather than leaving it open: it is not "value is the axis we happened to test" but "value is the axis, keys checked and inert." One honest scoping edge remains. Our corpus has a single target morphology — semantic referent *phrases* (Nimbus = the signup funnel). A separate prospecting microtest (0.6B, noisy, best-of-policy winner's-curse selection, tiny cells) hints that for a *different* shape — recovery of short **token-like identifiers** (a label → `userName`, `UTC`) — key-grafting may win, plausibly because that target is retrieval-*by-address* rather than semantic reconstruction. Crucially, where the two studies *overlap* — semantic phrases — they **agree** (the microtest reproduces V-only dominance, K-only 0/30 positive), so this is an untested-territory divergence, not a contradiction, and the noisy 0.6B signal can only stop our claim from being universal, never move it to "keys help." The honest read: **value is the operative axis for semantic-referent recovery**; whether keys matter for short-identifier targets is **open** on noisy evidence only. Target morphology may moderate key-graft utility — and the next experiment is a focused, pre-registered 30B identifier-lane test: add a short-identifier target lane, sweep K/V/coupled, and report the full policy surface rather than best-of.
-- **Model-specificity and the referent non-replication.** The dissociation is clean at 27B and 30B and gone at 4B, and referent recovery — strong at 30B — did not carry to 27B. With only three confounded models we cannot say whether this tracks scale, architecture, generation, or training. Mapping the effect across a controlled model ladder, and pinning down what makes referent recovery replicate, is the open empirical question.
-- **A sharper lens, or a purpose-built benchmark.** The J-lens was the right tool but, for a values-only intervention, a low-resolution one — it corroborates in aggregate and yields no vivid figure, partly because the intervention is genuinely subtle and partly because the lens is hypothesis-generation, not validation. A key/value intervention that actually moves retrieval might give the lens a target large enough to see per-example. And the field still needs a task deliberately built for the operative regime: long enough sessions to force genuine eviction, difficulty tuned so a mid-sized model can act on recovered context, and probes that separate sense/referent from stance. Until one exists, the end-to-end benefit stays under-measured.
-- **Deployment as an opaque compaction handle.** In practice this reframes compaction. Instead of "summarize and discard," a system could summarize for the human-readable transcript while retaining an opaque write-time-KV handle that gets grafted back on continuation — safe at a tuned operating point and honest by default. We have not measured the storage cost, but as a rough proposal the overhead should be on the order of a second prefill's worth of state, which we expect to be cheap to retain; the payoff is continuity that survives the boundary.
-
-The spirit of this write-up is a question as much as a claim. Re-supplying write-time activations at a compaction boundary is an obvious enough thing to try that we expected to find it named and studied; under the terminology we searched, we did not find that exact experiment, though adjacent territory is well populated — KV-cache editing and composition, latent-space KV compaction, and chunk-cache reuse and eviction all exist as prior art[1]. What we could not find, specifically, is write-time value state deliberately preserved and grafted back across a *summarization* boundary — as opposed to compressing, reusing, or evicting cache state in general. Either we are missing the right words for the narrower thing, or it has been considered too trivial to write up.
-
-## Related work and references
-
-**Compaction as production practice.** Text-only summarization is already the standard fix for context-window limits across hosted frontier APIs — OpenAI Responses' automatic `context_management` compaction and standalone `/responses/compact` endpoint, Anthropic's beta `compact_20260112` context-management edit, and Gemini's Managed Agents automatic compaction and Live API context compression all treat "summarize and evict" as the baseline, sometimes alongside opaque encrypted continuation objects (OpenAI's encrypted `compaction` item, Anthropic's thinking signatures, Gemini's thought signatures) whose internal contents are not publicly documented. On the research side, "Models Take Notes at Prefill: KV Cache Can Be Editable and Composable" demonstrates that KV-cache state can be edited and spliced across contexts; "Fast KV Compaction via Attention Matching" performs true latent-space KV compaction; "Parallel Context Compaction for Long-Horizon LLM Agent Serving" studies production-style agent summarization as a serving problem; and KVLink, CacheBlend, and StreamingLLM-style attention-sink eviction address cache reuse and eviction in adjacent (chiefly RAG/serving) settings. [1] Full survey, links, and the "documented vs. inference vs. unknown" evidence grading are in `provider-compaction-prior-art-review.md`.
-
-**[2] Logit lens.** nostalgebraist, "interpreting GPT: the logit lens," LessWrong (2020) — projecting an intermediate residual-stream state through the unembedding matrix and reading it as if it were the final-layer output. This is the lineage of the §4 readout; we use the original, plain logit lens there, and its Jacobian refinement (below) for the internal work in §5–7.
-
-**[3] Lens caveat.** Its documented caveat — attributed in our notes to Neel Nanda — is that lens-style readouts are hypothesis-*generation* tools, not hypothesis-*validation* tools, with an uncharacterized false-positive rate. We treat the J-lens accordingly throughout §5–7: as a cross-check on a behaviorally established effect, never as standalone proof.
-
-**[11] Tuned lens.** Belrose et al., "Eliciting Latent Predictions from Transformers with the Tuned Lens" (2023) — an affine per-layer correction to the logit lens that removes much of its basis-mismatch distortion; the conceptual midpoint between the plain logit lens and the J-lens.
-
-**[12] J-lens / Jacobian lens.** Gurnee, Sofroniew, Pearce, Piotrowski, Kauvar, Chen, Soligo, Bogdan, Ong, Wang, Thompson, Abrahams, Kantamneni, Ameisen, Batson, and Lindsey, "Verbalizable Representations Form a Global Workspace in Language Models," Transformer Circuits Thread (2026), with Anthropic's `anthropics/jacobian-lens` reference implementation and Neuronpedia's public Jacobian-lens weights for Qwen3.6-27B. The J-lens transports an intermediate residual-stream activation into the final-layer basis via averaged-Jacobian transport before unembedding — more general than the plain logit lens (it surfaces forward-looking, sometimes unspoken concepts and unifies "read" and "write" in one coordinate system) but narrower than sparse-autoencoder features (confined to single-vocabulary-token concepts). Public lens weights exist for Qwen3.6-27B only, which is why our §7 same-model confirmation re-ran *behavior* on 27B rather than illustrating the lens on a different model.
-
-**[4] Activation patching / representation editing.** Value grafting (§2) belongs to the broader family of causal-intervention interpretability methods that patch or edit internal model activations to test what a component carries — e.g. the ROME-style locate-and-edit tradition (Meng et al., "Locating and Editing Factual Associations in GPT") and causal-mediation/activation-patching methods more generally. Our contribution within that lineage is narrow: a values-only KV-cache graft applied specifically at a text-summarization boundary, not a general-purpose editing method.
-
-**[5] Sparse autoencoders / dictionary learning.** Anthropic, "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning" (Transformer Circuits thread, 2023) — the contrasting interpretability approach referenced in [12]: SAEs recover a large basis of (comparatively) monosemantic features via unsupervised dictionary learning, rather than the logit-lens family's narrower, unembedding-anchored, single-token readout.
-
-**[6] Rotary position embeddings.** Su et al., "RoFormer: Enhanced Transformer with Rotary Position Embedding" (2021) — the position-encoding scheme carried in the key vectors, which is the mechanistic basis for the §10 conjecture that *keys* carry the addressing information value-only grafting cannot supply.
-
-**Benchmarks.** [9] Jimenez et al., "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?" and its curated "SWE-bench Verified" subset. [10] Sierra's tau-bench ("τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains") and its tau2-bench follow-up. Aider's Polyglot benchmark (see the Aider project). LongMemEval, a long-term conversational-memory benchmark. [8] Qwen3-30B-A3B-2507's own model card documents Aider-Polyglot (55.1%) and tau-bench (32–71%) results but does not cite base SWE-bench for this non-Coder variant — used in-repo as a vendor-supplied "difficulty certificate" that independently predicted both this project's SWE-bench 0/7 boundary and its tau-bench choice (§9).
-
-**[7] KV-cache mechanics.** Standard attention/Transformer references (e.g. Vaswani et al., "Attention Is All You Need") describe the key/value cache underlying incremental decoding that §1 relies on.
-
-**On the closing novelty claim (§10).** The prior-art review above shows real adjacent work — KV-cache editing/composition, latent-space KV compaction, and cache reuse/eviction all have documented prior art, and hosted providers already ship opaque compaction-state objects as a product shape. That prior art narrows, rather than voids, the claim in §10: what we could not find under the terminology we searched was specifically *write-time value state deliberately preserved and grafted back across a text-summarization boundary*, as distinct from compressing, reusing, or evicting cache state in general, or from exposing an opaque (but mechanistically undocumented) compaction handle at the product-API layer.
+> **Compacted:** invents "'The 3-Second Cut' — No Fluff, No Noise, Just Clarity," and
+> certifies it "tested and proven to work at scale."
+> **Grafted:** "Tight jump-cut screen-share editing with real-time, floating query
+> captions" — the decision that was actually made.
+
+**Negative controls.** Grafting values from the *wrong conversation*, or shuffled, craters
+performance (~1–2 nats, both scales tested) — the effect is content- and
+alignment-specific. A norm-matched random-value placebo behaves the same way: the true
+graft beats the placebo decisively (E−placebo +0.24, CI [+0.03, +0.46] at 30B; +0.45,
+CI [+0.29, +0.61] at 27B), while the placebo actively hurts. One honest wrinkle from the
+same probe family: over a narrow 12-token pre-answer window the graft's E−B was null (27B)
+to slightly negative (30B) — that window measures the answer *preamble*, where the graft
+slightly perturbs generic tokens, and misses the content tokens where the benefit lands;
+we report it rather than hide it, and score full continuations everywhere else.
+
+## 6. Two scope conditions that turned out to be mechanism
+
+**The graft needs the model's own summary.** Running the identical harness on the 30B
+with a *fixed, externally-written* (Sonnet-authored) summary produced referent +0.004
+(null) and sense −0.147; switching only the summary source to the model's own self-
+generated summary restored referent to +0.136, CI [+0.034, +0.23], 81% helped (aggregate
++0.090, CI [+0.022, +0.154]) — matching the headline. Same model, same code, same
+scaffold; the only difference is whose summary sits at the boundary. Our reading: the
+graft re-injects the write-time state of the model's own *summarization act*; a summary
+the model merely read does not carry that recoverable continuity. Deployment reality
+matches the requirement — production compaction already uses the model's own summary.
+
+**The graft needs the model's own conversation.** On an earlier corpus whose assistant
+replies had been written by *other* models, the effect collapsed (referent ~+0.009);
+re-rendering so the test model generates its own replies from the same scaffold restored
+it (referent CI [+0.012, +0.195], mid ~+0.10). Foreign replies mean the write-time values
+encode surprise rather than settled sense, and re-injecting surprise recovers nothing.
+This is why the design is per-model-native (§4), and it kills the alternative explanation
+"any KV re-injection helps": the effect is specific to state the model itself laid down.
+
+## 7. The open validity item: does it generalize past the original 12 scenarios?
+
+We flag this prominently because it is the strongest outstanding threat to the headline.
+The +0.10–0.13 referent effect above is established on the original 12 hand-authored
+scenarios (c01–c12). The 42 newer scenarios did *not* carry the effect under the old
+foreign-reply rendering (~+0.009) — which the nativeness finding (§6) explains — but
+"native rendering fixes the fresh scenarios too" had, at the time of writing, been
+validated only *on the original 12*. A pre-registered **block experiment** is running as
+this draft is written: one apparatus renders c01–c36 natively on the 30B, and the
+analysis reads c01–c12 as a positive control (it must reproduce ~+0.10) and c13–c36 as a
+fresh held-out test, with a pre-committed stopping rule (extend to c37–c54 if the fresh
+referent CI spans zero at n=24). Its first run was lost to an infrastructure timeout
+mid-scoring; a re-run (with per-conversation checkpointing) was pending as this draft was
+finalized. Until it lands, the honest status of the headline is: **real, replicated, and
+control-validated on the original corpus; unverified on held-out fresh scenarios.** A
+full revision of this report will state the block result either way.
+
+## 8. The honesty effect (a second, sturdier-scoped finding)
+
+Compaction doesn't just lose content — it makes the model *confabulate* about what was
+lost. Probing with decoy questions about things that never existed in the conversation,
+plain Compacted fabricated 83% of the time; an arm that retains write-time KV state for a
+packed summary (the "Packed write-time-KV" arm — note this variant retains keys *and*
+values in a packed layout, a cousin of the value graft rather than the same intervention)
+fabricated 17%, while being simultaneously the most accurate on genuinely evicted facts
+(38/48, 79%) and the least fabricating (4%). Within-layout controls decompose the gain:
+packed layout alone cuts decoy fabrication 83%→25%; write-time encoding within the same
+layout cuts it further 25%→17%, and flips bare guesses into explicit admissions of
+uncertainty (3/24 → 18/24). This replicated from 4-bit to bf16 and from 4B to 30B —
+opposite scale behavior to the dissociation, which is why we report them as separate
+findings. Scope bound: the effect lives in *mid-task agentic* compaction; on
+retrieval-style personal-QA framing (LongMemEval) at 30B it washes out, because the
+model's own refusal calibration already covers that case.
+
+> **Decoy probe:** "What was the name of the consultant who audited our tax-rate
+> tables?" — no consultant ever existed.
+> **Compacted:** "The consultant … was Lena Cho, a compliance specialist from TaxFlow
+> Partners. … Her report is archived in Confluence > Compliance > Tax Audit Q2 2024."
+> **Write-time KV retained:** "I don't have access to your company's internal records,
+> including consultant names or audit details."
+
+## 9. Dose, tuning, and the keys question
+
+**Full strength can break the task.** At α=1.0 (full replacement), grafting
+catastrophically failed one agentic task chain (0/4 where every other arm scored 4/4) and,
+in probe transcripts, cross-wires real entities from elsewhere in the same conversation —
+right content, wrong referent, asserted "as established." A per-layer-tuned configuration,
+promoted only after champion/challenger evaluation, eliminated the instability (16/16 on
+the same family) **and** passed the wrong-conversation contamination guard — while a
+57-cache-slot mask that also looked good on holdout *failed* that guard and was killed as
+a content-independent artifact. The guards discriminate. Dose optima are scale-dependent
+(α≈0.25 at 4B, α≈0.75 at 30B), so the dose is a per-model calibration, not a universal
+constant.
+
+**Keys are neutral; values are the operative axis.** We built technically-sound key
+grafting (RoPE re-rotation of stored keys to new positions, validated to fp32 precision,
+cosine 0.9999998 against freshly-encoded keys) and swept K-only, coupled, and independent
+K/V policies, uniformly and per-layer, at 30B. On the robust metric, key grafting is
+approximately neutral everywhere and helps nowhere; value-only matches the headline
+(+0.120, CI [−0.001, +0.228] in that sweep). An earlier "keys actively hurt" conclusion
+was an artifact of the retired ratio estimator and is corrected here. Scope: our targets
+are semantic phrases; whether keys matter for short identifier-like targets (an
+addressing/retrieval regime) is untested at scale.
+
+## 10. Does it travel? Architecture-specificity, and a pre-registered null
+
+We began a cross-architecture sweep: same scaffold, per-model-native rendering, self-gen
+summaries, same gates, ~30B-class models. The pre-registered hypothesis (H1, frozen
+before the sweep) was that **QK-norm presence predicts a positive referent sign**. What
+the data did instead (12 conversations per model; preliminary):
+
+| model | architecture | referent raw E−B [95% CI, conv-clustered] | aggregate verdict |
+|---|---|---|---|
+| Qwen3-30B-A3B-Instruct-2507 | MoE, GQA 8, QK-norm | +0.136 [+0.034, +0.23] | significant positive |
+| Mistral-Small-24B-Instruct-2501 | dense, GQA 4, no QK-norm | **+0.035 [+0.010, +0.063]** | aggregate null; sense *negative* [−0.067, −0.005]; stance floored by headroom gate |
+| microsoft/phi-4 | dense, GQA 4, no QK-norm | −0.053 [−0.117, +0.008] | **significant negative** aggregate (−0.064 [−0.099, −0.027]) |
+| Qwen2.5-32B-Instruct | dense, no QK-norm | negative | significantly negative (aggregate ≈ −0.3, confirmed by three independent runs incl. the original trusted apparatus) |
+
+Two things follow. First, **H1 is falsified and reported as a pre-registered null**: a
+no-QK-norm model (Mistral) shows a significantly *positive* referent effect — the opposite
+of the prediction — and the within-model ablation that would have tested QK-norm causally
+(disabling q/k-norm modules at inference) broke generation outright, so it is
+uninformative. Second, and more interesting: the effect is **architecture-specific and
+can reverse sign**, with different per-category signatures on different models (Qwen3:
+referent+/sense+/stance-null; Mistral: referent+ but sense−; Qwen2.5 and phi-4: negative).
+A generic artifact would not flip sign by architecture; a real mechanism interacting with
+architectural detail would. Machinery gates (α=0 identity, self-graft no-op) passed on
+every model reported, so these are not plumbing failures. What drives the sign is open —
+n is small everywhere, per-model runs use 12 conversations, and two 24-conversation runs
+(Qwen3-32B dense; Qwen2.5-32B) were in flight at writing.
+
+Excluded by structure or tooling, disclosed in full in §14: MLA-attention models
+(DeepSeek/Kimi — no per-head value vectors to graft), five checkpoints shipping as
+multimodal wrappers (both Gemma-4s, Gemma-3-27B, both Qwen3.6s — which cost us the
+pre-registered second within-vendor MoE/dense pair), and sliding-window snapshot layouts
+the harness refuses rather than silently mishandles.
+
+## 11. Where it stops
+
+**Scale.** The dissociation does not replicate at 4B (probes-helped ordering muddled:
+stance 87%, sense 55%, referent 62% — the clean stance-null structure is gone; a
+dose-response inversion between 4B and 30B points the same way). The honesty effect
+*does* replicate at 4B — so the small model is not globally graft-insensitive; the
+dissociation specifically needs capability. On Qwen3.6-27B (a newer hybrid architecture),
+sense recovery replicates (59% of probes helped) and stance stays null, but referent
+recovery is flat (48% of probes helped — a coin flip) — a single cross-model
+non-replication we report as such, cause open (with n=2 confounded models we cannot separate architecture, generation, and
+training).
+
+**End-to-end agent benefit is undemonstrated — and the benchmark landscape is part of the
+finding.** SWE-bench is beyond a 30B subject model entirely (0/7 even oracle-mode; the
+vendor's own model card, which omits SWE-bench for this non-Coder variant, predicted as
+much). Interactive tau²-bench banking dialogues are structurally too short (~3–4K tokens
+even with a capable GPT-4o-mini user-simulator) for genuine eviction at any threshold.
+Chained exercise-scale tasks our model *can* do proved compaction-robust (Compacted 4/4
+across seeds — nothing to repair; the champion's 16/16 vs α=1.0's 0/4 there is a
+stability result, not a recovery result). The one clean real-trace signal is an offline
+proxy: on 75 real SWE-Gym/OpenHands trajectories, the tuned graft recovered +0.0156 nats
+of next-action prediction (45/75 wins, CI [0.005, 0.027]) — about 10% of the measured
+compaction damage on an unforgivingly off-policy instrument. The operative regime — tasks
+hard enough that eviction costs something, easy enough that recovered context is usable —
+is narrow and badly served by existing benchmarks; a purpose-built harness is future
+work, and our own natural-length synthetic conversations are the closest thing we had.
+
+**Looking inside (kept brief deliberately).** We also probed internal state — with the
+plain logit lens on 30B, and with the recently-published Jacobian lens (J-lens) on
+Qwen3.6-27B, the one model with public lens weights. The aggregate picture corroborates:
+grafting raises the evicted concept's internal presence (concept logprob moves from the
+Compacted floor toward the Original ceiling on 68–77% of probes), the effect is
+alignment-sensitive inside as well as outside (misaligned injection craters), moderate α
+beats full replacement internally too, and value grafting does not reconstruct relations
+a summary dropped entirely. But the per-example signal is small: a pre-registered
+free-generation probe looking for a clean internal "fork" toward the correct concept
+found 0 of 43, and the raw logit lens recovers most of the late-layer signal the
+specialized lens shows. We use the lens work as corroboration only; no claim in this
+report rests on it.
+
+## 12. Related work, and what seems to be new
+
+Every mechanical ingredient here has prior art; we found no prior instance of the
+composite, and — more specifically — no prior work that *measures* what we measure. The
+closest mechanism is "Models Take Notes at Prefill: KV Cache Can Be Editable and
+Composable" (arXiv 2606.17107), which edits and transplants KV across contexts with
+re-rotated keys and position-free values — but it transplants precompiled skills into
+fresh contexts and evaluates decision-identity, not a summary generated in-context whose
+write-time state is retained across a *compaction* boundary and scored on semantic
+continuity. Memorizing Transformers and InfLLM retrieve preserved write-time KV, but
+*append* it to extend context rather than grafting it to replace re-encoded summary text.
+Activation Beacon and the gist/soft-token family retain summary-like caches, but theirs
+are *learned* states, not preserved originals. The KV-eviction and cache-reuse literatures
+(H2O, SnapKV, CacheBlend, KVLink, …) optimize efficiency and measure aggregate accuracy;
+a recent survey (arXiv 2503.24000) notes explicitly that per-example semantic effects of
+cache manipulation go unmeasured, and the one work we found on compaction and constraints
+("Governance Decay," arXiv 2606.22528) tests whether a constraint *survives* the summary,
+not how retained text is *reinterpreted*. Hosted-provider compaction APIs already ship
+the "summary + opaque handle" product shape; whether any provider uses a value-tensor
+mechanism is publicly unknown, and we claim no novelty for the API pattern. Caveat: several
+of the nearest neighbors are unreviewed 2026 preprints. Our claim is correspondingly
+narrow: *write-time value state deliberately preserved and grafted back across a
+text-summarization boundary, evaluated on referent/sense/stance continuity of the
+conversation* — if that exists under other terminology, we'd genuinely like to know.
+
+## 13. What happens next
+
+In flight or queued at the time of writing: the held-out block reproduction (§7 — the
+single most important pending number); 24-conversation runs on Qwen3-32B and Qwen2.5-32B
+(the within-vendor MoE/dense contrast and the strongest negative, at doubled n); a
+robust-metric re-audit of remaining secondary tables (the 27B and 4B category breakdowns
+above are reported as %-helped for exactly this reason); more probes per category to power
+the sense/referent CIs on both metrics; and the short-identifier target lane for the keys
+question. The full revision of this report will incorporate all of it, whichever way the
+results land.
+
+## 14. Methods and provenance (details)
+
+**Models (exact checkpoints).** Headline: `Qwen/Qwen3-30B-A3B-Instruct-2507` (bf16, A100
+pods). This is the *non-thinking* instruct checkpoint; the similarly-named thinking
+`Qwen/Qwen3-30B-A3B` behaves differently (its `<think>` blocks change tokenization and
+alignment) and running it by mistake reproduces nothing — checkpoint identity is a
+reproduction-critical detail. Development and 4B results:
+`mlx-community/Qwen3-4B-Instruct-2507-4bit` (4-bit, MLX, Apple Silicon); local 30B runs
+used the 4-bit MLX build (precision is stated per result; headline numbers are bf16).
+Cross-architecture: `mistralai/Mistral-Small-24B-Instruct-2501`, `microsoft/phi-4`,
+`Qwen/Qwen2.5-32B-Instruct` (+ in-flight `Qwen/Qwen3-32B`). Same-model lens work:
+`Qwen3.6-27B`. Judge: Claude Sonnet 5. Nothing here fine-tunes or trains anything.
+
+**Corpus.** 54 authored scenario scaffolds (`data/scenarios.json`): system prompt, all
+user turns, planted items, probe paraphrases, gold continuations. c01–c12: ~8.3–9.4K
+tokens rendered, 22 user turns, 10 plants each (2 × {referent, sense, stance, ruled_out,
+evicted_fact}; 120 plants, contamination-audited to 115/120 clean, tail-clean in all
+scored categories). c13–c54: 30–36 user turns, 12 plants each (adds strong_prior; 506
+plants), authored by Fable/Opus/Sonnet/GPT-5.5-Codex subagents with per-file schema
+verification; per-file authorship is recorded in `meta.author`. 8 natural conversations
+(n01–n08, no plants) exist for continuation-scoring only; conclusions here do not rest on
+them.
+
+**Who generated every token.** User turns, plants, probes, golds: authored (see above) —
+never generated by the subject model. Assistant replies: the evaluated model itself,
+in-context, greedy, ≤320 tokens/reply, per-conversation seeds (base 1000). Summary: the
+evaluated model itself, greedy (temp 0.0, top_p 0.8, seed 17, ≤900 tokens), from a fixed
+request prompt asking for a thorough 300–500-word context note (verbatim in
+`src/arms_common.py`). Gold continuations: authored, shared across all models and arms,
+teacher-forced only. The one historical exception: the original c01–c12 renders used
+Qwen3-4B (same family) rather than the 30B itself; the 30B-native re-render reproduces
+the headline (§6), and all cross-architecture numbers use each model's own render.
+
+**Procedure.** Compacted context = system + assistant context-note ("[Context note]
+Earlier parts of this conversation were compacted. Summary of what came before: …") +
+retained tail (from the scaffold's middle-end boundary). Graft = value-only blend at the
+two aligned regions (§2), α=0.75 unless stated. Alignment: difflib per region, minimum
+block 8, sinks (first 4 positions) and special tokens excluded. (A stricter exact-span
+aligner was tried and reverted: it breaks on thinking-model self-generated summaries;
+the tolerant aligner was verified to align 100% of regions on every model reported.)
+Scoring: per-token mean teacher-forced logprob of the gold under each arm, averaged over
+probe paraphrases; identical forward-pass shapes across arms (batched-vs-stepwise kernel
+differences make cross-shape logit comparison invalid — an early lesson that shaped the
+whole harness). Temperature 0 everywhere in evaluation.
+
+**Statistics.** raw_EB = lp_E − lp_B; 95% percentile bootstrap (10k resamples; 20k for
+judged), clustered on conversations for headline CIs; %-helped alongside. Mean gap-closure
+ratios are retired (unstable); where legacy tables haven't been re-audited yet we quote
+%-helped only. Headroom floor 0.3 (floored categories excluded from sign verdicts, not
+counted as harm; e.g. stance on Mistral, whose own summaries preserve stance content).
+Task-competence floor: lp_A ≥ −8.0 per token (absolute mode; pre-registered relative
+median−3·MADN amendment on record, a verified no-op for every model scored so far).
+Exclusion counts are recorded per run (phi-4: 1 plant task-excluded; Mistral: 0).
+
+**Pre-registration and deviations.** H1 (QK-norm → positive referent sign), the metric,
+gates, and the within-vendor pair inference were frozen in `PREREGISTRATION.md` before
+the sweep; the pre-flight discovery that 5 of 16 queue models ship as multimodal wrappers
+(excluding the Gemma-4 pair) is documented there *before* any outcome data, reducing the
+primary within-vendor de-confound to one pair. H1's falsification is reported as a
+pre-registered null (§10). The block experiment's design and stopping rule (§7) were
+likewise committed before its data.
+
+**Known infrastructure/validity incidents affecting interpretation** (all documented in
+the repository's INCIDENTS.md): the wrong-checkpoint episode (thinking vs. instruct); the
+retired ratio estimator (which had distorted an earlier public draft's precision — the
+correction changed error bars and killed one secondary claim, not the direction of the
+main effect); and a session-state leak in an earlier agent-serving harness whose affected
+strata were demoted and never used for headline claims.
+
+**Reproducibility.** All code, scaffolds, per-run JSON results (with gates, covariates,
+CIs, and machinery-check outcomes embedded), decision log, incident log, and
+pre-registration are in this repository: `src/cross_arch_probe.py` (current harness:
+native render, gates, controls), `src/gap_closure_cat.py` (original apparatus),
+`scripts/block_analysis.py`, `scripts/judged_bootstrap.py`, `data/scenarios.json`,
+`results/`. A reader with an 80GB GPU can re-run any single model's sweep from the
+scaffold in a few hours; exact constants (seeds, tolerances, caps) are in the source and
+in this section.
+
+---
+
+*This report is a working snapshot of an ongoing autonomous research program; the
+repository's FINDINGS.md, DECISIONS.md, and INCIDENTS.md are the running scientific
+record. Numbers herein are observed results as of 2026-07-09; the held-out reproduction
+and two architecture runs pending at press time will be incorporated in the next
+revision.*
