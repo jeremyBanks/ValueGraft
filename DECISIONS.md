@@ -253,3 +253,21 @@ pos), self-native-scoped" + (if ablation confirms) QK-norm causally implicated v
   (default absolute = byte-identical) + --task-competence-k; self-tested CPU-only. TAKES EFFECT only on a GPU
   re-run with SC_TASK_COMPETENCE_MODE=relative (needed to produce OLMo's numbers); harness change is staged
   behind the pre-registered rule. Gates the OLMo re-run (1 of 3 text-loadable QK-norm-present models).
+
+## Champion scan — KEEP the value-depth RESCUE TEST, drop the rest (owner + Fable un-anchored, 07-09)
+Owner asked whether we abandoned per-layer/champion tuning. Verdict: keep ONE slice, drop the others.
+- DROP (future-work sentences only): per-HEAD tuning (already run at 4B — calibration TIES manual
+  tuning, +0.0182 vs +0.0173, doesn't beat it), independent-KV (keys already concluded ~null on the
+  robust metric). Not worth GPU.
+- KEEP: the per-model value-depth CHAMPION SCAN + RESCUE TEST (SC_CHAMPION_SCAN is already built).
+  Scan WHERE the value signal lives on a POSITIVE anchor (Qwen3-30B-A3B) and a NEGATIVE model
+  (Qwen2.5 or Mistral); then graft ONLY the positive model's graftable band on the NEGATIVE model
+  (a0 elsewhere) -> does net raw_EB flip positive? This converts architecture-specificity from
+  "the graft reverses across models" (a datapoint) into "we can SET the sign by choosing the depth
+  band -> the PROFILE, not the model, drives it" (a MECHANISM; answers the reviewer's "why reverse?").
+- WHY CHEAP: the expensive part is the RENDER; the scan re-grafts/re-scores depth-regions on the SAME
+  render = near-zero marginal GPU when piggybacked on a render we're already paying for. The incident
+  #38 per-conv checkpointing fix (persist snapshots) is what makes the re-graft reusable.
+- GATING (non-negotiable): do it ONLY AFTER the fresh-conv reproduction survives (don't build mechanism
+  on an unproven headline), and ONLY piggybacked on existing renders (never a fresh 6h render for it).
+  If snapshots aren't reusable -> clean future-work, no loss. Never ahead of the reproduction for $.
