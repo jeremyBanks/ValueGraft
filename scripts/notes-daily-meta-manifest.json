@@ -196,13 +196,14 @@
     },
     "20260709": {
       "note": "notes/20260709.md",
-      "source_count": 3,
+      "source_count": 4,
       "source_blob_ids": [
-        "4259f3072784157159f4c68e5b2c8bce6da71e15",
+        "08d310e370681d22621ddc43619be326d8a5627b",
+        "3b179d5e2114e767a7059d95056f563787235b1e",
         "8532de743ff17027251819665e9c70a242620096",
-        "defb02227c0c2313b68d22e2ccc05aa1538710aa"
+        "d29e1d2547e03c0c3f20963261cf1be0092b1be8"
       ],
-      "summary_hash": "734db4944fe52b91a7bca5b99239859a12a55125b22f0a2f7d6bdf8d5e5a1d94",
+      "summary_hash": "e91413c1c06935f223f587175727c31e1036c6c550410e7c8eac7c4c7de0f644",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
