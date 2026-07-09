@@ -398,7 +398,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026070730-report-draft.md": {
-      "object_id": "9897b8384c72db82ef496df0bf2190046ea82ee4",
+      "object_id": "2ffc655f25c4049831c77a052eb12a91f8e6d36f",
       "archive_timestamp_utc": "2026-07-07T14:37:24Z",
       "timestamp_source": "git current-file lifetime"
     },
@@ -428,7 +428,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026070736-report-synthesis.md": {
-      "object_id": "3b169424cee0b562cd06d29b49d22ff8b37d3dd0",
+      "object_id": "3b113ca6d23111d5185283b6e49b6df286061f4a",
       "archive_timestamp_utc": "2026-07-07T17:33:10Z",
       "timestamp_source": "git current-file lifetime"
     },
@@ -593,7 +593,7 @@
       "timestamp_source": "conversation manifest first timestamp"
     },
     "notes/2026070969-conversation-user-opus48.md": {
-      "object_id": "08d310e370681d22621ddc43619be326d8a5627b",
+      "object_id": "532d5974a63a88c3d3ff19e054baab17718561d8",
       "archive_timestamp_utc": "2026-07-09T00:06:04.102000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -603,8 +603,53 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026070971-conversation-user-gpt55.md": {
-      "object_id": "3b179d5e2114e767a7059d95056f563787235b1e",
+      "object_id": "49b44e8a741ad3bb507be991a56ec0b6ae1f84a0",
       "archive_timestamp_utc": "2026-07-09T11:40:03.779000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026070972-fable-holistic-assessment.md": {
+      "object_id": "b2f2aaeba0b5154c097d23f4f8ea81b21a15f554",
+      "archive_timestamp_utc": "2026-07-09T13:52:23Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070973-fable-native-render-premise.md": {
+      "object_id": "139c047e72d6b01322bf65c9a79ea456f8333f2d",
+      "archive_timestamp_utc": "2026-07-09T13:52:23Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070974-conversation-user-gpt55.md": {
+      "object_id": "09a73b86d2e736925bac240dc115ab2b60cc5c35",
+      "archive_timestamp_utc": "2026-07-09T14:07:24.599000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026070975-fable-pivot-decision.md": {
+      "object_id": "e4d1fed4d805ecd0e9329774df5562cf03ab42de",
+      "archive_timestamp_utc": "2026-07-09T15:07:16Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070976-env-setup-retrospective.md": {
+      "object_id": "9e6462bc1f6d431604d7bae87e0a08aeab6936ae",
+      "archive_timestamp_utc": "2026-07-09T16:12:53Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070977-precision-provenance-audit.md": {
+      "object_id": "1a1d4046722a59154501512fd0de5f045f7f621a",
+      "archive_timestamp_utc": "2026-07-09T16:24:55Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070978-postmortem-cornerstone-conflation.md": {
+      "object_id": "3f605e5bb61d7043430c2a411de7924f0e5afa0b",
+      "archive_timestamp_utc": "2026-07-09T16:24:55Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070979-fable-continuation-advice.md": {
+      "object_id": "b4d568741709658d88b9bd03255b6c971e227256",
+      "archive_timestamp_utc": "2026-07-09T16:36:49Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070980-conversation-user-gpt55.md": {
+      "object_id": "ddee47b99e426236d7baa0f93f0e4eee3d06b7cd",
+      "archive_timestamp_utc": "2026-07-09T17:44:46.290000Z",
       "timestamp_source": "conversation manifest first timestamp"
     }
   }
