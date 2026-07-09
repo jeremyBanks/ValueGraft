@@ -581,3 +581,13 @@ all exact under SC_BATCHED_RENDER=0. NOTE: under batched decode a PARTIALLY-lost
 differ at the token level (pre-existing batched-greedy composition sensitivity, documented in code);
 checkpointed convs are always byte-stable, and whole-chunk re-render is composition-stable. STILL TODO
 before the re-run: budget-headroom gate + render/score timeout split.
+FABLE REVIEW FOLLOW-UP (07-09, commit 2989820): review caught a rank-1 silent-number-change bug on the
+RESUME path (fresh/uninterrupted was clean): in RELATIVE floor mode the pre-scan computes lp_A for every
+plant of EVERY conv incl. empty-alignment convs, but the main loop returns early on empty-align convs, so
+deriving a checkpoint's scan_lpa from its (empty) scoring rows DROPPED those lp_A on resume -> drifted
+median-k*MADN floor -> different gating -> changed raw_EB/CI. FIX: checkpoint stores the pre-scan's OWN
+per-conv lp_A (prescan_lpa_by_pos), so the resumed floor pool == fresh. Now COMMITTED + reproducible:
+scripts/validate_checkpoint_resume.py forces an empty-align conv into a relative-mode window and proves
+fresh==resume==kill-sim on floor+by_category_robust+raw_EB+traces+CI, with a negative control (scan_lpa->[]
+= the pre-fix behavior) that DRIFTS the floor -9.499->-10.126 (bug real + caught). Rank-3 (render_fingerprint
+doesn't hash scaffold CONTENT) flagged in a code comment; safe while the scaffold is frozen.
