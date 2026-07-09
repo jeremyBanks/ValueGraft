@@ -207,6 +207,47 @@ def test_normalizer_updates_manifest_paths_for_renamed_notes(tmp_path: Path) -> 
     ]
 
 
+def test_normalizer_applies_rename_chain_through_existing_target(tmp_path: Path) -> None:
+    normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_chain_test")
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.check_call(["git", "init"], cwd=repo, stdout=subprocess.DEVNULL)
+    subprocess.check_call(["git", "config", "user.email", "test@example.com"], cwd=repo)
+    subprocess.check_call(["git", "config", "user.name", "Test User"], cwd=repo)
+    notes = repo / "notes"
+    notes.mkdir()
+    first = notes / "2026070801-alpha.md"
+    second = notes / "2026070802-beta.md"
+    first.write_text("alpha\n", encoding="utf-8")
+    second.write_text("beta\n", encoding="utf-8")
+    subprocess.check_call(["git", "add", "--", "notes/2026070801-alpha.md", "notes/2026070802-beta.md"], cwd=repo)
+    subprocess.check_call(["git", "commit", "-m", "add notes"], cwd=repo, stdout=subprocess.DEVNULL)
+
+    renames = [
+        normalizer.Rename(
+            source=first,
+            target=notes / "2026070802-alpha.md",
+            timestamp=normalizer.TimestampInfo(datetime(2026, 7, 8, 0, 0, tzinfo=timezone.utc), "test"),
+            day_index=2,
+            reasons=("test",),
+        ),
+        normalizer.Rename(
+            source=second,
+            target=notes / "2026070803-beta.md",
+            timestamp=normalizer.TimestampInfo(datetime(2026, 7, 8, 1, 0, tzinfo=timezone.utc), "test"),
+            day_index=3,
+            reasons=("test",),
+        ),
+    ]
+
+    normalizer.apply_renames(renames, repo)
+
+    assert not first.exists()
+    assert not second.exists()
+    assert (notes / "2026070802-alpha.md").read_text(encoding="utf-8") == "alpha\n"
+    assert (notes / "2026070803-beta.md").read_text(encoding="utf-8") == "beta\n"
+
+
 def test_timestamp_cache_reuses_matching_blob_entry(tmp_path: Path) -> None:
     normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_cache_test")
     repo = tmp_path / "repo"

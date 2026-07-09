@@ -93,6 +93,7 @@ def archive_files(notes_dir: Path) -> list[Path]:
 def plan_renames(paths: list[Path], root: Path, cache: ArchiveTimestampCache | None = None) -> list[Rename]:
     if cache is not None:
         cache.prepare(paths)
+    source_paths = {path.resolve() for path in paths}
     items: list[tuple[Path, TimestampInfo, str]] = []
     for source in paths:
         if source.name in RESERVED_DOC_NAMES or DAILY_META_RE.match(source.name):
@@ -122,7 +123,7 @@ def plan_renames(paths: list[Path], root: Path, cache: ArchiveTimestampCache | N
             target = source.with_name(f"{prefix}-{title}.md")
             if target in targets:
                 raise SystemExit(f"internal collision while planning target: {target}")
-            if target.exists() and target != source:
+            if target.exists() and target != source and target.resolve() not in source_paths:
                 raise SystemExit(f"target already exists; refusing ambiguous rename order: {target}")
 
             reasons: list[str] = []
@@ -180,8 +181,43 @@ def stage_rename(rename: Rename, root: Path) -> list[Path]:
         return [rename.target]
 
 
+def move_path(source: Path, target: Path, root: Path) -> None:
+    source_rel = source.relative_to(root).as_posix()
+    target_rel = target.relative_to(root).as_posix()
+    if git_is_tracked(source, root):
+        subprocess.check_call(["git", "mv", "--", source_rel, target_rel], cwd=root)
+    else:
+        source.rename(target)
+        subprocess.check_call(["git", "add", "--", target_rel], cwd=root)
+
+
+def temporary_path_for(rename: Rename, index: int) -> Path:
+    base = rename.source.with_name(f".normalize-tmp-{index:04d}-{rename.source.name}")
+    candidate = base
+    suffix = 1
+    while candidate.exists():
+        candidate = base.with_name(f"{base.name}.{suffix}")
+        suffix += 1
+    return candidate
+
+
 def apply_renames(renames: list[Rename], root: Path, cache: ArchiveTimestampCache | None = None) -> list[Path]:
     changed_paths: list[Path] = []
+    source_set = {rename.source.resolve() for rename in renames}
+    has_target_chain = any(rename.target.resolve() in source_set for rename in renames)
+    if has_target_chain:
+        staged: list[tuple[Rename, Path]] = []
+        for index, rename in enumerate(renames, 1):
+            temp = temporary_path_for(rename, index)
+            move_path(rename.source, temp, root)
+            staged.append((rename, temp))
+        for rename, temp in staged:
+            move_path(temp, rename.target, root)
+            changed_paths.extend([rename.source, rename.target])
+            if cache is not None:
+                cache.record_rename(rename.source, rename.target, rename.timestamp)
+        return changed_paths
+
     for rename in renames:
         changed_paths.extend(stage_rename(rename, root))
         if cache is not None:
