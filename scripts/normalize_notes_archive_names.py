@@ -270,6 +270,42 @@ def apply_manifest_path_updates(
     return manifest_path
 
 
+def seed_cache_from_conversation_manifest(
+    cache: ArchiveTimestampCache,
+    root: Path,
+    manifest_path: Path,
+) -> None:
+    manifest_path = resolve_manifest_path(manifest_path, root)
+    if not manifest_path.exists():
+        return
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return
+    note_paths: list[Path] = []
+    rows: list[tuple[Path, str]] = []
+    for row in data.get("notes", []):
+        note = row.get("note")
+        first_timestamp = row.get("first_timestamp")
+        if not isinstance(note, str) or not isinstance(first_timestamp, str):
+            continue
+        note_path = (root / note).resolve()
+        if not note_path.exists():
+            continue
+        note_paths.append(note_path)
+        rows.append((note_path, first_timestamp))
+    cache.prepare(note_paths)
+    for note_path, first_timestamp in rows:
+        try:
+            timestamp = parse_git_timestamp(first_timestamp)
+        except ValueError:
+            continue
+        cache.record_path(
+            note_path,
+            TimestampInfo(timestamp, "conversation manifest first timestamp"),
+        )
+
+
 def commit_paths(paths: list[Path], root: Path, message: str) -> None:
     rels: list[str] = []
     seen: set[str] = set()
@@ -362,6 +398,8 @@ def main() -> int:
             raise SystemExit(f"not an archive-note file: {path}")
 
     cache = ArchiveTimestampCache.load(root, args.timestamp_cache)
+    cache.prepare(paths)
+    seed_cache_from_conversation_manifest(cache, root, args.manifest)
     renames = plan_renames(paths, root, cache)
     mode = "check" if args.check else "dry-run" if args.dry_run else "apply"
     print_plan(renames, root, mode, len(paths))
