@@ -22,10 +22,14 @@ a row here with status ✅, or unless it ships with the ⚠/❌ caveat recorded 
 |---|---|---|
 | ✅ VERIFIED | recompute matches the stated claim within rounding | 16 |
 | ⚠ RECONCILE | recompute differs — both numbers + reason recorded | 5 |
-| ❌ UNSUPPORTED | cannot be reproduced from any on-disk file — **flag loudly** | 1 |
-| ⏳ PENDING | depends on a run in progress (held-out judged c13–c24) | 1 |
+| ❌ UNSUPPORTED / does-not-reproduce | cannot be reproduced from disk, OR reproduced and FAILED | 2 |
+| ⏳ PENDING | — | 0 |
 
-### ❌ UNSUPPORTED — read first (1)
+### ❌ UNSUPPORTED / FAILED-REPRODUCTION — read first (2)
+- **REC-5: judged sense +12pp is RENDER-FRAGILE — the positive control FAILED.** Under a clean
+  current-code render + one consistent judge, sense collapses +8.7→+1.0 (null). Together with the
+  render-fragile referent, **neither positive headline reproduces.** The paper cannot be led by a
+  stable recovery claim. THIS IS THE SESSION'S DECISIVE RESULT. (Row REC-5, commit f516bb9.)
 - **F2 "H-pack most accurate on evicted facts, 38/48 = 79%".** H-pack recalls
   **0/24** evicted facts on disk (30B) and **0/24** at 4B. No file anywhere in
   `results/` reproduces 38/48. **Do not ship the accuracy phrasing.** (Row F2-2.)
@@ -42,9 +46,9 @@ a row here with status ✅, or unless it ships with the ⚠/❌ caveat recorded 
   gives 80.6%→5.6% (n=36).** n=320 figure cited to DECISIONS prose; source JSON not
   located this pass.
 
-### ⏳ PENDING (1)
-- Held-out judged sense +12pp on c13–c24 (the DRAFT's central [BLOCKED] test). Not on
-  disk yet; `judge_semantic*_holdout/` not present.
+### ⏳ PENDING (0)
+- (Held-out c13–c24 judged test is now MOOT: the c01–c12 baseline positive control already
+  failed under clean code — REC-5. Held-out generation still finishing to complete the render set.)
 
 ---
 
@@ -113,12 +117,21 @@ a row here with status ✅, or unless it ships with the ⚠/❌ caveat recorded 
   the canonical `judged_bootstrap.py` pools {0.25,1.0}. **Use the bootstrap numbers**
   (+3.3 / +12.0 / +9.7); retire the "+2 / +10" prose values.
 
-### REC-5 · Held-out judged reproduction ⏳ PENDING
-- **CLAIM:** does judged sense +12pp survive on held-out c13–c24? (DRAFT's central
-  [BLOCKED] test.)
-- **STATUS:** No `results/judge_semantic_holdout*` on disk at f4b6a89. Cannot compute.
-  Builder is ready (`scripts/build_judge_batches.py --raw-dir … --convs c13…`).
-  Generation running locally (brief condition, `results/raw_brief_repro/`).
+### REC-5 · Judged sense reproduction under clean render ❌ DOES NOT REPRODUCE (render-fragile) — commit f516bb9
+- **CLAIM tested:** does judged sense +12pp reproduce? (The DRAFT's central spine.)
+- **RESULT (2026-07-09):** NO. Regenerated c01–c12 under a clean current-code BRIEF render
+  (`results/raw_brief_repro/`) and judged with ONE consistent Sonnet judge across renders:
+  - sense: original render **+8.7 [0.0,17.7]** → clean re-render **+1.0 [−5.2,+7.3]** (null)
+  - referent: +9.7 [−7.9,28.3] → +5.2 [−7.3,14.6] (both span 0); stance judge-unstable.
+  The +12.0→+8.7 gap is judge calibration; the **+8.7→+1.0 collapse is the RENDER** (MoE
+  hardware-nondeterminism, render-noise SD ≈ effect at n=12).
+- **CONCLUSION:** BOTH positive headlines (referent logprob + judged sense) are render-fragile
+  and do NOT reproduce on an independent render. The graft's meaning-recovery effect is not a
+  robust finding; the paper cannot be led by a stable recovery claim (see FINDINGS banner pt 4).
+- **RECOMPUTE:** `scripts/judged_bootstrap.py --graft-glob results/judge_semantic_brief_base/verdicts_*.json
+  --base-glob results/judge_semantic_base_brief_base/verdicts_*.json` (clean); `…/judge_semantic{,_base}/reverdict_*.json` (original, same judge).
+- **NOTE:** held-out c13–c24 (generating) is now moot for the headline — the baseline positive
+  control already failed under clean code.
 
 ### REC-6 · SWE-Gym / OpenHands coding trajectories (real non-synthetic content) ✅ VERIFIED
 - **CLAIM:** tuned ValueGraft (E-tuned, α=0.75) recovers **+0.0156 nats/token** on true
