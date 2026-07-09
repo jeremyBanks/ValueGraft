@@ -209,6 +209,67 @@ INTERPRETATION = (
 )
 
 
+# --------------------------------------------------------------------------- #
+# COMPRESSION SWEEP (SC_SUMMARY_LEVEL) -- vary ONLY the self-gen summary
+# length/detail budget along a MONOTONIC compression axis, holding model / dtype
+# / corpus / intervention / placebo FIXED. Tests whether the value-graft benefit
+# CONCENTRATES under aggressive compaction (positives lived under BRIEF; the
+# per-layer champion is null under the realistic SUMMARY_REQUEST). Each level is a
+# self-gen summary REQUEST; the harness MEASURES the realized compression ratio
+# (clean-summary_tokens / full_context_tokens) per conv so "aggressive vs
+# realistic" is a NUMBER, reported alongside raw_EB + content-specificity. Level
+# 'realistic' == the current SUMMARY_REQUEST null condition (DEFAULT; byte-
+# unchanged when SC_SUMMARY_LEVEL is unset). BRIEF and REALISTIC reuse the
+# existing arms_common requests; ULTRA and MEDIUM are constructed intermediates
+# that vary ONLY the length/detail budget in the same instruction style.
+# --------------------------------------------------------------------------- #
+_ULTRA_REQUEST = (
+    "Please write a ONE-SENTENCE context note (at most 25 words) giving only the "
+    "single most important thing about our conversation so far. No lists, no "
+    "specific details, no names or numbers. Do not add commentary before or after "
+    "the note itself.")
+_MEDIUM_REQUEST = (
+    "Please write a short context note (about 150 words) summarizing our "
+    "conversation so far, for someone who will continue this conversation without "
+    "seeing it. Cover the main decisions made, the key terms we introduced, and "
+    "the open threads. Include the most important specifics but omit minor "
+    "detail. Write it as flowing prose. Do not add commentary before or after the "
+    "note itself.")
+
+
+def compression_levels() -> dict:
+    """Ordered compression ladder {name: (request_text, approx_words, regime)},
+    MOST-AGGRESSIVE first. BRIEF/REALISTIC/PROD reuse the existing arms_common
+    requests (imported lazily so this module stays CPU-import-safe)."""
+    from arms_common import (  # noqa: PLC0415
+        SUMMARY_REQUEST, SUMMARY_REQUEST_BRIEF, SUMMARY_REQUEST_PROD)
+    return {
+        "ultra":     (_ULTRA_REQUEST, 25, "very-aggressive (~1 sentence, <=25w)"),
+        "brief":     (SUMMARY_REQUEST_BRIEF, 70, "aggressive (3-5 sentences)"),
+        "medium":    (_MEDIUM_REQUEST, 150, "moderate (~150 words)"),
+        "realistic": (SUMMARY_REQUEST, 400,
+                      "realistic (~300-500 words; current null condition)"),
+        "prod":      (SUMMARY_REQUEST_PROD, 400,
+                      "faithful (~300-500 words, OpenHands-condenser style)"),
+    }
+
+
+def resolve_summary_level(default_request):
+    """Resolve SC_SUMMARY_LEVEL -> (name, request_text, approx_words, regime).
+    Unset or 'realistic' -> the passed default request (behavior byte-unchanged).
+    An unknown level FAILS LOUD rather than silently scoring the wrong regime."""
+    name = (os.environ.get("SC_SUMMARY_LEVEL") or "").strip().lower()
+    if not name or name == "realistic":
+        return ("realistic", default_request, 400,
+                "realistic (~300-500 words; current null condition)")
+    levels = compression_levels()
+    if name not in levels:
+        raise ValueError(
+            f"SC_SUMMARY_LEVEL={name!r} not in {sorted(levels)}")
+    req, words, regime = levels[name]
+    return (name, req, words, regime)
+
+
 def bootstrap_ci_95(values, n_boot=10000, seed=0):
     """Percentile bootstrap 95% CI of the mean (pure python, no numpy)."""
     vals = [v for v in values if v is not None]
@@ -1106,7 +1167,8 @@ def checkpoint_path(out_dir: Path, model: str, window_pos: int,
 
 
 def render_fingerprint(model_id: str, *, conv_start: int, native_render: bool,
-                       native_max_reply: int, native_temp: float) -> dict:
+                       native_max_reply: int, native_temp: float,
+                       summary_request_sha256: str | None = None) -> dict:
     """Only the parameters that determine the GENERATED TEXT of a conversation --
     the native in-context replies AND (deterministically, fixed seed) the self-gen
     summary. A checkpoint's saved render (messages + summary) is REUSABLE by any
@@ -1128,6 +1190,10 @@ def render_fingerprint(model_id: str, *, conv_start: int, native_render: bool,
         "native_render": native_render,
         "native_max_reply": native_max_reply,
         "native_temp": native_temp,
+        # The self-gen summary IS part of the render, so a compression-level change
+        # (different summary request) MUST invalidate a saved summary. Without this
+        # a level-2 run in a shared out-dir would silently reuse level-1's summary.
+        "summary_request_sha256": summary_request_sha256,
     }
 
 
@@ -1140,7 +1206,8 @@ def run_fingerprint(model_id: str, *, conv_start: int, alpha_v: float, seed: int
                     champion_scan: int, champion_regions,
                     ablate_qk_norm_flag: bool, ablate_lambda_values,
                     alpha0_tol: float, change_tol: float,
-                    champion_cfg=None) -> dict:
+                    champion_cfg=None,
+                    summary_request_sha256: str | None = None) -> dict:
     """Every parameter that can change a per-conversation NUMBER. A checkpoint is
     only reused when its fingerprint matches the current run's -- so a run with a
     different alpha / seed / gate / control config never silently pools stale or
@@ -1177,6 +1244,9 @@ def run_fingerprint(model_id: str, *, conv_start: int, alpha_v: float, seed: int
         # save/reload round-trip (int map keys -> str on disk).
         "champion_cfg": (json.dumps(champion_cfg, sort_keys=True)
                          if champion_cfg else None),
+        # Compression sweep: the summary request determines the self-gen summary,
+        # which changes every per-conv NUMBER -> a level change recomputes.
+        "summary_request_sha256": summary_request_sha256,
     }
 
 
@@ -1814,6 +1884,11 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     )
 
     from arms_common import SUMMARY_REQUEST as _REQ  # noqa: PLC0415
+    # COMPRESSION SWEEP: SC_SUMMARY_LEVEL overrides the self-gen summary request
+    # (unset/'realistic' -> unchanged _REQ). This single override covers EVERY
+    # self-gen call site (all use _REQ). The realized compression ratio is
+    # MEASURED per conv below and aggregated into doc["compression"].
+    (_summ_level, _REQ, _summ_words, _summ_regime) = resolve_summary_level(_REQ)
     from arms_hf import generate_summary_hf, rope_base  # noqa: PLC0415
     from kvlib_hf import (  # noqa: PLC0415
         blend_values,
@@ -2013,16 +2088,19 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         },
         metric=prov.METRIC_CHAT_RAW_EB,
         condition={
-            # SUMMARY_REQUEST = "thorough context note, ~300-500 words" =>
-            # REALISTIC-LENGTH (moderate) compression, NOT the aggressive/lossy
-            # BRIEF request the SWE-Gym +0.0156 and judged +12pp headlines used.
-            "summary_kind": ("self-gen SUMMARY_REQUEST (realistic ~300-500w)"
+            # COMPRESSION SWEEP: the summary request now varies by SC_SUMMARY_LEVEL
+            # (ultra/brief/medium/realistic/prod). 'realistic' == the current null
+            # condition; the measured ratio is filled after the conv loop.
+            "summary_kind": (f"self-gen level={_summ_level} ({_summ_regime})"
                              if (native_render or selfgen_declared)
                              else doc["summary_source"]),
             "summary_request_sha256": prov.sha256_text(_REQ),
             "summary_source": doc["summary_source"],
             "summary_selfgen_declared": bool(selfgen_declared or native_render),
-            "summary_compression_regime": "realistic-length (SUMMARY_REQUEST, ~300-500 words)",
+            "summary_compression_level": _summ_level,
+            "summary_compression_regime": _summ_regime,
+            "summary_target_words": _summ_words,
+            "measured_compression_ratio_mean": None,  # filled after the conv loop
         },
         corpus={
             "name": ("native in-context render (design v2)" if native_render
@@ -2193,7 +2271,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         ablate_qk_norm_flag=ablate_qk_norm_flag,
         ablate_lambda_values=ablate_lambda_values,
         alpha0_tol=alpha0_tol, change_tol=change_tol,
-        champion_cfg=champion_cfg)
+        champion_cfg=champion_cfg,
+        summary_request_sha256=prov.sha256_text(_REQ))
 
     # ---- CHAMPION graft config (per-layer alpha-map OR per-head slot mask) ----
     # Resolve the tuned config ONCE into the exact args blend_values takes. When
@@ -2226,7 +2305,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     # only re-forward-passes to re-score. ck_fp gates the exact SCORE replay.
     render_fp = render_fingerprint(
         model_id, conv_start=conv_start, native_render=native_render,
-        native_max_reply=native_max_reply, native_temp=native_temp)
+        native_max_reply=native_max_reply, native_temp=native_temp,
+        summary_request_sha256=prov.sha256_text(_REQ))
     resume_skip_ok = resume_enabled and placebo_mode != "shuffle_probe"
     # self-gen summaries reused from checkpoints (keyed by conv id) so a resumed /
     # render-reusing run regenerates NO summary. Populated during render assembly
@@ -2567,11 +2647,35 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 for i in range(len(value_align_sum)):
                     value_align_sum[i] += p["value_align"][i]
 
+    # COMPRESSION SWEEP: per-conv realized ratio (clean-summary tokens / full-
+    # context tokens). Quantifies "aggressive vs realistic" as a NUMBER; aggregated
+    # into doc["compression"] + the manifest after the loop.
+    compression_rows: list = []
+
+    def _measure_compression(conv, summary_text):
+        """Realized compression ratio for one conv: the CLEAN self-gen summary
+        (what actually lands in the compacted B context, reasoning block stripped)
+        over the FULL pre-compaction context tokens. Best-effort; None on any
+        tokenization failure (never blocks the checkpoint)."""
+        try:
+            full_ctx = len(canonical_ids_any(
+                tok, conv["messages"][:-1], render_hf))
+            clean = strip_reasoning_block(summary_text) or summary_text
+            summ_tok = len(tok(clean, add_special_tokens=False).input_ids)
+            ratio = (summ_tok / full_ctx) if full_ctx else None
+            return {"conv_id": conv.get("id"), "summary_tokens": summ_tok,
+                    "full_ctx_tokens": full_ctx, "ratio": ratio}
+        except Exception:  # noqa: BLE001
+            return {"conv_id": conv.get("id"), "summary_tokens": None,
+                    "full_ctx_tokens": None, "ratio": None}
+
     def _write_scored_ck(pos, cid, conv, plants, summary_text, base):
         """Atomically persist this conv's FULL contribution (render spec +
         self-gen summary + per-plant lp_A for the pooled floor + the accumulator
         delta) as stage=scored, BEFORE the next conv starts."""
         payload = _delta(base)
+        comp = _measure_compression(conv, summary_text)
+        compression_rows.append(comp)
         # scan_lpa = the RELATIVE pre-scan's OWN per-conv lp_A (all non-short-gold
         # plants, INCLUDING empty-align convs whose main-loop early-return leaves
         # per_cat/task_excluded empty). Deriving from those rows would silently drop
@@ -2586,7 +2690,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             "render": {"conv": conv, "plants": plants,
                        "reply_records": reply_records_by_pos.get(pos, [])},
             "summary_text": summary_text, "scan_lpa": scan, "payload": payload,
-            "_manifest": manifest})
+            "compression": comp, "_manifest": manifest})
 
     try:
         def _process_conv(conv, plants, _ci):
@@ -3044,6 +3148,55 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "change_tol": change_tol,
     }
     doc["n_plants"] = n_plants
+    # ---- COMPRESSION SWEEP aggregate: realized ratio at THIS summary level. ----
+    # Read authoritatively from the on-disk scored checkpoints (resume-safe: a
+    # reused checkpoint contributes its saved "compression" even if this process
+    # never re-scored that conv). raw_EB / content_specificity below are then
+    # reported AS A FUNCTION of this measured ratio across the sweep's levels.
+    _comp_rows = list(compression_rows)
+    try:
+        _seen = {r.get("conv_id") for r in _comp_rows}
+        for _cf in sorted(checkpoint_dir(out_dir, model_id).glob("conv_*.json")):
+            try:
+                _ck = json.loads(_cf.read_text())
+            except Exception:  # noqa: BLE001
+                continue
+            _c = _ck.get("compression")
+            if _c and _c.get("conv_id") not in _seen:
+                _comp_rows.append(_c)
+                _seen.add(_c.get("conv_id"))
+    except Exception:  # noqa: BLE001
+        pass
+    _ratios = [r["ratio"] for r in _comp_rows
+               if r and r.get("ratio") is not None]
+    _summ_toks = [r["summary_tokens"] for r in _comp_rows
+                  if r and r.get("summary_tokens") is not None]
+    _ctx_toks = [r["full_ctx_tokens"] for r in _comp_rows
+                 if r and r.get("full_ctx_tokens") is not None]
+    _ratio_mean = (sum(_ratios) / len(_ratios)) if _ratios else None
+    doc["compression"] = {
+        "level": _summ_level,
+        "regime": _summ_regime,
+        "target_words": _summ_words,
+        "summary_request_sha256": prov.sha256_text(_REQ),
+        "ratio_mean": _ratio_mean,
+        "ratio_min": (min(_ratios) if _ratios else None),
+        "ratio_max": (max(_ratios) if _ratios else None),
+        "mean_summary_tokens": (sum(_summ_toks) / len(_summ_toks)
+                                if _summ_toks else None),
+        "mean_full_ctx_tokens": (sum(_ctx_toks) / len(_ctx_toks)
+                                 if _ctx_toks else None),
+        "n_convs": len(_ratios),
+        "per_conv": _comp_rows,
+    }
+    # backfill the manifest's measured ratio now that it is known.
+    try:
+        manifest["condition"]["measured_compression_ratio_mean"] = _ratio_mean
+        prov.write_run_manifest(out_dir, manifest,
+                                name=f"manifest__{_slug(model_id)}.json")
+    except Exception:  # noqa: BLE001
+        pass
+
     doc["pre_graft_gap"] = bootstrap_ci_95(pre_gaps)
     # PRIMARY aggregate metric: raw_EB = mean(lp_E - lp_B) over all plants.
     # The CI is CONVERSATION-CLUSTERED (resample whole conversations with
