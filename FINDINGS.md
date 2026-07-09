@@ -125,6 +125,12 @@ fabrication reduction Compacted→H-pack: decoy **+66.7pp CI[+45.8,+87.5]**, evi
 > fabrication 67%→**admission** 96% (4% fab). CORRECTED claim: write-time-KV **suppresses fabrication /
 > induces admission**, does NOT restore recall. Trace the 38/48 source; likely an overclaim or different corpus.
 
+**bf16 REPLICATION (2026-07-09, results/phase2_30b_bf16_verdicts.json, conv-clustered):** the packed-KV
+admission effect is NOT a 4-bit artifact — it holds at bf16: decoy fabrication↓ Compacted 79%→H-pack 17%
+**+62.5pp CI[+41.7,+83.3]**; evicted **+20.8pp CI[+8.3,+33.3]** (both significant; evicted smaller because bf16
+baseline fabricates less). STILL H-pack (packed coupled-KV, NOT value-only ValueGraft) + content-agnostic →
+a robust SUPPORTING mechanism finding, not a ValueGraft cornerstone. Recompute: the B-vs-H-pack conv-clustered bootstrap over phase2_30b_bf16_verdicts.json.
+
 ## F3. Tuning finding (banked). Naive full-strength grafting (alpha=1) can
 catastrophically break a task (chain s1: 0/4 where all else 4/4); per-layer
 guard-validated tuning eliminates the instability (champion 16/16). Layer
