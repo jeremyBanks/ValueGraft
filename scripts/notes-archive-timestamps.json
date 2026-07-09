@@ -182,384 +182,424 @@
       "archive_timestamp_utc": "2026-07-06T04:44:53Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070637-handoff.md": {
+    "notes/2026070637-conversation-user-gpt55.md": {
+      "object_id": "a51e79f6c9cd1f6b77c608d08a83c558ddcd2a21",
+      "archive_timestamp_utc": "2026-07-06T05:01:24Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070638-handoff.md": {
       "object_id": "87e8ac77f6f43724769514513aa4abbeec84fd74",
       "archive_timestamp_utc": "2026-07-06T05:36:18Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070638-shift-log.md": {
+    "notes/2026070639-shift-log.md": {
       "object_id": "48c0cf49f999b5e5efea995cb2f603ef6d4ad540",
       "archive_timestamp_utc": "2026-07-06T05:36:18Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070639-conversation-fable5.md": {
+    "notes/2026070640-conversation-fable5.md": {
       "object_id": "98d208af739faa8d7d568bfaf1e5e609e70eb0c8",
       "archive_timestamp_utc": "2026-07-06T06:08:00Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070640-morning-report.md": {
+    "notes/2026070641-morning-report.md": {
       "object_id": "f516fe12d3e7a39c1c7f1ef847a1e388e3fe3a43",
       "archive_timestamp_utc": "2026-07-06T08:52:04Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070641-day-plan.md": {
+    "notes/2026070642-day-plan.md": {
       "object_id": "f3094c26323f69568b8b4746ca4950590d5d17e1",
       "archive_timestamp_utc": "2026-07-06T10:58:29Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070642-conversation-user-gpt55.md": {
+    "notes/2026070643-conversation-user-gpt55.md": {
       "object_id": "8a56909b0b71c4718c975f68f9b959f51f3ac9c9",
       "archive_timestamp_utc": "2026-07-06T11:03:53Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070643-conversation-user-fable5.md": {
+    "notes/2026070644-conversation-user-fable5.md": {
       "object_id": "77faa5a12743c2150633c9910eccd6e970135b54",
       "archive_timestamp_utc": "2026-07-06T11:10:43Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070644-nomenclature-reframing-note.md": {
+    "notes/2026070645-nomenclature-reframing-note.md": {
       "object_id": "1a9dc278a7e04d669b89f82fa3e9cff0c88b46a9",
       "archive_timestamp_utc": "2026-07-06T12:08:57Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070645-controlled-key-graft-reframing.md": {
+    "notes/2026070646-controlled-key-graft-reframing.md": {
       "object_id": "acc3ef1b057589c446fc728985f4f3e46a440d85",
       "archive_timestamp_utc": "2026-07-06T12:38:51Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070646-standard-tasks-scouting.md": {
+    "notes/2026070647-standard-tasks-scouting.md": {
       "object_id": "dcb907ae8c39e748590147b7706ed2dfc4d6dfb2",
       "archive_timestamp_utc": "2026-07-06T13:22:55Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070647-valuegraft-focused-draft-2026-07-06.md": {
+    "notes/2026070648-valuegraft-focused-draft-2026-07-06.md": {
       "object_id": "cc52e2b8639e319f6a3d86021e8e4c7c11b10997",
       "archive_timestamp_utc": "2026-07-06T13:52:46Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070648-conversation-user-fable5.md": {
+    "notes/2026070649-conversation-user-fable5.md": {
       "object_id": "0c14cc21dc45345577797de905e58e767badf653",
       "archive_timestamp_utc": "2026-07-06T16:05:13Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070649-fallback-tiers-scouting.md": {
+    "notes/2026070650-fallback-tiers-scouting.md": {
       "object_id": "133a634042877f215528c68e956b692716394cb9",
       "archive_timestamp_utc": "2026-07-06T17:12:55Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070650-forensics-flask5063-tier0.md": {
+    "notes/2026070651-forensics-flask5063-tier0.md": {
       "object_id": "c7a99f2afb8553c72946aeac1f377d69fd6ff41e",
       "archive_timestamp_utc": "2026-07-06T18:01:37Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070651-pipeline-audit.md": {
+    "notes/2026070652-pipeline-audit.md": {
       "object_id": "052ec4722bdb61f305364aedf5b99b5a872d12f5",
       "archive_timestamp_utc": "2026-07-06T18:18:40Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070652-conversation-user-gpt55.md": {
+    "notes/2026070653-conversation-user-gpt55.md": {
       "object_id": "9f693a8a55f8f7f8c7bd77f39fee45ef91acb05d",
       "archive_timestamp_utc": "2026-07-06T18:19:01Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070653-conversation-user-fable5.md": {
+    "notes/2026070654-conversation-user-fable5.md": {
       "object_id": "b3bd10856ddc62b0fca585548ca8b365c4ab2159",
       "archive_timestamp_utc": "2026-07-06T21:26:38Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070654-vendor-benchmarks-scouting.md": {
+    "notes/2026070655-vendor-benchmarks-scouting.md": {
       "object_id": "6d928decfbeb6ad43df894d983c74db7bff41ff1",
       "archive_timestamp_utc": "2026-07-06T22:29:42Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070655-conversation-user-gpt55.md": {
+    "notes/2026070656-conversation-user-gpt55.md": {
       "object_id": "d168f43f7fa0e1f5bdb08851b560cd6aa731b53f",
       "archive_timestamp_utc": "2026-07-06T23:51:57Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070706-conversation-user-opus48-fable5.md": {
+    "notes/2026070707-conversation-user-opus48-fable5.md": {
       "object_id": "94d3115ba8597d46a8ee50e218f449dc53a7f548",
       "archive_timestamp_utc": "2026-07-07T00:11:43Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070707-conversation-user-gpt55.md": {
+    "notes/2026070708-conversation-user-gpt55.md": {
       "object_id": "7b93808db53c9e276144845dff43d122fc86d313",
       "archive_timestamp_utc": "2026-07-07T02:12:05Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070708-handoff-note-jlens-global-workspace.md": {
+    "notes/2026070709-handoff-note-jlens-global-workspace.md": {
       "object_id": "f9e00949fa9a2f87bb3d6fe363ff6351d7d496fc",
       "archive_timestamp_utc": "2026-07-07T02:12:55Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070709-plain-conversation-readout-notes.md": {
+    "notes/2026070710-plain-conversation-readout-notes.md": {
       "object_id": "dc1dcd7547863085ac32c342ed813dc85867ed1d",
       "archive_timestamp_utc": "2026-07-07T04:03:02Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070710-pokemon-readout-notes.md": {
+    "notes/2026070711-pokemon-readout-notes.md": {
       "object_id": "ad554afd21d3983563c50786f1f0ddb2428fb22e",
       "archive_timestamp_utc": "2026-07-07T04:03:02Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070711-readme.md": {
+    "notes/2026070712-readme.md": {
       "object_id": "a760b8e66059b862049b8c997d6c1f35408bb171",
       "archive_timestamp_utc": "2026-07-07T04:03:02Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070712-semantic-readout-blog-draft.md": {
+    "notes/2026070713-semantic-readout-blog-draft.md": {
       "object_id": "658aaea917f0f070146bb5f9f90bb53b8712e3e6",
       "archive_timestamp_utc": "2026-07-07T04:07:22Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070713-swegym-next-action-readout-notes.md": {
+    "notes/2026070714-swegym-next-action-readout-notes.md": {
       "object_id": "732d3bdc5eb5e522de602fbeba73e0384e7340dc",
       "archive_timestamp_utc": "2026-07-07T04:13:42Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070714-conversation-opus48.md": {
+    "notes/2026070715-conversation-opus48.md": {
       "object_id": "57d0eb4617bbfd81b5cbae24ea2c5365c69d0d4a",
       "archive_timestamp_utc": "2026-07-07T06:40:27Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070715-conversation-user-gpt55.md": {
+    "notes/2026070716-conversation-user-gpt55.md": {
       "object_id": "5618ec6950589b0927090b0a913fe6483dec76dd",
       "archive_timestamp_utc": "2026-07-07T10:39:04Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070716-conversation-user-opus48-fable5.md": {
+    "notes/2026070717-conversation-user-opus48-fable5.md": {
       "object_id": "a362abf20336fd2b9f1884556749c15b081d55ca",
       "archive_timestamp_utc": "2026-07-07T10:42:46Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070717-next-token-readout-control-report.md": {
+    "notes/2026070718-next-token-readout-control-report.md": {
       "object_id": "cecf3c33da951cad68eae7f1b468487958ac6471",
       "archive_timestamp_utc": "2026-07-07T11:15:58Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070718-full-layer-sweep-handoff.md": {
+    "notes/2026070719-full-layer-sweep-handoff.md": {
       "object_id": "2c61e6e9464e618864b1d8a712927e590f976e40",
       "archive_timestamp_utc": "2026-07-07T11:30:42Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070719-worklog.md": {
+    "notes/2026070720-worklog.md": {
       "object_id": "bf2065bf17e54a741d396aed29546d56525fb78e",
       "archive_timestamp_utc": "2026-07-07T11:57:42Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070720-full-layer-sweep-report.md": {
+    "notes/2026070721-full-layer-sweep-report.md": {
       "object_id": "810d89f057bd0c5466e86065ed3eb9f2c2532fba",
       "archive_timestamp_utc": "2026-07-07T12:03:18Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070721-interpreting-valuegraft-examples.md": {
+    "notes/2026070722-interpreting-valuegraft-examples.md": {
       "object_id": "210d3788f015d6e015f0fb22aad78566a98dd060",
       "archive_timestamp_utc": "2026-07-07T12:21:27Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070722-valuegraft-jlens-standalone-explainer.md": {
+    "notes/2026070723-valuegraft-jlens-standalone-explainer.md": {
       "object_id": "8dfac11686f30d71fbbcb4066bb4308e3d981726",
       "archive_timestamp_utc": "2026-07-07T12:21:27Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070723-provenance-correction.md": {
+    "notes/2026070724-provenance-correction.md": {
       "object_id": "d927edac73b1564b53bc2e52c863a1df9a9cd815",
       "archive_timestamp_utc": "2026-07-07T12:29:28Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070724-experiments.md": {
+    "notes/2026070725-experiments.md": {
       "object_id": "38969ddc5aae214bfb6549a737065aec5b31f5ad",
       "archive_timestamp_utc": "2026-07-07T13:17:35Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070725-story-consistency-design.md": {
+    "notes/2026070726-story-consistency-design.md": {
       "object_id": "1c6a7ab852dc2b563c09697e45b48fd544c7469a",
       "archive_timestamp_utc": "2026-07-07T13:23:41Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070726-valuegraft-four-sequence-intervention-probe.md": {
+    "notes/2026070727-valuegraft-four-sequence-intervention-probe.md": {
       "object_id": "660a66ae7e277236c64112c83ad93da11bb38c5f",
       "archive_timestamp_utc": "2026-07-07T13:41:35Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070727-concept-readout-design.md": {
+    "notes/2026070728-concept-readout-design.md": {
       "object_id": "ffbd283e5a36f4cb98605245ab7422d620c7fc4a",
       "archive_timestamp_utc": "2026-07-07T14:07:35Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070728-report-plan.md": {
+    "notes/2026070729-report-plan.md": {
       "object_id": "15e75d186f1c1c7a528e211c38142d2888a25f61",
       "archive_timestamp_utc": "2026-07-07T14:17:30Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070729-report-draft.md": {
+    "notes/2026070730-report-draft.md": {
       "object_id": "9897b8384c72db82ef496df0bf2190046ea82ee4",
       "archive_timestamp_utc": "2026-07-07T14:37:24Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070730-report.md": {
+    "notes/2026070731-report.md": {
       "object_id": "6d6b0b258ecfcbdbf4bc475c1dc449906b7816c2",
       "archive_timestamp_utc": "2026-07-07T14:37:24Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070731-intervention-batch-run-note.md": {
+    "notes/2026070732-intervention-batch-run-note.md": {
       "object_id": "8875608d6dd17bc92e1f4ce5dafc22883588685b",
       "archive_timestamp_utc": "2026-07-07T15:32:40Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070732-intervention-probe-findings.md": {
+    "notes/2026070733-intervention-probe-findings.md": {
       "object_id": "d1c1d77772679636f914a32a7e2477b2aaded03c",
       "archive_timestamp_utc": "2026-07-07T15:56:13Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070733-conversation-user-opus48.md": {
+    "notes/2026070734-conversation-user-opus48.md": {
       "object_id": "1cb0cca216e5015795d41f0795277fc3a3360b13",
       "archive_timestamp_utc": "2026-07-07T16:15:01Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070734-report2-plan.md": {
+    "notes/2026070735-report2-plan.md": {
       "object_id": "ef86c344ef245054edaf6f4530549f58a670dfc1",
       "archive_timestamp_utc": "2026-07-07T16:30:52Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070735-report-synthesis.md": {
+    "notes/2026070736-report-synthesis.md": {
       "object_id": "3b169424cee0b562cd06d29b49d22ff8b37d3dd0",
       "archive_timestamp_utc": "2026-07-07T17:33:10Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070736-referent-recovery-harness.md": {
+    "notes/2026070737-conversation-user-gpt55.md": {
+      "object_id": "dbb21a3206720e0041127bb1593614df8a27bfb2",
+      "archive_timestamp_utc": "2026-07-07T17:39:16Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070738-referent-recovery-harness.md": {
       "object_id": "992f09baec70830ae92162333cd043b34f136d72",
       "archive_timestamp_utc": "2026-07-07T19:26:55Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070737-microtest-results.md": {
+    "notes/2026070739-microtest-results.md": {
       "object_id": "3fef0eacb83b68b2fb7949fdd1cecf6b51ca0bfa",
       "archive_timestamp_utc": "2026-07-07T19:36:24Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070738-readme.md": {
+    "notes/2026070740-readme.md": {
       "object_id": "241933497312b0c6766e12a1f226122b8f865edb",
       "archive_timestamp_utc": "2026-07-07T19:36:24Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070739-free-divergence-design-rationale.md": {
+    "notes/2026070741-free-divergence-design-rationale.md": {
       "object_id": "debb5b484f5f4819928da2f604613df44225495f",
       "archive_timestamp_utc": "2026-07-07T19:42:38Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070740-problem-shape-exploration.md": {
+    "notes/2026070742-problem-shape-exploration.md": {
       "object_id": "b2b4f104bb114d6b86c1f0f860236d5881560bc9",
       "archive_timestamp_utc": "2026-07-07T20:00:02Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070741-problem-shape-notes.md": {
+    "notes/2026070743-problem-shape-notes.md": {
       "object_id": "4086d6bd711afe603aef0573989d47dc0ffe2410",
       "archive_timestamp_utc": "2026-07-07T20:00:02Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070742-policy-registry-followup.md": {
+    "notes/2026070744-policy-registry-followup.md": {
       "object_id": "841034e2bba4387392a673d253af824aafbf84c6",
       "archive_timestamp_utc": "2026-07-07T20:11:50Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070743-policy-registry-followup-notes.md": {
+    "notes/2026070745-policy-registry-followup-notes.md": {
       "object_id": "55bf34c91bd2b81e3c5bf3f0fdb23909565935f9",
       "archive_timestamp_utc": "2026-07-07T20:11:50Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070744-conversation-user-opus48.md": {
+    "notes/2026070746-conversation-user-opus48.md": {
       "object_id": "cacd10f7b02a1a379ad6424d5c94bd69f7f10438",
       "archive_timestamp_utc": "2026-07-07T20:59:51Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070745-topic-sensitivity-probe-initial-report.md": {
+    "notes/2026070747-conversation-user-gpt55.md": {
+      "object_id": "602354211e2e5f05f8f476ea474cbb38c4d1e4b9",
+      "archive_timestamp_utc": "2026-07-07T22:45:22Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070748-topic-sensitivity-probe-initial-report.md": {
       "object_id": "f7745f7f6bdf55997ba6d836abe807ceab5347a9",
       "archive_timestamp_utc": "2026-07-07T23:31:54Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070746-topic-sensitivity-probe-readme.md": {
+    "notes/2026070749-topic-sensitivity-probe-readme.md": {
       "object_id": "66e62bae5184d54722553017aff9ff0946f8f8c5",
       "archive_timestamp_utc": "2026-07-07T23:31:54Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070747-topic-sensitivity-probe-run-notes.md": {
+    "notes/2026070750-topic-sensitivity-probe-run-notes.md": {
       "object_id": "e4fa77a9585f3e35717af90ff23fdf393d3e38fa",
       "archive_timestamp_utc": "2026-07-07T23:32:58Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070748-topic-sensitivity-probe-observations.md": {
+    "notes/2026070751-topic-sensitivity-probe-observations.md": {
       "object_id": "43a9db4f2ec88124588e22a4d2cc787d3818d834",
       "archive_timestamp_utc": "2026-07-07T23:33:52Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070749-topic-sensitivity-probe-static-fix.md": {
+    "notes/2026070752-topic-sensitivity-probe-static-fix.md": {
       "object_id": "fa5d20f22befa04dedadb2d118a96b5bfe6bc1e0",
       "archive_timestamp_utc": "2026-07-07T23:39:07Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070750-topic-sensitivity-probe-case-specific-scores.md": {
+    "notes/2026070753-topic-sensitivity-probe-case-specific-scores.md": {
       "object_id": "16b5663e1c580ee04762f3279acd3e1ba3705cb3",
       "archive_timestamp_utc": "2026-07-07T23:43:10Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070851-conversation-user-gpt55.md": {
+    "notes/2026070854-conversation-user-gpt55.md": {
       "object_id": "523cbdf9b7910fa837b5d23ff753b624dba62465",
       "archive_timestamp_utc": "2026-07-08T00:02:38Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070852-conversation-user-opus48.md": {
+    "notes/2026070855-conversation-user-opus48.md": {
       "object_id": "7b676caa7883faa0956c39bbf77921bd814ed25a",
       "archive_timestamp_utc": "2026-07-08T00:03:18Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070853-prior-art-search-anthropic-claude-fable-high.md": {
+    "notes/2026070856-prior-art-search-anthropic-claude-fable-high.md": {
       "object_id": "a45694310f6c3a84ed1ffd950b17a62eb5babefa",
       "archive_timestamp_utc": "2026-07-08T00:26:05Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070854-prior-art-search-google-gemini-3-1-pro.md": {
+    "notes/2026070857-prior-art-search-google-gemini-3-1-pro.md": {
       "object_id": "c66c58ea58c4f2f695d908fe13575b00bcbb5718",
       "archive_timestamp_utc": "2026-07-08T00:26:05Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070855-prior-art-search-openai-gpt-5-5.md": {
+    "notes/2026070858-prior-art-search-openai-gpt-5-5.md": {
       "object_id": "d769f79a45267bfa5c573f2727d6bea00c4b6f8d",
       "archive_timestamp_utc": "2026-07-08T00:26:05Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070856-robust-f1-numbers.md": {
+    "notes/2026070859-robust-f1-numbers.md": {
       "object_id": "ea82f783ed4e1e2726e798589cc3abc005661cf6",
       "archive_timestamp_utc": "2026-07-08T00:27:36Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070857-topic-sensitivity-probe-raw-logit-compare.md": {
+    "notes/2026070860-topic-sensitivity-probe-raw-logit-compare.md": {
       "object_id": "cd03529e768766668708a42832ca434b2a27fc75",
       "archive_timestamp_utc": "2026-07-08T00:28:09Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070858-conversation-user-opus48.md": {
-      "object_id": "1276966f38bf0d9449023c05e58a242e0debe94e",
-      "archive_timestamp_utc": "2026-07-08T04:50:09Z",
-      "timestamp_source": "git current-file lifetime"
-    },
-    "notes/2026070859-conversation-user-opus48.md": {
-      "object_id": "464f09e40227f6b7b607591dbc31a3c6139357d5",
-      "archive_timestamp_utc": "2026-07-08T10:31:03Z",
-      "timestamp_source": "git current-file lifetime"
-    },
-    "notes/2026070860-conversation-user-gpt55.md": {
-      "object_id": "440a9ff5c07e5ab5c1ea0c8b26b232307e48c802",
-      "archive_timestamp_utc": "2026-07-08T11:50:11Z",
-      "timestamp_source": "git current-file lifetime"
-    },
     "notes/2026070861-conversation-user-opus48.md": {
-      "object_id": "cf8a5fa802e1d804b173dbe37c1d8454d3b77b5b",
+      "object_id": "1276966f38bf0d9449023c05e58a242e0debe94e",
       "archive_timestamp_utc": "2026-07-08T14:10:08Z",
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026070862-conversation-user-opus48.md": {
+      "object_id": "464f09e40227f6b7b607591dbc31a3c6139357d5",
+      "archive_timestamp_utc": "2026-07-08T19:34:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070863-conversation-user-gpt55.md": {
+      "object_id": "440a9ff5c07e5ab5c1ea0c8b26b232307e48c802",
+      "archive_timestamp_utc": "2026-07-08T11:50:11Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070864-conversation-user-opus48.md": {
+      "object_id": "cf8a5fa802e1d804b173dbe37c1d8454d3b77b5b",
+      "archive_timestamp_utc": "2026-07-08T14:10:08Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070865-conversation-user-gpt55.md": {
+      "object_id": "2252b6fc462f1fe29c5f664ac817664a425748d4",
+      "archive_timestamp_utc": "2026-07-08T17:20:14Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070866-conversation-user-opus48.md": {
       "object_id": "d20290c8426ef2b588a10d97055ac06e4ac0c693",
       "archive_timestamp_utc": "2026-07-08T19:34:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070867-conversation-user-gpt55.md": {
+      "object_id": "67e0c5207dc10a7ee3670d86c45ddd44b2ce71e1",
+      "archive_timestamp_utc": "2026-07-08T21:54:13Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070968-conversation-user-gpt55.md": {
+      "object_id": "01063b8d935292cdf255abe99c44cb2e3bb0706a",
+      "archive_timestamp_utc": "2026-07-09T00:00:07Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070969-conversation-user-opus48.md": {
+      "object_id": "d43d3db70184f575d642d90e880e0e58b01f31ab",
+      "archive_timestamp_utc": "2026-07-09T00:06:04Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070970-framing-provenance-correction.md": {
+      "object_id": "8532de743ff17027251819665e9c70a242620096",
+      "archive_timestamp_utc": "2026-07-09T04:03:13Z",
       "timestamp_source": "git current-file lifetime"
     }
   }
