@@ -62,9 +62,19 @@ python3 -m pip install -U pip >/dev/null
 # whole CUDA stack (model then never reaches the GPU). Freeze torch to whatever the
 # pod shipped, and cap transformers<5, via a pip CONSTRAINT that every install below
 # must respect. This is the real fix for the "package conflict" — pin, don't pray.
+# The pod's stock torch may be too OLD for modern quant libs (compressed-tensors 0.17
+# needs torch.nn.Buffer, added in torch 2.5). Install torch 2.5.1 built for the pod's
+# CUDA 12.4 driver EXPLICITLY from the cu124 index — this is the controlled upgrade,
+# NOT pip wandering off to a cu13 build that breaks the stack. Skip if already >=2.5.
+NEED_TORCH=$(python3 -c "import torch,sys; v=tuple(int(x) for x in torch.__version__.split('+')[0].split('.')[:2]); print('yes' if v < (2,5) else 'no')" 2>/dev/null)
+if [ "$NEED_TORCH" = "yes" ]; then
+  echo "torch too old for compressed-tensors; installing torch 2.5.1+cu124 (matched to driver)"
+  python3 -m pip install --no-cache-dir "torch==2.5.1" --index-url https://download.pytorch.org/whl/cu124 || true
+fi
 TORCH_LOCK=$(python3 -c "import torch;print('torch=='+torch.__version__)" 2>/dev/null)
 { echo "$TORCH_LOCK"; echo "transformers<5"; } > /tmp/pip-constraints.txt
 export PIP_CONSTRAINT=/tmp/pip-constraints.txt
+python3 -c "import torch;print('torch',torch.__version__,'cuda',torch.cuda.is_available())"
 echo "PIP_CONSTRAINT locking ${TORCH_LOCK} + transformers<5 for all installs"
 python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub pandas pyarrow || true
 # quant loader for the chosen repo (default: Intel int4-AutoRound). Alternatives if the
