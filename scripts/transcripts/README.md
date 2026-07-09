@@ -41,13 +41,19 @@ Raw transcript extraction splits at UTC day boundaries and at gaps over one
 hour. The update workflow may coalesce adjacent raw segments into one note, but
 only within a source stream and only when the inter-segment gap is at most
 `--max-coalesce-gap-hours`, default `2.0`. Crossing a UTC day boundary is
-allowed when that gap condition is still satisfied.
+allowed when that gap condition is still satisfied. Generated conversation notes
+also default to a six-hour maximum span. If a candidate note exceeds that, the
+planner prefers the largest message-to-message gap whose split point falls
+between four and five hours after the candidate note starts, falling back to the
+largest gap before six hours if the preferred window has no candidate.
 
-Use `--no-command` to write prompts only, or pass `update --command ...` to use
-a different summarizer command. Small continuations of an existing note are
-deferred by default so the script does not keep rewriting the latest note for
-the live tail created while an agent is working; use
-`--force-small-continuations` only when that is intentional.
+Use `--dry-run` to print the incremental update and duration-split plan without
+writing prompts, notes, manifests, or commits. Use `--no-command` to write
+prompts only, or pass `update --command ...` to use a different summarizer
+command. Small continuations of an existing note are deferred by default so the
+script does not keep rewriting the latest note for the live tail created while
+an agent is working; use `--force-small-continuations` only when that is
+intentional.
 
 Generated summaries are checked case-insensitively against `--forbid-regex`
 patterns. Defaults only cover common access-token shapes. If a candidate

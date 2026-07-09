@@ -230,6 +230,22 @@ class NoteRecord:
     models: list[str] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class SplitDecision:
+    index: int
+    gap_seconds: float
+    before_timestamp: str
+    after_timestamp: str
+    elapsed_hours: float
+    reason: str
+
+
+@dataclass(frozen=True)
+class PlannedMessageChunk:
+    messages: list[MessageRecord]
+    split_after: SplitDecision | None = None
+
+
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -444,6 +460,16 @@ def all_messages_for_ranges(
     for source_range in ranges:
         messages.extend(messages_for_range(segments, source_range))
     return messages
+
+
+def parse_message_timestamp(message: MessageRecord) -> datetime:
+    return datetime.fromisoformat(message.timestamp.replace("Z", "+00:00")).astimezone(timezone.utc)
+
+
+def message_duration_hours(messages: list[MessageRecord]) -> float:
+    if len(messages) < 2:
+        return 0.0
+    return (parse_message_timestamp(messages[-1]) - parse_message_timestamp(messages[0])).total_seconds() / 3600
 
 
 def parse_heading_fields(heading_metadata: str) -> dict[str, str]:
@@ -680,15 +706,119 @@ def covered_segments(records: list[NoteRecord]) -> dict[tuple[str, str, int], tu
     return covered
 
 
+def source_ranges_for_messages(messages: list[MessageRecord]) -> list[SourceRange]:
+    ranges: list[SourceRange] = []
+    current_key: tuple[str, str, int] | None = None
+    first_message: int | None = None
+    last_message: int | None = None
+    for message in messages:
+        key = (message.platform, message.date, message.sequence)
+        if current_key != key:
+            if current_key is not None and first_message is not None and last_message is not None:
+                ranges.append(SourceRange(*current_key, first_message, last_message))
+            current_key = key
+            first_message = message.message_index
+        last_message = message.message_index
+    if current_key is not None and first_message is not None and last_message is not None:
+        ranges.append(SourceRange(*current_key, first_message, last_message))
+    return ranges
+
+
+def choose_duration_split(
+    messages: list[MessageRecord],
+    max_note_duration_hours: float,
+    split_window_start_hours: float,
+    split_window_end_hours: float,
+) -> SplitDecision | None:
+    if len(messages) < 2 or message_duration_hours(messages) <= max_note_duration_hours:
+        return None
+    start_ts = parse_message_timestamp(messages[0])
+    preferred: list[SplitDecision] = []
+    fallback: list[SplitDecision] = []
+    for index in range(1, len(messages)):
+        before_ts = parse_message_timestamp(messages[index - 1])
+        after_ts = parse_message_timestamp(messages[index])
+        elapsed_hours = (before_ts - start_ts).total_seconds() / 3600
+        if elapsed_hours <= 0:
+            continue
+        gap_seconds = (after_ts - before_ts).total_seconds()
+        decision = SplitDecision(
+            index=index,
+            gap_seconds=gap_seconds,
+            before_timestamp=before_ts.isoformat().replace("+00:00", "Z"),
+            after_timestamp=after_ts.isoformat().replace("+00:00", "Z"),
+            elapsed_hours=elapsed_hours,
+            reason="preferred-window",
+        )
+        if split_window_start_hours <= elapsed_hours <= split_window_end_hours:
+            preferred.append(decision)
+        elif elapsed_hours < max_note_duration_hours:
+            fallback.append(
+                SplitDecision(
+                    index=index,
+                    gap_seconds=gap_seconds,
+                    before_timestamp=decision.before_timestamp,
+                    after_timestamp=decision.after_timestamp,
+                    elapsed_hours=elapsed_hours,
+                    reason="fallback-before-max",
+                )
+            )
+    candidates = preferred or fallback
+    if not candidates:
+        return SplitDecision(
+            index=1,
+            gap_seconds=0,
+            before_timestamp=messages[0].timestamp,
+            after_timestamp=messages[1].timestamp,
+            elapsed_hours=0,
+            reason="fallback-first-message",
+        )
+    return max(candidates, key=lambda decision: (decision.gap_seconds, decision.elapsed_hours))
+
+
+def split_messages_by_duration(
+    messages: list[MessageRecord],
+    max_note_duration_hours: float | None,
+    split_window_start_hours: float,
+    split_window_end_hours: float,
+) -> list[PlannedMessageChunk]:
+    if (
+        max_note_duration_hours is None
+        or max_note_duration_hours <= 0
+        or not messages
+        or message_duration_hours(messages) <= max_note_duration_hours
+    ):
+        return [PlannedMessageChunk(messages)]
+    chunks: list[PlannedMessageChunk] = []
+    current = list(messages)
+    while current and message_duration_hours(current) > max_note_duration_hours:
+        decision = choose_duration_split(
+            current,
+            max_note_duration_hours,
+            split_window_start_hours,
+            split_window_end_hours,
+        )
+        if decision is None:
+            break
+        chunks.append(PlannedMessageChunk(current[: decision.index], decision))
+        current = current[decision.index :]
+    if current:
+        chunks.append(PlannedMessageChunk(current))
+    return chunks
+
+
 def build_new_ranges(
     segments: dict[tuple[str, str, int], list[MessageRecord]],
     covered: dict[tuple[str, str, int], tuple[int, int]],
     target_chars: int,
     max_coalesce_gap_hours: float | None,
+    max_note_duration_hours: float | None = None,
+    split_window_start_hours: float = 4.0,
+    split_window_end_hours: float = 5.0,
 ) -> list[list[SourceRange]]:
     shards: list[list[SourceRange]] = []
     for platform in sorted({key[0] for key in segments}, key=lambda value: SOURCE_ORDER.get(value, value)):
-        current: list[SourceRange] = []
+        current_messages: list[MessageRecord] = []
         current_size = 0
         current_last_ts: datetime | None = None
         keys = [key for key in segments if key[0] == platform]
@@ -699,33 +829,152 @@ def build_new_ranges(
             if not messages:
                 continue
             rendered = render_messages(messages)
-            first_ts = datetime.fromisoformat(messages[0].timestamp.replace("Z", "+00:00")).astimezone(timezone.utc)
-            last_ts = datetime.fromisoformat(messages[-1].timestamp.replace("Z", "+00:00")).astimezone(timezone.utc)
+            first_ts = parse_message_timestamp(messages[0])
+            last_ts = parse_message_timestamp(messages[-1])
             gap_too_large = (
                 max_coalesce_gap_hours is not None
                 and current_last_ts is not None
                 and (first_ts - current_last_ts).total_seconds() > max_coalesce_gap_hours * 3600
             )
-            if current and (current_size + len(rendered) > target_chars or gap_too_large):
-                shards.append(current)
-                current = []
+            if current_messages and (current_size + len(rendered) > target_chars or gap_too_large):
+                for chunk in split_messages_by_duration(
+                    current_messages,
+                    max_note_duration_hours,
+                    split_window_start_hours,
+                    split_window_end_hours,
+                ):
+                    shards.append(source_ranges_for_messages(chunk.messages))
+                current_messages = []
                 current_size = 0
                 current_last_ts = None
-            _platform, date, sequence = key
-            current.append(
-                SourceRange(
-                    platform=_platform,
-                    date=date,
-                    sequence=sequence,
-                    first_message=messages[0].message_index,
-                    last_message=messages[-1].message_index,
-                )
-            )
+            current_messages.extend(messages)
             current_size += len(rendered)
             current_last_ts = last_ts
-        if current:
-            shards.append(current)
+        if current_messages:
+            for chunk in split_messages_by_duration(
+                current_messages,
+                max_note_duration_hours,
+                split_window_start_hours,
+                split_window_end_hours,
+            ):
+                shards.append(source_ranges_for_messages(chunk.messages))
     return shards
+
+
+def render_ranges_for_plan(ranges: list[SourceRange]) -> str:
+    return ", ".join(
+        f"{source_range.platform} {source_range.date}#{source_range.sequence} "
+        f"{source_range.first_message}-{source_range.last_message}"
+        for source_range in ranges
+    )
+
+
+def print_message_chunk_plan(
+    chunks: list[PlannedMessageChunk],
+    indent: str = "  ",
+) -> None:
+    for index, chunk in enumerate(chunks, 1):
+        first_ts, last_ts = chunk.messages[0].timestamp, chunk.messages[-1].timestamp
+        ranges = source_ranges_for_messages(chunk.messages)
+        print(
+            f"{indent}{index}. {first_ts} -> {last_ts} "
+            f"({message_duration_hours(chunk.messages):.2f}h, {len(chunk.messages)} messages)"
+        )
+        print(f"{indent}   ranges: {render_ranges_for_plan(ranges)}")
+        if chunk.split_after:
+            decision = chunk.split_after
+            print(
+                f"{indent}   split after: {decision.before_timestamp} -> {decision.after_timestamp}; "
+                f"gap {decision.gap_seconds / 60:.1f} min; "
+                f"elapsed {decision.elapsed_hours:.2f}h; {decision.reason}"
+            )
+
+
+def dry_run_update_notes(
+    records: list[NoteRecord],
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    args: argparse.Namespace,
+) -> None:
+    max_coalesce_gap_hours = (
+        None if args.max_coalesce_gap_hours is not None and args.max_coalesce_gap_hours < 0 else args.max_coalesce_gap_hours
+    )
+    max_note_duration_hours = (
+        None
+        if args.max_note_duration_hours is not None and args.max_note_duration_hours < 0
+        else args.max_note_duration_hours
+    )
+    covered = covered_segments(records)
+    print("DRY RUN: no prompts, summaries, notes, manifest, or git commits will be written.")
+    print(f"manifest records: {len(records)}")
+
+    split_candidates = []
+    if max_note_duration_hours is not None and max_note_duration_hours > 0:
+        for record in records:
+            messages = all_messages_for_ranges(segments, record.source_ranges)
+            if not messages:
+                continue
+            chunks = split_messages_by_duration(
+                messages,
+                max_note_duration_hours,
+                args.split_window_start_hours,
+                args.split_window_end_hours,
+            )
+            if len(chunks) > 1:
+                split_candidates.append((record, messages, chunks))
+
+    print(f"existing notes exceeding duration policy: {len(split_candidates)}")
+    for record, messages, chunks in split_candidates:
+        print(f"- {record.note}")
+        print(
+            f"  current: {messages[0].timestamp} -> {messages[-1].timestamp} "
+            f"({message_duration_hours(messages):.2f}h, {len(messages)} messages)"
+        )
+        print(f"  current ranges: {render_ranges_for_plan(record.source_ranges)}")
+        print(f"  would become {len(chunks)} notes:")
+        print_message_chunk_plan(chunks, indent="    ")
+
+    continuations: list[tuple[Path, tuple[str, str, int], int, int, int, int]] = []
+    for key, (last_message, record_idx) in covered.items():
+        messages = segments.get(key)
+        if not messages:
+            continue
+        current_last = messages[-1].message_index
+        if current_last <= last_message:
+            continue
+        new_range = SourceRange(key[0], key[1], key[2], last_message + 1, current_last)
+        new_count = current_last - last_message
+        new_chars = len(render_messages(messages_for_range(segments, new_range)))
+        if (
+            not args.force_small_continuations
+            and new_count < args.min_continuation_messages
+            and new_chars < args.min_continuation_chars
+        ):
+            continue
+        continuations.append((Path(records[record_idx].note), key, last_message + 1, current_last, new_count, new_chars))
+    print(f"large continuations that would revise existing notes: {len(continuations)}")
+    for note_path, key, first_message, last_message, new_count, new_chars in continuations:
+        print(
+            f"- {note_path}: {key} messages {first_message}-{last_message} "
+            f"({new_count} messages, {new_chars} chars)"
+        )
+
+    new_shards = build_new_ranges(
+        segments,
+        covered,
+        args.target_chars,
+        max_coalesce_gap_hours,
+        max_note_duration_hours,
+        args.split_window_start_hours,
+        args.split_window_end_hours,
+    )
+    print(f"new conversation notes that would be created: {len(new_shards)}")
+    for index, ranges in enumerate(new_shards, 1):
+        messages = all_messages_for_ranges(segments, ranges)
+        print(
+            f"- new {index}: {messages[0].timestamp} -> {messages[-1].timestamp} "
+            f"({message_duration_hours(messages):.2f}h, {len(messages)} messages)"
+        )
+        print(f"  ranges: {render_ranges_for_plan(ranges)}")
 
 
 @dataclass(frozen=True)
@@ -958,6 +1207,9 @@ def sync_model_blocks(
 def update_notes(args: argparse.Namespace) -> None:
     records = load_manifest(args.manifest)
     segments = load_segments(args.claude_jsonl, args.codex_jsonl)
+    if args.dry_run:
+        dry_run_update_notes(records, segments, args)
+        return
     covered = covered_segments(records)
     args.work_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1052,7 +1304,20 @@ def update_notes(args: argparse.Namespace) -> None:
     max_coalesce_gap_hours = (
         None if args.max_coalesce_gap_hours is not None and args.max_coalesce_gap_hours < 0 else args.max_coalesce_gap_hours
     )
-    new_shards = build_new_ranges(segments, covered, args.target_chars, max_coalesce_gap_hours)
+    max_note_duration_hours = (
+        None
+        if args.max_note_duration_hours is not None and args.max_note_duration_hours < 0
+        else args.max_note_duration_hours
+    )
+    new_shards = build_new_ranges(
+        segments,
+        covered,
+        args.target_chars,
+        max_coalesce_gap_hours,
+        max_note_duration_hours,
+        args.split_window_start_hours,
+        args.split_window_end_hours,
+    )
     for shard_idx, ranges in enumerate(new_shards, 1):
         messages = all_messages_for_ranges(segments, ranges)
         transcript = render_messages(messages)
@@ -1124,7 +1389,7 @@ def update_notes(args: argparse.Namespace) -> None:
 
 
 def use_default_update_command(args: argparse.Namespace) -> None:
-    if args.no_command:
+    if args.no_command or getattr(args, "dry_run", False):
         args.command = None
         return
     if args.command is not None:
@@ -1174,6 +1439,27 @@ def main() -> None:
         ),
     )
     update_parser.add_argument(
+        "--max-note-duration-hours",
+        type=float,
+        default=6.0,
+        help=(
+            "Prefer splitting generated conversation notes longer than this many hours; "
+            "use a negative value to disable duration splitting."
+        ),
+    )
+    update_parser.add_argument(
+        "--split-window-start-hours",
+        type=float,
+        default=4.0,
+        help="When duration splitting, prefer split points at least this many hours after the chunk start.",
+    )
+    update_parser.add_argument(
+        "--split-window-end-hours",
+        type=float,
+        default=5.0,
+        help="When duration splitting, prefer split points at most this many hours after the chunk start.",
+    )
+    update_parser.add_argument(
         "--min-continuation-messages",
         type=int,
         default=20,
@@ -1206,6 +1492,11 @@ def main() -> None:
         "--no-command",
         action="store_true",
         help="Write prompts only instead of running the default Claude summarizer.",
+    )
+    update_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print the update and duration-split plan without writing prompts, notes, manifests, or commits.",
     )
     update_parser.add_argument(
         "--forbid-regex",

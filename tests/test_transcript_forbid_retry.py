@@ -111,12 +111,20 @@ def test_new_note_prefix_carries_suffix_from_prior_days(tmp_path: Path) -> None:
     assert prefix == "2026070503"
 
 
-def make_message(mod, platform: str, date: str, sequence: int, timestamp: str, text: str):
+def make_message(
+    mod,
+    platform: str,
+    date: str,
+    sequence: int,
+    timestamp: str,
+    text: str,
+    message_index: int = 1,
+):
     return mod.MessageRecord(
         platform=platform,
         date=date,
         sequence=sequence,
-        message_index=1,
+        message_index=message_index,
         timestamp=timestamp,
         role="user",
         heading_metadata="",
@@ -163,3 +171,58 @@ def test_build_new_ranges_can_disable_gap_boundary() -> None:
     assert [[(source.date, source.sequence) for source in shard] for shard in ranges] == [
         [("2026-07-05", 1), ("2026-07-05", 2)]
     ]
+
+
+def test_build_new_ranges_splits_long_raw_segment_at_largest_gap_in_window() -> None:
+    mod = load_update_module()
+    timestamps = [
+        "2026-07-05T00:00:00Z",
+        "2026-07-05T03:00:00Z",
+        "2026-07-05T04:10:00Z",
+        "2026-07-05T04:20:00Z",
+        "2026-07-05T04:50:00Z",
+        "2026-07-05T05:10:00Z",
+        "2026-07-05T08:00:00Z",
+    ]
+    segments = {
+        ("codex", "2026-07-05", 1): [
+            make_message(mod, "codex", "2026-07-05", 1, timestamp, f"message {index}", index)
+            for index, timestamp in enumerate(timestamps, 1)
+        ]
+    }
+
+    ranges = mod.build_new_ranges(
+        segments,
+        {},
+        1_000_000,
+        2.0,
+        max_note_duration_hours=6.0,
+        split_window_start_hours=4.0,
+        split_window_end_hours=5.0,
+    )
+
+    assert [[(source.sequence, source.first_message, source.last_message) for source in shard] for shard in ranges] == [
+        [(1, 1, 4)],
+        [(1, 5, 7)],
+    ]
+
+
+def test_duration_split_falls_back_before_max_when_preferred_window_has_no_gap() -> None:
+    mod = load_update_module()
+    timestamps = [
+        "2026-07-05T00:00:00Z",
+        "2026-07-05T02:00:00Z",
+        "2026-07-05T03:00:00Z",
+        "2026-07-05T05:30:00Z",
+        "2026-07-05T07:00:00Z",
+    ]
+    messages = [
+        make_message(mod, "codex", "2026-07-05", 1, timestamp, f"message {index}", index)
+        for index, timestamp in enumerate(timestamps, 1)
+    ]
+
+    chunks = mod.split_messages_by_duration(messages, 6.0, 4.0, 5.0)
+
+    assert len(chunks) == 2
+    assert chunks[0].messages[-1].message_index == 3
+    assert chunks[0].split_after.reason == "fallback-before-max"
