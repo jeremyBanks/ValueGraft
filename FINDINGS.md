@@ -528,3 +528,16 @@ width as plant (low between-conv correlation), so the result held — but this i
 excluded EVERY OLMo plant (its gold logprobs sit lower); the old code guessed "empty alignment." New
 counters (empty_alignment_convs / short_gold_drops / task_excluded_plants) now name the true cause.
 OPEN: to get an OLMo result the floor likely needs to be per-model/relative — a methodology call.
+
+## Judged metric conv-clustered CIs (task #30 / Fable #2, 07-09): sense holds; significance FLIPS by metric
+Judged = Sonnet-5 meaning re-judge (RECOVERED/PARTIAL/MISSED = 1/0.5/0), pooled-graft (a0.25+a1.0)
+− Compacted, per category; 12 convs (c01-c12), 64 plants. Conversation-clustered bootstrap (resample
+the 12 convs, nboot=20000):
+- SENSE     +12.0pp  CI [+2.2, +22.9]  — EXCLUDES 0 (the load-bearing arm survives; Fable's flagged
+  uncorrected +12pp holds up under clustering).
+- REFERENT  +9.7pp   CI [-6.9, +26.2]  — spans 0 (only n=18 referent plants; wide).
+- STANCE    +3.3pp   CI [-5.4, +12.0]  — null (correct).
+SIGNIFICANCE FLIPS BY METRIC: logprob/gap-closure metric = REFERENT significant, sense underpowered;
+JUDGED metric = SENSE significant, referent not. So each dissociation arm is significant on ONE metric,
+not both — real but metric-dependent, NOT a clean "both instruments agree." The paper must state this
+honestly. Reproducible: scripts/judged_bootstrap.py.
