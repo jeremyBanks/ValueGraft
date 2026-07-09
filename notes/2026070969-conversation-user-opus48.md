@@ -1,145 +1,175 @@
-_This chunk continues the mainline project conversation covering the
-checkpointing/render-persistence build, its Fable review and bug fix, launch of
-the interruptible block-reproduction re-run, and the two architecture-pole
-results landing — ending mid-run, holding for the first baseline-vs-fresh block
-read._
+_This chunk covers a corrected reproduction verdict — the referent headline
+collapses further on independent verification while a packed-KV honesty effect
+confirms at bf16 — followed by the user reopening the champion/per-layer-tuned
+graft configuration as an untested variable, and directing a structured
+bf16-plus-4bit validation of that configuration to potentially enrich the
+negative/bounding paper._
 
 **Participants:** User and claude-opus-4-8.
 
-**New topic: coding-variant models.** The user asked whether coding-specialized
-variants of the candidate models exist. Confirmed they do
-(Qwen2.5-Coder/Qwen3-Coder, DeepSeek-Coder-V2, Codestral, CodeLlama, CodeGemma,
-Granite-Code), but framed as adding a different kind of value than the
-architecture map: same architecture as the base model, so zero new architecture
-diversity, but a clean controlled contrast (base vs. coder, same arch, different
-training domain) testing whether the graft's effect is architecture-driven or
-training-driven. The highest-value pair is Qwen2.5-Coder-32B against the
-already-planned Qwen2.5-32B base. The user directed that this pair be added to
-the queue but run after most of the new-vendor diversity, mid-priority; this was
-confirmed as already recorded in MODEL-QUEUE.md in that position. MODEL-QUEUE.md
-was also rewritten for scannability (queue table first, notes condensed below),
-since it had become prose-heavy through repeated appends.
+**Reproduction verdict deepens: the referent headline collapses under a second,
+independent check.** After the b0/b1 confirmatory re-render silently failed to
+launch (an unattended ssh relaunch that never actually started, discovered only
+when the pods sat idle-and-billing for 45 minutes), the agent harvested all
+banked renders locally rather than blindly relaunching, then ran the disciplined
+test Fable's holistic assessment had flagged as still missing: reproduce the
+judged sense +12pp under clean current code on a fresh render of the _same_
+c01–c12 conversations. It collapsed to +1.0pp (CI spanning zero). A same-judge
+disentangle (re-scoring the original answers with the new stricter judge)
+isolated the cause: judge-calibration explained only a small slice of the drop
+(+12.0→+8.7), while the render itself explained the rest (+8.7→+1.0) —
+confirming the collapse was render-fragility, not a judge artifact, and matching
+the earlier referent-logprob failure pattern exactly. This meant both of the
+project's positive headlines (referent recovery and judged-sense recovery) were
+now shown to be render-fragile at n=12 and non-reproducing, a result recorded as
+the most important finding of the session.
 
-**Checkpointing build completion and Fable review — first pass found a real
-bug.** The per-conversation checkpointing and full-render-persistence build
-completed, self-certified with claimed byte-identical validation tests. Before
-trusting it for the reproduction re-run (per the standing GPU-code-review rule),
-it was sent to Fable for adversarial review. Fable found a genuine, silent
-number-changing bug: in relative-floor mode, the resume path dropped a
-conversation's `lp_A` values from the pooled competence floor whenever that
-conversation had empty A↔B alignment, so a resumed run could compute a different
-floor than an uninterrupted run, silently changing which plants are gated and
-therefore the headline number and CI. Fable also found that the implementer's
-cited validation script (`scratchpad/validate_ckpt.py`) did not exist in
-committed form, making its "5 byte-identical tests" unverifiable — reinforcing
-that self-certification alone is not sufficient. The bug's blast radius was
-assessed as narrow: the fresh/uninterrupted path was independently verified
-byte-identical to the old code, and the bug only affects resumed relative-floor
-runs containing an empty-alignment conversation (an OLMo-class case, not the
-Qwen reproduction, which very likely has none).
+**Champion-scan build and fleet validated in parallel.** Per an explicit user
+override ("run at least a two-model champion scan"), the previously-unused
+`SC_CHAMPION_SCAN` capability was launched for the first time, catching and
+fixing a real bug (empty-string env vars crashing `int()` parsing in forwarded
+launcher config) before it could waste multiple pods. Once fixed, champion scans
+completed and were harvested for Qwen3-30B-A3B (MoE, reusing banked renders —
+validating the render-reuse economics), Qwen3-32B (dense sibling, fresh render
+banked), and Mistral-Small-24B (fresh render banked), each yielding a 10-config
+per-layer/region map. A parallel claims-ledger effort (`CLAIMS.md`, later moved
+from a gitignored path to a committed one) was built to recompute every headline
+number from disk against its source file, recompute command, and commit — and it
+caught a real overclaim: the F2 finding's "38/48 = 79% accurate" evicted-fact
+claim did not reproduce (true recall was 0/24 at both 4B and 30B); the correct,
+verified claim was that packed write-time KV converts fabrication into admission
+rather than restoring recall.
 
-**Fix and re-verification.** The checkpointing agent was redispatched with
-Fable's exact diagnosis and told to commit its validation this time rather than
-leave it in scratchpad. The fix made the pre-scan record its own
-per-conversation `lp_A` so the resumed floor pool matches the fresh pool even
-for empty-alignment conversations. The new validation was committed to git and
-included a negative control demonstrating the fix's necessity:
-FRESH/RESUME/KILL-SIM floors all matched at −9.499 under the fix, while the
-pre-fix code path drifted to −10.126 under the same test — proving the test
-actually detects the bug rather than trivially passing. Fable was re-consulted
-specifically on whether this fix resolved its own finding without introducing a
-new resume gap, and confirmed it was safe to trust. This cleared the linchpin
-blocking the reproduction re-run.
+**Fable's holistic and native-render-premise assessments (written to notes/
+files, the newly adopted practice for durable Fable output) surfaced two
+corrections.** First, both marquee positive results had been measured only under
+a deliberately terse "brief" summary condition designed to handicap the
+compacted baseline — no positive result existed under a production-faithful
+summary, which Fable ranked as a bigger risk than anything then in flight.
+Second, the standing claim that the graft requires natively self-rendered
+replies (not just a self-generated summary) was only partly supported: the
+self-generated-summary requirement was cleanly verified, but the
+natively-rendered-reply requirement rested on a cherry-picked low draw from
+render-to-render noise comparable in size to the effect itself, with a second
+on-disk native draw (+0.116, CI excluding zero) essentially reproducing the
+authored condition. The recommended fix was to present self-rendering as a
+defensible design choice rather than a proven requirement. The user endorsed
+pursuing a production-faithful summary arm as top priority while keeping the
+brief condition as a deliberately extreme complementary probe, and asked that
+cheap cross-model SWE-Gym data collection piggyback on already-warm pods given
+the real cost of reloading models between runs — a point the user judged Fable
+had under-weighted.
 
-**Launcher config-propagation fix.** Before launching, a check of
-`launch_pod.sh` found it only forwarded `MODELS`/`SC_CONV_LIMIT`/`SC_HF_MODEL`
-to remote jobs, not `SC_CONV_START` (the held-out conversation offset) or the
-relative-floor mode — meaning an unchecked launch would have silently run all
-three block cells starting at c01 with the wrong floor mode. This was fixed and
-committed before launch.
+**Attempted production-faithful SWE-Gym run hit a sustained
+environment/provisioning failure.** A missing `pandas` dependency on the
+champion pods (undocumented, present on only one of seven job-launch scripts)
+triggered an extended, ultimately unproductive debugging cycle involving stale
+logs, an interpreter mismatch, and repeated ssh truncation on a flaky pod; the
+pod was eventually terminated rather than continuing to fight it. The user
+flagged this as a recurring, systemic pattern rather than a one-off and asked
+for an independent subagent history-mining pass (with an explicit instruction to
+weight its findings but not over-index on them) instead of further self-directed
+debugging. That retrospective (`notes/2026070974`) identified a genuine root
+cause: pod-side dependency installation is copy-pasted and drifted across seven
+job scripts with no single source of truth, including a live contradiction where
+two scripts pin `transformers==5.0.*` while a third scripts explicitly avoids
+that version because it breaks pod weight loading. It proposed a shared
+`pod_env.sh` sourced by every job plus a fail-closed dependency check in
+preflight — recorded as a pending, not-yet-implemented recommendation.
 
-**Block re-run launched.** Three pods were launched for the block-design
-reproduction, all Qwen3-30B-A3B, relative floor, checkpointing enabled
-(resume-safe): b0 = baseline c01–c12, b1 = fresh c13–c24, b2 = fresh c25–c36.
-The launch chained through the same script and stalled — b0 came up correctly,
-but b1/b2 never launched because the chained script hung on b0's post-launch ssh
-check (a recurrence of a previously identified launcher-hang pattern). b1 and b2
-were then launched independently in parallel so neither could block the other;
-b2's first independent attempt still failed silently (empty log) and was
-re-fired successfully. Conv-range offsets were subsequently confirmed correct on
-all three pods (b0 at c01–c12, b1 at c13–c24, b2 at c25–c36), validating that
-the launcher config fix worked and none had silently collided on c01. This run
-is also the first to exercise the new per-conversation checkpointing in
-production; render checkpoints were confirmed accumulating on disk as
-conversations completed (e.g., b1 showing 10 saved checkpoints, b2 showing 5,
-mid-run), confirming the render-persistence fix is functioning as designed.
+**A user-mandated, unhoped-for statistical gate: the proposed honesty headline
+was made to clear the same bar that had just killed the sense-recovery claim,
+before any paper drafting proceeded.** Conversation-clustered bootstrap CIs
+showed the packed-KV fabrication-reduction effect was robust — decoy fabrication
+−66.7pp [+45.8, +87.5], evicted-fact fabrication −62.5pp [+41.7, +83.3] — with
+the write-time-KV-specific contribution (beyond mere packed layout) also
+independently significant. This effect was judged commensurately strong enough
+to lead the paper, contingent on stating its caveats plainly (the arm is a
+packed-keys+values "cousin" of the paper's named value-only method, not the
+method itself; n=24/arm over 12 clusters; not independently
+render-replication-tested; scope-limited to mid-task agentic compaction).
 
-**Architecture-pole results landed and banked.** Qwen3-32B (dense, pair-B)
-finished: referent CI [−0.063, +0.010] (null, spans zero), sense [−0.091,
-−0.008], stance [−0.139, −0.051], ruled_out [−0.130, −0.063], evicted_fact
-[−0.099, −0.017] — negative across every other category. Holding vendor and
-QK-norm status fixed against the MoE anchor (Qwen3-30B-A3B, referent +0.10),
-this is a clean within-Qwen MoE-vs-dense reversal: the graft helps the MoE and
-is null-to-harmful on the dense model. Qwen2.5-32B (dense, no QK-norm) finished
-shortly after: referent [−0.303, −0.157], sense −0.42, stance −0.18 — strongly
-harmful across the board, the most negative result of the sweep. Both results
-passed the real smoke checks (`identity_ok`, `alpha0_ok`); an initial false
-alarm on both models' `graft_direction_ok: False` was corrected after re-reading
-the code — that field is purely informational (aggregate raw_EB sign) and not a
-validity gate, so it was not evidence of a broken graft. Both pole results were
-recorded in FINDINGS.md and their pods (expo, w6) terminated for budget once
-idle, since their renders were made under the old harness and have no reuse
-value. With both dense poles now negative/null and only the MoE anchor and a
-weak Mistral positive, the emerging map skews MoE-positive / dense-negative —
-flagged explicitly as ambiguous between two readings: a real MoE-vs-dense
-mechanism, or the effect being largely specific to the model it was originally
-developed on. The reproduction result is the designated disambiguator between
-these readings, and this robustness caveat is not to be oversold as a confirmed
-reversal until fresh-conversation reproduction is in hand.
+**A precision/provenance crisis followed, triggered by direct user objection
+("we never reproduced our core results at 16-bit").** Investigation confirmed
+both core behavioral pipelines (recovery and the proposed honesty headline) had
+run only on the local MLX 4-bit backend, never at bf16 in scored form — a fact a
+paper draft had briefly and incorrectly labeled as bf16, caught by an
+adversarial review pass before anything shipped. The user's separate objection
+that the honesty arm ("H-pack") might not even represent the paper's actual
+named method (value-only ValueGraft) was also confirmed correct: H-pack retains
+write-time keys in addition to values and uses a packed layout — a materially
+different, coupled-KV intervention, not the value-only aligned graft the paper
+is framed around. A full-authority deep audit (paper construction halted in the
+interim) established the ground-truth state: no result on disk satisfied both
+"bf16" and "value-only ValueGraft" as a positive; the one available bf16
+value-only result (SWE-Gym, +0.0156 nats) was initially assessed as too
+thin/possibly render-null to carry a paper, and the placebo-controlled bf16
+value-only recovery test (`effect_bound`) was a preregistered null on two
+models. The audit's initial verdict was that the paper had no valid positive
+cornerstone and should be reframed as a negative/bounding result.
 
-**Baseline positive-control scare, corrected.** b0 (baseline c01–c12) finished
-first and showed referent CI [−0.068, +0.090], mid ≈ +0.012 — a apparent failure
-to reproduce the original +0.156 anchor point estimate, combined with the
-(subsequently found to be non-gating) `graft_direction_ok: False` flag,
-initially triggered a stop-and-check reaction suspecting a broken graft. This
-was walked back after rereading the code: the real smoke gates passed, and the
-informational flag firing across all models (including previously-trusted ones)
-was not meaningful. The more defensible reading of the +0.012 baseline point
-estimate is that it falls within the low end of the original result's own wide
-CI (n=12 was underpowered) and that Qwen3-30B-A3B's MoE routing is
-hardware-nondeterministic across pods, so this looks more like the original
-+0.10 having been noisy/fragile than like an apparatus failure — but this is
-provisional pending the full pooled block analysis (b0+b1+b2), which is required
-before drawing any conclusion. Two premature harvest attempts on b1 (mistaking
-completed rendering/scoring-stage checkpoints for a finished pooled result) were
-both self-corrected without consequence; b1 was confirmed genuinely mid-scoring
-(5/12) as of the latest check, with b2 still rendering behind it.
+**User-directed reframing: an honest postmortem, explicitly empowered as an
+acceptable primary deliverable.** The user explicitly authorized treating the
+entire effort as a candid negative/postmortem paper if that was the honest
+conclusion — describing the project as improvised, phone-directed "vibe
+research" conducted without dedicated time to build real understanding, at
+roughly $300 of compute spent — and asked that any postmortem be specific and
+detailed (grounded in the actual daily summaries/transcripts, not motivational
+or self-congratulatory framing) while paraphrasing rather than directly quoting
+the user's own more informal or rambling statements. On resuming with full
+context (including this explicit permission), Fable's second pass corrected the
+prior audit's SWE-Gym assessment: recomputed properly, it was a genuine,
+correctly-precision (bf16), correctly-armed (value-only) significant positive —
+CI [+0.005, +0.027] excluding zero, changing the greedy output on 49/75 tasks —
+not render-null as first assessed. Fable's recommendation, adopted and executed,
+was a paper combining (1) the bf16 placebo-controlled bounding/null result for
+value-only recovery, (2) the one small genuine bf16 value-only positive
+(SWE-Gym) as a caveated real effect under the brief-summary condition, (3) the
+packed-KV admission effect reported honestly as supporting-only (not the named
+method), and (4) a dry, specific process postmortem of the failure patterns.
+This draft was written to `paper/DRAFT.md`, verified against the ledger (no
+stubs, no accidental overclaims, no quoted user language), and committed — not
+yet promoted to README or pushed. A same-day follow-up scored the
+previously-unscored bf16 honesty answers and confirmed the packed-KV admission
+effect replicates at full precision (decoy +62.5pp, evicted +20.8pp, both
+CI-significant) — a real, supporting-only, bf16-confirmed finding layered onto
+the otherwise negative/bounding paper.
 
-**Explicit commitment: full picture to Fable before any conclusion.** The user
-directed that the complete picture — the block reproduction result, the full
-arch-pole map (Qwen3-32B null/harmful, Qwen2.5 strongly harmful, Mistral mixed
-positive/negative, phi-4 null), and the robustness concern about the effect
-being clearest on the model it was developed on — be put to Fable un-anchored
-(not a cherry-picked summary), with raw results and a pointer to notes/, before
-any conclusion is drawn or the paper is touched. This is queued as the next step
-once the pooled block_analysis read is available, per standing practice
-established earlier in the project.
+**Explicit repo-publishing boundary set and recorded.** The user authorized the
+agent to promote the finished, fully-reviewed paper to README and push to the
+repository autonomously once genuinely confident, without further sign-off — but
+drew a hard line that nothing leaves the repository (no external posting, no HF
+community blog, etc.) without the user's direct involvement. This was captured
+durably in the relevant protocol doc so it survives context resets.
 
-**Standing practice adopted: push notifications on major results.** The user
-asked to be notified via push notification on major results and milestones going
-forward, not routine progress ticks. This was adopted as a standing practice and
-has since been used for: the checkpointing review verdict (bug found), the fix
-landing and being re-cleared, and the block re-run launching.
+**New development, this chunk: the user reopened the champion/per-layer-tuned
+graft configuration as a specific, unresolved variable that may still salvage a
+positive result.** The user recalled that early testing of per-layer
+("champion") tuning appeared to make a large difference and asked whether it
+could still be tested cheaply on the pods. Investigation confirmed this is a
+live gap: the bf16 placebo-controlled null (`effect_bound`) was run only under
+the default global α=0.75 configuration, not the champion/per-layer-tuned
+configs; a separate `tune_eval_30b_bf16` result showed tuned configs
+(top16-layer α=1, position-tuned "posslots" α=1) consistently outperforming
+baseline at bf16 (posslots: +0.054 mean logprob improvement, 6/6 wins, vs. the
+default config's +0.033, 4/6 wins) — but these tuned-config runs were never
+placebo-controlled, so it remains unknown whether the larger tuned effect is
+content-specific or just an amplified version of the generic "any graft helps a
+little" placebo effect already characterized in the default-config null. The
+single decisive, low-cost experiment identified is to run the champion-tuned
+config through the same placebo-controlled design as `effect_bound`.
 
-**Handoff state at end of chunk.** All three block-reproduction pods (b0 done,
-b1 mid-scoring at 5/12, b2 still rendering) are healthy; b0's baseline read
-exists but is provisional pending pooling with b1/b2. Both architecture-pole
-results (Qwen3-32B, Qwen2.5-32B) are banked and recorded. The next required
-steps, in order, are: wait for b1 (then optionally do an early n=12 fresh read)
-and b2 to complete, harvest and pool all three via block_analysis for the
-central-floor, conv-clustered baseline-vs-fresh read, put the complete
-unresolved picture to Fable un-anchored for its honest verdict on whether the
-architecture map reflects a real mechanism or model-specific fragility, and
-push-notify the user with the reproduction verdict once it lands — per the
-earlier-established overnight arc, this determines whether the tiered
-model-enrichment sweep proceeds as planned or the narrative is revised first.
+The user rejected an earlier claim that no 4-bit-quantized checkpoint suitable
+for pod deployment exists, noting official quantized checkpoints are readily
+downloadable from Hugging Face, and directed a structured validation of the
+champion-tuning question along two precision tracks: bf16 on pods (as already
+scoped) and 4-bit — using an official quantized checkpoint if one exists, or the
+closest available otherwise — run on pods in parallel, prioritizing 4-bit first
+since it should be cheap and multiple instances may be runnable in parallel or
+kept warm for fast iteration; the 4-bit pod run requires its own separate
+champion/per-layer tuning pass rather than reusing the local-MLX 4-bit results.
+The user asked that Fable be consulted only for minor refinements to this plan,
+not a wholesale redirection, and directed the agent to proceed with executing
+substantially this plan to determine whether it can enrich the existing
+negative/bounding result. This is queued as the next concrete action; no pods
+have yet been launched for it as of the end of this chunk.
