@@ -30,9 +30,22 @@ NOT carry it on the old render (~+0.009); "native render fixes it" was ASSERTED 
 - Methodology: CI now CONVERSATION-clustered (was plant = anti-conservative); competence floor now
   per-model RELATIVE median-3*MADN (pre-registered) — OLMo "empty alignment" was a floor misdiagnosis.
 
-**ALL PODS OFF (2026-07-09, balance ~$25/$80 cap).** The block reproduction resolved (Fable verdict:
-referent headline FRAGILE, not a regression; renders banked to results/redraw_harvest/). The DECIDER is
-now a LOCAL, $0 job — no pods needed.
+**LIVE (2026-07-09, balance ~$25/$80 cap):**
+- LOCAL: brief-condition judged decider generating (results/raw_brief_repro/ c01-24; the +12pp reproduction
+  + held-out test). $0.
+- PODS (5, champion scans — OWNER OVERRIDE of Fable's hold): cs30b (Qwen3-30B MoE, REUSE banked renders —
+  validated: 12/12 reused, scoring champion configs), cs32b (Qwen3-32B), csmis (Mistral-24B), csq25
+  (Qwen2.5-32B), csphi (phi-4) — the four fresh ones RENDER+BANK c01-12 (fills the reproducibility gap:
+  we never banked renders for these) then champion-scan. Env-parse crash (empty SC_CONV_START) fixed f128712.
+- CLAIMS.md = audited ledger (committed): 16✅/5⚠/1❌/1⏳. F2 "38/48 accurate" = ❌ overclaim (corrected).
+- OPEN CRITICAL QUESTION (owner, 2026-07-09): the NATIVE-RENDER premise — we motivated huge work (native
+  re-rendering) on the assumption it's the valid measurement; native referent +0.012 vs authored +0.125 shows
+  nativeness changes the result enormously, but we have NOT rigorously verified the premise. Fable designing a
+  moderate verification experiment; capture + reflect required. Also planned: SWE-Gym eval across the fleet
+  models (cheap on warm pods).
+
+*(Superseded note: earlier today all pods were briefly off after the block reproduction resolved — the Fable
+verdict [referent headline FRAGILE, not a regression] still stands; renders banked to results/redraw_harvest/.)*
 
 **CURRENT DECIDER (running locally, brief condition):** Fable's un-anchored verdict = the whole positive
 story rests on the judged SENSE +12pp, which exists ONLY for c01-c12 and was NEVER tested held-out.
