@@ -296,3 +296,17 @@ costs minutes, not dollars — so be ambitious about variety.
   DeepSeek-distills/Mixtral) — new vendors meta/allenai/google/ibm/cohere/tii/deepseek; B=odd arch
   (GLM-4/gpt-oss/Nemotron/Sarvam); C=multimodal-backbone or 5.x-only or too-big (Gemma-3/Qwen3.6/Llama-4).
 - Goal: 6-8 NEW vendors on the architecture map. Render-once-reuse-forever makes each a permanent asset.
+
+## Enrichment ORDERING (owner, 07-09): easy fruit first, extraction last
+Work the candidate list in confidence order, never burn time on hard ones while easy fruit remains:
+1. EASY: standard text-arch, proven-load (Llama-3.x, OLMo-2, Gemma-2, Granite-3, Command-R, Falcon-3,
+   DeepSeek-R1-distills [Llama/Qwen arch], Mixtral). New vendors meta/allenai/google/ibm/cohere/tii/deepseek.
+2. TEXT-ONLY VARIANTS of newer families (CHECK FIRST before extraction — many families ship a text-only
+   checkpoint beside the multimodal one: Qwen vs Qwen-VL, Mistral vs Pixtral, small Gemma text sizes).
+3. HARD/LAST: backbone extraction from multimodal-ONLY models (grab .language_model, run graft on the
+   decoder, ignore vision tower — modest custom code, fiddly KV-surgery layer paths; NOT fundamental) +
+   transformers-5.x-only archs (park at the very end, isolated, per incident-risk).
+Multimodal architecture reminder: wrapper (e.g. Gemma3ForConditionalGeneration) = .language_model (a
+normal text decoder we CAN graft) + .vision_tower + projector. Our AutoModelForCausalLM path fails only
+because multimodal repos register under a different auto-class — the decoder inside is standard.
+Cheap load-smoke gates each (minutes not dollars); render only winners.
