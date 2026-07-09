@@ -51,14 +51,23 @@ if not torch.cuda.is_available():
 print("device", torch.cuda.get_device_name(0))
 PY
 
-# ---- deps. GPTQ (primary): gptqmodel+optimum. Fallbacks if the chosen repo is a
-# different quant: AWQ -> autoawq ; AutoRound -> auto-round. NO torch upgrade.
+# ---- deps. The harness REQUIRES transformers<5 (5.x breaks Qwen3Moe load + the
+# graft path). The pitfall we hit: `pip install gptqmodel` prefers transformers>=5
+# in its metadata and silently upgrades it, breaking BOTH the harness AND gptqmodel.
+# Fix: use a loader that's happy on 4.57 (Intel AutoRound -> auto-round), then FORCE
+# transformers back to <5 and VERIFY. This is not a "conflict" — it's pinning.
 python3 -m pip install -U pip >/dev/null
 python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub pandas pyarrow || true
-python3 -m pip install -U gptqmodel optimum || true
-# Uncomment the line matching the repo's quant if load fails:
-# python3 -m pip install -U autoawq            # cyankiwi ...-AWQ-4bit
-# python3 -m pip install -U auto-round          # Intel ...-int4-AutoRound
+# quant loader for the chosen repo (default: Intel int4-AutoRound). Alternatives if the
+# repo is a different quant: `autoawq` (AWQ) or `auto-gptq optimum` (GPTQ, transformers-4.x path).
+python3 -m pip install -U "${SC_QUANT_PKG:-auto-round}" || true
+# HARD re-pin: whatever the loader dragged in, transformers MUST be <5. Force + verify.
+python3 -m pip install -U --force-reinstall "transformers>=4.57.0,<5" 2>&1 | tail -1
+TV=$(python3 -c "import transformers;print(transformers.__version__)" 2>/dev/null)
+case "${TV:-x}" in
+  4.5[7-9]*|4.[6-9][0-9]*) echo "transformers ${TV} OK (<5), quant loader ${SC_QUANT_PKG:-auto-round}";;
+  *) echo "FATAL: transformers=${TV} is not <5 after loader install — refusing to run"; exit 3;;
+esac
 
 # =====================================================================
 # STAGE 1: DERIVE -- per-layer profile on VAL convs at this quant.
