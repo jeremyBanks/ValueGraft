@@ -281,3 +281,18 @@ not dozens — each is a permanent reusable asset now that renders are banked). 
 banks its render → its champion scan + architecture signature come cheap forever. Arc: reproduction →
 Fable un-anchored trajectory check → if solid, render a variety (bank renders + champion scans) →
 morning report. Rigor is the gate on every dollar; variety fills the remainder.
+
+## Model-enrichment approach (owner, 07-09): attempt MANY cheaply, render the winners
+Getting an architecture to LOAD + pass a 1-3 conv smoke is CHEAP (minutes of pod time: download+load+
+tiny probe), NOT a full render. The render is the cost. So: ATTEMPT a big list of architectures with a
+cheap load-smoke, keep the ones that work, RENDER only those (banking every render). "Can't load it"
+costs minutes, not dollars — so be ambitious about variety.
+- MULTIMODAL IS NOT A HARD BLOCK (owner corrected me): the AutoModelForCausalLM failure is mechanical;
+  multimodal models have a TEXT BACKBONE (e.g. Gemma3 .language_model) we can load with custom code.
+  It's a difficulty tier ("custom loading"), not exclusion. Gemma-3/4, Qwen3.6, Llama-4 back on the table.
+- transformers pin (4.57.1) survives as the one real constraint: very new 2026 archs may need 5.x — try
+  a per-model pinned newer version in the ISOLATED load-test; if it won't load cheaply, drop + move on.
+- Loadability tiers (cheap to test): A=standard text arch (Llama/OLMo/Gemma-2/Granite/Command-R/Falcon/
+  DeepSeek-distills/Mixtral) — new vendors meta/allenai/google/ibm/cohere/tii/deepseek; B=odd arch
+  (GLM-4/gpt-oss/Nemotron/Sarvam); C=multimodal-backbone or 5.x-only or too-big (Gemma-3/Qwen3.6/Llama-4).
+- Goal: 6-8 NEW vendors on the architecture map. Render-once-reuse-forever makes each a permanent asset.
