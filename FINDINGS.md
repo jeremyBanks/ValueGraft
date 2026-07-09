@@ -582,3 +582,20 @@ checkpointing / conv-CI) altered the apparatus vs the original run = a REGRESSIO
 render is hardware-nondeterministic (adds noise). Positive-control failure => CANNOT trust the fresh read
 until resolved. b2 (c25-c36) rendering for n=24 but MOOT if the apparatus is suspect. DO NOT conclude
 "effect fragile" until Fable adjudicates regression-vs-fragile.
+
+## REPRODUCTION VERDICT (Fable un-anchored, high-conf, 2026-07-09): +0.10 is FRAGILE, NOT a regression → paper pivots to SENSE-led
+Fable investigated (code, git, b0 traces) and ruled OUT regression:
+- The +0.10 native run was NEVER banked (only prose in FINDINGS) — incident-#38's unbanked-render sin; un-reproducible.
+- Apparatus mechanically sound: identity_ok/alpha0_ok PASS (a regression would trip them); recent changes
+  (checkpointing/relative-floor/SC_CONV_START) touch resume/gating, not the forward path; floor inert on c01-c12; ablation off.
+- Graft path INTACT: sense (+0.040), stance (-0.086), headroom (1.76) all REPRODUCE the original nearly exactly.
+  Only REFERENT moved (+0.10→+0.012). Sense uses the SAME graft path — if it broke, sense would move. It didn't.
+- Statistically indistinguishable: b0 per-conv referent stdev 0.148, SE~0.043; +0.012 == the original CI's LOWER BOUND
+  [+0.012,+0.195]; MoE hardware-nondeterministic render → regression-to-the-mean from a barely-significant CI.
+REFRAME (paper): referent-logprob headline is UNDERPOWERED/render-fragile (the +0.10 was a lucky unbanked draw; b0 is
+the first BANKED native referent = null). SURVIVES + becomes the load-bearing arm: judged SENSE +12pp [+2.2,+22.9]
+(banked, reproducible) — AND sense raw_EB reproduced here (+0.040). Paper = SENSE-LED; referent = fragile/underpowered
+dissociation signal + the significance-flips-by-metric caveat. ARCH MAP: dense-negative poles are REAL, but the
+MoE-positive reference pole is the fragile one → "one fragile positive vs several solid negatives"; report with
+per-render variance, don't lead with it. DON'T chase a phantom regression; DON'T retract; DO bank every render.
+NEXT: 3× independent re-render of c01-c12 (bank all) to state referent render-variance honestly (Fable predicts pooled ~+0.03-0.05, boundary).
