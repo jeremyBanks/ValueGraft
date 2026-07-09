@@ -271,3 +271,13 @@ Owner asked whether we abandoned per-layer/champion tuning. Verdict: keep ONE sl
 - GATING (non-negotiable): do it ONLY AFTER the fresh-conv reproduction survives (don't build mechanism
   on an unproven headline), and ONLY piggybacked on existing renders (never a fresh 6h render for it).
   If snapshots aren't reusable -> clean future-work, no loss. Never ahead of the reproduction for $.
+
+## Overnight priority (owner, 07-09): scientific rigor FIRST, then model-variety enrichment if budget
+Ordering for autonomous overnight work: (1) SCIENTIFIC QUALITY of the core is most important — the
+fresh-conv reproduction + statistics (the spine). (2) MODEL VARIETY is high-value ENRICHMENT (owner
+"really really wants" a variety of models tested) but NEVER ahead of the core rigor; do it only after
+the core is solid and only as budget allows (~$55; ~$5-9/render/model → realistically a few more,
+not dozens — each is a permanent reusable asset now that renders are banked). Every model rendered
+banks its render → its champion scan + architecture signature come cheap forever. Arc: reproduction →
+Fable un-anchored trajectory check → if solid, render a variety (bank renders + champion scans) →
+morning report. Rigor is the gate on every dollar; variety fills the remainder.
