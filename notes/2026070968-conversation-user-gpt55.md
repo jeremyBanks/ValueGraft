@@ -3,12 +3,12 @@ notes/conversation-archive tooling: enforcing a 6-hour note-duration policy,
 filtering compaction scaffolding out of summarizer inputs, fixing archive-naming
 gaps via bulk renames with a date cache, and building a two-layer meta-summary
 system (daily summaries plus an overall notes/README.md), followed by a
-git-identity misconfiguration and its correction._ _It concludes with a
+git-identity misconfiguration and its correction._ _It continues through a
 live-tail regeneration run that uncovered and fixed two further tooling bugs — a
 participant-block sync regex that could delete note content, and unstable
-archive renaming caused by unreliable git-history dates — while the underlying
-transcripts continued to grow concurrently, leaving a final note revision and
-the previously-requested commit/push still in progress._
+archive renaming caused by unreliable git-history dates — concluding with a full
+commit-and-push of the refreshed summaries, and ends with a four-hour timer set
+to repeat the incremental update._
 
 **Participants:** User and gpt-5.5-xhigh.
 
@@ -219,10 +219,33 @@ messages.
 
 The assistant then completed the manifest-seeded date-source fix, applied the
 remaining renames, and confirmed archive naming and the conversation manifest
-were stable. A final dry run confirmed the live transcript tail had in fact
-moved during the session: two existing 2026-07-09 conversation notes had
-accumulated substantial new content requiring revision, with no new note files
-needed. The assistant began revising those two notes using the established local
-forbid-regex filter; this revision, its validation, and the previously-requested
-commit-and-push of the full summary refresh had not yet completed as this
-excerpt ends.
+were stable. A dry run confirmed the live transcript tail had in fact moved
+during the session: two existing 2026-07-09 conversation notes had accumulated
+substantial new content requiring revision, with no new note files needed. The
+assistant revised those two notes using the established local forbid-regex
+filter — one Claude-side note and one Codex-side note, both completed,
+formatted, and committed along with the conversation manifest.
+
+With the live-tail revision complete, the assistant re-validated the archive
+(stable, zero planned renames) and proceeded to regenerate the daily
+meta-summaries and overall README to incorporate the backfilled/renamed/revised
+conversation notes. July 4 and 5 were already current; July 6, 7, and 8 were
+regenerated because their source notes had changed (backfilled or renamed), and
+a new `notes/20260709.md` daily summary was generated for the first time. The
+overall `notes/README.md` was then regenerated from all six daily summaries.
+Final validation passed cleanly: the archive normalizer reported zero planned
+renames, the meta-summary wrapper reported all daily summaries and the overall
+README current, the focused test suite passed (36 tests), all manifest hashes
+matched, and a sensitive-term scan over the regenerated summaries came back
+clean. This full set of changes — conversation summaries, archive normalization,
+daily summaries for July 6-9, and the overall README — was committed and pushed
+to `trunk`, leaving only the pre-existing unrelated cross-architecture result
+artifacts dirty.
+
+At the end of the session, the user asked for a recurring update in four hours:
+incrementally update conversation summaries for any new content, then refresh
+the daily/overall meta summaries, validate, commit, and push, while continuing
+to preserve the unrelated dirty cross-architecture experiment files. The
+assistant set a one-off timer to wake the thread in approximately four hours
+from the end of this session and perform that incremental update-and-publish
+cycle.
