@@ -47,6 +47,8 @@ from kvlib import (
 
 import os
 
+import provenance as prov
+
 MODEL = os.environ.get("SC_MODEL", "mlx-community/Qwen3-4B-Instruct-2507-4bit")
 E_POST_ALPHAS = [float(x) for x in os.environ.get("SC_E_POST", "0.25,0.5,0.75,1.0").split(",") if x]
 E_INTER_ALPHAS = [float(x) for x in os.environ.get("SC_E_INTER", "0.5,1.0").split(",") if x]
@@ -57,6 +59,10 @@ PROBE_MAX_TOKENS = 160
 # default "prod" uses the full production-style summary (ArmSet default -> None ->
 # SUMMARY_REQUEST). See DECISIONS.md 2026-07-06 17:40 for the brief-vs-prod caveat.
 SUMM_REQ = SUMMARY_REQUEST_BRIEF if os.environ.get("SC_SUMMARY") == "brief" else None
+SUMM_TAG = "brief" if os.environ.get("SC_SUMMARY") == "brief" else "prod"
+
+# Set once in main() after the model loads; stamped into every result JSON.
+MANIFEST = None
 
 
 def clear(*objs):
@@ -269,9 +275,11 @@ def run_natural(model, tokenizer, conv_path, outdir):
         print(f"    NAT {name}: {out['arms'][name]['mean_logprob']:.4f} "
               f"({time.time()-t1:.0f}s)")
         clear(cache)
-    json.dump({"id": cid, "model": MODEL, "cont": out,
-               "wall_seconds": time.time() - t0},
-              open(outfile, "w"), indent=1, ensure_ascii=False)
+    result = {"id": cid, "model": MODEL, "cont": out,
+              "wall_seconds": time.time() - t0}
+    if MANIFEST is not None:
+        prov.stamp(result, MANIFEST)
+    json.dump(result, open(outfile, "w"), indent=1, ensure_ascii=False)
     print(f"== {cid} done in {time.time()-t0:.0f}s")
 
 
@@ -297,14 +305,56 @@ def run_conversation(model, tokenizer, conv_path, outdir):
         "probes": probe_res,
         "wall_seconds": time.time() - t0,
     }
+    if MANIFEST is not None:
+        prov.stamp(result, MANIFEST)
     json.dump(result, open(outfile, "w"), indent=1, ensure_ascii=False)
     print(f"== {cid} done in {result['wall_seconds']:.0f}s")
 
 
 def main():
+    global MANIFEST
     model, tokenizer = load(MODEL)
     outdir = Path(OUTDIR)
     outdir.mkdir(parents=True, exist_ok=True)
+
+    # ---- PROVENANCE MANIFEST (runtime-read: dtype/quant from the loaded MLX
+    # model leaves, git from subprocess). Records that this is the LOCAL 4-bit
+    # MLX path + the summary condition (brief=handicapped | prod=faithful).
+    mp = prov.capture_mlx_provenance(model, MODEL)
+    MANIFEST = prov.build_manifest(
+        model_provenance=mp,
+        dtype_env="mlx (see quantization)",
+        harness="src/run_arms.py",
+        intervention={
+            "arm": "multi (A,B,C,D,H-gap,B-min,E-post,E-inter)",
+            "graft_type": "value",          # keys neutral (alpha_K=0)
+            "alpha": {"E_post": E_POST_ALPHAS, "E_inter": E_INTER_ALPHAS},
+            "champion_config_path": None,
+            "champion_config_sha256": None,
+            "champion_label": None,
+            "alignment": "difflib positional-within-region (tail+summary regions)",
+            "note": "LOCAL MLX driver; E-post/E-inter scalar-alpha graft arms.",
+        },
+        metric={
+            "definition": ("CONT/NAT: teacher-forced mean per-token logprob of "
+                           "the held-out continuation under each arm; PROBE: "
+                           "greedy answer text (judged offline)"),
+            "is_proxy": True,
+            "resolve_rate_measured": False,
+        },
+        condition={
+            "summary_kind": SUMM_TAG,        # brief=handicapped | prod=faithful
+            "summary_request_sha256": prov.sha256_text(SUMM_REQ),
+            "summary_source": "self-gen (model summarizes its own conversation)",
+        },
+        corpus={"name": "synthetic (c*) + natural (n*)", "split": "all",
+                "n": None, "instance_ids": None},
+    )
+    print("MANIFEST model.repo_id=%s dtype=%s quant=%s summary=%s git=%s" % (
+        MANIFEST["model"]["repo_id"], MANIFEST["load"]["dtype"],
+        MANIFEST["load"]["quantization"], SUMM_TAG,
+        MANIFEST["code"]["git_commit"]), flush=True)
+    prov.write_run_manifest(outdir, MANIFEST)
     only = set(sys.argv[1:])
     for p in sorted(Path("data/synthetic").glob("c*.json")):
         if only and p.stem not in only:

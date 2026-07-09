@@ -36,6 +36,7 @@ from arms_common import (
 )
 from arms_hf import generate_summary_hf, hf_prefill_ids, rope_base
 from kvlib_hf import rebuild_cache, tf_logprobs
+import provenance as prov
 
 MODEL = os.environ.get("SC_HF_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
 TAG = os.environ.get("SC_TUNE_TAG", "30b_bf16")
@@ -169,6 +170,53 @@ def main():
     rules = (json.load(open("tune_rules.json"))
              if PHASE == "eval" else None)
 
+    # ---- PROVENANCE MANIFEST (runtime-read: dtype from a real parameter, quant
+    # from the loaded config, git from subprocess). The tuning run's intervention
+    # is a value-graft SWEEP (per-phase: scalar-alpha grid / per-layer / per-head
+    # / eval-rules) -- the alpha/layer/head being scanned is the arm axis, so the
+    # manifest records the phase + the sweep values rather than a single alpha.
+    mp = prov.capture_model_provenance(model, model_id_hint=MODEL)
+    manifest = prov.build_manifest(
+        model_provenance=mp,
+        dtype_env=os.environ.get("SC_LOAD_DTYPE", "bfloat16"),
+        harness="src/run_tune_hf.py",
+        intervention={
+            "arm": f"tune:{PHASE}",
+            "graft_type": "value",          # keys neutral (alpha_K=0)
+            "alpha": (ALPHAS if PHASE == "sweep" else 1.0),
+            "champion_config_path": None,
+            "champion_config_sha256": None,
+            "champion_label": None,
+            "alignment": "difflib positional-within-region (tail+summary regions)",
+            "note": ("TUNING sweep, phase=%s: sweep=scalar-alpha grid %s; "
+                     "layer=per-layer alpha=1; head=per-(layer,kv-head) alpha=1; "
+                     "eval=derived rules on HOLDOUT. Output keys ARE the arm axis."
+                     % (PHASE, ALPHAS)),
+        },
+        metric={
+            "definition": ("teacher-forced mean per-token logprob of the held-out "
+                           "continuation (CONT) under each grafted arm"),
+            "is_proxy": True,
+            "resolve_rate_measured": False,
+        },
+        condition={
+            "summary_kind": "prod",         # run_tune_hf uses SUMMARY_REQUEST (prod)
+            "summary_request_sha256": prov.sha256_text(SUMMARY_REQUEST),
+            "summary_source": "self-gen (model summarizes its own conversation)",
+        },
+        corpus={
+            "name": "synthetic (c*) + natural (n*)",
+            "split": ("VAL" if PHASE in ("sweep", "layer", "head") else "HOLDOUT"),
+            "n": len(convs),
+            "instance_ids": list(convs),
+        },
+    )
+    print("MANIFEST model.repo_id=%s dtype=%s quant=%s phase=%s git=%s" % (
+        manifest["model"]["repo_id"], manifest["load"]["dtype"],
+        manifest["load"]["quantization"], PHASE,
+        manifest["code"]["git_commit"]), flush=True)
+    prov.write_run_manifest(outdir, manifest)
+
     for cid in convs:
         outfile = outdir / f"{cid}.json"
         if outfile.exists():
@@ -204,6 +252,7 @@ def main():
                                             rule["head_map"].items()}
                                            if rule.get("head_map") else None)),
                     feed, targets, next_pos)
+        prov.stamp(out, manifest)
         tmp = outfile.with_suffix(".tmp")
         json.dump(out, open(tmp, "w"), indent=1)
         tmp.rename(outfile)

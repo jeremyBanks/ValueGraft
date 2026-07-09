@@ -1966,6 +1966,65 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         doc.update(status="UNSUPPORTED", reason=f"model load failed: {type(e).__name__}: {e}")
         return doc
 
+    # ---- PROVENANCE MANIFEST (runtime-read: dtype from a real parameter tensor,
+    # quantization from the loaded config, git from subprocess) -- so a wrong
+    # model/dtype/intervention/condition run is self-evident in every result +
+    # per-conv checkpoint + the run-level manifest.json.
+    import provenance as prov  # noqa: PLC0415
+    _champ_path = os.environ.get("SC_CHAMPION_CONFIG")
+    if champion_cfg:
+        _alpha_field = champion_cfg.get("alpha_map") or champion_cfg.get("alpha")
+        _champ_label = champion_cfg.get("label")
+        _champ_hash = (prov.sha256_file(_champ_path)
+                       or prov.sha256_text(json.dumps(champion_cfg,
+                                                      sort_keys=True)))
+        _arm = "E-champion"
+    else:
+        _alpha_field = alpha_v
+        _champ_label = None
+        _champ_hash = None
+        _arm = "E (scalar value-graft)"
+    _mp = prov.capture_model_provenance(model, model_id_hint=model_id)
+    manifest = prov.build_manifest(
+        model_provenance=_mp,
+        dtype_env=os.environ.get("SC_LOAD_DTYPE", "bfloat16"),
+        harness="src/cross_arch_probe.py",
+        intervention={
+            "arm": _arm,
+            "graft_type": "value",          # keys neutral (alpha_K=0)
+            "alpha": _alpha_field,
+            "champion_config_path": _champ_path if champion_cfg else None,
+            "champion_config_sha256": _champ_hash,
+            "champion_label": _champ_label,
+            "placebo_mode": placebo_mode,   # None for the real graft
+            "alignment": "difflib positional-within-region (tail+summary regions)",
+            "qk_norm_ablated": bool(ablate_qk_norm_flag),
+        },
+        metric=prov.METRIC_CHAT_RAW_EB,
+        condition={
+            "summary_kind": ("self-gen (SUMMARY_REQUEST)" if native_render
+                             else doc["summary_source"]),
+            "summary_request_sha256": prov.sha256_text(_REQ),
+            "summary_source": doc["summary_source"],
+        },
+        corpus={
+            "name": ("native in-context render (design v2)" if native_render
+                     else str(data_dir)),
+            "split": f"conv_start={conv_start} conv_limit={conv_limit}",
+            "n": conv_limit,
+            "instance_ids": None,           # filled after the conv loop
+        },
+        extra={"seed": seed, "alpha_sweep": bool(alpha_sweep),
+               "champion_scan": int(champion_scan or 0)},
+    )
+    doc["_manifest"] = manifest
+    print("MANIFEST model.repo_id=%s dtype=%s quant=%s arm=%s summary=%s git=%s"
+          % (manifest["model"]["repo_id"], manifest["load"]["dtype"],
+             manifest["load"]["quantization"], _arm, doc["summary_source"],
+             manifest["code"]["git_commit"]), flush=True)
+    prov.write_run_manifest(out_dir, manifest,
+                            name=f"manifest__{_slug(model_id)}.json")
+
     try:
         family = detect_template_family(tok)
         # LOUD provenance: name the resolved chat-template family and which
@@ -2279,6 +2338,16 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         doc.update(status="ERROR", reason="no usable plants in corpus subset")
         return doc
 
+    # Record the ACTUAL scored conversation ids in the manifest (+ refresh the
+    # run-level manifest.json now that the exact instance set is known).
+    try:
+        manifest["corpus"]["instance_ids"] = [c.get("id") for c, _ in specs]
+        manifest["corpus"]["n_scored"] = len(specs)
+        prov.write_run_manifest(out_dir, manifest,
+                                name=f"manifest__{_slug(model_id)}.json")
+    except Exception:  # noqa: BLE001
+        pass
+
     # v2.1 task-competence gate accounting (per category).
     task_excluded: dict[str, list] = {c: [] for c in CATS}
 
@@ -2499,7 +2568,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             "render_fingerprint": render_fp, "window_pos": pos, "conv_id": cid,
             "render": {"conv": conv, "plants": plants,
                        "reply_records": reply_records_by_pos.get(pos, [])},
-            "summary_text": summary_text, "scan_lpa": scan, "payload": payload})
+            "summary_text": summary_text, "scan_lpa": scan, "payload": payload,
+            "_manifest": manifest})
 
     try:
         def _process_conv(conv, plants, _ci):

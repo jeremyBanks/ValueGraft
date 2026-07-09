@@ -46,6 +46,7 @@ from arms_hf import (
     to_ids,
 )
 from kvlib_hf import blend_values, rebuild_cache, tf_logprobs
+import provenance as prov
 
 MODEL = os.environ.get("SC_HF_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
 TAG = os.environ.get("SC_SWE_TAG", "30b_bf16")
@@ -116,6 +117,48 @@ def main():
     trajs = load_trajectories()
     outdir = Path(f"results/swegym_{TAG}_{SUMM_TAG}")
     outdir.mkdir(parents=True, exist_ok=True)
+
+    # ---- PROVENANCE MANIFEST (read from the RUNTIME, not inferred from TAG). --
+    # dtype comes from a real parameter tensor; quantization from the loaded
+    # config; git commit from subprocess -- so a wrong-model/dtype/condition run
+    # is self-evident in every result file + the run-level manifest.json.
+    mp = prov.capture_model_provenance(model, model_id_hint=MODEL)
+    manifest = prov.build_manifest(
+        model_provenance=mp,
+        dtype_env=os.environ.get("SC_LOAD_DTYPE", "bfloat16"),
+        harness="src/run_swegym_hf.py",
+        intervention={
+            "arm": "E-tuned",
+            "graft_type": "value",          # keys neutral (alpha_K=0)
+            "alpha": E_ALPHA,               # SCALAR alpha -- NOT a tuned champion
+            "champion_config_path": None,
+            "champion_config_sha256": None,
+            "champion_label": None,
+            "alignment": "difflib positional-within-region (tail+summary regions)",
+            "note": ("E-tuned here = SCALAR value-graft at alpha=%.3f; it is NOT "
+                     "the per-layer/per-head tuned champion. Other arms scored: "
+                     "A(full), B(compacted), B-min-pack, H-pack." % E_ALPHA),
+        },
+        metric=prov.METRIC_SWEGYM_TF_LOGPROB,
+        condition={
+            "summary_kind": SUMM_TAG,       # brief=handicapped | prod=faithful
+            "summary_request_sha256": prov.sha256_text(SUMM_REQ),
+            "summary_source": "self-gen (model summarizes its own trajectory)",
+        },
+        corpus={
+            "name": "SWE-Gym/OpenHands trajectories",
+            "parquet": PARQUET,
+            "split": f"shard {_shard}",
+            "n_requested": N_TRAJ,
+            "instance_ids": None,           # filled in the run manifest at the end
+        },
+    )
+    print("MANIFEST model.repo_id=%s dtype=%s quant=%s summary=%s alpha=%s "
+          "git=%s" % (manifest["model"]["repo_id"], manifest["load"]["dtype"],
+                      manifest["load"]["quantization"], SUMM_TAG, E_ALPHA,
+                      manifest["code"]["git_commit"]), flush=True)
+    prov.write_run_manifest(outdir, manifest)
+    scored_idxs = []
     done = 0
     for idx in range(SHARD_K, len(trajs), SHARD_N):
         if done >= N_TRAJ:
@@ -123,7 +166,8 @@ def main():
         outfile = outdir / f"t{idx:04d}.json"
         if outfile.exists():
             try:
-                json.load(open(outfile)); done += 1; continue
+                json.load(open(outfile)); scored_idxs.append(idx)
+                done += 1; continue
             except Exception:
                 outfile.unlink()
         msgs = trajs[idx]
@@ -204,19 +248,29 @@ def main():
         eval_arm("H-pack", hp, hp[0][0].shape[2]); del hp
 
         tmp = outfile.with_suffix(".tmp")
+        result = {"idx": idx, "meta": meta, "model": MODEL,
+                  "dtype": manifest["load"]["dtype"],  # RUNTIME-read, not "bfloat16"
+                  "summary_tokens": len(summary["gen_ids"]),
+                  "failed_evicted_commands": failed_evicted,
+                  "n_target_tokens": len(tgt_ids), **res}
+        prov.stamp(result, manifest)
         with open(tmp, "w") as f:
-            json.dump({"idx": idx, "meta": meta, "model": MODEL, "dtype": "bfloat16",
-                       "summary_tokens": len(summary["gen_ids"]),
-                       "failed_evicted_commands": failed_evicted,
-                       "n_target_tokens": len(tgt_ids), **res},
-                      f, indent=1)
+            json.dump(result, f, indent=1)
         tmp.rename(outfile)
+        scored_idxs.append(idx)
         done += 1
         print(f"== t{idx:04d} done in {time.time()-t0:.0f}s "
               f"[{done}/{N_TRAJ}] A={res['arms']['A']['tf_mean']:.3f} "
               f"B={res['arms']['B']['tf_mean']:.3f}", flush=True)
         del summary
         torch.cuda.empty_cache() if torch.cuda.is_available() else None
+
+    # Finalize the run-level manifest with the ACTUAL scored instance ids.
+    manifest["corpus"]["instance_ids"] = sorted(scored_idxs)
+    manifest["corpus"]["n_scored"] = len(scored_idxs)
+    prov.write_run_manifest(outdir, manifest)
+    print("RUN MANIFEST finalized: %d trajectories scored -> %s" % (
+        len(scored_idxs), outdir / "manifest.json"), flush=True)
 
 
 if __name__ == "__main__":
