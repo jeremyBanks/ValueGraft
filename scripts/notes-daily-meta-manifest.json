@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "description": "Daily notes meta-summary manifest. Staleness is keyed by sorted source git blob IDs, not source filenames.",
+  "days": {
+    "20260708": {
+      "note": "notes/20260708.md",
+      "source_count": 12,
+      "source_blob_ids": [
+        "1276966f38bf0d9449023c05e58a242e0debe94e",
+        "440a9ff5c07e5ab5c1ea0c8b26b232307e48c802",
+        "464f09e40227f6b7b607591dbc31a3c6139357d5",
+        "523cbdf9b7910fa837b5d23ff753b624dba62465",
+        "7b676caa7883faa0956c39bbf77921bd814ed25a",
+        "a45694310f6c3a84ed1ffd950b17a62eb5babefa",
+        "c66c58ea58c4f2f695d908fe13575b00bcbb5718",
+        "cd03529e768766668708a42832ca434b2a27fc75",
+        "cf8a5fa802e1d804b173dbe37c1d8454d3b77b5b",
+        "d20290c8426ef2b588a10d97055ac06e4ac0c693",
+        "d769f79a45267bfa5c573f2727d6bea00c4b6f8d",
+        "ea82f783ed4e1e2726e798589cc3abc005661cf6"
+      ],
+      "summary_hash": "a32fbd67d8427a63a146a0f231441897f7ca49494a991401e2c9adbf4dc9c9d4",
+      "input_policy": {
+        "ordinary_threshold_chars": 8192,
+        "ordinary_head_chars": 6144,
+        "ordinary_tail_chars": 2048,
+        "conversation_threshold_chars": 16384,
+        "conversation_head_chars": 12288,
+        "conversation_tail_chars": 4096
+      }
+    }
+  }
+}
