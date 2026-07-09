@@ -57,6 +57,15 @@ PY
 # Fix: use a loader that's happy on 4.57 (Intel AutoRound -> auto-round), then FORCE
 # transformers back to <5 and VERIFY. This is not a "conflict" — it's pinning.
 python3 -m pip install -U pip >/dev/null
+# ROOT-CAUSE GUARD: quant libs (compressed-tensors, autoawq, ...) drag in a newer
+# torch + CUDA-13 wheels, clobbering the pod's matched torch build and breaking the
+# whole CUDA stack (model then never reaches the GPU). Freeze torch to whatever the
+# pod shipped, and cap transformers<5, via a pip CONSTRAINT that every install below
+# must respect. This is the real fix for the "package conflict" — pin, don't pray.
+TORCH_LOCK=$(python3 -c "import torch;print('torch=='+torch.__version__)" 2>/dev/null)
+{ echo "$TORCH_LOCK"; echo "transformers<5"; } > /tmp/pip-constraints.txt
+export PIP_CONSTRAINT=/tmp/pip-constraints.txt
+echo "PIP_CONSTRAINT locking ${TORCH_LOCK} + transformers<5 for all installs"
 python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggingface_hub pandas pyarrow || true
 # quant loader for the chosen repo (default: Intel int4-AutoRound). Alternatives if the
 # repo is a different quant: `autoawq` (AWQ) or `auto-gptq optimum` (GPTQ, transformers-4.x path).
