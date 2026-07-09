@@ -1,41 +1,68 @@
 {
-  "version": 1,
-  "description": "Overall notes meta-summary manifest. Staleness is keyed by ordered daily-summary git blob IDs.",
-  "summary": {
-    "note": "notes/README.md",
-    "source_count": 6,
-    "sources": [
-      {
-        "day": "20260704",
-        "note": "notes/20260704.md",
-        "blob_id": "eced30d4cbb23296d7ee25566575ea2c2064ff90"
-      },
-      {
-        "day": "20260705",
-        "note": "notes/20260705.md",
-        "blob_id": "f13dee734cf982c9fcf7fbf820873da6252e3d41"
-      },
-      {
-        "day": "20260706",
-        "note": "notes/20260706.md",
-        "blob_id": "d03751f39945d30de542f34040677eadd8ca9c5a"
-      },
-      {
-        "day": "20260707",
-        "note": "notes/20260707.md",
-        "blob_id": "8b6fc1cb3ffbbe0719ae545613731fee4c447364"
-      },
-      {
-        "day": "20260708",
-        "note": "notes/20260708.md",
-        "blob_id": "5fefc188e3618d15ec5abdbfce18f98337d3c9a0"
-      },
-      {
-        "day": "20260709",
-        "note": "notes/20260709.md",
-        "blob_id": "dc79aafc0fb110b20960c27a7bfeb6cc6ecede4d"
-      }
-    ],
-    "summary_hash": "b9b28eea6bc733689f3e02b5d2c386a3e857bd949b95a363daea5e9affc3bb7d"
+  "version": 2,
+  "description": "Sparse hierarchical notes rollup manifest. Rollups are generated only when they combine multiple immediate sources; README is always generated or promoted.",
+  "rollups": {
+    "notes/202607.md": {
+      "note": "notes/202607.md",
+      "level": "month",
+      "key": "202607",
+      "mode": "summary",
+      "source_count": 6,
+      "sources": [
+        {
+          "note": "notes/20260704.md",
+          "level": "day",
+          "key": "20260704",
+          "blob_id": "fd9f93aace72efd054516c5d5e79d9e78d9d250c"
+        },
+        {
+          "note": "notes/20260705.md",
+          "level": "day",
+          "key": "20260705",
+          "blob_id": "9773baff4937765b35497c9e47fe35748d79d508"
+        },
+        {
+          "note": "notes/20260706.md",
+          "level": "day",
+          "key": "20260706",
+          "blob_id": "775cf8a6a39cb955acdcdb2a04800718a97bd48f"
+        },
+        {
+          "note": "notes/20260707.md",
+          "level": "day",
+          "key": "20260707",
+          "blob_id": "d8f2dc5f9a38e30126b319cf26516875dd5d5244"
+        },
+        {
+          "note": "notes/20260708.md",
+          "level": "day",
+          "key": "20260708",
+          "blob_id": "d1f99816b71c7553231da9865ddb90190569e2b0"
+        },
+        {
+          "note": "notes/20260709.md",
+          "level": "day",
+          "key": "20260709",
+          "blob_id": "8ef0bec6b53fe41657f18f9dc2407b43d8f6eee6"
+        }
+      ],
+      "summary_hash": "bce0b69bcfe1a1126912dbc52d8a8dd00e2e4a128f68380bb293f0e32262a953"
+    },
+    "notes/README.md": {
+      "note": "notes/README.md",
+      "level": "readme",
+      "key": "overall",
+      "mode": "promote",
+      "source_count": 1,
+      "sources": [
+        {
+          "note": "notes/202607.md",
+          "level": "month",
+          "key": "202607",
+          "blob_id": "54e4f902d2c189f1669580f5aef677ca64371237"
+        }
+      ],
+      "summary_hash": "42b000b0ae670fbdfc0130bac88bd2b7ca656a7d3d21def05797b7ec2cf89bd8"
+    }
   }
 }
