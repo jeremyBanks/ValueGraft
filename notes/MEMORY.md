@@ -1,0 +1,14 @@
+- [Tee before tail](tee-before-tail.md) — keep full stream reviewable when filtering long output
+- [Verify kills by PID](verify-kills-by-pid.md) — pkill -f patterns miss argv flags; pgrep-verify after every kill
+- [Model selection by fitness](model-selection-by-fitness.md) — pick model by task fitness not cost; Opus has headroom, Sonnet for perspective-diversity
+- [Quiet monitors](quiet-monitors.md) — silent on routine progress; notify only on done/error/change; 2min→24min backoff
+- [Validate before trusting](validate-before-trusting.md) — positive control before trusting a pipeline; mine on-disk data before spending; isolate variables; read code not narrate
+- [Question the backend](question-the-backend.md) — don't reflexively reuse slow tools; text-gen via fast subagent mix not local MLX
+- [Shard and verify before killing](shard-and-verify-before-killing.md) — parallelize multi-item generation from the start; never kill a subagent off output-file-size, verify real progress first
+- [Fable full context](fable-full-context.md) — consult Fable with full trajectory + point it at notes/ conversation logs
+- [Proactively use idle capacity](proactively-use-idle-capacity.md) — fill idle compute with useful preemptible work; don't park capacity
+- [Mitigation framing was owner intent](mitigation-framing-was-owner-intent.md) — 07-05 'reframing' was agents' misunderstanding corrected, not a pivot
+- [Push-notify major results](push-notify-major-results.md) — PushNotification on headline findings/milestones, not routine ticks
+- [Fable writes notes files](fable-writes-notes-files.md) — every serious Fable consult writes its output to a notes/ file I pre-create
+- [Verify provenance before claiming data](verify-provenance-before-claiming-data.md) — never say "we have data for X" without checking model/dtype/intervention/metric/condition proven-not-inferred
+- [Plan, don't chase the quick win](plan-dont-chase-the-quick-win.md) — root pattern behind the glossing; on hard problems STOP and figure out the right approach before acting, don't lever-pull
