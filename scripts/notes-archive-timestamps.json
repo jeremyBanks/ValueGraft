@@ -751,6 +751,11 @@
       "object_id": "68af5eb88cb94a5b233ff2090034892f1ebd52cd",
       "archive_timestamp_utc": "2026-07-09T20:01:27Z",
       "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070931-provenance-ledger.md": {
+      "object_id": "e13f6f827d1fdc2d7a20a16331ac808af006c72f",
+      "archive_timestamp_utc": "2026-07-09T20:08:02Z",
+      "timestamp_source": "git current-file lifetime"
     }
   }
 }
