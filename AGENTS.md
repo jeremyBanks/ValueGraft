@@ -145,6 +145,15 @@ survive attention under pressure; forms do.
   COPYING it over README.md (`cp <working-file> README.md`). README.md = the
   published snapshot; the working file = the live version; re-promote after each
   major confident update.
+- **PODS OFF BEFORE THE PAPER (user 07-08):** the moment DATA COLLECTION is done, TERMINATE every
+  pod — the writing phase is no-GPU, so pods must never run into it. Shutdown is a data-phase step,
+  not a post-paper afterthought.
+- **PAPER = HEAVY-FABLE collaboration (user 07-08):** written by owner + Fable + me, with HEAVY
+  emphasis on Fable (as valuable drafting the paper as it's been everywhere else), holding the line
+  on the stated requirements + the prior draft's good aspects. Written FRESH per current requirements.
+- **PUBLISHING BOUNDARY (user 07-08):** writing the paper, putting it in the REPO, and promoting to
+  README when GENUINELY confident = AUTONOMOUS (owner wants this done). Publishing EXTERNALLY to the
+  internet (HF community post / broader publication) = NOT autonomous — the owner must be involved.
 
 ## FINAL PAPER REVIEW: multi-perspective Fable passes (user 07-07)
 

@@ -245,6 +245,9 @@ conclusion into the prompt. A competent agent answers the question as posed; a l
   wrong, say so and say what IS right"), give FULL context + point at notes/ trajectory ([[fable-full-context]]),
   and EXPLICITLY invite the agent to challenge the framing and declare the current plan wrong.
 - Periodically RE-ASK strategic questions un-anchored, to detect a self-reinforcing frame you've been
-  feeding it across turns.
+  feeding it across turns. AT NATURAL CHECKPOINTS (a major result lands, before a new spend phase),
+  ask Fable OPEN-ENDEDLY whether the whole experiment TRAJECTORY still makes sense or warrants a MAJOR
+  CHANGE — not just execution details (user 07-08). Don't just barrel down the established plan; the
+  cost of the check is one cheap consult, the cost of not checking is incident #37.
 - A well-argued sub-agent answer to a leading question is NOT validation — it is your own bias reflected
   back with borrowed authority. Treat it as such.
