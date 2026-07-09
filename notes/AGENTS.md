@@ -18,6 +18,26 @@ file must be introduced in its own commit with author and committer dates set to
 the note's canonical timestamp. Existing-path edits do not need special
 timestamp handling.
 
+Daily meta-summaries are the one intentional naming exception:
+
+```text
+YYYYMMDD.md
+```
+
+They synthesize the ordinary notes for that UTC day and are excluded from the
+archive counter. Generate or refresh one with:
+
+```bash
+python3 scripts/update_daily_meta_summary.py YYYYMMDD
+```
+
+The daily-summary manifest keys staleness by the sorted set of source git blob
+IDs for that day, not by source filenames. Conversation summaries are included
+in full up to `16 KiB`; above that they use a `12 KiB` leading excerpt plus a
+`4 KiB` tail excerpt. Other notes are included in full up to `8 KiB`; above that
+they use a `6 KiB` leading excerpt plus a `2 KiB` tail excerpt, with an explicit
+omitted-content marker in the gap.
+
 ```bash
 python3 scripts/normalize_notes_archive_names.py
 ```

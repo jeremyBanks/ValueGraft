@@ -83,6 +83,19 @@ def test_normalizer_assigns_per_day_indexes(tmp_path: Path) -> None:
     assert targets == ["2026070501-alpha-note.md", "2026070502-beta-note.md"]
 
 
+def test_normalizer_excludes_daily_meta_summary(tmp_path: Path) -> None:
+    normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_daily_meta_test")
+    notes = tmp_path / "notes"
+    notes.mkdir()
+    daily = notes / "20260708.md"
+    ordinary = notes / "20260708010000-ordinary-note.md"
+    daily.write_text("daily\n", encoding="utf-8")
+    ordinary.write_text("ordinary\n", encoding="utf-8")
+
+    assert normalizer.archive_files(notes) == [ordinary]
+    assert normalizer.plan_renames([daily], tmp_path) == []
+
+
 def test_normalizer_carries_indexes_across_days(tmp_path: Path) -> None:
     normalizer = load_script(ROOT / "scripts" / "normalize_notes_archive_names.py", "normalizer_cross_day_test")
     notes = tmp_path / "notes"

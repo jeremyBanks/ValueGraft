@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 FULL_PREFIX_RE = re.compile(r"^\d{14}-")
 FULL_PREFIX_CAPTURE_RE = re.compile(r"^(\d{14})-")
 COMPACT_PREFIX_RE = re.compile(r"^\d{8}[0-9A-Z]{2}-")
+DAILY_META_RE = re.compile(r"^\d{8}\.md$")
 OLD_PREFIX_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-\d{2}-")
 SAFE_TITLE_RE = re.compile(r"[^a-z0-9-]+")
 HYPHENS_RE = re.compile(r"-+")
