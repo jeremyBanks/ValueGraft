@@ -71,3 +71,14 @@ Sources: computingforgeeks.com/open-source-llm-comparison, huggingface.co/blog/d
 magazine.sebastianraschka.com/p/a-dream-of-spring-for-open-weight (architectures), lmstudio.ai/models.
 
 ## Goal: 6-8 NEW vendors on the architecture map (meta, allenai, google, ibm, cohere, tii, deepseek, z.ai).
+
+## Coding-variant contrast (owner idea, 07-09): base-vs-coder = a controlled TRAINING-DOMAIN knob
+Coding variants (Qwen-Coder, DeepSeek-Coder, Codestral, CodeLlama, CodeGemma, Granite-Code) are usually
+the SAME architecture as their base — so ZERO arch diversity, but a clean CONTROLLED CONTRAST: base vs
+coder, arch held FIXED, training domain varied. Tests: is the graft's semantic-continuity effect
+ARCH-driven (robust to code fine-tuning) or TRAINING-driven (shifts)? Complementary to the arch map
+(map varies arch; this holds arch, varies training). Cheapest high-value pairs = where we already have
+the base: Qwen2.5-Coder-32B vs Qwen2.5-32B; Codestral vs Mistral-Small. Easy load (proven arch), cheap
+(reuse pipeline). Caveat: our task is NL-conversation; a code-heavy model may render NL a bit worse
+(measurable via competence gates; modern coders are base+code, usually OK). PRIORITY: mid — after
+pure-new-vendor Tier A (it's a refinement, not a new vendor); 1-2 pairs is plenty.
