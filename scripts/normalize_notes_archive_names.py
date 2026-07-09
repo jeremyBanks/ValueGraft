@@ -95,7 +95,7 @@ def plan_renames(paths: list[Path], root: Path, cache: ArchiveTimestampCache | N
         cache.prepare(paths)
     items: list[tuple[Path, TimestampInfo, str]] = []
     for source in paths:
-        if DAILY_META_RE.match(source.name):
+        if source.name in RESERVED_DOC_NAMES or DAILY_META_RE.match(source.name):
             continue
         timestamp = timestamp_for(source, root, cache)
         title = kebab_case(strip_known_prefix(source.stem))

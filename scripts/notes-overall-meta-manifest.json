@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "description": "Overall notes meta-summary manifest. Staleness is keyed by ordered daily-summary git blob IDs.",
+  "summary": {
+    "note": "notes/README.md",
+    "source_count": 5,
+    "sources": [
+      {
+        "day": "20260704",
+        "note": "notes/20260704.md",
+        "blob_id": "eced30d4cbb23296d7ee25566575ea2c2064ff90"
+      },
+      {
+        "day": "20260705",
+        "note": "notes/20260705.md",
+        "blob_id": "f13dee734cf982c9fcf7fbf820873da6252e3d41"
+      },
+      {
+        "day": "20260706",
+        "note": "notes/20260706.md",
+        "blob_id": "d1922749d23744909d9a4ce1fff5315909918438"
+      },
+      {
+        "day": "20260707",
+        "note": "notes/20260707.md",
+        "blob_id": "cdf9d1a148e073f132d411d31b3133b0062f2328"
+      },
+      {
+        "day": "20260708",
+        "note": "notes/20260708.md",
+        "blob_id": "0980e780ea9db56be8496cfb54b64bf2beaf18bd"
+      }
+    ],
+    "summary_hash": "ab1edc6d9dbfa5956b64d69cd5ba2ec0666d50eaeef88f4dab98dcc792090d81"
+  }
+}

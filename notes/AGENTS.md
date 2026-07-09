@@ -3,7 +3,12 @@
 This directory is an archive for research notes, drafts, reviews, and small
 reports. Archive notes should be Markdown files.
 
-Markdown archive files must use UTC, sortable, kebab-case names:
+Agents may add, edit, or move note content here, but they should not hand-manage
+archive filename prefixes. Put the content in the directory, then run the notes
+scripts; the scripts own prefix normalization, manifest updates, and
+meta-summary generation.
+
+Markdown archive files are normalized to UTC, sortable, kebab-case names:
 
 ```text
 YYYYMMDDNN-short-kebab-case-title.md
@@ -13,19 +18,25 @@ YYYYMMDDNN-short-kebab-case-title.md
 timestamp and normally continues across day boundaries. If carrying the prior
 day's suffix forward would push a day past `99`, that day starts at the same
 trailing digit in the `01` through `10` range instead. The full timestamp
-belongs in git history, not the filename. If a note is created or renamed, that
-file must be introduced in its own commit with author and committer dates set to
-the note's canonical timestamp. Existing-path edits do not need special
-timestamp handling.
+belongs in git history, not the filename. Do not invent or manually edit these
+prefixes; run the normalizer.
 
 Daily meta-summaries are the one intentional naming exception:
 
 ```text
 YYYYMMDD.md
+README.md
 ```
 
-They synthesize the ordinary notes for that UTC day and are excluded from the
-archive counter. Generate or refresh one with:
+`YYYYMMDD.md` files synthesize the ordinary notes for that UTC day and are
+excluded from the archive counter. `README.md` synthesizes the daily summaries
+into one project-history overview. Generate or refresh all meta-summaries with:
+
+```bash
+python3 scripts/update_notes_meta_summaries.py
+```
+
+Generate or refresh one daily summary with:
 
 ```bash
 python3 scripts/update_daily_meta_summary.py YYYYMMDD
@@ -38,16 +49,28 @@ in full up to `16 KiB`; above that they use a `12 KiB` leading excerpt plus a
 they use a `6 KiB` leading excerpt plus a `2 KiB` tail excerpt, with an explicit
 omitted-content marker in the gap.
 
+If any daily summaries change during an all-days run, the overall `README.md` is
+regenerated from the full daily summaries. The overall prompt includes date
+headers before each source day so the model can understand sequence, but it is
+instructed not to copy those date headers into its output.
+
+Summary generators accept `--forbid-regex` and also read
+`VALUEGRAFT_NOTES_FORBID_REGEX` or `NOTES_FORBID_REGEX` from the environment or
+from git-ignored dotenv files at `.env` and `notes/.env`. Use that for local
+topic/sensitive-term filters that should be respected by the daily and overall
+summary layers without committing the filter text.
+
 ```bash
 python3 scripts/normalize_notes_archive_names.py
 ```
 
-Usual workflow: drop a note into `notes/`, run the normalizer, and let it commit
-any required per-file rename. Use `--dry-run` first when reviewing planned
-changes. The normalizer accepts `.md` and markdown-like `.txt` notes, and
-outputs `.md`. When conversation-summary notes are renamed, the normalizer also
-updates and commits the corresponding manifest path changes. `AGENTS.md` is the
-intentional unprefixed instruction file in this directory.
+Usual workflow: drop or edit notes in `notes/`, then run the normalizer and the
+meta-summary updater. Use `--dry-run` first when reviewing planned changes. The
+normalizer accepts `.md` and markdown-like `.txt` notes, outputs `.md`, and
+updates conversation-summary manifest paths when conversation notes are renamed.
+The summary generators run `deno fmt` on generated Markdown/JSON before
+recording manifest hashes. `AGENTS.md` is the intentional unprefixed instruction
+file in this directory; `README.md` is the generated overview.
 
 Conversation-summary notes use participant-based names:
 

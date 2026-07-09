@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import shlex
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -23,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from notes_archive_naming import DAILY_META_RE
+from notes_summary_filters import resolve_forbid_patterns, run_filtered_summary_command
 
 KIB = 1024
 NON_CONVERSATION_THRESHOLD = 8 * KIB
@@ -142,6 +142,25 @@ def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def deno_fmt(root: Path, paths: list[Path]) -> None:
+    rels = [path.relative_to(root).as_posix() for path in paths if path.exists()]
+    if not rels:
+        return
+    proc = subprocess.run(
+        ["deno", "fmt", "--", *rels],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.stdout:
+        print(proc.stdout, end="")
+    if proc.stderr:
+        print(proc.stderr, end="", file=sys.stderr)
+    if proc.returncode != 0:
+        raise SystemExit(f"deno fmt failed with exit {proc.returncode}")
+
+
 def build_prompt(day: str, sources: list[SourceNote], root: Path) -> str:
     parts: list[str] = [
         f"""You are writing notes/{day}.md, a UTC daily meta-summary for the ValueGraft research repository.
@@ -238,18 +257,6 @@ def is_stale(day: str, note_path: Path, sources: list[SourceNote], manifest: dic
     return False
 
 
-def run_summary_command(command: str, prompt: str) -> str:
-    argv = shlex.split(command)
-    if not argv:
-        raise SystemExit("empty summary command")
-    proc = subprocess.run(argv, input=prompt, text=True, capture_output=True, check=False)
-    if proc.returncode != 0:
-        raise SystemExit(
-            f"daily meta-summary command failed with exit {proc.returncode}\nSTDERR:\n{proc.stderr}"
-        )
-    return proc.stdout.strip() + "\n"
-
-
 def git_has_staged_changes(root: Path, paths: list[Path]) -> bool:
     rels = [path.relative_to(root).as_posix() for path in paths]
     proc = subprocess.run(
@@ -296,6 +303,30 @@ def main() -> int:
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--no-command", action="store_true", help="write or print the prompt without running Sonnet")
     parser.add_argument("--no-commit", action="store_true", help="write files but leave them uncommitted")
+    parser.add_argument(
+        "--forbid-regex",
+        action="append",
+        default=[],
+        help="case-insensitive regex forbidden in generated summaries; may be repeated",
+    )
+    parser.add_argument(
+        "--dotenv",
+        action="append",
+        type=Path,
+        default=None,
+        help="dotenv file to read forbid-regex env vars from; defaults to .env and notes/.env",
+    )
+    parser.add_argument(
+        "--no-default-forbid-regex",
+        action="store_true",
+        help="disable default secret-shaped forbid regexes",
+    )
+    parser.add_argument(
+        "--max-forbid-attempts",
+        type=int,
+        default=5,
+        help="summary retries before line-scrubbing forbidden output; default: 5",
+    )
     args = parser.parse_args()
 
     root = git_root()
@@ -327,11 +358,33 @@ def main() -> int:
             sys.stdout.write(prompt)
         return 0
 
-    summary = run_summary_command(args.command, prompt)
+    forbid_patterns = resolve_forbid_patterns(
+        args.forbid_regex,
+        root,
+        include_defaults=not args.no_default_forbid_regex,
+        dotenv_paths=args.dotenv,
+    )
+    summary = run_filtered_summary_command(
+        args.command,
+        prompt,
+        forbid_patterns,
+        args.max_forbid_attempts,
+        f"daily meta-summary {args.day}",
+    )
     notes_dir.mkdir(parents=True, exist_ok=True)
     note_path.write_text(summary, encoding="utf-8")
-    manifest.setdefault("days", {})[args.day] = entry_for(args.day, note_path, summary, sources, root)
+    deno_fmt(root, [note_path])
+    formatted_summary = note_path.read_text(encoding="utf-8")
+    manifest.setdefault("days", {})[args.day] = entry_for(
+        args.day,
+        note_path,
+        formatted_summary,
+        sources,
+        root,
+    )
     manifest_changed = write_manifest(manifest_path, manifest)
+    if manifest_changed:
+        deno_fmt(root, [manifest_path])
 
     changed_paths = [note_path]
     if manifest_changed:

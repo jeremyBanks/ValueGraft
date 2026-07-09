@@ -2,6 +2,12 @@
 __pycache__/
 *.pyc
 .DS_Store
+.env
+.env.*
+!.env.example
+notes/.env
+notes/.env.*
+!notes/.env.example
 .runpod_key
 .huggingface_key
 .openrouter_key
