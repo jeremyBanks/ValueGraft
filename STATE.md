@@ -5,6 +5,24 @@ REPRODUCTION of the headline. Everything below the "SUPERSEDED" marker is histor
 
 ## CURRENT TRUTH (2026-07-09) — read first
 
+### ⚠⚠⚠ 2026-07-09 LATE — NO VALID POSITIVE CORNERSTONE (deep audit: notes/2026070976; postmortem: notes/2026070977)
+The paper had NO valid positive cornerstone under the owner's rule (**cornerstone must be bf16 AND the
+value-only ValueGraft method**). Verdict = honestly a **NEGATIVE / CAUTIONARY / BOUNDING** paper.
+- **Precision truth:** BOTH behavioral headlines are **4-bit MLX only** in every SCORED form: recovery
+  (judged sense/referent: raw_30b, raw_brief_repro) AND honesty (phase2_30b/4b). Local=MLX-4bit; pods=bf16.
+  A bf16 honesty answer set exists (honesty_30b_bf16) but was NEVER SCORED → no scored bf16 behavioral result.
+- **Honesty ≠ ValueGraft:** its arm H-pack = coupled KV-graft (α_K=1,α_V=1) in a PACKED non-production
+  layout — NOT value-only ValueGraft (E-post, α_K=0, aligned, production layout). AND not content-specific:
+  H-pack-wrongS (a DIFFERENT conv's state) suppresses fabrication 24/24 too → a packed-layout calibration
+  phenomenon, not value-carried meaning. Supporting at best.
+- **The bf16 value-only tests:** effect_bound (placebo-controlled, value-only, on recovery plants) = NULL
+  on TWO bf16 models (Qwen3.6-27B + Qwen3-30B-A3B). SWE-Gym E-tuned +0.0156 nats (bf16, value-only) but
+  tiny/TF-only/render-null/un-CI'd. So no robust positive at bf16+value-only.
+- **STATUS: HALTED.** Provisional honesty-led draft committed (e017631) is SUPERSEDED. Reframing to the
+  honest negative/bounding result OR seeking fresh bf16 value-only data — owner deciding; Fable advising
+  on how to continue (notes/2026070978). CLAIMS/FINDINGS need a full precision-provenance correction pass.
+  4-bit = SUPPLEMENTAL only (weaker/more-artifacts); primary target = bf16 ~30B.
+
 ### ⭐ STANDING GUIDANCE + OPEN DIRECTIVES (owner, 2026-07-09) — DO NOT LOSE THESE
 1. **Fable writes to a notes/ file for EVERY serious consult** — I pre-create the empty file, pass rich
    context, Fable writes its own assessment there, returns the path. (AGENTS.md "FABLE WRITES TO A NOTES FILE").
