@@ -1,100 +1,145 @@
-_This conversation resolves the multi-hour cross-architecture alignment saga,
-tracing the negative/null referent results through a sequence of misdiagnoses to
-their true root cause (a wrong model checkpoint), while a parallel thread of
-process corrections addressed several self-inflicted operational mistakes (a
-killed near-complete subagent, a destructive `rm` after a failed merge, and
-unintended branch drift off trunk). It closes with the positive control finally
-reproducing on the correct model, but surfaces a new problem: the doubled corpus
-does not carry the effect as well as the original conversations._
+_This conversation covers the resolution of the wrong-checkpoint saga's
+aftermath, a sustained sequence of process corrections about when to consult
+Fable versus the user, the discovery and resolution of a nativeness confound
+threatening the cross-architecture sweep's validity, and the redesign of the
+experimental harness to a per-model-native rendering approach that preserves the
+full 16-model ambition._
 
 **Participants:** User and claude-opus-4-8.
 
-**Corpus recovery and quality safeguards.** A single sequential Opus subagent
-tasked with authoring 27 new scenarios (c28–c54) was killed after being misread
-as stalled based on a 131-byte output-file proxy, when it was in fact nearly
-complete (holding content in-context for a final write). This was corrected to a
-6-way parallel shard (Sonnet/Fable) — a design later reframed, at the user's
-prompting, as a quality improvement rather than just a speed one (author
-diversity and fresh per-item attention reduce homogenization, e.g. repeated
-codenames like "Vader" across shards). A subsequent merge script's unconditional
-`rm -f` deleted the six uncommitted batch files after a merge assertion failed
-(on an unrelated zero-padding bug, "c1" vs "c01"); the content was recovered
-byte-identical by resuming the same subagents, which had generated output via a
-reproducible script. The corpus was ultimately merged and frozen at 54
-conversations / 626 plants, verified clean (0 problems, correct ASCII, correct
-plant placement, correct inventory), and committed.
+The positive control was confirmed reproducing on the correct model checkpoint
+(Qwen3-30B-A3B-Instruct-2507): referent CI [+0.034, +0.230], midpoint ~+0.13,
+matching the trusted apparatus's prior +0.12, with the referent>sense>stance
+dissociation intact and identity/alpha0 checks passing. This validated that the
+multi-hour debugging saga earlier in the session was purely a wrong-checkpoint
+problem, not a flaw in the harness or the underlying effect.
 
-**Branch and workflow hygiene.** A debugger subagent created a branch
-(`fix/selfgen-summary-think-alignment`) and the working tree switched to it,
-causing several mainline commits (corpus freeze, decisions) to land off trunk.
-This was corrected via fast-forward (no destructive operations, no work lost)
-back onto trunk, and a hard rule was established: only trunk, never branches —
-any subagent that branches gets consolidated back immediately. A related
-standing rule was set: commit and push to trunk after every unit of work, so
-origin stays current.
+A significant process correction occurred around consultation discipline. The
+user pointed out that hours were spent on narrow technical debugging before
+consulting Fable for a strategic read, when a basic question ("are you running
+the exact checkpoint the original result was measured on?") would have resolved
+the issue quickly. This was recorded as a rule in AGENTS.md: when a fix hasn't
+converged in 1–2 attempts, a subagent is looping, or a result is confusing,
+consult Fable immediately rather than after extended debugging. The user further
+noted that turning to the user for direction when stuck was itself a failure
+mode — since Fable is available for autonomous strategic consultation without
+interrupting the user, the correct sequence is to consult Fable first and
+continue working, reserving user escalation for decisions that are genuinely the
+user's to make (scope, spend, taste). This was also recorded in the repo (not
+private memory, since private memory files are invisible to subagents and
+collaborators — an earlier practice of recording learnings in private
+`~/.claude` memory was corrected by moving them into AGENTS.md and other
+repo-tracked files).
 
-**The alignment/positive-control saga.** The debugger's fix for the self-gen
-alignment crash (Qwen3's `<think>` block causing a 899-vs-538 token mismatch
-between write-time and compacted-context tokenization) initially appeared sound
-in design (preserving full think+answer in the write-time prefill, grafting only
-clean answer positions) but the positive control still failed, returning
-near-null/negative referent instead of the expected ~+0.136. Consultation with
-Fable produced a mechanistic insight (now recorded as a paper-relevant finding):
-for thinking models, the graft must snapshot with reasoning present, because
-attention smears the reasoning's effect forward into the answer token values —
-the reasoning doesn't need its own landing positions in the compacted context,
-provided the write-time values are computed with it in context. Fable also
-proposed a decisive O(1) diagnostic test — a null self-graft (E := B) that must
-equal ~0 by construction, distinguishing a plumbing bug from genuine substance
-loss.
+The user also flagged that project-management discipline had blurred — multiple
+purpose-specific tracking files exist (FINDINGS.md for load-bearing scientific
+claims, INCIDENTS.md for failures and fixes, DECISIONS.md for dated rationale,
+MASTER-PLAN.md for the durable design, STATE.md for current handoff state,
+AGENTS.md for workflow rules) and STATE.md in particular had gone stale, still
+reflecting pre-resolution status. STATE.md was refreshed to current reality.
 
-The debugger subagent, however, was found to be spinning — running a third full
-40-minute conversation-level run without ever executing the cheap decisive test
-— which was explicitly flagged as a fail-fast violation. It was stopped, and
-direct investigation resumed. This led to discovery that the trusted,
-previously-validated apparatus (`gap_closure_cat.py`, which had produced +0.156)
-failed with the identical error as the refactored `cross_arch_probe.py`,
-indicating a shared root cause rather than two separate bugs — a heuristic now
-recorded as: identical failures across independent apparatuses point to shared
-code, and should be checked first rather than last. Tracing the shared code
-found that an earlier "hardening" task (task 31) had replaced the tolerant
-`build_alignment_difflib` with a strict `build_alignment_direct` inside the
-common `build_alignment` function, based on a token-matching concern that had
-already been confirmed benign — i.e., the earlier hardening fixed a non-problem
-and introduced a real regression. Reverting that one-line delegation restored
-difflib and eliminated the crash, but the referent number remained negative on
-re-test, indicating the numeric problem was not the alignment strictness after
-all.
+Fable identified a second, more consequential issue: the original
+positive-control corpus (c01–c12) had assistant replies generated in-context by
+a Qwen model, meaning the effect could be native to Qwen and could fail to
+generalize — the same failure mode that had caused the newly-doubled corpus
+(c13–c54, rendered with foreign frontier-model replies) to underperform. If
+true, a cross-architecture sign map built on this corpus would track per-model
+reply-nativeness rather than attention geometry, which would undermine the
+planned 16-model sweep. The user asked several clarifying questions to separate
+what was and wasn't at risk; the assistant clarified that (1) the core effect
+and original corpus remain valid and unaffected, (2) only the newly-doubled
+corpus's _rendered conversations_ (not their underlying scenario scaffolding)
+were compromised by foreign replies, and (3) the cross-architecture geometry
+claim was an unpublished, unverified extension, not an existing finding under
+threat.
 
-Further investigation revealed the true root cause: the entire debugging session
-had been run against `Qwen3-30B-A3B` (the thinking-variant checkpoint), while
-the known-good +0.156/+0.136 baseline was measured on
-`Qwen3-30B-A3B-Instruct-2507` (the non-thinking variant, which is also
-`gap_closure_cat.py`'s actual default — the override to the thinking model was
-the source of every downstream symptom: the `<think>` block, the tokenization
-divergence, the alignment crash, and the think-strip band-aid). This is recorded
-as a lesson to verify the exact model identifier against the known-good run
-before any other debugging step.
+The user's expressed preference was to keep the full wide 16-model plan rather
+than scale back, conditional on making it valid. The user also observed that in
+real deployments, assistant replies in a conversation are always native to the
+model that produced them, so requiring native replies is not an artificial
+workaround but a realistic constraint — this reframing pointed to the resolving
+design: rather than testing all models on one shared (Qwen-native) corpus, each
+model should generate its own native assistant replies and summary from a shared
+set of scenarios (user prompts, planted facts, gold continuations), while the
+probe's gold continuation stays shared. Fable validated this as the correct
+design ("matched-scaffold, model-filled," v2.1), noting that the graft metric (a
+difference between grafted and baseline log-probabilities on the same shared
+gold continuation) causes generic-nativeness effects to cancel, since both terms
+are affected equally. Residual nativeness effects — reply content/capability,
+headroom (whether a model's own summary evicts the referent at all), and task
+competence — become measured covariates and gates rather than confounds:
+reply-covariate regression, headroom normalization with a floor gate, and a
+competence gate on full-context log-probability. Primary inference weight falls
+on two within-vendor dense/MoE pairs (Qwen3, Gemma-4) where nativeness is
+controlled by construction; the full 16-model regression becomes confirmatory of
+one pre-registered geometry direction (predicting sign, not magnitude). This
+design keeps the entire 54-scenario corpus usable, since native rendering
+regenerates replies for every scenario, removing the earlier c01–c12-vs-c13–c54
+split, which the assistant acknowledged had conflated reply-nativeness (a
+design-independent problem, now fixed uniformly) with underlying scenario-design
+quality (a separate, still-open question that native rendering tests fairly for
+the first time).
 
-Re-running on the correct checkpoint (`Instruct-2507`) reproduced the effect:
-original conversations c01–c12 gave referent = +0.1246 (matching the known
-+0.136, with the expected dissociation pattern — positive referent/sense, null
-stance). This confirms the underlying scientific effect and apparatus are sound;
-the multi-hour debugging saga was a tooling/checkpoint error, not a science
-failure.
+The user required that experimental methodology — specifically data provenance
+(who or what generated each piece of conversation content, exact checkpoints,
+procedures, gates) — be documented far more thoroughly than in prior paper
+drafts, calling the previous omission unacceptable and something that must not
+recur, since the omitted nativeness detail turned out to be load-bearing for
+validity. This was recorded as a blocking requirement in a new
+`METHODS-PROVENANCE-REQUIREMENTS.md` file, referenced from
+`writeup-guidelines.md` and `AGENTS.md`'s publish workflow, so the write-up
+cannot proceed without addressing it. Separately, the user specified the
+author-attribution byline should remain a clean hierarchy (Fable 5 and GPT-5.5
+as main authors, Jeremy Banks providing guidance, light "assistance from" credit
+to other models, no funding mention, no per-model contribution breakdown) — the
+guidelines had drifted to include per-model itemization and a funding mention,
+and were corrected to match the report's existing byline, with an explicit note
+distinguishing this attribution byline from the separate, detailed
+data-provenance methods section.
 
-**Open problem at handoff.** The same correct-model run showed that the new
-conversations (c13–c54, from the doubled corpus) do not carry the effect:
-referent ≈ +0.009 (~null) despite a substantial pre-graft evictable gap (1.12,
-vs. 1.69 for originals) — ruling out the benign "smaller gap, smaller effect"
-explanation. This means the corpus augmentation, as rendered via the model-mix
-pipeline, is lower-quality for measuring the graft effect and currently dilutes
-rather than strengthens the signal — the opposite of its intended purpose. The
-stated recommendation pending user confirmation is to run the wide
-cross-architecture sweep on the reliable original c01–c12 (clean, reproducing
-signal) to obtain the paper's core sign-map result, while treating the
-new-conversation rendering quality as a separate problem to diagnose and fix in
-parallel, rather than letting the diluted new material hold up the wide launch.
-This decision was posed to the user as an explicit choice (proceed wide on
-originals now vs. investigate new-conversation rendering first) and was not yet
-resolved at the end of the transcript.
+Implementation proceeded on the per-model native-rendering harness
+(`src/cross_arch_probe.py`): an `SC_NATIVE_RENDER` mode was added that ports the
+original corpus generator's in-context reply-generation approach to the HF/torch
+path, producing native replies and self-generated summaries per model while
+keeping the gold continuation shared, plus headroom, competence, and
+reply-covariate gates. This passed CPU self-tests reproducing the original
+conversation structure. A GPU verification run was launched on the cached pod
+(Qwen3-30B-A3B-Instruct-2507) to confirm native rendering reproduces the ~+0.12
+referent effect. This run proved considerably slower than expected —
+approximately 10 minutes per conversation due to genuine autoregressive
+generation cost (~7K tokens per conversation), putting the 12-scenario
+verification at roughly two hours rather than the initially estimated 30–60
+minutes, and flagging a real feasibility concern for the eventual 16-model × up
+to 54-scenario sweep. The assistant characterized the bottleneck as inherent
+generation cost rather than a fixable inefficiency (an initial suspicion of
+unnecessary re-prefill was ruled out) and recorded a scaling plan for later
+decision: reducing scenarios per model, shortening replies, and/or parallelizing
+across more pods. As of the end of this transcript, the verification run was
+still in progress (through roughly c07 of 12), with no referent number yet
+produced; a Mistral-Small nativeness-control run on the original corpus was
+abandoned as unnecessary after the design redesign (its intended role — showing
+the effect fails on non-native replies — is now superseded by the
+per-model-native design, and its pod provisioning was unreliable regardless).
+
+Also completed during this stretch: a geometry table for all 16 candidate models
+(GQA ratio, head dimension, RoPE theta, layer count, QK-norm flag) was gathered
+and saved to `data/model_geometry.json`, but QK-norm detection was found to be
+broken (reads false for all models, including Qwen3/Gemma/OLMo-2 which do use
+it) because it was checked via config keys rather than loaded model modules —
+this needs fixing before finalizing the pre-registered geometry hypothesis,
+since QK-norm was the leading candidate predictor. A pre-registration draft
+(`PREREGISTRATION.md`) was started, covering the estimand, frozen metric,
+exclusion rules, and primary/secondary inference structure, with the specific
+geometry direction still to be finalized pending the QK-norm fix and a further
+Fable consultation.
+
+**Handoff state.** The native-render verification on Qwen (pod ujg3iqy5cirnga)
+was the immediate blocking gate: pending its referent result reproducing ~+0.12,
+the plan is to fix QK-norm detection from loaded model modules, finalize the
+single pre-registered geometry direction, extend verification to the full
+54-scenario set (to test the previously-untested design quality of c13–c54 under
+fair native rendering), and then provision and run the full 16-model
+per-model-native sweep — factoring in the render-time scaling concern discovered
+in this session. No fixed ETA was given for the verification's completion beyond
+the revised ~2-hour estimate for the 12-scenario run, which had not yet
+completed at the end of this transcript.
