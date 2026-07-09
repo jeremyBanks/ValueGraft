@@ -656,6 +656,21 @@
       "object_id": "23730c06c36d9df3c6036b64d9239cfca8325185",
       "archive_timestamp_utc": "2026-07-09T17:47:47.897907Z",
       "timestamp_source": "filesystem birth time"
+    },
+    "notes/2026070982-champion-validation-experiment.md": {
+      "object_id": "34e31bb356499611a35462861b8bc99b330424e0",
+      "archive_timestamp_utc": "2026-07-09T18:09:34Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070983-paper-rewrite-guidance.md": {
+      "object_id": "fc18fa3279134905d192174647c091033d3178cd",
+      "archive_timestamp_utc": "2026-07-09T18:28:03Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070984-per-head-champion-scan.md": {
+      "object_id": "634ac522edad0203848a5ff05bea09daed3572fb",
+      "archive_timestamp_utc": "2026-07-09T19:40:21Z",
+      "timestamp_source": "git current-file lifetime"
     }
   }
 }
