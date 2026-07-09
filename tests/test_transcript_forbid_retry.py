@@ -150,6 +150,39 @@ def make_message(
     )
 
 
+def test_insert_participants_block_preserves_plain_following_paragraph() -> None:
+    mod = load_update_module()
+    messages = [
+        make_message(mod, "codex", "2026-07-09", 1, "2026-07-09T00:00:00Z", "request"),
+        mod.MessageRecord(
+            platform="codex",
+            date="2026-07-09",
+            sequence=1,
+            message_index=2,
+            timestamp="2026-07-09T00:01:00Z",
+            role="assistant",
+            heading_metadata="  [model=gpt-5.5; effort=xhigh]",
+            text="answer",
+            source_line=2,
+        ),
+    ]
+    summary = """_Opening paragraph._
+
+**Participants:** User and old-model.
+
+This plain paragraph used to be accidentally deleted.
+
+**Handoff State.** Keep this too.
+"""
+
+    updated = mod.insert_participants_block(summary, messages)
+
+    assert "**Participants:** User and gpt-5.5-xhigh." in updated
+    assert "old-model" not in updated
+    assert "This plain paragraph used to be accidentally deleted." in updated
+    assert "**Handoff State.** Keep this too." in updated
+
+
 def test_build_new_ranges_respects_two_hour_coalescing_gap() -> None:
     mod = load_update_module()
     segments = {

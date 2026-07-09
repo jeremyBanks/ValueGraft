@@ -583,21 +583,29 @@ def render_participants_block(messages: list[MessageRecord]) -> str:
     return f"{PARTICIPANTS_PREFIX} {format_english_list(participant_entries_for_messages(messages))}."
 
 
+def remove_existing_participants_blocks(summary: str) -> str:
+    paragraphs = [paragraph.strip() for paragraph in re.split(r"\n{2,}", summary.strip())]
+    kept: list[str] = []
+    skip_next = False
+    for paragraph in paragraphs:
+        if not paragraph:
+            continue
+        if skip_next:
+            skip_next = False
+            continue
+        if paragraph.startswith(PARTICIPANTS_PREFIX):
+            continue
+        if paragraph in {OLD_PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING}:
+            skip_next = True
+            continue
+        if paragraph.startswith(OLD_PARTICIPANTS_SECTION_HEADING) or paragraph.startswith(OLD_MODEL_SECTION_HEADING):
+            continue
+        kept.append(paragraph)
+    return "\n\n".join(kept).strip()
+
+
 def insert_participants_block(summary: str, messages: list[MessageRecord]) -> str:
-    summary = summary.strip()
-    for heading in (OLD_PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING):
-        summary = re.sub(
-            rf"\n\n{re.escape(heading)}\n.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
-            "",
-            summary,
-            flags=re.S,
-        )
-    summary = re.sub(
-        rf"\n\n{re.escape(PARTICIPANTS_PREFIX)}\s+.*?(?=\n\n(?:#{{1,6}}\s|\*\*)|\Z)",
-        "",
-        summary,
-        flags=re.S,
-    )
+    summary = remove_existing_participants_blocks(summary)
     block = render_participants_block(messages)
     if "\n\n" not in summary:
         return f"{summary}\n\n{block}\n"
