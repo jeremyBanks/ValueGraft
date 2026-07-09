@@ -401,6 +401,15 @@ def note_name_for_messages(prefix: str, messages: list[MessageRecord]) -> str:
     return f"{prefix}-{conversation_title(participant_entries_for_messages(messages))}.md"
 
 
+def provisional_note_path_for_messages(
+    notes_dir: Path,
+    messages: list[MessageRecord],
+    first_ts: datetime,
+) -> Path:
+    prefix = first_ts.astimezone(timezone.utc).strftime("%Y%m%d%H%M%S")
+    return notes_dir / note_name_for_messages(prefix, messages)
+
+
 def existing_note_path_for_messages(
     notes_dir: Path,
     root: Path,
@@ -1330,7 +1339,13 @@ def update_notes(args: argparse.Namespace) -> None:
         prefix = compact_prefix_for_new_note(args.notes_dir, args.repo_root, first_ts)
         note_path = args.notes_dir / note_name_for_messages(prefix, messages)
         if note_path.exists():
-            raise RuntimeError(f"Refusing to overwrite existing note: {note_path}")
+            provisional = provisional_note_path_for_messages(args.notes_dir, messages, first_ts)
+            if provisional.exists():
+                raise RuntimeError(
+                    f"Refusing to overwrite existing note or provisional note: {note_path}, {provisional}"
+                )
+            print(f"archive name occupied; writing provisional note for later normalization: {provisional}")
+            note_path = provisional
         prompt_path = args.work_dir / "prompts" / f"new-{note_path.name}"
         write_prompt(prompt_path, prompt)
         wrote_prompt = True

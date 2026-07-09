@@ -111,6 +111,23 @@ def test_new_note_prefix_carries_suffix_from_prior_days(tmp_path: Path) -> None:
     assert prefix == "2026070503"
 
 
+def test_provisional_note_path_uses_full_utc_timestamp(tmp_path: Path) -> None:
+    mod = load_update_module()
+    message = make_message(
+        mod,
+        "codex",
+        "2026-07-06",
+        3,
+        "2026-07-06T05:01:24.711000Z",
+        "hello",
+    )
+    first_ts = datetime.fromisoformat("2026-07-06T05:01:24.711000+00:00")
+
+    path = mod.provisional_note_path_for_messages(tmp_path, [message], first_ts)
+
+    assert path.name == "20260706050124-conversation-user.md"
+
+
 def make_message(
     mod,
     platform: str,
