@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the overall notes history summary from daily meta-summaries."""
+"""Generate sparse hierarchical notes rollups and the overall README."""
 
 from __future__ import annotations
 
@@ -11,20 +11,38 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from notes_archive_naming import DAILY_META_RE
+from notes_archive_naming import DAILY_META_RE, MONTHLY_META_RE, YEARLY_META_RE
+from notes_rollup import strip_sources_footer, with_sources_footer
 from notes_summary_filters import resolve_forbid_patterns, run_filtered_summary_command
-from update_daily_meta_summary import DEFAULT_COMMAND, deno_fmt, git_has_staged_changes, sha256_text
+from update_daily_meta_summary import (
+    DEFAULT_COMMAND,
+    deno_fmt,
+    git_has_staged_changes,
+    sha256_text,
+    source_paths_for_day,
+)
 
 DEFAULT_MANIFEST = Path("scripts/notes-overall-meta-manifest.json")
 DEFAULT_NOTE = Path("notes/README.md")
+RESERVED_NOTE_NAMES = {"AGENTS.md", "README.md"}
 
 
 @dataclass(frozen=True)
-class DailySummary:
+class RollupSource:
     path: Path
-    day: str
+    key: str
+    level: str
     text: str
     blob_id: str
+
+
+@dataclass(frozen=True)
+class RollupPlan:
+    path: Path
+    key: str
+    level: str
+    mode: str
+    sources: list[RollupSource]
 
 
 def git_root() -> Path:
@@ -42,78 +60,75 @@ def worktree_blob_id(path: Path, root: Path) -> str:
     return run_git(["hash-object", "--", rel], root)
 
 
-def daily_summary_paths(notes_dir: Path) -> list[Path]:
-    return sorted(path for path in notes_dir.glob("*.md") if DAILY_META_RE.match(path.name))
+def load_source(path: Path, key: str, level: str, root: Path) -> RollupSource:
+    return RollupSource(
+        path=path,
+        key=key,
+        level=level,
+        text=path.read_text(encoding="utf-8"),
+        blob_id=worktree_blob_id(path, root),
+    )
 
 
-def load_daily_summaries(notes_dir: Path, root: Path) -> list[DailySummary]:
-    summaries: list[DailySummary] = []
-    for path in daily_summary_paths(notes_dir):
-        summaries.append(
-            DailySummary(
-                path=path,
-                day=path.stem,
-                text=path.read_text(encoding="utf-8"),
-                blob_id=worktree_blob_id(path, root),
-            )
-        )
-    return summaries
+def source_days(notes_dir: Path) -> list[str]:
+    days: set[str] = set()
+    for path in notes_dir.glob("*.md"):
+        if not path.is_file() or path.name in RESERVED_NOTE_NAMES:
+            continue
+        if DAILY_META_RE.match(path.name):
+            continue
+        match = re.match(r"^(\d{8})", path.name)
+        if match:
+            days.add(match.group(1))
+    return sorted(days)
 
 
-def day_label(day: str) -> str:
-    match = re.fullmatch(r"(\d{4})(\d{2})(\d{2})", day)
-    if not match:
-        return day
-    return f"{match.group(1)}-{match.group(2)}-{match.group(3)} UTC"
+def representative_for_day(notes_dir: Path, day: str, root: Path) -> RollupSource | None:
+    source_paths = source_paths_for_day(notes_dir, day)
+    if not source_paths:
+        return None
+    daily_path = notes_dir / f"{day}.md"
+    if len(source_paths) == 1:
+        return load_source(source_paths[0], day, "note", root)
+    if not daily_path.exists():
+        raise SystemExit(f"missing daily summary for {day}; run update_daily_meta_summary.py first")
+    return load_source(daily_path, day, "day", root)
 
 
-def build_prompt(summaries: list[DailySummary], root: Path, note_path: Path) -> str:
-    parts: list[str] = [
-        f"""You are writing {note_path.relative_to(root).as_posix()}, the overall history summary for the ValueGraft research notes archive.
+def group_by_prefix(sources: list[RollupSource], length: int) -> dict[str, list[RollupSource]]:
+    groups: dict[str, list[RollupSource]] = {}
+    for source in sources:
+        groups.setdefault(source.key[:length], []).append(source)
+    return {key: sorted(value, key=lambda source: source.key) for key, value in sorted(groups.items())}
 
-Input: the complete daily meta-summaries, in chronological order. Each source day begins with an explicit date header so you can understand the sequence. Use those dates for chronology, but do not copy those date headers into your own output and do not structure your output as one section per day.
 
-Goal: help a future project agent understand the process and history of what happened from the beginning through the current state. Synthesize across days. Preserve the important pivots, methodology changes, empirical results, failures/corrections, terminology decisions, and remaining open questions. Conclude with a clear account of where the project generally stands now and what a future agent should check first.
-
-Output: the standalone Markdown body. The caller will write your response to {note_path.relative_to(root).as_posix()}. Return only the Markdown document content: no preamble, no code fence, no tool-call syntax, no file-writing description, and no closing status note.
-
-Preferred shape:
-
-- a top-level `# ValueGraft Notes Overview` heading;
-- one italicized opening paragraph summarizing the overall arc;
-- a small number of thematic sections, not day-by-day sections;
-- a concise current-state / handoff section at the end;
-- bullets only where they make dense facts easier to scan.
-
-Style: precise, readable prose. Avoid personal/emotional characterization, dramatic process labels, and publishing-platform logistics. Do not directly name sensitive-topic material; describe it generically as an interpretability tangent or notes-hygiene issue if needed.
-
-# Chronological Daily Source Summaries
-""",
+def source_entries(sources: list[RollupSource], root: Path) -> list[dict[str, str]]:
+    return [
+        {
+            "note": source.path.relative_to(root).as_posix(),
+            "level": source.level,
+            "key": source.key,
+            "blob_id": source.blob_id,
+        }
+        for source in sorted(sources, key=lambda item: (item.key, item.path.name))
     ]
-    for summary in summaries:
-        rel = summary.path.relative_to(root).as_posix()
-        parts.append(
-            f"""
-
-## Source Day: {day_label(summary.day)}
-
-Source file: {rel}
-
-{summary.text.rstrip()}
-"""
-        )
-    return "".join(parts)
 
 
 def load_manifest(path: Path) -> dict:
     if not path.exists():
         return {
-            "version": 1,
-            "description": "Overall notes meta-summary manifest. Staleness is keyed by ordered daily-summary git blob IDs.",
-            "summary": {},
+            "version": 2,
+            "description": "Sparse hierarchical notes rollup manifest. Rollups are generated only when they combine multiple immediate sources; README is always generated or promoted.",
+            "rollups": {},
         }
     data = json.loads(path.read_text(encoding="utf-8"))
-    if data.get("version") != 1 or not isinstance(data.get("summary"), dict):
+    if data.get("version") == 1:
+        return {
+            "version": 2,
+            "description": "Sparse hierarchical notes rollup manifest. Rollups are generated only when they combine multiple immediate sources; README is always generated or promoted.",
+            "rollups": {},
+        }
+    if data.get("version") != 2 or not isinstance(data.get("rollups"), dict):
         raise SystemExit(f"unsupported overall meta manifest format: {path}")
     return data
 
@@ -127,55 +142,281 @@ def write_manifest(path: Path, data: dict) -> bool:
     return True
 
 
-def source_entries(summaries: list[DailySummary], root: Path) -> list[dict[str, str]]:
-    return [
-        {
-            "day": summary.day,
-            "note": summary.path.relative_to(root).as_posix(),
-            "blob_id": summary.blob_id,
-        }
-        for summary in summaries
-    ]
-
-
-def entry_for(note_path: Path, summary: str, daily_summaries: list[DailySummary], root: Path) -> dict:
+def entry_for(plan: RollupPlan, text: str, root: Path) -> dict:
     return {
-        "note": note_path.relative_to(root).as_posix(),
-        "source_count": len(daily_summaries),
-        "sources": source_entries(daily_summaries, root),
-        "summary_hash": sha256_text(summary),
+        "note": plan.path.relative_to(root).as_posix(),
+        "level": plan.level,
+        "key": plan.key,
+        "mode": plan.mode,
+        "source_count": len(plan.sources),
+        "sources": source_entries(plan.sources, root),
+        "summary_hash": sha256_text(text),
     }
 
 
-def is_stale(note_path: Path, daily_summaries: list[DailySummary], manifest: dict, root: Path) -> bool:
-    entry = manifest.get("summary", {})
-    if not note_path.exists() or not entry:
+def expected_manifest_entry(plan: RollupPlan, root: Path) -> dict | None:
+    if not plan.path.exists():
+        return None
+    return entry_for(plan, plan.path.read_text(encoding="utf-8"), root)
+
+
+def is_stale(plan: RollupPlan, manifest: dict, root: Path) -> bool:
+    entry = manifest.get("rollups", {}).get(plan.path.relative_to(root).as_posix())
+    expected = expected_manifest_entry(plan, root)
+    if expected is None or not entry:
         return True
-    if entry.get("sources") != source_entries(daily_summaries, root):
-        return True
-    if entry.get("source_count") != len(daily_summaries):
-        return True
-    if entry.get("summary_hash") != sha256_text(note_path.read_text(encoding="utf-8")):
-        return True
-    return False
+    return entry != expected
+
+
+def period_label(level: str, key: str) -> str:
+    if level == "month":
+        return f"{key[:4]}-{key[4:6]} UTC"
+    if level == "year":
+        return f"{key} UTC"
+    return "the full archive"
+
+
+def title_for(level: str, key: str) -> str:
+    if level == "month":
+        return f"# ValueGraft Notes: {key[:4]}-{key[4:6]}"
+    if level == "year":
+        return f"# ValueGraft Notes: {key}"
+    return "# ValueGraft Notes Overview"
+
+
+def build_prompt(plan: RollupPlan, root: Path) -> str:
+    source_label = {
+        "month": "day representatives",
+        "year": "month representatives",
+        "readme": "top-level representatives",
+    }.get(plan.level, "source representatives")
+    parts: list[str] = [
+        f"""You are writing {plan.path.relative_to(root).as_posix()}, a {plan.level} rollup for the ValueGraft research notes archive.
+
+Input: the complete immediate {source_label}, in chronological order. These sources may be generated summaries or, when a lower-level bucket had only one file, the single lower-level note promoted directly into this layer.
+
+Goal: help a future project agent understand the process and history covered by {period_label(plan.level, plan.key)}. Synthesize across the immediate sources. Preserve important pivots, methodology changes, empirical results, failures/corrections, terminology decisions, and remaining open questions. Conclude with a compact current-state / handoff section for this scope.
+
+Output: the standalone Markdown body. The caller will write your response to {plan.path.relative_to(root).as_posix()}. Return only the Markdown document content: no preamble, no code fence, no tool-call syntax, no file-writing description, and no closing status note.
+
+Preferred shape:
+
+- a top-level `{title_for(plan.level, plan.key)}` heading;
+- one italicized opening paragraph summarizing the arc;
+- a small number of thematic sections, not one section per input file;
+- a concise current-state / handoff section at the end;
+- bullets only where they make dense facts easier to scan.
+
+Style: precise, readable prose. Avoid personal/emotional characterization, dramatic process labels, and publishing-platform logistics. Do not directly name sensitive-topic material; describe it generically as an interpretability tangent or notes-hygiene issue if needed. Do not include a `Sources` section; the caller appends a standardized linked source list after your output.
+
+Important: you already have all source text below. Do not inspect files, do not announce an intention to inspect files, and do not emit tool-call JSON or tool-call-like syntax. Your first non-whitespace character must be `#`.
+
+# Chronological Immediate Sources
+""",
+    ]
+    for source in sorted(plan.sources, key=lambda item: (item.key, item.path.name)):
+        rel = source.path.relative_to(root).as_posix()
+        parts.append(
+            f"""
+
+## Source: {rel}
+
+Source level: {source.level}; key={source.key}; chars={len(source.text)}.
+
+{source.text.rstrip()}
+"""
+        )
+    return "".join(parts)
+
+
+def promote_source(plan: RollupPlan) -> str:
+    if len(plan.sources) != 1:
+        raise ValueError("promotion plans require exactly one source")
+    return with_sources_footer(
+        strip_sources_footer(plan.sources[0].text),
+        plan.path,
+        [plan.sources[0].path],
+    )
+
+
+def invalid_rollup_reason(body: str) -> str | None:
+    stripped = body.lstrip()
+    if not stripped.startswith("#"):
+        return "output must begin with a top-level Markdown heading"
+    first_chunk = stripped[:600]
+    if re.search(r"(?i)\b(i'll|i will|i’m going to|i am going to|let me)\s+(check|inspect|read|look)", first_chunk):
+        return "output appears to announce file inspection instead of writing the summary"
+    if re.search(r'(?m)^\s*\{[^}]*"(?:path|pattern|output_mode)"', body):
+        return "output appears to contain tool-call JSON"
+    return None
+
+
+def retry_prompt_for_invalid_rollup(prompt: str, reason: str) -> str:
+    return f"""\
+The previous rollup output was invalid: {reason}.
+
+Rewrite the rollup from scratch using only the source text already included in
+the original task. Do not inspect files, do not announce an intention to inspect
+files, and do not emit tool-call JSON. Start immediately with the requested
+top-level Markdown heading.
+
+Original task:
+
+{prompt}
+"""
+
+
+def generate_rollup(
+    plan: RollupPlan,
+    root: Path,
+    command: str,
+    forbid_patterns: list[str],
+    max_forbid_attempts: int,
+) -> str:
+    if plan.mode == "promote":
+        return promote_source(plan)
+    prompt = build_prompt(plan, root)
+    print(f"prompt_chars[{plan.path.relative_to(root)}]={len(prompt)}")
+    current_prompt = prompt
+    attempts = max(1, max_forbid_attempts)
+    for attempt in range(1, attempts + 1):
+        body = run_filtered_summary_command(
+            command,
+            current_prompt,
+            forbid_patterns,
+            max_forbid_attempts,
+            f"{plan.level} rollup {plan.key}",
+        )
+        reason = invalid_rollup_reason(body)
+        if reason is None:
+            return with_sources_footer(body, plan.path, [source.path for source in plan.sources])
+        print(
+            f"invalid {plan.level} rollup {plan.key} output in attempt "
+            f"{attempt}/{attempts}: {reason}"
+        )
+        if attempt == attempts:
+            raise RuntimeError(f"{plan.level} rollup {plan.key} failed validation: {reason}")
+        current_prompt = retry_prompt_for_invalid_rollup(prompt, reason)
+    raise AssertionError("unreachable rollup validation retry state")
+
+
+def generated_rollup_paths(notes_dir: Path) -> set[Path]:
+    return {
+        path
+        for path in notes_dir.glob("*.md")
+        if MONTHLY_META_RE.match(path.name) or YEARLY_META_RE.match(path.name) or path.name == "README.md"
+    }
+
+
+def build_plans(notes_dir: Path, root: Path, readme_path: Path) -> tuple[list[RollupPlan], set[Path]]:
+    day_reps = [
+        rep
+        for day in source_days(notes_dir)
+        if (rep := representative_for_day(notes_dir, day, root)) is not None
+    ]
+    if not day_reps:
+        raise SystemExit("no note representatives found")
+
+    plans: list[RollupPlan] = []
+    month_reps: list[RollupSource] = []
+    for month, sources in group_by_prefix(day_reps, 6).items():
+        path = notes_dir / f"{month}.md"
+        if len(sources) == 1:
+            month_reps.append(sources[0])
+        else:
+            plan = RollupPlan(path=path, key=month, level="month", mode="summary", sources=sources)
+            plans.append(plan)
+            if path.exists():
+                month_reps.append(load_source(path, month, "month", root))
+            else:
+                month_reps.append(RollupSource(path, month, "month", "", ""))
+
+    year_reps: list[RollupSource] = []
+    for year, sources in group_by_prefix(month_reps, 4).items():
+        path = notes_dir / f"{year}.md"
+        if len(sources) == 1:
+            year_reps.append(sources[0])
+        else:
+            plan = RollupPlan(path=path, key=year, level="year", mode="summary", sources=sources)
+            plans.append(plan)
+            if path.exists():
+                year_reps.append(load_source(path, year, "year", root))
+            else:
+                year_reps.append(RollupSource(path, year, "year", "", ""))
+
+    readme_mode = "promote" if len(year_reps) == 1 else "summary"
+    plans.append(
+        RollupPlan(
+            path=readme_path,
+            key="overall",
+            level="readme",
+            mode=readme_mode,
+            sources=year_reps,
+        )
+    )
+    expected = {plan.path for plan in plans}
+    return plans, expected
+
+
+def refresh_plan_sources(plans: list[RollupPlan], root: Path) -> list[RollupPlan]:
+    refreshed: list[RollupPlan] = []
+    replacements: dict[Path, RollupSource] = {}
+    for plan in plans:
+        sources = [replacements.get(source.path, source) for source in plan.sources]
+        refreshed_plan = RollupPlan(
+            path=plan.path,
+            key=plan.key,
+            level=plan.level,
+            mode=plan.mode,
+            sources=sources,
+        )
+        refreshed.append(refreshed_plan)
+        if plan.path.exists():
+            replacements[plan.path] = load_source(plan.path, plan.key, plan.level, root)
+    return refreshed
+
+
+def remove_obsolete_rollups(notes_dir: Path, expected: set[Path], root: Path) -> list[Path]:
+    removed: list[Path] = []
+    for path in sorted(generated_rollup_paths(notes_dir) - expected):
+        rel = path.relative_to(root).as_posix()
+        subprocess.check_call(["git", "rm", "--ignore-unmatch", "--", rel], cwd=root)
+        if path.exists():
+            path.unlink()
+        removed.append(path)
+    return removed
 
 
 def commit_paths(root: Path, paths: list[Path], message: str) -> None:
-    rels = [path.relative_to(root).as_posix() for path in paths]
-    subprocess.check_call(["git", "add", "--", *rels], cwd=root)
+    rels: list[str] = []
+    seen: set[str] = set()
+    for path in paths:
+        rel = path.relative_to(root).as_posix()
+        if rel in seen:
+            continue
+        seen.add(rel)
+        rels.append(rel)
+    if not rels:
+        return
+    subprocess.check_call(["git", "add", "-A", "--", *rels], cwd=root)
     if git_has_staged_changes(root, paths):
         subprocess.check_call(["git", "commit", "-m", message, "--", *rels], cwd=root)
 
 
-def print_plan(note_path: Path, summaries: list[DailySummary], stale: bool, root: Path) -> None:
-    total_chars = sum(len(summary.text) for summary in summaries)
-    print(
-        f"overall meta-summary: note={note_path.relative_to(root)} "
-        f"sources={len(summaries)} stale={stale}"
-    )
-    for summary in summaries:
-        print(f"  {summary.day}: chars={len(summary.text)} blob={summary.blob_id[:12]}")
-    print(f"source_chars={total_chars}")
+def print_plan(plans: list[RollupPlan], expected: set[Path], manifest: dict, root: Path) -> None:
+    print(f"hierarchical notes rollups: plans={len(plans)} expected_generated={len(expected)}")
+    for plan in plans:
+        stale = is_stale(plan, manifest, root)
+        rel = plan.path.relative_to(root).as_posix()
+        print(
+            f"  {rel}: level={plan.level} key={plan.key} mode={plan.mode} "
+            f"sources={len(plan.sources)} stale={stale}"
+        )
+        for source in sorted(plan.sources, key=lambda item: (item.key, item.path.name)):
+            print(
+                f"    - {source.path.relative_to(root).as_posix()} "
+                f"level={source.level} key={source.key} blob={source.blob_id[:12]}"
+            )
 
 
 def main() -> int:
@@ -217,31 +458,27 @@ def main() -> int:
 
     root = git_root()
     notes_dir = (root / args.notes_dir).resolve()
-    note_path = (root / args.note).resolve()
+    readme_path = (root / args.note).resolve()
     manifest_path = (root / args.manifest).resolve()
-    daily_summaries = load_daily_summaries(notes_dir, root)
-    if not daily_summaries:
-        raise SystemExit("no daily summaries found")
-
     manifest = load_manifest(manifest_path)
-    stale = args.force or is_stale(note_path, daily_summaries, manifest, root)
-    print_plan(note_path, daily_summaries, stale, root)
-    prompt = build_prompt(daily_summaries, root, note_path)
-    print(f"prompt_chars={len(prompt)}")
+    plans, expected = build_plans(notes_dir, root, readme_path)
+    print_plan(plans, expected, manifest, root)
 
     if args.prompt_out:
         args.prompt_out.parent.mkdir(parents=True, exist_ok=True)
-        args.prompt_out.write_text(prompt, encoding="utf-8")
+        args.prompt_out.write_text(
+            "\n\n".join(build_prompt(plan, root) for plan in plans if plan.mode == "summary"),
+            encoding="utf-8",
+        )
         print(f"wrote prompt: {args.prompt_out}")
 
     if args.dry_run:
         return 0
-    if not stale:
-        print("overall meta-summary is current; no changes written")
-        return 0
     if args.no_command:
         if not args.prompt_out:
-            sys.stdout.write(prompt)
+            for plan in plans:
+                if plan.mode == "summary":
+                    sys.stdout.write(build_prompt(plan, root))
         return 0
 
     forbid_patterns = resolve_forbid_patterns(
@@ -250,27 +487,51 @@ def main() -> int:
         include_defaults=not args.no_default_forbid_regex,
         dotenv_paths=args.dotenv,
     )
-    summary = run_filtered_summary_command(
-        args.command,
-        prompt,
-        forbid_patterns,
-        args.max_forbid_attempts,
-        "overall meta-summary",
-    )
-    note_path.parent.mkdir(parents=True, exist_ok=True)
-    note_path.write_text(summary, encoding="utf-8")
-    deno_fmt(root, [note_path])
-    formatted_summary = note_path.read_text(encoding="utf-8")
-    manifest["summary"] = entry_for(note_path, formatted_summary, daily_summaries, root)
+
+    changed_paths: list[Path] = []
+    index = 0
+    while index < len(plans):
+        plan = plans[index]
+        stale = args.force or is_stale(plan, manifest, root)
+        if stale:
+            text = generate_rollup(
+                plan,
+                root,
+                args.command,
+                forbid_patterns,
+                args.max_forbid_attempts,
+            )
+            plan.path.parent.mkdir(parents=True, exist_ok=True)
+            plan.path.write_text(text, encoding="utf-8")
+            deno_fmt(root, [plan.path])
+            changed_paths.append(plan.path)
+        plans = refresh_plan_sources(plans, root)
+        plan = plans[index]
+        if plan.path.exists():
+            manifest.setdefault("rollups", {})[plan.path.relative_to(root).as_posix()] = entry_for(
+                plan,
+                plan.path.read_text(encoding="utf-8"),
+                root,
+            )
+        index += 1
+
+    removed = remove_obsolete_rollups(notes_dir, expected, root)
+    changed_paths.extend(removed)
+    expected_rels = {path.relative_to(root).as_posix() for path in expected}
+    manifest["rollups"] = {
+        rel: entry
+        for rel, entry in sorted(manifest.get("rollups", {}).items())
+        if rel in expected_rels
+    }
     manifest_changed = write_manifest(manifest_path, manifest)
     if manifest_changed:
         deno_fmt(root, [manifest_path])
-
-    changed_paths = [note_path]
-    if manifest_changed:
         changed_paths.append(manifest_path)
-    if not args.no_commit:
-        commit_paths(root, changed_paths, "Update overall notes meta-summary")
+
+    if changed_paths and not args.no_commit:
+        commit_paths(root, changed_paths, "Update hierarchical notes rollups")
+    if not changed_paths:
+        print("hierarchical notes rollups are current; no changes written")
     return 0
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Update daily notes meta-summaries, then the overall history summary."""
+"""Update sparse hierarchical notes meta-summaries."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from notes_archive_naming import DAILY_META_RE
+from notes_archive_naming import DAILY_META_RE, MONTHLY_META_RE, YEARLY_META_RE
 from update_daily_meta_summary import DEFAULT_COMMAND, sha256_text
 
 
@@ -33,6 +33,17 @@ def file_hash(path: Path) -> str | None:
     if not path.exists():
         return None
     return sha256_text(path.read_text(encoding="utf-8"))
+
+
+def generated_rollup_paths(notes_dir: Path) -> set[Path]:
+    return {
+        path
+        for path in notes_dir.glob("*.md")
+        if DAILY_META_RE.match(path.name)
+        or MONTHLY_META_RE.match(path.name)
+        or YEARLY_META_RE.match(path.name)
+        or path.name == "README.md"
+    }
 
 
 def run(cmd: list[str], root: Path) -> None:
@@ -78,6 +89,7 @@ def main() -> int:
     days = source_days(notes_dir)
     if not days:
         raise SystemExit("no ordinary note days found")
+    generated_before = generated_rollup_paths(notes_dir)
 
     changed_days: list[str] = []
     for day in days:
@@ -138,10 +150,10 @@ def main() -> int:
     run(overall_cmd, root)
 
     if not args.dry_run and not args.no_commit:
-        paths = [notes_dir / f"{day}.md" for day in days]
+        generated_after = generated_rollup_paths(notes_dir)
+        paths = sorted(generated_before | generated_after)
         paths.extend(
             [
-                root / "notes/README.md",
                 root / "scripts/notes-daily-meta-manifest.json",
                 root / "scripts/notes-overall-meta-manifest.json",
             ]
@@ -157,7 +169,7 @@ def main() -> int:
             seen.add(rel)
             rels.append(rel)
         if rels:
-            subprocess.check_call(["git", "add", "--", *rels], cwd=root)
+            subprocess.check_call(["git", "add", "-A", "--", *rels], cwd=root)
             diff = subprocess.run(
                 ["git", "diff", "--cached", "--quiet", "--", *rels],
                 cwd=root,

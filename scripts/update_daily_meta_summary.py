@@ -22,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from notes_archive_naming import DAILY_META_RE
+from notes_rollup import with_sources_footer
 from notes_summary_filters import resolve_forbid_patterns, run_filtered_summary_command
 
 KIB = 1024
@@ -136,6 +137,16 @@ def source_signature(sources: list[SourceNote]) -> str:
     return "\n".join(sorted(source.blob_id for source in sources))
 
 
+def source_entries(sources: list[SourceNote], root: Path) -> list[dict[str, str]]:
+    return [
+        {
+            "note": source.path.relative_to(root).as_posix(),
+            "blob_id": source.blob_id,
+        }
+        for source in sorted(sources, key=lambda item: item.path.name)
+    ]
+
+
 def sha256_text(text: str) -> str:
     import hashlib
 
@@ -177,10 +188,10 @@ Include:
 - the main research/workflow developments;
 - decisions, terminology, or methodological clarifications that should persist;
 - empirical results or observations, with caveats;
-- outstanding risks, open questions, and likely next actions;
-- a compact source map listing the input filenames and what each contributed.
+- outstanding risks, open questions, and likely next actions.
 
 Style: precise, readable prose. Use bullets only where they make dense facts easier to scan. Avoid personal/emotional characterization and dramatic process labels. Avoid publishing-platform logistics unless directly relevant to repository state. Do not mention timestamps beyond the UTC day. Do not directly name sensitive-topic material; describe it generically as an interpretability tangent or notes-hygiene issue if needed.
+Do not include a `Sources` section; the caller appends a standardized linked source list after your output.
 
 # Source Notes for {day} UTC
 """,
@@ -231,6 +242,7 @@ def entry_for(day: str, note_path: Path, summary: str, sources: list[SourceNote]
     return {
         "note": note_path.relative_to(root).as_posix(),
         "source_count": len(sources),
+        "sources": source_entries(sources, root),
         "source_blob_ids": sorted(source.blob_id for source in sources),
         "summary_hash": sha256_text(summary),
         "input_policy": {
@@ -244,9 +256,11 @@ def entry_for(day: str, note_path: Path, summary: str, sources: list[SourceNote]
     }
 
 
-def is_stale(day: str, note_path: Path, sources: list[SourceNote], manifest: dict) -> bool:
+def is_stale(day: str, note_path: Path, sources: list[SourceNote], manifest: dict, root: Path) -> bool:
     entry = manifest.get("days", {}).get(day)
     if not note_path.exists() or not entry:
+        return True
+    if entry.get("sources") != source_entries(sources, root):
         return True
     if entry.get("source_blob_ids") != sorted(source.blob_id for source in sources):
         return True
@@ -255,6 +269,85 @@ def is_stale(day: str, note_path: Path, sources: list[SourceNote], manifest: dic
     if entry.get("summary_hash") != sha256_text(note_path.read_text(encoding="utf-8")):
         return True
     return False
+
+
+def remove_summary_if_single_source(
+    day: str,
+    note_path: Path,
+    manifest_path: Path,
+    manifest: dict,
+    root: Path,
+    no_commit: bool,
+) -> int:
+    changed_paths: list[Path] = []
+    days = manifest.setdefault("days", {})
+    if day in days:
+        days.pop(day, None)
+        write_manifest(manifest_path, manifest)
+        deno_fmt(root, [manifest_path])
+        changed_paths.append(manifest_path)
+    if note_path.exists():
+        rel = note_path.relative_to(root).as_posix()
+        proc = subprocess.run(
+            ["git", "ls-files", "--error-unmatch", "--", rel],
+            cwd=root,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        if proc.returncode == 0:
+            subprocess.check_call(["git", "rm", "--", rel], cwd=root)
+        else:
+            note_path.unlink()
+            subprocess.check_call(["git", "add", "-A", "--", rel], cwd=root)
+        changed_paths.append(note_path)
+    if changed_paths and not no_commit:
+        commit_paths(root, changed_paths, f"Remove daily meta-summary for {day}")
+    return 0
+
+
+def can_refresh_footer_without_resummarizing(
+    day: str,
+    note_path: Path,
+    sources: list[SourceNote],
+    manifest: dict,
+) -> bool:
+    entry = manifest.get("days", {}).get(day)
+    if not note_path.exists() or not entry:
+        return False
+    if entry.get("source_count") != len(sources):
+        return False
+    if entry.get("source_blob_ids") != sorted(source.blob_id for source in sources):
+        return False
+    if entry.get("summary_hash") != sha256_text(note_path.read_text(encoding="utf-8")):
+        return False
+    return True
+
+
+def refresh_footer_without_resummarizing(
+    day: str,
+    note_path: Path,
+    sources: list[SourceNote],
+    manifest_path: Path,
+    manifest: dict,
+    root: Path,
+    no_commit: bool,
+) -> int:
+    note_path.write_text(
+        with_sources_footer(note_path.read_text(encoding="utf-8"), note_path, [source.path for source in sources]),
+        encoding="utf-8",
+    )
+    deno_fmt(root, [note_path])
+    formatted_summary = note_path.read_text(encoding="utf-8")
+    manifest.setdefault("days", {})[day] = entry_for(day, note_path, formatted_summary, sources, root)
+    manifest_changed = write_manifest(manifest_path, manifest)
+    changed_paths = [note_path]
+    if manifest_changed:
+        deno_fmt(root, [manifest_path])
+        changed_paths.append(manifest_path)
+    if not no_commit:
+        commit_paths(root, changed_paths, f"Update daily meta-summary sources for {day}")
+    return 0
 
 
 def git_has_staged_changes(root: Path, paths: list[Path]) -> bool:
@@ -338,7 +431,22 @@ def main() -> int:
         raise SystemExit(f"no source notes found for UTC day {args.day}")
 
     manifest = load_manifest(manifest_path)
-    stale = args.force or is_stale(args.day, note_path, sources, manifest)
+    if len(sources) == 1:
+        stale = note_path.exists() or args.day in manifest.get("days", {})
+        print_source_plan(args.day, note_path.relative_to(root), sources, stale)
+        print("single source note; no daily meta-summary should be generated")
+        if args.dry_run:
+            return 0
+        return remove_summary_if_single_source(
+            args.day,
+            note_path,
+            manifest_path,
+            manifest,
+            root,
+            args.no_commit,
+        )
+
+    stale = args.force or is_stale(args.day, note_path, sources, manifest, root)
     print_source_plan(args.day, note_path.relative_to(root), sources, stale)
     prompt = build_prompt(args.day, sources, root)
     print(f"prompt_chars={len(prompt)}")
@@ -353,6 +461,17 @@ def main() -> int:
     if not stale:
         print("daily meta-summary is current; no changes written")
         return 0
+    if not args.force and can_refresh_footer_without_resummarizing(args.day, note_path, sources, manifest):
+        print("existing daily summary content is current; refreshing standardized source footer")
+        return refresh_footer_without_resummarizing(
+            args.day,
+            note_path,
+            sources,
+            manifest_path,
+            manifest,
+            root,
+            args.no_commit,
+        )
     if args.no_command:
         if not args.prompt_out:
             sys.stdout.write(prompt)
@@ -371,6 +490,7 @@ def main() -> int:
         args.max_forbid_attempts,
         f"daily meta-summary {args.day}",
     )
+    summary = with_sources_footer(summary, note_path, [source.path for source in sources])
     notes_dir.mkdir(parents=True, exist_ok=True)
     note_path.write_text(summary, encoding="utf-8")
     deno_fmt(root, [note_path])

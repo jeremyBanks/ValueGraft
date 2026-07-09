@@ -21,16 +21,24 @@ trailing digit in the `01` through `10` range instead. The full timestamp
 belongs in git history, not the filename. Do not invent or manually edit these
 prefixes; run the normalizer.
 
-Daily meta-summaries are the one intentional naming exception:
+Generated rollups are the intentional naming exceptions:
 
 ```text
 YYYYMMDD.md
+YYYYMM.md
+YYYY.md
 README.md
 ```
 
 `YYYYMMDD.md` files synthesize the ordinary notes for that UTC day and are
-excluded from the archive counter. `README.md` synthesizes the daily summaries
-into one project-history overview. Generate or refresh all meta-summaries with:
+excluded from the archive counter. `YYYYMM.md` and `YYYY.md` are sparse
+intermediate rollups: they are generated only when that bucket has two or more
+immediate representatives to combine. If a day, month, or year has only one
+representative, no intermediate summary is created for that bucket; the single
+representative is passed upward. `README.md` is the only always-present rollup:
+if the top level has one representative, the README is promoted from that
+representative; if it has multiple representatives, the README is synthesized.
+Generate or refresh all meta-summaries with:
 
 ```bash
 python3 scripts/update_notes_meta_summaries.py
@@ -42,17 +50,18 @@ Generate or refresh one daily summary with:
 python3 scripts/update_daily_meta_summary.py YYYYMMDD
 ```
 
-The daily-summary manifest keys staleness by the sorted set of source git blob
-IDs for that day, not by source filenames. Conversation summaries are included
+Daily summaries are generated only for days with at least two source notes. The
+daily-summary manifest records both source blob IDs and source paths so linked
+source footers stay current after renames. Conversation summaries are included
 in full up to `16 KiB`; above that they use a `12 KiB` leading excerpt plus a
 `4 KiB` tail excerpt. Other notes are included in full up to `8 KiB`; above that
 they use a `6 KiB` leading excerpt plus a `2 KiB` tail excerpt, with an explicit
 omitted-content marker in the gap.
 
-If any daily summaries change during an all-days run, the overall `README.md` is
-regenerated from the full daily summaries. The overall prompt includes date
-headers before each source day so the model can understand sequence, but it is
-instructed not to copy those date headers into its output.
+Every generated rollup ends with a script-owned `## Sources` footer listing
+sorted Markdown links to the immediate source files used for that rollup. The
+LLM prompts explicitly tell the summarizer not to write this section itself.
+Do not hand-edit generated source footers; rerun the scripts.
 
 Summary generators accept `--forbid-regex` and also read
 `VALUEGRAFT_NOTES_FORBID_REGEX` or `NOTES_FORBID_REGEX` from the environment or

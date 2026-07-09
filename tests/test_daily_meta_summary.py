@@ -66,3 +66,45 @@ def test_source_signature_ignores_filename_order() -> None:
     right = [FakeSource("aaa"), FakeSource("bbb")]
 
     assert daily.source_signature(left) == daily.source_signature(right)
+
+
+def test_daily_entry_tracks_source_paths_for_footer_staleness(tmp_path: Path) -> None:
+    daily = load_script()
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    notes = repo / "notes"
+    notes.mkdir()
+    first = notes / "2026070801-alpha.md"
+    second = notes / "2026070802-beta.md"
+    first.write_text("alpha", encoding="utf-8")
+    second.write_text("beta", encoding="utf-8")
+
+    sources = [
+        daily.SourceNote(first, "alpha", "blob-a", "ordinary", "alpha", 0),
+        daily.SourceNote(second, "beta", "blob-b", "ordinary", "beta", 0),
+    ]
+    entry = daily.entry_for("20260708", notes / "20260708.md", "summary", sources, repo)
+
+    assert entry["sources"] == [
+        {"note": "notes/2026070801-alpha.md", "blob_id": "blob-a"},
+        {"note": "notes/2026070802-beta.md", "blob_id": "blob-b"},
+    ]
+
+
+def test_daily_summary_appends_standard_sources_footer(tmp_path: Path) -> None:
+    from notes_rollup import with_sources_footer
+
+    notes = tmp_path / "notes"
+    notes.mkdir()
+    target = notes / "20260708.md"
+    first = notes / "2026070801-alpha.md"
+    second = notes / "2026070802-beta.md"
+    text = with_sources_footer("# Day\n\nBody\n\n## Sources\n\n- stale", target, [second, first])
+
+    assert text == (
+        "# Day\n\n"
+        "Body\n\n"
+        "## Sources\n\n"
+        "- [2026070801-alpha.md](2026070801-alpha.md)\n"
+        "- [2026070802-beta.md](2026070802-beta.md)\n"
+    )

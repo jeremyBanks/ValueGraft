@@ -88,14 +88,18 @@ def test_normalizer_excludes_daily_meta_summary(tmp_path: Path) -> None:
     notes = tmp_path / "notes"
     notes.mkdir()
     daily = notes / "20260708.md"
+    monthly = notes / "202607.md"
+    yearly = notes / "2026.md"
     overall = notes / "README.md"
     ordinary = notes / "20260708010000-ordinary-note.md"
     daily.write_text("daily\n", encoding="utf-8")
+    monthly.write_text("monthly\n", encoding="utf-8")
+    yearly.write_text("yearly\n", encoding="utf-8")
     overall.write_text("summary\n", encoding="utf-8")
     ordinary.write_text("ordinary\n", encoding="utf-8")
 
     assert normalizer.archive_files(notes) == [ordinary]
-    assert normalizer.plan_renames([daily, overall], tmp_path) == []
+    assert normalizer.plan_renames([daily, monthly, yearly, overall], tmp_path) == []
 
 
 def test_normalizer_carries_indexes_across_days(tmp_path: Path) -> None:

@@ -27,8 +27,8 @@ from pathlib import Path
 
 from notes_archive_naming import (
     COMPACT_PREFIX_RE,
-    DAILY_META_RE,
     FULL_PREFIX_RE,
+    ROLLUP_META_RE,
     archive_day_start,
     compact_prefix,
     kebab_case,
@@ -86,7 +86,7 @@ def archive_files(notes_dir: Path) -> list[Path]:
         if path.is_file()
         and path.suffix.lower() in ARCHIVE_SUFFIXES
         and path.name not in RESERVED_DOC_NAMES
-        and not DAILY_META_RE.match(path.name)
+        and not ROLLUP_META_RE.match(path.name)
     )
 
 
@@ -96,7 +96,7 @@ def plan_renames(paths: list[Path], root: Path, cache: ArchiveTimestampCache | N
     source_paths = {path.resolve() for path in paths}
     items: list[tuple[Path, TimestampInfo, str]] = []
     for source in paths:
-        if source.name in RESERVED_DOC_NAMES or DAILY_META_RE.match(source.name):
+        if source.name in RESERVED_DOC_NAMES or ROLLUP_META_RE.match(source.name):
             continue
         timestamp = timestamp_for(source, root, cache)
         title = kebab_case(strip_known_prefix(source.stem))
@@ -392,7 +392,7 @@ def main() -> int:
     for path in paths:
         if notes_dir not in path.parents:
             raise SystemExit(f"refusing to normalize file outside {notes_dir}: {path}")
-        if path.name in RESERVED_DOC_NAMES or DAILY_META_RE.match(path.name):
+        if path.name in RESERVED_DOC_NAMES or ROLLUP_META_RE.match(path.name):
             continue
         if path.suffix.lower() not in ARCHIVE_SUFFIXES:
             raise SystemExit(f"not an archive-note file: {path}")
