@@ -218,6 +218,15 @@ corrected errors (the -0.31 stance, the 'keys hurt', the fixed-summary numbers).
 Brief Fable on: the robust metric, the CI'd effect (referent significant/sense
 underpowered/stance null), keys-neutral, and the own-summary mechanism.
 
+## FRAMING PROVENANCE (owner 07-09): mitigation-first was the owner's intent ALL ALONG
+
+The daily summaries narrate the 07-05 mitigation-first "reframing" as an external-review
+redirection. The owner corrects this: mitigation was their intent from the start; the
+mechanism-as-finding framing was the AGENTS' misunderstanding, which the owner only later
+noticed. Never narrate project history (in the paper or briefings) as "we thought the
+mechanism difference was the finding until review corrected us." Full correction:
+notes/2026070901-framing-provenance-correction.md.
+
 ## FABLE FREEDOM on paper title + intro (user 07-08)
 
 When Fable works on the PAPER writing/review, it has FULL FREEDOM to change the
