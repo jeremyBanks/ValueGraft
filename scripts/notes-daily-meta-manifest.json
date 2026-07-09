@@ -817,7 +817,7 @@
           "blob_id": "68af5eb88cb94a5b233ff2090034892f1ebd52cd"
         },
         {
-          "note": "notes/2026070985-provenance-ledger.md",
+          "note": "notes/2026070931-provenance-ledger.md",
           "blob_id": "e13f6f827d1fdc2d7a20a16331ac808af006c72f"
         }
       ],
@@ -849,7 +849,7 @@
         "fafe4240f01eb77380e1b8a69dd73461f1ef66e4",
         "fc18fa3279134905d192174647c091033d3178cd"
       ],
-      "summary_hash": "4013aba78564ef35af86d0fae953d22417e9bde35c515eb89f652d49aefa2010",
+      "summary_hash": "8100750db9e26e31f4b907fe7f69878a86c9e8ed0efe60a7ddd02a87408ec46b",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
