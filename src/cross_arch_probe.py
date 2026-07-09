@@ -93,6 +93,21 @@ Env:
                         pass runs WITHOUT QK-norm -- the clean causal H1 test.
                         FAILs LOUD (status=ERROR) if no QK-norm modules are found.
                         Everything else stays IDENTICAL (within-model comparison).
+  SC_ABLATE_LAMBDA    : GRADED QK-norm ablation dose-response, DECOUPLED FROM
+                        GENERATION (comma-separated lambdas, e.g.
+                        "1.0,0.5,0.25,0.0"; default off/1.0 = no change). Each
+                        QK-norm module is wrapped as qk_lambda(x)=(1-lambda)*x+
+                        lambda*RMSNorm_qk(x): lambda=1.0=clean/original,
+                        lambda=0.0=identity (== the full ablation above). The
+                        corpus is rendered + summarized ONCE at lambda=1.0 (clean,
+                        coherent); ONLY the teacher-forced graft-vs-compacted
+                        SCORING read-out (lp_A/lp_B/lp_E) is perturbed per lambda --
+                        the degraded model NEVER generates. Reports per lambda: the
+                        referent raw_EB (conversation-clustered CI) + n plants
+                        clearing the per-model relative competence floor. 1.0 is
+                        always added as the sanity anchor (must reproduce the
+                        validated referent). Mutually exclusive with
+                        SC_ABLATE_QK_NORM (that one breaks generation).
 
 FEATURE #1 (multi-probe averaging) is ALWAYS ON: each plant's raw_EB is the MEAN
 over its paraphrased ``probes`` of the teacher-forced gold lift (de-noises probe
@@ -348,6 +363,107 @@ def ablate_qk_norm(model) -> tuple:
         parent = model.get_submodule(parent_name) if parent_name else model
         setattr(parent, leaf, torch.nn.Identity())
     return len(targets), sorted(targets)
+
+
+# --- GRADED QK-NORM ABLATION (lambda dose-response, DECOUPLED FROM GENERATION) --
+# Fable's salvage of the causal H1 test: the BINARY full ablation above swaps
+# QK-norm for Identity at LOAD, which makes the DEGRADED model GENERATE -> empty
+# generation, every plant competence-floored. The graded version NEVER makes the
+# perturbed model generate: it WRAPS each original q_norm/k_norm RMSNorm in an
+# interpolation module and perturbs ONLY the graft-vs-compacted SCORING read-out
+# (run_model forces lambda=1.0 for the native render + self-gen summary, and sets
+# lambda<1.0 only around the teacher-forced lp_A/lp_B/lp_E forward passes).
+#
+#   qk_lambda(x) = (1-lambda)*x + lambda*RMSNorm_qk(x)
+#     lambda == 1.0 -> exactly RMSNorm_qk(x)  (CLEAN; reproduces validated behavior)
+#     lambda == 0.0 -> exactly x              (IDENTITY; == full QK-norm ablation)
+#
+# lambda is a plain mutable attribute so it is swept WITHOUT reloading weights (a
+# reference to the original RMSNorm is stored; the wrapper recomputes the blend).
+_QK_LAMBDA_CLASS = None
+
+
+def _qk_lambda_class():
+    """Lazily define + memoize the wrapper class (torch is imported lazily in this
+    module so it stays import-safe on the CPU box)."""
+    global _QK_LAMBDA_CLASS
+    if _QK_LAMBDA_CLASS is None:
+        import torch  # noqa: PLC0415
+
+        class QKLambdaNorm(torch.nn.Module):
+            """Interpolate between identity (lambda=0) and the ORIGINAL RMSNorm
+            (lambda=1). At lambda==1.0 the forward is byte-for-byte the original
+            module call (no arithmetic), so an installed-but-unswept wrapper is a
+            no-op; at lambda==0.0 it is a pure identity == the binary ablation."""
+
+            _is_qk_lambda = True
+
+            def __init__(self, orig):
+                super().__init__()
+                self.orig = orig
+                self.qk_lambda = 1.0
+
+            def forward(self, x):  # noqa: D401
+                lam = self.qk_lambda
+                if lam == 1.0:
+                    return self.orig(x)          # CLEAN: identical to original
+                if lam == 0.0:
+                    return x                      # IDENTITY: full ablation
+                return (1.0 - lam) * x + lam * self.orig(x)
+
+        _QK_LAMBDA_CLASS = QKLambdaNorm
+    return _QK_LAMBDA_CLASS
+
+
+def install_qk_lambda(model) -> tuple:
+    """Wrap every QK-norm leaf (``_QK_NORM_LEAF_NAMES``) in a QKLambdaNorm, storing
+    a ref to the ORIGINAL module. Idempotent (already-wrapped / Identity leaves are
+    skipped). All wrappers start at lambda=1.0 (== clean). Returns
+    ``(n_wrapped, sorted_names)``; the caller FAILs LOUD on 0 (nothing to graft)."""
+    import torch  # noqa: PLC0415
+    cls = _qk_lambda_class()
+    targets = [n for n, m in model.named_modules()
+               if n.rsplit(".", 1)[-1] in _QK_NORM_LEAF_NAMES
+               and m is not None
+               and not getattr(m, "_is_qk_lambda", False)
+               and not isinstance(m, torch.nn.Identity)]
+    for name in targets:
+        parent_name, _, leaf = name.rpartition(".")
+        parent = model.get_submodule(parent_name) if parent_name else model
+        setattr(parent, leaf, cls(getattr(parent, leaf)))
+    return len(targets), sorted(targets)
+
+
+def set_qk_lambda(model, value) -> int:
+    """Set ``qk_lambda`` on every installed QKLambdaNorm wrapper (no reload).
+    Returns the number of wrappers updated."""
+    n = 0
+    for _n, m in model.named_modules():
+        if getattr(m, "_is_qk_lambda", False):
+            m.qk_lambda = float(value)
+            n += 1
+    return n
+
+
+def parse_lambda_values(spec) -> list:
+    """Parse a comma-separated SC_ABLATE_LAMBDA / --ablate-lambda spec into a
+    sorted-descending list of lambdas for the dose-response. Returns [] when the
+    sweep is a no-op (empty, or solely 1.0) so the default path is byte-unchanged;
+    otherwise ALWAYS includes 1.0 (the clean sanity anchor) and sorts high->low."""
+    if not spec:
+        return []
+    vals = []
+    for tok_ in str(spec).split(","):
+        tok_ = tok_.strip()
+        if tok_ == "":
+            continue
+        vals.append(float(tok_))
+    if not vals:
+        return []
+    if all(v == 1.0 for v in vals):
+        return []                          # no perturbation requested -> no sweep
+    vals.append(1.0)                        # always anchor at clean
+    return sorted(set(vals), reverse=True)
 
 
 def detect_model_hparams(config, model=None) -> dict:
@@ -1425,7 +1541,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               task_lpa_floor: float = TASK_LPA_FLOOR_DEFAULT,
               task_competence_mode: str = TASK_COMPETENCE_MODE_DEFAULT,
               task_competence_k: float = TASK_COMPETENCE_K_DEFAULT,
-              ablate_qk_norm_flag: bool = False) -> dict:
+              ablate_qk_norm_flag: bool = False,
+              ablate_lambda_values: list | None = None) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
     was present and we fall back to per-model self-generated summaries (results
@@ -1478,6 +1595,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
         "n_plants": 0,
         "qk_norm_ablated": False,       # SC_ABLATE_QK_NORM: was QK-norm removed?
         "n_qk_modules_ablated": 0,      # how many q_norm/k_norm modules replaced
+        "ablate_lambda": None,          # SC_ABLATE_LAMBDA: graded dose-response block
         "kv_geometry": None,
         "pre_graft_gap": None,     # mean lp_A - lp_B (meaning lost to compaction)
         "raw_EB": None,            # PRIMARY aggregate: mean(lp_E-lp_B) + boot CI
@@ -1531,6 +1649,17 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             doc["model_hparams"]["qk_norm_source"] = _hp["qk_norm_source"]
         except Exception:  # noqa: BLE001
             pass
+        # BINARY and GRADED ablation are mutually exclusive (the binary one swaps
+        # to Identity at load and breaks generation -- exactly what the graded one
+        # fixes). Refuse rather than silently produce a broken/empty run.
+        if ablate_qk_norm_flag and ablate_lambda_values:
+            doc.update(
+                status="ERROR",
+                reason="SC_ABLATE_QK_NORM=1 and SC_ABLATE_LAMBDA are mutually "
+                       "exclusive: the binary ablation makes the model GENERATE "
+                       "degraded (the failure the graded lambda dose-response was "
+                       "built to avoid). Pick one.")
+            return doc
         # WITHIN-MODEL QK-NORM ABLATION (SC_ABLATE_QK_NORM) -- clean causal H1 test.
         # Run a QK-norm model with QK-norm DISABLED, everything else IDENTICAL.
         if ablate_qk_norm_flag:
@@ -1553,6 +1682,26 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             print(f"SC_ABLATE_QK_NORM=1 -> ablated {n_ablated} QK-norm modules "
                   f"(replaced with Identity); e.g. {ablated_names[:3]} ... "
                   f"forward pass now runs WITHOUT QK-norm.", flush=True)
+        # GRADED QK-NORM ABLATION (SC_ABLATE_LAMBDA) -- decoupled from generation.
+        # Wrap every QK-norm module in a QKLambdaNorm at lambda=1.0 (== clean, so
+        # the native render + self-gen summary below are byte-clean); the plant
+        # loop toggles lambda<1.0 ONLY around the teacher-forced SCORING passes.
+        n_qk_wrapped = 0
+        if ablate_lambda_values:
+            n_qk_wrapped, wrapped_names = install_qk_lambda(model)
+            if n_qk_wrapped == 0:
+                doc.update(
+                    status="ERROR",
+                    reason="SC_ABLATE_LAMBDA requested but no QK-norm modules "
+                           "found to wrap (model has no q_norm/k_norm/query|key "
+                           "layernorm modules); refusing to run a graded ablation "
+                           "with nothing perturbed")
+                return doc
+            set_qk_lambda(model, 1.0)   # generation/render + primary scoring stay clean
+            print(f"SC_ABLATE_LAMBDA={ablate_lambda_values} -> wrapped "
+                  f"{n_qk_wrapped} QK-norm modules with QKLambdaNorm (lambda=1.0 "
+                  f"now; perturbed ONLY around scoring). e.g. {wrapped_names[:3]} "
+                  f"... render/self-gen run CLEAN at lambda=1.0.", flush=True)
     except torch.cuda.OutOfMemoryError as e:  # noqa: BLE001
         doc.update(status="UNSUPPORTED", reason=f"OOM on load: {e}")
         return doc
@@ -1659,6 +1808,12 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     all_gc: list[float] = []            # gap_closure over all plants (for CI)
     identity_diffs: list[float] = []    # CONTROL #2: |lp_identity - lp_A| per conv
     traces: list[dict] = []             # CONTROL #4: raw per-probe traces
+    # GRADED QK-NORM ABLATION (SC_ABLATE_LAMBDA): per-lambda per-plant readout rows.
+    # {lambda: [{conversation_id, category, lp_A, raw_EB, cleared}, ...]}. Only
+    # populated for lambda-mode runs; each plant scored on the frozen lambda=1
+    # snapshots with lambda toggled ONLY around the tf() scoring passes.
+    lambda_values = list(ablate_lambda_values) if ablate_lambda_values else []
+    per_lambda_rows: dict[float, list] = {lam: [] for lam in lambda_values}
     # CONTROL #1 placebo: per-category rows of raw_EB_placebo = lp_E_placebo - lp_B
     per_cat_placebo: dict[str, list] = {c: [] for c in CATS}
     prev_summ_snap = None               # prev conv's summary snapshot (shuffle_probe)
@@ -1989,6 +2144,38 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                     "raw_EB": raw_eb, "pre_graft_gap": la - lb,
                     "gap_closure": gc})
 
+                # ---- GRADED QK-NORM ABLATION (SC_ABLATE_LAMBDA) dose-response ----
+                # Re-score THIS plant's graft (lp_E), compacted baseline (lp_B) and
+                # full-context lp_A at each lambda, perturbing ONLY the teacher-
+                # forced SCORING read-out (the frozen lambda=1 render/summary/write-
+                # time KV snapshots are untouched -- the model NEVER generates while
+                # degraded). lambda=1.0 reuses the values above, so it reproduces the
+                # validated referent exactly (the sanity anchor asserted after the
+                # loop). Restored to 1.0 before the next conv's summary/prefill.
+                if lambda_values:
+                    for lam in lambda_values:
+                        if lam == 1.0:
+                            la_l, lb_l, le_l = la, lb, le
+                        else:
+                            set_qk_lambda(model, lam)
+                            _la_l, _lb_l, _le_l = [], [], []
+                            for pi in range(n_probes):
+                                _la_l.append(
+                                    tf(a_snap, sa_list[pi] + tgt[:-1], tgt, len(ids)))
+                                _lb_l.append(
+                                    tf(b_snap, sb_list[pi] + tgt[:-1], tgt, len(b_ids)))
+                                _le_l.append(
+                                    tf(e_snap, sb_list[pi] + tgt[:-1], tgt, len(b_ids)))
+                            la_l = _mean(_la_l)
+                            lb_l = _mean(_lb_l)
+                            le_l = _mean(_le_l)
+                        per_lambda_rows[lam].append({
+                            "conversation_id": conv["id"],
+                            "category": pl["category"],
+                            "lp_A": la_l, "raw_EB": le_l - lb_l,
+                            "cleared": bool(task_competence_ok(la_l, active_floor))})
+                    set_qk_lambda(model, 1.0)   # restore CLEAN before next conv/gen
+
                 # ---- FEATURE #2: STRONG-PRIOR SIGNED READOUT (default on) ----
                 # For a strong_prior codename plant, ALSO measure how much logprob
                 # mass the graft moves from the famous PRIOR meaning (anti_keywords)
@@ -2310,6 +2497,73 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 "by_category_robust": per_a,
             }
         doc["alpha_sweep"] = {"alphas": list(alpha_list), "by_alpha": sweep}
+
+    # ---- GRADED QK-NORM ABLATION (SC_ABLATE_LAMBDA) dose-response report ----
+    # Per lambda: referent raw_EB (conversation-clustered CI) + how many plants
+    # still clear the per-model relative competence floor at that lambda. The
+    # readout is whether graft-benefit tracks lambda within the window where the
+    # model stays competent (n_cleared). lambda=1.0 is the CLEAN sanity anchor.
+    if lambda_values:
+        def _lam_block(rows):
+            cleared = [r for r in rows if r["cleared"]]
+            ci = bootstrap_ci_95_cluster(
+                _group_by_conv(cleared), n_boot=ROBUST_N_BOOT, seed=ROBUST_SEED)
+            return {
+                "raw_EB": {
+                    "mean": ci["mean"], "lo": ci["lo"], "hi": ci["hi"],
+                    "n": ci["n"], "n_conversations": ci["n_clusters"],
+                    "ci_method": "conversation-clustered"},
+                "n_cleared": len(cleared),
+                "n_candidate": len(rows),
+            }
+        by_lambda = {}
+        for lam in lambda_values:
+            rows = per_lambda_rows[lam]
+            by_lambda[str(lam)] = {
+                "referent": _lam_block([r for r in rows
+                                        if r["category"] == "referent"]),
+                "aggregate": _lam_block(rows),
+                "n_plants_cleared": sum(1 for r in rows if r["cleared"]),
+                "n_plants_candidate": len(rows),
+                "per_category": {
+                    c: _lam_block([r for r in rows if r["category"] == c])
+                    for c in CATS},
+            }
+        # SANITY ANCHOR: lambda=1.0 MUST reproduce the validated relative-mode
+        # referent raw_EB (~+0.10 on Qwen3-30B-A3B). A mismatch invalidates the run.
+        prim_ref = by_cat_robust.get("referent", {}).get("raw_EB_mean")
+        lam1_ref = (by_lambda.get("1.0", {}).get("referent", {})
+                    .get("raw_EB", {}).get("mean"))
+        sanity_ok = None
+        if prim_ref is not None and lam1_ref is not None:
+            sanity_ok = abs(prim_ref - lam1_ref) <= 1e-6
+        doc["ablate_lambda"] = {
+            "lambdas": lambda_values,
+            "n_qk_modules_wrapped": n_qk_wrapped,
+            "competence_mode": task_competence_mode,
+            "competence_active_floor": active_floor,
+            "by_lambda": by_lambda,
+            "sanity_anchor": {
+                "lambda1_referent_raw_EB": lam1_ref,
+                "primary_referent_raw_EB": prim_ref,
+                "ok": sanity_ok,
+                "note": ("lambda=1.0 must reproduce the validated relative-mode "
+                         "referent raw_EB (the point estimate equals the primary "
+                         "by_category_robust referent). ok=False INVALIDATES the "
+                         "run -- the clean anchor did not reproduce."),
+            },
+            "note": (
+                "Graded QK-norm ablation DECOUPLED FROM GENERATION (Fable H1 "
+                "salvage). The corpus was rendered + summarized ONCE at lambda=1.0 "
+                "(clean, coherent generation); ONLY the teacher-forced graft-vs-"
+                "compacted SCORING read-out (lp_A/lp_B/lp_E) was perturbed per "
+                "lambda via qk_lambda(x)=(1-lambda)*x+lambda*RMSNorm_qk(x). "
+                "lambda=1.0=clean/original, lambda=0.0=identity (full ablation). "
+                "The degraded model NEVER generates. Per lambda: referent raw_EB "
+                "(conversation-clustered CI) and n plants clearing the per-model "
+                "relative competence floor (n_cleared); reads whether graft-benefit "
+                "tracks lambda within the competent window."),
+        }
 
     # ---- FEATURE #2: strong-prior signed disambiguation aggregate ----
     if strong_prior and strong_prior_rows:
@@ -2828,6 +3082,7 @@ def _self_test_controls() -> int:
     _self_test_native()
     _self_test_batched_decode()
     _self_test_qk_ablation()
+    _self_test_qk_lambda()
 
     print("\nSELF-TEST OK")
     return 0
@@ -2923,6 +3178,135 @@ def _self_test_qk_ablation() -> int:
     print("  (c) no-QK-norm model -> ablate count 0 (caller fails loud) OK")
 
     print("  QK-NORM ABLATION OK")
+    return 0
+
+
+def _self_test_qk_lambda() -> int:
+    """CPU test for the GRADED QK-NORM ABLATION (SC_ABLATE_LAMBDA) -- the
+    dose-response DECOUPLED FROM GENERATION.
+
+    Asserts: (a) lambda=1.0 is numerically IDENTICAL to the original RMSNorm (both
+    at the module level and via full-model logits == un-wrapped), (b) lambda=0.0
+    equals Identity (== the binary full ablation's logits), (c) intermediate lambda
+    interpolates ((1-l)*x + l*orig(x)), (d) the perturbation toggles WITHOUT reload
+    -- lambda can be set to 1.0 (clean/render path), then <1.0 (scoring), then back
+    to 1.0 reproducing the clean logits exactly. Plus pure parse_lambda_values
+    checks. Skips cleanly if torch/Qwen3 are unavailable."""
+    print("\n== GRADED QK-NORM ABLATION (lambda) self-test (tiny Qwen3, CPU) ==")
+
+    # (pure) parse_lambda_values: no-op cases and canonical ordering + anchor.
+    assert parse_lambda_values(None) == []
+    assert parse_lambda_values("") == []
+    assert parse_lambda_values("1.0") == []               # solely 1.0 -> no sweep
+    assert parse_lambda_values("1.0,1.0") == []
+    assert parse_lambda_values("0.5") == [1.0, 0.5]        # anchor auto-added
+    assert parse_lambda_values("1.0,0.5,0.25,0.0") == [1.0, 0.5, 0.25, 0.0]
+    assert parse_lambda_values("0.0,0.5,1.0") == [1.0, 0.5, 0.0]  # sorted desc
+    print("  (parse) parse_lambda_values no-op/anchor/order OK")
+
+    try:
+        import copy  # noqa: PLC0415
+        import torch  # noqa: PLC0415
+        from transformers import Qwen3Config, Qwen3ForCausalLM  # noqa: PLC0415
+    except Exception as e:  # noqa: BLE001
+        print(f"  [skip] no torch/Qwen3 available: {type(e).__name__}: {e}")
+        return 0
+
+    torch.manual_seed(0)
+    cfg = Qwen3Config(vocab_size=64, hidden_size=32, intermediate_size=64,
+                      num_hidden_layers=2, num_attention_heads=4,
+                      num_key_value_heads=2, head_dim=8,
+                      max_position_embeddings=128)
+    model = Qwen3ForCausalLM(cfg).eval()
+    with torch.no_grad():
+        for n, m in model.named_modules():
+            if n.rsplit(".", 1)[-1] in ("q_norm", "k_norm"):
+                m.weight.add_(torch.randn_like(m.weight) * 0.5)
+
+    ids = torch.tensor([[3, 5, 7, 9, 11]])
+    with torch.no_grad():
+        logits_clean = model(ids).logits.clone()
+
+    # Reference twins for the two extremes: an untouched clean twin and a
+    # binary-ablated (Identity) twin, both weight-identical to `model`.
+    clean_twin = copy.deepcopy(model).eval()
+    ablated_twin = copy.deepcopy(model).eval()
+    n_abl, _ = ablate_qk_norm(ablated_twin)
+    assert n_abl == 4, f"twin ablation expected 4, got {n_abl}"
+    with torch.no_grad():
+        logits_ablated = ablated_twin(ids).logits.clone()
+
+    # Install the graded wrappers on `model`.
+    n_wrapped, names = install_qk_lambda(model)
+    assert n_wrapped == 4, f"expected 4 QK-norm modules wrapped, got {n_wrapped}"
+    # idempotent: re-installing wraps nothing new (already wrapped).
+    assert install_qk_lambda(model)[0] == 0, "install_qk_lambda not idempotent"
+
+    # (a) module-level: lambda=1.0 IDENTICAL to the original RMSNorm; and the full
+    # model at lambda=1.0 reproduces the un-wrapped logits EXACTLY (the render/gen
+    # path stays byte-clean).
+    set_qk_lambda(model, 1.0)
+    a_wrapper = None
+    for _n, m in model.named_modules():
+        if getattr(m, "_is_qk_lambda", False):
+            a_wrapper = m
+            break
+    x = torch.randn(2, 3, 8)
+    with torch.no_grad():
+        orig_out = a_wrapper.orig(x)
+        assert torch.equal(a_wrapper(x), orig_out), \
+            "lambda=1.0 wrapper is not identical to the original RMSNorm"
+        logits_l1 = model(ids).logits
+    d1 = (logits_l1 - logits_clean).abs().max().item()
+    assert d1 == 0.0, f"lambda=1.0 full-model logits differ from clean (max|d|={d1})"
+    print(f"  (a) lambda=1.0 == original RMSNorm (module exact; full-model max|d|"
+          f"={d1:.1e}) OK")
+
+    # (b) lambda=0.0 == Identity == binary full ablation (module and full model).
+    set_qk_lambda(model, 0.0)
+    with torch.no_grad():
+        assert torch.equal(a_wrapper(x), x), "lambda=0.0 wrapper is not Identity"
+        logits_l0 = model(ids).logits
+    d0 = (logits_l0 - logits_ablated).abs().max().item()
+    assert d0 <= 1e-5, \
+        f"lambda=0.0 does not match the binary full ablation (max|d|={d0:.2e})"
+    dclean0 = (logits_l0 - logits_clean).abs().max().item()
+    assert dclean0 > 1e-4, "lambda=0.0 did not change logits vs clean"
+    print(f"  (b) lambda=0.0 == Identity == full ablation (vs ablated max|d|"
+          f"={d0:.1e}; vs clean max|d|={dclean0:.3e}) OK")
+
+    # (c) intermediate lambda interpolates: (1-l)*x + l*orig(x).
+    for lam in (0.25, 0.5, 0.75):
+        set_qk_lambda(model, lam)
+        with torch.no_grad():
+            expect = (1.0 - lam) * x + lam * a_wrapper.orig(x)
+            got = a_wrapper(x)
+        di = (got - expect).abs().max().item()
+        assert di <= 1e-6, f"lambda={lam} interpolation wrong (max|d|={di:.2e})"
+    print("  (c) intermediate lambda interpolates (1-l)*x+l*orig(x) OK")
+
+    # (d) toggling WITHOUT reload: 1.0 (clean render/gen) -> 0.5 (scoring) -> 1.0
+    # reproduces the clean logits EXACTLY (models the run's render-clean/score-
+    # perturbed lambda cycling; weights are never reloaded).
+    set_qk_lambda(model, 1.0)
+    with torch.no_grad():
+        assert torch.equal(model(ids).logits, logits_clean), \
+            "restoring lambda=1.0 did not reproduce clean logits"
+    set_qk_lambda(model, 0.5)
+    with torch.no_grad():
+        mid = model(ids).logits
+    assert (mid - logits_clean).abs().max().item() > 1e-4, \
+        "lambda=0.5 scoring pass did not perturb logits"
+    set_qk_lambda(model, 1.0)
+    with torch.no_grad():
+        assert torch.equal(model(ids).logits, logits_clean), \
+            "second restore to lambda=1.0 did not reproduce clean logits"
+    # clean_twin was never perturbed -> still matches clean (sanity on the twin).
+    with torch.no_grad():
+        assert torch.equal(clean_twin(ids).logits, logits_clean)
+    print("  (d) lambda toggles 1.0->0.5->1.0 without reload; render path clean OK")
+
+    print("  GRADED QK-NORM ABLATION (lambda) OK")
     return 0
 
 
@@ -3476,6 +3860,19 @@ def main():
                          "causal test of H1. FAILs LOUD (status=ERROR) if the "
                          "model has no QK-norm modules to ablate. Everything else "
                          "stays IDENTICAL for a clean within-model comparison.")
+    ap.add_argument("--ablate-lambda", dest="ablate_lambda",
+                    default=(os.environ.get("SC_ABLATE_LAMBDA") or None),
+                    help="GRADED QK-NORM ABLATION dose-response, DECOUPLED FROM "
+                         "GENERATION (SC_ABLATE_LAMBDA; comma-separated lambdas, "
+                         "e.g. '1.0,0.5,0.25,0.0'; default off/1.0 = no change). "
+                         "Wraps each QK-norm module in qk_lambda(x)=(1-lambda)*x+"
+                         "lambda*RMSNorm_qk(x): lambda=1.0=clean/original, "
+                         "lambda=0.0=identity (full ablation). The corpus is "
+                         "rendered + summarized ONCE at lambda=1.0 (clean); ONLY "
+                         "the teacher-forced graft-vs-compacted SCORING read-out is "
+                         "perturbed per lambda (the degraded model NEVER generates). "
+                         "1.0 is always added as the sanity anchor. Mutually "
+                         "exclusive with --ablate-qk-norm.")
     ap.add_argument("--scenarios",
                     default=os.environ.get(
                         "SC_SCENARIOS",
@@ -3606,6 +4003,20 @@ def main():
         champion_regions = [int(x) for x in str(args.champion_regions).split(",")
                             if x.strip() != ""]
 
+    # GRADED QK-NORM ABLATION dose-response: parse the lambda list (no-op unless a
+    # value != 1.0 is requested). It takes precedence over the binary ablation (the
+    # binary one breaks generation, which the graded one exists to avoid).
+    lambda_values = parse_lambda_values(args.ablate_lambda)
+    if lambda_values and args.ablate_qk_norm:
+        print("SC_ABLATE_LAMBDA set -> ignoring SC_ABLATE_QK_NORM (binary ablation "
+              "breaks generation; the graded dose-response replaces it).",
+              file=sys.stderr)
+        args.ablate_qk_norm = False
+    if lambda_values:
+        print(f"SC_ABLATE_LAMBDA -> graded QK-norm dose-response at lambdas="
+              f"{lambda_values} (render/summary CLEAN at lambda=1.0; only the "
+              f"scoring read-out perturbed).", flush=True)
+
     try:
         doc = run_model(
             args.model, data_dir, out_dir, fixed_summaries,
@@ -3621,7 +4032,8 @@ def main():
             headroom_floor=args.headroom_floor, task_lpa_floor=args.task_lpa_floor,
             task_competence_mode=args.task_competence_mode,
             task_competence_k=args.task_competence_k,
-            ablate_qk_norm_flag=args.ablate_qk_norm)
+            ablate_qk_norm_flag=args.ablate_qk_norm,
+            ablate_lambda_values=lambda_values)
     except SystemExit:
         raise
     except BaseException as e:  # noqa: BLE001
