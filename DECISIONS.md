@@ -236,3 +236,20 @@ OPPORTUNISTIC TAIL (do NOT plan around; only if everything above is done AND fun
 PAPER REFRAME (Fable): headline (+0.10 dissociation) untouched; DROP "QK-norm predicts the sign" as the
 cross-arch headline; LEAD with "effect is real, architecture-specific, can reverse (Qwen2.5 neg, Mistral
 pos), self-native-scoped" + (if ablation confirms) QK-norm causally implicated via WITHIN-MODEL ablation.
+
+- 2026-07-08 — **GATE #3 competence floor made RELATIVE (per-model), pre-registered before application.** The
+  cross-arch harness's task-competence gate used an ABSOLUTE per-token lp_A floor (task_lpa_floor=-8.0), which
+  excluded EVERY OLMo-2 plant (its gold logprobs sit on a lower absolute scale) → spurious "no plants scored"
+  ERROR, and confounds cross-model comparison (drops more plants from lower-logprob models). On-disk audit (no
+  GPU): -8.0 excludes 0/67 Qwen3-30B, 0/120 Mistral-24B, 0/67 Qwen2.5-32B, 0/67 Qwen3-4B — i.e. INERT on every
+  model with real scored data — but total on OLMo. NEW RULE (frozen in PREREGISTRATION.md "GATE #3 AMENDMENT"):
+  floor_model = median(lp_A) − K·MADN(lp_A), MADN=1.4826·median(|lp_A−median|), K=3.0, applied identically to
+  all models; <8 plants ⇒ no floor. A within-model robust-outlier floor is scale-adaptive (fixes OLMo), still a
+  genuine competence gate (drops each model's OWN extreme-low outliers; MAD so outliers can't mask themselves),
+  and — verified on-disk — excludes 0 plants on every already-scored model (per-model floors -7.87/-5.42/-11.30/
+  -9.14 all below each min lp_A), so Qwen/Mistral raw_EB numbers are UNCHANGED (recompute is a proven no-op). A
+  lower-quantile rule was REJECTED (mechanically drops p% from every model → changes Qwen/Mistral sets). Impl:
+  src/cross_arch_probe.py adds pure relative_competence_floor() + --task-competence-mode {absolute,relative}
+  (default absolute = byte-identical) + --task-competence-k; self-tested CPU-only. TAKES EFFECT only on a GPU
+  re-run with SC_TASK_COMPETENCE_MODE=relative (needed to produce OLMo's numbers); harness change is staged
+  behind the pre-registered rule. Gates the OLMo re-run (1 of 3 text-loadable QK-norm-present models).

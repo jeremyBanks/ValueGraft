@@ -108,8 +108,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import random
+import statistics
 import sys
 import time
 import traceback
@@ -746,6 +748,12 @@ def reply_covariates(records: list) -> dict:
 HEADROOM_FLOOR_DEFAULT = 0.3     # min per-category A-B gap to be interpretable
 TASK_LPA_FLOOR_DEFAULT = -8.0    # min lp_A per-token; below = model can't do task
 HEADROOM_EPS = 1e-3              # denominator floor for raw_EB normalization
+# GATE #3 RELATIVE variant (pre-registered 2026-07-08). See PREREGISTRATION.md
+# "GATE #3 AMENDMENT". K in robust-sigma (MADN) units; MIN_N plants required to
+# estimate a per-model floor (below -> no plant is dropped).
+TASK_COMPETENCE_MODE_DEFAULT = "absolute"   # {"absolute","relative"}
+TASK_COMPETENCE_K_DEFAULT = 3.0
+TASK_COMPETENCE_MIN_N = 8
 
 
 def category_headroom(raw_EB_mean, pre_gaps, floor=HEADROOM_FLOOR_DEFAULT,
@@ -786,6 +794,38 @@ def task_competence_ok(la, floor=TASK_LPA_FLOOR_DEFAULT) -> bool:
     model whose native replies never establish the referent (very low lp_A) yields
     a degenerate plant that should be excluded, not read as a graft signal."""
     return la is not None and la >= floor
+
+
+def relative_competence_floor(la_values, k=TASK_COMPETENCE_K_DEFAULT,
+                              min_n=TASK_COMPETENCE_MIN_N):
+    """PURE (design v2.1 gate #3, RELATIVE variant -- pre-registered 2026-07-08,
+    PREREGISTRATION.md "GATE #3 AMENDMENT"): a per-MODEL competence floor derived
+    from the model's OWN gold-lp_A distribution, so the gate does not confound
+    cross-model comparison.
+
+        floor = median(lp_A) - k * MADN(lp_A)
+        MADN  = 1.4826 * median(|lp_A - median(lp_A)|)   (normal-consistent MAD)
+
+    WHY (vs the ABSOLUTE -8.0): the absolute floor lives on a per-model logprob
+    scale -- on disk it excludes 0 plants on Qwen/Mistral (lp_A runs high) but
+    EVERY plant on OLMo-2 (lp_A runs lower), so different models get scored on
+    different subsets. This within-model robust-outlier floor adapts to each
+    model's scale: it keeps a model's TYPICAL plants regardless of the absolute
+    level and drops only plants that are anomalously low FOR THAT MODEL (the
+    genuine can't-do-the-task / degenerate plants the gate is meant to remove).
+    MAD (not mean/std) is used so the very low-outlier plants we want to exclude
+    cannot inflate the spread and mask themselves.
+
+    Returns the per-token lp_A threshold, or None if fewer than ``min_n`` finite
+    values are available (too few to estimate a scale -> caller keeps all plants).
+    k in {2.5..4} gives identical (zero) exclusions on the observable high-lp_A
+    models; k=3.0 is the conventional extreme-outlier cutoff, chosen a priori."""
+    xs = [x for x in la_values if x is not None and math.isfinite(x)]
+    if len(xs) < min_n:
+        return None
+    med = statistics.median(xs)
+    madn = 1.4826 * statistics.median([abs(x - med) for x in xs])
+    return med - k * madn
 
 
 # ---------------------------------------------------------------------------
@@ -1363,6 +1403,8 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
               native_temp: float = NATIVE_TEMP_DEFAULT,
               headroom_floor: float = HEADROOM_FLOOR_DEFAULT,
               task_lpa_floor: float = TASK_LPA_FLOOR_DEFAULT,
+              task_competence_mode: str = TASK_COMPETENCE_MODE_DEFAULT,
+              task_competence_k: float = TASK_COMPETENCE_K_DEFAULT,
               ablate_qk_norm_flag: bool = False) -> dict:
     """fixed_summaries: {conv_id: summary_text} loaded from the shared external
     file (Sonnet-written, held IDENTICAL across models). If None, no fixed file
@@ -1657,6 +1699,54 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     # v2.1 task-competence gate accounting (per category).
     task_excluded: dict[str, list] = {c: [] for c in CATS}
 
+    # ---- v2.1 GATE #3: RELATIVE (per-model) competence floor -----------------
+    # Pre-registered 2026-07-08 (PREREGISTRATION.md "GATE #3 AMENDMENT"). The
+    # ABSOLUTE floor (-8.0) confounds cross-model comparison; in RELATIVE mode we
+    # PRE-SCAN this model's OWN gold-lp_A distribution and set a robust-outlier
+    # floor (median - k*MADN). lp_A depends ONLY on the FULL-context A snapshot
+    # (NOT on the summary or the graft), so the scan is well-defined and the value
+    # it sees is byte-identical to the one the gate sees in the main loop below.
+    # summary_cache carries the (once-computed) per-conv summary into the main loop
+    # so it is not regenerated. ABSOLUTE mode (default) runs NO pre-scan -> the
+    # existing code path and every already-scored number are byte-unchanged.
+    summary_cache: dict = {}
+    active_floor = task_lpa_floor
+    if task_competence_mode == "relative":
+        scan_lpa: list = []
+        for _cv, _pls in specs:
+            _msgs = _cv["messages"][:-1]
+            _tsm = _cv["sections"]["middle_end_msg"]
+            _st = fixed_summaries.get(_cv["id"]) if fixed_summaries else None
+            if fixed_summaries is not None and not _st:
+                continue                       # skip logged by the main loop
+            if _st is None:
+                _st = generate_summary_hf(model, tok, _msgs, request=_REQ)["text"]
+            summary_cache[_cv["id"]] = _st
+            _ctx = build_token_context(tok, family, _msgs, _st, _tsm)
+            _ids = _ctx["ids"]
+            _a_snap = force_prefill(_ids)
+            for _pl in _pls:
+                _tgt = tok(str(_pl["gold"]).strip(),
+                           add_special_tokens=False).input_ids[:max_gold_tok]
+                if len(_tgt) < 2:
+                    continue
+                _per = []
+                for _probe in (_pl.get("probes") or [_pl["probe"]]):
+                    _full = render_hf(
+                        tok, _msgs + [{"role": "user", "content": _probe}], True)
+                    _cn = canonical_ids_any(tok, _msgs, render_hf)
+                    _per.append(tf(_a_snap, _full[len(_cn):] + _tgt[:-1],
+                                   _tgt, len(_ids)))
+                scan_lpa.append(_mean(_per))
+        _rel = relative_competence_floor(scan_lpa, k=task_competence_k)
+        if _rel is not None:
+            active_floor = _rel
+        print(f"  [gate3-relative] n_scanned={len(scan_lpa)} "
+              f"relative_floor={active_floor:.3f} (k={task_competence_k}; "
+              f"absolute_would_be={task_lpa_floor}) -- per-model robust-outlier "
+              f"floor keeps high-lp_A models' plant sets intact, adapts to "
+              f"low-lp_A models (e.g. OLMo).", flush=True)
+
     try:
         for _ci, (conv, plants) in enumerate(specs):
             print(f"  [progress] conv {_ci+1}/{len(specs)} ({conv['id']}) "
@@ -1664,18 +1754,24 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             msgs = conv["messages"][:-1]
             tsm = conv["sections"]["middle_end_msg"]
 
-            summary_text = fixed_summaries.get(conv["id"]) if fixed_summaries else None
-            if fixed_summaries is not None and not summary_text:
-                # Missing fixed summary for THIS conv -> skip the conv (logged),
-                # do NOT abort the model. Other convs still contribute.
-                skipped_convs.append(conv["id"])
-                print(f"  SKIP {conv['id']}: no entry in fixed summaries file",
-                      flush=True)
-                continue
+            # RELATIVE mode pre-scan already computed (and cached) this conv's
+            # summary; reuse it so it is not regenerated. In ABSOLUTE mode the
+            # cache is empty and this is the original code path exactly.
+            summary_text = summary_cache.get(conv["id"])
             if summary_text is None:
-                # No fixed file at all: per-model fallback (marked non-comparable).
-                summary_text = generate_summary_hf(
-                    model, tok, msgs, request=_REQ)["text"]
+                summary_text = (fixed_summaries.get(conv["id"])
+                                if fixed_summaries else None)
+                if fixed_summaries is not None and not summary_text:
+                    # Missing fixed summary for THIS conv -> skip the conv (logged),
+                    # do NOT abort the model. Other convs still contribute.
+                    skipped_convs.append(conv["id"])
+                    print(f"  SKIP {conv['id']}: no entry in fixed summaries file",
+                          flush=True)
+                    continue
+                if summary_text is None:
+                    # No fixed file at all: per-model fallback (non-comparable).
+                    summary_text = generate_summary_hf(
+                        model, tok, msgs, request=_REQ)["text"]
 
             # PURE token geometry (A ids/starts, B b_ids/b_starts, summary
             # layout, alignment regions) -- the SAME construction --smoke-align
@@ -1847,7 +1943,7 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
                 # it from every aggregate (do not read it as a graft signal).
                 # Default floor is permissive so the pre-rendered path is
                 # unaffected. alpha0/identity machinery checks already ran above.
-                if not task_competence_ok(la, task_lpa_floor):
+                if not task_competence_ok(la, active_floor):
                     task_excluded[pl["category"]].append(
                         {"plant_id": pl["id"], "conversation_id": conv["id"],
                          "lp_A": la})
@@ -2121,6 +2217,11 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
     doc["gates"] = {
         "headroom_floor": headroom_floor,
         "task_lpa_floor": task_lpa_floor,
+        "task_competence_mode": task_competence_mode,
+        "task_competence_k": task_competence_k,
+        # the floor ACTUALLY applied: absolute -> task_lpa_floor; relative ->
+        # the per-model median-k*MADN value (None-fallback keeps task_lpa_floor).
+        "task_competence_active_floor": active_floor,
         "floored_categories": [c for c in CATS
                                if by_cat_robust.get(c, {}).get("floor")],
         "task_excluded": {c: task_excluded[c] for c in CATS
@@ -2137,8 +2238,10 @@ def run_model(model_id: str, data_dir: Path, out_dir: Path,
             "(headroom<headroom_floor) has no evicted meaning to recover -> "
             "uninterpretable, EXCLUDED from the sign verdict (NOT counted as harm); "
             "raw_EB_normalized = raw_EB/max(headroom,eps). GATE #3 task-competence: "
-            "plants with lp_A per-token < task_lpa_floor were dropped from all "
-            "aggregates (model can't do the task even with full context)."),
+            "plants with lp_A per-token < task_competence_active_floor were dropped "
+            "from all aggregates (model can't do the task even with full context); "
+            "mode='absolute' uses the fixed task_lpa_floor, mode='relative' uses the "
+            "pre-registered per-model median-k*MADN robust-outlier floor."),
     }
 
     # ---- CONTROL #1: placebo report (corrupted-source graft) ----
@@ -3022,6 +3125,30 @@ def _self_test_native(scenarios_path: Path | None = None) -> int:
     assert task_competence_ok(-8.0, floor=-8.0) is True  # boundary inclusive
     print("  task_competence_ok: lp_A floor gate (inclusive) OK")
 
+    # ---- relative_competence_floor (GATE #3 RELATIVE, pre-registered 07-08) ----
+    # Too few points -> None (permissive: caller keeps all plants).
+    assert relative_competence_floor([-1.0, -2.0, -3.0], min_n=8) is None
+    # A HIGH-lp_A model (Qwen/Mistral-like tight distribution): the robust floor
+    # sits well below the minimum -> excludes 0 plants (matches absolute -8.0),
+    # so already-scored numbers are unchanged. INVARIANT for k in {2.5..4}.
+    hi = [-0.3, -0.9, -1.3, -1.7, -1.9, -2.1, -2.5, -3.0, -3.6, -4.0]
+    for _k in (2.5, 3.0, 3.5, 4.0):
+        f_hi = relative_competence_floor(hi, k=_k)
+        assert f_hi < min(hi), (f_hi, min(hi), _k)
+        assert all(task_competence_ok(x, f_hi) for x in hi)
+    # A LOW-lp_A model (OLMo-like: whole distribution shifted DOWN) -- the absolute
+    # -8.0 would drop EVERY plant; the relative floor adapts to the model's own
+    # scale and KEEPS its typical plants while still dropping an in-model extreme
+    # low outlier (gate not disabled).
+    lo = [-9.0, -9.4, -9.6, -10.0, -10.1, -10.3, -10.8, -11.2, -11.9, -18.0]
+    assert all(not task_competence_ok(x, -8.0) for x in lo)  # absolute drops all
+    f_lo = relative_competence_floor(lo, k=3.0)
+    kept = [x for x in lo if task_competence_ok(x, f_lo)]
+    assert len(kept) == 9 and -18.0 not in kept, (f_lo, kept)  # keeps 9, drops outlier
+    print(f"  relative_competence_floor: hi-model floor<{min(hi):.1f} (0 excluded, "
+          f"k-invariant); lo-model floor={f_lo:.2f} keeps {len(kept)}/10 (drops "
+          f"outlier, adapts scale) OK")
+
     print("  NATIVE-RENDER pure-parts OK")
     return 0
 
@@ -3328,8 +3455,21 @@ def main():
     ap.add_argument("--task-lpa-floor", type=float,
                     default=float(os.environ.get("SC_TASK_LPA_FLOOR",
                                                  str(TASK_LPA_FLOOR_DEFAULT))),
-                    help="v2.1 GATE #3: min lp_A per-token to score a plant "
-                         "(below = model can't do the task, plant excluded)")
+                    help="v2.1 GATE #3 (absolute mode): min lp_A per-token to score "
+                         "a plant (below = model can't do the task, plant excluded)")
+    ap.add_argument("--task-competence-mode",
+                    choices=["absolute", "relative"],
+                    default=(os.environ.get("SC_TASK_COMPETENCE_MODE")
+                             or TASK_COMPETENCE_MODE_DEFAULT),
+                    help="v2.1 GATE #3 floor mode. 'absolute' (default) = fixed "
+                         "--task-lpa-floor. 'relative' (pre-registered 2026-07-08) = "
+                         "per-model robust-outlier floor median-k*MADN(lp_A); "
+                         "scale-adaptive, does not confound cross-model comparison "
+                         "(unblocks OLMo). Effective only on a fresh scored run.")
+    ap.add_argument("--task-competence-k", type=float,
+                    default=float(os.environ.get("SC_TASK_COMPETENCE_K",
+                                                 str(TASK_COMPETENCE_K_DEFAULT))),
+                    help="relative-mode K (robust-sigma/MADN units; default 3.0)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--self-test", action="store_true",
                     help="run the CPU-only controls self-tests, then exit")
@@ -3435,6 +3575,8 @@ def main():
             native_render=args.native_render, scenarios=scenarios,
             native_max_reply=args.native_max_reply, native_temp=args.native_temp,
             headroom_floor=args.headroom_floor, task_lpa_floor=args.task_lpa_floor,
+            task_competence_mode=args.task_competence_mode,
+            task_competence_k=args.task_competence_k,
             ablate_qk_norm_flag=args.ablate_qk_norm)
     except SystemExit:
         raise

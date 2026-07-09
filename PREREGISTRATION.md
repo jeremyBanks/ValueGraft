@@ -103,3 +103,76 @@ baseline generation. If BOTH pass, Gemma-4 is reported as the pre-registered pai
 text-substack loading path (same comparison, not post-hoc). If either fails or the box expires, we fall back
 to the one-pair-plus-regression case above. Qwen3.6 recovery is NOT attempted (same-vendor as Qwen3 = low
 de-confound value). All 5 models appear in an exclusions table with the architecture class as the stated reason.
+
+## GATE #3 AMENDMENT — RELATIVE (per-model) task-competence floor (pre-registered 2026-07-08, BEFORE it is applied to any scored result)
+
+This amendment CHANGES the task-competence gate (inclusion/exclusion GATE #3 above)
+for ALL models. It is committed BEFORE any result is scored under it, so it is a
+deliberate pre-commitment, not a post-hoc knob. Any already-scored result would be
+recomputed under this rule for comparability (see the on-disk comparability note below
+showing the recompute is a verified no-op for the models scored so far).
+
+**Problem being fixed.** The original GATE #3 used an ABSOLUTE floor
+`task_lpa_floor = -8.0` on the per-token gold logprob under full context A (`lp_A`).
+An absolute floor confounds cross-model comparison: it silently drops MORE plants from
+models whose logprobs run lower (different vocab/tokenizer/scale), so different models
+get scored on different subsets. Observed on-disk (per-token `lp_A`, this harness / the
+trusted gap_closure_cat path):
+
+| model | N | median lp_A | min lp_A | plants below −8.0 |
+|---|---|---|---|---|
+| Qwen3-30B-A3B-Instruct-2507 | 67 | −2.76 | −4.91 | 0 |
+| Mistral-Small-24B-2501 (cross-arch) | 120 | −1.70 | −4.03 | 0 |
+| Qwen2.5-32B | 67 | −3.74 | −6.76 | 0 |
+| Qwen3-4B | 67 | −4.35 | −6.33 | 0 |
+| OLMo-2 | (not on disk) | — | — | **ALL** (per FINDINGS: floor excluded every plant) |
+
+So −8.0 is INERT on Qwen/Mistral (excludes 0) yet total on OLMo-2 — the classic
+different-subsets confound. OLMo's own `lp_A` distribution is NOT observable on disk (its
+run errored under the floor). Minimal data that would settle OLMo directly: one OLMo run
+that records per-plant `lp_A` even for gate-excluded plants (the `task_excluded` records
+already store `lp_A`); that is exactly what a relative-mode re-run produces.
+
+**The rule (frozen).** Replace the absolute floor with a WITHIN-MODEL ROBUST-OUTLIER
+floor computed from the model's OWN gold-`lp_A` distribution (pooled over all of that
+model's scored plants):
+
+>   floor_model = median(lp_A) − K · MADN(lp_A),
+>   MADN(lp_A) = 1.4826 · median(|lp_A − median(lp_A)|)   (normal-consistent MAD)
+>   K = 3.0   (a plant is excluded iff lp_A < floor_model)
+
+A plant is scored iff `lp_A ≥ floor_model`. If a model has fewer than 8 finite `lp_A`
+values (too few to estimate a scale) the floor is undefined and NO plant is dropped
+(permissive fallback). Applied IDENTICALLY across all models. This is `--task-competence-mode
+relative` (`SC_TASK_COMPETENCE_MODE=relative`), K via `--task-competence-k`; absolute mode
+stays the default until the sweep is re-run under this rule.
+
+**Justification of each design choice.**
+- *Relative/per-model (a):* the floor tracks each model's own logprob scale, so it does not
+  confound cross-model comparison — a model whose whole distribution sits lower is not
+  penalized for that shift, only for plants that are anomalous FOR IT.
+- *Includes OLMo's plants (b):* median − K·MADN adapts to OLMo's (lower) scale, so OLMo's
+  TYPICAL plants clear it; the spurious "no plants scored" error is removed.
+- *Identical across models (c):* the same estimator + K = 3.0 + min-N = 8 for every model.
+- *Still a genuine competence gate (d):* it does NOT disable the gate — it excludes plants
+  whose `lp_A` is an extreme low outlier FOR THAT MODEL (the degenerate / can't-do-the-task
+  plants the gate is meant to remove). MAD (not mean/SD) is used deliberately so the very
+  low-outlier plants we want to exclude cannot inflate the spread and mask themselves.
+- *K = 3.0* is the conventional extreme-outlier cutoff (≈3σ under normality), chosen a priori.
+  On the observable models the exclusion count is INVARIANT for K ∈ [2.5, 4.0] (all give 0
+  excluded), so the exact K is not doing hidden work here; it will matter only on a model
+  with a genuine low-outlier tail, which is where a gate should act.
+
+**Comparability impact (verified on-disk, no GPU).** Under this rule the per-model floors
+are: Qwen3-30B −7.87, Mistral-24B −5.42, Qwen2.5-32B −11.30, Qwen3-4B −9.14. Each sits
+below that model's minimum observed `lp_A`, so the rule excludes 0 plants on every model
+scored so far — IDENTICAL to the current −8.0 (which also excludes 0). Therefore the already
+-scored Qwen/Mistral included-plant sets and all their raw_EB numbers are UNCHANGED under
+this amendment (the required recompute is a proven no-op for them). The rule changes outcomes
+ONLY for models whose distribution the absolute floor mis-handles (OLMo-2), which is the point.
+A pure lower-quantile rule (e.g. drop the bottom 5%) was REJECTED precisely because it would
+mechanically drop ~3–6 plants from Qwen/Mistral that −8.0 keeps, changing their sets and
+breaking backward-comparability; the robust-outlier floor does not.
+
+**What confirms/disconfirms unchanged.** This is an inclusion-rule amendment only; the
+estimand, metric, headroom gate, and the H1/geometry inference are untouched.
