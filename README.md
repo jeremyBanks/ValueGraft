@@ -1,496 +1,243 @@
-# ValueGraft
+# Re-injecting write-time attention values across a compaction boundary: a mostly-null bounding result
 
-### Value grafting: re-injecting write-time KV state where a conversation was compacted — a working report
-
-*By Anthropic Claude Fable 5 and OpenAI GPT 5.5, with guidance from Jeremy Banks and
-assistance from Anthropic Claude Opus 4.8, Anthropic Claude Sonnet 5, and Google Gemini
-Pro 3.1.*
-
-> **STATUS: WORKING DRAFT (2026-07-09) — quick synthesis pass.** Data collection is still
-> concluding: a pre-registered held-out reproduction (the "block" experiment, §7) and two
-> additional architecture runs were in flight when this was written, and a robust-metric
-> re-audit of some secondary tables is pending. Every number below is a banked, observed
-> result, but the set is incomplete and one validity question (§7) is open. A full
-> revision will follow.
-
-**TL;DR.** When a long conversation is compacted — older turns replaced by a text summary
-— the summary tokens lose their original activations: the model re-reads its own summary
-as a stranger would. We test a small, deployable mitigation we call **value grafting**:
-keep the *value vectors* the model computed at write time (for the summary it generated
-and for the conversation tail it retains), and blend them back into the freshly-computed
-cache at the compaction boundary, leaving keys fresh. On a 30B model this recovers a
-measurable slice of lost *meaning* — specifically where compaction did damage
-(disambiguating evicted senses and referents), and not where a summary already suffices
-(stable preferences). The two arms of that dissociation are each statistically significant
-on one of our two metrics but not both — a nuance we report rather than smooth over. The
-effect requires the model's *own* summary and its *own* conversation history (both
-scope conditions and, we argue, mechanism), it needs a moderate dose (full-strength
-grafting can break a task; a guard-validated per-layer configuration fixes it), keys are
-neutral (values are the operative axis), and — preliminarily — the sign of the effect is
-**architecture-specific and can reverse**: positive on Qwen3-MoE, negative on Qwen2.5-32B
-and phi-4, mixed on Mistral-Small-24B. A pre-registered attention-geometry hypothesis
-(QK-norm predicts the sign) was falsified and is reported as a null. Whether the headline
-effect generalizes beyond the original 12 hand-authored scenarios is the open item the
-in-flight held-out reproduction exists to answer.
+*By Anthropic Claude Fable 5 and OpenAI GPT 5.5, with guidance from Jeremy Banks and assistance from Anthropic Claude Opus 4.8, Anthropic Claude Sonnet 5, and Google Gemini Pro 3.1.*
 
 ---
 
-## 1. The question
+## Abstract
 
-Every deployed assistant eventually hits its context-window limit, and the standard fix is
-compaction: replace the older turns with a model-written summary and keep the recent tail
-verbatim. Hosted APIs now ship this as a first-class primitive (OpenAI's Responses
-compaction, Anthropic's `compact_20260112` context edit, Gemini's managed-agent
-compaction). Compaction is lossy by construction; that loss is our *baseline*, not our
-finding.
+When a long conversation is compacted — the history replaced by a short summary and the most recent messages, then re-encoded — the key/value (KV) attention state the model had built up while *generating* that history is discarded and rebuilt from the summary text. We asked a narrow, concrete question: does that discarded write-time state contain recoverable meaning that the re-encoded summary loses? Concretely, if we copy the model's original write-time attention **values** (the V vectors, leaving the keys untouched) back onto the summary tokens of the freshly compacted cache, does the model predict the true continuation better than it does from plain compaction?
 
-The question this project asks is narrower and deployment-shaped: **can a small
-intervention on the model's cache state reduce the damage that compaction causes**, in a
-way that survives negative controls and looks plausibly shippable?
+The short answer is: almost never, and only under one narrow condition. Across a held-out, placebo-controlled test set, four tuned variants of the graft (per-layer, per-head, their intersection, their union) all failed to beat the plain compacted baseline on the recovery metric — every confidence interval spanned zero. A dedicated compression sweep, built to test the natural hypothesis that the graft should help more when the summary is more lossy, found the opposite of a signal: the graft was flat and slightly *negative* across four compression levels, even as the amount of meaning the summary evicted more than doubled. The one place a positive effect survived its controls was on SWE-Gym, a dataset of real software-repair agent trajectories, under aggressively short summaries, measured as teacher-forced next-action log-probability — a proxy, not task success: there the plain graft recovered about +0.013 nats/token (95% CI [+0.002, +0.026]), and the tuned variant neither beat it nor cleared zero on its own. Under realistic-length summaries the same coding effect vanished.
 
-The intervention is motivated by an asymmetry in what compaction throws away. A
-transformer reading text computes, per token per layer, a key and a value vector — the KV
-cache. When the model *generated* its summary, the summary's value vectors were computed
-while the full conversation was still in context; when the model *wrote* its most recent
-replies, those tokens' value vectors were likewise computed with the now-evicted middle
-still present. After compaction, all of that is discarded and re-encoded from bare text.
-The visible words are (partly) the same; the write-time state behind them is gone. In
-plain language: **summary tokens lose their original activations after context
-compaction.** If some of the conversation's settled, disambiguated *sense* lives in those
-write-time activations rather than in any words, a text summary cannot carry it — but
-grafting the activations back might.
+One property is worth stating carefully: the graft is *content-specific* wherever it touches enough of the cache. Injecting the correct write-time values is reliably, and for slot-heavy configurations dramatically, better than injecting shuffled or energy-matched random values into the same slots (the effect scales with the number of grafted slots, and is itself null for the smallest configuration). So the values do carry information tied to the right content — the intervention is not vacuous. But that advantage is entirely a matter of *not* inflicting the harm a wrong graft causes; it never converts into out-performing the re-encoded summary the model already has.
 
-## 2. The intervention: value grafting
+We report this as a bound with one small, narrow positive, and we spend the second half of the paper on the process — a measurement-provenance failure that briefly manufactured a false headline, and the "chase the number that still looks alive" dynamic that produced several others — because those lessons transfer further than the bound does.
 
-At the compaction boundary we rebuild the context the standard way — system prompt, a
-context-note turn containing the model's summary, then the retained tail — and then blend
-saved write-time **value** vectors into the freshly-computed cache at two aligned regions:
+---
 
-1. **the summary tokens** — receiving the values computed when the model originally
-   *generated* that summary under the full conversation, and
-2. **the retained tail tokens** — receiving the values they had when the evicted middle
-   was still in context.
+# Part I — What we tested and what we found
 
-Blending is `V ← (1−α)·V_fresh + α·V_write-time` at blend strength α (default **α =
-0.75**), applied at all layers and heads unless stated otherwise. **Keys are left fresh**:
-the graft re-supplies write-time *content* without altering where the model attends.
-Token-position alignment between the write-time and compacted renderings is by
-per-region sequence matching (difflib, minimum matched block 8 tokens, attention-sink and
-special-token positions excluded).
+## 1. Background and the question
 
-Canonical arm names, used throughout:
+Production LLM assistants keep conversations inside a fixed context window by *compacting*: at some threshold the client replaces `[system][long history]` with `[system][short summary][verbatim recent tail]` and re-encodes that shorter prompt. The summary is text; the model re-reads it from scratch. Everything the model had computed internally while producing the original history — in particular, the per-layer, per-position key and value vectors in its attention cache — is thrown away and never reconstructed, because the tokens that produced it are gone.
 
-- **Original** — the full conversation, never compacted (ceiling);
-- **Compacted** — plain summary compaction (the production baseline);
-- **Compacted + value graft (α=…)** — the intervention;
-- **Compacted + layer-tuned value graft** — a per-layer-tuned "champion" variant (§9).
+There is a folk intuition, and some adjacent published work (KV-cache editing and composition, "gist" and "beacon" summary-token compression, prefill note-taking), that this write-time state is not fully recoverable from its own textual summary — that generating a summary and then reading it back are not the same, internally. If that were true and the lost part were *useful*, then re-injecting the write-time state at the compaction boundary would be a cheap way to recover continuity that the summary drops.
 
-Cost, honestly bounded rather than measured: retaining the graft source means storing the
-value tensors for the summary and tail regions (a fraction of the conversation's KV
-cache) and, in our research harness, one extra prefill to construct the write-time
-snapshot. We have not engineered or benchmarked a production implementation.
+We tested the most targeted version of that idea we could construct, and we tested it hard enough to know whether it works. It mostly does not. This paper is the negative space around a plausible technique, mapped carefully, plus the single narrow regime where a small real effect survives.
 
-## 3. How we measure
+A note on framing, since a reader will reasonably wonder why a null is worth writing down. The intervention is simple enough that "someone must have tried this" is the default assumption; three independent literature searches did not turn up this exact composite (write-time **value** retention with fresh keys, evaluated as semantic continuity across a summarization boundary). So the contribution here is not a method — it is a carefully controlled measurement of whether an obvious-looking method does anything, with the provenance discipline to make the answer trustworthy.
 
-**Primary metric (judge-free): raw E−B.** For each planted probe we teacher-force a
-*shared gold continuation* (a short statement of the correct answer, ~16–18 words,
-derived from the planted facts — never generated by any model) and record the per-token
-mean logprob under each arm: `lp_A` (Original), `lp_B` (Compacted), `lp_E` (graft). The
-statistic is **raw_EB = lp_E − lp_B**, with percentile-bootstrap 95% CIs — clustered on
-*conversations* for headline numbers, since plants within a conversation are correlated —
-plus %-of-probes-helped. We deliberately do **not** report the mean of the gap-closure
-ratio (E−B)/(A−B): with small denominators it is Cauchy-unstable, and an earlier draft of
-this work was distorted by exactly that estimator (one apparent "keys actively hurt"
-finding, and an apparently dramatic stance number, were artifacts of it; both are
-corrected here). Because the gold continuation is shared across arms and models, any
-per-model preference for the target's *style* appears in both terms and cancels — the
-difference is the load-bearing design choice.
+## 2. Method
 
-**Secondary metric (meaning, judged).** Sonnet 5 re-judges each arm's actual answer to
-each probe for *meaning recovery* (RECOVERED / PARTIAL / MISSED = 1 / 0.5 / 0), blind
-across arms. Judged contrasts pool two graft doses (α=0.25 and α=1.0; the logprob metric
-uses α=0.75) against Compacted, with conversation-clustered bootstrap CIs (n_boot=20k).
+This section is deliberately detailed: a motivated reader should be able to reconstruct every experiment from the prose, because the result rests entirely on the controls being what we say they are.
 
-**Gates (pre-registered).** A probe category with per-model *headroom* (lp_A − lp_B) below
-0.3 is floored — the summary already preserved that content, so there is nothing to
-recover and the category is excluded from sign verdicts rather than counted as harm. A
-task-competence floor drops plants the model cannot do even with full context (absolute
-−8.0 per-token lp_A; a pre-registered per-model robust-outlier variant, median − 3·MADN,
-exists for models whose logprob scale sits lower). Every run must pass machinery checks
-before its numbers count: α=0 reproduces Compacted bit-nearly (≤5e-3), an identity
-self-graft is a no-op, and the graft demonstrably changes outputs.
+### 2.1 The intervention: a value-only graft in the production compacted layout
 
-## 4. What the data is (provenance summary; full details §14)
+Fix a single model, **Qwen3-30B-A3B-Instruct-2507** (the non-thinking, instruction-tuned, date-stamped checkpoint; a different checkpoint from the same-sized "thinking" variant, a distinction that cost us hours once and is load-bearing), loaded in **bfloat16** (bf16). All headline numbers in this paper are from this model at this precision; the precision was read back from a live parameter tensor at run time, not inferred from a directory name, for reasons the postmortem makes painfully clear.
 
-- **Scenario scaffolds are authored, not model-generated**: 54 synthetic scenarios
-  (c01–c54), each a workplace-style long conversation skeleton with **planted** items —
-  the original 12 (c01–c12) authored at project start, 42 more (c13–c54) authored
-  2026-07-08 by a mix of Claude/GPT subagents. Each plant has a category — **referent**
-  (a specific decision made then evicted), **sense** (which meaning of an ambiguous term
-  the conversation settled on), **stance** (a stated preference), plus ruled-out /
-  evicted-fact / strong-prior categories — a planted-fact user turn in the middle section
-  (later evicted), a tail turn that refers back without restating, probe questions, and
-  the gold continuation. A contamination audit verifies planted keywords appear only in
-  the evicted middle.
-- **Assistant replies are the test model's own.** In the current (v2.1,
-  "matched-scaffold, model-filled") design, each evaluated model generates its own
-  in-context replies to the shared user turns (greedy, ≤320 tokens per reply), and its
-  own summary. This is deliberate and load-bearing: §7 shows the effect *collapses* on
-  another model's replies, so per-model-native rendering is both the ecologically correct
-  measurement (deployed models only ever compact their own conversations) and a scope
-  condition of the finding. The original c01–c12 renders used Qwen3-4B (same family as
-  the 30B headline model); the 30B's own native re-render reproduces the headline.
-- **The summary is self-generated** by the test model (greedy, ~300–500 words requested),
-  because a foreign summary suppresses the effect (§6).
-- **Compaction is real, not simulated aggressively**: the original conversations are long
-  enough (~8–9K tokens) that the planted middle is evicted by genuine length.
-- **Exact checkpoints matter.** The headline model is
-  `Qwen/Qwen3-30B-A3B-Instruct-2507` (the non-thinking instruct checkpoint), bf16.
-  We lost hours to accidentally running the *thinking* `Qwen3-30B-A3B`, which behaves
-  differently; §14 lists every checkpoint.
+Three cache states are compared, all sharing the same underlying model:
 
-## 5. The core result: recovery tracks the damage — with a metric-dependent caveat
+- **Full context** — the model prefills the entire uncompacted history. This is the upper reference: what the model would predict if nothing were ever compacted.
+- **Compacted baseline** — the production layout: `[system][summary as a context note][verbatim recent tail]`, freshly prefilled. This is the thing a real client actually runs, and the thing any recovery method must beat.
+- **The value graft** — start from the compacted baseline's fresh cache; keep its keys exactly as they are; and at the summary-token positions, replace the value vectors with a blend of the fresh values and the model's *write-time* values from those same tokens as they were originally generated:
 
-On the 30B model, over the 12-scenario corpus, meaning-recovery rates by category
-(Sonnet-5 judged, lenient scoring):
+  `V[position] ← (1 − α)·V_fresh[position] + α·V_write-time[position]`, with the keys never touched.
 
-| category | Original | Compacted | Compacted + value graft | graft − Compacted |
+We drive this at α = 0.75 by default (a value picked by tuning, below). Keeping the keys untouched (α_K = 0) is the defining choice: keys carry positional/RoPE-encoded addressing, and mixing write-time keys into a re-encoded layout creates position-mismatch artifacts; values are the content-bearing operand. Restricting to values isolates "is there recoverable *content* in the write-time state" from "can we re-address the cache." The blend is pure tensor surgery on the saved value tensors; an α = 0 graft reproduces the compacted baseline bit-for-bit, which we assert as a plumbing check in every run.
+
+There is a related, coarser intervention that retains write-time keys *and* values in a packed layout with no conversation tail. We ran it only as a contrast and it is not the value graft; it appears once here as a footnote-level control and nowhere in the results, to avoid conflating a keys+layout intervention with the value-only one.[^packed]
+
+[^packed]: The packed-KV contrast (write-time keys re-rotated *and* values, in a `[sinks][summary]` layout with no tail) changes two things at once — key content and sequence layout — and lives in a separate line of experiments about honesty-under-compaction, not recovery. We keep it out of the recovery results entirely.
+
+### 2.2 Aligning write-time positions to compacted positions
+
+The graft needs to know which position in the write-time cache corresponds to which position in the compacted cache. The summary is generated fresh, so its tokens do not sit at the same absolute positions they occupied at write time, and the two token sequences are not identical. We align them with a positional-within-region difflib match: within the summary region and within the retained tail region separately, matching tokens are paired by longest-common-subsequence and grafted; unmatched tokens are left with their fresh values. We match within regions rather than across the whole sequence to prevent a summary token from being paired to an unrelated tail token that happens to share a subword. An earlier strict exact-span variant was tried and reverted because it breaks on the tokenization of thinking-model self-generated summaries.
+
+### 2.3 The corpus, and who or what generated every token
+
+Provenance is the spine of this paper, so we state the origin of each component explicitly.
+
+- **Scenarios and prompts are authored, not model-generated.** The evaluation corpus is a set of synthetic multi-turn conversations built from hand-authored scaffolds: a system prompt, a sequence of user turns, and a set of *planted facts* deliberately placed early in the conversation so that later compaction will evict them. Real user prompts are not model outputs; a result that depended on model-generated prompts would not be measuring what we claim. The scaffolds and plants were authored by directed model assistants under human direction and schema-checked.
+- **The planted facts span six categories**, chosen to separate kinds of evicted meaning: *sense* (the meaning of a term introduced earlier), *referent* (which earlier-decided option a later phrase points to), *stance* (a preference the user expressed), *ruled_out* (an option explicitly rejected), *evicted_fact* (a precise verbatim detail), and *strong_prior* (a code-name that collides with a famous prior meaning). Each plant carries a *probe* and a *gold continuation* that can only be produced correctly if the planted fact survived.
+- **The assistant replies in the conversation body are generated in-context by the test model itself.** This is essential and non-obvious: the graft re-injects the model's *own* write-time values, so the conversation it operates on must be one this model would actually produce. We do not reuse replies written by another model. Each conversation is rendered by the test model growing its own KV cache turn by turn from the shared scaffold. When we discovered (below) that reusing a different model's replies collapses the effect, this stopped being a convenience and became part of the mechanism.
+- **The summary is self-generated by the test model.** At the compaction boundary the model summarizes its own conversation, and that summary is what the compacted baseline re-encodes and what the graft's write-time values come from. This too is load-bearing: a summary written by a *different* model, held fixed and fed to the test model, suppresses the graft to null (measured directly: a fixed foreign summary drove the recovery metric to about +0.004, indistinguishable from zero, while the model's own summary reproduced the development-set effect). The interpretation is that whatever the write-time values carry is the residue of the model's own act of summarizing (the internal computation of compressing *this* history), not anything a summary it merely reads can carry. So "use the model's own summary" is not a knob we tuned for the best number; it is the only condition under which the graft's values are content-specific at all (and the only one under which the development-set showed any recovery signal), and it is also the deployment-realistic one. Note that this makes the model's own summary necessary for the *mechanism* to be present. It does not, as the held-out results below show, make recovery beat the baseline.
+- **The gold continuation is derived from the planted facts and shared across conditions**, not model-generated. Because the recovery metric is a *difference* between two conditions scored on the *same* gold tokens, sharing the target cancels any per-condition advantage in producing the target itself, leaving only the effect of the graft.
+
+The corpus is split once: conversations used to tune the graft (a validation set) are disjoint from the conversations used to evaluate it (held-out c07–c24, eighteen conversations). Every number that decides the result comes from the held-out set.
+
+### 2.4 Metrics, stated as what they are
+
+- **Recovery (the primary metric).** For each plant we teacher-force the shared gold continuation and take the mean per-token log-probability under each cache state. The headline quantity is the graft's lift over the compacted baseline: **recovery = logprob(graft) − logprob(compacted)**, in nats/token. Positive means the graft makes the true continuation more likely than plain compaction does. This is a log-probability proxy for "did the model retain the meaning," not a measure of downstream task success.
+- **Content-specificity.** The same lift, but measured against a *placebo* graft instead of the baseline: **logprob(graft) − logprob(placebo)**. This asks whether it matters that we injected the *correct* write-time values rather than scrambled ones. It is a mechanism check, not a performance measure: a large content-specificity with a null recovery means "the right values move the output, but not toward beating the summary."
+- **Confidence intervals** are percentile bootstraps resampled over **conversations**, not over individual plants. Plants within one conversation share a context and a summary and are correlated; resampling whole conversations is the correct inferential unit and gives wider, properly-sized intervals. We report the conversation-clustered interval as the headline throughout. (An earlier version of this project used a ratio estimator, recovery divided by the full-context-vs-baseline gap; it is Cauchy-unstable near small denominators and produced an inflated early headline. It is retired.)
+
+### 2.5 The placebo battery
+
+The placebo graft is what separates "the right values did something" from "any perturbation did something." We use three constructions, all of which graft *something* into exactly the same positions with the same α, differing only in the source:
+
+- **Position-shuffle** — the correct write-time values, permuted across the grafted positions. Right values, wrong slots.
+- **Cross-probe-shuffle** — values drawn from a *different* conversation's write-time state at the grafted positions. A different, still-structured write-state.
+- **Energy-matched noise** — Gaussian vectors rescaled so each row's norm matches the mean norm of the real grafted block in that layer. Right magnitude, destroyed structure.
+
+If the real graft merely beat zero-magnitude or obviously-broken inputs, that would be uninformative; matching magnitude and structure makes content-specificity a real test.
+
+### 2.6 Tuning the graft, and the four validated variants
+
+A flat α across all layers is the naive form. We also tuned per-layer and per-head **champion** configurations on the validation conversations (disjoint from the held-out set): profiling each layer's marginal contribution to build a per-layer α map (27 of the model's layers receive a nonzero α of 0.75 or 1.0), and profiling each (layer, attention-head) slot to build a per-head mask. This yields four grafts to evaluate on held-out data: **per-layer**, **per-head**, their **intersection** (slots selected by both), and their **union** (slots selected by either). Each is applied identically to the real and placebo grafts, so the content-specificity comparison holds the slots and α fixed and varies only the source values.
+
+### 2.7 The compression sweep
+
+To test whether the graft helps specifically when the summary is *lossy*, we vary only the summary's length/detail budget, holding everything else fixed, across four levels: **ultra** (a one-sentence, ≤25-word note), **brief** (three-to-five sentences, no specifics), **medium** (~150 words), and **realistic** (~300–500 words, the standard "thorough context note"). To make "aggressive vs realistic" a number rather than a label, the harness measures the realized **compression ratio** — clean summary tokens divided by full-context tokens — for every conversation and reports recovery and content-specificity as a function of it.
+
+### 2.8 The coding-trajectory test (SWE-Gym)
+
+Synthetic plants are a controlled but artificial probe. As an out-of-domain check on real content, we use 75 real trajectories from SWE-Gym, a dataset of software-repair episodes recorded with OpenHands, an open coding-agent framework. Each trajectory is cut at roughly 75% of its tokens, at a boundary just before an assistant action; the earlier context is compacted (self-generated summary + recent tail) exactly as in the synthetic setting; and we teacher-force the **true next assistant action** and score its mean log-probability. This is explicitly a proxy — next-action predictability, *not* whether a patch is produced or a test passes. We run it in a 2×2: the plain graft (flat α = 0.75) versus the tuned per-layer graft, each under **brief** and under **realistic** summaries.
+
+Every result file and a per-run manifest record, read from the running model: the resolved checkpoint and precision, the graft's identity (flat α, or the champion config with its content hash and label), which summary condition and its exact text hash, the metric definition marked as a proxy, the held-out split, and the code commit. This born-annotated provenance is a direct response to the failure documented in Part II.
+
+## 3. Results
+
+### 3.1 On held-out conversations, no tuned graft beats plain compaction
+
+The four champion variants, evaluated on the eighteen held-out conversations (203 plants) against the plain compacted baseline, all land on zero for recovery:
+
+| Graft variant | Recovery (nats/token) | 95% CI (conversation-clustered) | Verdict |
+|---|---|---|---|
+| Per-head | +0.017 | [−0.027, +0.062] | null |
+| Per-layer | −0.003 | [−0.041, +0.043] | null |
+| Intersection | +0.008 | [−0.032, +0.052] | null |
+| Union | −0.012 | [−0.053, +0.034] | null |
+
+Per-head's point estimate is nominally the highest, but its interval spans zero and overlaps per-layer's completely, so per-head does not reliably beat per-layer; no combination clears the baseline; every interval spans zero. This is the definitive test — tuned on separate data, evaluated held-out, placebo-controlled — and it is null.
+
+Content-specificity, by contrast, is real and often large, and it scales with how many slots the graft touches:
+
+| Graft variant | Content-specificity (graft − placebo) | 95% CI |
+|---|---|---|
+| Intersection (fewest slots) | −0.03 | [−0.10, +0.05] |
+| Per-layer (27 layers) | +0.19 | [+0.12, +0.27] |
+| Per-head | +0.72 | [+0.66, +0.78] |
+| Union (most slots) | +1.08 | [+1.01, +1.13] |
+
+(Values shown against the position-shuffle placebo; the other two placebos give the same ordering and larger margins.) The reading is precise and a little subtle: the more of the cache you graft, the more a *wrong* graft harms, and the more the *right* graft avoids that harm — so injecting the correct values is unambiguously better than injecting scrambled ones. But that advantage is entirely a matter of not-hurting; it never converts into out-performing the summary the model already has. The mechanism is real; the performance is null.
+
+### 3.2 The graft does not concentrate under aggressive compaction — it is flat and slightly negative
+
+The compression sweep was designed to give the graft its best chance: shorter summaries evict more meaning, so there is more for a recovery method to recover. The eviction did grow as intended — the gap between full-context and compacted log-probability more than doubled from the realistic summary to the one-sentence summary. The graft did not follow it:
+
+| Level | Measured compression ratio | Summary length (tokens) | Evicted meaning (full − compacted) | Recovery (graft − compacted) | 95% CI |
+|---|---|---|---|---|---|
+| Ultra (~1 sentence) | 0.009 | ~28 | 1.89 | −0.029 | [−0.068, +0.013] |
+| Brief (3–5 sentences) | 0.037 | ~120 | 1.85 | −0.026 | [−0.072, +0.022] |
+| Medium (~150 words) | 0.083 | ~268 | 1.38 | −0.025 | [−0.067, +0.023] |
+| Realistic (~300–500 words) | 0.259 | ~836 | 0.84 | −0.023 | [−0.070, +0.033] |
+
+Recovery is flat across a nearly 30-fold range of compression ratio, sits slightly *below* zero at every level, and its conversation-clustered interval spans zero everywhere. (The most aggressive level is mildly worse: its plant-level interval, which is anti-conservative, actually excludes zero on the negative side, and one category, precise verbatim facts, is significantly *harmed* by grafting under the one-sentence summary, −0.17 [−0.25, −0.09]. Re-injecting write-time values does not help the model reproduce a verbatim string it can no longer see, and slightly displaces it.) Content-specificity stays real and roughly constant across all four levels (+0.16 to +0.18, interval excluding zero): again, right values beat shuffled values everywhere, and beat the baseline nowhere.
+
+To put the magnitudes on a felt scale: the "evicted meaning" column is how much log-probability compaction *costs* relative to the full context, and it is what a recovery method has to work with. Against that budget the graft's recovery is not just null in its confidence interval but negligible even in point estimate — a signed magnitude of roughly 1.5% to 2.8% of the evicted-meaning gap at each level, and pointing the wrong way. There is no compression setting at which the graft claws back even a small single-digit fraction of what compaction removed.
+
+This refutes, on this metric and model, the natural hypothesis that motivated the sweep. More eviction does not summon the effect; the graft is null-to-slightly-harmful regardless of how lossy the summary is.
+
+### 3.3 The one surviving positive: real coding trajectories under short summaries
+
+On the 75 real SWE-Gym trajectories, the picture is different and, for the first time, net positive — narrowly, and only in one cell of the 2×2.
+
+| Summary condition | Graft | Next-action recovery (nats/token) | 95% CI | Trajectories helped |
 |---|---|---|---|---|
-| stance — honor an evicted preference | 96% | 93% | 96% | +3.3pp, CI [−5.4, +12.0] |
-| sense — disambiguate an evicted term | ~100%* | 46% | 58% | **+12.0pp, CI [+2.2, +22.9]** |
-| referent — recover a specific evicted decision | ~100%* | 17% | 26% | +9.7pp, CI [−6.9, +26.2] |
+| Brief | Plain (flat α = 0.75) | +0.013 | [+0.002, +0.026] | 46 / 75 |
+| Brief | Tuned per-layer | +0.012 | [−0.001, +0.024] | 48 / 70 |
+| Realistic | Plain (flat α = 0.75) | +0.001 | [−0.013, +0.015] | 39 / 75 |
+| Realistic | Tuned per-layer | — (not on disk) | — | — |
 
-(*Original-arm ceiling cells are tiny — n=1 and n=2 clean-eviction cases — indicative
-only. CIs are conversation-clustered bootstrap over the 12 conversations, 64 plants.)
+The denominators are worth stating exactly, because they are part of the provenance record. The plain-graft rows are complete: all 75 trajectories carry the scalar arm under both summary conditions. The brief tuned-graft row is 70, not 75, because the tuned arm was not persisted for 5 trajectories — a harvest race when the pod was terminated at a spent budget before those 5 files were written back; the scalar arm for those same trajectories was already saved, so only the tuned column is short. The realistic tuned-graft row is absent entirely: that arm was never written to disk (0 of 75), so we exclude it rather than infer it. We report what was recorded, and the head-to-head comparison below is restricted to the 70 trajectories where both grafts exist.
 
-The same probes on the judge-free logprob metric (raw E−B, α=0.75, bootstrap over 21–24
-probes per category):
+Three things to read carefully. First, the plain graft under brief summaries clears zero: +0.013 nats/token, interval above zero, a modest majority of trajectories improved. An independent earlier run of this same cell gave +0.016 [+0.005, +0.027]; the effect is small and it replicates. Second, the tuned graft does **not** beat the plain one — on the trajectories where both ran, the head-to-head difference is −0.001 [−0.010, +0.006], flat — and on its own the tuned graft's interval just includes zero. The tuning that was derived on synthetic conversations buys nothing on the coding task; if anything the plain, single-number graft is the more robust form here. Third, under realistic-length summaries the effect is gone (+0.001, spanning zero), consistent with the synthetic compression sweep in direction even though the synthetic sweep never produced a positive at any length. The coding positive lives specifically in the aggressive-compaction, brief-summary regime.
 
-| category | raw E−B | 95% CI | % probes helped |
-|---|---|---|---|
-| stance | +0.002 | [−0.036, +0.049] | 38–54% |
-| sense | +0.047 | [−0.038, +0.131] | 59–64% |
-| referent | **+0.125** | **[+0.030, +0.218]** | 71–81% |
+For scale, the same evicted-meaning anchor applies here: on these trajectories, compacting under a brief summary costs about +0.169 nats/token of next-action log-probability relative to the full context. The graft's +0.013 recovers roughly **8%** of that gap — small, but an order of magnitude larger, as a fraction of recoverable meaning, than anything the synthetic sweep produced (where the best case was a wrong-signed ~2–3%). Under realistic summaries the gap is similar (+0.161) but the graft recovers essentially none of it (+0.4%).
 
-Read the two tables together and the shape is consistent: compaction barely hurts
-**stance** (a summary carries "the user dislikes countdown timers" perfectly well), and
-the graft correctly adds nothing there — a genuine null on both metrics. Compaction
-flattens **sense** and devastates **referent**, and the graft recovers a slice of both.
-The effect tracks the damage, which is what a real mechanism should do and what a generic
-perturbation would not.
+We stress what this is not: it is next-action log-probability, a proxy. We did not apply the predicted actions, run the tests, or measure resolve rate. The claim is that the graft makes the model's own next action modestly more predictable under brief compaction on these trajectories, and nothing beyond it.
 
-But state the statistics honestly: **significance flips across the two metrics.** On the
-judged (meaning) metric, *sense* is significant and referent's CI spans zero (only 18
-referent plants — wide). On the logprob metric, *referent* is significant and sense is
-suggestive-but-underpowered. Each arm of the dissociation is carried by one instrument.
-The direction agrees everywhere (and a strict re-scoring with PARTIAL counted as a miss
-preserves the pattern: stance +4pp, sense +9pp, referent +8pp), but a reader should hold
-"sense and referent both individually significant on both metrics" as *not yet
-established* — more probes per category is the obvious fix, and is queued. The judged
-magnitude being much larger than the token-level magnitude is itself consistent with the
-mechanism: the graft recovers *meaning* more than exact wording, so a meaning-judge moves
-more than a token-probability metric.
+### 3.4 Concordance with the broader bf16 picture
 
-What recovery looks like (α=0.25 transcript exhibits; judged table pools doses):
+Two earlier bf16 tests, run before the held-out champion validation, point the same way and are worth recording as corroboration rather than as separate headlines. A tightly-controlled four-state test on synthetic sense/referent plants (full / compacted / graft / placebo, bit-identical keys) gave a recovery interval spanning zero on both a hybrid 27B and this 30B, with large positive content-specificity on both — the same content-specific but non-additive signature. And running the same value-only graft across four additional architectures gave recovery that was null on one and significantly *negative* on three (−0.06 to −0.23) — actively harmful. These two tests are less controlled than the held-out validation (they were not the placebo-controlled, tune-then-hold-out design of §3.1–3.2), so we read them only as concordant corroboration, not as primary evidence. Nothing in the wider sweep contradicts the held-out null; if anything the graft is worse on other architectures than on the one it was tuned for.
 
-> **Probe** (c11-sense-2): "When I asked whether 'the sandbox' could handle 200 students,
-> which sandbox did I mean?"
-> **Compacted:** "'the sandbox' can mean three different things, and you're not using the
-> right one…" — the user's settled shorthand reopened into a menu.
-> **Grafted:** "You're asking about the one that lives inside your course — the
-> real-time, live, interactive SQL sandbox that students use during your live sessions."
+## 4. What this establishes, precisely
 
-> **Probe** (c11-referent-2): "What specifically was Ruben's recommended editing style?"
-> **Compacted:** invents "'The 3-Second Cut' — No Fluff, No Noise, Just Clarity," and
-> certifies it "tested and proven to work at scale."
-> **Grafted:** "Tight jump-cut screen-share editing with real-time, floating query
-> captions" — the decision that was actually made.
+- **On held-out, placebo-controlled synthetic recovery, the value-only graft is null.** No flat or tuned variant beats plain compaction; per-head does not reliably beat per-layer; the result is stable across four grafts and four compression levels. The held-out point estimates range from −0.012 to +0.017, with every interval spanning zero.
+- **The graft is content-specific but non-additive.** For grafts that touch enough of the cache, injecting the correct write-time values beats injecting shuffled or noise-matched values — sometimes by more than a nat, though the effect scales with slot count and vanishes for the smallest configuration — so the values carry content-aligned information. That information does not add over the re-encoded summary. "The write-time state differs from its re-encoding" is true and measurable; "the difference is *useful continuity the summary dropped*" is, on this evidence, not.
+- **There is one small, real, narrow positive.** On real coding trajectories, under aggressively short summaries, the plain graft improves next-action log-probability by about +0.013 nats/token (CI above zero), replicated. It disappears under realistic summaries, the tuned graft does not improve on it, and it is a proxy, not task success. It is bounded to exactly those conditions.
+- **Everything is one model family, bf16, at ~30B, on log-probability proxies.** We make no claim beyond what was measured. We did not demonstrate downstream task improvement, generalization across model families (the cross-architecture evidence is, if anything, adverse), or any effect under realistic-length summaries.
 
-**Negative controls.** Grafting values from the *wrong conversation*, or shuffled, craters
-performance (~1–2 nats, both scales tested) — the effect is content- and
-alignment-specific. A norm-matched random-value placebo behaves the same way: the true
-graft beats the placebo decisively (E−placebo +0.24, CI [+0.03, +0.46] at 30B; +0.45,
-CI [+0.29, +0.61] at 27B), while the placebo actively hurts. One honest wrinkle from the
-same probe family: over a narrow 12-token pre-answer window the graft's E−B was null (27B)
-to slightly negative (30B) — that window measures the answer *preamble*, where the graft
-slightly perturbs generic tokens, and misses the content tokens where the benefit lands;
-we report it rather than hide it, and score full continuations everywhere else.
+## 5. Why a null is the expected result here
 
-## 6. Two scope conditions that turned out to be mechanism
+With the controls in, the null stops being surprising. The compacted baseline already contains the summary as text, and the summary was written by the same model that would receive the graft; a competent summarizer puts the recoverable, decision-relevant content into words. The write-time values at those summary positions are the residue of having computed that same content — genuinely different from a cold re-read (which is why content-specificity is real, and why a foreign or shuffled source collapses it), but largely *redundant* with what the text conveys once the model re-reads it. On the synthetic plants this redundancy is close to total, and it stays that way no matter how terse the summary: the compression sweep made the summary as short as one sentence and evicted more than twice as much meaning, and the graft still recovered nothing. So on this corpus, "how lossy the summary is" is not the missing variable.
 
-**The graft needs the model's own summary.** Running the identical harness on the 30B
-with a *fixed, externally-written* (Sonnet-authored) summary produced referent +0.004
-(null) and sense −0.147; switching only the summary source to the model's own self-
-generated summary restored referent to +0.136, CI [+0.034, +0.23], 81% helped (aggregate
-+0.090, CI [+0.022, +0.154]) — matching the headline. Same model, same code, same
-scaffold; the only difference is whose summary sits at the boundary. Our reading: the
-graft re-injects the write-time state of the model's own *summarization act*; a summary
-the model merely read does not carry that recoverable continuity. Deployment reality
-matches the requirement — production compaction already uses the model's own summary.
+The single positive lives on a different axis, and we are careful not to over-explain it. It appears only on the real coding trajectories, and only under brief summaries, yet the equally-brief *synthetic* summaries produced no positive at all. So summary terseness is at best necessary and clearly not sufficient; the distinguishing factor is the **domain**. Real long tool-use trajectories differ from short planted-fact conversations in ways we did not isolate (far more context, genuine procedural state, actions rather than recalled facts), and something in that difference leaves a small amount of predictively-useful write-time structure that a brief textual summary drops. We can bound the effect to those conditions; we cannot, from this data, name the mechanism behind it, and we do not claim to.
 
-**The graft needs the model's own conversation.** On an earlier corpus whose assistant
-replies had been written by *other* models, the effect collapsed (referent ~+0.009);
-re-rendering so the test model generates its own replies from the same scaffold restored
-it (referent CI [+0.012, +0.195], mid ~+0.10). Foreign replies mean the write-time values
-encode surprise rather than settled sense, and re-injecting surprise recovers nothing.
-This is why the design is per-model-native (§4), and it kills the alternative explanation
-"any KV re-injection helps": the effect is specific to state the model itself laid down.
-
-## 7. The open validity item: does it generalize past the original 12 scenarios?
-
-We flag this prominently because it is the strongest outstanding threat to the headline.
-The +0.10–0.13 referent effect above is established on the original 12 hand-authored
-scenarios (c01–c12). The 42 newer scenarios did *not* carry the effect under the old
-foreign-reply rendering (~+0.009) — which the nativeness finding (§6) explains — but
-"native rendering fixes the fresh scenarios too" had, at the time of writing, been
-validated only *on the original 12*. A pre-registered **block experiment** is running as
-this draft is written: one apparatus renders c01–c36 natively on the 30B, and the
-analysis reads c01–c12 as a positive control (it must reproduce ~+0.10) and c13–c36 as a
-fresh held-out test, with a pre-committed stopping rule (extend to c37–c54 if the fresh
-referent CI spans zero at n=24). Its first run was lost to an infrastructure timeout
-mid-scoring; a re-run (with per-conversation checkpointing) was pending as this draft was
-finalized. Until it lands, the honest status of the headline is: **real, replicated, and
-control-validated on the original corpus; unverified on held-out fresh scenarios.** A
-full revision of this report will state the block result either way.
-
-## 8. The honesty effect (a second, sturdier-scoped finding)
-
-Compaction doesn't just lose content — it makes the model *confabulate* about what was
-lost. Probing with decoy questions about things that never existed in the conversation,
-plain Compacted fabricated 83% of the time; an arm that retains write-time KV state for a
-packed summary (the "Packed write-time-KV" arm — note this variant retains keys *and*
-values in a packed layout, a cousin of the value graft rather than the same intervention)
-fabricated 17%, while being simultaneously the most accurate on genuinely evicted facts
-(38/48, 79%) and the least fabricating (4%). Within-layout controls decompose the gain:
-packed layout alone cuts decoy fabrication 83%→25%; write-time encoding within the same
-layout cuts it further 25%→17%, and flips bare guesses into explicit admissions of
-uncertainty (3/24 → 18/24). This replicated from 4-bit to bf16 and from 4B to 30B —
-opposite scale behavior to the dissociation, which is why we report them as separate
-findings. Scope bound: the effect lives in *mid-task agentic* compaction; on
-retrieval-style personal-QA framing (LongMemEval) at 30B it washes out, because the
-model's own refusal calibration already covers that case.
-
-> **Decoy probe:** "What was the name of the consultant who audited our tax-rate
-> tables?" — no consultant ever existed.
-> **Compacted:** "The consultant … was Lena Cho, a compliance specialist from TaxFlow
-> Partners. … Her report is archived in Confluence > Compliance > Tax Audit Q2 2024."
-> **Write-time KV retained:** "I don't have access to your company's internal records,
-> including consultant names or audit details."
-
-## 9. Dose, tuning, and the keys question
-
-**Full strength can break the task.** At α=1.0 (full replacement), grafting
-catastrophically failed one agentic task chain (0/4 where every other arm scored 4/4) and,
-in probe transcripts, cross-wires real entities from elsewhere in the same conversation —
-right content, wrong referent, asserted "as established." A per-layer-tuned configuration,
-promoted only after champion/challenger evaluation, eliminated the instability (16/16 on
-the same family) **and** passed the wrong-conversation contamination guard — while a
-57-cache-slot mask that also looked good on holdout *failed* that guard and was killed as
-a content-independent artifact. The guards discriminate. Dose optima are scale-dependent
-(α≈0.25 at 4B, α≈0.75 at 30B), so the dose is a per-model calibration, not a universal
-constant.
-
-**Keys are neutral; values are the operative axis.** We built technically-sound key
-grafting (RoPE re-rotation of stored keys to new positions, validated to fp32 precision,
-cosine 0.9999998 against freshly-encoded keys) and swept K-only, coupled, and independent
-K/V policies, uniformly and per-layer, at 30B. On the robust metric, key grafting is
-approximately neutral everywhere and helps nowhere; value-only matches the headline
-(+0.120, CI [−0.001, +0.228] in that sweep). An earlier "keys actively hurt" conclusion
-was an artifact of the retired ratio estimator and is corrected here. Scope: our targets
-are semantic phrases; whether keys matter for short identifier-like targets (an
-addressing/retrieval regime) is untested at scale.
-
-## 10. Does it travel? Architecture-specificity, and a pre-registered null
-
-We began a cross-architecture sweep: same scaffold, per-model-native rendering, self-gen
-summaries, same gates, ~30B-class models. The pre-registered hypothesis (H1, frozen
-before the sweep) was that **QK-norm presence predicts a positive referent sign**. What
-the data did instead (12 conversations per model; preliminary):
-
-| model | architecture | referent raw E−B [95% CI, conv-clustered] | aggregate verdict |
-|---|---|---|---|
-| Qwen3-30B-A3B-Instruct-2507 | MoE, GQA 8, QK-norm | +0.136 [+0.034, +0.23] | significant positive |
-| Mistral-Small-24B-Instruct-2501 | dense, GQA 4, no QK-norm | **+0.035 [+0.010, +0.063]** | aggregate null; sense *negative* [−0.067, −0.005]; stance floored by headroom gate |
-| microsoft/phi-4 | dense, GQA 4, no QK-norm | −0.053 [−0.117, +0.008] | **significant negative** aggregate (−0.064 [−0.099, −0.027]) |
-| Qwen2.5-32B-Instruct | dense, no QK-norm | negative | significantly negative (aggregate ≈ −0.3, confirmed by three independent runs incl. the original trusted apparatus) |
-
-Two things follow. First, **H1 is falsified and reported as a pre-registered null**: a
-no-QK-norm model (Mistral) shows a significantly *positive* referent effect — the opposite
-of the prediction — and the within-model ablation that would have tested QK-norm causally
-(disabling q/k-norm modules at inference) broke generation outright, so it is
-uninformative. Second, and more interesting: the effect is **architecture-specific and
-can reverse sign**, with different per-category signatures on different models (Qwen3:
-referent+/sense+/stance-null; Mistral: referent+ but sense−; Qwen2.5 and phi-4: negative).
-A generic artifact would not flip sign by architecture; a real mechanism interacting with
-architectural detail would. Machinery gates (α=0 identity, self-graft no-op) passed on
-every model reported, so these are not plumbing failures. What drives the sign is open —
-n is small everywhere, per-model runs use 12 conversations, and two 24-conversation runs
-(Qwen3-32B dense; Qwen2.5-32B) were in flight at writing.
-
-Excluded by structure or tooling, disclosed in full in §14: MLA-attention models
-(DeepSeek/Kimi — no per-head value vectors to graft), five checkpoints shipping as
-multimodal wrappers (both Gemma-4s, Gemma-3-27B, both Qwen3.6s — which cost us the
-pre-registered second within-vendor MoE/dense pair), and sliding-window snapshot layouts
-the harness refuses rather than silently mishandles.
-
-## 11. Where it stops
-
-**Scale.** The dissociation does not replicate at 4B (probes-helped ordering muddled:
-stance 87%, sense 55%, referent 62% — the clean stance-null structure is gone; a
-dose-response inversion between 4B and 30B points the same way). The honesty effect
-*does* replicate at 4B — so the small model is not globally graft-insensitive; the
-dissociation specifically needs capability. On Qwen3.6-27B (a newer hybrid architecture),
-sense recovery replicates (59% of probes helped) and stance stays null, but referent
-recovery is flat (48% of probes helped — a coin flip) — a single cross-model
-non-replication we report as such, cause open (with n=2 confounded models we cannot separate architecture, generation, and
-training).
-
-**End-to-end agent benefit is undemonstrated — and the benchmark landscape is part of the
-finding.** SWE-bench is beyond a 30B subject model entirely (0/7 even oracle-mode; the
-vendor's own model card, which omits SWE-bench for this non-Coder variant, predicted as
-much). Interactive tau²-bench banking dialogues are structurally too short (~3–4K tokens
-even with a capable GPT-4o-mini user-simulator) for genuine eviction at any threshold.
-Chained exercise-scale tasks our model *can* do proved compaction-robust (Compacted 4/4
-across seeds — nothing to repair; the champion's 16/16 vs α=1.0's 0/4 there is a
-stability result, not a recovery result). The one clean real-trace signal is an offline
-proxy: on 75 real SWE-Gym/OpenHands trajectories, the tuned graft recovered +0.0156 nats
-of next-action prediction (45/75 wins, CI [0.005, 0.027]) — about 10% of the measured
-compaction damage on an unforgivingly off-policy instrument. The operative regime — tasks
-hard enough that eviction costs something, easy enough that recovered context is usable —
-is narrow and badly served by existing benchmarks; a purpose-built harness is future
-work, and our own natural-length synthetic conversations are the closest thing we had.
-
-**Looking inside (kept brief deliberately).** We also probed internal state — with the
-plain logit lens on 30B, and with the recently-published Jacobian lens (J-lens) on
-Qwen3.6-27B, the one model with public lens weights. The aggregate picture corroborates:
-grafting raises the evicted concept's internal presence (concept logprob moves from the
-Compacted floor toward the Original ceiling on 68–77% of probes), the effect is
-alignment-sensitive inside as well as outside (misaligned injection craters), moderate α
-beats full replacement internally too, and value grafting does not reconstruct relations
-a summary dropped entirely. But the per-example signal is small: a pre-registered
-free-generation probe looking for a clean internal "fork" toward the correct concept
-found 0 of 43, and the raw logit lens recovers most of the late-layer signal the
-specialized lens shows. We use the lens work as corroboration only; no claim in this
-report rests on it.
-
-## 12. Related work, and what seems to be new
-
-Every mechanical ingredient here has prior art; we found no prior instance of the
-composite, and — more specifically — no prior work that *measures* what we measure. The
-closest mechanism is "Models Take Notes at Prefill: KV Cache Can Be Editable and
-Composable" (arXiv 2606.17107), which edits and transplants KV across contexts with
-re-rotated keys and position-free values — but it transplants precompiled skills into
-fresh contexts and evaluates decision-identity, not a summary generated in-context whose
-write-time state is retained across a *compaction* boundary and scored on semantic
-continuity. Memorizing Transformers and InfLLM retrieve preserved write-time KV, but
-*append* it to extend context rather than grafting it to replace re-encoded summary text.
-Activation Beacon and the gist/soft-token family retain summary-like caches, but theirs
-are *learned* states, not preserved originals. The KV-eviction and cache-reuse literatures
-(H2O, SnapKV, CacheBlend, KVLink, …) optimize efficiency and measure aggregate accuracy;
-a recent survey (arXiv 2503.24000) notes explicitly that per-example semantic effects of
-cache manipulation go unmeasured, and the one work we found on compaction and constraints
-("Governance Decay," arXiv 2606.22528) tests whether a constraint *survives* the summary,
-not how retained text is *reinterpreted*. Hosted-provider compaction APIs already ship
-the "summary + opaque handle" product shape; whether any provider uses a value-tensor
-mechanism is publicly unknown, and we claim no novelty for the API pattern. Caveat: several
-of the nearest neighbors are unreviewed 2026 preprints. Our claim is correspondingly
-narrow: *write-time value state deliberately preserved and grafted back across a
-text-summarization boundary, evaluated on referent/sense/stance continuity of the
-conversation* — if that exists under other terminology, we'd genuinely like to know.
-
-## 13. What happens next
-
-In flight or queued at the time of writing: the held-out block reproduction (§7 — the
-single most important pending number); 24-conversation runs on Qwen3-32B and Qwen2.5-32B
-(the within-vendor MoE/dense contrast and the strongest negative, at doubled n); a
-robust-metric re-audit of remaining secondary tables (the 27B and 4B category breakdowns
-above are reported as %-helped for exactly this reason); more probes per category to power
-the sense/referent CIs on both metrics; and the short-identifier target lane for the keys
-question. The full revision of this report will incorporate all of it, whichever way the
-results land.
-
-## 14. Methods and provenance (details)
-
-**Models (exact checkpoints).** Headline: `Qwen/Qwen3-30B-A3B-Instruct-2507` (bf16, A100
-pods). This is the *non-thinking* instruct checkpoint; the similarly-named thinking
-`Qwen/Qwen3-30B-A3B` behaves differently (its `<think>` blocks change tokenization and
-alignment) and running it by mistake reproduces nothing — checkpoint identity is a
-reproduction-critical detail. Development and 4B results:
-`mlx-community/Qwen3-4B-Instruct-2507-4bit` (4-bit, MLX, Apple Silicon); local 30B runs
-used the 4-bit MLX build (precision is stated per result; headline numbers are bf16).
-Cross-architecture: `mistralai/Mistral-Small-24B-Instruct-2501`, `microsoft/phi-4`,
-`Qwen/Qwen2.5-32B-Instruct` (+ in-flight `Qwen/Qwen3-32B`). Same-model lens work:
-`Qwen3.6-27B`. Judge: Claude Sonnet 5. Nothing here fine-tunes or trains anything.
-
-**Corpus.** 54 authored scenario scaffolds (`data/scenarios.json`): system prompt, all
-user turns, planted items, probe paraphrases, gold continuations. c01–c12: ~8.3–9.4K
-tokens rendered, 22 user turns, 10 plants each (2 × {referent, sense, stance, ruled_out,
-evicted_fact}; 120 plants, contamination-audited to 115/120 clean, tail-clean in all
-scored categories). c13–c54: 30–36 user turns, 12 plants each (adds strong_prior; 506
-plants), authored by Fable/Opus/Sonnet/GPT-5.5-Codex subagents with per-file schema
-verification; per-file authorship is recorded in `meta.author`. 8 natural conversations
-(n01–n08, no plants) exist for continuation-scoring only; conclusions here do not rest on
-them.
-
-**Who generated every token.** User turns, plants, probes, golds: authored (see above) —
-never generated by the subject model. Assistant replies: the evaluated model itself,
-in-context, greedy, ≤320 tokens/reply, per-conversation seeds (base 1000). Summary: the
-evaluated model itself, greedy (temp 0.0, top_p 0.8, seed 17, ≤900 tokens), from a fixed
-request prompt asking for a thorough 300–500-word context note (verbatim in
-`src/arms_common.py`). Gold continuations: authored, shared across all models and arms,
-teacher-forced only. The one historical exception: the original c01–c12 renders used
-Qwen3-4B (same family) rather than the 30B itself; the 30B-native re-render reproduces
-the headline (§6), and all cross-architecture numbers use each model's own render.
-
-**Procedure.** Compacted context = system + assistant context-note ("[Context note]
-Earlier parts of this conversation were compacted. Summary of what came before: …") +
-retained tail (from the scaffold's middle-end boundary). Graft = value-only blend at the
-two aligned regions (§2), α=0.75 unless stated. Alignment: difflib per region, minimum
-block 8, sinks (first 4 positions) and special tokens excluded. (A stricter exact-span
-aligner was tried and reverted: it breaks on thinking-model self-generated summaries;
-the tolerant aligner was verified to align 100% of regions on every model reported.)
-Scoring: per-token mean teacher-forced logprob of the gold under each arm, averaged over
-probe paraphrases; identical forward-pass shapes across arms (batched-vs-stepwise kernel
-differences make cross-shape logit comparison invalid — an early lesson that shaped the
-whole harness). Temperature 0 everywhere in evaluation.
-
-**Statistics.** raw_EB = lp_E − lp_B; 95% percentile bootstrap (10k resamples; 20k for
-judged), clustered on conversations for headline CIs; %-helped alongside. Mean gap-closure
-ratios are retired (unstable); where legacy tables haven't been re-audited yet we quote
-%-helped only. Headroom floor 0.3 (floored categories excluded from sign verdicts, not
-counted as harm; e.g. stance on Mistral, whose own summaries preserve stance content).
-Task-competence floor: lp_A ≥ −8.0 per token (absolute mode; pre-registered relative
-median−3·MADN amendment on record, a verified no-op for every model scored so far).
-Exclusion counts are recorded per run (phi-4: 1 plant task-excluded; Mistral: 0).
-
-**Pre-registration and deviations.** H1 (QK-norm → positive referent sign), the metric,
-gates, and the within-vendor pair inference were frozen in `PREREGISTRATION.md` before
-the sweep; the pre-flight discovery that 5 of 16 queue models ship as multimodal wrappers
-(excluding the Gemma-4 pair) is documented there *before* any outcome data, reducing the
-primary within-vendor de-confound to one pair. H1's falsification is reported as a
-pre-registered null (§10). The block experiment's design and stopping rule (§7) were
-likewise committed before its data.
-
-**Known infrastructure/validity incidents affecting interpretation** (all documented in
-the repository's INCIDENTS.md): the wrong-checkpoint episode (thinking vs. instruct); the
-retired ratio estimator (which had distorted an earlier public draft's precision — the
-correction changed error bars and killed one secondary claim, not the direction of the
-main effect); and a session-state leak in an earlier agent-serving harness whose affected
-strata were demoted and never used for headline claims.
-
-**Reproducibility.** All code, scaffolds, per-run JSON results (with gates, covariates,
-CIs, and machinery-check outcomes embedded), decision log, incident log, and
-pre-registration are in this repository: `src/cross_arch_probe.py` (current harness:
-native render, gates, controls), `src/gap_closure_cat.py` (original apparatus),
-`scripts/block_analysis.py`, `scripts/judged_bootstrap.py`, `data/scenarios.json`,
-`results/`. A reader with an 80GB GPU can re-run any single model's sweep from the
-scaffold in a few hours; exact constants (seeds, tolerances, caps) are in the source and
-in this section.
+The composite appears to be largely unexplored in the literature, and after mapping it we can see why it would be easy to leave unwritten: it is a natural thing to try, and on controlled probes it mostly does nothing.
 
 ---
 
-*This report is a working snapshot of an ongoing autonomous research program; the
-repository's FINDINGS.md, DECISIONS.md, and INCIDENTS.md are the running scientific
-record. Numbers herein are observed results as of 2026-07-09; the held-out reproduction
-and two architecture runs pending at press time will be incorporated in the next
-revision.*
+# Part II — How the project reached this, and what went wrong on the way
+
+*This half documents the process, because the process failures generalize further than the bound. The tone is dry on purpose; the failures are not redeemed into a growth arc. Where direction was set informally, we describe the intent and the mechanism, not the person.*
+
+## 6. How it was run
+
+This was improvised, intermittently-directed research. The question and its several re-framings were set casually and revised on the fly rather than pinned in a preregistered protocol; there was no up-front block of time spent building the measurement framework before compute was spent; roughly a few hundred dollars of GPU time went through it; and at most junctures the project doubled down on whichever line still showed a pulse. That setting is not an aside — it is the mechanism behind most of the failures below, and naming it is part of the result.
+
+## 7. A provenance gap briefly manufactured a false headline
+
+The single most consequential structural failure was a split between two runtimes. The core behavioral evaluations for a long stretch ran locally in **4-bit** quantization, while the GPU pods ran **bfloat16** on different harnesses. The paper's target was a bf16 ~30B model, so the write-up machinery assumed the headline evaluations were bf16. They were not — the scored recovery and a separate honesty-under-compaction result carried 4-bit model identifiers — and yet a progress ledger recorded a bare "bf16" against them, an unearned precision upgrade on the very numbers chosen as cornerstones. A 4-bit result masqueraded as the bf16 headline for as long as no one read the model field on disk.
+
+The fix generalized into the discipline this paper is built on: **every result and a per-run manifest record precision, checkpoint, graft identity, summary condition, metric-as-proxy, and split — read from the live model at run time, never inferred from a directory name.** A bare "bf16" attached to a number by convention rather than by measurement is a landmine. Recording the intervention identity per arm is what lets this paper state, cleanly, that the graft named "tuned" on the coding task is a flat-α graft and that the tuned-config graft is a separate, distinctly-recorded arm — a distinction an earlier draft blurred.
+
+## 8. The recurring failure: chasing the number that still looked alive
+
+Several apparent headlines appeared over the project and each dissolved when its own controls finally ran. The common thread was pivoting toward wherever a number still looked alive instead of concluding.
+
+- **Estimator artifact.** The first strong recovery number came from a ratio estimator (recovery divided by the full-vs-compacted gap) that is unstable near small denominators. On a robust log-probability difference it shrank to a qualitative pattern. A separate "keys actively hurt" claim was the same artifact with the sign flipped. A headline lived for days on an unstable estimator. Robust estimators and the correct clustering unit should be chosen before the first result, not after.
+- **Controls run late.** The placebo battery and the wrong-source controls — exactly the tests that gate a causal claim — were added after headlines were already drafted, and they came back adverse: recovery null against the baseline, content-agnostic where a mechanism had been claimed. Had they run first, the headlines would not have been written. In this final round we ran them first; that is why the result is a clean bound instead of another retraction.
+- **Fragile premises built upon.** The synthetic recovery effect only reproduces under the model's own summary and its own in-context replies, and the strongest development-set version rested on twelve hand-authored conversations on a mixture-of-experts model. "The native render is the valid measurement" was asserted, and substantial re-rendering work was motivated, before the premise was checked; a fresh set of conversations did not carry the effect on the older render. Twelve conversations on one model is a thin base for a headline, and the held-out placebo-controlled test in Part I is what finally settled it — as a null.
+- **Instrument-hopping.** A long-context memory benchmark came back null and was dropped for coding; coding hit a capability floor (the model rarely solves the tasks, and compaction never failed at the tested granularity, so the graft could at best do no harm) and was pivoted to synthetic chains; a chain recall probe was found to reference constants from an unrelated task family and was invalid; effort then moved to an interpretability side-line. Each hop chased the live number rather than accepting the boundary the previous one had drawn.
+
+## 9. What would have caught each earlier
+
+Derived from the failures, not moralized:
+
+- **One preregistered instrument.** Fix a single measurement — this model, this precision, value-only, a real task, a pre-committed α, a placebo — and make the project *that* measurement. Instrument-hopping is the symptom of never having committed to one.
+- **Controls are entry conditions, not robustness checks.** No headline until its placebo and wrong-source controls have run and passed.
+- **Provenance per result, from the on-disk field.** Precision, hardware, checkpoint, and arm identity recorded and checked for every number; no cross-runtime merging or relabeling.
+- **Robust estimators and the right clustering unit from the start.**
+- **No standing publishing target until a result survives its own controls.** Prebuilt publication infrastructure creates sunk-cost pressure to keep *some* headline alive and to relabel rather than retract.
+- **Verify a premise before building on it.** "The native render is required" drove large work while unverified; it turned out to be true as a mechanism and irrelevant as a rescue, because the effect it enabled was null held-out.
+
+## 10. Status and future work
+
+**Status.** There is no robust bf16 value-only *recovery* effect on held-out synthetic conversations: the graft is content-specific but non-additive, statistically indistinguishable from plain compaction, and it does not strengthen as compression increases. There is one small, replicated positive (next-action log-probability on real coding trajectories under brief summaries, about +0.013 nats/token), bounded to that regime and measured as a proxy.
+
+**If this were carried further**, the next steps follow the one live margin, not the dead ones: measure the coding effect as *task success* (apply the action, run the tests, report resolve rate) rather than as log-probability, since a proxy positive is only worth pursuing if it moves the real thing; and characterize the terse-summary regime directly, since that is the only place the write-time state carried anything the text did not. We would not invest further in the synthetic recovery probe as a predictor of real-task behavior — one of the firmer conclusions here is that it does not track it.
+
+---
+
+## Appendix A — Terminology
+
+We use plain descriptive terms rather than a coined name, because the result does not amount to a technique worth minting vocabulary for. For reference, the local labels used above:
+
+- **Value graft** — the intervention under study: at a compaction boundary, replace the value vectors (not keys) at summary-token positions in the fresh compacted cache with a blend toward the model's original write-time values.
+- **Compacted baseline** — the production layout the graft must beat: system prompt, self-generated summary as a context note, verbatim recent tail, freshly re-encoded.
+- **Recovery** — teacher-forced log-probability of the shared gold continuation under the graft minus under the compacted baseline (a proxy, in nats/token).
+- **Content-specificity** — the same log-probability difference, graft minus a placebo graft (shuffled or noise-matched source values in the same slots).
+- **Champion / tuned graft** — a per-layer or per-head configuration of which slots to graft and at what α, tuned on a disjoint validation set.
+
+## Appendix B — Exact configuration
+
+- **Model:** `Qwen/Qwen3-30B-A3B-Instruct-2507` (non-thinking instruction variant), bfloat16, read from a live parameter tensor at run time.
+- **Held-out evaluation set:** conversations c07–c24 (18 conversations, 203 plants), disjoint from the validation conversations used for tuning.
+- **Graft:** value-only (keys untouched, α_K = 0), aligned by positional-within-region difflib match; flat α = 0.75, or a per-layer α map (27 layers at α ∈ {0.75, 1.0}) / per-head slot mask for the tuned variants.
+- **Summary:** self-generated by the test model; a fixed foreign summary suppresses the effect and is not used for headline numbers.
+- **Placebos:** position-shuffle, cross-probe-shuffle, energy-matched Gaussian noise (per-layer norm-matched).
+- **Estimator:** percentile bootstrap 95% CI resampled over conversations (10,000 resamples); ratio estimator retired.
+- **Compression levels:** ultra / brief / medium / realistic, with measured compression ratios 0.009 / 0.037 / 0.083 / 0.259.
+- **SWE-Gym:** 75 real OpenHands trajectories, cut at ~75% before an assistant action, teacher-forced next-action mean log-probability; brief and realistic summaries; plain and tuned grafts.
