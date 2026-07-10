@@ -1,0 +1,160 @@
+{
+ "idx": 153,
+ "meta": {
+  "n_tokens_full": 14274,
+  "cut_msg": 12,
+  "n_ctx_tokens": 11219
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 130,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 50,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.31346808275447985,
+   "gen": "Now I can see the key methods for group membership. Let me look at the Group class definition:\n\n<function=execute_bash>\n<parameter=command>grep -n \"class Group\" /testbed/moto/iam/models.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.5892209522199789,
+   "gen": "I found the relevant code for group membership operations in the IAM models.py file. The key methods are:\n\n1. `add_user_to_group` at line 2470: This method adds a user to a group by appending the user to the group's users list.\n2. `remove_user_from_group` at line 2475: This method removes a user from a group by removing the user from the group's users list.\n\nThe issue is that `add_user_to_group` doesn't check if the user is already in the group, which means adding a user to the same group multip",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.5071103154894138,
+   "gen": "Now I'll look at the specific code for the add_user_to_group and remove_user_from_group methods to understand the issue:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/iam/models.py</parameter>\n<parameter=view_range>[2470, 2480]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.4977917786942686,
+   "gen": "Now I'll examine the Group class definition to understand how group membership is stored:\n\n<function=execute_bash>\n<parameter=command>grep -n \"class Group\" /testbed/moto/iam/models.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -3.144054664095494,
+   "gen": "# Analysis of IAM Group Membership Bug in moto\n\nBased on the context provided, I need to analyze the bug in the moto library's IAM service implementation where adding a user to the same IAM group twice causes the group membership to become \"sticky\" and not be properly removed when the user is removed from the group.\n\n## Root Cause Analysis\n\nThe issue appears to be in the `add_user_to_group` and `remove_user_from_group` methods in the IAM models. The problem likely stems from how the library hand",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -3.0894233462813556,
+   "gen": "Based on the analysis of the issue and the code structure, here's the solution to fix the \"sticky\" group membership problem:\n\n## Root Cause Analysis\n\nThe issue occurs because the `add_user_to_group` method doesn't check if the user is already in the group before adding them. This creates duplicate entries in the group's user list, and when `remove_user_from_group` is called, it only removes one instance of the user, leaving the other instance intact.\n\n## Solution\n\nModify the `add_user_to_group` ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

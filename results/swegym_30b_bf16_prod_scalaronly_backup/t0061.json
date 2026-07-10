@@ -1,0 +1,110 @@
+{
+ "idx": 61,
+ "meta": {
+  "n_tokens_full": 12725,
+  "cut_msg": 26,
+  "n_ctx_tokens": 8703
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 520,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 211,
+ "arms": {
+  "A": {
+   "tf_mean": -0.5989822926124955,
+   "gen": "The `ParamsDependency` class in `dvc/dependency/param.py` is responsible for reading parameters from files. The issue likely lies in how the parameters are parsed from Python files. The `read_params` method uses `dpath.util.get` to retrieve values from the configuration dictionary, but it might not handle negative numbers correctly when parsing Python files.\n\nLet's check the `dvc/utils/serialize.py` file, which contains the loaders for different file types, including Python files.\n\n<function=str",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.7687699510893545,
+   "gen": "The `ParamsDependency` class in `dvc/dependency/param.py` is responsible for reading parameters from files. The key method here is `read_params()`, which uses `dpath.util.get()` to extract values from the parsed configuration (`config`). The `config` is loaded via `self._read()`, which uses `LOADERS` based on the file extension.\n\nThe error occurs because `dpath.util.get()` fails to find the parameter `my_int` in the parsed config, even though it exists in `my_params.py`. This suggests that the P",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.7790666553415168,
+   "gen": "The `ParamsDependency` class in `dvc/dependency/param.py` is responsible for reading parameters from files. The key method here is `_read()`, which uses `LOADERS` to parse the file based on its suffix. The `LOADERS` dictionary is imported from `dvc/utils/serialize`, and it determines how different file types (e.g., `.yaml`, `.json`, `.py`) are parsed.\n\nThe issue likely lies in how Python files are parsed. The `LOADERS` dictionary may not correctly handle negative numbers in Python files, or the ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.818849492474134,
+   "gen": "To resolve the issue where DVC fails to recognize negative numbers in Python parameter files (e.g., `my_int = -1` in `my_params.py`), we need to **fix the Python file parsing logic** in `dvc/utils/serialize/_py.py`, which is responsible for loading parameters from `.py` files.\n\n---\n\n### \u2705 Root Cause\nThe error `ERROR: Parameters 'my_int' are missing from 'my_params.py'` occurs because:\n- The current parser in `dvc/utils/serialize/_py.py` uses `exec` or a naive AST evaluation that **fails to corre",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.5962671258763883,
+   "gen": "You're on the right track with your analysis. Let's now **implement the fix** based on the findings, step by step.\n\n---\n\n### \u2705 **Root Cause (Confirmed)**\nThe issue lies in how Python files are parsed in `dvc/utils/serialize/_py.py`. The current implementation uses `exec` to evaluate the file in a namespace, but **if the file contains only assignments (like `my_int = -1`), and no `globals()` or `locals()` are properly captured, the resulting namespace may be empty or not properly structured**.\n\nM",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "idx": 195,
+ "meta": {
+  "n_tokens_full": 11100,
+  "cut_msg": 12,
+  "n_ctx_tokens": 7868
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 618,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 196,
+ "arms": {
+  "A": {
+   "tf_mean": -0.38151292964482036,
+   "gen": "The error is confirmed. The `AssertionError` in the `check_final` method of `checker.py` is due to the `lv.node` not being an instance of `Var` when it is expected to be. This happens when a class variable is redefined with a `Final` type annotation.\n\nLet's examine the `checker.py` file, specifically the `check_final` method, to understand the issue better.\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/python__mypy__0.970/mypy/checker.py</parameter",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.5572513046583876,
+   "gen": "The error has been successfully reproduced. The traceback confirms the issue: mypy crashes with an `AssertionError` in `checker.py` at line 2718 in the `check_final` method, specifically `assert isinstance(lv.node, Var)`. This happens when a class variable is redefined with a `Final` type annotation.\n\n### Analysis of the Issue:\n- The `check_final` method assumes that `lv.node` (the node associated with the variable) is always a `Var` instance.\n- However, in this case, `lv.node` is not a `Var` bu",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.5488814279350706,
+   "gen": "The error is confirmed. When mypy processes the `reproduce_error.py` script, it crashes with an `AssertionError` in `checker.py` at line 2718, specifically `assert isinstance(lv.node, Var)`. This indicates that `lv.node` is not a `Var` instance, which is expected in this case because the variable `a` was already defined as a class variable.\n\n### Analysis:\n- The `check_final` method assumes that `lv.node` is a `Var`, but in this case, it might be a `ClassVar` or another node type.\n- The error occ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.8744561873865548,
+   "gen": "You're on the right track with diagnosing the issue. The `AssertionError` in `checker.py` at `check_final` due to `assert isinstance(lv.node, Var)` crashing mypy when redefining a class variable (e.g., `a: None` then `a: Final[int] = 1`) is a known edge case in mypy\u2019s type checker logic.\n\n### \u2705 Root Cause\nThe problem occurs because:\n- During the **first pass** (`type_check_first_pass`), mypy processes assignments and sees `a: None` as a class variable (likely recorded as a `Var` or `ClassVar` no",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.6803503982585153,
+   "gen": "You're on the right track with your analysis. Let's now **implement the fix** in `checker.py` to resolve the `AssertionError` in `check_final` when redefining a class variable with `Final`, while preserving correct error reporting.\n\n---\n\n### \u2705 **Root Cause Recap**\nIn `mypy/checker.py`, the `check_final` method assumes that `lv.node` (the node representing the variable being assigned) is always a `Var`. However, when a class variable is redefined (e.g., `a: None` followed by `a: Final[int] = 1`),",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

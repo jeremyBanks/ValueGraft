@@ -1,0 +1,110 @@
+{
+ "idx": 93,
+ "meta": {
+  "n_tokens_full": 14823,
+  "cut_msg": 40,
+  "n_ctx_tokens": 11169
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 517,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 36,
+ "arms": {
+  "A": {
+   "tf_mean": -1.672210197077738e-06,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/iterative__dvc__1.1/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -6.069229008550299e-06,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/iterative__dvc__1.1/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -1.4205630501054302e-06,
+   "gen": "<function=execute_bash>\n<parameter=command>python3 /workspace/iterative__dvc__1.1/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.095284372737533,
+   "gen": "You're on the right track, and your analysis is solid. Let's **clarify the root cause**, **fix the test script**, and **ensure the newline is properly appended** in the final output of `dvc metrics diff --show-md`.\n\n---\n\n### \u2705 **Root Cause Summary**\n\nThe issue is:\n- The `table` function in `dvc/utils/diff.py` generates a markdown table using `tabulate`, but **does not append a trailing newline**.\n- When `markdown=True`, the output is a string like:\n  ```markdown\n  | metric | value |\n  |--------|",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.8531344719740854,
+   "gen": "You're on the right track, and your analysis is solid. Let's **resolve this step by step**, clarify the root cause, and provide a **correct, minimal fix** that ensures `dvc metrics diff --show-md` outputs a trailing newline \u2014 as required by the PR.\n\n---\n\n### \u2705 **Root Cause**\nThe issue isn't that the `table` function is missing a newline \u2014 it **is** being called with `markdown=True`, but **the `diff` command flow does not pass `markdown=True` to `table()`**. Instead, the `table` function is used ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

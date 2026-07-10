@@ -1,0 +1,160 @@
+{
+ "idx": 109,
+ "meta": {
+  "n_tokens_full": 9422,
+  "cut_msg": 8,
+  "n_ctx_tokens": 7323
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 130,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 60,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.48960404879558356,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/python__mypy__0.800/mypy/semanal.py</parameter>\n<parameter=view_range>\n[2630, 2650]\n</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.4843713401326443,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/python__mypy__0.800/mypy/semanal.py</parameter>\n<parameter=view_range>[2635, 2645]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.44753850076702595,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/python__mypy__0.800/mypy/semanal.py</parameter>\n<parameter=view_range>[2635, 2645]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.45227656796422205,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/python__mypy__0.800/mypy/semanal.py</parameter>\n<parameter=view_range>[2635, 2645]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -2.9683602850480857,
+   "gen": "Here's the minimal and correct fix for the issue where mypy incorrectly reports \"can't assign to ()\" when assigning to an empty tuple:\n\n```python\n# mypy/semanal.py\n\n# Find the check that rejects assignment to empty tuples\n# The problematic code is around line 2641 (or nearby)\n\n# Replace the check that rejects empty tuple assignments with a no-op\n# The original code likely looks something like:\n# if isinstance(expr, TupleExpr) and len(expr.items) == 0:\n#     self.fail(\"can't assign to ()\", expr)\n",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -2.8356607133618015,
+   "gen": "Based on your detailed context, here's the precise analysis and solution for the issue:\n\n---\n\n### \ud83d\udd0d **Root Cause Analysis**\nThe error message **\"can't assign to ()\"** is being triggered in `mypy/semanal.py` at **line 2641**, not line 1930 as initially suggested. This line is part of the semantic analyzer's logic that checks for invalid assignment targets.\n\nLooking at the actual code (from mypy's source, e.g., `mypy/semanal.py` in recent versions), the problematic check is typically in a method l",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

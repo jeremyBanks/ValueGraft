@@ -1,0 +1,110 @@
+{
+ "idx": 198,
+ "meta": {
+  "n_tokens_full": 11453,
+  "cut_msg": 20,
+  "n_ctx_tokens": 8186
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 544,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 284,
+ "arms": {
+  "A": {
+   "tf_mean": -0.5419735179671953,
+   "gen": "The `is_callable_compatible` function in `subtypes.py` calls `unify_generic_callable` when `left.variables` is non-empty. The `unify_generic_callable` function then calls `infer_constraints` in `constraints.py`. The error occurs in `infer_constraints` when trying to infer constraints for a `ParamSpec`.\n\nTo fix this, we need to modify the `infer_constraints` function to handle `ParamSpec` types properly. Specifically, we should ensure that the type inference process can handle cases where paramet",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.6499335495888585,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/python__mypy__0.950/mypy/constraints.py</parameter>\n<parameter=view_range>[390, 410]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.6561370075630171,
+   "gen": "The `infer_constraints` function in `constraints.py` is responsible for inferring constraints between types. The error occurs when trying to handle `ParamSpec` types, which are not properly managed in the current implementation.\n\nTo fix this, we need to modify the `infer_constraints` function to handle `ParamSpec` types appropriately. Specifically, we should ensure that when a `ParamSpec` is encountered, it does not raise an error but instead is handled in a way that allows the type inference to",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.7264979011846295,
+   "gen": "To resolve the **\"Parameters cannot be constrained\"** error in mypy when using `ParamSpec` with `TypeVar` in generic classes (e.g., `Job[..., _R]`), we need to **modify mypy\u2019s constraint inference system** to gracefully handle `ParamSpec` types during type unification \u2014 specifically, in `constraints.py` where the error is raised.\n\n---\n\n### \u2705 Root Cause Recap\n\nThe error occurs in this chain:\n```\nis_callable_compatible \u2192 unify_generic_callable \u2192 infer_constraints \u2192 visit_parameters\n```\n\nIn `constr",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.53054300250202,
+   "gen": "You're on the right track with diagnosing the issue. The error `RuntimeError(\"Parameters cannot be constrained to\")` in `constraints.py` is indeed a **hardcoded safeguard** in mypy\u2019s type constraint system, and it's being triggered when the type checker attempts to constrain a `Parameters` type (i.e., a `ParamSpec`-bound type) during inference \u2014 which is **not allowed** in the current design.\n\nHowever, this restriction is **too strict** in the context of `ParamSpec` usage, especially when `Param",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "idx": 90,
+ "meta": {
+  "n_tokens_full": 11622,
+  "cut_msg": 10,
+  "n_ctx_tokens": 8150
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 538,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 176,
+ "arms": {
+  "A": {
+   "tf_mean": -0.49110638228309916,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.6696464019987908,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.6427316047948008,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.4866744325293795,
+   "gen": "Here's the **minimal fix** for the `describe_db_clusters` method in `moto/rds/models.py` to raise `DBClusterNotFoundFault` instead of a `KeyError` when a non-existent cluster is requested:\n\n---\n\n### \u2705 **File**: `/workspace/getmoto__moto__3.1/moto/rds/models.py`  \n### **Line**: 1797 (or near the start of `describe_db_clusters` method)\n\n#### \ud83d\udd27 **Before (current broken code)**:\n```python\ndef describe_db_clusters(self, cluster_identifier=None):\n    if cluster_identifier:\n        return self.clusters",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.281893755094311,
+   "gen": "You're right \u2014 let's implement the fix **correctly and completely** based on the PR description and the codebase structure.\n\n---\n\n### \u2705 **Step 1: Fix the `describe_db_clusters` method**\n\nOpen:  \n`/workspace/getmoto/moto/rds/models.py`\n\nLocate the `describe_db_clusters` method (around line 1797). It currently looks like this:\n\n```python\ndef describe_db_clusters(self, cluster_identifier):\n    if cluster_identifier:\n        return self.clusters[cluster_identifier]\n    return list(self.clusters.valu",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

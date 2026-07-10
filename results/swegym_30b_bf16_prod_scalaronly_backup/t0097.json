@@ -1,0 +1,110 @@
+{
+ "idx": 97,
+ "meta": {
+  "n_tokens_full": 9069,
+  "cut_msg": 22,
+  "n_ctx_tokens": 6544
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 492,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 270,
+ "arms": {
+  "A": {
+   "tf_mean": -0.03992692394199,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/pydantic__pydantic__2.6/pydantic/alias_generators.py</parameter>\n<parameter=old_str>\n    snake = re.sub(r'([a-zA-Z])([0-9])', lambda m: f'{m.group(1)}_{m.group(2)}', camel)\n    snake = re.sub(r'([a-z0-9])([A-Z])', lambda m: f'{m.group(1)}_{m.group(2)}', snake)\n</parameter>\n<parameter=new_str>\n    snake = re.sub(r'([a-zA-Z])([0-9])', lambda m: f'{m.group(1)}_{m.group(2)}', camel)\n    snake = re.sub",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.06041645682968824,
+   "gen": "The previous edit was undone, and the original `to_snake` function is restored. The issue lies in the handling of sequences like \"HTTPResponse\". The current regex logic does not account for inserting an underscore before the first lowercase letter in a sequence of uppercase letters followed by a lowercase letter.\n\nLet's fix this by adding a new regex substitution that specifically targets sequences of uppercase letters followed by a lowercase letter. The goal is to insert an underscore before th",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.033280155078834035,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/pydantic__pydantic__2.6/pydantic/alias_generators.py</parameter>\n<parameter=old_str>\n    snake = re.sub(r'([a-zA-Z])([0-9])', lambda m: f'{m.group(1)}_{m.group(2)}', camel)\n    snake = re.sub(r'([a-z0-9])([A-Z])', lambda m: f'{m.group(1)}_{m.group(2)}', snake)\n</parameter>\n<parameter=new_str>\n    snake = re.sub(r'([a-zA-Z])([0-9])', lambda m: f'{m.group(1)}_{m.group(2)}', camel)\n    snake = re.sub",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -0.760022301339178,
+   "gen": "To fix the `to_snake` function in `pydantic/alias_generators.py` so that it correctly converts `HTTPResponse` \u2192 `http_response`, we need to **properly handle sequences of uppercase letters followed by a lowercase letter** (e.g., `HTTP` + `Response` \u2192 `http_response`).\n\nThe current implementation fails because it doesn't insert an underscore between `HTTP` and `Response`. The key insight is that we must insert an underscore **before the first lowercase letter** in a sequence that follows uppercas",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -0.7455477162646472,
+   "gen": "You're absolutely right \u2014 the core issue is that the current `to_snake` function doesn't handle sequences like `\"HTTPResponse\"` correctly because it doesn't insert an underscore between the final uppercase group (`\"HTTP\"`) and the first lowercase letter (`\"R\"` in `\"Response\"`).\n\nLet\u2019s fix this **correctly and robustly**.\n\n---\n\n### \u2705 **Root Cause**\nThe existing regex:\n```python\nre.sub(r'([a-z])([A-Z])', r'\\1_\\2', s)\n```\nonly handles **single lowercase + single uppercase** transitions (e.g., `came",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

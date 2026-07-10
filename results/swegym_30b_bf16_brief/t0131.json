@@ -1,0 +1,160 @@
+{
+ "idx": 131,
+ "meta": {
+  "n_tokens_full": 10478,
+  "cut_msg": 12,
+  "n_ctx_tokens": 7652
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 343,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 250,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.21413541263630032,
+   "gen": "Now I see the issue. The `table` function in `dvc/utils/diff.py` is responsible for generating the markdown table, but it doesn't add a newline at the end of the output. Let's modify this function to add a newline at the end of the table output.\n\n4. Let's edit the `table` function to add a newline at the end:\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/iterative__dvc__1.1/dvc/utils/diff.py</parameter>\n<parameter=old_str>\ndef table(header, ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.3862646595314534,
+   "gen": "I see the issue now. The `table` function in `dvc/utils/diff.py` is returning the tabulate output without adding a newline at the end. This is causing the subsequent text to be appended directly to the markdown table.\n\nLet's modify the `table` function to add a newline at the end of the output:\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/iterative__dvc__1.1/dvc/utils/diff.py</parameter>\n<parameter=old_str>def table(header, rows, markdown=F",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.34890916453042464,
+   "gen": "Now I see the issue. The `table` function in `dvc/utils/diff.py` is returning the tabulate output without adding a newline at the end. Let's modify it to add a newline:\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/iterative__dvc__1.1/dvc/utils/diff.py</parameter>\n<parameter=old_str>def table(header, rows, markdown=False):\n    from tabulate import tabulate\n\n    if not rows and not markdown:\n        return \"\"\n\n    return tabulate(\n        row",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.3473737506636789,
+   "gen": "Now I see the issue. The `table` function in `dvc/utils/diff.py` is returning the tabulate output without adding a newline at the end. Let's modify this function to add a newline at the end of the output:\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/iterative__dvc__1.1/dvc/utils/diff.py</parameter>\n<parameter=old_str>def table(header, rows, markdown=False):\n    from tabulate import tabulate\n\n    if not rows and not markdown:\n        return ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -0.6497590127022959,
+   "gen": "I'll fix the issue with the `dvc metrics diff --show-md` command not adding a newline at the end of its output.\n\nThe problem is in the `table` function in `dvc/utils/diff.py`. When generating markdown output, the function doesn't append a newline character at the end, which causes subsequent content to be appended directly to the markdown table.\n\nHere's the fix:\n\n```python\ndef table(header, rows, markdown=False):\n    from tabulate import tabulate\n\n    if not rows and not markdown:\n        return",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -0.767073854700279,
+   "gen": "The change has been successfully implemented. I've modified the `table` function in `dvc/utils/diff.py` to append a newline character (`\\n`) to the end of the markdown output. This ensures that when `dvc metrics diff --show-md` is used, the output will end with a newline, preventing subsequent content from being appended directly to the markdown table.\n\nThe change is minimal and focused:\n- Added `+ \"\\n\"` to the return statement of the `table` function\n- Maintains all existing functionality while",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

@@ -1,0 +1,160 @@
+{
+ "idx": 24,
+ "meta": {
+  "n_tokens_full": 13100,
+  "cut_msg": 20,
+  "n_ctx_tokens": 9169
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 122,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 201,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.5108832697980971,
+   "gen": "The issue with the `typing_extensions` module shadowing a library module is still present. This might be due to the environment setup. Let's try to run mypy with a different approach to see if we can isolate the error related to assigning to `()`.\n\nWe can try to run mypy with a minimal setup to avoid the shadowing issue. Let's create a new virtual environment and install mypy there.\n\n<function=execute_bash>\n<parameter=command>python3 -m venv /workspace/test_env</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.5467307746580748,
+   "gen": "The issue with the `typing_extensions` module shadowing a library module persists, which is preventing mypy from running properly. This is likely due to a misconfiguration in the environment. To proceed, we need to address this issue.\n\nLet's check the environment to see if there are any conflicting modules or if we can bypass this issue by using a different approach.\n\n<function=execute_bash>\n<parameter=command>ls /opt/miniconda3/envs/testbed/lib/python3.9/site-packages/typing_extensions-stubs/</",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.5457850196137269,
+   "gen": "The issue with the `typing_extensions` module shadowing a library module is still present. This might be due to the environment setup. Let's try to run mypy with a different approach to see if we can isolate the error related to assigning to `()`.\n\nWe'll try to run mypy with a minimal setup and see if we can reproduce the error.\n\n<function=execute_bash>\n<parameter=command>cd /workspace/python__mypy__0.800 && python3 -m mypy test_script.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.5384537977441238,
+   "gen": "The issue with the `typing_extensions` module shadowing a library module persists, but it does not seem to be directly affecting the error we are trying to reproduce. Let's try to run mypy with a different approach to isolate the issue.\n\nWe will create a minimal test case and run mypy directly on it to see if it raises the \"can't assign to ()\" error.\n\n<function=str_replace_editor>\n<parameter=command>create</parameter>\n<parameter=path>/workspace/python__mypy__0.800/minimal_test.py</parameter>\n<pa",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -1.9645896296698022,
+   "gen": "You're on the right track with identifying the issue in mypy: **it incorrectly raises a \"can't assign to ()\" error for assignments to empty tuples `()`, even though Python allows this syntax without error**.\n\n### \u2705 Why This Happens\nIn Python, the following is valid:\n```python\n() = (1, 2)  # This is allowed! It's a tuple unpacking, but the left side is empty.\n```\nThis is equivalent to:\n```python\n() = ()  # Also valid\n```\nEven though no variables are being assigned, Python's grammar permits this \u2014",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -1.863724902607304,
+   "gen": "You're on the right track! Let's walk through the **final steps** to implement and verify the fix for the `can't assign to ()` issue in mypy.\n\n---\n\n### \u2705 **Step 1: Locate the Problematic Code**\nThe error message `\"can't assign to ()\"` is generated in mypy's **semantic analyzer**, specifically in the `checker.py` file (or similar, depending on mypy version).\n\n\ud83d\udd0d **File**: `mypy/checker.py`  \n\ud83d\udd0d **Function**: `visit_assignment_stmt` or `visit_del_stmt` (depending on context)\n\nLook for code like this",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

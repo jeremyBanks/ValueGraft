@@ -1,0 +1,160 @@
+{
+ "idx": 201,
+ "meta": {
+  "n_tokens_full": 11537,
+  "cut_msg": 18,
+  "n_ctx_tokens": 9228
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 112,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 351,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.48874198394559465,
+   "gen": "### Summary of Changes\n\n1. **`classification_saver.py`**:\n   - Modified the `__call__` method to ensure that only filenames are gathered and passed to the `CSVSaver`. This is done by creating a new dictionary with only the `FILENAME_OR_OBJ` key and its gathered value.\n\n2. **`csv_saver.py`**:\n   - Adjusted the `save_batch` method to handle cases where only filenames are provided in the metadata. The new code ensures that only the filename is used for saving, avoiding any potential `IndexError` du",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.6542972566415207,
+   "gen": "The changes have been successfully implemented:\n\n1. In `classification_saver.py`, the metadata is now restricted to only include filenames (`Key.FILENAME_OR_OBJ`) after gathering across ranks. This ensures that no other metadata is passed, preventing mismatches during batch saving.\n\n2. In `csv_saver.py`, the `save_batch` method has been updated to handle cases where only filenames are provided in the metadata. It now explicitly checks for `Key.FILENAME_OR_OBJ` and uses the corresponding filename",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.6524734105496399,
+   "gen": "The changes have been successfully implemented:\n\n1. In `classification_saver.py`, the metadata is now restricted to only include `Key.FILENAME_OR_OBJ` after gathering across ranks. This ensures that only filenames are passed to the `CSVSaver`.\n\n2. In `csv_saver.py`, the `save_batch` method has been updated to handle the case where only filenames are provided in the metadata. It now correctly extracts the filename for each batch item using `meta_data[Key.FILENAME_OR_OBJ][i]`.\n\nThese changes ensur",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.6576254245326487,
+   "gen": "The changes have been successfully implemented:\n\n1. In `classification_saver.py`, the metadata is now restricted to only include filenames after gathering across ranks. This ensures that only the `FILENAME_OR_OBJ` key is passed to the `CSVSaver`.\n\n2. In `csv_saver.py`, the `save_batch` method has been updated to handle the case where only filenames are provided in the metadata. It now explicitly checks for the `FILENAME_OR_OBJ` key and uses it to save the data.\n\nThese changes ensure that:\n- Only",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -1.5242827418524152,
+   "gen": "You're working on a **deep learning library for medical image analysis**, specifically dealing with **distributed data parallel evaluation** for **classification tasks**. The core issue you're encountering is related to **metadata handling during distributed training/evaluation**, particularly when using **NIfTI files**.\n\n---\n\n### \ud83d\udd0d **Problem Summary**\n- You're using **distributed data parallel (DDP)** training/evaluation.\n- Each GPU/rank processes a subset of the data.\n- Metadata (e.g., patient",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -1.395675364541372,
+   "gen": "You're absolutely right \u2014 here's a clear, concise summary of the issue and solution, structured for better understanding and potential documentation or code comments:\n\n---\n\n### **Problem Summary**\nIn a distributed data parallel setup (e.g., using PyTorch `DistributedDataParallel`), when evaluating a classification model on medical images (e.g., NIfTI files), metadata (like image IDs, patient info, or spatial coordinates) is often attached to the data. However, during training/inference, only the",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "idx": 146,
+ "meta": {
+  "n_tokens_full": 14762,
+  "cut_msg": 16,
+  "n_ctx_tokens": 11549
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 532,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 68,
+ "arms": {
+  "A": {
+   "tf_mean": -0.2169417149615688,
+   "gen": "Let's look at the scan method in the Table class:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/dynamodb/models/table.py</parameter>\n<parameter=view_range>\n[802, 900]\n</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.3181020579708073,
+   "gen": "Now let's examine the `scan` method in detail to understand how it handles GSI scanning and projection:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/dynamodb/models/table.py</parameter>\n<parameter=view_range>[802, 865]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.3503216952854274,
+   "gen": "Now let's look at the `get_index()` method to understand how it retrieves the index:\n\n<function=execute_bash>\n<parameter=command>grep -n \"get_index\" /testbed/moto/dynamodb/models/table.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.7225234491736927,
+   "gen": "You're on the right track. Based on your analysis, the core issue is that **the `Table.scan()` method is not applying the projection filtering from the GSI (SecondaryIndex) when scanning a Global Secondary Index (GSI)** \u2014 even though the `SecondaryIndex.project()` method correctly implements the logic for filtering attributes based on `ProjectionType`.\n\nLet\u2019s fix this step by step.\n\n---\n\n### \u2705 **Root Cause**\nIn `table.py`, the `Table.scan()` method:\n- Retrieves the index via `self.get_index(scan",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.261476291775633,
+   "gen": "After analyzing the code and the issue, here's the solution:\n\n## Root Cause\nThe `Table.scan()` method retrieves the index via `self.get_index(scanned_index)` but doesn't apply the index's `project()` method to filter the results. The projection logic exists in `SecondaryIndex.project()` but isn't being called during the scan operation.\n\n## Solution\nModify the `scan()` method in `table.py` to apply the index's projection filtering when scanning a GSI. Here's the fix:\n\n```python\n# In /testbed/moto",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

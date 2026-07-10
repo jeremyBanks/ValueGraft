@@ -1,0 +1,110 @@
+{
+ "idx": 153,
+ "meta": {
+  "n_tokens_full": 14274,
+  "cut_msg": 12,
+  "n_ctx_tokens": 11219
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 484,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 50,
+ "arms": {
+  "A": {
+   "tf_mean": -0.31346808275447985,
+   "gen": "Now I can see the key methods for group membership. Let me look at the Group class definition:\n\n<function=execute_bash>\n<parameter=command>grep -n \"class Group\" /testbed/moto/iam/models.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.45839222303614674,
+   "gen": "I see the relevant code now. The issue is in the `Group` class where `users` is a list, and the `add_user_to_group` method appends users without checking for duplicates, while `remove_user_from_group` only removes the first occurrence. Let me examine the Group class definition:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/iam/models.py</parameter>\n<parameter=view_range>[2250, 2330]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.457675736104046,
+   "gen": "Now I can see the relevant code. The issue is in the `add_user_to_group` and `remove_user_from_group` methods. Let me examine the `Group` class to understand how users are stored:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/moto/iam/models.py</parameter>\n<parameter=view_range>[2250, 2330]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.3551078883434924,
+   "gen": "# Fix for Sticky IAM Group Membership Issue\n\n## Problem Analysis\n\nThe core issue is that:\n1. `add_user_to_group` appends users to a list without checking for duplicates\n2. `remove_user_from_group` only removes the first occurrence of a user\n3. This leads to \"sticky\" membership where users remain in groups even after removal if they were added multiple times\n\n## Solution\n\nI'll modify the `Group` class to use a `set` for users instead of a `list`, which naturally prevents duplicates and ensures id",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.7115919353833613,
+   "gen": "You're absolutely right to focus on the core issue: **ensuring idempotent behavior** when adding/removing users from groups. Here's a clean, minimal, and correct solution:\n\n---\n\n### \u2705 **Root Cause**\nThe `Group` class uses a `list` to store users, which allows duplicates. When `add_user_to_group` is called multiple times with the same user, the user gets added multiple times. When `remove_user_from_group` is called, it only removes the **first occurrence**, leaving the rest.\n\nThis breaks idempote",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

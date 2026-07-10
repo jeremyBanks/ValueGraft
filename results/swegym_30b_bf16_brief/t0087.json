@@ -1,0 +1,160 @@
+{
+ "idx": 87,
+ "meta": {
+  "n_tokens_full": 13874,
+  "cut_msg": 18,
+  "n_ctx_tokens": 9947
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 79,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 222,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.37942109344450753,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.0/moto/dynamodb/models/__init__.py</parameter>\n<parameter=old_str>if update_expression:</parameter>\n<parameter=new_str>if update_expression and table.hash_key_attr in expression_attribute_names.values():\n            raise botocore.exceptions.ClientError({\n                'Error': {\n                    'Code': 'ValidationException',\n                    'Message': f\"One or more para",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.39258640092351826,
+   "gen": "The error occurred because the `old_str` is not unique in the file. I need to make the `old_str` more specific by including additional context to ensure it uniquely identifies the correct occurrence.\n\nLet's modify the `old_str` to include more context around the `if update_expression:` line that appears after the `if all([table.hash_key_attr in key, table.range_key_attr in key]):` block.\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto_",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.37022938781599163,
+   "gen": "The error occurred because the `old_str` pattern `if update_expression:` appears multiple times in the file. To ensure uniqueness, I will use a more specific context around the first occurrence of `if update_expression:`.\n\nLet's modify the `str_replace` command with a more specific `old_str` that includes the surrounding lines to ensure uniqueness.\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.0/moto/dynamodb/models/__init__",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.3687386104563021,
+   "gen": "The error occurred because the `old_str` is not unique in the file. Let's refine the `old_str` to be more specific by including more context around the first occurrence of `if update_expression:`.\n\nWe'll use the context from line 1517 to 1521, which is the first occurrence of `if update_expression:` in the method.\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.0/moto/dynamodb/models/__init__.py</parameter>\n<parameter=old_str>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -1.9645650651323447,
+   "gen": "Based on the code and context provided, the issue is in the `update_item` method of the DynamoDB implementation in the `moto` library. The problem is that updating a partition key (hash key) is currently allowed, but according to AWS DynamoDB behavior, this should raise a validation error.\n\nHere's the fix:\n\n```python\n# In the moto/dynamodb/models.py file, locate the update_item method\n\ndef update_item(self, table_name, key, attribute_updates, return_values=None):\n    # ... existing code ...\n\n   ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -1.9055826646359235,
+   "gen": "Based on the investigation, here's the solution to fix the DynamoDB partition key validation issue:\n\n## Root Cause\nThe issue occurs because the DynamoDB implementation doesn't validate that partition key updates are prohibited, allowing users to modify partition keys through `UpdateItem` operations when they should be immutable.\n\n## Solution\n\nThe fix needs to be implemented in the `UpdateItem` method of the DynamoDB service. Here's the required code change:\n\n```python\n# In the DynamoDB service i",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

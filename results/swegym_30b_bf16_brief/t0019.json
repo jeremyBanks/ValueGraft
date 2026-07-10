@@ -1,0 +1,160 @@
+{
+ "idx": 19,
+ "meta": {
+  "n_tokens_full": 11737,
+  "cut_msg": 20,
+  "n_ctx_tokens": 9487
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 119,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 494,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.3002875158865332,
+   "gen": "The change I made to the `_get_scan_interval` function ensures that when `roi_size[i]` is 1, the scan interval is set to 1, which should prevent the issue with incorrect slice generation. This modification should ensure that the number of slices is correctly calculated even when one of the dimensions in `roi_size` is 1.\n\n### Next Steps\n1. **Create a script to reproduce the issue**: I'll create a script to reproduce the error as described in the PR.\n2. **Run the script**: Execute the script to co",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.4313866859541797,
+   "gen": "The modification to the `_get_scan_interval` function has been made to handle dimensions of size 1 correctly. The change ensures that if `roi_size[i]` is 1, the scan interval is set to 1, which should prevent incorrect slice generation.\n\n### Next Steps\n1. **Test the changes**: Run the test case to verify that the number of slices is now `30 * 450` as expected.\n2. **Verify the output**: Ensure that the output of the `sliding_window_inference` function is correct and matches the expected behavior.",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.4590206632582702,
+   "gen": "The changes to the `_get_scan_interval` function look correct. By adding the condition `roi_size[i] == 1`, we ensure that dimensions with size 1 are handled appropriately, which should resolve the issue with incorrect slice generation.\n\n### Next Steps\n1. **Test the changes**: Run the code with the modified function to verify that the number of slices is now `30 * 450` as expected.\n2. **Validate the output**: Ensure that the `sliding_window_inference` function produces the correct results.\n\nSince",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.4361269376892588,
+   "gen": "The changes to the `_get_scan_interval` function look correct. By adding the condition `roi_size[i] == 1`, we ensure that dimensions of size 1 are handled appropriately, which should resolve the issue with incorrect slice generation.\n\n### Next Steps\n1. **Test the changes**: Run the code with the modified function to verify that the number of slices is now `30 * 450` as expected.\n2. **Validate the output**: Ensure that the `sliding_window_inference` function produces the correct results.\n\nLet's p",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -0.9915053715568768,
+   "gen": "The issue you're describing in the `sliding_window_inference` function of the **MONAI** library\u2014specifically, incorrect handling of spatial dimensions with size 1\u2014is a known edge case that can lead to incorrect slicing and, consequently, incorrect inference results.\n\n### \ud83d\udd0d Problem Summary\n\nWhen using `sliding_window_inference`, if **any spatial dimension of the ROI (region of interest) size is 1**, the current implementation of `_get_scan_interval` (used internally to compute how much to shift t",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -0.9645248518188897,
+   "gen": "You're on the right track with your analysis! Let's refine and complete the explanation of the issue and the fix for the `sliding_window_inference` bug in MONAI, particularly when one of the ROI dimensions is 1.\n\n---\n\n### \ud83d\udd0d **Problem Summary:**\nIn MONAI\u2019s `sliding_window_inference`, when a spatial dimension of the `roi_size` (region of interest) is set to `1` (e.g., `roi_size=(128, 128, 1)`), the function may incorrectly compute the number of sliding windows or misalign the spatial indexing. Thi",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "idx": 169,
+ "meta": {
+  "n_tokens_full": 13807,
+  "cut_msg": 14,
+  "n_ctx_tokens": 11565
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 477,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 48,
+ "arms": {
+  "A": {
+   "tf_mean": -0.13967280252926795,
+   "gen": "Let's search for the specific line where the error occurs:\n\n<function=execute_bash>\n<parameter=command>grep -n \"extras_annotation = candidate_cls.__annotations__.get('__pydantic_extra__', None)\" /testbed/pydantic/_internal/_generate_schema.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.6122262153135822,
+   "gen": "<function=str_replace_editor>\n<parameter=command>grep -n \"extras_annotation\" /testbed/pydantic/_internal/_generate_schema.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.5409277252900323,
+   "gen": "<function=str_replace_editor>\n<parameter=command>grep -n \"def _model_schema\" /testbed/pydantic/_internal/_generate_schema.py</parameter>\n<parameter=path>/testbed/pydantic/_internal/_generate_schema.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.236702550036059,
+   "gen": "The issue you're encountering in Pydantic v2.7.0b1 \u2014 `AttributeError: type object 'Generic' has no attribute '__annotations__'` \u2014 occurs during schema generation when Pydantic tries to access `__annotations__` on a `Generic` type, which doesn't have this attribute.\n\nThis happens because the schema generation logic in `pydantic/_internal/_generate_schema.py` assumes all types have `__annotations__`, but `Generic` (and other typing constructs like `TypeVar`, `Union`, etc.) do not.\n\n---\n\n### \u2705 Root",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.1263942133123996,
+   "gen": "I'll help you fix the issue with the `AttributeError: type object 'Generic' has no attribute '__annotations__'` in Pydantic v2.7.0b1. This is a common issue when working with generic types in the typing module.\n\nThe problem occurs in the schema generation logic where it tries to access `__annotations__` on a `Generic` type, which doesn't have this attribute. Here's the fix:\n\n## Solution\n\nThe issue is in `/testbed/pydantic/_internal/_generate_schema.py` at line 539 where it tries to access `__ann",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

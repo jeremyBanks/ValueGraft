@@ -1,0 +1,110 @@
+{
+ "idx": 95,
+ "meta": {
+  "n_tokens_full": 10754,
+  "cut_msg": 14,
+  "n_ctx_tokens": 8568
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 484,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 37,
+ "arms": {
+  "A": {
+   "tf_mean": -0.23901676806786146,
+   "gen": "The changes look correct. The new functions `ones_like`, `zeros_like`, and `empty_like` are now implemented in `dask/array/ma.py` using `map_blocks` to apply the corresponding NumPy masked array functions. These functions preserve the mask of the input Dask array.\n\n### Step 3: Test the Changes\n\nLet's run the script again to verify that the mask is now preserved.\n\n<function=execute_bash>\n<parameter=command>python /workspace/dask__dask__2022.8/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.20296772681255038,
+   "gen": "The new functions `ones_like`, `zeros_like`, and `empty_like` have been successfully added to `dask/array/ma.py`. They use `map_blocks` to apply the corresponding NumPy masked array functions (`np.ma.ones_like`, `np.ma.zeros_like`, `np.ma.empty_like`) to Dask arrays, preserving the mask as required.\n\n### Step 3: Test the Changes\n\nLet's re-run the `reproduce_error.py` script to verify that the mask is now preserved.\n\n<function=execute_bash>\n<parameter=command>python /workspace/dask__dask__2022.8/",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.23532649534688252,
+   "gen": "The new functions `ones_like`, `zeros_like`, and `empty_like` have been successfully added to `dask/array/ma.py`. They use `map_blocks` to apply the corresponding NumPy masked array functions (`np.ma.ones_like`, `np.ma.zeros_like`, `np.ma.empty_like`) to Dask arrays, preserving the mask as required.\n\n### Step 3: Test the Changes\n\nLet's re-run the `reproduce_error.py` script to verify that the mask is now preserved.\n\n<function=execute_bash>\n<parameter=command>python /workspace/dask__dask__2022.8/",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.9345989003469435,
+   "gen": "\u2705 **Verification of Fix: `ones_like`, `zeros_like`, and `empty_like` Preserve Masks in Dask Masked Arrays**\n\nYou've correctly implemented the requested functions in `dask/array/ma.py` using `map_blocks` to wrap `np.ma.ones_like`, `np.ma.zeros_like`, and `np.ma.empty_like`. This approach aligns with existing patterns in the file (e.g., `masked_equal`, `masked_where`) and properly preserves the mask from the input masked Dask array.\n\n---\n\n### \u2705 **Final Implementation Summary**\n\nHere\u2019s a recap of w",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.6098250815273962,
+   "gen": "You're all set! Let's verify the fix by running your test script `reproduce_error.py` to confirm that `da.ones_like` now preserves the mask correctly.\n\n### \u2705 Step 1: Confirm the Implementation\nYou've added the following functions to `dask/array/ma.py` (or similar location):\n\n```python\n@derived_from(np)\ndef ones_like(a, dtype=None, order='K', subok=True, shape=None):\n    return map_blocks(\n        np.ones_like,\n        a,\n        dtype=dtype,\n        order=order,\n        subok=subok,\n        shap",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "idx": 83,
+ "meta": {
+  "n_tokens_full": 13575,
+  "cut_msg": 10,
+  "n_ctx_tokens": 11257
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 536,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 58,
+ "arms": {
+  "A": {
+   "tf_mean": -0.11963172250267964,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2022.6/dask/base.py</parameter>\n<parameter=view_range>\n[923, 1000]\n</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.18390465151858468,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2022.6/dask/base.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.20561707641554483,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/dask__dask__2022.6/dask/base.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.068020386373056,
+   "gen": "To implement **deterministic hashing for `Enum` types** in Dask's `tokenize` function, we need to:\n\n1. **Register a custom `normalize_token` handler** for `Enum` types.\n2. Ensure that `tokenize(Color.RED) == tokenize(Color.RED)` holds true (i.e., deterministic output).\n3. Use the proposed normalization: `(type(e).__name__, e.name, e.value)`.\n\n---\n\n### \u2705 Step-by-Step Fix\n\nWe'll modify the file:  \n`/workspace/dask__dask__2022.6/dask/base.py`\n\n---\n\n### \u2705 Modified Code (Add to `base.py`)\n\nAdd the fo",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.188511697907883,
+   "gen": "You're on the right track! Let's complete the implementation step by step, based on your analysis and the PR requirement.\n\n---\n\n### \u2705 **Step 1: Add `normalize_enum` function and register it in `base.py`**\n\nOpen the file:  \n`/workspace/dask__dask__2022/dask/base.py`\n\nAdd the following **after the imports** (but before any function definitions that might use `normalize_token`):\n\n```python\nfrom enum import Enum\nfrom dask.base import normalize_token\n\n@normalize_token.register(Enum)\ndef normalize_enu",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

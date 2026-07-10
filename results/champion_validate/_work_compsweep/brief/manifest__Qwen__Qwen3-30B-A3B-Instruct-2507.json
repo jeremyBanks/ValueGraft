@@ -1,0 +1,123 @@
+{
+ "manifest_schema": 1,
+ "harness": "src/cross_arch_probe.py",
+ "model": {
+  "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "architecture": "qwen3_moe"
+ },
+ "load": {
+  "dtype": "torch.bfloat16",
+  "dtype_env_requested": "bfloat16",
+  "config_dtype": "torch.bfloat16",
+  "quantization": null,
+  "kv_geometry": {
+   "num_attention_heads": 32,
+   "num_key_value_heads": 4,
+   "head_dim": 128,
+   "num_hidden_layers": 48,
+   "rope_theta": 10000000
+  },
+  "dtype_matches_request": true
+ },
+ "intervention": {
+  "arm": "E-champion",
+  "graft_type": "value",
+  "alpha": {
+   "3": 0.75,
+   "4": 1.0,
+   "6": 1.0,
+   "7": 0.75,
+   "8": 0.75,
+   "9": 0.75,
+   "10": 0.75,
+   "11": 1.0,
+   "13": 0.75,
+   "14": 1.0,
+   "15": 0.75,
+   "18": 0.75,
+   "19": 0.75,
+   "20": 0.75,
+   "21": 0.75,
+   "24": 0.75,
+   "25": 0.75,
+   "26": 1.0,
+   "27": 0.75,
+   "31": 1.0,
+   "32": 0.75,
+   "33": 0.75,
+   "34": 1.0,
+   "35": 1.0,
+   "37": 1.0,
+   "38": 1.0,
+   "46": 0.75
+  },
+  "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+  "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+  "champion_label": "layers_30b_bf16",
+  "placebo_mode": "gauss",
+  "alignment": "difflib positional-within-region (tail+summary regions)",
+  "qk_norm_ablated": false
+ },
+ "metric": {
+  "definition": "raw_EB = lp_E - lp_B: teacher-forced mean logprob lift of the value-graft over the compacted baseline, on the SHARED gold continuation",
+  "is_proxy": true,
+  "resolve_rate_measured": false,
+  "proxy_note": "logprob-based recovery metric; not a task-success/resolve rate."
+ },
+ "condition": {
+  "summary_kind": "self-gen level=brief (aggressive (3-5 sentences))",
+  "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+  "summary_source": "PER-MODEL SELF-GEN summary (DECLARED SC_SELFGEN=1; redesign default -- a fixed foreign summary suppresses the graft)",
+  "summary_selfgen_declared": true,
+  "summary_compression_level": "brief",
+  "summary_compression_regime": "aggressive (3-5 sentences)",
+  "summary_target_words": 70,
+  "measured_compression_ratio_mean": 0.037404215959763065
+ },
+ "corpus": {
+  "name": "/workspace/exp/data/synthetic",
+  "split": "conv_start=6 conv_limit=18",
+  "n": 18,
+  "instance_ids": [
+   "c07",
+   "c08",
+   "c09",
+   "c10",
+   "c11",
+   "c12",
+   "c13",
+   "c14",
+   "c15",
+   "c16",
+   "c17",
+   "c18",
+   "c19",
+   "c20",
+   "c21",
+   "c22",
+   "c23",
+   "c24"
+  ],
+  "n_scored": 18
+ },
+ "code": {
+  "git_commit": null,
+  "git_dirty": null
+ },
+ "run": {
+  "timestamp_utc": "2026-07-10T06:23:34Z",
+  "gpu_name": "NVIDIA A100 80GB PCIe",
+  "hostname": "71378ec216b5",
+  "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+  "python_version": "3.11.10",
+  "torch_version": "2.5.1+cu124",
+  "transformers_version": "4.57.6"
+ },
+ "extra": {
+  "seed": 42,
+  "alpha_sweep": false,
+  "champion_scan": 0
+ }
+}

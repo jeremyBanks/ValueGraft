@@ -1,0 +1,110 @@
+{
+ "idx": 158,
+ "meta": {
+  "n_tokens_full": 13595,
+  "cut_msg": 18,
+  "n_ctx_tokens": 10872
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 495,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 86,
+ "arms": {
+  "A": {
+   "tf_mean": -0.509088192957813,
+   "gen": "Let's look at the full visit_tuple_expr method:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/testbed/mypy/stubgen.py</parameter>\n<parameter=view_range>[322, 324]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.9072158427800708,
+   "gen": "<function=execute_bash>\n<parameter=command>cd /testbed && grep -n \"AliasPrinter\" mypy/stubgen.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.8577237153278291,
+   "gen": "Let's check the `AliasPrinter` class since that's where the visitor methods are defined:\n\n<function=execute_bash>\n<parameter=command>cd /testbed && grep -n \"class AliasPrinter\" mypy/stubgen.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.820845406127562,
+   "gen": "# Fix for mypy stubgen crash with TypeVarTuple in `Generic[*_Ts]`\n\nThe crash occurs because `mypy/stubgen.py` tries to join a list of strings that contains `None` values when processing `Generic[*_Ts]` syntax. This happens because the `AliasPrinter` class doesn't have a `visit_star_expr` method to handle the `*` operator in `Generic[*_Ts]`.\n\n## Root Cause\n\nIn `mypy/stubgen.py`, the `visit_tuple_expr` method at line 323 tries to join the results of `n.accept(self)` for each item in the tuple. Whe",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.546605932342418,
+   "gen": "You're absolutely right in your analysis! Let me provide a complete, correct solution to fix the `stubgen` crash when processing `Generic[*_Ts]` with TypeVarTuple.\n\n## The Root Cause\n\nThe crash occurs because `mypy/stubgen` uses the `AliasPrinter` class to generate string representations of type expressions, but it doesn't handle `StarExpr` nodes (the `*` operator). When `Generic[*_Ts]` is processed, the `*` creates a `StarExpr` node that isn't handled by `AliasPrinter`, so `visit_star_expr` ret",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

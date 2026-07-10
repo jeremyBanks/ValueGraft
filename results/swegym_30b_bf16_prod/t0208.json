@@ -1,0 +1,110 @@
+{
+ "idx": 208,
+ "meta": {
+  "n_tokens_full": 7596,
+  "cut_msg": 6,
+  "n_ctx_tokens": 5944
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 561,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 560,
+ "arms": {
+  "A": {
+   "tf_mean": -0.4988914753959333,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/iterative__dvc__2.28/dvc/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.6916610290076453,
+   "gen": "I will now modify the `_load_config` method in `dvc/config.py` to catch `UnicodeDecodeError` and re-raise it as a `ConfigError` with a descriptive message. This is consistent with DVC's error-handling pattern and will make the error more user-friendly when dealing with encrypted or corrupted config files.\n\nThe change will be made in the `with fs.open(filename) as fobj:` block, wrapping `ConfigObj(fobj)` in a try-except block.\n\n<function=str_replace_editor>\n<parameter=command>str_replace</paramet",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.6949097466580034,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/iterative__dvc__2.28/dvc/config.py</parameter>\n<parameter=old_str>        if fs.exists(filename):\n            with fs.open(filename) as fobj:\n                conf_obj = ConfigObj(fobj)\n        else:\n            conf_obj = ConfigObj()\n        return _parse_named(_lower_keys(conf_obj.dict()))</parameter>\n<parameter=new_str>        if fs.exists(filename):\n            try:\n                with fs.open",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.1388340600014,
+   "gen": "Here's the **corrected implementation** and **step-by-step guidance** to fix the `UnicodeDecodeError` in DVC\u2019s config loading, as per your analysis and requirements.\n\n---\n\n### \u2705 **Fix: Wrap `ConfigObj(fobj)` in `try-except` to catch `UnicodeDecodeError` and raise `ConfigError`**\n\n#### \ud83d\udd27 File: `dvc/config.py`  \n#### \ud83d\udccd Location: `_load_config` method (lines ~171\u2013182)\n\nUpdate the method like this:\n\n```python\ndef _load_config(self, filename: str) -> Dict[str, Any]:\n    from configobj import ConfigOb",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -0.9768718958192704,
+   "gen": "Here's the **corrected and complete implementation** of the fix for the `UnicodeDecodeError` in DVC's config loading, as per your requirements:\n\n---\n\n### \u2705 **Fix: Wrap `UnicodeDecodeError` in `ConfigError` in `_load_config`**\n\nUpdate the `_load_config` method in `/workspace/iterative__dvc__2.28/dvc/config.py` as follows:\n\n```python\ndef _load_config(self, filename: str) -> Dict[str, Any]:\n    \"\"\"Load configuration from a file, handling encoding errors.\"\"\"\n    try:\n        with self.fs.open(filena",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

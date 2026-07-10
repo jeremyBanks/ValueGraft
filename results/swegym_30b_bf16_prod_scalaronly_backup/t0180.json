@@ -1,0 +1,110 @@
+{
+ "idx": 180,
+ "meta": {
+  "n_tokens_full": 14235,
+  "cut_msg": 8,
+  "n_ctx_tokens": 10281
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 540,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 73,
+ "arms": {
+  "A": {
+   "tf_mean": -0.22295307714082574,
+   "gen": "I can see the error now. The issue is in the `forward` method of the `SSIMLoss` class in `ssim_loss.py`. The error occurs because when batch size > 1, the `ssim_value` tensor has a different shape than expected when trying to concatenate it with `ssim_val`.\n\nLet's examine the current implementation of the `SSIMLoss` class:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/Project-MONAI__MONAI__1.1/monai/losses/ssim_loss.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.41767090049371364,
+   "gen": "The error confirms our analysis: the issue occurs in `ssim_loss.py` at line 98 where `torch.cat` is trying to concatenate a tensor of size 2 with a tensor of size 1, which is invalid.\n\nLet's examine the `ssim_loss.py` file to understand the SSIM computation logic:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/Project-MONAI__MONAI__1.1/monai/losses/ssim_loss.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.36252535123096086,
+   "gen": "The error confirms our analysis: the code is trying to concatenate tensors with incompatible shapes. The issue is in the `forward` method of `SSIMLoss` class where it's trying to concatenate `ssim_value` (which has size 2 for batch size 4) with a view(1) tensor.\n\nLet's examine the `ssim_loss.py` file to understand the implementation:\n\n<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/Project-MONAI__MONAI__1.1/monai/losses/ssim_loss.py</parameter>\n</func",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.5828980045816095,
+   "gen": "# Fix for SSIM Loss Failure with Batch Size > 1\n\n## Problem Analysis\n\nThe error occurs in `ssim_loss.py` at line 98:\n```python\nssim_value = torch.cat((ssim_value.view(1), ssim_val.view(1)), dim=0)\n```\n\nWhen batch size > 1, `ssim_value` is already a tensor of size `[batch_size]` (e.g., `[4]`), but the code tries to concatenate it with another tensor of size `[1]`, resulting in a shape mismatch.\n\nThe root cause is that the SSIM computation is not properly handling batched inputs. The current imple",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.5795926389987067,
+   "gen": "After analyzing the issue and the code structure, here's the solution to fix the SSIM loss failure when batch size > 1:\n\n## Problem Analysis\n\nThe error occurs in `ssim_loss.py` at line 98:\n```python\nssim_value = torch.cat((ssim_value.view(1), ssim_val.view(1)), dim=0)\n```\n\nWhen batch size > 1, `ssim_value` is already a tensor of size `batch_size` (e.g., 4), but the code tries to concatenate it with a scalar view(1), causing a shape mismatch.\n\n## Solution\n\nThe fix is to modify the `forward` metho",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

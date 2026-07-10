@@ -1,0 +1,110 @@
+{
+ "idx": 187,
+ "meta": {
+  "n_tokens_full": 12693,
+  "cut_msg": 14,
+  "n_ctx_tokens": 10064
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 495,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 46,
+ "arms": {
+  "A": {
+   "tf_mean": -0.0758319008228052,
+   "gen": "Now let's run the updated test script to verify our changes:\n\n<function=execute_bash>\n<parameter=command>cd /workspace/dask__dask__2022.8 && python reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.6646291619302862,
+   "gen": "Now let's run the test script to verify that all three functions preserve the mask:\n\n<function=execute_bash>\n<parameter=command>python3 reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.5844371445200792,
+   "gen": "Now let's run the test script to verify the functionality:\n\n<function=execute_bash>\n<parameter=command>python3 reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.1684512388937516,
+   "gen": "\u2705 **Task Complete: Implementation and Verification of `ones_like`, `zeros_like`, and `empty_like` in `dask.array.ma`**\n\n---\n\n### \u2705 Summary of Implementation\n\nThe following functions have been successfully implemented in `dask/array/ma.py` to preserve masks when applied to masked dask arrays:\n\n```python\ndef ones_like(a, dtype=None):\n    \"\"\"Return a masked array of ones with the same shape and type as a.\"\"\"\n    return a.map_blocks(np.ma.ones_like, dtype=dtype)\n\ndef zeros_like(a, dtype=None):\n    \"",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.6037149054551194,
+   "gen": "The implementation of `ones_like`, `zeros_like`, and `empty_like` functions in `dask.array.ma` has been successfully completed and verified. Here's a summary of the outcome:\n\n### \u2705 **Implementation Summary**\n- **Functions Added**:  \n  - `ones_like(a, dtype=None)`  \n  - `zeros_like(a, dtype=None)`  \n  - `empty_like(a, dtype=None)`  \n  All are implemented using `a.map_blocks(np.ma.<func>, dtype=dtype)` to preserve the mask, consistent with the pattern in `ma.py`.\n\n- **Mask Preservation**:  \n  For ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

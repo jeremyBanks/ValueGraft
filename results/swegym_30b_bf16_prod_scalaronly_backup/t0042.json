@@ -1,0 +1,110 @@
+{
+ "idx": 42,
+ "meta": {
+  "n_tokens_full": 12432,
+  "cut_msg": 14,
+  "n_ctx_tokens": 9427
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 418,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 235,
+ "arms": {
+  "A": {
+   "tf_mean": -0.18572906414951892,
+   "gen": "The changes look good. I've added a check to ensure that the `PackageType` attribute is set to `\"Zip\"` if it is not provided in the `spec` dictionary. This will ensure that the `PackageType` attribute is always present in the Lambda function's details.\n\nNow, let's create a script to reproduce the error and confirm that the fix works.\n\n<function=str_replace_editor>\n<parameter=command>create</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/reproduce_error.py</parameter>\n<parameter=file_te",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.6885291651162035,
+   "gen": "The changes have been successfully applied to the `create_function` method in `/workspace/getmoto__moto__4.2/moto/awslambda/models.py`. The modification ensures that the `PackageType` attribute is set to `\"Zip\"` by default if it is not provided in the `spec` dictionary. This aligns with AWS's default behavior for Lambda functions created with a ZIP file.\n\nNext, I will verify that the fix works as expected by creating a script to reproduce the issue and running it. The script will create a Lambda",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.7375187116768162,
+   "gen": "The changes have been made to ensure that the `PackageType` attribute is set to `\"Zip\"` by default if it is not provided in the `spec` dictionary when creating a Lambda function. This should resolve the issue where the `PackageType` attribute was missing from the Lambda function's details.\n\nNext, I will verify that the change works as expected by creating a script to reproduce the error and running it. The script will create a Lambda function using `boto3` and then list the functions to check if",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.1260163703746353,
+   "gen": "You're on the right track with your analysis and fix. Let's formalize the **next steps** into a clear, actionable plan to verify the fix for the missing `PackageType` attribute in the `moto` library's `mock_lambda` decorator.\n\n---\n\n### \u2705 **Next Steps: Verify the Fix**\n\n#### 1. **Create a Test Script to Reproduce the Issue**\n\nCreate a file called `test_lambda_package_type.py` with the following content:\n\n```python\nimport boto3\nimport pytest\nfrom moto import mock_lambda\n\ndef test_create_lambda_wit",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.243830635284686,
+   "gen": "You're on the right track with your analysis! Let's **finalize and validate** your fix for the `PackageType` issue in `moto`'s `mock_lambda` decorator, ensuring it's both correct and testable.\n\n---\n\n### \u2705 **Final Fix: Ensure `PackageType` Defaults to `\"Zip\"` in `create_function`**\n\nThe issue is that when a Lambda function is created via `boto3` in a `moto`-mocked environment, the `PackageType` field is **not set by default**, even though AWS defaults to `\"Zip\"` for functions created with a ZIP f",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

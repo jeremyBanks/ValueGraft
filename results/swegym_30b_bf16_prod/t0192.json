@@ -1,0 +1,110 @@
+{
+ "idx": 192,
+ "meta": {
+  "n_tokens_full": 10981,
+  "cut_msg": 12,
+  "n_ctx_tokens": 8176
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 506,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 61,
+ "arms": {
+  "A": {
+   "tf_mean": -0.23125082630928448,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/cognitoidp/models.py</parameter>\n<parameter=view_range>[890, 920]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.36369515470109093,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/cognitoidp/models.py</parameter>\n<parameter=old_str>    def __init__(self,\\n        user_pool_id: str,\\n        identifier: str,\\n        name: str,\\n        scopes: List[Dict[str, str]],\\n    ):\\n        self.user_pool_id = user_pool_id\\n        self.identifier = identifier\\n        self.name = name\\n        self.scopes = scopes</parameter>\n<parameter=new_str>    def __ini",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.3606139975519056,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/cognitoidp/models.py</parameter>\n<parameter=old_str>    def __init__(\\n        self,\\n        user_pool_id: str,\\n        identifier: str,\\n        name: str,\\n        scopes: List[Dict[str, str]],\\n    ):\\n        self.user_pool_id = user_pool_id\\n        self.identifier = identifier\\n        self.name = name\\n        self.scopes = scopes</parameter>\n<parameter=new_str>   ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.2644870402847945,
+   "gen": "Here's the **corrected fix** for the `TypeError` in `moto.cognitoidp.models.CognitoResourceServer.to_json()` when `scopes` is `None`, along with a minimal reproduction script and verification steps.\n\n---\n\n### \u2705 **Fix: Update `CognitoResourceServer.__init__` and `to_json`**\n\n#### \ud83d\udd27 Modified Code (`moto/cognitoidp/models.py`)\n\n```python\nclass CognitoResourceServer:\n    def __init__(self, user_pool_id, identifier, name, scopes=None):\n        self.user_pool_id = user_pool_id\n        self.identifier ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.5827581436020375,
+   "gen": "Here's the complete fix for the `CognitoResourceServer` class in `moto/cognitoidp/models.py`, along with a minimal test script to verify the fix:\n\n---\n\n### \u2705 **Fix: Update `__init__` and `to_json` methods**\n\n```python\n# In moto/cognitoidp/models.py\n\nclass CognitoResourceServer:\n    def __init__(self, user_pool_id, identifier, scopes=None):\n        self.user_pool_id = user_pool_id\n        self.identifier = identifier\n        # Ensure scopes is always a list, even if None is passed\n        self.sc",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "idx": 213,
+ "meta": {
+  "n_tokens_full": 12707,
+  "cut_msg": 14,
+  "n_ctx_tokens": 10002
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 493,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 59,
+ "arms": {
+  "A": {
+   "tf_mean": -0.026221443907332553,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/iam/responses.py</parameter>\n<parameter=view_range>[460, 470]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.06195514080205134,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/iam/responses.py</parameter>\n<parameter=view_range>[460, 470]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.06750887563863596,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.2/moto/iam/responses.py</parameter>\n<parameter=view_range>[460, 470]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.25284636186854,
+   "gen": "Here is the **minimal fix** to add the `CreateDate` field to the `list_groups` response in the moto library:\n\n---\n\n### \u2705 **File to Edit**:  \n`/workspace/getmoto__moto__4.2/moto/iam/responses.py`  \n**Line**: ~462 (inside the `list_groups` method)\n\n---\n\n### \ud83d\udd27 **Change**:\nLocate the section where the response dictionary is built (typically around `response['Groups'] = [...]`).  \nYou'll see something like:\n\n```python\nresponse['Groups'] = [\n    {\n        'GroupName': group.name,\n        'GroupId': gr",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.1682788178157897,
+   "gen": "You're on the right track! Let's complete the fix step by step.\n\n---\n\n### \u2705 **Step 1: Update `responses.py` to Include `CreateDate`**\n\nOpen the file:  \n`/workspace/getmoto__moto__4.2/moto/iam/responses.py`\n\nLocate the `list_groups` method (around line 462). It likely looks something like this:\n\n```python\ndef list_groups(self):\n    groups = self.iam_backend.list_groups()\n    return json.dumps({\n        \"Groups\": [\n            {\n                \"GroupName\": group.name,\n                \"GroupId\": g",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

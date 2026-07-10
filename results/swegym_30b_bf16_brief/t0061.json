@@ -1,0 +1,160 @@
+{
+ "idx": 61,
+ "meta": {
+  "n_tokens_full": 12725,
+  "cut_msg": 26,
+  "n_ctx_tokens": 8703
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 111,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 211,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.5989822926124955,
+   "gen": "The `param.py` file is responsible for handling parameter dependencies in DVC. The issue likely lies in how parameters are parsed from Python files. The `read_params` method uses `dpath.util.get` to retrieve parameters from the configuration, but it might not be handling negative numbers correctly when reading from Python files.\n\nLet's check the `dvc/utils/serialize/_py.py` file, which is likely responsible for parsing Python files.\n\n<function=str_replace_editor>\n<parameter=command>view</paramet",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.8880042319439277,
+   "gen": "The issue lies in the `read_params` method of `ParamsDependency` class in `/workspace/iterative__dvc__2.8/dvc/dependency/param.py`. This method uses `dpath.util.get` to retrieve parameters from the config dictionary, but it does not handle the case where a parameter value is a negative number in a Python file.\n\nThe problem is that when parsing a Python file, the `LOADERS` dictionary in `dvc/utils/serialize.py` uses `ast.literal_eval` to parse the file, which can fail for negative numbers if the ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.8259731862389793,
+   "gen": "The `ParamsDependency` class in `dvc/dependency/param.py` is responsible for reading and validating parameters from files. The issue appears to be in how the file is parsed, particularly in the `_read` method, which uses `LOADERS` to determine the appropriate loader based on the file's suffix.\n\nLet's check the `LOADERS` dictionary to see how Python files are handled. The loader for `.py` files might not be properly configured to parse Python code correctly, especially for negative numbers.\n\n<fun",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/layers_30b_bf16.json",
+     "config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "label": "layers_30b_bf16",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.8146865829546058,
+   "gen": "The `ParamsDependency` class in `dvc/dependency/param.py` is responsible for reading and validating parameters from parameter files. The issue appears to be in how the file is parsed, particularly when dealing with Python files.\n\nThe key method here is `_read()`, which uses `LOADERS` to determine the appropriate loader based on the file's suffix. The `LOADERS` dictionary likely includes a loader for `.py` files, but it may not be correctly handling negative numbers.\n\nLet's check the `LOADERS` di",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -2.09168561045711,
+   "gen": "It sounds like you've identified a **bug in DVC (Data Version Control)** related to **parameter parsing in Python files**, specifically when **negative numbers** are used. Let's walk through what\u2019s likely happening, how to diagnose it, and how to fix it.\n\n---\n\n### \ud83d\udd0d **Problem Summary**\n- You're using DVC with Python parameter files (e.g., `params.py`).\n- When a parameter has a **negative value** (e.g., `learning_rate = -0.01`), DVC **fails to detect or parse** it correctly.\n- This breaks reprodu",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -1.9686585171451385,
+   "gen": "You're on the right track! Let's break down the next steps to **diagnose and fix** the issue where **negative numbers in Python parameter files are not being recognized** by DVC.\n\n---\n\n### \ud83d\udd0d **Root Cause Analysis (Likely Culprits)**\n\nThe most common reasons negative numbers aren't being parsed correctly in DVC are:\n\n1. **Incorrect file format parsing** (e.g., treating `.py` files as raw text instead of Python code).\n2. **Using `eval()` or `ast.literal_eval()` without proper handling of negative ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+   "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+   "champion_label": "layers_30b_bf16",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/layers_30b_bf16.json",
+     "champion_config_sha256": "3d7d244162554522e9ff2eb5c5c99bdf1cef5b33168b967efa108cce33ddd6a2",
+     "champion_label": "layers_30b_bf16"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T02:00:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "2af8702d08d8",
+   "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

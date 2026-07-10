@@ -1,0 +1,110 @@
+{
+ "idx": 199,
+ "meta": {
+  "n_tokens_full": 11666,
+  "cut_msg": 12,
+  "n_ctx_tokens": 7754
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 546,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 114,
+ "arms": {
+  "A": {
+   "tf_mean": -0.5017095006453989,
+   "gen": "The script executed without any errors, which is expected since it's just a Python file and not being checked by mypy. Let's now run mypy on this file to reproduce the error.\n\n<function=execute_bash>\n<parameter=command>python3 /workspace/python__mypy__0.920/mypy/__main__.py --show-traceback /workspace/python__mypy__0.920/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.7861356294384857,
+   "gen": "The script executed successfully without any runtime errors, as expected. This is because the issue is not a runtime error but a type-checking error in `mypy`. The error occurs when running `mypy --show-traceback reproduce_error.py`, not when running the script directly with `python3`.\n\nNow, let's run `mypy` on the script to reproduce the error.\n\n<function=execute_bash>\n<parameter=command>mypy --show-traceback /workspace/python__mypy__0.920/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.7112324301786406,
+   "gen": "The script executed without errors, which is expected since the issue is a mypy type-checking error, not a runtime error. Now, I will run mypy on the script to reproduce the crash.\n\n<function=execute_bash>\n<parameter=command>mypy --show-traceback /workspace/python__mypy__0.920/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -2.0314950887587453,
+   "gen": "To fix the crash in mypy 0.920+dev when processing a protocol member with a **contravariant type variable** (specifically in an `@overload` method), we need to address the root cause: **infinite recursion in `is_protocol_implementation`** due to improper handling of contravariant type variables during protocol member type inference, leading to `inst` or `temp` being `None` in `mypy/constraints.py` at line 447.\n\n---\n\n### \u2705 **Root Cause Summary**\n- A protocol member uses a **contravariant type var",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -2.192295536218337,
+   "gen": "After analyzing the crash and the call stack, the root cause is clear: **infinite recursion in `is_protocol_implementation` due to improper handling of contravariant type variables in protocol members during constraint inference**. The assertion `assert inst is not None and temp is not None` fails because the recursive type inference loop never terminates, leading to `None` values being passed where valid types are expected.\n\nHere\u2019s the **minimal, non-test-related fix** that resolves the crash:\n",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

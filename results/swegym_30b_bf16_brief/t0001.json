@@ -1,0 +1,45 @@
+{
+ "idx": 1,
+ "meta": {
+  "n_tokens_full": 12337,
+  "cut_msg": 12,
+  "n_ctx_tokens": 8944
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "bfloat16",
+ "summary_tokens": 131,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 59,
+ "arms": {
+  "A": {
+   "tf_mean": -0.032661401590796085,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/rds/responses.py</parameter>\n<parameter=view_range>[584, 590]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.051441492288600274,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/rds/responses.py</parameter>\n<parameter=view_range>[584, 590]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.05794929858542887,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__4.1/moto/rds/responses.py</parameter>\n<parameter=view_range>[584, 590]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -3.0816030930069136,
+   "gen": "You're on the right track identifying the issue in your mock AWS RDS implementation using the `moto` library. The problem is that `describe_db_clusters` currently only checks for direct matches in the clusters dictionary, but **does not handle ARNs (Amazon Resource Names)** properly.\n\n### \u2705 Problem Summary:\nWhen you pass an **ARN** (e.g., `arn:aws:rds:us-east-1:123456789012:cluster:my-cluster`) to `describe_db_clusters`, the code tries to find a cluster with that exact string as the identifier \u2014",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -3.0975133592687887,
+   "gen": "You're absolutely right in identifying the core issue: the `describe_db_clusters` method currently only checks for direct matches in the clusters dictionary, but it doesn't handle ARNs properly. Here's how to fix it:\n\n## Solution: ARN Parsing and Lookup\n\nThe key is to parse the ARN to extract the cluster identifier and then perform the lookup. Here's the corrected implementation:\n\n```python\nimport re\n\ndef describe_db_clusters(self, cluster_identifier=None, filters=None):\n    \"\"\"\n    Describe DB ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ }
+}

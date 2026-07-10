@@ -1,0 +1,110 @@
+{
+ "idx": 65,
+ "meta": {
+  "n_tokens_full": 7531,
+  "cut_msg": 12,
+  "n_ctx_tokens": 5533
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 605,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 428,
+ "arms": {
+  "A": {
+   "tf_mean": -0.33783410819116927,
+   "gen": "The script confirms the issue: `to_snake(\"HTTPResponse\")` returns \"httpresponse\" instead of the expected \"http_response\".\n\n### Analysis of the `to_snake` Function\n\nThe current implementation of `to_snake` in `alias_generators.py` is:\n\n```python\ndef to_snake(camel: str) -> str:\n    \"\"\"Convert a PascalCase or camelCase string to snake_case.\n\n    Args:\n        camel: The string to convert.\n\n    Returns:\n        The converted string in snake_case.\n    \"\"\"\n    snake = re.sub(r'([a-zA-Z])([0-9])', lam",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.42000706260246096,
+   "gen": "The error has been reproduced successfully. The `to_snake(\"HTTPResponse\")` function returns `\"httpresponse\"` instead of the expected `\"http_response\"`. This confirms that the `to_snake` function does not handle consecutive uppercase letters correctly.\n\n### Root Cause\nThe current implementation of `to_snake` uses two regex substitutions:\n1. `re.sub(r'([a-zA-Z])([0-9])', lambda m: f'{m.group(1)}_{m.group(2)}', camel)` \u2014 This handles digits after letters.\n2. `re.sub(r'([a-z0-9])([A-Z])', lambda m: ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.4001383622170848,
+   "gen": "The script confirms the issue: `to_snake(\"HTTPResponse\")` returns \"httpresponse\" instead of the expected \"http_response\". The problem lies in the `to_snake` function not handling consecutive uppercase letters correctly.\n\n### Fix Plan\n\n1. **Modify `to_snake` Function**: Add a regex substitution to handle consecutive uppercase letters by inserting underscores between them. For example, \"HTTP\" should become \"http\", and \"HTTPResponse\" should become \"http_response\".\n\n2. **Update the `to_snake` Functi",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -0.9734646573498701,
+   "gen": "# Fix for `to_snake` and `to_camel` Alias Generators\n\n## Problem Analysis\n\nThe current `to_snake` function in `pydantic/alias_generators.py` fails to handle consecutive uppercase letters correctly. For example:\n- `HTTPResponse` \u2192 `httpresponse` (incorrect)\n- Expected: `http_response`\n\nThis happens because the existing regex pattern only handles lowercase/numeric followed by uppercase letters, but doesn't account for sequences of uppercase letters that should be split.\n\n## Solution\n\nI'll modify t",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -0.8687924115910299,
+   "gen": "You're on the right track with identifying the core issue: **`to_snake` fails to handle consecutive uppercase letters** (like `HTTP`, `XML`, `JSON`) properly. The current regex only splits on lowercase/numeric \u2192 uppercase transitions, but not uppercase \u2192 uppercase.\n\n---\n\n### \u2705 **Fix: Update `to_snake` to Handle Consecutive Uppercase Letters**\n\nWe need to **insert underscores before uppercase letters that follow another uppercase letter**, unless the uppercase letter is part of a word boundary (e",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

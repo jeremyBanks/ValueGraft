@@ -1,0 +1,110 @@
+{
+ "idx": 103,
+ "meta": {
+  "n_tokens_full": 8951,
+  "cut_msg": 6,
+  "n_ctx_tokens": 7548
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "summary_tokens": 560,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 332,
+ "arms": {
+  "A": {
+   "tf_mean": -0.5215690062827542,
+   "gen": "I've examined the repository structure and identified the issue. The problem is in the `percentile` function in `/workspace/Project-MONAI__MONAI__0.9/monai/transforms/utils_pytorch_numpy_unification.py`. The error occurs because when converting the percentile values `q` to a PyTorch tensor, the dtype is not being preserved from the input tensor `x`.\n\nLooking at the code:\n```python\nq = torch.tensor(q, device=x.device)\nresult = torch.quantile(x, q / 100.0, dim=dim, keepdim=keepdim)\n```\n\nThe issue ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B": {
+   "tf_mean": -0.725892869354259,
+   "gen": "The issue is confirmed: in the `percentile()` function, line 110 creates the `q` tensor without explicitly setting its dtype to match `x.dtype`, which causes a `RuntimeError` when `x` has a different dtype (e.g., float64). The fix is to modify line 110 to include `dtype=x.dtype` in the `torch.tensor()` call.\n\nI will now apply the fix using `str_replace_editor`:\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/Project-MONAI__MONAI__0.9/monai/tra",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "E-tuned": {
+   "tf_mean": -0.6931027043501153,
+   "gen": "The issue is in the `percentile` function in `utils_pytorch_numpy_unification.py`. The current implementation creates the `q` tensor without explicitly setting its dtype to match `x.dtype`, which causes a `RuntimeError` when `x` has a different dtype (e.g., float64). The fix is to modify line 110 to include `dtype=x.dtype` when creating the `q` tensor.\n\nHere\u2019s the fix:\n- Change `q = torch.tensor(q, device=x.device)` to `q = torch.tensor(q, device=x.device, dtype=x.dtype)`.\n\nThis ensures that `q`",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "B-min-pack": {
+   "tf_mean": -1.294844661284254,
+   "gen": "Here is the **corrected and minimal fix** for the PyTorch-Numpy unification error in `monai/transforms/utils_pytorch_numpy_unification.py`, along with a **test script** to verify the fix using the provided test case.\n\n---\n\n### \u2705 **Fix: Update `percentile()` function**\n\nOpen the file:  \n`monai/transforms/utils_pytorch_numpy_unification.py`\n\nLocate the `percentile()` function (lines ~80\u2013112).  \n**Change line 110** from:\n\n```python\nq = torch.tensor(q, device=x.device)\n```\n\nto:\n\n```python\nq = torch.",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  },
+  "H-pack": {
+   "tf_mean": -1.0823341874975225,
+   "gen": "Here's the corrected implementation of the `percentile` function in `monai/transforms/utils_pytorch_numpy_unification.py`, with the fix applied:\n\n```python\ndef percentile(x: torch.Tensor, q: Union[float, Sequence[float]], dim: Optional[Union[int, Sequence[int]]] = None, keepdim: bool = False) -> torch.Tensor:\n    \"\"\"\n    Compute the q-th percentile of the input tensor along the specified dimensions.\n\n    Args:\n        x: Input tensor.\n        q: Percentile(s) to compute, in the range [0, 100].\n ",
+   "gen_first_cmd": "",
+   "repeats_failed": false
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "note": "E-tuned here = SCALAR value-graft at alpha=0.750; it is NOT the per-layer/per-head tuned champion. Other arms scored: A(full), B(compacted), B-min-pack, H-pack."
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "prod",
+   "summary_request_sha256": "ace34be8252b488bb80d64cd11dafd2fd908c6c3357e837dbcbc6e75b8655cfb",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1",
+   "n_requested": 75,
+   "instance_ids": null
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-09T20:11:53Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "71378ec216b5",
+   "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.5.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}
