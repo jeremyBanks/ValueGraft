@@ -1,351 +1,237 @@
-# ValueGraft: value-only write-time KV grafting does not reliably recover meaning lost to compaction — a bounding result and a postmortem
+# Re-injecting write-time attention values across a compaction boundary: a mostly-null bounding result
 
-*Draft, 2026-07-09. This document has two intertwined layers: (1) the technical result — a
-placebo-controlled bound showing value-only write-time KV grafting is, at bf16, null-to-harmful for
-recovering summarization-lost meaning on synthetic probes, with a single small positive on real coding
-trajectories; and (2) a postmortem of how the project reached that result, because the way it went
-wrong is itself the more transferable contribution. Every headline number is bf16, value-only, and
-CI'd; 4-bit results are labeled SUPPLEMENTAL; the honesty/H-pack result is a SUPPORTING sidelight, not
-a ValueGraft claim.*
+*By Anthropic Claude Fable 5 and OpenAI GPT 5.5, with guidance from Jeremy Banks and assistance from Anthropic Claude Opus 4.8, Anthropic Claude Sonnet 5, and Google Gemini Pro 3.1.*
 
 ---
 
 ## Abstract
 
-Production LLM agents compact long conversations by replacing history with a model-written summary,
-which discards the write-time key/value (KV) cache state that conditioned the model's behavior. We
-asked whether **grafting the write-time summary-token *values* back into a freshly-prefilled compacted
-context** (keys untouched — "ValueGraft," value-only, α_K=0) recovers the accuracy lost to that
-summarization. It largely does not. On a preregistered, placebo-controlled bf16 test over synthetic
-planted facts, the value-only graft is **content-specific and non-destructive** (it beats a
-norm-matched random-value graft with wide margins) but **statistically indistinguishable from plain
-compaction** — the effect versus baseline is null on two bf16 models, and significantly *negative* on
-three of four additional architectures. The single positive we found that is simultaneously bf16,
-value-only, and correctly-armed is on **real SWE-Gym coding trajectories**: the graft improves the
-teacher-forced logprob of the gold next action by **+0.0156 nats (95% CI [+0.005, +0.027])**, ~9.5% of
-the full-context headroom, and changes the greedy generation on 49 of 75 tasks — but this is
-next-token prediction, not task success, and it holds only under a terse baseline-handicapping summary,
-not a production-faithful one. The synthetic recovery probe that drove most of the project **disagrees
-with the real-task data**; that instrument dissociation is a genuine methodological finding. The second
-half of this paper is a candid account of how an improvised, under-specified research process produced
-a sequence of headlines that each dissolved under its own controls, and what a reader can take from it.
+When a long conversation is compacted — the history replaced by a short summary and the most recent messages, then re-encoded — the key/value (KV) attention state the model had built up while *generating* that history is discarded and rebuilt from the summary text. We asked a narrow, concrete question: does that discarded write-time state contain recoverable meaning that the re-encoded summary loses? Concretely, if we copy the model's original write-time attention **values** (the V vectors, leaving the keys untouched) back onto the summary tokens of the freshly compacted cache, does the model predict the true continuation better than it does from plain compaction?
+
+The short answer is: almost never, and only under one narrow condition. Across a held-out, placebo-controlled test set, four tuned variants of the graft (per-layer, per-head, their intersection, their union) all failed to beat the plain compacted baseline on the recovery metric — every confidence interval spanned zero. A dedicated compression sweep, built to test the natural hypothesis that the graft should help more when the summary is more lossy, found the opposite of a signal: the graft was flat and slightly *negative* across four compression levels, even as the amount of meaning the summary evicted more than doubled. The one place a positive effect survived its controls was on real coding-agent trajectories (SWE-Gym), under aggressively short summaries, measured as teacher-forced next-action log-probability — a proxy, not task success: there the plain graft recovered about +0.013 nats/token (95% CI [+0.002, +0.026]), and the tuned variant neither beat it nor cleared zero on its own. Under realistic-length summaries the same coding effect vanished.
+
+One property is worth stating carefully: the graft is *content-specific* wherever it touches enough of the cache. Injecting the correct write-time values is reliably, and for slot-heavy configurations dramatically, better than injecting shuffled or energy-matched random values into the same slots (the effect scales with the number of grafted slots, and is itself null for the smallest configuration). So the values do carry information tied to the right content — the intervention is not vacuous. But that advantage is entirely a matter of *not* inflicting the harm a wrong graft causes; it never converts into out-performing the re-encoded summary the model already has.
+
+We report this as a bound with one small, narrow positive, and we spend the second half of the paper on the process — a measurement-provenance failure that briefly manufactured a false headline, and the "chase the number that still looks alive" dynamic that produced several others — because those lessons transfer further than the bound does.
 
 ---
 
-# Part I — The science
+# Part I — What we tested and what we found
 
-## 1. Setup
+## 1. Background and the question
 
-### 1.1 The intervention
+Production LLM assistants keep conversations inside a fixed context window by *compacting*: at some threshold the client replaces `[system][long history]` with `[system][short summary][verbatim recent tail]` and re-encodes that shorter prompt. The summary is text; the model re-reads it from scratch. Everything the model had computed internally while producing the original history — in particular, the per-layer, per-position key and value vectors in its attention cache — is thrown away and never reconstructed, because the tokens that produced it are gone.
 
-At a compaction boundary, a production client replaces `[system][long history]` with
-`[system][summary-as-context-note][verbatim recent tail]` and re-prefills. This is our baseline **B**
-(fresh-compacted). The oracle **A** is the full uncompacted context. **ValueGraft (arm E)** starts from
-B's fresh cache, keeps the fresh keys bit-identical (α_K = 0), and blends *only the values* at aligned
-summary-token positions:
+There is a folk intuition, and some adjacent published work (KV-cache editing and composition, "gist" and "beacon" summary-token compression, prefill note-taking), that this write-time state is not fully recoverable from its own textual summary — that generating a summary and then reading it back are not the same, internally. If that were true and the lost part were *useful*, then re-injecting the write-time state at the compaction boundary would be a cheap way to recover continuity that the summary drops.
 
-```
-V[new_idx] ← (1 − α_V)·V_fresh + α_V·V_write_time     (keys untouched)
-```
+We tested the most targeted version of that idea we could construct, and we tested it hard enough to know whether it works. It mostly does not. This paper is the negative space around a plausible technique, mapped carefully, plus the single narrow regime where a small real effect survives.
 
-verified in `src/kvlib_hf.py:blend_values` (keys are never modified) and driven at α_V = 0.75. This is
-the method the project is named after: **value-only, in the production compacted layout.**
+A note on framing, since a reader will reasonably wonder why a null is worth writing down. The intervention is simple enough that "someone must have tried this" is the default assumption; three independent literature searches did not turn up this exact composite (write-time **value** retention with fresh keys, evaluated as semantic continuity across a summarization boundary). So the contribution here is not a method — it is a carefully controlled measurement of whether an obvious-looking method does anything, with the provenance discipline to make the answer trustworthy.
 
-Two things are *not* ValueGraft and must be kept distinct throughout:
+## 2. Method
 
-- **H-pack** — retains write-time keys (re-rotated) **and** values in a packed `[sinks][summary]`
-  layout with **no conversation tail** (`src/arms.py:arm_h_pack_snapshot`). In (α_K, α_V) terms this is
-  a **coupled full KV-graft (α_K = 1, α_V = 1) in a non-production layout.** It is a different
-  intervention on two axes at once (keys *and* layout). All "honesty" results below use H-pack; they
-  are a SUPPORTING sidelight (§4), never a ValueGraft claim.
-- **Placebo (P)** — the same grafted positions filled with a seeded, norm-matched *derangement* of the
-  source values (right magnitude, wrong content). This is the negative control that tells us whether
-  any E-vs-B movement is content-carried or just a perturbation.
+This section is deliberately detailed: a motivated reader should be able to reconstruct every experiment from the prose, because the result rests entirely on the controls being what we say they are.
 
-### 1.2 Precision and hardware (stated up front, because it is load-bearing)
+### 2.1 The intervention: a value-only graft in the production compacted layout
 
-The project ran on two non-interchangeable runtimes:
+Fix a single model, **Qwen3-30B-A3B-Instruct-2507** (the non-thinking, instruction-tuned, date-stamped checkpoint; a different checkpoint from the same-sized "thinking" variant, a distinction that cost us hours once and is load-bearing), loaded in **bfloat16** (bf16). All headline numbers in this paper are from this model at this precision; the precision was read back from a live parameter tensor at run time, not inferred from a directory name, for reasons the postmortem makes painfully clear.
 
-- **Local, 4-bit MLX** (Apple Silicon): the core behavioral evals — the synthetic recovery judging and
-  the honesty experiment — ran here. Model ids carry `mlx-community/…-4bit`. **All 4-bit results are
-  SUPPLEMENTAL** (a smaller, more-quantized reflection of real model behavior) and are labeled as such.
-- **Pods, bf16 HF:** effect_bound, SWE-Gym, cross-arch, and the tuning sweeps ran here at
-  `dtype=bfloat16`. **Only bf16 results can carry a headline.**
+Three cache states are compared, all sharing the same underlying model:
 
-4-bit and bf16 are different models; results are not convertible between them. Every number below is
-tagged. (The reason this warning is first, not a footnote, is §7.)
+- **Full context** — the model prefills the entire uncompacted history. This is the upper reference: what the model would predict if nothing were ever compacted.
+- **Compacted baseline** — the production layout: `[system][summary as a context note][verbatim recent tail]`, freshly prefilled. This is the thing a real client actually runs, and the thing any recovery method must beat.
+- **The value graft** — start from the compacted baseline's fresh cache; keep its keys exactly as they are; and at the summary-token positions, replace the value vectors with a blend of the fresh values and the model's *write-time* values from those same tokens as they were originally generated:
 
-### 1.3 Metrics
+  `V[position] ← (1 − α)·V_fresh[position] + α·V_write-time[position]`, with the keys never touched.
 
-- **raw E−B** on gold-token logprob (teacher-forced) — the robust primary. We retired the earlier
-  mean-of-ratios (E−B)/(A−B) estimator, which is Cauchy-unstable near small denominators and had
-  produced an inflated headline (§8.4).
-- **Judged sense/referent recovery** — an LLM judge scores whether a probe answer recovers the
-  planted meaning (SUPPLEMENTAL: 4-bit only).
-- **Paired bootstrap 95% CIs**, resampled over the clustering unit (cases/tasks), 10k resamples.
+We drive this at α = 0.75 by default (a value picked by tuning, below). Keeping the keys untouched (α_K = 0) is the defining choice: keys carry positional/RoPE-encoded addressing, and mixing write-time keys into a re-encoded layout creates position-mismatch artifacts; values are the content-bearing operand. Restricting to values isolates "is there recoverable *content* in the write-time state" from "can we re-address the cache." The blend is pure tensor surgery on the saved value tensors; an α = 0 graft reproduces the compacted baseline bit-for-bit, which we assert as a plumbing check in every run.
 
----
+There is a related, coarser intervention that retains write-time keys *and* values in a packed layout with no conversation tail. We ran it only as a contrast and it is not the value graft; it appears once here as a footnote-level control and nowhere in the results, to avoid conflating a keys+layout intervention with the value-only one.[^packed]
 
-## 2. The bounding result: value-only recovery is null-to-harmful at bf16
+[^packed]: The packed-KV contrast (write-time keys re-rotated *and* values, in a `[sinks][summary]` layout with no tail) changes two things at once — key content and sequence layout — and lives in a separate line of experiments about honesty-under-compaction, not recovery. We keep it out of the recovery results entirely.
 
-### 2.1 effect_bound — the clean, preregistered, placebo-controlled test
+### 2.2 Aligning write-time positions to compacted positions
 
-`effect_bound` is the cleanest test in the project: four cache states (A/B/E/P) that share
-**bit-identical keys**, teacher-forcing the same pre-divergence gold window on the synthetic
-sense/referent plants, with paired bootstrap CIs. It isolates the value-only graft and nothing else.
+The graft needs to know which position in the write-time cache corresponds to which position in the compacted cache. The summary is generated fresh, so its tokens do not sit at the same absolute positions they occupied at write time, and the two token sequences are not identical. We align them with a positional-within-region difflib match: within the summary region and within the retained tail region separately, matching tokens are paired by longest-common-subsequence and grafted; unmatched tokens are left with their fresh values. We match within regions rather than across the whole sequence to prevent a summary token from being paired to an unrelated tail token that happens to share a subword. An earlier strict exact-span variant was tried and reverted because it breaks on the tokenization of thinking-model self-generated summaries.
 
-| Model (bf16) | n | E−B (recovery) | placebo−B | E−placebo (content-specificity) | Verdict on E−B |
+### 2.3 The corpus, and who or what generated every token
+
+Provenance is the spine of this paper, so we state the origin of each component explicitly.
+
+- **Scenarios and prompts are authored, not model-generated.** The evaluation corpus is a set of synthetic multi-turn conversations built from hand-authored scaffolds: a system prompt, a sequence of user turns, and a set of *planted facts* deliberately placed early in the conversation so that later compaction will evict them. Real user prompts are not model outputs; a result that depended on model-generated prompts would not be measuring what we claim. The scaffolds and plants were authored by directed model assistants under human direction and schema-checked.
+- **The planted facts span six categories**, chosen to separate kinds of evicted meaning: *sense* (the meaning of a term introduced earlier), *referent* (which earlier-decided option a later phrase points to), *stance* (a preference the user expressed), *ruled_out* (an option explicitly rejected), *evicted_fact* (a precise verbatim detail), and *strong_prior* (a code-name that collides with a famous prior meaning). Each plant carries a *probe* and a *gold continuation* that can only be produced correctly if the planted fact survived.
+- **The assistant replies in the conversation body are generated in-context by the test model itself.** This is essential and non-obvious: the graft re-injects the model's *own* write-time values, so the conversation it operates on must be one this model would actually produce. We do not reuse replies written by another model. Each conversation is rendered by the test model growing its own KV cache turn by turn from the shared scaffold. When we discovered (below) that reusing a different model's replies collapses the effect, this stopped being a convenience and became part of the mechanism.
+- **The summary is self-generated by the test model.** At the compaction boundary the model summarizes its own conversation, and that summary is what the compacted baseline re-encodes and what the graft's write-time values come from. This too is load-bearing: a summary written by a *different* model, held fixed and fed to the test model, suppresses the graft to null (measured directly: a fixed foreign summary drove the recovery metric to about +0.004, indistinguishable from zero, while the model's own summary reproduced the development-set effect). The interpretation is that whatever the write-time values carry is the residue of the model's own act of summarizing — the internal computation of compressing *this* history — not anything a summary it merely reads can carry. So "use the model's own summary" is not a knob we tuned for the best number; it is the only condition under which the graft's values are content-specific at all (and the only one under which the development-set showed any recovery signal), and it is also the deployment-realistic one. Note that this makes the model's own summary necessary for the *mechanism* to be present — it does not, as the held-out results below show, make recovery beat the baseline.
+- **The gold continuation is derived from the planted facts and shared across conditions**, not model-generated. Because the recovery metric is a *difference* between two conditions scored on the *same* gold tokens, sharing the target cancels any per-condition advantage in producing the target itself, leaving only the effect of the graft.
+
+The corpus is split once: conversations used to tune the graft (a validation set) are disjoint from the conversations used to evaluate it (held-out c07–c24, eighteen conversations). Every number that decides the result comes from the held-out set.
+
+### 2.4 Metrics, stated as what they are
+
+- **Recovery (the primary metric).** For each plant we teacher-force the shared gold continuation and take the mean per-token log-probability under each cache state. The headline quantity is the graft's lift over the compacted baseline: **recovery = logprob(graft) − logprob(compacted)**, in nats/token. Positive means the graft makes the true continuation more likely than plain compaction does. This is a log-probability proxy for "did the model retain the meaning," not a measure of downstream task success.
+- **Content-specificity.** The same lift, but measured against a *placebo* graft instead of the baseline: **logprob(graft) − logprob(placebo)**. This asks whether it matters that we injected the *correct* write-time values rather than scrambled ones. It is a mechanism check, not a performance measure: a large content-specificity with a null recovery means "the right values move the output, but not toward beating the summary."
+- **Confidence intervals** are percentile bootstraps resampled over **conversations**, not over individual plants. Plants within one conversation share a context and a summary and are correlated; resampling whole conversations is the correct inferential unit and gives wider, properly-sized intervals. We report the conversation-clustered interval as the headline throughout. (An earlier version of this project used a ratio estimator, recovery divided by the full-context-vs-baseline gap; it is Cauchy-unstable near small denominators and produced an inflated early headline. It is retired.)
+
+### 2.5 The placebo battery
+
+The placebo graft is what separates "the right values did something" from "any perturbation did something." We use three constructions, all of which graft *something* into exactly the same positions with the same α, differing only in the source:
+
+- **Position-shuffle** — the correct write-time values, permuted across the grafted positions. Right values, wrong slots.
+- **Cross-probe-shuffle** — values drawn from a *different* conversation's write-time state at the grafted positions. A different, still-structured write-state.
+- **Energy-matched noise** — Gaussian vectors rescaled so each row's norm matches the mean norm of the real grafted block in that layer. Right magnitude, destroyed structure.
+
+If the real graft merely beat zero-magnitude or obviously-broken inputs, that would be uninformative; matching magnitude and structure makes content-specificity a real test.
+
+### 2.6 Tuning the graft, and the four validated variants
+
+A flat α across all layers is the naive form. We also tuned per-layer and per-head **champion** configurations on the validation conversations (disjoint from the held-out set): profiling each layer's marginal contribution to build a per-layer α map (27 of the model's layers receive a nonzero α of 0.75 or 1.0), and profiling each (layer, attention-head) slot to build a per-head mask. This yields four grafts to evaluate on held-out data: **per-layer**, **per-head**, their **intersection** (slots selected by both), and their **union** (slots selected by either). Each is applied identically to the real and placebo grafts, so the content-specificity comparison holds the slots and α fixed and varies only the source values.
+
+### 2.7 The compression sweep
+
+To test whether the graft helps specifically when the summary is *lossy*, we vary only the summary's length/detail budget, holding everything else fixed, across four levels: **ultra** (a one-sentence, ≤25-word note), **brief** (three-to-five sentences, no specifics), **medium** (~150 words), and **realistic** (~300–500 words, the standard "thorough context note"). To make "aggressive vs realistic" a number rather than a label, the harness measures the realized **compression ratio** — clean summary tokens divided by full-context tokens — for every conversation and reports recovery and content-specificity as a function of it.
+
+### 2.8 The coding-trajectory test (SWE-Gym)
+
+Synthetic plants are a controlled but artificial probe. As an out-of-domain check on real content, we use 75 real OpenHands agent trajectories from SWE-Gym. Each trajectory is cut at roughly 75% of its tokens, at a boundary just before an assistant action; the earlier context is compacted (self-generated summary + recent tail) exactly as in the synthetic setting; and we teacher-force the **true next assistant action** and score its mean log-probability. This is explicitly a proxy — next-action predictability, *not* whether a patch is produced or a test passes. We run it in a 2×2: the plain graft (flat α = 0.75) versus the tuned per-layer graft, each under **brief** and under **realistic** summaries.
+
+Every result file and a per-run manifest record, read from the running model: the resolved checkpoint and precision, the graft's identity (flat α, or the champion config with its content hash and label), which summary condition and its exact text hash, the metric definition marked as a proxy, the held-out split, and the code commit. This born-annotated provenance is a direct response to the failure documented in Part II.
+
+## 3. Results
+
+### 3.1 On held-out conversations, no tuned graft beats plain compaction
+
+The four champion variants, evaluated on the eighteen held-out conversations (203 plants) against the plain compacted baseline, all land on zero for recovery:
+
+| Graft variant | Recovery (nats/token) | 95% CI (conversation-clustered) | Verdict |
+|---|---|---|---|
+| Per-head | +0.017 | [−0.027, +0.062] | null |
+| Per-layer | −0.003 | [−0.041, +0.043] | null |
+| Intersection | +0.008 | [−0.032, +0.052] | null |
+| Union | −0.012 | [−0.053, +0.034] | null |
+
+Per-head's point estimate is nominally the highest, but its interval spans zero and overlaps per-layer's completely, so per-head does not reliably beat per-layer; no combination clears the baseline; every interval spans zero. This is the definitive test — tuned on separate data, evaluated held-out, placebo-controlled — and it is null.
+
+Content-specificity, by contrast, is real and often large, and it scales with how many slots the graft touches:
+
+| Graft variant | Content-specificity (graft − placebo) | 95% CI |
+|---|---|---|
+| Intersection (fewest slots) | −0.03 | [−0.10, +0.05] |
+| Per-layer (27 layers) | +0.19 | [+0.12, +0.27] |
+| Per-head | +0.72 | [+0.66, +0.78] |
+| Union (most slots) | +1.08 | [+1.01, +1.13] |
+
+(Values shown against the position-shuffle placebo; the other two placebos give the same ordering and larger margins.) The reading is precise and a little subtle: the more of the cache you graft, the more a *wrong* graft harms, and the more the *right* graft avoids that harm — so injecting the correct values is unambiguously better than injecting scrambled ones. But that advantage is entirely a matter of not-hurting; it never converts into out-performing the summary the model already has. The mechanism is real; the performance is null.
+
+### 3.2 The graft does not concentrate under aggressive compaction — it is flat and slightly negative
+
+The compression sweep was designed to give the graft its best chance: shorter summaries evict more meaning, so there is more for a recovery method to recover. The eviction did grow as intended — the gap between full-context and compacted log-probability more than doubled from the realistic summary to the one-sentence summary. The graft did not follow it:
+
+| Level | Measured compression ratio | Summary length (tokens) | Evicted meaning (full − compacted) | Recovery (graft − compacted) | 95% CI |
 |---|---|---|---|---|---|
-| Qwen3.6-27B | 43 | **+0.017**, CI [−0.033, +0.065] | −0.428, CI [−0.590, −0.276] | +0.445, CI [+0.286, +0.612] | **NULL** |
-| Qwen3-30B-A3B | 43 | **−0.049**, CI [−0.113, +0.014] | −0.177, CI [−0.348, −0.010] | +0.128, CI [−0.028, +0.289] | **NULL** |
+| Ultra (~1 sentence) | 0.009 | ~28 | 1.89 | −0.029 | [−0.068, +0.013] |
+| Brief (3–5 sentences) | 0.037 | ~120 | 1.85 | −0.026 | [−0.072, +0.022] |
+| Medium (~150 words) | 0.083 | ~268 | 1.38 | −0.025 | [−0.067, +0.023] |
+| Realistic (~300–500 words) | 0.259 | ~836 | 0.84 | −0.023 | [−0.070, +0.033] |
 
-Two facts, both preregistered, both robust:
+Recovery is flat across a nearly 30-fold range of compression ratio, sits slightly *below* zero at every level, and its conversation-clustered interval spans zero everywhere. (The most aggressive level is mildly worse: its plant-level interval, which is anti-conservative, actually excludes zero on the negative side, and one category — precise verbatim facts — is significantly *harmed* by grafting under the one-sentence summary, −0.17 [−0.25, −0.09]. Re-injecting write-time values does not help the model reproduce a verbatim string it can no longer see, and slightly displaces it.) Content-specificity stays real and roughly constant (+0.16 to +0.18, interval excluding zero) across all four levels — again, right values beat shuffled values everywhere, and beat the baseline nowhere.
 
-1. **The graft is content-specific and non-destructive.** E ≫ placebo with wide margins (a random-value
-   graft actively *harms*; the aligned graft does not). So the values do carry *something* aligned to
-   the right content — the intervention is not vacuous.
-2. **The graft does not recover.** E − B includes zero on both bf16 models; on the 30B the point
-   estimate is *negative*. Grafting the right values through fresh keys is **statistically
-   indistinguishable from doing nothing (plain compaction)** on this measure.
+This refutes, on this metric and model, the natural hypothesis that motivated the sweep. More eviction does not summon the effect; the graft is null-to-slightly-harmful regardless of how lossy the summary is.
 
-This is the paper's central bf16, value-only result, and it is a **bound, not a win.**
+### 3.3 The one surviving positive: real coding trajectories under short summaries
 
-### 2.2 Cross-architecture: the null is, if anything, harm
+On the 75 real SWE-Gym trajectories, the picture is different and, for the first time, net positive — narrowly, and only in one cell of the 2×2.
 
-The same value-only graft (bf16, native self-generated summary, α_V = 0.75) run across four more
-architectures on the synthetic plants gives raw E−B:
-
-| Model (bf16) | n | E−B | 95% CI | |
+| Summary condition | Graft | Next-action recovery (nats/token) | 95% CI | Trajectories helped |
 |---|---|---|---|---|
-| microsoft/phi-4 | 119 | **−0.064** | [−0.099, −0.027] | harmful (sig) |
-| Qwen/Qwen3-32B | 265 | **−0.064** | [−0.084, −0.045] | harmful (sig) |
-| Qwen/Qwen2.5-32B | 257 | **−0.230** | [−0.276, −0.183] | harmful (sig) |
-| mistralai/Mistral-Small-24B | 120 | −0.012 | [−0.027, +0.002] | null |
+| Brief | Plain (flat α = 0.75) | +0.013 | [+0.002, +0.026] | 46 / 75 |
+| Brief | Tuned per-layer | +0.012 | [−0.001, +0.024] | 48 / 70 |
+| Realistic | Plain (flat α = 0.75) | +0.001 | [−0.013, +0.015] | 39 / 75 |
+| Realistic | Tuned per-layer | — (not run to completion) | — | — |
 
-On three of four architectures the value-only graft **significantly reduces** the gold-token logprob
-relative to plain compaction; on the fourth it is null. Across seven bf16 model runs (the two above
-plus these five, counting the two effect_bound models), **not one shows a significant positive E−B on
-the synthetic recovery task.** The value-only recovery effect, on this instrument, is absent to
-negative. (Cross-arch serves as scale/diversity evidence; it is not placebo-controlled, so it bounds
-direction, not a clean effect size.)
+Three things to read carefully. First, the plain graft under brief summaries clears zero: +0.013 nats/token, interval above zero, a modest majority of trajectories improved. An independent earlier run of this same cell gave +0.016 [+0.005, +0.027]; the effect is small and it replicates. Second, the tuned graft does **not** beat the plain one — on the trajectories where both ran, the head-to-head difference is −0.001 [−0.010, +0.006], flat — and on its own the tuned graft's interval just includes zero. The tuning that was derived on synthetic conversations buys nothing on the coding task; if anything the plain, single-number graft is the more robust form here. Third, under realistic-length summaries the effect is gone (+0.001, spanning zero), consistent with the synthetic compression sweep in direction even though the synthetic sweep never produced a positive at any length. The coding positive lives specifically in the aggressive-compaction, brief-summary regime.
 
----
+We stress what this is not: it is next-action log-probability, a proxy. We did not apply the predicted actions, run the tests, or measure resolve rate. The claim is "the graft makes the model's own next action modestly more predictable under brief compaction on these trajectories," and nothing beyond it.
 
-## 3. The one positive: real coding trajectories (SWE-Gym)
+### 3.4 Concordance with the broader bf16 picture
 
-The only result that is simultaneously **bf16, value-only (α_K = 0, verified), correctly-armed, and
-positive** is on real SWE-Gym coding traces (`run_swegym_hf.py`, `dtype=bfloat16`). Compacting an
-agent's coding history and grafting the write-time summary values back:
+Two earlier bf16 tests, run before the held-out champion validation, point the same way and are worth recording as corroboration rather than as separate headlines. A tightly-controlled four-state test on synthetic sense/referent plants (full / compacted / graft / placebo, bit-identical keys) gave a recovery interval spanning zero on both a hybrid 27B and this 30B, with large positive content-specificity on both — the same "content-specific, non-recovering" signature. And running the same value-only graft across four additional architectures gave recovery that was null on one and significantly *negative* on three (−0.06 to −0.23) — actively harmful. These two tests are less controlled than the held-out validation (they were not the placebo-controlled, tune-then-hold-out design of §3.1–3.2), so we read them only as concordant corroboration, not as primary evidence. Nothing in the wider sweep contradicts the held-out null; if anything the graft is worse on other architectures than on the one it was tuned for.
 
-- **E − B = +0.0156 nats** on the teacher-forced logprob of the gold next assistant turn, **95% CI
-  [+0.005, +0.027]** (paired task bootstrap over n = 75, 10k resamples). **The CI excludes zero.**
-- This is **~9.5%** of the full-context headroom (A − B = +0.164 nats).
-- It is **not render-null**: E's greedy generation differs from B on **49 of 75** tasks (A/B/E are
-  byte-identical on only 9). The graft does change decoded output.
+## 4. What this establishes, precisely
 
-So on real data the value-only graft has a small but genuine effect where it has none on the synthetic
-plants. Three caveats keep it from being a production-faithful win:
+- **On held-out, placebo-controlled synthetic recovery, the value-only graft is null.** No flat or tuned variant beats plain compaction; per-head does not reliably beat per-layer; the result is stable across four grafts and four compression levels. The held-out point estimates range from −0.012 to +0.017, with every interval spanning zero.
+- **The graft is content-specific but non-additive.** For grafts that touch enough of the cache, injecting the correct write-time values beats injecting shuffled or noise-matched values — sometimes by more than a nat, though the effect scales with slot count and vanishes for the smallest configuration — so the values carry content-aligned information. That information does not add over the re-encoded summary. "The write-time state differs from its re-encoding" is true and measurable; "the difference is *useful continuity the summary dropped*" is, on this evidence, not.
+- **There is one small, real, narrow positive.** On real coding trajectories, under aggressively short summaries, the plain graft improves next-action log-probability by about +0.013 nats/token (CI above zero), replicated. It disappears under realistic summaries, the tuned graft does not improve on it, and it is a proxy, not task success. It is bounded to exactly those conditions.
+- **Everything is one model family, bf16, at ~30B, on log-probability proxies.** We make no claim beyond what was measured. We did not demonstrate downstream task improvement, generalization across model families (the cross-architecture evidence is, if anything, adverse), or any effect under realistic-length summaries.
 
-1. **It is next-token prediction, not task success.** The metric is teacher-forced logprob of the gold
-   turn, not unit-test pass rate. The 49/75 changed generations are *different*, not measured as
-   *better*. A 30B rarely solves SWE tasks unaided, and KV-edited inference is slow, so solve-rate was
-   never run at scale (§10).
-2. **It ran under the BRIEF summary, not production.** The on-disk SWE-Gym set predates the
-   production-summary knob and has a **median summary of 112 tokens** (max 272) — the terse,
-   mechanism-isolation, baseline-*handicapping* condition, not the 300–500-word production condenser.
-   A weaker baseline B inflates the headroom the graft can close. **No positive exists under a
-   production-faithful summary.**
-3. **α was fixed at 0.75**, tuned on the (4-bit, synthetic) sweeps — out-of-sample for SWE-Gym, which
-   is to the result's credit, but unswept here.
+## 5. Why a null is the expected result here
 
-Recorded honestly: a real, significant, small effect on next-token prediction of real coding
-continuations, under a handicapped baseline. Not a behavioral recovery claim.
+With the controls in, the null stops being surprising. The compacted baseline already contains the summary as text, and the summary was written by the same model that would receive the graft; a competent summarizer puts the recoverable, decision-relevant content into words. The write-time values at those summary positions are the residue of having computed that same content — genuinely different from a cold re-read (which is why content-specificity is real, and why a foreign or shuffled source collapses it), but largely *redundant* with what the text conveys once the model re-reads it. On the synthetic plants this redundancy is close to total, and it stays that way no matter how terse the summary: the compression sweep made the summary as short as one sentence and evicted more than twice as much meaning, and the graft still recovered nothing. So on this corpus, "how lossy the summary is" is not the missing variable.
+
+The single positive lives on a different axis, and we are careful not to over-explain it. It appears only on the real coding trajectories, and only under brief summaries — but the equally-brief *synthetic* summaries produced no positive at all. So summary terseness is at best necessary and clearly not sufficient; the distinguishing factor is the **domain**. Real long tool-use trajectories differ from short planted-fact conversations in ways we did not isolate — far more context, genuine procedural state, actions rather than recalled facts — and something in that difference leaves a small amount of predictively-useful write-time structure that a brief textual summary drops. We can bound the effect to those conditions; we cannot, from this data, name the mechanism behind it, and we do not claim to.
+
+The composite appears to be largely unexplored in the literature, and after mapping it we can see why it would be easy to leave unwritten: it is a natural thing to try, and on controlled probes it mostly does nothing.
 
 ---
 
-## 4. Supporting and supplemental evidence (explicitly not cornerstones)
+# Part II — How the project reached this, and what went wrong on the way
 
-### 4.1 The honesty / packed-KV sidelight (SUPPORTING; 4-bit; not ValueGraft)
-
-On planted-decoy probes, plain compaction B leads a model to **fabricate** answers about evicted
-details; the **H-pack** arm shifts it toward **admitting** it doesn't know (4-bit: B fabricates 18/24
-decoys on the 4B; H-pack 3/24). This is a real, large behavioral shift — and it is **not a ValueGraft
-result**, for three independent reasons:
-
-- **Wrong arm.** H-pack is packed coupled-KV (α_K = 1, α_V = 1), not value-only.
-- **Layout, not graft, drives it.** B-min-pack (fresh keys, *same packed layout*) captures most of the
-  admission gain; the packed regime is doing the work.
-- **Content is not required.** `H-pack-wrongS`, built from *a different conversation's* summary state,
-  admits **24/24** decoys on both model sizes — as honest as, or more than, the real thing. The behavior
-  is triggered by the packed write-time-state *regime*, not by the values carrying the *right* content.
-
-So the honesty result is a compaction-*regime/calibration* phenomenon (packing summary keys+values with
-sinks and no tail shifts fabrication→admission), 4-bit, layout-driven, content-agnostic. It is
-SUPPORTING at most, and only if the bf16 answer set (`phase2_30b_bf16`, generated but unscored;
-judge queue built) reproduces it — worth the cheap CPU scoring to settle whether it is a quant
-artifact, but never presentable as the value-only method.
-
-### 4.2 Supplemental / mechanism (4-bit unless noted)
-
-- **Judged sense/referent recovery** (the original headline): 4-bit MLX only. SUPPLEMENTAL. Its bf16
-  placebo-controlled version is the effect_bound null (§2.1).
-- **Render fragility:** the judged recovery effect only appears when the model generates its *own*
-  summary at the boundary (native render); a semantically-equivalent supplied summary does not carry
-  it. This is a finding *about the instrument*, and a warning (§8.5).
-- **α / per-layer / per-head / "champion" tuning:** value-only graft strength is dose-dependent and
-  full-strength (α=1) grafting can collapse generation, which per-layer "champion" tuning repairs;
-  these characterize the intervention's damage/robustness surface (tuning dirs bf16 by convention;
-  lower confidence, no in-file model field). Mechanism/trajectory, not effect-size claims.
-- **LongMemEval** fact-retrieval: full-context 52.5% vs 2.8–6.9% for every compacted arm, no arm
-  separation. 4-bit headline; a null that (correctly) redirected effort.
-
----
-
-## 5. What this establishes, precisely
-
-- **Value-only write-time KV grafting does not reliably recover meaning lost to compaction.** At bf16,
-  on synthetic recovery probes, it is content-specific and non-destructive but **indistinguishable from
-  plain compaction (null), and significantly harmful on most architectures.**
-- **The one bf16 value-only positive is small, next-token-only, and baseline-handicapped** (SWE-Gym
-  +0.0156 nats), not a production-faithful behavioral win.
-- **The synthetic recovery probe is the wrong instrument.** The same method, precision, and α is
-  null-to-harmful on synthetic plants and positive on real coding data — the instruments disagree, and
-  the one that matters for the actual goal (production coding compaction) is the real-task one.
-
-### 5.1 Why the null is the *expected* result (prior art)
-
-The bound is mechanistically unsurprising and should be read against the KV-fusion literature. Work on
-splicing precomputed KV across contexts (e.g. **CacheBlend**) finds that you cannot simply reuse
-precomputed cache — you must **recompute a fraction of the KV, and it is the *keys*/attention structure
-that carry the cross-context addressing.** **StreamingLLM / attention sinks** shows how much of
-apparent "memory" behavior is carried by layout and sink tokens rather than content. Both predict that
-grafting *values* through *fresh keys* should fail to restore evicted meaning — which is exactly the
-effect_bound null — and that a packed-sinks layout can change behavior without content (exactly the
-H-pack/wrongS result). Framed this way the negative is grounded and expected, not merely a failure to
-find signal. *(Citations to verify before external release.)*
-
----
-
-# Part II — The postmortem
-
-*This half documents how the project reached the result above. It is included because the process
-failures are more transferable than the bound. The tone is deliberately dry; the failures are not
-redeemed into a growth arc. Where the project's direction was set informally, we describe the intent
-and the mechanism, not the person.*
+*This half documents the process, because the process failures generalize further than the bound. The tone is dry on purpose; the failures are not redeemed into a growth arc. Where direction was set informally, we describe the intent and the mechanism, not the person.*
 
 ## 6. How it was run
 
-This was improvised, intermittently-directed research: the question and its many re-framings were set
-casually and on the fly rather than pinned in a preregistered protocol; there was no up-front block of
-focused time spent building a rigorous measurement framework or an execution plan before spending
-compute; roughly US$300 of pod time was spent; and at each juncture the project **doubled down on
-whatever line still showed a pulse.** That setting is not an aside — it is the mechanism that produced
-most of the failures in §7–§8. Naming it plainly is part of the result.
+This was improvised, intermittently-directed research. The question and its several re-framings were set casually and revised on the fly rather than pinned in a preregistered protocol; there was no up-front block of time spent building the measurement framework before compute was spent; roughly a few hundred dollars of GPU time went through it; and at most junctures the project doubled down on whichever line still showed a pulse. That setting is not an aside — it is the mechanism behind most of the failures below, and naming it is part of the result.
 
-## 7. The split-brain that manufactured a false cornerstone
+## 7. A provenance gap briefly manufactured a false headline
 
-The single most consequential structural failure: the **core behavioral evals ran locally at 4-bit
-MLX**, while the **pods ran bf16 on different harnesses.** The paper's target was bf16 ~30B, so
-everyone assumed the headline evals were bf16. They were not. The scored recovery *and* honesty results
-carry `model = mlx-community/…-4bit`. Yet the provenance ledger and draft labeled the honesty headline
-**bf16** — an unearned precision upgrade on the very number chosen as the cornerstone.
+The single most consequential structural failure was a split between two runtimes. The core behavioral evaluations for a long stretch ran locally in **4-bit** quantization, while the GPU pods ran **bfloat16** on different harnesses. The paper's target was a bf16 ~30B model, so the write-up machinery assumed the headline evaluations were bf16. They were not — the scored recovery and a separate honesty-under-compaction result carried 4-bit model identifiers — and yet a progress ledger recorded a bare "bf16" against them, an unearned precision upgrade on the very numbers chosen as cornerstones. A 4-bit result masqueraded as the bf16 headline for as long as no one read the model field on disk.
 
-The failure chain: (a) two runtimes, non-interchangeable, with the "real" evals on the *wrong* one;
-(b) a ledger that recorded a bare "bf16" with no per-result precision/hardware check; (c) a downstream
-draft built on that label. A 4-bit result masqueraded as the bf16 cornerstone for as long as no one
-read the model field. **Lesson: record precision + hardware + arm-identity per result, from the
-on-disk field, before any number is allowed to be a headline. A bare "bf16" is a landmine.**
+The fix generalized into the discipline this paper is built on: **every result and a per-run manifest record precision, checkpoint, graft identity, summary condition, metric-as-proxy, and split — read from the live model at run time, never inferred from a directory name.** A bare "bf16" attached to a number by convention rather than by measurement is a landmine. Recording the intervention identity per arm is what lets this paper state, cleanly, that the graft named "tuned" on the coding task is a flat-α graft and that the tuned-config graft is a separate, distinctly-recorded arm — a distinction an earlier draft blurred.
 
-## 8. The pattern: each headline dissolved under its own controls
+## 8. The recurring failure: chasing the number that still looked alive
 
-The project produced a sequence of headlines, each of which failed when its controls finally ran. The
-recurring move was **chasing the surviving number**: when a line died, effort pivoted to wherever a
-number still looked alive, rather than concluding.
+Several apparent headlines appeared over the project and each dissolved when its own controls finally ran. The common thread was pivoting toward wherever a number still looked alive instead of concluding.
 
-**8.1 Framing churn.** Base mechanism → "mitigation" → recovery → honesty → negative. External review
-said early that "write-time KV state differs from re-encoded text" is near-self-evident and not a
-contribution. The project re-spun the framing repeatedly instead of concluding; direction was set by
-*what still showed signal*, not by a fixed question.
-
-**8.2 Instrument-hopping.** LongMemEval came back null (§4.2) → dropped, pivot to coding; coding hit a
-capability floor (a 30B rarely solves the tasks, and compaction never failed at the tested granularity,
-so the graft could only "do no harm") → pivot to synthetic chains; the chain recall probe was then
-found **invalid** (it referenced constants from an unrelated task family) → pivot to an
-interpretability side-line. Each hop chased the live number.
-
-**8.3 Arm/method conflation.** A 07-06 arm-vocabulary reframing froze historical arm IDs and made
-"write-time KV" (H-pack, packed keys+values) easy to conflate with "ValueGraft" (value-only). The
-honesty cornerstone was H-pack — a different intervention on two axes — presented as if it spoke to the
-value-only method. **Effect size was treated as validity:** a large, significant number was promoted
-without checking its arm identity or precision. Both were wrong.
-
-**8.4 A statistical artifact as headline.** The recovery effect was estimated with mean-of-ratios
-(E−B)/(A−B), Cauchy-unstable near small denominators; on robust metrics it shrank to a qualitative
-dissociation. An earlier "keys actively hurt" claim was the *same* artifact. A headline lived on an
-unstable estimator for days. **Lesson: pick robust estimators before, not after, the first result.**
-
-**8.5 Render-fragility mistaken for signal.** The recovery effect only reproduces under native
-self-generated summaries, and the strongest version rested on **12 hand-authored conversations on an
-MoE model.** "Native render is the valid measurement" was asserted and large re-rendering work
-motivated on it **before the premise was verified.** A fresh augmentation (more conversations) did not
-carry the effect on the old render. n=12 on a mixture-of-experts model is a thin foundation for a
-headline.
-
-**8.6 Controls run late killed the headlines.** The placebo (effect_bound) and the wrong-source control
-(H-pack-wrongS) — exactly the tests that gate a causal claim — were added *after* the headlines were in
-the draft. Both came back adverse: E−B null vs compaction (recovery), content-agnostic (honesty). Had
-they run first, neither headline would have been written.
-
-**8.7 Process-integrity lapses** degraded the record the project depended on: an autonomy overreach, a
-retroactive misstatement of progress, and a multi-hour model-attribution error in commit trailers.
-Individually minor; together they eroded trust in the running log at the moments it mattered most.
+- **Estimator artifact.** The first strong recovery number came from a ratio estimator (recovery divided by the full-vs-compacted gap) that is unstable near small denominators. On a robust log-probability difference it shrank to a qualitative pattern. A separate "keys actively hurt" claim was the same artifact with the sign flipped. A headline lived for days on an unstable estimator. Robust estimators and the correct clustering unit should be chosen before the first result, not after.
+- **Controls run late.** The placebo battery and the wrong-source controls — exactly the tests that gate a causal claim — were added after headlines were already drafted, and they came back adverse: recovery null against the baseline, content-agnostic where a mechanism had been claimed. Had they run first, the headlines would not have been written. In this final round we ran them first; that is why the result is a clean bound instead of another retraction.
+- **Fragile premises built upon.** The synthetic recovery effect only reproduces under the model's own summary and its own in-context replies, and the strongest development-set version rested on twelve hand-authored conversations on a mixture-of-experts model. "The native render is the valid measurement" was asserted, and substantial re-rendering work was motivated, before the premise was checked; a fresh set of conversations did not carry the effect on the older render. Twelve conversations on one model is a thin base for a headline, and the held-out placebo-controlled test in Part I is what finally settled it — as a null.
+- **Instrument-hopping.** A long-context memory benchmark came back null and was dropped for coding; coding hit a capability floor (the model rarely solves the tasks, and compaction never failed at the tested granularity, so the graft could at best do no harm) and was pivoted to synthetic chains; a chain recall probe was found to reference constants from an unrelated task family and was invalid; effort then moved to an interpretability side-line. Each hop chased the live number rather than accepting the boundary the previous one had drawn.
 
 ## 9. What would have caught each earlier
 
 Derived from the failures, not moralized:
 
-- **One preregistered instrument.** Fix a single measurement — bf16, value-only, real-task,
-  behaviorally scored, pre-committed α — and make the project *that* measurement. Instrument-hopping is
-  a symptom of not having committed to one.
-- **Controls before drafts.** Placebo and wrong-source controls are entry conditions for a claim, not
-  post-hoc robustness checks. No headline until its negative control has run.
-- **Provenance per result.** Precision + hardware + arm-identity stored and checked from the on-disk
-  field for every number. No cross-runtime merging or relabeling.
-- **Robust estimators from the start.** No mean-of-ratios near zero denominators; CI over the correct
-  clustering unit.
-- **No public repo/paper/blog until a result survives its own controls.** Standing publishing
-  infrastructure created sunk-cost pressure to keep *a* headline alive and to relabel rather than retract.
-- **Verify premises before building on them.** "Native render is required" drove large work while
-  unverified; n=12 on an MoE is not a foundation.
+- **One preregistered instrument.** Fix a single measurement — this model, this precision, value-only, a real task, a pre-committed α, a placebo — and make the project *that* measurement. Instrument-hopping is the symptom of never having committed to one.
+- **Controls are entry conditions, not robustness checks.** No headline until its placebo and wrong-source controls have run and passed.
+- **Provenance per result, from the on-disk field.** Precision, hardware, checkpoint, and arm identity recorded and checked for every number; no cross-runtime merging or relabeling.
+- **Robust estimators and the right clustering unit from the start.**
+- **No standing publishing target until a result survives its own controls.** Prebuilt publication infrastructure creates sunk-cost pressure to keep *some* headline alive and to relabel rather than retract.
+- **Verify a premise before building on it.** "The native render is required" drove large work while unverified; it turned out to be true as a mechanism and irrelevant as a rescue, because the effect it enabled was null held-out.
 
-## 10. Honest status and future work
+## 10. Status and future work
 
-**Status.** No robust positive bf16 value-only *recovery* effect exists. What exists is a clean,
-preregistered **bound** (value-only graft is content-specific and non-destructive but not
-distinguishable from plain compaction, and harmful on most architectures), one **small next-token
-positive on real coding data under a handicapped baseline**, and a **methodological caution** that the
-synthetic KV probe does not track the real-task effect. The honesty/packed-KV result is a separate,
-supporting, layout-driven phenomenon, not a ValueGraft claim.
+**Status.** There is no robust bf16 value-only *recovery* effect on held-out synthetic conversations: the graft is content-specific and non-destructive but statistically indistinguishable from plain compaction, and it does not strengthen as compression increases. There is one small, replicated positive — next-action log-probability on real coding trajectories under brief summaries, about +0.013 nats/token — bounded to that regime and measured as a proxy. A related observation — that retaining write-time keys *and* values in a packed layout makes a compacted model admit uncertainty rather than fabricate, though without restoring the evicted facts — is a separate, layout-driven line, not a value-graft claim, and is not part of this result.
 
-**The one decisive open experiment.** Re-run SWE-Gym at **bf16 under the production-faithful summary**
-(not the brief one), with (a) the teacher-forced logprob CI and (b) a **behavioral metric** — ideally
-unit-test solve-rate on a subset, or, if that is too expensive on a 30B, an LLM-judged agreement
-between the *generated* next action and the gold action — across a small α sweep. This is the only test
-that can either (i) yield a production-faithful positive, promoting the SWE-Gym signal from next-token
-to behavioral and from handicapped to production strength, or (ii) show the one real signal dies outside
-the handicapped baseline, which **completes the negative result.** Either outcome is a finish line, and
-this paper stands honestly either way — it can absorb that experiment's result as a strengthening (case
-i) or a closing (case ii) without re-framing.
-
-**What we would not do again.** Run the core evals on a different runtime than the target precision;
-promote a number before checking its arm and precision; build publishing infrastructure before a result
-survives its controls; or keep re-framing a question to fit whichever number is still alive.
+**If this were carried further**, the next steps follow the one live margin, not the dead ones: measure the coding effect as *task success* (apply the action, run the tests, report resolve rate) rather than as log-probability, since a proxy positive is only worth pursuing if it moves the real thing; and characterize the terse-summary regime directly, since that is the only place the write-time state carried anything the text did not. We would not invest further in the synthetic recovery probe as a predictor of real-task behavior — one of the firmer conclusions here is that it does not track it.
 
 ---
 
-*Provenance: every bf16/value-only/CI figure in Part I was recomputed from the on-disk result files and
-arm code (`results/effect_bound/*`, `results/swegym_30b_bf16/t*.json`, `results/cross_arch_done/*`,
-`src/kvlib_hf.py`, `src/arms.py`, `src/run_swegym_hf.py`) for this draft; 4-bit results are labeled
-SUPPLEMENTAL; tuning-dir precision is by naming convention (lower confidence). Prior-art citations are
-to verify before any external release. This draft supersedes the earlier provisional (honesty-led) draft
-preserved in git.*
+## Appendix A — Terminology
+
+We use plain descriptive terms rather than a coined name, because the result does not amount to a technique worth minting vocabulary for. For reference, the local labels used above:
+
+- **Value graft** — the intervention under study: at a compaction boundary, replace the value vectors (not keys) at summary-token positions in the fresh compacted cache with a blend toward the model's original write-time values.
+- **Compacted baseline** — the production layout the graft must beat: system prompt, self-generated summary as a context note, verbatim recent tail, freshly re-encoded.
+- **Recovery** — teacher-forced log-probability of the shared gold continuation under the graft minus under the compacted baseline (a proxy, in nats/token).
+- **Content-specificity** — the same log-probability difference, graft minus a placebo graft (shuffled or noise-matched source values in the same slots).
+- **Champion / tuned graft** — a per-layer or per-head configuration of which slots to graft and at what α, tuned on a disjoint validation set.
+
+## Appendix B — Exact configuration
+
+- **Model:** `Qwen/Qwen3-30B-A3B-Instruct-2507` (non-thinking instruction variant), bfloat16, read from a live parameter tensor at run time.
+- **Held-out evaluation set:** conversations c07–c24 (18 conversations, 203 plants), disjoint from the validation conversations used for tuning.
+- **Graft:** value-only (keys untouched, α_K = 0), aligned by positional-within-region difflib match; flat α = 0.75, or a per-layer α map (27 layers at α ∈ {0.75, 1.0}) / per-head slot mask for the tuned variants.
+- **Summary:** self-generated by the test model; a fixed foreign summary suppresses the effect and is not used for headline numbers.
+- **Placebos:** position-shuffle, cross-probe-shuffle, energy-matched Gaussian noise (per-layer norm-matched).
+- **Estimator:** percentile bootstrap 95% CI resampled over conversations (10,000 resamples); ratio estimator retired.
+- **Compression levels:** ultra / brief / medium / realistic, with measured compression ratios 0.009 / 0.037 / 0.083 / 0.259.
+- **SWE-Gym:** 75 real OpenHands trajectories, cut at ~75% before an assistant action, teacher-forced next-action mean log-probability; brief and realistic summaries; plain and tuned grafts.
