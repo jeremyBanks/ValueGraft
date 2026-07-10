@@ -58,8 +58,8 @@ import provenance as prov
 
 MODEL = os.environ.get("SC_HF_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
 TAG = os.environ.get("SC_SWE_TAG", "30b_bf16")
-N_TRAJ = int(os.environ.get("SC_SWE_N", "75"))
-E_ALPHA = float(os.environ.get("SC_E_ALPHA", "0.75"))
+N_TRAJ = int(os.environ.get("SC_SWE_N") or "75")
+E_ALPHA = float(os.environ.get("SC_E_ALPHA") or "0.75")
 # Summary condition: SC_SUMMARY=brief -> terse mechanism-isolation summary (the
 # condition the +0.0156 anchor result used); default -> SUMMARY_REQUEST_PROD, the
 # production-faithful OpenHands-condenser-style summary (task/state/paths/decisions,
@@ -73,7 +73,7 @@ SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
 # set SC_SWE_MIN_IDX=214 to score a set GUARANTEED disjoint from them (adds
 # INDEPENDENT N to resolve the brief-SWE-Gym positive's sign, not a re-measurement
 # of the same trajectories). Each result records min_idx so disjointness is auditable.
-MIN_IDX = int(os.environ.get("SC_SWE_MIN_IDX", "0"))
+MIN_IDX = int(os.environ.get("SC_SWE_MIN_IDX") or "0")
 PARQUET = os.environ.get("SC_SWE_DATA", "swegym.parquet")
 MAX_TOK, MIN_TOK = 15000, 6000
 
@@ -106,10 +106,10 @@ CHAMPION_CFG = load_champion_graft_cfg(CHAMPION_CFG_PATH)
 ALPHA_SWEEP = [float(x) for x in os.environ.get("SC_E_ALPHAS", "").split(",")
                if x.strip()]
 SWE_PLACEBO = os.environ.get("SC_SWE_PLACEBO", "0") in ("1", "true", "yes")
-PLACEBO_SEED = int(os.environ.get("SC_PLACEBO_SEED", "1234"))
-PROFILE_REGIONS = int(os.environ.get("SC_PROFILE_REGIONS", "0"))
-PROFILE_ALPHA = float(os.environ.get("SC_PROFILE_ALPHA", "1.0"))
-SPLIT_SEED = int(os.environ.get("SC_TRAJ_SPLIT_SEED", "20260710"))
+PLACEBO_SEED = int(os.environ.get("SC_PLACEBO_SEED") or "1234")
+PROFILE_REGIONS = int(os.environ.get("SC_PROFILE_REGIONS") or "0")
+PROFILE_ALPHA = float(os.environ.get("SC_PROFILE_ALPHA") or "1.0")
+SPLIT_SEED = int(os.environ.get("SC_TRAJ_SPLIT_SEED") or "20260710")
 
 
 def traj_split(idx):
