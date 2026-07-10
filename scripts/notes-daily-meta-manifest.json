@@ -714,7 +714,7 @@
     },
     "20260709": {
       "note": "notes/20260709.md",
-      "source_count": 27,
+      "source_count": 28,
       "sources": [
         {
           "note": "notes/2026070906-conversation-user-gpt55.md",
@@ -773,55 +773,59 @@
           "blob_id": "9e6462bc1f6d431604d7bae87e0a08aeab6936ae"
         },
         {
-          "note": "notes/2026070920-precision-provenance-audit.md",
+          "note": "notes/2026070920-paper-draft-archived.md",
+          "blob_id": "42210d69eb3c074ec91f3492d14f1531de7d9091"
+        },
+        {
+          "note": "notes/2026070921-precision-provenance-audit.md",
           "blob_id": "1a1d4046722a59154501512fd0de5f045f7f621a"
         },
         {
-          "note": "notes/2026070921-postmortem-cornerstone-conflation.md",
+          "note": "notes/2026070922-postmortem-cornerstone-conflation.md",
           "blob_id": "3f605e5bb61d7043430c2a411de7924f0e5afa0b"
         },
         {
-          "note": "notes/2026070922-fable-continuation-advice.md",
+          "note": "notes/2026070923-fable-continuation-advice.md",
           "blob_id": "b4d568741709658d88b9bd03255b6c971e227256"
         },
         {
-          "note": "notes/2026070923-conversation-user-gpt55.md",
+          "note": "notes/2026070924-conversation-user-gpt55.md",
           "blob_id": "ddee47b99e426236d7baa0f93f0e4eee3d06b7cd"
         },
         {
-          "note": "notes/2026070924-champion-validation-experiment.md",
+          "note": "notes/2026070925-champion-validation-experiment.md",
           "blob_id": "23730c06c36d9df3c6036b64d9239cfca8325185"
         },
         {
-          "note": "notes/2026070925-champion-validation-experiment.md",
+          "note": "notes/2026070926-champion-validation-experiment.md",
           "blob_id": "34e31bb356499611a35462861b8bc99b330424e0"
         },
         {
-          "note": "notes/2026070926-paper-rewrite-guidance.md",
+          "note": "notes/2026070927-paper-rewrite-guidance.md",
           "blob_id": "996534fbe6ce1ae0aa1b3b92e9017a4e4b19b280"
         },
         {
-          "note": "notes/2026070927-per-head-champion-scan.md",
+          "note": "notes/2026070928-per-head-champion-scan.md",
           "blob_id": "634ac522edad0203848a5ff05bea09daed3572fb"
         },
         {
-          "note": "notes/2026070928-verify-provenance-before-claiming-data.md",
+          "note": "notes/2026070929-verify-provenance-before-claiming-data.md",
           "blob_id": "c0bb37e5f0046169568337ea1be3fa09f1ff85bc"
         },
         {
-          "note": "notes/2026070929-plan-dont-chase-the-quick-win.md",
+          "note": "notes/2026070930-plan-dont-chase-the-quick-win.md",
           "blob_id": "5d33b01898c2448fd6e4c3909bb3e651d1bf4726"
         },
         {
-          "note": "notes/2026070930-memory.md",
+          "note": "notes/2026070931-memory.md",
           "blob_id": "68af5eb88cb94a5b233ff2090034892f1ebd52cd"
         },
         {
-          "note": "notes/2026070931-provenance-ledger.md",
+          "note": "notes/2026070932-provenance-ledger.md",
           "blob_id": "876b5d3ff65025df0dd1fea66fa700cd5f020249"
         },
         {
-          "note": "notes/2026070932-compression-sweep.md",
+          "note": "notes/2026070933-compression-sweep.md",
           "blob_id": "25128b3bc3ae62f7e9322054aaf74d5f481d1355"
         }
       ],
@@ -834,6 +838,7 @@
         "25128b3bc3ae62f7e9322054aaf74d5f481d1355",
         "34e31bb356499611a35462861b8bc99b330424e0",
         "3f605e5bb61d7043430c2a411de7924f0e5afa0b",
+        "42210d69eb3c074ec91f3492d14f1531de7d9091",
         "49b44e8a741ad3bb507be991a56ec0b6ae1f84a0",
         "532d5974a63a88c3d3ff19e054baab17718561d8",
         "5d33b01898c2448fd6e4c3909bb3e651d1bf4726",
@@ -854,7 +859,7 @@
         "e4d1fed4d805ecd0e9329774df5562cf03ab42de",
         "fafe4240f01eb77380e1b8a69dd73461f1ef66e4"
       ],
-      "summary_hash": "ce1605b8e379aa4155d6579ee34b9845e38448d40bcab11003e31a759c3d0a35",
+      "summary_hash": "e08fb90f1a34a090c2aceb51b9a2348943c6f8138882b7d7c20f855cf52b71d5",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
