@@ -798,7 +798,7 @@
         },
         {
           "note": "notes/2026070926-paper-rewrite-guidance.md",
-          "blob_id": "7c10896725f41a371aba869a9ce0d42a3c88bd7a"
+          "blob_id": "996534fbe6ce1ae0aa1b3b92e9017a4e4b19b280"
         },
         {
           "note": "notes/2026070927-per-head-champion-scan.md",
@@ -841,10 +841,10 @@
         "62745bc7c60da2f0347712f39c1129be1c360046",
         "634ac522edad0203848a5ff05bea09daed3572fb",
         "68af5eb88cb94a5b233ff2090034892f1ebd52cd",
-        "7c10896725f41a371aba869a9ce0d42a3c88bd7a",
         "8532de743ff17027251819665e9c70a242620096",
         "876b5d3ff65025df0dd1fea66fa700cd5f020249",
         "8d7163f5c674a3567eea8b18e47a639b86da1470",
+        "996534fbe6ce1ae0aa1b3b92e9017a4e4b19b280",
         "9e6462bc1f6d431604d7bae87e0a08aeab6936ae",
         "b2f2aaeba0b5154c097d23f4f8ea81b21a15f554",
         "b4d568741709658d88b9bd03255b6c971e227256",
@@ -854,7 +854,7 @@
         "e4d1fed4d805ecd0e9329774df5562cf03ab42de",
         "fafe4240f01eb77380e1b8a69dd73461f1ef66e4"
       ],
-      "summary_hash": "3598a74bbb7c9f21d16cf5a72cecffba412efee01d7966470175ea641cfa1d47",
+      "summary_hash": "ce1605b8e379aa4155d6579ee34b9845e38448d40bcab11003e31a759c3d0a35",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
