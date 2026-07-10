@@ -697,64 +697,74 @@
       "archive_timestamp_utc": "2026-07-09T16:12:53Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070920-precision-provenance-audit.md": {
+    "notes/2026070920-paper-draft-archived.md": {
+      "object_id": "42210d69eb3c074ec91f3492d14f1531de7d9091",
+      "archive_timestamp_utc": "2026-07-09T16:12:53Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070921-precision-provenance-audit.md": {
       "object_id": "1a1d4046722a59154501512fd0de5f045f7f621a",
       "archive_timestamp_utc": "2026-07-09T16:24:55Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070921-postmortem-cornerstone-conflation.md": {
+    "notes/2026070922-postmortem-cornerstone-conflation.md": {
       "object_id": "3f605e5bb61d7043430c2a411de7924f0e5afa0b",
       "archive_timestamp_utc": "2026-07-09T16:24:55Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070922-fable-continuation-advice.md": {
+    "notes/2026070923-fable-continuation-advice.md": {
       "object_id": "b4d568741709658d88b9bd03255b6c971e227256",
       "archive_timestamp_utc": "2026-07-09T16:36:49Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070923-conversation-user-gpt55.md": {
+    "notes/2026070924-conversation-user-gpt55.md": {
       "object_id": "ddee47b99e426236d7baa0f93f0e4eee3d06b7cd",
       "archive_timestamp_utc": "2026-07-09T17:44:46.290000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
-    "notes/2026070924-champion-validation-experiment.md": {
-      "object_id": "23730c06c36d9df3c6036b64d9239cfca8325185",
-      "archive_timestamp_utc": "2026-07-09T17:47:47.897907Z",
-      "timestamp_source": "filesystem birth time"
-    },
     "notes/2026070925-champion-validation-experiment.md": {
+      "object_id": "23730c06c36d9df3c6036b64d9239cfca8325185",
+      "archive_timestamp_utc": "2026-07-09T18:09:34Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070926-champion-validation-experiment.md": {
       "object_id": "34e31bb356499611a35462861b8bc99b330424e0",
       "archive_timestamp_utc": "2026-07-09T18:09:34Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070926-paper-rewrite-guidance.md": {
-      "object_id": "fc18fa3279134905d192174647c091033d3178cd",
+    "notes/2026070927-paper-rewrite-guidance.md": {
+      "object_id": "996534fbe6ce1ae0aa1b3b92e9017a4e4b19b280",
       "archive_timestamp_utc": "2026-07-09T18:28:03Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070927-per-head-champion-scan.md": {
+    "notes/2026070928-per-head-champion-scan.md": {
       "object_id": "634ac522edad0203848a5ff05bea09daed3572fb",
       "archive_timestamp_utc": "2026-07-09T19:40:21Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070928-verify-provenance-before-claiming-data.md": {
+    "notes/2026070929-verify-provenance-before-claiming-data.md": {
       "object_id": "c0bb37e5f0046169568337ea1be3fa09f1ff85bc",
       "archive_timestamp_utc": "2026-07-09T19:59:14Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070929-plan-dont-chase-the-quick-win.md": {
+    "notes/2026070930-plan-dont-chase-the-quick-win.md": {
       "object_id": "5d33b01898c2448fd6e4c3909bb3e651d1bf4726",
       "archive_timestamp_utc": "2026-07-09T20:00:55Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070930-memory.md": {
+    "notes/2026070931-memory.md": {
       "object_id": "68af5eb88cb94a5b233ff2090034892f1ebd52cd",
       "archive_timestamp_utc": "2026-07-09T20:01:27Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026070931-provenance-ledger.md": {
-      "object_id": "e13f6f827d1fdc2d7a20a16331ac808af006c72f",
+    "notes/2026070932-provenance-ledger.md": {
+      "object_id": "876b5d3ff65025df0dd1fea66fa700cd5f020249",
       "archive_timestamp_utc": "2026-07-09T20:08:02Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026070933-compression-sweep.md": {
+      "object_id": "25128b3bc3ae62f7e9322054aaf74d5f481d1355",
+      "archive_timestamp_utc": "2026-07-09T21:51:40Z",
       "timestamp_source": "git current-file lifetime"
     }
   }
