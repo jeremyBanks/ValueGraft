@@ -1,50 +1,81 @@
-# In-domain graft optimization on brief-SWE-Gym (design; queued, NOT launched)
+# Brief-SWE-Gym: CONFIRM-then-OPTIMIZE (reconciled combined design; free step DONE)
 
-**Status:** built + committed, NOT launched (balance $0.30; fires only when funded).
-Do not launch; do not touch running pod state files.
+**Status:** built + committed; the paid run is queued, NOT launched (owner fires it).
+The free step 0 is DONE (numbers below). Reconciles the α-sweep/profiling design with
+an independent prioritization: the paper's only fragile claim is the brief-SWE-Gym
+positive (+0.013, N=75, lower bound one resample from zero), so the priority is to
+**resolve that positive's sign** (confirm) before optimizing — via independent new N,
+a near-free discrete task-relevant metric, and the α-sweep in the same run.
+
+## FREE STEP 0 — DONE (0 spend); results
+Backfilled the discrete next-action-match metric on both existing 75-trajectory runs
+(`src/backfill_swegym_action_match.py`, sidecars written; originals not mutated). The
+two runs cover the **same 75 trajectory indices** (test-retest, not independent N).
+
+| Existing run | continuous E−B (logprob) | action-match B | action-match graft | paired discrete (graft−B) |
+|---|---|---|---|---|
+| `swegym_30b_bf16` | +0.0156 [+0.0049, +0.0271] | 37% (28/75) | 39% (29/75) | +0.013 [−0.040, +0.067] |
+| `swegym_30b_bf16_brief` | +0.0133 [+0.0016, +0.0263] | 33% (25/75) | 36% (27/75) | +0.027 [−0.027, +0.080] |
+| **pooled (per-trajectory averaged, denoised)** | **+0.0145 [+0.0040, +0.0257]** | — | — | — |
+
+Reading: the continuous positive **holds and tightens slightly** when the two
+measurements of the same trajectories are averaged (+0.0145, lower bound +0.0040 —
+still one resample from zero). The discrete metric points the **same direction** (the
+graft emits the correct next tool/path/command slightly more often, net +1 and +2
+"fixes minus breaks"), but is **underpowered** at N=75 (paired CIs span 0). Both say
+the same thing: the effect is real-but-fragile and the resolver is **independent N**,
+which only new disjoint trajectories provide. (Every gold turn here happened to be a
+real action, 75/75.)
+
+**Status of the paid run:** queued, NOT launched. Do not touch running pod state files.
 
 ## The gap this closes
 The value graft's *only* net-positive cell is brief-SWE-Gym: flat scalar α=0.75 gives
-next-action recovery **+0.013 [+0.002, +0.026]** (clears 0). But every champion we built
-was tuned on the **synthetic conversation** corpus — the null regime — and transferred
-out-of-domain to SWE-Gym adding nothing (≈ scalar; head-to-head flat). `run_swegym_hf.py`
-had only ever run a single α (default 0.75) plus an optional *transferred* champion. We
-have **never** swept α or profiled per-layer **on coding trajectories**. This optimizes the
-graft in the one regime where it works, and asks: can an in-domain-tuned graft beat the
-naive +0.013, and by how much?
+next-action recovery **+0.013 [+0.002, +0.026]** (clears 0, N=75). The lower bound is one
+cluster-resample from zero; everything else in the paper is comfortably null. So the
+single highest-value move is to **resolve that positive's sign** — which pure optimization
+assumes away. **Confirm before optimize.** Then, in the same run, also learn whether 0.75
+is in-domain-optimal and whether the effect is content-specific and behaviorally real.
 
-## Design
+## Combined design (ONE run, unique stamped dir)
 Hold fixed: Qwen3-30B-A3B-Instruct-2507, bf16, **brief** self-generated summaries, the
-teacher-forced next-action mean-logprob metric (a **proxy**, not resolve rate), the same
-~75% pre-action cut. Vary the graft.
+teacher-forced next-action mean-logprob metric (a **proxy**), the same ~75% pre-action cut.
 
-1. **α-sweep** (cheap, first): value graft at α ∈ {0.25, 0.5, 0.75, 1.0, 1.5} on every
-   trajectory, as score-only arms `E-a{α}`. Answers "is 0.75 optimal on code, or does
-   another α recover more of the gap?"
-2. **Placebo per α**: `P-a{α}` = same grafted slots, source values position-shuffled
-   (seeded, per-trajectory). Content-specificity = `E-a{α} − P-a{α}` — is the coding effect
-   content-carried here, not generic perturbation.
-3. **Per-region layer profiling** (heavier): partition the 48 layers into 8 contiguous
-   fractional-depth regions; graft each region alone at α=1.0 as `R{k}`, giving each
-   region's marginal next-action recovery. A CPU step builds a **SWE-Gym-tuned per-layer
-   champion** = union of the regions with positive **TUNE-split** marginal, then a second
-   harness pass **evaluates it held-out** on the eval split (`E-champion` vs scalar
-   `E-tuned` vs `B`).
-4. **Held-out discipline** (critical at N≈75): every trajectory carries a deterministic
-   `split` = tune|eval from `sha256(seed:idx)` parity. α is *selected* and the layer
-   champion *built* on **tune**; both are *reported* on the **disjoint eval** split. The
-   in-sample (all-trajectory) α curve is also printed, clearly labelled as descriptive, not
-   the held-out claim.
-5. **Provenance**: unique stamped output dir per run; each result records the arm
-   intervention (α or champion path+hash+label), the split, and a born-annotated manifest.
+1. **Independent new N (the confirm).** Score ~150 trajectories **disjoint** from the
+   existing 75: `SC_SWE_MIN_IDX=214` (the existing runs consumed all find_cut-passing
+   indices in [1,213]) → guaranteed-disjoint tail. This adds independent N to the α=0.75
+   arm, tightening its CI to firm the positive or collapse it to a clean null. **Parquet
+   reality:** it holds **491** trajectories, but only ~35% pass the find_cut budget filter
+   (6k–15k tokens with a valid cut), and the existing 75 already took the passers in
+   [1,213]; the disjoint tail (idx 214–490, 277 candidates) yields **~90–100 usable**, not
+   a full 150. `SC_SWE_N=150` is a ceiling; the run takes what passes. ~75 → ~170 total
+   shrinks the CI half-width by roughly a third.
+2. **α-sweep in the same run.** Value graft at α ∈ {0.25, 0.5, 0.75, 1.0, 1.5} as
+   score-only arms `E-a{α}` (share the trajectory's prefill → the extra α are cheap).
+   Answers "is 0.75 in-domain-optimal, or does another α recover more?"
+3. **Placebo per α.** `P-a{α}` = same slots, source values position-shuffled (seeded).
+   Content-specificity = `E-a{α} − P-a{α}`.
+4. **Discrete next-action-match metric** (addresses the paper's biggest caveat without
+   Docker/tests). Parse the free generation of each *generating* arm (baseline, α=0.75,
+   champion) for the emitted **tool / file-path / command** and score whether it matches
+   the true next action when the baseline does NOT (and vice-versa). Recorded per
+   trajectory inline (`arms.<name>.action_match`) plus `gold_action` at the top level.
+5. **Held-out discipline + provenance.** Deterministic `sha256(seed:idx)` tune|eval split
+   per trajectory; α selected / any layer champion built on **tune**, reported on the
+   **disjoint eval**; trajectory-clustered bootstrap CIs; unique stamped dir; born-annotated
+   manifest recording `min_idx`, the arm interventions, and the discrete secondary metric.
+6. **Per-region profiling = OPTIONAL stretch** (`SC_STAGE=full`), only if budget remains
+   after the core: 8 fractional-depth region marginals `R{k}` on the tune split → build a
+   SWE-Gym-tuned per-layer champion (union of positive-tune regions) → a second pass
+   evaluates it **held-out** (`E-champion` vs scalar vs baseline, continuous + discrete).
 
 ### Overfitting caveat (stated honestly)
-Only ~75 trajectories pass the cut, so each split is ~35–40. Selecting α (one global
-scalar) on ~38 and confirming on ~37 is thin but legitimate; a *layer* champion has many
-degrees of freedom, so its held-out eval is the one that matters — an in-sample win that
-does not survive the eval split is overfitting, and the analysis reports it as such. The
-failed synthetic-champion transfer mildly suggests the graft may be **config-insensitive**
-here (α and layer-set barely matter, only the presence of the graft), in which case the
+Even with the new N, per-split counts are modest (~85 each after the tune/eval split).
+Selecting α (one global scalar) is robust to this; a *layer* champion has many degrees of
+freedom, so its held-out eval is the one that matters — an in-sample win that does not
+survive the eval split is overfitting, and the analysis flags it. The failed
+synthetic-champion transfer mildly suggests the graft may be **config-insensitive** here
+(only the presence of the graft matters, not α or layer-set), in which case the honest
 result is "flat — nothing beats the naive scalar." That is a real, reportable outcome.
 
 ## Loss lesson applied
@@ -55,86 +86,128 @@ Every run writes to a **unique, stamped** directory (`results/swegym_tune_<STAMP
 prod-champion data was lost precisely because a re-run reused those paths and a cp-backup
 created a revert path. No in-place overwrite of any prior run.
 
-## Staged cost estimate (one A100 80GB @ ~$1.39/hr)
-The α-sweep, placebo, and region arms are **score-only** (teacher-forced logprob, no
-200-token generation), so they add little on top of the per-trajectory prefills. Rough:
+## Staged cost estimate (one A100 80GB @ ~$1.39/hr; balance $25.30)
+The α-sweep/placebo/region arms are **score-only** (teacher-forced logprob, no 200-token
+generation); only the ~6 primary arms generate (and carry the discrete metric). The
+disjoint core scores ~90–100 new trajectories.
 
-- **Stage `sweep`** (α-sweep + placebo, one pass, analysis): ~75 trajectories × ~60–90 s ≈
-  **1.0–1.5 h ≈ $1.5–2.5**. High-value, do first — it alone answers "is 0.75 optimal / can
-  we beat +0.013 / is it content-specific."
+- **Stage `sweep`** (core: disjoint new N + α-sweep + placebo + discrete, one pass): ~90–100
+  trajectories × ~60–90 s ≈ **1.5–2.5 h ≈ $2–3.5**. This is the priority — it resolves the
+  +0.013 sign, tells us if 0.75 is optimal, gives content-specificity, and the behavioral
+  discrete metric. Comfortably inside $25.
 - **Stage `full`** (adds region profiling in the same first pass + a second held-out
-  champion-eval pass): ~2 passes ≈ **2.5–3.5 h ≈ $4–5** total.
+  champion-eval pass over the same disjoint set): ~2 passes ≈ **3.5–5 h ≈ $5–7** total.
+  Still well inside $25, so `full` is affordable if the owner wants the profiling stretch.
 
 (Estimates; the run prints per-trajectory wall time so the first few calibrate it.)
 
 ## How to run — exact launch commands (ready to fire when funded)
 
-**Stage 1 — α-sweep + placebo (cheapest, do first):**
+**Core (priority) — disjoint new N + α-sweep + placebo + discrete metric:**
 ```bash
 SC_HF_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507 \
 SC_LOAD_DTYPE=bfloat16 \
 SC_SUMMARY=brief \
 SC_STAGE=sweep \
+SC_SWE_MIN_IDX=214 \
+SC_SWE_N=150 \
 SC_E_ALPHAS="0.25,0.5,0.75,1.0,1.5" \
 SC_SWE_PLACEBO=1 \
 scripts/launch_pod.sh swegymtune scripts/job_swegym_tune_bf16.sh
 ```
 
-**Full — α-sweep + placebo + per-region profiling + held-out champion eval:**
+**Full — the above PLUS per-region profiling + held-out champion eval (affordable stretch):**
 ```bash
 SC_HF_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507 \
 SC_LOAD_DTYPE=bfloat16 \
 SC_SUMMARY=brief \
 SC_STAGE=full \
+SC_SWE_MIN_IDX=214 \
+SC_SWE_N=150 \
 SC_E_ALPHAS="0.25,0.5,0.75,1.0,1.5" \
 SC_SWE_PLACEBO=1 \
 SC_PROFILE_REGIONS=8 \
 scripts/launch_pod.sh swegymtune scripts/job_swegym_tune_bf16.sh
 ```
 
-(`launch_pod.sh swegymtune ...` writes `.pod_swegymtune_state.json`; the new knobs are
-forwarded by `launch_pod.sh`. `swegym.parquet` must be staged locally so it rsyncs to the
-pod. Re-running analysis afterward is free: `python3 src/analyze_swegym_tune.py --run
-results/swegym_tune_<STAMP>_brief [--champion-eval results/swegym_champeval_<STAMP>_brief]`.)
+(`launch_pod.sh swegymtune ...` writes `.pod_swegymtune_state.json`; all knobs incl.
+`SC_SWE_MIN_IDX` are forwarded by `launch_pod.sh`. `swegym.parquet` is staged locally and
+rsyncs to the pod. Both `SC_STAGE` values write UNIQUE stamped dirs
+`results/swegym_tune_<STAMP>_brief` / `results/swegym_champeval_<STAMP>_brief` — never the
+existing `swegym_30b_bf16_{brief,prod}`. Re-run analysis anytime for free:
+`python3 src/analyze_swegym_tune.py --run results/swegym_tune_<STAMP>_brief
+[--champion-eval results/swegym_champeval_<STAMP>_brief]`.)
 
-## How to read it
+## Free step 0 — reproduce anytime (0 spend)
+```bash
+uv run python src/backfill_swegym_action_match.py --parquet swegym.parquet \
+  --dirs results/swegym_30b_bf16 results/swegym_30b_bf16_brief
+```
+Writes `action_match_backfill.json` sidecars (originals untouched) and prints the pooled +
+discrete numbers in the table above.
+
+## How to read the paid run
 The analysis prints, for the held-out **eval** split unless noted:
-- **scalar baseline** `E-tuned − B` (all/tune/eval) — the +0.013 to beat.
-- **α curve**: per-α `E-a − B` (in-sample ALL, and held-out EVAL) + content-specificity
+- **scalar baseline** `E-tuned − B` continuous (all/tune/eval) + the **discrete
+  next-action-match** rates (baseline vs graft) and paired difference — the +0.013 to
+  confirm, now with independent N.
+- **α curve**: per-α `E-a − B` (in-sample ALL and held-out EVAL) + content-specificity
   `E-a − P-a`. Then the **α selected on TUNE** and its **held-out EVAL** CI vs scalar 0.75.
 - **region marginals** on TUNE, the champion layer-set built, and (full mode) the
-  **held-out champion**: `E-champion − B` and the paired `E-champion − E-tuned`.
-- **Decision rules**: a tuned α or the layer champion *wins* only if its held-out EVAL CI
-  clears 0 **and** beats scalar; if the head-to-head CI spans 0, the in-domain tuning added
-  nothing and the naive scalar is the robust form — report that plainly.
+  **held-out champion**: `E-champion − B` (continuous + discrete) and paired vs scalar.
+- **Decision rules**: the positive is *confirmed* if the α=0.75 arm's larger-N EVAL CI
+  still clears 0; a tuned α or layer champion *wins* only if its held-out CI clears 0 **and**
+  beats scalar; if head-to-head CIs span 0, the in-domain tuning added nothing and the naive
+  scalar is the robust form — report that plainly.
 
-## Drafted future-work paragraph for the paper's §10 (for review — not yet inserted)
+## Paper update text (for review — NOT inserted; owner finalizes)
 
-> **Optimize the graft where it works.** The one regime where value grafting is net-positive
-> — real coding trajectories under brief summaries — is the one regime we never tuned for.
-> The only grafts we optimized were fit on the synthetic conversation corpus, where the
-> effect is null, and they transferred to the coding task adding nothing over a flat α=0.75.
-> The obvious next experiment is an in-domain one: sweep the graft strength and profile the
-> per-layer contribution directly on held-out coding trajectories, with a shuffled-source
-> placebo and a strict tune/evaluate split, and ask whether a graft fit to this regime beats
-> the naive +0.013 nats/token. We designed and built this optimization but did not run it,
-> and we flag two honest possibilities in advance. It may find a better operating point,
-> tightening a real if narrow effect. Or it may come back flat — the graft largely
-> insensitive to α and layer choice, so that only the presence of the graft matters and the
-> naive scalar is already the best form — which the failure of the synthetic-tuned champion
-> to transfer mildly anticipates. Either way the honest version of this result requires
-> measuring **task success** (apply the action, run the tests, report resolve rate), not the
-> log-probability proxy: an optimized proxy effect is only worth reporting as a technique if
-> it moves the real thing. The narrowness is the point — the value of this direction is in
-> characterizing the one live margin precisely, not in resurrecting the general claim the
-> rest of the paper bounds to null.
+### §3.3 — add after the proxy-caveat sentence (behavioral corroboration from the free step)
+> A behavioral cross-check on the same 75 trajectories, using the free generation rather than
+> the log-probability, points the same way but is underpowered. Parsing each arm's emitted
+> next action (tool, file path, command) and scoring it against the true next action, the
+> graft matches the correct action slightly more often than the compacted baseline (39% vs
+> 37%, and 36% vs 33% across the two runs), with a small positive excess of trajectories the
+> graft gets right and the baseline gets wrong; the paired difference is positive but its
+> interval spans zero at this sample size. This is a weak, same-direction corroboration that
+> the log-probability gain corresponds to occasionally producing the correct next action —
+> not a claim of behavioral significance, which N=75 cannot support.
+
+### §10 — replace the future-work paragraph with confirm-then-optimize
+> **Confirm the one live effect, then optimize it where it lives.** The single fragile claim
+> in this paper is the brief-summary coding positive: at N=75 its interval clears zero only
+> narrowly, and pooling our two measurements of those trajectories tightens the estimate to
+> about +0.0145 nats/token without moving the lower bound far from zero. The first priority
+> is therefore not optimization but *sign resolution* — scoring a set of new coding
+> trajectories disjoint from the original, which adds the independent sample the current
+> estimate lacks and will either firm the effect or collapse it to a clean, complete null.
+> In the same measurement one can also learn whether the graft strength we used out of habit
+> is in fact the in-domain optimum (a strength sweep with a shuffled-source placebo for
+> content-specificity) and whether a graft profiled per-layer directly on coding data beats
+> the naive single-strength graft under a strict tune/evaluate split — noting that the
+> failure of our conversation-tuned configurations to transfer mildly anticipates a flat
+> result, in which case only the presence of the graft matters. We add a behavioral
+> next-action-match metric (does the grafted model emit the correct tool, file, and command
+> when the baseline does not) to make this partly independent of the log-probability proxy
+> without test execution; a fuller version would measure task success directly, which the
+> capability floor of a 30B model on these repairs makes uninformative at any affordable
+> scale. The narrowness is the point: the value is in characterizing the one live margin
+> precisely, not in reviving the general claim the rest of the paper bounds to null.
 
 ## Files
-- `src/run_swegym_hf.py` — score-only α-sweep / placebo / per-region-profile arms;
-  deterministic per-trajectory tune|eval split; manifest records the optimization surface.
-- `src/analyze_swegym_tune.py` — CPU held-out analysis: α curve + tune-select→eval-report,
-  content-specificity, region marginals, champion build, held-out champion eval.
-- `scripts/job_swegym_tune_bf16.sh` — staged job (`sweep` default; `full` adds profiling +
-  held-out champion eval); unique stamped dirs.
-- `scripts/launch_pod.sh` — forwards the new envs (`SC_STAGE`, `SC_E_ALPHAS`,
-  `SC_SWE_PLACEBO`, `SC_PROFILE_REGIONS`, `SC_PROFILE_ALPHA`).
+- `src/swegym_action_match.py` — the discrete next-action-match extractor/scorer (shared by
+  harness, backfill, analysis).
+- `src/backfill_swegym_action_match.py` — free step 0: backfills the discrete metric on
+  existing dirs (sidecars, originals untouched) + prints the pooled test-retest estimate.
+- `src/run_swegym_hf.py` — `SC_SWE_MIN_IDX` disjoint-set control; inline discrete
+  action-match on every generating arm + top-level `gold_action`; score-only α-sweep /
+  placebo / region-profile arms; deterministic tune|eval split; manifest records it all.
+- `src/analyze_swegym_tune.py` — CPU held-out analysis: continuous + discrete scalar
+  baseline, α curve (tune-select→eval-report), content-specificity, region marginals,
+  champion build, held-out champion eval (continuous + discrete).
+- `scripts/job_swegym_tune_bf16.sh` — combined staged job (`sweep` core = disjoint N +
+  α-sweep + placebo + discrete; `full` adds profiling + held-out champion eval); unique
+  stamped dirs, never reuses `swegym_30b_bf16_{brief,prod}`.
+- `scripts/launch_pod.sh` — forwards the new envs (`SC_STAGE`, `SC_SWE_MIN_IDX`,
+  `SC_E_ALPHAS`, `SC_SWE_PLACEBO`, `SC_PROFILE_REGIONS`, `SC_PROFILE_ALPHA`).
+- `results/swegym_30b_bf16{,_brief}/action_match_backfill.json` — free-step sidecars.

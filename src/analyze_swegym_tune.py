@@ -46,7 +46,9 @@ def boot(diffs, n_boot=10000, seed=0):
 
 
 def load_run(run_dir):
-    """Return {idx: {"split":..., "arms": {name: tf_mean}}} for every scored file."""
+    """Return {idx: {"split","arms","amatch"}} for every scored file. `amatch` maps
+    arm -> the composite discrete next-action-match bool (from the inline
+    action_match block the harness records on generating arms)."""
     out = {}
     for f in sorted(glob.glob(str(Path(run_dir) / "t*.json"))):
         try:
@@ -57,8 +59,30 @@ def load_run(run_dir):
                 if isinstance(v, dict) and v.get("tf_mean") is not None}
         if "B" not in arms:
             continue
-        out[d["idx"]] = {"split": d.get("split", "eval"), "arms": arms}
+        amatch = {k: (v.get("action_match") or {}).get("match")
+                  for k, v in (d.get("arms") or {}).items()
+                  if isinstance(v, dict) and v.get("action_match")}
+        gold_has = (d.get("gold_action") is not None)
+        out[d["idx"]] = {"split": d.get("split", "eval"), "arms": arms,
+                         "amatch": amatch, "gold_has_action": gold_has}
     return out
+
+
+def discrete_report(rows, graft="E-tuned", ref="B", split=None):
+    """Discrete next-action-match: match rates + paired (graft-ref) over the
+    trajectories whose gold turn is an actual action, restricted to `split`."""
+    ga = [r for r in rows.values() if r.get("gold_has_action")
+          and (split is None or r["split"] == split)
+          and graft in r.get("amatch", {}) and ref in r.get("amatch", {})]
+    if not ga:
+        return None
+    rm = sum(1 for r in ga if r["amatch"][ref])
+    gm = sum(1 for r in ga if r["amatch"][graft])
+    gwin = sum(1 for r in ga if r["amatch"][graft] and not r["amatch"][ref])
+    rwin = sum(1 for r in ga if r["amatch"][ref] and not r["amatch"][graft])
+    disc = boot([int(r["amatch"][graft]) - int(r["amatch"][ref]) for r in ga])
+    return {"n": len(ga), "ref_rate": rm / len(ga), "graft_rate": gm / len(ga),
+            "graft_fixes": gwin, "ref_breaks": rwin, "paired": disc}
 
 
 def paired(rows, arm, ref="B", split=None):
@@ -116,10 +140,17 @@ def main():
           f"CI=bootstrap over trajectories.\n")
 
     # ---- scalar reference (the +0.013 to beat) ------------------------------
-    print("-- scalar baseline arm E-tuned (flat alpha) vs B --")
+    print("-- scalar baseline arm E-tuned (flat alpha) vs B [continuous logprob] --")
     for split in ("all", "tune", "eval"):
         b = boot(paired(rows, "E-tuned", split=None if split == "all" else split))
         print(f"   {split:5}: {fmt(b)}")
+    # DISCRETE next-action-match (behavioral proxy, addresses the logprob caveat)
+    dr = discrete_report(rows, "E-tuned", "B")
+    if dr:
+        print("   [discrete next-action-match, all]: "
+              f"B={dr['ref_rate']*100:.0f}% E-tuned={dr['graft_rate']*100:.0f}% "
+              f"(fixes={dr['graft_fixes']} breaks={dr['ref_breaks']}) "
+              f"paired={fmt(dr['paired'])}")
     print()
 
     # ---- ALPHA SWEEP --------------------------------------------------------
@@ -205,6 +236,11 @@ def main():
               for r in eval_only.values()
               if 'E-champion' in r['arms'] and 'E-tuned' in r['arms']]
         print(f"   E-champion - E-tuned (paired): {fmt(boot(hh))}")
+        for arm in ("E-tuned", "E-champion"):
+            dr = discrete_report(eval_only, arm, "B")
+            if dr:
+                print(f"   [discrete {arm} vs B]: B={dr['ref_rate']*100:.0f}% "
+                      f"{arm}={dr['graft_rate']*100:.0f}% paired={fmt(dr['paired'])}")
         print("   -> champion BEATS scalar iff this CI clears 0; flat CI = the "
               "in-domain layer tuning added nothing (report either way).")
 

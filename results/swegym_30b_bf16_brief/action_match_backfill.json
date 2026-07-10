@@ -1,0 +1,480 @@
+{
+ "note": "discrete next-action-match backfilled from persisted gen fields (free step 0); originals NOT mutated",
+ "graft": "E-tuned",
+ "ref": "B",
+ "summary": {
+  "continuous_eb": {
+   "n": 75,
+   "mean": 0.013331335522045138,
+   "lo": 0.0015645537346935035,
+   "hi": 0.026336808348697817,
+   "pos": 46
+  },
+  "n_gold_action": 75,
+  "match_rate": {
+   "B": 0.3333333333333333,
+   "E-tuned": 0.36
+  },
+  "graft_fixes": 3,
+  "ref_breaks": 1,
+  "paired_discrete": {
+   "n": 75,
+   "mean": 0.02666666666666667,
+   "lo": -0.02666666666666667,
+   "hi": 0.08,
+   "pos": 3
+  }
+ },
+ "per_trajectory": {
+  "1": {
+   "eb": -0.006507806296828594,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "4": {
+   "eb": 0.10342543314042485,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "5": {
+   "eb": 0.011603793235641924,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "10": {
+   "eb": 0.011656991690632057,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "12": {
+   "eb": -0.020427300063347364,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "14": {
+   "eb": 0.14777335747278997,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": true
+  },
+  "16": {
+   "eb": 0.01795497633822385,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "19": {
+   "eb": -0.02763397730409045,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "23": {
+   "eb": -0.04385749063995048,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "24": {
+   "eb": 0.0009457550443479068,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "25": {
+   "eb": -0.027391504245397047,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "26": {
+   "eb": 0.004230489155082635,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "27": {
+   "eb": -0.06840694341523268,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "35": {
+   "eb": 0.007965361029466676,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "37": {
+   "eb": -0.02235304583530298,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "40": {
+   "eb": 0.09034560044093942,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "42": {
+   "eb": -0.00285515475276088,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "44": {
+   "eb": 0.011589211166433855,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "45": {
+   "eb": -0.027391504245397047,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "47": {
+   "eb": 0.10445758063655144,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "48": {
+   "eb": 0.0382970430338031,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "50": {
+   "eb": 0.2488684175908349,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "51": {
+   "eb": -0.014477658541309557,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "53": {
+   "eb": 0.011213486828999364,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "55": {
+   "eb": -0.0033362929070397396,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "58": {
+   "eb": 0.15805884453778093,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "61": {
+   "eb": 0.06203104570494844,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "64": {
+   "eb": -0.04090173428315337,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "65": {
+   "eb": 0.045070817097627225,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "68": {
+   "eb": 0.026848873612285384,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "74": {
+   "eb": -0.0015881143639502326,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "78": {
+   "eb": 0.013662324169542515,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "80": {
+   "eb": 0.0028251870605916374,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "82": {
+   "eb": -0.06369760209585562,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "83": {
+   "eb": 0.0215441685894531,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "84": {
+   "eb": 0.016099348262514468,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "85": {
+   "eb": -0.022192693057434796,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "86": {
+   "eb": 0.02698668467760082,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": true
+  },
+  "87": {
+   "eb": 0.022357013107526635,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "88": {
+   "eb": 1.688697119917038e-06,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "89": {
+   "eb": 0.0027246411910148566,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "90": {
+   "eb": 0.017599317371600143,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": false
+  },
+  "93": {
+   "eb": 3.0369285996596e-05,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "95": {
+   "eb": -0.04704647283054808,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "97": {
+   "eb": 0.026442360954267302,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "100": {
+   "eb": -0.03521012752862984,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "103": {
+   "eb": 0.039043795564394634,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "107": {
+   "eb": 0.05760125265032601,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "108": {
+   "eb": 0.005573614209870181,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "109": {
+   "eb": 0.036832839365618375,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "110": {
+   "eb": 0.007965361029466676,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "124": {
+   "eb": -0.045581456174250135,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "131": {
+   "eb": 0.03735549500102875,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "146": {
+   "eb": 0.0681219542760251,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "153": {
+   "eb": 0.08211063673056518,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "158": {
+   "eb": -0.04238795131501383,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "169": {
+   "eb": -0.03239065897214788,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "175": {
+   "eb": 0.10065412256753614,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "180": {
+   "eb": 0.01958612689126532,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": true
+  },
+  "187": {
+   "eb": 0.030175201210896785,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "192": {
+   "eb": 0.003243806839400898,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "193": {
+   "eb": 0.043394963053707325,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "195": {
+   "eb": 0.0021599600092127025,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "196": {
+   "eb": -0.028134431673874277,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "197": {
+   "eb": -0.010862819640761745,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "198": {
+   "eb": -0.022854681243364317,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "199": {
+   "eb": -0.025701810050817286,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "201": {
+   "eb": 0.0018238460918807986,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "202": {
+   "eb": -0.1393036827007229,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "206": {
+   "eb": -0.00015057982442223672,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "207": {
+   "eb": 0.044553870022301656,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "208": {
+   "eb": 0.030921562942533454,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "209": {
+   "eb": -0.012184680799962336,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  },
+  "210": {
+   "eb": -0.020873734656081167,
+   "gold_action": true,
+   "ref_match": false,
+   "graft_match": false
+  },
+  "213": {
+   "eb": -0.008176515969039719,
+   "gold_action": true,
+   "ref_match": true,
+   "graft_match": true
+  }
+ }
+}

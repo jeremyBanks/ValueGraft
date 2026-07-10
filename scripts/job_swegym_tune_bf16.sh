@@ -34,7 +34,13 @@ export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:T
 MODEL="${SC_HF_MODEL:-Qwen/Qwen3-30B-A3B-Instruct-2507}"
 export SC_LOAD_DTYPE="${SC_LOAD_DTYPE:-bfloat16}"
 export SC_SUMMARY="${SC_SUMMARY:-brief}"          # the regime the effect lives in
-export SC_SWE_N="${SC_SWE_N:-75}"
+# DISJOINT NEW N to resolve the +0.013 positive's SIGN: the existing two 75-traj
+# runs consumed find_cut-passing indices in [1,213]; MIN_IDX=214 scores a
+# GUARANTEED-disjoint set (independent N, not a re-measurement). The parquet has
+# 491 trajectories but only ~35% pass the find_cut budget filter, so the disjoint
+# tail yields ~90-100 usable (SC_SWE_N is a ceiling; the run takes what passes).
+export SC_SWE_MIN_IDX="${SC_SWE_MIN_IDX:-214}"
+export SC_SWE_N="${SC_SWE_N:-150}"
 export SC_SHARD="${SC_SHARD:-0/1}"
 export SC_E_ALPHAS="${SC_E_ALPHAS:-0.25,0.5,0.75,1.0,1.5}"
 export SC_SWE_PLACEBO="${SC_SWE_PLACEBO:-1}"
@@ -47,7 +53,7 @@ CHAMP="data/champion_configs/swegym_tuned_${STAMP}.json"
 mkdir -p data/champion_configs
 
 echo "START swegym-tune $(date -Is)  model=$MODEL stage=$STAGE summary=$SC_SUMMARY"
-echo "  alphas=$SC_E_ALPHAS placebo=$SC_SWE_PLACEBO regions(full)=$REGIONS stamp=$STAMP"
+echo "  DISJOINT min_idx=$SC_SWE_MIN_IDX n<=$SC_SWE_N alphas=$SC_E_ALPHAS placebo=$SC_SWE_PLACEBO regions(full)=$REGIONS stamp=$STAMP"
 nvidia-smi || true
 for f in /workspace/exp/.hf_key /workspace/exp/.huggingface_key /workspace/.huggingface_key; do
   if [ -f "$f" ]; then export HF_TOKEN; HF_TOKEN="$(tr -d '[:space:]' < "$f")"; break; fi

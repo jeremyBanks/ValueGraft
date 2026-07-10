@@ -53,6 +53,7 @@ from arms_hf import (
 )
 from kvlib_hf import blend_values, rebuild_cache, tf_logprobs
 from cross_arch_probe import load_champion_graft_cfg  # reuse the canonical loader
+from swegym_action_match import extract_action, match_action
 import provenance as prov
 
 MODEL = os.environ.get("SC_HF_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
@@ -67,6 +68,12 @@ SUMM_REQ = SUMMARY_REQUEST_BRIEF if os.environ.get("SC_SUMMARY") == "brief" else
 SUMM_TAG = "brief" if os.environ.get("SC_SUMMARY") == "brief" else "prod"
 _shard = os.environ.get("SC_SHARD", "0/1")
 SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
+# SC_SWE_MIN_IDX: only consider trajectory indices >= this (DISJOINT-SET control).
+# The existing 75-trajectory runs consumed the find_cut-passing indices in [1,213];
+# set SC_SWE_MIN_IDX=214 to score a set GUARANTEED disjoint from them (adds
+# INDEPENDENT N to resolve the brief-SWE-Gym positive's sign, not a re-measurement
+# of the same trajectories). Each result records min_idx so disjointness is auditable.
+MIN_IDX = int(os.environ.get("SC_SWE_MIN_IDX", "0"))
 PARQUET = os.environ.get("SC_SWE_DATA", "swegym.parquet")
 MAX_TOK, MIN_TOK = 15000, 6000
 
@@ -261,9 +268,15 @@ def main():
         corpus={
             "name": "SWE-Gym/OpenHands trajectories",
             "parquet": PARQUET,
-            "split": f"shard {_shard}",
+            "split": f"shard {_shard} min_idx={MIN_IDX}",
+            "min_idx": MIN_IDX,             # DISJOINT-SET control (>=214 => new N)
             "n_requested": N_TRAJ,
             "instance_ids": None,           # filled in the run manifest at the end
+            "secondary_metric": ("discrete next-action-match (tool/path/command "
+                                 "parsed from the free generation vs the true next "
+                                 "action) recorded per generating arm -- a "
+                                 "behavioral check that does NOT need test "
+                                 "execution; addresses the logprob-proxy caveat"),
         },
     )
     print("MANIFEST model.repo_id=%s dtype=%s quant=%s summary=%s alpha=%s "
@@ -288,7 +301,7 @@ def main():
     prov.write_run_manifest(outdir, manifest)
     scored_idxs = []
     done = 0
-    for idx in range(SHARD_K, len(trajs), SHARD_N):
+    for idx in range(max(SHARD_K, MIN_IDX), len(trajs), SHARD_N):
         if done >= N_TRAJ:
             break
         outfile = outdir / f"t{idx:04d}.json"
@@ -307,6 +320,9 @@ def main():
         if built is None:
             continue
         ctx, target, meta = built
+        # DISCRETE next-action-match: the GOLD action is the true next assistant
+        # turn (target). Parsed once; each generating arm is scored against it.
+        gold_action = extract_action(target["content"])
         t0 = time.time()
         try:
             summary = generate_summary_hf(model, tokenizer, ctx,
@@ -342,6 +358,8 @@ def main():
                             max_tokens=200)
             m = CMD_PAT.search(gen)
             first_cmd = (m.group(1).strip().split("\n")[0][:120] if m else "")
+            # DISCRETE next-action-match on this arm's FREE generation vs the gold.
+            am = match_action(gold_action, extract_action(gen))
             res["arms"][name] = {
                 # BORN-ANNOTATED: each grafted arm records EXACTLY which
                 # intervention produced its number (scalar α vs tuned champion).
@@ -351,6 +369,7 @@ def main():
                 "gen_first_cmd": first_cmd,
                 "repeats_failed": first_cmd in failed_evicted if first_cmd
                                   else False,
+                "action_match": am,        # {has_action,tool_match,path_match,cmd_match,match}
             }
 
         def score_arm(name, snap, next_pos, intervention=None):
@@ -455,6 +474,8 @@ def main():
         result = {"idx": idx, "meta": meta, "model": MODEL,
                   "dtype": manifest["load"]["dtype"],  # RUNTIME-read, not "bfloat16"
                   "split": traj_split(idx),   # deterministic held-out tune/eval
+                  "min_idx": MIN_IDX,         # disjoint-set audit
+                  "gold_action": gold_action,  # the true next action (tool/path/command)
                   "summary_tokens": len(summary["gen_ids"]),
                   "failed_evicted_commands": failed_evicted,
                   "n_target_tokens": len(tgt_ids), **res}
