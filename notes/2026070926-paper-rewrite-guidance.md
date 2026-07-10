@@ -40,3 +40,16 @@ result; then the paper's shape is determined:
   repeatedly, don't one-shot.
 - **Multiple distinct Fable review roles at the END**: an adversarial pure reviewer, a proofreader, a
   readability/flow/focus reviewer, etc. — lots of separate passes, each with a single clear lens.
+
+## Naming / terminology (owner, 2026-07-09) — DO NOT coin a term
+- **Do NOT coin a new term** (like "ValueGraft") in the paper — especially NOT in the title, and NOT as
+  persistent vocabulary. The technique does not robustly work (it's null on the primary metric; effect is
+  indirect at best), and we are NOT telling anyone to do it. Coining a capitalized/camelCase name for a
+  technique that doesn't work just **litters the namespace** — it's irresponsible to mint persistent
+  vocabulary for a non-result.
+- Internally we can keep using a term for convenience, but in the paper: use a **plain, lowercase,
+  descriptive** phrase (NOT capitalized, NOT camelCase, not a brand). Define it ONCE in a **glossary** as
+  *"the term we use in this paper to refer to X"* — explicitly a local convenience label, NOT a coinage.
+- Rationale: we report a bounding/negative (or at best indirect) result; the framing must not smuggle in
+  the implication that this is a named, recommended method. The name should read as descriptive, not
+  aspirational-branding.
