@@ -203,3 +203,35 @@ was a provenance bug, now fixed. The null is a real, honestly-reportable
 underpowered-aggregate result in the moderate-compression regime; the positive headlines
 sit under aggressive-compaction (BRIEF). Whether the effect is compaction-severity-gated is
 a clean, worthwhile follow-up, not a contradiction.
+
+---
+
+## 6. Champion-on-SWE-Gym — the tuned map now testable on the coding task (2026-07-09)
+
+**Gap closed:** `run_swegym_hf.py` previously grafted ONLY at scalar α=0.75 (its
+"E-tuned" arm is a misnomer — flat α, not the champion), so the conversation-tuned
+champion was never tested on SWE-Gym. Added `SC_CHAMPION_CONFIG` support: when set, the
+runner loads the config via `load_champion_graft_cfg` (the same loader cross_arch uses) and
+adds a distinct **`E-champion`** arm applying the tuned per-LAYER `alpha_map` (or per-HEAD
+`head_map`), value-only (α_K=0), ALONGSIDE the scalar `E-tuned` arm — so one run yields both
+numbers vs B for a direct paired comparison.
+
+**Born-annotated recording (no ambiguity about which intervention made which number):**
+- Each result's `arms.E-tuned.intervention` = `{kind implicit scalar, alpha:0.75, champion:null}`;
+  `arms.E-champion.intervention` = `{alpha:null (per-layer map) or scalar, champion:{config_path,
+  config_sha256, label, family}}`.
+- The run manifest's `intervention.grafted_arms` lists both arms with the champion path +
+  content sha256 + label; the startup log prints `CHAMPION arm ACTIVE/INACTIVE`.
+
+**Honest framing (report either way):** this tests whether the champion tuned on the
+SYNTHETIC CONVERSATION corpus (VAL c01-c06,n01-n04) TRANSFERS OUT-OF-DOMAIN to the coding
+task, and whether it beats the naive scalar α=0.75 **where the effect appears** (the BRIEF /
+aggressive-compaction regime — see §5). Plausible outcomes, all reportable:
+1. Champion transfers and beats scalar under BRIEF → the tuned per-layer profile is
+   domain-general (strong result).
+2. Champion ties/underperforms scalar → the tuning is corpus-specific / doesn't transfer to
+   code (also informative — argues the scalar graft is the robust shippable form).
+3. Both null under PROD (faithful) → consistent with the compression-severity story (§5):
+   little evicted meaning to recover under a faithful summary.
+The head-to-head `E-champion − E-tuned` paired CI (printed by the job) is the arbiter; do
+NOT assume transfer — the champion was tuned on conversations, SWE-Gym is a different domain.

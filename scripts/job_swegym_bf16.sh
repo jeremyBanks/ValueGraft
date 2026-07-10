@@ -52,33 +52,56 @@ python3 -m pip install -U "transformers>=4.57.0,<5" accelerate safetensors huggi
 echo "== run swegym eval $(date -Is)"
 SC_HF_MODEL="$MODEL" SC_SWE_TAG="$TAG" python3 -u src/run_swegym_hf.py 2>&1 | tee "swegym_${TAG}_${SUMM_TAG}.log"
 
-echo "== SUMMARY: paired E-tuned - B, trajectory bootstrap CI $(date -Is)"
+echo "== SUMMARY: paired (arm - B) trajectory bootstrap CI, per grafted arm $(date -Is)"
 python3 - "$TAG" "$SUMM_TAG" <<'PY'
 import json, glob, random, sys
 tag, summ = sys.argv[1], sys.argv[2]
 files = sorted(glob.glob(f"results/swegym_{tag}_{summ}/t*.json"))
-diffs = []
+# collect per-arm paired diffs (arm.tf_mean - B.tf_mean) for every grafted arm
+# present; E-champion appears only when SC_CHAMPION_CONFIG was set.
+by_arm = {}
+champ_label = None
 for f in files:
     try:
-        d = json.load(open(f)); arms = d["arms"]
-        diffs.append(arms["E-tuned"]["tf_mean"] - arms["B"]["tf_mean"])
+        d = json.load(open(f)); arms = d["arms"]; b = arms["B"]["tf_mean"]
     except Exception:
-        pass
-n = len(diffs)
-if n == 0:
-    print("NO trajectories parsed"); sys.exit(0)
-mean = sum(diffs) / n
-random.seed(0)
-boots = []
-for _ in range(10000):
-    s = [diffs[random.randrange(n)] for _ in range(n)]
-    boots.append(sum(s) / n)
-boots.sort()
-lo, hi = boots[249], boots[9749]
-pos = sum(1 for x in diffs if x > 0)
-flag = "REPLICATES (CI>0)" if lo > 0 else "CI spans 0"
-print(f"  n_traj={n}  E-tuned - B mean={mean:+.4f}  95%CI=[{lo:+.4f}, {hi:+.4f}]  "
-      f"pct_helped={pos}/{n}  -> {flag}")
-print(f"  (prior anchor +0.0156 @ N=75; this run N={n})")
+        continue
+    for name in ("E-tuned", "E-champion"):
+        if name in arms and arms[name].get("tf_mean") is not None:
+            by_arm.setdefault(name, []).append(arms[name]["tf_mean"] - b)
+            if name == "E-champion":
+                iv = arms[name].get("intervention") or {}
+                champ_label = (iv.get("champion") or {}).get("label") or champ_label
+def boot(diffs):
+    n = len(diffs)
+    if n == 0:
+        return None
+    mean = sum(diffs) / n
+    random.seed(0)
+    bs = []
+    for _ in range(10000):
+        bs.append(sum(diffs[random.randrange(n)] for _ in range(n)) / n)
+    bs.sort()
+    return n, mean, bs[249], bs[9749], sum(1 for x in diffs if x > 0)
+for name in ("E-tuned", "E-champion"):
+    r = boot(by_arm.get(name, []))
+    if r is None:
+        print(f"  {name}: (not present)"); continue
+    n, mean, lo, hi, pos = r
+    flag = "CI>0" if lo > 0 else "CI spans 0"
+    extra = f"  [champion={champ_label}]" if name == "E-champion" else ""
+    print(f"  {name} - B  mean={mean:+.4f}  95%CI=[{lo:+.4f}, {hi:+.4f}]  "
+          f"pct_helped={pos}/{n}  -> {flag}{extra}")
+# head-to-head champion vs scalar where both present (paired over trajectories)
+if by_arm.get("E-tuned") and by_arm.get("E-champion") and \
+   len(by_arm["E-tuned"]) == len(by_arm["E-champion"]):
+    d = [c - s for s, c in zip(by_arm["E-tuned"], by_arm["E-champion"])]
+    r = boot(d)
+    if r:
+        n, mean, lo, hi, pos = r
+        flag = "champion BEATS scalar (CI>0)" if lo > 0 else "not distinguishable (CI spans 0)"
+        print(f"  E-champion - E-tuned (paired)  mean={mean:+.4f}  "
+              f"95%CI=[{lo:+.4f}, {hi:+.4f}]  -> {flag}")
+print(f"  (prior scalar anchor +0.0156 @ N=75, BRIEF)")
 PY
 echo "SWEGYM_BF16_DONE $(date -Is)"

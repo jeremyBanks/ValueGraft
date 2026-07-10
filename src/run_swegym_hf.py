@@ -46,6 +46,7 @@ from arms_hf import (
     to_ids,
 )
 from kvlib_hf import blend_values, rebuild_cache, tf_logprobs
+from cross_arch_probe import load_champion_graft_cfg  # reuse the canonical loader
 import provenance as prov
 
 MODEL = os.environ.get("SC_HF_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
@@ -62,6 +63,28 @@ _shard = os.environ.get("SC_SHARD", "0/1")
 SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
 PARQUET = os.environ.get("SC_SWE_DATA", "swegym.parquet")
 MAX_TOK, MIN_TOK = 15000, 6000
+
+# CHAMPION arm (SC_CHAMPION_CONFIG): when set, ADD an "E-champion" arm applying the
+# TUNED per-LAYER alpha_map (or per-HEAD head_map) value-graft (keys neutral, α_K=0)
+# ALONGSIDE the scalar "E-tuned" (flat α=SC_E_ALPHA) arm -- so ONE run yields both
+# numbers vs B for a direct paired comparison. Tests whether the conversation-tuned
+# champion TRANSFERS to the coding task. None -> champion arm skipped (scalar only).
+CHAMPION_CFG_PATH = os.environ.get("SC_CHAMPION_CONFIG") or None
+CHAMPION_CFG = load_champion_graft_cfg(CHAMPION_CFG_PATH)
+# Resolve the tuned config ONCE into the exact args blend_values takes (mirrors
+# cross_arch_probe.run_model): per-layer alpha_map -> alpha is a {layer: α} dict;
+# per-head head_map -> scalar alpha + {layer: [kv_head,...]}. VALUE-ONLY either way.
+CHAMP_ALPHA = None
+CHAMP_HEAD_MAP = None
+if CHAMPION_CFG:
+    if "alpha_map" in CHAMPION_CFG:
+        CHAMP_ALPHA = {int(k): float(v)
+                       for k, v in CHAMPION_CFG["alpha_map"].items()}
+        CHAMP_HEAD_MAP = None
+    elif "head_map" in CHAMPION_CFG:
+        CHAMP_ALPHA = float(CHAMPION_CFG.get("alpha", E_ALPHA))
+        CHAMP_HEAD_MAP = {int(k): [int(h) for h in v]
+                          for k, v in CHAMPION_CFG["head_map"].items()}
 
 
 def load_trajectories():
@@ -128,16 +151,34 @@ def main():
         dtype_env=os.environ.get("SC_LOAD_DTYPE", "bfloat16"),
         harness="src/run_swegym_hf.py",
         intervention={
+            # PRIMARY graft arm (kept for continuity); FULL per-arm provenance is
+            # in "grafted_arms" and in each result's arms.<name>.intervention.
             "arm": "E-tuned",
             "graft_type": "value",          # keys neutral (alpha_K=0)
             "alpha": E_ALPHA,               # SCALAR alpha -- NOT a tuned champion
-            "champion_config_path": None,
-            "champion_config_sha256": None,
-            "champion_label": None,
+            "champion_config_path": CHAMPION_CFG_PATH,
+            "champion_config_sha256": prov.sha256_file(CHAMPION_CFG_PATH),
+            "champion_label": (CHAMPION_CFG.get("label") if CHAMPION_CFG
+                               else None),
             "alignment": "difflib positional-within-region (tail+summary regions)",
-            "note": ("E-tuned here = SCALAR value-graft at alpha=%.3f; it is NOT "
-                     "the per-layer/per-head tuned champion. Other arms scored: "
-                     "A(full), B(compacted), B-min-pack, H-pack." % E_ALPHA),
+            "grafted_arms": [
+                {"arm": "E-tuned", "kind": "scalar", "alpha": E_ALPHA,
+                 "champion": None,
+                 "note": "flat value-graft at alpha; NOT the tuned champion"},
+            ] + ([
+                {"arm": "E-champion", "kind": "champion",
+                 "family": ("alpha_map" if "alpha_map" in CHAMPION_CFG
+                            else "head_map"),
+                 "alpha": (None if isinstance(CHAMP_ALPHA, dict)
+                           else CHAMP_ALPHA),
+                 "champion_config_path": CHAMPION_CFG_PATH,
+                 "champion_config_sha256": prov.sha256_file(CHAMPION_CFG_PATH),
+                 "champion_label": CHAMPION_CFG.get("label")},
+            ] if CHAMPION_CFG else []),
+            "note": ("E-tuned = SCALAR value-graft at alpha=%.3f (NOT the tuned "
+                     "champion). E-champion (only if SC_CHAMPION_CONFIG set) = the "
+                     "tuned per-layer/per-head map. Other arms: A(full), "
+                     "B(compacted), B-min-pack, H-pack." % E_ALPHA),
         },
         metric=prov.METRIC_SWEGYM_TF_LOGPROB,
         condition={
@@ -157,6 +198,16 @@ def main():
           "git=%s" % (manifest["model"]["repo_id"], manifest["load"]["dtype"],
                       manifest["load"]["quantization"], SUMM_TAG, E_ALPHA,
                       manifest["code"]["git_commit"]), flush=True)
+    if CHAMPION_CFG:
+        print("CHAMPION arm ACTIVE: E-champion <- %s (label=%s, family=%s, "
+              "sha=%s) applied value-only alongside scalar E-tuned(alpha=%.3f)."
+              % (CHAMPION_CFG_PATH, CHAMPION_CFG.get("label"),
+                 "alpha_map" if "alpha_map" in CHAMPION_CFG else "head_map",
+                 (prov.sha256_file(CHAMPION_CFG_PATH) or "")[:16], E_ALPHA),
+              flush=True)
+    else:
+        print("CHAMPION arm INACTIVE (SC_CHAMPION_CONFIG unset): scalar E-tuned "
+              "(alpha=%.3f) only." % E_ALPHA, flush=True)
     prov.write_run_manifest(outdir, manifest)
     scored_idxs = []
     done = 0
@@ -204,7 +255,7 @@ def main():
 
         res = {"arms": {}}
 
-        def eval_arm(name, snap, next_pos):
+        def eval_arm(name, snap, next_pos, intervention=None):
             cache = rebuild_cache(snap, DynamicCache)
             feed = gp_suffix + tgt_ids[:-1]
             pos = torch.arange(next_pos, next_pos + len(feed),
@@ -215,6 +266,9 @@ def main():
             m = CMD_PAT.search(gen)
             first_cmd = (m.group(1).strip().split("\n")[0][:120] if m else "")
             res["arms"][name] = {
+                # BORN-ANNOTATED: each grafted arm records EXACTLY which
+                # intervention produced its number (scalar α vs tuned champion).
+                "intervention": intervention,
                 "tf_mean": sum(lps) / len(lps),
                 "gen": gen[:500],
                 "gen_first_cmd": first_cmd,
@@ -224,10 +278,11 @@ def main():
 
         # A
         a_snap, _ = hf_prefill_ids(model, ctx_ids)
-        eval_arm("A", a_snap, len(ctx_ids)); del a_snap
+        eval_arm("A", a_snap, len(ctx_ids), intervention={"arm": "A-full"})
+        del a_snap
         # B + E
         b_snap, _ = hf_prefill_ids(model, b_ids)
-        eval_arm("B", b_snap, len(b_ids))
+        eval_arm("B", b_snap, len(b_ids), intervention={"arm": "B-compacted"})
         b_starts = message_token_starts(tokenizer, b_ids, len(b_msgs))
         regions = [
             ((b_starts[2], len(b_ids)), (starts[tail_start_msg],
@@ -237,8 +292,31 @@ def main():
         ]
         pairs = build_alignment(b_ids, summary["old_ids"],
                                 set(tokenizer.all_special_ids), regions)
+        # SCALAR arm ("E-tuned" -- a misnomer kept for continuity: it is FLAT
+        # α=E_ALPHA, NOT the tuned champion).
         e_snap = blend_values(b_snap, summary["snapshot"], pairs, E_ALPHA)
-        eval_arm("E-tuned", e_snap, len(b_ids)); del b_snap, e_snap
+        eval_arm("E-tuned", e_snap, len(b_ids), intervention={
+            "arm": "E-tuned", "graft_type": "value", "alpha": E_ALPHA,
+            "champion": None,
+            "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"})
+        del e_snap
+        # CHAMPION arm ("E-champion" -- the TUNED per-layer alpha_map / per-head
+        # head_map). Only added when SC_CHAMPION_CONFIG is set. Same B snapshot,
+        # same pairs -> a clean paired comparison vs both B and the scalar arm.
+        if CHAMPION_CFG:
+            ec_snap = blend_values(b_snap, summary["snapshot"], pairs,
+                                   CHAMP_ALPHA, head_map=CHAMP_HEAD_MAP)
+            eval_arm("E-champion", ec_snap, len(b_ids), intervention={
+                "arm": "E-champion", "graft_type": "value",
+                "alpha": (None if isinstance(CHAMP_ALPHA, dict) else CHAMP_ALPHA),
+                "champion": {
+                    "config_path": CHAMPION_CFG_PATH,
+                    "config_sha256": prov.sha256_file(CHAMPION_CFG_PATH),
+                    "label": CHAMPION_CFG.get("label"),
+                    "family": ("alpha_map" if "alpha_map" in CHAMPION_CFG
+                               else "head_map")}})
+            del ec_snap
+        del b_snap
         # packed arms (gp suffix belongs to the chat frame; packed contexts
         # still get the same generation-prompt tokens after their storage)
         bmp = bmin_pack_ids(summary, ctx_ids)
