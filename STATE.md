@@ -1,5 +1,55 @@
 # STATE.md — session handoff / current state
 
+## CURRENT TRUTH (2026-07-11) — coherent-state v10 execution
+
+The active experiment is the additive Amendment-1-through-10
+`coherent-state-gapped-v10` assay. It asks whether the exact incremental K/V of a
+model-generated summary carries correct-history-specific information that a fresh
+same-token encoding loses under position-preserving compaction. It does **not** test
+every possible write-time channel elsewhere in the cache.
+
+- Exact production checkpoint: `Qwen/Qwen3-30B-A3B-Instruct-2507`, revision
+  `0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe`, bf16, eager attention.
+- No paid pod is running and no paid v10 semantic outcome exists.
+- RunPod balance was last observed at `$63.3160022124`; the owner authorized an
+  approximately `$60` total ceiling. The fresh Fable design consultation reported a
+  `$4.440664` provider usage estimate, conservatively tracked but not verified as an
+  incremental cash charge.
+- The v10 production-tokenizer donor artifact passed 12/12 and is committed at
+  `results/coherent_state_ladder/coherent_external_donors_gapped_v10_Qwen3-30B-A3B-Instruct-2507_20260711T122320Z.json`.
+- The exact local 0.6B bf16 eager CPU ladder is live as PID `55253`, output prefix
+  `results/coherent_state_ladder/coherent_state_ladder_gapped_v10_Qwen3-0.6B_20260711T123246Z`.
+  Static provenance passed 1/1, attention-backend attestation passed 28/28, and the
+  synthetic schedule stage passed 7/7 with aggregate discrepancy exactly `0.0`
+  against the frozen `5e-4` limit. The twelve committed-case schedule stage is now
+  running from 0/12. Intermediate sidecars are committed at each durable milestone.
+- The accidental historical v6 CPU ladder remains paused and cannot authorize v10.
+
+The sequence is fail-closed: finish and commit the v10 ladder; run the full tests,
+monitor self-test, and exact-commit code/science/Fable reviews; push the frozen
+candidate; execute one paid technical-only 30B gate; harvest, commit, and independently
+validate it; only then authorize the preregistered semantic N=6 and conditional N=12
+sequence. Every render must be saved and committed. A technical failure stops semantic
+execution.
+
+Claude Opus 4.8 raised a recent-prior-art concern that history-conditioned notes may
+reside on downstream tokens. After direct geometry inspection, two independent audits,
+and a deep `claude-fable-5` consultation, the decision is to keep v10 frozen. Native
+retained-tail tokens occur before the summary request in the source but after the summary
+in the destination, so the proposed one-arm tail transplant was neither same-position
+nor rotation-free and lacked a wrong-history control. Claude accepted and withdrew it.
+The binding null boundary is: **no detected downstream-usable channel carried by the
+generated summary rows under this fixed assay**, never “no write-time state exists
+elsewhere.” See `notes/2026071164-fable-tail-channel-design-review.md` and the concluding
+turns of `notes/2026071156-sol-fable-execution-coordination.md`. A same-position
+request/header or immediate-post-summary correct-versus-wrong assay is reserved as a
+separately preregistered follow-up reusing saved renders.
+
+After data collection, Fable leads a fresh paper draft; Sol owns factual/methodological
+truth-checking. The final review stack remains the required multi-angle Fable passes,
+critics, terminology and methods/provenance checks, and an independent Codex review.
+Only a fully reviewed in-repo paper may be promoted to `README.md` and pushed.
+
 *Updated 2026-07-09. PIVOTED: QK-norm/ablation thesis DROPPED; now testing FRESH-CONVERSATION
 REPRODUCTION of the headline. Everything below the "SUPERSEDED" marker is historical.*
 
