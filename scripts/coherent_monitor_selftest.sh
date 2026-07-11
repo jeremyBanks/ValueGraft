@@ -39,7 +39,10 @@ grep -q 'terminal_confirmations.*-ge 2' "$WATCH"
 grep -q 'coherent_terminal_status "$desired"' "$WATCH"
 grep -q '28800' "$WATCH"
 grep -q '2700' "$WATCH"
-PASS=$((PASS + 12))
+grep -q 'coherent_state_gapped_v1_' "$WATCH"
+grep -q 'validate_coherent_harvest.py.*failure' "$WATCH"
+grep -q 'transformers==5.0.0' scripts/job_coherent_state_bf16.sh
+PASS=$((PASS + 15))
 
 [ "$(coherent_remote_dir_class 0)" = EXISTS ]
 [ "$(coherent_remote_dir_class 1)" = ABSENT ]
@@ -59,11 +62,31 @@ PASS=$((PASS + 12))
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
-printf 'log\n' > "$TMP/job.log"
-printf '{"status":"COMPLETE"}\n' > "$TMP/manifest.json"
-for i in 1 2 3 4 5 6; do
-  printf '{"status":"scored"}\n' > "$TMP/conv_0${i}.json"
-done
+python3 - "$TMP" <<'PY'
+import json, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+identity = {"schema": 2,
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
+            "design_id": "coherent-state-gapped-v1"}
+arms = ["A_full", "G_fresh", "G_correct", "G_wrong", "G_Vcorrect",
+        "G_Kcorrect", "G_delta"]
+def write(name, doc):
+    (root / name).write_text(json.dumps(doc) + "\n")
+(root / "job.log").write_text("MODEL_READY\nCOHERENT_STATE_JOB_DONE\n")
+write("manifest.json", {**identity, "status": "COMPLETE",
+      "resume_probe_verified": True})
+write("resume_probe.json", {**identity, "status": "VERIFIED",
+      "resume_probe_verified": True})
+write("production_kernel_gate.json", {**identity, "status": "PASS",
+      "completed_at": "2026-07-11T00:00:00Z", "gates": {"passes": True}})
+for i in range(1, 7):
+    write(f"conv_{i:02d}_c{i:02d}.json", {
+        **identity, "stage": "scored", "status": "scored", "order_position": i,
+        "fingerprint": identity, "conversation": {}, "summary": {}, "sources": {},
+        "destination": {}, "arm_scores": {x: {} for x in arms},
+        "conversation_outcomes": {x: 0.0 for x in arms},
+        "gates": {"technical_pass": True}, "runtime": {}})
+PY
 python3 scripts/validate_coherent_harvest.py "$TMP" complete >/dev/null
 printf '{bad\n' > "$TMP/conv_01.json"
 if python3 scripts/validate_coherent_harvest.py "$TMP" complete >/dev/null 2>&1; then
