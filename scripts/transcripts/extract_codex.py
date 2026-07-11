@@ -31,6 +31,7 @@ class Message:
     agent_runtime_version: str | None = None
     reasoning_effort: str | None = None
     transcript_scaffolding: bool = False
+    subagent: str | None = None
 
 
 def parse_ts(value: str | None) -> datetime | None:
@@ -107,7 +108,26 @@ def is_transcript_scaffolding_record(row: dict[str, Any]) -> bool:
     )
 
 
-def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -> tuple[str, str | None, list[Message]]:
+def response_item_text(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if not isinstance(content, list):
+        return ""
+    parts: list[str] = []
+    for item in content:
+        if isinstance(item, dict) and item.get("type") in {"text", "input_text", "output_text"}:
+            text = item.get("text")
+            if isinstance(text, str):
+                parts.append(text)
+    return "\n\n".join(parts)
+
+
+def iter_messages(
+    path: Path,
+    *,
+    include_transcript_scaffolding: bool = False,
+    include_subagent_finals: bool = True,
+) -> tuple[str, str | None, list[Message]]:
     thread_id = path.stem.rsplit("-", 1)[-1]
     cwd: str | None = None
     model_provider: str | None = None
@@ -115,6 +135,7 @@ def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -
     current_model: str | None = None
     current_effort: str | None = None
     out: list[Message] = []
+    subagent_finals: list[Message] = []
     with path.open("r", encoding="utf-8") as handle:
         for line_no, line in enumerate(handle, 1):
             try:
@@ -139,6 +160,30 @@ def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -
                 cwd = payload.get("cwd") or cwd
                 current_model = payload.get("model") or current_model
                 current_effort = payload.get("effort") or current_effort
+                continue
+            if row.get("type") == "response_item" and include_subagent_finals:
+                payload = row.get("payload")
+                if isinstance(payload, dict) and payload.get("type") == "agent_message":
+                    author = payload.get("author")
+                    recipient = payload.get("recipient")
+                    text = clean_text(response_item_text(payload.get("content")))
+                    if (
+                        isinstance(author, str)
+                        and author != "/root"
+                        and recipient == "/root"
+                        and text.startswith("Message Type: FINAL_ANSWER")
+                    ):
+                        subagent_finals.append(
+                            Message(
+                                parse_ts(row.get("timestamp")),
+                                "assistant",
+                                redact_visible_timestamps(text),
+                                line_no,
+                                model_provider=model_provider,
+                                agent_runtime_version=agent_runtime_version,
+                                subagent=author,
+                            )
+                        )
                 continue
             if row.get("type") != "event_msg":
                 continue
@@ -177,6 +222,9 @@ def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -
                     transcript_scaffolding=transcript_scaffolding,
                 )
             )
+    if include_subagent_finals:
+        main_texts = {message.text for message in out}
+        out.extend(message for message in subagent_finals if message.text not in main_texts)
     out = sorted(out, key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line))
     return thread_id, cwd, out
 
@@ -224,6 +272,8 @@ def heading_metadata(msg: Message) -> str:
         fields.append(f"codex_cli={msg.agent_runtime_version}")
     if msg.reasoning_effort:
         fields.append(f"effort={msg.reasoning_effort}")
+    if msg.subagent:
+        fields.append(f"subagent={msg.subagent}")
     return "  [" + "; ".join(fields) + "]" if fields else ""
 
 
@@ -253,10 +303,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path)
     parser.add_argument("out_dir", type=Path)
+    parser.add_argument("--no-subagent-finals", action="store_true")
     args = parser.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    thread_id, cwd, messages = iter_messages(args.source)
+    thread_id, cwd, messages = iter_messages(
+        args.source,
+        include_subagent_finals=not args.no_subagent_finals,
+    )
     segments = split_segments(messages)
 
     per_day_counts: dict[str, int] = {}

@@ -118,7 +118,10 @@ prohibited words, or quote examples of language to avoid. Return only the note
 body, with no title. The script adds a deterministic participants paragraph from
 source metadata; do not invent model identifiers. If the transcript headings
 show a switch between assistant models, mention the switch at the relevant point
-in the summary flow.
+in the summary flow. Assistant messages labeled `subagent=...` are final
+subagent assessments, not tool logs. Preserve their unique conclusions,
+evidence, and proposed follow-ups when material, but synthesize them rather than
+copying every detail.
 
 Preserve explicit scheduling commitments as handoff facts. If an agent or user
 commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
@@ -181,7 +184,10 @@ prohibited words, or quote examples of language to avoid. Return only the note
 body, with no title. The script adds a deterministic participants paragraph from
 source metadata; do not invent model identifiers. If the transcript headings
 show a switch between assistant models, mention the switch at the relevant point
-in the summary flow.
+in the summary flow. Assistant messages labeled `subagent=...` are final
+subagent assessments, not tool logs. Preserve their unique conclusions,
+evidence, and proposed follow-ups when material, but synthesize them rather than
+copying every detail.
 
 Preserve explicit scheduling commitments as handoff facts. If an agent or user
 commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
@@ -274,7 +280,12 @@ def script_dir() -> Path:
     return Path(__file__).resolve().parent
 
 
-def load_segments(claude_jsonl: Path, codex_jsonl: Path) -> dict[tuple[str, str, int], list[MessageRecord]]:
+def load_segments(
+    claude_jsonl: Path,
+    codex_jsonl: Path,
+    *,
+    include_subagent_finals: bool = True,
+) -> dict[tuple[str, str, int], list[MessageRecord]]:
     claude = load_module(script_dir() / "extract_claude.py", "vg_incremental_claude")
     codex = load_module(script_dir() / "extract_codex.py", "vg_incremental_codex")
     segments: dict[tuple[str, str, int], list[MessageRecord]] = {}
@@ -285,9 +296,17 @@ def load_segments(claude_jsonl: Path, codex_jsonl: Path) -> dict[tuple[str, str,
     ]
     for platform, mod, source in sources:
         if platform == "codex":
-            _thread_id, _cwd, messages = mod.iter_messages(source, include_transcript_scaffolding=True)
+            _thread_id, _cwd, messages = mod.iter_messages(
+                source,
+                include_transcript_scaffolding=True,
+                include_subagent_finals=include_subagent_finals,
+            )
         else:
-            messages = mod.iter_messages(source, include_transcript_scaffolding=True)
+            messages = mod.iter_messages(
+                source,
+                include_transcript_scaffolding=True,
+                include_subagent_finals=include_subagent_finals,
+            )
         per_day: dict[str, int] = {}
         for segment in mod.split_segments(messages):
             start = next((m.ts for m in segment if m.ts), None)
@@ -718,7 +737,11 @@ def timestamps_for_ranges(
 
 
 def init_manifest(args: argparse.Namespace) -> None:
-    segments = load_segments(args.claude_jsonl, args.codex_jsonl)
+    segments = load_segments(
+        args.claude_jsonl,
+        args.codex_jsonl,
+        include_subagent_finals=not args.no_subagent_finals,
+    )
     records: list[NoteRecord] = []
     for shard_path in sorted(args.summary_shards_dir.glob("shard-*.md")):
         shard_text = shard_path.read_text(encoding="utf-8")
@@ -1257,7 +1280,11 @@ def sync_model_blocks(
 
 def update_notes(args: argparse.Namespace) -> None:
     records = load_manifest(args.manifest)
-    segments = load_segments(args.claude_jsonl, args.codex_jsonl)
+    segments = load_segments(
+        args.claude_jsonl,
+        args.codex_jsonl,
+        include_subagent_finals=not args.no_subagent_finals,
+    )
     if args.dry_run:
         dry_run_update_notes(records, segments, args)
         return
@@ -1483,6 +1510,7 @@ def main() -> None:
     init_parser.add_argument("--notes-dir", type=Path, default=DEFAULT_NOTES_DIR)
     init_parser.add_argument("--claude-jsonl", type=Path, default=DEFAULT_CLAUDE_JSONL)
     init_parser.add_argument("--codex-jsonl", type=Path, default=DEFAULT_CODEX_JSONL)
+    init_parser.add_argument("--no-subagent-finals", action="store_true")
     init_parser.set_defaults(func=init_manifest)
 
     update_parser = sub.add_parser("update")
@@ -1490,6 +1518,11 @@ def main() -> None:
     update_parser.add_argument("--notes-dir", type=Path, default=DEFAULT_NOTES_DIR)
     update_parser.add_argument("--claude-jsonl", type=Path, default=DEFAULT_CLAUDE_JSONL)
     update_parser.add_argument("--codex-jsonl", type=Path, default=DEFAULT_CODEX_JSONL)
+    update_parser.add_argument(
+        "--no-subagent-finals",
+        action="store_true",
+        help="Exclude final subagent assessments from summarizer-facing transcripts.",
+    )
     update_parser.add_argument("--work-dir", type=Path, default=DEFAULT_WORK_DIR)
     update_parser.add_argument("--target-chars", type=int, default=180_000)
     update_parser.add_argument(

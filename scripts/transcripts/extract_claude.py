@@ -35,6 +35,7 @@ class Message:
     model: str | None = None
     agent_runtime_version: str | None = None
     transcript_scaffolding: bool = False
+    subagent: str | None = None
 
 
 def parse_ts(value: str | None) -> datetime | None:
@@ -143,7 +144,49 @@ def is_summary_worker_transcript(path: Path) -> bool:
     return False
 
 
-def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -> list[Message]:
+def subagent_final_messages(path: Path) -> list[Message]:
+    """Return only the last nonempty assistant text from each Claude subagent."""
+    subagents_dir = path.parent / path.stem / "subagents"
+    if not subagents_dir.is_dir():
+        return []
+    finals: list[Message] = []
+    for subagent_path in sorted(subagents_dir.glob("*.jsonl")):
+        final: Message | None = None
+        with subagent_path.open("r", encoding="utf-8") as handle:
+            for line_no, line in enumerate(handle, 1):
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                msg = row.get("message")
+                if not isinstance(msg, dict) or msg.get("role") != "assistant":
+                    continue
+                text = clean_text(text_from_content(msg.get("content")))
+                if not text or is_noise_text(text):
+                    continue
+                agent_id = row.get("agentId") or subagent_path.stem.removeprefix("agent-")
+                final = Message(
+                    parse_ts(row.get("timestamp")),
+                    "assistant",
+                    redact_visible_timestamps(text),
+                    line_no,
+                    model=msg.get("model") if isinstance(msg.get("model"), str) else None,
+                    agent_runtime_version=(
+                        row.get("version") if isinstance(row.get("version"), str) else None
+                    ),
+                    subagent=str(agent_id),
+                )
+        if final is not None:
+            finals.append(final)
+    return finals
+
+
+def iter_messages(
+    path: Path,
+    *,
+    include_transcript_scaffolding: bool = False,
+    include_subagent_finals: bool = True,
+) -> list[Message]:
     if is_summary_worker_transcript(path):
         return []
     out: list[Message] = []
@@ -189,6 +232,9 @@ def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -
                     transcript_scaffolding=transcript_scaffolding,
                 )
             )
+    if include_subagent_finals:
+        main_texts = {message.text for message in out}
+        out.extend(message for message in subagent_final_messages(path) if message.text not in main_texts)
     return sorted(out, key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line))
 
 
@@ -231,6 +277,8 @@ def heading_metadata(msg: Message) -> str:
         fields.append(f"model={msg.model}")
     if msg.agent_runtime_version:
         fields.append(f"claude_code_version={msg.agent_runtime_version}")
+    if msg.subagent:
+        fields.append(f"subagent={msg.subagent}")
     return "  [" + "; ".join(fields) + "]" if fields else ""
 
 
@@ -259,10 +307,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path)
     parser.add_argument("out_dir", type=Path)
+    parser.add_argument("--no-subagent-finals", action="store_true")
     args = parser.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    messages = iter_messages(args.source)
+    messages = iter_messages(args.source, include_subagent_finals=not args.no_subagent_finals)
     segments = split_segments(messages)
 
     session_id = args.source.stem

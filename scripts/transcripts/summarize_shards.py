@@ -57,6 +57,10 @@ avoid.
 Return only the note body. Do not include preambles such as "Ready to summarize."
 Do not try to preserve every message.
 
+Assistant messages labeled `subagent=...` are final subagent assessments, not
+tool logs. Preserve their unique conclusions, evidence, and proposed follow-ups
+when material, but synthesize them rather than copying every detail.
+
 {previous_context_block}
 
 Conversation segment:

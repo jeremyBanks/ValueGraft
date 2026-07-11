@@ -119,6 +119,70 @@ def test_claude_extractor_rejects_standalone_summary_worker_session(tmp_path: Pa
     assert mod.iter_messages(source) == []
 
 
+def test_claude_extractor_includes_only_final_subagent_answer(tmp_path: Path) -> None:
+    mod = load_script(
+        ROOT / "scripts" / "transcripts" / "extract_claude.py",
+        "extract_claude_subagent_test",
+    )
+    source = tmp_path / "main-session.jsonl"
+    write_jsonl(
+        source,
+        [
+            {
+                "type": "user",
+                "timestamp": "2026-07-10T00:00:00Z",
+                "message": {"role": "user", "content": "Main request."},
+            },
+            {
+                "type": "assistant",
+                "timestamp": "2026-07-10T00:00:01Z",
+                "message": {"role": "assistant", "content": "Main answer."},
+            },
+        ],
+    )
+    subagents = tmp_path / source.stem / "subagents"
+    subagents.mkdir(parents=True)
+    write_jsonl(
+        subagents / "agent-reviewer.jsonl",
+        [
+            {
+                "type": "user",
+                "isSidechain": True,
+                "agentId": "reviewer",
+                "timestamp": "2026-07-10T00:00:02Z",
+                "message": {"role": "user", "content": "Review it."},
+            },
+            {
+                "type": "assistant",
+                "isSidechain": True,
+                "agentId": "reviewer",
+                "timestamp": "2026-07-10T00:00:03Z",
+                "message": {"role": "assistant", "content": "Intermediate update."},
+            },
+            {
+                "type": "assistant",
+                "isSidechain": True,
+                "agentId": "reviewer",
+                "timestamp": "2026-07-10T00:00:04Z",
+                "message": {"role": "assistant", "content": "Detailed final assessment."},
+            },
+        ],
+    )
+
+    messages = mod.iter_messages(source)
+
+    assert [message.text for message in messages] == [
+        "Main request.",
+        "Main answer.",
+        "Detailed final assessment.",
+    ]
+    assert messages[-1].subagent == "reviewer"
+    assert [message.text for message in mod.iter_messages(source, include_subagent_finals=False)] == [
+        "Main request.",
+        "Main answer.",
+    ]
+
+
 def test_codex_extractor_skips_compaction_records(tmp_path: Path) -> None:
     mod = load_script(ROOT / "scripts" / "transcripts" / "extract_codex.py", "extract_codex_test")
     source = tmp_path / "rollout-2026-07-08T00-00-00-thread.jsonl"
@@ -193,6 +257,68 @@ def test_codex_extractor_skips_compaction_records(tmp_path: Path) -> None:
         False,
         True,
     ]
+
+
+def test_codex_extractor_includes_only_final_subagent_message(tmp_path: Path) -> None:
+    mod = load_script(
+        ROOT / "scripts" / "transcripts" / "extract_codex.py",
+        "extract_codex_subagent_test",
+    )
+    source = tmp_path / "rollout-2026-07-10T00-00-00-thread.jsonl"
+    write_jsonl(
+        source,
+        [
+            {
+                "type": "session_meta",
+                "timestamp": "2026-07-10T00:00:00Z",
+                "payload": {"cwd": "/tmp/example", "model": "gpt-5.6-sol"},
+            },
+            {
+                "type": "event_msg",
+                "timestamp": "2026-07-10T00:00:01Z",
+                "payload": {"type": "user_message", "message": "Main request."},
+            },
+            {
+                "type": "response_item",
+                "timestamp": "2026-07-10T00:00:02Z",
+                "payload": {
+                    "type": "agent_message",
+                    "author": "/root/reviewer",
+                    "recipient": "/root",
+                    "content": [{"type": "text", "text": "Message Type: MESSAGE\nPayload: progress"}],
+                },
+            },
+            {
+                "type": "response_item",
+                "timestamp": "2026-07-10T00:00:03Z",
+                "payload": {
+                    "type": "agent_message",
+                    "author": "/root/reviewer",
+                    "recipient": "/root",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Message Type: FINAL_ANSWER\nPayload: Detailed final assessment.",
+                        }
+                    ],
+                },
+            },
+            {
+                "type": "event_msg",
+                "timestamp": "2026-07-10T00:00:04Z",
+                "payload": {"type": "agent_message", "message": "Main answer."},
+            },
+        ],
+    )
+
+    _thread, _cwd, messages = mod.iter_messages(source)
+
+    assert [message.text for message in messages] == [
+        "Main request.",
+        "Message Type: FINAL_ANSWER\nPayload: Detailed final assessment.",
+        "Main answer.",
+    ]
+    assert messages[1].subagent == "/root/reviewer"
 
 
 def test_conversation_note_renderer_omits_scaffolding_but_keeps_ranges_available() -> None:
