@@ -296,3 +296,16 @@ result existed:
    all-layer absolute-position comparison observed roughly `1.46e-4` drift in V
    while exact same-prefix replay remained bit-identical. The failed stricter
    attempt is preserved in `results/coherent_state_ladder/`.
+7. The original body-reply cap rule is superseded for model-native conversation
+   construction only. Prior exact-checkpoint development renders (inspected before
+   this run) recorded roughly 20–22 capped replies per conversation, so requiring
+   natural EOS before 320 would make the frozen corpus structurally impossible.
+   A body reply that reaches 320 is deterministically trimmed to its last complete
+   sentence when a boundary occurs after its first third; otherwise the renderer's
+   explicit fallback preserves the auditable hard cut rather than returning empty.
+   In either case the canonical conversation uses that established rendering, while
+   the newly required raw generated token IDs and full decoded text are persisted
+   alongside that canonical trim. This does not apply to the summary: reaching the
+   900-token summary cap remains a hard technical failure because the actual live
+   summary-generation state is the intervention source. Body cap counts and every
+   raw/canonical pair must be reported.

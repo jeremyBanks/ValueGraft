@@ -61,7 +61,7 @@ from coherent_state_store import (
     save_render,
     validate_scored_checkpoint,
 )
-from cross_arch_probe import native_render_specs
+from cross_arch_probe import native_render_specs, trim_capped_reply
 from l_coherent_state_hf import run_loaded_kernel_gates
 
 
@@ -99,7 +99,11 @@ def sha256_file(path: Path) -> str:
 
 def runtime_provenance(run_dir: Path) -> dict:
     commit = git_value("rev-parse", "HEAD")
-    dirty_rows = [x for x in git_value("status", "--porcelain").splitlines() if x]
+    # --untracked-files=all is load-bearing: default porcelain collapses a new
+    # untracked results tree to its parent directory, which would make a valid
+    # leaf run look dirty outside itself on invocation 2 of the resume probe.
+    dirty_rows = [x for x in git_value(
+        "status", "--porcelain", "--untracked-files=all").splitlines() if x]
     repo = Path(git_value("rev-parse", "--show-toplevel")).resolve()
     allowed = run_dir.resolve()
     disallowed = []
@@ -276,21 +280,38 @@ class Runner:
             cid = FROZEN_ORDER[idx]
             if conv.get("id") != cid:
                 raise ArtifactError(f"render order mismatch: {conv.get('id')} != {cid}")
+            assistants = [m["content"] for m in conv.get("messages", [])
+                          if m.get("role") == "assistant"]
+            if len(assistants) != len(reply_records):
+                raise ArtifactError(f"{cid}: reply-record coverage mismatch")
+            for turn, (canonical, record) in enumerate(
+                    zip(assistants, reply_records), 1):
+                ids = record.get("token_ids")
+                raw = record.get("raw_text")
+                if not isinstance(ids, list) or len(ids) != record.get("n_tokens"):
+                    raise ArtifactError(f"{cid}: turn {turn} raw token IDs absent")
+                if self.tokenizer.decode(ids).strip() != raw:
+                    raise ArtifactError(f"{cid}: turn {turn} raw render mismatch")
+                raw_hash = hashlib.sha256(json.dumps(
+                    ids, separators=(",", ":")).encode()).hexdigest()
+                if raw_hash != record.get("raw_token_ids_sha256"):
+                    raise ArtifactError(f"{cid}: turn {turn} raw token hash mismatch")
+                expected = trim_capped_reply(raw) if record.get("hit_token_cap") else raw
+                if canonical != expected or record.get("canonical_text") != expected:
+                    raise ArtifactError(f"{cid}: turn {turn} canonical trim mismatch")
+                block = record.get("canonical_block_ids")
+                block_hash = hashlib.sha256(json.dumps(
+                    block, separators=(",", ":")).encode()).hexdigest() \
+                    if isinstance(block, list) else None
+                if block_hash != record.get("canonical_block_ids_sha256"):
+                    raise ArtifactError(f"{cid}: turn {turn} canonical ID hash mismatch")
+                if bool(record.get("ended_on_eos")) == bool(
+                        record.get("hit_token_cap")):
+                    raise ArtifactError(f"{cid}: turn {turn} termination flags conflict")
             save_render(
                 self.ckpath(idx + 1, cid), fingerprint=self.fingerprint,
                 order_position=idx + 1, conversation=conv,
                 reply_records=reply_records)
-            if conv.get("meta", {}).get("truncated_replies", 0):
-                current = read_checkpoint(
-                    self.ckpath(idx + 1, cid), self.fingerprint)
-                promote_checkpoint(self.ckpath(idx + 1, cid), current, {
-                    "gates": {"technical_pass": False, "failures": [{
-                        "type": "reply_cap",
-                        "count": conv["meta"]["truncated_replies"],
-                    }]}
-                }, "void")
-                raise CoherentStateError(
-                    f"{cid} hit the {MAX_REPLY_TOKENS}-token native reply cap")
             print(f"CHECKPOINT_RENDERED position={idx + 1} id={cid}", flush=True)
 
         native_render_specs(
@@ -488,6 +509,10 @@ class Runner:
                     "wrong_key_delta": wrong_delta,
                 },
                 "arm_scores": arm_scores,
+                "target_provenance": {
+                    plant["id"]: self.targets[plant["id"]]
+                    for plant in plants
+                },
                 "arm_diagnostics": arm_diagnostics,
                 "conversation_outcomes": outcomes,
                 "calibration": calibration,
@@ -496,9 +521,7 @@ class Runner:
                     "technical_pass": True, "failures": [],
                     "generated_replay_identity": identity,
                     "fresh_self_replacement_exact": True,
-                    "fresh_self_replacement_tokenwise_max_abs": noop_max,
-                    "alpha_zero_tokenwise_max_abs": noop_max,
-                    "irrelevant_history_no_state_change_max_abs": noop_max,
+                    "self_transplant_tokenwise_max_abs": noop_max,
                     "key_rotation_zero_max_abs": zero_max,
                     "rotation_roundtrip_max_abs": rotation_max,
                     "rotation_tolerance": ROTATION_TOLERANCE,

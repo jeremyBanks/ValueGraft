@@ -23,6 +23,7 @@ from coherent_state_hf import (
     delta_deranged_snapshot,
     move_key_rows,
     replace_summary_rows,
+    row_hashes,
 )
 from coherent_state_runtime import (
     ARM_NAMES,
@@ -31,6 +32,7 @@ from coherent_state_runtime import (
     capture_forced_summary,
     capture_generated_summary,
     score_arm,
+    score_target,
     validate_generated_replay,
 )
 from coherent_state_store import checkpoint_path, read_checkpoint, save_render
@@ -168,7 +170,7 @@ def run_loaded_kernel_gates(model, tokenizer, *, identity_tolerance: float,
     nxt = torch.tensor([next_id], device=device)
     nxtpos = torch.tensor([[len(seq)]], device=device)
     with torch.no_grad():
-        out1 = model(input_ids=nxt, past_key_values=rebuild_cache(snap0, DynamicCache),
+        out1 = model(input_ids=nxt, past_key_values=cache0,
                      position_ids=nxtpos, use_cache=True)
         out2 = model(input_ids=nxt, past_key_values=rebuild_cache(snap0, DynamicCache),
                      position_ids=nxtpos, use_cache=True)
@@ -213,6 +215,21 @@ def run_loaded_kernel_gates(model, tokenizer, *, identity_tolerance: float,
                                 "basis": "loaded production gate"}}
     fresh_score = score_arm(model, tokenizer, fresh_snapshot, layout.messages,
                             layout.context_ids, [plant], targets)
+    base_hashes_before = row_hashes(fresh_snapshot)
+    consumed_branch = list(fresh_snapshot)
+    consumed_score = score_target(
+        model, tokenizer, consumed_branch, layout.messages, layout.context_ids,
+        plant["probe"], targets["loaded-gate"]["correct"],
+        consume_snapshot=True)
+    if consumed_branch:
+        raise RuntimeError("bounded branch ownership was not transferred")
+    base_hashes_after = row_hashes(fresh_snapshot)
+    expected_correct = fresh_score["plants"][0]["correct"]
+    bounded_lp_diff = max(abs(a - b) for a, b in zip(
+        consumed_score["token_logprobs"], expected_correct["token_logprobs"]))
+    if base_hashes_before != base_hashes_after or bounded_lp_diff > identity_tolerance:
+        raise RuntimeError(
+            f"bounded scoring changed base or scores: lp={bounded_lp_diff}")
     self_snapshot = replace_summary_rows(
         fresh_snapshot, fresh_rows, layout.summary_start,
         use_keys=True, use_values=True)
@@ -227,6 +244,18 @@ def run_loaded_kernel_gates(model, tokenizer, *, identity_tolerance: float,
     noop = max(abs(a - b) for a, b in zip(f_lps, s_lps))
     if noop > identity_tolerance:
         raise RuntimeError(f"loaded tokenwise no-op failed: {noop}")
+    irrelevant_no_state = replace_summary_rows(
+        fresh_snapshot, wrong.rows, layout.summary_start,
+        use_keys=False, use_values=False)
+    irrelevant_score = score_arm(
+        model, tokenizer, irrelevant_no_state, layout.messages,
+        layout.context_ids, [plant], targets)
+    i_lps = [lp for row in irrelevant_score["plants"]
+             for side in ("correct", "counterfactual")
+             for lp in row[side]["token_logprobs"]]
+    irrelevant_noop = max(abs(a - b) for a, b in zip(f_lps, i_lps))
+    if irrelevant_noop > identity_tolerance:
+        raise RuntimeError(f"irrelevant-source no-state control failed: {irrelevant_noop}")
     delta_snapshot, delta_diag = delta_deranged_snapshot(
         fresh_snapshot, correct.rows, layout.summary_start, 20_260_711)
     if (any(x.fixed_points for x in delta_diag) or
@@ -254,8 +283,9 @@ def run_loaded_kernel_gates(model, tokenizer, *, identity_tolerance: float,
         "generated_replay": replay_identity,
         "generated_token_count": len(generated.summary_ids),
         "tokenwise_self_replacement_max_abs": noop,
-        "alpha_zero_max_abs": 0.0,
-        "irrelevant_history_no_state_change_max_abs": 0.0,
+        "bounded_scoring_tokenwise_max_abs": bounded_lp_diff,
+        "bounded_scoring_base_unchanged": base_hashes_before == base_hashes_after,
+        "irrelevant_source_no_state_tokenwise_max_abs": irrelevant_noop,
         "placebo_fixed_points": sum(x.fixed_points for x in delta_diag),
         "placebo_intended_multiset_max_diff": max(
             x.max_multiset_diff for x in delta_diag),

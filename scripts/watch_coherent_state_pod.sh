@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Local lifecycle watcher: observe, harvest, and terminate one coherent-state pod.
+# shellcheck disable=SC2034  # PC_* variables are consumed by sourced classifier.
 set -u
 
 NAME="${1:?usage: watch_coherent_state_pod.sh POD_NAME}"
@@ -10,8 +11,11 @@ START="$(date +%s)"
 LAST_PROGRESS="$START"
 LAST_SIG=""
 FAIL_REASON=""
+PROBLEM_STREAK=0
 
 cd "$ROOT" || exit 1
+# shellcheck source=scripts/classify_pod.sh
+. scripts/classify_pod.sh
 [ -f "$STATE" ] || { echo "FATAL: state absent $STATE"; exit 2; }
 
 status_json() {
@@ -19,26 +23,62 @@ status_json() {
 }
 
 harvest_and_terminate() {
-  local ipp ip port ssh run_remote local_dir stamp
-  ipp="$(status_json | python3 -c 'import json,sys; d=json.load(sys.stdin); print((d.get("publicIp") or "")+":"+str((d.get("portMappings") or {}).get("22", "")))' 2>/dev/null)"
-  ip="${ipp%%:*}"; port="${ipp##*:}"
-  ssh="ssh -i $KEY -p $port -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$ip"
-  run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)"
-  if [ -n "$run_remote" ]; then
-    local_dir="$ROOT/${run_remote#/workspace/repo/}"
-    mkdir -p "$(dirname "$local_dir")" "$local_dir"
-    rsync -az -e "ssh -i $KEY -p $port" "root@$ip:$run_remote/" "$local_dir/" || true
-    rsync -az -e "ssh -i $KEY -p $port" "root@$ip:/workspace/exp/job.log" "$local_dir/job.log" || true
-    echo "HARVESTED $local_dir"
-  else
-    stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-    local_dir="$ROOT/results/_QUARANTINE_coherent_state_${stamp}"
-    mkdir -p "$local_dir"
-    rsync -az -e "ssh -i $KEY -p $port" "root@$ip:/workspace/exp/job.log" "$local_dir/job.log" || true
-    status_json > "$local_dir/pod_status.json" 2>/dev/null || true
-    echo "HARVESTED_PARTIAL $local_dir"
+  local mode="${1:-failure}" attempt ipp ip port ssh run_remote local_dir stamp
+  local harvested=0
+  for attempt in 1 2 3 4 5; do
+    ipp="$(status_json | python3 -c 'import json,sys; d=json.load(sys.stdin); print((d.get("publicIp") or "")+":"+str((d.get("portMappings") or {}).get("22", "")))' 2>/dev/null)" || true
+    ip="${ipp%%:*}"; port="${ipp##*:}"
+    if [ -z "$ip" ] || [ -z "$port" ] || [ "$ipp" = ":" ]; then
+      echo "HARVEST_RETRY $attempt endpoint unavailable"; sleep 60; continue
+    fi
+    ssh="ssh -i $KEY -p $port -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$ip"
+    run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)" || true
+    if [ -n "$run_remote" ]; then
+      local_dir="$ROOT/${run_remote#/workspace/repo/}"
+      mkdir -p "$(dirname "$local_dir")" "$local_dir"
+      if rsync -az --checksum -e "ssh -i $KEY -p $port" \
+          "root@$ip:$run_remote/" "$local_dir/" && \
+          rsync -az --checksum -e "ssh -i $KEY -p $port" \
+          "root@$ip:/workspace/exp/job.log" "$local_dir/job.log"; then
+        if python3 scripts/validate_coherent_harvest.py "$local_dir" "$mode"
+        then harvested=1; echo "HARVEST_VERIFIED $local_dir"; break; fi
+      fi
+    else
+      stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+      local_dir="$ROOT/results/_QUARANTINE_coherent_state_${stamp}"
+      mkdir -p "$local_dir"
+      if rsync -az --checksum -e "ssh -i $KEY -p $port" \
+          "root@$ip:/workspace/exp/job.log" "$local_dir/job.log" && \
+          [ -s "$local_dir/job.log" ]; then
+        status_json > "$local_dir/pod_status.json" 2>/dev/null || true
+        harvested=1; echo "HARVEST_VERIFIED_SETUP_FAILURE $local_dir"; break
+      fi
+    fi
+    echo "HARVEST_RETRY $attempt transfer/validation failed"
+    sleep 60
+  done
+  if [ "$harvested" != 1 ]; then
+    echo "HARVEST_UNVERIFIED — refusing to terminate result-bearing pod"
+    return 2
   fi
-  SC_POD_STATE="$STATE" uv run python src/pod.py terminate || true
+
+  local terminal=0
+  for attempt in 1 2 3 4 5; do
+    SC_POD_STATE="$STATE" uv run python src/pod.py terminate >/dev/null 2>&1 || true
+    sleep 10
+    if ! status_json >/tmp/coherent_pod_status_after_delete.json 2>/dev/null; then
+      terminal=1; break
+    fi
+    desired="$(python3 -c 'import json;print(json.load(open("/tmp/coherent_pod_status_after_delete.json")).get("desiredStatus"))' 2>/dev/null)"
+    if [ "$desired" != "RUNNING" ]; then terminal=1; break; fi
+    echo "TERMINATE_RETRY $attempt desiredStatus=$desired"
+  done
+  if [ "$terminal" != 1 ]; then
+    echo "TERMINATION_UNVERIFIED — pod may still be billing"
+    return 3
+  fi
+  echo "TERMINATION_VERIFIED"
+  return 0
 }
 
 while true; do
@@ -56,34 +96,31 @@ PY
   IPP="$(echo "$STATUS" | python3 -c 'import json,sys; d=json.load(sys.stdin); print((d.get("publicIp") or "")+":"+str((d.get("portMappings") or {}).get("22", "")))' 2>/dev/null)"
   IP="${IPP%%:*}"; PORT="${IPP##*:}"
   SSH="ssh -i $KEY -p $PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$IP"
-  OBS="$($SSH 'LOG=/workspace/exp/job.log
-    ALIVE=$(pgrep -f "job.sh|run_coherent_state_hf.py" | grep -v $$ | wc -l | tr -d " ")
-    DONE=$(grep -c "COHERENT_STATE_JOB_DONE" "$LOG" 2>/dev/null || true)
-    CRASH=$(grep -cE "FATAL|Traceback|CUDA error|OutOfMemoryError" "$LOG" 2>/dev/null || true)
-    READY=$(grep -c "MODEL_READY" "$LOG" 2>/dev/null || true)
-    RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_[^ ]*" "$LOG" 2>/dev/null | tail -1)
-    if [ -n "$RUN" ] && [ -d "$RUN" ]; then
-      CK=$(find "$RUN" -maxdepth 1 -name "conv_*.json" | wc -l | tr -d " ")
-      MT=$(find "$RUN" -maxdepth 1 -name "conv_*.json" -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)
-    else CK=0; MT=0; fi
-    GPU=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader,nounits 2>/dev/null | head -1)
-    DISK=$(df -BG /workspace | tail -1 | awk "{gsub(/G/,\"\",\$4);print \$4}")
-    echo "ALIVE=$ALIVE DONE=$DONE CRASH=$CRASH READY=$READY CK=$CK MT=${MT:-0} GPU=$GPU DISK=$DISK"' 2>/dev/null)" || {
+  if ! OBS="$($SSH "PC_ERROR_SIGNATURES='$PC_ERROR_SIGNATURES' bash -s" <<'REMOTE'
+LOG=/workspace/exp/job.log
+ALIVE=$(pgrep -f "job.sh|run_coherent_state_hf.py" | grep -v $$ | wc -l | tr -d " ")
+DONE=$(grep -c "COHERENT_STATE_JOB_DONE" "$LOG" 2>/dev/null || true)
+CRASH=$(grep -cE "$PC_ERROR_SIGNATURES" "$LOG" 2>/dev/null || true)
+READY=$(grep -c "MODEL_READY" "$LOG" 2>/dev/null || true)
+RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_[^ ]*" "$LOG" 2>/dev/null | tail -1)
+if [ -n "$RUN" ] && [ -d "$RUN" ]; then
+  CK=$(find "$RUN" -maxdepth 1 -name "conv_*.json" | wc -l | tr -d " ")
+  MT=$(find "$RUN" -maxdepth 1 -name "conv_*.json" -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)
+else CK=0; MT=0; fi
+GPU=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader,nounits 2>/dev/null | head -1)
+AGE=$(( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ))
+DISK=$(df -BG /workspace | tail -1 | awk '{gsub(/G/,"",$4);print $4}')
+echo "ALIVE=$ALIVE DONE=$DONE CRASH=$CRASH READY=$READY CK=$CK MT=${MT:-0} AGE=$AGE GPU=$GPU DISK=$DISK"
+REMOTE
+)"; then
       echo "$(date -Is) transient SSH observation failure"
       sleep 60
       continue
-    }
+  fi
   echo "$(date -Is) elapsed=$ELAPSED rate=$RATE $OBS"
-  eval "$(echo "$OBS" | sed -n 's/.*ALIVE=\([0-9]*\) DONE=\([0-9]*\) CRASH=\([0-9]*\) READY=\([0-9]*\) CK=\([0-9]*\) MT=\([0-9]*\).*/ALIVE=\1;DONE=\2;CRASH=\3;READY=\4;CK=\5;MT=\6/p')"
+  eval "$(echo "$OBS" | sed -n 's/.*ALIVE=\([0-9]*\) DONE=\([0-9]*\) CRASH=\([0-9]*\) READY=\([0-9]*\) CK=\([0-9]*\) MT=\([0-9]*\) AGE=\([0-9]*\) GPU=\([0-9]*\).*/ALIVE=\1;DONE=\2;CRASH=\3;READY=\4;CK=\5;MT=\6;AGE=\7;GPU_UTIL=\8/p')"
   SIG="${CK:-0}:${MT:-0}"
   if [ "$SIG" != "$LAST_SIG" ]; then LAST_SIG="$SIG"; LAST_PROGRESS="$NOW"; fi
-  if [ "${DONE:-0}" -gt 0 ]; then
-    harvest_and_terminate
-    echo "WATCH_COMPLETE"
-    exit 0
-  fi
-  if [ "${CRASH:-0}" -gt 0 ]; then FAIL_REASON="fatal marker in job.log"; break; fi
-  if [ "${ALIVE:-0}" = 0 ]; then FAIL_REASON="no scientific/job process"; break; fi
   if [ "${READY:-0}" = 0 ] && [ "$ELAPSED" -gt 2700 ]; then
     FAIL_REASON="MODEL_READY deadline exceeded"
     break
@@ -92,9 +129,37 @@ PY
     FAIL_REASON="45 minutes without atomic checkpoint progress"
     break
   fi
+  if [ "${READY:-0}" -gt 0 ]; then
+    PC_REACH=ok
+    PC_PROC="${ALIVE:-}"
+    PC_GPU="${GPU_UTIL:-}"
+    PC_DONE="${DONE:-0}"
+    PC_LAST="CHECKPOINT signature=$SIG"
+    [ "${CRASH:-0}" -gt 0 ] && PC_LAST="FATAL signature-count=$CRASH"
+    PC_RESULT=""
+    PC_LOGAGE="${AGE:-}"
+    PC_STALL_SECS=2700
+    if classify_pod; then
+      PROBLEM_STREAK=0
+    else
+      PROBLEM_STREAK=$((PROBLEM_STREAK + 1))
+      echo "CLASSIFIER_PROBLEM streak=$PROBLEM_STREAK class=$PC_CLASS msg=$PC_MSG"
+      if [ "$PROBLEM_STREAK" -ge 2 ] || [ "$PC_CLASS" = "ERROR" ] || \
+          [ "$PC_CLASS" = "DIED" ]; then
+        FAIL_REASON="classifier $PC_CLASS: $PC_MSG"
+        break
+      fi
+    fi
+    if [ "$PC_CLASS" = "DONE" ]; then
+      harvest_and_terminate complete || exit $?
+      echo "WATCH_COMPLETE"
+      exit 0
+    fi
+    unset PC_REACH PC_PROC PC_GPU PC_DONE PC_LAST PC_RESULT PC_LOGAGE PC_STALL_SECS
+  fi
   sleep 300
 done
 
 echo "WATCH_FAILURE reason=$FAIL_REASON"
-harvest_and_terminate
+harvest_and_terminate failure || exit $?
 exit 1

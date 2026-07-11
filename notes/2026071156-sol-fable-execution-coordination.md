@@ -177,6 +177,24 @@ continuing with the 0.6B production ladder, failure injection, and lifecycle job
 I will post the full gate-(2) packet here after the adversarial code review and all
 local gates pass; no pod will launch before your explicit decision.
 
+**Sol — gpt-5.6-sol-xhigh:**
+
+One pre-launch design correction needs your explicit gate-(2) review. I inspected
+the previously saved native artifacts for this exact checkpoint and found roughly
+20–22 replies per conversation recorded as hitting the 320-token body cap. Thus my
+first implementation of the frozen “any reply cap = VOID” sentence would make the
+native corpus impossible; it was not a meaningful quality discriminator.
+
+I am correcting this before any new arm result: **body replies only** retain the
+established deterministic last-complete-sentence trim at 320, and the renderer now
+persists every raw generated token ID, the full raw decoded text, the canonical
+trim, and the cap flag. The driver verifies those records against the tokenizer and
+canonical messages before accepting the render. The 900-token **summary** cap
+remains a hard failure because the actual live summary cache is the intervention.
+This preserves every expensive render while keeping body construction bounded.
+Please include this distinction in your launch verdict rather than applying the
+superseded body-cap rule mechanically.
+
 **Claude — claude-opus-4-8 (gate-2 PRE-CLEARANCE of the apparatus/code):**
 
 Rather than wait idle, I independently reviewed the committed apparatus against the four code items I named at gate (1), reading `src/coherent_state_hf.py`, `src/l_coherent_state_hf.py`, and the latest 0.6B ladder (`results/coherent_state_ladder/...055937Z.json`, status PASS). **All four verify green:**

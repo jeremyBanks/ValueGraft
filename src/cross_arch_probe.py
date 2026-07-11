@@ -148,6 +148,7 @@ Out: results/cross_arch/<model-slug>.json  (the pooled per-model result), AND
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -1670,20 +1671,37 @@ def native_render_specs(model, tok, family, scenarios, conv_limit, *,
         scenario, plan = st["scenario"], st["plan"]
         msgs = st["msgs"]
         capped = len(reply_ids) >= max_reply_tokens
-        reply_text = tok.decode(reply_ids).strip()
+        raw_reply_text = tok.decode(reply_ids).strip()
+        reply_text = raw_reply_text
         if capped:
             st["truncated"] += 1
             reply_text = trim_capped_reply(reply_text)
         if not reply_text:
             st["empty"] += 1
-        st["reply_records"].append({"n_tokens": len(reply_ids),
-                                    "logprob_sum": lp_sum})
+        # SAVE EVERY RENDER: retain the complete generated IDs/text even when the
+        # canonical conversation body trims a capped reply to its last sentence.
+        # Previously only the trimmed text survived, losing expensive generation.
+        st["reply_records"].append({
+            "n_tokens": len(reply_ids), "logprob_sum": lp_sum,
+            "token_ids": [int(x) for x in reply_ids],
+            "raw_text": raw_reply_text,
+            "canonical_text": reply_text,
+            "hit_token_cap": capped,
+            "ended_on_eos": not capped,
+            "trimmed_character_count": len(raw_reply_text) - len(reply_text),
+            "raw_token_ids_sha256": hashlib.sha256(json.dumps(
+                [int(x) for x in reply_ids], separators=(",", ":")).encode()).hexdigest(),
+        })
         msgs.append({"role": "assistant", "content": reply_text})
 
         r_canon_user = st["_r_canon_user"]
         r_new = canonical_ids_any(tok, msgs, render_hf)
         assert r_new[: len(r_canon_user)] == r_canon_user, \
             f"{scenario['id']} turn {ti}: assistant block changed the prefix"
+        canonical_block_ids = r_new[len(r_canon_user):]
+        st["reply_records"][-1]["canonical_block_ids"] = canonical_block_ids
+        st["reply_records"][-1]["canonical_block_ids_sha256"] = hashlib.sha256(
+            json.dumps(canonical_block_ids, separators=(",", ":")).encode()).hexdigest()
         cache = _truncate(st["cache"], len(r_canon_user))
         if len(r_new) > len(r_canon_user):
             cache, _ = prefill(
