@@ -220,6 +220,80 @@ def test_durable_summary_resumes_by_exact_reconstruction_not_generation(
          "generated_incremental_exact_reconstruction")]
 
 
+def test_strict_replay_waiver_requires_bit_exact_summary_hashes():
+    generated = _generated_capture()
+    replay = _generated_capture()
+    numerical = {
+        "passes": True,
+        "token_logprob_max_abs": 0.0,
+        "k_max_abs": 0.0,
+        "v_max_abs": 0.0,
+    }
+    exact = driver._strict_generated_replay_witness(
+        generated, replay, numerical)
+    assert exact["passes"] is True
+    assert exact["summary_row_hashes_bit_exact"] is True
+    assert exact["raw_tensor_archive_waived_by_exact_replay"] is True
+
+    replay.row_hashes = [{"layer": 0, "k": "changed", "v": "v"}]
+    mismatch = driver._strict_generated_replay_witness(
+        generated, replay, numerical)
+    assert mismatch["numerical_tolerance_passes"] is True
+    assert mismatch["summary_row_hashes_bit_exact"] is False
+    assert mismatch["raw_tensor_archive_waived_by_exact_replay"] is False
+    assert mismatch["passes"] is False
+
+
+def test_scoring_source_materialization_record_is_bounded_and_additive(tmp_path):
+    runner = driver.Runner.__new__(driver.Runner)
+    path = tmp_path / "conv.json"
+    path.write_text(json.dumps({"sources": {"correct_actual": {"x": 1}}}))
+    first = runner._record_scoring_source_materialization(
+        path, "live_incremental_generation_rows")
+    assert first["sources"]["scoring_source_materializations"] == [
+        "live_incremental_generation_rows"]
+    assert first["sources"]["scoring_source_materialization_used"] == \
+        "live_incremental_generation_rows"
+    second = runner._record_scoring_source_materialization(
+        path, "bit_exact_stepwise_resume_reconstruction")
+    assert second["sources"]["scoring_source_materializations"] == [
+        "bit_exact_stepwise_resume_reconstruction",
+        "live_incremental_generation_rows",
+    ]
+    assert second["sources"]["scoring_source_materialization_used"] == \
+        "bit_exact_stepwise_resume_reconstruction"
+    with pytest.raises(driver.ArtifactError, match="invalid scoring source"):
+        runner._record_scoring_source_materialization(path, "batched_prefill")
+
+
+def test_branch_audit_persists_component_level_summary_hash_lineage():
+    torch = driver.torch
+    fresh = [(torch.zeros((1, 1, 4, 2)), torch.zeros((1, 1, 4, 2)))]
+    correct = [(torch.full((1, 1, 2, 2), 3.0),
+                torch.full((1, 1, 2, 2), 5.0))]
+    wrong = [(torch.full((1, 1, 2, 2), 7.0),
+              torch.full((1, 1, 2, 2), 11.0))]
+    layout = SimpleNamespace(physical_summary_start=2,
+                             physical_summary_end=4)
+    branch = driver.replace_summary_rows(
+        fresh, correct, 2, use_keys=False, use_values=True)
+    audit = driver._assert_boundary_intervention(
+        "G_Vcorrect", fresh, branch, layout, correct, wrong)
+    fresh_hashes = driver.row_hashes([
+        (fresh[0][0][..., 2:4, :], fresh[0][1][..., 2:4, :])])
+    correct_hashes = driver.row_hashes(correct)
+    assert audit["declared_k_source"] == "fresh"
+    assert audit["declared_v_source"] == "correct_actual"
+    assert audit["inserted_summary_row_hashes"] == \
+        audit["declared_source_summary_row_hashes"]
+    assert audit["declared_source_summary_row_hashes"][0]["k_sha256"] == \
+        fresh_hashes[0]["k_sha256"]
+    assert audit["declared_source_summary_row_hashes"][0]["v_sha256"] == \
+        correct_hashes[0]["v_sha256"]
+    assert audit["fresh_before_summary_row_hashes"] == \
+        audit["branch_before_summary_row_hashes"]
+
+
 def test_technical_only_flag_is_explicit(monkeypatch, tmp_path):
     monkeypatch.setattr(
         driver.sys, "argv",

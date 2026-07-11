@@ -63,10 +63,10 @@ from coherent_state_runtime import (
     eager_backend_fingerprint,
     gapped_arm_boundary,
     measure_gapped_destination_schedule,
+    measure_generated_replay,
     score_arm,
     score_target,
     validate_position_schedule,
-    validate_generated_replay,
 )
 from coherent_state_tokens import (
     gapped_destination_layout,
@@ -441,6 +441,59 @@ def _snapshot_hashes(snapshot) -> list[dict]:
     return row_hashes(snapshot)
 
 
+def _snapshot_span_hashes(snapshot, start: int, end: int) -> list[dict]:
+    if not 0 <= start < end:
+        raise CoherentStateError(f"invalid snapshot hash span [{start}, {end})")
+    return row_hashes([
+        (keys[..., start:end, :], values[..., start:end, :])
+        for keys, values in snapshot
+    ])
+
+
+def _declared_summary_hashes(arm: str, fresh_hashes: list[dict],
+                             correct_hashes: list[dict],
+                             wrong_hashes: list[dict]) -> tuple[list[dict], str, str]:
+    if not (len(fresh_hashes) == len(correct_hashes) == len(wrong_hashes)):
+        raise CoherentStateError("summary lineage layer-count mismatch")
+    sources = {
+        "G_fresh": (fresh_hashes, "fresh", "fresh"),
+        "G_correct": (correct_hashes, "correct_actual", "correct_actual"),
+        "G_wrong": (wrong_hashes, "wrong_history", "wrong_history"),
+    }
+    if arm in sources:
+        return sources[arm]
+    if arm == "G_Vcorrect":
+        return ([
+            {"layer": fresh["layer"], "k_sha256": fresh["k_sha256"],
+             "v_sha256": correct["v_sha256"]}
+            for fresh, correct in zip(fresh_hashes, correct_hashes)
+        ], "fresh", "correct_actual")
+    if arm == "G_Kcorrect":
+        return ([
+            {"layer": fresh["layer"], "k_sha256": correct["k_sha256"],
+             "v_sha256": fresh["v_sha256"]}
+            for fresh, correct in zip(fresh_hashes, correct_hashes)
+        ], "correct_actual", "fresh")
+    raise CoherentStateError(f"unknown gapped lineage arm {arm}")
+
+
+def _strict_generated_replay_witness(generated, replay, numerical: dict) -> dict:
+    """Bind the replay waiver to exact K/V bytes, not only a tolerance."""
+    actual_hashes = generated.row_hashes
+    replay_hashes = replay.row_hashes
+    hashes_exact = actual_hashes == replay_hashes
+    numerical_passes = numerical.get("passes") is True
+    return {
+        **numerical,
+        "numerical_tolerance_passes": numerical_passes,
+        "actual_summary_row_hashes": actual_hashes,
+        "replay_summary_row_hashes": replay_hashes,
+        "summary_row_hashes_bit_exact": hashes_exact,
+        "raw_tensor_archive_waived_by_exact_replay": hashes_exact,
+        "passes": numerical_passes and hashes_exact,
+    }
+
+
 def _assert_boundary_intervention(arm: str, fresh, branch, layout,
                                   correct_rows, wrong_rows) -> dict:
     """Prove a branch is still pre-tail and changes only its declared rows."""
@@ -458,6 +511,12 @@ def _assert_boundary_intervention(arm: str, fresh, branch, layout,
         "G_Vcorrect": (correct_rows, False, True),
         "G_Kcorrect": (correct_rows, True, False),
     }.get(arm)
+    fresh_summary_hashes = _snapshot_span_hashes(fresh, s0, s1)
+    correct_hashes = _snapshot_hashes(correct_rows)
+    wrong_hashes = _snapshot_hashes(wrong_rows)
+    declared_hashes, declared_k_source, declared_v_source = \
+        _declared_summary_hashes(
+            arm, fresh_summary_hashes, correct_hashes, wrong_hashes)
     for layer, ((kf, vf), (kb, vb)) in enumerate(zip(fresh, branch)):
         for label, base, candidate in (("K", kf, kb), ("V", vf, vb)):
             if (not torch.equal(base[..., :s0, :], candidate[..., :s0, :]) or
@@ -476,12 +535,28 @@ def _assert_boundary_intervention(arm: str, fresh, branch, layout,
                     not torch.equal(expected_v, vb[..., s0:s1, :])):
                 raise CoherentStateError(
                     f"{arm}: declared summary insertion mismatch at layer {layer}")
+    inserted_hashes = _snapshot_span_hashes(branch, s0, s1)
+    if inserted_hashes != declared_hashes:
+        raise CoherentStateError(
+            f"{arm}: inserted summary hashes differ from declared lineage")
+    fresh_prefix_hashes = _snapshot_span_hashes(fresh, 0, s0)
+    branch_prefix_hashes = _snapshot_span_hashes(branch, 0, s0)
+    if fresh_prefix_hashes != branch_prefix_hashes:
+        raise CoherentStateError(f"{arm}: pre-summary hash lineage differs")
     return {
         "arm": arm,
         "pre_tail_storage_lengths": branch_lengths,
         "pre_tail_row_hashes": _snapshot_hashes(branch),
+        "fresh_summary_row_hashes": fresh_summary_hashes,
+        "inserted_summary_row_hashes": inserted_hashes,
+        "declared_source_summary_row_hashes": declared_hashes,
+        "declared_k_source": declared_k_source,
+        "declared_v_source": declared_v_source,
+        "fresh_before_summary_row_hashes": fresh_prefix_hashes,
+        "branch_before_summary_row_hashes": branch_prefix_hashes,
         "non_summary_rows_bit_exact": True,
         "declared_summary_intervention_exact": True,
+        "summary_hash_lineage_exact": True,
     }
 
 
@@ -550,13 +625,42 @@ class Runner:
                 "generation_trace": generated.trace,
             },
             "sources": {
-                "correct_actual": _serializable_source(generated),
+                "correct_actual": {
+                    **_serializable_source(generated),
+                    "capture_materialization": "live_incremental_generation_rows",
+                    "raw_tensor_archived": False,
+                    "exact_replay_waiver_required_before_scoring": True,
+                },
             },
             "capture_progress": {
                 "generated_source_persisted": True,
                 "generated_replay_pending_at_durable_save": True,
             },
         }, "captured")
+
+    def _record_scoring_source_materialization(
+            self, path: Path, kind: str) -> dict:
+        """Append one of two bounded source-materialization facts durably."""
+        allowed = {
+            "live_incremental_generation_rows",
+            "bit_exact_stepwise_resume_reconstruction",
+        }
+        if kind not in allowed:
+            raise ArtifactError(f"invalid scoring source materialization: {kind}")
+        current = json.loads(path.read_text())
+        sources = dict(current.get("sources") or {})
+        used = sources.get("scoring_source_materializations", [])
+        if (not isinstance(used, list) or not set(used).issubset(allowed) or
+                len(used) > len(allowed)):
+            raise ArtifactError("scoring source materialization record is malformed")
+        sources["scoring_source_materializations"] = sorted(set(used) | {kind})
+        # This singular field is deliberately replaced before any scoring on a
+        # resumed attempt. The history above remains additive; this value names
+        # the materialization that supplies every branch in the current attempt.
+        sources["scoring_source_materialization_used"] = kind
+        current["sources"] = sources
+        atomic_write_json(path, current)
+        return current
 
     def ckpath(self, position: int, cid: str) -> Path:
         return checkpoint_path(self.run_dir, position, cid)
@@ -788,6 +892,8 @@ class Runner:
             if durable_generation:
                 generated = self._restore_generated_summary(
                     existing, correct_messages)
+                scoring_materialization = \
+                    "bit_exact_stepwise_resume_reconstruction"
                 print(
                     f"SUMMARY_RESUME position={position} id={cid} "
                     f"tokens={len(generated.summary_ids)}",
@@ -803,6 +909,7 @@ class Runner:
                 # it atomically before running even the independent replay gate.
                 existing = self._persist_generated_summary(
                     path, existing, generated)
+                scoring_materialization = "live_incremental_generation_rows"
                 print(
                     f"SUMMARY_DURABLE position={position} id={cid} "
                     f"tokens={len(generated.summary_ids)}",
@@ -832,6 +939,7 @@ class Runner:
 
             destination_schedule = measure_gapped_destination_schedule(
                 self.model, declared_layout, generated.summary_ids,
+                conversation_id=cid,
                 tolerance=ZERO_GAP_TOLERANCE,
                 progress=destination_schedule_progress)
             if (destination_schedule.get("passes") is not True or
@@ -848,8 +956,9 @@ class Runner:
             replay = capture_forced_summary(
                 self.model, self.tokenizer, correct_messages,
                 generated.summary_ids, source_kind="correct_stepwise_replay")
-            identity = validate_generated_replay(
-                generated, replay, IDENTITY_TOLERANCE)
+            identity = _strict_generated_replay_witness(
+                generated, replay, measure_generated_replay(
+                    generated, replay, IDENTITY_TOLERANCE))
             if not (generated.summary_start == replay.summary_start and
                     generated.summary_end == replay.summary_end and
                     generated.summary_ids == replay.summary_ids):
@@ -863,9 +972,16 @@ class Runner:
                     "generated_replay_identity": identity,
                 },
                 "capture_progress": {
-                    "generated_replay_validated": True,
+                    "generated_replay_validated": identity["passes"],
                 },
             }, "captured")
+            if not identity["passes"]:
+                raise CoherentStateError(
+                    "generated/replay strict identity failed: "
+                    f"numerical={identity['numerical_tolerance_passes']} "
+                    f"row_hashes={identity['summary_row_hashes_bit_exact']}")
+            existing = self._record_scoring_source_materialization(
+                path, scoring_materialization)
             print(f"CHECKPOINT_CAPTURED position={position} id={cid}", flush=True)
 
             generated.cache = None
