@@ -14,6 +14,7 @@ from pathlib import Path
 import random
 import statistics
 
+from coherent_state_cases import FROZEN_ORDER, WRONG_DONOR
 from coherent_state_runtime import AMENDMENT_ID, DESIGN_ID
 
 
@@ -94,6 +95,19 @@ def load_checkpoints(run_dir: Path):
 
 
 def validate_docs(docs):
+    if len(docs) not in (6, 12):
+        raise AnalysisError(
+            f"actionable analysis requires frozen N=6 or N=12, got {len(docs)}")
+    reference_fingerprint = docs[0].get("fingerprint")
+    if not isinstance(reference_fingerprint, dict):
+        raise AnalysisError("checkpoint lacks a common run fingerprint")
+    if reference_fingerprint.get("frozen_order") != list(FROZEN_ORDER):
+        raise AnalysisError("fingerprint frozen order differs")
+    if reference_fingerprint.get("wrong_donors") != WRONG_DONOR:
+        raise AnalysisError("fingerprint external donor map differs")
+    if not reference_fingerprint.get("scenario_sha256") or \
+            not reference_fingerprint.get("targets_sha256"):
+        raise AnalysisError("fingerprint lacks scenario/target hashes")
     for expected, doc in enumerate(docs, 1):
         fingerprint = doc.get("fingerprint") or {}
         if int(doc.get("schema", -1)) != 2:
@@ -102,11 +116,18 @@ def validate_docs(docs):
                 doc.get("amendment_id", fingerprint.get("amendment_id")) !=
                 AMENDMENT_ID):
             raise AnalysisError(
-                f"{doc.get('_path')} is not an Amendments-1-2 gapped artifact")
+                f"{doc.get('_path')} is not an Amendments-1-2-3 gapped artifact")
         if int(doc.get("order_position", -1)) != expected:
             raise AnalysisError(
                 f"non-contiguous frozen order at {doc.get('_path')}: "
                 f"got {doc.get('order_position')} expected {expected}")
+        expected_id = FROZEN_ORDER[expected - 1]
+        if doc.get("conversation_id") != expected_id:
+            raise AnalysisError(
+                f"frozen conversation order differs at {expected}: "
+                f"got {doc.get('conversation_id')} expected {expected_id}")
+        if doc.get("fingerprint") != reference_fingerprint:
+            raise AnalysisError("checkpoints do not share one fingerprint")
         outcomes = doc.get("conversation_outcomes") or {}
         missing = [arm for arm in ARMS if arm not in outcomes]
         if missing:
@@ -205,6 +226,8 @@ def interpret(stats):
         return "VOID_TECHNICAL"
     if not stats["regime_gate"]["passes"]:
         return "REGIME_INADEQUATE"
+    if stats["n_conversations"] < 12:
+        return "INTERIM_NO_EFFICACY_DECLARATION"
     channel = clears(cf) and clears(cw)
     if channel:
         return "HISTORY_SPECIFIC_CHANNEL"

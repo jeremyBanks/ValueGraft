@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from analyze_coherent_state import AnalysisError, analyze, bootstrap_interval, t_interval
+from coherent_state_cases import FROZEN_ORDER, WRONG_DONOR
 
 
 def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
@@ -16,9 +17,9 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
         w = c - cw
         docs.append({
             "schema": 2,
-            "design_id": "coherent-state-gapped-v2",
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
-            "conversation_id": f"c{i+1:02d}",
+            "design_id": "coherent-state-gapped-v3",
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+            "conversation_id": FROZEN_ORDER[i],
             "order_position": i + 1,
             "status": "scored",
             "gates": {"technical_pass": technical,
@@ -38,6 +39,16 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
                 "G_wrong": 0.0 if calibration else 0.1,
             },
             "calibration": {"correct_label": calibration_labels[i]},
+            "fingerprint": {
+                "schema": 2,
+                "design_id": "coherent-state-gapped-v3",
+                "amendment_id":
+                    "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+                "frozen_order": list(FROZEN_ORDER),
+                "wrong_donors": WRONG_DONOR,
+                "scenario_sha256": "scenario-fixture",
+                "targets_sha256": "targets-fixture",
+            },
         })
     return docs
 
@@ -54,6 +65,7 @@ def test_n6_extends_when_channel_direction_or_calibration_fires():
     assert out["serial_decision"] == "EXTEND_TO_12"
     assert out["regime_gate"]["passes"]
     assert out["calibration"]["fires"]
+    assert out["interpretation"] == "INTERIM_NO_EFFICACY_DECLARATION"
     assert out["calibration"]["variants"]["A"]["n_repeated_executions"] == 5
     assert out["calibration"]["variants"]["B"]["n_repeated_executions"] == 1
 
@@ -137,5 +149,22 @@ def test_old_packed_or_unversioned_documents_fail_closed():
         analyze(docs)
     docs = _docs()
     docs[0]["design_id"] = "coherent-state-packed-v0"
-    with pytest.raises(AnalysisError, match="Amendments-1-2"):
+    with pytest.raises(AnalysisError, match="Amendments-1-2-3"):
         analyze(docs)
+
+
+def test_wrong_frozen_id_or_fingerprint_fails_closed():
+    docs = _docs()
+    docs[0]["conversation_id"] = "c99"
+    with pytest.raises(AnalysisError, match="frozen conversation order"):
+        analyze(docs)
+    docs = _docs()
+    docs[2]["fingerprint"] = dict(docs[2]["fingerprint"])
+    docs[2]["fingerprint"]["targets_sha256"] = "different"
+    with pytest.raises(AnalysisError, match="one fingerprint"):
+        analyze(docs)
+
+
+def test_nonterminal_sample_size_is_rejected():
+    with pytest.raises(AnalysisError, match="N=6 or N=12"):
+        analyze(_docs(n=6)[:5])

@@ -108,7 +108,7 @@ def promote_checkpoint(path: Path, existing: dict, additions: dict,
 def validate_scored_checkpoint(doc: dict) -> None:
     if (doc.get("schema") != 2 or doc.get("design_id") != DESIGN_ID or
             doc.get("amendment_id") != AMENDMENT_ID):
-        raise ArtifactError("scored checkpoint is not Amendments-1-2 schema 2")
+        raise ArtifactError("scored checkpoint is not Amendments-1-2-3 schema 2")
     required = (
         "conversation", "summary", "sources", "destination", "arm_scores",
         "conversation_outcomes", "gates", "runtime",

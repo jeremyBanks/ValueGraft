@@ -156,13 +156,13 @@ def run_loaded_gapped_gates(
         placebo_quantization_tolerance: float = 0.05,
         placebo_moment_tolerance: float = 0.02,
         diagnostic_sink: dict | None = None) -> dict:
-    """Amendments-1-2 production gate; packed diagnostics never authorize it."""
+    """Amendments-1-2-3 gate; packed diagnostics never authorize it."""
     sink = diagnostic_sink if diagnostic_sink is not None else {}
     sink.clear()
     sink.update({
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
-        "design_id": "coherent-state-gapped-v2",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+        "design_id": "coherent-state-gapped-v3",
         "passes": False,
         "authorization_path": "gapped_position_preserving_only",
         "position_policy": "logical_position_ids_physical_cache_position",
@@ -190,6 +190,8 @@ def run_loaded_gapped_gates(
                 cache_position=physical0)
             rows37 = snapshot_cache(cache37)
             native = compare_rows(rows0, move_key_rows(rows37, -37, theta))
+            wrong_sign = compare_rows(
+                rows0, move_key_rows(rows37, 37, theta))
             roundtrip = compare_rows(
                 rows0,
                 move_key_rows(move_key_rows(rows0, 37, theta), -37, theta))
@@ -199,6 +201,11 @@ def run_loaded_gapped_gates(
                 "native_shift_k_max_abs": max(x["k_max_abs"] for x in native),
                 "native_shift_v_max_abs": max(x["v_max_abs"] for x in native),
                 "native_shift_per_layer": native,
+                "wrong_sign_shift_k_max_abs": max(
+                    x["k_max_abs"] for x in wrong_sign),
+                "wrong_sign_failure_injection_detected": (
+                    max(x["k_max_abs"] for x in wrong_sign) >
+                    max(x["k_max_abs"] for x in native)),
                 "roundtrip_k_max_abs": max(x["k_max_abs"] for x in roundtrip),
                 "zero_rotation_k_max_abs": max(x["k_max_abs"] for x in zero),
             }
@@ -368,7 +375,7 @@ def run_loaded_gapped_gates(
         replay.cache = None
 
         target = fake_conv("c10", "A", "target-tail")
-        donor = fake_conv("c02", "B", "donor-tail")
+        donor = fake_conv("c13", "B", "donor-tail")
         fresh_messages = fresh_source_messages(target, REQUEST)
         summary_ids = rendered_assistant_content_ids(
             tokenizer, fresh_messages, SUMMARY)
@@ -593,7 +600,7 @@ def run_ladder() -> dict:
             f"loaded gapped gate failed: {failure.get('error', failure)}")
 
     target = fake_conv("c10", "A", "target-tail")
-    donor = fake_conv("c02", "B", "donor-tail")
+    donor = fake_conv("c13", "B", "donor-tail")
     fresh_messages = fresh_source_messages(target, REQUEST)
     summary_ids = rendered_assistant_content_ids(
         tokenizer, fresh_messages, SUMMARY)
@@ -697,7 +704,7 @@ def run_ladder() -> dict:
     if set(by_label) != {"A", "B"}:
         raise RuntimeError(
             f"ladder calibration did not cover both label variants: {set(by_label)}")
-    if any(doc.get("design_id") != "coherent-state-gapped-v2"
+    if any(doc.get("design_id") != "coherent-state-gapped-v3"
            for doc in calibrations.values()):
         raise RuntimeError("ladder calibration design identity changed")
 
@@ -715,8 +722,8 @@ def run_ladder() -> dict:
 
     return {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
-        "design_id": "coherent-state-gapped-v2",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+        "design_id": "coherent-state-gapped-v3",
         "status": "PASS", "model": MODEL,
         "resolved_revision": getattr(model.config, "_commit_hash", None),
         "dtype": str(next(model.parameters()).dtype),
@@ -774,8 +781,8 @@ def main():
         result = {
                   "schema": 2,
                   "amendment_id":
-                      "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
-                  "design_id": "coherent-state-gapped-v2",
+                      "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+                  "design_id": "coherent-state-gapped-v3",
                   "status": "FAIL", "error_type": type(exc).__name__,
                   "error": str(exc), "traceback": traceback.format_exc(),
                   "failed_at": datetime.now(timezone.utc).isoformat()}

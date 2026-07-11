@@ -16,8 +16,8 @@ from typing import Any
 
 
 SCHEMA = 2
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2"
-DESIGN_ID = "coherent-state-gapped-v2"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3"
+DESIGN_ID = "coherent-state-gapped-v3"
 ARMS = (
     "A_full",
     "G_fresh",
@@ -27,6 +27,16 @@ ARMS = (
     "G_Kcorrect",
     "G_delta",
 )
+FROZEN_ORDER = (
+    "c10", "c02", "c01", "c04", "c07", "c11",
+    "c05", "c09", "c06", "c12", "c08", "c03",
+)
+WRONG_DONORS = {
+    "c10": "c13", "c02": "c14", "c01": "c15",
+    "c04": "c16", "c07": "c17", "c11": "c18",
+    "c05": "c25", "c09": "c26", "c06": "c27",
+    "c12": "c28", "c08": "c29", "c03": "c30",
+}
 OLD_ARMS = {"F_fresh", "C_coherent", "W_wrong", "V_value", "K_key", "D_delta"}
 FAILURE_RE = re.compile(
     r"(?:FATAL|Traceback \(most recent call last\)|CUDA out of memory|"
@@ -112,6 +122,10 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool) -> No
         if not isinstance(fingerprint, dict):
             raise ValueError(f"{path.name} lacks fingerprint object")
         _require_identity(fingerprint, f"{path.name} fingerprint")
+        if fingerprint.get("frozen_order") != list(FROZEN_ORDER):
+            raise ValueError(f"{path.name} fingerprint frozen order mismatch")
+        if fingerprint.get("wrong_donors") != WRONG_DONORS:
+            raise ValueError(f"{path.name} fingerprint donor map mismatch")
     else:
         if doc.get("stage") != "void" or doc.get("status") != "void":
             raise ValueError(f"{path.name} is not a void checkpoint")
@@ -131,6 +145,10 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
         raise ValueError("complete harvest lacks COMPLETE manifest")
     if manifest.get("resume_probe_verified") is not True:
         raise ValueError("manifest lacks resume_probe_verified=true")
+    manifest_fingerprint = manifest.get("fingerprint")
+    if not isinstance(manifest_fingerprint, dict):
+        raise ValueError("manifest lacks run fingerprint")
+    _require_identity(manifest_fingerprint, "manifest fingerprint")
     probe = _load(root / "resume_probe.json")
     _require_identity(probe, "resume probe")
     if probe.get("resume_probe_verified") is not True:
@@ -141,6 +159,7 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
     if len(paths) not in (6, 12):
         raise ValueError(f"complete harvest has invalid checkpoint N={len(paths)}")
     seen_positions: list[int] = []
+    seen_ids: list[str] = []
     for path in paths:
         doc = _load(path)
         _validate_checkpoint(doc, path, scored=True)
@@ -148,8 +167,11 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
         if not isinstance(position, int):
             raise ValueError(f"{path.name} lacks integer order_position")
         seen_positions.append(position)
+        seen_ids.append(doc.get("conversation_id"))
     if sorted(seen_positions) != list(range(1, len(paths) + 1)):
         raise ValueError(f"checkpoint positions are not contiguous: {seen_positions}")
+    if seen_ids != list(FROZEN_ORDER[:len(paths)]):
+        raise ValueError(f"checkpoint frozen ID order differs: {seen_ids}")
     if "COHERENT_STATE_JOB_DONE" not in log_text:
         raise ValueError("complete harvest job log lacks completion marker")
     return {

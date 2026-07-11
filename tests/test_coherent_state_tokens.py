@@ -1,10 +1,12 @@
 from pathlib import Path
+import json
 
 import pytest
 from transformers import AutoTokenizer
 
 from arms_common import SUMMARY_REQUEST
 from coherent_state_hf import CoherentStateError
+from coherent_state_cases import FROZEN_ORDER, WRONG_DONOR
 from coherent_state_tokens import (
     gapped_destination_layout,
     generation_prefix_ids,
@@ -77,7 +79,7 @@ def test_generation_prefix_requires_user_final(tok):
 
 def test_wrong_prefix_changes_only_exact_length_content_slots(tok, conv):
     donor = {
-        "id": "c02",
+        "id": "c13",
         "messages": [
             {"role": "system", "content": "Donor system."},
             {"role": "user", "content": "A red kite was selected instead."},
@@ -133,3 +135,17 @@ def test_gapped_layout_rejects_changed_correct_source_system(tok, conv):
     with pytest.raises(CoherentStateError, match="system island"):
         gapped_destination_layout(
             tok, conv, summary, summary_ids, SUMMARY_REQUEST, changed)
+
+
+def test_all_frozen_external_donor_slot_mappings_are_exact_length(tok):
+    root = Path("data/synthetic")
+    for target_id in FROZEN_ORDER:
+        donor_id = WRONG_DONOR[target_id]
+        target = json.loads((root / f"{target_id}.json").read_text())
+        donor = json.loads((root / f"{donor_id}.json").read_text())
+        matched = matched_wrong_prefix_ids(tok, target, donor, SUMMARY_REQUEST)
+        assert len(matched.correct_ids) == len(matched.wrong_ids)
+        assert matched.correct_ids != matched.wrong_ids
+        assert all(matched.correct_ids[i] == matched.wrong_ids[i]
+                   for i in matched.structural_positions)
+        assert donor_id not in FROZEN_ORDER

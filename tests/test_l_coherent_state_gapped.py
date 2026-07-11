@@ -1,7 +1,10 @@
 from types import SimpleNamespace
+import inspect
 
 import pytest
 import torch
+
+import l_coherent_state_hf as ladder
 
 from l_coherent_state_hf import (
     _require_summary_boundary,
@@ -51,3 +54,9 @@ def test_exact_length_wrong_rejects_structure_and_special_content():
     with pytest.raises(RuntimeError, match="special token"):
         _validate_exact_length_wrong(
             correct, [10, 99, 22, 13], [0, 3], [1, 2], [99])
+
+
+def test_retired_diagnostic_keeps_wrong_sign_failure_injection():
+    source = inspect.getsource(ladder.run_loaded_gapped_gates)
+    assert "wrong_sign_failure_injection_detected" in source
+    assert "wrong_sign_shift_k_max_abs" in source

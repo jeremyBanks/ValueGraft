@@ -39,7 +39,7 @@ grep -q 'terminal_confirmations.*-ge 2' "$WATCH"
 grep -q 'coherent_terminal_status "$desired"' "$WATCH"
 grep -q '28800' "$WATCH"
 grep -q '2700' "$WATCH"
-grep -q 'coherent_state_gapped_v2_' "$WATCH"
+grep -q 'coherent_state_gapped_v3_' "$WATCH"
 grep -q 'validate_coherent_harvest.py.*failure' "$WATCH"
 grep -q 'transformers==5.0.0' scripts/job_coherent_state_bf16.sh
 PASS=$((PASS + 15))
@@ -66,23 +66,32 @@ python3 - "$TMP" <<'PY'
 import json, pathlib, sys
 root = pathlib.Path(sys.argv[1])
 identity = {"schema": 2,
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
-            "design_id": "coherent-state-gapped-v2"}
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+            "design_id": "coherent-state-gapped-v3"}
 arms = ["A_full", "G_fresh", "G_correct", "G_wrong", "G_Vcorrect",
         "G_Kcorrect", "G_delta"]
+order = ["c10", "c02", "c01", "c04", "c07", "c11",
+         "c05", "c09", "c06", "c12", "c08", "c03"]
+donors = {"c10": "c13", "c02": "c14", "c01": "c15",
+          "c04": "c16", "c07": "c17", "c11": "c18",
+          "c05": "c25", "c09": "c26", "c06": "c27",
+          "c12": "c28", "c08": "c29", "c03": "c30"}
+fingerprint = {**identity, "frozen_order": order, "wrong_donors": donors}
 def write(name, doc):
     (root / name).write_text(json.dumps(doc) + "\n")
 (root / "job.log").write_text("MODEL_READY\nCOHERENT_STATE_JOB_DONE\n")
 write("manifest.json", {**identity, "status": "COMPLETE",
-      "resume_probe_verified": True})
+      "resume_probe_verified": True, "fingerprint": fingerprint})
 write("resume_probe.json", {**identity, "status": "VERIFIED",
       "resume_probe_verified": True})
 write("production_kernel_gate.json", {**identity, "status": "PASS",
       "completed_at": "2026-07-11T00:00:00Z", "gates": {"passes": True}})
 for i in range(1, 7):
-    write(f"conv_{i:02d}_c{i:02d}.json", {
+    cid = order[i - 1]
+    write(f"conv_{i:02d}_{cid}.json", {
         **identity, "stage": "scored", "status": "scored", "order_position": i,
-        "fingerprint": identity, "conversation": {}, "summary": {}, "sources": {},
+        "conversation_id": cid, "fingerprint": fingerprint,
+        "conversation": {}, "summary": {}, "sources": {},
         "destination": {}, "arm_scores": {x: {} for x in arms},
         "conversation_outcomes": {x: 0.0 for x in arms},
         "gates": {"technical_pass": True}, "runtime": {}})

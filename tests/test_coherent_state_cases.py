@@ -7,6 +7,8 @@ from coherent_state_cases import (
     compacted_messages,
     correct_source_messages,
     fresh_source_messages,
+    FROZEN_ORDER,
+    WRONG_DONOR,
     select_primary_plants,
     wrong_source_messages,
 )
@@ -28,7 +30,7 @@ def _conv(cid, marker):
 
 def test_source_layouts_preserve_only_intended_history():
     target = _conv("c10", "target")
-    donor = _conv("c02", "donor")
+    donor = _conv("c13", "donor")
     correct = correct_source_messages(target, "REQUEST")
     fresh = fresh_source_messages(target, "REQUEST")
     wrong = wrong_source_messages(target, donor, "REQUEST")
@@ -53,7 +55,12 @@ def test_compacted_layout_has_no_legacy_preamble_or_evicted_block():
 
 def test_wrong_donor_mapping_fails_closed():
     with pytest.raises(CaseConstructionError, match="frozen donor"):
-        wrong_source_messages(_conv("c10", "target"), _conv("c01", "donor"))
+        wrong_source_messages(_conv("c10", "target"), _conv("c14", "donor"))
+
+
+def test_external_donors_are_unique_and_disjoint_from_targets():
+    assert len(set(WRONG_DONOR.values())) == len(FROZEN_ORDER)
+    assert not set(FROZEN_ORDER).intersection(WRONG_DONOR.values())
 
 
 def test_primary_selection_is_first_per_category():

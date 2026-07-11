@@ -44,7 +44,12 @@ def checkpoint(position: int, status: str = "scored") -> dict:
     base = {
         **identity(),
         "order_position": position,
-        "fingerprint": identity(),
+        "fingerprint": {
+            **identity(),
+            "frozen_order": list(MODULE.FROZEN_ORDER),
+            "wrong_donors": MODULE.WRONG_DONORS,
+        },
+        "conversation_id": MODULE.FROZEN_ORDER[position - 1],
     }
     if status == "void":
         return {**base, "stage": "void", "status": "void",
@@ -68,7 +73,12 @@ def checkpoint(position: int, status: str = "scored") -> dict:
 def complete_tree(root: Path) -> None:
     (root / "job.log").write_text("MODEL_READY\nCOHERENT_STATE_JOB_DONE\n")
     write(root / "manifest.json", {
-        **identity(), "status": "COMPLETE", "resume_probe_verified": True})
+        **identity(), "status": "COMPLETE", "resume_probe_verified": True,
+        "fingerprint": {
+            **identity(),
+            "frozen_order": list(MODULE.FROZEN_ORDER),
+            "wrong_donors": MODULE.WRONG_DONORS,
+        }})
     write(root / "resume_probe.json", {
         **identity(), "status": "VERIFIED", "resume_probe_verified": True})
     write(root / "production_kernel_gate.json", gate("PASS"))

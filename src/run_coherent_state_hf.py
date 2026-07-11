@@ -31,6 +31,7 @@ from coherent_state_cases import (
     load_and_validate_targets,
     load_scenarios,
     select_primary_plants,
+    validate_native_conversation,
 )
 from coherent_state_hf import (
     CoherentStateError,
@@ -70,11 +71,12 @@ REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STRUCTURAL_SEED = 20_260_711
 PLACEBO_SEED = 20_260_711
 ARTIFACT_SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v2"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2"
+DESIGN_ID = "coherent-state-gapped-v3"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3"
 AMENDMENT_PATHS = (
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-2.md"),
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-3.md"),
 )
 EXPECTED_GEOMETRY = {
     "layers": 48, "attention_heads": 32, "kv_heads": 4,
@@ -102,6 +104,37 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def load_external_donors(donor_dir: Path) -> tuple[dict[str, dict], dict[str, dict]]:
+    donors = {}
+    provenance = {}
+    donor_ids = list(WRONG_DONOR.values())
+    if len(set(donor_ids)) != len(donor_ids):
+        raise CoherentStateError("external wrong-history donors are reused")
+    if set(donor_ids).intersection(FROZEN_ORDER):
+        raise CoherentStateError("external donor is also a scored target")
+    for donor_id in donor_ids:
+        path = donor_dir / f"{donor_id}.json"
+        if not path.is_file():
+            raise CoherentStateError(f"external donor file absent: {path}")
+        donor = json.loads(path.read_text())
+        if donor.get("id") != donor_id:
+            raise CoherentStateError(
+                f"external donor ID mismatch: {path} has {donor.get('id')}")
+        validate_native_conversation(donor)
+        author = (donor.get("meta") or {}).get("author")
+        if not isinstance(author, str) or not author.strip():
+            raise CoherentStateError(f"external donor lacks author: {path}")
+        donors[donor_id] = donor
+        provenance[donor_id] = {
+            "donor_id": donor_id,
+            "path": str(path),
+            "sha256": sha256_file(path),
+            "recorded_author": author,
+            "subject_native": False,
+        }
+    return donors, provenance
 
 
 def runtime_provenance(run_dir: Path) -> dict:
@@ -315,7 +348,7 @@ def _assert_boundary_intervention(arm: str, fresh, branch, layout,
 
 class Runner:
     def __init__(self, args, model, tokenizer, scenarios, targets,
-                 fingerprint, provenance, geometry):
+                 fingerprint, provenance, geometry, donors, donor_provenance):
         self.args = args
         self.model = model
         self.tokenizer = tokenizer
@@ -325,6 +358,8 @@ class Runner:
         self.fingerprint = fingerprint
         self.provenance = provenance
         self.geometry = geometry
+        self.donors = donors
+        self.donor_provenance = donor_provenance
         self.run_dir = args.run_dir
 
     def ckpath(self, position: int, cid: str) -> Path:
@@ -515,8 +550,7 @@ class Runner:
             return existing
         conv = existing["conversation"]
         donor_id = WRONG_DONOR[cid]
-        donor_pos = FROZEN_ORDER.index(donor_id) + 1
-        donor = self.load_rendered(donor_pos)["conversation"]
+        donor = self.donors[donor_id]
         scenario = self.by_id[cid]
         plants = select_primary_plants(scenario)
         started = time.monotonic()
@@ -612,6 +646,7 @@ class Runner:
             }
             wrong_construction = {
                 **asdict(matched_wrong),
+                "external_donor": self.donor_provenance[donor_id],
                 "correct_prefix_sha256": sha256_ids(matched_wrong.correct_ids),
                 "wrong_prefix_sha256": sha256_ids(matched_wrong.wrong_ids),
                 "changed_positions": changed_positions,
@@ -942,8 +977,7 @@ class Runner:
     def run_stage(self, limit: int) -> dict:
         for position in range(1, limit + 1):
             cid = FROZEN_ORDER[position - 1]
-            donor_position = FROZEN_ORDER.index(WRONG_DONOR[cid]) + 1
-            self.ensure_render_positions({position - 1, donor_position - 1})
+            self.ensure_render_positions({position - 1})
             self.process_conversation(position)
             if (position == 1 and self.args.resume_probe_stop_after_one and
                     not (self.run_dir / "resume_probe.json").exists()):
@@ -976,6 +1010,7 @@ def parse_args():
     ap.add_argument("--scenarios", type=Path, default=Path("data/scenarios.json"))
     ap.add_argument("--targets", type=Path,
                     default=Path("data/coherent_state_targets.json"))
+    ap.add_argument("--donor-dir", type=Path, default=Path("data/synthetic"))
     ap.add_argument("--resume-probe-stop-after-one", action="store_true",
                     help="operational gate: exit 75 after first scored checkpoint")
     return ap.parse_args()
@@ -1034,6 +1069,7 @@ def main():
         scenario_map = load_scenarios(args.scenarios)
         scenarios = frozen_scenarios(scenario_map)
         targets = load_and_validate_targets(args.targets, scenario_map)
+        donors, donor_provenance = load_external_donors(args.donor_dir)
         fingerprint = {
             "schema": ARTIFACT_SCHEMA,
             "design_id": DESIGN_ID,
@@ -1048,6 +1084,7 @@ def main():
                 SUMMARY_REQUEST.encode()).hexdigest(),
             "frozen_order": list(FROZEN_ORDER),
             "wrong_donors": WRONG_DONOR,
+            "external_donor_provenance": donor_provenance,
             "structural_seed": STRUCTURAL_SEED,
             "placebo_seed": PLACEBO_SEED,
             "max_reply_tokens": MAX_REPLY_TOKENS,
@@ -1126,8 +1163,9 @@ def main():
             production_kernel_gate_path=gate_path.name,
             production_kernel_gate_attempt_path=gate_attempt_path.name,
             production_kernel_gate_status=gate_status)
-        runner = Runner(args, model, tokenizer, scenarios, targets, fingerprint,
-                        provenance, geometry)
+        runner = Runner(
+            args, model, tokenizer, scenarios, targets, fingerprint,
+            provenance, geometry, donors, donor_provenance)
         stats6 = runner.run_stage(6)
         if stats6["serial_decision"] == "EXTEND_TO_12":
             stats = runner.run_stage(12)
