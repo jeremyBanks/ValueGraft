@@ -185,3 +185,97 @@ def norm_matched_value_placebo_row(
         "zero_semantic_delta": False,
     }
     return result, diagnostics
+
+
+def bf16_gradient_ulp_edit_row(
+    fresh: torch.Tensor,
+    gradient: torch.Tensor,
+    *,
+    ulp_count: int,
+    direction: int,
+) -> tuple[torch.Tensor, dict[str, Any]]:
+    """Edit one maximum-gradient scalar by an exact number of bf16 ULPs.
+
+    ``direction=+1`` moves with the local gradient and ``direction=-1`` moves
+    against it.  A zero-gradient row is returned unchanged and explicitly
+    marked unselected.  The caller aggregates this pure operation over every
+    layer/channel/token row in the frozen R2 interval.
+    """
+    _require(isinstance(fresh, torch.Tensor), "fresh must be a tensor")
+    _require(isinstance(gradient, torch.Tensor), "gradient must be a tensor")
+    _require(fresh.shape == gradient.shape and fresh.numel() > 0,
+             "fresh and gradient row shapes must match and be nonempty")
+    _require(fresh.dtype == torch.bfloat16, "fresh row must be bfloat16")
+    _require(gradient.dtype in (torch.float16, torch.bfloat16, torch.float32,
+                                torch.float64),
+             "gradient row must use a floating dtype")
+    _require(isinstance(ulp_count, int) and ulp_count >= 1,
+             "ulp_count must be a positive integer")
+    _require(direction in (-1, 1), "direction must be -1 or +1")
+    _require(torch.isfinite(fresh).all().item(), "fresh row is nonfinite")
+    _require(torch.isfinite(gradient).all().item(), "gradient row is nonfinite")
+
+    source_device = fresh.device
+    fresh_cpu = fresh.detach().to(device="cpu").contiguous()
+    gradient_cpu = gradient.detach().to(device="cpu", dtype=torch.float64).contiguous()
+    flat_gradient = gradient_cpu.reshape(-1)
+    max_abs = float(torch.max(torch.abs(flat_gradient)).item())
+    if max_abs == 0.0:
+        result = fresh.detach().clone()
+        return result, {
+            "schema": "coherent_canary_v12_bf16_gradient_ulp_row_v1",
+            "selected": False,
+            "reason": "zero_gradient_row",
+            "ulp_count": ulp_count,
+            "direction": direction,
+            "shape": list(fresh.shape),
+            "fresh_sha256": _tensor_sha256(fresh),
+            "edited_sha256": _tensor_sha256(result),
+        }
+
+    # torch.argmax returns the first flat maximum, freezing tie behavior.
+    flat_index = int(torch.argmax(torch.abs(flat_gradient)).item())
+    signed_gradient = float(flat_gradient[flat_index].item())
+    _require(signed_gradient != 0.0, "selected gradient is zero")
+    step_sign = 1 if signed_gradient * direction > 0.0 else -1
+
+    edited_flat = fresh_cpu.reshape(-1).clone()
+    old = edited_flat[flat_index].reshape(1).clone()
+    value = old.clone()
+    destination = torch.full_like(
+        value, float("inf") if step_sign > 0 else float("-inf"))
+    for _ in range(ulp_count):
+        stepped = torch.nextafter(value, destination)
+        _require(torch.isfinite(stepped).all().item(),
+                 "bf16 ULP edit saturated to nonfinite")
+        _require(not torch.equal(stepped, value), "bf16 ULP edit did not advance")
+        value = stepped
+    edited_flat[flat_index] = value[0]
+    edited_cpu = edited_flat.reshape(fresh_cpu.shape)
+    actual_delta = float(
+        edited_flat[flat_index].to(torch.float64).item()
+        - old[0].to(torch.float64).item())
+    directional_product = signed_gradient * actual_delta
+    _require(directional_product * direction > 0.0,
+             "applied bf16 edit has the wrong gradient direction")
+    result = edited_cpu.to(device=source_device)
+    coordinate = list(torch.unravel_index(
+        torch.tensor(flat_index), fresh_cpu.shape))
+    coordinate = [int(value.item()) for value in coordinate]
+    return result, {
+        "schema": "coherent_canary_v12_bf16_gradient_ulp_row_v1",
+        "selected": True,
+        "ulp_count": ulp_count,
+        "direction": direction,
+        "shape": list(fresh.shape),
+        "flat_index": flat_index,
+        "coordinate": coordinate,
+        "signed_gradient": signed_gradient,
+        "max_abs_gradient": max_abs,
+        "old_bf16_bits": int(old.view(torch.uint16).item()),
+        "new_bf16_bits": int(value.view(torch.uint16).item()),
+        "actual_delta": actual_delta,
+        "gradient_dot_delta": directional_product,
+        "fresh_sha256": _tensor_sha256(fresh),
+        "edited_sha256": _tensor_sha256(result),
+    }
