@@ -283,6 +283,13 @@ class PlannedMessageChunk:
     split_after: SplitDecision | None = None
 
 
+@dataclass(frozen=True)
+class DurationRepairPlan:
+    record_index: int
+    expanded_ranges: list[SourceRange]
+    chunks: list[PlannedMessageChunk]
+
+
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -998,6 +1005,51 @@ def split_messages_by_duration(
     return chunks
 
 
+def plan_existing_duration_repairs(
+    records: list[NoteRecord],
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    max_note_duration_hours: float | None,
+    split_window_start_hours: float,
+    split_window_end_hours: float,
+) -> list[DurationRepairPlan]:
+    """Plan selective repairs for existing notes that violate the duration cap.
+
+    The latest note owning a raw segment also absorbs that segment's currently
+    available continuation before the duration test. This prevents a note that
+    was initially below the cap from growing past it through the incremental
+    revision path. Earlier split notes sharing the same source segment are never
+    extended again.
+    """
+    if max_note_duration_hours is None or max_note_duration_hours <= 0:
+        return []
+    latest_coverage = covered_segments(records)
+    plans: list[DurationRepairPlan] = []
+    for record_index, record in enumerate(records):
+        expanded_ranges: list[SourceRange] = []
+        for source_range in record.source_ranges:
+            expanded = SourceRange(**asdict(source_range))
+            key = (expanded.platform, expanded.date, expanded.sequence)
+            owner = latest_coverage.get(key)
+            messages = segments.get(key, [])
+            if (
+                owner == (expanded.last_message, record_index)
+                and messages
+                and messages[-1].message_index > expanded.last_message
+            ):
+                expanded.last_message = messages[-1].message_index
+            expanded_ranges.append(expanded)
+        messages = all_messages_for_ranges(segments, expanded_ranges)
+        chunks = split_messages_by_duration(
+            messages,
+            max_note_duration_hours,
+            split_window_start_hours,
+            split_window_end_hours,
+        )
+        if len(chunks) > 1:
+            plans.append(DurationRepairPlan(record_index, expanded_ranges, chunks))
+    return plans
+
+
 def build_new_ranges(
     segments: dict[tuple[str, str, int], list[MessageRecord]],
     covered: dict[tuple[str, str, int], tuple[int, int]],
@@ -1401,6 +1453,220 @@ def sync_model_blocks(
     return changed_paths, manifest_changed
 
 
+def previous_context_before_record(
+    records: list[NoteRecord],
+    excluded_record_index: int,
+    platform: str,
+    first_timestamp: str,
+    max_chars: int,
+) -> str:
+    if max_chars <= 0:
+        return ""
+    candidates = [
+        record
+        for index, record in enumerate(records)
+        if index != excluded_record_index
+        and record.last_timestamp < first_timestamp
+        and record.source_ranges
+        and all(source_range.platform == platform for source_range in record.source_ranges)
+    ]
+    if not candidates:
+        return ""
+    previous = max(candidates, key=lambda record: record.last_timestamp)
+    path = Path(previous.note)
+    if not path.exists():
+        return ""
+    return context_from_summary(path.read_text(encoding="utf-8"), max_chars)
+
+
+def repair_existing_duration_violations(
+    records: list[NoteRecord],
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    args: argparse.Namespace,
+) -> int:
+    """Regenerate only existing records that now exceed the duration policy."""
+    max_duration = (
+        None
+        if args.max_note_duration_hours is not None and args.max_note_duration_hours < 0
+        else args.max_note_duration_hours
+    )
+    plans = plan_existing_duration_repairs(
+        records,
+        segments,
+        max_duration,
+        args.split_window_start_hours,
+        args.split_window_end_hours,
+    )
+    if not plans:
+        print("existing duration repair: no violating notes")
+        return 0
+
+    for plan in plans:
+        record = records[plan.record_index]
+        messages = all_messages_for_ranges(segments, plan.expanded_ranges)
+        print(
+            f"existing duration repair: {record.note} "
+            f"{message_duration_hours(messages):.2f}h -> {len(plan.chunks)} notes"
+        )
+        print_message_chunk_plan(plan.chunks, indent="  ")
+    if not args.command:
+        print(f"No summary command provided; planned {len(plans)} selective duration repairs only.")
+        return 0
+
+    root = args.repo_root.resolve()
+
+    def absolute_repo_path(path: Path) -> Path:
+        return (root / path).resolve() if not path.is_absolute() else path.resolve()
+
+    old_paths = [absolute_repo_path(Path(records[plan.record_index].note)) for plan in plans]
+    old_path_set = set(old_paths)
+    generated: list[tuple[Path, Path]] = []
+    replacements: dict[int, list[NoteRecord]] = {}
+    final_targets: set[Path] = set()
+    args.work_dir.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory(prefix="conversation-duration-repair-", dir=args.work_dir) as tmp:
+        tmp_dir = Path(tmp)
+        for plan in plans:
+            old_record = records[plan.record_index]
+            old_path = absolute_repo_path(Path(old_record.note))
+            prior_context = ""
+            first_messages = plan.chunks[0].messages
+            platforms = {message.platform for message in first_messages}
+            platform = next(iter(platforms)) if len(platforms) == 1 else None
+            if platform:
+                prior_context = previous_context_before_record(
+                    records,
+                    plan.record_index,
+                    platform,
+                    first_messages[0].timestamp,
+                    args.rolling_context_chars,
+                )
+            replacement_records: list[NoteRecord] = []
+            for chunk_index, chunk in enumerate(plan.chunks):
+                messages = chunk.messages
+                ranges = source_ranges_for_messages(messages)
+                transcript = render_messages(messages)
+                previous_context_block = ""
+                if platform and prior_context:
+                    previous_context_block = PREVIOUS_CONTEXT_TEMPLATE.format(
+                        platform=platform,
+                        context=prior_context,
+                    ).strip()
+                prompt = SUMMARY_PROMPT.format(
+                    previous_context_block=previous_context_block,
+                    transcript=transcript,
+                )
+                first_ts = first_timestamp_for_ranges(segments, ranges)
+                if chunk_index == 0:
+                    final_path = old_path
+                else:
+                    final_path = absolute_repo_path(
+                        provisional_note_path_for_messages(args.notes_dir, messages, first_ts)
+                    )
+                if final_path in final_targets or (
+                    final_path.exists() and final_path not in old_path_set
+                ):
+                    raise RuntimeError(f"duration-repair target collision: {final_path}")
+                final_targets.add(final_path)
+                candidate_path = tmp_dir / f"{plan.record_index:04d}-{chunk_index:03d}.md"
+                prompt_path = (
+                    args.work_dir / "prompts" /
+                    f"duration-repair-{plan.record_index:04d}-{chunk_index:03d}.md"
+                )
+                retry_prompt_path = (
+                    args.work_dir / "prompts" /
+                    f"retry-duration-repair-{plan.record_index:04d}-{chunk_index:03d}.md"
+                )
+                write_prompt(prompt_path, prompt)
+                print(
+                    f"duration repair {plan.record_index + 1}.{chunk_index + 1}: "
+                    f"{final_path.name} messages={len(messages)} prompt_chars={len(prompt)}"
+                )
+                candidate = run_summary_command(
+                    args.command,
+                    prompt,
+                    candidate_path,
+                    retry_prompt_path,
+                    args.forbid_regex,
+                    args.max_forbid_attempts,
+                )
+                model_entries = model_entries_for_messages(messages)
+                note_text = insert_participants_block(candidate, messages)
+                note_text = insert_conversation_sources_footer(note_text, messages)
+                candidate_path.write_text(note_text, encoding="utf-8")
+                format_markdown([candidate_path], args.repo_root)
+                formatted_summary = candidate_path.read_text(encoding="utf-8")
+                missing_models = validate_model_mentions(formatted_summary, model_entries)
+                if missing_models:
+                    raise RuntimeError(
+                        f"model roster missing required model ids in {final_path}: {missing_models}"
+                    )
+                first, last = timestamps_for_ranges(segments, ranges)
+                replacement_records.append(
+                    NoteRecord(
+                        note=str(final_path.relative_to(root)),
+                        source_ranges=ranges,
+                        first_timestamp=first,
+                        last_timestamp=last,
+                        input_hash=sha256_text(transcript),
+                        summary_hash=sha256_text(formatted_summary),
+                        models=model_entries,
+                        summarizer=args.summarizer_provenance,
+                    )
+                )
+                generated.append((candidate_path, final_path))
+                if platform and args.rolling_context_chars > 0:
+                    prior_context = context_from_summary(
+                        formatted_summary,
+                        args.rolling_context_chars,
+                    )
+            replacements[plan.record_index] = replacement_records
+
+        updated_records: list[NoteRecord] = []
+        for index, record in enumerate(records):
+            updated_records.extend(replacements.get(index, [record]))
+
+        backup_dir = tmp_dir / "previous-notes"
+        backup_dir.mkdir()
+        manifest_path = absolute_repo_path(args.manifest)
+        manifest_before = manifest_path.read_bytes() if manifest_path.exists() else None
+        backups: list[tuple[Path, Path]] = []
+        moved_new: list[Path] = []
+        changed_paths = [*old_paths, *(final for _candidate, final in generated), manifest_path]
+        try:
+            for old_path in old_paths:
+                backup_path = backup_dir / old_path.name
+                shutil.move(str(old_path), backup_path)
+                backups.append((backup_path, old_path))
+            for candidate_path, final_path in generated:
+                final_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(candidate_path), final_path)
+                moved_new.append(final_path)
+            write_manifest(manifest_path, updated_records)
+            provider = args.summarizer_provenance.get("provider", "custom")
+            model = args.summarizer_provenance.get("model")
+            label = f"{provider}/{model}" if model else provider
+            git_commit(
+                sorted(set(changed_paths)),
+                f"Repair overlong conversation summaries with {label}",
+                root,
+            )
+        except Exception:
+            for final_path in moved_new:
+                if final_path.exists():
+                    final_path.unlink()
+            for backup_path, old_path in backups:
+                old_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(backup_path), old_path)
+            if manifest_before is None:
+                manifest_path.unlink(missing_ok=True)
+            else:
+                manifest_path.write_bytes(manifest_before)
+            raise
+    return len(plans)
+
+
 def rebuild_all_records(
     old_records: list[NoteRecord],
     segments: dict[tuple[str, str, int], list[MessageRecord]],
@@ -1607,9 +1873,20 @@ def update_notes(args: argparse.Namespace) -> None:
     if args.dry_run:
         dry_run_update_notes(records, segments, args)
         return
-    covered = covered_segments(records)
     args.work_dir.mkdir(parents=True, exist_ok=True)
     timestamp_cache = ArchiveTimestampCache.load(args.repo_root)
+
+    if args.resummarize_all:
+        rebuild_all_records(records, segments, args)
+        return
+
+    repaired = repair_existing_duration_violations(records, segments, args)
+    if repaired:
+        records = load_manifest(args.manifest)
+    if args.repair_overlong_only:
+        return
+
+    covered = covered_segments(records)
 
     changed_paths: list[Path] = []
     manifest_changed = False
@@ -1617,10 +1894,6 @@ def update_notes(args: argparse.Namespace) -> None:
         synced_paths, synced_manifest = sync_model_blocks(records, segments, args)
         changed_paths.extend(synced_paths)
         manifest_changed = manifest_changed or synced_manifest
-
-    if args.resummarize_all:
-        rebuild_all_records(records, segments, args)
-        return
 
     wrote_prompt = False
     continuations: dict[int, list[tuple[tuple[str, str, int], int, int]]] = {}
@@ -1913,6 +2186,14 @@ def main() -> None:
         help="Rebuild every conversation note and the coverage manifest from raw transcripts.",
     )
     update_parser.add_argument(
+        "--repair-overlong-only",
+        action="store_true",
+        help=(
+            "Selectively regenerate only existing notes that exceed the duration policy, "
+            "including the latest available continuation of their source segment."
+        ),
+    )
+    update_parser.add_argument(
         "--no-model-block-sync",
         action="store_true",
         help="Skip deterministic model-roster block synchronization.",
@@ -1980,6 +2261,8 @@ def main() -> None:
 
     args = parser.parse_args()
     if args.command_name == "update":
+        if args.resummarize_all and args.repair_overlong_only:
+            parser.error("--resummarize-all and --repair-overlong-only are mutually exclusive")
         args.forbid_regex = resolve_forbid_patterns(
             args.forbid_regex,
             args.repo_root,

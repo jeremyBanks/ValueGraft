@@ -62,6 +62,8 @@ def build_stage_commands(args: argparse.Namespace) -> list[tuple[str, list[str]]
             cmd.append("--dry-run")
         if args.resummarize_all:
             cmd.append("--resummarize-all")
+        if args.repair_overlong_only:
+            cmd.append("--repair-overlong-only")
         cmd.extend(filter_args(args))
         # `--command` consumes the remainder of the conversation updater argv,
         # so provider/custom-command arguments must always come last.
@@ -114,6 +116,11 @@ def main() -> int:
     )
     parser.add_argument("--force-small-continuations", action="store_true")
     parser.add_argument("--resummarize-all", action="store_true")
+    parser.add_argument(
+        "--repair-overlong-only",
+        action="store_true",
+        help="Regenerate only conversation notes that violate the duration policy.",
+    )
     parser.add_argument("--no-subagent-finals", action="store_true")
     parser.add_argument("--force-rollups", action="store_true")
     parser.add_argument("--forbid-regex", action="append", default=[])
@@ -121,6 +128,8 @@ def main() -> int:
     parser.add_argument("--no-default-forbid-regex", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
+    if args.resummarize_all and args.repair_overlong_only:
+        parser.error("--resummarize-all and --repair-overlong-only are mutually exclusive")
 
     root = git_root()
     stages = build_stage_commands(args)

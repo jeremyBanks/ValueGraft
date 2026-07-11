@@ -30,6 +30,7 @@ def args(**overrides):
         "summary_command": None,
         "force_small_continuations": False,
         "resummarize_all": False,
+        "repair_overlong_only": False,
         "no_subagent_finals": False,
         "force_rollups": False,
         "forbid_regex": [],
@@ -107,3 +108,15 @@ def test_custom_command_comes_after_all_conversation_updater_flags() -> None:
     assert command.index("--dry-run") < command_index
     assert command.index("--resummarize-all") < command_index
     assert command[command_index + 1 :] == ["python3", "custom.py"]
+
+
+def test_selective_duration_repair_is_forwarded_before_provider_args() -> None:
+    mod = load_module()
+
+    stages = mod.build_stage_commands(
+        args(normalize=False, rollups=False, repair_overlong_only=True)
+    )
+
+    command = stages[0][1]
+    assert "--repair-overlong-only" in command
+    assert command.index("--repair-overlong-only") < command.index("--summary-provider")

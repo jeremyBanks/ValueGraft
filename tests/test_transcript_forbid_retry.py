@@ -350,3 +350,77 @@ def test_duration_split_falls_back_before_max_when_preferred_window_has_no_gap()
     assert len(chunks) == 2
     assert chunks[0].messages[-1].message_index == 3
     assert chunks[0].split_after.reason == "fallback-before-max"
+
+
+def test_existing_duration_repair_absorbs_latest_continuation_before_splitting() -> None:
+    mod = load_update_module()
+    timestamps = [
+        "2026-07-05T00:00:00Z",
+        "2026-07-05T02:00:00Z",
+        "2026-07-05T04:20:00Z",
+        "2026-07-05T07:00:00Z",
+        "2026-07-05T08:00:00Z",
+    ]
+    segments = {
+        ("codex", "2026-07-05", 1): [
+            make_message(mod, "codex", "2026-07-05", 1, timestamp, f"message {index}", index)
+            for index, timestamp in enumerate(timestamps, 1)
+        ]
+    }
+    record = mod.NoteRecord(
+        note="notes/existing.md",
+        source_ranges=[mod.SourceRange("codex", "2026-07-05", 1, 1, 3)],
+        first_timestamp=timestamps[0],
+        last_timestamp=timestamps[2],
+        input_hash="input",
+        summary_hash="summary",
+    )
+
+    plans = mod.plan_existing_duration_repairs([record], segments, 6.0, 4.0, 5.0)
+
+    assert len(plans) == 1
+    assert plans[0].expanded_ranges[0].last_message == 5
+    assert [[message.message_index for message in chunk.messages] for chunk in plans[0].chunks] == [
+        [1, 2, 3],
+        [4, 5],
+    ]
+
+
+def test_existing_duration_repair_does_not_reabsorb_a_shared_segment_into_earlier_note() -> None:
+    mod = load_update_module()
+    segments = {
+        ("codex", "2026-07-05", 1): [
+            make_message(
+                mod,
+                "codex",
+                "2026-07-05",
+                1,
+                f"2026-07-05T0{index}:00:00Z",
+                f"message {index}",
+                index + 1,
+            )
+            for index in range(9)
+        ]
+    }
+    records = [
+        mod.NoteRecord(
+            note="notes/first.md",
+            source_ranges=[mod.SourceRange("codex", "2026-07-05", 1, 1, 5)],
+            first_timestamp="2026-07-05T00:00:00Z",
+            last_timestamp="2026-07-05T04:00:00Z",
+            input_hash="first",
+            summary_hash="first",
+        ),
+        mod.NoteRecord(
+            note="notes/second.md",
+            source_ranges=[mod.SourceRange("codex", "2026-07-05", 1, 6, 8)],
+            first_timestamp="2026-07-05T05:00:00Z",
+            last_timestamp="2026-07-05T07:00:00Z",
+            input_hash="second",
+            summary_hash="second",
+        ),
+    ]
+
+    plans = mod.plan_existing_duration_repairs(records, segments, 6.0, 4.0, 5.0)
+
+    assert plans == []
