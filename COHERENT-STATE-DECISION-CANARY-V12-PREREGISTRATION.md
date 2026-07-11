@@ -433,18 +433,25 @@ Before semantic treatment scoring on the pod, persist and independently validate
 
 Start from a fresh technical R2 boundary on the exact public gapped path. Freeze
 model weights and compute the gradient of one frozen downstream target margin
-with respect to the selected R2 K/V rows. Normalize the complete selected-row
-gradient to unit L2 and try the fixed signed epsilon sequence
-`[0.001, 0.003, 0.01, 0.03, 0.1]`, stopping at the first epsilon for which bf16
-rounding changes the persisted rows and both directions are measurable. Detach
-the `+` and `-` edited rows, destroy the graph and live destination, reconstruct
-a new fresh gapped destination, reinsert through the exact public K+V replacement
-function, recompute the bridge, and score.
+with respect to the selected R2 K/V rows. The edit is explicitly bf16-aware:
+for every layer/channel/token row with a nonzero finite gradient, flatten heads
+and head dimensions, select the lowest flat index among elements with maximal
+absolute gradient, and move that cached bf16 scalar in the signed gradient
+direction with `nextafter`. Try the frozen ULP-count sequence
+`[1, 2, 4, 8, 16, 32, 64]`; the negative edit moves the same coordinates in the
+opposite direction. Stop at the first count for which both persisted directions
+differ from fresh and are measurable. Any nonfinite gradient, saturated step,
+or unrecorded coordinate aborts. Detach the `+` and `-` edited rows, destroy the
+graph and live destination, reconstruct a new fresh gapped destination, reinsert
+through the exact public K+V replacement function, recompute the bridge, and
+score.
 
 The gate passes only if `+` raises and `-` lowers the frozen margin by at least
 `1e-4`, selected insertion/confinement remains exact, and the full raw trace,
-gradient norm, epsilon attempts, row hashes, and log probabilities persist. It
-licenses intervention/readout sensitivity only. Failure aborts semantic scoring.
+per-row selected coordinates, signed gradients, old/new bf16 bit patterns,
+actual L2/max deltas, ULP attempts, row hashes, and log probabilities persist.
+It licenses intervention/readout sensitivity only. Failure aborts semantic
+scoring.
 
 ### 14.2 Natural downstream-note calibration (reported, not a plumbing gate)
 
