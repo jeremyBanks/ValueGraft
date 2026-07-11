@@ -33,6 +33,11 @@ harvest_and_terminate() {
     fi
     ssh="ssh -i $KEY -p $port -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$ip"
     run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)" || true
+    if [ -n "$run_remote" ] && ! $ssh "test -d '$run_remote'" 2>/dev/null; then
+      # The job announces its intended absolute path before clone/model setup.
+      # A logged-but-not-yet-created path is a setup failure, not a result tree.
+      run_remote=""
+    fi
     if [ -n "$run_remote" ]; then
       local_dir="$ROOT/${run_remote#/workspace/repo/}"
       mkdir -p "$(dirname "$local_dir")" "$local_dir"
@@ -62,16 +67,26 @@ harvest_and_terminate() {
     return 2
   fi
 
-  local terminal=0
+  local terminal=0 terminal_confirmations=0 desired
   for attempt in 1 2 3 4 5; do
     SC_POD_STATE="$STATE" uv run python src/pod.py terminate >/dev/null 2>&1 || true
     sleep 10
-    if ! status_json >/tmp/coherent_pod_status_after_delete.json 2>/dev/null; then
-      terminal=1; break
+    if status_json >/tmp/coherent_pod_status_after_delete.json 2>/dev/null; then
+      desired="$(python3 -c 'import json;print(json.load(open("/tmp/coherent_pod_status_after_delete.json")).get("desiredStatus"))' 2>/dev/null)"
+      if [ -n "$desired" ] && [ "$desired" != "RUNNING" ]; then
+        terminal_confirmations=$((terminal_confirmations + 1))
+      else
+        terminal_confirmations=0
+      fi
+    elif grep -q 'API ERROR 404' /tmp/coherent_pod_status_after_delete.json; then
+      terminal_confirmations=$((terminal_confirmations + 1))
+      desired="HTTP404"
+    else
+      terminal_confirmations=0
+      desired="UNVERIFIED_API_FAILURE"
     fi
-    desired="$(python3 -c 'import json;print(json.load(open("/tmp/coherent_pod_status_after_delete.json")).get("desiredStatus"))' 2>/dev/null)"
-    if [ "$desired" != "RUNNING" ]; then terminal=1; break; fi
-    echo "TERMINATE_RETRY $attempt desiredStatus=$desired"
+    if [ "$terminal_confirmations" -ge 2 ]; then terminal=1; break; fi
+    echo "TERMINATE_RETRY $attempt desiredStatus=$desired confirmations=$terminal_confirmations"
   done
   if [ "$terminal" != 1 ]; then
     echo "TERMINATION_UNVERIFIED — pod may still be billing"

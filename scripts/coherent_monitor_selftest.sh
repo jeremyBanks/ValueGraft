@@ -31,9 +31,13 @@ grep -q 'rsync -az --checksum' "$WATCH"
 grep -q 'HARVEST_UNVERIFIED.*refusing to terminate' "$WATCH"
 grep -q 'TERMINATION_UNVERIFIED' "$WATCH"
 grep -q 'status_json.*coherent_pod_status_after_delete' "$WATCH"
+grep -q "test -d.*run_remote" "$WATCH"
+grep -q "API ERROR 404" "$WATCH"
+grep -q 'terminal_confirmations.*-ge 2' "$WATCH"
+grep -q '\[ -n "$desired" \].*\[ "$desired" != "RUNNING" \]' "$WATCH"
 grep -q '28800' "$WATCH"
 grep -q '2700' "$WATCH"
-PASS=$((PASS + 8))
+PASS=$((PASS + 12))
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
