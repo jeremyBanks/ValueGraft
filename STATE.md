@@ -66,6 +66,28 @@ history, renamed `GMC`, with exact per-message token lengths, all downstream ref
 repaired, frozen-target alignment, and blind decoded-coherence review. Omission is a
 secondary diagnostic. No semantic implementation or outcome may use the cyclic arm.
 
+Four c02/c10 minimally counterfactual feasibility witnesses now pass the exact
+production-tokenizer mechanical contract: unchanged message count/roles and
+non-allowlisted content, exact per-message widths, identical full-prefix lengths,
+message starts, and P/O schedules. The review-bound validator passed 113/113 focused
+tests and emitted a sealed `MECHANICAL_PASS` artifact at `4ef5393`, while explicitly
+recording `semantic_authorized=false`, `execution_authorized=false`, blind review
+`FAIL`, and target-aware verdict `REVISE_ALL_FOUR`. The blind review found pervasive
+clipped/nonresponsive turns and broken chains inherited from the c02/c10 bases; the
+paired factual audit also found edit-specific contradictions and invented details.
+None of the four candidates may be scored. They remain immutable feasibility
+witnesses; any repair requires a new symmetrically repaired correct/counterfactual
+pair and both reviews again.
+
+The repository also contains duplicate banks of all twelve Qwen3-30B model-authored
+canonical conversations, but they are one corpus rather than independent renders.
+Their old fingerprints omit resolved revision/dtype/backend/code provenance, their
+reply records omit raw token IDs/text, and 226/264 replies hit the 320-token cap before
+canonical trimming. They may reduce cost only as frozen text candidates after decoded
+review; they are not preserved native incremental state and cannot be described as a
+fully provenance-bound exact-revision render. See
+`notes/2026071184-sol-banked-30b-render-reuse-audit.md`.
+
 After origin classification, a separately frozen c10/c02 measurement must use true
 turn-aligned replay `P`, ordinary chunks `O`, fixed gapped destination `D`, and decoded
 valid counterfactual sources to measure `GF` and `GMC` under both schedules. The local
