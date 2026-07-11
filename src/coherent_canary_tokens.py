@@ -52,8 +52,8 @@ def _bounded_prefill_events(label: str, role: str, message_index: int,
     return out
 
 
-def _assistant_events(tokenizer, messages: list[dict], ids: list[int],
-                      starts: list[int], index: int) -> list[ReplayEvent]:
+def _assistant_content_bounds(tokenizer, messages: list[dict], ids: list[int],
+                              starts: list[int], index: int) -> tuple[int, int]:
     preceding = messages[:index]
     content = str(messages[index].get("content", ""))
     if not content:
@@ -70,14 +70,7 @@ def _assistant_events(tokenizer, messages: list[dict], ids: list[int],
     if ids[header_end:content_end] != content_ids:
         raise CanarySchemaError(
             f"assistant message {index} content IDs differ from canonical stream")
-    events = _bounded_prefill_events(
-        "assistant_open", "assistant", index, starts[index], header_end)
-    events.extend(ReplayEvent(
-        "q1", "assistant_content", "assistant", index, position,
-        position + 1).validate() for position in range(header_end, content_end))
-    events.extend(_bounded_prefill_events(
-        "assistant_close", "assistant", index, content_end, message_end))
-    return events
+    return header_end, content_end
 
 
 def build_role_native_plan(tokenizer, history_messages: list[dict], *,
@@ -106,20 +99,45 @@ def build_role_native_plan(tokenizer, history_messages: list[dict], *,
     if len(starts) != len(messages) or starts[0] != 0:
         raise CanarySchemaError(
             f"canonical message start coverage {len(starts)} != {len(messages)}")
-    events: list[ReplayEvent] = []
     assistant_content_bounds: dict[int, tuple[int, int]] = {}
     for index, message in enumerate(messages):
-        message_end = starts[index + 1] if index + 1 < len(starts) else len(ids)
         if message["role"] == "assistant":
-            built = _assistant_events(tokenizer, messages, ids, starts, index)
-            q1 = [event for event in built if event.kind == "q1"]
-            assistant_content_bounds[index] = (
-                q1[0].token_start, q1[-1].token_end)
-            events.extend(built)
+            assistant_content_bounds[index] = _assistant_content_bounds(
+                tokenizer, messages, ids, starts, index)
+
+    assistant_indices = sorted(assistant_content_bounds)
+    if not assistant_indices:
+        raise CanarySchemaError("canonical stream has no assistant message")
+
+    # Match a persistent chat generation schedule rather than tokenizing each
+    # role fragment as its own call.  The first production prefill contains the
+    # system/user material and the first assistant generation header.  After an
+    # assistant response is forced q=1, the next production addition contains
+    # that response's canonical close, the next user message, and the next
+    # assistant generation header in one structural prefill.  Splitting those
+    # pieces would change query shape—the exact confound this schedule exists to
+    # control.
+    events: list[ReplayEvent] = []
+    first_index = assistant_indices[0]
+    first_content_start = assistant_content_bounds[first_index][0]
+    events.extend(_bounded_prefill_events(
+        "initial_generation_prefix", "structural", first_index,
+        0, first_content_start))
+    for ordinal, index in enumerate(assistant_indices):
+        content_start, content_end = assistant_content_bounds[index]
+        events.extend(ReplayEvent(
+            "q1", "assistant_content", "assistant", index, position,
+            position + 1).validate() for position in range(content_start, content_end))
+        if ordinal + 1 < len(assistant_indices):
+            next_index = assistant_indices[ordinal + 1]
+            next_content_start = assistant_content_bounds[next_index][0]
+            events.extend(_bounded_prefill_events(
+                "turn_continuation", "structural", next_index,
+                content_end, next_content_start))
         else:
             events.extend(_bounded_prefill_events(
-                f"{message['role']}_message", message["role"], index,
-                starts[index], message_end))
+                "final_assistant_close", "structural", index,
+                content_end, len(ids)))
 
     carrier_index = len(history_messages) + 1
     anchor_assistant_index = len(messages) - 1

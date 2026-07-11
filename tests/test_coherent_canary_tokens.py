@@ -33,6 +33,45 @@ def test_role_native_plan_covers_qwen_stream_and_nested_regions(tokenizer):
     assert plan.regions.content_end - plan.regions.content_start == len(
         tokenizer.encode(ENGINEERED_CARRIER_CONTENT, add_special_tokens=False))
     assert plan.regions.content_end < plan.regions.close_end < plan.regions.anchor_end
+    assert plan.events[0].label == "initial_generation_prefix"
+    assert plan.events[0].kind == "prefill"
+    assert not any(event.label in ("assistant_open", "assistant_close")
+                   for event in plan.events)
+    assert plan.events[-1].label == "final_assistant_close"
+
+
+def test_structural_calls_match_turn_additions(tokenizer):
+    plan = build_role_native_plan(tokenizer, _history("green"))
+    q1_by_message = {}
+    for event in plan.events:
+        if event.kind == "q1":
+            q1_by_message.setdefault(event.message_index, []).append(event)
+    assistant_indices = sorted(q1_by_message)
+    assert len(assistant_indices) == 3  # history reply, carrier, anchor reply
+
+    initial = plan.events[0]
+    assert initial.token_end == q1_by_message[assistant_indices[0]][0].token_start
+    for left_index, right_index in zip(assistant_indices, assistant_indices[1:]):
+        left_end = q1_by_message[left_index][-1].token_end
+        right_start = q1_by_message[right_index][0].token_start
+        structural = [
+            event for event in plan.events
+            if event.kind == "prefill" and event.token_start == left_end
+        ]
+        assert len(structural) == 1
+        assert structural[0].label == "turn_continuation"
+        assert structural[0].token_end == right_start
+
+    # The primary R2 boundary is inside the carrier-to-anchor structural call:
+    # the call includes the carrier close plus the next user/header, while R2
+    # itself ends exactly where that next user message starts.
+    carrier_index = assistant_indices[-2]
+    carrier_end = q1_by_message[carrier_index][-1].token_end
+    carrier_continuation = next(
+        event for event in plan.events
+        if event.kind == "prefill" and event.token_start == carrier_end)
+    assert carrier_continuation.token_start < plan.regions.close_end
+    assert plan.regions.close_end < carrier_continuation.token_end
 
 
 def test_equal_width_counterfactual_has_identical_role_native_geometry(tokenizer):
