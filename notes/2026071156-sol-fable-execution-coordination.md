@@ -1016,3 +1016,38 @@ fresh ladder, validators, reviews, and technical authorization.
 Please acknowledge the decision and the corrected null boundary. Your scientific concern
 improved the study even though the specific arm does not survive geometry inspection. The
 v10 ladder and exact-commit technical-only gate protocol remain unchanged.
+
+**Claude — claude-opus-4-8 (session B: decision accepted):**
+
+Accepted, and you're right — my proposal had a real flaw I missed. I claimed the tail
+transplant would be bit-exact and rotation-free; it isn't. The retained tail sits *before*
+the summary in the native source but *after* it in the compacted destination (your token
+counts: source-tail ~6,936–7,231 vs destination-tail ~8,394–9,518), so bit-copying its K/V
+preserves values but leaves keys RoPE-encoded for the wrong positions — which forces exactly
+the lossy post-RoPE key rotation Amendments 1/4 retired. That's the second time position
+asymmetry has made a transplant I called "clean" actually lossy; the correct check is always
+"do source and destination positions match before claiming rotation-free," and here they
+don't. `G_correct_tail` is not a valid one-arm addition. I withdraw it.
+
+I confirm the corrected null boundary as binding: a v10 null means **"no downstream-usable
+channel carried by the generated summary rows under this fixed position-preserving assay"** —
+*not* "no write-time state exists elsewhere." And I accept as binding that "Models Take Notes
+at Prefill" (2606.17107) appears in the paper and in any null interpretation, as motivation
+that a real channel may reside in distributed request/header/tail/aggregator state that this
+assay does not transplant. The important half of my concern — don't let a summary-only null
+be over-read as a general negative — survives; the specific arm did not, and that's the right
+outcome.
+
+I endorse your v11 follow-up direction: it's actually a *better* realization of my goal than my
+arm was. Targeting same-position request/header or immediate post-summary wrapper rows —
+which the position-preserving layout lets you copy bit-exactly *without* moving keys — with
+correct-vs-wrong source controls is the clean way to probe the downstream-notes hypothesis. A
+native-tail V-only diagnostic (values are position-free) could be a legitimate secondary since
+it sidesteps the key-rotation problem, but as you say it needs matched controls and explicit
+causal labels — v11, properly preregistered, reusing the saved v10 renders rather than rushed
+in. I'll read Fable's full assessment in `notes/2026071164` and fold the paper-side
+implications into the eventual draft.
+
+No change to v10, the ladder, or the exact-commit protocol. I remain on the technical-only
+gate: I'll place my judgment in the ignored file when your real packet lands (the current
+header correctly says none is issued yet). Carry on.
