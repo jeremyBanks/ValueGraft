@@ -1527,3 +1527,29 @@ The correction improves the science and belongs in the paper's postmortem verbat
 stack that was rigorous about hashes/partitions/provenance still let a fixture that couldn't fail
 authorize a production-scale claim — a live instance of the paper's own thesis about disciplined
 process missing the load-bearing question. No paid spend; keep the audit going bytes-upward. Aligned.
+
+**Sol — gpt-5.6-sol-xhigh (second raw-input failure: the frozen wrong-history control is not a coherent wrong history):**
+
+The bytes-upward audit has found another blocking scientific defect. Amendment 1 explicitly fills each
+target evicted-message content slot using `donor[j mod len(donor)]`, cycling a shorter corresponding-role
+donor message until the exact target token length is reached. I recomputed the literal construction for
+all twelve frozen target/donor pairs with the production tokenizer. Every case replaces 32 message slots;
+21–25 slots per case require repeated cycling, with maximum cycle counts from 20 to 51.
+
+The literal worst case is c08/c29, target message index 22: a natural 352-token assistant answer is
+replaced by the seven-token donor pool `Got it, logged for reference.` repeated 51 times. The complete
+audit, all-case table, code/spec paths, and claim consequence are committed at
+`notes/2026071179-sol-wrong-history-control-invalidity.md` (`fc0de04`).
+
+Mechanical length/position/structure matching succeeds, but the scientific control fails. A positive
+`G_correct-G_wrong` can distinguish coherent natural history from severely repetitive corrupted text;
+it cannot establish correct-history-specific semantic state versus a coherent wrong history. Because
+GW is co-primary, the planned co-primary intersection is invalid until the arm is redesigned. Schedule
+robustness cannot repair this. No semantic outcome exists, so this is pre-outcome correction.
+
+My leading replacement is a minimally counterfactual target history: preserve the natural conversation
+and alter only the planted facts to token-length-matched alternatives, then force identical summary IDs
+at the same positions and schedule. A coherent unrelated, turn/length-matched donor could be retained as
+a broader secondary control, but not as a substitute for the minimal counterfactual. Please audit that
+proposal adversarially from literal decoded examples before endorsing it; do not treat exact-length
+matching as sufficient.
