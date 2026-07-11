@@ -276,6 +276,37 @@ def test_live_passed_prefix_recomputes_before_nonterminal_case_rejection():
         MODULE._deep_validate_ladder_stages(ROOT, stages)
 
 
+def _live_ladder_stages():
+    stem = (
+        ROOT / "results" / "coherent_state_ladder" /
+        "coherent_state_ladder_gapped_v10_Qwen3-0.6B_20260711T123246Z")
+    return {
+        name: json.loads(stem.with_name(
+            f"{stem.name}__stage_{name}.json").read_text())["stage"]
+        for name in MODULE.STAGE_ORDER}
+
+
+def test_resealed_bogus_synthetic_aggregate_is_rejected():
+    stages = _live_ladder_stages()
+    stages["synthetic_schedule_fixtures"]["observed_aggregate"] = 0.0004
+    with pytest.raises(MODULE.ReleaseError, match="synthetic aggregate"):
+        MODULE._deep_validate_ladder_stages(ROOT, stages)
+
+
+def test_missing_eager_backend_layer_is_rejected():
+    stages = _live_ladder_stages()
+    stages["attention_backend"]["raw"]["fingerprint"]["layers"].pop()
+    with pytest.raises(MODULE.ReleaseError, match="backend layer"):
+        MODULE._deep_validate_ladder_stages(ROOT, stages)
+
+
+def test_relaxed_synthetic_threshold_is_rejected():
+    stages = _live_ladder_stages()
+    stages["synthetic_schedule_fixtures"]["threshold"] = 0.01
+    with pytest.raises(MODULE.ReleaseError, match="stage schema differs"):
+        MODULE._deep_validate_ladder_stages(ROOT, stages)
+
+
 def test_release_layer_does_not_change_v10_apparatus_inventory():
     import sys
     sys.path.insert(0, str(ROOT / "src"))
