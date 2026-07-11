@@ -163,12 +163,13 @@ MANDATORY_FROZEN_PATHS = {
     "scripts/run_coherent_canary_v12_phase_a.py",
     "scripts/validate_coherent_canary_v12_phase_a.py",
     "scripts/run_coherent_canary_v12_treatment.py",
-    "src/coherent_canary_artifacts.py", "src/coherent_canary_controls.py",
+    "src/coherent_canary_artifacts.py", "src/coherent_canary_case.py",
+    "src/coherent_canary_controls.py",
     "src/coherent_canary_loader.py", "src/coherent_canary_path_control.py",
     "src/coherent_canary_preflight.py", "src/coherent_canary_runtime.py",
     "src/coherent_canary_schema.py", "src/coherent_canary_stimuli.py",
     "src/coherent_canary_store.py", "src/coherent_canary_technical.py",
-    "src/coherent_canary_tokens.py",
+    "src/coherent_canary_tokens.py", "src/coherent_state_tokens.py",
 }
 
 
