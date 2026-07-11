@@ -9,6 +9,7 @@ import l_coherent_state_hf as ladder
 
 from l_coherent_state_hf import (
     FROZEN_CASE_CONTINUATION_POSITIONS,
+    LadderDurableDiagnosticSink,
     MAX_TECHNICAL_LOGICAL_POSITION,
     V5_GATE_STAGE_ORDER,
     _require_summary_boundary,
@@ -116,3 +117,31 @@ def test_ladder_writer_externalizes_gate_stages_and_preserves_failure(tmp_path):
     assert manifest["payload_sha256"] == on_disk["payload_sha256"]
     with pytest.raises(RuntimeError, match="overwrite"):
         write_sharded_ladder_result(output, result)
+
+
+def test_ladder_durable_sink_persists_running_stage_then_terminalizes(tmp_path):
+    output = tmp_path / "coherent_ladder_durable.json"
+    sink = LadderDurableDiagnosticSink(output)
+    schema = v5_gate_schema(expected_attention_layers=2)
+    for key, value in schema.items():
+        sink[key] = value
+    attention_path = tmp_path / (
+        "coherent_ladder_durable__stage_attention_backend.json")
+    pending = json.loads(attention_path.read_text())
+    assert pending["stage"]["status"] == "PENDING"
+    sink["attention_backend"] = {
+        **sink["attention_backend"], "status": "PASS", "passes": True}
+    terminal = json.loads(attention_path.read_text())
+    assert terminal["stage"]["status"] == "PASS"
+    gate = dict(sink)
+    gate.update({"status": "FAIL", "passes": False,
+                 "failures": ["generated_replay_identity"]})
+    result = {
+        "schema": 2, "amendment_id": schema["amendment_id"],
+        "design_id": schema["design_id"], "status": "FAIL",
+        "diagnostics": {"loaded_gapped_production_gate": gate},
+    }
+    manifest = write_sharded_ladder_result(output, result)
+    assert manifest["status"] == "FAIL"
+    with pytest.raises(RuntimeError, match="resume/overwrite"):
+        LadderDurableDiagnosticSink(output)

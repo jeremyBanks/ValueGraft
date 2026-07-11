@@ -1910,7 +1910,7 @@ def run_loaded_gapped_gates(
     return sink
 
 
-def run_ladder() -> dict:
+def run_ladder(diagnostic_sink: dict | None = None) -> dict:
     global _LAST_LADDER_DIAGNOSTICS
     _LAST_LADDER_DIAGNOSTICS = {}
     tokenizer = AutoTokenizer.from_pretrained(
@@ -1926,7 +1926,8 @@ def run_ladder() -> dict:
             f"v6 local ladder must use observed-equivalent CPU, got {model.device}")
     loaded_gates = run_loaded_gapped_gates(
         model, tokenizer, identity_tolerance=1e-4,
-        tokenizer_revision=PRODUCTION_TOKENIZER_REVISION)
+        tokenizer_revision=PRODUCTION_TOKENIZER_REVISION,
+        diagnostic_sink=diagnostic_sink)
     _LAST_LADDER_DIAGNOSTICS["loaded_gapped_production_gate"] = loaded_gates
     if not loaded_gates.get("passes"):
         failure = loaded_gates.get("failure", {})
@@ -2107,6 +2108,53 @@ def _atomic_write_bytes(path: Path, raw: bytes) -> None:
             temporary.unlink()
 
 
+def _atomic_replace_bytes(path: Path, raw: bytes) -> None:
+    """Durably replace one nonterminal lifecycle payload in its unique attempt."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    if temporary.exists():
+        raise RuntimeError(f"ladder temporary path already exists: {temporary}")
+    try:
+        with temporary.open("xb") as handle:
+            handle.write(raw)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+class LadderDurableDiagnosticSink(dict):
+    """Persist each whole-stage reassignment while a long ladder is running."""
+
+    def __init__(self, output: Path):
+        super().__init__()
+        self.output = Path(output)
+        existing = list(self.output.parent.glob(
+            f"{self.output.stem}__stage_*.json"))
+        if self.output.exists() or existing:
+            raise RuntimeError(
+                f"refusing to resume/overwrite ladder attempt: "
+                f"{[str(self.output), *map(str, existing)]}")
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+        if key not in V5_GATE_STAGE_ORDER or not isinstance(value, dict):
+            return
+        _closed, raw = _encoded_payload({
+            "schema": 2,
+            "amendment_id": AMENDMENT_ID,
+            "design_id": DESIGN_ID,
+            "artifact_kind": "ladder_gate_stage",
+            "stage_name": key,
+            "stage": value,
+        })
+        path = self.output.with_name(
+            f"{self.output.stem}__stage_{key}.json")
+        _atomic_replace_bytes(path, raw)
+
+
 def write_sharded_ladder_result(output: Path, result: dict) -> dict:
     """Write a small v6 ladder manifest plus commit-safe gate stage sidecars."""
     output = Path(output)
@@ -2165,12 +2213,15 @@ def write_sharded_ladder_result(output: Path, result: dict) -> dict:
         for path, raw in writes
     ]
     closed_manifest, manifest_raw = _encoded_payload(document)
-    all_paths = [path for path, _raw in writes] + [output]
-    collisions = [str(path) for path in all_paths if path.exists()]
-    if collisions:
-        raise RuntimeError(f"refusing to overwrite ladder artifacts: {collisions}")
+    if output.exists():
+        raise RuntimeError(f"refusing to overwrite ladder artifact: {output}")
     for path, raw in writes:
-        _atomic_write_bytes(path, raw)
+        if path.exists():
+            if path.read_bytes() != raw:
+                raise RuntimeError(
+                    f"durable ladder stage differs from terminal payload: {path}")
+        else:
+            _atomic_write_bytes(path, raw)
     _atomic_write_bytes(output, manifest_raw)
     return closed_manifest
 
@@ -2182,16 +2233,24 @@ def main():
     if args.output.exists():
         raise SystemExit(f"refusing to overwrite {args.output}")
     print(f"RUN coherent_state_ladder model={MODEL} -> {args.output}", flush=True)
+    progress_sink = LadderDurableDiagnosticSink(args.output)
     try:
-        result = run_ladder()
+        result = run_ladder(progress_sink)
     except Exception as exc:
+        diagnostics = _LAST_LADDER_DIAGNOSTICS
+        if ("loaded_gapped_production_gate" not in diagnostics and
+                progress_sink):
+            diagnostics = {
+                **diagnostics,
+                "loaded_gapped_production_gate": dict(progress_sink),
+            }
         result = {
                   "schema": 2,
                   "amendment_id": AMENDMENT_ID,
                   "design_id": DESIGN_ID,
                   "status": "FAIL", "error_type": type(exc).__name__,
                   "error": str(exc), "traceback": traceback.format_exc(),
-                  "diagnostics": _LAST_LADDER_DIAGNOSTICS,
+                  "diagnostics": diagnostics,
                   "failed_at": datetime.now(timezone.utc).isoformat()}
     manifest = write_sharded_ladder_result(args.output, result)
     print(json.dumps(manifest, indent=2), flush=True)
