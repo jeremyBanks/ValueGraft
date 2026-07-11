@@ -45,8 +45,8 @@ def _snapshot(rows=4):
 
 
 def test_v8_identity_and_exact_six_arms_are_frozen():
-    assert AMENDMENT_ID == "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8-9"
-    assert DESIGN_ID == "coherent-state-gapped-v9"
+    assert AMENDMENT_ID == "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8-9-10"
+    assert DESIGN_ID == "coherent-state-gapped-v10"
     assert GAPPED_ARM_NAMES == (
         "A_full", "G_fresh", "G_correct", "G_wrong",
         "G_Vcorrect", "G_Kcorrect",
