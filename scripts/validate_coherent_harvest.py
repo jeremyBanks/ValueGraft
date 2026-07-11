@@ -14,7 +14,9 @@ import hashlib
 import json
 import math
 import os
+import random
 import re
+import statistics
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -990,6 +992,544 @@ def _validate_gapped_destination_schedule(
         raise ValueError(f"{label} gapped-destination terminal aggregate differs")
 
 
+def _semantic_scenario_and_targets(repo: Path, cid: str) \
+        -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    scenarios = json.loads((repo / "data/scenarios.json").read_text())
+    scenario = next((row for row in scenarios if row.get("id") == cid), None)
+    if not isinstance(scenario, dict):
+        raise ValueError(f"semantic scenario absent: {cid}")
+    selected = []
+    for category in ("referent", "sense"):
+        plant = next((row for row in scenario.get("plants", [])
+                      if row.get("category") == category), None)
+        if not isinstance(plant, dict):
+            raise ValueError(f"semantic primary plant absent: {cid}/{category}")
+        selected.append(plant)
+    raw_targets = json.loads((repo / "data/coherent_state_targets.json").read_text())
+    rows = raw_targets.get("targets") if isinstance(raw_targets, dict) else raw_targets
+    targets = {row.get("plant_id"): row for row in rows or []}
+    expected_targets = {}
+    for plant in selected:
+        target = targets.get(plant.get("id"))
+        if not isinstance(target, dict):
+            raise ValueError(f"semantic target absent: {plant.get('id')}")
+        expected_targets[plant["id"]] = {
+            **target,
+            "scaffold_gold": plant["gold"],
+            "scaffold_gold_sha256": hashlib.sha256(
+                plant["gold"].encode()).hexdigest(),
+        }
+    return scenario, selected, expected_targets
+
+
+def _semantic_turn_plan(scenario: dict[str, Any], seed: int) -> dict[str, Any]:
+    rng = random.Random(seed)
+    turns = [{"kind": "early", "text": text}
+             for text in scenario["early_user_turns"]]
+    plants = list(scenario["plants"])
+    rng.shuffle(plants)
+    fillers = list(scenario["middle_filler_user_turns"])
+    middle = []
+    pi = fi = 0
+    while pi < len(plants) or fi < len(fillers):
+        if fi < len(fillers):
+            middle.append({"kind": "filler", "text": fillers[fi]})
+            fi += 1
+        for _ in range(3):
+            if pi < len(plants):
+                middle.append({"kind": "plant", "text": plants[pi]["middle_user"],
+                               "plant_id": plants[pi].get("id")})
+                pi += 1
+    tail_fragments = [row["tail_user_fragment"] for row in scenario["plants"]
+                      if row.get("tail_user_fragment")]
+    rng.shuffle(tail_fragments)
+    tail = [{"kind": "tail", "text": text} for text in (
+        [scenario["tail_filler_user_turns"][0], *tail_fragments,
+         scenario["tail_filler_user_turns"][1]])]
+    return {
+        "turns": turns + middle + tail,
+        "early_end_msg": 1 + 2 * len(turns),
+        "middle_end_msg": 1 + 2 * (len(turns) + len(middle)),
+        "n_messages": 1 + 2 * (len(turns) + len(middle) + len(tail)),
+    }
+
+
+def _trim_capped_reply(text: str) -> str:
+    cut = max(text.rfind("\n\n"), text.rfind(". "),
+              text.rfind("! "), text.rfind("? "))
+    return text[:cut + 1].rstrip() if cut > len(text) // 3 else text
+
+
+def _validate_render_provenance(doc: dict[str, Any], scenario: dict[str, Any],
+                                position: int, tokenizer, label: str) -> None:
+    conversation = doc.get("conversation")
+    records = doc.get("reply_records")
+    if not isinstance(conversation, dict) or not isinstance(records, list):
+        raise ValueError(f"{label} render/reply provenance is absent")
+    plan = _semantic_turn_plan(scenario, 20_260_711 + position - 1)
+    messages = conversation.get("messages")
+    if (conversation.get("id") != scenario.get("id") or
+            conversation.get("title") != scenario.get("title") or
+            conversation.get("plants") != scenario.get("plants") or
+            not isinstance(messages, list) or len(messages) != plan["n_messages"] or
+            messages[0] != {"role": "system", "content": scenario["system"]} or
+            len(records) != len(plan["turns"])):
+        raise ValueError(f"{label} rendered scaffold differs")
+    for index, turn in enumerate(plan["turns"]):
+        if messages[1 + 2 * index] != {"role": "user", "content": turn["text"]}:
+            raise ValueError(f"{label} rendered user turn differs: {index}")
+        assistant = messages[2 + 2 * index]
+        record = records[index]
+        ids = record.get("token_ids") if isinstance(record, dict) else None
+        if (not isinstance(ids, list) or
+                any(not isinstance(token, int) for token in ids) or
+                record.get("n_tokens") != len(ids) or len(ids) > 320):
+            raise ValueError(f"{label} reply token coverage differs: {index}")
+        raw = tokenizer.decode(ids).strip()
+        capped = len(ids) == 320
+        canonical = _trim_capped_reply(raw) if capped else raw
+        raw_digest = hashlib.sha256(json.dumps(
+            ids, separators=(",", ":")).encode()).hexdigest()
+        through_user = _canonical_message_ids(tokenizer, messages[:2 + 2 * index])
+        through_reply = _canonical_message_ids(tokenizer, messages[:3 + 2 * index])
+        block = through_reply[len(through_user):]
+        block_digest = hashlib.sha256(json.dumps(
+            block, separators=(",", ":")).encode()).hexdigest()
+        logprob_sum = record.get("logprob_sum")
+        if (assistant != {"role": "assistant", "content": canonical} or
+                record.get("raw_text") != raw or
+                record.get("canonical_text") != canonical or
+                record.get("hit_token_cap") is not capped or
+                record.get("ended_on_eos") is not (not capped) or
+                record.get("trimmed_character_count") != len(raw) - len(canonical) or
+                record.get("raw_token_ids_sha256") != raw_digest or
+                record.get("canonical_block_ids") != block or
+                record.get("canonical_block_ids_sha256") != block_digest or
+                not isinstance(logprob_sum, (int, float)) or
+                not math.isfinite(float(logprob_sum))):
+            raise ValueError(f"{label} reply provenance differs: {index}")
+    sections = conversation.get("sections") or {}
+    full_ids = _canonical_message_ids(tokenizer, messages)
+    early_ids = _canonical_message_ids(tokenizer, messages[:plan["early_end_msg"]])
+    middle_ids = _canonical_message_ids(tokenizer, messages[:plan["middle_end_msg"]])
+    meta = conversation.get("meta") or {}
+    if (sections != {
+            "early_end_msg": plan["early_end_msg"],
+            "middle_end_msg": plan["middle_end_msg"],
+            "early_end_tokens": len(early_ids),
+            "middle_end_tokens": len(middle_ids),
+            "total_tokens": len(full_ids),
+        } or meta != {
+            "native_render": True, "seed": 20_260_711 + position - 1,
+            "temp": 0.0,
+            "truncated_replies": sum(
+                record["hit_token_cap"] for record in records),
+            "empty_replies": sum(not record["canonical_text"] for record in records),
+        }):
+        raise ValueError(f"{label} rendered section/meta provenance differs")
+
+
+def _semantic_layout(tokenizer, conversation: dict[str, Any],
+                     summary_text: str, summary_ids: list[int],
+                     correct_prefix: list[int],
+                     request: str = SUMMARY_REQUEST) -> dict[str, Any]:
+    messages = conversation["messages"]
+    middle_end = conversation["sections"]["middle_end_msg"]
+    compacted = [
+        messages[0], {"role": "user", "content": request},
+        {"role": "assistant", "content": summary_text}, *messages[middle_end:],
+    ]
+    fresh_messages = compacted[:2]
+    fresh = _generation_prefix_ids(tokenizer, fresh_messages)
+    context = _canonical_message_ids(tokenizer, compacted)
+    if context[:len(fresh)] != fresh or context[
+            len(fresh):len(fresh) + len(summary_ids)] != summary_ids:
+        raise ValueError("semantic compacted rendering differs")
+    physical_start = len(fresh)
+    physical_end = physical_start + len(summary_ids)
+    post = context[physical_end:]
+    marker = int(tokenizer.encode(
+        "<|im_start|>", add_special_tokens=False)[0])
+    starts = [index for index, token in enumerate(fresh) if token == marker]
+    if len(starts) != 3:
+        raise ValueError("semantic fresh boundary coverage differs")
+    system_end = starts[1]
+    suffix = fresh[system_end:]
+    source_start = len(correct_prefix)
+    request_start = source_start - len(suffix)
+    prefix_positions = list(range(system_end)) + list(range(
+        request_start, source_start))
+    summary_positions = list(range(source_start, source_start + len(summary_ids)))
+    post_positions = list(range(summary_positions[-1] + 1,
+                                summary_positions[-1] + 1 + len(post)))
+    def schedule(logical: list[int], physical_start: int) -> dict[str, int]:
+        return {
+            "physical_start": physical_start,
+            "physical_end": physical_start + len(logical),
+            "logical_start": logical[0], "logical_end": logical[-1] + 1,
+            "gap_from_physical": logical[0] - physical_start,
+        }
+    return {
+        "messages": compacted, "prefix_token_ids": fresh,
+        "context_token_ids": context,
+        "context_sha256": _sha256_ints(context, "semantic.context"),
+        "context_position_ids": prefix_positions + summary_positions + post_positions,
+        "prefix_position_ids": prefix_positions,
+        "summary_position_ids": summary_positions,
+        "post_summary_position_ids": post_positions,
+        "physical_summary_start": physical_start,
+        "physical_summary_end": physical_end,
+        "logical_summary_start": source_start,
+        "logical_summary_end": source_start + len(summary_ids),
+        "logical_next_position": source_start + len(summary_ids) + len(post),
+        "system_end": system_end, "request_logical_start": request_start,
+        "post_summary_token_ids": post,
+        "cache_position_ids": list(range(len(context))),
+        "position_policy": "gapped_same_source_summary_position",
+        "position_schedules": {
+            "natural_source_summary": schedule(
+                summary_positions, source_start),
+            "gapped_prefix": schedule(prefix_positions, 0),
+            "gapped_summary": schedule(summary_positions, physical_start),
+            "gapped_post_summary": schedule(post_positions, physical_end),
+        },
+    }
+
+
+def _expected_probe_score(tokenizer, messages: list[dict[str, Any]],
+                          context_ids: list[int], probe: str, target: str,
+                          logical_start: int) -> dict[str, Any]:
+    probe_messages = [*messages, {"role": "user", "content": probe}]
+    prefix = _generation_prefix_ids(tokenizer, probe_messages)
+    if prefix[:len(context_ids)] != context_ids:
+        raise ValueError("semantic probe changed its context prefix")
+    target_ids = _rendered_assistant_ids(tokenizer, probe_messages, target)
+    suffix = prefix[len(context_ids):]
+    feed_len = len(suffix) + len(target_ids) - 1
+    return {
+        "text": target, "token_ids": target_ids, "probe_suffix_ids": suffix,
+        "logical_position_ids": list(range(logical_start, logical_start + feed_len)),
+        "physical_cache_positions": list(range(
+            len(context_ids), len(context_ids) + feed_len)),
+    }
+
+
+def _validate_source_arrays(source: Any, *, prefix: list[int], summary: list[int],
+                            summary_start: int, kind: str, label: str) -> None:
+    if not isinstance(source, dict):
+        raise ValueError(f"{label} source is absent")
+    expected = {
+        "source_kind": kind,
+        "prefix_token_ids": prefix,
+        "prefix_sha256": _sha256_ints(prefix, f"{label}.prefix"),
+        "prefix_token_count": len(prefix),
+        "summary_token_ids": summary,
+        "summary_token_sha256": _sha256_ints(summary, f"{label}.summary"),
+        "summary_start": summary_start,
+        "summary_end": summary_start + len(summary),
+        "prefix_position_ids": list(range(len(prefix))),
+        "summary_position_ids": list(range(
+            summary_start, summary_start + len(summary))),
+        "physical_cache_position_ids": list(range(len(prefix) + len(summary))),
+    }
+    if any(source.get(key) != value for key, value in expected.items()):
+        raise ValueError(f"{label} source arrays differ")
+    trace = source.get("trace")
+    if (not isinstance(trace, dict) or trace.get("token_ids") != summary or
+            trace.get("start_position") != summary_start or
+            trace.get("end_position") != summary_start + len(summary) or
+            not isinstance(trace.get("token_logprobs"), list) or
+            len(trace["token_logprobs"]) != len(summary)):
+        raise ValueError(f"{label} source trace differs")
+
+
+def _validate_scored_target_expected(score: Any, expected: dict[str, Any],
+                                     label: str) -> None:
+    if not isinstance(score, dict):
+        raise ValueError(f"{label} target score is absent")
+    if any(score.get(key) != value for key, value in expected.items()):
+        raise ValueError(f"{label} target/probe/position provenance differs")
+
+
+def _validate_main_semantic_provenance(doc: dict[str, Any], path: Path) -> None:
+    repo = Path(__file__).resolve().parent.parent
+    cid = doc.get("conversation_id")
+    position = doc.get("order_position")
+    if cid not in FROZEN_ORDER or position != FROZEN_ORDER.index(cid) + 1:
+        raise ValueError(f"{path.name} frozen semantic identity differs")
+    scenario, plants, targets = _semantic_scenario_and_targets(repo, cid)
+    tokenizer = _validation_tokenizer()
+    _validate_render_provenance(
+        doc, scenario, position, tokenizer, path.name)
+    conversation = doc["conversation"]
+    summary = doc["summary"]
+    summary_ids = summary["token_ids"]
+    actual = doc["sources"]["correct_actual"]
+    layout = _semantic_layout(
+        tokenizer, conversation, summary["text"], summary_ids,
+        actual["prefix_token_ids"])
+    if doc.get("destination") != layout:
+        raise ValueError(f"{path.name} full destination/tail provenance differs")
+
+    expected_target_provenance = {plant["id"]: targets[plant["id"]]
+                                  for plant in plants}
+    if doc.get("target_provenance") != expected_target_provenance:
+        raise ValueError(f"{path.name} target provenance differs")
+
+    donor_id = WRONG_DONORS[cid]
+    donor = json.loads((repo / f"data/synthetic/{donor_id}.json").read_text())
+    reconstructed = _reconstruct_donor_replacements(
+        tokenizer, conversation, donor, cid)
+    wrong_construction = doc["sources"].get("wrong_exact_length_construction")
+    if not isinstance(wrong_construction, dict):
+        raise ValueError(f"{path.name} wrong construction is absent")
+    replacement_keys = {
+        "target_message_index", "donor_message_index", "role", "start", "end",
+        "target_ids", "donor_pool_ids", "replacement_ids", "cycles",
+    }
+    expected_replacements = [
+        {key: row[key] for key in replacement_keys}
+        for row in reconstructed["replacements"]]
+    donor_raw = (repo / f"data/synthetic/{donor_id}.json").read_bytes()
+    expected_wrong_fields = {
+        "correct_ids": reconstructed["correct_ids"],
+        "wrong_ids": reconstructed["wrong_ids"],
+        "structural_positions": reconstructed["structural"],
+        "content_positions": reconstructed["content"],
+        "replacements": expected_replacements,
+        "correct_prefix_sha256": _sha256_ints(
+            reconstructed["correct_ids"], "semantic.correct_wrong"),
+        "wrong_prefix_sha256": _sha256_ints(
+            reconstructed["wrong_ids"], "semantic.wrong"),
+        "changed_positions": reconstructed["changed"],
+        "changed_position_count": len(reconstructed["changed"]),
+        "changed_subset_of_declared_content": True,
+        "structural_positions_exact": True,
+        "replacement_special_token_count": 0,
+        "external_donor": {
+            "donor_id": donor_id, "path": f"data/synthetic/{donor_id}.json",
+            "sha256": hashlib.sha256(donor_raw).hexdigest(),
+            "recorded_author": (donor.get("meta") or {}).get("author"),
+            "subject_native": False,
+        },
+    }
+    if any(wrong_construction.get(key) != value
+           for key, value in expected_wrong_fields.items()):
+        raise ValueError(f"{path.name} wrong construction differs")
+    wrong = doc["sources"].get("wrong")
+    _validate_source_arrays(
+        wrong, prefix=reconstructed["wrong_ids"], summary=summary_ids,
+        summary_start=len(reconstructed["correct_ids"]),
+        kind="wrong_history_exact_length_counterfactual",
+        label=f"{path.name}.wrong")
+    trace_lps = wrong["trace"]["token_logprobs"]
+    wrong_nll = -sum(_finite(value, f"{path.name}.wrong_nll")
+                     for value in trace_lps) / len(trace_lps)
+    if _finite(doc["sources"].get("wrong_summary_mean_nll"),
+               f"{path.name}.wrong_summary_mean_nll") != wrong_nll:
+        raise ValueError(f"{path.name} wrong summary NLL differs")
+
+    fresh = doc["sources"].get("fresh")
+    if (not isinstance(fresh, dict) or
+            fresh.get("source_kind") != "gapped_fresh_stepwise_forced" or
+            fresh.get("prefix_token_ids") != layout["prefix_token_ids"] or
+            fresh.get("prefix_sha256") != _sha256_ints(
+                layout["prefix_token_ids"], f"{path.name}.fresh") or
+            fresh.get("prefix_position_ids") != layout["prefix_position_ids"] or
+            fresh.get("physical_summary_start") !=
+            layout["physical_summary_start"] or
+            fresh.get("physical_summary_end") != layout["physical_summary_end"] or
+            fresh.get("summary_start") != layout["logical_summary_start"] or
+            fresh.get("summary_end") != layout["logical_summary_end"] or
+            fresh.get("summary_token_ids") != summary_ids):
+        raise ValueError(f"{path.name} fresh source/layout binding differs")
+
+    correct_messages = [*conversation["messages"],
+                        {"role": "user", "content": SUMMARY_REQUEST}]
+    a_messages = [*correct_messages,
+                  {"role": "assistant", "content": summary["text"]}]
+    a_ids = _canonical_message_ids(tokenizer, a_messages)
+    a_source = doc["sources"].get("a_full_forced_replay_reconstruction")
+    _validate_source_arrays(
+        a_source, prefix=actual["prefix_token_ids"], summary=summary_ids,
+        summary_start=len(actual["prefix_token_ids"]),
+        kind="a_full_forced_replay_reconstruction",
+        label=f"{path.name}.A_full")
+
+    for arm in ARMS:
+        expected_context_messages = a_messages if arm == "A_full" else layout["messages"]
+        expected_context_ids = a_ids if arm == "A_full" else layout["context_token_ids"]
+        logical_start = len(a_ids) if arm == "A_full" else layout["logical_next_position"]
+        rows = (doc.get("arm_scores") or {}).get(arm, {}).get("plants")
+        if not isinstance(rows, list) or len(rows) != len(plants):
+            raise ValueError(f"{path.name} main plant count differs: {arm}")
+        for row, plant in zip(rows, plants):
+            if (row.get("plant_id") != plant["id"] or
+                    row.get("category") != plant["category"] or
+                    row.get("probe") != plant["probe"]):
+                raise ValueError(f"{path.name} main plant identity differs: {arm}")
+            target = targets[plant["id"]]
+            for side, field in (("correct", "correct"),
+                                ("counterfactual", "counterfactual")):
+                expected = _expected_probe_score(
+                    tokenizer, expected_context_messages, expected_context_ids,
+                    plant["probe"], target[field], logical_start)
+                _validate_scored_target_expected(
+                    row.get(side), expected,
+                    f"{path.name}.{arm}.{plant['id']}.{side}")
+
+
+def _validate_calibration_semantic(doc: dict[str, Any], path: Path) -> None:
+    calibration = doc.get("calibration")
+    if not isinstance(calibration, dict):
+        raise ValueError(f"{path.name} calibration provenance is absent")
+    _require_identity(calibration, f"{path.name} calibration")
+    cid = doc["conversation_id"]
+    tokenizer = _validation_tokenizer()
+    expected = _reconstruct_calibration_variant(tokenizer, cid)
+    correct_ids = expected["correct_prefix_ids"]
+    wrong_ids = expected["wrong_prefix_ids"]
+    fresh_ids = _generation_prefix_ids(tokenizer, [
+        {"role": "system", "content": CALIBRATION_SYSTEM},
+        {"role": "user", "content": CALIBRATION_REQUEST},
+    ])
+    source_ids = calibration.get("source_prefix_token_ids")
+    source_hashes = calibration.get("source_prefix_hashes")
+    if (calibration.get("correct_label") != expected["correct_label"] or
+            calibration.get("wrong_label") != expected["wrong_label"] or
+            calibration.get("summary_text") != CALIBRATION_SUMMARY or
+            calibration.get("summary_ids") != expected["summary_ids"] or
+            source_ids != {"correct": correct_ids, "wrong": wrong_ids,
+                           "fresh": fresh_ids} or
+            source_hashes != {
+                "correct": _sha256_ints(correct_ids, "calibration.correct"),
+                "wrong": _sha256_ints(wrong_ids, "calibration.wrong"),
+                "fresh": _sha256_ints(fresh_ids, "calibration.fresh"),
+            } or calibration.get("wrong_changed_positions") !=
+            expected["changed_positions"] or
+            calibration.get("wrong_decoded_prefix") != tokenizer.decode(wrong_ids)):
+        raise ValueError(f"{path.name} calibration source construction differs")
+    wrong_construction = calibration.get("wrong_exact_length_construction")
+    expected_wrong = {
+        "target_label": expected["correct_label"],
+        "donor_label": expected["wrong_label"],
+        "prefix_length": len(correct_ids),
+        "changed_positions": expected["changed_positions"],
+        "structural_positions": expected["structural_positions"],
+        "target_ids": [correct_ids[index] for index in expected["changed_positions"]],
+        "replacement_ids": [wrong_ids[index] for index in expected["changed_positions"]],
+        "structural_slots_equal": True, "special_ids_excluded": True,
+    }
+    if wrong_construction != expected_wrong:
+        raise ValueError(f"{path.name} calibration wrong-source mapping differs")
+
+    conv = {
+        "id": f"calibration-{cid}",
+        "messages": _calibration_messages(expected["correct_label"])[:-1],
+        "sections": {"middle_end_msg": 3},
+    }
+    layout = _semantic_layout(
+        tokenizer, conv, CALIBRATION_SUMMARY, expected["summary_ids"],
+        correct_ids, CALIBRATION_REQUEST)
+    expected_layout_fields = {
+        "position_policy": "gapped_same_source_summary_position",
+        "summary_start": len(correct_ids),
+        "physical_summary_start": layout["physical_summary_start"],
+        "physical_summary_end": layout["physical_summary_end"],
+        "logical_next_position": layout["logical_next_position"],
+        "physical_cache_positions": list(range(len(layout["context_token_ids"]))),
+        "context_position_ids": layout["context_position_ids"],
+    }
+    if any(calibration.get(key) != value
+           for key, value in expected_layout_fields.items()):
+        raise ValueError(f"{path.name} calibration destination layout differs")
+    trace = calibration.get("fresh_trace") or {}
+    if (trace.get("start_position") != len(correct_ids) or
+            trace.get("end_position") !=
+            len(correct_ids) + len(expected["summary_ids"])):
+        raise ValueError(f"{path.name} calibration fresh trace differs")
+
+    source_rows = calibration.get("source_summary_row_hashes") or {}
+    correct_rows = _validate_hash_rows(
+        source_rows.get("correct"), f"{path.name}.calibration.correct",
+        rows=len(expected["summary_ids"]))
+    wrong_rows = _validate_hash_rows(
+        source_rows.get("wrong"), f"{path.name}.calibration.wrong",
+        rows=len(expected["summary_ids"]))
+    fresh_rows = _validate_hash_rows(
+        source_rows.get("fresh"), f"{path.name}.calibration.fresh",
+        rows=len(expected["summary_ids"]))
+    audits = calibration.get("branch_audits")
+    calibration_arms = {"G_fresh", "G_correct", "G_wrong"}
+    if not isinstance(audits, dict) or set(audits) != calibration_arms:
+        raise ValueError(f"{path.name} calibration branch lineage is absent")
+    expected_sources = {
+        "G_fresh": (fresh_rows, "fresh"),
+        "G_correct": (correct_rows, "correct_actual"),
+        "G_wrong": (wrong_rows, "wrong_history"),
+    }
+    common_before = None
+    for arm in sorted(calibration_arms):
+        audit = audits[arm]
+        declared, source = expected_sources[arm]
+        for key, width in (
+                ("pre_tail_row_hashes", layout["physical_summary_end"]),
+                ("post_tail_row_hashes", len(layout["context_token_ids"])),
+                ("fresh_summary_row_hashes", len(expected["summary_ids"])),
+                ("inserted_summary_row_hashes", len(expected["summary_ids"])),
+                ("declared_source_summary_row_hashes", len(expected["summary_ids"])),
+                ("fresh_before_summary_row_hashes", layout["physical_summary_start"]),
+                ("branch_before_summary_row_hashes", layout["physical_summary_start"])):
+            _validate_hash_rows(
+                audit.get(key) if isinstance(audit, dict) else None,
+                f"{path.name}.calibration.{arm}.{key}", rows=width)
+        if (audit.get("arm") != arm or
+                audit.get("pre_tail_storage_lengths") !=
+                [layout["physical_summary_end"]] * 48 or
+                audit.get("post_tail_storage_lengths") !=
+                [len(layout["context_token_ids"])] * 48 or
+                audit.get("fresh_summary_row_hashes") != fresh_rows or
+                audit.get("inserted_summary_row_hashes") != declared or
+                audit.get("declared_source_summary_row_hashes") != declared or
+                audit.get("declared_k_source") != source or
+                audit.get("declared_v_source") != source or
+                audit.get("fresh_before_summary_row_hashes") !=
+                audit.get("branch_before_summary_row_hashes") or
+                any(audit.get(flag) is not True for flag in (
+                    "non_summary_rows_bit_exact",
+                    "declared_summary_intervention_exact",
+                    "summary_hash_lineage_exact", "tail_recomputed_from_boundary"))):
+            raise ValueError(f"{path.name} calibration branch lineage differs: {arm}")
+        if common_before is None:
+            common_before = audit["fresh_before_summary_row_hashes"]
+        elif common_before != audit["fresh_before_summary_row_hashes"]:
+            raise ValueError(f"{path.name} calibration fresh-prefix lineage differs")
+
+    expected_lengths = {}
+    for arm in sorted(calibration_arms):
+        rows = (calibration.get("arm_details") or {}).get(arm, {}).get("plants")
+        if not isinstance(rows, list) or len(rows) != 1:
+            raise ValueError(f"{path.name} calibration plant count differs: {arm}")
+        row = rows[0]
+        if (row.get("plant_id") != "calibration" or
+                row.get("category") != "calibration" or
+                row.get("probe") != CALIBRATION_PROBE):
+            raise ValueError(f"{path.name} calibration plant identity differs: {arm}")
+        expected_lengths[arm] = {}
+        for side, text in (
+                ("correct", f"Label {expected['correct_label']}."),
+                ("counterfactual", f"Label {expected['wrong_label']}.")):
+            score_expected = _expected_probe_score(
+                tokenizer, layout["messages"], layout["context_token_ids"],
+                CALIBRATION_PROBE, text, layout["logical_next_position"])
+            _validate_scored_target_expected(
+                row.get(side), score_expected,
+                f"{path.name}.calibration.{arm}.{side}")
+            expected_lengths[arm][side] = len(score_expected["token_ids"])
+    if calibration.get("rendered_target_token_lengths") != expected_lengths:
+        raise ValueError(f"{path.name} calibration rendered target lengths differ")
+
+
 def _validate_target_score(doc: Any, label: str) -> float:
     """Recompute one persisted target mean from its token log-probabilities."""
     if not isinstance(doc, dict):
@@ -1294,6 +1834,8 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
         missing = sorted(required - doc.keys())
         if missing:
             raise ValueError(f"{path.name} missing fields {missing}")
+        _validate_main_semantic_provenance(doc, path)
+        _validate_calibration_semantic(doc, path)
         _validate_actual_render_schedule(doc, path.name)
         _validate_gapped_destination_schedule(doc, path.name)
         _validate_snapshot_provenance(doc, path.name)

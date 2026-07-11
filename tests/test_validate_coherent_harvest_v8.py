@@ -124,6 +124,222 @@ def arm_score(*, offset: float = 0.0, plant_id: str = "fixture-plant") -> dict:
     return {"plants": [row], "conversation_margin": margin}
 
 
+def rendered_conversation_fixture(cid: str, position: int) -> tuple[dict, list[dict]]:
+    tokenizer = MODULE._validation_tokenizer()
+    scenarios = json.loads((ROOT / "data/scenarios.json").read_text())
+    scenario = next(row for row in scenarios if row["id"] == cid)
+    plan = MODULE._semantic_turn_plan(scenario, 20_260_711 + position - 1)
+    messages = [{"role": "system", "content": scenario["system"]}]
+    records = []
+    for index, turn in enumerate(plan["turns"]):
+        messages.append({"role": "user", "content": turn["text"]})
+        raw_ids = [int(value) for value in tokenizer.encode(
+            f"Acknowledged turn {index}.", add_special_tokens=False)]
+        raw = tokenizer.decode(raw_ids).strip()
+        through_user = MODULE._canonical_message_ids(tokenizer, messages)
+        messages.append({"role": "assistant", "content": raw})
+        through_reply = MODULE._canonical_message_ids(tokenizer, messages)
+        block = through_reply[len(through_user):]
+        records.append({
+            "n_tokens": len(raw_ids), "logprob_sum": -float(len(raw_ids)),
+            "token_ids": raw_ids, "raw_text": raw, "canonical_text": raw,
+            "hit_token_cap": False, "ended_on_eos": True,
+            "trimmed_character_count": 0,
+            "raw_token_ids_sha256": hashlib.sha256(json.dumps(
+                raw_ids, separators=(",", ":")).encode()).hexdigest(),
+            "canonical_block_ids": block,
+            "canonical_block_ids_sha256": hashlib.sha256(json.dumps(
+                block, separators=(",", ":")).encode()).hexdigest(),
+        })
+    canonical = MODULE._canonical_message_ids
+    conversation = {
+        "id": cid, "title": scenario.get("title"), "messages": messages,
+        "sections": {
+            "early_end_msg": plan["early_end_msg"],
+            "middle_end_msg": plan["middle_end_msg"],
+            "early_end_tokens": len(canonical(
+                tokenizer, messages[:plan["early_end_msg"]])),
+            "middle_end_tokens": len(canonical(
+                tokenizer, messages[:plan["middle_end_msg"]])),
+            "total_tokens": len(canonical(tokenizer, messages)),
+        },
+        "plants": scenario["plants"],
+        "meta": {
+            "native_render": True, "seed": 20_260_711 + position - 1,
+            "temp": 0.0, "truncated_replies": 0, "empty_replies": 0,
+        },
+    }
+    return conversation, records
+
+
+def scored_target(expected: dict, offset: float) -> dict:
+    lps = [-1.0 + offset - index / 10
+           for index in range(len(expected["token_ids"]))]
+    return {**expected, "token_logprobs": lps,
+            "mean_logprob": sum(lps) / len(lps)}
+
+
+def semantic_arm_score(tokenizer, messages: list[dict], context: list[int],
+                       logical_start: int, plants: list[dict], targets: dict,
+                       offset: float) -> dict:
+    rows = []
+    for plant in plants:
+        correct = scored_target(MODULE._expected_probe_score(
+            tokenizer, messages, context, plant["probe"],
+            targets[plant["id"]]["correct"], logical_start), offset)
+        counterfactual = scored_target(MODULE._expected_probe_score(
+            tokenizer, messages, context, plant["probe"],
+            targets[plant["id"]]["counterfactual"], logical_start), offset - 1.0)
+        rows.append({
+            "plant_id": plant["id"], "category": plant["category"],
+            "probe": plant["probe"], "correct": correct,
+            "counterfactual": counterfactual,
+            "margin": correct["mean_logprob"] - counterfactual["mean_logprob"],
+        })
+    return {"plants": rows,
+            "conversation_margin": sum(row["margin"] for row in rows) / len(rows)}
+
+
+def calibration_fixture(cid: str) -> dict:
+    tokenizer = MODULE._validation_tokenizer()
+    expected = MODULE._reconstruct_calibration_variant(tokenizer, cid)
+    correct_ids = expected["correct_prefix_ids"]
+    wrong_ids = expected["wrong_prefix_ids"]
+    conv = {
+        "id": f"calibration-{cid}",
+        "messages": MODULE._calibration_messages(expected["correct_label"])[:-1],
+        "sections": {"middle_end_msg": 3},
+    }
+    layout = MODULE._semantic_layout(
+        tokenizer, conv, MODULE.CALIBRATION_SUMMARY, expected["summary_ids"],
+        correct_ids, MODULE.CALIBRATION_REQUEST)
+    fresh_rows = hash_rows("calibration:fresh", len(expected["summary_ids"]))
+    correct_rows = hash_rows("calibration:correct", len(expected["summary_ids"]))
+    wrong_rows = hash_rows("calibration:wrong", len(expected["summary_ids"]))
+    before = hash_rows("calibration:before", layout["physical_summary_start"])
+    declared = {
+        "G_fresh": (fresh_rows, "fresh"),
+        "G_correct": (correct_rows, "correct_actual"),
+        "G_wrong": (wrong_rows, "wrong_history"),
+    }
+    audits = {arm: {
+        "arm": arm,
+        "pre_tail_storage_lengths": [layout["physical_summary_end"]] * 48,
+        "pre_tail_row_hashes": hash_rows(
+            f"calibration:{arm}:pre", layout["physical_summary_end"]),
+        "post_tail_storage_lengths": [len(layout["context_token_ids"])] * 48,
+        "post_tail_row_hashes": hash_rows(
+            f"calibration:{arm}:post", len(layout["context_token_ids"])),
+        "fresh_summary_row_hashes": fresh_rows,
+        "inserted_summary_row_hashes": rows,
+        "declared_source_summary_row_hashes": rows,
+        "declared_k_source": source, "declared_v_source": source,
+        "fresh_before_summary_row_hashes": before,
+        "branch_before_summary_row_hashes": before,
+        "non_summary_rows_bit_exact": True,
+        "declared_summary_intervention_exact": True,
+        "summary_hash_lineage_exact": True,
+        "tail_recomputed_from_boundary": True,
+    } for arm, (rows, source) in declared.items()}
+    plant = {"id": "calibration", "category": "calibration",
+             "probe": MODULE.CALIBRATION_PROBE}
+    targets = {"calibration": {
+        "correct": f"Label {expected['correct_label']}.",
+        "counterfactual": f"Label {expected['wrong_label']}.",
+    }}
+    details = {arm: semantic_arm_score(
+        tokenizer, layout["messages"], layout["context_token_ids"],
+        layout["logical_next_position"], [plant], targets, index / 20)
+        for index, arm in enumerate(("G_fresh", "G_correct", "G_wrong"))}
+    outcomes = {arm: score["conversation_margin"]
+                for arm, score in details.items()}
+    rendered_lengths = {arm: {
+        side: len(details[arm]["plants"][0][side]["token_ids"])
+        for side in ("correct", "counterfactual")}
+        for arm in details}
+    return {
+        **identity(), "correct_label": expected["correct_label"],
+        "wrong_label": expected["wrong_label"],
+        "summary_text": MODULE.CALIBRATION_SUMMARY,
+        "summary_ids": expected["summary_ids"],
+        "source_prefix_hashes": {
+            "correct": MODULE._sha256_ints(correct_ids, "cal.correct"),
+            "wrong": MODULE._sha256_ints(wrong_ids, "cal.wrong"),
+            "fresh": MODULE._sha256_ints(
+                layout["prefix_token_ids"], "cal.fresh"),
+        },
+        "source_prefix_token_ids": {
+            "correct": correct_ids, "wrong": wrong_ids,
+            "fresh": layout["prefix_token_ids"],
+        },
+        "wrong_changed_positions": expected["changed_positions"],
+        "wrong_exact_length_construction": {
+            "target_label": expected["correct_label"],
+            "donor_label": expected["wrong_label"],
+            "prefix_length": len(correct_ids),
+            "changed_positions": expected["changed_positions"],
+            "structural_positions": expected["structural_positions"],
+            "target_ids": [correct_ids[i] for i in expected["changed_positions"]],
+            "replacement_ids": [wrong_ids[i] for i in expected["changed_positions"]],
+            "structural_slots_equal": True, "special_ids_excluded": True,
+        },
+        "wrong_decoded_prefix": tokenizer.decode(wrong_ids),
+        "source_summary_row_hashes": {
+            "correct": correct_rows, "wrong": wrong_rows, "fresh": fresh_rows},
+        "position_policy": "gapped_same_source_summary_position",
+        "summary_start": len(correct_ids),
+        "physical_summary_start": layout["physical_summary_start"],
+        "physical_summary_end": layout["physical_summary_end"],
+        "logical_next_position": layout["logical_next_position"],
+        "physical_cache_positions": list(range(len(layout["context_token_ids"]))),
+        "context_position_ids": layout["context_position_ids"],
+        "fresh_trace": {"start_position": len(correct_ids),
+                        "end_position": len(correct_ids) +
+                        len(expected["summary_ids"])},
+        "branch_audits": audits,
+        "rendered_target_token_lengths": rendered_lengths,
+        "outcomes": outcomes, "arm_details": details,
+    }
+
+
+def rendered_schedule_identity(conversation: dict) -> dict:
+    tokenizer = MODULE._validation_tokenizer()
+    correct = MODULE._generation_prefix_ids(
+        tokenizer, [*conversation["messages"],
+                    {"role": "user", "content": MODULE.SUMMARY_REQUEST}])
+    fresh = MODULE._generation_prefix_ids(tokenizer, [
+        conversation["messages"][0],
+        {"role": "user", "content": MODULE.SUMMARY_REQUEST}])
+    marker = int(tokenizer.encode(
+        "<|im_start|>", add_special_tokens=False)[0])
+    starts = [i for i, token in enumerate(correct) if token == marker]
+    fresh_starts = [i for i, token in enumerate(fresh) if token == marker]
+    system_end = starts[1]
+    suffix = fresh[system_end:]
+    request_start = len(correct) - len(suffix)
+    widths = {"system": system_end,
+              "history": request_start - system_end,
+              "request_header": len(correct) - request_start}
+    blocks = [piece for key in ("system", "history", "request_header")
+              for piece in MODULE._chunk_widths(widths[key])]
+    positions = list(range(len(correct)))
+    return {
+        "complete_prefix_token_ids": correct,
+        "complete_prefix_token_sha256": MODULE._sha256_ints(correct, "render"),
+        "complete_position_ids": positions,
+        "complete_position_array_sha256": MODULE._sha256_ints(positions, "positions"),
+        "fresh_prefix_token_ids": fresh, "token_count": len(correct),
+        "continuation_logical_position": len(correct), "system_end": system_end,
+        "request_header_start": request_start, "conceptual_block_widths": widths,
+        "ordinary_resolved_call_widths": MODULE._chunk_widths(len(correct)),
+        "message_block_resolved_call_widths": blocks,
+        "system_equal": fresh_starts[1] == system_end,
+        "request_header_equal": correct[-len(suffix):] == suffix,
+        "blocks_nonempty": all(width > 0 for width in widths.values()),
+        "blocks_ordered_nonoverlapping": True, "blocks_cover_prefix": True,
+    }
+
+
 def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
     tokenizer = MODULE._validation_tokenizer()
     summary_text = "The context note remains available."
@@ -222,6 +438,8 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
         "summary_end": len(correct) + len(summary_ids),
         "summary_position_ids": list(range(
             len(correct), len(correct) + len(summary_ids))),
+        "physical_cache_position_ids": list(range(
+            len(correct) + len(summary_ids))),
         "summary_row_hashes": actual_hashes,
         "trace": trace,
     }
@@ -814,31 +1032,101 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
         **identity(), "status": "VERIFIED", "resume_probe_verified": True,
     })
     for position, cid in enumerate(MODULE.FROZEN_ORDER[:6], 1):
-        arms = {arm: arm_score(offset=index / 10)
-                for index, arm in enumerate(MODULE.ARMS)}
-        calibration_details = {
-            arm: arm_score(offset=index / 20, plant_id="calibration")
-            for index, arm in enumerate(("G_fresh", "G_correct", "G_wrong"))
-        }
-        calibration_outcomes = {
-            arm: score["conversation_margin"]
-            for arm, score in calibration_details.items()
-        }
-        rendered_conversation = json.loads((
-            ROOT / "data" / "synthetic" / f"{cid}.json").read_text())
+        tokenizer = MODULE._validation_tokenizer()
+        rendered_conversation, reply_records = rendered_conversation_fixture(
+            cid, position)
         saved_summary, sources, destination_schedule = \
             destination_schedule_fixture(rendered_conversation)
-        destination = {
-            "physical_summary_start":
-                destination_schedule["physical_summary_start"],
-            "physical_summary_end":
-                destination_schedule["physical_summary_end"],
-            "context_token_ids": (
-                destination_schedule["prefix_token_ids"] +
-                destination_schedule["summary_token_ids"] + [701, 702, 703]),
+        destination = MODULE._semantic_layout(
+            tokenizer, rendered_conversation, saved_summary["text"],
+            saved_summary["token_ids"],
+            sources["correct_actual"]["prefix_token_ids"])
+        scenario, plants, targets = MODULE._semantic_scenario_and_targets(
+            ROOT, cid)
+        donor_id = MODULE.WRONG_DONORS[cid]
+        donor = json.loads((ROOT / f"data/synthetic/{donor_id}.json").read_text())
+        reconstructed = MODULE._reconstruct_donor_replacements(
+            tokenizer, rendered_conversation, donor, cid)
+        summary_ids = saved_summary["token_ids"]
+        source_start = len(reconstructed["correct_ids"])
+        wrong_trace = copy.deepcopy(sources["correct_actual"]["trace"])
+        wrong_record = {
+            **sources["correct_actual"],
+            "source_kind": "wrong_history_exact_length_counterfactual",
+            "prefix_token_ids": reconstructed["wrong_ids"],
+            "prefix_sha256": MODULE._sha256_ints(
+                reconstructed["wrong_ids"], "fixture.wrong"),
+            "prefix_token_count": len(reconstructed["wrong_ids"]),
+            "summary_start": source_start, "summary_end": source_start + len(summary_ids),
+            "prefix_position_ids": list(range(source_start)),
+            "summary_position_ids": list(range(source_start, source_start + len(summary_ids))),
+            "physical_cache_position_ids": list(range(source_start + len(summary_ids))),
+            "summary_row_hashes": hash_rows("semantic_wrong", len(summary_ids)),
+            "trace": wrong_trace,
         }
+        donor_raw = (ROOT / f"data/synthetic/{donor_id}.json").read_bytes()
+        replacement_keys = {
+            "target_message_index", "donor_message_index", "role", "start", "end",
+            "target_ids", "donor_pool_ids", "replacement_ids", "cycles"}
+        sources["wrong"] = wrong_record
+        sources["wrong_exact_length_construction"] = {
+            "correct_ids": reconstructed["correct_ids"],
+            "wrong_ids": reconstructed["wrong_ids"],
+            "structural_positions": reconstructed["structural"],
+            "content_positions": reconstructed["content"],
+            "replacements": [{key: row[key] for key in replacement_keys}
+                             for row in reconstructed["replacements"]],
+            "external_donor": {
+                "donor_id": donor_id, "path": f"data/synthetic/{donor_id}.json",
+                "sha256": hashlib.sha256(donor_raw).hexdigest(),
+                "recorded_author": donor["meta"]["author"], "subject_native": False},
+            "correct_prefix_sha256": MODULE._sha256_ints(
+                reconstructed["correct_ids"], "fixture.correct"),
+            "wrong_prefix_sha256": MODULE._sha256_ints(
+                reconstructed["wrong_ids"], "fixture.wrong"),
+            "changed_positions": reconstructed["changed"],
+            "changed_position_count": len(reconstructed["changed"]),
+            "changed_subset_of_declared_content": True,
+            "structural_positions_exact": True,
+            "replacement_special_token_count": 0,
+        }
+        sources["wrong_summary_mean_nll"] = -sum(
+            wrong_trace["token_logprobs"]) / len(wrong_trace["token_logprobs"])
+        sources["fresh"] = {
+            "source_kind": "gapped_fresh_stepwise_forced",
+            "prefix_token_ids": destination["prefix_token_ids"],
+            "prefix_sha256": MODULE._sha256_ints(
+                destination["prefix_token_ids"], "fixture.fresh"),
+            "prefix_position_ids": destination["prefix_position_ids"],
+            "physical_summary_start": destination["physical_summary_start"],
+            "physical_summary_end": destination["physical_summary_end"],
+            "summary_start": destination["logical_summary_start"],
+            "summary_end": destination["logical_summary_end"],
+            "summary_token_ids": summary_ids,
+            "summary_row_hashes": hash_rows("semantic_fresh", len(summary_ids)),
+            "trace": {"start_position": destination["logical_summary_start"],
+                      "end_position": destination["logical_summary_end"]},
+        }
+        correct_messages = [*rendered_conversation["messages"],
+                            {"role": "user", "content": MODULE.SUMMARY_REQUEST}]
+        a_messages = [*correct_messages,
+                      {"role": "assistant", "content": saved_summary["text"]}]
+        a_ids = MODULE._canonical_message_ids(tokenizer, a_messages)
+        sources["a_full_forced_replay_reconstruction"] = {
+            **sources["correct_actual"],
+            "source_kind": "a_full_forced_replay_reconstruction",
+        }
+        arms = {}
+        for index, arm in enumerate(MODULE.ARMS):
+            messages = a_messages if arm == "A_full" else destination["messages"]
+            context = a_ids if arm == "A_full" else destination["context_token_ids"]
+            logical = len(a_ids) if arm == "A_full" else destination["logical_next_position"]
+            arms[arm] = semantic_arm_score(
+                tokenizer, messages, context, logical, plants, targets, index / 10)
+        calibration = calibration_fixture(cid)
+        calibration_outcomes = calibration["outcomes"]
         branch_audits = semantic_branch_audits(sources, destination)
-        case_identity = _real_case_identity(cid)
+        case_identity = rendered_schedule_identity(rendered_conversation)
         actual_schedule = {
             **identity(), **schedule_row(), "conversation_id": cid,
             "semantic_scoring_performed": False,
@@ -857,18 +1145,17 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
             **identity(), "stage": "scored", "status": "scored",
             "order_position": position, "conversation_id": cid,
             "conversation": rendered_conversation,
+            "reply_records": reply_records,
             "pre_score_schedule_equivalence": actual_schedule,
             "pre_score_destination_schedule_equivalence":
                 destination_schedule,
             "summary": saved_summary, "sources": sources,
             "destination": destination, "arm_scores": arms,
+            "target_provenance": targets,
             "branch_audits": branch_audits,
             "conversation_outcomes": {
                 arm: score["conversation_margin"] for arm, score in arms.items()},
-            "calibration": {
-                "arm_details": calibration_details,
-                "outcomes": calibration_outcomes,
-            },
+            "calibration": calibration,
             "calibration_outcomes": calibration_outcomes,
             "gates": {"technical_pass": True}, "runtime": {},
             "fingerprint": fingerprint,
@@ -1166,7 +1453,7 @@ def test_semantic_complete_validates_bound_prior_authorization_and_envelope(
     (lambda doc: doc["calibration"]["outcomes"].__setitem__(
         "G_fresh", -99.0), "calibration outcome differs"),
     (lambda doc: doc["arm_scores"]["G_Kcorrect"]["plants"][0].__setitem__(
-        "plant_id", "different-plant"), "arm plant coverage/order differs"),
+        "plant_id", "different-plant"), "main plant identity differs"),
 ])
 def test_semantic_checkpoint_recomputes_every_decision_aggregate(
         tmp_path: Path, mutation, match):
@@ -1212,6 +1499,44 @@ def test_semantic_checkpoint_reconstructs_gapped_destination_schedule(
         MODULE._validate_checkpoint(
             doc, path, scored=True,
             expected_fingerprint=doc["fingerprint"])
+
+
+def test_semantic_checkpoint_rejects_source_derived_provenance_counterexamples(
+        tmp_path: Path):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    original = json.loads(path.read_text())
+    mutations = [
+        (lambda doc: doc.pop("reply_records"), "render/reply provenance is absent"),
+        (lambda doc: doc.pop("target_provenance"), "target provenance differs"),
+        (lambda doc: doc["destination"]["post_summary_token_ids"].append(123),
+         "full destination/tail provenance differs"),
+        (lambda doc: doc["sources"].pop("wrong_exact_length_construction"),
+         "wrong construction is absent"),
+        (lambda doc: doc["sources"].__setitem__("wrong_summary_mean_nll", 99.0),
+         "wrong summary NLL differs"),
+        (lambda doc: doc["sources"].pop("a_full_forced_replay_reconstruction"),
+         "A_full source is absent"),
+        (lambda doc: doc["arm_scores"]["G_correct"]["plants"][0]["correct"].
+         __setitem__("text", "fabricated target"),
+         "target/probe/position provenance differs"),
+        (lambda doc: doc["arm_scores"]["G_correct"]["plants"][0]["correct"].
+         __setitem__("logical_position_ids", [-1]),
+         "target/probe/position provenance differs"),
+        (lambda doc: doc["calibration"].__setitem__("correct_label", "Z"),
+         "calibration source construction differs"),
+        (lambda doc: doc["calibration"].pop("branch_audits"),
+         "calibration branch lineage is absent"),
+        (lambda doc: doc["sources"]["correct_actual"]["summary_row_hashes"][0].
+         __setitem__("k_shape", [1, 4, 999, 128]), "k shape differs"),
+    ]
+    for mutation, match in mutations:
+        doc = copy.deepcopy(original)
+        mutation(doc)
+        with pytest.raises(ValueError, match=match):
+            MODULE._validate_checkpoint(
+                doc, path, scored=True,
+                expected_fingerprint=doc["fingerprint"])
 
 
 def _change_digest(value: str) -> str:

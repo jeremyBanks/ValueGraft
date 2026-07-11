@@ -261,11 +261,57 @@ def run_calibration(model, tokenizer, conversation_id: str) -> dict:
 
     outcomes = {}
     arm_details = {}
+    branch_audits = {}
+    summary_start = layout.physical_summary_start
+    summary_end = layout.physical_summary_end
+    fresh_summary_hashes = row_hashes(fresh_rows)
+    correct_hashes = correct.row_hashes
+    wrong_hashes = wrong.row_hashes
+    fresh_before = row_hashes([
+        (keys[..., :summary_start, :], values[..., :summary_start, :])
+        for keys, values in fresh_boundary])
     for arm in ("G_fresh", "G_correct", "G_wrong"):
         boundary, _ = gapped_arm_boundary(
             arm, fresh_boundary, correct.rows, wrong.rows,
             layout.physical_summary_start, 20_260_711)
+        inserted = row_hashes([
+            (keys[..., summary_start:summary_end, :],
+             values[..., summary_start:summary_end, :])
+            for keys, values in boundary])
+        branch_before = row_hashes([
+            (keys[..., :summary_start, :], values[..., :summary_start, :])
+            for keys, values in boundary])
+        declared = {
+            "G_fresh": fresh_summary_hashes,
+            "G_correct": correct_hashes,
+            "G_wrong": wrong_hashes,
+        }[arm]
+        if inserted != declared or branch_before != fresh_before:
+            raise CoherentStateError(
+                f"calibration {arm} intervention lineage differs")
         snap = append_gapped_post_summary(model, boundary, layout)
+        branch_audits[arm] = {
+            "arm": arm,
+            "pre_tail_storage_lengths": [summary_end] * len(boundary),
+            "pre_tail_row_hashes": row_hashes(boundary),
+            "post_tail_storage_lengths": [len(layout.context_ids)] * len(snap),
+            "post_tail_row_hashes": row_hashes(snap),
+            "fresh_summary_row_hashes": fresh_summary_hashes,
+            "inserted_summary_row_hashes": inserted,
+            "declared_source_summary_row_hashes": declared,
+            "declared_k_source": {
+                "G_fresh": "fresh", "G_correct": "correct_actual",
+                "G_wrong": "wrong_history"}[arm],
+            "declared_v_source": {
+                "G_fresh": "fresh", "G_correct": "correct_actual",
+                "G_wrong": "wrong_history"}[arm],
+            "fresh_before_summary_row_hashes": fresh_before,
+            "branch_before_summary_row_hashes": branch_before,
+            "non_summary_rows_bit_exact": True,
+            "declared_summary_intervention_exact": True,
+            "summary_hash_lineage_exact": True,
+            "tail_recomputed_from_boundary": True,
+        }
         score = score_arm(
             model, tokenizer, snap, layout.messages, layout.context_ids,
             [plant], target,
@@ -329,6 +375,7 @@ def run_calibration(model, tokenizer, conversation_id: str) -> dict:
             "start_position": fresh_trace.start_position,
             "end_position": fresh_trace.end_position,
         },
+        "branch_audits": branch_audits,
         "rendered_target_token_lengths": rendered_lengths,
         "outcomes": outcomes, "arm_details": arm_details,
     }
