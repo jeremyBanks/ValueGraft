@@ -1553,7 +1553,7 @@
       "models": [
         "gpt-5.6-sol-xhigh"
       ],
-      "note": "notes/20260711071232-conversation-gpt56.md",
+      "note": "notes/2026071158-conversation-gpt56.md",
       "source_ranges": [
         {
           "date": "2026-07-11",
@@ -1578,7 +1578,7 @@
       "models": [
         "gpt-5.6-sol-xhigh"
       ],
-      "note": "notes/20260711115820-conversation-user-gpt56.md",
+      "note": "notes/2026071165-conversation-user-gpt56.md",
       "source_ranges": [
         {
           "date": "2026-07-11",
@@ -1603,7 +1603,7 @@
       "models": [
         "claude-opus-4-8"
       ],
-      "note": "notes/2026071164-conversation-user-opus48.md",
+      "note": "notes/2026071166-conversation-user-opus48.md",
       "source_ranges": [
         {
           "date": "2026-07-11",
