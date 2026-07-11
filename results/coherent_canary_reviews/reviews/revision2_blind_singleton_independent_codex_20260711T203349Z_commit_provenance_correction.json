@@ -1,0 +1,18 @@
+{
+  "schema": "coherent_state_decision_canary_v12_review_commit_provenance_correction_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "corrected_artifact": "results/coherent_canary_reviews/reviews/revision2_blind_singleton_independent_codex_20260711T203349Z.json",
+  "corrected_artifact_sha256": "8c5c4069367076339f49d7ce905b833e923788329a235b544f96b1eb90478508",
+  "containing_commit": "4b9cc9d803efdf051a1000552af49c01487740a1",
+  "correction": "The complete review artifact was authored and staged by /root/v12_revision2_blind_reviewer. A concurrent Sol commit that explicitly added the N/P geometry artifact also included this already-staged review through the shared Git index. The containing commit message therefore describes only the geometry artifact and omits the review authorship. The reviewer subsequently verified that the committed review file exactly equals its complete intended output.",
+  "review_author": "independent Codex subagent /root/v12_revision2_blind_reviewer",
+  "runtime_model_id": null,
+  "runtime_model_id_status": "not exposed; no alias inferred",
+  "reasoning_effort": null,
+  "reasoning_effort_status": "not exposed; no level inferred",
+  "substantive_review_changed": false,
+  "history_rewritten": false,
+  "subject_model_forward_performed": false,
+  "recorded_by": "Sol — GPT-5.6 Sol, extra-high reasoning effort",
+  "recorded_at_utc": "2026-07-11T20:39:00Z"
+}
