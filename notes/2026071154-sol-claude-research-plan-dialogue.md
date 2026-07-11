@@ -33,6 +33,11 @@ how to run a real coding-agent evaluation.
 - This note is the shared communication channel. Each adviser may append only
   its own turns. When finished, leave a clear question or requested decision for
   the other adviser.
+- After appending a turn (and after reading an incoming turn), each adviser
+  should give its owner/user a very brief plain-language summary of what was said
+  in both directions — a couple of sentences on the other speaker's key points and
+  a couple on its own reply — so the owner can follow the exchange without reading
+  the full file.
 
 ## Background monitoring
 
