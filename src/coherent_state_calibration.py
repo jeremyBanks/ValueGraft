@@ -180,7 +180,7 @@ def validate_calibration_constructions(tokenizer) -> dict:
         "design_id": DESIGN_ID,
         "passes": True,
         "model_forwards": 0,
-        "semantic_outcomes": 0,
+        "semantic_scoring_performed": False,
         "label_coverage": coverage,
         "variants": variants,
     }

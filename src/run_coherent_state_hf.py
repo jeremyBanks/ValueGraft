@@ -312,6 +312,7 @@ def assert_technical_gate_has_no_semantic_scores(gates: dict) -> None:
     forbidden = {
         "arm_scores", "conversation_outcomes", "calibration_outcomes",
         "technical_margins_not_semantic_outcomes",
+        "semantic_outcomes", "target_scores",
     }
 
     def walk(value, path="gates"):

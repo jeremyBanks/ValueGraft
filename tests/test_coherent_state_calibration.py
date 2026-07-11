@@ -36,7 +36,8 @@ def test_pure_calibration_constructions_cover_both_labels_without_outcomes():
     tokenizer = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
     result = validate_calibration_constructions(tokenizer)
     assert result["passes"] is True
-    assert result["model_forwards"] == result["semantic_outcomes"] == 0
+    assert result["model_forwards"] == 0
+    assert result["semantic_scoring_performed"] is False
     assert result["label_coverage"] == ["A", "B"]
     assert set(result["variants"]) == {"c10", "c07"}
     for row in result["variants"].values():

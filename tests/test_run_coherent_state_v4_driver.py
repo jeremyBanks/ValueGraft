@@ -58,6 +58,10 @@ def test_technical_gate_rejects_semantic_score_fields_recursively():
             "passes": True,
             "nested": {"technical_margins_not_semantic_outcomes": {}},
         })
+    with pytest.raises(CoherentStateError, match="forbidden semantic score"):
+        driver.assert_technical_gate_has_no_semantic_scores({
+            "passes": True, "semantic_outcomes": 0,
+        })
 
 
 def test_context_limit_covers_long_frozen_fixture_and_rejects_boundary():
