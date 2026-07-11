@@ -39,7 +39,7 @@ grep -q 'terminal_confirmations.*-ge 2' "$WATCH"
 grep -q 'coherent_terminal_status "$desired"' "$WATCH"
 grep -q '28800' "$WATCH"
 grep -q '2700' "$WATCH"
-grep -q 'coherent_state_gapped_v7_' "$WATCH"
+grep -q 'coherent_state_gapped_v8_' "$WATCH"
 grep -q 'validate_coherent_harvest.py.*failure' "$WATCH"
 grep -q 'transformers==5.0.0' scripts/job_coherent_state_bf16.sh
 grep -q '2.4.1+cu124' scripts/job_coherent_state_bf16.sh
@@ -74,13 +74,13 @@ for nonterminal in RUNNING CREATED "" None; do
 done
 PASS=$((PASS + 12))
 
-# The validator's exact v7 terminal, sidecar, science, semantic-authorization,
+# The validator's exact v8 terminal, sidecar, science, semantic-authorization,
 # and failure fixtures are its executable CLI/interface self-test. Keep this
 # monitor gate coupled to those current fixtures instead of embedding a stale
 # second schema here.
 PYTHONPATH=src uv run pytest -q \
   tests/test_validate_coherent_harvest.py \
-  tests/test_validate_coherent_harvest_v7.py >/dev/null
+  tests/test_validate_coherent_harvest_v8.py >/dev/null
 PASS=$((PASS + 12))
 
 echo "coherent_monitor_selftest: $PASS cases passed, 0 failed"

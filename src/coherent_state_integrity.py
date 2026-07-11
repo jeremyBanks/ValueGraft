@@ -1,4 +1,4 @@
-"""Terminal integrity and two-process authorization for coherent-state v7.
+"""Terminal integrity and two-process authorization for coherent-state v8.
 
 This module deliberately contains no model execution.  It seals terminal
 apparatus payloads, inventories the complete executable apparatus, and verifies
@@ -19,8 +19,8 @@ from typing import Any, Iterable
 
 
 SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v7"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7"
+DESIGN_ID = "coherent-state-gapped-v8"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8"
 INDEX_NAME = "terminal_artifact_index.json"
 RECEIPT_NAME = "terminal_receipt.json"
 
@@ -35,6 +35,7 @@ APPARATUS_REQUIRED = (
     "COHERENT-STATE-PREREGISTRATION-AMENDMENT-5.md",
     "COHERENT-STATE-PREREGISTRATION-AMENDMENT-6.md",
     "COHERENT-STATE-PREREGISTRATION-AMENDMENT-7.md",
+    "COHERENT-STATE-PREREGISTRATION-AMENDMENT-8.md",
     "src/analyze_coherent_state.py",
     "src/arms_common.py",
     "src/coherent_state_calibration.py",

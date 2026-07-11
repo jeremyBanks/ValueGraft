@@ -21,8 +21,8 @@ from typing import Any
 
 
 SCHEMA = 2
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7"
-DESIGN_ID = "coherent-state-gapped-v7"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8"
+DESIGN_ID = "coherent-state-gapped-v8"
 MODEL_ID = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 MODEL_REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 PARAMETER_DTYPE = "torch.bfloat16"
@@ -88,7 +88,7 @@ WRONG_DONORS = {
 EXTERNAL_AUTHORS = {"sonnet", "opus", "codex-gpt5.5", "sonnet-render"}
 AMENDMENT_PATHS = tuple(
     f"COHERENT-STATE-PREREGISTRATION-AMENDMENT-{index}.md"
-    for index in range(1, 8))
+    for index in range(1, 9))
 APPARATUS_REQUIRED = (
     *AMENDMENT_PATHS,
     "src/analyze_coherent_state.py", "src/arms_common.py",
@@ -1646,7 +1646,7 @@ def _validate_committed_case_source(
         raise ValueError(f"committed-case resolved partitions differ: {cid}")
 
 
-def _validate_v7_pass_gates(
+def _validate_v8_pass_gates(
         gates: dict[str, Any], *, fingerprint: dict[str, Any] | None,
         static_fingerprint: dict[str, Any] | None,
         repo_root: Path | None, verify_sources: bool) -> None:
@@ -2415,7 +2415,7 @@ def _validate_technical(root: Path, log_text: str) -> dict[str, Any]:
             gate.get("apparatus_inventory")):
         raise ValueError("technical top-level/static apparatus binding differs")
     expanded_gates = _resolve_heavy_stages(root, gate)
-    _validate_v7_pass_gates(
+    _validate_v8_pass_gates(
         expanded_gates, fingerprint=gate.get("fingerprint"),
         static_fingerprint=gate.get("fingerprint_static"),
         repo_root=Path(__file__).resolve().parent.parent,
@@ -2578,7 +2578,7 @@ def main() -> None:
                     validator.get("path") != "scripts/validate_coherent_harvest.py" or
                     validator.get("sha256") !=
                     _raw_file_sha256(Path(__file__).resolve()) or
-                    validator.get("version") != "coherent-harvest-v7"):
+                    validator.get("version") != "coherent-harvest-v8"):
                 raise ValueError("harvest attestation provenance differs")
     if args.output is not None:
         if args.output.exists():
@@ -2593,7 +2593,7 @@ def main() -> None:
             "validator": {
                 "path": "scripts/validate_coherent_harvest.py",
                 "sha256": _raw_file_sha256(Path(__file__).resolve()),
-                "version": "coherent-harvest-v7",
+                "version": "coherent-harvest-v8",
             },
         }
         attestation["payload_sha256"] = _canonical_payload_sha256(attestation)

@@ -126,7 +126,7 @@ def validate_docs(docs):
                 doc.get("amendment_id", fingerprint.get("amendment_id")) !=
                 AMENDMENT_ID):
             raise AnalysisError(
-                f"{doc.get('_path')} is not an Amendments-1-2-3-4-5-6-7 gapped artifact")
+                f"{doc.get('_path')} is not an Amendments-1-2-3-4-5-6-7-8 gapped artifact")
         if int(doc.get("order_position", -1)) != expected:
             raise AnalysisError(
                 f"non-contiguous frozen order at {doc.get('_path')}: "

@@ -90,8 +90,8 @@ def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7",
-        "design_id": "coherent-state-gapped-v7",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8",
+        "design_id": "coherent-state-gapped-v8",
         "fingerprint": {
             "attention_backend": "eager",
             "attention_backend_fingerprint": backend_attestation(),
@@ -125,8 +125,8 @@ def test_scored_validation_rejects_wrong_backend():
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7",
-        "design_id": "coherent-state-gapped-v7",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8",
+        "design_id": "coherent-state-gapped-v8",
         "fingerprint": {
             "attention_backend": "sdpa",
             "attention_backend_fingerprint": backend_attestation(),

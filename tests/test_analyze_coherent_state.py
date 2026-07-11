@@ -46,8 +46,8 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
         w = c - cw
         docs.append({
             "schema": 2,
-            "design_id": "coherent-state-gapped-v7",
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7",
+            "design_id": "coherent-state-gapped-v8",
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8",
             "conversation_id": FROZEN_ORDER[i],
             "order_position": i + 1,
             "status": "scored",
@@ -69,9 +69,9 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
             "calibration": {"correct_label": calibration_labels[i]},
             "fingerprint": {
                 "schema": 2,
-                "design_id": "coherent-state-gapped-v7",
+                "design_id": "coherent-state-gapped-v8",
                 "amendment_id":
-                    "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7",
+                    "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8",
                 "frozen_order": list(FROZEN_ORDER),
                 "wrong_donors": WRONG_DONOR,
                 "scenario_sha256": "scenario-fixture",
@@ -179,7 +179,7 @@ def test_old_packed_or_unversioned_documents_fail_closed():
         analyze(docs)
     docs = _docs()
     docs[0]["design_id"] = "coherent-state-packed-v0"
-    with pytest.raises(AnalysisError, match="Amendments-1-2-3-4-5-6-7"):
+    with pytest.raises(AnalysisError, match="Amendments-1-2-3-4-5-6-7-8"):
         analyze(docs)
 
 
@@ -191,7 +191,7 @@ def test_missing_or_wrong_backend_fails_closed():
         analyze(docs)
 
 
-def test_unknown_v7_arm_fails_closed():
+def test_unknown_v8_arm_fails_closed():
     docs = _docs()
     docs[0]["conversation_outcomes"]["G_delta"] = 0.0
     with pytest.raises(AnalysisError, match="unknown arms"):

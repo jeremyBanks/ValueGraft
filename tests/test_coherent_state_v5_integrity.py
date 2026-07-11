@@ -220,7 +220,7 @@ def test_technical_pass_exits_after_receipt_without_runner(
 
 
 def test_driver_failure_forces_aggregate_fail_after_all_stages_pass():
-    gates = driver.v7_gate_schema(expected_attention_layers=1)
+    gates = driver.v8_gate_schema(expected_attention_layers=1)
     for name in gates["stage_order"]:
         gates[name].update({"status": "PASS", "passes": True})
     gates.update({"status": "PASS", "passes": True})

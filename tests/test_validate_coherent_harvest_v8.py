@@ -12,7 +12,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "validate_coherent_harvest_v7",
+    "validate_coherent_harvest_v8",
     ROOT / "scripts/validate_coherent_harvest.py")
 assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
@@ -990,7 +990,7 @@ def technical_tree(root: Path) -> None:
 
 
 def test_independent_v7_science_validation_accepts_complete_exact_fixture():
-    MODULE._validate_v7_pass_gates(
+    MODULE._validate_v8_pass_gates(
         complete_pass_gates(), fingerprint=science_fingerprint(), repo_root=None,
         static_fingerprint=science_fingerprint(), verify_sources=False)
 
@@ -1007,7 +1007,7 @@ def test_independent_v7_science_validation_recomputes_raw_evidence(mutation, mat
     gates = complete_pass_gates()
     mutation(gates)
     with pytest.raises(ValueError, match=match):
-        MODULE._validate_v7_pass_gates(
+        MODULE._validate_v8_pass_gates(
             gates, fingerprint=science_fingerprint(), repo_root=None,
             static_fingerprint=science_fingerprint(), verify_sources=False)
 
@@ -1039,7 +1039,7 @@ def test_independent_donor_validation_rejects_special_token_counterexample():
         key: value for key, value in donor.items()
         if key != "canonical_payload_sha256"})
     with pytest.raises(ValueError, match="replacement bounds"):
-        MODULE._validate_v7_pass_gates(
+        MODULE._validate_v8_pass_gates(
             gates, fingerprint=science_fingerprint(), repo_root=None,
             static_fingerprint=science_fingerprint(), verify_sources=False)
 
@@ -1079,7 +1079,7 @@ def test_independent_calibration_rejects_nonfrozen_prefix_counterexample():
     row["wrong_prefix_sha256"] = MODULE._sha256_ints(
         row["wrong_prefix_ids"], "mutated wrong")
     with pytest.raises(ValueError, match="source-derived reconstruction"):
-        MODULE._validate_v7_pass_gates(
+        MODULE._validate_v8_pass_gates(
             gates, fingerprint=science_fingerprint(), repo_root=None,
             static_fingerprint=science_fingerprint(), verify_sources=False)
 
@@ -1092,7 +1092,7 @@ def test_intervention_rejects_zero_sensitivity_counterexample():
         "recomputed_post_summary_kv_max_abs": 0.0,
     }]
     with pytest.raises(ValueError, match="sensitivity recomputation"):
-        MODULE._validate_v7_pass_gates(
+        MODULE._validate_v8_pass_gates(
             gates, fingerprint=science_fingerprint(), repo_root=None,
             static_fingerprint=science_fingerprint(), verify_sources=False)
 

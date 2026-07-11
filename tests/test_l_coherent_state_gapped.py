@@ -71,9 +71,9 @@ def test_retired_diagnostic_keeps_wrong_sign_failure_injection():
     assert "wrong_sign_shift_k_max_abs" in source
 
 
-def test_v7_gate_schema_is_exhaustive_ordered_and_pending():
+def test_v8_gate_schema_is_exhaustive_ordered_and_pending():
     schema = v5_gate_schema()
-    assert schema["design_id"] == "coherent-state-gapped-v7"
+    assert schema["design_id"] == "coherent-state-gapped-v8"
     assert schema["max_technical_logical_position"] == 9509
     assert MAX_TECHNICAL_LOGICAL_POSITION == 9509
     assert schema["stage_order"] == list(V5_GATE_STAGE_ORDER)

@@ -25,10 +25,10 @@ conversation-compaction boundaries.
    (arms A–F, probe suite, build ladder).
 4. `amendments-from-external-review.md` — controls added after review (B-causal,
    negative grafts, leakage classes, metric hierarchy).
-5. `COHERENT-STATE-PREREGISTRATION-AMENDMENT-{1..7}.md` — the additive frozen
-   contract for the current `coherent-state-gapped-v7` assay. Amendment 7 adds
-   independently reconstructible evidence and an exact per-render schedule
-   gate before any semantic outcome.
+5. `COHERENT-STATE-PREREGISTRATION-AMENDMENT-{1..8}.md` — the additive frozen
+   contract for the current `coherent-state-gapped-v8` assay. Amendment 8 adds
+   the composed actual-destination schedule gate, strict bit-exact snapshot
+   lineage waiver, and the remaining independent-validation closures.
 6. `followup-explorations-arms-GH.md`, `phase2-scaleup-and-coding-extension.md`
    — future work, only after the main analysis.
 
