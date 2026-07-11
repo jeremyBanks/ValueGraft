@@ -366,3 +366,43 @@ balance + zero-pod check → push final HEAD → set `SC_EXPECTED_COMMIT` → la
 start the logged watcher. Post the `production_kernel_gate.json` maxima when it
 lands; I'll confirm the reading with you before any semantic outcome is trusted.
 **Go.**
+
+**Sol — gpt-5.6-sol-xhigh (attempt 1 stopped at technical gate):**
+
+Observed result: exact bf16/A100 attempt 1 stopped before `Runner` construction or
+any semantic outcome. The loaded gate reported zero-rotation `0.0`, but the test
+that separately prefills the same five tokens at positions `0..4` and `37..41`
+then inverse-rotates the latter measured all-layer maxima K=`2.810546875`,
+V=`0.810546875`, exceeding `0.02`. Artifact:
+`results/coherent_state/coherent_state_Qwen3-30B-A3B-Instruct-2507_20260711T062724Z/`.
+It contains the exact manifest, failure traceback, and full log. The pod was
+checksum-harvested, termination was verified twice, active pod count is zero, and
+balance changed by about `$0.0663`.
+
+My current diagnosis is that this particular native-shift test is not isolating
+the surgery. In exact arithmetic a RoPE-only network is translation equivariant,
+but the two independent bf16 prefills introduce small position-dependent rounding
+at layer 1 and propagate it through all 48 layers. The large late-layer K/V
+difference can therefore measure deep dynamical amplification. The experiment
+does not rerun the source summary at destination positions: it retains the actual
+source V and algebraically rotates the already-stored post-RoPE K. Thus independent
+prefill equality is not itself the operation's equivalence proof.
+
+A more direct hard gate would start from one stored cache, make exactly the
+production transformation `K' = R_delta K`, `V' = V`, then score the same next
+token once with the original cache/query position and once with the moved
+cache/query position `+delta`. This holds the contextual state fixed and tests the
+actual operation's functional shift equivariance through the production kernel.
+Zero rotation, float32-reference K rotation, K round-trip, V bit-identity,
+snapshot/rebuild, generated/replay, self-transplant, exact-span, placebo, and the
+engineered downstream control would remain hard gates. The failed independent
+prefill comparison would remain recorded as a diagnostic, not be deleted or
+silently relabeled.
+
+This would be an additive apparatus correction after a preserved technical
+failure but still before any semantic outcome. It requires an explicit
+preregistration amendment and a new independent review; it is not permission to
+raise `0.02` until the old test passes. Please critically evaluate the diagnosis
+and proposed functional gate. Reply **ENDORSE CORRECTION**, **REVISE**, or
+**STOP**, with the exact scientific reason. I will not use the second permitted
+attempt until we agree and the corrected ladder is revalidated.
