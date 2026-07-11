@@ -26,6 +26,8 @@ status_json() {
 
 harvest_and_terminate() {
   local mode="${1:-failure}" attempt ipp ip port ssh run_remote local_dir stamp
+  local local_attestation
+  local -a validation_args
   local run_path_rc run_path_class remote_dir_rc remote_dir_class
   local harvested=0
   for attempt in 1 2 3 4 5; do
@@ -35,7 +37,7 @@ harvest_and_terminate() {
       echo "HARVEST_RETRY $attempt endpoint unavailable"; sleep 60; continue
     fi
     ssh="ssh -i $KEY -p $port -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$ip"
-    run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_gapped_v4_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)"
+    run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_gapped_v6_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)"
     run_path_rc=$?
     run_path_class="$(coherent_run_path_class "$run_path_rc")"
     if [ "$run_path_class" = UNVERIFIED ]; then
@@ -64,7 +66,20 @@ harvest_and_terminate() {
           "root@$ip:$run_remote/" "$local_dir/" && \
           rsync -az --checksum -e "ssh -i $KEY -p $port" \
           "root@$ip:/workspace/exp/job.log" "$local_dir/job.log"; then
-        if python3 scripts/validate_coherent_harvest.py "$local_dir" "$mode"
+        local_attestation="${local_dir}.harvest_validation.json"
+        if $ssh "test -f '${run_remote}.harvest_validation.json'" \
+            >/dev/null 2>&1; then
+          rsync -az --checksum -e "ssh -i $KEY -p $port" \
+            "root@$ip:${run_remote}.harvest_validation.json" \
+            "$local_attestation" || continue
+        fi
+        if [ -f "$local_attestation" ]; then
+          validation_args=(--read-only)
+        else
+          validation_args=(--output "$local_attestation")
+        fi
+        if python3 scripts/validate_coherent_harvest.py \
+            "$local_dir" "$mode" "${validation_args[@]}"
         then harvested=1; echo "HARVEST_VERIFIED $local_dir"; break; fi
       fi
     else
@@ -148,7 +163,7 @@ TECHDONE=$(grep -c "COHERENT_STATE_TECHNICAL_DONE" "$LOG" 2>/dev/null || true)
 DONE=$((FULLDONE + TECHDONE))
 CRASH=$(grep -cE "$PC_ERROR_SIGNATURES" "$LOG" 2>/dev/null || true)
 READY=$(grep -c "MODEL_READY" "$LOG" 2>/dev/null || true)
-RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_gapped_v4_[^ ]*" "$LOG" 2>/dev/null | tail -1)
+RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_gapped_v6_[^ ]*" "$LOG" 2>/dev/null | tail -1)
 if [ -n "$RUN" ] && [ -d "$RUN" ]; then
   CK=$(find "$RUN" -maxdepth 1 -name "conv_*.json" | wc -l | tr -d " ")
   MT=$(find "$RUN" -maxdepth 1 \( -name "conv_*.json" -o -name "production_kernel_gate.json" -o -name "production_kernel_gate_*.json" -o -name "manifest.json" \) -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)
@@ -172,8 +187,11 @@ REMOTE
     break
   fi
   if [ "${READY:-0}" -gt 0 ] && [ $((NOW - LAST_PROGRESS)) -gt 2700 ]; then
-    FAIL_REASON="45 minutes without atomic checkpoint progress"
-    break
+    if [ "${ALIVE:-0}" -eq 0 ] || [ "${GPU_UTIL:-0}" -lt 10 ]; then
+      FAIL_REASON="45 minutes without durable progress and no active GPU work"
+      break
+    fi
+    echo "LONG_GATE_ACTIVE no durable update but process/GPU remain active"
   fi
   if [ "${READY:-0}" -gt 0 ]; then
     PC_REACH=ok

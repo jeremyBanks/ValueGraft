@@ -39,7 +39,7 @@ grep -q 'terminal_confirmations.*-ge 2' "$WATCH"
 grep -q 'coherent_terminal_status "$desired"' "$WATCH"
 grep -q '28800' "$WATCH"
 grep -q '2700' "$WATCH"
-grep -q 'coherent_state_gapped_v4_' "$WATCH"
+grep -q 'coherent_state_gapped_v6_' "$WATCH"
 grep -q 'validate_coherent_harvest.py.*failure' "$WATCH"
 grep -q 'transformers==5.0.0' scripts/job_coherent_state_bf16.sh
 grep -q -- '--technical-only' scripts/job_coherent_state_bf16.sh
@@ -47,7 +47,11 @@ grep -q 'ATTENTION_BACKEND=eager' scripts/job_coherent_state_bf16.sh
 grep -q 'ATTENTION_BACKEND = "eager"' scripts/validate_coherent_harvest.py
 grep -q 'COHERENT_STATE_TECHNICAL_DONE' "$WATCH"
 grep -q 'production_kernel_gate_\*\.json' "$WATCH"
-PASS=$((PASS + 20))
+grep -q 'LONG_GATE_ACTIVE' "$WATCH"
+grep -q 'harvest_validation.json' "$WATCH"
+grep -q 'validation_args=(--read-only)' "$WATCH"
+grep -q 'validation_args=(--output' "$WATCH"
+PASS=$((PASS + 24))
 
 [ "$(coherent_remote_dir_class 0)" = EXISTS ]
 [ "$(coherent_remote_dir_class 1)" = ABSENT ]
@@ -65,75 +69,14 @@ for nonterminal in RUNNING CREATED "" None; do
 done
 PASS=$((PASS + 12))
 
-TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
-python3 - "$TMP" <<'PY'
-import json, pathlib, sys
-root = pathlib.Path(sys.argv[1])
-identity = {"schema": 2,
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
-            "design_id": "coherent-state-gapped-v4"}
-arms = ["A_full", "G_fresh", "G_correct", "G_wrong", "G_Vcorrect",
-        "G_Kcorrect"]
-order = ["c10", "c02", "c01", "c04", "c07", "c11",
-         "c05", "c09", "c06", "c12", "c08", "c03"]
-donors = {"c10": "c13", "c02": "c14", "c01": "c15",
-          "c04": "c16", "c07": "c17", "c11": "c18",
-          "c05": "c25", "c09": "c26", "c06": "c27",
-          "c12": "c28", "c08": "c29", "c03": "c30"}
-backend = {"requested_implementation": "eager",
-           "layers": [{"layer_index": i, "resolved_implementation": "eager"}
-                      for i in range(48)],
-           "sha256": "fixture"}
-fingerprint = {**identity, "frozen_order": order, "wrong_donors": donors,
-               "attention_backend": "eager",
-               "attention_backend_fingerprint": backend}
-def write(name, doc):
-    (root / name).write_text(json.dumps(doc) + "\n")
-(root / "job.log").write_text("MODEL_READY\nCOHERENT_STATE_JOB_DONE\n")
-write("manifest.json", {**identity, "status": "COMPLETE",
-      "resume_probe_verified": True, "fingerprint": fingerprint})
-write("resume_probe.json", {**identity, "status": "VERIFIED",
-      "resume_probe_verified": True})
-write("production_kernel_gate.json", {**identity, "status": "PASS",
-      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
-      "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
-      "dtype": "torch.bfloat16", "completed_at": "2026-07-11T00:00:00Z",
-      "gates": {"passes": True, "attention_backend": {
-          "observed_backend": "eager", "passes": True,
-          "fingerprint": backend}}})
-for i in range(1, 7):
-    cid = order[i - 1]
-    write(f"conv_{i:02d}_{cid}.json", {
-        **identity, "stage": "scored", "status": "scored", "order_position": i,
-        "conversation_id": cid, "fingerprint": fingerprint,
-        "conversation": {}, "summary": {}, "sources": {},
-        "destination": {}, "arm_scores": {x: {} for x in arms},
-        "conversation_outcomes": {x: 0.0 for x in arms},
-        "gates": {"technical_pass": True}, "runtime": {}})
-tech = root / "technical"
-tech.mkdir()
-(tech / "job.log").write_text(
-    "MODEL_READY attention_backend=eager\nCOHERENT_STATE_TECHNICAL_DONE\n")
-(tech / "manifest.json").write_text(json.dumps({
-    **identity, "status": "TECHNICAL_PASS", "phase": "TECHNICAL_COMPLETE",
-    "fingerprint": fingerprint}) + "\n")
-(tech / "production_kernel_gate.json").write_text(json.dumps({
-    **identity, "status": "PASS",
-    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
-    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
-    "dtype": "torch.bfloat16", "completed_at": "2026-07-11T00:00:00Z",
-    "gates": {"passes": True, "attention_backend": {
-        "observed_backend": "eager", "passes": True,
-        "fingerprint": backend}}}) + "\n")
-PY
-python3 scripts/validate_coherent_harvest.py "$TMP" complete >/dev/null
-python3 scripts/validate_coherent_harvest.py "$TMP/technical" technical >/dev/null
-printf '{bad\n' > "$TMP/conv_01.json"
-if python3 scripts/validate_coherent_harvest.py "$TMP" complete >/dev/null 2>&1; then
-  echo "FAIL malformed harvest was accepted"; exit 1
-fi
-PASS=$((PASS + 3))
+# The validator's exact v6 terminal, sidecar, science, semantic-authorization,
+# and failure fixtures are its executable CLI/interface self-test. Keep this
+# monitor gate coupled to those current fixtures instead of embedding a stale
+# second schema here.
+PYTHONPATH=src uv run pytest -q \
+  tests/test_validate_coherent_harvest.py \
+  tests/test_validate_coherent_harvest_v6.py >/dev/null
+PASS=$((PASS + 12))
 
 echo "coherent_monitor_selftest: $PASS cases passed, 0 failed"
 echo "COHERENT MONITOR CLEARED"

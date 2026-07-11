@@ -289,35 +289,43 @@ def _validate_terminal_integrity(root: Path, expected_status: str) -> dict[str, 
     if receipt.get("index_bytes") != index_path.stat().st_size or \
             receipt.get("index_raw_sha256") != _raw_file_sha256(index_path):
         raise ValueError("terminal receipt does not match index bytes")
-    unique = sorted(root.glob("production_kernel_gate_*.json"))
-    if len(unique) != 1:
-        raise ValueError(f"terminal run has {len(unique)} unique gate attempts")
-    gate = _load(root / "production_kernel_gate.json")
-    stage_refs = ((gate.get("gates") or {}).get("stage_refs") or {})
-    if not isinstance(stage_refs, dict):
-        raise ValueError("technical gate stage_refs is not an object")
-    expected_ref_names = {
-        "committed_case_schedule_fixtures",
-        "external_donor_construction",
-    }
-    if expected_status == "PASS" and set(stage_refs) != expected_ref_names:
-        raise ValueError("PASS technical gate heavy-stage references differ")
-    sidecar_paths: list[str] = []
-    for stage_name, ref in sorted(stage_refs.items()):
-        if stage_name not in expected_ref_names or not isinstance(ref, dict):
-            raise ValueError(f"invalid technical stage reference: {stage_name}")
-        relative = ref.get("path")
-        expected_name = f"technical_stage_{stage_name}.json"
-        if relative != expected_name:
-            raise ValueError(f"technical stage path differs: {stage_name}")
-        sidecar_paths.append(relative)
-    required = [
-        "manifest.json", "production_kernel_gate.json", unique[0].name,
-        *sidecar_paths,
-    ]
-    if expected_status == "FAIL":
-        required.append("failure.json")
-    required = sorted(required)
+    canonical_gate = root / "production_kernel_gate.json"
+    unique: list[Path] = []
+    if canonical_gate.exists():
+        unique = sorted(root.glob("production_kernel_gate_*.json"))
+        if len(unique) != 1:
+            raise ValueError(f"terminal run has {len(unique)} unique gate attempts")
+        gate = _load(canonical_gate)
+        stage_refs = ((gate.get("gates") or {}).get("stage_refs") or {})
+        if not isinstance(stage_refs, dict):
+            raise ValueError("technical gate stage_refs is not an object")
+        expected_ref_names = {
+            "committed_case_schedule_fixtures",
+            "external_donor_construction",
+        }
+        if expected_status == "PASS" and set(stage_refs) != expected_ref_names:
+            raise ValueError("PASS technical gate heavy-stage references differ")
+        sidecar_paths: list[str] = []
+        for stage_name, ref in sorted(stage_refs.items()):
+            if stage_name not in expected_ref_names or not isinstance(ref, dict):
+                raise ValueError(f"invalid technical stage reference: {stage_name}")
+            relative = ref.get("path")
+            expected_name = f"technical_stage_{stage_name}.json"
+            if relative != expected_name:
+                raise ValueError(f"technical stage path differs: {stage_name}")
+            sidecar_paths.append(relative)
+        required = [
+            "manifest.json", "production_kernel_gate.json", unique[0].name,
+            *sidecar_paths,
+        ]
+        if expected_status == "FAIL":
+            required.append("failure.json")
+        required = sorted(required)
+    else:
+        required = sorted(
+            path.relative_to(root).as_posix()
+            for path in root.rglob("*.json")
+            if path.name not in {index_path.name, receipt_path.name})
     if index.get("required_apparatus_payload_paths") != required:
         raise ValueError("terminal index required-path set differs")
     rows = index.get("artifacts")
@@ -336,11 +344,12 @@ def _validate_terminal_integrity(root: Path, expected_status: str) -> dict[str, 
                 row.get("payload_sha256") != doc.get("payload_sha256"):
             raise ValueError(f"indexed hashes differ: {row['path']}")
         raw_hashes[row["path"]] = raw_sha
-    if (root / "production_kernel_gate.json").read_bytes() != unique[0].read_bytes():
+    if unique and canonical_gate.read_bytes() != unique[0].read_bytes():
         raise ValueError("canonical and unique gate bytes differ")
     allowed_json = set(required) | {index_path.name, receipt_path.name}
-    extra = sorted(path.name for path in root.glob("*.json")
-                   if path.name not in allowed_json)
+    extra = sorted(
+        path.relative_to(root).as_posix() for path in root.rglob("*.json")
+        if path.relative_to(root).as_posix() not in allowed_json)
     if extra:
         raise ValueError(f"terminal run has unindexed JSON payloads {extra}")
     return {
@@ -525,7 +534,7 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
     if not isinstance(gap, dict):
         raise ValueError("logical-gap fixture absent")
     if (gap.get("logical_positions") != list(range(32)) + list(range(8192, 8224))
-            or gap.get("physical_positions") != list(range(64))):
+            or gap.get("physical_cache_positions") != list(range(64))):
         raise ValueError("logical-gap position arrays differ")
     if gap.get("full_attention_over_physically_prior_rows") is not True:
         raise ValueError("logical-gap full-attention assertion absent")
@@ -697,7 +706,10 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
 def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
     manifest = _load(root / "manifest.json")
     _require_identity(manifest, "manifest")
-    if manifest.get("status") != "COMPLETE":
+    _require_payload_sha256(manifest, "manifest")
+    if (manifest.get("status") != "COMPLETE" or
+            manifest.get("phase") != "COMPLETE" or
+            manifest.get("technical_only") is not False):
         raise ValueError("complete harvest lacks COMPLETE manifest")
     if manifest.get("resume_probe_verified") is not True:
         raise ValueError("manifest lacks resume_probe_verified=true")
@@ -706,19 +718,75 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
         raise ValueError("manifest lacks run fingerprint")
     _require_identity(manifest_fingerprint, "manifest fingerprint")
     _require_backend_fingerprint(manifest_fingerprint, "manifest fingerprint")
+    if (manifest.get("attention_backend") != ATTENTION_BACKEND or
+            manifest.get("attention_backend_fingerprint") !=
+            manifest_fingerprint.get("attention_backend_fingerprint")):
+        raise ValueError("semantic manifest/backend fingerprint binding differs")
+    checks = manifest.get("authorization_checks")
+    required_checks = {
+        "terminal_payloads_exact", "committed_directory_bytes_exact",
+        "result_commit_is_ancestor", "result_commit_on_trunk",
+        "harvest_attestation_committed_exact",
+        "independent_harvest_revalidation_passed",
+        "apparatus_inventory_exact", "static_data_fingerprint_exact",
+        "backend_attestation_exact",
+    }
+    if (not isinstance(checks, dict) or set(checks) != required_checks or
+            any(checks[key] is not True for key in required_checks)):
+        raise ValueError("semantic authorization checks are not exact PASS")
+    authorization = manifest.get("semantic_authorization")
+    fingerprint_authorization = manifest_fingerprint.get(
+        "semantic_authorization")
+    if not isinstance(authorization, dict) or \
+            not isinstance(fingerprint_authorization, dict):
+        raise ValueError("semantic authorization binding is absent")
+    harvest = authorization.get("harvest") or {}
+    expected_binding = {
+        "technical_result_commit": authorization.get("result_commit"),
+        "technical_run_dir": authorization.get("run_dir"),
+        "gate_payload_sha256": authorization.get("gate_payload_sha256"),
+        "raw_sha256": authorization.get("raw_sha256"),
+        "harvest_path": harvest.get("path"),
+        "harvest_raw_sha256": harvest.get("raw_sha256"),
+        "harvest_payload_sha256": harvest.get("payload_sha256"),
+        "apparatus_aggregate_sha256": (
+            authorization.get("apparatus_inventory") or {}).get(
+                "aggregate_sha256"),
+        "backend_exact": True,
+        "static_fingerprint_exact": True,
+    }
+    if fingerprint_authorization != expected_binding:
+        raise ValueError("semantic fingerprint/prior authorization binding differs")
+    commit = expected_binding.get("technical_result_commit")
+    if (not isinstance(commit, str) or len(commit) not in (40, 64) or
+            any(char not in "0123456789abcdef" for char in commit.lower())):
+        raise ValueError("semantic authorization lacks exact technical_result_commit")
+    for key in (
+            "gate_payload_sha256",
+            "harvest_raw_sha256", "harvest_payload_sha256",
+            "apparatus_aggregate_sha256"):
+        value = expected_binding.get(key)
+        if not isinstance(value, str) or len(value) != 64:
+            raise ValueError(f"semantic authorization lacks exact {key}")
+    _validate_terminal_integrity(root, "PASS")
     probe = _load(root / "resume_probe.json")
     _require_identity(probe, "resume probe")
+    _require_payload_sha256(probe, "resume probe")
     if probe.get("resume_probe_verified") is not True:
         raise ValueError("resume probe was not verified on restart")
-    _validate_gate(root, "PASS")
+    if (root / "production_kernel_gate.json").exists():
+        raise ValueError("semantic run improperly contains a local technical gate")
 
     paths = _checkpoint_paths(root)
     if len(paths) not in (6, 12):
         raise ValueError(f"complete harvest has invalid checkpoint N={len(paths)}")
+    if manifest.get("n_conversations") != len(paths):
+        raise ValueError("semantic manifest/checkpoint count differs")
     seen_positions: list[int] = []
     seen_ids: list[str] = []
     for path in paths:
         doc = _load(path)
+        _require_payload_sha256(doc, path.name)
         _validate_checkpoint(
             doc, path, scored=True,
             expected_fingerprint=manifest_fingerprint)
@@ -734,6 +802,7 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
     if "COHERENT_STATE_JOB_DONE" not in log_text:
         raise ValueError("complete harvest job log lacks completion marker")
     return {
+        "status": "PASS",
         "mode": "complete",
         "n_scored": len(paths),
         "resume_probe_verified": True,
@@ -863,6 +932,7 @@ def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
     if model_ready and gate_status not in ("PASS", "FAIL"):
         raise ValueError("post-MODEL_READY failure lacks terminal gate evidence")
     return {
+        "status": "PASS",
         "mode": "failure",
         "model_ready": model_ready,
         "production_gate": gate_status,
@@ -901,10 +971,32 @@ def main() -> None:
     output.add_argument("--output", type=Path)
     args = ap.parse_args()
     result = validate(args.root, args.mode)
+    repo = Path(__file__).resolve().parent.parent
+    if args.read_only:
+        sibling = Path(f"{args.root}.harvest_validation.json")
+        if sibling.exists():
+            attestation = _load(sibling)
+            _require_identity(attestation, "harvest attestation")
+            _require_payload_sha256(attestation, "harvest attestation")
+            for key, value in result.items():
+                if attestation.get(key) != value:
+                    raise ValueError(
+                        f"harvest attestation field differs: {key}")
+            try:
+                run_relative = args.root.resolve().relative_to(repo).as_posix()
+            except ValueError as exc:
+                raise ValueError("harvest run directory is outside repository") from exc
+            validator = attestation.get("validator") or {}
+            if (attestation.get("status") != "PASS" or
+                    attestation.get("run_dir") != run_relative or
+                    validator.get("path") != "scripts/validate_coherent_harvest.py" or
+                    validator.get("sha256") !=
+                    _raw_file_sha256(Path(__file__).resolve()) or
+                    validator.get("version") != "coherent-harvest-v6"):
+                raise ValueError("harvest attestation provenance differs")
     if args.output is not None:
         if args.output.exists():
             raise ValueError(f"refusing to overwrite harvest attestation: {args.output}")
-        repo = Path(__file__).resolve().parent.parent
         try:
             run_relative = args.root.resolve().relative_to(repo).as_posix()
         except ValueError as exc:
