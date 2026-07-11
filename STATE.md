@@ -13,23 +13,29 @@ every possible write-time channel elsewhere in the cache.
 - No paid pod is running, paid experiment compute remains `$0`, and no v10
   semantic outcome exists.
 - RunPod balance was last observed at `$63.3160022124`; the owner authorized an
-  approximately `$60` total ceiling. Three fresh Fable consultations reported a
-  combined `$16.707801` provider usage estimate, conservatively tracked but not
-  verified as an incremental cash charge.
-- The v10 production-tokenizer donor artifact passed 12/12 and is committed at
+  approximately `$60` total ceiling. Completed and failed Fable CLI calls have
+  reported a conservative combined `$31.176448` provider usage estimate. This is
+  not verified as an incremental cash charge; paid experiment compute remains `$0`.
+- The v10 production-tokenizer donor artifact mechanically reconstructed 12/12
+  frozen pairs and is committed at
   `results/coherent_state_ladder/coherent_external_donors_gapped_v10_Qwen3-30B-A3B-Instruct-2507_20260711T122320Z.json`.
-- The exact local 0.6B bf16 eager CPU ladder is live as PID `55253`, output prefix
+- The exact local 0.6B bf16 eager CPU ladder is paused as PID `55253` (`T+`), output prefix
   `results/coherent_state_ladder/coherent_state_ladder_gapped_v10_Qwen3-0.6B_20260711T123246Z`.
   Static provenance passed 1/1, attention-backend attestation passed 28/28, and the
-  synthetic schedule stage passed 7/7 with aggregate discrepancy exactly `0.0`
-  against the frozen `5e-4` limit. The first natural committed case, `c10`, then
-  decisively failed: identical 8,430 tokens/positions under partitions
+  synthetic schedule stage passed seven lengths of one five-token periodic stream
+  with aggregate discrepancy exactly `0.0`. That is a smoke test, not seven
+  independent fixtures and not natural-content equivalence evidence. The first
+  realistic generated-conversation fixture, `c10`, then decisively failed: identical
+  8,430 tokens/positions under partitions
   `[4096,4096,238]` and `[23,4096,4096,92,123]` produced cache K/V maxima
   `16.125/5.125`, final-logit maximum `0.59375`, selected-margin shift
   `0.060546875`, and continuation-logit maximum `0.84375`. Layer-0 stored K/V are
   exact; divergence begins at layer 1. The sealed sidecar is committed at
-  `4ad714f`. `c02` is running solely for a second natural diagnostic and the process
-  will be reversibly paused afterward.
+  `4ad714f`. The second realistic fixture, `c02`, independently failed with K/V
+  `6.5/5.6875`, final-logit `0.5`, selected-margin shift `0.1318359375`, and
+  continuation logits/K/V `0.46875/0.5/1.1875`; layers 0–3 were exact and the first
+  stored-cache divergence appeared at layer 4. The two-case sidecar is committed at
+  `cfde9bc`. C01 only entered `RUNNING` before the reversible pause and has no durable result.
 - The accidental historical v6 CPU ladder remains paused and cannot authorize v10.
 
 Amendment 11 separated scheduling from authorization, but the observed `c10` FAIL now
@@ -38,16 +44,35 @@ launch: even a paid `T=PASS` would be rejected by the machine-enforced `L AND T`
 V10 is permanently non-authorizing unless a separately preregistered scientific version
 replaces it; no gate will be waived or reinterpreted after the failure.
 
-The next `$0` step is frozen at
+The current `$0` step is frozen at
 `COHERENT-STATE-SCHEDULE-ORIGIN-DIAGNOSTIC-PREREGISTRATION.md`. After `c02`, a
 three-branch exact c10 diagnostic compares the first 23 cached rows under a 23-token
 query, the original 4,096-token query, and an equal-shaped 4,096-token query with only
 causally future tokens changed. It distinguishes construction divergence,
-future-token influence, and query-shape-dependent bf16 rounding. If rounding is
-confirmed, a separately frozen c10/c02 measurement will test whether the actual
-`G_correct-G_fresh` and `G_correct-G_wrong` contrasts inherit the schedule noise. Only
-contrast-level stability can justify one batched v11 redesign; otherwise the experiment
-stops at a precision-limited methodological result.
+future-token influence, and query-shape-dependent bf16 rounding. It is running as
+`scripts/diagnose_c10_schedule_origin.py` (child PID `60227`) with unique output
+`results/c10_schedule_origin/c10_schedule_origin_Qwen3-0.6B_20260711T174844462255Z.json`.
+It is non-authorizing and licenses only a c10 origin classification.
+
+The raw-input audit found two additional blocking design defects before any semantic
+outcome. First, the schedule repeatedly called `message_block`/`message-aligned` is
+actually coarse system + whole-history 4096 chunks + request/header; c10 has 47 message
+starts, and a true turn-aligned replay would use 46 calls. Second, the frozen `G_wrong`
+fills exact-length content slots by cyclically repeating short donor messages; 21–25 of
+32 slots per case cycle, with maxima 20–51. It therefore contrasts coherent history with
+repetitive corruption and cannot support history specificity. The old `GW` co-primary is
+invalid. The proposed replacement is a plant-specific minimally counterfactual coherent
+history, renamed `GMC`, with exact per-message token lengths, all downstream references
+repaired, frozen-target alignment, and blind decoded-coherence review. Omission is a
+secondary diagnostic. No semantic implementation or outcome may use the cyclic arm.
+
+After origin classification, a separately frozen c10/c02 measurement must use true
+turn-aligned replay `P`, ordinary chunks `O`, fixed gapped destination `D`, and decoded
+valid counterfactual sources to measure `GF` and `GMC` under both schedules. The local
+N=2 0.6B result is an apparatus/case diagnostic, not a 30B equivalence estimate. Only a
+technically valid design that carries both schedules into the exact 30B subject can
+justify paid semantic work; otherwise the experiment stops at a precision-limited or
+apparatus-invalid methodological result.
 
 The release layer was frozen and implemented without changing any of the 35 inventoried v10
 apparatus files; the aggregate remains
