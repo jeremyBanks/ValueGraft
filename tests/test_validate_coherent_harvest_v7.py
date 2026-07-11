@@ -156,6 +156,7 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
     }
     zero_rows = [0.0] * len(summary_ids)
     evidence = {
+        **identity(), "conversation_id": conversation["id"],
         "status": "PASS", "passes": True,
         "semantic_scoring_performed": False,
         "prefix_token_ids": fresh,
@@ -1095,6 +1096,9 @@ def test_semantic_checkpoint_recomputes_every_decision_aggregate(
      "tokenwise trace differs"),
     (lambda doc: doc.pop("pre_score_destination_schedule_equivalence"),
      "lacks gapped-destination schedule evidence"),
+    (lambda doc: doc["pre_score_destination_schedule_equivalence"].__setitem__(
+        "conversation_id", "wrong-conversation"),
+     "conversation/verdict differs"),
 ])
 def test_semantic_checkpoint_reconstructs_gapped_destination_schedule(
         tmp_path: Path, mutation, match):

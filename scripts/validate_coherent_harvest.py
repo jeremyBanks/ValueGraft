@@ -819,13 +819,16 @@ def _validate_gapped_destination_schedule(
     if (not isinstance(evidence, dict) or not isinstance(conversation, dict) or
             not isinstance(summary, dict) or not isinstance(correct_actual, dict)):
         raise ValueError(f"{label} lacks gapped-destination schedule evidence")
-    if (evidence.get("status") != "PASS" or evidence.get("passes") is not True or
+    _require_identity(evidence, f"{label} gapped-destination schedule")
+    if (evidence.get("conversation_id") != doc.get("conversation_id") or
+            evidence.get("status") != "PASS" or
+            evidence.get("passes") is not True or
             evidence.get("semantic_scoring_performed") is not False or
             evidence.get("reference_complete") is not True or
             evidence.get("alternative_complete") is not True or
             evidence.get("measurement_complete") is not True or
             evidence.get("failure_evidence") not in (None, [], {})):
-        raise ValueError(f"{label} gapped-destination verdict differs")
+        raise ValueError(f"{label} gapped-destination conversation/verdict differs")
 
     tokenizer = _validation_tokenizer()
     messages = conversation.get("messages")
