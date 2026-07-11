@@ -878,7 +878,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071156-sol-fable-execution-coordination.md": {
-      "object_id": "710922e6d26a6f5139adc8a03c2892b64782c136",
+      "object_id": "ab615dd4789a5beff77c87dc31f3b4e06c505a96",
       "archive_timestamp_utc": "2026-07-11T05:07:01Z",
       "timestamp_source": "git current-file lifetime"
     },
@@ -923,12 +923,12 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071165-conversation-user-gpt56.md": {
-      "object_id": "4e7995c5601d804899dfb9727d6e84879222a932",
+      "object_id": "c5c413c5a4e39633e887656a7bd443d02e092c4e",
       "archive_timestamp_utc": "2026-07-11T11:58:20.201000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
     "notes/2026071166-conversation-user-opus48.md": {
-      "object_id": "acb157db37ae43e0ec037130b5ba60d293f7007e",
+      "object_id": "49e48cb21192c0bd1eed6f4bcb6dabe4562e98d1",
       "archive_timestamp_utc": "2026-07-11T12:10:52.497000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -965,6 +965,86 @@
     "notes/2026071173-fable-parallel-gate-sequencing-review.md": {
       "object_id": "3c605b36a98c751708f4fedbd1f2dc6e124582a4",
       "archive_timestamp_utc": "2026-07-11T15:21:35Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071174-conversation-user-gpt56.md": {
+      "object_id": "ff777937d4447ccf71049d27e619d9871230d2c6",
+      "archive_timestamp_utc": "2026-07-11T16:33:54.579000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071175-fable-c10-schedule-failure-design-review.md": {
+      "object_id": "dccd0352923673a6468c23d22cd928ae80133689",
+      "archive_timestamp_utc": "2026-07-11T16:35:58Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071176-conversation-user-opus48.md": {
+      "object_id": "2afb9a7cf10a9fdab6e8eb2992a8910be45035a2",
+      "archive_timestamp_utc": "2026-07-11T17:03:06.825000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071177-sol-schedule-discontinuity-and-claim-boundary.md": {
+      "object_id": "315bc4e4906475bb762f1f2544986fc602b856dc",
+      "archive_timestamp_utc": "2026-07-11T17:12:07Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071178-carver-schedule-sensitivity-forensic-audit.md": {
+      "object_id": "f80bb652d4763b96da0f002ce178824be56c92c6",
+      "archive_timestamp_utc": "2026-07-11T17:16:02Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071179-fable-raw-input-and-independence-audit.md": {
+      "object_id": "9e51497d6be5b78c039057663d905d5b427a3da2",
+      "archive_timestamp_utc": "2026-07-11T17:16:21Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071180-sol-wrong-history-control-invalidity.md": {
+      "object_id": "df7c96a79ff1103400de864f7829768e5888c83d",
+      "archive_timestamp_utc": "2026-07-11T17:24:37Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071181-lagrange-schedule-robust-estimand-design-audit.md": {
+      "object_id": "3729d6ce06feba02969183ffd3a9a1c831d06ea3",
+      "archive_timestamp_utc": "2026-07-11T17:26:24Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071182-fable-raw-input-audit-supplement.md": {
+      "object_id": "8b87d5ac01a50e9f0b79127784e5a8b027622d42",
+      "archive_timestamp_utc": "2026-07-11T17:26:54Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071183-carver-v10-gate-and-sample-lineage-audit.md": {
+      "object_id": "b7d0ec42c4def550a91582f370e87d43670abd1f",
+      "archive_timestamp_utc": "2026-07-11T17:30:29Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071184-opus-paper-spine-and-methodological-postmortem.md": {
+      "object_id": "3711b0863cf273b598bf67ebe11b7e24c0e3eed2",
+      "archive_timestamp_utc": "2026-07-11T17:42:38Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071185-lagrange-counterfactual-control-estimand.md": {
+      "object_id": "b11e21769d2f45707934b42a36327e02aeaa6d8e",
+      "archive_timestamp_utc": "2026-07-11T17:43:14Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071186-counterfactual-control-feasibility-audit.md": {
+      "object_id": "6f6ed755f5dc12fb7629896536f7efa95b4d2f37",
+      "archive_timestamp_utc": "2026-07-11T17:55:22Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071187-sol-banked-30b-render-reuse-audit.md": {
+      "object_id": "258b2a784e41705719ae33526b4e31e5fd5c4ea3",
+      "archive_timestamp_utc": "2026-07-11T18:10:07Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071188-sol-c10-schedule-origin-result.md": {
+      "object_id": "94b79dcdd415d506b6c7e1ee5a5b16becb3f884f",
+      "archive_timestamp_utc": "2026-07-11T18:29:43Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071189-independent-paired-v11-design-review.md": {
+      "object_id": "988c4100c42680b6de9ff9ca90b9ee2b787e8cf8",
+      "archive_timestamp_utc": "2026-07-11T18:33:44Z",
       "timestamp_source": "git current-file lifetime"
     }
   }
