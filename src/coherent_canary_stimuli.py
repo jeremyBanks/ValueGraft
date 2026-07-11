@@ -213,8 +213,8 @@ def validate_case(tokenizer, case: dict) -> dict:
              f"{case_id} pre-carrier tokens {history_tokens} outside "
              f"{band} band {expected_band}")
     require_matching_geometry(correct_plan, wrong_plan)
-    _require(correct_plan.regions.anchor_end < len(correct_plan.token_ids),
-             f"{case_id} R3 incorrectly includes the retained tail")
+    _require(correct_plan.regions.anchor_content_end < len(correct_plan.token_ids),
+             f"{case_id} R3 incorrectly reaches the stream end")
     correct_ids = correct_plan.token_ids
     wrong_ids = wrong_plan.token_ids
     changed_positions = [

@@ -88,12 +88,12 @@ class ReplayEvent:
 class CarrierRegions:
     content_start: int
     content_end: int
-    close_end: int
-    anchor_end: int
+    anchor_prefix_end: int
+    anchor_content_end: int
 
     def validate(self) -> "CarrierRegions":
         points = (self.content_start, self.content_end,
-                  self.close_end, self.anchor_end)
+                  self.anchor_prefix_end, self.anchor_content_end)
         if self.content_start < 0 or any(
                 right <= left for left, right in zip(points, points[1:])):
             raise CanarySchemaError(f"carrier regions are not nested: {points}")
@@ -104,9 +104,9 @@ class CarrierRegions:
         if region == R1:
             return self.content_start, self.content_end
         if region == R2:
-            return self.content_start, self.close_end
+            return self.content_start, self.anchor_prefix_end
         if region == R3:
-            return self.content_start, self.anchor_end
+            return self.content_start, self.anchor_content_end
         raise CanarySchemaError(f"unknown carrier region: {region}")
 
 
@@ -135,7 +135,7 @@ class ReplayPlan:
         if expected != len(self.token_ids):
             raise CanarySchemaError(
                 f"event coverage ends at {expected}, tokens end at {len(self.token_ids)}")
-        if self.regions.anchor_end > len(self.token_ids):
+        if self.regions.anchor_content_end > len(self.token_ids):
             raise CanarySchemaError("carrier regions exceed replay token stream")
         self.regions.validate()
         return self

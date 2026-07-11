@@ -39,7 +39,8 @@ def test_role_native_plan_covers_qwen_stream_and_nested_regions(tokenizer):
     assert all(event.width == 1 for event in plan.events if event.kind == "q1")
     assert plan.regions.content_end - plan.regions.content_start == len(
         tokenizer.encode(ENGINEERED_CARRIER_CONTENT, add_special_tokens=False))
-    assert plan.regions.content_end < plan.regions.close_end < plan.regions.anchor_end
+    assert (plan.regions.content_end < plan.regions.anchor_prefix_end <
+            plan.regions.anchor_content_end)
     assert plan.events[0].label == "initial_generation_prefix"
     assert plan.events[0].kind == "prefill"
     assert not any(event.label in ("assistant_open", "assistant_close")
@@ -69,22 +70,22 @@ def test_structural_calls_match_turn_additions(tokenizer):
         assert structural[0].label == "turn_continuation"
         assert structural[0].token_end == right_start
 
-    # The primary R2 boundary is inside the carrier-to-anchor structural call:
-    # the call includes the carrier close plus the next user/header, while R2
-    # itself ends exactly where that next user message starts.
+    # The primary R2 boundary is the END of the carrier-to-anchor structural
+    # call. It includes the carrier close plus the anchor user/header, so the
+    # intervention never cuts inside a model call.
     carrier_index = assistant_indices[-2]
     carrier_end = q1_by_message[carrier_index][-1].token_end
     carrier_continuation = next(
         event for event in plan.events
         if event.kind == "prefill" and event.token_start == carrier_end)
-    assert carrier_continuation.token_start < plan.regions.close_end
-    assert plan.regions.close_end < carrier_continuation.token_end
+    assert carrier_continuation.token_start < plan.regions.anchor_prefix_end
+    assert plan.regions.anchor_prefix_end == carrier_continuation.token_end
 
 
 def test_carrier_and_anchor_are_inserted_before_retained_tail(tokenizer):
     history = _history_with_tail("green")
     plan = build_role_native_plan(tokenizer, history, middle_end_msg=3)
-    assert plan.regions.anchor_end < len(plan.token_ids)
+    assert plan.regions.anchor_content_end < len(plan.token_ids)
 
     rendered = tokenizer.decode(plan.token_ids)
     carrier_offset = rendered.index("The prior discussion established")
@@ -92,11 +93,15 @@ def test_carrier_and_anchor_are_inserted_before_retained_tail(tokenizer):
     tail_offset = rendered.index("Continue with a neutral checklist.")
     assert carrier_offset < anchor_offset < tail_offset
 
-    # R3 ends at the retained-tail user-message start, not at the end of the
-    # entire replay stream.
-    assert plan.regions.anchor_end in plan.message_start_positions
-    tail_start_ordinal = plan.message_start_positions.index(plan.regions.anchor_end)
-    assert tail_start_ordinal == 7  # 3 prefix + 4 carrier/anchor messages
+    # R3 ends after the q=1 acknowledgment content, before the structural call
+    # containing its close plus the retained-tail user/header.
+    anchor_q1 = [event for event in plan.events
+                 if event.kind == "q1" and event.message_index == 6]
+    assert plan.regions.anchor_content_end == anchor_q1[-1].token_end
+    following = next(event for event in plan.events
+                     if event.token_start == plan.regions.anchor_content_end)
+    assert following.kind == "prefill"
+    assert following.label == "turn_continuation"
 
 
 def test_equal_width_counterfactual_has_identical_role_native_geometry(tokenizer):

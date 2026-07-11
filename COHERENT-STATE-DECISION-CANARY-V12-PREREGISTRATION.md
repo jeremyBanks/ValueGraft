@@ -217,10 +217,15 @@ favor any target. The maximal source carrier is:
 All regions use identical visible tokens and positions. They vary only the rows
 replaced by source rows; all subsequent rows are causally recomputed.
 
-- `R1_content`: carrier assistant content only.
-- `R2_boundary`: R1 plus the canonical suffix that closes that assistant
-  message, ending before the anchor user's message begins.
-- `R3_anchor`: R2 plus the complete fixed anchor exchange.
+- `R1_content`: carrier assistant content only, ending at a q=1 call boundary.
+- `R2_boundary`: R1 plus the **complete next structural call**: the canonical
+  carrier close, fixed anchor-user message, and anchor-assistant generation
+  header. It ends immediately before the q=1 anchor-assistant content. This is
+  the smallest production-turn-shaped boundary containing the close without
+  cutting an intervention boundary inside one model call.
+- `R3_anchor`: R2 plus the fixed anchor-assistant content `Acknowledged.` forced
+  q=1. Its canonical close and the retained-tail continuation are visible in
+  every arm but causally recomputed after the R3 boundary.
 
 `R2_boundary` is the sole stop/go region. R1 and R3 are descriptive localization
 conditions. They cannot rescue a failed R2 decision or become primary from their
@@ -239,7 +244,8 @@ The primary source protocol is `N = role_native_q1_replay`:
    call with explicit logical `position_ids` and contiguous physical
    `cache_position`.
 4. Prefill the canonical assistant close plus the next user message and next
-   assistant header as the next message addition.
+   assistant header as one complete next-message addition. No retained-region
+   boundary may cut inside this call.
 5. Continue through the history, carrier request, generated/forced carrier,
    canonical close, and anchor exchange.
 
@@ -652,8 +658,9 @@ runner aggregates.
 - Fresh comparisons are utility contrasts and include execution-policy
   differences.
 - Full-KV success does not validate value-only copying.
-- R2 success is content-plus-boundary retention, not summary-content-only
-  success; R3 success is an engineered-anchor result.
+- R2 success is carrier content plus the carrier close and fixed anchor
+  prompt/header, not summary-content-only success; R3 success additionally
+  retains the engineered acknowledgment content.
 - The 3x schedule rule is an exploratory heuristic, not a universal numerical
   law.
 - Path-control success validates the tested intervention/readout path but does

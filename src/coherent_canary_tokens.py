@@ -154,13 +154,9 @@ def build_role_native_plan(tokenizer, history_messages: list[dict], *,
     carrier_index = middle_end_msg + 1
     anchor_assistant_index = middle_end_msg + 3
     content_start, content_end = assistant_content_bounds[carrier_index]
-    close_end = starts[carrier_index + 1]
-    anchor_end = (
-        starts[anchor_assistant_index + 1]
-        if anchor_assistant_index + 1 < len(starts)
-        else len(ids)
-    )
-    if assistant_content_bounds[anchor_assistant_index][1] >= anchor_end:
+    anchor_content_start, anchor_content_end = assistant_content_bounds[
+        anchor_assistant_index]
+    if anchor_content_end >= len(ids):
         raise CanarySchemaError("anchor assistant has no canonical close suffix")
     return ReplayPlan(
         token_ids=ids,
@@ -169,7 +165,7 @@ def build_role_native_plan(tokenizer, history_messages: list[dict], *,
         regions=CarrierRegions(
             content_start=content_start,
             content_end=content_end,
-            close_end=close_end,
-            anchor_end=anchor_end,
+            anchor_prefix_end=anchor_content_start,
+            anchor_content_end=anchor_content_end,
         ),
     ).validate()
