@@ -90,8 +90,8 @@ def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6",
-        "design_id": "coherent-state-gapped-v6",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7",
+        "design_id": "coherent-state-gapped-v7",
         "fingerprint": {
             "attention_backend": "eager",
             "attention_backend_fingerprint": backend_attestation(),
@@ -104,6 +104,9 @@ def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
         "calibration_outcomes": {
             "G_fresh": 0.0, "G_correct": 1.0, "G_wrong": 0.0},
         "gates": {"technical_pass": True}, "runtime": {},
+        "pre_score_schedule_equivalence": {
+            "status": "PASS", "passes": True,
+            "semantic_scoring_performed": False},
     }
     validate_scored_checkpoint(doc)
     doc["conversation_outcomes"]["F_fresh"] = 0.0
@@ -122,8 +125,8 @@ def test_scored_validation_rejects_wrong_backend():
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6",
-        "design_id": "coherent-state-gapped-v6",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7",
+        "design_id": "coherent-state-gapped-v7",
         "fingerprint": {
             "attention_backend": "sdpa",
             "attention_backend_fingerprint": backend_attestation(),
@@ -135,6 +138,9 @@ def test_scored_validation_rejects_wrong_backend():
         "calibration_outcomes": {
             "G_fresh": 0.0, "G_correct": 1.0, "G_wrong": 0.0},
         "gates": {"technical_pass": True}, "runtime": {},
+        "pre_score_schedule_equivalence": {
+            "status": "PASS", "passes": True,
+            "semantic_scoring_performed": False},
     }
     with pytest.raises(ArtifactError, match="eager attention"):
         validate_scored_checkpoint(doc)

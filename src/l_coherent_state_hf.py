@@ -151,6 +151,15 @@ def _snapshot_max_abs(a, b) -> tuple[float, float]:
             max(x["v_max_abs"] for x in rows))
 
 
+def _span_hashes(snapshot, start: int, end: int) -> list[dict[str, str]]:
+    if not 0 <= start <= end <= _snapshot_length(snapshot):
+        raise RuntimeError(f"invalid snapshot hash span [{start}, {end})")
+    return row_hashes([
+        (key[..., start:end, :], value[..., start:end, :])
+        for key, value in snapshot
+    ])
+
+
 def _scalar_metric_max(raw: dict, metric_names) -> float:
     """Aggregate only the predeclared scalar metrics in a mixed raw payload."""
     values = []
@@ -183,7 +192,8 @@ FROZEN_CASE_CONTINUATION_POSITIONS = {
     "c07": 8600, "c11": 9381, "c05": 8556, "c09": 9195,
     "c06": 8876, "c12": 9509, "c08": 8525, "c03": 8913,
 }
-V6_GATE_STAGE_ORDER = (
+V7_GATE_STAGE_ORDER = (
+    "static_provenance",
     "attention_backend",
     "synthetic_schedule_fixtures",
     "committed_case_schedule_fixtures",
@@ -197,8 +207,9 @@ V6_GATE_STAGE_ORDER = (
     "external_donor_construction",
     "retired_G_delta",
 )
-# Compatibility for downstream code written while Amendment 5 was current.
-V5_GATE_STAGE_ORDER = V6_GATE_STAGE_ORDER
+# Compatibility for downstream code written while Amendments 5/6 were current.
+V6_GATE_STAGE_ORDER = V7_GATE_STAGE_ORDER
+V5_GATE_STAGE_ORDER = V7_GATE_STAGE_ORDER
 TERMINAL_STAGE_STATES = {"PASS", "FAIL", "ERROR", "SKIPPED_DEPENDENCY"}
 
 
@@ -218,14 +229,14 @@ def _stage(*, prerequisites=(), threshold=None, comparison=None,
     }
 
 
-def v6_gate_schema(*, identity_tolerance: float = 1e-4,
+def v7_gate_schema(*, identity_tolerance: float = 1e-4,
                    zero_gap_tolerance: float = 5e-4,
                    case_dir: Path | str = Path("data/synthetic"),
                    donor_dir: Path | str | None = None,
                    expected_attention_layers: int = 48) -> dict:
-    """Return the exhaustive predeclared Amendments-5/6 model-gate schema.
+    """Return the exhaustive predeclared Amendments-5/6/7 model-gate schema.
 
-    Returned identities and maximum position are exclusively v6.
+    Returned identities and maximum position are exclusively v7.
     """
     donor_dir = Path(case_dir) if donor_dir is None else Path(donor_dir)
     common_schedule_metrics = (
@@ -267,6 +278,10 @@ def v6_gate_schema(*, identity_tolerance: float = 1e-4,
         ],
     }
     stages = {
+        "static_provenance": _stage(
+            expected_coverage=1,
+            metric_names=("fingerprint_static", "apparatus_inventory",
+                          "input_inventory")),
         "attention_backend": _stage(
             expected_coverage=int(expected_attention_layers),
             metric_names=("model_config", "text_config", "layers")),
@@ -327,16 +342,21 @@ def v6_gate_schema(*, identity_tolerance: float = 1e-4,
         "authorization_path": "gapped_position_preserving_only",
         "position_policy": "logical_position_ids_physical_cache_position",
         "max_technical_logical_position": MAX_TECHNICAL_LOGICAL_POSITION,
-        "stage_order": list(V6_GATE_STAGE_ORDER),
+        "stage_order": list(V7_GATE_STAGE_ORDER),
         "case_dir": str(Path(case_dir)),
         "donor_dir": str(donor_dir),
         **stages,
     }
 
 
+def v6_gate_schema(**kwargs) -> dict:
+    """Compatibility alias; no v6 identity or artifact is ever returned."""
+    return v7_gate_schema(**kwargs)
+
+
 def v5_gate_schema(**kwargs) -> dict:
     """Compatibility alias; no v5 identity or artifact is ever returned."""
-    return v6_gate_schema(**kwargs)
+    return v7_gate_schema(**kwargs)
 
 
 def _copy_json(value):
@@ -348,8 +368,12 @@ def _set_stage(sink: dict, name: str, stage: dict) -> None:
     sink[name] = _copy_json(stage)
 
 
-def _begin_stage(sink: dict, name: str) -> dict:
+def _begin_stage(sink: dict, name: str, *, resume_running: bool = False) -> dict:
     stage = _copy_json(sink[name])
+    if stage["status"] == "RUNNING" and resume_running:
+        stage.setdefault("started_at", datetime.now(timezone.utc).isoformat())
+        _set_stage(sink, name, stage)
+        return stage
     if stage["status"] != "PENDING":
         raise RuntimeError(f"{name} did not begin from PENDING")
     stage["status"] = "RUNNING"
@@ -555,6 +579,7 @@ def run_frozen_schedule_fixtures(model, tokenizer, tolerance=5e-4,
         row["status"] = "RUNNING"
         if progress is not None:
             progress(json.loads(json.dumps(document)))
+        unsafe_exc = None
         try:
             def row_progress(value):
                 row.update(value)
@@ -570,8 +595,11 @@ def run_frozen_schedule_fixtures(model, tokenizer, tolerance=5e-4,
             row.update({"status": "ERROR", "passes": False,
                         "error_type": type(exc).__name__, "error": str(exc)})
             failures.append(f"contiguous-L{length}")
+            unsafe_exc = exc if _unsafe_model_exception(exc) else None
         if progress is not None:
             progress(json.loads(json.dumps(document)))
+        if unsafe_exc is not None:
+            raise unsafe_exc
 
     gap_ids = [observed_pool[i % len(observed_pool)] for i in range(64)]
     gap_positions = list(range(32)) + list(range(8192, 8224))
@@ -581,6 +609,7 @@ def run_frozen_schedule_fixtures(model, tokenizer, tolerance=5e-4,
         "logical_positions_sha256": sha256_ids(gap_positions),
         "logical_positions": gap_positions,
         "physical_cache_positions": list(range(64)),
+        "continuation_logical_position": 8224,
         "full_attention_over_physically_prior_rows": True,
         "status": "RUNNING",
     }
@@ -612,6 +641,10 @@ def run_frozen_schedule_fixtures(model, tokenizer, tolerance=5e-4,
         gap.update({"status": "ERROR", "passes": False,
                     "error_type": type(exc).__name__, "error": str(exc)})
         failures.append("logical-gap")
+        if progress is not None:
+            progress(json.loads(json.dumps(document)))
+        if _unsafe_model_exception(exc):
+            raise
     document["logical_gap"] = gap
     document["passes"] = not failures
     if progress is not None:
@@ -732,6 +765,7 @@ def run_committed_case_schedule_fixtures(
         row["status"] = "RUNNING"
         if progress is not None:
             progress(_copy_json(payload))
+        unsafe_exc = None
         try:
             raw = path.read_bytes()
             conversation = json.loads(raw)
@@ -747,8 +781,10 @@ def run_committed_case_schedule_fixtures(
                 "parsed_source": conversation,
                 "recorded_author": (conversation.get("meta") or {}).get("author"),
                 "exact_model_revision": getattr(model.config, "_commit_hash", None),
-                "tokenizer_vocabulary_sha256": _tokenizer_vocab_hash(tokenizer),
-                "chat_template_sha256": _sha256_json(tokenizer.chat_template),
+                "tokenizer_vocabulary_sha256": _sha256_json(
+                    tokenizer.get_vocab()),
+                "chat_template_sha256": _sha256_bytes(
+                    str(tokenizer.chat_template).encode()),
                 "summary_request_sha256": _sha256_bytes(
                     SUMMARY_REQUEST.encode()),
                 "complete_prefix_token_sha256": sha256_ids(ids),
@@ -793,9 +829,12 @@ def run_committed_case_schedule_fixtures(
                 "traceback": traceback.format_exc(),
             })
             failures.append(conversation_id)
+            unsafe_exc = exc if _unsafe_model_exception(exc) else None
         payload["observed_coverage"] = order_position
         if progress is not None:
             progress(_copy_json(payload))
+        if unsafe_exc is not None:
+            raise unsafe_exc
     source_paths = [row.get("source_path") for row in rows]
     source_hashes = [row.get("raw_source_file_sha256") for row in rows]
     coverage_exact = (
@@ -821,6 +860,63 @@ def run_committed_case_schedule_fixtures(
     if progress is not None:
         progress(_copy_json(payload))
     return payload
+
+
+def run_exact_render_schedule_fixture(
+        model, tokenizer, conversation: dict, *, tolerance: float = 5e-4,
+        progress=None) -> dict:
+    """Attest the exact freshly rendered semantic prefix before any outcome.
+
+    This is deliberately a per-render gate: it compares the production ordinary
+    chunking with the exact system/history/request message-block chunking on the
+    token stream that will actually generate the summary.  It computes no
+    summary, target, margin, arm, or semantic outcome.
+    """
+    layout = _case_schedule_layout(tokenizer, conversation)
+    ids = layout.pop("correct_prefix_ids")
+    fresh_ids = layout.pop("fresh_prefix_ids")
+    positions = list(range(len(ids)))
+    evidence = {
+        "schema": 2, "design_id": DESIGN_ID, "amendment_id": AMENDMENT_ID,
+        "status": "RUNNING", "passes": False,
+        "conversation_id": str(conversation.get("id")),
+        "semantic_scoring_performed": False,
+        "complete_prefix_token_ids": ids,
+        "complete_prefix_token_sha256": sha256_ids(ids),
+        "complete_position_ids": positions,
+        "complete_position_array_sha256": sha256_ids(positions),
+        "fresh_prefix_token_ids": fresh_ids,
+        "token_count": len(ids),
+        "continuation_logical_position": len(ids),
+        "threshold": tolerance, "comparison": "<=",
+        **layout,
+    }
+    if progress is not None:
+        progress(_copy_json(evidence))
+
+    def measurement_progress(value):
+        evidence.update(value)
+        if progress is not None:
+            progress(_copy_json(evidence))
+
+    measured = _compare_schedules(
+        model, ids, positions,
+        evidence["ordinary_resolved_call_widths"],
+        evidence["message_block_resolved_call_widths"],
+        tolerance, progress=measurement_progress)
+    evidence.update(measured)
+    evidence["passes"] = bool(
+        measured["passes"] and evidence["system_equal"] and
+        evidence["request_header_equal"] and evidence["blocks_nonempty"] and
+        evidence["blocks_ordered_nonoverlapping"] and
+        evidence["blocks_cover_prefix"])
+    evidence["status"] = "PASS" if evidence["passes"] else "FAIL"
+    if progress is not None:
+        progress(_copy_json(evidence))
+    if not evidence["passes"]:
+        raise RuntimeError(
+            "fresh semantic render schedule equivalence did not pass")
+    return evidence
 
 
 def _validate_exact_length_wrong(correct_ids, wrong_ids,
@@ -1307,7 +1403,7 @@ def run_loaded_gapped_gates(
         case_dir: Path | str = Path("data/synthetic"),
         donor_dir: Path | str | None = None,
         tokenizer_revision: str | None = None) -> dict:
-    """Execute the exhaustive Amendment-6 technical-only model gate.
+    """Execute the exhaustive Amendment-7 technical-only model gate.
 
     Each stage is declared before work, persisted by whole-stage reassignment,
     and terminalized from its recorded raw payload. Failures aggregate; only
@@ -1316,14 +1412,14 @@ def run_loaded_gapped_gates(
     del placebo_quantization_tolerance, placebo_moment_tolerance
     donor_dir = Path(case_dir) if donor_dir is None else Path(donor_dir)
     sink = diagnostic_sink if diagnostic_sink is not None else {}
-    schema = v6_gate_schema(
+    schema = v7_gate_schema(
         identity_tolerance=identity_tolerance,
         zero_gap_tolerance=zero_gap_tolerance,
         case_dir=case_dir, donor_dir=donor_dir,
         expected_attention_layers=int(getattr(
             getattr(model.config, "text_config", model.config),
             "num_hidden_layers", -1)))
-    # Never clear caller-owned provenance. Required v6 fields are installed by
+    # Never clear caller-owned provenance. Required v7 fields are installed by
     # top-level assignment so a DurableDiagnosticSink persists each declaration.
     for key, value in schema.items():
         if key not in sink:
@@ -1341,7 +1437,7 @@ def run_loaded_gapped_gates(
 
     # 1. Backend attestation, with one durable full-stage write per layer.
     name = "attention_backend"
-    stage = _begin_stage(sink, name)
+    stage = _begin_stage(sink, name, resume_running=True)
     try:
         def backend_progress(partial):
             stage["raw"] = {"fingerprint": partial}
@@ -1699,16 +1795,37 @@ def run_loaded_gapped_gates(
             raw = {
                 "source_summary_start": layout.source_summary_start,
                 "physical_summary_start": layout.physical_summary_start,
+                "physical_summary_end": layout.physical_summary_end,
+                "system_end": layout.system_end,
+                "request_logical_start": layout.request_logical_start,
+                "logical_next_position": layout.logical_next_position,
                 "common_summary_start": (
                     correct.summary_start == wrong.summary_start ==
                     layout.source_summary_start),
                 "logical_gap": layout.source_summary_start - layout.physical_summary_start,
                 "context_position_ids": layout.context_position_ids,
+                "prefix_position_ids": layout.prefix_position_ids,
+                "summary_position_ids": layout.summary_position_ids,
+                "post_summary_position_ids": layout.post_summary_position_ids,
                 "physical_cache_positions": list(range(len(layout.context_ids))),
+                "context_ids_sha256": sha256_ids(layout.context_ids),
+                "context_ids": layout.context_ids,
+                "correct_prefix_sha256": sha256_ids(matched.correct_ids),
+                "wrong_prefix_sha256": sha256_ids(matched.wrong_ids),
+                "correct_prefix_ids": matched.correct_ids,
+                "wrong_prefix_ids": matched.wrong_ids,
+                "summary_ids_sha256": sha256_ids(summary_ids),
+                "summary_ids": summary_ids,
                 "wrong_prefix_length_equal": (
                     len(matched.correct_ids) == len(matched.wrong_ids)),
                 "wrong_structural_positions": len(matched.structural_positions),
                 "wrong_content_positions": len(matched.content_positions),
+                "wrong_structural_position_ids": matched.structural_positions,
+                "wrong_content_position_ids": matched.content_positions,
+                "wrong_structural_positions_sha256": sha256_ids(
+                    matched.structural_positions),
+                "wrong_content_positions_sha256": sha256_ids(
+                    matched.content_positions),
                 "altered_structure_failure_injection": altered_rejected,
                 "wrong_position_failure_injection": wrong_position_rejected,
                 "post_summary_nonempty": bool(layout.post_summary_ids),
@@ -1837,6 +1954,41 @@ def run_loaded_gapped_gates(
                 "sensitivity_attempts": attempts,
                 "downstream_sensitivity": sensitivity,
                 "recomputed_tail_changed": tail_changed,
+                "summary_span": {"start": s0, "end": s1},
+                "boundary_lengths": {
+                    "fresh": _snapshot_length(fresh_boundary),
+                    "self": _snapshot_length(self_boundary),
+                    "correct": _snapshot_length(c_boundary),
+                    "wrong": _snapshot_length(w_boundary),
+                },
+                "full_lengths": {
+                    "fresh": _snapshot_length(full_fresh),
+                    "correct": _snapshot_length(full_correct),
+                    "wrong": _snapshot_length(full_wrong),
+                },
+                "hashes": {
+                    "fresh_boundary": row_hashes(fresh_boundary),
+                    "self_boundary": row_hashes(self_boundary),
+                    "correct_boundary": row_hashes(c_boundary),
+                    "wrong_boundary": row_hashes(w_boundary),
+                    "fresh_before_summary": _span_hashes(
+                        fresh_boundary, 0, s0),
+                    "correct_before_summary": _span_hashes(c_boundary, 0, s0),
+                    "wrong_before_summary": _span_hashes(w_boundary, 0, s0),
+                    "correct_source_summary": row_hashes(correct.rows),
+                    "wrong_source_summary": row_hashes(wrong.rows),
+                    "correct_inserted_summary": _span_hashes(c_boundary, s0, s1),
+                    "wrong_inserted_summary": _span_hashes(w_boundary, s0, s1),
+                    "full_fresh": row_hashes(full_fresh),
+                    "full_correct": row_hashes(full_correct),
+                    "full_wrong": row_hashes(full_wrong),
+                    "fresh_post_summary": _span_hashes(
+                        full_fresh, s1, _snapshot_length(full_fresh)),
+                    "correct_post_summary": _span_hashes(
+                        full_correct, s1, _snapshot_length(full_correct)),
+                    "wrong_post_summary": _span_hashes(
+                        full_wrong, s1, _snapshot_length(full_wrong)),
+                },
             }
             passes = all((self_exact, raw["independently_recomputed_identical_tail_lengths"],
                           sensitivity, tail_changed))
@@ -1914,9 +2066,9 @@ def run_loaded_gapped_gates(
 
     # Terminal verdict is recomputed from every predeclared stage, never from a
     # transient tensor or a status-only success marker.
-    terminal = [sink[name].get("status") for name in V6_GATE_STAGE_ORDER]
+    terminal = [sink[name].get("status") for name in V7_GATE_STAGE_ORDER]
     sink["failures"] = sorted(set(
-        failures + [name for name in V6_GATE_STAGE_ORDER
+        failures + [name for name in V7_GATE_STAGE_ORDER
                     if sink[name].get("status") != "PASS"]))
     sink["passes"] = all(status == "PASS" for status in terminal)
     sink["status"] = "PASS" if sink["passes"] else "FAIL"
@@ -1924,7 +2076,7 @@ def run_loaded_gapped_gates(
     if not sink["passes"]:
         sink["failure"] = {
             "error_type": "AggregateTechnicalGateFailure",
-            "error": "one or more Amendment-6 technical stages did not pass",
+            "error": "one or more Amendment-7 technical stages did not pass",
             "failed_stages": sink["failures"],
         }
     return sink
@@ -1943,11 +2095,28 @@ def run_ladder(diagnostic_sink: dict | None = None) -> dict:
     model.requires_grad_(False)
     if model.device.type != "cpu":
         raise RuntimeError(
-            f"v6 local ladder must use observed-equivalent CPU, got {model.device}")
+            f"v7 local ladder must use observed-equivalent CPU, got {model.device}")
+    ladder_sink = diagnostic_sink if diagnostic_sink is not None else {}
+    ladder_sink["static_provenance"] = {
+            "status": "PASS", "passes": True, "prerequisites": [],
+            "threshold": None, "comparison": None,
+            "expected_coverage": 1, "observed_coverage": 1,
+            "metric_names": ["local_model", "production_tokenizer"],
+            "raw": {
+                "local_model": MODEL,
+                "production_tokenizer": PRODUCTION_TOKENIZER_MODEL,
+                "production_tokenizer_revision": PRODUCTION_TOKENIZER_REVISION,
+                "dtype": str(next(model.parameters()).dtype),
+                "device": str(model.device), "technical_only": True,
+            },
+            "failure_evidence": None,
+            "started_at": datetime.now(timezone.utc).isoformat(),
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+    }
     loaded_gates = run_loaded_gapped_gates(
         model, tokenizer, identity_tolerance=1e-4,
         tokenizer_revision=PRODUCTION_TOKENIZER_REVISION,
-        diagnostic_sink=diagnostic_sink)
+        diagnostic_sink=ladder_sink)
     _LAST_LADDER_DIAGNOSTICS["loaded_gapped_production_gate"] = loaded_gates
     if not loaded_gates.get("passes"):
         failure = loaded_gates.get("failure", {})
@@ -2160,7 +2329,7 @@ class LadderDurableDiagnosticSink(dict):
 
     def __setitem__(self, key, value):
         super().__setitem__(key, value)
-        if key not in V6_GATE_STAGE_ORDER or not isinstance(value, dict):
+        if key not in V7_GATE_STAGE_ORDER or not isinstance(value, dict):
             return
         _closed, raw = _encoded_payload({
             "schema": 2,
@@ -2176,13 +2345,13 @@ class LadderDurableDiagnosticSink(dict):
 
 
 def write_sharded_ladder_result(output: Path, result: dict) -> dict:
-    """Write a small v6 ladder manifest plus commit-safe gate stage sidecars."""
+    """Write a small v7 ladder manifest plus commit-safe gate stage sidecars."""
     output = Path(output)
     if output.exists():
         raise RuntimeError(f"refusing to overwrite {output}")
     document = _copy_json(result)
     if document.get("design_id") != DESIGN_ID:
-        raise RuntimeError("ladder result identity is not current v6")
+        raise RuntimeError("ladder result identity is not current v7")
 
     gate_container = document
     gate_key = "loaded_gapped_production_gate"
@@ -2192,7 +2361,7 @@ def write_sharded_ladder_result(output: Path, result: dict) -> dict:
     writes: list[tuple[Path, bytes]] = []
     refs = {}
     if isinstance(gate, dict):
-        for stage_name in V6_GATE_STAGE_ORDER:
+        for stage_name in V7_GATE_STAGE_ORDER:
             stage = gate.get(stage_name)
             if not isinstance(stage, dict):
                 continue
@@ -2220,7 +2389,7 @@ def write_sharded_ladder_result(output: Path, result: dict) -> dict:
             "status": gate.get("status"),
             "passes": gate.get("passes", False),
             "technical_only": gate.get("technical_only", True),
-            "stage_order": gate.get("stage_order", list(V6_GATE_STAGE_ORDER)),
+            "stage_order": gate.get("stage_order", list(V7_GATE_STAGE_ORDER)),
             "failures": gate.get("failures", []),
             "failure": gate.get("failure"),
             "stage_refs": refs,

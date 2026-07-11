@@ -21,7 +21,7 @@ class ArtifactError(RuntimeError):
 
 
 def validate_production_backend_attestation(attestation: Any) -> None:
-    """Independently validate the frozen v6 48-layer eager attestation."""
+    """Independently validate the frozen v7 48-layer eager attestation."""
     if not isinstance(attestation, dict):
         raise ArtifactError("attention-backend fingerprint is not an object")
     expected_keys = {
@@ -154,10 +154,11 @@ def validate_scored_checkpoint(doc: dict) -> None:
     if (doc.get("schema") != 2 or doc.get("design_id") != DESIGN_ID or
             doc.get("amendment_id") != AMENDMENT_ID):
         raise ArtifactError(
-            "scored checkpoint is not Amendments-1-2-3-4-5-6 schema 2")
+            "scored checkpoint is not Amendments-1-2-3-4-5-6-7 schema 2")
     required = (
         "conversation", "summary", "sources", "destination", "arm_scores",
         "conversation_outcomes", "gates", "runtime",
+        "pre_score_schedule_equivalence",
     )
     missing = [key for key in required if key not in doc]
     if missing:
@@ -187,3 +188,8 @@ def validate_scored_checkpoint(doc: dict) -> None:
         raise ArtifactError("checkpoint lacks the amended position policy")
     if not doc["gates"].get("technical_pass"):
         raise ArtifactError("scored checkpoint claims failed technical gate")
+    schedule = doc["pre_score_schedule_equivalence"]
+    if (not isinstance(schedule, dict) or schedule.get("status") != "PASS" or
+            schedule.get("passes") is not True or
+            schedule.get("semantic_scoring_performed") is not False):
+        raise ArtifactError("scored checkpoint lacks pre-score schedule PASS")

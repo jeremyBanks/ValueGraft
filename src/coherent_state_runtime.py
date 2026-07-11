@@ -49,8 +49,8 @@ GAPPED_ARM_NAMES = (
     "A_full", "G_fresh", "G_correct", "G_wrong",
     "G_Vcorrect", "G_Kcorrect",
 )
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
-DESIGN_ID = "coherent-state-gapped-v6"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7"
+DESIGN_ID = "coherent-state-gapped-v7"
 
 
 def eager_backend_fingerprint(model, *, progress=None) -> dict:

@@ -44,9 +44,9 @@ def _snapshot(rows=4):
     return [(x.clone(), (x + 10).clone())]
 
 
-def test_v6_identity_and_exact_six_arms_are_frozen():
-    assert AMENDMENT_ID == "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
-    assert DESIGN_ID == "coherent-state-gapped-v6"
+def test_v7_identity_and_exact_six_arms_are_frozen():
+    assert AMENDMENT_ID == "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7"
+    assert DESIGN_ID == "coherent-state-gapped-v7"
     assert GAPPED_ARM_NAMES == (
         "A_full", "G_fresh", "G_correct", "G_wrong",
         "G_Vcorrect", "G_Kcorrect",

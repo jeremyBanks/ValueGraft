@@ -12,6 +12,7 @@ from l_coherent_state_hf import (
     LadderDurableDiagnosticSink,
     MAX_TECHNICAL_LOGICAL_POSITION,
     V5_GATE_STAGE_ORDER,
+    _begin_stage,
     _require_summary_boundary,
     _scalar_metric_max,
     _validate_exact_length_wrong,
@@ -70,12 +71,13 @@ def test_retired_diagnostic_keeps_wrong_sign_failure_injection():
     assert "wrong_sign_shift_k_max_abs" in source
 
 
-def test_v6_gate_schema_is_exhaustive_ordered_and_pending():
+def test_v7_gate_schema_is_exhaustive_ordered_and_pending():
     schema = v5_gate_schema()
-    assert schema["design_id"] == "coherent-state-gapped-v6"
+    assert schema["design_id"] == "coherent-state-gapped-v7"
     assert schema["max_technical_logical_position"] == 9509
     assert MAX_TECHNICAL_LOGICAL_POSITION == 9509
     assert schema["stage_order"] == list(V5_GATE_STAGE_ORDER)
+    assert schema["stage_order"][0] == "static_provenance"
     assert all(schema[name]["status"] == "PENDING"
                for name in V5_GATE_STAGE_ORDER)
     assert schema["committed_case_schedule_fixtures"]["expected_coverage"] == 12
@@ -85,6 +87,28 @@ def test_v6_gate_schema_is_exhaustive_ordered_and_pending():
         "c05", "c09", "c06", "c12", "c08", "c03",
     ]
     assert max(FROZEN_CASE_CONTINUATION_POSITIONS.values()) == 9509
+
+
+def test_backend_stage_resumes_durable_model_load_progress_only():
+    schema = v5_gate_schema(expected_attention_layers=2)
+    schema["attention_backend"].update({
+        "status": "RUNNING", "started_at": "already-durable",
+        "observed_coverage": 1})
+    resumed = _begin_stage(
+        schema, "attention_backend", resume_running=True)
+    assert resumed["status"] == "RUNNING"
+    assert resumed["started_at"] == "already-durable"
+    schema["synthetic_schedule_fixtures"]["status"] = "RUNNING"
+    with pytest.raises(RuntimeError, match="did not begin from PENDING"):
+        _begin_stage(schema, "synthetic_schedule_fixtures")
+
+
+def test_cuda_oom_paths_are_explicitly_rethrown_before_later_model_work():
+    synthetic = inspect.getsource(ladder.run_frozen_schedule_fixtures)
+    committed = inspect.getsource(ladder.run_committed_case_schedule_fixtures)
+    for source in (synthetic, committed):
+        assert "_unsafe_model_exception(exc)" in source
+        assert "raise unsafe_exc" in source or "raise\n" in source
 
 
 def test_v5_gate_never_clears_caller_sink_and_persists_raw_replay_first():
@@ -181,3 +205,32 @@ def test_model_identity_aggregate_rejects_missing_or_nonfinite_scalar():
         _scalar_metric_max(
             {"earlier_logits_max_abs": float("nan")},
             ("earlier_logits_max_abs",))
+
+
+def test_exact_render_schedule_gate_uses_actual_prefix_before_semantic_scoring(
+        monkeypatch):
+    monkeypatch.setattr(ladder, "_case_schedule_layout", lambda *_: {
+        "correct_prefix_ids": [1, 2, 3, 4],
+        "fresh_prefix_ids": [1, 4],
+        "ordinary_resolved_call_widths": [4],
+        "message_block_resolved_call_widths": [1, 2, 1],
+        "system_equal": True, "request_header_equal": True,
+        "blocks_nonempty": True, "blocks_ordered_nonoverlapping": True,
+        "blocks_cover_prefix": True,
+    })
+    monkeypatch.setattr(ladder, "_compare_schedules", lambda *_args, **_kwargs: {
+        "status": "PASS", "passes": True, "tolerance": 5e-4,
+        "base_measurement_complete": True,
+        "continuation_measurement_complete": True,
+        "per_layer": [], "continuation_per_layer": [],
+        "cache_k_max_abs": 0.0, "cache_v_max_abs": 0.0,
+        "last_logits_max_abs": 0.0, "selected_margin_abs_shift": 0.0,
+        "continuation_logits_max_abs": 0.0,
+        "continuation_k_max_abs": 0.0, "continuation_v_max_abs": 0.0,
+        "observed_aggregate": 0.0,
+    })
+    observed = ladder.run_exact_render_schedule_fixture(
+        object(), object(), {"id": "c10"})
+    assert observed["status"] == "PASS"
+    assert observed["semantic_scoring_performed"] is False
+    assert observed["complete_prefix_token_ids"] == [1, 2, 3, 4]
