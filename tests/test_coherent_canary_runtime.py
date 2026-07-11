@@ -6,6 +6,7 @@ from transformers import DynamicCache
 
 from coherent_canary_runtime import (
     CanaryRuntimeError,
+    append_block_to_snapshot,
     collect_fresh_region_margin_gradients,
     continue_fresh_plan,
     execute_fresh_plan,
@@ -236,6 +237,11 @@ def test_prefix_block_binds_ids_and_positions():
     assert result.logical_positions == [0, 1, 2]
     assert result.physical_positions == [0, 1, 2]
     assert result.calls[0]["label"] == "identity_prefix"
+    appended = append_block_to_snapshot(
+        model, result.snapshot, [7, 8], logical_start=10, label="probe_suffix")
+    assert appended.physical_positions == [3, 4]
+    assert appended.logical_positions == [10, 11]
+    assert appended.physical_end == 5
 
 
 def test_margin_gradients_cover_every_selected_key_and_value_row(tokenizer):

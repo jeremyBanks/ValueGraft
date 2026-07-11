@@ -362,6 +362,35 @@ def execute_prefix_block(model, token_ids: Sequence[int], *,
         physical_end=len(ids), logical_end=logical[-1] + 1)
 
 
+def append_block_to_snapshot(model, snapshot: Snapshot, token_ids: Sequence[int], *,
+                             logical_start: int,
+                             label: str = "structural_suffix") -> ExecutionResult:
+    ids = [int(x) for x in token_ids]
+    _require(0 < len(ids) <= 4096, "appended block width lies outside 1..4096")
+    physical_start = snapshot_physical_length(snapshot)
+    _require(physical_start + len(ids) <= MAX_LIVE_CACHE_TOKENS,
+             "appended block would exceed live-cache bound")
+    logical = list(range(int(logical_start), int(logical_start) + len(ids)))
+    physical = list(range(physical_start, physical_start + len(ids)))
+    cache = rebuild_cache(snapshot)
+    cache, logits = _forward(
+        model, cache, ids, logical, physical, enable_grad=False)
+    event = {
+        "kind": "prefill", "label": label, "role": "structural",
+        "message_index": 0, "physical_start": physical_start,
+        "physical_end": physical_start + len(ids),
+        "logical_start": logical[0], "logical_end": logical[-1] + 1,
+        "token_ids_sha256": hashlib.sha256(b"".join(
+            int(x).to_bytes(8, "little", signed=True) for x in ids
+        )).hexdigest(),
+    }
+    return ExecutionResult(
+        snapshot=snapshot_cache(cache), last_logits=logits, calls=[event],
+        q1_token_logprobs=[], executed_token_ids=ids,
+        logical_positions=logical, physical_positions=physical,
+        physical_end=physical_start + len(ids), logical_end=logical[-1] + 1)
+
+
 def execute_fresh_plan(model, plan: FreshDestinationPlan, *,
                        stop_at: int | None = None) -> ExecutionResult:
     plan.validate()
