@@ -410,8 +410,10 @@ def test_loaded_subject_attestation_rehashes_weights_and_rejects_quantization(
         kind="protocol_tokenizer", repo_id=MODEL_30B)
     tokenizer = AutoTokenizer.from_pretrained(
         str(protocol_snapshot), local_files_only=True, trust_remote_code=False)
-    loading_info = {"missing_keys": [], "unexpected_keys": [],
-                    "mismatched_keys": [], "error_msgs": []}
+    # Transformers 5 returns empty sets for some loading-info fields.  Empty
+    # list/tuple/set containers are equivalent; any member still fails closed.
+    loading_info = {"missing_keys": set(), "unexpected_keys": set(),
+                    "mismatched_keys": set(), "error_msgs": []}
     model_rows = model_inventory["weight_tensors"]
     local_contract_entry = {
         "model_id": LOCAL_SPEC.model_id, "revision": LOCAL_SPEC.revision,
@@ -466,6 +468,10 @@ def test_loaded_subject_attestation_rehashes_weights_and_rejects_quantization(
         protocol_tokenizer_inventory=protocol_inventory,
         loading_info=loading_info)
     assert result["all_parameters_frozen"] is True
+    assert result["loading_info"] == {
+        "missing_keys": [], "unexpected_keys": [],
+        "mismatched_keys": [], "error_msgs": [],
+    }
     assert result["protocol_tokenizer_attestation"] == \
         PROTOCOL_TOKENIZER_ATTESTATION
     assert result["release_binding"]["apparatus_commit"] == "a" * 40
@@ -493,13 +499,29 @@ def test_loaded_subject_attestation_rehashes_weights_and_rejects_quantization(
             protocol_tokenizer_snapshot=protocol_snapshot,
             protocol_tokenizer_inventory=protocol_inventory,
             loading_info=loading_info)
+    for key in loading_info:
+        with pytest.raises(CanaryLoaderError, match=key):
+            attest_loaded_subject(
+                model, tokenizer, spec=LOCAL_SPEC, model_snapshot=snapshot,
+                **release, model_inventory=model_inventory,
+                protocol_tokenizer_snapshot=protocol_snapshot,
+                protocol_tokenizer_inventory=protocol_inventory,
+                loading_info={**loading_info, key: ["reported.problem"]})
+    with pytest.raises(CanaryLoaderError, match="fields differ"):
+        attest_loaded_subject(
+            model, tokenizer, spec=LOCAL_SPEC, model_snapshot=snapshot, **release,
+            model_inventory=model_inventory,
+            protocol_tokenizer_snapshot=protocol_snapshot,
+            protocol_tokenizer_inventory=protocol_inventory,
+            loading_info={key: value for key, value in loading_info.items()
+                          if key != "missing_keys"})
     with pytest.raises(CanaryLoaderError, match="missing_keys"):
         attest_loaded_subject(
             model, tokenizer, spec=LOCAL_SPEC, model_snapshot=snapshot, **release,
             model_inventory=model_inventory,
             protocol_tokenizer_snapshot=protocol_snapshot,
             protocol_tokenizer_inventory=protocol_inventory,
-            loading_info={**loading_info, "missing_keys": ["missing.weight"]})
+            loading_info={**loading_info, "missing_keys": {}})
     model.is_quantized = True
     with pytest.raises(CanaryLoaderError, match="quantized"):
         attest_loaded_subject(

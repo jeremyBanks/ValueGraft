@@ -114,7 +114,7 @@ PROTOCOL_TOKENIZER_ATTESTATION = {
 MODEL_SNAPSHOT_CONTRACT_PATH = Path(
     "data/coherent_canary_v12/model_snapshot_contract.json")
 FROZEN_AUTHORIZATION_PATH = Path(
-    "COHERENT-STATE-DECISION-CANARY-V12-FROZEN-AUTHORIZATION.json")
+    "COHERENT-STATE-DECISION-CANARY-V12-FROZEN-AUTHORIZATION-2.json")
 MANDATORY_FROZEN_PATHS = {
     "AGENTS.md", "pyproject.toml", "uv.lock",
     "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
@@ -770,9 +770,14 @@ def attest_loaded_subject(model, tokenizer, *, spec: SubjectSpec,
         tokenizer, snapshot=protocol_tokenizer_snapshot,
         inventory=protocol_tokenizer_inventory)
     _require(isinstance(loading_info, Mapping), "model loading info is absent")
-    for key in ("missing_keys", "unexpected_keys", "mismatched_keys", "error_msgs"):
-        _require(loading_info.get(key, []) == [],
-                 f"model loading reported {key}: {loading_info.get(key)}")
+    loading_info_keys = (
+        "missing_keys", "unexpected_keys", "mismatched_keys", "error_msgs")
+    _require(set(loading_info) == set(loading_info_keys),
+             f"model loading info fields differ: {sorted(loading_info)}")
+    for key in loading_info_keys:
+        value = loading_info[key]
+        _require(isinstance(value, (list, tuple, set)) and not value,
+                 f"model loading reported {key}: {value}")
     _quantization_absent(model)
     model.eval()
     model.requires_grad_(False)
@@ -846,9 +851,8 @@ def attest_loaded_subject(model, tokenizer, *, spec: SubjectSpec,
             protocol_tokenizer_inventory["inventory_sha256"],
         "protocol_tokenizer_attestation": tokenizer_attestation,
         "weight_tensors_sha256": model_inventory["weight_tensors_sha256"],
-        "loading_info": {key: list(loading_info.get(key, [])) for key in
-                         ("missing_keys", "unexpected_keys", "mismatched_keys",
-                          "error_msgs")},
+        "loading_info": {key: list(loading_info[key]) for key in
+                         loading_info_keys},
         "parameter_count": loaded_parameter_count,
         "loaded_parameter_topology_sha256": hashlib.sha256(
             _canonical(loaded_parameter_rows)).hexdigest(),
