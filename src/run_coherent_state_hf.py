@@ -465,13 +465,19 @@ def _declared_summary_hashes(arm: str, fresh_hashes: list[dict],
         return sources[arm]
     if arm == "G_Vcorrect":
         return ([
-            {"layer": fresh["layer"], "k_sha256": fresh["k_sha256"],
+            {"layer": fresh["layer"],
+             "k_dtype": fresh["k_dtype"], "k_shape": fresh["k_shape"],
+             "k_sha256": fresh["k_sha256"],
+             "v_dtype": correct["v_dtype"], "v_shape": correct["v_shape"],
              "v_sha256": correct["v_sha256"]}
             for fresh, correct in zip(fresh_hashes, correct_hashes)
         ], "fresh", "correct_actual")
     if arm == "G_Kcorrect":
         return ([
-            {"layer": fresh["layer"], "k_sha256": correct["k_sha256"],
+            {"layer": fresh["layer"],
+             "k_dtype": correct["k_dtype"], "k_shape": correct["k_shape"],
+             "k_sha256": correct["k_sha256"],
+             "v_dtype": fresh["v_dtype"], "v_shape": fresh["v_shape"],
              "v_sha256": fresh["v_sha256"]}
             for fresh, correct in zip(fresh_hashes, correct_hashes)
         ], "correct_actual", "fresh")

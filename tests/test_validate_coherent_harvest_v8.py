@@ -72,10 +72,12 @@ def zero_layers() -> list[dict]:
             for index in range(48)]
 
 
-def hash_rows(seed: str) -> list[dict]:
+def hash_rows(seed: str, rows: int = 2) -> list[dict]:
     return [{
         "layer": str(index),
+        "k_dtype": "torch.bfloat16", "k_shape": [1, 4, rows, 128],
         "k_sha256": hashlib.sha256(f"{seed}:k:{index}".encode()).hexdigest(),
+        "v_dtype": "torch.bfloat16", "v_shape": [1, 4, rows, 128],
         "v_sha256": hashlib.sha256(f"{seed}:v:{index}".encode()).hexdigest(),
     } for index in range(48)]
 
@@ -203,9 +205,9 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
         "request_sha256": hashlib.sha256(
             MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
     }
-    actual_hashes = hash_rows("semantic_actual")
-    fresh_hashes = hash_rows("semantic_fresh")
-    wrong_hashes = hash_rows("semantic_wrong")
+    actual_hashes = hash_rows("semantic_actual", len(summary_ids))
+    fresh_hashes = hash_rows("semantic_fresh", len(summary_ids))
+    wrong_hashes = hash_rows("semantic_wrong", len(summary_ids))
     summary["actual_row_hashes"] = actual_hashes
     source_record = {
         "source_kind": "generated_incremental",
@@ -271,7 +273,10 @@ def semantic_branch_audits(sources: dict, destination: dict) -> dict:
 
     def mixed(keys, values):
         return [{
-            "layer": key["layer"], "k_sha256": key["k_sha256"],
+            "layer": key["layer"],
+            "k_dtype": key["k_dtype"], "k_shape": key["k_shape"],
+            "k_sha256": key["k_sha256"],
+            "v_dtype": value["v_dtype"], "v_shape": value["v_shape"],
             "v_sha256": value["v_sha256"],
         } for key, value in zip(keys, values)]
 
@@ -282,13 +287,16 @@ def semantic_branch_audits(sources: dict, destination: dict) -> dict:
         "G_Vcorrect": (mixed(fresh, actual), "fresh", "correct_actual"),
         "G_Kcorrect": (mixed(actual, fresh), "correct_actual", "fresh"),
     }
-    before = hash_rows("semantic_before_summary")
+    before = hash_rows(
+        "semantic_before_summary", destination["physical_summary_start"])
     return {arm: {
         "arm": arm,
         "pre_tail_storage_lengths": [destination["physical_summary_end"]] * 48,
-        "pre_tail_row_hashes": hash_rows(f"{arm}:pre"),
+        "pre_tail_row_hashes": hash_rows(
+            f"{arm}:pre", destination["physical_summary_end"]),
         "post_tail_storage_lengths": [len(destination["context_token_ids"])] * 48,
-        "post_tail_row_hashes": hash_rows(f"{arm}:post"),
+        "post_tail_row_hashes": hash_rows(
+            f"{arm}:post", len(destination["context_token_ids"])),
         "fresh_summary_row_hashes": fresh,
         "inserted_summary_row_hashes": declared,
         "declared_source_summary_row_hashes": declared,

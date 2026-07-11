@@ -98,10 +98,15 @@ def extract_summary_rows(cache, start: int, end: int, *,
     return out
 
 
-def row_hashes(rows: Snapshot) -> list[dict[str, str]]:
+def row_hashes(rows: Snapshot) -> list[dict[str, object]]:
     return [
-        {"layer": str(li), "k_sha256": sha256_tensor(k),
-         "v_sha256": sha256_tensor(v)}
+        {
+            "layer": str(li),
+            "k_dtype": str(k.dtype), "k_shape": list(k.shape),
+            "k_sha256": sha256_tensor(k),
+            "v_dtype": str(v.dtype), "v_shape": list(v.shape),
+            "v_sha256": sha256_tensor(v),
+        }
         for li, (k, v) in enumerate(rows)
     ]
 

@@ -1096,7 +1096,9 @@ def _mixed_hash_rows(keys: list[dict[str, str]],
         raise ValueError("snapshot provenance mixed-source coverage differs")
     return [{
         "layer": key["layer"],
+        "k_dtype": key["k_dtype"], "k_shape": key["k_shape"],
         "k_sha256": key["k_sha256"],
+        "v_dtype": value["v_dtype"], "v_shape": value["v_shape"],
         "v_sha256": value["v_sha256"],
     } for key, value in zip(keys, values)]
 
@@ -1115,15 +1117,21 @@ def _validate_snapshot_provenance(doc: dict[str, Any], label: str) -> None:
     if not all(isinstance(value, dict) for value in (
             actual, replay, wrong, fresh, identity)):
         raise ValueError(f"{label} snapshot source records are incomplete")
+    summary_ids = actual.get("summary_token_ids")
+    if not isinstance(summary_ids, list) or not summary_ids:
+        raise ValueError(f"{label} snapshot summary-token coverage differs")
+    summary_rows = len(summary_ids)
 
     actual_hashes = _validate_hash_rows(
-        actual.get("summary_row_hashes"), f"{label}.correct_actual")
+        actual.get("summary_row_hashes"), f"{label}.correct_actual",
+        rows=summary_rows)
     replay_hashes = _validate_hash_rows(
-        replay.get("summary_row_hashes"), f"{label}.correct_replay")
+        replay.get("summary_row_hashes"), f"{label}.correct_replay",
+        rows=summary_rows)
     wrong_hashes = _validate_hash_rows(
-        wrong.get("summary_row_hashes"), f"{label}.wrong")
+        wrong.get("summary_row_hashes"), f"{label}.wrong", rows=summary_rows)
     fresh_hashes = _validate_hash_rows(
-        fresh.get("summary_row_hashes"), f"{label}.fresh")
+        fresh.get("summary_row_hashes"), f"{label}.fresh", rows=summary_rows)
     if (summary.get("actual_row_hashes") != actual_hashes or
             identity.get("actual_summary_row_hashes") != actual_hashes or
             identity.get("replay_summary_row_hashes") != replay_hashes or
@@ -1234,7 +1242,20 @@ def _validate_snapshot_provenance(doc: dict[str, Any], label: str) -> None:
                 "declared_source_summary_row_hashes",
                 "fresh_before_summary_row_hashes",
                 "branch_before_summary_row_hashes"):
-            _validate_hash_rows(audit.get(key), f"{label}.{arm}.{key}")
+            if key in {
+                    "fresh_summary_row_hashes", "inserted_summary_row_hashes",
+                    "declared_source_summary_row_hashes"}:
+                width = summary_rows
+            elif key in {
+                    "fresh_before_summary_row_hashes",
+                    "branch_before_summary_row_hashes"}:
+                width = summary_start
+            elif key == "pre_tail_row_hashes":
+                width = summary_end
+            else:
+                width = len(context_ids)
+            _validate_hash_rows(
+                audit.get(key), f"{label}.{arm}.{key}", rows=width)
         declared, k_source, v_source = expected[arm]
         if (audit.get("fresh_summary_row_hashes") != fresh_hashes or
                 audit.get("declared_source_summary_row_hashes") != declared or
@@ -1462,12 +1483,22 @@ def _finite(value: Any, label: str) -> float:
     return number
 
 
-def _validate_hash_rows(value: Any, label: str) -> list[dict[str, str]]:
+def _validate_hash_rows(value: Any, label: str, *, rows: int | None = None) \
+        -> list[dict[str, Any]]:
     if not isinstance(value, list) or len(value) != 48:
         raise ValueError(f"{label} hash-row coverage differs")
     if [row.get("layer") for row in value] != [str(i) for i in range(48)]:
         raise ValueError(f"{label} hash-row order differs")
     for row in value:
+        expected_shape = [1, 4, rows, 128] if rows is not None else None
+        for prefix in ("k", "v"):
+            if row.get(f"{prefix}_dtype") != "torch.bfloat16":
+                raise ValueError(f"{label} {prefix} dtype differs")
+            shape = row.get(f"{prefix}_shape")
+            if (not isinstance(shape, list) or len(shape) != 4 or
+                    any(not isinstance(item, int) or item < 1 for item in shape) or
+                    (expected_shape is not None and shape != expected_shape)):
+                raise ValueError(f"{label} {prefix} shape differs")
         for key in ("k_sha256", "v_sha256"):
             digest = row.get(key)
             if (not isinstance(digest, str) or len(digest) != 64 or
