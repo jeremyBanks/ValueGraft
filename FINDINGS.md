@@ -9,7 +9,7 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 > ## ⚠ 2026-07-11 MECHANISTIC / APPARATUS CORRECTION — read before every finding below
 >
 > A new position-preserving coherent-summary-state assay has produced **no semantic
-> outcome**. Its pre-semantic validation instead established three load-bearing
+> outcome**. Its pre-semantic validation instead established four load-bearing
 > methodological failures:
 >
 > 1. **Prefill schedule is part of the computed state at the scale of the proposed
@@ -17,7 +17,12 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 >    ordinary versus coarse three-block schedules moved a fixed margin `0.060546875`;
 >    c02 independently moved it `0.1318359375`. Cache/logit differences were much
 >    larger coordinate-wise. These are deterministic fixed-schedule effects, not
->    random run-to-run nondeterminism. The exact origin diagnostic is still running.
+>    random run-to-run nondeterminism. A preregistered c10 diagnostic then found that
+>    equal-shaped calls with different causally future tokens were bit-exact on protected
+>    rows, while 23-token versus 4,096-token query shapes first diverged after layer-0
+>    attention. The pinned local classification is `QUERY_SHAPE_ROUNDING`, not
+>    future-token influence; the exact low-level kernel path and 30B magnitude remain
+>    unmeasured.
 > 2. **The apparent 7/7 equivalence validation was pseudoreplicated.** Seven lengths
 >    all cycled one five-token stream. The exact-zero passes apply only to that
 >    periodic input and cannot license realistic-conversation equivalence. The first
@@ -29,6 +34,11 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 >    corruption, not coherent correct with coherent wrong history. No semantic run used
 >    this arm. It must be replaced by decoded, plant-specific minimally counterfactual
 >    histories before any new assay.
+> 4. **Exact counterfactual geometry did not imply decoded validity.** Four c02/c10
+>    feasibility witnesses matched every message width, boundary, and P/O schedule, but
+>    blind review failed all four complete histories and target-aware review found both
+>    inherited base-corpus defects and edit-specific contradictions. They remain
+>    `MECHANICAL_PASS`/content-`FAIL`, with semantic and execution authorization false.
 >
 > Consequences for earlier findings:
 >
@@ -55,8 +65,10 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 > Primary evidence and audits: the two-case sidecar committed at `cfde9bc`;
 > `notes/2026071175-sol-schedule-discontinuity-and-claim-boundary.md`;
 > `notes/2026071176-carver-schedule-sensitivity-forensic-audit.md`;
-> `notes/2026071179-sol-wrong-history-control-invalidity.md`; and
-> `notes/2026071181-carver-v10-gate-and-sample-lineage-audit.md`.
+> `notes/2026071179-sol-wrong-history-control-invalidity.md`;
+> `notes/2026071181-carver-v10-gate-and-sample-lineage-audit.md`;
+> `notes/2026071185-sol-c10-schedule-origin-result.md`; and the two committed
+> counterfactual review artifacts under `data/coherent_state_counterfactuals/`.
 
 > ## ⚠ PROVENANCE CORRECTION + LIVE STATUS (2026-07-09) — read before trusting F1's numbers
 >
