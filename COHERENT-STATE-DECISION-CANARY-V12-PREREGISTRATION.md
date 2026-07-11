@@ -267,11 +267,20 @@ introduced after observing it.
 
 ## 8. Schedule sensitivity P
 
-`P = turn_aligned_replay` uses the committed v11 derivation: one conceptual
-block per canonical message, internally split only above 4,096 tokens, with the
-carrier forced q=1. P runs on the same exact 30B stack for every engineered
-primary case's R2 full-KV correct/wrong contrast. P is a numerical yardstick,
-not a replicate or alternative primary.
+`P = turn_aligned_replay` is independently derived over the complete v12 token
+stream. Before the carrier request, each complete canonical historical message
+(including an assistant message's open/content/close) is one conceptual prefill,
+split into a frozen ordered list only above 4,096 tokens. The carrier request
+plus assistant header is then one prefill. From the first carrier-content token
+onward, P uses the **identical q=1 carrier, complete carrier-to-anchor structural
+call, q=1 acknowledgment, and retained-tail events as N**. Thus P varies how the
+imported pre-boundary history wrote state; it does not introduce a second
+carrier/anchor/tail protocol. F has no imported historical messages and is the
+same compact schedule from the carrier onward. P runs on the same exact 30B
+stack for every engineered primary case's R2 `CC`, `WW`, `FC`, and `FW` cells.
+P is a numerical yardstick, not a replicate or alternative primary. C/W P
+plans must have exact token, message-start, region, call-width, logical-position,
+and physical-position equality before execution.
 
 For state family X and cases i, define
 `S_X = mean_i(abs(D_i,N^X - D_i,P^X))`. A clear N decision requires

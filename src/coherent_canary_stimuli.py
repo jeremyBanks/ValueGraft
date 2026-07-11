@@ -22,7 +22,11 @@ from coherent_canary_schema import (
     CanarySchemaError,
     require_matching_geometry,
 )
-from coherent_canary_tokens import build_role_native_plan, message_starts
+from coherent_canary_tokens import (
+    build_role_native_plan,
+    build_turn_aligned_plan,
+    message_starts,
+)
 
 
 def sha256_ints(values: Sequence[int]) -> str:
@@ -70,7 +74,7 @@ def _target(case: dict, key: str) -> dict:
 
 
 def _variant_evidence(tokenizer, messages: list[dict], *,
-                      middle_end_msg: int | None = None) -> tuple[dict, object]:
+                      middle_end_msg: int | None = None) -> tuple[dict, object, object]:
     ids = [int(value) for value in canonical_ids_any(tokenizer, messages, render_hf)]
     starts = message_starts(tokenizer, ids)
     _require(len(starts) == len(messages), "canonical message-start coverage differs")
@@ -88,6 +92,13 @@ def _variant_evidence(tokenizer, messages: list[dict], *,
     if middle_end_msg is None:
         middle_end_msg = len(messages)
     carrier_request_start = plan.message_start_positions[middle_end_msg]
+    p_plan = build_turn_aligned_plan(
+        tokenizer, messages, middle_end_msg=middle_end_msg)
+    _require(plan.token_ids == p_plan.token_ids,
+             "N/P canonical token streams differ")
+    _require(plan.message_start_positions == p_plan.message_start_positions,
+             "N/P message starts differ")
+    _require(plan.regions == p_plan.regions, "N/P carrier regions differ")
     evidence = {
         "canonical_token_count": len(ids),
         "canonical_token_ids_sha256": sha256_ints(ids),
@@ -99,12 +110,15 @@ def _variant_evidence(tokenizer, messages: list[dict], *,
         "role_native_event_kinds": [event.kind for event in plan.events],
         "role_native_event_widths": [event.width for event in plan.events],
         "role_native_geometry_sha256": sha256_json(plan.geometry()),
+        "turn_aligned_event_kinds": [event.kind for event in p_plan.events],
+        "turn_aligned_event_widths": [event.width for event in p_plan.events],
+        "turn_aligned_geometry_sha256": sha256_json(p_plan.geometry()),
         "source_replay_token_count": len(plan.token_ids),
         "carrier_request_start": carrier_request_start,
         "carrier_regions": asdict(plan.regions),
         "decoded_round_trip": True,
     }
-    return evidence, plan
+    return evidence, plan, p_plan
 
 
 def validate_case(tokenizer, case: dict) -> dict:
@@ -203,9 +217,9 @@ def validate_case(tokenizer, case: dict) -> dict:
     _require(all(0 < value < middle for value in control_indices),
              f"{case_id} control indices lie outside evicted block")
 
-    correct_evidence, correct_plan = _variant_evidence(
+    correct_evidence, correct_plan, correct_p_plan = _variant_evidence(
         tokenizer, correct, middle_end_msg=middle)
-    wrong_evidence, wrong_plan = _variant_evidence(
+    wrong_evidence, wrong_plan, wrong_p_plan = _variant_evidence(
         tokenizer, wrong, middle_end_msg=middle)
     history_tokens = correct_evidence["carrier_request_start"]
     expected_band = (1000, 2000) if band == "short" else (4000, 6000)
@@ -213,6 +227,7 @@ def validate_case(tokenizer, case: dict) -> dict:
              f"{case_id} pre-carrier tokens {history_tokens} outside "
              f"{band} band {expected_band}")
     require_matching_geometry(correct_plan, wrong_plan)
+    require_matching_geometry(correct_p_plan, wrong_p_plan)
     _require(correct_plan.regions.anchor_content_end < len(correct_plan.token_ids),
              f"{case_id} R3 incorrectly reaches the stream end")
     correct_ids = correct_plan.token_ids
@@ -264,6 +279,7 @@ def validate_case(tokenizer, case: dict) -> dict:
             "canonical_changed_positions_sha256": sha256_ints(changed_positions),
             "retained_tail_byte_identical": True,
             "role_native_geometry_identical": True,
+            "turn_aligned_geometry_identical": True,
         },
         "targets": target_counts,
     }

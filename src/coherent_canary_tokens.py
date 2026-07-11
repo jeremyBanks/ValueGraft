@@ -169,3 +169,51 @@ def build_role_native_plan(tokenizer, history_messages: list[dict], *,
             anchor_content_end=anchor_content_end,
         ),
     ).validate()
+
+
+def build_turn_aligned_plan(tokenizer, history_messages: list[dict], *,
+                            middle_end_msg: int,
+                            carrier_request: str = ENGINEERED_CARRIER_REQUEST,
+                            carrier_content: str = ENGINEERED_CARRIER_CONTENT,
+                            anchor_user: str = ANCHOR_USER,
+                            anchor_assistant: str = ANCHOR_ASSISTANT) -> ReplayPlan:
+    """Build schedule P over the complete v12 source stream.
+
+    P block-prefills each complete historical message before the compaction
+    boundary.  From the carrier content onward it uses the exact same q=1 and
+    structural events as N.  Thus P changes the imported-history write schedule
+    without inventing a second carrier/anchor/tail protocol.
+    """
+    n_plan = build_role_native_plan(
+        tokenizer,
+        history_messages,
+        middle_end_msg=middle_end_msg,
+        carrier_request=carrier_request,
+        carrier_content=carrier_content,
+        anchor_user=anchor_user,
+        anchor_assistant=anchor_assistant,
+    )
+    if not (2 < middle_end_msg < len(history_messages)):
+        raise CanarySchemaError("turn-aligned plan requires a retained tail")
+    events: list[ReplayEvent] = []
+    for index in range(middle_end_msg):
+        start = n_plan.message_start_positions[index]
+        end = n_plan.message_start_positions[index + 1]
+        role = str(history_messages[index].get("role", ""))
+        events.extend(_bounded_prefill_events(
+            "historical_message", role, index, start, end))
+
+    carrier_request_start = n_plan.message_start_positions[middle_end_msg]
+    events.extend(_bounded_prefill_events(
+        "carrier_request_and_header", "structural", middle_end_msg,
+        carrier_request_start, n_plan.regions.content_start))
+    events.extend(
+        event for event in n_plan.events
+        if event.token_start >= n_plan.regions.content_start
+    )
+    return ReplayPlan(
+        token_ids=list(n_plan.token_ids),
+        message_start_positions=list(n_plan.message_start_positions),
+        events=events,
+        regions=n_plan.regions,
+    ).validate()

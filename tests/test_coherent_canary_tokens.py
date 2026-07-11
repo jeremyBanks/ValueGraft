@@ -1,7 +1,7 @@
 import pytest
 
 from coherent_canary_schema import ENGINEERED_CARRIER_CONTENT, require_matching_geometry
-from coherent_canary_tokens import build_role_native_plan
+from coherent_canary_tokens import build_role_native_plan, build_turn_aligned_plan
 
 
 @pytest.fixture(scope="module")
@@ -115,5 +115,32 @@ def test_equal_width_counterfactual_with_tail_has_identical_geometry(tokenizer):
     correct = build_role_native_plan(
         tokenizer, _history_with_tail("green"), middle_end_msg=3)
     wrong = build_role_native_plan(
+        tokenizer, _history_with_tail("amber"), middle_end_msg=3)
+    require_matching_geometry(correct, wrong)
+
+
+def test_turn_aligned_p_is_complete_and_matches_after_carrier_start(tokenizer):
+    history = _history_with_tail("green")
+    n_plan = build_role_native_plan(tokenizer, history, middle_end_msg=3)
+    p_plan = build_turn_aligned_plan(tokenizer, history, middle_end_msg=3)
+    assert p_plan.token_ids == n_plan.token_ids
+    assert p_plan.regions == n_plan.regions
+    assert p_plan.events[0].label == "historical_message"
+    assert [event.label for event in p_plan.events[:3]] == [
+        "historical_message", "historical_message", "historical_message"]
+    assert p_plan.events[3].label == "carrier_request_and_header"
+    n_suffix = [event for event in n_plan.events
+                if event.token_start >= n_plan.regions.content_start]
+    p_suffix = [event for event in p_plan.events
+                if event.token_start >= p_plan.regions.content_start]
+    assert p_suffix == n_suffix
+    assert [event.width for event in p_plan.events] != [
+        event.width for event in n_plan.events]
+
+
+def test_turn_aligned_counterfactual_geometry_matches(tokenizer):
+    correct = build_turn_aligned_plan(
+        tokenizer, _history_with_tail("green"), middle_end_msg=3)
+    wrong = build_turn_aligned_plan(
         tokenizer, _history_with_tail("amber"), middle_end_msg=3)
     require_matching_geometry(correct, wrong)
