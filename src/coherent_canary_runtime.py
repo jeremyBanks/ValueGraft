@@ -333,6 +333,35 @@ def execute_replay_plan(model, plan: ReplayPlan, *, stop_at: int | None = None) 
                        destination=False)
 
 
+def execute_prefix_block(model, token_ids: Sequence[int], *,
+                         logical_positions: Sequence[int] | None = None,
+                         label: str = "generation_prefix") -> ExecutionResult:
+    ids = [int(x) for x in token_ids]
+    _require(0 < len(ids) <= 4096, "prefix block width lies outside 1..4096")
+    logical = (list(range(len(ids))) if logical_positions is None else
+               [int(x) for x in logical_positions])
+    _require(len(logical) == len(ids) and all(
+        right == left + 1 for left, right in zip(logical, logical[1:])),
+        "prefix logical positions are not one contiguous span")
+    cache, logits = _forward(
+        model, None, ids, logical, range(len(ids)), enable_grad=False)
+    snapshot = snapshot_cache(cache)
+    event = {
+        "kind": "prefill", "label": label, "role": "structural",
+        "message_index": 0, "physical_start": 0,
+        "physical_end": len(ids), "logical_start": logical[0],
+        "logical_end": logical[-1] + 1,
+        "token_ids_sha256": hashlib.sha256(b"".join(
+            int(x).to_bytes(8, "little", signed=True) for x in ids
+        )).hexdigest(),
+    }
+    return ExecutionResult(
+        snapshot=snapshot, last_logits=logits, calls=[event],
+        q1_token_logprobs=[], executed_token_ids=ids,
+        logical_positions=logical, physical_positions=list(range(len(ids))),
+        physical_end=len(ids), logical_end=logical[-1] + 1)
+
+
 def execute_fresh_plan(model, plan: FreshDestinationPlan, *,
                        stop_at: int | None = None) -> ExecutionResult:
     plan.validate()

@@ -9,6 +9,7 @@ from coherent_canary_runtime import (
     collect_fresh_region_margin_gradients,
     continue_fresh_plan,
     execute_fresh_plan,
+    execute_prefix_block,
     execute_replay_plan,
     extract_rows,
     force_content_q1,
@@ -226,6 +227,15 @@ def test_generated_forced_identity_is_bit_exact_and_eos_is_not_appended():
     assert generated.stop_candidate_id == 9
     assert generated.snapshot[0][0].shape[-2] == 10
     assert evidence["status"] == "GENERATED_FORCED_IDENTITY_PASS"
+
+
+def test_prefix_block_binds_ids_and_positions():
+    model = FakeCacheModel()
+    result = execute_prefix_block(model, [4, 5, 6], label="identity_prefix")
+    assert result.executed_token_ids == [4, 5, 6]
+    assert result.logical_positions == [0, 1, 2]
+    assert result.physical_positions == [0, 1, 2]
+    assert result.calls[0]["label"] == "identity_prefix"
 
 
 def test_margin_gradients_cover_every_selected_key_and_value_row(tokenizer):
