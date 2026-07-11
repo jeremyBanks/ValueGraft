@@ -1,0 +1,1536 @@
+{
+  "schema": "coherent_state_decision_canary_v12_review_packet_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "packet_kind": "target_aware_paired",
+  "packet_run_id": "20260711T200825Z",
+  "source_set_commitment_sha256": "809ccaf21fa54db02b63bdd061f3e81d94304f0cb678ecab54cd2bcf2b936944",
+  "builder_scope": "Deterministic review material only; no tokenizer/model was loaded, no forward pass occurred, and this packet records no review outcome.",
+  "review_boundary": "For each pair, verify the focal decision is genuinely derived, the counterfactual minimally and coherently reverses it, all downstream focal references are repaired, and the nonfocal chain and retained tail remain unchanged. Record judgments separately; this packet makes none.",
+  "cases": [
+    {
+      "case_id": "e01",
+      "source_file_sha256": "b6aef73d8d2a4d07d67762ee697adce1343c857e1c680f337c9f830d4f7c8546",
+      "title": "Atlas rollback gate and overnight handoff",
+      "domain": "software release operations",
+      "middle_end_msg": 11,
+      "changed_message_allowlist": [
+        3,
+        6
+      ],
+      "focal": {
+        "plant_id": "e01_release_ring",
+        "category": "derived_decision",
+        "rule_or_relation": "Partner beta requires both an additive migration and a logged rollback interval under eight minutes; otherwise the staff ring is required.",
+        "changed_input": "The one load-bearing input is the logged rollback interval: 6:40 in C versus 10:40 in W.",
+        "probe": "Under the recorded release gate, which ring was selected for Atlas 4.8? Answer with only the ring name.",
+        "correct_target": "partner beta",
+        "counterfactual_target": "staff ring",
+        "establishing_message_indices": [
+          1,
+          3,
+          6
+        ],
+        "downstream_reference_indices": [
+          6
+        ],
+        "why_derived": "The answer requires combining the unchanged additive-schema finding with the timed rollback result and applying the conjunctive gate.",
+        "why_counterfactual_reverses": "Changing only the rollback interval from below to above eight minutes makes one required condition fail, so the rule reverses the selected ring."
+      },
+      "nonfocal_control": {
+        "plant_id": "e01_trace_retention",
+        "category": "unchanged_control",
+        "probe": "For how long are the rehearsal traces retained? Answer with only the duration.",
+        "target": "21 days",
+        "countertarget": "30 days",
+        "establishing_message_indices": [
+          7,
+          8
+        ],
+        "why_independent_of_focal": "The retention matrix is tied to the trace classification and is explicitly independent of the release-ring gate."
+      },
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "c8ef5f708bd4ac218fc8f4eef87be77467b8e1c53ba8de7fe92732e173c9cfd0",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping a release coordinator keep an accurate operational record. Distinguish observed facts from proposed actions, apply stated release rules literally, and do not claim to have changed systems or contacted people."
+            },
+            {
+              "role": "user",
+              "content": "I am coordinating tonight's Atlas 4.8 database patch with Priya from reliability and Leon from customer operations. Our release rule is deliberately simple: the partner beta ring is allowed only when the migration is additive and the timed rollback rehearsal finishes in under eight minutes. If either condition fails, the build stays in the staff ring. We have not applied the rule yet; I want the evidence recorded before the decision."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I will treat this as a two-part gate rather than a general risk judgment. Both an additive migration and a rollback time below eight minutes are required for partner beta; one failed condition is enough to keep the build in the staff ring. I will wait for the measured inputs before naming the ring."
+            },
+            {
+              "role": "user",
+              "content": "Priya's review found that the migration only adds the nullable `source_region` column; it drops or rewrites nothing. The rehearsal began at 19:12:00 and the database was accepting writes again at 19:18:40, so the measured rollback interval was six minutes forty seconds. The timing came from the deployment log, not an estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "I have the schema classification and the timed rollback result as separate observations. The migration evidence addresses the additive condition, while the logged interval addresses the time condition. I will use the strict wording of the gate when you ask for the release-ring decision."
+            },
+            {
+              "role": "user",
+              "content": "Apply the stated gate now. Which ring should Atlas 4.8 use for this release? Give the decision and the two inputs that control it, without adding a broader recommendation."
+            },
+            {
+              "role": "assistant",
+              "content": "Atlas 4.8 should use the partner beta ring. The migration is additive, and the logged rollback interval of six minutes forty seconds is under the eight-minute limit, so both required conditions are satisfied."
+            },
+            {
+              "role": "user",
+              "content": "Separately, the telemetry schedule has already been settled. This patch's rehearsal traces are classified as short-lived operational diagnostics, and our matrix keeps that class for 21 days. That retention rule is independent of the ring decision and will not change if the release gate changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as a separate control fact: the rehearsal traces are retained for 21 days because they are short-lived operational diagnostics. I will not infer the retention period from the chosen release ring."
+            },
+            {
+              "role": "user",
+              "content": "For the runbook, outline what the overnight coordinator should verify before treating the handoff as complete. Keep it procedural: identify the evidence locations, who owns an unresolved item, and how to mark a superseded note. Do not invent ticket numbers or say that any check has been performed."
+            },
+            {
+              "role": "assistant",
+              "content": "The coordinator should verify that each material statement points to its evidence location, such as the deployment log or schema review; that every unresolved item names an owner and a next check; and that an obsolete instruction is visibly marked as superseded rather than silently replaced. The handoff should also separate observations, decisions, and contingencies so a later reader can see which claims are settled."
+            },
+            {
+              "role": "user",
+              "content": "The next shift will inherit this discussion after midnight. Suggest a compact structure for the handoff that does not repeat any settled release choice or telemetry value. It should still make clear how a new observation can be added without erasing the earlier record."
+            },
+            {
+              "role": "assistant",
+              "content": "Use four short sections: current context, evidence references, open items with owners, and change log. Put each new observation in the change log with its source and time, then link it to any affected open item. If it supersedes an earlier note, preserve the old entry and label the relationship explicitly. This keeps the handoff auditable without restating settled details."
+            },
+            {
+              "role": "user",
+              "content": "Priya also asked how to flag uncertainty when a metric is delayed. We need wording that distinguishes a missing observation from a failed check, because the overnight reader should not treat silence as evidence of failure. What labels would be clear without sounding bureaucratic?"
+            },
+            {
+              "role": "assistant",
+              "content": "Three plain labels should suffice: `observed` for a result backed by evidence, `pending` when the expected observation has not arrived, and `failed` only when a completed check produced a failing result. Add the expected source and next review time beside a pending item. That makes absence of data explicit while reserving failure language for an actual adverse observation."
+            },
+            {
+              "role": "user",
+              "content": "Finally, give me a neutral sentence the coordinator can place above the open-items list. It should invite the next shift to verify the record, but it must not imply that the previous shift completed work that is not documented."
+            },
+            {
+              "role": "assistant",
+              "content": "Continue from the documented evidence below, verify any item whose status is pending, and record new observations with their source before changing an existing conclusion."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "b6aef73d8d2a4d07d67762ee697adce1343c857e1c680f337c9f830d4f7c8546",
+            "case_id": "e01",
+            "variant": "correct",
+            "literal_messages_sha256": "678ff74aae43c3e78f532e6b79a79f267572ebbd67394e917d178f7998b65a4d"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "dd51223cc4062a9bf2d42b7716af451c120d7d9b02ff529a99350845ae8e35a6",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping a release coordinator keep an accurate operational record. Distinguish observed facts from proposed actions, apply stated release rules literally, and do not claim to have changed systems or contacted people."
+            },
+            {
+              "role": "user",
+              "content": "I am coordinating tonight's Atlas 4.8 database patch with Priya from reliability and Leon from customer operations. Our release rule is deliberately simple: the partner beta ring is allowed only when the migration is additive and the timed rollback rehearsal finishes in under eight minutes. If either condition fails, the build stays in the staff ring. We have not applied the rule yet; I want the evidence recorded before the decision."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I will treat this as a two-part gate rather than a general risk judgment. Both an additive migration and a rollback time below eight minutes are required for partner beta; one failed condition is enough to keep the build in the staff ring. I will wait for the measured inputs before naming the ring."
+            },
+            {
+              "role": "user",
+              "content": "Priya's review found that the migration only adds the nullable `source_region` column; it drops or rewrites nothing. The rehearsal began at 19:12:00 and the database was accepting writes again at 19:22:40, so the measured rollback interval was ten minutes forty seconds. The timing came from the deployment log, not an estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "I have the schema classification and the timed rollback result as separate observations. The migration evidence addresses the additive condition, while the logged interval addresses the time condition. I will use the strict wording of the gate when you ask for the release-ring decision."
+            },
+            {
+              "role": "user",
+              "content": "Apply the stated gate now. Which ring should Atlas 4.8 use for this release? Give the decision and the two inputs that control it, without adding a broader recommendation."
+            },
+            {
+              "role": "assistant",
+              "content": "Atlas 4.8 should use the staff ring for this release. The migration is additive, but the logged rollback interval of ten minutes forty seconds exceeds the eight-minute limit, so one required condition fails."
+            },
+            {
+              "role": "user",
+              "content": "Separately, the telemetry schedule has already been settled. This patch's rehearsal traces are classified as short-lived operational diagnostics, and our matrix keeps that class for 21 days. That retention rule is independent of the ring decision and will not change if the release gate changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as a separate control fact: the rehearsal traces are retained for 21 days because they are short-lived operational diagnostics. I will not infer the retention period from the chosen release ring."
+            },
+            {
+              "role": "user",
+              "content": "For the runbook, outline what the overnight coordinator should verify before treating the handoff as complete. Keep it procedural: identify the evidence locations, who owns an unresolved item, and how to mark a superseded note. Do not invent ticket numbers or say that any check has been performed."
+            },
+            {
+              "role": "assistant",
+              "content": "The coordinator should verify that each material statement points to its evidence location, such as the deployment log or schema review; that every unresolved item names an owner and a next check; and that an obsolete instruction is visibly marked as superseded rather than silently replaced. The handoff should also separate observations, decisions, and contingencies so a later reader can see which claims are settled."
+            },
+            {
+              "role": "user",
+              "content": "The next shift will inherit this discussion after midnight. Suggest a compact structure for the handoff that does not repeat any settled release choice or telemetry value. It should still make clear how a new observation can be added without erasing the earlier record."
+            },
+            {
+              "role": "assistant",
+              "content": "Use four short sections: current context, evidence references, open items with owners, and change log. Put each new observation in the change log with its source and time, then link it to any affected open item. If it supersedes an earlier note, preserve the old entry and label the relationship explicitly. This keeps the handoff auditable without restating settled details."
+            },
+            {
+              "role": "user",
+              "content": "Priya also asked how to flag uncertainty when a metric is delayed. We need wording that distinguishes a missing observation from a failed check, because the overnight reader should not treat silence as evidence of failure. What labels would be clear without sounding bureaucratic?"
+            },
+            {
+              "role": "assistant",
+              "content": "Three plain labels should suffice: `observed` for a result backed by evidence, `pending` when the expected observation has not arrived, and `failed` only when a completed check produced a failing result. Add the expected source and next review time beside a pending item. That makes absence of data explicit while reserving failure language for an actual adverse observation."
+            },
+            {
+              "role": "user",
+              "content": "Finally, give me a neutral sentence the coordinator can place above the open-items list. It should invite the next shift to verify the record, but it must not imply that the previous shift completed work that is not documented."
+            },
+            {
+              "role": "assistant",
+              "content": "Continue from the documented evidence below, verify any item whose status is pending, and record new observations with their source before changing an existing conclusion."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "b6aef73d8d2a4d07d67762ee697adce1343c857e1c680f337c9f830d4f7c8546",
+            "case_id": "e01",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "42ae647fa520c7298724ed1f6e4baed3170aaddc3a4ff239307c417293d64265"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e02",
+      "source_file_sha256": "91ac899075e1ef9756106e62a423deb6de94fcfcc5115feb45bca1d862e23eb4",
+      "title": "Cold-chain eligibility for the Saturday route",
+      "domain": "nonprofit meal-delivery allocation",
+      "middle_end_msg": 11,
+      "changed_message_allowlist": [
+        5,
+        8
+      ],
+      "focal": {
+        "plant_id": "e02_route_hub",
+        "category": "derived_decision",
+        "rule_or_relation": "Exclude hubs with verified cold hold below 45 minutes, then choose the eligible hub with lower total driving time.",
+        "changed_input": "The one load-bearing input is Cedar's verified cold-hold time: 62 minutes in C versus 41 minutes in W.",
+        "probe": "Which staging hub did the board's sequence select for the refrigerated route? Answer with only the hub name.",
+        "correct_target": "Cedar",
+        "counterfactual_target": "Harbor",
+        "establishing_message_indices": [
+          1,
+          3,
+          5,
+          8
+        ],
+        "downstream_reference_indices": [
+          8
+        ],
+        "why_derived": "The answer requires screening both hubs by cold-hold eligibility and then, only if both remain, comparing their independent driving times.",
+        "why_counterfactual_reverses": "Changing only Cedar's cold hold from above to below the threshold excludes the otherwise shorter hub and leaves Harbor as the eligible choice."
+      },
+      "nonfocal_control": {
+        "plant_id": "e02_intake_day",
+        "category": "unchanged_control",
+        "probe": "On which day is walk-in intake at the Linden center? Answer with only the weekday.",
+        "target": "Thursday",
+        "countertarget": "Tuesday",
+        "establishing_message_indices": [
+          9,
+          10
+        ],
+        "why_independent_of_focal": "The benefits-team service calendar is explicitly separate from hub eligibility, driving time, and delivery allocation."
+      },
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "51ddbecb3c6577b76d09a4ffca9493227f435dff01a30c264f50ec6db250512c",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a community meal program with a careful planning record. Apply the program's stated allocation rules, keep unrelated service facts separate, and never imply that a booking, delivery, or contact has occurred."
+            },
+            {
+              "role": "user",
+              "content": "I coordinate Saturday deliveries for the East Ward Meal Network. We are comparing the Cedar and Harbor staging hubs for one refrigerated route. The board's rule is sequential: first exclude any hub whose verified cold-hold time is below 45 minutes; if more than one hub remains, choose the eligible hub with the lower total driving time. Do not choose until all measurements are on the record."
+            },
+            {
+              "role": "assistant",
+              "content": "I will apply eligibility before comparing travel time. A hub below 45 minutes of verified cold hold is removed even if its route is shorter. Only after that screen will I compare the total driving minutes of the remaining hubs. I will keep this allocation separate from other service-calendar details."
+            },
+            {
+              "role": "user",
+              "content": "The route planner measured 38 total driving minutes from Cedar and 51 from Harbor, using the same Saturday stop list. Harbor's sealed-container test maintained the required temperature for 58 minutes. Those figures have been checked against the route sheet and the kitchen test log."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded: Cedar has the shorter route at 38 minutes, Harbor's route is 51 minutes, and Harbor has a verified 58-minute cold hold. Cedar's cold-hold measurement is still needed before the eligibility screen can be completed."
+            },
+            {
+              "role": "user",
+              "content": "Cedar's test used the same sealed-container protocol and held the required temperature for 62 minutes. The kitchen lead confirmed that result from the uninterrupted sensor trace; it is not a projection from the shorter route."
+            },
+            {
+              "role": "assistant",
+              "content": "I have Cedar's verified cold-hold result and will treat it as the remaining eligibility input. The route duration and cold-hold duration are different measurements, so I will not substitute one for the other."
+            },
+            {
+              "role": "user",
+              "content": "Apply the board's sequence now and name the hub for the refrigerated route. State which hub survives the eligibility screen and how the driving-time comparison resolves the choice."
+            },
+            {
+              "role": "assistant",
+              "content": "Choose Cedar. Both hubs clear the 45-minute cold-hold screen, and Cedar's 38-minute route is shorter than Harbor's 51-minute route, so the second step selects Cedar."
+            },
+            {
+              "role": "user",
+              "content": "A different service detail is already fixed: walk-in intake at the Linden center is on Thursday. That schedule belongs to the benefits team, not the delivery route, and it stays Thursday regardless of which staging hub is selected."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as an independent control fact: walk-in intake at Linden is Thursday. I will not connect that weekday to the cold-chain or route-time decision."
+            },
+            {
+              "role": "user",
+              "content": "The volunteer captain will read the handoff before assigning people. Suggest a concise way to list evidence without repeating any chosen hub, route duration, cold-hold duration, or intake weekday. The format should let the captain see whether a claim came from a route sheet, a sensor trace, or a service calendar."
+            },
+            {
+              "role": "assistant",
+              "content": "Use an evidence index with one row per claim and columns for source type, source owner, observation time, and verification status. Refer to the operational conclusion by a neutral record label rather than restating it. This lets the captain distinguish route, sensor, and calendar evidence while keeping settled values out of the handoff section."
+            },
+            {
+              "role": "user",
+              "content": "We also need a convention for late volunteer updates. A driver may report an availability change after the handoff, but that should not silently rewrite earlier notes. What should the next coordinator record so the sequence remains clear?"
+            },
+            {
+              "role": "assistant",
+              "content": "Add the new report as a dated entry with the driver's name, the time received, and the earlier entry it affects. Mark the earlier entry as superseded but retain it. If the report has not been confirmed, label it pending and name the person responsible for verification. This preserves the chronology without treating an unverified update as settled."
+            },
+            {
+              "role": "user",
+              "content": "Give me a short opening line for that volunteer section. It should direct the next coordinator to use the evidence index and change log, without implying that assignments have already been made."
+            },
+            {
+              "role": "assistant",
+              "content": "Review the evidence index before assigning volunteers, then record any later availability report in the change log with its source and verification status."
+            },
+            {
+              "role": "user",
+              "content": "If the next coordinator finds two updates that disagree, I do not want a guess folded into the record. Propose a small escalation entry that shows the conflict, the evidence still needed, and who will reconcile it. Keep the wording general so it works for staffing, supply counts, or timing notes."
+            },
+            {
+              "role": "assistant",
+              "content": "Create a `needs reconciliation` entry that cites both updates, names the specific evidence that would resolve the difference, and assigns one person to check it by a stated time. Leave both original entries visible and avoid selecting either as current until the check is complete. The same structure works across staffing, inventory, and schedule conflicts."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "91ac899075e1ef9756106e62a423deb6de94fcfcc5115feb45bca1d862e23eb4",
+            "case_id": "e02",
+            "variant": "correct",
+            "literal_messages_sha256": "7a8f51f908975581cc37662075e3e2b3b312373692b031eb4631bf984c0aada6"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "55062acc204ea789e6be179ee6926b7ae81b483a6ba80cac8f788053bd24f71f",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a community meal program with a careful planning record. Apply the program's stated allocation rules, keep unrelated service facts separate, and never imply that a booking, delivery, or contact has occurred."
+            },
+            {
+              "role": "user",
+              "content": "I coordinate Saturday deliveries for the East Ward Meal Network. We are comparing the Cedar and Harbor staging hubs for one refrigerated route. The board's rule is sequential: first exclude any hub whose verified cold-hold time is below 45 minutes; if more than one hub remains, choose the eligible hub with the lower total driving time. Do not choose until all measurements are on the record."
+            },
+            {
+              "role": "assistant",
+              "content": "I will apply eligibility before comparing travel time. A hub below 45 minutes of verified cold hold is removed even if its route is shorter. Only after that screen will I compare the total driving minutes of the remaining hubs. I will keep this allocation separate from other service-calendar details."
+            },
+            {
+              "role": "user",
+              "content": "The route planner measured 38 total driving minutes from Cedar and 51 from Harbor, using the same Saturday stop list. Harbor's sealed-container test maintained the required temperature for 58 minutes. Those figures have been checked against the route sheet and the kitchen test log."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded: Cedar has the shorter route at 38 minutes, Harbor's route is 51 minutes, and Harbor has a verified 58-minute cold hold. Cedar's cold-hold measurement is still needed before the eligibility screen can be completed."
+            },
+            {
+              "role": "user",
+              "content": "Cedar's test used the same sealed-container protocol and held the required temperature for 41 minutes. The kitchen lead confirmed that result from the uninterrupted sensor trace; it is not a projection from the shorter route."
+            },
+            {
+              "role": "assistant",
+              "content": "I have Cedar's verified cold-hold result and will treat it as the remaining eligibility input. The route duration and cold-hold duration are different measurements, so I will not substitute one for the other."
+            },
+            {
+              "role": "user",
+              "content": "Apply the board's sequence now and name the hub for the refrigerated route. State which hub survives the eligibility screen and how the driving-time comparison resolves the choice."
+            },
+            {
+              "role": "assistant",
+              "content": "Choose Harbor. Harbor clears the 45-minute cold-hold screen, while Cedar's 41-minute result fails it. Only Harbor remains eligible, so the driving-time comparison does not change the selection."
+            },
+            {
+              "role": "user",
+              "content": "A different service detail is already fixed: walk-in intake at the Linden center is on Thursday. That schedule belongs to the benefits team, not the delivery route, and it stays Thursday regardless of which staging hub is selected."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as an independent control fact: walk-in intake at Linden is Thursday. I will not connect that weekday to the cold-chain or route-time decision."
+            },
+            {
+              "role": "user",
+              "content": "The volunteer captain will read the handoff before assigning people. Suggest a concise way to list evidence without repeating any chosen hub, route duration, cold-hold duration, or intake weekday. The format should let the captain see whether a claim came from a route sheet, a sensor trace, or a service calendar."
+            },
+            {
+              "role": "assistant",
+              "content": "Use an evidence index with one row per claim and columns for source type, source owner, observation time, and verification status. Refer to the operational conclusion by a neutral record label rather than restating it. This lets the captain distinguish route, sensor, and calendar evidence while keeping settled values out of the handoff section."
+            },
+            {
+              "role": "user",
+              "content": "We also need a convention for late volunteer updates. A driver may report an availability change after the handoff, but that should not silently rewrite earlier notes. What should the next coordinator record so the sequence remains clear?"
+            },
+            {
+              "role": "assistant",
+              "content": "Add the new report as a dated entry with the driver's name, the time received, and the earlier entry it affects. Mark the earlier entry as superseded but retain it. If the report has not been confirmed, label it pending and name the person responsible for verification. This preserves the chronology without treating an unverified update as settled."
+            },
+            {
+              "role": "user",
+              "content": "Give me a short opening line for that volunteer section. It should direct the next coordinator to use the evidence index and change log, without implying that assignments have already been made."
+            },
+            {
+              "role": "assistant",
+              "content": "Review the evidence index before assigning volunteers, then record any later availability report in the change log with its source and verification status."
+            },
+            {
+              "role": "user",
+              "content": "If the next coordinator finds two updates that disagree, I do not want a guess folded into the record. Propose a small escalation entry that shows the conflict, the evidence still needed, and who will reconcile it. Keep the wording general so it works for staffing, supply counts, or timing notes."
+            },
+            {
+              "role": "assistant",
+              "content": "Create a `needs reconciliation` entry that cites both updates, names the specific evidence that would resolve the difference, and assigns one person to check it by a stated time. Leave both original entries visible and avoid selecting either as current until the check is complete. The same structure works across staffing, inventory, and schedule conflicts."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "91ac899075e1ef9756106e62a423deb6de94fcfcc5115feb45bca1d862e23eb4",
+            "case_id": "e02",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "922730e815f2dc9df75aaf07b1006d89451a896940a4f554e641d1f6d4860def"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e03",
+      "source_file_sha256": "5186e8444ee9ae3eaef67e9ac322a206034ce80f9d245c44dce123cb6561628a",
+      "title": "North Fork sensor-service access plan",
+      "domain": "physical logistics and field operations",
+      "middle_end_msg": 11,
+      "changed_message_allowlist": [
+        5
+      ],
+      "focal": {
+        "plant_id": "e03-route-authorization",
+        "category": "derived_decision",
+        "rule_or_relation": "Ridge Spur is authorized only if the current bridge posting is at least the 8.6-tonne loaded weight plus a 0.5-tonne reserve and the verified 07:00 gauge is below 1.20 metres; otherwise Quarry Loop is required.",
+        "changed_input": "The current Mill Bridge posting is 9.4 tonnes in C and 8.8 tonnes in W.",
+        "probe": "Given the truck, bridge posting, stream gauge, and routing rule already recorded, which access route is authorized for the morning sensor service?",
+        "correct_target": "Ridge Spur",
+        "counterfactual_target": "Quarry Loop",
+        "establishing_message_indices": [
+          1,
+          3,
+          5,
+          9
+        ],
+        "downstream_reference_indices": [],
+        "why_derived": "The answer requires computing the 9.1-tonne minimum posting from loaded weight plus reserve, comparing the current posting to it, checking the separate gauge threshold, and applying the two-condition rule.",
+        "why_counterfactual_reverses": "C clears both conditions (9.4 >= 9.1 and 0.88 < 1.20), while W fails the bridge condition (8.8 < 9.1) even though the gauge still clears."
+      },
+      "nonfocal_control": {
+        "plant_id": "e03-radio-assignment",
+        "category": "unchanged_control",
+        "probe": "Which radio channel should Dana's western creek crew monitor for base check-ins?",
+        "target": "Channel 3",
+        "countertarget": "Channel 5",
+        "establishing_message_indices": [
+          7,
+          8
+        ],
+        "why_independent_of_focal": "The communications card maps crew sector to channel and explicitly states that the assignment does not depend on access route. The entire radio chain is byte-identical under C and W."
+      },
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "3755595b178c5c1962638e86e0f5cbc0525ac8bc0d3764b9e0127710ca0d16d0",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting Dana, a field coordinator preparing a one-day maintenance visit for a watershed sensor network. Keep operational facts distinct, do not claim that external actions have occurred, and answer from the decisions and constraints stated in the conversation."
+            },
+            {
+              "role": "user",
+              "content": "I'm assembling tomorrow's North Fork plan for Dana Ruiz, our field lead. The job is to replace the rain-gauge battery and inspect the telemetry mast before the afternoon weather moves in. We have one 4x4 service truck, gross weight 8.6 tonnes once the tool cabinet and crew are aboard. There are two usable approaches: Ridge Spur is the direct road over Mill Bridge, while Quarry Loop adds about forty minutes but avoids that bridge. I want the handoff to preserve the actual constraints rather than just calling one route 'preferred.'"
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I’ll treat the truck weight, bridge status, water conditions, and routing policy as separate inputs. Ridge Spur being shorter does not by itself authorize it; Quarry Loop remains the alternate if the direct approach fails an operating condition. I’ll also keep unrelated crew and equipment details separate so a later route question is based only on the relevant chain."
+            },
+            {
+              "role": "user",
+              "content": "Here is the route rule from the field manual. Ridge Spur may be used only when the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the 07:00 North Fork gauge is below 1.20 metres. If either condition fails, use Quarry Loop. Do not substitute yesterday's bridge sign or an estimated gauge reading. The bridge posting update is still coming from roads, so don't choose a route yet."
+            },
+            {
+              "role": "assistant",
+              "content": "The decision rule is recorded without resolving it: compare the current posting with 8.6 tonnes plus the 0.5-tonne reserve, and separately check the specified morning gauge against 1.20 metres. Both conditions must hold for Ridge Spur. A failed or missing condition sends the truck by Quarry Loop. I’ll wait for the two current observations."
+            },
+            {
+              "role": "user",
+              "content": "Roads has now issued the current Mill Bridge posting: 9.4 tonnes. The notice applies through the end of tomorrow's shift and supersedes the faded sign at the south abutment. No other road restriction was included in that notice."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ve recorded the current posting and its validity window. I won’t infer the route from that input alone because the morning gauge condition is still part of the rule. The old sign is not a decision input."
+            },
+            {
+              "role": "user",
+              "content": "Separate radio item: the communications card assigns Channel 3 to crews working the western creek sector and Channel 5 to crews on the eastern ridge sector. Dana's crew is servicing the western creek sector tomorrow. That channel assignment is for check-ins with base and does not depend on which access road the truck takes."
+            },
+            {
+              "role": "assistant",
+              "content": "The communications chain is independent: tomorrow's crew is in the western creek sector, whose check-in assignment is Channel 3. I’ll keep Channel 5 as the eastern-ridge alternative and won’t let the later road choice alter the radio answer."
+            },
+            {
+              "role": "user",
+              "content": "The hydrology technician has posted the verified 07:00 North Fork gauge for tomorrow's planning sheet: 0.88 metres. The reading came from the upstream staff gauge, not the downstream culvert marker. The forecast mentions light rain after 14:00, but the route rule uses this verified morning value, not the forecast total. We also have a spare mast clamp in the truck; that inventory note doesn't affect access."
+            },
+            {
+              "role": "assistant",
+              "content": "All inputs named by the routing rule are now present, and the measurement source is unambiguous. I’ve also kept the later rain forecast and spare-clamp inventory as context rather than treating either as a routing condition. I can apply the recorded rule when the route is asked for."
+            },
+            {
+              "role": "user",
+              "content": "For the retained part of the handoff, let's settle the inspection record. Dana wants one photograph of the mast footing before work, one of the opened enclosure, and one after the new battery is connected. Use the site code NF-17 at the beginning of each filename, followed by the local time and a short view label. The crew should not photograph the nearby private cabin or its driveway."
+            },
+            {
+              "role": "assistant",
+              "content": "The inspection record will consist of three scoped images: footing before work, enclosure open, and battery connected. Filenames begin with NF-17, then local time and a concise view label. The private cabin and driveway remain outside the frame. This documentation convention does not add a route or radio constraint."
+            },
+            {
+              "role": "user",
+              "content": "One more scheduling detail: the crew will meet at the depot at 06:20, complete the vehicle walk-around there, and aim to be at the sensor site before 08:30. Lunch stays flexible and can happen after the telemetry check. If the mast inspection finds a cracked base plate, they should document it and return with the existing portable unit rather than attempting a structural repair in the field."
+            },
+            {
+              "role": "assistant",
+              "content": "The timing and stop-work boundary are clear. The depot walk-around precedes departure, the site target is before 08:30, and lunch can follow the telemetry check. A cracked base plate changes the on-site work scope to documentation and return; it does not authorize an improvised structural repair."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "5186e8444ee9ae3eaef67e9ac322a206034ce80f9d245c44dce123cb6561628a",
+            "case_id": "e03",
+            "variant": "correct",
+            "literal_messages_sha256": "b3eb7a44d0f372af29468efd505f3fefa13493bc4d312ab6a6a6ee3d948598cd"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "99924f3ba0321f9157a4102695a1310b8de9164e750bf5b7e74507bdd6ea496b",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting Dana, a field coordinator preparing a one-day maintenance visit for a watershed sensor network. Keep operational facts distinct, do not claim that external actions have occurred, and answer from the decisions and constraints stated in the conversation."
+            },
+            {
+              "role": "user",
+              "content": "I'm assembling tomorrow's North Fork plan for Dana Ruiz, our field lead. The job is to replace the rain-gauge battery and inspect the telemetry mast before the afternoon weather moves in. We have one 4x4 service truck, gross weight 8.6 tonnes once the tool cabinet and crew are aboard. There are two usable approaches: Ridge Spur is the direct road over Mill Bridge, while Quarry Loop adds about forty minutes but avoids that bridge. I want the handoff to preserve the actual constraints rather than just calling one route 'preferred.'"
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I’ll treat the truck weight, bridge status, water conditions, and routing policy as separate inputs. Ridge Spur being shorter does not by itself authorize it; Quarry Loop remains the alternate if the direct approach fails an operating condition. I’ll also keep unrelated crew and equipment details separate so a later route question is based only on the relevant chain."
+            },
+            {
+              "role": "user",
+              "content": "Here is the route rule from the field manual. Ridge Spur may be used only when the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the 07:00 North Fork gauge is below 1.20 metres. If either condition fails, use Quarry Loop. Do not substitute yesterday's bridge sign or an estimated gauge reading. The bridge posting update is still coming from roads, so don't choose a route yet."
+            },
+            {
+              "role": "assistant",
+              "content": "The decision rule is recorded without resolving it: compare the current posting with 8.6 tonnes plus the 0.5-tonne reserve, and separately check the specified morning gauge against 1.20 metres. Both conditions must hold for Ridge Spur. A failed or missing condition sends the truck by Quarry Loop. I’ll wait for the two current observations."
+            },
+            {
+              "role": "user",
+              "content": "Roads has now issued the current Mill Bridge posting: 8.8 tonnes. The notice applies through the end of tomorrow's shift and supersedes the faded sign at the south abutment. No other road restriction was included in that notice."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ve recorded the current posting and its validity window. I won’t infer the route from that input alone because the morning gauge condition is still part of the rule. The old sign is not a decision input."
+            },
+            {
+              "role": "user",
+              "content": "Separate radio item: the communications card assigns Channel 3 to crews working the western creek sector and Channel 5 to crews on the eastern ridge sector. Dana's crew is servicing the western creek sector tomorrow. That channel assignment is for check-ins with base and does not depend on which access road the truck takes."
+            },
+            {
+              "role": "assistant",
+              "content": "The communications chain is independent: tomorrow's crew is in the western creek sector, whose check-in assignment is Channel 3. I’ll keep Channel 5 as the eastern-ridge alternative and won’t let the later road choice alter the radio answer."
+            },
+            {
+              "role": "user",
+              "content": "The hydrology technician has posted the verified 07:00 North Fork gauge for tomorrow's planning sheet: 0.88 metres. The reading came from the upstream staff gauge, not the downstream culvert marker. The forecast mentions light rain after 14:00, but the route rule uses this verified morning value, not the forecast total. We also have a spare mast clamp in the truck; that inventory note doesn't affect access."
+            },
+            {
+              "role": "assistant",
+              "content": "All inputs named by the routing rule are now present, and the measurement source is unambiguous. I’ve also kept the later rain forecast and spare-clamp inventory as context rather than treating either as a routing condition. I can apply the recorded rule when the route is asked for."
+            },
+            {
+              "role": "user",
+              "content": "For the retained part of the handoff, let's settle the inspection record. Dana wants one photograph of the mast footing before work, one of the opened enclosure, and one after the new battery is connected. Use the site code NF-17 at the beginning of each filename, followed by the local time and a short view label. The crew should not photograph the nearby private cabin or its driveway."
+            },
+            {
+              "role": "assistant",
+              "content": "The inspection record will consist of three scoped images: footing before work, enclosure open, and battery connected. Filenames begin with NF-17, then local time and a concise view label. The private cabin and driveway remain outside the frame. This documentation convention does not add a route or radio constraint."
+            },
+            {
+              "role": "user",
+              "content": "One more scheduling detail: the crew will meet at the depot at 06:20, complete the vehicle walk-around there, and aim to be at the sensor site before 08:30. Lunch stays flexible and can happen after the telemetry check. If the mast inspection finds a cracked base plate, they should document it and return with the existing portable unit rather than attempting a structural repair in the field."
+            },
+            {
+              "role": "assistant",
+              "content": "The timing and stop-work boundary are clear. The depot walk-around precedes departure, the site target is before 08:30, and lunch can follow the telemetry check. A cracked base plate changes the on-site work scope to documentation and return; it does not authorize an improvised structural repair."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "5186e8444ee9ae3eaef67e9ac322a206034ce80f9d245c44dce123cb6561628a",
+            "case_id": "e03",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "f6a3ea3b93c3fb5754adb46ce98f8192245899ce4b088ff0202b2c66022131f2"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e04",
+      "source_file_sha256": "bd050a1f230f5ed66857ef6909391b2cd6109b39c66ccc76a22ada87b6497b8b",
+      "title": "K-27 pilot coating qualification handoff",
+      "domain": "manufacturing and safety operations",
+      "middle_end_msg": 21,
+      "changed_message_allowlist": [
+        5
+      ],
+      "focal": {
+        "plant_id": "e04-abrasion-disposition",
+        "category": "derived_decision",
+        "rule_or_relation": "Release K-27 only if the G-14-corrected five-panel mean lies within 119.0–123.0 micrometres, the full corrected-mean ±1.1 interval lies within 117.0–125.0, and the stabilized oven-zone spread is no more than 4.0 degrees; otherwise hold it.",
+        "changed_input": "The current G-14 signed calibration correction is +0.8 micrometres in C and +4.8 micrometres in W.",
+        "probe": "Apply the approved three-part gate to the recorded certificate, panel readings, and stabilized oven values. What is the disposition for the abrasion trial?",
+        "correct_target": "Release",
+        "counterfactual_target": "Hold",
+        "establishing_message_indices": [
+          3,
+          5,
+          9,
+          11
+        ],
+        "downstream_reference_indices": [],
+        "why_derived": "The answer requires averaging five readings, applying a signed calibration correction, constructing and checking an uncertainty interval, calculating the oven's max-minus-min spread, then conjoining all three gate conditions.",
+        "why_counterfactual_reverses": "The raw mean is 120.0 and oven spread is 2.5. In C, correction +0.8 gives 120.8 with interval 119.7–121.9, so all checks pass. In W, correction +4.8 gives 124.8 with interval 123.7–125.9, so both thickness checks fail while the oven check remains unchanged."
+      },
+      "nonfocal_control": {
+        "plant_id": "e04-retained-set-cabinet",
+        "category": "unchanged_control",
+        "probe": "Under the retention map, which cabinet holds K-27's sealed witness-panel set?",
+        "target": "Cabinet 2",
+        "countertarget": "Cabinet 4",
+        "establishing_message_indices": [
+          7,
+          8,
+          17,
+          18
+        ],
+        "why_independent_of_focal": "Cabinet assignment depends only on odd versus even lot number and is explicitly independent of release status. The whole mapping and K-27 identity are byte-identical across C and W."
+      },
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "f97942cd604805430e3aac25e43026ea7618841f5a6223129037b5c6b40e4503",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a process engineer with a pilot coating-line handoff. Preserve distinctions among measurements, qualification rules, safety boundaries, and administrative details. Do not claim that tests, releases, notifications, or physical work occurred unless the user states that they did."
+            },
+            {
+              "role": "user",
+              "content": "I’m preparing the second-shift handoff for pilot lot K-27 on Line 4. This is a waterborne barrier coating on aluminum witness panels, not customer product. Mina is the process engineer, Owen runs the coater, and Priya is the quality technician. The immediate question later will be whether K-27 may enter the scheduled abrasion trial or must remain on hold. I want the record to preserve the qualification logic, but nobody should infer that a release or a hold has already been entered in the quality system."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ll treat the abrasion-trial disposition as a decision to derive from the stated rule and verified inputs, not as an action already taken. I’ll also separate process observations from safety limits and from clerical follow-up. Mina owns the technical interpretation, Priya owns the recorded measurements, and Owen’s operating notes can supply context without overriding the qualification rule."
+            },
+            {
+              "role": "user",
+              "content": "Here is the approved gate for this pilot. First calculate the corrected wet-film mean by adding the signed calibration correction from gauge G-14 to the arithmetic mean of Priya’s five panel readings. The corrected mean must be from 119.0 through 123.0 micrometres. Then take the corrected mean plus or minus the certificate’s 1.1-micrometre expanded uncertainty; that entire interval must remain inside the hard guardrails of 117.0 through 125.0. Finally, the largest difference among the three stabilized oven-zone temperatures must be no more than 4.0 degrees Celsius. If all three conditions pass, the disposition is Release K-27; otherwise it is Hold K-27."
+            },
+            {
+              "role": "assistant",
+              "content": "The gate has three conjunctive checks. I’ll compute the five-reading mean, apply G-14’s signed correction, test the corrected mean against 119.0–123.0, expand it by 1.1 in both directions and test that interval against 117.0–125.0, then calculate the oven’s maximum zone spread and compare it with 4.0. A failure anywhere produces the hold disposition; process preference or schedule pressure cannot substitute for a passing calculation."
+            },
+            {
+              "role": "user",
+              "content": "Metrology has attached the current G-14 certificate. For this range, its signed correction is +0.8 micrometres. The 1.1-micrometre expanded uncertainty in the approved gate is the value from the same certificate. This certificate covers tomorrow's pilot window; an older sticker showing a zero adjustment is obsolete."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ve recorded the current signed correction and the certificate uncertainty as distinct quantities. The signed correction changes the measured mean, while the expanded uncertainty defines the interval around that corrected result. I’ll exclude the obsolete zero-adjustment sticker and wait for the actual panel readings before deriving any disposition."
+            },
+            {
+              "role": "user",
+              "content": "Independent sample-control item: the witness-panel retention map assigns sets from odd-numbered pilot lots to Cabinet 2 and sets from even-numbered pilot lots to Cabinet 4. K-27 is the odd-numbered lot, so its sealed witness set follows the Cabinet 2 branch. This storage mapping is based only on the lot number and remains the same whether the abrasion trial is released or held."
+            },
+            {
+              "role": "assistant",
+              "content": "The retention chain is independent of the qualification result: odd-numbered K-27 maps to Cabinet 2, while Cabinet 4 is the even-lot alternative. I’ll preserve that storage answer separately and won’t treat the eventual abrasion disposition as changing it."
+            },
+            {
+              "role": "user",
+              "content": "Priya has now completed the five wet-film readings on the designated qualification panels, in panel order: 119.6, 120.1, 120.4, 119.9, and 120.0 micrometres. She checked the panel IDs against the traveler before transcribing them. The sixth strip on the rack is a setup strip and is not part of the five-reading mean. No reading was discarded or rounded before this list was entered."
+            },
+            {
+              "role": "assistant",
+              "content": "The qualification set is the five listed values only; their arithmetic sum is 600.0 micrometres, so the uncorrected mean is 120.0. The setup strip remains excluded by the approved sampling definition. I’ll combine that mean with the current signed correction and uncertainty only when applying the full gate, rather than mixing setup observations into the calculation."
+            },
+            {
+              "role": "user",
+              "content": "Owen’s stabilized oven log reads Zone A 86.2 degrees Celsius, Zone B 88.7, and Zone C 87.5. Those are the ten-minute stabilized values after the web speed reached the pilot setpoint. The earlier warm-up values in the margin are not qualification data. Airflow alarms stayed clear during this interval, but alarm status is not a replacement for the numerical zone-spread check."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ve isolated the three stabilized temperatures from the warm-up notes. The maximum is 88.7 and the minimum is 86.2, making the relevant spread 2.5 degrees Celsius. Clear airflow alarms are useful operating context, but the qualification input remains the calculated spread under the stated 4.0-degree limit."
+            },
+            {
+              "role": "user",
+              "content": "For context, the mixer ran the standard sequence: water charge, dispersant, pigment blend, then the binder addition under reduced speed. The batch rested twelve minutes before the first viscosity check. A small amount of foam was skimmed from the setup pail, not from the production tote. The final viscosity was 410 mPa·s at the specified spindle and temperature. None of those observations appears in the abrasion-release gate, but they should stay in the process narrative for troubleshooting."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ll retain the mixing order, rest time, setup-pail foam observation, and final viscosity as process history. They may help explain later coating behavior, yet they are not additional pass/fail terms in the frozen gate. In particular, I won’t turn the 410 mPa·s reading into an unstated release criterion or confuse setup-pail handling with the qualified tote."
+            },
+            {
+              "role": "user",
+              "content": "Safety boundary for the next shift: the interlocked enclosure stays closed whenever the coater is moving. If the web breaks, Owen stops the drive and verifies zero motion before anyone opens the access panel. Solvent respirators are not required for this waterborne formulation under the current assessment, but safety glasses, cut-resistant gloves for panel edges, and the line's normal hearing protection still apply. A qualification decision never waives these controls."
+            },
+            {
+              "role": "assistant",
+              "content": "The enclosure and zero-motion sequence are operational safety requirements independent of lot disposition. The specified PPE remains safety glasses, edge-handling gloves, and normal hearing protection; the current assessment does not add solvent respirators. I’ll keep these as boundaries on any continued work rather than treating a favorable quality calculation as permission to bypass them."
+            },
+            {
+              "role": "user",
+              "content": "Traceability details: the coating tote is tagged K27-MX2, the qualification panels are K27-P01 through K27-P05, and the retained sealed set is K27-R. Priya initialed the transcription line, while Mina will initial the calculated disposition after review. The abrasion machine booking is a calendar reservation, not evidence of approval. If the lot is held, the booking can simply be released later; don't let its existence influence the gate."
+            },
+            {
+              "role": "assistant",
+              "content": "The identifiers and sign-off sequence are recorded. Priya’s initials establish measurement transcription, while Mina’s later initials belong to the reviewed calculation. The abrasion reservation is administrative capacity only and has no evidentiary weight in the qualification decision. K27-R remains the retained set governed by the separate cabinet mapping."
+            },
+            {
+              "role": "user",
+              "content": "Before we move on, preserve enough detail that a later assistant can answer the disposition question by calculation rather than by guessing from tone. The current certificate, the exact five readings, the uncertainty, the numerical guardrails, and the stabilized oven values are the load-bearing inputs. The mixing notes, calendar booking, and staffing are useful context but must not create extra criteria. Do not state the final disposition in this part of the conversation; it will be probed separately."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. The later decision can be reconstructed from the frozen three-part rule and its explicit numerical inputs, with no appeal to schedule, confidence language, or unrelated process notes. I’ll preserve the distinction between evidence, calculation, and the unperformed administrative act. I will not state the final disposition here."
+            },
+            {
+              "role": "user",
+              "content": "Now for the retained shift plan. Second shift starts at 14:30 with a ten-minute face-to-face turnover at the Line 4 board. Owen remains the line operator until 18:00, and Lena takes the operator role after the meal break. Priya is available until 17:15 for measurement questions; after that, Mina is the contact for interpretation. The plan should name roles rather than imply that one person owns every task."
+            },
+            {
+              "role": "assistant",
+              "content": "The retained staffing plan separates responsibilities and times: turnover at 14:30, Owen operating through 18:00, Lena assuming the operator role after the meal break, Priya available for measurement questions until 17:15, and Mina handling later interpretation. I’ll avoid collapsing these into a single owner or implying that availability changes the technical criteria."
+            },
+            {
+              "role": "user",
+              "content": "At turnover, the outgoing operator should point out the west-side emergency stop, the manual web-cut tool, and the boundary of the marked exclusion zone. The incoming operator should repeat back the web-break sequence before motion resumes. This is a verbal verification, not a request to stage a drill while material is threaded. The aisle beside the electrical cabinet must stay clear of panel carts."
+            },
+            {
+              "role": "assistant",
+              "content": "The turnover includes location awareness for the emergency stop and web-cut tool, plus a repeat-back of the web-break sequence. It does not call for an energized or threaded-material drill. The exclusion-zone boundary and clear electrical-cabinet aisle remain standing housekeeping constraints for both operators."
+            },
+            {
+              "role": "user",
+              "content": "If work continues, panel handling uses the padded rack with coated faces alternating left and right so adjacent panels do not touch. Each slot card carries the panel ID in plain text; color dots are only a visual aid and are not the traceability record. Anyone moving a panel records the time and destination on the traveler. No one should rewrite an ID to make a damaged label look cleaner."
+            },
+            {
+              "role": "assistant",
+              "content": "The padded-rack orientation, plain-text slot cards, and traveler entries define the handling record. Color dots cannot replace panel IDs, and damaged labels should be preserved and escalated rather than cosmetically rewritten. Those controls apply to any authorized panel movement without deciding whether movement is authorized."
+            },
+            {
+              "role": "user",
+              "content": "Cleaning after the pilot uses the established low-volume sequence: drain the removable feed cup, wipe it with the approved aqueous cleaner, circulate the first rinse through the return line, and collect that rinse in the labeled recovery container. A second clear-water rinse may go to the normal treatment tote only after the operator confirms it is free of visible coating. Do not combine the first and second rinses for convenience."
+            },
+            {
+              "role": "assistant",
+              "content": "The cleanup sequence keeps the concentrated first rinse segregated in its labeled recovery container and conditions the second rinse on a visual-clear check before it reaches the normal treatment tote. The feed-cup drain and wipe precede circulation. I’ll preserve that order and the prohibition on combining rinses."
+            },
+            {
+              "role": "user",
+              "content": "For the shift record, take one overview photograph of the cleared operator station and one close view of the feed cup after the first wipe. The camera must exclude the whiteboard section containing employee phone numbers. Use the traveler ID and local time in the image caption; don't photograph the metrology certificate because its controlled copy already sits in the document system."
+            },
+            {
+              "role": "assistant",
+              "content": "The record calls for two scoped photographs: a cleared-station overview and the feed cup after its first wipe. Captions use the traveler ID and local time. Employee phone numbers and the controlled metrology certificate remain outside the images, avoiding both privacy exposure and an unnecessary duplicate record."
+            },
+            {
+              "role": "user",
+              "content": "Maintenance left two spare doctor-blade clamps in the blue parts bin and marked the installed clamp for inspection at the next planned shutdown. That note is not a finding that the installed clamp is defective. If it begins to chatter or loosen during operation, stop under the normal abnormal-condition procedure instead of swapping hardware while the line is moving."
+            },
+            {
+              "role": "assistant",
+              "content": "The spare clamps are inventory, and the inspection mark schedules a future check rather than declaring a present defect. Chatter or loosening would trigger the normal stop procedure; no hardware change occurs in motion. I’ll keep the maintenance note factual and separate from both quality disposition and immediate fault diagnosis."
+            },
+            {
+              "role": "user",
+              "content": "If the building alarm sounds during turnover, everyone follows the posted evacuation route to Assembly Area North and the shift lead accounts for the team there. The team does not pause to cover the coating tote or retrieve notebooks. Once facilities gives an all-clear, Mina decides whether the pilot record is still complete enough to resume; an all-clear by itself does not answer that documentation question."
+            },
+            {
+              "role": "assistant",
+              "content": "The evacuation instruction takes priority: use the posted route, assemble at Area North, and account for the team without delaying for materials or records. A facilities all-clear permits re-entry but does not independently establish record completeness; Mina makes the separate resume assessment afterward."
+            },
+            {
+              "role": "user",
+              "content": "Room conditions are tracked separately from the oven log. The wall sensor records temperature and relative humidity every fifteen minutes, and the operator copies only the start and finish values onto the traveler. If the wall sensor shows a fault code, preserve the code and use the calibrated portable meter for a clearly labeled supplemental reading. Do not silently replace a failed wall-sensor value or backfill a number from the building dashboard."
+            },
+            {
+              "role": "assistant",
+              "content": "Ambient records keep their source identity: ordinary start and finish values come from the wall sensor, while a portable-meter value is supplemental and labeled as such after a fault. A fault code stays visible in the record. Building-dashboard history is not a substitute, and none of these ambient entries should be confused with the three stabilized oven temperatures."
+            },
+            {
+              "role": "user",
+              "content": "Unused coating remains in the closed K27-MX2 tote until Mina chooses its next status. Two blank material-status tags are available, but neither should be selected or attached preemptively. Any tag that is eventually used needs the traveler ID, date, initials, and the status written in plain text; color alone is never the status record. Keep unused tags in the document pouch beside the traveler."
+            },
+            {
+              "role": "assistant",
+              "content": "The tote remains closed under its existing identity until a disposition is actually entered. Red and green tags are possible downstream controls, not advance evidence about the decision. A used tag requires traveler ID, date, and initials, with its text—not color alone—carrying the status."
+            },
+            {
+              "role": "user",
+              "content": "The small drawdown cups from setup are labeled S1 and S2. They may remain on the drying tray until morning so the day-shift engineer can compare appearance, but they are not members of the five-panel qualification set or the sealed retention set. Keep the tray inside the marked sample area, and discard the cups only after Mina closes the comparison note."
+            },
+            {
+              "role": "assistant",
+              "content": "S1 and S2 are appearance-comparison samples with their own temporary custody path. They stay in the marked sample area until the comparison note closes, but they do not enter the qualification mean and are not K27-R. Their presence therefore cannot add observations to either the decision calculation or the retention-cabinet mapping."
+            },
+            {
+              "role": "user",
+              "content": "Data amendments follow the laboratory convention: draw one line through an incorrect handwritten entry, leave the original legible, add the corrected value, initials, date, and a brief reason. Blank spaces on a completed measurement row are crossed out. Electronic attachments keep their original filenames, and a revised attachment gets a new version rather than replacing the earlier file. This is about record integrity, not about making the sheet look tidy."
+            },
+            {
+              "role": "assistant",
+              "content": "The amendment method preserves the audit trail in both media. Handwritten corrections remain legible and attributable, completed rows cannot retain ambiguous blanks, and electronic revisions are additive versions rather than silent replacements. Cosmetic cleanup is not a reason to erase original evidence."
+            },
+            {
+              "role": "user",
+              "content": "A power interruption has its own recovery rule. Leave the drive stopped, note the displayed line speed and oven temperatures when power returns, and have maintenance inspect the interlock status before rethreading. Mina then decides whether the interruption created a process break that needs a new set of panels. The crew must not assume that equipment restart means the existing measurements remain representative."
+            },
+            {
+              "role": "assistant",
+              "content": "Recovery after power loss separates equipment readiness from experimental continuity. The crew records the returned displays, maintenance checks interlocks before rethreading, and Mina evaluates whether new panels are required. A successful restart does not retroactively validate or invalidate the existing measurements by itself."
+            },
+            {
+              "role": "user",
+              "content": "At end of shift, the Line 4 board should show only current operational status: whether the line is stopped and clean, stopped and awaiting cleanup, or secured for maintenance. Detailed measurements stay in the traveler rather than being copied to the public board. The outgoing operator signs the turnover box only after the incoming operator has had a chance to ask questions."
+            },
+            {
+              "role": "assistant",
+              "content": "The public board carries a bounded equipment-status phrase, while measurements remain in the controlled traveler. Turnover sign-off follows the incoming operator's question opportunity rather than preceding it. This keeps the board useful without turning it into a duplicate technical record or an implicit quality disposition."
+            },
+            {
+              "role": "user",
+              "content": "Any trimmed edge material goes into the pilot-scrap drum marked WB-4, with K-27 written on the batch line of the drum log. Intact witness panels do not go into that drum, even if they are no longer needed for testing; Mina assigns their final disposition separately. The operator records an estimated scrap mass, not a fabricated scale reading, because this line has no floor scale."
+            },
+            {
+              "role": "assistant",
+              "content": "Trimmed edge material uses the WB-4 pilot-scrap path and a clearly identified estimated mass. Intact witness panels remain outside that waste stream pending their own disposition. The record should label an estimate honestly rather than presenting unsupported precision."
+            },
+            {
+              "role": "user",
+              "content": "Please keep the eventual handoff concise and operational. It should distinguish settled context from actions that still require a person, avoid congratulatory language, and avoid inventing messages to maintenance, quality, or scheduling. The next assistant may be asked about either a technical fact or a retained-tail instruction, so the wording should not collapse the whole exchange into the coating disposition alone."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ll keep the handoff neutral, role-specific, and bounded by what was actually stated. It will preserve the relevant operating context and retained instructions without claiming that anyone was contacted or that a physical or administrative step occurred. It will also keep the technical decision chain distinct from staffing, cleanup, safety, traceability, and contingency details."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "bd050a1f230f5ed66857ef6909391b2cd6109b39c66ccc76a22ada87b6497b8b",
+            "case_id": "e04",
+            "variant": "correct",
+            "literal_messages_sha256": "0f1b1c5065779045ec65ae1606a47fd8adce291e97629b6407758a9bd254ddde"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "8aa6ce40c0e286397f73f7007d7e84f2a9413b68497600f02a94316fb712c3fe",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a process engineer with a pilot coating-line handoff. Preserve distinctions among measurements, qualification rules, safety boundaries, and administrative details. Do not claim that tests, releases, notifications, or physical work occurred unless the user states that they did."
+            },
+            {
+              "role": "user",
+              "content": "I’m preparing the second-shift handoff for pilot lot K-27 on Line 4. This is a waterborne barrier coating on aluminum witness panels, not customer product. Mina is the process engineer, Owen runs the coater, and Priya is the quality technician. The immediate question later will be whether K-27 may enter the scheduled abrasion trial or must remain on hold. I want the record to preserve the qualification logic, but nobody should infer that a release or a hold has already been entered in the quality system."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ll treat the abrasion-trial disposition as a decision to derive from the stated rule and verified inputs, not as an action already taken. I’ll also separate process observations from safety limits and from clerical follow-up. Mina owns the technical interpretation, Priya owns the recorded measurements, and Owen’s operating notes can supply context without overriding the qualification rule."
+            },
+            {
+              "role": "user",
+              "content": "Here is the approved gate for this pilot. First calculate the corrected wet-film mean by adding the signed calibration correction from gauge G-14 to the arithmetic mean of Priya’s five panel readings. The corrected mean must be from 119.0 through 123.0 micrometres. Then take the corrected mean plus or minus the certificate’s 1.1-micrometre expanded uncertainty; that entire interval must remain inside the hard guardrails of 117.0 through 125.0. Finally, the largest difference among the three stabilized oven-zone temperatures must be no more than 4.0 degrees Celsius. If all three conditions pass, the disposition is Release K-27; otherwise it is Hold K-27."
+            },
+            {
+              "role": "assistant",
+              "content": "The gate has three conjunctive checks. I’ll compute the five-reading mean, apply G-14’s signed correction, test the corrected mean against 119.0–123.0, expand it by 1.1 in both directions and test that interval against 117.0–125.0, then calculate the oven’s maximum zone spread and compare it with 4.0. A failure anywhere produces the hold disposition; process preference or schedule pressure cannot substitute for a passing calculation."
+            },
+            {
+              "role": "user",
+              "content": "Metrology has attached the current G-14 certificate. For this range, its signed correction is +4.8 micrometres. The 1.1-micrometre expanded uncertainty in the approved gate is the value from the same certificate. This certificate covers tomorrow's pilot window; an older sticker showing a zero adjustment is obsolete."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ve recorded the current signed correction and the certificate uncertainty as distinct quantities. The signed correction changes the measured mean, while the expanded uncertainty defines the interval around that corrected result. I’ll exclude the obsolete zero-adjustment sticker and wait for the actual panel readings before deriving any disposition."
+            },
+            {
+              "role": "user",
+              "content": "Independent sample-control item: the witness-panel retention map assigns sets from odd-numbered pilot lots to Cabinet 2 and sets from even-numbered pilot lots to Cabinet 4. K-27 is the odd-numbered lot, so its sealed witness set follows the Cabinet 2 branch. This storage mapping is based only on the lot number and remains the same whether the abrasion trial is released or held."
+            },
+            {
+              "role": "assistant",
+              "content": "The retention chain is independent of the qualification result: odd-numbered K-27 maps to Cabinet 2, while Cabinet 4 is the even-lot alternative. I’ll preserve that storage answer separately and won’t treat the eventual abrasion disposition as changing it."
+            },
+            {
+              "role": "user",
+              "content": "Priya has now completed the five wet-film readings on the designated qualification panels, in panel order: 119.6, 120.1, 120.4, 119.9, and 120.0 micrometres. She checked the panel IDs against the traveler before transcribing them. The sixth strip on the rack is a setup strip and is not part of the five-reading mean. No reading was discarded or rounded before this list was entered."
+            },
+            {
+              "role": "assistant",
+              "content": "The qualification set is the five listed values only; their arithmetic sum is 600.0 micrometres, so the uncorrected mean is 120.0. The setup strip remains excluded by the approved sampling definition. I’ll combine that mean with the current signed correction and uncertainty only when applying the full gate, rather than mixing setup observations into the calculation."
+            },
+            {
+              "role": "user",
+              "content": "Owen’s stabilized oven log reads Zone A 86.2 degrees Celsius, Zone B 88.7, and Zone C 87.5. Those are the ten-minute stabilized values after the web speed reached the pilot setpoint. The earlier warm-up values in the margin are not qualification data. Airflow alarms stayed clear during this interval, but alarm status is not a replacement for the numerical zone-spread check."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ve isolated the three stabilized temperatures from the warm-up notes. The maximum is 88.7 and the minimum is 86.2, making the relevant spread 2.5 degrees Celsius. Clear airflow alarms are useful operating context, but the qualification input remains the calculated spread under the stated 4.0-degree limit."
+            },
+            {
+              "role": "user",
+              "content": "For context, the mixer ran the standard sequence: water charge, dispersant, pigment blend, then the binder addition under reduced speed. The batch rested twelve minutes before the first viscosity check. A small amount of foam was skimmed from the setup pail, not from the production tote. The final viscosity was 410 mPa·s at the specified spindle and temperature. None of those observations appears in the abrasion-release gate, but they should stay in the process narrative for troubleshooting."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ll retain the mixing order, rest time, setup-pail foam observation, and final viscosity as process history. They may help explain later coating behavior, yet they are not additional pass/fail terms in the frozen gate. In particular, I won’t turn the 410 mPa·s reading into an unstated release criterion or confuse setup-pail handling with the qualified tote."
+            },
+            {
+              "role": "user",
+              "content": "Safety boundary for the next shift: the interlocked enclosure stays closed whenever the coater is moving. If the web breaks, Owen stops the drive and verifies zero motion before anyone opens the access panel. Solvent respirators are not required for this waterborne formulation under the current assessment, but safety glasses, cut-resistant gloves for panel edges, and the line's normal hearing protection still apply. A qualification decision never waives these controls."
+            },
+            {
+              "role": "assistant",
+              "content": "The enclosure and zero-motion sequence are operational safety requirements independent of lot disposition. The specified PPE remains safety glasses, edge-handling gloves, and normal hearing protection; the current assessment does not add solvent respirators. I’ll keep these as boundaries on any continued work rather than treating a favorable quality calculation as permission to bypass them."
+            },
+            {
+              "role": "user",
+              "content": "Traceability details: the coating tote is tagged K27-MX2, the qualification panels are K27-P01 through K27-P05, and the retained sealed set is K27-R. Priya initialed the transcription line, while Mina will initial the calculated disposition after review. The abrasion machine booking is a calendar reservation, not evidence of approval. If the lot is held, the booking can simply be released later; don't let its existence influence the gate."
+            },
+            {
+              "role": "assistant",
+              "content": "The identifiers and sign-off sequence are recorded. Priya’s initials establish measurement transcription, while Mina’s later initials belong to the reviewed calculation. The abrasion reservation is administrative capacity only and has no evidentiary weight in the qualification decision. K27-R remains the retained set governed by the separate cabinet mapping."
+            },
+            {
+              "role": "user",
+              "content": "Before we move on, preserve enough detail that a later assistant can answer the disposition question by calculation rather than by guessing from tone. The current certificate, the exact five readings, the uncertainty, the numerical guardrails, and the stabilized oven values are the load-bearing inputs. The mixing notes, calendar booking, and staffing are useful context but must not create extra criteria. Do not state the final disposition in this part of the conversation; it will be probed separately."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. The later decision can be reconstructed from the frozen three-part rule and its explicit numerical inputs, with no appeal to schedule, confidence language, or unrelated process notes. I’ll preserve the distinction between evidence, calculation, and the unperformed administrative act. I will not state the final disposition here."
+            },
+            {
+              "role": "user",
+              "content": "Now for the retained shift plan. Second shift starts at 14:30 with a ten-minute face-to-face turnover at the Line 4 board. Owen remains the line operator until 18:00, and Lena takes the operator role after the meal break. Priya is available until 17:15 for measurement questions; after that, Mina is the contact for interpretation. The plan should name roles rather than imply that one person owns every task."
+            },
+            {
+              "role": "assistant",
+              "content": "The retained staffing plan separates responsibilities and times: turnover at 14:30, Owen operating through 18:00, Lena assuming the operator role after the meal break, Priya available for measurement questions until 17:15, and Mina handling later interpretation. I’ll avoid collapsing these into a single owner or implying that availability changes the technical criteria."
+            },
+            {
+              "role": "user",
+              "content": "At turnover, the outgoing operator should point out the west-side emergency stop, the manual web-cut tool, and the boundary of the marked exclusion zone. The incoming operator should repeat back the web-break sequence before motion resumes. This is a verbal verification, not a request to stage a drill while material is threaded. The aisle beside the electrical cabinet must stay clear of panel carts."
+            },
+            {
+              "role": "assistant",
+              "content": "The turnover includes location awareness for the emergency stop and web-cut tool, plus a repeat-back of the web-break sequence. It does not call for an energized or threaded-material drill. The exclusion-zone boundary and clear electrical-cabinet aisle remain standing housekeeping constraints for both operators."
+            },
+            {
+              "role": "user",
+              "content": "If work continues, panel handling uses the padded rack with coated faces alternating left and right so adjacent panels do not touch. Each slot card carries the panel ID in plain text; color dots are only a visual aid and are not the traceability record. Anyone moving a panel records the time and destination on the traveler. No one should rewrite an ID to make a damaged label look cleaner."
+            },
+            {
+              "role": "assistant",
+              "content": "The padded-rack orientation, plain-text slot cards, and traveler entries define the handling record. Color dots cannot replace panel IDs, and damaged labels should be preserved and escalated rather than cosmetically rewritten. Those controls apply to any authorized panel movement without deciding whether movement is authorized."
+            },
+            {
+              "role": "user",
+              "content": "Cleaning after the pilot uses the established low-volume sequence: drain the removable feed cup, wipe it with the approved aqueous cleaner, circulate the first rinse through the return line, and collect that rinse in the labeled recovery container. A second clear-water rinse may go to the normal treatment tote only after the operator confirms it is free of visible coating. Do not combine the first and second rinses for convenience."
+            },
+            {
+              "role": "assistant",
+              "content": "The cleanup sequence keeps the concentrated first rinse segregated in its labeled recovery container and conditions the second rinse on a visual-clear check before it reaches the normal treatment tote. The feed-cup drain and wipe precede circulation. I’ll preserve that order and the prohibition on combining rinses."
+            },
+            {
+              "role": "user",
+              "content": "For the shift record, take one overview photograph of the cleared operator station and one close view of the feed cup after the first wipe. The camera must exclude the whiteboard section containing employee phone numbers. Use the traveler ID and local time in the image caption; don't photograph the metrology certificate because its controlled copy already sits in the document system."
+            },
+            {
+              "role": "assistant",
+              "content": "The record calls for two scoped photographs: a cleared-station overview and the feed cup after its first wipe. Captions use the traveler ID and local time. Employee phone numbers and the controlled metrology certificate remain outside the images, avoiding both privacy exposure and an unnecessary duplicate record."
+            },
+            {
+              "role": "user",
+              "content": "Maintenance left two spare doctor-blade clamps in the blue parts bin and marked the installed clamp for inspection at the next planned shutdown. That note is not a finding that the installed clamp is defective. If it begins to chatter or loosen during operation, stop under the normal abnormal-condition procedure instead of swapping hardware while the line is moving."
+            },
+            {
+              "role": "assistant",
+              "content": "The spare clamps are inventory, and the inspection mark schedules a future check rather than declaring a present defect. Chatter or loosening would trigger the normal stop procedure; no hardware change occurs in motion. I’ll keep the maintenance note factual and separate from both quality disposition and immediate fault diagnosis."
+            },
+            {
+              "role": "user",
+              "content": "If the building alarm sounds during turnover, everyone follows the posted evacuation route to Assembly Area North and the shift lead accounts for the team there. The team does not pause to cover the coating tote or retrieve notebooks. Once facilities gives an all-clear, Mina decides whether the pilot record is still complete enough to resume; an all-clear by itself does not answer that documentation question."
+            },
+            {
+              "role": "assistant",
+              "content": "The evacuation instruction takes priority: use the posted route, assemble at Area North, and account for the team without delaying for materials or records. A facilities all-clear permits re-entry but does not independently establish record completeness; Mina makes the separate resume assessment afterward."
+            },
+            {
+              "role": "user",
+              "content": "Room conditions are tracked separately from the oven log. The wall sensor records temperature and relative humidity every fifteen minutes, and the operator copies only the start and finish values onto the traveler. If the wall sensor shows a fault code, preserve the code and use the calibrated portable meter for a clearly labeled supplemental reading. Do not silently replace a failed wall-sensor value or backfill a number from the building dashboard."
+            },
+            {
+              "role": "assistant",
+              "content": "Ambient records keep their source identity: ordinary start and finish values come from the wall sensor, while a portable-meter value is supplemental and labeled as such after a fault. A fault code stays visible in the record. Building-dashboard history is not a substitute, and none of these ambient entries should be confused with the three stabilized oven temperatures."
+            },
+            {
+              "role": "user",
+              "content": "Unused coating remains in the closed K27-MX2 tote until Mina chooses its next status. Two blank material-status tags are available, but neither should be selected or attached preemptively. Any tag that is eventually used needs the traveler ID, date, initials, and the status written in plain text; color alone is never the status record. Keep unused tags in the document pouch beside the traveler."
+            },
+            {
+              "role": "assistant",
+              "content": "The tote remains closed under its existing identity until a disposition is actually entered. Red and green tags are possible downstream controls, not advance evidence about the decision. A used tag requires traveler ID, date, and initials, with its text—not color alone—carrying the status."
+            },
+            {
+              "role": "user",
+              "content": "The small drawdown cups from setup are labeled S1 and S2. They may remain on the drying tray until morning so the day-shift engineer can compare appearance, but they are not members of the five-panel qualification set or the sealed retention set. Keep the tray inside the marked sample area, and discard the cups only after Mina closes the comparison note."
+            },
+            {
+              "role": "assistant",
+              "content": "S1 and S2 are appearance-comparison samples with their own temporary custody path. They stay in the marked sample area until the comparison note closes, but they do not enter the qualification mean and are not K27-R. Their presence therefore cannot add observations to either the decision calculation or the retention-cabinet mapping."
+            },
+            {
+              "role": "user",
+              "content": "Data amendments follow the laboratory convention: draw one line through an incorrect handwritten entry, leave the original legible, add the corrected value, initials, date, and a brief reason. Blank spaces on a completed measurement row are crossed out. Electronic attachments keep their original filenames, and a revised attachment gets a new version rather than replacing the earlier file. This is about record integrity, not about making the sheet look tidy."
+            },
+            {
+              "role": "assistant",
+              "content": "The amendment method preserves the audit trail in both media. Handwritten corrections remain legible and attributable, completed rows cannot retain ambiguous blanks, and electronic revisions are additive versions rather than silent replacements. Cosmetic cleanup is not a reason to erase original evidence."
+            },
+            {
+              "role": "user",
+              "content": "A power interruption has its own recovery rule. Leave the drive stopped, note the displayed line speed and oven temperatures when power returns, and have maintenance inspect the interlock status before rethreading. Mina then decides whether the interruption created a process break that needs a new set of panels. The crew must not assume that equipment restart means the existing measurements remain representative."
+            },
+            {
+              "role": "assistant",
+              "content": "Recovery after power loss separates equipment readiness from experimental continuity. The crew records the returned displays, maintenance checks interlocks before rethreading, and Mina evaluates whether new panels are required. A successful restart does not retroactively validate or invalidate the existing measurements by itself."
+            },
+            {
+              "role": "user",
+              "content": "At end of shift, the Line 4 board should show only current operational status: whether the line is stopped and clean, stopped and awaiting cleanup, or secured for maintenance. Detailed measurements stay in the traveler rather than being copied to the public board. The outgoing operator signs the turnover box only after the incoming operator has had a chance to ask questions."
+            },
+            {
+              "role": "assistant",
+              "content": "The public board carries a bounded equipment-status phrase, while measurements remain in the controlled traveler. Turnover sign-off follows the incoming operator's question opportunity rather than preceding it. This keeps the board useful without turning it into a duplicate technical record or an implicit quality disposition."
+            },
+            {
+              "role": "user",
+              "content": "Any trimmed edge material goes into the pilot-scrap drum marked WB-4, with K-27 written on the batch line of the drum log. Intact witness panels do not go into that drum, even if they are no longer needed for testing; Mina assigns their final disposition separately. The operator records an estimated scrap mass, not a fabricated scale reading, because this line has no floor scale."
+            },
+            {
+              "role": "assistant",
+              "content": "Trimmed edge material uses the WB-4 pilot-scrap path and a clearly identified estimated mass. Intact witness panels remain outside that waste stream pending their own disposition. The record should label an estimate honestly rather than presenting unsupported precision."
+            },
+            {
+              "role": "user",
+              "content": "Please keep the eventual handoff concise and operational. It should distinguish settled context from actions that still require a person, avoid congratulatory language, and avoid inventing messages to maintenance, quality, or scheduling. The next assistant may be asked about either a technical fact or a retained-tail instruction, so the wording should not collapse the whole exchange into the coating disposition alone."
+            },
+            {
+              "role": "assistant",
+              "content": "I’ll keep the handoff neutral, role-specific, and bounded by what was actually stated. It will preserve the relevant operating context and retained instructions without claiming that anyone was contacted or that a physical or administrative step occurred. It will also keep the technical decision chain distinct from staffing, cleanup, safety, traceability, and contingency details."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "bd050a1f230f5ed66857ef6909391b2cd6109b39c66ccc76a22ada87b6497b8b",
+            "case_id": "e04",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "5ebbc6c847bb13c0d608e670a3c07db4046e9bd1a1589ca1bbe3f3f4a317de14"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e05",
+      "source_file_sha256": "5f819f40f5e80dba1df8e65e03f765c6f81ff061c30775d8babba5962e715a33",
+      "title": "Aster Room accessible-seating threshold and greeter run sheet",
+      "domain": "event accessibility and facilities",
+      "middle_end_msg": 11,
+      "changed_message_allowlist": [
+        3,
+        6
+      ],
+      "focal": {
+        "plant_id": "e05_room_assignment",
+        "category": "derived_decision",
+        "rule_or_relation": "Aster Room requires that reserving ceil(confirmed companion requests / 2) of its 10 accessible spaces still leaves enough remaining space for the 7 confirmed wheelchair-user registrants; otherwise Birch Hall is required.",
+        "changed_input": "The one load-bearing input is the confirmed companion request count: 4 in C versus 8 in W.",
+        "probe": "Under the recorded accommodation rule, which room was selected for Saturday's keynote? Answer with only the room name.",
+        "correct_target": "Aster Room",
+        "counterfactual_target": "Birch Hall",
+        "establishing_message_indices": [
+          1,
+          3,
+          6
+        ],
+        "downstream_reference_indices": [
+          6
+        ],
+        "why_derived": "The answer requires combining the fixed 10-space capacity and the 7 confirmed wheelchair-user registrants with the confirmed companion count and applying the threshold rule.",
+        "why_counterfactual_reverses": "Changing only the confirmed companion count from 4 to 8 doubles the reserved companion spaces from 2 to 4, dropping the remaining spaces from 8 to 6 and falling below the 7-space threshold, so the rule reverses the selected room."
+      },
+      "nonfocal_control": {
+        "plant_id": "e05_interpreter_checkin",
+        "category": "unchanged_control",
+        "probe": "What time is the ASL interpreter confirmed to check in? Answer with only the time.",
+        "target": "8:15",
+        "countertarget": "8:45",
+        "establishing_message_indices": [
+          7,
+          8
+        ],
+        "why_independent_of_focal": "The interpreter check-in time is a separately settled schedule fact and is explicitly independent of the room-assignment rule."
+      },
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "26a8c95b18391aa95a385e76b99e171d6d2d9b9bd12b7f80c3c6ef59496bcc17",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping an event accessibility coordinator keep an accurate seating record. Distinguish confirmed registrations from proposed actions, apply the stated room-assignment rule literally, and do not claim to have contacted attendees or reserved seats yourself."
+            },
+            {
+              "role": "user",
+              "content": "I am finalizing accessible seating for Saturday's keynote with Priya from the venue team and Leon from guest services. Our rule is deliberately simple: Aster Room, which has 10 accessible spaces, may be used only if reserving ceil(confirmed companion requests / 2) of those spaces for companions still leaves enough room for the 7 confirmed wheelchair-user registrants; otherwise we use Birch Hall. We have not applied the rule yet; I want the evidence recorded before the decision."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I will treat this as a capacity threshold rather than a general judgment call. After reserving ceil(confirmed companion requests / 2) of Aster Room's 10 accessible spaces, the remaining spaces must be enough for the 7 confirmed wheelchair-user registrants for Aster Room to qualify; if they are not enough, Birch Hall is required. I will wait for the confirmed companion count before naming the room."
+            },
+            {
+              "role": "user",
+              "content": "The registration desk confirmed 4 companion requests for the keynote. That count came from the completed registration form, not an estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "I have the confirmed companion count as a separate observation from the wheelchair-user registrant count. I will use the strict wording of the rule when you ask for the room decision."
+            },
+            {
+              "role": "user",
+              "content": "Apply the stated rule now. Which room should be used for Saturday's keynote? Give the decision and the numbers that drove it, without adding a broader recommendation."
+            },
+            {
+              "role": "assistant",
+              "content": "Aster Room should be used for Saturday's keynote. Reserving spaces for the 4 confirmed companion requests holds ceil(4/2) = 2 of the 10 accessible spaces, leaving 8 spaces, which just clears the 7-space threshold set by the confirmed wheelchair-user registrants."
+            },
+            {
+              "role": "user",
+              "content": "Separately, the interpreter schedule has already been settled. The ASL interpreter for the keynote is confirmed to check in at 8:15 a.m., and that time is independent of the room decision and will not change if the room assignment changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as a separate control fact: the ASL interpreter check-in time is 8:15 a.m., independent of the room decision. I will not infer the check-in time from the chosen room."
+            },
+            {
+              "role": "user",
+              "content": "For the run sheet, outline what the volunteer greeters should verify before treating attendee check-in as complete. Keep it procedural: identify where confirmed requests are logged, who owns an unresolved accessibility request, and how to mark a superseded note. Do not invent attendee names or say a check has been performed."
+            },
+            {
+              "role": "assistant",
+              "content": "Greeters should verify that each accessible-seating claim points to its log entry, such as the registration form or interpreter roster; that every unresolved request names an owner and a next check; and that an outdated note is visibly marked as superseded rather than silently replaced. The run sheet should separate confirmed counts, decisions, and open questions so a later reader can see what is settled."
+            },
+            {
+              "role": "user",
+              "content": "The morning-of team will inherit this discussion after doors open. Suggest a compact structure for the run sheet that does not repeat any settled room choice or interpreter time. It should still make clear how a new observation can be added without erasing the earlier record."
+            },
+            {
+              "role": "assistant",
+              "content": "Use four short sections: current context, evidence references, open items with owners, and change log. Put each new observation in the change log with its source and time, then link it to any affected open item. If it supersedes an earlier note, preserve the old entry and label the relationship explicitly. This keeps the run sheet auditable without restating settled details."
+            },
+            {
+              "role": "user",
+              "content": "Priya also asked how to flag uncertainty when a headcount update is delayed. We need wording that distinguishes a missing observation from a failed check, because the morning-of reader should not treat silence as evidence of failure. What labels would be clear without sounding bureaucratic?"
+            },
+            {
+              "role": "assistant",
+              "content": "Three plain labels should suffice: `observed` for a result backed by evidence, `pending` when the expected observation has not arrived, and `failed` only when a completed check produced a failing result. Add the expected source and next review time beside a pending item. That makes absence of data explicit while reserving failure language for an actual adverse observation."
+            },
+            {
+              "role": "user",
+              "content": "Finally, give me a neutral sentence the greeters can place above the open-items list. It should invite the morning-of team to verify the record, but it must not imply that the earlier team completed work that is not documented."
+            },
+            {
+              "role": "assistant",
+              "content": "Continue from the documented evidence below, verify any item whose status is pending, and record new observations with their source before changing an existing conclusion."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "5f819f40f5e80dba1df8e65e03f765c6f81ff061c30775d8babba5962e715a33",
+            "case_id": "e05",
+            "variant": "correct",
+            "literal_messages_sha256": "339cf301458395db892b42bc5cc22aead4b32f1c43f3130e8c0bbc411cc6db8b"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "d60f3fbde829c4557f419af1ab83a748f6661c7a73e473c987573011f4f5b684",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping an event accessibility coordinator keep an accurate seating record. Distinguish confirmed registrations from proposed actions, apply the stated room-assignment rule literally, and do not claim to have contacted attendees or reserved seats yourself."
+            },
+            {
+              "role": "user",
+              "content": "I am finalizing accessible seating for Saturday's keynote with Priya from the venue team and Leon from guest services. Our rule is deliberately simple: Aster Room, which has 10 accessible spaces, may be used only if reserving ceil(confirmed companion requests / 2) of those spaces for companions still leaves enough room for the 7 confirmed wheelchair-user registrants; otherwise we use Birch Hall. We have not applied the rule yet; I want the evidence recorded before the decision."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I will treat this as a capacity threshold rather than a general judgment call. After reserving ceil(confirmed companion requests / 2) of Aster Room's 10 accessible spaces, the remaining spaces must be enough for the 7 confirmed wheelchair-user registrants for Aster Room to qualify; if they are not enough, Birch Hall is required. I will wait for the confirmed companion count before naming the room."
+            },
+            {
+              "role": "user",
+              "content": "The registration desk confirmed 8 companion requests for the keynote. That count came from the completed registration form, not an estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "I have the confirmed companion count as a separate observation from the wheelchair-user registrant count. I will use the strict wording of the rule when you ask for the room decision."
+            },
+            {
+              "role": "user",
+              "content": "Apply the stated rule now. Which room should be used for Saturday's keynote? Give the decision and the numbers that drove it, without adding a broader recommendation."
+            },
+            {
+              "role": "assistant",
+              "content": "Birch Hall should be used for Saturday's keynote. Reserving spaces for the 8 confirmed companion requests holds ceil(8/2) = 4 of the 10 accessible spaces, leaving 6 spaces, which misses the 7-space threshold set by the confirmed wheelchair-user registrants."
+            },
+            {
+              "role": "user",
+              "content": "Separately, the interpreter schedule has already been settled. The ASL interpreter for the keynote is confirmed to check in at 8:15 a.m., and that time is independent of the room decision and will not change if the room assignment changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as a separate control fact: the ASL interpreter check-in time is 8:15 a.m., independent of the room decision. I will not infer the check-in time from the chosen room."
+            },
+            {
+              "role": "user",
+              "content": "For the run sheet, outline what the volunteer greeters should verify before treating attendee check-in as complete. Keep it procedural: identify where confirmed requests are logged, who owns an unresolved accessibility request, and how to mark a superseded note. Do not invent attendee names or say a check has been performed."
+            },
+            {
+              "role": "assistant",
+              "content": "Greeters should verify that each accessible-seating claim points to its log entry, such as the registration form or interpreter roster; that every unresolved request names an owner and a next check; and that an outdated note is visibly marked as superseded rather than silently replaced. The run sheet should separate confirmed counts, decisions, and open questions so a later reader can see what is settled."
+            },
+            {
+              "role": "user",
+              "content": "The morning-of team will inherit this discussion after doors open. Suggest a compact structure for the run sheet that does not repeat any settled room choice or interpreter time. It should still make clear how a new observation can be added without erasing the earlier record."
+            },
+            {
+              "role": "assistant",
+              "content": "Use four short sections: current context, evidence references, open items with owners, and change log. Put each new observation in the change log with its source and time, then link it to any affected open item. If it supersedes an earlier note, preserve the old entry and label the relationship explicitly. This keeps the run sheet auditable without restating settled details."
+            },
+            {
+              "role": "user",
+              "content": "Priya also asked how to flag uncertainty when a headcount update is delayed. We need wording that distinguishes a missing observation from a failed check, because the morning-of reader should not treat silence as evidence of failure. What labels would be clear without sounding bureaucratic?"
+            },
+            {
+              "role": "assistant",
+              "content": "Three plain labels should suffice: `observed` for a result backed by evidence, `pending` when the expected observation has not arrived, and `failed` only when a completed check produced a failing result. Add the expected source and next review time beside a pending item. That makes absence of data explicit while reserving failure language for an actual adverse observation."
+            },
+            {
+              "role": "user",
+              "content": "Finally, give me a neutral sentence the greeters can place above the open-items list. It should invite the morning-of team to verify the record, but it must not imply that the earlier team completed work that is not documented."
+            },
+            {
+              "role": "assistant",
+              "content": "Continue from the documented evidence below, verify any item whose status is pending, and record new observations with their source before changing an existing conclusion."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "5f819f40f5e80dba1df8e65e03f765c6f81ff061c30775d8babba5962e715a33",
+            "case_id": "e05",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "128565fe5294cd7c7a55630b21bb86b4a7265f0a5dc9566f8a7d749264b78c17"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e06",
+      "source_file_sha256": "45cdc7d8f72cf5899f50e6955dbf4d5cc059a9b05e515fe396d0c19939781f53",
+      "title": "Low Tide at Cortes flagged-passage queue gate and production handoff",
+      "domain": "publishing legal review",
+      "middle_end_msg": 11,
+      "changed_message_allowlist": [
+        5
+      ],
+      "focal": {
+        "plant_id": "e06_review_queue",
+        "category": "derived_decision",
+        "rule_or_relation": "The fast-track queue requires at most three flagged passages at close of review, none naming a living private individual by full name; otherwise the standard queue is required.",
+        "changed_input": "The one load-bearing input is passage three's naming status: redacted in C versus naming Marta Coelho by full name in W.",
+        "probe": "Under the recorded queue-eligibility rule, which queue applies to Low Tide at Cortes? Answer with only the queue name.",
+        "correct_target": "fast-track queue",
+        "counterfactual_target": "standard queue",
+        "establishing_message_indices": [
+          1,
+          3,
+          5
+        ],
+        "downstream_reference_indices": [],
+        "why_derived": "The answer requires combining the fixed flagged-passage count of three, the cleared status of passages one and two, and passage three's naming status, then applying the conjunctive gate; no message states the queue directly.",
+        "why_counterfactual_reverses": "Changing only passage three from redacted to naming a living private individual by full name breaks the no-named-individual condition while the count stays at three, so the rule reverses the applicable queue."
+      },
+      "nonfocal_control": {
+        "plant_id": "e06_narration_vendor",
+        "category": "unchanged_control",
+        "probe": "Which vendor was confirmed for the audiobook narration? Answer with only the vendor name.",
+        "target": "Meridian Audio",
+        "countertarget": "Harmonic Audio",
+        "establishing_message_indices": [
+          7,
+          8
+        ],
+        "why_independent_of_focal": "The narration vendor assignment is a separately settled production fact and is explicitly independent of the legal-review queue rule."
+      },
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "6d91569380f3eba61acdad15f71a7b562b3e969fd66052c239e347701160a991",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping a publishing production and legal-review coordinator keep an accurate manuscript record. Distinguish confirmed passage statuses from proposed edits, apply the stated queue-eligibility rule literally, and do not claim to have redacted text, contacted the author, or made any legal determination yourself."
+            },
+            {
+              "role": "user",
+              "content": "I am tracking pre-publication legal review for the manuscript Low Tide at Cortes together with Renata from rights and Devon from production. Our queue-eligibility rule is deliberately simple, and I want it recorded before we apply it to anything: a manuscript is eligible for the fast-track queue only if, at the close of legal review, at most three passages remain flagged, and none of those remaining flagged passages names a living private individual by full name. If either condition fails, more passages remain flagged than that, or any remaining flagged passage names a living private individual by full name, the manuscript takes the standard queue instead. This is a conjunctive gate, not a general risk judgment, and I do not want it applied until the passage-level evidence is in the record."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I will treat this as a two-part gate: the count of passages still flagged at the close of review must be three or fewer, and none of those flagged passages may name a living private individual by full name. Both conditions must hold for the fast-track queue; failing either one is sufficient to require the standard queue. I will wait for the confirmed passage-level evidence before naming a queue, and I will keep each passage's naming status as a separate observation rather than inferring it from the others."
+            },
+            {
+              "role": "user",
+              "content": "Renata's review has narrowed the flagged list to exactly three passages; no further passages are under review. Passage one quotes a public agency's press release verbatim and names no individual, living or otherwise, so it was cleared without any edit. Passage two originally named a source directly, but the tracked manuscript file now refers to that person only as a former dockworker, with no name anywhere in the passage; Devon confirmed this rewrite is already merged into the working file, not a proposed diff. Both statuses come from the current manuscript file and Renata's review notes, not from a draft or a verbal summary."
+            },
+            {
+              "role": "assistant",
+              "content": "I have passage one and passage two recorded as confirmed and cleared of naming a living private individual, based on the current manuscript file and Renata's review notes. That leaves passage three as the only one of the three flagged passages whose naming status is still open, and I will treat it as a separate observation rather than assuming it matches the other two."
+            },
+            {
+              "role": "user",
+              "content": "Passage three has been confirmed redacted. The manuscript file now reads name withheld at legal's request at the point where the individual was previously identified, and Renata verified that redaction against the current file, not a draft."
+            },
+            {
+              "role": "assistant",
+              "content": "I have passage three recorded as a separate observation from passages one and two, exactly as reported. I will use the strict wording of the queue rule only when you ask for the queue decision directly, and I will not state a queue in this message."
+            },
+            {
+              "role": "user",
+              "content": "Separately, the audio rights have already been settled and are not part of the legal-review gate. The audiobook edition of Low Tide at Cortes will be produced by Meridian Audio, and that vendor assignment is independent of the legal-review queue; it will not change if the queue assignment changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as a separate control fact: Meridian Audio is confirmed for the audiobook narration, independent of the legal-review queue decision. I will not infer the vendor assignment from the queue, or the queue from the vendor assignment."
+            },
+            {
+              "role": "user",
+              "content": "Before we go further, give me a procedural checklist for what Devon should verify before treating the production handoff as complete for this title. Keep it procedural: identify where each confirmed passage status is logged, who owns any item that is still open, and how a superseded instruction should be marked so it is not silently replaced. Do not invent ticket numbers, page numbers, or say that any check has been performed that is not already documented above."
+            },
+            {
+              "role": "assistant",
+              "content": "Devon should verify that each passage-level claim points to its evidence location, such as the manuscript file diff or Renata's review notes; that any still-open item names an owner and a next check date; and that an outdated instruction is visibly marked as superseded rather than silently replaced or deleted. The handoff should separate confirmed observations, settled production assignments, and open questions, so a later reader can immediately see which claims are settled and which are still pending."
+            },
+            {
+              "role": "user",
+              "content": "The copyediting team will inherit this discussion once the file is handed off. Suggest a compact structure for that handoff note that does not repeat any settled legal-review outcome or the narration-vendor assignment. It should still make clear how a new observation can be added later without erasing the earlier record."
+            },
+            {
+              "role": "assistant",
+              "content": "Use four short sections: current context, evidence references, open items with owners, and a change log. Put each new observation in the change log with its source and date, then link it to any open item it affects. If a new note supersedes an earlier one, preserve the old entry and label the relationship explicitly rather than deleting it. This keeps the handoff auditable without restating any settled detail."
+            },
+            {
+              "role": "user",
+              "content": "Renata also asked how to flag uncertainty when a review result is delayed, for instance if a fact-checker's response has not arrived yet. We need wording that distinguishes a missing observation from a failed check, because the copyediting team should not treat silence as evidence of a problem. What labels would be clear without sounding bureaucratic?"
+            },
+            {
+              "role": "assistant",
+              "content": "Three plain labels should suffice: observed for a result backed by evidence already in the file or notes, pending when the expected observation has not arrived yet, and failed only when a completed check actually produced an adverse result. Put the expected source and the next review date beside any pending item. That keeps an absence of data visibly distinct from a real failure."
+            },
+            {
+              "role": "user",
+              "content": "Give me a neutral sentence the handoff note can place above the open-items list. It should invite the copyediting team to verify the record, but it must not imply that Renata's team already completed work that is not documented here."
+            },
+            {
+              "role": "assistant",
+              "content": "Continue from the documented evidence below, verify any item whose status is pending, and record new observations with their source before changing an existing conclusion."
+            },
+            {
+              "role": "user",
+              "content": "One more procedural question: how should the proofing calendar note a passage that was re-flagged after an earlier pass cleared it, so the schedule does not look like it silently reopened without explanation?"
+            },
+            {
+              "role": "assistant",
+              "content": "Add a single calendar entry that names the passage, cites the reason it was re-flagged, and links back to the earlier clearance entry instead of overwriting it. Mark the earlier entry as superseded rather than removing it, so the schedule shows the full sequence: cleared, re-flagged, and the reason, in that order."
+            },
+            {
+              "role": "user",
+              "content": "Last item: what belongs in the indexing and metadata note so it does not accidentally reference a passage's earlier wording after any redaction or edit is finalized?"
+            },
+            {
+              "role": "assistant",
+              "content": "The indexing note should reference passages by their stable passage identifier rather than by quoted text, so an index entry survives a later redaction or rewrite without edit. Any metadata field that does quote a passage directly should carry a last-verified date and be regenerated whenever that passage's status changes, rather than being treated as permanent."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "45cdc7d8f72cf5899f50e6955dbf4d5cc059a9b05e515fe396d0c19939781f53",
+            "case_id": "e06",
+            "variant": "correct",
+            "literal_messages_sha256": "eab37f1ad537bb0c4009d2c845e5ab031456adc2083a5487423e580ff5550057"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "1d4900ce4d0987f2ddc9ae62668ddb2985d2f1c50050e80bb08554727a4d7a6c",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping a publishing production and legal-review coordinator keep an accurate manuscript record. Distinguish confirmed passage statuses from proposed edits, apply the stated queue-eligibility rule literally, and do not claim to have redacted text, contacted the author, or made any legal determination yourself."
+            },
+            {
+              "role": "user",
+              "content": "I am tracking pre-publication legal review for the manuscript Low Tide at Cortes together with Renata from rights and Devon from production. Our queue-eligibility rule is deliberately simple, and I want it recorded before we apply it to anything: a manuscript is eligible for the fast-track queue only if, at the close of legal review, at most three passages remain flagged, and none of those remaining flagged passages names a living private individual by full name. If either condition fails, more passages remain flagged than that, or any remaining flagged passage names a living private individual by full name, the manuscript takes the standard queue instead. This is a conjunctive gate, not a general risk judgment, and I do not want it applied until the passage-level evidence is in the record."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood. I will treat this as a two-part gate: the count of passages still flagged at the close of review must be three or fewer, and none of those flagged passages may name a living private individual by full name. Both conditions must hold for the fast-track queue; failing either one is sufficient to require the standard queue. I will wait for the confirmed passage-level evidence before naming a queue, and I will keep each passage's naming status as a separate observation rather than inferring it from the others."
+            },
+            {
+              "role": "user",
+              "content": "Renata's review has narrowed the flagged list to exactly three passages; no further passages are under review. Passage one quotes a public agency's press release verbatim and names no individual, living or otherwise, so it was cleared without any edit. Passage two originally named a source directly, but the tracked manuscript file now refers to that person only as a former dockworker, with no name anywhere in the passage; Devon confirmed this rewrite is already merged into the working file, not a proposed diff. Both statuses come from the current manuscript file and Renata's review notes, not from a draft or a verbal summary."
+            },
+            {
+              "role": "assistant",
+              "content": "I have passage one and passage two recorded as confirmed and cleared of naming a living private individual, based on the current manuscript file and Renata's review notes. That leaves passage three as the only one of the three flagged passages whose naming status is still open, and I will treat it as a separate observation rather than assuming it matches the other two."
+            },
+            {
+              "role": "user",
+              "content": "Passage three has been confirmed unredacted. The manuscript file still reads Marta Coelho in full at the point where the individual was previously identified, and Renata verified that wording against the current file, not a draft."
+            },
+            {
+              "role": "assistant",
+              "content": "I have passage three recorded as a separate observation from passages one and two, exactly as reported. I will use the strict wording of the queue rule only when you ask for the queue decision directly, and I will not state a queue in this message."
+            },
+            {
+              "role": "user",
+              "content": "Separately, the audio rights have already been settled and are not part of the legal-review gate. The audiobook edition of Low Tide at Cortes will be produced by Meridian Audio, and that vendor assignment is independent of the legal-review queue; it will not change if the queue assignment changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded as a separate control fact: Meridian Audio is confirmed for the audiobook narration, independent of the legal-review queue decision. I will not infer the vendor assignment from the queue, or the queue from the vendor assignment."
+            },
+            {
+              "role": "user",
+              "content": "Before we go further, give me a procedural checklist for what Devon should verify before treating the production handoff as complete for this title. Keep it procedural: identify where each confirmed passage status is logged, who owns any item that is still open, and how a superseded instruction should be marked so it is not silently replaced. Do not invent ticket numbers, page numbers, or say that any check has been performed that is not already documented above."
+            },
+            {
+              "role": "assistant",
+              "content": "Devon should verify that each passage-level claim points to its evidence location, such as the manuscript file diff or Renata's review notes; that any still-open item names an owner and a next check date; and that an outdated instruction is visibly marked as superseded rather than silently replaced or deleted. The handoff should separate confirmed observations, settled production assignments, and open questions, so a later reader can immediately see which claims are settled and which are still pending."
+            },
+            {
+              "role": "user",
+              "content": "The copyediting team will inherit this discussion once the file is handed off. Suggest a compact structure for that handoff note that does not repeat any settled legal-review outcome or the narration-vendor assignment. It should still make clear how a new observation can be added later without erasing the earlier record."
+            },
+            {
+              "role": "assistant",
+              "content": "Use four short sections: current context, evidence references, open items with owners, and a change log. Put each new observation in the change log with its source and date, then link it to any open item it affects. If a new note supersedes an earlier one, preserve the old entry and label the relationship explicitly rather than deleting it. This keeps the handoff auditable without restating any settled detail."
+            },
+            {
+              "role": "user",
+              "content": "Renata also asked how to flag uncertainty when a review result is delayed, for instance if a fact-checker's response has not arrived yet. We need wording that distinguishes a missing observation from a failed check, because the copyediting team should not treat silence as evidence of a problem. What labels would be clear without sounding bureaucratic?"
+            },
+            {
+              "role": "assistant",
+              "content": "Three plain labels should suffice: observed for a result backed by evidence already in the file or notes, pending when the expected observation has not arrived yet, and failed only when a completed check actually produced an adverse result. Put the expected source and the next review date beside any pending item. That keeps an absence of data visibly distinct from a real failure."
+            },
+            {
+              "role": "user",
+              "content": "Give me a neutral sentence the handoff note can place above the open-items list. It should invite the copyediting team to verify the record, but it must not imply that Renata's team already completed work that is not documented here."
+            },
+            {
+              "role": "assistant",
+              "content": "Continue from the documented evidence below, verify any item whose status is pending, and record new observations with their source before changing an existing conclusion."
+            },
+            {
+              "role": "user",
+              "content": "One more procedural question: how should the proofing calendar note a passage that was re-flagged after an earlier pass cleared it, so the schedule does not look like it silently reopened without explanation?"
+            },
+            {
+              "role": "assistant",
+              "content": "Add a single calendar entry that names the passage, cites the reason it was re-flagged, and links back to the earlier clearance entry instead of overwriting it. Mark the earlier entry as superseded rather than removing it, so the schedule shows the full sequence: cleared, re-flagged, and the reason, in that order."
+            },
+            {
+              "role": "user",
+              "content": "Last item: what belongs in the indexing and metadata note so it does not accidentally reference a passage's earlier wording after any redaction or edit is finalized?"
+            },
+            {
+              "role": "assistant",
+              "content": "The indexing note should reference passages by their stable passage identifier rather than by quoted text, so an index entry survives a later redaction or rewrite without edit. Any metadata field that does quote a passage directly should carry a last-verified date and be regenerated whenever that passage's status changes, rather than being treated as permanent."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "45cdc7d8f72cf5899f50e6955dbf4d5cc059a9b05e515fe396d0c19939781f53",
+            "case_id": "e06",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "4b302c6f8a758f14dad02200d8e93216384aef762a7261f47df82442f53f7d59"
+          }
+        }
+      }
+    }
+  ],
+  "packet_sha256": "fe16e7c82f3b4a74d1503cb9962f67052abcfd6468152a73e77f30a40259b791"
+}
