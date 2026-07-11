@@ -1,0 +1,7 @@
+{
+  "status": "FAIL",
+  "error_type": "RuntimeError",
+  "error": "loaded K/V shift gate failed: zero=0.0 nativeK=0.00014495849609375 nativeV=0.00014591217041015625",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/jeb/experimentation/src/l_coherent_state_hf.py\", line 385, in main\n    result = run_ladder()\n             ^^^^^^^^^^^^\n  File \"/Users/jeb/experimentation/src/l_coherent_state_hf.py\", line 261, in run_ladder\n    loaded_gates = run_loaded_kernel_gates(\n                   ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/jeb/experimentation/src/l_coherent_state_hf.py\", line 153, in run_loaded_kernel_gates\n    raise RuntimeError(\nRuntimeError: loaded K/V shift gate failed: zero=0.0 nativeK=0.00014495849609375 nativeV=0.00014591217041015625\n",
+  "failed_at": "2026-07-11T05:52:24.755754+00:00"
+}
