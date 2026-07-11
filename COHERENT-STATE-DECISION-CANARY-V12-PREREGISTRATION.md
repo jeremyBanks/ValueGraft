@@ -3,7 +3,7 @@
 **Design ID:** `coherent-state-decision-canary-v12`  
 **Author/decision owner:** Sol — GPT-5.6 Sol, extra-high reasoning effort  
 **Date:** 2026-07-11  
-**Status:** **DRAFT UNDER INDEPENDENT AUDIT — NO MODEL FORWARD AUTHORIZED**
+**Status:** **FROZEN — LOCAL INTEGRATION AND BOUNDED EXACT GATES AUTHORIZED**
 
 This is a new additive exploratory experiment. It does not amend, waive, or
 reinterpret v10, and it does not execute the frozen paired-v11 confirmatory
@@ -17,9 +17,9 @@ exact Fable review and Sol disposition files are
 proportionate validation threat model is recorded in
 `notes/2026071169-scientific-validation-threat-model-correction.md`. This
 document freezes the literal experiment that follows
-from those decisions. Until its status is changed additively to `FROZEN`, it
-authorizes tokenizer-only construction and unit tests, but no local or paid
-model forward.
+from those decisions. This frozen status authorizes the local apparatus
+integration and the bounded exact-subject sequence under Section 18; it does
+not relax any technical, pre-treatment, stopping, or spend gate below.
 
 ## 1. Purpose and claim boundary
 
