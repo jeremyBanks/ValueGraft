@@ -209,6 +209,13 @@ def test_participants_block_includes_labeled_contributing_subagents() -> None:
         "**Participants:** User, gpt-5.6-sol-xhigh, and subagent methodology_audit."
     )
 
+    path = mod.provisional_note_path_for_messages(
+        Path("notes"),
+        messages,
+        datetime(2026, 7, 10, tzinfo=timezone.utc),
+    )
+    assert path.name == "20260710000000-conversation-user-gpt56.md"
+
 
 def test_codex_discovery_includes_repo_user_sessions_only(tmp_path: Path, monkeypatch) -> None:
     mod = load_update_module()

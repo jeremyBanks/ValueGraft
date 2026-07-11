@@ -503,7 +503,7 @@ def compact_prefix_for_new_note(
 
 
 def note_name_for_messages(prefix: str, messages: list[MessageRecord]) -> str:
-    return f"{prefix}-{conversation_title(participant_entries_for_messages(messages))}.md"
+    return f"{prefix}-{conversation_title(title_participant_entries_for_messages(messages))}.md"
 
 
 def provisional_note_path_for_messages(
@@ -521,7 +521,7 @@ def existing_note_path_for_messages(
     messages: list[MessageRecord],
     first_timestamp: datetime,
 ) -> Path:
-    title = conversation_title(participant_entries_for_messages(messages))
+    title = conversation_title(title_participant_entries_for_messages(messages))
     cache = ArchiveTimestampCache.load(root)
     paths = archive_note_files(notes_dir)
     cache.prepare(paths)
@@ -636,11 +636,8 @@ def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
 
 
 def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
-    entries: list[str] = []
+    entries = title_participant_entries_for_messages(messages)
     visible_messages = [msg for msg in messages if not msg.transcript_scaffolding]
-    if any(msg.role == "user" for msg in visible_messages):
-        entries.append("User")
-    entries.extend(model_entries_for_messages(visible_messages))
     subagent_stats: dict[str, tuple[int, int]] = {}
     for index, msg in enumerate(visible_messages):
         if msg.role != "assistant":
@@ -658,6 +655,16 @@ def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]
             key=lambda item: (-item[1][0], item[1][1], item[0]),
         )
     )
+    return entries
+
+
+def title_participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
+    """Return compact filename participants, excluding potentially many subagents."""
+    entries: list[str] = []
+    visible_messages = [msg for msg in messages if not msg.transcript_scaffolding]
+    if any(msg.role == "user" for msg in visible_messages):
+        entries.append("User")
+    entries.extend(model_entries_for_messages(visible_messages))
     if not entries:
         entries.append("No user or assistant model metadata found.")
     return entries
