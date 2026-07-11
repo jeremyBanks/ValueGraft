@@ -1,0 +1,278 @@
+{
+  "schema": "coherent_state_decision_canary_v12_blind_review_v1",
+  "review_kind": "blind_singleton_independent",
+  "reviewer": {
+    "agent": "Codex subagent",
+    "runtime_model": "not exposed",
+    "runtime_model_inference_performed": false
+  },
+  "independence": {
+    "reviewed_only_declared_packet": true,
+    "source_cases_inspected": false,
+    "paired_or_diversity_packets_inspected": false,
+    "prior_reviews_inspected": false,
+    "implementation_inspected": false,
+    "experimental_outcomes_seen": false,
+    "subject_model_forward_performed": false
+  },
+  "packet_binding": {
+    "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T210013Z_7f36752b3295.json",
+    "literal_file_sha256": "981b703749edfa3d2a2b1cf57419776b3dda18fa3cc8788d83a3f51ad0e2e2ec",
+    "declared_internal_packet_sha256": "7f36752b3295e40638ab56365110802f3b371b2a5f48bbffa2c99555e6f3c39f",
+    "internal_packet_sha256_verification": {
+      "status": "VERIFIED",
+      "method": "SHA-256 of UTF-8 canonical JSON after removing the top-level packet_sha256 field, with keys sorted, ensure_ascii=false, and compact separators, with no terminal newline",
+      "computed_sha256": "7f36752b3295e40638ab56365110802f3b371b2a5f48bbffa2c99555e6f3c39f"
+    },
+    "declared_source_set_commitment_sha256": "cc7cd6c3223e8ae138d575edca32bf9fc36ba616f63e1b34c61797068b68e960",
+    "source_set_commitment_opening_available_to_reviewer": false,
+    "packet_run_id": "20260711T210013Z"
+  },
+  "declared_review_boundary": "Review each history independently for naturalness, coherence, dangling references, conspicuous balancing/padding, fake external actions, and whether the retained tail remains coherent. Review the shared carrier request/content and anchor exchange for target neutrality, hidden factual implication, and compatibility with every anonymous history.",
+  "coverage": {
+    "anonymous_histories_present": 12,
+    "anonymous_histories_reviewed": 12,
+    "messages_present": 292,
+    "messages_reviewed": 292,
+    "retained_tails_reviewed": 12,
+    "shared_carrier_anchor_sets_present": 1,
+    "shared_carrier_anchor_sets_reviewed": 1,
+    "history_ids_reviewed_in_packet_order": [
+      "history-01",
+      "history-02",
+      "history-03",
+      "history-04",
+      "history-05",
+      "history-06",
+      "history-07",
+      "history-08",
+      "history-09",
+      "history-10",
+      "history-11",
+      "history-12"
+    ],
+    "criterion_applications": {
+      "history_level": 72,
+      "carrier_level": 3
+    }
+  },
+  "shared_carrier_anchor_review": {
+    "verdict": "PASS",
+    "criteria": {
+      "target_neutrality": "PASS",
+      "hidden_factual_implication": "PASS",
+      "compatibility_with_every_history": "PASS"
+    },
+    "reason": "The request asks only for a fixed neutral handoff; the carrier content contains no case entity, value, branch label, answer, or domain fact. It says only that prior context and decision criteria exist and that existing constraints should be preserved. Its statement that the note introduces no unresolved action is about the note itself, so it neither falsely resolves decisions that remain unstated nor reopens decisions already stated. The acknowledgment adds no fact. Insertion immediately before every disclosed retained-tail boundary leaves each following user turn pragmatically well formed across all 12 histories.",
+    "compatibility_coverage": {
+      "histories_checked": 12,
+      "histories_compatible": 12,
+      "incompatible_history_ids": []
+    }
+  },
+  "history_reviews": [
+    {
+      "anonymous_history_id": "history-01",
+      "binding_commitment_sha256": "0c3c1e9d5319799db425a63ab6991fc232e620d8e621d52333b32fe20e0e9e45",
+      "message_count": 55,
+      "retained_tail_start_message_index": 51,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The unusually long coating-qualification record is meticulous but reads as one chronological manufacturing and audit reconstruction: receiving, preparation, coating, prospective sampling, measurements, source checks, readiness, physical reconciliation, then a single close. The later certificate, custody, trend, readiness, and physical-closeout turns each add a distinct audit function rather than reopening a chronology previously declared complete. No reference is left without an antecedent, and assistant statements stay within actions or observations the user supplied. After the insertion boundary, the tote-custody and Line 4 board instructions are a coherent continuing-shift tail and do not depend on an omitted adjacent utterance."
+    },
+    {
+      "anonymous_history_id": "history-02",
+      "binding_commitment_sha256": "edbf7be2f8b41c8521c4dd0b34a937e26b9348032c8311afcd04f1c3adfae766",
+      "message_count": 17,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The incident-room exchange progresses cleanly from rule and independent retention fact through migration and timing evidence, branch application, and follow-up provenance practice. No filler detour or unsupported deployment, contact, or resolution is asserted. The post-boundary clock-discrepancy question is self-contained, follows the preceding discussion of source timestamp differences, and remains coherent after the neutral handoff."
+    },
+    {
+      "anonymous_history_id": "history-03",
+      "binding_commitment_sha256": "9b3969a6216e535d225265aaaea3c248412f1acea90567af08031f475d0aaa23",
+      "message_count": 19,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The field-service planning record consistently separates route inputs, a radio control fact, and later work instructions. The route remains intentionally unstated without producing a broken reference. The retained photograph requirement and conditional cracked-base-plate stop rule form a natural handoff section, and the assistant correctly phrases them as requirements and contingencies rather than completed travel, inspection, photography, or repair."
+    },
+    {
+      "anonymous_history_id": "history-04",
+      "binding_commitment_sha256": "abbd9f86fc9caaa6d75ef639faec2dbb7a4527cf0ebf55238ffa6d1d93802e0a",
+      "message_count": 17,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The lecture-planning exchange cleanly derives a room from sourced capacity inputs, then moves to a distinct facilities-access task. The arrival-route discussion supplies every referent needed by the retained sign-and-lamp placement request. The answer remains a proposal with a pre-opening check, not a false claim that equipment was placed or a room changed, and no balancing or padding is conspicuous."
+    },
+    {
+      "anonymous_history_id": "history-05",
+      "binding_commitment_sha256": "33a3195fafdb68be1389d78514e2e102fd224808033e1cd381769e8a0655e812",
+      "message_count": 55,
+      "retained_tail_start_message_index": 51,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "This is a long but internally plausible process-record reconstruction. Each phase adds identifiable provenance, operating, measurement, or closeout evidence, and the audit sequence is declared closed only after the document and physical reconciliations finish. The extensive checks are repetitive in style but not conspicuous content-free padding: certificate revision, panel custody, oven corroboration, readiness, and material custody address different risks. The assistant does not invent downstream actions. The retained tote and equipment-board instructions continue naturally from the single close and remain coherent across the inserted handoff."
+    },
+    {
+      "anonymous_history_id": "history-06",
+      "binding_commitment_sha256": "8c44d5e961e1436b88090fb5b1aa3bcfd15e913b82d9651869c4e2a3193ddcd5",
+      "message_count": 17,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The production-editor conversation distinguishes the review predicate, unresolved queue, layout placeholders, and copyediting choices without collapsing them. The final square-bracket typography question has explicit antecedents in the immediately preceding field-note discussion and is fully answerable after the handoff. The recommendation is framed as house style, not as an edit already made, and the short history contains no conspicuous filler."
+    },
+    {
+      "anonymous_history_id": "history-07",
+      "binding_commitment_sha256": "9e23bce4894f4ad8ad8a109fa8364a0d35ebb4eec1330a46b09797ef45e64fe4",
+      "message_count": 19,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The route-planning evidence and independent radio mapping remain coherent, sourced, and deliberately separate. The history has no dangling reference or gratuitous extra stage. At the boundary the conversation changes naturally from route evidence to site-documentation instructions; both retained turns remain intelligible after acknowledgment, and their conditional wording avoids claiming that travel, damage, photography, or repair occurred."
+    },
+    {
+      "anonymous_history_id": "history-08",
+      "binding_commitment_sha256": "762134e3fce0f7a366408a0e939518ba166cbe372d4032699f861e7c32d63cf7",
+      "message_count": 17,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The rights-review record consistently tracks flag count, flag reasons, literal naming status, and later copyediting presentation as separate matters. The retained typography request has a clear field-note and italic-quotation antecedent and does not rely on an omitted bridge. The assistant offers a recommendation rather than claiming a manuscript edit, approval, assignment, or contact, and no padding or internal contradiction appears."
+    },
+    {
+      "anonymous_history_id": "history-09",
+      "binding_commitment_sha256": "7af5db2de1109bd0e5bdf7e35d95ab5e6096e218ac6d5467dfb685a661cb32e3",
+      "message_count": 21,
+      "retained_tail_start_message_index": 17,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The meal-program history applies its two-stage rule in order, preserves the independent service-calendar fact, and then transitions to handling and briefing practice. The two retained turns form a complete late-volunteer/read-back exchange that is coherent after the handoff and introduces no hidden dependency on the earlier hub facts. The assistant gives prospective guidance and explicitly avoids recording work completion, so no external action is fabricated."
+    },
+    {
+      "anonymous_history_id": "history-10",
+      "binding_commitment_sha256": "f58cf59d6316cb5a3165744537d90fed8300c5597b761030a18f32abbc5ef586",
+      "message_count": 17,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The sourced accommodation calculation and subsequent entrance-layout task are coherent and appropriately separated. The retained request refers to the already described glass door, corridor, and quiet alcove, so the handoff does not strand a referent. The proposed placement observes the stated access constraints without pretending that physical placement or a further room/service change occurred; the progression is compact rather than padded."
+    },
+    {
+      "anonymous_history_id": "history-11",
+      "binding_commitment_sha256": "3b627ace963facbd38a42d5036ffb375aa1ce874f8a51bc42f87898d95df751b",
+      "message_count": 21,
+      "retained_tail_start_message_index": 17,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The cold-hold screening and route tiebreak sequence is applied coherently, while handling safeguards remain non-scoring follow-up guidance. The retained late-volunteer question and clarification follow-up are a natural briefing micro-task, with all referents present and no need to repeat the earlier allocation decision. The answer is explicitly prospective and conditions assignment on a successful read-back rather than inventing a completed assignment."
+    },
+    {
+      "anonymous_history_id": "history-12",
+      "binding_commitment_sha256": "a1f3bb71873212a560126e0808d1ca1c093b33447539aae80e2b1d4f05e69415",
+      "message_count": 17,
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "criteria": {
+        "naturalness": "PASS",
+        "coherence": "PASS",
+        "dangling_references": "PASS",
+        "conspicuous_balancing_or_padding": "PASS",
+        "fake_external_actions": "PASS",
+        "retained_tail_coherence": "PASS"
+      },
+      "reason": "The release-coordination record separates migration evidence, rollback timing, trace retention, branch selection, and later incident provenance without contradiction. The retained alert-clock question follows directly from the prior emphasis on separately sourced timestamps and remains self-contained after the neutral handoff. The answer records how a future discrepancy should be handled and does not assert an alert, notification, deployment, approval, or resolution that the user did not state."
+    }
+  ],
+  "aggregate": {
+    "carrier_anchor_verdict": "PASS",
+    "history_pass_count": 12,
+    "history_revise_count": 0,
+    "history_fail_count": 0,
+    "overall_verdict": "PASS",
+    "blocking_findings": [],
+    "nonblocking_observations": [
+      "Histories 01 and 05 are much longer and more formally repetitive than the others, but their added turns have distinct audit functions and preserve a single forward chronology; the review did not classify that length alone as conspicuous padding."
+    ]
+  }
+}

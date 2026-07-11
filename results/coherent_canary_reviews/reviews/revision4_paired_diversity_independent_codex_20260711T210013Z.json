@@ -1,0 +1,184 @@
+{
+  "schema": "coherent_state_decision_canary_v12_paired_diversity_review_v1",
+  "review_id": "revision4_paired_diversity_independent_codex_20260711T210013Z",
+  "reviewed_at_utc": "2026-07-11T21:02:57Z",
+  "reviewer": {
+    "identity": "Independent Codex subagent",
+    "runtime_model_id": null,
+    "runtime_model_id_status": "not exposed to this reviewer; no alias inferred",
+    "reasoning_effort": null,
+    "reasoning_effort_status": "not exposed to this reviewer; no level inferred"
+  },
+  "independence": {
+    "review_boundary": "Only the assigned target-aware paired packet and cross-case diversity packet were inspected. Source files, blind material, prior reviews, implementation, and outcomes were not inspected.",
+    "outcomes_seen": false,
+    "subject_model_forward_performed": false
+  },
+  "packet_bindings": {
+    "target_aware_paired": {
+      "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_target_aware_paired_20260711T210013Z_55779fc94383.json",
+      "literal_file_sha256": "2945ae429651e7a853ce64157fd4428d3252d4f18085772bb384e273efc10e61",
+      "internal_packet_sha256": "55779fc943837528a9fd2525e57ea1853c4d81bb95a394e928635b4d450f6353",
+      "internal_packet_sha256_recomputed_from_canonical_packet_without_seal": "55779fc943837528a9fd2525e57ea1853c4d81bb95a394e928635b4d450f6353",
+      "internal_packet_seal_valid": true,
+      "source_set_commitment_sha256": "cc7cd6c3223e8ae138d575edca32bf9fc36ba616f63e1b34c61797068b68e960"
+    },
+    "cross_case_diversity": {
+      "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_cross_case_diversity_20260711T210013Z_8d7e38e6e2e4.json",
+      "literal_file_sha256": "d45bf013d2be9d79b5e0dc86de7071536edb295648f626c153b8822caf18f1dd",
+      "internal_packet_sha256": "8d7e38e6e2e4f2a96300e5048c8c132591c8619bce359609054814cff8504b16",
+      "internal_packet_sha256_recomputed_from_canonical_packet_without_seal": "8d7e38e6e2e4f2a96300e5048c8c132591c8619bce359609054814cff8504b16",
+      "internal_packet_seal_valid": true,
+      "source_set_commitment_sha256": "cc7cd6c3223e8ae138d575edca32bf9fc36ba616f63e1b34c61797068b68e960"
+    },
+    "cross_packet_checks": {
+      "same_source_set_commitment": true,
+      "source_set_commitment_recomputed_from_ordered_case_id_and_declared_source_file_sha256": "cc7cd6c3223e8ae138d575edca32bf9fc36ba616f63e1b34c61797068b68e960",
+      "canonical_case_history_projection_sha256_target_aware_paired": "30564fb99add52494159e0d0d405b246e18cf078facad45d04bac316afe3f1c6",
+      "canonical_case_history_projection_sha256_cross_case_diversity": "30564fb99add52494159e0d0d405b246e18cf078facad45d04bac316afe3f1c6",
+      "same_literal_histories_and_case_bindings": true,
+      "all_twelve_literal_message_hashes_recomputed_and_valid": true,
+      "all_twelve_source_binding_commitments_recomputed_and_valid": true,
+      "declared_source_file_sha256_consistent_between_case_and_both_variant_bindings": true,
+      "source_file_bytes_independently_verified": false,
+      "source_file_verification_note": "The assigned boundary prohibited inspecting source files. Source-file hashes are therefore bound as packet declarations, not independently compared with external source bytes. Literal packet histories and their internal binding commitments were independently recomputed."
+    }
+  },
+  "coverage": {
+    "expected_case_ids": ["e01", "e02", "e03", "e04", "e05", "e06"],
+    "reviewed_case_ids": ["e01", "e02", "e03", "e04", "e05", "e06"],
+    "paired_cases_reviewed": 6,
+    "paired_cases_expected": 6,
+    "correct_histories_reviewed": 6,
+    "wrong_focal_histories_reviewed": 6,
+    "all_declared_establishing_indices_reviewed": true,
+    "all_declared_downstream_reference_indices_reviewed": true,
+    "all_declared_nonfocal_control_indices_reviewed": true,
+    "all_retained_tails_reviewed": true,
+    "cross_case_dimensions_reviewed": [
+      "domain",
+      "discourse",
+      "decision rule",
+      "turn structure",
+      "distractors",
+      "probe form",
+      "explicit versus unstated target handling",
+      "shared fill-in-the-nouns risk"
+    ],
+    "coverage_complete": true
+  },
+  "paired_case_reviews": [
+    {
+      "case_id": "e01",
+      "verdict": "PASS",
+      "actual_changed_message_indices": [7, 10],
+      "declared_changed_message_allowlist": [7, 10],
+      "change_coverage_exact": true,
+      "focal_derivation": "The rule requires both an additive migration and a logged rollback interval below eight minutes. The histories establish the additive condition and change 6:40 to 10:40, producing partner beta in C and the exhaustive staff-ring branch in W.",
+      "counterfactual_minimal_and_coherent": true,
+      "downstream_repair": "Message 10 changes the stated selection and explanation consistently; all other messages remain literal matches.",
+      "declared_establishing_indices_supported": true,
+      "nonfocal_control": "The 21-day trace-retention chain at messages 3-4 is explicit, independent of ring selection, and byte-identical.",
+      "retained_tail": "Messages 15-16 are byte-identical clock-reconciliation guidance and avoid both targets, both rollback durations, the schema classification, and the control answer.",
+      "target_status_in_history": "explicit before the retained tail",
+      "leakage_or_contradiction_found": false
+    },
+    {
+      "case_id": "e02",
+      "verdict": "PASS",
+      "actual_changed_message_indices": [9, 14],
+      "declared_changed_message_allowlist": [9, 14],
+      "change_coverage_exact": true,
+      "focal_derivation": "The histories first screen hubs at 45 minutes and only then compare driving time. Cedar's 62-minute C result leaves both eligible and its 38-minute route wins; its 41-minute W result excludes Cedar and leaves Harbor as the sole eligible hub.",
+      "counterfactual_minimal_and_coherent": true,
+      "downstream_repair": "Message 14 changes the selected hub and branch explanation consistently; no unrelated history text changes.",
+      "declared_establishing_indices_supported": true,
+      "nonfocal_control": "Thursday walk-in intake at messages 1-2 is explicit, operationally unrelated, and byte-identical.",
+      "retained_tail": "Messages 17-20 are byte-identical volunteer read-back guidance and omit all hub, route, cold-hold, and service-calendar answers.",
+      "target_status_in_history": "explicit before the retained tail",
+      "leakage_or_contradiction_found": false
+    },
+    {
+      "case_id": "e03",
+      "verdict": "PASS",
+      "actual_changed_message_indices": [5],
+      "declared_changed_message_allowlist": [5],
+      "change_coverage_exact": true,
+      "focal_derivation": "The 8.6-tonne load plus 0.5-tonne reserve yields a 9.1-tonne minimum, while the verified gauge is 0.88 below 1.20. A 9.4-tonne C posting clears both conjuncts and requires Ridge Spur; an 8.8-tonne W posting fails the bridge conjunct and requires Quarry Loop.",
+      "counterfactual_minimal_and_coherent": true,
+      "downstream_repair": "No target statement requires repair. Message 6 refers generically to comparing the current posting with 9.1 and remains true under either value.",
+      "declared_establishing_indices_supported": true,
+      "nonfocal_control": "The western-creek-sector to Channel 3 mapping at messages 7-8 is explicit, route-independent, and byte-identical.",
+      "retained_tail": "Messages 15-18 are byte-identical photography and conditional stop-work instructions and neither name nor imply a route or radio answer.",
+      "target_status_in_history": "unstated; derivable only",
+      "leakage_or_contradiction_found": false
+    },
+    {
+      "case_id": "e04",
+      "verdict": "PASS",
+      "actual_changed_message_indices": [5],
+      "declared_changed_message_allowlist": [5],
+      "change_coverage_exact": true,
+      "focal_derivation": "The five readings total 600.0 and average 120.0. C applies +0.8 to obtain 120.8 with interval 119.7-121.9; together with the 2.5-degree spread, all three checks pass and imply Release. W applies +4.8 to obtain 124.8 with interval 123.7-125.9; the mean band and full-interval containment fail, implying Hold despite the passing spread.",
+      "counterfactual_minimal_and_coherent": true,
+      "downstream_repair": "No disposition is stated. Messages 6, 34, 36, and 38 discuss the current correction or all-pass logic without repeating a value or committing to either target, so they remain coherent unchanged.",
+      "declared_establishing_indices_supported": true,
+      "nonfocal_control": "Messages 7-8 establish odd-lot K-27 to Cabinet 2; messages 33-34 preserve K27-R identity and its independent map. All four declared indices are relevant and byte-identical.",
+      "retained_tail": "Messages 51-54 are byte-identical custody and equipment-board guidance. They repeatedly preserve a blank status without indicating Release or Hold and do not reveal the cabinet countertarget.",
+      "target_status_in_history": "unstated; derivable only",
+      "leakage_or_contradiction_found": false
+    },
+    {
+      "case_id": "e05",
+      "verdict": "PASS",
+      "actual_changed_message_indices": [7, 12],
+      "declared_changed_message_allowlist": [7, 12],
+      "change_coverage_exact": true,
+      "focal_derivation": "C reserves ceil(4/2)=2 of ten spaces and leaves eight, which meets the seven-space requirement and mandates Aster. W reserves ceil(8/2)=4 and leaves six, mandating Birch.",
+      "counterfactual_minimal_and_coherent": true,
+      "downstream_repair": "Message 12 changes the room, arithmetic, and comparison consistently; no other history text changes.",
+      "declared_establishing_indices_supported": true,
+      "nonfocal_control": "The 8:15 interpreter check-in at messages 3-4 is explicit, room-independent, and byte-identical.",
+      "retained_tail": "Messages 15-16 are byte-identical sign-and-lamp placement guidance and omit room, capacity, registration, and interpreter answers.",
+      "target_status_in_history": "explicit before the retained tail",
+      "leakage_or_contradiction_found": false
+    },
+    {
+      "case_id": "e06",
+      "verdict": "PASS",
+      "actual_changed_message_indices": [9],
+      "declared_changed_message_allowlist": [9],
+      "change_coverage_exact": true,
+      "focal_derivation": "Both histories have exactly three flagged passages. C removes the living private organizer's full name, satisfying both iff conditions and requiring fast-track; W retains Marta Coelho's full name, failing the naming predicate and requiring the standard queue.",
+      "counterfactual_minimal_and_coherent": true,
+      "downstream_repair": "No queue is stated and no later message repeats the naming predicate, so changing only message 9 is sufficient and coherent.",
+      "declared_establishing_indices_supported": true,
+      "nonfocal_control": "The Meridian Audio contract at messages 1-2 is explicit, queue-independent, and byte-identical.",
+      "retained_tail": "Messages 15-16 are byte-identical copyediting guidance and omit passage count, names, queue, and producer.",
+      "target_status_in_history": "unstated; derivable only",
+      "leakage_or_contradiction_found": false
+    }
+  ],
+  "cross_case_diversity_review": {
+    "verdict": "PASS",
+    "explicit_target_cases": ["e01", "e02", "e05"],
+    "unstated_derivable_target_cases": ["e03", "e04", "e06"],
+    "domain_diversity": "Six substantively different domains: software release operations, community cold-chain routing, watershed field logistics, manufacturing qualification, event accessibility, and publishing rights review.",
+    "decision_rule_diversity": "The set includes a categorical-plus-threshold conjunction, sequential eligibility and route-time tiebreak, computed-reserve conjunction, corrected-mean plus interval-containment plus range conjunction, ceiling-and-residual-capacity arithmetic, and count-plus-privacy predicate logic.",
+    "turn_structure_diversity": "Histories range from 17 to 55 messages; three state the derived decision and repair it in W, while three deliberately leave it unstated and need no downstream target repair. Rules and load-bearing inputs also appear at different points and in different orders.",
+    "distractor_diversity": "Distractors span timestamp provenance, matched-test protocol, preliminary sensor readings, maintenance and traceability records, optional arrival routing, and editorial layout/copyediting. Nonfocal controls likewise vary across retention duration, weekday, radio channel, cabinet mapping, appointment time, and vendor identity.",
+    "probe_diversity": "All probes request a short categorical answer, as required by the assay, but they differ in whether they cue the operative inputs, refer to an already selected result, or ask for application of an unstated rule.",
+    "fill_in_the_nouns_risk": {
+      "rejected": true,
+      "assessment": "The cases share a deliberately explicit audit/planning register and binary mandatory-rule discipline, but they are not one scaffold with nouns replaced. Their computations, evidence topology, number and placement of changed messages, explicit-versus-unstated handling, history length, distractor chains, nonfocal controls, and retained-tail tasks differ materially.",
+      "residual_limitation": "The common didactic register and repeated assistant restatement of mandatory rules reduce ecological breadth. This is a bounded external-validity limitation, not a paired-validity failure or a shared fill-in-the-nouns template."
+    }
+  },
+  "overall_verdict": "PASS",
+  "formal_gate_recommendation": "PASS for the assigned paired-content and cross-case-diversity review layer only.",
+  "limitations": [
+    "No source files were inspected, so declared source-file hashes were not independently compared with external bytes.",
+    "No tokenizer geometry, implementation path, model behavior, prior review, blind review, or experimental outcome was inspected.",
+    "This review does not authorize any execution step outside the paired-content and diversity gate assigned here."
+  ]
+}
