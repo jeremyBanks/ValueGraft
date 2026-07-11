@@ -1,136 +1,186 @@
-_This conversation documents the collapse of v10 as an authorizing experiment
-after natural c10 and c02 fixtures exposed large schedule-dependent bf16
-divergence, followed by discovery of invalid controls and a redesign toward
-schedule-robust, independently reviewed matched histories. The latest review
-recommends pausing the costly N=12 build and testing the mechanism with a
-smaller decomposition canary first._
+_This conversation documents the invalidation of v10 as an authorizing
+experiment, the discovery of schedule-dependent bf16 divergence and defective
+controls, and a subsequent pivot toward a smaller, decision-focused
+decomposition assay before any full confirmatory corpus or paid fan-out. The
+current project priority is to validate whether a coherent, history-specific
+summary-state channel exists at all, while preserving strict technical and
+content gates._
 
 **Participants:** User and gpt-5.6-sol-xhigh.
 
-**Core result.** V10 is permanently non-authorizing; its paid run was cancelled
-before launch and no semantic result was collected. Natural c10 showed a
-fixed-margin shift of about `0.06055` nats, maximum K/V divergence `16.125`, and
-continuation-logit change `0.84375`; c02 independently showed a `0.1318359375`
-margin shift, K/V maxima `6.5/5.6875`, final-logit maximum `0.5`, and
-continuation-logit maximum `0.46875`. The old ladder stopped durably after c02
-(`c10`, `c02` failed; c01 had no substantive completion). Earlier mechanistic
-results require a schedule-noise caveat; coarse behavioral observations are not
-automatically void.
+**Handoff State.** V10 is permanently non-authorizing. Its paid run was
+cancelled before launch, no semantic result was collected, and the old ladder is
+paused after durable failures on c10 and c02; c01 has no substantive completion.
+C10 showed a fixed-margin shift of approximately `0.06055` nats, maximum K/V
+divergence `16.125`, and continuation-logit change `0.84375`. C02 independently
+showed a `0.1318359375` margin shift, K/V maxima `6.5/5.6875`, final-logit
+maximum `0.5`, and continuation-logit maximum `0.46875`. Earlier mechanistic
+observations require a schedule-noise caveat, although coarse behavioral
+observations are not automatically void.
 
 The frozen c10 origin diagnostic completed with `QUERY_SHAPE_ROUNDING`. Branches
-with the same 4,096-token shape but altered causally future content were
-bit-identical in the first 23 rows, while the same prefix processed with
-23-token versus 4,096-token query shapes diverged. This rules out the suspected
+with identical 4,096-token shapes but different causally future content were
+bit-identical in the first 23 rows, while identical prefixes processed with
+23-token and 4,096-token query shapes diverged. This rules out the suspected
 future-token leak for c10 and identifies call-shape-dependent bf16 arithmetic as
-the local cause. The phenomenon is established prior art; the potentially useful
-contribution is an assay-specific warning that execution-path numerics can
-masquerade as semantic state in KV/activation grafting. It does not rescue v10,
-and the observed magnitude is established only for the tested Qwen3-0.6B
-CPU/bf16/eager configuration, not the intended 30B A100 setup.
+the local cause. The underlying phenomenon is established prior art; the
+potentially useful contribution is an assay-specific warning that execution-path
+numerics can masquerade as semantic state in KV/activation grafting. The
+observed magnitude is established only for the tested Qwen3-0.6B CPU/bf16/eager
+configuration, not the intended 30B A100 setup.
 
-The synthetic gate was invalid as scientific validation: seven “fixtures” were
-seven lengths of one five-token periodic stream, creating pseudoreplication and
-failing to represent natural-language diversity. The supposed `G_wrong` control
-also cycled short donor token IDs into target-length slots, producing incoherent
-repetitive histories; the old `message_block` schedule likewise concatenated the
-whole history before chunking rather than replaying actual message boundaries.
-These controls must not be reused. The hard empirical gate itself was correct
-and prevented paid or semantic execution. Attribution is settled:
-Sol/gpt-5.6-sol designed and froze the cyclic fixture and approved its
-implementation; Claude Opus 4.8 had the fixture in review scope and failed to
-challenge its representativeness; Fable/claude-fable-5 did not choose it and
-identified the degeneracy only after inspecting the literal construction.
-Fable’s later corrective review was stopped after $2.34 without producing a
-usable note and is not a current dependency.
+The methodological implication is fundamental: at finite precision, a KV cache
+is determined not only by weights, tokens, positions, and dtype, but also by
+call boundaries, query shape, kernel, backend, hardware, and library version. P
+and O must therefore be treated as distinct explicit replay protocols rather
+than assumed-equivalent executions. P is turn-aligned replay of imported
+assistant text, not native live conversational state; a positive result must be
+described as a schedule-conditioned summary-row channel, not evidence about
+ordinary live-agent caches.
+
+The original synthetic gate was invalid as scientific validation. Its seven
+fixtures were seven lengths of one five-token periodic stream, creating
+pseudoreplication and failing to represent natural-language diversity. Exact
+zero on that stream is informative only for that trajectory and does not
+establish general schedule invariance. The old `G_wrong` control was also
+invalid: it cycled short donor token IDs into target-length slots, producing
+incoherent repetitive histories. The old `message_block` schedule was
+mislabelled as message-aligned; it concatenated the whole history before
+chunking rather than replaying actual message boundaries. None of these controls
+may authorize future work.
+
+Attribution is settled. Sol/gpt-5.6-sol designed and froze the cyclic fixture
+and approved its implementation. Claude Opus 4.8 had the literal fixture in
+review scope but failed to challenge its representativeness.
+Fable/claude-fable-5 did not choose the fixture and identified its degeneracy
+only after inspecting the construction. Fable’s later corrective review was
+stopped after $2.34 without producing a usable note and is not a current
+dependency. The hard natural-case gate nevertheless worked as intended: it
+stopped paid semantic execution and exposed the schedule problem before
+contamination. The durable lesson is that every authorizing gate requires
+raw-input inspection, independent fixture count, content-diversity review,
+production-representativeness review, and an explicit statement of the claim it
+can support.
 
 The banked c10/c02 counterfactual candidates were mechanically exact but failed
 blind naturalness and target-aware factual review. All four remain unauthorized;
 the corrected validator reports geometry `MECHANICAL_PASS`, content review
-`FAIL`, and execution authorization `false`. Validator provenance and
-review-reporting defects were independently corrected. The banked 30B corpus is
-unsuitable as primary confirmatory material: 226/264 assistant replies hit the
-320-token cap, raw token IDs and resolved revision were not preserved, and the
-text does not constitute native live-cache state.
+`FAIL`, and execution authorization `false`. The validator’s own provenance and
+stale-review-reporting defects were corrected additively. The candidates are
+historical feasibility witnesses only. The banked 30B corpus is unsuitable as
+primary confirmatory material: 226/264 assistant replies hit the 320-token cap,
+raw token IDs and resolved revision were not preserved, and the text does not
+constitute native live-cache state. It may be retained as model-authored surface
+text after coherence review, but not as preserved native conversation state.
 
-The prior redesign proposed a fresh externally authored paired corpus of 12
-diverse conversations, each with referent and overloaded-sense plants, coherent
-correct and plant-specific minimally counterfactual histories, identical message
-boundaries and canonical widths, and blind plus target-aware review before any
-model outcome was exposed. Its schedules were `P` (true turn-aligned replay),
-`O` (ordinary 4,096-token chunks), and `D/F` (fixed gapped destination), with
-forced identical summaries across arms. The intended estimands were
-history-versus-fresh (`GF`) and history-versus-matched-counterfactual (`GMC`)
-under both schedules, with focal selectivity, component log-probabilities,
-summary NLL, and competence diagnostics retained. P/O cache equality is not
-required; deterministic repeats and explicit schedule effects are required.
+The replacement v11 effort was paused after three mechanically exact drafts were
+committed and pushed as explicitly `DRAFT_UNREVIEWED`: c01 at 6,221 tokens, c04
+at 6,688, and c05 at 6,862. Additional authoring checkpoints exist locally for
+c02, c03, and c06. No v11 model forward pass has occurred. The drafts appear to
+share a long planning/decision-record scaffold and were produced by the same
+authoring model, so blind diversity and coherence review is required before
+further expansion. Existing drafts should be preserved as engineering fixtures,
+not treated as momentum toward a confirmatory study.
 
-That N=12 plan is now paused for first-principles review. Three mechanically
-exact v11 drafts were committed and pushed as explicitly `DRAFT_UNREVIEWED`
-(`c01` 6,221 tokens, `c04` 6,688, `c05` 6,862); additional authoring checkpoints
-exist locally for c02/c03/c06; no v11 model forward pass has occurred. The
-drafts appear to share a long planning/decision-record scaffold and were
-produced by the same authoring model, so blind diversity review is required
-before further expansion.
+**Design pivot.** The latest red-team and statistical reviews, together with
+independent reconstruction, conclude that completing twelve long cases before
+observing the exact model is not the highest-decision-value next step. The
+immediate program should be a separate discovery/decomposition assay, with its
+cases permanently excluded from any later confirmatory N. The corrected
+methodological or negative paper should begin in parallel and should not depend
+on a future positive result.
 
-The latest red-team assessment concludes that a clean N=12 confirmation is not
-currently the highest-decision-value next step. The recommended sequence is:
+The cleanest semantic contrasts are same-schedule, same-shape comparisons
+between correct and plant-specific minimally counterfactual histories.
+Correct-versus-fresh remains a practical utility contrast because the fresh arm
+uses a different gapped-destination execution path; it is not by itself a clean
+semantic causal contrast. Each counterfactual must change only the focal
+referent or overloaded sense and all necessary downstream references, while
+preserving message boundaries, canonical widths, positions, summary IDs, and
+schedule calls. Every wrong-history arm must be scored on both focal plants so
+generic disruption can be separated from focal movement.
 
-- Freeze further long-corpus expansion and retain existing drafts as engineering
-  fixtures.
-- Complete a `$0` local end-to-end decomposition on a short or first-two-case
-  apparatus, including real model execution, persistence, harvest, full-KV,
-  V-only, fresh, and counterfactual arms.
-- If technically valid, run a separate 1–3-case exact-30B canary, approximately
-  `$3–$5`, not counted toward any later confirmatory N.
-- Build the independent N=12 corpus only if the canary shows a large,
-  interpretable channel.
-- Begin the corrected negative/methodological paper in parallel rather than
-  making it depend on a future positive result.
-- Defer live coding-agent treatment evaluation until a coherent-state channel
-  and the required native-cache infrastructure exist; a few tasks would
-  currently be only an engineering smoke test.
+The forced correct summary is a controlled mediator, not a natural
+counterfactual workflow. It estimates the effect of changing source history
+while holding visible summary tokens fixed, but can create history-summary
+contradiction when the summary states the correct fact. Summaries therefore
+require a blinded pre-outcome leakage label such as target-neutral, partial, or
+explicit. Forced-summary NLL must be reported, but does not remove the
+contradiction concern. A balanced history-by-summary crossover, or a
+target-independent carrier assay, is needed if a strong semantic-specificity
+claim is retained.
 
-The canary must address several previously under-specified issues. Copying only
-generated summary content rows may miss information stored in a natural closing
-delimiter or downstream aggregator, so content-only,
-content-plus-closing-boundary, and a small fixed-anchor condition should be
-considered prospectively. The forced correct summary under a counterfactual
-history is an off-support mediator and can measure history-summary contradiction
-rather than semantic memory. A balanced history-by-summary crossover, or a
-target-independent carrier assay, is needed if the stronger specificity claim is
-retained. Summary leakage and compacted-state headroom must be audited before
-interpreting any improvement. Correct-target and counterfactual-target log
-probabilities must be reported separately; a larger margin alone does not
-establish improved competence. Full coherent K+V, V-only, and optionally K-only
-interventions must be distinguished, since a positive K+V result would not
-validate the original naive value-copying intervention.
+The recommended state families are:
 
-The canary should require full-history competence, measurable compaction damage,
-a correct-target increase under coherent state, counterfactual-direction
-movement under the wrong history, focal selectivity, generated/forced replay
-identity, persistence and independent-harvest integrity, and schedule
-interaction smaller than the observed channel. A null at this stage would be a
-bounded decision result, not a universal null. A positive canary would justify a
-new independent confirmatory corpus; a V-only null would support “channel
-exists, naive V-only intervention fails”; absent headroom, severe leakage,
-incoherence, or schedule interaction at effect scale, the mechanism program
-should stop under the current budget.
+- `R`: coherent full K+V summary-state insertion, testing whether a usable state
+  channel exists.
+- `V`: value-only insertion, directly testing the original mitigation idea.
+- Fresh, correct-history, and plant-specific counterfactual-history arms, all
+  with the same summary IDs and matched schedules.
 
-The proposed P schedule remains explicitly replay, not live conversational
-state: it prefills historical assistant messages rather than reproducing
-token-by-token native generation. Any positive result must therefore be
-described as a history-conditioned summary-row channel under an explicit replay
-schedule, not as proof that an ordinary live agent cache carries the same state.
-Native-cache evaluation is a separate future study requiring common-prefix
-forking and a different control strategy.
+For each family, report utility versus fresh, focal
+correct-versus-counterfactual movement, and focal selectivity against the
+non-focal plant. Correct-target and counterfactual-target log probabilities must
+be reported separately; a larger margin alone does not establish improved
+competence. Full-KV success must not automatically authorize value-only claims.
+A positive full-KV result with a null value-only result would support “a
+coherent channel exists but naive V-only copying fails,” not the original
+intervention hypothesis.
 
-The immediate handoff state is therefore: v10 remains permanently
-non-authorizing; the old ladder is paused; the c10 diagnostic is complete with
-`QUERY_SHAPE_ROUNDING`; v11 expansion is paused; three drafts are committed but
-unreviewed; no v11 forward pass or paid semantic run has occurred; Fable is not
-blocking progress; and the next required decision is whether the smaller local
-decomposition and exact-30B canary should replace blind completion of the full
-N=12 corpus.
+P should be the protocol-primary schedule. O, ordinary 4,096-token chunking,
+should be a prespecified sensitivity condition rather than a co-primary
+requirement unless the budget and implementation make dual scheduling
+inexpensive. Neither schedule is native live-agent execution. N=12, if
+eventually run, supports a fixed authored benchmark claim rather than broad
+population generalization; all case values, sign counts, intervals, author-pass
+sensitivity, and leave-one-case-out analyses should be reported.
+
+**Required sequence.** First, freeze further long-corpus expansion and preserve
+the three drafts as unreviewed engineering fixtures. Second, complete a `$0`
+local end-to-end decomposition on a short or first-two-case apparatus, including
+real model execution, persistence, independent harvest, full-KV, V-only, fresh,
+and coherent counterfactual arms. The local result is a technical and decision
+diagnostic, not evidence about the 30B numerical floor. It must verify exact
+model/template identity, schedule derivation, deterministic repeats,
+generated/forced replay identity, positions and lineage, summary leakage and
+headroom, finite scores, and durable artifacts.
+
+Third, if the local apparatus is valid and shows a large interpretable channel,
+run a separate exact-30B canary on one to three cases, approximately `$3–$5`,
+not counted toward any later confirmatory N. Require full-history competence,
+measurable compaction damage, correct-target improvement under coherent state,
+counterfactual-direction movement under wrong history, focal selectivity,
+acceptable summary leakage, generated/forced identity, persistence and
+independent-harvest integrity, and schedule interaction smaller than the
+observed channel. A null is bounded under this assay and budget; it is not a
+universal null. Severe leakage, absent headroom, incoherence, invalid controls,
+or schedule interaction at effect scale should terminate the mechanism program
+under the current budget.
+
+Only a strong canary should authorize a newly authored independent N=12 corpus.
+That corpus must be authored as matched correct/counterfactual triplets from the
+beginning, with complete non-clipped replies, diverse structures and topics,
+coherent retained tails, exact canonical geometry, blind randomized naturalness
+review, target-aware factual review, cross-case scaffold review, and a third
+adjudicator for disagreements. No summary, state, NLL, or outcome may be visible
+during authoring or review.
+
+A live coding-agent treatment evaluation is deferred. It requires native
+assistant-token generation, common-prefix cache forking, isolated environments,
+and a capability-matched model that passes its own technical ladder. A small
+number of tasks would be an engineering smoke test rather than credible
+performance evidence. It becomes worthwhile only after a coherent-state channel
+clears the discovery assay and the native-cache infrastructure exists.
+
+The project’s intended document form is a paper-style corrected negative or
+methodological report, with any later canary or v11 result added as a separate
+empirical section. The durable current state is: v10 is dead as an authorizing
+instrument; c10 is classified as query-shape rounding; the old ladder is paused;
+the old synthetic and wrong-history controls are invalid; v11 expansion is
+paused; three drafts are committed but unreviewed; no v11 forward pass or paid
+semantic run has occurred; Fable is nonblocking; and the next decision is
+whether the `$0` decomposition and, if justified, the separate exact-30B canary
+should replace blind completion of the full N=12 corpus.
 
 ## Conversation sources
 
@@ -145,3 +195,4 @@ N=12 corpus.
 - `019f5261-4513-7f91-8a71-25352239708b`
 - `019f5267-8b36-77f0-bb1a-b24cb81c0c47`
 - `019f5286-6b5e-7fd0-8352-980a83e287d5`
+- `019f5287-c1cb-7ef1-8dbc-9397ce31da62`
