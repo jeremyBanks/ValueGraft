@@ -1,5 +1,56 @@
 # STATE.md — session handoff / current state
 
+## CURRENT TRUTH (2026-07-11, ultra-depth regroup) — v11 paused; exploratory canary next
+
+The twelve-case paired-v11 corpus is **paused before any semantic model forward**.
+Six committed files remain non-executable discovery/engineering checkpoints:
+c01/c04/c05 are mechanically complete but unreviewed drafts, c02/c03 are
+authoring-source WIP, and c06 is an unvalidated full draft. Do not expand, score,
+or silently promote them. The frozen v11 corpus contract remains a possible
+future confirmatory design, not the current execution plan.
+
+An ultra-depth review by Sol, two independent Codex subagents, and a focused
+`claude-fable-5` consultation converged that building all twelve long,
+token-exact triple histories before observing the exact model has poor decision
+value. The next scientific version is a separate exploratory exact-model
+decision canary. Its stimuli are permanently excluded from any later
+confirmation. The strategy and closed corrections are:
+
+- `notes/2026071187-trajectory-red-team-ultra-regroup.md`;
+- `notes/2026071188-causal-statistical-blackboard-ultra-regroup.md`;
+- `notes/2026071189-sol-ultra-regroup-decision.md`;
+- `notes/2026071190-fable-ultra-regroup-review.md`;
+- `notes/2026071192-sol-fable-review-disposition-and-canary-closure.md`.
+
+The canary first runs exact-stack gates and a same-path downstream-note positive
+control, then four engineered matched-history cases (three short, one
+mid-length). Conversation discovery is conditional on a full-KV engineered
+channel. The primary source protocol is a q=1 role-native stepwise replay, not
+the current whole-assistant-message P prefill. The primary retained region is
+summary content plus the canonical close/boundary; content-only and a fixed
+anchor extension are descriptive. All regions contain identical visible anchor
+text. Clean semantic evidence comes from same-schedule correct-versus-minimally-
+counterfactual state with focal selectivity; fresh comparisons measure utility.
+Full-KV and value-only claims remain separate.
+
+Local end-to-end gates must pass before a pod. A critical subset must then rerun
+on the exact bf16 30B pod before semantic scoring. Paid order is gates ->
+same-path positive control -> one full-arm engineered case -> observed forecast
+-> remaining engineered cases -> conditional conversation cells. Initial paid
+authorization is `$2`; the full canary has a hard `$8` ceiling only after the
+forecast, with at least `$15` reserved for failures and final synthesis/review.
+
+No paid coherent-state compute has run and no pod is active. The latest focused
+Fable review reported `$2.611132`, bringing conservative provider-usage estimates
+to `$33.787580` against the owner's approximate `$60` ceiling; this is not
+verified as incremental cash billing. The prior RunPod balance observation
+remains `$63.3160022124`.
+
+The immediate work is to freeze the additive canary preregistration, implement
+and independently harvest its complete runner, and begin the corrected
+negative/methodological paper scaffold in parallel. Do not resume long-corpus
+authoring or launch compute merely because the strategy review is complete.
+
 ## CURRENT TRUTH (2026-07-11) — coherent-state v10 execution
 
 The active experiment is the additive Amendment-1-through-10
