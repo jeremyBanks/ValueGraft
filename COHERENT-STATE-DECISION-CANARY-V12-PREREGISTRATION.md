@@ -264,7 +264,12 @@ positions. Generated-versus-forced identity is a technical gate on a separate
 literal fixture, not a requirement that greedy decoding reproduce the externally
 fixed engineered carrier. Under that fixture, greedily generate one sequence,
 persist the observed IDs, rebuild the identical prefix, force those observed IDs
-q=1, and require bit-exact token log probabilities and K/V rows. The gate fixture
+q=1, and require bit-exact token log probabilities and K/V rows. Exact comparison
+also covers prefix IDs, logical/physical positions, event widths, every content
+row's dtype/shape/bytes, and the final unappended EOS candidate ID and log-probability
+bits. EOS is a stop witness, not a forced row; decoded-text equality is diagnostic
+and token-ID equality is authoritative. No tolerance or engineered-carrier equality
+enters this gate. The gate fixture
 is: system `Answer plainly.`; user `Write one short neutral sentence acknowledging
 that a record exists.`; greedy temperature 0; maximum 64 content tokens; normal
 EOS required. The engineered carrier remains forced fixed text under every
@@ -359,9 +364,16 @@ deterministic Rademacher vector `r` from a SHA-256 counter stream seeded by the
 UTF-8 string `coherent-state-v12-placebo-20260711` plus case/layer/row indices.
 Project it orthogonal to d, normalize it to `L2(u)=L2(d)`, reshape it, and set
 `V_placebo = V_F + u` with fresh keys. If `L2(d)=0`, use `u=0`; if projection
-norm is zero, advance the counter until nonzero. Persist pre/post norms, dot
-products, seed material, and dtype conversion. No target text or label enters
-the PRNG.
+norm is zero, advance the counter. For nonzero `d`, try deterministic counter
+attempts `0..1023` and select the first whose **applied bf16** delta is nonzero,
+has relative L2 error at most `0.05`, and absolute cosine with `d` at most `0.02`;
+the pre-cast relative norm error and absolute cosine must each be at most `1e-12`.
+Zero-`d` rows remain bit-exactly fresh. Persist every rejected attempt, pre/post
+norms, dot products, seed material, dtype conversion, and row hashes. If any
+nonzero row has no valid deterministic attempt, do not score that placebo arm:
+record `PLACEBO_UNAVAILABLE` for that case/region. This is adverse control
+availability but does not invalidate the separately specified full-KV or
+value-only primary arms. No target text or label enters the PRNG or selection.
 
 ## 11. Oracles, probes, and raw outcomes
 
@@ -369,6 +381,14 @@ Score two full-history oracles with the same visible maximal carrier/anchor:
 
 - `A_C`: correct full history;
 - `A_W`: counterfactual full history.
+
+Both oracles are unsurgered contiguous executions under schedule N only. Their
+literal order is evicted history prefix, carrier/anchor, then retained tail—the
+same order frozen by the source planner. Execute through the final assistant
+close, append probe user plus assistant header as one canonical structural call
+derived by exact prefix differencing, and fork that immutable probe-prefix state
+for generation and each q=1 target forcing. Logical and physical positions are
+contiguous. P-schedule or compact oracles are not run and cannot substitute.
 
 For each arm and probe persist:
 
@@ -379,6 +399,17 @@ For each arm and probe persist:
 - deterministic generated answer and stop reason;
 - complete teacher-forcing feed IDs/positions;
 - immutable source/destination/arm hashes.
+
+Every generated answer uses greedy argmax with the lowest token ID winning an
+exact tie, no sampling or text stop, and a preflight-bound nonempty EOS set that
+must agree across model/generation/tokenizer metadata. Append at most 64 non-EOS
+content tokens q=1. After the 64th, inspect one additional next-token distribution:
+EOS there is a normal stop but is not appended; another token is `max_content_tokens`.
+Persist content IDs/log-probabilities, stop candidate ID/log-probability, EOS set,
+content count, stop reason, and cap flag. Identity generation requires nonempty
+content and normal EOS. An ordinary arm cap hit remains behavioral evidence and
+fails any generated-answer oracle-competence requirement but does not erase its
+forced-target scores.
 
 Never call a larger margin "less loss" unless the C-target mean log probability
 also improves. Never discard the two log-probability components.
@@ -519,10 +550,22 @@ Production-tokenizer IDs and exact matched geometry must be committed before
 FROZEN status; if the literal strings do not match geometrically, an additive
 revision replaces them before any forward.
 
-For both directions, A-green must generate/favor `approve`, A-amber must
-generate/favor `deny`, and the R2 full-KV transplant must move the margin toward
-its source conclusion with recovery at least 0.5 of the corresponding oracle-
-versus-stale margin gap. The natural calibration result is reported before e01.
+Let `m(x)=log p_x(approve)-log p_x(deny)`. Freeze five raw cells: full-history
+green oracle `A_g`, full-history amber oracle `A_a`, the unique fresh compact
+`F=FF`, R2/N green full-KV transplant `T_g=CC`, and R2/N amber full-KV transplant
+`T_a=WW`. The C/W fresh constructions must hash identically; `F` is the sole
+stale baseline. Define
+
+- `rho_green = (m(T_g)-m(F)) / (m(A_g)-m(F))`;
+- `rho_amber = (m(F)-m(T_a)) / (m(F)-m(A_a))`.
+
+All terms must be finite and both denominators strictly positive. Require
+`m(A_g)>0`, `m(A_a)<0`, `rho_green>=0.5`, and `rho_amber>=0.5`; ratios are
+unclipped and values above one are reported. The two label-balanced directions
+are oriented views of these same five raw cells, not independent fixtures or
+duplicated evidence. Oracle generation must begin with/favor its exact target;
+forced-margin direction is mandatory even if generated prose is longer. The
+natural calibration result is reported before e01.
 Its failure is scientifically adverse but does not relabel a passing technical
 path control as broken; the frozen engineered decision rules remain terminal.
 
