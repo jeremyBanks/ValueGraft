@@ -1,0 +1,287 @@
+{
+ "idx": 87,
+ "meta": {
+  "n_tokens_full": 13874,
+  "cut_msg": 18,
+  "n_ctx_tokens": 9947
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "split": "tune",
+ "min_idx": 0,
+ "gold_action": {
+  "tool": "str_replace_editor",
+  "path": "/workspace/getmoto__moto__4.0/moto/dynamodb/models/__init__.py",
+  "command": "str_replace"
+ },
+ "summary_tokens": 79,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 222,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.37942109344450753,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.0/moto/dynamodb/models/__init__.py</parameter>\n<parameter=old_str>if update_expression:</parameter>\n<parameter=new_str>if update_expression and table.hash_key_attr in expression_attribute_names.values():\n            raise botocore.exceptions.ClientError({\n                'Error': {\n                    'Code': 'ValidationException',\n                    'Message': f\"One or more para",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": true,
+    "cmd_match": true,
+    "match": true
+   }
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.39258640092351826,
+   "gen": "The error occurred because the `old_str` is not unique in the file. I need to make the `old_str` more specific by including additional context to ensure it uniquely identifies the correct occurrence.\n\nLet's modify the `old_str` to include more context around the `if update_expression:` line that appears after the `if all([table.hash_key_attr in key, table.range_key_attr in key]):` block.\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto_",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": true,
+    "cmd_match": true,
+    "match": true
+   }
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.37022938781599163,
+   "gen": "The error occurred because the `old_str` pattern `if update_expression:` appears multiple times in the file. To ensure uniqueness, I will use a more specific context around the first occurrence of `if update_expression:`.\n\nLet's modify the `str_replace` command with a more specific `old_str` that includes the surrounding lines to ensure uniqueness.\n\n<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__4.0/moto/dynamodb/models/__init__",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": true,
+    "cmd_match": true,
+    "match": true
+   }
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+     "config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+     "label": "swegym_tuned_20260710T145330Z",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.3764632316599503,
+   "gen": "The error occurred because the `old_str` pattern `if update_expression:` appears multiple times in the file. To fix this, I will use a more specific context to uniquely identify the correct instance of `if update_expression:` that needs to be modified.\n\nI will target the block that follows the `if update_expression:` check and is related to validating the update expression AST. This block is located just after the `update_expression_ast.validate()` call.\n\n<function=str_replace_editor>\n<parameter",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": true,
+    "cmd_match": true,
+    "match": true
+   }
+  },
+  "E-a0.5": {
+   "intervention": {
+    "arm": "E-a0.5",
+    "graft_type": "value",
+    "alpha": 0.5,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.3776259397960409
+  },
+  "P-a0.5": {
+   "intervention": {
+    "arm": "P-a0.5",
+    "graft_type": "value-placebo",
+    "alpha": 0.5,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1321,
+    "kind": "placebo"
+   },
+   "tf_mean": -0.47428802034329093
+  },
+  "E-a0.75": {
+   "intervention": {
+    "arm": "E-a0.75",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.37022938781599163
+  },
+  "P-a0.75": {
+   "intervention": {
+    "arm": "P-a0.75",
+    "graft_type": "value-placebo",
+    "alpha": 0.75,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1321,
+    "kind": "placebo"
+   },
+   "tf_mean": -1.1565464397387044
+  },
+  "E-a1": {
+   "intervention": {
+    "arm": "E-a1",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.363186586526566
+  },
+  "P-a1": {
+   "intervention": {
+    "arm": "P-a1",
+    "graft_type": "value-placebo",
+    "alpha": 1.0,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1321,
+    "kind": "placebo"
+   },
+   "tf_mean": -1.621194247633697
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -1.9645650651323447,
+   "gen": "Based on the code and context provided, the issue is in the `update_item` method of the DynamoDB implementation in the `moto` library. The problem is that updating a partition key (hash key) is currently allowed, but according to AWS DynamoDB behavior, this should raise a validation error.\n\nHere's the fix:\n\n```python\n# In the moto/dynamodb/models.py file, locate the update_item method\n\ndef update_item(self, table_name, key, attribute_updates, return_values=None):\n    # ... existing code ...\n\n   ",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -1.9055826646359235,
+   "gen": "Based on the investigation, here's the solution to fix the DynamoDB partition key validation issue:\n\n## Root Cause\nThe issue occurs because the DynamoDB implementation doesn't validate that partition key updates are prohibited, allowing users to modify partition keys through `UpdateItem` operations when they should be immutable.\n\n## Solution\n\nThe fix needs to be implemented in the `UpdateItem` method of the DynamoDB service. Here's the required code change:\n\n```python\n# In the DynamoDB service i",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+   "champion_config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+   "champion_label": "swegym_tuned_20260710T145330Z",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+     "champion_config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+     "champion_label": "swegym_tuned_20260710T145330Z"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack.",
+   "alpha_sweep": [
+    0.5,
+    0.75,
+    1.0
+   ],
+   "placebo": "position-shuffle per swept alpha (arms P-a{alpha})",
+   "profile_regions": null,
+   "profile_alpha": null,
+   "held_out_split": {
+    "rule": "sha256(SC_TRAJ_SPLIT_SEED:idx) parity -> tune|eval",
+    "seed": 20260710,
+    "note": "select alpha / build the layer champion on TUNE, report on the DISJOINT EVAL split; ~75 usable trajectories so each split is thin -- overfitting caveat in the analysis"
+   }
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1 min_idx=0",
+   "min_idx": 0,
+   "n_requested": 75,
+   "instance_ids": null,
+   "secondary_metric": "discrete next-action-match (tool/path/command parsed from the free generation vs the true next action) recorded per generating arm -- a behavioral check that does NOT need test execution; addresses the logprob-proxy caveat"
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-11T01:11:28Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "4480dec8617d",
+   "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

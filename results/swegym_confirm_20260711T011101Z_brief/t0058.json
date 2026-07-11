@@ -1,0 +1,287 @@
+{
+ "idx": 58,
+ "meta": {
+  "n_tokens_full": 12118,
+  "cut_msg": 12,
+  "n_ctx_tokens": 8219
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "split": "eval",
+ "min_idx": 0,
+ "gold_action": {
+  "tool": "str_replace_editor",
+  "path": "/workspace/getmoto__moto__3.1/moto/rds/responses.py",
+  "command": "view"
+ },
+ "summary_tokens": 117,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 59,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.12682327244962108,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/exceptions.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": false,
+    "cmd_match": true,
+    "match": false
+   }
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.2844989940139577,
+   "gen": "The `describe_db_clusters` method in the RDS models file currently attempts to access the cluster directly from the `self.clusters` dictionary without checking if the cluster identifier exists. This can lead to a KeyError when querying a non-existent cluster. To fix this, we need to add a check to verify the existence of the cluster identifier before accessing it.\n\nI will modify the method to first check if the cluster identifier exists in the `self.clusters` dictionary. If it does not exist, we",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": false,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.12644014947617674,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/models.py</parameter>\n<parameter=old_str>    def describe_db_clusters(self, cluster_identifier):\n        if cluster_identifier:\n            return [self.clusters[cluster_identifier]]\n        return self.clusters.values()</parameter>\n<parameter=new_str>    def describe_db_clusters(self, cluster_identifier):\n        if cluster_identifier:\n            if cluster_identifier",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": false,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+     "config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+     "label": "swegym_tuned_20260710T145330Z",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -0.18820287019052995,
+   "gen": "<function=str_replace_editor>\n<parameter=command>str_replace</parameter>\n<parameter=path>/workspace/getmoto__moto__3.1/moto/rds/models.py</parameter>\n<parameter=old_str>    def describe_db_clusters(self, cluster_identifier):\\n        if cluster_identifier:\\n            return [self.clusters[cluster_identifier]]\\n        return self.clusters.values()</parameter>\n<parameter=new_str>    def describe_db_clusters(self, cluster_identifier):\\n        if cluster_identifier:\\n            if cluster_ident",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": false,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "E-a0.5": {
+   "intervention": {
+    "arm": "E-a0.5",
+    "graft_type": "value",
+    "alpha": 0.5,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.13689679821988218
+  },
+  "P-a0.5": {
+   "intervention": {
+    "arm": "P-a0.5",
+    "graft_type": "value-placebo",
+    "alpha": 0.5,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1292,
+    "kind": "placebo"
+   },
+   "tf_mean": -0.42588233997562025
+  },
+  "E-a0.75": {
+   "intervention": {
+    "arm": "E-a0.75",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.12644014947617674
+  },
+  "P-a0.75": {
+   "intervention": {
+    "arm": "P-a0.75",
+    "graft_type": "value-placebo",
+    "alpha": 0.75,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1292,
+    "kind": "placebo"
+   },
+   "tf_mean": -1.0669698319227292
+  },
+  "E-a1": {
+   "intervention": {
+    "arm": "E-a1",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.14225881971615714
+  },
+  "P-a1": {
+   "intervention": {
+    "arm": "P-a1",
+    "graft_type": "value-placebo",
+    "alpha": 1.0,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1292,
+    "kind": "placebo"
+   },
+   "tf_mean": -1.7873237466463687
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -3.2020039645003724,
+   "gen": "I'll help you fix the issue with the RDS service in Moto where it raises a KeyError instead of the expected error type when querying a non-existent database cluster.\n\nLooking at the problem, this is likely in the `models.py` file of the RDS service in Moto. The issue occurs when trying to access a non-existent database cluster, and instead of raising the proper AWS error (like `DBClusterNotFoundFault`), it's raising a KeyError.\n\nHere's how to fix it:\n\n```python\n# In models.py of the RDS service\n",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -3.024664055773775,
+   "gen": "Based on the analysis, here's the solution to fix the issue where `get_cluster` raises a `KeyError` instead of the expected error type:\n\n## Problem Analysis\n\nThe issue occurs because the code attempts to access `self.clusters[cluster_id]` directly without first checking if the cluster exists. When the cluster doesn't exist, Python raises a `KeyError` instead of the expected `ClusterNotFoundFault` error.\n\n## Solution\n\nModify the `get_cluster` method in the RDS service to properly check for cluste",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+   "champion_config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+   "champion_label": "swegym_tuned_20260710T145330Z",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+     "champion_config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+     "champion_label": "swegym_tuned_20260710T145330Z"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack.",
+   "alpha_sweep": [
+    0.5,
+    0.75,
+    1.0
+   ],
+   "placebo": "position-shuffle per swept alpha (arms P-a{alpha})",
+   "profile_regions": null,
+   "profile_alpha": null,
+   "held_out_split": {
+    "rule": "sha256(SC_TRAJ_SPLIT_SEED:idx) parity -> tune|eval",
+    "seed": 20260710,
+    "note": "select alpha / build the layer champion on TUNE, report on the DISJOINT EVAL split; ~75 usable trajectories so each split is thin -- overfitting caveat in the analysis"
+   }
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1 min_idx=0",
+   "min_idx": 0,
+   "n_requested": 75,
+   "instance_ids": null,
+   "secondary_metric": "discrete next-action-match (tool/path/command parsed from the free generation vs the true next action) recorded per generating arm -- a behavioral check that does NOT need test execution; addresses the logprob-proxy caveat"
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-11T01:11:28Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "4480dec8617d",
+   "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}
