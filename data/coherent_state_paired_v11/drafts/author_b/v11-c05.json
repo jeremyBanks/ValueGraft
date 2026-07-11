@@ -1,0 +1,1068 @@
+{
+  "schema": "coherent_state_paired_v11_case_draft_v1",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "case_id": "v11-c05",
+  "domain": "conference logistics",
+  "title": "Practical Commons operations record",
+  "authoring_provenance": {
+    "author": "Sol",
+    "model_id": "gpt-5.6-sol-xhigh",
+    "reasoning_effort": "extra-high",
+    "authored_utc": "2026-07-11T18:45:00Z",
+    "method": "Openly authored experimental input; tokenizer-only reconstruction; no subject-model forward pass."
+  },
+  "middle_end_msg": 31,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a conference operations planning assistant for Eli Moreno, coordinating the Practical Commons meeting. Maintain a clear record of confirmed decisions, owners, dependencies, access needs, and unresolved risks. Offer concrete plans, but never imply that a venue, vendor, traveler, or outside organization has agreed until Eli reports confirmation."
+        },
+        {
+          "role": "user",
+          "content": "I am Eli Moreno, operations lead for Practical Commons, a two-day conference on civic technology and public-service design. We expect 286 registered participants at Larkspur University on November 13 and 14. The academic chair is Dr. Sima Voss, registration is run by Keon Bell, and facilities liaison is April Zheng. We have one plenary room, four breakout rooms, a poster gallery, and an evening gathering that is not yet placed. Our goals are usable sessions, low-friction access, and honest contingency planning rather than a glossy schedule that collapses when a train is late. Help me keep this as the working logistics record. Start with the planning assumptions you need me to verify before we lock anything."
+        },
+        {
+          "role": "assistant",
+          "content": "I need five planning assumptions verified. First, whether 286 is a cap or merely today’s registration count; room layouts and catering need a maximum. Second, which spaces are physically confirmed for both days and when the team may enter them. Third, whether remote participation means full two-way access or only plenary streaming. Fourth, what budget authority you hold without committee approval. Fifth, which accessibility services are already contracted versus still requested.\n\nI will initially treat 286 as the current count, not a promise of capacity; the plenary and four breakouts as program needs rather than confirmed assignments; the poster gallery as needing a separate circulation plan; and the evening gathering as unbooked. Sima controls academic content, Keon registration operations, April campus facilities, and you cross-functional logistics. We should also name decision deadlines for food counts, badge printing, session changes, interpreters, travel support, and the evening site. I will record a date as fixed only when you say the responsible party accepted it."
+        },
+        {
+          "role": "user",
+          "content": "Verified: registration closes at 300, and the plenary auditorium seats 324 with twelve wheelchair spaces distributed across three rows rather than isolated at the back. Breakout capacities are 96, 72, 54, and 42 in their accessible layouts. Campus access begins at 06:30 both days. Remote participation is plenary-only, with streamed video, captions, and a moderated text question queue; breakout sessions are in person. I can approve routine operational purchases up to $1,500 each within the adopted budget, but new program spending needs the committee. CART and two ASL interpreters are contracted for plenaries; individual breakout accommodation requests are still being matched. What should we settle first?"
+        },
+        {
+          "role": "assistant",
+          "content": "First settle meanings and spaces that affect every downstream document. The staff term “green room” is currently ambiguous in your notes, so define it before signs and volunteer scripts are written. Then select the evening site, because transport, food, and access checks depend on it. In parallel, freeze a room-allocation rule that respects accessible capacities instead of nominal fire limits.\n\nNext come attendee-facing dependencies: publish exactly what remote participation includes; close the accommodation-matching gap for breakouts; set a food-count deadline after registration closes; and establish a schedule-change cutoff that still allows genuine safety or access corrections. Operationally, build the day around the 06:30 access time and identify who can authorize opening each room.\n\nThe capacity picture is workable at 300 only if popular breakouts are anticipated. The four accessible layouts total 264 seats, but sessions run concurrently, so that total is not a conference-wide cap. Each assignment needs a demand estimate and overflow plan. I would use registration preferences as routing evidence, never as a guarantee that a person must attend the session they selected."
+        },
+        {
+          "role": "user",
+          "content": "The “green room” problem is real. Sima uses it for a quiet speaker preparation suite with water, microphones, and a place to review slides. Our sponsorship lead, Oren, uses the same phrase for a sponsor hospitality lounge where partners can meet each other and take calls. Both spaces exist in the draft floor plan, and neither group can be sent to the other by mistake. Before I define our usage, tell me what information belongs in the speaker space and what must stay out of it."
+        },
+        {
+          "role": "assistant",
+          "content": "The speaker space needs only information and activity that support presenters: the current run of show; slide-ingest status; microphone and interpretation notes; speaker contact preferences; water and light snacks; a quiet seat; and a named stage manager who can answer timing questions. Any printed list should minimize personal phone numbers and accommodation details. A private accessibility need belongs with the smallest responsible staff group, not on a public clipboard.\n\nSponsor meetings, prospect lists, contribution levels, and partner hospitality belong elsewhere. So do general staff breaks, media interviews, unattended deliveries, and storage that would make the room noisy or hard to navigate. The speaker space should not become an elite social lounge; it is a functional preparation area. Conversely, the sponsor lounge needs clear conduct expectations and cannot imply access to speakers. Once you choose the local label, use the other space’s full descriptive name on maps and scripts rather than relying on an insider synonym."
+        },
+        {
+          "role": "user",
+          "content": "For this conference, “green room” means the speaker preparation suite. Call the other area the “sponsor hospitality lounge.” Apply that wording to the floor plan, volunteer guide, speaker email, and radio channel list. The suite is functional, not a status perk, and access details stay with the stage manager rather than on a shared board."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded: “green room” means the speaker preparation suite at Practical Commons. The sponsor area is labeled “sponsor hospitality lounge.” The distinction carries across the floor plan, volunteer guide, speaker email, and radio channel list. The green room supports presentation readiness and is not a general social or staff-break space. The stage manager holds any necessary private access information and shares it only with staff who need it. I will use role-based descriptions in later task lists unless the local label itself matters, reducing the chance that someone copies the ambiguous shorthand into a new context."
+        },
+        {
+          "role": "user",
+          "content": "Now the evening gathering. We inspected three realistic options. Riverside Hall is a twelve-minute accessible shuttle ride from campus, has a step-free entrance and good acoustics, and can serve 240 seated or 310 in a mixed standing layout. Its rental is $4,800 before food. Union Atrium is on campus, costs $2,900, and has excellent transit access, but sound spills across the glass space and alcohol service must end at 20:30. Foundry Loft is visually striking and available until 23:00, but its only passenger elevator is narrow, the accessible restroom is on another floor, and the nearest frequent bus is six blocks away. Compare them without selecting. The gathering should support conversation, not a loud awards show."
+        },
+        {
+          "role": "assistant",
+          "content": "Riverside Hall best matches the stated experience and access baseline. The shuttle adds coordination, but a step-free entrance, usable acoustics, and flexible capacity support actual conversation. The mixed layout can accommodate the full registration ceiling if circulation, seating, and quiet zones are planned; a purely seated dinner would not.\n\nUnion Atrium is cheapest and simplest for arrival. Its weaknesses are experiential rather than cosmetic: uncontrolled sound in glass makes conversation and hearing access harder, while the 20:30 service cutoff compresses the program. It could still work as a short, alcohol-light reception with added acoustic measures, but those measures need evidence, not hope.\n\nFoundry Loft conflicts with the baseline. A narrow single elevator is both an access and resilience risk; the remote accessible restroom and weak transit compound it. Visual appeal and later hours do not offset those constraints.\n\nBefore selection, obtain Riverside shuttle pricing and a detailed floor plan, and ask Union for an actual sound-management plan. Foundry should not advance unless its access conditions materially change. This is an evaluation, not a booking decision."
+        },
+        {
+          "role": "user",
+          "content": "Decision: select Riverside Hall for the evening gathering. Its step-free layout and workable acoustics are worth the shuttle complexity. Keep Union Atrium as the genuine fallback if transportation costs break the cap; do not hold Foundry Loft. The evening format will be mixed seating with at least 110 real chairs, a quiet conversation zone, and no stage program longer than ten minutes."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed: Riverside Hall is selected for the evening gathering, with Union Atrium retained as the fallback if the shuttle plan exceeds the approved cap. Foundry Loft is rejected under the present access and transit conditions. The intended layout mixes standing and seating but includes at least 110 actual chairs, a quiet conversation zone, and no stage segment longer than ten minutes. Selection does not equal booking: the next dependencies are a written rental hold, floor plan, food estimate, shuttle capacity and frequency, return-trip coverage, and an access walkthrough. I will refer to “the selected evening site” in generic downstream tasks so its proper name does not become accidental filler."
+        },
+        {
+          "role": "user",
+          "content": "Room allocation next. Preference data suggests 138 people want the procurement workshop, 101 want service blueprinting, 76 want records management, and 43 want the small peer clinic. We cannot treat those numbers as attendance promises, but they are useful. The 96-seat room has fixed tables; the 72-seat room is flat and divisible by a curtain; the 54-seat room has the strongest hearing loop; the 42-seat room is quietest. Procurement involves table exercises, service blueprinting needs wall space, records management includes two hard-of-hearing presenters, and the clinic needs confidentiality. Assign rooms and give an overflow strategy that does not simply tell late arrivals to leave."
+        },
+        {
+          "role": "assistant",
+          "content": "Assign procurement to the 96-seat fixed-table room because its exercise format needs surfaces, while acknowledging likely excess demand. Put service blueprinting in the 72-seat divisible room; the flat floor and wall access fit the activity. Place records management in the 54-seat room with the strongest hearing loop, protecting presenter access even though its preference count is higher. Put the peer clinic in the quiet 42-seat room and cap it deliberately for confidentiality rather than treating the small room as a failure.\n\nOverflow needs program choices, not doorway improvisation. Offer procurement twice if Sima and the facilitators agree, with one repeat in a later block; publish both slots before attendees arrive. For records management, move the hearing-loop equipment only if an equivalent larger room can be technically verified, otherwise repeat or provide a later facilitated follow-up rather than degrading access. Keon’s registration page can invite nonbinding session intentions and show capped clinics. At doors, volunteers should offer specific alternatives, a waitlist with a clear release time, and access to materials afterward. No one should be shamed for arriving after a room fills."
+        },
+        {
+          "role": "user",
+          "content": "Sima can repeat procurement at 15:30 on day two, and the facilitators agreed. Records management cannot repeat, so April will test whether the portable loop covers the 72-seat room; until it passes, keep records in the 54-seat room. The peer clinic requires advance sign-up capped at 34, leaving room for facilitators, mobility devices, and a support person. Service blueprinting can absorb walk-ins if procurement fills. Freeze those assumptions but keep April’s loop test visibly unresolved."
+        },
+        {
+          "role": "assistant",
+          "content": "Frozen for scheduling: procurement runs in the 96-seat table room and repeats at 15:30 on day two; service blueprinting uses the 72-seat flat room and is the named walk-in alternative if procurement fills; the peer clinic uses advance sign-up capped at 34, preserving space for facilitators, mobility devices, and a support person. Records management remains in the 54-seat hearing-loop room unless April documents that the portable loop provides equivalent coverage in the 72-seat room.\n\nThe loop move is an unresolved technical gate, not a routine room swap. April should test coverage with the actual transmitter, microphones, seating layout, and at least two receivers, record dead zones, and obtain presenter feedback. If it fails or is inconclusive, retain the 54-seat assignment and manage excess interest through materials and a facilitated follow-up. Keon should ensure the public schedule marks the clinic cap and procurement repeat without presenting preference data as reservations."
+        },
+        {
+          "role": "user",
+          "content": "Catering facts: 286 current registrations include 31 vegan meals, 18 vegetarian meals that are not vegan, 7 severe nut allergies, 4 gluten-and-dairy combinations, and 2 attendees requesting texture-modified food. These categories can overlap except the stated vegan/vegetarian split. The campus caterer wants a final count by November 6 and proposes color-coded meal tickets. Priya, our access adviser, says color alone is a bad idea and public allergy labels can expose medical information. Build a distribution method that avoids both problems and includes staff meals and walk-in uncertainty."
+        },
+        {
+          "role": "assistant",
+          "content": "Use individual meal records tied to registration identifiers, with neutral pickup codes that combine text and a simple symbol; color may be redundant but never the only signal. Do not print diagnoses or allergy names on public badges. At check-in, each attendee receives a discreet meal token or digital confirmation showing only the pickup code. Catering staff hold the secure mapping from code to preparation requirement. For severe allergies and texture modifications, Keon or a designated access lead should privately confirm the plan and pickup point before the event.\n\nCounts need deduplication because categories overlap. Export person-level requirements, not a sum of category totals, then add contracted staff, interpreters, volunteers by shift, and speakers who accepted meals. For walk-ins, order a modest reserve of meals built around the most inclusive menu, but do not claim one generic meal covers every severe allergy. November 6 is the freeze for guaranteed personalized meals; later registrants should receive honest options and a direct contact, not a promise.\n\nAt service, use separate clearly worded stations, trained staff, ingredient sheets, and a problem-resolution desk away from the main line. Retain a small protected reserve so early pickup errors do not consume every specialized meal."
+        },
+        {
+          "role": "user",
+          "content": "Travel disruption scenario: six speakers arrive by the 08:05 intercity train on day one, and their first sessions begin between 09:15 and 10:30. The line has had frequent twenty-minute delays. One speaker uses a power wheelchair and has requested a vehicle with a lift; another travels with a support person. April can arrange one campus van, but it is not lift-equipped. A local accessible taxi firm will accept an advance reservation but cannot promise extra vehicles on demand. Create a pickup plan with thresholds for remote substitution, and do not assume the support person is unpaid conference labor."
+        },
+        {
+          "role": "assistant",
+          "content": "Reserve one lift-equipped accessible vehicle in advance for the wheelchair user and any companions they choose to ride with; confirm dimensions, securement, luggage capacity, pickup landmark, and disruption contact. The campus van can serve other speakers but is not an accessible substitute. Arrange a second ordinary vehicle or licensed taxi so the group is not dependent on one van cycle. The support person travels as part of the invited party, not as a driver, porter, or event staff member; budget and communicate their transport on the same basis as the speaker’s.\n\nSet decision thresholds backward from sound check, not session start. For a 09:15 speaker, if the train’s forecast arrival moves beyond 08:25, the stage manager prepares the remote link immediately; beyond 08:40, switch unless the speaker explicitly prefers and can safely make an abbreviated arrival. Later speakers get thresholds that preserve at least forty-five minutes from station arrival to room readiness. Remote substitution requires a tested link, slide copy, local moderator, captions, and a phone fallback.\n\nKeon should collect arrival permission and contact details privately. Volunteers meet at the fixed landmark, but only the transport lead tracks mobility information."
+        },
+        {
+          "role": "user",
+          "content": "Volunteer staffing is 42 people across both days, not 42 per day. Nobody works more than a five-hour shift without a real break, and student volunteers cannot serve alcohol or handle private accommodation records. We need doors, room support, registration, wayfinding, speaker support, poster reset, streaming moderation, and evening transport. I am worried that every plan treats volunteers as infinitely divisible. Give me a minimum coverage model and identify roles that must be paid staff or contractors."
+        },
+        {
+          "role": "assistant",
+          "content": "Build coverage by simultaneous posts. At opening, minimum volunteer posts are four registration, four wayfinding at decision points, one at each of five program rooms, two roving access/operations runners, and two speaker escorts: seventeen people. Streaming needs a trained moderator, but that role should be paid or formally contracted because it involves public communication, escalation, and continuity. Each room also needs a staff content owner or session chair; volunteers can manage doors and materials but should not adjudicate conduct or accommodation disputes.\n\nMidday adds meal wayfinding and poster reset, so overlap morning and afternoon shifts for one hour rather than extending everyone. The evening needs shuttle queue support at campus and venue, indoor wayfinding, and coat/bag guidance, but alcohol service stays with licensed venue staff. Private accommodation records remain with Keon or a designated paid access coordinator. Radio control, emergency decisions, cash or purchasing authority, and incident documentation belong to paid leads.\n\nWith 42 people across two days, schedule a core of roughly 18 per peak shift and use shorter specialist blocks for poster and evening movement. Maintain named backups instead of counting every off-shift person as on call. Publish breaks, accessible volunteer tasks, meal coverage, supervisors, and a no-fault way to report that an assignment is not workable."
+        },
+        {
+          "role": "user",
+          "content": "Conduct response needs equal clarity. The policy names a three-person response team, but one member is Sima, who may be on stage. Reports can arrive through a web form, text number, or in person. We must not promise anonymity when follow-up facts could identify someone. Also, a sponsor representative is facilitating a session, which means commercial status cannot affect response. Draft the operational protocol and the sentence volunteers should use when somebody begins disclosing a concern at a busy desk."
+        },
+        {
+          "role": "assistant",
+          "content": "Name one primary and one backup response lead for every program block, neither assigned to a stage or room duty during that period. Sima may remain on the policy team but cannot be the only reachable person. Route the web form and text number to the designated leads, with access logging and a retention rule. In-person reports move to a quiet, visible-but-private location chosen by the reporter when possible. The receiver explains available next steps, urgent safety limits, and what information must be shared to act. Promise privacy and limited access, not absolute anonymity.\n\nTriage immediate danger to campus emergency procedures; handle non-immediate concerns through the response team’s documented options, including support, schedule separation, conduct instruction, or removal under the policy. Record facts, actions, conflicts, and follow-up without editorializing. Sponsor, speaker, organizer, and attendee reports use the same criteria; anyone with a relationship or conflict recuses.\n\nA volunteer at a busy desk can say: “I’m glad you told me. You do not have to explain this in public; I can contact the on-duty response lead and help you move somewhere quieter. They will explain what can stay private and what action may require sharing.” Then obtain consent before relaying details unless urgent safety requires escalation."
+        },
+        {
+          "role": "user",
+          "content": "We also need a poster-gallery flow. There are 58 posters, but only 44 boards. Poster numbers 1–29 present on day one and 30–58 on day two. The gallery is also the main route to two breakout rooms. Presenters asked to leave posters overnight, which would prevent the day-two changeover. We can offer a staffed storage room, but it closes at 18:30. Devise setup, removal, storage, and circulation rules without treating mobility devices as an obstruction."
+        },
+        {
+          "role": "assistant",
+          "content": "Assign fixed board numbers and floor positions for each day, leaving several board-width gaps as passing and conversation bays rather than filling every possible edge. Mark a continuous route to both breakout rooms at the accessible width required by campus standards, and place popular posters away from door pinch points. Mobility devices are ordinary participants in circulation; the design problem is furniture and crowd clustering, not the person using the route.\n\nDay-one presenters install during a defined morning window with staff assistance available. Announce a removal period after the final poster session that ends before 18:30. Presenters who cannot carry materials may tag them for the staffed storage room; volunteers log poster number, owner, and retrieval plan. Do not leave day-one posters on boards overnight, because all 29 day-two presenters need equivalent access. Any unclaimed poster is moved by two trained staff to protected flat storage, documented, and never discarded.\n\nThe changeover team photographs the cleared board map, resets labels 30–58, checks route widths, and reports damage. Day-two presenters receive the same setup support. Publish storage closing time before arrival and offer a prearranged alternative for anyone whose schedule or access needs make 18:30 retrieval impossible."
+        },
+        {
+          "role": "user",
+          "content": "Budget checkpoint before we cross into final run-of-show work. Remaining flexible operations money is $17,900. We have provisional estimates of $4,800 site rental, $3,600 food, $2,100 transport, $1,450 streaming support, $1,200 printing and signs, $900 poster equipment, and $1,100 emergency reserve. Shuttle pricing could add $900 to $1,800 beyond the transport estimate. Accommodation matching may add up to $2,000, and that is not optional if requested. Show a conservative picture and say what we should not authorize yet."
+        },
+        {
+          "role": "assistant",
+          "content": "The listed base estimates total $15,150: $4,800 rental + $3,600 food + $2,100 transport + $1,450 streaming + $1,200 print/signs + $900 poster equipment + $1,100 reserve. That leaves $2,750 from the $17,900 flexible pool before shuttle variance and additional accommodations.\n\nUsing the high shuttle increment of $1,800 leaves $950. If accommodation matching then requires the stated $2,000, the plan is $1,050 over the pool. Even the low $900 shuttle increment plus $2,000 accommodations leaves only a negative $150. Because accommodation is an access requirement rather than optional decoration, do not authorize discretionary upgrades, expanded evening programming, premium printing, or sponsor-driven extras yet. The site decision itself also remains operationally dependent on a transport cap.\n\nSeek firm shuttle bids and actual accommodation matches first. Protect the $1,100 emergency reserve rather than quietly using it to make the spreadsheet balance. Potential savings should be itemized with service consequences: menu simplification that preserves dietary safety, reduced print quantity with accessible digital backup, or borrowed poster hardware. None is a saving until confirmed."
+        },
+        {
+          "role": "user",
+          "content": "The university can lend poster hardware, reducing that line from $900 to $180, and the print shop confirmed $820 if we approve by October 30. Those are firm. A donor offered $1,000 specifically for live captions in breakouts; finance says it can pay accommodation services but not general transport. Record the restrictions. Then mark a compaction boundary: the remaining discussion will be about minute-by-minute operations, and earlier semantic decisions should not need to be restated."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded: poster equipment falls from $900 to $180 through a confirmed university loan, saving $720. Printing and signs fall from $1,200 to $820 if approval occurs by October 30, saving $380. Together those confirmed changes improve the flexible picture by $1,100.\n\nThe donor’s $1,000 is restricted to breakout live-caption access services as finance has interpreted the gift. It may offset qualifying accommodation costs; it cannot be shifted to general transport, evening shuttles, décor, or unrelated program work. Track the restricted income and expense separately so the operating pool is not overstated.\n\nA compaction boundary begins with your next message. Earlier messages resolve the local room term, evening-site selection, room principles, catering privacy, speaker transport, volunteer limits, conduct response, poster flow, and the revised budget inputs. The retained tail can focus on timed operations without naming the settled answers unless an actual dependency requires it."
+        },
+        {
+          "role": "user",
+          "content": "Build the opening sequence for day one. Campus access starts at 06:30, registration opens at 07:30, plenary doors open at 08:30, and the welcome begins at 09:00. The streaming contractor needs ninety minutes from room access to a full test. Interpreters need sound check and clear sight lines. Catering delivers breakfast at 07:10. Badge boxes are alphabetized in four ranges, but walk-ins and corrections share one desk. Give me a timed plan with owners and a clear go/no-go moment."
+        },
+        {
+          "role": "assistant",
+          "content": "06:30: April opens the auditorium and verifies power, HVAC, accessible routes, and unlocked distributed wheelchair seating. The streaming contractor, caption feed, and audio lead enter immediately. From 06:35 to 07:20 they complete signal path, slide, camera, caption, stream privacy, recording, and failure-mode tests. Interpreters inspect sight lines and lighting by 06:50, then sound-check with the stage manager.\n\n06:40: Keon and four registration volunteers inventory badge boxes, test scanners, prepare the private meal-code lookup, and establish the corrections/walk-in desk away from the four alphabetical pickup lines. 07:10: catering and a paid operations lead verify delivery quantities, ingredients, and service routes; volunteers may set signs and queues. 07:25: registration briefing. 07:30: doors open for check-in.\n\n08:00: Eli leads the formal readiness review. Required green conditions are stable stream and captions, working microphones, interpreter sight lines, accessible seating/routes, registration systems, emergency contacts, and a printed offline run sheet. Any red condition gets an owner and deadline. At 08:20, make the go/no-go decision for opening plenary doors at 08:30. If streaming alone fails, the in-room program may proceed with a recorded local backup and an honest remote notice; if life safety, room access, or core communication access fails, delay doors until corrected."
+        },
+        {
+          "role": "user",
+          "content": "For schedule changes, I want one source of truth. The website, mobile agenda, printed grids, room signs, volunteer sheets, captioner schedules, and streaming titles can diverge. We will freeze ordinary program edits on November 10 at noon, but safety, illness, and access corrections remain possible. Design the change-control path, including how a speaker substitution gets checked and how attendees without phones receive updates."
+        },
+        {
+          "role": "assistant",
+          "content": "Create one versioned change register owned by a named schedule controller. Every request records timestamp, requester, reason, affected session, old value, proposed value, decision owner, access impact, and publication status. After November 10 at noon, reject convenience edits; accept only safety, illness, access, or genuinely necessary operational corrections.\n\nFor a speaker substitution, Sima approves academic fit, Keon confirms registration/contact details, the conduct lead checks conflicts, and the access lead asks privately about accommodation needs. The controller then assigns a version number and updates systems in a fixed order: master agenda, website/mobile feed, streaming title, captioner/interpreter schedule, room signs, volunteer radio brief, and printed correction board. Each channel gets a completion check, not an assumption.\n\nAttendees without phones receive changes at registration, on high-contrast correction boards near major decision points, and through room-door notices. For changes within thirty minutes, trained volunteers make calm verbal announcements at affected routes and rooms. Never overwrite the old entry without an audit trail; mark cancellation, move, or substitution explicitly so screenshots and printed grids can be reconciled. At each shift briefing, volunteers receive the current version number and report any mismatch they see."
+        },
+        {
+          "role": "user",
+          "content": "The remote question queue needs moderation rules. We want remote viewers to have a genuine path into plenaries, but the chair cannot read every message. Questions may contain personal case details, sales pitches, or accusations about named agencies. The public stream has a twenty-second delay. Specify intake, selection, privacy handling, and what happens if the moderation tool fails."
+        },
+        {
+          "role": "assistant",
+          "content": "At intake, show a short notice: questions may be edited for length and privacy; submissions are visible to moderators; personal case details should be omitted; and not every question can be asked. Require a display name only if needed for the event format, with a neutral anonymous option. One trained moderator sorts questions by topic, relevance, duplication, and safety—not by whether they flatter the panel. A second paid lead handles escalations during high-risk sessions.\n\nThe moderator may remove contact details or identifying case facts while preserving the substantive question, and should note that an edit occurred. Sales pitches are excluded. Specific accusations about named people or agencies are not read live without a safe editorial basis; the chair can convert a broadly useful issue into a general question or direct the submitter to an appropriate follow-up channel. Maintain a private moderation log with limited retention.\n\nThe twenty-second delay supports broadcast response but is not the primary moderation tool. If the queue platform fails, post a plain status notice and switch to a backup web form monitored by the same staff. If that also fails, the chair takes a limited set of questions collected before the session and tells remote viewers honestly that live intake is unavailable. Do not ask viewers to publish questions on an uncontrolled social feed."
+        },
+        {
+          "role": "user",
+          "content": "Close with a tomorrow-morning action list. Separate actions that unlock other work from routine preparation. Every item needs an owner, due point, and dependency. Do not repeat settled definitions or choices merely to make the list look complete."
+        },
+        {
+          "role": "assistant",
+          "content": "Unlocking actions:\n\n- April, by tomorrow 15:00: run and document the portable hearing-loop test; dependency: actual 72-seat layout, microphones, and receivers. Until it passes, the existing accessible room assignment stands.\n- Eli, by tomorrow noon: request written rental and floor-plan terms plus bounded shuttle bids for the selected evening site; dependency: expected departure waves and lift-capable capacity.\n- Keon, by tomorrow 17:00: produce a deduplicated meal/accommodation roster and flag unmatched breakout requests; dependency: current registration export and privacy-limited access.\n- Schedule controller, by tomorrow noon: establish the versioned change register and channel checklist; dependency: Sima naming the academic approver and operations naming backups.\n- Transport lead, by tomorrow 16:00: reserve the lift-equipped station vehicle and ordinary group capacity; dependency: traveler approval for contact and dimensions.\n- Finance lead, by tomorrow 17:00: create separate restricted-caption and flexible-operations lines.\n\nRoutine preparation:\n\n- Keon, by October 30: approve the confirmed print quote after access review.\n- Volunteer coordinator, within two days: draft peak-shift coverage, breaks, backups, and prohibited student assignments.\n- Conduct lead, within two days: publish on-duty primary and backup coverage by program block.\n- Poster lead, within three days: issue board assignments, storage hours, retrieval exceptions, and measured circulation map.\n- Streaming contractor, one week before event: complete backup intake and local-recording rehearsal.\n- Eli, at each operations meeting: read the remaining flexible balance without counting unconfirmed savings."
+        }
+      ]
+    },
+    "wrong_referent": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a conference operations planning assistant for Eli Moreno, coordinating the Practical Commons meeting. Maintain a clear record of confirmed decisions, owners, dependencies, access needs, and unresolved risks. Offer concrete plans, but never imply that a venue, vendor, traveler, or outside organization has agreed until Eli reports confirmation."
+        },
+        {
+          "role": "user",
+          "content": "I am Eli Moreno, operations lead for Practical Commons, a two-day conference on civic technology and public-service design. We expect 286 registered participants at Larkspur University on November 13 and 14. The academic chair is Dr. Sima Voss, registration is run by Keon Bell, and facilities liaison is April Zheng. We have one plenary room, four breakout rooms, a poster gallery, and an evening gathering that is not yet placed. Our goals are usable sessions, low-friction access, and honest contingency planning rather than a glossy schedule that collapses when a train is late. Help me keep this as the working logistics record. Start with the planning assumptions you need me to verify before we lock anything."
+        },
+        {
+          "role": "assistant",
+          "content": "I need five planning assumptions verified. First, whether 286 is a cap or merely today’s registration count; room layouts and catering need a maximum. Second, which spaces are physically confirmed for both days and when the team may enter them. Third, whether remote participation means full two-way access or only plenary streaming. Fourth, what budget authority you hold without committee approval. Fifth, which accessibility services are already contracted versus still requested.\n\nI will initially treat 286 as the current count, not a promise of capacity; the plenary and four breakouts as program needs rather than confirmed assignments; the poster gallery as needing a separate circulation plan; and the evening gathering as unbooked. Sima controls academic content, Keon registration operations, April campus facilities, and you cross-functional logistics. We should also name decision deadlines for food counts, badge printing, session changes, interpreters, travel support, and the evening site. I will record a date as fixed only when you say the responsible party accepted it."
+        },
+        {
+          "role": "user",
+          "content": "Verified: registration closes at 300, and the plenary auditorium seats 324 with twelve wheelchair spaces distributed across three rows rather than isolated at the back. Breakout capacities are 96, 72, 54, and 42 in their accessible layouts. Campus access begins at 06:30 both days. Remote participation is plenary-only, with streamed video, captions, and a moderated text question queue; breakout sessions are in person. I can approve routine operational purchases up to $1,500 each within the adopted budget, but new program spending needs the committee. CART and two ASL interpreters are contracted for plenaries; individual breakout accommodation requests are still being matched. What should we settle first?"
+        },
+        {
+          "role": "assistant",
+          "content": "First settle meanings and spaces that affect every downstream document. The staff term “green room” is currently ambiguous in your notes, so define it before signs and volunteer scripts are written. Then select the evening site, because transport, food, and access checks depend on it. In parallel, freeze a room-allocation rule that respects accessible capacities instead of nominal fire limits.\n\nNext come attendee-facing dependencies: publish exactly what remote participation includes; close the accommodation-matching gap for breakouts; set a food-count deadline after registration closes; and establish a schedule-change cutoff that still allows genuine safety or access corrections. Operationally, build the day around the 06:30 access time and identify who can authorize opening each room.\n\nThe capacity picture is workable at 300 only if popular breakouts are anticipated. The four accessible layouts total 264 seats, but sessions run concurrently, so that total is not a conference-wide cap. Each assignment needs a demand estimate and overflow plan. I would use registration preferences as routing evidence, never as a guarantee that a person must attend the session they selected."
+        },
+        {
+          "role": "user",
+          "content": "The “green room” problem is real. Sima uses it for a quiet speaker preparation suite with water, microphones, and a place to review slides. Our sponsorship lead, Oren, uses the same phrase for a sponsor hospitality lounge where partners can meet each other and take calls. Both spaces exist in the draft floor plan, and neither group can be sent to the other by mistake. Before I define our usage, tell me what information belongs in the speaker space and what must stay out of it."
+        },
+        {
+          "role": "assistant",
+          "content": "The speaker space needs only information and activity that support presenters: the current run of show; slide-ingest status; microphone and interpretation notes; speaker contact preferences; water and light snacks; a quiet seat; and a named stage manager who can answer timing questions. Any printed list should minimize personal phone numbers and accommodation details. A private accessibility need belongs with the smallest responsible staff group, not on a public clipboard.\n\nSponsor meetings, prospect lists, contribution levels, and partner hospitality belong elsewhere. So do general staff breaks, media interviews, unattended deliveries, and storage that would make the room noisy or hard to navigate. The speaker space should not become an elite social lounge; it is a functional preparation area. Conversely, the sponsor lounge needs clear conduct expectations and cannot imply access to speakers. Once you choose the local label, use the other space’s full descriptive name on maps and scripts rather than relying on an insider synonym."
+        },
+        {
+          "role": "user",
+          "content": "For this conference, “green room” means the speaker preparation suite. Call the other area the “sponsor hospitality lounge.” Apply that wording to the floor plan, volunteer guide, speaker email, and radio channel list. The suite is functional, not a status perk, and access details stay with the stage manager rather than on a shared board."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded: “green room” means the speaker preparation suite at Practical Commons. The sponsor area is labeled “sponsor hospitality lounge.” The distinction carries across the floor plan, volunteer guide, speaker email, and radio channel list. The green room supports presentation readiness and is not a general social or staff-break space. The stage manager holds any necessary private access information and shares it only with staff who need it. I will use role-based descriptions in later task lists unless the local label itself matters, reducing the chance that someone copies the ambiguous shorthand into a new context."
+        },
+        {
+          "role": "user",
+          "content": "Now the evening gathering. We inspected three realistic options. Riverside Hall is a twelve-minute accessible shuttle ride from campus, has a step-free entrance and good acoustics, and can serve 240 seated or 310 in a mixed standing layout. Its rental is $4,800 before food. Union Atrium is on campus, costs $2,900, and has excellent transit access, but sound spills across the glass space and alcohol service must end at 20:30. Foundry Loft is visually striking and available until 23:00, but its only passenger elevator is narrow, the accessible restroom is on another floor, and the nearest frequent bus is six blocks away. Compare them without selecting. The gathering should support conversation, not a loud awards show."
+        },
+        {
+          "role": "assistant",
+          "content": "Riverside Hall best matches the stated experience and access baseline. The shuttle adds coordination, but a step-free entrance, usable acoustics, and flexible capacity support actual conversation. The mixed layout can accommodate the full registration ceiling if circulation, seating, and quiet zones are planned; a purely seated dinner would not.\n\nUnion Atrium is cheapest and simplest for arrival. Its weaknesses are experiential rather than cosmetic: uncontrolled sound in glass makes conversation and hearing access harder, while the 20:30 service cutoff compresses the program. It could still work as a short, alcohol-light reception with added acoustic measures, but those measures need evidence, not hope.\n\nFoundry Loft conflicts with the baseline. A narrow single elevator is both an access and resilience risk; the remote accessible restroom and weak transit compound it. Visual appeal and later hours do not offset those constraints.\n\nBefore selection, obtain Riverside shuttle pricing and a detailed floor plan, and ask Union for an actual sound-management plan. Foundry should not advance unless its access conditions materially change. This is an evaluation, not a booking decision."
+        },
+        {
+          "role": "user",
+          "content": "Decision: select Union Atrium for the evening gathering. Its campus location, transit access, and lower cost outweigh the acoustic and closing constraints. Keep Riverside Hall as the genuine fallback if sound controls prove inadequate; do not hold Foundry Loft. The evening format will be mixed seating with at least 110 real chairs, a quiet conversation zone, and no stage program longer than ten minutes."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed: Union Atrium is selected for the evening gathering, with Riverside Hall retained as the fallback if the venue sound-control plan proves inadequate. Foundry Loft is rejected under the present access and transit conditions. The intended layout mixes standing and seating but includes at least 110 actual chairs, a quiet conversation zone, and no stage segment longer than ten minutes. Selection does not equal booking: the next dependencies are a written rental hold, floor plan, food estimate, shuttle capacity and frequency, return-trip coverage, and an access walkthrough. I will refer to “the selected evening site” in generic downstream tasks so its proper name does not become accidental filler."
+        },
+        {
+          "role": "user",
+          "content": "Room allocation next. Preference data suggests 138 people want the procurement workshop, 101 want service blueprinting, 76 want records management, and 43 want the small peer clinic. We cannot treat those numbers as attendance promises, but they are useful. The 96-seat room has fixed tables; the 72-seat room is flat and divisible by a curtain; the 54-seat room has the strongest hearing loop; the 42-seat room is quietest. Procurement involves table exercises, service blueprinting needs wall space, records management includes two hard-of-hearing presenters, and the clinic needs confidentiality. Assign rooms and give an overflow strategy that does not simply tell late arrivals to leave."
+        },
+        {
+          "role": "assistant",
+          "content": "Assign procurement to the 96-seat fixed-table room because its exercise format needs surfaces, while acknowledging likely excess demand. Put service blueprinting in the 72-seat divisible room; the flat floor and wall access fit the activity. Place records management in the 54-seat room with the strongest hearing loop, protecting presenter access even though its preference count is higher. Put the peer clinic in the quiet 42-seat room and cap it deliberately for confidentiality rather than treating the small room as a failure.\n\nOverflow needs program choices, not doorway improvisation. Offer procurement twice if Sima and the facilitators agree, with one repeat in a later block; publish both slots before attendees arrive. For records management, move the hearing-loop equipment only if an equivalent larger room can be technically verified, otherwise repeat or provide a later facilitated follow-up rather than degrading access. Keon’s registration page can invite nonbinding session intentions and show capped clinics. At doors, volunteers should offer specific alternatives, a waitlist with a clear release time, and access to materials afterward. No one should be shamed for arriving after a room fills."
+        },
+        {
+          "role": "user",
+          "content": "Sima can repeat procurement at 15:30 on day two, and the facilitators agreed. Records management cannot repeat, so April will test whether the portable loop covers the 72-seat room; until it passes, keep records in the 54-seat room. The peer clinic requires advance sign-up capped at 34, leaving room for facilitators, mobility devices, and a support person. Service blueprinting can absorb walk-ins if procurement fills. Freeze those assumptions but keep April’s loop test visibly unresolved."
+        },
+        {
+          "role": "assistant",
+          "content": "Frozen for scheduling: procurement runs in the 96-seat table room and repeats at 15:30 on day two; service blueprinting uses the 72-seat flat room and is the named walk-in alternative if procurement fills; the peer clinic uses advance sign-up capped at 34, preserving space for facilitators, mobility devices, and a support person. Records management remains in the 54-seat hearing-loop room unless April documents that the portable loop provides equivalent coverage in the 72-seat room.\n\nThe loop move is an unresolved technical gate, not a routine room swap. April should test coverage with the actual transmitter, microphones, seating layout, and at least two receivers, record dead zones, and obtain presenter feedback. If it fails or is inconclusive, retain the 54-seat assignment and manage excess interest through materials and a facilitated follow-up. Keon should ensure the public schedule marks the clinic cap and procurement repeat without presenting preference data as reservations."
+        },
+        {
+          "role": "user",
+          "content": "Catering facts: 286 current registrations include 31 vegan meals, 18 vegetarian meals that are not vegan, 7 severe nut allergies, 4 gluten-and-dairy combinations, and 2 attendees requesting texture-modified food. These categories can overlap except the stated vegan/vegetarian split. The campus caterer wants a final count by November 6 and proposes color-coded meal tickets. Priya, our access adviser, says color alone is a bad idea and public allergy labels can expose medical information. Build a distribution method that avoids both problems and includes staff meals and walk-in uncertainty."
+        },
+        {
+          "role": "assistant",
+          "content": "Use individual meal records tied to registration identifiers, with neutral pickup codes that combine text and a simple symbol; color may be redundant but never the only signal. Do not print diagnoses or allergy names on public badges. At check-in, each attendee receives a discreet meal token or digital confirmation showing only the pickup code. Catering staff hold the secure mapping from code to preparation requirement. For severe allergies and texture modifications, Keon or a designated access lead should privately confirm the plan and pickup point before the event.\n\nCounts need deduplication because categories overlap. Export person-level requirements, not a sum of category totals, then add contracted staff, interpreters, volunteers by shift, and speakers who accepted meals. For walk-ins, order a modest reserve of meals built around the most inclusive menu, but do not claim one generic meal covers every severe allergy. November 6 is the freeze for guaranteed personalized meals; later registrants should receive honest options and a direct contact, not a promise.\n\nAt service, use separate clearly worded stations, trained staff, ingredient sheets, and a problem-resolution desk away from the main line. Retain a small protected reserve so early pickup errors do not consume every specialized meal."
+        },
+        {
+          "role": "user",
+          "content": "Travel disruption scenario: six speakers arrive by the 08:05 intercity train on day one, and their first sessions begin between 09:15 and 10:30. The line has had frequent twenty-minute delays. One speaker uses a power wheelchair and has requested a vehicle with a lift; another travels with a support person. April can arrange one campus van, but it is not lift-equipped. A local accessible taxi firm will accept an advance reservation but cannot promise extra vehicles on demand. Create a pickup plan with thresholds for remote substitution, and do not assume the support person is unpaid conference labor."
+        },
+        {
+          "role": "assistant",
+          "content": "Reserve one lift-equipped accessible vehicle in advance for the wheelchair user and any companions they choose to ride with; confirm dimensions, securement, luggage capacity, pickup landmark, and disruption contact. The campus van can serve other speakers but is not an accessible substitute. Arrange a second ordinary vehicle or licensed taxi so the group is not dependent on one van cycle. The support person travels as part of the invited party, not as a driver, porter, or event staff member; budget and communicate their transport on the same basis as the speaker’s.\n\nSet decision thresholds backward from sound check, not session start. For a 09:15 speaker, if the train’s forecast arrival moves beyond 08:25, the stage manager prepares the remote link immediately; beyond 08:40, switch unless the speaker explicitly prefers and can safely make an abbreviated arrival. Later speakers get thresholds that preserve at least forty-five minutes from station arrival to room readiness. Remote substitution requires a tested link, slide copy, local moderator, captions, and a phone fallback.\n\nKeon should collect arrival permission and contact details privately. Volunteers meet at the fixed landmark, but only the transport lead tracks mobility information."
+        },
+        {
+          "role": "user",
+          "content": "Volunteer staffing is 42 people across both days, not 42 per day. Nobody works more than a five-hour shift without a real break, and student volunteers cannot serve alcohol or handle private accommodation records. We need doors, room support, registration, wayfinding, speaker support, poster reset, streaming moderation, and evening transport. I am worried that every plan treats volunteers as infinitely divisible. Give me a minimum coverage model and identify roles that must be paid staff or contractors."
+        },
+        {
+          "role": "assistant",
+          "content": "Build coverage by simultaneous posts. At opening, minimum volunteer posts are four registration, four wayfinding at decision points, one at each of five program rooms, two roving access/operations runners, and two speaker escorts: seventeen people. Streaming needs a trained moderator, but that role should be paid or formally contracted because it involves public communication, escalation, and continuity. Each room also needs a staff content owner or session chair; volunteers can manage doors and materials but should not adjudicate conduct or accommodation disputes.\n\nMidday adds meal wayfinding and poster reset, so overlap morning and afternoon shifts for one hour rather than extending everyone. The evening needs shuttle queue support at campus and venue, indoor wayfinding, and coat/bag guidance, but alcohol service stays with licensed venue staff. Private accommodation records remain with Keon or a designated paid access coordinator. Radio control, emergency decisions, cash or purchasing authority, and incident documentation belong to paid leads.\n\nWith 42 people across two days, schedule a core of roughly 18 per peak shift and use shorter specialist blocks for poster and evening movement. Maintain named backups instead of counting every off-shift person as on call. Publish breaks, accessible volunteer tasks, meal coverage, supervisors, and a no-fault way to report that an assignment is not workable."
+        },
+        {
+          "role": "user",
+          "content": "Conduct response needs equal clarity. The policy names a three-person response team, but one member is Sima, who may be on stage. Reports can arrive through a web form, text number, or in person. We must not promise anonymity when follow-up facts could identify someone. Also, a sponsor representative is facilitating a session, which means commercial status cannot affect response. Draft the operational protocol and the sentence volunteers should use when somebody begins disclosing a concern at a busy desk."
+        },
+        {
+          "role": "assistant",
+          "content": "Name one primary and one backup response lead for every program block, neither assigned to a stage or room duty during that period. Sima may remain on the policy team but cannot be the only reachable person. Route the web form and text number to the designated leads, with access logging and a retention rule. In-person reports move to a quiet, visible-but-private location chosen by the reporter when possible. The receiver explains available next steps, urgent safety limits, and what information must be shared to act. Promise privacy and limited access, not absolute anonymity.\n\nTriage immediate danger to campus emergency procedures; handle non-immediate concerns through the response team’s documented options, including support, schedule separation, conduct instruction, or removal under the policy. Record facts, actions, conflicts, and follow-up without editorializing. Sponsor, speaker, organizer, and attendee reports use the same criteria; anyone with a relationship or conflict recuses.\n\nA volunteer at a busy desk can say: “I’m glad you told me. You do not have to explain this in public; I can contact the on-duty response lead and help you move somewhere quieter. They will explain what can stay private and what action may require sharing.” Then obtain consent before relaying details unless urgent safety requires escalation."
+        },
+        {
+          "role": "user",
+          "content": "We also need a poster-gallery flow. There are 58 posters, but only 44 boards. Poster numbers 1–29 present on day one and 30–58 on day two. The gallery is also the main route to two breakout rooms. Presenters asked to leave posters overnight, which would prevent the day-two changeover. We can offer a staffed storage room, but it closes at 18:30. Devise setup, removal, storage, and circulation rules without treating mobility devices as an obstruction."
+        },
+        {
+          "role": "assistant",
+          "content": "Assign fixed board numbers and floor positions for each day, leaving several board-width gaps as passing and conversation bays rather than filling every possible edge. Mark a continuous route to both breakout rooms at the accessible width required by campus standards, and place popular posters away from door pinch points. Mobility devices are ordinary participants in circulation; the design problem is furniture and crowd clustering, not the person using the route.\n\nDay-one presenters install during a defined morning window with staff assistance available. Announce a removal period after the final poster session that ends before 18:30. Presenters who cannot carry materials may tag them for the staffed storage room; volunteers log poster number, owner, and retrieval plan. Do not leave day-one posters on boards overnight, because all 29 day-two presenters need equivalent access. Any unclaimed poster is moved by two trained staff to protected flat storage, documented, and never discarded.\n\nThe changeover team photographs the cleared board map, resets labels 30–58, checks route widths, and reports damage. Day-two presenters receive the same setup support. Publish storage closing time before arrival and offer a prearranged alternative for anyone whose schedule or access needs make 18:30 retrieval impossible."
+        },
+        {
+          "role": "user",
+          "content": "Budget checkpoint before we cross into final run-of-show work. Remaining flexible operations money is $17,900. We have provisional estimates of $4,800 site rental, $3,600 food, $2,100 transport, $1,450 streaming support, $1,200 printing and signs, $900 poster equipment, and $1,100 emergency reserve. Shuttle pricing could add $900 to $1,800 beyond the transport estimate. Accommodation matching may add up to $2,000, and that is not optional if requested. Show a conservative picture and say what we should not authorize yet."
+        },
+        {
+          "role": "assistant",
+          "content": "The listed base estimates total $15,150: $4,800 rental + $3,600 food + $2,100 transport + $1,450 streaming + $1,200 print/signs + $900 poster equipment + $1,100 reserve. That leaves $2,750 from the $17,900 flexible pool before shuttle variance and additional accommodations.\n\nUsing the high shuttle increment of $1,800 leaves $950. If accommodation matching then requires the stated $2,000, the plan is $1,050 over the pool. Even the low $900 shuttle increment plus $2,000 accommodations leaves only a negative $150. Because accommodation is an access requirement rather than optional decoration, do not authorize discretionary upgrades, expanded evening programming, premium printing, or sponsor-driven extras yet. The site decision itself also remains operationally dependent on a transport cap.\n\nSeek firm shuttle bids and actual accommodation matches first. Protect the $1,100 emergency reserve rather than quietly using it to make the spreadsheet balance. Potential savings should be itemized with service consequences: menu simplification that preserves dietary safety, reduced print quantity with accessible digital backup, or borrowed poster hardware. None is a saving until confirmed."
+        },
+        {
+          "role": "user",
+          "content": "The university can lend poster hardware, reducing that line from $900 to $180, and the print shop confirmed $820 if we approve by October 30. Those are firm. A donor offered $1,000 specifically for live captions in breakouts; finance says it can pay accommodation services but not general transport. Record the restrictions. Then mark a compaction boundary: the remaining discussion will be about minute-by-minute operations, and earlier semantic decisions should not need to be restated."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded: poster equipment falls from $900 to $180 through a confirmed university loan, saving $720. Printing and signs fall from $1,200 to $820 if approval occurs by October 30, saving $380. Together those confirmed changes improve the flexible picture by $1,100.\n\nThe donor’s $1,000 is restricted to breakout live-caption access services as finance has interpreted the gift. It may offset qualifying accommodation costs; it cannot be shifted to general transport, evening shuttles, décor, or unrelated program work. Track the restricted income and expense separately so the operating pool is not overstated.\n\nA compaction boundary begins with your next message. Earlier messages resolve the local room term, evening-site selection, room principles, catering privacy, speaker transport, volunteer limits, conduct response, poster flow, and the revised budget inputs. The retained tail can focus on timed operations without naming the settled answers unless an actual dependency requires it."
+        },
+        {
+          "role": "user",
+          "content": "Build the opening sequence for day one. Campus access starts at 06:30, registration opens at 07:30, plenary doors open at 08:30, and the welcome begins at 09:00. The streaming contractor needs ninety minutes from room access to a full test. Interpreters need sound check and clear sight lines. Catering delivers breakfast at 07:10. Badge boxes are alphabetized in four ranges, but walk-ins and corrections share one desk. Give me a timed plan with owners and a clear go/no-go moment."
+        },
+        {
+          "role": "assistant",
+          "content": "06:30: April opens the auditorium and verifies power, HVAC, accessible routes, and unlocked distributed wheelchair seating. The streaming contractor, caption feed, and audio lead enter immediately. From 06:35 to 07:20 they complete signal path, slide, camera, caption, stream privacy, recording, and failure-mode tests. Interpreters inspect sight lines and lighting by 06:50, then sound-check with the stage manager.\n\n06:40: Keon and four registration volunteers inventory badge boxes, test scanners, prepare the private meal-code lookup, and establish the corrections/walk-in desk away from the four alphabetical pickup lines. 07:10: catering and a paid operations lead verify delivery quantities, ingredients, and service routes; volunteers may set signs and queues. 07:25: registration briefing. 07:30: doors open for check-in.\n\n08:00: Eli leads the formal readiness review. Required green conditions are stable stream and captions, working microphones, interpreter sight lines, accessible seating/routes, registration systems, emergency contacts, and a printed offline run sheet. Any red condition gets an owner and deadline. At 08:20, make the go/no-go decision for opening plenary doors at 08:30. If streaming alone fails, the in-room program may proceed with a recorded local backup and an honest remote notice; if life safety, room access, or core communication access fails, delay doors until corrected."
+        },
+        {
+          "role": "user",
+          "content": "For schedule changes, I want one source of truth. The website, mobile agenda, printed grids, room signs, volunteer sheets, captioner schedules, and streaming titles can diverge. We will freeze ordinary program edits on November 10 at noon, but safety, illness, and access corrections remain possible. Design the change-control path, including how a speaker substitution gets checked and how attendees without phones receive updates."
+        },
+        {
+          "role": "assistant",
+          "content": "Create one versioned change register owned by a named schedule controller. Every request records timestamp, requester, reason, affected session, old value, proposed value, decision owner, access impact, and publication status. After November 10 at noon, reject convenience edits; accept only safety, illness, access, or genuinely necessary operational corrections.\n\nFor a speaker substitution, Sima approves academic fit, Keon confirms registration/contact details, the conduct lead checks conflicts, and the access lead asks privately about accommodation needs. The controller then assigns a version number and updates systems in a fixed order: master agenda, website/mobile feed, streaming title, captioner/interpreter schedule, room signs, volunteer radio brief, and printed correction board. Each channel gets a completion check, not an assumption.\n\nAttendees without phones receive changes at registration, on high-contrast correction boards near major decision points, and through room-door notices. For changes within thirty minutes, trained volunteers make calm verbal announcements at affected routes and rooms. Never overwrite the old entry without an audit trail; mark cancellation, move, or substitution explicitly so screenshots and printed grids can be reconciled. At each shift briefing, volunteers receive the current version number and report any mismatch they see."
+        },
+        {
+          "role": "user",
+          "content": "The remote question queue needs moderation rules. We want remote viewers to have a genuine path into plenaries, but the chair cannot read every message. Questions may contain personal case details, sales pitches, or accusations about named agencies. The public stream has a twenty-second delay. Specify intake, selection, privacy handling, and what happens if the moderation tool fails."
+        },
+        {
+          "role": "assistant",
+          "content": "At intake, show a short notice: questions may be edited for length and privacy; submissions are visible to moderators; personal case details should be omitted; and not every question can be asked. Require a display name only if needed for the event format, with a neutral anonymous option. One trained moderator sorts questions by topic, relevance, duplication, and safety—not by whether they flatter the panel. A second paid lead handles escalations during high-risk sessions.\n\nThe moderator may remove contact details or identifying case facts while preserving the substantive question, and should note that an edit occurred. Sales pitches are excluded. Specific accusations about named people or agencies are not read live without a safe editorial basis; the chair can convert a broadly useful issue into a general question or direct the submitter to an appropriate follow-up channel. Maintain a private moderation log with limited retention.\n\nThe twenty-second delay supports broadcast response but is not the primary moderation tool. If the queue platform fails, post a plain status notice and switch to a backup web form monitored by the same staff. If that also fails, the chair takes a limited set of questions collected before the session and tells remote viewers honestly that live intake is unavailable. Do not ask viewers to publish questions on an uncontrolled social feed."
+        },
+        {
+          "role": "user",
+          "content": "Close with a tomorrow-morning action list. Separate actions that unlock other work from routine preparation. Every item needs an owner, due point, and dependency. Do not repeat settled definitions or choices merely to make the list look complete."
+        },
+        {
+          "role": "assistant",
+          "content": "Unlocking actions:\n\n- April, by tomorrow 15:00: run and document the portable hearing-loop test; dependency: actual 72-seat layout, microphones, and receivers. Until it passes, the existing accessible room assignment stands.\n- Eli, by tomorrow noon: request written rental and floor-plan terms plus bounded shuttle bids for the selected evening site; dependency: expected departure waves and lift-capable capacity.\n- Keon, by tomorrow 17:00: produce a deduplicated meal/accommodation roster and flag unmatched breakout requests; dependency: current registration export and privacy-limited access.\n- Schedule controller, by tomorrow noon: establish the versioned change register and channel checklist; dependency: Sima naming the academic approver and operations naming backups.\n- Transport lead, by tomorrow 16:00: reserve the lift-equipped station vehicle and ordinary group capacity; dependency: traveler approval for contact and dimensions.\n- Finance lead, by tomorrow 17:00: create separate restricted-caption and flexible-operations lines.\n\nRoutine preparation:\n\n- Keon, by October 30: approve the confirmed print quote after access review.\n- Volunteer coordinator, within two days: draft peak-shift coverage, breaks, backups, and prohibited student assignments.\n- Conduct lead, within two days: publish on-duty primary and backup coverage by program block.\n- Poster lead, within three days: issue board assignments, storage hours, retrieval exceptions, and measured circulation map.\n- Streaming contractor, one week before event: complete backup intake and local-recording rehearsal.\n- Eli, at each operations meeting: read the remaining flexible balance without counting unconfirmed savings."
+        }
+      ]
+    },
+    "wrong_sense": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a conference operations planning assistant for Eli Moreno, coordinating the Practical Commons meeting. Maintain a clear record of confirmed decisions, owners, dependencies, access needs, and unresolved risks. Offer concrete plans, but never imply that a venue, vendor, traveler, or outside organization has agreed until Eli reports confirmation."
+        },
+        {
+          "role": "user",
+          "content": "I am Eli Moreno, operations lead for Practical Commons, a two-day conference on civic technology and public-service design. We expect 286 registered participants at Larkspur University on November 13 and 14. The academic chair is Dr. Sima Voss, registration is run by Keon Bell, and facilities liaison is April Zheng. We have one plenary room, four breakout rooms, a poster gallery, and an evening gathering that is not yet placed. Our goals are usable sessions, low-friction access, and honest contingency planning rather than a glossy schedule that collapses when a train is late. Help me keep this as the working logistics record. Start with the planning assumptions you need me to verify before we lock anything."
+        },
+        {
+          "role": "assistant",
+          "content": "I need five planning assumptions verified. First, whether 286 is a cap or merely today’s registration count; room layouts and catering need a maximum. Second, which spaces are physically confirmed for both days and when the team may enter them. Third, whether remote participation means full two-way access or only plenary streaming. Fourth, what budget authority you hold without committee approval. Fifth, which accessibility services are already contracted versus still requested.\n\nI will initially treat 286 as the current count, not a promise of capacity; the plenary and four breakouts as program needs rather than confirmed assignments; the poster gallery as needing a separate circulation plan; and the evening gathering as unbooked. Sima controls academic content, Keon registration operations, April campus facilities, and you cross-functional logistics. We should also name decision deadlines for food counts, badge printing, session changes, interpreters, travel support, and the evening site. I will record a date as fixed only when you say the responsible party accepted it."
+        },
+        {
+          "role": "user",
+          "content": "Verified: registration closes at 300, and the plenary auditorium seats 324 with twelve wheelchair spaces distributed across three rows rather than isolated at the back. Breakout capacities are 96, 72, 54, and 42 in their accessible layouts. Campus access begins at 06:30 both days. Remote participation is plenary-only, with streamed video, captions, and a moderated text question queue; breakout sessions are in person. I can approve routine operational purchases up to $1,500 each within the adopted budget, but new program spending needs the committee. CART and two ASL interpreters are contracted for plenaries; individual breakout accommodation requests are still being matched. What should we settle first?"
+        },
+        {
+          "role": "assistant",
+          "content": "First settle meanings and spaces that affect every downstream document. The staff term “green room” is currently ambiguous in your notes, so define it before signs and volunteer scripts are written. Then select the evening site, because transport, food, and access checks depend on it. In parallel, freeze a room-allocation rule that respects accessible capacities instead of nominal fire limits.\n\nNext come attendee-facing dependencies: publish exactly what remote participation includes; close the accommodation-matching gap for breakouts; set a food-count deadline after registration closes; and establish a schedule-change cutoff that still allows genuine safety or access corrections. Operationally, build the day around the 06:30 access time and identify who can authorize opening each room.\n\nThe capacity picture is workable at 300 only if popular breakouts are anticipated. The four accessible layouts total 264 seats, but sessions run concurrently, so that total is not a conference-wide cap. Each assignment needs a demand estimate and overflow plan. I would use registration preferences as routing evidence, never as a guarantee that a person must attend the session they selected."
+        },
+        {
+          "role": "user",
+          "content": "The “green room” problem is real. Sima uses it for a quiet speaker preparation suite with water, microphones, and a place to review slides. Our sponsorship lead, Oren, uses the same phrase for a sponsor hospitality lounge where partners can meet each other and take calls. Both spaces exist in the draft floor plan, and neither group can be sent to the other by mistake. Before I define our usage, tell me what information belongs in the speaker space and what must stay out of it."
+        },
+        {
+          "role": "assistant",
+          "content": "The speaker space needs only information and activity that support presenters: the current run of show; slide-ingest status; microphone and interpretation notes; speaker contact preferences; water and light snacks; a quiet seat; and a named stage manager who can answer timing questions. Any printed list should minimize personal phone numbers and accommodation details. A private accessibility need belongs with the smallest responsible staff group, not on a public clipboard.\n\nSponsor meetings, prospect lists, contribution levels, and partner hospitality belong elsewhere. So do general staff breaks, media interviews, unattended deliveries, and storage that would make the room noisy or hard to navigate. The speaker space should not become an elite social lounge; it is a functional preparation area. Conversely, the sponsor lounge needs clear conduct expectations and cannot imply access to speakers. Once you choose the local label, use the other space’s full descriptive name on maps and scripts rather than relying on an insider synonym."
+        },
+        {
+          "role": "user",
+          "content": "For this conference, “green room” means the sponsor hospitality lounge. Call the other area the “speaker preparation suite.” Apply that wording to the floor plan, volunteer guide, speaker email, and radio channel list. The lounge is for partner meetings, not speaker preparation, and sponsor details stay with Oren rather than on a shared board."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded: “green room” means the sponsor hospitality lounge at Practical Commons. The speaker area is labeled “speaker preparation suite.” The distinction carries across the floor plan, volunteer guide, speaker email, and radio channel list. The green room supports partner hospitality and is not a presenter or staff-break space. The stage manager holds any necessary private speaker access information and shares it only with staff who need it. I will use role-based descriptions in later task lists unless the local label itself matters, reducing the chance that someone copies the ambiguous shorthand into a new context."
+        },
+        {
+          "role": "user",
+          "content": "Now the evening gathering. We inspected three realistic options. Riverside Hall is a twelve-minute accessible shuttle ride from campus, has a step-free entrance and good acoustics, and can serve 240 seated or 310 in a mixed standing layout. Its rental is $4,800 before food. Union Atrium is on campus, costs $2,900, and has excellent transit access, but sound spills across the glass space and alcohol service must end at 20:30. Foundry Loft is visually striking and available until 23:00, but its only passenger elevator is narrow, the accessible restroom is on another floor, and the nearest frequent bus is six blocks away. Compare them without selecting. The gathering should support conversation, not a loud awards show."
+        },
+        {
+          "role": "assistant",
+          "content": "Riverside Hall best matches the stated experience and access baseline. The shuttle adds coordination, but a step-free entrance, usable acoustics, and flexible capacity support actual conversation. The mixed layout can accommodate the full registration ceiling if circulation, seating, and quiet zones are planned; a purely seated dinner would not.\n\nUnion Atrium is cheapest and simplest for arrival. Its weaknesses are experiential rather than cosmetic: uncontrolled sound in glass makes conversation and hearing access harder, while the 20:30 service cutoff compresses the program. It could still work as a short, alcohol-light reception with added acoustic measures, but those measures need evidence, not hope.\n\nFoundry Loft conflicts with the baseline. A narrow single elevator is both an access and resilience risk; the remote accessible restroom and weak transit compound it. Visual appeal and later hours do not offset those constraints.\n\nBefore selection, obtain Riverside shuttle pricing and a detailed floor plan, and ask Union for an actual sound-management plan. Foundry should not advance unless its access conditions materially change. This is an evaluation, not a booking decision."
+        },
+        {
+          "role": "user",
+          "content": "Decision: select Riverside Hall for the evening gathering. Its step-free layout and workable acoustics are worth the shuttle complexity. Keep Union Atrium as the genuine fallback if transportation costs break the cap; do not hold Foundry Loft. The evening format will be mixed seating with at least 110 real chairs, a quiet conversation zone, and no stage program longer than ten minutes."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed: Riverside Hall is selected for the evening gathering, with Union Atrium retained as the fallback if the shuttle plan exceeds the approved cap. Foundry Loft is rejected under the present access and transit conditions. The intended layout mixes standing and seating but includes at least 110 actual chairs, a quiet conversation zone, and no stage segment longer than ten minutes. Selection does not equal booking: the next dependencies are a written rental hold, floor plan, food estimate, shuttle capacity and frequency, return-trip coverage, and an access walkthrough. I will refer to “the selected evening site” in generic downstream tasks so its proper name does not become accidental filler."
+        },
+        {
+          "role": "user",
+          "content": "Room allocation next. Preference data suggests 138 people want the procurement workshop, 101 want service blueprinting, 76 want records management, and 43 want the small peer clinic. We cannot treat those numbers as attendance promises, but they are useful. The 96-seat room has fixed tables; the 72-seat room is flat and divisible by a curtain; the 54-seat room has the strongest hearing loop; the 42-seat room is quietest. Procurement involves table exercises, service blueprinting needs wall space, records management includes two hard-of-hearing presenters, and the clinic needs confidentiality. Assign rooms and give an overflow strategy that does not simply tell late arrivals to leave."
+        },
+        {
+          "role": "assistant",
+          "content": "Assign procurement to the 96-seat fixed-table room because its exercise format needs surfaces, while acknowledging likely excess demand. Put service blueprinting in the 72-seat divisible room; the flat floor and wall access fit the activity. Place records management in the 54-seat room with the strongest hearing loop, protecting presenter access even though its preference count is higher. Put the peer clinic in the quiet 42-seat room and cap it deliberately for confidentiality rather than treating the small room as a failure.\n\nOverflow needs program choices, not doorway improvisation. Offer procurement twice if Sima and the facilitators agree, with one repeat in a later block; publish both slots before attendees arrive. For records management, move the hearing-loop equipment only if an equivalent larger room can be technically verified, otherwise repeat or provide a later facilitated follow-up rather than degrading access. Keon’s registration page can invite nonbinding session intentions and show capped clinics. At doors, volunteers should offer specific alternatives, a waitlist with a clear release time, and access to materials afterward. No one should be shamed for arriving after a room fills."
+        },
+        {
+          "role": "user",
+          "content": "Sima can repeat procurement at 15:30 on day two, and the facilitators agreed. Records management cannot repeat, so April will test whether the portable loop covers the 72-seat room; until it passes, keep records in the 54-seat room. The peer clinic requires advance sign-up capped at 34, leaving room for facilitators, mobility devices, and a support person. Service blueprinting can absorb walk-ins if procurement fills. Freeze those assumptions but keep April’s loop test visibly unresolved."
+        },
+        {
+          "role": "assistant",
+          "content": "Frozen for scheduling: procurement runs in the 96-seat table room and repeats at 15:30 on day two; service blueprinting uses the 72-seat flat room and is the named walk-in alternative if procurement fills; the peer clinic uses advance sign-up capped at 34, preserving space for facilitators, mobility devices, and a support person. Records management remains in the 54-seat hearing-loop room unless April documents that the portable loop provides equivalent coverage in the 72-seat room.\n\nThe loop move is an unresolved technical gate, not a routine room swap. April should test coverage with the actual transmitter, microphones, seating layout, and at least two receivers, record dead zones, and obtain presenter feedback. If it fails or is inconclusive, retain the 54-seat assignment and manage excess interest through materials and a facilitated follow-up. Keon should ensure the public schedule marks the clinic cap and procurement repeat without presenting preference data as reservations."
+        },
+        {
+          "role": "user",
+          "content": "Catering facts: 286 current registrations include 31 vegan meals, 18 vegetarian meals that are not vegan, 7 severe nut allergies, 4 gluten-and-dairy combinations, and 2 attendees requesting texture-modified food. These categories can overlap except the stated vegan/vegetarian split. The campus caterer wants a final count by November 6 and proposes color-coded meal tickets. Priya, our access adviser, says color alone is a bad idea and public allergy labels can expose medical information. Build a distribution method that avoids both problems and includes staff meals and walk-in uncertainty."
+        },
+        {
+          "role": "assistant",
+          "content": "Use individual meal records tied to registration identifiers, with neutral pickup codes that combine text and a simple symbol; color may be redundant but never the only signal. Do not print diagnoses or allergy names on public badges. At check-in, each attendee receives a discreet meal token or digital confirmation showing only the pickup code. Catering staff hold the secure mapping from code to preparation requirement. For severe allergies and texture modifications, Keon or a designated access lead should privately confirm the plan and pickup point before the event.\n\nCounts need deduplication because categories overlap. Export person-level requirements, not a sum of category totals, then add contracted staff, interpreters, volunteers by shift, and speakers who accepted meals. For walk-ins, order a modest reserve of meals built around the most inclusive menu, but do not claim one generic meal covers every severe allergy. November 6 is the freeze for guaranteed personalized meals; later registrants should receive honest options and a direct contact, not a promise.\n\nAt service, use separate clearly worded stations, trained staff, ingredient sheets, and a problem-resolution desk away from the main line. Retain a small protected reserve so early pickup errors do not consume every specialized meal."
+        },
+        {
+          "role": "user",
+          "content": "Travel disruption scenario: six speakers arrive by the 08:05 intercity train on day one, and their first sessions begin between 09:15 and 10:30. The line has had frequent twenty-minute delays. One speaker uses a power wheelchair and has requested a vehicle with a lift; another travels with a support person. April can arrange one campus van, but it is not lift-equipped. A local accessible taxi firm will accept an advance reservation but cannot promise extra vehicles on demand. Create a pickup plan with thresholds for remote substitution, and do not assume the support person is unpaid conference labor."
+        },
+        {
+          "role": "assistant",
+          "content": "Reserve one lift-equipped accessible vehicle in advance for the wheelchair user and any companions they choose to ride with; confirm dimensions, securement, luggage capacity, pickup landmark, and disruption contact. The campus van can serve other speakers but is not an accessible substitute. Arrange a second ordinary vehicle or licensed taxi so the group is not dependent on one van cycle. The support person travels as part of the invited party, not as a driver, porter, or event staff member; budget and communicate their transport on the same basis as the speaker’s.\n\nSet decision thresholds backward from sound check, not session start. For a 09:15 speaker, if the train’s forecast arrival moves beyond 08:25, the stage manager prepares the remote link immediately; beyond 08:40, switch unless the speaker explicitly prefers and can safely make an abbreviated arrival. Later speakers get thresholds that preserve at least forty-five minutes from station arrival to room readiness. Remote substitution requires a tested link, slide copy, local moderator, captions, and a phone fallback.\n\nKeon should collect arrival permission and contact details privately. Volunteers meet at the fixed landmark, but only the transport lead tracks mobility information."
+        },
+        {
+          "role": "user",
+          "content": "Volunteer staffing is 42 people across both days, not 42 per day. Nobody works more than a five-hour shift without a real break, and student volunteers cannot serve alcohol or handle private accommodation records. We need doors, room support, registration, wayfinding, speaker support, poster reset, streaming moderation, and evening transport. I am worried that every plan treats volunteers as infinitely divisible. Give me a minimum coverage model and identify roles that must be paid staff or contractors."
+        },
+        {
+          "role": "assistant",
+          "content": "Build coverage by simultaneous posts. At opening, minimum volunteer posts are four registration, four wayfinding at decision points, one at each of five program rooms, two roving access/operations runners, and two speaker escorts: seventeen people. Streaming needs a trained moderator, but that role should be paid or formally contracted because it involves public communication, escalation, and continuity. Each room also needs a staff content owner or session chair; volunteers can manage doors and materials but should not adjudicate conduct or accommodation disputes.\n\nMidday adds meal wayfinding and poster reset, so overlap morning and afternoon shifts for one hour rather than extending everyone. The evening needs shuttle queue support at campus and venue, indoor wayfinding, and coat/bag guidance, but alcohol service stays with licensed venue staff. Private accommodation records remain with Keon or a designated paid access coordinator. Radio control, emergency decisions, cash or purchasing authority, and incident documentation belong to paid leads.\n\nWith 42 people across two days, schedule a core of roughly 18 per peak shift and use shorter specialist blocks for poster and evening movement. Maintain named backups instead of counting every off-shift person as on call. Publish breaks, accessible volunteer tasks, meal coverage, supervisors, and a no-fault way to report that an assignment is not workable."
+        },
+        {
+          "role": "user",
+          "content": "Conduct response needs equal clarity. The policy names a three-person response team, but one member is Sima, who may be on stage. Reports can arrive through a web form, text number, or in person. We must not promise anonymity when follow-up facts could identify someone. Also, a sponsor representative is facilitating a session, which means commercial status cannot affect response. Draft the operational protocol and the sentence volunteers should use when somebody begins disclosing a concern at a busy desk."
+        },
+        {
+          "role": "assistant",
+          "content": "Name one primary and one backup response lead for every program block, neither assigned to a stage or room duty during that period. Sima may remain on the policy team but cannot be the only reachable person. Route the web form and text number to the designated leads, with access logging and a retention rule. In-person reports move to a quiet, visible-but-private location chosen by the reporter when possible. The receiver explains available next steps, urgent safety limits, and what information must be shared to act. Promise privacy and limited access, not absolute anonymity.\n\nTriage immediate danger to campus emergency procedures; handle non-immediate concerns through the response team’s documented options, including support, schedule separation, conduct instruction, or removal under the policy. Record facts, actions, conflicts, and follow-up without editorializing. Sponsor, speaker, organizer, and attendee reports use the same criteria; anyone with a relationship or conflict recuses.\n\nA volunteer at a busy desk can say: “I’m glad you told me. You do not have to explain this in public; I can contact the on-duty response lead and help you move somewhere quieter. They will explain what can stay private and what action may require sharing.” Then obtain consent before relaying details unless urgent safety requires escalation."
+        },
+        {
+          "role": "user",
+          "content": "We also need a poster-gallery flow. There are 58 posters, but only 44 boards. Poster numbers 1–29 present on day one and 30–58 on day two. The gallery is also the main route to two breakout rooms. Presenters asked to leave posters overnight, which would prevent the day-two changeover. We can offer a staffed storage room, but it closes at 18:30. Devise setup, removal, storage, and circulation rules without treating mobility devices as an obstruction."
+        },
+        {
+          "role": "assistant",
+          "content": "Assign fixed board numbers and floor positions for each day, leaving several board-width gaps as passing and conversation bays rather than filling every possible edge. Mark a continuous route to both breakout rooms at the accessible width required by campus standards, and place popular posters away from door pinch points. Mobility devices are ordinary participants in circulation; the design problem is furniture and crowd clustering, not the person using the route.\n\nDay-one presenters install during a defined morning window with staff assistance available. Announce a removal period after the final poster session that ends before 18:30. Presenters who cannot carry materials may tag them for the staffed storage room; volunteers log poster number, owner, and retrieval plan. Do not leave day-one posters on boards overnight, because all 29 day-two presenters need equivalent access. Any unclaimed poster is moved by two trained staff to protected flat storage, documented, and never discarded.\n\nThe changeover team photographs the cleared board map, resets labels 30–58, checks route widths, and reports damage. Day-two presenters receive the same setup support. Publish storage closing time before arrival and offer a prearranged alternative for anyone whose schedule or access needs make 18:30 retrieval impossible."
+        },
+        {
+          "role": "user",
+          "content": "Budget checkpoint before we cross into final run-of-show work. Remaining flexible operations money is $17,900. We have provisional estimates of $4,800 site rental, $3,600 food, $2,100 transport, $1,450 streaming support, $1,200 printing and signs, $900 poster equipment, and $1,100 emergency reserve. Shuttle pricing could add $900 to $1,800 beyond the transport estimate. Accommodation matching may add up to $2,000, and that is not optional if requested. Show a conservative picture and say what we should not authorize yet."
+        },
+        {
+          "role": "assistant",
+          "content": "The listed base estimates total $15,150: $4,800 rental + $3,600 food + $2,100 transport + $1,450 streaming + $1,200 print/signs + $900 poster equipment + $1,100 reserve. That leaves $2,750 from the $17,900 flexible pool before shuttle variance and additional accommodations.\n\nUsing the high shuttle increment of $1,800 leaves $950. If accommodation matching then requires the stated $2,000, the plan is $1,050 over the pool. Even the low $900 shuttle increment plus $2,000 accommodations leaves only a negative $150. Because accommodation is an access requirement rather than optional decoration, do not authorize discretionary upgrades, expanded evening programming, premium printing, or sponsor-driven extras yet. The site decision itself also remains operationally dependent on a transport cap.\n\nSeek firm shuttle bids and actual accommodation matches first. Protect the $1,100 emergency reserve rather than quietly using it to make the spreadsheet balance. Potential savings should be itemized with service consequences: menu simplification that preserves dietary safety, reduced print quantity with accessible digital backup, or borrowed poster hardware. None is a saving until confirmed."
+        },
+        {
+          "role": "user",
+          "content": "The university can lend poster hardware, reducing that line from $900 to $180, and the print shop confirmed $820 if we approve by October 30. Those are firm. A donor offered $1,000 specifically for live captions in breakouts; finance says it can pay accommodation services but not general transport. Record the restrictions. Then mark a compaction boundary: the remaining discussion will be about minute-by-minute operations, and earlier semantic decisions should not need to be restated."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded: poster equipment falls from $900 to $180 through a confirmed university loan, saving $720. Printing and signs fall from $1,200 to $820 if approval occurs by October 30, saving $380. Together those confirmed changes improve the flexible picture by $1,100.\n\nThe donor’s $1,000 is restricted to breakout live-caption access services as finance has interpreted the gift. It may offset qualifying accommodation costs; it cannot be shifted to general transport, evening shuttles, décor, or unrelated program work. Track the restricted income and expense separately so the operating pool is not overstated.\n\nA compaction boundary begins with your next message. Earlier messages resolve the local room term, evening-site selection, room principles, catering privacy, speaker transport, volunteer limits, conduct response, poster flow, and the revised budget inputs. The retained tail can focus on timed operations without naming the settled answers unless an actual dependency requires it."
+        },
+        {
+          "role": "user",
+          "content": "Build the opening sequence for day one. Campus access starts at 06:30, registration opens at 07:30, plenary doors open at 08:30, and the welcome begins at 09:00. The streaming contractor needs ninety minutes from room access to a full test. Interpreters need sound check and clear sight lines. Catering delivers breakfast at 07:10. Badge boxes are alphabetized in four ranges, but walk-ins and corrections share one desk. Give me a timed plan with owners and a clear go/no-go moment."
+        },
+        {
+          "role": "assistant",
+          "content": "06:30: April opens the auditorium and verifies power, HVAC, accessible routes, and unlocked distributed wheelchair seating. The streaming contractor, caption feed, and audio lead enter immediately. From 06:35 to 07:20 they complete signal path, slide, camera, caption, stream privacy, recording, and failure-mode tests. Interpreters inspect sight lines and lighting by 06:50, then sound-check with the stage manager.\n\n06:40: Keon and four registration volunteers inventory badge boxes, test scanners, prepare the private meal-code lookup, and establish the corrections/walk-in desk away from the four alphabetical pickup lines. 07:10: catering and a paid operations lead verify delivery quantities, ingredients, and service routes; volunteers may set signs and queues. 07:25: registration briefing. 07:30: doors open for check-in.\n\n08:00: Eli leads the formal readiness review. Required green conditions are stable stream and captions, working microphones, interpreter sight lines, accessible seating/routes, registration systems, emergency contacts, and a printed offline run sheet. Any red condition gets an owner and deadline. At 08:20, make the go/no-go decision for opening plenary doors at 08:30. If streaming alone fails, the in-room program may proceed with a recorded local backup and an honest remote notice; if life safety, room access, or core communication access fails, delay doors until corrected."
+        },
+        {
+          "role": "user",
+          "content": "For schedule changes, I want one source of truth. The website, mobile agenda, printed grids, room signs, volunteer sheets, captioner schedules, and streaming titles can diverge. We will freeze ordinary program edits on November 10 at noon, but safety, illness, and access corrections remain possible. Design the change-control path, including how a speaker substitution gets checked and how attendees without phones receive updates."
+        },
+        {
+          "role": "assistant",
+          "content": "Create one versioned change register owned by a named schedule controller. Every request records timestamp, requester, reason, affected session, old value, proposed value, decision owner, access impact, and publication status. After November 10 at noon, reject convenience edits; accept only safety, illness, access, or genuinely necessary operational corrections.\n\nFor a speaker substitution, Sima approves academic fit, Keon confirms registration/contact details, the conduct lead checks conflicts, and the access lead asks privately about accommodation needs. The controller then assigns a version number and updates systems in a fixed order: master agenda, website/mobile feed, streaming title, captioner/interpreter schedule, room signs, volunteer radio brief, and printed correction board. Each channel gets a completion check, not an assumption.\n\nAttendees without phones receive changes at registration, on high-contrast correction boards near major decision points, and through room-door notices. For changes within thirty minutes, trained volunteers make calm verbal announcements at affected routes and rooms. Never overwrite the old entry without an audit trail; mark cancellation, move, or substitution explicitly so screenshots and printed grids can be reconciled. At each shift briefing, volunteers receive the current version number and report any mismatch they see."
+        },
+        {
+          "role": "user",
+          "content": "The remote question queue needs moderation rules. We want remote viewers to have a genuine path into plenaries, but the chair cannot read every message. Questions may contain personal case details, sales pitches, or accusations about named agencies. The public stream has a twenty-second delay. Specify intake, selection, privacy handling, and what happens if the moderation tool fails."
+        },
+        {
+          "role": "assistant",
+          "content": "At intake, show a short notice: questions may be edited for length and privacy; submissions are visible to moderators; personal case details should be omitted; and not every question can be asked. Require a display name only if needed for the event format, with a neutral anonymous option. One trained moderator sorts questions by topic, relevance, duplication, and safety—not by whether they flatter the panel. A second paid lead handles escalations during high-risk sessions.\n\nThe moderator may remove contact details or identifying case facts while preserving the substantive question, and should note that an edit occurred. Sales pitches are excluded. Specific accusations about named people or agencies are not read live without a safe editorial basis; the chair can convert a broadly useful issue into a general question or direct the submitter to an appropriate follow-up channel. Maintain a private moderation log with limited retention.\n\nThe twenty-second delay supports broadcast response but is not the primary moderation tool. If the queue platform fails, post a plain status notice and switch to a backup web form monitored by the same staff. If that also fails, the chair takes a limited set of questions collected before the session and tells remote viewers honestly that live intake is unavailable. Do not ask viewers to publish questions on an uncontrolled social feed."
+        },
+        {
+          "role": "user",
+          "content": "Close with a tomorrow-morning action list. Separate actions that unlock other work from routine preparation. Every item needs an owner, due point, and dependency. Do not repeat settled definitions or choices merely to make the list look complete."
+        },
+        {
+          "role": "assistant",
+          "content": "Unlocking actions:\n\n- April, by tomorrow 15:00: run and document the portable hearing-loop test; dependency: actual 72-seat layout, microphones, and receivers. Until it passes, the existing accessible room assignment stands.\n- Eli, by tomorrow noon: request written rental and floor-plan terms plus bounded shuttle bids for the selected evening site; dependency: expected departure waves and lift-capable capacity.\n- Keon, by tomorrow 17:00: produce a deduplicated meal/accommodation roster and flag unmatched breakout requests; dependency: current registration export and privacy-limited access.\n- Schedule controller, by tomorrow noon: establish the versioned change register and channel checklist; dependency: Sima naming the academic approver and operations naming backups.\n- Transport lead, by tomorrow 16:00: reserve the lift-equipped station vehicle and ordinary group capacity; dependency: traveler approval for contact and dimensions.\n- Finance lead, by tomorrow 17:00: create separate restricted-caption and flexible-operations lines.\n\nRoutine preparation:\n\n- Keon, by October 30: approve the confirmed print quote after access review.\n- Volunteer coordinator, within two days: draft peak-shift coverage, breaks, backups, and prohibited student assignments.\n- Conduct lead, within two days: publish on-duty primary and backup coverage by program block.\n- Poster lead, within three days: issue board assignments, storage hours, retrieval exceptions, and measured circulation map.\n- Streaming contractor, one week before event: complete backup intake and local-recording rehearsal.\n- Eli, at each operations meeting: read the remaining flexible balance without counting unconfirmed savings."
+        }
+      ]
+    }
+  },
+  "plants": {
+    "referent": {
+      "plant_id": "v11-c05-referent",
+      "category": "referent",
+      "probe": "Which venue was selected for the conference evening gathering?",
+      "correct_target": "Riverside Hall",
+      "counterfactual_target": "Union Atrium",
+      "establishing_indices": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "downstream_reference_indices": [],
+      "factual_rationale": "Three feasible venues are compared against access, transport, acoustics, and cost before one is explicitly selected and confirmed."
+    },
+    "sense": {
+      "plant_id": "v11-c05-sense",
+      "category": "sense",
+      "probe": "What did “green room” mean at Practical Commons?",
+      "correct_target": "speaker preparation suite",
+      "counterfactual_target": "sponsor hospitality lounge",
+      "establishing_indices": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "downstream_reference_indices": [],
+      "factual_rationale": "Two locally plausible rooms share an ambiguous staff label before the conference assigns it to one function."
+    }
+  },
+  "changed_message_allowlists": {
+    "wrong_referent": [
+      {
+        "message_index": 11,
+        "role": "user",
+        "correct_content_sha256": "c7c98187def23b0ec2792a010e6027ee71b7c04e989dcb323c5a55c56ce36dd7",
+        "counterfactual_content_sha256": "6304a18700639db9f355cb61dc4af3b5e356c6c9e50eb93a806c6335e2dd923b",
+        "correct_content_token_count": 80,
+        "counterfactual_content_token_count": 80
+      },
+      {
+        "message_index": 12,
+        "role": "assistant",
+        "correct_content_sha256": "0d289aa1e373b419a252b5b0e2ea41a65e14a1ae85cd4cb937868f524fd64361",
+        "counterfactual_content_sha256": "f9a2ea70929e47611f864b70613ae2006d0cf0ee7da25343e41f48376e9c5d51",
+        "correct_content_token_count": 134,
+        "counterfactual_content_token_count": 134
+      }
+    ],
+    "wrong_sense": [
+      {
+        "message_index": 7,
+        "role": "user",
+        "correct_content_sha256": "41c888318c746e7a44528417d43c5e10f38d54dcfa77b86a2b307761f5a39c73",
+        "counterfactual_content_sha256": "042bfbc42bba0aeed6e5ded4df0554e98c1b662532890b380eacbad033d55f7a",
+        "correct_content_token_count": 68,
+        "counterfactual_content_token_count": 68
+      },
+      {
+        "message_index": 8,
+        "role": "assistant",
+        "correct_content_sha256": "4000b937adcc702c8d83bd0d6aa3fc505445102f82da435551faef5dd9eef51c",
+        "counterfactual_content_sha256": "c2d819d6889a6c1e10383036f9af364b65ca116ef32ba169e650d125f9baa333",
+        "correct_content_token_count": 112,
+        "counterfactual_content_token_count": 112
+      }
+    ]
+  },
+  "distractor_fact_inventory": [
+    {
+      "chain_id": "room-and-access",
+      "indices": [
+        3,
+        4,
+        13,
+        14,
+        15,
+        16
+      ],
+      "summary": "Capacity, replay scheduling, hearing-loop gating, and clinic limits."
+    },
+    {
+      "chain_id": "food-and-travel",
+      "indices": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "summary": "Private meal routing and thresholded accessible station transport."
+    },
+    {
+      "chain_id": "staff-conduct-posters",
+      "indices": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "summary": "Volunteer role bounds, conduct response, poster changeover, and circulation."
+    },
+    {
+      "chain_id": "budget",
+      "indices": [
+        27,
+        28,
+        29,
+        30
+      ],
+      "summary": "Conservative flexible-budget calculation, confirmed savings, and restricted caption funding."
+    },
+    {
+      "chain_id": "retained-operations",
+      "indices": [
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "summary": "Timed opening, schedule change control, remote moderation, and actionable ownership."
+    }
+  ],
+  "tokenizer_binding": {
+    "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "summary_request": "Write a compact handoff note of 180–240 words for another assistant who will continue this conversation without seeing it. Identify the participants and their roles, current goals, decisions that still affect next steps, constraints, unresolved questions, and the next actions. Prioritize what the next assistant needs to act; compress settled background details when they are not needed. Use plain prose or concise bullets. Do not add commentary before or after the note.",
+    "summary_request_sha256": "c9799f7e1c6adcaf9bc90b0ec4c67d1b7a317ad3d24e55be9753c89eb6ef12e3"
+  },
+  "observed_mechanical_evidence": {
+    "method": "tokenizer-only local reconstruction; no subject-model forward pass",
+    "variants": {
+      "correct": {
+        "full_prefix_token_count": 6862,
+        "full_prefix_token_ids_sha256": "ce327585fe51eb0168624431d556c3888453d6bd33dce8a3f1ea6ba28380c627",
+        "message_start_positions": [
+          0,
+          66,
+          222,
+          434,
+          595,
+          823,
+          930,
+          1121,
+          1194,
+          1311,
+          1482,
+          1709,
+          1794,
+          1933,
+          2088,
+          2320,
+          2432,
+          2636,
+          2765,
+          3010,
+          3142,
+          3388,
+          3491,
+          3757,
+          3858,
+          4116,
+          4233,
+          4491,
+          4642,
+          4927,
+          5038,
+          5251,
+          5379,
+          5700,
+          5788,
+          6038,
+          6114,
+          6370,
+          6421,
+          6762,
+          6859
+        ],
+        "message_start_positions_sha256": "e714b3095ef015cce3738961bb7b8152f36ee98eb21cbbed4e67573d1ab237d8",
+        "per_message_canonical_widths": [
+          66,
+          156,
+          212,
+          161,
+          228,
+          107,
+          191,
+          73,
+          117,
+          171,
+          227,
+          85,
+          139,
+          155,
+          232,
+          112,
+          204,
+          129,
+          245,
+          132,
+          246,
+          103,
+          266,
+          101,
+          258,
+          117,
+          258,
+          151,
+          285,
+          111,
+          213,
+          128,
+          321,
+          88,
+          250,
+          76,
+          256,
+          51,
+          341,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          66,
+          156,
+          212,
+          161,
+          228,
+          107,
+          191,
+          73,
+          117,
+          171,
+          227,
+          85,
+          139,
+          155,
+          232,
+          112,
+          204,
+          129,
+          245,
+          132,
+          246,
+          103,
+          266,
+          101,
+          258,
+          117,
+          258,
+          151,
+          285,
+          111,
+          213,
+          128,
+          321,
+          88,
+          250,
+          76,
+          256,
+          51,
+          341,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2766
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "2e94d9060e8319373549f6a1fcd498872c096218eaefd8676b7b13f7d2b81c88"
+      },
+      "wrong_referent": {
+        "full_prefix_token_count": 6862,
+        "full_prefix_token_ids_sha256": "617ff454a4edbd463d26e652b4b758b8d3eb4708f82d7f5e6dee7558df4cce22",
+        "message_start_positions": [
+          0,
+          66,
+          222,
+          434,
+          595,
+          823,
+          930,
+          1121,
+          1194,
+          1311,
+          1482,
+          1709,
+          1794,
+          1933,
+          2088,
+          2320,
+          2432,
+          2636,
+          2765,
+          3010,
+          3142,
+          3388,
+          3491,
+          3757,
+          3858,
+          4116,
+          4233,
+          4491,
+          4642,
+          4927,
+          5038,
+          5251,
+          5379,
+          5700,
+          5788,
+          6038,
+          6114,
+          6370,
+          6421,
+          6762,
+          6859
+        ],
+        "message_start_positions_sha256": "e714b3095ef015cce3738961bb7b8152f36ee98eb21cbbed4e67573d1ab237d8",
+        "per_message_canonical_widths": [
+          66,
+          156,
+          212,
+          161,
+          228,
+          107,
+          191,
+          73,
+          117,
+          171,
+          227,
+          85,
+          139,
+          155,
+          232,
+          112,
+          204,
+          129,
+          245,
+          132,
+          246,
+          103,
+          266,
+          101,
+          258,
+          117,
+          258,
+          151,
+          285,
+          111,
+          213,
+          128,
+          321,
+          88,
+          250,
+          76,
+          256,
+          51,
+          341,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          66,
+          156,
+          212,
+          161,
+          228,
+          107,
+          191,
+          73,
+          117,
+          171,
+          227,
+          85,
+          139,
+          155,
+          232,
+          112,
+          204,
+          129,
+          245,
+          132,
+          246,
+          103,
+          266,
+          101,
+          258,
+          117,
+          258,
+          151,
+          285,
+          111,
+          213,
+          128,
+          321,
+          88,
+          250,
+          76,
+          256,
+          51,
+          341,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2766
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "b63aa39e5df5c3274550469d9a3749b4c5c9ae71fda9ea83783eafe9109d6e14"
+      },
+      "wrong_sense": {
+        "full_prefix_token_count": 6862,
+        "full_prefix_token_ids_sha256": "562b367cb65bdd7d35352be007b87d337f5bea13558d8a54f2934b7894d48ed0",
+        "message_start_positions": [
+          0,
+          66,
+          222,
+          434,
+          595,
+          823,
+          930,
+          1121,
+          1194,
+          1311,
+          1482,
+          1709,
+          1794,
+          1933,
+          2088,
+          2320,
+          2432,
+          2636,
+          2765,
+          3010,
+          3142,
+          3388,
+          3491,
+          3757,
+          3858,
+          4116,
+          4233,
+          4491,
+          4642,
+          4927,
+          5038,
+          5251,
+          5379,
+          5700,
+          5788,
+          6038,
+          6114,
+          6370,
+          6421,
+          6762,
+          6859
+        ],
+        "message_start_positions_sha256": "e714b3095ef015cce3738961bb7b8152f36ee98eb21cbbed4e67573d1ab237d8",
+        "per_message_canonical_widths": [
+          66,
+          156,
+          212,
+          161,
+          228,
+          107,
+          191,
+          73,
+          117,
+          171,
+          227,
+          85,
+          139,
+          155,
+          232,
+          112,
+          204,
+          129,
+          245,
+          132,
+          246,
+          103,
+          266,
+          101,
+          258,
+          117,
+          258,
+          151,
+          285,
+          111,
+          213,
+          128,
+          321,
+          88,
+          250,
+          76,
+          256,
+          51,
+          341,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          66,
+          156,
+          212,
+          161,
+          228,
+          107,
+          191,
+          73,
+          117,
+          171,
+          227,
+          85,
+          139,
+          155,
+          232,
+          112,
+          204,
+          129,
+          245,
+          132,
+          246,
+          103,
+          266,
+          101,
+          258,
+          117,
+          258,
+          151,
+          285,
+          111,
+          213,
+          128,
+          321,
+          88,
+          250,
+          76,
+          256,
+          51,
+          341,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2766
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "3f41c66fb19ed09ade44afcc5d19c1f8a062aa9cecf493f2d36b49bebcf156bf"
+      }
+    },
+    "pair_invariants": {
+      "roles_message_count_order_identical": true,
+      "non_allowlisted_messages_byte_identical": true,
+      "system_and_retained_tail_byte_identical": true,
+      "changed_messages_strictly_before_middle_end": true,
+      "changed_content_token_counts_equal": true,
+      "full_prefix_counts_equal": true,
+      "message_start_positions_equal": true,
+      "P_widths_equal": true,
+      "O_widths_equal": true
+    }
+  },
+  "review": "PENDING",
+  "warning": "DRAFT_UNREVIEWED. Not frozen, not reviewed, not executable, and must not be used for semantic outcomes."
+}
