@@ -544,3 +544,63 @@ Capture everything very well (owner).
   run only. The subject must freely generate the summary under correct-history P; force
   the identical summary IDs through every other history/schedule. Imported conversation
   bodies are openly authored replay inputs, not live native state.
+
+## Ultra-depth strategy regroup (2026-07-11)
+
+- **Pause paired-v11 before semantic execution; confirmation is premature.** The
+  twelve-case contract is a defensible confirmatory design but not the
+  highest-value next experiment. Six draft/checkpoint files are preserved and
+  remain non-executable. No further long-corpus authoring occurs until an
+  independent exploratory canary shows a large, interpretable exact-model
+  channel. Canary cases can never enter later confirmation. Evidence and full
+  rationale: `notes/2026071187` through `notes/2026071192`.
+
+- **Use role-native q=1 replay as the canary-primary source protocol.** Historical
+  assistant content is forced token by token; user/system/tool blocks are
+  appended as message prefills; summary/carrier tokens are generated or forced
+  stepwise. This is computationally equivalent to this repository's incremental
+  loop for the fixed observed token IDs, but it is still imported-text replay and
+  not a continuously batched production server or a live organic agent. Current
+  whole-assistant P is a paid-stack numerical sensitivity condition, never an
+  independent replicate or rescue schedule.
+
+- **Separate semantic history specificity from restart utility.** Same-schedule,
+  same-shape correct versus minimally counterfactual full-KV/value-only states
+  are the primary semantic contrasts and require focal selectivity over an
+  unchanged fact. Correct retained state versus fresh compacted state is a
+  utility contrast and includes execution-policy differences. Full-KV and
+  value-only claim families are independent; neither procedurally gates running
+  or scoring the other.
+
+- **Make boundary carriage the canary-primary region without changing visible
+  text.** Every destination contains the same target-neutral anchor. `R2`
+  (summary content plus canonical assistant close/boundary) is the sole stop/go
+  region; content-only `R1` and content+boundary+anchor `R3` are descriptive.
+  Rows after the selected region are causally recomputed. An R1/R3-only result
+  cannot rescue R2 or retrospectively change the original intervention.
+
+- **Sequence paid evidence by decision value and rerun gates on the actual
+  stack.** Exact 30B provenance/identity/intervention gates and a same-path
+  downstream-note positive control precede all semantic scoring. Four engineered
+  carrier cases run before any conversation cases. One complete full-arm case
+  produces the observed cost forecast. Paid authorization starts at `$2` and may
+  extend to a hard `$8` canary ceiling only from that forecast; pod repairs occur
+  with the pod stopped. At least `$15` stays reserved for failures and final
+  synthesis/review.
+
+- **Close ambiguity before outcomes.** Primary R2 engineered passage requires
+  at least 3/4 directionally selective cases, favorable correct-target movement,
+  and a semantic contrast at least three times its paid-stack N-versus-P
+  schedule shift. A clear stop has a non-positive full-KV mean or fewer than 2/4
+  directional/selective cases with a working positive control. Exactly one
+  two-case engineered ambiguity extension is permitted under the frozen arms and
+  thresholds; no further extension or on-the-day rescue is allowed. Stimulus
+  redesign is gated only on pre-treatment competence/damage/leakage/NLL evidence
+  committed before treatment unblinding.
+
+- **Begin the honest paper in parallel; defer live-agent treatment evaluation.**
+  Existing evidence already supports a negative/bounding and methodological
+  paper. A live coding-agent fork becomes worthwhile only after an internally
+  valid usable treatment, exact coding-model ladder, full-context competence,
+  and observed compaction damage. Two to six tasks would be feasibility only;
+  no current task result supports a practical performance claim.
