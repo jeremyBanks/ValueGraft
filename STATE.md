@@ -44,15 +44,16 @@ launch: even a paid `T=PASS` would be rejected by the machine-enforced `L AND T`
 V10 is permanently non-authorizing unless a separately preregistered scientific version
 replaces it; no gate will be waived or reinterpreted after the failure.
 
-The current `$0` step is frozen at
-`COHERENT-STATE-SCHEDULE-ORIGIN-DIAGNOSTIC-PREREGISTRATION.md`. After `c02`, a
-three-branch exact c10 diagnostic compares the first 23 cached rows under a 23-token
-query, the original 4,096-token query, and an equal-shaped 4,096-token query with only
-causally future tokens changed. It distinguishes construction divergence,
-future-token influence, and query-shape-dependent bf16 rounding. It is running as
-`scripts/diagnose_c10_schedule_origin.py` (child PID `60227`) with unique output
-`results/c10_schedule_origin/c10_schedule_origin_Qwen3-0.6B_20260711T174844462255Z.json`.
-It is non-authorizing and licenses only a c10 origin classification.
+The preregistered three-branch c10 origin diagnostic completed at `f19c4df` with
+non-authorizing outcome `QUERY_SHAPE_ROUNDING`. Every A/B/C branch repeated bit-exactly.
+The same first 23 tokens diverged between a 23-token and 4,096-token query beginning at
+layer 1, row 22 (A/B K/V maxima `0.75/0.875`), while equal-shaped B/C calls with only
+causally future rows changed remained exactly equal on protected rows at all layers.
+The changed-tail positive control diverged from layer 0, row 23 with K/V
+`374.0/118.5`. Thus the tested mask is causally correct and query shape changes
+deterministic bf16 arithmetic; the exact low-level kernel path and 30B magnitude remain
+unmeasured. The sealed artifact is under `results/c10_schedule_origin/`; interpretation
+is in `notes/2026071185-sol-c10-schedule-origin-result.md`.
 
 The raw-input audit found two additional blocking design defects before any semantic
 outcome. First, the schedule repeatedly called `message_block`/`message-aligned` is
@@ -88,13 +89,16 @@ review; they are not preserved native incremental state and cannot be described 
 fully provenance-bound exact-revision render. See
 `notes/2026071184-sol-banked-30b-render-reuse-audit.md`.
 
-After origin classification, a separately frozen c10/c02 measurement must use true
-turn-aligned replay `P`, ordinary chunks `O`, fixed gapped destination `D`, and decoded
-valid counterfactual sources to measure `GF` and `GMC` under both schedules. The local
-N=2 0.6B result is an apparatus/case diagnostic, not a 30B equivalence estimate. Only a
-technically valid design that carries both schedules into the exact 30B subject can
-justify paid semantic work; otherwise the experiment stops at a precision-limited or
-apparatus-invalid methodological result.
+The replacement design will not repair c10/c02 or promote the capped 30B bank as its
+primary corpus. It will author and freeze twelve new concise, diverse matched
+correct/referent-counterfactual/sense-counterfactual conversations before any semantic
+outcome. A new additive apparatus must use true turn-aligned replay `P`, ordinary chunks
+`O`, fixed gapped destination `D`, and decoded-valid counterfactual sources to measure
+`GF`, `GMC`, focal selectivity, and P/O interactions. The first two already-frozen
+members form a local 0.6B technical-completeness diagnostic only; they are not an
+efficacy or equivalence sample. The exact subject's summary is freely generated under
+correct-history P, then the same IDs are forced through all matched histories and
+schedules. Imported body text remains explicit replay, not live subject-native state.
 
 The release layer was frozen and implemented without changing any of the 35 inventoried v10
 apparatus files; the aggregate remains
