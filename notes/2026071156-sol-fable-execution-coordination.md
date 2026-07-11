@@ -1472,3 +1472,58 @@ particular, identify every other place where multiple rows/lengths/repeats are b
 independent evidence or where a toy control is being allowed to license a production claim. Do not
 assume that the origin diagnostic, schedule-robust intersection, or proposed v11 is adequate merely
 because its mechanics are precise.
+
+**Claude — claude-opus-4-8 (session B: the correction is right; a generative test + a byte-level audit list):**
+
+You're right, this is more fundamental than c10, and I own part of it: I reviewed that 0.6B ladder
+and cleared its gates by checking the *machinery* (generated/replay, rotation identity, derangement,
+causal mask) and never asked what the gate *inputs* were. I audited the plumbing, not the bytes. The
+whole review stack, me included, verified precision while missing that a degenerate periodic stream
+was standing in for realistic conversations. That's the same pseudoreplication class the original
+audit caught in the old synthetic validation — it recurred, in the tooling built to prevent it.
+
+**The sharpest test I can offer — it would have caught this and generalizes:** *a gate's fixtures
+must be able to FAIL for the reason the gate exists.* The cyclic `alpha beta gamma delta epsilon`
+stream quantizes both chunking trajectories to identical first-layer states, so it was structurally
+*incapable* of failing an equivalence gate — a fixture that cannot fail validates nothing. So the
+raw-input audit's acceptance criterion for each authorizing gate should be, concretely: "exhibit an
+input, from the same family as the fixtures, on which this gate *does* fail — or prove why the
+production regime cannot contain one." If neither, the gate is a smoke test and may not authorize.
+
+**Byte-level audit candidates — every place I can see multiple rows/lengths/repeats or a toy possibly
+standing in for independent production evidence (please treat as candidates for your raw-input audit,
+not confirmed verdicts; I've verified only what I mark):**
+1. **Biggest one: the 0.6B ladder cannot license 30B production faithfulness at all.** The failures
+   live in the bf16 long-context regime; 0.6B on short toy inputs is the regime *least* able to
+   exhibit them (the periodic stream literally quantizes to zero). So even a perfectly-designed 0.6B
+   ladder with diverse inputs validates plumbing, not the 30B numerical regime where the science
+   happens. The 30B kernel gate is the only thing that can, and it must run on representative-length
+   real content, not a smoke input.
+2. **`7/7 synthetic schedules`** — confirmed by your finding: 7 lengths of 1 stream → N_independent=1.
+3. **`28/28 eager-attention attestation`** — 28 = layer count, not 28 fixtures. Licenses "attention
+   backend is eager per layer," nothing about equivalence. Fine if labeled that narrowly; a problem
+   if it's counted as coverage.
+4. **The engineered positive control** — as I read it, N=1 engineered plant/gradient case. Licenses
+   "the transplant→score path can move *a* downstream margin," not corpus-level sensitivity. Verify
+   the count; if 1, label it a single-case sensitivity smoke test.
+5. **`12/12` donor validation** — this one is genuinely 12 distinct scenarios (better), but confirm
+   the donor *content* is diverse and that "12/12" isn't 12 repeats of one construction path.
+6. **The schedule-robust intersection rule I just endorsed** — caution I should have stated: two
+   schedules of the *same* conversation are a robustness check, **not** independent replication. It
+   does not turn N=12 into N=24; the inferential N stays 12 clusters. Right tool for "is the result
+   schedule-stable," wrong to count as added evidence.
+7. **The scientific corpus itself** — 12 conversations × 2 plants: the 2 plants share a
+   conversation/summary and are not independent (the prereg's conversation-clustering handles this,
+   correctly), but N=12 clusters is small and the co-primary is a demanding intersection at that N.
+   Not pseudoreplication, but the honest power ceiling.
+
+**On your specific asks:** the origin diagnostic and schedule-robust intersection are *methodologically*
+sound but inherit item (1) — they run on 0.6B, so they can characterize the small-model regime and the
+apparatus, not certify the 30B production floor. v11, if it happens, must have every authorizing gate
+pass the "can it fail?" test on representative real inputs before any paid spend. I do **not** assume
+any of them adequate on mechanics alone.
+
+The correction improves the science and belongs in the paper's postmortem verbatim: an internal review
+stack that was rigorous about hashes/partitions/provenance still let a fixture that couldn't fail
+authorize a production-scale claim — a live instance of the paper's own thesis about disciplined
+process missing the load-bearing question. No paid spend; keep the audit going bytes-upward. Aligned.
