@@ -111,19 +111,37 @@ def run_fresh_self_replacement(model, plan) -> dict:
     for region in (R1, R2, R3):
         start, end = plan.physical_regions.interval(region)
         fresh_rows = extract_rows(direct.snapshot, start, end)
-        boundary = execute_fresh_plan(model, plan, stop_at=end)
-        replaced, insertion = replace_rows(
-            boundary.snapshot, fresh_rows, start,
-            use_keys=True, use_values=True)
-        completed = continue_fresh_plan(model, plan, replaced, start_at=end)
-        _require(snapshot_hashes(completed.snapshot) == snapshot_hashes(direct.snapshot),
-                 f"fresh self-replacement rows differ for {region}")
-        _require(tensor_sha256(completed.last_logits) == tensor_sha256(direct.last_logits),
-                 f"fresh self-replacement logits differ for {region}")
-        rows.append({"region": region, "status": "PASS",
-                     "insertion": insertion,
-                     "continuation_calls": completed.calls})
-    return {"status": "PASS", "regions": rows}
+        for mode, use_keys, use_values in (
+                ("K+V", True, True), ("K-only", True, False),
+                ("V-only", False, True)):
+            boundary = execute_fresh_plan(model, plan, stop_at=end)
+            replaced, insertion = replace_rows(
+                boundary.snapshot, fresh_rows, start,
+                use_keys=use_keys, use_values=use_values)
+            completed = continue_fresh_plan(model, plan, replaced, start_at=end)
+            _require(snapshot_hashes(completed.snapshot) ==
+                     snapshot_hashes(direct.snapshot),
+                     f"fresh self-replacement rows differ for {region}/{mode}")
+            _require(tensor_sha256(completed.last_logits) ==
+                     tensor_sha256(direct.last_logits),
+                     f"fresh self-replacement logits differ for {region}/{mode}")
+            rows.append({
+                "region": region, "mode": mode, "status": "PASS",
+                "fresh_selected_row_hashes": snapshot_hashes(fresh_rows),
+                "boundary_before_hashes": snapshot_hashes(boundary.snapshot),
+                "boundary_after_hashes": snapshot_hashes(replaced),
+                "insertion": insertion,
+                "continuation_calls": completed.calls,
+                "continued_snapshot_hashes": snapshot_hashes(completed.snapshot),
+                "continued_last_logits_sha256": tensor_sha256(
+                    completed.last_logits),
+            })
+    return {
+        "status": "PASS", "regions": rows,
+        "direct_calls": direct.calls,
+        "direct_snapshot_hashes": snapshot_hashes(direct.snapshot),
+        "direct_last_logits_sha256": tensor_sha256(direct.last_logits),
+    }
 
 
 def _transplant_complete(model, plan, source_rows, region: str):
@@ -148,8 +166,10 @@ def run_natural_calibration(model, tokenizer, fixture: dict,
     green = execute_replay_plan(model, green_plan)
     amber = execute_replay_plan(model, amber_plan)
     fresh = execute_fresh_plan(model, fresh_plan)
-    approve_id = tokenizer.encode(fixture["correct_target"], add_special_tokens=False)
-    deny_id = tokenizer.encode(fixture["counterfactual_target"], add_special_tokens=False)
+    approve_text = fixture["correct_target"]
+    deny_text = fixture["counterfactual_target"]
+    approve_id = tokenizer.encode(approve_text, add_special_tokens=False)
+    deny_id = tokenizer.encode(deny_text, add_special_tokens=False)
     _require(len(approve_id) == len(deny_id) == 1, "calibration targets differ")
     source_start, source_end = green_plan.regions.interval(R2)
     green_rows = extract_rows(green.snapshot, source_start, source_end)
@@ -160,34 +180,80 @@ def run_natural_calibration(model, tokenizer, fixture: dict,
     raw = {
         "A_g": _probe_record(model, tokenizer, green.snapshot,
             source_messages(green_history, middle), green_plan.token_ids,
-            len(green_plan.token_ids), fixture["probe"], "approve", "deny", eos_ids),
+            len(green_plan.token_ids), fixture["probe"], approve_text, deny_text,
+            eos_ids),
         "A_a": _probe_record(model, tokenizer, amber.snapshot,
             source_messages(amber_history, middle), amber_plan.token_ids,
-            len(amber_plan.token_ids), fixture["probe"], "approve", "deny", eos_ids),
+            len(amber_plan.token_ids), fixture["probe"], approve_text, deny_text,
+            eos_ids),
         "F": _probe_record(model, tokenizer, fresh.snapshot, compact,
             fresh_plan.token_ids, fresh_plan.logical_positions[-1] + 1,
-            fixture["probe"], "approve", "deny", eos_ids),
+            fixture["probe"], approve_text, deny_text, eos_ids),
         "T_g": _probe_record(model, tokenizer, tg.snapshot, compact,
             fresh_plan.token_ids, fresh_plan.logical_positions[-1] + 1,
-            fixture["probe"], "approve", "deny", eos_ids),
+            fixture["probe"], approve_text, deny_text, eos_ids),
         "T_a": _probe_record(model, tokenizer, ta.snapshot, compact,
             fresh_plan.token_ids, fresh_plan.logical_positions[-1] + 1,
-            fixture["probe"], "approve", "deny", eos_ids),
+            fixture["probe"], approve_text, deny_text, eos_ids),
     }
-    mg, ma, mf, mtg, mta = (raw[key]["margin"] for key in
-                             ("A_g", "A_a", "F", "T_g", "T_a"))
-    _require(mg - mf > 0 and mf - ma > 0, "natural denominators are nonpositive")
-    rho_green = (mtg - mf) / (mg - mf)
-    rho_amber = (mf - mta) / (mf - ma)
-    green_generated = raw["A_g"]["generation"]["content_ids"][:1] == approve_id
-    amber_generated = raw["A_a"]["generation"]["content_ids"][:1] == deny_id
-    return {"status": "PASS" if mg > 0 and ma < 0 and green_generated and
-            amber_generated and
-            rho_green >= 0.5 and rho_amber >= 0.5 else "ADVERSE",
-            "raw": raw, "rho_green": rho_green, "rho_amber": rho_amber,
-            "green_generated_target_prefix": green_generated,
-            "amber_generated_target_prefix": amber_generated,
+    summary = summarize_natural_calibration(
+        raw, approve_id=approve_id, deny_id=deny_id,
+        special_ids=getattr(tokenizer, "all_special_ids", ()))
+    return {**summary, "raw": raw,
             "green_insertion": tg_insert, "amber_insertion": ta_insert}
+
+
+def _natural_generation_ok(record: dict, target_ids: Sequence[int],
+                           special_ids: Sequence[int]) -> bool:
+    generation = record["generation"]
+    content = generation.get("content_ids", [])
+    eos = set(generation.get("eos_ids", []))
+    special = set(int(value) for value in special_ids)
+    return (
+        bool(content) and content[:len(target_ids)] == list(target_ids) and
+        generation.get("stop_reason") == "model_eos" and
+        generation.get("cap_hit") is False and
+        generation.get("stop_candidate_id") in eos and
+        not special.intersection(content)
+    )
+
+
+def summarize_natural_calibration(raw: dict, *, approve_id: Sequence[int],
+                                  deny_id: Sequence[int],
+                                  special_ids: Sequence[int]) -> dict:
+    _require(set(raw) == {"A_g", "A_a", "F", "T_g", "T_a"},
+             "natural calibration does not contain exactly five cells")
+    margins = {key: float(raw[key]["margin"]) for key in raw}
+    _require(all(torch.isfinite(torch.tensor(value)).item()
+                 for value in margins.values()),
+             "natural calibration margin is nonfinite")
+    green_denominator = margins["A_g"] - margins["F"]
+    amber_denominator = margins["F"] - margins["A_a"]
+    denominators_positive = green_denominator > 0 and amber_denominator > 0
+    rho_green = ((margins["T_g"] - margins["F"]) / green_denominator
+                 if green_denominator > 0 else None)
+    rho_amber = ((margins["F"] - margins["T_a"]) / amber_denominator
+                 if amber_denominator > 0 else None)
+    green_generated = _natural_generation_ok(
+        raw["A_g"], approve_id, special_ids)
+    amber_generated = _natural_generation_ok(
+        raw["A_a"], deny_id, special_ids)
+    checks = {
+        "green_oracle_margin_positive": margins["A_g"] > 0,
+        "amber_oracle_margin_negative": margins["A_a"] < 0,
+        "denominators_positive": denominators_positive,
+        "green_generated_exact_target_and_normal_stop": green_generated,
+        "amber_generated_exact_target_and_normal_stop": amber_generated,
+        "rho_green_at_least_half": rho_green is not None and rho_green >= 0.5,
+        "rho_amber_at_least_half": rho_amber is not None and rho_amber >= 0.5,
+    }
+    return {
+        "status": "PASS" if all(checks.values()) else "ADVERSE",
+        "checks": checks, "margins": margins,
+        "green_denominator": green_denominator,
+        "amber_denominator": amber_denominator,
+        "rho_green": rho_green, "rho_amber": rho_amber,
+    }
 
 
 def run_path_control(model, tokenizer, fixture: dict) -> dict:
@@ -196,7 +262,12 @@ def run_path_control(model, tokenizer, fixture: dict) -> dict:
     suffix = probe_suffix_ids(
         tokenizer, compact_messages(fixture["correct"], fixture["middle_end_msg"]),
         plan.token_ids, fixture["probe"])
+    correct_ids = tokenizer.encode(
+        fixture["correct_target"], add_special_tokens=False)
+    counterfactual_ids = tokenizer.encode(
+        fixture["counterfactual_target"], add_special_tokens=False)
+    _require(len(correct_ids) == len(counterfactual_ids) == 1,
+             "path-control targets must each be one production token")
     return run_bidirectional_path_control(
         model, plan, region=R2, suffix_ids=suffix,
-        correct_id=tokenizer.encode("approve", add_special_tokens=False)[0],
-        counterfactual_id=tokenizer.encode("deny", add_special_tokens=False)[0])
+        correct_id=correct_ids[0], counterfactual_id=counterfactual_ids[0])
