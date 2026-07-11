@@ -1,49 +1,55 @@
-_This conversation covers the v10 experiment’s release-gating redesign,
-validation progress, and a correction to transcript-summary time-boundary
-handling. The experiment remains pre-paid and semantically blocked, while
-selective note regeneration is now underway._
+_This conversation covers the transition from a nearly launch-ready v10
+ValueGraft experiment to a decisive technical halt after the natural c10
+validation case exposed large schedule-dependent bf16 divergence. It also
+records a selective repair of overlong conversation summaries and the resulting
+redesign/diagnostic state._
 
 **Participants:** User and gpt-5.6-sol-xhigh.
 
-**Experiment state.** v10 preserves the original scientific assay and identity,
-with Amendment 11 adding only a machine-enforced release overlay: local 0.6B CPU
-validation and the paid 30B technical check may run concurrently, but semantic
-execution requires independently validated `L AND T`. Fable (`claude-fable-5`)
-was consulted as an independent adviser; its conclusion agreed that the proposed
-retained-tail arm is invalid for v10 because it violates causal ordering/RoPE
-position constraints and lacks matched wrong-history controls. The tail
-hypothesis is reserved for a separately designed v11 follow-up, while v10 nulls
-must be interpreted narrowly as no detected summary-region channel.
+**Experiment state.** v10’s apparatus and release interlock passed independent
+reviews, with parallel technical execution prospectively authorized only under a
+machine-enforced local-ladder AND paid-technical-PASS condition. The local 0.6B
+bf16 eager-CPU ladder reached 7/7 synthetic fixtures with zero discrepancy, but
+c10 (8,430 natural-token case) failed dramatically: ordinary chunks
+`[4096,4096,238]` versus message-aligned `[23,4096,4096,92,123]` produced K/V
+maxima of 16.125/5.125, final-logit discrepancy 0.59375, and continuation
+discrepancies up to 1.59375. Inputs, tokens, positions, cache structure, and
+artifact hashes matched; layer-0 K/V were identical and divergence began at
+layer-1, implicating query-shape-dependent bf16 attention rounding amplified
+through depth rather than tokenization or position corruption.
 
-The corrected release layer received independent science and code GO
-assessments, with targeted suites passing (reported 50 and 34 tests), unchanged
-35-file v10 apparatus inventory, deep ladder reconstruction, remote
-pre-inference gating, and post-run receipt validation. Full suite, monitor
-self-test, exact pushed-commit review, gate-holder authorization, and preflight
-remain required. No paid pod has launched. The local ladder completed synthetic
-coverage 7/7 with aggregate discrepancy `0.0`, then entered 12 committed cases;
-`c10` subsequently failed the strict equivalence threshold, although the
-diagnostic run continued collecting remaining cases. This failure is apparatus
-evidence and cannot authorize semantic work.
+This failure voids v10 semantic authorization and invalidates any paid technical
+PASS for v10. No paid pod has launched and experiment spend remains $0. The
+earlier 1.5–2.5-day completion estimate is superseded. The remaining cases may
+establish whether c10 is representative, but the next priority is a cheap
+three-way first-layer diagnostic: compare a 23-token call, the original
+4096-token call, and a modified 4096-token call with later tokens changed. Equal
+latter outputs with differing 23-token outputs would confirm shape-dependent
+rounding; changes in earlier rows would indicate leakage or construction error.
+A narrowly preregistered 30B/A100 c10 diagnostic may follow, but it is
+diagnostic only and cannot resurrect v10.
 
-The earlier estimate was approximately 1.5–2.5 days to a validated result and
-reviewed paper if gates passed: roughly 18–26 hours for committed-case checks,
-followed by reviews, a 2–5-hour paid technical gate, 3–6 hours for N=6
-semantics, possible additional N=12 work, and 6–12 hours for paper synthesis.
-Real-agent evaluation remains conditional on finding both a channel and usable
-treatment. Intermediate scientific and documentation state should be committed
-and pushed frequently.
+**Methodological conclusions.** The proposed native retained-tail arm remains
+rejected: it would move state across causal order and RoPE positions, lack a
+matched wrong-history control, and require a new v11 design. Any v10 null would
+only bound summary-region channels, not downstream retained-tail information.
+The correct follow-up is a separately controlled, same-position downstream-tail
+study.
 
-**Transcript-summary correction.** The six-hour note-duration policy remains
-correct: when a conversation exceeds six hours, choose the largest inter-message
-gap in the four-to-five-hour window after chunk start, with a fallback before
-six hours. The incremental continuation path incorrectly appended to existing
-notes without reapplying this splitter; a dry run found a 12.52-hour note that
-should become approximately 4.18, 4.63, and 3.39 hours. Rollups may remain
-longer. The repair is committed, regression tests pass, and Luna is running
-selective regeneration from a frozen input snapshot, affecting only the overlong
-source record and rollups whose input hashes change. Concurrent ladder artifacts
-are being left untouched.
+**Summary-pipeline repair.** Incremental continuation updates were found to
+append without reapplying the six-hour splitter, producing a 13.40-hour note.
+The invariant is: split overlong conversations at the largest gap in the
+4–5-hour window, falling back before six hours; rollups may span longer. The fix
+and regression tests passed. Only the affected source was selectively rebuilt
+into three notes spanning 4.18h, 4.63h, and 4.28h; manifests, hashes,
+normalization, and rollups were verified, with focused tests 21/21.
+
+**Current handoff.** The archive repair is complete. The experiment is paused at
+technical diagnosis: c02 remains healthy and is being preserved as a second
+natural-case check, while no paid execution or semantic work may proceed. The
+local ladder’s c10 failure is terminal for v10 regardless of later diagnosis;
+any replacement assay requires a fresh amendment, identity, apparatus
+validation, reviews, and authorization.
 
 ## Conversation sources
 
