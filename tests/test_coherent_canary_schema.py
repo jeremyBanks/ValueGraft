@@ -56,7 +56,8 @@ def test_replay_plan_requires_contiguous_event_coverage_and_matching_geometry():
         events=[
             ReplayEvent("prefill", "prefix", "system", 0, 0, 2),
             ReplayEvent("q1", "content", "assistant", 1, 2, 3),
-            ReplayEvent("prefill", "suffix", "assistant", 1, 3, 5),
+            ReplayEvent("prefill", "anchor_prefix", "structural", 2, 3, 4),
+            ReplayEvent("q1", "anchor_content", "assistant", 3, 4, 5),
         ],
         regions=regions,
     ).validate()
@@ -75,3 +76,18 @@ def test_replay_plan_requires_contiguous_event_coverage_and_matching_geometry():
     )
     with pytest.raises(CanarySchemaError):
         require_matching_geometry(left, broken)
+
+
+def test_replay_plan_rejects_region_inside_an_event():
+    broken = ReplayPlan(
+        token_ids=[1, 2, 3, 4, 5],
+        message_start_positions=[0, 2],
+        events=[
+            ReplayEvent("prefill", "prefix", "system", 0, 0, 2),
+            ReplayEvent("q1", "content", "assistant", 1, 2, 3),
+            ReplayEvent("prefill", "combined", "structural", 2, 3, 5),
+        ],
+        regions=CarrierRegions(2, 3, 4, 5),
+    )
+    with pytest.raises(CanarySchemaError, match="R2"):
+        broken.validate()

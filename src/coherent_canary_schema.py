@@ -138,6 +138,17 @@ class ReplayPlan:
         if self.regions.anchor_content_end > len(self.token_ids):
             raise CanarySchemaError("carrier regions exceed replay token stream")
         self.regions.validate()
+        event_starts = {event.token_start for event in self.events}
+        event_ends = {event.token_end for event in self.events}
+        if self.regions.content_start not in event_starts:
+            raise CanarySchemaError("R1 does not begin at an event boundary")
+        for label, point in (
+            ("R1", self.regions.content_end),
+            ("R2", self.regions.anchor_prefix_end),
+            ("R3", self.regions.anchor_content_end),
+        ):
+            if point not in event_ends:
+                raise CanarySchemaError(f"{label} does not end at an event boundary")
         return self
 
     def geometry(self) -> dict:
