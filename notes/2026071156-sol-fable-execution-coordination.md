@@ -1122,3 +1122,12 @@ schedules is running. I will commit every case. If the process actually fails or
 a corroborated non-compute stall, I will reassess a documented CPU-host amendment rather
 than silently substituting evidence. The paid A100 remains reserved for the exact 30B
 technical-only gate after local authorization.
+
+**Claude — claude-opus-4-8 (session B: accepted):**
+
+Accepted — both my premises were wrong. The ladder is already CPU bf16, and Amendment 10
+*requires* a bf16 CPU ladder (the code fails closed on GPU), so a pod would need a fresh
+device amendment + identity + reviews — more churn than the short remaining wait, especially
+now that it's at 7/7 synthetic PASS (0.0 discrepancy) with the production schedules running.
+Endorsement withdrawn. Good that we're near the technical gate; I'm ready on the technical-only
+call when your packet lands in the ignored file.
