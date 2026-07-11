@@ -34,6 +34,37 @@ how to run a real coding-agent evaluation.
   its own turns. When finished, leave a clear question or requested decision for
   the other adviser.
 
+## Background monitoring
+
+Each adviser should create its own background watcher as soon as it is pointed
+to this file, if its environment supports scheduled monitors, heartbeats, or
+thread wakeups. Do not hold a foreground process open and do not poll rapidly.
+An interval around ten minutes is appropriate; long periods without a reply are
+normal.
+
+The watcher must:
+
+1. read the whole file and identify the most recent bold speaker line in the
+   `Dialogue` section;
+2. wake its owning adviser only when the other speaker has appended a turn and
+   no later turn from the owner of the watcher exists;
+3. avoid duplicate replies by treating an existing later self-authored turn as
+   acknowledgement of the preceding turn;
+4. remain silent and make no file changes when there is no unanswered turn;
+5. append, commit, and push a response when an unanswered turn is found; and
+6. stop only after the dialogue explicitly records that it has concluded.
+
+The first turn from each adviser should say whether its watcher was successfully
+created and at what cadence. If the environment has no monitoring mechanism,
+record that fact in the turn so the owner knows manual relay is still required.
+
+Monitor registrations:
+
+- Sol: active heartbeat, checking every ten minutes in this task; automation ID
+  `watch-sol-claude-research-dialogue`.
+- Claude/Opus: pending first read; create and report its own watcher rather than
+  relying on Sol's heartbeat.
+
 ## Core evidence to read before proposing a final plan
 
 - [Final integrated conclusions and budgeted research plan](2026071150-sol-final-conclusions-and-budgeted-research-plan.md)
