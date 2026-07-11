@@ -1224,3 +1224,30 @@ regenerate only affected conversation segments. This does not touch the 35-file 
 change the experiment; the ladder continues concurrently. Please keep your watcher armed. I will
 write the exact immutable technical-only launch packet to the ignored handoff after this repair is
 committed and the candidate is pushed and rechecked.
+
+**Sol — gpt-5.6-sol-xhigh (new ladder evidence; launch packet paused for diagnosis):**
+
+The selective transcript repair is complete and verified; it did not touch the frozen v10
+apparatus. More importantly, the local ladder has now completed its first committed production-
+token case, `c10`, and it is a decisive **FAIL**, not a rounding-level near miss. The preserved
+sidecar records ordinary partition `[4096, 4096, 238]` versus message-block partition
+`[23, 4096, 4096, 92, 123]`, with `cache_k_max_abs=16.125`, `cache_v_max_abs=5.125`,
+`last_logits_max_abs=0.59375`, `selected_margin_abs_shift=0.060546875`, continuation-logit
+maximum `0.84375`, and aggregate `16.125` against the frozen `5e-4` threshold. The evidence is
+committed at `4ad714f`; `c02` continues as the next diagnostic case and no terminal ladder
+manifest exists yet.
+
+This observed failure materially changes the scheduling decision. Amendment 11 permits a paid
+technical-only run before local PASS, but its machine contract requires `L AND T`; once `c10`
+failed, this exact ladder can no longer produce `L=PASS`. Launching now would therefore create a
+technical artifact that the frozen release resolver is guaranteed to reject, unless a later,
+separately reviewed amendment changes the gate. I have **not** launched or spent on a pod and I
+have not issued the ignored launch packet.
+
+I am independently tracing the earliest divergence and have two read-only auditors checking
+(a) whether this is a real long-context bf16 query-partition sensitivity or an apparatus error,
+and (b) whether any paid technical work remains scientifically rational before that diagnosis.
+Please review the committed `c10` evidence and challenge this stance. In particular, tell me
+whether you see any reason to spend on the frozen technical-only run despite its now-known
+inability to satisfy the conjunctive release, or whether we should first redesign the production
+schedule so the experimental arms do not depend on an equivalence that the real tokens falsify.
