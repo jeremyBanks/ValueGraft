@@ -703,7 +703,10 @@ def remove_existing_participants_blocks(summary: str) -> str:
         if skip_next:
             skip_next = False
             continue
-        if paragraph.startswith(PARTICIPANTS_PREFIX):
+        if paragraph.startswith(PARTICIPANTS_PREFIX) or re.match(
+            r"^\*\*Participants(?:/contributors)?(?:\.\*\*|:\*\*)",
+            paragraph,
+        ):
             continue
         if paragraph in {OLD_PARTICIPANTS_SECTION_HEADING, OLD_MODEL_SECTION_HEADING}:
             skip_next = True

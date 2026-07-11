@@ -173,6 +173,8 @@ def test_insert_participants_block_preserves_plain_following_paragraph() -> None
 
 **Participants:** User and old-model.
 
+**Participants.** User and a model-written duplicate.
+
 This plain paragraph used to be accidentally deleted.
 
 **Handoff State.** Keep this too.
@@ -182,6 +184,7 @@ This plain paragraph used to be accidentally deleted.
 
     assert "**Participants:** User and gpt-5.5-xhigh." in updated
     assert "old-model" not in updated
+    assert "model-written duplicate" not in updated
     assert "This plain paragraph used to be accidentally deleted." in updated
     assert "**Handoff State.** Keep this too." in updated
 
