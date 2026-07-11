@@ -94,7 +94,8 @@ def _validate_gate(root: Path, expected_status: str) -> dict[str, Any]:
     return gate
 
 
-def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool) -> None:
+def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
+                         expected_fingerprint: dict[str, Any] | None = None) -> None:
     _require_identity(doc, path.name)
     if scored:
         if doc.get("schema") != SCHEMA or doc.get("stage") != "scored" or \
@@ -126,6 +127,10 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool) -> No
             raise ValueError(f"{path.name} fingerprint frozen order mismatch")
         if fingerprint.get("wrong_donors") != WRONG_DONORS:
             raise ValueError(f"{path.name} fingerprint donor map mismatch")
+        if (expected_fingerprint is not None and
+                fingerprint != expected_fingerprint):
+            raise ValueError(
+                f"{path.name} fingerprint differs from manifest fingerprint")
     else:
         if doc.get("stage") != "void" or doc.get("status") != "void":
             raise ValueError(f"{path.name} is not a void checkpoint")
@@ -162,7 +167,9 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
     seen_ids: list[str] = []
     for path in paths:
         doc = _load(path)
-        _validate_checkpoint(doc, path, scored=True)
+        _validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=manifest_fingerprint)
         position = doc.get("order_position")
         if not isinstance(position, int):
             raise ValueError(f"{path.name} lacks integer order_position")

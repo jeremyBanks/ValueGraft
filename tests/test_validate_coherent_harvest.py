@@ -121,6 +121,16 @@ def test_complete_validates_every_checkpoint(tmp_path: Path):
         MODULE.validate(tmp_path, "complete")
 
 
+def test_complete_requires_checkpoint_fingerprint_equal_manifest(tmp_path: Path):
+    complete_tree(tmp_path)
+    path = tmp_path / "conv_02_c02.json"
+    doc = json.loads(path.read_text())
+    doc["fingerprint"]["external_donor_provenance"] = {"tampered": True}
+    write(path, doc)
+    with pytest.raises(ValueError, match="manifest fingerprint"):
+        MODULE.validate(tmp_path, "complete")
+
+
 def test_global_gate_failure_requires_complete_fail_gate(tmp_path: Path):
     (tmp_path / "job.log").write_text("MODEL_READY\nFATAL injected\n")
     write(tmp_path / "failure.json", {"error": "injected"})
