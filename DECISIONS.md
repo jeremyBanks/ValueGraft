@@ -553,7 +553,11 @@ Capture everything very well (owner).
   remain non-executable. No further long-corpus authoring occurs until an
   independent exploratory canary shows a large, interpretable exact-model
   channel. Canary cases can never enter later confirmation. Evidence and full
-  rationale: `notes/2026071187` through `notes/2026071192`.
+  rationale: `notes/2026071190-trajectory-red-team-ultra-regroup.md`,
+  `notes/2026071191-causal-statistical-blackboard-ultra-regroup.md`,
+  `notes/2026071192-sol-ultra-regroup-decision.md`,
+  `notes/2026071193-fable-ultra-regroup-review.md`, and
+  `notes/2026071192-sol-fable-review-disposition-and-canary-closure.md`.
 
 - **Use role-native q=1 replay as the canary-primary source protocol.** Historical
   assistant content is forced token by token; user/system/tool blocks are
