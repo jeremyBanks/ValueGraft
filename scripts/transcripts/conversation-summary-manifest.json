@@ -1522,8 +1522,8 @@
     },
     {
       "first_timestamp": "2026-07-11T02:50:35.343000Z",
-      "input_hash": "4f7a5af58bd9a9f450bc8e3793edf8f09dc8483c716e03b3743ea9080b00b55d",
-      "last_timestamp": "2026-07-11T15:21:50.749000Z",
+      "input_hash": "27db4718312484f315e4871dcd85548965a2134e3b638a95d9d2c384367bafd7",
+      "last_timestamp": "2026-07-11T07:01:14.531000Z",
       "mode": "summary",
       "models": [
         "gpt-5.6-sol-xhigh"
@@ -1533,7 +1533,7 @@
         {
           "date": "2026-07-11",
           "first_message": 1,
-          "last_message": 334,
+          "last_message": 167,
           "platform": "codex",
           "sequence": 1
         }
@@ -1543,7 +1543,57 @@
         "provider": "codex",
         "reasoning": "medium"
       },
-      "summary_hash": "91d45cae0e470259c6ce5e3c44afaec04dce0fb74d28d7f6c55cd0f2c972c34c"
+      "summary_hash": "4d5fd369ae9a0f8ef8bad3a425085d04491048cac50e01761f285623636ffa9b"
+    },
+    {
+      "first_timestamp": "2026-07-11T07:12:32.123000Z",
+      "input_hash": "361fdcbe8ac33f87a9e3ff566fca340e6e988c3b1bb328179ccbc614f922a193",
+      "last_timestamp": "2026-07-11T11:50:11.220000Z",
+      "mode": "summary",
+      "models": [
+        "gpt-5.6-sol-xhigh"
+      ],
+      "note": "notes/20260711071232-conversation-gpt56.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-11",
+          "first_message": 168,
+          "last_message": 243,
+          "platform": "codex",
+          "sequence": 1
+        }
+      ],
+      "summarizer": {
+        "model": "gpt-5.6-luna",
+        "provider": "codex",
+        "reasoning": "medium"
+      },
+      "summary_hash": "319ea4858b3477858f132d40a02cba1bd0b2b43e9110727075bdafec10db0269"
+    },
+    {
+      "first_timestamp": "2026-07-11T11:58:20.201000Z",
+      "input_hash": "425cdc48479addee0bacaeb3cc574ca05db64cd65b7364441acd620bdfcee624",
+      "last_timestamp": "2026-07-11T16:14:51.029000Z",
+      "mode": "summary",
+      "models": [
+        "gpt-5.6-sol-xhigh"
+      ],
+      "note": "notes/20260711115820-conversation-user-gpt56.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-11",
+          "first_message": 244,
+          "last_message": 361,
+          "platform": "codex",
+          "sequence": 1
+        }
+      ],
+      "summarizer": {
+        "model": "gpt-5.6-luna",
+        "provider": "codex",
+        "reasoning": "medium"
+      },
+      "summary_hash": "5e6f4a77dd7fa84bb9223a00b501244b66373850f16e81d7b873d29a14a05d94"
     },
     {
       "first_timestamp": "2026-07-11T12:10:52.497000Z",
