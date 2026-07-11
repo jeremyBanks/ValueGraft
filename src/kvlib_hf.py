@@ -53,8 +53,12 @@ PREFILL_CHUNK = 4096
 def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None,
             cache_position=None):
     """Forward pass building/extending a cache; returns (cache, last_logits).
-    Long inputs are fed in PREFILL_CHUNK pieces (bounds activation memory;
-    KV result identical — verified vs single-shot on short inputs)."""
+    Long inputs are fed in PREFILL_CHUNK pieces to bound activation memory.
+
+    Query partitioning is an execution variable, not a general identity: the
+    calling assay must separately gate the exact backend, dtype, model, lengths,
+    and partitions it relies on.
+    """
     n = input_ids.shape[1]
     if n <= PREFILL_CHUNK or attention_mask is not None:
         with torch.no_grad():

@@ -17,15 +17,17 @@ from coherent_state_cases import (
     correct_source_messages,
     fresh_source_messages,
 )
-from coherent_state_calibration import run_calibration
+from coherent_state_calibration import validate_calibration_constructions
 from coherent_state_hf import (
     compare_rows,
-    delta_deranged_snapshot,
     move_key_rows,
     replace_summary_rows,
     row_hashes,
+    sha256_ids,
 )
 from coherent_state_runtime import (
+    AMENDMENT_ID,
+    DESIGN_ID,
     GAPPED_ARM_NAMES,
     append_gapped_post_summary,
     build_gapped_fresh_boundary,
@@ -33,8 +35,8 @@ from coherent_state_runtime import (
     capture_forced_summary,
     capture_generated_summary,
     complete_assistant_context,
+    eager_backend_fingerprint,
     gapped_arm_boundary,
-    score_arm,
     validate_generated_replay,
     validate_position_schedule,
 )
@@ -49,6 +51,7 @@ from kvlib_hf import prefill, rebuild_cache, snapshot_cache
 MODEL = "Qwen/Qwen3-0.6B"
 REQUEST = "Write a short context summary. Output only the summary."
 SUMMARY = "The approved label remains on file."
+_LAST_LADDER_DIAGNOSTICS: dict = {}
 
 
 def fake_conv(cid: str, label: str, marker: str) -> dict:
@@ -136,6 +139,195 @@ def _snapshot_max_abs(a, b) -> tuple[float, float]:
             max(x["v_max_abs"] for x in rows))
 
 
+FROZEN_FIXTURE_LITERAL = "alpha beta gamma delta epsilon"
+FROZEN_FIXTURE_POOL = [7141, 13440, 21619, 9477, 31204]
+FROZEN_MARGIN_IDS = [362, 425]
+FROZEN_CONTINUATION_ID = 7141
+FROZEN_SCHEDULES = (
+    (5, (5,), (2, 3)),
+    (64, (64,), (32, 32)),
+    (900, (900,), (32, 868)),
+    (4096, (4096,), (32, 4064)),
+    (4097, (4096, 1), (32, 4065)),
+    (8193, (4096, 4096, 1), (32, 4096, 4065)),
+)
+
+
+def _partitioned_forward(model, token_ids, logical_positions, partitions):
+    if sum(partitions) != len(token_ids):
+        raise RuntimeError("fixture partition does not cover token stream")
+    cache = None
+    logits = None
+    lo = 0
+    for width in partitions:
+        hi = lo + width
+        ids = torch.tensor([token_ids[lo:hi]], device=model.device)
+        pos = torch.tensor([logical_positions[lo:hi]], device=model.device)
+        physical = torch.arange(lo, hi, device=model.device)
+        cache, logits = prefill(
+            model, ids, past=cache, position_ids=pos,
+            cache_position=physical)
+        lo = hi
+    return cache, logits
+
+
+def _margin(logits) -> float:
+    lp = torch.log_softmax(logits.float(), dim=-1)
+    return float(lp[0, FROZEN_MARGIN_IDS[0]] - lp[0, FROZEN_MARGIN_IDS[1]])
+
+
+def _compare_schedules(model, token_ids, logical_positions,
+                       reference_partition, alternative_partition,
+                       tolerance) -> dict:
+    reference, reference_logits = _partitioned_forward(
+        model, token_ids, logical_positions, reference_partition)
+    alternative, alternative_logits = _partitioned_forward(
+        model, token_ids, logical_positions, alternative_partition)
+    rows = compare_rows(snapshot_cache(reference), snapshot_cache(alternative))
+    last_logits = float(
+        (reference_logits.float() - alternative_logits.float()).abs().max())
+    margin_shift = abs(_margin(reference_logits) - _margin(alternative_logits))
+    n = len(token_ids)
+    continuation_ids = torch.tensor([[FROZEN_CONTINUATION_ID]], device=model.device)
+    continuation_pos = torch.tensor([[logical_positions[-1] + 1]], device=model.device)
+    continuation_cache_pos = torch.tensor([n], device=model.device)
+    with torch.no_grad():
+        ref_next = model(
+            input_ids=continuation_ids, past_key_values=reference,
+            position_ids=continuation_pos, cache_position=continuation_cache_pos,
+            use_cache=True, logits_to_keep=0)
+        alt_next = model(
+            input_ids=continuation_ids, past_key_values=alternative,
+            position_ids=continuation_pos, cache_position=continuation_cache_pos,
+            use_cache=True, logits_to_keep=0)
+    continuation_logits = float(
+        (ref_next.logits.float() - alt_next.logits.float()).abs().max())
+    continuation_rows = []
+    for li, ((rk, rv), (ak, av)) in enumerate(zip(
+            snapshot_cache(ref_next.past_key_values),
+            snapshot_cache(alt_next.past_key_values))):
+        continuation_rows.append({
+            "layer": li,
+            "k_max_abs": float(
+                (rk[..., -1:, :].float() - ak[..., -1:, :].float()).abs().max()),
+            "v_max_abs": float(
+                (rv[..., -1:, :].float() - av[..., -1:, :].float()).abs().max()),
+        })
+    maxima = {
+        "cache_k_max_abs": max(x["k_max_abs"] for x in rows),
+        "cache_v_max_abs": max(x["v_max_abs"] for x in rows),
+        "last_logits_max_abs": last_logits,
+        "selected_margin_abs_shift": margin_shift,
+        "continuation_logits_max_abs": continuation_logits,
+        "continuation_k_max_abs": max(x["k_max_abs"] for x in continuation_rows),
+        "continuation_v_max_abs": max(x["v_max_abs"] for x in continuation_rows),
+    }
+    return {
+        "reference_partition": list(reference_partition),
+        "alternative_partition": list(alternative_partition),
+        "per_layer": rows,
+        "continuation_per_layer": continuation_rows,
+        **maxima,
+        "tolerance": tolerance,
+        "passes": max(maxima.values()) <= tolerance,
+    }
+
+
+def run_frozen_schedule_fixtures(model, tokenizer, tolerance=5e-4,
+                                 progress=None) -> dict:
+    """Execute every Amendment-4 schedule row, retaining all safe evidence."""
+    observed_pool = tokenizer(
+        FROZEN_FIXTURE_LITERAL, add_special_tokens=False).input_ids
+    if observed_pool != FROZEN_FIXTURE_POOL:
+        raise RuntimeError(
+            f"frozen fixture tokenizer mismatch: {observed_pool} != {FROZEN_FIXTURE_POOL}")
+    special = {int(x) for x in tokenizer.all_special_ids}
+    provenance = {
+        "literal": FROZEN_FIXTURE_LITERAL,
+        "pool_token_ids": list(observed_pool),
+        "pool_decoded_text": tokenizer.decode(observed_pool),
+        "pool_contains_special_token": any(x in special for x in observed_pool),
+        "pool_sha256": sha256_ids(observed_pool),
+        "margin_token_ids": list(FROZEN_MARGIN_IDS),
+        "margin_decoded_text": [tokenizer.decode([x]) for x in FROZEN_MARGIN_IDS],
+        "continuation_token_id": FROZEN_CONTINUATION_ID,
+        "continuation_decoded_text": tokenizer.decode([FROZEN_CONTINUATION_ID]),
+    }
+    if provenance["pool_contains_special_token"]:
+        raise RuntimeError("frozen fixture pool contains a special token")
+    contiguous = []
+    failures = []
+    document = {
+        "fixture_provenance": provenance,
+        "contiguous": contiguous,
+        "logical_gap": {"status": "PENDING", "passes": False},
+        "tolerance": tolerance,
+        "failures": failures,
+        "passes": False,
+    }
+    if progress is not None:
+        progress(json.loads(json.dumps(document)))
+    for length, reference, alternative in FROZEN_SCHEDULES:
+        token_ids = [observed_pool[i % len(observed_pool)] for i in range(length)]
+        row = {
+            "length": length,
+            "token_ids_sha256": sha256_ids(token_ids),
+            "status": "RUNNING",
+        }
+        try:
+            row.update(_compare_schedules(
+                model, token_ids, list(range(length)), reference, alternative,
+                tolerance))
+            row["status"] = "PASS" if row["passes"] else "FAIL"
+            if not row["passes"]:
+                failures.append(f"contiguous-L{length}")
+        except Exception as exc:
+            row.update({"status": "ERROR", "passes": False,
+                        "error_type": type(exc).__name__, "error": str(exc)})
+            failures.append(f"contiguous-L{length}")
+        contiguous.append(row)
+        if progress is not None:
+            progress(json.loads(json.dumps(document)))
+
+    gap_ids = [observed_pool[i % len(observed_pool)] for i in range(64)]
+    gap_positions = list(range(32)) + list(range(8192, 8224))
+    gap = {
+        "length": 64,
+        "token_ids_sha256": sha256_ids(gap_ids),
+        "logical_positions_sha256": sha256_ids(gap_positions),
+        "logical_positions": gap_positions,
+        "physical_cache_positions": list(range(64)),
+        "full_attention_over_physically_prior_rows": True,
+        "status": "RUNNING",
+    }
+    try:
+        gap.update(_compare_schedules(
+            model, gap_ids, gap_positions, (32, 32), (32,) + (1,) * 32,
+            tolerance))
+        try:
+            validate_position_schedule(
+                gap_positions[32:], gap_positions[32:], physical_start=32)
+        except Exception as exc:
+            gap["logical_as_cache_position_rejected"] = True
+            gap["logical_as_cache_position_error"] = str(exc)
+        else:
+            gap["logical_as_cache_position_rejected"] = False
+        gap["passes"] = bool(
+            gap["passes"] and gap["logical_as_cache_position_rejected"])
+        gap["status"] = "PASS" if gap["passes"] else "FAIL"
+        if not gap["passes"]:
+            failures.append("logical-gap")
+    except Exception as exc:
+        gap.update({"status": "ERROR", "passes": False,
+                    "error_type": type(exc).__name__, "error": str(exc)})
+        failures.append("logical-gap")
+    document["logical_gap"] = gap
+    document["passes"] = not failures
+    if progress is not None:
+        progress(json.loads(json.dumps(document)))
+    return document
+
+
 def _validate_exact_length_wrong(correct_ids, wrong_ids,
                                  structural_positions, content_positions,
                                  special_ids) -> None:
@@ -156,16 +348,19 @@ def run_loaded_gapped_gates(
         placebo_quantization_tolerance: float = 0.05,
         placebo_moment_tolerance: float = 0.02,
         diagnostic_sink: dict | None = None) -> dict:
-    """Amendments-1-2-3 gate; packed diagnostics never authorize it."""
+    """Amendments-1-2-3-4 gate; all safe measurements accumulate before fail."""
+    del placebo_quantization_tolerance, placebo_moment_tolerance
     sink = diagnostic_sink if diagnostic_sink is not None else {}
     sink.clear()
     sink.update({
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
-        "design_id": "coherent-state-gapped-v3",
+        "amendment_id": AMENDMENT_ID,
+        "design_id": DESIGN_ID,
         "passes": False,
         "authorization_path": "gapped_position_preserving_only",
         "position_policy": "logical_position_ids_physical_cache_position",
+        "attention_backend": {"status": "RUNNING", "passes": False},
+        "frozen_schedule_fixtures": {"status": "RUNNING", "passes": False},
     })
 
     cfg = getattr(model.config, "text_config", model.config)
@@ -178,6 +373,42 @@ def run_loaded_gapped_gates(
     physical0 = torch.arange(len(seq), device=device)
 
     try:
+        try:
+            backend = eager_backend_fingerprint(model)
+        except Exception as exc:
+            sink["attention_backend"] = {
+                "status": "FAIL", "observed_backend": None, "passes": False,
+                "error_type": type(exc).__name__, "error": str(exc),
+            }
+            raise
+        sink["attention_backend"] = {
+            "status": "PASS", "observed_backend": "eager", "passes": True,
+            "fingerprint": backend,
+        }
+        sink["attention_backend_fingerprint"] = backend
+
+        # All schedule rows are accumulated before the aggregate decision so a
+        # failing row cannot erase later, still-interpretable diagnostics.
+        try:
+            sink["frozen_schedule_fixtures"] = run_frozen_schedule_fixtures(
+                model, tokenizer, zero_gap_tolerance,
+                progress=lambda value: sink.__setitem__(
+                    "frozen_schedule_fixtures", value))
+        except Exception as exc:
+            sink["frozen_schedule_fixtures"] = {
+                "status": "ERROR", "passes": False,
+                "error_type": type(exc).__name__, "error": str(exc),
+            }
+            raise
+        sink["frozen_schedule_fixtures"]["status"] = (
+            "PASS" if sink["frozen_schedule_fixtures"]["passes"] else "FAIL")
+        sink["frozen_schedule_fixtures"] = dict(
+            sink["frozen_schedule_fixtures"])
+        if not sink["frozen_schedule_fixtures"]["passes"]:
+            raise RuntimeError(
+                "frozen schedule-equivalence fixtures failed: " +
+                ", ".join(sink["frozen_schedule_fixtures"]["failures"]))
+
         cache0, logits0 = prefill(
             model, ids, position_ids=pos0, cache_position=physical0)
         rows0 = snapshot_cache(cache0)
@@ -216,26 +447,16 @@ def run_loaded_gapped_gates(
                                     f"{diagnostic_exc}",
             }
 
-        # Zero-gap split execution is the limiting case of the physical-cache /
-        # logical-position schedule and must match contiguous execution.
-        cut = 2
-        split, _ = prefill(
-            model, ids[:, :cut], position_ids=pos0[:, :cut],
-            cache_position=physical0[:cut])
-        split, split_logits = prefill(
-            model, ids[:, cut:], past=split, position_ids=pos0[:, cut:],
-            cache_position=physical0[cut:])
-        split_k, split_v = _snapshot_max_abs(rows0, snapshot_cache(split))
-        split_logits_diff = float(
-            (logits0.float() - split_logits.float()).abs().max())
+        # Retain the original v3 field as a non-authorizing compatibility view
+        # of Amendment 4's first frozen schedule row.
+        first_schedule = sink["frozen_schedule_fixtures"]["contiguous"][0]
         sink["zero_gap_equivalence"] = {
-            "k_max_abs": split_k,
-            "v_max_abs": split_v,
-            "last_logits_max_abs": split_logits_diff,
+            "k_max_abs": first_schedule["cache_k_max_abs"],
+            "v_max_abs": first_schedule["cache_v_max_abs"],
+            "last_logits_max_abs": first_schedule["last_logits_max_abs"],
             "tolerance": zero_gap_tolerance,
+            "authorizes_v4": False,
         }
-        if max(split_k, split_v, split_logits_diff) > zero_gap_tolerance:
-            raise RuntimeError("zero-gap split execution is not equivalent")
 
         # Snapshot/rebuild continuation identity compares the original live
         # cache to an independently rebuilt cache, rather than two rebuilds.
@@ -456,13 +677,7 @@ def run_loaded_gapped_gates(
             "wrong_insert_and_non_summary_preservation": True,
         }
 
-        plant = {"id": "loaded-gate", "category": "referent",
-                 "probe": "Which label is approved? Answer with only A or B."}
-        targets = {"loaded-gate": {
-            "correct": "A", "counterfactual": "B",
-            "basis": "loaded gapped technical gate"}}
-
-        def score_boundary(boundary):
+        def complete_boundary(boundary):
             _require_summary_boundary(boundary, layout)
             before = row_hashes(boundary)
             full = append_gapped_post_summary(model, boundary, layout)
@@ -470,15 +685,26 @@ def run_loaded_gapped_gates(
                 raise RuntimeError("tail append mutated the fork boundary")
             if _snapshot_length(full) != len(layout.context_ids):
                 raise RuntimeError("recomputed tail has wrong physical length")
-            score = score_arm(
-                model, tokenizer, full, layout.messages, layout.context_ids,
-                [plant], targets,
-                logical_context_end=layout.logical_next_position)
-            return full, score
+            return full
 
-        full_fresh, fresh_score = score_boundary(list(fresh_boundary))
-        full_correct, correct_score = score_boundary(c_boundary)
-        full_wrong, wrong_score = score_boundary(w_boundary)
+        full_fresh = complete_boundary(list(fresh_boundary))
+        full_correct = complete_boundary(c_boundary)
+        full_wrong = complete_boundary(w_boundary)
+
+        def fixed_continuation_logits(snapshot):
+            with torch.no_grad():
+                out = model(
+                    input_ids=torch.tensor(
+                        [[FROZEN_CONTINUATION_ID]], device=model.device),
+                    past_key_values=rebuild_cache(snapshot, DynamicCache),
+                    position_ids=torch.tensor(
+                        [[layout.logical_next_position]], device=model.device),
+                    cache_position=torch.tensor(
+                        [len(layout.context_ids)], device=model.device),
+                    use_cache=True, logits_to_keep=0)
+            return out.logits[:, -1, :]
+
+        baseline_continuation = fixed_continuation_logits(full_fresh)
 
         # The same function must reject an already-tailed snapshot rather than
         # silently appending a second close/tail sequence.
@@ -503,10 +729,10 @@ def run_loaded_gapped_gates(
                 pattern = torch.ones_like(value[..., s0:s1, :])
                 pattern[..., 1::2] *= -1
                 value[..., s0:s1, :] += epsilon * pattern
-            full_perturbed, perturbed_score = score_boundary(perturbed)
-            margin_change = abs(
-                perturbed_score["conversation_margin"] -
-                fresh_score["conversation_margin"])
+            full_perturbed = complete_boundary(perturbed)
+            continuation_change = float((
+                fixed_continuation_logits(full_perturbed).float() -
+                baseline_continuation.float()).abs().max())
             post = layout.physical_summary_end
             tail_diff = 0.0
             for (kf, vf), (kp, vp) in zip(full_fresh, full_perturbed):
@@ -518,10 +744,10 @@ def run_loaded_gapped_gates(
                            vf[..., post:, :].float()).abs().max()))
             attempts.append({
                 "epsilon": epsilon,
-                "margin_abs_change": margin_change,
+                "fixed_continuation_logits_max_abs": continuation_change,
                 "recomputed_post_summary_kv_max_abs": tail_diff,
             })
-            sensitivity_pass = sensitivity_pass or margin_change > 1e-4
+            sensitivity_pass = sensitivity_pass or continuation_change > 1e-4
             tail_changed = tail_changed or tail_diff > 0
             if sensitivity_pass and tail_changed:
                 break
@@ -533,46 +759,21 @@ def run_loaded_gapped_gates(
         if not (sensitivity_pass and tail_changed):
             raise RuntimeError("gapped downstream sensitivity control failed")
 
-        delta_boundary, delta_diag = delta_deranged_snapshot(
-            fresh_boundary, correct.rows, layout.physical_summary_start,
-            20_260_711)
-        applied_quant = max(max(x.applied_delta_max_abs_error,
-                                x.applied_multiset_diff) for x in delta_diag)
-        applied_moment = max(max(x.applied_mean_diff,
-                                 x.applied_covariance_diff) for x in delta_diag)
-        if (any(x.fixed_points for x in delta_diag) or
-                max(x.max_multiset_diff for x in delta_diag) != 0 or
-                applied_quant > placebo_quantization_tolerance or
-                applied_moment > placebo_moment_tolerance):
-            raise RuntimeError("gapped placebo invariant failed")
-        delta_end = (layout.physical_summary_start +
-                     correct.rows[0][1].shape[-2])
-        for li, ((kf, vf), (kd, vd)) in enumerate(
-                zip(fresh_boundary, delta_boundary)):
-            if (not torch.equal(kf, kd) or
-                    not torch.equal(vf[..., :layout.physical_summary_start, :],
-                                    vd[..., :layout.physical_summary_start, :]) or
-                    not torch.equal(vf[..., delta_end:, :],
-                                    vd[..., delta_end:, :])):
-                raise RuntimeError(
-                    f"layer {li} placebo changed keys or non-summary values")
-        sink["placebo"] = {
-            "fixed_points": sum(x.fixed_points for x in delta_diag),
-            "intended_multiset_max_diff": max(
-                x.max_multiset_diff for x in delta_diag),
-            "applied_quantization_max_abs": applied_quant,
-            "applied_moment_max_abs": applied_moment,
+        sink["retired_G_delta"] = {
+            "retired_by": "Amendment 4",
+            "executed": False,
+            "authorizes_run": False,
         }
 
-        sink["technical_margins_not_semantic_outcomes"] = {
-            "G_fresh": fresh_score["conversation_margin"],
-            "G_correct": correct_score["conversation_margin"],
-            "G_wrong": wrong_score["conversation_margin"],
-        }
-        sink["tail_cache_lengths"] = {
-            "G_fresh": _snapshot_length(full_fresh),
-            "G_correct": _snapshot_length(full_correct),
-            "G_wrong": _snapshot_length(full_wrong),
+        calibrations = validate_calibration_constructions(tokenizer)
+        if calibrations.get("passes") is not True:
+            raise RuntimeError("technical calibration construction gate failed")
+        sink["calibration_construction_only"] = calibrations
+
+        sink["technical_branch_cache_lengths"] = {
+            "fresh_baseline": _snapshot_length(full_fresh),
+            "correct_source_copy": _snapshot_length(full_correct),
+            "wrong_source_copy": _snapshot_length(full_wrong),
         }
         sink["passes"] = True
         return sink
@@ -587,13 +788,20 @@ def run_loaded_gapped_gates(
 
 
 def run_ladder() -> dict:
+    global _LAST_LADDER_DIAGNOSTICS
+    _LAST_LADDER_DIAGNOSTICS = {}
     tokenizer = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL, dtype=torch.float32, local_files_only=True)
+        MODEL, dtype=torch.bfloat16, attn_implementation="eager",
+        local_files_only=True)
     model.eval()
     model.requires_grad_(False)
+    if model.device.type != "cpu":
+        raise RuntimeError(
+            f"v4 local ladder must use observed-equivalent CPU, got {model.device}")
     loaded_gates = run_loaded_gapped_gates(
-        model, tokenizer, identity_tolerance=1e-5)
+        model, tokenizer, identity_tolerance=1e-4)
+    _LAST_LADDER_DIAGNOSTICS["loaded_gapped_production_gate"] = loaded_gates
     if not loaded_gates.get("passes"):
         failure = loaded_gates.get("failure", {})
         raise RuntimeError(
@@ -620,7 +828,7 @@ def run_ladder() -> dict:
         summary_start=correct.summary_start)
 
     # A_full is reconstructed before releasing the live correct-source cache.
-    full_messages, full_context_ids, full_source = complete_assistant_context(
+    _full_messages, _full_context_ids, full_source = complete_assistant_context(
         model, tokenizer, correct_source_messages(target, REQUEST), correct)
     layout, fresh_trace, fresh_boundary, fresh_rows = \
         build_gapped_fresh_boundary(
@@ -641,16 +849,6 @@ def run_ladder() -> dict:
     if not self_exact:
         raise RuntimeError("gapped fresh self-replacement changed a tensor")
 
-    plant = {"id": "ladder", "category": "referent",
-             "probe": "Which label is approved? Answer with only A or B."}
-    targets = {"ladder": {"correct": "A", "counterfactual": "B",
-                           "basis": "engineered ladder record"}}
-    outcomes = {
-        "A_full": score_arm(
-            model, tokenizer, full_source, full_messages, full_context_ids,
-            [plant], targets)["conversation_margin"]
-    }
-    placebo_diagnostics = None
     arm_cache_lengths = {"A_full": _snapshot_length(full_source)}
     for arm in GAPPED_ARM_NAMES[1:]:
         boundary, diag = gapped_arm_boundary(
@@ -678,35 +876,19 @@ def run_ladder() -> dict:
                 layout.physical_summary_start,
                 use_keys=True, use_values=False)
         full = append_gapped_post_summary(model, boundary, layout)
-        score = score_arm(
-            model, tokenizer, full, layout.messages, layout.context_ids,
-            [plant], targets,
-            logical_context_end=layout.logical_next_position)
-        outcomes[arm] = score["conversation_margin"]
         arm_cache_lengths[arm] = _snapshot_length(full)
-        if arm == "G_delta":
-            placebo_diagnostics = diag
-    if tuple(outcomes) != GAPPED_ARM_NAMES:
-        raise RuntimeError(f"ladder arm set/order changed: {tuple(outcomes)}")
-    if not all(torch.isfinite(torch.tensor(v)) for v in outcomes.values()):
-        raise RuntimeError("non-finite production-path arm outcome")
-    if not placebo_diagnostics or any(x["fixed_points"] for x in placebo_diagnostics):
-        raise RuntimeError("delta placebo derangement failed")
-    if max(x["max_multiset_diff"] for x in placebo_diagnostics) > 1e-6:
-        raise RuntimeError("delta placebo changed its row multiset")
+    if tuple(arm_cache_lengths) != GAPPED_ARM_NAMES:
+        raise RuntimeError(
+            f"ladder arm set/order changed: {tuple(arm_cache_lengths)}")
 
     # Exercise both unique deterministic calibration variants. Conversation
     # repetitions are not independent calibration evidence (Amendment 2).
-    calibrations = {
-        cid: run_calibration(model, tokenizer, cid) for cid in ("c10", "c07")
-    }
-    by_label = {doc["correct_label"]: doc for doc in calibrations.values()}
-    if set(by_label) != {"A", "B"}:
+    calibrations = validate_calibration_constructions(tokenizer)
+    if set(calibrations.get("label_coverage", [])) != {"A", "B"}:
         raise RuntimeError(
-            f"ladder calibration did not cover both label variants: {set(by_label)}")
-    if any(doc.get("design_id") != "coherent-state-gapped-v3"
-           for doc in calibrations.values()):
-        raise RuntimeError("ladder calibration design identity changed")
+            "ladder calibration did not cover both label variants")
+    if calibrations.get("passes") is not True:
+        raise RuntimeError("ladder calibration construction failed")
 
     # A killed run after rendering must load identical text and never rerender.
     with tempfile.TemporaryDirectory() as td:
@@ -722,11 +904,12 @@ def run_ladder() -> dict:
 
     return {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
-        "design_id": "coherent-state-gapped-v3",
+        "amendment_id": AMENDMENT_ID,
+        "design_id": DESIGN_ID,
         "status": "PASS", "model": MODEL,
         "resolved_revision": getattr(model.config, "_commit_hash", None),
         "dtype": str(next(model.parameters()).dtype),
+        "device": str(model.device),
         "forced_summary_ids": summary_ids,
         "fresh_trace": asdict(fresh_trace),
         "self_replacement_exact": self_exact,
@@ -744,24 +927,13 @@ def run_ladder() -> dict:
             "content_position_count": len(matched.content_positions),
             "replacement_count": len(matched.replacements),
         },
-        "arm_outcomes": outcomes,
-        "arm_cache_lengths": arm_cache_lengths,
-        "calibration_unique_variants": calibrations,
-        "placebo": {
-            "n_diagnostics": len(placebo_diagnostics),
-            "max_multiset_diff": max(
-                x["max_multiset_diff"] for x in placebo_diagnostics),
-            "max_mean_diff": max(x["mean_diff"] for x in placebo_diagnostics),
-            "max_covariance_diff": max(
-                x["covariance_diff"] for x in placebo_diagnostics),
-            "fixed_points": sum(x["fixed_points"] for x in placebo_diagnostics),
-            "applied_quantization_max_abs": max(
-                max(x["applied_delta_max_abs_error"], x["applied_multiset_diff"])
-                for x in placebo_diagnostics),
-            "applied_moment_max_abs": max(
-                max(x["applied_mean_diff"], x["applied_covariance_diff"])
-                for x in placebo_diagnostics),
+        "arm_constructor_checks": {
+            "exact_arm_order": list(arm_cache_lengths),
+            "all_completed_without_semantic_scoring": True,
         },
+        "arm_cache_lengths": arm_cache_lengths,
+        "calibration_construction_only": calibrations,
+        "retired_G_delta": {"executed": False, "retired_by": "Amendment 4"},
         "render_resume_exact": resume_exact,
         "loaded_gapped_production_gate": loaded_gates,
         "completed_at": datetime.now(timezone.utc).isoformat(),
@@ -780,11 +952,11 @@ def main():
     except Exception as exc:
         result = {
                   "schema": 2,
-                  "amendment_id":
-                      "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
-                  "design_id": "coherent-state-gapped-v3",
+                  "amendment_id": AMENDMENT_ID,
+                  "design_id": DESIGN_ID,
                   "status": "FAIL", "error_type": type(exc).__name__,
                   "error": str(exc), "traceback": traceback.format_exc(),
+                  "diagnostics": _LAST_LADDER_DIAGNOSTICS,
                   "failed_at": datetime.now(timezone.utc).isoformat()}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n")

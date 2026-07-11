@@ -8,6 +8,8 @@ the 0.6B ladder and the paid bf16 run.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import hashlib
+import json
 import math
 from typing import Sequence
 
@@ -45,10 +47,85 @@ ARM_NAMES = (
 )
 GAPPED_ARM_NAMES = (
     "A_full", "G_fresh", "G_correct", "G_wrong",
-    "G_Vcorrect", "G_Kcorrect", "G_delta",
+    "G_Vcorrect", "G_Kcorrect",
 )
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3"
-DESIGN_ID = "coherent-state-gapped-v3"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4"
+DESIGN_ID = "coherent-state-gapped-v4"
+
+
+def eager_backend_fingerprint(model) -> dict:
+    """Return and validate the resolved eager backend for every decoder layer.
+
+    A requested load argument is insufficient provenance.  Decoder attention
+    modules are enumerated in layer order and both model-level resolution fields
+    and any module-local fields are retained in the fingerprint.
+    """
+    cfg = getattr(model.config, "text_config", model.config)
+    raw_model_fields = {
+        "model_config__attn_implementation": getattr(
+            model.config, "_attn_implementation", None),
+        "text_config__attn_implementation": getattr(
+            cfg, "_attn_implementation", None),
+        "model_config_attn_implementation": getattr(
+            model.config, "attn_implementation", None),
+        "text_config_attn_implementation": getattr(
+            cfg, "attn_implementation", None),
+    }
+    model_fields = {
+        key: None if value is None else str(value)
+        for key, value in raw_model_fields.items()
+    }
+    model_resolutions = {v for v in model_fields.values() if v is not None}
+    if model_resolutions != {"eager"}:
+        raise CoherentStateError(
+            "model attention backend fields are missing, ambiguous, or non-eager: "
+            f"{sorted(model_resolutions)}")
+    resolved_model = "eager"
+    records = []
+    for name, module in model.named_modules():
+        cls = type(module).__name__
+        if not (hasattr(module, "q_proj") and hasattr(module, "k_proj") and
+                "Attention" in cls):
+            continue
+        module_fields = {
+            key: (None if getattr(module, key, None) is None else
+                  str(getattr(module, key)))
+            for key in ("_attn_implementation", "attn_implementation")
+        }
+        local = next((str(v) for v in module_fields.values() if v is not None),
+                     None)
+        local_values = {v for v in module_fields.values() if v is not None}
+        if local_values and local_values != {"eager"}:
+            raise CoherentStateError(
+                f"attention module {name} has ambiguous or non-eager fields: "
+                f"{sorted(local_values)}")
+        records.append({
+            "layer_index": int(getattr(module, "layer_idx", len(records))),
+            "module_name": name,
+            "module_class": cls,
+            "module_fields": module_fields,
+            "resolved_implementation": local or resolved_model,
+        })
+    records.sort(key=lambda x: x["layer_index"])
+    expected = int(getattr(cfg, "num_hidden_layers", -1))
+    if expected < 1 or len(records) != expected:
+        raise CoherentStateError(
+            f"attention layer enumeration mismatch: {len(records)} != {expected}")
+    if [x["layer_index"] for x in records] != list(range(expected)):
+        raise CoherentStateError("attention layer indices are not complete and ordered")
+    resolved = {x["resolved_implementation"] for x in records}
+    if resolved != {"eager"}:
+        raise CoherentStateError(
+            f"subject attention backend is not uniformly eager: {sorted(map(str, resolved))}")
+    payload = {
+        "requested_implementation": "eager",
+        "model_fields": model_fields,
+        "expected_layer_count": expected,
+        "layers": records,
+    }
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    payload["sha256"] = hashlib.sha256(canonical.encode()).hexdigest()
+    return payload
 
 
 @dataclass
@@ -341,6 +418,8 @@ def gapped_arm_boundary(arm: str, fresh_boundary: Snapshot,
                         destination_start: int,
                         placebo_seed: int) -> tuple[Snapshot, list[dict]]:
     """Apply only the amended same-position summary-row intervention."""
+    if arm == "G_delta":
+        raise CoherentStateError("G_delta is retired by Amendment 4")
     if arm not in GAPPED_ARM_NAMES[1:]:
         raise CoherentStateError(f"unsupported gapped arm: {arm}")
     if not correct_rows or not wrong_rows:
@@ -372,9 +451,7 @@ def gapped_arm_boundary(arm: str, fresh_boundary: Snapshot,
         return replace_summary_rows(
             fresh_boundary, correct_rows, destination_start,
             use_keys=True, use_values=False), []
-    snap, raw = delta_deranged_snapshot(
-        fresh_boundary, correct_rows, destination_start, placebo_seed)
-    return snap, [asdict(x) for x in raw]
+    raise CoherentStateError(f"unimplemented gapped arm: {arm}")
 
 
 def arm_snapshot(arm: str, fresh_snapshot: Snapshot, correct_rows: Snapshot,
