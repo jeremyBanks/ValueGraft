@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import math
 import os
 from pathlib import Path
@@ -17,6 +18,50 @@ from coherent_state_runtime import (
 
 class ArtifactError(RuntimeError):
     pass
+
+
+def validate_production_backend_attestation(attestation: Any) -> None:
+    """Independently validate the frozen v6 48-layer eager attestation."""
+    if not isinstance(attestation, dict):
+        raise ArtifactError("attention-backend fingerprint is not an object")
+    expected_keys = {
+        "requested_implementation", "model_config", "text_config",
+        "text_config_is_model_config", "expected_layer_count", "layers", "sha256",
+    }
+    if set(attestation) != expected_keys:
+        raise ArtifactError("attention-backend fingerprint field set differs")
+    if attestation["requested_implementation"] != "eager" or \
+            attestation["expected_layer_count"] != 48:
+        raise ArtifactError("attention-backend request/layer count differs")
+    for scope in ("model_config", "text_config"):
+        row = attestation.get(scope)
+        if not isinstance(row, dict) or row.get("scope") != scope:
+            raise ArtifactError(f"{scope} backend record is malformed")
+        if not isinstance(row.get("config_class"), str) or not row["config_class"]:
+            raise ArtifactError(f"{scope} config class is absent")
+        for key in ("_attn_implementation", "_attn_implementation_internal",
+                    "resolved_implementation"):
+            if row.get(key) != "eager":
+                raise ArtifactError(f"{scope} {key} is not eager")
+    layers = attestation.get("layers")
+    if not isinstance(layers, list) or len(layers) != 48:
+        raise ArtifactError("attention-backend layer coverage differs")
+    for index, row in enumerate(layers):
+        if not isinstance(row, dict) or row.get("layer_index") != index:
+            raise ArtifactError("attention-backend layer order differs")
+        for key in ("module_name", "module_class", "module_config_class"):
+            if not isinstance(row.get(key), str) or not row[key]:
+                raise ArtifactError(f"attention layer {index} lacks {key}")
+        for key in ("module_config__attn_implementation",
+                    "module_config__attn_implementation_internal",
+                    "resolved_implementation"):
+            if row.get(key) != "eager":
+                raise ArtifactError(f"attention layer {index} {key} is not eager")
+    payload = {key: value for key, value in attestation.items() if key != "sha256"}
+    observed = hashlib.sha256(json.dumps(
+        payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    if attestation.get("sha256") != observed:
+        raise ArtifactError("attention-backend fingerprint SHA-256 differs")
 
 
 STAGE_RANK = {"rendered": 1, "captured": 2, "scored": 3, "void": 3}
@@ -108,7 +153,8 @@ def promote_checkpoint(path: Path, existing: dict, additions: dict,
 def validate_scored_checkpoint(doc: dict) -> None:
     if (doc.get("schema") != 2 or doc.get("design_id") != DESIGN_ID or
             doc.get("amendment_id") != AMENDMENT_ID):
-        raise ArtifactError("scored checkpoint is not Amendments-1-2-3-4 schema 2")
+        raise ArtifactError(
+            "scored checkpoint is not Amendments-1-2-3-4-5-6 schema 2")
     required = (
         "conversation", "summary", "sources", "destination", "arm_scores",
         "conversation_outcomes", "gates", "runtime",
@@ -130,8 +176,8 @@ def validate_scored_checkpoint(doc: dict) -> None:
     fingerprint = doc.get("fingerprint") or {}
     if fingerprint.get("attention_backend") != "eager":
         raise ArtifactError("checkpoint fingerprint does not freeze eager attention")
-    if not isinstance(fingerprint.get("attention_backend_fingerprint"), dict):
-        raise ArtifactError("checkpoint lacks attention-backend fingerprint")
+    validate_production_backend_attestation(
+        fingerprint.get("attention_backend_fingerprint"))
     calibration = doc.get("calibration_outcomes") or {}
     if set(calibration) != {"G_fresh", "G_correct", "G_wrong"}:
         raise ArtifactError("calibration outcomes do not equal the amended G set")

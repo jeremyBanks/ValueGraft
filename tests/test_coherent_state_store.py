@@ -1,4 +1,5 @@
 import json
+import hashlib
 
 import pytest
 
@@ -10,6 +11,34 @@ from coherent_state_store import (
     save_render,
     validate_scored_checkpoint,
 )
+
+
+def backend_attestation():
+    def config(scope):
+        return {
+            "scope": scope, "config_class": "FixtureConfig",
+            "_attn_implementation": "eager",
+            "_attn_implementation_internal": "eager",
+            "resolved_implementation": "eager",
+        }
+    payload = {
+        "requested_implementation": "eager",
+        "model_config": config("model_config"),
+        "text_config": config("text_config"),
+        "text_config_is_model_config": False,
+        "expected_layer_count": 48,
+        "layers": [{
+            "layer_index": i, "module_name": f"model.layers.{i}.self_attn",
+            "module_class": "FixtureAttention",
+            "module_config_class": "FixtureConfig",
+            "module_config__attn_implementation": "eager",
+            "module_config__attn_implementation_internal": "eager",
+            "resolved_implementation": "eager",
+        } for i in range(48)],
+    }
+    payload["sha256"] = hashlib.sha256(json.dumps(
+        payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return payload
 
 
 def test_render_checkpoint_is_atomic_and_resume_stable(tmp_path):
@@ -61,11 +90,11 @@ def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
-        "design_id": "coherent-state-gapped-v4",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6",
+        "design_id": "coherent-state-gapped-v6",
         "fingerprint": {
             "attention_backend": "eager",
-            "attention_backend_fingerprint": {"passes": True},
+            "attention_backend_fingerprint": backend_attestation(),
         },
         "conversation": {}, "summary": {}, "sources": {},
         "destination": {
@@ -93,11 +122,11 @@ def test_scored_validation_rejects_wrong_backend():
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
-        "design_id": "coherent-state-gapped-v4",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6",
+        "design_id": "coherent-state-gapped-v6",
         "fingerprint": {
             "attention_backend": "sdpa",
-            "attention_backend_fingerprint": {"passes": False},
+            "attention_backend_fingerprint": backend_attestation(),
         },
         "conversation": {}, "summary": {}, "sources": {},
         "destination": {"position_policy": "gapped_same_source_summary_position"},

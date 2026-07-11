@@ -1,9 +1,38 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import pytest
 
 from analyze_coherent_state import AnalysisError, analyze, bootstrap_interval, t_interval
 from coherent_state_cases import FROZEN_ORDER, WRONG_DONOR
+
+
+def _backend_attestation():
+    config = lambda scope: {
+        "scope": scope, "config_class": "FixtureConfig",
+        "_attn_implementation": "eager",
+        "_attn_implementation_internal": "eager",
+        "resolved_implementation": "eager",
+    }
+    payload = {
+        "requested_implementation": "eager",
+        "model_config": config("model_config"),
+        "text_config": config("text_config"),
+        "text_config_is_model_config": False,
+        "expected_layer_count": 48,
+        "layers": [{
+            "layer_index": i, "module_name": f"model.layers.{i}.self_attn",
+            "module_class": "FixtureAttention",
+            "module_config_class": "FixtureConfig",
+            "module_config__attn_implementation": "eager",
+            "module_config__attn_implementation_internal": "eager",
+            "resolved_implementation": "eager",
+        } for i in range(48)],
+    }
+    payload["sha256"] = hashlib.sha256(json.dumps(
+        payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return payload
 
 
 def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
@@ -17,8 +46,8 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
         w = c - cw
         docs.append({
             "schema": 2,
-            "design_id": "coherent-state-gapped-v4",
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
+            "design_id": "coherent-state-gapped-v6",
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6",
             "conversation_id": FROZEN_ORDER[i],
             "order_position": i + 1,
             "status": "scored",
@@ -40,15 +69,15 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
             "calibration": {"correct_label": calibration_labels[i]},
             "fingerprint": {
                 "schema": 2,
-                "design_id": "coherent-state-gapped-v4",
+                "design_id": "coherent-state-gapped-v6",
                 "amendment_id":
-                    "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
+                    "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6",
                 "frozen_order": list(FROZEN_ORDER),
                 "wrong_donors": WRONG_DONOR,
                 "scenario_sha256": "scenario-fixture",
                 "targets_sha256": "targets-fixture",
                 "attention_backend": "eager",
-                "attention_backend_fingerprint": {"passes": True},
+                "attention_backend_fingerprint": _backend_attestation(),
             },
         })
     return docs
@@ -150,7 +179,7 @@ def test_old_packed_or_unversioned_documents_fail_closed():
         analyze(docs)
     docs = _docs()
     docs[0]["design_id"] = "coherent-state-packed-v0"
-    with pytest.raises(AnalysisError, match="Amendments-1-2-3-4"):
+    with pytest.raises(AnalysisError, match="Amendments-1-2-3-4-5-6"):
         analyze(docs)
 
 
@@ -159,6 +188,13 @@ def test_missing_or_wrong_backend_fails_closed():
     docs[0]["fingerprint"] = dict(docs[0]["fingerprint"])
     docs[0]["fingerprint"]["attention_backend"] = "sdpa"
     with pytest.raises(AnalysisError, match="eager attention"):
+        analyze(docs)
+
+
+def test_unknown_v6_arm_fails_closed():
+    docs = _docs()
+    docs[0]["conversation_outcomes"]["G_delta"] = 0.0
+    with pytest.raises(AnalysisError, match="unknown arms"):
         analyze(docs)
 
 

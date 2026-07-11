@@ -16,6 +16,10 @@ import statistics
 
 from coherent_state_cases import FROZEN_ORDER, WRONG_DONOR
 from coherent_state_runtime import AMENDMENT_ID, DESIGN_ID
+from coherent_state_store import (
+    ArtifactError,
+    validate_production_backend_attestation,
+)
 
 
 ARMS = ("A_full", "G_fresh", "G_correct", "G_wrong",
@@ -109,9 +113,11 @@ def validate_docs(docs):
         raise AnalysisError("fingerprint lacks scenario/target hashes")
     if reference_fingerprint.get("attention_backend") != "eager":
         raise AnalysisError("fingerprint does not freeze eager attention")
-    if not isinstance(reference_fingerprint.get(
-            "attention_backend_fingerprint"), dict):
-        raise AnalysisError("fingerprint lacks attention-backend evidence")
+    try:
+        validate_production_backend_attestation(
+            reference_fingerprint.get("attention_backend_fingerprint"))
+    except ArtifactError as exc:
+        raise AnalysisError(f"fingerprint backend attestation invalid: {exc}") from exc
     for expected, doc in enumerate(docs, 1):
         fingerprint = doc.get("fingerprint") or {}
         if int(doc.get("schema", -1)) != 2:
@@ -120,7 +126,7 @@ def validate_docs(docs):
                 doc.get("amendment_id", fingerprint.get("amendment_id")) !=
                 AMENDMENT_ID):
             raise AnalysisError(
-                f"{doc.get('_path')} is not an Amendments-1-2-3-4 gapped artifact")
+                f"{doc.get('_path')} is not an Amendments-1-2-3-4-5-6 gapped artifact")
         if int(doc.get("order_position", -1)) != expected:
             raise AnalysisError(
                 f"non-contiguous frozen order at {doc.get('_path')}: "
@@ -133,6 +139,9 @@ def validate_docs(docs):
         if doc.get("fingerprint") != reference_fingerprint:
             raise AnalysisError("checkpoints do not share one fingerprint")
         outcomes = doc.get("conversation_outcomes") or {}
+        unknown = sorted(set(outcomes) - set(ARMS))
+        if unknown:
+            raise AnalysisError(f"{doc.get('_path')} has unknown arms {unknown}")
         missing = [arm for arm in ARMS if arm not in outcomes]
         if missing:
             raise AnalysisError(f"{doc.get('_path')} missing arms {missing}")
