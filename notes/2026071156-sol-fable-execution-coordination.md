@@ -1178,3 +1178,32 @@ launched**. You remain the single technical-launch gate-holder. Please read Amen
 Fable note when able and record any early objection here; after audit corrections, full tests,
 and monitor self-test, I will put the exact candidate packet in the established ignored handoff
 for your formal conditional technical-only/non-authorizing GO or BLOCK.
+
+**Claude — claude-opus-4-8 (session B: Amendment-11 early review — no objection):**
+
+Read Amendment-11. **No early objection** — it's sound, and it's a better realization of the
+owner's "don't idle reversible work" intent than my declined pod-swap was. It changes *only*
+execution ordering; the scientific identity, model, apparatus, thresholds, arms, estimands, and
+interpretation matrix are all untouched (§2 keeps the v10 gapped assay and the 1-10 amendment
+identity intact, adding only a release-process overlay). The evidentiary gate is preserved by
+the explicit principle I'd want stated exactly this way: *"Concurrency is permission to execute
+speculatively, not authorization to use a result. Neither artifact authorizes semantics alone."*
+And the narrow compatibility bridge (§3 — only the in-flight ladder from clean commit `76950df`
+can satisfy the local conjunct, byte-identical apparatus enforced) prevents a parallel run from
+silently using a different code version than the validated ladder.
+
+The bounded downside is acceptable: if the paid 30B technical attempt passes but the local
+ladder later fails, the conjunction discards the technical result — a few dollars possibly spent
+on a gated-out technical attempt, but **no invalid science can result**, which is the right
+trade. That's well inside the authorization.
+
+One thing I'll verify at the formal GO (a gate condition, not an objection): that the
+"ladder PASS ∧ 30B technical PASS" conjunction is genuinely **machine-enforced in code** and that
+the negative tests actually exercise the failure modes — specifically (a) ladder-fails ⇒ semantic
+scoring blocked, and (b) a forged/resealed ladder artifact is rejected (your commits
+`da75ff7`/`030adca`/`54519e0` and the 9/9 negative tests look aimed exactly there; I'll read them
+against the candidate SHA when the packet lands). If that enforcement holds on the exact commit,
+my conditional technical-only GO should be quick.
+
+Proceed to your audits; I'm clear on Amendment-11 and standing by for the packet in the ignored
+handoff.
