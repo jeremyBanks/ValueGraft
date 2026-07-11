@@ -28,6 +28,15 @@ FAMILIES = ("full_KV", "value_only")
 PRIMARY_CASE_IDS = ("e01", "e02", "e03", "e04")
 RESERVE_CASE_IDS = ("e05", "e06")
 ALL_CASE_IDS = PRIMARY_CASE_IDS + RESERVE_CASE_IDS
+CASE_SUBTYPES = {
+    "e01": "explicit_resolution", "e02": "explicit_resolution",
+    "e03": "unstated_derivable", "e04": "unstated_derivable",
+    "e05": "explicit_resolution", "e06": "unstated_derivable",
+}
+REPORT_METRICS = (
+    "D_N", "D_nonfocal_N", "SEL_N", "Hplus_N", "U_N", "Uplus_N",
+    "D_P", "absolute_schedule_gap",
+)
 SUBJECTS = {
     "exact-subject": {
         "requested_model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
@@ -232,9 +241,7 @@ def family_analysis(cases: Sequence[Mapping[str, Any]], family: str,
     summaries = {
         metric: summarize({case_id: values[metric]
                            for case_id, values in per_case.items()})
-        for metric in (
-            "D_N", "D_nonfocal_N", "SEL_N", "Hplus_N", "U_N",
-            "Uplus_N", "D_P", "absolute_schedule_gap")
+        for metric in REPORT_METRICS
     }
     directional_selective = sum(
         values["D_N"] > 0 and values["SEL_N"] > 0
@@ -243,9 +250,27 @@ def family_analysis(cases: Sequence[Mapping[str, Any]], family: str,
     mean_hplus = summaries["Hplus_N"]["mean"]
     mean_gap = summaries["absolute_schedule_gap"]["mean"]
     yardstick_pass = mean_d >= 3.0 * mean_gap
+    subtype_rows = {}
+    for subtype in ("explicit_resolution", "unstated_derivable"):
+        selected = {case_id: values for case_id, values in per_case.items()
+                    if CASE_SUBTYPES[case_id] == subtype}
+        if selected:
+            subtype_rows[subtype] = {
+                "case_ids": sorted(selected),
+                "summaries": {
+                    metric: summarize({
+                        case_id: values[metric]
+                        for case_id, values in selected.items()})
+                    for metric in REPORT_METRICS
+                },
+                "directional_and_selective_count": sum(
+                    values["D_N"] > 0 and values["SEL_N"] > 0
+                    for values in selected.values()),
+            }
     return {
         "per_case": per_case,
         "summaries": summaries,
+        "subtype_reporting": subtype_rows,
         "criteria": {
             "mean_D_N_positive": mean_d > 0,
             "directional_and_selective_count": directional_selective,
@@ -284,9 +309,7 @@ def classify_six(analysis: Mapping[str, Any]) -> str:
 
 
 def paired_family_differences(cases: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
-    metrics = (
-        "D_N", "D_nonfocal_N", "SEL_N", "Hplus_N", "U_N", "Uplus_N",
-        "D_P", "absolute_schedule_gap")
+    metrics = REPORT_METRICS
     per_case = {}
     for case in cases:
         full = case["families"]["full_KV"]
@@ -302,6 +325,35 @@ def paired_family_differences(cases: Sequence[Mapping[str, Any]]) -> dict[str, A
             for metric in metrics
         },
         "inferential_test_performed": False,
+    }
+
+
+def mitigation_utility_analysis(
+        cases: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    eligible = [case for case in cases
+                if case["phase_a_fresh_damage"]["utility_damage_eligible"]]
+    u_values = {
+        case["case_id"]: case["families"]["value_only"]["U_N"]
+        for case in eligible}
+    uplus_values = {
+        case["case_id"]: case["families"]["value_only"]["Uplus_N"]
+        for case in eligible}
+    u_summary = summarize(u_values) if u_values else None
+    uplus_summary = summarize(uplus_values) if uplus_values else None
+    condition = bool(eligible) and u_summary["mean"] > 0 and \
+        uplus_summary["mean"] > 0
+    return {
+        "rule": (
+            "Among cases with positive A_C-minus-FF margin and correct-target "
+            "damage, mean value-only U_N > 0 and mean value-only Uplus_N > 0."),
+        "eligible_case_ids": [case["case_id"] for case in eligible],
+        "eligible_case_count": len(eligible),
+        "U_N": u_summary,
+        "Uplus_N": uplus_summary,
+        "condition_met": condition,
+        "decision_role": (
+            "Additional requirement for a value-only mitigation branch; it "
+            "does not change the family PASS/STOP classification."),
     }
 
 
@@ -476,6 +528,7 @@ def aggregate(report_paths: Sequence[Path], *, repo_root: Path = ROOT,
         "apparatus_integration_only": not exact_semantic,
         "families": families,
         "paired_family_differences": paired_family_differences(cases),
+        "value_only_mitigation_utility": mitigation_utility_analysis(cases),
         "phase_a_utility_damage": {
             case["case_id"]: case["phase_a_fresh_damage"] for case in cases},
         "inference": {

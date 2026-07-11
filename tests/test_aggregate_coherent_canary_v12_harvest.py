@@ -164,6 +164,29 @@ def test_four_case_pass4_and_direct_paired_differences(tmp_path):
     assert aggregate["families"]["full_KV"]["summaries"]["U_N"]["n"] == 4
     assert aggregate["phase_a_utility_damage"]["e01"][
         "utility_damage_eligible"] is True
+    assert aggregate["families"]["full_KV"]["subtype_reporting"][
+        "explicit_resolution"]["case_ids"] == ["e01", "e02"]
+    assert aggregate["families"]["full_KV"]["subtype_reporting"][
+        "unstated_derivable"]["case_ids"] == ["e03", "e04"]
+    assert aggregate["value_only_mitigation_utility"]["condition_met"] is False
+
+
+def test_value_only_mitigation_utility_rule_is_machine_applied(tmp_path):
+    rows = pass_four_rows()
+    for row in rows:
+        value = row["R2_primary_estimands"]["N"]["value_only"]
+        value["U"] = 0.2
+        value["Uplus"] = 0.1
+    # Exclude one case through the preregistered positive-damage condition.
+    rows[-1]["phase_a_fresh_damage_diagnostic"]["margin"] = -0.1
+    rows[-1]["phase_a_fresh_damage_diagnostic"][
+        "positive_margin_damage"] = False
+    aggregate = MODULE.aggregate(reports(tmp_path, rows), repo_root=tmp_path)
+    mitigation = aggregate["value_only_mitigation_utility"]
+    assert mitigation["eligible_case_ids"] == ["e01", "e02", "e03"]
+    assert mitigation["U_N"]["mean"] == pytest.approx(0.2)
+    assert mitigation["Uplus_N"]["mean"] == pytest.approx(0.1)
+    assert mitigation["condition_met"] is True
 
 
 def test_four_case_stop4_and_ambiguous4_are_family_specific(tmp_path):
