@@ -195,6 +195,16 @@ def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
     if not evidence:
         raise ValueError("failure harvest lacks meaningful failure evidence")
 
+    failure_fingerprint = None
+    manifest_path = root / "manifest.json"
+    if manifest_path.exists():
+        manifest = _load(manifest_path)
+        _require_identity(manifest, "failure manifest")
+        candidate = manifest.get("fingerprint")
+        if candidate is not None and not isinstance(candidate, dict):
+            raise ValueError("failure manifest fingerprint is malformed")
+        failure_fingerprint = candidate
+
     model_ready = "MODEL_READY" in log_text
     gate_path = root / "production_kernel_gate.json"
     gate_status = None
@@ -216,7 +226,12 @@ def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
     for path in paths:
         doc = _load(path)
         if doc.get("status") == "scored":
-            _validate_checkpoint(doc, path, scored=True)
+            if failure_fingerprint is None:
+                raise ValueError(
+                    "failure harvest has scored checkpoint but no manifest fingerprint")
+            _validate_checkpoint(
+                doc, path, scored=True,
+                expected_fingerprint=failure_fingerprint)
             scored += 1
         elif doc.get("status") == "void":
             _validate_checkpoint(doc, path, scored=False)

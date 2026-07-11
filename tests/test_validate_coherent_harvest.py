@@ -157,6 +157,25 @@ def test_post_gate_case_failure_requires_void_checkpoint(tmp_path: Path):
     assert out["n_void"] == 1
 
 
+def test_failure_scored_checkpoint_must_match_manifest_fingerprint(tmp_path: Path):
+    (tmp_path / "job.log").write_text("MODEL_READY\nFATAL later case failed\n")
+    write(tmp_path / "failure.json", {"error": "later case failed"})
+    write(tmp_path / "production_kernel_gate.json", gate("PASS"))
+    scored = checkpoint(1)
+    fingerprint = scored["fingerprint"]
+    write(tmp_path / "manifest.json", {
+        **identity(), "status": "ERROR", "fingerprint": fingerprint})
+    write(tmp_path / "conv_01_c10.json", scored)
+    write(tmp_path / "conv_02_c02.json", checkpoint(2, "void"))
+    assert MODULE.validate(tmp_path, "failure")["n_scored"] == 1
+
+    scored["fingerprint"] = dict(scored["fingerprint"])
+    scored["fingerprint"]["scenario_sha256"] = "tampered"
+    write(tmp_path / "conv_01_c10.json", scored)
+    with pytest.raises(ValueError, match="manifest fingerprint"):
+        MODULE.validate(tmp_path, "failure")
+
+
 def test_setup_failure_needs_meaningful_evidence_but_no_gate(tmp_path: Path):
     (tmp_path / "job.log").write_text("FATAL: CUDA unavailable\n")
     out = MODULE.validate(tmp_path, "failure")
