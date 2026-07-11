@@ -1004,6 +1004,10 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
         **identity(),
         "frozen_order": list(MODULE.FROZEN_ORDER),
         "wrong_donors": MODULE.WRONG_DONORS,
+        "scenario_sha256": hashlib.sha256(
+            (ROOT / "data/scenarios.json").read_bytes()).hexdigest(),
+        "targets_sha256": hashlib.sha256(
+            (ROOT / "data/coherent_state_targets.json").read_bytes()).hexdigest(),
         "attention_backend": "eager",
         "attention_backend_fingerprint": backend,
         "semantic_authorization": binding,
@@ -1160,6 +1164,15 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
             "gates": {"technical_pass": True}, "runtime": {},
             "fingerprint": fingerprint,
         })
+    checkpoint_docs = [json.loads(path.read_text()) for path in sorted(
+        root.glob("conv_*.json"))]
+    analysis = MODULE._independent_analysis(checkpoint_docs)
+    seal(root / "analysis_n06.json", analysis)
+    manifest = json.loads((root / "manifest.json").read_text())
+    manifest.pop("payload_sha256", None)
+    manifest.update({key: analysis[key] for key in (
+        "n_conversations", "serial_decision", "interpretation")})
+    seal(root / "manifest.json", manifest)
     paths = sorted(path.name for path in root.glob("*.json"))
     rows = []
     for relative in paths:
@@ -1625,6 +1638,37 @@ def test_semantic_complete_rejects_mixed_authorization_binding(tmp_path: Path):
     semantic_tree(tmp_path, corrupt_binding=True)
     with pytest.raises(ValueError, match="fingerprint/prior authorization"):
         MODULE.validate(tmp_path, "complete")
+
+
+def test_terminal_analysis_is_independently_recomputed_and_required(tmp_path: Path):
+    from analyze_coherent_state import analyze
+
+    semantic_tree(tmp_path)
+    docs = [json.loads(path.read_text()) for path in sorted(
+        tmp_path.glob("conv_*.json"))]
+    manifest = json.loads((tmp_path / "manifest.json").read_text())
+    independent = MODULE._independent_analysis(docs)
+    assert independent == analyze(docs)
+    MODULE._validate_terminal_analysis(tmp_path, docs, manifest)
+
+    analysis_path = tmp_path / "analysis_n06.json"
+    original = analysis_path.read_bytes()
+    analysis_path.unlink()
+    with pytest.raises(ValueError, match="terminal analysis path set differs"):
+        MODULE._validate_terminal_analysis(tmp_path, docs, manifest)
+    analysis_path.write_bytes(original)
+
+    tampered = json.loads(analysis_path.read_text())
+    tampered["serial_decision"] = "FABRICATED"
+    seal(analysis_path, tampered)
+    with pytest.raises(ValueError, match="independent recomputation"):
+        MODULE._validate_terminal_analysis(tmp_path, docs, manifest)
+    analysis_path.write_bytes(original)
+
+    bad_manifest = copy.deepcopy(manifest)
+    bad_manifest["interpretation"] = "FABRICATED"
+    with pytest.raises(ValueError, match="manifest/final analysis interpretation"):
+        MODULE._validate_terminal_analysis(tmp_path, docs, bad_manifest)
 
 
 def test_technical_harvest_validates_full_sidecar_and_terminal_contract(

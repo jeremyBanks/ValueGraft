@@ -2838,6 +2838,179 @@ def _validate_v8_pass_gates(
         raise ValueError("aggregate gate verdict differs")
 
 
+_T975 = {
+    1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
+    6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228, 11: 2.201,
+}
+_CONTRASTS = {
+    "GF": ("G_correct", "G_fresh"),
+    "GW": ("G_correct", "G_wrong"),
+    "GVF": ("G_Vcorrect", "G_fresh"),
+    "GKF": ("G_Kcorrect", "G_fresh"),
+    "AF": ("A_full", "G_fresh"),
+}
+
+
+def _analysis_mean(values: list[float]) -> float:
+    return sum(values) / len(values)
+
+
+def _analysis_t_interval(values: list[float]) -> dict[str, Any]:
+    mean = _analysis_mean(values)
+    if len(values) == 1:
+        return {"n": 1, "mean": mean, "lo": None, "hi": None,
+                "method": "Student-t unavailable at n=1"}
+    half = _T975[len(values) - 1] * statistics.stdev(values) / math.sqrt(len(values))
+    return {"n": len(values), "mean": mean, "lo": mean - half,
+            "hi": mean + half, "method": "two-sided 95% Student-t"}
+
+
+def _analysis_bootstrap(values: list[float]) -> dict[str, Any]:
+    rng = random.Random(20_260_711)
+    n = len(values)
+    samples = sorted(_analysis_mean([
+        values[rng.randrange(n)] for _ in range(n)]) for _ in range(10_000))
+    return {"n": n, "mean": _analysis_mean(values),
+            "lo": samples[250], "hi": samples[9750],
+            "n_boot": 10_000, "seed": 20_260_711,
+            "method": "conversation bootstrap percentile 95%"}
+
+
+def _independent_calibration_summary(docs: list[dict[str, Any]]) -> dict[str, Any]:
+    rows_by_label: dict[str, list[tuple[float, float]]] = {"A": [], "B": []}
+    for doc in docs[:6]:
+        outcomes = doc["calibration_outcomes"]
+        label = doc["calibration"]["correct_label"]
+        rows_by_label[label].append((
+            float(outcomes["G_correct"]) - float(outcomes["G_fresh"]),
+            float(outcomes["G_correct"]) - float(outcomes["G_wrong"]),
+        ))
+    variants = {}
+    for label, rows in rows_by_label.items():
+        mean_gf = _analysis_mean([row[0] for row in rows]) if rows else None
+        mean_gw = _analysis_mean([row[1] for row in rows]) if rows else None
+        variants[label] = {
+            "n_repeated_executions": len(rows), "mean_GF": mean_gf,
+            "mean_GW": mean_gw,
+            "fires": bool(rows and mean_gf > 0 and mean_gw > 0),
+        }
+    both = sum(row["fires"] for row in variants.values())
+    all_rows = [row for rows in rows_by_label.values() for row in rows]
+    variant_rows = [row for row in variants.values()
+                    if row["mean_GF"] is not None and row["mean_GW"] is not None]
+    return {
+        "fires": both == 2,
+        "rule": "both unique label variants have positive GF and GW",
+        "variants": variants,
+        "mean_GF": _analysis_mean([row["mean_GF"] for row in variant_rows]),
+        "mean_GW": _analysis_mean([row["mean_GW"] for row in variant_rows]),
+        "repeated_execution_weighted_mean_GF": _analysis_mean(
+            [row[0] for row in all_rows]),
+        "repeated_execution_weighted_mean_GW": _analysis_mean(
+            [row[1] for row in all_rows]),
+        "both_directional_variants": both, "n": len(docs[:6]),
+        "frozen_at_n": 6,
+    }
+
+
+def _independent_analysis(docs: list[dict[str, Any]]) -> dict[str, Any]:
+    n = len(docs)
+    if n not in (6, 12):
+        raise ValueError(f"independent analysis cannot use N={n}")
+    contrasts = {}
+    for name, (left, right) in _CONTRASTS.items():
+        rows = [float(doc["conversation_outcomes"][left]) -
+                float(doc["conversation_outcomes"][right]) for doc in docs]
+        contrasts[name] = {
+            "rows": rows, "t": _analysis_t_interval(rows),
+            "bootstrap": _analysis_bootstrap(rows),
+        }
+    regime_docs = docs[:6]
+    a_rows = [float(doc["conversation_outcomes"]["A_full"])
+              for doc in regime_docs]
+    af_rows = [float(doc["conversation_outcomes"]["A_full"]) -
+               float(doc["conversation_outcomes"]["G_fresh"])
+               for doc in regime_docs]
+    regime = {
+        "competence_count_positive": sum(value > 0 for value in a_rows),
+        "headroom_count_positive": sum(value > 0 for value in af_rows),
+        "mean_A": _analysis_mean(a_rows), "mean_AF": _analysis_mean(af_rows),
+    }
+    regime["passes"] = bool(
+        regime["competence_count_positive"] >= 4 and regime["mean_A"] > 0 and
+        regime["headroom_count_positive"] >= 4 and regime["mean_AF"] >= 0.30)
+    regime["frozen_at_n"] = 6
+    calibration = _independent_calibration_summary(docs)
+    technical = {"passes": True, "failed": []}
+    result = {
+        "schema": SCHEMA, "amendment_id": AMENDMENT_ID,
+        "design_id": DESIGN_ID,
+        "position_policy": "gapped_same_source_summary_position",
+        "n_conversations": n,
+        "conversation_ids": [doc["conversation_id"] for doc in docs],
+        "technical_gate": technical, "regime_gate": regime,
+        "calibration": calibration, "contrasts": contrasts,
+    }
+    if n == 6:
+        gf = contrasts["GF"]["t"]["mean"]
+        gw = contrasts["GW"]["t"]["mean"]
+        if not regime["passes"]:
+            decision = "STOP_REGIME"
+        elif gf <= 0 and gw <= 0 and not calibration["fires"]:
+            decision = "STOP_FUTILITY"
+        else:
+            decision = "EXTEND_TO_12"
+        result["serial_decision"] = decision
+    else:
+        result["serial_decision"] = "FINAL_N12"
+    if not regime["passes"]:
+        interpretation = "REGIME_INADEQUATE"
+    elif n < 12:
+        interpretation = "INTERIM_NO_EFFICACY_DECLARATION"
+    else:
+        clears = lambda row: row["lo"] is not None and row["lo"] > 0
+        cf, cw = contrasts["GF"]["t"], contrasts["GW"]["t"]
+        if clears(cf) and clears(cw):
+            interpretation = "HISTORY_SPECIFIC_CHANNEL"
+        elif clears(cf):
+            interpretation = "COHERENCE_WITHOUT_HISTORY_SPECIFICITY"
+        elif not calibration["fires"]:
+            interpretation = "SENSITIVITY_INADEQUATE_NO_CHANNEL_CLAIM"
+        else:
+            interpretation = "NO_CONFIRMATORY_CHANNEL"
+    result["interpretation"] = interpretation
+    return result
+
+
+def _validate_terminal_analysis(root: Path, docs: list[dict[str, Any]],
+                                manifest: dict[str, Any]) -> None:
+    n = len(docs)
+    expected_names = ["analysis_n06.json"]
+    if n == 12:
+        expected_names.append("analysis_n12.json")
+    observed_names = sorted(path.name for path in root.glob("analysis_n*.json"))
+    if observed_names != expected_names:
+        raise ValueError(
+            f"terminal analysis path set differs: {observed_names} != {expected_names}")
+    analyses = {}
+    for count, name in ((6, "analysis_n06.json"), (12, "analysis_n12.json")):
+        if name not in expected_names:
+            continue
+        persisted = _load(root / name)
+        _require_identity(persisted, name)
+        _require_payload_sha256(persisted, name)
+        expected = _independent_analysis(docs[:count])
+        observed = {key: value for key, value in persisted.items()
+                    if key != "payload_sha256"}
+        if observed != expected:
+            raise ValueError(f"{name} differs from independent recomputation")
+        analyses[count] = expected
+    final = analyses[n]
+    for field in ("n_conversations", "serial_decision", "interpretation"):
+        if manifest.get(field) != final[field]:
+            raise ValueError(f"semantic manifest/final analysis {field} differs")
+
+
 def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
     manifest = _load(root / "manifest.json")
     _require_identity(manifest, "manifest")
@@ -2919,6 +3092,7 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
         raise ValueError("semantic manifest/checkpoint count differs")
     seen_positions: list[int] = []
     seen_ids: list[str] = []
+    checkpoint_docs: list[dict[str, Any]] = []
     for path in paths:
         doc = _load(path)
         _require_payload_sha256(doc, path.name)
@@ -2930,10 +3104,12 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
             raise ValueError(f"{path.name} lacks integer order_position")
         seen_positions.append(position)
         seen_ids.append(doc.get("conversation_id"))
+        checkpoint_docs.append(doc)
     if sorted(seen_positions) != list(range(1, len(paths) + 1)):
         raise ValueError(f"checkpoint positions are not contiguous: {seen_positions}")
     if seen_ids != list(FROZEN_ORDER[:len(paths)]):
         raise ValueError(f"checkpoint frozen ID order differs: {seen_ids}")
+    _validate_terminal_analysis(root, checkpoint_docs, manifest)
     if "COHERENT_STATE_JOB_DONE" not in log_text:
         raise ValueError("complete harvest job log lacks completion marker")
     return {
