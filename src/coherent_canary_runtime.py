@@ -370,6 +370,8 @@ def score_target_q1(model, snapshot: Snapshot, *, suffix_ids: Sequence[int],
     cache = rebuild_cache(snapshot)
     physical = snapshot_physical_length(snapshot)
     suffix = [int(x) for x in suffix_ids]
+    _require(physical + len(suffix) + len(targets) - 1 <= MAX_LIVE_CACHE_TOKENS,
+             "target scoring would exceed live-cache bound")
     cache, logits = _forward(
         model, cache, suffix,
         range(logical_context_end, logical_context_end + len(suffix)),
@@ -422,6 +424,8 @@ def greedy_generate_q1(model, prefix_snapshot: Snapshot, prefix_logits: torch.Te
     _require(max_content_tokens == 64, "v12 generation cap must equal 64")
     cache = rebuild_cache(prefix_snapshot)
     physical = snapshot_physical_length(prefix_snapshot)
+    _require(physical + max_content_tokens <= MAX_LIVE_CACHE_TOKENS,
+             "generation would exceed live-cache bound")
     logical = int(logical_start)
     logits = prefix_logits.detach().clone()
     ids: list[int] = []
@@ -473,6 +477,8 @@ def force_content_q1(model, prefix_snapshot: Snapshot, prefix_logits: torch.Tens
     _require(not set(ids).intersection(eos), "forced content contains EOS")
     cache = rebuild_cache(prefix_snapshot)
     physical = snapshot_physical_length(prefix_snapshot)
+    _require(physical + len(ids) <= MAX_LIVE_CACHE_TOKENS,
+             "forced content would exceed live-cache bound")
     logical = int(logical_start)
     logits = prefix_logits.detach().clone()
     lps: list[float] = []
@@ -580,6 +586,8 @@ def require_generated_forced_identity(
             generated_prefix.last_logits),
         "eos_ids": list(generated.eos_ids),
         "content_ids": list(generated.content_ids),
+        "content_logical_positions": list(generated.logical_positions),
+        "content_physical_positions": list(generated.physical_positions),
         "content_start": content_start,
         "content_end": end,
         "token_logprob_float32_bits": list(
