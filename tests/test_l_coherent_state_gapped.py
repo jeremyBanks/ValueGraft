@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 import inspect
+import json
 
 import pytest
 import torch
@@ -14,6 +15,7 @@ from l_coherent_state_hf import (
     _validate_exact_length_wrong,
     _verify_intervention,
     v5_gate_schema,
+    write_sharded_ladder_result,
 )
 
 
@@ -88,3 +90,29 @@ def test_v5_gate_never_clears_caller_sink_and_persists_raw_replay_first():
     assert "sink.clear" not in source
     assert "persist before verdict validation" in source
     assert "SKIPPED_DEPENDENCY" in inspect.getsource(ladder._skip_stage)
+
+
+def test_ladder_writer_externalizes_gate_stages_and_preserves_failure(tmp_path):
+    gate = v5_gate_schema(expected_attention_layers=2)
+    gate.update({"status": "FAIL", "passes": False,
+                 "failures": ["generated_replay_identity"]})
+    result = {
+        "schema": 2,
+        "amendment_id": gate["amendment_id"],
+        "design_id": gate["design_id"],
+        "status": "FAIL",
+        "diagnostics": {"loaded_gapped_production_gate": gate},
+    }
+    output = tmp_path / "coherent_ladder_unique.json"
+    manifest = write_sharded_ladder_result(output, result)
+    on_disk = json.loads(output.read_text())
+    external = on_disk["diagnostics"]["loaded_gapped_production_gate"]
+    assert external["externalized"] is True
+    assert external["status"] == "FAIL"
+    assert set(external["stage_refs"]) == set(ladder.V5_GATE_STAGE_ORDER)
+    for ref in external["stage_refs"].values():
+        path = tmp_path / ref["path"]
+        assert path.stat().st_size == ref["byte_count"] < 4_000_000
+    assert manifest["payload_sha256"] == on_disk["payload_sha256"]
+    with pytest.raises(RuntimeError, match="overwrite"):
+        write_sharded_ladder_result(output, result)

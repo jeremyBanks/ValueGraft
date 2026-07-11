@@ -7,6 +7,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
 import traceback
@@ -2065,6 +2066,115 @@ def run_ladder() -> dict:
     }
 
 
+MAX_COMMITTED_ARTIFACT_BYTES = 4_000_000
+
+
+def _payload_sha256(payload: dict) -> str:
+    clean = {key: value for key, value in payload.items()
+             if key != "payload_sha256"}
+    return hashlib.sha256(json.dumps(
+        clean, sort_keys=True, separators=(",", ":"),
+        ensure_ascii=False).encode()).hexdigest()
+
+
+def _encoded_payload(payload: dict) -> tuple[dict, bytes]:
+    closed = _copy_json(payload)
+    closed["payload_sha256"] = _payload_sha256(closed)
+    raw = (json.dumps(
+        closed, sort_keys=True, separators=(",", ":"),
+        ensure_ascii=False) + "\n").encode()
+    if len(raw) >= MAX_COMMITTED_ARTIFACT_BYTES:
+        raise RuntimeError(
+            f"ladder payload is not commit-safe: {len(raw)} bytes")
+    return closed, raw
+
+
+def _atomic_write_bytes(path: Path, raw: bytes) -> None:
+    if path.exists():
+        raise RuntimeError(f"refusing to overwrite ladder artifact: {path}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    if temporary.exists():
+        raise RuntimeError(f"ladder temporary path already exists: {temporary}")
+    try:
+        with temporary.open("xb") as handle:
+            handle.write(raw)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+def write_sharded_ladder_result(output: Path, result: dict) -> dict:
+    """Write a small v6 ladder manifest plus commit-safe gate stage sidecars."""
+    output = Path(output)
+    if output.exists():
+        raise RuntimeError(f"refusing to overwrite {output}")
+    document = _copy_json(result)
+    if document.get("design_id") != DESIGN_ID:
+        raise RuntimeError("ladder result identity is not current v6")
+
+    gate_container = document
+    gate_key = "loaded_gapped_production_gate"
+    if gate_key not in gate_container:
+        gate_container = document.get("diagnostics", {})
+    gate = gate_container.get(gate_key)
+    writes: list[tuple[Path, bytes]] = []
+    refs = {}
+    if isinstance(gate, dict):
+        for stage_name in V5_GATE_STAGE_ORDER:
+            stage = gate.get(stage_name)
+            if not isinstance(stage, dict):
+                continue
+            filename = f"{output.stem}__stage_{stage_name}.json"
+            sidecar_path = output.with_name(filename)
+            closed, raw = _encoded_payload({
+                "schema": 2,
+                "amendment_id": AMENDMENT_ID,
+                "design_id": DESIGN_ID,
+                "artifact_kind": "ladder_gate_stage",
+                "stage_name": stage_name,
+                "stage": stage,
+            })
+            writes.append((sidecar_path, raw))
+            refs[stage_name] = {
+                "path": filename,
+                "byte_count": len(raw),
+                "raw_file_sha256": hashlib.sha256(raw).hexdigest(),
+                "payload_sha256": closed["payload_sha256"],
+            }
+        gate_container[gate_key] = {
+            "schema": gate.get("schema", 2),
+            "amendment_id": gate.get("amendment_id"),
+            "design_id": gate.get("design_id"),
+            "status": gate.get("status"),
+            "passes": gate.get("passes", False),
+            "technical_only": gate.get("technical_only", True),
+            "stage_order": gate.get("stage_order", list(V5_GATE_STAGE_ORDER)),
+            "failures": gate.get("failures", []),
+            "failure": gate.get("failure"),
+            "stage_refs": refs,
+            "externalized": True,
+        }
+
+    document["artifact_files"] = [
+        {"path": path.name, "byte_count": len(raw),
+         "raw_file_sha256": hashlib.sha256(raw).hexdigest()}
+        for path, raw in writes
+    ]
+    closed_manifest, manifest_raw = _encoded_payload(document)
+    all_paths = [path for path, _raw in writes] + [output]
+    collisions = [str(path) for path in all_paths if path.exists()]
+    if collisions:
+        raise RuntimeError(f"refusing to overwrite ladder artifacts: {collisions}")
+    for path, raw in writes:
+        _atomic_write_bytes(path, raw)
+    _atomic_write_bytes(output, manifest_raw)
+    return closed_manifest
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--output", required=True, type=Path)
@@ -2083,9 +2193,8 @@ def main():
                   "error": str(exc), "traceback": traceback.format_exc(),
                   "diagnostics": _LAST_LADDER_DIAGNOSTICS,
                   "failed_at": datetime.now(timezone.utc).isoformat()}
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, indent=2) + "\n")
-    print(json.dumps(result, indent=2), flush=True)
+    manifest = write_sharded_ladder_result(args.output, result)
+    print(json.dumps(manifest, indent=2), flush=True)
     return 0 if result["status"] == "PASS" else 1
 
 
