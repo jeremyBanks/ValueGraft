@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-pod Amendments-1-2-3-4-5-6 eager technical-only authorization attempt.
+# One-pod Amendments-1-2-3-4-5-6-7 eager technical-only authorization attempt.
 # No conversation render, calibration target, A_full, or treatment outcome may run.
 set -euo pipefail
 
@@ -9,7 +9,7 @@ EXPECTED_COMMIT="${SC_EXPECTED_COMMIT:?SC_EXPECTED_COMMIT is required}"
 MODEL="Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION="0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-RUN_DIR="results/coherent_state/coherent_state_gapped_v6_Qwen3-30B-A3B-Instruct-2507_${STAMP}"
+RUN_DIR="results/coherent_state/coherent_state_gapped_v7_Qwen3-30B-A3B-Instruct-2507_${STAMP}"
 CLONE_TMP="/workspace/repo_${STAMP}.tmp"
 
 echo "START COHERENT_STATE $(date -Is)"
@@ -48,6 +48,9 @@ python3 - <<'PY'
 import sys, torch, transformers
 print("SETUP python", sys.version)
 print("SETUP torch", torch.__version__, "transformers", transformers.__version__)
+if torch.__version__ != "2.4.1+cu124" or torch.version.cuda != "12.4":
+    raise SystemExit(
+        f"FATAL: ambient torch/CUDA drifted: {torch.__version__}/{torch.version.cuda}")
 if not torch.cuda.is_available():
     raise SystemExit("FATAL: CUDA unavailable")
 print("SETUP gpu", torch.cuda.get_device_name(0))
@@ -75,8 +78,11 @@ PY
 cp /workspace/exp/job.log "$RUN_DIR/job.log"
 if [ "$DRIVER_STATUS" -eq 0 ]; then
   printf '%s\n' "COHERENT_STATE_TECHNICAL_DONE" >> "$RUN_DIR/job.log"
-  python3 scripts/validate_coherent_harvest.py "$RUN_DIR" technical \
-    --output "${RUN_DIR}.harvest_validation.json"
+  if ! python3 scripts/validate_coherent_harvest.py "$RUN_DIR" technical \
+      --output "${RUN_DIR}.harvest_validation.json"; then
+    echo "FATAL: independent technical harvest validation rejected terminal PASS"
+    exit 6
+  fi
 else
   printf '%s\n' "COHERENT_STATE_TECHNICAL_FAILED" >> "$RUN_DIR/job.log"
   python3 scripts/validate_coherent_harvest.py "$RUN_DIR" failure \

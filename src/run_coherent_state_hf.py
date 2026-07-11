@@ -81,15 +81,19 @@ from coherent_state_store import (
     validate_scored_checkpoint,
 )
 from cross_arch_probe import native_render_specs, trim_capped_reply
-from l_coherent_state_hf import run_loaded_gapped_gates, v6_gate_schema
+from l_coherent_state_hf import (
+    run_exact_render_schedule_fixture,
+    run_loaded_gapped_gates,
+    v7_gate_schema,
+)
 
 
 MODEL = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STRUCTURAL_SEED = 20_260_711
 ARTIFACT_SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v6"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
+DESIGN_ID = "coherent-state-gapped-v7"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7"
 AMENDMENT_PATHS = (
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-2.md"),
@@ -97,6 +101,7 @@ AMENDMENT_PATHS = (
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-4.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-5.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-6.md"),
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-7.md"),
 )
 ATTENTION_BACKEND = "eager"
 EXPECTED_GEOMETRY = {
@@ -110,7 +115,7 @@ ZERO_GAP_TOLERANCE = 5e-4
 MAX_TECHNICAL_LOGICAL_POSITION = 9_509
 
 if DESIGN_ID != INTEGRITY_DESIGN_ID or AMENDMENT_ID != INTEGRITY_AMENDMENT_ID:
-    raise RuntimeError("driver/integrity v5 identities disagree")
+    raise RuntimeError("driver/integrity v7 identities disagree")
 
 
 def utc_now() -> str:
@@ -212,7 +217,8 @@ def model_geometry(config) -> dict:
 
 def sha256_json(value) -> str:
     return hashlib.sha256(json.dumps(
-        value, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+        default=str).encode()).hexdigest()
 
 
 class DurableDiagnosticSink(dict):
@@ -752,6 +758,29 @@ class Runner:
                 raise CoherentStateError(
                     f"{cid}: prefix plus frozen summary cap exceeds context "
                     f"{len(prefix_ids)}+{MAX_SUMMARY_TOKENS}>{self.context_limit}")
+
+            def schedule_progress(evidence: dict) -> None:
+                current = json.loads(path.read_text())
+                atomic_write_json(path, {
+                    **current,
+                    "pre_score_schedule_equivalence": evidence,
+                    "capture_progress": {
+                        **(current.get("capture_progress") or {}),
+                        "actual_render_schedule_status": evidence.get("status"),
+                        "actual_render_schedule_semantic_scoring_performed": False,
+                    },
+                })
+
+            actual_schedule = run_exact_render_schedule_fixture(
+                self.model, self.tokenizer, conv,
+                tolerance=ZERO_GAP_TOLERANCE, progress=schedule_progress)
+            if (actual_schedule.get("passes") is not True or
+                    actual_schedule.get("complete_prefix_token_ids") != prefix_ids or
+                    actual_schedule.get("semantic_scoring_performed") is not False):
+                raise CoherentStateError(
+                    f"{cid}: actual rendered prefix schedule gate failed")
+            existing = json.loads(path.read_text())
+            _release_cuda()
             durable_generation = bool(
                 (existing.get("capture_progress") or {}).get(
                     "generated_source_persisted"))
@@ -1214,7 +1243,7 @@ def parse_args():
               "mode; retained for launch-script clarity"))
     ap.add_argument(
         "--semantic-authorization", type=Path,
-        help=("explicit prior committed v6 technical PASS directory; enables "
+        help=("explicit prior committed v7 technical PASS directory; enables "
               "the otherwise unreachable separate semantic process"))
     ap.add_argument(
         "--technical-result-commit",
@@ -1333,11 +1362,14 @@ def _terminalize_gate_lifecycle(gates: dict, failure: dict | None = None) -> dic
             continue
         status = stage.get("status")
         if status in {"PENDING", "RUNNING"}:
-            stage["status"] = "SKIPPED_DEPENDENCY"
+            stage["status"] = (
+                "ERROR" if status == "RUNNING" else "SKIPPED_DEPENDENCY")
             stage["passes"] = False
             stage["completed_at"] = utc_now()
             stage["failure_evidence"] = {
-                "failed_prerequisite": "driver_or_prior_gate_failure",
+                "failed_prerequisite": (
+                    name if status == "RUNNING" else
+                    "driver_or_prior_gate_failure"),
                 "reason": ((failure or {}).get("error") or
                            "attempt terminated before this stage closed"),
                 "prior_status": status,
@@ -1438,7 +1470,7 @@ def _technical_main(args) -> int:
     geometry = None
     backend_fingerprint = None
     context_limit = None
-    gate_schema = v6_gate_schema(
+    gate_schema = v7_gate_schema(
         identity_tolerance=IDENTITY_TOLERANCE,
         zero_gap_tolerance=ZERO_GAP_TOLERANCE,
         case_dir=args.donor_dir, donor_dir=args.donor_dir)
@@ -1481,11 +1513,17 @@ def _technical_main(args) -> int:
     })
 
     try:
+        phase = "STATIC_PROVENANCE"
+        static_stage = dict(gate_sink["static_provenance"])
+        static_stage.update({
+            "status": "RUNNING", "started_at": utc_now(),
+            "observed_coverage": 0,
+        })
+        gate_sink["static_provenance"] = static_stage
         _static_design_self_check()
         missing = [path for path in AMENDMENT_PATHS if not path.is_file()]
         if missing:
             raise CoherentStateError(f"missing frozen amendments: {missing}")
-        phase = "STATIC_PROVENANCE"
         repo = Path(git_value("rev-parse", "--show-toplevel")).resolve()
         provenance = runtime_provenance(run_dir)
         apparatus = apparatus_inventory(repo)
@@ -1496,6 +1534,23 @@ def _technical_main(args) -> int:
         _, donor_provenance = load_external_donors(args.donor_dir)
         static_fingerprint = _build_static_fingerprint(
             args, provenance, subject_metadata, donor_provenance, apparatus)
+        static_stage.update({
+            "status": "PASS", "passes": True,
+            "observed_coverage": 1, "completed_at": utc_now(),
+            "failure_evidence": None,
+            "raw": {
+                "fingerprint_static_sha256": sha256_json(static_fingerprint),
+                "apparatus_inventory_sha256": sha256_json(apparatus),
+                "input_inventory_sha256": sha256_json(
+                    static_fingerprint["input_inventory"]),
+                "code_commit": static_fingerprint["code_commit"],
+                "model": MODEL, "revision": REVISION,
+                "dtype": "torch.bfloat16",
+                "attention_backend": ATTENTION_BACKEND,
+                "technical_only": True,
+            },
+        })
+        gate_sink["static_provenance"] = static_stage
         persist_running(dict(gate_sink), fingerprint_static=static_fingerprint)
         atomic_write_json(manifest_path, {
             "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
@@ -1513,6 +1568,7 @@ def _technical_main(args) -> int:
             stage = dict(gate_sink["attention_backend"])
             stage.update({
                 "status": "RUNNING",
+                "started_at": stage.get("started_at") or utc_now(),
                 "observed_coverage": len(partial.get("layers", [])),
                 "raw": partial,
             })

@@ -164,6 +164,7 @@ def test_technical_pass_exits_after_receipt_without_runner(
         "schema": 2, "design_id": driver.DESIGN_ID,
         "amendment_id": driver.AMENDMENT_ID, "code_commit": "b" * 40,
         "apparatus_inventory": {"aggregate_sha256": "c" * 64},
+        "input_inventory": {"files": [], "aggregate_sha256": "e" * 64},
     }
     monkeypatch.setattr(driver, "AMENDMENT_PATHS", ())
     monkeypatch.setattr(driver, "_static_design_self_check", lambda: None)
@@ -182,15 +183,18 @@ def test_technical_pass_exits_after_receipt_without_runner(
     monkeypatch.setattr(driver, "load_external_donors", lambda _path: ({}, {}))
     monkeypatch.setattr(
         driver, "_build_static_fingerprint", lambda *_args: static)
-    monkeypatch.setattr(
-        driver, "load_subject",
-        lambda *_args, **_kwargs: (object(), object(), {"layers": 48}, backend))
+    def load_subject_with_progress(*_args, **kwargs):
+        kwargs["backend_progress"]({"layers": [{"layer_index": 0}]})
+        return object(), object(), {"layers": 48}, backend
+
+    monkeypatch.setattr(driver, "load_subject", load_subject_with_progress)
     monkeypatch.setattr(driver, "model_context_limit", lambda _model: 40_960)
     called = {}
 
     def gates(_model, _tokenizer, **kwargs):
         called.update(kwargs)
         sink = kwargs["diagnostic_sink"]
+        assert sink["attention_backend"]["status"] == "RUNNING"
         for stage_name in sink["stage_order"]:
             stage = dict(sink[stage_name])
             stage["status"] = "PASS"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Separate Amendment-6 semantic process, cryptographically bound to a committed
+# Separate Amendment-7 semantic process, cryptographically bound to a committed
 # technical PASS.  This script is inventoried by the technical attestation.
 set -euo pipefail
 
@@ -11,7 +11,7 @@ TECHNICAL_RUN_DIR="${SC_TECHNICAL_RUN_DIR:?SC_TECHNICAL_RUN_DIR is required}"
 MODEL="Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION="0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-RUN_DIR="${SC_SEMANTIC_RUN_DIR:-results/coherent_state/coherent_state_gapped_v6_semantic_Qwen3-30B-A3B-Instruct-2507_${STAMP}}"
+RUN_DIR="${SC_SEMANTIC_RUN_DIR:-results/coherent_state/coherent_state_gapped_v7_semantic_Qwen3-30B-A3B-Instruct-2507_${STAMP}}"
 CLONE_TMP="/workspace/repo_${STAMP}.tmp"
 
 echo "START COHERENT_STATE_SEMANTIC $(date -Is)"
@@ -59,6 +59,15 @@ cd "$REPO"
 python3 -m pip install -q --upgrade pip
 python3 -m pip install -q "transformers==5.0.0" "accelerate==1.14.0" \
   "safetensors==0.8.0" "huggingface_hub==1.22.0" "sentencepiece==0.2.1"
+python3 - <<'PY'
+import torch
+print("SETUP torch", torch.__version__, "cuda", torch.version.cuda)
+if torch.__version__ != "2.4.1+cu124" or torch.version.cuda != "12.4":
+    raise SystemExit(
+        f"FATAL: ambient torch/CUDA drifted: {torch.__version__}/{torch.version.cuda}")
+if not torch.cuda.is_available():
+    raise SystemExit("FATAL: CUDA unavailable")
+PY
 
 COMMON=(
   --run-dir "$RUN_DIR"

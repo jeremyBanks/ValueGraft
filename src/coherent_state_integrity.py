@@ -1,4 +1,4 @@
-"""Terminal integrity and two-process authorization for coherent-state v6.
+"""Terminal integrity and two-process authorization for coherent-state v7.
 
 This module deliberately contains no model execution.  It seals terminal
 apparatus payloads, inventories the complete executable apparatus, and verifies
@@ -19,8 +19,8 @@ from typing import Any, Iterable
 
 
 SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v6"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
+DESIGN_ID = "coherent-state-gapped-v7"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7"
 INDEX_NAME = "terminal_artifact_index.json"
 RECEIPT_NAME = "terminal_receipt.json"
 
@@ -34,6 +34,7 @@ APPARATUS_REQUIRED = (
     "COHERENT-STATE-PREREGISTRATION-AMENDMENT-4.md",
     "COHERENT-STATE-PREREGISTRATION-AMENDMENT-5.md",
     "COHERENT-STATE-PREREGISTRATION-AMENDMENT-6.md",
+    "COHERENT-STATE-PREREGISTRATION-AMENDMENT-7.md",
     "src/analyze_coherent_state.py",
     "src/arms_common.py",
     "src/coherent_state_calibration.py",
@@ -46,6 +47,7 @@ APPARATUS_REQUIRED = (
     "src/cross_arch_probe.py",
     "src/l_coherent_state_hf.py",
     "src/kvlib_hf.py",
+    "src/pod.py",
     "src/run_coherent_state_hf.py",
     "src/validate_coherent_external_donors.py",
     "scripts/classify_pod.sh",
@@ -54,6 +56,8 @@ APPARATUS_REQUIRED = (
     "scripts/job_coherent_state_bf16.sh",
     "scripts/job_coherent_state_semantic_bf16.sh",
     "scripts/launch_pod.sh",
+    "scripts/preflight.py",
+    "scripts/preflight.sh",
     "scripts/validate_coherent_harvest.py",
     "scripts/watch_coherent_state_pod.sh",
 )
