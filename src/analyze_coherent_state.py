@@ -188,7 +188,12 @@ def analyze(docs):
     validate_docs(docs)
     rows = contrast_rows(docs)
     technical = technical_gate(docs)
-    regime = regime_gate(docs) if docs else {"passes": False}
+    # The regime gate is frozen at the first six conversations. At N=12 it must
+    # not be recomputed over the extension, which could reverse the preregistered
+    # stage-one decision after treatment outcomes were observed.
+    regime_docs = docs[:6]
+    regime = regime_gate(regime_docs) if regime_docs else {"passes": False}
+    regime["frozen_at_n"] = len(regime_docs)
     calibration = calibration_fires(docs)
     contrasts = {
         name: {"rows": vals, "t": t_interval(vals),

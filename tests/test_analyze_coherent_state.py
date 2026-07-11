@@ -69,6 +69,15 @@ def test_final_intersection_channel_claim_needs_both_intervals():
     assert out["interpretation"] == "HISTORY_CHANNEL_KV_SPLIT_LOSES_IT"
 
 
+def test_n12_regime_gate_remains_frozen_to_first_six():
+    docs = _docs(n=12, headroom=0.6)
+    for doc in docs[6:]:
+        doc["conversation_outcomes"]["A_full"] = -10.0
+    out = analyze(docs)
+    assert out["regime_gate"]["passes"]
+    assert out["regime_gate"]["frozen_at_n"] == 6
+
+
 def test_missing_arm_and_noncontiguous_order_fail_closed():
     docs = _docs()
     del docs[0]["conversation_outcomes"]["K_only"]

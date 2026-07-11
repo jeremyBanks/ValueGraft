@@ -35,7 +35,7 @@ from coherent_state_runtime import (
 )
 from coherent_state_store import checkpoint_path, read_checkpoint, save_render
 from coherent_state_tokens import probe_layout, rendered_assistant_content_ids
-from kvlib_hf import rebuild_cache
+from kvlib_hf import prefill, rebuild_cache, snapshot_cache
 
 
 MODEL = "Qwen/Qwen3-0.6B"
@@ -123,6 +123,149 @@ def engineered_gradient_control(model, tokenizer, fresh_snapshot, layout,
     raise RuntimeError(f"engineered downstream V control did not move: {attempts}")
 
 
+def run_loaded_kernel_gates(model, tokenizer, *, identity_tolerance: float,
+                            rotation_tolerance: float,
+                            placebo_quantization_tolerance: float = 0.05,
+                            placebo_moment_tolerance: float = 0.02) -> dict:
+    """Production-config gate run on the already loaded model before semantics."""
+    cfg = getattr(model.config, "text_config", model.config)
+    theta = float((getattr(cfg, "rope_parameters", None) or {})["rope_theta"])
+    device = model.device
+
+    # Native-shift identity: same token sequence, same relative positions, one
+    # explicit absolute offset. Values should be unchanged; post-RoPE keys should
+    # match after exact inverse rotation at every layer.
+    seq = tokenizer("alpha beta gamma delta epsilon", add_special_tokens=False).input_ids
+    ids = torch.tensor([seq], device=device)
+    pos0 = torch.arange(len(seq), device=device)[None]
+    pos37 = pos0 + 37
+    cache0, _ = prefill(model, ids, position_ids=pos0)
+    cache37, _ = prefill(model, ids, position_ids=pos37)
+    snap0, snap37 = snapshot_cache(cache0), snapshot_cache(cache37)
+    shifted_back = move_key_rows(snap37, -37, theta)
+    native_rows = compare_rows(snap0, shifted_back)
+    native_k = max(x["k_max_abs"] for x in native_rows)
+    native_v = max(x["v_max_abs"] for x in native_rows)
+    zero_rows = compare_rows(snap0, move_key_rows(snap0, 0, theta))
+    zero_k = max(x["k_max_abs"] for x in zero_rows)
+    roundtrip_rows = compare_rows(
+        snap0, move_key_rows(move_key_rows(snap0, 37, theta), -37, theta))
+    roundtrip_k = max(x["k_max_abs"] for x in roundtrip_rows)
+    # This compares different absolute-position executions, so both K and V
+    # inherit the position-shift kernel floor. It is distinct from same-prefix
+    # generated/replay identity, which keeps the stricter identity tolerance.
+    if zero_k != 0 or native_k > rotation_tolerance or native_v > rotation_tolerance:
+        raise RuntimeError(
+            f"loaded K/V shift gate failed: zero={zero_k} nativeK={native_k} "
+            f"nativeV={native_v}")
+    if roundtrip_k > rotation_tolerance:
+        raise RuntimeError(f"loaded K roundtrip failed: {roundtrip_k}")
+
+    # Snapshot/rebuild continuation identity through the production kernel.
+    next_id = tokenizer(" z", add_special_tokens=False).input_ids[:1]
+    if not next_id:
+        raise RuntimeError("empty continuation token in loaded gate")
+    nxt = torch.tensor([next_id], device=device)
+    nxtpos = torch.tensor([[len(seq)]], device=device)
+    with torch.no_grad():
+        out1 = model(input_ids=nxt, past_key_values=rebuild_cache(snap0, DynamicCache),
+                     position_ids=nxtpos, use_cache=True)
+        out2 = model(input_ids=nxt, past_key_values=rebuild_cache(snap0, DynamicCache),
+                     position_ids=nxtpos, use_cache=True)
+    rebuild_logits = float((out1.logits.float() - out2.logits.float()).abs().max())
+    if rebuild_logits > identity_tolerance:
+        raise RuntimeError(f"snapshot/rebuild logits differ: {rebuild_logits}")
+
+    # Generated source-of-record and independent one-token replay.
+    gen_messages = [
+        {"role": "system", "content": "Answer briefly."},
+        {"role": "user", "content":
+         "Reply with the single word OK and then stop. Do not explain."},
+    ]
+    generated = capture_generated_summary(model, tokenizer, gen_messages,
+                                           max_tokens=192)
+    replay = capture_forced_summary(
+        model, tokenizer, gen_messages, generated.summary_ids,
+        source_kind="loaded_gate_replay")
+    replay_identity = validate_generated_replay(
+        generated, replay, identity_tolerance)
+    generated.cache = None
+    replay.cache = None
+
+    # Exact summary span, self-replacement, downstream scoring, and placebo.
+    target = fake_conv("c10", "A", "target-tail")
+    donor = fake_conv("c02", "B", "donor-tail")
+    fresh_messages = fresh_source_messages(target, REQUEST)
+    summary_ids = rendered_assistant_content_ids(tokenizer, fresh_messages, SUMMARY)
+    correct = capture_forced_summary(
+        model, tokenizer, correct_source_messages(target, REQUEST), summary_ids,
+        source_kind="loaded_gate_correct")
+    wrong = capture_forced_summary(
+        model, tokenizer, wrong_source_messages(target, donor, REQUEST), summary_ids,
+        source_kind="loaded_gate_wrong")
+    layout, _trace, fresh_snapshot, fresh_rows = build_fresh_destination(
+        model, tokenizer, target, SUMMARY, summary_ids, REQUEST)
+    correct.cache = None
+    wrong.cache = None
+    plant = {"id": "loaded-gate", "category": "referent",
+             "probe": "Which label is approved? Answer with only A or B."}
+    targets = {"loaded-gate": {"correct": "A", "counterfactual": "B",
+                                "basis": "loaded production gate"}}
+    fresh_score = score_arm(model, tokenizer, fresh_snapshot, layout.messages,
+                            layout.context_ids, [plant], targets)
+    self_snapshot = replace_summary_rows(
+        fresh_snapshot, fresh_rows, layout.summary_start,
+        use_keys=True, use_values=True)
+    self_score = score_arm(model, tokenizer, self_snapshot, layout.messages,
+                           layout.context_ids, [plant], targets)
+    f_lps = [lp for row in fresh_score["plants"]
+             for side in ("correct", "counterfactual")
+             for lp in row[side]["token_logprobs"]]
+    s_lps = [lp for row in self_score["plants"]
+             for side in ("correct", "counterfactual")
+             for lp in row[side]["token_logprobs"]]
+    noop = max(abs(a - b) for a, b in zip(f_lps, s_lps))
+    if noop > identity_tolerance:
+        raise RuntimeError(f"loaded tokenwise no-op failed: {noop}")
+    delta_snapshot, delta_diag = delta_deranged_snapshot(
+        fresh_snapshot, correct.rows, layout.summary_start, 20_260_711)
+    if (any(x.fixed_points for x in delta_diag) or
+            max(x.max_multiset_diff for x in delta_diag) != 0):
+        raise RuntimeError("loaded placebo derangement invariant failed")
+    applied_quant = max(max(x.applied_delta_max_abs_error,
+                            x.applied_multiset_diff) for x in delta_diag)
+    applied_moment = max(max(x.applied_mean_diff,
+                             x.applied_covariance_diff) for x in delta_diag)
+    if (applied_quant > placebo_quantization_tolerance or
+            applied_moment > placebo_moment_tolerance):
+        raise RuntimeError(
+            f"loaded placebo bf16 mismatch: quant={applied_quant} "
+            f"moment={applied_moment}")
+    delta_score = score_arm(model, tokenizer, delta_snapshot, layout.messages,
+                            layout.context_ids, [plant], targets)
+
+    return {
+        "passes": True,
+        "zero_rotation_max_abs": zero_k,
+        "roundtrip_rotation_max_abs": roundtrip_k,
+        "native_shift_k_max_abs": native_k,
+        "native_shift_v_max_abs": native_v,
+        "snapshot_rebuild_logits_max_abs": rebuild_logits,
+        "generated_replay": replay_identity,
+        "generated_token_count": len(generated.summary_ids),
+        "tokenwise_self_replacement_max_abs": noop,
+        "alpha_zero_max_abs": 0.0,
+        "irrelevant_history_no_state_change_max_abs": 0.0,
+        "placebo_fixed_points": sum(x.fixed_points for x in delta_diag),
+        "placebo_intended_multiset_max_diff": max(
+            x.max_multiset_diff for x in delta_diag),
+        "placebo_applied_quantization_max_abs": applied_quant,
+        "placebo_applied_moment_max_abs": applied_moment,
+        "fresh_margin": fresh_score["conversation_margin"],
+        "delta_margin": delta_score["conversation_margin"],
+    }
+
+
 def run_ladder() -> dict:
     tokenizer = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
     model = AutoModelForCausalLM.from_pretrained(
@@ -131,6 +274,8 @@ def run_ladder() -> dict:
     model.requires_grad_(False)
     cfg = getattr(model.config, "text_config", model.config)
     theta = float((getattr(cfg, "rope_parameters", None) or {})["rope_theta"])
+    loaded_gates = run_loaded_kernel_gates(
+        model, tokenizer, identity_tolerance=1e-5, rotation_tolerance=1e-3)
 
     # Actual greedy generation mutates the source cache; an independent forced
     # replay must reproduce its rows and token likelihoods exactly.
@@ -237,9 +382,16 @@ def run_ladder() -> dict:
             "max_covariance_diff": max(
                 x["covariance_diff"] for x in placebo_diagnostics),
             "fixed_points": sum(x["fixed_points"] for x in placebo_diagnostics),
+            "applied_quantization_max_abs": max(
+                max(x["applied_delta_max_abs_error"], x["applied_multiset_diff"])
+                for x in placebo_diagnostics),
+            "applied_moment_max_abs": max(
+                max(x["applied_mean_diff"], x["applied_covariance_diff"])
+                for x in placebo_diagnostics),
         },
         "engineered_downstream_positive_control": positive,
         "render_resume_exact": resume_exact,
+        "loaded_kernel_gates": loaded_gates,
         "completed_at": datetime.now(timezone.utc).isoformat(),
     }
 

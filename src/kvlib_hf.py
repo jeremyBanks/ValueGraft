@@ -39,10 +39,11 @@ def snapshot_cache(cache):
     return out
 
 
-def rebuild_cache(snap, cache_cls):
+def rebuild_cache(snap, cache_cls, *, clone=True):
     cache = cache_cls()
     for i, (k, v) in enumerate(snap):
-        cache.update(k.clone(), v.clone(), i)
+        cache.update(k.clone() if clone else k,
+                     v.clone() if clone else v, i)
     return cache
 
 

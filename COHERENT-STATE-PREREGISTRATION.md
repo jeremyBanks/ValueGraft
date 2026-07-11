@@ -275,3 +275,24 @@ result existed:
    opposite labels; fresh states neither. All force the exact rendered sentence
    “The recorded choice remains the approved one.” and score the same downstream
    exact-answer probe. It is excluded from the primary estimates as specified.
+4. The memory bound is operationally clarified as one immutable full base plus
+   one transient scoring branch (never three full destination copies), alongside
+   the bounded summary slices. Branch ownership is transferred into the live
+   cache and released after each target; a new branch is constructed for the next
+   target. This is the minimum needed to score counterfactual branches without
+   repeatedly re-prefilling the full compacted context.
+5. The delta placebo's intended float32 treatment delta remains an exact
+   fixed-point-free row permutation. Because the live cache is bf16, adding that
+   delta to a different fresh row can round the stored value, making exact equality
+   of the *applied* delta mathematically unavailable. The harness therefore records
+   both the exact intended-permutation invariants and the applied bf16 multiset,
+   mean, covariance, and maximum quantization error; it fails if any applied
+   discrepancy exceeds the pre-outcome absolute tolerance `0.05`. The paper must
+   describe this finite-precision qualification rather than call the stored bf16
+   deltas exactly matched.
+6. Same-prefix generated/replay identity retains the `1e-4` bound. The distinct
+   native absolute-position-shift check uses the frozen `0.02` production RoPE
+   kernel bound for both re-rotated K and unchanged V: even in local float32, the
+   all-layer absolute-position comparison observed roughly `1.46e-4` drift in V
+   while exact same-prefix replay remained bit-identical. The failed stricter
+   attempt is preserved in `results/coherent_state_ladder/`.

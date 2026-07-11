@@ -181,6 +181,10 @@ class DerangementDiagnostics:
     max_multiset_diff: float
     mean_diff: float
     covariance_diff: float
+    applied_delta_max_abs_error: float
+    applied_multiset_diff: float
+    applied_mean_diff: float
+    applied_covariance_diff: float
 
 
 def _moment_diffs(original: torch.Tensor,
@@ -230,11 +234,23 @@ def delta_deranged_snapshot(fresh_snapshot: Snapshot, correct_rows: Snapshot,
             v2[:, head, destination_start:end, :] = \
                 (fresh_rows[:, head] + dperm).to(v2.dtype)
             multiset, mean, cov = _moment_diffs(delta[0], dperm[0])
+            applied = (v2[:, head, destination_start:end, :].float()
+                       - fresh_rows[:, head])
+            applied_error = float((applied - dperm).abs().max().item())
+            _unused_sort_diff, applied_mean, applied_cov = _moment_diffs(
+                delta[0], applied[0])
             diagnostics.append(DerangementDiagnostics(
                 seed=head_seed, layer=li, head=head,
                 permutation=tuple(perm), fixed_points=0,
                 max_multiset_diff=multiset, mean_diff=mean,
-                covariance_diff=cov))
+                covariance_diff=cov,
+                applied_delta_max_abs_error=applied_error,
+                # The intended-to-applied row correspondence is known (dperm),
+                # so its max pointwise error is a valid upper bound on optimal
+                # multiset matching. Sorting by near-equal row sums is unstable.
+                applied_multiset_diff=applied_error,
+                applied_mean_diff=applied_mean,
+                applied_covariance_diff=applied_cov))
         out.append((kf.clone(), v2))
     return out, diagnostics
 

@@ -69,6 +69,8 @@ def test_delta_placebo_is_exact_per_head_delta_permutation():
         assert d.max_multiset_diff == 0.0
         assert d.mean_diff < 1e-5
         assert d.covariance_diff < 1e-4
+        assert d.applied_delta_max_abs_error == 0.0
+        assert d.applied_multiset_diff == 0.0
     for li, ((kf, vf), (kp, vp), (_, vc)) in enumerate(zip(fresh, placebo, correct)):
         assert torch.equal(kp, kf)
         assert torch.equal(vp[..., :start, :], vf[..., :start, :])
@@ -81,6 +83,19 @@ def test_delta_placebo_is_exact_per_head_delta_permutation():
             assert torch.equal(
                 torch.sort(original.sum(-1)).values,
                 torch.sort(observed.sum(-1)).values)
+
+
+def test_bfloat16_placebo_reports_applied_rounding_separately():
+    fresh = [(torch.randn(1, 2, 7, 8, dtype=torch.bfloat16),
+              torch.randn(1, 2, 7, 8, dtype=torch.bfloat16))]
+    rows = fresh[0][1][..., 1:6, :]
+    correct = [(fresh[0][0][..., 1:6, :].clone(),
+                (rows.float() + torch.randn_like(rows.float()) * 0.1).to(
+                    torch.bfloat16))]
+    _, diagnostics = delta_deranged_snapshot(fresh, correct, 1, seed=7)
+    assert all(d.max_multiset_diff == 0 for d in diagnostics)
+    assert all(d.applied_delta_max_abs_error >= 0 for d in diagnostics)
+    assert all(d.applied_multiset_diff >= 0 for d in diagnostics)
 
 
 def test_key_move_roundtrip_is_small():

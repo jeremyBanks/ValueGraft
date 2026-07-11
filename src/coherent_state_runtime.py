@@ -213,10 +213,15 @@ def arm_snapshot(arm: str, fresh_snapshot: Snapshot, correct_rows: Snapshot,
 
 def score_target(model, tokenizer, snapshot: Snapshot,
                  context_messages: list[dict], context_ids: Sequence[int],
-                 probe: str, target: str) -> dict:
+                 probe: str, target: str, *, consume_snapshot: bool = False) -> dict:
     layout = probe_layout(tokenizer, context_messages, context_ids, probe, target)
     feed = teacher_forcing_feed(layout)
-    cache = rebuild_cache(snapshot, DynamicCache)
+    cache = rebuild_cache(snapshot, DynamicCache, clone=not consume_snapshot)
+    if consume_snapshot:
+        # Transfer ownership of the full branch to DynamicCache. The caller must
+        # build a new branch for another target; this bounds production scoring
+        # to one persistent fresh base plus one transient working cache.
+        snapshot.clear()
     pos = _positions(model, len(context_ids), len(feed))
     token_lps = tf_logprobs(model, cache, feed, layout.target_ids,
                            position_ids=pos)
