@@ -230,6 +230,18 @@ def test_tampered_sidecar_reference_fails(tmp_path):
         _validate(repo, launch, result, apparatus)
 
 
+@pytest.mark.parametrize("bad_row", ["duplicate", "non-object"])
+def test_duplicate_or_nonobject_artifact_rows_fail(tmp_path, bad_row):
+    def mutate(manifest, _sidecars, _parent):
+        if bad_row == "duplicate":
+            manifest["artifact_files"].append(dict(manifest["artifact_files"][0]))
+        else:
+            manifest["artifact_files"][0] = "not-an-object"
+    repo, launch, result, apparatus = _fixture(tmp_path, mutate)
+    with pytest.raises(MODULE.ReleaseError, match="artifact file inventory"):
+        _validate(repo, launch, result, apparatus)
+
+
 def test_wrong_scientific_identity_fails(tmp_path):
     def mutate(manifest, _sidecars, _parent):
         manifest["design_id"] = "coherent-state-gapped-v999"

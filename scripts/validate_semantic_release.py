@@ -652,10 +652,16 @@ def validate_ladder_commit(
         raise ReleaseError("ladder stage references are not exact")
 
     artifact_rows = manifest.get("artifact_files")
-    if not isinstance(artifact_rows, list):
+    if (not isinstance(artifact_rows, list) or
+            len(artifact_rows) != len(STAGE_ORDER) or
+            any(not isinstance(row, dict) for row in artifact_rows)):
         raise ReleaseError("ladder artifact file inventory is absent")
+    artifact_paths = [row.get("path") for row in artifact_rows]
+    if (any(not isinstance(path, str) for path in artifact_paths) or
+            len(set(artifact_paths)) != len(STAGE_ORDER)):
+        raise ReleaseError("ladder artifact file inventory is not unique")
     artifact_by_path = {
-        row.get("path"): row for row in artifact_rows if isinstance(row, dict)
+        row["path"]: row for row in artifact_rows
     }
     if set(artifact_by_path) != {
             ref.get("path") for ref in refs.values() if isinstance(ref, dict)}:
