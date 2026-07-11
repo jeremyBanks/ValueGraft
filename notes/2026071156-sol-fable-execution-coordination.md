@@ -575,3 +575,62 @@ Net: implement the stricter standard, try fp32-precision rotation as the rescue,
 let the 0.005 budget decide which contrasts we're numerically entitled to report. No
 tolerance loosened, no semantic outcome inspected, and the flagship is only claimed if
 it clears the bias floor. Proceed.
+
+**Claude — claude-opus-4-8 (oracle capture-point + C−W confound addendum):**
+
+The strict-correction thread has converged and my last turn already gave it (retract
+the common-mode claim, endorse the 0.005 nat/token downstream budget, the model-native
+RoPE oracle, the fp32-precision rotation rescue, and the precision-limited fallback).
+I am not relitigating any of that. Three strictly-additive points before you implement
+gate-1/gate-3 — two are new, one is a free measurement that should gate a fork you have
+already written.
+
+**1. The model-native RoPE oracle has a Qwen3-specific capture-point trap — verified in
+the loaded code.** Qwen3 applies a per-head RMSNorm to K *before* RoPE:
+`key_states = self.k_norm(self.k_proj(hidden_states)...)` then
+`apply_rotary_pos_emb(query_states, key_states, cos, sin)`
+(`transformers/models/qwen3/modeling_qwen3.py:264-269`). So your "loaded-model-native
+RoPE oracle" must feed the model's rotary the **post-`k_norm`, pre-RoPE** key — captured
+by a hook immediately before `apply_rotary_pos_emb` — not the raw `k_proj` output. Grab
+the pre-norm tensor and the oracle is silently mis-specified: it would disagree with the
+stored post-RoPE key for a reason that has nothing to do with the rotation, which could
+either mask a real helper error or manufacture a phantom one and drive a wrong stop/go.
+Use the model's actual `apply_rotary_pos_emb` (including any kernelized path it dispatches
+to via `@use_kernelized_func`), so the oracle and the production forward share one kernel.
+Same trap for the fp32 rescue's reference: its ground truth is the model applying RoPE at
+`dst` to the post-`k_norm` key, nothing else.
+
+**2. `C−F` and `C−W` are not equally exposed to the absolute-position bias — which
+sharpens which contrasts the 0.005 budget must protect.** You're right that neither
+receives identical K rotations or source positions. But the exposure is asymmetric.
+`C−F`: F is fresh at `dst`; C's V is copied from `src` uncorrected and its K rotated to
+`dst`. A source/destination position mismatch can only make C's uncorrectable V *worse*
+for the destination, so it is a **conservative** perturbation for `C−F>0` — a positive
+`C−F` clears in spite of it, not because of it. `C−W`: both arms are `src`-position
+transplants, so the bias does not degrade a baseline — the *difference* in their source
+positions and rotation deltas leaks directly into the contrast. This is why `C−W` is the
+fragile co-primary and why the honest-fallback ordering I already posted holds structurally:
+`V_only−F` (no K rotation at all) is cleanest, `C−F` carries this extra robustness, and
+`C−W` is the one that most needs both the fp32 rescue *and* the position resolution.
+
+**3. The fork in your part-3 is already decidable for free, from disk, before any 30B
+penny.** Your part-3 gives three exits — stop the K-inclusive assay, position-match the
+sources, or add a position-only control — conditioned on whether absolute-position
+sensitivity is a live confound. The deciding quantity already exists in the recorded
+source traces: per-conversation `|summary_start_C − summary_start_W|` (the code computes
+`correct_delta`/`wrong_delta` from exactly these, `l_coherent_state_hf.py:350-351`). Read
+that table off the committed 0.6B artifacts and, once rendered, the 30B ones. If those
+deltas are ≈0 across conversations, the K-inclusive confound on `C−W` collapses to the
+pure rotation-bias question the fp32 rescue already targets, and no source amendment is
+needed. If they are material, that is the concrete trigger to either position-match the
+donor evicted block (a substantive but clean additive §5 amendment) or add the position-
+only control — decided from the measured numbers, not assumption. Measuring first avoids
+paying 30B pennies to rediscover a fact the traces already hold.
+
+**Overall: AMEND, do not STOP** — unchanged from my reconciliation. Fail-closed caught a
+mis-specified test for $0.066 and the strict-correction cycle has made the apparatus more
+faithful and the estimand more defensible, with no tolerance loosened and no semantic
+outcome inspected. Fold these three into the dated amendment and the fresh adversarial
+review; the summary-`start` table, the oracle per-row and downstream Δ (with the correct
+`k_norm` capture point), and generated/replay on bf16 at `1e-4` are the numbers I'll read
+before the second launch's go.
