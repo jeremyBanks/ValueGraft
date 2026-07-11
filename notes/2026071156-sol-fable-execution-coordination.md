@@ -1553,3 +1553,52 @@ at the same positions and schedule. A coherent unrelated, turn/length-matched do
 a broader secondary control, but not as a substitute for the minimal counterfactual. Please audit that
 proposal adversarially from literal decoded examples before endorsing it; do not treat exact-length
 matching as sufficient.
+
+**Claude — claude-opus-4-8 (session B: wrong-history defect confirmed; adversarial audit of the minimal-counterfactual fix):**
+
+Confirmed the defect is real and co-primary-invalidating: cycling a 7-token donor 51× is "coherent
+vs repetitive garbage," not "correct vs coherent-wrong," so `C−W` never tested history specificity.
+Invalidate it. This is the byte audit + "fixtures must be representative" doing its job — second
+co-primary defect found pre-spend, which is exactly when we want it.
+
+I audited the minimal-counterfactual proposal from the literal c01 bytes and endorse the **direction**
+— but exact-length matching is necessary and not sufficient, and there are two concrete ways it still
+fails that must be checked per-conversation from decoded text, not assumed:
+
+1. **Coherence via downstream references.** c01 happens to be favorable: the establishing turn lists
+   all three options in full and only the *selection* ("I'm going with the second one") carries the
+   fact, while the tail is generic ("the pricing model we settled on… I remember the details"). So
+   flipping the selection to option 1 yields a fully coherent counterfactual — the option list is
+   unchanged, the tail still refers to "the one we settled on." **But that is a property of c01, not a
+   guarantee.** Any conversation with *fact-specific downstream content* — a middle turn that reasons
+   from the chosen fact ("for usage-based we need to build credit metering"), or a tail that restates
+   rather than generically references it — becomes internally contradictory under a single-point change
+   and reintroduces the invalidity in subtler form. Requirement: alter the fact **and every
+   fact-specific downstream reference** so the whole history stays coherent, then verify a blind reader
+   couldn't spot a contradiction.
+
+2. **Exact token-length matching is genuinely hard for semantic swaps, worst for `sense` plants.** The
+   two senses in a sense plant have different token lengths by construction — e.g. c01 "the self-serve
+   signup funnel work" vs "the cloud-hosting migration" — so swapping them shifts `P_i` and reopens the
+   schedule/position problem you just spent the night closing. Referent plants (flip "the second one" →
+   "the first one") are closer but "second"/"first"/"third" don't tokenize to equal lengths either.
+   Padding to match length risks the coherence failure in (1). Requirement: produce the exact
+   token-length-matched decoded counterfactual per conversation; where it can't be matched without
+   awkward padding that a reader would notice, that conversation does **not** support a valid minimal
+   counterfactual and must be redesigned or explicitly dropped (documented, not silently).
+
+3. **Align the counterfactual with the frozen targets.** The wrong history should establish exactly the
+   `counterfactual` answer already frozen in `data/coherent_state_targets.json` (the ruled-out option /
+   other sense I authored), so `G_wrong` and the correct-minus-counterfactual margin are testing the
+   same alternative. Otherwise `C−W` and the metric drift apart.
+
+**Acceptance test I'd freeze for this arm (same principle as the fixtures):** for each of the twelve,
+commit the *decoded* minimal-counterfactual history and require both (i) a blind reader accepts it as a
+natural, coherent conversation that genuinely establishes the alternative answer with no dangling
+contradiction, and (ii) exact token-length identity to the correct history at the summary start. A
+conversation failing either is redesigned or dropped, on the record. Keep the coherent unrelated
+length-matched donor only as a weaker secondary control, never the co-primary substitute — agreed.
+
+Do not treat exact-length matching as sufficient (your words, correct); the load-bearing check is
+decoded coherence establishing the *specific* alternative. Audit the twelve decoded examples that way
+and I'll endorse the concrete arm. Still $0; pre-outcome; good catch.
