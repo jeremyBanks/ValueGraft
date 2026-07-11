@@ -507,3 +507,67 @@ deconflicted commit with tests+monitors observed green, carrying the authored-
 external-donor fixed-benchmark and position-preserving claim constraints.
 
 Note path: `notes/2026071157-opus-gapped-v2-launch-review.md`
+
+---
+
+**Claude — claude-opus-4-8 (final launch-commit delta):**
+
+Runtime model identifier: `claude-opus-4-8`. Bounded review of the four
+launch-commit deltas (`3419f56`, `9ebf2f9`, `547c6d8`, `b0a2fe3`), all ancestors of
+HEAD `f17e7d8`; working tree clean. I read every diff and the production-tokenizer
+artifact directly. These are strictly additive, fail-closed hardening — no gate is
+loosened and no surgery/masking/analysis/donor-map/arm/tolerance logic changes.
+
+- **`3419f56` + `9ebf2f9` — harvest fingerprint binding (verified).** The
+  independent, no-`src`-import harvest validator now requires **every scored
+  checkpoint's `fingerprint` to equal the terminal manifest fingerprint** on both
+  the COMPLETE and the ERROR/FAILURE paths, and fails closed if a scored checkpoint
+  is preserved with no/malformed manifest fingerprint. Since the fingerprint binds
+  the external donor provenance/hashes, scenario/target hashes, amendment SHAs, and
+  code commit, this catches donor/scenario/code tampering or checkpoint-mixing at
+  certification, complementing the analysis-side common-fingerprint check. Both
+  additions ship adversarial mutation tests (tampered `external_donor_provenance` →
+  COMPLETE raises "manifest fingerprint"; tampered `scenario_sha256` → FAILURE
+  raises). Void checkpoints stay unbound, which is correct — they carry failure
+  evidence, not scored outcomes.
+- **`547c6d8` + `b0a2fe3` — exact production-tokenizer donor preflight (verified).**
+  `src/validate_coherent_external_donors.py` resolves the exact
+  `Qwen3-30B-A3B-Instruct-2507@0d7cf2399…` snapshot, asserts the resolved revision,
+  and runs `matched_wrong_prefix_ids` over **all twelve** frozen external mappings
+  under the *production* tokenizer, recording per-mapping target/donor SHA-256,
+  recorded author, token counts, and U+FFFD decode-corruption counts, and asserting
+  twelve unique donor hashes. The committed artifact
+  (`…coherent_external_donors_gapped_v3_…_20260711T075800Z.json`) is observed
+  **PASS**: resolved revision == requested, `Qwen2Tokenizer` vocab 151669,
+  `n_rows=12`, `all_rows_pass=true`, `max_replacement_char=0`, `min_content_positions
+  6753`, `n_unique_donors=12`, identity `…AMENDMENTS-1-2-3` / `gapped-v3`. This
+  closes the one Amendment-3 launch-gate item my v3 review could only see exercised
+  on the 0.6B ladder tokenizer: the exact-length donor-slot construction now
+  provably tokenizes and decodes cleanly for every mapping under the real 30B
+  tokenizer — retiring a latent tokenizer-mismatch risk rather than assuming it.
+
+**New defect? None.** The deltas are small, fail-closed, and covered by tests. The
+external donors remain **authored/non-subject-native** controls with exact recorded
+authors (`sonnet` c13–c15, `opus` c16–c18, `codex-gpt5.5` c25–c27, `sonnet-render`
+c28–c30), now additionally hash-and-author-validated under the production tokenizer
+and fingerprint-bound across every harvest path. The full-suite **124 pass /
+monitor 35 clear** and the independent code auditor's GO corroborate the one item I
+could not execute here (test/model runs are sandbox-blocked this session); I
+attribute that observation to those runs, not my own execution. The v3 claim
+constraints are unchanged (position-preserving compaction; fixed-benchmark `GW`
+against authored external donor-slot controls, not superiority to every wrong
+history; N=6 interim only, confirmatory at N=12; 5e-4/bf16 disclosures; render-time
+corpus with the regime backstop).
+
+**VERDICT: GO (v3 GO preserved).** The four deltas are pure fail-closed hardening
+plus the production-tokenizer donor validation; they strengthen the launch posture,
+introduce no blocker, and close my last outstanding pre-launch verification gap.
+The remaining conditions are operational only: launch from this frozen, pushed,
+deconflicted clean commit.
+
+One-line verdict: **GO** — harvest-to-manifest fingerprint binding and the
+exact-production-tokenizer 12-mapping donor preflight (artifact PASS, zero decode
+corruption) are additive fail-closed hardening with no new defect; v3 GO preserved,
+launch from the frozen clean commit.
+
+Note path: `notes/2026071157-opus-gapped-v2-launch-review.md`
