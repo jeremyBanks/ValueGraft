@@ -809,6 +809,184 @@ def _validate_actual_render_schedule(doc: dict[str, Any], label: str) -> None:
         label=f"{label}.actual_render_schedule")
 
 
+def _validate_gapped_destination_schedule(
+        doc: dict[str, Any], label: str) -> None:
+    """Reconstruct the exact compacted prefix and all schedule aggregates."""
+    evidence = doc.get("pre_score_destination_schedule_equivalence")
+    conversation = doc.get("conversation")
+    summary = doc.get("summary")
+    correct_actual = (doc.get("sources") or {}).get("correct_actual")
+    if (not isinstance(evidence, dict) or not isinstance(conversation, dict) or
+            not isinstance(summary, dict) or not isinstance(correct_actual, dict)):
+        raise ValueError(f"{label} lacks gapped-destination schedule evidence")
+    if (evidence.get("status") != "PASS" or evidence.get("passes") is not True or
+            evidence.get("semantic_scoring_performed") is not False or
+            evidence.get("reference_complete") is not True or
+            evidence.get("alternative_complete") is not True or
+            evidence.get("measurement_complete") is not True or
+            evidence.get("failure_evidence") not in (None, [], {})):
+        raise ValueError(f"{label} gapped-destination verdict differs")
+
+    tokenizer = _validation_tokenizer()
+    messages = conversation.get("messages")
+    summary_text = summary.get("text")
+    summary_ids = summary.get("token_ids")
+    if (not isinstance(messages, list) or not messages or
+            not isinstance(summary_text, str) or not summary_text or
+            not isinstance(summary_ids, list) or not summary_ids or
+            any(not isinstance(value, int) for value in summary_ids)):
+        raise ValueError(f"{label} gapped-destination source evidence differs")
+    correct = _generation_prefix_ids(
+        tokenizer, list(messages) + [{"role": "user", "content": SUMMARY_REQUEST}])
+    fresh_messages = [
+        messages[0], {"role": "user", "content": SUMMARY_REQUEST}]
+    fresh = _generation_prefix_ids(tokenizer, fresh_messages)
+    rendered_summary = _rendered_assistant_ids(
+        tokenizer, fresh_messages, summary_text)
+    if (summary_ids != rendered_summary or
+            summary.get("token_sha256") !=
+            _sha256_ints(summary_ids, f"{label}.summary") or
+            summary.get("request") != SUMMARY_REQUEST or
+            summary.get("request_sha256") !=
+            hashlib.sha256(SUMMARY_REQUEST.encode()).hexdigest() or
+            correct_actual.get("prefix_token_ids") != correct or
+            correct_actual.get("prefix_sha256") !=
+            _sha256_ints(correct, f"{label}.correct_prefix") or
+            correct_actual.get("prefix_token_count") != len(correct) or
+            correct_actual.get("prefix_position_ids") != list(range(len(correct))) or
+            correct_actual.get("summary_token_ids") != summary_ids or
+            correct_actual.get("summary_token_sha256") !=
+            _sha256_ints(summary_ids, f"{label}.correct_summary") or
+            correct_actual.get("summary_start") != len(correct) or
+            correct_actual.get("summary_end") != len(correct) + len(summary_ids) or
+            correct_actual.get("summary_position_ids") != list(range(
+                len(correct), len(correct) + len(summary_ids)))):
+        raise ValueError(f"{label} gapped-destination saved source differs")
+
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    if len(marker_ids) != 1:
+        raise ValueError("production tokenizer im_start marker is not singular")
+    starts = [index for index, token in enumerate(fresh)
+              if token == int(marker_ids[0])]
+    if len(starts) != 3:
+        raise ValueError(f"{label} compacted prefix boundaries differ")
+    system_end = starts[1]
+    suffix = fresh[system_end:]
+    source_summary_start = len(correct)
+    request_logical_start = source_summary_start - len(suffix)
+    if (not suffix or request_logical_start < system_end or
+            correct[:system_end] != fresh[:system_end] or
+            correct[request_logical_start:] != suffix):
+        raise ValueError(f"{label} compacted logical islands differ")
+    prefix_positions = list(range(system_end)) + list(range(
+        request_logical_start, source_summary_start))
+    summary_positions = list(range(
+        source_summary_start, source_summary_start + len(summary_ids)))
+    physical_summary_start = len(fresh)
+    physical_summary_end = physical_summary_start + len(summary_ids)
+    production_partition = [system_end, len(fresh) - system_end]
+    alternative_partition = _chunk_widths(len(fresh))
+    expected_arrays = {
+        "prefix_token_ids": fresh,
+        "prefix_position_ids": prefix_positions,
+        "summary_token_ids": summary_ids,
+        "summary_position_ids": summary_positions,
+        "physical_prefix_cache_position_ids": list(range(len(fresh))),
+        "physical_summary_cache_position_ids": list(range(
+            physical_summary_start, physical_summary_end)),
+        "production_prefix_partition": production_partition,
+        "alternative_prefix_partition": alternative_partition,
+        "summary_step_widths": [1] * len(summary_ids),
+    }
+    if any(evidence.get(key) != value for key, value in expected_arrays.items()):
+        raise ValueError(f"{label} gapped-destination arrays/partitions differ")
+    if (evidence.get("prefix_token_sha256") !=
+            _sha256_ints(fresh, f"{label}.destination_prefix") or
+            evidence.get("prefix_position_sha256") !=
+            _sha256_ints(prefix_positions, f"{label}.destination_positions") or
+            evidence.get("summary_token_sha256") !=
+            _sha256_ints(summary_ids, f"{label}.destination_summary") or
+            evidence.get("summary_position_sha256") !=
+            _sha256_ints(summary_positions, f"{label}.summary_positions") or
+            evidence.get("system_end") != system_end or
+            evidence.get("request_logical_start") != request_logical_start or
+            evidence.get("source_summary_start") != source_summary_start or
+            evidence.get("physical_summary_start") != physical_summary_start or
+            evidence.get("physical_summary_end") != physical_summary_end):
+        raise ValueError(f"{label} gapped-destination hashes/bounds differ")
+
+    traces = []
+    for trace_name in ("reference_trace", "alternative_trace"):
+        trace = evidence.get(trace_name)
+        if (not isinstance(trace, dict) or trace.get("token_ids") != summary_ids or
+                trace.get("start_position") != source_summary_start or
+                trace.get("end_position") !=
+                source_summary_start + len(summary_ids) or
+                trace.get("ended_on_eos") is not False):
+            raise ValueError(
+                f"{label} gapped-destination {trace_name} differs")
+        logprobs = trace.get("token_logprobs")
+        if not isinstance(logprobs, list) or len(logprobs) != len(summary_ids):
+            raise ValueError(
+                f"{label} gapped-destination {trace_name} coverage differs")
+        traces.append([
+            _finite(value, f"{label}.{trace_name}.token_logprobs[{index}]")
+            for index, value in enumerate(logprobs)
+        ])
+    token_differences = [abs(left - right)
+                         for left, right in zip(traces[0], traces[1])]
+    if evidence.get("token_logprob_abs_differences") != token_differences:
+        raise ValueError(f"{label} gapped-destination tokenwise trace differs")
+    token_max = max(token_differences)
+    if _finite(evidence.get("token_logprob_max_abs"),
+               f"{label}.destination.token_max") != token_max:
+        raise ValueError(f"{label} gapped-destination token aggregate differs")
+
+    per_layer = evidence.get("per_layer")
+    if not isinstance(per_layer, list) or len(per_layer) != 48 or \
+            [row.get("layer") for row in per_layer] != list(range(48)):
+        raise ValueError(f"{label} gapped-destination layer coverage differs")
+    layer_k: list[float] = []
+    layer_v: list[float] = []
+    for layer, row in enumerate(per_layer):
+        k_rows = row.get("k_per_summary_token_max_abs")
+        v_rows = row.get("v_per_summary_token_max_abs")
+        if (not isinstance(k_rows, list) or len(k_rows) != len(summary_ids) or
+                not isinstance(v_rows, list) or len(v_rows) != len(summary_ids)):
+            raise ValueError(
+                f"{label} gapped-destination summary-row coverage differs: {layer}")
+        finite_k = [_finite(value, f"{label}.layer[{layer}].K[{index}]")
+                    for index, value in enumerate(k_rows)]
+        finite_v = [_finite(value, f"{label}.layer[{layer}].V[{index}]")
+                    for index, value in enumerate(v_rows)]
+        if any(value < 0 for value in finite_k + finite_v):
+            raise ValueError(
+                f"{label} gapped-destination negative absolute difference: {layer}")
+        k_max = max(finite_k)
+        v_max = max(finite_v)
+        if (_finite(row.get("k_max_abs"), f"{label}.layer[{layer}].Kmax") !=
+                k_max or
+                _finite(row.get("v_max_abs"), f"{label}.layer[{layer}].Vmax") !=
+                v_max):
+            raise ValueError(
+                f"{label} gapped-destination per-layer aggregate differs: {layer}")
+        layer_k.append(k_max)
+        layer_v.append(v_max)
+    cache_k = max(layer_k)
+    cache_v = max(layer_v)
+    aggregate = max(token_max, cache_k, cache_v)
+    if (_finite(evidence.get("cache_k_max_abs"),
+                f"{label}.destination.cache_K") != cache_k or
+            _finite(evidence.get("cache_v_max_abs"),
+                    f"{label}.destination.cache_V") != cache_v or
+            _finite(evidence.get("observed_aggregate"),
+                    f"{label}.destination.aggregate") != aggregate or
+            _finite(evidence.get("threshold"),
+                    f"{label}.destination.threshold") != 5e-4 or
+            evidence.get("comparison") != "<=" or aggregate > 5e-4):
+        raise ValueError(f"{label} gapped-destination terminal aggregate differs")
+
+
 def _validate_target_score(doc: Any, label: str) -> float:
     """Recompute one persisted target mean from its token log-probabilities."""
     if not isinstance(doc, dict):
@@ -924,6 +1102,7 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
         if missing:
             raise ValueError(f"{path.name} missing fields {missing}")
         _validate_actual_render_schedule(doc, path.name)
+        _validate_gapped_destination_schedule(doc, path.name)
         for field in ("arm_scores", "conversation_outcomes"):
             arms = doc.get(field)
             if not isinstance(arms, dict) or set(arms) != set(ARMS):

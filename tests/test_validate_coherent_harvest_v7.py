@@ -122,6 +122,104 @@ def arm_score(*, offset: float = 0.0, plant_id: str = "fixture-plant") -> dict:
     return {"plants": [row], "conversation_margin": margin}
 
 
+def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
+    tokenizer = MODULE._validation_tokenizer()
+    summary_text = "The context note remains available."
+    messages = conversation["messages"]
+    correct = MODULE._generation_prefix_ids(
+        tokenizer, list(messages) + [
+            {"role": "user", "content": MODULE.SUMMARY_REQUEST}])
+    fresh_messages = [
+        messages[0], {"role": "user", "content": MODULE.SUMMARY_REQUEST}]
+    fresh = MODULE._generation_prefix_ids(tokenizer, fresh_messages)
+    summary_ids = MODULE._rendered_assistant_ids(
+        tokenizer, fresh_messages, summary_text)
+    marker = int(tokenizer.encode(
+        "<|im_start|>", add_special_tokens=False)[0])
+    starts = [index for index, token in enumerate(fresh) if token == marker]
+    system_end = starts[1]
+    suffix = fresh[system_end:]
+    source_start = len(correct)
+    request_start = source_start - len(suffix)
+    prefix_positions = list(range(system_end)) + list(range(
+        request_start, source_start))
+    summary_positions = list(range(
+        source_start, source_start + len(summary_ids)))
+    physical_start = len(fresh)
+    physical_end = physical_start + len(summary_ids)
+    logprobs = [-1.0 - index / 10 for index in range(len(summary_ids))]
+    trace = {
+        "token_ids": summary_ids, "token_logprobs": logprobs,
+        "start_position": source_start,
+        "end_position": source_start + len(summary_ids),
+        "ended_on_eos": False,
+    }
+    zero_rows = [0.0] * len(summary_ids)
+    evidence = {
+        "status": "PASS", "passes": True,
+        "semantic_scoring_performed": False,
+        "prefix_token_ids": fresh,
+        "prefix_token_sha256": MODULE._sha256_ints(fresh, "fresh"),
+        "prefix_position_ids": prefix_positions,
+        "prefix_position_sha256": MODULE._sha256_ints(
+            prefix_positions, "fresh positions"),
+        "summary_token_ids": summary_ids,
+        "summary_token_sha256": MODULE._sha256_ints(summary_ids, "summary"),
+        "summary_position_ids": summary_positions,
+        "summary_position_sha256": MODULE._sha256_ints(
+            summary_positions, "summary positions"),
+        "physical_prefix_cache_position_ids": list(range(len(fresh))),
+        "physical_summary_cache_position_ids": list(range(
+            physical_start, physical_end)),
+        "system_end": system_end,
+        "request_logical_start": request_start,
+        "source_summary_start": source_start,
+        "physical_summary_start": physical_start,
+        "physical_summary_end": physical_end,
+        "production_prefix_partition": [system_end, len(fresh) - system_end],
+        "alternative_prefix_partition": MODULE._chunk_widths(len(fresh)),
+        "summary_step_widths": [1] * len(summary_ids),
+        "threshold": 5e-4, "comparison": "<=",
+        "reference_complete": True, "alternative_complete": True,
+        "measurement_complete": True,
+        "reference_trace": trace,
+        "alternative_trace": copy.deepcopy(trace),
+        "token_logprob_abs_differences": zero_rows,
+        "token_logprob_max_abs": 0.0,
+        "per_layer": [{
+            "layer": layer,
+            "k_per_summary_token_max_abs": zero_rows,
+            "v_per_summary_token_max_abs": zero_rows,
+            "k_max_abs": 0.0, "v_max_abs": 0.0,
+        } for layer in range(48)],
+        "cache_k_max_abs": 0.0, "cache_v_max_abs": 0.0,
+        "observed_aggregate": 0.0,
+    }
+    summary = {
+        "text": summary_text, "token_ids": summary_ids,
+        "token_sha256": MODULE._sha256_ints(summary_ids, "saved summary"),
+        "request": MODULE.SUMMARY_REQUEST,
+        "request_sha256": hashlib.sha256(
+            MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
+    }
+    source = {
+        "correct_actual": {
+            "prefix_token_ids": correct,
+            "prefix_sha256": MODULE._sha256_ints(correct, "correct"),
+            "prefix_token_count": len(correct),
+            "prefix_position_ids": list(range(len(correct))),
+            "summary_token_ids": summary_ids,
+            "summary_token_sha256": MODULE._sha256_ints(
+                summary_ids, "correct summary"),
+            "summary_start": len(correct),
+            "summary_end": len(correct) + len(summary_ids),
+            "summary_position_ids": list(range(
+                len(correct), len(correct) + len(summary_ids))),
+        },
+    }
+    return summary, source, evidence
+
+
 def partition(length: int) -> list[int]:
     widths = []
     while length:
@@ -636,6 +734,8 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
         }
         rendered_conversation = json.loads((
             ROOT / "data" / "synthetic" / f"{cid}.json").read_text())
+        saved_summary, sources, destination_schedule = \
+            destination_schedule_fixture(rendered_conversation)
         case_identity = _real_case_identity(cid)
         actual_schedule = {
             **identity(), **schedule_row(), "conversation_id": cid,
@@ -656,7 +756,9 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
             "order_position": position, "conversation_id": cid,
             "conversation": rendered_conversation,
             "pre_score_schedule_equivalence": actual_schedule,
-            "summary": {}, "sources": {},
+            "pre_score_destination_schedule_equivalence":
+                destination_schedule,
+            "summary": saved_summary, "sources": sources,
             "destination": {}, "arm_scores": arms,
             "conversation_outcomes": {
                 arm: score["conversation_margin"] for arm, score in arms.items()},
@@ -964,6 +1066,37 @@ def test_semantic_complete_validates_bound_prior_authorization_and_envelope(
         "plant_id", "different-plant"), "arm plant coverage/order differs"),
 ])
 def test_semantic_checkpoint_recomputes_every_decision_aggregate(
+        tmp_path: Path, mutation, match):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    mutation(doc)
+    with pytest.raises(ValueError, match=match):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
+
+
+@pytest.mark.parametrize("mutation,match", [
+    (lambda doc: doc["pre_score_destination_schedule_equivalence"]
+     ["prefix_position_ids"].__setitem__(1, 9999),
+     "arrays/partitions differ"),
+    (lambda doc: doc["pre_score_destination_schedule_equivalence"].__setitem__(
+        "production_prefix_partition", [1, 1]),
+     "arrays/partitions differ"),
+    (lambda doc: doc["pre_score_destination_schedule_equivalence"]["per_layer"]
+     [0]["k_per_summary_token_max_abs"].pop(),
+     "summary-row coverage differs"),
+    (lambda doc: doc["pre_score_destination_schedule_equivalence"].__setitem__(
+        "observed_aggregate", 0.25),
+     "terminal aggregate differs"),
+    (lambda doc: doc["pre_score_destination_schedule_equivalence"]
+     ["alternative_trace"]["token_logprobs"].__setitem__(0, -9.0),
+     "tokenwise trace differs"),
+    (lambda doc: doc.pop("pre_score_destination_schedule_equivalence"),
+     "lacks gapped-destination schedule evidence"),
+])
+def test_semantic_checkpoint_reconstructs_gapped_destination_schedule(
         tmp_path: Path, mutation, match):
     semantic_tree(tmp_path)
     path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
