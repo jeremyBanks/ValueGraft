@@ -421,6 +421,9 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
         "request_sha256": hashlib.sha256(
             MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
     }
+    actual_trace = {**trace, "ended_on_eos": True}
+    replay_trace = {**trace, "ended_on_eos": False}
+    summary["generation_trace"] = actual_trace
     actual_hashes = hash_rows("semantic_actual", len(summary_ids))
     fresh_hashes = hash_rows("semantic_fresh", len(summary_ids))
     wrong_hashes = hash_rows("semantic_wrong", len(summary_ids))
@@ -441,7 +444,7 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
         "physical_cache_position_ids": list(range(
             len(correct) + len(summary_ids))),
         "summary_row_hashes": actual_hashes,
-        "trace": trace,
+        "trace": actual_trace,
     }
     source = {
         "correct_actual": {
@@ -451,7 +454,8 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
             "exact_replay_waiver_required_before_scoring": True,
         },
         "correct_replay": {
-            **source_record, "source_kind": "correct_stepwise_replay"},
+            **source_record, "source_kind": "correct_stepwise_replay",
+            "trace": replay_trace},
         "wrong": {
             **source_record,
             "source_kind": "wrong_history_exact_length_counterfactual",
@@ -1056,6 +1060,7 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
         summary_ids = saved_summary["token_ids"]
         source_start = len(reconstructed["correct_ids"])
         wrong_trace = copy.deepcopy(sources["correct_actual"]["trace"])
+        wrong_trace["ended_on_eos"] = False
         wrong_record = {
             **sources["correct_actual"],
             "source_kind": "wrong_history_exact_length_counterfactual",
@@ -1443,9 +1448,38 @@ def test_static_provenance_rejects_final_static_binding_divergence():
         MODULE._validate_static_fingerprint(static, final, ROOT)
 
 
+def test_static_provenance_rejects_code_different_data_same_semantic_commit():
+    static = production_static_fingerprint()
+    final = copy.deepcopy(static)
+    final["subject_metadata"] = {
+        **final["subject_metadata"],
+        "attention_backend_resolved": "eager",
+        "attention_backend_fingerprint": backend_fingerprint(),
+        "context_limit": 32768,
+    }
+    final["attention_backend_fingerprint"] = backend_fingerprint()
+    final["context_limit"] = 32768
+    different = subprocess.check_output(
+        ["git", "rev-parse", "2d2e4bf^{commit}"], cwd=ROOT,
+        text=True).strip()
+    assert hashlib.sha256(MODULE._launch_blob(
+        ROOT, different, "data/scenarios.json")).hexdigest() == \
+        static["scenario_sha256"]
+    assert hashlib.sha256(MODULE._launch_blob(
+        ROOT, different, "data/coherent_state_targets.json")).hexdigest() == \
+        static["targets_sha256"]
+    static["code_commit"] = different
+    final["code_commit"] = different
+    with pytest.raises(ValueError, match="static fingerprint reconstruction differs|"
+                                               "lacks required apparatus files"):
+        MODULE._validate_static_fingerprint(static, final, ROOT)
+
+
 def test_semantic_complete_validates_bound_prior_authorization_and_envelope(
-        tmp_path: Path):
+        tmp_path: Path, monkeypatch):
     semantic_tree(tmp_path)
+    monkeypatch.setattr(MODULE, "_validate_semantic_authorization",
+                        lambda root, manifest, repo: None)
     observed = MODULE.validate(tmp_path, "complete")
     assert observed["status"] == "PASS"
     assert observed["n_scored"] == 6
@@ -1521,6 +1555,7 @@ def test_semantic_checkpoint_rejects_source_derived_provenance_counterexamples(
     semantic_tree(tmp_path)
     path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
     original = json.loads(path.read_text())
+    special = int(MODULE._validation_tokenizer().all_special_ids[0])
     mutations = [
         (lambda doc: doc.pop("reply_records"), "render/reply provenance is absent"),
         (lambda doc: doc.pop("target_provenance"), "target provenance differs"),
@@ -1544,6 +1579,17 @@ def test_semantic_checkpoint_rejects_source_derived_provenance_counterexamples(
          "calibration branch lineage is absent"),
         (lambda doc: doc["sources"]["correct_actual"]["summary_row_hashes"][0].
          __setitem__("k_shape", [1, 4, 999, 128]), "k shape differs"),
+        (lambda doc: doc["sources"]["correct_actual"]["trace"].__setitem__(
+            "ended_on_eos", False), "generated summary termination/trace differs"),
+        (lambda doc: doc["sources"]["correct_replay"]["trace"].__setitem__(
+            "ended_on_eos", True), "forced replay termination/positions differ"),
+        (lambda doc: doc["summary"].pop("generation_trace"),
+         "saved/generated summary binding differs"),
+        (lambda doc: doc["summary"]["generation_trace"].__setitem__(
+            "start_position", -1), "saved/generated summary binding differs"),
+        (lambda doc: doc["sources"]["correct_actual"]
+         ["physical_cache_position_ids"].__setitem__(0, 99),
+         "generated source arrays differ"),
     ]
     for mutation, match in mutations:
         doc = copy.deepcopy(original)
@@ -1552,6 +1598,18 @@ def test_semantic_checkpoint_rejects_source_derived_provenance_counterexamples(
             MODULE._validate_checkpoint(
                 doc, path, scored=True,
                 expected_fingerprint=doc["fingerprint"])
+
+    for mutation, match in (
+            (lambda doc: doc["sources"]["correct_actual"].__setitem__(
+                "summary_token_ids", [1] * 900),
+             "summary-token coverage differs"),
+            (lambda doc: doc["sources"]["correct_actual"]["summary_token_ids"].
+             __setitem__(0, special),
+             "generated summary contains a special token")):
+        doc = copy.deepcopy(original)
+        mutation(doc)
+        with pytest.raises(ValueError, match=match):
+            MODULE._validate_snapshot_provenance(doc, path.name)
 
 
 def _change_digest(value: str) -> str:
@@ -1588,6 +1646,21 @@ def test_semantic_snapshot_waiver_rejects_actual_source_hash_tamper(
     rows = doc["sources"]["correct_actual"]["summary_row_hashes"]
     rows[0]["v_sha256"] = _change_digest(rows[0]["v_sha256"])
     with pytest.raises(ValueError, match="actual/replay source hash binding"):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
+
+
+def test_semantic_snapshot_bit_exact_hashes_require_zero_numeric_kv(
+        tmp_path: Path):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    identity = doc["sources"]["generated_replay_identity"]
+    identity["per_layer"][0]["k_max_abs"] = 5e-5
+    identity["k_max_abs"] = 5e-5
+    identity["observed_aggregate"] = 5e-5
+    with pytest.raises(ValueError, match="bit-identical replay has nonzero K/V"):
         MODULE._validate_checkpoint(
             doc, path, scored=True,
             expected_fingerprint=doc["fingerprint"])
@@ -1636,10 +1709,22 @@ def test_semantic_snapshot_waiver_binds_materialization_into_replay_identity(
             expected_fingerprint=doc["fingerprint"])
 
 
-def test_semantic_complete_rejects_mixed_authorization_binding(tmp_path: Path):
+def test_semantic_complete_rejects_mixed_authorization_binding(
+        tmp_path: Path, monkeypatch):
     semantic_tree(tmp_path, corrupt_binding=True)
+    monkeypatch.setattr(MODULE, "_validate_semantic_authorization",
+                        lambda root, manifest, repo: None)
     with pytest.raises(ValueError, match="fingerprint/prior authorization"):
         MODULE.validate(tmp_path, "complete")
+
+
+def test_semantic_authorization_rejects_fabricated_nonexistent_technical_result(
+        tmp_path: Path):
+    semantic_tree(tmp_path)
+    manifest = json.loads((tmp_path / "manifest.json").read_text())
+    manifest["fingerprint_static"] = production_static_fingerprint()
+    with pytest.raises(ValueError, match="cannot reconstruct launch commit"):
+        MODULE._validate_semantic_authorization(tmp_path, manifest, ROOT)
 
 
 def test_terminal_analysis_is_independently_recomputed_and_required(tmp_path: Path):
@@ -1671,6 +1756,49 @@ def test_terminal_analysis_is_independently_recomputed_and_required(tmp_path: Pa
     bad_manifest["interpretation"] = "FABRICATED"
     with pytest.raises(ValueError, match="manifest/final analysis interpretation"):
         MODULE._validate_terminal_analysis(tmp_path, docs, bad_manifest)
+
+
+def _terminal_analysis_docs(*, n: int, regime_passes: bool) -> list[dict]:
+    docs = []
+    for index, cid in enumerate(MODULE.FROZEN_ORDER[:n]):
+        docs.append({
+            "conversation_id": cid,
+            "conversation_outcomes": {
+                "A_full": 1.0 if regime_passes else -1.0,
+                "G_fresh": 0.2, "G_correct": 0.8, "G_wrong": 0.1,
+                "G_Vcorrect": 0.5, "G_Kcorrect": 0.3,
+            },
+            "calibration": {"correct_label": "A" if index % 2 == 0 else "B"},
+            "calibration_outcomes": {
+                "G_fresh": 0.0, "G_correct": 0.5, "G_wrong": -0.1,
+            },
+        })
+    return docs
+
+
+def test_terminal_analysis_rejects_n6_complete_with_extend_decision(
+        tmp_path: Path):
+    docs = _terminal_analysis_docs(n=6, regime_passes=True)
+    analysis = MODULE._independent_analysis(docs)
+    assert analysis["serial_decision"] == "EXTEND_TO_12"
+    seal(tmp_path / "analysis_n06.json", analysis)
+    manifest = {key: analysis[key] for key in (
+        "n_conversations", "serial_decision", "interpretation")}
+    with pytest.raises(ValueError, match="N=6 COMPLETE.*nonterminal"):
+        MODULE._validate_terminal_analysis(tmp_path, docs, manifest)
+
+
+def test_terminal_analysis_rejects_n12_after_n6_stop_decision(tmp_path: Path):
+    docs = _terminal_analysis_docs(n=12, regime_passes=False)
+    interim = MODULE._independent_analysis(docs[:6])
+    final = MODULE._independent_analysis(docs)
+    assert interim["serial_decision"] == "STOP_REGIME"
+    seal(tmp_path / "analysis_n06.json", interim)
+    seal(tmp_path / "analysis_n12.json", final)
+    manifest = {key: final[key] for key in (
+        "n_conversations", "serial_decision", "interpretation")}
+    with pytest.raises(ValueError, match="N=12 COMPLETE.*EXTEND_TO_12"):
+        MODULE._validate_terminal_analysis(tmp_path, docs, manifest)
 
 
 def test_technical_harvest_validates_full_sidecar_and_terminal_contract(

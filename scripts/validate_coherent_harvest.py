@@ -999,6 +999,170 @@ def _semantic_launch_bytes(repo: Path, commit: str, relative: str) -> bytes:
     return _launch_blob(repo, commit, relative)
 
 
+def _validate_semantic_authorization(
+        root: Path, manifest: dict[str, Any], repo: Path) -> None:
+    """Independently reconstruct the committed technical authorization.
+
+    The semantic producer performs this verification before model loading.  A
+    terminal harvest must not merely trust the producer's booleans and copied
+    hashes: it reconstructs the same git/tree/envelope binding from repository
+    bytes and the current independent validator.
+    """
+    authorization = manifest.get("semantic_authorization")
+    fingerprint = manifest.get("fingerprint")
+    static = manifest.get("fingerprint_static")
+    if not all(isinstance(value, dict) for value in (
+            authorization, fingerprint, static)):
+        raise ValueError("semantic authorization/static fingerprint is malformed")
+
+    result_commit = authorization.get("result_commit")
+    launch_commit = authorization.get("launch_commit")
+    run_relative = authorization.get("run_dir")
+    for label, commit in (("result", result_commit), ("launch", launch_commit)):
+        if (not isinstance(commit, str) or len(commit) != 40 or
+                any(char not in "0123456789abcdef" for char in commit.lower())):
+            raise ValueError(f"semantic authorization {label} commit is malformed")
+        resolved = _git_bytes(
+            repo, "rev-parse", f"{commit}^{{commit}}").decode().strip()
+        if resolved != commit:
+            raise ValueError(
+                f"semantic authorization {label} commit did not resolve exactly")
+    if launch_commit != fingerprint.get("code_commit") or \
+            launch_commit != static.get("code_commit"):
+        raise ValueError("semantic authorization launch/fingerprint commit differs")
+    if subprocess.run(
+            ["git", "merge-base", "--is-ancestor", result_commit, launch_commit],
+            cwd=repo, stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL).returncode != 0:
+        raise ValueError("technical result is not an ancestor of semantic launch")
+    if subprocess.run(
+            ["git", "merge-base", "--is-ancestor", result_commit,
+             "refs/heads/trunk"], cwd=repo, stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL).returncode != 0:
+        raise ValueError("technical result commit is not on trunk")
+    if subprocess.run(
+            ["git", "merge-base", "--is-ancestor", launch_commit,
+             "refs/heads/trunk"], cwd=repo, stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL).returncode != 0:
+        raise ValueError("semantic launch commit is not on trunk")
+
+    if (not isinstance(run_relative, str) or not run_relative or
+            Path(run_relative).is_absolute()):
+        raise ValueError("semantic authorization run directory is malformed")
+    technical_root = (repo / run_relative).resolve()
+    try:
+        canonical_relative = technical_root.relative_to(repo.resolve()).as_posix()
+    except ValueError as exc:
+        raise ValueError(
+            "semantic authorization technical directory is outside repo") from exc
+    if canonical_relative != run_relative or not technical_root.is_dir():
+        raise ValueError(
+            "semantic authorization technical directory is absent or noncanonical")
+    resolved_semantic_root = root.resolve()
+    if (technical_root == resolved_semantic_root or
+            technical_root in resolved_semantic_root.parents or
+            resolved_semantic_root in technical_root.parents):
+        raise ValueError("semantic and technical result directories overlap")
+
+    tree = _git_bytes(
+        repo, "ls-tree", "-r", "--name-only", result_commit, "--",
+        run_relative).decode().splitlines()
+    tree_paths = sorted(path for path in tree if path)
+    disk_paths = sorted(path.relative_to(repo).as_posix()
+                        for path in technical_root.rglob("*") if path.is_file())
+    if tree_paths != disk_paths:
+        raise ValueError("committed technical directory path set differs")
+    committed_rows = []
+    for relative in tree_paths:
+        committed = _launch_blob(repo, result_commit, relative)
+        disk = (repo / relative).read_bytes()
+        if committed != disk:
+            raise ValueError(f"committed technical bytes differ: {relative}")
+        committed_rows.append({
+            "path": relative, "bytes": len(disk),
+            "sha256": hashlib.sha256(disk).hexdigest(),
+        })
+    expected_committed = {
+        "result_commit": result_commit,
+        "semantic_launch_commit": launch_commit,
+        "run_dir": run_relative,
+        "files": committed_rows,
+    }
+    if authorization.get("committed_directory") != expected_committed:
+        raise ValueError("semantic committed-directory attestation differs")
+
+    technical_result = validate(technical_root, "technical")
+    gate_path = technical_root / "production_kernel_gate.json"
+    technical_manifest_path = technical_root / "manifest.json"
+    technical_index_path = technical_root / "terminal_artifact_index.json"
+    technical_receipt_path = technical_root / "terminal_receipt.json"
+    gate = _load(gate_path)
+    technical_manifest = _load(technical_manifest_path)
+    unique_name = technical_manifest.get("production_kernel_gate_attempt_path")
+    if not isinstance(unique_name, str):
+        raise ValueError("technical authorization unique gate path is malformed")
+    raw = {
+        name: _raw_file_sha256(technical_root / name)
+        for name in (
+            unique_name, "production_kernel_gate.json", "manifest.json",
+            "terminal_artifact_index.json", "terminal_receipt.json")
+    }
+    if (authorization.get("gate_payload_sha256") != gate.get("payload_sha256") or
+            authorization.get("raw_sha256") != raw or
+            authorization.get("apparatus_inventory") !=
+            technical_manifest.get("apparatus_inventory") or
+            authorization.get("static_fingerprint") !=
+            technical_manifest.get("fingerprint_static")):
+        raise ValueError("semantic authorization technical payload binding differs")
+
+    current_apparatus = _expected_apparatus_inventory(repo, launch_commit)
+    if (authorization.get("apparatus_inventory") != current_apparatus or
+            manifest.get("apparatus_inventory") != current_apparatus or
+            static.get("apparatus_inventory") != current_apparatus):
+        raise ValueError("semantic authorization apparatus inventory differs")
+    technical_static = authorization["static_fingerprint"]
+    if ({key: value for key, value in technical_static.items()
+         if key != "code_commit"} !=
+            {key: value for key, value in static.items()
+             if key != "code_commit"}):
+        raise ValueError("semantic/technical static-data fingerprint differs")
+    semantic_final = {key: value for key, value in fingerprint.items()
+                      if key != "semantic_authorization"}
+    _validate_static_fingerprint(static, semantic_final, repo)
+
+    sibling_relative = f"{run_relative}.harvest_validation.json"
+    sibling = (repo / sibling_relative).resolve()
+    if not sibling.is_file():
+        raise ValueError("committed technical harvest attestation is absent")
+    if _launch_blob(repo, result_commit, sibling_relative) != sibling.read_bytes():
+        raise ValueError("committed technical harvest attestation bytes differ")
+    attestation = _load(sibling)
+    _require_identity(attestation, "technical harvest attestation")
+    _require_payload_sha256(attestation, "technical harvest attestation")
+    validator = attestation.get("validator") or {}
+    if (attestation.get("status") != "PASS" or
+            attestation.get("mode") != "technical" or
+            attestation.get("run_dir") != run_relative or
+            validator != {
+                "path": "scripts/validate_coherent_harvest.py",
+                "sha256": _raw_file_sha256(Path(__file__).resolve()),
+                "version": "coherent-harvest-v9",
+            } or any(attestation.get(key) != value
+                     for key, value in technical_result.items())):
+        raise ValueError("committed technical harvest attestation differs")
+    expected_harvest = {
+        "path": sibling_relative,
+        "raw_sha256": _raw_file_sha256(sibling),
+        "payload_sha256": attestation["payload_sha256"],
+        "attestation": attestation,
+        "independent_revalidation": technical_result,
+        "index": _load(technical_index_path),
+        "receipt": _load(technical_receipt_path),
+    }
+    if authorization.get("harvest") != expected_harvest:
+        raise ValueError("semantic authorization harvest reconstruction differs")
+
+
 def _semantic_scenario_and_targets(repo: Path, commit: str, cid: str) \
         -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, dict[str, Any]]]:
     scenarios = json.loads(_semantic_launch_bytes(
@@ -1678,9 +1842,54 @@ def _validate_snapshot_provenance(doc: dict[str, Any], label: str) -> None:
             actual, replay, wrong, fresh, identity)):
         raise ValueError(f"{label} snapshot source records are incomplete")
     summary_ids = actual.get("summary_token_ids")
-    if not isinstance(summary_ids, list) or not summary_ids:
+    if (not isinstance(summary_ids, list) or
+            not 0 < len(summary_ids) < 900 or
+            any(not isinstance(token, int) for token in summary_ids)):
         raise ValueError(f"{label} snapshot summary-token coverage differs")
     summary_rows = len(summary_ids)
+    tokenizer = _validation_tokenizer()
+    special = {int(token) for token in tokenizer.all_special_ids}
+    if any(token in special for token in summary_ids):
+        raise ValueError(f"{label} generated summary contains a special token")
+    prefix_ids = actual.get("prefix_token_ids")
+    summary_start = actual.get("summary_start")
+    summary_end = actual.get("summary_end")
+    expected_physical = (list(range(len(prefix_ids) + len(summary_ids)))
+                         if isinstance(prefix_ids, list) else None)
+    if (not isinstance(prefix_ids, list) or not prefix_ids or
+            any(not isinstance(token, int) for token in prefix_ids) or
+            actual.get("prefix_token_count") != len(prefix_ids) or
+            actual.get("prefix_sha256") !=
+            _sha256_ints(prefix_ids, f"{label}.actual_prefix") or
+            summary_start != len(prefix_ids) or
+            summary_end != summary_start + len(summary_ids) or
+            actual.get("summary_token_sha256") !=
+            _sha256_ints(summary_ids, f"{label}.actual_summary") or
+            actual.get("prefix_position_ids") != list(range(len(prefix_ids))) or
+            actual.get("summary_position_ids") !=
+            list(range(summary_start, summary_end)) or
+            actual.get("physical_cache_position_ids") != expected_physical):
+        raise ValueError(f"{label} generated source arrays differ")
+    actual_trace = actual.get("trace")
+    if (not isinstance(actual_trace, dict) or
+            actual_trace.get("token_ids") != summary_ids or
+            actual_trace.get("start_position") != summary_start or
+            actual_trace.get("end_position") != summary_end or
+            actual_trace.get("ended_on_eos") is not True or
+            not isinstance(actual_trace.get("token_logprobs"), list) or
+            len(actual_trace["token_logprobs"]) != len(summary_ids) or
+            any(not math.isfinite(_finite(value, f"{label}.actual_trace"))
+                for value in actual_trace["token_logprobs"])):
+        raise ValueError(f"{label} generated summary termination/trace differs")
+    if (summary.get("token_ids") != summary_ids or
+            summary.get("text") != tokenizer.decode(summary_ids) or
+            summary.get("token_sha256") !=
+            _sha256_ints(summary_ids, f"{label}.saved_summary") or
+            summary.get("request") != SUMMARY_REQUEST or
+            summary.get("request_sha256") !=
+            hashlib.sha256(SUMMARY_REQUEST.encode()).hexdigest() or
+            summary.get("generation_trace") != actual_trace):
+        raise ValueError(f"{label} saved/generated summary binding differs")
 
     actual_hashes = _validate_hash_rows(
         actual.get("summary_row_hashes"), f"{label}.correct_actual",
@@ -1705,18 +1914,23 @@ def _validate_snapshot_provenance(doc: dict[str, Any], label: str) -> None:
 
     for field in ("prefix_token_ids", "prefix_sha256", "prefix_token_count",
                   "summary_token_ids", "summary_token_sha256", "summary_start",
-                  "summary_end", "prefix_position_ids", "summary_position_ids"):
+                  "summary_end", "prefix_position_ids", "summary_position_ids",
+                  "physical_cache_position_ids"):
         if replay.get(field) != actual.get(field):
             raise ValueError(f"{label} actual/replay {field} differs")
     if (actual.get("source_kind") != "generated_incremental" or
             replay.get("source_kind") != "correct_stepwise_replay"):
         raise ValueError(f"{label} actual/replay source path differs")
-    actual_trace, replay_trace = actual.get("trace"), replay.get("trace")
-    if not isinstance(actual_trace, dict) or not isinstance(replay_trace, dict):
+    replay_trace = replay.get("trace")
+    if not isinstance(replay_trace, dict):
         raise ValueError(f"{label} actual/replay trace is absent")
     if actual_trace.get("token_ids") != replay_trace.get("token_ids") or \
             actual_trace.get("token_ids") != actual.get("summary_token_ids"):
         raise ValueError(f"{label} actual/replay trace IDs differ")
+    if (replay_trace.get("start_position") != summary_start or
+            replay_trace.get("end_position") != summary_end or
+            replay_trace.get("ended_on_eos") is not False):
+        raise ValueError(f"{label} forced replay termination/positions differ")
     left, right = (actual_trace.get("token_logprobs"),
                    replay_trace.get("token_logprobs"))
     if (not isinstance(left, list) or not left or not isinstance(right, list) or
@@ -1748,6 +1962,12 @@ def _validate_snapshot_provenance(doc: dict[str, Any], label: str) -> None:
             identity.get("raw_tensor_archive_waived_by_exact_replay") is not True or
             identity.get("passes") is not True):
         raise ValueError(f"{label} strict actual/replay identity differs")
+    if (k_max != 0.0 or v_max != 0.0 or
+            any(_finite(row.get("k_max_abs"), f"{label}.replay_exact_K") != 0.0 or
+                _finite(row.get("v_max_abs"), f"{label}.replay_exact_V") != 0.0
+                for row in per_layer)):
+        raise ValueError(
+            f"{label} bit-identical replay has nonzero K/V difference")
 
     allowed_materializations = {
         "live_incremental_generation_rows",
@@ -3025,6 +3245,14 @@ def _validate_terminal_analysis(root: Path, docs: list[dict[str, Any]],
         if observed != expected:
             raise ValueError(f"{name} differs from independent recomputation")
         analyses[count] = expected
+    interim_decision = analyses[6]["serial_decision"]
+    if n == 6 and interim_decision not in {
+            "STOP_TECHNICAL", "STOP_REGIME", "STOP_FUTILITY"}:
+        raise ValueError(
+            "N=6 COMPLETE has a nonterminal EXTEND_TO_12 decision")
+    if n == 12 and interim_decision != "EXTEND_TO_12":
+        raise ValueError(
+            "N=12 COMPLETE lacks an immutable N=6 EXTEND_TO_12 decision")
     final = analyses[n]
     for field in ("n_conversations", "serial_decision", "interpretation"):
         if manifest.get(field) != final[field]:
@@ -3096,6 +3324,8 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
         value = expected_binding.get(key)
         if not isinstance(value, str) or len(value) != 64:
             raise ValueError(f"semantic authorization lacks exact {key}")
+    _validate_semantic_authorization(
+        root, manifest, Path(__file__).resolve().parent.parent)
     _validate_terminal_integrity(root, "PASS")
     probe = _load(root / "resume_probe.json")
     _require_identity(probe, "resume probe")
