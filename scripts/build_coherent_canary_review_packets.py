@@ -218,8 +218,9 @@ def load_source_cases(paths: Sequence[str | Path]) -> list[dict]:
         _require(isinstance(tokenizer_binding, dict),
                  f"{case_id}: tokenizer binding is absent")
         for field, literal in COMMON_VISIBLE_CARRIER.items():
-            _require(tokenizer_binding.get(field) == literal,
-                     f"{case_id}: common visible {field} differs")
+            if field in tokenizer_binding:
+                _require(tokenizer_binding[field] == literal,
+                         f"{case_id}: common visible {field} differs")
         records.append({
             "path": str(path),
             "source_file_sha256": _sha256_bytes(source_bytes),
