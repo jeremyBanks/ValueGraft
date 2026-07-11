@@ -34,7 +34,7 @@ their full descriptions (the outstanding state).
 - #45 · completed · Per-head champion scan on primary bf16 30B (Fable designing)
 - #46 · completed · Strengthen SWE-Gym +0.0156 anchor on primary bf16 30B
 - #47 · completed · After paper is promoted: move draft into notes/
-- #48 · **pending** · FINAL (after paper + everything else): re-run note-naming then summarization scripts, commit + push
+- #48 · ~~DELETED~~ · (was: re-run note-naming/summarization scripts) — DESCOPED by owner 2026-07-10: the notes naming/summary/regeneration scripts are no longer this agent's responsibility; do NOT run them. Writing notes files into the folder is still fine; running the regeneration tooling is not.
 - #49 · **pending** · Design in-domain graft optimization on brief-SWE-Gym (the unexplored live margin)
 - #50 · **pending** · After full close-out: fresh Fable writes a speculative note on WHY the graft fails
 - #51 · **pending** · Spend remaining use-it-or-lose-it credit on more data (even long shots) — brief Fable
