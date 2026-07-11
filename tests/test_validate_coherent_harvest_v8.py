@@ -1047,7 +1047,7 @@ def test_independent_donor_validation_rejects_special_token_counterexample():
 def test_independent_donor_reconstruction_matches_committed_sources():
     tokenizer = MODULE._validation_tokenizer()
     artifact = json.loads(next((ROOT / "results" / "coherent_state_ladder").glob(
-        "coherent_external_donors_gapped_v7_*.json")).read_text())
+        "coherent_external_donors_gapped_v8_*.json")).read_text())
     rows = {row["target_id"]: row for row in artifact["rows"]}
     for cid in MODULE.FROZEN_ORDER:
         donor_id = MODULE.WRONG_DONORS[cid]
