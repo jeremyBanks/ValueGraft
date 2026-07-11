@@ -8,11 +8,11 @@
       "sources": [
         {
           "note": "notes/2026070858-conversation-user-gpt55.md",
-          "blob_id": "523cbdf9b7910fa837b5d23ff753b624dba62465"
+          "blob_id": "ccf04dd55fdcecfe7965a71bb2e2ccdb2f35e58b"
         },
         {
-          "note": "notes/2026070859-conversation-user-opus48.md",
-          "blob_id": "7b676caa7883faa0956c39bbf77921bd814ed25a"
+          "note": "notes/2026070859-conversation-user-opus48-sonnet5.md",
+          "blob_id": "87cd2394cca06785291a1e70ac79be9051fb41e5"
         },
         {
           "note": "notes/2026070860-prior-art-search-anthropic-claude-fable-high.md",
@@ -43,8 +43,8 @@
           "blob_id": "f8e48a2bfe2b8690b0a2fd886f9cdc546eedbf38"
         },
         {
-          "note": "notes/2026070867-conversation-user-opus48.md",
-          "blob_id": "1276966f38bf0d9449023c05e58a242e0debe94e"
+          "note": "notes/2026070867-conversation-user-opus48-sonnet5.md",
+          "blob_id": "019e1f3237c32395b61cf5eb1e60e81692f2eda1"
         },
         {
           "note": "notes/2026070868-shard-and-verify-before-killing.md",
@@ -52,7 +52,7 @@
         },
         {
           "note": "notes/2026070869-conversation-user-opus48.md",
-          "blob_id": "464f09e40227f6b7b607591dbc31a3c6139357d5"
+          "blob_id": "f12fe5816281d16d5f84b89522b93ac68a775bfb"
         },
         {
           "note": "notes/2026070870-verify-boring-before-clever.md",
@@ -60,46 +60,46 @@
         },
         {
           "note": "notes/2026070871-conversation-user-gpt55.md",
-          "blob_id": "440a9ff5c07e5ab5c1ea0c8b26b232307e48c802"
+          "blob_id": "d7fc1560268d19ca94d9659772ab3be9bf39f7c9"
         },
         {
           "note": "notes/2026070872-conversation-user-opus48.md",
-          "blob_id": "cf8a5fa802e1d804b173dbe37c1d8454d3b77b5b"
+          "blob_id": "0eb271f074c3cd2b16115315cdbaaa6cc3eb08ad"
         },
         {
           "note": "notes/2026070873-conversation-user-gpt55.md",
-          "blob_id": "2252b6fc462f1fe29c5f664ac817664a425748d4"
+          "blob_id": "345e5bbc8086049d9a7b82815b89ff03223fefa2"
         },
         {
-          "note": "notes/2026070874-conversation-user-opus48.md",
-          "blob_id": "d20290c8426ef2b588a10d97055ac06e4ac0c693"
+          "note": "notes/2026070874-conversation-user-opus48-sonnet5.md",
+          "blob_id": "8b56062dd5e5f339de3aef06c935ce0a792e9b96"
         },
         {
           "note": "notes/2026070875-conversation-user-gpt55.md",
-          "blob_id": "67e0c5207dc10a7ee3670d86c45ddd44b2ce71e1"
+          "blob_id": "bcc5eb9e42bce3acdae6717e53cf88a3f59a555d"
         }
       ],
       "source_blob_ids": [
-        "1276966f38bf0d9449023c05e58a242e0debe94e",
+        "019e1f3237c32395b61cf5eb1e60e81692f2eda1",
+        "0eb271f074c3cd2b16115315cdbaaa6cc3eb08ad",
         "14ac4120fea8203f38c0d2be9cf6164cfc114998",
-        "2252b6fc462f1fe29c5f664ac817664a425748d4",
-        "440a9ff5c07e5ab5c1ea0c8b26b232307e48c802",
-        "464f09e40227f6b7b607591dbc31a3c6139357d5",
-        "523cbdf9b7910fa837b5d23ff753b624dba62465",
+        "345e5bbc8086049d9a7b82815b89ff03223fefa2",
         "60123c667321aaefe8c801f4a450b37fa4d07aa0",
-        "67e0c5207dc10a7ee3670d86c45ddd44b2ce71e1",
-        "7b676caa7883faa0956c39bbf77921bd814ed25a",
+        "87cd2394cca06785291a1e70ac79be9051fb41e5",
+        "8b56062dd5e5f339de3aef06c935ce0a792e9b96",
         "a45694310f6c3a84ed1ffd950b17a62eb5babefa",
+        "bcc5eb9e42bce3acdae6717e53cf88a3f59a555d",
         "c66c58ea58c4f2f695d908fe13575b00bcbb5718",
+        "ccf04dd55fdcecfe7965a71bb2e2ccdb2f35e58b",
         "cd03529e768766668708a42832ca434b2a27fc75",
-        "cf8a5fa802e1d804b173dbe37c1d8454d3b77b5b",
-        "d20290c8426ef2b588a10d97055ac06e4ac0c693",
         "d769f79a45267bfa5c573f2727d6bea00c4b6f8d",
+        "d7fc1560268d19ca94d9659772ab3be9bf39f7c9",
         "e74ade5af8f7121d460696c465cbb3dc40b4e8ec",
         "ea82f783ed4e1e2726e798589cc3abc005661cf6",
+        "f12fe5816281d16d5f84b89522b93ac68a775bfb",
         "f8e48a2bfe2b8690b0a2fd886f9cdc546eedbf38"
       ],
-      "summary_hash": "784332649859583d051ba997b220532577f92ed201edd524fa6bda4d03de316b",
+      "summary_hash": "92aec6f777d08037805398be55507711a2173c4f9b22d785774d5360c20a83ed",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -107,6 +107,11 @@
         "conversation_threshold_chars": 16384,
         "conversation_head_chars": 12288,
         "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
       }
     },
     "20260704": {
@@ -119,7 +124,7 @@
         },
         {
           "note": "notes/2026070402-conversation-user-fable5.md",
-          "blob_id": "d4f5bbed159ad611b6f04b5e682c708ebd127934"
+          "blob_id": "ba97391939acacff3fd2adef9532d1e922813f01"
         },
         {
           "note": "notes/2026070403-tee-before-tail.md",
@@ -139,9 +144,9 @@
         "092bfffe98740fcd5a559cb50f9c40be4f77319f",
         "10c3e9d6c8eda9098f4663cbd79b5cc051fb2f3f",
         "89a4be92938308a66be42ebda40ed5b1d75a99e6",
-        "d4f5bbed159ad611b6f04b5e682c708ebd127934"
+        "ba97391939acacff3fd2adef9532d1e922813f01"
       ],
-      "summary_hash": "b9cb0b1c7f77a320a038021ec0358776ac3d69978e06fdee81ce5c674f9b8b6c",
+      "summary_hash": "1db9fe63cdf784134183195a120698aac8fe7878b9d0fb8f6896d284017364ad",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -149,6 +154,11 @@
         "conversation_threshold_chars": 16384,
         "conversation_head_chars": 12288,
         "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
       }
     },
     "20260705": {
@@ -160,12 +170,12 @@
           "blob_id": "630286a3d6ab737290e13b46e00046986bfa5122"
         },
         {
-          "note": "notes/2026070507-conversation-user-fable5.md",
-          "blob_id": "3c8e1f67a3b0f3d9c3e23e8ac023721f45cf91cb"
+          "note": "notes/2026070507-conversation-user-fable5-sonnet5.md",
+          "blob_id": "e5a4aebe01a7e4898449c25d778c78a03339b04c"
         },
         {
           "note": "notes/2026070508-conversation-user-gpt55.md",
-          "blob_id": "4bcc9eb8ecde9746efe310ab0869c0f912346f60"
+          "blob_id": "c9f55f3189b8a0ee2c083e9e42955738c6a5e30b"
         },
         {
           "note": "notes/2026070509-refocusing-and-reframing.md",
@@ -177,7 +187,7 @@
         },
         {
           "note": "notes/2026070511-conversation-user-gpt55.md",
-          "blob_id": "ad76bf364816c5561559997dde42cebd5962fed4"
+          "blob_id": "7cf9f6a73a057a1aa2fe75425a7c34839e55a794"
         },
         {
           "note": "notes/2026070512-phase2-design.md",
@@ -188,8 +198,8 @@
           "blob_id": "5df27e589fa808d63aa66e08d3e60bafbad5fc3d"
         },
         {
-          "note": "notes/2026070514-conversation-user-fable5.md",
-          "blob_id": "0f86c3e7137f8206d08ff308ee8d6efc7a6a9ff8"
+          "note": "notes/2026070514-conversation-user-sonnet5-fable5.md",
+          "blob_id": "28a810fc6c5560ba1648b1e4ac4803191c38bc41"
         },
         {
           "note": "notes/2026070515-results-30b-addendum.md",
@@ -200,8 +210,8 @@
           "blob_id": "9c943e585d9f28f928c78d0dfc987a526232b2fe"
         },
         {
-          "note": "notes/2026070517-conversation-user-fable5.md",
-          "blob_id": "91c628f4e475890357218863be2a9cfc51d1d286"
+          "note": "notes/2026070517-conversation-user-sonnet5-fable5.md",
+          "blob_id": "bc726d8ee66d96095f6b69e5d098d65105156bc1"
         },
         {
           "note": "notes/2026070518-blog-draft.md",
@@ -213,7 +223,7 @@
         },
         {
           "note": "notes/2026070520-conversation-user-gpt55.md",
-          "blob_id": "77326d4a83c7d6da12bf070e9da9e81b73c54312"
+          "blob_id": "ec3adbc3334d42270de5e04625dfdba3d27778da"
         },
         {
           "note": "notes/2026070521-opaque-compaction-handle-notes.md",
@@ -224,8 +234,8 @@
           "blob_id": "2893361d3707dba85e2f3b3d8b5b428666dbd066"
         },
         {
-          "note": "notes/2026070523-conversation-user-fable5.md",
-          "blob_id": "b49cdd8c104f0f666c4673e1f06619a766930f9c"
+          "note": "notes/2026070523-conversation-user-fable5-sonnet5.md",
+          "blob_id": "aa7d2e3f38ec798938d04f01c6ab94a3d5ce9925"
         },
         {
           "note": "notes/2026070524-verify-kills-by-pid.md",
@@ -237,7 +247,7 @@
         },
         {
           "note": "notes/2026070526-conversation-user-gpt55.md",
-          "blob_id": "b8339e37423f6a6a115a899e63e48a05a5bdd798"
+          "blob_id": "e393e56bb90463afca14c88d47b75c94966b7927"
         },
         {
           "note": "notes/2026070527-per-head-alpha-speculation.md",
@@ -249,41 +259,41 @@
         },
         {
           "note": "notes/2026070529-conversation-user-fable5.md",
-          "blob_id": "f8783c3beb3f0e79dc34a0d4b7da9cb5af24319d"
+          "blob_id": "ab0aea0ffa2ef75870b46b55356ed2a003249e03"
         },
         {
           "note": "notes/2026070530-conversation-user-gpt55.md",
-          "blob_id": "012f37b03487f9e6e2c0be64d1b14e5578abb5f5"
+          "blob_id": "d3f87b126dea3e002f05a5a68b6c43358615bb41"
         }
       ],
       "source_blob_ids": [
-        "012f37b03487f9e6e2c0be64d1b14e5578abb5f5",
-        "0f86c3e7137f8206d08ff308ee8d6efc7a6a9ff8",
         "169142035a46ab8a237e4f7b864bd7ff686f4948",
         "24cad513b2ffec465ffe84d7777ae6e84c08cb01",
         "2893361d3707dba85e2f3b3d8b5b428666dbd066",
-        "3c8e1f67a3b0f3d9c3e23e8ac023721f45cf91cb",
+        "28a810fc6c5560ba1648b1e4ac4803191c38bc41",
         "3f22f82b5eb74f7a8cf6d565080078fb90efde26",
         "429679e9dfb1db241571e621ef2ff75b5aad41b8",
-        "4bcc9eb8ecde9746efe310ab0869c0f912346f60",
         "51fad6496637c983cb64518a2d292dd9096229bf",
         "5600c81ac652c3928584ca5b22eb975e38e0baab",
         "5df27e589fa808d63aa66e08d3e60bafbad5fc3d",
         "61eae9ae8f0b3666a7906bc60571c9148bb83cc7",
         "630286a3d6ab737290e13b46e00046986bfa5122",
         "727794663d664a64088b08dde10a6c2645db4bb3",
-        "77326d4a83c7d6da12bf070e9da9e81b73c54312",
+        "7cf9f6a73a057a1aa2fe75425a7c34839e55a794",
         "8dc10d620d115afb38db726def135466ed4bd604",
-        "91c628f4e475890357218863be2a9cfc51d1d286",
         "9c943e585d9f28f928c78d0dfc987a526232b2fe",
-        "ad76bf364816c5561559997dde42cebd5962fed4",
-        "b49cdd8c104f0f666c4673e1f06619a766930f9c",
-        "b8339e37423f6a6a115a899e63e48a05a5bdd798",
+        "aa7d2e3f38ec798938d04f01c6ab94a3d5ce9925",
+        "ab0aea0ffa2ef75870b46b55356ed2a003249e03",
+        "bc726d8ee66d96095f6b69e5d098d65105156bc1",
         "c19cad0bb5b4ff8e53333b49ef51875e2b73a0f3",
+        "c9f55f3189b8a0ee2c083e9e42955738c6a5e30b",
+        "d3f87b126dea3e002f05a5a68b6c43358615bb41",
+        "e393e56bb90463afca14c88d47b75c94966b7927",
+        "e5a4aebe01a7e4898449c25d778c78a03339b04c",
         "e7ad40182f2c7500e3166b4f24cc676e173769a6",
-        "f8783c3beb3f0e79dc34a0d4b7da9cb5af24319d"
+        "ec3adbc3334d42270de5e04625dfdba3d27778da"
       ],
-      "summary_hash": "b27067464b816455d5dd47f1672cf98a871528b07edabaa0cd402f97f88e490e",
+      "summary_hash": "918fe3eff3b53da6db0919d2a4b5fa0e2aa25377831e8f29ab11aa6cb9278dc6",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -291,6 +301,11 @@
         "conversation_threshold_chars": 16384,
         "conversation_head_chars": 12288,
         "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
       }
     },
     "20260706": {
@@ -302,8 +317,8 @@
           "blob_id": "419b235ea090d4234a771ce7715dc068e05974ef"
         },
         {
-          "note": "notes/2026070632-conversation-user-fable5.md",
-          "blob_id": "70b08f4fb3337a5b8bb5460db93e95d2effafbf3"
+          "note": "notes/2026070632-conversation-user-fable5-sonnet5.md",
+          "blob_id": "667d41efdf038ee599959a5c97df1713a375dd51"
         },
         {
           "note": "notes/2026070633-value-steering-design-notes.md",
@@ -331,7 +346,7 @@
         },
         {
           "note": "notes/2026070639-conversation-user-gpt55.md",
-          "blob_id": "a51e79f6c9cd1f6b77c608d08a83c558ddcd2a21"
+          "blob_id": "dd9ac3a77db0cc73be09d95aa6fce85b44329ee6"
         },
         {
           "note": "notes/2026070640-handoff.md",
@@ -342,8 +357,8 @@
           "blob_id": "48c0cf49f999b5e5efea995cb2f603ef6d4ad540"
         },
         {
-          "note": "notes/2026070642-conversation-fable5.md",
-          "blob_id": "98d208af739faa8d7d568bfaf1e5e609e70eb0c8"
+          "note": "notes/2026070642-conversation-fable5-sonnet5.md",
+          "blob_id": "7623068ec49553b34f8831ca50499eff421690c6"
         },
         {
           "note": "notes/2026070643-morning-report.md",
@@ -355,11 +370,11 @@
         },
         {
           "note": "notes/2026070645-conversation-user-gpt55.md",
-          "blob_id": "8a56909b0b71c4718c975f68f9b959f51f3ac9c9"
+          "blob_id": "c38e54c17abfd066c44c3be99c150261875b07e1"
         },
         {
-          "note": "notes/2026070646-conversation-user-fable5.md",
-          "blob_id": "77faa5a12743c2150633c9910eccd6e970135b54"
+          "note": "notes/2026070646-conversation-user-fable5-sonnet5.md",
+          "blob_id": "c24b271d216811a90a2952893c59a5f86133f709"
         },
         {
           "note": "notes/2026070647-nomenclature-reframing-note.md",
@@ -378,8 +393,8 @@
           "blob_id": "cc52e2b8639e319f6a3d86021e8e4c7c11b10997"
         },
         {
-          "note": "notes/2026070651-conversation-user-fable5.md",
-          "blob_id": "0c14cc21dc45345577797de905e58e767badf653"
+          "note": "notes/2026070651-conversation-user-fable5-sonnet5.md",
+          "blob_id": "f1ae51d4e6022df95ff3dc2dc81514be015808a9"
         },
         {
           "note": "notes/2026070652-fallback-tiers-scouting.md",
@@ -395,11 +410,11 @@
         },
         {
           "note": "notes/2026070655-conversation-user-gpt55.md",
-          "blob_id": "9f693a8a55f8f7f8c7bd77f39fee45ef91acb05d"
+          "blob_id": "db19115369890c7a883081f9290628fa1dc7a385"
         },
         {
-          "note": "notes/2026070656-conversation-user-fable5.md",
-          "blob_id": "b3bd10856ddc62b0fca585548ca8b365c4ab2159"
+          "note": "notes/2026070656-conversation-user-fable5-sonnet5.md",
+          "blob_id": "a8bc78369f1e709e17b4a8efee355bbf3de26748"
         },
         {
           "note": "notes/2026070657-vendor-benchmarks-scouting.md",
@@ -407,40 +422,40 @@
         },
         {
           "note": "notes/2026070658-conversation-user-gpt55.md",
-          "blob_id": "d168f43f7fa0e1f5bdb08851b560cd6aa731b53f"
+          "blob_id": "25b02e6e9867f58e12680f746e1f88220f1872f0"
         }
       ],
       "source_blob_ids": [
         "052ec4722bdb61f305364aedf5b99b5a872d12f5",
-        "0c14cc21dc45345577797de905e58e767badf653",
         "133a634042877f215528c68e956b692716394cb9",
         "1a9dc278a7e04d669b89f82fa3e9cff0c88b46a9",
         "20fc696724ca025f4caf98ec6c65811371e981d4",
+        "25b02e6e9867f58e12680f746e1f88220f1872f0",
         "3fbb387bc60dc058d726914ed5214c095be25ae6",
         "41448e82cf1109f64530d08db73b91f2cde75591",
         "419b235ea090d4234a771ce7715dc068e05974ef",
         "48c0cf49f999b5e5efea995cb2f603ef6d4ad540",
         "5898b6dfd635c11292db8615544671e4a9342bcf",
+        "667d41efdf038ee599959a5c97df1713a375dd51",
         "6d928decfbeb6ad43df894d983c74db7bff41ff1",
-        "70b08f4fb3337a5b8bb5460db93e95d2effafbf3",
         "7583503585996c2ce31340c0edd7239cdd6ad619",
-        "77faa5a12743c2150633c9910eccd6e970135b54",
+        "7623068ec49553b34f8831ca50499eff421690c6",
         "87e8ac77f6f43724769514513aa4abbeec84fd74",
-        "8a56909b0b71c4718c975f68f9b959f51f3ac9c9",
-        "98d208af739faa8d7d568bfaf1e5e609e70eb0c8",
-        "9f693a8a55f8f7f8c7bd77f39fee45ef91acb05d",
-        "a51e79f6c9cd1f6b77c608d08a83c558ddcd2a21",
+        "a8bc78369f1e709e17b4a8efee355bbf3de26748",
         "acc3ef1b057589c446fc728985f4f3e46a440d85",
-        "b3bd10856ddc62b0fca585548ca8b365c4ab2159",
         "bbcf4565acf7b67858f34e5cc546cc4e0d22a857",
+        "c24b271d216811a90a2952893c59a5f86133f709",
+        "c38e54c17abfd066c44c3be99c150261875b07e1",
         "c7a99f2afb8553c72946aeac1f377d69fd6ff41e",
         "cc52e2b8639e319f6a3d86021e8e4c7c11b10997",
-        "d168f43f7fa0e1f5bdb08851b560cd6aa731b53f",
+        "db19115369890c7a883081f9290628fa1dc7a385",
         "dcb907ae8c39e748590147b7706ed2dfc4d6dfb2",
+        "dd9ac3a77db0cc73be09d95aa6fce85b44329ee6",
+        "f1ae51d4e6022df95ff3dc2dc81514be015808a9",
         "f3094c26323f69568b8b4746ca4950590d5d17e1",
         "f516fe12d3e7a39c1c7f1ef847a1e388e3fe3a43"
       ],
-      "summary_hash": "7f59fa18e747bea791befb03b1dd282cd66608fe9ffb1bd4455a1119616c40d0",
+      "summary_hash": "4267c5474608d71eb9a14dbc16bf81f7d98aa0aeadeb639ba738d74d0dbb0842",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -448,6 +463,11 @@
         "conversation_threshold_chars": 16384,
         "conversation_head_chars": 12288,
         "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
       }
     },
     "20260707": {
@@ -456,11 +476,11 @@
       "sources": [
         {
           "note": "notes/2026070709-conversation-user-opus48-fable5.md",
-          "blob_id": "94d3115ba8597d46a8ee50e218f449dc53a7f548"
+          "blob_id": "e6ef22d7fbdf3fd2c92e3345724654f8ffe9d78d"
         },
         {
           "note": "notes/2026070710-conversation-user-gpt55.md",
-          "blob_id": "7b93808db53c9e276144845dff43d122fc86d313"
+          "blob_id": "091f9be0dcf721b5eff5e9be6e1532164c85dc7a"
         },
         {
           "note": "notes/2026070711-handoff-note-jlens-global-workspace.md",
@@ -488,15 +508,15 @@
         },
         {
           "note": "notes/2026070717-conversation-opus48.md",
-          "blob_id": "57d0eb4617bbfd81b5cbae24ea2c5365c69d0d4a"
+          "blob_id": "34aaa7b81a9d5f96768dce159fc461f5473d28a9"
         },
         {
           "note": "notes/2026070718-conversation-user-gpt55.md",
-          "blob_id": "5618ec6950589b0927090b0a913fe6483dec76dd"
+          "blob_id": "b71563bd506823028b51f1dbece216b59c9943ce"
         },
         {
-          "note": "notes/2026070719-conversation-user-opus48-fable5.md",
-          "blob_id": "a362abf20336fd2b9f1884556749c15b081d55ca"
+          "note": "notes/2026070719-conversation-user-opus48-fable5-sonnet5.md",
+          "blob_id": "b232c1183ac8ed05c0001555eaf739dfe3b15e22"
         },
         {
           "note": "notes/2026070720-next-token-readout-control-report.md",
@@ -563,8 +583,8 @@
           "blob_id": "d1c1d77772679636f914a32a7e2477b2aaded03c"
         },
         {
-          "note": "notes/2026070736-conversation-user-opus48.md",
-          "blob_id": "1cb0cca216e5015795d41f0795277fc3a3360b13"
+          "note": "notes/2026070736-conversation-user-opus48-sonnet5.md",
+          "blob_id": "c971445a8d2e9bcc15ebea68ef5ee747305f16ea"
         },
         {
           "note": "notes/2026070737-report2-plan.md",
@@ -580,7 +600,7 @@
         },
         {
           "note": "notes/2026070740-conversation-user-gpt55.md",
-          "blob_id": "dbb21a3206720e0041127bb1593614df8a27bfb2"
+          "blob_id": "5f83086fa894faaf233d0323815ac8c6cd50236d"
         },
         {
           "note": "notes/2026070741-referent-recovery-harness.md",
@@ -619,12 +639,12 @@
           "blob_id": "55bf34c91bd2b81e3c5bf3f0fdb23909565935f9"
         },
         {
-          "note": "notes/2026070750-conversation-user-opus48.md",
-          "blob_id": "cacd10f7b02a1a379ad6424d5c94bd69f7f10438"
+          "note": "notes/2026070750-conversation-user-opus48-sonnet5.md",
+          "blob_id": "224eb446f8ee9be8de2c40d14e1c4e8ccad5b1ac"
         },
         {
           "note": "notes/2026070751-conversation-user-gpt55.md",
-          "blob_id": "602354211e2e5f05f8f476ea474cbb38c4d1e4b9"
+          "blob_id": "cec29b8e69477b5d877af58fafd307677a69afbc"
         },
         {
           "note": "notes/2026070752-topic-sensitivity-probe-initial-report.md",
@@ -652,14 +672,16 @@
         }
       ],
       "source_blob_ids": [
+        "091f9be0dcf721b5eff5e9be6e1532164c85dc7a",
         "15e75d186f1c1c7a528e211c38142d2888a25f61",
         "16b5663e1c580ee04762f3279acd3e1ba3705cb3",
         "1c6a7ab852dc2b563c09697e45b48fd544c7469a",
-        "1cb0cca216e5015795d41f0795277fc3a3360b13",
         "210d3788f015d6e015f0fb22aad78566a98dd060",
+        "224eb446f8ee9be8de2c40d14e1c4e8ccad5b1ac",
         "241933497312b0c6766e12a1f226122b8f865edb",
         "2c61e6e9464e618864b1d8a712927e590f976e40",
         "2ffc655f25c4049831c77a052eb12a91f8e6d36f",
+        "34aaa7b81a9d5f96768dce159fc461f5473d28a9",
         "38969ddc5aae214bfb6549a737065aec5b31f5ad",
         "3b113ca6d23111d5185283b6e49b6df286061f4a",
         "3fef0eacb83b68b2fb7949fdd1cecf6b51ca0bfa",
@@ -667,42 +689,40 @@
         "435193d84e6536198c77488f0a7b9543bf07ee48",
         "43a9db4f2ec88124588e22a4d2cc787d3818d834",
         "55bf34c91bd2b81e3c5bf3f0fdb23909565935f9",
-        "5618ec6950589b0927090b0a913fe6483dec76dd",
-        "57d0eb4617bbfd81b5cbae24ea2c5365c69d0d4a",
-        "602354211e2e5f05f8f476ea474cbb38c4d1e4b9",
+        "5f83086fa894faaf233d0323815ac8c6cd50236d",
         "658aaea917f0f070146bb5f9f90bb53b8712e3e6",
         "660a66ae7e277236c64112c83ad93da11bb38c5f",
         "66e62bae5184d54722553017aff9ff0946f8f8c5",
         "6d6b0b258ecfcbdbf4bc475c1dc449906b7816c2",
         "732d3bdc5eb5e522de602fbeba73e0384e7340dc",
-        "7b93808db53c9e276144845dff43d122fc86d313",
         "810d89f057bd0c5466e86065ed3eb9f2c2532fba",
         "841034e2bba4387392a673d253af824aafbf84c6",
         "8875608d6dd17bc92e1f4ce5dafc22883588685b",
         "8dfac11686f30d71fbbcb4066bb4308e3d981726",
-        "94d3115ba8597d46a8ee50e218f449dc53a7f548",
         "992f09baec70830ae92162333cd043b34f136d72",
-        "a362abf20336fd2b9f1884556749c15b081d55ca",
         "a760b8e66059b862049b8c997d6c1f35408bb171",
         "ad554afd21d3983563c50786f1f0ddb2428fb22e",
+        "b232c1183ac8ed05c0001555eaf739dfe3b15e22",
         "b2b4f104bb114d6b86c1f0f860236d5881560bc9",
         "b3a088568dc6f76db734fa32f340b0e3740c483f",
+        "b71563bd506823028b51f1dbece216b59c9943ce",
         "bf2065bf17e54a741d396aed29546d56525fb78e",
-        "cacd10f7b02a1a379ad6424d5c94bd69f7f10438",
+        "c971445a8d2e9bcc15ebea68ef5ee747305f16ea",
+        "cec29b8e69477b5d877af58fafd307677a69afbc",
         "cecf3c33da951cad68eae7f1b468487958ac6471",
         "d1c1d77772679636f914a32a7e2477b2aaded03c",
         "d927edac73b1564b53bc2e52c863a1df9a9cd815",
-        "dbb21a3206720e0041127bb1593614df8a27bfb2",
         "dc1dcd7547863085ac32c342ed813dc85867ed1d",
         "debb5b484f5f4819928da2f604613df44225495f",
         "e4fa77a9585f3e35717af90ff23fdf393d3e38fa",
+        "e6ef22d7fbdf3fd2c92e3345724654f8ffe9d78d",
         "ef86c344ef245054edaf6f4530549f58a670dfc1",
         "f7745f7f6bdf55997ba6d836abe807ceab5347a9",
         "f9e00949fa9a2f87bb3d6fe363ff6351d7d496fc",
         "fa5d20f22befa04dedadb2d118a96b5bfe6bc1e0",
         "ffbd283e5a36f4cb98605245ab7422d620c7fc4a"
       ],
-      "summary_hash": "14c6ba47478c839cae52135127ca6b46093681d0446cf051cfe24d370ef0e488",
+      "summary_hash": "5bd63feb448dfdc3f2dd492408689a0c3509855c879c2b8d0e77ccbe414ad18f",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -710,19 +730,24 @@
         "conversation_threshold_chars": 16384,
         "conversation_head_chars": 12288,
         "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
       }
     },
     "20260709": {
       "note": "notes/20260709.md",
-      "source_count": 28,
+      "source_count": 32,
       "sources": [
         {
           "note": "notes/2026070906-conversation-user-gpt55.md",
-          "blob_id": "d29e1d2547e03c0c3f20963261cf1be0092b1be8"
+          "blob_id": "1a1a87b1685e71241498c27f7fdec4fa338ea12b"
         },
         {
           "note": "notes/2026070907-conversation-user-opus48.md",
-          "blob_id": "532d5974a63a88c3d3ff19e054baab17718561d8"
+          "blob_id": "6df434cf72b0653130b6c04aca61bcd6eb66db5a"
         },
         {
           "note": "notes/2026070908-fable-full-context.md",
@@ -741,111 +766,129 @@
           "blob_id": "8532de743ff17027251819665e9c70a242620096"
         },
         {
-          "note": "notes/2026070912-push-notify-major-results.md",
+          "note": "notes/2026070912-conversation-user-opus48.md",
+          "blob_id": "c2e37cddff1c732ad0e490fb6c40d63f73b43e07"
+        },
+        {
+          "note": "notes/2026070913-push-notify-major-results.md",
           "blob_id": "62745bc7c60da2f0347712f39c1129be1c360046"
         },
         {
-          "note": "notes/2026070913-conversation-user-gpt55.md",
-          "blob_id": "49b44e8a741ad3bb507be991a56ec0b6ae1f84a0"
+          "note": "notes/2026070914-conversation-user-opus48.md",
+          "blob_id": "f5fb267575d71898ce7aa0eaf42ba9e528394b8a"
         },
         {
-          "note": "notes/2026070914-fable-writes-notes-files.md",
+          "note": "notes/2026070915-conversation-user-gpt55.md",
+          "blob_id": "1ad2e6c1e505650c1d5fe4443847d7cbddb0a9ec"
+        },
+        {
+          "note": "notes/2026070916-fable-writes-notes-files.md",
           "blob_id": "8d7163f5c674a3567eea8b18e47a639b86da1470"
         },
         {
-          "note": "notes/2026070915-fable-holistic-assessment.md",
+          "note": "notes/2026070917-fable-holistic-assessment.md",
           "blob_id": "b2f2aaeba0b5154c097d23f4f8ea81b21a15f554"
         },
         {
-          "note": "notes/2026070916-fable-native-render-premise.md",
+          "note": "notes/2026070918-fable-native-render-premise.md",
           "blob_id": "139c047e72d6b01322bf65c9a79ea456f8333f2d"
         },
         {
-          "note": "notes/2026070917-conversation-user-gpt55.md",
-          "blob_id": "09a73b86d2e736925bac240dc115ab2b60cc5c35"
+          "note": "notes/2026070919-conversation-user-gpt55.md",
+          "blob_id": "6b55b74e72a32c90021e20a3b08bde548ac776f3"
         },
         {
-          "note": "notes/2026070918-fable-pivot-decision.md",
+          "note": "notes/2026070920-conversation-user-opus48-sonnet5.md",
+          "blob_id": "eebe7a0c72637220f59d5e979afaad68178daf6e"
+        },
+        {
+          "note": "notes/2026070921-fable-pivot-decision.md",
           "blob_id": "e4d1fed4d805ecd0e9329774df5562cf03ab42de"
         },
         {
-          "note": "notes/2026070919-env-setup-retrospective.md",
+          "note": "notes/2026070922-env-setup-retrospective.md",
           "blob_id": "9e6462bc1f6d431604d7bae87e0a08aeab6936ae"
         },
         {
-          "note": "notes/2026070920-paper-draft-archived.md",
+          "note": "notes/2026070923-paper-draft-archived.md",
           "blob_id": "42210d69eb3c074ec91f3492d14f1531de7d9091"
         },
         {
-          "note": "notes/2026070921-precision-provenance-audit.md",
+          "note": "notes/2026070924-precision-provenance-audit.md",
           "blob_id": "1a1d4046722a59154501512fd0de5f045f7f621a"
         },
         {
-          "note": "notes/2026070922-postmortem-cornerstone-conflation.md",
+          "note": "notes/2026070925-postmortem-cornerstone-conflation.md",
           "blob_id": "3f605e5bb61d7043430c2a411de7924f0e5afa0b"
         },
         {
-          "note": "notes/2026070923-fable-continuation-advice.md",
+          "note": "notes/2026070926-fable-continuation-advice.md",
           "blob_id": "b4d568741709658d88b9bd03255b6c971e227256"
         },
         {
-          "note": "notes/2026070924-conversation-user-gpt55.md",
-          "blob_id": "ddee47b99e426236d7baa0f93f0e4eee3d06b7cd"
+          "note": "notes/2026070927-conversation-user-gpt55.md",
+          "blob_id": "d2de3a6532ed8a3c9a10a82e00c2b0ce46a204de"
         },
         {
-          "note": "notes/2026070925-champion-validation-experiment.md",
+          "note": "notes/2026070928-champion-validation-experiment.md",
           "blob_id": "23730c06c36d9df3c6036b64d9239cfca8325185"
         },
         {
-          "note": "notes/2026070926-champion-validation-experiment.md",
+          "note": "notes/2026070929-champion-validation-experiment.md",
           "blob_id": "34e31bb356499611a35462861b8bc99b330424e0"
         },
         {
-          "note": "notes/2026070927-paper-rewrite-guidance.md",
+          "note": "notes/2026070930-paper-rewrite-guidance.md",
           "blob_id": "996534fbe6ce1ae0aa1b3b92e9017a4e4b19b280"
         },
         {
-          "note": "notes/2026070928-per-head-champion-scan.md",
+          "note": "notes/2026070931-conversation-user-opus48.md",
+          "blob_id": "8175c27c624fdb5afebf619e795b092efdd318d3"
+        },
+        {
+          "note": "notes/2026070932-per-head-champion-scan.md",
           "blob_id": "634ac522edad0203848a5ff05bea09daed3572fb"
         },
         {
-          "note": "notes/2026070929-verify-provenance-before-claiming-data.md",
+          "note": "notes/2026070933-verify-provenance-before-claiming-data.md",
           "blob_id": "c0bb37e5f0046169568337ea1be3fa09f1ff85bc"
         },
         {
-          "note": "notes/2026070930-plan-dont-chase-the-quick-win.md",
+          "note": "notes/2026070934-plan-dont-chase-the-quick-win.md",
           "blob_id": "5d33b01898c2448fd6e4c3909bb3e651d1bf4726"
         },
         {
-          "note": "notes/2026070931-memory.md",
+          "note": "notes/2026070935-memory.md",
           "blob_id": "68af5eb88cb94a5b233ff2090034892f1ebd52cd"
         },
         {
-          "note": "notes/2026070932-provenance-ledger.md",
+          "note": "notes/2026070936-provenance-ledger.md",
           "blob_id": "876b5d3ff65025df0dd1fea66fa700cd5f020249"
         },
         {
-          "note": "notes/2026070933-compression-sweep.md",
+          "note": "notes/2026070937-compression-sweep.md",
           "blob_id": "25128b3bc3ae62f7e9322054aaf74d5f481d1355"
         }
       ],
       "source_blob_ids": [
-        "09a73b86d2e736925bac240dc115ab2b60cc5c35",
         "139c047e72d6b01322bf65c9a79ea456f8333f2d",
         "16a19480b30342d9acc3c521b0560794aa470bec",
+        "1a1a87b1685e71241498c27f7fdec4fa338ea12b",
         "1a1d4046722a59154501512fd0de5f045f7f621a",
+        "1ad2e6c1e505650c1d5fe4443847d7cbddb0a9ec",
         "23730c06c36d9df3c6036b64d9239cfca8325185",
         "25128b3bc3ae62f7e9322054aaf74d5f481d1355",
         "34e31bb356499611a35462861b8bc99b330424e0",
         "3f605e5bb61d7043430c2a411de7924f0e5afa0b",
         "42210d69eb3c074ec91f3492d14f1531de7d9091",
-        "49b44e8a741ad3bb507be991a56ec0b6ae1f84a0",
-        "532d5974a63a88c3d3ff19e054baab17718561d8",
         "5d33b01898c2448fd6e4c3909bb3e651d1bf4726",
         "5de95eb64d8dd69ae78c0d501d298109bc92fb76",
         "62745bc7c60da2f0347712f39c1129be1c360046",
         "634ac522edad0203848a5ff05bea09daed3572fb",
         "68af5eb88cb94a5b233ff2090034892f1ebd52cd",
+        "6b55b74e72a32c90021e20a3b08bde548ac776f3",
+        "6df434cf72b0653130b6c04aca61bcd6eb66db5a",
+        "8175c27c624fdb5afebf619e795b092efdd318d3",
         "8532de743ff17027251819665e9c70a242620096",
         "876b5d3ff65025df0dd1fea66fa700cd5f020249",
         "8d7163f5c674a3567eea8b18e47a639b86da1470",
@@ -854,12 +897,14 @@
         "b2f2aaeba0b5154c097d23f4f8ea81b21a15f554",
         "b4d568741709658d88b9bd03255b6c971e227256",
         "c0bb37e5f0046169568337ea1be3fa09f1ff85bc",
-        "d29e1d2547e03c0c3f20963261cf1be0092b1be8",
-        "ddee47b99e426236d7baa0f93f0e4eee3d06b7cd",
+        "c2e37cddff1c732ad0e490fb6c40d63f73b43e07",
+        "d2de3a6532ed8a3c9a10a82e00c2b0ce46a204de",
         "e4d1fed4d805ecd0e9329774df5562cf03ab42de",
+        "eebe7a0c72637220f59d5e979afaad68178daf6e",
+        "f5fb267575d71898ce7aa0eaf42ba9e528394b8a",
         "fafe4240f01eb77380e1b8a69dd73461f1ef66e4"
       ],
-      "summary_hash": "e08fb90f1a34a090c2aceb51b9a2348943c6f8138882b7d7c20f855cf52b71d5",
+      "summary_hash": "e60850deec430baff436f1c9deccdc99d0ebbffda71e3d6f7dc4c0aff1cb1621",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -867,6 +912,135 @@
         "conversation_threshold_chars": 16384,
         "conversation_head_chars": 12288,
         "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
+      }
+    },
+    "20260710": {
+      "note": "notes/20260710.md",
+      "source_count": 8,
+      "sources": [
+        {
+          "note": "notes/2026071038-conversation-user-opus48.md",
+          "blob_id": "fbbff9062f87e029cad6d033e3b32bcabee16615"
+        },
+        {
+          "note": "notes/2026071039-conversation-user-gpt55.md",
+          "blob_id": "66ef1d80b9f8369cad72d721758fc3f5f014ed14"
+        },
+        {
+          "note": "notes/2026071040-conversation-opus48.md",
+          "blob_id": "44879b53a95c5cf0fbaeed97c864555f837cdc7b"
+        },
+        {
+          "note": "notes/2026071041-conversation-user-opus48-sonnet5.md",
+          "blob_id": "ae7520fbb1df0c0e922fc64dac9e8ef21d17241d"
+        },
+        {
+          "note": "notes/2026071042-swegym-indomain-tune.md",
+          "blob_id": "0f7aae58262bb6cdc3b15380548f01372671aa3b"
+        },
+        {
+          "note": "notes/2026071043-conversation-user-opus48.md",
+          "blob_id": "2ad857e267a73d129441bca9990d6b8e0a0c46b0"
+        },
+        {
+          "note": "notes/2026071044-todo-list-state-capture.md",
+          "blob_id": "fa3219b67badad6ef01d587d1a84c0a8b35113f4"
+        },
+        {
+          "note": "notes/2026071045-conversation-user-opus48.md",
+          "blob_id": "31d142e911bcb6dd3face65e5dc0fbf0dc02401c"
+        }
+      ],
+      "source_blob_ids": [
+        "0f7aae58262bb6cdc3b15380548f01372671aa3b",
+        "2ad857e267a73d129441bca9990d6b8e0a0c46b0",
+        "31d142e911bcb6dd3face65e5dc0fbf0dc02401c",
+        "44879b53a95c5cf0fbaeed97c864555f837cdc7b",
+        "66ef1d80b9f8369cad72d721758fc3f5f014ed14",
+        "ae7520fbb1df0c0e922fc64dac9e8ef21d17241d",
+        "fa3219b67badad6ef01d587d1a84c0a8b35113f4",
+        "fbbff9062f87e029cad6d033e3b32bcabee16615"
+      ],
+      "summary_hash": "675e2322d53d2da0f5955f1ef0b5881f81948a343b8f7e88925d2382ef50e674",
+      "input_policy": {
+        "ordinary_threshold_chars": 8192,
+        "ordinary_head_chars": 6144,
+        "ordinary_tail_chars": 2048,
+        "conversation_threshold_chars": 16384,
+        "conversation_head_chars": 12288,
+        "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
+      }
+    },
+    "20260711": {
+      "note": "notes/20260711.md",
+      "source_count": 8,
+      "sources": [
+        {
+          "note": "notes/2026071146-conversation-user-gpt56.md",
+          "blob_id": "74f8479c61a86821a24f7a65642654ca884ec5e7"
+        },
+        {
+          "note": "notes/2026071147-sol-empirical-statistical-audit.md",
+          "blob_id": "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec"
+        },
+        {
+          "note": "notes/2026071148-sol-methodology-implementation-audit.md",
+          "blob_id": "781b415e9487265c772e252aff747e4049b031e5"
+        },
+        {
+          "note": "notes/2026071149-sol-independent-scientific-consultation.md",
+          "blob_id": "3c970b9682c674a1525d05ee062d446f2c5b4f3f"
+        },
+        {
+          "note": "notes/2026071150-sol-final-conclusions-and-budgeted-research-plan.md",
+          "blob_id": "c3ea9a5d3fc5213820fdc248a623720497ef003c"
+        },
+        {
+          "note": "notes/2026071151-conversation-user-opus48.md",
+          "blob_id": "4e88d5c2a659bf46111e0dcbf3ada20c2306cf09"
+        },
+        {
+          "note": "notes/2026071152-why-value-grafting-mostly-fails.md",
+          "blob_id": "23376f899d0a4854f48def5de190c31684155acf"
+        },
+        {
+          "note": "notes/2026071153-corrections-from-sol-audit.md",
+          "blob_id": "14d36b97809794012e60e439c3c9a9bd3ab997ae"
+        }
+      ],
+      "source_blob_ids": [
+        "14d36b97809794012e60e439c3c9a9bd3ab997ae",
+        "23376f899d0a4854f48def5de190c31684155acf",
+        "3c970b9682c674a1525d05ee062d446f2c5b4f3f",
+        "4e88d5c2a659bf46111e0dcbf3ada20c2306cf09",
+        "74f8479c61a86821a24f7a65642654ca884ec5e7",
+        "781b415e9487265c772e252aff747e4049b031e5",
+        "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec",
+        "c3ea9a5d3fc5213820fdc248a623720497ef003c"
+      ],
+      "summary_hash": "078edd35855b76efcbbd78630162aae5390086a9660f5fdcf35360f1c9c0bc62",
+      "input_policy": {
+        "ordinary_threshold_chars": 8192,
+        "ordinary_head_chars": 6144,
+        "ordinary_tail_chars": 2048,
+        "conversation_threshold_chars": 16384,
+        "conversation_head_chars": 12288,
+        "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
       }
     }
   }

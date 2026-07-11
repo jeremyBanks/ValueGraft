@@ -7,46 +7,63 @@
       "level": "month",
       "key": "202607",
       "mode": "summary",
-      "source_count": 6,
+      "source_count": 8,
       "sources": [
         {
           "note": "notes/20260704.md",
           "level": "day",
           "key": "20260704",
-          "blob_id": "c892b23f768dc07077be4859438c8d0a74bc8e6b"
+          "blob_id": "f082546af22c090b0dc558354db9590bc9dcce3e"
         },
         {
           "note": "notes/20260705.md",
           "level": "day",
           "key": "20260705",
-          "blob_id": "1f734bd659dd120b19dc84bf593a0b97b660a919"
+          "blob_id": "877f469ecf42df68482ef60ee054025c9f2cfedb"
         },
         {
           "note": "notes/20260706.md",
           "level": "day",
           "key": "20260706",
-          "blob_id": "1f30a7f7300b08d20a44f997c25bf028f7ccf305"
+          "blob_id": "434ec9bf91836712a647fe97280244e0dd6162f2"
         },
         {
           "note": "notes/20260707.md",
           "level": "day",
           "key": "20260707",
-          "blob_id": "0db8c9b91b0a38d84de71a1b22c87a6fff3b476d"
+          "blob_id": "c31c16765397d73d4415d73f950717fbf060381f"
         },
         {
           "note": "notes/20260708.md",
           "level": "day",
           "key": "20260708",
-          "blob_id": "32f4b827501136c35600268b4d9a9710e916ef8c"
+          "blob_id": "5b545dfdda216ca4344be7866237afea522cbf34"
         },
         {
           "note": "notes/20260709.md",
           "level": "day",
           "key": "20260709",
-          "blob_id": "affd77478a2879e664d714ac63061bcc60ffe6b8"
+          "blob_id": "cd780d126790736733bbe3b093818e6111a9a874"
+        },
+        {
+          "note": "notes/20260710.md",
+          "level": "day",
+          "key": "20260710",
+          "blob_id": "3772e90bbadc06e3a575cad3e6df1abb8d7885df"
+        },
+        {
+          "note": "notes/20260711.md",
+          "level": "day",
+          "key": "20260711",
+          "blob_id": "49b992ba41d332afaa73c0bf01d7e0fa8436d2e3"
         }
       ],
-      "summary_hash": "f62e56bc1d2851a0465971dddcc62613ca9e0dd4bd77e77bab2b298bfb3e9aec"
+      "summary_hash": "a092101859750d85282401af4ebba9bd6dd2e92130c04ee9c68e7d3f08449dd1",
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
+      }
     },
     "notes/README.md": {
       "note": "notes/README.md",
@@ -59,10 +76,13 @@
           "note": "notes/202607.md",
           "level": "month",
           "key": "202607",
-          "blob_id": "ba731f480e5f487d87656c68fc1598e6a23ec421"
+          "blob_id": "efe2cecb00cbb5a54f155b477f29e5d0b1c6ed20"
         }
       ],
-      "summary_hash": "817695696cf3c2eb6d4021fe3e62967d893a139b52759562a4df370ea1de56b7"
+      "summary_hash": "d0713e4a58ea8e70545e9c4199b4010255bbfde60cc952a61db44f25677728de",
+      "summarizer": {
+        "provider": "promote"
+      }
     }
   }
 }

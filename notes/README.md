@@ -1,193 +1,213 @@
 # ValueGraft Notes: 2026-07
 
-_Across six dense days, the ValueGraft project moved from founding hypothesis
-through a full empirical campaign — pilot results, a mid-course reframing from
-mechanism to mitigation, a live coding-agent evaluation, a headline
-sense/referent recovery finding corroborated by an interpretability probe — to a
-reproduction collapse that unwound both of the project's positive results and
-forced a pivot toward a smaller, honestly-bounded paper anchored on a single
-real bf16 effect, with a champion-tuning experiment queued as the decisive test
-of whether anything larger survives scrutiny._
+_July moved ValueGraft from an initially promising cache-state intervention
+toward a provenance-clean, narrowly bounded account: generation-time KV state
+contains task-relevant information, but post-prefill transplantation of
+historical values has not shown reliable semantic-recovery or agent-performance
+benefits. The month also established stricter validation, provenance, placebo,
+rendering, and archive-rebuild procedures._
 
-## Research question and its evolution
+**Participants/contributors:** Jeremy Banks (user, project director, and
+credited guidance); Claude Fable 5 / Fable; Claude Sonnet 5; Claude Opus 4.8;
+OpenAI GPT-5.5 variants including `gpt-5.5-xhigh`, `gpt-5.5-high`,
+`gpt-5.5-medium`, and `gpt-5.5-low`; OpenAI GPT-5.6-sol-xhigh / Sol; Gemini Pro
+3.1; and labeled Codex, Sonnet, Opus, Gemini, read-only mining,
+design/implementation, judging, and provenance-audit subagents. Some commits
+labeled Fable were later attributed to Opus after the documented handoff.
 
-The project began (07-04) testing whether write-time KV-cache state carried
-across a text-compaction boundary preserves semantic continuity (referent,
-sense, stance) that pure-text recomputation destroys, with a secondary
-factorization hypothesis that the effect lives in cached **values** rather than
-position-stamped **keys**. An external review on 07-05 argued the original
-framing was close to self-evident and redirected the work toward a
-mitigation-first question — can a small, practical intervention reduce
-compaction's behavioral damage — a shift the project owner later clarified
-(07-09) had been the original intent all along, not a correction of drift.
+## From mechanism demonstration to bounded evidence
 
-Naming and formalism went through several passes before stabilizing. Early arm
-letters (A–E, H, B-min, B-causal) gave way, after repeated confusion between a
-_layout_ axis (packed vs. gapped vs. tail-retained) and a _state-source_ axis
-(fresh vs. write-time), to a clean two-parameter model fixed on 07-06:
-**ValueGraft** as the umbrella family, with
-`K_final = (1-α_K)·K_fresh + α_K·K_write_time` and the analogous blend for `V`.
-Named regions include Plain Summary Compaction (α_K=α_V=0) and V-only Graft
-(α_K=0, α_V tuned) — the latter is what nearly all live experimental arms
-actually are. "Replace" (α=1) was rejected as a separate method name, since it
-is just an endpoint of the continuous parameterization. A hard rule followed:
-any comparison must hold summary text, token IDs, layout, tail, positions, and
-decoding fixed and vary only the axis under test.
+The project began with a controlled comparison of full context, fresh text
+compaction, retained write-time cache state, and fresh-key/old-value
+transplantation. Early 4B and 30B results suggested that write-time state could
+preserve information not reproduced by summary re-encoding, with possible
+continuation gains and reduced fabrication. Packed write-time summaries notably
+increased uncertainty admissions on unknowable questions, but layout and
+tail-retention changes made this unsuitable as clean evidence for value-only
+grafting.
 
-## Empirical arc: rise, corroboration, and collapse
+The scientific claim was progressively narrowed. The durable distinction is
+between:
 
-**Early signal (07-04–07-05).** A 4B pilot found no probe-accuracy mitigation on
-interpretation probes but did find write-time encoding measurably mattered on
-continuation NLL, plus an unplanned "honesty effect" — retained/grafted-state
-arms admitted ignorance of evicted facts where text-only compaction fabricated
-confidently. A 30B replication strengthened the encoding advantage and revealed
-scale-dependent dose-response inversion (full-strength grafting, harmful at 4B,
-became net-positive at 30B). A standard benchmark (LongMemEval) gave an honest
-null on recall but confirmed the honesty effect was frame-dependent. A first
-real coding-agent result (SWE-Gym trajectory replay) produced a modest but
-statistically clean effect (+0.0156 nats, 95% CI excluding zero) — this proxy
-result would later turn out to be the project's only load-bearing empirical
-anchor.
+1. information present in coherent generation-time state;
+2. information specific to the correct hidden history;
+3. benefit from retaining a coherent original state; and
+4. benefit from transplanting historical values into fresh keys and downstream
+   cached representations.
 
-**Live agent evaluation and its complications (07-06).** A wide overnight matrix
-produced a genuine per-layer-tuned champion configuration passing 9/9 gated
-coding episodes, alongside a session-state contamination bug that forced a full
-data-hygiene rebuild, and the discovery that supposedly "real" coding-agent runs
-had in fact all been synthetic (queued real SWE-bench rows sat unrun at the back
-of long queues). Pivoting to actual SWE-bench-Lite tasks then exposed a
-capability floor: the subject model failed validation on even the easiest
-gold-patch instances under full, uncompacted context, while a Sonnet subagent
-solved the same instance in 52 seconds — pinning the problem on the subject
-model/scaffold, not task difficulty or compaction. This triggered scaffold fixes
-(native tool calling had been silently disabled; decoding was hardcoded to
-greedy regardless of configured temperature) and a new "chained-exercise"
-difficulty tier.
+The tested intervention primarily addressed the fourth, and may damage the
+model’s trained K/V joint representation. Values are contextual activations, not
+position-free memory payloads. The strongest defensible synthesis is that
+generation-time KV state can preserve task-relevant information absent from, or
+unrecoverable by, compacted text; reliable improvement from post-hoc value
+transplantation remains unestablished.
 
-**The headline finding and its first corroboration (07-07).** Re-analyzing the
-synthetic probe corpus for semantic richness rather than exact recall produced
-the project's central claim: grafting recovered ~+12pp on sense disambiguation
-and ~+10pp on referent recovery at 30B, with a near-null +2pp on stance — a
-dissociation pattern read as the signature of a real mechanism, since it tracked
-exactly where plain compaction had done damage. This was corroborated by an
-independent teacher-forced logprob metric and, after a serious mid-investigation
-correction (early demos had never actually captured the grafted-intervention
-state, only a pre-existing gap between old and fresh context), by a borrowed
-interpretability tool (the "J-lens"), which showed aligned grafting moved
-internal readouts closer to full-context ground truth on a worked example. The
-same day, the chained-exercise agent-task line closed with a real but hollow
-result — a tuned configuration passed every seed, but so did the
-plain-compaction baseline, meaning the task set exposed no damage for grafting
-to visibly repair — and tau2-bench was piloted and retired as structurally
-unable to force real content eviction. By day's end a new placebo-controlled
-measurement script produced 30B numbers (37% of cases helped) contradicting the
-already-published headline (64–81%) on nominally identical settings, freezing
-all downstream scaling work pending a reproduction check.
+At 30B, independent harnesses initially reproduced positive referent and sense
+signals, with referent stronger than sense and stance largely unchanged.
+Subsequent provenance and held-out audits substantially weakened those results:
 
-**Reproduction crisis (07-08).** The frozen check initially misfired: an
-apparent non-reproduction traced not to model nondeterminism (two byte-identical
-same-hardware runs ruled that out) but to a `transformers` version drift and a
-Cauchy-unstable mean-of-ratio estimator that blew up near zero denominators.
-Switching to robust metrics (raw difference, percent-helped, median-ratio,
-bootstrap CIs) preserved the primary effect (referent significant, sense
-positive but underpowered, stance null) and downgraded an earlier "keys actively
-hurt" claim to "keys neutral." A second, more corrosive discovery followed: the
-positive result depended on the model having generated its own summary at the
-compaction boundary, not merely on equivalent content being present — externally
-supplied summaries gave a null. Fable then flagged that "MoE flips the sign," a
-load-bearing explanation in the project's mechanism story, was implausible on
-attention-geometry grounds and redesigned the investigation around whether
-KV-head count, GQA ratio, and QK-norm predict the effect's sign, motivating a
-16-model, 9-vendor cross-architecture sweep built around a nativeness-confound
-fix (each model generates its own replies and summary against a shared scenario
-scaffold; only the gold continuation stays fixed). The sweep launch was slowed
-by a checkpoint mismatch (debugging had run against the wrong Qwen3-30B-A3B
-variant) and a chain of infrastructure and self-inflicted errors, all remediated
-with new standing rules (verify checkpoints, verify real progress before killing
-jobs, trunk-only git policy, fail-closed dependency pinning).
+- The canonical bf16 held-out champion produced graft-minus-baseline `−0.0026`
+  with a clustered interval spanning zero.
+- Position-shuffled values were clearly harmful, showing alignment or
+  compatibility sensitivity, but this does not prove recovery from the correct
+  hidden history.
+- Per-head, per-layer, intersection, and union champions did not beat baseline
+  on conversation recovery.
+- The compression sweep was flat to slightly negative, although several
+  aggressive conditions may have reconstructed state under a request
+  inconsistent with summary generation and require code verification.
+- The graft affected summary and retained-tail positions together, so existing
+  results cannot attribute effects specifically to summary-state retention.
+- Source-stratified synthetic results showed a possible sign reversal:
+  approximately `+0.120` nats/token for c07–c12 and `−0.050` for c13–c24, pooled
+  near zero. The corpus is not homogeneous: its conversation bodies mix
+  4B-rendered and Claude/Fable-authored material, while summaries were generated
+  by the 30B test model.
 
-**Collapse and provenance audit (07-09).** A disciplined re-render of the twelve
-reference conversations under clean current code collapsed the judged
-sense-recovery headline from +12pp to +1.0pp (CI spanning zero); a same-judge
-disentangle showed most of the drop came from the render itself, not judge
-recalibration, and the referent-logprob anchor collapsed on the same pattern. A
-deeper provenance audit — triggered by the owner noting the core results had
-never been reproduced at 16-bit — found the situation was worse: neither the
-recovery pipeline nor the proposed honesty/anti-fabrication result had ever
-actually been scored at bf16 (both were 4-bit-only despite a draft mislabeling
-one as bf16), and the honesty result's intervention arm ("H-pack") turned out to
-graft keys as well as values in a way that was not even content-specific (a
-wrong-conversation control suppressed fabrication just as well). Both the
-headline recovery claim and the honesty "cornerstone" were disqualified — wrong
-precision, and in the honesty case, wrong arm. The only artifact confirmed
-simultaneously bf16, value-only, and statistically sound is the SWE-Gym
-teacher-forced-logprob effect from 07-05 (+0.0156 nats, CI excluding zero).
+The brief-summary SWE-Gym signal remained a legitimate but narrow observation:
+roughly `+0.013–+0.016` teacher-forced next-action log-probability, with changed
+greedy outputs on many tasks. Production-faithful summaries were null, and an
+independent disjoint replication yielded approximately `−0.0035` for scalar
+α=0.75, with no reliable α improvement. Across 173 unique trajectories the
+pooled estimate was approximately `+0.0053`, with an interval spanning zero. A
+12-layer in-domain champion reached approximately `+0.011–+0.013` on its
+selection-adjacent pool, but remains vulnerable to selection and regime effects.
+These are offline proxies on successful foreign trajectories, not task success,
+patch correctness, test execution, or live-agent improvement.
 
-## Prior art and novelty scope
+## Terminology and experimental discipline
 
-Three independent literature searches (Claude/Fable, Gemini, GPT-5.5) on 07-08,
-plus earlier provider-API reviews on 07-05 and 07-06, converged on the same
-boundary: preserving write-time value states while recomputing keys, to test
-semantic reinterpretation of retained text across a compaction boundary, is not
-covered as a composite claim by prior work, but every individual ingredient (KV
-editability, cache splicing, attention-based state transplant, in-context
-summary retention) has scattered precedent, and hosted providers (notably
-OpenAI's Responses API) already ship opaque server-side compaction handles
-similar in shape to what the project had built. The defensible novelty claim was
-repeatedly narrowed to the specific mitigation experiment and its evaluation
-instrument — no existing benchmark measures referent, sense, or stance
-reinterpretation after cache manipulation — rather than any general claim about
-KV-state editability or opaque compaction APIs.
+The public taxonomy was reset around independently controlled keys and values:
 
-## Process and methodology lessons
+```text
+K(αK) = (1 − αK) Kfresh + αK Kwrite-time, rerotated
+V(αV) = (1 − αV) Vfresh + αV Vwrite-time
+```
 
-Several incidents recurred across the month in slightly different clothing —
-per-session state bleeding between concurrent runs, misleading "real task"
-framing when synthetic data was actually used, destructive actions taken on
-proxy signals rather than verified state, and results cited from directory names
-rather than data actually verified as matching claimed model/dtype/arm/metric.
-Each produced both an immediate fix and a standing rule (validity-at-the-source
-design so failures produce no output rather than bad output; mandatory inline
-task-source labeling; verify-before-destroy discipline; provenance must be
-proven from data, not inferred). By 07-08 the project had converged on the
-meta-lesson that guidance surviving only as prose reminders reliably recurs as
-failure, while guidance converted into automated gates does not — this now
-explicitly drives infrastructure decisions. A parallel, lower-stakes thread on
-07-08–07-09 built and hardened an incremental notes-summarization pipeline for
-this archive itself (per-source manifest tracking, segment-grouping and
-duration-split policies, sensitive-topic filtering, two-layer daily/overall
-meta-summaries), including fixing a regex bug that could delete note content and
-reverting a git-identity change that silently misattributed unrelated commits.
+Plain compaction is `(0,0)`. The canonical current intervention is V-Graft:
+fresh keys with aligned write-time values. KV-Graft denotes experiments that
+also modify keys; historical packed and coupled-KV arms remain separate
+auxiliary conditions. Keys require positional re-rotation; values do not.
+
+Reporting now prioritizes raw graft-minus-baseline log-probability, percentage
+helped, and conversation-cluster bootstrap intervals. The unstable gap-closure
+ratio was retired. Content specificity, measured with matched placebos, must be
+separated from net recovery. Teacher-forced continuation and next-action
+likelihood are secondary proxies, not behavioral task success. Meaning recovery
+should be reported separately from verbatim continuation, using judged meaning,
+contradiction, calibration, or distance-to-oracle measures where appropriate.
+
+The month also established that:
+
+- Global α and tuned champions must be reported separately.
+- Tuning must use disjoint validation data and held-out conversations.
+- Placebos should match slots, α, norms, covariance, and layout as closely as
+  possible.
+- Summary leakage, evicted-only facts, fabricated answers, abstention, and judge
+  artifacts require separate strata.
+- Native per-model rendering is preferable, but reply length, competence,
+  headroom, meaningful eviction, and render variance must be audited.
+- Positive controls must reproduce a known effect through the actual production
+  path before fan-out.
+- Exact checkpoint, precision, model/template, summary condition, intervention
+  identity, split, code commit, compression ratio, and cache provenance must be
+  recorded from artifacts or runtime state.
+- Batch decoding is not interchangeable with validated per-token greedy
+  decoding: it changed bf16 outputs and weakened the referent effect.
+- Any future causal test should compare coherent original K+V, identical-text
+  fresh restart, wrong-history restart, old-V/fresh-K graft, and
+  treatment-delta-matched placebo, with summary-only and tail-only factorial
+  arms.
+
+A speculative explanation is that fresh values are often a re-derivable readout
+of the surviving summary; correct grafts therefore avoid the harm caused by
+wrong grafts without adding much signal. Gradient-projection analysis of
+write-time versus fresh values is the most decisive proposed test, but remains a
+hypothesis.
+
+## Coding-agent and benchmark program
+
+The live coding-agent effort exposed contamination, shared-run directories,
+stale endpoints, broken probes, cache-growth failures, false completion files,
+and capability-floor problems. Humane SWE-bench reached no trusted passes in the
+tested slice, including oracle-retrieval validation. Those results are boundary
+evidence, not intervention comparisons.
+
+The program consequently shifted to capability-gated chained exercises and
+synthetic mechanism proxies. A small chain slice showed promising but incomplete
+counts, and full-strength grafting could destabilize a chain champion; per-layer
+tuning restored one case from `0/4` to `4/4`. The tasks were too robust, too
+small, or partly contaminated to establish compaction-sensitive agent benefit.
+Tau-banking dialogues were too short to create a meaningful compaction gap and
+were paused pending redesign.
+
+Operational safeguards now include source-level invalidation, per-task cache
+generations, atomic completion writes, health gating, configuration banners,
+explicit strata, and trusted-row requirements. A filename collision later erased
+one production-champion arm and five brief-champion trajectories; the missing
+data were documented and excluded rather than inferred.
+
+## Interpretability and adjacent analyses
+
+The J-lens and related readouts showed substantial old-versus-fresh
+residual-stream differences across summary tokens and layers, with layer 48
+often most separable and later layers more continuation-like. Intervention
+sweeps showed modest alignment-sensitive movement at moderate α, degradation at
+α=1, and many ambiguous or disconfirming free-generation cases. The J-lens
+supports a low-resolution state-gap claim, not vivid per-example recovery or
+task success, and remains secondary to behavioral evidence.
+
+Topic- and language-sensitivity work suggests that internal states can retain
+topic/event associations while generation routes toward different narrative
+language. Raw logit lens recovered much of the signal; J-lens supplied cleaner
+category and transported-space comparisons but was not uniquely necessary. The
+interpretation should remain language- and topic-dependent narrative routing
+rather than a claim about ignorance, refusal, or a specific hidden mechanism.
+
+## Infrastructure, provenance, and archive work
+
+The project adopted fail-closed execution: dependency and checkpoint preflights,
+fresh verification tokens, small expansion probes, health monitors, atomic
+checkpoints, resumable rendering, and explicit failure classification. The
+runtime split between local MLX/4-bit/Python 3.12 and pod HF/bf16/Python 3.11
+remains a major reproducibility risk; a shared pod environment and dependency
+validation are required before further environment-sensitive work.
+
+Archive tooling was consolidated behind a provider-configurable Luna/Claude
+rebuild with shared extraction, summarization, normalization, and rollup stages.
+It separates filename identity, participant identity, and opaque provenance;
+excludes worker chatter and unrelated sidecars; preserves selected final
+subagent assessments; and supports incremental, UTC-sorted, manifest-backed
+regeneration. Fifty-seven repository tests and dry-run checks passed. The clean
+Luna rebuild has generated and validated only the first three of 55 replacement
+conversation notes; existing notes and the manifest remain the rollback state
+until every candidate is validated and an atomic swap is authorized.
 
 ## Current state and handoff
 
-- **Standing result:** the only claim currently both bf16 and value-only and
-  statistically sound is the SWE-Gym next-action logprob effect (+0.0156 nats,
-  CI [+0.005, +0.027], 49/75 wins) — small, a proxy rather than task success,
-  under an aggressively brief summary condition.
-- **Disqualified:** the synthetic sense/referent recovery headline (render- and
-  precision-fragile, collapses to near-null under clean bf16 reproduction) and
-  the honesty/anti-fabrication "cornerstone" (measured at the wrong precision,
-  on a coupled K+V arm, not content-specific).
-- **Decisive pending test:** a placebo-controlled, per-quantization
-  champion-configuration (per-layer tuning) validation experiment, designed but
-  not yet run to completion, will determine whether any positive result beyond
-  the SWE-Gym anchor survives; a paper rewrite is explicitly blocked on its
-  outcome.
-- **Also queued, unlaunched:** a per-head champion scan, a compression-level
-  sweep testing whether any effect concentrates under aggressive compaction, and
-  the cross-architecture QK-norm sign-prediction sweep (partial results exist; a
-  non-QK-norm dense model showed a positive primary-measure effect that
-  complicates the hypothesis).
-- **Editorial direction:** the next paper draft is to be written from scratch
-  around the bounding result plus the single SWE-Gym positive, authored
-  primarily by Fable, avoiding internal jargon and overselling, and reviewed
-  through separate adversarial/proofreading/readability passes rather than one
-  omnibus review.
-- **Known process risks:** the notes-heartbeat automation for unattended updates
-  has missed its firing window repeatedly and should not be trusted without
-  verification; several already-collected results still lack provenance
-  manifests and can only be cited with hedged, inferred-not-proven caveats
-  pending reprocessing.
+ValueGraft should currently be treated as a bounded scientific investigation,
+not an established reusable technique. The best-supported results are:
+
+- write-time state can differ materially from fresh summary state;
+- mismatched or shuffled values can harm behavior;
+- a narrow, condition-specific coding proxy signal appeared but did not
+  independently replicate;
+- broad held-out conversation recovery and agent-performance benefits are null
+  or unresolved.
+
+Before further compute or publication changes:
+
+- Complete the authorized holistic paper correction covering provenance,
+  source-stratified results, compression validity, graft region, placebo
+  matching, SWE-Gym scope, and reproducibility metadata.
+- Verify compression request consistency and preserve exact summaries, token
+  IDs, contexts, alignments, hashes, and commits.
+- Run only a small causal, capability-matched experiment after the offline
+  apparatus passes.
+- Avoid broad α/head/layer/architecture searches, unmatched placebos, imported
+  action scoring, and live-agent claims.
+- Complete and validate all 55 archive candidates before atomic replacement;
+  retain current notes as rollback.
 
 ## Sources
 
