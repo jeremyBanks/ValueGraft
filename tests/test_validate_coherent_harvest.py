@@ -118,53 +118,19 @@ def checkpoint(position: int, status: str = "scored") -> dict:
     }
 
 
-def test_global_gate_failure_requires_complete_fail_gate(tmp_path: Path):
+def test_post_model_failure_without_terminal_envelope_fails_closed(tmp_path: Path):
     (tmp_path / "job.log").write_text("MODEL_READY\nFATAL injected\n")
     write(tmp_path / "failure.json", {"error": "injected"})
     write(tmp_path / "production_kernel_gate.json", gate("FAIL"))
-    out = MODULE.validate(tmp_path, "failure")
-    assert out["production_gate"] == "FAIL"
-
-    pre_backend = gate("FAIL")
-    pre_backend["gates"].pop("attention_backend")
-    write(tmp_path / "production_kernel_gate.json", pre_backend)
-    assert MODULE.validate(tmp_path, "failure")["production_gate"] == "FAIL"
-
-    bad = gate("FAIL")
-    bad["gates"].pop("error")
-    write(tmp_path / "production_kernel_gate.json", bad)
-    with pytest.raises(ValueError, match="lacks failure evidence"):
+    with pytest.raises(ValueError, match="required artifact absent"):
         MODULE.validate(tmp_path, "failure")
 
 
-def test_post_gate_case_failure_requires_void_checkpoint(tmp_path: Path):
+def test_post_gate_case_failure_cannot_bypass_terminal_integrity(tmp_path: Path):
     (tmp_path / "job.log").write_text("MODEL_READY\nFATAL case failed\n")
     write(tmp_path / "failure.json", {"error": "case failed"})
     write(tmp_path / "production_kernel_gate.json", gate("PASS"))
-    with pytest.raises(ValueError, match="void checkpoint"):
-        MODULE.validate(tmp_path, "failure")
-
-    write(tmp_path / "conv_01_c01.json", checkpoint(1, "void"))
-    out = MODULE.validate(tmp_path, "failure")
-    assert out["n_void"] == 1
-
-
-def test_failure_scored_checkpoint_must_match_manifest_fingerprint(tmp_path: Path):
-    (tmp_path / "job.log").write_text("MODEL_READY\nFATAL later case failed\n")
-    write(tmp_path / "failure.json", {"error": "later case failed"})
-    write(tmp_path / "production_kernel_gate.json", gate("PASS"))
-    scored = checkpoint(1)
-    fingerprint = scored["fingerprint"]
-    write(tmp_path / "manifest.json", {
-        **identity(), "status": "ERROR", "fingerprint": fingerprint})
-    write(tmp_path / "conv_01_c10.json", scored)
-    write(tmp_path / "conv_02_c02.json", checkpoint(2, "void"))
-    assert MODULE.validate(tmp_path, "failure")["n_scored"] == 1
-
-    scored["fingerprint"] = dict(scored["fingerprint"])
-    scored["fingerprint"]["scenario_sha256"] = "tampered"
-    write(tmp_path / "conv_01_c10.json", scored)
-    with pytest.raises(ValueError, match="manifest fingerprint"):
+    with pytest.raises(ValueError, match="required artifact absent"):
         MODULE.validate(tmp_path, "failure")
 
 

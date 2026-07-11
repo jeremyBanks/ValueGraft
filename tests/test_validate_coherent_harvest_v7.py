@@ -11,7 +11,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "validate_coherent_harvest_v6",
+    "validate_coherent_harvest_v7",
     ROOT / "scripts/validate_coherent_harvest.py")
 assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
@@ -71,6 +71,14 @@ def zero_layers() -> list[dict]:
             for index in range(48)]
 
 
+def hash_rows(seed: str) -> list[dict]:
+    return [{
+        "layer": str(index),
+        "k_sha256": hashlib.sha256(f"{seed}:k:{index}".encode()).hexdigest(),
+        "v_sha256": hashlib.sha256(f"{seed}:v:{index}".encode()).hexdigest(),
+    } for index in range(48)]
+
+
 def schedule_row() -> dict:
     return {
         "status": "PASS", "passes": True, "tolerance": 5e-4,
@@ -97,7 +105,83 @@ def partition(length: int) -> list[int]:
     return widths
 
 
-def complete_pass_gates() -> dict:
+def science_fingerprint() -> dict:
+    return {
+        "schema": 2, "design_id": MODULE.DESIGN_ID,
+        "amendment_id": MODULE.AMENDMENT_ID,
+        "code_commit": "a" * 40,
+        "apparatus_inventory": {"aggregate_sha256": "b" * 64},
+        "input_inventory": {"files": [], "aggregate_sha256": "c" * 64},
+    }
+
+
+def _real_case_identity(cid: str) -> dict:
+    path = ROOT / "data" / "synthetic" / f"{cid}.json"
+    raw = path.read_bytes()
+    parsed = json.loads(raw)
+    tokenizer = MODULE._validation_tokenizer()
+    messages = parsed["messages"]
+    correct = MODULE._generation_prefix_ids(
+        tokenizer, list(messages) + [
+            {"role": "user", "content": MODULE.SUMMARY_REQUEST}])
+    fresh = MODULE._generation_prefix_ids(
+        tokenizer, [messages[0],
+                    {"role": "user", "content": MODULE.SUMMARY_REQUEST}])
+    marker = int(tokenizer.encode(
+        "<|im_start|>", add_special_tokens=False)[0])
+    starts = [index for index, token in enumerate(correct) if token == marker]
+    system_end = starts[1]
+    suffix = fresh[system_end:]
+    request_start = len(correct) - len(suffix)
+    widths = {
+        "system": system_end, "history": request_start - system_end,
+        "request_header": len(correct) - request_start,
+    }
+    positions = list(range(len(correct)))
+    return {
+        "raw_source_file_sha256": hashlib.sha256(raw).hexdigest(),
+        "canonical_parsed_source_sha256": MODULE._canonical_json_sha256(parsed),
+        "parsed_source": parsed,
+        "recorded_author": (parsed.get("meta") or {}).get("author"),
+        "exact_model_revision": MODULE.MODEL_REVISION,
+        "tokenizer_vocabulary_sha256": MODULE._canonical_json_sha256(
+            tokenizer.get_vocab()),
+        "chat_template_sha256": hashlib.sha256(
+            str(tokenizer.chat_template).encode()).hexdigest(),
+        "summary_request_sha256": hashlib.sha256(
+            MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
+        "complete_prefix_token_ids": correct,
+        "complete_prefix_token_sha256": MODULE._sha256_ints(correct, "correct"),
+        "fresh_prefix_token_ids": fresh,
+        "token_count": len(correct),
+        "continuation_logical_position": len(correct),
+        "expected_continuation_logical_position": len(correct),
+        "continuation_position_matches_frozen": True,
+        "complete_position_ids": positions,
+        "complete_position_array_sha256": MODULE._sha256_ints(
+            positions, "positions"),
+        "system_end": system_end, "request_header_start": request_start,
+        "conceptual_block_widths": widths,
+        "ordinary_resolved_call_widths": MODULE._chunk_widths(len(correct)),
+        "message_block_resolved_call_widths": [
+            piece for key in ("system", "history", "request_header")
+            for piece in MODULE._chunk_widths(widths[key])],
+        "boundary_token_ids": {
+            "im_start": marker, "system_end_token": correct[system_end],
+            "request_header_start_token": correct[request_start],
+            "final_prefix_token": correct[-1],
+        },
+        "message_start_positions": starts,
+        "blocks_nonempty": True, "blocks_ordered_nonoverlapping": True,
+        "blocks_cover_prefix": True, "system_equal": True,
+        "request_header_equal": True,
+    }
+
+
+def complete_pass_gates(*, real_cases: bool = False) -> dict:
+    from coherent_state_calibration import validate_calibration_constructions
+    calibration = validate_calibration_constructions(
+        MODULE._validation_tokenizer())
     backend = backend_fingerprint()
     synthetic_rows = []
     for length, partitions in zip(
@@ -106,12 +190,24 @@ def complete_pass_gates() -> dict:
             **schedule_row(), "length": length,
             "reference_partition": list(partitions[0]),
             "alternative_partition": list(partitions[1]),
+            "token_ids_sha256": MODULE._sha256_ints([
+                MODULE.FROZEN_FIXTURE_POOL[i % len(MODULE.FROZEN_FIXTURE_POOL)]
+                for i in range(length)], "synthetic"),
         })
     gap = {
         **schedule_row(),
         "logical_positions": list(range(32)) + list(range(8192, 8224)),
         "physical_cache_positions": list(range(64)),
         "full_attention_over_physically_prior_rows": True,
+        "length": 64, "reference_partition": [32, 32],
+        "alternative_partition": [32] + [1] * 32,
+        "continuation_logical_position": 8224,
+        "logical_as_cache_position_rejected": True,
+        "token_ids_sha256": MODULE._sha256_ints([
+            MODULE.FROZEN_FIXTURE_POOL[i % len(MODULE.FROZEN_FIXTURE_POOL)]
+            for i in range(64)], "gap_tokens"),
+        "logical_positions_sha256": MODULE._sha256_ints(
+            list(range(32)) + list(range(8192, 8224)), "gap_positions"),
     }
     case_rows = []
     for order, cid in enumerate(MODULE.FROZEN_ORDER, 1):
@@ -119,7 +215,7 @@ def complete_pass_gates() -> dict:
         tokens = list(range(count))
         positions = list(range(count))
         widths = {"system": 1, "history": count - 2, "request_header": 1}
-        case_rows.append({
+        case_row = {
             **schedule_row(), "conversation_id": cid,
             "order_position": order,
             "source_path": f"data/synthetic/{cid}.json",
@@ -141,19 +237,24 @@ def complete_pass_gates() -> dict:
             "request_header_equal": True,
             "ordinary_resolved_call_widths": partition(count),
             "message_block_resolved_call_widths": partition(count),
-        })
+        }
+        if real_cases:
+            case_row.update(_real_case_identity(cid))
+        case_rows.append(case_row)
     donor_rows = []
     for order, cid in enumerate(MODULE.FROZEN_ORDER, 1):
         correct_ids = list(range(10))
         structural = [0, 1, 8, 9]
         content = [2, 3, 4, 5, 6, 7]
-        changed = [2, 3]
+        changed = list(content)
         replacement = {
             "start": 2, "end": 8, "length": 6,
             "target_ids": correct_ids[2:8],
             "donor_pool_ids": [20, 21, 22, 23, 24, 25],
-            "replacement_ids": [25, 24, 23, 22, 21, 20],
+            "replacement_ids": [20, 21, 22, 23, 24, 25],
             "contains_special_token": False,
+            "target_message_index": 1, "donor_message_index": 1,
+            "role": "user", "cycles": 1,
         }
         replacement.update({
             "target_ids_sha256": MODULE._sha256_ints(
@@ -166,6 +267,12 @@ def complete_pass_gates() -> dict:
         donor_rows.append({
             "order_position": order, "target_id": cid,
             "donor_id": MODULE.WRONG_DONORS[cid], "subject_native": False,
+            "target_path": f"data/synthetic/{cid}.json",
+            "donor_path": f"data/synthetic/{MODULE.WRONG_DONORS[cid]}.json",
+            "target_sha256": "1" * 64, "donor_sha256": "2" * 64,
+            "target_canonical_sha256": "3" * 64,
+            "donor_canonical_sha256": "4" * 64,
+            "donor_recorded_author": "opus",
             "correct_prefix_tokens": len(correct_ids),
             "wrong_prefix_tokens": len(correct_ids),
             "correct_prefix_ids": correct_ids,
@@ -188,6 +295,34 @@ def complete_pass_gates() -> dict:
             "replacement_spans_non_overlapping": True,
             "replacement_coverage_exact": True,
         })
+        reconstructed = list(correct_ids)
+        reconstructed[2:8] = replacement["replacement_ids"]
+        donor_rows[-1]["wrong_prefix_sha256"] = MODULE._sha256_ints(
+            reconstructed, "wrong")
+    donor_raw = {
+        "status": "PASS", "passes": True,
+        "requested_revision": MODULE.MODEL_REVISION,
+        "resolved_tokenizer_revision": MODULE.MODEL_REVISION,
+        "expected_coverage": 12, "observed_coverage": 12,
+        "rows": donor_rows, "mapping": MODULE.WRONG_DONORS,
+        "frozen_order": list(MODULE.FROZEN_ORDER),
+        "n_unique_donor_ids": 12, "n_unique_donor_hashes": 12,
+    }
+    if real_cases:
+        from validate_coherent_external_donors import validate_with_tokenizer
+        donor_raw = validate_with_tokenizer(
+            MODULE._validation_tokenizer(), ROOT / "data" / "synthetic",
+            resolved_revision=MODULE.MODEL_REVISION)
+        # Production uses the repository-relative CLI argument.
+        for row in donor_raw["rows"]:
+            row["target_path"] = row["target_path"].replace(
+                f"{ROOT}/", "")
+            row["donor_path"] = row["donor_path"].replace(
+                f"{ROOT}/", "")
+        donor_raw.pop("canonical_payload_sha256", None)
+    donor_raw["canonical_payload_sha256"] = MODULE._canonical_json_sha256(
+        donor_raw)
+    static_fingerprint = science_fingerprint()
     gates = {
         "schema": 2,
         "amendment_id": MODULE.AMENDMENT_ID,
@@ -195,13 +330,25 @@ def complete_pass_gates() -> dict:
         "status": "PASS", "passes": True, "failures": [],
         "max_technical_logical_position": 9509,
         "stage_order": [
-            "attention_backend", "synthetic_schedule_fixtures",
+            "static_provenance", "attention_backend", "synthetic_schedule_fixtures",
             "committed_case_schedule_fixtures", "generated_replay_identity",
             "snapshot_rebuild_identity", "physical_causal_mask_identity",
             "future_mutation_identity", "position_structure",
             "intervention_propagation", "calibration_construction",
             "external_donor_construction", "retired_G_delta",
         ],
+        "static_provenance": stage({
+            "fingerprint_static_sha256": MODULE._canonical_json_sha256(
+                static_fingerprint),
+            "apparatus_inventory_sha256": MODULE._canonical_json_sha256(
+                static_fingerprint["apparatus_inventory"]),
+            "input_inventory_sha256": MODULE._canonical_json_sha256(
+                static_fingerprint["input_inventory"]),
+            "code_commit": static_fingerprint["code_commit"],
+            "model": MODULE.MODEL_ID, "revision": MODULE.MODEL_REVISION,
+            "dtype": MODULE.PARAMETER_DTYPE, "attention_backend": "eager",
+            "technical_only": True,
+        }, coverage=1),
         "attention_backend": stage({
             "fingerprint": backend,
             "subject": {
@@ -213,7 +360,17 @@ def complete_pass_gates() -> dict:
             },
         }, coverage=48),
         "synthetic_schedule_fixtures": stage({
+            "fixture_provenance": {
+                "literal": MODULE.FROZEN_FIXTURE_LITERAL,
+                "pool_token_ids": MODULE.FROZEN_FIXTURE_POOL,
+                "pool_sha256": MODULE._sha256_ints(
+                    MODULE.FROZEN_FIXTURE_POOL, "pool"),
+                "margin_token_ids": MODULE.FROZEN_MARGIN_IDS,
+                "continuation_token_id": MODULE.FROZEN_CONTINUATION_ID,
+                "pool_contains_special_token": False,
+            },
             "contiguous": synthetic_rows, "logical_gap": gap,
+            "passes": True, "failures": [],
         }, coverage=7, threshold=5e-4, aggregate=0.0),
         "committed_case_schedule_fixtures": stage({
             "rows": case_rows, "frozen_order": list(MODULE.FROZEN_ORDER),
@@ -225,19 +382,49 @@ def complete_pass_gates() -> dict:
         }, coverage=1, threshold=1e-4, aggregate=0.0),
         "snapshot_rebuild_identity": stage({
             "logits_max_abs": 0.0, "k_max_abs": 0.0, "v_max_abs": 0.0,
+            "per_layer": zero_layers(),
         }, coverage=1, threshold=1e-4, aggregate=0.0),
         "physical_causal_mask_identity": stage({
             "logits_max_abs": 0.0, "k_max_abs": 0.0, "v_max_abs": 0.0,
+            "per_layer": zero_layers(),
         }, coverage=1, threshold=1e-4, aggregate=0.0),
         "future_mutation_identity": stage({
             "earlier_logits_max_abs": 0.0, "earlier_cache_max_abs": 0.0,
+            "per_layer": zero_layers(),
         }, coverage=1, threshold=1e-4, aggregate=0.0),
         "position_structure": stage({
             "common_summary_start": True, "wrong_prefix_length_equal": True,
             "post_summary_nonempty": True,
             "altered_structure_failure_injection": {"rejected": True},
             "wrong_position_failure_injection": {"rejected": True},
-            "physical_cache_positions": list(range(32)),
+            "source_summary_start": 10, "physical_summary_start": 4,
+            "physical_summary_end": 6, "system_end": 2,
+            "request_logical_start": 8, "logical_next_position": 13,
+            "logical_gap": 6,
+            "prefix_position_ids": [0, 1, 8, 9],
+            "summary_position_ids": [10, 11],
+            "post_summary_position_ids": [12],
+            "context_position_ids": [0, 1, 8, 9, 10, 11, 12],
+            "physical_cache_positions": list(range(7)),
+            "correct_prefix_ids": list(range(10)),
+            "wrong_prefix_ids": [0, 1, 20, 21, 22, 23, 24, 25, 8, 9],
+            "correct_prefix_sha256": MODULE._sha256_ints(
+                list(range(10)), "position.correct"),
+            "wrong_prefix_sha256": MODULE._sha256_ints(
+                [0, 1, 20, 21, 22, 23, 24, 25, 8, 9], "position.wrong"),
+            "wrong_structural_position_ids": [0, 1, 8, 9],
+            "wrong_content_position_ids": [2, 3, 4, 5, 6, 7],
+            "wrong_structural_positions": 4, "wrong_content_positions": 6,
+            "wrong_structural_positions_sha256": MODULE._sha256_ints(
+                [0, 1, 8, 9], "position.structural"),
+            "wrong_content_positions_sha256": MODULE._sha256_ints(
+                [2, 3, 4, 5, 6, 7], "position.content"),
+            "context_ids": [101, 102, 103, 104, 105, 106, 107],
+            "context_ids_sha256": MODULE._sha256_ints(
+                [101, 102, 103, 104, 105, 106, 107], "position.context"),
+            "summary_ids": [105, 106],
+            "summary_ids_sha256": MODULE._sha256_ints(
+                [105, 106], "position.summary"),
         }, coverage=1),
         "intervention_propagation": stage({
             "fresh_self_replacement": True,
@@ -248,15 +435,33 @@ def complete_pass_gates() -> dict:
             "downstream_sensitivity": True, "recomputed_tail_changed": True,
             "pre_tailed_failure_injection": {"rejected": True},
             "sensitivity_attempts": [{"epsilon": 0.1}],
+            "summary_span": {"start": 10, "end": 20},
+            "boundary_lengths": {
+                "fresh": 20, "self": 20, "correct": 20, "wrong": 20},
+            "full_lengths": {"fresh": 30, "correct": 30, "wrong": 30},
+            "hashes": {
+                "fresh_boundary": hash_rows("fresh_boundary"),
+                "self_boundary": hash_rows("fresh_boundary"),
+                "correct_boundary": hash_rows("correct_boundary"),
+                "wrong_boundary": hash_rows("wrong_boundary"),
+                "fresh_before_summary": hash_rows("before"),
+                "correct_before_summary": hash_rows("before"),
+                "wrong_before_summary": hash_rows("before"),
+                "correct_source_summary": hash_rows("correct_summary"),
+                "wrong_source_summary": hash_rows("wrong_summary"),
+                "correct_inserted_summary": hash_rows("correct_summary"),
+                "wrong_inserted_summary": hash_rows("wrong_summary"),
+                "full_fresh": hash_rows("full_fresh"),
+                "full_correct": hash_rows("full_correct"),
+                "full_wrong": hash_rows("full_wrong"),
+                "fresh_post_summary": hash_rows("tail_fresh"),
+                "correct_post_summary": hash_rows("tail_correct"),
+                "wrong_post_summary": hash_rows("tail_wrong"),
+            },
         }, coverage=1),
-        "calibration_construction": stage({
-            "passes": True, "model_forwards": 0,
-            "semantic_scoring_performed": False,
-        }, coverage=2),
+        "calibration_construction": stage(calibration, coverage=2),
         "external_donor_construction": stage({
-            "rows": donor_rows, "mapping": MODULE.WRONG_DONORS,
-            "frozen_order": list(MODULE.FROZEN_ORDER),
-            "n_unique_donor_ids": 12, "n_unique_donor_hashes": 12,
+            **donor_raw,
         }, coverage=12),
         "retired_G_delta": stage({
             "executed": False, "authorizes_run": False,
@@ -347,10 +552,29 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
     })
     for position, cid in enumerate(MODULE.FROZEN_ORDER[:6], 1):
         arms = {arm: {"conversation_margin": 0.0} for arm in MODULE.ARMS}
+        rendered_conversation = json.loads((
+            ROOT / "data" / "synthetic" / f"{cid}.json").read_text())
+        case_identity = _real_case_identity(cid)
+        actual_schedule = {
+            **identity(), **schedule_row(), "conversation_id": cid,
+            "semantic_scoring_performed": False,
+            **{key: case_identity[key] for key in (
+                "complete_prefix_token_ids", "complete_prefix_token_sha256",
+                "complete_position_ids", "complete_position_array_sha256",
+                "fresh_prefix_token_ids", "token_count",
+                "continuation_logical_position", "system_end",
+                "request_header_start", "conceptual_block_widths",
+                "ordinary_resolved_call_widths",
+                "message_block_resolved_call_widths", "system_equal",
+                "request_header_equal", "blocks_nonempty",
+                "blocks_ordered_nonoverlapping", "blocks_cover_prefix")},
+        }
         seal(root / f"conv_{position:02d}_{cid}.json", {
             **identity(), "stage": "scored", "status": "scored",
             "order_position": position, "conversation_id": cid,
-            "conversation": {}, "summary": {}, "sources": {},
+            "conversation": rendered_conversation,
+            "pre_score_schedule_equivalence": actual_schedule,
+            "summary": {}, "sources": {},
             "destination": {}, "arm_scores": arms,
             "conversation_outcomes": {arm: 0.0 for arm in MODULE.ARMS},
             "gates": {"technical_pass": True}, "runtime": {},
@@ -385,7 +609,7 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
 
 def technical_tree(root: Path) -> None:
     root.mkdir(parents=True, exist_ok=True)
-    gates = complete_pass_gates()
+    gates = complete_pass_gates(real_cases=True)
     refs = {}
     for stage_name in (
             "committed_case_schedule_fixtures",
@@ -408,9 +632,37 @@ def technical_tree(root: Path) -> None:
     backend = backend_fingerprint()
     fingerprint = {
         **identity(), "attention_backend": "eager",
+        "code_commit": "a" * 40,
+        "apparatus_inventory": {"aggregate_sha256": "b" * 64},
         "attention_backend_fingerprint": backend,
+        "summary_request_sha256": hashlib.sha256(
+            MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
+        "subject_metadata": {
+            "tokenizer_vocab_sha256": MODULE._canonical_json_sha256(
+                MODULE._validation_tokenizer().get_vocab()),
+            "chat_template_sha256": hashlib.sha256(str(
+                MODULE._validation_tokenizer().chat_template).encode()).hexdigest(),
+        },
+        "input_inventory": {"files": [{
+            "path": f"data/synthetic/{cid}.json",
+            "bytes": (ROOT / "data" / "synthetic" / f"{cid}.json").stat().st_size,
+            "sha256": hashlib.sha256((
+                ROOT / "data" / "synthetic" / f"{cid}.json").read_bytes()).hexdigest(),
+        } for cid in sorted(set(MODULE.FROZEN_ORDER).union(
+            MODULE.WRONG_DONORS.values()))]},
     }
-    static = {"code_commit": "a" * 40}
+    static = dict(fingerprint)
+    gates["static_provenance"]["raw"] = {
+        "fingerprint_static_sha256": MODULE._canonical_json_sha256(static),
+        "apparatus_inventory_sha256": MODULE._canonical_json_sha256(
+            fingerprint["apparatus_inventory"]),
+        "input_inventory_sha256": MODULE._canonical_json_sha256(
+            fingerprint["input_inventory"]),
+        "code_commit": fingerprint["code_commit"],
+        "model": MODULE.MODEL_ID, "revision": MODULE.MODEL_REVISION,
+        "dtype": MODULE.PARAMETER_DTYPE, "attention_backend": "eager",
+        "technical_only": True,
+    }
     apparatus = {"aggregate_sha256": "b" * 64}
     gate_doc = {
         **identity(), "status": "PASS", "completed_at": "2026-07-11T00:00:00Z",
@@ -464,8 +716,10 @@ def technical_tree(root: Path) -> None:
     (root / "job.log").write_text("COHERENT_STATE_TECHNICAL_DONE\n")
 
 
-def test_independent_v6_science_validation_accepts_complete_exact_fixture():
-    MODULE._validate_v6_pass_gates(complete_pass_gates())
+def test_independent_v7_science_validation_accepts_complete_exact_fixture():
+    MODULE._validate_v7_pass_gates(
+        complete_pass_gates(), fingerprint=science_fingerprint(), repo_root=None,
+        static_fingerprint=science_fingerprint(), verify_sources=False)
 
 
 @pytest.mark.parametrize("mutation,match", [
@@ -474,13 +728,15 @@ def test_independent_v6_science_validation_accepts_complete_exact_fixture():
     (lambda gates: gates["committed_case_schedule_fixtures"]["raw"]["rows"][9].__setitem__(
         "token_count", 9508), "committed-case identity"),
     (lambda gates: gates["external_donor_construction"]["raw"]["rows"][0].__setitem__(
-        "subject_native", True), "external donor row"),
+        "subject_native", True), "external donor canonical|external donor row"),
 ])
-def test_independent_v6_science_validation_recomputes_raw_evidence(mutation, match):
+def test_independent_v7_science_validation_recomputes_raw_evidence(mutation, match):
     gates = complete_pass_gates()
     mutation(gates)
     with pytest.raises(ValueError, match=match):
-        MODULE._validate_v6_pass_gates(gates)
+        MODULE._validate_v7_pass_gates(
+            gates, fingerprint=science_fingerprint(), repo_root=None,
+            static_fingerprint=science_fingerprint(), verify_sources=False)
 
 
 def test_semantic_complete_validates_bound_prior_authorization_and_envelope(
@@ -511,3 +767,15 @@ def test_technical_harvest_rejects_sidecar_binding_tamper(tmp_path: Path):
     path.write_bytes(path.read_bytes() + b" ")
     with pytest.raises(ValueError, match="byte count differs|hashes differ"):
         MODULE.validate(tmp_path, "technical")
+
+
+def test_failure_harvest_preserves_terminal_pass_rejected_by_independent_validator(
+        tmp_path: Path):
+    technical_tree(tmp_path)
+    (tmp_path / "job.log").write_text(
+        "MODEL_READY\nFATAL: independent technical harvest validation rejected "
+        "terminal PASS\n")
+    observed = MODULE.validate(tmp_path, "failure")
+    assert observed["status"] == "PASS"
+    assert observed["terminal_integrity_verified"] is True
+    assert observed["technical_pass_rejected_at_harvest"] is True

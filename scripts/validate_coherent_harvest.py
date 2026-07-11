@@ -19,8 +19,8 @@ from typing import Any
 
 
 SCHEMA = 2
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
-DESIGN_ID = "coherent-state-gapped-v6"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7"
+DESIGN_ID = "coherent-state-gapped-v7"
 MODEL_ID = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 MODEL_REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 PARAMETER_DTYPE = "torch.bfloat16"
@@ -34,6 +34,20 @@ SYNTHETIC_PARTITIONS = (
     ((4096,), (32, 4064)),
     ((4096, 1), (32, 4065)),
     ((4096, 4096, 1), (32, 4096, 4065)),
+)
+FROZEN_FIXTURE_LITERAL = "alpha beta gamma delta epsilon"
+FROZEN_FIXTURE_POOL = [7141, 13440, 21619, 9477, 31204]
+FROZEN_MARGIN_IDS = [362, 425]
+FROZEN_CONTINUATION_ID = 7141
+SUMMARY_REQUEST = (
+    "Please write a thorough context note summarizing our conversation so far, "
+    "for someone who will continue this conversation without seeing it. Cover: "
+    "decisions made and what was chosen over what; open threads and next steps; "
+    "definitions, names, and terms we introduced and what they mean; constraints "
+    "and preferences either of us stated; approaches or options we tried and "
+    "ruled out, and why. Be redundant and specific; use retrieval-friendly "
+    "wording. Write it as flowing prose or bullet points, roughly 300-500 words. "
+    "Do not add commentary before or after the note itself."
 )
 CASE_CONTINUATION_POSITIONS = {
     "c10": 8430, "c02": 8385, "c01": 8855, "c04": 8595,
@@ -100,6 +114,48 @@ def _raw_file_sha256(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _canonical_json_sha256(value: Any) -> str:
+    return hashlib.sha256(json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+        allow_nan=False).encode()).hexdigest()
+
+
+def _chunk_widths(width: int) -> list[int]:
+    if not isinstance(width, int) or width < 1:
+        raise ValueError("chunk width must be a positive integer")
+    return [min(4096, width - start) for start in range(0, width, 4096)]
+
+
+_TOKENIZER = None
+
+
+def _validation_tokenizer():
+    global _TOKENIZER
+    if _TOKENIZER is None:
+        try:
+            from transformers import AutoTokenizer
+            _TOKENIZER = AutoTokenizer.from_pretrained(
+                MODEL_ID, revision=MODEL_REVISION, local_files_only=True)
+        except Exception as exc:
+            raise ValueError(
+                f"exact production tokenizer unavailable to harvest: {exc}") from exc
+    return _TOKENIZER
+
+
+def _generation_prefix_ids(tokenizer, messages: list[dict[str, Any]]) -> list[int]:
+    if not messages or messages[-1].get("role") != "user":
+        raise ValueError("committed-case messages do not end in a user request")
+    ids = tokenizer.apply_chat_template(
+        messages, tokenize=True, add_generation_prompt=True)
+    if hasattr(ids, "input_ids"):
+        ids = ids.input_ids
+    elif isinstance(ids, dict):
+        ids = ids.get("input_ids")
+    if isinstance(ids, list) and ids and isinstance(ids[0], list):
+        ids = ids[0]
+    return [int(value) for value in ids]
 
 
 def _backend_payload_sha256(doc: dict[str, Any]) -> str:
@@ -224,6 +280,69 @@ def _validate_gate(root: Path, expected_status: str) -> dict[str, Any]:
     return gate
 
 
+def _validate_actual_render_schedule(doc: dict[str, Any], label: str) -> None:
+    evidence = doc.get("pre_score_schedule_equivalence")
+    conversation = doc.get("conversation")
+    if not isinstance(evidence, dict) or not isinstance(conversation, dict):
+        raise ValueError(f"{label} lacks actual-render schedule evidence")
+    _require_identity(evidence, f"{label} actual-render schedule")
+    if (evidence.get("status") != "PASS" or evidence.get("passes") is not True or
+            evidence.get("semantic_scoring_performed") is not False or
+            evidence.get("conversation_id") != doc.get("conversation_id")):
+        raise ValueError(f"{label} actual-render schedule verdict differs")
+    tokenizer = _validation_tokenizer()
+    messages = conversation.get("messages")
+    if not isinstance(messages, list) or not messages:
+        raise ValueError(f"{label} rendered conversation is malformed")
+    correct = _generation_prefix_ids(
+        tokenizer, list(messages) + [{"role": "user", "content": SUMMARY_REQUEST}])
+    fresh = _generation_prefix_ids(
+        tokenizer, [messages[0], {"role": "user", "content": SUMMARY_REQUEST}])
+    positions = list(range(len(correct)))
+    if (evidence.get("complete_prefix_token_ids") != correct or
+            evidence.get("complete_prefix_token_sha256") !=
+            _sha256_ints(correct, f"{label}.render.tokens") or
+            evidence.get("complete_position_ids") != positions or
+            evidence.get("complete_position_array_sha256") !=
+            _sha256_ints(positions, f"{label}.render.positions") or
+            evidence.get("fresh_prefix_token_ids") != fresh or
+            evidence.get("token_count") != len(correct) or
+            evidence.get("continuation_logical_position") != len(correct)):
+        raise ValueError(f"{label} actual-render token evidence differs")
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    if len(marker_ids) != 1:
+        raise ValueError("production tokenizer im_start marker is not singular")
+    marker = int(marker_ids[0])
+    starts = [i for i, token in enumerate(correct) if token == marker]
+    fresh_starts = [i for i, token in enumerate(fresh) if token == marker]
+    if len(starts) != len(messages) + 2 or len(fresh_starts) != 3:
+        raise ValueError(f"{label} actual-render boundaries differ")
+    system_end = starts[1]
+    suffix = fresh[system_end:]
+    if not suffix or correct[-len(suffix):] != suffix:
+        raise ValueError(f"{label} actual-render request suffix differs")
+    request_start = len(correct) - len(suffix)
+    widths = {"system": system_end, "history": request_start - system_end,
+              "request_header": len(correct) - request_start}
+    ordinary = _chunk_widths(len(correct))
+    blocks = [piece for key in ("system", "history", "request_header")
+              for piece in _chunk_widths(widths[key])]
+    if (evidence.get("conceptual_block_widths") != widths or
+            evidence.get("ordinary_resolved_call_widths") != ordinary or
+            evidence.get("message_block_resolved_call_widths") != blocks or
+            evidence.get("system_end") != system_end or
+            evidence.get("request_header_start") != request_start or
+            evidence.get("system_equal") is not True or
+            evidence.get("request_header_equal") is not True or
+            evidence.get("blocks_nonempty") is not True or
+            evidence.get("blocks_ordered_nonoverlapping") is not True or
+            evidence.get("blocks_cover_prefix") is not True):
+        raise ValueError(f"{label} actual-render partition evidence differs")
+    _validate_schedule_measurement(
+        evidence, layers=48, tolerance=5e-4,
+        label=f"{label}.actual_render_schedule")
+
+
 def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
                          expected_fingerprint: dict[str, Any] | None = None) -> None:
     _require_identity(doc, path.name)
@@ -238,6 +357,7 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
         missing = sorted(required - doc.keys())
         if missing:
             raise ValueError(f"{path.name} missing fields {missing}")
+        _validate_actual_render_schedule(doc, path.name)
         for field in ("arm_scores", "conversation_outcomes"):
             arms = doc.get(field)
             if not isinstance(arms, dict) or set(arms) != set(ARMS):
@@ -303,8 +423,8 @@ def _validate_terminal_integrity(root: Path, expected_status: str) -> dict[str, 
             "committed_case_schedule_fixtures",
             "external_donor_construction",
         }
-        if expected_status == "PASS" and set(stage_refs) != expected_ref_names:
-            raise ValueError("PASS technical gate heavy-stage references differ")
+        if set(stage_refs) != expected_ref_names:
+            raise ValueError("technical gate heavy-stage references differ")
         sidecar_paths: list[str] = []
         for stage_name, ref in sorted(stage_refs.items()):
             if stage_name not in expected_ref_names or not isinstance(ref, dict):
@@ -423,6 +543,20 @@ def _finite(value: Any, label: str) -> float:
     return number
 
 
+def _validate_hash_rows(value: Any, label: str) -> list[dict[str, str]]:
+    if not isinstance(value, list) or len(value) != 48:
+        raise ValueError(f"{label} hash-row coverage differs")
+    if [row.get("layer") for row in value] != [str(i) for i in range(48)]:
+        raise ValueError(f"{label} hash-row order differs")
+    for row in value:
+        for key in ("k_sha256", "v_sha256"):
+            digest = row.get(key)
+            if (not isinstance(digest, str) or len(digest) != 64 or
+                    any(char not in "0123456789abcdef" for char in digest.lower())):
+                raise ValueError(f"{label} {key} differs")
+    return value
+
+
 def _required_pass_stage(gates: dict[str, Any], key: str) -> dict[str, Any]:
     stage = gates.get(key)
     if not isinstance(stage, dict):
@@ -481,9 +615,124 @@ def _validate_schedule_measurement(row: dict[str, Any], *, layers: int,
     return aggregate
 
 
-def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
+def _validate_committed_case_source(
+        row: dict[str, Any], cid: str, fingerprint: dict[str, Any],
+        repo_root: Path) -> None:
+    """Recompute exact file, tokenizer, token, boundary, and partition evidence."""
+    source_path = row.get("source_path")
+    if source_path != f"data/synthetic/{cid}.json":
+        raise ValueError(f"committed-case source path differs: {cid}")
+    path = repo_root / source_path
+    raw_bytes = path.read_bytes()
+    parsed = json.loads(raw_bytes)
+    if parsed != row.get("parsed_source") or str(parsed.get("id")) != cid:
+        raise ValueError(f"committed-case parsed source differs: {cid}")
+    if (row.get("raw_source_file_sha256") !=
+            hashlib.sha256(raw_bytes).hexdigest() or
+            row.get("canonical_parsed_source_sha256") !=
+            _canonical_json_sha256(parsed)):
+        raise ValueError(f"committed-case source hashes differ: {cid}")
+    inventory_rows = ((fingerprint.get("input_inventory") or {}).get("files") or [])
+    inventory = {item.get("path"): item for item in inventory_rows
+                 if isinstance(item, dict)}
+    inventory_row = inventory.get(source_path)
+    if (not isinstance(inventory_row, dict) or
+            inventory_row.get("bytes") != len(raw_bytes) or
+            inventory_row.get("sha256") != hashlib.sha256(raw_bytes).hexdigest()):
+        raise ValueError(f"committed-case input inventory differs: {cid}")
+    metadata = fingerprint.get("subject_metadata") or {}
+    tokenizer = _validation_tokenizer()
+    vocab_sha = _canonical_json_sha256(tokenizer.get_vocab())
+    template_sha = hashlib.sha256(
+        str(tokenizer.chat_template).encode()).hexdigest()
+    request_sha = hashlib.sha256(SUMMARY_REQUEST.encode()).hexdigest()
+    if (row.get("exact_model_revision") != MODEL_REVISION or
+            row.get("tokenizer_vocabulary_sha256") != vocab_sha or
+            metadata.get("tokenizer_vocab_sha256") != vocab_sha or
+            row.get("chat_template_sha256") != template_sha or
+            metadata.get("chat_template_sha256") != template_sha or
+            row.get("summary_request_sha256") != request_sha or
+            fingerprint.get("summary_request_sha256") != request_sha):
+        raise ValueError(f"committed-case tokenizer/request binding differs: {cid}")
+    recorded_author = (parsed.get("meta") or {}).get("author")
+    if row.get("recorded_author") != recorded_author:
+        raise ValueError(f"committed-case recorded author differs: {cid}")
+
+    messages = parsed.get("messages")
+    if not isinstance(messages, list) or not messages or \
+            messages[0].get("role") != "system":
+        raise ValueError(f"committed-case messages malformed: {cid}")
+    correct_messages = list(messages) + [
+        {"role": "user", "content": SUMMARY_REQUEST}]
+    fresh_messages = [messages[0], {"role": "user", "content": SUMMARY_REQUEST}]
+    correct_ids = _generation_prefix_ids(tokenizer, correct_messages)
+    fresh_ids = _generation_prefix_ids(tokenizer, fresh_messages)
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    if len(marker_ids) != 1:
+        raise ValueError("production tokenizer im_start marker is not singular")
+    marker = int(marker_ids[0])
+    starts = [index for index, token in enumerate(correct_ids) if token == marker]
+    fresh_starts = [index for index, token in enumerate(fresh_ids) if token == marker]
+    if len(starts) != len(messages) + 2 or len(fresh_starts) != 3:
+        raise ValueError(f"committed-case message boundary coverage differs: {cid}")
+    system_end = starts[1]
+    if fresh_starts[1] != system_end:
+        raise ValueError(f"committed-case fresh system boundary differs: {cid}")
+    suffix = fresh_ids[system_end:]
+    if not suffix or correct_ids[-len(suffix):] != suffix:
+        raise ValueError(f"committed-case request/header suffix differs: {cid}")
+    request_start = len(correct_ids) - len(suffix)
+    widths = {
+        "system": system_end,
+        "history": request_start - system_end,
+        "request_header": len(correct_ids) - request_start,
+    }
+    if (row.get("complete_prefix_token_ids") != correct_ids or
+            row.get("fresh_prefix_token_ids") != fresh_ids or
+            row.get("complete_prefix_token_sha256") !=
+            _sha256_ints(correct_ids, f"{cid}.retokenized") or
+            row.get("token_count") != len(correct_ids) or
+            row.get("continuation_logical_position") != len(correct_ids) or
+            row.get("expected_continuation_logical_position") !=
+            CASE_CONTINUATION_POSITIONS[cid] or
+            row.get("continuation_position_matches_frozen") is not True or
+            len(correct_ids) != CASE_CONTINUATION_POSITIONS[cid]):
+        raise ValueError(f"committed-case retokenized prefix differs: {cid}")
+    expected_positions = list(range(len(correct_ids)))
+    if (row.get("complete_position_ids") != expected_positions or
+            row.get("complete_position_array_sha256") !=
+            _sha256_ints(expected_positions, f"{cid}.positions")):
+        raise ValueError(f"committed-case position array differs: {cid}")
+    boundary = row.get("boundary_token_ids") or {}
+    if (row.get("message_start_positions") != starts or
+            boundary.get("im_start") != marker or
+            boundary.get("system_end_token") != correct_ids[system_end] or
+            boundary.get("request_header_start_token") !=
+            correct_ids[request_start] or
+            boundary.get("final_prefix_token") != correct_ids[-1] or
+            row.get("system_end") != system_end or
+            row.get("request_header_start") != request_start or
+            row.get("conceptual_block_widths") != widths or
+            row.get("blocks_nonempty") is not True or
+            row.get("blocks_ordered_nonoverlapping") is not True or
+            row.get("blocks_cover_prefix") is not True or
+            row.get("system_equal") is not True or
+            row.get("request_header_equal") is not True):
+        raise ValueError(f"committed-case boundary evidence differs: {cid}")
+    ordinary = _chunk_widths(len(correct_ids))
+    message_block = [piece for key in ("system", "history", "request_header")
+                     for piece in _chunk_widths(widths[key])]
+    if (row.get("ordinary_resolved_call_widths") != ordinary or
+            row.get("message_block_resolved_call_widths") != message_block):
+        raise ValueError(f"committed-case resolved partitions differ: {cid}")
+
+
+def _validate_v7_pass_gates(
+        gates: dict[str, Any], *, fingerprint: dict[str, Any] | None,
+        static_fingerprint: dict[str, Any] | None,
+        repo_root: Path | None, verify_sources: bool) -> None:
     required_order = [
-        "attention_backend", "synthetic_schedule_fixtures",
+        "static_provenance", "attention_backend", "synthetic_schedule_fixtures",
         "committed_case_schedule_fixtures", "generated_replay_identity",
         "snapshot_rebuild_identity", "physical_causal_mask_identity",
         "future_mutation_identity", "position_structure",
@@ -495,6 +744,24 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
     if gates.get("max_technical_logical_position") != \
             MAX_TECHNICAL_LOGICAL_POSITION:
         raise ValueError("technical gate maximum logical position differs")
+
+    static = _required_pass_stage(gates, "static_provenance")
+    static_raw = static.get("raw") or {}
+    if (not isinstance(static_fingerprint, dict) or
+            static.get("observed_coverage") != 1 or
+            static_raw.get("fingerprint_static_sha256") !=
+            _canonical_json_sha256(static_fingerprint) or
+            static_raw.get("apparatus_inventory_sha256") !=
+            _canonical_json_sha256(static_fingerprint.get("apparatus_inventory")) or
+            static_raw.get("input_inventory_sha256") !=
+            _canonical_json_sha256(static_fingerprint.get("input_inventory")) or
+            static_raw.get("code_commit") != static_fingerprint.get("code_commit") or
+            static_raw.get("model") != MODEL_ID or
+            static_raw.get("revision") != MODEL_REVISION or
+            static_raw.get("dtype") != PARAMETER_DTYPE or
+            static_raw.get("attention_backend") != ATTENTION_BACKEND or
+            static_raw.get("technical_only") is not True):
+        raise ValueError("static provenance stage differs")
 
     backend = _required_pass_stage(gates, "attention_backend")
     if backend.get("observed_coverage") != 48:
@@ -517,6 +784,15 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
     if _finite(synthetic.get("threshold"), "synthetic threshold") != 5e-4:
         raise ValueError("synthetic stage threshold differs")
     raw = synthetic.get("raw") or {}
+    provenance = raw.get("fixture_provenance") or {}
+    if (provenance.get("literal") != FROZEN_FIXTURE_LITERAL or
+            provenance.get("pool_token_ids") != FROZEN_FIXTURE_POOL or
+            provenance.get("pool_sha256") !=
+            _sha256_ints(FROZEN_FIXTURE_POOL, "synthetic.pool") or
+            provenance.get("margin_token_ids") != FROZEN_MARGIN_IDS or
+            provenance.get("continuation_token_id") != FROZEN_CONTINUATION_ID or
+            provenance.get("pool_contains_special_token") is not False):
+        raise ValueError("synthetic fixture provenance differs")
     rows = raw.get("contiguous")
     if not isinstance(rows, list) or len(rows) != len(SYNTHETIC_LENGTHS):
         raise ValueError("synthetic fixture coverage differs")
@@ -527,6 +803,11 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
                 row.get("reference_partition") != list(partitions[0]) or
                 row.get("alternative_partition") != list(partitions[1])):
             raise ValueError(f"synthetic fixture {index} declaration differs")
+        token_ids = [FROZEN_FIXTURE_POOL[i % len(FROZEN_FIXTURE_POOL)]
+                     for i in range(length)]
+        if row.get("token_ids_sha256") != _sha256_ints(
+                token_ids, f"synthetic[{length}].tokens"):
+            raise ValueError(f"synthetic fixture {length} token hash differs")
         aggregates.append(_validate_schedule_measurement(
             row, layers=48, tolerance=5e-4,
             label=f"synthetic[{length}]"))
@@ -534,8 +815,21 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
     if not isinstance(gap, dict):
         raise ValueError("logical-gap fixture absent")
     if (gap.get("logical_positions") != list(range(32)) + list(range(8192, 8224))
-            or gap.get("physical_cache_positions") != list(range(64))):
+            or gap.get("physical_cache_positions") != list(range(64)) or
+            gap.get("length") != 64 or
+            gap.get("reference_partition") != [32, 32] or
+            gap.get("alternative_partition") != [32] + [1] * 32 or
+            gap.get("continuation_logical_position") != 8224 or
+            gap.get("logical_as_cache_position_rejected") is not True):
         raise ValueError("logical-gap position arrays differ")
+    gap_tokens = [FROZEN_FIXTURE_POOL[i % len(FROZEN_FIXTURE_POOL)]
+                  for i in range(64)]
+    gap_positions = list(range(32)) + list(range(8192, 8224))
+    if (gap.get("token_ids_sha256") !=
+            _sha256_ints(gap_tokens, "logical_gap.tokens") or
+            gap.get("logical_positions_sha256") !=
+            _sha256_ints(gap_positions, "logical_gap.positions")):
+        raise ValueError("logical-gap hashes differ")
     if gap.get("full_attention_over_physically_prior_rows") is not True:
         raise ValueError("logical-gap full-attention assertion absent")
     aggregates.append(_validate_schedule_measurement(
@@ -544,6 +838,8 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
             _finite(synthetic.get("observed_aggregate"),
                     "synthetic aggregate") != max(aggregates):
         raise ValueError("synthetic stage aggregate/coverage differs")
+    if raw.get("passes") is not True or raw.get("failures") not in ([], None):
+        raise ValueError("synthetic raw verdict differs")
 
     committed = _required_pass_stage(
         gates, "committed_case_schedule_fixtures")
@@ -561,6 +857,10 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
                 row.get("source_path") != f"data/synthetic/{cid}.json" or
                 row.get("token_count") != expected_tokens):
             raise ValueError(f"committed-case identity differs: {cid}")
+        if verify_sources:
+            if not isinstance(fingerprint, dict) or repo_root is None:
+                raise ValueError("strict committed-case validation lacks fingerprint/root")
+            _validate_committed_case_source(row, cid, fingerprint, repo_root)
         for key in ("raw_source_file_sha256", "canonical_parsed_source_sha256",
                     "tokenizer_vocabulary_sha256", "chat_template_sha256",
                     "summary_request_sha256"):
@@ -609,6 +909,8 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
     gen_per = gen_raw.get("per_layer")
     if not isinstance(gen_per, list) or len(gen_per) != 48:
         raise ValueError("generated/replay layer coverage differs")
+    if [row.get("layer") for row in gen_per] != list(range(48)):
+        raise ValueError("generated/replay layer order differs")
     gen_k = max(_finite(row.get("k_max_abs"), "generated K") for row in gen_per)
     gen_v = max(_finite(row.get("v_max_abs"), "generated V") for row in gen_per)
     gen_metrics = [
@@ -628,6 +930,21 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
         stage = _required_pass_stage(gates, stage_name)
         values = [_finite((stage.get("raw") or {}).get(field),
                           f"{stage_name}.{field}") for field in fields]
+        stage_raw = stage.get("raw") or {}
+        per_layer = stage_raw.get("per_layer")
+        if not isinstance(per_layer, list) or len(per_layer) != 48 or \
+                [row.get("layer") for row in per_layer] != list(range(48)):
+            raise ValueError(f"{stage_name} per-layer coverage differs")
+        per_k = max(_finite(row.get("k_max_abs"), f"{stage_name}.K")
+                    for row in per_layer)
+        per_v = max(_finite(row.get("v_max_abs"), f"{stage_name}.V")
+                    for row in per_layer)
+        if stage_name in {
+                "snapshot_rebuild_identity", "physical_causal_mask_identity"}:
+            if (values[1] != per_k or values[2] != per_v):
+                raise ValueError(f"{stage_name} per-layer aggregate differs")
+        elif values[1] != max(per_k, per_v):
+            raise ValueError("future mutation per-layer aggregate differs")
         if (stage.get("observed_coverage") != 1 or
                 _finite(stage.get("observed_aggregate"),
                         f"{stage_name}.aggregate") != max(values) or
@@ -645,8 +962,64 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
         if (pos.get(key) or {}).get("rejected") is not True:
             raise ValueError(f"position structure injection failed: {key}")
     physical = pos.get("physical_cache_positions")
-    if physical != list(range(len(physical or []))):
+    context_positions = pos.get("context_position_ids")
+    prefix_positions = pos.get("prefix_position_ids")
+    summary_positions = pos.get("summary_position_ids")
+    post_positions = pos.get("post_summary_position_ids")
+    source_start = pos.get("source_summary_start")
+    physical_start = pos.get("physical_summary_start")
+    physical_end = pos.get("physical_summary_end")
+    system_end = pos.get("system_end")
+    request_start = pos.get("request_logical_start")
+    if (not all(isinstance(value, int) for value in (
+            source_start, physical_start, physical_end, system_end, request_start)) or
+            not 0 < system_end <= request_start < source_start or
+            prefix_positions != list(range(system_end)) +
+            list(range(request_start, source_start)) or
+            physical_start != len(prefix_positions) or
+            not isinstance(summary_positions, list) or not summary_positions or
+            summary_positions != list(range(source_start,
+                                             source_start + len(summary_positions))) or
+            physical_end != physical_start + len(summary_positions) or
+            not isinstance(post_positions, list) or
+            post_positions != list(range(
+                source_start + len(summary_positions),
+                source_start + len(summary_positions) + len(post_positions))) or
+            context_positions != prefix_positions + summary_positions + post_positions or
+            pos.get("logical_next_position") != context_positions[-1] + 1 or
+            pos.get("logical_gap") != source_start - physical_start):
+        raise ValueError("position structure schedule evidence differs")
+    if (not isinstance(physical, list) or not physical or
+            physical != list(range(len(context_positions)))):
         raise ValueError("physical cache positions are not contiguous")
+    correct_prefix = pos.get("correct_prefix_ids")
+    wrong_prefix = pos.get("wrong_prefix_ids")
+    structural = pos.get("wrong_structural_position_ids")
+    content = pos.get("wrong_content_position_ids")
+    if (not isinstance(correct_prefix, list) or not isinstance(wrong_prefix, list) or
+            len(correct_prefix) != len(wrong_prefix) or
+            pos.get("correct_prefix_sha256") !=
+            _sha256_ints(correct_prefix, "position.correct") or
+            pos.get("wrong_prefix_sha256") !=
+            _sha256_ints(wrong_prefix, "position.wrong") or
+            not isinstance(structural, list) or not isinstance(content, list) or
+            pos.get("wrong_structural_positions") != len(structural) or
+            pos.get("wrong_content_positions") != len(content) or
+            pos.get("wrong_structural_positions_sha256") !=
+            _sha256_ints(structural, "position.structural") or
+            pos.get("wrong_content_positions_sha256") !=
+            _sha256_ints(content, "position.content") or
+            set(structural) & set(content) or
+            sorted(structural + content) != list(range(len(correct_prefix))) or
+            any(correct_prefix[i] != wrong_prefix[i] for i in structural) or
+            not any(correct_prefix[i] != wrong_prefix[i] for i in content)):
+        raise ValueError("position wrong-source evidence differs")
+    for values_key, hash_key in (
+            ("context_ids", "context_ids_sha256"),
+            ("summary_ids", "summary_ids_sha256")):
+        if pos.get(hash_key) != _sha256_ints(
+                pos.get(values_key), f"position.{values_key}"):
+            raise ValueError(f"position structure lacks exact {hash_key}")
 
     intervention = _required_pass_stage(gates, "intervention_propagation")
     inter = intervention.get("raw") or {}
@@ -663,24 +1036,131 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
     if not isinstance(inter.get("sensitivity_attempts"), list) or \
             not inter["sensitivity_attempts"]:
         raise ValueError("intervention sensitivity attempts absent")
+    span = inter.get("summary_span") or {}
+    start, end = span.get("start"), span.get("end")
+    boundary_lengths = inter.get("boundary_lengths") or {}
+    full_lengths = inter.get("full_lengths") or {}
+    if (not isinstance(start, int) or not isinstance(end, int) or
+            not 0 <= start < end or
+            set(boundary_lengths) != {"fresh", "self", "correct", "wrong"} or
+            len(set(boundary_lengths.values())) != 1 or
+            next(iter(boundary_lengths.values())) != end or
+            set(full_lengths) != {"fresh", "correct", "wrong"} or
+            len(set(full_lengths.values())) != 1 or
+            next(iter(full_lengths.values())) <= end):
+        raise ValueError("intervention span/length evidence differs")
+    hashes = inter.get("hashes") or {}
+    required_hashes = {
+        "fresh_boundary", "self_boundary", "correct_boundary", "wrong_boundary",
+        "fresh_before_summary", "correct_before_summary", "wrong_before_summary",
+        "correct_source_summary", "wrong_source_summary",
+        "correct_inserted_summary", "wrong_inserted_summary",
+        "full_fresh", "full_correct", "full_wrong",
+        "fresh_post_summary", "correct_post_summary", "wrong_post_summary",
+    }
+    if set(hashes) != required_hashes:
+        raise ValueError("intervention hash evidence field set differs")
+    for key in sorted(required_hashes):
+        _validate_hash_rows(hashes[key], f"intervention.{key}")
+    if (hashes["self_boundary"] != hashes["fresh_boundary"] or
+            hashes["correct_before_summary"] != hashes["fresh_before_summary"] or
+            hashes["wrong_before_summary"] != hashes["fresh_before_summary"] or
+            hashes["correct_inserted_summary"] !=
+            hashes["correct_source_summary"] or
+            hashes["wrong_inserted_summary"] != hashes["wrong_source_summary"]):
+        raise ValueError("intervention bit-exact hash equalities differ")
+    if (hashes["correct_post_summary"] == hashes["fresh_post_summary"] and
+            hashes["wrong_post_summary"] == hashes["fresh_post_summary"]):
+        raise ValueError("intervention recomputed tails show no causal change")
 
     calibration = _required_pass_stage(gates, "calibration_construction")
     cal = calibration.get("raw") or {}
     if (cal.get("passes") is not True or cal.get("model_forwards") != 0 or
             cal.get("semantic_scoring_performed") is not False or
-            calibration.get("observed_coverage") != 2):
+            calibration.get("observed_coverage") != 2 or
+            cal.get("label_coverage") != ["A", "B"]):
         raise ValueError("calibration construction coverage differs")
+    variants = cal.get("variants")
+    if not isinstance(variants, dict) or set(variants) != {"c10", "c07"}:
+        raise ValueError("calibration construction variants differ")
+    tokenizer = _validation_tokenizer()
+    labels = []
+    for cid in ("c10", "c07"):
+        row = variants[cid]
+        correct = row.get("correct_prefix_ids")
+        wrong = row.get("wrong_prefix_ids")
+        if (not isinstance(correct, list) or not isinstance(wrong, list) or
+                len(correct) != len(wrong) or len(correct) != row.get("prefix_length") or
+                row.get("correct_prefix_sha256") !=
+                _sha256_ints(correct, f"calibration[{cid}].correct") or
+                row.get("wrong_prefix_sha256") !=
+                _sha256_ints(wrong, f"calibration[{cid}].wrong")):
+            raise ValueError(f"calibration prefix evidence differs: {cid}")
+        changed = [index for index, pair in enumerate(zip(correct, wrong))
+                   if pair[0] != pair[1]]
+        allowed = row.get("allowed_first_record_content_positions")
+        structural = row.get("structural_positions")
+        if (not changed or row.get("changed_positions") != changed or
+                not isinstance(allowed, list) or not set(changed).issubset(allowed) or
+                structural != [i for i in range(len(correct)) if i not in changed] or
+                row.get("exact_length") is not True or
+                row.get("changed_only_first_record_content") is not True or
+                row.get("structural_slots_equal") is not True or
+                row.get("special_ids_excluded") is not True or
+                any(correct[i] in tokenizer.all_special_ids or
+                    wrong[i] in tokenizer.all_special_ids for i in changed)):
+            raise ValueError(f"calibration structural evidence differs: {cid}")
+        summary_ids = row.get("summary_ids")
+        if (_sha256_ints(summary_ids, f"calibration[{cid}].summary") !=
+                row.get("summary_sha256")):
+            raise ValueError(f"calibration summary hash differs: {cid}")
+        correct_label, wrong_label = row.get("correct_label"), row.get("wrong_label")
+        if {correct_label, wrong_label} != {"A", "B"}:
+            raise ValueError(f"calibration labels differ: {cid}")
+        labels.append(correct_label)
+        targets = row.get("targets") or {}
+        expected_correct = f"Label {correct_label}."
+        expected_wrong = f"Label {wrong_label}."
+        correct_target = tokenizer.encode(expected_correct, add_special_tokens=False)
+        wrong_target = tokenizer.encode(expected_wrong, add_special_tokens=False)
+        rendered_correct = targets.get("rendered_correct_ids")
+        rendered_wrong = targets.get("rendered_wrong_ids")
+        if (targets.get("correct_text") != expected_correct or
+                targets.get("wrong_text") != expected_wrong or
+                targets.get("correct_ids") != correct_target or
+                targets.get("wrong_ids") != wrong_target or
+                targets.get("equal_token_length") is not True or
+                targets.get("token_length") != len(correct_target) or
+                len(correct_target) != len(wrong_target) or
+                not isinstance(rendered_correct, list) or
+                not isinstance(rendered_wrong, list) or
+                targets.get("rendered_equal_token_length") is not True or
+                targets.get("rendered_token_length") != len(rendered_correct) or
+                len(rendered_correct) != len(rendered_wrong)):
+            raise ValueError(f"calibration target evidence differs: {cid}")
+    if sorted(set(labels)) != ["A", "B"]:
+        raise ValueError("calibration label coverage recomputation differs")
 
     donors = _required_pass_stage(gates, "external_donor_construction")
     donor = donors.get("raw") or {}
     donor_rows = donor.get("rows")
     if (not isinstance(donor_rows, list) or len(donor_rows) != 12 or
+            donor.get("status") != "PASS" or donor.get("passes") is not True or
+            donor.get("requested_revision") != MODEL_REVISION or
+            donor.get("resolved_tokenizer_revision") != MODEL_REVISION or
+            donor.get("expected_coverage") != 12 or
+            donor.get("observed_coverage") != 12 or
             donor.get("mapping") != WRONG_DONORS or
             donor.get("frozen_order") != list(FROZEN_ORDER) or
             donor.get("n_unique_donor_ids") != 12 or
             donor.get("n_unique_donor_hashes") != 12 or
             donors.get("observed_coverage") != 12):
         raise ValueError("external donor coverage differs")
+    donor_unhashed = {key: value for key, value in donor.items()
+                      if key != "canonical_payload_sha256"}
+    if donor.get("canonical_payload_sha256") != \
+            _canonical_json_sha256(donor_unhashed):
+        raise ValueError("external donor canonical payload hash differs")
     for index, (row, cid) in enumerate(zip(donor_rows, FROZEN_ORDER), 1):
         if (row.get("order_position") != index or row.get("target_id") != cid or
                 row.get("donor_id") != WRONG_DONORS[cid] or
@@ -694,6 +1174,35 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
                 row.get("replacement_coverage_exact") is not True or
                 int(row.get("changed_position_count", 0)) < 1):
             raise ValueError(f"external donor row differs: {cid}")
+        donor_id = WRONG_DONORS[cid]
+        if (row.get("target_path") != f"data/synthetic/{cid}.json" or
+                row.get("donor_path") != f"data/synthetic/{donor_id}.json"):
+            raise ValueError(f"external donor source paths differ: {cid}")
+        if verify_sources:
+            if not isinstance(fingerprint, dict) or repo_root is None:
+                raise ValueError("strict donor validation lacks fingerprint/root")
+            inventory_rows = ((fingerprint.get("input_inventory") or {}).get(
+                "files") or [])
+            inventory = {item.get("path"): item for item in inventory_rows
+                         if isinstance(item, dict)}
+            for path_key, hash_key, canonical_key, expected_id in (
+                    ("target_path", "target_sha256", "target_canonical_sha256", cid),
+                    ("donor_path", "donor_sha256", "donor_canonical_sha256", donor_id)):
+                relative = row[path_key]
+                path = repo_root / relative
+                raw_bytes = path.read_bytes()
+                parsed = json.loads(raw_bytes)
+                raw_sha = hashlib.sha256(raw_bytes).hexdigest()
+                if (str(parsed.get("id")) != expected_id or
+                        row.get(hash_key) != raw_sha or
+                        row.get(canonical_key) != _canonical_json_sha256(parsed) or
+                        (inventory.get(relative) or {}).get("bytes") != len(raw_bytes) or
+                        (inventory.get(relative) or {}).get("sha256") != raw_sha):
+                    raise ValueError(f"external donor source binding differs: {cid}")
+            donor_doc = json.loads((repo_root / row["donor_path"]).read_bytes())
+            if row.get("donor_recorded_author") != (
+                    donor_doc.get("meta") or {}).get("author"):
+                raise ValueError(f"external donor author differs: {cid}")
         correct_ids = row.get("correct_prefix_ids")
         structural = row.get("structural_positions")
         content = row.get("content_positions")
@@ -708,7 +1217,9 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
                     _sha256_ints(values, f"donor[{cid}].{count_key}") !=
                     row.get(hash_key)):
                 raise ValueError(f"external donor row array differs: {cid}")
-        if (not set(changed).issubset(content) or
+        if (set(structural) & set(content) or
+                sorted(structural + content) != list(range(len(correct_ids))) or
+                not set(changed).issubset(content) or
                 any(position < 0 or position >= len(correct_ids)
                     for position in structural + content + changed)):
             raise ValueError(f"external donor position coverage differs: {cid}")
@@ -736,12 +1247,33 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
                         replacement.get(hash_key)):
                     raise ValueError(f"external donor replacement hash differs: {cid}")
             if (len(replacement["target_ids"]) != end - start or
-                    len(replacement["replacement_ids"]) != end - start):
+                    len(replacement["replacement_ids"]) != end - start or
+                    replacement["target_ids"] != correct_ids[start:end] or
+                    not replacement["donor_pool_ids"] or
+                    replacement["replacement_ids"] != [
+                        replacement["donor_pool_ids"][i % len(
+                            replacement["donor_pool_ids"])]
+                        for i in range(end - start)] or
+                    replacement.get("cycles") != math.ceil(
+                        (end - start) / len(replacement["donor_pool_ids"])) or
+                    not isinstance(replacement.get("target_message_index"), int) or
+                    not isinstance(replacement.get("donor_message_index"), int) or
+                    replacement.get("role") not in {"user", "assistant"}):
                 raise ValueError(f"external donor replacement length differs: {cid}")
             covered.extend(range(start, end))
         if (len(covered) != len(set(covered)) or
                 sorted(covered) != sorted(content)):
             raise ValueError(f"external donor replacement coverage differs: {cid}")
+        reconstructed = list(correct_ids)
+        for replacement in replacements:
+            reconstructed[replacement["start"]:replacement["end"]] = \
+                replacement["replacement_ids"]
+        reconstructed_changed = [i for i, pair in enumerate(zip(
+            correct_ids, reconstructed)) if pair[0] != pair[1]]
+        if (reconstructed_changed != changed or
+                _sha256_ints(reconstructed, f"donor[{cid}].wrong") !=
+                row.get("wrong_prefix_sha256")):
+            raise ValueError(f"external donor reconstructed prefix differs: {cid}")
 
     retired = _required_pass_stage(gates, "retired_G_delta")
     retired_raw = retired.get("raw") or {}
@@ -901,7 +1433,11 @@ def _validate_technical(root: Path, log_text: str) -> dict[str, Any]:
         if manifest.get(field) != gate.get(field):
             raise ValueError(f"technical manifest/gate {field} binding differs")
     expanded_gates = _resolve_heavy_stages(root, gate)
-    _validate_v6_pass_gates(expanded_gates)
+    _validate_v7_pass_gates(
+        expanded_gates, fingerprint=gate.get("fingerprint"),
+        static_fingerprint=gate.get("fingerprint_static"),
+        repo_root=Path(__file__).resolve().parent.parent,
+        verify_sources=True)
     forbidden = _find_forbidden_semantic_fields(gate)
     if forbidden:
         raise ValueError(
@@ -934,10 +1470,12 @@ def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
         raise ValueError("failure harvest lacks meaningful failure evidence")
 
     failure_fingerprint = None
+    failure_manifest = None
     manifest_path = root / "manifest.json"
     if manifest_path.exists():
         manifest = _load(manifest_path)
         _require_identity(manifest, "failure manifest")
+        failure_manifest = manifest
         candidate = manifest.get("fingerprint")
         if candidate is not None and not isinstance(candidate, dict):
             raise ValueError("failure manifest fingerprint is malformed")
@@ -946,17 +1484,26 @@ def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
     model_ready = "MODEL_READY" in log_text
     gate_path = root / "production_kernel_gate.json"
     gate_status = None
+    terminal_integrity = None
+    has_index = (root / "terminal_artifact_index.json").exists()
+    has_receipt = (root / "terminal_receipt.json").exists()
+    if has_index != has_receipt:
+        raise ValueError("failure harvest has a partial terminal envelope")
     if gate_path.exists():
         gate = _load(gate_path)
         gate_status = gate.get("status")
         if gate_status == "FAIL":
+            terminal_integrity = _validate_terminal_integrity(root, "FAIL")
             _validate_gate(root, "FAIL")
         elif gate_status == "PASS":
+            terminal_integrity = _validate_terminal_integrity(root, "PASS")
             _validate_gate(root, "PASS")
         else:
             raise ValueError(f"failure harvest has incomplete gate status {gate_status!r}")
     elif model_ready:
         raise ValueError("post-MODEL_READY failure lacks complete production gate")
+    elif has_index:
+        terminal_integrity = _validate_terminal_integrity(root, "FAIL")
 
     paths = _checkpoint_paths(root)
     scored = 0
@@ -978,8 +1525,11 @@ def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
             raise ValueError(
                 f"failure harvest contains non-terminal checkpoint {path.name}")
 
-    if gate_status == "PASS" and voids < 1:
+    technical_only = bool((failure_manifest or {}).get("technical_only"))
+    if gate_status == "PASS" and voids < 1 and not technical_only:
         raise ValueError("post-gate case failure lacks a void checkpoint")
+    if model_ready and terminal_integrity is None:
+        raise ValueError("post-MODEL_READY failure lacks verified terminal integrity")
     if model_ready and gate_status not in ("PASS", "FAIL"):
         raise ValueError("post-MODEL_READY failure lacks terminal gate evidence")
     return {
@@ -987,6 +1537,9 @@ def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
         "mode": "failure",
         "model_ready": model_ready,
         "production_gate": gate_status,
+        "terminal_integrity_verified": terminal_integrity is not None,
+        "technical_pass_rejected_at_harvest": bool(
+            gate_status == "PASS" and technical_only and voids == 0),
         "n_scored": scored,
         "n_void": voids,
     }
@@ -1043,7 +1596,7 @@ def main() -> None:
                     validator.get("path") != "scripts/validate_coherent_harvest.py" or
                     validator.get("sha256") !=
                     _raw_file_sha256(Path(__file__).resolve()) or
-                    validator.get("version") != "coherent-harvest-v6"):
+                    validator.get("version") != "coherent-harvest-v7"):
                 raise ValueError("harvest attestation provenance differs")
     if args.output is not None:
         if args.output.exists():
@@ -1058,7 +1611,7 @@ def main() -> None:
             "validator": {
                 "path": "scripts/validate_coherent_harvest.py",
                 "sha256": _raw_file_sha256(Path(__file__).resolve()),
-                "version": "coherent-harvest-v6",
+                "version": "coherent-harvest-v7",
             },
         }
         attestation["payload_sha256"] = _canonical_payload_sha256(attestation)
