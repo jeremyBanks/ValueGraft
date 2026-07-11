@@ -16,10 +16,10 @@ value. The next scientific version is a separate exploratory exact-model
 decision canary. Its stimuli are permanently excluded from any later
 confirmation. The strategy and closed corrections are:
 
-- `notes/2026071187-trajectory-red-team-ultra-regroup.md`;
-- `notes/2026071188-causal-statistical-blackboard-ultra-regroup.md`;
-- `notes/2026071189-sol-ultra-regroup-decision.md`;
-- `notes/2026071190-fable-ultra-regroup-review.md`;
+- `notes/2026071190-trajectory-red-team-ultra-regroup.md`;
+- `notes/2026071191-causal-statistical-blackboard-ultra-regroup.md`;
+- `notes/2026071192-sol-ultra-regroup-decision.md`;
+- `notes/2026071193-fable-ultra-regroup-review.md`;
 - `notes/2026071192-sol-fable-review-disposition-and-canary-closure.md`.
 
 The canary first runs exact-stack gates and a same-path downstream-note positive
