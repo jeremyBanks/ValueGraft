@@ -169,7 +169,7 @@ FROZEN_CASE_CONTINUATION_POSITIONS = {
     "c07": 8600, "c11": 9381, "c05": 8556, "c09": 9195,
     "c06": 8876, "c12": 9509, "c08": 8525, "c03": 8913,
 }
-V5_GATE_STAGE_ORDER = (
+V6_GATE_STAGE_ORDER = (
     "attention_backend",
     "synthetic_schedule_fixtures",
     "committed_case_schedule_fixtures",
@@ -183,6 +183,8 @@ V5_GATE_STAGE_ORDER = (
     "external_donor_construction",
     "retired_G_delta",
 )
+# Compatibility for downstream code written while Amendment 5 was current.
+V5_GATE_STAGE_ORDER = V6_GATE_STAGE_ORDER
 TERMINAL_STAGE_STATES = {"PASS", "FAIL", "ERROR", "SKIPPED_DEPENDENCY"}
 
 
@@ -311,7 +313,7 @@ def v6_gate_schema(*, identity_tolerance: float = 1e-4,
         "authorization_path": "gapped_position_preserving_only",
         "position_policy": "logical_position_ids_physical_cache_position",
         "max_technical_logical_position": MAX_TECHNICAL_LOGICAL_POSITION,
-        "stage_order": list(V5_GATE_STAGE_ORDER),
+        "stage_order": list(V6_GATE_STAGE_ORDER),
         "case_dir": str(Path(case_dir)),
         "donor_dir": str(donor_dir),
         **stages,
@@ -1894,9 +1896,9 @@ def run_loaded_gapped_gates(
 
     # Terminal verdict is recomputed from every predeclared stage, never from a
     # transient tensor or a status-only success marker.
-    terminal = [sink[name].get("status") for name in V5_GATE_STAGE_ORDER]
+    terminal = [sink[name].get("status") for name in V6_GATE_STAGE_ORDER]
     sink["failures"] = sorted(set(
-        failures + [name for name in V5_GATE_STAGE_ORDER
+        failures + [name for name in V6_GATE_STAGE_ORDER
                     if sink[name].get("status") != "PASS"]))
     sink["passes"] = all(status == "PASS" for status in terminal)
     sink["status"] = "PASS" if sink["passes"] else "FAIL"
@@ -2140,7 +2142,7 @@ class LadderDurableDiagnosticSink(dict):
 
     def __setitem__(self, key, value):
         super().__setitem__(key, value)
-        if key not in V5_GATE_STAGE_ORDER or not isinstance(value, dict):
+        if key not in V6_GATE_STAGE_ORDER or not isinstance(value, dict):
             return
         _closed, raw = _encoded_payload({
             "schema": 2,
@@ -2172,7 +2174,7 @@ def write_sharded_ladder_result(output: Path, result: dict) -> dict:
     writes: list[tuple[Path, bytes]] = []
     refs = {}
     if isinstance(gate, dict):
-        for stage_name in V5_GATE_STAGE_ORDER:
+        for stage_name in V6_GATE_STAGE_ORDER:
             stage = gate.get(stage_name)
             if not isinstance(stage, dict):
                 continue
@@ -2200,7 +2202,7 @@ def write_sharded_ladder_result(output: Path, result: dict) -> dict:
             "status": gate.get("status"),
             "passes": gate.get("passes", False),
             "technical_only": gate.get("technical_only", True),
-            "stage_order": gate.get("stage_order", list(V5_GATE_STAGE_ORDER)),
+            "stage_order": gate.get("stage_order", list(V6_GATE_STAGE_ORDER)),
             "failures": gate.get("failures", []),
             "failure": gate.get("failure"),
             "stage_refs": refs,
