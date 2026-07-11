@@ -28,6 +28,14 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from notes_archive_naming import archive_day_start, compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
 from notes_archive_timestamps import ArchiveTimestampCache, TimestampInfo  # noqa: E402
+from summary_model import (  # noqa: E402
+    DEFAULT_CODEX_REASONING,
+    DEFAULT_PROVIDER,
+    PROVIDERS,
+    custom_command_provenance,
+    resolve_spec,
+    wrapper_argv,
+)
 
 
 SOURCE_ORDER = {"claude-code": "0-claude", "codex": "1-codex"}
@@ -43,7 +51,6 @@ DEFAULT_CODEX_JSONL = (
     Path.home()
     / ".codex/sessions/2026/07/04/rollout-2026-07-04T22-07-20-019f3007-bab0-7e50-b019-2625d1538f63.jsonl"
 )
-DEFAULT_SUMMARY_COMMAND = ["claude", "--print", "--model", "sonnet"]
 DEFAULT_FORBID_REGEX = [
     r"\bAKIA[0-9A-Z]{16}\b",
     r"\bASIA[0-9A-Z]{16}\b",
@@ -230,6 +237,7 @@ class NoteRecord:
     summary_hash: str
     mode: str = "summary"
     models: list[str] = field(default_factory=list)
+    summarizer: dict[str, str] | None = None
 
 
 @dataclass(frozen=True)
@@ -675,6 +683,7 @@ def load_manifest(path: Path) -> list[NoteRecord]:
                 summary_hash=row["summary_hash"],
                 mode=row.get("mode", "summary"),
                 models=row.get("models", []),
+                summarizer=row.get("summarizer"),
             )
         )
     return records
@@ -1341,6 +1350,7 @@ def update_notes(args: argparse.Namespace) -> None:
         record.input_hash = sha256_text(render_messages(all_messages_for_ranges(segments, record.source_ranges)))
         record.summary_hash = sha256_text(formatted_summary)
         record.models = model_entries
+        record.summarizer = args.summarizer_provenance
         manifest_changed = True
         changed_paths.append(note_path)
 
@@ -1416,6 +1426,7 @@ def update_notes(args: argparse.Namespace) -> None:
                 input_hash=sha256_text(transcript),
                 summary_hash=sha256_text(formatted_summary),
                 models=model_entries,
+                summarizer=args.summarizer_provenance,
             )
         )
         manifest_changed = True
@@ -1443,15 +1454,18 @@ def use_default_update_command(args: argparse.Namespace) -> None:
         args.command = None
         return
     if args.command is not None:
+        args.summarizer_provenance = custom_command_provenance(args.command)
         return
-    command = DEFAULT_SUMMARY_COMMAND.copy()
+    spec = resolve_spec(args.summary_provider, args.summary_model, args.summary_reasoning)
+    command = wrapper_argv(spec)
     if shutil.which(command[0]) is None:
         raise RuntimeError(
             f"Default summarizer command not found: {command[0]!r}. "
-            "Install the Claude CLI, pass --command explicitly, or use --no-command "
+            "Install the selected provider CLI, pass --command explicitly, or use --no-command "
             "to write prompts without generating summaries."
         )
     args.command = command
+    args.summarizer_provenance = spec.provenance()
 
 
 def main() -> None:
@@ -1541,7 +1555,22 @@ def main() -> None:
     update_parser.add_argument(
         "--no-command",
         action="store_true",
-        help="Write prompts only instead of running the default Claude summarizer.",
+        help="Write prompts only instead of running the selected summarizer.",
+    )
+    update_parser.add_argument(
+        "--summary-provider",
+        choices=PROVIDERS,
+        default=DEFAULT_PROVIDER,
+        help="Summary CLI provider; default: codex.",
+    )
+    update_parser.add_argument(
+        "--summary-model",
+        help="Provider model id/alias; defaults to gpt-5.6-luna for Codex or sonnet for Claude.",
+    )
+    update_parser.add_argument(
+        "--summary-reasoning",
+        default=DEFAULT_CODEX_REASONING,
+        help="Codex reasoning effort; ignored by Claude. Default: medium.",
     )
     update_parser.add_argument(
         "--dry-run",

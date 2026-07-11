@@ -84,6 +84,41 @@ def test_claude_extractor_skips_visible_only_compaction_summaries(tmp_path: Path
     ]
 
 
+def test_claude_extractor_rejects_standalone_summary_worker_session(tmp_path: Path) -> None:
+    mod = load_script(
+        ROOT / "scripts" / "transcripts" / "extract_claude.py",
+        "extract_claude_worker_test",
+    )
+    source = tmp_path / "summary-worker.jsonl"
+    write_jsonl(
+        source,
+        [
+            {
+                "type": "user",
+                "timestamp": "2026-07-10T00:00:00Z",
+                "message": {
+                    "role": "user",
+                    "content": (
+                        "You are summarizing mainline project conversation for a future agent.\n\n"
+                        "Transcript..."
+                    ),
+                },
+            },
+            {
+                "type": "assistant",
+                "timestamp": "2026-07-10T00:00:01Z",
+                "message": {
+                    "role": "assistant",
+                    "content": "_Generated summary._",
+                    "model": "claude-sonnet-5",
+                },
+            },
+        ],
+    )
+
+    assert mod.iter_messages(source) == []
+
+
 def test_codex_extractor_skips_compaction_records(tmp_path: Path) -> None:
     mod = load_script(ROOT / "scripts" / "transcripts" / "extract_codex.py", "extract_codex_test")
     source = tmp_path / "rollout-2026-07-08T00-00-00-thread.jsonl"

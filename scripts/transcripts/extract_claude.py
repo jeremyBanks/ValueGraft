@@ -17,6 +17,13 @@ from typing import Any
 
 
 GAP_SECONDS = 60 * 60
+SUMMARY_WORKER_PROMPT_PREFIXES = (
+    "You are summarizing mainline project conversation",
+    "You are updating an existing mainline project conversation summary",
+    "You are summarizing a contiguous segment of mainline project conversation",
+    "You are writing notes/",
+    "You are writing the sparse hierarchical",
+)
 
 
 @dataclass
@@ -112,7 +119,33 @@ def text_from_content(content: Any) -> str:
     return ""
 
 
+def is_summary_worker_transcript(path: Path) -> bool:
+    """Reject a standalone CLI summary session before extracting its answer.
+
+    Print-mode Claude sessions contain a synthetic user message, so merely
+    requiring a user row does not prevent recursive self-ingestion. Summary
+    workers are separate sessions whose first real user prompt is our known
+    summary instruction.
+    """
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if row.get("isSidechain") or row.get("isMeta"):
+                continue
+            msg = row.get("message")
+            if not isinstance(msg, dict) or msg.get("role") != "user":
+                continue
+            text = clean_text(text_from_content(msg.get("content")))
+            return text.startswith(SUMMARY_WORKER_PROMPT_PREFIXES)
+    return False
+
+
 def iter_messages(path: Path, *, include_transcript_scaffolding: bool = False) -> list[Message]:
+    if is_summary_worker_transcript(path):
+        return []
     out: list[Message] = []
     with path.open("r", encoding="utf-8") as handle:
         for line_no, line in enumerate(handle, 1):
