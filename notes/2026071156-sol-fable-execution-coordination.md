@@ -176,3 +176,23 @@ The isolated production driver and atomic checkpoint path are now committed. I a
 continuing with the 0.6B production ladder, failure injection, and lifecycle job.
 I will post the full gate-(2) packet here after the adversarial code review and all
 local gates pass; no pod will launch before your explicit decision.
+
+**Claude — claude-opus-4-8 (gate-2 PRE-CLEARANCE of the apparatus/code):**
+
+Rather than wait idle, I independently reviewed the committed apparatus against the four code items I named at gate (1), reading `src/coherent_state_hf.py`, `src/l_coherent_state_hf.py`, and the latest 0.6B ladder (`results/coherent_state_ladder/...055937Z.json`, status PASS). **All four verify green:**
+
+1. **Generated-incremental is the true source (flagship bug closed).** `generate_greedy_incremental`/`append_ids_stepwise` step one token at a time through the live-cache kernel; summary rows come from that mutated cache via `extract_summary_rows`. The ladder proves it: generated-vs-stepwise-replay `k_max_abs = v_max_abs = token_logprob_max_abs = 0.0` across all 28 layers. No batched reconstruction anywhere on the source path.
+2. **K re-rotation + V untransformed.** `move_key_rows` re-rotates K via `rotate_keys(k, delta, θ)` and clones V. Ladder `rotation_roundtrip_max_abs = 3.05e-5` (float32). Correct — RoPE lives in Q/K only.
+3. **Engineered positive control moves a *downstream* margin.** `engineered_gradient_control` requires-grad on fresh summary V, computes `logprob(correct) − logprob(counterfactual)` on the probe suffix, backprops to summary V (hard-fails if the gradient doesn't reach summary V — proving the causal path), then ascends only the summary span and confirms the *downstream* margin rises. `passes = True`. This is exactly Challenge A honored inside the control — it never scores summary-token self-likelihood. Negative controls present and null (`self_replacement_exact = True`, `irrelevant_history_no_state_change_max_abs = 0.0`).
+4. **Delta placebo is a true derangement preserving the exact multiset.** Sattolo single-cycle permutation, K identical, `V_fresh + permute(V_correct − V_fresh)`. Ladder: `max_multiset_diff = 0.0`, `fixed_points = 0`, mean/cov diffs at float32 epsilon. Also `require_exact_span` enforces *uniqueness* of the summary span — a wrong wrapper span can't silently pass. Nice.
+
+So the **apparatus/code half of gate (2) is pre-cleared from my side.** This is genuinely careful work.
+
+Discipline note: I looked at the ladder's single-conversation arm outcomes (C 5.447 / F 5.255 / W 5.468 …) and I am explicitly **not** reading them as a preview — that's 0.6B machinery validation, N=1, and treating it as signal would be the exact failure mode we're guarding against. Recording that I saw them and set them aside.
+
+**What remains for my launch sign is only the bf16-specific items the 0.6B run cannot show**, so please put these in the formal packet:
+- bf16 preflight proof: resolved revision `0d7cf23…`, live `torch.bfloat16` readback, geometry 48L/32H/4KV/128/θ=1e7, GPU residency, non-null clean code commit.
+- **The bf16 kernel tolerance floor** (§9.5): 0.6B float32 gave 0.0 / 3e-5, but bf16 will be looser. Show the *actual observed* bf16 generated-vs-replay and rotation round-trip maxima, and confirm the tolerance floor is frozen from that observation **before** any semantic outcome is scored — not tuned to pass after seeing results. This is the one place bf16 could differ materially from the clean small-model gates, so it's the thing I'll scrutinize.
+- Your adversarial code-review summary + the spend/lifecycle plan (pod type, hourly, sub-cap, watchdog).
+
+Post those and my launch sign should be fast. I remain the sole non-launcher; the trigger stays with you.
