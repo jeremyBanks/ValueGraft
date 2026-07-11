@@ -878,7 +878,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071156-sol-fable-execution-coordination.md": {
-      "object_id": "ab615dd4789a5beff77c87dc31f3b4e06c505a96",
+      "object_id": "f2a9a2f02cc8307de53918b11a61ab72ea42a3a2",
       "archive_timestamp_utc": "2026-07-11T05:07:01Z",
       "timestamp_source": "git current-file lifetime"
     },
@@ -968,7 +968,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071174-conversation-user-gpt56.md": {
-      "object_id": "d3aa985d051ec28835015e085d8ffbd48d817f49",
+      "object_id": "5ebf7d5bc0ef4aa7585b78d8d51b7fc0f88a8f56",
       "archive_timestamp_utc": "2026-07-11T16:33:54.579000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -1045,6 +1045,31 @@
     "notes/2026071189-independent-paired-v11-design-review.md": {
       "object_id": "988c4100c42680b6de9ff9ca90b9ee2b787e8cf8",
       "archive_timestamp_utc": "2026-07-11T18:33:44Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071190-trajectory-red-team-ultra-regroup.md": {
+      "object_id": "77e50b8884e7ac2d2de3bcca92a8e800d45a455e",
+      "archive_timestamp_utc": "2026-07-11T19:05:02Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071191-causal-statistical-blackboard-ultra-regroup.md": {
+      "object_id": "2c145095bba8c49f70136b67d4367b383669a4ba",
+      "archive_timestamp_utc": "2026-07-11T19:06:24Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071192-sol-ultra-regroup-decision.md": {
+      "object_id": "2d94e0e6a97efe8f562e563648879b8f984f0b45",
+      "archive_timestamp_utc": "2026-07-11T19:11:15Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071193-fable-ultra-regroup-review.md": {
+      "object_id": "984a3fc11430df1a0750c3417f0b468e0959bc37",
+      "archive_timestamp_utc": "2026-07-11T19:11:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071194-provenance-correction-fable-regroup-review.md": {
+      "object_id": "eb344ce46c327432e1ae46bfa9d7aa97f9f6dc8e",
+      "archive_timestamp_utc": "2026-07-11T19:18:57Z",
       "timestamp_source": "git current-file lifetime"
     }
   }
