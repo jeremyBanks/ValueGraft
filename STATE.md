@@ -10,31 +10,44 @@ every possible write-time channel elsewhere in the cache.
 
 - Exact production checkpoint: `Qwen/Qwen3-30B-A3B-Instruct-2507`, revision
   `0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe`, bf16, eager attention.
-- No paid pod is running and no paid v10 semantic outcome exists.
+- No paid pod is running, paid experiment compute remains `$0`, and no v10
+  semantic outcome exists.
 - RunPod balance was last observed at `$63.3160022124`; the owner authorized an
-  approximately `$60` total ceiling. The fresh Fable design consultation reported a
-  `$4.440664` provider usage estimate, conservatively tracked but not verified as an
-  incremental cash charge.
+  approximately `$60` total ceiling. Three fresh Fable consultations reported a
+  combined `$16.707801` provider usage estimate, conservatively tracked but not
+  verified as an incremental cash charge.
 - The v10 production-tokenizer donor artifact passed 12/12 and is committed at
   `results/coherent_state_ladder/coherent_external_donors_gapped_v10_Qwen3-30B-A3B-Instruct-2507_20260711T122320Z.json`.
 - The exact local 0.6B bf16 eager CPU ladder is live as PID `55253`, output prefix
   `results/coherent_state_ladder/coherent_state_ladder_gapped_v10_Qwen3-0.6B_20260711T123246Z`.
   Static provenance passed 1/1, attention-backend attestation passed 28/28, and the
   synthetic schedule stage passed 7/7 with aggregate discrepancy exactly `0.0`
-  against the frozen `5e-4` limit. The twelve committed-case schedule stage is now
-  running from 0/12. Intermediate sidecars are committed at each durable milestone.
+  against the frozen `5e-4` limit. The first natural committed case, `c10`, then
+  decisively failed: identical 8,430 tokens/positions under partitions
+  `[4096,4096,238]` and `[23,4096,4096,92,123]` produced cache K/V maxima
+  `16.125/5.125`, final-logit maximum `0.59375`, selected-margin shift
+  `0.060546875`, and continuation-logit maximum `0.84375`. Layer-0 stored K/V are
+  exact; divergence begins at layer 1. The sealed sidecar is committed at
+  `4ad714f`. `c02` is running solely for a second natural diagnostic and the process
+  will be reversibly paused afterward.
 - The accidental historical v6 CPU ladder remains paused and cannot authorize v10.
 
-Amendment 11 now separates scheduling from authorization. The healthy local ladder
-continues, while one paid technical-only 30B attempt may run concurrently after the
-remaining exact-commit launch gates. The paid result is provisional and cannot authorize
-semantics alone. Before any semantic work, the external release resolver must independently
-validate `L AND T`: the exact committed terminal local-ladder PASS and the exact committed,
-independently harvested 30B technical PASS. A remote outer wrapper revalidates the same
-packet before inference; a separate final release receipt is required before any semantic
-result counts. The scientific assay remains schema-2 `coherent-state-gapped-v10` under
-Amendments 1–10; Amendment 11 is a separately identified authorization overlay. Every render
-must still be saved and committed.
+Amendment 11 separated scheduling from authorization, but the observed `c10` FAIL now
+makes a frozen v10 local `L=PASS` impossible. Therefore no paid v10 technical attempt will
+launch: even a paid `T=PASS` would be rejected by the machine-enforced `L AND T` resolver.
+V10 is permanently non-authorizing unless a separately preregistered scientific version
+replaces it; no gate will be waived or reinterpreted after the failure.
+
+The next `$0` step is frozen at
+`COHERENT-STATE-SCHEDULE-ORIGIN-DIAGNOSTIC-PREREGISTRATION.md`. After `c02`, a
+three-branch exact c10 diagnostic compares the first 23 cached rows under a 23-token
+query, the original 4,096-token query, and an equal-shaped 4,096-token query with only
+causally future tokens changed. It distinguishes construction divergence,
+future-token influence, and query-shape-dependent bf16 rounding. If rounding is
+confirmed, a separately frozen c10/c02 measurement will test whether the actual
+`G_correct-G_fresh` and `G_correct-G_wrong` contrasts inherit the schedule noise. Only
+contrast-level stability can justify one batched v11 redesign; otherwise the experiment
+stops at a precision-limited methodological result.
 
 The release layer was frozen and implemented without changing any of the 35 inventoried v10
 apparatus files; the aggregate remains
@@ -54,7 +67,7 @@ in the destination, so the proposed one-arm tail transplant was neither same-pos
 nor rotation-free and lacked a wrong-history control. Claude accepted and withdrew it.
 The binding null boundary is: **no detected downstream-usable channel carried by the
 generated summary rows under this fixed assay**, never “no write-time state exists
-elsewhere.” See `notes/2026071164-fable-tail-channel-design-review.md` and the concluding
+elsewhere.” See `notes/2026071170-fable-tail-channel-design-review.md` and the concluding
 turns of `notes/2026071156-sol-fable-execution-coordination.md`. A same-position
 request/header or immediate-post-summary correct-versus-wrong assay is reserved as a
 separately preregistered follow-up reusing saved renders.

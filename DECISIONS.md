@@ -384,8 +384,8 @@ Capture everything very well (owner).
   generated summary rows under this fixed assay**, never “no write-time state exists
   elsewhere.” A same-position correct/wrong request/header or immediate-post-summary
   assay is a separately preregistered follow-up reusing saved renders. Evidence:
-  `notes/2026071164-fable-tail-channel-design-review.md`,
-  `notes/2026071166-sol-models-take-notes-primary-source-reading.md`, and the final
+  `notes/2026071170-fable-tail-channel-design-review.md`,
+  `notes/2026071172-sol-models-take-notes-primary-source-reading.md`, and the final
   turns of `notes/2026071156-sol-fable-execution-coordination.md`.
 
 - **Do not replace the required v10 local CPU ladder with a GPU-pod proxy.** The live
@@ -418,4 +418,34 @@ Capture everything very well (owner).
   outside the v10 apparatus globs, preserving the live ladder and v10 scientific identity.
   Evidence: `COHERENT-STATE-PREREGISTRATION-AMENDMENT-11.md`,
   `COHERENT-STATE-AUTHORIZATION-CLARIFICATION-11A.md`, and
-  `notes/2026071171-fable-parallel-gate-sequencing-review.md`.
+  `notes/2026071173-fable-parallel-gate-sequencing-review.md`.
+
+- **The first natural schedule fixture falsified v10's long-prefix equivalence gate;
+  do not launch the paid v10 technical run.** `c10` used the exact same 8,430 token IDs,
+  logical positions, and physical positions under ordinary `[4096,4096,238]` versus
+  message-aligned `[23,4096,4096,92,123]` calls. Every structural/equality check passed,
+  but cache K/V maxima were `16.125/5.125`, the selected-token margin moved
+  `0.060546875`, and continuation logits moved `0.84375`, all far beyond `5e-4`.
+  Layer-0 cached K/V are exact and layer 1 first diverges, which rules out the known
+  token/position/cache-construction classes and localizes the first change to layer-0
+  attention execution. Query-shape-dependent bf16 rounding is the leading **theory**;
+  future-token influence remains unexcluded until the preregistered three-way test.
+  Since one failed row makes local `L=PASS` impossible, Amendment 11's `L AND T`
+  resolver guarantees that a paid v10 result cannot authorize semantics. Paid experiment
+  spend stays `$0`.
+
+- **Measure the estimand-level numerical floor before redesigning or abandoning the
+  mechanism assay.** Claude Opus 4.8 correctly challenged the inference from an absolute
+  prefix-equivalence failure to unstable arm contrasts: common-mode schedule effects may
+  cancel, but prior experience forbids assuming that. Actual `claude-fable-5` and two
+  independent audits converged on a two-step `$0` sequence: first localize c10 with
+  equal-input/equal-shape causal controls; then, only if the backend is causally correct,
+  freeze and measure how canonical versus alternative source schedules change
+  `G_correct-G_fresh` and `G_correct-G_wrong` themselves. Let in-flight `c02` finish for
+  one second natural magnitude, pause the rest of v10, and put these measurements on the
+  CPU critical path. Stable contrasts permit one batched v11 redesign/review cycle;
+  schedule shifts at the plausible effect scale terminate the mechanism experiment with
+  an honest precision-limited result. Evidence: the c10 sidecar at `4ad714f`,
+  `COHERENT-STATE-SCHEDULE-ORIGIN-DIAGNOSTIC-PREREGISTRATION.md`,
+  `notes/2026071174-fable-c10-schedule-failure-design-review.md`, and the latest turns of
+  `notes/2026071156-sol-fable-execution-coordination.md`.
