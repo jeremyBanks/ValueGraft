@@ -77,6 +77,11 @@ def _target(case: dict, key: str) -> dict:
 def _variant_evidence(tokenizer, messages: list[dict], *,
                       middle_end_msg: int | None = None) -> tuple[dict, object, object, object]:
     ids = [int(value) for value in canonical_ids_any(tokenizer, messages, render_hf)]
+    decoded = tokenizer.decode(
+        ids, skip_special_tokens=False, clean_up_tokenization_spaces=False)
+    decoded_ids = [int(value) for value in tokenizer.encode(
+        decoded, add_special_tokens=False)]
+    _require(decoded_ids == ids, "decoded canonical stream does not round-trip")
     starts = message_starts(tokenizer, ids)
     _require(len(starts) == len(messages), "canonical message-start coverage differs")
     widths = [
@@ -104,7 +109,9 @@ def _variant_evidence(tokenizer, messages: list[dict], *,
     _require(plan.regions == p_plan.regions, "N/P carrier regions differ")
     evidence = {
         "canonical_token_count": len(ids),
+        "canonical_token_ids": ids,
         "canonical_token_ids_sha256": sha256_ints(ids),
+        "decoded_utf8_sha256": hashlib.sha256(decoded.encode("utf-8")).hexdigest(),
         "literal_messages_sha256": sha256_json(messages),
         "message_start_positions": starts,
         "message_start_positions_sha256": sha256_ints(starts),
@@ -112,22 +119,32 @@ def _variant_evidence(tokenizer, messages: list[dict], *,
         "content_token_widths": content_widths,
         "role_native_event_kinds": [event.kind for event in plan.events],
         "role_native_event_widths": [event.width for event in plan.events],
+        "role_native_events": [asdict(event) for event in plan.events],
         "role_native_geometry_sha256": sha256_json(plan.geometry()),
         "turn_aligned_event_kinds": [event.kind for event in p_plan.events],
         "turn_aligned_event_widths": [event.width for event in p_plan.events],
+        "turn_aligned_events": [asdict(event) for event in p_plan.events],
         "turn_aligned_geometry_sha256": sha256_json(p_plan.geometry()),
         "fresh_destination_token_count": len(fresh_plan.token_ids),
+        "fresh_destination_token_ids": list(fresh_plan.token_ids),
         "fresh_destination_token_ids_sha256": sha256_ints(fresh_plan.token_ids),
         "fresh_destination_logical_positions_sha256": sha256_ints(
             fresh_plan.logical_positions),
+        "fresh_destination_logical_positions": list(fresh_plan.logical_positions),
+        "fresh_destination_physical_positions": list(fresh_plan.physical_positions),
         "fresh_destination_source_indices_sha256": sha256_ints(
             fresh_plan.source_token_indices),
+        "fresh_destination_source_indices": list(fresh_plan.source_token_indices),
+        "fresh_destination_events": [asdict(event) for event in fresh_plan.events],
         "fresh_destination_geometry_sha256": sha256_json(fresh_plan.geometry()),
+        "fresh_destination_source_regions": asdict(fresh_plan.source_regions),
         "fresh_destination_physical_regions": asdict(fresh_plan.physical_regions),
+        "fresh_destination_system_width": fresh_plan.system_width,
+        "fresh_destination_suffix_source_start": fresh_plan.suffix_source_start,
         "source_replay_token_count": len(plan.token_ids),
         "carrier_request_start": carrier_request_start,
         "carrier_regions": asdict(plan.regions),
-        "decoded_round_trip": True,
+        "decoded_round_trip": decoded_ids == ids,
     }
     return evidence, plan, p_plan, fresh_plan
 
@@ -281,6 +298,11 @@ def validate_case(tokenizer, case: dict) -> dict:
              f"{case_id} focal target token lengths are needlessly asymmetric")
     return {
         "case_id": case_id,
+        "length_band": band,
+        "middle_end_msg": middle,
+        "focal_result_subtype": (
+            "explicit" if case_id in ("e01", "e02", "e05") else "unstated"),
+        "authoring_provenance": provenance,
         "status": "MECHANICAL_DRAFT_PASS",
         "execution_ready": False,
         "review_ready": True,

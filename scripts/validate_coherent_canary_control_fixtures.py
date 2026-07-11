@@ -10,7 +10,12 @@ from pathlib import Path
 
 from transformers import AutoTokenizer
 
-from coherent_canary_schema import MODEL_ID, MODEL_REVISION, require_matching_geometry
+from coherent_canary_schema import (
+    DESIGN_ID,
+    MODEL_ID,
+    MODEL_REVISION,
+    require_matching_geometry,
+)
 from coherent_canary_stimuli import sha256_ints, sha256_json
 from coherent_canary_tokens import (
     build_fresh_destination_plan,
@@ -24,6 +29,24 @@ class FixtureError(RuntimeError):
     pass
 
 
+TECHNICAL_CORRECT = [
+    {"role": "system", "content": "Apply the stated policy exactly. At the final question answer with exactly approve or deny."},
+    {"role": "user", "content": "Policy: approve only when the status is green. Current status: green."},
+    {"role": "assistant", "content": "The policy and current record have been processed. Use the recorded state for the decision."},
+    {"role": "user", "content": "At the final question, answer with exactly one policy label."},
+    {"role": "assistant", "content": "Understood."},
+]
+TECHNICAL_WRONG = [dict(row) for row in TECHNICAL_CORRECT]
+TECHNICAL_WRONG[1] = {
+    "role": "user",
+    "content": "Policy: approve only when the status is green. Current status: amber.",
+}
+IDENTITY_MESSAGES = [
+    {"role": "system", "content": "Answer plainly."},
+    {"role": "user", "content": "Write one short neutral sentence acknowledging that a record exists."},
+]
+
+
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise FixtureError(message)
@@ -32,11 +55,17 @@ def require(condition: bool, message: str) -> None:
 def validate_technical(tokenizer, path: Path) -> dict:
     raw_bytes = path.read_bytes()
     raw = json.loads(raw_bytes)
+    require(raw.get("schema") ==
+            "coherent_state_decision_canary_v12_technical_control_fixture_v1",
+            "technical schema differs")
+    require(raw.get("design_id") == DESIGN_ID, "technical design differs")
     require(raw.get("status") == "FROZEN_TOKENIZER_ONLY", "technical status differs")
     require(raw.get("model") == MODEL_ID, "technical model differs")
     require(raw.get("revision") == MODEL_REVISION, "technical revision differs")
     correct = raw.get("correct")
     wrong = raw.get("wrong")
+    require(correct == TECHNICAL_CORRECT, "technical correct literal differs")
+    require(wrong == TECHNICAL_WRONG, "technical wrong literal differs")
     require(isinstance(correct, list) and isinstance(wrong, list), "histories absent")
     require(len(correct) == len(wrong) == 5, "technical message count differs")
     for messages in (correct, wrong):
@@ -56,6 +85,15 @@ def validate_technical(tokenizer, path: Path) -> dict:
     require(correct_widths == wrong_widths, "technical content widths differ")
     middle = raw.get("middle_end_msg")
     require(middle == 3, "technical boundary differs")
+    require(raw.get("probe") == "Decision?", "technical probe differs")
+    require(raw.get("correct_target") == "approve", "technical correct target differs")
+    require(raw.get("counterfactual_target") == "deny",
+            "technical counterfactual target differs")
+    require(raw.get("margin") == "log_p_approve_minus_log_p_deny",
+            "technical margin differs")
+    require(raw.get("uses_common_carrier") ==
+            "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+            "technical carrier binding differs")
     n_correct = build_role_native_plan(tokenizer, correct, middle_end_msg=middle)
     n_wrong = build_role_native_plan(tokenizer, wrong, middle_end_msg=middle)
     p_correct = build_turn_aligned_plan(tokenizer, correct, middle_end_msg=middle)
@@ -97,11 +135,16 @@ def validate_technical(tokenizer, path: Path) -> dict:
 def validate_identity(tokenizer, path: Path) -> dict:
     raw_bytes = path.read_bytes()
     raw = json.loads(raw_bytes)
+    require(raw.get("schema") ==
+            "coherent_state_decision_canary_v12_generated_forced_identity_fixture_v1",
+            "identity schema differs")
+    require(raw.get("design_id") == DESIGN_ID, "identity design differs")
     require(raw.get("status") == "FROZEN_LITERAL_PRE_FORWARD",
             "identity status differs")
     require(raw.get("model") == MODEL_ID, "identity model differs")
     require(raw.get("revision") == MODEL_REVISION, "identity revision differs")
     messages = raw.get("messages")
+    require(messages == IDENTITY_MESSAGES, "identity message literals differ")
     require(isinstance(messages, list) and len(messages) == 2,
             "identity messages differ")
     require([row.get("role") for row in messages] == ["system", "user"],

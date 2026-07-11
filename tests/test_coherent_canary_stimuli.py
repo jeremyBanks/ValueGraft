@@ -90,6 +90,16 @@ def test_valid_matched_case_builds_independent_evidence(tokenizer):
     assert result["pair"]["role_native_geometry_identical"] is True
     assert result["pair"]["turn_aligned_geometry_identical"] is True
     assert result["pair"]["fresh_destination_identical"] is True
+    assert result["correct"]["decoded_round_trip"] is True
+    assert result["correct"]["canonical_token_ids"]
+    assert result["correct"]["role_native_events"]
+    assert result["correct"]["turn_aligned_events"]
+    assert result["correct"]["fresh_destination_token_ids"]
+    assert result["correct"]["fresh_destination_logical_positions"] == \
+        result["correct"]["fresh_destination_source_indices"]
+    assert result["correct"]["fresh_destination_physical_positions"] == list(
+        range(result["correct"]["fresh_destination_token_count"]))
+    assert result["correct"]["fresh_destination_events"]
     assert 1000 <= result["correct"]["carrier_request_start"] <= 2000
     assert result["correct"]["carrier_regions"]["anchor_content_end"] < result[
         "correct"]["source_replay_token_count"]
