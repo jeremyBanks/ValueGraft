@@ -185,6 +185,46 @@ def score_pair(record: Any, label: str) -> dict[str, Any]:
     }
 
 
+def phase_a_damage_summary(phase_payload: Mapping[str, Any],
+                           phase_report: Mapping[str, Any]) -> dict[str, Any]:
+    scores = phase_payload.get("scores")
+    require(isinstance(scores, Mapping) and
+            {"A_C_focal", "FF_focal"}.issubset(scores),
+            "Phase-A focal damage scores are absent")
+    oracle = score_summary(scores["A_C_focal"], "phase_a.A_C_focal")
+    fresh = score_summary(scores["FF_focal"], "phase_a.FF_focal")
+    result = {
+        "margin": oracle["margin"] - fresh["margin"],
+        "correct_target_logprob": (
+            oracle["correct"]["mean_logprob"] -
+            fresh["correct"]["mean_logprob"]),
+    }
+    result["positive_margin_damage"] = result["margin"] > 0
+    result["positive_correct_target_damage"] = (
+        result["correct_target_logprob"] > 0)
+    declared = phase_report.get("fresh_damage_diagnostic")
+    declared_margin = (declared.get("margin")
+                       if isinstance(declared, Mapping) else None)
+    declared_correct = (declared.get("correct_target_logprob")
+                        if isinstance(declared, Mapping) else None)
+    require(isinstance(declared, Mapping) and
+            isinstance(declared_margin, (int, float)) and
+            isinstance(declared_correct, (int, float)) and
+            math.isfinite(float(declared_margin)) and
+            math.isfinite(float(declared_correct)) and
+            math.isclose(result["margin"], float(declared_margin),
+                         rel_tol=1e-12, abs_tol=1e-12) and
+            math.isclose(result["correct_target_logprob"],
+                         float(declared_correct),
+                         rel_tol=1e-12, abs_tol=1e-12) and
+            declared.get("positive_margin_damage") is
+            result["positive_margin_damage"] and
+            declared.get("positive_correct_target_damage") is
+            result["positive_correct_target_damage"],
+            "Phase-A reported fresh-damage diagnostic differs from raw scores")
+    return result
+
+
 def verify_source_bindings(raw: Mapping[str, Any], repo_root: Path) -> dict[str, Any]:
     bindings = raw.get("bindings")
     require(isinstance(bindings, Mapping) and set(bindings) == EXPECTED_BINDINGS,
@@ -295,6 +335,8 @@ def verify_source_bindings(raw: Mapping[str, Any], repo_root: Path) -> dict[str,
                 phase_bindings[name].get("sha256") == bindings[name]["sha256"],
                 f"Phase-A/treatment {name} binding continuity differs")
 
+    damage = phase_a_damage_summary(phase_payload, phase_report)
+
     return {
         "paths": paths,
         "bindings": {name: {"path": str(paths[name]),
@@ -303,6 +345,7 @@ def verify_source_bindings(raw: Mapping[str, Any], repo_root: Path) -> dict[str,
         "phase_raw": phase_raw,
         "phase_a_status": phase_status,
         "phase_a_inadequacy_reasons": list(inadequacy),
+        "phase_a_fresh_damage_diagnostic": damage,
         "runtime_fingerprint_sha256": phase_fingerprint,
     }
 
@@ -541,6 +584,8 @@ def harvest(treatment_path: Path, *, repo_root: Path = ROOT) -> dict[str, Any]:
         "phase_a_status": evidence["phase_a_status"],
         "phase_a_inadequacy_reasons": evidence[
             "phase_a_inadequacy_reasons"],
+        "phase_a_fresh_damage_diagnostic": evidence[
+            "phase_a_fresh_damage_diagnostic"],
         "completed_at_utc": datetime.now(timezone.utc).isoformat(),
         "treatment_artifact": {
             "path": str(treatment_path), "sha256": file_sha256(treatment_path)},

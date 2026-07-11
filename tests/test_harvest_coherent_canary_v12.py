@@ -203,7 +203,10 @@ def release_fixture(tmp_path: Path, *, subject: str = "exact-subject",
             "schema": RUNNER.PHASE_A_PAYLOAD_SCHEMA,
             "design_id": HARVEST.DESIGN_ID,
             "case_id": "e01", "treatment_scores_present": False,
-            "scores": {"oracle-only": {}},
+            "scores": {
+                "A_C_focal": score("focal", 1.0, 0.0),
+                "FF_focal": score("focal", 0.2, 0.0),
+            },
         },
     })
     phase_report = write_json(tmp_path / "results/phase-a-report.json", {
@@ -223,6 +226,12 @@ def release_fixture(tmp_path: Path, *, subject: str = "exact-subject",
         "invalidity_reasons": [],
         "inadequacy_reasons": (
             [] if phase_status == "PRETREATMENT_PASS" else ["oracle"]),
+        "fresh_damage_diagnostic": {
+            "margin": 1.0 - HARVEST.float32(0.2),
+            "correct_target_logprob": 1.0 - HARVEST.float32(0.2),
+            "positive_margin_damage": True,
+            "positive_correct_target_damage": True,
+        },
     })
     args = RUNNER.parse_args([
         "--subject", subject,
@@ -282,6 +291,11 @@ def test_actual_treatment_runner_output_flows_directly_into_harvester(
         HARVEST.SUBJECTS["exact-subject"]["model_id"])
     assert report["semantic_evidence_eligible"] is True
     assert report["apparatus_integration_only"] is False
+    damage = report["phase_a_fresh_damage_diagnostic"]
+    assert damage["margin"] == pytest.approx(0.8)
+    assert damage["correct_target_logprob"] == pytest.approx(0.8)
+    assert damage["positive_margin_damage"] is True
+    assert damage["positive_correct_target_damage"] is True
     full_n = report["R2_primary_estimands"]["N"]["full_KV"]
     value_n = report["R2_primary_estimands"]["N"]["value_only"]
     assert full_n == pytest.approx({
