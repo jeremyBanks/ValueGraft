@@ -256,3 +256,159 @@ these candidates (or reject both), specify whether GF can remain co-primary unde
 passing exact-model eager identity gate, and give an explicit **PROCEED TECHNICAL**,
 **REVISE**, or **STOP** recommendation. Please also judge whether retiring `G_delta`
 is the least post hoc option. No tolerance change is available.
+
+**Claude — claude-opus-4-8 (round 2, reconciling Sol's SDPA/eager evidence):**
+
+Runtime model, restated exactly: **claude-opus-4-8** (Claude Opus 4.8). This evidence
+is decision-relevant and I update my prior review materially. Below I reconcile, verify
+provenance, choose a candidate, resolve GF, judge `G_delta`, and decide.
+
+### Provenance check first (two facts that gate everything)
+
+1. **Sol's eager/SDPA numbers are not yet in the committed record.** The only committed
+   coherent_state artifact is still the original SDPA failure
+   (`…gapped_v3_…20260711T080431Z/`); `git log` shows nothing added since. I searched
+   `results/` and found no eager-gate JSON, no SDPA-vs-eager table, no persisted
+   `G_delta` failure. Under the results-in-repo rule and "verify provenance before
+   claiming data," Sol's table and the eager pass are **reported, not audited**. They
+   are credible and mechanistically expected (see below), but they cannot authorize a
+   paid run until persisted and committed as artifacts.
+2. **The apparatus does not currently select or assert an attention backend.**
+   `grep -E 'attn_implementation|eager|sdpa'` over the load/runtime/gate code
+   (`run_coherent_state_hf.py`, `coherent_state_hf.py`, `l_coherent_state_hf.py`,
+   `kvlib_hf.py`) returns nothing — the model loads with the transformers default
+   (SDPA for this model). "Freeze eager" is therefore a **code change**, not a flag flip:
+   it needs a fresh Amendment-4 ladder + code review + clean launch commit per
+   Amendment 3's launch-gate, and the gate must assert the resolved per-module
+   implementation and fail closed otherwise, with the backend in the fingerprint.
+
+### Reconciliation with my prior review — what I retract and what stands
+
+The eager=0.0 / SDPA≈1.0 split is mechanistically exactly what I should expect, and it
+is credible, not suspicious: eager computes `QK^T`+softmax with a per-query reduction
+over the key axis whose order is independent of how many queries are batched, so
+contiguous-vs-split is bit-identical; SDPA/flash dispatches query-length-dependent
+kernels whose online-softmax block accumulation order changes with q-shape, producing
+bf16 rounding that compounds through 48 layers.
+
+- **I RETRACT my strongest claim** — that "in bf16 MoE the written KV state is not
+  well-defined below O(1) / the noise floor may be irreducible." Eager being bit-exact
+  on the same model+dtype shows the non-equivalence is a property of the **SDPA kernel's
+  query-shape-dependent reduction**, not of bf16 or of MoE. The floor is **removable by
+  backend choice**, not irreducible. My STOP-on-irreducible-floor branch is largely
+  defused (though see the length caveat below — it is not yet proven defused at 30B or at
+  P_i scale).
+- **I NARROW my (b) confound.** GF was confounded **on the SDPA path v3 actually ran**;
+  under eager the source(contiguous)-vs-fresh(split) segmentation difference collapses to
+  the bit, so GF then measures history content, not kernel shape. My recommendation to
+  demote GF was correct *conditional on SDPA* and is **not required under a passing eager
+  identity gate**.
+- **(a) and (c) stand and strengthen.** The gate correctly caught an SDPA artifact (a);
+  eager bit-exactness proves it is **not** a cache/mask/position bug (c). My
+  ladder-validity point stands but sharpens: the gap was float32+dense *and* an unasserted
+  backend; the fix is a committed bf16 **eager** ladder plus the exact-30B eager technical
+  gate as the authorizing artifact.
+
+MoE routing is downgraded to at most an amplifier of the SDPA artifact: under eager the
+attention output is bit-identical across q-shapes, so router inputs are bit-identical and
+no expert flips occur — consistent with Sol's tiny-MoE observation that eager removes it.
+
+### Candidate choice: adopt Candidate 1 (freeze eager); REJECT Candidate 2
+
+- **Candidate 2 is prohibitive and partly illusory.** ~211k long-prefix q=1 calls is
+  budget- and operational-failure-heavy (precisely the pod-flakiness/lost-run class this
+  project has bled on). Worse, all-q=1 does not preserve deployment fidelity: real SDPA
+  serving writes KV with q=large prefill + q=1 decode, so an all-q=1 replay produces a
+  *different* (q=1-replayed) KV than generation-time KV under SDPA bf16 — its claim to
+  "keep the deployment SDPA backend" is only partly true. And its auto-vs-explicit-mask
+  check becomes non-authorizing (Sol concedes this — a lost gate). Reject.
+- **Candidate 1 removes the artifact at its source.** Eager is the mathematically-exact
+  attention; measuring whether correct-history KV beats fresh/wrong under eager is the
+  cleaner substrate for the information-content question. Its cost — the finding is scoped
+  to eager, not SDPA — is real but **acceptable and reportable**, not invalidating: the
+  SDPA query-shape bf16 sensitivity becomes a separately reported serving-numerics result
+  ("position-preserving compaction under a fast attention kernel additionally needs a
+  fixed generation schedule to be bit-reproducible"), which is honest and consistent with
+  Amendment 1's mandate to report apparatus limits. Keep the frozen 5e-4 / 1e-4
+  tolerances unchanged, exactly as Sol proposes.
+
+### GF co-primary: conditionally YES
+
+GF may remain co-primary **iff** the exact-30B bf16 eager identity gate passes at frozen
+tolerances **and** the representative-length same-token placebos come in ≈0 (below). Under
+that condition the SDPA segmentation confound that motivated demotion is removed to the
+bit, and GF measures history. If any eager zero-gap / representative-length / selected-token
+margin placebo at 30B fails to clear threshold, GF is demoted to supporting and GW carries
+the confirmatory weight (my prior REVISE posture). GW stays co-primary either way — do not
+re-estimate the design from technical data alone, as Sol rightly cautions.
+
+### `G_delta`: retire additively — yes, least post hoc
+
+Agree. `G_delta` was only exploratory/mechanistic (Amendment 1 §4); GW is the stronger
+content-specific negative control and is co-primary; baseline-dependent bf16 rounding makes
+the intended fixed-point-free derangement multiset non-exact, so its own frozen moment/
+quantization placebo cannot be met without loosening. **Removing the arm is strictly more
+conservative than relaxing its limits** — the least post-hoc option. Two required fixes so
+retirement is clean, not a swept failure: (i) the apparatus raised **before persisting** the
+offending values — that violates the amendments' persist-complete-evidence-for-PASS-and-FAIL
+rule (the zero-gap gate persists correctly); fix persistence so the failure values
+(applied 0.125 vs 0.05; mean 0.0357 vs 0.02; covariance 0.429) land on the committed record;
+then (ii) retire in a dated Amendment 4. Retirement touches no confirmatory arm or the
+GF∩GW intersection.
+
+### Decision: **PROCEED TECHNICAL** (exact-30B bf16 eager, no semantics), conditional
+
+Not REVISE-the-estimand (unnecessary if eager passes) and not STOP (the floor is not
+irreducible). Authorize a cheap, exact-model, technical-only eager gate; it is decision-
+relevant and chooses cleanly between authorize-semantics and fall-back. No paid semantic
+run until it passes.
+
+**Pre-conditions (before the exact-30B eager gate can authorize anything):**
+
+- P1. Commit Sol's local evidence as artifacts: the SDPA-vs-eager table, the bf16 eager
+  0.6B gate pass, and the `G_delta` bf16 placebo failure. Un-committed reproductions do
+  not authorize a paid run.
+- P2. Wire `attn_implementation="eager"` at load; gate **asserts** the resolved per-module
+  implementation and fails closed on anything else; backend recorded in fingerprint/manifest.
+- P3. Fresh Amendment-4 bf16 **eager** 0.6B ladder artifact + independent code/science review
+  + clean launch commit; pod clones that exact commit (do not skip the ladder).
+- P4. Amendment 4 also records: `G_delta` retirement, GF-conditional-on-eager rule, and that
+  no frozen tolerance is changed.
+
+**Exact pre-semantic gates on the exact 30B (Qwen3-30B-A3B-Instruct-2507, rev 0d7cf239,
+bf16, eager) — all persisted (PASS and FAIL) before any A_full/calibration/treatment score:**
+
+- G1. Zero-gap contiguous-vs-split K/V/logits ≤ **5e-4** (expect ≈0 under eager; record the
+  number).
+- G2. **Representative-length** same-token one-shot-vs-split placebo at P_i-scale prefixes
+  (hundreds–thousands of tokens, spanning the frozen cases), not only n=5 — record max
+  K/V/logit and **selected-token margin**; must clear threshold. This is the load-bearing
+  new gate: it excludes a length-triggered kernel switch even under eager (SDPA showed a
+  0.109-nat margin shift at n=5; eager must show ≈0 at production length, since Amendment 1
+  §1 showed small tensor error does not bound the selected-token margin).
+- G3. Generated source-of-record vs independent one-token replay ≤ **1e-4**; snapshot/rebuild
+  continuation ≤ **1e-4**.
+- G4. Automatic vs independent explicit-4D physical causal mask ≤ **1e-4**; future-token
+  mutation cannot change earlier logits or earlier K/V rows ≤ **1e-4**.
+- G5. Bit-copy insertion: `G_correct`/`G_wrong` inserted summary rows hash-match their source;
+  no `move_key_rows` on any confirmatory arm.
+- G6. Per-arm fork at the summary boundary; pre-tail hashes prove only summary rows changed;
+  identical tail recomputed per arm; a changed summary state can causally move the tail while
+  non-summary inputs stay identical; a reused fresh-precomputed tail fails closed.
+- G7. Structure/position: exact system-island equality, exact request/header suffix equality,
+  island non-overlap, all summary starts = P_i, contiguous physical `cache_position` with the
+  logical gap carried only by `position_ids`; logical-as-cache-position injection rejected.
+- G8. Backend assertion: eager confirmed in force per module and fingerprinted; calibration
+  Amendment-2 unique-variant rule and Amendment-3 disjoint external donor map re-validated
+  with the production tokenizer under the eager build.
+
+**Decision rule after the technical gate:** all pass → GF and GW co-primary, paid semantic
+run authorized on the eager path (report the eager scoping + SDPA serving-numerics caveat).
+G1/G2/G8 margin placebos not clearing at 30B → demote GF to supporting, GW-only primary
+(REVISE), or STOP if eager also fails to bit-reproduce at length. Do not adopt Candidate 2 as
+a fallback.
+
+One-line topline: **PROCEED TECHNICAL** — exact-30B bf16 **eager** technical-only gate under
+frozen tolerances; GF stays co-primary only if that gate (incl. representative-length margin
+placebos) passes; adopt Candidate 1, reject Candidate 2, retire `G_delta` additively; commit
+Sol's evidence and wire+assert the backend first; no semantics and no tolerance change until it passes.
