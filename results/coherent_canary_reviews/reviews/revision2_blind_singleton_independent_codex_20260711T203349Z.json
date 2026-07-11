@@ -1,0 +1,224 @@
+{
+  "schema": "coherent_state_decision_canary_v12_blind_singleton_review_v1",
+  "review_kind": "revision_2_blind_singleton_independent",
+  "created_at_utc": "2026-07-11T20:35:58Z",
+  "reviewer_provenance": {
+    "reviewer": "Codex subagent",
+    "runtime": "not exposed",
+    "reasoning_effort": "not exposed",
+    "runtime_or_effort_inferred": false,
+    "statement": "This review was produced by a Codex subagent. The runtime and reasoning-effort setting were not exposed, and neither was inferred."
+  },
+  "review_scope": {
+    "files_read": [
+      "/Users/jeb/experimentation/AGENTS.md",
+      "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T203349Z_33a035ebc84e.json"
+    ],
+    "excluded_from_review": [
+      "source cases",
+      "other review packets",
+      "prior reviews",
+      "preregistration documents",
+      "subject results"
+    ],
+    "independence_statement": "Each anonymous history was reviewed independently in packet order. No pairing or target identity was inferred."
+  },
+  "packet_binding": {
+    "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T203349Z_33a035ebc84e.json",
+    "raw_file_sha256": {
+      "value": "e5f2024421acfbbcc7efe4a0bd5da9b82d44ba118a21d3faf1bc9694d68eb714",
+      "meaning": "SHA-256 computed over the exact raw bytes of the packet file reviewed."
+    },
+    "declared_packet_content_seal": {
+      "field": "packet_sha256",
+      "value": "33a035ebc84ec23e722b016678373787f3ab077762cb2914ca4e5b281148ea08",
+      "meaning": "The packet's own declared content seal as read from its packet_sha256 field. It is distinct from the raw-file SHA-256 and was not represented as a hash of the file's literal bytes."
+    }
+  },
+  "review_outcomes_seen": false,
+  "subject_model_forward_performed": false,
+  "common_carrier_anchor_review": {
+    "verdict": "PASS",
+    "naturalness": "The request for a fixed handoff note, the concise handoff, and the one-word acknowledgement form a plausible administrative bridge.",
+    "target_neutrality": "The carrier contains no domain entity, numerical input, branch label, decision answer, or evaluative cue that favors any anonymous history.",
+    "hidden_factual_implication": "The generic statement that prior discussion established context and criteria is true of every disclosed history and does not imply which decision branch applies. The sentence about unresolved action says only that the note introduces none; it does not erase unresolved actions already in a history.",
+    "anchor": "The anchor asks only for acknowledgement without factual repetition, and 'Acknowledged.' complies without adding information.",
+    "compatibility": "Insertion before each disclosed retained-tail boundary preserves role order and leaves every following user message understandable as continued work."
+  },
+  "history_reviews": [
+    {
+      "packet_order": 1,
+      "anonymous_history_id": "history-01",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "The exchange plausibly moves from an incident-room gate, through a recorded rehearsal result, to overnight source-reconciliation guidance.",
+      "internal_coherence": "The additive migration evidence is separated from the logged 10:40 rollback interval, and the staff-ring answer follows the stated under-eight-minute conjunction. The 21-day trace retention fact remains independent.",
+      "dangling_references": "The expected dashboard export and possible mixed-version error are explicitly prospective. The retained question identifies the service log and automated alert sufficiently for its timestamp guidance.",
+      "padding_or_balancing": "The retention detail and monitoring instructions have distinct operational purposes; repetition of evidence boundaries is noticeable but not conspicuous enough to read as length padding.",
+      "fake_actions": "No alert, notification, approval, or later incident is invented. The response gives recording procedure without asserting reconciliation occurred.",
+      "retained_tail_coherence": "At index 15, the next-coordinator clock question directly continues the preceding discussion of divergent log sources and new observations.",
+      "carrier_neutrality_and_compatibility": "The shared carrier adds no release-ring clue and can be inserted before index 15 without changing the meaning of the timestamp question."
+    },
+    {
+      "packet_order": 2,
+      "anonymous_history_id": "history-02",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "The route-planning record transitions credibly into field-documentation and stop-work instructions for the same NF-17 visit.",
+      "internal_coherence": "The truck requires a 9.1-tonne posting, the supplied posting is 9.4 tonnes, and the verified 0.88-metre reading is below 1.20. Radio Channel 3 is consistently kept independent of the access rule.",
+      "dangling_references": "The nearby cabin, mast footing, enclosure, battery connection, portable unit, and possible cracked base plate are all introduced or self-explanatory in the retained tail.",
+      "padding_or_balancing": "The obsolete sign, preliminary telemetry, forecast, spare clamp, and radio assignment are plausible field-record distinctions rather than conspicuous filler.",
+      "fake_actions": "Photographs, travel, damage, and repair remain requirements or conditionals; none is falsely reported as completed.",
+      "retained_tail_coherence": "The boundary begins a continuing-work note for the already established site visit, and the following cracked-plate condition naturally extends it.",
+      "carrier_neutrality_and_compatibility": "The carrier reveals no route or radio answer and does not disrupt the transition to site documentation."
+    },
+    {
+      "packet_order": 3,
+      "anonymous_history_id": "history-03",
+      "retained_tail_start_message_index": 51,
+      "verdict": "REVISE",
+      "naturalness": "The manufacturing sequence itself is credible and ordered, but the conversational record is over-extended. Messages 39-40 explicitly close and call the chronology complete, after which messages 41-50 reopen it for four more rounds of certificate, custody, trend, readiness, and layer-separation review.",
+      "internal_coherence": "Materials, cleaning, mixing, instrument control, prospective sampling, measurement, oven stabilization, transcription, observations, and custody remain consistent. The five readings total 600.0 and average 120.0; applying the stated +4.8 correction and plus-or-minus 1.1 interval is arithmetically well-defined, and the reported oven range of 2.5 is correct.",
+      "dangling_references": "K27-MX2, Mina, the traveler, and the Line 4 board are established or clear at the retained boundary. No unresolved pronoun or unexplained artifact blocks comprehension.",
+      "padding_or_balancing": "The history contains real process detail, but conspicuous padding remains: nearly every assistant turn repeats that the detail is not a gate criterion or disposition, and the post-closure messages 41-50 add checks after completeness was already declared. Trim or move those checks before the closure and reduce repeated outcome disclaimers while retaining the source chain.",
+      "fake_actions": "Physical and documentary actions are asserted only after the user records them. The tail keeps tote movement conditional and does not invent a status entry.",
+      "retained_tail_coherence": "Index 51 is a coherent shift-handoff continuation: tote custody and the equipment-state board follow the preceding closeout record without requiring hidden context.",
+      "carrier_neutrality_and_compatibility": "The carrier contains no coating value or disposition cue and is compatible with the shift-note boundary.",
+      "revision_required": "Make the completion point singular: place necessary certificate/custody/trend/readiness checks before the close, remove redundant meta-reminders, and then retain one concise close before index 51."
+    },
+    {
+      "packet_order": 4,
+      "anonymous_history_id": "history-04",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "The accessibility planning exchange naturally moves from room assignment to optional low-sensory arrival routing and physical sign placement.",
+      "internal_coherence": "Four companion requests reserve two of ten spaces, leaving eight for seven confirmed wheelchair users, so the stated Aster selection follows the rule. The interpreter check-in remains independent.",
+      "dangling_references": "The glass door, corridor, alcove, sign holder, lamps, and turning space are introduced immediately before or within the retained request.",
+      "padding_or_balancing": "The separate interpreter appointment and arrival-route discussion are operationally relevant and not conspicuous balancing material.",
+      "fake_actions": "The assistant proposes placement and a pre-opening check; it does not claim that equipment was placed or the check completed.",
+      "retained_tail_coherence": "Index 15 asks for implementation detail about the entrance just discussed at indices 13-14.",
+      "carrier_neutrality_and_compatibility": "The carrier discloses no room or count and fits cleanly before the entrance-placement request."
+    },
+    {
+      "packet_order": 5,
+      "anonymous_history_id": "history-05",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "A rights-review discussion credibly shifts into production-layout and house-style treatment of quoted material.",
+      "internal_coherence": "Exactly three passages remain flagged, the identified living private organizer is not named in full, and the queue conclusion is deliberately left unstated. Meridian Audio remains an independent contracted producer.",
+      "dangling_references": "The field-note excerpt, italic quotation, square brackets, and writer's clarification are established at indices 13-15.",
+      "padding_or_balancing": "The audiobook fact and three distinct verification flags provide plausible editorial context without conspicuous length balancing.",
+      "fake_actions": "The assistant recommends typography and queries; it does not claim the proof, edit, assignment, or contact occurred.",
+      "retained_tail_coherence": "The roman-versus-italic question at index 15 directly narrows the copyediting issue introduced at index 13.",
+      "carrier_neutrality_and_compatibility": "The carrier gives no queue, name, or vendor fact and does not interfere with the style question."
+    },
+    {
+      "packet_order": 6,
+      "anonymous_history_id": "history-06",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "The route-planning record transitions credibly into documentation and structural stop-work guidance for the same service visit.",
+      "internal_coherence": "The 8.6-tonne truck plus the required 0.5-tonne reserve needs 9.1 tonnes; the current 8.8-tonne posting fails that check even though the 0.88-metre gauge passes. Channel 3 remains independent.",
+      "dangling_references": "Every site feature and conditional action in the retained tail is introduced locally or follows from the established mast inspection.",
+      "padding_or_balancing": "The competing observations and field safeguards are distinct and plausible rather than conspicuous filler.",
+      "fake_actions": "The photograph, cracked plate, portable-unit use, travel, and repair remain prospective or conditional.",
+      "retained_tail_coherence": "Index 15 begins a same-visit work note, and index 17 adds a clear conditional boundary.",
+      "carrier_neutrality_and_compatibility": "The carrier exposes neither route branch nor any site finding and fits the retained boundary."
+    },
+    {
+      "packet_order": 7,
+      "anonymous_history_id": "history-07",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "The rights-review conversation moves plausibly into layout and a focused house-style question.",
+      "internal_coherence": "The record consistently has three flagged passages and states that the living private organizer's full name remains in the caption; the mandatory queue label is not prematurely stated. The audiobook vendor remains separate.",
+      "dangling_references": "The writer's bracketed clarification and surrounding italic quotation are established by the immediately preceding copyediting discussion.",
+      "padding_or_balancing": "The independent vendor fact and publication-production details are plausible and do not look conspicuously padded.",
+      "fake_actions": "No edit, assignment, author query, or contact is represented as completed by the assistant.",
+      "retained_tail_coherence": "The retained style question is an immediate refinement of the line-break and quotation treatment at index 13.",
+      "carrier_neutrality_and_compatibility": "The carrier supplies no naming or queue clue and leaves the typography question intact."
+    },
+    {
+      "packet_order": 8,
+      "anonymous_history_id": "history-08",
+      "retained_tail_start_message_index": 17,
+      "verdict": "PASS",
+      "naturalness": "The meal-program planning exchange naturally proceeds from hub selection and crate handling to onboarding a late volunteer.",
+      "internal_coherence": "Both 58- and 62-minute tests clear the 45-minute screen, and Cedar's 38-minute route is below Harbor's 51 minutes, so the stated Cedar selection follows the two-stage rule. Thursday intake remains independent.",
+      "dangling_references": "The loading briefing, role card, supervisor, read-back, and crate work are clear from the retained messages and preceding handling guidance.",
+      "padding_or_balancing": "Matched test conditions, route restrictions, and handling safeguards each serve a distinct planning purpose; no conspicuous balancing is present.",
+      "fake_actions": "The volunteer is hypothetical, and the assistant gives procedure without claiming arrival, assignment, dispatch, or task completion.",
+      "retained_tail_coherence": "Index 17 continues the loading-lead topic from indices 15-16 and index 19 logically follows the proposed read-back.",
+      "carrier_neutrality_and_compatibility": "The carrier contains no hub, duration, route, or service-calendar clue and fits before the briefing question."
+    },
+    {
+      "packet_order": 9,
+      "anonymous_history_id": "history-09",
+      "retained_tail_start_message_index": 51,
+      "verdict": "REVISE",
+      "naturalness": "The process chronology is technically plausible, but its dialogue form remains artificially prolonged. Messages 39-40 say the chronology is complete, then messages 41-50 restart it with additional certificate, custody, trend, readiness, and conceptual-separation checks.",
+      "internal_coherence": "The record maintains stable identities and chronology across receiving, cleaning, mixing, gauge verification, sampling, readings, oven data, transcription, process observations, and closeout. The five readings total 600.0 and average 120.0; the +0.8 correction and plus-or-minus 1.1 interval are unambiguous, and 88.7 minus 86.2 correctly yields a 2.5-degree spread.",
+      "dangling_references": "The retained tote-custody and equipment-board instructions refer to previously established K27-MX2, Mina, the traveler, and Line 4. Nothing dangles at the boundary.",
+      "padding_or_balancing": "Although most details have a traceability function, the repeated statement that each fact is not a gate input or outcome and the five post-closure exchanges make the length conspicuous. Consolidate the extra continuity checks before the close and remove redundant disclaimers.",
+      "fake_actions": "The assistant does not invent production, disposition, movement, or board updates. Tail actions remain instructions or conditionals.",
+      "retained_tail_coherence": "Index 51 is a coherent shift handoff about custody, followed by a compatible equipment-state restriction.",
+      "carrier_neutrality_and_compatibility": "The generic carrier gives no numerical or disposition information and remains compatible with the retained shift note.",
+      "revision_required": "Reorder the late audit checks before one final close and materially reduce repetitive meta-language while preserving the manufacturing source chain."
+    },
+    {
+      "packet_order": 10,
+      "anonymous_history_id": "history-10",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "The venue exchange transitions coherently from room arithmetic to inclusive entrance guidance and concrete sign placement.",
+      "internal_coherence": "Eight companion requests reserve four of ten spaces, leaving six, which is fewer than the seven confirmed wheelchair users; the Birch selection is consistent. The interpreter appointment remains independent.",
+      "dangling_references": "All physical features and available equipment named in the retained request are introduced in indices 13 and 15.",
+      "padding_or_balancing": "The scheduling fact and arrival-conditions work are plausible separate venue tasks, not conspicuous padding.",
+      "fake_actions": "The answer remains a proposal and check instruction, without claiming placement or an attendee arrangement occurred.",
+      "retained_tail_coherence": "The boundary request directly implements the immediately preceding optional-route discussion.",
+      "carrier_neutrality_and_compatibility": "The carrier adds no capacity or room clue and fits the boundary without contradiction."
+    },
+    {
+      "packet_order": 11,
+      "anonymous_history_id": "history-11",
+      "retained_tail_start_message_index": 17,
+      "verdict": "PASS",
+      "naturalness": "The planning conversation naturally shifts from hub selection and crate safeguards to late-volunteer briefing practice.",
+      "internal_coherence": "Harbor's 58 minutes clears the threshold while Cedar's 41 minutes does not, so Harbor is the sole survivor and route time is correctly not used to restore Cedar. Thursday intake remains separate.",
+      "dangling_references": "The retained role card, supervisor, read-back, and crate task are locally introduced and require no missing context.",
+      "padding_or_balancing": "Comparable test protocol, route-sheet evidence, and briefing safeguards are operationally distinct rather than conspicuously balanced filler.",
+      "fake_actions": "The possible late arrival and unclear read-back remain hypothetical; no assignment, dispatch, contact, or completion is invented.",
+      "retained_tail_coherence": "Index 17 continues the loading-lead discussion, and index 19 follows directly from the read-back procedure proposed at index 18.",
+      "carrier_neutrality_and_compatibility": "The carrier exposes no eligibility result or selection and leaves the retained briefing task coherent."
+    },
+    {
+      "packet_order": 12,
+      "anonymous_history_id": "history-12",
+      "retained_tail_start_message_index": 15,
+      "verdict": "PASS",
+      "naturalness": "The rehearsal record plausibly moves from a ring decision to overnight reconciliation and possible alert-clock discrepancies.",
+      "internal_coherence": "The migration is additive and the logged 6:40 rollback interval is below eight minutes, so the partner-beta answer follows the conjunction. Trace retention stays independent.",
+      "dangling_references": "The automated alert, service log, and common clock reference are sufficiently introduced by the prior export and mixed-version monitoring discussion.",
+      "padding_or_balancing": "The separate retention rule and follow-up source controls are plausible incident-record content, not conspicuous padding.",
+      "fake_actions": "No future alert, notification, approval, or mixed-version error is claimed to have occurred.",
+      "retained_tail_coherence": "At index 15 the alert-clock question directly extends the source-provenance cautions at indices 11-14.",
+      "carrier_neutrality_and_compatibility": "The carrier contains no ring, interval, or retention detail and can precede the retained question without altering it."
+    }
+  ],
+  "coverage": {
+    "expected_history_count": 12,
+    "reviewed_history_count": 12,
+    "reviewed_once_each": true,
+    "packet_order_preserved": true,
+    "missing_ids": [],
+    "duplicate_ids": []
+  },
+  "verdict_counts": {
+    "PASS": 10,
+    "REVISE": 2,
+    "FAIL": 0
+  },
+  "overall_verdict": "REVISE",
+  "overall_rationale": "The common carrier/anchor and ten histories pass. Histories 03 and 09 are internally coherent and have clean retained tails, but each still requires revision for conspicuous conversational padding and an unnatural second close after the chronology was already declared complete. No history fails for contradiction, dangling reference, fake action, retained-tail incoherence, or carrier incompatibility.",
+  "adjudication_owner": "Sol"
+}
