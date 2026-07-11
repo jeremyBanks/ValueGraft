@@ -188,6 +188,7 @@ def test_probe_suffix_and_q1_target_scoring(tokenizer):
         model, result.snapshot, suffix_ids=suffix, target_ids=[1, 2],
         logical_context_end=fresh.logical_positions[-1] + 1)
     assert len(score["token_logprobs"]) == 2
+    assert len(score["token_logprob_float32_bits"]) == 2
     assert score["teacher_forcing_feed_ids"] == suffix + [1]
     assert len(score["logical_feed_positions"]) == len(suffix) + 1
 

@@ -437,11 +437,13 @@ def score_target_q1(model, snapshot: Snapshot, *, suffix_ids: Sequence[int],
     logical = logical_context_end + len(suffix)
     physical += len(suffix)
     logprobs = []
+    logprob_bits = []
     for index, token_id in enumerate(targets):
         lp = torch.log_softmax(logits.float(), dim=-1)[0, token_id]
         value = float(lp.detach().cpu())
         _require(math.isfinite(value), "target log probability is nonfinite")
         logprobs.append(value)
+        logprob_bits.append(_float32_bits(lp))
         if index + 1 < len(targets):
             cache, logits = _forward(
                 model, cache, [token_id], [logical], [physical], enable_grad=False)
@@ -450,6 +452,7 @@ def score_target_q1(model, snapshot: Snapshot, *, suffix_ids: Sequence[int],
     return {
         "target_token_ids": targets,
         "token_logprobs": logprobs,
+        "token_logprob_float32_bits": logprob_bits,
         "mean_logprob": sum(logprobs) / len(logprobs),
         "probe_suffix_ids": suffix,
         "teacher_forcing_feed_ids": suffix + targets[:-1],
