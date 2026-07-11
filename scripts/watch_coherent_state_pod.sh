@@ -151,7 +151,7 @@ READY=$(grep -c "MODEL_READY" "$LOG" 2>/dev/null || true)
 RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_gapped_v4_[^ ]*" "$LOG" 2>/dev/null | tail -1)
 if [ -n "$RUN" ] && [ -d "$RUN" ]; then
   CK=$(find "$RUN" -maxdepth 1 -name "conv_*.json" | wc -l | tr -d " ")
-  MT=$(find "$RUN" -maxdepth 1 \( -name "conv_*.json" -o -name "production_kernel_gate.json" -o -name "manifest.json" \) -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)
+  MT=$(find "$RUN" -maxdepth 1 \( -name "conv_*.json" -o -name "production_kernel_gate.json" -o -name "production_kernel_gate_*.json" -o -name "manifest.json" \) -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)
 else CK=0; MT=0; fi
 GPU=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader,nounits 2>/dev/null | head -1)
 AGE=$(( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ))

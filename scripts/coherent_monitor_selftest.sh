@@ -46,7 +46,8 @@ grep -q -- '--technical-only' scripts/job_coherent_state_bf16.sh
 grep -q 'ATTENTION_BACKEND=eager' scripts/job_coherent_state_bf16.sh
 grep -q 'ATTENTION_BACKEND = "eager"' scripts/validate_coherent_harvest.py
 grep -q 'COHERENT_STATE_TECHNICAL_DONE' "$WATCH"
-PASS=$((PASS + 19))
+grep -q 'production_kernel_gate_\*\.json' "$WATCH"
+PASS=$((PASS + 20))
 
 [ "$(coherent_remote_dir_class 0)" = EXISTS ]
 [ "$(coherent_remote_dir_class 1)" = ABSENT ]
