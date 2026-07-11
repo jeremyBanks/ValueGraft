@@ -6,6 +6,58 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 
 ---
 
+> ## ⚠ 2026-07-11 MECHANISTIC / APPARATUS CORRECTION — read before every finding below
+>
+> A new position-preserving coherent-summary-state assay has produced **no semantic
+> outcome**. Its pre-semantic validation instead established three load-bearing
+> methodological failures:
+>
+> 1. **Prefill schedule is part of the computed state at the scale of the proposed
+>    effect.** On Qwen3-0.6B CPU bf16 eager, the same 8,430-token c10 prefix under
+>    ordinary versus coarse three-block schedules moved a fixed margin `0.060546875`;
+>    c02 independently moved it `0.1318359375`. Cache/logit differences were much
+>    larger coordinate-wise. These are deterministic fixed-schedule effects, not
+>    random run-to-run nondeterminism. The exact origin diagnostic is still running.
+> 2. **The apparent 7/7 equivalence validation was pseudoreplicated.** Seven lengths
+>    all cycled one five-token stream. The exact-zero passes apply only to that
+>    periodic input and cannot license realistic-conversation equivalence. The first
+>    two realistic generated-conversation fixtures both failed. V10 is permanently
+>    non-authorizing.
+> 3. **The co-primary wrong-history control was invalid.** To preserve length it
+>    cyclically repeated short donor messages through most content slots (up to 51
+>    times). `G_correct-G_wrong` therefore compared coherent history with repetitive
+>    corruption, not coherent correct with coherent wrong history. No semantic run used
+>    this arm. It must be replaced by decoded, plant-specific minimally counterfactual
+>    histories before any new assay.
+>
+> Consequences for earlier findings:
+>
+> - Same-schedule behavioral contrasts remain descriptions of their exact tested
+>   policies; they are not automatically numerically void. Their stronger causal
+>   attribution to history-conditioned semantic K/V is **not established** unless the
+>   source-state creation schedules were matched or sensitivity-controlled.
+> - H-pack's behavioral honesty effect remains observed, but
+>   `B-min-pack -> H-pack` identifies a composite packed transformed write-time-KV
+>   policy. It does not isolate a clean semantic channel because it also changes source
+>   execution provenance and uses lossy finite-precision key re-rotation. The phrase
+>   “write-time KV specifically is earned” below is superseded.
+> - Key movement is algebraically correct in real arithmetic, not functionally exact in
+>   bf16. The committed dtype diagnostic observed bf16 K max `0.25` and target-margin
+>   error `0.1015625` relative to native destination computation. Claims below that keys
+>   are moved “exactly” are superseded by **position-corrected approximately, with
+>   dtype- and downstream-sensitive error**.
+> - The later robust-metric correction already made K-only near-neutral. The additional
+>   provenance issue means the licensed claim is only that this approximate re-rotated
+>   K-graft did not help; keys are not universally inert.
+> - “Deterministic within environment” means repeatable at one fixed schedule and
+>   environment. It never means decomposition- or schedule-invariant.
+>
+> Primary evidence and audits: the two-case sidecar committed at `cfde9bc`;
+> `notes/2026071175-sol-schedule-discontinuity-and-claim-boundary.md`;
+> `notes/2026071176-carver-schedule-sensitivity-forensic-audit.md`;
+> `notes/2026071179-sol-wrong-history-control-invalidity.md`; and
+> `notes/2026071181-carver-v10-gate-and-sample-lineage-audit.md`.
+
 > ## ⚠ PROVENANCE CORRECTION + LIVE STATUS (2026-07-09) — read before trusting F1's numbers
 >
 > Verified by rebuilding the judge batches from disk and diffing (`scripts/build_judge_batches.py --validate`):
