@@ -1,0 +1,189 @@
+{
+  "schema": 2,
+  "design_id": "coherent-state-gapped-v3",
+  "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+  "status": "ERROR",
+  "phase": "PRODUCTION_GATE",
+  "started_at": "2026-07-11T08:04:51.058210+00:00",
+  "updated_at": "2026-07-11T08:39:03.504967+00:00",
+  "resume_probe_verified": false,
+  "resumed_at": null,
+  "fingerprint": {
+    "schema": 2,
+    "design_id": "coherent-state-gapped-v3",
+    "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+    "amendment_sha256": {
+      "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md": "4276570a045eb3350c03599c0ce48c044957c9f2c81afd9ded769599fc525737",
+      "COHERENT-STATE-PREREGISTRATION-AMENDMENT-2.md": "d98e1971597f96fa9558eba36e8bc798a1f17e3ed66eae29d5a7f920e7c4bbc2",
+      "COHERENT-STATE-PREREGISTRATION-AMENDMENT-3.md": "60d39287b5b10620a7c063df579db5dfae29f811d6cc1e41a5b50b7e96feb198"
+    },
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "code_commit": "9cdb23025a67409d78d295fbb5e66945ca3ea3ce",
+    "scenario_sha256": "9a6f41c5208f0312572e6901fbaad31806d2863a98f74270ca2242322a2e6781",
+    "targets_sha256": "220fd7fa083dbced339e66dd2ee21b2b030d952965af9073bcc62c72bbc65085",
+    "summary_request_sha256": "4ad7c575c0b1f3e200c662c0e2b061f5d527c5af42dc7691e44919322f9a3b16",
+    "frozen_order": [
+      "c10",
+      "c02",
+      "c01",
+      "c04",
+      "c07",
+      "c11",
+      "c05",
+      "c09",
+      "c06",
+      "c12",
+      "c08",
+      "c03"
+    ],
+    "wrong_donors": {
+      "c10": "c13",
+      "c02": "c14",
+      "c01": "c15",
+      "c04": "c16",
+      "c07": "c17",
+      "c11": "c18",
+      "c05": "c25",
+      "c09": "c26",
+      "c06": "c27",
+      "c12": "c28",
+      "c08": "c29",
+      "c03": "c30"
+    },
+    "external_donor_provenance": {
+      "c13": {
+        "donor_id": "c13",
+        "path": "data/synthetic/c13.json",
+        "sha256": "e20fb57bf0e06149de6bc941440aec73003ecc5b8fca4a9d4a3a9011023c6310",
+        "recorded_author": "sonnet",
+        "subject_native": false
+      },
+      "c14": {
+        "donor_id": "c14",
+        "path": "data/synthetic/c14.json",
+        "sha256": "e64820a99dc5889cace6da2fe9387c6ba34575df9f159c859f9cbd83f9e83248",
+        "recorded_author": "sonnet",
+        "subject_native": false
+      },
+      "c15": {
+        "donor_id": "c15",
+        "path": "data/synthetic/c15.json",
+        "sha256": "1675e98c7b183f88a9c6211a5012fde46c8464f83ddbaa10d3fadbc4867913de",
+        "recorded_author": "sonnet",
+        "subject_native": false
+      },
+      "c16": {
+        "donor_id": "c16",
+        "path": "data/synthetic/c16.json",
+        "sha256": "dd56b2e90a21159f7e7b2a0e7c192af1b4510a568614045c27fa2b294426d9cf",
+        "recorded_author": "opus",
+        "subject_native": false
+      },
+      "c17": {
+        "donor_id": "c17",
+        "path": "data/synthetic/c17.json",
+        "sha256": "7370719d0e35b363e3e3e93026a74d9f351a042893c3bc4bdef7b4e850cc4062",
+        "recorded_author": "opus",
+        "subject_native": false
+      },
+      "c18": {
+        "donor_id": "c18",
+        "path": "data/synthetic/c18.json",
+        "sha256": "bb528b149335e30dfcf777739048f76c5a321d9309c903cce6f75c67f534bff7",
+        "recorded_author": "opus",
+        "subject_native": false
+      },
+      "c25": {
+        "donor_id": "c25",
+        "path": "data/synthetic/c25.json",
+        "sha256": "6be52ce08f82cffd40137a1fd4bbdc3ac4164f679b991981c6ede89b4aedc05d",
+        "recorded_author": "codex-gpt5.5",
+        "subject_native": false
+      },
+      "c26": {
+        "donor_id": "c26",
+        "path": "data/synthetic/c26.json",
+        "sha256": "d1c53a236f1b4a2dae4dddfb1d044d80bf7770f4d1e0cf3f38901dc46abe92b8",
+        "recorded_author": "codex-gpt5.5",
+        "subject_native": false
+      },
+      "c27": {
+        "donor_id": "c27",
+        "path": "data/synthetic/c27.json",
+        "sha256": "403e6b52ae2f56139494811bf97f8c6da19d8518d74b10223e7b1ab46291b6b1",
+        "recorded_author": "codex-gpt5.5",
+        "subject_native": false
+      },
+      "c28": {
+        "donor_id": "c28",
+        "path": "data/synthetic/c28.json",
+        "sha256": "96621a56ee778a0e497e1739c7245bbc66cfa439e4fc0d94254c68b92208d4b1",
+        "recorded_author": "sonnet-render",
+        "subject_native": false
+      },
+      "c29": {
+        "donor_id": "c29",
+        "path": "data/synthetic/c29.json",
+        "sha256": "0fa148ee595885aa11722619a426fdd7a1196ef3ac8c7f65ab7f8a6fa5109b4a",
+        "recorded_author": "sonnet-render",
+        "subject_native": false
+      },
+      "c30": {
+        "donor_id": "c30",
+        "path": "data/synthetic/c30.json",
+        "sha256": "8bad86f2ee929267414cec0d5796c9c1a2a4c2cea43b20d9b4de6f3f359d5ac9",
+        "recorded_author": "sonnet-render",
+        "subject_native": false
+      }
+    },
+    "structural_seed": 20260711,
+    "placebo_seed": 20260711,
+    "max_reply_tokens": 320,
+    "max_summary_tokens": 900,
+    "identity_tolerance": 0.0001,
+    "zero_gap_tolerance": 0.0005,
+    "placebo_moment_tolerance": 0.02,
+    "placebo_quantization_tolerance": 0.05,
+    "subject_metadata": {
+      "resolved_model_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "config_sha256": "131fd291d47289c02c43f823bf95dbbd1c9946ce426c68a565197330b3b4c6d2",
+      "tokenizer_revision_requested": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "tokenizer_class": "Qwen2Tokenizer",
+      "tokenizer_vocab_sha256": "c96fa22dee2dd9c98c4f0c73ea423e21907bc96abda81fa5c6b2e24a670c66bf",
+      "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "special_tokens_map_sha256": "edcb2fc2acbbe77f858a9c4fe51295ffdb84711efba5703ec5906b3d67282569"
+    }
+  },
+  "provenance": {
+    "code_commit": "9cdb23025a67409d78d295fbb5e66945ca3ea3ce",
+    "worktree_dirty_rows": [],
+    "only_run_directory_dirty": false,
+    "python": "3.11.10 (main, Sep  7 2024, 18:35:41) [GCC 11.4.0]",
+    "platform": "Linux-6.8.0-40-generic-x86_64-with-glibc2.35",
+    "torch": "2.4.1+cu124",
+    "transformers": "5.0.0",
+    "cuda": "12.4",
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "subject": {
+      "resolved_model_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "config_sha256": "131fd291d47289c02c43f823bf95dbbd1c9946ce426c68a565197330b3b4c6d2",
+      "tokenizer_revision_requested": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "tokenizer_class": "Qwen2Tokenizer",
+      "tokenizer_vocab_sha256": "c96fa22dee2dd9c98c4f0c73ea423e21907bc96abda81fa5c6b2e24a670c66bf",
+      "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "special_tokens_map_sha256": "edcb2fc2acbbe77f858a9c4fe51295ffdb84711efba5703ec5906b3d67282569"
+    }
+  },
+  "production_kernel_gate_path": "production_kernel_gate.json",
+  "geometry": {
+    "layers": 48,
+    "attention_heads": 32,
+    "kv_heads": 4,
+    "head_dim": 128,
+    "rope_theta": 10000000
+  },
+  "failure_path": "failure.json",
+  "production_kernel_gate_attempt_path": "production_kernel_gate_20260711T080451058143Z.json",
+  "void_checkpoint_paths": []
+}

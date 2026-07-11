@@ -1,0 +1,11 @@
+{
+  "schema": 2,
+  "design_id": "coherent-state-gapped-v3",
+  "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+  "status": "ERROR",
+  "phase": "PRODUCTION_GATE",
+  "failed_at": "2026-07-11T08:39:03.501838+00:00",
+  "error_type": "CoherentStateError",
+  "error": "production gapped gate failed; complete evidence was persisted",
+  "traceback": "Traceback (most recent call last):\n  File \"/workspace/repo/src/run_coherent_state_hf.py\", line 1156, in main\n    raise CoherentStateError(\ncoherent_state_hf.CoherentStateError: production gapped gate failed; complete evidence was persisted\n"
+}
