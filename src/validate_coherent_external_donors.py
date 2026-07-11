@@ -217,7 +217,13 @@ def main() -> int:
         flush=True)
     result = validate(args.donor_dir)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, indent=2) + "\n")
+    payload = (json.dumps(
+        result, sort_keys=True, separators=(",", ":"),
+        ensure_ascii=False) + "\n").encode()
+    if len(payload) >= 4_000_000:
+        raise SystemExit(
+            f"refusing non-commit-safe donor artifact: {len(payload)} bytes")
+    args.output.write_bytes(payload)
     print(f"PASS n={result['n_unique_donors']}", flush=True)
     return 0
 
