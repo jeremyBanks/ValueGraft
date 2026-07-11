@@ -1,0 +1,62 @@
+{
+  "schema": "coherent_state_decision_canary_v12_control_fixture_validation_v1",
+  "status": "TOKENIZER_FIXTURES_PASS",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "tokenizer_class": "Qwen2Tokenizer",
+  "technical": {
+    "path": "data/coherent_canary_v12/technical_control_fixture.json",
+    "file_sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921",
+    "changed_messages": [
+      1
+    ],
+    "content_token_widths": [
+      17,
+      15,
+      17,
+      12,
+      3
+    ],
+    "correct_target_ids": [
+      49221
+    ],
+    "counterfactual_target_ids": [
+      89963
+    ],
+    "n_correct_geometry_sha256": "529d3bf9894a1f96aaed01b17bfc906ed35d45aec793f4dadad2317da129b6f2",
+    "n_wrong_geometry_sha256": "529d3bf9894a1f96aaed01b17bfc906ed35d45aec793f4dadad2317da129b6f2",
+    "p_correct_geometry_sha256": "de99fbf1f3ab2b698a4fb91082b90401e3e6afc3155eb2955ce420454c7c2fb5",
+    "p_wrong_geometry_sha256": "de99fbf1f3ab2b698a4fb91082b90401e3e6afc3155eb2955ce420454c7c2fb5",
+    "fresh_geometry_sha256": "c4bf3eb318eb0ac6b29e2d56e407458652302d5d63ac142250e76af330a080f1",
+    "fresh_token_ids_sha256": "82c0c53b6414a9ab7cab32c9a8bcf810fe8e39b1e0c21e8cbdb9a074ed1d5eb1",
+    "fresh_logical_positions_sha256": "9260412c477f3f225289a4dc3bc55d3f59b95c61806dc86d682b99e5661d9fae",
+    "carrier_regions": {
+      "source": {
+        "content_start": 89,
+        "content_end": 131,
+        "anchor_prefix_end": 156,
+        "anchor_content_end": 159
+      },
+      "physical": {
+        "content_start": 47,
+        "content_end": 89,
+        "anchor_prefix_end": 114,
+        "anchor_content_end": 117
+      }
+    }
+  },
+  "generated_forced_identity": {
+    "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+    "file_sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651",
+    "generation_prefix_token_count": 27,
+    "generation_prefix_token_ids_sha256": "44bc1b106347e9008c6d7f1d30ab51166942c419ad66819eae733d2e990c3881",
+    "message_content_token_widths": [
+      3,
+      11
+    ],
+    "temperature": 0,
+    "max_content_tokens": 64,
+    "normal_eos_required": true
+  },
+  "subject_model_forward_performed": false
+}

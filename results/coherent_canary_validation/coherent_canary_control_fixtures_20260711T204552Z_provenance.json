@@ -1,0 +1,10 @@
+{
+  "schema": "coherent_canary_validation_provenance_correction_v1",
+  "corrects_artifact": "results/coherent_canary_validation/coherent_canary_control_fixtures_Qwen3-30B-A3B-Instruct-2507_20260711T204552Z.json",
+  "status": "HISTORICAL_PRE_BINDING_VALIDATION_NOT_AUTHORIZING",
+  "reason": "The earlier tokenizer-only artifact was generated before the generated-versus-forced identity fixture explicitly bound the exact model revision. The fixture was still uncommitted at that point. Its observed hash and tokenizer facts are preserved, but it is not the current gate artifact.",
+  "current_artifact": "results/coherent_canary_validation/coherent_canary_control_fixtures_Qwen3-30B-A3B-Instruct-2507_20260711T204846Z.json",
+  "current_fixture": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+  "subject_model_forward_performed": false,
+  "history_rewritten": false
+}
