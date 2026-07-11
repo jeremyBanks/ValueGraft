@@ -1,0 +1,261 @@
+{
+  "schema": "coherent_state_decision_canary_v12_case_draft_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "case_id": "e03",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "stratum": "engineered",
+  "length_band": "short",
+  "domain": "physical logistics and field operations",
+  "title": "North Fork sensor-service access plan",
+  "authoring_provenance": {
+    "author": "independent Codex subagent",
+    "runtime_model_id": null,
+    "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+    "reasoning_effort": null,
+    "reasoning_effort_status": "not exposed to this subagent",
+    "authoring_session_source": "/root/v12_author_e03_e04",
+    "authorship_completed_at_utc": "2026-07-11T19:45:49Z",
+    "semantic_outcomes_seen": false,
+    "model_forward_performed": false
+  },
+  "middle_end_msg": 11,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting Dana, a field coordinator preparing a one-day maintenance visit for a watershed sensor network. Keep operational facts distinct, do not claim that external actions have occurred, and answer from the decisions and constraints stated in the conversation."
+        },
+        {
+          "role": "user",
+          "content": "I'm assembling tomorrow's North Fork plan for Dana Ruiz, our field lead. The job is to replace the rain-gauge battery and inspect the telemetry mast before the afternoon weather moves in. We have one 4x4 service truck, gross weight 8.6 tonnes once the tool cabinet and crew are aboard. There are two usable approaches: Ridge Spur is the direct road over Mill Bridge, while Quarry Loop adds about forty minutes but avoids that bridge. I want the handoff to preserve the actual constraints rather than just calling one route 'preferred.'"
+        },
+        {
+          "role": "assistant",
+          "content": "Understood. I’ll treat the truck weight, bridge status, water conditions, and routing policy as separate inputs. Ridge Spur being shorter does not by itself authorize it; Quarry Loop remains the alternate if the direct approach fails an operating condition. I’ll also keep unrelated crew and equipment details separate so a later route question is based only on the relevant chain."
+        },
+        {
+          "role": "user",
+          "content": "Here is the route rule from the field manual. Ridge Spur may be used only when the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the 07:00 North Fork gauge is below 1.20 metres. If either condition fails, use Quarry Loop. Do not substitute yesterday's bridge sign or an estimated gauge reading. The bridge posting update is still coming from roads, so don't choose a route yet."
+        },
+        {
+          "role": "assistant",
+          "content": "The decision rule is recorded without resolving it: compare the current posting with 8.6 tonnes plus the 0.5-tonne reserve, and separately check the specified morning gauge against 1.20 metres. Both conditions must hold for Ridge Spur. A failed or missing condition sends the truck by Quarry Loop. I’ll wait for the two current observations."
+        },
+        {
+          "role": "user",
+          "content": "Roads has now issued the current Mill Bridge posting: 9.4 tonnes. The notice applies through the end of tomorrow's shift and supersedes the faded sign at the south abutment. No other road restriction was included in that notice."
+        },
+        {
+          "role": "assistant",
+          "content": "I’ve recorded the current posting and its validity window. I won’t infer the route from that input alone because the morning gauge condition is still part of the rule. The old sign is not a decision input."
+        },
+        {
+          "role": "user",
+          "content": "Separate radio item: the communications card assigns Channel 3 to crews working the western creek sector and Channel 5 to crews on the eastern ridge sector. Dana's crew is servicing the western creek sector tomorrow. That channel assignment is for check-ins with base and does not depend on which access road the truck takes."
+        },
+        {
+          "role": "assistant",
+          "content": "The communications chain is independent: tomorrow's crew is in the western creek sector, whose check-in assignment is Channel 3. I’ll keep Channel 5 as the eastern-ridge alternative and won’t let the later road choice alter the radio answer."
+        },
+        {
+          "role": "user",
+          "content": "The hydrology technician has posted the verified 07:00 North Fork gauge for tomorrow's planning sheet: 0.88 metres. The reading came from the upstream staff gauge, not the downstream culvert marker. The forecast mentions light rain after 14:00, but the route rule uses this verified morning value, not the forecast total. We also have a spare mast clamp in the truck; that inventory note doesn't affect access."
+        },
+        {
+          "role": "assistant",
+          "content": "All inputs named by the routing rule are now present, and the measurement source is unambiguous. I’ve also kept the later rain forecast and spare-clamp inventory as context rather than treating either as a routing condition. I can apply the recorded rule when the route is asked for."
+        },
+        {
+          "role": "user",
+          "content": "For the retained part of the handoff, let's settle the inspection record. Dana wants one photograph of the mast footing before work, one of the opened enclosure, and one after the new battery is connected. Use the site code NF-17 at the beginning of each filename, followed by the local time and a short view label. The crew should not photograph the nearby private cabin or its driveway."
+        },
+        {
+          "role": "assistant",
+          "content": "The inspection record will consist of three scoped images: footing before work, enclosure open, and battery connected. Filenames begin with NF-17, then local time and a concise view label. The private cabin and driveway remain outside the frame. This documentation convention does not add a route or radio constraint."
+        },
+        {
+          "role": "user",
+          "content": "One more scheduling detail: the crew will meet at the depot at 06:20, complete the vehicle walk-around there, and aim to be at the sensor site before 08:30. Lunch stays flexible and can happen after the telemetry check. If the mast inspection finds a cracked base plate, they should document it and return with the existing portable unit rather than attempting a structural repair in the field."
+        },
+        {
+          "role": "assistant",
+          "content": "The timing and stop-work boundary are clear. The depot walk-around precedes departure, the site target is before 08:30, and lunch can follow the telemetry check. A cracked base plate changes the on-site work scope to documentation and return; it does not authorize an improvised structural repair."
+        }
+      ]
+    },
+    "wrong_focal": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting Dana, a field coordinator preparing a one-day maintenance visit for a watershed sensor network. Keep operational facts distinct, do not claim that external actions have occurred, and answer from the decisions and constraints stated in the conversation."
+        },
+        {
+          "role": "user",
+          "content": "I'm assembling tomorrow's North Fork plan for Dana Ruiz, our field lead. The job is to replace the rain-gauge battery and inspect the telemetry mast before the afternoon weather moves in. We have one 4x4 service truck, gross weight 8.6 tonnes once the tool cabinet and crew are aboard. There are two usable approaches: Ridge Spur is the direct road over Mill Bridge, while Quarry Loop adds about forty minutes but avoids that bridge. I want the handoff to preserve the actual constraints rather than just calling one route 'preferred.'"
+        },
+        {
+          "role": "assistant",
+          "content": "Understood. I’ll treat the truck weight, bridge status, water conditions, and routing policy as separate inputs. Ridge Spur being shorter does not by itself authorize it; Quarry Loop remains the alternate if the direct approach fails an operating condition. I’ll also keep unrelated crew and equipment details separate so a later route question is based only on the relevant chain."
+        },
+        {
+          "role": "user",
+          "content": "Here is the route rule from the field manual. Ridge Spur may be used only when the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the 07:00 North Fork gauge is below 1.20 metres. If either condition fails, use Quarry Loop. Do not substitute yesterday's bridge sign or an estimated gauge reading. The bridge posting update is still coming from roads, so don't choose a route yet."
+        },
+        {
+          "role": "assistant",
+          "content": "The decision rule is recorded without resolving it: compare the current posting with 8.6 tonnes plus the 0.5-tonne reserve, and separately check the specified morning gauge against 1.20 metres. Both conditions must hold for Ridge Spur. A failed or missing condition sends the truck by Quarry Loop. I’ll wait for the two current observations."
+        },
+        {
+          "role": "user",
+          "content": "Roads has now issued the current Mill Bridge posting: 8.8 tonnes. The notice applies through the end of tomorrow's shift and supersedes the faded sign at the south abutment. No other road restriction was included in that notice."
+        },
+        {
+          "role": "assistant",
+          "content": "I’ve recorded the current posting and its validity window. I won’t infer the route from that input alone because the morning gauge condition is still part of the rule. The old sign is not a decision input."
+        },
+        {
+          "role": "user",
+          "content": "Separate radio item: the communications card assigns Channel 3 to crews working the western creek sector and Channel 5 to crews on the eastern ridge sector. Dana's crew is servicing the western creek sector tomorrow. That channel assignment is for check-ins with base and does not depend on which access road the truck takes."
+        },
+        {
+          "role": "assistant",
+          "content": "The communications chain is independent: tomorrow's crew is in the western creek sector, whose check-in assignment is Channel 3. I’ll keep Channel 5 as the eastern-ridge alternative and won’t let the later road choice alter the radio answer."
+        },
+        {
+          "role": "user",
+          "content": "The hydrology technician has posted the verified 07:00 North Fork gauge for tomorrow's planning sheet: 0.88 metres. The reading came from the upstream staff gauge, not the downstream culvert marker. The forecast mentions light rain after 14:00, but the route rule uses this verified morning value, not the forecast total. We also have a spare mast clamp in the truck; that inventory note doesn't affect access."
+        },
+        {
+          "role": "assistant",
+          "content": "All inputs named by the routing rule are now present, and the measurement source is unambiguous. I’ve also kept the later rain forecast and spare-clamp inventory as context rather than treating either as a routing condition. I can apply the recorded rule when the route is asked for."
+        },
+        {
+          "role": "user",
+          "content": "For the retained part of the handoff, let's settle the inspection record. Dana wants one photograph of the mast footing before work, one of the opened enclosure, and one after the new battery is connected. Use the site code NF-17 at the beginning of each filename, followed by the local time and a short view label. The crew should not photograph the nearby private cabin or its driveway."
+        },
+        {
+          "role": "assistant",
+          "content": "The inspection record will consist of three scoped images: footing before work, enclosure open, and battery connected. Filenames begin with NF-17, then local time and a concise view label. The private cabin and driveway remain outside the frame. This documentation convention does not add a route or radio constraint."
+        },
+        {
+          "role": "user",
+          "content": "One more scheduling detail: the crew will meet at the depot at 06:20, complete the vehicle walk-around there, and aim to be at the sensor site before 08:30. Lunch stays flexible and can happen after the telemetry check. If the mast inspection finds a cracked base plate, they should document it and return with the existing portable unit rather than attempting a structural repair in the field."
+        },
+        {
+          "role": "assistant",
+          "content": "The timing and stop-work boundary are clear. The depot walk-around precedes departure, the site target is before 08:30, and lunch can follow the telemetry check. A cracked base plate changes the on-site work scope to documentation and return; it does not authorize an improvised structural repair."
+        }
+      ]
+    }
+  },
+  "focal": {
+    "plant_id": "e03-route-authorization",
+    "category": "derived_decision",
+    "rule_or_relation": "Ridge Spur is authorized only if the current bridge posting is at least the 8.6-tonne loaded weight plus a 0.5-tonne reserve and the verified 07:00 gauge is below 1.20 metres; otherwise Quarry Loop is required.",
+    "changed_input": "The current Mill Bridge posting is 9.4 tonnes in C and 8.8 tonnes in W.",
+    "probe": "Given the truck, bridge posting, stream gauge, and routing rule already recorded, which access route is authorized for the morning sensor service?",
+    "correct_target": "Ridge Spur",
+    "counterfactual_target": "Quarry Loop",
+    "establishing_message_indices": [1, 3, 5, 9],
+    "downstream_reference_indices": [],
+    "why_derived": "The answer requires computing the 9.1-tonne minimum posting from loaded weight plus reserve, comparing the current posting to it, checking the separate gauge threshold, and applying the two-condition rule.",
+    "why_counterfactual_reverses": "C clears both conditions (9.4 >= 9.1 and 0.88 < 1.20), while W fails the bridge condition (8.8 < 9.1) even though the gauge still clears."
+  },
+  "nonfocal_control": {
+    "plant_id": "e03-radio-assignment",
+    "category": "unchanged_control",
+    "probe": "Which radio channel should Dana's western creek crew monitor for base check-ins?",
+    "target": "Channel 3",
+    "countertarget": "Channel 5",
+    "establishing_message_indices": [7, 8],
+    "why_independent_of_focal": "The communications card maps crew sector to channel and explicitly states that the assignment does not depend on access route. The entire radio chain is byte-identical under C and W."
+  },
+  "changed_message_allowlist": [5],
+  "distractor_fact_inventory": [
+    "afternoon light-rain forecast",
+    "spare mast clamp inventory",
+    "three-photo inspection record and NF-17 naming convention",
+    "private-cabin photography exclusion",
+    "depot meeting and site-arrival times",
+    "cracked-base-plate stop-work boundary"
+  ],
+  "retained_tail_purpose": "Preserve a natural continuation about inspection documentation, timing, and field-work scope without restating or implying either route or radio target.",
+  "tokenizer_binding": {
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "loaded_from_pinned_local_snapshot": true
+  },
+  "observed_mechanical_evidence": {
+    "status": "TOKENIZER_MEASURED",
+    "validator": "scripts/validate_coherent_canary_stimuli.py",
+    "validation_completed_at_utc": "2026-07-11T19:44:47.265768+00:00",
+    "model_forward_performed": false,
+    "hash_methods": {
+      "integer_arrays": "SHA-256 over each integer encoded as signed 8-byte little-endian",
+      "json_values": "SHA-256 over UTF-8 JSON with sorted keys, compact separators, and ensure_ascii=false"
+    },
+    "correct": {
+      "canonical_token_count": 1120,
+      "canonical_token_ids_sha256": "4accb0113755f8bcdd63906cc8b124dbce4845e33215f99533e2965a346fd6c3",
+      "carrier_generation_prefix_token_count": 1145,
+      "carrier_generation_prefix_token_ids_sha256": "a56fb339b5003f3567cb20d9da4012ffe64e97ac2e6422c2af271d3936faa08d",
+      "literal_messages_sha256": "b3eb7a44d0f372af29468efd505f3fefa13493bc4d312ab6a6a6ee3d948598cd",
+      "message_start_positions": [0, 51, 168, 245, 348, 427, 483, 530, 598, 653, 751, 812, 898, 964, 1054],
+      "message_start_positions_sha256": "e4754e76a8b4209db7e8f10e53472b8904d692cc50865c9b4ed2f694c83de8f1",
+      "canonical_message_widths": [51, 117, 77, 103, 79, 56, 47, 68, 55, 98, 61, 86, 66, 90, 66],
+      "content_token_widths": [46, 112, 72, 98, 74, 51, 42, 63, 50, 93, 56, 81, 61, 85, 61],
+      "max_canonical_message_width": 117,
+      "max_content_token_width": 112,
+      "role_native_geometry_sha256": "f118a498b75ce4409a70bcf0ced2c46ced9fd4f678375b298eb94dbbc0ba5f91",
+      "decoded_round_trip": true
+    },
+    "wrong_focal": {
+      "canonical_token_count": 1120,
+      "canonical_token_ids_sha256": "6b49a3c95c67c33ccdc16ea5c5c08547caf9938fc0de945f34dcbfb82327e5b8",
+      "carrier_generation_prefix_token_count": 1145,
+      "carrier_generation_prefix_token_ids_sha256": "01b4fb487df7bbececee9c8fa7dfe89170b05138cdcd013879b0e64f3c18ea9e",
+      "literal_messages_sha256": "f6a3ea3b93c3fb5754adb46ce98f8192245899ce4b088ff0202b2c66022131f2",
+      "message_start_positions": [0, 51, 168, 245, 348, 427, 483, 530, 598, 653, 751, 812, 898, 964, 1054],
+      "message_start_positions_sha256": "e4754e76a8b4209db7e8f10e53472b8904d692cc50865c9b4ed2f694c83de8f1",
+      "canonical_message_widths": [51, 117, 77, 103, 79, 56, 47, 68, 55, 98, 61, 86, 66, 90, 66],
+      "content_token_widths": [46, 112, 72, 98, 74, 51, 42, 63, 50, 93, 56, 81, 61, 85, 61],
+      "max_canonical_message_width": 117,
+      "max_content_token_width": 112,
+      "role_native_geometry_sha256": "f118a498b75ce4409a70bcf0ced2c46ced9fd4f678375b298eb94dbbc0ba5f91",
+      "decoded_round_trip": true
+    },
+    "shared_exact_role_native_events": {
+      "encoding": "Ordered role-native events: emit each initial_prefill_widths value as one prefill event; for each assistant_q1_token_counts entry emit that many q1 events of width 1, then emit the aligned post_assistant_prefill_groups widths as prefill events.",
+      "initial_prefill_widths": [51, 117, 3],
+      "assistant_q1_token_counts": [72, 74, 42, 50, 56, 61, 61, 43, 3],
+      "post_assistant_prefill_groups": [[2, 103, 3], [2, 56, 3], [2, 68, 3], [2, 98, 3], [2, 86, 3], [2, 90, 3], [2, 22, 3], [2, 20, 3], [2]],
+      "expanded_event_count": 490,
+      "expanded_kinds_sha256": "eceea1b3874c411c1bd131854abdfdfe7347e2aec34f68c95ddc315f6e2a19af",
+      "expanded_widths_sha256": "8789e08f4c0012a64078cf79eeb00fa78e35759c855f3a781e4e4640681802da",
+      "geometry_sha256": "f118a498b75ce4409a70bcf0ced2c46ced9fd4f678375b298eb94dbbc0ba5f91",
+      "carrier_regions": {"content_start": 1145, "content_end": 1188, "close_end": 1190, "anchor_end": 1218}
+    },
+    "pair": {
+      "changed_message_allowlist": [5],
+      "canonical_changed_position_count": 2,
+      "canonical_changed_positions": [442, 444],
+      "canonical_changed_positions_sha256": "a2e77312aaa03108e15204a08e2d4dbba0b3409b7fdbc9b7963d9c5211c57771",
+      "allowlisted_content_token_spans_half_open": [{"message_index": 5, "start": 430, "end": 481}],
+      "changed_positions_confined_to_allowlisted_content": true,
+      "retained_tail_byte_identical": true,
+      "role_native_geometry_identical": true
+    },
+    "targets": {
+      "focal_correct_token_count": 4,
+      "focal_counterfactual_token_count": 3,
+      "control_target_token_count": 3,
+      "control_countertarget_token_count": 3
+    }
+  },
+  "review": "PENDING",
+  "warning": "Openly authored draft. It is not organic or production traffic, has not been semantically or mechanically reviewed by an independent reviewer, and is not execution-ready."
+}
