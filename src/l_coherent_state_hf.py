@@ -899,11 +899,23 @@ def run_exact_render_schedule_fixture(
         if progress is not None:
             progress(_copy_json(evidence))
 
-    measured = _compare_schedules(
-        model, ids, positions,
-        evidence["ordinary_resolved_call_widths"],
-        evidence["message_block_resolved_call_widths"],
-        tolerance, progress=measurement_progress)
+    try:
+        measured = _compare_schedules(
+            model, ids, positions,
+            evidence["ordinary_resolved_call_widths"],
+            evidence["message_block_resolved_call_widths"],
+            tolerance, progress=measurement_progress)
+    except Exception as exc:
+        evidence.update({
+            "status": "ERROR", "passes": False,
+            "failure_evidence": {
+                "error_type": type(exc).__name__, "error": str(exc),
+                "traceback": traceback.format_exc(),
+            },
+        })
+        if progress is not None:
+            progress(_copy_json(evidence))
+        raise
     evidence.update(measured)
     evidence["passes"] = bool(
         measured["passes"] and evidence["system_equal"] and

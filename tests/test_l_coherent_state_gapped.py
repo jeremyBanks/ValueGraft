@@ -234,3 +234,24 @@ def test_exact_render_schedule_gate_uses_actual_prefix_before_semantic_scoring(
     assert observed["status"] == "PASS"
     assert observed["semantic_scoring_performed"] is False
     assert observed["complete_prefix_token_ids"] == [1, 2, 3, 4]
+
+
+def test_exact_render_schedule_persists_exception_before_propagating(monkeypatch):
+    monkeypatch.setattr(ladder, "_case_schedule_layout", lambda *_: {
+        "correct_prefix_ids": [1, 2], "fresh_prefix_ids": [1],
+        "ordinary_resolved_call_widths": [2],
+        "message_block_resolved_call_widths": [1, 1],
+        "system_equal": True, "request_header_equal": True,
+        "blocks_nonempty": True, "blocks_ordered_nonoverlapping": True,
+        "blocks_cover_prefix": True,
+    })
+    monkeypatch.setattr(
+        ladder, "_compare_schedules",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            torch.OutOfMemoryError("injected")))
+    observed = []
+    with pytest.raises(torch.OutOfMemoryError, match="injected"):
+        ladder.run_exact_render_schedule_fixture(
+            object(), object(), {"id": "c10"}, progress=observed.append)
+    assert observed[-1]["status"] == "ERROR"
+    assert observed[-1]["failure_evidence"]["error_type"] == "OutOfMemoryError"
