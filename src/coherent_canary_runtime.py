@@ -11,6 +11,7 @@ from contextlib import nullcontext
 from dataclasses import asdict, dataclass
 import hashlib
 import math
+import struct
 from typing import Sequence
 
 import torch
@@ -202,6 +203,22 @@ class ExecutionResult:
     logical_end: int
 
 
+@dataclass
+class GenerationResult:
+    snapshot: Snapshot
+    content_ids: list[int]
+    token_logprobs: list[float]
+    token_logprob_float32_bits: list[str]
+    logical_positions: list[int]
+    physical_positions: list[int]
+    stop_reason: str
+    stop_candidate_id: int
+    stop_candidate_logprob: float
+    stop_candidate_logprob_float32_bits: str
+    eos_ids: list[int]
+    cap_hit: bool
+
+
 def _forward(model, cache, token_ids: Sequence[int], logical_positions: Sequence[int],
              physical_positions: Sequence[int], *, enable_grad: bool):
     _require(len(token_ids) == len(logical_positions) == len(physical_positions) > 0,
@@ -344,4 +361,157 @@ def score_target_q1(model, snapshot: Snapshot, *, suffix_ids: Sequence[int],
         "physical_feed_positions": list(range(
             snapshot_physical_length(snapshot),
             snapshot_physical_length(snapshot) + len(suffix) + len(targets) - 1)),
+    }
+
+
+def _float32_bits(value: torch.Tensor) -> str:
+    scalar = value.detach().to(device="cpu", dtype=torch.float32).reshape(())
+    return struct.pack("<f", float(scalar)).hex()
+
+
+def _candidate(logits: torch.Tensor) -> tuple[int, torch.Tensor]:
+    values = logits.float()
+    token_id = int(torch.argmax(values, dim=-1).item())
+    logprob = torch.log_softmax(values, dim=-1)[0, token_id]
+    _require(torch.isfinite(logprob).item(), "generation candidate logprob is nonfinite")
+    return token_id, logprob
+
+
+def greedy_generate_q1(model, prefix_snapshot: Snapshot, prefix_logits: torch.Tensor, *,
+                       logical_start: int, eos_ids: Sequence[int],
+                       max_content_tokens: int = 64) -> GenerationResult:
+    eos = sorted({int(x) for x in eos_ids})
+    _require(bool(eos) and all(x >= 0 for x in eos), "EOS set is empty/invalid")
+    _require(max_content_tokens == 64, "v12 generation cap must equal 64")
+    cache = rebuild_cache(prefix_snapshot)
+    physical = snapshot_physical_length(prefix_snapshot)
+    logical = int(logical_start)
+    logits = prefix_logits.detach().clone()
+    ids: list[int] = []
+    lps: list[float] = []
+    bits: list[str] = []
+    logical_positions: list[int] = []
+    physical_positions: list[int] = []
+    for count in range(max_content_tokens + 1):
+        token_id, lp = _candidate(logits)
+        if token_id in eos:
+            return GenerationResult(
+                snapshot=snapshot_cache(cache), content_ids=ids,
+                token_logprobs=lps, token_logprob_float32_bits=bits,
+                logical_positions=logical_positions,
+                physical_positions=physical_positions,
+                stop_reason="model_eos", stop_candidate_id=token_id,
+                stop_candidate_logprob=float(lp.detach().cpu()),
+                stop_candidate_logprob_float32_bits=_float32_bits(lp),
+                eos_ids=eos, cap_hit=False)
+        if count == max_content_tokens:
+            return GenerationResult(
+                snapshot=snapshot_cache(cache), content_ids=ids,
+                token_logprobs=lps, token_logprob_float32_bits=bits,
+                logical_positions=logical_positions,
+                physical_positions=physical_positions,
+                stop_reason="max_content_tokens", stop_candidate_id=token_id,
+                stop_candidate_logprob=float(lp.detach().cpu()),
+                stop_candidate_logprob_float32_bits=_float32_bits(lp),
+                eos_ids=eos, cap_hit=True)
+        ids.append(token_id)
+        lps.append(float(lp.detach().cpu()))
+        bits.append(_float32_bits(lp))
+        logical_positions.append(logical)
+        physical_positions.append(physical)
+        cache, logits = _forward(
+            model, cache, [token_id], [logical], [physical], enable_grad=False)
+        logical += 1
+        physical += 1
+    raise CanaryRuntimeError("unreachable generation loop exit")
+
+
+def force_content_q1(model, prefix_snapshot: Snapshot, prefix_logits: torch.Tensor, *,
+                     content_ids: Sequence[int], logical_start: int,
+                     eos_ids: Sequence[int]) -> GenerationResult:
+    ids = [int(x) for x in content_ids]
+    _require(bool(ids), "forced identity content is empty")
+    eos = sorted({int(x) for x in eos_ids})
+    _require(bool(eos), "EOS set is empty")
+    _require(not set(ids).intersection(eos), "forced content contains EOS")
+    cache = rebuild_cache(prefix_snapshot)
+    physical = snapshot_physical_length(prefix_snapshot)
+    logical = int(logical_start)
+    logits = prefix_logits.detach().clone()
+    lps: list[float] = []
+    bits: list[str] = []
+    logical_positions: list[int] = []
+    physical_positions: list[int] = []
+    for token_id in ids:
+        lp = torch.log_softmax(logits.float(), dim=-1)[0, token_id]
+        _require(torch.isfinite(lp).item(), "forced content logprob is nonfinite")
+        lps.append(float(lp.detach().cpu()))
+        bits.append(_float32_bits(lp))
+        logical_positions.append(logical)
+        physical_positions.append(physical)
+        cache, logits = _forward(
+            model, cache, [token_id], [logical], [physical], enable_grad=False)
+        logical += 1
+        physical += 1
+    stop_id, stop_lp = _candidate(logits)
+    return GenerationResult(
+        snapshot=snapshot_cache(cache), content_ids=ids,
+        token_logprobs=lps, token_logprob_float32_bits=bits,
+        logical_positions=logical_positions, physical_positions=physical_positions,
+        stop_reason="model_eos" if stop_id in eos else "forced_stop_not_eos",
+        stop_candidate_id=stop_id,
+        stop_candidate_logprob=float(stop_lp.detach().cpu()),
+        stop_candidate_logprob_float32_bits=_float32_bits(stop_lp),
+        eos_ids=eos, cap_hit=False)
+
+
+def require_generated_forced_identity(generated: GenerationResult,
+                                      forced: GenerationResult, *,
+                                      content_start: int) -> dict:
+    _require(generated.stop_reason == "model_eos" and not generated.cap_hit,
+             "generated identity branch did not stop normally")
+    _require(bool(generated.content_ids), "generated identity content is empty")
+    _require(generated.content_ids == forced.content_ids,
+             "generated/forced content IDs differ")
+    _require(generated.logical_positions == forced.logical_positions and
+             generated.physical_positions == forced.physical_positions,
+             "generated/forced content positions differ")
+    _require(generated.token_logprob_float32_bits ==
+             forced.token_logprob_float32_bits,
+             "generated/forced token logprob bits differ")
+    _require(generated.stop_candidate_id == forced.stop_candidate_id and
+             generated.stop_candidate_logprob_float32_bits ==
+             forced.stop_candidate_logprob_float32_bits and
+             forced.stop_candidate_id in forced.eos_ids,
+             "generated/forced EOS witness differs")
+    end = content_start + len(generated.content_ids)
+    generated_rows = extract_rows(
+        generated.snapshot, content_start, end,
+        max_rows=64, to_cpu=True)
+    forced_rows = extract_rows(
+        forced.snapshot, content_start, end,
+        max_rows=64, to_cpu=True)
+    _require(len(generated_rows) == len(forced_rows),
+             "generated/forced layer counts differ")
+    per_layer = []
+    for index, ((gk, gv), (fk, fv)) in enumerate(zip(generated_rows, forced_rows)):
+        _require(torch.equal(gk, fk) and torch.equal(gv, fv),
+                 f"generated/forced K/V rows differ at layer {index}")
+        per_layer.append({
+            "layer": index,
+            "k_shape": list(gk.shape), "v_shape": list(gv.shape),
+            "k_dtype": str(gk.dtype), "v_dtype": str(gv.dtype),
+            "k_sha256": tensor_sha256(gk), "v_sha256": tensor_sha256(gv),
+        })
+    return {
+        "status": "GENERATED_FORCED_IDENTITY_PASS",
+        "content_ids": list(generated.content_ids),
+        "content_start": content_start,
+        "content_end": end,
+        "token_logprob_float32_bits": list(
+            generated.token_logprob_float32_bits),
+        "stop_candidate_id": generated.stop_candidate_id,
+        "stop_candidate_logprob_float32_bits":
+            generated.stop_candidate_logprob_float32_bits,
+        "per_layer_content_rows": per_layer,
     }

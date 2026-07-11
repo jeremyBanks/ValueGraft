@@ -10,12 +10,17 @@ from coherent_canary_runtime import (
     execute_fresh_plan,
     execute_replay_plan,
     extract_rows,
+    force_content_q1,
+    greedy_generate_q1,
     probe_suffix_ids,
     replace_rows,
+    require_generated_forced_identity,
     score_target_q1,
     snapshot_physical_length,
 )
-from coherent_canary_schema import MODEL_ID, MODEL_REVISION, R2
+from coherent_canary_schema import (
+    MODEL_ID, MODEL_REVISION, R2, CarrierRegions, ReplayEvent, ReplayPlan,
+)
 from coherent_canary_tokens import build_fresh_destination_plan, build_role_native_plan
 
 
@@ -46,6 +51,20 @@ class FakeCacheModel(torch.nn.Module):
             logits[0, offset, pivot % self.vocab_size] = 3.0
             logits[0, offset, (pivot + 1) % self.vocab_size] = 1.0
         return SimpleNamespace(past_key_values=cache, logits=logits)
+
+
+class ScriptedFakeCacheModel(FakeCacheModel):
+    def __init__(self, candidate_by_cache_length):
+        super().__init__()
+        self.candidate_by_cache_length = candidate_by_cache_length
+
+    def forward(self, *args, **kwargs):
+        result = super().forward(*args, **kwargs)
+        length = int(result.past_key_values.layers[0].keys.shape[-2])
+        candidate = self.candidate_by_cache_length.get(length, 3)
+        result.logits.zero_()
+        result.logits[:, -1, candidate] = 5.0
+        return result
 
 
 @pytest.fixture(scope="module")
@@ -143,3 +162,33 @@ def test_selected_row_bound_is_asserted(tokenizer):
     result = execute_replay_plan(model, source)
     with pytest.raises(CanaryRuntimeError, match="exceed asserted bound"):
         extract_rows(result.snapshot, 0, 3, max_rows=2)
+
+
+def test_generated_forced_identity_is_bit_exact_and_eos_is_not_appended():
+    plan = ReplayPlan(
+        token_ids=list(range(8)),
+        message_start_positions=[0],
+        events=[
+            ReplayEvent("prefill", "prefix", "structural", 0, 0, 1),
+            ReplayEvent("q1", "content", "assistant", 0, 1, 2),
+            ReplayEvent("prefill", "bridge", "structural", 0, 2, 3),
+            ReplayEvent("q1", "anchor", "assistant", 0, 3, 4),
+            ReplayEvent("prefill", "suffix", "structural", 0, 4, 8),
+        ],
+        regions=CarrierRegions(1, 2, 3, 4),
+    ).validate()
+    model = ScriptedFakeCacheModel({8: 7, 9: 8, 10: 9})
+    generated_prefix = execute_replay_plan(model, plan)
+    generated = greedy_generate_q1(
+        model, generated_prefix.snapshot, generated_prefix.last_logits,
+        logical_start=8, eos_ids=[9])
+    forced_prefix = execute_replay_plan(model, plan)
+    forced = force_content_q1(
+        model, forced_prefix.snapshot, forced_prefix.last_logits,
+        content_ids=generated.content_ids, logical_start=8, eos_ids=[9])
+    evidence = require_generated_forced_identity(
+        generated, forced, content_start=8)
+    assert generated.content_ids == [7, 8]
+    assert generated.stop_candidate_id == 9
+    assert generated.snapshot[0][0].shape[-2] == 10
+    assert evidence["status"] == "GENERATED_FORCED_IDENTITY_PASS"
