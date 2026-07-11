@@ -113,3 +113,57 @@ partition maps, provenance stamps, and release mechanics, and still let (a) a fi
 fail and (b) a control made of cycled garbage authorize co-primary claims. That is a live instance of
 the paper's own thesis: process rigor on the verifiable-but-wrong questions is not a substitute for
 asking whether the literal bytes support the generalization. Report it plainly.
+
+---
+
+## Update (2026-07-11, post-regroup): two more items + the strategic decision
+
+**Sixth postmortem item — block-prefill vs. token-by-token fidelity.** The apparatus prefilled each
+historical assistant turn as a single block (`turn_aligned_replay`), whereas a live model writes
+those tokens one at a time. In most settings that is a harmless implementation detail; here — where
+query-shape/schedule differences were measured *at the scale of the hypothesized effect* — it is not.
+It is another instance of the unifying thread: any construction choice that alters the bf16 forward
+trajectory (chunking, block-vs-stepwise, rotation, schedule) perturbs the outcome by an amount
+comparable to the signal, so "the tokens are identical" is not sufficient; the *trajectory* must be,
+and at 30B/long-context it demonstrably is not, across several axes.
+
+**Seventh — confirmatory-before-signal.** The team had begun building a twelve-case paired
+*confirmatory* corpus before the exact 30B subject had shown even a single large, clean, same-text
+summary-state effect under the corrected apparatus. Building a confirmatory benchmark to certify an
+effect never yet observed on the target model is its own methodological error (a sunk-cost /
+cart-before-horse trap dressed in rigor). The corrected decision, on the record, is to **stop** that
+build, preserve the drafts as non-executable engineering, and instead run a small, explicitly
+**exploratory decision canary** — full apparatus locally, then a few dollars on the exact bf16 30B —
+whose stimuli are firewalled from any future confirmatory sample. Only a large, history-directional,
+focal-selective signal authorizes building a confirmatory corpus at all.
+
+## The honest shape of the result (as of the regroup, pre-canary)
+
+Stated without waiting on the canary, because these are stable:
+1. **No positive effect has been observed on the target model under a trustworthy apparatus.** Every
+   apparent positive in this project's history was later attributed to a precision artifact, a
+   quantization regime, a degenerate control, or a non-independent fixture.
+2. **The measurement is precision-limited by construction at production scale.** The hypothesized
+   effect (~0.05–0.2 nats) sits at the bf16 long-context numerical floor, which manifests through
+   rotation, chunking, schedule, and prefill-order — repeatedly, at the effect's own scale.
+3. **The channel the project set out to exploit is real but not ours to claim.** Prior art (MEMENTO;
+   Models Take Notes at Prefill) establishes that generation-time KV state carries information beyond
+   the summary text — but distributed onto downstream/aggregator tokens, with the source token's own
+   K/V driving <1% of the decision. A summary-token-only, training-free transplant is therefore
+   pointed at the wrong locus, which predicts the null independent of the numerical floor.
+4. **The durable contribution is the method-failure catalogue**, not an effect estimate: the specific,
+   non-obvious ways a KV-state transplant measurement yields a false or uninterpretable result, and
+   the acceptance test that catches most of them — *a gate's fixtures must be able to fail for the
+   reason the gate exists.*
+
+This is a legitimate negative/methodological paper. It should be written from the above now, with the
+canary's outcome slotting into (1) as either "still no signal, precision-limited null" or, if a large
+clean signal appears, "a single exploratory positive that would justify — but does not itself
+constitute — a confirmatory study." Either way the spine above holds.
+
+## Draft status / next
+
+This note is the stable narrative core. Next increments (this author, non-blocking): fold into the
+canonical brief structure (`FACTS.md`, `METHODS-BRIEF.md`, `RELATED-WORK-BRIEF.md`), verify the
+MEMENTO restart figures at source before any number is quoted, and write the abstract + intro once the
+canary resolves item (1). No result is asserted here that is not already committed to disk.
