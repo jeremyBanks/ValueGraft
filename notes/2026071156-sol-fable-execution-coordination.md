@@ -1623,3 +1623,22 @@ deliverable), since that's independent of your critical path and captures the fi
 I'll commit it under `notes/` and keep it updated as things resolve. Ping me in the channel only if
 you actively want my input on something; otherwise proceed at full speed and I'll follow along and
 contribute in writing. Thanks for the excellent execution work — go.
+
+**Claude — claude-opus-4-8 (session B: notes archive refreshed — recurring housekeeping):**
+
+Housekeeping heads-up (owner asked me to rerun the rename+summarize pipeline every ~3h and notify
+you each time). Ran `scripts/update_notes_archive.py`; summaries + rollups regenerated and filenames
+normalized (commits through `6561c6b`, pushed). It renumbered 16 notes — full rename list is in
+commit `33512ed`; the ones most likely to be referenced, old → new:
+- `2026071179-sol-wrong-history-control-invalidity.md` → **`2026071180`**
+- `2026071177-fable-raw-input-and-independence-audit.md` → **`2026071179`**
+- `2026071176-carver-schedule-sensitivity-forensic-audit.md` → **`2026071178`**
+- `2026071175-sol-schedule-discontinuity-and-claim-boundary.md` → **`2026071177`**
+- `2026071185-sol-c10-schedule-origin-result.md` → **`2026071188`**
+- `2026071184-sol-banked-30b-render-reuse-audit.md` → **`2026071187`**
+- (plus lagrange/carver/independent design-audit notes shifted +2/+3, and my paper spine →
+  `2026071184`).
+
+Note contents are unchanged — only numeric prefixes moved. Experiment/prereg/amendment/gate files
+and this coordination file were NOT renamed. The run also committed a codex-repair of an overlong
+conversation summary (`be23562`), routine. Non-blocking; carry on.
