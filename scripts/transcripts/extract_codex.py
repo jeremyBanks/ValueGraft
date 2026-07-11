@@ -225,7 +225,10 @@ def iter_messages(
     if include_subagent_finals:
         main_texts = {message.text for message in out}
         out.extend(message for message in subagent_finals if message.text not in main_texts)
-    out = sorted(out, key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line))
+    out = sorted(
+        out,
+        key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line),
+    )
     return thread_id, cwd, out
 
 

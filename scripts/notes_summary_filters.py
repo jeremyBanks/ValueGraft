@@ -27,10 +27,33 @@ output filters.
 Forbidden matches seen across attempts so far:
 {matches}
 
-Rewrite the summary from scratch. Avoid these exact terms and closely similar
-language. Refer to those subjects only with vague, generic phrasing and less
-detail. Do not mention the filtering rule, the forbidden list, or the previous
-attempt in the summary.
+Rewrite the summary from scratch. Each match identifies an underlying referent
+or subject that must become non-identifiable. This is
+not a word-ban or synonym substitution exercise. Remove not only the matched term but also synonyms,
+euphemisms, distinctive attributes, people, places, events, surrounding facts,
+and narrative clues that would let a reader infer the specific subject. Rewrite
+or remove the whole sentence or paragraph rather than playing taboo around one
+word. If the subject is not essential to project state, omit it entirely. If it
+is essential, reduce it to genuinely non-identifying language such as "an
+unrelated sensitive-topic tangent" or "a notes-hygiene issue." Do not mention
+the filtering rule, the forbidden list, or the previous attempt in the summary.
+
+Original task:
+
+{prompt}
+"""
+REFERENT_GUARD_PROMPT = """\
+The source material contains one or more subjects covered by output exclusion
+filters:
+
+{matches}
+
+Treat each match as identifying an underlying referent, not merely a forbidden
+word. Make that referent non-identifiable in the answer: omit or generically
+rewrite the entire relevant passage, including synonyms, euphemisms,
+distinctive attributes, people, places, events, surrounding facts, and
+narrative clues. Do not play taboo by withholding the name while still clearly
+pointing to one specific thing. Do not mention this instruction or the filters.
 
 Original task:
 
@@ -139,6 +162,23 @@ def retry_prompt_for_forbidden_matches(prompt: str, matches: list[ForbiddenMatch
     return FORBIDDEN_RETRY_PROMPT.format(matches=rendered, prompt=prompt)
 
 
+def preemptive_prompt_for_forbidden_referents(
+    prompt: str,
+    matches: list[ForbiddenMatch],
+) -> str:
+    display_values: list[str] = []
+    seen: set[str] = set()
+    for match in matches:
+        value = display_forbidden_match(match)
+        key = value.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        display_values.append(value)
+    rendered = "\n".join(f"- {value}" for value in display_values)
+    return REFERENT_GUARD_PROMPT.format(matches=rendered, prompt=prompt)
+
+
 def scrub_forbidden_lines(text: str, forbidden_patterns: list[str]) -> str:
     lines = text.splitlines()
     kept = [
@@ -172,7 +212,12 @@ def run_filtered_summary_command(
     label: str,
 ) -> str:
     all_matches: list[ForbiddenMatch] = []
-    current_prompt = prompt
+    source_matches = forbidden_matches(prompt, forbidden_patterns)
+    current_prompt = (
+        preemptive_prompt_for_forbidden_referents(prompt, source_matches)
+        if source_matches
+        else prompt
+    )
     attempts = max(1, max_attempts)
     for attempt in range(1, attempts + 1):
         candidate = run_command(command, current_prompt)

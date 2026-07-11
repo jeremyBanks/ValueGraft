@@ -66,19 +66,23 @@ conversation-compaction boundaries.
 - Data: `data/scenarios.json` (authored plants), `data/synthetic/`,
   `data/natural/` (composed conversations), `results/raw*/` (per-conversation
   arm outputs), `results/scores.json` (probe scoring).
-- Conversation-summary archive: run
-  `python3 scripts/transcripts/update_conversation_notes.py` from the repo root.
-  With no arguments it uses the repo's default Claude/Codex transcript sources,
-  updates `notes/*-{claude,codex}-conversation.md`, runs the default summarizer,
-  formats generated Markdown with Deno when available, and refreshes the
-  manifest. Small live-tail continuations are deferred by default; use
+- Conversation-summary archive: run `python3 scripts/update_notes_archive.py`
+  from the repo root. This single entry point updates conversation notes,
+  normalizes archive filenames, and recursively refreshes daily/month/year/
+  archive summaries. It defaults every summary level to Codex
+  `gpt-5.6-luna`/medium; use `--summary-provider claude --summary-model sonnet`
+  to switch the whole pipeline to Claude. It includes repo-rooted user Codex
+  sessions plus the configured Claude source and interleaves final labeled
+  subagent responses into parent conversations without including their tool
+  traffic. Use `--resummarize-all --force-rollups` for a clean raw-transcript
+  rebuild. Small live-tail continuations are deferred by default; use
   `--force-small-continuations` only when you intentionally want to rewrite a
   note for a tiny recent exchange. Conversation notes include a generated
   `**Participants:** ...` paragraph; it includes `User` only when user messages
   are present, then full assistant model identifiers sorted by contributed text
-  volume. If reasoning effort is present, append it to the model identifier with
-  a hyphen, such as `gpt-5.5-xhigh`. Every model ID found in the raw
-  conversation metadata must appear there.
+  volume and labeled contributing subagents. If reasoning effort is present,
+  append it to the model identifier with a hyphen, such as `gpt-5.5-xhigh`.
+  Every model ID found in the raw conversation metadata must appear there.
 
 ## Source-control policy (07-05)
 

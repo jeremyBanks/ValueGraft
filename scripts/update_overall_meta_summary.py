@@ -14,6 +14,14 @@ from pathlib import Path
 from notes_archive_naming import DAILY_META_RE, MONTHLY_META_RE, YEARLY_META_RE
 from notes_rollup import strip_sources_footer, with_sources_footer
 from notes_summary_filters import resolve_forbid_patterns, run_filtered_summary_command
+from summary_model import (
+    DEFAULT_CODEX_REASONING,
+    DEFAULT_PROVIDER,
+    PROVIDERS,
+    custom_command_provenance,
+    resolve_spec,
+    wrapper_command,
+)
 from update_daily_meta_summary import (
     DEFAULT_COMMAND,
     deno_fmt,
@@ -142,8 +150,13 @@ def write_manifest(path: Path, data: dict) -> bool:
     return True
 
 
-def entry_for(plan: RollupPlan, text: str, root: Path) -> dict:
-    return {
+def entry_for(
+    plan: RollupPlan,
+    text: str,
+    root: Path,
+    summarizer: dict[str, str] | None = None,
+) -> dict:
+    entry = {
         "note": plan.path.relative_to(root).as_posix(),
         "level": plan.level,
         "key": plan.key,
@@ -152,17 +165,31 @@ def entry_for(plan: RollupPlan, text: str, root: Path) -> dict:
         "sources": source_entries(plan.sources, root),
         "summary_hash": sha256_text(text),
     }
+    if plan.mode == "promote":
+        entry["summarizer"] = {"provider": "promote"}
+    elif summarizer is not None:
+        entry["summarizer"] = summarizer
+    return entry
 
 
-def expected_manifest_entry(plan: RollupPlan, root: Path) -> dict | None:
+def expected_manifest_entry(
+    plan: RollupPlan,
+    root: Path,
+    summarizer: dict[str, str] | None = None,
+) -> dict | None:
     if not plan.path.exists():
         return None
-    return entry_for(plan, plan.path.read_text(encoding="utf-8"), root)
+    return entry_for(plan, plan.path.read_text(encoding="utf-8"), root, summarizer)
 
 
-def is_stale(plan: RollupPlan, manifest: dict, root: Path) -> bool:
+def is_stale(
+    plan: RollupPlan,
+    manifest: dict,
+    root: Path,
+    summarizer: dict[str, str] | None = None,
+) -> bool:
     entry = manifest.get("rollups", {}).get(plan.path.relative_to(root).as_posix())
-    expected = expected_manifest_entry(plan, root)
+    expected = expected_manifest_entry(plan, root, summarizer)
     if expected is None or not entry:
         return True
     return entry != expected
@@ -203,6 +230,9 @@ Preferred shape:
 
 - a top-level `{title_for(plan.level, plan.key)}` heading;
 - one italicized opening paragraph summarizing the arc;
+- a concise `**Participants/contributors:** ...` paragraph naming the users,
+  assistant model identifiers, authors, and labeled subagents represented in
+  the immediate sources; use only source-supported identities and never guess;
 - a small number of thematic sections, not one section per input file;
 - a concise current-state / handoff section at the end;
 - bullets only where they make dense facts easier to scan.
@@ -403,10 +433,16 @@ def commit_paths(root: Path, paths: list[Path], message: str) -> None:
         subprocess.check_call(["git", "commit", "-m", message, "--", *rels], cwd=root)
 
 
-def print_plan(plans: list[RollupPlan], expected: set[Path], manifest: dict, root: Path) -> None:
+def print_plan(
+    plans: list[RollupPlan],
+    expected: set[Path],
+    manifest: dict,
+    root: Path,
+    summarizer: dict[str, str] | None = None,
+) -> None:
     print(f"hierarchical notes rollups: plans={len(plans)} expected_generated={len(expected)}")
     for plan in plans:
-        stale = is_stale(plan, manifest, root)
+        stale = is_stale(plan, manifest, root, summarizer)
         rel = plan.path.relative_to(root).as_posix()
         print(
             f"  {rel}: level={plan.level} key={plan.key} mode={plan.mode} "
@@ -424,7 +460,10 @@ def main() -> int:
     parser.add_argument("--notes-dir", type=Path, default=Path("notes"))
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--note", type=Path, default=DEFAULT_NOTE)
-    parser.add_argument("--command", default=DEFAULT_COMMAND)
+    parser.add_argument("--command")
+    parser.add_argument("--summary-provider", choices=PROVIDERS, default=DEFAULT_PROVIDER)
+    parser.add_argument("--summary-model")
+    parser.add_argument("--summary-reasoning", default=DEFAULT_CODEX_REASONING)
     parser.add_argument("--prompt-out", type=Path)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
@@ -456,13 +495,20 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    if args.command:
+        summarizer_provenance = custom_command_provenance(args.command)
+    else:
+        summary_spec = resolve_spec(args.summary_provider, args.summary_model, args.summary_reasoning)
+        args.command = wrapper_command(summary_spec)
+        summarizer_provenance = summary_spec.provenance()
+
     root = git_root()
     notes_dir = (root / args.notes_dir).resolve()
     readme_path = (root / args.note).resolve()
     manifest_path = (root / args.manifest).resolve()
     manifest = load_manifest(manifest_path)
     plans, expected = build_plans(notes_dir, root, readme_path)
-    print_plan(plans, expected, manifest, root)
+    print_plan(plans, expected, manifest, root, summarizer_provenance)
 
     if args.prompt_out:
         args.prompt_out.parent.mkdir(parents=True, exist_ok=True)
@@ -492,7 +538,7 @@ def main() -> int:
     index = 0
     while index < len(plans):
         plan = plans[index]
-        stale = args.force or is_stale(plan, manifest, root)
+        stale = args.force or is_stale(plan, manifest, root, summarizer_provenance)
         if stale:
             text = generate_rollup(
                 plan,
@@ -512,6 +558,7 @@ def main() -> int:
                 plan,
                 plan.path.read_text(encoding="utf-8"),
                 root,
+                summarizer_provenance,
             )
         index += 1
 

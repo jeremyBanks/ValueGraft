@@ -59,7 +59,9 @@ Do not try to preserve every message.
 
 Assistant messages labeled `subagent=...` are final subagent assessments, not
 tool logs. Preserve their unique conclusions, evidence, and proposed follow-ups
-when material, but synthesize them rather than copying every detail.
+when material, but synthesize them rather than copying every detail. Acknowledge
+materially contributing subagents by their supplied label when useful, but never
+guess an unlabeled subagent's model identity.
 
 {previous_context_block}
 

@@ -50,5 +50,26 @@ def test_forbidden_retry_prompt_uses_vague_rewrite_instruction() -> None:
     prompt = filters.retry_prompt_for_forbidden_matches("Original prompt", matches)
 
     assert "secret phrase" in prompt
-    assert "vague, generic phrasing" in prompt
+    assert "underlying referent" in prompt
+    assert "not a word-ban or synonym substitution exercise" in prompt
+    assert "narrative clues" in prompt
     assert "Original prompt" in prompt
+
+
+def test_source_match_adds_referent_guard_before_first_generation() -> None:
+    filters = load_filters()
+    seen_prompts: list[str] = []
+    filters.run_command = lambda _command, prompt: seen_prompts.append(prompt) or "Safe summary.\n"
+
+    result = filters.run_filtered_summary_command(
+        "unused",
+        "Summarize discussion of secret phrase.",
+        [r"secret phrase"],
+        2,
+        "test",
+    )
+
+    assert result == "Safe summary.\n"
+    assert len(seen_prompts) == 1
+    assert "underlying referent" in seen_prompts[0]
+    assert "Do not play taboo" in seen_prompts[0]

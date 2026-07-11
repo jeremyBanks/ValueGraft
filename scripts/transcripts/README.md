@@ -22,20 +22,31 @@ For the normal "bring conversation notes up to date" workflow, run this from the
 repo root:
 
 ```bash
-python3 scripts/transcripts/update_conversation_notes.py
+python3 scripts/update_notes_archive.py
 ```
 
-With no arguments, the script defaults to the known local Claude Code and Codex
-transcript files for this repo, writes prompts/candidates under
-`/tmp/valuegraft_transcript_incremental`, runs `claude --print --model sonnet`,
-updates `notes/*-conversation-*.md`, runs `deno fmt` on generated Markdown files
-when Deno is available, and refreshes
-`scripts/transcripts/conversation-summary-manifest.json`. It also inserts a
-deterministic `**Participants:** ...` paragraph from raw transcript metadata:
-`User` when present, then assistant models sorted by contributed text volume. If
-reasoning effort is present, it is appended to the model identifier with a
-hyphen, such as `gpt-5.5-xhigh`; provider names, app runtimes, and CLI versions
-are not included.
+This one entry point runs conversation extraction/summarization, archive-name
+normalization, and the recursive daily/month/year/archive rollups in dependency
+order. Each stage can be disabled with `--no-conversations`, `--no-normalize`,
+or `--no-rollups`. The default summarizer for every level is Codex
+`gpt-5.6-luna` at medium reasoning. Use `--summary-provider claude
+--summary-model sonnet` to select Claude, or `--summary-command ...` for a raw
+custom command.
+
+The conversation stage includes the configured Claude source and discovers all
+user-owned Codex sessions rooted in this repository; Codex subagent sessions are
+not treated as duplicate standalone conversations. Instead, final responses
+from labeled Claude and Codex subagents are interleaved chronologically into
+their parent transcript, while tool calls, tool output, and progress chatter
+remain excluded. Standalone summary-worker sessions are rejected, and the
+provided Claude/Codex wrappers use nonpersistent or ephemeral execution so a
+generated summary cannot become a new transcript input.
+
+Generated notes include a deterministic `**Participants:** ...` paragraph from
+raw transcript metadata: `User` when present, assistant models sorted by
+contributed text volume, and labeled contributing subagents. If reasoning effort
+is present, it is appended to the model identifier with a hyphen, such as
+`gpt-5.5-xhigh`; provider names, app runtimes, and CLI versions are not included.
 
 Raw transcript extraction splits at UTC day boundaries and at gaps over one
 hour. The update workflow may coalesce adjacent raw segments into one note, but
@@ -57,10 +68,12 @@ intentional.
 
 Generated summaries are checked case-insensitively against `--forbid-regex`
 patterns. Defaults only cover common access-token shapes. If a candidate
-matches, the script retries with a fresh prompt that lists the accumulated
-forbidden matches and asks for vaguer language around those topics. After
-`--max-forbid-attempts` attempts, it deletes matching lines as a last-resort
-scrub.
+matches, the script retries from scratch. A match identifies an underlying
+referent, not merely a forbidden word: the rewrite must also remove synonyms,
+distinctive attributes, surrounding facts, and narrative clues that would let
+a reader infer the subject. It should omit the passage or reduce it to genuinely
+non-identifying language. After `--max-forbid-attempts` attempts, it deletes
+matching lines as a last-resort scrub.
 
 The summaries should focus on ideas, decisions, methodology, results, caveats,
 explicit timeline commitments, and handoff state. If a discussion established an
@@ -84,7 +97,8 @@ Conversation-note style:
   or at most two short sentences, describing the conversation
 - include the generated `**Participants:** ...` paragraph immediately after the
   opening summary; every source model ID for that note must appear there, with
-  reasoning effort appended by hyphen when present
+  reasoning effort appended by hyphen when present, along with labeled
+  subagents whose final responses contributed source material
 - use prose paragraphs; if section labels help, use optional bold
   paragraph-opening labels like `**Handoff State.**` rather than Markdown
   heading syntax
@@ -116,6 +130,19 @@ future agent should do next:
 ```
 
 ## Full Rebuild Example
+
+The supported clean rebuild is:
+
+```bash
+python3 scripts/update_notes_archive.py --resummarize-all --force-rollups
+```
+
+Conversation candidates are generated and validated in a temporary directory
+before any existing conversation note or manifest record is replaced. The
+normalizer then assigns archive counters, and the rollup stage regenerates every
+affected hierarchy level with the same selected provider/model. The older
+low-level commands below remain useful for extractor debugging and custom
+one-off workflows.
 
 ```bash
 WORK=/tmp/valuegraft_transcript_work

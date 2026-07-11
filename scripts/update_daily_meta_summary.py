@@ -24,6 +24,14 @@ from pathlib import Path
 from notes_archive_naming import DAILY_META_RE
 from notes_rollup import with_sources_footer
 from notes_summary_filters import resolve_forbid_patterns, run_filtered_summary_command
+from summary_model import (
+    DEFAULT_CODEX_REASONING,
+    DEFAULT_PROVIDER,
+    PROVIDERS,
+    custom_command_provenance,
+    resolve_spec,
+    wrapper_command,
+)
 
 KIB = 1024
 NON_CONVERSATION_THRESHOLD = 8 * KIB
@@ -34,7 +42,7 @@ CONVERSATION_HEAD = 12 * KIB
 CONVERSATION_TAIL = 4 * KIB
 
 DEFAULT_MANIFEST = Path("scripts/notes-daily-meta-manifest.json")
-DEFAULT_COMMAND = "claude --print --model sonnet --no-session-persistence --permission-mode dontAsk --disallowedTools *"
+DEFAULT_COMMAND = wrapper_command(resolve_spec(DEFAULT_PROVIDER, None, DEFAULT_CODEX_REASONING))
 RESERVED_NOTE_NAMES = {"AGENTS.md", "README.md"}
 
 
@@ -185,6 +193,9 @@ description, and no closing status note. Aim for synthesis, not a ledger.
 Include:
 
 - an italicized opening paragraph summarizing the UTC day in one or two sentences;
+- a concise `**Participants/contributors:** ...` paragraph naming the users,
+  assistant model identifiers, authors, and labeled subagents represented in
+  the source notes; use only source-supported identities and never guess;
 - the main research/workflow developments;
 - decisions, terminology, or methodological clarifications that should persist;
 - empirical results or observations, with caveats;
@@ -238,8 +249,15 @@ def write_manifest(path: Path, data: dict) -> bool:
     return True
 
 
-def entry_for(day: str, note_path: Path, summary: str, sources: list[SourceNote], root: Path) -> dict:
-    return {
+def entry_for(
+    day: str,
+    note_path: Path,
+    summary: str,
+    sources: list[SourceNote],
+    root: Path,
+    summarizer: dict[str, str] | None = None,
+) -> dict:
+    entry = {
         "note": note_path.relative_to(root).as_posix(),
         "source_count": len(sources),
         "sources": source_entries(sources, root),
@@ -254,9 +272,19 @@ def entry_for(day: str, note_path: Path, summary: str, sources: list[SourceNote]
             "conversation_tail_chars": CONVERSATION_TAIL,
         },
     }
+    if summarizer is not None:
+        entry["summarizer"] = summarizer
+    return entry
 
 
-def is_stale(day: str, note_path: Path, sources: list[SourceNote], manifest: dict, root: Path) -> bool:
+def is_stale(
+    day: str,
+    note_path: Path,
+    sources: list[SourceNote],
+    manifest: dict,
+    root: Path,
+    summarizer: dict[str, str] | None = None,
+) -> bool:
     entry = manifest.get("days", {}).get(day)
     if not note_path.exists() or not entry:
         return True
@@ -267,6 +295,8 @@ def is_stale(day: str, note_path: Path, sources: list[SourceNote], manifest: dic
     if entry.get("source_count") != len(sources):
         return True
     if entry.get("summary_hash") != sha256_text(note_path.read_text(encoding="utf-8")):
+        return True
+    if summarizer is not None and entry.get("summarizer") != summarizer:
         return True
     return False
 
@@ -311,6 +341,7 @@ def can_refresh_footer_without_resummarizing(
     note_path: Path,
     sources: list[SourceNote],
     manifest: dict,
+    summarizer: dict[str, str] | None = None,
 ) -> bool:
     entry = manifest.get("days", {}).get(day)
     if not note_path.exists() or not entry:
@@ -320,6 +351,8 @@ def can_refresh_footer_without_resummarizing(
     if entry.get("source_blob_ids") != sorted(source.blob_id for source in sources):
         return False
     if entry.get("summary_hash") != sha256_text(note_path.read_text(encoding="utf-8")):
+        return False
+    if summarizer is not None and entry.get("summarizer") != summarizer:
         return False
     return True
 
@@ -332,6 +365,7 @@ def refresh_footer_without_resummarizing(
     manifest: dict,
     root: Path,
     no_commit: bool,
+    summarizer: dict[str, str] | None = None,
 ) -> int:
     note_path.write_text(
         with_sources_footer(note_path.read_text(encoding="utf-8"), note_path, [source.path for source in sources]),
@@ -339,7 +373,14 @@ def refresh_footer_without_resummarizing(
     )
     deno_fmt(root, [note_path])
     formatted_summary = note_path.read_text(encoding="utf-8")
-    manifest.setdefault("days", {})[day] = entry_for(day, note_path, formatted_summary, sources, root)
+    manifest.setdefault("days", {})[day] = entry_for(
+        day,
+        note_path,
+        formatted_summary,
+        sources,
+        root,
+        summarizer,
+    )
     manifest_changed = write_manifest(manifest_path, manifest)
     changed_paths = [note_path]
     if manifest_changed:
@@ -390,7 +431,10 @@ def main() -> int:
     parser.add_argument("day", nargs="?", type=validate_day, default=yesterday_utc())
     parser.add_argument("--notes-dir", type=Path, default=Path("notes"))
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
-    parser.add_argument("--command", default=DEFAULT_COMMAND)
+    parser.add_argument("--command")
+    parser.add_argument("--summary-provider", choices=PROVIDERS, default=DEFAULT_PROVIDER)
+    parser.add_argument("--summary-model")
+    parser.add_argument("--summary-reasoning", default=DEFAULT_CODEX_REASONING)
     parser.add_argument("--prompt-out", type=Path)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
@@ -422,6 +466,13 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    if args.command:
+        summarizer_provenance = custom_command_provenance(args.command)
+    else:
+        summary_spec = resolve_spec(args.summary_provider, args.summary_model, args.summary_reasoning)
+        args.command = wrapper_command(summary_spec)
+        summarizer_provenance = summary_spec.provenance()
+
     root = git_root()
     notes_dir = (root / args.notes_dir).resolve()
     manifest_path = (root / args.manifest).resolve()
@@ -446,7 +497,14 @@ def main() -> int:
             args.no_commit,
         )
 
-    stale = args.force or is_stale(args.day, note_path, sources, manifest, root)
+    stale = args.force or is_stale(
+        args.day,
+        note_path,
+        sources,
+        manifest,
+        root,
+        summarizer_provenance,
+    )
     print_source_plan(args.day, note_path.relative_to(root), sources, stale)
     prompt = build_prompt(args.day, sources, root)
     print(f"prompt_chars={len(prompt)}")
@@ -461,7 +519,13 @@ def main() -> int:
     if not stale:
         print("daily meta-summary is current; no changes written")
         return 0
-    if not args.force and can_refresh_footer_without_resummarizing(args.day, note_path, sources, manifest):
+    if not args.force and can_refresh_footer_without_resummarizing(
+        args.day,
+        note_path,
+        sources,
+        manifest,
+        summarizer_provenance,
+    ):
         print("existing daily summary content is current; refreshing standardized source footer")
         return refresh_footer_without_resummarizing(
             args.day,
@@ -471,6 +535,7 @@ def main() -> int:
             manifest,
             root,
             args.no_commit,
+            summarizer_provenance,
         )
     if args.no_command:
         if not args.prompt_out:
@@ -501,6 +566,7 @@ def main() -> int:
         formatted_summary,
         sources,
         root,
+        summarizer_provenance,
     )
     manifest_changed = write_manifest(manifest_path, manifest)
     if manifest_changed:

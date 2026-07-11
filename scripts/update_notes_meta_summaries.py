@@ -9,7 +9,8 @@ import subprocess
 from pathlib import Path
 
 from notes_archive_naming import DAILY_META_RE, MONTHLY_META_RE, YEARLY_META_RE
-from update_daily_meta_summary import DEFAULT_COMMAND, sha256_text
+from summary_model import DEFAULT_CODEX_REASONING, DEFAULT_PROVIDER, PROVIDERS
+from update_daily_meta_summary import sha256_text
 
 
 def git_root() -> Path:
@@ -51,10 +52,27 @@ def run(cmd: list[str], root: Path) -> None:
     subprocess.check_call(cmd, cwd=root)
 
 
+def summary_cli_args(args: argparse.Namespace) -> list[str]:
+    if args.command:
+        return ["--command", args.command]
+    result = [
+        "--summary-provider",
+        args.summary_provider,
+        "--summary-reasoning",
+        args.summary_reasoning,
+    ]
+    if args.summary_model:
+        result.extend(["--summary-model", args.summary_model])
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--notes-dir", type=Path, default=Path("notes"))
-    parser.add_argument("--command", default=DEFAULT_COMMAND)
+    parser.add_argument("--command")
+    parser.add_argument("--summary-provider", choices=PROVIDERS, default=DEFAULT_PROVIDER)
+    parser.add_argument("--summary-model")
+    parser.add_argument("--summary-reasoning", default=DEFAULT_CODEX_REASONING)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--no-commit", action="store_true")
@@ -101,9 +119,8 @@ def main() -> int:
             day,
             "--notes-dir",
             args.notes_dir.as_posix(),
-            "--command",
-            args.command,
         ]
+        cmd.extend(summary_cli_args(args))
         if args.dry_run:
             cmd.append("--dry-run")
         if args.force:
@@ -127,9 +144,8 @@ def main() -> int:
         "scripts/update_overall_meta_summary.py",
         "--notes-dir",
         args.notes_dir.as_posix(),
-        "--command",
-        args.command,
     ]
+    overall_cmd.extend(summary_cli_args(args))
     if args.dry_run:
         overall_cmd.append("--dry-run")
     if args.force or changed_days:
@@ -147,6 +163,26 @@ def main() -> int:
         print("daily summaries changed: " + ", ".join(changed_days), flush=True)
     else:
         print("no daily summaries changed", flush=True)
+    if args.dry_run:
+        missing_daily = []
+        for day in days:
+            ordinary = [
+                path
+                for path in notes_dir.glob(f"{day}*.md")
+                if not DAILY_META_RE.match(path.name)
+                and not MONTHLY_META_RE.match(path.name)
+                and not YEARLY_META_RE.match(path.name)
+                and path.name != "README.md"
+            ]
+            if len(ordinary) > 1 and not (notes_dir / f"{day}.md").exists():
+                missing_daily.append(day)
+        if missing_daily:
+            print(
+                "skip overall dry-run because these daily summaries would first be created: "
+                + ", ".join(missing_daily),
+                flush=True,
+            )
+            return 0
     run(overall_cmd, root)
 
     if not args.dry_run and not args.no_commit:

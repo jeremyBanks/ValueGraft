@@ -19,6 +19,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -28,6 +29,10 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from notes_archive_naming import archive_day_start, compact_prefix, conversation_title, timestamp_from_full_prefix  # noqa: E402
 from notes_archive_timestamps import ArchiveTimestampCache, TimestampInfo  # noqa: E402
+from notes_summary_filters import (  # noqa: E402
+    preemptive_prompt_for_forbidden_referents,
+    resolve_forbid_patterns,
+)
 from summary_model import (  # noqa: E402
     DEFAULT_CODEX_REASONING,
     DEFAULT_PROVIDER,
@@ -70,10 +75,16 @@ output filters.
 Forbidden matches seen across attempts so far:
 {matches}
 
-Rewrite the summary from scratch. Avoid these exact terms and closely similar
-language. Refer to those subjects only with vague, generic phrasing and less
-detail. Do not mention the filtering rule, the forbidden list, or the previous
-attempt in the summary.
+Rewrite the summary from scratch. Each match identifies an underlying referent
+or subject that must become non-identifiable. This is
+not a word-ban or synonym substitution exercise. Remove not only the matched term but also synonyms,
+euphemisms, distinctive attributes, people, places, events, surrounding facts,
+and narrative clues that would let a reader infer the specific subject. Rewrite
+or remove the whole sentence or paragraph rather than playing taboo around one
+word. If the subject is not essential to project state, omit it entirely. If it
+is essential, reduce it to genuinely non-identifying language such as "an
+unrelated sensitive-topic tangent" or "a notes-hygiene issue." Do not mention
+the filtering rule, the forbidden list, or the previous attempt in the summary.
 
 Original task:
 
@@ -121,7 +132,10 @@ show a switch between assistant models, mention the switch at the relevant point
 in the summary flow. Assistant messages labeled `subagent=...` are final
 subagent assessments, not tool logs. Preserve their unique conclusions,
 evidence, and proposed follow-ups when material, but synthesize them rather than
-copying every detail.
+copying every detail. The deterministic participants paragraph names users and
+models from raw metadata. In the prose, also acknowledge materially contributing
+subagents by their supplied label when useful, but never guess an unlabeled
+subagent's model identity.
 
 Preserve explicit scheduling commitments as handoff facts. If an agent or user
 commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
@@ -187,7 +201,10 @@ show a switch between assistant models, mention the switch at the relevant point
 in the summary flow. Assistant messages labeled `subagent=...` are final
 subagent assessments, not tool logs. Preserve their unique conclusions,
 evidence, and proposed follow-ups when material, but synthesize them rather than
-copying every detail.
+copying every detail. The deterministic participants paragraph names users and
+models from raw metadata. In the prose, also acknowledge materially contributing
+subagents by their supplied label when useful, but never guess an unlabeled
+subagent's model identity.
 
 Preserve explicit scheduling commitments as handoff facts. If an agent or user
 commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
@@ -280,21 +297,62 @@ def script_dir() -> Path:
     return Path(__file__).resolve().parent
 
 
+def discover_codex_sources(explicit_source: Path, repo_root: Path) -> list[Path]:
+    """Find user-owned Codex sessions rooted in this repository.
+
+    Subagent sessions are represented by their final answers in their parent
+    transcript and must not also be summarized as independent conversations.
+    The explicitly configured legacy source is retained even when its older
+    metadata predates ``thread_source``.
+    """
+    sources = {explicit_source.expanduser().resolve()}
+    sessions_root = Path.home() / ".codex" / "sessions"
+    if not sessions_root.is_dir():
+        return sorted(sources)
+    expected_cwd = repo_root.resolve()
+    for candidate in sessions_root.glob("**/*.jsonl"):
+        try:
+            first_line = candidate.open("r", encoding="utf-8").readline()
+            row = json.loads(first_line)
+        except (OSError, json.JSONDecodeError):
+            continue
+        payload = row.get("payload") if row.get("type") == "session_meta" else None
+        if not isinstance(payload, dict) or payload.get("thread_source") != "user":
+            continue
+        cwd = payload.get("cwd")
+        if not isinstance(cwd, str):
+            continue
+        try:
+            same_repo = Path(cwd).expanduser().resolve() == expected_cwd
+        except OSError:
+            same_repo = False
+        if same_repo:
+            sources.add(candidate.resolve())
+    return sorted(sources)
+
+
 def load_segments(
     claude_jsonl: Path,
     codex_jsonl: Path,
     *,
     include_subagent_finals: bool = True,
+    discover_codex_sessions: bool = False,
+    repo_root: Path | None = None,
 ) -> dict[tuple[str, str, int], list[MessageRecord]]:
     claude = load_module(script_dir() / "extract_claude.py", "vg_incremental_claude")
     codex = load_module(script_dir() / "extract_codex.py", "vg_incremental_codex")
     segments: dict[tuple[str, str, int], list[MessageRecord]] = {}
 
-    sources = [
-        ("claude-code", claude, claude_jsonl),
-        ("codex", codex, codex_jsonl),
+    codex_sources = [codex_jsonl]
+    if discover_codex_sessions:
+        codex_sources = discover_codex_sources(codex_jsonl, repo_root or Path.cwd())
+    sources = [("claude-code", claude, claude_jsonl)] + [
+        ("codex", codex, source) for source in codex_sources
     ]
+    raw_segments: dict[str, list[tuple[datetime, ModuleType, list[Any]]]] = {}
     for platform, mod, source in sources:
+        if not source.exists():
+            continue
         if platform == "codex":
             _thread_id, _cwd, messages = mod.iter_messages(
                 source,
@@ -307,11 +365,14 @@ def load_segments(
                 include_transcript_scaffolding=True,
                 include_subagent_finals=include_subagent_finals,
             )
-        per_day: dict[str, int] = {}
         for segment in mod.split_segments(messages):
             start = next((m.ts for m in segment if m.ts), None)
-            if start is None:
-                continue
+            if start is not None:
+                raw_segments.setdefault(platform, []).append((start, mod, segment))
+
+    for platform, platform_segments in raw_segments.items():
+        per_day: dict[str, int] = {}
+        for start, mod, segment in sorted(platform_segments, key=lambda item: item[0]):
             date = start.date().isoformat()
             per_day[date] = per_day.get(date, 0) + 1
             sequence = per_day[date]
@@ -580,6 +641,23 @@ def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]
     if any(msg.role == "user" for msg in visible_messages):
         entries.append("User")
     entries.extend(model_entries_for_messages(visible_messages))
+    subagent_stats: dict[str, tuple[int, int]] = {}
+    for index, msg in enumerate(visible_messages):
+        if msg.role != "assistant":
+            continue
+        label = parse_heading_fields(msg.heading_metadata).get("subagent")
+        if not label:
+            continue
+        display = label.rstrip("/").rsplit("/", 1)[-1]
+        chars, first_index = subagent_stats.get(display, (0, index))
+        subagent_stats[display] = (chars + len(msg.text), first_index)
+    entries.extend(
+        f"subagent {label}"
+        for label, (_chars, _first_index) in sorted(
+            subagent_stats.items(),
+            key=lambda item: (-item[1][0], item[1][1], item[0]),
+        )
+    )
     if not entries:
         entries.append("No user or assistant model metadata found.")
     return entries
@@ -1150,7 +1228,12 @@ def run_summary_command(
     max_forbid_attempts: int,
 ) -> str:
     all_matches: list[ForbiddenMatch] = []
-    current_prompt = prompt
+    source_matches = forbidden_matches(prompt, forbidden_patterns)
+    current_prompt = (
+        preemptive_prompt_for_forbidden_referents(prompt, source_matches)
+        if source_matches
+        else prompt
+    )
     attempts = max(1, max_forbid_attempts)
     for attempt in range(1, attempts + 1):
         candidate = run_command(command, current_prompt)
@@ -1278,13 +1361,208 @@ def sync_model_blocks(
     return changed_paths, manifest_changed
 
 
+def rebuild_all_records(
+    old_records: list[NoteRecord],
+    segments: dict[tuple[str, str, int], list[MessageRecord]],
+    args: argparse.Namespace,
+) -> None:
+    max_coalesce_gap_hours = (
+        None
+        if args.max_coalesce_gap_hours is not None and args.max_coalesce_gap_hours < 0
+        else args.max_coalesce_gap_hours
+    )
+    max_note_duration_hours = (
+        None
+        if args.max_note_duration_hours is not None and args.max_note_duration_hours < 0
+        else args.max_note_duration_hours
+    )
+    shards = build_new_ranges(
+        segments,
+        {},
+        args.target_chars,
+        max_coalesce_gap_hours,
+        max_note_duration_hours,
+        args.split_window_start_hours,
+        args.split_window_end_hours,
+    )
+    if not shards:
+        raise RuntimeError("full conversation rebuild found no transcript ranges")
+
+    print(f"full conversation rebuild: old_notes={len(old_records)} new_notes={len(shards)}")
+    root = args.repo_root.resolve()
+
+    def absolute_repo_path(path: Path) -> Path:
+        return (root / path).resolve() if not path.is_absolute() else path.resolve()
+
+    old_path_candidates = {absolute_repo_path(Path(record.note)) for record in old_records}
+    old_path_candidates.update(
+        path.resolve()
+        for path in args.notes_dir.glob("*.md")
+        if re.match(r"^\d{10,14}-conversation-.*\.md$", path.name)
+    )
+    old_paths = sorted(path for path in old_path_candidates if path.exists())
+    old_path_set = set(old_paths)
+    previous_context_by_platform: dict[str, str] = {}
+    new_records: list[NoteRecord] = []
+    generated: list[tuple[Path, Path]] = []
+    final_targets: set[Path] = set()
+
+    args.work_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="conversation-rebuild-", dir=args.work_dir) as tmp:
+        tmp_dir = Path(tmp)
+        for index, ranges in enumerate(shards, 1):
+            messages = all_messages_for_ranges(segments, ranges)
+            transcript = render_messages(messages)
+            platforms = {source_range.platform for source_range in ranges}
+            platform = next(iter(platforms)) if len(platforms) == 1 else None
+            previous_context_block = ""
+            if platform and args.rolling_context_chars > 0:
+                previous_context = previous_context_by_platform.get(platform, "")
+                if previous_context:
+                    previous_context_block = PREVIOUS_CONTEXT_TEMPLATE.format(
+                        platform=platform,
+                        context=previous_context,
+                    ).strip()
+            prompt = SUMMARY_PROMPT.format(
+                previous_context_block=previous_context_block,
+                transcript=transcript,
+            )
+            first_ts = first_timestamp_for_ranges(segments, ranges)
+            final_path = provisional_note_path_for_messages(args.notes_dir, messages, first_ts)
+            final_absolute = absolute_repo_path(final_path)
+            if final_absolute in final_targets or (
+                final_absolute.exists() and final_absolute not in old_path_set
+            ):
+                raise RuntimeError(f"full rebuild target collision: {final_path}")
+            final_targets.add(final_absolute)
+            candidate_path = tmp_dir / final_path.name
+            prompt_path = args.work_dir / "prompts" / f"rebuild-{final_path.stem}.md"
+            retry_prompt_path = args.work_dir / "prompts" / f"retry-rebuild-{final_path.stem}.md"
+            write_prompt(prompt_path, prompt)
+            print(
+                f"rebuild {index}/{len(shards)}: {final_path.name} "
+                f"messages={len(messages)} prompt_chars={len(prompt)}"
+            )
+            if not args.command:
+                continue
+            candidate = run_summary_command(
+                args.command,
+                prompt,
+                candidate_path,
+                retry_prompt_path,
+                args.forbid_regex,
+                args.max_forbid_attempts,
+            )
+            model_entries = model_entries_for_messages(messages)
+            note_text = insert_participants_block(candidate, messages)
+            candidate_path.write_text(note_text, encoding="utf-8")
+            format_markdown([candidate_path], args.repo_root)
+            formatted_summary = candidate_path.read_text(encoding="utf-8")
+            missing_models = validate_model_mentions(formatted_summary, model_entries)
+            if missing_models:
+                raise RuntimeError(
+                    f"model roster missing required model ids in {final_path}: {missing_models}"
+                )
+            first, last = timestamps_for_ranges(segments, ranges)
+            new_records.append(
+                NoteRecord(
+                    note=str(final_path),
+                    source_ranges=ranges,
+                    first_timestamp=first,
+                    last_timestamp=last,
+                    input_hash=sha256_text(transcript),
+                    summary_hash=sha256_text(formatted_summary),
+                    models=model_entries,
+                    summarizer=args.summarizer_provenance,
+                )
+            )
+            generated.append((candidate_path, final_path))
+            if platform and args.rolling_context_chars > 0:
+                previous_context_by_platform[platform] = context_from_summary(
+                    formatted_summary,
+                    args.rolling_context_chars,
+                )
+
+        if not args.command:
+            print(f"No summary command provided; wrote {len(shards)} full-rebuild prompts only.")
+            return
+
+        backup_dir = tmp_dir / "previous-notes"
+        backup_dir.mkdir()
+        manifest_path = absolute_repo_path(args.manifest)
+        manifest_before = manifest_path.read_bytes() if manifest_path.exists() else None
+        backups: list[tuple[Path, Path]] = []
+        moved_new: list[Path] = []
+        final_paths = [absolute_repo_path(final) for _candidate, final in generated]
+        changed_paths = [*old_paths, *final_paths, manifest_path]
+        try:
+            for old_path in old_paths:
+                backup_path = backup_dir / old_path.name
+                shutil.move(str(old_path), backup_path)
+                backups.append((backup_path, old_path))
+            for candidate_path, final_path in generated:
+                final_absolute = absolute_repo_path(final_path)
+                final_absolute.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(candidate_path), final_absolute)
+                moved_new.append(final_absolute)
+            write_manifest(manifest_path, new_records)
+
+            provider = args.summarizer_provenance.get("provider", "custom")
+            model = args.summarizer_provenance.get("model")
+            label = f"{provider}/{model}" if model else provider
+            git_commit(changed_paths, f"Rebuild conversation summaries with {label}", root)
+        except Exception:
+            for final_path in moved_new:
+                if final_path.exists():
+                    final_path.unlink()
+            for backup_path, old_path in backups:
+                old_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(backup_path), old_path)
+            if manifest_before is None:
+                manifest_path.unlink(missing_ok=True)
+            else:
+                manifest_path.write_bytes(manifest_before)
+            rels = sorted(
+                {
+                    path.resolve().relative_to(root).as_posix()
+                    for path in changed_paths
+                    if path.resolve().is_relative_to(root)
+                }
+            )
+            if rels:
+                subprocess.run(
+                    ["git", "add", "--all", "--", *rels],
+                    cwd=root,
+                    check=False,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+            raise
+
+
 def update_notes(args: argparse.Namespace) -> None:
     records = load_manifest(args.manifest)
     segments = load_segments(
         args.claude_jsonl,
         args.codex_jsonl,
         include_subagent_finals=not args.no_subagent_finals,
+        discover_codex_sessions=args.discover_codex_sessions,
+        repo_root=args.repo_root,
     )
+    if args.dry_run and args.resummarize_all:
+        max_gap = None if args.max_coalesce_gap_hours < 0 else args.max_coalesce_gap_hours
+        max_duration = None if args.max_note_duration_hours < 0 else args.max_note_duration_hours
+        shards = build_new_ranges(
+            segments,
+            {},
+            args.target_chars,
+            max_gap,
+            max_duration,
+            args.split_window_start_hours,
+            args.split_window_end_hours,
+        )
+        print(f"FULL REBUILD DRY RUN: old_notes={len(records)} replacement_notes={len(shards)}")
+        return
     if args.dry_run:
         dry_run_update_notes(records, segments, args)
         return
@@ -1294,10 +1572,14 @@ def update_notes(args: argparse.Namespace) -> None:
 
     changed_paths: list[Path] = []
     manifest_changed = False
-    if args.command and not args.no_model_block_sync:
+    if args.command and not args.no_model_block_sync and not args.resummarize_all:
         synced_paths, synced_manifest = sync_model_blocks(records, segments, args)
         changed_paths.extend(synced_paths)
         manifest_changed = manifest_changed or synced_manifest
+
+    if args.resummarize_all:
+        rebuild_all_records(records, segments, args)
+        return
 
     wrote_prompt = False
     continuations: dict[int, list[tuple[tuple[str, str, int], int, int]]] = {}
@@ -1519,6 +1801,15 @@ def main() -> None:
     update_parser.add_argument("--claude-jsonl", type=Path, default=DEFAULT_CLAUDE_JSONL)
     update_parser.add_argument("--codex-jsonl", type=Path, default=DEFAULT_CODEX_JSONL)
     update_parser.add_argument(
+        "--discover-codex-sessions",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Include every user-owned Codex session whose working directory is this repository "
+            "(default: enabled); subagent sessions remain excluded as independent sources."
+        ),
+    )
+    update_parser.add_argument(
         "--no-subagent-finals",
         action="store_true",
         help="Exclude final subagent assessments from summarizer-facing transcripts.",
@@ -1574,6 +1865,11 @@ def main() -> None:
         help="Revise existing notes even for tiny live-tail continuations.",
     )
     update_parser.add_argument(
+        "--resummarize-all",
+        action="store_true",
+        help="Rebuild every conversation note and the coverage manifest from raw transcripts.",
+    )
+    update_parser.add_argument(
         "--no-model-block-sync",
         action="store_true",
         help="Skip deterministic model-roster block synchronization.",
@@ -1613,8 +1909,22 @@ def main() -> None:
     update_parser.add_argument(
         "--forbid-regex",
         action="append",
-        default=DEFAULT_FORBID_REGEX,
-        help="Regex that must not appear in generated summaries; defaults to common secret-shaped strings.",
+        default=[],
+        help=(
+            "Additional regex identifying a referent that must not be identifiable in generated summaries; "
+            "may be repeated."
+        ),
+    )
+    update_parser.add_argument(
+        "--dotenv",
+        action="append",
+        type=Path,
+        help="dotenv file supplying notes forbid-regex env vars; defaults to .env and notes/.env.",
+    )
+    update_parser.add_argument(
+        "--no-default-forbid-regex",
+        action="store_true",
+        help="Disable the built-in credential-shaped output filters.",
     )
     update_parser.add_argument(
         "--max-forbid-attempts",
@@ -1627,6 +1937,12 @@ def main() -> None:
 
     args = parser.parse_args()
     if args.command_name == "update":
+        args.forbid_regex = resolve_forbid_patterns(
+            args.forbid_regex,
+            args.repo_root,
+            include_defaults=not args.no_default_forbid_regex,
+            dotenv_paths=args.dotenv,
+        )
         use_default_update_command(args)
     args.func(args)
 

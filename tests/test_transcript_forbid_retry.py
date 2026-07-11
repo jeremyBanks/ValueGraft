@@ -4,6 +4,7 @@ import importlib.util
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+import json
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,7 +41,9 @@ def test_retry_prompt_requests_vague_language() -> None:
 
     assert "Forbidden matches seen across attempts so far" in prompt
     assert "- angry" in prompt
-    assert "vague, generic phrasing" in prompt
+    assert "underlying referent" in prompt
+    assert "not a word-ban or synonym substitution exercise" in prompt
+    assert "narrative clues" in prompt
     assert "Original prompt" in prompt
 
 
@@ -181,6 +184,58 @@ This plain paragraph used to be accidentally deleted.
     assert "old-model" not in updated
     assert "This plain paragraph used to be accidentally deleted." in updated
     assert "**Handoff State.** Keep this too." in updated
+
+
+def test_participants_block_includes_labeled_contributing_subagents() -> None:
+    mod = load_update_module()
+    messages = [
+        make_message(mod, "codex", "2026-07-10", 1, "2026-07-10T00:00:00Z", "request"),
+        mod.MessageRecord(
+            platform="codex",
+            date="2026-07-10",
+            sequence=1,
+            message_index=2,
+            timestamp="2026-07-10T00:01:00Z",
+            role="assistant",
+            heading_metadata="  [model=gpt-5.6-sol; effort=xhigh; subagent=/root/methodology_audit]",
+            text="Detailed assessment.",
+            source_line=2,
+        ),
+    ]
+
+    block = mod.render_participants_block(messages)
+
+    assert block == (
+        "**Participants:** User, gpt-5.6-sol-xhigh, and subagent methodology_audit."
+    )
+
+
+def test_codex_discovery_includes_repo_user_sessions_only(tmp_path: Path, monkeypatch) -> None:
+    mod = load_update_module()
+    monkeypatch.setenv("HOME", str(tmp_path))
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    sessions = tmp_path / ".codex" / "sessions" / "2026" / "07" / "10"
+    sessions.mkdir(parents=True)
+    explicit = sessions / "legacy.jsonl"
+    explicit.write_text("{}\n", encoding="utf-8")
+
+    def write_session(name: str, cwd: Path, thread_source: str) -> Path:
+        path = sessions / name
+        row = {
+            "type": "session_meta",
+            "payload": {"cwd": str(cwd), "thread_source": thread_source},
+        }
+        path.write_text(json.dumps(row) + "\n", encoding="utf-8")
+        return path
+
+    included = write_session("included.jsonl", repo, "user")
+    write_session("subagent.jsonl", repo, "subagent")
+    write_session("other-repo.jsonl", tmp_path / "other", "user")
+
+    discovered = mod.discover_codex_sources(explicit, repo)
+
+    assert discovered == sorted([explicit.resolve(), included.resolve()])
 
 
 def test_build_new_ranges_respects_two_hour_coalescing_gap() -> None:

@@ -235,7 +235,10 @@ def iter_messages(
     if include_subagent_finals:
         main_texts = {message.text for message in out}
         out.extend(message for message in subagent_final_messages(path) if message.text not in main_texts)
-    return sorted(out, key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line))
+    return sorted(
+        out,
+        key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line),
+    )
 
 
 def split_segments(messages: list[Message]) -> list[list[Message]]:
