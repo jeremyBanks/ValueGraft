@@ -1,0 +1,5797 @@
+{
+  "apparatus_git": {
+    "commit": "c146e545189d41db85bc0c75004d9605890b27e3",
+    "tree_status": "?? src/diagnose_bf16_gapped_delta.py"
+  },
+  "completed_at": "2026-07-11T09:02:25.681180+00:00",
+  "fixture": {
+    "actual_dispatch_path": "coherent_state_runtime.gapped_arm_boundary('G_delta') -> coherent_state_hf.delta_deranged_snapshot",
+    "correct_prefix_sha256": "037fd399977ad42c519d0b7968d4f539dc25488b84fe567f654be0645cdb00c6",
+    "correct_prefix_token_count": 85,
+    "external_wrong_donor": {
+      "id": "c13",
+      "messages": [
+        {
+          "content": "Maintain the user's test record.",
+          "role": "system"
+        },
+        {
+          "content": "The approved label is B. Remember that exact label.",
+          "role": "user"
+        },
+        {
+          "content": "Understood; the approved label is B.",
+          "role": "assistant"
+        },
+        {
+          "content": "Unrelated tail marker: donor-tail.",
+          "role": "user"
+        },
+        {
+          "content": "Tail marker noted.",
+          "role": "assistant"
+        }
+      ],
+      "sections": {
+        "middle_end_msg": 3
+      }
+    },
+    "logical_gap": 53,
+    "physical_summary_end": 39,
+    "physical_summary_start": 32,
+    "placebo_seed": 20260711,
+    "request": "Write a short context summary. Output only the summary.",
+    "source": "exact Qwen3-0.6B production-ladder gapped fixture",
+    "source_summary_start": 85,
+    "summary_text": "The approved label remains on file.",
+    "summary_token_ids": [
+      785,
+      11792,
+      2383,
+      8458,
+      389,
+      1034,
+      13
+    ],
+    "summary_token_sha256": "075e0b3d2ee621504d744df96287c4a3cbb53a51d676a6e64d8356e5482c992c",
+    "target_conversation": {
+      "id": "c10",
+      "messages": [
+        {
+          "content": "Maintain the user's test record.",
+          "role": "system"
+        },
+        {
+          "content": "The approved label is A. Remember that exact label.",
+          "role": "user"
+        },
+        {
+          "content": "Understood; the approved label is A.",
+          "role": "assistant"
+        },
+        {
+          "content": "Unrelated tail marker: target-tail.",
+          "role": "user"
+        },
+        {
+          "content": "Tail marker noted.",
+          "role": "assistant"
+        }
+      ],
+      "sections": {
+        "middle_end_msg": 3
+      }
+    },
+    "wrong_prefix_length_equal": true,
+    "wrong_prefix_sha256": "6fcb37902b9974a10a55700d3b40210444059f29c6d52da90b2816ab0e70f1df",
+    "wrong_prefix_token_count": 85
+  },
+  "fresh_boundary_hashes_before": [
+    {
+      "k_sha256": "35aada1622d0c98fa5a5684ccbdeb1182e1920bd259f46dc10bd9096b8405fad",
+      "layer": "0",
+      "v_sha256": "30b32ca046ea0b426ecc8629ea5fd1653473e1d76cb905439aa8da8023ecb930"
+    },
+    {
+      "k_sha256": "32bd2425c0e48ec82444c66df5dd89921d64efaf44f111eaaaa2816eb07b9a28",
+      "layer": "1",
+      "v_sha256": "9dbd2f119ff84c739407853e98f3135e5111387f628a10ff79e006ac14231042"
+    },
+    {
+      "k_sha256": "f1847af3148729a4145914d9044f38d4d09fd718615313d229a6351b31b56760",
+      "layer": "2",
+      "v_sha256": "728801a96e28f0434e3118826cfc36c84d88ed5043704181c6f2d63bb3003178"
+    },
+    {
+      "k_sha256": "38f57119fba01bfa64b7c2ce3377b67d838b8ecb0cbe5c016480b1c5a5f87610",
+      "layer": "3",
+      "v_sha256": "85b7d6d4b13f608b7241d71792d40b5457be2b4b06b935972267da054b83c332"
+    },
+    {
+      "k_sha256": "6ed99bfdd0030736989ecdfb25037ecfe3fec152f0275b7341eca2718f8c03ff",
+      "layer": "4",
+      "v_sha256": "95b040da2376c62e8a7292dd098183acb2de21e92adbee2f545f448a28703c31"
+    },
+    {
+      "k_sha256": "5af8ba3f7cb7ed3cd2016a0a7a6b3f13bb69afea2b54ebdede8ead525ad719e9",
+      "layer": "5",
+      "v_sha256": "dfc22cacae242c2046b6f2b7d2aa8f17439cedec3116445092c42d6c558fb7bd"
+    },
+    {
+      "k_sha256": "85d79a026c1a7cce448672e2e1f72192cc6f2b2aee7ab1e129e19ed07142e9b4",
+      "layer": "6",
+      "v_sha256": "8347fcf374e8689d2d8bf9a03c3a36ff76fed9a47854e980564fc410f96e3ccc"
+    },
+    {
+      "k_sha256": "57b686c76e686cdaa526697258d7d6889bffc5e1fe936b6270709538113fa287",
+      "layer": "7",
+      "v_sha256": "c1b7c7f46cc7825b114e96db0ee53739c2f6231d304bbe8a73004502490394a0"
+    },
+    {
+      "k_sha256": "dd3f4d7d7e6a2c91d286dfc841dde0d19fd4f43b434d23333dd876592b1915bf",
+      "layer": "8",
+      "v_sha256": "965e87cc74d4d03a1a947d66034867760ec0544da3d4a02fdb57785cf8bcc641"
+    },
+    {
+      "k_sha256": "5e7154867f3e4d0568995954aab4f97b6a65a0e7890723607dc9c9dd8bf95a13",
+      "layer": "9",
+      "v_sha256": "3993f11b516a7a38203d5679c4ea41b8400e7960cdb2575f641ab17aaaa7f24f"
+    },
+    {
+      "k_sha256": "be3c7ff1b16d63542b3ceb0357bbf27269aa306bfe9eefe6842f2a30cac0cee1",
+      "layer": "10",
+      "v_sha256": "a0fd37d46daba4be5dc77ae949f7b6a381dac08512c6a717623ac57a7dfbb162"
+    },
+    {
+      "k_sha256": "7d039a1d8050f8c53b8daf3256e867abb276b2b99fa3b19b71575a917abee907",
+      "layer": "11",
+      "v_sha256": "b222552d0e2f43883da5e610465b7f55b69a18a9a0c31f0677a0985235e54e5a"
+    },
+    {
+      "k_sha256": "f6b487399fad1f47c246ff23f80644d39759669e3348a878dd21466f2d2e3b92",
+      "layer": "12",
+      "v_sha256": "bce2ebe4bb1c649001b94e49aa90a5442dd53bd5b129ebd8f95c70b71d9cc1a5"
+    },
+    {
+      "k_sha256": "a498cb62a5403bf5015edc2e7f0203156087ec156cfee06e94935f432a69b802",
+      "layer": "13",
+      "v_sha256": "4ecfbbf188eb9e07117952f7972b9505c574bc0ac9898bf757a02f507372764b"
+    },
+    {
+      "k_sha256": "f6520a174cd3bee93b99054995f31359aed1577c2fc93aed51d0f832e350a00e",
+      "layer": "14",
+      "v_sha256": "c49803e759dab63e8ead484cc81350f01511a427f9261b400951530084cc8db1"
+    },
+    {
+      "k_sha256": "4427e7cf5702375117798eb20db9dd3758347d452d7927d7a54e02229feac2bd",
+      "layer": "15",
+      "v_sha256": "39650b9198a994179dc23e72646d660637d1c3a38eae7d4c129c05e91a9b466e"
+    },
+    {
+      "k_sha256": "0a20a305f8fdac03fb876792b48246afdbcbc2e57940666b1ae19d874431794f",
+      "layer": "16",
+      "v_sha256": "b8b0c818ceaa2dc446cbcac204bff07c5b17a29e59e3be530ebb8864dbcb4b11"
+    },
+    {
+      "k_sha256": "35ac0196b0e99f5dd02b9cb071f805d8a2346386b6970b547409b3e15bcdab01",
+      "layer": "17",
+      "v_sha256": "bcc4c59a1ee949bf0ef5b1f98c0758fb58603e979aeec84ba6b7879c1bb48cb0"
+    },
+    {
+      "k_sha256": "0d36c0cf4f20c9a01a4aa25734cef71775411732fc4f790cd5c1a15dcf457c45",
+      "layer": "18",
+      "v_sha256": "78f8405926bf264e5cdf80bfa9ded114d5f6f686aceff7b747e9454ef94b732e"
+    },
+    {
+      "k_sha256": "51c237e3d9554530828b52e1dd75c337dad587967c88e88169b5fdf9fff14deb",
+      "layer": "19",
+      "v_sha256": "f295081fed115111a9f41462385cdeb4620e0e4589687dcbbec2473f012ad65e"
+    },
+    {
+      "k_sha256": "e77952b55cee2394ec9c3ddb29bd1db3cf81a5aab901a7223ca452df1a94655f",
+      "layer": "20",
+      "v_sha256": "ecf991fe337b39105b5c0aaaa279a56fc8cabfb432a274cf56dc825a7964503c"
+    },
+    {
+      "k_sha256": "f02d7fa156e901750cdfb7f7f388a27e9654d1d37a1fd3b2f544af53c23e550b",
+      "layer": "21",
+      "v_sha256": "122547c19e19b447e728a8b86b106cd4747fb9df281ceebf5aef3e9193f72bf7"
+    },
+    {
+      "k_sha256": "b1afa621dac29eee302b06918160260838e39a2ff8cb30445747276043d10cac",
+      "layer": "22",
+      "v_sha256": "ca79095f2bf6c870c21a7f40918187b2455340e04dbae0bddc86b77a18850d53"
+    },
+    {
+      "k_sha256": "6f779d4b89883965bb16facd21f44f5d8e119fedbf03904cc221e5d41b6115cc",
+      "layer": "23",
+      "v_sha256": "ff250180bc6bb764d4e4a09ae4ddee52de306445bdc1d4368374fb661f8ed226"
+    },
+    {
+      "k_sha256": "601f7b63d9c9c6b513853a38378cb8d11b1a705bf9b48361870e4f3e479d7c5a",
+      "layer": "24",
+      "v_sha256": "47330381b73fce79ba936300ca339286f7ed838506b5466a82795df353da52fa"
+    },
+    {
+      "k_sha256": "40ffaf7f82245587c1b7fb2f166f42c1946194060a97c38c36cfa1dc6ceac9b6",
+      "layer": "25",
+      "v_sha256": "d831f3fab3382978ab26fd98f935101d5d410f93d32c3cf5b3b909f638242d24"
+    },
+    {
+      "k_sha256": "1b4430eb46d63b31ab23ac49efdd7b7e0375effc3d0787e29a11e8cd7221660d",
+      "layer": "26",
+      "v_sha256": "c2e4dba6bdc38d2937526b413797176437733b19a75e6254dcf119c0db2f964c"
+    },
+    {
+      "k_sha256": "5edfa6f06921f0df7550484259fb1009ac8602acdf3bd1678358f02364a71c1c",
+      "layer": "27",
+      "v_sha256": "232475848dd207142d5b74958558dec16a0364d461a2fb758449eedd1f14928a"
+    }
+  ],
+  "g_delta": {
+    "aggregate": {
+      "applied_covariance_max_abs": 0.4293537139892578,
+      "applied_delta_quantization_max_abs": 0.125,
+      "applied_mean_max_abs": 0.03571438789367676,
+      "applied_moment_max_abs": 0.4293537139892578,
+      "applied_multiset_max_abs": 0.125,
+      "applied_quantization_max_abs": 0.125,
+      "fixed_points": 0,
+      "raw_covariance_max_abs": 1.52587890625e-05,
+      "raw_mean_max_abs": 0.0,
+      "raw_multiset_max_abs": 0.0
+    },
+    "arm": "G_delta",
+    "boundary_preservation": {
+      "all_keys_bit_exact_to_fresh": true,
+      "all_post_summary_values_bit_exact_to_fresh": true,
+      "all_pre_summary_values_bit_exact_to_fresh": true
+    },
+    "checks": {
+      "applied_moments_within_frozen_limit": false,
+      "applied_quantization_within_frozen_limit": false,
+      "non_summary_and_keys_preserved": true,
+      "raw_multiset_exact": true,
+      "zero_fixed_points": true
+    },
+    "delta_boundary_hashes": [
+      {
+        "k_sha256": "35aada1622d0c98fa5a5684ccbdeb1182e1920bd259f46dc10bd9096b8405fad",
+        "layer": "0",
+        "v_sha256": "30b32ca046ea0b426ecc8629ea5fd1653473e1d76cb905439aa8da8023ecb930"
+      },
+      {
+        "k_sha256": "32bd2425c0e48ec82444c66df5dd89921d64efaf44f111eaaaa2816eb07b9a28",
+        "layer": "1",
+        "v_sha256": "e947c5a223d552bac9070c8cc221595a3745a2b0d845e3165b33885bbe02208e"
+      },
+      {
+        "k_sha256": "f1847af3148729a4145914d9044f38d4d09fd718615313d229a6351b31b56760",
+        "layer": "2",
+        "v_sha256": "211dbc2b47c5dc73d84e61bf16c91d23abf2ee1dcb78be96cdc70a0afd0d2ba8"
+      },
+      {
+        "k_sha256": "38f57119fba01bfa64b7c2ce3377b67d838b8ecb0cbe5c016480b1c5a5f87610",
+        "layer": "3",
+        "v_sha256": "8e95b10a8625bea0e528944dff7ea8a84dca00bdeb8798757d776546713dcc5d"
+      },
+      {
+        "k_sha256": "6ed99bfdd0030736989ecdfb25037ecfe3fec152f0275b7341eca2718f8c03ff",
+        "layer": "4",
+        "v_sha256": "c3a7f638b2817993fa88ad33bb4279f1bc8c0f2d3cb80dbc8dd03cce2a54eb35"
+      },
+      {
+        "k_sha256": "5af8ba3f7cb7ed3cd2016a0a7a6b3f13bb69afea2b54ebdede8ead525ad719e9",
+        "layer": "5",
+        "v_sha256": "bebc2c738e286bdd292e4738bdfcb27500f2a89864171a6cf2e0e5d85da1170a"
+      },
+      {
+        "k_sha256": "85d79a026c1a7cce448672e2e1f72192cc6f2b2aee7ab1e129e19ed07142e9b4",
+        "layer": "6",
+        "v_sha256": "6c68700dfb91bac7036ce91e45c8346c21acb80913fc9b522fcdc21b43b69b79"
+      },
+      {
+        "k_sha256": "57b686c76e686cdaa526697258d7d6889bffc5e1fe936b6270709538113fa287",
+        "layer": "7",
+        "v_sha256": "cede82e8accb82736e014eb6f5e10146eaec3bc8ee839bf14e53713199aa0865"
+      },
+      {
+        "k_sha256": "dd3f4d7d7e6a2c91d286dfc841dde0d19fd4f43b434d23333dd876592b1915bf",
+        "layer": "8",
+        "v_sha256": "6a12819890abd08c2cb6e0e64b30fefd9efa98154b3db7815d82fda93435f0ea"
+      },
+      {
+        "k_sha256": "5e7154867f3e4d0568995954aab4f97b6a65a0e7890723607dc9c9dd8bf95a13",
+        "layer": "9",
+        "v_sha256": "a40f179aa7a1983ef68ef65ddef3cd94e74d4ba9670078ca58a0430f31572c7f"
+      },
+      {
+        "k_sha256": "be3c7ff1b16d63542b3ceb0357bbf27269aa306bfe9eefe6842f2a30cac0cee1",
+        "layer": "10",
+        "v_sha256": "6166d3d8eb8acf8c0b8c601b838cb14815a94873658a6ab1319228c9dea847bd"
+      },
+      {
+        "k_sha256": "7d039a1d8050f8c53b8daf3256e867abb276b2b99fa3b19b71575a917abee907",
+        "layer": "11",
+        "v_sha256": "431ef24d7597d48b2cd2a274c520405180600b0ef836156d09160d50c068894e"
+      },
+      {
+        "k_sha256": "f6b487399fad1f47c246ff23f80644d39759669e3348a878dd21466f2d2e3b92",
+        "layer": "12",
+        "v_sha256": "2a1379efc4337879c4abae2b8874527e56238d2b38eaa8df9c0443564b6507ac"
+      },
+      {
+        "k_sha256": "a498cb62a5403bf5015edc2e7f0203156087ec156cfee06e94935f432a69b802",
+        "layer": "13",
+        "v_sha256": "13ccd8bdf98b7e046b485c69556c92451a48306489e364be2ea1b1a20c6e8802"
+      },
+      {
+        "k_sha256": "f6520a174cd3bee93b99054995f31359aed1577c2fc93aed51d0f832e350a00e",
+        "layer": "14",
+        "v_sha256": "bf8ac2a6db8278ba1c5b95394f4ca03c0f4bee9253c904b3d6c1da81d5bc5875"
+      },
+      {
+        "k_sha256": "4427e7cf5702375117798eb20db9dd3758347d452d7927d7a54e02229feac2bd",
+        "layer": "15",
+        "v_sha256": "69f705f198d9ee713829dcab97ca058a19631237e2f2acb7bdfcbc2338032035"
+      },
+      {
+        "k_sha256": "0a20a305f8fdac03fb876792b48246afdbcbc2e57940666b1ae19d874431794f",
+        "layer": "16",
+        "v_sha256": "709e7a49aeedbfe6eb0b95ed3f4dd4631f8c4ef9bbde4a18ef07005cad985a33"
+      },
+      {
+        "k_sha256": "35ac0196b0e99f5dd02b9cb071f805d8a2346386b6970b547409b3e15bcdab01",
+        "layer": "17",
+        "v_sha256": "fd3641929188c312e13c843dbd471a78ccb6863af9f1e27820ace28581567333"
+      },
+      {
+        "k_sha256": "0d36c0cf4f20c9a01a4aa25734cef71775411732fc4f790cd5c1a15dcf457c45",
+        "layer": "18",
+        "v_sha256": "89175fb2f9a3e85a4cc1bd47fc8011eaef729f7ca00f6311ed2ecdb088b04211"
+      },
+      {
+        "k_sha256": "51c237e3d9554530828b52e1dd75c337dad587967c88e88169b5fdf9fff14deb",
+        "layer": "19",
+        "v_sha256": "a7d1eccaf1a50dd8cd678dfda0b4a9c4c1977490dbc2ced3e5b4546eb22ed938"
+      },
+      {
+        "k_sha256": "e77952b55cee2394ec9c3ddb29bd1db3cf81a5aab901a7223ca452df1a94655f",
+        "layer": "20",
+        "v_sha256": "608381df0d10cc3c4f52150aad1d5ded6de1909e9256f4b255f4464d0e2d31cb"
+      },
+      {
+        "k_sha256": "f02d7fa156e901750cdfb7f7f388a27e9654d1d37a1fd3b2f544af53c23e550b",
+        "layer": "21",
+        "v_sha256": "0da0f138ff29831942087bf0442f574d756b59dc9e8d3cd26e188b415f253dde"
+      },
+      {
+        "k_sha256": "b1afa621dac29eee302b06918160260838e39a2ff8cb30445747276043d10cac",
+        "layer": "22",
+        "v_sha256": "c23e888f1038c41c629fc5f72b7f4db71b757d6c098d47335fa02979db29f072"
+      },
+      {
+        "k_sha256": "6f779d4b89883965bb16facd21f44f5d8e119fedbf03904cc221e5d41b6115cc",
+        "layer": "23",
+        "v_sha256": "64bef12367c3b5e61327fbce104413cc41c15fb64337f9e14b0426011ac91763"
+      },
+      {
+        "k_sha256": "601f7b63d9c9c6b513853a38378cb8d11b1a705bf9b48361870e4f3e479d7c5a",
+        "layer": "24",
+        "v_sha256": "2c334273710350ca9ff24f0311883bd156155acafa73410d9824a0e4099320d0"
+      },
+      {
+        "k_sha256": "40ffaf7f82245587c1b7fb2f166f42c1946194060a97c38c36cfa1dc6ceac9b6",
+        "layer": "25",
+        "v_sha256": "0cdaa9021f7b707712cf8a2e88fadcb544d976a5dbabe446b7a8f2cd02e436f7"
+      },
+      {
+        "k_sha256": "1b4430eb46d63b31ab23ac49efdd7b7e0375effc3d0787e29a11e8cd7221660d",
+        "layer": "26",
+        "v_sha256": "096c1e2c39806e6f7968bb56c0f85872bb89951bdbcf58fa75c01b691a877f6e"
+      },
+      {
+        "k_sha256": "5edfa6f06921f0df7550484259fb1009ac8602acdf3bd1678358f02364a71c1c",
+        "layer": "27",
+        "v_sha256": "db945ee5f0f6e653ec3fa6a1114eadd92ef58da6f31c262139ec60cc968f0db3"
+      }
+    ],
+    "frozen_limits": {
+      "applied_moment_max_abs": 0.02,
+      "applied_quantization_max_abs": 0.05,
+      "comparison": "less_than_or_equal"
+    },
+    "per_layer_head_diagnostics": [
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          4,
+          6,
+          1,
+          0,
+          3,
+          5
+        ],
+        "seed": 20260711
+      },
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          6,
+          2,
+          0,
+          1,
+          4
+        ],
+        "seed": 20261720
+      },
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          0,
+          3,
+          1,
+          2,
+          6,
+          4
+        ],
+        "seed": 20262729
+      },
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          4,
+          0,
+          6,
+          3,
+          1,
+          2
+        ],
+        "seed": 20263738
+      },
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          4,
+          5,
+          0,
+          1,
+          3
+        ],
+        "seed": 20264747
+      },
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          5,
+          1,
+          2,
+          6,
+          0
+        ],
+        "seed": 20265756
+      },
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          0,
+          5,
+          2,
+          6,
+          1
+        ],
+        "seed": 20266765
+      },
+      {
+        "applied_covariance_diff": 0.0,
+        "applied_delta_max_abs_error": 0.0,
+        "applied_mean_diff": 0.0,
+        "applied_multiset_diff": 0.0,
+        "covariance_diff": 0.0,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 0,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          6,
+          4,
+          0,
+          3,
+          5
+        ],
+        "seed": 20267774
+      },
+      {
+        "applied_covariance_diff": 3.60608464688994e-06,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.00013950892025604844,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 7.275957614183426e-12,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          0,
+          3,
+          4,
+          1,
+          2,
+          5
+        ],
+        "seed": 20360714
+      },
+      {
+        "applied_covariance_diff": 3.4343611332587898e-06,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.00022670184262096882,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 5.4569682106375694e-12,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          5,
+          0,
+          2,
+          1,
+          6,
+          3
+        ],
+        "seed": 20361723
+      },
+      {
+        "applied_covariance_diff": 6.539477908518165e-06,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.0003487728536128998,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 2.9103830456733704e-11,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          6,
+          2,
+          5,
+          0,
+          1
+        ],
+        "seed": 20362732
+      },
+      {
+        "applied_covariance_diff": 2.520446287235245e-06,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.00022670207545161247,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 7.275957614183426e-12,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          6,
+          5,
+          0,
+          2,
+          1
+        ],
+        "seed": 20363741
+      },
+      {
+        "applied_covariance_diff": 6.996473530307412e-06,
+        "applied_delta_max_abs_error": 0.001953125,
+        "applied_mean_diff": 0.00048828125,
+        "applied_multiset_diff": 0.001953125,
+        "covariance_diff": 5.820766091346741e-11,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0
+        ],
+        "seed": 20364750
+      },
+      {
+        "applied_covariance_diff": 3.129907327092951e-06,
+        "applied_delta_max_abs_error": 0.00115966796875,
+        "applied_mean_diff": 0.00013950893480796367,
+        "applied_multiset_diff": 0.00115966796875,
+        "covariance_diff": 1.4551915228366852e-11,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          4,
+          6,
+          5,
+          3,
+          0,
+          1
+        ],
+        "seed": 20365759
+      },
+      {
+        "applied_covariance_diff": 3.3715678000589833e-06,
+        "applied_delta_max_abs_error": 0.00091552734375,
+        "applied_mean_diff": 0.00013950932770967484,
+        "applied_multiset_diff": 0.00091552734375,
+        "covariance_diff": 7.275957614183426e-12,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          0,
+          2,
+          5,
+          6,
+          3
+        ],
+        "seed": 20366768
+      },
+      {
+        "applied_covariance_diff": 6.1257596826180816e-06,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.00017438619397580624,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 1.4551915228366852e-11,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 1,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          4,
+          0,
+          5,
+          2,
+          1,
+          3
+        ],
+        "seed": 20367777
+      },
+      {
+        "applied_covariance_diff": 8.521834388375282e-05,
+        "applied_delta_max_abs_error": 0.0013427734375,
+        "applied_mean_diff": 0.000244140625,
+        "applied_multiset_diff": 0.0013427734375,
+        "covariance_diff": 1.3969838619232178e-09,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          0,
+          6,
+          5,
+          3,
+          2,
+          1
+        ],
+        "seed": 20460717
+      },
+      {
+        "applied_covariance_diff": 0.00015760213136672974,
+        "applied_delta_max_abs_error": 0.001953125,
+        "applied_mean_diff": 0.00027901679277420044,
+        "applied_multiset_diff": 0.001953125,
+        "covariance_diff": 1.862645149230957e-09,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          6,
+          5,
+          1,
+          2,
+          4
+        ],
+        "seed": 20461726
+      },
+      {
+        "applied_covariance_diff": 4.255492240190506e-05,
+        "applied_delta_max_abs_error": 0.00146484375,
+        "applied_mean_diff": 0.000244140625,
+        "applied_multiset_diff": 0.00146484375,
+        "covariance_diff": 4.656612873077393e-10,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          4,
+          5,
+          6,
+          0,
+          3
+        ],
+        "seed": 20462735
+      },
+      {
+        "applied_covariance_diff": 8.164159953594208e-05,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.00020926445722579956,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 1.862645149230957e-09,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          0,
+          1,
+          5,
+          6,
+          2
+        ],
+        "seed": 20463744
+      },
+      {
+        "applied_covariance_diff": 8.485279977321625e-05,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.0002179828006774187,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 4.656612873077393e-10,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          6,
+          1,
+          0,
+          4,
+          3
+        ],
+        "seed": 20464753
+      },
+      {
+        "applied_covariance_diff": 0.00022494792938232422,
+        "applied_delta_max_abs_error": 0.001953125,
+        "applied_mean_diff": 0.0003138929605484009,
+        "applied_multiset_diff": 0.001953125,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          4,
+          2,
+          0,
+          3,
+          1
+        ],
+        "seed": 20465762
+      },
+      {
+        "applied_covariance_diff": 6.439280696213245e-05,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.00026157964020967484,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 1.862645149230957e-09,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          6,
+          5,
+          2,
+          1,
+          4,
+          0
+        ],
+        "seed": 20466771
+      },
+      {
+        "applied_covariance_diff": 7.909536361694336e-05,
+        "applied_delta_max_abs_error": 0.0009765625,
+        "applied_mean_diff": 0.00027901679277420044,
+        "applied_multiset_diff": 0.0009765625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 2,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          2,
+          6,
+          4,
+          1,
+          0,
+          5
+        ],
+        "seed": 20467780
+      },
+      {
+        "applied_covariance_diff": 0.00023267604410648346,
+        "applied_delta_max_abs_error": 0.001953125,
+        "applied_mean_diff": 0.00079345703125,
+        "applied_multiset_diff": 0.001953125,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          1,
+          4,
+          2,
+          3,
+          0
+        ],
+        "seed": 20560720
+      },
+      {
+        "applied_covariance_diff": 0.0008685290813446045,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0013950914144515991,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0
+        ],
+        "seed": 20561729
+      },
+      {
+        "applied_covariance_diff": 0.00032933615148067474,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0009765625,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          3,
+          0,
+          2,
+          4,
+          1
+        ],
+        "seed": 20562738
+      },
+      {
+        "applied_covariance_diff": 0.00028429762460291386,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0009765625,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          0,
+          5,
+          4,
+          6,
+          3,
+          1
+        ],
+        "seed": 20563747
+      },
+      {
+        "applied_covariance_diff": 0.0001771543174982071,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006975457072257996,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 1.862645149230957e-09,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          0,
+          3,
+          1,
+          2,
+          4,
+          5
+        ],
+        "seed": 20564756
+      },
+      {
+        "applied_covariance_diff": 0.0009182021021842957,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.00048828125,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          4,
+          6,
+          1,
+          0,
+          2
+        ],
+        "seed": 20565765
+      },
+      {
+        "applied_covariance_diff": 0.0011044442653656006,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006975457072257996,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          3,
+          5,
+          2,
+          6,
+          0,
+          1
+        ],
+        "seed": 20566774
+      },
+      {
+        "applied_covariance_diff": 0.0002716253511607647,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0009765625,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 3,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          3,
+          6,
+          4,
+          5,
+          2,
+          0
+        ],
+        "seed": 20567783
+      },
+      {
+        "applied_covariance_diff": 0.000457763671875,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006277901120483875,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 5.587935447692871e-09,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          3,
+          1,
+          0,
+          5,
+          6,
+          2
+        ],
+        "seed": 20660723
+      },
+      {
+        "applied_covariance_diff": 0.00017862208187580109,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006626658141613007,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          2,
+          3,
+          5,
+          6,
+          0,
+          1
+        ],
+        "seed": 20661732
+      },
+      {
+        "applied_covariance_diff": 0.0005058050155639648,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0008370541036128998,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          5,
+          0,
+          6,
+          4,
+          3
+        ],
+        "seed": 20662741
+      },
+      {
+        "applied_covariance_diff": 0.00029694102704524994,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.001255583018064499,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          0,
+          5,
+          4,
+          2,
+          1,
+          3
+        ],
+        "seed": 20663750
+      },
+      {
+        "applied_covariance_diff": 0.00031554698944091797,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0009068064391613007,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          1,
+          4,
+          5,
+          6,
+          0
+        ],
+        "seed": 20664759
+      },
+      {
+        "applied_covariance_diff": 0.0002340134233236313,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006975382566452026,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          4,
+          0,
+          1,
+          5,
+          2,
+          3
+        ],
+        "seed": 20665768
+      },
+      {
+        "applied_covariance_diff": 0.0007322728633880615,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0015346109867095947,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 2.2351741790771484e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          6,
+          4,
+          2,
+          0,
+          3,
+          5
+        ],
+        "seed": 20666777
+      },
+      {
+        "applied_covariance_diff": 0.00032188743352890015,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006277933716773987,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 4,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          2,
+          0,
+          4,
+          6,
+          1,
+          5
+        ],
+        "seed": 20667786
+      },
+      {
+        "applied_covariance_diff": 0.0003182562068104744,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0009504045592620969,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          0,
+          4,
+          6,
+          3,
+          2,
+          1
+        ],
+        "seed": 20760726
+      },
+      {
+        "applied_covariance_diff": 0.0008241832256317139,
+        "applied_delta_max_abs_error": 0.0074462890625,
+        "applied_mean_diff": 0.0011160708963871002,
+        "applied_multiset_diff": 0.0074462890625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          5,
+          0,
+          6,
+          4,
+          3
+        ],
+        "seed": 20761735
+      },
+      {
+        "applied_covariance_diff": 0.0004998892545700073,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0008370541036128998,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          4,
+          3,
+          5,
+          2,
+          0,
+          1
+        ],
+        "seed": 20762744
+      },
+      {
+        "applied_covariance_diff": 0.00038212165236473083,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0007498604245483875,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 3.725290298461914e-09,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          6,
+          1,
+          0,
+          4,
+          3
+        ],
+        "seed": 20763753
+      },
+      {
+        "applied_covariance_diff": 0.0019143372774124146,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0010114386677742004,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          3,
+          6,
+          4,
+          5,
+          2,
+          0
+        ],
+        "seed": 20764762
+      },
+      {
+        "applied_covariance_diff": 0.0004395991563796997,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0011160708963871002,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          6,
+          1,
+          3,
+          4,
+          0
+        ],
+        "seed": 20765771
+      },
+      {
+        "applied_covariance_diff": 0.00024019554257392883,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006855577230453491,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          3,
+          5,
+          6,
+          2,
+          1,
+          0
+        ],
+        "seed": 20766780
+      },
+      {
+        "applied_covariance_diff": 0.0009148977696895599,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741007566452026,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 5,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          0,
+          5,
+          6,
+          1,
+          3,
+          4
+        ],
+        "seed": 20767789
+      },
+      {
+        "applied_covariance_diff": 0.0005892049521207809,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0008370503783226013,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          3,
+          0,
+          4,
+          6,
+          2,
+          5
+        ],
+        "seed": 20860729
+      },
+      {
+        "applied_covariance_diff": 0.00047229230403900146,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0016741082072257996,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          0,
+          4,
+          1,
+          2,
+          3
+        ],
+        "seed": 20861738
+      },
+      {
+        "applied_covariance_diff": 0.0009606704115867615,
+        "applied_delta_max_abs_error": 0.0068359375,
+        "applied_mean_diff": 0.0010811947286128998,
+        "applied_multiset_diff": 0.0068359375,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          0,
+          3,
+          4,
+          6,
+          1,
+          5
+        ],
+        "seed": 20862747
+      },
+      {
+        "applied_covariance_diff": 0.0006653144955635071,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0005580484867095947,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          4,
+          1,
+          0,
+          6,
+          2,
+          3
+        ],
+        "seed": 20863756
+      },
+      {
+        "applied_covariance_diff": 0.000331902876496315,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0009416863322257996,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          3,
+          6,
+          2,
+          5,
+          1,
+          0
+        ],
+        "seed": 20864765
+      },
+      {
+        "applied_covariance_diff": 0.000612899661064148,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0011160671710968018,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          6,
+          4,
+          5,
+          2,
+          1
+        ],
+        "seed": 20865774
+      },
+      {
+        "applied_covariance_diff": 0.00036678090691566467,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0008370541036128998,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          6,
+          2,
+          0,
+          3,
+          4
+        ],
+        "seed": 20866783
+      },
+      {
+        "applied_covariance_diff": 0.00031968019902706146,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0006975419819355011,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 7.450580596923828e-09,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 6,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          1,
+          4,
+          0,
+          6,
+          3
+        ],
+        "seed": 20867792
+      },
+      {
+        "applied_covariance_diff": 0.0015980899333953857,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0009765625,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          3,
+          5,
+          6,
+          0,
+          4,
+          2
+        ],
+        "seed": 20960732
+      },
+      {
+        "applied_covariance_diff": 0.001896977424621582,
+        "applied_delta_max_abs_error": 0.0068359375,
+        "applied_mean_diff": 0.00146484375,
+        "applied_multiset_diff": 0.0068359375,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          1,
+          0,
+          3,
+          2,
+          4
+        ],
+        "seed": 20961741
+      },
+      {
+        "applied_covariance_diff": 0.0015152543783187866,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0011204332113265991,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          4,
+          2,
+          6,
+          1,
+          0
+        ],
+        "seed": 20962750
+      },
+      {
+        "applied_covariance_diff": 0.0009481906890869141,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0012555718421936035,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          0,
+          2,
+          3,
+          6,
+          4
+        ],
+        "seed": 20963759
+      },
+      {
+        "applied_covariance_diff": 0.00103074312210083,
+        "applied_delta_max_abs_error": 0.005859375,
+        "applied_mean_diff": 0.0011160746216773987,
+        "applied_multiset_diff": 0.005859375,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          0,
+          3
+        ],
+        "seed": 20964768
+      },
+      {
+        "applied_covariance_diff": 0.004889249801635742,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.00146484375,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          0,
+          4,
+          2,
+          1,
+          6,
+          3
+        ],
+        "seed": 20965777
+      },
+      {
+        "applied_covariance_diff": 0.0016850084066390991,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0027901828289031982,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          4,
+          1,
+          3,
+          6,
+          0
+        ],
+        "seed": 20966786
+      },
+      {
+        "applied_covariance_diff": 0.0027834177017211914,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0010811984539031982,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 7,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          4,
+          0,
+          5,
+          3,
+          1
+        ],
+        "seed": 20967795
+      },
+      {
+        "applied_covariance_diff": 0.0018790662288665771,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0011160671710968018,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          4,
+          0,
+          1,
+          6,
+          3,
+          2
+        ],
+        "seed": 21060735
+      },
+      {
+        "applied_covariance_diff": 0.004470944404602051,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0011160708963871002,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          3,
+          6,
+          5,
+          0,
+          2,
+          4
+        ],
+        "seed": 21061744
+      },
+      {
+        "applied_covariance_diff": 0.0013503357768058777,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0011117085814476013,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          3,
+          6,
+          4,
+          2,
+          0,
+          5
+        ],
+        "seed": 21062753
+      },
+      {
+        "applied_covariance_diff": 0.0009423322044312954,
+        "applied_delta_max_abs_error": 0.00390625,
+        "applied_mean_diff": 0.0007673017680644989,
+        "applied_multiset_diff": 0.00390625,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          4,
+          6,
+          1,
+          0,
+          2,
+          3
+        ],
+        "seed": 21063762
+      },
+      {
+        "applied_covariance_diff": 0.002169966697692871,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0011509507894515991,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          0,
+          6,
+          2,
+          1,
+          4
+        ],
+        "seed": 21064771
+      },
+      {
+        "applied_covariance_diff": 0.0015318095684051514,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0013950765132904053,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          5,
+          0,
+          2,
+          1,
+          6,
+          3
+        ],
+        "seed": 21065780
+      },
+      {
+        "applied_covariance_diff": 0.0009038150310516357,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741156578063965,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.4901161193847656e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          0,
+          3,
+          1,
+          5,
+          2,
+          4
+        ],
+        "seed": 21066789
+      },
+      {
+        "applied_covariance_diff": 0.0016454458236694336,
+        "applied_delta_max_abs_error": 0.005859375,
+        "applied_mean_diff": 0.0012555867433547974,
+        "applied_multiset_diff": 0.005859375,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 8,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          0,
+          6,
+          3,
+          4,
+          1
+        ],
+        "seed": 21067798
+      },
+      {
+        "applied_covariance_diff": 0.001838594675064087,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016261637210845947,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          4,
+          1,
+          6,
+          3,
+          0
+        ],
+        "seed": 21160738
+      },
+      {
+        "applied_covariance_diff": 0.0035476088523864746,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001395106315612793,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 8.940696716308594e-08,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          4,
+          5,
+          1,
+          6,
+          3,
+          0
+        ],
+        "seed": 21161747
+      },
+      {
+        "applied_covariance_diff": 0.005054771900177002,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741156578063965,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 8.940696716308594e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          3,
+          0,
+          5,
+          1,
+          2,
+          4
+        ],
+        "seed": 21162756
+      },
+      {
+        "applied_covariance_diff": 0.004170536994934082,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0013253353536128998,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          6,
+          3,
+          5,
+          2,
+          1,
+          0
+        ],
+        "seed": 21163765
+      },
+      {
+        "applied_covariance_diff": 0.0024805963039398193,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741156578063965,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          0,
+          5,
+          6,
+          2,
+          3
+        ],
+        "seed": 21164774
+      },
+      {
+        "applied_covariance_diff": 0.002482086420059204,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0018833689391613007,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          4,
+          6,
+          1,
+          3,
+          0
+        ],
+        "seed": 21165783
+      },
+      {
+        "applied_covariance_diff": 0.005121126770973206,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741082072257996,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          0,
+          6,
+          1,
+          2,
+          4
+        ],
+        "seed": 21166792
+      },
+      {
+        "applied_covariance_diff": 0.0043239593505859375,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741156578063965,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 9,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          4,
+          6,
+          0,
+          1,
+          2
+        ],
+        "seed": 21167801
+      },
+      {
+        "applied_covariance_diff": 0.0015025362372398376,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0013950914144515991,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          6,
+          1,
+          5,
+          3,
+          0,
+          4
+        ],
+        "seed": 21260741
+      },
+      {
+        "applied_covariance_diff": 0.0019659101963043213,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.002232193946838379,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          1,
+          6,
+          5,
+          0,
+          2
+        ],
+        "seed": 21261750
+      },
+      {
+        "applied_covariance_diff": 0.002498868852853775,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.002022862434387207,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 8.940696716308594e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          3,
+          0,
+          1,
+          2,
+          4
+        ],
+        "seed": 21262759
+      },
+      {
+        "applied_covariance_diff": 0.0020661279559135437,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0013253241777420044,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          6,
+          2,
+          1,
+          4,
+          5
+        ],
+        "seed": 21263768
+      },
+      {
+        "applied_covariance_diff": 0.004531502723693848,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0015346109867095947,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          5,
+          0,
+          6,
+          4,
+          1
+        ],
+        "seed": 21264777
+      },
+      {
+        "applied_covariance_diff": 0.0024499893188476562,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741156578063965,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          0,
+          1,
+          3,
+          2,
+          4
+        ],
+        "seed": 21265786
+      },
+      {
+        "applied_covariance_diff": 0.001711919903755188,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0019705593585968018,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.9802322387695312e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          1,
+          4,
+          5,
+          6,
+          2
+        ],
+        "seed": 21266795
+      },
+      {
+        "applied_covariance_diff": 0.0024954676628112793,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0020926296710968018,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 10,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          6,
+          5,
+          4,
+          1,
+          3,
+          0
+        ],
+        "seed": 21267804
+      },
+      {
+        "applied_covariance_diff": 0.0027443766593933105,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.002232164144515991,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          1,
+          0,
+          6,
+          4,
+          2
+        ],
+        "seed": 21360744
+      },
+      {
+        "applied_covariance_diff": 0.0026397705078125,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741063445806503,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          5,
+          0,
+          1,
+          6,
+          4
+        ],
+        "seed": 21361753
+      },
+      {
+        "applied_covariance_diff": 0.004075765609741211,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.002232142724096775,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          6,
+          0,
+          2,
+          3,
+          4,
+          5
+        ],
+        "seed": 21362762
+      },
+      {
+        "applied_covariance_diff": 0.002672851085662842,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001953125,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          4,
+          0,
+          2,
+          5,
+          3,
+          1
+        ],
+        "seed": 21363771
+      },
+      {
+        "applied_covariance_diff": 0.002852827310562134,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.002197265625,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          4,
+          0,
+          5,
+          3,
+          1
+        ],
+        "seed": 21364780
+      },
+      {
+        "applied_covariance_diff": 0.002791076898574829,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001953125,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          6,
+          4,
+          2,
+          0,
+          1
+        ],
+        "seed": 21365789
+      },
+      {
+        "applied_covariance_diff": 0.004628896713256836,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0018136203289031982,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          0,
+          4,
+          6,
+          5,
+          3,
+          1
+        ],
+        "seed": 21366798
+      },
+      {
+        "applied_covariance_diff": 0.0026561319828033447,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741752624511719,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 11,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          3,
+          0,
+          1,
+          4,
+          2
+        ],
+        "seed": 21367807
+      },
+      {
+        "applied_covariance_diff": 0.00714111328125,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0012555718421936035,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          4,
+          6,
+          0,
+          2,
+          1
+        ],
+        "seed": 21460747
+      },
+      {
+        "applied_covariance_diff": 0.006505370140075684,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.002371653914451599,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          5,
+          0,
+          2,
+          6,
+          3
+        ],
+        "seed": 21461756
+      },
+      {
+        "applied_covariance_diff": 0.0062978267669677734,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.002232193946838379,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          2,
+          3,
+          0,
+          6,
+          1,
+          5
+        ],
+        "seed": 21462765
+      },
+      {
+        "applied_covariance_diff": 0.010019302368164062,
+        "applied_delta_max_abs_error": 0.01171875,
+        "applied_mean_diff": 0.0030691921710968018,
+        "applied_multiset_diff": 0.01171875,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          3,
+          1,
+          4,
+          5,
+          0,
+          2
+        ],
+        "seed": 21463774
+      },
+      {
+        "applied_covariance_diff": 0.004481375217437744,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001395106315612793,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          6,
+          2,
+          1,
+          4,
+          5
+        ],
+        "seed": 21464783
+      },
+      {
+        "applied_covariance_diff": 0.002774149179458618,
+        "applied_delta_max_abs_error": 0.0146484375,
+        "applied_mean_diff": 0.004324764013290405,
+        "applied_multiset_diff": 0.0146484375,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          4,
+          0,
+          6,
+          1,
+          5
+        ],
+        "seed": 21465792
+      },
+      {
+        "applied_covariance_diff": 0.0038307011127471924,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0013950893189758062,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          3,
+          5,
+          0,
+          6,
+          4
+        ],
+        "seed": 21466801
+      },
+      {
+        "applied_covariance_diff": 0.006339728832244873,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016740858554840088,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 12,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          0,
+          1,
+          4,
+          6,
+          3,
+          2
+        ],
+        "seed": 21467810
+      },
+      {
+        "applied_covariance_diff": 0.002399623394012451,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001953125,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          3,
+          0,
+          1,
+          4,
+          2
+        ],
+        "seed": 21560750
+      },
+      {
+        "applied_covariance_diff": 0.003423929214477539,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001953125,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          4,
+          5,
+          6,
+          2,
+          1
+        ],
+        "seed": 21561759
+      },
+      {
+        "applied_covariance_diff": 0.002926766872406006,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001743912696838379,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          3,
+          0,
+          5,
+          1,
+          4
+        ],
+        "seed": 21562768
+      },
+      {
+        "applied_covariance_diff": 0.008815288543701172,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0022321343421936035,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 1.7881393432617188e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          0,
+          3,
+          4,
+          5,
+          6,
+          1
+        ],
+        "seed": 21563777
+      },
+      {
+        "applied_covariance_diff": 0.003130108118057251,
+        "applied_delta_max_abs_error": 0.013671875,
+        "applied_mean_diff": 0.0015345960855484009,
+        "applied_multiset_diff": 0.013671875,
+        "covariance_diff": 4.470348358154297e-08,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          4,
+          6,
+          0,
+          2,
+          1
+        ],
+        "seed": 21564786
+      },
+      {
+        "applied_covariance_diff": 0.0036427676677703857,
+        "applied_delta_max_abs_error": 0.01171875,
+        "applied_mean_diff": 0.0016741156578063965,
+        "applied_multiset_diff": 0.01171875,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          4,
+          5,
+          1,
+          6,
+          3,
+          0
+        ],
+        "seed": 21565795
+      },
+      {
+        "applied_covariance_diff": 0.004136532545089722,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0015346109867095947,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 8.940696716308594e-08,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          1,
+          0,
+          6,
+          4,
+          3
+        ],
+        "seed": 21566804
+      },
+      {
+        "applied_covariance_diff": 0.002663910388946533,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.001953125,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 13,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          1,
+          2,
+          0,
+          3,
+          4
+        ],
+        "seed": 21567813
+      },
+      {
+        "applied_covariance_diff": 0.005222029983997345,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0027901530265808105,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          6,
+          4,
+          0,
+          3,
+          2,
+          5
+        ],
+        "seed": 21660753
+      },
+      {
+        "applied_covariance_diff": 0.004025638103485107,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0018136203289031982,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          0,
+          5,
+          2,
+          1,
+          4,
+          3
+        ],
+        "seed": 21661762
+      },
+      {
+        "applied_covariance_diff": 0.0054891109466552734,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.00390625,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 5.960464477539063e-08,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          5,
+          6,
+          3,
+          0,
+          2
+        ],
+        "seed": 21662771
+      },
+      {
+        "applied_covariance_diff": 0.004038810729980469,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0026506707072257996,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          3,
+          0,
+          6,
+          4,
+          2
+        ],
+        "seed": 21663780
+      },
+      {
+        "applied_covariance_diff": 0.008413553237915039,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0025112032890319824,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          6,
+          5,
+          1,
+          0,
+          4
+        ],
+        "seed": 21664789
+      },
+      {
+        "applied_covariance_diff": 0.004330407828092575,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0022321343421936035,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 8.940696716308594e-08,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          6,
+          4,
+          0,
+          3,
+          5
+        ],
+        "seed": 21665798
+      },
+      {
+        "applied_covariance_diff": 0.004920601844787598,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0016741454601287842,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          1,
+          2,
+          3,
+          4,
+          0
+        ],
+        "seed": 21666807
+      },
+      {
+        "applied_covariance_diff": 0.005312621593475342,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.002232074737548828,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 14,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          4,
+          6,
+          3,
+          0,
+          1
+        ],
+        "seed": 21667816
+      },
+      {
+        "applied_covariance_diff": 0.014331340789794922,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0022321343421936035,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          1,
+          2,
+          3,
+          0,
+          4
+        ],
+        "seed": 21760756
+      },
+      {
+        "applied_covariance_diff": 0.011471271514892578,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0025112032890319824,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          6,
+          5,
+          0,
+          1,
+          3,
+          2
+        ],
+        "seed": 21761765
+      },
+      {
+        "applied_covariance_diff": 0.005002498626708984,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.002685546875,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          3,
+          0,
+          6,
+          2,
+          5
+        ],
+        "seed": 21762774
+      },
+      {
+        "applied_covariance_diff": 0.013475418090820312,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.003348231315612793,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          0,
+          4,
+          1,
+          6,
+          2
+        ],
+        "seed": 21763783
+      },
+      {
+        "applied_covariance_diff": 0.009931564331054688,
+        "applied_delta_max_abs_error": 0.0078125,
+        "applied_mean_diff": 0.0022321417927742004,
+        "applied_multiset_diff": 0.0078125,
+        "covariance_diff": 3.5762786865234375e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          1,
+          2,
+          3,
+          0,
+          4
+        ],
+        "seed": 21764792
+      },
+      {
+        "applied_covariance_diff": 0.009463071823120117,
+        "applied_delta_max_abs_error": 0.013671875,
+        "applied_mean_diff": 0.003348231315612793,
+        "applied_multiset_diff": 0.013671875,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          4,
+          0,
+          5,
+          6,
+          3
+        ],
+        "seed": 21765801
+      },
+      {
+        "applied_covariance_diff": 0.006833434104919434,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0033482015132904053,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 1.7881393432617188e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          6,
+          5,
+          0,
+          2,
+          1,
+          3
+        ],
+        "seed": 21766810
+      },
+      {
+        "applied_covariance_diff": 0.00800180435180664,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.001953125,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 15,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          0,
+          1,
+          2,
+          6,
+          3,
+          5
+        ],
+        "seed": 21767819
+      },
+      {
+        "applied_covariance_diff": 0.009910941123962402,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0027901530265808105,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 1.1920928955078125e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          6,
+          3,
+          4,
+          5,
+          0,
+          2
+        ],
+        "seed": 21860759
+      },
+      {
+        "applied_covariance_diff": 0.021021366119384766,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.00390625,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          6,
+          3,
+          0,
+          2,
+          4,
+          5
+        ],
+        "seed": 21861768
+      },
+      {
+        "applied_covariance_diff": 0.01049938052892685,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.002162337303161621,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          0,
+          6,
+          1,
+          2,
+          4
+        ],
+        "seed": 21862777
+      },
+      {
+        "applied_covariance_diff": 0.007001340389251709,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0041852593421936035,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          6,
+          1,
+          5,
+          2,
+          4,
+          0
+        ],
+        "seed": 21863786
+      },
+      {
+        "applied_covariance_diff": 0.014913082122802734,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.003348231315612793,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          3,
+          4,
+          0,
+          6,
+          2
+        ],
+        "seed": 21864795
+      },
+      {
+        "applied_covariance_diff": 0.008619308471679688,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0028250813484191895,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          4,
+          5,
+          1,
+          6,
+          3,
+          0
+        ],
+        "seed": 21865804
+      },
+      {
+        "applied_covariance_diff": 0.015277385711669922,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0036272406578063965,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          1,
+          6,
+          5,
+          0,
+          2
+        ],
+        "seed": 21866813
+      },
+      {
+        "applied_covariance_diff": 0.010380983352661133,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.0026506781578063965,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 16,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          3,
+          1,
+          0,
+          6,
+          2,
+          5
+        ],
+        "seed": 21867822
+      },
+      {
+        "applied_covariance_diff": 0.01703619956970215,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.004464298486709595,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          6,
+          4,
+          5,
+          0,
+          1,
+          2
+        ],
+        "seed": 21960762
+      },
+      {
+        "applied_covariance_diff": 0.0747528076171875,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0078125,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          1,
+          6,
+          5,
+          0,
+          2
+        ],
+        "seed": 21961771
+      },
+      {
+        "applied_covariance_diff": 0.04613018035888672,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0078125,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          3,
+          6,
+          5,
+          2,
+          0
+        ],
+        "seed": 21962780
+      },
+      {
+        "applied_covariance_diff": 0.016411542892456055,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.004464268684387207,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "seed": 21963789
+      },
+      {
+        "applied_covariance_diff": 0.026906728744506836,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.006556987762451172,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          0,
+          6,
+          1,
+          3,
+          4
+        ],
+        "seed": 21964798
+      },
+      {
+        "applied_covariance_diff": 0.01311492919921875,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.00390625,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          4,
+          1,
+          0,
+          3,
+          2
+        ],
+        "seed": 21965807
+      },
+      {
+        "applied_covariance_diff": 0.03564453125,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.006417453289031982,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          1,
+          5,
+          6,
+          4,
+          2
+        ],
+        "seed": 21966816
+      },
+      {
+        "applied_covariance_diff": 0.03658628463745117,
+        "applied_delta_max_abs_error": 0.0234375,
+        "applied_mean_diff": 0.00390625,
+        "applied_multiset_diff": 0.0234375,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 17,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          0,
+          4,
+          5,
+          3,
+          6,
+          1
+        ],
+        "seed": 21967825
+      },
+      {
+        "applied_covariance_diff": 0.028630733489990234,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.004185318946838379,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          6,
+          0,
+          5,
+          3,
+          1,
+          2
+        ],
+        "seed": 22060765
+      },
+      {
+        "applied_covariance_diff": 0.023442208766937256,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0050223469734191895,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 7.152557373046875e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          0,
+          1,
+          6,
+          2,
+          5
+        ],
+        "seed": 22061774
+      },
+      {
+        "applied_covariance_diff": 0.012380242347717285,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.011160731315612793,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          3,
+          6,
+          5,
+          2,
+          0
+        ],
+        "seed": 22062783
+      },
+      {
+        "applied_covariance_diff": 0.03441953659057617,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0050223469734191895,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          6,
+          1,
+          4,
+          0,
+          3,
+          5
+        ],
+        "seed": 22063792
+      },
+      {
+        "applied_covariance_diff": 0.017749786376953125,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.00613839365541935,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 2.384185791015625e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          6,
+          1,
+          2,
+          4,
+          0
+        ],
+        "seed": 22064801
+      },
+      {
+        "applied_covariance_diff": 0.023733973503112793,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.005580306053161621,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 3.5762786865234375e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          4,
+          6,
+          1,
+          3,
+          0
+        ],
+        "seed": 22065810
+      },
+      {
+        "applied_covariance_diff": 0.015145421028137207,
+        "applied_delta_max_abs_error": 0.015625,
+        "applied_mean_diff": 0.004464291036128998,
+        "applied_multiset_diff": 0.015625,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          6,
+          1,
+          2,
+          0,
+          5
+        ],
+        "seed": 22066819
+      },
+      {
+        "applied_covariance_diff": 0.040859222412109375,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.005859375,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 7.152557373046875e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 18,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          6,
+          0,
+          5,
+          1,
+          4
+        ],
+        "seed": 22067828
+      },
+      {
+        "applied_covariance_diff": 0.02221536636352539,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.008928567171096802,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          0,
+          2,
+          1,
+          4,
+          3
+        ],
+        "seed": 22160768
+      },
+      {
+        "applied_covariance_diff": 0.022596314549446106,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0069754719734191895,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          5,
+          4,
+          6,
+          1,
+          0
+        ],
+        "seed": 22161777
+      },
+      {
+        "applied_covariance_diff": 0.018072158098220825,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0066964030265808105,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          2,
+          5,
+          1,
+          3,
+          6,
+          0
+        ],
+        "seed": 22162786
+      },
+      {
+        "applied_covariance_diff": 0.041346073150634766,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0066967010498046875,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          0,
+          6,
+          2,
+          4,
+          1
+        ],
+        "seed": 22163795
+      },
+      {
+        "applied_covariance_diff": 0.017564773559570312,
+        "applied_delta_max_abs_error": 0.0234375,
+        "applied_mean_diff": 0.005580335855484009,
+        "applied_multiset_diff": 0.0234375,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          2,
+          6,
+          4,
+          5,
+          1,
+          0
+        ],
+        "seed": 22164804
+      },
+      {
+        "applied_covariance_diff": 0.030393123626708984,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.007254481315612793,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          6,
+          4,
+          0,
+          2,
+          3
+        ],
+        "seed": 22165813
+      },
+      {
+        "applied_covariance_diff": 0.033138275146484375,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.00665283203125,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          2,
+          4,
+          1,
+          6,
+          0,
+          5
+        ],
+        "seed": 22166822
+      },
+      {
+        "applied_covariance_diff": 0.07250595092773438,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.006696343421936035,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 19,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          2,
+          0,
+          5,
+          6,
+          4,
+          1
+        ],
+        "seed": 22167831
+      },
+      {
+        "applied_covariance_diff": 0.0446624755859375,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.006696462631225586,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          3,
+          4,
+          0,
+          2,
+          1
+        ],
+        "seed": 22260771
+      },
+      {
+        "applied_covariance_diff": 0.057969093322753906,
+        "applied_delta_max_abs_error": 0.0546875,
+        "applied_mean_diff": 0.010044649243354797,
+        "applied_multiset_diff": 0.0546875,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          3,
+          0,
+          5,
+          2,
+          4,
+          1
+        ],
+        "seed": 22261780
+      },
+      {
+        "applied_covariance_diff": 0.03346872329711914,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.005859375,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          3,
+          0,
+          4,
+          5,
+          2,
+          1
+        ],
+        "seed": 22262789
+      },
+      {
+        "applied_covariance_diff": 0.03343546390533447,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.011160731315612793,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          5,
+          2,
+          3,
+          6,
+          0
+        ],
+        "seed": 22263798
+      },
+      {
+        "applied_covariance_diff": 0.03421473503112793,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.005580350756645203,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          6,
+          0,
+          5,
+          2,
+          3
+        ],
+        "seed": 22264807
+      },
+      {
+        "applied_covariance_diff": 0.020106792449951172,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.006975412368774414,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 3.5762786865234375e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          0,
+          6,
+          1,
+          2,
+          4,
+          3
+        ],
+        "seed": 22265816
+      },
+      {
+        "applied_covariance_diff": 0.027011632919311523,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.008928537368774414,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 7.152557373046875e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          0,
+          6,
+          2,
+          5,
+          3,
+          1
+        ],
+        "seed": 22266825
+      },
+      {
+        "applied_covariance_diff": 0.030085325241088867,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0078125,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 20,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          6,
+          0,
+          1,
+          4,
+          5
+        ],
+        "seed": 22267834
+      },
+      {
+        "applied_covariance_diff": 0.07989931106567383,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.014508962631225586,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          6,
+          0,
+          3,
+          2,
+          4
+        ],
+        "seed": 22360774
+      },
+      {
+        "applied_covariance_diff": 0.03693509101867676,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.0078125,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          5,
+          0,
+          3,
+          6,
+          4
+        ],
+        "seed": 22361783
+      },
+      {
+        "applied_covariance_diff": 0.044449806213378906,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.006138443946838379,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          2,
+          6,
+          4,
+          1,
+          0,
+          5
+        ],
+        "seed": 22362792
+      },
+      {
+        "applied_covariance_diff": 0.07493257522583008,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.011160731315612793,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          5,
+          1,
+          3,
+          0,
+          4
+        ],
+        "seed": 22363801
+      },
+      {
+        "applied_covariance_diff": 0.12357783317565918,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.012834787368774414,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 2.86102294921875e-06,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          6,
+          0,
+          4,
+          5,
+          1,
+          2
+        ],
+        "seed": 22364810
+      },
+      {
+        "applied_covariance_diff": 0.04461964964866638,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.008928537368774414,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          0,
+          5,
+          2,
+          1,
+          4,
+          3
+        ],
+        "seed": 22365819
+      },
+      {
+        "applied_covariance_diff": 0.08241462707519531,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.0078125,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          0,
+          2,
+          1,
+          6,
+          4
+        ],
+        "seed": 22366828
+      },
+      {
+        "applied_covariance_diff": 0.05098533630371094,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.01450890302658081,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 21,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          1,
+          4,
+          5,
+          6,
+          2
+        ],
+        "seed": 22367837
+      },
+      {
+        "applied_covariance_diff": 0.08352088928222656,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.011160731315612793,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          3,
+          0,
+          6,
+          4,
+          1
+        ],
+        "seed": 22460777
+      },
+      {
+        "applied_covariance_diff": 0.05538463592529297,
+        "applied_delta_max_abs_error": 0.046875,
+        "applied_mean_diff": 0.013392806053161621,
+        "applied_multiset_diff": 0.046875,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          3,
+          6,
+          5,
+          0,
+          2,
+          4
+        ],
+        "seed": 22461786
+      },
+      {
+        "applied_covariance_diff": 0.06227898597717285,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.0111432746052742,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          6,
+          1,
+          4,
+          5,
+          0,
+          3
+        ],
+        "seed": 22462795
+      },
+      {
+        "applied_covariance_diff": 0.10199546813964844,
+        "applied_delta_max_abs_error": 0.04296875,
+        "applied_mean_diff": 0.011160671710968018,
+        "applied_multiset_diff": 0.04296875,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          4,
+          0,
+          1,
+          2,
+          6,
+          3
+        ],
+        "seed": 22463804
+      },
+      {
+        "applied_covariance_diff": 0.05691051483154297,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.010044693946838379,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          6,
+          2,
+          0,
+          3,
+          4
+        ],
+        "seed": 22464813
+      },
+      {
+        "applied_covariance_diff": 0.14322900772094727,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.017857074737548828,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          5,
+          1,
+          6,
+          0,
+          3,
+          4
+        ],
+        "seed": 22465822
+      },
+      {
+        "applied_covariance_diff": 0.05818343162536621,
+        "applied_delta_max_abs_error": 0.052734375,
+        "applied_mean_diff": 0.010323643684387207,
+        "applied_multiset_diff": 0.052734375,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          6,
+          1,
+          4,
+          2,
+          0,
+          5
+        ],
+        "seed": 22466831
+      },
+      {
+        "applied_covariance_diff": 0.1420745849609375,
+        "applied_delta_max_abs_error": 0.03125,
+        "applied_mean_diff": 0.011160850524902344,
+        "applied_multiset_diff": 0.03125,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 22,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1
+        ],
+        "seed": 22467840
+      },
+      {
+        "applied_covariance_diff": 0.06047734618186951,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.009765625,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          1,
+          6,
+          0,
+          2,
+          5
+        ],
+        "seed": 22560780
+      },
+      {
+        "applied_covariance_diff": 0.13117027282714844,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.011160731315612793,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          3,
+          1,
+          4,
+          5,
+          0,
+          2
+        ],
+        "seed": 22561789
+      },
+      {
+        "applied_covariance_diff": 0.059940338134765625,
+        "applied_delta_max_abs_error": 0.046875,
+        "applied_mean_diff": 0.008928537368774414,
+        "applied_multiset_diff": 0.046875,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          0,
+          1,
+          3,
+          6,
+          4
+        ],
+        "seed": 22562798
+      },
+      {
+        "applied_covariance_diff": 0.09827995300292969,
+        "applied_delta_max_abs_error": 0.046875,
+        "applied_mean_diff": 0.008370637893676758,
+        "applied_multiset_diff": 0.046875,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          0,
+          2,
+          1,
+          6,
+          4
+        ],
+        "seed": 22563807
+      },
+      {
+        "applied_covariance_diff": 0.0820307731628418,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.012276768684387207,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 2.86102294921875e-06,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          5,
+          4,
+          2,
+          6,
+          3,
+          0
+        ],
+        "seed": 22564816
+      },
+      {
+        "applied_covariance_diff": 0.1439952850341797,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.0100446417927742,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          6,
+          4,
+          1,
+          0,
+          2,
+          5
+        ],
+        "seed": 22565825
+      },
+      {
+        "applied_covariance_diff": 0.06659889221191406,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.01088172197341919,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.430511474609375e-06,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          5,
+          1,
+          3,
+          0,
+          4
+        ],
+        "seed": 22566834
+      },
+      {
+        "applied_covariance_diff": 0.06586503982543945,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.015415728092193604,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 4.76837158203125e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 23,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          4,
+          1,
+          6,
+          3,
+          0,
+          5
+        ],
+        "seed": 22567843
+      },
+      {
+        "applied_covariance_diff": 0.22957611083984375,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.012276791036128998,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          0,
+          4,
+          1,
+          6,
+          3
+        ],
+        "seed": 22660783
+      },
+      {
+        "applied_covariance_diff": 0.1366710662841797,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.011370062828063965,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          3,
+          4,
+          0,
+          2,
+          1
+        ],
+        "seed": 22661792
+      },
+      {
+        "applied_covariance_diff": 0.12938722968101501,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.015346050262451172,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          3,
+          0,
+          4,
+          5,
+          2,
+          1
+        ],
+        "seed": 22662801
+      },
+      {
+        "applied_covariance_diff": 0.15049457550048828,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.017857134342193604,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          3,
+          5,
+          0,
+          1,
+          6,
+          4
+        ],
+        "seed": 22663810
+      },
+      {
+        "applied_covariance_diff": 0.09412193298339844,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.008928537368774414,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          6,
+          0,
+          1,
+          3,
+          4,
+          2
+        ],
+        "seed": 22664819
+      },
+      {
+        "applied_covariance_diff": 0.0997467041015625,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.015625,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          4,
+          5,
+          1,
+          0,
+          3,
+          2
+        ],
+        "seed": 22665828
+      },
+      {
+        "applied_covariance_diff": 0.13627338409423828,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.015485525131225586,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          5,
+          4,
+          6,
+          0,
+          2,
+          1
+        ],
+        "seed": 22666837
+      },
+      {
+        "applied_covariance_diff": 0.1153411865234375,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.01060265302658081,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 9.5367431640625e-07,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 24,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          4,
+          0,
+          1,
+          6,
+          2,
+          5
+        ],
+        "seed": 22667846
+      },
+      {
+        "applied_covariance_diff": 0.34442138671875,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.022321462631225586,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.52587890625e-05,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          5,
+          4,
+          0,
+          6,
+          3
+        ],
+        "seed": 22760786
+      },
+      {
+        "applied_covariance_diff": 0.18768692016601562,
+        "applied_delta_max_abs_error": 0.109375,
+        "applied_mean_diff": 0.020089268684387207,
+        "applied_multiset_diff": 0.109375,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          6,
+          1,
+          4,
+          0,
+          3,
+          5
+        ],
+        "seed": 22761795
+      },
+      {
+        "applied_covariance_diff": 0.3551445007324219,
+        "applied_delta_max_abs_error": 0.125,
+        "applied_mean_diff": 0.02901780605316162,
+        "applied_multiset_diff": 0.125,
+        "covariance_diff": 5.7220458984375e-06,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          6,
+          1,
+          5,
+          2,
+          0,
+          3
+        ],
+        "seed": 22762804
+      },
+      {
+        "applied_covariance_diff": 0.23101806640625,
+        "applied_delta_max_abs_error": 0.11328125,
+        "applied_mean_diff": 0.0234375,
+        "applied_multiset_diff": 0.11328125,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          3,
+          0,
+          4,
+          5,
+          2,
+          1
+        ],
+        "seed": 22763813
+      },
+      {
+        "applied_covariance_diff": 0.26349639892578125,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.017857074737548828,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 5.7220458984375e-06,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          0,
+          1,
+          5,
+          6,
+          4,
+          2
+        ],
+        "seed": 22764822
+      },
+      {
+        "applied_covariance_diff": 0.18137454986572266,
+        "applied_delta_max_abs_error": 0.109375,
+        "applied_mean_diff": 0.015625,
+        "applied_multiset_diff": 0.109375,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          0,
+          4,
+          2,
+          6,
+          3,
+          1
+        ],
+        "seed": 22765831
+      },
+      {
+        "applied_covariance_diff": 0.26190185546875,
+        "applied_delta_max_abs_error": 0.125,
+        "applied_mean_diff": 0.016043424606323242,
+        "applied_multiset_diff": 0.125,
+        "covariance_diff": 2.86102294921875e-06,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          2,
+          4,
+          5,
+          6,
+          0,
+          3,
+          1
+        ],
+        "seed": 22766840
+      },
+      {
+        "applied_covariance_diff": 0.21222305297851562,
+        "applied_delta_max_abs_error": 0.069580078125,
+        "applied_mean_diff": 0.016741037368774414,
+        "applied_multiset_diff": 0.069580078125,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 25,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          3,
+          2,
+          4,
+          6,
+          5,
+          0,
+          1
+        ],
+        "seed": 22767849
+      },
+      {
+        "applied_covariance_diff": 0.1551363468170166,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.013671875,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          5,
+          4,
+          2,
+          1,
+          0,
+          3
+        ],
+        "seed": 22860789
+      },
+      {
+        "applied_covariance_diff": 0.2600841522216797,
+        "applied_delta_max_abs_error": 0.078125,
+        "applied_mean_diff": 0.015625,
+        "applied_multiset_diff": 0.078125,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          0,
+          3,
+          1,
+          5,
+          6,
+          2
+        ],
+        "seed": 22861798
+      },
+      {
+        "applied_covariance_diff": 0.2182769775390625,
+        "applied_delta_max_abs_error": 0.099609375,
+        "applied_mean_diff": 0.018973201513290405,
+        "applied_multiset_diff": 0.099609375,
+        "covariance_diff": 5.7220458984375e-06,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          6,
+          0,
+          2,
+          1,
+          3,
+          5
+        ],
+        "seed": 22862807
+      },
+      {
+        "applied_covariance_diff": 0.2762947082519531,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.01450890302658081,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 2.86102294921875e-06,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          5,
+          3,
+          6,
+          1,
+          2,
+          0
+        ],
+        "seed": 22863816
+      },
+      {
+        "applied_covariance_diff": 0.2686948776245117,
+        "applied_delta_max_abs_error": 0.125,
+        "applied_mean_diff": 0.022321343421936035,
+        "applied_multiset_diff": 0.125,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          5,
+          6,
+          1,
+          3,
+          2,
+          0
+        ],
+        "seed": 22864825
+      },
+      {
+        "applied_covariance_diff": 0.13324284553527832,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.015625,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          3,
+          1,
+          0,
+          2,
+          6,
+          4
+        ],
+        "seed": 22865834
+      },
+      {
+        "applied_covariance_diff": 0.4293537139892578,
+        "applied_delta_max_abs_error": 0.125,
+        "applied_mean_diff": 0.03571438789367676,
+        "applied_multiset_diff": 0.125,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          5,
+          1,
+          3,
+          0,
+          4
+        ],
+        "seed": 22866843
+      },
+      {
+        "applied_covariance_diff": 0.31153106689453125,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.01688063144683838,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 26,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          0,
+          6,
+          1,
+          5,
+          2,
+          3
+        ],
+        "seed": 22867852
+      },
+      {
+        "applied_covariance_diff": 0.20457077026367188,
+        "applied_delta_max_abs_error": 0.125,
+        "applied_mean_diff": 0.02678579092025757,
+        "applied_multiset_diff": 0.125,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 0,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          2,
+          0,
+          1,
+          6,
+          4,
+          3
+        ],
+        "seed": 22960792
+      },
+      {
+        "applied_covariance_diff": 0.3383827209472656,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.011160716414451599,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 1,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          3,
+          0,
+          6,
+          2,
+          5
+        ],
+        "seed": 22961801
+      },
+      {
+        "applied_covariance_diff": 0.3024749755859375,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.015625,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 2,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          2,
+          4,
+          6,
+          5,
+          3,
+          0
+        ],
+        "seed": 22962810
+      },
+      {
+        "applied_covariance_diff": 0.1261749267578125,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.010044574737548828,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 1.9073486328125e-06,
+        "fixed_points": 0,
+        "head": 3,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          2,
+          5,
+          1,
+          3,
+          0,
+          4
+        ],
+        "seed": 22963819
+      },
+      {
+        "applied_covariance_diff": 0.17571163177490234,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.015067100524902344,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 5.7220458984375e-06,
+        "fixed_points": 0,
+        "head": 4,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          5,
+          4,
+          6,
+          2,
+          0,
+          3,
+          1
+        ],
+        "seed": 22964828
+      },
+      {
+        "applied_covariance_diff": 0.318359375,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.022321462631225586,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 5.7220458984375e-06,
+        "fixed_points": 0,
+        "head": 5,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          6,
+          0,
+          4,
+          2,
+          5,
+          1,
+          3
+        ],
+        "seed": 22965837
+      },
+      {
+        "applied_covariance_diff": 0.26320648193359375,
+        "applied_delta_max_abs_error": 0.0625,
+        "applied_mean_diff": 0.013392865657806396,
+        "applied_multiset_diff": 0.0625,
+        "covariance_diff": 7.62939453125e-06,
+        "fixed_points": 0,
+        "head": 6,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          4,
+          2,
+          6,
+          0,
+          1,
+          3,
+          5
+        ],
+        "seed": 22966846
+      },
+      {
+        "applied_covariance_diff": 0.36293601989746094,
+        "applied_delta_max_abs_error": 0.09375,
+        "applied_mean_diff": 0.026227712631225586,
+        "applied_multiset_diff": 0.09375,
+        "covariance_diff": 3.814697265625e-06,
+        "fixed_points": 0,
+        "head": 7,
+        "layer": 27,
+        "max_multiset_diff": 0.0,
+        "mean_diff": 0.0,
+        "permutation": [
+          1,
+          4,
+          5,
+          0,
+          2,
+          6,
+          3
+        ],
+        "seed": 22967855
+      }
+    ],
+    "technical_diagnostic_not_semantic_outcome": true
+  },
+  "kind": "technical_bf16_gapped_delta_diagnostic_not_semantic_outcome",
+  "model": {
+    "architecture": [
+      "Qwen3ForCausalLM"
+    ],
+    "checkpoint_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "config_sha256": "c92ef5eb678fdded7c2c1692eb6db6be91c1ad05749e7eee72cdaa9ad985ef60",
+    "device": "cpu",
+    "head_dim": 128,
+    "model_id": "Qwen/Qwen3-0.6B",
+    "name_or_path": "Qwen/Qwen3-0.6B",
+    "num_hidden_layers": 28,
+    "num_key_value_heads": 8,
+    "parameter_dtype": "torch.bfloat16",
+    "requested_attention_backend": "eager",
+    "requested_dtype": "torch.bfloat16",
+    "resolved_attention_backend": "eager",
+    "resolved_text_attention_backend": "eager"
+  },
+  "passes_frozen_invariants": false,
+  "runtime": {
+    "huggingface_hub": "1.22.0",
+    "machine": "arm64",
+    "mps_available": true,
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "python": "3.12.11 (main, Aug 18 2025, 19:02:39) [Clang 20.1.4 ]",
+    "requested_device": "cpu",
+    "torch": "2.12.1",
+    "transformers": "5.0.0"
+  },
+  "schema": 1,
+  "source_row_hashes": {
+    "correct": [
+      {
+        "k_sha256": "e9bb93432afaa5fcde0bb358cced710299f451c6d3b7f99d6b025da06e338b67",
+        "layer": "0",
+        "v_sha256": "028ca2f378495cfad81f82018e1d7947ddff655032feb2a2314f7a23219ee133"
+      },
+      {
+        "k_sha256": "b55564a3daa35b81fb354c97d472a2e470cc3179551382c5650d4fddef5090b1",
+        "layer": "1",
+        "v_sha256": "515dae6764455bec088ff7c6a5e4af3472c6a38d731cab0704c0b333c6cad37f"
+      },
+      {
+        "k_sha256": "c9b9e82009b54ac916215934a359f17cfef8450db09decd6dd7eb6b5f1a7ef01",
+        "layer": "2",
+        "v_sha256": "b7958bc9ecf4f14034ee0aab59e678cb64dd314544258d6e08e1af464188fe7d"
+      },
+      {
+        "k_sha256": "8c8f08092e7ca16f1fb94e0e2bc89d184e3b181550ec7602c8f5882860640520",
+        "layer": "3",
+        "v_sha256": "dc199deed28985ffab4313589041b13c436870de2513c8583fb3cddf474c9b44"
+      },
+      {
+        "k_sha256": "55dace58072b417eace2859b9ac7293c2d716b7c1d702603f835b9c2309dbd70",
+        "layer": "4",
+        "v_sha256": "d417c416bdee9f9eb1899f95383d3b0169056997372f9fd3ce25b1e987902219"
+      },
+      {
+        "k_sha256": "b8c5ea4509101cfcf4621c3c82a437ad80464e20eb47dfb0485a4585f57cbd64",
+        "layer": "5",
+        "v_sha256": "22937e0ffa272ef425e9fe7c3fa6bcf58d0007204e41cafff5429df07538cb63"
+      },
+      {
+        "k_sha256": "28a751a36f868c70e6bb190452cf1833de821856e20cfe14b3a048afb61f8546",
+        "layer": "6",
+        "v_sha256": "f4ab8d77a2fe2f9414e4c8ea3392ebcdaac1578af1e7134feea0ceaaef4955ef"
+      },
+      {
+        "k_sha256": "0a116fb64bfc9cb5c8d31a1d6bb4b8ccd6fd6de8643ee23372746caef1c4825e",
+        "layer": "7",
+        "v_sha256": "ae9086cde66cf701ace7c0475af41b73db47577e6e013ef0f8edb44498c74a34"
+      },
+      {
+        "k_sha256": "36a8a04189484ba449708bdc88b9348843000fe75632ba0238f6c29f6e9b17b8",
+        "layer": "8",
+        "v_sha256": "f909fc4b70270aec73a2bedaada8039ff1d6a5ec862429d132df5c5180b4d1d8"
+      },
+      {
+        "k_sha256": "14a7e4bda75911b2ad486f737c183d21ba52df1095ce6156a355e1bf94fad158",
+        "layer": "9",
+        "v_sha256": "4d2afce8fd8906ac92428435b4c3f75de057bc68cda09be19d1b52b442338980"
+      },
+      {
+        "k_sha256": "bb6fddcb09570f849d68fe1d6a751a3568c4885a59bc1c02ccf3e31f3f186bdd",
+        "layer": "10",
+        "v_sha256": "ea820be9c39baa58330c82c5f3cc0bd926e0d479b4b7f9fb4ad7df51412af674"
+      },
+      {
+        "k_sha256": "2be7521cd75c3625c8fefa545ccbf7222c176be301e8b2fea326f5b7f4805b74",
+        "layer": "11",
+        "v_sha256": "c5c294984a3a016893408c2655a5f11f9ee68a964b515582ec53677ee549dcf9"
+      },
+      {
+        "k_sha256": "24d408ab037dd0d17cd14992a53c1af4fb6b61edd76b6bcc2269f2ad768e6d6f",
+        "layer": "12",
+        "v_sha256": "41e0d20171440055801cbff2ba6a6a27d7335d14b9f2804640123e5188efc708"
+      },
+      {
+        "k_sha256": "084f230ed3d7e3eaa5ea6ed05831c0853243057af02a8bae0812dce181ae6f7f",
+        "layer": "13",
+        "v_sha256": "c8758658406caa1dd16ed64bd13d015d3ad7dd672416c97e8a3c399ce55f578e"
+      },
+      {
+        "k_sha256": "d95b1ceff3081bcc22c0b4ed04231a2f4546d6752a67e3478135790a69b38c6c",
+        "layer": "14",
+        "v_sha256": "4778ef75e567bffdfe9f1616be1e8be2ca5cd637ee2ae8dc97b0367d40ce9267"
+      },
+      {
+        "k_sha256": "7a26dcbb07add44698275a3e86811469af0b71dea03ad941b0f5074a7b2a95e2",
+        "layer": "15",
+        "v_sha256": "5754a943957768bc3cede482e073805ea1c594342e2d739d6b72620472a3ecc0"
+      },
+      {
+        "k_sha256": "8a1c0c322e4b6da01840e2ab15eba9cc78b97b813f0bac75110a753d85075474",
+        "layer": "16",
+        "v_sha256": "c673dc6d58f6c1a17f560676b0c8dfa4bd3fdf4f1d8197be36c1c27fb4450c7f"
+      },
+      {
+        "k_sha256": "e67177b312d5c5f4d7b4d849e5aa9f8dd48b3249fc0d923b6927e99c035017e3",
+        "layer": "17",
+        "v_sha256": "eb7194a2b04d139223795014e0b9304b99553f0779e6f3f1e0a645779a10add6"
+      },
+      {
+        "k_sha256": "813a40b977b2ab424440b5ff9f232ac69ee0fb9506c8b2b5039c8787b3d1dc0e",
+        "layer": "18",
+        "v_sha256": "29b78da29774e0b03f5cfb8393246659e1f2dcb5228effa2387ed33b403197e9"
+      },
+      {
+        "k_sha256": "b6838c3b988e9e67b4c4a8dcf1ffd02ad1d2288d0c5c434e469c33478e9bbbd9",
+        "layer": "19",
+        "v_sha256": "f9e0aaae6fdb71a5124cdef0a13bbb08e2daa7f1e2e3bd858048026fcbd4b7c5"
+      },
+      {
+        "k_sha256": "bda94c85c9012e72240afa1045f02bdeaafc16c128d3ce450d80696cbbb22456",
+        "layer": "20",
+        "v_sha256": "7be03091acc96830271633ff6aa93afbb1b2b843006841d04249e6a8deee65e8"
+      },
+      {
+        "k_sha256": "6259c4f33d0b799d7614baa2e1293c005fdd0e96530754c5be732de61f436193",
+        "layer": "21",
+        "v_sha256": "844997227fb86f39d11877e78f552a7318772ab904b3f58b634f427e01c61be8"
+      },
+      {
+        "k_sha256": "d7e9a09ac6b04e3729447129837cb640bd5cf2c7af189d2bcaf1de2dae96cb50",
+        "layer": "22",
+        "v_sha256": "bc31dae1b83fd16e0a280800f57a3e1432b5092daea841442b486dc201d7fa26"
+      },
+      {
+        "k_sha256": "787c8c0cd4c5b99398af09acca08367f19f8e885f00c0bb457d008caaa895f9b",
+        "layer": "23",
+        "v_sha256": "4668df8eaa7d4f81f782040f7ccad30942f05cca43135959d7c0db25add6c5c3"
+      },
+      {
+        "k_sha256": "747b9d27e3a668ffcf20841a33d4ad1936895a3a65f0e2f03e0faea6d56a2b3f",
+        "layer": "24",
+        "v_sha256": "351bea1d53b47feab31ff1cdf755b761560ee7e547190687e9f44be890931c09"
+      },
+      {
+        "k_sha256": "13619a10e9302dba56b6dc99a0df19433dc9277ce74a901bcae191555dbe8aa3",
+        "layer": "25",
+        "v_sha256": "feb63f9da64841d2c7c21e8857490d736981a09e62ac05a6b2412d0afb6794bf"
+      },
+      {
+        "k_sha256": "2f1a6018e734eb155d45bbb68411ffeb0e95874c9eac657ab727de32b99e4cbc",
+        "layer": "26",
+        "v_sha256": "0f7e94d48386dca146a8e45f635950eff5f8bb081763977fd3da7a1fa8c74604"
+      },
+      {
+        "k_sha256": "3545ed7285a618f69d7648840d6276519afdc58d730a0b8aed683f7cb9f040b9",
+        "layer": "27",
+        "v_sha256": "c627919ce1b072a7fce30ce1f2cea6ae44d062f0d0ae673350a333d1425693c8"
+      }
+    ],
+    "fresh_summary": [
+      {
+        "k_sha256": "e9bb93432afaa5fcde0bb358cced710299f451c6d3b7f99d6b025da06e338b67",
+        "layer": "0",
+        "v_sha256": "028ca2f378495cfad81f82018e1d7947ddff655032feb2a2314f7a23219ee133"
+      },
+      {
+        "k_sha256": "55f70b2e250dae16fbac810f12adcd48e9e49eb4875242a855196597e562c2bb",
+        "layer": "1",
+        "v_sha256": "b2566bcf205e6ac654c8af0031ffa8cb960568bddfa63b250b26459220eed05f"
+      },
+      {
+        "k_sha256": "1b5728947e8e094a5731205b479e1c29991864758971ea1015815278298c4c29",
+        "layer": "2",
+        "v_sha256": "94f7bc139318a2c84d3bd8690bc987306dc1a3318b233825e00bf4d74d3c834f"
+      },
+      {
+        "k_sha256": "b03178fbd2cae45638388d1a6dfc0ef465bc90919366c130b79797d067668169",
+        "layer": "3",
+        "v_sha256": "cfb789cc3eb40f04cbb8adf86a2be1516ba3c4bb8a6210581098ef858fd6bb95"
+      },
+      {
+        "k_sha256": "677c0f31e444953063da74d138978859249fbd758a769b9924491859e706be63",
+        "layer": "4",
+        "v_sha256": "531a7b2660cf87514ecf7ac0fa03d3ac99491016437853959ebb8dba2e2804b5"
+      },
+      {
+        "k_sha256": "d0dae674ae5ac5eb2fa00fdb4fce7292f4710a40e754effadbb6083af83d87e5",
+        "layer": "5",
+        "v_sha256": "1d207c2f00c00ae64c64a505a42c0c1142306cd780bc32ff58f1b2b3fb26580d"
+      },
+      {
+        "k_sha256": "61bda38615fffe29eaa5d294575f9a0415ed1f91e1a0eba5ddcb99d95d5ee3a6",
+        "layer": "6",
+        "v_sha256": "a27f49e60299cf2c3a6a073e0a62f5c18321f5f6eaa1488eee5795cfc9e8a14b"
+      },
+      {
+        "k_sha256": "bfd60f26f04f982a3651c6a7923524437ad0a8f7d842aee71dee996a3ad004ef",
+        "layer": "7",
+        "v_sha256": "d67f8942a79674803f54d2e21e4adb58c6794d4b02fee2de9b8274434fe66662"
+      },
+      {
+        "k_sha256": "b97ae5bd4f633a5946599a22c87965d3f7eb6485ead4653f0bef5d6f4d4d59a1",
+        "layer": "8",
+        "v_sha256": "40cd88c0ce485e6fe4903069704bf387ba3c1baff19c46effd3ad1dfc0a5348a"
+      },
+      {
+        "k_sha256": "7090cd949378390843d06299e0f3012515f178a716dce35d3018ff59e96ba4d6",
+        "layer": "9",
+        "v_sha256": "64854b937b52b61bad42a2c935a0633758d981501dfe6cc8f2535dab2b85fa16"
+      },
+      {
+        "k_sha256": "bfad9f2ed885473d6c212783dce4ab28e32d6d0f8f467f0d004b21f8de279ba7",
+        "layer": "10",
+        "v_sha256": "0589cb939acc63e0534c5d7f97e3506f5e8df77f5e320aadd19959372669f16f"
+      },
+      {
+        "k_sha256": "2522fccec201e4b12c53388e3cf2d0055bd25e47bbda9af68d5d97d7698e48b5",
+        "layer": "11",
+        "v_sha256": "f1a15384cd6201b630dd0b9fdf47bd57cc49fef4e06b9b67e880aec9687b4259"
+      },
+      {
+        "k_sha256": "31724be63a2b31bdc8aff04aeb8b053a61c4f3599041dbd9bff7bacc3591ad36",
+        "layer": "12",
+        "v_sha256": "c00c529196c79f9c2791c04b61266cb93f530c0ce3fbfefac5a8b2a4fbb1fa86"
+      },
+      {
+        "k_sha256": "dc0ca3c6c527f288455ec470b25894ed6c648996f0d1a78ca03858d9a46cc2ac",
+        "layer": "13",
+        "v_sha256": "a626b97bdbba9e79c70b8e4b88cb12d15dfb77b302128307e7364678124c4e70"
+      },
+      {
+        "k_sha256": "4a373a4d7856cd056dd7a076e416291b5d0c1273eab4e0ee15f4c6cbdc6ed209",
+        "layer": "14",
+        "v_sha256": "f90e7521cf3f2888119caf75ec269a03bf336393a44d6667bda088d03022100c"
+      },
+      {
+        "k_sha256": "611ed58e10e449200bce6b8d42236b736177b352eb055bc8fb2549303c9ddb62",
+        "layer": "15",
+        "v_sha256": "359f2deef73fc5d1a303d8504ccbdd83ec53bb878f447a015dda793f512d20d4"
+      },
+      {
+        "k_sha256": "7029e0163446bf927c3e942738984c8d15b0a3ffc461587b087829ac8930c7d9",
+        "layer": "16",
+        "v_sha256": "5aa0aa0f90b3a9685eac89255bbf000f7f00a88550edc1715e287e0766a324c1"
+      },
+      {
+        "k_sha256": "1f8a18e8257c1c863dce25fa594f36709a241d7463804caf8eda545845865d9c",
+        "layer": "17",
+        "v_sha256": "22197e096050514cab735c6ec5ab69ba40739cbce17bc3ea002ea88b0b8882e3"
+      },
+      {
+        "k_sha256": "d803b035f611f7362dc2397b231a90c2ab8d7994922a9688f06f8d4ee45f8571",
+        "layer": "18",
+        "v_sha256": "23ec52758ecda621dc1c85b196278d2ece3e9d47948d4964746c7e5099089623"
+      },
+      {
+        "k_sha256": "7246247a56b97383a22e0dc5fed4ed695754156c751f80e0c35e02d391e11f91",
+        "layer": "19",
+        "v_sha256": "e4f52e35ec9382925258fa23ccfb6c448f3368d15f73449a97eff7cdbb69ac08"
+      },
+      {
+        "k_sha256": "e5193d73fb021fd037f6f96c4414326dd4d3d3c40811fea38090e5b33facd6fb",
+        "layer": "20",
+        "v_sha256": "a144a4dff9b9f63968d5bb076418fb8772808328714b72afc91e9f354b18a1e0"
+      },
+      {
+        "k_sha256": "1e4cd5ca3121eebc643d5244a5fa7b31d02e9053b29767548c3d1d143dd00c78",
+        "layer": "21",
+        "v_sha256": "613693ebb242e888e926a6f3b37989fe3d1c41fb7bf8c1d73f89772085a195b1"
+      },
+      {
+        "k_sha256": "c3269e09ae145e488aed23ca622a765bdf08e115cd2c617da1f5143944e2aced",
+        "layer": "22",
+        "v_sha256": "dd81a829d6912db76c938b484ea4f1a9e0b697571f1bfdf4fe900a77e0303db3"
+      },
+      {
+        "k_sha256": "316bdc5977335fc421399c56b191e3cff92b4181579002fabca4e7cbc4c41fb3",
+        "layer": "23",
+        "v_sha256": "12dd809360c6a4de143611bf93e622c046ebd27adda3eee51d40b7f01aed54c2"
+      },
+      {
+        "k_sha256": "5a6181c936326bf778c1553f21e335cba4a4ebf4473b1fc484024a230705fc18",
+        "layer": "24",
+        "v_sha256": "9c99ad8940013f7b0e89d8fc28fdfbd3af39c1199cfaec3b1328afef0906a791"
+      },
+      {
+        "k_sha256": "326a613feab5a51c42fef666741274855e758435de852bd4db0618543ae7c425",
+        "layer": "25",
+        "v_sha256": "4da8e0499421fe74df082fb6cb6ae874c5e09936f5907e0efdd44a30c1dcd3b9"
+      },
+      {
+        "k_sha256": "6de9358f7fb5fac3f8576554d084febacb7007a918719d85c31db2288397db61",
+        "layer": "26",
+        "v_sha256": "75667070288a97ec3dad2b134b9690348327b66848dd2c525c65cc491b9d91f0"
+      },
+      {
+        "k_sha256": "9755e642706f53c3b48dc17a9cf742614d605c9f6e90111cf469f48fd49e3c52",
+        "layer": "27",
+        "v_sha256": "e4ba71dc6ffe6ee77e67d016569afad2d38896ef5b7947e3348709dbc9648ba8"
+      }
+    ],
+    "wrong": [
+      {
+        "k_sha256": "e9bb93432afaa5fcde0bb358cced710299f451c6d3b7f99d6b025da06e338b67",
+        "layer": "0",
+        "v_sha256": "028ca2f378495cfad81f82018e1d7947ddff655032feb2a2314f7a23219ee133"
+      },
+      {
+        "k_sha256": "da9d1e9f9c5249252a07302d2f109b01f3ae1500ba8a49394f72d910cfb07da6",
+        "layer": "1",
+        "v_sha256": "26bd11312b96d5207c838bfca94b913954f64f644e4d193c3fdf70f2e0d523a3"
+      },
+      {
+        "k_sha256": "c491d7af3bd41c3407dbbac164b5b3c50bdfed6f37031f1de2ed7843fe091e23",
+        "layer": "2",
+        "v_sha256": "5c4a5d335bda0e6db43a6ca2d7075120da7462a28a91d3bc28eccbdfebe54c0c"
+      },
+      {
+        "k_sha256": "d22f0661aa2710b7ab9ba06a9969e2ebd0b0ea80b0645bd29c0a0843ff5b9b38",
+        "layer": "3",
+        "v_sha256": "33a66af1e0ba392786279ef9bfd13020e903188f8cdd8343183f10afa7fc4366"
+      },
+      {
+        "k_sha256": "ae652a3b0610b2dd9d5849e8d20dd97f807e537533b0c9186e7c40b1cd54d503",
+        "layer": "4",
+        "v_sha256": "4f3230e966406a9334a1a76053795359e23897e08f8287881075e1c2add574ec"
+      },
+      {
+        "k_sha256": "76df7d55bcf306f2634408d6f024b17fecae043c94e21f700bc6001c73090a76",
+        "layer": "5",
+        "v_sha256": "11de598e2b2efe63f1cd2f486bb99fbed9844dda8a1bbb719a062603fa103e62"
+      },
+      {
+        "k_sha256": "1c87f51ef0269a21235448a06824b4bc19ce876a0fd090d99e97f16ed33ac84e",
+        "layer": "6",
+        "v_sha256": "280a48586b7640a0f0b95b964966f73fda1b93e5a3d632b10c17a81ae546f01a"
+      },
+      {
+        "k_sha256": "41352f36fba5146a63d106a589ccd15ff970acc09e7d15e5ba0d5d07bf82bbeb",
+        "layer": "7",
+        "v_sha256": "5fc140cc1f110eb36e837c33a45425c42171d52d54452a0492fc4226c152b3a0"
+      },
+      {
+        "k_sha256": "86b165b9414b490a70eb55060197f6429e0bdb26fa6cd87a0f379a6d0d30cd0c",
+        "layer": "8",
+        "v_sha256": "00811e226cd3f776cbfcf96b35ad7592c11a43bb5fb503cf111a9555d49b96cb"
+      },
+      {
+        "k_sha256": "b5df6191a6073a9aefa5d8e77306971903b2e4c5ce52308f1bcd19bb3a99ecff",
+        "layer": "9",
+        "v_sha256": "56a727cdbd1fd18310262844d21e74405ccc191c7f9eae798321c7cbecd36763"
+      },
+      {
+        "k_sha256": "d9ddc8ed5d01bccac8509ea435b5434ab0641bc1cc5e7004a00576c1257a02b2",
+        "layer": "10",
+        "v_sha256": "d619e8ef1029844613cd7a109df832a8eee3e616aedc68361afd5152c0d8f42b"
+      },
+      {
+        "k_sha256": "c9905772fdbc49f68e8143e0f49e95a54f1e9f83a9dc96fddf7764d7e00b60ae",
+        "layer": "11",
+        "v_sha256": "8845618df77993fe1931dcb421866a6e23c0bfd3c28b78017d8d523fa2b7a749"
+      },
+      {
+        "k_sha256": "0155c6783b208c33c347a34632a7d5d238a51efc91f3c1f44173f51bced5529c",
+        "layer": "12",
+        "v_sha256": "f4e1fa7dca8a689dd220eadbd8fedf0595273f2b4f4d50e53ba06076a0871fdf"
+      },
+      {
+        "k_sha256": "6537546085ebeab15980ac5ef6bde5249fafc8c8c4bbae14fc592f2cf212f88e",
+        "layer": "13",
+        "v_sha256": "665472169c7e1d6621e13d93232c73669b3b9a76da6d75232b5c4fab6f4ee30b"
+      },
+      {
+        "k_sha256": "788e9b7e1ed7e57b6b28d167df9ba425424f328b9c58ad7aac1d651fa5c14e94",
+        "layer": "14",
+        "v_sha256": "dfb261bfc7909b3dffcad43e51bfc04cd1f19824cb7b6da93133d317c150817c"
+      },
+      {
+        "k_sha256": "09c208daebe8188dc853670b78051780b2172cf7ff6a43691755f4384c6e3a09",
+        "layer": "15",
+        "v_sha256": "65566e7f1874a8c444f2095dd0445700cce2466668416478e25978c650cf26b6"
+      },
+      {
+        "k_sha256": "f48dcd197d896b07b9cc7185634be409e6f5ea88964cfd95a964ffb78373fb7b",
+        "layer": "16",
+        "v_sha256": "7ffbbf72856fcb494250573deb3e1b0cc6c557d5187cd738b94a9a57444fd70d"
+      },
+      {
+        "k_sha256": "466813149ac67df138a524b07cdbb2bab095920bb66833e988824aae3db091db",
+        "layer": "17",
+        "v_sha256": "f93de95be3736558fe2268de8f90d3bb8be871478b99957d7e3a31ccb7da7cdd"
+      },
+      {
+        "k_sha256": "4bad932f9ba892a3c1a95de0ce042a7f065beff2af2a42ff788e54ce3f50e8ad",
+        "layer": "18",
+        "v_sha256": "ba0e222934712d76a0cb5b786a3906d8769b45991a09723d534aa364b05d2b89"
+      },
+      {
+        "k_sha256": "8a436fed718c8c1ebd07ca055286c598d5329490a80482c9a35b2d4a66db4d60",
+        "layer": "19",
+        "v_sha256": "d41551db9cdda8599e51d75bdb061e9b37b9d685b2c3e89fe8749b946aa96a37"
+      },
+      {
+        "k_sha256": "b5e5763f83842f9f1bb54da4418d4f30ec185342d3915437300122595bfaeed9",
+        "layer": "20",
+        "v_sha256": "0e138964e1e4a0b003b48af010e08172a9912dd5cba7276f3cb0a11205ac7fa9"
+      },
+      {
+        "k_sha256": "625b30ffb572ac09a7a1ea59ec67f9c625b26f5d35b09a92b1b91193263b8203",
+        "layer": "21",
+        "v_sha256": "7118e5d61b9f8750bdc15e0783b023f0d9a01a8708138dfc3f76ba61e02b3b71"
+      },
+      {
+        "k_sha256": "5909cef593bc9ac66001d5ceb2d4173eedd9c900d8242b0762bb27aedd057a9c",
+        "layer": "22",
+        "v_sha256": "48a70d7a9554fe75873cdb558b6bcf44b5a17edc5b57d07554ff464d9ad99a63"
+      },
+      {
+        "k_sha256": "71a5f60d185642fb544073f699667348a71b7fe0351258a6b1821889ad1ba078",
+        "layer": "23",
+        "v_sha256": "4741904c9ec0d21773f3d50ba62d10d547777b102678bc7d80b69f6d1cb57c4d"
+      },
+      {
+        "k_sha256": "09f53e1fcf2a8b5106eb057f84c2d150c2d8e1ca736ef80a7ca8bb144560ae53",
+        "layer": "24",
+        "v_sha256": "a87c605b9e3ecbe7ea9613d9a3c9e5b220fe72ccd4945ddc78e128937e5463a1"
+      },
+      {
+        "k_sha256": "7ad1eb4116c71957da7510d09b3b5231e13a20fe11b806cdc075ac8686546c7f",
+        "layer": "25",
+        "v_sha256": "6fd7176f2a57868b0c2e33674c160394eea26c65dc3f8332761a267fb538eacb"
+      },
+      {
+        "k_sha256": "db4a7043639d8bbcbd29fc3590e894ad26109e9700d0da506441b626964d6744",
+        "layer": "26",
+        "v_sha256": "2c90e450a33b2633da5649c90d28ee3bb6c82ea251278a5c86a0d3d8dac0c67b"
+      },
+      {
+        "k_sha256": "926d1c2459873261b76277f2c2e9cd66599523578be2655746be7e1944508d3f",
+        "layer": "27",
+        "v_sha256": "f74d093ed0598437f3fdc16e4374a4d2928d072f7226841fae8da67746d835ef"
+      }
+    ]
+  },
+  "started_at": "2026-07-11T09:02:23.179483+00:00",
+  "status": "failed_frozen_invariant"
+}
