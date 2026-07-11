@@ -1,0 +1,238 @@
+{
+  "schema": "coherent_state_decision_canary_v12_case_draft_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "case_id": "e06",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "stratum": "engineered",
+  "length_band": "short",
+  "domain": "publishing production and rights review",
+  "title": "Manuscript review queue and illustrated-notes copyedit",
+  "supersedes_source_file_sha256": "45cdc7d8f72cf5899f50e6955dbf4d5cc059a9b05e515fe396d0c19939781f53",
+  "authoring_provenance": {
+    "original_author": "Claude Sonnet 5",
+    "original_runtime_model_id": "claude-sonnet-5",
+    "original_reasoning_effort": "high",
+    "revision_author": "Independent Codex subagent",
+    "revision_runtime_model_id": null,
+    "revision_runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+    "revision_reasoning_effort": null,
+    "revision_reasoning_effort_status": "not exposed to this subagent; no level inferred",
+    "authoring_session_source_id": "/root/v12_revision2_e05_e06",
+    "authored_at_utc": "2026-07-11T20:28:07Z",
+    "source_revision": 2,
+    "superseded_source_path": "data/coherent_canary_v12/drafts/claude_session_c/e06.json",
+    "superseded_source_file_sha256": "45cdc7d8f72cf5899f50e6955dbf4d5cc059a9b05e515fe396d0c19939781f53",
+    "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+    "subject_model_forward_performed": false
+  },
+  "middle_end_msg": 15,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting a production editor who is coordinating rights review for a nonfiction manuscript. Preserve distinctions between a passage remaining flagged, the reason for that flag, and whether a full name appears; apply the stated queue rule literally; and do not claim that an edit, approval, assignment, or contact occurred unless the conversation records it."
+        },
+        {
+          "role": "user",
+          "content": "One production fact can be closed before we discuss the rights-review queue. Meridian Audio is the contracted producer for the audiobook edition of Low Tide at Cortes. Devon confirmed the executed agreement in the production folder this morning. That vendor assignment is independent of how quickly the print manuscript moves through rights review, and neither a fast-track nor standard review assignment changes the audiobook producer."
+        },
+        {
+          "role": "assistant",
+          "content": "I will keep the audiobook-production fact on its own chain: Meridian Audio is the confirmed producer. I will not infer the review queue from that agreement or alter the vendor when applying the manuscript rule. If asked later for the producer, I can answer from the executed-agreement record without consulting any passage status."
+        },
+        {
+          "role": "user",
+          "content": "The print manuscript is a reported account of a coastal arts festival. Renata is handling rights review, Devon is preparing production pages, and the author is available for wording questions but has not been asked to make further changes. The three passages under discussion involve an archived council notice, a description of a privately organized supper, and a caption for a photograph. We need the queue assignment derived only after their current statuses are stated."
+        },
+        {
+          "role": "assistant",
+          "content": "I will treat the current manuscript and Renata's review notes as the evidence sources. I will not treat a proposed edit as completed, and I will not collapse a non-privacy flag into a naming concern. The organizer's personal status, whether her full name remains, the number of passages still flagged, and the mandatory queue rule must all be explicit before the later probe can determine an assignment."
+        },
+        {
+          "role": "user",
+          "content": "The assignment rule is exhaustive. Put the manuscript in the fast-track queue if and only if, at the close of this review, no more than three passages remain flagged and none of those flagged passages names a living private individual by full name. When both conditions pass, fast-track is mandatory; if either condition fails, assign the standard queue. Eligibility and assignment are the same decision here, with no discretionary branch."
+        },
+        {
+          "role": "assistant",
+          "content": "Under that rule, the passage count and the full-name predicate are jointly necessary and jointly sufficient. Three or fewer flagged passages with no full name of a living private individual requires fast-track; a fourth flagged passage or even one qualifying full name requires the standard queue. I will preserve that binary assignment while keeping the factual review separate from the eventual probe."
+        },
+        {
+          "role": "user",
+          "content": "All three passages remain flagged at the close of review, and they remain flagged for non-privacy reasons. Passage one still needs its council-notice date checked against the archive. Passage two still needs the supper's seating capacity checked against the venue invoice. Neither passage names any individual: the first quotes an office title, and the second refers only to the organizer's role. These open checks count toward the flagged total even though neither is a naming issue."
+        },
+        {
+          "role": "assistant",
+          "content": "The current count is therefore three, with passages one and two unambiguously still on the flagged list for date and capacity verification. Their non-privacy reasons do not remove them from the count, and their wording contains no individual name. I will wait for the literal status of passage three before the later queue question is answered."
+        },
+        {
+          "role": "user",
+          "content": "Passage three also remains flagged for a non-privacy reason: the photograph credit still needs the image number reconciled with the contact sheet. The supper organizer is a living private individual. In the current caption her full name has been removed, and the text identifies her only as the festival organizer."
+        },
+        {
+          "role": "assistant",
+          "content": "That completes the factual predicate without assigning a queue in this exchange. There are exactly three passages still flagged, their outstanding reasons are non-privacy checks, and the record separately states the organizer's living-private status and the current caption's naming condition. The mandatory rule can be applied when the queue is asked for later."
+        },
+        {
+          "role": "user",
+          "content": "While that decision remains unstated, Devon is laying out a two-page illustrated notes section. The council excerpt will appear as a short indented quotation, the supper description as ordinary body text, and the photograph caption beneath a half-page image. The archive date and image number are still verification matters; the layout mock-up should not turn either one into a confirmed fact merely because placeholder text occupies the space."
+        },
+        {
+          "role": "assistant",
+          "content": "The mock-up can distinguish typography from verification. Use the intended styles and reserve enough space, but mark the date and image-number fields as editorial placeholders in the internal proof. Their presence demonstrates fit, not factual confirmation. The final proof should draw those values from the archive and contact-sheet checks rather than from whatever temporary text was used for pagination."
+        },
+        {
+          "role": "user",
+          "content": "The quoted council notice contains an old-fashioned spelling that the author wants preserved, while the surrounding explanation follows current house style. Devon also has a handwritten field-note excerpt with two line breaks that matter to its cadence. We are moving now from rights evidence to copyediting presentation, and none of these typographic choices should be treated as a queue assignment or as a change to the audiobook agreement."
+        },
+        {
+          "role": "assistant",
+          "content": "Preserve the historical spelling inside the clearly attributed quotation and use current house style in the editorial prose around it. For the field-note excerpt, retain the two meaningful line breaks if the available measure permits; if the proof forces another wrap, distinguish the original breaks from automatic line wrapping in the production annotation. Those are copyediting choices, not evidence about the unresolved queue."
+        },
+        {
+          "role": "user",
+          "content": "For the field-note excerpt, should the writer's inserted square-bracket clarification stay in roman type or follow the surrounding italic quotation? Give a brief house-style recommendation and explain how to keep the editorial insertion visually distinct without changing the quoted wording. Do not mention any passage count, personal name, review queue, or production vendor."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep the bracketed clarification in roman type within the italic quotation. The contrast marks it as editorial rather than original while the square brackets preserve its exact boundary. Do not add emphasis inside the brackets; if the change of type is too subtle at the final size, note the convention in the copyediting query rather than altering the quoted words."
+        }
+      ]
+    },
+    "wrong_focal": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting a production editor who is coordinating rights review for a nonfiction manuscript. Preserve distinctions between a passage remaining flagged, the reason for that flag, and whether a full name appears; apply the stated queue rule literally; and do not claim that an edit, approval, assignment, or contact occurred unless the conversation records it."
+        },
+        {
+          "role": "user",
+          "content": "One production fact can be closed before we discuss the rights-review queue. Meridian Audio is the contracted producer for the audiobook edition of Low Tide at Cortes. Devon confirmed the executed agreement in the production folder this morning. That vendor assignment is independent of how quickly the print manuscript moves through rights review, and neither a fast-track nor standard review assignment changes the audiobook producer."
+        },
+        {
+          "role": "assistant",
+          "content": "I will keep the audiobook-production fact on its own chain: Meridian Audio is the confirmed producer. I will not infer the review queue from that agreement or alter the vendor when applying the manuscript rule. If asked later for the producer, I can answer from the executed-agreement record without consulting any passage status."
+        },
+        {
+          "role": "user",
+          "content": "The print manuscript is a reported account of a coastal arts festival. Renata is handling rights review, Devon is preparing production pages, and the author is available for wording questions but has not been asked to make further changes. The three passages under discussion involve an archived council notice, a description of a privately organized supper, and a caption for a photograph. We need the queue assignment derived only after their current statuses are stated."
+        },
+        {
+          "role": "assistant",
+          "content": "I will treat the current manuscript and Renata's review notes as the evidence sources. I will not treat a proposed edit as completed, and I will not collapse a non-privacy flag into a naming concern. The organizer's personal status, whether her full name remains, the number of passages still flagged, and the mandatory queue rule must all be explicit before the later probe can determine an assignment."
+        },
+        {
+          "role": "user",
+          "content": "The assignment rule is exhaustive. Put the manuscript in the fast-track queue if and only if, at the close of this review, no more than three passages remain flagged and none of those flagged passages names a living private individual by full name. When both conditions pass, fast-track is mandatory; if either condition fails, assign the standard queue. Eligibility and assignment are the same decision here, with no discretionary branch."
+        },
+        {
+          "role": "assistant",
+          "content": "Under that rule, the passage count and the full-name predicate are jointly necessary and jointly sufficient. Three or fewer flagged passages with no full name of a living private individual requires fast-track; a fourth flagged passage or even one qualifying full name requires the standard queue. I will preserve that binary assignment while keeping the factual review separate from the eventual probe."
+        },
+        {
+          "role": "user",
+          "content": "All three passages remain flagged at the close of review, and they remain flagged for non-privacy reasons. Passage one still needs its council-notice date checked against the archive. Passage two still needs the supper's seating capacity checked against the venue invoice. Neither passage names any individual: the first quotes an office title, and the second refers only to the organizer's role. These open checks count toward the flagged total even though neither is a naming issue."
+        },
+        {
+          "role": "assistant",
+          "content": "The current count is therefore three, with passages one and two unambiguously still on the flagged list for date and capacity verification. Their non-privacy reasons do not remove them from the count, and their wording contains no individual name. I will wait for the literal status of passage three before the later queue question is answered."
+        },
+        {
+          "role": "user",
+          "content": "Passage three also remains flagged for a non-privacy reason: the photograph credit still needs the image number reconciled with the contact sheet. The supper organizer is a living private individual. In the current caption her full name remains present, and the text identifies her explicitly as Marta Coelho."
+        },
+        {
+          "role": "assistant",
+          "content": "That completes the factual predicate without assigning a queue in this exchange. There are exactly three passages still flagged, their outstanding reasons are non-privacy checks, and the record separately states the organizer's living-private status and the current caption's naming condition. The mandatory rule can be applied when the queue is asked for later."
+        },
+        {
+          "role": "user",
+          "content": "While that decision remains unstated, Devon is laying out a two-page illustrated notes section. The council excerpt will appear as a short indented quotation, the supper description as ordinary body text, and the photograph caption beneath a half-page image. The archive date and image number are still verification matters; the layout mock-up should not turn either one into a confirmed fact merely because placeholder text occupies the space."
+        },
+        {
+          "role": "assistant",
+          "content": "The mock-up can distinguish typography from verification. Use the intended styles and reserve enough space, but mark the date and image-number fields as editorial placeholders in the internal proof. Their presence demonstrates fit, not factual confirmation. The final proof should draw those values from the archive and contact-sheet checks rather than from whatever temporary text was used for pagination."
+        },
+        {
+          "role": "user",
+          "content": "The quoted council notice contains an old-fashioned spelling that the author wants preserved, while the surrounding explanation follows current house style. Devon also has a handwritten field-note excerpt with two line breaks that matter to its cadence. We are moving now from rights evidence to copyediting presentation, and none of these typographic choices should be treated as a queue assignment or as a change to the audiobook agreement."
+        },
+        {
+          "role": "assistant",
+          "content": "Preserve the historical spelling inside the clearly attributed quotation and use current house style in the editorial prose around it. For the field-note excerpt, retain the two meaningful line breaks if the available measure permits; if the proof forces another wrap, distinguish the original breaks from automatic line wrapping in the production annotation. Those are copyediting choices, not evidence about the unresolved queue."
+        },
+        {
+          "role": "user",
+          "content": "For the field-note excerpt, should the writer's inserted square-bracket clarification stay in roman type or follow the surrounding italic quotation? Give a brief house-style recommendation and explain how to keep the editorial insertion visually distinct without changing the quoted wording. Do not mention any passage count, personal name, review queue, or production vendor."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep the bracketed clarification in roman type within the italic quotation. The contrast marks it as editorial rather than original while the square brackets preserve its exact boundary. Do not add emphasis inside the brackets; if the change of type is too subtle at the final size, note the convention in the copyediting query rather than altering the quoted words."
+        }
+      ]
+    }
+  },
+  "focal": {
+    "plant_id": "e06_review_queue",
+    "category": "derived_decision",
+    "rule_or_relation": "Assign fast-track if and only if at most three passages remain flagged and none names a living private individual by full name; assign the standard queue otherwise.",
+    "changed_input": "The one load-bearing input is whether the full name of the explicitly living private organizer remains in passage three: absent in C versus present in W.",
+    "probe": "Under the recorded mandatory assignment rule, which review queue applies to Low Tide at Cortes? Answer with only the queue name.",
+    "correct_target": "fast-track queue",
+    "counterfactual_target": "standard queue",
+    "establishing_message_indices": [5, 7, 9],
+    "downstream_reference_indices": [],
+    "why_derived": "No history message states a queue. The answer requires combining the count of exactly three still-flagged passages, the explicit living-private classification, the presence or absence of the organizer's full name, and the exhaustive assignment rule.",
+    "why_counterfactual_reverses": "Both variants have exactly three passages flagged for non-privacy reasons. Removing the full name satisfies the second condition and requires fast-track; retaining Marta Coelho breaks it and requires the standard queue."
+  },
+  "nonfocal_control": {
+    "plant_id": "e06_audiobook_producer",
+    "category": "unchanged_control",
+    "probe": "Which company is the contracted producer for the audiobook edition? Answer with only the company name.",
+    "target": "Meridian Audio",
+    "countertarget": "Harmonic Audio",
+    "establishing_message_indices": [1, 2],
+    "why_independent_of_focal": "The executed audiobook-production agreement is explicitly independent of passage count, naming status, and print-manuscript review queue."
+  },
+  "changed_message_allowlist": [9],
+  "distractor_fact_inventory": [
+    {
+      "chain_id": "illustrated-notes-layout",
+      "indices": [11, 12],
+      "summary": "The proof uses placeholders for an archive date and image number so typography does not masquerade as factual verification."
+    },
+    {
+      "chain_id": "quotation-copyediting",
+      "indices": [13, 14, 15, 16],
+      "summary": "Historical spelling, meaningful line breaks, and a bracketed editorial clarification receive concrete copyediting treatment."
+    }
+  ],
+  "retained_tail_purpose": "A short byte-identical copyediting question about roman type inside an italic quotation follows the carrier without naming or implying a review queue, passage count, person, or audiobook producer.",
+  "tokenizer_binding": {
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "carrier_request": "Write the fixed neutral handoff note for the next assistant. Output only that note.",
+    "carrier_content": "The prior discussion established the operating context and relevant decision criteria. Continue from this handoff, preserve the existing constraints, and answer later questions from the state available here. No unresolved action is introduced by this note.",
+    "anchor_user": "Acknowledge receipt of this handoff without adding or repeating any factual detail.",
+    "anchor_assistant": "Acknowledged."
+  },
+  "observed_mechanical_evidence": {
+    "status": "TOKENIZER_RECONSTRUCTION_COMPLETE_UNREVIEWED",
+    "method": "Current repository validator with the pinned local production tokenizer; no subject-model forward pass.",
+    "correct_pre_carrier_token_count": 1173,
+    "wrong_pre_carrier_token_count": 1173,
+    "correct_total_canonical_token_count": 1315,
+    "wrong_total_canonical_token_count": 1315,
+    "per_message_content_widths_identical": true,
+    "role_native_geometry_identical": true,
+    "changed_positions_confined_to_allowlist": true,
+    "decoded_round_trip": true,
+    "execution_authorized": false,
+    "subject_model_forward_performed": false
+  },
+  "review": "PENDING",
+  "warning": "DRAFT_UNREVIEWED. Revision 2 is not frozen, not reviewed, not executable, and must not be used for semantic outcomes."
+}

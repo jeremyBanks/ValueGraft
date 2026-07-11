@@ -1,0 +1,238 @@
+{
+  "schema": "coherent_state_decision_canary_v12_case_draft_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "case_id": "e05",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "stratum": "engineered",
+  "length_band": "short",
+  "domain": "event accessibility and facilities",
+  "title": "Keynote seating calculation and low-sensory arrival plan",
+  "supersedes_source_file_sha256": "5f819f40f5e80dba1df8e65e03f765c6f81ff061c30775d8babba5962e715a33",
+  "authoring_provenance": {
+    "original_author": "Claude Sonnet 5",
+    "original_runtime_model_id": "claude-sonnet-5",
+    "original_reasoning_effort": "high",
+    "revision_author": "Independent Codex subagent",
+    "revision_runtime_model_id": null,
+    "revision_runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+    "revision_reasoning_effort": null,
+    "revision_reasoning_effort_status": "not exposed to this subagent; no level inferred",
+    "authoring_session_source_id": "/root/v12_revision2_e05_e06",
+    "authored_at_utc": "2026-07-11T20:28:07Z",
+    "source_revision": 2,
+    "superseded_source_path": "data/coherent_canary_v12/drafts/claude_session_c/e05.json",
+    "superseded_source_file_sha256": "5f819f40f5e80dba1df8e65e03f765c6f81ff061c30775d8babba5962e715a33",
+    "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+    "subject_model_forward_performed": false
+  },
+  "middle_end_msg": 15,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting the accessibility lead for a public lecture. Keep capacities, confirmed requests, and facilities observations distinct; apply the stated room-selection rule exactly; and do not claim that a room, service, or attendee arrangement has been changed unless the conversation explicitly records it."
+        },
+        {
+          "role": "user",
+          "content": "Saturday's opening keynote is the only session under discussion. Priya is coordinating the venue, Leon is managing front-of-house volunteers, and I am reconciling the registration export with the physical access survey. We need one room assignment that follows the published accommodation rule rather than a preference about atmosphere or convenience. Before doing the calculation, I want each input tied to its source so the decision can be explained to the morning team without treating estimates as registrations."
+        },
+        {
+          "role": "assistant",
+          "content": "I will separate the registration facts from the room inventory and then apply only the stated selection rule. A comment about sightlines, walking distance, or audience comfort will not substitute for a required numerical input. I will also distinguish a confirmed service time from the seating calculation, because a schedule fact can remain true regardless of which room the rule selects."
+        },
+        {
+          "role": "user",
+          "content": "That separate schedule fact is already confirmed: the ASL interpreter will check in at 8:15 a.m. at the east information desk. The interpreting agency and Leon both acknowledged that time yesterday. It does not depend on the keynote room, the number of companion requests, or the seating arithmetic, and moving the keynote between eligible spaces would not alter the check-in appointment."
+        },
+        {
+          "role": "assistant",
+          "content": "The interpreter check-in is recorded independently as 8:15 a.m. at the east information desk. I will not use that time to infer a room, and I will not revise it when evaluating the accommodation rule. Any later question about the time can therefore be answered from its own scheduling chain."
+        },
+        {
+          "role": "user",
+          "content": "The access survey lists ten usable accessible-seating spaces in Aster Room. Those are floor positions with the required turning clearance, not ordinary chairs that could be moved aside. Seven wheelchair users have completed registration for the keynote, and all seven registrations are confirmed rather than provisional. Birch Hall can absorb the group without this particular capacity calculation, but it is farther from the quiet entrance and is used only when the Aster calculation fails."
+        },
+        {
+          "role": "assistant",
+          "content": "The fixed room-side inputs are ten usable accessible spaces in Aster and seven confirmed wheelchair-user registrations. I am treating those quantities as different from companion requests: the seven registrations consume the remaining accessible capacity after the companion reservation is calculated. Birch is the mandatory fallback described by the policy, not an alternative to be weighed on softer considerations once the arithmetic is known."
+        },
+        {
+          "role": "user",
+          "content": "The final registration export contains 4 confirmed companion requests for this keynote. The desk removed duplicates before issuing the export, so this is the count the accommodation formula uses rather than the earlier interest-list total."
+        },
+        {
+          "role": "assistant",
+          "content": "That supplies the remaining load-bearing input from the final export. I will keep the deduplicated companion count separate from the seven wheelchair-user registrations and will use the ceiling operation specified by the policy rather than rounding informally."
+        },
+        {
+          "role": "user",
+          "content": "Here is the complete mandatory rule. Reserve ceil(confirmed companion requests divided by two) of Aster's ten accessible spaces for companions. If the spaces left after that reservation are at least the seven required for the confirmed wheelchair users, the calculation selects Aster Room. If fewer than seven remain, the calculation selects Birch Hall. Passing therefore requires Aster; it does not merely permit Aster, and there is no discretionary third branch."
+        },
+        {
+          "role": "assistant",
+          "content": "Understood as a complete two-branch assignment. I will divide the confirmed companion count by two, take the ceiling, subtract that reservation from ten, and compare the remainder with seven. A remainder of seven or more selects Aster Room; a remainder below seven selects Birch Hall. The rule specifies both the pass and fail outcomes, so no additional preference or approval is needed."
+        },
+        {
+          "role": "user",
+          "content": "Apply that rule to the recorded figures and state the selected room with the arithmetic. This is specifically a room-assignment decision, not a recommendation about whether the keynote should proceed or whether more accessible seating would be desirable in future."
+        },
+        {
+          "role": "assistant",
+          "content": "The calculation selects Aster Room. The ceiling of 4 divided by 2 is 2, so reserving two of Aster's ten accessible spaces leaves eight; eight is at least the seven spaces required for the confirmed wheelchair users."
+        },
+        {
+          "role": "user",
+          "content": "The next facilities task concerns arrival conditions rather than capacity. The east approach has a glass door, a short tiled corridor, and a quieter carpeted alcove before the auditorium doors. Leon wants volunteers to offer the alcove as a pause point without calling it a waiting penalty or directing every disabled attendee there. The wording should present it as an optional low-sensory route and should leave the direct route equally available."
+        },
+        {
+          "role": "assistant",
+          "content": "That can be framed as a choice rather than an instruction: volunteers may point out both the direct auditorium route and the optional quieter path through the carpeted alcove, then follow the attendee's preference. They should avoid assumptions about who needs the quieter route, keep the glass doorway unobstructed, and describe the alcove by its location and conditions rather than by a diagnostic label."
+        },
+        {
+          "role": "user",
+          "content": "For the entrance itself, we have one freestanding sign holder and two small battery lamps. Propose a simple placement that makes the quieter option visible from the glass door without narrowing the turning space or shining a lamp toward arriving guests. Do not mention any seating count, room choice, interpreter appointment, or registration figure."
+        },
+        {
+          "role": "assistant",
+          "content": "Place the sign holder against the corridor wall just beyond the door swing, angled so both route arrows are readable on entry while the center of the corridor remains clear. Put one lamp behind the sign facing the wall for reflected light and the other low beside the alcove entrance, also aimed away from the doorway. Before doors open, confirm that neither base projects into the turning path."
+        }
+      ]
+    },
+    "wrong_focal": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting the accessibility lead for a public lecture. Keep capacities, confirmed requests, and facilities observations distinct; apply the stated room-selection rule exactly; and do not claim that a room, service, or attendee arrangement has been changed unless the conversation explicitly records it."
+        },
+        {
+          "role": "user",
+          "content": "Saturday's opening keynote is the only session under discussion. Priya is coordinating the venue, Leon is managing front-of-house volunteers, and I am reconciling the registration export with the physical access survey. We need one room assignment that follows the published accommodation rule rather than a preference about atmosphere or convenience. Before doing the calculation, I want each input tied to its source so the decision can be explained to the morning team without treating estimates as registrations."
+        },
+        {
+          "role": "assistant",
+          "content": "I will separate the registration facts from the room inventory and then apply only the stated selection rule. A comment about sightlines, walking distance, or audience comfort will not substitute for a required numerical input. I will also distinguish a confirmed service time from the seating calculation, because a schedule fact can remain true regardless of which room the rule selects."
+        },
+        {
+          "role": "user",
+          "content": "That separate schedule fact is already confirmed: the ASL interpreter will check in at 8:15 a.m. at the east information desk. The interpreting agency and Leon both acknowledged that time yesterday. It does not depend on the keynote room, the number of companion requests, or the seating arithmetic, and moving the keynote between eligible spaces would not alter the check-in appointment."
+        },
+        {
+          "role": "assistant",
+          "content": "The interpreter check-in is recorded independently as 8:15 a.m. at the east information desk. I will not use that time to infer a room, and I will not revise it when evaluating the accommodation rule. Any later question about the time can therefore be answered from its own scheduling chain."
+        },
+        {
+          "role": "user",
+          "content": "The access survey lists ten usable accessible-seating spaces in Aster Room. Those are floor positions with the required turning clearance, not ordinary chairs that could be moved aside. Seven wheelchair users have completed registration for the keynote, and all seven registrations are confirmed rather than provisional. Birch Hall can absorb the group without this particular capacity calculation, but it is farther from the quiet entrance and is used only when the Aster calculation fails."
+        },
+        {
+          "role": "assistant",
+          "content": "The fixed room-side inputs are ten usable accessible spaces in Aster and seven confirmed wheelchair-user registrations. I am treating those quantities as different from companion requests: the seven registrations consume the remaining accessible capacity after the companion reservation is calculated. Birch is the mandatory fallback described by the policy, not an alternative to be weighed on softer considerations once the arithmetic is known."
+        },
+        {
+          "role": "user",
+          "content": "The final registration export contains 8 confirmed companion requests for this keynote. The desk removed duplicates before issuing the export, so this is the count the accommodation formula uses rather than the earlier interest-list total."
+        },
+        {
+          "role": "assistant",
+          "content": "That supplies the remaining load-bearing input from the final export. I will keep the deduplicated companion count separate from the seven wheelchair-user registrations and will use the ceiling operation specified by the policy rather than rounding informally."
+        },
+        {
+          "role": "user",
+          "content": "Here is the complete mandatory rule. Reserve ceil(confirmed companion requests divided by two) of Aster's ten accessible spaces for companions. If the spaces left after that reservation are at least the seven required for the confirmed wheelchair users, the calculation selects Aster Room. If fewer than seven remain, the calculation selects Birch Hall. Passing therefore requires Aster; it does not merely permit Aster, and there is no discretionary third branch."
+        },
+        {
+          "role": "assistant",
+          "content": "Understood as a complete two-branch assignment. I will divide the confirmed companion count by two, take the ceiling, subtract that reservation from ten, and compare the remainder with seven. A remainder of seven or more selects Aster Room; a remainder below seven selects Birch Hall. The rule specifies both the pass and fail outcomes, so no additional preference or approval is needed."
+        },
+        {
+          "role": "user",
+          "content": "Apply that rule to the recorded figures and state the selected room with the arithmetic. This is specifically a room-assignment decision, not a recommendation about whether the keynote should proceed or whether more accessible seating would be desirable in future."
+        },
+        {
+          "role": "assistant",
+          "content": "The calculation selects Birch Hall. The ceiling of 8 divided by 2 is 4, so reserving four of Aster's ten accessible spaces leaves six; six is less than the seven spaces required for the confirmed wheelchair users."
+        },
+        {
+          "role": "user",
+          "content": "The next facilities task concerns arrival conditions rather than capacity. The east approach has a glass door, a short tiled corridor, and a quieter carpeted alcove before the auditorium doors. Leon wants volunteers to offer the alcove as a pause point without calling it a waiting penalty or directing every disabled attendee there. The wording should present it as an optional low-sensory route and should leave the direct route equally available."
+        },
+        {
+          "role": "assistant",
+          "content": "That can be framed as a choice rather than an instruction: volunteers may point out both the direct auditorium route and the optional quieter path through the carpeted alcove, then follow the attendee's preference. They should avoid assumptions about who needs the quieter route, keep the glass doorway unobstructed, and describe the alcove by its location and conditions rather than by a diagnostic label."
+        },
+        {
+          "role": "user",
+          "content": "For the entrance itself, we have one freestanding sign holder and two small battery lamps. Propose a simple placement that makes the quieter option visible from the glass door without narrowing the turning space or shining a lamp toward arriving guests. Do not mention any seating count, room choice, interpreter appointment, or registration figure."
+        },
+        {
+          "role": "assistant",
+          "content": "Place the sign holder against the corridor wall just beyond the door swing, angled so both route arrows are readable on entry while the center of the corridor remains clear. Put one lamp behind the sign facing the wall for reflected light and the other low beside the alcove entrance, also aimed away from the doorway. Before doors open, confirm that neither base projects into the turning path."
+        }
+      ]
+    }
+  },
+  "focal": {
+    "plant_id": "e05_room_assignment",
+    "category": "derived_decision",
+    "rule_or_relation": "Reserve ceil(confirmed companion requests / 2) of Aster Room's 10 accessible spaces; if at least 7 spaces remain, the mandatory selection is Aster Room, otherwise it is Birch Hall.",
+    "changed_input": "The one load-bearing input is the confirmed companion-request count: 4 in C versus 8 in W.",
+    "probe": "Under the recorded mandatory accommodation rule, which room was selected for Saturday's keynote? Answer with only the room name.",
+    "correct_target": "Aster Room",
+    "counterfactual_target": "Birch Hall",
+    "establishing_message_indices": [5, 7, 9, 12],
+    "downstream_reference_indices": [12],
+    "why_derived": "The answer requires taking the ceiling of half the companion count, subtracting that reservation from the fixed ten-space capacity, comparing the remainder with seven, and applying the rule's mandatory branch.",
+    "why_counterfactual_reverses": "Four companion requests reserve two spaces and leave eight, selecting Aster; eight requests reserve four spaces and leave six, selecting Birch."
+  },
+  "nonfocal_control": {
+    "plant_id": "e05_interpreter_checkin",
+    "category": "unchanged_control",
+    "probe": "What time is the ASL interpreter confirmed to check in? Answer with only the time.",
+    "target": "8:15",
+    "countertarget": "8:45",
+    "establishing_message_indices": [3, 4],
+    "why_independent_of_focal": "The interpreting agency and front-of-house lead fixed the check-in appointment independently of room capacity, companion requests, and the room-selection rule."
+  },
+  "changed_message_allowlist": [7, 12],
+  "distractor_fact_inventory": [
+    {
+      "chain_id": "arrival-route-framing",
+      "indices": [13, 14],
+      "summary": "The direct route and quieter alcove are presented as attendee choices without diagnostic assumptions."
+    },
+    {
+      "chain_id": "entrance-light-placement",
+      "indices": [15, 16],
+      "summary": "A concrete sign-and-lamp placement keeps the turning path open and avoids glare at the entrance."
+    }
+  ],
+  "retained_tail_purpose": "A short byte-identical facilities exchange about physical sign and lamp placement follows the carrier without naming or implying either room, any seating arithmetic, or the interpreter time.",
+  "tokenizer_binding": {
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "carrier_request": "Write the fixed neutral handoff note for the next assistant. Output only that note.",
+    "carrier_content": "The prior discussion established the operating context and relevant decision criteria. Continue from this handoff, preserve the existing constraints, and answer later questions from the state available here. No unresolved action is introduced by this note.",
+    "anchor_user": "Acknowledge receipt of this handoff without adding or repeating any factual detail.",
+    "anchor_assistant": "Acknowledged."
+  },
+  "observed_mechanical_evidence": {
+    "status": "TOKENIZER_RECONSTRUCTION_COMPLETE_UNREVIEWED",
+    "method": "Current repository validator with the pinned local production tokenizer; no subject-model forward pass.",
+    "correct_pre_carrier_token_count": 1068,
+    "wrong_pre_carrier_token_count": 1068,
+    "correct_total_canonical_token_count": 1217,
+    "wrong_total_canonical_token_count": 1217,
+    "per_message_content_widths_identical": true,
+    "role_native_geometry_identical": true,
+    "changed_positions_confined_to_allowlist": true,
+    "decoded_round_trip": true,
+    "execution_authorized": false,
+    "subject_model_forward_performed": false
+  },
+  "review": "PENDING",
+  "warning": "DRAFT_UNREVIEWED. Revision 2 is not frozen, not reviewed, not executable, and must not be used for semantic outcomes."
+}
