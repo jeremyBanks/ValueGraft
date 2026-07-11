@@ -199,6 +199,9 @@ class ExecutionResult:
     last_logits: torch.Tensor
     calls: list[dict]
     q1_token_logprobs: list[dict]
+    executed_token_ids: list[int]
+    logical_positions: list[int]
+    physical_positions: list[int]
     physical_end: int
     logical_end: int
 
@@ -230,6 +233,20 @@ class GradientResult:
     physical_region: tuple[int, int]
     logical_region: tuple[int, int]
     probe_suffix_ids: list[int]
+    gradient_boundary_calls: list[dict]
+    gradient_continuation_calls: list[dict]
+    public_full_calls: list[dict]
+    gradient_boundary_token_ids: list[int]
+    gradient_boundary_logical_positions: list[int]
+    gradient_boundary_physical_positions: list[int]
+    gradient_continuation_token_ids: list[int]
+    gradient_continuation_logical_positions: list[int]
+    gradient_continuation_physical_positions: list[int]
+    public_full_token_ids: list[int]
+    public_full_logical_positions: list[int]
+    public_full_physical_positions: list[int]
+    probe_logical_positions: list[int]
+    probe_physical_positions: list[int]
 
 
 def _forward(model, cache, token_ids: Sequence[int], logical_positions: Sequence[int],
@@ -260,6 +277,9 @@ def _run_events(model, token_ids: Sequence[int], events, *,
     last_logits = None
     calls: list[dict] = []
     q1_lps: list[dict] = []
+    executed_ids: list[int] = []
+    executed_logical: list[int] = []
+    executed_physical: list[int] = []
     for event in events:
         event_start = event.physical_start if destination else event.token_start
         event_end = event.physical_end if destination else event.token_end
@@ -281,6 +301,9 @@ def _run_events(model, token_ids: Sequence[int], events, *,
             model, cache, ids, range(logical_start, logical_end),
             range(event_start, event_end), enable_grad=enable_grad)
         physical_cursor = event_end
+        executed_ids.extend(ids)
+        executed_logical.extend(range(logical_start, logical_end))
+        executed_physical.extend(range(event_start, event_end))
         calls.append({
             **asdict(event),
             "physical_start": event_start,
@@ -299,6 +322,7 @@ def _run_events(model, token_ids: Sequence[int], events, *,
     _require(snapshot_physical_length(snapshot) == stop_at,
              "executed cache physical length differs")
     return ExecutionResult(snapshot, last_logits, calls, q1_lps,
+                           executed_ids, executed_logical, executed_physical,
                            physical_cursor, logical_end)
 
 
@@ -478,9 +502,27 @@ def force_content_q1(model, prefix_snapshot: Snapshot, prefix_logits: torch.Tens
         eos_ids=eos, cap_hit=False)
 
 
-def require_generated_forced_identity(generated: GenerationResult,
-                                      forced: GenerationResult, *,
-                                      content_start: int) -> dict:
+def require_generated_forced_identity(
+        generated_prefix: ExecutionResult, generated: GenerationResult,
+        forced_prefix: ExecutionResult, forced: GenerationResult, *,
+        content_start: int) -> dict:
+    _require(generated_prefix.executed_token_ids == forced_prefix.executed_token_ids,
+             "generated/forced prefix token IDs differ")
+    _require(generated_prefix.logical_positions == forced_prefix.logical_positions and
+             generated_prefix.physical_positions == forced_prefix.physical_positions,
+             "generated/forced prefix positions differ")
+    _require(generated_prefix.calls == forced_prefix.calls,
+             "generated/forced prefix events differ")
+    _require(generated_prefix.logical_end == forced_prefix.logical_end,
+             "generated/forced prefix logical ends differ")
+    _require(generated_prefix.physical_end == forced_prefix.physical_end == content_start,
+             "generated/forced content_start is not the exact prefix end")
+    _require(snapshot_hashes(generated_prefix.snapshot) ==
+             snapshot_hashes(forced_prefix.snapshot),
+             "generated/forced prefix K/V rows differ")
+    _require(tensor_sha256(generated_prefix.last_logits) ==
+             tensor_sha256(forced_prefix.last_logits),
+             "generated/forced prefix logits differ")
     _require(generated.stop_reason == "model_eos" and not generated.cap_hit,
              "generated identity branch did not stop normally")
     _require(bool(generated.content_ids), "generated identity content is empty")
@@ -489,6 +531,17 @@ def require_generated_forced_identity(generated: GenerationResult,
     _require(generated.logical_positions == forced.logical_positions and
              generated.physical_positions == forced.physical_positions,
              "generated/forced content positions differ")
+    _require(generated.eos_ids == forced.eos_ids,
+             "generated/forced EOS sets differ")
+    _require(generated.physical_positions and
+             generated.physical_positions[0] == content_start,
+             "generated content rows do not start at prefix end")
+    expected_logical = list(range(
+        generated_prefix.logical_end,
+        generated_prefix.logical_end + len(generated.content_ids)))
+    _require(generated.logical_positions == forced.logical_positions ==
+             expected_logical,
+             "generated/forced content logical positions do not start at prefix end")
     _require(generated.token_logprob_float32_bits ==
              forced.token_logprob_float32_bits,
              "generated/forced token logprob bits differ")
@@ -518,6 +571,14 @@ def require_generated_forced_identity(generated: GenerationResult,
         })
     return {
         "status": "GENERATED_FORCED_IDENTITY_PASS",
+        "prefix_token_ids": list(generated_prefix.executed_token_ids),
+        "prefix_logical_positions": list(generated_prefix.logical_positions),
+        "prefix_physical_positions": list(generated_prefix.physical_positions),
+        "prefix_calls": list(generated_prefix.calls),
+        "prefix_row_hashes": snapshot_hashes(generated_prefix.snapshot),
+        "prefix_last_logits_sha256": tensor_sha256(
+            generated_prefix.last_logits),
+        "eos_ids": list(generated.eos_ids),
         "content_ids": list(generated.content_ids),
         "content_start": content_start,
         "content_end": end,
@@ -606,6 +667,10 @@ def collect_fresh_region_margin_gradients(
     grad_margin_bits = _float32_bits(margin)
     grad_correct_bits = _float32_bits(correct)
     grad_counterfactual_bits = _float32_bits(counterfactual)
+    differentiated_calls = list(differentiated.calls)
+    differentiated_ids = list(differentiated.executed_token_ids)
+    differentiated_logical = list(differentiated.logical_positions)
+    differentiated_physical = list(differentiated.physical_positions)
     del differentiated, leaf_boundary, leaves, raw_gradients
 
     public = execute_fresh_plan(model, plan)
@@ -626,4 +691,20 @@ def collect_fresh_region_margin_gradients(
         physical_region=(physical_start, physical_end),
         logical_region=(logical_start, logical_end),
         probe_suffix_ids=[int(x) for x in suffix_ids],
+        gradient_boundary_calls=list(boundary.calls),
+        gradient_continuation_calls=differentiated_calls,
+        public_full_calls=list(public.calls),
+        gradient_boundary_token_ids=list(boundary.executed_token_ids),
+        gradient_boundary_logical_positions=list(boundary.logical_positions),
+        gradient_boundary_physical_positions=list(boundary.physical_positions),
+        gradient_continuation_token_ids=differentiated_ids,
+        gradient_continuation_logical_positions=differentiated_logical,
+        gradient_continuation_physical_positions=differentiated_physical,
+        public_full_token_ids=list(public.executed_token_ids),
+        public_full_logical_positions=list(public.logical_positions),
+        public_full_physical_positions=list(public.physical_positions),
+        probe_logical_positions=list(range(
+            logical_context_end, logical_context_end + len(suffix_ids))),
+        probe_physical_positions=list(range(
+            len(plan.token_ids), len(plan.token_ids) + len(suffix_ids))),
     )

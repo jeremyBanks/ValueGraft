@@ -39,6 +39,13 @@ class FakeCacheModel(torch.nn.Module):
     def forward(self, input_ids, past_key_values=None, position_ids=None,
                 cache_position=None, use_cache=True, logits_to_keep=1):
         del use_cache, logits_to_keep
+        past_length = (0 if past_key_values is None else
+                       int(past_key_values.layers[0].keys.shape[-2]))
+        assert cache_position.tolist() == list(range(
+            past_length, past_length + input_ids.shape[1]))
+        assert position_ids.shape == input_ids.shape
+        assert all(right == left + 1 for left, right in zip(
+            position_ids[0].tolist(), position_ids[0, 1:].tolist()))
         cache = DynamicCache() if past_key_values is None else past_key_values
         token = input_ids.to(torch.float32)
         position = position_ids.to(torch.float32)
@@ -214,7 +221,7 @@ def test_generated_forced_identity_is_bit_exact_and_eos_is_not_appended():
         model, forced_prefix.snapshot, forced_prefix.last_logits,
         content_ids=generated.content_ids, logical_start=8, eos_ids=[9])
     evidence = require_generated_forced_identity(
-        generated, forced, content_start=8)
+        generated_prefix, generated, forced_prefix, forced, content_start=8)
     assert generated.content_ids == [7, 8]
     assert generated.stop_candidate_id == 9
     assert generated.snapshot[0][0].shape[-2] == 10

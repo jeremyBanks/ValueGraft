@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import hashlib
+import json
 import math
 from typing import Sequence
 
@@ -19,7 +21,7 @@ from coherent_canary_runtime import (
     replace_rows,
     tensor_sha256,
 )
-from coherent_canary_schema import FreshDestinationPlan
+from coherent_canary_schema import FreshDestinationPlan, R2
 
 
 ULP_COUNTS = (1, 2, 4, 8, 16, 32, 64)
@@ -90,6 +92,22 @@ def _score_detached_rows(model, plan: FreshDestinationPlan, *, region: str,
         "correct_logprob": values[1],
         "counterfactual_logprob": values[2],
         "insertion": insertion,
+        "execution_trace": {
+            "boundary_calls": boundary.calls,
+            "boundary_token_ids": boundary.executed_token_ids,
+            "boundary_logical_positions": boundary.logical_positions,
+            "boundary_physical_positions": boundary.physical_positions,
+            "continuation_calls": completed.calls,
+            "continuation_token_ids": completed.executed_token_ids,
+            "continuation_logical_positions": completed.logical_positions,
+            "continuation_physical_positions": completed.physical_positions,
+            "probe_suffix_ids": [int(x) for x in suffix_ids],
+            "probe_logical_positions": list(range(
+                plan.logical_positions[-1] + 1,
+                plan.logical_positions[-1] + 1 + len(suffix_ids))),
+            "probe_physical_positions": list(range(
+                len(plan.token_ids), len(plan.token_ids) + len(suffix_ids))),
+        },
     }
 
 
@@ -97,6 +115,7 @@ def run_bidirectional_path_control(
         model, plan: FreshDestinationPlan, *, region: str,
         suffix_ids: Sequence[int], correct_id: int, counterfactual_id: int,
 ) -> dict:
+    _require(region == R2, "technical path control must use frozen R2")
     gradient = collect_fresh_region_margin_gradients(
         model, plan, region=region, suffix_ids=suffix_ids,
         correct_id=correct_id, counterfactual_id=counterfactual_id)
@@ -153,6 +172,16 @@ def run_bidirectional_path_control(
                 "schema": "coherent_canary_v12_bidirectional_path_control_v1",
                 "status": "PASS",
                 "region": region,
+                "correct_target_id": int(correct_id),
+                "counterfactual_target_id": int(counterfactual_id),
+                "probe_suffix_ids": [int(x) for x in suffix_ids],
+                "plan_geometry_sha256": hashlib.sha256(json.dumps(
+                    plan.geometry(), sort_keys=True, separators=(",", ":")
+                ).encode()).hexdigest(),
+                "plan_token_ids_sha256": hashlib.sha256(b"".join(
+                    int(value).to_bytes(8, "little", signed=True)
+                    for value in plan.token_ids
+                )).hexdigest(),
                 "chosen_ulp_count": ulp_count,
                 "minimum_margin_movement": MIN_MARGIN_MOVEMENT,
                 "gradient_baseline": {
