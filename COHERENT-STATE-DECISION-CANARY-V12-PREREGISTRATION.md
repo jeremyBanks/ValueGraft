@@ -721,11 +721,10 @@ Stateful-change checklist for implementation commits:
 ## 18. Paid execution budget and truncation
 
 Conservative provider-usage estimates before canary implementation total
-`$36.863842`; paid coherent-state compute remains `$0`. This includes two capped
-Claude Sonnet 5 reserve-stimulus authoring attempts, the second of which left
-recoverable authored text that Sol completed through the tokenizer-only writer.
-Against the owner's approximate `$60` ceiling, treat `$23.14` as remaining unless
-billing evidence changes it.
+`$42.532574`; paid coherent-state compute remains `$0`. This includes the prior
+stimulus/review work plus the final Fable pre-freeze review, whose CLI exceeded
+its nominal caps while caching context. Against the owner's approximate `$60`
+ceiling, treat `$17.467426` as remaining unless billing evidence changes it.
 
 Paid order:
 
@@ -741,11 +740,13 @@ Paid order:
 10. conditional d01 neutral cell, then native crossover;
 11. conditional d02/d03, case-atomic, in that order.
 
-Initial authorization is `$2` through step 3. The run may extend to a hard `$8`
-total canary ceiling only after the observed forecast. The `$8` includes
-provisioning, failed starts, e01--e04, the possible e05/e06 extension, and any
-conversation work; the extension's `$3` sub-cap is inside, not additional to,
-`$8`. Record the provider hourly price and forecast each next complete case from
+Initial authorization is `$2` through step 3. Because the pre-freeze review
+consumed more of the conservative total than planned, this execution now has a
+hard `$2.40` paid-compute ceiling, including provisioning and failed starts. It
+may proceed beyond the gates only after the observed forecast and only while a
+full next case fits that total. No reserve extension or conversation stratum may
+begin unless it also fits; otherwise return the observed forecast to the owner
+without starting it. Record the provider hourly price and forecast each next complete case from
 observed wall time with a 25% safety buffer. Do not begin a case unless its full
 forecast fits the remaining cap. Incomplete cases are persisted but do not
 contribute to a decision. If all three conversation cases cannot fit, do not
