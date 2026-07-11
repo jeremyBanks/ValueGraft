@@ -65,7 +65,8 @@ def _target(case: dict, key: str) -> dict:
     return value
 
 
-def _variant_evidence(tokenizer, messages: list[dict]) -> tuple[dict, object]:
+def _variant_evidence(tokenizer, messages: list[dict], *,
+                      middle_end_msg: int | None = None) -> tuple[dict, object]:
     ids = [int(value) for value in canonical_ids_any(tokenizer, messages, render_hf)]
     starts = message_starts(tokenizer, ids)
     _require(len(starts) == len(messages), "canonical message-start coverage differs")
@@ -78,7 +79,8 @@ def _variant_evidence(tokenizer, messages: list[dict]) -> tuple[dict, object]:
         for message in messages
     ]
     _require(max(content_widths) <= 4096, "an authored message exceeds 4096 tokens")
-    plan = build_role_native_plan(tokenizer, messages)
+    plan = build_role_native_plan(
+        tokenizer, messages, middle_end_msg=middle_end_msg)
     evidence = {
         "canonical_token_count": len(ids),
         "canonical_token_ids_sha256": sha256_ints(ids),
@@ -192,8 +194,10 @@ def validate_case(tokenizer, case: dict) -> dict:
     _require(all(0 < value < middle for value in control_indices),
              f"{case_id} control indices lie outside evicted block")
 
-    correct_evidence, correct_plan = _variant_evidence(tokenizer, correct)
-    wrong_evidence, wrong_plan = _variant_evidence(tokenizer, wrong)
+    correct_evidence, correct_plan = _variant_evidence(
+        tokenizer, correct, middle_end_msg=middle)
+    wrong_evidence, wrong_plan = _variant_evidence(
+        tokenizer, wrong, middle_end_msg=middle)
     history_tokens = correct_evidence["canonical_token_count"]
     expected_band = (1000, 2000) if band == "short" else (4000, 6000)
     _require(expected_band[0] <= history_tokens <= expected_band[1],

@@ -25,6 +25,13 @@ def _history(label: str):
     ]
 
 
+def _history_with_tail(label: str):
+    return _history(label) + [
+        {"role": "user", "content": "Continue with a neutral checklist."},
+        {"role": "assistant", "content": "Use source, owner, and status columns."},
+    ]
+
+
 def test_role_native_plan_covers_qwen_stream_and_nested_regions(tokenizer):
     plan = build_role_native_plan(tokenizer, _history("green"))
     assert plan.events[0].token_start == 0
@@ -74,8 +81,34 @@ def test_structural_calls_match_turn_additions(tokenizer):
     assert plan.regions.close_end < carrier_continuation.token_end
 
 
+def test_carrier_and_anchor_are_inserted_before_retained_tail(tokenizer):
+    history = _history_with_tail("green")
+    plan = build_role_native_plan(tokenizer, history, middle_end_msg=3)
+    assert plan.regions.anchor_end < len(plan.token_ids)
+
+    rendered = tokenizer.decode(plan.token_ids)
+    carrier_offset = rendered.index("The prior discussion established")
+    anchor_offset = rendered.index("Acknowledged.")
+    tail_offset = rendered.index("Continue with a neutral checklist.")
+    assert carrier_offset < anchor_offset < tail_offset
+
+    # R3 ends at the retained-tail user-message start, not at the end of the
+    # entire replay stream.
+    assert plan.regions.anchor_end in plan.message_start_positions
+    tail_start_ordinal = plan.message_start_positions.index(plan.regions.anchor_end)
+    assert tail_start_ordinal == 7  # 3 prefix + 4 carrier/anchor messages
+
+
 def test_equal_width_counterfactual_has_identical_role_native_geometry(tokenizer):
     correct = build_role_native_plan(tokenizer, _history("green"))
     wrong = build_role_native_plan(tokenizer, _history("amber"))
     require_matching_geometry(correct, wrong)
     assert correct.token_ids != wrong.token_ids
+
+
+def test_equal_width_counterfactual_with_tail_has_identical_geometry(tokenizer):
+    correct = build_role_native_plan(
+        tokenizer, _history_with_tail("green"), middle_end_msg=3)
+    wrong = build_role_native_plan(
+        tokenizer, _history_with_tail("amber"), middle_end_msg=3)
+    require_matching_geometry(correct, wrong)

@@ -74,6 +74,7 @@ def _assistant_content_bounds(tokenizer, messages: list[dict], ids: list[int],
 
 
 def build_role_native_plan(tokenizer, history_messages: list[dict], *,
+                           middle_end_msg: int | None = None,
                            carrier_request: str = ENGINEERED_CARRIER_REQUEST,
                            carrier_content: str = ENGINEERED_CARRIER_CONTENT,
                            anchor_user: str = ANCHOR_USER,
@@ -82,12 +83,23 @@ def build_role_native_plan(tokenizer, history_messages: list[dict], *,
         raise CanarySchemaError("history must start with a system message")
     if history_messages[-1].get("role") != "assistant":
         raise CanarySchemaError("history must end with an assistant message")
-    messages = deepcopy(history_messages) + [
+    if middle_end_msg is None:
+        middle_end_msg = len(history_messages)
+    if not isinstance(middle_end_msg, int) or not (
+            2 < middle_end_msg <= len(history_messages)):
+        raise CanarySchemaError("middle_end_msg is outside the history")
+    prefix = deepcopy(history_messages[:middle_end_msg])
+    retained_tail = deepcopy(history_messages[middle_end_msg:])
+    if prefix[-1].get("role") != "assistant":
+        raise CanarySchemaError("evicted prefix must end with an assistant message")
+    if retained_tail and retained_tail[0].get("role") != "user":
+        raise CanarySchemaError("retained tail must begin with a user message")
+    messages = prefix + [
         {"role": "user", "content": carrier_request},
         {"role": "assistant", "content": carrier_content},
         {"role": "user", "content": anchor_user},
         {"role": "assistant", "content": anchor_assistant},
-    ]
+    ] + retained_tail
     for index, message in enumerate(messages):
         expected = "system" if index == 0 else ("user" if index % 2 else "assistant")
         if message.get("role") != expected:
@@ -139,11 +151,15 @@ def build_role_native_plan(tokenizer, history_messages: list[dict], *,
                 "final_assistant_close", "structural", index,
                 content_end, len(ids)))
 
-    carrier_index = len(history_messages) + 1
-    anchor_assistant_index = len(messages) - 1
+    carrier_index = middle_end_msg + 1
+    anchor_assistant_index = middle_end_msg + 3
     content_start, content_end = assistant_content_bounds[carrier_index]
     close_end = starts[carrier_index + 1]
-    anchor_end = len(ids)
+    anchor_end = (
+        starts[anchor_assistant_index + 1]
+        if anchor_assistant_index + 1 < len(starts)
+        else len(ids)
+    )
     if assistant_content_bounds[anchor_assistant_index][1] >= anchor_end:
         raise CanarySchemaError("anchor assistant has no canonical close suffix")
     return ReplayPlan(
