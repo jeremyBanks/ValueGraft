@@ -1090,6 +1090,173 @@ def _validate_semantic_score_aggregates(doc: dict[str, Any], label: str) -> None
             raise ValueError(f"{label} calibration outcome differs: {arm}")
 
 
+def _mixed_hash_rows(keys: list[dict[str, str]],
+                     values: list[dict[str, str]]) -> list[dict[str, str]]:
+    if len(keys) != len(values):
+        raise ValueError("snapshot provenance mixed-source coverage differs")
+    return [{
+        "layer": key["layer"],
+        "k_sha256": key["k_sha256"],
+        "v_sha256": value["v_sha256"],
+    } for key, value in zip(keys, values)]
+
+
+def _validate_snapshot_provenance(doc: dict[str, Any], label: str) -> None:
+    """Reconstruct the raw-tensor waiver and every scored branch's lineage."""
+    sources = doc.get("sources")
+    summary = doc.get("summary")
+    if not isinstance(sources, dict) or not isinstance(summary, dict):
+        raise ValueError(f"{label} snapshot provenance is absent")
+    actual = sources.get("correct_actual")
+    replay = sources.get("correct_replay")
+    wrong = sources.get("wrong")
+    fresh = sources.get("fresh")
+    identity = sources.get("generated_replay_identity")
+    if not all(isinstance(value, dict) for value in (
+            actual, replay, wrong, fresh, identity)):
+        raise ValueError(f"{label} snapshot source records are incomplete")
+
+    actual_hashes = _validate_hash_rows(
+        actual.get("summary_row_hashes"), f"{label}.correct_actual")
+    replay_hashes = _validate_hash_rows(
+        replay.get("summary_row_hashes"), f"{label}.correct_replay")
+    wrong_hashes = _validate_hash_rows(
+        wrong.get("summary_row_hashes"), f"{label}.wrong")
+    fresh_hashes = _validate_hash_rows(
+        fresh.get("summary_row_hashes"), f"{label}.fresh")
+    if (summary.get("actual_row_hashes") != actual_hashes or
+            identity.get("actual_summary_row_hashes") != actual_hashes or
+            identity.get("replay_summary_row_hashes") != replay_hashes or
+            replay_hashes != actual_hashes):
+        raise ValueError(f"{label} actual/replay source hash binding differs")
+    if (actual.get("capture_materialization") !=
+            "live_incremental_generation_rows" or
+            actual.get("raw_tensor_archived") is not False or
+            actual.get("exact_replay_waiver_required_before_scoring") is not True):
+        raise ValueError(f"{label} actual source materialization differs")
+
+    for field in ("prefix_token_ids", "prefix_sha256", "prefix_token_count",
+                  "summary_token_ids", "summary_token_sha256", "summary_start",
+                  "summary_end", "prefix_position_ids", "summary_position_ids"):
+        if replay.get(field) != actual.get(field):
+            raise ValueError(f"{label} actual/replay {field} differs")
+    if (actual.get("source_kind") != "generated_incremental" or
+            replay.get("source_kind") != "correct_stepwise_replay"):
+        raise ValueError(f"{label} actual/replay source path differs")
+    actual_trace, replay_trace = actual.get("trace"), replay.get("trace")
+    if not isinstance(actual_trace, dict) or not isinstance(replay_trace, dict):
+        raise ValueError(f"{label} actual/replay trace is absent")
+    if actual_trace.get("token_ids") != replay_trace.get("token_ids") or \
+            actual_trace.get("token_ids") != actual.get("summary_token_ids"):
+        raise ValueError(f"{label} actual/replay trace IDs differ")
+    left, right = (actual_trace.get("token_logprobs"),
+                   replay_trace.get("token_logprobs"))
+    if (not isinstance(left, list) or not left or not isinstance(right, list) or
+            len(left) != len(right)):
+        raise ValueError(f"{label} actual/replay trace coverage differs")
+    lp_max = max(abs(_finite(a, f"{label}.actual_lp") -
+                     _finite(b, f"{label}.replay_lp"))
+                 for a, b in zip(left, right))
+    per_layer = identity.get("per_layer")
+    if (not isinstance(per_layer, list) or len(per_layer) != 48 or
+            [row.get("layer") for row in per_layer] != list(range(48))):
+        raise ValueError(f"{label} replay numerical layer coverage differs")
+    k_max = max(_finite(row.get("k_max_abs"), f"{label}.replay_K")
+                for row in per_layer)
+    v_max = max(_finite(row.get("v_max_abs"), f"{label}.replay_V")
+                for row in per_layer)
+    threshold = _finite(identity.get("tolerance"), f"{label}.replay_tolerance")
+    if (threshold != 1e-4 or
+            _finite(identity.get("token_logprob_max_abs"),
+                    f"{label}.replay_lp_max") != lp_max or
+            _finite(identity.get("k_max_abs"), f"{label}.replay_k_max") != k_max or
+            _finite(identity.get("v_max_abs"), f"{label}.replay_v_max") != v_max or
+            _finite(identity.get("observed_aggregate"),
+                    f"{label}.replay_aggregate") != max(lp_max, k_max, v_max) or
+            max(lp_max, k_max, v_max) > threshold or
+            identity.get("comparison") != "<=" or
+            identity.get("numerical_tolerance_passes") is not True or
+            identity.get("summary_row_hashes_bit_exact") is not True or
+            identity.get("raw_tensor_archive_waived_by_exact_replay") is not True or
+            identity.get("passes") is not True):
+        raise ValueError(f"{label} strict actual/replay identity differs")
+
+    allowed_materializations = {
+        "live_incremental_generation_rows",
+        "bit_exact_stepwise_resume_reconstruction",
+    }
+    used = sources.get("scoring_source_materialization_used")
+    history = sources.get("scoring_source_materializations")
+    if (not isinstance(used, str) or used not in allowed_materializations or
+            not isinstance(history, list) or
+            any(not isinstance(value, str) for value in history) or
+            history != sorted(set(history)) or
+            not 1 <= len(history) <= len(allowed_materializations) or
+            not set(history).issubset(allowed_materializations) or used not in history):
+        raise ValueError(f"{label} scoring source materialization is ambiguous")
+
+    audits = doc.get("branch_audits")
+    expected_arms = {
+        "G_fresh", "G_correct", "G_wrong", "G_Vcorrect", "G_Kcorrect"}
+    if not isinstance(audits, dict) or set(audits) != expected_arms:
+        raise ValueError(f"{label} branch-audit arm set differs")
+    destination = doc.get("destination") or {}
+    summary_start = destination.get("physical_summary_start")
+    summary_end = destination.get("physical_summary_end")
+    context_ids = destination.get("context_token_ids")
+    if (not isinstance(summary_start, int) or not isinstance(summary_end, int) or
+            not 0 < summary_start < summary_end or
+            not isinstance(context_ids, list) or len(context_ids) <= summary_end or
+            summary_end - summary_start != len(actual.get("summary_token_ids") or [])):
+        raise ValueError(f"{label} branch-audit destination bounds differ")
+
+    expected = {
+        "G_fresh": (fresh_hashes, "fresh", "fresh"),
+        "G_correct": (actual_hashes, "correct_actual", "correct_actual"),
+        "G_wrong": (wrong_hashes, "wrong_history", "wrong_history"),
+        "G_Vcorrect": (
+            _mixed_hash_rows(fresh_hashes, actual_hashes),
+            "fresh", "correct_actual"),
+        "G_Kcorrect": (
+            _mixed_hash_rows(actual_hashes, fresh_hashes),
+            "correct_actual", "fresh"),
+    }
+    common_fresh_prefix = None
+    for arm in sorted(expected_arms):
+        audit = audits[arm]
+        if not isinstance(audit, dict) or audit.get("arm") != arm:
+            raise ValueError(f"{label} branch audit identity differs: {arm}")
+        for key in (
+                "pre_tail_row_hashes", "post_tail_row_hashes",
+                "fresh_summary_row_hashes", "inserted_summary_row_hashes",
+                "declared_source_summary_row_hashes",
+                "fresh_before_summary_row_hashes",
+                "branch_before_summary_row_hashes"):
+            _validate_hash_rows(audit.get(key), f"{label}.{arm}.{key}")
+        declared, k_source, v_source = expected[arm]
+        if (audit.get("fresh_summary_row_hashes") != fresh_hashes or
+                audit.get("declared_source_summary_row_hashes") != declared or
+                audit.get("inserted_summary_row_hashes") != declared or
+                audit.get("declared_k_source") != k_source or
+                audit.get("declared_v_source") != v_source or
+                audit.get("fresh_before_summary_row_hashes") !=
+                audit.get("branch_before_summary_row_hashes")):
+            raise ValueError(f"{label} branch source/inserted hash lineage differs: {arm}")
+        if common_fresh_prefix is None:
+            common_fresh_prefix = audit["fresh_before_summary_row_hashes"]
+        elif audit["fresh_before_summary_row_hashes"] != common_fresh_prefix:
+            raise ValueError(f"{label} branch fresh-prefix lineage differs: {arm}")
+        if (audit.get("pre_tail_storage_lengths") != [summary_end] * 48 or
+                audit.get("post_tail_storage_lengths") != [len(context_ids)] * 48):
+            raise ValueError(f"{label} branch storage lengths differ: {arm}")
+        for key in ("non_summary_rows_bit_exact",
+                    "declared_summary_intervention_exact",
+                    "summary_hash_lineage_exact", "repeated_branch_hashes_exact",
+                    "tail_recomputed_from_boundary"):
+            if audit.get(key) is not True:
+                raise ValueError(f"{label} branch lineage flag differs: {arm}.{key}")
+
+
 def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
                          expected_fingerprint: dict[str, Any] | None = None) -> None:
     _require_identity(doc, path.name)
@@ -1106,6 +1273,7 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
             raise ValueError(f"{path.name} missing fields {missing}")
         _validate_actual_render_schedule(doc, path.name)
         _validate_gapped_destination_schedule(doc, path.name)
+        _validate_snapshot_provenance(doc, path.name)
         for field in ("arm_scores", "conversation_outcomes"):
             arms = doc.get(field)
             if not isinstance(arms, dict) or set(arms) != set(ARMS):

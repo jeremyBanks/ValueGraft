@@ -203,22 +203,103 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
         "request_sha256": hashlib.sha256(
             MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
     }
+    actual_hashes = hash_rows("semantic_actual")
+    fresh_hashes = hash_rows("semantic_fresh")
+    wrong_hashes = hash_rows("semantic_wrong")
+    summary["actual_row_hashes"] = actual_hashes
+    source_record = {
+        "source_kind": "generated_incremental",
+        "prefix_token_ids": correct,
+        "prefix_sha256": MODULE._sha256_ints(correct, "correct"),
+        "prefix_token_count": len(correct),
+        "prefix_position_ids": list(range(len(correct))),
+        "summary_token_ids": summary_ids,
+        "summary_token_sha256": MODULE._sha256_ints(
+            summary_ids, "correct summary"),
+        "summary_start": len(correct),
+        "summary_end": len(correct) + len(summary_ids),
+        "summary_position_ids": list(range(
+            len(correct), len(correct) + len(summary_ids))),
+        "summary_row_hashes": actual_hashes,
+        "trace": trace,
+    }
     source = {
         "correct_actual": {
-            "prefix_token_ids": correct,
-            "prefix_sha256": MODULE._sha256_ints(correct, "correct"),
-            "prefix_token_count": len(correct),
-            "prefix_position_ids": list(range(len(correct))),
-            "summary_token_ids": summary_ids,
-            "summary_token_sha256": MODULE._sha256_ints(
-                summary_ids, "correct summary"),
-            "summary_start": len(correct),
-            "summary_end": len(correct) + len(summary_ids),
-            "summary_position_ids": list(range(
-                len(correct), len(correct) + len(summary_ids))),
+            **source_record,
+            "capture_materialization": "live_incremental_generation_rows",
+            "raw_tensor_archived": False,
+            "exact_replay_waiver_required_before_scoring": True,
         },
+        "correct_replay": {
+            **source_record, "source_kind": "correct_stepwise_replay"},
+        "wrong": {
+            **source_record,
+            "source_kind": "wrong_history_exact_length_counterfactual",
+            "summary_row_hashes": wrong_hashes,
+        },
+        "fresh": {
+            **source_record,
+            "source_kind": "gapped_fresh_stepwise_forced",
+            "summary_row_hashes": fresh_hashes,
+        },
+        "generated_replay_identity": {
+            "tolerance": 1e-4, "comparison": "<=",
+            "token_logprob_max_abs": 0.0,
+            "k_max_abs": 0.0, "v_max_abs": 0.0,
+            "per_layer": zero_layers(), "observed_aggregate": 0.0,
+            "numerical_tolerance_passes": True,
+            "actual_summary_row_hashes": actual_hashes,
+            "replay_summary_row_hashes": actual_hashes,
+            "summary_row_hashes_bit_exact": True,
+            "raw_tensor_archive_waived_by_exact_replay": True,
+            "passes": True,
+        },
+        "scoring_source_materializations": [
+            "live_incremental_generation_rows"],
+        "scoring_source_materialization_used":
+            "live_incremental_generation_rows",
     }
     return summary, source, evidence
+
+
+def semantic_branch_audits(sources: dict, destination: dict) -> dict:
+    actual = sources["correct_actual"]["summary_row_hashes"]
+    fresh = sources["fresh"]["summary_row_hashes"]
+    wrong = sources["wrong"]["summary_row_hashes"]
+
+    def mixed(keys, values):
+        return [{
+            "layer": key["layer"], "k_sha256": key["k_sha256"],
+            "v_sha256": value["v_sha256"],
+        } for key, value in zip(keys, values)]
+
+    expected = {
+        "G_fresh": (fresh, "fresh", "fresh"),
+        "G_correct": (actual, "correct_actual", "correct_actual"),
+        "G_wrong": (wrong, "wrong_history", "wrong_history"),
+        "G_Vcorrect": (mixed(fresh, actual), "fresh", "correct_actual"),
+        "G_Kcorrect": (mixed(actual, fresh), "correct_actual", "fresh"),
+    }
+    before = hash_rows("semantic_before_summary")
+    return {arm: {
+        "arm": arm,
+        "pre_tail_storage_lengths": [destination["physical_summary_end"]] * 48,
+        "pre_tail_row_hashes": hash_rows(f"{arm}:pre"),
+        "post_tail_storage_lengths": [len(destination["context_token_ids"])] * 48,
+        "post_tail_row_hashes": hash_rows(f"{arm}:post"),
+        "fresh_summary_row_hashes": fresh,
+        "inserted_summary_row_hashes": declared,
+        "declared_source_summary_row_hashes": declared,
+        "declared_k_source": k_source,
+        "declared_v_source": v_source,
+        "fresh_before_summary_row_hashes": before,
+        "branch_before_summary_row_hashes": before,
+        "non_summary_rows_bit_exact": True,
+        "declared_summary_intervention_exact": True,
+        "summary_hash_lineage_exact": True,
+        "repeated_branch_hashes_exact": True,
+        "tail_recomputed_from_boundary": True,
+    } for arm, (declared, k_source, v_source) in expected.items()}
 
 
 def partition(length: int) -> list[int]:
@@ -737,6 +818,16 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
             ROOT / "data" / "synthetic" / f"{cid}.json").read_text())
         saved_summary, sources, destination_schedule = \
             destination_schedule_fixture(rendered_conversation)
+        destination = {
+            "physical_summary_start":
+                destination_schedule["physical_summary_start"],
+            "physical_summary_end":
+                destination_schedule["physical_summary_end"],
+            "context_token_ids": (
+                destination_schedule["prefix_token_ids"] +
+                destination_schedule["summary_token_ids"] + [701, 702, 703]),
+        }
+        branch_audits = semantic_branch_audits(sources, destination)
         case_identity = _real_case_identity(cid)
         actual_schedule = {
             **identity(), **schedule_row(), "conversation_id": cid,
@@ -760,7 +851,8 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
             "pre_score_destination_schedule_equivalence":
                 destination_schedule,
             "summary": saved_summary, "sources": sources,
-            "destination": {}, "arm_scores": arms,
+            "destination": destination, "arm_scores": arms,
+            "branch_audits": branch_audits,
             "conversation_outcomes": {
                 arm: score["conversation_margin"] for arm, score in arms.items()},
             "calibration": {
@@ -1107,6 +1199,73 @@ def test_semantic_checkpoint_reconstructs_gapped_destination_schedule(
     doc = json.loads(path.read_text())
     mutation(doc)
     with pytest.raises(ValueError, match=match):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
+
+
+def _change_digest(value: str) -> str:
+    return ("0" if value[0] != "0" else "1") + value[1:]
+
+
+def test_semantic_snapshot_waiver_rejects_approximate_non_bit_exact_replay(
+        tmp_path: Path):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    changed = copy.deepcopy(doc["sources"]["correct_replay"][
+        "summary_row_hashes"])
+    changed[0]["k_sha256"] = _change_digest(changed[0]["k_sha256"])
+    doc["sources"]["correct_replay"]["summary_row_hashes"] = changed
+    identity = doc["sources"]["generated_replay_identity"]
+    identity["replay_summary_row_hashes"] = changed
+    identity["summary_row_hashes_bit_exact"] = False
+    identity["raw_tensor_archive_waived_by_exact_replay"] = False
+    identity["passes"] = False
+    # Numerical evidence still claims a perfect replay; only the byte witness
+    # differs. The waiver must fail on the hashes alone.
+    with pytest.raises(ValueError, match="actual/replay source hash binding"):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
+
+
+def test_semantic_snapshot_waiver_rejects_actual_source_hash_tamper(
+        tmp_path: Path):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    rows = doc["sources"]["correct_actual"]["summary_row_hashes"]
+    rows[0]["v_sha256"] = _change_digest(rows[0]["v_sha256"])
+    with pytest.raises(ValueError, match="actual/replay source hash binding"):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
+
+
+def test_semantic_snapshot_waiver_rejects_inserted_hash_tamper(tmp_path: Path):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    rows = doc["branch_audits"]["G_correct"][
+        "inserted_summary_row_hashes"]
+    rows[0]["k_sha256"] = _change_digest(rows[0]["k_sha256"])
+    with pytest.raises(ValueError, match="source/inserted hash lineage"):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
+
+
+def test_semantic_snapshot_waiver_rejects_ambiguous_materialization(
+        tmp_path: Path):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    doc["sources"]["scoring_source_materialization_used"] = [
+        "live_incremental_generation_rows",
+        "bit_exact_stepwise_resume_reconstruction",
+    ]
+    with pytest.raises(ValueError, match="materialization is ambiguous"):
         MODULE._validate_checkpoint(
             doc, path, scored=True,
             expected_fingerprint=doc["fingerprint"])
