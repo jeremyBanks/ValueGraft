@@ -987,7 +987,7 @@
       "sources": [
         {
           "note": "notes/2026071146-conversation-user-gpt56.md",
-          "blob_id": "74f8479c61a86821a24f7a65642654ca884ec5e7"
+          "blob_id": "9115d3249b07c914219bc9196ef51be824f58878"
         },
         {
           "note": "notes/2026071147-sol-empirical-statistical-audit.md",
@@ -1007,7 +1007,7 @@
         },
         {
           "note": "notes/2026071151-conversation-user-opus48.md",
-          "blob_id": "4e88d5c2a659bf46111e0dcbf3ada20c2306cf09"
+          "blob_id": "15552845d7f11db7b2378e980013f50969f9d2e4"
         },
         {
           "note": "notes/2026071152-why-value-grafting-mostly-fails.md",
@@ -1020,15 +1020,15 @@
       ],
       "source_blob_ids": [
         "14d36b97809794012e60e439c3c9a9bd3ab997ae",
+        "15552845d7f11db7b2378e980013f50969f9d2e4",
         "23376f899d0a4854f48def5de190c31684155acf",
         "3c970b9682c674a1525d05ee062d446f2c5b4f3f",
-        "4e88d5c2a659bf46111e0dcbf3ada20c2306cf09",
-        "74f8479c61a86821a24f7a65642654ca884ec5e7",
         "781b415e9487265c772e252aff747e4049b031e5",
         "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec",
+        "9115d3249b07c914219bc9196ef51be824f58878",
         "c3ea9a5d3fc5213820fdc248a623720497ef003c"
       ],
-      "summary_hash": "049a6a9dc80b6525782d783e859e94fd65f236b14525225c82711e3b4f46ad23",
+      "summary_hash": "b15c026e5633c6c5fc8c8f7a1bbfd08b632f3e080465aae9e2a04abe4b104ffc",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
