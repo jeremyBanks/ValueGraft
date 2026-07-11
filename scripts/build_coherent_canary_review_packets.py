@@ -27,6 +27,23 @@ PACKET_SCHEMA = "coherent_state_decision_canary_v12_review_packet_v1"
 BINDING_SCHEMA = "v12_history_source_binding_v1"
 ORDER_SCHEMA = "sha256_seeded_sort_v1"
 RUN_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$")
+COMMON_VISIBLE_CARRIER = {
+    "carrier_request": (
+        "Write the fixed neutral handoff note for the next assistant. "
+        "Output only that note."
+    ),
+    "carrier_content": (
+        "The prior discussion established the operating context and resolved one "
+        "local decision. Continue from this handoff, preserve the existing "
+        "constraints, and answer later questions from the state available here. "
+        "No unresolved action is introduced by this note."
+    ),
+    "anchor_user": (
+        "Acknowledge receipt of this handoff without adding or repeating any "
+        "factual detail."
+    ),
+    "anchor_assistant": "Acknowledged.",
+}
 
 
 class ReviewPacketError(RuntimeError):
@@ -197,6 +214,12 @@ def load_source_cases(paths: Sequence[str | Path]) -> list[dict]:
         retained_purpose = raw.get("retained_tail_purpose")
         _require(isinstance(retained_purpose, str) and retained_purpose.strip() != "",
                  f"{case_id}: retained-tail purpose is empty")
+        tokenizer_binding = raw.get("tokenizer_binding")
+        _require(isinstance(tokenizer_binding, dict),
+                 f"{case_id}: tokenizer binding is absent")
+        for field, literal in COMMON_VISIBLE_CARRIER.items():
+            _require(tokenizer_binding.get(field) == literal,
+                     f"{case_id}: common visible {field} differs")
         records.append({
             "path": str(path),
             "source_file_sha256": _sha256_bytes(source_bytes),
@@ -300,6 +323,16 @@ def build_review_packets(
             "anonymous_history_id": f"history-{index:02d}",
             **history,
         })
+        binding = history["binding_commitment_sha256"]
+        matching_record = next(
+            record for record in records
+            if any(
+                _sha256_json(_binding_payload(record, variant)) == binding
+                for variant in VARIANTS
+            )
+        )
+        blind_entries[-1]["retained_tail_start_message_index"] = matching_record[
+            "middle_end_msg"]
     blind = {
         **_packet_base("blind_singleton", run_id, source_set_commitment),
         "review_boundary": (
@@ -311,6 +344,13 @@ def build_review_packets(
         "anonymization": (
             "Entries disclose no case ID, variant label, target metadata, source path, "
             "or raw source-file hash. Each opaque commitment binds those hidden fields."
+        ),
+        "common_visible_carrier": deepcopy(COMMON_VISIBLE_CARRIER),
+        "carrier_review_instruction": (
+            "Review the shared carrier request/content and anchor exchange for target "
+            "neutrality, hidden factual implication, and compatibility with every "
+            "anonymous history. The carrier is inserted at the disclosed retained-tail "
+            "boundary before the retained messages continue."
         ),
         "randomization": {
             "algorithm": ORDER_SCHEMA,
@@ -365,6 +405,7 @@ def build_review_packets(
             "references are repaired, and the nonfocal chain and retained tail remain "
             "unchanged. Record judgments separately; this packet makes none."
         ),
+        "common_visible_carrier": deepcopy(COMMON_VISIBLE_CARRIER),
         "cases": paired_cases,
     }
     diversity = {
@@ -374,6 +415,7 @@ def build_review_packets(
             "turn-structure, distractor, and probe diversity. Reject shared fill-in-the-"
             "nouns scaffolds. Record judgments separately; this packet makes none."
         ),
+        "common_visible_carrier": deepcopy(COMMON_VISIBLE_CARRIER),
         "cases": diversity_cases,
     }
 

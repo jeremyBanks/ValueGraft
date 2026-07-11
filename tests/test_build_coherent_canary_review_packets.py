@@ -67,6 +67,7 @@ def _case(number: int) -> dict:
         },
         "distractor_fact_inventory": [f"fact-{number}-a", f"fact-{number}-b"],
         "retained_tail_purpose": f"neutral continuation {number}",
+        "tokenizer_binding": deepcopy(MODULE.COMMON_VISIBLE_CARRIER),
         "variants": {
             variant: {"messages": _messages(number, variant)}
             for variant in MODULE.VARIANTS
@@ -101,7 +102,8 @@ def test_build_is_deterministic_complete_and_blind(tmp_path: Path) -> None:
     ]
     assert len(set(_commitments(blind))) == 12
     assert all(set(row) == {
-        "anonymous_history_id", "binding_commitment_sha256", "messages"
+        "anonymous_history_id", "binding_commitment_sha256", "messages",
+        "retained_tail_start_message_index",
     } for row in blind["histories"])
     forbidden = {"case_id", "variant", "source_file_sha256", "source_binding",
                  "focal", "nonfocal_control", "target", "countertarget"}
@@ -115,6 +117,9 @@ def test_build_is_deterministic_complete_and_blind(tmp_path: Path) -> None:
         json.dumps(row["messages"], sort_keys=True) for row in blind["histories"]
     }
     assert observed_messages == expected_messages
+    assert blind["common_visible_carrier"] == MODULE.COMMON_VISIBLE_CARRIER
+    assert all(row["retained_tail_start_message_index"] == 5
+               for row in blind["histories"])
 
 
 def test_disclosed_packets_open_every_blind_binding(tmp_path: Path) -> None:
