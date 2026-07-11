@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import argparse
 import ast
+import copy
 from dataclasses import asdict
 from datetime import datetime, timezone
 import gc
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -39,6 +41,19 @@ from coherent_state_hf import (
     row_hashes,
     sha256_ids,
 )
+from coherent_state_integrity import (
+    AMENDMENT_ID as INTEGRITY_AMENDMENT_ID,
+    DESIGN_ID as INTEGRITY_DESIGN_ID,
+    IntegrityError,
+    INDEX_NAME,
+    RECEIPT_NAME,
+    apparatus_inventory,
+    raw_sha256,
+    seal_payload,
+    verify_prior_technical_authorization,
+    write_sealed_payload,
+    write_terminal_envelope,
+)
 from coherent_state_runtime import (
     GAPPED_ARM_NAMES,
     append_gapped_post_summary,
@@ -68,20 +83,22 @@ from coherent_state_store import (
     validate_scored_checkpoint,
 )
 from cross_arch_probe import native_render_specs, trim_capped_reply
-from l_coherent_state_hf import run_loaded_gapped_gates
+from l_coherent_state_hf import run_loaded_gapped_gates, v6_gate_schema
 
 
 MODEL = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STRUCTURAL_SEED = 20_260_711
 ARTIFACT_SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v4"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4"
+DESIGN_ID = "coherent-state-gapped-v6"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
 AMENDMENT_PATHS = (
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-2.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-3.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-4.md"),
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-5.md"),
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-6.md"),
 )
 ATTENTION_BACKEND = "eager"
 EXPECTED_GEOMETRY = {
@@ -92,7 +109,10 @@ MAX_REPLY_TOKENS = 320
 MAX_SUMMARY_TOKENS = 900
 IDENTITY_TOLERANCE = 1e-4
 ZERO_GAP_TOLERANCE = 5e-4
-MAX_TECHNICAL_LOGICAL_POSITION = 8_193
+MAX_TECHNICAL_LOGICAL_POSITION = 9_509
+
+if DESIGN_ID != INTEGRITY_DESIGN_ID or AMENDMENT_ID != INTEGRITY_AMENDMENT_ID:
+    raise RuntimeError("driver/integrity v5 identities disagree")
 
 
 def utc_now() -> str:
@@ -168,6 +188,11 @@ def runtime_provenance(run_dir: Path) -> dict:
         "transformers": __import__("transformers").__version__,
         "cuda": torch.version.cuda,
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "execution_packages": {
+            name: importlib.metadata.version(name) for name in (
+                "accelerate", "huggingface_hub", "safetensors",
+                "sentencepiece", "torch", "transformers")
+        },
     }
 
 
@@ -270,7 +295,7 @@ def prepare_subject_metadata():
     return config, tokenizer, metadata
 
 
-def load_subject(config, tokenizer):
+def load_subject(config, tokenizer, *, backend_progress=None):
     if not torch.cuda.is_available():
         raise CoherentStateError("paid production driver requires CUDA")
     geometry = model_geometry(config)
@@ -293,7 +318,9 @@ def load_subject(config, tokenizer):
         raise CoherentStateError(
             f"live model revision {getattr(model.config, '_commit_hash', None)} "
             f"!= {REVISION}")
-    backend = eager_backend_fingerprint(model)
+    backend = (eager_backend_fingerprint(model)
+               if backend_progress is None else
+               eager_backend_fingerprint(model, progress=backend_progress))
     return model, tokenizer, geometry, backend
 
 
@@ -1185,122 +1212,316 @@ def parse_args():
                     help="operational gate: exit 75 after first scored checkpoint")
     ap.add_argument(
         "--technical-only", action="store_true",
-        help=("run and persist the exact-model technical gate, then exit "
-              "without rendering, calibration, or semantic scoring"))
-    return ap.parse_args()
+        help=("deprecated explicit spelling of the default technical-only "
+              "mode; retained for launch-script clarity"))
+    ap.add_argument(
+        "--semantic-authorization", type=Path,
+        help=("explicit prior committed v6 technical PASS directory; enables "
+              "the otherwise unreachable separate semantic process"))
+    ap.add_argument(
+        "--technical-result-commit",
+        help="named trunk commit containing the prior technical directory")
+    args = ap.parse_args()
+    if args.semantic_authorization is None and args.technical_result_commit:
+        ap.error("--technical-result-commit requires --semantic-authorization")
+    if args.semantic_authorization is not None and not args.technical_result_commit:
+        ap.error("--semantic-authorization requires --technical-result-commit")
+    if args.semantic_authorization is not None and args.technical_only:
+        ap.error("semantic authorization and --technical-only are mutually exclusive")
+    # Technical-only is the fail-closed default.  No absent/false flag can
+    # expose rendering or scoring.
+    args.technical_only = args.semantic_authorization is None
+    return args
 
 
 class IntentionalResumeProbe(RuntimeError):
     pass
 
 
-def main():
-    args = parse_args()
-    print(f"RUN coherent_state model={MODEL}@{REVISION} -> {args.run_dir}",
-          flush=True)
-    args.run_dir.mkdir(parents=True, exist_ok=True)
-    manifest_path = args.run_dir / "manifest.json"
-    gate_path = args.run_dir / "production_kernel_gate.json"
+def _repo_relative(repo: Path, path: Path) -> str:
+    return path.resolve().relative_to(repo.resolve()).as_posix()
+
+
+def _input_inventory(repo: Path, args, donor_provenance: dict) -> dict:
+    paths = {args.scenarios.resolve(), args.targets.resolve()}
+    paths.update((args.donor_dir / f"{cid}.json").resolve()
+                 for cid in set(FROZEN_ORDER).union(WRONG_DONOR.values()))
+    rows = []
+    for path in sorted(paths):
+        if not path.is_file():
+            raise CoherentStateError(f"frozen input absent: {path}")
+        rows.append({
+            "path": _repo_relative(repo, path),
+            "bytes": path.stat().st_size,
+            "sha256": sha256_file(path),
+        })
+    return {
+        "files": rows,
+        "aggregate_sha256": sha256_json(rows),
+        "external_donor_provenance": donor_provenance,
+    }
+
+
+def _build_static_fingerprint(args, provenance, subject_metadata,
+                              donor_provenance, apparatus) -> dict:
+    repo = Path(git_value("rev-parse", "--show-toplevel")).resolve()
+    return {
+        "schema": ARTIFACT_SCHEMA,
+        "design_id": DESIGN_ID,
+        "amendment_id": AMENDMENT_ID,
+        "amendment_sha256": {
+            path.name: sha256_file(path) for path in AMENDMENT_PATHS},
+        "model": MODEL,
+        "revision": REVISION,
+        "dtype": "torch.bfloat16",
+        "code_commit": provenance["code_commit"],
+        "runtime_environment": {
+            **{key: provenance.get(key) for key in (
+                "python", "platform", "torch", "transformers", "cuda", "gpu")},
+            "execution_packages": provenance.get("execution_packages"),
+        },
+        "apparatus_inventory": apparatus,
+        "input_inventory": _input_inventory(repo, args, donor_provenance),
+        "scenario_sha256": sha256_file(args.scenarios),
+        "targets_sha256": sha256_file(args.targets),
+        "summary_request_sha256": hashlib.sha256(
+            SUMMARY_REQUEST.encode()).hexdigest(),
+        "frozen_order": list(FROZEN_ORDER),
+        "wrong_donors": WRONG_DONOR,
+        "structural_seed": STRUCTURAL_SEED,
+        "max_reply_tokens": MAX_REPLY_TOKENS,
+        "max_summary_tokens": MAX_SUMMARY_TOKENS,
+        "identity_tolerance": IDENTITY_TOLERANCE,
+        "zero_gap_tolerance": ZERO_GAP_TOLERANCE,
+        "attention_backend": ATTENTION_BACKEND,
+        "max_technical_logical_position": MAX_TECHNICAL_LOGICAL_POSITION,
+        "arms": list(GAPPED_ARM_NAMES),
+        "subject_metadata": subject_metadata,
+    }
+
+
+def _binding_static(value: dict) -> dict:
+    # The technical launch commit necessarily precedes the commit that adds its
+    # result.  Code identity is bound by the apparatus inventory and ancestry;
+    # every other static field is exact.
+    return {key: item for key, item in value.items() if key != "code_commit"}
+
+
+def _write_identical_terminal_gate(unique_path: Path, canonical_path: Path,
+                                   doc: dict) -> dict:
+    sealed = write_sealed_payload(unique_path, doc)
+    write_sealed_payload(canonical_path, sealed)
+    if (unique_path.stat().st_size >= MAX_TERMINAL_PAYLOAD_BYTES or
+            canonical_path.stat().st_size >= MAX_TERMINAL_PAYLOAD_BYTES):
+        raise IntegrityError("terminal gate payload is not below 4 MiB")
+    if unique_path.read_bytes() != canonical_path.read_bytes():
+        raise IntegrityError("unique and canonical gate bytes differ")
+    return sealed
+
+
+HEAVY_GATE_STAGES = (
+    "committed_case_schedule_fixtures",
+    "external_donor_construction",
+)
+MAX_TERMINAL_PAYLOAD_BYTES = 4 * 1024 * 1024
+
+
+def _terminalize_gate_lifecycle(gates: dict, failure: dict | None = None) -> dict:
+    """Close every declared lifecycle state before a terminal gate is sealed."""
+    closed = copy.deepcopy(gates)
+    for name in closed.get("stage_order", []):
+        stage = closed.get(name)
+        if not isinstance(stage, dict):
+            continue
+        status = stage.get("status")
+        if status in {"PENDING", "RUNNING"}:
+            stage["status"] = "SKIPPED_DEPENDENCY"
+            stage["passes"] = False
+            stage["completed_at"] = utc_now()
+            stage["failure_evidence"] = {
+                "failed_prerequisite": "driver_or_prior_gate_failure",
+                "reason": ((failure or {}).get("error") or
+                           "attempt terminated before this stage closed"),
+                "prior_status": status,
+            }
+    closed["passes"] = bool(
+        closed.get("stage_order") and all(
+            isinstance(closed.get(name), dict) and
+            closed[name].get("status") == "PASS"
+            for name in closed["stage_order"]))
+    closed["status"] = "PASS" if closed["passes"] else "FAIL"
+    if failure is not None:
+        closed["failure"] = failure
+    return closed
+
+
+def _externalize_heavy_gate_stages(
+        run_dir: Path, gates: dict, terminal_status: str) -> tuple[dict, list[str]]:
+    """Move complete heavy lifecycle stages into sealed, indexed sidecars."""
+    compact = copy.deepcopy(gates)
+    refs = {}
+    paths = []
+    for stage_name in HEAVY_GATE_STAGES:
+        if stage_name not in compact:
+            raise IntegrityError(f"predeclared heavy stage absent: {stage_name}")
+        lifecycle = compact.pop(stage_name)
+        relative = f"technical_stage_{stage_name}.json"
+        path = run_dir / relative
+        sidecar = write_sealed_payload(path, {
+            "schema": ARTIFACT_SCHEMA,
+            "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID,
+            "status": terminal_status,
+            "kind": "technical_gate_stage_sidecar",
+            "stage_name": stage_name,
+            "lifecycle": lifecycle,
+        })
+        byte_count = path.stat().st_size
+        if byte_count >= MAX_TERMINAL_PAYLOAD_BYTES:
+            raise IntegrityError(
+                f"{relative} is {byte_count} bytes, not below 4 MiB")
+        refs[stage_name] = {
+            "path": relative,
+            "byte_count": byte_count,
+            "raw_file_sha256": sha256_file(path),
+            "payload_sha256": sidecar["payload_sha256"],
+        }
+        paths.append(relative)
+    compact["stage_refs"] = refs
+    return compact, paths
+
+
+def _seal_semantic_terminal(run_dir: Path, terminal_status: str) -> None:
+    """Seal and index every terminal semantic JSON artifact in-place."""
+    if ((run_dir / INDEX_NAME).exists() or (run_dir / RECEIPT_NAME).exists()):
+        raise IntegrityError("semantic terminal envelope already exists")
+    paths = sorted(
+        path for path in run_dir.rglob("*.json")
+        if path.name not in {INDEX_NAME, RECEIPT_NAME})
+    if not paths:
+        raise IntegrityError("semantic terminal has no JSON payloads")
+    relatives = []
+    for path in paths:
+        doc = json.loads(path.read_text())
+        if not isinstance(doc, dict):
+            raise IntegrityError(f"semantic terminal payload is not object: {path}")
+        doc = {
+            "schema": doc.get("schema", ARTIFACT_SCHEMA),
+            "design_id": doc.get("design_id", DESIGN_ID),
+            "amendment_id": doc.get("amendment_id", AMENDMENT_ID),
+            **doc,
+        }
+        if (doc["schema"] != ARTIFACT_SCHEMA or doc["design_id"] != DESIGN_ID or
+                doc["amendment_id"] != AMENDMENT_ID):
+            raise IntegrityError(f"semantic payload identity differs: {path}")
+        write_sealed_payload(path, doc)
+        if path.stat().st_size >= MAX_TERMINAL_PAYLOAD_BYTES:
+            raise IntegrityError(f"semantic payload is not below 4 MiB: {path}")
+        relatives.append(path.relative_to(run_dir).as_posix())
+    write_terminal_envelope(
+        run_dir, relatives, terminal_status=terminal_status)
+
+
+def _technical_main(args) -> int:
+    run_dir = args.run_dir
+    run_dir.mkdir(parents=True, exist_ok=True)
+    if list(run_dir.glob("*.json")) or list(run_dir.glob("conv_*.json")):
+        raise ArtifactError("technical attempt requires a fresh unique run directory")
+    manifest_path = run_dir / "manifest.json"
+    gate_path = run_dir / "production_kernel_gate.json"
     invocation_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
-    gate_attempt_path = args.run_dir / f"production_kernel_gate_{invocation_id}.json"
+    gate_attempt_path = run_dir / f"production_kernel_gate_{invocation_id}.json"
+    started_at = utc_now()
     phase = "INVOCATION_START"
-    fingerprint = None
     provenance = None
+    static_fingerprint = None
+    fingerprint = None
+    apparatus = None
     geometry = None
     backend_fingerprint = None
     context_limit = None
-    static_fingerprint = None
-    started_at = utc_now()
-    production_gate = None
+    gate_schema = v6_gate_schema(
+        identity_tolerance=IDENTITY_TOLERANCE,
+        zero_gap_tolerance=ZERO_GAP_TOLERANCE,
+        case_dir=args.donor_dir, donor_dir=args.donor_dir)
 
-    def write_manifest(status: str, current_phase: str, **extra) -> None:
-        prior_doc = (json.loads(manifest_path.read_text())
-                     if manifest_path.exists() else {})
-        doc = {
-            **prior_doc,
-            "schema": ARTIFACT_SCHEMA,
-            "design_id": DESIGN_ID,
-            "amendment_id": AMENDMENT_ID,
-            "status": status,
-            "phase": current_phase,
-            "started_at": prior_doc.get("started_at", started_at),
-            "updated_at": utc_now(),
-            "resume_probe_verified": bool(
-                (json.loads((args.run_dir / "resume_probe.json").read_text())
-                 if (args.run_dir / "resume_probe.json").exists() else {})
-                .get("resume_probe_verified", False)),
-            **extra,
-        }
-        atomic_write_json(manifest_path, doc)
-
-    try:
-        _static_design_self_check()
-        missing_amendments = [path for path in AMENDMENT_PATHS if not path.exists()]
-        if missing_amendments:
-            raise CoherentStateError(
-                f"missing frozen amendments: {missing_amendments}")
-        phase = "PROVENANCE"
-        provenance = runtime_provenance(args.run_dir)
-        config, tokenizer, subject_metadata = prepare_subject_metadata()
-        provenance["subject"] = subject_metadata
-        scenario_map = load_scenarios(args.scenarios)
-        scenarios = frozen_scenarios(scenario_map)
-        targets = load_and_validate_targets(args.targets, scenario_map)
-        donors, donor_provenance = load_external_donors(args.donor_dir)
-        static_fingerprint = {
-            "schema": ARTIFACT_SCHEMA,
-            "design_id": DESIGN_ID,
-            "amendment_id": AMENDMENT_ID,
-            "amendment_sha256": {
-                path.name: sha256_file(path) for path in AMENDMENT_PATHS},
-            "model": MODEL, "revision": REVISION,
-            "code_commit": provenance["code_commit"],
-            "scenario_sha256": sha256_file(args.scenarios),
-            "targets_sha256": sha256_file(args.targets),
-            "summary_request_sha256": hashlib.sha256(
-                SUMMARY_REQUEST.encode()).hexdigest(),
-            "frozen_order": list(FROZEN_ORDER),
-            "wrong_donors": WRONG_DONOR,
-            "external_donor_provenance": donor_provenance,
-            "structural_seed": STRUCTURAL_SEED,
-            "max_reply_tokens": MAX_REPLY_TOKENS,
-            "max_summary_tokens": MAX_SUMMARY_TOKENS,
-            "identity_tolerance": IDENTITY_TOLERANCE,
-            "zero_gap_tolerance": ZERO_GAP_TOLERANCE,
-            "attention_backend": ATTENTION_BACKEND,
-            "max_technical_logical_position": MAX_TECHNICAL_LOGICAL_POSITION,
-            "subject_metadata": subject_metadata,
-        }
-        prior = json.loads(manifest_path.read_text()) if manifest_path.exists() else None
-        if args.technical_only and list(args.run_dir.glob("conv_*.json")):
-            raise ArtifactError(
-                "technical-only run directory already contains conversation checkpoints")
-        started_at = prior.get("started_at") if prior else started_at
-        phase = "SETUP"
-        write_manifest(
-            "SETUP", phase,
-            resumed_at=utc_now() if prior else None,
-            fingerprint_static=static_fingerprint, provenance=provenance,
-            technical_only=args.technical_only,
-            production_kernel_gate_path=gate_path.name)
-        atomic_write_json(gate_attempt_path, {
+    def persist_running(gates: dict, **extra) -> None:
+        prior = json.loads(gate_attempt_path.read_text()) \
+            if gate_attempt_path.exists() else {}
+        document = {
+            **prior,
             "schema": ARTIFACT_SCHEMA,
             "design_id": DESIGN_ID,
             "amendment_id": AMENDMENT_ID,
             "status": "RUNNING",
-            "started_at": utc_now(),
+            "started_at": prior.get("started_at", started_at),
+            "updated_at": utc_now(),
             "model": MODEL,
             "revision": REVISION,
             "dtype": "torch.bfloat16",
             "attention_backend_requested": ATTENTION_BACKEND,
-            "technical_only": args.technical_only,
+            "technical_only": True,
             "fingerprint_static": static_fingerprint,
-            "gates": {},
+            "apparatus_inventory": apparatus,
+            "gates": gates,
+            **extra,
+        }
+        atomic_write_json(gate_attempt_path, document)
+        if json.loads(gate_attempt_path.read_text()) != document:
+            raise ArtifactError("durable gate progress read-back mismatch")
+
+    gate_sink = DurableDiagnosticSink(lambda value: persist_running(value))
+    dict.update(gate_sink, gate_schema)
+    # Exhaustive lifecycle schema exists durably before any model load.
+    persist_running(dict(gate_sink))
+    atomic_write_json(manifest_path, {
+        "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+        "amendment_id": AMENDMENT_ID, "status": "SETUP",
+        "phase": phase, "started_at": started_at, "technical_only": True,
+        "production_kernel_gate_path": gate_path.name,
+        "production_kernel_gate_attempt_path": gate_attempt_path.name,
+    })
+
+    try:
+        _static_design_self_check()
+        missing = [path for path in AMENDMENT_PATHS if not path.is_file()]
+        if missing:
+            raise CoherentStateError(f"missing frozen amendments: {missing}")
+        phase = "STATIC_PROVENANCE"
+        repo = Path(git_value("rev-parse", "--show-toplevel")).resolve()
+        provenance = runtime_provenance(run_dir)
+        apparatus = apparatus_inventory(repo)
+        config, tokenizer, subject_metadata = prepare_subject_metadata()
+        scenario_map = load_scenarios(args.scenarios)
+        frozen_scenarios(scenario_map)
+        load_and_validate_targets(args.targets, scenario_map)
+        _, donor_provenance = load_external_donors(args.donor_dir)
+        static_fingerprint = _build_static_fingerprint(
+            args, provenance, subject_metadata, donor_provenance, apparatus)
+        persist_running(dict(gate_sink), fingerprint_static=static_fingerprint)
+        atomic_write_json(manifest_path, {
+            "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID, "status": "SETUP",
+            "phase": phase, "started_at": started_at, "updated_at": utc_now(),
+            "technical_only": True, "fingerprint_static": static_fingerprint,
+            "apparatus_inventory": apparatus, "provenance": provenance,
+            "production_kernel_gate_path": gate_path.name,
+            "production_kernel_gate_attempt_path": gate_attempt_path.name,
         })
-        print("PHASE SETUP", flush=True)
+
         phase = "MODEL_LOADING"
+
+        def backend_progress(partial: dict) -> None:
+            stage = dict(gate_sink["attention_backend"])
+            stage.update({
+                "status": "RUNNING",
+                "observed_coverage": len(partial.get("layers", [])),
+                "raw": partial,
+            })
+            gate_sink["attention_backend"] = stage
+
         model, tokenizer, geometry, backend_fingerprint = load_subject(
-            config, tokenizer)
+            config, tokenizer, backend_progress=backend_progress)
         context_limit = model_context_limit(model)
         subject_metadata = {
             **subject_metadata,
@@ -1315,252 +1536,332 @@ def main():
             "attention_backend_fingerprint": backend_fingerprint,
             "context_limit": context_limit,
         }
-        if prior is not None and prior.get("fingerprint") not in (None, fingerprint):
-            raise ArtifactError("run manifest fingerprint mismatch")
-        phase = "MODEL_READY"
-        write_manifest(
-            "RUNNING", phase, fingerprint=fingerprint,
-            provenance=provenance, geometry=geometry,
-            attention_backend=ATTENTION_BACKEND,
-            attention_backend_fingerprint=backend_fingerprint,
+        persist_running(
+            dict(gate_sink), fingerprint=fingerprint, geometry=geometry,
             context_limit=context_limit,
-            technical_only=args.technical_only,
-            production_kernel_gate_path=gate_path.name)
+            attention_backend_fingerprint=backend_fingerprint)
         print(f"MODEL_READY revision={REVISION} dtype=bf16 "
               f"attention_backend={ATTENTION_BACKEND} "
               f"backend_sha256={backend_fingerprint['sha256']} "
-              f"context_limit={context_limit} geometry={geometry}",
-              flush=True)
+              f"context_limit={context_limit} geometry={geometry}", flush=True)
+
         phase = "PRODUCTION_GATE"
-
-        def persist_gate_progress(gates: dict) -> None:
-            running = json.loads(gate_attempt_path.read_text())
-            atomic_write_json(gate_attempt_path, {
-                **running,
-                "status": "RUNNING",
-                "updated_at": utc_now(),
-                "fingerprint": fingerprint,
-                "geometry": geometry,
-                "context_limit": context_limit,
-                "attention_backend_fingerprint": backend_fingerprint,
-                "gates": gates,
-            })
-
-        gate_sink = DurableDiagnosticSink(persist_gate_progress)
         try:
             production_gate = run_loaded_gapped_gates(
                 model, tokenizer,
                 identity_tolerance=IDENTITY_TOLERANCE,
                 zero_gap_tolerance=ZERO_GAP_TOLERANCE,
-                diagnostic_sink=gate_sink)
+                diagnostic_sink=gate_sink,
+                case_dir=args.donor_dir,
+                donor_dir=args.donor_dir)
         except Exception as gate_exc:
             production_gate = {
-                **gate_sink,
-                "passes": False,
+                **gate_sink, "passes": False,
                 "failure": {
                     "error_type": type(gate_exc).__name__,
-                    "error": str(gate_exc),
-                    "traceback": traceback.format_exc(),
+                    "error": str(gate_exc), "traceback": traceback.format_exc(),
                 },
             }
-        try:
-            assert_technical_gate_has_no_semantic_scores(production_gate)
-        except Exception as semantic_gate_exc:
-            production_gate = {
-                **production_gate,
-                "passes": False,
-                "failure": {
-                    "error_type": type(semantic_gate_exc).__name__,
-                    "error": str(semantic_gate_exc),
-                    "traceback": traceback.format_exc(),
-                },
-            }
+        assert_technical_gate_has_no_semantic_scores(production_gate)
+        persisted_gate = json.loads(gate_attempt_path.read_text()).get("gates")
+        if persisted_gate != dict(production_gate):
+            raise ArtifactError(
+                "terminal gate differs from durably persisted measurements")
         backend_gate = production_gate.get("attention_backend") or {}
-        if (backend_gate.get("passes") is not True or
-                backend_gate.get("observed_backend") != ATTENTION_BACKEND or
+        if (production_gate.get("passes") is not True or
+                backend_gate.get("passes") is not True or
                 backend_gate.get("fingerprint") != backend_fingerprint):
-            production_gate = {
-                **production_gate,
-                "passes": False,
-                "failure": production_gate.get("failure") or {
-                    "error_type": "CoherentStateError",
-                    "error": "production gate lacks exact eager backend attestation",
-                },
-            }
-        gate_status = "PASS" if production_gate.get("passes") is True else "FAIL"
-        gate_doc = {
-            "schema": ARTIFACT_SCHEMA,
-            "design_id": DESIGN_ID,
-            "amendment_id": AMENDMENT_ID,
-            "status": gate_status, "completed_at": utc_now(),
-            "model": MODEL, "revision": REVISION,
-            "dtype": "torch.bfloat16", "geometry": geometry,
+            raise CoherentStateError(
+                "production technical gate failed or backend attestation changed")
+        if list(run_dir.glob("conv_*.json")):
+            raise ArtifactError("technical process produced a conversation checkpoint")
+
+        completed_at = utc_now()
+        production_gate = _terminalize_gate_lifecycle(production_gate)
+        production_gate, sidecar_paths = _externalize_heavy_gate_stages(
+            run_dir, production_gate, "PASS")
+        gate_doc = _write_identical_terminal_gate(
+            gate_attempt_path, gate_path, {
+                "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+                "amendment_id": AMENDMENT_ID, "status": "PASS",
+                "completed_at": completed_at, "model": MODEL,
+                "revision": REVISION, "dtype": "torch.bfloat16",
+                "geometry": geometry, "attention_backend": ATTENTION_BACKEND,
+                "attention_backend_fingerprint": backend_fingerprint,
+                "context_limit": context_limit, "fingerprint": fingerprint,
+                "fingerprint_static": static_fingerprint,
+                "apparatus_inventory": apparatus, "technical_only": True,
+                "gates": production_gate,
+            })
+        manifest = write_sealed_payload(manifest_path, {
+            "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID, "status": "TECHNICAL_PASS",
+            "phase": "TECHNICAL_COMPLETE", "started_at": started_at,
+            "completed_at": completed_at, "technical_only": True,
+            "model": MODEL, "revision": REVISION, "dtype": "torch.bfloat16",
             "attention_backend": ATTENTION_BACKEND,
             "attention_backend_fingerprint": backend_fingerprint,
-            "context_limit": context_limit,
-            "fingerprint": fingerprint,
-            "technical_only": args.technical_only,
-            "gates": production_gate,
+            "geometry": geometry, "context_limit": context_limit,
+            "fingerprint_static": static_fingerprint,
+            "fingerprint": fingerprint, "apparatus_inventory": apparatus,
+            "provenance": provenance,
+            "production_kernel_gate_path": gate_path.name,
+            "production_kernel_gate_attempt_path": gate_attempt_path.name,
+            "production_kernel_gate_payload_sha256": gate_doc["payload_sha256"],
+        })
+        write_terminal_envelope(
+            run_dir,
+            [gate_attempt_path.name, gate_path.name, manifest_path.name,
+             *sidecar_paths],
+            terminal_status="PASS")
+        print("COHERENCE_TECHNICAL_RECEIPT_DURABLE status=PASS", flush=True)
+        return 0
+    except Exception as exc:
+        failure = {
+            "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID, "status": "ERROR", "phase": phase,
+            "failed_at": utc_now(), "error_type": type(exc).__name__,
+            "error": str(exc), "traceback": traceback.format_exc(),
         }
-        if gate_status == "FAIL":
-            gate_doc["error"] = (
-                production_gate.get("failure") or
-                production_gate.get("failures") or
-                "production gapped gate returned passes=false")
-        atomic_write_json(gate_attempt_path, gate_doc)
-        atomic_write_json(gate_path, gate_doc)
-        if gate_status != "PASS":
-            raise CoherentStateError(
-                "production gapped gate failed; complete evidence was persisted")
-        print("PRODUCTION_GAPPED_GATE_PASS", flush=True)
-        if args.technical_only:
-            if list(args.run_dir.glob("conv_*.json")):
-                raise ArtifactError(
-                    "technical-only gate unexpectedly produced a checkpoint")
-            phase = "TECHNICAL_COMPLETE"
-            write_manifest(
-                "TECHNICAL_PASS", phase, completed_at=utc_now(),
-                fingerprint=fingerprint, provenance=provenance,
-                geometry=geometry, context_limit=context_limit,
-                attention_backend=ATTENTION_BACKEND,
-                attention_backend_fingerprint=backend_fingerprint,
-                technical_only=True,
-                production_kernel_gate_path=gate_path.name,
-                production_kernel_gate_attempt_path=gate_attempt_path.name,
-                production_kernel_gate_status="PASS",
-                production_kernel_gate=production_gate,
-                semantic_scoring_performed=False,
-                conversation_checkpoints=[])
-            print("COHERENCE_TECHNICAL_ONLY_DONE status=PASS semantics=none",
-                  flush=True)
-            return 0
+        try:
+            if ((run_dir / INDEX_NAME).exists() or
+                    (run_dir / RECEIPT_NAME).exists()):
+                raise IntegrityError(
+                    "terminal envelope already started; refusing to mutate payloads")
+            write_sealed_payload(run_dir / "failure.json", failure)
+            failed_gates = _terminalize_gate_lifecycle(
+                dict(gate_sink), failure)
+            failed_gates, sidecar_paths = _externalize_heavy_gate_stages(
+                run_dir, failed_gates, "FAIL")
+            _write_identical_terminal_gate(
+                gate_attempt_path, gate_path, {
+                    "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+                    "amendment_id": AMENDMENT_ID, "status": "FAIL",
+                    "completed_at": utc_now(), "model": MODEL,
+                    "revision": REVISION, "dtype": "torch.bfloat16",
+                    "geometry": geometry, "attention_backend": ATTENTION_BACKEND,
+                    "attention_backend_fingerprint": backend_fingerprint,
+                    "context_limit": context_limit, "fingerprint": fingerprint,
+                    "fingerprint_static": static_fingerprint,
+                    "apparatus_inventory": apparatus, "technical_only": True,
+                    "gates": failed_gates, "error": failure,
+                })
+            write_sealed_payload(manifest_path, {
+                "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+                "amendment_id": AMENDMENT_ID, "status": "ERROR",
+                "phase": phase, "started_at": started_at,
+                "completed_at": utc_now(), "technical_only": True,
+                "model": MODEL, "revision": REVISION, "dtype": "torch.bfloat16",
+                "fingerprint_static": static_fingerprint,
+                "fingerprint": fingerprint, "apparatus_inventory": apparatus,
+                "provenance": provenance, "geometry": geometry,
+                "attention_backend": ATTENTION_BACKEND,
+                "attention_backend_fingerprint": backend_fingerprint,
+                "context_limit": context_limit, "failure_path": "failure.json",
+                "production_kernel_gate_path": gate_path.name,
+                "production_kernel_gate_attempt_path": gate_attempt_path.name,
+            })
+            write_terminal_envelope(
+                run_dir,
+                [gate_attempt_path.name, gate_path.name, manifest_path.name,
+                 "failure.json", *sidecar_paths], terminal_status="FAIL")
+            print("COHERENCE_TECHNICAL_RECEIPT_DURABLE status=FAIL", flush=True)
+        except Exception as terminal_exc:
+            print(f"FATAL terminalization failed: {terminal_exc}",
+                  file=sys.stderr, flush=True)
+        print(f"FATAL {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+        traceback.print_exc()
+        return 1
+
+
+def _semantic_main(args) -> int:
+    """Separate process; unreachable without an explicit committed attestation."""
+    run_dir = args.run_dir
+    authorization_dir = args.semantic_authorization
+    resolved_run = run_dir.resolve()
+    resolved_authorization = authorization_dir.resolve()
+    if (resolved_run == resolved_authorization or
+            resolved_authorization in resolved_run.parents or
+            resolved_run in resolved_authorization.parents):
+        raise IntegrityError(
+            "semantic run and technical authorization directories overlap")
+    run_dir.mkdir(parents=True, exist_ok=True)
+    manifest_path = run_dir / "manifest.json"
+    started_at = utc_now()
+    phase = "SEMANTIC_AUTHORIZATION"
+    fingerprint = None
+    provenance = None
+    geometry = None
+    try:
+        repo = Path(git_value("rev-parse", "--show-toplevel")).resolve()
+        launch_commit = git_value("rev-parse", "HEAD")
+        current_apparatus = apparatus_inventory(repo)
+        authorization = verify_prior_technical_authorization(
+            repo, args.semantic_authorization, args.technical_result_commit,
+            launch_commit, current_apparatus)
+        provenance = runtime_provenance(run_dir)
+        config, tokenizer, subject_metadata = prepare_subject_metadata()
+        scenario_map = load_scenarios(args.scenarios)
+        scenarios = frozen_scenarios(scenario_map)
+        targets = load_and_validate_targets(args.targets, scenario_map)
+        donors, donor_provenance = load_external_donors(args.donor_dir)
+        static_fingerprint = _build_static_fingerprint(
+            args, provenance, subject_metadata, donor_provenance,
+            current_apparatus)
+        if _binding_static(static_fingerprint) != _binding_static(
+                authorization.static_fingerprint):
+            raise IntegrityError(
+                "semantic static/data fingerprint differs from technical PASS")
+        atomic_write_json(manifest_path, {
+            "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID,
+            "status": "STATIC_AUTHORIZATION_VERIFIED_MODEL_PENDING",
+            "phase": phase, "started_at": started_at, "technical_only": False,
+            "semantic_authorization": asdict(authorization),
+            "authorization_checks": {
+                "terminal_payloads_exact": True,
+                "committed_directory_bytes_exact": True,
+                "result_commit_is_ancestor": True,
+                "result_commit_on_trunk": True,
+                "harvest_attestation_committed_exact": True,
+                "independent_harvest_revalidation_passed": True,
+                "apparatus_inventory_exact": True,
+                "static_data_fingerprint_exact": True,
+                "backend_attestation_exact": False,
+            },
+            "fingerprint_static": static_fingerprint,
+            "apparatus_inventory": current_apparatus,
+        })
+
+        phase = "MODEL_LOADING"
+        model, tokenizer, geometry, backend_fingerprint = load_subject(
+            config, tokenizer)
+        context_limit = model_context_limit(model)
+        prior_gate = json.loads(
+            (args.semantic_authorization / "production_kernel_gate.json").read_text())
+        if backend_fingerprint != prior_gate.get("attention_backend_fingerprint"):
+            raise IntegrityError(
+                "recomputed semantic backend differs from technical PASS")
+        subject_metadata = {
+            **subject_metadata,
+            "attention_backend_resolved": ATTENTION_BACKEND,
+            "attention_backend_fingerprint": backend_fingerprint,
+            "context_limit": context_limit,
+        }
+        provenance["subject"] = subject_metadata
+        fingerprint = {
+            **static_fingerprint,
+            "subject_metadata": subject_metadata,
+            "attention_backend_fingerprint": backend_fingerprint,
+            "context_limit": context_limit,
+            "semantic_authorization": {
+                "technical_result_commit": authorization.result_commit,
+                "technical_run_dir": authorization.run_dir,
+                "gate_payload_sha256": authorization.gate_payload_sha256,
+                "raw_sha256": authorization.raw_sha256,
+                "harvest_path": authorization.harvest["path"],
+                "harvest_raw_sha256": authorization.harvest["raw_sha256"],
+                "harvest_payload_sha256": authorization.harvest["payload_sha256"],
+                "apparatus_aggregate_sha256": current_apparatus[
+                    "aggregate_sha256"],
+                "backend_exact": True,
+                "static_fingerprint_exact": True,
+            },
+        }
+        atomic_write_json(manifest_path, {
+            "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID, "status": "RUNNING",
+            "phase": "SEMANTIC_RUN", "started_at": started_at,
+            "updated_at": utc_now(), "technical_only": False,
+            "fingerprint_static": static_fingerprint,
+            "fingerprint": fingerprint, "provenance": provenance,
+            "geometry": geometry, "context_limit": context_limit,
+            "attention_backend": ATTENTION_BACKEND,
+            "attention_backend_fingerprint": backend_fingerprint,
+            "semantic_authorization": asdict(authorization),
+            "authorization_checks": {
+                "terminal_payloads_exact": True,
+                "committed_directory_bytes_exact": True,
+                "result_commit_is_ancestor": True,
+                "result_commit_on_trunk": True,
+                "harvest_attestation_committed_exact": True,
+                "independent_harvest_revalidation_passed": True,
+                "apparatus_inventory_exact": True,
+                "static_data_fingerprint_exact": True,
+                "backend_attestation_exact": True,
+            },
+        })
         phase = "SEMANTIC_RUN"
-        write_manifest(
-            "RUNNING", phase, fingerprint=fingerprint,
-            provenance=provenance, geometry=geometry,
-            production_kernel_gate_path=gate_path.name,
-            production_kernel_gate_attempt_path=gate_attempt_path.name,
-            production_kernel_gate_status=gate_status,
-            attention_backend=ATTENTION_BACKEND,
-            attention_backend_fingerprint=backend_fingerprint,
-            context_limit=context_limit,
-            technical_only=False)
         runner = Runner(
             args, model, tokenizer, scenarios, targets, fingerprint,
             provenance, geometry, donors, donor_provenance)
         stats6 = runner.run_stage(6)
-        if stats6["serial_decision"] == "EXTEND_TO_12":
-            stats = runner.run_stage(12)
-        else:
-            stats = stats6
-        marker_path = args.run_dir / "resume_probe.json"
+        stats = runner.run_stage(12) \
+            if stats6["serial_decision"] == "EXTEND_TO_12" else stats6
+        marker_path = run_dir / "resume_probe.json"
         marker = json.loads(marker_path.read_text()) if marker_path.exists() else {}
         if marker.get("resume_probe_verified") is not True:
             raise ArtifactError("forced-restart resume probe was not verified")
-        phase = "COMPLETE"
-        write_manifest(
-            "COMPLETE", phase, completed_at=utc_now(),
-            fingerprint=fingerprint, provenance=provenance, geometry=geometry,
-            production_kernel_gate_path=gate_path.name,
-            production_kernel_gate_attempt_path=gate_attempt_path.name,
-            production_kernel_gate_status="PASS",
-            production_kernel_gate=production_gate,
-            n_conversations=stats["n_conversations"],
-            serial_decision=stats["serial_decision"],
-            interpretation=stats["interpretation"])
-        print(
-            f"COHERENCE_RUN_DONE n={stats['n_conversations']} "
-            f"decision={stats['serial_decision']}", flush=True)
+        atomic_write_json(manifest_path, {
+            **json.loads(manifest_path.read_text()),
+            "status": "COMPLETE", "phase": "COMPLETE",
+            "completed_at": utc_now(),
+            "resume_probe_verified": True,
+            "n_conversations": stats["n_conversations"],
+            "serial_decision": stats["serial_decision"],
+            "interpretation": stats["interpretation"],
+        })
+        _seal_semantic_terminal(run_dir, "PASS")
+        print(f"COHERENCE_RUN_DONE n={stats['n_conversations']} "
+              f"decision={stats['serial_decision']}", flush=True)
         return 0
     except IntentionalResumeProbe:
-        phase = "FORCED_RESTART"
-        write_manifest(
-            "RESUME_REQUIRED", phase, fingerprint=fingerprint,
-            provenance=provenance, geometry=geometry,
-            production_kernel_gate_path=gate_path.name,
-            production_kernel_gate_attempt_path=(
-                gate_attempt_path.name if gate_attempt_path.exists() else None),
-            production_kernel_gate_status=(
-                "PASS" if production_gate and production_gate.get("passes") else None))
+        manifest = json.loads(manifest_path.read_text())
+        atomic_write_json(manifest_path, {
+            **manifest, "status": "RESUME_REQUIRED", "phase": "FORCED_RESTART",
+            "updated_at": utc_now(),
+        })
         return 75
     except Exception as exc:
-        failure = {"schema": ARTIFACT_SCHEMA,
-                   "design_id": DESIGN_ID, "amendment_id": AMENDMENT_ID,
-                   "status": "ERROR", "phase": phase, "failed_at": utc_now(),
-                   "error_type": type(exc).__name__, "error": str(exc),
-                   "traceback": traceback.format_exc()}
-        failure_path = args.run_dir / "failure.json"
-        atomic_write_json(failure_path, failure)
-        attempt_terminalized = terminalize_running_gate_attempt(
-            gate_attempt_path, gate_path, failure,
-            geometry=geometry,
-            attention_backend=ATTENTION_BACKEND,
-            attention_backend_fingerprint=backend_fingerprint,
-            context_limit=context_limit,
-            fingerprint=fingerprint,
-            fingerprint_static=static_fingerprint)
-        if (not attempt_terminalized and
-                phase in {"MODEL_READY", "PRODUCTION_GATE"} and
-                not gate_path.exists()):
-            failed_gate = {
-                "schema": ARTIFACT_SCHEMA,
-                "design_id": DESIGN_ID,
-                "amendment_id": AMENDMENT_ID,
-                "status": "FAIL", "completed_at": utc_now(),
-                "model": MODEL, "revision": REVISION,
-                "dtype": "torch.bfloat16", "geometry": geometry,
-                "attention_backend": ATTENTION_BACKEND,
-                "attention_backend_fingerprint": backend_fingerprint,
-                "context_limit": context_limit,
-                "fingerprint": fingerprint,
-                "gates": {"passes": False, "failure": failure},
-                "error": failure,
-            }
-            atomic_write_json(gate_path, failed_gate)
-        if gate_path.exists() and not gate_attempt_path.exists():
-            atomic_write_json(
-                gate_attempt_path, json.loads(gate_path.read_text()))
-        void_refs = terminalize_partial_checkpoints(args.run_dir, failure)
-        gate_doc = json.loads(gate_path.read_text()) if gate_path.exists() else {}
-        if (gate_doc.get("status") == "PASS" and not void_refs and
-                not args.technical_only):
-            run_void = args.run_dir / "conv_00_run_failure.json"
-            atomic_write_json(run_void, {
-                "schema": ARTIFACT_SCHEMA,
-                "design_id": DESIGN_ID,
-                "amendment_id": AMENDMENT_ID,
-                "stage": "void", "status": "void",
-                "fingerprint": fingerprint,
-                "order_position": 0,
-                "conversation_id": "run-level-failure",
-                "failure": failure,
-            })
-            void_refs = [run_void.name]
-        failure_manifest = {
-            "failure_path": failure_path.name,
-            "production_kernel_gate_path": (
-                gate_path.name if gate_path.exists() else None),
-            "production_kernel_gate_attempt_path": (
-                gate_attempt_path.name if gate_attempt_path.exists() else None),
-            "void_checkpoint_paths": void_refs,
+        failure = {
+            "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID, "status": "ERROR", "phase": phase,
+            "failed_at": utc_now(), "error_type": type(exc).__name__,
+            "error": str(exc), "traceback": traceback.format_exc(),
         }
-        if fingerprint is not None:
-            failure_manifest["fingerprint"] = fingerprint
-        if provenance is not None:
-            failure_manifest["provenance"] = provenance
-        if geometry is not None:
-            failure_manifest["geometry"] = geometry
-        if backend_fingerprint is not None:
-            failure_manifest["attention_backend"] = ATTENTION_BACKEND
-            failure_manifest["attention_backend_fingerprint"] = \
-                backend_fingerprint
-        if context_limit is not None:
-            failure_manifest["context_limit"] = context_limit
-        failure_manifest["technical_only"] = args.technical_only
-        write_manifest("ERROR", phase, **failure_manifest)
+        if ((run_dir / INDEX_NAME).exists() or
+                (run_dir / RECEIPT_NAME).exists()):
+            print("FATAL semantic terminal envelope already started; "
+                  "payloads left immutable", file=sys.stderr, flush=True)
+        else:
+            write_sealed_payload(run_dir / "failure.json", failure)
+            voids = terminalize_partial_checkpoints(run_dir, failure)
+            prior = (json.loads(manifest_path.read_text())
+                     if manifest_path.exists() else {})
+            atomic_write_json(manifest_path, {
+                **prior, "schema": ARTIFACT_SCHEMA, "design_id": DESIGN_ID,
+                "amendment_id": AMENDMENT_ID, "status": "ERROR", "phase": phase,
+                "updated_at": utc_now(), "technical_only": False,
+                "void_checkpoint_paths": voids,
+            })
+            try:
+                _seal_semantic_terminal(run_dir, "FAIL")
+            except Exception as terminal_exc:
+                print(f"FATAL semantic terminalization failed: {terminal_exc}",
+                      file=sys.stderr, flush=True)
         print(f"FATAL {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
         traceback.print_exc()
         return 1
+
+
+def main():
+    args = parse_args()
+    mode = "semantic" if args.semantic_authorization is not None else "technical-only"
+    print(f"RUN coherent_state model={MODEL}@{REVISION} mode={mode} -> "
+          f"{args.run_dir}", flush=True)
+    if args.semantic_authorization is not None:
+        return _semantic_main(args)
+    return _technical_main(args)
 
 
 if __name__ == "__main__":

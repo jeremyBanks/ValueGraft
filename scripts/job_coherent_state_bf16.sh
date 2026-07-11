@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-pod Amendments-1-2-3-4 eager technical-only authorization attempt.
+# One-pod Amendments-1-2-3-4-5-6 eager technical-only authorization attempt.
 # No conversation render, calibration target, A_full, or treatment outcome may run.
 set -euo pipefail
 
@@ -9,7 +9,7 @@ EXPECTED_COMMIT="${SC_EXPECTED_COMMIT:?SC_EXPECTED_COMMIT is required}"
 MODEL="Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION="0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-RUN_DIR="results/coherent_state/coherent_state_gapped_v4_Qwen3-30B-A3B-Instruct-2507_${STAMP}"
+RUN_DIR="results/coherent_state/coherent_state_gapped_v6_Qwen3-30B-A3B-Instruct-2507_${STAMP}"
 CLONE_TMP="/workspace/repo_${STAMP}.tmp"
 
 echo "START COHERENT_STATE $(date -Is)"
@@ -42,8 +42,8 @@ mv "$CLONE_TMP" "$REPO"
 cd "$REPO"
 
 python3 -m pip install -q --upgrade pip
-python3 -m pip install -q "transformers==5.0.0" "accelerate>=1.14.0" \
-  safetensors huggingface_hub sentencepiece
+python3 -m pip install -q "transformers==5.0.0" "accelerate==1.14.0" \
+  "safetensors==0.8.0" "huggingface_hub==1.22.0" "sentencepiece==0.2.1"
 python3 - <<'PY'
 import sys, torch, transformers
 print("SETUP python", sys.version)
@@ -54,14 +54,35 @@ print("SETUP gpu", torch.cuda.get_device_name(0))
 PY
 
 echo "PHASE EXACT_MODEL_TECHNICAL_ONLY $(date -Is)"
+set +e
 PYTHONPATH=src python3 -u src/run_coherent_state_hf.py \
   --run-dir "$RUN_DIR" --technical-only
+DRIVER_STATUS=$?
+set -e
 
-# The harvest validator requires the terminal marker.  Stage a local snapshot of
-# the externally captured log with that marker; the watcher later overwrites this
-# copy with the complete /workspace/exp/job.log after the real marker is emitted.
+# Independently verify that the terminal receipt is durable before writing the
+# final technical marker anywhere.  The harvest validator then performs its
+# deeper independent recomputation and writes the sibling harvest attestation.
+python3 - "$RUN_DIR" <<'PY'
+import hashlib, json, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+receipt = json.loads((root / "terminal_receipt.json").read_text())
+index = root / receipt["index_path"]
+assert index.stat().st_size == receipt["index_bytes"]
+assert hashlib.sha256(index.read_bytes()).hexdigest() == receipt["index_raw_sha256"]
+print("TERMINAL_RECEIPT_PREMARKER_VERIFIED", flush=True)
+PY
 cp /workspace/exp/job.log "$RUN_DIR/job.log"
-printf '%s\n' "COHERENT_STATE_TECHNICAL_DONE" >> "$RUN_DIR/job.log"
-python3 scripts/validate_coherent_harvest.py "$RUN_DIR" technical
+if [ "$DRIVER_STATUS" -eq 0 ]; then
+  printf '%s\n' "COHERENT_STATE_TECHNICAL_DONE" >> "$RUN_DIR/job.log"
+  python3 scripts/validate_coherent_harvest.py "$RUN_DIR" technical \
+    --output "${RUN_DIR}.harvest_validation.json"
+else
+  printf '%s\n' "COHERENT_STATE_TECHNICAL_FAILED" >> "$RUN_DIR/job.log"
+  python3 scripts/validate_coherent_harvest.py "$RUN_DIR" failure \
+    --output "${RUN_DIR}.harvest_validation.json"
+  echo "COHERENT_STATE_TECHNICAL_FAILED $(date -Is) status=$DRIVER_STATUS RUN_DIR=/workspace/repo/$RUN_DIR"
+  exit "$DRIVER_STATUS"
+fi
 
 echo "COHERENT_STATE_TECHNICAL_DONE $(date -Is) RUN_DIR=/workspace/repo/$RUN_DIR"
