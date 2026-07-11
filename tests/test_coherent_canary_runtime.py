@@ -1,0 +1,145 @@
+from types import SimpleNamespace
+
+import pytest
+import torch
+from transformers import DynamicCache
+
+from coherent_canary_runtime import (
+    CanaryRuntimeError,
+    continue_fresh_plan,
+    execute_fresh_plan,
+    execute_replay_plan,
+    extract_rows,
+    probe_suffix_ids,
+    replace_rows,
+    score_target_q1,
+    snapshot_physical_length,
+)
+from coherent_canary_schema import MODEL_ID, MODEL_REVISION, R2
+from coherent_canary_tokens import build_fresh_destination_plan, build_role_native_plan
+
+
+class FakeCacheModel(torch.nn.Module):
+    def __init__(self, vocab_size=151700):
+        super().__init__()
+        self.anchor = torch.nn.Parameter(torch.zeros(()), requires_grad=False)
+        self.vocab_size = vocab_size
+
+    @property
+    def device(self):
+        return self.anchor.device
+
+    def forward(self, input_ids, past_key_values=None, position_ids=None,
+                cache_position=None, use_cache=True, logits_to_keep=1):
+        del use_cache, logits_to_keep
+        cache = DynamicCache() if past_key_values is None else past_key_values
+        token = input_ids.to(torch.float32)
+        position = position_ids.to(torch.float32)
+        for layer in range(2):
+            keys = torch.stack((token + layer, position + layer), dim=-1).unsqueeze(1)
+            values = torch.stack((token - layer, position - layer), dim=-1).unsqueeze(1)
+            cache.update(keys, values, layer)
+        q = input_ids.shape[1]
+        logits = torch.zeros((1, q, self.vocab_size), dtype=torch.float32)
+        for offset in range(q):
+            pivot = int((input_ids[0, offset] + position_ids[0, offset]).item())
+            logits[0, offset, pivot % self.vocab_size] = 3.0
+            logits[0, offset, (pivot + 1) % self.vocab_size] = 1.0
+        return SimpleNamespace(past_key_values=cache, logits=logits)
+
+
+@pytest.fixture(scope="module")
+def tokenizer():
+    transformers = pytest.importorskip("transformers")
+    try:
+        return transformers.AutoTokenizer.from_pretrained(
+            MODEL_ID, revision=MODEL_REVISION, local_files_only=True)
+    except OSError:
+        pytest.skip("pinned production tokenizer is not cached")
+
+
+def history():
+    return [
+        {"role": "system", "content": "Keep a compact record."},
+        {"role": "user", "content": "The signal is green."},
+        {"role": "assistant", "content": "I recorded the signal."},
+        {"role": "user", "content": "Continue with a neutral checklist."},
+        {"role": "assistant", "content": "Check source and owner."},
+    ]
+
+
+def compact_messages():
+    from coherent_canary_schema import (
+        ANCHOR_ASSISTANT, ANCHOR_USER, ENGINEERED_CARRIER_CONTENT,
+        ENGINEERED_CARRIER_REQUEST,
+    )
+    rows = history()
+    return [rows[0],
+            {"role": "user", "content": ENGINEERED_CARRIER_REQUEST},
+            {"role": "assistant", "content": ENGINEERED_CARRIER_CONTENT},
+            {"role": "user", "content": ANCHOR_USER},
+            {"role": "assistant", "content": ANCHOR_ASSISTANT},
+            *rows[3:]]
+
+
+def test_replay_and_fresh_execute_exact_event_boundaries(tokenizer):
+    model = FakeCacheModel()
+    source = build_role_native_plan(tokenizer, history(), middle_end_msg=3)
+    fresh = build_fresh_destination_plan(tokenizer, history(), middle_end_msg=3)
+    source_result = execute_replay_plan(model, source)
+    assert snapshot_physical_length(source_result.snapshot) == len(source.token_ids)
+    assert len(source_result.calls) == len(source.events)
+    assert [row["kind"] for row in source_result.calls] == [
+        event.kind for event in source.events]
+    assert all(row["physical_start"] == row["logical_start"]
+               for row in source_result.calls)
+    r2_physical_end = fresh.physical_regions.interval(R2)[1]
+    fresh_boundary = execute_fresh_plan(model, fresh, stop_at=r2_physical_end)
+    assert snapshot_physical_length(fresh_boundary.snapshot) == r2_physical_end
+
+
+def test_row_replacement_and_causal_continuation(tokenizer):
+    model = FakeCacheModel()
+    source = build_role_native_plan(tokenizer, history(), middle_end_msg=3)
+    fresh = build_fresh_destination_plan(tokenizer, history(), middle_end_msg=3)
+    source_result = execute_replay_plan(model, source)
+    source_start, source_end = source.regions.interval(R2)
+    physical_start, physical_end = fresh.physical_regions.interval(R2)
+    rows = extract_rows(source_result.snapshot, source_start, source_end)
+    boundary = execute_fresh_plan(model, fresh, stop_at=physical_end)
+    replaced, evidence = replace_rows(
+        boundary.snapshot, rows, physical_start, use_keys=True, use_values=True)
+    assert evidence["destination_end"] == physical_end
+    completed = continue_fresh_plan(model, fresh, replaced, start_at=physical_end)
+    assert snapshot_physical_length(completed.snapshot) == len(fresh.token_ids)
+
+
+def test_stop_inside_event_fails(tokenizer):
+    model = FakeCacheModel()
+    source = build_role_native_plan(tokenizer, history(), middle_end_msg=3)
+    first = source.events[0]
+    assert first.width > 1
+    with pytest.raises(CanaryRuntimeError, match="cuts inside"):
+        execute_replay_plan(model, source, stop_at=first.token_end - 1)
+
+
+def test_probe_suffix_and_q1_target_scoring(tokenizer):
+    model = FakeCacheModel()
+    fresh = build_fresh_destination_plan(tokenizer, history(), middle_end_msg=3)
+    result = execute_fresh_plan(model, fresh)
+    suffix = probe_suffix_ids(
+        tokenizer, compact_messages(), fresh.token_ids, "Decision?")
+    score = score_target_q1(
+        model, result.snapshot, suffix_ids=suffix, target_ids=[1, 2],
+        logical_context_end=fresh.logical_positions[-1] + 1)
+    assert len(score["token_logprobs"]) == 2
+    assert score["teacher_forcing_feed_ids"] == suffix + [1]
+    assert len(score["logical_feed_positions"]) == len(suffix) + 1
+
+
+def test_selected_row_bound_is_asserted(tokenizer):
+    model = FakeCacheModel()
+    source = build_role_native_plan(tokenizer, history(), middle_end_msg=3)
+    result = execute_replay_plan(model, source)
+    with pytest.raises(CanaryRuntimeError, match="exceed asserted bound"):
+        extract_rows(result.snapshot, 0, 3, max_rows=2)
