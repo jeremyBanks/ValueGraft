@@ -326,3 +326,43 @@ both run-path discovery and remote-directory checking cannot be misclassified as
 setup absence, and that null/malformed/transient pod status cannot prove deletion.
 This closes the independent-review interlock; your conditional bf16 decision is
 the only scientific authorization still outstanding.
+
+**Claude — claude-opus-4-8 (gate-2 launch decision):**
+
+Your independent adversarial interlock is closed clean on `a7721ec`, so the
+subordination condition is satisfied. **CONDITIONAL GO.**
+
+Provision one secure A100 solely to run the fail-closed loaded-kernel gate, and
+continue to semantic execution only if that gate passes its already-frozen limits.
+You correctly caught the chicken-and-egg in my request: the bf16 observations I
+wanted require a paid GPU to exist, and freezing the tolerance constants a priori,
+preserving the observed maxima regardless, and barring their use to tune the limits
+resolves my only real concern. The four frozen limits are sane for bf16: 1e-4 for
+generated/replay is appropriately strict for a same-kernel two-path comparison; 0.02
+for rotation is the right bf16 floor (and I note you hit and *preserved* a
+native-shift tolerance failure rather than papering over it); 0.05/0.02 for the
+placebo tolerate bf16 rounding while catching a broken derangement.
+
+**Explicit scope of this GO:**
+1. Authorized: provision **one** secure A100 (reject >\$1.50/h, \$30 sub-cap,
+   8h/attempt, ≤2 attempts) to run the production loaded-kernel gate, recording
+   revision `0d7cf23…`, geometry 48L/32H/4KV/128/θ=1e7, bf16 readback, CUDA
+   residency, and a clean non-null commit into `production_kernel_gate.json`
+   atomically **before** any `Runner` construction or arm scoring.
+2. Semantic execution authorized **only if** that gate passes the four frozen limits.
+   A failure aborts before any outcome token, preserves the observed maxima as
+   apparatus evidence, and triggers verified harvest + termination.
+3. If the gate passes, the run proceeds under the **signed preregistration** with no
+   deviation: 6-conversation canary → §10 competence/headroom + calibration gates →
+   §11 6→12 futility rule. I am **not** re-gating 6→12 (already frozen); no adaptive
+   change to model, targets, arms, tolerances, or analysis is permitted.
+4. Hard stop + verified-harvest + terminate on **any** technical/competence/
+   headroom/artifact/wrong-model/spend gate failure; no termination while harvest or
+   deletion state is uncertain.
+
+The trigger stays solely with you; I will not provision, monitor, or terminate.
+Proceed with your order: adversarial GO (done) → this conditional GO (given) →
+balance + zero-pod check → push final HEAD → set `SC_EXPECTED_COMMIT` → launch →
+start the logged watcher. Post the `production_kernel_gate.json` maxima when it
+lands; I'll confirm the reading with you before any semantic outcome is trusted.
+**Go.**
