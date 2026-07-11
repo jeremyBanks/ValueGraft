@@ -449,3 +449,51 @@ Capture everything very well (owner).
   `COHERENT-STATE-SCHEDULE-ORIGIN-DIAGNOSTIC-PREREGISTRATION.md`,
   `notes/2026071174-fable-c10-schedule-failure-design-review.md`, and the latest turns of
   `notes/2026071156-sol-fable-execution-coordination.md`.
+
+- **Additive correction: c10/c02 are realistic generated-conversation fixtures, not
+  independent natural conversations; the alternative schedule is coarse B, not
+  message-aligned P.** Both fixtures come from the authored/rendered corpus under
+  `data/synthetic/`. C10's `[23,4096,4096,92,123]` and c02's
+  `[22,4096,4096,48,123]` split system, the whole concatenated history (4096-chunked),
+  and request/header. They do not use each internal turn boundary. Preserve the old
+  artifact field for provenance, but new prose/designs must call it
+  `coarse_system_history_request` (`B`). A true `turn_aligned_replay` (`P`) uses every
+  canonical message block and remains replay, not subject-native live-session state.
+  Evidence: `notes/2026071178-lagrange-schedule-robust-estimand-design-audit.md`.
+
+- **The second realistic schedule fixture independently failed; retain both as
+  diagnostic evidence.** C02 used 8,385 identical tokens/positions under O versus B
+  and recorded K/V `6.5/5.6875`, final-logit `0.5`, fixed-margin shift
+  `0.1318359375`, and continuation logits/K/V `0.46875/0.5/1.1875`. Layers 0–3 were
+  exact; the first stored-cache divergence appeared at layer 4. This rules out length
+  and a c10-only pathology as sufficient explanations, but it does not identify one
+  universal low-level root. The two-case sealed sidecar is committed at `cfde9bc`.
+
+- **Retire the cyclic `G_wrong` arm and old `GW` co-primary.** Exact-length donor
+  construction cycled short message pools through most replaced slots; maximum cycle
+  counts were 20–51, including a seven-token acknowledgement repeated 51 times. It can
+  compare coherent history with repetitive corruption, not correct with coherent wrong
+  history. A new scientific version must replace it; no v10 semantic execution or in-place
+  waiver is permitted. Evidence: `notes/2026071179-sol-wrong-history-control-invalidity.md`
+  and `notes/2026071181-carver-v10-gate-and-sample-lineage-audit.md`.
+
+- **Use plant-specific minimally counterfactual history as the replacement specificity
+  control.** For each conversation and selected plant, change the establishing fact to
+  the already frozen counterfactual answer and repair every fact-specific downstream
+  reference while leaving the other selected plant and unrelated history fixed. Require
+  exact per-message canonical token counts, identical P/O schedules and summary positions,
+  the same forced summary IDs, committed decoded text/diffs, target-aware factual review,
+  and blind naturalness/coherence review before scoring. Rename the specificity estimand
+  `GMC`; omission/neutral history is a prespecified secondary diagnostic, while a coherent
+  unrelated donor is only an optional broad stress control. The inferential unit remains
+  the conversation and schedules remain repeated conditions. Evidence:
+  `notes/2026071182-lagrange-counterfactual-control-estimand.md` and the focused Opus turn
+  in `notes/2026071156-sol-fable-execution-coordination.md`.
+
+- **Routine Fable consultations are focused, optional, and non-blocking.** Give a fresh
+  Fable session only the smallest decision-specific primary artifacts/short audit notes;
+  point to generated summaries as optional trajectory context; explicitly exclude
+  re-litigation of unrelated settled questions. If a focused consult cannot finish for
+  roughly `$4`, narrow or stop it rather than extending/resuming a giant context. Reserve
+  comprehensive context for final paper synthesis/review. Sol retains final authority and
+  uses other independent agents when Fable is unavailable or disproportionate.
