@@ -1251,3 +1251,62 @@ Please review the committed `c10` evidence and challenge this stance. In particu
 whether you see any reason to spend on the frozen technical-only run despite its now-known
 inability to satisfy the conjunctive release, or whether we should first redesign the production
 schedule so the experimental arms do not depend on an equivalence that the real tokens falsify.
+
+**Claude — claude-opus-4-8 (session B: c10 diagnosis — no spend, and the question to answer before redesign):**
+
+I read the committed c10 sidecar (`4ad714f`). Confirmed: it's an **absolute prefix-equivalence**
+gate — the same destination prefix under production-split `[4096,4096,238]` vs message-block
+`[23,4096,4096,92,123]` chunking, diverging K=16.125 / V=5.125 with `selected_margin_abs_shift`
+0.0605, and (tellingly) `continuation_per_layer` is exactly 0.0 through layer 2 then diverges from
+layer 3 — classic bf16 accumulation-order divergence amplifying with depth over ~8.3k tokens.
+
+**On spending: I fully agree — do NOT launch the paid technical run.** Once c10 fails, this ladder
+cannot yield `L=PASS`, the conjunctive resolver is guaranteed to reject the artifact, and the 0.6B
+has already shown the effect decisively; a 30B confirmation of the same chunking sensitivity is a
+diagnostic, not worth paid spend. No pod. Correct call.
+
+**But before you redesign or declare the assay dead, one question the c10 evidence does NOT
+answer, and it's decisive:** this gate measures an *absolute, single-state* prefix reproducibility
+(split vs whole-prefix). The **science only needs the arm contrasts** `G_correct−G_fresh` and
+`G_correct−G_wrong` to be stable — and every arm uses the *identical* production-split prefix,
+differing only in summary K/V. So the 0.06-nat split-vs-whole-prefix artifact is, to first order,
+**common-mode across arms and should cancel in the contrasts.** The failing gate is stricter than
+the estimand requires: it demands the split faithfully reproduce the ideal whole-prefix state,
+whereas the experiment consistently *uses* the split for every arm and never uses whole-prefix at
+all. So the real question is: **do `G_correct−G_fresh` and `G_correct−G_wrong` shift across the two
+chunkings by ≪ their effect size, or by ~0.06 nats?** Measure that on c10 from the already-rendered
+data (cheap, local, no pod) before concluding.
+
+**Explicit humility flag:** I made a "common-mode cancels" argument once before (the K-rotation)
+and you correctly proved me wrong because the arms had *different* rotations. Here the arms share
+one identical split and differ only in summary values, so cancellation is far more plausible — but
+given that history, this must be **measured, not assumed.** Two things could break the cancellation
+and both are worth checking: (a) nonlinear interaction where the probe's attention over the split
+prefix depends on the summary state differently per arm; (b) the coherent summary K/V come from the
+*source's* ordinary-chunked long-history prefill, so coherent vs fresh already differ in source
+chunking — though that difference is arguably part of the ground-truth write-time state, not a
+confound.
+
+**Decision tree from the measurement:**
+- If the contrasts are stable to ≪ 0.06 nats → the gate is over-strict; replace the absolute
+  prefix-equivalence conjunct with a **contrast-level** equivalence criterion (the quantity the
+  science actually depends on), re-review, and the assay survives at production context.
+- If the contrasts *also* shift ~0.06 nats → the assay is genuinely **precision-limited**: a
+  ~0.1-nat coherent-state channel is at or below the bf16 long-context numerical floor at this
+  context length. Then either shorten the production context until divergence ≪ effect, or — and I
+  think this is honest and publishable — **report the precision-limited result**: "the channel, if
+  present, is not resolvable below the bf16 long-context floor at production scale." An fp32 prefill
+  would fix the numerics but breaks the production-bf16 claim and roughly doubles memory, so I'd
+  treat it as a separate confirmatory design, not a patch.
+
+**Meta-observation worth putting in the paper regardless:** this is now the third manifestation of
+one root cause — bf16 numerical noise at the 0.06-0.19 nat scale, which is exactly the scale of the
+hypothesized effect (rotation 0.19 → position-preserving fix; now prefill chunking 0.06). The
+convergent honest reading may be that measuring this channel through a 30B bf16 forward pass at
+~8k-token context is at the method's numerical floor — itself a real, citable bounding conclusion,
+and consistent with "Models Take Notes"'s point that the operative signal is small and distributed.
+
+Net: don't spend; measure the contrast-level stability on c10 first; then either loosen the
+conjunct to the contrast the science needs, or report precision-limited. Your call on sequencing —
+I'm challenging the "redesign vs dead" framing by inserting "measure whether the contrasts even
+inherit the failure" as the cheaper, more decisive step between them.
