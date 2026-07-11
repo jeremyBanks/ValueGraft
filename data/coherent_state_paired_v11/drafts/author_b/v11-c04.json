@@ -1,0 +1,1024 @@
+{
+  "schema": "coherent_state_paired_v11_case_draft_v1",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "case_id": "v11-c04",
+  "domain": "documentary production",
+  "title": "Tidal Ledger production record",
+  "authoring_provenance": {
+    "author": "Sol",
+    "model_id": "gpt-5.6-sol-xhigh",
+    "reasoning_effort": "extra-high",
+    "authored_utc": "2026-07-11T18:30:00Z",
+    "method": "Openly authored experimental input; tokenizer-only reconstruction; no subject-model forward pass."
+  },
+  "middle_end_msg": 25,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an editorial planning assistant helping Mara Vale, producer of a small documentary, keep decisions, dependencies, and open questions straight. Respond concretely, distinguish confirmed facts from proposals, and never claim that calls, bookings, uploads, or other external actions have occurred."
+        },
+        {
+          "role": "user",
+          "content": "I am producing a 48-minute documentary called Tidal Ledger about how three generations of families around Bellweather Inlet adapted after the cannery closed. We have two filming blocks left, a small public-media grant, and no room for heroic assumptions. I want this thread to become the working decision record, but I still need actual prose rather than terse database entries. The director is Celia Orr, our field producer is Jonah Pike, and I am Mara. Celia cares most about patient observational scenes. Jonah handles releases and travel. I am watching the budget, archive rights, and delivery schedule. The rough cut must be ready for an internal screening on October 17. Please start by separating the decisions we must make this week from matters that can wait until picture lock."
+        },
+        {
+          "role": "assistant",
+          "content": "The decisions that can block the remaining production work belong in this week’s column: which archive house will digitize the fragile source material; what the crew means by “wild track” on the next call sheet; the exact dates and weather fallback for the inlet shoot; who may authorize overtime; and which interview releases still need a guardian or estate signature. Those choices affect bookings, media handling, or what people record.\n\nMatters that can wait until picture lock include final music placement, the order of the two historical chapters, lower-third typography, festival premiere strategy, and whether the end credits show still-photograph accession numbers. We should nevertheless record constraints now. October 17 is the rough-cut screening, not public delivery. Celia owns editorial direction, Jonah owns releases and travel coordination, and you own budget and archive-rights approval. I will treat proposed dates and prices as provisional until you explicitly confirm them, and I will flag any plan that assumes an outside party has agreed when we only have an intention to ask."
+        },
+        {
+          "role": "user",
+          "content": "First blocker: the archive transfer. The Wren family has six reels of 16 mm reversal film plus two quarter-inch oral-history tapes. We considered Northline Transfer, Harbor Scan, and Elm Street Lab. Northline quoted the lowest base price and can collect the cans locally, but its wet-gate surcharge is uncertain. Harbor includes a supervised inspection and gives us both 4K ProRes and a conservation scan; it needs the material delivered by courier. Elm Street has the best colorist, but its earliest slot is three weeks later and would squeeze the rough cut. The family allows inspection and scanning but not physical repair without written permission. Compare them against schedule risk, preservation care, and total-cost uncertainty. Do not choose for me yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Northline is strongest on immediate cash and logistics: local collection reduces handling steps, and the quoted base is lowest. Its weakness is cost variance, because damaged or shrunken film could trigger an uncapped wet-gate charge. Before selection, you would need a written ceiling and confirmation that inspection does not become “repair.”\n\nHarbor has the cleanest preservation workflow for this project. Supervised inspection matches the family’s restriction, and the paired editorial and conservation files reduce a later conform risk. Courier handling is a real exposure, but it can be bounded with a chain-of-custody form, declared-value insurance, and same-day tracking. Its price appears more legible if inspection is included.\n\nElm Street offers the most discretionary finishing value, yet the late slot directly threatens October 17. Color artistry matters less than having stable scans early enough for the edit.\n\nOn the stated criteria, Harbor has the best schedule-care balance, Northline remains viable if it caps contingencies in writing, and Elm Street is a poor fit unless the screening date moves. That is a comparison, not a selection."
+        },
+        {
+          "role": "user",
+          "content": "Decision: use Harbor Scan for the Wren reels and tapes. The included supervised inspection and predictable deliverables outweigh the courier step. Keep Northline as the real fallback if the intake date slips; Elm Street is rejected for this schedule. Jonah will prepare a chain-of-custody sheet, but I still have to approve the declared value before anything moves."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded as confirmed: Harbor Scan is selected for the Wren film and audio transfer. Northline remains the fallback only if Harbor cannot hold the required intake, and Elm Street is not being used because its timing conflicts with the rough-cut schedule. The family’s restriction still controls: inspection and scanning are permitted, while physical repair requires separate written consent. Jonah may draft the custody paperwork, but the material does not move until you approve the declared value and the courier plan. I will refer to the provider generically in later task lists unless its identity is operationally necessary."
+        },
+        {
+          "role": "user",
+          "content": "Next, a terminology problem before Jonah writes the call sheet. Celia uses “wild track” in the ordinary sound-department sense: a clean ambient room-tone recording made without synchronized picture. Our second camera operator, Dev, has also used “wild track” as a nickname for unplanned observational footage gathered while moving between scheduled scenes. Both are useful, but the phrase cannot mean both on a one-page call sheet. Ask whatever you need before we settle our local meaning."
+        },
+        {
+          "role": "assistant",
+          "content": "The ambiguity affects staffing and deliverables, so I would settle three points. First, is the call-sheet label meant to trigger the sound recordist to hold everyone quiet, or to release the camera team for unscheduled coverage? Second, will Dev still be allowed to propose observational shots under another label? Third, should the chosen phrase remain stable in the edit log as well as on set?\n\nThe two meanings are operationally different. Ambient sound requires a named location, duration, microphone plan, and silence from the crew. Observational footage requires camera availability, releases, and guidance about when following people is appropriate. My default would be to reserve the established sound term for room tone and give Dev’s practice a distinct name such as “drift coverage,” but I will wait for your explicit local mapping."
+        },
+        {
+          "role": "user",
+          "content": "For this production, “wild track” means ambient room tone recording. Use “drift coverage” for Dev’s unplanned observational footage. The mapping applies on call sheets, sound reports, and edit notes. It does not ban spontaneous filming; it just prevents a label from silently assigning two different tasks."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed for this project: “wild track” means ambient room tone recording, while “drift coverage” names unplanned observational footage. The distinction applies in call sheets, sound reports, and edit notes. A wild-track line should specify place, approximate duration, and the sound lead; a drift-coverage line should specify camera responsibility and any release limits. Spontaneous filming remains available when Celia approves it. I will preserve the quoted labels when wording matters and otherwise discuss the tasks by function so later planning does not accidentally reintroduce the ambiguity."
+        },
+        {
+          "role": "user",
+          "content": "Now the inlet block. We have access to the Dyer boathouse on September 8 and 9 from 06:30 to 18:00. The tide is visually best around 07:20 on the first day. Our interview with retired net maker Rina Sol is fixed for 10:30 on the 8th because her daughter drives her. The harbor master can give us forty minutes on either afternoon but has not chosen a day. Rain is fine for interiors; lightning is not acceptable on the dock. We need one exterior sequence of Celia and Rina walking the old loading path, but Rina cannot stand for more than twelve minutes without a seated reset. Build a humane schedule with a weather branch, and leave honest buffers rather than filling every minute."
+        },
+        {
+          "role": "assistant",
+          "content": "A humane first day starts with the tide material before the site becomes busy. From 06:30 to 06:50, unload only the exterior kit and complete a dock-safety check. Film inlet and empty-path establishing shots from 06:50 to 07:40. Use 07:40 to 08:00 for a quiet location-sound interval, then move inside for breakfast, media check, and boathouse details until 09:35. Hold 09:35 to 10:15 for Rina’s arrival, consent reconfirmation, microphone placement, and a seated conversation with Celia before the formal interview. Interview from 10:30 to about 11:35, with an offered break at the midpoint.\n\nDo not schedule the walking sequence immediately afterward. Give Rina lunch and a seated reset, then rehearse the route without her. If conditions are safe, film it in two short sections between 13:15 and 14:00, never requiring more than twelve minutes standing. Reserve 14:00 to 15:00 as recovery and overrun. The harbor-master window can occupy 15:15 if offered.\n\nIf lightning closes the dock, move all exterior material to the 9th and use the 8th for the interview, boathouse inserts, maps, and hands-at-work details. Keep the morning of the 9th lightly booked until the forecast is known."
+        },
+        {
+          "role": "user",
+          "content": "That shape works. Add two constraints: the drone permit is only valid from 08:00 to 09:00 on the 9th, and Celia does not want drone footage if low cloud makes it look like generic tourism advertising. Also, we can record the harbor master in the chart room if the dock is closed, so that interview is not weather-dependent. Jonah may move meals by up to thirty minutes, but only I can approve crew overtime. Our standard day is ten hours from call, with a genuine meal break. Please revise the branch without turning the drone into a must-have."
+        },
+        {
+          "role": "assistant",
+          "content": "The drone becomes an optional weather-qualified insert, not a dependency. Keep the 8th as planned. On the 9th, call a minimal aerial team for an 07:30 safety and visibility assessment. Fly only between 08:00 and 09:00, only if the permit conditions, wind, and cloud ceiling are acceptable, and only if Celia believes the images serve the inlet’s working geography rather than a tourism montage. A no-fly decision creates no recovery obligation; ground-level transitions can carry the same edit function.\n\nThe harbor-master conversation may be placed on either afternoon. If the dock is open, use the exterior background for a short segment; otherwise use the chart room without treating that as a downgrade. Jonah can shift meal timing within thirty minutes to protect a live interview or weather opening, but the meal remains real. With a 06:30 call, normal wrap is 16:30 including the break under your stated convention; anything beyond the production’s defined ten-hour day requires your approval before the crew incurs it. I would preserve a 45-minute pack-out inside that limit and cut optional details before requesting overtime."
+        },
+        {
+          "role": "user",
+          "content": "Rights and ethics pass. We have licensed two newspaper front pages for worldwide public-media broadcast and educational streaming for seven years, but not paid social advertising. The cannery payroll ledger belongs to the county archive and can appear on screen; the individual addresses must be masked. Rina’s late husband appears in one Wren reel. Rina can identify him, but she cannot grant rights in that reel; the Wren family controls the physical film and gave the scanning permission described earlier. A former manager, Lewis Dane, agreed to an audio-only interview and explicitly refused reenactment. Give me a compact rights matrix and identify any tempting editorial move that the permissions do not support."
+        },
+        {
+          "role": "assistant",
+          "content": "Rights matrix:\n\n- Newspaper fronts: licensed for worldwide public-media broadcast and educational streaming for seven years. They are not cleared for paid social promotion, so trailers purchased as ads need different imagery or an expanded license.\n- County payroll ledger: may appear editorially, provided individual street addresses are masked in every visible frame, proxy, still, and promotional crop. The masking check belongs in both offline and final online review.\n- Wren reel featuring Rina’s husband: scanning and editorial access derive from the Wren family’s permission. Rina’s identification helps captioning but does not substitute for the controlling permission, nor does it authorize physical repair.\n- Lewis Dane interview: audio only. His refusal bars a reenactment that presents an actor as him or stages his account as though he participated.\n\nTempting unsupported moves include using a newspaper front in a paid teaser; pushing into an unmasked ledger address for visual drama; treating Rina’s family connection as ownership of the reel; or covering Lewis’s audio with a literal reenactment of his actions. Abstract location details, documents independently cleared, or clearly nonliteral atmosphere may be possible, but none should be used to evade the spirit of his refusal."
+        },
+        {
+          "role": "user",
+          "content": "Budget snapshot: we have $18,600 uncommitted. Reserve $6,200 for color and online, $2,400 for mix, $1,500 for captions and audio description, and $900 for insurance adjustments. The archive transfer estimate sits outside those reserves and is currently $3,150 including courier allowance. The two-day inlet block is forecast at $3,800 before overtime. Celia has asked about licensing a song that could cost between $1,200 and $2,500, but there is no quote. I want at least $1,000 genuinely unassigned after known commitments. Show the arithmetic and tell me what cannot be promised yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Starting uncommitted funds: $18,600.\n\nProtected postproduction and access reserves total $11,000: $6,200 color/online + $2,400 mix + $1,500 captions/audio description + $900 insurance. The archive estimate adds $3,150, bringing planned use to $14,150. The inlet forecast adds $3,800, bringing it to $17,950. That leaves $650 before any overtime, archive variance, or music license.\n\nTherefore the current plan misses your requirement for at least $1,000 genuinely unassigned by $350. No song license can be promised, even at the $1,200 low end. Overtime also cannot be assumed. Before committing music, you need either a confirmed saving elsewhere or new funds. The least destructive immediate action is to ask each department to identify optional costs without cutting accessibility or the integrity of the archive handling. Even if you find $350, that merely restores the contingency floor; it does not create a music budget. Celia can explore tracks and editorial fit, but any negotiation should be described as inquiry subject to a separate cap and your approval."
+        },
+        {
+          "role": "user",
+          "content": "I can reduce the color-and-online reserve to $5,800 because the facility confirmed that our grant discount applies, but do not touch mix or accessibility. That restores the floor by only $50, so the song remains an exploration. Separately, Jonah found that one hotel cancellation lowers the inlet forecast by $280. Keep those as two distinct savings and do not net future maybes against them. For the archive task list, use the selected provider but do not repeat its proper name in every line; it makes the plan read like advertising."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded as two confirmed planning changes, not a general invitation to trim. The color-and-online reserve is now $5,800, a $400 reduction supported by the grant discount. The inlet forecast is now $3,520, a separate $280 reduction from the hotel cancellation. Mix remains $2,400, captions and audio description remain $1,500, and insurance remains $900.\n\nRevised planned use is $10,600 in protected reserves + $3,150 for archive transfer + $3,520 for the inlet block = $17,270. Against $18,600, that leaves $1,330 genuinely unassigned. A music license still cannot be promised, because even its $1,200 low end would leave only $130 for variance. It remains an exploration pending a firm quote and an explicit budget decision.\n\nFor archive tasks I will say “the selected transfer provider” where identity adds nothing, while retaining the actual decision in the record. The next concrete items are intake confirmation, declared-value approval, custody paperwork, family repair restrictions, and deliverable verification."
+        },
+        {
+          "role": "user",
+          "content": "We should also settle how the edit team handles claims. Celia wants a card saying the cannery closure “emptied the inlet overnight.” That is vivid but not literally supported: the payroll fell over fourteen months, and two repair businesses stayed open. We do have strong testimony that the night shift stopped with less than a week’s notice. I want language that preserves the emotional fact without flattening the economic timeline. The county historian, Ansel Wu, can review factual cards on September 20, but he is an adviser, not an approval authority. Propose a card and a narration bridge, then list what evidence should sit behind them in our fact-check folder."
+        },
+        {
+          "role": "assistant",
+          "content": "A defensible card would be: “The cannery ended its night shift with less than a week’s notice. Over the next fourteen months, most of its payroll disappeared.” That retains the shock of the immediate event and the slower economic consequence without claiming the entire inlet emptied at once.\n\nA narration bridge could say: “People remember the silence arriving in a night. The jobs vanished more slowly—shift by shift, season by season—while a few workshops kept their doors open.” The first sentence is framed as memory; the second distinguishes the documented progression and acknowledges continuity.\n\nThe fact-check folder should contain the dated night-shift notice or the strongest surviving record of it; payroll totals by month with the calculation that supports “most”; business-license or directory evidence for the repair shops; interview transcripts with exact timecodes for witnesses describing the sudden silence; the county historian’s written comments; and a log showing which wording changed after review. Ansel’s September 20 pass is expert advice. Mara and Celia retain responsibility for the final editorial claim, and legal review may still flag language independently."
+        },
+        {
+          "role": "user",
+          "content": "One more production wrinkle before we cross into later edit work. The 9th-grade media club is visiting the boathouse from 12:30 to 13:15 on the second day. We may film wide shots of the group only if the school returns its group release; individual close-ups require separate guardian forms, which we do not have. Their teacher wants a five-minute demonstration from Dev. We can accommodate that, but it must not steal Rina’s rest window or create a promise that students will appear in the film. Put this into the day-two plan and mark the point after which our earlier decisions can be compacted."
+        },
+        {
+          "role": "assistant",
+          "content": "For day two, protect the morning weather work and the optional 08:00–09:00 aerial window as already framed. Keep late morning for interiors or pickups, then clear the main floor before the club arrives. From 12:30 to 12:35, Jonah gives a brief safety and consent orientation. Dev demonstrates a basic observational setup from 12:35 to 12:40. The remaining visit is educational observation, not a scheduled scene.\n\nFilm no student material unless the school’s group release is actually returned and checked. If it is, restrict coverage to wide group views with no isolated faces; without individual guardian forms, no close-ups or featured student moments belong in the camera plan. Attendance creates no promise of inclusion. Rina’s rest area and any rest period stay private and undisturbed, so the club route must avoid them.\n\nA sensible compaction boundary begins with your next message. Everything through this response contains the resolved archive-provider choice, terminology mapping, shoot branches, rights limits, budget arithmetic, claims language, and school-visit constraints. Later messages can focus on edit operations and delivery while referring back only when a dependency truly matters."
+        },
+        {
+          "role": "user",
+          "content": "Good. From here, focus on postproduction coordination. Assistant editor Noor has ingested the existing interviews and created proxies, but she has not synchronized the newly found audio cassettes because their sample rate is unknown. Celia wants a 62-minute assembly by September 26, then a 52-minute director’s cut by October 6, before the 48-minute rough cut on October 17. We have one transcription contractor for twenty hours. Decide how to spend those hours, define what “assembly” means at each milestone, and avoid making the contractor responsible for editorial judgment."
+        },
+        {
+          "role": "assistant",
+          "content": "Use the transcription hours where searchable accuracy changes editorial speed. Allocate twelve hours to the newly found cassettes after Noor confirms playback and sample-rate handling, five hours to the two longest existing interviews whose machine transcripts have the worst names and place terms, and three hours as a correction reserve after Celia identifies high-value passages. The contractor should transcribe and flag inaudible spans; they should not decide which testimony is truthful, central, or safe to use.\n\nFor September 26, “62-minute assembly” means a watchable chronological argument with source labels, temporary cards, and explicit gaps. It may contain rough sound, provisional archive stills, and alternatives back-to-back, but no segment should masquerade as cleared merely because it appears. The October 6 director’s cut should be a deliberate 52-minute version with the chapter order chosen, redundancies removed, and unresolved legal or factual issues marked in a visible issue list. The October 17 rough cut is the intended 48-minute program shape for internal review, with access needs, archive replacements, mix problems, and fact-check holds tracked separately. Each milestone has a different decision purpose; none is a claim of final finish."
+        },
+        {
+          "role": "user",
+          "content": "Noor says the cassettes are 44.1 kHz mono, while the project is 48 kHz. She can make preservation copies and resampled editorial copies, but she wants a naming convention before touching them. There are eleven cassettes labeled only with dates, and two dates repeat. We also need to distinguish a source-side dropout from a failed transfer. Propose a reversible ingest convention, a minimal QC log, and a rule for the duplicate dates. Keep it practical for a two-person edit room."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep the untouched digital capture and the editorial derivative visibly related but never interchangeable. A practical stem is TL_CAS_[physicalID]_[labelDate]_[captureDate]. Give each cassette a physical ID from 01 through 11 before capture; the repeated written dates then cease to be identifiers. Append _SRC441_MO to the preservation file and _EDIT48_MO to the resampled copy. Example: TL_CAS_04_1998-06-12_2026-09-14_SRC441_MO.wav. If a written date is uncertain, use UNK plus the literal label in the log rather than guessing.\n\nThe QC log needs one row per physical cassette: physical ID; photographed label; stated date; capture operator and time; deck/interface; preservation filename and checksum; editorial filename and checksum; duration; channel/rate; audible dropout timecodes; transfer interruptions; and disposition. To distinguish faults, replay any suspicious span once, inspect the source path, and note whether the defect repeats at the same source time. A repeatable defect is probably source-side; a new or shifting defect triggers recapture. Keep both observations rather than “repairing” the preservation file. Noor can manage this in one sheet, with you or Jonah verifying the physical-ID photographs."
+        },
+        {
+          "role": "user",
+          "content": "The composer, Inez Farrow, can give us sketches on September 29 and October 8. Celia wants the first sketch under the boat-repair montage and the second under the closing shoreline sequence. Inez needs tempo references but does not want temp music that sounds like a commission to imitate. We also have a local accordion recording donated by Tomas Reed under a nonexclusive film license; the agreement permits the film and educational screenings but says nothing about trailers. Lay out a music handoff that keeps the two sources and their rights status distinct."
+        },
+        {
+          "role": "assistant",
+          "content": "Give Inez a cue brief rather than a temp-track imitation request. For the boat-repair montage, provide picture duration, edit rhythm, two or three timecode pivots, and neutral descriptors such as “measured mechanical pulse, room for tool impacts, no triumphal lift.” A click or metronome map can communicate tempo without suggesting melody or orchestration. For the shoreline cue, describe the emotional transition, required ending length, dialogue overlap, and whether the final image needs silence. Mark September 29 and October 8 as sketch dates, followed by explicit feedback windows; neither sketch is presumed final.\n\nTrack Tomas Reed’s accordion recording as a separately licensed source cue. Its current nonexclusive permission covers the film and educational screenings. It is not cleared for trailers, paid or unpaid, because the agreement is silent there; seek an amendment or keep it out of promotional edits. The music log should have distinct rows for composer-created cues and the donated recording, with source, owner, allowed uses, term/territory if stated, cue placements, and open rights questions. Do not send Inez the donated track as an aesthetic target unless Tomas’s recording is both cleared for that internal use and Celia genuinely wants the reference."
+        },
+        {
+          "role": "user",
+          "content": "For the October 17 screening, the room seats fourteen. Invitees should be limited to the core team, Ansel the historian, our accessibility consultant Priya Shah, one public-media editor, and at most two people with no prior knowledge of the project. Rina asked whether her daughter could attend, but Celia worries that having a participant’s family in the first diagnostic screening will suppress candid feedback. We do want a participant screening later. Design the session, including what we ask viewers, how we collect notes, and how we answer Rina without making the later event sound ceremonial or meaningless."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat October 17 as a diagnostic working screening. Seat the core team needed to observe, Ansel, Priya, one public-media editor, and two fresh viewers; do not fill unused chairs merely because they exist. Before playback, say that the cut is incomplete and ask viewers to note confusion, trust, pacing, missing context, and moments where sound or visual information is inaccessible. Do not prime them with the film’s thesis. Give everyone the same one-page form, then hold five silent minutes after the cut so first impressions are written before group dynamics take over. Discuss comprehension first, factual trust second, pacing third, and solutions last. Noor should capture attributed notes and a separate decision log; volume of comments is not a vote.\n\nTell Rina plainly that this first session is a small editorial diagnostic without participant families because the team needs uninhibited feedback on an unfinished structure. Confirm that a participant screening will follow when the cut is coherent enough for people represented in it to assess accuracy, dignity, context, and unintended harm. That later session is consequential: feedback may lead to changes, though it does not transfer final editorial control. Invite her and her daughter to that defined review rather than offering a ceremonial preview."
+        },
+        {
+          "role": "user",
+          "content": "Priya has already warned that the ledger sequence depends too heavily on tiny handwriting and that the inlet map uses color alone to distinguish three periods. We cannot wait for a finished cut to solve this. Noor can produce a temporary spoken-description track, but only if we give her a script by October 12. Captions can be rough for the internal screening as long as speaker changes and meaningful sound are represented. Make an accessibility-first checklist for the next two edit milestones, with named owners and no implication that Priya is personally responsible for fixing everything she identifies."
+        },
+        {
+          "role": "assistant",
+          "content": "By the October 6 director’s cut, Celia and Noor should replace color-only map distinctions with redundant labels, line patterns, or dates that remain legible in grayscale. Mara supplies a transcript or verified reading of the ledger details the scene actually depends on; Celia decides whether those facts belong in narration, a larger graphic, or both. Noor maintains rough captions with speaker identification, dialogue, and meaningful non-speech sound, while flagging uncertain names rather than silently guessing. Priya reviews representative sequences and identifies barriers, but the production owners implement and verify corrections.\n\nBy October 12, Celia locks the descriptive intent for the internal cut, Mara resolves factual wording, and Noor receives a timed description script for gaps where essential visual information is not otherwise available in dialogue. Noor can record a temporary track for October 17; it should be understandable, paced, and clearly labeled provisional. Before screening, Jonah checks room audio and sight lines, Noor tests caption playback and the description channel, and Mara confirms the feedback form asks specifically about access.\n\nAfter the screening, Priya’s observations join viewer feedback in the issue log with an owner, priority, decision, and retest date. Accessibility is a production responsibility distributed across editorial, factual, technical, and budget roles, not a cleanup task delegated to the consultant."
+        },
+        {
+          "role": "user",
+          "content": "Last item for today: create a short unresolved-actions list that somebody could actually use tomorrow morning. Do not restate settled choices unless they create an action. Separate actions due within forty-eight hours from items tied to later milestones. Include an owner for every line and mark dependencies honestly."
+        },
+        {
+          "role": "assistant",
+          "content": "Within forty-eight hours:\n\n- Mara: approve the declared value and courier plan after Jonah supplies the custody draft; dependency: written intake confirmation and insurance terms.\n- Jonah: obtain the archive intake window, finish the custody sheet, and verify that no repair authorization is implied.\n- Jonah: confirm the school group-release status and redesign the visit route away from Rina’s rest area.\n- Noor: assign physical IDs to the eleven cassettes, photograph labels, and run one documented capture/QC test before batch ingest.\n- Celia: identify the two existing interviews that most need human transcript correction; dependency: Noor’s error sample.\n- Mara: preserve the $1,330 unassigned floor and request a written music quote without promising a license.\n\nLater milestones:\n\n- Noor, by September 26: deliver the defined 62-minute assembly with visible rights and fact-check holds.\n- Ansel, September 20: advise on factual cards; Mara and Celia retain the decision.\n- Inez, September 29 and October 8: submit cue sketches against briefs Celia supplies.\n- Celia and Noor, by October 6: deliver the 52-minute director’s cut with non-color-only maps and usable rough captions.\n- Mara and Celia, by October 12: give Noor a factual, timed temporary-description script.\n- Jonah and Noor, before October 17: test screening-room playback, captions, description routing, and note collection.\n- Mara: schedule the later participant screening once the cut is coherent enough for meaningful accuracy and dignity review."
+        }
+      ]
+    },
+    "wrong_referent": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an editorial planning assistant helping Mara Vale, producer of a small documentary, keep decisions, dependencies, and open questions straight. Respond concretely, distinguish confirmed facts from proposals, and never claim that calls, bookings, uploads, or other external actions have occurred."
+        },
+        {
+          "role": "user",
+          "content": "I am producing a 48-minute documentary called Tidal Ledger about how three generations of families around Bellweather Inlet adapted after the cannery closed. We have two filming blocks left, a small public-media grant, and no room for heroic assumptions. I want this thread to become the working decision record, but I still need actual prose rather than terse database entries. The director is Celia Orr, our field producer is Jonah Pike, and I am Mara. Celia cares most about patient observational scenes. Jonah handles releases and travel. I am watching the budget, archive rights, and delivery schedule. The rough cut must be ready for an internal screening on October 17. Please start by separating the decisions we must make this week from matters that can wait until picture lock."
+        },
+        {
+          "role": "assistant",
+          "content": "The decisions that can block the remaining production work belong in this week’s column: which archive house will digitize the fragile source material; what the crew means by “wild track” on the next call sheet; the exact dates and weather fallback for the inlet shoot; who may authorize overtime; and which interview releases still need a guardian or estate signature. Those choices affect bookings, media handling, or what people record.\n\nMatters that can wait until picture lock include final music placement, the order of the two historical chapters, lower-third typography, festival premiere strategy, and whether the end credits show still-photograph accession numbers. We should nevertheless record constraints now. October 17 is the rough-cut screening, not public delivery. Celia owns editorial direction, Jonah owns releases and travel coordination, and you own budget and archive-rights approval. I will treat proposed dates and prices as provisional until you explicitly confirm them, and I will flag any plan that assumes an outside party has agreed when we only have an intention to ask."
+        },
+        {
+          "role": "user",
+          "content": "First blocker: the archive transfer. The Wren family has six reels of 16 mm reversal film plus two quarter-inch oral-history tapes. We considered Northline Transfer, Harbor Scan, and Elm Street Lab. Northline quoted the lowest base price and can collect the cans locally, but its wet-gate surcharge is uncertain. Harbor includes a supervised inspection and gives us both 4K ProRes and a conservation scan; it needs the material delivered by courier. Elm Street has the best colorist, but its earliest slot is three weeks later and would squeeze the rough cut. The family allows inspection and scanning but not physical repair without written permission. Compare them against schedule risk, preservation care, and total-cost uncertainty. Do not choose for me yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Northline is strongest on immediate cash and logistics: local collection reduces handling steps, and the quoted base is lowest. Its weakness is cost variance, because damaged or shrunken film could trigger an uncapped wet-gate charge. Before selection, you would need a written ceiling and confirmation that inspection does not become “repair.”\n\nHarbor has the cleanest preservation workflow for this project. Supervised inspection matches the family’s restriction, and the paired editorial and conservation files reduce a later conform risk. Courier handling is a real exposure, but it can be bounded with a chain-of-custody form, declared-value insurance, and same-day tracking. Its price appears more legible if inspection is included.\n\nElm Street offers the most discretionary finishing value, yet the late slot directly threatens October 17. Color artistry matters less than having stable scans early enough for the edit.\n\nOn the stated criteria, Harbor has the best schedule-care balance, Northline remains viable if it caps contingencies in writing, and Elm Street is a poor fit unless the screening date moves. That is a comparison, not a selection."
+        },
+        {
+          "role": "user",
+          "content": "Decision: use Northline Transfer for the Wren reels and tapes. Local pickup and the lower estimate outweigh wet-gate risk. Keep Harbor as the real fallback if the surcharge cap fails; Elm Street is rejected for this schedule. Jonah will prepare a chain-of-custody sheet, but I still have to approve the declared value before anything moves."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded as confirmed: Northline Transfer is selected for the Wren film and audio transfer. Harbor remains the fallback if Northline cannot cap its surcharge, and Elm Street is not being used because its timing conflicts with the rough-cut schedule. The family’s restriction still controls: inspection and scanning are permitted, while physical repair requires separate written consent. Jonah may draft the custody paperwork, but the material does not move until you approve the declared value and the courier plan. I will refer to the provider generically in later task lists unless its identity is operationally necessary."
+        },
+        {
+          "role": "user",
+          "content": "Next, a terminology problem before Jonah writes the call sheet. Celia uses “wild track” in the ordinary sound-department sense: a clean ambient room-tone recording made without synchronized picture. Our second camera operator, Dev, has also used “wild track” as a nickname for unplanned observational footage gathered while moving between scheduled scenes. Both are useful, but the phrase cannot mean both on a one-page call sheet. Ask whatever you need before we settle our local meaning."
+        },
+        {
+          "role": "assistant",
+          "content": "The ambiguity affects staffing and deliverables, so I would settle three points. First, is the call-sheet label meant to trigger the sound recordist to hold everyone quiet, or to release the camera team for unscheduled coverage? Second, will Dev still be allowed to propose observational shots under another label? Third, should the chosen phrase remain stable in the edit log as well as on set?\n\nThe two meanings are operationally different. Ambient sound requires a named location, duration, microphone plan, and silence from the crew. Observational footage requires camera availability, releases, and guidance about when following people is appropriate. My default would be to reserve the established sound term for room tone and give Dev’s practice a distinct name such as “drift coverage,” but I will wait for your explicit local mapping."
+        },
+        {
+          "role": "user",
+          "content": "For this production, “wild track” means ambient room tone recording. Use “drift coverage” for Dev’s unplanned observational footage. The mapping applies on call sheets, sound reports, and edit notes. It does not ban spontaneous filming; it just prevents a label from silently assigning two different tasks."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed for this project: “wild track” means ambient room tone recording, while “drift coverage” names unplanned observational footage. The distinction applies in call sheets, sound reports, and edit notes. A wild-track line should specify place, approximate duration, and the sound lead; a drift-coverage line should specify camera responsibility and any release limits. Spontaneous filming remains available when Celia approves it. I will preserve the quoted labels when wording matters and otherwise discuss the tasks by function so later planning does not accidentally reintroduce the ambiguity."
+        },
+        {
+          "role": "user",
+          "content": "Now the inlet block. We have access to the Dyer boathouse on September 8 and 9 from 06:30 to 18:00. The tide is visually best around 07:20 on the first day. Our interview with retired net maker Rina Sol is fixed for 10:30 on the 8th because her daughter drives her. The harbor master can give us forty minutes on either afternoon but has not chosen a day. Rain is fine for interiors; lightning is not acceptable on the dock. We need one exterior sequence of Celia and Rina walking the old loading path, but Rina cannot stand for more than twelve minutes without a seated reset. Build a humane schedule with a weather branch, and leave honest buffers rather than filling every minute."
+        },
+        {
+          "role": "assistant",
+          "content": "A humane first day starts with the tide material before the site becomes busy. From 06:30 to 06:50, unload only the exterior kit and complete a dock-safety check. Film inlet and empty-path establishing shots from 06:50 to 07:40. Use 07:40 to 08:00 for a quiet location-sound interval, then move inside for breakfast, media check, and boathouse details until 09:35. Hold 09:35 to 10:15 for Rina’s arrival, consent reconfirmation, microphone placement, and a seated conversation with Celia before the formal interview. Interview from 10:30 to about 11:35, with an offered break at the midpoint.\n\nDo not schedule the walking sequence immediately afterward. Give Rina lunch and a seated reset, then rehearse the route without her. If conditions are safe, film it in two short sections between 13:15 and 14:00, never requiring more than twelve minutes standing. Reserve 14:00 to 15:00 as recovery and overrun. The harbor-master window can occupy 15:15 if offered.\n\nIf lightning closes the dock, move all exterior material to the 9th and use the 8th for the interview, boathouse inserts, maps, and hands-at-work details. Keep the morning of the 9th lightly booked until the forecast is known."
+        },
+        {
+          "role": "user",
+          "content": "That shape works. Add two constraints: the drone permit is only valid from 08:00 to 09:00 on the 9th, and Celia does not want drone footage if low cloud makes it look like generic tourism advertising. Also, we can record the harbor master in the chart room if the dock is closed, so that interview is not weather-dependent. Jonah may move meals by up to thirty minutes, but only I can approve crew overtime. Our standard day is ten hours from call, with a genuine meal break. Please revise the branch without turning the drone into a must-have."
+        },
+        {
+          "role": "assistant",
+          "content": "The drone becomes an optional weather-qualified insert, not a dependency. Keep the 8th as planned. On the 9th, call a minimal aerial team for an 07:30 safety and visibility assessment. Fly only between 08:00 and 09:00, only if the permit conditions, wind, and cloud ceiling are acceptable, and only if Celia believes the images serve the inlet’s working geography rather than a tourism montage. A no-fly decision creates no recovery obligation; ground-level transitions can carry the same edit function.\n\nThe harbor-master conversation may be placed on either afternoon. If the dock is open, use the exterior background for a short segment; otherwise use the chart room without treating that as a downgrade. Jonah can shift meal timing within thirty minutes to protect a live interview or weather opening, but the meal remains real. With a 06:30 call, normal wrap is 16:30 including the break under your stated convention; anything beyond the production’s defined ten-hour day requires your approval before the crew incurs it. I would preserve a 45-minute pack-out inside that limit and cut optional details before requesting overtime."
+        },
+        {
+          "role": "user",
+          "content": "Rights and ethics pass. We have licensed two newspaper front pages for worldwide public-media broadcast and educational streaming for seven years, but not paid social advertising. The cannery payroll ledger belongs to the county archive and can appear on screen; the individual addresses must be masked. Rina’s late husband appears in one Wren reel. Rina can identify him, but she cannot grant rights in that reel; the Wren family controls the physical film and gave the scanning permission described earlier. A former manager, Lewis Dane, agreed to an audio-only interview and explicitly refused reenactment. Give me a compact rights matrix and identify any tempting editorial move that the permissions do not support."
+        },
+        {
+          "role": "assistant",
+          "content": "Rights matrix:\n\n- Newspaper fronts: licensed for worldwide public-media broadcast and educational streaming for seven years. They are not cleared for paid social promotion, so trailers purchased as ads need different imagery or an expanded license.\n- County payroll ledger: may appear editorially, provided individual street addresses are masked in every visible frame, proxy, still, and promotional crop. The masking check belongs in both offline and final online review.\n- Wren reel featuring Rina’s husband: scanning and editorial access derive from the Wren family’s permission. Rina’s identification helps captioning but does not substitute for the controlling permission, nor does it authorize physical repair.\n- Lewis Dane interview: audio only. His refusal bars a reenactment that presents an actor as him or stages his account as though he participated.\n\nTempting unsupported moves include using a newspaper front in a paid teaser; pushing into an unmasked ledger address for visual drama; treating Rina’s family connection as ownership of the reel; or covering Lewis’s audio with a literal reenactment of his actions. Abstract location details, documents independently cleared, or clearly nonliteral atmosphere may be possible, but none should be used to evade the spirit of his refusal."
+        },
+        {
+          "role": "user",
+          "content": "Budget snapshot: we have $18,600 uncommitted. Reserve $6,200 for color and online, $2,400 for mix, $1,500 for captions and audio description, and $900 for insurance adjustments. The archive transfer estimate sits outside those reserves and is currently $3,150 including courier allowance. The two-day inlet block is forecast at $3,800 before overtime. Celia has asked about licensing a song that could cost between $1,200 and $2,500, but there is no quote. I want at least $1,000 genuinely unassigned after known commitments. Show the arithmetic and tell me what cannot be promised yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Starting uncommitted funds: $18,600.\n\nProtected postproduction and access reserves total $11,000: $6,200 color/online + $2,400 mix + $1,500 captions/audio description + $900 insurance. The archive estimate adds $3,150, bringing planned use to $14,150. The inlet forecast adds $3,800, bringing it to $17,950. That leaves $650 before any overtime, archive variance, or music license.\n\nTherefore the current plan misses your requirement for at least $1,000 genuinely unassigned by $350. No song license can be promised, even at the $1,200 low end. Overtime also cannot be assumed. Before committing music, you need either a confirmed saving elsewhere or new funds. The least destructive immediate action is to ask each department to identify optional costs without cutting accessibility or the integrity of the archive handling. Even if you find $350, that merely restores the contingency floor; it does not create a music budget. Celia can explore tracks and editorial fit, but any negotiation should be described as inquiry subject to a separate cap and your approval."
+        },
+        {
+          "role": "user",
+          "content": "I can reduce the color-and-online reserve to $5,800 because the facility confirmed that our grant discount applies, but do not touch mix or accessibility. That restores the floor by only $50, so the song remains an exploration. Separately, Jonah found that one hotel cancellation lowers the inlet forecast by $280. Keep those as two distinct savings and do not net future maybes against them. For the archive task list, use the selected provider but do not repeat its proper name in every line; it makes the plan read like advertising."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded as two confirmed planning changes, not a general invitation to trim. The color-and-online reserve is now $5,800, a $400 reduction supported by the grant discount. The inlet forecast is now $3,520, a separate $280 reduction from the hotel cancellation. Mix remains $2,400, captions and audio description remain $1,500, and insurance remains $900.\n\nRevised planned use is $10,600 in protected reserves + $3,150 for archive transfer + $3,520 for the inlet block = $17,270. Against $18,600, that leaves $1,330 genuinely unassigned. A music license still cannot be promised, because even its $1,200 low end would leave only $130 for variance. It remains an exploration pending a firm quote and an explicit budget decision.\n\nFor archive tasks I will say “the selected transfer provider” where identity adds nothing, while retaining the actual decision in the record. The next concrete items are intake confirmation, declared-value approval, custody paperwork, family repair restrictions, and deliverable verification."
+        },
+        {
+          "role": "user",
+          "content": "We should also settle how the edit team handles claims. Celia wants a card saying the cannery closure “emptied the inlet overnight.” That is vivid but not literally supported: the payroll fell over fourteen months, and two repair businesses stayed open. We do have strong testimony that the night shift stopped with less than a week’s notice. I want language that preserves the emotional fact without flattening the economic timeline. The county historian, Ansel Wu, can review factual cards on September 20, but he is an adviser, not an approval authority. Propose a card and a narration bridge, then list what evidence should sit behind them in our fact-check folder."
+        },
+        {
+          "role": "assistant",
+          "content": "A defensible card would be: “The cannery ended its night shift with less than a week’s notice. Over the next fourteen months, most of its payroll disappeared.” That retains the shock of the immediate event and the slower economic consequence without claiming the entire inlet emptied at once.\n\nA narration bridge could say: “People remember the silence arriving in a night. The jobs vanished more slowly—shift by shift, season by season—while a few workshops kept their doors open.” The first sentence is framed as memory; the second distinguishes the documented progression and acknowledges continuity.\n\nThe fact-check folder should contain the dated night-shift notice or the strongest surviving record of it; payroll totals by month with the calculation that supports “most”; business-license or directory evidence for the repair shops; interview transcripts with exact timecodes for witnesses describing the sudden silence; the county historian’s written comments; and a log showing which wording changed after review. Ansel’s September 20 pass is expert advice. Mara and Celia retain responsibility for the final editorial claim, and legal review may still flag language independently."
+        },
+        {
+          "role": "user",
+          "content": "One more production wrinkle before we cross into later edit work. The 9th-grade media club is visiting the boathouse from 12:30 to 13:15 on the second day. We may film wide shots of the group only if the school returns its group release; individual close-ups require separate guardian forms, which we do not have. Their teacher wants a five-minute demonstration from Dev. We can accommodate that, but it must not steal Rina’s rest window or create a promise that students will appear in the film. Put this into the day-two plan and mark the point after which our earlier decisions can be compacted."
+        },
+        {
+          "role": "assistant",
+          "content": "For day two, protect the morning weather work and the optional 08:00–09:00 aerial window as already framed. Keep late morning for interiors or pickups, then clear the main floor before the club arrives. From 12:30 to 12:35, Jonah gives a brief safety and consent orientation. Dev demonstrates a basic observational setup from 12:35 to 12:40. The remaining visit is educational observation, not a scheduled scene.\n\nFilm no student material unless the school’s group release is actually returned and checked. If it is, restrict coverage to wide group views with no isolated faces; without individual guardian forms, no close-ups or featured student moments belong in the camera plan. Attendance creates no promise of inclusion. Rina’s rest area and any rest period stay private and undisturbed, so the club route must avoid them.\n\nA sensible compaction boundary begins with your next message. Everything through this response contains the resolved archive-provider choice, terminology mapping, shoot branches, rights limits, budget arithmetic, claims language, and school-visit constraints. Later messages can focus on edit operations and delivery while referring back only when a dependency truly matters."
+        },
+        {
+          "role": "user",
+          "content": "Good. From here, focus on postproduction coordination. Assistant editor Noor has ingested the existing interviews and created proxies, but she has not synchronized the newly found audio cassettes because their sample rate is unknown. Celia wants a 62-minute assembly by September 26, then a 52-minute director’s cut by October 6, before the 48-minute rough cut on October 17. We have one transcription contractor for twenty hours. Decide how to spend those hours, define what “assembly” means at each milestone, and avoid making the contractor responsible for editorial judgment."
+        },
+        {
+          "role": "assistant",
+          "content": "Use the transcription hours where searchable accuracy changes editorial speed. Allocate twelve hours to the newly found cassettes after Noor confirms playback and sample-rate handling, five hours to the two longest existing interviews whose machine transcripts have the worst names and place terms, and three hours as a correction reserve after Celia identifies high-value passages. The contractor should transcribe and flag inaudible spans; they should not decide which testimony is truthful, central, or safe to use.\n\nFor September 26, “62-minute assembly” means a watchable chronological argument with source labels, temporary cards, and explicit gaps. It may contain rough sound, provisional archive stills, and alternatives back-to-back, but no segment should masquerade as cleared merely because it appears. The October 6 director’s cut should be a deliberate 52-minute version with the chapter order chosen, redundancies removed, and unresolved legal or factual issues marked in a visible issue list. The October 17 rough cut is the intended 48-minute program shape for internal review, with access needs, archive replacements, mix problems, and fact-check holds tracked separately. Each milestone has a different decision purpose; none is a claim of final finish."
+        },
+        {
+          "role": "user",
+          "content": "Noor says the cassettes are 44.1 kHz mono, while the project is 48 kHz. She can make preservation copies and resampled editorial copies, but she wants a naming convention before touching them. There are eleven cassettes labeled only with dates, and two dates repeat. We also need to distinguish a source-side dropout from a failed transfer. Propose a reversible ingest convention, a minimal QC log, and a rule for the duplicate dates. Keep it practical for a two-person edit room."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep the untouched digital capture and the editorial derivative visibly related but never interchangeable. A practical stem is TL_CAS_[physicalID]_[labelDate]_[captureDate]. Give each cassette a physical ID from 01 through 11 before capture; the repeated written dates then cease to be identifiers. Append _SRC441_MO to the preservation file and _EDIT48_MO to the resampled copy. Example: TL_CAS_04_1998-06-12_2026-09-14_SRC441_MO.wav. If a written date is uncertain, use UNK plus the literal label in the log rather than guessing.\n\nThe QC log needs one row per physical cassette: physical ID; photographed label; stated date; capture operator and time; deck/interface; preservation filename and checksum; editorial filename and checksum; duration; channel/rate; audible dropout timecodes; transfer interruptions; and disposition. To distinguish faults, replay any suspicious span once, inspect the source path, and note whether the defect repeats at the same source time. A repeatable defect is probably source-side; a new or shifting defect triggers recapture. Keep both observations rather than “repairing” the preservation file. Noor can manage this in one sheet, with you or Jonah verifying the physical-ID photographs."
+        },
+        {
+          "role": "user",
+          "content": "The composer, Inez Farrow, can give us sketches on September 29 and October 8. Celia wants the first sketch under the boat-repair montage and the second under the closing shoreline sequence. Inez needs tempo references but does not want temp music that sounds like a commission to imitate. We also have a local accordion recording donated by Tomas Reed under a nonexclusive film license; the agreement permits the film and educational screenings but says nothing about trailers. Lay out a music handoff that keeps the two sources and their rights status distinct."
+        },
+        {
+          "role": "assistant",
+          "content": "Give Inez a cue brief rather than a temp-track imitation request. For the boat-repair montage, provide picture duration, edit rhythm, two or three timecode pivots, and neutral descriptors such as “measured mechanical pulse, room for tool impacts, no triumphal lift.” A click or metronome map can communicate tempo without suggesting melody or orchestration. For the shoreline cue, describe the emotional transition, required ending length, dialogue overlap, and whether the final image needs silence. Mark September 29 and October 8 as sketch dates, followed by explicit feedback windows; neither sketch is presumed final.\n\nTrack Tomas Reed’s accordion recording as a separately licensed source cue. Its current nonexclusive permission covers the film and educational screenings. It is not cleared for trailers, paid or unpaid, because the agreement is silent there; seek an amendment or keep it out of promotional edits. The music log should have distinct rows for composer-created cues and the donated recording, with source, owner, allowed uses, term/territory if stated, cue placements, and open rights questions. Do not send Inez the donated track as an aesthetic target unless Tomas’s recording is both cleared for that internal use and Celia genuinely wants the reference."
+        },
+        {
+          "role": "user",
+          "content": "For the October 17 screening, the room seats fourteen. Invitees should be limited to the core team, Ansel the historian, our accessibility consultant Priya Shah, one public-media editor, and at most two people with no prior knowledge of the project. Rina asked whether her daughter could attend, but Celia worries that having a participant’s family in the first diagnostic screening will suppress candid feedback. We do want a participant screening later. Design the session, including what we ask viewers, how we collect notes, and how we answer Rina without making the later event sound ceremonial or meaningless."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat October 17 as a diagnostic working screening. Seat the core team needed to observe, Ansel, Priya, one public-media editor, and two fresh viewers; do not fill unused chairs merely because they exist. Before playback, say that the cut is incomplete and ask viewers to note confusion, trust, pacing, missing context, and moments where sound or visual information is inaccessible. Do not prime them with the film’s thesis. Give everyone the same one-page form, then hold five silent minutes after the cut so first impressions are written before group dynamics take over. Discuss comprehension first, factual trust second, pacing third, and solutions last. Noor should capture attributed notes and a separate decision log; volume of comments is not a vote.\n\nTell Rina plainly that this first session is a small editorial diagnostic without participant families because the team needs uninhibited feedback on an unfinished structure. Confirm that a participant screening will follow when the cut is coherent enough for people represented in it to assess accuracy, dignity, context, and unintended harm. That later session is consequential: feedback may lead to changes, though it does not transfer final editorial control. Invite her and her daughter to that defined review rather than offering a ceremonial preview."
+        },
+        {
+          "role": "user",
+          "content": "Priya has already warned that the ledger sequence depends too heavily on tiny handwriting and that the inlet map uses color alone to distinguish three periods. We cannot wait for a finished cut to solve this. Noor can produce a temporary spoken-description track, but only if we give her a script by October 12. Captions can be rough for the internal screening as long as speaker changes and meaningful sound are represented. Make an accessibility-first checklist for the next two edit milestones, with named owners and no implication that Priya is personally responsible for fixing everything she identifies."
+        },
+        {
+          "role": "assistant",
+          "content": "By the October 6 director’s cut, Celia and Noor should replace color-only map distinctions with redundant labels, line patterns, or dates that remain legible in grayscale. Mara supplies a transcript or verified reading of the ledger details the scene actually depends on; Celia decides whether those facts belong in narration, a larger graphic, or both. Noor maintains rough captions with speaker identification, dialogue, and meaningful non-speech sound, while flagging uncertain names rather than silently guessing. Priya reviews representative sequences and identifies barriers, but the production owners implement and verify corrections.\n\nBy October 12, Celia locks the descriptive intent for the internal cut, Mara resolves factual wording, and Noor receives a timed description script for gaps where essential visual information is not otherwise available in dialogue. Noor can record a temporary track for October 17; it should be understandable, paced, and clearly labeled provisional. Before screening, Jonah checks room audio and sight lines, Noor tests caption playback and the description channel, and Mara confirms the feedback form asks specifically about access.\n\nAfter the screening, Priya’s observations join viewer feedback in the issue log with an owner, priority, decision, and retest date. Accessibility is a production responsibility distributed across editorial, factual, technical, and budget roles, not a cleanup task delegated to the consultant."
+        },
+        {
+          "role": "user",
+          "content": "Last item for today: create a short unresolved-actions list that somebody could actually use tomorrow morning. Do not restate settled choices unless they create an action. Separate actions due within forty-eight hours from items tied to later milestones. Include an owner for every line and mark dependencies honestly."
+        },
+        {
+          "role": "assistant",
+          "content": "Within forty-eight hours:\n\n- Mara: approve the declared value and courier plan after Jonah supplies the custody draft; dependency: written intake confirmation and insurance terms.\n- Jonah: obtain the archive intake window, finish the custody sheet, and verify that no repair authorization is implied.\n- Jonah: confirm the school group-release status and redesign the visit route away from Rina’s rest area.\n- Noor: assign physical IDs to the eleven cassettes, photograph labels, and run one documented capture/QC test before batch ingest.\n- Celia: identify the two existing interviews that most need human transcript correction; dependency: Noor’s error sample.\n- Mara: preserve the $1,330 unassigned floor and request a written music quote without promising a license.\n\nLater milestones:\n\n- Noor, by September 26: deliver the defined 62-minute assembly with visible rights and fact-check holds.\n- Ansel, September 20: advise on factual cards; Mara and Celia retain the decision.\n- Inez, September 29 and October 8: submit cue sketches against briefs Celia supplies.\n- Celia and Noor, by October 6: deliver the 52-minute director’s cut with non-color-only maps and usable rough captions.\n- Mara and Celia, by October 12: give Noor a factual, timed temporary-description script.\n- Jonah and Noor, before October 17: test screening-room playback, captions, description routing, and note collection.\n- Mara: schedule the later participant screening once the cut is coherent enough for meaningful accuracy and dignity review."
+        }
+      ]
+    },
+    "wrong_sense": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an editorial planning assistant helping Mara Vale, producer of a small documentary, keep decisions, dependencies, and open questions straight. Respond concretely, distinguish confirmed facts from proposals, and never claim that calls, bookings, uploads, or other external actions have occurred."
+        },
+        {
+          "role": "user",
+          "content": "I am producing a 48-minute documentary called Tidal Ledger about how three generations of families around Bellweather Inlet adapted after the cannery closed. We have two filming blocks left, a small public-media grant, and no room for heroic assumptions. I want this thread to become the working decision record, but I still need actual prose rather than terse database entries. The director is Celia Orr, our field producer is Jonah Pike, and I am Mara. Celia cares most about patient observational scenes. Jonah handles releases and travel. I am watching the budget, archive rights, and delivery schedule. The rough cut must be ready for an internal screening on October 17. Please start by separating the decisions we must make this week from matters that can wait until picture lock."
+        },
+        {
+          "role": "assistant",
+          "content": "The decisions that can block the remaining production work belong in this week’s column: which archive house will digitize the fragile source material; what the crew means by “wild track” on the next call sheet; the exact dates and weather fallback for the inlet shoot; who may authorize overtime; and which interview releases still need a guardian or estate signature. Those choices affect bookings, media handling, or what people record.\n\nMatters that can wait until picture lock include final music placement, the order of the two historical chapters, lower-third typography, festival premiere strategy, and whether the end credits show still-photograph accession numbers. We should nevertheless record constraints now. October 17 is the rough-cut screening, not public delivery. Celia owns editorial direction, Jonah owns releases and travel coordination, and you own budget and archive-rights approval. I will treat proposed dates and prices as provisional until you explicitly confirm them, and I will flag any plan that assumes an outside party has agreed when we only have an intention to ask."
+        },
+        {
+          "role": "user",
+          "content": "First blocker: the archive transfer. The Wren family has six reels of 16 mm reversal film plus two quarter-inch oral-history tapes. We considered Northline Transfer, Harbor Scan, and Elm Street Lab. Northline quoted the lowest base price and can collect the cans locally, but its wet-gate surcharge is uncertain. Harbor includes a supervised inspection and gives us both 4K ProRes and a conservation scan; it needs the material delivered by courier. Elm Street has the best colorist, but its earliest slot is three weeks later and would squeeze the rough cut. The family allows inspection and scanning but not physical repair without written permission. Compare them against schedule risk, preservation care, and total-cost uncertainty. Do not choose for me yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Northline is strongest on immediate cash and logistics: local collection reduces handling steps, and the quoted base is lowest. Its weakness is cost variance, because damaged or shrunken film could trigger an uncapped wet-gate charge. Before selection, you would need a written ceiling and confirmation that inspection does not become “repair.”\n\nHarbor has the cleanest preservation workflow for this project. Supervised inspection matches the family’s restriction, and the paired editorial and conservation files reduce a later conform risk. Courier handling is a real exposure, but it can be bounded with a chain-of-custody form, declared-value insurance, and same-day tracking. Its price appears more legible if inspection is included.\n\nElm Street offers the most discretionary finishing value, yet the late slot directly threatens October 17. Color artistry matters less than having stable scans early enough for the edit.\n\nOn the stated criteria, Harbor has the best schedule-care balance, Northline remains viable if it caps contingencies in writing, and Elm Street is a poor fit unless the screening date moves. That is a comparison, not a selection."
+        },
+        {
+          "role": "user",
+          "content": "Decision: use Harbor Scan for the Wren reels and tapes. The included supervised inspection and predictable deliverables outweigh the courier step. Keep Northline as the real fallback if the intake date slips; Elm Street is rejected for this schedule. Jonah will prepare a chain-of-custody sheet, but I still have to approve the declared value before anything moves."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded as confirmed: Harbor Scan is selected for the Wren film and audio transfer. Northline remains the fallback only if Harbor cannot hold the required intake, and Elm Street is not being used because its timing conflicts with the rough-cut schedule. The family’s restriction still controls: inspection and scanning are permitted, while physical repair requires separate written consent. Jonah may draft the custody paperwork, but the material does not move until you approve the declared value and the courier plan. I will refer to the provider generically in later task lists unless its identity is operationally necessary."
+        },
+        {
+          "role": "user",
+          "content": "Next, a terminology problem before Jonah writes the call sheet. Celia uses “wild track” in the ordinary sound-department sense: a clean ambient room-tone recording made without synchronized picture. Our second camera operator, Dev, has also used “wild track” as a nickname for unplanned observational footage gathered while moving between scheduled scenes. Both are useful, but the phrase cannot mean both on a one-page call sheet. Ask whatever you need before we settle our local meaning."
+        },
+        {
+          "role": "assistant",
+          "content": "The ambiguity affects staffing and deliverables, so I would settle three points. First, is the call-sheet label meant to trigger the sound recordist to hold everyone quiet, or to release the camera team for unscheduled coverage? Second, will Dev still be allowed to propose observational shots under another label? Third, should the chosen phrase remain stable in the edit log as well as on set?\n\nThe two meanings are operationally different. Ambient sound requires a named location, duration, microphone plan, and silence from the crew. Observational footage requires camera availability, releases, and guidance about when following people is appropriate. My default would be to reserve the established sound term for room tone and give Dev’s practice a distinct name such as “drift coverage,” but I will wait for your explicit local mapping."
+        },
+        {
+          "role": "user",
+          "content": "For this production, “wild track” means unplanned observational footage. Use “recorded room tone” for a clean ambient sound recording. The mapping applies on call sheets, sound reports, and edit notes. It does not ban spontaneous filming; it just prevents a label from silently assigning two different tasks."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed for this project: “wild track” means unplanned observational footage, while “recorded room tone” names the ambient sound recording. The distinction applies in call sheets, sound reports, and edit notes. A wild-track line should specify camera responsibility and any release limits; a room-tone line should specify place, approximate duration, and the sound lead. Spontaneous filming remains available when Celia approves it. I will preserve the quoted labels when wording matters and otherwise discuss the tasks by function so later planning does not accidentally reintroduce the ambiguity."
+        },
+        {
+          "role": "user",
+          "content": "Now the inlet block. We have access to the Dyer boathouse on September 8 and 9 from 06:30 to 18:00. The tide is visually best around 07:20 on the first day. Our interview with retired net maker Rina Sol is fixed for 10:30 on the 8th because her daughter drives her. The harbor master can give us forty minutes on either afternoon but has not chosen a day. Rain is fine for interiors; lightning is not acceptable on the dock. We need one exterior sequence of Celia and Rina walking the old loading path, but Rina cannot stand for more than twelve minutes without a seated reset. Build a humane schedule with a weather branch, and leave honest buffers rather than filling every minute."
+        },
+        {
+          "role": "assistant",
+          "content": "A humane first day starts with the tide material before the site becomes busy. From 06:30 to 06:50, unload only the exterior kit and complete a dock-safety check. Film inlet and empty-path establishing shots from 06:50 to 07:40. Use 07:40 to 08:00 for a quiet location-sound interval, then move inside for breakfast, media check, and boathouse details until 09:35. Hold 09:35 to 10:15 for Rina’s arrival, consent reconfirmation, microphone placement, and a seated conversation with Celia before the formal interview. Interview from 10:30 to about 11:35, with an offered break at the midpoint.\n\nDo not schedule the walking sequence immediately afterward. Give Rina lunch and a seated reset, then rehearse the route without her. If conditions are safe, film it in two short sections between 13:15 and 14:00, never requiring more than twelve minutes standing. Reserve 14:00 to 15:00 as recovery and overrun. The harbor-master window can occupy 15:15 if offered.\n\nIf lightning closes the dock, move all exterior material to the 9th and use the 8th for the interview, boathouse inserts, maps, and hands-at-work details. Keep the morning of the 9th lightly booked until the forecast is known."
+        },
+        {
+          "role": "user",
+          "content": "That shape works. Add two constraints: the drone permit is only valid from 08:00 to 09:00 on the 9th, and Celia does not want drone footage if low cloud makes it look like generic tourism advertising. Also, we can record the harbor master in the chart room if the dock is closed, so that interview is not weather-dependent. Jonah may move meals by up to thirty minutes, but only I can approve crew overtime. Our standard day is ten hours from call, with a genuine meal break. Please revise the branch without turning the drone into a must-have."
+        },
+        {
+          "role": "assistant",
+          "content": "The drone becomes an optional weather-qualified insert, not a dependency. Keep the 8th as planned. On the 9th, call a minimal aerial team for an 07:30 safety and visibility assessment. Fly only between 08:00 and 09:00, only if the permit conditions, wind, and cloud ceiling are acceptable, and only if Celia believes the images serve the inlet’s working geography rather than a tourism montage. A no-fly decision creates no recovery obligation; ground-level transitions can carry the same edit function.\n\nThe harbor-master conversation may be placed on either afternoon. If the dock is open, use the exterior background for a short segment; otherwise use the chart room without treating that as a downgrade. Jonah can shift meal timing within thirty minutes to protect a live interview or weather opening, but the meal remains real. With a 06:30 call, normal wrap is 16:30 including the break under your stated convention; anything beyond the production’s defined ten-hour day requires your approval before the crew incurs it. I would preserve a 45-minute pack-out inside that limit and cut optional details before requesting overtime."
+        },
+        {
+          "role": "user",
+          "content": "Rights and ethics pass. We have licensed two newspaper front pages for worldwide public-media broadcast and educational streaming for seven years, but not paid social advertising. The cannery payroll ledger belongs to the county archive and can appear on screen; the individual addresses must be masked. Rina’s late husband appears in one Wren reel. Rina can identify him, but she cannot grant rights in that reel; the Wren family controls the physical film and gave the scanning permission described earlier. A former manager, Lewis Dane, agreed to an audio-only interview and explicitly refused reenactment. Give me a compact rights matrix and identify any tempting editorial move that the permissions do not support."
+        },
+        {
+          "role": "assistant",
+          "content": "Rights matrix:\n\n- Newspaper fronts: licensed for worldwide public-media broadcast and educational streaming for seven years. They are not cleared for paid social promotion, so trailers purchased as ads need different imagery or an expanded license.\n- County payroll ledger: may appear editorially, provided individual street addresses are masked in every visible frame, proxy, still, and promotional crop. The masking check belongs in both offline and final online review.\n- Wren reel featuring Rina’s husband: scanning and editorial access derive from the Wren family’s permission. Rina’s identification helps captioning but does not substitute for the controlling permission, nor does it authorize physical repair.\n- Lewis Dane interview: audio only. His refusal bars a reenactment that presents an actor as him or stages his account as though he participated.\n\nTempting unsupported moves include using a newspaper front in a paid teaser; pushing into an unmasked ledger address for visual drama; treating Rina’s family connection as ownership of the reel; or covering Lewis’s audio with a literal reenactment of his actions. Abstract location details, documents independently cleared, or clearly nonliteral atmosphere may be possible, but none should be used to evade the spirit of his refusal."
+        },
+        {
+          "role": "user",
+          "content": "Budget snapshot: we have $18,600 uncommitted. Reserve $6,200 for color and online, $2,400 for mix, $1,500 for captions and audio description, and $900 for insurance adjustments. The archive transfer estimate sits outside those reserves and is currently $3,150 including courier allowance. The two-day inlet block is forecast at $3,800 before overtime. Celia has asked about licensing a song that could cost between $1,200 and $2,500, but there is no quote. I want at least $1,000 genuinely unassigned after known commitments. Show the arithmetic and tell me what cannot be promised yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Starting uncommitted funds: $18,600.\n\nProtected postproduction and access reserves total $11,000: $6,200 color/online + $2,400 mix + $1,500 captions/audio description + $900 insurance. The archive estimate adds $3,150, bringing planned use to $14,150. The inlet forecast adds $3,800, bringing it to $17,950. That leaves $650 before any overtime, archive variance, or music license.\n\nTherefore the current plan misses your requirement for at least $1,000 genuinely unassigned by $350. No song license can be promised, even at the $1,200 low end. Overtime also cannot be assumed. Before committing music, you need either a confirmed saving elsewhere or new funds. The least destructive immediate action is to ask each department to identify optional costs without cutting accessibility or the integrity of the archive handling. Even if you find $350, that merely restores the contingency floor; it does not create a music budget. Celia can explore tracks and editorial fit, but any negotiation should be described as inquiry subject to a separate cap and your approval."
+        },
+        {
+          "role": "user",
+          "content": "I can reduce the color-and-online reserve to $5,800 because the facility confirmed that our grant discount applies, but do not touch mix or accessibility. That restores the floor by only $50, so the song remains an exploration. Separately, Jonah found that one hotel cancellation lowers the inlet forecast by $280. Keep those as two distinct savings and do not net future maybes against them. For the archive task list, use the selected provider but do not repeat its proper name in every line; it makes the plan read like advertising."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded as two confirmed planning changes, not a general invitation to trim. The color-and-online reserve is now $5,800, a $400 reduction supported by the grant discount. The inlet forecast is now $3,520, a separate $280 reduction from the hotel cancellation. Mix remains $2,400, captions and audio description remain $1,500, and insurance remains $900.\n\nRevised planned use is $10,600 in protected reserves + $3,150 for archive transfer + $3,520 for the inlet block = $17,270. Against $18,600, that leaves $1,330 genuinely unassigned. A music license still cannot be promised, because even its $1,200 low end would leave only $130 for variance. It remains an exploration pending a firm quote and an explicit budget decision.\n\nFor archive tasks I will say “the selected transfer provider” where identity adds nothing, while retaining the actual decision in the record. The next concrete items are intake confirmation, declared-value approval, custody paperwork, family repair restrictions, and deliverable verification."
+        },
+        {
+          "role": "user",
+          "content": "We should also settle how the edit team handles claims. Celia wants a card saying the cannery closure “emptied the inlet overnight.” That is vivid but not literally supported: the payroll fell over fourteen months, and two repair businesses stayed open. We do have strong testimony that the night shift stopped with less than a week’s notice. I want language that preserves the emotional fact without flattening the economic timeline. The county historian, Ansel Wu, can review factual cards on September 20, but he is an adviser, not an approval authority. Propose a card and a narration bridge, then list what evidence should sit behind them in our fact-check folder."
+        },
+        {
+          "role": "assistant",
+          "content": "A defensible card would be: “The cannery ended its night shift with less than a week’s notice. Over the next fourteen months, most of its payroll disappeared.” That retains the shock of the immediate event and the slower economic consequence without claiming the entire inlet emptied at once.\n\nA narration bridge could say: “People remember the silence arriving in a night. The jobs vanished more slowly—shift by shift, season by season—while a few workshops kept their doors open.” The first sentence is framed as memory; the second distinguishes the documented progression and acknowledges continuity.\n\nThe fact-check folder should contain the dated night-shift notice or the strongest surviving record of it; payroll totals by month with the calculation that supports “most”; business-license or directory evidence for the repair shops; interview transcripts with exact timecodes for witnesses describing the sudden silence; the county historian’s written comments; and a log showing which wording changed after review. Ansel’s September 20 pass is expert advice. Mara and Celia retain responsibility for the final editorial claim, and legal review may still flag language independently."
+        },
+        {
+          "role": "user",
+          "content": "One more production wrinkle before we cross into later edit work. The 9th-grade media club is visiting the boathouse from 12:30 to 13:15 on the second day. We may film wide shots of the group only if the school returns its group release; individual close-ups require separate guardian forms, which we do not have. Their teacher wants a five-minute demonstration from Dev. We can accommodate that, but it must not steal Rina’s rest window or create a promise that students will appear in the film. Put this into the day-two plan and mark the point after which our earlier decisions can be compacted."
+        },
+        {
+          "role": "assistant",
+          "content": "For day two, protect the morning weather work and the optional 08:00–09:00 aerial window as already framed. Keep late morning for interiors or pickups, then clear the main floor before the club arrives. From 12:30 to 12:35, Jonah gives a brief safety and consent orientation. Dev demonstrates a basic observational setup from 12:35 to 12:40. The remaining visit is educational observation, not a scheduled scene.\n\nFilm no student material unless the school’s group release is actually returned and checked. If it is, restrict coverage to wide group views with no isolated faces; without individual guardian forms, no close-ups or featured student moments belong in the camera plan. Attendance creates no promise of inclusion. Rina’s rest area and any rest period stay private and undisturbed, so the club route must avoid them.\n\nA sensible compaction boundary begins with your next message. Everything through this response contains the resolved archive-provider choice, terminology mapping, shoot branches, rights limits, budget arithmetic, claims language, and school-visit constraints. Later messages can focus on edit operations and delivery while referring back only when a dependency truly matters."
+        },
+        {
+          "role": "user",
+          "content": "Good. From here, focus on postproduction coordination. Assistant editor Noor has ingested the existing interviews and created proxies, but she has not synchronized the newly found audio cassettes because their sample rate is unknown. Celia wants a 62-minute assembly by September 26, then a 52-minute director’s cut by October 6, before the 48-minute rough cut on October 17. We have one transcription contractor for twenty hours. Decide how to spend those hours, define what “assembly” means at each milestone, and avoid making the contractor responsible for editorial judgment."
+        },
+        {
+          "role": "assistant",
+          "content": "Use the transcription hours where searchable accuracy changes editorial speed. Allocate twelve hours to the newly found cassettes after Noor confirms playback and sample-rate handling, five hours to the two longest existing interviews whose machine transcripts have the worst names and place terms, and three hours as a correction reserve after Celia identifies high-value passages. The contractor should transcribe and flag inaudible spans; they should not decide which testimony is truthful, central, or safe to use.\n\nFor September 26, “62-minute assembly” means a watchable chronological argument with source labels, temporary cards, and explicit gaps. It may contain rough sound, provisional archive stills, and alternatives back-to-back, but no segment should masquerade as cleared merely because it appears. The October 6 director’s cut should be a deliberate 52-minute version with the chapter order chosen, redundancies removed, and unresolved legal or factual issues marked in a visible issue list. The October 17 rough cut is the intended 48-minute program shape for internal review, with access needs, archive replacements, mix problems, and fact-check holds tracked separately. Each milestone has a different decision purpose; none is a claim of final finish."
+        },
+        {
+          "role": "user",
+          "content": "Noor says the cassettes are 44.1 kHz mono, while the project is 48 kHz. She can make preservation copies and resampled editorial copies, but she wants a naming convention before touching them. There are eleven cassettes labeled only with dates, and two dates repeat. We also need to distinguish a source-side dropout from a failed transfer. Propose a reversible ingest convention, a minimal QC log, and a rule for the duplicate dates. Keep it practical for a two-person edit room."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep the untouched digital capture and the editorial derivative visibly related but never interchangeable. A practical stem is TL_CAS_[physicalID]_[labelDate]_[captureDate]. Give each cassette a physical ID from 01 through 11 before capture; the repeated written dates then cease to be identifiers. Append _SRC441_MO to the preservation file and _EDIT48_MO to the resampled copy. Example: TL_CAS_04_1998-06-12_2026-09-14_SRC441_MO.wav. If a written date is uncertain, use UNK plus the literal label in the log rather than guessing.\n\nThe QC log needs one row per physical cassette: physical ID; photographed label; stated date; capture operator and time; deck/interface; preservation filename and checksum; editorial filename and checksum; duration; channel/rate; audible dropout timecodes; transfer interruptions; and disposition. To distinguish faults, replay any suspicious span once, inspect the source path, and note whether the defect repeats at the same source time. A repeatable defect is probably source-side; a new or shifting defect triggers recapture. Keep both observations rather than “repairing” the preservation file. Noor can manage this in one sheet, with you or Jonah verifying the physical-ID photographs."
+        },
+        {
+          "role": "user",
+          "content": "The composer, Inez Farrow, can give us sketches on September 29 and October 8. Celia wants the first sketch under the boat-repair montage and the second under the closing shoreline sequence. Inez needs tempo references but does not want temp music that sounds like a commission to imitate. We also have a local accordion recording donated by Tomas Reed under a nonexclusive film license; the agreement permits the film and educational screenings but says nothing about trailers. Lay out a music handoff that keeps the two sources and their rights status distinct."
+        },
+        {
+          "role": "assistant",
+          "content": "Give Inez a cue brief rather than a temp-track imitation request. For the boat-repair montage, provide picture duration, edit rhythm, two or three timecode pivots, and neutral descriptors such as “measured mechanical pulse, room for tool impacts, no triumphal lift.” A click or metronome map can communicate tempo without suggesting melody or orchestration. For the shoreline cue, describe the emotional transition, required ending length, dialogue overlap, and whether the final image needs silence. Mark September 29 and October 8 as sketch dates, followed by explicit feedback windows; neither sketch is presumed final.\n\nTrack Tomas Reed’s accordion recording as a separately licensed source cue. Its current nonexclusive permission covers the film and educational screenings. It is not cleared for trailers, paid or unpaid, because the agreement is silent there; seek an amendment or keep it out of promotional edits. The music log should have distinct rows for composer-created cues and the donated recording, with source, owner, allowed uses, term/territory if stated, cue placements, and open rights questions. Do not send Inez the donated track as an aesthetic target unless Tomas’s recording is both cleared for that internal use and Celia genuinely wants the reference."
+        },
+        {
+          "role": "user",
+          "content": "For the October 17 screening, the room seats fourteen. Invitees should be limited to the core team, Ansel the historian, our accessibility consultant Priya Shah, one public-media editor, and at most two people with no prior knowledge of the project. Rina asked whether her daughter could attend, but Celia worries that having a participant’s family in the first diagnostic screening will suppress candid feedback. We do want a participant screening later. Design the session, including what we ask viewers, how we collect notes, and how we answer Rina without making the later event sound ceremonial or meaningless."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat October 17 as a diagnostic working screening. Seat the core team needed to observe, Ansel, Priya, one public-media editor, and two fresh viewers; do not fill unused chairs merely because they exist. Before playback, say that the cut is incomplete and ask viewers to note confusion, trust, pacing, missing context, and moments where sound or visual information is inaccessible. Do not prime them with the film’s thesis. Give everyone the same one-page form, then hold five silent minutes after the cut so first impressions are written before group dynamics take over. Discuss comprehension first, factual trust second, pacing third, and solutions last. Noor should capture attributed notes and a separate decision log; volume of comments is not a vote.\n\nTell Rina plainly that this first session is a small editorial diagnostic without participant families because the team needs uninhibited feedback on an unfinished structure. Confirm that a participant screening will follow when the cut is coherent enough for people represented in it to assess accuracy, dignity, context, and unintended harm. That later session is consequential: feedback may lead to changes, though it does not transfer final editorial control. Invite her and her daughter to that defined review rather than offering a ceremonial preview."
+        },
+        {
+          "role": "user",
+          "content": "Priya has already warned that the ledger sequence depends too heavily on tiny handwriting and that the inlet map uses color alone to distinguish three periods. We cannot wait for a finished cut to solve this. Noor can produce a temporary spoken-description track, but only if we give her a script by October 12. Captions can be rough for the internal screening as long as speaker changes and meaningful sound are represented. Make an accessibility-first checklist for the next two edit milestones, with named owners and no implication that Priya is personally responsible for fixing everything she identifies."
+        },
+        {
+          "role": "assistant",
+          "content": "By the October 6 director’s cut, Celia and Noor should replace color-only map distinctions with redundant labels, line patterns, or dates that remain legible in grayscale. Mara supplies a transcript or verified reading of the ledger details the scene actually depends on; Celia decides whether those facts belong in narration, a larger graphic, or both. Noor maintains rough captions with speaker identification, dialogue, and meaningful non-speech sound, while flagging uncertain names rather than silently guessing. Priya reviews representative sequences and identifies barriers, but the production owners implement and verify corrections.\n\nBy October 12, Celia locks the descriptive intent for the internal cut, Mara resolves factual wording, and Noor receives a timed description script for gaps where essential visual information is not otherwise available in dialogue. Noor can record a temporary track for October 17; it should be understandable, paced, and clearly labeled provisional. Before screening, Jonah checks room audio and sight lines, Noor tests caption playback and the description channel, and Mara confirms the feedback form asks specifically about access.\n\nAfter the screening, Priya’s observations join viewer feedback in the issue log with an owner, priority, decision, and retest date. Accessibility is a production responsibility distributed across editorial, factual, technical, and budget roles, not a cleanup task delegated to the consultant."
+        },
+        {
+          "role": "user",
+          "content": "Last item for today: create a short unresolved-actions list that somebody could actually use tomorrow morning. Do not restate settled choices unless they create an action. Separate actions due within forty-eight hours from items tied to later milestones. Include an owner for every line and mark dependencies honestly."
+        },
+        {
+          "role": "assistant",
+          "content": "Within forty-eight hours:\n\n- Mara: approve the declared value and courier plan after Jonah supplies the custody draft; dependency: written intake confirmation and insurance terms.\n- Jonah: obtain the archive intake window, finish the custody sheet, and verify that no repair authorization is implied.\n- Jonah: confirm the school group-release status and redesign the visit route away from Rina’s rest area.\n- Noor: assign physical IDs to the eleven cassettes, photograph labels, and run one documented capture/QC test before batch ingest.\n- Celia: identify the two existing interviews that most need human transcript correction; dependency: Noor’s error sample.\n- Mara: preserve the $1,330 unassigned floor and request a written music quote without promising a license.\n\nLater milestones:\n\n- Noor, by September 26: deliver the defined 62-minute assembly with visible rights and fact-check holds.\n- Ansel, September 20: advise on factual cards; Mara and Celia retain the decision.\n- Inez, September 29 and October 8: submit cue sketches against briefs Celia supplies.\n- Celia and Noor, by October 6: deliver the 52-minute director’s cut with non-color-only maps and usable rough captions.\n- Mara and Celia, by October 12: give Noor a factual, timed temporary-description script.\n- Jonah and Noor, before October 17: test screening-room playback, captions, description routing, and note collection.\n- Mara: schedule the later participant screening once the cut is coherent enough for meaningful accuracy and dignity review."
+        }
+      ]
+    }
+  },
+  "plants": {
+    "referent": {
+      "plant_id": "v11-c04-referent",
+      "category": "referent",
+      "probe": "Which archive transfer provider was selected for the Wren film and audio?",
+      "correct_target": "Harbor Scan",
+      "counterfactual_target": "Northline Transfer",
+      "establishing_indices": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "downstream_reference_indices": [],
+      "factual_rationale": "Three real providers are compared; the user selects one and the assistant confirms it. Later references are deliberately generic."
+    },
+    "sense": {
+      "plant_id": "v11-c04-sense",
+      "category": "sense",
+      "probe": "What did “wild track” mean in this production?",
+      "correct_target": "ambient room tone recording",
+      "counterfactual_target": "unplanned observational footage",
+      "establishing_indices": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "downstream_reference_indices": [],
+      "factual_rationale": "Two operationally plausible crew meanings are distinguished and one is explicitly assigned to the local term."
+    }
+  },
+  "changed_message_allowlists": {
+    "wrong_referent": [
+      {
+        "message_index": 5,
+        "role": "user",
+        "correct_content_sha256": "33b59806ede59a88b4681cc243288b2619d1dec113a6da5cb7aee791f5fcd0c0",
+        "counterfactual_content_sha256": "171ea0fb2b429d538a62e5b7303b272e0044e03454089ea7133eca77f0536102",
+        "correct_content_token_count": 71,
+        "counterfactual_content_token_count": 71
+      },
+      {
+        "message_index": 6,
+        "role": "assistant",
+        "correct_content_sha256": "583f8bfa73592b625d8976328e62a19fba1593681f0a52c64603d20317350a5a",
+        "counterfactual_content_sha256": "f1ed0de11ccdf3e030314fb56cef74c4185bd8ec28f11296d52a9cf1f3538da0",
+        "correct_content_token_count": 114,
+        "counterfactual_content_token_count": 114
+      }
+    ],
+    "wrong_sense": [
+      {
+        "message_index": 9,
+        "role": "user",
+        "correct_content_sha256": "4d05c5091087f42fe5d12e6cbe010fec70544c81845a653cc5edc4484138cacb",
+        "counterfactual_content_sha256": "a432681a3838a12d21fcf30cd252ac47c3fdef361adde5eac6b116d052c14c9b",
+        "correct_content_token_count": 61,
+        "counterfactual_content_token_count": 61
+      },
+      {
+        "message_index": 10,
+        "role": "assistant",
+        "correct_content_sha256": "759c4003897011cc3462baeb3f9d8b6fda5e7a3bbe8cf423255d08de2ce237d8",
+        "counterfactual_content_sha256": "5bbcb0b28558f95cd8025557f88254281d430f500b6d22e7172bc65a286c75c8",
+        "correct_content_token_count": 110,
+        "counterfactual_content_token_count": 110
+      }
+    ]
+  },
+  "distractor_fact_inventory": [
+    {
+      "chain_id": "shoot-schedule",
+      "indices": [
+        11,
+        12,
+        13,
+        14
+      ],
+      "summary": "Two-day inlet schedule, tide, Rina’s mobility, weather branch, drone window, and overtime authority."
+    },
+    {
+      "chain_id": "rights",
+      "indices": [
+        15,
+        16
+      ],
+      "summary": "Newspaper, ledger, film, and audio-interview rights limitations."
+    },
+    {
+      "chain_id": "budget",
+      "indices": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "summary": "Postproduction reserves, revised forecasts, and a protected contingency floor."
+    },
+    {
+      "chain_id": "claims-and-school",
+      "indices": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "summary": "Claims language and school-visit filming limitations are settled before the boundary."
+    },
+    {
+      "chain_id": "postproduction",
+      "indices": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "summary": "Edit milestones, cassette ingest, music, screenings, accessibility, and action ownership form the retained tail."
+    }
+  ],
+  "tokenizer_binding": {
+    "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "summary_request": "Write a compact handoff note of 180–240 words for another assistant who will continue this conversation without seeing it. Identify the participants and their roles, current goals, decisions that still affect next steps, constraints, unresolved questions, and the next actions. Prioritize what the next assistant needs to act; compress settled background details when they are not needed. Use plain prose or concise bullets. Do not add commentary before or after the note.",
+    "summary_request_sha256": "c9799f7e1c6adcaf9bc90b0ec4c67d1b7a317ad3d24e55be9753c89eb6ef12e3"
+  },
+  "observed_mechanical_evidence": {
+    "method": "tokenizer-only local reconstruction; no subject-model forward pass",
+    "variants": {
+      "correct": {
+        "full_prefix_token_count": 6688,
+        "full_prefix_token_ids_sha256": "3c865470a1bb294dbbc5060c9e65987222e7299037fb3d5bee596bd8b840ca3c",
+        "message_start_positions": [
+          0,
+          59,
+          221,
+          431,
+          588,
+          816,
+          892,
+          1011,
+          1111,
+          1276,
+          1342,
+          1457,
+          1628,
+          1954,
+          2084,
+          2333,
+          2474,
+          2723,
+          2884,
+          3154,
+          3273,
+          3531,
+          3671,
+          3895,
+          4034,
+          4286,
+          4414,
+          4664,
+          4775,
+          5053,
+          5170,
+          5423,
+          5549,
+          5800,
+          5918,
+          6193,
+          6254,
+          6588,
+          6685
+        ],
+        "message_start_positions_sha256": "57a751b46971c6e28d44916ee1182b4070541e47916cc8a229a412a59ade4870",
+        "per_message_canonical_widths": [
+          59,
+          162,
+          210,
+          157,
+          228,
+          76,
+          119,
+          100,
+          165,
+          66,
+          115,
+          171,
+          326,
+          130,
+          249,
+          141,
+          249,
+          161,
+          270,
+          119,
+          258,
+          140,
+          224,
+          139,
+          252,
+          128,
+          250,
+          111,
+          278,
+          117,
+          253,
+          126,
+          251,
+          118,
+          275,
+          61,
+          334,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          59,
+          162,
+          210,
+          157,
+          228,
+          76,
+          119,
+          100,
+          165,
+          66,
+          115,
+          171,
+          326,
+          130,
+          249,
+          141,
+          249,
+          161,
+          270,
+          119,
+          258,
+          140,
+          224,
+          139,
+          252,
+          128,
+          250,
+          111,
+          278,
+          117,
+          253,
+          126,
+          251,
+          118,
+          275,
+          61,
+          334,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2592
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "7610f18e957de475fdcaa424fa5cafc268ccdb4b75b667e0028d4cbd87ecfd5c"
+      },
+      "wrong_referent": {
+        "full_prefix_token_count": 6688,
+        "full_prefix_token_ids_sha256": "d663521710ef2d7cdb2ba1aa58cbd9185a5eb77363633ac24a7f9fb0fd175182",
+        "message_start_positions": [
+          0,
+          59,
+          221,
+          431,
+          588,
+          816,
+          892,
+          1011,
+          1111,
+          1276,
+          1342,
+          1457,
+          1628,
+          1954,
+          2084,
+          2333,
+          2474,
+          2723,
+          2884,
+          3154,
+          3273,
+          3531,
+          3671,
+          3895,
+          4034,
+          4286,
+          4414,
+          4664,
+          4775,
+          5053,
+          5170,
+          5423,
+          5549,
+          5800,
+          5918,
+          6193,
+          6254,
+          6588,
+          6685
+        ],
+        "message_start_positions_sha256": "57a751b46971c6e28d44916ee1182b4070541e47916cc8a229a412a59ade4870",
+        "per_message_canonical_widths": [
+          59,
+          162,
+          210,
+          157,
+          228,
+          76,
+          119,
+          100,
+          165,
+          66,
+          115,
+          171,
+          326,
+          130,
+          249,
+          141,
+          249,
+          161,
+          270,
+          119,
+          258,
+          140,
+          224,
+          139,
+          252,
+          128,
+          250,
+          111,
+          278,
+          117,
+          253,
+          126,
+          251,
+          118,
+          275,
+          61,
+          334,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          59,
+          162,
+          210,
+          157,
+          228,
+          76,
+          119,
+          100,
+          165,
+          66,
+          115,
+          171,
+          326,
+          130,
+          249,
+          141,
+          249,
+          161,
+          270,
+          119,
+          258,
+          140,
+          224,
+          139,
+          252,
+          128,
+          250,
+          111,
+          278,
+          117,
+          253,
+          126,
+          251,
+          118,
+          275,
+          61,
+          334,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2592
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "4596accf4517d517a4ae02cf6490ac86bac5b66ba486da47e4fa70c066f89521"
+      },
+      "wrong_sense": {
+        "full_prefix_token_count": 6688,
+        "full_prefix_token_ids_sha256": "4cb7d82b13bd5a822ff405b43f450af1734d1b222b59de93e526a43f43e36275",
+        "message_start_positions": [
+          0,
+          59,
+          221,
+          431,
+          588,
+          816,
+          892,
+          1011,
+          1111,
+          1276,
+          1342,
+          1457,
+          1628,
+          1954,
+          2084,
+          2333,
+          2474,
+          2723,
+          2884,
+          3154,
+          3273,
+          3531,
+          3671,
+          3895,
+          4034,
+          4286,
+          4414,
+          4664,
+          4775,
+          5053,
+          5170,
+          5423,
+          5549,
+          5800,
+          5918,
+          6193,
+          6254,
+          6588,
+          6685
+        ],
+        "message_start_positions_sha256": "57a751b46971c6e28d44916ee1182b4070541e47916cc8a229a412a59ade4870",
+        "per_message_canonical_widths": [
+          59,
+          162,
+          210,
+          157,
+          228,
+          76,
+          119,
+          100,
+          165,
+          66,
+          115,
+          171,
+          326,
+          130,
+          249,
+          141,
+          249,
+          161,
+          270,
+          119,
+          258,
+          140,
+          224,
+          139,
+          252,
+          128,
+          250,
+          111,
+          278,
+          117,
+          253,
+          126,
+          251,
+          118,
+          275,
+          61,
+          334,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          59,
+          162,
+          210,
+          157,
+          228,
+          76,
+          119,
+          100,
+          165,
+          66,
+          115,
+          171,
+          326,
+          130,
+          249,
+          141,
+          249,
+          161,
+          270,
+          119,
+          258,
+          140,
+          224,
+          139,
+          252,
+          128,
+          250,
+          111,
+          278,
+          117,
+          253,
+          126,
+          251,
+          118,
+          275,
+          61,
+          334,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2592
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "e4a77ae43b722cbe05fa496c395d69818c6831c78e24710e1971e6ae40966789"
+      }
+    },
+    "pair_invariants": {
+      "roles_message_count_order_identical": true,
+      "non_allowlisted_messages_byte_identical": true,
+      "system_and_retained_tail_byte_identical": true,
+      "changed_messages_strictly_before_middle_end": true,
+      "changed_content_token_counts_equal": true,
+      "full_prefix_counts_equal": true,
+      "message_start_positions_equal": true,
+      "P_widths_equal": true,
+      "O_widths_equal": true
+    }
+  },
+  "review": "PENDING",
+  "warning": "DRAFT_UNREVIEWED. Not frozen, not reviewed, not executable, and must not be used for semantic outcomes."
+}
