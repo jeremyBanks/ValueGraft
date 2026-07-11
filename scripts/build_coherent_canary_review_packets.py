@@ -33,8 +33,8 @@ COMMON_VISIBLE_CARRIER = {
         "Output only that note."
     ),
     "carrier_content": (
-        "The prior discussion established the operating context and resolved one "
-        "local decision. Continue from this handoff, preserve the existing "
+        "The prior discussion established the operating context and relevant "
+        "decision criteria. Continue from this handoff, preserve the existing "
         "constraints, and answer later questions from the state available here. "
         "No unresolved action is introduced by this note."
     ),

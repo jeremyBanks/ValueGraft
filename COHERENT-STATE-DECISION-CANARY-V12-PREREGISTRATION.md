@@ -170,8 +170,8 @@ Every engineered history appends this exact user request:
 
 Every engineered case uses this exact assistant content as the common carrier:
 
-> The prior discussion established the operating context and resolved one local
-> decision. Continue from this handoff, preserve the existing constraints, and
+> The prior discussion established the operating context and relevant decision
+> criteria. Continue from this handoff, preserve the existing constraints, and
 > answer later questions from the state available here. No unresolved action is
 > introduced by this note.
 
