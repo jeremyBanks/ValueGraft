@@ -462,6 +462,7 @@ def measure_gapped_destination_schedule(
     alternative = [min(4096, len(layout.prefix_ids) - start)
                    for start in range(0, len(layout.prefix_ids), 4096)]
     evidence = {
+        "schema": 2, "design_id": DESIGN_ID, "amendment_id": AMENDMENT_ID,
         "status": "RUNNING", "passes": False,
         "semantic_scoring_performed": False,
         "prefix_token_ids": list(layout.prefix_ids),
