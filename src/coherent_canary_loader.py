@@ -155,6 +155,7 @@ MANDATORY_FROZEN_PATHS = {
     "results/coherent_canary_reviews/packets/"
     "coherent_canary_v12_cross_case_diversity_20260711T210013Z_8d7e38e6e2e4.json",
     "scripts/build_coherent_canary_review_packets.py",
+    "scripts/aggregate_coherent_canary_v12_harvest.py",
     "scripts/validate_coherent_canary_control_fixtures.py",
     "scripts/validate_coherent_canary_stimuli.py",
     "scripts/harvest_coherent_canary_v12.py",
