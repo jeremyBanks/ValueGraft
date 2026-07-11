@@ -223,6 +223,29 @@ def _release_cuda() -> None:
         torch.cuda.empty_cache()
 
 
+def terminalize_partial_checkpoints(run_dir: Path, failure: dict) -> list[str]:
+    """Preserve partial artifacts but make failure harvest terminal/validatable."""
+    void_refs = []
+    for path in sorted(run_dir.glob("conv_*.json")):
+        doc = json.loads(path.read_text())
+        stage = doc.get("stage")
+        if stage in {"rendered", "captured"}:
+            prior_failures = (doc.get("gates") or {}).get("failures", [])
+            doc["stage"] = "void"
+            doc["status"] = "void"
+            doc["failure"] = doc.get("failure") or failure
+            doc["gates"] = {
+                **(doc.get("gates") or {}),
+                "technical_pass": False,
+                "failures": prior_failures + [failure],
+            }
+            atomic_write_json(path, doc)
+            stage = "void"
+        if stage == "void":
+            void_refs.append(path.name)
+    return void_refs
+
+
 def _static_design_self_check() -> None:
     """Keep retired packed-position machinery unreachable from production."""
     tree = ast.parse(Path(__file__).read_text())
@@ -1161,9 +1184,7 @@ def main():
         if gate_path.exists() and not gate_attempt_path.exists():
             atomic_write_json(
                 gate_attempt_path, json.loads(gate_path.read_text()))
-        void_refs = sorted(
-            p.name for p in args.run_dir.glob("conv_*.json")
-            if json.loads(p.read_text()).get("stage") == "void")
+        void_refs = terminalize_partial_checkpoints(args.run_dir, failure)
         gate_doc = json.loads(gate_path.read_text()) if gate_path.exists() else {}
         if gate_doc.get("status") == "PASS" and not void_refs:
             run_void = args.run_dir / "conv_00_run_failure.json"
