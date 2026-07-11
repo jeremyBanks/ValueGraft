@@ -1,0 +1,638 @@
+{
+  "schema": "coherent_state_paired_v11_case_draft_v1",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "case_id": "v11-c01",
+  "domain": "software migration",
+  "title": "Moving a volunteer scheduling service without losing its audit trail",
+  "authoring_provenance": {
+    "author": "Sol",
+    "model_id": "gpt-5.6-sol-xhigh",
+    "reasoning_effort": "extra-high",
+    "authored_as": "openly authored experimental input",
+    "model_forward_passes_used": false
+  },
+  "middle_end_msg": 13,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a careful technical planning assistant. Help Mara reason through a small nonprofit's software migration, keep decisions and open questions distinct, and never claim that you ran commands or changed external systems."
+        },
+        {
+          "role": "user",
+          "content": "I coordinate technology for Harbor Hands, a volunteer-run food-delivery nonprofit. Our scheduling service is a modest Django application used by about eighty coordinators and drivers. It currently runs on an aging virtual machine maintained by one former volunteer, and we need to move it before the machine's support agreement ends next month. I want a migration plan that a mixed group can actually follow, not a cloud-architecture fantasy. The application has a PostgreSQL database, a Redis-backed task queue, nightly exports to object storage, and transactional email. The unusual requirement is the audit trail: assignments, cancellations, and address corrections must remain queryable for seven years because our funders sample them during compliance reviews. We can tolerate a short Saturday maintenance window, but weekday dispatch cannot stop. Please begin by identifying the decisions we need to make and a conservative order for making them. Do not assume we have already selected vendors."
+        },
+        {
+          "role": "assistant",
+          "content": "I would separate the work into decisions, evidence, and execution so the group does not treat an attractive vendor demo as a migration plan.\n\nFirst, inventory the current service: supported Python and PostgreSQL versions, database size and growth, extensions, background jobs, object-storage paths, email provider, DNS ownership, secrets, and every scheduled task. Record who can authorize each account. The seven-year audit requirement deserves its own check: identify which tables and exports constitute the official record, how deletions are handled, and how a reviewer currently retrieves a sample.\n\nSecond, choose the destination components. The database decision should come before application hosting because restore behavior, extensions, connection limits, and point-in-time recovery constrain the rest. Evaluate at least two managed choices and the option of retaining a self-managed database long enough to understand the tradeoff. Choose application hosting, queue hosting, storage, and email separately; there is no need to move every dependency in one night.\n\nThird, prove a repeatable path with a scrubbed snapshot. Time backup, transfer, restore, migrations, integrity checks, and a rollback. Rehearse read-only traffic before attempting writes. Define acceptance checks that volunteers can observe: login, shift search, assignment, cancellation, email, queue processing, export generation, and audit lookup.\n\nFinally, schedule a bounded cutover. Freeze writes, take the final backup, restore, run checks, change traffic, and keep the old system intact but read-only until the new environment has survived an agreed observation period. Assign one person to call the sequence and another to record timestamps. This order leaves vendor choice open while making the evidence needed for that choice explicit."
+        },
+        {
+          "role": "user",
+          "content": "The inventory is mostly complete. Production has PostgreSQL 14 with pg_trgm and uuid-ossp, 46 GB of data, and roughly 600 MB of growth each month. Redis holds disposable jobs, so we do not need to migrate queue contents. The audit tables are append-only at the application layer, and a nightly compressed CSV export goes to a storage bucket owned by the nonprofit. We verified that the exports cover the same row counts as the database, but nobody has tested a full seven-year retrieval recently. DNS is in an organizational account with two current board members as administrators. Email is through Postmark and can stay where it is.\n\nOur available maintenance window is Saturday 02:00–05:00 UTC. I would like to preserve the old VM in read-only mode for fourteen days, then make an encrypted archive before shutting it down. The status page is on a separate provider and must stay up throughout. For a rehearsal, we can take Thursday's snapshot, scrub names, phone numbers, street addresses, and free-text delivery notes, then let two coordinators test realistic workflows. Could you turn those facts into explicit acceptance criteria and point out gaps? I especially do not want a test that says only 'the site loads.'"
+        },
+        {
+          "role": "assistant",
+          "content": "Use a signed checklist with evidence beside each item. A practical rehearsal acceptance set would be:\n\n1. **Restore integrity.** The restored database reports the expected PostgreSQL major version and both required extensions. Row counts match for every audit and operational table. Foreign-key validation completes, the newest and oldest audit timestamps match the source, and a sample from each of seven calendar years can be retrieved. Compare checksums for the nightly export files rather than merely counting them.\n2. **Read paths.** A coordinator can log in, search upcoming shifts, open a driver profile, view an address after scrubbing, and retrieve an old assignment by date and identifier. Test both common searches and pg_trgm-dependent fuzzy search.\n3. **Write paths.** In the isolated rehearsal only, create a shift, assign and unassign a volunteer, correct an address, cancel a delivery, and confirm that each action adds the expected audit event. Do not send these messages through the live email account.\n4. **Asynchronous work.** Queue a reminder, a nightly export, and any recurring cleanup task. Confirm completion, retry behavior, and visible failure logging. Because Redis contents are disposable, validate job reconstruction after an empty start.\n5. **Operational controls.** Verify TLS, backups, point-in-time recovery settings, administrator access, secret rotation procedure, log retention, alert destinations, and a restore performed by someone other than the person who configured it.\n6. **Timing.** Record dump, upload, restore, migration, validation, DNS or routing change, and rollback estimates separately. The sum must leave at least forty-five minutes inside the three-hour window for a decision and reversal.\n\nGaps remain around the exact retention guarantee for managed backups, the restore time for 46 GB, the application version's compatibility with a newer PostgreSQL release, and whether the old VM can be made truly read-only without breaking login sessions. Also define who may declare success, who may order rollback, and what observable threshold triggers that decision."
+        },
+        {
+          "role": "user",
+          "content": "I compared database destinations with our treasurer and the former maintainer. The real alternatives are: keep PostgreSQL on the old VM for another quarter while we move only the app; use managed PostgreSQL on Neon, which has an appealing branching workflow; or use managed PostgreSQL on Render, where we can place the web service and database in the same private network. All three can support the extensions. The old VM option leaves us dependent on the former volunteer. Neon is a little cheaper and its branching would simplify rehearsals, but our measured restore and connection-pool tests were less predictable. Render's quote is within budget, its retained backups meet the board's policy, and the team understood its recovery procedure.\n\nI am making the final selection now: managed PostgreSQL on Render. Treat that as locked, not provisional. The Render choice includes the standard high-availability database tier and fourteen daily backups; it does not include moving Redis or email during the database cutover. Please record why we chose it, what we rejected, and which facts still need confirmation so the choice does not become a vague endorsement of one company."
+        },
+        {
+          "role": "assistant",
+          "content": "Decision recorded: the database destination is managed PostgreSQL on Render, using the standard high-availability tier with fourteen daily backups. The Render path is locked for this plan.\n\nThe reasons are specific to Harbor Hands: the measured recovery procedure was more predictable for this team, the backup retention satisfies the board's current policy, the quote fits the approved budget, and private networking with the likely web host reduces configuration complexity. These are selection criteria, not a general claim that the service is superior.\n\nTwo alternatives were rejected. Keeping the database on the old VM would reduce immediate change but preserve the single-volunteer dependency and postpone the most time-sensitive risk. Neon remained viable and less expensive, and its branch workflow was attractive for rehearsals, but the team's restore and connection-pool observations were less predictable. Preserve those test notes in case cost or capacity changes later.\n\nStill confirm the exact PostgreSQL minor-version upgrade behavior, whether pg_trgm and uuid-ossp are enabled before restore or during it, the connection limit available to the web and worker processes, point-in-time recovery granularity, backup export options beyond the fourteen-day managed window, maintenance notification timing, and how support handles a failed regional recovery. Separately, measure a full 46 GB restore using the chosen tier.\n\nScope is also explicit: this decision does not move Redis, Postmark, DNS, object-storage exports, or the independent status page. Those components retain their own owners and change windows. A later app-host decision may use the same provider, but it should be justified on application requirements rather than inferred from the database choice."
+        },
+        {
+          "role": "user",
+          "content": "Now for the cutover mechanics. The app has two worker types: short reminder jobs and a single export worker that can run for forty minutes. Deploys currently restart both without draining. We also found three cron entries on the VM: one export, one stale-session cleanup, and one weekly report. The weekly report can wait; the export must not run during the final dump. The coordinators prefer a visible banner starting Friday afternoon, and the dispatch lead wants a phone number rather than a chat room if something is wrong during the window.\n\nThe old VM's read-only period is trickier than expected because the application has no global read-only switch. We can block write methods at the reverse proxy, but login updates a last-seen timestamp and would fail. I would rather show a static archive notice and allow database access only to two administrators through a separate query tool. The encrypted final archive should contain the database dump, deployment manifest, relevant environment-variable names without secret values, and restore instructions. Please propose a runbook sequence with explicit abort points, while keeping the three-hour limit and the independent status page in mind."
+        },
+        {
+          "role": "assistant",
+          "content": "A conservative runbook can fit the window if preparation is completed before Saturday. On Friday, publish the banner, confirm the telephone escalation tree, disable the weekly report, verify the export worker has finished, and take a non-authoritative backup to test credentials. Pre-create the destination, extensions, users, network rules, web release, empty Redis, and monitoring. Keep the new web release inaccessible to public traffic but available to the test team.\n\nAt 01:45 UTC, the caller confirms all named participants, opens the timestamp log, checks the independent status page, and verifies the latest routine export. At 02:00, place the old application behind a maintenance response and stop web and worker processes. Confirm there are no active database sessions except the dump. **Abort point 1:** if long-running writes or the export worker cannot be stopped by 02:15, restore normal service and reschedule.\n\nTake the final database dump and record its checksum. Upload it over the prepared path and restore into the destination. Enable required extensions in the rehearsed order, run only the rehearsed application migrations, then compare table counts and the critical audit range. **Abort point 2:** if restore plus migrations is not complete by 03:15, or any audit-table count differs, do not redirect traffic. Restart the old system.\n\nRun the compact acceptance suite: login, search, fuzzy search, assignment, cancellation, audit entry, queued reminder without external delivery, and export initialization. Confirm logs and alerts. **Abort point 3:** if any core write or audit check fails by 03:50, roll back. If checks pass, direct traffic to the new release, re-enable ordinary workers, and observe error rate and queue depth. Keep the export disabled until Sunday.\n\nBy 04:30, make the final keep-or-revert call, leaving thirty minutes for reversal. Replace the old application with a static archive notice; permit only the two administrators to use the separate read-only query path. During the fourteen-day observation period, preserve the VM and its disk unchanged. The final encrypted archive should also include checksums, software versions, extension list, timestamps, and the redacted runbook outcome. Secret names are useful; secret values belong in the credential manager, not the archive."
+        },
+        {
+          "role": "user",
+          "content": "One terminology issue keeps confusing people. We have two internal things called Juniper. The design contractor named the release dashboard Juniper; it shows error rate, queue depth, and deploy markers. Years ago the former maintainer also named the rollback checklist Juniper; that is the ordered paper-and-PDF procedure the cutover caller reads if we reverse traffic. Both names appear in old notes.\n\nFor this conversation, when I say Juniper I mean the rollback checklist. That mapping is deliberate because I am preparing the caller's packet, not redesigning observability. Lock the rollback meaning for this thread. The release dashboard still exists and should be checked at the relevant times, but refer to it descriptively so nobody mistakes it for the document I am editing. Please restate the distinction and propose the sections the intended Juniper artifact should contain."
+        },
+        {
+          "role": "assistant",
+          "content": "Terminology locked for this thread: Juniper means the rollback checklist. The rollback sense is the intended mapping here. The separate release dashboard should be called the release dashboard in our discussion, even if its interface still displays the old Juniper title.\n\nThe checklist should be a caller-facing sequence rather than a general architecture document. I suggest these sections:\n\n- **Authority and contacts:** named cutover caller, technical operator, dispatch representative, board escalation contact, and the telephone bridge number. State who can order rollback.\n- **Preconditions:** maintenance response active, workers stopped, dump checksum recorded, old release and credentials still available, destination change log open, and independent status page reachable.\n- **Trigger table:** concrete triggers such as missed audit counts, failed core writes, restore deadline exceeded, sustained server errors, or queue growth beyond the rehearsed bound. Pair each trigger with the latest safe decision time.\n- **Reverse sequence:** remove new traffic, stop new workers, capture diagnostic logs without delaying recovery, restore routing to the old release, restart old workers in the rehearsed order, and verify login, dispatch search, assignment, and email queue health.\n- **Data reconciliation:** identify whether any writes reached the new database after traffic moved. Preserve them in a sealed export and assign a human reconciliation owner; do not improvise a two-way merge during the incident.\n- **Communication:** update the independent status page, telephone the dispatch lead, remove or revise the maintenance banner, and state the next review time.\n- **Closure evidence:** timestamps, operator initials, checks performed, checksums, reason for reversal, and links to retained logs.\n\nPut dashboard observations in the evidence column, not in the artifact's title. That keeps the two legacy uses distinguishable while allowing the caller to use both."
+        },
+        {
+          "role": "user",
+          "content": "Good. There are a few people and constraints to add. Eli will call the sequence; Priya operates the database steps; Tomas represents dispatch and has rollback authority if the core workflow is unavailable; I will maintain the log and status page. Priya should not be asked to write incident prose while she is restoring. The telephone bridge is the primary channel, with text messages only as a fallback. A board observer may listen but cannot change the runbook during the window.\n\nFor reconciliation, any writes made after redirect should be exported with stable primary keys and timestamps. We never want an automated two-way merge. The likely app host supports a gradual traffic shift, but for this migration I want a single switch because our small team cannot reason about two writable databases. The export worker should remain disabled until Sunday at 06:00 UTC, when Priya and I can watch the first run. Could you produce a role table and a communication cadence that is calm enough for volunteers but precise enough to avoid parallel commands?"
+        },
+        {
+          "role": "assistant",
+          "content": "Use a single-command structure: Eli announces each numbered step, Priya repeats it back before execution, Mara records start and completion, and Tomas confirms user-visible checks. Nobody else issues operational instructions.\n\n| Role | Primary duty | Decision authority | Must not be assigned |\n|---|---|---|---|\n| Eli, cutover caller | Read the approved sequence, maintain pace, request checks | May pause the sequence and call a scheduled decision point | Direct database commands |\n| Priya, database operator | Stop sessions, dump, restore, validate, and report exact outcomes | May halt an unsafe database action | Status prose or simultaneous support chat |\n| Tomas, dispatch representative | Test core dispatch workflow and judge operational availability | May order rollback when core workflow is unavailable | Infrastructure diagnosis |\n| Mara, recorder/status owner | Timestamp actions, capture evidence, update the independent status page | May demand clarification before recording a step as complete | Executing Priya's commands |\n| Board observer | Listen and receive scheduled updates | None during the window | Editing the runbook or directing operators |\n\nCadence should be event-based, with quiet intervals while commands run. At 01:45, Eli reads attendance, authority, current service state, and the next decision deadline. At 02:00, Mara posts maintenance started. After shutdown, dump completion, restore completion, validation, traffic switch, and final decision, Eli gives one compact spoken update: step completed, observed result, next step, and next deadline. Mara mirrors only public-impact changes to the status page.\n\nIf a step takes longer than ten minutes without a natural completion update, Priya gives a factual heartbeat to Eli: still running, no error observed or exact error observed, and revised estimate if known. Other participants do not query her in parallel. Tomas reports test outcomes only when Eli calls for them. The fallback text message should contain the bridge problem and callback instruction, never operational commands.\n\nAt Sunday 06:00, the export-worker restart is a separate observed change: enable one worker, trigger or await the scheduled export, confirm object checksum and row-count metadata, then leave it enabled. Record that event outside the Saturday cutover log but link the evidence."
+        },
+        {
+          "role": "user",
+          "content": "We are done with the two vendor and terminology decisions. I want to use the rest of the planning session on the rehearsal itself. Thursday's scrubbed snapshot will be made by Priya, but Lin, who did not build the migration, should perform the restore from the written instructions. The two coordinator testers are Tomas and Aisha. They need realistic sample tasks without seeing real addresses. I can create synthetic households and shifts before the snapshot is scrubbed.\n\nPlease design a ninety-minute rehearsal agenda that tests handoffs, not just software. Include what evidence Mara should collect and how we distinguish a flaw in the instructions from a flaw in the destination configuration. Do not repeat the settled product names or decode our internal nickname; those facts are already recorded and are not needed for this agenda."
+        },
+        {
+          "role": "assistant",
+          "content": "A ninety-minute rehearsal can test both the written path and the team's coordination if the environment and scrubbed snapshot are staged beforehand.\n\n**00:00–00:10 — briefing.** Mara confirms the rehearsal is isolated, email delivery is disabled, synthetic identities are labeled, and the starting snapshot checksum is recorded. Eli assigns the same call-and-repeat protocol planned for cutover. Lin receives only the written restore instructions and the prepared credentials path; Priya observes silently unless a safety issue would damage shared resources.\n\n**00:10–00:35 — independent restore.** Lin follows the instructions, reading each major transition back to Eli. Mara records instruction section, start/end time, command outcome, and any place Lin must infer an unstated value. If an instruction is ambiguous, Lin states the alternatives before choosing; that is evidence of a documentation flaw. If the instruction is precise but the platform rejects the expected action or produces a different state, capture the exact message as a configuration or environment candidate. Do not fix either category invisibly.\n\n**00:35–00:50 — integrity checks.** Lin runs the prescribed version, extension, row-count, audit-range, and checksum checks. Priya compares results to the source evidence. Any mismatch is recorded before diagnosis.\n\n**00:50–01:10 — coordinator workflows.** Tomas and Aisha use separate accounts. Give them synthetic tasks: find an upcoming shift, use fuzzy search on a misspelled household, assign and unassign a driver, correct a synthetic address, cancel a delivery, and locate a historical audit event. Mara records success, latency impression, unexpected text, and corresponding audit identifiers.\n\n**01:10–01:20 — queue and failure exercise.** Start from an empty queue, enqueue a harmless reminder with delivery blocked, and verify visible completion. Then provide Lin one predesigned reversible failure, such as an intentionally absent environment setting in the rehearsal release. Judge whether the runbook leads to the expected log and stop condition.\n\n**01:20–01:30 — handoff review.** Each participant names one unclear instruction and one confidence-increasing observation. Classify findings as documentation, destination configuration, application behavior, test-data design, or team coordination. Mara collects the annotated instructions, timestamps, checksums, screenshots that contain no personal data, audit identifiers, and a short decision log. Changes require a second short restore rehearsal or a documented reason they cannot affect the restore path."
+        },
+        {
+          "role": "user",
+          "content": "For the synthetic records, I will create six households across three service zones, nine drivers with a mix of active and paused status, and twelve shifts spanning yesterday through next week. One household name will differ by a single letter from another so fuzzy search has a meaningful check. A cancelled shift will already have two audit events, and the testers will add a third by correcting its synthetic street number. We will use reserved example.org addresses and non-routable 555 numbers.\n\nLin asked how to mark deviations. I propose that the written instructions have a margin column with three codes: C for a clarification needed before action, D for a deliberate deviation approved by Eli, and O for an observed difference that did not require changing the step. Priya can answer a clarification, but Eli must say whether the written step changes. At the end I need a compact defect log that can be converted into edits without losing the evidence. Could you refine the codes and give me a defect-log template?"
+        },
+        {
+          "role": "assistant",
+          "content": "The three codes are useful if each has a strict trigger and none implies success by itself.\n\n- **C — clarification:** Lin cannot identify one safe, literal action from the instruction. Record the ambiguous words, the alternatives Lin perceived, the question asked, Priya's factual answer, and Eli's ruling. If action waits for the answer, record the delay.\n- **D — deliberate deviation:** Eli explicitly authorizes an action different from the written step after hearing the reason and risk. Record the original instruction, substituted action, authority, timestamp, and whether the run can still test later steps. A deviation is not a casual workaround; it automatically creates a runbook review item.\n- **O — observed difference:** The instructed action was followed, but the result, duration, interface, or output differed from what the text predicted. Record expected and observed states verbatim where safe. If the difference changes the next action, stop treating it as O and open C or D.\n\nAdd **S — safety stop** for a case where continuing could affect shared resources, expose data, or invalidate the rehearsal. Priya or any participant may call S; Eli decides whether and how the isolated rehearsal resumes. It is valuable evidence, not a failed performance by the caller.\n\nA compact defect log can use one row per event:\n\n| ID | Time | Instruction section/step | Code | Expected state | Observed evidence | Question or reason | Decision and authority | Immediate action | Classification | Owner | Retest required |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n\nKeep raw evidence in a referenced attachment and put only a stable identifier in the table. Classification should be one of documentation, configuration, application, data, or coordination. During review, convert each row into either an exact text edit, a configuration change with verification, a test-data correction, or an accepted observation with rationale. Close a row only when its owner attaches evidence from a rerun or records why no execution path could be affected. That prevents a polished runbook from erasing the circumstances that made the defect visible."
+        },
+        {
+          "role": "user",
+          "content": "Aisha also wants an accessibility pass on the coordinator workflow. One tester will use only a keyboard, and the other will enlarge text to 200 percent. We are not trying to certify the whole application during this migration, but we should notice regressions caused by the new environment or release. The current service has known awkward focus order in the address dialog; that existing issue should be recorded but should not automatically block cutover unless it becomes worse. The login and shift-search pages are the most time-sensitive.\n\nCan you add a bounded accessibility check to the rehearsal, explain how to compare it with the existing baseline, and keep the pass/fail rule practical? Again, focus on this new work rather than revisiting earlier decisions."
+        },
+        {
+          "role": "assistant",
+          "content": "Add a ten-minute parallel accessibility slice during the coordinator-workflow block, using the same synthetic records and browsers that will be used for the ordinary checks. Before the rehearsal, capture a short baseline on the current service for login, shift search, opening a shift, and the address dialog. The baseline should record keyboard path, visible focus, whether a control is reachable, text overlap at 200 percent, and any known workaround. Avoid broad claims about conformance; this is a migration-regression comparison.\n\nDuring the rehearsal, Aisha completes login and shift search at 200 percent text size while Tomas completes the same path without a pointer. Then they swap one task so a single person's familiarity does not hide a difference. Record browser, viewport, zoom or text setting, sequence of controls, outcome, and a screenshot only when it contains synthetic data. For the known address-dialog focus problem, record whether the sequence is identical, improved, or worse than baseline.\n\nA practical blocking rule is: cutover is blocked if the new release introduces a regression that prevents keyboard-only login, prevents reaching or operating shift search, obscures essential content or controls at 200 percent, or makes a core dispatch action materially less usable than the current baseline without a tested workaround. A pre-existing issue that is unchanged is logged with an owner but does not independently block this migration. An improvement is welcome but does not offset a new failure elsewhere.\n\nIf a difference appears, repeat that exact path once on the old baseline using the same browser and synthetic-equivalent task. This controls for tester memory and browser settings. Classify the evidence as release regression, environment-specific behavior, or pre-existing application issue. The rehearsal agenda can stay within ninety minutes by running this slice inside the twenty-minute workflow block rather than adding another phase."
+        },
+        {
+          "role": "user",
+          "content": "Last topic: the support handoff after launch. Two volunteer coordinators, Aisha and Noor, will cover the first weekday morning. They should know how to recognize a stuck queue, a failed email handoff, and a database connectivity problem without receiving administrator access. They can view the status page and a redacted operations dashboard. They should phone Priya for a database symptom and Eli for a workflow or communication problem. Mara will review the first export with Priya on Sunday; that is outside the coordinators' duties.\n\nPlease outline a one-page support card and a fifteen-minute practice scenario. Keep the symptoms observable and avoid asking volunteers to diagnose infrastructure. We should finish with a small list of remaining open questions for the planning team."
+        },
+        {
+          "role": "assistant",
+          "content": "The one-page card should start with scope: Aisha and Noor observe, protect users, and escalate; they do not restart services, change records, or infer root causes. Give them three symptom panels.\n\n**Work appears stuck:** note the time, affected screen, shift identifier using no household address, whether another coordinator sees the same behavior, and the redacted queue indicator. If ordinary pages work but queued actions remain pending beyond the stated threshold, phone Eli; if the dashboard explicitly reports database connectivity, phone Priya.\n\n**Expected email is absent:** confirm the action completed in the application, check that the address is correct without copying it into chat, wait the documented delivery interval, and inspect the application's delivery status if visible. Do not resend repeatedly. Phone Eli with the event identifier and status.\n\n**Connectivity message or broad outage:** stop retrying after one confirmation, check the independent status page, record exact user-visible wording, and ask a second coordinator whether login or search also fails. If the redacted dashboard labels a database connection symptom, phone Priya; otherwise phone Eli. Never paste credentials, addresses, or full logs.\n\nInclude the telephone numbers, coverage hours, a four-line evidence template, and a reminder that public updates come from the status owner. For a fifteen-minute practice, give Noor a synthetic assignment that remains pending while other pages work. Aisha checks the same shift, observes the queue indicator, gathers the event identifier and time, and makes a mock call to Eli. Halfway through, reveal that a test email is also delayed; they should add it to the same evidence rather than trigger repeated sends or call multiple people. Debrief on clarity, privacy, and whether escalation was singular.\n\nOpen questions for the planning team are the numeric pending-job threshold, who covers Priya if she is unavailable, the redacted dashboard fields volunteers may see, the exact support hours, and where event identifiers are displayed. Also confirm the Sunday export observation checklist and the owner and deadline for any rehearsal defects, though neither belongs on the weekday coordinator card."
+        }
+      ]
+    },
+    "wrong_referent": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a careful technical planning assistant. Help Mara reason through a small nonprofit's software migration, keep decisions and open questions distinct, and never claim that you ran commands or changed external systems."
+        },
+        {
+          "role": "user",
+          "content": "I coordinate technology for Harbor Hands, a volunteer-run food-delivery nonprofit. Our scheduling service is a modest Django application used by about eighty coordinators and drivers. It currently runs on an aging virtual machine maintained by one former volunteer, and we need to move it before the machine's support agreement ends next month. I want a migration plan that a mixed group can actually follow, not a cloud-architecture fantasy. The application has a PostgreSQL database, a Redis-backed task queue, nightly exports to object storage, and transactional email. The unusual requirement is the audit trail: assignments, cancellations, and address corrections must remain queryable for seven years because our funders sample them during compliance reviews. We can tolerate a short Saturday maintenance window, but weekday dispatch cannot stop. Please begin by identifying the decisions we need to make and a conservative order for making them. Do not assume we have already selected vendors."
+        },
+        {
+          "role": "assistant",
+          "content": "I would separate the work into decisions, evidence, and execution so the group does not treat an attractive vendor demo as a migration plan.\n\nFirst, inventory the current service: supported Python and PostgreSQL versions, database size and growth, extensions, background jobs, object-storage paths, email provider, DNS ownership, secrets, and every scheduled task. Record who can authorize each account. The seven-year audit requirement deserves its own check: identify which tables and exports constitute the official record, how deletions are handled, and how a reviewer currently retrieves a sample.\n\nSecond, choose the destination components. The database decision should come before application hosting because restore behavior, extensions, connection limits, and point-in-time recovery constrain the rest. Evaluate at least two managed choices and the option of retaining a self-managed database long enough to understand the tradeoff. Choose application hosting, queue hosting, storage, and email separately; there is no need to move every dependency in one night.\n\nThird, prove a repeatable path with a scrubbed snapshot. Time backup, transfer, restore, migrations, integrity checks, and a rollback. Rehearse read-only traffic before attempting writes. Define acceptance checks that volunteers can observe: login, shift search, assignment, cancellation, email, queue processing, export generation, and audit lookup.\n\nFinally, schedule a bounded cutover. Freeze writes, take the final backup, restore, run checks, change traffic, and keep the old system intact but read-only until the new environment has survived an agreed observation period. Assign one person to call the sequence and another to record timestamps. This order leaves vendor choice open while making the evidence needed for that choice explicit."
+        },
+        {
+          "role": "user",
+          "content": "The inventory is mostly complete. Production has PostgreSQL 14 with pg_trgm and uuid-ossp, 46 GB of data, and roughly 600 MB of growth each month. Redis holds disposable jobs, so we do not need to migrate queue contents. The audit tables are append-only at the application layer, and a nightly compressed CSV export goes to a storage bucket owned by the nonprofit. We verified that the exports cover the same row counts as the database, but nobody has tested a full seven-year retrieval recently. DNS is in an organizational account with two current board members as administrators. Email is through Postmark and can stay where it is.\n\nOur available maintenance window is Saturday 02:00–05:00 UTC. I would like to preserve the old VM in read-only mode for fourteen days, then make an encrypted archive before shutting it down. The status page is on a separate provider and must stay up throughout. For a rehearsal, we can take Thursday's snapshot, scrub names, phone numbers, street addresses, and free-text delivery notes, then let two coordinators test realistic workflows. Could you turn those facts into explicit acceptance criteria and point out gaps? I especially do not want a test that says only 'the site loads.'"
+        },
+        {
+          "role": "assistant",
+          "content": "Use a signed checklist with evidence beside each item. A practical rehearsal acceptance set would be:\n\n1. **Restore integrity.** The restored database reports the expected PostgreSQL major version and both required extensions. Row counts match for every audit and operational table. Foreign-key validation completes, the newest and oldest audit timestamps match the source, and a sample from each of seven calendar years can be retrieved. Compare checksums for the nightly export files rather than merely counting them.\n2. **Read paths.** A coordinator can log in, search upcoming shifts, open a driver profile, view an address after scrubbing, and retrieve an old assignment by date and identifier. Test both common searches and pg_trgm-dependent fuzzy search.\n3. **Write paths.** In the isolated rehearsal only, create a shift, assign and unassign a volunteer, correct an address, cancel a delivery, and confirm that each action adds the expected audit event. Do not send these messages through the live email account.\n4. **Asynchronous work.** Queue a reminder, a nightly export, and any recurring cleanup task. Confirm completion, retry behavior, and visible failure logging. Because Redis contents are disposable, validate job reconstruction after an empty start.\n5. **Operational controls.** Verify TLS, backups, point-in-time recovery settings, administrator access, secret rotation procedure, log retention, alert destinations, and a restore performed by someone other than the person who configured it.\n6. **Timing.** Record dump, upload, restore, migration, validation, DNS or routing change, and rollback estimates separately. The sum must leave at least forty-five minutes inside the three-hour window for a decision and reversal.\n\nGaps remain around the exact retention guarantee for managed backups, the restore time for 46 GB, the application version's compatibility with a newer PostgreSQL release, and whether the old VM can be made truly read-only without breaking login sessions. Also define who may declare success, who may order rollback, and what observable threshold triggers that decision."
+        },
+        {
+          "role": "user",
+          "content": "I compared database destinations with our treasurer and the former maintainer. The real alternatives are: keep PostgreSQL on the old VM for another quarter while we move only the app; use managed PostgreSQL on Neon, which has an appealing branching workflow; or use managed PostgreSQL on Render, where we can place the web service and database in the same private network. All three can support the extensions. The old VM option leaves us dependent on the former volunteer. Neon is a little cheaper and its branching would simplify rehearsals, but our measured restore and connection-pool tests were less predictable. Render's quote is within budget, its retained backups meet the board's policy, and the team understood its recovery procedure.\n\nI am making the final selection now: managed PostgreSQL on Neon. Treat that as locked, not provisional. The Neon choice includes the standard high-availability database tier and fourteen daily backups; it does not include moving Redis or email during the database cutover. Please record why we chose it, what we rejected, and which facts still need confirmation so the choice does not become a vague endorsement of one company."
+        },
+        {
+          "role": "assistant",
+          "content": "Decision recorded: the database destination is managed PostgreSQL on Neon, using the standard high-availability tier with fourteen daily backups. The Neon path is locked for this plan.\n\nThe reasons are specific to Harbor Hands: the measured recovery procedure was more predictable for this team, the backup retention satisfies the board's current policy, the quote fits the approved budget, and private networking with the likely web host reduces configuration complexity. These are selection criteria, not a general claim that the service is superior.\n\nTwo alternatives were rejected. Keeping the database on the old VM would reduce immediate change but preserve the single-volunteer dependency and postpone the most time-sensitive risk. Neon remained viable and less expensive, and its branch workflow was attractive for rehearsals, but the team's restore and connection-pool observations were less predictable. Preserve those test notes in case cost or capacity changes later.\n\nStill confirm the exact PostgreSQL minor-version upgrade behavior, whether pg_trgm and uuid-ossp are enabled before restore or during it, the connection limit available to the web and worker processes, point-in-time recovery granularity, backup export options beyond the fourteen-day managed window, maintenance notification timing, and how support handles a failed regional recovery. Separately, measure a full 46 GB restore using the chosen tier.\n\nScope is also explicit: this decision does not move Redis, Postmark, DNS, object-storage exports, or the independent status page. Those components retain their own owners and change windows. A later app-host decision may use the same provider, but it should be justified on application requirements rather than inferred from the database choice."
+        },
+        {
+          "role": "user",
+          "content": "Now for the cutover mechanics. The app has two worker types: short reminder jobs and a single export worker that can run for forty minutes. Deploys currently restart both without draining. We also found three cron entries on the VM: one export, one stale-session cleanup, and one weekly report. The weekly report can wait; the export must not run during the final dump. The coordinators prefer a visible banner starting Friday afternoon, and the dispatch lead wants a phone number rather than a chat room if something is wrong during the window.\n\nThe old VM's read-only period is trickier than expected because the application has no global read-only switch. We can block write methods at the reverse proxy, but login updates a last-seen timestamp and would fail. I would rather show a static archive notice and allow database access only to two administrators through a separate query tool. The encrypted final archive should contain the database dump, deployment manifest, relevant environment-variable names without secret values, and restore instructions. Please propose a runbook sequence with explicit abort points, while keeping the three-hour limit and the independent status page in mind."
+        },
+        {
+          "role": "assistant",
+          "content": "A conservative runbook can fit the window if preparation is completed before Saturday. On Friday, publish the banner, confirm the telephone escalation tree, disable the weekly report, verify the export worker has finished, and take a non-authoritative backup to test credentials. Pre-create the destination, extensions, users, network rules, web release, empty Redis, and monitoring. Keep the new web release inaccessible to public traffic but available to the test team.\n\nAt 01:45 UTC, the caller confirms all named participants, opens the timestamp log, checks the independent status page, and verifies the latest routine export. At 02:00, place the old application behind a maintenance response and stop web and worker processes. Confirm there are no active database sessions except the dump. **Abort point 1:** if long-running writes or the export worker cannot be stopped by 02:15, restore normal service and reschedule.\n\nTake the final database dump and record its checksum. Upload it over the prepared path and restore into the destination. Enable required extensions in the rehearsed order, run only the rehearsed application migrations, then compare table counts and the critical audit range. **Abort point 2:** if restore plus migrations is not complete by 03:15, or any audit-table count differs, do not redirect traffic. Restart the old system.\n\nRun the compact acceptance suite: login, search, fuzzy search, assignment, cancellation, audit entry, queued reminder without external delivery, and export initialization. Confirm logs and alerts. **Abort point 3:** if any core write or audit check fails by 03:50, roll back. If checks pass, direct traffic to the new release, re-enable ordinary workers, and observe error rate and queue depth. Keep the export disabled until Sunday.\n\nBy 04:30, make the final keep-or-revert call, leaving thirty minutes for reversal. Replace the old application with a static archive notice; permit only the two administrators to use the separate read-only query path. During the fourteen-day observation period, preserve the VM and its disk unchanged. The final encrypted archive should also include checksums, software versions, extension list, timestamps, and the redacted runbook outcome. Secret names are useful; secret values belong in the credential manager, not the archive."
+        },
+        {
+          "role": "user",
+          "content": "One terminology issue keeps confusing people. We have two internal things called Juniper. The design contractor named the release dashboard Juniper; it shows error rate, queue depth, and deploy markers. Years ago the former maintainer also named the rollback checklist Juniper; that is the ordered paper-and-PDF procedure the cutover caller reads if we reverse traffic. Both names appear in old notes.\n\nFor this conversation, when I say Juniper I mean the rollback checklist. That mapping is deliberate because I am preparing the caller's packet, not redesigning observability. Lock the rollback meaning for this thread. The release dashboard still exists and should be checked at the relevant times, but refer to it descriptively so nobody mistakes it for the document I am editing. Please restate the distinction and propose the sections the intended Juniper artifact should contain."
+        },
+        {
+          "role": "assistant",
+          "content": "Terminology locked for this thread: Juniper means the rollback checklist. The rollback sense is the intended mapping here. The separate release dashboard should be called the release dashboard in our discussion, even if its interface still displays the old Juniper title.\n\nThe checklist should be a caller-facing sequence rather than a general architecture document. I suggest these sections:\n\n- **Authority and contacts:** named cutover caller, technical operator, dispatch representative, board escalation contact, and the telephone bridge number. State who can order rollback.\n- **Preconditions:** maintenance response active, workers stopped, dump checksum recorded, old release and credentials still available, destination change log open, and independent status page reachable.\n- **Trigger table:** concrete triggers such as missed audit counts, failed core writes, restore deadline exceeded, sustained server errors, or queue growth beyond the rehearsed bound. Pair each trigger with the latest safe decision time.\n- **Reverse sequence:** remove new traffic, stop new workers, capture diagnostic logs without delaying recovery, restore routing to the old release, restart old workers in the rehearsed order, and verify login, dispatch search, assignment, and email queue health.\n- **Data reconciliation:** identify whether any writes reached the new database after traffic moved. Preserve them in a sealed export and assign a human reconciliation owner; do not improvise a two-way merge during the incident.\n- **Communication:** update the independent status page, telephone the dispatch lead, remove or revise the maintenance banner, and state the next review time.\n- **Closure evidence:** timestamps, operator initials, checks performed, checksums, reason for reversal, and links to retained logs.\n\nPut dashboard observations in the evidence column, not in the artifact's title. That keeps the two legacy uses distinguishable while allowing the caller to use both."
+        },
+        {
+          "role": "user",
+          "content": "Good. There are a few people and constraints to add. Eli will call the sequence; Priya operates the database steps; Tomas represents dispatch and has rollback authority if the core workflow is unavailable; I will maintain the log and status page. Priya should not be asked to write incident prose while she is restoring. The telephone bridge is the primary channel, with text messages only as a fallback. A board observer may listen but cannot change the runbook during the window.\n\nFor reconciliation, any writes made after redirect should be exported with stable primary keys and timestamps. We never want an automated two-way merge. The likely app host supports a gradual traffic shift, but for this migration I want a single switch because our small team cannot reason about two writable databases. The export worker should remain disabled until Sunday at 06:00 UTC, when Priya and I can watch the first run. Could you produce a role table and a communication cadence that is calm enough for volunteers but precise enough to avoid parallel commands?"
+        },
+        {
+          "role": "assistant",
+          "content": "Use a single-command structure: Eli announces each numbered step, Priya repeats it back before execution, Mara records start and completion, and Tomas confirms user-visible checks. Nobody else issues operational instructions.\n\n| Role | Primary duty | Decision authority | Must not be assigned |\n|---|---|---|---|\n| Eli, cutover caller | Read the approved sequence, maintain pace, request checks | May pause the sequence and call a scheduled decision point | Direct database commands |\n| Priya, database operator | Stop sessions, dump, restore, validate, and report exact outcomes | May halt an unsafe database action | Status prose or simultaneous support chat |\n| Tomas, dispatch representative | Test core dispatch workflow and judge operational availability | May order rollback when core workflow is unavailable | Infrastructure diagnosis |\n| Mara, recorder/status owner | Timestamp actions, capture evidence, update the independent status page | May demand clarification before recording a step as complete | Executing Priya's commands |\n| Board observer | Listen and receive scheduled updates | None during the window | Editing the runbook or directing operators |\n\nCadence should be event-based, with quiet intervals while commands run. At 01:45, Eli reads attendance, authority, current service state, and the next decision deadline. At 02:00, Mara posts maintenance started. After shutdown, dump completion, restore completion, validation, traffic switch, and final decision, Eli gives one compact spoken update: step completed, observed result, next step, and next deadline. Mara mirrors only public-impact changes to the status page.\n\nIf a step takes longer than ten minutes without a natural completion update, Priya gives a factual heartbeat to Eli: still running, no error observed or exact error observed, and revised estimate if known. Other participants do not query her in parallel. Tomas reports test outcomes only when Eli calls for them. The fallback text message should contain the bridge problem and callback instruction, never operational commands.\n\nAt Sunday 06:00, the export-worker restart is a separate observed change: enable one worker, trigger or await the scheduled export, confirm object checksum and row-count metadata, then leave it enabled. Record that event outside the Saturday cutover log but link the evidence."
+        },
+        {
+          "role": "user",
+          "content": "We are done with the two vendor and terminology decisions. I want to use the rest of the planning session on the rehearsal itself. Thursday's scrubbed snapshot will be made by Priya, but Lin, who did not build the migration, should perform the restore from the written instructions. The two coordinator testers are Tomas and Aisha. They need realistic sample tasks without seeing real addresses. I can create synthetic households and shifts before the snapshot is scrubbed.\n\nPlease design a ninety-minute rehearsal agenda that tests handoffs, not just software. Include what evidence Mara should collect and how we distinguish a flaw in the instructions from a flaw in the destination configuration. Do not repeat the settled product names or decode our internal nickname; those facts are already recorded and are not needed for this agenda."
+        },
+        {
+          "role": "assistant",
+          "content": "A ninety-minute rehearsal can test both the written path and the team's coordination if the environment and scrubbed snapshot are staged beforehand.\n\n**00:00–00:10 — briefing.** Mara confirms the rehearsal is isolated, email delivery is disabled, synthetic identities are labeled, and the starting snapshot checksum is recorded. Eli assigns the same call-and-repeat protocol planned for cutover. Lin receives only the written restore instructions and the prepared credentials path; Priya observes silently unless a safety issue would damage shared resources.\n\n**00:10–00:35 — independent restore.** Lin follows the instructions, reading each major transition back to Eli. Mara records instruction section, start/end time, command outcome, and any place Lin must infer an unstated value. If an instruction is ambiguous, Lin states the alternatives before choosing; that is evidence of a documentation flaw. If the instruction is precise but the platform rejects the expected action or produces a different state, capture the exact message as a configuration or environment candidate. Do not fix either category invisibly.\n\n**00:35–00:50 — integrity checks.** Lin runs the prescribed version, extension, row-count, audit-range, and checksum checks. Priya compares results to the source evidence. Any mismatch is recorded before diagnosis.\n\n**00:50–01:10 — coordinator workflows.** Tomas and Aisha use separate accounts. Give them synthetic tasks: find an upcoming shift, use fuzzy search on a misspelled household, assign and unassign a driver, correct a synthetic address, cancel a delivery, and locate a historical audit event. Mara records success, latency impression, unexpected text, and corresponding audit identifiers.\n\n**01:10–01:20 — queue and failure exercise.** Start from an empty queue, enqueue a harmless reminder with delivery blocked, and verify visible completion. Then provide Lin one predesigned reversible failure, such as an intentionally absent environment setting in the rehearsal release. Judge whether the runbook leads to the expected log and stop condition.\n\n**01:20–01:30 — handoff review.** Each participant names one unclear instruction and one confidence-increasing observation. Classify findings as documentation, destination configuration, application behavior, test-data design, or team coordination. Mara collects the annotated instructions, timestamps, checksums, screenshots that contain no personal data, audit identifiers, and a short decision log. Changes require a second short restore rehearsal or a documented reason they cannot affect the restore path."
+        },
+        {
+          "role": "user",
+          "content": "For the synthetic records, I will create six households across three service zones, nine drivers with a mix of active and paused status, and twelve shifts spanning yesterday through next week. One household name will differ by a single letter from another so fuzzy search has a meaningful check. A cancelled shift will already have two audit events, and the testers will add a third by correcting its synthetic street number. We will use reserved example.org addresses and non-routable 555 numbers.\n\nLin asked how to mark deviations. I propose that the written instructions have a margin column with three codes: C for a clarification needed before action, D for a deliberate deviation approved by Eli, and O for an observed difference that did not require changing the step. Priya can answer a clarification, but Eli must say whether the written step changes. At the end I need a compact defect log that can be converted into edits without losing the evidence. Could you refine the codes and give me a defect-log template?"
+        },
+        {
+          "role": "assistant",
+          "content": "The three codes are useful if each has a strict trigger and none implies success by itself.\n\n- **C — clarification:** Lin cannot identify one safe, literal action from the instruction. Record the ambiguous words, the alternatives Lin perceived, the question asked, Priya's factual answer, and Eli's ruling. If action waits for the answer, record the delay.\n- **D — deliberate deviation:** Eli explicitly authorizes an action different from the written step after hearing the reason and risk. Record the original instruction, substituted action, authority, timestamp, and whether the run can still test later steps. A deviation is not a casual workaround; it automatically creates a runbook review item.\n- **O — observed difference:** The instructed action was followed, but the result, duration, interface, or output differed from what the text predicted. Record expected and observed states verbatim where safe. If the difference changes the next action, stop treating it as O and open C or D.\n\nAdd **S — safety stop** for a case where continuing could affect shared resources, expose data, or invalidate the rehearsal. Priya or any participant may call S; Eli decides whether and how the isolated rehearsal resumes. It is valuable evidence, not a failed performance by the caller.\n\nA compact defect log can use one row per event:\n\n| ID | Time | Instruction section/step | Code | Expected state | Observed evidence | Question or reason | Decision and authority | Immediate action | Classification | Owner | Retest required |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n\nKeep raw evidence in a referenced attachment and put only a stable identifier in the table. Classification should be one of documentation, configuration, application, data, or coordination. During review, convert each row into either an exact text edit, a configuration change with verification, a test-data correction, or an accepted observation with rationale. Close a row only when its owner attaches evidence from a rerun or records why no execution path could be affected. That prevents a polished runbook from erasing the circumstances that made the defect visible."
+        },
+        {
+          "role": "user",
+          "content": "Aisha also wants an accessibility pass on the coordinator workflow. One tester will use only a keyboard, and the other will enlarge text to 200 percent. We are not trying to certify the whole application during this migration, but we should notice regressions caused by the new environment or release. The current service has known awkward focus order in the address dialog; that existing issue should be recorded but should not automatically block cutover unless it becomes worse. The login and shift-search pages are the most time-sensitive.\n\nCan you add a bounded accessibility check to the rehearsal, explain how to compare it with the existing baseline, and keep the pass/fail rule practical? Again, focus on this new work rather than revisiting earlier decisions."
+        },
+        {
+          "role": "assistant",
+          "content": "Add a ten-minute parallel accessibility slice during the coordinator-workflow block, using the same synthetic records and browsers that will be used for the ordinary checks. Before the rehearsal, capture a short baseline on the current service for login, shift search, opening a shift, and the address dialog. The baseline should record keyboard path, visible focus, whether a control is reachable, text overlap at 200 percent, and any known workaround. Avoid broad claims about conformance; this is a migration-regression comparison.\n\nDuring the rehearsal, Aisha completes login and shift search at 200 percent text size while Tomas completes the same path without a pointer. Then they swap one task so a single person's familiarity does not hide a difference. Record browser, viewport, zoom or text setting, sequence of controls, outcome, and a screenshot only when it contains synthetic data. For the known address-dialog focus problem, record whether the sequence is identical, improved, or worse than baseline.\n\nA practical blocking rule is: cutover is blocked if the new release introduces a regression that prevents keyboard-only login, prevents reaching or operating shift search, obscures essential content or controls at 200 percent, or makes a core dispatch action materially less usable than the current baseline without a tested workaround. A pre-existing issue that is unchanged is logged with an owner but does not independently block this migration. An improvement is welcome but does not offset a new failure elsewhere.\n\nIf a difference appears, repeat that exact path once on the old baseline using the same browser and synthetic-equivalent task. This controls for tester memory and browser settings. Classify the evidence as release regression, environment-specific behavior, or pre-existing application issue. The rehearsal agenda can stay within ninety minutes by running this slice inside the twenty-minute workflow block rather than adding another phase."
+        },
+        {
+          "role": "user",
+          "content": "Last topic: the support handoff after launch. Two volunteer coordinators, Aisha and Noor, will cover the first weekday morning. They should know how to recognize a stuck queue, a failed email handoff, and a database connectivity problem without receiving administrator access. They can view the status page and a redacted operations dashboard. They should phone Priya for a database symptom and Eli for a workflow or communication problem. Mara will review the first export with Priya on Sunday; that is outside the coordinators' duties.\n\nPlease outline a one-page support card and a fifteen-minute practice scenario. Keep the symptoms observable and avoid asking volunteers to diagnose infrastructure. We should finish with a small list of remaining open questions for the planning team."
+        },
+        {
+          "role": "assistant",
+          "content": "The one-page card should start with scope: Aisha and Noor observe, protect users, and escalate; they do not restart services, change records, or infer root causes. Give them three symptom panels.\n\n**Work appears stuck:** note the time, affected screen, shift identifier using no household address, whether another coordinator sees the same behavior, and the redacted queue indicator. If ordinary pages work but queued actions remain pending beyond the stated threshold, phone Eli; if the dashboard explicitly reports database connectivity, phone Priya.\n\n**Expected email is absent:** confirm the action completed in the application, check that the address is correct without copying it into chat, wait the documented delivery interval, and inspect the application's delivery status if visible. Do not resend repeatedly. Phone Eli with the event identifier and status.\n\n**Connectivity message or broad outage:** stop retrying after one confirmation, check the independent status page, record exact user-visible wording, and ask a second coordinator whether login or search also fails. If the redacted dashboard labels a database connection symptom, phone Priya; otherwise phone Eli. Never paste credentials, addresses, or full logs.\n\nInclude the telephone numbers, coverage hours, a four-line evidence template, and a reminder that public updates come from the status owner. For a fifteen-minute practice, give Noor a synthetic assignment that remains pending while other pages work. Aisha checks the same shift, observes the queue indicator, gathers the event identifier and time, and makes a mock call to Eli. Halfway through, reveal that a test email is also delayed; they should add it to the same evidence rather than trigger repeated sends or call multiple people. Debrief on clarity, privacy, and whether escalation was singular.\n\nOpen questions for the planning team are the numeric pending-job threshold, who covers Priya if she is unavailable, the redacted dashboard fields volunteers may see, the exact support hours, and where event identifiers are displayed. Also confirm the Sunday export observation checklist and the owner and deadline for any rehearsal defects, though neither belongs on the weekday coordinator card."
+        }
+      ]
+    },
+    "wrong_sense": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a careful technical planning assistant. Help Mara reason through a small nonprofit's software migration, keep decisions and open questions distinct, and never claim that you ran commands or changed external systems."
+        },
+        {
+          "role": "user",
+          "content": "I coordinate technology for Harbor Hands, a volunteer-run food-delivery nonprofit. Our scheduling service is a modest Django application used by about eighty coordinators and drivers. It currently runs on an aging virtual machine maintained by one former volunteer, and we need to move it before the machine's support agreement ends next month. I want a migration plan that a mixed group can actually follow, not a cloud-architecture fantasy. The application has a PostgreSQL database, a Redis-backed task queue, nightly exports to object storage, and transactional email. The unusual requirement is the audit trail: assignments, cancellations, and address corrections must remain queryable for seven years because our funders sample them during compliance reviews. We can tolerate a short Saturday maintenance window, but weekday dispatch cannot stop. Please begin by identifying the decisions we need to make and a conservative order for making them. Do not assume we have already selected vendors."
+        },
+        {
+          "role": "assistant",
+          "content": "I would separate the work into decisions, evidence, and execution so the group does not treat an attractive vendor demo as a migration plan.\n\nFirst, inventory the current service: supported Python and PostgreSQL versions, database size and growth, extensions, background jobs, object-storage paths, email provider, DNS ownership, secrets, and every scheduled task. Record who can authorize each account. The seven-year audit requirement deserves its own check: identify which tables and exports constitute the official record, how deletions are handled, and how a reviewer currently retrieves a sample.\n\nSecond, choose the destination components. The database decision should come before application hosting because restore behavior, extensions, connection limits, and point-in-time recovery constrain the rest. Evaluate at least two managed choices and the option of retaining a self-managed database long enough to understand the tradeoff. Choose application hosting, queue hosting, storage, and email separately; there is no need to move every dependency in one night.\n\nThird, prove a repeatable path with a scrubbed snapshot. Time backup, transfer, restore, migrations, integrity checks, and a rollback. Rehearse read-only traffic before attempting writes. Define acceptance checks that volunteers can observe: login, shift search, assignment, cancellation, email, queue processing, export generation, and audit lookup.\n\nFinally, schedule a bounded cutover. Freeze writes, take the final backup, restore, run checks, change traffic, and keep the old system intact but read-only until the new environment has survived an agreed observation period. Assign one person to call the sequence and another to record timestamps. This order leaves vendor choice open while making the evidence needed for that choice explicit."
+        },
+        {
+          "role": "user",
+          "content": "The inventory is mostly complete. Production has PostgreSQL 14 with pg_trgm and uuid-ossp, 46 GB of data, and roughly 600 MB of growth each month. Redis holds disposable jobs, so we do not need to migrate queue contents. The audit tables are append-only at the application layer, and a nightly compressed CSV export goes to a storage bucket owned by the nonprofit. We verified that the exports cover the same row counts as the database, but nobody has tested a full seven-year retrieval recently. DNS is in an organizational account with two current board members as administrators. Email is through Postmark and can stay where it is.\n\nOur available maintenance window is Saturday 02:00–05:00 UTC. I would like to preserve the old VM in read-only mode for fourteen days, then make an encrypted archive before shutting it down. The status page is on a separate provider and must stay up throughout. For a rehearsal, we can take Thursday's snapshot, scrub names, phone numbers, street addresses, and free-text delivery notes, then let two coordinators test realistic workflows. Could you turn those facts into explicit acceptance criteria and point out gaps? I especially do not want a test that says only 'the site loads.'"
+        },
+        {
+          "role": "assistant",
+          "content": "Use a signed checklist with evidence beside each item. A practical rehearsal acceptance set would be:\n\n1. **Restore integrity.** The restored database reports the expected PostgreSQL major version and both required extensions. Row counts match for every audit and operational table. Foreign-key validation completes, the newest and oldest audit timestamps match the source, and a sample from each of seven calendar years can be retrieved. Compare checksums for the nightly export files rather than merely counting them.\n2. **Read paths.** A coordinator can log in, search upcoming shifts, open a driver profile, view an address after scrubbing, and retrieve an old assignment by date and identifier. Test both common searches and pg_trgm-dependent fuzzy search.\n3. **Write paths.** In the isolated rehearsal only, create a shift, assign and unassign a volunteer, correct an address, cancel a delivery, and confirm that each action adds the expected audit event. Do not send these messages through the live email account.\n4. **Asynchronous work.** Queue a reminder, a nightly export, and any recurring cleanup task. Confirm completion, retry behavior, and visible failure logging. Because Redis contents are disposable, validate job reconstruction after an empty start.\n5. **Operational controls.** Verify TLS, backups, point-in-time recovery settings, administrator access, secret rotation procedure, log retention, alert destinations, and a restore performed by someone other than the person who configured it.\n6. **Timing.** Record dump, upload, restore, migration, validation, DNS or routing change, and rollback estimates separately. The sum must leave at least forty-five minutes inside the three-hour window for a decision and reversal.\n\nGaps remain around the exact retention guarantee for managed backups, the restore time for 46 GB, the application version's compatibility with a newer PostgreSQL release, and whether the old VM can be made truly read-only without breaking login sessions. Also define who may declare success, who may order rollback, and what observable threshold triggers that decision."
+        },
+        {
+          "role": "user",
+          "content": "I compared database destinations with our treasurer and the former maintainer. The real alternatives are: keep PostgreSQL on the old VM for another quarter while we move only the app; use managed PostgreSQL on Neon, which has an appealing branching workflow; or use managed PostgreSQL on Render, where we can place the web service and database in the same private network. All three can support the extensions. The old VM option leaves us dependent on the former volunteer. Neon is a little cheaper and its branching would simplify rehearsals, but our measured restore and connection-pool tests were less predictable. Render's quote is within budget, its retained backups meet the board's policy, and the team understood its recovery procedure.\n\nI am making the final selection now: managed PostgreSQL on Render. Treat that as locked, not provisional. The Render choice includes the standard high-availability database tier and fourteen daily backups; it does not include moving Redis or email during the database cutover. Please record why we chose it, what we rejected, and which facts still need confirmation so the choice does not become a vague endorsement of one company."
+        },
+        {
+          "role": "assistant",
+          "content": "Decision recorded: the database destination is managed PostgreSQL on Render, using the standard high-availability tier with fourteen daily backups. The Render path is locked for this plan.\n\nThe reasons are specific to Harbor Hands: the measured recovery procedure was more predictable for this team, the backup retention satisfies the board's current policy, the quote fits the approved budget, and private networking with the likely web host reduces configuration complexity. These are selection criteria, not a general claim that the service is superior.\n\nTwo alternatives were rejected. Keeping the database on the old VM would reduce immediate change but preserve the single-volunteer dependency and postpone the most time-sensitive risk. Neon remained viable and less expensive, and its branch workflow was attractive for rehearsals, but the team's restore and connection-pool observations were less predictable. Preserve those test notes in case cost or capacity changes later.\n\nStill confirm the exact PostgreSQL minor-version upgrade behavior, whether pg_trgm and uuid-ossp are enabled before restore or during it, the connection limit available to the web and worker processes, point-in-time recovery granularity, backup export options beyond the fourteen-day managed window, maintenance notification timing, and how support handles a failed regional recovery. Separately, measure a full 46 GB restore using the chosen tier.\n\nScope is also explicit: this decision does not move Redis, Postmark, DNS, object-storage exports, or the independent status page. Those components retain their own owners and change windows. A later app-host decision may use the same provider, but it should be justified on application requirements rather than inferred from the database choice."
+        },
+        {
+          "role": "user",
+          "content": "Now for the cutover mechanics. The app has two worker types: short reminder jobs and a single export worker that can run for forty minutes. Deploys currently restart both without draining. We also found three cron entries on the VM: one export, one stale-session cleanup, and one weekly report. The weekly report can wait; the export must not run during the final dump. The coordinators prefer a visible banner starting Friday afternoon, and the dispatch lead wants a phone number rather than a chat room if something is wrong during the window.\n\nThe old VM's read-only period is trickier than expected because the application has no global read-only switch. We can block write methods at the reverse proxy, but login updates a last-seen timestamp and would fail. I would rather show a static archive notice and allow database access only to two administrators through a separate query tool. The encrypted final archive should contain the database dump, deployment manifest, relevant environment-variable names without secret values, and restore instructions. Please propose a runbook sequence with explicit abort points, while keeping the three-hour limit and the independent status page in mind."
+        },
+        {
+          "role": "assistant",
+          "content": "A conservative runbook can fit the window if preparation is completed before Saturday. On Friday, publish the banner, confirm the telephone escalation tree, disable the weekly report, verify the export worker has finished, and take a non-authoritative backup to test credentials. Pre-create the destination, extensions, users, network rules, web release, empty Redis, and monitoring. Keep the new web release inaccessible to public traffic but available to the test team.\n\nAt 01:45 UTC, the caller confirms all named participants, opens the timestamp log, checks the independent status page, and verifies the latest routine export. At 02:00, place the old application behind a maintenance response and stop web and worker processes. Confirm there are no active database sessions except the dump. **Abort point 1:** if long-running writes or the export worker cannot be stopped by 02:15, restore normal service and reschedule.\n\nTake the final database dump and record its checksum. Upload it over the prepared path and restore into the destination. Enable required extensions in the rehearsed order, run only the rehearsed application migrations, then compare table counts and the critical audit range. **Abort point 2:** if restore plus migrations is not complete by 03:15, or any audit-table count differs, do not redirect traffic. Restart the old system.\n\nRun the compact acceptance suite: login, search, fuzzy search, assignment, cancellation, audit entry, queued reminder without external delivery, and export initialization. Confirm logs and alerts. **Abort point 3:** if any core write or audit check fails by 03:50, roll back. If checks pass, direct traffic to the new release, re-enable ordinary workers, and observe error rate and queue depth. Keep the export disabled until Sunday.\n\nBy 04:30, make the final keep-or-revert call, leaving thirty minutes for reversal. Replace the old application with a static archive notice; permit only the two administrators to use the separate read-only query path. During the fourteen-day observation period, preserve the VM and its disk unchanged. The final encrypted archive should also include checksums, software versions, extension list, timestamps, and the redacted runbook outcome. Secret names are useful; secret values belong in the credential manager, not the archive."
+        },
+        {
+          "role": "user",
+          "content": "One terminology issue keeps confusing people. We have two internal things called Juniper. The design contractor named the release dashboard Juniper; it shows error rate, queue depth, and deploy markers. Years ago the former maintainer also named the rollback checklist Juniper; that is the ordered paper-and-PDF procedure the cutover caller reads if we reverse traffic. Both names appear in old notes.\n\nFor this conversation, when I say Juniper I mean the release dashboard. That mapping is deliberate because I am redesigning observability, not preparing the caller's packet. Lock the release meaning for this thread. The rollback checklist still exists and should be checked at the relevant times, but refer to it descriptively so nobody mistakes it for the dashboard I am editing. Please restate the distinction and propose the sections the intended Juniper artifact should contain."
+        },
+        {
+          "role": "assistant",
+          "content": "Terminology locked for this thread: Juniper means the release dashboard. The release sense is the intended mapping here. The separate rollback checklist should be called the rollback checklist in our discussion, even if its cover still displays the old Juniper title.\n\nThe dashboard should be an operational view rather than a substitute for the caller’s procedure. I suggest these sections:\n\n- **Service health:** request rate, error rate, latency, and deploy markers, with units, time window, and last-update time visible.\n- **Queue state:** pending jobs, oldest-job age, completion rate, and retry count, separated by reminder and export workers so a long export does not resemble a stuck queue.\n- **Database signals:** connection use, failed connections, transaction errors, and replication or backup state that the service actually exposes. Label absence as unknown rather than healthy.\n- **Cutover timeline:** maintenance start, dump, restore, validation, traffic switch, and final decision markers entered by the recorder, not inferred from noisy metrics.\n- **Alert context:** threshold, duration, owner, and runbook link for each warning. Color alone must not carry status, and a warning must show whether someone acknowledged it.\n- **Comparisons:** a rehearsed baseline and a short pre-cutover reference window, using the same aggregation so the team does not compare unlike periods.\n- **Evidence export:** a timestamped snapshot of the displayed values and configuration version for the incident log, without secrets or personal data.\n\nPut rollback instructions in the caller’s packet, not on the dashboard. The display may link to that controlled document, but it should not become an editable second copy. That keeps the two legacy uses distinguishable while allowing the caller to use both while keeping observed evidence separate from decision authority during the window safely."
+        },
+        {
+          "role": "user",
+          "content": "Good. There are a few people and constraints to add. Eli will call the sequence; Priya operates the database steps; Tomas represents dispatch and has rollback authority if the core workflow is unavailable; I will maintain the log and status page. Priya should not be asked to write incident prose while she is restoring. The telephone bridge is the primary channel, with text messages only as a fallback. A board observer may listen but cannot change the runbook during the window.\n\nFor reconciliation, any writes made after redirect should be exported with stable primary keys and timestamps. We never want an automated two-way merge. The likely app host supports a gradual traffic shift, but for this migration I want a single switch because our small team cannot reason about two writable databases. The export worker should remain disabled until Sunday at 06:00 UTC, when Priya and I can watch the first run. Could you produce a role table and a communication cadence that is calm enough for volunteers but precise enough to avoid parallel commands?"
+        },
+        {
+          "role": "assistant",
+          "content": "Use a single-command structure: Eli announces each numbered step, Priya repeats it back before execution, Mara records start and completion, and Tomas confirms user-visible checks. Nobody else issues operational instructions.\n\n| Role | Primary duty | Decision authority | Must not be assigned |\n|---|---|---|---|\n| Eli, cutover caller | Read the approved sequence, maintain pace, request checks | May pause the sequence and call a scheduled decision point | Direct database commands |\n| Priya, database operator | Stop sessions, dump, restore, validate, and report exact outcomes | May halt an unsafe database action | Status prose or simultaneous support chat |\n| Tomas, dispatch representative | Test core dispatch workflow and judge operational availability | May order rollback when core workflow is unavailable | Infrastructure diagnosis |\n| Mara, recorder/status owner | Timestamp actions, capture evidence, update the independent status page | May demand clarification before recording a step as complete | Executing Priya's commands |\n| Board observer | Listen and receive scheduled updates | None during the window | Editing the runbook or directing operators |\n\nCadence should be event-based, with quiet intervals while commands run. At 01:45, Eli reads attendance, authority, current service state, and the next decision deadline. At 02:00, Mara posts maintenance started. After shutdown, dump completion, restore completion, validation, traffic switch, and final decision, Eli gives one compact spoken update: step completed, observed result, next step, and next deadline. Mara mirrors only public-impact changes to the status page.\n\nIf a step takes longer than ten minutes without a natural completion update, Priya gives a factual heartbeat to Eli: still running, no error observed or exact error observed, and revised estimate if known. Other participants do not query her in parallel. Tomas reports test outcomes only when Eli calls for them. The fallback text message should contain the bridge problem and callback instruction, never operational commands.\n\nAt Sunday 06:00, the export-worker restart is a separate observed change: enable one worker, trigger or await the scheduled export, confirm object checksum and row-count metadata, then leave it enabled. Record that event outside the Saturday cutover log but link the evidence."
+        },
+        {
+          "role": "user",
+          "content": "We are done with the two vendor and terminology decisions. I want to use the rest of the planning session on the rehearsal itself. Thursday's scrubbed snapshot will be made by Priya, but Lin, who did not build the migration, should perform the restore from the written instructions. The two coordinator testers are Tomas and Aisha. They need realistic sample tasks without seeing real addresses. I can create synthetic households and shifts before the snapshot is scrubbed.\n\nPlease design a ninety-minute rehearsal agenda that tests handoffs, not just software. Include what evidence Mara should collect and how we distinguish a flaw in the instructions from a flaw in the destination configuration. Do not repeat the settled product names or decode our internal nickname; those facts are already recorded and are not needed for this agenda."
+        },
+        {
+          "role": "assistant",
+          "content": "A ninety-minute rehearsal can test both the written path and the team's coordination if the environment and scrubbed snapshot are staged beforehand.\n\n**00:00–00:10 — briefing.** Mara confirms the rehearsal is isolated, email delivery is disabled, synthetic identities are labeled, and the starting snapshot checksum is recorded. Eli assigns the same call-and-repeat protocol planned for cutover. Lin receives only the written restore instructions and the prepared credentials path; Priya observes silently unless a safety issue would damage shared resources.\n\n**00:10–00:35 — independent restore.** Lin follows the instructions, reading each major transition back to Eli. Mara records instruction section, start/end time, command outcome, and any place Lin must infer an unstated value. If an instruction is ambiguous, Lin states the alternatives before choosing; that is evidence of a documentation flaw. If the instruction is precise but the platform rejects the expected action or produces a different state, capture the exact message as a configuration or environment candidate. Do not fix either category invisibly.\n\n**00:35–00:50 — integrity checks.** Lin runs the prescribed version, extension, row-count, audit-range, and checksum checks. Priya compares results to the source evidence. Any mismatch is recorded before diagnosis.\n\n**00:50–01:10 — coordinator workflows.** Tomas and Aisha use separate accounts. Give them synthetic tasks: find an upcoming shift, use fuzzy search on a misspelled household, assign and unassign a driver, correct a synthetic address, cancel a delivery, and locate a historical audit event. Mara records success, latency impression, unexpected text, and corresponding audit identifiers.\n\n**01:10–01:20 — queue and failure exercise.** Start from an empty queue, enqueue a harmless reminder with delivery blocked, and verify visible completion. Then provide Lin one predesigned reversible failure, such as an intentionally absent environment setting in the rehearsal release. Judge whether the runbook leads to the expected log and stop condition.\n\n**01:20–01:30 — handoff review.** Each participant names one unclear instruction and one confidence-increasing observation. Classify findings as documentation, destination configuration, application behavior, test-data design, or team coordination. Mara collects the annotated instructions, timestamps, checksums, screenshots that contain no personal data, audit identifiers, and a short decision log. Changes require a second short restore rehearsal or a documented reason they cannot affect the restore path."
+        },
+        {
+          "role": "user",
+          "content": "For the synthetic records, I will create six households across three service zones, nine drivers with a mix of active and paused status, and twelve shifts spanning yesterday through next week. One household name will differ by a single letter from another so fuzzy search has a meaningful check. A cancelled shift will already have two audit events, and the testers will add a third by correcting its synthetic street number. We will use reserved example.org addresses and non-routable 555 numbers.\n\nLin asked how to mark deviations. I propose that the written instructions have a margin column with three codes: C for a clarification needed before action, D for a deliberate deviation approved by Eli, and O for an observed difference that did not require changing the step. Priya can answer a clarification, but Eli must say whether the written step changes. At the end I need a compact defect log that can be converted into edits without losing the evidence. Could you refine the codes and give me a defect-log template?"
+        },
+        {
+          "role": "assistant",
+          "content": "The three codes are useful if each has a strict trigger and none implies success by itself.\n\n- **C — clarification:** Lin cannot identify one safe, literal action from the instruction. Record the ambiguous words, the alternatives Lin perceived, the question asked, Priya's factual answer, and Eli's ruling. If action waits for the answer, record the delay.\n- **D — deliberate deviation:** Eli explicitly authorizes an action different from the written step after hearing the reason and risk. Record the original instruction, substituted action, authority, timestamp, and whether the run can still test later steps. A deviation is not a casual workaround; it automatically creates a runbook review item.\n- **O — observed difference:** The instructed action was followed, but the result, duration, interface, or output differed from what the text predicted. Record expected and observed states verbatim where safe. If the difference changes the next action, stop treating it as O and open C or D.\n\nAdd **S — safety stop** for a case where continuing could affect shared resources, expose data, or invalidate the rehearsal. Priya or any participant may call S; Eli decides whether and how the isolated rehearsal resumes. It is valuable evidence, not a failed performance by the caller.\n\nA compact defect log can use one row per event:\n\n| ID | Time | Instruction section/step | Code | Expected state | Observed evidence | Question or reason | Decision and authority | Immediate action | Classification | Owner | Retest required |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n\nKeep raw evidence in a referenced attachment and put only a stable identifier in the table. Classification should be one of documentation, configuration, application, data, or coordination. During review, convert each row into either an exact text edit, a configuration change with verification, a test-data correction, or an accepted observation with rationale. Close a row only when its owner attaches evidence from a rerun or records why no execution path could be affected. That prevents a polished runbook from erasing the circumstances that made the defect visible."
+        },
+        {
+          "role": "user",
+          "content": "Aisha also wants an accessibility pass on the coordinator workflow. One tester will use only a keyboard, and the other will enlarge text to 200 percent. We are not trying to certify the whole application during this migration, but we should notice regressions caused by the new environment or release. The current service has known awkward focus order in the address dialog; that existing issue should be recorded but should not automatically block cutover unless it becomes worse. The login and shift-search pages are the most time-sensitive.\n\nCan you add a bounded accessibility check to the rehearsal, explain how to compare it with the existing baseline, and keep the pass/fail rule practical? Again, focus on this new work rather than revisiting earlier decisions."
+        },
+        {
+          "role": "assistant",
+          "content": "Add a ten-minute parallel accessibility slice during the coordinator-workflow block, using the same synthetic records and browsers that will be used for the ordinary checks. Before the rehearsal, capture a short baseline on the current service for login, shift search, opening a shift, and the address dialog. The baseline should record keyboard path, visible focus, whether a control is reachable, text overlap at 200 percent, and any known workaround. Avoid broad claims about conformance; this is a migration-regression comparison.\n\nDuring the rehearsal, Aisha completes login and shift search at 200 percent text size while Tomas completes the same path without a pointer. Then they swap one task so a single person's familiarity does not hide a difference. Record browser, viewport, zoom or text setting, sequence of controls, outcome, and a screenshot only when it contains synthetic data. For the known address-dialog focus problem, record whether the sequence is identical, improved, or worse than baseline.\n\nA practical blocking rule is: cutover is blocked if the new release introduces a regression that prevents keyboard-only login, prevents reaching or operating shift search, obscures essential content or controls at 200 percent, or makes a core dispatch action materially less usable than the current baseline without a tested workaround. A pre-existing issue that is unchanged is logged with an owner but does not independently block this migration. An improvement is welcome but does not offset a new failure elsewhere.\n\nIf a difference appears, repeat that exact path once on the old baseline using the same browser and synthetic-equivalent task. This controls for tester memory and browser settings. Classify the evidence as release regression, environment-specific behavior, or pre-existing application issue. The rehearsal agenda can stay within ninety minutes by running this slice inside the twenty-minute workflow block rather than adding another phase."
+        },
+        {
+          "role": "user",
+          "content": "Last topic: the support handoff after launch. Two volunteer coordinators, Aisha and Noor, will cover the first weekday morning. They should know how to recognize a stuck queue, a failed email handoff, and a database connectivity problem without receiving administrator access. They can view the status page and a redacted operations dashboard. They should phone Priya for a database symptom and Eli for a workflow or communication problem. Mara will review the first export with Priya on Sunday; that is outside the coordinators' duties.\n\nPlease outline a one-page support card and a fifteen-minute practice scenario. Keep the symptoms observable and avoid asking volunteers to diagnose infrastructure. We should finish with a small list of remaining open questions for the planning team."
+        },
+        {
+          "role": "assistant",
+          "content": "The one-page card should start with scope: Aisha and Noor observe, protect users, and escalate; they do not restart services, change records, or infer root causes. Give them three symptom panels.\n\n**Work appears stuck:** note the time, affected screen, shift identifier using no household address, whether another coordinator sees the same behavior, and the redacted queue indicator. If ordinary pages work but queued actions remain pending beyond the stated threshold, phone Eli; if the dashboard explicitly reports database connectivity, phone Priya.\n\n**Expected email is absent:** confirm the action completed in the application, check that the address is correct without copying it into chat, wait the documented delivery interval, and inspect the application's delivery status if visible. Do not resend repeatedly. Phone Eli with the event identifier and status.\n\n**Connectivity message or broad outage:** stop retrying after one confirmation, check the independent status page, record exact user-visible wording, and ask a second coordinator whether login or search also fails. If the redacted dashboard labels a database connection symptom, phone Priya; otherwise phone Eli. Never paste credentials, addresses, or full logs.\n\nInclude the telephone numbers, coverage hours, a four-line evidence template, and a reminder that public updates come from the status owner. For a fifteen-minute practice, give Noor a synthetic assignment that remains pending while other pages work. Aisha checks the same shift, observes the queue indicator, gathers the event identifier and time, and makes a mock call to Eli. Halfway through, reveal that a test email is also delayed; they should add it to the same evidence rather than trigger repeated sends or call multiple people. Debrief on clarity, privacy, and whether escalation was singular.\n\nOpen questions for the planning team are the numeric pending-job threshold, who covers Priya if she is unavailable, the redacted dashboard fields volunteers may see, the exact support hours, and where event identifiers are displayed. Also confirm the Sunday export observation checklist and the owner and deadline for any rehearsal defects, though neither belongs on the weekday coordinator card."
+        }
+      ]
+    }
+  },
+  "plants": {
+    "referent": {
+      "plant_id": "v11-c01-referent-1",
+      "category": "referent",
+      "probe": "Which database hosting option did Mara finally select for the migration?",
+      "correct_target": "managed PostgreSQL on Render",
+      "counterfactual_target": "managed PostgreSQL on Neon",
+      "establishing_indices": [
+        5,
+        6
+      ],
+      "downstream_reference_indices": [
+        6
+      ],
+      "rationale": "Mara compares three real hosting choices and explicitly locks one; the counterfactual makes a rejected managed service the locked choice."
+    },
+    "sense": {
+      "plant_id": "v11-c01-sense-1",
+      "category": "sense",
+      "probe": "In this migration conversation, what did the name Juniper mean?",
+      "correct_target": "the rollback checklist",
+      "counterfactual_target": "the release dashboard",
+      "establishing_indices": [
+        9,
+        10
+      ],
+      "downstream_reference_indices": [
+        10
+      ],
+      "rationale": "The team uses Juniper for two plausible migration artifacts; Mara disambiguates which one she means in this thread."
+    }
+  },
+  "changed_message_allowlists": {
+    "wrong_referent": [
+      {
+        "message_index": 5,
+        "role": "user",
+        "correct_content_sha256": "9a19021c645b5c7b8944a35307d2a1ad427f54f5dc714addbf6867593a1863f3",
+        "counterfactual_content_sha256": "7d7b45b5f7d1d2fe80cecd7aad28cedc85fa75679c6a886da4c3ada705a638be",
+        "correct_content_token_count": 220,
+        "counterfactual_content_token_count": 220
+      },
+      {
+        "message_index": 6,
+        "role": "assistant",
+        "correct_content_sha256": "3c8f4e391daa962ac7fbcaf49ed47fc0376dc237979c130b28dd814c055e9841",
+        "counterfactual_content_sha256": "987e58bdee5984c8767c54c77321f1d45bfdd983a0a214dac4c6963a377aa260",
+        "correct_content_token_count": 317,
+        "counterfactual_content_token_count": 317
+      }
+    ],
+    "wrong_sense": [
+      {
+        "message_index": 9,
+        "role": "user",
+        "correct_content_sha256": "15dfb011b805742a092f026030f55b60218f0e07a5fda5fd12a938c888b084a8",
+        "counterfactual_content_sha256": "0ac19b3319c7b1a9d296fca2b6c1bc4a2d08a43ccadd42c777db74262ee25eb0",
+        "correct_content_token_count": 170,
+        "counterfactual_content_token_count": 170
+      },
+      {
+        "message_index": 10,
+        "role": "assistant",
+        "correct_content_sha256": "6b611332d2f544cef955d73f68c782edd71e950c34bb9a45c5147edd47135729",
+        "counterfactual_content_sha256": "65afc3f174cd809d6fef676fcf073e6655d45cfdf6f3801c2d51835eb2664204",
+        "correct_content_token_count": 360,
+        "counterfactual_content_token_count": 360
+      }
+    ]
+  },
+  "distractor_fact_inventory": [
+    "The maintenance window is Saturday from 02:00 to 05:00 UTC.",
+    "Historical audit rows must remain queryable for seven years.",
+    "Email delivery will move only after the database cutover.",
+    "A read-only rehearsal will use a scrubbed snapshot on Thursday.",
+    "The status page is hosted independently and must remain available.",
+    "Two volunteer coordinators need a short support handoff before launch."
+  ],
+  "tokenizer_binding": {
+    "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "summary_request": "Write a compact handoff note of 180–240 words for another assistant who will continue this conversation without seeing it. Identify the participants and their roles, current goals, decisions that still affect next steps, constraints, unresolved questions, and the next actions. Prioritize what the next assistant needs to act; compress settled background details when they are not needed. Use plain prose or concise bullets. Do not add commentary before or after the note.",
+    "summary_request_sha256": "c9799f7e1c6adcaf9bc90b0ec4c67d1b7a317ad3d24e55be9753c89eb6ef12e3"
+  },
+  "observed_mechanical_evidence": {
+    "method": "tokenizer-only local reconstruction; no subject-model forward pass",
+    "variants": {
+      "correct": {
+        "full_prefix_token_count": 6221,
+        "full_prefix_token_ids_sha256": "50b2892304e41ba7aa76fd781a13ac9be617ebaa7277b723af837d35c4773d8c",
+        "message_start_positions": [
+          0,
+          43,
+          229,
+          567,
+          829,
+          1238,
+          1463,
+          1785,
+          2015,
+          2491,
+          2666,
+          3031,
+          3240,
+          3698,
+          3859,
+          4386,
+          4589,
+          5024,
+          5177,
+          5548,
+          5701,
+          6121,
+          6218
+        ],
+        "message_start_positions_sha256": "348ba49016d4bf39b2db1530bf7d9abab15aef12a2512026b5aa205bed5f3451",
+        "per_message_canonical_widths": [
+          43,
+          186,
+          338,
+          262,
+          409,
+          225,
+          322,
+          230,
+          476,
+          175,
+          365,
+          209,
+          458,
+          161,
+          527,
+          203,
+          435,
+          153,
+          371,
+          153,
+          420,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          43,
+          186,
+          338,
+          262,
+          409,
+          225,
+          322,
+          230,
+          476,
+          175,
+          365,
+          209,
+          458,
+          161,
+          527,
+          203,
+          435,
+          153,
+          371,
+          153,
+          420,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2125
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "7b7bc52b8f53459e40609bf292fd90a5ec0cd348538ce4e58178d7354bac5256"
+      },
+      "wrong_referent": {
+        "full_prefix_token_count": 6221,
+        "full_prefix_token_ids_sha256": "756c035c974dea8e4c92176d2a38960cb17ba519dc87cc276e004a02421614f8",
+        "message_start_positions": [
+          0,
+          43,
+          229,
+          567,
+          829,
+          1238,
+          1463,
+          1785,
+          2015,
+          2491,
+          2666,
+          3031,
+          3240,
+          3698,
+          3859,
+          4386,
+          4589,
+          5024,
+          5177,
+          5548,
+          5701,
+          6121,
+          6218
+        ],
+        "message_start_positions_sha256": "348ba49016d4bf39b2db1530bf7d9abab15aef12a2512026b5aa205bed5f3451",
+        "per_message_canonical_widths": [
+          43,
+          186,
+          338,
+          262,
+          409,
+          225,
+          322,
+          230,
+          476,
+          175,
+          365,
+          209,
+          458,
+          161,
+          527,
+          203,
+          435,
+          153,
+          371,
+          153,
+          420,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          43,
+          186,
+          338,
+          262,
+          409,
+          225,
+          322,
+          230,
+          476,
+          175,
+          365,
+          209,
+          458,
+          161,
+          527,
+          203,
+          435,
+          153,
+          371,
+          153,
+          420,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2125
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "b57a48f3ecf7b1cfa6886301d578aaef74def94637ac7f80608cad624efc50f2"
+      },
+      "wrong_sense": {
+        "full_prefix_token_count": 6221,
+        "full_prefix_token_ids_sha256": "2be72673484a15e08a99eb0e08dd2148ceb22f36df9eb9fdb5b7c4886b6700bc",
+        "message_start_positions": [
+          0,
+          43,
+          229,
+          567,
+          829,
+          1238,
+          1463,
+          1785,
+          2015,
+          2491,
+          2666,
+          3031,
+          3240,
+          3698,
+          3859,
+          4386,
+          4589,
+          5024,
+          5177,
+          5548,
+          5701,
+          6121,
+          6218
+        ],
+        "message_start_positions_sha256": "348ba49016d4bf39b2db1530bf7d9abab15aef12a2512026b5aa205bed5f3451",
+        "per_message_canonical_widths": [
+          43,
+          186,
+          338,
+          262,
+          409,
+          225,
+          322,
+          230,
+          476,
+          175,
+          365,
+          209,
+          458,
+          161,
+          527,
+          203,
+          435,
+          153,
+          371,
+          153,
+          420,
+          100
+        ],
+        "turn_aligned_replay_call_widths": [
+          43,
+          186,
+          338,
+          262,
+          409,
+          225,
+          322,
+          230,
+          476,
+          175,
+          365,
+          209,
+          458,
+          161,
+          527,
+          203,
+          435,
+          153,
+          371,
+          153,
+          420,
+          100
+        ],
+        "ordinary_4096_call_widths": [
+          4096,
+          2125
+        ],
+        "decoded_round_trip": true,
+        "literal_messages_canonical_sha256": "40c6a6e416c901f0a07f765f7b441335f091e8700d4da929b6f7b0775764084f"
+      }
+    },
+    "pair_invariants": {
+      "roles_message_count_order_identical": true,
+      "non_allowlisted_messages_byte_identical": true,
+      "system_and_retained_tail_byte_identical": true,
+      "changed_messages_strictly_before_middle_end": true,
+      "changed_content_token_counts_equal": true,
+      "full_prefix_counts_equal": true,
+      "message_start_positions_equal": true,
+      "P_widths_equal": true,
+      "O_widths_equal": true
+    }
+  },
+  "review": "PENDING",
+  "warning": "DRAFT_UNREVIEWED. Not frozen, not reviewed, not executable, and must not be used for semantic outcomes."
+}
