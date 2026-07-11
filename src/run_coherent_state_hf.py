@@ -959,6 +959,8 @@ class Runner:
             identity = _strict_generated_replay_witness(
                 generated, replay, measure_generated_replay(
                     generated, replay, IDENTITY_TOLERANCE))
+            identity["scoring_source_materialization_used"] = \
+                scoring_materialization
             if not (generated.summary_start == replay.summary_start and
                     generated.summary_end == replay.summary_end and
                     generated.summary_ids == replay.summary_ids):

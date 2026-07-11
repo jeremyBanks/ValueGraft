@@ -1194,6 +1194,8 @@ def _validate_snapshot_provenance(doc: dict[str, Any], label: str) -> None:
             not 1 <= len(history) <= len(allowed_materializations) or
             not set(history).issubset(allowed_materializations) or used not in history):
         raise ValueError(f"{label} scoring source materialization is ambiguous")
+    if identity.get("scoring_source_materialization_used") != used:
+        raise ValueError(f"{label} replay/materialization binding differs")
 
     audits = doc.get("branch_audits")
     expected_arms = {

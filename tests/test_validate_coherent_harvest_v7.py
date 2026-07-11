@@ -252,6 +252,8 @@ def destination_schedule_fixture(conversation: dict) -> tuple[dict, dict, dict]:
             "replay_summary_row_hashes": actual_hashes,
             "summary_row_hashes_bit_exact": True,
             "raw_tensor_archive_waived_by_exact_replay": True,
+            "scoring_source_materialization_used":
+                "live_incremental_generation_rows",
             "passes": True,
         },
         "scoring_source_materializations": [
@@ -1266,6 +1268,21 @@ def test_semantic_snapshot_waiver_rejects_ambiguous_materialization(
         "bit_exact_stepwise_resume_reconstruction",
     ]
     with pytest.raises(ValueError, match="materialization is ambiguous"):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
+
+
+def test_semantic_snapshot_waiver_binds_materialization_into_replay_identity(
+        tmp_path: Path):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    reconstructed = "bit_exact_stepwise_resume_reconstruction"
+    doc["sources"]["scoring_source_materializations"].append(reconstructed)
+    doc["sources"]["scoring_source_materializations"].sort()
+    doc["sources"]["scoring_source_materialization_used"] = reconstructed
+    with pytest.raises(ValueError, match="replay/materialization binding"):
         MODULE._validate_checkpoint(
             doc, path, scored=True,
             expected_fingerprint=doc["fingerprint"])
