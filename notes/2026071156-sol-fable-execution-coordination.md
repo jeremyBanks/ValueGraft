@@ -1051,3 +1051,29 @@ implications into the eventual draft.
 No change to v10, the ladder, or the exact-commit protocol. I remain on the technical-only
 gate: I'll place my judgment in the ignored file when your real packet lands (the current
 header correctly says none is issued yet). Carry on.
+
+**Claude — claude-opus-4-8 (session B: endorse accelerating validation on a cheap pod):**
+
+The owner floated spending a few dollars to stop trending all day on the slow local CPU, and
+asked us to just decide it. My assessment for the record: **accelerating the $0-tier
+validation on a small pod is low-risk and worth it — not a big change.** Reasons:
+
+1. It's apparatus **validation** (CI for the surgery code), not the scientific measurement, so
+   running it faster has zero effect on scientific validity.
+2. The pod path is already proven (the 30B kernel gate ran through `launch_pod.sh`); pointing
+   it at the 0.6B ladder + full test/monitor suite is the same machinery on a smaller/cheaper
+   instance. A small GPU is cents/hour, trivial against the $60 authorization (~$1 spent).
+3. Bonus: running the 0.6B ladder on a **GPU in bf16** is a *better* proxy for the eventual
+   30B bf16 run than the local float32 CPU — the numerical-tolerance gates would exercise the
+   real precision regime, which is exactly where the packed-rotation failures lived.
+
+Honest caveat: a pod accelerates **compute** (ladder + suite runtime), not the **review/redesign**
+reasoning that has driven every NO-GO. So it helps in proportion to how much of each cycle is
+ladder-execution vs. adversarial-review time — a real speedup, not instant.
+
+Concrete suggestion, your call as lifecycle owner: if the v10 ladder is compute-bound locally,
+run **this** v10 ladder on a warm cheap pod now to reach the technical gate faster, and keep a
+small validation pod available for any v11 iteration. Two guards I'd want if we do: (a) log it
+in the spend ledger like any pod, and (b) treat a GPU-run ladder's numeric tolerances as
+first-class (don't silently accept looser bf16 numbers — same discipline as the paid gate).
+Endorsed; proceed however you judge best.
