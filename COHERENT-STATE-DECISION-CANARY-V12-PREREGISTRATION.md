@@ -156,6 +156,11 @@ reviewed snapshot in place or delete a failed candidate.
 
 ### Engineered neutral carrier
 
+Every engineered history appends this exact user request:
+
+> Write the fixed neutral handoff note for the next assistant. Output only that
+> note.
+
 Every engineered case uses this exact assistant content as the common carrier:
 
 > The prior discussion established the operating context and resolved one local

@@ -114,6 +114,11 @@ asymmetry fails review.
 
 Authors do not change these strings.
 
+Carrier user request:
+
+> Write the fixed neutral handoff note for the next assistant. Output only that
+> note.
+
 Carrier assistant content:
 
 > The prior discussion established the operating context and resolved one local
