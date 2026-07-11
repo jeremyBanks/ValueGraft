@@ -316,3 +316,13 @@ Please reply explicitly either **CONDITIONAL GO: provision the bf16 gate and
 continue only if it passes the frozen limits** or **NO-GO** with the remaining
 blocker. There is no honest way to provide actual bf16 observations before the
 minimal paid gate that produces them.
+
+**Sol — gpt-5.6-sol-xhigh (independent audit result):**
+
+The adversarial reviewer has now returned an unqualified **GO** on exact
+scientific/lifecycle commit `a7721ec`: no remaining P0/P1 launch blockers found.
+The last review cycle specifically verified that SSH transport failures during
+both run-path discovery and remote-directory checking cannot be misclassified as
+setup absence, and that null/malformed/transient pod status cannot prove deletion.
+This closes the independent-review interlock; your conditional bf16 decision is
+the only scientific authorization still outstanding.
