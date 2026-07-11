@@ -1,0 +1,125 @@
+{
+  "schema": "coherent_state_decision_canary_v12_blind_review_v1",
+  "review_kind": "blind_singleton_independent",
+  "reviewed_at_utc": "2026-07-11T20:51:21Z",
+  "reviewer": {
+    "agent_label": "Codex subagent",
+    "exact_runtime_model": null,
+    "runtime_model_status": "not exposed",
+    "runtime_model_note": "The exact runtime model identifier was not exposed to this reviewer; it is not inferred."
+  },
+  "packet_binding": {
+    "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T205002Z_1d1ae0abec73.json",
+    "literal_packet_file_sha256": "1604a522f85feb414039eec53b81f4cd84e1d1da33d5372c76397bf144badcef",
+    "declared_internal_packet_sha256": "1d1ae0abec73c387d1935c1a8793e79c2d476d265a2d2cfa73c9316dc2b5c282",
+    "source_set_commitment_sha256": "70a46116b5adf8dc9a69c7cb4b505c516b696c384bd18554f5abeb27be6595fb",
+    "binding_note": "The literal file hash and the packet's declared internal seal are recorded as distinct values."
+  },
+  "independence": {
+    "source_case_files_seen": false,
+    "paired_or_diversity_packets_seen": false,
+    "prior_reviews_seen": false,
+    "semantic_or_model_outcomes_seen": false,
+    "subject_model_forward_performed": false,
+    "review_scope": "Only the named blind singleton packet was inspected."
+  },
+  "criteria": [
+    "naturalness",
+    "coherence",
+    "dangling references",
+    "conspicuous balancing or padding",
+    "fake external actions",
+    "retained-tail coherence"
+  ],
+  "shared_carrier_anchor_review": {
+    "verdict": "PASS",
+    "target_neutrality": "PASS",
+    "hidden_factual_implication": "PASS",
+    "compatibility": "PASS",
+    "reason": "The carrier contains no option name, numerical threshold, outcome label, or domain fact. It asks only for continuity from whatever state precedes it, and the anchor adds no factual content. The sentence about unresolved action describes what the note itself introduces, so it remains compatible with histories that either have pending work or have already recorded a decision. In all twelve entries, insertion immediately before the disclosed retained tail yields a coherent handoff into the next operational or presentation task."
+  },
+  "history_reviews": [
+    {
+      "anonymous_history_id": "history-01",
+      "binding_commitment_sha256": "edbf7be2f8b41c8521c4dd0b34a937e26b9348032c8311afcd04f1c3adfae766",
+      "verdict": "PASS",
+      "reason": "The incident-room record proceeds from a binary release rule through separately sourced migration and timing evidence, a derived ring, and later provenance safeguards. The retained clock-reconciliation question follows naturally from the immediately preceding discussion of new alerts and source timestamps. No reference dangles, no external action is invented, and the repeated evidence-boundary language is functional rather than filler."
+    },
+    {
+      "anonymous_history_id": "history-02",
+      "binding_commitment_sha256": "9b3969a6216e535d225265aaaea3c248412f1acea90567af08031f475d0aaa23",
+      "verdict": "PASS",
+      "reason": "The field-service history clearly separates route inputs, an independent radio mapping, and later work instructions. Measurements and notices are attributed, while future travel and maintenance remain prospective. The retained photo and cracked-base-plate instructions are coherent continuations of the planned station visit and contain no dangling referent or implied completed action."
+    },
+    {
+      "anonymous_history_id": "history-03",
+      "binding_commitment_sha256": "abbd9f86fc9caaa6d75ef639faec2dbb7a4527cf0ebf55238ffa6d1d93802e0a",
+      "verdict": "PASS",
+      "reason": "The lecture-planning exchange cleanly distinguishes registration arithmetic, a fixed interpreter appointment, and subsequent entrance-access planning. The move from room assignment to optional low-sensory routing is explicit. The retained sign-and-lamp placement question has all required physical referents in the preceding turn and the answer avoids claiming that placement occurred."
+    },
+    {
+      "anonymous_history_id": "history-04",
+      "binding_commitment_sha256": "8c44d5e961e1436b88090fb5b1aa3bcfd15e913b82d9651869c4e2a3193ddcd5",
+      "verdict": "PASS",
+      "reason": "The editorial history maintains the distinction among flag count, flag reason, naming status, and the unrelated audiobook producer. It then makes a natural, explicit transition to typography. The retained question about a bracketed clarification is grounded by the field-note excerpt and is answered as advice, not as a fabricated edit or approval."
+    },
+    {
+      "anonymous_history_id": "history-05",
+      "binding_commitment_sha256": "68f78b9c25da40abf878000cb6c5594e2b9d2173baba2004711bce391c1fbd8e",
+      "verdict": "PASS",
+      "reason": "This is unusually long and formal, but it remains one chronological qualification record. Receiving, preparation, sampling, measurement, source verification, readiness review, and physical reconciliation each add a distinct audit or custody function; the late sections do not reopen a previously closed chronology. The explicit close immediately precedes a coherent retained shift note about tote custody and board scope. No technical disposition or downstream action is fabricated, and the length does not amount to conspicuous semantic padding."
+    },
+    {
+      "anonymous_history_id": "history-06",
+      "binding_commitment_sha256": "9e23bce4894f4ad8ad8a109fa8364a0d35ebb4eec1330a46b09797ef45e64fe4",
+      "verdict": "PASS",
+      "reason": "The field-service history is internally consistent about the mandatory route rule, current bridge notice, verified gauge, separate radio assignment, and prospective work. The retained photography and stop-work instructions follow naturally from the planned mast inspection. References are resolved, and neither travel nor damage is falsely claimed to have occurred."
+    },
+    {
+      "anonymous_history_id": "history-07",
+      "binding_commitment_sha256": "762134e3fce0f7a366408a0e939518ba166cbe372d4032699f861e7c32d63cf7",
+      "verdict": "PASS",
+      "reason": "The production discussion keeps the three flagged passages, their non-privacy reasons, the current full-name condition, and the independent vendor fact distinct. Its transition into copyediting presentation is explicit and plausible. The retained style question has a fully introduced excerpt and clarification, and the response recommends a convention without pretending to perform an edit."
+    },
+    {
+      "anonymous_history_id": "history-08",
+      "binding_commitment_sha256": "1f502f809af3dd2445b716050d3038f98f1c3a3263d9283d7578f1d0bb287e7c",
+      "verdict": "PASS",
+      "reason": "Despite its length, the process record advances in a credible sequence from source material and equipment checks through controlled measurements, document control, custody review, readiness, and physical closeout. Each late verification has a different evidentiary purpose, and the record is closed only after those steps, avoiding a false reopen-and-pad pattern. The retained tote and board instructions are coherent handoff material; no disposition, trial, shipment, or status change is invented."
+    },
+    {
+      "anonymous_history_id": "history-09",
+      "binding_commitment_sha256": "7af5db2de1109bd0e5bdf7e35d95ab5e6096e218ac6d5467dfb685a661cb32e3",
+      "verdict": "PASS",
+      "reason": "The meal-program exchange applies the stated two-stage allocation in a readable order while keeping the service-calendar control separate. The retained volunteer briefing and read-back questions are a natural operational continuation after handling safeguards. They introduce no unresolved reference, repeat no decision facts, and make no claim that work or dispatch occurred."
+    },
+    {
+      "anonymous_history_id": "history-10",
+      "binding_commitment_sha256": "f58cf59d6316cb5a3165744537d90fed8300c5597b761030a18f32abbc5ef586",
+      "verdict": "PASS",
+      "reason": "The accessibility-planning record coherently separates the room calculation, interpreter scheduling, and later entrance conditions. The facilities transition is explicit, and every object in the retained sign-and-light question is introduced immediately beforehand. The answer remains a proposal with a verification step rather than claiming that the setup was installed."
+    },
+    {
+      "anonymous_history_id": "history-11",
+      "binding_commitment_sha256": "3b627ace963facbd38a42d5036ffb375aa1ce874f8a51bc42f87898d95df751b",
+      "verdict": "PASS",
+      "reason": "The cold-hold screen, route comparison, derived hub choice, and independent walk-in weekday are cleanly separated. The retained role-card and repeated read-back guidance follows directly from loading safeguards and is self-contained. Nothing suggests a dispatch, assignment, or external contact happened merely because guidance was given."
+    },
+    {
+      "anonymous_history_id": "history-12",
+      "binding_commitment_sha256": "a1f3bb71873212a560126e0808d1ca1c093b33447539aae80e2b1d4f05e69415",
+      "verdict": "PASS",
+      "reason": "The release rehearsal history consistently separates rule, migration classification, logged interval, derived ring, and later incident evidence. The retained alert-clock question is directly prepared by the prior discussion of preserving distinct sources and chronology. The response is short, source-aware, and does not fabricate reconciliation or a new incident."
+    }
+  ],
+  "coverage": {
+    "packet_history_count": 12,
+    "review_record_count": 12,
+    "unique_anonymous_history_id_count": 12,
+    "reviewed_exactly_once": true,
+    "missing_history_ids": [],
+    "duplicate_history_ids": []
+  },
+  "overall_verdict": "PASS",
+  "overall_reason": "The shared carrier and all twelve anonymous histories pass the declared blind criteria. The histories are coherent at their disclosed retained-tail boundaries, contain no dangling referents or fabricated external actions, and do not require revision for conspicuous balancing or padding."
+}

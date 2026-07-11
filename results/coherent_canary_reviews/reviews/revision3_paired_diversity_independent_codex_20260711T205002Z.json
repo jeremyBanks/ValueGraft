@@ -1,0 +1,162 @@
+{
+  "schema": "coherent_state_decision_canary_v12_independent_paired_diversity_review_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "review_run_id": "20260711T205002Z",
+  "reviewer": {
+    "agent_family": "Codex",
+    "runtime_model": "not exposed",
+    "runtime_model_inference_performed": false
+  },
+  "review_scope": {
+    "only_packets_inspected": [
+      "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_target_aware_paired_20260711T205002Z_c667ddbde03d.json",
+      "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_cross_case_diversity_20260711T205002Z_fddd5e960bfa.json"
+    ],
+    "source_case_files_inspected": false,
+    "blind_packet_or_review_inspected": false,
+    "prior_reviews_inspected": false,
+    "implementation_inspected": false,
+    "semantic_or_model_outcomes_seen": false,
+    "subject_model_forward_performed": false
+  },
+  "packet_bindings": [
+    {
+      "packet_kind": "target_aware_paired",
+      "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_target_aware_paired_20260711T205002Z_c667ddbde03d.json",
+      "literal_file_sha256": "43971179542ddfddf339bc9e93857f8885296dec02852325182ed010faea8241",
+      "declared_internal_packet_seal": "c667ddbde03d53218ac8075843614f25e3d399713fe8c372e0137d5632e55c61",
+      "declared_source_set_commitment_sha256": "70a46116b5adf8dc9a69c7cb4b505c516b696c384bd18554f5abeb27be6595fb",
+      "binding_note": "The literal byte-level file digest and the packet's declared internal seal are recorded as distinct values. The packet does not state the seal serialization algorithm, so this review records rather than independently recomputes the internal seal."
+    },
+    {
+      "packet_kind": "cross_case_diversity",
+      "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_cross_case_diversity_20260711T205002Z_fddd5e960bfa.json",
+      "literal_file_sha256": "cd1d00fbb80d241efbb8a805cbfe7ff654724750702bc3dff51c93d1d140b5e2",
+      "declared_internal_packet_seal": "fddd5e960bfa9088040dfade54555ef238edb8caa45d18edff7a405f6cb2ba9b",
+      "declared_source_set_commitment_sha256": "70a46116b5adf8dc9a69c7cb4b505c516b696c384bd18554f5abeb27be6595fb",
+      "binding_note": "The literal byte-level file digest and the packet's declared internal seal are recorded as distinct values. The packet does not state the seal serialization algorithm, so this review records rather than independently recomputes the internal seal."
+    }
+  ],
+  "coverage": {
+    "paired_cases_declared": 6,
+    "paired_cases_reviewed": 6,
+    "paired_variants_reviewed": 12,
+    "paired_case_ids": [
+      "e01",
+      "e02",
+      "e03",
+      "e04",
+      "e05",
+      "e06"
+    ],
+    "diversity_cases_declared": 6,
+    "diversity_cases_reviewed": 6,
+    "diversity_case_ids": [
+      "e01",
+      "e02",
+      "e03",
+      "e04",
+      "e05",
+      "e06"
+    ],
+    "coverage_complete": true
+  },
+  "paired_review": {
+    "overall_verdict": "REVISE",
+    "verdict_scope": "Narrow packet-provenance revision required. All six underlying C/W causal contrasts, targets, controls, and retained tails are substantively valid in the supplied histories, but e04's declared nonfocal-control establishing indices are partly stale and point to unrelated turns.",
+    "cases": [
+      {
+        "case_id": "e01",
+        "verdict": "PASS",
+        "causal_contrast": "The sole load-bearing measurement changes from a 6:40 to a 10:40 rollback interval; the paired downstream selection statement is coherently repaired from partner beta to staff ring, and no other messages differ.",
+        "target_derivation": "The migration is independently established as additive. Six minutes forty seconds is below eight minutes, so C satisfies both conjuncts and selects partner beta; ten minutes forty seconds is not below eight minutes, so W takes the exhaustive staff-ring branch.",
+        "leakage_or_answer_contamination": "No unrepaired focal reference was found after the changed answer. The later dashboard and incident-record exchanges mention neither ring nor duration. This is intentionally an explicit-result case because message 10 states the derived selection in each variant.",
+        "nonfocal_control": "The 21-day trace-retention fact is established independently at messages 3-4, is unchanged across variants, and is governed by diagnostics classification rather than either gate input.",
+        "retained_tail": "The final clock-reconciliation exchange is coherent in either variant and avoids ring, rollback, schema, and retention answers."
+      },
+      {
+        "case_id": "e02",
+        "verdict": "PASS",
+        "causal_contrast": "Only Cedar's cold-hold measurement and the resulting selection statement change. The 62-minute C measurement leaves both hubs eligible; the 41-minute W measurement excludes Cedar before the route-time stage.",
+        "target_derivation": "Harbor's 58 minutes always clears the 45-minute screen. In C, Cedar's 62 minutes also clears it and Cedar wins 38 versus 51 minutes; in W, Cedar's 41 minutes fails and Harbor is the sole survivor.",
+        "leakage_or_answer_contamination": "The paired downstream answer at message 14 is fully repaired. Subsequent handling and briefing turns contain no hub, route duration, cold-hold duration, or weekday answer. This is intentionally an explicit-result case.",
+        "nonfocal_control": "Thursday walk-in intake is fixed by a separate service calendar at messages 1-2 and is explicitly independent of delivery planning.",
+        "retained_tail": "The late-volunteer read-back exchange is natural, byte-identical in the pair, and target-neutral."
+      },
+      {
+        "case_id": "e03",
+        "verdict": "PASS",
+        "causal_contrast": "The current bridge posting alone changes from 9.4 to 8.8 tonnes. No downstream answer repair is needed because later turns refer generically to the current posting and deliberately leave the route unstated.",
+        "target_derivation": "The required posting is 8.6 + 0.5 = 9.1 tonnes and the verified gauge is 0.88, below 1.20. C therefore selects Ridge Spur; W fails the posting check and takes Quarry Loop.",
+        "leakage_or_answer_contamination": "Neither route name is stated after the focal evidence, and the unchanged language does not imply which side of 9.1 the current posting occupies. This is an unstated-result case.",
+        "nonfocal_control": "Channel 3 follows from NF-17's western-creek-sector classification at messages 7-8, with route explicitly declared irrelevant.",
+        "retained_tail": "The site-photo and conditional stop-work instructions remain coherent and contain no route or radio answer."
+      },
+      {
+        "case_id": "e04",
+        "verdict": "REVISE",
+        "substantive_case_status": "PASS",
+        "causal_contrast": "The signed G-14 correction alone changes from +0.8 to +4.8 micrometres. All later mentions use source-relative wording and no disposition is stated, so the single-message contrast is coherent.",
+        "target_derivation": "The five-panel mean is 120.0 and oven spread is 2.5. C gives corrected mean 120.8 and interval 119.7-121.9, passing all checks and deriving Release. W gives corrected mean 124.8 and interval 123.7-125.9, failing the mean and interval checks and deriving Hold.",
+        "leakage_or_answer_contamination": "The chronology repeatedly preserves a blank disposition and contains no Release or Hold answer. References to the current certificate remain valid in both variants. This is an unstated-result case.",
+        "nonfocal_control": "Cabinet 2 is substantively established by the odd-lot parity rule at messages 7-8 and is repeated later without dependence on disposition. However, the packet declares establishing_message_indices [7,8,31,32], while messages 31-32 concern an edge bead and pressure rise rather than cabinet assignment. The later direct cabinet references are at messages 33-34 (and physical closeout also refers to Cabinet 2 at 47-48).",
+        "retained_tail": "The tote-custody and equipment-board tail is coherent, target-neutral, and carefully distinguishes handling state from quality disposition.",
+        "required_revision": "Correct the e04 nonfocal-control establishing-message provenance. A minimally supported annotation is [7,8]; if a later confirmation pair is desired, [7,8,33,34] matches the supplied history. Rebuild and reseal the affected packets after correction."
+      },
+      {
+        "case_id": "e05",
+        "verdict": "PASS",
+        "causal_contrast": "Only the confirmed companion count and the downstream arithmetic/room statement change. Four versus eight requests reverses the threshold outcome without altering capacity or required wheelchair spaces.",
+        "target_derivation": "C reserves ceil(4/2)=2 and leaves 8 of 10, selecting Aster because 8 is at least 7. W reserves ceil(8/2)=4 and leaves 6, selecting Birch because 6 is below 7.",
+        "leakage_or_answer_contamination": "The answer statement at message 12 is coherently repaired. The later arrival and placement exchange avoids all capacity, room, registration, and interpreter answers. This is intentionally an explicit-result case.",
+        "nonfocal_control": "The 8:15 interpreter check-in is established at messages 3-4 by scheduling sources and explicitly separated from room arithmetic.",
+        "retained_tail": "The sign-and-lamp placement request is a plausible continuation and is neutral to both focal and control targets."
+      },
+      {
+        "case_id": "e06",
+        "verdict": "PASS",
+        "causal_contrast": "The sole change is whether the explicitly living private organizer's full name remains in passage three. The passage remains flagged for the same non-privacy reason in both variants, so the change isolates the naming predicate.",
+        "target_derivation": "Exactly three passages remain flagged. C has no full name among them and therefore requires fast-track; W retains Marta Coelho's full name and therefore takes the exhaustive standard-queue branch.",
+        "leakage_or_answer_contamination": "No queue is stated in either history. The assistant's generic reference to the current naming condition remains valid in both variants, and later copyediting turns do not imply the queue. This is an unstated-result case.",
+        "nonfocal_control": "Meridian Audio is established from the executed agreement at messages 1-2 and is explicitly independent of print review.",
+        "retained_tail": "The roman-versus-italic copyediting question is coherent and avoids queue, passage count, person, and producer answers."
+      }
+    ]
+  },
+  "result_statement_categories": {
+    "explicit_in_history": [
+      "e01",
+      "e02",
+      "e05"
+    ],
+    "unstated_and_must_be_derived_at_probe": [
+      "e03",
+      "e04",
+      "e06"
+    ],
+    "category_coverage": "3 explicit-result cases and 3 unstated-result cases; all six accounted for."
+  },
+  "diversity_review": {
+    "verdict": "PASS",
+    "shared_fill_in_the_nouns_scaffold": false,
+    "reason": "The cases share the deliberately controlled assay skeleton of an exhaustive binary decision, one isolated load-bearing counterfactual, a separate factual control, distractors, and a target-neutral continuation. Within that constraint, they are substantively different rather than noun substitutions: release operations combines schema classification with rollback timing; cold-chain allocation uses ordered eligibility then a route-time tiebreak; field routing combines reserve arithmetic with bridge and gauge inequalities; manufacturing qualification requires averaging, signed correction, interval containment, and a range calculation across a much longer audit chronology; accessibility uses a ceiling-and-capacity calculation; and publishing uses a count plus categorical full-name predicate. Controls, distractor chains, retained-tail tasks, domains, focal input types, and discourse lengths also vary, with e04 materially longer and with an even 3/3 split between explicit and unstated outcomes.",
+    "limitation": "This is diversity within a tightly engineered binary-rule assay, not broad evidence of natural-dialog diversity. All six histories repeatedly emphasize mandatory rules, source separation, and control independence, so conclusions should not be generalized to unconstrained conversational decision processes on diversity alone.",
+    "dimensions": {
+      "domain": "PASS: six distinct operational domains.",
+      "decision_rule": "PASS: biconditional conjunction, ordered filter/tiebreak, numeric conjunction with inclusive/strict comparisons, multi-part measurement gate, ceiling/capacity arithmetic, and count-plus-categorical predicate.",
+      "turn_structure": "PASS: histories range from 17 to 55 messages, with explicit and deliberately unstated derivations and differing placement of focal/control chains.",
+      "distractors": "PASS: operational clocks, matched test methods, hydrology/source distractors, manufacturing provenance, accessibility route design, and copyediting/layout chains are not interchangeable.",
+      "probe_and_target": "PASS: targets span ring, hub, route, disposition, room, and queue, with three memory-plus-derivation cases and three pure later-derivation cases.",
+      "retained_tail": "PASS: clock reconciliation, briefing practice, site documentation, custody/board state, physical wayfinding, and typography are distinct and target-neutral."
+    }
+  },
+  "final_assessment": {
+    "paired_verdict": "REVISE",
+    "diversity_verdict": "PASS",
+    "blocking_issue_count": 1,
+    "blocking_issue": "Correct and reseal e04's stale nonfocal-control establishing-message indices. No subject-model execution should be authorized from this review artifact until the corrected packets receive the required review disposition.",
+    "substantive_pair_failures": 0,
+    "subject_model_forward_performed": false,
+    "semantic_or_model_outcomes_seen": false
+  }
+}
