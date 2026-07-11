@@ -54,6 +54,10 @@ incremental loop over fixed token IDs.
 - Attention: resolved eager on every layer.
 - Purpose: technical completeness only. No semantic result from this subject
   can authorize or discourage the exact-model canary.
+- After an independently validated, technically valid Phase A, the local
+  subject may exercise the full treatment/harvest path even if its oracle
+  competence is `ESTIMAND_INADEQUATE`; that run remains apparatus-only. The
+  exact subject never receives this exception.
 - The resolved revision/hash, tokenizer files, Transformers/PyTorch versions,
   model config, layer geometry, and backend enumeration must be persisted.
 
