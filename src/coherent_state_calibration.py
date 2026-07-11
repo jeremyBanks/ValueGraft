@@ -10,11 +10,12 @@ from coherent_state_runtime import (
     DESIGN_ID,
     append_gapped_post_summary,
     build_gapped_fresh_boundary,
+    capture_forced_prefix_ids,
     capture_forced_summary,
     gapped_arm_boundary,
     score_arm,
 )
-from coherent_state_tokens import rendered_assistant_content_ids
+from coherent_state_tokens import generation_prefix_ids, rendered_assistant_content_ids
 
 
 CALIBRATION_SYSTEM = (
@@ -68,20 +69,45 @@ def run_calibration(model, tokenizer, conversation_id: str) -> dict:
     if len(summary_ids) < 2:
         raise CoherentStateError("calibration summary is too short to derange")
 
+    correct_messages = calibration_source_messages(correct_label)
+    wrong_messages = calibration_source_messages(wrong_label)
     correct = capture_forced_summary(
-        model, tokenizer, calibration_source_messages(correct_label), summary_ids,
+        model, tokenizer, correct_messages, summary_ids,
         source_kind="calibration_correct_forced")
-    wrong = capture_forced_summary(
-        model, tokenizer, calibration_source_messages(wrong_label), summary_ids,
-        source_kind="calibration_wrong_forced")
-    if len(correct.prefix_ids) != len(wrong.prefix_ids):
+    wrong_prefix_ids = generation_prefix_ids(tokenizer, wrong_messages)
+    if len(correct.prefix_ids) != len(wrong_prefix_ids):
         raise CoherentStateError("calibration sources are not position matched")
-    if correct.summary_start != wrong.summary_start:
-        raise CoherentStateError("calibration summary starts differ")
     changed_positions = [i for i, (a, b) in enumerate(
-        zip(correct.prefix_ids, wrong.prefix_ids)) if a != b]
+        zip(correct.prefix_ids, wrong_prefix_ids)) if a != b]
     if not changed_positions:
         raise CoherentStateError("calibration sources differ at no token position")
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    if len(marker_ids) != 1:
+        raise CoherentStateError("calibration chat-boundary marker is not one token")
+    starts = [i for i, token_id in enumerate(correct.prefix_ids)
+              if token_id == marker_ids[0]]
+    if len(starts) != len(correct_messages) + 1:
+        raise CoherentStateError("calibration message boundary count differs")
+    allowed_content_block = range(starts[1], starts[2])
+    if any(i not in allowed_content_block for i in changed_positions):
+        raise CoherentStateError(
+            "calibration wrong source changed a non-record message slot")
+    special = set(int(x) for x in tokenizer.all_special_ids)
+    if any(correct.prefix_ids[i] in special or wrong_prefix_ids[i] in special
+           for i in changed_positions):
+        raise CoherentStateError(
+            "calibration wrong source changed a structural/special token")
+    structural_positions = [i for i in range(len(correct.prefix_ids))
+                            if i not in changed_positions]
+    if any(correct.prefix_ids[i] != wrong_prefix_ids[i]
+           for i in structural_positions):
+        raise CoherentStateError("calibration structural slots differ")
+    wrong = capture_forced_prefix_ids(
+        model, tokenizer, wrong_prefix_ids, summary_ids,
+        source_kind="calibration_wrong_exact_length_counterfactual",
+        summary_start=correct.summary_start)
+    if correct.summary_start != wrong.summary_start:
+        raise CoherentStateError("calibration summary starts differ")
     conv = {
         "id": f"calibration-{conversation_id}",
         "messages": calibration_source_messages(correct_label)[:-1],
@@ -151,6 +177,17 @@ def run_calibration(model, tokenizer, conversation_id: str) -> dict:
             "fresh": layout.prefix_ids,
         },
         "wrong_changed_positions": changed_positions,
+        "wrong_exact_length_construction": {
+            "target_label": correct_label,
+            "donor_label": wrong_label,
+            "prefix_length": len(correct.prefix_ids),
+            "changed_positions": changed_positions,
+            "structural_positions": structural_positions,
+            "target_ids": [correct.prefix_ids[i] for i in changed_positions],
+            "replacement_ids": [wrong.prefix_ids[i] for i in changed_positions],
+            "structural_slots_equal": True,
+            "special_ids_excluded": True,
+        },
         "wrong_decoded_prefix": tokenizer.decode(wrong.prefix_ids),
         "source_summary_row_hashes": {
             "correct": correct.row_hashes,

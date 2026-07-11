@@ -125,12 +125,16 @@ def contrast_rows(docs):
 
 
 def calibration_fires(docs):
+    # Sensitivity was frozen as four directional successes among the first six.
+    # The extension cannot dilute that gate to four-of-twelve or rescue it with
+    # post-extension calibration outcomes.
+    docs = list(docs[:6])
     rows = []
     for doc in docs:
         cal = doc.get("calibration_outcomes") or {}
         if not all(a in cal for a in ("G_correct", "G_fresh", "G_wrong")):
             return {"fires": False, "reason": "missing calibration rows",
-                    "both_directional": 0, "n": len(docs)}
+                    "both_directional": 0, "n": len(docs), "frozen_at_n": 6}
         cf = float(cal["G_correct"]) - float(cal["G_fresh"])
         cw = float(cal["G_correct"]) - float(cal["G_wrong"])
         rows.append((cf, cw))
@@ -138,7 +142,7 @@ def calibration_fires(docs):
     mcf, mcw = mean([x[0] for x in rows]), mean([x[1] for x in rows])
     return {"fires": bool(mcf > 0 and mcw > 0 and both >= 4),
             "mean_GF": mcf, "mean_GW": mcw,
-            "both_directional": both, "n": len(rows)}
+            "both_directional": both, "n": len(rows), "frozen_at_n": 6}
 
 
 def regime_gate(docs):

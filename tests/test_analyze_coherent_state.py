@@ -81,6 +81,17 @@ def test_n12_regime_gate_remains_frozen_to_first_six():
     assert out["regime_gate"]["frozen_at_n"] == 6
 
 
+def test_n12_calibration_gate_remains_frozen_to_first_six():
+    docs = _docs(n=12, calibration=False)
+    for doc in docs[6:]:
+        doc["calibration_outcomes"] = {
+            "G_correct": 1.0, "G_fresh": 0.0, "G_wrong": 0.0}
+    out = analyze(docs)
+    assert not out["calibration"]["fires"]
+    assert out["calibration"]["n"] == 6
+    assert out["calibration"]["frozen_at_n"] == 6
+
+
 def test_missing_arm_and_noncontiguous_order_fail_closed():
     docs = _docs()
     del docs[0]["conversation_outcomes"]["G_Kcorrect"]
