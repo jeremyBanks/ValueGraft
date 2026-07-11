@@ -983,11 +983,11 @@
     },
     "20260711": {
       "note": "notes/20260711.md",
-      "source_count": 8,
+      "source_count": 26,
       "sources": [
         {
           "note": "notes/2026071146-conversation-user-gpt56.md",
-          "blob_id": "2538d66bdff02137bbda39cf31c2f07c7288868e"
+          "blob_id": "b63a2bf86e4ff3bc003edb4c6bb7bb0734b45beb"
         },
         {
           "note": "notes/2026071147-sol-empirical-statistical-audit.md",
@@ -1007,7 +1007,7 @@
         },
         {
           "note": "notes/2026071151-conversation-user-opus48.md",
-          "blob_id": "15552845d7f11db7b2378e980013f50969f9d2e4"
+          "blob_id": "eb9116fee89f44c9871a9cdd2531e7e668074a7f"
         },
         {
           "note": "notes/2026071152-why-value-grafting-mostly-fails.md",
@@ -1016,19 +1016,109 @@
         {
           "note": "notes/2026071153-corrections-from-sol-audit.md",
           "blob_id": "14d36b97809794012e60e439c3c9a9bd3ab997ae"
+        },
+        {
+          "note": "notes/2026071154-sol-claude-research-plan-dialogue.md",
+          "blob_id": "008e73ae245d7f53bd034f433baed2ddbf277ff4"
+        },
+        {
+          "note": "notes/2026071155-sol-final-paper-review.md",
+          "blob_id": "e76cf2ee2ac57d8b7e804a62a8c24f883be202d0"
+        },
+        {
+          "note": "notes/2026071156-sol-fable-execution-coordination.md",
+          "blob_id": "dfaff6845a5721ec30e80bd7e0af47eccbf96027"
+        },
+        {
+          "note": "notes/2026071157-fable-outcome-interpretation-matrix.md",
+          "blob_id": "0fb4af7c6a67056795c9d59a0e8a9c8bb02b7a89"
+        },
+        {
+          "note": "notes/2026071158-opus-gapped-v2-launch-review.md",
+          "blob_id": "5b9c4dcaf4a8e915872190724dab79de2d3306e1"
+        },
+        {
+          "note": "notes/2026071159-opus-30b-zero-gap-failure-review.md",
+          "blob_id": "517c90e4c3020812070f2c6d346eed612cdfbde7"
+        },
+        {
+          "note": "notes/2026071160-opus-v6-prelaunch-review.md",
+          "blob_id": "2c9190b439ac7fe93b370c30fb09901dffcf11b6"
+        },
+        {
+          "note": "notes/2026071161-v7-semantic-aggregate-validator-provenance.md",
+          "blob_id": "ba79d81eb113415654aef32e4d5310fbca4c9673"
+        },
+        {
+          "note": "notes/2026071162-sol-v7-v8-adversarial-review.md",
+          "blob_id": "b40c8a806fff9991ab8bc723ff2d41aa39059fc0"
+        },
+        {
+          "note": "notes/2026071163-opus-v8-preladder-review.md",
+          "blob_id": "234a1d59d9d7afd0eba5f98a1d133f9afda69cb3"
+        },
+        {
+          "note": "notes/2026071164-conversation-user-opus48.md",
+          "blob_id": "acb157db37ae43e0ec037130b5ba60d293f7007e"
+        },
+        {
+          "note": "notes/2026071165-sol-v8-v10-semantic-closure-review.md",
+          "blob_id": "b5c09f76d16f043bea87f65c9e58c060615ddbdb"
+        },
+        {
+          "note": "notes/2026071166-sol-claude-joint-research-plan.md",
+          "blob_id": "3befd1390c7be0dd1a11224b98f33b683a727a28"
+        },
+        {
+          "note": "notes/2026071167-opus-prior-art-verification.md",
+          "blob_id": "c93e082210aa65795e52cfe8d1300377ad8ca612"
+        },
+        {
+          "note": "notes/2026071168-fable-tail-channel-design-review.md",
+          "blob_id": "c6bf9acb4970f4371a222a1962d3a5bde404766c"
+        },
+        {
+          "note": "notes/2026071169-sol-memento-primary-source-correction.md",
+          "blob_id": "7eccaee9451d3d2233c8854606bf6255b0bf7845"
+        },
+        {
+          "note": "notes/2026071170-sol-models-take-notes-primary-source-reading.md",
+          "blob_id": "1824d6182f2310263cffd10018366074c47c2cd6"
+        },
+        {
+          "note": "notes/2026071171-fable-parallel-gate-sequencing-review.md",
+          "blob_id": "4462eb308518392441e6211532326bdcfc134485"
         }
       ],
       "source_blob_ids": [
+        "008e73ae245d7f53bd034f433baed2ddbf277ff4",
+        "0fb4af7c6a67056795c9d59a0e8a9c8bb02b7a89",
         "14d36b97809794012e60e439c3c9a9bd3ab997ae",
-        "15552845d7f11db7b2378e980013f50969f9d2e4",
+        "1824d6182f2310263cffd10018366074c47c2cd6",
         "23376f899d0a4854f48def5de190c31684155acf",
-        "2538d66bdff02137bbda39cf31c2f07c7288868e",
+        "234a1d59d9d7afd0eba5f98a1d133f9afda69cb3",
+        "2c9190b439ac7fe93b370c30fb09901dffcf11b6",
+        "3befd1390c7be0dd1a11224b98f33b683a727a28",
         "3c970b9682c674a1525d05ee062d446f2c5b4f3f",
+        "4462eb308518392441e6211532326bdcfc134485",
+        "517c90e4c3020812070f2c6d346eed612cdfbde7",
+        "5b9c4dcaf4a8e915872190724dab79de2d3306e1",
         "781b415e9487265c772e252aff747e4049b031e5",
         "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec",
-        "c3ea9a5d3fc5213820fdc248a623720497ef003c"
+        "7eccaee9451d3d2233c8854606bf6255b0bf7845",
+        "acb157db37ae43e0ec037130b5ba60d293f7007e",
+        "b40c8a806fff9991ab8bc723ff2d41aa39059fc0",
+        "b5c09f76d16f043bea87f65c9e58c060615ddbdb",
+        "b63a2bf86e4ff3bc003edb4c6bb7bb0734b45beb",
+        "ba79d81eb113415654aef32e4d5310fbca4c9673",
+        "c3ea9a5d3fc5213820fdc248a623720497ef003c",
+        "c6bf9acb4970f4371a222a1962d3a5bde404766c",
+        "c93e082210aa65795e52cfe8d1300377ad8ca612",
+        "dfaff6845a5721ec30e80bd7e0af47eccbf96027",
+        "e76cf2ee2ac57d8b7e804a62a8c24f883be202d0",
+        "eb9116fee89f44c9871a9cdd2531e7e668074a7f"
       ],
-      "summary_hash": "6d4969ebec34742856f8e343921ecc0ac6c723a3c786903bc86dfac2c97680ff",
+      "summary_hash": "d31cc5f2a8118f1dbf2b25e4a6e0286487a800f5d6165594788143fd2c02c9f5",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
