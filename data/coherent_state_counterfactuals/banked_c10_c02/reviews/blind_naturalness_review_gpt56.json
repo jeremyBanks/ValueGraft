@@ -1,0 +1,123 @@
+{
+  "model_id": "gpt-5.6",
+  "review_type": "blind_naturalness_and_coherence_review",
+  "review_date": "2026-07-11",
+  "scope": "Only counterfactual_conversation.messages from each candidate was inspected. Candidate files were otherwise used only to compute whole-file SHA256 hashes.",
+  "candidates": {
+    "c10_referent": {
+      "candidate_file": "data/coherent_state_counterfactuals/banked_c10_c02/c10_referent_unreviewed.json",
+      "sha256": "876dffac15e24a99e3f8007c23d6910db7718a5272c328a959a31271d547a15a",
+      "probe": "Which kitchen layout did we decide on?",
+      "recoverable_answer": {
+        "verdict": "PASS",
+        "answer": "The U-shaped kitchen with a peninsula (Naomi's option 3).",
+        "reason": "The user explicitly selects the third of three enumerated layouts, and the immediately following assistant turn restates that selection consistently."
+      },
+      "internal_contradictions_or_dangling_references": {
+        "verdict": "FAIL",
+        "reason": "The selected layout itself is internally consistent, but several later references are left dangling. The assistant does not answer whether the chosen layout changes the plumbing rough-in, does not actually confirm whether the electrical subcontractor is booked for the week of the 14th, and treats the later templating question as a generic design-to-full-construction timeline rather than resolving the countertop context established for Naomi's alternative."
+      },
+      "conspicuous_padding_repetition_register_discontinuity_or_edited_text_artifact": {
+        "verdict": "FAIL",
+        "reason": "The assistant repeatedly converts brief project notes into ornate 'official' records with invented filenames and dates, using highly repetitive praise, headings, emojis, and stock phrases. More seriously, turns 36, 38, and 40 end after an opening acknowledgment or setup and never supply the requested substance. Those abrupt fragments are conspicuous clipping or edited-text artifacts."
+      },
+      "overall_natural_conversational_coherence": {
+        "verdict": "FAIL",
+        "reason": "The main remodel topic is followable and the layout fact is clear, but the exchange does not read as a naturally functioning conversation because multiple direct questions receive only an acknowledgment or preamble before the user moves on."
+      },
+      "unrelated_factual_chain_broken": {
+        "verdict": "YES",
+        "reason": "The electrical-subcontractor scheduling chain, plumbing-impact chain, and countertop-templating chain are not carried through. The templating response also drifts to a broad 4-to-8-week construction timeline and repeats permitting despite the conversation already recording a filed permit."
+      },
+      "overall_candidate_verdict": "FAIL",
+      "overall_reason": "The target layout answer is recoverable and internally stable, but obvious incomplete responses and broken downstream project chains fail a skeptical naturalness/coherence review."
+    },
+    "c10_sense": {
+      "candidate_file": "data/coherent_state_counterfactuals/banked_c10_c02/c10_sense_unreviewed.json",
+      "sha256": "40df199fc4a92986569e918453329877c9c0382dac0108febe6ed29b46ff5329",
+      "probe": "When I said Cedar in this conversation, which project did I mean?",
+      "recoverable_answer": {
+        "verdict": "PASS",
+        "answer": "The cedar closet lining idea upstairs; in this chat, Cedar means the closet project only.",
+        "reason": "The user explicitly distinguishes the closet lining from the back deck and states that their use of Cedar always means the closet. The assistant's heading and primary definition preserve that mapping."
+      },
+      "internal_contradictions_or_dangling_references": {
+        "verdict": "FAIL",
+        "reason": "The assistant's Cedar clarification says the back deck is a separate project 'upstairs, in the master bedroom,' which is incompatible with a back deck and conflicts with the user's statement that the deck rebuild is bundled into the remodel. The later question about whether Cedar can run in parallel with framing inspection is also left entirely unanswered."
+      },
+      "conspicuous_padding_repetition_register_discontinuity_or_edited_text_artifact": {
+        "verdict": "FAIL",
+        "reason": "The assistant uses conspicuously repetitive praise and elaborate faux-document formatting for routine notes. Turns 36, 38, and 40 are visibly incomplete: an opening compliment, a generic acknowledgment, and a scheduling preamble appear without any answer. This is strong evidence of clipping or edited-text artifacts."
+      },
+      "overall_natural_conversational_coherence": {
+        "verdict": "FAIL",
+        "reason": "The intended in-chat meaning of Cedar is clear, but the direct deck-location contradiction and repeated nonanswers make the history unnatural and locally incoherent."
+      },
+      "unrelated_factual_chain_broken": {
+        "verdict": "YES",
+        "reason": "The Cedar/framing dependency, layout/plumbing impact, electrical-subcontractor confirmation, and countertop-templating chains are broken or misread."
+      },
+      "overall_candidate_verdict": "FAIL",
+      "overall_reason": "The probe answer is recoverable, but the Cedar clarification contains a conspicuous factual contradiction and the downstream conversation contains multiple clipped, non-responsive turns."
+    },
+    "c02_referent": {
+      "candidate_file": "data/coherent_state_counterfactuals/banked_c10_c02/c02_referent_unreviewed.json",
+      "sha256": "fdb3db2f7404acff497ce3de775f6239145f0650fe3d4bd990ead8d985a0548d",
+      "probe": "Which catering option did we lock in for the conference?",
+      "recoverable_answer": {
+        "verdict": "PASS",
+        "answer": "Option 2: the hot buffet from Cateright.",
+        "reason": "The user explicitly selects the second enumerated catering option, and the immediately following assistant turn names the Cateright hot buffet."
+      },
+      "internal_contradictions_or_dangling_references": {
+        "verdict": "FAIL",
+        "reason": "The catering selection itself is consistent, but its downstream timing question receives only a one-line acknowledgment. Ravi's hosting question gets a preamble without actual host choices or a briefing, and the requested Beacon blurb receives no blurb. The hall-capacity answer asserts precise capacities based on hypothetical dimensions that were never supplied for the specifically defined Hall B annex."
+      },
+      "conspicuous_padding_repetition_register_discontinuity_or_edited_text_artifact": {
+        "verdict": "FAIL",
+        "reason": "The assistant's repeated effusive praise, 'official' records, emojis, and boilerplate are conspicuous relative to the user's practical register. Turns 36, 38, and 40 are abruptly incomplete or non-responsive, creating a strong edited/clipped-text signature."
+      },
+      "overall_natural_conversational_coherence": {
+        "verdict": "FAIL",
+        "reason": "The conference-planning history is topically connected and the catering fact is clear, but several consecutive direct requests are not answered while the user proceeds as though the exchange remained functional."
+      },
+      "unrelated_factual_chain_broken": {
+        "verdict": "YES",
+        "reason": "The keynote-hosting, catering/break-timing, and Beacon-program-copy chains are broken. The venue-capacity chain also substitutes unsupported generic assumptions for the identified annex room."
+      },
+      "overall_candidate_verdict": "FAIL",
+      "overall_reason": "The catering answer is unambiguous, but multiple missing answers and unsupported venue specifics fail the broader coherence and naturalness criteria."
+    },
+    "c02_sense": {
+      "candidate_file": "data/coherent_state_counterfactuals/banked_c10_c02/c02_sense_unreviewed.json",
+      "sha256": "03bce8100c9c68a67a7b8d25adc0927b2f43cbc21f87c7489d26cb9f26bdd616",
+      "probe": "When I said Beacon in this conversation, what was I referring to?",
+      "recoverable_answer": {
+        "verdict": "PASS",
+        "answer": "The sponsors' networking lounge, not the first-time-speaker mentorship track.",
+        "reason": "The user explicitly establishes that in-chat sense, and the assistant's clarification consistently labels the sponsor networking lounge as the priority meaning."
+      },
+      "internal_contradictions_or_dangling_references": {
+        "verdict": "FAIL",
+        "reason": "The initial Beacon mapping is coherent, but the later request for a sub-80-word Beacon program blurb receives only 'Sounds good — let's keep moving on that basis.' The volunteer-care response later refers to guiding people to a 'Beacon session,' a mild type drift from the previously defined drop-in sponsor lounge. Ravi's hosting question and the catering/break-timing follow-up are also left dangling."
+      },
+      "conspicuous_padding_repetition_register_discontinuity_or_edited_text_artifact": {
+        "verdict": "FAIL",
+        "reason": "The assistant repeatedly uses disproportionate praise, canned emotional language, decorative headings, and faux-official documentation. Several late assistant turns stop after a preamble or generic acknowledgment, which is conspicuously unlike a complete conversational response."
+      },
+      "overall_natural_conversational_coherence": {
+        "verdict": "FAIL",
+        "reason": "Beacon's target sense remains recoverable, but the late exchange contains too many unanswered requests and an avoidable lounge/session drift to pass a skeptical naturalness review."
+      },
+      "unrelated_factual_chain_broken": {
+        "verdict": "YES",
+        "reason": "The keynote-hosting, catering/break-timing, Beacon-copy, and room-capacity chains are incomplete or unsupported."
+      },
+      "overall_candidate_verdict": "FAIL",
+      "overall_reason": "The Beacon sense is explicit and recoverable, but the candidate still fails because of clipped responses, dangling requests, and register/artifact problems elsewhere in the conversation."
+    }
+  },
+  "overall_verdict": "FAIL",
+  "overall_summary": "All four probe answers are directly recoverable from their respective histories, and each candidate preserves its target answer locally. Nevertheless, all four candidates fail blind whole-conversation naturalness/coherence review because multiple late assistant turns are visibly clipped or non-responsive, the prose is heavily padded and repetitive, and unrelated factual chains are abandoned or replaced with unsupported assumptions. The c10_sense candidate additionally contains a direct contradiction that locates a back deck upstairs in a master bedroom and calls it unrelated despite the user's description of it as bundled work.",
+  "forbidden_sources_statement": "I did not read notes, manifest metadata, base conversations, data/coherent_state_targets.json, changed-message allowlists, or any file outside the four candidate JSONs. Within each candidate JSON, I inspected only .counterfactual_conversation.messages; no other candidate fields were read. AGENTS.md was used only for repository rules. I did not compare candidates to originals and did not infer intended answers beyond what each inspected history explicitly supported."
+}
