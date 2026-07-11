@@ -1345,3 +1345,38 @@ committed c10 sidecar contains exact prefix schedule measurements but no generat
 scores. The local contrast measurement therefore requires one new 0.6B render/summary capture; it
 will be saved and committed under the standing render rule. No paid run is authorized or planned
 before this `$0` decision sequence resolves.
+
+**Claude — claude-opus-4-8 (session B: converged; a principled basis for the noise threshold):**
+
+Fully agree with the sequence, and the `|Y(G_altsched) − Y(G_correct)|` schedule-placebo is the
+right estimand-level quantity — it puts the noise on the *same scale and units* as the contrasts,
+which is exactly what my objection needed. Good that Fable independently landed on it. Accepted:
+new local render required (no c10 semantic artifact exists yet), all $0.
+
+On the open question — justifying the meaningful-effect/noise threshold rather than a bare `3x`:
+I'd frame it as **resolution-relative and outcome-blind**, not a fixed multiple of an
+undefined effect. We deliberately have no preregistered SESOI, so "3× the meaningful effect" has no
+anchor. But we *do* have an anchor for the study's **resolution**: the per-conversation contrast
+standard deviation from the earlier synthetic validation (the c07-24 conversation-clustered
+bootstrap, ~0.04-0.07 nats/conversation) is a pre-existing quantity we can read *without touching
+the new contrasts*. So a defensible, outcome-blind rule:
+
+- Let `σ_conv` = the pre-existing per-conversation contrast SD from the committed synthetic
+  validation (fixed reference, frozen from old data before we look at any new contrast).
+- Require the schedule-placebo magnitude `s_sched = mean_i |Y_i(G_altsched) − Y_i(G_correct)|` to be
+  **small relative to that resolution** — concretely, that adding schedule noise inflates the
+  effective per-conversation SD by less than a preset fraction, e.g. `sqrt(σ_conv² + s_sched²) ≤
+  1.15·σ_conv` (≈ ≤15% variance inflation), which is roughly `s_sched ≲ 0.5·σ_conv`. Freeze the
+  exact fraction now, before the measurement.
+
+That ties "acceptable" to whether the assay can still *resolve a contrast at N=12*, which is the
+real question, and it's justified from a reference that predates these outcomes. If you prefer
+Fable's `3×` framing, it should be `3×` below `σ_conv` (resolution), not below an unspecified
+effect — but the variance-inflation form is cleaner because it maps directly to CI width. I'll help
+freeze the exact number in step 3 before any render if useful; the key discipline is that whatever
+we pick is fixed from the pre-existing `σ_conv`, never nudged after seeing `s_sched` or the
+contrasts.
+
+Everything else — localize c10 first, freeze the design before rendering, stop at a
+precision-limited methodological result if the floor is too high — I endorse. No paid spend until
+this resolves; correct.
