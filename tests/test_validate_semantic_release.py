@@ -307,6 +307,32 @@ def test_relaxed_synthetic_threshold_is_rejected():
         MODULE._deep_validate_ladder_stages(ROOT, stages)
 
 
+def test_local_case_source_validation_uses_local_model_revision_and_restores():
+    seen = []
+    helper = SimpleNamespace(MODEL_REVISION=MODULE.PRODUCTION_REVISION)
+    helper._validate_committed_case_source = (
+        lambda *_args: seen.append(helper.MODEL_REVISION))
+    MODULE._validate_local_committed_case_source(
+        helper, {}, "c10", {}, ROOT)
+    assert seen == [MODULE.LADDER_REVISION]
+    assert helper.MODEL_REVISION == MODULE.PRODUCTION_REVISION
+
+
+def test_local_ladder_hash_rows_accept_28_layers_8_heads_and_exact_span():
+    rows = [{
+        "layer": str(index),
+        "k_dtype": "torch.bfloat16", "k_shape": [1, 8, 37, 128],
+        "k_sha256": "a" * 64,
+        "v_dtype": "torch.bfloat16", "v_shape": [1, 8, 37, 128],
+        "v_sha256": "b" * 64,
+    } for index in range(28)]
+    assert MODULE._validate_ladder_hash_rows(
+        rows, "local", rows=37) == rows
+    rows[0]["k_shape"] = [1, 4, 37, 128]
+    with pytest.raises(MODULE.ReleaseError, match="shape differs"):
+        MODULE._validate_ladder_hash_rows(rows, "local", rows=37)
+
+
 def test_release_layer_does_not_change_v10_apparatus_inventory():
     import sys
     sys.path.insert(0, str(ROOT / "src"))
@@ -498,6 +524,12 @@ def test_wrappers_bind_one_packet_and_outer_receipt():
     assert "expected exactly one release preflight" in local
     assert "does not name the sole frozen preflight" in local
     assert "scripts/job_semantic_release.sh" in local
+    assert "uv run python scripts/validate_semantic_release.py verify" in local
     assert "expected exactly one committed release preflight" in remote
     assert "SEMANTIC_RELEASE_OUTER_PASS launch=" in remote
     assert "SC_TECHNICAL_RESULT_COMMIT=" in remote
+    seed = remote.index("AutoTokenizer.from_pretrained")
+    verify = remote.index("validate_semantic_release.py verify")
+    assert seed < verify
+    assert MODULE.PRODUCTION_MODEL in remote
+    assert MODULE.PRODUCTION_REVISION in remote

@@ -37,6 +37,18 @@ for f in "$BOOT/.hf_key" "$BOOT/.huggingface_key" /workspace/.huggingface_key; d
 done
 [ -n "${HF_TOKEN:-}" ] || { echo "FATAL: HF token absent"; exit 2; }
 
+# Seed only the exact production config/tokenizer. The release resolver and
+# independent harvest deliberately use local_files_only=True so an unpinned
+# network lookup can never occur during validation.
+python3 - <<'PY'
+from transformers import AutoConfig, AutoTokenizer
+MODEL = "Qwen/Qwen3-30B-A3B-Instruct-2507"
+REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+AutoConfig.from_pretrained(MODEL, revision=REVISION)
+AutoTokenizer.from_pretrained(MODEL, revision=REVISION)
+print("SEMANTIC_RELEASE_CACHE_SEEDED", MODEL, REVISION, flush=True)
+PY
+
 VERIFIED_RELEASE="$(python3 scripts/validate_semantic_release.py verify \
   --repo . \
   --attestation-path "${RELEASE_PACKETS[0]}" \

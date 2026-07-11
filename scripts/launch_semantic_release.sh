@@ -30,7 +30,7 @@ RELEASE_PACKETS=(results/v10_release/preflight_*.json)
   exit 5
 }
 
-VERIFIED_RELEASE="$(python3 scripts/validate_semantic_release.py verify \
+VERIFIED_RELEASE="$(uv run python scripts/validate_semantic_release.py verify \
   --repo . \
   --attestation-path "$ATTESTATION" \
   --expected-launch-commit "$EXPECTED_COMMIT")"

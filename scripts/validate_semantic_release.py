@@ -175,6 +175,52 @@ def _load_harvest_helpers(repo: Path):
     return module
 
 
+def _validate_local_committed_case_source(
+        helper, row: dict[str, Any], cid: str,
+        fingerprint: dict[str, Any], repo: Path) -> None:
+    """Reuse shared source reconstruction with the local subject revision.
+
+    The tokenizer is loaded and cached under the production revision before
+    this wrapper is called. Only the row's exact *model* revision differs from
+    the production technical gate.
+    """
+    prior = helper.MODEL_REVISION
+    helper.MODEL_REVISION = LADDER_REVISION
+    try:
+        helper._validate_committed_case_source(
+            row, cid, fingerprint, repo)
+    finally:
+        helper.MODEL_REVISION = prior
+
+
+def _validate_ladder_hash_rows(
+        value: Any, label: str, *, rows: int | None = None) \
+        -> list[dict[str, Any]]:
+    if not isinstance(value, list) or len(value) != 28:
+        raise ReleaseError(f"{label} hash-row coverage differs")
+    if [row.get("layer") for row in value] != [str(i) for i in range(28)]:
+        raise ReleaseError(f"{label} hash-row order differs")
+    for row in value:
+        expected = [1, 8, rows, 128] if rows is not None else None
+        for prefix in ("k", "v"):
+            if row.get(f"{prefix}_dtype") != "torch.bfloat16":
+                raise ReleaseError(f"{label} {prefix} dtype differs")
+            shape = row.get(f"{prefix}_shape")
+            if (not isinstance(shape, list) or len(shape) != 4 or
+                    any(not isinstance(item, int) or item < 1 for item in shape) or
+                    shape[0] != 1 or shape[1] != 8 or shape[3] != 128 or
+                    (expected is not None and shape != expected)):
+                raise ReleaseError(f"{label} {prefix} shape differs")
+        if row.get("k_shape") != row.get("v_shape"):
+            raise ReleaseError(f"{label} K/V shapes differ")
+        for key in ("k_sha256", "v_sha256"):
+            digest = row.get(key)
+            if (not isinstance(digest, str) or len(digest) != 64 or
+                    any(char not in "0123456789abcdef" for char in digest.lower())):
+                raise ReleaseError(f"{label} {key} differs")
+    return value
+
+
 def _deep_validate_ladder_stages(
         repo: Path, stages: dict[str, dict[str, Any]]) -> None:
     """Recompute local-ladder raw verdicts, never trusting producer booleans."""
@@ -321,7 +367,8 @@ def _deep_validate_ladder_stages(
             if (row.get("conversation_id") != cid or
                     row.get("order_position") != index):
                 raise ValueError(f"committed-case identity differs: {cid}")
-            helper._validate_committed_case_source(
+            _validate_local_committed_case_source(
+                helper,
                 row, cid, source_fingerprint, repo)
             case_aggregates.append(helper._validate_schedule_measurement(
                 row, layers=28, tolerance=5e-4, label=f"ladder.case[{cid}]"))
@@ -491,12 +538,25 @@ def _deep_validate_ladder_stages(
         "correct_post_summary", "wrong_post_summary"}
     if set(hashes) != required_hashes:
         raise ReleaseError("ladder intervention hash field set differs")
-    try:
-        for key in required_hashes:
-            helper._validate_hash_rows(
-                hashes[key], f"intervention.{key}", rows=28)
-    except ValueError as exc:
-        raise ReleaseError(str(exc)) from exc
+    hash_widths = {
+        "fresh_boundary": end, "self_boundary": end,
+        "correct_boundary": end, "wrong_boundary": end,
+        "fresh_before_summary": start, "correct_before_summary": start,
+        "wrong_before_summary": start,
+        "correct_source_summary": end - start,
+        "wrong_source_summary": end - start,
+        "correct_inserted_summary": end - start,
+        "wrong_inserted_summary": end - start,
+        "full_fresh": full_lengths["fresh"],
+        "full_correct": full_lengths["correct"],
+        "full_wrong": full_lengths["wrong"],
+        "fresh_post_summary": full_lengths["fresh"] - end,
+        "correct_post_summary": full_lengths["correct"] - end,
+        "wrong_post_summary": full_lengths["wrong"] - end,
+    }
+    for key in required_hashes:
+        _validate_ladder_hash_rows(
+            hashes[key], f"intervention.{key}", rows=hash_widths[key])
     if (hashes["self_boundary"] != hashes["fresh_boundary"] or
             hashes["correct_before_summary"] != hashes["fresh_before_summary"] or
             hashes["wrong_before_summary"] != hashes["fresh_before_summary"] or
