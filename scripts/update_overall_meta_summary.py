@@ -230,9 +230,12 @@ Preferred shape:
 
 - a top-level `{title_for(plan.level, plan.key)}` heading;
 - one italicized opening paragraph summarizing the arc;
-- a concise `**Participants/contributors:** ...` paragraph naming the users,
-  assistant model identifiers, authors, and labeled subagents represented in
-  the immediate sources; use only source-supported identities and never guess;
+- a concise `**Participants/contributors:** ...` paragraph naming the users and
+  exact assistant model identifiers/versions/reasoning-effort levels represented
+  in the immediate sources; use only source-supported identities and never
+  guess. Task labels, role descriptions, generic agent/subagent categories, tool
+  names, and nicknames without a model identifier are not participant identities
+  and must be omitted;
 - a small number of thematic sections, not one section per input file;
 - a concise current-state / handoff section at the end;
 - bullets only where they make dense facts easier to scan.

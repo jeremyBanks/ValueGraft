@@ -193,9 +193,12 @@ description, and no closing status note. Aim for synthesis, not a ledger.
 Include:
 
 - an italicized opening paragraph summarizing the UTC day in one or two sentences;
-- a concise `**Participants/contributors:** ...` paragraph naming the users,
-  assistant model identifiers, authors, and labeled subagents represented in
-  the source notes; use only source-supported identities and never guess;
+- a concise `**Participants/contributors:** ...` paragraph naming the users and
+  exact assistant model identifiers/versions/reasoning-effort levels represented
+  in the source notes; use only source-supported identities and never guess.
+  Task labels, role descriptions, generic agent/subagent categories, tool names,
+  and nicknames without a model identifier are not participant identities and
+  must be omitted;
 - the main research/workflow developments;
 - decisions, terminology, or methodological clarifications that should persist;
 - empirical results or observations, with caveats;
