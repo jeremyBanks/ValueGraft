@@ -4,7 +4,8 @@ from types import SimpleNamespace
 import pytest
 import torch
 
-from coherent_state_hf import CoherentStateError
+from coherent_state_hf import CoherentStateError, IncrementalTrace
+import coherent_state_runtime as runtime
 from coherent_state_runtime import (
     append_gapped_post_summary,
     arm_snapshot,
@@ -101,6 +102,58 @@ def test_logical_positions_cannot_be_used_as_cache_positions():
     assert ok["gap_from_physical"] == 76
     with pytest.raises(CoherentStateError, match="cache_position"):
         validate_position_schedule([80, 81, 82], [80, 81, 82], physical_start=4)
+
+
+def test_actual_gapped_destination_schedule_compares_every_saved_summary_row(
+        monkeypatch):
+    layout = SimpleNamespace(
+        prefix_ids=[10, 11, 12, 13],
+        prefix_position_ids=[0, 1, 80, 81],
+        summary_position_ids=[82, 83],
+        system_end=2,
+        request_logical_start=80,
+        source_summary_start=82,
+        physical_summary_start=4,
+        physical_summary_end=6,
+    )
+    calls = []
+
+    def branch(_model, _layout, summary, partitions):
+        calls.append(list(partitions))
+        trace = IncrementalTrace(
+            token_ids=list(summary), token_logprobs=[-1.0, -2.0],
+            start_position=82, end_position=84, ended_on_eos=False)
+        rows = [(torch.zeros(1, 2, 2, 3), torch.zeros(1, 2, 2, 3))]
+        return trace, rows
+
+    monkeypatch.setattr(runtime, "_run_gapped_schedule_branch", branch)
+    observed = runtime.measure_gapped_destination_schedule(
+        object(), layout, [21, 22])
+    assert calls == [[2, 2], [4]]
+    assert observed["status"] == "PASS"
+    assert observed["summary_step_widths"] == [1, 1]
+    assert observed["prefix_position_ids"] == [0, 1, 80, 81]
+    assert observed["per_layer"][0]["k_per_summary_token_max_abs"] == [0.0, 0.0]
+    assert observed["token_logprob_abs_differences"] == [0.0, 0.0]
+
+
+def test_actual_gapped_destination_schedule_persists_error(monkeypatch):
+    layout = SimpleNamespace(
+        prefix_ids=[10, 11], prefix_position_ids=[0, 80],
+        summary_position_ids=[81], system_end=1,
+        request_logical_start=80, source_summary_start=81,
+        physical_summary_start=2, physical_summary_end=3,
+    )
+    monkeypatch.setattr(
+        runtime, "_run_gapped_schedule_branch",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            torch.OutOfMemoryError("injected")))
+    progress = []
+    with pytest.raises(torch.OutOfMemoryError, match="injected"):
+        runtime.measure_gapped_destination_schedule(
+            object(), layout, [21], progress=progress.append)
+    assert progress[-1]["status"] == "ERROR"
+    assert progress[-1]["failure_evidence"]["error_type"] == "OutOfMemoryError"
 
 
 def test_snapshot_length_and_gapped_boundary_reject_pretailed_cache():

@@ -62,6 +62,7 @@ from coherent_state_runtime import (
     complete_assistant_context,
     eager_backend_fingerprint,
     gapped_arm_boundary,
+    measure_gapped_destination_schedule,
     score_arm,
     score_target,
     validate_position_schedule,
@@ -806,6 +807,44 @@ class Runner:
                     f"SUMMARY_DURABLE position={position} id={cid} "
                     f"tokens={len(generated.summary_ids)}",
                     flush=True)
+
+            # Exercise the exact compacted destination at this render's real
+            # length and logical gap, through every saved summary token, before
+            # constructing a wrong source, arm, target, or semantic outcome.
+            declared_layout = gapped_destination_layout(
+                self.tokenizer, conv, generated.summary_text,
+                generated.summary_ids, SUMMARY_REQUEST,
+                generated.prefix_ids)
+
+            def destination_schedule_progress(evidence: dict) -> None:
+                current = json.loads(path.read_text())
+                atomic_write_json(path, {
+                    **current,
+                    "pre_score_destination_schedule_equivalence": evidence,
+                    "capture_progress": {
+                        **(current.get("capture_progress") or {}),
+                        "actual_destination_schedule_status":
+                            evidence.get("status"),
+                        "actual_destination_schedule_semantic_scoring_performed":
+                            False,
+                    },
+                })
+
+            destination_schedule = measure_gapped_destination_schedule(
+                self.model, declared_layout, generated.summary_ids,
+                tolerance=ZERO_GAP_TOLERANCE,
+                progress=destination_schedule_progress)
+            if (destination_schedule.get("passes") is not True or
+                    destination_schedule.get("prefix_token_ids") !=
+                    declared_layout.prefix_ids or
+                    destination_schedule.get("summary_token_ids") !=
+                    generated.summary_ids or
+                    destination_schedule.get(
+                        "semantic_scoring_performed") is not False):
+                raise CoherentStateError(
+                    f"{cid}: actual gapped destination schedule gate failed")
+            _release_cuda()
+
             replay = capture_forced_summary(
                 self.model, self.tokenizer, correct_messages,
                 generated.summary_ids, source_kind="correct_stepwise_replay")
@@ -894,10 +933,13 @@ class Runner:
             wrong.cache = None
             _release_cuda()
 
-            declared_layout = gapped_destination_layout(
+            reconstructed_layout = gapped_destination_layout(
                 self.tokenizer, conv, generated.summary_text,
                 generated.summary_ids, SUMMARY_REQUEST,
                 generated.prefix_ids)
+            if reconstructed_layout != declared_layout:
+                raise CoherentStateError(
+                    "destination layout changed after its schedule gate")
             if declared_layout.logical_next_position > self.context_limit:
                 raise CoherentStateError(
                     f"{cid}: logical destination end "

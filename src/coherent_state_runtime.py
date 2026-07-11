@@ -415,6 +415,159 @@ def build_gapped_fresh_boundary(
     return layout, trace, boundary, fresh_rows
 
 
+def _run_gapped_schedule_branch(model, layout: GappedDestinationLayout,
+                                summary_ids: Sequence[int],
+                                prefix_partitions: Sequence[int]):
+    """Force one identical-token gapped destination under a call schedule."""
+    widths = [int(value) for value in prefix_partitions]
+    if (not widths or any(value < 1 for value in widths) or
+            sum(widths) != len(layout.prefix_ids)):
+        raise CoherentStateError(
+            "gapped destination partition does not cover its prefix")
+    cache = None
+    first = None
+    lo = 0
+    for width in widths:
+        hi = lo + width
+        cache, first = prefill(
+            model, _ids(model, layout.prefix_ids[lo:hi]), past=cache,
+            position_ids=torch.tensor(
+                [layout.prefix_position_ids[lo:hi]], device=model.device),
+            cache_position=_cache_positions(model, lo, width))
+        lo = hi
+    cache, _, trace = append_ids_stepwise(
+        model, cache, first, summary_ids, layout.source_summary_start,
+        start_cache_position=len(layout.prefix_ids))
+    rows = extract_summary_rows(
+        cache, layout.physical_summary_start, layout.physical_summary_end)
+    return trace, rows
+
+
+def measure_gapped_destination_schedule(
+        model, layout: GappedDestinationLayout, summary_ids: Sequence[int], *,
+        tolerance: float = 5e-4, progress=None) -> dict:
+    """Compare the exact production destination schedule to an alternative.
+
+    Both branches use the actual compacted token stream, identical gapped
+    logical positions, contiguous physical cache positions, and the complete
+    saved summary.  Only the prefix call partition differs: production's
+    system/request split versus ordinary consecutive chunks.  The summary is
+    forced stepwise in both branches, exactly as in ``G_fresh``.
+    """
+    summary = [int(value) for value in summary_ids]
+    production = [layout.system_end,
+                  len(layout.prefix_ids) - layout.system_end]
+    if any(value < 1 for value in production):
+        raise CoherentStateError("gapped destination production blocks are empty")
+    alternative = [min(4096, len(layout.prefix_ids) - start)
+                   for start in range(0, len(layout.prefix_ids), 4096)]
+    evidence = {
+        "status": "RUNNING", "passes": False,
+        "semantic_scoring_performed": False,
+        "prefix_token_ids": list(layout.prefix_ids),
+        "prefix_token_sha256": sha256_ids(layout.prefix_ids),
+        "prefix_position_ids": list(layout.prefix_position_ids),
+        "prefix_position_sha256": sha256_ids(layout.prefix_position_ids),
+        "summary_token_ids": summary,
+        "summary_token_sha256": sha256_ids(summary),
+        "summary_position_ids": list(layout.summary_position_ids),
+        "summary_position_sha256": sha256_ids(layout.summary_position_ids),
+        "physical_prefix_cache_position_ids": list(range(len(layout.prefix_ids))),
+        "physical_summary_cache_position_ids": list(range(
+            layout.physical_summary_start, layout.physical_summary_end)),
+        "system_end": int(layout.system_end),
+        "request_logical_start": int(layout.request_logical_start),
+        "source_summary_start": int(layout.source_summary_start),
+        "physical_summary_start": int(layout.physical_summary_start),
+        "physical_summary_end": int(layout.physical_summary_end),
+        "production_prefix_partition": production,
+        "alternative_prefix_partition": alternative,
+        "summary_step_widths": [1] * len(summary),
+        "threshold": float(tolerance), "comparison": "<=",
+        "reference_complete": False, "alternative_complete": False,
+        "measurement_complete": False,
+    }
+    if progress is not None:
+        progress(json.loads(json.dumps(evidence)))
+    try:
+        reference_trace, reference_rows = _run_gapped_schedule_branch(
+            model, layout, summary, production)
+        evidence["reference_trace"] = asdict(reference_trace)
+        evidence["reference_complete"] = True
+        if progress is not None:
+            progress(json.loads(json.dumps(evidence)))
+        alternative_trace, alternative_rows = _run_gapped_schedule_branch(
+            model, layout, summary, alternative)
+        evidence["alternative_trace"] = asdict(alternative_trace)
+        evidence["alternative_complete"] = True
+        if progress is not None:
+            progress(json.loads(json.dumps(evidence)))
+
+        reference_lps = evidence["reference_trace"]["token_logprobs"]
+        alternative_lps = evidence["alternative_trace"]["token_logprobs"]
+        if (evidence["reference_trace"]["token_ids"] != summary or
+                evidence["alternative_trace"]["token_ids"] != summary or
+                len(reference_lps) != len(summary) or
+                len(alternative_lps) != len(summary)):
+            raise CoherentStateError(
+                "gapped destination trace does not cover the saved summary")
+        token_logprob_abs = [abs(float(left) - float(right))
+                             for left, right in zip(reference_lps, alternative_lps)]
+        per_layer = []
+        if len(reference_rows) != len(alternative_rows) or not reference_rows:
+            raise CoherentStateError(
+                "gapped destination schedule layer coverage differs")
+        for layer, ((left_k, left_v), (right_k, right_v)) in enumerate(zip(
+                reference_rows, alternative_rows)):
+            k_diff = (left_k.float() - right_k.float()).abs()
+            v_diff = (left_v.float() - right_v.float()).abs()
+            # Reduce every individual summary row across batch, heads, and
+            # head-dimension while retaining the complete rowwise sequence.
+            k_per_token = k_diff.amax(dim=(0, 1, 3)).tolist()
+            v_per_token = v_diff.amax(dim=(0, 1, 3)).tolist()
+            per_layer.append({
+                "layer": layer,
+                "k_per_summary_token_max_abs": [float(x) for x in k_per_token],
+                "v_per_summary_token_max_abs": [float(x) for x in v_per_token],
+                "k_max_abs": float(k_diff.max()),
+                "v_max_abs": float(v_diff.max()),
+            })
+            evidence["per_layer"] = per_layer
+            if progress is not None:
+                progress(json.loads(json.dumps(evidence)))
+        k_max = max(row["k_max_abs"] for row in per_layer)
+        v_max = max(row["v_max_abs"] for row in per_layer)
+        lp_max = max(token_logprob_abs, default=0.0)
+        evidence.update({
+            "token_logprob_abs_differences": token_logprob_abs,
+            "token_logprob_max_abs": lp_max,
+            "per_layer": per_layer,
+            "cache_k_max_abs": k_max,
+            "cache_v_max_abs": v_max,
+            "observed_aggregate": max(lp_max, k_max, v_max),
+            "measurement_complete": True,
+        })
+        evidence["passes"] = evidence["observed_aggregate"] <= tolerance
+        evidence["status"] = "PASS" if evidence["passes"] else "FAIL"
+        if progress is not None:
+            progress(json.loads(json.dumps(evidence)))
+        if not evidence["passes"]:
+            raise CoherentStateError(
+                "gapped destination schedule equivalence did not pass")
+        return evidence
+    except Exception as exc:
+        if evidence.get("status") == "RUNNING":
+            evidence.update({
+                "status": "ERROR", "passes": False,
+                "failure_evidence": {
+                    "error_type": type(exc).__name__, "error": str(exc),
+                },
+            })
+            if progress is not None:
+                progress(json.loads(json.dumps(evidence)))
+        raise
+
+
 def append_gapped_post_summary(model, boundary_snapshot: Snapshot,
                                layout: GappedDestinationLayout) -> Snapshot:
     """Fork one arm at the boundary and causally append close + retained tail."""
