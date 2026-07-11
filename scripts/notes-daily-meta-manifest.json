@@ -983,7 +983,7 @@
     },
     "20260711": {
       "note": "notes/20260711.md",
-      "source_count": 44,
+      "source_count": 49,
       "sources": [
         {
           "note": "notes/2026071146-conversation-user-gpt56.md",
@@ -1027,7 +1027,7 @@
         },
         {
           "note": "notes/2026071156-sol-fable-execution-coordination.md",
-          "blob_id": "ab615dd4789a5beff77c87dc31f3b4e06c505a96"
+          "blob_id": "f2a9a2f02cc8307de53918b11a61ab72ea42a3a2"
         },
         {
           "note": "notes/2026071157-fable-outcome-interpretation-matrix.md",
@@ -1099,7 +1099,7 @@
         },
         {
           "note": "notes/2026071174-conversation-user-gpt56.md",
-          "blob_id": "d3aa985d051ec28835015e085d8ffbd48d817f49"
+          "blob_id": "5ebf7d5bc0ef4aa7585b78d8d51b7fc0f88a8f56"
         },
         {
           "note": "notes/2026071175-fable-c10-schedule-failure-design-review.md",
@@ -1160,6 +1160,26 @@
         {
           "note": "notes/2026071189-independent-paired-v11-design-review.md",
           "blob_id": "988c4100c42680b6de9ff9ca90b9ee2b787e8cf8"
+        },
+        {
+          "note": "notes/2026071190-trajectory-red-team-ultra-regroup.md",
+          "blob_id": "77e50b8884e7ac2d2de3bcca92a8e800d45a455e"
+        },
+        {
+          "note": "notes/2026071191-causal-statistical-blackboard-ultra-regroup.md",
+          "blob_id": "2c145095bba8c49f70136b67d4367b383669a4ba"
+        },
+        {
+          "note": "notes/2026071192-sol-ultra-regroup-decision.md",
+          "blob_id": "2d94e0e6a97efe8f562e563648879b8f984f0b45"
+        },
+        {
+          "note": "notes/2026071193-fable-ultra-regroup-review.md",
+          "blob_id": "984a3fc11430df1a0750c3417f0b468e0959bc37"
+        },
+        {
+          "note": "notes/2026071194-provenance-correction-fable-regroup-review.md",
+          "blob_id": "eb344ce46c327432e1ae46bfa9d7aa97f9f6dc8e"
         }
       ],
       "source_blob_ids": [
@@ -1172,7 +1192,9 @@
         "234a1d59d9d7afd0eba5f98a1d133f9afda69cb3",
         "258b2a784e41705719ae33526b4e31e5fd5c4ea3",
         "2afb9a7cf10a9fdab6e8eb2992a8910be45035a2",
+        "2c145095bba8c49f70136b67d4367b383669a4ba",
         "2c9190b439ac7fe93b370c30fb09901dffcf11b6",
+        "2d94e0e6a97efe8f562e563648879b8f984f0b45",
         "315bc4e4906475bb762f1f2544986fc602b856dc",
         "3711b0863cf273b598bf67ebe11b7e24c0e3eed2",
         "3729d6ce06feba02969183ffd3a9a1c831d06ea3",
@@ -1182,15 +1204,17 @@
         "49e48cb21192c0bd1eed6f4bcb6dabe4562e98d1",
         "517c90e4c3020812070f2c6d346eed612cdfbde7",
         "5b9c4dcaf4a8e915872190724dab79de2d3306e1",
+        "5ebf7d5bc0ef4aa7585b78d8d51b7fc0f88a8f56",
         "6f6ed755f5dc12fb7629896536f7efa95b4d2f37",
+        "77e50b8884e7ac2d2de3bcca92a8e800d45a455e",
         "781b415e9487265c772e252aff747e4049b031e5",
         "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec",
         "7eccaee9451d3d2233c8854606bf6255b0bf7845",
         "8b87d5ac01a50e9f0b79127784e5a8b027622d42",
         "94b79dcdd415d506b6c7e1ee5a5b16becb3f884f",
+        "984a3fc11430df1a0750c3417f0b468e0959bc37",
         "988c4100c42680b6de9ff9ca90b9ee2b787e8cf8",
         "9e51497d6be5b78c039057663d905d5b427a3da2",
-        "ab615dd4789a5beff77c87dc31f3b4e06c505a96",
         "b11e21769d2f45707934b42a36327e02aeaa6d8e",
         "b40c8a806fff9991ab8bc723ff2d41aa39059fc0",
         "b5c09f76d16f043bea87f65c9e58c060615ddbdb",
@@ -1200,15 +1224,16 @@
         "c5c413c5a4e39633e887656a7bd443d02e092c4e",
         "c6bf9acb4970f4371a222a1962d3a5bde404766c",
         "c93e082210aa65795e52cfe8d1300377ad8ca612",
-        "d3aa985d051ec28835015e085d8ffbd48d817f49",
         "dccd0352923673a6468c23d22cd928ae80133689",
         "df7c96a79ff1103400de864f7829768e5888c83d",
         "e76cf2ee2ac57d8b7e804a62a8c24f883be202d0",
         "ea063b4ca1cfa377767751d086906369fb6f9592",
+        "eb344ce46c327432e1ae46bfa9d7aa97f9f6dc8e",
         "eb9116fee89f44c9871a9cdd2531e7e668074a7f",
+        "f2a9a2f02cc8307de53918b11a61ab72ea42a3a2",
         "f80bb652d4763b96da0f002ce178824be56c92c6"
       ],
-      "summary_hash": "dd086b2ea4e806f0ce7f4ed417006fae88c52c9ec0867f57cc03cb6da1beea3b",
+      "summary_hash": "0c027dfa0f0fd459c58ea2d4391116bd501e44210023fbfe44850cc6e45035e8",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
