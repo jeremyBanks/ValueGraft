@@ -48,9 +48,9 @@ def compact_messages(history: list[dict], middle: int) -> list[dict]:
     return source_messages(history, middle)[:1] + source_messages(history, middle)[middle:]
 
 
-def _probe_record(model, tokenizer, snapshot, messages, context_ids,
-                  logical_end: int, probe: str, correct_text: str,
-                  wrong_text: str, eos_ids: Sequence[int]) -> dict:
+def probe_record(model, tokenizer, snapshot, messages, context_ids,
+                 logical_end: int, probe: str, correct_text: str,
+                 wrong_text: str, eos_ids: Sequence[int]) -> dict:
     suffix = probe_suffix_ids(tokenizer, messages, context_ids, probe)
     target_context = list(messages) + [{"role": "user", "content": probe}]
     correct_ids = [int(value) for value in rendered_assistant_content_ids(
@@ -76,6 +76,12 @@ def _probe_record(model, tokenizer, snapshot, messages, context_ids,
         logical_start=prefix.logical_end, eos_ids=eos_ids)
     margin = (torch.tensor(correct["mean_logprob"], dtype=torch.float32) -
               torch.tensor(wrong["mean_logprob"], dtype=torch.float32))
+    generation_record = {
+        key: value for key, value in asdict(generation).items()
+        if key != "snapshot"
+    }
+    generation_record["decoded_content"] = tokenizer.decode(
+        generation.content_ids, skip_special_tokens=False)
     return {
         "probe": probe, "suffix_ids": suffix,
         "correct_text": correct_text, "counterfactual_text": wrong_text,
@@ -92,14 +98,12 @@ def _probe_record(model, tokenizer, snapshot, messages, context_ids,
             "physical_positions": prefix.physical_positions,
             "row_hashes": snapshot_hashes(prefix.snapshot),
         },
-        "generation": {
-            key: value for key, value in asdict(generation).items()
-            if key != "snapshot"
-        },
+        "generation": generation_record,
     }
 
 
-def _identity_branch_record(prefix, generation, *, content_start: int) -> dict:
+def _identity_branch_record(prefix, generation, tokenizer, *,
+                            content_start: int) -> dict:
     content_end = content_start + len(generation.content_ids)
     rows = extract_rows(
         generation.snapshot, content_start, content_end,
@@ -118,7 +122,8 @@ def _identity_branch_record(prefix, generation, *, content_start: int) -> dict:
         "generation": {
             key: value for key, value in asdict(generation).items()
             if key != "snapshot"
-        },
+        } | {"decoded_content": tokenizer.decode(
+            generation.content_ids, skip_special_tokens=False)},
         "content_start": content_start,
         "content_end": content_end,
         "content_row_hashes": snapshot_hashes(rows),
@@ -145,10 +150,11 @@ def run_generated_forced_identity(model, tokenizer, fixture: dict,
             generated_prefix, generated, forced_prefix, forced,
             content_start=generated_prefix.physical_end)
         generated_record = _identity_branch_record(
-            generated_prefix, generated,
+            generated_prefix, generated, tokenizer,
             content_start=generated_prefix.physical_end)
         forced_record = _identity_branch_record(
-            forced_prefix, forced, content_start=forced_prefix.physical_end)
+            forced_prefix, forced, tokenizer,
+            content_start=forced_prefix.physical_end)
         branches.append({
             "generated": generated_record,
             "forced": forced_record,
@@ -249,21 +255,21 @@ def run_natural_calibration(model, tokenizer, fixture: dict,
     tg, tg_insert = _transplant_complete(model, fresh_plan, green_rows, R2)
     ta, ta_insert = _transplant_complete(model, fresh_plan, amber_rows, R2)
     raw = {
-        "A_g": _probe_record(model, tokenizer, green.snapshot,
+        "A_g": probe_record(model, tokenizer, green.snapshot,
             source_messages(green_history, middle), green_plan.token_ids,
             len(green_plan.token_ids), fixture["probe"], approve_text, deny_text,
             eos_ids),
-        "A_a": _probe_record(model, tokenizer, amber.snapshot,
+        "A_a": probe_record(model, tokenizer, amber.snapshot,
             source_messages(amber_history, middle), amber_plan.token_ids,
             len(amber_plan.token_ids), fixture["probe"], approve_text, deny_text,
             eos_ids),
-        "F": _probe_record(model, tokenizer, fresh.snapshot, compact,
+        "F": probe_record(model, tokenizer, fresh.snapshot, compact,
             fresh_plan.token_ids, fresh_plan.logical_positions[-1] + 1,
             fixture["probe"], approve_text, deny_text, eos_ids),
-        "T_g": _probe_record(model, tokenizer, tg.snapshot, compact,
+        "T_g": probe_record(model, tokenizer, tg.snapshot, compact,
             fresh_plan.token_ids, fresh_plan.logical_positions[-1] + 1,
             fixture["probe"], approve_text, deny_text, eos_ids),
-        "T_a": _probe_record(model, tokenizer, ta.snapshot, compact,
+        "T_a": probe_record(model, tokenizer, ta.snapshot, compact,
             fresh_plan.token_ids, fresh_plan.logical_positions[-1] + 1,
             fixture["probe"], approve_text, deny_text, eos_ids),
     }
