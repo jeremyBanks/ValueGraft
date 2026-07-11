@@ -219,6 +219,19 @@ class GenerationResult:
     cap_hit: bool
 
 
+@dataclass
+class GradientResult:
+    fresh_rows: Snapshot
+    gradients: Snapshot
+    baseline_margin: float
+    baseline_margin_float32_bits: str
+    correct_logprob: float
+    counterfactual_logprob: float
+    physical_region: tuple[int, int]
+    logical_region: tuple[int, int]
+    probe_suffix_ids: list[int]
+
+
 def _forward(model, cache, token_ids: Sequence[int], logical_positions: Sequence[int],
              physical_positions: Sequence[int], *, enable_grad: bool):
     _require(len(token_ids) == len(logical_positions) == len(physical_positions) > 0,
@@ -515,3 +528,102 @@ def require_generated_forced_identity(generated: GenerationResult,
             generated.stop_candidate_logprob_float32_bits,
         "per_layer_content_rows": per_layer,
     }
+
+
+def _selected_leaf_boundary(snapshot: Snapshot, start: int, end: int):
+    _require(0 <= start < end <= snapshot_physical_length(snapshot),
+             "gradient selected interval is invalid")
+    full: Snapshot = []
+    leaves: list[torch.Tensor] = []
+    fresh_rows: Snapshot = []
+    for keys, values in snapshot:
+        key_leaf = keys[..., start:end, :].detach().clone().requires_grad_(True)
+        value_leaf = values[..., start:end, :].detach().clone().requires_grad_(True)
+        full_keys = torch.cat(
+            (keys[..., :start, :].detach(), key_leaf,
+             keys[..., end:, :].detach()), dim=-2)
+        full_values = torch.cat(
+            (values[..., :start, :].detach(), value_leaf,
+             values[..., end:, :].detach()), dim=-2)
+        full.append((full_keys, full_values))
+        leaves.extend((key_leaf, value_leaf))
+        fresh_rows.append((key_leaf.detach().cpu().clone(),
+                           value_leaf.detach().cpu().clone()))
+    return full, leaves, fresh_rows
+
+
+def _one_prefix_margin(model, snapshot: Snapshot, *, suffix_ids: Sequence[int],
+                       logical_context_end: int, correct_id: int,
+                       counterfactual_id: int, enable_grad: bool):
+    cache = rebuild_cache(snapshot, clone=not enable_grad)
+    physical = snapshot_physical_length(snapshot)
+    suffix = [int(x) for x in suffix_ids]
+    cache, logits = _forward(
+        model, cache, suffix,
+        range(logical_context_end, logical_context_end + len(suffix)),
+        range(physical, physical + len(suffix)), enable_grad=enable_grad)
+    logprobs = torch.log_softmax(logits.float(), dim=-1)[0]
+    correct = logprobs[int(correct_id)]
+    counterfactual = logprobs[int(counterfactual_id)]
+    return correct - counterfactual, correct, counterfactual
+
+
+def collect_fresh_region_margin_gradients(
+        model, plan: FreshDestinationPlan, *, region: str,
+        suffix_ids: Sequence[int], correct_id: int, counterfactual_id: int,
+) -> GradientResult:
+    """Differentiate one immutable one-token margin through a fresh region.
+
+    Model weights must already be frozen. Only the selected cached K/V rows are
+    leaves. The function independently reruns the public no-grad path and
+    requires bit-exact baseline margin/log-probability equality.
+    """
+    _require(all(not parameter.requires_grad for parameter in model.parameters()),
+             "model weights are not frozen for path control")
+    physical_start, physical_end = plan.physical_regions.interval(region)
+    logical_start, logical_end = plan.source_regions.interval(region)
+    boundary = execute_fresh_plan(model, plan, stop_at=physical_end)
+    leaf_boundary, leaves, fresh_rows = _selected_leaf_boundary(
+        boundary.snapshot, physical_start, physical_end)
+    differentiated = _run_events(
+        model, plan.token_ids, plan.events, stop_at=len(plan.token_ids),
+        destination=True, initial_snapshot=leaf_boundary, enable_grad=True)
+    logical_context_end = plan.logical_positions[-1] + 1
+    margin, correct, counterfactual = _one_prefix_margin(
+        model, differentiated.snapshot, suffix_ids=suffix_ids,
+        logical_context_end=logical_context_end, correct_id=correct_id,
+        counterfactual_id=counterfactual_id, enable_grad=True)
+    raw_gradients = torch.autograd.grad(
+        margin, leaves, allow_unused=False, retain_graph=False, create_graph=False)
+    gradients: Snapshot = []
+    for layer in range(len(fresh_rows)):
+        key_gradient = raw_gradients[2 * layer].detach().cpu().clone()
+        value_gradient = raw_gradients[2 * layer + 1].detach().cpu().clone()
+        _require(torch.isfinite(key_gradient).all().item() and
+                 torch.isfinite(value_gradient).all().item(),
+                 f"nonfinite path-control gradient at layer {layer}")
+        gradients.append((key_gradient, value_gradient))
+    grad_margin_bits = _float32_bits(margin)
+    grad_correct_bits = _float32_bits(correct)
+    grad_counterfactual_bits = _float32_bits(counterfactual)
+    del differentiated, leaf_boundary, leaves, raw_gradients
+
+    public = execute_fresh_plan(model, plan)
+    public_margin, public_correct, public_counterfactual = _one_prefix_margin(
+        model, public.snapshot, suffix_ids=suffix_ids,
+        logical_context_end=logical_context_end, correct_id=correct_id,
+        counterfactual_id=counterfactual_id, enable_grad=False)
+    _require(_float32_bits(public_margin) == grad_margin_bits and
+             _float32_bits(public_correct) == grad_correct_bits and
+             _float32_bits(public_counterfactual) == grad_counterfactual_bits,
+             "gradient baseline differs from public no-grad path")
+    return GradientResult(
+        fresh_rows=fresh_rows, gradients=gradients,
+        baseline_margin=float(public_margin.detach().cpu()),
+        baseline_margin_float32_bits=_float32_bits(public_margin),
+        correct_logprob=float(public_correct.detach().cpu()),
+        counterfactual_logprob=float(public_counterfactual.detach().cpu()),
+        physical_region=(physical_start, physical_end),
+        logical_region=(logical_start, logical_end),
+        probe_suffix_ids=[int(x) for x in suffix_ids],
+    )

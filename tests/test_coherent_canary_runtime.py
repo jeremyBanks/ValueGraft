@@ -6,6 +6,7 @@ from transformers import DynamicCache
 
 from coherent_canary_runtime import (
     CanaryRuntimeError,
+    collect_fresh_region_margin_gradients,
     continue_fresh_plan,
     execute_fresh_plan,
     execute_replay_plan,
@@ -18,6 +19,7 @@ from coherent_canary_runtime import (
     score_target_q1,
     snapshot_physical_length,
 )
+from coherent_canary_path_control import run_bidirectional_path_control
 from coherent_canary_schema import (
     MODEL_ID, MODEL_REVISION, R2, CarrierRegions, ReplayEvent, ReplayPlan,
 )
@@ -64,6 +66,31 @@ class ScriptedFakeCacheModel(FakeCacheModel):
         candidate = self.candidate_by_cache_length.get(length, 3)
         result.logits.zero_()
         result.logits[:, -1, candidate] = 5.0
+        return result
+
+
+class GradientFakeCacheModel(FakeCacheModel):
+    def forward(self, *args, **kwargs):
+        result = super().forward(*args, **kwargs)
+        total = sum(
+            layer.keys.float().sum() + 0.5 * layer.values.float().sum()
+            for layer in result.past_key_values.layers)
+        result.logits[..., 1] = total
+        result.logits[..., 2] = -total
+        return result
+
+
+class GradientBf16FakeCacheModel(FakeCacheModel):
+    def forward(self, *args, **kwargs):
+        result = super().forward(*args, **kwargs)
+        for layer in result.past_key_values.layers:
+            layer.keys = layer.keys.to(torch.bfloat16)
+            layer.values = layer.values.to(torch.bfloat16)
+        total = sum(
+            layer.keys.float().sum() + 0.5 * layer.values.float().sum()
+            for layer in result.past_key_values.layers)
+        result.logits[..., 1] = total * 1e-3
+        result.logits[..., 2] = -total * 1e-3
         return result
 
 
@@ -192,3 +219,35 @@ def test_generated_forced_identity_is_bit_exact_and_eos_is_not_appended():
     assert generated.stop_candidate_id == 9
     assert generated.snapshot[0][0].shape[-2] == 10
     assert evidence["status"] == "GENERATED_FORCED_IDENTITY_PASS"
+
+
+def test_margin_gradients_cover_every_selected_key_and_value_row(tokenizer):
+    model = GradientFakeCacheModel()
+    fresh = build_fresh_destination_plan(tokenizer, history(), middle_end_msg=3)
+    result = collect_fresh_region_margin_gradients(
+        model, fresh, region=R2, suffix_ids=[5],
+        correct_id=1, counterfactual_id=2)
+    assert result.physical_region == fresh.physical_regions.interval(R2)
+    assert result.logical_region == fresh.source_regions.interval(R2)
+    assert len(result.fresh_rows) == len(result.gradients) == 2
+    for (keys, values), (key_gradient, value_gradient) in zip(
+            result.fresh_rows, result.gradients):
+        assert keys.shape == key_gradient.shape
+        assert values.shape == value_gradient.shape
+        assert torch.count_nonzero(key_gradient) == key_gradient.numel()
+        assert torch.count_nonzero(value_gradient) == value_gradient.numel()
+
+
+def test_bidirectional_path_control_reinserts_detached_bf16_rows(tokenizer):
+    model = GradientBf16FakeCacheModel()
+    fresh = build_fresh_destination_plan(tokenizer, history(), middle_end_msg=3)
+    result = run_bidirectional_path_control(
+        model, fresh, region=R2, suffix_ids=[5],
+        correct_id=1, counterfactual_id=2)
+    assert result["status"] == "PASS"
+    assert result["chosen_ulp_count"] in (1, 2, 4, 8, 16, 32, 64)
+    chosen = result["attempts"][-1]
+    assert chosen["plus_margin_movement"] >= 1e-4
+    assert chosen["minus_margin_movement"] >= 1e-4
+    assert chosen["plus"]["insertion"]["use_keys"] is True
+    assert chosen["plus"]["insertion"]["use_values"] is True
