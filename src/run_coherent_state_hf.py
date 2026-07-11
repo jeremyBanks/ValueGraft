@@ -631,10 +631,13 @@ class Runner:
                     len(generated.summary_ids)):
                 raise CoherentStateError("destination summary schedule differs")
             request_suffix = layout.prefix_ids[layout.system_end:]
-            if (generated.prefix_ids[layout.request_logical_start:] != request_suffix or
+            if (generated.prefix_ids[:layout.system_end] !=
+                    layout.prefix_ids[:layout.system_end] or
+                    generated.prefix_ids[layout.request_logical_start:] != request_suffix or
                     layout.prefix_position_ids[-1] != generated.summary_start - 1 or
                     layout.request_logical_start < layout.system_end):
-                raise CoherentStateError("gapped request/header suffix gate failed")
+                raise CoherentStateError(
+                    "gapped system or request/header island gate failed")
             if layout.context_ids[:layout.physical_summary_start] != layout.prefix_ids:
                 raise CoherentStateError("destination prefix IDs changed")
             if (layout.context_ids[layout.physical_summary_start:
@@ -728,6 +731,7 @@ class Runner:
                 "structural_request_header_tail_positions_exact": True,
                 "replacement_special_tokens_excluded": True,
                 "request_header_suffix_exact": True,
+                "system_island_exact": True,
                 "logical_islands_nonoverlapping": True,
                 "summary_positions_equal": True,
                 "cache_position_contiguous": True,
