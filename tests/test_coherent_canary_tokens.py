@@ -1,7 +1,11 @@
 import pytest
 
 from coherent_canary_schema import ENGINEERED_CARRIER_CONTENT, require_matching_geometry
-from coherent_canary_tokens import build_role_native_plan, build_turn_aligned_plan
+from coherent_canary_tokens import (
+    build_fresh_destination_plan,
+    build_role_native_plan,
+    build_turn_aligned_plan,
+)
 
 
 @pytest.fixture(scope="module")
@@ -144,3 +148,29 @@ def test_turn_aligned_counterfactual_geometry_matches(tokenizer):
     wrong = build_turn_aligned_plan(
         tokenizer, _history_with_tail("amber"), middle_end_msg=3)
     require_matching_geometry(correct, wrong)
+
+
+def test_fresh_destination_is_packed_physical_and_gapped_logical(tokenizer):
+    history = _history_with_tail("green")
+    source = build_role_native_plan(tokenizer, history, middle_end_msg=3)
+    fresh = build_fresh_destination_plan(tokenizer, history, middle_end_msg=3)
+    assert fresh.physical_positions == list(range(len(fresh.token_ids)))
+    assert fresh.logical_positions == fresh.source_token_indices
+    assert fresh.logical_positions[fresh.system_width] == fresh.suffix_source_start
+    assert fresh.suffix_source_start > fresh.system_width
+    assert len(fresh.token_ids) < len(source.token_ids)
+    for region in ("R1_content", "R2_boundary", "R3_anchor"):
+        source_start, source_end = fresh.source_regions.interval(region)
+        physical_start, physical_end = fresh.physical_regions.interval(region)
+        assert fresh.logical_positions[physical_start] == source_start
+        assert physical_end - physical_start == source_end - source_start
+        assert fresh.token_ids[physical_start:physical_end] == source.token_ids[
+            source_start:source_end]
+
+
+def test_counterfactuals_have_identical_fresh_destination(tokenizer):
+    correct = build_fresh_destination_plan(
+        tokenizer, _history_with_tail("green"), middle_end_msg=3)
+    wrong = build_fresh_destination_plan(
+        tokenizer, _history_with_tail("amber"), middle_end_msg=3)
+    assert correct == wrong

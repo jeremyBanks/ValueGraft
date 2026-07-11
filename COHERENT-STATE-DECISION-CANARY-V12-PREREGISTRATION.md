@@ -299,10 +299,15 @@ result.
 
 For a fixed visible carrier:
 
-- build compact physical storage containing the system, the carrier request,
-  maximal visible carrier, fixed anchor exchange, and retained tail;
-- assign the carrier/anchor the exact logical positions of the corresponding
-  full-history source rows;
+- build exactly this compact canonical message list once, with no duplicated
+  anchor: `[original system, carrier request, carrier assistant, anchor user,
+  anchor assistant, retained-tail messages...]`;
+- derive its token IDs by selecting the complete original-system source interval
+  plus the full source suffix beginning at the carrier-request start; independently
+  rerender the compact message list and require byte-identical token IDs;
+- assign every compact token its exact full-source logical position: original
+  system positions remain `0..system_end`, while the carrier request through the
+  retained-tail end keep the source suffix positions after the evicted gap;
 - keep `cache_position` contiguous in compact physical storage;
 - force fresh carrier content q=1 and append close/anchor in the same exact call
   pattern used for the source region;
@@ -310,6 +315,15 @@ For a fixed visible carrier:
   recompute all following visible tokens and the retained tail;
 - append each probe and teacher-force its exact target phrases from separately
   rebuilt immutable arm snapshots.
+
+Before any model forward, persist for every case the complete arrays
+`token_ids`, `logical_positions`, `physical_positions`, and
+`source_token_indices`; the exact event list; source and physical R1/R2/R3
+intervals; system width; and suffix-source start. Assert packed physical
+positions, one intentional logical gap, exact source-token reconstruction,
+identical C/W fresh plans, whole-event region boundaries, and equal region
+widths/IDs/logical positions across F/C/W. N and P share this same fresh plan
+from carrier content onward.
 
 The fresh destination comparison is a deployment-utility contrast. Its compact
 prefix differs from the long source trajectory by construction; it is not the

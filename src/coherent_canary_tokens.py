@@ -13,6 +13,8 @@ from coherent_canary_schema import (
     ENGINEERED_CARRIER_REQUEST,
     CanarySchemaError,
     CarrierRegions,
+    DestinationEvent,
+    FreshDestinationPlan,
     ReplayEvent,
     ReplayPlan,
 )
@@ -216,4 +218,79 @@ def build_turn_aligned_plan(tokenizer, history_messages: list[dict], *,
         message_start_positions=list(n_plan.message_start_positions),
         events=events,
         regions=n_plan.regions,
+    ).validate()
+
+
+def build_fresh_destination_plan(tokenizer, history_messages: list[dict], *,
+                                 middle_end_msg: int) -> FreshDestinationPlan:
+    """Build the exact packed-physical, gapped-logical fresh destination."""
+    source = build_role_native_plan(
+        tokenizer, history_messages, middle_end_msg=middle_end_msg)
+    starts = source.message_start_positions
+    system_width = starts[1]
+    suffix_source_start = starts[middle_end_msg]
+    source_indices = (
+        list(range(system_width)) +
+        list(range(suffix_source_start, len(source.token_ids)))
+    )
+    token_ids = [source.token_ids[index] for index in source_indices]
+
+    compact_messages = deepcopy(history_messages[:1]) + [
+        {"role": "user", "content": ENGINEERED_CARRIER_REQUEST},
+        {"role": "assistant", "content": ENGINEERED_CARRIER_CONTENT},
+        {"role": "user", "content": ANCHOR_USER},
+        {"role": "assistant", "content": ANCHOR_ASSISTANT},
+    ] + deepcopy(history_messages[middle_end_msg:])
+    compact_ids = [int(value) for value in canonical_ids_any(
+        tokenizer, compact_messages, render_hf)]
+    if compact_ids != token_ids:
+        raise CanarySchemaError("fresh compact render differs from source mapping")
+
+    def physical(source_position: int) -> int:
+        if source_position < suffix_source_start:
+            if source_position >= system_width:
+                raise CanarySchemaError("source position lies in evicted gap")
+            return source_position
+        return system_width + source_position - suffix_source_start
+
+    events: list[DestinationEvent] = [DestinationEvent(
+        "prefill", "retained_system", "system", 0,
+        0, system_width, 0, system_width).validate()]
+    carrier_physical_start = physical(suffix_source_start)
+    carrier_content_physical_start = physical(source.regions.content_start)
+    events.extend(DestinationEvent(
+        event.kind, event.label, event.role, event.message_index,
+        physical(event.token_start), physical(event.token_end),
+        event.token_start, event.token_end,
+    ).validate() for event in _bounded_prefill_events(
+        "carrier_request_and_header", "structural", middle_end_msg,
+        suffix_source_start, source.regions.content_start))
+    events.extend(DestinationEvent(
+        event.kind, event.label, event.role, event.message_index,
+        physical(event.token_start), physical(event.token_end),
+        event.token_start, event.token_end,
+    ).validate() for event in source.events
+                  if event.token_start >= source.regions.content_start)
+    if events[1].physical_start != carrier_physical_start or (
+            events[1].physical_end > carrier_content_physical_start):
+        raise CanarySchemaError("fresh carrier request/header mapping differs")
+
+    def physical_regions(regions: CarrierRegions) -> CarrierRegions:
+        return CarrierRegions(
+            content_start=physical(regions.content_start),
+            content_end=physical(regions.content_end),
+            anchor_prefix_end=physical(regions.anchor_prefix_end),
+            anchor_content_end=physical(regions.anchor_content_end),
+        ).validate()
+
+    return FreshDestinationPlan(
+        token_ids=token_ids,
+        logical_positions=list(source_indices),
+        physical_positions=list(range(len(token_ids))),
+        source_token_indices=list(source_indices),
+        events=events,
+        source_regions=source.regions,
+        physical_regions=physical_regions(source.regions),
+        system_width=system_width,
+        suffix_source_start=suffix_source_start,
     ).validate()

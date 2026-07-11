@@ -88,6 +88,8 @@ def test_valid_matched_case_builds_independent_evidence(tokenizer):
     assert result["status"] == "MECHANICAL_DRAFT_PASS"
     assert result["execution_ready"] is False
     assert result["pair"]["role_native_geometry_identical"] is True
+    assert result["pair"]["turn_aligned_geometry_identical"] is True
+    assert result["pair"]["fresh_destination_identical"] is True
     assert 1000 <= result["correct"]["carrier_request_start"] <= 2000
     assert result["correct"]["carrier_regions"]["anchor_content_end"] < result[
         "correct"]["source_replay_token_count"]
