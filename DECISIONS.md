@@ -497,3 +497,25 @@ Capture everything very well (owner).
   roughly `$4`, narrow or stop it rather than extending/resuming a giant context. Reserve
   comprehensive context for final paper synthesis/review. Sol retains final authority and
   uses other independent agents when Fable is unavailable or disproportionate.
+
+- **Mechanical exactness and decoded validity are conjunctive gates; the first four
+  counterfactual witnesses fail the latter.** All four c02/c10 candidates reconstruct with
+  exact message widths, full-prefix length, message starts, P/O schedules, retained tail,
+  and non-allowlisted bytes. Independent blind review nevertheless failed every full
+  conversation, and target-aware review returned `REVISE_ALL_FOUR`. The review-bound
+  validator therefore records `MECHANICAL_PASS` together with external-review `FAIL` and
+  both authorization booleans false. Preserve the candidates as feasibility evidence; do
+  not score, repair in place, or treat mechanical status as content approval. Inherited
+  base repairs require a new symmetrically repaired correct/counterfactual pair. Evidence:
+  `results/coherent_state_counterfactual_validation/`, both review JSON files under the
+  candidate bank, and incident #42.
+
+- **The old Qwen3-30B render bank is a possible text-cost shortcut, not native-state or
+  exact-provenance evidence.** The two twelve-case directories contain identical render
+  objects and summaries and thus represent one corpus. Their artifacts omit the resolved
+  model revision/dtype/backend/code binding and raw reply token IDs/text; 226/264 replies
+  hit the 320-token cap before canonical trimming. Reuse is permitted only as frozen
+  model-authored canonical text after blind coherence review. A corrected assay still
+  requires live exact-model summary generation and complete provenance, and must call a
+  replay of banked text replay—not preserved live native state. Evidence:
+  `notes/2026071184-sol-banked-30b-render-reuse-audit.md`.
