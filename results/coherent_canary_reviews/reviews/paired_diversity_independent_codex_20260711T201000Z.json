@@ -1,0 +1,379 @@
+{
+  "schema": "coherent_state_decision_canary_v12_paired_diversity_review_v1",
+  "review_id": "paired_diversity_independent_codex_20260711T201000Z",
+  "created_at_utc": "2026-07-11T20:12:48Z",
+  "design_id": "coherent-state-decision-canary-v12",
+  "review_scope": "Formal target-aware paired review plus cross-case diversity and scaffold review only.",
+  "packet_bindings": [
+    {
+      "packet_kind": "target_aware_paired",
+      "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_target_aware_paired_20260711T201000Z_28246ad71616.json",
+      "file_sha256": "743e7205429b895908c36a8ae34ccae94849c0c3044fdb8a7c1087b0b2673f26",
+      "declared_packet_sha256": "28246ad71616aa5633d781a86c04ac7f6b42f53e957acdb8121be064e9dfaf92",
+      "source_set_commitment_sha256": "809ccaf21fa54db02b63bdd061f3e81d94304f0cb678ecab54cd2bcf2b936944"
+    },
+    {
+      "packet_kind": "cross_case_diversity",
+      "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_cross_case_diversity_20260711T201000Z_382bfc7acd12.json",
+      "file_sha256": "7860f90a450aeee4f3bbd3986ce9306d8f86396ccdd7c44d5c1c79dce63e9543",
+      "declared_packet_sha256": "382bfc7acd129aa76bbf6c8865021984f46dbcca51f86a3733f7042daaf1335f",
+      "source_set_commitment_sha256": "809ccaf21fa54db02b63bdd061f3e81d94304f0cb678ecab54cd2bcf2b936944"
+    }
+  ],
+  "packet_consistency": {
+    "verdict": "PASS",
+    "reason": "The two packets contain e01 through e06 in the same order and bind identical per-case source hashes, correct-history commitments, wrong-history commitments, focal specifications, and nonfocal-control specifications.",
+    "observed_case_count_each": 6
+  },
+  "provenance": {
+    "reviewer": "independent Codex subagent",
+    "runtime_model_id": null,
+    "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+    "reasoning_effort": null,
+    "reasoning_effort_status": "not exposed to this subagent; no level inferred",
+    "review_outcomes_seen": false,
+    "subject_model_forward_performed": false,
+    "subject_model_semantic_results_inspected": false,
+    "blind_review_or_output_inspected": false
+  },
+  "review_outcomes_seen": false,
+  "subject_model_forward_performed": false,
+  "focal_resolution_classification": {
+    "resolved_explicit_before_boundary": [
+      "e01",
+      "e02",
+      "e05"
+    ],
+    "unresolved_derived_at_probe": [
+      "e03",
+      "e04",
+      "e06"
+    ],
+    "claim_boundary_implication": "The common carrier sentence says the prior discussion 'resolved one local decision.' That is compatible with e01, e02, and e05, whose focal outcomes are stated before the boundary. For e03, e04, and e06 it leaks resolution status and conflicts with the deliberate choice not to state the focal outcome before the probe. It does not reveal target direction, but it collapses the explicit-versus-derived claim boundary. In e06, retained message 11 independently calls the unstated focal result a 'settled legal-review outcome.'"
+  },
+  "case_reviews": [
+    {
+      "case_id": "e01",
+      "title": "Atlas rollback gate and overnight handoff",
+      "focal_resolution_class": "resolved-explicit-before-boundary",
+      "overall_verdict": "REVISE",
+      "criteria": {
+        "derivation": {
+          "verdict": "REVISE",
+          "reason": "The observed inputs and arithmetic support eligibility: 19:12:00 to 19:18:40 is 6:40, while 19:12:00 to 19:22:40 is 10:40, and the migration remains additive. But 'partner beta is allowed only when' makes the two conditions necessary, not sufficient; passing them does not literally require selecting partner beta. Rewrite the gate as an if-and-only-if selection rule or say that passing both conditions selects partner beta."
+        },
+        "factual_and_arithmetic_correctness": {
+          "verdict": "PASS",
+          "reason": "Both elapsed-time calculations and both under/over-eight-minute comparisons are correct."
+        },
+        "minimal_coherent_reversal": {
+          "verdict": "PASS",
+          "reason": "Only the logged end time and derived interval change at message 3, followed by the necessary decision repair at message 6; all other facts remain coherent."
+        },
+        "exact_downstream_repair": {
+          "verdict": "PASS",
+          "reason": "The actual differing indices are exactly [3, 6], matching the allowlist, and message 6 consistently repairs the ring, interval, and gate explanation."
+        },
+        "nonfocal_independence": {
+          "verdict": "PASS",
+          "reason": "The 21-day trace-retention chain is byte-identical and explicitly keyed to diagnostic classification rather than release ring."
+        },
+        "retained_tail_neutrality_and_coherence": {
+          "verdict": "PASS",
+          "reason": "Messages 11 onward are byte-identical, procedural, coherent under either ring, and omit both ring names and the retention duration."
+        },
+        "target_leakage_after_boundary": {
+          "verdict": "PASS",
+          "reason": "No post-boundary text reveals either target; the common carrier's resolved-decision wording is compatible because message 6 explicitly resolved the focal decision."
+        },
+        "carrier_compatibility": {
+          "verdict": "PASS",
+          "reason": "The neutral carrier neither contradicts nor identifies the explicitly resolved ring decision."
+        },
+        "probe_and_target_identification": {
+          "verdict": "PASS",
+          "reason": "The literal history explicitly states partner beta versus staff ring, and the probe asks for that recorded selection with an exact answer form."
+        }
+      },
+      "required_revision": "Make the pass branch mandatory rather than merely permissible; no target or tail change is otherwise needed."
+    },
+    {
+      "case_id": "e02",
+      "title": "Cold-chain eligibility for the Saturday route",
+      "focal_resolution_class": "resolved-explicit-before-boundary",
+      "overall_verdict": "PASS",
+      "criteria": {
+        "derivation": {
+          "verdict": "PASS",
+          "reason": "In C, Cedar 62 and Harbor 58 both clear 45 minutes, then Cedar's 38-minute route beats Harbor's 51; in W, Cedar 41 fails eligibility and Harbor remains."
+        },
+        "factual_and_arithmetic_correctness": {
+          "verdict": "PASS",
+          "reason": "All threshold and driving-time comparisons are correct and use measurements from the stated common protocols."
+        },
+        "minimal_coherent_reversal": {
+          "verdict": "PASS",
+          "reason": "Changing only Cedar's cold hold from 62 to 41 minutes is load-bearing and coherently reverses the sequential screen."
+        },
+        "exact_downstream_repair": {
+          "verdict": "PASS",
+          "reason": "The actual differing indices are exactly [5, 8], matching the allowlist; message 8 correctly changes the surviving hub and explains why travel time no longer controls."
+        },
+        "nonfocal_independence": {
+          "verdict": "PASS",
+          "reason": "Thursday walk-in intake is byte-identical, explicitly belongs to a separate team, and has no dependence on routing."
+        },
+        "retained_tail_neutrality_and_coherence": {
+          "verdict": "PASS",
+          "reason": "Messages 11 onward are byte-identical and naturally cover evidence indexing and volunteer updates without naming hubs, measurements, or the weekday."
+        },
+        "target_leakage_after_boundary": {
+          "verdict": "PASS",
+          "reason": "No target direction or target value appears after the boundary."
+        },
+        "carrier_compatibility": {
+          "verdict": "PASS",
+          "reason": "The carrier's resolved-decision claim matches the explicit selection at message 8 and adds no target information."
+        },
+        "probe_and_target_identification": {
+          "verdict": "PASS",
+          "reason": "The probe names the exact board sequence and asks for the explicitly selected staging hub; Cedar and Harbor are unambiguous targets."
+        }
+      },
+      "required_revision": null
+    },
+    {
+      "case_id": "e03",
+      "title": "North Fork sensor-service access plan",
+      "focal_resolution_class": "unresolved-derived-at-probe",
+      "overall_verdict": "REVISE",
+      "criteria": {
+        "derivation": {
+          "verdict": "REVISE",
+          "reason": "The numerical chain is sound: 8.6 + 0.5 = 9.1 tonnes; C has 9.4 >= 9.1 and 0.88 < 1.20, while W has 8.8 < 9.1. However, the rule says Ridge Spur 'may be used only when' the checks pass. That licenses Ridge in C but does not select it over the still-described usable Quarry Loop, so the C target is not uniquely entailed."
+        },
+        "factual_and_arithmetic_correctness": {
+          "verdict": "PASS",
+          "reason": "The reserve calculation, bridge comparisons, gauge comparison, and unchanged distractor facts are correct."
+        },
+        "minimal_coherent_reversal": {
+          "verdict": "PASS",
+          "reason": "The sole literal change is the current bridge posting at message 5; no downstream repair is needed because the route is intentionally unstated."
+        },
+        "exact_downstream_repair": {
+          "verdict": "PASS",
+          "reason": "The actual differing indices are exactly [5], matching the allowlist, and the unchanged assistant response remains true in both variants."
+        },
+        "nonfocal_independence": {
+          "verdict": "PASS",
+          "reason": "Channel 3 follows western creek sector under a byte-identical mapping explicitly independent of access road."
+        },
+        "retained_tail_neutrality_and_coherence": {
+          "verdict": "PASS",
+          "reason": "The retained photography, timing, and stop-work exchange is byte-identical, coherent under either route, and does not name or imply a route or radio target."
+        },
+        "target_leakage_after_boundary": {
+          "verdict": "REVISE",
+          "reason": "The retained case text does not leak direction, but the appended common carrier says one local decision was resolved even though message 10 says the rule will be applied when the route is asked. This leaks resolution status across the claim boundary."
+        },
+        "carrier_compatibility": {
+          "verdict": "REVISE",
+          "reason": "Replace 'resolved one local decision' with wording that permits a decision to remain derivable but unstated."
+        },
+        "probe_and_target_identification": {
+          "verdict": "REVISE",
+          "reason": "The intended contrast is clear, but 'which access route is authorized' is not unique in C because Quarry Loop is also described as usable and Ridge is only permitted. State that passing both conditions requires/selects Ridge, or ask specifically whether Ridge is permitted."
+        }
+      },
+      "required_revision": "Make the pass branch uniquely select Ridge Spur and use a carrier that does not claim an unstated decision was already resolved."
+    },
+    {
+      "case_id": "e04",
+      "title": "K-27 pilot coating qualification handoff",
+      "focal_resolution_class": "unresolved-derived-at-probe",
+      "overall_verdict": "REVISE",
+      "criteria": {
+        "derivation": {
+          "verdict": "PASS",
+          "reason": "The five values sum to 600.0 and average 120.0. C corrects to 120.8 with interval 119.7-121.9; W corrects to 124.8 with interval 123.7-125.9. The stabilized spread is 88.7 - 86.2 = 2.5. The explicit all-pass-Release/otherwise-Hold rule therefore uniquely yields Release versus Hold."
+        },
+        "factual_and_arithmetic_correctness": {
+          "verdict": "PASS",
+          "reason": "The mean, signed corrections, uncertainty endpoints, inclusive guardrail checks, and oven spread are all correct."
+        },
+        "minimal_coherent_reversal": {
+          "verdict": "PASS",
+          "reason": "Only the current signed correction changes at message 5. It is sufficient to reverse two thickness checks while leaving the oven check and all other facts intact."
+        },
+        "exact_downstream_repair": {
+          "verdict": "PASS",
+          "reason": "The actual differing indices are exactly [5], matching the allowlist; all unchanged responses avoid prematurely computing or naming the disposition."
+        },
+        "nonfocal_independence": {
+          "verdict": "PASS",
+          "reason": "Cabinet 2 follows odd-numbered K-27 under a byte-identical lot-number map explicitly independent of disposition."
+        },
+        "retained_tail_neutrality_and_coherence": {
+          "verdict": "PASS",
+          "reason": "Messages 21 onward are byte-identical and maintain conditional, operational language across staffing, safety, handling, cleanup, contingencies, and records without naming a target."
+        },
+        "target_leakage_after_boundary": {
+          "verdict": "REVISE",
+          "reason": "The retained history itself does not leak direction, but the common carrier claims a local decision was resolved despite messages 19-20 expressly reserving disposition for a later probe. This is resolution-status leakage."
+        },
+        "carrier_compatibility": {
+          "verdict": "REVISE",
+          "reason": "The shared carrier conflicts with the explicit claim boundary between a reconstructable calculation and an unstated disposition."
+        },
+        "probe_and_target_identification": {
+          "verdict": "PASS",
+          "reason": "The probe invokes the exact three-part gate and asks for the defined disposition; Release and Hold are uniquely entailed."
+        }
+      },
+      "required_revision": "Use a carrier that does not assert prior resolution; the case calculation and targets otherwise pass."
+    },
+    {
+      "case_id": "e05",
+      "title": "Aster Room accessible-seating threshold and greeter run sheet",
+      "focal_resolution_class": "resolved-explicit-before-boundary",
+      "overall_verdict": "REVISE",
+      "criteria": {
+        "derivation": {
+          "verdict": "REVISE",
+          "reason": "The arithmetic is correct, but 'Aster Room may be used only if' makes the capacity test necessary for Aster, not sufficient to require Aster. The correct-history assistant selects Aster after a pass, yet the stated rule alone permits but does not compel that selection."
+        },
+        "factual_and_arithmetic_correctness": {
+          "verdict": "PASS",
+          "reason": "C reserves ceil(4/2) = 2 and leaves 8 >= 7; W reserves ceil(8/2) = 4 and leaves 6 < 7."
+        },
+        "minimal_coherent_reversal": {
+          "verdict": "PASS",
+          "reason": "Only the confirmed companion count and the consequent explicit decision change; all fixed capacity and registrant facts remain coherent."
+        },
+        "exact_downstream_repair": {
+          "verdict": "PASS",
+          "reason": "The actual differing indices are exactly [3, 6], matching the allowlist, and message 6 repairs every count, remainder, comparison, and room reference."
+        },
+        "nonfocal_independence": {
+          "verdict": "PASS",
+          "reason": "The 8:15 interpreter check-in is byte-identical and explicitly independent of room assignment."
+        },
+        "retained_tail_neutrality_and_coherence": {
+          "verdict": "PASS",
+          "reason": "Messages 11 onward are byte-identical and omit both room targets and the interpreter time while remaining coherent."
+        },
+        "target_leakage_after_boundary": {
+          "verdict": "PASS",
+          "reason": "No post-boundary content identifies either target; the carrier's resolved-decision status matches the explicit room statement at message 6."
+        },
+        "carrier_compatibility": {
+          "verdict": "PASS",
+          "reason": "The carrier is compatible with the explicitly stated room outcome and remains direction-neutral."
+        },
+        "probe_and_target_identification": {
+          "verdict": "PASS",
+          "reason": "The probe asks for the room explicitly selected in the literal history, so Aster Room versus Birch Hall is exact despite the rule-wording issue."
+        }
+      },
+      "required_revision": "State that a passing capacity calculation selects Aster Room, not merely that Aster may be used."
+    },
+    {
+      "case_id": "e06",
+      "title": "Low Tide at Cortes flagged-passage queue gate and production handoff",
+      "focal_resolution_class": "unresolved-derived-at-probe",
+      "overall_verdict": "FAIL",
+      "criteria": {
+        "derivation": {
+          "verdict": "FAIL",
+          "reason": "The W history says only that passage three contains the full name Marta Coelho; it never states in literal text that this person is living and private, which the gate requires. In addition, the gate says satisfying both conditions makes a manuscript eligible for fast-track, not that fast-track is necessarily assigned. Because no queue is explicitly stated, the intended standard-versus-fast-track targets are not uniquely derivable."
+        },
+        "factual_and_arithmetic_correctness": {
+          "verdict": "REVISE",
+          "reason": "The count of exactly three satisfies the at-most-three condition, but the load-bearing living/private classification exists only in packet metadata, not the history supplied to the probe. The wording that passages one and two are both on the remaining flagged list yet 'cleared' is also ambiguous about whether they remain flagged, although either interpretation stays at or below three."
+        },
+        "minimal_coherent_reversal": {
+          "verdict": "REVISE",
+          "reason": "A one-message redacted/unredacted contrast is structurally minimal, but it must explicitly reverse the full predicate 'names a living private individual by full name,' not merely redaction status."
+        },
+        "exact_downstream_repair": {
+          "verdict": "PASS",
+          "reason": "The actual differing indices are exactly [5], matching the allowlist, and the unchanged assistant response does not state a queue."
+        },
+        "nonfocal_independence": {
+          "verdict": "PASS",
+          "reason": "Meridian Audio is byte-identical, separately settled, and explicitly independent of the review queue."
+        },
+        "retained_tail_neutrality_and_coherence": {
+          "verdict": "REVISE",
+          "reason": "The retained procedures are otherwise coherent and byte-identical, but message 11 calls the deliberately unstated focal result a 'settled legal-review outcome,' crossing the resolution-status boundary."
+        },
+        "target_leakage_after_boundary": {
+          "verdict": "REVISE",
+          "reason": "No direction or queue name leaks, but message 11 and the common carrier both leak that the unresolved-at-probe focal decision is supposedly already settled."
+        },
+        "carrier_compatibility": {
+          "verdict": "REVISE",
+          "reason": "The carrier's 'resolved one local decision' statement conflicts with message 6's deliberate refusal to apply or state a queue before the probe."
+        },
+        "probe_and_target_identification": {
+          "verdict": "FAIL",
+          "reason": "The probe asks which queue applies, but literal eligibility does not require assignment and the W history omits the living/private predicate needed to trigger standard queue."
+        }
+      },
+      "required_revision": "Rewrite message 5 so both variants explicitly identify the subject as a living private individual while reversing only whether the full name remains; make passing the gate select fast-track; clarify whether the three passages remain flagged; replace the settled-outcome tail phrase and use an unresolved-compatible carrier."
+    }
+  ],
+  "paired_review_overall": {
+    "verdict": "FAIL",
+    "counts": {
+      "PASS": 1,
+      "REVISE": 4,
+      "FAIL": 1
+    },
+    "reason": "Only e02 passes every target-aware criterion. e01 and e05 need necessary-versus-sufficient gate wording repaired; e03 needs a unique pass-branch route and an unresolved-compatible carrier; e04 needs only the carrier claim repaired; e06 lacks a literal load-bearing predicate, has an eligibility-versus-assignment gap, and crosses the resolution-status boundary."
+  },
+  "cross_case_diversity_review": {
+    "verdict": "FAIL",
+    "dimensions": {
+      "domain_diversity": {
+        "verdict": "PASS",
+        "reason": "The six domains are substantively distinct: software release operations, meal-delivery allocation, field logistics, manufacturing qualification, event accessibility, and publishing legal review."
+      },
+      "rule_form_diversity": {
+        "verdict": "REVISE",
+        "reason": "There is useful variation in sequential screening, arithmetic margin, calibrated interval, ceiling-based capacity, and count/content checks. However, e01, e03, e05, and e06 all use the same binary special-path-if-gate-passes/ordinary-path-otherwise form, and several repeat the same 'only if' sufficiency defect."
+      },
+      "target_diversity": {
+        "verdict": "PASS",
+        "reason": "Targets span ring, hub, access route, quality disposition, room, and review queue, with independent controls spanning duration, weekday, channel, cabinet, time, and vendor."
+      },
+      "turn_rhythm_diversity": {
+        "verdict": "FAIL",
+        "reason": "e01 and e05 have the same 17-message rhythm and the same changed indices [3,6], control at [7,8], and procedural tail at [9:16]. e06 uses the same rule-evidence-neutral-acknowledgment-control-checklist-four-sections-status-labels sequence, while e02 is a modestly expanded version of that rhythm."
+      },
+      "retained_tail_structure_diversity": {
+        "verdict": "FAIL",
+        "reason": "e01 and e05 are near-literal substitutions: evidence location, unresolved owner and next check, superseded note, four sections, change log, observed/pending/failed labels, and the exact closing sentence. e06 repeats nearly all of that scaffold, and e02 repeats the evidence-index/change-log/superseded-entry pattern. Only e03 and especially e04 supply materially different retained-tail structures."
+      },
+      "author_and_session_diversity": {
+        "verdict": "REVISE",
+        "reason": "The packet reports three authoring sessions across two model families: one Codex session for e01-e02, a second Codex session for e03-e04, and one Claude Sonnet 5 session for e05-e06. This is some provenance diversity, but each session authored a pair and the Claude pair reproduces the dominant Codex scaffold rather than adding independent structure."
+      },
+      "stylistic_diversity": {
+        "verdict": "FAIL",
+        "reason": "Across e01, e02, e05, and e06, repeated phrases include 'rule is deliberately simple,' 'independent of the ... decision,' 'Recorded as a separate control fact,' 'Use four short sections,' superseded-not-deleted advice, observed/pending/failed labels, and substantially identical neutral closing lines. Domain nouns change more than discourse style."
+      }
+    },
+    "shared_fill_in_the_nouns_scaffold": {
+      "verdict": "FAIL",
+      "rejected": true,
+      "reason": "The set contains a shared fill-in-the-nouns scaffold. e01 and e05 are the clearest direct template pair, while e06 and, to a lesser degree, e02 extend the same template. Distinct domains and targets do not compensate for repeated turn function, sentence form, control placement, and retained-tail choreography."
+    },
+    "minimum_remediation": "Replace at least e05 and e06 with independently structured conversations and non-procedural or differently procedural retained tails; vary where the control appears, whether the focal is explicit or probe-derived, the number and function of turns, and the discourse style. Recheck e01/e02 overlap after replacement rather than merely paraphrasing nouns and labels."
+  },
+  "overall_verdict": {
+    "verdict": "FAIL",
+    "reason": "The packet set fails the mandatory target-aware and diversity gates: e06 is not literally sufficient for its targets, three unresolved-at-probe cases are incompatible with the shared resolved-decision carrier, and the cross-case set contains a rejected fill-in-the-nouns scaffold. This is an advisory review; Sol owns final adjudication."
+  },
+  "adjudication_owner": "Sol"
+}
