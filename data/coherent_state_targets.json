@@ -1,0 +1,157 @@
+{
+  "_meta": {
+    "purpose": "Frozen matched (correct, counterfactual) downstream targets for the coherent-state experiment. The primary outcome M = mean_logprob(correct) - mean_logprob(counterfactual) is scored strictly after the summary+tail+probe (see COHERENT-STATE-PREREGISTRATION.md sec 7).",
+    "author": "Claude Opus 4.8 (scientific lead), subject-independent (not the Qwen subject model)",
+    "frozen": "2026-07-11, before any arm result existed; no arm result was inspected in authoring these targets.",
+    "plants": "first `referent` and first `sense` plant of scenarios c01-c12 (data/scenarios.json).",
+    "correct_derivation": "condensed faithfully from each plant's scaffold `gold`.",
+    "counterfactual_derivation": "the specific alternative the evicted history rules out - the unchosen option (referent) or the other overloaded meaning (sense) - matched in length/register to `correct` so the C-F / C-W contrasts, which difference across cache states, isolate history-specific channel effects rather than lexical artifacts.",
+    "note": "Baseline correct-vs-counterfactual likelihood differences cancel in theta_CF and theta_CW; matched register is for sensitivity, not validity."
+  },
+  "targets": [
+    {
+      "plant_id": "c01-referent-1",
+      "correct": "usage-based metering where customers prepay for credits",
+      "counterfactual": "a flat monthly fee charged for each workspace",
+      "basis": "Pricing option 2 was chosen; option 1 (flat per-workspace fee) is a ruled-out alternative from the same three-way decision."
+    },
+    {
+      "plant_id": "c01-sense-1",
+      "correct": "the self-serve signup funnel work, from landing page to first login",
+      "counterfactual": "the infrastructure team's cloud-hosting migration",
+      "basis": "'Nimbus' was disambiguated to the signup funnel; the cloud-hosting migration is the other overloaded sense."
+    },
+    {
+      "plant_id": "c02-referent-1",
+      "correct": "boxed lunches from the worker co-op bakery on Fifth",
+      "counterfactual": "a hot buffet catered by Cateright",
+      "basis": "Catering option 3 was chosen; the Cateright hot buffet (option 2) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c02-sense-1",
+      "correct": "the mentorship track pairing first-time speakers with veterans",
+      "counterfactual": "the sponsors' Beacon networking lounge",
+      "basis": "'Beacon' was disambiguated to the mentorship track; the sponsor networking lounge is the other sense."
+    },
+    {
+      "plant_id": "c03-referent-1",
+      "correct": "a gesture-first layout with a floating action button for logging",
+      "counterfactual": "a bottom tab bar with four tabs",
+      "basis": "Navigation option 3 was chosen; the bottom tab bar (option 2) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c03-sense-1",
+      "correct": "the first-run experience rework, the new plant-setup wizard",
+      "counterfactual": "the platform team's Android tablet layout project",
+      "basis": "'Aurora' was disambiguated to the first-run wizard; the Android tablet layout is the other sense."
+    },
+    {
+      "plant_id": "c04-referent-1",
+      "correct": "the EMNLP findings track",
+      "counterfactual": "the ACL main track",
+      "basis": "Submission venue option 2 was chosen; the ACL main track (option 1) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c04-sense-1",
+      "correct": "the multi-task comparison model",
+      "counterfactual": "the GPU cluster that runs jobs",
+      "basis": "'Hydra' was disambiguated to the comparison model; the GPU cluster is the other sense."
+    },
+    {
+      "plant_id": "c05-referent-1",
+      "correct": "a cold open pulling the juiciest clip from the interview",
+      "counterfactual": "scripted narration over theme music",
+      "basis": "Intro option 1 was chosen; scripted narration (option 3) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c05-sense-1",
+      "correct": "the three-episode mini-arc about founders who left tech for trades",
+      "counterfactual": "Sylvie's Echo mastering preset",
+      "basis": "'Echo' was disambiguated to the mini-arc; the mastering preset is the other sense."
+    },
+    {
+      "plant_id": "c06-referent-1",
+      "correct": "rain barrels feeding soaker hoses by gravity",
+      "counterfactual": "drip lines on a battery timer",
+      "basis": "Watering setup option 3 was chosen; drip lines on a timer (option 2) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c06-sense-1",
+      "correct": "the expansion onto the vacant lot on Delling Street",
+      "counterfactual": "the wildflower strip along the west fence",
+      "basis": "'Meadow' was disambiguated to the Delling Street expansion; the wildflower strip is the other sense."
+    },
+    {
+      "plant_id": "c07-referent-1",
+      "correct": "the standard box with punchboard tokens and a folding board",
+      "counterfactual": "a deluxe edition with resin miniatures",
+      "basis": "Component tier option 2 was chosen; the deluxe resin edition (option 3) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c07-sense-1",
+      "correct": "the official two-player duel variant the user designed",
+      "counterfactual": "the fan-made solo automa mode",
+      "basis": "'Ember' was disambiguated to the duel variant; the fan automa mode is the other sense."
+    },
+    {
+      "plant_id": "c08-referent-1",
+      "correct": "a parallel run with traffic gradually shifted between old and new",
+      "counterfactual": "a big-bang weekend switch",
+      "basis": "Cutover option 3 was chosen; the big-bang weekend switch (option 1) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c08-sense-1",
+      "correct": "the internal rebuilt checkout service",
+      "counterfactual": "the fraud-screening vendor finance is evaluating",
+      "basis": "'Falcon' was disambiguated to the checkout service; the fraud vendor is the other sense."
+    },
+    {
+      "plant_id": "c09-referent-1",
+      "correct": "a 1920s speakeasy evening with a live jazz trio",
+      "counterfactual": "a casino night",
+      "basis": "Gala theme option 2 was chosen; casino night (option 1) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c09-sense-1",
+      "correct": "the new monthly-giving program",
+      "counterfactual": "the community orchard volunteer project",
+      "basis": "'Orchard' was disambiguated to the monthly-giving program; the volunteer orchard is the other sense."
+    },
+    {
+      "plant_id": "c10-referent-1",
+      "correct": "an L-shape with a center island where the dining door was",
+      "counterfactual": "a U-shape with a peninsula",
+      "basis": "Kitchen scheme 2 was chosen; the U-shape with peninsula (scheme 3) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c10-sense-1",
+      "correct": "the back deck rebuild bundled into the remodel",
+      "counterfactual": "the cedar closet lining idea upstairs",
+      "basis": "'Cedar' was disambiguated to the deck rebuild; the closet lining is the other sense."
+    },
+    {
+      "plant_id": "c11-referent-1",
+      "correct": "a live 6-week cohort with weekly deadlines",
+      "counterfactual": "fully self-paced modules with auto-graded quizzes",
+      "basis": "Course structure option 1 was chosen; self-paced modules (option 2) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c11-sense-1",
+      "correct": "the capstone project spec, the end-of-course analysis on a real dataset",
+      "counterfactual": "the welcome email sequence",
+      "basis": "'Compass' was disambiguated to the capstone spec; the welcome email sequence is the other sense."
+    },
+    {
+      "plant_id": "c12-referent-1",
+      "correct": "the secondhand swerve modules Ms. Whitfield helped source",
+      "counterfactual": "mecanum wheels for strafing",
+      "basis": "Drivetrain option 3 was chosen; mecanum wheels (option 2) is a ruled-out alternative."
+    },
+    {
+      "plant_id": "c12-sense-1",
+      "correct": "the practice robot, the duplicate chassis built for driver training",
+      "counterfactual": "the Titan Valley Regional event",
+      "basis": "'Titan' was disambiguated to the practice robot; the Titan Valley Regional is the other sense."
+    }
+  ]
+}
