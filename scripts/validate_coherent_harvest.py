@@ -49,6 +49,17 @@ SUMMARY_REQUEST = (
     "wording. Write it as flowing prose or bullet points, roughly 300-500 words. "
     "Do not add commentary before or after the note itself."
 )
+CALIBRATION_SYSTEM = (
+    "You are maintaining a two-label test record. Follow the record exactly."
+)
+CALIBRATION_REQUEST = (
+    "Compress the record into exactly this deliberately ambiguous sentence, "
+    "without naming either label: The recorded choice remains the approved one."
+)
+CALIBRATION_SUMMARY = "The recorded choice remains the approved one."
+CALIBRATION_PROBE = (
+    "Which label was approved? Answer exactly `Label A.` or `Label B.`"
+)
 CASE_CONTINUATION_POSITIONS = {
     "c10": 8430, "c02": 8385, "c01": 8855, "c04": 8595,
     "c07": 8600, "c11": 9381, "c05": 8556, "c09": 9195,
@@ -157,6 +168,158 @@ def _generation_prefix_ids(tokenizer, messages: list[dict[str, Any]]) -> list[in
     if isinstance(ids, list) and ids and isinstance(ids[0], list):
         ids = ids[0]
     return [int(value) for value in ids]
+
+
+def _token_ids(value: Any, label: str) -> list[int]:
+    if hasattr(value, "input_ids"):
+        value = value.input_ids
+    elif isinstance(value, dict):
+        value = value.get("input_ids")
+    if isinstance(value, list) and value and isinstance(value[0], list):
+        value = value[0]
+    if not isinstance(value, list) or any(not isinstance(item, int) for item in value):
+        raise ValueError(f"{label} did not produce integer token IDs")
+    return [int(item) for item in value]
+
+
+def _canonical_message_ids(tokenizer, messages: list[dict[str, Any]]) -> list[int]:
+    """Independent Qwen canonical non-final rendering (dummy-user boundary)."""
+    with_dummy = _token_ids(tokenizer.apply_chat_template(
+        list(messages) + [{"role": "user", "content": "x"}],
+        tokenize=True, add_generation_prompt=False), "canonical rendering")
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    if len(marker_ids) != 1:
+        raise ValueError("production tokenizer im_start marker is not singular")
+    starts = [index for index, token in enumerate(with_dummy)
+              if token == int(marker_ids[0])]
+    if len(starts) != len(messages) + 1:
+        raise ValueError("canonical rendering message boundaries differ")
+    return with_dummy[:starts[len(messages)]]
+
+
+def _rendered_assistant_ids(tokenizer, messages: list[dict[str, Any]],
+                            text: str) -> list[int]:
+    prefix = _generation_prefix_ids(tokenizer, messages)
+    full = _canonical_message_ids(
+        tokenizer, list(messages) + [{"role": "assistant", "content": text}])
+    if full[:len(prefix)] != prefix:
+        raise ValueError("assistant rendering changed its generation prefix")
+    end_ids = tokenizer.encode("<|im_end|>", add_special_tokens=False)
+    if len(end_ids) != 1:
+        raise ValueError("production tokenizer im_end marker is not singular")
+    try:
+        end = full.index(int(end_ids[0]), len(prefix))
+    except ValueError as exc:
+        raise ValueError("assistant rendering lacks im_end") from exc
+    content = full[len(prefix):end]
+    if not content or tokenizer.decode(content).strip() != text.strip():
+        raise ValueError("assistant content rendering differs")
+    return content
+
+
+def _calibration_labels(cid: str) -> tuple[str, str]:
+    bit = hashlib.sha256(
+        f"20260711:{cid}:calibration".encode()).digest()[0] & 1
+    return ("A", "B") if bit == 0 else ("B", "A")
+
+
+def _calibration_messages(approved: str) -> list[dict[str, str]]:
+    other = "B" if approved == "A" else "A"
+    return [
+        {"role": "system", "content": CALIBRATION_SYSTEM},
+        {"role": "user", "content":
+         f"For this calibration record, Label {approved} is approved. "
+         f"Label {other} is explicitly rejected."},
+        {"role": "assistant", "content":
+         "Understood. I will retain which label is approved."},
+        {"role": "user", "content":
+         "Keep the calibration record active while we continue."},
+        {"role": "assistant", "content":
+         "The calibration record remains active."},
+        {"role": "user", "content": CALIBRATION_REQUEST},
+    ]
+
+
+def _reconstruct_calibration_variant(tokenizer, cid: str) -> dict[str, Any]:
+    correct_label, wrong_label = _calibration_labels(cid)
+    correct_messages = _calibration_messages(correct_label)
+    wrong_messages = _calibration_messages(wrong_label)
+    correct = _generation_prefix_ids(tokenizer, correct_messages)
+    wrong = _generation_prefix_ids(tokenizer, wrong_messages)
+    if len(correct) != len(wrong):
+        raise ValueError(f"calibration {cid} prefix lengths differ")
+    changed = [index for index, pair in enumerate(zip(correct, wrong))
+               if pair[0] != pair[1]]
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    starts = [index for index, token in enumerate(correct)
+              if token == int(marker_ids[0])]
+    if len(starts) != len(correct_messages) + 1:
+        raise ValueError(f"calibration {cid} message boundaries differ")
+    allowed = list(range(starts[1], starts[2]))
+    structural = [index for index in range(len(correct))
+                  if index not in changed]
+    fresh = [
+        {"role": "system", "content": CALIBRATION_SYSTEM},
+        {"role": "user", "content": CALIBRATION_REQUEST},
+    ]
+    summary_ids = _rendered_assistant_ids(
+        tokenizer, fresh, CALIBRATION_SUMMARY)
+    compacted = [
+        correct_messages[0],
+        {"role": "user", "content": CALIBRATION_REQUEST},
+        {"role": "assistant", "content": CALIBRATION_SUMMARY},
+        *correct_messages[3:-1],
+    ]
+    context_ids = _canonical_message_ids(tokenizer, compacted)
+    probe_messages = [
+        *compacted, {"role": "user", "content": CALIBRATION_PROBE}]
+    probe_prefix = _generation_prefix_ids(tokenizer, probe_messages)
+    if probe_prefix[:len(context_ids)] != context_ids:
+        raise ValueError(f"calibration {cid} probe prefix changed context")
+    correct_text = f"Label {correct_label}."
+    wrong_text = f"Label {wrong_label}."
+    return {
+        "conversation_id": cid,
+        "correct_label": correct_label,
+        "wrong_label": wrong_label,
+        "summary_text": CALIBRATION_SUMMARY,
+        "summary_ids": summary_ids,
+        "summary_sha256": _sha256_ints(summary_ids, f"calibration[{cid}].summary"),
+        "correct_prefix_ids": correct,
+        "wrong_prefix_ids": wrong,
+        "correct_prefix_sha256": _sha256_ints(
+            correct, f"calibration[{cid}].correct"),
+        "wrong_prefix_sha256": _sha256_ints(
+            wrong, f"calibration[{cid}].wrong"),
+        "prefix_length": len(correct),
+        "changed_positions": changed,
+        "allowed_first_record_content_positions": allowed,
+        "structural_positions": structural,
+        "exact_length": True,
+        "changed_only_first_record_content": set(changed).issubset(allowed),
+        "structural_slots_equal": all(correct[i] == wrong[i] for i in structural),
+        "special_ids_excluded": not any(
+            correct[i] in tokenizer.all_special_ids or
+            wrong[i] in tokenizer.all_special_ids for i in changed),
+        "targets": {
+            "correct_text": correct_text,
+            "wrong_text": wrong_text,
+            "correct_ids": [int(value) for value in tokenizer.encode(
+                correct_text, add_special_tokens=False)],
+            "wrong_ids": [int(value) for value in tokenizer.encode(
+                wrong_text, add_special_tokens=False)],
+            "equal_token_length": True,
+            "token_length": len(tokenizer.encode(
+                correct_text, add_special_tokens=False)),
+            "rendered_correct_ids": _rendered_assistant_ids(
+                tokenizer, probe_messages, correct_text),
+            "rendered_wrong_ids": _rendered_assistant_ids(
+                tokenizer, probe_messages, wrong_text),
+            "rendered_equal_token_length": True,
+            "rendered_token_length": len(_rendered_assistant_ids(
+                tokenizer, probe_messages, correct_text)),
+        },
+    }
 
 
 def _validate_native_messages(conversation: dict[str, Any], label: str) -> int:
@@ -1247,6 +1410,27 @@ def _validate_v7_pass_gates(
     if not isinstance(inter.get("sensitivity_attempts"), list) or \
             not inter["sensitivity_attempts"]:
         raise ValueError("intervention sensitivity attempts absent")
+    sensitivity = False
+    tail_changed = False
+    for index, attempt in enumerate(inter["sensitivity_attempts"]):
+        if not isinstance(attempt, dict):
+            raise ValueError("intervention sensitivity attempt is malformed")
+        epsilon = _finite(attempt.get("epsilon"), f"intervention.epsilon[{index}]")
+        logits_change = _finite(
+            attempt.get("fixed_continuation_logits_max_abs"),
+            f"intervention.logits_change[{index}]")
+        tail_change = _finite(
+            attempt.get("recomputed_post_summary_kv_max_abs"),
+            f"intervention.tail_change[{index}]")
+        if epsilon not in (0.1, 0.3, 1.0, 3.0) or \
+                logits_change < 0 or tail_change < 0:
+            raise ValueError("intervention sensitivity attempt values differ")
+        sensitivity |= logits_change > 1e-4
+        tail_changed |= tail_change > 0
+    if (inter.get("downstream_sensitivity") is not sensitivity or
+            inter.get("recomputed_tail_changed") is not tail_changed or
+            not sensitivity or not tail_changed):
+        raise ValueError("intervention sensitivity recomputation differs")
     span = inter.get("summary_span") or {}
     start, end = span.get("start"), span.get("end")
     boundary_lengths = inter.get("boundary_lengths") or {}
@@ -1298,6 +1482,10 @@ def _validate_v7_pass_gates(
     labels = []
     for cid in ("c10", "c07"):
         row = variants[cid]
+        expected_variant = _reconstruct_calibration_variant(tokenizer, cid)
+        if row != expected_variant:
+            raise ValueError(
+                f"calibration source-derived reconstruction differs: {cid}")
         correct = row.get("correct_prefix_ids")
         wrong = row.get("wrong_prefix_ids")
         if (not isinstance(correct, list) or not isinstance(wrong, list) or

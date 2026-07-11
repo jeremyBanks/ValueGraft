@@ -459,7 +459,11 @@ def complete_pass_gates(*, real_cases: bool = False) -> dict:
             "independently_recomputed_identical_tail_lengths": True,
             "downstream_sensitivity": True, "recomputed_tail_changed": True,
             "pre_tailed_failure_injection": {"rejected": True},
-            "sensitivity_attempts": [{"epsilon": 0.1}],
+            "sensitivity_attempts": [{
+                "epsilon": 0.1,
+                "fixed_continuation_logits_max_abs": 1e-3,
+                "recomputed_post_summary_kv_max_abs": 1e-3,
+            }],
             "summary_span": {"start": 10, "end": 20},
             "boundary_lengths": {
                 "fresh": 20, "self": 20, "correct": 20, "wrong": 20},
@@ -832,6 +836,38 @@ def test_independent_donor_reconstruction_matches_committed_sources():
             expected["wrong_ids"], f"{cid}.wrong")
 
 
+def test_independent_calibration_rejects_nonfrozen_prefix_counterexample():
+    gates = complete_pass_gates()
+    row = gates["calibration_construction"]["raw"]["variants"]["c10"]
+    special = set(MODULE._validation_tokenizer().all_special_ids)
+    index = next(i for i in row["structural_positions"]
+                 if row["correct_prefix_ids"][i] not in special and
+                 row["wrong_prefix_ids"][i] not in special)
+    row["correct_prefix_ids"][index] = 12345
+    row["wrong_prefix_ids"][index] = 12345
+    row["correct_prefix_sha256"] = MODULE._sha256_ints(
+        row["correct_prefix_ids"], "mutated correct")
+    row["wrong_prefix_sha256"] = MODULE._sha256_ints(
+        row["wrong_prefix_ids"], "mutated wrong")
+    with pytest.raises(ValueError, match="source-derived reconstruction"):
+        MODULE._validate_v7_pass_gates(
+            gates, fingerprint=science_fingerprint(), repo_root=None,
+            static_fingerprint=science_fingerprint(), verify_sources=False)
+
+
+def test_intervention_rejects_zero_sensitivity_counterexample():
+    gates = complete_pass_gates()
+    gates["intervention_propagation"]["raw"]["sensitivity_attempts"] = [{
+        "epsilon": 0.1,
+        "fixed_continuation_logits_max_abs": 0.0,
+        "recomputed_post_summary_kv_max_abs": 0.0,
+    }]
+    with pytest.raises(ValueError, match="sensitivity recomputation"):
+        MODULE._validate_v7_pass_gates(
+            gates, fingerprint=science_fingerprint(), repo_root=None,
+            static_fingerprint=science_fingerprint(), verify_sources=False)
+
+
 def test_semantic_complete_validates_bound_prior_authorization_and_envelope(
         tmp_path: Path):
     semantic_tree(tmp_path)
@@ -854,6 +890,10 @@ def test_semantic_complete_validates_bound_prior_authorization_and_envelope(
      "target mean_logprob differs"),
     (lambda doc: doc["calibration_outcomes"].__setitem__(
         "G_wrong", -99.0), "calibration outcome differs"),
+    (lambda doc: doc["calibration"]["outcomes"].__setitem__(
+        "G_fresh", -99.0), "calibration outcome differs"),
+    (lambda doc: doc["arm_scores"]["G_Kcorrect"]["plants"][0].__setitem__(
+        "plant_id", "different-plant"), "arm plant coverage/order differs"),
 ])
 def test_semantic_checkpoint_recomputes_every_decision_aggregate(
         tmp_path: Path, mutation, match):
