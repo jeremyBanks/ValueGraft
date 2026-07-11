@@ -10,10 +10,12 @@ reinterpret v10, and it does not execute the frozen paired-v11 confirmatory
 contract. V10 remains permanently non-authorizing. V11 remains paused with its
 drafts non-executable.
 
-The strategy record is in `notes/2026071192-sol-ultra-regroup-decision.md`. The
+The strategy record is in `notes/2026071152-sol-ultra-regroup-decision.md`. The
 exact Fable review and Sol disposition files are
-`notes/2026071193-fable-ultra-regroup-review.md` and
-`notes/2026071192-sol-fable-review-disposition-and-canary-closure.md`. This
+`notes/2026071153-fable-ultra-regroup-review.md` and
+`notes/2026071155-sol-fable-review-disposition-and-canary-closure.md`. The
+proportionate validation threat model is recorded in
+`notes/2026071169-scientific-validation-threat-model-correction.md`. This
 document freezes the literal experiment that follows
 from those decisions. Until its status is changed additively to `FROZEN`, it
 authorizes tokenizer-only construction and unit tests, but no local or paid
@@ -371,8 +373,10 @@ norm is zero, advance the counter. For nonzero `d`, try deterministic counter
 attempts `0..1023` and select the first whose **applied bf16** delta is nonzero,
 has relative L2 error at most `0.05`, and absolute cosine with `d` at most `0.02`;
 the pre-cast relative norm error and absolute cosine must each be at most `1e-12`.
-Zero-`d` rows remain bit-exactly fresh. Persist every rejected attempt, pre/post
-norms, dot products, seed material, dtype conversion, and row hashes. If any
+Zero-`d` rows remain bit-exactly fresh. Check every attempted row in memory and
+persist a compact per-region record: row and attempt counts, zero-delta count,
+maximum applied norm error and absolute cosine, a canonical hash of the complete
+diagnostics, and source/result row hashes. If any
 nonzero row has no valid deterministic attempt, do not score that placebo arm:
 record `PLACEBO_UNAVAILABLE` for that case/region. This is adverse control
 availability but does not invalidate the separately specified full-KV or
@@ -498,7 +502,7 @@ Before semantic treatment scoring on the pod, persist and independently validate
 6. canonical close/open rendering identity;
 7. gapped physical/logical position coverage and tail recomputation;
 8. deterministic perturbation sensitivity;
-9. durable save/resume and independent lineage reconstruction.
+9. durable raw-artifact creation and independent validation.
 
 ### 14.1 Technical bidirectional path control (gating)
 
@@ -534,9 +538,9 @@ through the exact public K+V replacement function, recompute the bridge, and
 score.
 
 The gate passes only if `+` raises and `-` lowers the frozen margin by at least
-`1e-4`, selected insertion/confinement remains exact, and the full raw trace,
-per-row selected coordinates, signed gradients, old/new bf16 bit patterns,
-actual L2/max deltas, ULP attempts, row hashes, and log probabilities persist.
+`1e-4`, selected insertion/confinement remains exact, and the execution trace,
+ULP attempts, direction/coverage counts, canonical hashes of checked row
+diagnostics, edited row hashes, and raw log probabilities persist.
 It licenses intervention/readout sensitivity only. Failure aborts semantic
 scoring.
 
@@ -683,16 +687,18 @@ checkpoints include:
 - exact environment/repository fingerprint;
 - canonical messages and token IDs;
 - every call width, logical position, and physical cache position;
-- source rows or a lossless durable tensor artifact with layer/region hashes;
+- source/result row hashes and exact layer/region coverage;
 - maximal visible carrier text and boundaries;
 - full arm grid lineage;
 - raw oracle/fresh/treatment scores;
 - cost/wall-time and resume state.
 
-Large tensors may live in an explicitly inventoried result artifact outside git
-only while necessary, but every scored result, render text, trace, and row hash
-must land under `results/` and be committed. The final schema must specify tensor
-retention location and reproducibility before FROZEN status.
+Lossless cache tensors are not a release prerequisite: the subject/model bytes,
+stimulus, deterministic execution code, token/position traces, and row hashes
+make them reproducible, while retaining every tensor would add substantial
+storage and handling cost without addressing an ordinary failure mode. Every
+scored result, generated text/token stream, trace, and row hash must land under
+`results/` and be committed.
 
 Stateful-change checklist for implementation commits:
 
@@ -700,10 +706,11 @@ Stateful-change checklist for implementation commits:
    carrier/schedule/region/model fingerprint;
 2. size bounded by one case, three histories, three regions, and explicit layer/
    token assertions;
-3. the runner releases live full caches after durable row capture and evicts arm
-   snapshots immediately after scoring;
-4. correctness proof = row hashes, self-replacement, generated/forced identity,
-   immutable reconstruction, and independent lineage harvest;
+3. each process handles one case; live caches are released when that case process
+   exits, and no cross-case state is retained;
+4. correctness evidence = row hashes, self-replacement, generated/forced
+   identity, exact selected/unselected-row checks, and independent formula
+   recomputation;
 5. probe gate = local full apparatus plus exact-stack gate subset, bidirectional
    technical path control, and natural downstream-note calibration.
 
@@ -756,15 +763,17 @@ Required additive components are:
 
 - independent token/event/region planning;
 - role-native runtime and maximal R3 capture;
-- bounded store with separate `technical`, `eligibility`, and `treatment` modes;
-- machine-enforced technical -> committed eligibility -> treatment release;
+- separate append-only technical, eligibility, and treatment artifacts;
+- machine-enforced technical -> persisted eligibility -> treatment release;
 - an independent harvester that does not import runner/layout constructors;
 - paid-stack preflight/launch wrappers.
 
-The harvester rerenders literal messages, reconstructs event calls and
-R1/R2/R3 intervals, verifies visible-text and source-lineage hashes, recomputes
-all formulas and decision branches from raw token log probabilities, and ignores
-runner aggregates.
+The harvester verifies case/release/runtime bindings and the complete frozen arm
+selector set, decodes the authoritative float32 score bits, recomputes all
+formulas and decision branches, and ignores runner decimal aggregates and status
+labels. Layout reconstruction is covered by the focused planner/runtime tests
+and technical gate; duplicating the tokenizer and cache planner inside the
+harvester is outside the ordinary scientific-failure threat model.
 
 ## 20. Claim boundaries (mandatory wording)
 
