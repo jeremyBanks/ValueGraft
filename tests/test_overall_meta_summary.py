@@ -81,7 +81,10 @@ def test_rollup_prompt_uses_immediate_sources_and_bans_sources_section(tmp_path:
     notes.mkdir()
     first = notes / "20260704.md"
     second = notes / "20260705.md"
-    first.write_text("# First\n\nAlpha", encoding="utf-8")
+    first.write_text(
+        "# First\n\n**Participants/contributors:** User and `gpt-5.5-xhigh`.\n\nAlpha",
+        encoding="utf-8",
+    )
     second.write_text("# Second\n\nBeta", encoding="utf-8")
     subprocess.check_call(["git", "add", "--", "notes/20260704.md", "notes/20260705.md"], cwd=repo)
     subprocess.check_call(["git", "commit", "-m", "add daily"], cwd=repo, stdout=subprocess.DEVNULL)
@@ -98,6 +101,9 @@ def test_rollup_prompt_uses_immediate_sources_and_bans_sources_section(tmp_path:
     assert "## Source: notes/20260705.md" in prompt
     assert "Do not include a `Sources` section" in prompt
     assert "Your first non-whitespace character must be `#`" in prompt
+    assert "# Required participant records" in prompt
+    assert "gpt-5.5-xhigh" in prompt
+    assert "do not claim that an identity is unavailable" in prompt
 
 
 def test_rollup_validator_rejects_tool_like_output() -> None:

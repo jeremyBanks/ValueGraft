@@ -211,6 +211,29 @@ def title_for(level: str, key: str) -> str:
     return "# ValueGraft Notes Overview"
 
 
+def participant_records(plan: RollupPlan, root: Path) -> str:
+    records: list[str] = []
+    pattern = re.compile(
+        r"(?ms)^\*\*Participants(?:/contributors)?:\*\*\s*(.+?)(?=\n\s*\n|\Z)"
+    )
+    for source in sorted(plan.sources, key=lambda item: (item.key, item.path.name)):
+        text = source.path.read_text(encoding="utf-8")
+        for match in pattern.finditer(text):
+            value = " ".join(match.group(1).split())
+            if value:
+                records.append(f"- {source.path.relative_to(root).as_posix()}: {value}")
+    if not records:
+        return ""
+    return (
+        "\n# Required participant records\n\n"
+        "Merge every source-supported user/model identity below into the participant paragraph. "
+        "Do not replace an exact model ID with a generic role, and do not claim that an identity "
+        "is unavailable when it appears here.\n\n"
+        + "\n".join(records)
+        + "\n"
+    )
+
+
 def build_prompt(plan: RollupPlan, root: Path) -> str:
     source_label = {
         "month": "day representatives",
@@ -259,6 +282,7 @@ Source level: {source.level}; key={source.key}; chars={len(source.text)}.
 {source.text.rstrip()}
 """
         )
+    parts.append(participant_records(plan, root))
     return "".join(parts)
 
 

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -180,6 +181,28 @@ def deno_fmt(root: Path, paths: list[Path]) -> None:
         raise SystemExit(f"deno fmt failed with exit {proc.returncode}")
 
 
+def participant_records(sources: list[SourceNote], root: Path) -> str:
+    records: list[str] = []
+    pattern = re.compile(
+        r"(?ms)^\*\*Participants(?:/contributors)?:\*\*\s*(.+?)(?=\n\s*\n|\Z)"
+    )
+    for source in sources:
+        for match in pattern.finditer(source.text):
+            value = " ".join(match.group(1).split())
+            if value:
+                records.append(f"- {source.path.relative_to(root).as_posix()}: {value}")
+    if not records:
+        return ""
+    return (
+        "\n# Required participant records\n\n"
+        "Merge every source-supported user/model identity below into the participant paragraph. "
+        "Do not replace an exact model ID with a generic role, and do not claim that an identity "
+        "is unavailable when it appears here.\n\n"
+        + "\n".join(records)
+        + "\n"
+    )
+
+
 def build_prompt(day: str, sources: list[SourceNote], root: Path) -> str:
     parts: list[str] = [
         f"""You are writing notes/{day}.md, a UTC daily meta-summary for the ValueGraft research repository.
@@ -227,6 +250,7 @@ Source inclusion: {source.kind}; original_chars={len(source.text)}; shown_chars=
 {source.shown_text.rstrip()}
 """
         )
+    parts.append(participant_records(sources, root))
     return "".join(parts)
 
 
