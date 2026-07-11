@@ -1,0 +1,191 @@
+{
+  "schema": "coherent_state_decision_canary_v12_codex_runtime_provenance_correction_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "status": "PROVENANCE_CORRECTION",
+  "created_at_utc": "2026-07-11T21:46:29Z",
+  "subject_model_forward_performed": false,
+  "semantic_outcome_seen": false,
+  "correction_scope": "The committed case and review artifacts truthfully recorded that their Codex subagents could not see their own runtime model identifiers. The local immutable Codex rollout records expose those identifiers in turn_context metadata. This additive artifact records the recovered values without changing the historical artifacts or inferring an alias.",
+  "extraction_method": {
+    "session_selection": "Match session_meta.payload.source.subagent.thread_spawn.agent_path exactly to the committed authoring_session_source or reviewer task path.",
+    "runtime_model": "Require one unique nonempty turn_context.payload.model value across every turn in the selected rollout.",
+    "reasoning_effort": "Require one unique nonempty turn_context.payload.effort value across every turn in the selected rollout.",
+    "session_identity": "Record session_meta.payload.id and SHA-256 of the complete local JSONL rollout bytes.",
+    "raw_rollout_retention": "The rollout contains private conversation context and is not copied into the repository; its exact local bytes are bound by SHA-256.",
+    "inference_used": false
+  },
+  "recovered_runtime": {
+    "model_id": "gpt-5.6-sol",
+    "reasoning_effort": "xhigh"
+  },
+  "artifact_bindings": [
+    {
+      "path": "data/coherent_canary_v12/revision2/session_d/e01.json",
+      "sha256": "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_d/e02.json",
+      "sha256": "0d52caab89a6f7d6877f097fc451b5ac529f010720e8118ad89044a054ca9ff0"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_e/e03.json",
+      "sha256": "3594202e1ec405b7cb2c0a5f9351d3e3c68b65ba6affb38ba83ce5a507273ed3"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision4/session_h/e04.json",
+      "sha256": "99d79f0009299178dd48947168415d17aeb9fea643d082452cc564a17911c541"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_f/e05.json",
+      "sha256": "cd73088f32a1cdc81cebe9f95d5a5d8e739e977977f83dac3b1c055db268812a"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_f/e06.json",
+      "sha256": "27bbd14802438d45a8160aa58b9bb044ab8338fb4b8e4d8b76a036c9c3bfcc4f"
+    },
+    {
+      "path": "results/coherent_canary_reviews/reviews/revision4_blind_singleton_independent_codex_20260711T210013Z.json",
+      "sha256": "4b9eace0b4f4754ca0de6fcd6dc59852374ab5fd804f42bfb06d108da1d1fcda"
+    },
+    {
+      "path": "results/coherent_canary_reviews/reviews/revision4_paired_diversity_independent_codex_20260711T210013Z.json",
+      "sha256": "1909224e4dab2265d9b033d7b016c1a9842a24dce9531cf17d240a54287a375b"
+    }
+  ],
+  "sessions": [
+    {
+      "agent_path": "/root/v12_author_e01_e02",
+      "role": "original author",
+      "artifact_scope": [
+        "e01 revision-1 draft",
+        "e02 revision-1 draft"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T15-34-38-019f52ac-b70e-7832-8000-a951b40284a5.jsonl",
+      "session_id": "019f52ac-b70e-7832-8000-a951b40284a5",
+      "rollout_sha256": "c6eb7369490492fc41f6d141a97893a8860aed3856a24834321d8c975983b1e9",
+      "turn_context_count": 35,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "agent_path": "/root/v12_author_e03_e04",
+      "role": "original author",
+      "artifact_scope": [
+        "e03 revision-1 draft",
+        "e04 revision-1 draft"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T15-34-45-019f52ac-d2c4-7b60-b4ab-8e61b36d95a5.jsonl",
+      "session_id": "019f52ac-d2c4-7b60-b4ab-8e61b36d95a5",
+      "rollout_sha256": "96d00283aae32fa96ed642a68ba6e503b7a59a8dfebaf47f2899ca868689195a",
+      "turn_context_count": 35,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "agent_path": "/root/v12_revision2_e01_e02",
+      "role": "revision-2 author",
+      "artifact_scope": [
+        "e01 current literal messages",
+        "e02 current literal messages"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T16-20-45-019f52d6-eeea-7701-90c6-339182371740.jsonl",
+      "session_id": "019f52d6-eeea-7701-90c6-339182371740",
+      "rollout_sha256": "dbd3700f073af86e32af60061b18ea118089685316d0789c4a86a39e5c31b8ff",
+      "turn_context_count": 36,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "agent_path": "/root/v12_revision2_e03_e04",
+      "role": "revision-2 author",
+      "artifact_scope": [
+        "e03 current literal messages",
+        "e04 revision-2 literal messages"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T16-20-55-019f52d7-1776-7050-92cd-60d6802e4d15.jsonl",
+      "session_id": "019f52d7-1776-7050-92cd-60d6802e4d15",
+      "rollout_sha256": "82bdd25b9a609c00af4d3d3398be324cae0881b49d260948ab36c32298cb6722",
+      "turn_context_count": 36,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "agent_path": "/root/v12_revision2_e05_e06",
+      "role": "revision-2 author",
+      "artifact_scope": [
+        "e05 current literal messages after Claude Sonnet 5 source draft",
+        "e06 current literal messages after Claude Sonnet 5 source draft"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T16-26-52-019f52dc-8980-7240-b39f-266378f6e1eb.jsonl",
+      "session_id": "019f52dc-8980-7240-b39f-266378f6e1eb",
+      "rollout_sha256": "40294b1679f6183b0cb40cee83d2beeff20a6b985acc36f05b76a701a7d67019",
+      "turn_context_count": 36,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "agent_path": "/root/v12_revision3_e04",
+      "role": "revision-3 author",
+      "artifact_scope": [
+        "e04 current literal messages"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T16-42-26-019f52ea-caca-7c90-8b02-909f3985a127.jsonl",
+      "session_id": "019f52ea-caca-7c90-8b02-909f3985a127",
+      "rollout_sha256": "9d87e3c3bd9582cee636abaad89ace813c48a59f5208404b44f8907a00e113f4",
+      "turn_context_count": 36,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "agent_path": "/root/v12_revision4_blind_review",
+      "role": "blind singleton and carrier reviewer",
+      "artifact_scope": [
+        "revision-4 blind carrier review",
+        "revision-4 blind review of all 12 histories"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T17-00-27-019f52fb-46e6-7bc1-a929-63dab10b0be4.jsonl",
+      "session_id": "019f52fb-46e6-7bc1-a929-63dab10b0be4",
+      "rollout_sha256": "e2fb752cef38bb5ad8e7e229f38a6eb40b5ef1096aeb54dbb90f355f77f22078",
+      "turn_context_count": 37,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "agent_path": "/root/v12_revision4_paired_review",
+      "role": "paired-content and cross-case-diversity reviewer",
+      "artifact_scope": [
+        "revision-4 paired review of e01-e06",
+        "revision-4 cross-case diversity review"
+      ],
+      "rollout_file_basename": "rollout-2026-07-11T17-00-36-019f52fb-6caa-79c2-922f-59ae90a63c13.jsonl",
+      "session_id": "019f52fb-6caa-79c2-922f-59ae90a63c13",
+      "rollout_sha256": "ccbea7cd049a5dff21a1de04dfb71be6ff2719193fb4676fb0a7676298eff587",
+      "turn_context_count": 37,
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh"
+    }
+  ],
+  "separately_declared_contributors": [
+    {
+      "model_id": "claude-sonnet-5",
+      "reasoning_effort": "high",
+      "artifact_scope": [
+        "e05 revision-1 source draft",
+        "e06 revision-1 source draft"
+      ],
+      "evidence": "The committed source drafts report these values as supplied by the Claude session runtime; this correction does not reinterpret them."
+    },
+    {
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh",
+      "artifact_scope": [
+        "e04 revision-4 metadata-only correction"
+      ],
+      "evidence": "The committed revision-4 case declares the primary-agent runtime and the literal-message bytes are unchanged from revision 3."
+    }
+  ],
+  "supersedes_for_runtime_attribution_only": [
+    "null runtime_model_id fields in the referenced Codex-authored case artifacts",
+    "not exposed runtime model fields in the two revision-4 review artifacts"
+  ]
+}
