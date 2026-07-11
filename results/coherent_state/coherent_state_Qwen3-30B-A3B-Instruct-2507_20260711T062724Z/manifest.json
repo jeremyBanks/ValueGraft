@@ -1,0 +1,77 @@
+{
+  "status": "SETUP",
+  "started_at": "2026-07-11T06:27:47.793101+00:00",
+  "resumed_at": null,
+  "fingerprint": {
+    "schema": 1,
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "code_commit": "eaa89133ce88e73ca2352ff4ffee44e71c52bbbe",
+    "scenario_sha256": "9a6f41c5208f0312572e6901fbaad31806d2863a98f74270ca2242322a2e6781",
+    "targets_sha256": "220fd7fa083dbced339e66dd2ee21b2b030d952965af9073bcc62c72bbc65085",
+    "summary_request_sha256": "4ad7c575c0b1f3e200c662c0e2b061f5d527c5af42dc7691e44919322f9a3b16",
+    "frozen_order": [
+      "c10",
+      "c02",
+      "c01",
+      "c04",
+      "c07",
+      "c11",
+      "c05",
+      "c09",
+      "c06",
+      "c12",
+      "c08",
+      "c03"
+    ],
+    "wrong_donors": {
+      "c10": "c02",
+      "c02": "c01",
+      "c01": "c04",
+      "c04": "c07",
+      "c07": "c11",
+      "c11": "c10",
+      "c05": "c09",
+      "c09": "c06",
+      "c06": "c12",
+      "c12": "c08",
+      "c08": "c03",
+      "c03": "c05"
+    },
+    "structural_seed": 20260711,
+    "placebo_seed": 20260711,
+    "max_reply_tokens": 320,
+    "max_summary_tokens": 900,
+    "identity_tolerance": 0.0001,
+    "rotation_tolerance": 0.02,
+    "subject_metadata": {
+      "resolved_model_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "config_sha256": "131fd291d47289c02c43f823bf95dbbd1c9946ce426c68a565197330b3b4c6d2",
+      "tokenizer_revision_requested": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "tokenizer_class": "Qwen2Tokenizer",
+      "tokenizer_vocab_sha256": "c96fa22dee2dd9c98c4f0c73ea423e21907bc96abda81fa5c6b2e24a670c66bf",
+      "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "special_tokens_map_sha256": "edcb2fc2acbbe77f858a9c4fe51295ffdb84711efba5703ec5906b3d67282569"
+    }
+  },
+  "provenance": {
+    "code_commit": "eaa89133ce88e73ca2352ff4ffee44e71c52bbbe",
+    "worktree_dirty_rows": [],
+    "only_run_directory_dirty": false,
+    "python": "3.11.10 (main, Sep  7 2024, 18:35:41) [GCC 11.4.0]",
+    "platform": "Linux-6.5.0-45-generic-x86_64-with-glibc2.35",
+    "torch": "2.4.1+cu124",
+    "transformers": "5.0.0",
+    "cuda": "12.4",
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "subject": {
+      "resolved_model_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "config_sha256": "131fd291d47289c02c43f823bf95dbbd1c9946ce426c68a565197330b3b4c6d2",
+      "tokenizer_revision_requested": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "tokenizer_class": "Qwen2Tokenizer",
+      "tokenizer_vocab_sha256": "c96fa22dee2dd9c98c4f0c73ea423e21907bc96abda81fa5c6b2e24a670c66bf",
+      "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "special_tokens_map_sha256": "edcb2fc2acbbe77f858a9c4fe51295ffdb84711efba5703ec5906b3d67282569"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "status": "ERROR",
+  "failed_at": "2026-07-11T06:30:00.505913+00:00",
+  "error_type": "RuntimeError",
+  "error": "loaded K/V shift gate failed: zero=0.0 nativeK=2.810546875 nativeV=0.810546875",
+  "traceback": "Traceback (most recent call last):\n  File \"/workspace/repo/src/run_coherent_state_hf.py\", line 654, in main\n    production_gate = run_loaded_kernel_gates(\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/repo/src/l_coherent_state_hf.py\", line 160, in run_loaded_kernel_gates\n    raise RuntimeError(\nRuntimeError: loaded K/V shift gate failed: zero=0.0 nativeK=2.810546875 nativeV=0.810546875\n"
+}
