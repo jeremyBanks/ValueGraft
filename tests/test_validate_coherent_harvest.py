@@ -202,6 +202,11 @@ def test_global_gate_failure_requires_complete_fail_gate(tmp_path: Path):
     out = MODULE.validate(tmp_path, "failure")
     assert out["production_gate"] == "FAIL"
 
+    pre_backend = gate("FAIL")
+    pre_backend["gates"].pop("attention_backend")
+    write(tmp_path / "production_kernel_gate.json", pre_backend)
+    assert MODULE.validate(tmp_path, "failure")["production_gate"] == "FAIL"
+
     bad = gate("FAIL")
     bad["gates"].pop("error")
     write(tmp_path / "production_kernel_gate.json", bad)

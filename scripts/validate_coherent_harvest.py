@@ -104,17 +104,24 @@ def _validate_gate(root: Path, expected_status: str) -> dict[str, Any]:
         raise ValueError("production gate model or revision mismatch")
     if gate.get("dtype") != PARAMETER_DTYPE:
         raise ValueError("production gate dtype mismatch")
-    backend = gates.get("attention_backend")
-    if not isinstance(backend, dict):
-        raise ValueError("production gate lacks attention-backend evidence")
-    if (backend.get("observed_backend") != ATTENTION_BACKEND or
-            backend.get("passes") is not True):
-        raise ValueError("production gate did not attest eager attention")
-    fingerprint = backend.get("fingerprint")
-    if not isinstance(fingerprint, dict) or \
-            fingerprint.get("requested_implementation") != ATTENTION_BACKEND:
-        raise ValueError("production gate backend fingerprint is malformed")
     expected_passes = expected_status == "PASS"
+    backend = gates.get("attention_backend")
+    if expected_passes:
+        if not isinstance(backend, dict):
+            raise ValueError("production gate lacks attention-backend evidence")
+        if (backend.get("observed_backend") != ATTENTION_BACKEND or
+                backend.get("passes") is not True):
+            raise ValueError("production gate did not attest eager attention")
+        fingerprint = backend.get("fingerprint")
+        if not isinstance(fingerprint, dict) or \
+                fingerprint.get("requested_implementation") != ATTENTION_BACKEND:
+            raise ValueError("production gate backend fingerprint is malformed")
+    elif backend is not None:
+        if not isinstance(backend, dict):
+            raise ValueError("failed gate attention-backend evidence is malformed")
+        if (backend.get("passes") is True and
+                backend.get("observed_backend") != ATTENTION_BACKEND):
+            raise ValueError("failed gate falsely attests a non-eager backend")
     if gates.get("passes") is not expected_passes:
         raise ValueError(
             f"production gates.passes must be {str(expected_passes).lower()}")
