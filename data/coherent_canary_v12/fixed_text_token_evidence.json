@@ -1,0 +1,75 @@
+{
+  "schema": "coherent_state_canary_v12_fixed_text_token_evidence_v1",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "tokenizer_class": "Qwen2Tokenizer",
+  "method": "tokenizer-only local reconstruction; no model forward",
+  "texts": {
+    "engineered_carrier_request": {
+      "text": "Write the fixed neutral handoff note for the next assistant. Output only that note.",
+      "utf8_sha256": "6b08dff6c9c498a51adac1956b17a94c088d388400c4cdb58fef481cbb544ea6",
+      "token_count": 17,
+      "token_ids": [7985, 279, 8356, 20628, 1424, 1847, 5185, 369, 279, 1790, 17847, 13, 9258, 1172, 429, 5185, 13]
+    },
+    "engineered_carrier_content": {
+      "text": "The prior discussion established the operating context and resolved one local decision. Continue from this handoff, preserve the existing constraints, and answer later questions from the state available here. No unresolved action is introduced by this note.",
+      "utf8_sha256": "70d5a40125a9157fca14068932c0dab2518ef5245401680659eead76f8c73a25",
+      "token_count": 43,
+      "token_ids": [785, 4867, 10219, 9555, 279, 10350, 2266, 323, 19673, 825, 2205, 5480, 13, 15003, 504, 419, 1424, 1847, 11, 21129, 279, 6350, 16982, 11, 323, 4226, 2937, 4755, 504, 279, 1584, 2500, 1588, 13, 2308, 80161, 1917, 374, 11523, 553, 419, 5185, 13]
+    },
+    "anchor_user": {
+      "text": "Acknowledge receipt of this handoff without adding or repeating any factual detail.",
+      "utf8_sha256": "b6ae65b26cd50f202a8d9d83dc882457a3de21ba31782721251ff7af025fe7bb",
+      "token_count": 15,
+      "token_ids": [55559, 51186, 22567, 315, 419, 1424, 1847, 2041, 7842, 476, 39816, 894, 59901, 7716, 13]
+    },
+    "anchor_assistant": {
+      "text": "Acknowledged.",
+      "utf8_sha256": "a2542670074ea3e0c6876ad6d0f75e2dc933461c6b765c0c5fab376a498215b8",
+      "token_count": 3,
+      "token_ids": [90236, 3556, 13]
+    },
+    "pc_system": {
+      "text": "Apply the stated policy exactly. At the final question answer with exactly approve or deny.",
+      "utf8_sha256": "26feac645997df6a4acabf0adb060c8f1a2c4b3dbff013559c7fb245093078cc",
+      "token_count": 17,
+      "token_ids": [28497, 279, 10982, 4842, 6896, 13, 2411, 279, 1590, 3405, 4226, 448, 6896, 28151, 476, 23101, 13]
+    },
+    "pc_policy_green": {
+      "text": "Policy: approve only when the status is green. Current status: green.",
+      "utf8_sha256": "657560f55f1ca3e5045c74676d7a2f4816ced4a7319533eaa308b1e06ead09e5",
+      "token_count": 15,
+      "token_ids": [13825, 25, 28151, 1172, 979, 279, 2639, 374, 6176, 13, 9125, 2639, 25, 6176, 13]
+    },
+    "pc_policy_amber": {
+      "text": "Policy: approve only when the status is green. Current status: amber.",
+      "utf8_sha256": "ffc23a4595e66a7eeee9ca5fadf53b68252671318313bb906b808bd9b405ed73",
+      "token_count": 15,
+      "token_ids": [13825, 25, 28151, 1172, 979, 279, 2639, 374, 6176, 13, 9125, 2639, 25, 67605, 13]
+    },
+    "pc_carrier": {
+      "text": "The policy and current record have been processed. Use the recorded state for the decision.",
+      "utf8_sha256": "b737692cc3f3760e5baa6706979d0ccc0e47c03cab8e01904d9675ccf4d01bc6",
+      "token_count": 17,
+      "token_ids": [785, 4842, 323, 1482, 3255, 614, 1012, 15233, 13, 5443, 279, 12433, 1584, 369, 279, 5480, 13]
+    },
+    "pc_probe": {
+      "text": "Decision?",
+      "utf8_sha256": "f064fb155b8508414086294a0126611fcbaec3e7a4d7696d19b7e0072414d776",
+      "token_count": 2,
+      "token_ids": [74846, 30]
+    },
+    "pc_target_approve": {
+      "text": "approve",
+      "utf8_sha256": "74e21680eac7385ca408cb01878465fd693b37e58eb0c0c32663a2d8f15d8136",
+      "token_count": 1,
+      "token_ids": [49221]
+    },
+    "pc_target_deny": {
+      "text": "deny",
+      "utf8_sha256": "3026a0ca485e5831657ba0120fa8dd66b3425427bfb0a2be0db743e2305cc7c5",
+      "token_count": 1,
+      "token_ids": [89963]
+    }
+  }
+}
