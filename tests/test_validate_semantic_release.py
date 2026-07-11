@@ -155,7 +155,13 @@ def _fixture(tmp_path: Path, mutate=None):
 
 def _validate(repo, launch, result, apparatus):
     prior = MODULE.LADDER_LAUNCH_COMMIT
+    prior_count = MODULE.V10_APPARATUS_FILE_COUNT
+    prior_aggregate = MODULE.V10_APPARATUS_AGGREGATE_SHA256
+    prior_deep = MODULE._deep_validate_ladder_stages
     MODULE.LADDER_LAUNCH_COMMIT = launch
+    MODULE.V10_APPARATUS_FILE_COUNT = 1
+    MODULE.V10_APPARATUS_AGGREGATE_SHA256 = apparatus["aggregate_sha256"]
+    MODULE._deep_validate_ladder_stages = lambda _repo, _stages: None
     try:
         return MODULE.validate_ladder_commit(
             repo, result_commit=result,
@@ -164,6 +170,9 @@ def _validate(repo, launch, result, apparatus):
             current_apparatus=apparatus)
     finally:
         MODULE.LADDER_LAUNCH_COMMIT = prior
+        MODULE.V10_APPARATUS_FILE_COUNT = prior_count
+        MODULE.V10_APPARATUS_AGGREGATE_SHA256 = prior_aggregate
+        MODULE._deep_validate_ladder_stages = prior_deep
 
 
 def test_complete_ladder_and_exact_apparatus_pass(tmp_path):
@@ -247,6 +256,24 @@ def test_only_exact_frozen_ladder_path_is_eligible(tmp_path):
                 semantic_launch_commit=result, current_apparatus=apparatus)
     finally:
         MODULE.LADDER_LAUNCH_COMMIT = prior
+
+
+def test_producer_pass_booleans_without_raw_evidence_are_rejected():
+    stages = {name: _stage(name) for name in MODULE.STAGE_ORDER}
+    with pytest.raises(MODULE.ReleaseError):
+        MODULE._deep_validate_ladder_stages(ROOT, stages)
+
+
+def test_live_passed_prefix_recomputes_before_nonterminal_case_rejection():
+    stem = (
+        ROOT / "results" / "coherent_state_ladder" /
+        "coherent_state_ladder_gapped_v10_Qwen3-0.6B_20260711T123246Z")
+    stages = {}
+    for name in MODULE.STAGE_ORDER:
+        path = stem.with_name(f"{stem.name}__stage_{name}.json")
+        stages[name] = json.loads(path.read_text())["stage"]
+    with pytest.raises(MODULE.ReleaseError, match="committed-case"):
+        MODULE._deep_validate_ladder_stages(ROOT, stages)
 
 
 def test_release_layer_does_not_change_v10_apparatus_inventory():
@@ -334,3 +361,112 @@ def test_committed_attestation_recomputes_from_descendant_launch(
     observed = MODULE.verify_committed_attestation(repo, relative, launch)
     assert observed["status"] == "PASS"
     assert observed["launch_commit"] == launch
+
+
+def test_semantic_result_must_use_preflight_technical_binding():
+    preflight = {
+        "technical": {
+            "result_commit": "a" * 40,
+            "run_dir": "results/technical/run",
+            "gate_payload_sha256": "b" * 64,
+            "raw_sha256": {"manifest": "c" * 64},
+            "harvest_payload_sha256": "d" * 64,
+        }}
+    manifest = {
+        "semantic_authorization": {
+            "result_commit": "a" * 40,
+            "run_dir": "results/technical/run",
+            "gate_payload_sha256": "b" * 64,
+            "raw_sha256": {"manifest": "c" * 64},
+            "harvest": {"payload_sha256": "d" * 64},
+        }}
+    MODULE._require_semantic_technical_binding(manifest, preflight)
+    manifest["semantic_authorization"]["result_commit"] = "e" * 40
+    with pytest.raises(MODULE.ReleaseError, match="different technical"):
+        MODULE._require_semantic_technical_binding(manifest, preflight)
+
+
+def test_finalize_commit_and_verify_final_descendant(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-b", "trunk")
+    _git(repo, "config", "user.email", "test@example.com")
+    _git(repo, "config", "user.name", "Test")
+    preflight_path = "results/v10_release/preflight_test.json"
+    preflight = MODULE._seal({
+        "schema": 1, "authorization_contract_id": MODULE.CONTRACT_ID,
+        "status": "PASS", "authorization_expression": "L AND T",
+        "semantic_outcomes_observed": 0,
+        "ladder": {"status": "PASS", "result_commit": "a" * 40},
+        "technical": {
+            "status": "PASS", "result_commit": "b" * 40,
+            "run_dir": "results/technical/run",
+            "gate_payload_sha256": "c" * 64,
+            "raw_sha256": {}, "harvest_payload_sha256": "d" * 64},
+    })
+    path = repo / preflight_path
+    path.parent.mkdir(parents=True)
+    path.write_bytes(MODULE._canonical(preflight) + b"\n")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-m", "release evidence")
+    release_head = _git(repo, "rev-parse", "HEAD")
+    _git(repo, "remote", "add", "origin", ".")
+    _git(repo, "update-ref", "refs/remotes/origin/trunk", release_head)
+
+    monkeypatch.setattr(
+        MODULE, "verify_committed_attestation",
+        lambda _repo, _path, _head: {
+            "status": "PASS", "authorization_contract_id": MODULE.CONTRACT_ID,
+            "authorization_expression": "L AND T"})
+    semantic = {
+        "status": "PASS", "result_commit": "e" * 40,
+        "run_dir": "results/semantic/run",
+        "semantic_launch_commit": "f" * 40,
+        "tree_files": [], "harvest_path": "results/semantic.harvest.json",
+        "harvest_raw_sha256": "1" * 64,
+        "harvest_payload_sha256": "2" * 64,
+        "independent_harvest": {"status": "PASS", "mode": "complete"},
+        "preflight_at_launch_raw_sha256": "3" * 64,
+        "outer_release_receipt": "SEMANTIC_RELEASE_OUTER_PASS test",
+    }
+    monkeypatch.setattr(
+        MODULE, "validate_semantic_result",
+        lambda *_args, **_kwargs: semantic)
+
+    final = MODULE.build_final_release_attestation(
+        repo, preflight_path=preflight_path,
+        semantic_run_dir=semantic["run_dir"],
+        semantic_result_commit=semantic["result_commit"],
+        release_head=release_head)
+    final_path = "results/v10_release/final_test.json"
+    (repo / final_path).write_bytes(MODULE._canonical(final) + b"\n")
+    _git(repo, "add", final_path)
+    _git(repo, "commit", "-m", "final release")
+    final_head = _git(repo, "rev-parse", "HEAD")
+    _git(repo, "update-ref", "refs/remotes/origin/trunk", final_head)
+
+    observed = MODULE.verify_final_release_attestation(
+        repo, final_path, final_head)
+    assert observed["status"] == "PASS"
+
+
+def test_preflight_and_safe_binding_conventions():
+    assert MODULE.PREFLIGHT_PATH_RE.fullmatch(
+        "results/v10_release/preflight_20260711T120000Z.json")
+    assert not MODULE.PREFLIGHT_PATH_RE.fullmatch("results/other.json")
+    MODULE._require_safe_technical_binding(
+        "a" * 40, "results/coherent_state/run-1")
+    with pytest.raises(MODULE.ReleaseError, match="shell-safe"):
+        MODULE._require_safe_technical_binding(
+            "a" * 40, "results/coherent_state/x' injected")
+
+
+def test_wrappers_bind_one_packet_and_outer_receipt():
+    local = (ROOT / "scripts" / "launch_semantic_release.sh").read_text()
+    remote = (ROOT / "scripts" / "job_semantic_release.sh").read_text()
+    assert "expected exactly one release preflight" in local
+    assert "does not name the sole frozen preflight" in local
+    assert "scripts/job_semantic_release.sh" in local
+    assert "expected exactly one committed release preflight" in remote
+    assert "SEMANTIC_RELEASE_OUTER_PASS launch=" in remote
+    assert "SC_TECHNICAL_RESULT_COMMIT=" in remote
