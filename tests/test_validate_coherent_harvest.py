@@ -151,6 +151,19 @@ def test_technical_pass_rejects_checkpoint_or_semantic_log_marker(tmp_path: Path
         MODULE.validate(tmp_path, "technical")
 
 
+def test_technical_pass_rejects_outcome_fields_inside_gate(tmp_path: Path):
+    (tmp_path / "job.log").write_text("COHERENT_STATE_TECHNICAL_DONE\n")
+    write(tmp_path / "manifest.json", {
+        **identity(), "status": "TECHNICAL_PASS",
+        "phase": "TECHNICAL_COMPLETE", "fingerprint": run_fingerprint()})
+    bad = gate("PASS")
+    bad["gates"]["technical_margins_not_semantic_outcomes"] = {
+        "G_correct": 1.0}
+    write(tmp_path / "production_kernel_gate.json", bad)
+    with pytest.raises(ValueError, match="semantic outcome fields"):
+        MODULE.validate(tmp_path, "technical")
+
+
 def test_complete_rejects_retired_or_missing_arm(tmp_path: Path):
     complete_tree(tmp_path)
     path = tmp_path / "conv_01_c01.json"

@@ -181,6 +181,26 @@ def _checkpoint_paths(root: Path) -> list[Path]:
     return sorted(root.glob("conv_*.json"))
 
 
+def _find_forbidden_semantic_fields(value: Any, path: str = "") -> list[str]:
+    forbidden = {
+        "arm_scores", "conversation_outcomes", "calibration_outcomes",
+        "technical_margins_not_semantic_outcomes", "semantic_outcomes",
+        "target_scores",
+    }
+    found: list[str] = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            child_path = f"{path}.{key}" if path else str(key)
+            if key in forbidden:
+                found.append(child_path)
+            found.extend(_find_forbidden_semantic_fields(child, child_path))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            found.extend(_find_forbidden_semantic_fields(
+                child, f"{path}[{index}]"))
+    return found
+
+
 def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
     manifest = _load(root / "manifest.json")
     _require_identity(manifest, "manifest")
@@ -239,7 +259,11 @@ def _validate_technical(root: Path, log_text: str) -> dict[str, Any]:
         raise ValueError("technical manifest lacks run fingerprint")
     _require_identity(fingerprint, "technical manifest fingerprint")
     _require_backend_fingerprint(fingerprint, "technical manifest fingerprint")
-    _validate_gate(root, "PASS")
+    gate = _validate_gate(root, "PASS")
+    forbidden = _find_forbidden_semantic_fields(gate)
+    if forbidden:
+        raise ValueError(
+            f"technical-only gate contains semantic outcome fields {forbidden}")
     if _checkpoint_paths(root):
         raise ValueError("technical-only harvest contains conversation checkpoints")
     if "COHERENT_STATE_TECHNICAL_DONE" not in log_text:
