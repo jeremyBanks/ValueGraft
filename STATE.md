@@ -56,10 +56,29 @@ terminated with SIGTERM after their useful durable evidence was committed. A
 follow-up process listing contained none of the four PIDs. No authorizing work
 was discarded; both designs are nonauthorizing.
 
-The immediate work is to freeze the additive canary preregistration, implement
-and independently harvest its complete runner, and begin the corrected
-negative/methodological paper scaffold in parallel. Do not resume long-corpus
-authoring or launch compute merely because the strategy review is complete.
+Revision-1 e01--e06 is now additively rejected. Personal event tracing found
+that the initial planner first fragmented production turn additions, then placed
+the carrier after rather than before the retained tail. Those two defects were
+corrected in `b51db97` and `7cb98b4`. A further validator audit found that the
+length bands had been applied to the whole authored conversation instead of the
+literal pre-carrier source prefix: observed pre-carrier lengths were only
+670/574/812/1866/665/947 for e01--e06, so every case fails its frozen band. The
+formal revision-1 target-aware/diversity review independently returned FAIL
+(only e02 passed case-level review; shared scaffold rejected), and the blind
+review required revisions to both e04 and e06 histories. Full correction:
+`notes/2026071199-sol-v12-precarrier-length-and-review-failure.md`.
+
+Revision-2 authoring is in progress in new additive paths. The carrier is now
+the unresolved-compatible 42-token literal recorded in
+`data/coherent_canary_v12/fixed_text_token_evidence_v2.json`. The current
+validator gates the actual carrier-request start, exact boundary order, R3 end
+before retained tail, production turn-addition call shapes, and all fixed
+literals. No old case or validation artifact can authorize execution.
+
+The immediate work is to complete and re-review revision 2, then freeze the
+additive preregistration, implement and independently harvest its complete
+runner, and begin the corrected negative/methodological paper scaffold in
+parallel. Do not launch compute merely because the strategy review is complete.
 
 ## CURRENT TRUTH (2026-07-11) — coherent-state v10 execution
 
