@@ -1,0 +1,22 @@
+{
+  "schema": "coherent_state_decision_canary_v12_generated_forced_identity_fixture_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "status": "FROZEN_LITERAL_PRE_FORWARD",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Answer plainly."
+    },
+    {
+      "role": "user",
+      "content": "Write one short neutral sentence acknowledging that a record exists."
+    }
+  ],
+  "temperature": 0,
+  "max_content_tokens": 64,
+  "normal_eos_required": true,
+  "procedure": "Greedily generate once; persist the observed content IDs; rebuild the identical prefix; force those observed IDs q=1; compare token log probabilities and every generated content K/V row bit-exactly. The generated text is arbitrary and is not required to equal the engineered carrier.",
+  "subject_model_forward_performed": false
+}

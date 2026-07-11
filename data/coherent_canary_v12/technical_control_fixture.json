@@ -1,0 +1,64 @@
+{
+  "schema": "coherent_state_decision_canary_v12_technical_control_fixture_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "status": "FROZEN_TOKENIZER_ONLY",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "middle_end_msg": 3,
+  "correct": [
+    {
+      "role": "system",
+      "content": "Apply the stated policy exactly. At the final question answer with exactly approve or deny."
+    },
+    {
+      "role": "user",
+      "content": "Policy: approve only when the status is green. Current status: green."
+    },
+    {
+      "role": "assistant",
+      "content": "The policy and current record have been processed. Use the recorded state for the decision."
+    },
+    {
+      "role": "user",
+      "content": "At the final question, answer with exactly one policy label."
+    },
+    {
+      "role": "assistant",
+      "content": "Understood."
+    }
+  ],
+  "wrong": [
+    {
+      "role": "system",
+      "content": "Apply the stated policy exactly. At the final question answer with exactly approve or deny."
+    },
+    {
+      "role": "user",
+      "content": "Policy: approve only when the status is green. Current status: amber."
+    },
+    {
+      "role": "assistant",
+      "content": "The policy and current record have been processed. Use the recorded state for the decision."
+    },
+    {
+      "role": "user",
+      "content": "At the final question, answer with exactly one policy label."
+    },
+    {
+      "role": "assistant",
+      "content": "Understood."
+    }
+  ],
+  "changed_message_allowlist": [1],
+  "probe": "Decision?",
+  "correct_target": "approve",
+  "counterfactual_target": "deny",
+  "margin": "log_p_approve_minus_log_p_deny",
+  "target_aggregation": "single production-tokenizer token per target from one immutable probe-prefix forward",
+  "uses_common_carrier": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+  "roles": {
+    "gradient_path_control": "Fresh R2 bf16-aware bidirectional ULP edit; plumbing gate only.",
+    "natural_calibration": "Unedited correct/wrong R2 source transplant through the same public path; reported separately."
+  },
+  "subject_model_forward_performed": false
+}
