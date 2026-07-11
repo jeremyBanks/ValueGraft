@@ -9,7 +9,10 @@ import pytest
 from transformers import AutoTokenizer
 
 import coherent_canary_case as case_module
-from coherent_canary_case import build_case_plans, run_phase_a_case
+from coherent_canary_case import (
+    ARM_SOURCES, P_CELLS, REGIONS, build_case_plans, run_phase_a_case,
+    run_treatment_case,
+)
 from coherent_canary_loader import REVISION_30B
 from coherent_canary_schema import R1
 
@@ -108,3 +111,37 @@ def test_phase_a_contains_oracles_and_fresh_only(tokenizer, monkeypatch):
     assert set(result["plans"]) == {"C_N", "W_N", "C_P", "W_P", "F"}
     assert result["forced_carrier_support"]["C_N"]["all_finite"] is True
     assert len(result["forced_carrier_support"]["C_N"]["token_ids"]) == 42
+
+
+def test_treatment_grid_is_separate_and_complete(tokenizer, monkeypatch):
+    case = load_case(CASE_PATHS[0])
+    monkeypatch.setattr(
+        case_module, "execute_replay_plan",
+        lambda model, plan: fake_execution(plan, fresh=False))
+    monkeypatch.setattr(
+        case_module, "execute_fresh_plan",
+        lambda model, plan, stop_at=None: fake_execution(plan, fresh=True))
+    monkeypatch.setattr(
+        case_module, "snapshot_hashes", lambda snapshot: [{"layer": 0}])
+    monkeypatch.setattr(
+        case_module, "tensor_sha256", lambda tensor: "a" * 64)
+    monkeypatch.setattr(
+        case_module, "probe_record",
+        lambda *args, **kwargs: {"margin_float32_bits": "00000000"})
+    monkeypatch.setattr(
+        case_module, "_arm_record",
+        lambda model, tok, source_case, plans, executions, boundaries,
+               schedule, region, cell, eos_ids: {
+                   "schedule": schedule, "region": region, "cell": cell,
+                   "key_source": ARM_SOURCES[cell][0],
+                   "value_source": ARM_SOURCES[cell][1],
+                   "scores": {"focal": {}, "nonfocal": {}},
+               })
+    result = run_treatment_case("model", tokenizer, case, eos_ids=[9])
+    assert result["schema"] == case_module.TREATMENT_SCHEMA
+    assert result["phase_a_scores_present"] is False
+    assert result["arm_count"] == 31
+    assert {(row["schedule"], row["region"], row["cell"])
+            for row in result["arms"]} == (
+        {("N", region, cell) for region in REGIONS for cell in ARM_SOURCES} |
+        {("P", case_module.R2, cell) for cell in P_CELLS})
