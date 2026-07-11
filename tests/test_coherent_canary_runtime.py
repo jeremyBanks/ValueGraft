@@ -5,6 +5,7 @@ import torch
 from transformers import DynamicCache
 
 from coherent_canary_runtime import (
+    _float32_bits,
     CanaryRuntimeError,
     append_block_to_snapshot,
     collect_fresh_region_margin_gradients,
@@ -26,6 +27,11 @@ from coherent_canary_schema import (
     MODEL_ID, MODEL_REVISION, R2, CarrierRegions, ReplayEvent, ReplayPlan,
 )
 from coherent_canary_tokens import build_fresh_destination_plan, build_role_native_plan
+
+
+def test_authoritative_float32_bits_are_little_endian():
+    value = torch.tensor(-0.1, dtype=torch.float32)
+    assert _float32_bits(value) == "cdccccbd"
 
 
 class FakeCacheModel(torch.nn.Module):
