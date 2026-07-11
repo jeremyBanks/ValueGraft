@@ -15,6 +15,11 @@ import torch
 
 
 PLACEBO_SEED = "coherent-state-v12-placebo-20260711"
+PLACEBO_MAX_ATTEMPTS = 1024
+PLACEBO_PRECAST_RELATIVE_NORM_TOLERANCE = 1e-12
+PLACEBO_PRECAST_ABS_COSINE_TOLERANCE = 1e-12
+PLACEBO_APPLIED_RELATIVE_NORM_TOLERANCE = 0.05
+PLACEBO_APPLIED_ABS_COSINE_TOLERANCE = 0.02
 _CASE_ID = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 
 
@@ -133,10 +138,9 @@ def norm_matched_value_placebo_row(
         return result, diagnostics
 
     delta_sq = float(torch.dot(delta, delta).item())
-    projected = None
-    seed_material = None
+    rejected_attempts = []
     attempt = 0
-    while attempt < 1024:
+    while attempt < PLACEBO_MAX_ATTEMPTS:
         random, candidate_seed = _rademacher(
             delta.numel(), case_id=case_id, layer_index=layer_index,
             row_index=row_index, attempt=attempt,
@@ -145,46 +149,66 @@ def norm_matched_value_placebo_row(
         candidate_norm = float(torch.linalg.vector_norm(candidate).item())
         if math.isfinite(candidate_norm) and candidate_norm > 0.0:
             projected = candidate * (delta_norm / candidate_norm)
-            seed_material = candidate_seed
-            break
+            pre_norm = float(torch.linalg.vector_norm(projected).item())
+            pre_dot = float(torch.dot(projected, delta).item())
+            pre_cosine = _cosine(pre_dot, pre_norm, delta_norm)
+            pre_relative = abs(pre_norm - delta_norm) / delta_norm
+            result_cpu = (fresh64 + projected).reshape(shape).to(dtype=fresh.dtype)
+            applied = result_cpu.to(dtype=torch.float64).reshape(-1) - fresh64
+            applied_norm = float(torch.linalg.vector_norm(applied).item())
+            applied_dot = float(torch.dot(applied, delta).item())
+            applied_cosine = _cosine(applied_dot, applied_norm, delta_norm)
+            applied_relative = abs(applied_norm - delta_norm) / delta_norm
+            valid = (
+                pre_relative <= PLACEBO_PRECAST_RELATIVE_NORM_TOLERANCE and
+                abs(pre_cosine) <= PLACEBO_PRECAST_ABS_COSINE_TOLERANCE and
+                applied_norm > 0.0 and
+                applied_relative <= PLACEBO_APPLIED_RELATIVE_NORM_TOLERANCE and
+                abs(applied_cosine) <= PLACEBO_APPLIED_ABS_COSINE_TOLERANCE and
+                torch.isfinite(result_cpu).all().item()
+            )
+            if valid:
+                result = result_cpu.to(device=fresh.device)
+                diagnostics = {
+                    "schema": "coherent_canary_v12_value_placebo_row_v1",
+                    "case_id": case_id,
+                    "layer_index": layer_index,
+                    "row_index": row_index,
+                    "shape": shape,
+                    "dtype": str(fresh.dtype),
+                    "seed_base": PLACEBO_SEED,
+                    "seed_material": candidate_seed,
+                    "projection_attempt": attempt,
+                    "rejected_attempts": rejected_attempts,
+                    "target_delta_l2": delta_norm,
+                    "pre_cast_u_l2": pre_norm,
+                    "pre_cast_dot_with_delta": pre_dot,
+                    "pre_cast_cosine_with_delta": pre_cosine,
+                    "pre_cast_relative_norm_error": pre_relative,
+                    "applied_delta_l2": applied_norm,
+                    "applied_dot_with_delta": applied_dot,
+                    "applied_cosine_with_delta": applied_cosine,
+                    "applied_relative_norm_error": applied_relative,
+                    "fresh_sha256": _tensor_sha256(fresh),
+                    "correct_sha256": _tensor_sha256(correct),
+                    "wrong_sha256": _tensor_sha256(wrong),
+                    "placebo_sha256": _tensor_sha256(result),
+                    "zero_semantic_delta": False,
+                }
+                return result, diagnostics
+            rejected_attempts.append({
+                "attempt": attempt,
+                "seed_material": candidate_seed,
+                "pre_cast_relative_norm_error": pre_relative,
+                "pre_cast_abs_cosine": abs(pre_cosine),
+                "applied_delta_l2": applied_norm,
+                "applied_relative_norm_error": applied_relative,
+                "applied_abs_cosine": abs(applied_cosine),
+            })
         attempt += 1
-    _require(projected is not None and seed_material is not None,
-             "failed to construct a nonzero orthogonal direction")
-
-    pre_norm = float(torch.linalg.vector_norm(projected).item())
-    pre_dot = float(torch.dot(projected, delta).item())
-    result_cpu = (fresh64 + projected).reshape(shape).to(dtype=fresh.dtype)
-    applied = result_cpu.to(dtype=torch.float64).reshape(-1) - fresh64
-    applied_norm = float(torch.linalg.vector_norm(applied).item())
-    applied_dot = float(torch.dot(applied, delta).item())
-    result = result_cpu.to(device=fresh.device)
-
-    diagnostics = {
-        "schema": "coherent_canary_v12_value_placebo_row_v1",
-        "case_id": case_id,
-        "layer_index": layer_index,
-        "row_index": row_index,
-        "shape": shape,
-        "dtype": str(fresh.dtype),
-        "seed_base": PLACEBO_SEED,
-        "seed_material": seed_material,
-        "projection_attempt": attempt,
-        "target_delta_l2": delta_norm,
-        "pre_cast_u_l2": pre_norm,
-        "pre_cast_dot_with_delta": pre_dot,
-        "pre_cast_cosine_with_delta": _cosine(pre_dot, pre_norm, delta_norm),
-        "applied_delta_l2": applied_norm,
-        "applied_dot_with_delta": applied_dot,
-        "applied_cosine_with_delta": _cosine(
-            applied_dot, applied_norm, delta_norm),
-        "applied_relative_norm_error": abs(applied_norm - delta_norm) / delta_norm,
-        "fresh_sha256": _tensor_sha256(fresh),
-        "correct_sha256": _tensor_sha256(correct),
-        "wrong_sha256": _tensor_sha256(wrong),
-        "placebo_sha256": _tensor_sha256(result),
-        "zero_semantic_delta": False,
-    }
-    return result, diagnostics
+    raise CanaryControlError(
+        "PLACEBO_UNAVAILABLE: no deterministic bf16-valid orthogonal row "
+        f"within {PLACEBO_MAX_ATTEMPTS} attempts; rejected={rejected_attempts[-3:]}")
 
 
 def bf16_gradient_ulp_edit_row(
