@@ -1,0 +1,1795 @@
+{
+  "schema": "coherent_state_decision_canary_v12_review_packet_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "packet_kind": "cross_case_diversity",
+  "packet_run_id": "20260711T205002Z",
+  "source_set_commitment_sha256": "70a46116b5adf8dc9a69c7cb4b505c516b696c384bd18554f5abeb27be6595fb",
+  "builder_scope": "Deterministic review material only; no tokenizer/model was loaded, no forward pass occurred, and this packet records no review outcome.",
+  "review_boundary": "Compare all six cases for substantive domain, discourse, decision-rule, turn-structure, distractor, and probe diversity. Reject shared fill-in-the-nouns scaffolds. Record judgments separately; this packet makes none.",
+  "common_visible_carrier": {
+    "carrier_request": "Write the fixed neutral handoff note for the next assistant. Output only that note.",
+    "carrier_content": "The prior discussion established the operating context and relevant decision criteria. Continue from this handoff, preserve the existing constraints, and answer later questions from the state available here. No unresolved action is introduced by this note.",
+    "anchor_user": "Acknowledge receipt of this handoff without adding or repeating any factual detail.",
+    "anchor_assistant": "Acknowledged."
+  },
+  "cases": [
+    {
+      "case_id": "e01",
+      "source_file_sha256": "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090",
+      "title": "Atlas release rehearsal and overnight incident-room record",
+      "domain": "software release operations",
+      "length_band": "short",
+      "middle_end_msg": 15,
+      "changed_message_allowlist": [
+        7,
+        10
+      ],
+      "authoring_provenance": {
+        "author": "Independent Codex subagent",
+        "runtime_model_id": null,
+        "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+        "reasoning_effort": null,
+        "reasoning_effort_status": "not exposed to this subagent; no level inferred",
+        "authoring_session_source_id": "/root/v12_revision2_e01_e02",
+        "authored_at_utc": "2026-07-11T20:55:00Z",
+        "source_revision": 2,
+        "superseded_source_path": "data/coherent_canary_v12/drafts/codex_session_a/e01.json",
+        "superseded_source_file_sha256": "b6aef73d8d2a4d07d67762ee697adce1343c857e1c680f337c9f830d4f7c8546",
+        "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+        "subject_model_forward_performed": false
+      },
+      "focal": {
+        "plant_id": "e01_release_ring",
+        "category": "derived_decision",
+        "rule_or_relation": "Select partner beta if and only if the migration is additive and the logged rollback interval is under eight minutes; select the staff ring otherwise.",
+        "changed_input": "The one load-bearing input is the logged rollback interval: 6:40 in C versus 10:40 in W.",
+        "probe": "Under the recorded mandatory selection rule, which ring was selected for Atlas 4.8? Answer with only the ring name.",
+        "correct_target": "partner beta",
+        "counterfactual_target": "staff ring",
+        "establishing_message_indices": [
+          1,
+          5,
+          7,
+          10
+        ],
+        "downstream_reference_indices": [
+          10
+        ],
+        "why_derived": "The answer requires combining the independently established additive-schema finding with the logged rollback duration and applying the mandatory biconditional selection rule.",
+        "why_counterfactual_reverses": "Changing only the rollback endpoint moves the measured duration from below to above eight minutes; under the explicit otherwise branch, that reverses the required ring."
+      },
+      "nonfocal_control": {
+        "plant_id": "e01_trace_retention",
+        "category": "unchanged_control",
+        "probe": "For how long are the Atlas rehearsal traces retained? Answer with only the duration.",
+        "target": "21 days",
+        "countertarget": "30 days",
+        "establishing_message_indices": [
+          3,
+          4
+        ],
+        "why_independent_of_focal": "The duration is fixed by the diagnostics-retention matrix and is explicitly independent of the schema and rollback conditions that select a release ring."
+      },
+      "distractor_fact_inventory": [
+        {
+          "chain_id": "dashboard-clock-reconciliation",
+          "indices": [
+            11,
+            12
+          ],
+          "summary": "A delayed dashboard export is corroborating evidence and must not silently replace the deployment-log endpoint."
+        },
+        {
+          "chain_id": "mixed-version-observation-discipline",
+          "indices": [
+            13,
+            14
+          ],
+          "summary": "Any later mixed-version read error is appended chronologically with evidence rather than projected backward or erased by a later success."
+        }
+      ],
+      "retained_tail_purpose": "A short byte-identical clock-reconciliation exchange follows the carrier naturally without naming or implying either release ring, either rollback duration, the schema classification, or the trace-retention duration.",
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "a1f3bb71873212a560126e0808d1ca1c093b33447539aae80e2b1d4f05e69415",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping a release coordinator maintain an exact incident-room record. Separate measurements from interpretations, apply the stated routing rule literally, and do not claim that a deployment, notification, or approval has occurred unless the conversation says so."
+            },
+            {
+              "role": "user",
+              "content": "Tonight's Atlas 4.8 rehearsal is meant to determine its next release ring, not to reopen the whole launch plan. The rule is mandatory in both directions: select partner beta if and only if the migration is additive and the logged rollback interval is under eight minutes; select the staff ring otherwise. A favorable judgment cannot substitute for either input, and satisfying both conditions requires the partner-beta selection."
+            },
+            {
+              "role": "assistant",
+              "content": "I will use that as a complete selection rule. The pass branch is not merely permission: an additive migration together with a rollback interval below eight minutes selects partner beta. Every other combination selects the staff ring. I will keep the two observations separate until both are documented and will not infer a result from the team's confidence or from unrelated operational notes."
+            },
+            {
+              "role": "user",
+              "content": "One unrelated records question was settled before the rehearsal. Atlas traces from this exercise are classified as short-lived operational diagnostics, and the retention matrix keeps that class for 21 days. That duration is governed by the diagnostics classification, not by the eventual release ring, so it must remain unchanged if the gate outcome changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded independently: the rehearsal traces are kept for 21 days under the diagnostics-retention matrix. I will not use that duration as evidence about the migration or rollback test, and I will not change it when applying the release-ring rule."
+            },
+            {
+              "role": "user",
+              "content": "Here is the operational context for the schema half. The patch introduces a nullable source-region field for new routing reports. Existing rows remain valid, the old reader ignores the new field, and the migration plan contains no rename, type conversion, backfill requirement, or destructive statement. Priya compared the generated statement with the reviewed plan while Leon checked that the prior service binary can still read a row written after the change."
+            },
+            {
+              "role": "assistant",
+              "content": "Those observations support the additive classification without relying on the timing test. Adding one nullable field leaves existing records readable, and the compatibility check addresses the mixed-version interval. I am treating the absence of a rewrite or destructive operation as part of the schema evidence, while reserving the second gate condition for the logged rehearsal timestamps."
+            },
+            {
+              "role": "user",
+              "content": "Priya's review found that the migration only adds the nullable `source_region` column; it drops or rewrites nothing. The rehearsal began at 19:12:00 and the database was accepting writes again at 19:18:40, so the measured rollback interval was six minutes forty seconds. The timing came from the deployment log, not an estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "The record now contains both gate inputs from distinct sources: the reviewed migration statement supplies the schema classification, and the deployment log supplies the rollback interval. The recovery endpoint is the return of accepted writes, so the measurement uses the same operational definition as the rule rather than an earlier process-exit marker."
+            },
+            {
+              "role": "user",
+              "content": "Apply the mandatory selection rule to those recorded inputs. State the ring and explain the branch in one sentence. Do not turn the answer into a general launch recommendation, because capacity planning, customer messaging, and the production window are separate decisions that have not been requested here."
+            },
+            {
+              "role": "assistant",
+              "content": "Atlas 4.8 should use the partner beta ring. The migration is additive, and the logged rollback interval of six minutes forty seconds is under the eight-minute limit, so both required conditions are satisfied."
+            },
+            {
+              "role": "user",
+              "content": "Before the overnight shift arrives, I want the record to distinguish the rehearsal evidence from follow-up work. A delayed dashboard export is still expected, but it does not define rollback completion and therefore cannot revise the measured interval. The shift should compare the export with the deployment log only as a consistency check and should preserve both sources if their timestamps differ."
+            },
+            {
+              "role": "assistant",
+              "content": "That distinction is clear. The deployment log remains the controlling source for the measured recovery endpoint, while the later dashboard export is corroborating material. If the export differs, the overnight shift should record the discrepancy and investigate its clock or ingestion path rather than silently replacing the logged measurement or treating a delayed display as a failed recovery."
+            },
+            {
+              "role": "user",
+              "content": "Leon will also watch for mixed-version read errors during the quiet period. If one appears, it belongs in a new incident observation with the first affected request, the reader version, and the matching trace reference. It should not be rewritten as if it had been present during the rehearsal, and nobody should claim that the issue was resolved merely because a later request succeeded."
+            },
+            {
+              "role": "assistant",
+              "content": "A new error should be appended with its own observation time and evidence, preserving the earlier rehearsal record. A later successful request can establish recovery for that request but cannot erase the earlier failure. The next shift can then assess the new incident on its own evidence without confusing chronological updates with facts already observed during the gate exercise."
+            },
+            {
+              "role": "user",
+              "content": "The next coordinator may receive an automated alert whose clock differs slightly from the service log. How should that discrepancy be recorded before anyone decides whether it is a real new event? Keep the guidance short and do not repeat any settled measurement, classification, duration, or ring."
+            },
+            {
+              "role": "assistant",
+              "content": "Record both timestamps with their named sources, note the observed offset, and leave the event's relationship to the existing record undecided until one clock can be reconciled against a common reference."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090",
+            "case_id": "e01",
+            "variant": "correct",
+            "literal_messages_sha256": "99a79e819fc9aa4d0f16acabac976cdc97df575cae58ecbeb45ac295f042f36d"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "edbf7be2f8b41c8521c4dd0b34a937e26b9348032c8311afcd04f1c3adfae766",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are helping a release coordinator maintain an exact incident-room record. Separate measurements from interpretations, apply the stated routing rule literally, and do not claim that a deployment, notification, or approval has occurred unless the conversation says so."
+            },
+            {
+              "role": "user",
+              "content": "Tonight's Atlas 4.8 rehearsal is meant to determine its next release ring, not to reopen the whole launch plan. The rule is mandatory in both directions: select partner beta if and only if the migration is additive and the logged rollback interval is under eight minutes; select the staff ring otherwise. A favorable judgment cannot substitute for either input, and satisfying both conditions requires the partner-beta selection."
+            },
+            {
+              "role": "assistant",
+              "content": "I will use that as a complete selection rule. The pass branch is not merely permission: an additive migration together with a rollback interval below eight minutes selects partner beta. Every other combination selects the staff ring. I will keep the two observations separate until both are documented and will not infer a result from the team's confidence or from unrelated operational notes."
+            },
+            {
+              "role": "user",
+              "content": "One unrelated records question was settled before the rehearsal. Atlas traces from this exercise are classified as short-lived operational diagnostics, and the retention matrix keeps that class for 21 days. That duration is governed by the diagnostics classification, not by the eventual release ring, so it must remain unchanged if the gate outcome changes."
+            },
+            {
+              "role": "assistant",
+              "content": "Recorded independently: the rehearsal traces are kept for 21 days under the diagnostics-retention matrix. I will not use that duration as evidence about the migration or rollback test, and I will not change it when applying the release-ring rule."
+            },
+            {
+              "role": "user",
+              "content": "Here is the operational context for the schema half. The patch introduces a nullable source-region field for new routing reports. Existing rows remain valid, the old reader ignores the new field, and the migration plan contains no rename, type conversion, backfill requirement, or destructive statement. Priya compared the generated statement with the reviewed plan while Leon checked that the prior service binary can still read a row written after the change."
+            },
+            {
+              "role": "assistant",
+              "content": "Those observations support the additive classification without relying on the timing test. Adding one nullable field leaves existing records readable, and the compatibility check addresses the mixed-version interval. I am treating the absence of a rewrite or destructive operation as part of the schema evidence, while reserving the second gate condition for the logged rehearsal timestamps."
+            },
+            {
+              "role": "user",
+              "content": "Priya's review found that the migration only adds the nullable `source_region` column; it drops or rewrites nothing. The rehearsal began at 19:12:00 and the database was accepting writes again at 19:22:40, so the measured rollback interval was ten minutes forty seconds. The timing came from the deployment log, not an estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "The record now contains both gate inputs from distinct sources: the reviewed migration statement supplies the schema classification, and the deployment log supplies the rollback interval. The recovery endpoint is the return of accepted writes, so the measurement uses the same operational definition as the rule rather than an earlier process-exit marker."
+            },
+            {
+              "role": "user",
+              "content": "Apply the mandatory selection rule to those recorded inputs. State the ring and explain the branch in one sentence. Do not turn the answer into a general launch recommendation, because capacity planning, customer messaging, and the production window are separate decisions that have not been requested here."
+            },
+            {
+              "role": "assistant",
+              "content": "Atlas 4.8 should use the staff ring for this release. The migration is additive, but the logged rollback interval of ten minutes forty seconds exceeds the eight-minute limit, so one required condition fails."
+            },
+            {
+              "role": "user",
+              "content": "Before the overnight shift arrives, I want the record to distinguish the rehearsal evidence from follow-up work. A delayed dashboard export is still expected, but it does not define rollback completion and therefore cannot revise the measured interval. The shift should compare the export with the deployment log only as a consistency check and should preserve both sources if their timestamps differ."
+            },
+            {
+              "role": "assistant",
+              "content": "That distinction is clear. The deployment log remains the controlling source for the measured recovery endpoint, while the later dashboard export is corroborating material. If the export differs, the overnight shift should record the discrepancy and investigate its clock or ingestion path rather than silently replacing the logged measurement or treating a delayed display as a failed recovery."
+            },
+            {
+              "role": "user",
+              "content": "Leon will also watch for mixed-version read errors during the quiet period. If one appears, it belongs in a new incident observation with the first affected request, the reader version, and the matching trace reference. It should not be rewritten as if it had been present during the rehearsal, and nobody should claim that the issue was resolved merely because a later request succeeded."
+            },
+            {
+              "role": "assistant",
+              "content": "A new error should be appended with its own observation time and evidence, preserving the earlier rehearsal record. A later successful request can establish recovery for that request but cannot erase the earlier failure. The next shift can then assess the new incident on its own evidence without confusing chronological updates with facts already observed during the gate exercise."
+            },
+            {
+              "role": "user",
+              "content": "The next coordinator may receive an automated alert whose clock differs slightly from the service log. How should that discrepancy be recorded before anyone decides whether it is a real new event? Keep the guidance short and do not repeat any settled measurement, classification, duration, or ring."
+            },
+            {
+              "role": "assistant",
+              "content": "Record both timestamps with their named sources, note the observed offset, and leave the event's relationship to the existing record undecided until one clock can be reconciled against a common reference."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090",
+            "case_id": "e01",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "a53194def46a28340653855311e541adb3d860c0a8d5a6aeaccf32fcba746941"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e02",
+      "source_file_sha256": "0d52caab89a6f7d6877f097fc451b5ac529f010720e8118ad89044a054ca9ff0",
+      "title": "East Ward cold-chain route selection",
+      "domain": "nonprofit meal delivery allocation",
+      "length_band": "short",
+      "middle_end_msg": 17,
+      "changed_message_allowlist": [
+        9,
+        14
+      ],
+      "authoring_provenance": {
+        "author": "Independent Codex subagent",
+        "runtime_model_id": null,
+        "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+        "reasoning_effort": null,
+        "reasoning_effort_status": "not exposed to this subagent; no level inferred",
+        "authoring_session_source_id": "/root/v12_revision2_e01_e02",
+        "authored_at_utc": "2026-07-11T20:55:00Z",
+        "source_revision": 2,
+        "superseded_source_path": "data/coherent_canary_v12/drafts/codex_session_a/e02.json",
+        "superseded_source_file_sha256": "91ac899075e1ef9756106e62a423deb6de94fcfcc5115feb45bca1d862e23eb4",
+        "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+        "subject_model_forward_performed": false
+      },
+      "focal": {
+        "plant_id": "e02_route_hub",
+        "category": "derived_decision",
+        "rule_or_relation": "Exclude hubs with a verified cold hold below 45 minutes; if more than one remains, select the eligible hub with the lower total driving time, and if one remains select it.",
+        "changed_input": "The one load-bearing input is Cedar's verified cold-hold time: 62 minutes in C versus 41 minutes in W.",
+        "probe": "Which staging hub did the board's sequence select for the refrigerated route? Answer with only the hub name.",
+        "correct_target": "Cedar",
+        "counterfactual_target": "Harbor",
+        "establishing_message_indices": [
+          5,
+          7,
+          9,
+          11,
+          14
+        ],
+        "downstream_reference_indices": [
+          14
+        ],
+        "why_derived": "The answer requires first screening both hubs against comparable sealed-crate cold-hold evidence and then applying the route-time tiebreak only to eligible survivors.",
+        "why_counterfactual_reverses": "Changing only Cedar's verified cold hold from above to below the threshold removes the otherwise shorter hub at stage one, leaving Harbor as the sole eligible choice."
+      },
+      "nonfocal_control": {
+        "plant_id": "e02_intake_day",
+        "category": "unchanged_control",
+        "probe": "On which day is walk-in intake at the Linden center? Answer with only the weekday.",
+        "target": "Thursday",
+        "countertarget": "Tuesday",
+        "establishing_message_indices": [
+          1,
+          2
+        ],
+        "why_independent_of_focal": "The benefits-team service calendar is established before delivery planning and explicitly does not depend on hubs, route times, cold-hold tests, or volunteer assignments."
+      },
+      "distractor_fact_inventory": [
+        {
+          "chain_id": "matched-test-method",
+          "indices": [
+            7,
+            8
+          ],
+          "summary": "The two kitchens use the same crate, payload, logger, pass band, loading simulation, and handling conditions."
+        },
+        {
+          "chain_id": "loading-safeguards",
+          "indices": [
+            15,
+            16
+          ],
+          "summary": "Crate grouping and retesting after a broken seal preserve handling validity without adding another hub-selection criterion."
+        }
+      ],
+      "retained_tail_purpose": "A byte-identical late-volunteer briefing exchange provides a short natural continuation after the carrier while omitting every hub, route duration, test duration, service weekday, and target implication.",
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "7af5db2de1109bd0e5bdf7e35d95ab5e6096e218ac6d5467dfb685a661cb32e3",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a community meal program with an accurate planning conversation. Apply the program's stated allocation sequence, distinguish verified measurements from estimates, keep unrelated service facts separate, and never imply that a reservation, dispatch, or external contact has occurred."
+            },
+            {
+              "role": "user",
+              "content": "Before we discuss Saturday deliveries, note one item for the public-services desk. Walk-in intake at the Linden center is on Thursday. That weekday comes from the benefits team's service calendar and does not depend on a kitchen test, a driving route, a volunteer assignment, or any hub chosen for food distribution."
+            },
+            {
+              "role": "assistant",
+              "content": "I have recorded Thursday as the Linden walk-in day and will keep it separate from delivery planning. I will not infer that weekday from route or refrigeration evidence, and a later change in the staging decision would not alter the benefits-team calendar."
+            },
+            {
+              "role": "user",
+              "content": "The East Ward Meal Network has one refrigerated Saturday run serving the same six apartment stops from either Cedar or Harbor. The vehicle and driver are the same in both plans. We are deciding only where sealed meal crates should be staged before loading. The board asked us to base that choice on comparable cold-hold tests and the full route sheets, not on which kitchen staff happen to prefer."
+            },
+            {
+              "role": "assistant",
+              "content": "That fixes the comparison unit: one vehicle, one driver, and one stop list, with the staging hub as the decision variable. I will treat staff preference as irrelevant. I will also distinguish time spent driving from time a sealed test crate remains within the required temperature band, because a shorter route cannot compensate for a hub that fails the cold-chain screen."
+            },
+            {
+              "role": "user",
+              "content": "The allocation sequence has two stages. First, remove any hub whose verified sealed-crate cold hold is below 45 minutes. Then, if more than one hub remains, choose the eligible hub with the lower total driving time on the common stop list. A hub that fails the first stage cannot return to consideration because its route is shorter. If only one survives, that hub is selected."
+            },
+            {
+              "role": "assistant",
+              "content": "I will screen cold-hold eligibility before looking at route length. Forty-five minutes qualifies and anything below it does not. When both qualify, the lower driving total selects the hub; when only one qualifies, that survivor is selected without using the ineligible hub's route time as a tradeoff."
+            },
+            {
+              "role": "user",
+              "content": "Both kitchen tests used the same insulated crate model, six chilled meal packs, the same calibrated logger, and the same pass band. Staff sealed each crate after a twenty-minute loading simulation and left it in the marked dispatch area with no replacement ice. Harbor's uninterrupted logger trace stayed within the band for 58 minutes. The kitchen lead signed the trace review after checking that there were no missing samples."
+            },
+            {
+              "role": "assistant",
+              "content": "Harbor therefore clears the 45-minute eligibility threshold on a complete trace. Because the crate design, payload, logger, loading simulation, and handling condition were matched, the test can be compared with Cedar's result once that result is stated. I am not using Harbor's route length yet."
+            },
+            {
+              "role": "user",
+              "content": "Cedar's test used the same sealed-container protocol and held the required temperature for 62 minutes. The kitchen lead confirmed that result from the uninterrupted sensor trace; it is not a projection from the shorter route."
+            },
+            {
+              "role": "assistant",
+              "content": "I have Cedar's verified cold-hold result and will treat it as the remaining eligibility input. The route duration and cold-hold duration are different measurements, so I will not substitute one for the other."
+            },
+            {
+              "role": "user",
+              "content": "The route planner then drove both versions with the normal Saturday restrictions loaded: no use of the school lane before noon, the same six stops, and the same return point. Cedar totaled 38 minutes of driving and Harbor totaled 51. The worksheet separates driving from loading time, and its totals were checked against the turn-by-turn traces rather than copied from an unconstrained map estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "Those are comparable route totals for the second stage. Cedar has the lower driving time at 38 minutes, while Harbor is 51. The school-lane restriction and common stops were applied to both, so the difference is not explained by a different route definition. The cold-hold screen still comes first."
+            },
+            {
+              "role": "user",
+              "content": "Apply the board's sequence now and name the staging hub. Explain first which candidates survive the sealed-crate threshold and then, only if needed, how the matched route totals determine the selection. Do not claim that the driver or kitchen has been assigned."
+            },
+            {
+              "role": "assistant",
+              "content": "Choose Cedar. Both hubs clear the 45-minute cold-hold screen, and Cedar's 38-minute route is shorter than Harbor's 51-minute route, so the second step selects Cedar."
+            },
+            {
+              "role": "user",
+              "content": "For the loading lead, clarify two details that do not alter the hub rule. Meal packs stay in their labeled crate until the vehicle is at the loading line, and a crate whose seal is broken during staging must be checked again rather than assumed equivalent to the test crate. These are handling safeguards, not extra scoring criteria for choosing between otherwise eligible hubs."
+            },
+            {
+              "role": "assistant",
+              "content": "The lead should preserve the labeled-crate grouping until loading and send any prematurely opened crate through a fresh check. Those instructions protect the conditions represented by the tests; they do not add a third comparison stage, revise the recorded test durations, or authorize a different staging choice."
+            },
+            {
+              "role": "user",
+              "content": "A volunteer may arrive after the loading briefing has started. Suggest a simple way for the lead to bring that person into the work without repeating any recorded hub, route, test duration, or service-calendar detail."
+            },
+            {
+              "role": "assistant",
+              "content": "Give the late volunteer the current role card, point out the person supervising that role, and ask for a read-back of the next two handling steps before work begins."
+            },
+            {
+              "role": "user",
+              "content": "If the read-back reveals that one instruction was unclear, what should the lead do before the volunteer touches a crate? Keep the answer about briefing practice rather than any earlier decision."
+            },
+            {
+              "role": "assistant",
+              "content": "Restate the unclear step in concrete order, have the volunteer repeat it again, and wait for an accurate read-back before assigning the task. Record no completion until the work itself is observed."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "0d52caab89a6f7d6877f097fc451b5ac529f010720e8118ad89044a054ca9ff0",
+            "case_id": "e02",
+            "variant": "correct",
+            "literal_messages_sha256": "1e03a62dd36a9ad1a64d766586970bb9c2c258952b9901a9e36b4d86ee928261"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "3b627ace963facbd38a42d5036ffb375aa1ce874f8a51bc42f87898d95df751b",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a community meal program with an accurate planning conversation. Apply the program's stated allocation sequence, distinguish verified measurements from estimates, keep unrelated service facts separate, and never imply that a reservation, dispatch, or external contact has occurred."
+            },
+            {
+              "role": "user",
+              "content": "Before we discuss Saturday deliveries, note one item for the public-services desk. Walk-in intake at the Linden center is on Thursday. That weekday comes from the benefits team's service calendar and does not depend on a kitchen test, a driving route, a volunteer assignment, or any hub chosen for food distribution."
+            },
+            {
+              "role": "assistant",
+              "content": "I have recorded Thursday as the Linden walk-in day and will keep it separate from delivery planning. I will not infer that weekday from route or refrigeration evidence, and a later change in the staging decision would not alter the benefits-team calendar."
+            },
+            {
+              "role": "user",
+              "content": "The East Ward Meal Network has one refrigerated Saturday run serving the same six apartment stops from either Cedar or Harbor. The vehicle and driver are the same in both plans. We are deciding only where sealed meal crates should be staged before loading. The board asked us to base that choice on comparable cold-hold tests and the full route sheets, not on which kitchen staff happen to prefer."
+            },
+            {
+              "role": "assistant",
+              "content": "That fixes the comparison unit: one vehicle, one driver, and one stop list, with the staging hub as the decision variable. I will treat staff preference as irrelevant. I will also distinguish time spent driving from time a sealed test crate remains within the required temperature band, because a shorter route cannot compensate for a hub that fails the cold-chain screen."
+            },
+            {
+              "role": "user",
+              "content": "The allocation sequence has two stages. First, remove any hub whose verified sealed-crate cold hold is below 45 minutes. Then, if more than one hub remains, choose the eligible hub with the lower total driving time on the common stop list. A hub that fails the first stage cannot return to consideration because its route is shorter. If only one survives, that hub is selected."
+            },
+            {
+              "role": "assistant",
+              "content": "I will screen cold-hold eligibility before looking at route length. Forty-five minutes qualifies and anything below it does not. When both qualify, the lower driving total selects the hub; when only one qualifies, that survivor is selected without using the ineligible hub's route time as a tradeoff."
+            },
+            {
+              "role": "user",
+              "content": "Both kitchen tests used the same insulated crate model, six chilled meal packs, the same calibrated logger, and the same pass band. Staff sealed each crate after a twenty-minute loading simulation and left it in the marked dispatch area with no replacement ice. Harbor's uninterrupted logger trace stayed within the band for 58 minutes. The kitchen lead signed the trace review after checking that there were no missing samples."
+            },
+            {
+              "role": "assistant",
+              "content": "Harbor therefore clears the 45-minute eligibility threshold on a complete trace. Because the crate design, payload, logger, loading simulation, and handling condition were matched, the test can be compared with Cedar's result once that result is stated. I am not using Harbor's route length yet."
+            },
+            {
+              "role": "user",
+              "content": "Cedar's test used the same sealed-container protocol and held the required temperature for 41 minutes. The kitchen lead confirmed that result from the uninterrupted sensor trace; it is not a projection from the shorter route."
+            },
+            {
+              "role": "assistant",
+              "content": "I have Cedar's verified cold-hold result and will treat it as the remaining eligibility input. The route duration and cold-hold duration are different measurements, so I will not substitute one for the other."
+            },
+            {
+              "role": "user",
+              "content": "The route planner then drove both versions with the normal Saturday restrictions loaded: no use of the school lane before noon, the same six stops, and the same return point. Cedar totaled 38 minutes of driving and Harbor totaled 51. The worksheet separates driving from loading time, and its totals were checked against the turn-by-turn traces rather than copied from an unconstrained map estimate."
+            },
+            {
+              "role": "assistant",
+              "content": "Those are comparable route totals for the second stage. Cedar has the lower driving time at 38 minutes, while Harbor is 51. The school-lane restriction and common stops were applied to both, so the difference is not explained by a different route definition. The cold-hold screen still comes first."
+            },
+            {
+              "role": "user",
+              "content": "Apply the board's sequence now and name the staging hub. Explain first which candidates survive the sealed-crate threshold and then, only if needed, how the matched route totals determine the selection. Do not claim that the driver or kitchen has been assigned."
+            },
+            {
+              "role": "assistant",
+              "content": "Choose Harbor. Harbor clears the 45-minute cold-hold screen, while Cedar's 41-minute result fails it. Only Harbor remains eligible, so the driving-time comparison does not change the selection."
+            },
+            {
+              "role": "user",
+              "content": "For the loading lead, clarify two details that do not alter the hub rule. Meal packs stay in their labeled crate until the vehicle is at the loading line, and a crate whose seal is broken during staging must be checked again rather than assumed equivalent to the test crate. These are handling safeguards, not extra scoring criteria for choosing between otherwise eligible hubs."
+            },
+            {
+              "role": "assistant",
+              "content": "The lead should preserve the labeled-crate grouping until loading and send any prematurely opened crate through a fresh check. Those instructions protect the conditions represented by the tests; they do not add a third comparison stage, revise the recorded test durations, or authorize a different staging choice."
+            },
+            {
+              "role": "user",
+              "content": "A volunteer may arrive after the loading briefing has started. Suggest a simple way for the lead to bring that person into the work without repeating any recorded hub, route, test duration, or service-calendar detail."
+            },
+            {
+              "role": "assistant",
+              "content": "Give the late volunteer the current role card, point out the person supervising that role, and ask for a read-back of the next two handling steps before work begins."
+            },
+            {
+              "role": "user",
+              "content": "If the read-back reveals that one instruction was unclear, what should the lead do before the volunteer touches a crate? Keep the answer about briefing practice rather than any earlier decision."
+            },
+            {
+              "role": "assistant",
+              "content": "Restate the unclear step in concrete order, have the volunteer repeat it again, and wait for an accurate read-back before assigning the task. Record no completion until the work itself is observed."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "0d52caab89a6f7d6877f097fc451b5ac529f010720e8118ad89044a054ca9ff0",
+            "case_id": "e02",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "a9d2d7ca7cb61c63db5d8b4bccb041bc8bbdf3d3beac8e38b49c92ca26855a1c"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e03",
+      "source_file_sha256": "3594202e1ec405b7cb2c0a5f9351d3e3c68b65ba6affb38ba83ce5a507273ed3",
+      "title": "North Fork instrument-service route record",
+      "domain": "watershed field operations and physical logistics",
+      "length_band": "short",
+      "middle_end_msg": 15,
+      "changed_message_allowlist": [
+        5
+      ],
+      "authoring_provenance": {
+        "author": "Codex subagent",
+        "runtime_model_id": null,
+        "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+        "reasoning_effort": null,
+        "reasoning_effort_status": "not exposed to this subagent",
+        "authoring_session_source": "/root/v12_revision2_e03_e04",
+        "authorship_completed_at_utc": "2026-07-11T20:28:27Z",
+        "semantic_outcomes_seen": false,
+        "model_forward_performed": false,
+        "source_revision": 2
+      },
+      "focal": {
+        "plant_id": "e03-route-selection",
+        "category": "derived_decision",
+        "rule_or_relation": "The plan must select Ridge Spur when both the current Mill Bridge posting is at least 0.5 tonnes above the 8.6-tonne loaded gross weight and the verified 07:00 North Fork gauge is below 1.20 metres; otherwise it must select Quarry Loop.",
+        "changed_input": "The current Mill Bridge posting is 9.4 tonnes in C and 8.8 tonnes in W.",
+        "probe": "Apply the recorded weight reserve, bridge posting, verified gauge, and mandatory routing rule. Which access route must the plan select?",
+        "correct_target": "Ridge Spur",
+        "counterfactual_target": "Quarry Loop",
+        "establishing_message_indices": [
+          1,
+          3,
+          5,
+          9,
+          11,
+          13
+        ],
+        "downstream_reference_indices": [
+          6
+        ],
+        "why_derived": "The answer requires computing 8.6 + 0.5 = 9.1 tonnes, comparing the current posting inclusively to 9.1, checking that 0.88 is strictly below 1.20, and applying the mandatory two-branch selection rule.",
+        "why_counterfactual_reverses": "C clears both conditions because 9.4 is at least 9.1 and 0.88 is below 1.20; W fails the bridge condition because 8.8 is below 9.1, so the mandatory otherwise branch applies."
+      },
+      "nonfocal_control": {
+        "plant_id": "e03-radio-channel",
+        "category": "unchanged_control",
+        "probe": "Which radio channel is assigned to Dana's NF-17 crew for base check-ins?",
+        "target": "Channel 3",
+        "countertarget": "Channel 5",
+        "establishing_message_indices": [
+          7,
+          8
+        ],
+        "why_independent_of_focal": "The radio card maps the station's western creek sector to Channel 3 and explicitly makes sector, not route, determinative. This chain is byte-identical across C and W."
+      },
+      "distractor_fact_inventory": [
+        "midnight dashboard water value",
+        "downstream culvert marker",
+        "afternoon light-rain forecast",
+        "spare mast clamp inventory",
+        "aggregate-yard delay on the alternate road"
+      ],
+      "retained_tail_purpose": "Continue briefly with site-photo scope and a conditional structural stop-work boundary without identifying or implying either route or radio answer.",
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "9b3969a6216e535d225265aaaea3c248412f1acea90567af08031f475d0aaa23",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a watershed field coordinator preparing a one-day instrument-service visit. Preserve the distinction between current observations, operating rules, and unrelated logistics. Do not claim that travel, maintenance, or notification has occurred unless the user says it has."
+            },
+            {
+              "role": "user",
+              "content": "Tomorrow Dana Ruiz is taking the service truck to North Fork station NF-17 to replace a rain-gauge battery and inspect the telemetry mast. With two people, the tool cabinet, and the recovery winch aboard, the truck's loaded gross weight is 8.6 tonnes. Ridge Spur reaches the station directly across Mill Bridge. Quarry Loop avoids the bridge but adds about forty minutes and passes through an active aggregate yard. Both roads are open in the general roads bulletin, so the route has to come from our more specific field rule rather than from the word open."
+            },
+            {
+              "role": "assistant",
+              "content": "I will keep the loaded weight at 8.6 tonnes and distinguish general road availability from the field team's route-selection rule. Ridge Spur's shorter travel time is not itself a decision input, and Quarry Loop's extra time does not disqualify it. The applicable bridge posting and the specified water observation still need to be placed alongside the rule before the route can be derived."
+            },
+            {
+              "role": "user",
+              "content": "The field manual is explicit about selection. If the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the verified 07:00 North Fork gauge is below 1.20 metres, the plan must select Ridge Spur. If either check fails or is missing, the plan must select Quarry Loop. The two checks are conjunctive; this is not merely permission to consider Ridge. Yesterday's bridge sign and the downstream culvert marker are not substitutes for the named observations."
+            },
+            {
+              "role": "assistant",
+              "content": "The selection rule therefore requires a minimum current posting of 9.1 tonnes, obtained from 8.6 plus the 0.5-tonne reserve. A posting at or above 9.1 and a verified 07:00 gauge strictly below 1.20 jointly select the direct route; any failure selects the other route. I will not choose yet because the two current observations have not both been supplied."
+            },
+            {
+              "role": "user",
+              "content": "Roads has issued the current Mill Bridge posting as 9.4 tonnes. The notice names Mill Bridge, applies through the end of tomorrow's service window, and supersedes the faded south-abutment sign. It reports no axle-specific reduction and no separate closure interval. The planning copy was received at 16:10 and the coordinator matched its bridge identifier to the NF-17 route sheet."
+            },
+            {
+              "role": "assistant",
+              "content": "The current posting is tied to the correct bridge and service window and will determine the load-side comparison against the computed 9.1-tonne minimum. The water-side check remains part of the rule, so I will preserve the posting and its provenance without yet stating the route selected by the complete rule."
+            },
+            {
+              "role": "user",
+              "content": "There is a separate communications assignment to preserve. The current radio card maps Channel 3 to the western creek sector and Channel 5 to the eastern ridge sector. NF-17 is listed in the western creek sector, and Dana's crew will be servicing NF-17. Sector, not access road, controls the check-in channel, so a later route choice cannot change this mapping. The spare handheld in the truck is already programmed with both channels."
+            },
+            {
+              "role": "assistant",
+              "content": "The independent radio chain is complete: NF-17 belongs to the western creek sector, which maps to Channel 3. Channel 5 is the counterfactual for the eastern ridge sector, not an alternate created by road conditions. I will keep this control fact separate from bridge capacity, gauge height, and travel time."
+            },
+            {
+              "role": "user",
+              "content": "For the route record, the gauge value must come from the upstream staff gauge after the technician's 07:00 verification. The dashboard's midnight value was 1.04 metres, but it is only a preliminary telemetry point and cannot be used in this rule. The downstream culvert marker is for flood inspection, not routing. The technician will label the accepted entry with station, local time, and source so the handoff does not silently swap one water reading for another."
+            },
+            {
+              "role": "assistant",
+              "content": "Only the verified upstream staff-gauge entry at 07:00 can satisfy the water observation specified by the rule. The midnight dashboard point and culvert marker remain contextual distractors even if their numbers look plausible. I will use the source label and time to prevent either from being substituted into the route calculation."
+            },
+            {
+              "role": "user",
+              "content": "The hydrology technician has now entered the verified value: North Fork upstream staff gauge, 07:00 local, 0.88 metres. The field sheet shows no obscured graduations and notes that the reading was repeated once before entry. Light rain is forecast after 14:00, but the manual does not use forecast accumulation in this morning selection. A spare mast clamp is also aboard; that inventory item changes the repair options, not access."
+            },
+            {
+              "role": "assistant",
+              "content": "The specified water input is now present and 0.88 is below 1.20. The later rain forecast and spare clamp do not add criteria. The complete evidence needed to apply the selection rule is recorded, but I will leave the resulting route unstated here so that a later question must derive it from the rule, weight, current posting, and verified gauge."
+            },
+            {
+              "role": "user",
+              "content": "Before the neutral handoff, check the evidence boundaries. The gross weight already includes the crew and winch, so no reserve other than the manual's 0.5 tonnes should be added. The bridge comparison is inclusive at its minimum, while the gauge comparison is strictly below its limit. Quarry Loop's travel delay and aggregate-yard activity are operational consequences, not extra screening tests. Do not turn the route into a preference poll or state its name in this part of the record."
+            },
+            {
+              "role": "assistant",
+              "content": "The record supports one deterministic application: use the already-loaded 8.6-tonne figure, add exactly the stated reserve, apply the inclusive posting comparison, and apply the strict gauge comparison. Neither convenience nor the alternate road's characteristics can override those checks. I will preserve the inputs and rule without naming the derived route before the probe."
+            },
+            {
+              "role": "user",
+              "content": "For the continuing work note, Dana needs three photographs at NF-17: the mast footing before work, the opened enclosure, and the battery connection after replacement. Each filename begins with NF-17, then local time and a short view label. Keep the nearby cabin and its driveway outside every frame."
+            },
+            {
+              "role": "assistant",
+              "content": "The continuing note calls for those three scoped images with the stated site-and-time naming pattern, while excluding the cabin and driveway. It records a documentation requirement without asserting that the visit or any photograph has occurred."
+            },
+            {
+              "role": "user",
+              "content": "If the mast inspection finds a cracked base plate, the crew should photograph the condition, leave the portable unit in service, and return without attempting structural repair. That stop-work boundary belongs in the handoff even though the inspection result is not yet known."
+            },
+            {
+              "role": "assistant",
+              "content": "A cracked base plate would limit the visit to documentation and return, with the portable unit left in service. The instruction is conditional and does not imply that damage was found or that field repair was attempted."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "3594202e1ec405b7cb2c0a5f9351d3e3c68b65ba6affb38ba83ce5a507273ed3",
+            "case_id": "e03",
+            "variant": "correct",
+            "literal_messages_sha256": "69d344ba1d4f0371626166908b1bfcc3aa93b0a4abc4d8519ccfb6c9f6c391ca"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "9e23bce4894f4ad8ad8a109fa8364a0d35ebb4eec1330a46b09797ef45e64fe4",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a watershed field coordinator preparing a one-day instrument-service visit. Preserve the distinction between current observations, operating rules, and unrelated logistics. Do not claim that travel, maintenance, or notification has occurred unless the user says it has."
+            },
+            {
+              "role": "user",
+              "content": "Tomorrow Dana Ruiz is taking the service truck to North Fork station NF-17 to replace a rain-gauge battery and inspect the telemetry mast. With two people, the tool cabinet, and the recovery winch aboard, the truck's loaded gross weight is 8.6 tonnes. Ridge Spur reaches the station directly across Mill Bridge. Quarry Loop avoids the bridge but adds about forty minutes and passes through an active aggregate yard. Both roads are open in the general roads bulletin, so the route has to come from our more specific field rule rather than from the word open."
+            },
+            {
+              "role": "assistant",
+              "content": "I will keep the loaded weight at 8.6 tonnes and distinguish general road availability from the field team's route-selection rule. Ridge Spur's shorter travel time is not itself a decision input, and Quarry Loop's extra time does not disqualify it. The applicable bridge posting and the specified water observation still need to be placed alongside the rule before the route can be derived."
+            },
+            {
+              "role": "user",
+              "content": "The field manual is explicit about selection. If the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the verified 07:00 North Fork gauge is below 1.20 metres, the plan must select Ridge Spur. If either check fails or is missing, the plan must select Quarry Loop. The two checks are conjunctive; this is not merely permission to consider Ridge. Yesterday's bridge sign and the downstream culvert marker are not substitutes for the named observations."
+            },
+            {
+              "role": "assistant",
+              "content": "The selection rule therefore requires a minimum current posting of 9.1 tonnes, obtained from 8.6 plus the 0.5-tonne reserve. A posting at or above 9.1 and a verified 07:00 gauge strictly below 1.20 jointly select the direct route; any failure selects the other route. I will not choose yet because the two current observations have not both been supplied."
+            },
+            {
+              "role": "user",
+              "content": "Roads has issued the current Mill Bridge posting as 8.8 tonnes. The notice names Mill Bridge, applies through the end of tomorrow's service window, and supersedes the faded south-abutment sign. It reports no axle-specific reduction and no separate closure interval. The planning copy was received at 16:10 and the coordinator matched its bridge identifier to the NF-17 route sheet."
+            },
+            {
+              "role": "assistant",
+              "content": "The current posting is tied to the correct bridge and service window and will determine the load-side comparison against the computed 9.1-tonne minimum. The water-side check remains part of the rule, so I will preserve the posting and its provenance without yet stating the route selected by the complete rule."
+            },
+            {
+              "role": "user",
+              "content": "There is a separate communications assignment to preserve. The current radio card maps Channel 3 to the western creek sector and Channel 5 to the eastern ridge sector. NF-17 is listed in the western creek sector, and Dana's crew will be servicing NF-17. Sector, not access road, controls the check-in channel, so a later route choice cannot change this mapping. The spare handheld in the truck is already programmed with both channels."
+            },
+            {
+              "role": "assistant",
+              "content": "The independent radio chain is complete: NF-17 belongs to the western creek sector, which maps to Channel 3. Channel 5 is the counterfactual for the eastern ridge sector, not an alternate created by road conditions. I will keep this control fact separate from bridge capacity, gauge height, and travel time."
+            },
+            {
+              "role": "user",
+              "content": "For the route record, the gauge value must come from the upstream staff gauge after the technician's 07:00 verification. The dashboard's midnight value was 1.04 metres, but it is only a preliminary telemetry point and cannot be used in this rule. The downstream culvert marker is for flood inspection, not routing. The technician will label the accepted entry with station, local time, and source so the handoff does not silently swap one water reading for another."
+            },
+            {
+              "role": "assistant",
+              "content": "Only the verified upstream staff-gauge entry at 07:00 can satisfy the water observation specified by the rule. The midnight dashboard point and culvert marker remain contextual distractors even if their numbers look plausible. I will use the source label and time to prevent either from being substituted into the route calculation."
+            },
+            {
+              "role": "user",
+              "content": "The hydrology technician has now entered the verified value: North Fork upstream staff gauge, 07:00 local, 0.88 metres. The field sheet shows no obscured graduations and notes that the reading was repeated once before entry. Light rain is forecast after 14:00, but the manual does not use forecast accumulation in this morning selection. A spare mast clamp is also aboard; that inventory item changes the repair options, not access."
+            },
+            {
+              "role": "assistant",
+              "content": "The specified water input is now present and 0.88 is below 1.20. The later rain forecast and spare clamp do not add criteria. The complete evidence needed to apply the selection rule is recorded, but I will leave the resulting route unstated here so that a later question must derive it from the rule, weight, current posting, and verified gauge."
+            },
+            {
+              "role": "user",
+              "content": "Before the neutral handoff, check the evidence boundaries. The gross weight already includes the crew and winch, so no reserve other than the manual's 0.5 tonnes should be added. The bridge comparison is inclusive at its minimum, while the gauge comparison is strictly below its limit. Quarry Loop's travel delay and aggregate-yard activity are operational consequences, not extra screening tests. Do not turn the route into a preference poll or state its name in this part of the record."
+            },
+            {
+              "role": "assistant",
+              "content": "The record supports one deterministic application: use the already-loaded 8.6-tonne figure, add exactly the stated reserve, apply the inclusive posting comparison, and apply the strict gauge comparison. Neither convenience nor the alternate road's characteristics can override those checks. I will preserve the inputs and rule without naming the derived route before the probe."
+            },
+            {
+              "role": "user",
+              "content": "For the continuing work note, Dana needs three photographs at NF-17: the mast footing before work, the opened enclosure, and the battery connection after replacement. Each filename begins with NF-17, then local time and a short view label. Keep the nearby cabin and its driveway outside every frame."
+            },
+            {
+              "role": "assistant",
+              "content": "The continuing note calls for those three scoped images with the stated site-and-time naming pattern, while excluding the cabin and driveway. It records a documentation requirement without asserting that the visit or any photograph has occurred."
+            },
+            {
+              "role": "user",
+              "content": "If the mast inspection finds a cracked base plate, the crew should photograph the condition, leave the portable unit in service, and return without attempting structural repair. That stop-work boundary belongs in the handoff even though the inspection result is not yet known."
+            },
+            {
+              "role": "assistant",
+              "content": "A cracked base plate would limit the visit to documentation and return, with the portable unit left in service. The instruction is conditional and does not imply that damage was found or that field repair was attempted."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "3594202e1ec405b7cb2c0a5f9351d3e3c68b65ba6affb38ba83ce5a507273ed3",
+            "case_id": "e03",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "65a2b09b5e70e307374b7d50468d4d4755cdf07f95fdca5cbc92220a630d4ed2"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e04",
+      "source_file_sha256": "660b90951a1e829c05d464e8e329d8160f7942cf8e2b7214261c160ecc503845",
+      "title": "K-27 coating qualification record",
+      "domain": "pilot manufacturing qualification",
+      "length_band": "mid",
+      "middle_end_msg": 51,
+      "changed_message_allowlist": [
+        5
+      ],
+      "authoring_provenance": {
+        "author": "Codex subagent",
+        "runtime_model_id": null,
+        "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+        "reasoning_effort": null,
+        "reasoning_effort_status": "not exposed to this subagent",
+        "authoring_session_source": "/root/v12_revision3_e04",
+        "authorship_completed_at_utc": "2026-07-11T20:43:25Z",
+        "semantic_outcomes_seen": false,
+        "model_forward_performed": false,
+        "source_revision": 3,
+        "revision_scope": "Additive revision responding only to the revision-2 blind singleton naturalness finding for e04; the focal rule, arithmetic, C/W change, independent control, carrier, anchor, retained tail, and middle boundary are preserved. Messages 39-50 were reordered and rewritten as one continuous audit sequence with one final close. No semantic result was available to or seen by the author."
+      },
+      "focal": {
+        "plant_id": "e04-qualification-disposition",
+        "category": "derived_decision",
+        "rule_or_relation": "Release only when the signed-correction-adjusted five-panel mean is within 119.0-123.0 micrometres, its full plus-or-minus 1.1 interval is within 117.0-125.0, and the stabilized oven-zone spread is no more than 4.0 degrees Celsius; otherwise Hold.",
+        "changed_input": "The current G-14 signed correction is +0.8 micrometres in C and +4.8 micrometres in W.",
+        "probe": "Apply the recorded three-part gate to the current certificate, five-panel mean, and stabilized oven spread. What is the qualification disposition?",
+        "correct_target": "Release",
+        "counterfactual_target": "Hold",
+        "establishing_message_indices": [
+          3,
+          5,
+          17,
+          23,
+          25,
+          27,
+          33,
+          35
+        ],
+        "downstream_reference_indices": [
+          6,
+          34,
+          36,
+          38
+        ],
+        "why_derived": "The answer requires averaging five readings to 120.0, applying the signed correction, forming and checking both endpoints of the plus-or-minus 1.1 interval, calculating the 2.5-degree oven spread, and conjoining all three checks.",
+        "why_counterfactual_reverses": "In C the corrected mean is 120.8 and interval is 119.7-121.9, so those checks and the 2.5 spread pass. In W the corrected mean is 124.8 and interval is 123.7-125.9, so the thickness checks fail even though the oven spread passes."
+      },
+      "nonfocal_control": {
+        "plant_id": "e04-retention-cabinet",
+        "category": "unchanged_control",
+        "probe": "Which cabinet receives the sealed K27-R witness set under the lot-parity map?",
+        "target": "Cabinet 2",
+        "countertarget": "Cabinet 4",
+        "establishing_message_indices": [
+          7,
+          8,
+          31,
+          32
+        ],
+        "why_independent_of_focal": "The retention map depends only on odd versus even lot number, explicitly not on qualification disposition, and is byte-identical across variants."
+      },
+      "distractor_fact_inventory": [
+        "receiving seal and use-date checks",
+        "vessel cleaning verification",
+        "mix sequence and viscosity duplicate",
+        "setup and appearance strips excluded from qualification",
+        "closed historical fan-belt maintenance note",
+        "post-sample edge bead and small pressure rise",
+        "abrasion-machine calendar reservation"
+      ],
+      "retained_tail_purpose": "Continue with a short, focused custody and shift-board note that remains target-neutral and preserves the difference between handling state and quality disposition.",
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "68f78b9c25da40abf878000cb6c5594e2b9d2173baba2004711bce391c1fbd8e",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a process engineer assembling the factual record for one pilot coating qualification. Preserve chronology, source identity, calculation rules, safety boundaries, and the distinction between observed evidence and an unstated disposition. Do not claim that a release, hold, notification, test, or physical action occurred unless the user explicitly says it did."
+            },
+            {
+              "role": "user",
+              "content": "This record covers pilot lot K-27 on Line 4, a waterborne barrier coating applied to aluminum witness panels before a scheduled abrasion trial. Mina is the process engineer, Priya is the quality technician, and Owen is the line operator. The material is not customer product. A later question will ask for the qualification disposition, but no disposition has been entered or stated. I want one coherent account from material verification through measurement closeout, with administrative details kept from becoming invented technical criteria."
+            },
+            {
+              "role": "assistant",
+              "content": "I will preserve the run as a chronological evidence record. Priya's measurements, Owen's operating observations, and Mina's interpretation responsibilities will remain distinct. A calendar reservation or a favorable tone will not count as evidence. I will retain the exact qualification rule and its inputs while leaving the derived disposition unstated until it is directly probed."
+            },
+            {
+              "role": "user",
+              "content": "The approved gate has three conjunctive checks. Add gauge G-14's current signed calibration correction to the arithmetic mean of exactly five designated wet-film readings. The corrected mean must lie from 119.0 through 123.0 micrometres, inclusive. Build the certificate interval by taking that corrected mean plus or minus 1.1 micrometres; the full interval must remain within 117.0 through 125.0, inclusive. Finally, the maximum minus minimum among the three stabilized oven-zone temperatures must be no more than 4.0 degrees Celsius. If every check passes, the disposition is Release; otherwise it is Hold."
+            },
+            {
+              "role": "assistant",
+              "content": "The rule is deterministic and all-pass. I will average only the five designated readings, add the signed correction with its sign intact, test the corrected mean, test both endpoints of the plus-or-minus 1.1 interval, and calculate the spread of the three stabilized zone temperatures. Any failed check maps to Hold; only all three passing maps to Release. No process observation can silently add or waive a gate term."
+            },
+            {
+              "role": "user",
+              "content": "Metrology attached the current G-14 certificate for this measurement range. Its signed correction is +0.8 micrometres, and its expanded uncertainty is 1.1 micrometres. The certificate serial matches the gauge body, its validity covers the pilot date, and the laboratory sign-off is present. A worn sticker on the storage case says zero adjustment, but that sticker belongs to the superseded certificate and is not an input."
+            },
+            {
+              "role": "assistant",
+              "content": "The current certificate is linked to the instrument and pilot window, while the storage-case sticker is explicitly obsolete. I will keep the signed correction separate from the expanded uncertainty: one shifts the measured mean and the other defines the interval around that corrected value. I will not calculate or state a disposition until the designated readings and stabilized oven values are also in the record."
+            },
+            {
+              "role": "user",
+              "content": "A separate retention map supplies our control fact. Sealed witness sets from odd-numbered pilot lots go to Cabinet 2, and sets from even-numbered lots go to Cabinet 4. K-27 is odd-numbered, so its sealed set K27-R follows the Cabinet 2 branch. Cabinet assignment depends only on lot parity and does not change with the coating qualification disposition, abrasion schedule, or remaining tote status."
+            },
+            {
+              "role": "assistant",
+              "content": "The independent retention chain is complete: K-27 is odd-numbered and therefore K27-R maps to Cabinet 2; Cabinet 4 is the even-lot counterfactual. I will preserve this answer separately from the qualification calculation. A later Release or Hold determination cannot alter the cabinet mapping."
+            },
+            {
+              "role": "user",
+              "content": "Receiving records identify the coating base as WB-17, pigment concentrate as PC-4, and binder as BX-9. Each container seal was intact, each lot number matched the pilot traveler, and all three were within their use dates. The aluminum panels came from bundle AL-62 and were held in the controlled staging room overnight. These checks establish material identity and traceability, but the approved abrasion gate does not contain a separate receiving-pass term."
+            },
+            {
+              "role": "assistant",
+              "content": "The material identities and receipt checks belong in the provenance chain without becoming a fourth qualification condition. They establish which inputs were used and help diagnose a later anomaly. I will not infer that intact seals or valid use dates guarantee the numerical coating result, and I will keep the AL-62 panel bundle linked to the designated sample IDs."
+            },
+            {
+              "role": "user",
+              "content": "Owen and Priya reconciled the empty mix vessel against the prior-cleaning record before charging. The record lists a final aqueous rinse, visual inspection under the vessel light, and a conductivity result within the cleaning procedure's acceptance band. The drain was closed before the first charge. No residue exception was opened. This is relevant chronology because carryover could explain a coating anomaly, although the frozen disposition rule still operates on the stated gauge and oven evidence."
+            },
+            {
+              "role": "assistant",
+              "content": "The vessel was linked to a completed cleaning verification before use, with the drain position and absence of an exception documented. That makes the chronology internally usable and preserves a potential causal check if the run behaves unexpectedly. It remains supporting process evidence rather than a substitute for any of the three numerical gate checks."
+            },
+            {
+              "role": "user",
+              "content": "The batch sequence was water charge, dispersant addition, pigment concentrate under high shear, then binder addition after reducing speed. Owen recorded the start and finish times for each stage on the traveler. The batch rested twelve minutes before viscosity sampling. Foam appeared only in the small setup pail and was skimmed there; the production tote was not skimmed. The sequence followed the pilot instruction, and no ingredient was reworked from an earlier lot."
+            },
+            {
+              "role": "assistant",
+              "content": "I will preserve the ordered additions, speed transition, twelve-minute rest, and the location of the foam observation. Distinguishing the setup pail from the production tote prevents an unsupported claim about the qualified material. The absence of rework and the timed sequence support traceability but do not predetermine film thickness or disposition."
+            },
+            {
+              "role": "user",
+              "content": "Priya measured final viscosity as 410 mPa·s using the specified spindle, speed, and sample temperature. The duplicate check was 412 mPa·s, within the method's repeatability allowance, so the first recorded value remained the reportable process value. Both readings are in the batch section rather than the qualification table. The pilot instruction uses viscosity to monitor mixing consistency; it does not list viscosity in the three-part abrasion gate."
+            },
+            {
+              "role": "assistant",
+              "content": "The viscosity pair is source-labeled and internally consistent, with 410 retained as the reportable process observation under the method. I will keep 412 as the duplicate check rather than averaging it into any film calculation. Because viscosity is not in the frozen gate, neither value can create an extra pass or fail condition."
+            },
+            {
+              "role": "user",
+              "content": "Before coating, Priya checked G-14's body serial against the certificate, inspected the contact faces, and verified its zero response on the reference block specified by the work instruction. The reference-block check was within its procedural tolerance. She then returned the block to its case and recorded the check time. This confirms that the named gauge was used normally; it does not replace the signed certificate correction already supplied."
+            },
+            {
+              "role": "assistant",
+              "content": "The pre-use inspection ties the actual gauge to the certificate and records an acceptable functional check. It neither resets the signed correction to zero nor changes the 1.1-micrometre uncertainty. I will treat the reference-block result as instrument-use evidence and retain the current certificate quantities as the numerical inputs required by the gate."
+            },
+            {
+              "role": "user",
+              "content": "Line 4's oven has three controlled zones. Before the pilot, Owen verified that sensors A, B, and C displayed plausible ambient values and that their identifiers matched the traveler columns. The prior maintenance note concerned a fan belt replaced last month and was closed after verification; it is not an active deviation. Airflow interlocks and the over-temperature trip were tested under the startup checklist before material was threaded."
+            },
+            {
+              "role": "assistant",
+              "content": "The oven-zone identity check and completed startup controls establish which later readings belong to A, B, and C. The closed fan-belt note remains historical context, not evidence of a current fault. Clear startup interlocks support the validity of the run chronology but do not stand in for the gate's required numerical zone-spread calculation."
+            },
+            {
+              "role": "user",
+              "content": "The coater setup used the pilot's specified applicator gap and line-speed setpoint. Owen made one setup strip while speed stabilized, then marked the point at which qualification coating began. The setup strip is labeled K27-S0 and is excluded from the five-panel set. No adjustment to gap or speed occurred after the qualification start mark. The enclosure stayed interlocked whenever the web was moving, and no web break occurred during the sampled interval."
+            },
+            {
+              "role": "assistant",
+              "content": "The setup strip has a separate identity and cannot enter the qualification mean. The fixed settings and absence of adjustment after the start mark make the five later panels part of one coherent interval. Safety-interlock status and the lack of a web break support run continuity, while the actual disposition still depends on the prescribed measurements."
+            },
+            {
+              "role": "user",
+              "content": "The sampling instruction designates the first acceptable panel after stabilization, then four more panels at equal traveler intervals. Priya labeled them K27-P01 through K27-P05 before measurement and checked every label against the traveler. A sixth panel, K27-S1, was drawn for appearance comparison and is not a substitute if one of the five qualification readings is inconvenient. No panel was discarded, relabeled, or selected after seeing a thickness value."
+            },
+            {
+              "role": "assistant",
+              "content": "The five-member set was fixed by order and interval before its values were known, which prevents outcome-based substitution. K27-S1 stays outside both the mean and the sealed K27-R retention set. I will use exactly P01 through P05 in panel order and will preserve the statement that none was discarded or relabeled."
+            },
+            {
+              "role": "user",
+              "content": "Priya recorded the wet-film readings in panel order: P01 119.6, P02 120.1, P03 120.4, P04 119.9, and P05 120.0 micrometres. She read each display aloud while Owen checked the panel ID, then transcribed the values without rounding. The worksheet totals the five readings as 600.0 micrometres. K27-S0 and K27-S1 appear in a different table and have no values in the qualification row."
+            },
+            {
+              "role": "assistant",
+              "content": "The designated five values sum to 600.0, so their uncorrected arithmetic mean is 120.0 micrometres. The sample identities and no-rounding statement make the calculation traceable. I will not include either setup or appearance strip, and I will leave the corrected mean and resulting disposition unstated for the later probe."
+            },
+            {
+              "role": "user",
+              "content": "Owen's stabilized oven log gives Zone A 86.2 degrees Celsius, Zone B 88.7, and Zone C 87.5. These are the ten-minute values after line speed reached the pilot setpoint. Three warm-up readings appear above them but are crossed into the setup section and are not qualification data. The operator noted no alarm, door opening, speed change, or power interruption during the stabilized interval."
+            },
+            {
+              "role": "assistant",
+              "content": "The qualification temperatures are the three stabilized values only. Their maximum is 88.7 and minimum is 86.2, so the relevant zone spread is 2.5 degrees Celsius. The warm-up values remain excluded by source and phase. The uninterrupted interval supports the record, but only the computed spread is compared with the numerical oven limit."
+            },
+            {
+              "role": "user",
+              "content": "Priya then reviewed the paper traveler for transcription errors. The panel IDs matched the preassigned sequence, decimal places matched the instrument display, and the oven values matched the electronic trend export at the stabilized timestamp. The export retains its original filename and checksum. No handwritten correction was needed. The review confirms that the supplied numbers were carried accurately; it is not a second measurement and should not be counted as replication."
+            },
+            {
+              "role": "assistant",
+              "content": "The transcription review links the paper values to their sources without inventing independent observations. I will preserve the original export identity and avoid calling the comparison a replicate. This closes a data-transfer risk while leaving the same five panel readings and three oven readings as the only numerical observation sets in the gate."
+            },
+            {
+              "role": "user",
+              "content": "There were two process observations during coating. A faint edge bead appeared on K27-S1 after the qualification panels had already been completed, and the return-line pressure briefly rose by 0.1 bar while remaining inside the operating band. Neither observation affected P01 through P05, and no deviation was opened. Keep them in chronology so a later investigator can find them, but do not retroactively add them to the approved disposition rule."
+            },
+            {
+              "role": "assistant",
+              "content": "The edge bead and small pressure rise occurred after or outside the designated qualification evidence and remained within the stated operating context. I will record their timing and scope without treating the absence of a deviation as proof of quality. They neither replace a gate input nor alter the defined sample set."
+            },
+            {
+              "role": "user",
+              "content": "Traceability closeout reconciled the remaining material and panels. The tote remains K27-MX2, the measured panels remain P01 through P05, the appearance strip remains S1, and the sealed retention set remains K27-R. Priya initialed the measurement-transcription line. Mina's disposition line is intentionally blank pending calculation review. The abrasion-machine reservation is still only a calendar hold and has no approval code attached."
+            },
+            {
+              "role": "assistant",
+              "content": "The identities remain continuous from material through samples, and the blank disposition line accurately represents an action not yet taken. Priya's initials attest to transcription, not release authority. I will not interpret the abrasion reservation as an approval signal, and the independent K27-R cabinet mapping remains unchanged."
+            },
+            {
+              "role": "user",
+              "content": "For calculation review, use the raw mean of 120.0, the current certificate's signed correction, the plus-or-minus 1.1 interval, and the stabilized spread of 2.5. Check the corrected mean against 119.0 through 123.0 and the complete interval against 117.0 through 125.0, with endpoints allowed. Then combine those results with the no-more-than-4.0 spread check. Do not substitute viscosity, receiving status, setup-strip appearance, or the calendar booking."
+            },
+            {
+              "role": "assistant",
+              "content": "The calculation inputs and exclusions are now explicit. I will preserve the sign on the certificate correction, test both interval endpoints rather than just its center, and treat the spread limit as inclusive. The contextual records support auditability but do not enter the conjunction. I will not state the resulting disposition in this exchange."
+            },
+            {
+              "role": "user",
+              "content": "One more integrity check: the 1.1 value is not added to the five raw readings and is not divided by five. It expands around the already corrected mean. Likewise, the oven check uses maximum minus minimum, not an average temperature and not deviation from the setpoint. If any one of the corrected-mean band, full-interval containment, or spread limit fails, the otherwise branch controls. Preserve that logic exactly even though the final label remains unstated."
+            },
+            {
+              "role": "assistant",
+              "content": "The uncertainty and spread operations are unambiguous. The interval is centered on the corrected mean, and the oven statistic is the range across stabilized zones. All three checks are conjunctive with a mandatory otherwise branch. The evidence record is therefore sufficient for a later derivation without an early target statement."
+            },
+            {
+              "role": "user",
+              "content": "Quality's document check next compared the certificate revision named in the traveler with the controlled metrology index. The attached certificate is revision C, the index lists revision C as current for G-14, and revision B is marked superseded. Both revisions carry the same instrument serial, so the checker used the revision field and effective date to distinguish them. The index date and reviewer initials were entered on the traveler without copying either certificate's numerical fields into a new note."
+            },
+            {
+              "role": "assistant",
+              "content": "That comparison supplies a direct document-control path from the traveler to revision C even though the serial number alone would not distinguish the two certificates. The signed correction and uncertainty remain those printed on the selected current certificate; the review entry records how that source was chosen rather than creating an additional metrology observation."
+            },
+            {
+              "role": "user",
+              "content": "The panel worksheet was then checked for custody and order. Priya measured P01 through P05 from the same padded rack, returning each panel to its labeled slot before taking the next. Their timestamps increase in that sequence and all fall after the stabilization mark. Owen's check initials appear once beside the completed sequence, not beside every numerical entry. The rack log shows no swapped panel, repeated reading, or post-measurement substitution."
+            },
+            {
+              "role": "assistant",
+              "content": "The ordered timestamps, labeled slots, and single sequence check connect each reported value to one prospectively designated panel in the stabilized interval. They support using P01 through P05 once each, in recorded order. Owen's initials document the sequence-level check and are not five separate measurements or a reason to replace any value."
+            },
+            {
+              "role": "user",
+              "content": "Priya also opened the oven trend export at the logged snapshot. For the preceding three minutes, each zone stayed within 0.3 degrees of its reported stabilized value and the line-speed trace stayed at setpoint. The sensor identifiers in the export match the A, B, and C traveler columns. She recorded the export filename, checksum, and snapshot time on the review line, while leaving the three traveler readings unchanged."
+            },
+            {
+              "role": "assistant",
+              "content": "The short trend window corroborates that the three logged zone readings were simultaneous stabilized observations rather than isolated warm-up values. It does not add extra temperatures to the calculation: the recorded snapshot still supplies A, B, and C, and their range remains the maximum minus the minimum. The filename and checksum keep that continuity check traceable to its source."
+            },
+            {
+              "role": "user",
+              "content": "Mina then performed the readiness review in traveler order. She located the approved gate text, revision-C certificate, five-panel table, stabilized oven row, electronic-export reference, and the deviation register for the sampled interval. Each reference was present and source-linked. The checklist records document identifiers and page locations, has no field for a disposition label, and sends any missing item back to its record owner before calculation review."
+            },
+            {
+              "role": "assistant",
+              "content": "The readiness pass ties the rule and its required inputs to named controlled records in one review path. All listed sources were found, so the packet can move to calculation review without reconstructing values from memory or from the public board. Any later technical conclusion still has to be entered in Mina's blank disposition field through the normal review step."
+            },
+            {
+              "role": "user",
+              "content": "Physical closeout followed the document review. Owen weighed the closed K27-MX2 tote, reconciled the issued containers and rinse collection against the traveler, and placed the used setup and appearance strips in their labeled sleeves. Priya sealed P01 through P05 together as the measured-panel packet and sealed K27-R separately for Cabinet 2. The waste container retains its own label and mass entry. Nothing was shipped, sent to abrasion, relabeled, or moved out of the controlled staging area."
+            },
+            {
+              "role": "assistant",
+              "content": "The closeout accounts for the remaining coating, measured panels, retained witnesses, comparison strips, and collected rinse without merging their identities. The measured-panel packet and K27-R now have separate custody paths, with K27-R following the already recorded odd-lot cabinet map. Staging status and seal placement describe where the materials are, not a completed abrasion trial or shipment."
+            },
+            {
+              "role": "user",
+              "content": "Close the audit sequence now with one factual handoff. The record runs continuously from receiving and vessel preparation through mixing, coating, prospective sampling, measurement, stabilized oven logging, transcription review, source verification, readiness review, and physical reconciliation. Mina's disposition field remains blank; no customer shipment, abrasion trial, material-status tag, or quality-system disposition has occurred during this exchange."
+            },
+            {
+              "role": "assistant",
+              "content": "The K-27 manufacturing and audit chronology is closed at physical reconciliation. Materials, instruments, samples, source records, and custody destinations remain linked by their recorded identifiers; the required calculation inputs are available in their controlled locations. No downstream action or disposition is asserted. The next shift can continue from this single close while Mina's technical entry remains pending."
+            },
+            {
+              "role": "user",
+              "content": "For the continuing shift note, keep K27-MX2 closed under its existing lot identity until Mina records a status. If the tote must be moved for aisle access, the mover records time and destination on the traveler; movement alone does not assign a material status."
+            },
+            {
+              "role": "assistant",
+              "content": "The continuing note preserves tote identity and custody while leaving status entry to Mina. A documented location change would be a handling event, not evidence of a qualification outcome."
+            },
+            {
+              "role": "user",
+              "content": "Also keep the Line 4 board limited to equipment state: stopped and clean, stopped awaiting cleanup, or secured for maintenance. Detailed measurements remain in the controlled traveler, and the public board must not be used as a quality disposition record."
+            },
+            {
+              "role": "assistant",
+              "content": "The board will carry only the bounded equipment-state phrase, while measurements and any later quality entry remain in their controlled records. That separation avoids turning a shift-status display into an implicit technical decision."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "660b90951a1e829c05d464e8e329d8160f7942cf8e2b7214261c160ecc503845",
+            "case_id": "e04",
+            "variant": "correct",
+            "literal_messages_sha256": "03e54631a280885e3647c35576348d063395543aa25f41c782aecbe59ae15fa2"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "1f502f809af3dd2445b716050d3038f98f1c3a3263d9283d7578f1d0bb287e7c",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a process engineer assembling the factual record for one pilot coating qualification. Preserve chronology, source identity, calculation rules, safety boundaries, and the distinction between observed evidence and an unstated disposition. Do not claim that a release, hold, notification, test, or physical action occurred unless the user explicitly says it did."
+            },
+            {
+              "role": "user",
+              "content": "This record covers pilot lot K-27 on Line 4, a waterborne barrier coating applied to aluminum witness panels before a scheduled abrasion trial. Mina is the process engineer, Priya is the quality technician, and Owen is the line operator. The material is not customer product. A later question will ask for the qualification disposition, but no disposition has been entered or stated. I want one coherent account from material verification through measurement closeout, with administrative details kept from becoming invented technical criteria."
+            },
+            {
+              "role": "assistant",
+              "content": "I will preserve the run as a chronological evidence record. Priya's measurements, Owen's operating observations, and Mina's interpretation responsibilities will remain distinct. A calendar reservation or a favorable tone will not count as evidence. I will retain the exact qualification rule and its inputs while leaving the derived disposition unstated until it is directly probed."
+            },
+            {
+              "role": "user",
+              "content": "The approved gate has three conjunctive checks. Add gauge G-14's current signed calibration correction to the arithmetic mean of exactly five designated wet-film readings. The corrected mean must lie from 119.0 through 123.0 micrometres, inclusive. Build the certificate interval by taking that corrected mean plus or minus 1.1 micrometres; the full interval must remain within 117.0 through 125.0, inclusive. Finally, the maximum minus minimum among the three stabilized oven-zone temperatures must be no more than 4.0 degrees Celsius. If every check passes, the disposition is Release; otherwise it is Hold."
+            },
+            {
+              "role": "assistant",
+              "content": "The rule is deterministic and all-pass. I will average only the five designated readings, add the signed correction with its sign intact, test the corrected mean, test both endpoints of the plus-or-minus 1.1 interval, and calculate the spread of the three stabilized zone temperatures. Any failed check maps to Hold; only all three passing maps to Release. No process observation can silently add or waive a gate term."
+            },
+            {
+              "role": "user",
+              "content": "Metrology attached the current G-14 certificate for this measurement range. Its signed correction is +4.8 micrometres, and its expanded uncertainty is 1.1 micrometres. The certificate serial matches the gauge body, its validity covers the pilot date, and the laboratory sign-off is present. A worn sticker on the storage case says zero adjustment, but that sticker belongs to the superseded certificate and is not an input."
+            },
+            {
+              "role": "assistant",
+              "content": "The current certificate is linked to the instrument and pilot window, while the storage-case sticker is explicitly obsolete. I will keep the signed correction separate from the expanded uncertainty: one shifts the measured mean and the other defines the interval around that corrected value. I will not calculate or state a disposition until the designated readings and stabilized oven values are also in the record."
+            },
+            {
+              "role": "user",
+              "content": "A separate retention map supplies our control fact. Sealed witness sets from odd-numbered pilot lots go to Cabinet 2, and sets from even-numbered lots go to Cabinet 4. K-27 is odd-numbered, so its sealed set K27-R follows the Cabinet 2 branch. Cabinet assignment depends only on lot parity and does not change with the coating qualification disposition, abrasion schedule, or remaining tote status."
+            },
+            {
+              "role": "assistant",
+              "content": "The independent retention chain is complete: K-27 is odd-numbered and therefore K27-R maps to Cabinet 2; Cabinet 4 is the even-lot counterfactual. I will preserve this answer separately from the qualification calculation. A later Release or Hold determination cannot alter the cabinet mapping."
+            },
+            {
+              "role": "user",
+              "content": "Receiving records identify the coating base as WB-17, pigment concentrate as PC-4, and binder as BX-9. Each container seal was intact, each lot number matched the pilot traveler, and all three were within their use dates. The aluminum panels came from bundle AL-62 and were held in the controlled staging room overnight. These checks establish material identity and traceability, but the approved abrasion gate does not contain a separate receiving-pass term."
+            },
+            {
+              "role": "assistant",
+              "content": "The material identities and receipt checks belong in the provenance chain without becoming a fourth qualification condition. They establish which inputs were used and help diagnose a later anomaly. I will not infer that intact seals or valid use dates guarantee the numerical coating result, and I will keep the AL-62 panel bundle linked to the designated sample IDs."
+            },
+            {
+              "role": "user",
+              "content": "Owen and Priya reconciled the empty mix vessel against the prior-cleaning record before charging. The record lists a final aqueous rinse, visual inspection under the vessel light, and a conductivity result within the cleaning procedure's acceptance band. The drain was closed before the first charge. No residue exception was opened. This is relevant chronology because carryover could explain a coating anomaly, although the frozen disposition rule still operates on the stated gauge and oven evidence."
+            },
+            {
+              "role": "assistant",
+              "content": "The vessel was linked to a completed cleaning verification before use, with the drain position and absence of an exception documented. That makes the chronology internally usable and preserves a potential causal check if the run behaves unexpectedly. It remains supporting process evidence rather than a substitute for any of the three numerical gate checks."
+            },
+            {
+              "role": "user",
+              "content": "The batch sequence was water charge, dispersant addition, pigment concentrate under high shear, then binder addition after reducing speed. Owen recorded the start and finish times for each stage on the traveler. The batch rested twelve minutes before viscosity sampling. Foam appeared only in the small setup pail and was skimmed there; the production tote was not skimmed. The sequence followed the pilot instruction, and no ingredient was reworked from an earlier lot."
+            },
+            {
+              "role": "assistant",
+              "content": "I will preserve the ordered additions, speed transition, twelve-minute rest, and the location of the foam observation. Distinguishing the setup pail from the production tote prevents an unsupported claim about the qualified material. The absence of rework and the timed sequence support traceability but do not predetermine film thickness or disposition."
+            },
+            {
+              "role": "user",
+              "content": "Priya measured final viscosity as 410 mPa·s using the specified spindle, speed, and sample temperature. The duplicate check was 412 mPa·s, within the method's repeatability allowance, so the first recorded value remained the reportable process value. Both readings are in the batch section rather than the qualification table. The pilot instruction uses viscosity to monitor mixing consistency; it does not list viscosity in the three-part abrasion gate."
+            },
+            {
+              "role": "assistant",
+              "content": "The viscosity pair is source-labeled and internally consistent, with 410 retained as the reportable process observation under the method. I will keep 412 as the duplicate check rather than averaging it into any film calculation. Because viscosity is not in the frozen gate, neither value can create an extra pass or fail condition."
+            },
+            {
+              "role": "user",
+              "content": "Before coating, Priya checked G-14's body serial against the certificate, inspected the contact faces, and verified its zero response on the reference block specified by the work instruction. The reference-block check was within its procedural tolerance. She then returned the block to its case and recorded the check time. This confirms that the named gauge was used normally; it does not replace the signed certificate correction already supplied."
+            },
+            {
+              "role": "assistant",
+              "content": "The pre-use inspection ties the actual gauge to the certificate and records an acceptable functional check. It neither resets the signed correction to zero nor changes the 1.1-micrometre uncertainty. I will treat the reference-block result as instrument-use evidence and retain the current certificate quantities as the numerical inputs required by the gate."
+            },
+            {
+              "role": "user",
+              "content": "Line 4's oven has three controlled zones. Before the pilot, Owen verified that sensors A, B, and C displayed plausible ambient values and that their identifiers matched the traveler columns. The prior maintenance note concerned a fan belt replaced last month and was closed after verification; it is not an active deviation. Airflow interlocks and the over-temperature trip were tested under the startup checklist before material was threaded."
+            },
+            {
+              "role": "assistant",
+              "content": "The oven-zone identity check and completed startup controls establish which later readings belong to A, B, and C. The closed fan-belt note remains historical context, not evidence of a current fault. Clear startup interlocks support the validity of the run chronology but do not stand in for the gate's required numerical zone-spread calculation."
+            },
+            {
+              "role": "user",
+              "content": "The coater setup used the pilot's specified applicator gap and line-speed setpoint. Owen made one setup strip while speed stabilized, then marked the point at which qualification coating began. The setup strip is labeled K27-S0 and is excluded from the five-panel set. No adjustment to gap or speed occurred after the qualification start mark. The enclosure stayed interlocked whenever the web was moving, and no web break occurred during the sampled interval."
+            },
+            {
+              "role": "assistant",
+              "content": "The setup strip has a separate identity and cannot enter the qualification mean. The fixed settings and absence of adjustment after the start mark make the five later panels part of one coherent interval. Safety-interlock status and the lack of a web break support run continuity, while the actual disposition still depends on the prescribed measurements."
+            },
+            {
+              "role": "user",
+              "content": "The sampling instruction designates the first acceptable panel after stabilization, then four more panels at equal traveler intervals. Priya labeled them K27-P01 through K27-P05 before measurement and checked every label against the traveler. A sixth panel, K27-S1, was drawn for appearance comparison and is not a substitute if one of the five qualification readings is inconvenient. No panel was discarded, relabeled, or selected after seeing a thickness value."
+            },
+            {
+              "role": "assistant",
+              "content": "The five-member set was fixed by order and interval before its values were known, which prevents outcome-based substitution. K27-S1 stays outside both the mean and the sealed K27-R retention set. I will use exactly P01 through P05 in panel order and will preserve the statement that none was discarded or relabeled."
+            },
+            {
+              "role": "user",
+              "content": "Priya recorded the wet-film readings in panel order: P01 119.6, P02 120.1, P03 120.4, P04 119.9, and P05 120.0 micrometres. She read each display aloud while Owen checked the panel ID, then transcribed the values without rounding. The worksheet totals the five readings as 600.0 micrometres. K27-S0 and K27-S1 appear in a different table and have no values in the qualification row."
+            },
+            {
+              "role": "assistant",
+              "content": "The designated five values sum to 600.0, so their uncorrected arithmetic mean is 120.0 micrometres. The sample identities and no-rounding statement make the calculation traceable. I will not include either setup or appearance strip, and I will leave the corrected mean and resulting disposition unstated for the later probe."
+            },
+            {
+              "role": "user",
+              "content": "Owen's stabilized oven log gives Zone A 86.2 degrees Celsius, Zone B 88.7, and Zone C 87.5. These are the ten-minute values after line speed reached the pilot setpoint. Three warm-up readings appear above them but are crossed into the setup section and are not qualification data. The operator noted no alarm, door opening, speed change, or power interruption during the stabilized interval."
+            },
+            {
+              "role": "assistant",
+              "content": "The qualification temperatures are the three stabilized values only. Their maximum is 88.7 and minimum is 86.2, so the relevant zone spread is 2.5 degrees Celsius. The warm-up values remain excluded by source and phase. The uninterrupted interval supports the record, but only the computed spread is compared with the numerical oven limit."
+            },
+            {
+              "role": "user",
+              "content": "Priya then reviewed the paper traveler for transcription errors. The panel IDs matched the preassigned sequence, decimal places matched the instrument display, and the oven values matched the electronic trend export at the stabilized timestamp. The export retains its original filename and checksum. No handwritten correction was needed. The review confirms that the supplied numbers were carried accurately; it is not a second measurement and should not be counted as replication."
+            },
+            {
+              "role": "assistant",
+              "content": "The transcription review links the paper values to their sources without inventing independent observations. I will preserve the original export identity and avoid calling the comparison a replicate. This closes a data-transfer risk while leaving the same five panel readings and three oven readings as the only numerical observation sets in the gate."
+            },
+            {
+              "role": "user",
+              "content": "There were two process observations during coating. A faint edge bead appeared on K27-S1 after the qualification panels had already been completed, and the return-line pressure briefly rose by 0.1 bar while remaining inside the operating band. Neither observation affected P01 through P05, and no deviation was opened. Keep them in chronology so a later investigator can find them, but do not retroactively add them to the approved disposition rule."
+            },
+            {
+              "role": "assistant",
+              "content": "The edge bead and small pressure rise occurred after or outside the designated qualification evidence and remained within the stated operating context. I will record their timing and scope without treating the absence of a deviation as proof of quality. They neither replace a gate input nor alter the defined sample set."
+            },
+            {
+              "role": "user",
+              "content": "Traceability closeout reconciled the remaining material and panels. The tote remains K27-MX2, the measured panels remain P01 through P05, the appearance strip remains S1, and the sealed retention set remains K27-R. Priya initialed the measurement-transcription line. Mina's disposition line is intentionally blank pending calculation review. The abrasion-machine reservation is still only a calendar hold and has no approval code attached."
+            },
+            {
+              "role": "assistant",
+              "content": "The identities remain continuous from material through samples, and the blank disposition line accurately represents an action not yet taken. Priya's initials attest to transcription, not release authority. I will not interpret the abrasion reservation as an approval signal, and the independent K27-R cabinet mapping remains unchanged."
+            },
+            {
+              "role": "user",
+              "content": "For calculation review, use the raw mean of 120.0, the current certificate's signed correction, the plus-or-minus 1.1 interval, and the stabilized spread of 2.5. Check the corrected mean against 119.0 through 123.0 and the complete interval against 117.0 through 125.0, with endpoints allowed. Then combine those results with the no-more-than-4.0 spread check. Do not substitute viscosity, receiving status, setup-strip appearance, or the calendar booking."
+            },
+            {
+              "role": "assistant",
+              "content": "The calculation inputs and exclusions are now explicit. I will preserve the sign on the certificate correction, test both interval endpoints rather than just its center, and treat the spread limit as inclusive. The contextual records support auditability but do not enter the conjunction. I will not state the resulting disposition in this exchange."
+            },
+            {
+              "role": "user",
+              "content": "One more integrity check: the 1.1 value is not added to the five raw readings and is not divided by five. It expands around the already corrected mean. Likewise, the oven check uses maximum minus minimum, not an average temperature and not deviation from the setpoint. If any one of the corrected-mean band, full-interval containment, or spread limit fails, the otherwise branch controls. Preserve that logic exactly even though the final label remains unstated."
+            },
+            {
+              "role": "assistant",
+              "content": "The uncertainty and spread operations are unambiguous. The interval is centered on the corrected mean, and the oven statistic is the range across stabilized zones. All three checks are conjunctive with a mandatory otherwise branch. The evidence record is therefore sufficient for a later derivation without an early target statement."
+            },
+            {
+              "role": "user",
+              "content": "Quality's document check next compared the certificate revision named in the traveler with the controlled metrology index. The attached certificate is revision C, the index lists revision C as current for G-14, and revision B is marked superseded. Both revisions carry the same instrument serial, so the checker used the revision field and effective date to distinguish them. The index date and reviewer initials were entered on the traveler without copying either certificate's numerical fields into a new note."
+            },
+            {
+              "role": "assistant",
+              "content": "That comparison supplies a direct document-control path from the traveler to revision C even though the serial number alone would not distinguish the two certificates. The signed correction and uncertainty remain those printed on the selected current certificate; the review entry records how that source was chosen rather than creating an additional metrology observation."
+            },
+            {
+              "role": "user",
+              "content": "The panel worksheet was then checked for custody and order. Priya measured P01 through P05 from the same padded rack, returning each panel to its labeled slot before taking the next. Their timestamps increase in that sequence and all fall after the stabilization mark. Owen's check initials appear once beside the completed sequence, not beside every numerical entry. The rack log shows no swapped panel, repeated reading, or post-measurement substitution."
+            },
+            {
+              "role": "assistant",
+              "content": "The ordered timestamps, labeled slots, and single sequence check connect each reported value to one prospectively designated panel in the stabilized interval. They support using P01 through P05 once each, in recorded order. Owen's initials document the sequence-level check and are not five separate measurements or a reason to replace any value."
+            },
+            {
+              "role": "user",
+              "content": "Priya also opened the oven trend export at the logged snapshot. For the preceding three minutes, each zone stayed within 0.3 degrees of its reported stabilized value and the line-speed trace stayed at setpoint. The sensor identifiers in the export match the A, B, and C traveler columns. She recorded the export filename, checksum, and snapshot time on the review line, while leaving the three traveler readings unchanged."
+            },
+            {
+              "role": "assistant",
+              "content": "The short trend window corroborates that the three logged zone readings were simultaneous stabilized observations rather than isolated warm-up values. It does not add extra temperatures to the calculation: the recorded snapshot still supplies A, B, and C, and their range remains the maximum minus the minimum. The filename and checksum keep that continuity check traceable to its source."
+            },
+            {
+              "role": "user",
+              "content": "Mina then performed the readiness review in traveler order. She located the approved gate text, revision-C certificate, five-panel table, stabilized oven row, electronic-export reference, and the deviation register for the sampled interval. Each reference was present and source-linked. The checklist records document identifiers and page locations, has no field for a disposition label, and sends any missing item back to its record owner before calculation review."
+            },
+            {
+              "role": "assistant",
+              "content": "The readiness pass ties the rule and its required inputs to named controlled records in one review path. All listed sources were found, so the packet can move to calculation review without reconstructing values from memory or from the public board. Any later technical conclusion still has to be entered in Mina's blank disposition field through the normal review step."
+            },
+            {
+              "role": "user",
+              "content": "Physical closeout followed the document review. Owen weighed the closed K27-MX2 tote, reconciled the issued containers and rinse collection against the traveler, and placed the used setup and appearance strips in their labeled sleeves. Priya sealed P01 through P05 together as the measured-panel packet and sealed K27-R separately for Cabinet 2. The waste container retains its own label and mass entry. Nothing was shipped, sent to abrasion, relabeled, or moved out of the controlled staging area."
+            },
+            {
+              "role": "assistant",
+              "content": "The closeout accounts for the remaining coating, measured panels, retained witnesses, comparison strips, and collected rinse without merging their identities. The measured-panel packet and K27-R now have separate custody paths, with K27-R following the already recorded odd-lot cabinet map. Staging status and seal placement describe where the materials are, not a completed abrasion trial or shipment."
+            },
+            {
+              "role": "user",
+              "content": "Close the audit sequence now with one factual handoff. The record runs continuously from receiving and vessel preparation through mixing, coating, prospective sampling, measurement, stabilized oven logging, transcription review, source verification, readiness review, and physical reconciliation. Mina's disposition field remains blank; no customer shipment, abrasion trial, material-status tag, or quality-system disposition has occurred during this exchange."
+            },
+            {
+              "role": "assistant",
+              "content": "The K-27 manufacturing and audit chronology is closed at physical reconciliation. Materials, instruments, samples, source records, and custody destinations remain linked by their recorded identifiers; the required calculation inputs are available in their controlled locations. No downstream action or disposition is asserted. The next shift can continue from this single close while Mina's technical entry remains pending."
+            },
+            {
+              "role": "user",
+              "content": "For the continuing shift note, keep K27-MX2 closed under its existing lot identity until Mina records a status. If the tote must be moved for aisle access, the mover records time and destination on the traveler; movement alone does not assign a material status."
+            },
+            {
+              "role": "assistant",
+              "content": "The continuing note preserves tote identity and custody while leaving status entry to Mina. A documented location change would be a handling event, not evidence of a qualification outcome."
+            },
+            {
+              "role": "user",
+              "content": "Also keep the Line 4 board limited to equipment state: stopped and clean, stopped awaiting cleanup, or secured for maintenance. Detailed measurements remain in the controlled traveler, and the public board must not be used as a quality disposition record."
+            },
+            {
+              "role": "assistant",
+              "content": "The board will carry only the bounded equipment-state phrase, while measurements and any later quality entry remain in their controlled records. That separation avoids turning a shift-status display into an implicit technical decision."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "660b90951a1e829c05d464e8e329d8160f7942cf8e2b7214261c160ecc503845",
+            "case_id": "e04",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "bd08eb30420dc233ead22e397a4ec4e1b9705f965f26bdcef123f87ef45d7a58"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e05",
+      "source_file_sha256": "cd73088f32a1cdc81cebe9f95d5a5d8e739e977977f83dac3b1c055db268812a",
+      "title": "Keynote seating calculation and low-sensory arrival plan",
+      "domain": "event accessibility and facilities",
+      "length_band": "short",
+      "middle_end_msg": 15,
+      "changed_message_allowlist": [
+        7,
+        12
+      ],
+      "authoring_provenance": {
+        "original_author": "Claude Sonnet 5",
+        "original_runtime_model_id": "claude-sonnet-5",
+        "original_reasoning_effort": "high",
+        "revision_author": "Independent Codex subagent",
+        "revision_runtime_model_id": null,
+        "revision_runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+        "revision_reasoning_effort": null,
+        "revision_reasoning_effort_status": "not exposed to this subagent; no level inferred",
+        "authoring_session_source_id": "/root/v12_revision2_e05_e06",
+        "authored_at_utc": "2026-07-11T20:28:07Z",
+        "source_revision": 2,
+        "superseded_source_path": "data/coherent_canary_v12/drafts/claude_session_c/e05.json",
+        "superseded_source_file_sha256": "5f819f40f5e80dba1df8e65e03f765c6f81ff061c30775d8babba5962e715a33",
+        "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+        "subject_model_forward_performed": false
+      },
+      "focal": {
+        "plant_id": "e05_room_assignment",
+        "category": "derived_decision",
+        "rule_or_relation": "Reserve ceil(confirmed companion requests / 2) of Aster Room's 10 accessible spaces; if at least 7 spaces remain, the mandatory selection is Aster Room, otherwise it is Birch Hall.",
+        "changed_input": "The one load-bearing input is the confirmed companion-request count: 4 in C versus 8 in W.",
+        "probe": "Under the recorded mandatory accommodation rule, which room was selected for Saturday's keynote? Answer with only the room name.",
+        "correct_target": "Aster Room",
+        "counterfactual_target": "Birch Hall",
+        "establishing_message_indices": [
+          5,
+          7,
+          9,
+          12
+        ],
+        "downstream_reference_indices": [
+          12
+        ],
+        "why_derived": "The answer requires taking the ceiling of half the companion count, subtracting that reservation from the fixed ten-space capacity, comparing the remainder with seven, and applying the rule's mandatory branch.",
+        "why_counterfactual_reverses": "Four companion requests reserve two spaces and leave eight, selecting Aster; eight requests reserve four spaces and leave six, selecting Birch."
+      },
+      "nonfocal_control": {
+        "plant_id": "e05_interpreter_checkin",
+        "category": "unchanged_control",
+        "probe": "What time is the ASL interpreter confirmed to check in? Answer with only the time.",
+        "target": "8:15",
+        "countertarget": "8:45",
+        "establishing_message_indices": [
+          3,
+          4
+        ],
+        "why_independent_of_focal": "The interpreting agency and front-of-house lead fixed the check-in appointment independently of room capacity, companion requests, and the room-selection rule."
+      },
+      "distractor_fact_inventory": [
+        {
+          "chain_id": "arrival-route-framing",
+          "indices": [
+            13,
+            14
+          ],
+          "summary": "The direct route and quieter alcove are presented as attendee choices without diagnostic assumptions."
+        },
+        {
+          "chain_id": "entrance-light-placement",
+          "indices": [
+            15,
+            16
+          ],
+          "summary": "A concrete sign-and-lamp placement keeps the turning path open and avoids glare at the entrance."
+        }
+      ],
+      "retained_tail_purpose": "A short byte-identical facilities exchange about physical sign and lamp placement follows the carrier without naming or implying either room, any seating arithmetic, or the interpreter time.",
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "abbd9f86fc9caaa6d75ef639faec2dbb7a4527cf0ebf55238ffa6d1d93802e0a",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting the accessibility lead for a public lecture. Keep capacities, confirmed requests, and facilities observations distinct; apply the stated room-selection rule exactly; and do not claim that a room, service, or attendee arrangement has been changed unless the conversation explicitly records it."
+            },
+            {
+              "role": "user",
+              "content": "Saturday's opening keynote is the only session under discussion. Priya is coordinating the venue, Leon is managing front-of-house volunteers, and I am reconciling the registration export with the physical access survey. We need one room assignment that follows the published accommodation rule rather than a preference about atmosphere or convenience. Before doing the calculation, I want each input tied to its source so the decision can be explained to the morning team without treating estimates as registrations."
+            },
+            {
+              "role": "assistant",
+              "content": "I will separate the registration facts from the room inventory and then apply only the stated selection rule. A comment about sightlines, walking distance, or audience comfort will not substitute for a required numerical input. I will also distinguish a confirmed service time from the seating calculation, because a schedule fact can remain true regardless of which room the rule selects."
+            },
+            {
+              "role": "user",
+              "content": "That separate schedule fact is already confirmed: the ASL interpreter will check in at 8:15 a.m. at the east information desk. The interpreting agency and Leon both acknowledged that time yesterday. It does not depend on the keynote room, the number of companion requests, or the seating arithmetic, and moving the keynote between eligible spaces would not alter the check-in appointment."
+            },
+            {
+              "role": "assistant",
+              "content": "The interpreter check-in is recorded independently as 8:15 a.m. at the east information desk. I will not use that time to infer a room, and I will not revise it when evaluating the accommodation rule. Any later question about the time can therefore be answered from its own scheduling chain."
+            },
+            {
+              "role": "user",
+              "content": "The access survey lists ten usable accessible-seating spaces in Aster Room. Those are floor positions with the required turning clearance, not ordinary chairs that could be moved aside. Seven wheelchair users have completed registration for the keynote, and all seven registrations are confirmed rather than provisional. Birch Hall can absorb the group without this particular capacity calculation, but it is farther from the quiet entrance and is used only when the Aster calculation fails."
+            },
+            {
+              "role": "assistant",
+              "content": "The fixed room-side inputs are ten usable accessible spaces in Aster and seven confirmed wheelchair-user registrations. I am treating those quantities as different from companion requests: the seven registrations consume the remaining accessible capacity after the companion reservation is calculated. Birch is the mandatory fallback described by the policy, not an alternative to be weighed on softer considerations once the arithmetic is known."
+            },
+            {
+              "role": "user",
+              "content": "The final registration export contains 4 confirmed companion requests for this keynote. The desk removed duplicates before issuing the export, so this is the count the accommodation formula uses rather than the earlier interest-list total."
+            },
+            {
+              "role": "assistant",
+              "content": "That supplies the remaining load-bearing input from the final export. I will keep the deduplicated companion count separate from the seven wheelchair-user registrations and will use the ceiling operation specified by the policy rather than rounding informally."
+            },
+            {
+              "role": "user",
+              "content": "Here is the complete mandatory rule. Reserve ceil(confirmed companion requests divided by two) of Aster's ten accessible spaces for companions. If the spaces left after that reservation are at least the seven required for the confirmed wheelchair users, the calculation selects Aster Room. If fewer than seven remain, the calculation selects Birch Hall. Passing therefore requires Aster; it does not merely permit Aster, and there is no discretionary third branch."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood as a complete two-branch assignment. I will divide the confirmed companion count by two, take the ceiling, subtract that reservation from ten, and compare the remainder with seven. A remainder of seven or more selects Aster Room; a remainder below seven selects Birch Hall. The rule specifies both the pass and fail outcomes, so no additional preference or approval is needed."
+            },
+            {
+              "role": "user",
+              "content": "Apply that rule to the recorded figures and state the selected room with the arithmetic. This is specifically a room-assignment decision, not a recommendation about whether the keynote should proceed or whether more accessible seating would be desirable in future."
+            },
+            {
+              "role": "assistant",
+              "content": "The calculation selects Aster Room. The ceiling of 4 divided by 2 is 2, so reserving two of Aster's ten accessible spaces leaves eight; eight is at least the seven spaces required for the confirmed wheelchair users."
+            },
+            {
+              "role": "user",
+              "content": "The next facilities task concerns arrival conditions rather than capacity. The east approach has a glass door, a short tiled corridor, and a quieter carpeted alcove before the auditorium doors. Leon wants volunteers to offer the alcove as a pause point without calling it a waiting penalty or directing every disabled attendee there. The wording should present it as an optional low-sensory route and should leave the direct route equally available."
+            },
+            {
+              "role": "assistant",
+              "content": "That can be framed as a choice rather than an instruction: volunteers may point out both the direct auditorium route and the optional quieter path through the carpeted alcove, then follow the attendee's preference. They should avoid assumptions about who needs the quieter route, keep the glass doorway unobstructed, and describe the alcove by its location and conditions rather than by a diagnostic label."
+            },
+            {
+              "role": "user",
+              "content": "For the entrance itself, we have one freestanding sign holder and two small battery lamps. Propose a simple placement that makes the quieter option visible from the glass door without narrowing the turning space or shining a lamp toward arriving guests. Do not mention any seating count, room choice, interpreter appointment, or registration figure."
+            },
+            {
+              "role": "assistant",
+              "content": "Place the sign holder against the corridor wall just beyond the door swing, angled so both route arrows are readable on entry while the center of the corridor remains clear. Put one lamp behind the sign facing the wall for reflected light and the other low beside the alcove entrance, also aimed away from the doorway. Before doors open, confirm that neither base projects into the turning path."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "cd73088f32a1cdc81cebe9f95d5a5d8e739e977977f83dac3b1c055db268812a",
+            "case_id": "e05",
+            "variant": "correct",
+            "literal_messages_sha256": "fca3fa2e55d0afee5bfc60521d9e674f9765e47870e3e4cc5837f97e81d3303b"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "f58cf59d6316cb5a3165744537d90fed8300c5597b761030a18f32abbc5ef586",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting the accessibility lead for a public lecture. Keep capacities, confirmed requests, and facilities observations distinct; apply the stated room-selection rule exactly; and do not claim that a room, service, or attendee arrangement has been changed unless the conversation explicitly records it."
+            },
+            {
+              "role": "user",
+              "content": "Saturday's opening keynote is the only session under discussion. Priya is coordinating the venue, Leon is managing front-of-house volunteers, and I am reconciling the registration export with the physical access survey. We need one room assignment that follows the published accommodation rule rather than a preference about atmosphere or convenience. Before doing the calculation, I want each input tied to its source so the decision can be explained to the morning team without treating estimates as registrations."
+            },
+            {
+              "role": "assistant",
+              "content": "I will separate the registration facts from the room inventory and then apply only the stated selection rule. A comment about sightlines, walking distance, or audience comfort will not substitute for a required numerical input. I will also distinguish a confirmed service time from the seating calculation, because a schedule fact can remain true regardless of which room the rule selects."
+            },
+            {
+              "role": "user",
+              "content": "That separate schedule fact is already confirmed: the ASL interpreter will check in at 8:15 a.m. at the east information desk. The interpreting agency and Leon both acknowledged that time yesterday. It does not depend on the keynote room, the number of companion requests, or the seating arithmetic, and moving the keynote between eligible spaces would not alter the check-in appointment."
+            },
+            {
+              "role": "assistant",
+              "content": "The interpreter check-in is recorded independently as 8:15 a.m. at the east information desk. I will not use that time to infer a room, and I will not revise it when evaluating the accommodation rule. Any later question about the time can therefore be answered from its own scheduling chain."
+            },
+            {
+              "role": "user",
+              "content": "The access survey lists ten usable accessible-seating spaces in Aster Room. Those are floor positions with the required turning clearance, not ordinary chairs that could be moved aside. Seven wheelchair users have completed registration for the keynote, and all seven registrations are confirmed rather than provisional. Birch Hall can absorb the group without this particular capacity calculation, but it is farther from the quiet entrance and is used only when the Aster calculation fails."
+            },
+            {
+              "role": "assistant",
+              "content": "The fixed room-side inputs are ten usable accessible spaces in Aster and seven confirmed wheelchair-user registrations. I am treating those quantities as different from companion requests: the seven registrations consume the remaining accessible capacity after the companion reservation is calculated. Birch is the mandatory fallback described by the policy, not an alternative to be weighed on softer considerations once the arithmetic is known."
+            },
+            {
+              "role": "user",
+              "content": "The final registration export contains 8 confirmed companion requests for this keynote. The desk removed duplicates before issuing the export, so this is the count the accommodation formula uses rather than the earlier interest-list total."
+            },
+            {
+              "role": "assistant",
+              "content": "That supplies the remaining load-bearing input from the final export. I will keep the deduplicated companion count separate from the seven wheelchair-user registrations and will use the ceiling operation specified by the policy rather than rounding informally."
+            },
+            {
+              "role": "user",
+              "content": "Here is the complete mandatory rule. Reserve ceil(confirmed companion requests divided by two) of Aster's ten accessible spaces for companions. If the spaces left after that reservation are at least the seven required for the confirmed wheelchair users, the calculation selects Aster Room. If fewer than seven remain, the calculation selects Birch Hall. Passing therefore requires Aster; it does not merely permit Aster, and there is no discretionary third branch."
+            },
+            {
+              "role": "assistant",
+              "content": "Understood as a complete two-branch assignment. I will divide the confirmed companion count by two, take the ceiling, subtract that reservation from ten, and compare the remainder with seven. A remainder of seven or more selects Aster Room; a remainder below seven selects Birch Hall. The rule specifies both the pass and fail outcomes, so no additional preference or approval is needed."
+            },
+            {
+              "role": "user",
+              "content": "Apply that rule to the recorded figures and state the selected room with the arithmetic. This is specifically a room-assignment decision, not a recommendation about whether the keynote should proceed or whether more accessible seating would be desirable in future."
+            },
+            {
+              "role": "assistant",
+              "content": "The calculation selects Birch Hall. The ceiling of 8 divided by 2 is 4, so reserving four of Aster's ten accessible spaces leaves six; six is less than the seven spaces required for the confirmed wheelchair users."
+            },
+            {
+              "role": "user",
+              "content": "The next facilities task concerns arrival conditions rather than capacity. The east approach has a glass door, a short tiled corridor, and a quieter carpeted alcove before the auditorium doors. Leon wants volunteers to offer the alcove as a pause point without calling it a waiting penalty or directing every disabled attendee there. The wording should present it as an optional low-sensory route and should leave the direct route equally available."
+            },
+            {
+              "role": "assistant",
+              "content": "That can be framed as a choice rather than an instruction: volunteers may point out both the direct auditorium route and the optional quieter path through the carpeted alcove, then follow the attendee's preference. They should avoid assumptions about who needs the quieter route, keep the glass doorway unobstructed, and describe the alcove by its location and conditions rather than by a diagnostic label."
+            },
+            {
+              "role": "user",
+              "content": "For the entrance itself, we have one freestanding sign holder and two small battery lamps. Propose a simple placement that makes the quieter option visible from the glass door without narrowing the turning space or shining a lamp toward arriving guests. Do not mention any seating count, room choice, interpreter appointment, or registration figure."
+            },
+            {
+              "role": "assistant",
+              "content": "Place the sign holder against the corridor wall just beyond the door swing, angled so both route arrows are readable on entry while the center of the corridor remains clear. Put one lamp behind the sign facing the wall for reflected light and the other low beside the alcove entrance, also aimed away from the doorway. Before doors open, confirm that neither base projects into the turning path."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "cd73088f32a1cdc81cebe9f95d5a5d8e739e977977f83dac3b1c055db268812a",
+            "case_id": "e05",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "dab7a24309de860b92cc7d14c03cefe6ef81c20a76a146bcf8e00e5ad0fe8b94"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "e06",
+      "source_file_sha256": "27bbd14802438d45a8160aa58b9bb044ab8338fb4b8e4d8b76a036c9c3bfcc4f",
+      "title": "Manuscript review queue and illustrated-notes copyedit",
+      "domain": "publishing production and rights review",
+      "length_band": "short",
+      "middle_end_msg": 15,
+      "changed_message_allowlist": [
+        9
+      ],
+      "authoring_provenance": {
+        "original_author": "Claude Sonnet 5",
+        "original_runtime_model_id": "claude-sonnet-5",
+        "original_reasoning_effort": "high",
+        "revision_author": "Independent Codex subagent",
+        "revision_runtime_model_id": null,
+        "revision_runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+        "revision_reasoning_effort": null,
+        "revision_reasoning_effort_status": "not exposed to this subagent; no level inferred",
+        "authoring_session_source_id": "/root/v12_revision2_e05_e06",
+        "authored_at_utc": "2026-07-11T20:28:07Z",
+        "source_revision": 2,
+        "superseded_source_path": "data/coherent_canary_v12/drafts/claude_session_c/e06.json",
+        "superseded_source_file_sha256": "45cdc7d8f72cf5899f50e6955dbf4d5cc059a9b05e515fe396d0c19939781f53",
+        "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+        "subject_model_forward_performed": false
+      },
+      "focal": {
+        "plant_id": "e06_review_queue",
+        "category": "derived_decision",
+        "rule_or_relation": "Assign fast-track if and only if at most three passages remain flagged and none names a living private individual by full name; assign the standard queue otherwise.",
+        "changed_input": "The one load-bearing input is whether the full name of the explicitly living private organizer remains in passage three: absent in C versus present in W.",
+        "probe": "Under the recorded mandatory assignment rule, which review queue applies to Low Tide at Cortes? Answer with only the queue name.",
+        "correct_target": "fast-track queue",
+        "counterfactual_target": "standard queue",
+        "establishing_message_indices": [
+          5,
+          7,
+          9
+        ],
+        "downstream_reference_indices": [],
+        "why_derived": "No history message states a queue. The answer requires combining the count of exactly three still-flagged passages, the explicit living-private classification, the presence or absence of the organizer's full name, and the exhaustive assignment rule.",
+        "why_counterfactual_reverses": "Both variants have exactly three passages flagged for non-privacy reasons. Removing the full name satisfies the second condition and requires fast-track; retaining Marta Coelho breaks it and requires the standard queue."
+      },
+      "nonfocal_control": {
+        "plant_id": "e06_audiobook_producer",
+        "category": "unchanged_control",
+        "probe": "Which company is the contracted producer for the audiobook edition? Answer with only the company name.",
+        "target": "Meridian Audio",
+        "countertarget": "Harmonic Audio",
+        "establishing_message_indices": [
+          1,
+          2
+        ],
+        "why_independent_of_focal": "The executed audiobook-production agreement is explicitly independent of passage count, naming status, and print-manuscript review queue."
+      },
+      "distractor_fact_inventory": [
+        {
+          "chain_id": "illustrated-notes-layout",
+          "indices": [
+            11,
+            12
+          ],
+          "summary": "The proof uses placeholders for an archive date and image number so typography does not masquerade as factual verification."
+        },
+        {
+          "chain_id": "quotation-copyediting",
+          "indices": [
+            13,
+            14,
+            15,
+            16
+          ],
+          "summary": "Historical spelling, meaningful line breaks, and a bracketed editorial clarification receive concrete copyediting treatment."
+        }
+      ],
+      "retained_tail_purpose": "A short byte-identical copyediting question about roman type inside an italic quotation follows the carrier without naming or implying a review queue, passage count, person, or audiobook producer.",
+      "histories": {
+        "correct": {
+          "binding_commitment_sha256": "8c44d5e961e1436b88090fb5b1aa3bcfd15e913b82d9651869c4e2a3193ddcd5",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a production editor who is coordinating rights review for a nonfiction manuscript. Preserve distinctions between a passage remaining flagged, the reason for that flag, and whether a full name appears; apply the stated queue rule literally; and do not claim that an edit, approval, assignment, or contact occurred unless the conversation records it."
+            },
+            {
+              "role": "user",
+              "content": "One production fact can be closed before we discuss the rights-review queue. Meridian Audio is the contracted producer for the audiobook edition of Low Tide at Cortes. Devon confirmed the executed agreement in the production folder this morning. That vendor assignment is independent of how quickly the print manuscript moves through rights review, and neither a fast-track nor standard review assignment changes the audiobook producer."
+            },
+            {
+              "role": "assistant",
+              "content": "I will keep the audiobook-production fact on its own chain: Meridian Audio is the confirmed producer. I will not infer the review queue from that agreement or alter the vendor when applying the manuscript rule. If asked later for the producer, I can answer from the executed-agreement record without consulting any passage status."
+            },
+            {
+              "role": "user",
+              "content": "The print manuscript is a reported account of a coastal arts festival. Renata is handling rights review, Devon is preparing production pages, and the author is available for wording questions but has not been asked to make further changes. The three passages under discussion involve an archived council notice, a description of a privately organized supper, and a caption for a photograph. We need the queue assignment derived only after their current statuses are stated."
+            },
+            {
+              "role": "assistant",
+              "content": "I will treat the current manuscript and Renata's review notes as the evidence sources. I will not treat a proposed edit as completed, and I will not collapse a non-privacy flag into a naming concern. The organizer's personal status, whether her full name remains, the number of passages still flagged, and the mandatory queue rule must all be explicit before the later probe can determine an assignment."
+            },
+            {
+              "role": "user",
+              "content": "The assignment rule is exhaustive. Put the manuscript in the fast-track queue if and only if, at the close of this review, no more than three passages remain flagged and none of those flagged passages names a living private individual by full name. When both conditions pass, fast-track is mandatory; if either condition fails, assign the standard queue. Eligibility and assignment are the same decision here, with no discretionary branch."
+            },
+            {
+              "role": "assistant",
+              "content": "Under that rule, the passage count and the full-name predicate are jointly necessary and jointly sufficient. Three or fewer flagged passages with no full name of a living private individual requires fast-track; a fourth flagged passage or even one qualifying full name requires the standard queue. I will preserve that binary assignment while keeping the factual review separate from the eventual probe."
+            },
+            {
+              "role": "user",
+              "content": "All three passages remain flagged at the close of review, and they remain flagged for non-privacy reasons. Passage one still needs its council-notice date checked against the archive. Passage two still needs the supper's seating capacity checked against the venue invoice. Neither passage names any individual: the first quotes an office title, and the second refers only to the organizer's role. These open checks count toward the flagged total even though neither is a naming issue."
+            },
+            {
+              "role": "assistant",
+              "content": "The current count is therefore three, with passages one and two unambiguously still on the flagged list for date and capacity verification. Their non-privacy reasons do not remove them from the count, and their wording contains no individual name. I will wait for the literal status of passage three before the later queue question is answered."
+            },
+            {
+              "role": "user",
+              "content": "Passage three also remains flagged for a non-privacy reason: the photograph credit still needs the image number reconciled with the contact sheet. The supper organizer is a living private individual. In the current caption her full name has been removed, and the text identifies her only as the festival organizer."
+            },
+            {
+              "role": "assistant",
+              "content": "That completes the factual predicate without assigning a queue in this exchange. There are exactly three passages still flagged, their outstanding reasons are non-privacy checks, and the record separately states the organizer's living-private status and the current caption's naming condition. The mandatory rule can be applied when the queue is asked for later."
+            },
+            {
+              "role": "user",
+              "content": "While that decision remains unstated, Devon is laying out a two-page illustrated notes section. The council excerpt will appear as a short indented quotation, the supper description as ordinary body text, and the photograph caption beneath a half-page image. The archive date and image number are still verification matters; the layout mock-up should not turn either one into a confirmed fact merely because placeholder text occupies the space."
+            },
+            {
+              "role": "assistant",
+              "content": "The mock-up can distinguish typography from verification. Use the intended styles and reserve enough space, but mark the date and image-number fields as editorial placeholders in the internal proof. Their presence demonstrates fit, not factual confirmation. The final proof should draw those values from the archive and contact-sheet checks rather than from whatever temporary text was used for pagination."
+            },
+            {
+              "role": "user",
+              "content": "The quoted council notice contains an old-fashioned spelling that the author wants preserved, while the surrounding explanation follows current house style. Devon also has a handwritten field-note excerpt with two line breaks that matter to its cadence. We are moving now from rights evidence to copyediting presentation, and none of these typographic choices should be treated as a queue assignment or as a change to the audiobook agreement."
+            },
+            {
+              "role": "assistant",
+              "content": "Preserve the historical spelling inside the clearly attributed quotation and use current house style in the editorial prose around it. For the field-note excerpt, retain the two meaningful line breaks if the available measure permits; if the proof forces another wrap, distinguish the original breaks from automatic line wrapping in the production annotation. Those are copyediting choices, not evidence about the unresolved queue."
+            },
+            {
+              "role": "user",
+              "content": "For the field-note excerpt, should the writer's inserted square-bracket clarification stay in roman type or follow the surrounding italic quotation? Give a brief house-style recommendation and explain how to keep the editorial insertion visually distinct without changing the quoted wording. Do not mention any passage count, personal name, review queue, or production vendor."
+            },
+            {
+              "role": "assistant",
+              "content": "Keep the bracketed clarification in roman type within the italic quotation. The contrast marks it as editorial rather than original while the square brackets preserve its exact boundary. Do not add emphasis inside the brackets; if the change of type is too subtle at the final size, note the convention in the copyediting query rather than altering the quoted words."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "27bbd14802438d45a8160aa58b9bb044ab8338fb4b8e4d8b76a036c9c3bfcc4f",
+            "case_id": "e06",
+            "variant": "correct",
+            "literal_messages_sha256": "b4cd973d986e69882d105e78a47ba271d80ae6bc976ae1fc148856805fd50420"
+          }
+        },
+        "wrong_focal": {
+          "binding_commitment_sha256": "762134e3fce0f7a366408a0e939518ba166cbe372d4032699f861e7c32d63cf7",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are assisting a production editor who is coordinating rights review for a nonfiction manuscript. Preserve distinctions between a passage remaining flagged, the reason for that flag, and whether a full name appears; apply the stated queue rule literally; and do not claim that an edit, approval, assignment, or contact occurred unless the conversation records it."
+            },
+            {
+              "role": "user",
+              "content": "One production fact can be closed before we discuss the rights-review queue. Meridian Audio is the contracted producer for the audiobook edition of Low Tide at Cortes. Devon confirmed the executed agreement in the production folder this morning. That vendor assignment is independent of how quickly the print manuscript moves through rights review, and neither a fast-track nor standard review assignment changes the audiobook producer."
+            },
+            {
+              "role": "assistant",
+              "content": "I will keep the audiobook-production fact on its own chain: Meridian Audio is the confirmed producer. I will not infer the review queue from that agreement or alter the vendor when applying the manuscript rule. If asked later for the producer, I can answer from the executed-agreement record without consulting any passage status."
+            },
+            {
+              "role": "user",
+              "content": "The print manuscript is a reported account of a coastal arts festival. Renata is handling rights review, Devon is preparing production pages, and the author is available for wording questions but has not been asked to make further changes. The three passages under discussion involve an archived council notice, a description of a privately organized supper, and a caption for a photograph. We need the queue assignment derived only after their current statuses are stated."
+            },
+            {
+              "role": "assistant",
+              "content": "I will treat the current manuscript and Renata's review notes as the evidence sources. I will not treat a proposed edit as completed, and I will not collapse a non-privacy flag into a naming concern. The organizer's personal status, whether her full name remains, the number of passages still flagged, and the mandatory queue rule must all be explicit before the later probe can determine an assignment."
+            },
+            {
+              "role": "user",
+              "content": "The assignment rule is exhaustive. Put the manuscript in the fast-track queue if and only if, at the close of this review, no more than three passages remain flagged and none of those flagged passages names a living private individual by full name. When both conditions pass, fast-track is mandatory; if either condition fails, assign the standard queue. Eligibility and assignment are the same decision here, with no discretionary branch."
+            },
+            {
+              "role": "assistant",
+              "content": "Under that rule, the passage count and the full-name predicate are jointly necessary and jointly sufficient. Three or fewer flagged passages with no full name of a living private individual requires fast-track; a fourth flagged passage or even one qualifying full name requires the standard queue. I will preserve that binary assignment while keeping the factual review separate from the eventual probe."
+            },
+            {
+              "role": "user",
+              "content": "All three passages remain flagged at the close of review, and they remain flagged for non-privacy reasons. Passage one still needs its council-notice date checked against the archive. Passage two still needs the supper's seating capacity checked against the venue invoice. Neither passage names any individual: the first quotes an office title, and the second refers only to the organizer's role. These open checks count toward the flagged total even though neither is a naming issue."
+            },
+            {
+              "role": "assistant",
+              "content": "The current count is therefore three, with passages one and two unambiguously still on the flagged list for date and capacity verification. Their non-privacy reasons do not remove them from the count, and their wording contains no individual name. I will wait for the literal status of passage three before the later queue question is answered."
+            },
+            {
+              "role": "user",
+              "content": "Passage three also remains flagged for a non-privacy reason: the photograph credit still needs the image number reconciled with the contact sheet. The supper organizer is a living private individual. In the current caption her full name remains present, and the text identifies her explicitly as Marta Coelho."
+            },
+            {
+              "role": "assistant",
+              "content": "That completes the factual predicate without assigning a queue in this exchange. There are exactly three passages still flagged, their outstanding reasons are non-privacy checks, and the record separately states the organizer's living-private status and the current caption's naming condition. The mandatory rule can be applied when the queue is asked for later."
+            },
+            {
+              "role": "user",
+              "content": "While that decision remains unstated, Devon is laying out a two-page illustrated notes section. The council excerpt will appear as a short indented quotation, the supper description as ordinary body text, and the photograph caption beneath a half-page image. The archive date and image number are still verification matters; the layout mock-up should not turn either one into a confirmed fact merely because placeholder text occupies the space."
+            },
+            {
+              "role": "assistant",
+              "content": "The mock-up can distinguish typography from verification. Use the intended styles and reserve enough space, but mark the date and image-number fields as editorial placeholders in the internal proof. Their presence demonstrates fit, not factual confirmation. The final proof should draw those values from the archive and contact-sheet checks rather than from whatever temporary text was used for pagination."
+            },
+            {
+              "role": "user",
+              "content": "The quoted council notice contains an old-fashioned spelling that the author wants preserved, while the surrounding explanation follows current house style. Devon also has a handwritten field-note excerpt with two line breaks that matter to its cadence. We are moving now from rights evidence to copyediting presentation, and none of these typographic choices should be treated as a queue assignment or as a change to the audiobook agreement."
+            },
+            {
+              "role": "assistant",
+              "content": "Preserve the historical spelling inside the clearly attributed quotation and use current house style in the editorial prose around it. For the field-note excerpt, retain the two meaningful line breaks if the available measure permits; if the proof forces another wrap, distinguish the original breaks from automatic line wrapping in the production annotation. Those are copyediting choices, not evidence about the unresolved queue."
+            },
+            {
+              "role": "user",
+              "content": "For the field-note excerpt, should the writer's inserted square-bracket clarification stay in roman type or follow the surrounding italic quotation? Give a brief house-style recommendation and explain how to keep the editorial insertion visually distinct without changing the quoted wording. Do not mention any passage count, personal name, review queue, or production vendor."
+            },
+            {
+              "role": "assistant",
+              "content": "Keep the bracketed clarification in roman type within the italic quotation. The contrast marks it as editorial rather than original while the square brackets preserve its exact boundary. Do not add emphasis inside the brackets; if the change of type is too subtle at the final size, note the convention in the copyediting query rather than altering the quoted words."
+            }
+          ],
+          "source_binding": {
+            "schema": "v12_history_source_binding_v1",
+            "source_file_sha256": "27bbd14802438d45a8160aa58b9bb044ab8338fb4b8e4d8b76a036c9c3bfcc4f",
+            "case_id": "e06",
+            "variant": "wrong_focal",
+            "literal_messages_sha256": "d1fed4dcb1c807b02da523fb022f96a02e403aed9cc41e03e9231127ab61a34d"
+          }
+        }
+      }
+    }
+  ],
+  "packet_sha256": "fddd5e960bfa9088040dfade54555ef238edb8caa45d18edff7a405f6cb2ba9b"
+}
