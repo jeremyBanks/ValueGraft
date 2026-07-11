@@ -229,14 +229,14 @@ def _stage(*, prerequisites=(), threshold=None, comparison=None,
     }
 
 
-def v8_gate_schema(*, identity_tolerance: float = 1e-4,
+def v9_gate_schema(*, identity_tolerance: float = 1e-4,
                    zero_gap_tolerance: float = 5e-4,
                    case_dir: Path | str = Path("data/synthetic"),
                    donor_dir: Path | str | None = None,
                    expected_attention_layers: int = 48) -> dict:
     """Return the exhaustive predeclared Amendments-5/6/7 model-gate schema.
 
-    Returned identities and maximum position are exclusively v8.
+    Returned identities and maximum position are exclusively v9.
     """
     donor_dir = Path(case_dir) if donor_dir is None else Path(donor_dir)
     common_schedule_metrics = (
@@ -351,12 +351,12 @@ def v8_gate_schema(*, identity_tolerance: float = 1e-4,
 
 def v6_gate_schema(**kwargs) -> dict:
     """Compatibility alias; no v6 identity or artifact is ever returned."""
-    return v8_gate_schema(**kwargs)
+    return v9_gate_schema(**kwargs)
 
 
 def v5_gate_schema(**kwargs) -> dict:
     """Compatibility alias; no v5 identity or artifact is ever returned."""
-    return v8_gate_schema(**kwargs)
+    return v9_gate_schema(**kwargs)
 
 
 def _copy_json(value):
@@ -1415,7 +1415,7 @@ def run_loaded_gapped_gates(
         case_dir: Path | str = Path("data/synthetic"),
         donor_dir: Path | str | None = None,
         tokenizer_revision: str | None = None) -> dict:
-    """Execute the exhaustive Amendment-8 technical-only model gate.
+    """Execute the exhaustive Amendment-9 technical-only model gate.
 
     Each stage is declared before work, persisted by whole-stage reassignment,
     and terminalized from its recorded raw payload. Failures aggregate; only
@@ -1424,14 +1424,14 @@ def run_loaded_gapped_gates(
     del placebo_quantization_tolerance, placebo_moment_tolerance
     donor_dir = Path(case_dir) if donor_dir is None else Path(donor_dir)
     sink = diagnostic_sink if diagnostic_sink is not None else {}
-    schema = v8_gate_schema(
+    schema = v9_gate_schema(
         identity_tolerance=identity_tolerance,
         zero_gap_tolerance=zero_gap_tolerance,
         case_dir=case_dir, donor_dir=donor_dir,
         expected_attention_layers=int(getattr(
             getattr(model.config, "text_config", model.config),
             "num_hidden_layers", -1)))
-    # Never clear caller-owned provenance. Required v8 fields are installed by
+    # Never clear caller-owned provenance. Required v9 fields are installed by
     # top-level assignment so a DurableDiagnosticSink persists each declaration.
     for key, value in schema.items():
         if key not in sink:
@@ -2088,7 +2088,7 @@ def run_loaded_gapped_gates(
     if not sink["passes"]:
         sink["failure"] = {
             "error_type": "AggregateTechnicalGateFailure",
-            "error": "one or more Amendment-8 technical stages did not pass",
+            "error": "one or more Amendment-9 technical stages did not pass",
             "failed_stages": sink["failures"],
         }
     return sink
@@ -2107,7 +2107,7 @@ def run_ladder(diagnostic_sink: dict | None = None) -> dict:
     model.requires_grad_(False)
     if model.device.type != "cpu":
         raise RuntimeError(
-            f"v8 local ladder must use observed-equivalent CPU, got {model.device}")
+            f"v9 local ladder must use observed-equivalent CPU, got {model.device}")
     ladder_sink = diagnostic_sink if diagnostic_sink is not None else {}
     ladder_sink["static_provenance"] = {
             "status": "PASS", "passes": True, "prerequisites": [],
@@ -2357,13 +2357,13 @@ class LadderDurableDiagnosticSink(dict):
 
 
 def write_sharded_ladder_result(output: Path, result: dict) -> dict:
-    """Write a small v8 ladder manifest plus commit-safe gate stage sidecars."""
+    """Write a small v9 ladder manifest plus commit-safe gate stage sidecars."""
     output = Path(output)
     if output.exists():
         raise RuntimeError(f"refusing to overwrite {output}")
     document = _copy_json(result)
     if document.get("design_id") != DESIGN_ID:
-        raise RuntimeError("ladder result identity is not current v8")
+        raise RuntimeError("ladder result identity is not current v9")
 
     gate_container = document
     gate_key = "loaded_gapped_production_gate"

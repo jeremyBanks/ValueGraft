@@ -21,7 +21,7 @@ class ArtifactError(RuntimeError):
 
 
 def validate_production_backend_attestation(attestation: Any) -> None:
-    """Independently validate the frozen v8 48-layer eager attestation."""
+    """Independently validate the frozen v9 48-layer eager attestation."""
     if not isinstance(attestation, dict):
         raise ArtifactError("attention-backend fingerprint is not an object")
     expected_keys = {
@@ -154,7 +154,7 @@ def validate_scored_checkpoint(doc: dict) -> None:
     if (doc.get("schema") != 2 or doc.get("design_id") != DESIGN_ID or
             doc.get("amendment_id") != AMENDMENT_ID):
         raise ArtifactError(
-            "scored checkpoint is not Amendments-1-2-3-4-5-6-7-8 schema 2")
+            "scored checkpoint is not Amendments-1-2-3-4-5-6-7-8-9 schema 2")
     required = (
         "conversation", "summary", "sources", "destination", "arm_scores",
         "conversation_outcomes", "gates", "runtime",

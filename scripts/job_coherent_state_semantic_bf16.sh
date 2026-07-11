@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Separate Amendment-8 semantic process, cryptographically bound to a committed
+# Separate Amendment-9 semantic process, cryptographically bound to a committed
 # technical PASS.  This script is inventoried by the technical attestation.
 set -euo pipefail
 
@@ -11,7 +11,7 @@ TECHNICAL_RUN_DIR="${SC_TECHNICAL_RUN_DIR:?SC_TECHNICAL_RUN_DIR is required}"
 MODEL="Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION="0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-RUN_DIR="${SC_SEMANTIC_RUN_DIR:-results/coherent_state/coherent_state_gapped_v8_semantic_Qwen3-30B-A3B-Instruct-2507_${STAMP}}"
+RUN_DIR="${SC_SEMANTIC_RUN_DIR:-results/coherent_state/coherent_state_gapped_v9_semantic_Qwen3-30B-A3B-Instruct-2507_${STAMP}}"
 CLONE_TMP="/workspace/repo_${STAMP}.tmp"
 
 echo "START COHERENT_STATE_SEMANTIC $(date -Is)"

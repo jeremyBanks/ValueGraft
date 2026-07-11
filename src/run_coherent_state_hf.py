@@ -85,7 +85,7 @@ from cross_arch_probe import native_render_specs, trim_capped_reply
 from l_coherent_state_hf import (
     run_exact_render_schedule_fixture,
     run_loaded_gapped_gates,
-    v8_gate_schema,
+    v9_gate_schema,
 )
 
 
@@ -93,8 +93,8 @@ MODEL = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STRUCTURAL_SEED = 20_260_711
 ARTIFACT_SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v8"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8"
+DESIGN_ID = "coherent-state-gapped-v9"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6-7-8-9"
 AMENDMENT_PATHS = (
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-2.md"),
@@ -104,6 +104,7 @@ AMENDMENT_PATHS = (
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-6.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-7.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-8.md"),
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-9.md"),
 )
 ATTENTION_BACKEND = "eager"
 EXPECTED_GEOMETRY = {
@@ -117,7 +118,7 @@ ZERO_GAP_TOLERANCE = 5e-4
 MAX_TECHNICAL_LOGICAL_POSITION = 9_509
 
 if DESIGN_ID != INTEGRITY_DESIGN_ID or AMENDMENT_ID != INTEGRITY_AMENDMENT_ID:
-    raise RuntimeError("driver/integrity v8 identities disagree")
+    raise RuntimeError("driver/integrity v9 identities disagree")
 
 
 def utc_now() -> str:
@@ -1410,7 +1411,7 @@ def parse_args():
               "mode; retained for launch-script clarity"))
     ap.add_argument(
         "--semantic-authorization", type=Path,
-        help=("explicit prior committed v8 technical PASS directory; enables "
+        help=("explicit prior committed v9 technical PASS directory; enables "
               "the otherwise unreachable separate semantic process"))
     ap.add_argument(
         "--technical-result-commit",
@@ -1638,7 +1639,7 @@ def _technical_main(args) -> int:
     geometry = None
     backend_fingerprint = None
     context_limit = None
-    gate_schema = v8_gate_schema(
+    gate_schema = v9_gate_schema(
         identity_tolerance=IDENTITY_TOLERANCE,
         zero_gap_tolerance=ZERO_GAP_TOLERANCE,
         case_dir=args.donor_dir, donor_dir=args.donor_dir)
