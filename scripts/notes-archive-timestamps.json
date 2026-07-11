@@ -828,7 +828,7 @@
       "timestamp_source": "conversation manifest first timestamp"
     },
     "notes/2026071146-conversation-user-gpt56.md": {
-      "object_id": "74f8479c61a86821a24f7a65642654ca884ec5e7",
+      "object_id": "9115d3249b07c914219bc9196ef51be824f58878",
       "archive_timestamp_utc": "2026-07-11T02:50:35.343000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -853,7 +853,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071151-conversation-user-opus48.md": {
-      "object_id": "4e88d5c2a659bf46111e0dcbf3ada20c2306cf09",
+      "object_id": "15552845d7f11db7b2378e980013f50969f9d2e4",
       "archive_timestamp_utc": "2026-07-11T03:28:16.690000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
