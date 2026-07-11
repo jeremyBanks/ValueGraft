@@ -118,19 +118,22 @@ The omitted interval is a logical gap representing evicted history. The request 
 header suffix must be exact-ID-equal to the suffix of the correct prefix, and the
 two islands must not overlap.
 
-Fresh stepwise encoding forces `S_i` at `P_i..P_i+n_i-1`. Logical `position_ids`
-carry those positions, while `cache_position` is always the contiguous physical
-storage index `0..stored_length-1`; a logical gap must never be passed as cache
-storage indices.
+The system island is prefetched first. The request/header island is then appended
+to that nonempty cache; a discontiguous logical-position vector must not be sent as
+one `past_key_values=None` packed prefill. Fresh stepwise encoding forces `S_i` at
+`P_i..P_i+n_i-1`. Logical `position_ids` carry those positions, while
+`cache_position` is always the contiguous physical storage index
+`0..stored_length-1`; a logical gap must never be passed as cache storage indices.
 
 The immutable compacted base ends at the summary boundary. For each arm, construct
 one transient branch, make the declared summary-row intervention, and only then
-append the exact target retained-tail IDs beginning at `P_i+n_i`. Probe and target
-tokens continue monotonically after the tail. Thus the intervention touches only
-summary rows, while tail K/V may differ as legitimate causal descendants of that
-intervention. Replacing summary rows in a full cache whose tail was already
-computed under fresh state is prohibited: that would freeze away propagation
-through the retained tail and answer a narrower direct-effect question.
+append the exact assistant-close/wrapper plus target retained-tail IDs beginning at
+`P_i+n_i`. Probe and target tokens continue monotonically afterward. Thus the
+intervention touches only summary rows, while close/tail K/V may differ as
+legitimate causal descendants of that intervention. Replacing summary rows in a
+full cache whose close/tail was already computed under fresh state is prohibited:
+that would freeze away propagation through the retained tail and answer a narrower
+direct-effect question.
 
 Every scored compacted arm uses the same physical token IDs and exact logical
 position vector. Physical cache storage remains contiguous in every branch.
@@ -212,6 +215,10 @@ The 0.6B ladder must demonstrate:
 - identical gapped position vectors across arms;
 - explicit causal-mask coverage over physically stored entries, including failure
   injection where logical positions are incorrectly supplied as `cache_position`;
+- zero-gap mode reproduces ordinary contiguous execution; an independently
+  constructed 4D physical-storage causal mask agrees with automatic masking;
+- mutating later tokens in an equal-length batched extension cannot change earlier
+  logits or the earlier appended K/V rows;
 - per-arm tail recomputation from the intervention boundary, with a test that a
   changed summary state can causally change tail state while non-summary
   intervention inputs remain identical;
