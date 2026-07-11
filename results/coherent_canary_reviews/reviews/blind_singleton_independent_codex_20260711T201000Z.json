@@ -1,0 +1,223 @@
+{
+  "schema": "coherent_state_decision_canary_v12_blind_singleton_review_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "review_kind": "formal_randomized_blind_singleton",
+  "packet_binding": {
+    "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T201000Z_9a0abe757eb3.json",
+    "sha256": "9a0abe757eb31062ba52ee989ae439945b947f128910fd1e1c8b5ec93a49fb41",
+    "embedded_packet_sha256_matches_observed_file_sha256": true
+  },
+  "review_scope": {
+    "history_review_mode": "Each anonymous history was reviewed independently in packet order. No pair relationship was inferred or disclosed.",
+    "mechanical_or_token_validity_reviewed": false,
+    "review_criteria": [
+      "naturalness",
+      "internal coherence",
+      "dangling references",
+      "conspicuous padding/balancing",
+      "fake actions",
+      "retained-tail coherence from the disclosed boundary",
+      "carrier compatibility/neutrality"
+    ]
+  },
+  "history_reviews": [
+    {
+      "anonymous_history_id": "history-01",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "The release-gate discussion, separate telemetry fact, and later handoff-format questions form a plausible operational exchange, with the level of procedural detail motivated by the requested runbook.",
+        "internal coherence": "The additive-migration observation and 6:40 rollback interval are correctly kept separate and correctly produce partner beta under the stated under-eight-minute conjunctive gate.",
+        "dangling references": "No material reference is left without an antecedent; deployment log, schema review, telemetry class, and shift roles are introduced before use.",
+        "conspicuous padding/balancing": "The post-decision material is compact and consistently about an auditable shift handoff; it does not expand into unrelated operational domains.",
+        "fake actions": "The assistant describes what the coordinator should verify and does not claim to have changed a system, contacted a person, or completed an external check.",
+        "retained-tail coherence from the disclosed boundary": "From message index 11, the user naturally asks for the handoff structure promised by the preceding runbook discussion, followed by status labels and a neutral opening sentence.",
+        "carrier compatibility/neutrality": "At the boundary, operating context and a local release decision have been established. The carrier adds no specific fact and the retained request remains intelligible after it."
+      },
+      "reason": "All stated calculations and distinctions remain coherent, the retained tail is operationally motivated, and the neutral carrier does not bias or disrupt the history."
+    },
+    {
+      "anonymous_history_id": "history-02",
+      "verdict": "REVISE",
+      "criterion_assessments": {
+        "naturalness": "The qualification setup through message 20 is credible, but the retained tail becomes an implausibly exhaustive tour of staffing, emergency equipment, rack orientation, rinses, photography, spare clamps, evacuation, ambient sensors, tags, setup cups, amendments, power loss, board status, and scrap handling in one assistant conversation.",
+        "internal coherence": "The qualification arithmetic is coherent: the five readings average 120.0, the +0.8 correction gives 120.8, its 119.7-121.9 uncertainty interval is within the guardrails, and the oven spread is 2.5. However, message 38 invents red and green tags even though message 37 specifies only two blank material-status tags and explicitly says color is not the status record.",
+        "dangling references": "Most terms are introduced, but the invented red/green characterization has no source in the history and therefore reads as an unsupported reference to absent tag colors.",
+        "conspicuous padding/balancing": "The fifteen retained-tail topic changes after the boundary are conspicuous padding. Many are individually sensible but collectively look constructed to distribute unrelated facts rather than like a concise second-shift handoff.",
+        "fake actions": "The assistant generally preserves proposed or conditional actions and does not claim that photographs, cleanup, maintenance inspection, tagging, or release occurred. The unsupported color assertion is a factual invention, not an external-action claim.",
+        "retained-tail coherence from the disclosed boundary": "Each retained exchange follows locally from the one before it only at the broad handoff level; the sequence remains understandable, but its breadth conflicts with the user's eventual request for a concise operational handoff.",
+        "carrier compatibility/neutrality": "The carrier can refer neutrally to the established Cabinet 2 storage decision and does not force an abrasion disposition. It is compatible, though it does not cure the tail's padding or the unsupported tag colors."
+      },
+      "reason": "Revise by removing the unsupported red/green tag assertion and substantially pruning or consolidating the retained tail so it resembles a real concise handoff rather than an omnibus checklist."
+    },
+    {
+      "anonymous_history_id": "history-03",
+      "verdict": "REVISE",
+      "criterion_assessments": {
+        "naturalness": "The qualification setup through message 20 is credible, but the retained tail becomes an implausibly exhaustive tour of staffing, emergency equipment, rack orientation, rinses, photography, spare clamps, evacuation, ambient sensors, tags, setup cups, amendments, power loss, board status, and scrap handling in one assistant conversation.",
+        "internal coherence": "The qualification evidence is internally usable: the 120.0 mean plus +4.8 correction is outside the 119.0-123.0 corrected-mean band, while the oven spread is 2.5. Independently, message 38 invents red and green tags even though message 37 specifies only two blank material-status tags and says color is not the status record.",
+        "dangling references": "Most terms are introduced, but the invented red/green characterization has no antecedent and reads as a reference to tag colors absent from the user-provided record.",
+        "conspicuous padding/balancing": "The fifteen retained-tail topic changes after the boundary are conspicuous padding. The cumulative breadth is far beyond what the stated concise shift-handoff purpose naturally calls for.",
+        "fake actions": "The assistant generally distinguishes conditional procedures from completed actions and does not claim that release, tagging, photography, cleanup, or maintenance work occurred. The tag-color statement is unsupported factual content rather than a claimed action.",
+        "retained-tail coherence from the disclosed boundary": "The retained messages remain locally interpretable as handoff procedures, but the long series of loosely connected contingencies weakens the tail's realism and focus.",
+        "carrier compatibility/neutrality": "The neutral carrier is compatible through the independently resolved Cabinet 2 storage mapping and does not state the deferred abrasion disposition. It does not introduce a target cue."
+      },
+      "reason": "Revise by removing the unsupported red/green tag assertion and pruning or grouping the retained-tail material into a realistically bounded handoff."
+    },
+    {
+      "anonymous_history_id": "history-04",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "A meal-program coordinator moving from hub selection to an evidence index and volunteer-change log is a plausible handoff workflow.",
+        "internal coherence": "Cedar's 41-minute cold hold fails the 45-minute screen, Harbor's 58-minute hold passes, and Harbor is correctly selected without misusing the shorter Cedar drive time.",
+        "dangling references": "The evidence index, change log, volunteer updates, and reconciliation entry all have clear antecedents and stated purposes.",
+        "conspicuous padding/balancing": "The retained tail stays focused on four compact record-keeping questions and does not accumulate unrelated facts.",
+        "fake actions": "The assistant proposes formats and procedures without claiming volunteer assignments, contacts, bookings, or deliveries occurred.",
+        "retained-tail coherence from the disclosed boundary": "Message 11 directly begins the volunteer handoff requested by the broader planning context; subsequent updates and conflict handling extend that same record.",
+        "carrier compatibility/neutrality": "The carrier truthfully remains generic after the hub decision and independent Thursday intake fact, and the retained volunteer section follows without contradiction."
+      },
+      "reason": "The decision chain, separate service fact, and retained record-keeping tail are coherent, concise, and compatible with the neutral carrier."
+    },
+    {
+      "anonymous_history_id": "history-05",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "The progression from route selection to evidence indexing and late volunteer updates is plausible for a community meal-program handoff.",
+        "internal coherence": "Both hubs clear the 45-minute cold-hold screen, and Cedar is correctly chosen because its 38-minute route is shorter than Harbor's 51-minute route.",
+        "dangling references": "All sources and later record labels are introduced before use; no unexplained person, document, or action appears.",
+        "conspicuous padding/balancing": "The tail contains a bounded set of closely related handoff-record questions and does not read as an unrelated fact inventory.",
+        "fake actions": "The assistant limits itself to suggested formats and does not claim that assignments, communications, bookings, or deliveries have occurred.",
+        "retained-tail coherence from the disclosed boundary": "The volunteer captain's evidence-index request at message 11 is a natural continuation from the completed hub decision and independent service-calendar fact.",
+        "carrier compatibility/neutrality": "The generic carrier accurately fits the established context and decision while withholding every target-specific fact; the retained tail remains grammatical and meaningful after insertion."
+      },
+      "reason": "The history is self-contained, operationally plausible, and free of unsupported actions or carrier-induced implications."
+    },
+    {
+      "anonymous_history_id": "history-06",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "The field-plan exchange moves plausibly from access constraints and radio assignment to the photographic inspection record and schedule.",
+        "internal coherence": "The assistant correctly recognizes that an 8.6-tonne truck requires at least a 9.1-tonne posting and does not prematurely choose a route from the 8.8-tonne posting alone; it also keeps Channel 3 independent of routing.",
+        "dangling references": "NF-17, the image views, depot timing, telemetry check, and cracked-base-plate contingency are all introduced explicitly.",
+        "conspicuous padding/balancing": "The retained tail is short and limited to documentation, schedule, and a closely related stop-work condition.",
+        "fake actions": "The assistant describes the planned record and conditional field response without claiming the photographs, battery connection, walk-around, or inspection already occurred.",
+        "retained-tail coherence from the disclosed boundary": "Message 11 explicitly opens the retained part of the handoff and is followed by a compatible scheduling detail; the sequence is coherent from the disclosed insertion point.",
+        "carrier compatibility/neutrality": "The carrier can refer to the independently resolved Channel 3 assignment as the local decision without resolving the still-unasked route question; it adds no route cue."
+      },
+      "reason": "The route inputs, independent radio fact, retained inspection plan, and shared carrier remain cleanly separated and coherent."
+    },
+    {
+      "anonymous_history_id": "history-07",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "The field-planning exchange is concise and plausibly transitions from access evidence to inspection documentation and scheduling.",
+        "internal coherence": "The 9.4-tonne posting exceeds the 8.6-tonne truck weight by 0.8 tonnes and the 0.88-metre gauge is below 1.20; the assistant correctly notes that all inputs are present without claiming the route before being asked. Channel 3 remains separate.",
+        "dangling references": "The site code, photographic views, depot schedule, telemetry check, and structural stop-work condition are all grounded in user statements.",
+        "conspicuous padding/balancing": "Only two focused retained-tail turns follow the boundary, with no conspicuous attempt to distribute extraneous facts.",
+        "fake actions": "No external work is claimed; photographs, the walk-around, travel, battery connection, and any return are all framed prospectively or conditionally.",
+        "retained-tail coherence from the disclosed boundary": "The user explicitly announces the retained inspection record at message 11, and the later schedule and cracked-base-plate rule fit that operational handoff.",
+        "carrier compatibility/neutrality": "The carrier is compatible via the resolved Channel 3 assignment and remains silent on the unasked route outcome, preserving target neutrality."
+      },
+      "reason": "The history is concise, internally consistent, free of fabricated actions, and unaffected by the neutral carrier insertion."
+    },
+    {
+      "anonymous_history_id": "history-08",
+      "verdict": "REVISE",
+      "criterion_assessments": {
+        "naturalness": "The production-handoff questions are plausible, but the early status language sounds engineered around a gate and does not read like a settled legal-review record because 'flagged' and 'cleared' are used without a stable status definition.",
+        "internal coherence": "Message 3 says the flagged list is exactly three and immediately says passage one 'was cleared'; message 4 then calls passages one and two 'cleared of naming' while still describing passage three as one of three flagged passages. It is unclear whether cleared passages remain flagged. In addition, the full name Marta Coelho is stated, but the history never establishes that this person is both living and private, which the literal gate requires.",
+        "dangling references": "The count of passages that remain flagged at close of review is left unresolved by the shifting use of 'cleared.' The living/private classification for the named person is also missing, so the stated gate cannot be fully applied from the record alone.",
+        "conspicuous padding/balancing": "The retained tail is moderately repetitive—structure, labels, opening line, re-flagging, and metadata—but remains within one production-record domain and is not by itself disqualifying.",
+        "fake actions": "The user states that the tracked rewrite and vendor assignment are confirmed; the assistant does not claim to redact text or contact anyone. Its description of Meridian Audio as handling 'narration' is slightly narrower than the user's statement that it will produce the audiobook and should be corrected to avoid unsupported scope.",
+        "retained-tail coherence from the disclosed boundary": "From message 11, the handoff-structure, uncertainty-label, re-flagging, and indexing questions form a coherent copyediting tail.",
+        "carrier compatibility/neutrality": "The carrier is compatible through the independently settled Meridian Audio assignment and does not state a queue. It cannot repair the underlying ambiguity about which passages remain flagged or whether the named individual satisfies the gate's classification."
+      },
+      "reason": "Revise the passage-status wording to state unambiguously which passages remain flagged at close, explicitly provide the gate-required living/private classification, and avoid recasting audiobook production as narration."
+    },
+    {
+      "anonymous_history_id": "history-09",
+      "verdict": "REVISE",
+      "criterion_assessments": {
+        "naturalness": "The copyediting handoff is plausible, but the initial evidence record uses 'flagged' and 'cleared' in a way that a real production coordinator would need clarified before applying the frozen queue rule.",
+        "internal coherence": "Message 3 calls the flagged list exactly three and then says passage one 'was cleared'; message 4 reframes passages one and two as 'cleared of naming' yet still treats passage three as one of three flagged passages. The history never clearly says whether all three still count as remaining flagged after the clearances and redaction.",
+        "dangling references": "The central count of passages remaining flagged at close is not stably resolved. The phrase 'cleared of naming' supplies a naming result but not an unambiguous flagged/unflagged status under the stated gate.",
+        "conspicuous padding/balancing": "The retained tail revisits record preservation in several forms, but the questions remain related to the production handoff and do not become an unrelated omnibus checklist.",
+        "fake actions": "The assistant does not claim to have redacted text or contacted the author. Its statement that Meridian Audio is confirmed for 'narration' goes beyond the user's narrower evidence that Meridian will produce the audiobook edition.",
+        "retained-tail coherence from the disclosed boundary": "The handoff structure, delayed-result labels, neutral opening line, re-flagging procedure, and metadata guidance are coherent after message 11.",
+        "carrier compatibility/neutrality": "The generic carrier fits through the separately settled vendor assignment and remains queue-neutral. The status-count ambiguity is already present before insertion and remains unresolved."
+      },
+      "reason": "Revise the record to distinguish naming clearance from flagged-list membership explicitly and describe Meridian only at the confirmed audiobook-production scope."
+    },
+    {
+      "anonymous_history_id": "history-10",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "The accessibility coordinator's progression from capacity decision to interpreter fact and morning-of record format is plausible and focused.",
+        "internal coherence": "The stated formula reserves four of ten spaces for eight requests, leaves six, and correctly selects Birch Hall because seven wheelchair-user spaces are required.",
+        "dangling references": "Registration form, interpreter roster, open items, status labels, and morning-of team all have clear antecedents.",
+        "conspicuous padding/balancing": "The tail contains only closely related run-sheet structure and uncertainty-label questions and is not conspicuously padded.",
+        "fake actions": "The assistant does not claim to contact attendees, reserve seats, or complete a check; it records user-confirmed facts and recommends procedures.",
+        "retained-tail coherence from the disclosed boundary": "Message 11 naturally continues the run-sheet discussion from message 9, and the later headcount and open-items language remains in that same context.",
+        "carrier compatibility/neutrality": "The carrier accurately abstracts the settled room decision and operating context without exposing either the room or interpreter time, and the anchor adds no fact."
+      },
+      "reason": "The capacity calculation, independent interpreter fact, retained run-sheet tail, and carrier insertion are all coherent and appropriately bounded."
+    },
+    {
+      "anonymous_history_id": "history-11",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "The release coordinator's decision, telemetry control fact, and overnight handoff questions form a realistic operational record.",
+        "internal coherence": "The additive migration passes one condition, but the 10:40 rollback exceeds the under-eight-minute threshold, so the staff-ring decision is correct.",
+        "dangling references": "Every evidence source, status label, open-item concept, and shift reference is introduced before use.",
+        "conspicuous padding/balancing": "The retained tail stays within a concise handoff-record theme and avoids unrelated operational details.",
+        "fake actions": "The assistant does not claim to deploy, modify systems, contact people, or perform undocumented checks.",
+        "retained-tail coherence from the disclosed boundary": "The handoff-structure request at message 11 directly follows the procedural runbook checklist, with later turns refining the same artifact.",
+        "carrier compatibility/neutrality": "The generic carrier fits the resolved release decision and preserves all constraints without disclosing the chosen ring or telemetry value."
+      },
+      "reason": "The release rule is correctly applied, the procedural tail remains natural, and the carrier is neutral and fully compatible."
+    },
+    {
+      "anonymous_history_id": "history-12",
+      "verdict": "PASS",
+      "criterion_assessments": {
+        "naturalness": "The seating-capacity exchange and later morning-of run-sheet planning are plausible for an accessibility coordinator.",
+        "internal coherence": "The stated formula reserves two of ten spaces for four companion requests, leaves eight, and correctly selects Aster Room because at least seven spaces remain.",
+        "dangling references": "All source logs, team roles, status labels, and open-item concepts are introduced clearly.",
+        "conspicuous padding/balancing": "The retained tail is a compact, single-purpose set of record-keeping questions rather than a balanced inventory of unrelated facts.",
+        "fake actions": "The assistant does not claim to reserve seats, contact attendees, or perform a check; confirmed facts come from the user's record.",
+        "retained-tail coherence from the disclosed boundary": "Message 11 is a direct continuation of the run-sheet checklist and remains coherent through the delayed-headcount and opening-line questions.",
+        "carrier compatibility/neutrality": "The carrier accurately abstracts a settled local decision without naming the room or interpreter time and is compatible with the full retained tail."
+      },
+      "reason": "The decision arithmetic, independent schedule fact, retained handoff content, and carrier are coherent and natural."
+    }
+  ],
+  "carrier_review": {
+    "verdict": "PASS",
+    "target_neutrality": "The carrier request asks only for a fixed neutral note. The carrier content names no domain, actor, quantity, option, outcome, source, or retained-tail fact, so it supplies no directional cue toward any local decision.",
+    "hidden_factual_implication": "The only substantive abstraction is that operating context exists and one local decision was resolved. Every history contains at least one resolved local decision before the boundary, including an independent control decision where the main calculated decision was deliberately deferred. The statement that the carrier introduces no unresolved action is also accurate because the note itself requests none.",
+    "compatibility_with_all_histories": "Insertion at each disclosed boundary leaves the next user message grammatically and pragmatically intelligible. The anchor request forbids adding or repeating facts, and the assistant's 'Acknowledged.' complies exactly.",
+    "reason": "The shared carrier and anchor are generic, fact-sparing, compatible with all twelve boundary contexts, and neutral with respect to any later question."
+  },
+  "overall": {
+    "verdict": "REVISE",
+    "counts": {
+      "PASS": 8,
+      "REVISE": 4,
+      "FAIL": 0
+    },
+    "reason": "The carrier passes and eight histories pass independently. Revision is required for the two coating histories because of conspicuous retained-tail padding and an unsupported tag-color assertion, and for the two publishing histories because the relationship between 'flagged' and 'cleared' is ambiguous under the literal gate; one also omits the gate-required living/private classification."
+  },
+  "provenance": {
+    "reviewer": "independent Codex subagent",
+    "runtime_model": "not exposed",
+    "runtime_effort": "not exposed",
+    "runtime_model_or_effort_inferred": false,
+    "review_outcomes_seen": false,
+    "subject_model_forward_performed": false,
+    "materials_consulted": [
+      "/Users/jeb/experimentation/AGENTS.md",
+      "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T201000Z_9a0abe757eb3.json"
+    ],
+    "excluded_materials_consulted": false,
+    "adjudication_role": "advisory; Sol owns final adjudication"
+  }
+}
