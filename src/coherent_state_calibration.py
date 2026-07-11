@@ -74,6 +74,9 @@ def run_calibration(model, tokenizer, conversation_id: str,
         source_kind="calibration_fresh_forced")
     context_messages, context_ids, fresh_snapshot = complete_assistant_context(
         model, tokenizer, fresh_messages, fresh)
+    correct.cache = None
+    wrong.cache = None
+    fresh.cache = None
 
     plant = {"id": "calibration", "category": "calibration",
              "probe": CALIBRATION_PROBE}

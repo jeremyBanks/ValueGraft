@@ -80,12 +80,19 @@ def promote_checkpoint(path: Path, existing: dict, additions: dict,
     current = existing.get("stage")
     if current not in STAGE_RANK or STAGE_RANK[stage] < STAGE_RANK[current]:
         raise ArtifactError(f"stage regression {current} -> {stage}")
-    out = dict(existing)
-    overlap = set(out) & set(additions)
-    unsafe = [k for k in overlap if out[k] != additions[k]]
-    if unsafe:
-        raise ArtifactError(f"promotion would overwrite fields: {unsafe}")
-    out.update(additions)
+    def merge(old, new, prefix=""):
+        out = dict(old)
+        for key, value in new.items():
+            where = f"{prefix}.{key}" if prefix else key
+            if key not in out:
+                out[key] = value
+            elif isinstance(out[key], dict) and isinstance(value, dict):
+                out[key] = merge(out[key], value, where)
+            elif out[key] != value:
+                raise ArtifactError(f"promotion would overwrite field: {where}")
+        return out
+
+    out = merge(existing, additions)
     out["stage"] = stage
     out["status"] = "scored" if stage == "scored" else stage
     atomic_write_json(path, out)

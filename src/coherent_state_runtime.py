@@ -183,9 +183,11 @@ def arm_snapshot(arm: str, fresh_snapshot: Snapshot, correct_rows: Snapshot,
         raise CoherentStateError(f"unsupported compacted arm: {arm}")
     diagnostics: list[dict] = []
     if arm == "F_fresh":
-        return [(k.clone(), v.clone()) for k, v in fresh_snapshot], diagnostics
-    moved_correct = move_key_rows(correct_rows, correct_delta, rope_theta)
+        # Scoring rebuilds/clones the cache before mutation. A shallow list avoids
+        # a needless second full destination copy for the identity arm.
+        return list(fresh_snapshot), diagnostics
     if arm == "C_coherent":
+        moved_correct = move_key_rows(correct_rows, correct_delta, rope_theta)
         return replace_summary_rows(fresh_snapshot, moved_correct,
                                     destination_start, use_keys=True,
                                     use_values=True), diagnostics
@@ -199,6 +201,7 @@ def arm_snapshot(arm: str, fresh_snapshot: Snapshot, correct_rows: Snapshot,
                                     destination_start, use_keys=False,
                                     use_values=True), diagnostics
     if arm == "K_only":
+        moved_correct = move_key_rows(correct_rows, correct_delta, rope_theta)
         return replace_summary_rows(fresh_snapshot, moved_correct,
                                     destination_start, use_keys=True,
                                     use_values=False), diagnostics
