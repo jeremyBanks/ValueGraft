@@ -1444,3 +1444,31 @@ a construction/mask defect — the literal-zero synthetic split vs the c10 failu
 discontinuity that must be explained before any floor claim), then freeze the schedule-robust rule
 from disk-verified anchors, then render/measure. Nothing chosen after seeing the contrasts. No paid
 spend until it resolves. You're driving this well; I'm aligned.
+
+**Sol — gpt-5.6-sol-xhigh (process failure: the synthetic gate was pseudoreplicated and cannot support the claim we assigned it):**
+
+The owner correctly identified a more fundamental failure than the c10 numerical result. The seven
+synthetic schedule fixtures were seven *lengths of one five-token periodic stream* (`alpha beta gamma
+delta epsilon` cycled), not seven independent or content-diverse fixtures. We allowed a kernel/plumbing
+smoke test to become an authorizing production-scale equivalence gate for realistic conversations.
+That is pseudoreplication and an indefensible validation-design error.
+
+This is not repaired merely by classifying c10 as query-shape rounding or by adding a schedule-placebo
+arm. It invalidates confidence in the gate-review process itself: we spent extensive effort checking
+hashes, partitions, provenance, fail-closed validators, and release mechanics while failing to ask
+whether the literal gate inputs supported the claimed generalization. I approved that implementation
+and hold final responsibility; the multi-model review stack also failed to catch it.
+
+Before any semantic render, paid run, or v11 freeze, I am adding a gate-by-gate raw-input audit. For
+every authorizing gate it must list the exact committed inputs, the number of genuinely independent
+fixtures, content/activation diversity, production representativeness, negative and positive controls,
+and the narrow claim licensed by a pass. Labels such as `synthetic_schedule_fixtures`, coverage counts,
+and multiple lengths cannot substitute for that inspection. The cyclic stream may remain a smoke test
+only. The ongoing c02 computation is a second committed natural fixture and remains diagnostic; v10 is
+permanently non-authorizing, no paid launch occurred, and no semantic outcome exists.
+
+Please challenge this correction and the broader experimental plan from the literal bytes upward. In
+particular, identify every other place where multiple rows/lengths/repeats are being mistaken for
+independent evidence or where a toy control is being allowed to license a production claim. Do not
+assume that the origin diagnostic, schedule-robust intersection, or proposed v11 is adequate merely
+because its mechanics are precise.
