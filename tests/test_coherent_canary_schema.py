@@ -9,6 +9,8 @@ from coherent_canary_schema import (
     CanarySchemaError,
     CarrierRegions,
     ReplayEvent,
+    ReplayPlan,
+    require_matching_geometry,
     validate_arm_name,
 )
 
@@ -44,3 +46,32 @@ def test_arm_sources_are_explicit():
     assert validate_arm_name("FC") == ("F", "C")
     with pytest.raises(CanarySchemaError):
         validate_arm_name("G_correct")
+
+
+def test_replay_plan_requires_contiguous_event_coverage_and_matching_geometry():
+    regions = CarrierRegions(2, 3, 4, 5)
+    left = ReplayPlan(
+        token_ids=[1, 2, 3, 4, 5],
+        message_start_positions=[0, 2],
+        events=[
+            ReplayEvent("prefill", "prefix", "system", 0, 0, 2),
+            ReplayEvent("q1", "content", "assistant", 1, 2, 3),
+            ReplayEvent("prefill", "suffix", "assistant", 1, 3, 5),
+        ],
+        regions=regions,
+    ).validate()
+    right = ReplayPlan(
+        token_ids=[9, 8, 7, 6, 5],
+        message_start_positions=[0, 2],
+        events=list(left.events),
+        regions=regions,
+    ).validate()
+    require_matching_geometry(left, right)
+    broken = ReplayPlan(
+        token_ids=[1, 2, 3, 4, 5],
+        message_start_positions=[0, 2],
+        events=[ReplayEvent("prefill", "all", "system", 0, 0, 5)],
+        regions=regions,
+    )
+    with pytest.raises(CanarySchemaError):
+        require_matching_geometry(left, broken)

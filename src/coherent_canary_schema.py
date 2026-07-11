@@ -7,7 +7,7 @@ It contains no model execution.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Literal
+from typing import Literal, Sequence
 
 
 DESIGN_ID = "coherent-state-decision-canary-v12"
@@ -110,7 +110,63 @@ class CarrierRegions:
         raise CanarySchemaError(f"unknown carrier region: {region}")
 
 
+@dataclass(frozen=True)
+class ReplayPlan:
+    token_ids: list[int]
+    message_start_positions: list[int]
+    events: list[ReplayEvent]
+    regions: CarrierRegions
+
+    def validate(self) -> "ReplayPlan":
+        if not self.token_ids or not self.events:
+            raise CanarySchemaError("replay plan is empty")
+        if not self.message_start_positions or self.message_start_positions[0] != 0:
+            raise CanarySchemaError("message starts do not begin at zero")
+        if any(right <= left for left, right in zip(
+                self.message_start_positions, self.message_start_positions[1:])):
+            raise CanarySchemaError("message starts are not strictly increasing")
+        expected = 0
+        for event in self.events:
+            event.validate()
+            if event.token_start != expected:
+                raise CanarySchemaError(
+                    f"event coverage gap/overlap: {event.token_start} != {expected}")
+            expected = event.token_end
+        if expected != len(self.token_ids):
+            raise CanarySchemaError(
+                f"event coverage ends at {expected}, tokens end at {len(self.token_ids)}")
+        if self.regions.anchor_end > len(self.token_ids):
+            raise CanarySchemaError("carrier regions exceed replay token stream")
+        self.regions.validate()
+        return self
+
+    def geometry(self) -> dict:
+        self.validate()
+        return {
+            "token_count": len(self.token_ids),
+            "message_start_positions": list(self.message_start_positions),
+            "events": [
+                {
+                    "kind": event.kind,
+                    "label": event.label,
+                    "role": event.role,
+                    "message_index": event.message_index,
+                    "token_start": event.token_start,
+                    "token_end": event.token_end,
+                    "width": event.width,
+                }
+                for event in self.events
+            ],
+            "regions": asdict(self.regions),
+        }
+
+
 def validate_arm_name(arm: str) -> tuple[str, str]:
     if arm not in ARM_GRID:
         raise CanarySchemaError(f"unknown canary arm: {arm}")
     return arm[0], arm[1]
+
+
+def require_matching_geometry(left: ReplayPlan, right: ReplayPlan) -> None:
+    if left.geometry() != right.geometry():
+        raise CanarySchemaError("role-native replay geometry differs")
