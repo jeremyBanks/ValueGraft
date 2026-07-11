@@ -1002,6 +1002,8 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
         binding["gate_payload_sha256"] = "0" * 64
     fingerprint = {
         **identity(),
+        "code_commit": subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "frozen_order": list(MODULE.FROZEN_ORDER),
         "wrong_donors": MODULE.WRONG_DONORS,
         "scenario_sha256": hashlib.sha256(
@@ -1046,7 +1048,7 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
             saved_summary["token_ids"],
             sources["correct_actual"]["prefix_token_ids"])
         scenario, plants, targets = MODULE._semantic_scenario_and_targets(
-            ROOT, cid)
+            ROOT, fingerprint["code_commit"], cid)
         donor_id = MODULE.WRONG_DONORS[cid]
         donor = json.loads((ROOT / f"data/synthetic/{donor_id}.json").read_text())
         reconstructed = MODULE._reconstruct_donor_replacements(

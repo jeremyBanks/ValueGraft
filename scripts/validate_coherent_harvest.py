@@ -992,9 +992,17 @@ def _validate_gapped_destination_schedule(
         raise ValueError(f"{label} gapped-destination terminal aggregate differs")
 
 
-def _semantic_scenario_and_targets(repo: Path, cid: str) \
+def _semantic_launch_bytes(repo: Path, commit: str, relative: str) -> bytes:
+    if (not isinstance(commit, str) or len(commit) != 40 or
+            any(char not in "0123456789abcdef" for char in commit.lower())):
+        raise ValueError("semantic launch commit is malformed")
+    return _launch_blob(repo, commit, relative)
+
+
+def _semantic_scenario_and_targets(repo: Path, commit: str, cid: str) \
         -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, dict[str, Any]]]:
-    scenarios = json.loads((repo / "data/scenarios.json").read_text())
+    scenarios = json.loads(_semantic_launch_bytes(
+        repo, commit, "data/scenarios.json"))
     scenario = next((row for row in scenarios if row.get("id") == cid), None)
     if not isinstance(scenario, dict):
         raise ValueError(f"semantic scenario absent: {cid}")
@@ -1005,7 +1013,8 @@ def _semantic_scenario_and_targets(repo: Path, cid: str) \
         if not isinstance(plant, dict):
             raise ValueError(f"semantic primary plant absent: {cid}/{category}")
         selected.append(plant)
-    raw_targets = json.loads((repo / "data/coherent_state_targets.json").read_text())
+    raw_targets = json.loads(_semantic_launch_bytes(
+        repo, commit, "data/coherent_state_targets.json"))
     rows = raw_targets.get("targets") if isinstance(raw_targets, dict) else raw_targets
     targets = {row.get("plant_id"): row for row in rows or []}
     expected_targets = {}
@@ -1257,7 +1266,17 @@ def _validate_main_semantic_provenance(doc: dict[str, Any], path: Path) -> None:
     position = doc.get("order_position")
     if cid not in FROZEN_ORDER or position != FROZEN_ORDER.index(cid) + 1:
         raise ValueError(f"{path.name} frozen semantic identity differs")
-    scenario, plants, targets = _semantic_scenario_and_targets(repo, cid)
+    fingerprint = doc.get("fingerprint") or {}
+    commit = fingerprint.get("code_commit")
+    scenario_raw = _semantic_launch_bytes(repo, commit, "data/scenarios.json")
+    targets_raw = _semantic_launch_bytes(
+        repo, commit, "data/coherent_state_targets.json")
+    if (fingerprint.get("scenario_sha256") !=
+            hashlib.sha256(scenario_raw).hexdigest() or
+            fingerprint.get("targets_sha256") !=
+            hashlib.sha256(targets_raw).hexdigest()):
+        raise ValueError(f"{path.name} launch input hashes differ")
+    scenario, plants, targets = _semantic_scenario_and_targets(repo, commit, cid)
     tokenizer = _validation_tokenizer()
     _validate_render_provenance(
         doc, scenario, position, tokenizer, path.name)
@@ -1277,7 +1296,9 @@ def _validate_main_semantic_provenance(doc: dict[str, Any], path: Path) -> None:
         raise ValueError(f"{path.name} target provenance differs")
 
     donor_id = WRONG_DONORS[cid]
-    donor = json.loads((repo / f"data/synthetic/{donor_id}.json").read_text())
+    donor_relative = f"data/synthetic/{donor_id}.json"
+    donor_raw = _semantic_launch_bytes(repo, commit, donor_relative)
+    donor = json.loads(donor_raw)
     reconstructed = _reconstruct_donor_replacements(
         tokenizer, conversation, donor, cid)
     wrong_construction = doc["sources"].get("wrong_exact_length_construction")
@@ -1290,7 +1311,6 @@ def _validate_main_semantic_provenance(doc: dict[str, Any], path: Path) -> None:
     expected_replacements = [
         {key: row[key] for key in replacement_keys}
         for row in reconstructed["replacements"]]
-    donor_raw = (repo / f"data/synthetic/{donor_id}.json").read_bytes()
     expected_wrong_fields = {
         "correct_ids": reconstructed["correct_ids"],
         "wrong_ids": reconstructed["wrong_ids"],
@@ -1307,7 +1327,7 @@ def _validate_main_semantic_provenance(doc: dict[str, Any], path: Path) -> None:
         "structural_positions_exact": True,
         "replacement_special_token_count": 0,
         "external_donor": {
-            "donor_id": donor_id, "path": f"data/synthetic/{donor_id}.json",
+            "donor_id": donor_id, "path": donor_relative,
             "sha256": hashlib.sha256(donor_raw).hexdigest(),
             "recorded_author": (donor.get("meta") or {}).get("author"),
             "subject_native": False,
