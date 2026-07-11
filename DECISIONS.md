@@ -365,3 +365,35 @@ gym data "for the sake of having it." Plan: after each champion pod finishes, ru
 model before shutdown. LET THE 4 IN-FLIGHT CHAMPION PODS COMPLETE (render+bank+champion) — don't kill them.
 Going forward, prioritize resources per Fable (std-summary arm) EXCEPT capture gym where marginal cost is low.
 Capture everything very well (owner).
+
+## Coherent-state v10 execution decisions (2026-07-11)
+
+- **Keep v10 summary-only; reject the proposed one-arm native-tail transplant.** Recent
+  prior work (*Models Take Notes at Prefill*, arXiv:2606.17107) makes distributed
+  downstream state a binding interpretation concern, but the suggested
+  `G_correct_tail` arm is not same-position or rotation-free in this layout. Native
+  retained-tail tokens occur before the summary request in the source and after the
+  generated summary in the compacted destination. Bit-copying their K/V leaves keys
+  RoPE-encoded for old positions; moving them requires the lossy key transformation
+  retired by Amendments 1/4. One correct-tail arm also lacks history specificity and
+  tail-sensitivity controls. Two independent audits plus a deep `claude-fable-5`
+  review converged; Claude Opus 4.8 withdrew the arm after inspecting the geometry.
+  V10 remains valuable because it recomputes the tail causally after the summary
+  intervention, so summary-state effects may propagate through it. Binding null:
+  **no detected downstream-usable correct-history-specific channel carried by the
+  generated summary rows under this fixed assay**, never “no write-time state exists
+  elsewhere.” A same-position correct/wrong request/header or immediate-post-summary
+  assay is a separately preregistered follow-up reusing saved renders. Evidence:
+  `notes/2026071164-fable-tail-channel-design-review.md`,
+  `notes/2026071166-sol-models-take-notes-primary-source-reading.md`, and the final
+  turns of `notes/2026071156-sol-fable-execution-coordination.md`.
+
+- **Do not replace the required v10 local CPU ladder with a GPU-pod proxy.** The live
+  ladder already uses `torch.bfloat16`; it is not a float32 surrogate. Amendment 10
+  requires a fresh 0.6B bf16 eager CPU ladder, and `src/l_coherent_state_hf.py` aborts
+  when the model device is not CPU. A GPU execution would require changing frozen
+  code/identity and could not authorize v10. A pod-host CPU is of unknown speed and
+  kernel behavior, and running it only as supplemental evidence would not shorten the
+  authorizing path. Continue the healthy Mac run, committing each durable case. Revisit
+  a documented CPU-host amendment only after an actual failure or corroborated
+  non-compute stall; retain the paid A100 for the exact 30B technical-only gate.
