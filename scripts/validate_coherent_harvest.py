@@ -72,6 +72,7 @@ WRONG_DONORS = {
     "c05": "c25", "c09": "c26", "c06": "c27",
     "c12": "c28", "c08": "c29", "c03": "c30",
 }
+EXTERNAL_AUTHORS = {"sonnet", "opus", "codex-gpt5.5", "sonnet-render"}
 OLD_ARMS = {
     "F_fresh", "C_coherent", "W_wrong", "V_value", "K_key", "D_delta",
     "G_delta",
@@ -156,6 +157,115 @@ def _generation_prefix_ids(tokenizer, messages: list[dict[str, Any]]) -> list[in
     if isinstance(ids, list) and ids and isinstance(ids[0], list):
         ids = ids[0]
     return [int(value) for value in ids]
+
+
+def _validate_native_messages(conversation: dict[str, Any], label: str) -> int:
+    messages = conversation.get("messages")
+    middle_end = (conversation.get("sections") or {}).get("middle_end_msg")
+    if (not isinstance(messages, list) or len(messages) < 3 or
+            not isinstance(middle_end, int) or
+            not 1 < middle_end < len(messages) or
+            (messages[0] or {}).get("role") != "system" or
+            (messages[middle_end] or {}).get("role") != "user"):
+        raise ValueError(f"{label} native conversation structure differs")
+    for index, message in enumerate(messages[1:], 1):
+        expected = "user" if index % 2 else "assistant"
+        if not isinstance(message, dict) or message.get("role") != expected:
+            raise ValueError(f"{label} message role order differs")
+    return middle_end
+
+
+def _unique_token_span(container: list[int], needle: list[int], lo: int,
+                       hi: int, label: str) -> tuple[int, int]:
+    matches = [index for index in range(lo, hi - len(needle) + 1)
+               if container[index:index + len(needle)] == needle]
+    if len(matches) != 1:
+        raise ValueError(f"{label} content span is not unique: {matches}")
+    return matches[0], matches[0] + len(needle)
+
+
+def _reconstruct_donor_replacements(
+        tokenizer, target: dict[str, Any], donor: dict[str, Any],
+        cid: str) -> dict[str, Any]:
+    """Independently rebuild the exact frozen wrong-prefix construction."""
+    target_end = _validate_native_messages(target, f"donor target {cid}")
+    donor_end = _validate_native_messages(donor, f"donor source {cid}")
+    messages = list(target["messages"]) + [
+        {"role": "user", "content": SUMMARY_REQUEST}]
+    correct = _generation_prefix_ids(tokenizer, messages)
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    if len(marker_ids) != 1:
+        raise ValueError("production tokenizer im_start marker is not singular")
+    starts = [index for index, token in enumerate(correct)
+              if token == int(marker_ids[0])]
+    if len(starts) != len(messages) + 1:
+        raise ValueError(f"donor target {cid} message-boundary coverage differs")
+    special = {int(value) for value in tokenizer.all_special_ids}
+    donor_by_role: dict[str, list[tuple[int, list[int]]]] = {}
+    for donor_index in range(1, donor_end):
+        message = donor["messages"][donor_index]
+        pool = [int(value) for value in tokenizer.encode(
+            message["content"], add_special_tokens=False)]
+        if not pool or any(value in special for value in pool):
+            raise ValueError(f"donor source {cid} has empty/special content")
+        donor_by_role.setdefault(message["role"], []).append(
+            (donor_index, pool))
+
+    wrong = list(correct)
+    content: set[int] = set()
+    role_ordinals: dict[str, int] = {}
+    replacements = []
+    for target_index in range(1, target_end):
+        message = messages[target_index]
+        target_ids = [int(value) for value in tokenizer.encode(
+            message["content"], add_special_tokens=False)]
+        if not target_ids:
+            raise ValueError(f"donor target {cid} has empty content")
+        start, end = _unique_token_span(
+            correct, target_ids, starts[target_index], starts[target_index + 1],
+            f"donor target {cid} message {target_index}")
+        pools = donor_by_role.get(message["role"], [])
+        if not pools:
+            raise ValueError(f"donor source {cid} lacks role {message['role']}")
+        ordinal = role_ordinals.get(message["role"], 0)
+        role_ordinals[message["role"]] = ordinal + 1
+        donor_index, pool = pools[ordinal % len(pools)]
+        replacement_ids = [pool[index % len(pool)]
+                           for index in range(end - start)]
+        wrong[start:end] = replacement_ids
+        content.update(range(start, end))
+        replacements.append({
+            "target_message_index": target_index,
+            "donor_message_index": donor_index,
+            "role": message["role"],
+            "start": start,
+            "end": end,
+            "target_ids": target_ids,
+            "donor_pool_ids": pool,
+            "replacement_ids": replacement_ids,
+            "cycles": math.ceil(len(replacement_ids) / len(pool)),
+            "target_ids_sha256": _sha256_ints(
+                target_ids, f"donor[{cid}].target_ids"),
+            "source_pool_sha256": _sha256_ints(
+                pool, f"donor[{cid}].donor_pool_ids"),
+            "replacement_sha256": _sha256_ints(
+                replacement_ids, f"donor[{cid}].replacement_ids"),
+            "length": end - start,
+            "contains_special_token": any(
+                value in special for value in replacement_ids),
+        })
+    structural = [index for index in range(len(correct))
+                  if index not in content]
+    changed = [index for index, pair in enumerate(zip(correct, wrong))
+               if pair[0] != pair[1]]
+    return {
+        "correct_ids": correct,
+        "wrong_ids": wrong,
+        "structural": structural,
+        "content": sorted(content),
+        "changed": changed,
+        "replacements": replacements,
+    }
 
 
 def _backend_payload_sha256(doc: dict[str, Any]) -> str:
@@ -343,6 +453,106 @@ def _validate_actual_render_schedule(doc: dict[str, Any], label: str) -> None:
         label=f"{label}.actual_render_schedule")
 
 
+def _validate_target_score(doc: Any, label: str) -> float:
+    """Recompute one persisted target mean from its token log-probabilities."""
+    if not isinstance(doc, dict):
+        raise ValueError(f"{label} target score is not an object")
+    token_ids = doc.get("token_ids")
+    token_logprobs = doc.get("token_logprobs")
+    if (not isinstance(token_ids, list) or not token_ids or
+            any(not isinstance(token, int) for token in token_ids) or
+            not isinstance(token_logprobs, list) or not token_logprobs or
+            len(token_ids) != len(token_logprobs)):
+        raise ValueError(f"{label} target token/logprob coverage differs")
+    values = [
+        _finite(value, f"{label}.token_logprobs[{index}]")
+        for index, value in enumerate(token_logprobs)
+    ]
+    recomputed = sum(values) / len(values)
+    if _finite(doc.get("mean_logprob"), f"{label}.mean_logprob") != recomputed:
+        raise ValueError(f"{label} target mean_logprob differs")
+    return recomputed
+
+
+def _validate_arm_score(doc: Any, label: str) -> tuple[float, list[tuple[Any, ...]]]:
+    """Recompute plant margins and the conversation-level arm aggregate."""
+    if not isinstance(doc, dict):
+        raise ValueError(f"{label} arm score is not an object")
+    plants = doc.get("plants")
+    if not isinstance(plants, list) or not plants:
+        raise ValueError(f"{label} arm has no plant rows")
+    margins: list[float] = []
+    identities: list[tuple[Any, ...]] = []
+    seen_ids: set[Any] = set()
+    for index, row in enumerate(plants):
+        row_label = f"{label}.plants[{index}]"
+        if not isinstance(row, dict):
+            raise ValueError(f"{row_label} is not an object")
+        plant_id = row.get("plant_id")
+        if not isinstance(plant_id, str) or not plant_id or plant_id in seen_ids:
+            raise ValueError(f"{row_label} plant identity differs")
+        seen_ids.add(plant_id)
+        identities.append((plant_id, row.get("category"), row.get("probe")))
+        correct = _validate_target_score(row.get("correct"), f"{row_label}.correct")
+        counterfactual = _validate_target_score(
+            row.get("counterfactual"), f"{row_label}.counterfactual")
+        recomputed_margin = correct - counterfactual
+        if _finite(row.get("margin"), f"{row_label}.margin") != recomputed_margin:
+            raise ValueError(f"{row_label} plant margin differs")
+        margins.append(recomputed_margin)
+    recomputed_conversation = sum(margins) / len(margins)
+    if _finite(doc.get("conversation_margin"),
+               f"{label}.conversation_margin") != recomputed_conversation:
+        raise ValueError(f"{label} conversation_margin differs")
+    return recomputed_conversation, identities
+
+
+def _validate_semantic_score_aggregates(doc: dict[str, Any], label: str) -> None:
+    """Independently derive every decision-bearing semantic aggregate."""
+    arm_scores = doc.get("arm_scores")
+    outcomes = doc.get("conversation_outcomes")
+    if not isinstance(arm_scores, dict) or not isinstance(outcomes, dict):
+        raise ValueError(f"{label} semantic score maps are malformed")
+    expected_plants = None
+    for arm in ARMS:
+        aggregate, plant_identities = _validate_arm_score(
+            arm_scores.get(arm), f"{label}.arm_scores.{arm}")
+        if expected_plants is None:
+            expected_plants = plant_identities
+        elif plant_identities != expected_plants:
+            raise ValueError(f"{label} arm plant coverage/order differs")
+        if _finite(outcomes.get(arm),
+                   f"{label}.conversation_outcomes.{arm}") != aggregate:
+            raise ValueError(f"{label} conversation outcome differs: {arm}")
+
+    calibration = doc.get("calibration")
+    persisted_calibration = doc.get("calibration_outcomes")
+    if not isinstance(calibration, dict) or not isinstance(
+            persisted_calibration, dict):
+        raise ValueError(f"{label} calibration evidence is malformed")
+    details = calibration.get("arm_details")
+    embedded_outcomes = calibration.get("outcomes")
+    calibration_arms = {"G_fresh", "G_correct", "G_wrong"}
+    if (not isinstance(details, dict) or set(details) != calibration_arms or
+            not isinstance(embedded_outcomes, dict) or
+            set(embedded_outcomes) != calibration_arms or
+            set(persisted_calibration) != calibration_arms):
+        raise ValueError(f"{label} calibration arm coverage differs")
+    expected_calibration_plants = None
+    for arm in sorted(calibration_arms):
+        aggregate, plant_identities = _validate_arm_score(
+            details[arm], f"{label}.calibration.arm_details.{arm}")
+        if expected_calibration_plants is None:
+            expected_calibration_plants = plant_identities
+        elif plant_identities != expected_calibration_plants:
+            raise ValueError(f"{label} calibration plant coverage/order differs")
+        if (_finite(embedded_outcomes.get(arm),
+                    f"{label}.calibration.outcomes.{arm}") != aggregate or
+                _finite(persisted_calibration.get(arm),
+                        f"{label}.calibration_outcomes.{arm}") != aggregate):
+            raise ValueError(f"{label} calibration outcome differs: {arm}")
+
+
 def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
                          expected_fingerprint: dict[str, Any] | None = None) -> None:
     _require_identity(doc, path.name)
@@ -366,6 +576,7 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
             stale = OLD_ARMS.intersection(arms)
             if stale:
                 raise ValueError(f"{path.name} contains retired arms {sorted(stale)}")
+        _validate_semantic_score_aggregates(doc, path.name)
         gates = doc.get("gates")
         if not isinstance(gates, dict) or gates.get("technical_pass") is not True:
             raise ValueError(f"{path.name} lacks technical_pass=true")
@@ -1161,6 +1372,8 @@ def _validate_v7_pass_gates(
     if donor.get("canonical_payload_sha256") != \
             _canonical_json_sha256(donor_unhashed):
         raise ValueError("external donor canonical payload hash differs")
+    observed_donor_ids: list[str] = []
+    observed_donor_hashes: list[str] = []
     for index, (row, cid) in enumerate(zip(donor_rows, FROZEN_ORDER), 1):
         if (row.get("order_position") != index or row.get("target_id") != cid or
                 row.get("donor_id") != WRONG_DONORS[cid] or
@@ -1175,9 +1388,11 @@ def _validate_v7_pass_gates(
                 int(row.get("changed_position_count", 0)) < 1):
             raise ValueError(f"external donor row differs: {cid}")
         donor_id = WRONG_DONORS[cid]
+        observed_donor_ids.append(donor_id)
         if (row.get("target_path") != f"data/synthetic/{cid}.json" or
                 row.get("donor_path") != f"data/synthetic/{donor_id}.json"):
             raise ValueError(f"external donor source paths differ: {cid}")
+        target_doc = donor_doc = None
         if verify_sources:
             if not isinstance(fingerprint, dict) or repo_root is None:
                 raise ValueError("strict donor validation lacks fingerprint/root")
@@ -1199,10 +1414,14 @@ def _validate_v7_pass_gates(
                         (inventory.get(relative) or {}).get("bytes") != len(raw_bytes) or
                         (inventory.get(relative) or {}).get("sha256") != raw_sha):
                     raise ValueError(f"external donor source binding differs: {cid}")
+            target_doc = json.loads((repo_root / row["target_path"]).read_bytes())
             donor_doc = json.loads((repo_root / row["donor_path"]).read_bytes())
-            if row.get("donor_recorded_author") != (
-                    donor_doc.get("meta") or {}).get("author"):
+            donor_author = (donor_doc.get("meta") or {}).get("author")
+            if (row.get("donor_recorded_author") != donor_author or
+                    donor_author not in EXTERNAL_AUTHORS):
                 raise ValueError(f"external donor author differs: {cid}")
+            observed_donor_hashes.append(hashlib.sha256(
+                (repo_root / row["donor_path"]).read_bytes()).hexdigest())
         correct_ids = row.get("correct_prefix_ids")
         structural = row.get("structural_positions")
         content = row.get("content_positions")
@@ -1229,6 +1448,8 @@ def _validate_v7_pass_gates(
                 not replacements):
             raise ValueError(f"external donor replacements differ: {cid}")
         covered: list[int] = []
+        tokenizer = _validation_tokenizer()
+        special_ids = {int(value) for value in tokenizer.all_special_ids}
         for replacement in replacements:
             if not isinstance(replacement, dict):
                 raise ValueError(f"external donor replacement malformed: {cid}")
@@ -1236,7 +1457,9 @@ def _validate_v7_pass_gates(
             if (not isinstance(start, int) or not isinstance(end, int) or
                     not 0 <= start < end <= len(correct_ids) or
                     replacement.get("length") != end - start or
-                    replacement.get("contains_special_token") is not False):
+                    replacement.get("contains_special_token") is not False or
+                    any(int(value) in special_ids for value in
+                        (replacement.get("replacement_ids") or []))):
                 raise ValueError(f"external donor replacement bounds differ: {cid}")
             for values_key, hash_key in (
                     ("target_ids", "target_ids_sha256"),
@@ -1274,6 +1497,25 @@ def _validate_v7_pass_gates(
                 _sha256_ints(reconstructed, f"donor[{cid}].wrong") !=
                 row.get("wrong_prefix_sha256")):
             raise ValueError(f"external donor reconstructed prefix differs: {cid}")
+        if verify_sources:
+            expected = _reconstruct_donor_replacements(
+                tokenizer, target_doc, donor_doc, cid)
+            if (correct_ids != expected["correct_ids"] or
+                    structural != expected["structural"] or
+                    content != expected["content"] or
+                    changed != expected["changed"] or
+                    replacements != expected["replacements"] or
+                    reconstructed != expected["wrong_ids"]):
+                raise ValueError(
+                    f"external donor source-derived reconstruction differs: {cid}")
+
+    if verify_sources and (
+            len(set(observed_donor_ids)) != 12 or
+            set(observed_donor_ids) & set(FROZEN_ORDER) or
+            len(set(observed_donor_hashes)) != 12 or
+            donor.get("n_unique_donor_ids") != len(set(observed_donor_ids)) or
+            donor.get("n_unique_donor_hashes") != len(set(observed_donor_hashes))):
+        raise ValueError("external donor independently recomputed uniqueness differs")
 
     retired = _required_pass_stage(gates, "retired_G_delta")
     retired_raw = retired.get("raw") or {}

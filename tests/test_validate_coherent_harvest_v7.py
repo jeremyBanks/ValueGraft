@@ -96,6 +96,31 @@ def schedule_row() -> dict:
     }
 
 
+def target_score(token_logprobs: list[float], *, token_base: int = 100) -> dict:
+    return {
+        "text": "fixture target",
+        "token_ids": list(range(token_base, token_base + len(token_logprobs))),
+        "token_logprobs": token_logprobs,
+        "mean_logprob": sum(token_logprobs) / len(token_logprobs),
+        "probe_suffix_ids": [90],
+        "logical_position_ids": list(range(10, 10 + len(token_logprobs))),
+        "physical_cache_positions": list(range(5, 5 + len(token_logprobs))),
+    }
+
+
+def arm_score(*, offset: float = 0.0, plant_id: str = "fixture-plant") -> dict:
+    correct = target_score([-1.0 + offset, -2.0 + offset])
+    counterfactual = target_score(
+        [-2.0 + offset, -3.0 + offset], token_base=200)
+    margin = correct["mean_logprob"] - counterfactual["mean_logprob"]
+    row = {
+        "plant_id": plant_id, "category": "referent", "probe": "Which?",
+        "correct": correct, "counterfactual": counterfactual,
+        "margin": margin,
+    }
+    return {"plants": [row], "conversation_margin": margin}
+
+
 def partition(length: int) -> list[int]:
     widths = []
     while length:
@@ -551,7 +576,16 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
         **identity(), "status": "VERIFIED", "resume_probe_verified": True,
     })
     for position, cid in enumerate(MODULE.FROZEN_ORDER[:6], 1):
-        arms = {arm: {"conversation_margin": 0.0} for arm in MODULE.ARMS}
+        arms = {arm: arm_score(offset=index / 10)
+                for index, arm in enumerate(MODULE.ARMS)}
+        calibration_details = {
+            arm: arm_score(offset=index / 20, plant_id="calibration")
+            for index, arm in enumerate(("G_fresh", "G_correct", "G_wrong"))
+        }
+        calibration_outcomes = {
+            arm: score["conversation_margin"]
+            for arm, score in calibration_details.items()
+        }
         rendered_conversation = json.loads((
             ROOT / "data" / "synthetic" / f"{cid}.json").read_text())
         case_identity = _real_case_identity(cid)
@@ -576,7 +610,13 @@ def semantic_tree(root: Path, *, corrupt_binding: bool = False) -> None:
             "pre_score_schedule_equivalence": actual_schedule,
             "summary": {}, "sources": {},
             "destination": {}, "arm_scores": arms,
-            "conversation_outcomes": {arm: 0.0 for arm in MODULE.ARMS},
+            "conversation_outcomes": {
+                arm: score["conversation_margin"] for arm, score in arms.items()},
+            "calibration": {
+                "arm_details": calibration_details,
+                "outcomes": calibration_outcomes,
+            },
+            "calibration_outcomes": calibration_outcomes,
             "gates": {"technical_pass": True}, "runtime": {},
             "fingerprint": fingerprint,
         })
@@ -739,12 +779,92 @@ def test_independent_v7_science_validation_recomputes_raw_evidence(mutation, mat
             static_fingerprint=science_fingerprint(), verify_sources=False)
 
 
+def test_independent_donor_validation_rejects_special_token_counterexample():
+    gates = complete_pass_gates()
+    donor = gates["external_donor_construction"]["raw"]
+    row = donor["rows"][0]
+    replacement = row["replacements"][0]
+    special = int(MODULE._validation_tokenizer().all_special_ids[0])
+    replacement["donor_pool_ids"][0] = special
+    replacement["replacement_ids"][0] = special
+    replacement["source_pool_sha256"] = MODULE._sha256_ints(
+        replacement["donor_pool_ids"], "mutated donor pool")
+    replacement["replacement_sha256"] = MODULE._sha256_ints(
+        replacement["replacement_ids"], "mutated replacement")
+    reconstructed = list(row["correct_prefix_ids"])
+    for item in row["replacements"]:
+        reconstructed[item["start"]:item["end"]] = item["replacement_ids"]
+    changed = [index for index, pair in enumerate(zip(
+        row["correct_prefix_ids"], reconstructed)) if pair[0] != pair[1]]
+    row.update({
+        "changed_positions": changed,
+        "changed_position_count": len(changed),
+        "changed_positions_sha256": MODULE._sha256_ints(changed, "changed"),
+        "wrong_prefix_sha256": MODULE._sha256_ints(reconstructed, "wrong"),
+    })
+    donor["canonical_payload_sha256"] = MODULE._canonical_json_sha256({
+        key: value for key, value in donor.items()
+        if key != "canonical_payload_sha256"})
+    with pytest.raises(ValueError, match="replacement bounds"):
+        MODULE._validate_v7_pass_gates(
+            gates, fingerprint=science_fingerprint(), repo_root=None,
+            static_fingerprint=science_fingerprint(), verify_sources=False)
+
+
+def test_independent_donor_reconstruction_matches_committed_sources():
+    tokenizer = MODULE._validation_tokenizer()
+    artifact = json.loads(next((ROOT / "results" / "coherent_state_ladder").glob(
+        "coherent_external_donors_gapped_v7_*.json")).read_text())
+    rows = {row["target_id"]: row for row in artifact["rows"]}
+    for cid in MODULE.FROZEN_ORDER:
+        donor_id = MODULE.WRONG_DONORS[cid]
+        target = json.loads((ROOT / "data" / "synthetic" / f"{cid}.json").read_text())
+        donor = json.loads((ROOT / "data" / "synthetic" / f"{donor_id}.json").read_text())
+        expected = MODULE._reconstruct_donor_replacements(
+            tokenizer, target, donor, cid)
+        observed = rows[cid]
+        assert observed["correct_prefix_ids"] == expected["correct_ids"]
+        assert observed["structural_positions"] == expected["structural"]
+        assert observed["content_positions"] == expected["content"]
+        assert observed["changed_positions"] == expected["changed"]
+        assert observed["replacements"] == expected["replacements"]
+        assert observed["wrong_prefix_sha256"] == MODULE._sha256_ints(
+            expected["wrong_ids"], f"{cid}.wrong")
+
+
 def test_semantic_complete_validates_bound_prior_authorization_and_envelope(
         tmp_path: Path):
     semantic_tree(tmp_path)
     observed = MODULE.validate(tmp_path, "complete")
     assert observed["status"] == "PASS"
     assert observed["n_scored"] == 6
+
+
+@pytest.mark.parametrize("mutation,match", [
+    (lambda doc: doc["arm_scores"]["A_full"]["plants"][0]["correct"].__setitem__(
+        "mean_logprob", -99.0), "target mean_logprob differs"),
+    (lambda doc: doc["arm_scores"]["G_fresh"]["plants"][0].__setitem__(
+        "margin", -99.0), "plant margin differs"),
+    (lambda doc: doc["arm_scores"]["G_correct"].__setitem__(
+        "conversation_margin", -99.0), "conversation_margin differs"),
+    (lambda doc: doc["conversation_outcomes"].__setitem__(
+        "G_wrong", -99.0), "conversation outcome differs"),
+    (lambda doc: doc["calibration"]["arm_details"]["G_correct"]["plants"][0]
+     ["counterfactual"].__setitem__("mean_logprob", -99.0),
+     "target mean_logprob differs"),
+    (lambda doc: doc["calibration_outcomes"].__setitem__(
+        "G_wrong", -99.0), "calibration outcome differs"),
+])
+def test_semantic_checkpoint_recomputes_every_decision_aggregate(
+        tmp_path: Path, mutation, match):
+    semantic_tree(tmp_path)
+    path = tmp_path / f"conv_01_{MODULE.FROZEN_ORDER[0]}.json"
+    doc = json.loads(path.read_text())
+    mutation(doc)
+    with pytest.raises(ValueError, match=match):
+        MODULE._validate_checkpoint(
+            doc, path, scored=True,
+            expected_fingerprint=doc["fingerprint"])
 
 
 def test_semantic_complete_rejects_mixed_authorization_binding(tmp_path: Path):
