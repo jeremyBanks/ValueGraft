@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 from pathlib import Path
 from typing import Any
 
-from coherent_state_runtime import ARM_NAMES
+from coherent_state_runtime import (
+    AMENDMENT_ID,
+    DESIGN_ID,
+    GAPPED_ARM_NAMES,
+)
 
 
 class ArtifactError(RuntimeError):
@@ -62,7 +67,8 @@ def save_render(path: Path, *, fingerprint: dict, order_position: int,
             raise ArtifactError(f"refusing to overwrite changed render: {path}")
         return existing
     doc = {
-        "schema": 1, "stage": "rendered", "status": "rendered",
+        "schema": 2, "amendment_id": AMENDMENT_ID, "design_id": DESIGN_ID,
+        "stage": "rendered", "status": "rendered",
         "fingerprint": fingerprint,
         "order_position": order_position,
         "conversation_id": conversation.get("id"),
@@ -100,6 +106,9 @@ def promote_checkpoint(path: Path, existing: dict, additions: dict,
 
 
 def validate_scored_checkpoint(doc: dict) -> None:
+    if (doc.get("schema") != 2 or doc.get("design_id") != DESIGN_ID or
+            doc.get("amendment_id") != AMENDMENT_ID):
+        raise ArtifactError("scored checkpoint is not Amendment-1 schema 2")
     required = (
         "conversation", "summary", "sources", "destination", "arm_scores",
         "conversation_outcomes", "gates", "runtime",
@@ -108,8 +117,22 @@ def validate_scored_checkpoint(doc: dict) -> None:
     if missing:
         raise ArtifactError(f"scored checkpoint missing {missing}")
     outcomes = doc["conversation_outcomes"]
-    missing_arms = [arm for arm in ARM_NAMES if arm not in outcomes]
+    missing_arms = [arm for arm in GAPPED_ARM_NAMES if arm not in outcomes]
     if missing_arms:
         raise ArtifactError(f"scored checkpoint missing arms {missing_arms}")
+    unknown_arms = sorted(set(outcomes) - set(GAPPED_ARM_NAMES))
+    if unknown_arms:
+        raise ArtifactError(f"scored checkpoint has unknown arms {unknown_arms}")
+    if not all(math.isfinite(float(outcomes[arm])) for arm in GAPPED_ARM_NAMES):
+        raise ArtifactError("scored checkpoint has non-finite outcomes")
+    if set(doc["arm_scores"]) != set(GAPPED_ARM_NAMES):
+        raise ArtifactError("arm-score keys do not equal the amended G arm set")
+    calibration = doc.get("calibration_outcomes") or {}
+    if set(calibration) != {"G_fresh", "G_correct", "G_wrong"}:
+        raise ArtifactError("calibration outcomes do not equal the amended G set")
+    destination = doc.get("destination") or {}
+    if destination.get("position_policy") != \
+            "gapped_same_source_summary_position":
+        raise ArtifactError("checkpoint lacks the amended position policy")
     if not doc["gates"].get("technical_pass"):
         raise ArtifactError("scored checkpoint claims failed technical gate")

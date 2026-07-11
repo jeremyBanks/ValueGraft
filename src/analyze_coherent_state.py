@@ -14,18 +14,18 @@ from pathlib import Path
 import random
 import statistics
 
+from coherent_state_runtime import AMENDMENT_ID, DESIGN_ID
 
-ARMS = ("A_full", "F_fresh", "C_coherent", "W_wrong",
-        "V_only", "K_only", "D_delta")
+
+ARMS = ("A_full", "G_fresh", "G_correct", "G_wrong",
+        "G_Vcorrect", "G_Kcorrect", "G_delta")
 CONTRASTS = {
-    "CF": ("C_coherent", "F_fresh"),
-    "CW": ("C_coherent", "W_wrong"),
-    "VF": ("V_only", "F_fresh"),
-    "KF": ("K_only", "F_fresh"),
-    "CV": ("C_coherent", "V_only"),
-    "CK": ("C_coherent", "K_only"),
-    "VD": ("V_only", "D_delta"),
-    "AF": ("A_full", "F_fresh"),
+    "GF": ("G_correct", "G_fresh"),
+    "GW": ("G_correct", "G_wrong"),
+    "GVF": ("G_Vcorrect", "G_fresh"),
+    "GKF": ("G_Kcorrect", "G_fresh"),
+    "GCD": ("G_correct", "G_delta"),
+    "AF": ("A_full", "G_fresh"),
 }
 
 # Two-sided 95% Student-t critical values by degrees of freedom. The frozen
@@ -95,6 +95,14 @@ def load_checkpoints(run_dir: Path):
 
 def validate_docs(docs):
     for expected, doc in enumerate(docs, 1):
+        fingerprint = doc.get("fingerprint") or {}
+        if int(doc.get("schema", -1)) != 2:
+            raise AnalysisError(f"{doc.get('_path')} is not schema 2")
+        if (doc.get("design_id", fingerprint.get("design_id")) != DESIGN_ID or
+                doc.get("amendment_id", fingerprint.get("amendment_id")) !=
+                AMENDMENT_ID):
+            raise AnalysisError(
+                f"{doc.get('_path')} is not an Amendment-1 gapped artifact")
         if int(doc.get("order_position", -1)) != expected:
             raise AnalysisError(
                 f"non-contiguous frozen order at {doc.get('_path')}: "
@@ -120,23 +128,23 @@ def calibration_fires(docs):
     rows = []
     for doc in docs:
         cal = doc.get("calibration_outcomes") or {}
-        if not all(a in cal for a in ("C_coherent", "F_fresh", "W_wrong")):
+        if not all(a in cal for a in ("G_correct", "G_fresh", "G_wrong")):
             return {"fires": False, "reason": "missing calibration rows",
                     "both_directional": 0, "n": len(docs)}
-        cf = float(cal["C_coherent"]) - float(cal["F_fresh"])
-        cw = float(cal["C_coherent"]) - float(cal["W_wrong"])
+        cf = float(cal["G_correct"]) - float(cal["G_fresh"])
+        cw = float(cal["G_correct"]) - float(cal["G_wrong"])
         rows.append((cf, cw))
     both = sum(cf > 0 and cw > 0 for cf, cw in rows)
     mcf, mcw = mean([x[0] for x in rows]), mean([x[1] for x in rows])
     return {"fires": bool(mcf > 0 and mcw > 0 and both >= 4),
-            "mean_CF": mcf, "mean_CW": mcw,
+            "mean_GF": mcf, "mean_GW": mcw,
             "both_directional": both, "n": len(rows)}
 
 
 def regime_gate(docs):
     ys_a = [float(d["conversation_outcomes"]["A_full"]) for d in docs]
     af = [float(d["conversation_outcomes"]["A_full"]) -
-          float(d["conversation_outcomes"]["F_fresh"]) for d in docs]
+          float(d["conversation_outcomes"]["G_fresh"]) for d in docs]
     competence_count = sum(x > 0 for x in ys_a)
     headroom_count = sum(x > 0 for x in af)
     return {
@@ -160,27 +168,19 @@ def technical_gate(docs):
 
 
 def interpret(stats):
-    cf, cw = stats["contrasts"]["CF"]["t"], stats["contrasts"]["CW"]["t"]
-    vf, vd = stats["contrasts"]["VF"]["t"], stats["contrasts"]["VD"]["t"]
-    cv, kf = stats["contrasts"]["CV"]["t"], stats["contrasts"]["KF"]["t"]
+    cf, cw = stats["contrasts"]["GF"]["t"], stats["contrasts"]["GW"]["t"]
     clears = lambda x: x and x["lo"] is not None and x["lo"] > 0
     if not stats["technical_gate"]["passes"]:
         return "VOID_TECHNICAL"
     if not stats["regime_gate"]["passes"]:
         return "REGIME_INADEQUATE"
     channel = clears(cf) and clears(cw)
-    if channel and clears(vf) and clears(vd):
-        return "HISTORY_CHANNEL_AND_VALUE_ONLY_GAIN"
-    if channel and not clears(vf) and clears(cv):
-        return "HISTORY_CHANNEL_KV_SPLIT_LOSES_IT"
-    if channel and clears(kf) and not clears(vf):
-        return "HISTORY_CHANNEL_KEY_DOMINANT_LEAD"
-    if clears(vf) and not clears(vd):
-        return "VALUE_GAIN_NOT_BEYOND_MATCHED_PLACEBO"
     if channel:
-        return "HISTORY_SPECIFIC_CHANNEL_MECHANISM_MIXED"
+        return "HISTORY_SPECIFIC_CHANNEL"
     if clears(cf) and not clears(cw):
         return "COHERENCE_WITHOUT_HISTORY_SPECIFICITY"
+    if not stats["calibration"]["fires"]:
+        return "SENSITIVITY_INADEQUATE_NO_CHANNEL_CLAIM"
     return "NO_CONFIRMATORY_CHANNEL"
 
 
@@ -201,7 +201,8 @@ def analyze(docs):
         for name, vals in rows.items()
     }
     result = {
-        "schema": 1,
+        "schema": 2, "amendment_id": AMENDMENT_ID, "design_id": DESIGN_ID,
+        "position_policy": "gapped_same_source_summary_position",
         "n_conversations": len(docs),
         "conversation_ids": [d["conversation_id"] for d in docs],
         "technical_gate": technical,
@@ -210,7 +211,7 @@ def analyze(docs):
         "contrasts": contrasts,
     }
     if len(docs) == 6:
-        cf, cw = contrasts["CF"]["t"]["mean"], contrasts["CW"]["t"]["mean"]
+        cf, cw = contrasts["GF"]["t"]["mean"], contrasts["GW"]["t"]["mean"]
         if not technical["passes"]:
             decision = "STOP_TECHNICAL"
         elif not regime["passes"]:

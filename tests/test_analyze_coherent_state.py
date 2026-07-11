@@ -13,6 +13,9 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
         c = f + cf
         w = c - cw
         docs.append({
+            "schema": 2,
+            "design_id": "coherent-state-gapped-v1",
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
             "conversation_id": f"c{i+1:02d}",
             "order_position": i + 1,
             "status": "scored",
@@ -20,17 +23,17 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
                       "failures": [] if technical else ["injected"]},
             "conversation_outcomes": {
                 "A_full": f + headroom,
-                "F_fresh": f,
-                "C_coherent": c,
-                "W_wrong": w,
-                "V_only": f + vf,
-                "K_only": f,
-                "D_delta": f,
+                "G_fresh": f,
+                "G_correct": c,
+                "G_wrong": w,
+                "G_Vcorrect": f + vf,
+                "G_Kcorrect": f,
+                "G_delta": f,
             },
             "calibration_outcomes": {
-                "C_coherent": 0.3 if calibration else 0.0,
-                "F_fresh": 0.0,
-                "W_wrong": 0.0 if calibration else 0.1,
+                "G_correct": 0.3 if calibration else 0.0,
+                "G_fresh": 0.0,
+                "G_wrong": 0.0 if calibration else 0.1,
             },
         })
     return docs
@@ -64,9 +67,9 @@ def test_final_intersection_channel_claim_needs_both_intervals():
     # Identical per-row effects have zero variance and positive lower bounds.
     out = analyze(_docs(n=12, cf=0.4, cw=0.3, vf=0.0))
     assert out["serial_decision"] == "FINAL_N12"
-    assert out["contrasts"]["CF"]["t"]["lo"] > 0
-    assert out["contrasts"]["CW"]["t"]["lo"] > 0
-    assert out["interpretation"] == "HISTORY_CHANNEL_KV_SPLIT_LOSES_IT"
+    assert out["contrasts"]["GF"]["t"]["lo"] > 0
+    assert out["contrasts"]["GW"]["t"]["lo"] > 0
+    assert out["interpretation"] == "HISTORY_SPECIFIC_CHANNEL"
 
 
 def test_n12_regime_gate_remains_frozen_to_first_six():
@@ -80,10 +83,21 @@ def test_n12_regime_gate_remains_frozen_to_first_six():
 
 def test_missing_arm_and_noncontiguous_order_fail_closed():
     docs = _docs()
-    del docs[0]["conversation_outcomes"]["K_only"]
+    del docs[0]["conversation_outcomes"]["G_Kcorrect"]
     with pytest.raises(AnalysisError, match="missing arms"):
         analyze(docs)
     docs = _docs()
     docs[2]["order_position"] = 7
     with pytest.raises(AnalysisError, match="non-contiguous"):
+        analyze(docs)
+
+
+def test_old_packed_or_unversioned_documents_fail_closed():
+    docs = _docs()
+    docs[0]["schema"] = 1
+    with pytest.raises(AnalysisError, match="schema 2"):
+        analyze(docs)
+    docs = _docs()
+    docs[0]["design_id"] = "coherent-state-packed-v0"
+    with pytest.raises(AnalysisError, match="Amendment-1"):
         analyze(docs)

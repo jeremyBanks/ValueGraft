@@ -1,12 +1,16 @@
 import copy
+from types import SimpleNamespace
 
 import pytest
 import torch
 
 from coherent_state_hf import CoherentStateError
 from coherent_state_runtime import (
+    append_gapped_post_summary,
     arm_snapshot,
     gapped_arm_boundary,
+    snapshot_physical_length,
+    validate_position_schedule,
     validate_generated_replay,
 )
 
@@ -64,7 +68,7 @@ def test_unknown_or_full_arm_cannot_enter_compacted_constructor():
 
 
 def test_gapped_arms_copy_without_key_rotation():
-    fresh = _snap()
+    fresh = _snap(rows=4)
     correct = [(k[..., :2, :].clone() + 11, v[..., :2, :].clone() + 7)
                for k, v in fresh]
     wrong = [(k[..., :2, :].clone() - 13, v[..., :2, :].clone() - 9)
@@ -90,3 +94,29 @@ def test_full_arm_cannot_enter_gapped_constructor():
     rows = [(k[..., :2, :], v[..., :2, :]) for k, v in fresh]
     with pytest.raises(CoherentStateError, match="unsupported gapped"):
         gapped_arm_boundary("A_full", fresh, rows, rows, 2, 1)
+
+
+def test_logical_positions_cannot_be_used_as_cache_positions():
+    ok = validate_position_schedule([80, 81, 82], [4, 5, 6], physical_start=4)
+    assert ok["gap_from_physical"] == 76
+    with pytest.raises(CoherentStateError, match="cache_position"):
+        validate_position_schedule([80, 81, 82], [80, 81, 82], physical_start=4)
+
+
+def test_snapshot_length_and_gapped_boundary_reject_pretailed_cache():
+    fresh = _snap(rows=5)
+    assert snapshot_physical_length(fresh) == 5
+    rows = [(k[..., :2, :], v[..., :2, :]) for k, v in fresh]
+    with pytest.raises(CoherentStateError, match="immediate summary boundary"):
+        gapped_arm_boundary("G_correct", fresh, rows, rows, 2, 1)
+
+    layout = SimpleNamespace(physical_summary_end=4)
+    with pytest.raises(CoherentStateError, match="exactly at the summary boundary"):
+        append_gapped_post_summary(None, fresh, layout)
+
+
+def test_snapshot_length_rejects_inconsistent_layers():
+    malformed = _snap()
+    malformed[1] = (malformed[1][0][..., :-1, :], malformed[1][1][..., :-1, :])
+    with pytest.raises(CoherentStateError, match="inconsistent physical lengths"):
+        snapshot_physical_length(malformed)

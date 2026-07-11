@@ -47,6 +47,8 @@ GAPPED_ARM_NAMES = (
     "A_full", "G_fresh", "G_correct", "G_wrong",
     "G_Vcorrect", "G_Kcorrect", "G_delta",
 )
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1"
+DESIGN_ID = "coherent-state-gapped-v1"
 
 
 @dataclass
@@ -75,6 +77,47 @@ def _positions(model, start: int, n: int) -> torch.Tensor:
 
 def _cache_positions(model, start: int, n: int) -> torch.Tensor:
     return torch.arange(start, start + n, device=model.device)
+
+
+def validate_position_schedule(logical_positions: Sequence[int],
+                               cache_positions: Sequence[int], *,
+                               physical_start: int) -> dict:
+    """Fail closed if logical RoPE positions leak into physical cache indices."""
+    logical = [int(x) for x in logical_positions]
+    physical = [int(x) for x in cache_positions]
+    if not logical or len(logical) != len(physical):
+        raise CoherentStateError("position schedule coverage mismatch")
+    expected = list(range(physical_start, physical_start + len(physical)))
+    if physical != expected:
+        raise CoherentStateError(
+            f"cache_position is not contiguous physical storage: {physical} != {expected}")
+    if any(b <= a for a, b in zip(logical, logical[1:])):
+        raise CoherentStateError("logical position_ids are not strictly increasing")
+    return {
+        "physical_start": physical_start,
+        "physical_end": physical_start + len(physical),
+        "logical_start": logical[0],
+        "logical_end": logical[-1] + 1,
+        "gap_from_physical": logical[0] - physical_start,
+    }
+
+
+def snapshot_physical_length(snapshot: Snapshot) -> int:
+    """Return a cache's physical row count, rejecting malformed snapshots."""
+    if not snapshot:
+        raise CoherentStateError("cache snapshot has no layers")
+    lengths = []
+    for layer, (keys, values) in enumerate(snapshot):
+        if keys.ndim < 3 or values.ndim < 3:
+            raise CoherentStateError(f"cache layer {layer} has invalid rank")
+        if keys.shape[-2] != values.shape[-2]:
+            raise CoherentStateError(
+                f"cache layer {layer} K/V physical lengths differ")
+        lengths.append(int(keys.shape[-2]))
+    if len(set(lengths)) != 1:
+        raise CoherentStateError(
+            f"cache layers have inconsistent physical lengths: {lengths}")
+    return lengths[0]
 
 
 def eos_ids(model) -> set[int]:
@@ -226,6 +269,13 @@ def build_gapped_fresh_boundary(
     layout = gapped_destination_layout(
         tokenizer, conv, summary_text, summary_ids, request,
         correct_prefix_ids)
+    validate_position_schedule(
+        layout.prefix_position_ids, range(len(layout.prefix_ids)),
+        physical_start=0)
+    validate_position_schedule(
+        layout.summary_position_ids,
+        range(layout.physical_summary_start, layout.physical_summary_end),
+        physical_start=layout.physical_summary_start)
     system_ids = layout.prefix_ids[:layout.system_end]
     request_ids = layout.prefix_ids[layout.system_end:]
     cache, first = prefill(
@@ -247,14 +297,31 @@ def build_gapped_fresh_boundary(
         start_cache_position=len(layout.prefix_ids))
     fresh_rows = extract_summary_rows(
         cache, layout.physical_summary_start, layout.physical_summary_end)
-    return layout, trace, snapshot_cache(cache), fresh_rows
+    boundary = snapshot_cache(cache)
+    if snapshot_physical_length(boundary) != layout.physical_summary_end:
+        raise CoherentStateError(
+            "gapped boundary physical cache contains phantom or missing rows")
+    if (trace.start_position != layout.source_summary_start or
+            trace.end_position != layout.source_summary_start + len(summary_ids)):
+        raise CoherentStateError("gapped fresh trace logical summary span differs")
+    return layout, trace, boundary, fresh_rows
 
 
 def append_gapped_post_summary(model, boundary_snapshot: Snapshot,
                                layout: GappedDestinationLayout) -> Snapshot:
     """Fork one arm at the boundary and causally append close + retained tail."""
+    boundary_length = snapshot_physical_length(boundary_snapshot)
+    if boundary_length != layout.physical_summary_end:
+        raise CoherentStateError(
+            "gapped arm must end exactly at the summary boundary; "
+            f"got {boundary_length}, expected {layout.physical_summary_end}")
     cache = rebuild_cache(boundary_snapshot, DynamicCache)
     if layout.post_summary_ids:
+        validate_position_schedule(
+            layout.post_summary_position_ids,
+            range(layout.physical_summary_end,
+                  layout.physical_summary_end + len(layout.post_summary_ids)),
+            physical_start=layout.physical_summary_end)
         cache, _ = prefill(
             model, _ids(model, layout.post_summary_ids), past=cache,
             position_ids=torch.tensor(
@@ -262,7 +329,11 @@ def append_gapped_post_summary(model, boundary_snapshot: Snapshot,
             cache_position=_cache_positions(
                 model, layout.physical_summary_end,
                 len(layout.post_summary_ids)))
-    return snapshot_cache(cache)
+    completed = snapshot_cache(cache)
+    if snapshot_physical_length(completed) != len(layout.context_ids):
+        raise CoherentStateError(
+            "gapped post-summary append produced wrong physical cache length")
+    return completed
 
 
 def gapped_arm_boundary(arm: str, fresh_boundary: Snapshot,
@@ -272,6 +343,17 @@ def gapped_arm_boundary(arm: str, fresh_boundary: Snapshot,
     """Apply only the amended same-position summary-row intervention."""
     if arm not in GAPPED_ARM_NAMES[1:]:
         raise CoherentStateError(f"unsupported gapped arm: {arm}")
+    if not correct_rows or not wrong_rows:
+        raise CoherentStateError("gapped source rows are empty")
+    summary_rows = int(correct_rows[0][0].shape[-2])
+    if any(int(k.shape[-2]) != summary_rows or
+           int(v.shape[-2]) != summary_rows
+           for source in (correct_rows, wrong_rows) for k, v in source):
+        raise CoherentStateError("gapped source summary row counts differ")
+    expected_boundary = destination_start + summary_rows
+    if snapshot_physical_length(fresh_boundary) != expected_boundary:
+        raise CoherentStateError(
+            "gapped fresh input is not an immediate summary boundary")
     if arm == "G_fresh":
         return list(fresh_boundary), []
     if arm == "G_correct":
@@ -338,6 +420,10 @@ def score_target(model, tokenizer, snapshot: Snapshot,
                  logical_context_end: int | None = None) -> dict:
     layout = probe_layout(tokenizer, context_messages, context_ids, probe, target)
     feed = teacher_forcing_feed(layout)
+    physical_context_end = snapshot_physical_length(snapshot)
+    if physical_context_end != len(context_ids):
+        raise CoherentStateError(
+            "scoring snapshot physical length differs from visible context IDs")
     cache = rebuild_cache(snapshot, DynamicCache, clone=not consume_snapshot)
     if consume_snapshot:
         # Transfer ownership of the full branch to DynamicCache. The caller must
@@ -347,7 +433,11 @@ def score_target(model, tokenizer, snapshot: Snapshot,
     logical_start = (len(context_ids) if logical_context_end is None
                      else int(logical_context_end))
     pos = _positions(model, logical_start, len(feed))
-    cache_pos = _cache_positions(model, len(context_ids), len(feed))
+    cache_pos = _cache_positions(model, physical_context_end, len(feed))
+    validate_position_schedule(
+        range(logical_start, logical_start + len(feed)),
+        range(physical_context_end, physical_context_end + len(feed)),
+        physical_start=physical_context_end)
     token_lps = tf_logprobs(model, cache, feed, layout.target_ids,
                            position_ids=pos, cache_position=cache_pos)
     if len(token_lps) != len(layout.target_ids) or not all(
@@ -359,6 +449,10 @@ def score_target(model, tokenizer, snapshot: Snapshot,
         "token_logprobs": [float(x) for x in token_lps],
         "mean_logprob": sum(token_lps) / len(token_lps),
         "probe_suffix_ids": layout.suffix_ids,
+        "logical_position_ids": list(range(logical_start,
+                                           logical_start + len(feed))),
+        "physical_cache_positions": list(range(
+            physical_context_end, physical_context_end + len(feed))),
     }
 
 

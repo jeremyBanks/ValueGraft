@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import hashlib
 
-from coherent_state_hf import CoherentStateError
+from coherent_state_hf import CoherentStateError, row_hashes, sha256_ids
 from coherent_state_runtime import (
-    arm_snapshot,
+    AMENDMENT_ID,
+    DESIGN_ID,
+    append_gapped_post_summary,
+    build_gapped_fresh_boundary,
     capture_forced_summary,
-    complete_assistant_context,
+    gapped_arm_boundary,
     score_arm,
 )
 from coherent_state_tokens import rendered_assistant_content_ids
@@ -43,6 +46,10 @@ def calibration_source_messages(approved: str) -> list[dict]:
          f"Label {other} is explicitly rejected."},
         {"role": "assistant", "content":
          "Understood. I will retain which label is approved."},
+        {"role": "user", "content":
+         "Keep the calibration record active while we continue."},
+        {"role": "assistant", "content":
+         "The calibration record remains active."},
         {"role": "user", "content": CALIBRATION_REQUEST},
     ]
 
@@ -54,8 +61,7 @@ def calibration_fresh_messages() -> list[dict]:
     ]
 
 
-def run_calibration(model, tokenizer, conversation_id: str,
-                    rope_theta: float) -> dict:
+def run_calibration(model, tokenizer, conversation_id: str) -> dict:
     correct_label, wrong_label = calibration_labels(conversation_id)
     summary_ids = rendered_assistant_content_ids(
         tokenizer, calibration_fresh_messages(), CALIBRATION_SUMMARY)
@@ -68,15 +74,24 @@ def run_calibration(model, tokenizer, conversation_id: str,
     wrong = capture_forced_summary(
         model, tokenizer, calibration_source_messages(wrong_label), summary_ids,
         source_kind="calibration_wrong_forced")
-    fresh_messages = calibration_fresh_messages()
-    fresh = capture_forced_summary(
-        model, tokenizer, fresh_messages, summary_ids,
-        source_kind="calibration_fresh_forced")
-    context_messages, context_ids, fresh_snapshot = complete_assistant_context(
-        model, tokenizer, fresh_messages, fresh)
+    if len(correct.prefix_ids) != len(wrong.prefix_ids):
+        raise CoherentStateError("calibration sources are not position matched")
+    if correct.summary_start != wrong.summary_start:
+        raise CoherentStateError("calibration summary starts differ")
+    changed_positions = [i for i, (a, b) in enumerate(
+        zip(correct.prefix_ids, wrong.prefix_ids)) if a != b]
+    if not changed_positions:
+        raise CoherentStateError("calibration sources differ at no token position")
+    conv = {
+        "id": f"calibration-{conversation_id}",
+        "messages": calibration_source_messages(correct_label)[:-1],
+        "sections": {"middle_end_msg": 3},
+    }
+    layout, fresh_trace, fresh_boundary, fresh_rows = build_gapped_fresh_boundary(
+        model, tokenizer, conv, CALIBRATION_SUMMARY, summary_ids,
+        CALIBRATION_REQUEST, correct.prefix_ids)
     correct.cache = None
     wrong.cache = None
-    fresh.cache = None
 
     plant = {"id": "calibration", "category": "calibration",
              "probe": CALIBRATION_PROBE}
@@ -96,27 +111,63 @@ def run_calibration(model, tokenizer, conversation_id: str,
 
     outcomes = {}
     arm_details = {}
-    deltas = {
-        "C_coherent": len(fresh.prefix_ids) - len(correct.prefix_ids),
-        "W_wrong": len(fresh.prefix_ids) - len(wrong.prefix_ids),
-    }
-    for arm in ("F_fresh", "C_coherent", "W_wrong"):
-        snap, _ = arm_snapshot(
-            arm, fresh_snapshot, correct.rows, wrong.rows,
-            fresh.summary_start, deltas["C_coherent"], deltas["W_wrong"],
-            rope_theta, 20_260_711)
-        score = score_arm(model, tokenizer, snap, context_messages, context_ids,
-                          [plant], target)
+    for arm in ("G_fresh", "G_correct", "G_wrong"):
+        boundary, _ = gapped_arm_boundary(
+            arm, fresh_boundary, correct.rows, wrong.rows,
+            layout.physical_summary_start, 20_260_711)
+        snap = append_gapped_post_summary(model, boundary, layout)
+        score = score_arm(
+            model, tokenizer, snap, layout.messages, layout.context_ids,
+            [plant], target,
+            logical_context_end=layout.logical_next_position)
         outcomes[arm] = score["conversation_margin"]
         arm_details[arm] = score
-        del snap
+        del boundary, snap
+
+    rendered_lengths = {
+        arm: {
+            side: len(arm_details[arm]["plants"][0][side]["token_ids"])
+            for side in ("correct", "counterfactual")
+        }
+        for arm in arm_details
+    }
+    if any(row["correct"] != row["counterfactual"]
+           for row in rendered_lengths.values()):
+        raise CoherentStateError(
+            "calibration targets differ in rendered scoring-token length")
 
     return {
+        "schema": 2, "amendment_id": AMENDMENT_ID, "design_id": DESIGN_ID,
         "correct_label": correct_label, "wrong_label": wrong_label,
         "summary_text": CALIBRATION_SUMMARY, "summary_ids": summary_ids,
         "source_prefix_hashes": {
-            "correct": correct.prefix_sha256, "fresh": fresh.prefix_sha256,
+            "correct": correct.prefix_sha256,
+            "fresh": sha256_ids(layout.prefix_ids),
             "wrong": wrong.prefix_sha256,
         },
+        "source_prefix_token_ids": {
+            "correct": correct.prefix_ids,
+            "wrong": wrong.prefix_ids,
+            "fresh": layout.prefix_ids,
+        },
+        "wrong_changed_positions": changed_positions,
+        "wrong_decoded_prefix": tokenizer.decode(wrong.prefix_ids),
+        "source_summary_row_hashes": {
+            "correct": correct.row_hashes,
+            "wrong": wrong.row_hashes,
+            "fresh": row_hashes(fresh_rows),
+        },
+        "position_policy": "gapped_same_source_summary_position",
+        "summary_start": correct.summary_start,
+        "physical_summary_start": layout.physical_summary_start,
+        "physical_summary_end": layout.physical_summary_end,
+        "logical_next_position": layout.logical_next_position,
+        "physical_cache_positions": list(range(len(layout.context_ids))),
+        "context_position_ids": layout.context_position_ids,
+        "fresh_trace": {
+            "start_position": fresh_trace.start_position,
+            "end_position": fresh_trace.end_position,
+        },
+        "rendered_target_token_lengths": rendered_lengths,
         "outcomes": outcomes, "arm_details": arm_details,
     }

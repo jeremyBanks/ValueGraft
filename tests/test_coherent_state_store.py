@@ -8,6 +8,7 @@ from coherent_state_store import (
     promote_checkpoint,
     read_checkpoint,
     save_render,
+    validate_scored_checkpoint,
 )
 
 
@@ -51,3 +52,32 @@ def test_stage_promotion_is_additive_and_no_regression(tmp_path):
     with pytest.raises(ArtifactError, match="overwrite"):
         promote_checkpoint(path, captured, {"summary": {"ids": [2]}},
                            "scored")
+
+
+def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
+    arms = {
+        "A_full": 1.0, "G_fresh": 0.0, "G_correct": 0.2,
+        "G_wrong": 0.1, "G_Vcorrect": 0.1, "G_Kcorrect": 0.1,
+        "G_delta": 0.0,
+    }
+    doc = {
+        "schema": 2,
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
+        "design_id": "coherent-state-gapped-v1",
+        "conversation": {}, "summary": {}, "sources": {},
+        "destination": {
+            "position_policy": "gapped_same_source_summary_position"},
+        "arm_scores": {key: {} for key in arms},
+        "conversation_outcomes": dict(arms),
+        "calibration_outcomes": {
+            "G_fresh": 0.0, "G_correct": 1.0, "G_wrong": 0.0},
+        "gates": {"technical_pass": True}, "runtime": {},
+    }
+    validate_scored_checkpoint(doc)
+    doc["conversation_outcomes"]["F_fresh"] = 0.0
+    with pytest.raises(ArtifactError, match="unknown arms"):
+        validate_scored_checkpoint(doc)
+    del doc["conversation_outcomes"]["F_fresh"]
+    doc["conversation_outcomes"]["G_correct"] = float("nan")
+    with pytest.raises(ArtifactError, match="non-finite"):
+        validate_scored_checkpoint(doc)
