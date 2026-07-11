@@ -81,6 +81,9 @@ def _variant_evidence(tokenizer, messages: list[dict], *,
     _require(max(content_widths) <= 4096, "an authored message exceeds 4096 tokens")
     plan = build_role_native_plan(
         tokenizer, messages, middle_end_msg=middle_end_msg)
+    if middle_end_msg is None:
+        middle_end_msg = len(messages)
+    carrier_request_start = plan.message_start_positions[middle_end_msg]
     evidence = {
         "canonical_token_count": len(ids),
         "canonical_token_ids_sha256": sha256_ints(ids),
@@ -92,6 +95,8 @@ def _variant_evidence(tokenizer, messages: list[dict], *,
         "role_native_event_kinds": [event.kind for event in plan.events],
         "role_native_event_widths": [event.width for event in plan.events],
         "role_native_geometry_sha256": sha256_json(plan.geometry()),
+        "source_replay_token_count": len(plan.token_ids),
+        "carrier_request_start": carrier_request_start,
         "carrier_regions": asdict(plan.regions),
         "decoded_round_trip": True,
     }
@@ -198,11 +203,14 @@ def validate_case(tokenizer, case: dict) -> dict:
         tokenizer, correct, middle_end_msg=middle)
     wrong_evidence, wrong_plan = _variant_evidence(
         tokenizer, wrong, middle_end_msg=middle)
-    history_tokens = correct_evidence["canonical_token_count"]
+    history_tokens = correct_evidence["carrier_request_start"]
     expected_band = (1000, 2000) if band == "short" else (4000, 6000)
     _require(expected_band[0] <= history_tokens <= expected_band[1],
-             f"{case_id} history tokens {history_tokens} outside {band} band {expected_band}")
+             f"{case_id} pre-carrier tokens {history_tokens} outside "
+             f"{band} band {expected_band}")
     require_matching_geometry(correct_plan, wrong_plan)
+    _require(correct_plan.regions.anchor_end < len(correct_plan.token_ids),
+             f"{case_id} R3 incorrectly includes the retained tail")
     correct_ids = correct_plan.token_ids
     wrong_ids = wrong_plan.token_ids
     changed_positions = [

@@ -21,11 +21,11 @@ def _case():
     correct = [
         {"role": "system", "content": "Keep a careful decision record."},
         {"role": "user", "content": "If the marker is green, choose north; otherwise choose south. The unchanged desk code is cedar."},
-        {"role": "assistant", "content": "I will apply that rule when the marker is fixed."},
+        {"role": "assistant", "content": "I will apply that rule when the marker is fixed. " + filler},
         {"role": "user", "content": "The marker is green. Record the result now."},
         {"role": "assistant", "content": "The rule and desk code are recorded."},
         {"role": "user", "content": "Now discuss only unrelated packing steps."},
-        {"role": "assistant", "content": "We should label the crate and verify its seal. " + filler},
+        {"role": "assistant", "content": "We should label the crate and verify its seal."},
     ]
     wrong = copy.deepcopy(correct)
     wrong[3]["content"] = "The marker is amber. Record the result now."
@@ -71,6 +71,20 @@ def test_valid_matched_case_builds_independent_evidence(tokenizer):
     assert result["status"] == "MECHANICAL_DRAFT_PASS"
     assert result["execution_ready"] is False
     assert result["pair"]["role_native_geometry_identical"] is True
+    assert 1000 <= result["correct"]["carrier_request_start"] <= 2000
+    assert result["correct"]["carrier_regions"]["anchor_end"] < result[
+        "correct"]["source_replay_token_count"]
+
+
+def test_tail_padding_cannot_satisfy_precarrier_length_band(tokenizer):
+    case = _case()
+    filler = case["variants"]["correct"]["messages"][2]["content"]
+    for variant in ("correct", "wrong_focal"):
+        messages = case["variants"][variant]["messages"]
+        messages[2]["content"] = "I will apply that rule when the marker is fixed."
+        messages[6]["content"] += filler
+    with pytest.raises(CanarySchemaError, match="pre-carrier tokens"):
+        validate_case(tokenizer, case)
 
 
 def test_nonallowlisted_change_fails(tokenizer):
