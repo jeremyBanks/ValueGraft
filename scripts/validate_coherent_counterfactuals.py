@@ -27,6 +27,9 @@ MANIFEST_SCHEMA = "coherent_state_counterfactual_candidate_manifest_v1"
 OUTPUT_SCHEMA = "coherent_state_counterfactual_mechanical_validation_v1"
 DEFAULT_INPUT_DIR = "data/coherent_state_counterfactuals/banked_c10_c02"
 DEFAULT_OUTPUT_DIR = "results/coherent_state_counterfactual_validation"
+VALIDATOR_PATH = "scripts/validate_coherent_counterfactuals.py"
+BLIND_REVIEW_NAME = "blind_naturalness_review_gpt56.json"
+FACTUAL_REVIEW_NAME = "target_aware_factual_review_gpt56.json"
 EXPECTED_COVERAGE = {
     ("c02", "referent"), ("c02", "sense"),
     ("c10", "referent"), ("c10", "sense"),
@@ -765,6 +768,93 @@ def _validate_manifest_row_inventory(
     return paths, ids, plants
 
 
+def _validate_external_reviews(
+    repo: Path, input_dir: str,
+    candidate_bindings: dict[str, dict[str, str]],
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Bind the independent decoded reviews without rewriting candidate snapshots."""
+    review_dir = f"{input_dir}/reviews"
+    blind_path = f"{review_dir}/{BLIND_REVIEW_NAME}"
+    factual_path = f"{review_dir}/{FACTUAL_REVIEW_NAME}"
+    blind, blind_raw, blind_sha = _committed_json(repo, blind_path)
+    factual, factual_raw, factual_sha = _committed_json(repo, factual_path)
+
+    _require(blind.get("overall_verdict") == "FAIL",
+             "blind review overall verdict is not FAIL")
+    blind_candidates = blind.get("candidates")
+    _require(isinstance(blind_candidates, dict) and
+             len(blind_candidates) == len(candidate_bindings),
+             "blind review candidate coverage differs")
+    blind_by_path: dict[str, dict[str, Any]] = {}
+    for row in blind_candidates.values():
+        _require(isinstance(row, dict), "blind review row is not an object")
+        path = _safe_relative(row.get("candidate_file"),
+                              "blind review candidate path")
+        _require(path not in blind_by_path, "blind review candidate path repeats")
+        blind_by_path[path] = row
+    _require(set(blind_by_path) == set(candidate_bindings),
+             "blind review paths differ from candidate inventory")
+
+    _require(factual.get("schema") ==
+             "coherent_state_counterfactual_target_aware_factual_review_v1",
+             "target-aware review schema differs")
+    _require(factual.get("overall_verdict") == "REVISE_ALL_FOUR",
+             "target-aware review overall verdict differs")
+    factual_candidates = factual.get("candidates")
+    _require(isinstance(factual_candidates, dict) and
+             set(factual_candidates) ==
+             {binding["candidate_id"] for binding in candidate_bindings.values()},
+             "target-aware review candidate coverage differs")
+
+    per_candidate = []
+    for path in sorted(candidate_bindings):
+        binding = candidate_bindings[path]
+        blind_row = blind_by_path[path]
+        _require(blind_row.get("sha256") == binding["raw_file_sha256"] and
+                 blind_row.get("overall_candidate_verdict") == "FAIL",
+                 f"blind review binding/verdict differs for {path}")
+        factual_row = factual_candidates[binding["candidate_id"]]
+        factual_binding = (factual_row.get("bindings")
+                           if isinstance(factual_row, dict) else None)
+        _require(isinstance(factual_binding, dict) and
+                 factual_binding.get("candidate_path") == path and
+                 factual_binding.get("candidate_raw_file_sha256") ==
+                 binding["raw_file_sha256"] and
+                 factual_row.get("verdict") == "REVISE",
+                 f"target-aware review binding/verdict differs for {path}")
+        per_candidate.append({
+            "candidate_id": binding["candidate_id"],
+            "path": path,
+            "blind_verdict": "FAIL",
+            "target_aware_verdict": "REVISE",
+            "execution_authorized": False,
+        })
+
+    evidence = {
+        "status": "FAIL",
+        "blind_review": {
+            "path": blind_path,
+            "raw_file_sha256": blind_sha,
+            "overall_verdict": "FAIL",
+        },
+        "target_aware_factual_review": {
+            "path": factual_path,
+            "raw_file_sha256": factual_sha,
+            "overall_verdict": "REVISE_ALL_FOUR",
+        },
+        "candidate_verdicts": per_candidate,
+        "semantic_authorized": False,
+        "execution_authorized": False,
+    }
+    inventory = [
+        {"path": blind_path, "bytes": len(blind_raw),
+         "raw_file_sha256": blind_sha},
+        {"path": factual_path, "bytes": len(factual_raw),
+         "raw_file_sha256": factual_sha},
+    ]
+    return evidence, inventory
+
+
 def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
                        tokenizer: Any | None = None) -> dict[str, Any]:
     repo = repo.resolve()
@@ -772,6 +862,7 @@ def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
     head = _git(repo, "rev-parse", "HEAD^{commit}").decode().strip()
     _require(re.fullmatch(r"[0-9a-f]{40}", head) is not None,
              "repository HEAD is malformed")
+    validator_raw, validator_sha = _committed_bytes(repo, VALIDATOR_PATH)
     manifest_path = f"{input_dir}/manifest.json"
     manifest, manifest_raw, manifest_sha = _committed_json(repo, manifest_path)
     raw_provenance = manifest.get("authoring_provenance")
@@ -779,7 +870,7 @@ def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
              "manifest authoring provenance is not an object")
     note_path = _safe_relative(raw_provenance.get("source_note_path"),
                                "source note path")
-    _, note_sha = _committed_bytes(repo, note_path)
+    note_raw, note_sha = _committed_bytes(repo, note_path)
     manifest_provenance = _validate_manifest_header(manifest, note_sha)
 
     rows = manifest["candidates"]
@@ -790,10 +881,15 @@ def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
 
     tokenizer = tokenizer or _load_tokenizer()
     candidate_results: list[dict[str, Any]] = []
-    input_rows = [{
-        "path": manifest_path, "bytes": len(manifest_raw),
-        "raw_file_sha256": manifest_sha,
-    }]
+    input_rows = [
+        {"path": VALIDATOR_PATH, "bytes": len(validator_raw),
+         "raw_file_sha256": validator_sha},
+        {"path": note_path, "bytes": len(note_raw),
+         "raw_file_sha256": note_sha},
+        {"path": manifest_path, "bytes": len(manifest_raw),
+         "raw_file_sha256": manifest_sha},
+    ]
+    candidate_bindings: dict[str, dict[str, str]] = {}
     coverage: set[tuple[str, str]] = set()
     for row in rows:
         candidate_path = row["path"]
@@ -829,6 +925,10 @@ def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
             row, _expected_manifest_row(candidate, result, candidate_sha))
         coverage.add((result["conversation_id"], result["category"]))
         candidate_results.append(result)
+        candidate_bindings[candidate_path] = {
+            "candidate_id": result["candidate_id"],
+            "raw_file_sha256": candidate_sha,
+        }
         input_rows.extend([
             {"path": candidate_path, "bytes": len(candidate_raw),
              "raw_file_sha256": candidate_sha},
@@ -841,6 +941,9 @@ def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
         ])
     _require(coverage == EXPECTED_COVERAGE,
              "candidate case/category coverage differs")
+    external_reviews, review_inputs = _validate_external_reviews(
+        repo, input_dir, candidate_bindings)
+    input_rows.extend(review_inputs)
 
     unique_inputs = {row["path"]: row for row in input_rows}
     _require(all(len({item["raw_file_sha256"] for item in input_rows
@@ -848,9 +951,6 @@ def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
                  for path in unique_inputs), "input path hashes disagree")
     inventory = [unique_inputs[path] for path in sorted(unique_inputs)]
     candidate_results.sort(key=lambda item: item["candidate_id"])
-    missing_reviews = sorted({missing
-                              for item in candidate_results
-                              for missing in item["missing_review_attestations"]})
     return _seal({
         "schema": OUTPUT_SCHEMA,
         "verdict": "MECHANICAL_PASS",
@@ -858,15 +958,20 @@ def validate_directory(repo: Path, input_dir: str = DEFAULT_INPUT_DIR,
         "semantic_authorized": False,
         "execution_authorized": False,
         "model_forward_performed": False,
-        "review_status": "PENDING",
-        "missing_review_attestations": missing_reviews,
+        "embedded_candidate_review_status": "PENDING",
+        "external_review_status": "FAIL",
+        "missing_review_attestations": [],
+        "external_review_evidence": external_reviews,
         "warning": (
-            "MECHANICAL_PASS is not semantic authorization. These inputs are "
-            "UNREVIEWED banked feasibility witnesses and are not execution-ready."
+            "MECHANICAL_PASS is not semantic authorization. Independent decoded "
+            "review failed every candidate; these banked feasibility witnesses "
+            "are not execution-ready."
         ),
         "repository_head": head,
         "input_manifest_path": manifest_path,
         "input_manifest_raw_file_sha256": manifest_sha,
+        "validator_script_path": VALIDATOR_PATH,
+        "validator_script_raw_file_sha256": validator_sha,
         "committed_input_inventory": inventory,
         "committed_input_inventory_sha256": _canonical_sha256(inventory),
         "tokenizer_binding": {
@@ -900,6 +1005,13 @@ def _seal(doc: dict[str, Any]) -> dict[str, Any]:
 def _require_sealed(doc: dict[str, Any]) -> None:
     _require(doc.get("payload_sha256") == _payload_sha256(doc),
              "output payload seal differs")
+    _require(doc.get("schema") == OUTPUT_SCHEMA and
+             doc.get("verdict") == "MECHANICAL_PASS" and
+             doc.get("mechanical_pass") is True and
+             doc.get("semantic_authorized") is False and
+             doc.get("execution_authorized") is False and
+             doc.get("model_forward_performed") is False,
+             "sealed output policy invariants differ")
 
 
 def _unique_output_path(repo: Path, output_dir: str) -> Path:

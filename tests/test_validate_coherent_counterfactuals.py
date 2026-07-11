@@ -6,6 +6,7 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 import pytest
 
@@ -70,11 +71,24 @@ def test_committed_banked_candidates_mechanically_pass_but_never_authorize(token
     assert result["semantic_authorized"] is False
     assert result["execution_authorized"] is False
     assert result["model_forward_performed"] is False
-    assert result["review_status"] == "PENDING"
-    assert result["missing_review_attestations"] == [
-        "blind randomized naturalness/coherence review",
-        "target-aware factual counterfactual audit",
-    ]
+    assert result["embedded_candidate_review_status"] == "PENDING"
+    assert result["external_review_status"] == "FAIL"
+    assert result["missing_review_attestations"] == []
+    assert result["external_review_evidence"]["status"] == "FAIL"
+    assert result["external_review_evidence"]["blind_review"][
+        "overall_verdict"] == "FAIL"
+    assert result["external_review_evidence"]["target_aware_factual_review"][
+        "overall_verdict"] == "REVISE_ALL_FOUR"
+    assert all(row["execution_authorized"] is False
+               for row in result["external_review_evidence"][
+                   "candidate_verdicts"])
+    inventory_paths = {row["path"] for row in result["committed_input_inventory"]}
+    assert MODULE.VALIDATOR_PATH in inventory_paths
+    assert MODULE.SOURCE_NOTE_PATH in inventory_paths
+    assert (f"{MODULE.DEFAULT_INPUT_DIR}/reviews/"
+            f"{MODULE.BLIND_REVIEW_NAME}") in inventory_paths
+    assert (f"{MODULE.DEFAULT_INPUT_DIR}/reviews/"
+            f"{MODULE.FACTUAL_REVIEW_NAME}") in inventory_paths
     assert {(row["conversation_id"], row["category"])
             for row in result["candidates"]} == MODULE.EXPECTED_COVERAGE
     assert all(row["mechanical_status"] == "MECHANICAL_PASS" and
@@ -208,6 +222,20 @@ def test_exact_decoded_round_trip_is_required():
             NonRoundTripTokenizer(), "original", "mutant")
 
 
+def test_validator_rendering_matches_production_prefix_path_for_every_candidate(
+        tokenizer):
+    sys.path.insert(0, str(ROOT / "src"))
+    from coherent_state_tokens import generation_prefix_ids
+
+    for path in sorted(INPUT_DIR.glob("*_unreviewed.json")):
+        candidate = json.loads(path.read_text())
+        messages = list(candidate["counterfactual_conversation"]["messages"]) + [{
+            "role": "user", "content": MODULE.SUMMARY_REQUEST,
+        }]
+        assert MODULE._generation_prefix_ids(tokenizer, messages) == \
+            generation_prefix_ids(tokenizer, messages)
+
+
 MANIFEST_HEADER_MUTATIONS = [
     (("schema",), "wrong"),
     (("status",), "REVIEWED"),
@@ -290,7 +318,10 @@ def test_sealed_output_is_exact_round_trip_and_never_overwritten(tmp_path):
     document = MODULE._seal({
         "schema": MODULE.OUTPUT_SCHEMA,
         "verdict": "MECHANICAL_PASS",
+        "mechanical_pass": True,
         "semantic_authorized": False,
+        "execution_authorized": False,
+        "model_forward_performed": False,
     })
     MODULE._write_sealed_unique(output, document)
     assert json.loads(output.read_text()) == document
@@ -299,10 +330,13 @@ def test_sealed_output_is_exact_round_trip_and_never_overwritten(tmp_path):
                        match="refusing to overwrite"):
         MODULE._write_sealed_unique(output, document)
 
-    tampered = copy.deepcopy(document)
-    tampered["semantic_authorized"] = True
+    tampered = MODULE._seal({
+        **document,
+        "semantic_authorized": True,
+        "execution_authorized": True,
+    })
     with pytest.raises(MODULE.CounterfactualValidationError,
-                       match="payload seal differs"):
+                       match="policy invariants differ"):
         MODULE._write_sealed_unique(tmp_path / "tampered.json", tampered)
 
 
