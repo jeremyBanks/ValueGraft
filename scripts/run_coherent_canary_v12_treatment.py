@@ -6,7 +6,9 @@ load time.  It first verifies a separately persisted subject-matched Phase-A
 validation report and its bound raw artifact.  Only after that release check and
 an identical pinned-runtime check does it import and call ``run_treatment_case``.
 Local runs are apparatus integration only; only a released exact-subject run can
-be labeled eligible semantic evidence.
+be labeled eligible semantic evidence.  A technically valid but
+estimand-inadequate local Phase A may still exercise the treatment apparatus;
+the exact subject may not.
 """
 
 from __future__ import annotations
@@ -211,17 +213,23 @@ def validate_release_inputs(args: argparse.Namespace) -> dict[str, Any]:
         "runtime_fingerprint", {})
     phase_evidence = phase_runtime.get("evidence", {})
     phase_fingerprint = phase_evidence.get("fingerprint_sha256")
+    phase_status = phase_report.get("status")
+    allowed_statuses = ({"PRETREATMENT_PASS"} if args.subject == "exact-subject"
+                        else {"PRETREATMENT_PASS", "ESTIMAND_INADEQUATE"})
+    inadequacy = phase_report.get("inadequacy_reasons")
     require(
         phase_report.get("schema") == PHASE_A_REPORT_SCHEMA and
         phase_report.get("design_id") == DESIGN_ID and
         phase_report.get("case_id") == case_id and
-        phase_report.get("status") == "PRETREATMENT_PASS" and
+        phase_status in allowed_statuses and
         phase_report.get("subject") == args.subject and
         phase_runtime.get("passed") is True and
         phase_fingerprint == technical_fingerprint and
         not phase_report.get("invalidity_reasons") and
-        not phase_report.get("inadequacy_reasons"),
-        "Phase-A report is not a subject-matched PRETREATMENT_PASS release")
+        isinstance(inadequacy, list) and
+        ((phase_status == "PRETREATMENT_PASS" and not inadequacy) or
+         (phase_status == "ESTIMAND_INADEQUATE" and bool(inadequacy))),
+        "Phase-A report is not valid for the requested subject mode")
     require(phase_report.get("semantic_release_eligible") is
             expected_semantic_eligibility,
             "Phase-A semantic eligibility differs from subject mode")
@@ -285,6 +293,8 @@ def validate_release_inputs(args: argparse.Namespace) -> dict[str, Any]:
         "phase_a_release": {
             "status": phase_report["status"],
             "subject": phase_report["subject"],
+            "estimand_adequate": phase_status == "PRETREATMENT_PASS",
+            "inadequacy_reasons": list(inadequacy),
             "semantic_release_eligible": phase_report[
                 "semantic_release_eligible"],
             "report_sha256": bindings["phase_a_validation_report"]["sha256"],

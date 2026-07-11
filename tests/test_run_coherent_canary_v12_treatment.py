@@ -296,7 +296,7 @@ def test_unreleased_phase_a_is_saved_as_error_without_loading_or_importing(
     persisted = json.loads(output.read_text())
     assert code == 1
     assert persisted["status"] == document["status"] == "ERROR"
-    assert "PRETREATMENT_PASS" in persisted["error"]["message"]
+    assert "requested subject mode" in persisted["error"]["message"]
     assert persisted["phase_a_scores_present"] is False
     assert "treatment" not in persisted
 
@@ -311,6 +311,24 @@ def test_local_pretreatment_pass_runs_as_apparatus_integration_only(
     assert document["status"] == persisted["status"] == "PASS"
     assert persisted["subject"] == "local-apparatus"
     assert persisted["phase_a_release"]["semantic_release_eligible"] is False
+    assert persisted["semantic_evidence_eligible"] is False
+    assert persisted["apparatus_integration_only"] is True
+    assert persisted["treatment"]["arm_count"] == 34
+
+
+def test_local_estimand_inadequate_still_exercises_apparatus_only(
+        tmp_path, monkeypatch):
+    args, runtime = fixture(
+        tmp_path, subject="local-apparatus",
+        report_status="ESTIMAND_INADEQUATE")
+    install_mocks(monkeypatch, runtime)
+    output, document, code = MODULE.run(args)
+    persisted = json.loads(output.read_text())
+    assert code == 0
+    assert document["status"] == persisted["status"] == "PASS"
+    assert persisted["phase_a_release"]["status"] == "ESTIMAND_INADEQUATE"
+    assert persisted["phase_a_release"]["estimand_adequate"] is False
+    assert persisted["phase_a_release"]["inadequacy_reasons"] == ["oracle"]
     assert persisted["semantic_evidence_eligible"] is False
     assert persisted["apparatus_integration_only"] is True
     assert persisted["treatment"]["arm_count"] == 34
