@@ -197,6 +197,7 @@ def test_probe_suffix_and_q1_target_scoring(tokenizer):
     assert len(score["token_logprob_float32_bits"]) == 2
     assert score["teacher_forcing_feed_ids"] == suffix + [1]
     assert len(score["logical_feed_positions"]) == len(suffix) + 1
+    assert all(len(row) == 8 for row in score["token_logprob_float32_bits"])
 
 
 def test_selected_row_bound_is_asserted(tokenizer):
@@ -279,5 +280,7 @@ def test_bidirectional_path_control_reinserts_detached_bf16_rows(tokenizer):
     chosen = result["attempts"][-1]
     assert chosen["plus_margin_movement"] >= 1e-4
     assert chosen["minus_margin_movement"] >= 1e-4
+    assert len(chosen["plus"]["margin_float32_bits"]) == 8
+    assert len(chosen["minus"]["margin_float32_bits"]) == 8
     assert chosen["plus"]["insertion"]["use_keys"] is True
     assert chosen["plus"]["insertion"]["use_values"] is True

@@ -14,6 +14,7 @@ from coherent_canary_controls import bf16_gradient_ulp_edit_row
 from coherent_canary_runtime import (
     CanaryRuntimeError,
     Snapshot,
+    _float32_bits,
     _one_prefix_margin,
     collect_fresh_region_margin_gradients,
     continue_fresh_plan,
@@ -89,8 +90,11 @@ def _score_detached_rows(model, plan: FreshDestinationPlan, *, region: str,
              "path-control detached score is nonfinite")
     return {
         "margin": values[0],
+        "margin_float32_bits": _float32_bits(margin),
         "correct_logprob": values[1],
+        "correct_logprob_float32_bits": _float32_bits(correct),
         "counterfactual_logprob": values[2],
+        "counterfactual_logprob_float32_bits": _float32_bits(counterfactual),
         "insertion": insertion,
         "execution_trace": {
             "boundary_calls": boundary.calls,

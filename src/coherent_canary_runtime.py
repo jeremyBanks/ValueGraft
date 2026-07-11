@@ -229,7 +229,9 @@ class GradientResult:
     baseline_margin: float
     baseline_margin_float32_bits: str
     correct_logprob: float
+    correct_logprob_float32_bits: str
     counterfactual_logprob: float
+    counterfactual_logprob_float32_bits: str
     physical_region: tuple[int, int]
     logical_region: tuple[int, int]
     probe_suffix_ids: list[int]
@@ -296,7 +298,9 @@ def _run_events(model, token_ids: Sequence[int], events, *,
             lp = torch.log_softmax(last_logits.float(), dim=-1)[0, token_id]
             q1_lps.append({"physical_position": event_start,
                            "logical_position": logical_start,
-                           "token_id": token_id, "logprob": float(lp.detach().cpu())})
+                           "token_id": token_id,
+                           "logprob": float(lp.detach().cpu()),
+                           "logprob_float32_bits": _float32_bits(lp)})
         cache, last_logits = _forward(
             model, cache, ids, range(logical_start, logical_end),
             range(event_start, event_end), enable_grad=enable_grad)
@@ -756,7 +760,9 @@ def collect_fresh_region_margin_gradients(
         baseline_margin=float(public_margin.detach().cpu()),
         baseline_margin_float32_bits=_float32_bits(public_margin),
         correct_logprob=float(public_correct.detach().cpu()),
+        correct_logprob_float32_bits=_float32_bits(public_correct),
         counterfactual_logprob=float(public_counterfactual.detach().cpu()),
+        counterfactual_logprob_float32_bits=_float32_bits(public_counterfactual),
         physical_region=(physical_start, physical_end),
         logical_region=(logical_start, logical_end),
         probe_suffix_ids=[int(x) for x in suffix_ids],
