@@ -20,8 +20,11 @@ class FakeAttention(torch.nn.Module):
         self.layer_idx = layer_idx
         self.q_proj = torch.nn.Identity()
         self.k_proj = torch.nn.Identity()
-        if implementation is not None:
-            self._attn_implementation = implementation
+        implementation = implementation or "eager"
+        self.config = SimpleNamespace(
+            _attn_implementation=implementation,
+            _attn_implementation_internal=implementation,
+        )
 
 
 class FakeModel(torch.nn.Module):
@@ -29,6 +32,7 @@ class FakeModel(torch.nn.Module):
         super().__init__()
         self.config = SimpleNamespace(
             _attn_implementation=backend,
+            _attn_implementation_internal=backend,
             num_hidden_layers=2,
         )
         self.layers = torch.nn.ModuleList([
@@ -40,9 +44,9 @@ def _snapshot(rows=4):
     return [(x.clone(), (x + 10).clone())]
 
 
-def test_v4_identity_and_exact_six_arms_are_frozen():
-    assert AMENDMENT_ID == "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4"
-    assert DESIGN_ID == "coherent-state-gapped-v4"
+def test_v6_identity_and_exact_six_arms_are_frozen():
+    assert AMENDMENT_ID == "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
+    assert DESIGN_ID == "coherent-state-gapped-v6"
     assert GAPPED_ARM_NAMES == (
         "A_full", "G_fresh", "G_correct", "G_wrong",
         "G_Vcorrect", "G_Kcorrect",
@@ -64,7 +68,7 @@ def test_backend_fingerprint_rejects_non_eager_and_heterogeneous_layers():
     with pytest.raises(CoherentStateError, match="non-eager"):
         eager_backend_fingerprint(FakeModel("sdpa"))
     model = FakeModel("eager")
-    model.layers[1]._attn_implementation = "sdpa"
+    model.layers[1].config._attn_implementation = "sdpa"
     with pytest.raises(CoherentStateError, match="non-eager"):
         eager_backend_fingerprint(model)
 

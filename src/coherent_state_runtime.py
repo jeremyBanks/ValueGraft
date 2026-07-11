@@ -49,11 +49,11 @@ GAPPED_ARM_NAMES = (
     "A_full", "G_fresh", "G_correct", "G_wrong",
     "G_Vcorrect", "G_Kcorrect",
 )
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4"
-DESIGN_ID = "coherent-state-gapped-v4"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4-5-6"
+DESIGN_ID = "coherent-state-gapped-v6"
 
 
-def eager_backend_fingerprint(model) -> dict:
+def eager_backend_fingerprint(model, *, progress=None) -> dict:
     """Return and validate the resolved eager backend for every decoder layer.
 
     A requested load argument is insufficient provenance.  Decoder attention
@@ -61,52 +61,68 @@ def eager_backend_fingerprint(model) -> dict:
     and any module-local fields are retained in the fingerprint.
     """
     cfg = getattr(model.config, "text_config", model.config)
-    raw_model_fields = {
-        "model_config__attn_implementation": getattr(
-            model.config, "_attn_implementation", None),
-        "text_config__attn_implementation": getattr(
-            cfg, "_attn_implementation", None),
-        "model_config_attn_implementation": getattr(
-            model.config, "attn_implementation", None),
-        "text_config_attn_implementation": getattr(
-            cfg, "attn_implementation", None),
-    }
-    model_fields = {
-        key: None if value is None else str(value)
-        for key, value in raw_model_fields.items()
-    }
-    model_resolutions = {v for v in model_fields.values() if v is not None}
-    if model_resolutions != {"eager"}:
-        raise CoherentStateError(
-            "model attention backend fields are missing, ambiguous, or non-eager: "
-            f"{sorted(model_resolutions)}")
-    resolved_model = "eager"
+
+    def config_record(label, config):
+        fields = {
+            "_attn_implementation": getattr(
+                config, "_attn_implementation", None),
+            "_attn_implementation_internal": getattr(
+                config, "_attn_implementation_internal", None),
+        }
+        fields = {key: None if value is None else str(value)
+                  for key, value in fields.items()}
+        if set(fields.values()) != {"eager"}:
+            raise CoherentStateError(
+                f"{label} attention backend fields are missing, ambiguous, "
+                f"or non-eager: {fields}")
+        return {
+            "scope": label,
+            "config_class": type(config).__name__,
+            **fields,
+            "resolved_implementation": "eager",
+        }
+
+    model_record = config_record("model.config", model.config)
+    text_record = config_record("model.config.text_config", cfg)
     records = []
+    partial = {
+        "requested_implementation": "eager",
+        "model_config": model_record,
+        "text_config": text_record,
+        "text_config_is_model_config": cfg is model.config,
+        "expected_layer_count": int(getattr(cfg, "num_hidden_layers", -1)),
+        "layers": records,
+    }
+    if progress is not None:
+        progress(json.loads(json.dumps(partial)))
     for name, module in model.named_modules():
         cls = type(module).__name__
         if not (hasattr(module, "q_proj") and hasattr(module, "k_proj") and
                 "Attention" in cls):
             continue
-        module_fields = {
-            key: (None if getattr(module, key, None) is None else
-                  str(getattr(module, key)))
-            for key in ("_attn_implementation", "attn_implementation")
-        }
-        local = next((str(v) for v in module_fields.values() if v is not None),
-                     None)
-        local_values = {v for v in module_fields.values() if v is not None}
-        if local_values and local_values != {"eager"}:
+        module_config = getattr(module, "config", None)
+        if module_config is None:
             raise CoherentStateError(
-                f"attention module {name} has ambiguous or non-eager fields: "
-                f"{sorted(local_values)}")
-        records.append({
+                f"attention module {name} has no module.config")
+        local = config_record(f"module:{name}.config", module_config)
+        layer_index = getattr(module, "layer_idx", None)
+        if not isinstance(layer_index, int):
+            raise CoherentStateError(
+                f"attention module {name} has invalid layer_idx={layer_index!r}")
+        record = {
             "layer_index": int(getattr(module, "layer_idx", len(records))),
             "module_name": name,
             "module_class": cls,
-            "module_fields": module_fields,
-            "resolved_implementation": local or resolved_model,
-        })
-    records.sort(key=lambda x: x["layer_index"])
+            "module_config_class": type(module_config).__name__,
+            "module_config__attn_implementation":
+                local["_attn_implementation"],
+            "module_config__attn_implementation_internal":
+                local["_attn_implementation_internal"],
+            "resolved_implementation": local["resolved_implementation"],
+        }
+        records.append(record)
+        if progress is not None:
+            progress(json.loads(json.dumps(partial)))
     expected = int(getattr(cfg, "num_hidden_layers", -1))
     if expected < 1 or len(records) != expected:
         raise CoherentStateError(
@@ -117,12 +133,7 @@ def eager_backend_fingerprint(model) -> dict:
     if resolved != {"eager"}:
         raise CoherentStateError(
             f"subject attention backend is not uniformly eager: {sorted(map(str, resolved))}")
-    payload = {
-        "requested_implementation": "eager",
-        "model_fields": model_fields,
-        "expected_layer_count": expected,
-        "layers": records,
-    }
+    payload = partial
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     payload["sha256"] = hashlib.sha256(canonical.encode()).hexdigest()
     return payload
@@ -279,6 +290,23 @@ def capture_forced_prefix_ids(model, tokenizer, prefix_ids: Sequence[int],
 
 def validate_generated_replay(generated: SourceCapture, replay: SourceCapture,
                               tolerance: float = 1e-4) -> dict:
+    result = measure_generated_replay(generated, replay, tolerance)
+    if not result["passes"]:
+        raise CoherentStateError(
+            "generated/replay identity failed: "
+            f"lp={result['token_logprob_max_abs']} K={result['k_max_abs']} "
+            f"V={result['v_max_abs']}")
+    return result
+
+
+def measure_generated_replay(generated: SourceCapture, replay: SourceCapture,
+                             tolerance: float = 1e-4) -> dict:
+    """Return complete replay measurements before applying the verdict.
+
+    The authorization lifecycle persists this payload and only then validates
+    ``passes``.  ``validate_generated_replay`` remains the fail-closed API for
+    ordinary callers.
+    """
     if generated.summary_ids != replay.summary_ids:
         raise CoherentStateError("generated/replay summary IDs differ")
     if generated.prefix_ids != replay.prefix_ids:
@@ -290,12 +318,12 @@ def validate_generated_replay(generated: SourceCapture, replay: SourceCapture,
     row_diff = compare_rows(generated.rows, replay.rows)
     k_diff = max(x["k_max_abs"] for x in row_diff)
     v_diff = max(x["v_max_abs"] for x in row_diff)
-    if max(lp_diff, k_diff, v_diff) > tolerance:
-        raise CoherentStateError(
-            f"generated/replay identity failed: lp={lp_diff} K={k_diff} V={v_diff}")
     return {"tolerance": tolerance, "token_logprob_max_abs": lp_diff,
             "k_max_abs": k_diff, "v_max_abs": v_diff,
-            "per_layer": row_diff}
+            "per_layer": row_diff,
+            "observed_aggregate": max(lp_diff, k_diff, v_diff),
+            "comparison": "<=",
+            "passes": max(lp_diff, k_diff, v_diff) <= tolerance}
 
 
 def complete_assistant_context(model, tokenizer, source_messages: list[dict],

@@ -7,9 +7,13 @@ import torch
 import l_coherent_state_hf as ladder
 
 from l_coherent_state_hf import (
+    FROZEN_CASE_CONTINUATION_POSITIONS,
+    MAX_TECHNICAL_LOGICAL_POSITION,
+    V5_GATE_STAGE_ORDER,
     _require_summary_boundary,
     _validate_exact_length_wrong,
     _verify_intervention,
+    v5_gate_schema,
 )
 
 
@@ -57,6 +61,30 @@ def test_exact_length_wrong_rejects_structure_and_special_content():
 
 
 def test_retired_diagnostic_keeps_wrong_sign_failure_injection():
-    source = inspect.getsource(ladder.run_loaded_gapped_gates)
+    source = inspect.getsource(ladder._run_loaded_gapped_gates_v4_legacy)
     assert "wrong_sign_failure_injection_detected" in source
     assert "wrong_sign_shift_k_max_abs" in source
+
+
+def test_v6_gate_schema_is_exhaustive_ordered_and_pending():
+    schema = v5_gate_schema()
+    assert schema["design_id"] == "coherent-state-gapped-v6"
+    assert schema["max_technical_logical_position"] == 9509
+    assert MAX_TECHNICAL_LOGICAL_POSITION == 9509
+    assert schema["stage_order"] == list(V5_GATE_STAGE_ORDER)
+    assert all(schema[name]["status"] == "PENDING"
+               for name in V5_GATE_STAGE_ORDER)
+    assert schema["committed_case_schedule_fixtures"]["expected_coverage"] == 12
+    assert schema["external_donor_construction"]["expected_coverage"] == 12
+    assert list(FROZEN_CASE_CONTINUATION_POSITIONS) == [
+        "c10", "c02", "c01", "c04", "c07", "c11",
+        "c05", "c09", "c06", "c12", "c08", "c03",
+    ]
+    assert max(FROZEN_CASE_CONTINUATION_POSITIONS.values()) == 9509
+
+
+def test_v5_gate_never_clears_caller_sink_and_persists_raw_replay_first():
+    source = inspect.getsource(ladder.run_loaded_gapped_gates)
+    assert "sink.clear" not in source
+    assert "persist before verdict validation" in source
+    assert "SKIPPED_DEPENDENCY" in inspect.getsource(ladder._skip_stage)
