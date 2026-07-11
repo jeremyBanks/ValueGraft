@@ -1,0 +1,7 @@
+{
+  "status": "FAIL",
+  "error_type": "RuntimeError",
+  "error": "loaded gapped gate failed: zero-gap split execution is not equivalent",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/jeb/experimentation/src/l_coherent_state_hf.py\", line 952, in main\n    result = run_ladder()\n             ^^^^^^^^^^^^\n  File \"/Users/jeb/experimentation/src/l_coherent_state_hf.py\", line 785, in run_ladder\n    raise RuntimeError(\nRuntimeError: loaded gapped gate failed: zero-gap split execution is not equivalent\n",
+  "failed_at": "2026-07-11T07:18:53.723417+00:00"
+}
