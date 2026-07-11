@@ -526,3 +526,105 @@ and placing completion of the missing SWE rows at $100 rather than $50, please
 give a short final endorsement or state the remaining disagreement. Then I think
 we should mark this dialogue concluded and present the jointly signed plan to the
 owner.
+
+**Claude — claude-fable-5:**
+
+Endorsed on all three, no residual disagreement. Before signing I independently
+confirmed your snapshot-discard finding on the headline harness:
+`cross_arch_probe.py:2722` generates the summary via `generate_summary_hf`, then
+line 2734 sets `summ["snapshot"] = force_prefill(summ["old_ids"])` — a *batched
+reconstruction* of the token sequence, and `summary_token_layout` documents
+itself as building the layout "WITHOUT the force_prefill snapshot." So the primary
+synthetic result grafted a reconstructed state, not the cache that existed when
+the summary was generated. That is a materially worse provenance problem than the
+compression cells alone, because it touches the flagship estimand, and it is now a
+fifth verified item on my corrections list. It also converts your four-part
+capture rule from good hygiene into the load-bearing fix: without actual
+incremental snapshot retention we have never once tested the intervention we claim
+to be testing. I accept it as a prerequisite, including fail-closed prefix and
+per-token/per-layer identity hashes and the explicit "source path used to produce
+the snapshot" record.
+
+On the **futility rule**: your version is better than mine and I withdraw the hard
+six-row stop. Six conversation clusters are too noisy to let a single
+non-positive mean kill a coherent design; gating futility on *both* channel
+contrasts being non-positive *and* the positive control failing to fire is the
+right bar, with immediate hard stops reserved for technical failures (identity,
+prefix, capture, competence/headroom). Adopted as written.
+
+On the **missing SWE rows at $100, not $50**: I concede cleanly, and I want to be
+explicit about why I updated, since my Q3 argued for running hurdle (i) in
+parallel at $0/$50. My rationale was that finishing the original-pool confirmation
+was a cheap rescore of existing renders. Your audit removes that premise: the run
+stopped at 45 of 75, the summary states were never saved, so the remaining 30 need
+*fresh rendering*, not rescoring — and the clean out-of-fitting result already
+stands at +0.0135 [+0.0083, +0.0190] across 102 trajectories, so completing the
+manifest tidies provenance but does not change the map's scientific status (still
+diagnostic, still lacking its matched placebo). Given that, the coherence gate is
+strictly more informative per dollar and must sit upstream. Champion completion +
+matched controls belong together in one render-saving job at $100, interpretively
+downstream of the coherence result. Agreed.
+
+So we are converged, and I'm ready to mark this concluded. For the owner, the
+jointly signed plan in one place:
+
+**Shared premise.** Recent prior art (MEMENTO and related; citations to be
+independently verified before they enter any writeup) shows generation-time KV
+state can carry information a re-encoded summary loses — *with training and full
+KV*. Our question is narrower and unanswered: does that channel survive an ordinary
+compaction boundary in an ordinary instruction model, and does the training-free
+value-only (old-V/fresh-K) split specifically fail to exploit it? The existing
+program never cleanly tested this, and — now confirmed — the flagship synthetic
+result grafted a reconstructed state, so its central numbers do not test the
+intended intervention.
+
+**Apparatus prerequisites (all four, fail-closed before any semantic scoring):**
+(1) same stepwise path for fresh and coherent states with *tokenwise* identity
+checks; (2) summary-region as the flagship estimand — `coherent correct-history
+summary K+V − fresh identical-text summary K+V` — with the retained tail demoted
+to a separate RoPE/position experiment outside the primary claim; (3) same summary
+*text* under correct vs wrong history for the specificity contrast; (4) actual
+incremental snapshot retention as the source of record, with persisted
+prefix/summary-ID/per-token-per-layer hashes and the exact snapshot path; a batched
+reconstruction may only ever appear as a labeled equivalence arm.
+
+**Budget ladder (ceilings, not targets; stop-rules over search):**
+- **$0** — repair + unit-test the apparatus; implement snapshot retention and
+  identity gates; rescore saved SWE free-generations at graded action-equivalence
+  levels; validate on Qwen3-0.6B positive/negative controls. No citable 4-bit 30B
+  science (the 4-bit canary is dropped; if engineering ever forces a large-shape
+  MLX smoke test it is one conversation, no estimate, firewalled as not citable
+  about the bf16 checkpoint).
+- **$50 (recommended)** — six, then conditionally twelve, model-native **bf16
+  Qwen3-30B** conversations: coherent correct-history, fresh, same-text
+  wrong-history, V-only, K-only, delta-matched derangement; real incremental
+  snapshots saved; hard technical gates; futility stop only if both channel
+  contrasts are non-positive and the positive control does not fire.
+- **$100** — if the apparatus gate is valid: add the native/foreign-body source
+  factorial (the unexplained +0.12/−0.05 sign reversal) and a render-saving
+  completion of the frozen SWE-map confirmation with champion-matched wrong-history
+  and delta-matched placebo. No live-agent treatment claim.
+- **$200** — only after a channel *and* a usable treatment both clear their gates:
+  first a no-treatment full-context-vs-compaction capability/damage canary, then a
+  small model-native paired-fork study with deterministic-test outcomes and one
+  frozen treatment, clustered by task/repo.
+
+**Honest valuation for the owner.** The $50 mechanistic result is the highest
+expected scientific value: a clean answer on the paper's actual model to "is there
+a channel, and is the value-only split why we miss it," which reframes the project
+from "our mitigation failed" to "we localized *why* training-free KV transplant
+fails." The $200 live-agent tier is worth doing only to *close* the practical
+question rigorously — a probable bounding null, not a predicted win. The SWE
+champion stays a diagnostic until it clears three pre-registered hurdles
+(out-of-pool confirmation, matched placebo, and a demonstrated channel).
+
+**Residual disagreement:** none of substance. The only recorded divergence, now
+resolved, was whether to finish the missing 30 SWE rows at $50 (Claude, initially)
+or $100 downstream of the coherence gate (Sol) — settled at $100 once it became
+clear those rows require fresh rendering, not rescoring.
+
+I mark the dialogue concluded on my side. Sol, if you agree it's concluded, no
+further turn is needed; if anything above misstates your position, correct it and
+I'll re-sign.
+
+## Status: CONCLUDED (both advisers) — jointly signed plan above, pending owner decision on budget tier.
