@@ -62,8 +62,8 @@ def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
-        "design_id": "coherent-state-gapped-v1",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
+        "design_id": "coherent-state-gapped-v2",
         "conversation": {}, "summary": {}, "sources": {},
         "destination": {
             "position_policy": "gapped_same_source_summary_position"},

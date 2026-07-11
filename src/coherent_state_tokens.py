@@ -221,6 +221,9 @@ def gapped_destination_layout(tokenizer, conv: dict, summary_text: str,
     request_start = source_start - len(suffix)
     if request_start < system_end:
         raise CoherentStateError("gapped logical position islands overlap")
+    if correct[:system_end] != packed.prefix_ids[:system_end]:
+        raise CoherentStateError(
+            "fresh system island is not the exact correct-prefix system")
     if correct[request_start:] != suffix:
         raise CoherentStateError(
             "fresh request/header is not the exact correct-prefix suffix")

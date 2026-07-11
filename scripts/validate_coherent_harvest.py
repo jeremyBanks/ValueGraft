@@ -16,8 +16,8 @@ from typing import Any
 
 
 SCHEMA = 2
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1"
-DESIGN_ID = "coherent-state-gapped-v1"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2"
+DESIGN_ID = "coherent-state-gapped-v2"
 ARMS = (
     "A_full",
     "G_fresh",

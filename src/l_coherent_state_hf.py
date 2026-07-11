@@ -17,6 +17,7 @@ from coherent_state_cases import (
     correct_source_messages,
     fresh_source_messages,
 )
+from coherent_state_calibration import run_calibration
 from coherent_state_hf import (
     compare_rows,
     delta_deranged_snapshot,
@@ -70,7 +71,7 @@ def run_loaded_kernel_gates(model, tokenizer, *, identity_tolerance: float,
                             rotation_tolerance: float,
                             placebo_quantization_tolerance: float = 0.05,
                             placebo_moment_tolerance: float = 0.02) -> dict:
-    """Compatibility name for the Amendment-1 gapped authorization gate.
+    """Compatibility name for the additive-amendment gapped authorization gate.
 
     rotation_tolerance is intentionally ignored: packed key movement is a
     retired diagnostic and can no longer authorize a semantic run through this
@@ -155,13 +156,13 @@ def run_loaded_gapped_gates(
         placebo_quantization_tolerance: float = 0.05,
         placebo_moment_tolerance: float = 0.02,
         diagnostic_sink: dict | None = None) -> dict:
-    """Amendment-1 production gate; packed diagnostics never authorize it."""
+    """Amendments-1-2 production gate; packed diagnostics never authorize it."""
     sink = diagnostic_sink if diagnostic_sink is not None else {}
     sink.clear()
     sink.update({
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
-        "design_id": "coherent-state-gapped-v1",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
+        "design_id": "coherent-state-gapped-v2",
         "passes": False,
         "authorization_path": "gapped_position_preserving_only",
         "position_policy": "logical_position_ids_physical_cache_position",
@@ -687,6 +688,19 @@ def run_ladder() -> dict:
     if max(x["max_multiset_diff"] for x in placebo_diagnostics) > 1e-6:
         raise RuntimeError("delta placebo changed its row multiset")
 
+    # Exercise both unique deterministic calibration variants. Conversation
+    # repetitions are not independent calibration evidence (Amendment 2).
+    calibrations = {
+        cid: run_calibration(model, tokenizer, cid) for cid in ("c10", "c07")
+    }
+    by_label = {doc["correct_label"]: doc for doc in calibrations.values()}
+    if set(by_label) != {"A", "B"}:
+        raise RuntimeError(
+            f"ladder calibration did not cover both label variants: {set(by_label)}")
+    if any(doc.get("design_id") != "coherent-state-gapped-v2"
+           for doc in calibrations.values()):
+        raise RuntimeError("ladder calibration design identity changed")
+
     # A killed run after rendering must load identical text and never rerender.
     with tempfile.TemporaryDirectory() as td:
         root = Path(td)
@@ -701,8 +715,8 @@ def run_ladder() -> dict:
 
     return {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
-        "design_id": "coherent-state-gapped-v1",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
+        "design_id": "coherent-state-gapped-v2",
         "status": "PASS", "model": MODEL,
         "resolved_revision": getattr(model.config, "_commit_hash", None),
         "dtype": str(next(model.parameters()).dtype),
@@ -725,6 +739,7 @@ def run_ladder() -> dict:
         },
         "arm_outcomes": outcomes,
         "arm_cache_lengths": arm_cache_lengths,
+        "calibration_unique_variants": calibrations,
         "placebo": {
             "n_diagnostics": len(placebo_diagnostics),
             "max_multiset_diff": max(
@@ -759,8 +774,8 @@ def main():
         result = {
                   "schema": 2,
                   "amendment_id":
-                      "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
-                  "design_id": "coherent-state-gapped-v1",
+                      "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
+                  "design_id": "coherent-state-gapped-v2",
                   "status": "FAIL", "error_type": type(exc).__name__,
                   "error": str(exc), "traceback": traceback.format_exc(),
                   "failed_at": datetime.now(timezone.utc).isoformat()}

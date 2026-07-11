@@ -70,9 +70,12 @@ REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STRUCTURAL_SEED = 20_260_711
 PLACEBO_SEED = 20_260_711
 ARTIFACT_SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v1"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1"
-AMENDMENT_PATH = Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md")
+DESIGN_ID = "coherent-state-gapped-v2"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2"
+AMENDMENT_PATHS = (
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md"),
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-2.md"),
+)
 EXPECTED_GEOMETRY = {
     "layers": 48, "attention_heads": 32, "kv_heads": 4,
     "head_dim": 128, "rope_theta": 10_000_000,
@@ -80,6 +83,7 @@ EXPECTED_GEOMETRY = {
 MAX_REPLY_TOKENS = 320
 MAX_SUMMARY_TOKENS = 900
 IDENTITY_TOLERANCE = 1e-4
+ZERO_GAP_TOLERANCE = 5e-4
 PLACEBO_MOMENT_TOLERANCE = 0.02
 PLACEBO_QUANTIZATION_TOLERANCE = 0.05
 
@@ -996,8 +1000,10 @@ def main():
 
     try:
         _static_design_self_check()
-        if not AMENDMENT_PATH.exists():
-            raise CoherentStateError(f"missing frozen amendment: {AMENDMENT_PATH}")
+        missing_amendments = [path for path in AMENDMENT_PATHS if not path.exists()]
+        if missing_amendments:
+            raise CoherentStateError(
+                f"missing frozen amendments: {missing_amendments}")
         phase = "PROVENANCE"
         provenance = runtime_provenance(args.run_dir)
         config, tokenizer, subject_metadata = prepare_subject_metadata()
@@ -1009,7 +1015,8 @@ def main():
             "schema": ARTIFACT_SCHEMA,
             "design_id": DESIGN_ID,
             "amendment_id": AMENDMENT_ID,
-            "amendment_sha256": sha256_file(AMENDMENT_PATH),
+            "amendment_sha256": {
+                path.name: sha256_file(path) for path in AMENDMENT_PATHS},
             "model": MODEL, "revision": REVISION,
             "code_commit": provenance["code_commit"],
             "scenario_sha256": sha256_file(args.scenarios),
@@ -1023,6 +1030,7 @@ def main():
             "max_reply_tokens": MAX_REPLY_TOKENS,
             "max_summary_tokens": MAX_SUMMARY_TOKENS,
             "identity_tolerance": IDENTITY_TOLERANCE,
+            "zero_gap_tolerance": ZERO_GAP_TOLERANCE,
             "placebo_moment_tolerance": PLACEBO_MOMENT_TOLERANCE,
             "placebo_quantization_tolerance": PLACEBO_QUANTIZATION_TOLERANCE,
             "subject_metadata": subject_metadata,
@@ -1053,6 +1061,7 @@ def main():
             production_gate = run_loaded_gapped_gates(
                 model, tokenizer,
                 identity_tolerance=IDENTITY_TOLERANCE,
+                zero_gap_tolerance=ZERO_GAP_TOLERANCE,
                 placebo_quantization_tolerance=PLACEBO_QUANTIZATION_TOLERANCE,
                 placebo_moment_tolerance=PLACEBO_MOMENT_TOLERANCE,
                 diagnostic_sink=gate_sink)

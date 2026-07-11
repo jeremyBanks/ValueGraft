@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-pod Amendment-1 gapped coherent-summary-state run. The first invocation
+# One-pod Amendments-1-2 gapped coherent-summary-state run. The first invocation
 # exits intentionally after one scored checkpoint; the second must verify and
 # reuse it byte-for-byte.
 set -euo pipefail
@@ -10,7 +10,7 @@ EXPECTED_COMMIT="${SC_EXPECTED_COMMIT:?SC_EXPECTED_COMMIT is required}"
 MODEL="Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION="0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-RUN_DIR="results/coherent_state/coherent_state_gapped_v1_Qwen3-30B-A3B-Instruct-2507_${STAMP}"
+RUN_DIR="results/coherent_state/coherent_state_gapped_v2_Qwen3-30B-A3B-Instruct-2507_${STAMP}"
 CLONE_TMP="/workspace/repo_${STAMP}.tmp"
 
 echo "START COHERENT_STATE $(date -Is)"

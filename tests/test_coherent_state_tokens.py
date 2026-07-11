@@ -115,3 +115,21 @@ def test_gapped_layout_anchors_request_and_summary_to_correct_source(tok, conv):
                               layout.physical_summary_end] == summary_ids
     assert len(layout.context_ids) == len(layout.context_position_ids)
     assert layout.logical_next_position == layout.context_position_ids[-1] + 1
+
+
+def test_gapped_layout_rejects_changed_correct_source_system(tok, conv):
+    source = [conv["messages"][0], {"role": "user", "content": SUMMARY_REQUEST}]
+    summary = "The conversation concerned a blue heron."
+    summary_ids = rendered_assistant_content_ids(tok, source, summary)
+    correct_prefix = generation_prefix_ids(
+        tok, conv["messages"] + [{"role": "user", "content": SUMMARY_REQUEST}])
+    baseline = gapped_destination_layout(
+        tok, conv, summary, summary_ids, SUMMARY_REQUEST, correct_prefix)
+    changed = list(correct_prefix)
+    special = set(tok.all_special_ids)
+    position = next(i for i in range(baseline.system_end)
+                    if changed[i] not in special)
+    changed[position] = (changed[position] + 1) % tok.vocab_size
+    with pytest.raises(CoherentStateError, match="system island"):
+        gapped_destination_layout(
+            tok, conv, summary, summary_ids, SUMMARY_REQUEST, changed)

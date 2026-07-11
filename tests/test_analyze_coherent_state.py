@@ -8,14 +8,16 @@ from analyze_coherent_state import AnalysisError, analyze, bootstrap_interval, t
 def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
           technical=True, headroom=0.6):
     docs = []
+    calibration_labels = ["A", "A", "A", "A", "B", "A",
+                          "B", "A", "B", "A", "B", "A"]
     for i in range(n):
         f = 0.2 + i * 0.01
         c = f + cf
         w = c - cw
         docs.append({
             "schema": 2,
-            "design_id": "coherent-state-gapped-v1",
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
+            "design_id": "coherent-state-gapped-v2",
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
             "conversation_id": f"c{i+1:02d}",
             "order_position": i + 1,
             "status": "scored",
@@ -35,6 +37,7 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
                 "G_fresh": 0.0,
                 "G_wrong": 0.0 if calibration else 0.1,
             },
+            "calibration": {"correct_label": calibration_labels[i]},
         })
     return docs
 
@@ -51,6 +54,18 @@ def test_n6_extends_when_channel_direction_or_calibration_fires():
     assert out["serial_decision"] == "EXTEND_TO_12"
     assert out["regime_gate"]["passes"]
     assert out["calibration"]["fires"]
+    assert out["calibration"]["variants"]["A"]["n_repeated_executions"] == 5
+    assert out["calibration"]["variants"]["B"]["n_repeated_executions"] == 1
+
+
+def test_calibration_does_not_pseudoreplicate_majority_label():
+    docs = _docs()
+    b = next(doc for doc in docs if doc["calibration"]["correct_label"] == "B")
+    b["calibration_outcomes"] = {
+        "G_correct": 0.0, "G_fresh": 0.1, "G_wrong": 0.1}
+    out = analyze(docs)
+    assert not out["calibration"]["fires"]
+    assert out["calibration"]["both_directional_variants"] == 1
 
 
 def test_n6_futility_requires_both_nonpositive_and_calibration_failure():
@@ -110,5 +125,5 @@ def test_old_packed_or_unversioned_documents_fail_closed():
         analyze(docs)
     docs = _docs()
     docs[0]["design_id"] = "coherent-state-packed-v0"
-    with pytest.raises(AnalysisError, match="Amendment-1"):
+    with pytest.raises(AnalysisError, match="Amendments-1-2"):
         analyze(docs)

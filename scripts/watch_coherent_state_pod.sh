@@ -35,7 +35,7 @@ harvest_and_terminate() {
       echo "HARVEST_RETRY $attempt endpoint unavailable"; sleep 60; continue
     fi
     ssh="ssh -i $KEY -p $port -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$ip"
-    run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_gapped_v1_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)"
+    run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_gapped_v2_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)"
     run_path_rc=$?
     run_path_class="$(coherent_run_path_class "$run_path_rc")"
     if [ "$run_path_class" = UNVERIFIED ]; then
@@ -146,7 +146,7 @@ ALIVE=$(pgrep -f "job.sh|run_coherent_state_hf.py" | grep -v $$ | wc -l | tr -d 
 DONE=$(grep -c "COHERENT_STATE_JOB_DONE" "$LOG" 2>/dev/null || true)
 CRASH=$(grep -cE "$PC_ERROR_SIGNATURES" "$LOG" 2>/dev/null || true)
 READY=$(grep -c "MODEL_READY" "$LOG" 2>/dev/null || true)
-RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_gapped_v1_[^ ]*" "$LOG" 2>/dev/null | tail -1)
+RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_gapped_v2_[^ ]*" "$LOG" 2>/dev/null | tail -1)
 if [ -n "$RUN" ] && [ -d "$RUN" ]; then
   CK=$(find "$RUN" -maxdepth 1 -name "conv_*.json" | wc -l | tr -d " ")
   MT=$(find "$RUN" -maxdepth 1 -name "conv_*.json" -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)

@@ -39,7 +39,7 @@ grep -q 'terminal_confirmations.*-ge 2' "$WATCH"
 grep -q 'coherent_terminal_status "$desired"' "$WATCH"
 grep -q '28800' "$WATCH"
 grep -q '2700' "$WATCH"
-grep -q 'coherent_state_gapped_v1_' "$WATCH"
+grep -q 'coherent_state_gapped_v2_' "$WATCH"
 grep -q 'validate_coherent_harvest.py.*failure' "$WATCH"
 grep -q 'transformers==5.0.0' scripts/job_coherent_state_bf16.sh
 PASS=$((PASS + 15))
@@ -66,8 +66,8 @@ python3 - "$TMP" <<'PY'
 import json, pathlib, sys
 root = pathlib.Path(sys.argv[1])
 identity = {"schema": 2,
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
-            "design_id": "coherent-state-gapped-v1"}
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2",
+            "design_id": "coherent-state-gapped-v2"}
 arms = ["A_full", "G_fresh", "G_correct", "G_wrong", "G_Vcorrect",
         "G_Kcorrect", "G_delta"]
 def write(name, doc):

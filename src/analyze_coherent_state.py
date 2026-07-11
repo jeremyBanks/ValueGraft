@@ -102,7 +102,7 @@ def validate_docs(docs):
                 doc.get("amendment_id", fingerprint.get("amendment_id")) !=
                 AMENDMENT_ID):
             raise AnalysisError(
-                f"{doc.get('_path')} is not an Amendment-1 gapped artifact")
+                f"{doc.get('_path')} is not an Amendments-1-2 gapped artifact")
         if int(doc.get("order_position", -1)) != expected:
             raise AnalysisError(
                 f"non-contiguous frozen order at {doc.get('_path')}: "
@@ -125,24 +125,47 @@ def contrast_rows(docs):
 
 
 def calibration_fires(docs):
-    # Sensitivity was frozen as four directional successes among the first six.
-    # The extension cannot dilute that gate to four-of-twelve or rescue it with
-    # post-extension calibration outcomes.
+    # Calibration has only two deterministic unique contexts (A-approved and
+    # B-approved); conversation-ID assignments repeat those contexts. Treating
+    # repeats as independent trials would pseudo-replicate a 5:1 first-six label
+    # allocation. Sensitivity therefore requires both unique variants to work.
+    # The extension cannot rescue the gate with later calibration outcomes.
     docs = list(docs[:6])
-    rows = []
+    rows_by_label = {"A": [], "B": []}
     for doc in docs:
         cal = doc.get("calibration_outcomes") or {}
         if not all(a in cal for a in ("G_correct", "G_fresh", "G_wrong")):
             return {"fires": False, "reason": "missing calibration rows",
-                    "both_directional": 0, "n": len(docs), "frozen_at_n": 6}
+                    "both_directional_variants": 0, "n": len(docs),
+                    "frozen_at_n": 6}
+        label = (doc.get("calibration") or {}).get("correct_label")
+        if label not in rows_by_label:
+            return {"fires": False, "reason": "missing calibration label",
+                    "both_directional_variants": 0, "n": len(docs),
+                    "frozen_at_n": 6}
         cf = float(cal["G_correct"]) - float(cal["G_fresh"])
         cw = float(cal["G_correct"]) - float(cal["G_wrong"])
-        rows.append((cf, cw))
-    both = sum(cf > 0 and cw > 0 for cf, cw in rows)
-    mcf, mcw = mean([x[0] for x in rows]), mean([x[1] for x in rows])
-    return {"fires": bool(mcf > 0 and mcw > 0 and both >= 4),
-            "mean_GF": mcf, "mean_GW": mcw,
-            "both_directional": both, "n": len(rows), "frozen_at_n": 6}
+        rows_by_label[label].append((cf, cw))
+    variants = {}
+    for label, rows in rows_by_label.items():
+        variants[label] = {
+            "n_repeated_executions": len(rows),
+            "mean_GF": mean([x[0] for x in rows]),
+            "mean_GW": mean([x[1] for x in rows]),
+            "fires": bool(rows and mean([x[0] for x in rows]) > 0 and
+                          mean([x[1] for x in rows]) > 0),
+        }
+    both = sum(row["fires"] for row in variants.values())
+    all_rows = [row for rows in rows_by_label.values() for row in rows]
+    return {
+        "fires": both == 2,
+        "rule": "both unique label variants have positive GF and GW",
+        "variants": variants,
+        "mean_GF": mean([x[0] for x in all_rows]),
+        "mean_GW": mean([x[1] for x in all_rows]),
+        "both_directional_variants": both,
+        "n": len(docs), "frozen_at_n": 6,
+    }
 
 
 def regime_gate(docs):

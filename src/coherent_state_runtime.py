@@ -47,8 +47,8 @@ GAPPED_ARM_NAMES = (
     "A_full", "G_fresh", "G_correct", "G_wrong",
     "G_Vcorrect", "G_Kcorrect", "G_delta",
 )
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1"
-DESIGN_ID = "coherent-state-gapped-v1"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2"
+DESIGN_ID = "coherent-state-gapped-v2"
 
 
 @dataclass
