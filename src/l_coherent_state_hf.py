@@ -83,6 +83,7 @@ def run_loaded_kernel_gates(model, tokenizer, *, identity_tolerance: float,
         placebo_quantization_tolerance=placebo_quantization_tolerance,
         placebo_moment_tolerance=placebo_moment_tolerance)
 
+
 def _snapshot_length(snapshot) -> int:
     lengths = {int(t.shape[-2]) for pair in snapshot for t in pair}
     if len(lengths) != 1:
@@ -755,7 +756,12 @@ def main():
     try:
         result = run_ladder()
     except Exception as exc:
-        result = {"status": "FAIL", "error_type": type(exc).__name__,
+        result = {
+                  "schema": 2,
+                  "amendment_id":
+                      "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1",
+                  "design_id": "coherent-state-gapped-v1",
+                  "status": "FAIL", "error_type": type(exc).__name__,
                   "error": str(exc), "traceback": traceback.format_exc(),
                   "failed_at": datetime.now(timezone.utc).isoformat()}
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -766,4 +772,3 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-    gapped_arm_boundary,
