@@ -663,3 +663,33 @@ RULE 32 — SCHEDULE PROVENANCE: schedule names must be derived from and checked
 call-width array. Persisting message boundaries is not evidence that calls used them. New designs
 must distinguish `ordinary_4096`, `coarse_system_history_request`, `turn_aligned_replay`, and
 actual live generation state; never reuse a production-sounding label across them.
+
+## Incident #42 (07-11): token-exact counterfactuals and their base conversations failed decoded review
+
+WHAT: four plant-specific counterfactual candidates for c02/c10 preserved exact per-message token
+counts, full prefix length, message boundaries, P/O call widths, structural tokens, retained tail,
+and all non-allowlisted messages. A blind whole-conversation review nevertheless failed all four.
+The old base conversations themselves contain clipped/nonresponsive assistant turns, unsupported
+claims, repetitive faux-document formatting, and dangling factual chains. A target-aware paired
+review then found additional edit-specific faults: invented rationale/operating details, a retained
+`Beacon session` type cue, a U-shape counterfactual that inherited an island/location reference,
+and a literal back deck placed upstairs in a master bedroom.
+
+WHY: the feasibility-authoring pass optimized exact tokenizer geometry and local target recovery
+before independent readers evaluated the decoded conversation as a whole. The same failure class as
+#40 remained possible in a subtler form: mechanically matched text can still be semantically invalid.
+The inherited defects also show that starting from an already-generated corpus does not make a
+counterfactual control natural or coherent.
+
+IMPACT: none of the four candidates is execution-ready; all remain immutable UNREVIEWED feasibility
+witnesses. Mechanical validation correctly reports `MECHANICAL_PASS` while keeping semantic and
+execution authorization false. Repairing an inherited defect in only the counterfactual would break
+the matched design, so any repair must create a new correct/counterfactual pair, receive new hashes,
+and repeat both reviews. No semantic model outcome was scored.
+
+RULE 33 — CONTENT REVIEW PRECEDES SEMANTIC EXECUTION: exact token/position/schedule validation and
+decoded review are separate conjunctive gates. Blind reviewers must see the complete correct and
+counterfactual histories, not only diffs or target passages. A base-history failure disqualifies the
+pair even when the counterfactual edit is locally correct. Inherited repairs are applied symmetrically
+to a new pair; edit-specific repairs remain focal and minimal. Never promote `MECHANICAL_PASS` to a
+content-valid or execution-ready label.
