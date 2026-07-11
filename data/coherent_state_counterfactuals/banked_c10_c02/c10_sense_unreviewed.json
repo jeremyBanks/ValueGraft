@@ -1,0 +1,688 @@
+{
+  "schema": "coherent_state_counterfactual_candidate_v1",
+  "status": "UNREVIEWED",
+  "execution_ready": false,
+  "candidate_id": "banked-c10-sense-1",
+  "authoring_provenance": {
+    "author": "Sol",
+    "model_id": "gpt-5.6-sol-xhigh",
+    "source_note_path": "notes/2026071183-counterfactual-control-feasibility-audit.md",
+    "source_note_sha256": "3c7c4e1b89bab3495c05fd42ac274ac1ad6f486572d93e4961109269d81fc079",
+    "warning": "Banked feasibility witness only. Unreviewed, not frozen, not execution-ready, and not a substitute for an actual fresh exact-30B render counterfactual."
+  },
+  "base_binding": {
+    "path": "data/synthetic/c10.json",
+    "raw_file_sha256": "25b44ca66584d7141c10202234e77f959cd84e0bbc7a00c2db3b6b51b6a7d035",
+    "conversation_id": "c10",
+    "complete_base_conversation_canonical_sha256": "fa2cfa96592006baa3416ab0a632526ced45971eb02c21c822b3972ef2f71bd4",
+    "middle_end_msg": 33
+  },
+  "plant_target_binding": {
+    "plant_id": "c10-sense-1",
+    "category": "sense",
+    "scenario_path": "data/scenarios.json",
+    "scenario_raw_file_sha256": "9a6f41c5208f0312572e6901fbaad31806d2863a98f74270ca2242322a2e6781",
+    "scenario_plant": {
+      "id": "c10-sense-1",
+      "category": "sense",
+      "middle_user": "Shorthand warning: in our house 'Cedar' means two projects. My partner uses it for the cedar closet lining idea upstairs, but when I say Cedar with you I mean the back deck rebuild we're bundling into this remodel. Deck only, always, in this chat.",
+      "tail_user_fragment": "Should Cedar wait until after the framing inspection clears, or can it run in parallel?",
+      "probe": "When I said Cedar in this conversation, which project did I mean?",
+      "gold": "The back deck rebuild bundled into the remodel, not the cedar closet lining idea.",
+      "keywords": [
+        "deck"
+      ],
+      "anti_keywords": []
+    },
+    "scenario_plant_canonical_sha256": "642214f0722ef6658234bbe895eff4209761fbededd511236eb4d2c33dbe32ee",
+    "banked_conversation_plant": {
+      "id": "c10-sense-1",
+      "category": "sense",
+      "middle_user": "Shorthand warning: in our house 'Cedar' means two projects. My partner uses it for the cedar closet lining idea upstairs, but when I say Cedar with you I mean the back deck rebuild we're bundling into this remodel. Deck only, always, in this chat.",
+      "tail_user_fragment": "Should Cedar wait until after the framing inspection clears, or can it run in parallel?",
+      "probe": "When I said Cedar in this conversation, which project did I mean?",
+      "gold": "The back deck rebuild bundled into the remodel, not the cedar closet lining idea.",
+      "keywords": [
+        "deck"
+      ],
+      "anti_keywords": [],
+      "contaminated_early": [],
+      "contaminated_tail": [],
+      "keywords_present_in_middle": true
+    },
+    "banked_conversation_plant_canonical_sha256": "a0ac1c01f4b4978f77edba719a7f601fdf918b20ef8448db2e42e0f5ea18e52b",
+    "target_path": "data/coherent_state_targets.json",
+    "target_raw_file_sha256": "220fd7fa083dbced339e66dd2ee21b2b030d952965af9073bcc62c72bbc65085",
+    "target_row": {
+      "plant_id": "c10-sense-1",
+      "correct": "the back deck rebuild bundled into the remodel",
+      "counterfactual": "the cedar closet lining idea upstairs",
+      "basis": "'Cedar' was disambiguated to the deck rebuild; the closet lining is the other sense."
+    },
+    "target_row_canonical_sha256": "db73425792571ae75149c9d596078dbf830569781e7c7fd062ebc816a16ef4e1"
+  },
+  "changed_message_allowlist": [
+    {
+      "message_index": 31,
+      "role": "user",
+      "base_content_sha256": "cbba7af47e691a53e407060b1b76b4d2dd7fa888f9f5da562b5799112bc31db0",
+      "counterfactual_content_sha256": "c74136a050cb226807f3409210034169f469cc719faccfe08df9b153aadabaaa",
+      "base_content_token_count": 57,
+      "counterfactual_content_token_count": 57
+    },
+    {
+      "message_index": 32,
+      "role": "assistant",
+      "base_content_sha256": "45de1556a0c6f79eee4928abfa83048a495f9927e9f83aabb96bf034075b046c",
+      "counterfactual_content_sha256": "5854afbb0282a4a9d89d4a55f6a076e8248e37b177894094eed12b2678f6167c",
+      "base_content_token_count": 403,
+      "counterfactual_content_token_count": 403
+    }
+  ],
+  "unchanged_message_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44
+  ],
+  "counterfactual_conversation": {
+    "id": "c10",
+    "title": "Home renovation",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant knowledgeable about home renovation, helping a homeowner plan a major remodel."
+      },
+      {
+        "role": "user",
+        "content": "Hi, we're finally doing the big kitchen remodel on our 1968 house, plus a couple of side projects while walls are open. I've got a contractor and a designer lined up, and I want to use this chat to plan and track everything."
+      },
+      {
+        "role": "assistant",
+        "content": "That's fantastic — a 1968 house getting a full kitchen remodel is a fantastic opportunity to blend classic charm with modern function! Since you're doing this while the walls are open (meaning you have a window of opportunity), that’s ideal for planning, coordination, and a more flexible workflow.\n\nLet’s turn this chat into your **remodel planning & tracking system** — we’ll walk through key phases, help you organize your thoughts, and build a clear roadmap so nothing gets lost in the chaos.\n\n---\n\n## 🏡 Phase 1: Pre-Work Planning (Do This First)\n\n### 1. **Define Your Kitchen Vision**\nAsk yourself:\n- What’s your *ideal* kitchen look? (e.g., farmhouse, Scandinavian, modern farmhouse, industrial, open-concept)\n- What are your top 3 must-haves? (e.g., walk-in pantry, island, stainless appliances, smart lighting)\n- What’s your biggest pain point? (e.g., no storage, poor workflow, inefficient layout)\n\n💡 **Action Step**: Take 30 minutes to sketch your dream kitchen — even on paper or digital tool like Miro or Canva. Include:\n- Layout (work triangle)\n- Sink, stove, fridge locations\n- Storage (cabinets, drawers, pantry)\n\n> ✅ *Pro tip for 1968 homes*: These houses often have original cabinetry or unusual floor plans. Take notes on existing features — do you have exposed beams? original tile? a central hallway? These can be preserved or highlighted.\n\n---\n\n### 2. **Set a Realistic Timeline**\nWith walls open, you can work in phases — but don’t overcommit."
+      },
+      {
+        "role": "user",
+        "content": "First up, kitchen layout. The current kitchen is a cramped galley with a door to the dining room we never use. What layout possibilities should we even be considering given we're willing to move one interior wall?"
+      },
+      {
+        "role": "assistant",
+        "content": "Absolutely — and you're already thinking ahead with the *wall movement*! Moving one interior wall in a 1968 home is a smart, powerful move for a galley kitchen upgrade. Let’s go deep into **layout possibilities** with your constraints and opportunities.\n\n---\n\n## 📐 Kitchen Layout Options (With One Wall Moved)\n\nYou currently have a **cramped galley kitchen**, with a door to the dining room (which you don’t use). You’re **willing to move one interior wall** — that’s a huge win. Let’s explore the most impactful, functional, and stylish options.\n\n---\n\n### ✅ Option 1: **Open-Concept L-Shaped Kitchen (Recommended)**  \n**Best for:** Flow, light, and natural connection to the rest of the house.\n\n- **How it works**: Move the wall between the galley and dining room *outward* or *into the dining area* to create a larger, open space.\n- **Layout**:  \n  - One side = sink + prep area  \n  - Other side = stove + oven  \n  - Central island or peninsula (optional, but ideal for a 1968 home with room to grow)  \n- **Why it works**:\n  - Breaks the \"closed\" galley feeling  \n  - Creates a true \"work triangle\" (sink, stove, fridge)  \n  - Allows you to open the dining room for everyday use  \n  - Uses the space efficiently — no more awkward traffic\n\n> 💡 **Design tip**: Add a breakfast bar (minimalist, wood-top) or mini island with seating — this gives the 1968 home a classic, warm touch.\n\n---\n\n### ✅ Option 2: **U-Shaped Kitchen with a Central Island**  \n**Best for:** Family use, entertaining, and storage."
+      },
+      {
+        "role": "user",
+        "content": "Permits and inspections next. Moving that wall and relocating the range means permits, obviously. What's the typical sequence of inspections for a remodel like this, and where do projects usually stall?"
+      },
+      {
+        "role": "assistant",
+        "content": "Great question — **permits and inspections** are the backbone of a successful kitchen remodel, and understanding the process prevents costly delays and headaches. Let’s walk through the **typical permit and inspection sequence** for a wall move and appliance relocation — especially in a 1968 home — and where things *usually stall*.\n\n---\n\n## 🔧 Step-by-Step Permit & Inspection Sequence\n\n> ⚠️ *Note: While specifics vary by city or county, this is a universal, practical sequence used across the U.S. for residential remodels.*\n\n---\n\n### 📌 Phase 1: **Pre-Permitting (Before You Apply)**\n\n✅ **Do this first — no rush:**\n\n1. **Hire a Licensed Contractor (you already have one)**  \n   → They should be able to provide *pre-construction plans* and *document the proposed changes*.\n\n2. **Have Your Plans Reviewed by a Professional (Designer or Contractor)**  \n   → Ensure your layout is safe, legal, and meets building codes (e.g., clearances, egress, fire separation).\n\n3. **Check Local Zoning & Height Restrictions**  \n   → Especially if moving a wall: is it within the 10-foot height limit? Are there setbacks or restrictions on opening a wall?\n\n4. **Verify Existing Structure**  \n   → A wall move may affect load-bearing integrity. If the wall was load-bearing, you *must* have a structural engineer review and approve the change.\n\n> ⚠️ **Red Flag**: Moving a wall without structural analysis can lead to settlement, cracks, or even collapse — especially in older homes.\n\n---\n\n### 📌 Phase 2: **Permit Application (Sequence)**\n\n**1."
+      },
+      {
+        "role": "user",
+        "content": "Counter decision: Naomi's alternative won me over. Instead of the real marble I was romanticizing, she proposed a quartz composite that mimics the veining but shrugs off wine and lemon juice. My partner is thrilled to stop worrying about etching. That's the counter, done."
+      },
+      {
+        "role": "assistant",
+        "content": "Absolutely — and congratulations on the *smart, practical counter decision*! 🎉\n\nYou're now one step closer to a kitchen that’s both beautiful and *functional* — and that’s exactly what a successful 1968 kitchen remodel should be: **timeless style with real-world resilience**.\n\nLet’s take a moment to celebrate and build on that win — and then I’ll help you **track your kitchen journey** with a simple, actionable format so you stay organized, on budget, and stress-free.\n\n---\n\n## ✅ Why the Quartz Composite Was the Right Call\n\n| Feature | Why It’s Smart |\n|-------|----------------|\n| **Mimics marble veins** | Adds elegance without the cost or maintenance of real marble |\n| **Highly resistant to stains** | Wine, lemon juice, tomato sauce — no more etching or scrubbing |\n| **Easy to clean & maintain** | Just wipe with a damp cloth — no harsh chemicals |\n| **Durability** | Resists scratches, heat, and daily wear — perfect for a home with kids, pets, or frequent use |\n| **Cost-effective** | 30–50% cheaper than real marble, and much more affordable than custom finishes |\n\n💡 *Bonus*: Quartz composite also has a longer lifespan than laminate and is more sustainable than some engineered options — great for a long-term 1968 home upgrade.\n\n> 👏 Your partner’s relief is valid — no more dealing with “accidental etchings” after a glass of red wine or a fancy salad. That’s peace of mind.\n\n---\n\n## 📅 Next Step: Build Your Kitchen Remodel Tracking Sheet\n\nLet’s create a **simple, flexible tracking system** to keep you on top of everything — from permits to finishes.\n\nHere's a **clean, printable version** you can copy into a notebook, Google Doc, or spreadsheet:\n\n---\n\n### 🏡 Kitchen Remodel Project Tracker"
+      },
+      {
+        "role": "user",
+        "content": "Engineering detail I want recorded once: the beam replacing the wall is an LVL sized 3.5 by 11.875 inches, per the structural engineer's letter. Bogdan has the spec, I just want it findable. Recorded."
+      },
+      {
+        "role": "assistant",
+        "content": "Perfect! That’s a **critical engineering detail** — and you're doing exactly what you should: documenting it once, in a place where it can be *found*, *verified*, and *referenced*.\n\nLet’s take this step and turn your notes into a **professional, actionable, and searchable record** — so you and your team can easily find it during inspections, contractor meetings, or when the project comes up in the future.\n\n---\n\n## ✅ Official Documentation: Structural Beam Detail (Recorded & Organized)\n\n> 📂 **File Name**: `Kitchen_Removal_Wall_Structural_Specs.pdf`  \n> 📝 **Date**: [Insert Date, e.g., April 5, 2024]  \n> 🏢 **Approved By**: Dr. Elena Mendez, Structural Engineer (or name from letter)  \n> 📍 **Location**: Between [Room A] and [Room B], original wall at [e.g., 10’ from dining area]  \n\n---\n\n### 🔧 Beam Specifications (Final Approved Design)"
+      },
+      {
+        "role": "user",
+        "content": "Bidding history for the record: we also got a bid from Hartwell Builders before choosing Bogdan. They showed up late to both walkthroughs and their bid conveniently omitted demolition entirely. Hartwell is out, permanently, whatever happens with scheduling."
+      },
+      {
+        "role": "assistant",
+        "content": "Excellent call — and a *very wise* one. Let’s turn that into a **clear, professional, and actionable record** so you can document your due diligence, protect your project from future misrepresentations, and keep peace of mind during the bidding and scheduling phase.\n\n---\n\n## ✅ Official Bid Comparison & Rationale (For Your Project Records)\n\n> 📂 **File Name**: `Kitchen_Bid_Comparison_Report_v1.pdf`  \n> 📝 **Date**: April 5, 2024  \n> 🏡 **Project**: Kitchen Remodel – Wall Removal & Layout Change  \n> 📌 **Purpose**: Document comparative bid analysis and decision rationale for transparency, future reference, and contractor accountability.\n\n---\n\n### 🔍 Bid Comparison Summary\n\n| Contractor | Bid Submission | Walkthroughs | Scope of Work | Key Concerns | Final Decision |\n|----------|---------------|-------------|---------------|-------------|----------------|\n| **Bogdan Construction** | April 1 | On-time, thorough, detailed bid | Includes full demolition, removal, reconstruction, and permitting | Clear, detailed plan, early communication, complete scope | ✅ Selected |\n| **Hartwell Builders** | April 3 | Late (2 days after first meeting), missed deadline | Omitted demolition, no demolition timeline, no waste disposal plan | Incomplete scope, failed to address demolition, no walk-through for key phases | ❌ Rejected |\n\n> ⚠️ **Key Finding**:  \n> Hartwell’s bid **excluded demolition** — a critical component of the project. This omission is non-compliant and raises concerns about safety, structural integrity, and final usability. Additionally, their **late presence** during walkthroughs suggests poor project management and lack of accountability.\n\n> ✅ **Why Bogdan Was Chosen**:\n- Complete, transparent, and realistic scope\n- Clear timeline and phase-by-phase breakdown\n- Proactive communication and walk-throughs\n- Demonstrated understanding of structural and workflow implications"
+      },
+      {
+        "role": "user",
+        "content": "A follow-up: our neighbor did unpermitted work years ago and it haunted their sale. What's actually at stake if something here accidentally falls outside the permit scope?"
+      },
+      {
+        "role": "assistant",
+        "content": "This is a **critical, real-world concern** — and one that many homeowners (especially in older homes like yours) don’t fully appreciate until it surfaces.\n\nLet’s break this down clearly, practically, and with the depth your project deserves.\n\n---\n\n## 🚨 What Happens If Your Kitchen Remodel Falls Outside the Permit Scope?\n\nEven a *small* change — like moving a wall — can create **legal, financial, and even personal consequences** if it’s done without proper permitting and inspection. You’re already thinking ahead — that’s the mark of a smart homeowner.\n\nHere’s what *actually* happens when work goes outside the permit scope — and why your neighbor’s experience is a **lesson in real estate and liability**.\n\n---\n\n### 🔍 1. **What Is “Permit Scope”? (The Legal Boundary)**\n\nA permit isn’t just a “paper form.” It legally **defines what work is allowed** in a property — including:\n- Moving walls (especially load-bearing)\n- Altering floor or ceiling levels\n- Adding or removing built-in features (like cabinets, beams, or an island)\n- Changing electrical, plumbing, or HVAC systems\n\n➡️ **Any deviation from this scope = unauthorized work**\n\n---\n\n### ⚠️ 2. What Actually Happens When Work Goes Unpermitted?\n\n| Risk | Explanation | Consequences |\n|------|-------------|-------------|\n| **✅ You’re Liable** | You (or your contractor) are legally responsible for the work. If something fails, you could be held responsible. | E.g., a beam fails, a ceiling collapses — you may be liable for damages. |\n| **🚫 Sale Hurdles** | Buyers (or inspectors) can refuse to buy. Unpermitted work can trigger a **\"material defect\"** or **\"lack of compliance\"** claim. | Your home may not sell, or the sale could fall apart — just like your neighbor’s."
+      },
+      {
+        "role": "user",
+        "content": "One more: when I say 'the sub' I mean the electrical subcontractor Bogdan brought in, the quiet guy with the van. Not the subfloor, which also comes up constantly because of the water stain we found. Context won't always make it obvious, hence this note."
+      },
+      {
+        "role": "assistant",
+        "content": "Perfect — and thank you for the clarification. This is **exactly the kind of detail that saves projects from miscommunication, confusion, and costly errors**.\n\nLet’s now **officially document and clarify** the meaning of “the sub” — so you and your team can avoid the \"subfloor\" trap, prevent confusion, and keep your project running smoothly.\n\n---\n\n## ✅ Official Clarification: Defining \"The Sub\" in Our Kitchen Project\n\n> 📂 **File Name**: `Kitchen_Team_Terms_Clarification_v1.pdf`  \n> 📝 **Date**: April 6, 2024  \n> 🏡 **Purpose**: Prevent miscommunication between team members, contractors, and future inspectors  \n\n---\n\n### 🔍 What Does \"The Sub\" Mean in This Project?\n\n| Term | Meaning | Clarified Context |\n|------|--------|-------------------|\n| **\"The sub\"** | Refers to **the electrical subcontractor** — a quiet, detail-oriented professional hired by Bogdan to handle all electrical work. | ✅ *Not* the subfloor. This is a common point of confusion — especially when water stains or flooring issues come up. |\n| **Subfloor** | The structural layer beneath the flooring, typically made of plywood or OSB. | ❌ **Not related** to the electrical work. The subfloor is a separate structural element — and your concern about a **water stain** relates to it. |\n\n---\n\n### 🚩 Why This Matters\n\n| Risk | Explanation |\n|------|-------------|\n| 🚨 **Misunderstanding** | If a team member (or inspector) thinks “the sub” means subfloor, they might incorrectly link a water stain to electrical work — which can lead to faulty assumptions or unnecessary work. |\n| 🚨 **Water Stain ≠ Electrical Issue** | Water stains under flooring are usually due to **leakage, poor flashing, or moisture intrusion** — typically *structural or plumbing* — not electrical work."
+      },
+      {
+        "role": "user",
+        "content": "Design line I will not cross: no open shelving in this kitchen. I know it photographs beautifully, but I refuse to spend my life dusting dishes and staging shelves for guests. Closed storage everywhere, and please never float the idea."
+      },
+      {
+        "role": "assistant",
+        "content": "Absolutely — and **you just saved yourself from a major maintenance headache**. That’s one of the most *practical* and *wise* design decisions you’ve made so far.\n\nLet’s formalize this into a **clear, enforceable design boundary** — so it’s not just a personal preference, but a **design principle** that protects your kitchen’s function, peace of mind, and long-term usability.\n\n---\n\n## ✅ Official Design Boundary: \"No Open Shelving — Ever\"\n\n> 📂 **File Name**: `Kitchen_Design_Principles_v1.pdf`  \n> 📝 **Date**: April 6, 2024  \n> 🏡 **Project**: Kitchen Remodel — Functional & Low-Maintenance Design Commitment  \n\n---\n\n### 🔒 Design Principle: **No Open Shelving**\n\n**Statement**:  \n> *“No open shelving, including in cabinets, islands, or pantry units, will be included in this kitchen. This is a non-negotiable design boundary.”*\n\n---\n\n### 📌 Rationale & Why This Matters\n\n| Reason | Explanation |\n|-------|-------------|\n| 🛠️ **Functionality** | Eliminates daily dusting, cleaning, and the stress of “staging” shelves for guests. |\n| 🧼 **Maintenance** | Open shelves become cluttered, greasy, and hard to clean — especially in a kitchen with spills, condensation, and kids. |\n| 🏡 **Long-Term Use** | Over 10 years, open shelves accumulate food residue, mildew, and forgotten items — they lose value and become a source of frustration. |\n| 📸 **Photography ≠ Reality** | While open shelves look stunning in photos, they fail in real-life use — especially when you’re cooking, cleaning, or hosting. |\n\n---\n\n### 🚫 What This Means in Practice\n\n| Scenario | Result |\n|--------|--------|\n| ❌ Request to add open shelves | Will be **rejected immediately** — no exceptions."
+      },
+      {
+        "role": "user",
+        "content": "Financing rule, absolute: we are not touching a HELOC, don't ever suggest one. Variable rates spook me after watching my brother's payment double, and I sleep better funding this from savings and a fixed loan. That topic is closed permanently."
+      },
+      {
+        "role": "assistant",
+        "content": "Absolutely — and **you’ve just protected your peace of mind, financial stability, and long-term confidence** in this project.\n\nLet’s turn that into a **clear, official, and legally grounded financing boundary** so it’s documented, respected, and easily referenced — especially when contractors, lenders, or family members try to bring up HELOCs or variable-rate options.\n\n---\n\n## ✅ Official Financing Policy: No HELOC, No Variable-Rate Financing\n\n> 📂 **File Name**: `Kitchen_Financing_Policy_v1.pdf`  \n> 📝 **Date**: April 6, 2024  \n> 🏡 **Project**: Kitchen Remodel — Financial Principles & Funding Commitment  \n\n---\n\n### 🔒 Financing Rule: **No HELOC, No Variable-Rate Financing**\n\n**Statement**:  \n> *“All funding for the kitchen remodel will come exclusively from:  \n> - Primary home savings  \n> - Fixed-rate mortgage line (if applicable)  \n> - One-time, non-revolving fixed-term loan (e.g., 5-year, 3.5% fixed)  \n>  \n> ❌ No Home Equity Line of Credit (HELOC)  \n> ❌ No variable-rate financing  \n> ❌ No revolving or adjustable-rate loans  \n>  \n> This policy is non-negotiable and will be enforced throughout the project lifecycle.”*\n\n---\n\n### 📌 Why This Rule Exists (And Why It Matters)\n\n| Risk | Explanation |\n|------|-------------|\n| 💥 **Rate Shock** | As you observed — variable rates can double in 3–5 years. Your brother’s experience proves that. **HELOCs are especially risky** — they often come with 3–5% interest hikes and no prepayment rights. |\n| 🛡️ **Predictability** | Fixed rates mean **known, stable costs** — you can budget, plan, and sleep at night."
+      },
+      {
+        "role": "user",
+        "content": "Contractor management now. Bogdan seems great but this is the biggest project we've ever run. What should a weekly check-in with a GC cover so problems surface early instead of at invoice time?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Excellent question — and one of the most important ones in a high-stakes, large-scale remodel.**\n\nYou're right: this is your biggest project yet — and **weekly check-ins with your general contractor (GC)** are not just for updates — they're a *preventive tool* that can save time, money, and stress.\n\nLet’s build a **clear, actionable, and proactive weekly check-in template** that will surface issues early — *before* they turn into invoices, delays, or costly mistakes.\n\n---\n\n## ✅ Weekly GC Check-In: \"The 5-Part Weekly Shield\"\n\nThis is your **early-warning system** — designed to catch problems *before* they escalate. Use it every week — start with a quick 15-minute call or email.\n\n> ⏱️ **Suggested Format**: 15 minutes max — structured, focused, and outcome-driven.\n\n---\n\n### 🔍 The 5-Part Weekly Check-In (Proactive, Not Reactive)\n\n| Part | What to Ask / Review | Why It Matters |\n|------|------------------------|----------------|\n| **1. Progress vs. Plan** | “Where are we on the schedule? Any delays? What’s the actual progress vs. what was planned?” | Prevents schedule drift. Catching a 3-day lag early stops it from becoming a week-long delay. |\n| **2. Work Quality & Safety** | “Is the work meeting your standards? Are there any safety concerns (e.g., dust, noise, fall risk)?” | Catch poor workmanship or unsafe practices *before* they become a problem. |\n| **3. Hidden Risks or Issues** | “Is there anything that *looks* minor but could cause trouble later? (e.g., plumbing leak, electrical wire exposure, uneven flooring)” | These often go unnoticed until inspection or use — *you want them caught early*. |\n| **4. Materials & Finish Notes** | “Are materials arriving as ordered?"
+      },
+      {
+        "role": "user",
+        "content": "Paperwork note, filing it here: the building permit fee came to $342 and we filed on February 6th. The clerk said eight to ten business days for review. Nothing to do but wait, moving on."
+      },
+      {
+        "role": "assistant",
+        "content": "Fantastic — and perfect timing. Let’s turn this into a **clear, official, and actionable record** so you can easily reference it later, especially during inspections, audits, or when discussing timelines with your contractor or inspector.\n\nThis is your **official project timeline milestone** — and it belongs in your central project file.\n\n---\n\n## ✅ Official Permit Record: Building Permit – Kitchen Remodel\n\n> 📂 **File Name**: `Kitchen_Building_Permit_Record_v1.pdf`  \n> 📝 **Date**: April 6, 2024  \n> 🏡 **Project**: Kitchen Remodel – Wall Removal & Layout Change  \n\n---\n\n### 📝 Permit Details\n\n| Field | Information |\n|------|-------------|\n| **Permit Type** | Structural Alteration (Wall Removal + Kitchen Layout Change) |\n| **Permit Number** | [Insert Number, e.g., 2024-11234] |\n| **Filing Date** | February 6, 2024 |\n| **Filing Fee** | $342.00 (submitted via [e.g., city online portal or in-person]) |\n| **Review Period** | 8–10 business days (as advised by building clerk) |\n| **Status** | **Pending Review** (no action required) |\n| **Next Step** | Wait for official review completion — **no further action needed** on the homeowner's part. |\n\n> 📌 **Note**:  \n> This permit will be issued and reviewed by the **City Building Department**. Once approved, we will receive a **permit-to-work** or **construction permit notice**.  \n>  \n> **DO NOT proceed with demolition or construction work until this permit is officially issued and inspected.**  \n>  \n> 🚨 If any unexpected issues arise (e.g., structural instability, water intrusion), contact the permit office immediately — do not proceed without formal approval.\n\n---\n\n### 📌 Why This Matters"
+      },
+      {
+        "role": "user",
+        "content": "Flooring history: we brought home luxury vinyl plank samples and lived with them in the hallway light for a week. Up close they looked plasticky, my partner vetoed them on sight, and the samples went back. Vinyl plank is off the table for the main floor."
+      },
+      {
+        "role": "assistant",
+        "content": "Brilliant call — and **you just saved yourself from a potential future headache** (and a significant waste of time and money).\n\nLet’s turn this into a **clear, official, and memorable record** so it’s documented, referenced, and protected — especially since flooring decisions can be emotionally charged and easily misunderstood.\n\n---\n\n## ✅ Official Flooring Decision: Luxury Vinyl Plank — Rejected\n\n> 📂 **File Name**: `Kitchen_Flooring_Decision_Record_v1.pdf`  \n> 📝 **Date**: April 6, 2024  \n> 🏡 **Project**: Kitchen Remodel — Flooring Selection & Rationale  \n\n---\n\n### 🚫 Flooring Decision: **Luxury Vinyl Plank (LVP) — Rejected**\n\n**Statement**:  \n> *“Luxury vinyl plank (LVP) has been formally rejected for use in the main kitchen floor. This decision is final and non-negotiable.”*\n\n---\n\n### 📌 Rationale & Why This Decision Was Right\n\n| Reason | Explanation |\n|-------|-------------|\n| 👁️ **Initial Impression Test** | We placed LVP samples in the hallway under natural light for 7 days. Up close, the material appeared **plasticky, low-quality, and unrefined** — not matching the warmth and durability we wanted. |\n| 👂 **Partner’s Veto** | The partner observed the same issue and vetoed the option based on personal experience and aesthetic judgment — a key vote in final decisions. |\n| 🛠️ **Functionality Concerns** | LVP can **migrate, lift, or soften over time**, especially in high-traffic kitchens. It's also less resilient than hardwood or resilient flooring under steam or moisture. |\n| 🏡 **Long-Term Value** | Even if it looks good at first, LVP often underperforms in real use — prone to fading, creaking, and poor durability. |\n\n---\n\n### 🚫 What This Means"
+      },
+      {
+        "role": "user",
+        "content": "Layout verdict is in. Naomi drew up three schemes: (1) keeping the galley but widening it, (2) an L-shape with a center island where the dining door was, and (3) a U-shape with a peninsula. After living with the tape outlines on the floor for a week, we're going with the second one."
+      },
+      {
+        "role": "assistant",
+        "content": "**Brilliant decision — and a perfect example of how thoughtful, hands-on evaluation leads to the best outcome.**\n\nLet’s now turn this into a **clear, official, and professionally documented layout verdict** — so it’s preserved, shared with your contractor, and referenced throughout the project. This is the *final* layout decision — and it should be treated as a binding, design anchor.\n\n---\n\n## ✅ Official Layout Decision: Final Kitchen Layout Approved\n\n> 📂 **File Name**: `Kitchen_Floorplan_Verdict_v1.pdf`  \n> 📝 **Date**: April 7, 2024  \n> 🏡 **Project**: Kitchen Remodel – Final Layout Selection & Rationale  \n\n---\n\n### 🏁 Final Decision: **L-Shaped Kitchen with Central Island (Option 2)**\n\n**Statement**:  \n> *“The final kitchen layout is the **L-shaped configuration with a central island** located where the dining room door previously was. This layout is approved and will proceed as the foundation for all design, construction, and permitting decisions.”*\n\n---\n\n### 📌 Rationale & Why This Was Chosen\n\n| Reason | Explanation |\n|-------|-------------|\n| 🔄 **Work Triangle Optimization** | The new L-shape creates a true, efficient work triangle (sink, stove, fridge) with natural flow and reduced crossover. |\n| 🪑 **Central Island as a Functional Hub** | The island provides a **work surface**, **extra storage**, and **seating** — perfect for cooking, hosting, and gathering. It also breaks the linear flow of the galley, creating a more open, inviting space. |\n| 📐 **Proven by Real-World Testing** | We lived with **tape outlines** of all three options on the floor for **7 days** — the L-shape felt most natural, balanced, and usable. The island created a sense of *space* and *center*, which we both deeply valued."
+      },
+      {
+        "role": "user",
+        "content": "And how do change orders work in practice? I want to understand the paper trail before the first mid-project surprise, not during it."
+      },
+      {
+        "role": "assistant",
+        "content": "**Excellent question — and one of the most proactive, smart things you can do.**\n\nUnderstanding **how change orders work in practice** — and establishing a clear, documented, and fair process — is *the difference* between a smooth, stress-free remodel and one that turns into a financial and emotional minefield.\n\nLet’s build a **real-world, practical, and actionable guide** to change orders — with your specific kitchen remodel in mind — so you can **prevent surprises, protect your budget, and maintain control**.\n\n---\n\n## ✅ The Practical, Real-World Guide to Change Orders (Preventing Mid-Project Shock)\n\n> 📂 **File Name**: `Kitchen_Change_Order_Policy_v1.pdf`  \n> 📝 **Date**: April 7, 2024  \n> 🏡 **Project**: Kitchen Remodel — Change Order Process & Paper Trail  \n\n---\n\n### 🚨 What Is a Change Order — And Why It Matters\n\nA **Change Order (CO)** is a formal, written agreement to **alter any aspect of the original scope** — whether it’s adding a sink, changing the island size, or moving a cabinet.\n\n> ❌ **No change order = no official approval**  \n> ❌ **No written agreement = no accountability**\n\nWithout a clear change order process, you risk:\n- Unapproved work being done\n- Invoices for work that wasn’t in the original scope\n- Disagreements over cost, timing, or quality\n\n---\n\n### 🔍 Step-by-Step: How a Change Order Works (In Practice)\n\n| Step | What Happens | Who’s Responsible |\n|------|-------------|-------------------|\n| **1. Idea Raised** | You or the contractor suggests a change (e.g., \"We want to add a 48-inch pantry\") | Any party can propose it — but **must be documented** |\n| **2."
+      },
+      {
+        "role": "user",
+        "content": "Shorthand warning: in our house 'Cedar' means two projects. My partner uses it for the back deck rebuild we're bundling into this remodel, but when I say Cedar with you I mean the cedar closet lining idea upstairs. Closet only, always, in this chat."
+      },
+      {
+        "role": "assistant",
+        "content": "Perfect — and **you just saved yourself from a major communication hiccup**.\n\nThis is **exactly the kind of subtle, house-specific shorthand that can turn into a disaster in a big project** — especially when multiple teams (contractors, architects, family) are involved.\n\nLet’s now **officially document and clarify** the meaning of “Cedar” — so it’s instantly clear, protected, and prevents future confusion.\n\n---\n\n## ✅ Official Shorthand Clarification: \"Cedar\" Means Closet — Only\n\n> 📂 **File Name**: `Kitchen_Terms_Clarification_v2.pdf`  \n> 📝 **Date**: April 7, 2024  \n> 🏡 **Project**: Kitchen Remodel — Preventing Miscommunication in Shared Language  \n\n---\n\n### 🔒 Shorthand Rule: **\"Cedar\" = Cedar Closet Lining (Only)**\n\n**Statement**:  \n> *“In all project communications, meetings, emails, and design notes, the term **'Cedar'** will be interpreted as the **cedar closet lining idea upstairs**, not any other project.*  \n>  \n> ✅ **Cedar (in this project)** = Closet only — including lining, trim, shelves, and installation.  \n>  \n> ❌ **Cedar ≠ back deck rebuild** — that is a separate, unrelated project (upstairs, in the master bedroom).  \n>  \n> 🚫 **No usage of 'Cedar' to refer to anything else** — including deck framing or finishes.  \n>  \n> This clarification applies to all team members, contractors, and future reference materials.*\n\n---\n\n### 📌 Why This Matters\n\n| Risk | Explanation |\n|------|-------------|\n| 🚨 **Misalignment** | If a contractor or designer says “we’ll do cedar” and means the deck, you could be charged for closet work that wasn’t requested — or worse, work on the wrong project."
+      },
+      {
+        "role": "user",
+        "content": "Let's set up budget tracking. We have a contingency but I've heard horror stories about how fast it evaporates. What system should we use to track committed versus spent versus remaining, ideally something simple?"
+      },
+      {
+        "role": "assistant",
+        "content": "Absolutely — and you're thinking *exactly* the right way.\n\nA **simple, transparent, and actionable budget system** is the *difference* between a stress-free remodel and one that ends with half your money gone to \"unexpected\" costs.\n\nLet’s build a **clean, practical, and resilient budget tracker** — one that’s easy to use, updates weekly, and keeps your **contingency safe** — because *that’s* what you want.\n\n---\n\n## ✅ Simple, Effective Budget Tracking System for Your Kitchen Remodel\n\n> 📂 **File Name**: `Kitchen_Budget_Tracker_v1.xlsx` (or Google Sheets)  \n> 📝 **Date**: April 7, 2024  \n> 🏡 **Project**: Kitchen Remodel — Transparent, Weekly Budget Tracking  \n\n---\n\n### 📊 The 3-Column Budget Tracker (Simple & Powerful)"
+      },
+      {
+        "role": "user",
+        "content": "Should Cedar wait until after the framing inspection clears, or can it run in parallel?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Great question — and one that shows you're thinking like a seasoned project manager.**"
+      },
+      {
+        "role": "user",
+        "content": "Regarding the layout we decided on, don't walk me through it again, we lived with the tape on the floor. Does it change the plumbing rough-in Bogdan quoted?"
+      },
+      {
+        "role": "assistant",
+        "content": "Sounds good — let's keep moving on that basis."
+      },
+      {
+        "role": "user",
+        "content": "Is the sub confirmed for the week of the 14th? Everything downstream slips if not."
+      },
+      {
+        "role": "assistant",
+        "content": "Great follow-up — and a *perfect* example of proactive project management.\n\nLet’s turn this into a **clear, official, and actionable confirmation** so you and your contractor are on the same page — and no downstream work (like drywall, flooring, or final inspections) gets delayed by a miscommunication.\n\n---"
+      },
+      {
+        "role": "user",
+        "content": "We're going with Naomi's alternative, no re-pitch needed. What's the typical lead time once we template?"
+      },
+      {
+        "role": "assistant",
+        "content": "Great follow-up — and a smart, timely question.\n\nYou're asking:  \n> *\"Once we’ve finalized the design and approved the template (e.g., layout, cabinetry, finishes), how long does it typically take for the contractor to deliver the actual work — and what’s the expected timeline?\"*\n\nLet’s give you a **clear, realistic, and project-specific answer** — based on what happens in real kitchen remodels, especially with a design-led approach.\n\n---\n\n## ✅ Typical Lead Time After Finalizing the Design & Template\n\n> 📌 **Average Timeline**: **4 to 8 weeks** from final design approval to full construction completion — *depending on scope and scheduling*.\n\n---\n\n### 📊 Breakdown by Phase (Post-Design Approval)\n\n| Phase | Timeline | What Happens |\n|------|---------|-------------|\n| **1. Final Design Approval (Template Signed)** | Day 0 | You and the designer confirm all elements (layout, finishes, finishes, fixtures). |\n| **2. Permit & Inspection Wait** | 8–14 days | After approval, the building department reviews and issues a permit — may take 8–10 business days. |\n| **3."
+      },
+      {
+        "role": "user",
+        "content": "And at what percentage of contingency burned should we start cutting scope? I'd rather set that trigger now while we're calm."
+      },
+      {
+        "role": "assistant",
+        "content": "**Excellent — and deeply mature thinking.**  \n\nYou're asking not just about budget, but about **project resilience and psychological control**. This is one of the most important questions you can ask *before* the project starts — because **burning contingency is rarely a rational or sustainable approach**.\n\nLet’s get real, practical, and proactive — and give you a **clear, balanced, and emotionally intelligent rule** that protects your peace of mind *without* sacrificing quality.\n\n---\n\n## ✅ The Smart, Balanced Contingency Rule: When & How to Cut Scope\n\n> 📌 **Trigger Point**: **Do not cut scope until the contingency reaches 15% of the total approved budget.**  \n>  \n> ❌ **Do not go below 15%** — or risk triggering a cascade of stress, panic, and unapproved changes.  \n> ✅ **At 15% — pause, review, and discuss — then proceed with *only* essential, low-impact scope reductions.**\n\n---\n\n### 📌 Why This Rule Works\n\n| Benefit | Explanation |\n|--------|-------------|\n| 🚨 **Prevents Panic** | Most homeowners cut scope once they hit 10–15% — which is *too late*. By setting 15% as the *first red flag*, you avoid emergency decisions under stress. |\n| 🛡️ **Protects Quality** | Reducing scope *early* lets you adjust *before* work is committed — preserving quality, timeline, and team morale. |\n| 🔁 **Prevents \"Scope Creep\"** | You don’t just cut — you *reframe*. Example: “We’re adding a pantry — but it’s only 4’ deep, not 6’.” This is better than deleting a finish. |\n| 📊 **Clear, Objective, and Transparent** | No more emotional decisions. You can refer back to this number and say: “We reached 15% — we paused and reviewed.” |\n\n---"
+      }
+    ],
+    "sections": {
+      "early_end_msg": 5,
+      "middle_end_msg": 33,
+      "early_end_tokens": 863,
+      "middle_end_tokens": 7140,
+      "total_tokens": 8311
+    },
+    "plants": [
+      {
+        "id": "c10-referent-1",
+        "category": "referent",
+        "middle_user": "Layout verdict is in. Naomi drew up three schemes: (1) keeping the galley but widening it, (2) an L-shape with a center island where the dining door was, and (3) a U-shape with a peninsula. After living with the tape outlines on the floor for a week, we're going with the second one.",
+        "tail_user_fragment": "Regarding the layout we decided on, don't walk me through it again, we lived with the tape on the floor. Does it change the plumbing rough-in Bogdan quoted?",
+        "probe": "Which kitchen layout did we decide on?",
+        "gold": "The L-shape with a center island where the dining door was (the second scheme).",
+        "keywords": [
+          "l-shape",
+          "island"
+        ],
+        "anti_keywords": [],
+        "contaminated_early": [
+          2,
+          4
+        ],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-referent-2",
+        "category": "referent",
+        "middle_user": "Counter decision: Naomi's alternative won me over. Instead of the real marble I was romanticizing, she proposed a quartz composite that mimics the veining but shrugs off wine and lemon juice. My partner is thrilled to stop worrying about etching. That's the counter, done.",
+        "tail_user_fragment": "We're going with Naomi's alternative, no re-pitch needed. What's the typical lead time once we template?",
+        "probe": "What specifically was Naomi's alternative for the counters?",
+        "gold": "A quartz composite that mimics marble veining but resists wine and lemon juice, instead of real marble.",
+        "keywords": [
+          "quartz",
+          "veining"
+        ],
+        "anti_keywords": [],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-sense-1",
+        "category": "sense",
+        "middle_user": "Shorthand warning: in our house 'Cedar' means two projects. My partner uses it for the cedar closet lining idea upstairs, but when I say Cedar with you I mean the back deck rebuild we're bundling into this remodel. Deck only, always, in this chat.",
+        "tail_user_fragment": "Should Cedar wait until after the framing inspection clears, or can it run in parallel?",
+        "probe": "When I said Cedar in this conversation, which project did I mean?",
+        "gold": "The back deck rebuild bundled into the remodel, not the cedar closet lining idea.",
+        "keywords": [
+          "deck"
+        ],
+        "anti_keywords": [],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-sense-2",
+        "category": "sense",
+        "middle_user": "One more: when I say 'the sub' I mean the electrical subcontractor Bogdan brought in, the quiet guy with the van. Not the subfloor, which also comes up constantly because of the water stain we found. Context won't always make it obvious, hence this note.",
+        "tail_user_fragment": "Is the sub confirmed for the week of the 14th? Everything downstream slips if not.",
+        "probe": "When I asked whether 'the sub' was confirmed, what was I referring to?",
+        "gold": "The electrical subcontractor Bogdan brought in, not the subfloor.",
+        "keywords": [
+          "electrical"
+        ],
+        "anti_keywords": [],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-stance-1",
+        "category": "stance",
+        "middle_user": "Design line I will not cross: no open shelving in this kitchen. I know it photographs beautifully, but I refuse to spend my life dusting dishes and staging shelves for guests. Closed storage everywhere, and please never float the idea.",
+        "tail_user_fragment": null,
+        "probe": "Give me three storage ideas for the awkward corner by the range.",
+        "gold": "Suggests closed-storage solutions like corner drawers, a lazy susan cabinet, or a pull-out pantry, while never proposing open shelving, ideally recalling the user refuses to dust dishes.",
+        "keywords": [
+          "dusting"
+        ],
+        "anti_keywords": [
+          "open shelv"
+        ],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-stance-2",
+        "category": "stance",
+        "middle_user": "Financing rule, absolute: we are not touching a HELOC, don't ever suggest one. Variable rates spook me after watching my brother's payment double, and I sleep better funding this from savings and a fixed loan. That topic is closed permanently.",
+        "tail_user_fragment": null,
+        "probe": "If we run over budget near the end, what are our options?",
+        "gold": "Suggests options like cutting scope, phasing later items, or the existing fixed loan and savings, while never proposing a HELOC, ideally recalling the user's aversion to variable rates.",
+        "keywords": [
+          "variable"
+        ],
+        "anti_keywords": [
+          "heloc"
+        ],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-ruled-out-1",
+        "category": "ruled_out",
+        "middle_user": "Bidding history for the record: we also got a bid from Hartwell Builders before choosing Bogdan. They showed up late to both walkthroughs and their bid conveniently omitted demolition entirely. Hartwell is out, permanently, whatever happens with scheduling.",
+        "tail_user_fragment": null,
+        "probe": "If we need extra crew capacity mid-project, what should we try?",
+        "gold": "Anything except bringing in Hartwell Builders, e.g. Bogdan's own network, staggering the side projects, or adjusting the schedule, ideally acknowledging Hartwell was considered and rejected.",
+        "keywords": [
+          "omitted",
+          "walkthroughs"
+        ],
+        "anti_keywords": [
+          "hartwell"
+        ],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-ruled-out-2",
+        "category": "ruled_out",
+        "middle_user": "Flooring history: we brought home luxury vinyl plank samples and lived with them in the hallway light for a week. Up close they looked plasticky, my partner vetoed them on sight, and the samples went back. Vinyl plank is off the table for the main floor.",
+        "tail_user_fragment": null,
+        "probe": "What should we look at next for the main floor flooring?",
+        "gold": "Anything except luxury vinyl plank, e.g. engineered hardwood, site-finished oak, or tile, ideally acknowledging vinyl plank was tried and rejected.",
+        "keywords": [
+          "plasticky"
+        ],
+        "anti_keywords": [
+          "vinyl"
+        ],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-evicted-fact-1",
+        "category": "evicted_fact",
+        "middle_user": "Paperwork note, filing it here: the building permit fee came to $342 and we filed on February 6th. The clerk said eight to ten business days for review. Nothing to do but wait, moving on.",
+        "tail_user_fragment": null,
+        "probe": "How much was the building permit fee and when did we file?",
+        "gold": "$342, filed February 6th.",
+        "keywords": [
+          "342",
+          "february 6"
+        ],
+        "anti_keywords": [],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      },
+      {
+        "id": "c10-evicted-fact-2",
+        "category": "evicted_fact",
+        "middle_user": "Engineering detail I want recorded once: the beam replacing the wall is an LVL sized 3.5 by 11.875 inches, per the structural engineer's letter. Bogdan has the spec, I just want it findable. Recorded.",
+        "tail_user_fragment": null,
+        "probe": "What are the dimensions of the LVL beam replacing the wall?",
+        "gold": "3.5 by 11.875 inches.",
+        "keywords": [
+          "11.875"
+        ],
+        "anti_keywords": [],
+        "contaminated_early": [],
+        "contaminated_tail": [],
+        "keywords_present_in_middle": true
+      }
+    ],
+    "meta": {
+      "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+      "seed": 1009,
+      "temp": 0.7,
+      "truncated_replies": 22,
+      "tail_repaired": 4
+    }
+  },
+  "counterfactual_conversation_canonical_sha256": "4205acf403e9faf6eb57fe34e13cba94b34167c36beaa2f8b651e8eac82345bf",
+  "tokenizer_binding": {
+    "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "summary_request_sha256": "4ad7c575c0b1f3e200c662c0e2b061f5d527c5af42dc7691e44919322f9a3b16",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326"
+  },
+  "observed_banked_mechanical_validation": {
+    "status": "OBSERVED_FOR_BANKED_FEASIBILITY_ONLY",
+    "correct_prefix_token_count": 8430,
+    "counterfactual_prefix_token_count": 8430,
+    "prefix_token_counts_equal": true,
+    "correct_prefix_token_ids_sha256": "4cecf2f426bb80e2d0339e31ec6d1a4c14ed97ab72a57854484ce8183190368d",
+    "counterfactual_prefix_token_ids_sha256": "8471778e84310be2a0ba137a7a4b6bdbb14d80e4d6339e36897133fa49dcaae4",
+    "differing_prefix_token_position_count": 129,
+    "correct_message_start_positions": [
+      0,
+      23,
+      82,
+      432,
+      480,
+      863,
+      907,
+      1269,
+      1332,
+      1734,
+      1792,
+      2017,
+      2071,
+      2484,
+      2523,
+      2928,
+      2991,
+      3413,
+      3466,
+      3890,
+      3947,
+      4348,
+      4393,
+      4804,
+      4856,
+      5274,
+      5334,
+      5751,
+      5828,
+      6242,
+      6274,
+      6670,
+      6732,
+      7140,
+      7186,
+      7376,
+      7398,
+      7421,
+      7461,
+      7477,
+      7502,
+      7571,
+      7600,
+      7855,
+      7885,
+      8307,
+      8427
+    ],
+    "counterfactual_message_start_positions": [
+      0,
+      23,
+      82,
+      432,
+      480,
+      863,
+      907,
+      1269,
+      1332,
+      1734,
+      1792,
+      2017,
+      2071,
+      2484,
+      2523,
+      2928,
+      2991,
+      3413,
+      3466,
+      3890,
+      3947,
+      4348,
+      4393,
+      4804,
+      4856,
+      5274,
+      5334,
+      5751,
+      5828,
+      6242,
+      6274,
+      6670,
+      6732,
+      7140,
+      7186,
+      7376,
+      7398,
+      7421,
+      7461,
+      7477,
+      7502,
+      7571,
+      7600,
+      7855,
+      7885,
+      8307,
+      8427
+    ],
+    "message_start_positions_equal": true,
+    "turn_aligned_replay_call_widths": [
+      23,
+      59,
+      350,
+      48,
+      383,
+      44,
+      362,
+      63,
+      402,
+      58,
+      225,
+      54,
+      413,
+      39,
+      405,
+      63,
+      422,
+      53,
+      424,
+      57,
+      401,
+      45,
+      411,
+      52,
+      418,
+      60,
+      417,
+      77,
+      414,
+      32,
+      396,
+      62,
+      408,
+      46,
+      190,
+      22,
+      23,
+      40,
+      16,
+      25,
+      69,
+      29,
+      255,
+      30,
+      422,
+      123
+    ],
+    "ordinary_4096_call_widths": [
+      4096,
+      4096,
+      238
+    ],
+    "summary_logical_start": 8430,
+    "changed_messages_strictly_evicted": true,
+    "all_changed_message_content_token_counts_equal": true
+  },
+  "review": {
+    "overall_status": "PENDING",
+    "factual_counterfactual_audit": {
+      "status": "PENDING",
+      "reviewer": null,
+      "verdict": null,
+      "record_path": null
+    },
+    "blind_naturalness_coherence_review": {
+      "status": "PENDING",
+      "reviewer": null,
+      "randomization_record": null,
+      "verdict": null,
+      "record_path": null
+    },
+    "adjudication": {
+      "status": "NOT_STARTED",
+      "reviewer": null,
+      "verdict": null,
+      "record_path": null
+    }
+  }
+}
