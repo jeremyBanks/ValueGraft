@@ -35,9 +35,12 @@ their full descriptions (the outstanding state).
 - #46 · completed · Strengthen SWE-Gym +0.0156 anchor on primary bf16 30B
 - #47 · completed · After paper is promoted: move draft into notes/
 - #48 · ~~DELETED~~ · (was: re-run note-naming/summarization scripts) — DESCOPED by owner 2026-07-10: the notes naming/summary/regeneration scripts are no longer this agent's responsibility; do NOT run them. Writing notes files into the folder is still fine; running the regeneration tooling is not.
-- #49 · **pending** · Design in-domain graft optimization on brief-SWE-Gym (the unexplored live margin)
-- #50 · **pending** · After full close-out: fresh Fable writes a speculative note on WHY the graft fails
-- #51 · **pending** · Spend remaining use-it-or-lose-it credit on more data (even long shots) — brief Fable
+- #49 · completed · Design in-domain graft optimization on brief-SWE-Gym — RAN. Naive graft sample-heterogeneous (pooled borderline null); in-domain-tuned per-layer champion holds small out-of-sample positive (pooled +0.0126 CI>0). In paper §3.3.
+- #50 · completed · Fresh Fable wrote the speculative why-it-fails note → notes/2026071101-why-value-grafting-mostly-fails.md (6 hypotheses). Pushed.
+- #51 · completed · Spent credit on the in-domain tune + confirm; data exhausted; spend halted at $7.33 per owner. In paper.
+
+## FINAL STATE (2026-07-11)
+Paper finalized + pushed (README.md, commit 1d64086 on origin/trunk). Speculative note pushed. All pods down, spend halted ($7.33 frozen, ~$7 left unspent per owner). Note naming/summary/regeneration scripts DESCOPED (#48 deleted — not this agent's responsibility). Remaining pending tasks (#27, #32, #36, #37, #38) are older / out-of-scope-for-this-round items, left as-is. External publishing (HF blog / public posting) NOT done — held for owner.
 
 ## Pending tasks — full descriptions
 
