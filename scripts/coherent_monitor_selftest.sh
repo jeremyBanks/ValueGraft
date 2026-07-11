@@ -4,6 +4,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 # shellcheck source=scripts/classify_pod.sh
 . scripts/classify_pod.sh
+# shellcheck source=scripts/coherent_lifecycle_lib.sh
+. scripts/coherent_lifecycle_lib.sh
 
 PASS=0
 case_ok() {
@@ -34,10 +36,23 @@ grep -q 'status_json.*coherent_pod_status_after_delete' "$WATCH"
 grep -q "test -d.*run_remote" "$WATCH"
 grep -q "API ERROR 404" "$WATCH"
 grep -q 'terminal_confirmations.*-ge 2' "$WATCH"
-grep -q '\[ -n "$desired" \].*\[ "$desired" != "RUNNING" \]' "$WATCH"
+grep -q 'coherent_terminal_status "$desired"' "$WATCH"
 grep -q '28800' "$WATCH"
 grep -q '2700' "$WATCH"
 PASS=$((PASS + 12))
+
+[ "$(coherent_remote_dir_class 0)" = EXISTS ]
+[ "$(coherent_remote_dir_class 1)" = ABSENT ]
+[ "$(coherent_remote_dir_class 255)" = UNVERIFIED ]
+for terminal in EXITED TERMINATED; do
+  coherent_terminal_status "$terminal"
+done
+for nonterminal in RUNNING CREATED "" None; do
+  if coherent_terminal_status "$nonterminal"; then
+    echo "FAIL nonterminal status accepted: ${nonterminal:-<empty>}"; exit 1
+  fi
+done
+PASS=$((PASS + 9))
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT

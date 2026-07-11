@@ -16,6 +16,8 @@ PROBLEM_STREAK=0
 cd "$ROOT" || exit 1
 # shellcheck source=scripts/classify_pod.sh
 . scripts/classify_pod.sh
+# shellcheck source=scripts/coherent_lifecycle_lib.sh
+. scripts/coherent_lifecycle_lib.sh
 [ -f "$STATE" ] || { echo "FATAL: state absent $STATE"; exit 2; }
 
 status_json() {
@@ -24,6 +26,7 @@ status_json() {
 
 harvest_and_terminate() {
   local mode="${1:-failure}" attempt ipp ip port ssh run_remote local_dir stamp
+  local remote_dir_rc remote_dir_class
   local harvested=0
   for attempt in 1 2 3 4 5; do
     ipp="$(status_json | python3 -c 'import json,sys; d=json.load(sys.stdin); print((d.get("publicIp") or "")+":"+str((d.get("portMappings") or {}).get("22", "")))' 2>/dev/null)" || true
@@ -33,10 +36,19 @@ harvest_and_terminate() {
     fi
     ssh="ssh -i $KEY -p $port -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$ip"
     run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)" || true
-    if [ -n "$run_remote" ] && ! $ssh "test -d '$run_remote'" 2>/dev/null; then
-      # The job announces its intended absolute path before clone/model setup.
-      # A logged-but-not-yet-created path is a setup failure, not a result tree.
-      run_remote=""
+    if [ -n "$run_remote" ]; then
+      $ssh "test -d '$run_remote'" >/dev/null 2>&1
+      remote_dir_rc=$?
+      remote_dir_class="$(coherent_remote_dir_class "$remote_dir_rc")"
+      if [ "$remote_dir_class" = ABSENT ]; then
+        # The job announces its intended absolute path before clone/model setup.
+        # A confirmed absent path is a setup failure, not a result tree.
+        run_remote=""
+      elif [ "$remote_dir_class" = UNVERIFIED ]; then
+        echo "HARVEST_RETRY $attempt result-directory check transport failure rc=$remote_dir_rc"
+        sleep 60
+        continue
+      fi
     fi
     if [ -n "$run_remote" ]; then
       local_dir="$ROOT/${run_remote#/workspace/repo/}"
@@ -72,8 +84,8 @@ harvest_and_terminate() {
     SC_POD_STATE="$STATE" uv run python src/pod.py terminate >/dev/null 2>&1 || true
     sleep 10
     if status_json >/tmp/coherent_pod_status_after_delete.json 2>/dev/null; then
-      desired="$(python3 -c 'import json;print(json.load(open("/tmp/coherent_pod_status_after_delete.json")).get("desiredStatus"))' 2>/dev/null)"
-      if [ -n "$desired" ] && [ "$desired" != "RUNNING" ]; then
+      desired="$(python3 -c 'import json; v=json.load(open("/tmp/coherent_pod_status_after_delete.json")).get("desiredStatus"); print(v if isinstance(v,str) else "")' 2>/dev/null)"
+      if coherent_terminal_status "$desired"; then
         terminal_confirmations=$((terminal_confirmations + 1))
       else
         terminal_confirmations=0
