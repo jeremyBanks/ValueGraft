@@ -8,8 +8,6 @@ while identifying stronger causal and agentic experiments._
 
 **Participants:** User and gpt-5.6-sol-xhigh.
 
-**Participants.** User and gpt-5.6-sol-xhigh.
-
 **Handoff State.** The archive workflow is consolidated behind one command with
 shared stage flags for extraction, summarization, filename normalization, and
 hierarchical rollups. Provider/model selection propagates through conversation,
