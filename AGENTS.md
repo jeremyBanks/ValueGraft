@@ -80,9 +80,12 @@ conversation-compaction boundaries.
   note for a tiny recent exchange. Conversation notes include a generated
   `**Participants:** ...` paragraph; it includes `User` only when user messages
   are present, then full assistant model identifiers sorted by contributed text
-  volume and labeled contributing subagents. If reasoning effort is present,
-  append it to the model identifier with a hyphen, such as `gpt-5.5-xhigh`.
-  Every model ID found in the raw conversation metadata must appear there.
+  volume, including models recovered from contributing subagent sessions. If
+  reasoning effort is present, append it to the model identifier with a hyphen,
+  such as `gpt-5.5-xhigh`. Every model ID found in the raw conversation metadata
+  must appear there. Filenames contain only compact user/model identifiers and
+  omit effort, task labels, and source IDs. Each conversation note ends with an
+  unlinked `## Conversation sources` list of the opaque main/subagent source IDs.
 
 ## Source-control policy (07-05)
 

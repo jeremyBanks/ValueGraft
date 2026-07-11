@@ -36,6 +36,7 @@ class Message:
     agent_runtime_version: str | None = None
     transcript_scaffolding: bool = False
     subagent: str | None = None
+    source_id: str | None = None
 
 
 def parse_ts(value: str | None) -> datetime | None:
@@ -175,6 +176,7 @@ def subagent_final_messages(path: Path) -> list[Message]:
                         row.get("version") if isinstance(row.get("version"), str) else None
                     ),
                     subagent=str(agent_id),
+                    source_id=str(agent_id),
                 )
         if final is not None:
             finals.append(final)
@@ -230,6 +232,11 @@ def iter_messages(
                     model=msg.get("model") if isinstance(msg.get("model"), str) else None,
                     agent_runtime_version=row.get("version") if isinstance(row.get("version"), str) else None,
                     transcript_scaffolding=transcript_scaffolding,
+                    source_id=(
+                        str(row.get("sessionId"))
+                        if row.get("sessionId")
+                        else path.stem
+                    ),
                 )
             )
     if include_subagent_finals:

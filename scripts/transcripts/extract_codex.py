@@ -32,6 +32,7 @@ class Message:
     reasoning_effort: str | None = None
     transcript_scaffolding: bool = False
     subagent: str | None = None
+    source_id: str | None = None
 
 
 def parse_ts(value: str | None) -> datetime | None:
@@ -120,6 +121,50 @@ def response_item_text(content: Any) -> str:
             if isinstance(text, str):
                 parts.append(text)
     return "\n\n".join(parts)
+
+
+def subagent_session_metadata(parent_thread_id: str) -> dict[str, dict[str, str]]:
+    """Map agent paths to child conversation/model metadata for one parent."""
+    sessions_root = Path.home() / ".codex" / "sessions"
+    if not sessions_root.is_dir():
+        return {}
+    result: dict[str, dict[str, str]] = {}
+    for candidate in sorted(sessions_root.glob("**/*.jsonl")):
+        try:
+            with candidate.open("r", encoding="utf-8") as handle:
+                first = json.loads(handle.readline())
+                payload = first.get("payload") if first.get("type") == "session_meta" else None
+                if not isinstance(payload, dict) or payload.get("parent_thread_id") != parent_thread_id:
+                    continue
+                source = payload.get("source")
+                subagent = source.get("subagent") if isinstance(source, dict) else None
+                spawn = subagent.get("thread_spawn") if isinstance(subagent, dict) else None
+                agent_path = spawn.get("agent_path") if isinstance(spawn, dict) else None
+                if not isinstance(agent_path, str):
+                    continue
+                info = {
+                    "source_id": str(payload.get("id") or candidate.stem),
+                    "model_provider": str(payload.get("model_provider") or ""),
+                    "agent_runtime_version": str(payload.get("cli_version") or ""),
+                }
+                for line in handle:
+                    try:
+                        row = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    if row.get("type") != "turn_context":
+                        continue
+                    context = row.get("payload")
+                    if not isinstance(context, dict):
+                        continue
+                    if context.get("model"):
+                        info["model"] = str(context["model"])
+                    if context.get("effort"):
+                        info["reasoning_effort"] = str(context["effort"])
+                result[agent_path] = info
+        except (OSError, json.JSONDecodeError):
+            continue
+    return result
 
 
 def iter_messages(
@@ -223,8 +268,21 @@ def iter_messages(
                 )
             )
     if include_subagent_finals:
+        metadata = subagent_session_metadata(thread_id)
+        for message in subagent_finals:
+            info = metadata.get(message.subagent or "", {})
+            message.source_id = info.get("source_id") or message.subagent
+            message.model = info.get("model") or message.model
+            message.model_provider = info.get("model_provider") or message.model_provider
+            message.agent_runtime_version = (
+                info.get("agent_runtime_version") or message.agent_runtime_version
+            )
+            message.reasoning_effort = info.get("reasoning_effort") or message.reasoning_effort
         main_texts = {message.text for message in out}
         out.extend(message for message in subagent_finals if message.text not in main_texts)
+    for message in out:
+        if message.source_id is None:
+            message.source_id = thread_id
     out = sorted(
         out,
         key=lambda m: (m.ts is None, m.ts or datetime.max.replace(tzinfo=timezone.utc), m.source_line),

@@ -43,10 +43,12 @@ provided Claude/Codex wrappers use nonpersistent or ephemeral execution so a
 generated summary cannot become a new transcript input.
 
 Generated notes include a deterministic `**Participants:** ...` paragraph from
-raw transcript metadata: `User` when present, assistant models sorted by
-contributed text volume, and labeled contributing subagents. If reasoning effort
-is present, it is appended to the model identifier with a hyphen, such as
-`gpt-5.5-xhigh`; provider names, app runtimes, and CLI versions are not included.
+raw transcript metadata: `User` when present, then every contributing main or
+subagent model sorted by contributed text volume. Reasoning effort is appended
+to the model identifier with a hyphen, such as `gpt-5.5-xhigh`; provider names,
+app runtimes, task labels, and CLI versions are not participant identities. A
+final unlinked `## Conversation sources` list records the opaque main-session
+and subagent-session IDs whose text supplied the note.
 
 Raw transcript extraction splits at UTC day boundaries and at gaps over one
 hour. The update workflow may coalesce adjacent raw segments into one note, but
@@ -91,14 +93,16 @@ repository workflow.
 Conversation-note style:
 
 - name files as `YYYYMMDDNN-conversation-<participants>.md`, where `NN` is the
-  per-day git-creation-time order and participant slugs are compact (`user`,
-  `fable5`, `opus48`, `sonnet5`, `gpt55`)
+  per-day git-creation-time order and participant slugs contain only `user` and
+  contributing model identifiers (`fable5`, `opus48`, `sonnet5`, `gpt55`);
+  reasoning effort, task labels, and conversation IDs never enter filenames
 - start with one italicized opening summary paragraph containing one sentence,
   or at most two short sentences, describing the conversation
 - include the generated `**Participants:** ...` paragraph immediately after the
   opening summary; every source model ID for that note must appear there, with
-  reasoning effort appended by hyphen when present, along with labeled
-  subagents whose final responses contributed source material
+  reasoning effort appended by hyphen when present
+- end with an unlinked `## Conversation sources` bullet list of opaque source
+  conversation/subagent IDs
 - use prose paragraphs; if section labels help, use optional bold
   paragraph-opening labels like `**Handoff State.**` rather than Markdown
   heading syntax

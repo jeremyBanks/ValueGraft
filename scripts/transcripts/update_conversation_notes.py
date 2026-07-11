@@ -68,7 +68,7 @@ OLD_PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
 OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
 RESERVED_NOTE_NAMES = {"AGENTS.md", "README.md"}
 ARCHIVE_SUFFIXES = {".md", ".txt"}
-MAX_NOTE_TITLE_BYTES = 220
+CONVERSATION_SOURCES_HEADING = "## Conversation sources"
 FORBIDDEN_RETRY_PROMPT = """\
 A previous attempt at this summary used words or phrases that matched forbidden
 output filters.
@@ -127,16 +127,17 @@ changed; at most preserve the intended document style or a concrete repo
 workflow change. For transcript-note style discussions, record only the final
 durable style rule in general terms. Do not retell the cleanup episode, mention
 prohibited words, or quote examples of language to avoid. Return only the note
-body, with no title. The script adds a deterministic participants paragraph from
-source metadata; do not invent model identifiers. If the transcript headings
+body, with no title. The script adds a deterministic participants paragraph and
+an unlinked conversation-source ID list from source metadata; do not invent
+model identifiers or source IDs. If the transcript headings
 show a switch between assistant models, mention the switch at the relevant point
 in the summary flow. Assistant messages labeled `subagent=...` are final
 subagent assessments, not tool logs. Preserve their unique conclusions,
 evidence, and proposed follow-ups when material, but synthesize them rather than
 copying every detail. The deterministic participants paragraph names users and
-models from raw metadata. In the prose, also acknowledge materially contributing
-subagents by their supplied label when useful, but never guess an unlabeled
-subagent's model identity.
+contributing models from raw metadata. Attribute a subagent contribution to its
+source-supported model identifier when available; never substitute its task
+label for a participant identity or guess missing model metadata.
 
 Preserve explicit scheduling commitments as handoff facts. If an agent or user
 commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
@@ -196,16 +197,17 @@ changed; at most preserve the intended document style or a concrete repo
 workflow change. For transcript-note style discussions, record only the final
 durable style rule in general terms. Do not retell the cleanup episode, mention
 prohibited words, or quote examples of language to avoid. Return only the note
-body, with no title. The script adds a deterministic participants paragraph from
-source metadata; do not invent model identifiers. If the transcript headings
+body, with no title. The script adds a deterministic participants paragraph and
+an unlinked conversation-source ID list from source metadata; do not invent
+model identifiers or source IDs. If the transcript headings
 show a switch between assistant models, mention the switch at the relevant point
 in the summary flow. Assistant messages labeled `subagent=...` are final
 subagent assessments, not tool logs. Preserve their unique conclusions,
 evidence, and proposed follow-ups when material, but synthesize them rather than
 copying every detail. The deterministic participants paragraph names users and
-models from raw metadata. In the prose, also acknowledge materially contributing
-subagents by their supplied label when useful, but never guess an unlabeled
-subagent's model identity.
+contributing models from raw metadata. Attribute a subagent contribution to its
+source-supported model identifier when available; never substitute its task
+label for a participant identity or guess missing model metadata.
 
 Preserve explicit scheduling commitments as handoff facts. If an agent or user
 commits to a concrete ETA, deadline, duration, recurrence, check-back interval,
@@ -239,6 +241,7 @@ class MessageRecord:
     heading_metadata: str
     text: str
     source_line: int
+    source_id: str | None = None
     transcript_scaffolding: bool = False
 
 
@@ -394,6 +397,7 @@ def load_segments(
                         heading_metadata=heading_metadata,
                         text=msg.text,
                         source_line=msg.source_line,
+                        source_id=getattr(msg, "source_id", None),
                         transcript_scaffolding=getattr(msg, "transcript_scaffolding", False),
                     )
                 )
@@ -503,23 +507,9 @@ def compact_prefix_for_new_note(
     return compact_prefix(timestamp, index)
 
 
-def bounded_note_title(title: str, max_bytes: int = MAX_NOTE_TITLE_BYTES) -> str:
-    if len(title.encode("utf-8")) <= max_bytes:
-        return title
-    digest = hashlib.sha256(title.encode("utf-8")).hexdigest()[:10]
-    suffix = f"-{digest}"
-    budget = max_bytes - len(suffix.encode("utf-8"))
-    truncated = title.encode("utf-8")[:budget].decode("utf-8", errors="ignore").rstrip("-")
-    return truncated + suffix
-
-
-def note_title_for_messages(messages: list[MessageRecord]) -> str:
-    title = conversation_title(title_participant_entries_for_messages(messages))
-    return bounded_note_title(title)
-
-
 def note_name_for_messages(prefix: str, messages: list[MessageRecord]) -> str:
-    return f"{prefix}-{note_title_for_messages(messages)}.md"
+    title = conversation_title(title_participant_entries_for_messages(messages))
+    return f"{prefix}-{title}.md"
 
 
 def provisional_note_path_for_messages(
@@ -537,7 +527,7 @@ def existing_note_path_for_messages(
     messages: list[MessageRecord],
     first_timestamp: datetime,
 ) -> Path:
-    title = note_title_for_messages(messages)
+    title = conversation_title(title_participant_entries_for_messages(messages))
     cache = ArchiveTimestampCache.load(root)
     paths = archive_note_files(notes_dir)
     cache.prepare(paths)
@@ -627,7 +617,11 @@ def is_real_model_id(model: str) -> bool:
     return not (model.startswith("<") and model.endswith(">"))
 
 
-def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
+def model_entries_for_messages(
+    messages: list[MessageRecord],
+    *,
+    include_effort: bool = True,
+) -> list[str]:
     stats: dict[str, tuple[int, int]] = {}
     for index, msg in enumerate(messages):
         if msg.transcript_scaffolding:
@@ -638,7 +632,7 @@ def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
         model = fields.get("model")
         if not model or not is_real_model_id(model):
             continue
-        if effort := fields.get("effort"):
+        if include_effort and (effort := fields.get("effort")):
             model = f"{model}-{effort}"
         chars, first_index = stats.get(model, (0, index))
         stats[model] = (chars + len(msg.text), first_index)
@@ -657,58 +651,18 @@ def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]
     if any(msg.role == "user" for msg in visible_messages):
         entries.append("User")
     entries.extend(model_entries_for_messages(visible_messages))
-    subagent_stats: dict[str, tuple[int, int]] = {}
-    for index, msg in enumerate(visible_messages):
-        if msg.role != "assistant":
-            continue
-        label = parse_heading_fields(msg.heading_metadata).get("subagent")
-        if not label:
-            continue
-        display = label.rstrip("/").rsplit("/", 1)[-1]
-        chars, first_index = subagent_stats.get(display, (0, index))
-        subagent_stats[display] = (chars + len(msg.text), first_index)
-    entries.extend(
-        f"subagent {label}"
-        for label, (_chars, _first_index) in sorted(
-            subagent_stats.items(),
-            key=lambda item: (-item[1][0], item[1][1], item[0]),
-        )
-    )
     if not entries:
         entries.append("No user or assistant model metadata found.")
     return entries
 
 
 def title_participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
-    """Return filename participants with readable subagents and compact opaque IDs."""
+    """Return the established filename roster: user plus model IDs, no effort."""
     entries: list[str] = []
     visible_messages = [msg for msg in messages if not msg.transcript_scaffolding]
     if any(msg.role == "user" for msg in visible_messages):
         entries.append("User")
-    entries.extend(model_entries_for_messages(visible_messages))
-    subagent_labels = [
-        parse_heading_fields(msg.heading_metadata).get("subagent")
-        for msg in visible_messages
-        if msg.role == "assistant"
-    ]
-    ordered_labels: list[str] = []
-    for raw_label in subagent_labels:
-        if not raw_label:
-            continue
-        label = raw_label.rstrip("/").rsplit("/", 1)[-1]
-        if label not in ordered_labels:
-            ordered_labels.append(label)
-    opaque_count = 0
-    readable_labels: list[str] = []
-    for label in ordered_labels:
-        normalized = label.removeprefix("agent-")
-        if re.fullmatch(r"[0-9a-f]{12,}", normalized, flags=re.IGNORECASE):
-            opaque_count += 1
-        else:
-            readable_labels.append(label)
-    if opaque_count:
-        entries.append(f"subagents{opaque_count}")
-    entries.extend(readable_labels)
+    entries.extend(model_entries_for_messages(visible_messages, include_effort=False))
     if not entries:
         entries.append("No user or assistant model metadata found.")
     return entries
@@ -767,6 +721,37 @@ def insert_participants_block(summary: str, messages: list[MessageRecord]) -> st
         return f"{summary}\n\n{block}\n"
     opening, rest = summary.split("\n\n", 1)
     return f"{opening.strip()}\n\n{block}\n\n{rest.strip()}\n"
+
+
+def conversation_source_ids(messages: list[MessageRecord]) -> list[str]:
+    source_ids: list[str] = []
+    for message in messages:
+        if message.transcript_scaffolding or not message.source_id:
+            continue
+        if message.source_id not in source_ids:
+            source_ids.append(message.source_id)
+    return source_ids
+
+
+def remove_conversation_sources_footer(summary: str) -> str:
+    pattern = re.compile(rf"(?m)^{re.escape(CONVERSATION_SOURCES_HEADING)}\s*$")
+    matches = list(pattern.finditer(summary.rstrip()))
+    if not matches:
+        return summary.rstrip()
+    return summary[: matches[-1].start()].rstrip()
+
+
+def insert_conversation_sources_footer(
+    summary: str,
+    messages: list[MessageRecord],
+) -> str:
+    body = remove_conversation_sources_footer(summary)
+    source_ids = conversation_source_ids(messages)
+    if not source_ids:
+        return body + "\n"
+    lines = [CONVERSATION_SOURCES_HEADING, ""]
+    lines.extend(f"- `{source_id}`" for source_id in source_ids)
+    return body + "\n\n" + "\n".join(lines) + "\n"
 
 
 def validate_model_mentions(summary: str, model_entries: list[str]) -> list[str]:
@@ -1396,6 +1381,7 @@ def sync_model_blocks(
         original = note_path.read_text(encoding="utf-8")
         messages = all_messages_for_ranges(segments, record.source_ranges)
         updated = insert_participants_block(original, messages)
+        updated = insert_conversation_sources_footer(updated, messages)
         if updated != original:
             note_path.write_text(updated, encoding="utf-8")
             format_markdown([note_path], args.repo_root)
@@ -1506,6 +1492,7 @@ def rebuild_all_records(
             )
             model_entries = model_entries_for_messages(messages)
             note_text = insert_participants_block(candidate, messages)
+            note_text = insert_conversation_sources_footer(note_text, messages)
             candidate_path.write_text(note_text, encoding="utf-8")
             format_markdown([candidate_path], args.repo_root)
             formatted_summary = candidate_path.read_text(encoding="utf-8")
@@ -1698,6 +1685,7 @@ def update_notes(args: argparse.Namespace) -> None:
         messages = all_messages_for_ranges(segments, record.source_ranges)
         model_entries = model_entries_for_messages(messages)
         note_text = insert_participants_block(candidate, messages)
+        note_text = insert_conversation_sources_footer(note_text, messages)
         note_path.write_text(note_text, encoding="utf-8")
         format_markdown([note_path], args.repo_root)
         formatted_summary = note_path.read_text(encoding="utf-8")
@@ -1770,6 +1758,7 @@ def update_notes(args: argparse.Namespace) -> None:
         messages = all_messages_for_ranges(segments, ranges)
         model_entries = model_entries_for_messages(messages)
         note_text = insert_participants_block(candidate, messages)
+        note_text = insert_conversation_sources_footer(note_text, messages)
         note_path.write_text(note_text, encoding="utf-8")
         format_markdown([note_path], args.repo_root)
         formatted_summary = note_path.read_text(encoding="utf-8")

@@ -259,19 +259,53 @@ def test_codex_extractor_skips_compaction_records(tmp_path: Path) -> None:
     ]
 
 
-def test_codex_extractor_includes_only_final_subagent_message(tmp_path: Path) -> None:
+def test_codex_extractor_includes_only_final_subagent_message(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
     mod = load_script(
         ROOT / "scripts" / "transcripts" / "extract_codex.py",
         "extract_codex_subagent_test",
     )
+    monkeypatch.setenv("HOME", str(tmp_path))
     source = tmp_path / "rollout-2026-07-10T00-00-00-thread.jsonl"
+    child = tmp_path / ".codex" / "sessions" / "2026" / "07" / "10" / "child.jsonl"
+    child.parent.mkdir(parents=True)
+    write_jsonl(
+        child,
+        [
+            {
+                "type": "session_meta",
+                "payload": {
+                    "id": "child-conversation-id",
+                    "parent_thread_id": "parent-conversation-id",
+                    "thread_source": "subagent",
+                    "model_provider": "openai",
+                    "cli_version": "0.144.0",
+                    "source": {
+                        "subagent": {
+                            "thread_spawn": {"agent_path": "/root/reviewer"}
+                        }
+                    },
+                },
+            },
+            {
+                "type": "turn_context",
+                "payload": {"model": "gpt-5.6-sol", "effort": "xhigh"},
+            },
+        ],
+    )
     write_jsonl(
         source,
         [
             {
                 "type": "session_meta",
                 "timestamp": "2026-07-10T00:00:00Z",
-                "payload": {"cwd": "/tmp/example", "model": "gpt-5.6-sol"},
+                "payload": {
+                    "id": "parent-conversation-id",
+                    "cwd": "/tmp/example",
+                    "model": "gpt-5.6-sol",
+                },
             },
             {
                 "type": "event_msg",
@@ -319,6 +353,9 @@ def test_codex_extractor_includes_only_final_subagent_message(tmp_path: Path) ->
         "Main answer.",
     ]
     assert messages[1].subagent == "/root/reviewer"
+    assert messages[1].source_id == "child-conversation-id"
+    assert messages[1].model == "gpt-5.6-sol"
+    assert messages[1].reasoning_effort == "xhigh"
 
 
 def test_conversation_note_renderer_omits_scaffolding_but_keeps_ranges_available() -> None:

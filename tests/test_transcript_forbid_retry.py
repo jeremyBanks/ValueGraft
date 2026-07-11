@@ -186,7 +186,7 @@ This plain paragraph used to be accidentally deleted.
     assert "**Handoff State.** Keep this too." in updated
 
 
-def test_participants_block_includes_labeled_contributing_subagents() -> None:
+def test_model_roster_filename_and_conversation_source_footer_are_separate() -> None:
     mod = load_update_module()
     messages = [
         make_message(mod, "codex", "2026-07-10", 1, "2026-07-10T00:00:00Z", "request"),
@@ -200,54 +200,30 @@ def test_participants_block_includes_labeled_contributing_subagents() -> None:
             heading_metadata="  [model=gpt-5.6-sol; effort=xhigh; subagent=/root/methodology_audit]",
             text="Detailed assessment.",
             source_line=2,
+            source_id="019f4f2d-1b08-7b61-aa7c-8d55f26f2f5b",
         ),
     ]
+    messages[0].source_id = "019f4f15-7584-7b03-9760-138202ff7c80"
 
     block = mod.render_participants_block(messages)
 
-    assert block == (
-        "**Participants:** User, gpt-5.6-sol-xhigh, and subagent methodology_audit."
-    )
+    assert block == "**Participants:** User and gpt-5.6-sol-xhigh."
 
     path = mod.provisional_note_path_for_messages(
         Path("notes"),
         messages,
         datetime(2026, 7, 10, tzinfo=timezone.utc),
     )
-    assert path.name == "20260710000000-conversation-user-gpt56-methodologyaudit.md"
+    assert path.name == "20260710000000-conversation-user-gpt56.md"
 
-
-def test_note_filename_compacts_opaque_subagents_and_caps_component_bytes() -> None:
-    mod = load_update_module()
-    messages = [
-        make_message(mod, "claude-code", "2026-07-10", 1, "2026-07-10T00:00:00Z", "request")
-    ]
-    for index in range(30):
-        label = f"agent-{index:016x}" if index < 14 else f"descriptive_contributor_{index:02d}_with_context"
-        messages.append(
-            mod.MessageRecord(
-                platform="claude-code",
-                date="2026-07-10",
-                sequence=1,
-                message_index=index + 2,
-                timestamp=f"2026-07-10T00:{index + 1:02d}:00Z",
-                role="assistant",
-                heading_metadata=f"  [model=claude-fable-5; subagent={label}]",
-                text="assessment",
-                source_line=index + 2,
-            )
-        )
-
-    path = mod.provisional_note_path_for_messages(
-        Path("notes"),
-        messages,
-        datetime(2026, 7, 10, tzinfo=timezone.utc),
+    summary = mod.insert_conversation_sources_footer("_Summary._\n", messages)
+    assert summary.endswith(
+        "## Conversation sources\n\n"
+        "- `019f4f15-7584-7b03-9760-138202ff7c80`\n"
+        "- `019f4f2d-1b08-7b61-aa7c-8d55f26f2f5b`\n"
     )
-
-    assert "subagents14" in path.name
-    assert "descriptivecontributor14withcontext" in path.name
-    assert len(path.name.encode("utf-8")) <= 240
-    assert path.name.endswith(".md")
+    assert "methodology_audit" not in path.name
+    assert "xhigh" not in path.name
 
 
 def test_codex_discovery_includes_repo_user_sessions_only(tmp_path: Path, monkeypatch) -> None:
