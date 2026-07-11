@@ -71,5 +71,22 @@
       "token_count": 1,
       "token_ids": [89963]
     }
+  },
+  "positive_control_pair_geometry": {
+    "method": "canonical non-final dummy-user rendering; IDs hashed as unsigned four-byte big-endian integers",
+    "roles": ["system", "user", "assistant", "user", "assistant"],
+    "green": {
+      "canonical_token_count": 92,
+      "canonical_token_ids_sha256": "f6d7d8eab9f6e380fbcac95d389f19921399286715503a7db227e3ea71554a37",
+      "message_start_positions": [0, 22, 42, 64, 84],
+      "canonical_message_widths": [22, 20, 22, 20, 8]
+    },
+    "amber": {
+      "canonical_token_count": 92,
+      "canonical_token_ids_sha256": "91c015a4f166f8163a91de475f84a4f4ea49801b9c7d49328df7aa689716285b",
+      "message_start_positions": [0, 22, 42, 64, 84],
+      "canonical_message_widths": [22, 20, 22, 20, 8]
+    },
+    "exact_geometry_match": true
   }
 }
