@@ -1,0 +1,698 @@
+{
+  "schema": "coherent_state_paired_v11_case_draft_v1",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "case_id": "v11-c06",
+  "domain": "small manufacturing",
+  "title": "Fieldmark launch-readiness record",
+  "authoring_provenance": {
+    "author": "Sol",
+    "model_id": "gpt-5.6-sol-xhigh",
+    "reasoning_effort": "extra-high",
+    "authored_utc": "2026-07-11T19:10:00Z",
+    "method": "Openly authored experimental input; tokenizer-only reconstruction; no subject-model forward pass."
+  },
+  "middle_end_msg": 37,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an operations planning assistant for Leena Aras at Cedar Vale Instruments, a small manufacturer preparing a limited production launch. Track confirmed choices, calculations, quality gates, owners, and unresolved dependencies. Be practical about safety and capacity, and never claim that an order, test, shipment, inspection, or outside approval occurred unless Leena reports it."
+        },
+        {
+          "role": "user",
+          "content": "I am Leena Aras, operations manager at Cedar Vale Instruments. We are preparing the first commercial run of the Fieldmark, a hand-cranked water-quality sampler used by watershed crews. The run is 420 units, assembled in our twelve-person shop. Tomas Reid leads machining, Priya Noll leads quality, and Chen Wu handles purchasing and shipping. The device has an aluminum frame, stainless spindle, molded grip, replaceable sample tube, and a paper calibration card. We promised distributors a readiness update on March 4, not shipment on that date. I need this conversation to hold the real production logic, including what is still conditional. Start by identifying the decisions that could quietly invalidate the launch if we leave them vague."
+        },
+        {
+          "role": "assistant",
+          "content": "The highest-risk ambiguities are the finish supplier and acceptance standard for the aluminum frames; the local meaning of shop status tags; the exact boundary between a pilot batch and saleable production; spindle tolerance and gauge capability; molded-grip lot traceability; calibration-card version control; rework authority; and the shipping sequence if fewer than 420 units pass together.\n\nWe also need verified capacity rather than nominal machine speed: available labor by operation, preventive-maintenance windows, cure and inspection time, packaging throughput, and the maximum work in process that can be stored without mixing lots. March 4 is a distributor readiness update, so I will not convert it into an internal ship deadline. Tomas owns machining execution, Priya owns acceptance and nonconformance disposition within her authority, Chen owns purchasing and outbound coordination, and you resolve cross-functional priority and budget. Any supplier choice remains provisional until you explicitly select it, and a quotation is not a confirmed purchase order."
+        },
+        {
+          "role": "user",
+          "content": "Baseline quantities: build 440 frames and spindles to support 420 finished units plus expected setup loss. We have 450 molded grips from lot G17 and 460 tube sets split across lots T81 and T82. Packaging is available for 430 units. Calibration cards exist in version 2.3, but engineering has proposed version 2.4 and not released it. The frame drawing calls for an anodized or conversion-coated corrosion-resistant finish, color neutral gray, with no glossy cosmetic requirement. We can hold at most 160 unfinished frames safely between machining and finishing. Which facts need hard stops in the traveler rather than a note in somebody’s inbox?"
+        },
+        {
+          "role": "assistant",
+          "content": "Put hard stops at every irreversible or lot-mixing transition. The frame traveler should require drawing revision, raw-material heat/lot, machining completion, deburr inspection, quantity, and selected finish specification before anything leaves for coating. Shipment quantity must not exceed the safe 160-frame buffer unless an approved staged-return plan prevents overflow. On return, record supplier lot, certificate, count, visible condition, and acceptance status before frames enter assembly.\n\nThe spindle traveler needs actual gauge identification and calibration status at final diameter inspection. Grip and tube installation must capture G17 and either T81 or T82 by unit batch; do not commingle tube lots without a recorded breakpoint. Packaging cannot authorize more than the 430 sets physically available. Calibration-card insertion must stop at the last released version—currently 2.3. Version 2.4 is not production material until engineering releases it and disposition of already packed units is decided.\n\nAdd signature or electronic authorization fields for nonconformance use-as-is, rework, and scrap. An email can support a decision, but the traveler must point to the controlled record rather than relying on a person remembering it."
+        },
+        {
+          "role": "user",
+          "content": "Finish source is the first decision. We obtained comparable written quotes from Alder Coatings, Morrow Finishes, and Keel Surface Works. Alder offers Type II sulfuric anodize, a five-business-day turn, and included thickness certificates; freight is ours, and its rack marks will appear on two hidden tabs. Morrow offers trivalent conversion coating in three days, local pickup, and the lowest price, but it gives a certificate per order rather than per batch unless we pay extra. Keel offers anodize with excellent cosmetic samples, but its ten-day turn crosses our assembly window and it wants all 440 frames at once. Compare corrosion evidence, flow risk, traceability, and total operational fit. Do not choose yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Alder has the strongest balanced evidence package. Type II anodize satisfies the drawing’s allowed finish family, included thickness certificates support incoming acceptance, and five business days can fit if lots are staged within the 160-frame storage bound. Freight and hidden rack marks are manageable provided the drawing and inspection plan accept those tab locations.\n\nMorrow is strongest for speed, cash, and local handling. Trivalent conversion coating is allowed by the drawing, but per-order certification weakens batch traceability if material is split across returns. The extra certificate cost should be included before calling it cheapest. A three-day turn is useful only if pickup, receipt inspection, and cure/handling requirements are clear.\n\nKeel offers finish quality the product does not require while creating two direct flow conflicts: ten days crosses the assembly window, and a single 440-frame transfer exceeds safe in-process storage on return unless immediately absorbed. Its cosmetic advantage does not compensate.\n\nOperationally, Alder leads if it accepts staged lots and identifies each certificate accordingly. Morrow is a viable alternative if per-batch records are priced and confirmed. Keel is a poor launch fit under current timing and lot-size terms. This is analysis, not selection."
+        },
+        {
+          "role": "user",
+          "content": "Decision: select Alder Coatings for the Fieldmark frames. Its batch certificates and manageable five-day turn outweigh the freight step. Keep Morrow Finishes as the actual fallback if staged intake cannot be confirmed; do not place a hold with Keel. Ask Alder for three identified lots no larger than 160 frames, with the final lot containing the balance."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed: Alder Coatings is selected for the frame finish, with Morrow Finishes retained as fallback if the primary source will not confirm staged intake. Keel is rejected for this launch under its timing and all-at-once terms. The requested release pattern is three identified lots, each no larger than the 160-frame safe buffer, with the last lot carrying the remaining quantity. Selection is not an order: Chen still needs written lot acceptance, certificate scope, rack-point agreement, freight terms, price, and dates before issuing the purchase order. Later task lists can say “the selected finishing source” unless identity is necessary for an action."
+        },
+        {
+          "role": "user",
+          "content": "For lot arithmetic, I am considering 150, 150, and 140 frames. Machining can finish about 55 acceptable frames per day after setup. Incoming finish inspection can clear 70 per day, and assembly can consume 48 per day once all other parts are kitted. We do not want coated frames sitting more than seven calendar days before assembly because the temporary rack protection gets unreliable. Check whether the proposed split is coherent, and tell me what timing information is missing before Chen requests dates."
+        },
+        {
+          "role": "assistant",
+          "content": "The 150/150/140 split respects the 160-frame physical limit and totals 440. At 55 acceptable machined frames per day, each 150-frame lot needs just under three production days after setup; the 140-frame lot also needs roughly three. Incoming inspection at 70 per day takes a little over two days for a 150-frame return, while assembly at 48 per day consumes one in just over three days. Inspection is faster than assembly but not instantaneous, so release cadence must avoid stacking a cleared lot behind work already waiting.\n\nThe seven-day protection constraint should be measured per returned lot from receipt to assembly consumption, especially the final units in each lot. Missing information includes supplier pickup and return days; whether the five-business-day turn starts at receipt or processing; weekend behavior; cure or sealing hold time; transport capacity; whether partial lots return together; machining start date and yield variability; assembly readiness for grips, spindles, tubes, and cards; and where rejected frames wait. Chen should request date windows, not merely “five days,” and require notification before a lot returns so inspection and assembly capacity are reserved."
+        },
+        {
+          "role": "user",
+          "content": "Tomas can start frames February 3. The finishing source says its clock begins the morning after receipt, returns each lot separately, and does not process weekends. Our carrier collects Tuesdays and Fridays and returns on the same pattern. Assembly may start February 18 if the spindle gauge study passes and the released card stock is on hand. We will not ask you to optimize an exact calendar yet. Instead, record the dependencies and a conservative rule that prevents us from releasing another lot simply because machining finished it."
+        },
+        {
+          "role": "assistant",
+          "content": "Record these fixed inputs: frame machining may start February 3; supplier processing begins the morning after receipt; weekends do not count; lots return separately; carrier movements occur Tuesdays and Fridays; and assembly may begin February 18 only if the spindle measurement study passes and released calibration cards are available.\n\nUse a pull rule for outbound frame lots. Chen may release the next lot only when all four conditions are true: the finishing source has acknowledged capacity and an identified return window; the prior return will not push on-site unfinished or awaiting-inspection frames above 160; Priya has reserved incoming-inspection capacity; and the projected last frame from the new lot can enter assembly within seven calendar days of return. Machining completion alone satisfies none of those downstream conditions.\n\nMaintain a small date table per lot with machine-ready count, pickup, supplier day one, promised return, actual return, inspection window, assembly start, and projected final consumption. If a prerequisite such as gauge capability or card release slips, pause outbound release rather than using coating lead time to hide the constraint."
+        },
+        {
+          "role": "user",
+          "content": "We have another terminology collision. On the old pump line, a “blue tag” meant a material quarantine hold: the item could not move until quality disposition. In the maintenance cage, technicians use “blue tag” for calibration review pending: the tool may stay in its location but cannot be used for acceptance measurements. Both concepts will occur during Fieldmark production, and the same blue stock is still in drawers. Ask the minimum questions needed before I declare the local meaning for this launch."
+        },
+        {
+          "role": "assistant",
+          "content": "I need three decisions. First, is the local term going to follow product material through production, or identify measuring equipment status? Second, what distinct label will be used for the other condition so neither concept disappears? Third, does the rule apply only to paper tags, or also to the traveler, quarantine area, tool board, and electronic status fields?\n\nThe controls must remain different. Material quarantine prevents movement or use of a part until authorized disposition and needs item/lot identity, reason, owner, and controlled location. Calibration-pending status prevents a gauge or tool from supporting acceptance and needs equipment ID, due or failure reason, and an alternate-tool plan; the tool may remain physically stored. Whichever meaning gets the nickname, remove or cover obsolete blue stock before launch and brief every shift. Otherwise color and habit will override the written definition."
+        },
+        {
+          "role": "user",
+          "content": "For the Fieldmark launch, “blue tag” means material quarantine hold. Use “calibration review” for a gauge or tool that cannot support acceptance measurements. Apply the mapping on paper tags, the traveler, quarantine rack, tool board, and electronic log. Color is redundant only: both labels must print the status words and an item or equipment identifier."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded for this launch: “blue tag” means material quarantine hold. “Calibration review” is the separate status for a gauge or tool barred from acceptance measurements. Both labels require printed status text plus an item, lot, or equipment identifier; blue color alone carries no authority. The mapping applies to paper tags, the traveler, quarantine rack, tool board, and electronic log. Before production, Priya and Tomas should remove obsolete blank blue stock, issue controlled labels, and include both workflows in the shift briefing. I will refer to quarantine or calibration status by function in later planning unless the local nickname itself is relevant."
+        },
+        {
+          "role": "user",
+          "content": "Spindle quality gate: nominal diameter is 7.980 mm with tolerance plus 0.000, minus 0.018. Tomas wants to inspect with a digital caliper that resolves 0.01 mm because it is fast. Priya wants the bench micrometer, which resolves 0.001 mm, but two operators get different readings when they overtighten it. We have a setting standard and ratchet stop. Define a small capability check that can be completed before February 18, and state what would make either tool unacceptable for final acceptance."
+        },
+        {
+          "role": "assistant",
+          "content": "Use representative parts spanning the tolerance, not only nominal pieces. Select at least ten stable spindles, including samples near 7.962 and 7.980 mm if available, and establish reference values with the micrometer using the setting standard, clean anvils, controlled temperature, and ratchet technique. Have at least two operators measure each part twice in randomized order without seeing prior values. Record equipment ID, calibration status, operator, repetition, and result.\n\nThe caliper’s 0.01 mm resolution is too coarse relative to an 0.018 mm total tolerance for confident final acceptance; it may screen gross errors but should not decide conformity near either limit. Reject it as the acceptance method unless a documented study demonstrates adequate discrimination and error, which is unlikely on these numbers.\n\nThe micrometer is not automatically acceptable merely because it displays 0.001 mm. It must pass the setting check and show repeatability and operator-to-operator variation small enough that guard bands can protect both limits. If technique-sensitive spread could change pass/fail classification, retrain, revise fixturing or method, and repeat the study. Until capability is documented, assembly start remains conditional."
+        },
+        {
+          "role": "user",
+          "content": "Grip lot G17 has a separate issue. Incoming inspection found 6 short shots and 3 warped pieces in a sample of 80. The remaining 370 are unopened. We need 420 saleable units and have no second grip lot on site. The molding supplier can sort the lot for a fee or ship 60 replacements, but it wants photographs and defect definitions first. Do not extrapolate a fake precise defect rate. Give me a containment plan and the information Chen should send."
+        },
+        {
+          "role": "assistant",
+          "content": "Contain G17 as one traceable lot and stop it from automatic kit release. Preserve the sampled defects, photograph each against a neutral scale, and define short shot and warp with drawing or functional criteria rather than subjective adjectives. Record the sampling method: which cartons, how units were chosen, and whether defects clustered. The observed 9/80 result is a warning from one sample, not a precise estimate for all 450.\n\nPriya should decide between a controlled internal screen and supplier sort based on labor, inspection reliability, and timing. If screening internally, create accepted, rejected, and uncertain bins with counts and independent verification of borderline pieces. Do not consume accepted pieces faster than the replacement plan can cover the required 420 plus reasonable handling loss.\n\nChen’s supplier packet should include purchase order and lot G17, total received, sample size and selection, counts by defect type, photos, applicable drawing dimensions or fit test, requested containment response, and the date replacements or a supplier sort must arrive. Ask whether the proposed 60 replacements come from a separately identified lot and require its certificate/inspection plan. No supplier credit substitutes for enough conforming grips on time."
+        },
+        {
+          "role": "user",
+          "content": "Tube sets T81 and T82 are dimensionally identical, but T81 uses a gasket compound that was later superseded because it swells in one uncommon cleaning solvent. Our current instructions do not recommend that solvent, yet two pilot users mentioned it. Engineering has not issued a restriction or approved T81 for sale. There are 190 sets in T81 and 270 in T82. We can build 420 units only if at least 150 from T81 become usable or more T82 arrives. Frame the decision tree without deciding engineering’s risk question for them."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat T81 as unresolved material, not available inventory. Engineering must document one of three dispositions. If T81 is approved without restriction, quality records the basis and both lots may be planned with clear unit traceability. If approved only with a cleaning limitation, engineering and product leadership must define the allowed solvent statement, labeling/manual change, distributor communication, and whether already printed material is obsolete before release. If T81 is rejected, purchasing needs at least 150 additional conforming sets to reach 420, plus whatever reserve the team chooses.\n\nIn every branch, keep T81 and T82 segregated and record which units receive which lot. Test evidence should reflect the uncommon solvent at relevant concentration, duration, temperature, and repeated-use conditions; absence from current instructions does not erase foreseeable use reported by pilots. Priya verifies that the released disposition matches travelers and packaging, but engineering owns the material-risk conclusion.\n\nSet a decision deadline backward from kitting. If engineering has not released a disposition by then, plan as though T81 is unavailable and ask Chen for a bounded T82 replenishment quote. Do not begin mixed-lot assembly hoping paperwork catches up."
+        },
+        {
+          "role": "user",
+          "content": "Calibration cards: version 2.3 says to take three crank cycles before sampling. Proposed 2.4 says five cycles after a field trial found residual rinse water in cold conditions. Engineering review is scheduled February 12. We have 500 printed 2.3 cards and no 2.4 stock. The printer needs four business days after proof approval. Some distributors want translated cards, but translations cannot start until source text freezes. Build a document-control plan that avoids hand-marking hundreds of cards unless there is a genuine controlled fallback."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep 2.3 stock segregated and labeled with its current revision status; do not insert it into saleable units while the cycle instruction is under review. Engineering owns the February 12 technical decision and must release either 2.3 unchanged, 2.4, or another revision through document control. Once source text freezes, quality checks the master revision, effective date, and disposition of old stock before Chen sends a controlled print proof.\n\nThe printer’s four business days begin after proof approval, so reserve review time for numerical accuracy, diagrams, revision mark, language identifier, and print legibility. Translation starts from the released source only, with translator questions logged and back-check or qualified review appropriate to the market. Translated editions need their own controlled identifiers linked to the same source revision.\n\nHand correction is a fallback only if engineering and quality issue a documented deviation specifying exact wording, method, verification sample or 100-percent check, affected quantity, and expiration. Labor and mis-mark risk may make reprint safer. Do not treat 500 existing cards as usable value until disposition is released. Assembly can stage components, but final pack cannot close without the correct controlled card."
+        },
+        {
+          "role": "user",
+          "content": "Assembly labor: four assemblers can each complete about 13 units per day once parts are kitted. One of them, Nia, is also the only person currently trained to perform the leak test, which takes six minutes per unit plus fixture reset. Priya can train Omar, but the qualification needs twenty supervised tests including two seeded failures. Packaging can handle 65 units per day. Show the bottleneck and propose a leveling plan that does not rely on Nia skipping breaks or signing work she did not witness."
+        },
+        {
+          "role": "assistant",
+          "content": "Nominal assembly capacity is about 52 units per day, below packaging’s 65, so packaging is not the first bottleneck. Leak testing at six minutes per unit is at least 312 test minutes for 52 units, plus resets, documentation, failures, and retests. One tester could barely sustain that within a day only by making the station the dominant assignment; relying on Nia for both assembly and every test would reduce actual assembly output and create a single point of failure.\n\nQualify Omar before the production ramp. The twenty supervised tests, including two seeded failures, should verify setup, reading, failure recognition, segregation, documentation, and response—not merely completion. Nia witnesses only tests she actually observes during qualification; afterward each qualified tester signs their own work. Stagger assembly so the test queue stays bounded: begin with two assemblers while qualification finishes, then move toward four only when test capacity and accepted kits support it. Use a visible FIFO lane with a maximum quantity, separate failed units, and stop upstream release when the lane is full.\n\nPlan daily output from the lower of conforming-kit availability, assembly, leak-test, and document/pack readiness. Preserve breaks and rotate repetitive work; overtime is a separate approved decision, not hidden capacity."
+        },
+        {
+          "role": "user",
+          "content": "Rework authority is fuzzy. Operators may replace a visibly damaged O-ring using the standard work instruction. They may not polish a spindle or enlarge a frame hole. Tomas can adjust machine offsets before parts are accepted, but once a lot fails final inspection, Priya controls disposition. Engineering must approve any use-as-is outside drawing. Turn that into a compact authority matrix, including when a new serial or trace record is required."
+        },
+        {
+          "role": "assistant",
+          "content": "Authority matrix:\n\n- Assembly operator: may replace a visibly damaged O-ring exactly under the released standard work, record the replacement against the unit, and repeat the specified leak test. No design judgment or dimensional salvage.\n- Machining lead Tomas: may adjust machine offsets during production setup or in-process control before final acceptance, while preserving measurement and affected-quantity records. He may not relabel failed final-inspection parts as conforming.\n- Quality lead Priya: owns containment and disposition routing after final-inspection failure; may authorize standard, preapproved rework and required reinspection. She cannot approve a drawing deviation reserved to engineering.\n- Engineering: must approve use-as-is outside drawing, nonstandard material removal, hole enlargement, spindle polishing, or altered acceptance criteria. Quality verifies implementation and traceability.\n- Leena: resolves schedule and cost priorities but cannot waive technical acceptance.\n\nAn O-ring replacement stays with the existing serial if the serial uniquely records component action and retest. Assign a new serial only when the released serial procedure requires it, such as scrapping an identified assembly and rebuilding a distinct unit. Lot-level rework needs affected serials or a bounded serial range, original result, authorization, method, new result, operator, and date. Never erase the first failure."
+        },
+        {
+          "role": "user",
+          "content": "Shipping sequence: three distributors requested 180, 150, and 90 units. The 180-unit customer accepts two partial shipments; the others prefer one shipment each. We may not have all 420 ready together. Freight pickup is Monday and Thursday. Packaging labels include calibration-card revision and tube-lot code, so those fields cannot be guessed early. Design a fair release rule and inventory status that avoids promising the first accepted unit to the loudest customer."
+        },
+        {
+          "role": "assistant",
+          "content": "Freeze allocation by an explicit commercial rule approved before finished inventory accumulates. One fair approach is proportional first release: once a safe minimum batch is accepted, allocate approximately 3:2.5:1.5 across the 180/150/90 commitments, rounded to full cartons, while honoring the first customer’s permission for splits. Another defensible rule is contract date or requested delivery date. Choose and document one; do not let call frequency become priority.\n\nUse inventory statuses that separate physically assembled from legally releasable: assembled-awaiting-test, failed/contained, accepted-awaiting-document, packed-awaiting-allocation, and released-to-shipping. A unit enters packed status only after its actual card revision and tube-lot code are known and verified. Allocation records serial/carton range, customer, quantity, decision-rule version, and pickup.\n\nBuild Monday/Thursday release reviews around accepted counts and complete documents. If the 150- or 90-unit customer cannot receive its preferred single shipment without unreasonable delay, Chen should request written acceptance of a split rather than assuming. Distributor readiness updates should report ranges and dependencies, never convert work-in-process into shipped quantity."
+        },
+        {
+          "role": "user",
+          "content": "Safety and maintenance: the deburr station’s local exhaust has a rising pressure reading, though still inside its posted green band. Maintenance is booked February 6. The spindle lathe has preventive maintenance due after another 36 spindle-hours, which could land mid-lot. A temporary aisle near the quarantine rack narrows whenever empty totes accumulate. I want concrete stop conditions, not “monitor closely,” and I want housekeeping treated as production work."
+        },
+        {
+          "role": "assistant",
+          "content": "For the deburr exhaust, record the current pressure and the manufacturer or facility limit, inspect hood capture and filters at shift start, and define a stop at the posted action threshold, loss of visible capture, alarm, unusual dust escape, or any worker symptom—whichever occurs first. The February 6 maintenance remains scheduled even if the gauge stays green; a green band does not cancel a worsening trend.\n\nFor the lathe, calculate spindle-hours per planned lot before release. Schedule preventive maintenance before beginning any lot that cannot finish within the remaining 36 hours plus an approved conservative margin. Do not plan to cross the due point mid-lot. Record actual hours each shift and stop at the due threshold if the forecast was wrong.\n\nMark the quarantine-rack aisle width on the floor and set a no-storage boundary. Empty-tote removal gets a named owner and times at shift start, lunch, and close, plus immediate removal when the boundary is crossed. If required egress or handling clearance is lost, stop movement through the area and clear it before resuming. Housekeeping time belongs in the capacity plan; it is not unpaid slack extracted from breaks."
+        },
+        {
+          "role": "user",
+          "content": "Financial picture before we shift to daily control. Flexible launch funds are $46,000. Current estimates: $12,800 frame finish including freight, $8,600 grips and possible replacements, $7,900 tube sets, $4,400 calibration cards and translations, $5,200 packaging, $3,100 gauge and fixture work, and $2,000 contingency. The grip sort could add $1,400. Additional T82 sets could add $3,600. A card reprint could add $1,100 beyond the estimate. Show base and stacked exposure, then identify what is truly optional."
+        },
+        {
+          "role": "assistant",
+          "content": "The listed base estimates total $44,000: $12,800 finish + $8,600 grips + $7,900 tubes + $4,400 cards/translations + $5,200 packaging + $3,100 gauge/fixture work + $2,000 contingency. That leaves $2,000 in the $46,000 pool.\n\nStacking the stated unresolved exposures adds $6,100: $1,400 grip sort + $3,600 additional T82 + $1,100 card reprint. If all occur, planned need reaches $50,100, which is $4,100 over the pool even before other variance. The $2,000 contingency is already included in base; it cannot be counted again as free coverage.\n\nWhat is optional depends on released technical decisions. Cosmetic upgrades, rush shipping chosen only to recover avoidable delay, premium packaging, and nonessential launch materials are optional. Conforming grips, enough approved tube sets, a released accurate calibration card, capable measurement, safe work, and compliant finish records are not. Do not “save” money by assuming T81 approval, skipping a necessary sort, or using obsolete cards. Resolve technical branches, seek bounded quotes, and identify service-preserving reductions before authorizing optional spend."
+        },
+        {
+          "role": "user",
+          "content": "Two confirmed changes: the packaging supplier accepted a return of excess inserts, reducing packaging from $5,200 to $4,650, and the fixture shop waived $480 because its original bore plate was out of specification. Keep those as separate credits. The distributor update should state that launch readiness depends on component disposition and process qualification; it must not mention internal nicknames or suppliers. Mark the boundary after which we can concentrate on daily floor control."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded separately: packaging falls by $550, from $5,200 to $4,650, due to the accepted excess-insert return. Gauge and fixture work falls by $480, from $3,100 to $2,620, because the fixture shop waived the cost tied to its nonconforming bore plate. Together the confirmed credits improve the base by $1,030, but each retains its own source and audit trail.\n\nRevised base planning need is $42,970, leaving $3,030 from the $46,000 pool before unresolved grip, tube, or card exposure. All three stacked would still exceed available funds by $3,070. The distributor update can say readiness remains conditional on component disposition, measurement/process qualification, controlled documents, and accepted production output. It should not expose shop nicknames, supplier identities, or unresolved blame.\n\nA compaction boundary begins with your next message. The earlier record contains the selected source, local status mapping, lot flow, quality gates, materials branches, document control, labor, authority, shipping, safety, and budget facts. Daily floor control can refer back by function without repeating selected answers."
+        },
+        {
+          "role": "user",
+          "content": "Create a first-week floor board. I want columns that reveal blocked work rather than rewarding units started. Include frame lots, spindle lots, grip containment, tube disposition, card revision, assembly, leak test, packaging, and shipping. The board is physical, but private employee or supplier performance details should stay in controlled records. Define cards, limits, and the daily meeting rhythm."
+        },
+        {
+          "role": "assistant",
+          "content": "Use columns for Ready, In Process, Waiting for Verification, Accepted/Released, and Contained, with operation-specific swimlanes. Each card shows work ID, quantity, drawing/document revision, component lots, current owner, entered time, next gate, and blocking dependency. Supplier or employee performance commentary stays in the controlled issue log; the floor card needs only factual status.\n\nSet explicit work-in-process limits: frame movements never exceed the approved physical buffer; spindle inspection queue fits one planned shift; grip screening uses three bounded bins; tube lots remain segregated; card status permits no pack closure without released revision; assembly-to-leak-test queue has a small numeric cap set from qualified tester capacity; packaging accepts only tested, document-complete units; shipping accepts only allocated released cartons. A red blocker marker must include owner and next review time, not just “waiting.”\n\nHold a twelve-minute start-of-shift board walk led by Leena: safety/maintenance stops, blocked dependencies, capacity for the next pull, and owner commitments. Add a five-minute midday exception check for new containment or a full queue. At close, operation leads update counts from records and reconcile physical quantities. The board visualizes controlled data; it does not replace travelers, inspection results, or serial traceability."
+        },
+        {
+          "role": "user",
+          "content": "We need a reaction plan for the first ten assembled units. They are not a ceremonial “golden batch”; they are a process check. Priya wants full dimensional review, leak test, crank-force measurement, packaging fit, card verification, and a ten-minute cold-water trial. Tomas worries that this pauses the line too long. Define the hold and release logic and what happens if one unit fails for an obvious assembly mistake."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat units 1–10 as a held verification group. Assemble them under normal released work, but do not start unrestricted production or pack them as saleable until the defined review completes. Priya coordinates dimensional checks, individual leak results, crank force, packaging fit, actual card revision, and the cold-water trial with recorded equipment and criteria. Tomas may continue preparing components and correcting setup within approved controls, but should not create a large downstream queue before process release.\n\nRelease requires all ten records complete, all critical characteristics conforming, no unexplained trend, and any observed work-instruction ambiguity resolved. A single obvious assembly error is still information. Contain the affected unit, document the original failure, correct it only under authorized standard rework, repeat all impacted tests, and review whether the instruction, training, component presentation, or fixture made the error likely. If the cause is isolated and evidence supports it, Priya may release the group under the written plan; do not erase the failure or automatically restart the entire ten.\n\nAny dimensional systemic issue, repeated leak, unsafe crank force, wrong document, lot-trace gap, or unclear root cause keeps the process on hold and triggers bounded investigation before more units are assembled."
+        },
+        {
+          "role": "user",
+          "content": "If a dependency misses its date, I want escalation based on consequence rather than hierarchy. Propose thresholds for the gauge study, grip disposition, tube decision, card release, and finishing returns. Include what useful work can continue without creating stranded inventory. We have a daily 15:40 decision window with engineering and quality."
+        },
+        {
+          "role": "assistant",
+          "content": "Escalate when a miss threatens the next irreversible pull. Gauge study: if not passed two working days before planned assembly, stop scheduling saleable spindle acceptance; continue maintenance, training, fixture checks, and nonacceptance practice pieces. Grip disposition: if conforming quantity plus confirmed replacements cannot cover the next three assembly days, pause additional kitting and use labor for controlled screening or other released work.\n\nTube decision: if unresolved by the component-kitting cutoff, treat the disputed lot as unavailable, preserve segregation, and build only against released supply without consuming scarce parts into incomplete kits. Card release: if source text is not frozen by the printer’s latest proof date, stop any plan that closes packages; assembly may proceed only within the bounded tested-unit and storage capacity, with serial/document linkage protected. Finishing returns: if a promised lot slips enough to violate inspection reservations or seven-day consumption logic, stop release of the next outbound lot and re-level machining.\n\nAt 15:40, each owner reports actual state, next hard gate, quantity exposed, and one decision request. Engineering and quality decide technical releases; Leena decides schedule and budget consequences. Useful work includes training, maintenance, document preparation, supplier questions, fixture verification, safe component preparation, and resolving existing containment—not producing inventory whose required disposition is merely hoped for."
+        },
+        {
+          "role": "user",
+          "content": "Close with a concise action list for tomorrow. Separate actions that release a gate from housekeeping or preparation. Give each item one owner, a due point, and a dependency. Do not repeat the earlier choices by name."
+        },
+        {
+          "role": "assistant",
+          "content": "Gate-releasing actions:\n\n- Chen, by 10:00: obtain written staged-lot acceptance, certificate scope, rack-point terms, and dated movement windows from the selected finishing source; dependency: carrier Tuesday/Friday availability.\n- Priya, by noon: publish the spindle capability protocol and identify ten representative samples; dependency: calibrated micrometer, setting standard, and two operators.\n- Chen, by 13:00: send the G17 defect packet and request bounded sort/replacement dates; dependency: Priya’s photos and objective defect definitions.\n- Engineering lead, at the 15:40 window: state the T81 evidence plan and release deadline; dependency: pilot-use details and solvent-test scope.\n- Document-control lead, by 11:00: prepare the February 12 card decision and proof workflow; dependency: engineering reviewers and printer cutoff.\n- Priya, by end of shift: schedule Omar’s twenty-test qualification with seeded failures; dependency: safe test fixtures and Nia’s supervised availability.\n\nPreparation and housekeeping:\n\n- Tomas, at shift start: log exhaust pressure and lathe hours, then confirm maintenance stop points.\n- Floor lead, before material movement: clear totes, verify the marked aisle, and assign the three daily housekeeping checks.\n- Leena, by noon: post the floor-board limits and name the 15:40 decision owners.\n- Chen, by 14:00: update the base budget with the two separate confirmed credits and keep unresolved exposures distinct.\n- Priya, before labels are issued: remove obsolete blank tag stock and verify controlled status labels.\n- Shipping lead, before allocation begins: draft the auditable customer-release rule and carton status fields."
+        }
+      ]
+    },
+    "wrong_referent": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an operations planning assistant for Leena Aras at Cedar Vale Instruments, a small manufacturer preparing a limited production launch. Track confirmed choices, calculations, quality gates, owners, and unresolved dependencies. Be practical about safety and capacity, and never claim that an order, test, shipment, inspection, or outside approval occurred unless Leena reports it."
+        },
+        {
+          "role": "user",
+          "content": "I am Leena Aras, operations manager at Cedar Vale Instruments. We are preparing the first commercial run of the Fieldmark, a hand-cranked water-quality sampler used by watershed crews. The run is 420 units, assembled in our twelve-person shop. Tomas Reid leads machining, Priya Noll leads quality, and Chen Wu handles purchasing and shipping. The device has an aluminum frame, stainless spindle, molded grip, replaceable sample tube, and a paper calibration card. We promised distributors a readiness update on March 4, not shipment on that date. I need this conversation to hold the real production logic, including what is still conditional. Start by identifying the decisions that could quietly invalidate the launch if we leave them vague."
+        },
+        {
+          "role": "assistant",
+          "content": "The highest-risk ambiguities are the finish supplier and acceptance standard for the aluminum frames; the local meaning of shop status tags; the exact boundary between a pilot batch and saleable production; spindle tolerance and gauge capability; molded-grip lot traceability; calibration-card version control; rework authority; and the shipping sequence if fewer than 420 units pass together.\n\nWe also need verified capacity rather than nominal machine speed: available labor by operation, preventive-maintenance windows, cure and inspection time, packaging throughput, and the maximum work in process that can be stored without mixing lots. March 4 is a distributor readiness update, so I will not convert it into an internal ship deadline. Tomas owns machining execution, Priya owns acceptance and nonconformance disposition within her authority, Chen owns purchasing and outbound coordination, and you resolve cross-functional priority and budget. Any supplier choice remains provisional until you explicitly select it, and a quotation is not a confirmed purchase order."
+        },
+        {
+          "role": "user",
+          "content": "Baseline quantities: build 440 frames and spindles to support 420 finished units plus expected setup loss. We have 450 molded grips from lot G17 and 460 tube sets split across lots T81 and T82. Packaging is available for 430 units. Calibration cards exist in version 2.3, but engineering has proposed version 2.4 and not released it. The frame drawing calls for an anodized or conversion-coated corrosion-resistant finish, color neutral gray, with no glossy cosmetic requirement. We can hold at most 160 unfinished frames safely between machining and finishing. Which facts need hard stops in the traveler rather than a note in somebody’s inbox?"
+        },
+        {
+          "role": "assistant",
+          "content": "Put hard stops at every irreversible or lot-mixing transition. The frame traveler should require drawing revision, raw-material heat/lot, machining completion, deburr inspection, quantity, and selected finish specification before anything leaves for coating. Shipment quantity must not exceed the safe 160-frame buffer unless an approved staged-return plan prevents overflow. On return, record supplier lot, certificate, count, visible condition, and acceptance status before frames enter assembly.\n\nThe spindle traveler needs actual gauge identification and calibration status at final diameter inspection. Grip and tube installation must capture G17 and either T81 or T82 by unit batch; do not commingle tube lots without a recorded breakpoint. Packaging cannot authorize more than the 430 sets physically available. Calibration-card insertion must stop at the last released version—currently 2.3. Version 2.4 is not production material until engineering releases it and disposition of already packed units is decided.\n\nAdd signature or electronic authorization fields for nonconformance use-as-is, rework, and scrap. An email can support a decision, but the traveler must point to the controlled record rather than relying on a person remembering it."
+        },
+        {
+          "role": "user",
+          "content": "Finish source is the first decision. We obtained comparable written quotes from Alder Coatings, Morrow Finishes, and Keel Surface Works. Alder offers Type II sulfuric anodize, a five-business-day turn, and included thickness certificates; freight is ours, and its rack marks will appear on two hidden tabs. Morrow offers trivalent conversion coating in three days, local pickup, and the lowest price, but it gives a certificate per order rather than per batch unless we pay extra. Keel offers anodize with excellent cosmetic samples, but its ten-day turn crosses our assembly window and it wants all 440 frames at once. Compare corrosion evidence, flow risk, traceability, and total operational fit. Do not choose yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Alder has the strongest balanced evidence package. Type II anodize satisfies the drawing’s allowed finish family, included thickness certificates support incoming acceptance, and five business days can fit if lots are staged within the 160-frame storage bound. Freight and hidden rack marks are manageable provided the drawing and inspection plan accept those tab locations.\n\nMorrow is strongest for speed, cash, and local handling. Trivalent conversion coating is allowed by the drawing, but per-order certification weakens batch traceability if material is split across returns. The extra certificate cost should be included before calling it cheapest. A three-day turn is useful only if pickup, receipt inspection, and cure/handling requirements are clear.\n\nKeel offers finish quality the product does not require while creating two direct flow conflicts: ten days crosses the assembly window, and a single 440-frame transfer exceeds safe in-process storage on return unless immediately absorbed. Its cosmetic advantage does not compensate.\n\nOperationally, Alder leads if it accepts staged lots and identifies each certificate accordingly. Morrow is a viable alternative if per-batch records are priced and confirmed. Keel is a poor launch fit under current timing and lot-size terms. This is analysis, not selection."
+        },
+        {
+          "role": "user",
+          "content": "Decision: select Morrow Finishes for the Fieldmark frames. Its three-day turn and local pickup outweigh the added batch-record fee. Keep Alder Coatings as the actual fallback if batch records cannot be confirmed; do not place a hold with Keel. Ask Alder for three identified lots no larger than 160 frames, with the final lot containing the balance."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed: Morrow Finishes is selected for the frame finish, with Alder Coatings retained as fallback if the primary source will not confirm batch records. Keel is rejected for this launch under its timing and all-at-once terms. The requested release pattern is three identified lots, each no larger than the 160-frame safe buffer, with the last lot carrying the remaining quantity. Selection is not an order: Chen still needs written lot acceptance, certificate scope, rack-point agreement, freight terms, price, and dates before issuing the purchase order. Later task lists can say “the selected finishing source” unless identity is necessary for an action."
+        },
+        {
+          "role": "user",
+          "content": "For lot arithmetic, I am considering 150, 150, and 140 frames. Machining can finish about 55 acceptable frames per day after setup. Incoming finish inspection can clear 70 per day, and assembly can consume 48 per day once all other parts are kitted. We do not want coated frames sitting more than seven calendar days before assembly because the temporary rack protection gets unreliable. Check whether the proposed split is coherent, and tell me what timing information is missing before Chen requests dates."
+        },
+        {
+          "role": "assistant",
+          "content": "The 150/150/140 split respects the 160-frame physical limit and totals 440. At 55 acceptable machined frames per day, each 150-frame lot needs just under three production days after setup; the 140-frame lot also needs roughly three. Incoming inspection at 70 per day takes a little over two days for a 150-frame return, while assembly at 48 per day consumes one in just over three days. Inspection is faster than assembly but not instantaneous, so release cadence must avoid stacking a cleared lot behind work already waiting.\n\nThe seven-day protection constraint should be measured per returned lot from receipt to assembly consumption, especially the final units in each lot. Missing information includes supplier pickup and return days; whether the five-business-day turn starts at receipt or processing; weekend behavior; cure or sealing hold time; transport capacity; whether partial lots return together; machining start date and yield variability; assembly readiness for grips, spindles, tubes, and cards; and where rejected frames wait. Chen should request date windows, not merely “five days,” and require notification before a lot returns so inspection and assembly capacity are reserved."
+        },
+        {
+          "role": "user",
+          "content": "Tomas can start frames February 3. The finishing source says its clock begins the morning after receipt, returns each lot separately, and does not process weekends. Our carrier collects Tuesdays and Fridays and returns on the same pattern. Assembly may start February 18 if the spindle gauge study passes and the released card stock is on hand. We will not ask you to optimize an exact calendar yet. Instead, record the dependencies and a conservative rule that prevents us from releasing another lot simply because machining finished it."
+        },
+        {
+          "role": "assistant",
+          "content": "Record these fixed inputs: frame machining may start February 3; supplier processing begins the morning after receipt; weekends do not count; lots return separately; carrier movements occur Tuesdays and Fridays; and assembly may begin February 18 only if the spindle measurement study passes and released calibration cards are available.\n\nUse a pull rule for outbound frame lots. Chen may release the next lot only when all four conditions are true: the finishing source has acknowledged capacity and an identified return window; the prior return will not push on-site unfinished or awaiting-inspection frames above 160; Priya has reserved incoming-inspection capacity; and the projected last frame from the new lot can enter assembly within seven calendar days of return. Machining completion alone satisfies none of those downstream conditions.\n\nMaintain a small date table per lot with machine-ready count, pickup, supplier day one, promised return, actual return, inspection window, assembly start, and projected final consumption. If a prerequisite such as gauge capability or card release slips, pause outbound release rather than using coating lead time to hide the constraint."
+        },
+        {
+          "role": "user",
+          "content": "We have another terminology collision. On the old pump line, a “blue tag” meant a material quarantine hold: the item could not move until quality disposition. In the maintenance cage, technicians use “blue tag” for calibration review pending: the tool may stay in its location but cannot be used for acceptance measurements. Both concepts will occur during Fieldmark production, and the same blue stock is still in drawers. Ask the minimum questions needed before I declare the local meaning for this launch."
+        },
+        {
+          "role": "assistant",
+          "content": "I need three decisions. First, is the local term going to follow product material through production, or identify measuring equipment status? Second, what distinct label will be used for the other condition so neither concept disappears? Third, does the rule apply only to paper tags, or also to the traveler, quarantine area, tool board, and electronic status fields?\n\nThe controls must remain different. Material quarantine prevents movement or use of a part until authorized disposition and needs item/lot identity, reason, owner, and controlled location. Calibration-pending status prevents a gauge or tool from supporting acceptance and needs equipment ID, due or failure reason, and an alternate-tool plan; the tool may remain physically stored. Whichever meaning gets the nickname, remove or cover obsolete blue stock before launch and brief every shift. Otherwise color and habit will override the written definition."
+        },
+        {
+          "role": "user",
+          "content": "For the Fieldmark launch, “blue tag” means material quarantine hold. Use “calibration review” for a gauge or tool that cannot support acceptance measurements. Apply the mapping on paper tags, the traveler, quarantine rack, tool board, and electronic log. Color is redundant only: both labels must print the status words and an item or equipment identifier."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded for this launch: “blue tag” means material quarantine hold. “Calibration review” is the separate status for a gauge or tool barred from acceptance measurements. Both labels require printed status text plus an item, lot, or equipment identifier; blue color alone carries no authority. The mapping applies to paper tags, the traveler, quarantine rack, tool board, and electronic log. Before production, Priya and Tomas should remove obsolete blank blue stock, issue controlled labels, and include both workflows in the shift briefing. I will refer to quarantine or calibration status by function in later planning unless the local nickname itself is relevant."
+        },
+        {
+          "role": "user",
+          "content": "Spindle quality gate: nominal diameter is 7.980 mm with tolerance plus 0.000, minus 0.018. Tomas wants to inspect with a digital caliper that resolves 0.01 mm because it is fast. Priya wants the bench micrometer, which resolves 0.001 mm, but two operators get different readings when they overtighten it. We have a setting standard and ratchet stop. Define a small capability check that can be completed before February 18, and state what would make either tool unacceptable for final acceptance."
+        },
+        {
+          "role": "assistant",
+          "content": "Use representative parts spanning the tolerance, not only nominal pieces. Select at least ten stable spindles, including samples near 7.962 and 7.980 mm if available, and establish reference values with the micrometer using the setting standard, clean anvils, controlled temperature, and ratchet technique. Have at least two operators measure each part twice in randomized order without seeing prior values. Record equipment ID, calibration status, operator, repetition, and result.\n\nThe caliper’s 0.01 mm resolution is too coarse relative to an 0.018 mm total tolerance for confident final acceptance; it may screen gross errors but should not decide conformity near either limit. Reject it as the acceptance method unless a documented study demonstrates adequate discrimination and error, which is unlikely on these numbers.\n\nThe micrometer is not automatically acceptable merely because it displays 0.001 mm. It must pass the setting check and show repeatability and operator-to-operator variation small enough that guard bands can protect both limits. If technique-sensitive spread could change pass/fail classification, retrain, revise fixturing or method, and repeat the study. Until capability is documented, assembly start remains conditional."
+        },
+        {
+          "role": "user",
+          "content": "Grip lot G17 has a separate issue. Incoming inspection found 6 short shots and 3 warped pieces in a sample of 80. The remaining 370 are unopened. We need 420 saleable units and have no second grip lot on site. The molding supplier can sort the lot for a fee or ship 60 replacements, but it wants photographs and defect definitions first. Do not extrapolate a fake precise defect rate. Give me a containment plan and the information Chen should send."
+        },
+        {
+          "role": "assistant",
+          "content": "Contain G17 as one traceable lot and stop it from automatic kit release. Preserve the sampled defects, photograph each against a neutral scale, and define short shot and warp with drawing or functional criteria rather than subjective adjectives. Record the sampling method: which cartons, how units were chosen, and whether defects clustered. The observed 9/80 result is a warning from one sample, not a precise estimate for all 450.\n\nPriya should decide between a controlled internal screen and supplier sort based on labor, inspection reliability, and timing. If screening internally, create accepted, rejected, and uncertain bins with counts and independent verification of borderline pieces. Do not consume accepted pieces faster than the replacement plan can cover the required 420 plus reasonable handling loss.\n\nChen’s supplier packet should include purchase order and lot G17, total received, sample size and selection, counts by defect type, photos, applicable drawing dimensions or fit test, requested containment response, and the date replacements or a supplier sort must arrive. Ask whether the proposed 60 replacements come from a separately identified lot and require its certificate/inspection plan. No supplier credit substitutes for enough conforming grips on time."
+        },
+        {
+          "role": "user",
+          "content": "Tube sets T81 and T82 are dimensionally identical, but T81 uses a gasket compound that was later superseded because it swells in one uncommon cleaning solvent. Our current instructions do not recommend that solvent, yet two pilot users mentioned it. Engineering has not issued a restriction or approved T81 for sale. There are 190 sets in T81 and 270 in T82. We can build 420 units only if at least 150 from T81 become usable or more T82 arrives. Frame the decision tree without deciding engineering’s risk question for them."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat T81 as unresolved material, not available inventory. Engineering must document one of three dispositions. If T81 is approved without restriction, quality records the basis and both lots may be planned with clear unit traceability. If approved only with a cleaning limitation, engineering and product leadership must define the allowed solvent statement, labeling/manual change, distributor communication, and whether already printed material is obsolete before release. If T81 is rejected, purchasing needs at least 150 additional conforming sets to reach 420, plus whatever reserve the team chooses.\n\nIn every branch, keep T81 and T82 segregated and record which units receive which lot. Test evidence should reflect the uncommon solvent at relevant concentration, duration, temperature, and repeated-use conditions; absence from current instructions does not erase foreseeable use reported by pilots. Priya verifies that the released disposition matches travelers and packaging, but engineering owns the material-risk conclusion.\n\nSet a decision deadline backward from kitting. If engineering has not released a disposition by then, plan as though T81 is unavailable and ask Chen for a bounded T82 replenishment quote. Do not begin mixed-lot assembly hoping paperwork catches up."
+        },
+        {
+          "role": "user",
+          "content": "Calibration cards: version 2.3 says to take three crank cycles before sampling. Proposed 2.4 says five cycles after a field trial found residual rinse water in cold conditions. Engineering review is scheduled February 12. We have 500 printed 2.3 cards and no 2.4 stock. The printer needs four business days after proof approval. Some distributors want translated cards, but translations cannot start until source text freezes. Build a document-control plan that avoids hand-marking hundreds of cards unless there is a genuine controlled fallback."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep 2.3 stock segregated and labeled with its current revision status; do not insert it into saleable units while the cycle instruction is under review. Engineering owns the February 12 technical decision and must release either 2.3 unchanged, 2.4, or another revision through document control. Once source text freezes, quality checks the master revision, effective date, and disposition of old stock before Chen sends a controlled print proof.\n\nThe printer’s four business days begin after proof approval, so reserve review time for numerical accuracy, diagrams, revision mark, language identifier, and print legibility. Translation starts from the released source only, with translator questions logged and back-check or qualified review appropriate to the market. Translated editions need their own controlled identifiers linked to the same source revision.\n\nHand correction is a fallback only if engineering and quality issue a documented deviation specifying exact wording, method, verification sample or 100-percent check, affected quantity, and expiration. Labor and mis-mark risk may make reprint safer. Do not treat 500 existing cards as usable value until disposition is released. Assembly can stage components, but final pack cannot close without the correct controlled card."
+        },
+        {
+          "role": "user",
+          "content": "Assembly labor: four assemblers can each complete about 13 units per day once parts are kitted. One of them, Nia, is also the only person currently trained to perform the leak test, which takes six minutes per unit plus fixture reset. Priya can train Omar, but the qualification needs twenty supervised tests including two seeded failures. Packaging can handle 65 units per day. Show the bottleneck and propose a leveling plan that does not rely on Nia skipping breaks or signing work she did not witness."
+        },
+        {
+          "role": "assistant",
+          "content": "Nominal assembly capacity is about 52 units per day, below packaging’s 65, so packaging is not the first bottleneck. Leak testing at six minutes per unit is at least 312 test minutes for 52 units, plus resets, documentation, failures, and retests. One tester could barely sustain that within a day only by making the station the dominant assignment; relying on Nia for both assembly and every test would reduce actual assembly output and create a single point of failure.\n\nQualify Omar before the production ramp. The twenty supervised tests, including two seeded failures, should verify setup, reading, failure recognition, segregation, documentation, and response—not merely completion. Nia witnesses only tests she actually observes during qualification; afterward each qualified tester signs their own work. Stagger assembly so the test queue stays bounded: begin with two assemblers while qualification finishes, then move toward four only when test capacity and accepted kits support it. Use a visible FIFO lane with a maximum quantity, separate failed units, and stop upstream release when the lane is full.\n\nPlan daily output from the lower of conforming-kit availability, assembly, leak-test, and document/pack readiness. Preserve breaks and rotate repetitive work; overtime is a separate approved decision, not hidden capacity."
+        },
+        {
+          "role": "user",
+          "content": "Rework authority is fuzzy. Operators may replace a visibly damaged O-ring using the standard work instruction. They may not polish a spindle or enlarge a frame hole. Tomas can adjust machine offsets before parts are accepted, but once a lot fails final inspection, Priya controls disposition. Engineering must approve any use-as-is outside drawing. Turn that into a compact authority matrix, including when a new serial or trace record is required."
+        },
+        {
+          "role": "assistant",
+          "content": "Authority matrix:\n\n- Assembly operator: may replace a visibly damaged O-ring exactly under the released standard work, record the replacement against the unit, and repeat the specified leak test. No design judgment or dimensional salvage.\n- Machining lead Tomas: may adjust machine offsets during production setup or in-process control before final acceptance, while preserving measurement and affected-quantity records. He may not relabel failed final-inspection parts as conforming.\n- Quality lead Priya: owns containment and disposition routing after final-inspection failure; may authorize standard, preapproved rework and required reinspection. She cannot approve a drawing deviation reserved to engineering.\n- Engineering: must approve use-as-is outside drawing, nonstandard material removal, hole enlargement, spindle polishing, or altered acceptance criteria. Quality verifies implementation and traceability.\n- Leena: resolves schedule and cost priorities but cannot waive technical acceptance.\n\nAn O-ring replacement stays with the existing serial if the serial uniquely records component action and retest. Assign a new serial only when the released serial procedure requires it, such as scrapping an identified assembly and rebuilding a distinct unit. Lot-level rework needs affected serials or a bounded serial range, original result, authorization, method, new result, operator, and date. Never erase the first failure."
+        },
+        {
+          "role": "user",
+          "content": "Shipping sequence: three distributors requested 180, 150, and 90 units. The 180-unit customer accepts two partial shipments; the others prefer one shipment each. We may not have all 420 ready together. Freight pickup is Monday and Thursday. Packaging labels include calibration-card revision and tube-lot code, so those fields cannot be guessed early. Design a fair release rule and inventory status that avoids promising the first accepted unit to the loudest customer."
+        },
+        {
+          "role": "assistant",
+          "content": "Freeze allocation by an explicit commercial rule approved before finished inventory accumulates. One fair approach is proportional first release: once a safe minimum batch is accepted, allocate approximately 3:2.5:1.5 across the 180/150/90 commitments, rounded to full cartons, while honoring the first customer’s permission for splits. Another defensible rule is contract date or requested delivery date. Choose and document one; do not let call frequency become priority.\n\nUse inventory statuses that separate physically assembled from legally releasable: assembled-awaiting-test, failed/contained, accepted-awaiting-document, packed-awaiting-allocation, and released-to-shipping. A unit enters packed status only after its actual card revision and tube-lot code are known and verified. Allocation records serial/carton range, customer, quantity, decision-rule version, and pickup.\n\nBuild Monday/Thursday release reviews around accepted counts and complete documents. If the 150- or 90-unit customer cannot receive its preferred single shipment without unreasonable delay, Chen should request written acceptance of a split rather than assuming. Distributor readiness updates should report ranges and dependencies, never convert work-in-process into shipped quantity."
+        },
+        {
+          "role": "user",
+          "content": "Safety and maintenance: the deburr station’s local exhaust has a rising pressure reading, though still inside its posted green band. Maintenance is booked February 6. The spindle lathe has preventive maintenance due after another 36 spindle-hours, which could land mid-lot. A temporary aisle near the quarantine rack narrows whenever empty totes accumulate. I want concrete stop conditions, not “monitor closely,” and I want housekeeping treated as production work."
+        },
+        {
+          "role": "assistant",
+          "content": "For the deburr exhaust, record the current pressure and the manufacturer or facility limit, inspect hood capture and filters at shift start, and define a stop at the posted action threshold, loss of visible capture, alarm, unusual dust escape, or any worker symptom—whichever occurs first. The February 6 maintenance remains scheduled even if the gauge stays green; a green band does not cancel a worsening trend.\n\nFor the lathe, calculate spindle-hours per planned lot before release. Schedule preventive maintenance before beginning any lot that cannot finish within the remaining 36 hours plus an approved conservative margin. Do not plan to cross the due point mid-lot. Record actual hours each shift and stop at the due threshold if the forecast was wrong.\n\nMark the quarantine-rack aisle width on the floor and set a no-storage boundary. Empty-tote removal gets a named owner and times at shift start, lunch, and close, plus immediate removal when the boundary is crossed. If required egress or handling clearance is lost, stop movement through the area and clear it before resuming. Housekeeping time belongs in the capacity plan; it is not unpaid slack extracted from breaks."
+        },
+        {
+          "role": "user",
+          "content": "Financial picture before we shift to daily control. Flexible launch funds are $46,000. Current estimates: $12,800 frame finish including freight, $8,600 grips and possible replacements, $7,900 tube sets, $4,400 calibration cards and translations, $5,200 packaging, $3,100 gauge and fixture work, and $2,000 contingency. The grip sort could add $1,400. Additional T82 sets could add $3,600. A card reprint could add $1,100 beyond the estimate. Show base and stacked exposure, then identify what is truly optional."
+        },
+        {
+          "role": "assistant",
+          "content": "The listed base estimates total $44,000: $12,800 finish + $8,600 grips + $7,900 tubes + $4,400 cards/translations + $5,200 packaging + $3,100 gauge/fixture work + $2,000 contingency. That leaves $2,000 in the $46,000 pool.\n\nStacking the stated unresolved exposures adds $6,100: $1,400 grip sort + $3,600 additional T82 + $1,100 card reprint. If all occur, planned need reaches $50,100, which is $4,100 over the pool even before other variance. The $2,000 contingency is already included in base; it cannot be counted again as free coverage.\n\nWhat is optional depends on released technical decisions. Cosmetic upgrades, rush shipping chosen only to recover avoidable delay, premium packaging, and nonessential launch materials are optional. Conforming grips, enough approved tube sets, a released accurate calibration card, capable measurement, safe work, and compliant finish records are not. Do not “save” money by assuming T81 approval, skipping a necessary sort, or using obsolete cards. Resolve technical branches, seek bounded quotes, and identify service-preserving reductions before authorizing optional spend."
+        },
+        {
+          "role": "user",
+          "content": "Two confirmed changes: the packaging supplier accepted a return of excess inserts, reducing packaging from $5,200 to $4,650, and the fixture shop waived $480 because its original bore plate was out of specification. Keep those as separate credits. The distributor update should state that launch readiness depends on component disposition and process qualification; it must not mention internal nicknames or suppliers. Mark the boundary after which we can concentrate on daily floor control."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded separately: packaging falls by $550, from $5,200 to $4,650, due to the accepted excess-insert return. Gauge and fixture work falls by $480, from $3,100 to $2,620, because the fixture shop waived the cost tied to its nonconforming bore plate. Together the confirmed credits improve the base by $1,030, but each retains its own source and audit trail.\n\nRevised base planning need is $42,970, leaving $3,030 from the $46,000 pool before unresolved grip, tube, or card exposure. All three stacked would still exceed available funds by $3,070. The distributor update can say readiness remains conditional on component disposition, measurement/process qualification, controlled documents, and accepted production output. It should not expose shop nicknames, supplier identities, or unresolved blame.\n\nA compaction boundary begins with your next message. The earlier record contains the selected source, local status mapping, lot flow, quality gates, materials branches, document control, labor, authority, shipping, safety, and budget facts. Daily floor control can refer back by function without repeating selected answers."
+        },
+        {
+          "role": "user",
+          "content": "Create a first-week floor board. I want columns that reveal blocked work rather than rewarding units started. Include frame lots, spindle lots, grip containment, tube disposition, card revision, assembly, leak test, packaging, and shipping. The board is physical, but private employee or supplier performance details should stay in controlled records. Define cards, limits, and the daily meeting rhythm."
+        },
+        {
+          "role": "assistant",
+          "content": "Use columns for Ready, In Process, Waiting for Verification, Accepted/Released, and Contained, with operation-specific swimlanes. Each card shows work ID, quantity, drawing/document revision, component lots, current owner, entered time, next gate, and blocking dependency. Supplier or employee performance commentary stays in the controlled issue log; the floor card needs only factual status.\n\nSet explicit work-in-process limits: frame movements never exceed the approved physical buffer; spindle inspection queue fits one planned shift; grip screening uses three bounded bins; tube lots remain segregated; card status permits no pack closure without released revision; assembly-to-leak-test queue has a small numeric cap set from qualified tester capacity; packaging accepts only tested, document-complete units; shipping accepts only allocated released cartons. A red blocker marker must include owner and next review time, not just “waiting.”\n\nHold a twelve-minute start-of-shift board walk led by Leena: safety/maintenance stops, blocked dependencies, capacity for the next pull, and owner commitments. Add a five-minute midday exception check for new containment or a full queue. At close, operation leads update counts from records and reconcile physical quantities. The board visualizes controlled data; it does not replace travelers, inspection results, or serial traceability."
+        },
+        {
+          "role": "user",
+          "content": "We need a reaction plan for the first ten assembled units. They are not a ceremonial “golden batch”; they are a process check. Priya wants full dimensional review, leak test, crank-force measurement, packaging fit, card verification, and a ten-minute cold-water trial. Tomas worries that this pauses the line too long. Define the hold and release logic and what happens if one unit fails for an obvious assembly mistake."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat units 1–10 as a held verification group. Assemble them under normal released work, but do not start unrestricted production or pack them as saleable until the defined review completes. Priya coordinates dimensional checks, individual leak results, crank force, packaging fit, actual card revision, and the cold-water trial with recorded equipment and criteria. Tomas may continue preparing components and correcting setup within approved controls, but should not create a large downstream queue before process release.\n\nRelease requires all ten records complete, all critical characteristics conforming, no unexplained trend, and any observed work-instruction ambiguity resolved. A single obvious assembly error is still information. Contain the affected unit, document the original failure, correct it only under authorized standard rework, repeat all impacted tests, and review whether the instruction, training, component presentation, or fixture made the error likely. If the cause is isolated and evidence supports it, Priya may release the group under the written plan; do not erase the failure or automatically restart the entire ten.\n\nAny dimensional systemic issue, repeated leak, unsafe crank force, wrong document, lot-trace gap, or unclear root cause keeps the process on hold and triggers bounded investigation before more units are assembled."
+        },
+        {
+          "role": "user",
+          "content": "If a dependency misses its date, I want escalation based on consequence rather than hierarchy. Propose thresholds for the gauge study, grip disposition, tube decision, card release, and finishing returns. Include what useful work can continue without creating stranded inventory. We have a daily 15:40 decision window with engineering and quality."
+        },
+        {
+          "role": "assistant",
+          "content": "Escalate when a miss threatens the next irreversible pull. Gauge study: if not passed two working days before planned assembly, stop scheduling saleable spindle acceptance; continue maintenance, training, fixture checks, and nonacceptance practice pieces. Grip disposition: if conforming quantity plus confirmed replacements cannot cover the next three assembly days, pause additional kitting and use labor for controlled screening or other released work.\n\nTube decision: if unresolved by the component-kitting cutoff, treat the disputed lot as unavailable, preserve segregation, and build only against released supply without consuming scarce parts into incomplete kits. Card release: if source text is not frozen by the printer’s latest proof date, stop any plan that closes packages; assembly may proceed only within the bounded tested-unit and storage capacity, with serial/document linkage protected. Finishing returns: if a promised lot slips enough to violate inspection reservations or seven-day consumption logic, stop release of the next outbound lot and re-level machining.\n\nAt 15:40, each owner reports actual state, next hard gate, quantity exposed, and one decision request. Engineering and quality decide technical releases; Leena decides schedule and budget consequences. Useful work includes training, maintenance, document preparation, supplier questions, fixture verification, safe component preparation, and resolving existing containment—not producing inventory whose required disposition is merely hoped for."
+        },
+        {
+          "role": "user",
+          "content": "Close with a concise action list for tomorrow. Separate actions that release a gate from housekeeping or preparation. Give each item one owner, a due point, and a dependency. Do not repeat the earlier choices by name."
+        },
+        {
+          "role": "assistant",
+          "content": "Gate-releasing actions:\n\n- Chen, by 10:00: obtain written staged-lot acceptance, certificate scope, rack-point terms, and dated movement windows from the selected finishing source; dependency: carrier Tuesday/Friday availability.\n- Priya, by noon: publish the spindle capability protocol and identify ten representative samples; dependency: calibrated micrometer, setting standard, and two operators.\n- Chen, by 13:00: send the G17 defect packet and request bounded sort/replacement dates; dependency: Priya’s photos and objective defect definitions.\n- Engineering lead, at the 15:40 window: state the T81 evidence plan and release deadline; dependency: pilot-use details and solvent-test scope.\n- Document-control lead, by 11:00: prepare the February 12 card decision and proof workflow; dependency: engineering reviewers and printer cutoff.\n- Priya, by end of shift: schedule Omar’s twenty-test qualification with seeded failures; dependency: safe test fixtures and Nia’s supervised availability.\n\nPreparation and housekeeping:\n\n- Tomas, at shift start: log exhaust pressure and lathe hours, then confirm maintenance stop points.\n- Floor lead, before material movement: clear totes, verify the marked aisle, and assign the three daily housekeeping checks.\n- Leena, by noon: post the floor-board limits and name the 15:40 decision owners.\n- Chen, by 14:00: update the base budget with the two separate confirmed credits and keep unresolved exposures distinct.\n- Priya, before labels are issued: remove obsolete blank tag stock and verify controlled status labels.\n- Shipping lead, before allocation begins: draft the auditable customer-release rule and carton status fields."
+        }
+      ]
+    },
+    "wrong_sense": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an operations planning assistant for Leena Aras at Cedar Vale Instruments, a small manufacturer preparing a limited production launch. Track confirmed choices, calculations, quality gates, owners, and unresolved dependencies. Be practical about safety and capacity, and never claim that an order, test, shipment, inspection, or outside approval occurred unless Leena reports it."
+        },
+        {
+          "role": "user",
+          "content": "I am Leena Aras, operations manager at Cedar Vale Instruments. We are preparing the first commercial run of the Fieldmark, a hand-cranked water-quality sampler used by watershed crews. The run is 420 units, assembled in our twelve-person shop. Tomas Reid leads machining, Priya Noll leads quality, and Chen Wu handles purchasing and shipping. The device has an aluminum frame, stainless spindle, molded grip, replaceable sample tube, and a paper calibration card. We promised distributors a readiness update on March 4, not shipment on that date. I need this conversation to hold the real production logic, including what is still conditional. Start by identifying the decisions that could quietly invalidate the launch if we leave them vague."
+        },
+        {
+          "role": "assistant",
+          "content": "The highest-risk ambiguities are the finish supplier and acceptance standard for the aluminum frames; the local meaning of shop status tags; the exact boundary between a pilot batch and saleable production; spindle tolerance and gauge capability; molded-grip lot traceability; calibration-card version control; rework authority; and the shipping sequence if fewer than 420 units pass together.\n\nWe also need verified capacity rather than nominal machine speed: available labor by operation, preventive-maintenance windows, cure and inspection time, packaging throughput, and the maximum work in process that can be stored without mixing lots. March 4 is a distributor readiness update, so I will not convert it into an internal ship deadline. Tomas owns machining execution, Priya owns acceptance and nonconformance disposition within her authority, Chen owns purchasing and outbound coordination, and you resolve cross-functional priority and budget. Any supplier choice remains provisional until you explicitly select it, and a quotation is not a confirmed purchase order."
+        },
+        {
+          "role": "user",
+          "content": "Baseline quantities: build 440 frames and spindles to support 420 finished units plus expected setup loss. We have 450 molded grips from lot G17 and 460 tube sets split across lots T81 and T82. Packaging is available for 430 units. Calibration cards exist in version 2.3, but engineering has proposed version 2.4 and not released it. The frame drawing calls for an anodized or conversion-coated corrosion-resistant finish, color neutral gray, with no glossy cosmetic requirement. We can hold at most 160 unfinished frames safely between machining and finishing. Which facts need hard stops in the traveler rather than a note in somebody’s inbox?"
+        },
+        {
+          "role": "assistant",
+          "content": "Put hard stops at every irreversible or lot-mixing transition. The frame traveler should require drawing revision, raw-material heat/lot, machining completion, deburr inspection, quantity, and selected finish specification before anything leaves for coating. Shipment quantity must not exceed the safe 160-frame buffer unless an approved staged-return plan prevents overflow. On return, record supplier lot, certificate, count, visible condition, and acceptance status before frames enter assembly.\n\nThe spindle traveler needs actual gauge identification and calibration status at final diameter inspection. Grip and tube installation must capture G17 and either T81 or T82 by unit batch; do not commingle tube lots without a recorded breakpoint. Packaging cannot authorize more than the 430 sets physically available. Calibration-card insertion must stop at the last released version—currently 2.3. Version 2.4 is not production material until engineering releases it and disposition of already packed units is decided.\n\nAdd signature or electronic authorization fields for nonconformance use-as-is, rework, and scrap. An email can support a decision, but the traveler must point to the controlled record rather than relying on a person remembering it."
+        },
+        {
+          "role": "user",
+          "content": "Finish source is the first decision. We obtained comparable written quotes from Alder Coatings, Morrow Finishes, and Keel Surface Works. Alder offers Type II sulfuric anodize, a five-business-day turn, and included thickness certificates; freight is ours, and its rack marks will appear on two hidden tabs. Morrow offers trivalent conversion coating in three days, local pickup, and the lowest price, but it gives a certificate per order rather than per batch unless we pay extra. Keel offers anodize with excellent cosmetic samples, but its ten-day turn crosses our assembly window and it wants all 440 frames at once. Compare corrosion evidence, flow risk, traceability, and total operational fit. Do not choose yet."
+        },
+        {
+          "role": "assistant",
+          "content": "Alder has the strongest balanced evidence package. Type II anodize satisfies the drawing’s allowed finish family, included thickness certificates support incoming acceptance, and five business days can fit if lots are staged within the 160-frame storage bound. Freight and hidden rack marks are manageable provided the drawing and inspection plan accept those tab locations.\n\nMorrow is strongest for speed, cash, and local handling. Trivalent conversion coating is allowed by the drawing, but per-order certification weakens batch traceability if material is split across returns. The extra certificate cost should be included before calling it cheapest. A three-day turn is useful only if pickup, receipt inspection, and cure/handling requirements are clear.\n\nKeel offers finish quality the product does not require while creating two direct flow conflicts: ten days crosses the assembly window, and a single 440-frame transfer exceeds safe in-process storage on return unless immediately absorbed. Its cosmetic advantage does not compensate.\n\nOperationally, Alder leads if it accepts staged lots and identifies each certificate accordingly. Morrow is a viable alternative if per-batch records are priced and confirmed. Keel is a poor launch fit under current timing and lot-size terms. This is analysis, not selection."
+        },
+        {
+          "role": "user",
+          "content": "Decision: select Alder Coatings for the Fieldmark frames. Its batch certificates and manageable five-day turn outweigh the freight step. Keep Morrow Finishes as the actual fallback if staged intake cannot be confirmed; do not place a hold with Keel. Ask Alder for three identified lots no larger than 160 frames, with the final lot containing the balance."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed: Alder Coatings is selected for the frame finish, with Morrow Finishes retained as fallback if the primary source will not confirm staged intake. Keel is rejected for this launch under its timing and all-at-once terms. The requested release pattern is three identified lots, each no larger than the 160-frame safe buffer, with the last lot carrying the remaining quantity. Selection is not an order: Chen still needs written lot acceptance, certificate scope, rack-point agreement, freight terms, price, and dates before issuing the purchase order. Later task lists can say “the selected finishing source” unless identity is necessary for an action."
+        },
+        {
+          "role": "user",
+          "content": "For lot arithmetic, I am considering 150, 150, and 140 frames. Machining can finish about 55 acceptable frames per day after setup. Incoming finish inspection can clear 70 per day, and assembly can consume 48 per day once all other parts are kitted. We do not want coated frames sitting more than seven calendar days before assembly because the temporary rack protection gets unreliable. Check whether the proposed split is coherent, and tell me what timing information is missing before Chen requests dates."
+        },
+        {
+          "role": "assistant",
+          "content": "The 150/150/140 split respects the 160-frame physical limit and totals 440. At 55 acceptable machined frames per day, each 150-frame lot needs just under three production days after setup; the 140-frame lot also needs roughly three. Incoming inspection at 70 per day takes a little over two days for a 150-frame return, while assembly at 48 per day consumes one in just over three days. Inspection is faster than assembly but not instantaneous, so release cadence must avoid stacking a cleared lot behind work already waiting.\n\nThe seven-day protection constraint should be measured per returned lot from receipt to assembly consumption, especially the final units in each lot. Missing information includes supplier pickup and return days; whether the five-business-day turn starts at receipt or processing; weekend behavior; cure or sealing hold time; transport capacity; whether partial lots return together; machining start date and yield variability; assembly readiness for grips, spindles, tubes, and cards; and where rejected frames wait. Chen should request date windows, not merely “five days,” and require notification before a lot returns so inspection and assembly capacity are reserved."
+        },
+        {
+          "role": "user",
+          "content": "Tomas can start frames February 3. The finishing source says its clock begins the morning after receipt, returns each lot separately, and does not process weekends. Our carrier collects Tuesdays and Fridays and returns on the same pattern. Assembly may start February 18 if the spindle gauge study passes and the released card stock is on hand. We will not ask you to optimize an exact calendar yet. Instead, record the dependencies and a conservative rule that prevents us from releasing another lot simply because machining finished it."
+        },
+        {
+          "role": "assistant",
+          "content": "Record these fixed inputs: frame machining may start February 3; supplier processing begins the morning after receipt; weekends do not count; lots return separately; carrier movements occur Tuesdays and Fridays; and assembly may begin February 18 only if the spindle measurement study passes and released calibration cards are available.\n\nUse a pull rule for outbound frame lots. Chen may release the next lot only when all four conditions are true: the finishing source has acknowledged capacity and an identified return window; the prior return will not push on-site unfinished or awaiting-inspection frames above 160; Priya has reserved incoming-inspection capacity; and the projected last frame from the new lot can enter assembly within seven calendar days of return. Machining completion alone satisfies none of those downstream conditions.\n\nMaintain a small date table per lot with machine-ready count, pickup, supplier day one, promised return, actual return, inspection window, assembly start, and projected final consumption. If a prerequisite such as gauge capability or card release slips, pause outbound release rather than using coating lead time to hide the constraint."
+        },
+        {
+          "role": "user",
+          "content": "We have another terminology collision. On the old pump line, a “blue tag” meant a material quarantine hold: the item could not move until quality disposition. In the maintenance cage, technicians use “blue tag” for calibration review pending: the tool may stay in its location but cannot be used for acceptance measurements. Both concepts will occur during Fieldmark production, and the same blue stock is still in drawers. Ask the minimum questions needed before I declare the local meaning for this launch."
+        },
+        {
+          "role": "assistant",
+          "content": "I need three decisions. First, is the local term going to follow product material through production, or identify measuring equipment status? Second, what distinct label will be used for the other condition so neither concept disappears? Third, does the rule apply only to paper tags, or also to the traveler, quarantine area, tool board, and electronic status fields?\n\nThe controls must remain different. Material quarantine prevents movement or use of a part until authorized disposition and needs item/lot identity, reason, owner, and controlled location. Calibration-pending status prevents a gauge or tool from supporting acceptance and needs equipment ID, due or failure reason, and an alternate-tool plan; the tool may remain physically stored. Whichever meaning gets the nickname, remove or cover obsolete blue stock before launch and brief every shift. Otherwise color and habit will override the written definition."
+        },
+        {
+          "role": "user",
+          "content": "For the Fieldmark launch, “blue tag” means calibration review pending. Use “material quarantine” for a part or lot that cannot move before disposition. Apply the mapping on paper tags, the traveler, quarantine rack, tool board, and electronic log. Color is redundant only: both labels must print the status words and an item or equipment identifier."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded for this launch: “blue tag” means calibration review pending. “Material quarantine” is the separate status for a part or lot barred from movement before disposition. Both labels require printed status text plus an item, lot, or equipment identifier; blue color alone carries no authority. The mapping applies to paper tags, the traveler, quarantine rack, tool board, and electronic log. Before production, Priya and Tomas should remove obsolete blank blue stock, issue controlled labels, and brief both workflows to every shift. I will refer to quarantine or calibration status by function in later planning unless the local nickname itself is relevant."
+        },
+        {
+          "role": "user",
+          "content": "Spindle quality gate: nominal diameter is 7.980 mm with tolerance plus 0.000, minus 0.018. Tomas wants to inspect with a digital caliper that resolves 0.01 mm because it is fast. Priya wants the bench micrometer, which resolves 0.001 mm, but two operators get different readings when they overtighten it. We have a setting standard and ratchet stop. Define a small capability check that can be completed before February 18, and state what would make either tool unacceptable for final acceptance."
+        },
+        {
+          "role": "assistant",
+          "content": "Use representative parts spanning the tolerance, not only nominal pieces. Select at least ten stable spindles, including samples near 7.962 and 7.980 mm if available, and establish reference values with the micrometer using the setting standard, clean anvils, controlled temperature, and ratchet technique. Have at least two operators measure each part twice in randomized order without seeing prior values. Record equipment ID, calibration status, operator, repetition, and result.\n\nThe caliper’s 0.01 mm resolution is too coarse relative to an 0.018 mm total tolerance for confident final acceptance; it may screen gross errors but should not decide conformity near either limit. Reject it as the acceptance method unless a documented study demonstrates adequate discrimination and error, which is unlikely on these numbers.\n\nThe micrometer is not automatically acceptable merely because it displays 0.001 mm. It must pass the setting check and show repeatability and operator-to-operator variation small enough that guard bands can protect both limits. If technique-sensitive spread could change pass/fail classification, retrain, revise fixturing or method, and repeat the study. Until capability is documented, assembly start remains conditional."
+        },
+        {
+          "role": "user",
+          "content": "Grip lot G17 has a separate issue. Incoming inspection found 6 short shots and 3 warped pieces in a sample of 80. The remaining 370 are unopened. We need 420 saleable units and have no second grip lot on site. The molding supplier can sort the lot for a fee or ship 60 replacements, but it wants photographs and defect definitions first. Do not extrapolate a fake precise defect rate. Give me a containment plan and the information Chen should send."
+        },
+        {
+          "role": "assistant",
+          "content": "Contain G17 as one traceable lot and stop it from automatic kit release. Preserve the sampled defects, photograph each against a neutral scale, and define short shot and warp with drawing or functional criteria rather than subjective adjectives. Record the sampling method: which cartons, how units were chosen, and whether defects clustered. The observed 9/80 result is a warning from one sample, not a precise estimate for all 450.\n\nPriya should decide between a controlled internal screen and supplier sort based on labor, inspection reliability, and timing. If screening internally, create accepted, rejected, and uncertain bins with counts and independent verification of borderline pieces. Do not consume accepted pieces faster than the replacement plan can cover the required 420 plus reasonable handling loss.\n\nChen’s supplier packet should include purchase order and lot G17, total received, sample size and selection, counts by defect type, photos, applicable drawing dimensions or fit test, requested containment response, and the date replacements or a supplier sort must arrive. Ask whether the proposed 60 replacements come from a separately identified lot and require its certificate/inspection plan. No supplier credit substitutes for enough conforming grips on time."
+        },
+        {
+          "role": "user",
+          "content": "Tube sets T81 and T82 are dimensionally identical, but T81 uses a gasket compound that was later superseded because it swells in one uncommon cleaning solvent. Our current instructions do not recommend that solvent, yet two pilot users mentioned it. Engineering has not issued a restriction or approved T81 for sale. There are 190 sets in T81 and 270 in T82. We can build 420 units only if at least 150 from T81 become usable or more T82 arrives. Frame the decision tree without deciding engineering’s risk question for them."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat T81 as unresolved material, not available inventory. Engineering must document one of three dispositions. If T81 is approved without restriction, quality records the basis and both lots may be planned with clear unit traceability. If approved only with a cleaning limitation, engineering and product leadership must define the allowed solvent statement, labeling/manual change, distributor communication, and whether already printed material is obsolete before release. If T81 is rejected, purchasing needs at least 150 additional conforming sets to reach 420, plus whatever reserve the team chooses.\n\nIn every branch, keep T81 and T82 segregated and record which units receive which lot. Test evidence should reflect the uncommon solvent at relevant concentration, duration, temperature, and repeated-use conditions; absence from current instructions does not erase foreseeable use reported by pilots. Priya verifies that the released disposition matches travelers and packaging, but engineering owns the material-risk conclusion.\n\nSet a decision deadline backward from kitting. If engineering has not released a disposition by then, plan as though T81 is unavailable and ask Chen for a bounded T82 replenishment quote. Do not begin mixed-lot assembly hoping paperwork catches up."
+        },
+        {
+          "role": "user",
+          "content": "Calibration cards: version 2.3 says to take three crank cycles before sampling. Proposed 2.4 says five cycles after a field trial found residual rinse water in cold conditions. Engineering review is scheduled February 12. We have 500 printed 2.3 cards and no 2.4 stock. The printer needs four business days after proof approval. Some distributors want translated cards, but translations cannot start until source text freezes. Build a document-control plan that avoids hand-marking hundreds of cards unless there is a genuine controlled fallback."
+        },
+        {
+          "role": "assistant",
+          "content": "Keep 2.3 stock segregated and labeled with its current revision status; do not insert it into saleable units while the cycle instruction is under review. Engineering owns the February 12 technical decision and must release either 2.3 unchanged, 2.4, or another revision through document control. Once source text freezes, quality checks the master revision, effective date, and disposition of old stock before Chen sends a controlled print proof.\n\nThe printer’s four business days begin after proof approval, so reserve review time for numerical accuracy, diagrams, revision mark, language identifier, and print legibility. Translation starts from the released source only, with translator questions logged and back-check or qualified review appropriate to the market. Translated editions need their own controlled identifiers linked to the same source revision.\n\nHand correction is a fallback only if engineering and quality issue a documented deviation specifying exact wording, method, verification sample or 100-percent check, affected quantity, and expiration. Labor and mis-mark risk may make reprint safer. Do not treat 500 existing cards as usable value until disposition is released. Assembly can stage components, but final pack cannot close without the correct controlled card."
+        },
+        {
+          "role": "user",
+          "content": "Assembly labor: four assemblers can each complete about 13 units per day once parts are kitted. One of them, Nia, is also the only person currently trained to perform the leak test, which takes six minutes per unit plus fixture reset. Priya can train Omar, but the qualification needs twenty supervised tests including two seeded failures. Packaging can handle 65 units per day. Show the bottleneck and propose a leveling plan that does not rely on Nia skipping breaks or signing work she did not witness."
+        },
+        {
+          "role": "assistant",
+          "content": "Nominal assembly capacity is about 52 units per day, below packaging’s 65, so packaging is not the first bottleneck. Leak testing at six minutes per unit is at least 312 test minutes for 52 units, plus resets, documentation, failures, and retests. One tester could barely sustain that within a day only by making the station the dominant assignment; relying on Nia for both assembly and every test would reduce actual assembly output and create a single point of failure.\n\nQualify Omar before the production ramp. The twenty supervised tests, including two seeded failures, should verify setup, reading, failure recognition, segregation, documentation, and response—not merely completion. Nia witnesses only tests she actually observes during qualification; afterward each qualified tester signs their own work. Stagger assembly so the test queue stays bounded: begin with two assemblers while qualification finishes, then move toward four only when test capacity and accepted kits support it. Use a visible FIFO lane with a maximum quantity, separate failed units, and stop upstream release when the lane is full.\n\nPlan daily output from the lower of conforming-kit availability, assembly, leak-test, and document/pack readiness. Preserve breaks and rotate repetitive work; overtime is a separate approved decision, not hidden capacity."
+        },
+        {
+          "role": "user",
+          "content": "Rework authority is fuzzy. Operators may replace a visibly damaged O-ring using the standard work instruction. They may not polish a spindle or enlarge a frame hole. Tomas can adjust machine offsets before parts are accepted, but once a lot fails final inspection, Priya controls disposition. Engineering must approve any use-as-is outside drawing. Turn that into a compact authority matrix, including when a new serial or trace record is required."
+        },
+        {
+          "role": "assistant",
+          "content": "Authority matrix:\n\n- Assembly operator: may replace a visibly damaged O-ring exactly under the released standard work, record the replacement against the unit, and repeat the specified leak test. No design judgment or dimensional salvage.\n- Machining lead Tomas: may adjust machine offsets during production setup or in-process control before final acceptance, while preserving measurement and affected-quantity records. He may not relabel failed final-inspection parts as conforming.\n- Quality lead Priya: owns containment and disposition routing after final-inspection failure; may authorize standard, preapproved rework and required reinspection. She cannot approve a drawing deviation reserved to engineering.\n- Engineering: must approve use-as-is outside drawing, nonstandard material removal, hole enlargement, spindle polishing, or altered acceptance criteria. Quality verifies implementation and traceability.\n- Leena: resolves schedule and cost priorities but cannot waive technical acceptance.\n\nAn O-ring replacement stays with the existing serial if the serial uniquely records component action and retest. Assign a new serial only when the released serial procedure requires it, such as scrapping an identified assembly and rebuilding a distinct unit. Lot-level rework needs affected serials or a bounded serial range, original result, authorization, method, new result, operator, and date. Never erase the first failure."
+        },
+        {
+          "role": "user",
+          "content": "Shipping sequence: three distributors requested 180, 150, and 90 units. The 180-unit customer accepts two partial shipments; the others prefer one shipment each. We may not have all 420 ready together. Freight pickup is Monday and Thursday. Packaging labels include calibration-card revision and tube-lot code, so those fields cannot be guessed early. Design a fair release rule and inventory status that avoids promising the first accepted unit to the loudest customer."
+        },
+        {
+          "role": "assistant",
+          "content": "Freeze allocation by an explicit commercial rule approved before finished inventory accumulates. One fair approach is proportional first release: once a safe minimum batch is accepted, allocate approximately 3:2.5:1.5 across the 180/150/90 commitments, rounded to full cartons, while honoring the first customer’s permission for splits. Another defensible rule is contract date or requested delivery date. Choose and document one; do not let call frequency become priority.\n\nUse inventory statuses that separate physically assembled from legally releasable: assembled-awaiting-test, failed/contained, accepted-awaiting-document, packed-awaiting-allocation, and released-to-shipping. A unit enters packed status only after its actual card revision and tube-lot code are known and verified. Allocation records serial/carton range, customer, quantity, decision-rule version, and pickup.\n\nBuild Monday/Thursday release reviews around accepted counts and complete documents. If the 150- or 90-unit customer cannot receive its preferred single shipment without unreasonable delay, Chen should request written acceptance of a split rather than assuming. Distributor readiness updates should report ranges and dependencies, never convert work-in-process into shipped quantity."
+        },
+        {
+          "role": "user",
+          "content": "Safety and maintenance: the deburr station’s local exhaust has a rising pressure reading, though still inside its posted green band. Maintenance is booked February 6. The spindle lathe has preventive maintenance due after another 36 spindle-hours, which could land mid-lot. A temporary aisle near the quarantine rack narrows whenever empty totes accumulate. I want concrete stop conditions, not “monitor closely,” and I want housekeeping treated as production work."
+        },
+        {
+          "role": "assistant",
+          "content": "For the deburr exhaust, record the current pressure and the manufacturer or facility limit, inspect hood capture and filters at shift start, and define a stop at the posted action threshold, loss of visible capture, alarm, unusual dust escape, or any worker symptom—whichever occurs first. The February 6 maintenance remains scheduled even if the gauge stays green; a green band does not cancel a worsening trend.\n\nFor the lathe, calculate spindle-hours per planned lot before release. Schedule preventive maintenance before beginning any lot that cannot finish within the remaining 36 hours plus an approved conservative margin. Do not plan to cross the due point mid-lot. Record actual hours each shift and stop at the due threshold if the forecast was wrong.\n\nMark the quarantine-rack aisle width on the floor and set a no-storage boundary. Empty-tote removal gets a named owner and times at shift start, lunch, and close, plus immediate removal when the boundary is crossed. If required egress or handling clearance is lost, stop movement through the area and clear it before resuming. Housekeeping time belongs in the capacity plan; it is not unpaid slack extracted from breaks."
+        },
+        {
+          "role": "user",
+          "content": "Financial picture before we shift to daily control. Flexible launch funds are $46,000. Current estimates: $12,800 frame finish including freight, $8,600 grips and possible replacements, $7,900 tube sets, $4,400 calibration cards and translations, $5,200 packaging, $3,100 gauge and fixture work, and $2,000 contingency. The grip sort could add $1,400. Additional T82 sets could add $3,600. A card reprint could add $1,100 beyond the estimate. Show base and stacked exposure, then identify what is truly optional."
+        },
+        {
+          "role": "assistant",
+          "content": "The listed base estimates total $44,000: $12,800 finish + $8,600 grips + $7,900 tubes + $4,400 cards/translations + $5,200 packaging + $3,100 gauge/fixture work + $2,000 contingency. That leaves $2,000 in the $46,000 pool.\n\nStacking the stated unresolved exposures adds $6,100: $1,400 grip sort + $3,600 additional T82 + $1,100 card reprint. If all occur, planned need reaches $50,100, which is $4,100 over the pool even before other variance. The $2,000 contingency is already included in base; it cannot be counted again as free coverage.\n\nWhat is optional depends on released technical decisions. Cosmetic upgrades, rush shipping chosen only to recover avoidable delay, premium packaging, and nonessential launch materials are optional. Conforming grips, enough approved tube sets, a released accurate calibration card, capable measurement, safe work, and compliant finish records are not. Do not “save” money by assuming T81 approval, skipping a necessary sort, or using obsolete cards. Resolve technical branches, seek bounded quotes, and identify service-preserving reductions before authorizing optional spend."
+        },
+        {
+          "role": "user",
+          "content": "Two confirmed changes: the packaging supplier accepted a return of excess inserts, reducing packaging from $5,200 to $4,650, and the fixture shop waived $480 because its original bore plate was out of specification. Keep those as separate credits. The distributor update should state that launch readiness depends on component disposition and process qualification; it must not mention internal nicknames or suppliers. Mark the boundary after which we can concentrate on daily floor control."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded separately: packaging falls by $550, from $5,200 to $4,650, due to the accepted excess-insert return. Gauge and fixture work falls by $480, from $3,100 to $2,620, because the fixture shop waived the cost tied to its nonconforming bore plate. Together the confirmed credits improve the base by $1,030, but each retains its own source and audit trail.\n\nRevised base planning need is $42,970, leaving $3,030 from the $46,000 pool before unresolved grip, tube, or card exposure. All three stacked would still exceed available funds by $3,070. The distributor update can say readiness remains conditional on component disposition, measurement/process qualification, controlled documents, and accepted production output. It should not expose shop nicknames, supplier identities, or unresolved blame.\n\nA compaction boundary begins with your next message. The earlier record contains the selected source, local status mapping, lot flow, quality gates, materials branches, document control, labor, authority, shipping, safety, and budget facts. Daily floor control can refer back by function without repeating selected answers."
+        },
+        {
+          "role": "user",
+          "content": "Create a first-week floor board. I want columns that reveal blocked work rather than rewarding units started. Include frame lots, spindle lots, grip containment, tube disposition, card revision, assembly, leak test, packaging, and shipping. The board is physical, but private employee or supplier performance details should stay in controlled records. Define cards, limits, and the daily meeting rhythm."
+        },
+        {
+          "role": "assistant",
+          "content": "Use columns for Ready, In Process, Waiting for Verification, Accepted/Released, and Contained, with operation-specific swimlanes. Each card shows work ID, quantity, drawing/document revision, component lots, current owner, entered time, next gate, and blocking dependency. Supplier or employee performance commentary stays in the controlled issue log; the floor card needs only factual status.\n\nSet explicit work-in-process limits: frame movements never exceed the approved physical buffer; spindle inspection queue fits one planned shift; grip screening uses three bounded bins; tube lots remain segregated; card status permits no pack closure without released revision; assembly-to-leak-test queue has a small numeric cap set from qualified tester capacity; packaging accepts only tested, document-complete units; shipping accepts only allocated released cartons. A red blocker marker must include owner and next review time, not just “waiting.”\n\nHold a twelve-minute start-of-shift board walk led by Leena: safety/maintenance stops, blocked dependencies, capacity for the next pull, and owner commitments. Add a five-minute midday exception check for new containment or a full queue. At close, operation leads update counts from records and reconcile physical quantities. The board visualizes controlled data; it does not replace travelers, inspection results, or serial traceability."
+        },
+        {
+          "role": "user",
+          "content": "We need a reaction plan for the first ten assembled units. They are not a ceremonial “golden batch”; they are a process check. Priya wants full dimensional review, leak test, crank-force measurement, packaging fit, card verification, and a ten-minute cold-water trial. Tomas worries that this pauses the line too long. Define the hold and release logic and what happens if one unit fails for an obvious assembly mistake."
+        },
+        {
+          "role": "assistant",
+          "content": "Treat units 1–10 as a held verification group. Assemble them under normal released work, but do not start unrestricted production or pack them as saleable until the defined review completes. Priya coordinates dimensional checks, individual leak results, crank force, packaging fit, actual card revision, and the cold-water trial with recorded equipment and criteria. Tomas may continue preparing components and correcting setup within approved controls, but should not create a large downstream queue before process release.\n\nRelease requires all ten records complete, all critical characteristics conforming, no unexplained trend, and any observed work-instruction ambiguity resolved. A single obvious assembly error is still information. Contain the affected unit, document the original failure, correct it only under authorized standard rework, repeat all impacted tests, and review whether the instruction, training, component presentation, or fixture made the error likely. If the cause is isolated and evidence supports it, Priya may release the group under the written plan; do not erase the failure or automatically restart the entire ten.\n\nAny dimensional systemic issue, repeated leak, unsafe crank force, wrong document, lot-trace gap, or unclear root cause keeps the process on hold and triggers bounded investigation before more units are assembled."
+        },
+        {
+          "role": "user",
+          "content": "If a dependency misses its date, I want escalation based on consequence rather than hierarchy. Propose thresholds for the gauge study, grip disposition, tube decision, card release, and finishing returns. Include what useful work can continue without creating stranded inventory. We have a daily 15:40 decision window with engineering and quality."
+        },
+        {
+          "role": "assistant",
+          "content": "Escalate when a miss threatens the next irreversible pull. Gauge study: if not passed two working days before planned assembly, stop scheduling saleable spindle acceptance; continue maintenance, training, fixture checks, and nonacceptance practice pieces. Grip disposition: if conforming quantity plus confirmed replacements cannot cover the next three assembly days, pause additional kitting and use labor for controlled screening or other released work.\n\nTube decision: if unresolved by the component-kitting cutoff, treat the disputed lot as unavailable, preserve segregation, and build only against released supply without consuming scarce parts into incomplete kits. Card release: if source text is not frozen by the printer’s latest proof date, stop any plan that closes packages; assembly may proceed only within the bounded tested-unit and storage capacity, with serial/document linkage protected. Finishing returns: if a promised lot slips enough to violate inspection reservations or seven-day consumption logic, stop release of the next outbound lot and re-level machining.\n\nAt 15:40, each owner reports actual state, next hard gate, quantity exposed, and one decision request. Engineering and quality decide technical releases; Leena decides schedule and budget consequences. Useful work includes training, maintenance, document preparation, supplier questions, fixture verification, safe component preparation, and resolving existing containment—not producing inventory whose required disposition is merely hoped for."
+        },
+        {
+          "role": "user",
+          "content": "Close with a concise action list for tomorrow. Separate actions that release a gate from housekeeping or preparation. Give each item one owner, a due point, and a dependency. Do not repeat the earlier choices by name."
+        },
+        {
+          "role": "assistant",
+          "content": "Gate-releasing actions:\n\n- Chen, by 10:00: obtain written staged-lot acceptance, certificate scope, rack-point terms, and dated movement windows from the selected finishing source; dependency: carrier Tuesday/Friday availability.\n- Priya, by noon: publish the spindle capability protocol and identify ten representative samples; dependency: calibrated micrometer, setting standard, and two operators.\n- Chen, by 13:00: send the G17 defect packet and request bounded sort/replacement dates; dependency: Priya’s photos and objective defect definitions.\n- Engineering lead, at the 15:40 window: state the T81 evidence plan and release deadline; dependency: pilot-use details and solvent-test scope.\n- Document-control lead, by 11:00: prepare the February 12 card decision and proof workflow; dependency: engineering reviewers and printer cutoff.\n- Priya, by end of shift: schedule Omar’s twenty-test qualification with seeded failures; dependency: safe test fixtures and Nia’s supervised availability.\n\nPreparation and housekeeping:\n\n- Tomas, at shift start: log exhaust pressure and lathe hours, then confirm maintenance stop points.\n- Floor lead, before material movement: clear totes, verify the marked aisle, and assign the three daily housekeeping checks.\n- Leena, by noon: post the floor-board limits and name the 15:40 decision owners.\n- Chen, by 14:00: update the base budget with the two separate confirmed credits and keep unresolved exposures distinct.\n- Priya, before labels are issued: remove obsolete blank tag stock and verify controlled status labels.\n- Shipping lead, before allocation begins: draft the auditable customer-release rule and carton status fields."
+        }
+      ]
+    }
+  },
+  "plants": {
+    "referent": {
+      "plant_id": "v11-c06-referent",
+      "category": "referent",
+      "probe": "Which finishing supplier was selected for the Fieldmark frames?",
+      "correct_target": "Alder Coatings",
+      "counterfactual_target": "Morrow Finishes",
+      "establishing_indices": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "downstream_reference_indices": [],
+      "factual_rationale": "Three finish suppliers are compared on corrosion evidence, flow, traceability, and timing before one is explicitly selected and confirmed."
+    },
+    "sense": {
+      "plant_id": "v11-c06-sense",
+      "category": "sense",
+      "probe": "What did “blue tag” mean during the Fieldmark launch?",
+      "correct_target": "material quarantine hold",
+      "counterfactual_target": "calibration review pending",
+      "establishing_indices": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "downstream_reference_indices": [],
+      "factual_rationale": "Two existing shop usages are both plausible; the launch explicitly assigns the nickname to one controlled status."
+    }
+  },
+  "changed_message_allowlists": {
+    "wrong_referent": [
+      7,
+      8
+    ],
+    "wrong_sense": [
+      15,
+      16
+    ]
+  },
+  "distractor_fact_inventory": [
+    {
+      "chain_id": "flow-and-lots",
+      "indices": [
+        3,
+        4,
+        9,
+        10,
+        11,
+        12
+      ],
+      "summary": "Traveler stops, frame lot arithmetic, carrier cadence, and pull conditions."
+    },
+    {
+      "chain_id": "quality-and-components",
+      "indices": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "summary": "Spindle measurement, grip containment, tube disposition, and controlled card release."
+    },
+    {
+      "chain_id": "labor-authority-shipping",
+      "indices": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "summary": "Leak-test bottleneck, rework authority, and fair serial-level allocation."
+    },
+    {
+      "chain_id": "safety-and-budget",
+      "indices": [
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "summary": "Maintenance stops, housekeeping, stacked exposure, and confirmed separate credits."
+    },
+    {
+      "chain_id": "retained-floor-control",
+      "indices": [
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ],
+      "summary": "Floor board, first-ten-unit hold, consequence-based escalation, and tomorrow actions."
+    }
+  ],
+  "tokenizer_binding": {
+    "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "chat_template_source": "pinned tokenizer apply_chat_template",
+    "canonical_rendering": "dummy-user non-final rendering",
+    "summary_request": "Write a compact handoff note of 180–240 words for another assistant who will continue this conversation without seeing it. Identify the participants and their roles, current goals, decisions that still affect next steps, constraints, unresolved questions, and the next actions. Prioritize what the next assistant needs to act; compress settled background details when they are not needed. Use plain prose or concise bullets. Do not add commentary before or after the note."
+  },
+  "observed_mechanical_evidence": {
+    "status": "PENDING_COMPUTATION"
+  },
+  "review": {
+    "overall_status": "PENDING",
+    "mechanical_validator": "PENDING",
+    "blind_randomized_whole_history_review": "PENDING",
+    "target_aware_paired_review": "PENDING",
+    "diversity_audit": "PENDING",
+    "adjudication": "NOT_STARTED"
+  },
+  "warning": "DRAFT_UNREVIEWED. Not frozen, reviewed, authorized, or execution-ready. Do not use for any model summary, cache, target score, or semantic outcome."
+}
+
