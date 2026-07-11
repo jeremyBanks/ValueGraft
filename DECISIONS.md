@@ -578,8 +578,9 @@ Capture everything very well (owner).
 
 - **Make boundary carriage the canary-primary region without changing visible
   text.** Every destination contains the same target-neutral anchor. `R2`
-  (summary content plus canonical assistant close/boundary) is the sole stop/go
-  region; content-only `R1` and content+boundary+anchor `R3` are descriptive.
+  (carrier content plus the complete carrier close, anchor-user message, and
+  anchor-assistant generation header) is the sole stop/go region; content-only
+  `R1` and R2 plus the q=1 `Acknowledged.` content in `R3` are descriptive.
   Rows after the selected region are causally recomputed. An R1/R3-only result
   cannot rescue R2 or retrospectively change the original intervention.
 

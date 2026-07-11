@@ -68,17 +68,28 @@ formal revision-1 target-aware/diversity review independently returned FAIL
 review required revisions to both e04 and e06 histories. Full correction:
 `notes/2026071199-sol-v12-precarrier-length-and-review-failure.md`.
 
-Revision-2 authoring is in progress in new additive paths. The carrier is now
-the unresolved-compatible 42-token literal recorded in
-`data/coherent_canary_v12/fixed_text_token_evidence_v2.json`. The current
-validator gates the actual carrier-request start, exact boundary order, R3 end
-before retained tail, production turn-addition call shapes, and all fixed
-literals. No old case or validation artifact can authorize execution.
+Revision-4 is the current authored candidate set. E01/e02/e03/e05/e06 retain
+their revision-2 literal histories; e04 revision-3 repaired a late chronology
+defect and revision-4 corrected only stale cabinet-control provenance indices.
+Fresh independent review passed the carrier and all 12 histories, all six paired
+causal contrasts, and cross-case diversity. The complete tokenizer-only manifest
+at `results/coherent_canary_validation/coherent_canary_revision4_full_manifest_Qwen3-30B-A3B-Instruct-2507_20260711T205951Z.json`
+persists the literal token/event/logical/physical/source arrays and observed
+decode round trips. It remains explicitly nonauthorizing.
 
-The immediate work is to complete and re-review revision 2, then freeze the
-additive preregistration, implement and independently harvest its complete
-runner, and begin the corrected negative/methodological paper scaffold in
-parallel. Do not launch compute merely because the strategy review is complete.
+The execution-gap audit observed that v12 initially had planners but no model
+runner, bounded store, release layer, harvester, or budget wrapper. The first
+additive runtime core now executes frozen N/fresh events, enforces packed versus
+logical positions and cache bounds, transplants selected K/V rows with confinement
+checks, causally recomputes suffix events, and scores q=1 targets. Its tests used
+a deterministic fake cache model only. The differentiable path control, bounded
+persistence/release modes, independent harvester, exact preflight, and local 0.6B
+full-apparatus gate remain incomplete. No subject-model forward is authorized;
+paid coherent-state compute remains `$0` and no pod is active.
+
+The immediate work is to complete and independently validate that apparatus,
+then run the local 0.6B gate. Do not launch exact-stack compute merely because
+the stimulus review passed.
 
 ## CURRENT TRUTH (2026-07-11) — coherent-state v10 execution
 
