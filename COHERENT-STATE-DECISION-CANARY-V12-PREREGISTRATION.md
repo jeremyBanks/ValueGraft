@@ -80,7 +80,7 @@ runs and persists before any semantic treatment score.
 Freeze six complete paired cases before any treatment outcome:
 
 - primary cases `e01`--`e04`;
-- ambiguity-reserve cases `e05`--`e06`, run only under Section 14's trigger.
+- ambiguity-reserve cases `e05`--`e06`, run only under Section 15's trigger.
 
 E01--e03 contain roughly 1,000--2,000 production-tokenizer tokens before the
 carrier request. E04 contains roughly 4,000--6,000. Reserve cases span different
@@ -366,7 +366,8 @@ Phase A may compute only:
 - leakage labels;
 - forced-token NLL/support under C and W;
 - `A_C`, `A_W`, and `FF` competence/damage outcomes;
-- technical identities and positive-control outcomes.
+- technical identities, bidirectional path-control outcomes, and the natural
+  downstream-note calibration.
 
 An independent validator writes and commits one of:
 
