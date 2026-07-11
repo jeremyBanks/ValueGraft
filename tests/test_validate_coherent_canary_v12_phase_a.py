@@ -74,6 +74,9 @@ def create_sources(repo: Path, case_id="e01", *,
             "passed": True,
             "evidence": {"fingerprint_sha256":
                          runtime["fingerprint_sha256"]},
+        }, "source_bindings": {
+            "passed": True,
+            "evidence": {"fixed_text_evidence": bound(fixed, repo)},
         }},
     })
     return {

@@ -188,6 +188,16 @@ def verify_bindings(raw: Mapping[str, Any], repo_root: Path) -> dict[str, Any]:
     if raw.get("subject") == "exact-subject":
         require(technical.get("semantic_release_eligible") is True,
                 "exact technical report is not semantic-release eligible")
+    fixed_path = repo_root / (
+        "data/coherent_canary_v12/fixed_text_token_evidence_v2.json")
+    source_check = technical.get("checks", {}).get("source_bindings", {})
+    fixed_binding = source_check.get("evidence", {}).get(
+        "fixed_text_evidence", {})
+    require(source_check.get("passed") is True and fixed_path.is_file() and
+            fixed_binding.get("path") ==
+            "data/coherent_canary_v12/fixed_text_token_evidence_v2.json" and
+            fixed_binding.get("sha256") == file_sha256(fixed_path),
+            "technical report does not bind current fixed-text evidence")
     return {
         "case": {"path": str(case_path), "sha256": file_sha256(case_path)},
         "manifest": {"path": str(manifest_path),

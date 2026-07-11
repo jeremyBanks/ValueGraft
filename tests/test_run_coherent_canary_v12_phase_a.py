@@ -28,12 +28,17 @@ VALIDATOR_SPEC.loader.exec_module(VALIDATOR)
 
 
 def write_json(path: Path, value) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, sort_keys=True) + "\n")
     return path
 
 
 def fixture(tmp_path: Path, *, subject="local-apparatus",
             semantic_release_eligible=False, fingerprint="a" * 64):
+    fixed = write_json(
+        tmp_path / "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+        {"texts": {"engineered_carrier_content": {
+            "token_ids": [101, 102, 103]}}})
     case = {
         "schema": "coherent_state_decision_canary_v12_case_draft_v1",
         "design_id": MODULE.DESIGN_ID, "case_id": "e01",
@@ -67,6 +72,12 @@ def fixture(tmp_path: Path, *, subject="local-apparatus",
         "checks": {"runtime_fingerprint": {
             "passed": True,
             "evidence": {"fingerprint_sha256": fingerprint},
+        }, "source_bindings": {
+            "passed": True,
+            "evidence": {"fixed_text_evidence": {
+                "path": fixed.relative_to(tmp_path).as_posix(),
+                "sha256": MODULE.file_sha256(fixed),
+            }},
         }},
     })
     prereg = tmp_path / "prereg.md"
@@ -262,7 +273,6 @@ def test_runner_output_is_accepted_by_independent_validator(tmp_path, monkeypatc
     args, _ = fixture(
         tmp_path, fingerprint=runtime["fingerprint_sha256"])
     fixed = tmp_path / "data/coherent_canary_v12/fixed_text_token_evidence_v2.json"
-    fixed.parent.mkdir(parents=True)
     carrier_ids = [101, 102, 103]
     write_json(fixed, {"texts": {"engineered_carrier_content": {
         "token_ids": carrier_ids}}})
