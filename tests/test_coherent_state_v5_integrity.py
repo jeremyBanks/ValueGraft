@@ -219,6 +219,18 @@ def test_technical_pass_exits_after_receipt_without_runner(
     assert not list(args.run_dir.glob("conv_*.json"))
 
 
+def test_driver_failure_forces_aggregate_fail_after_all_stages_pass():
+    gates = driver.v7_gate_schema(expected_attention_layers=1)
+    for name in gates["stage_order"]:
+        gates[name].update({"status": "PASS", "passes": True})
+    gates.update({"status": "PASS", "passes": True})
+    closed = driver._terminalize_gate_lifecycle(
+        gates, {"error": "injected post-gate terminalization failure"})
+    assert closed["status"] == "FAIL"
+    assert closed["passes"] is False
+    assert closed["failure"]["error"].startswith("injected")
+
+
 def test_apparatus_aggregate_binds_paths_and_bytes(tmp_path: Path, monkeypatch):
     required = ("src/run_coherent_state_hf.py",)
     monkeypatch.setattr(integrity, "APPARATUS_REQUIRED", required)

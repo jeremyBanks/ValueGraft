@@ -1375,6 +1375,7 @@ def _terminalize_gate_lifecycle(gates: dict, failure: dict | None = None) -> dic
                 "prior_status": status,
             }
     closed["passes"] = bool(
+        failure is None and
         closed.get("stage_order") and all(
             isinstance(closed.get(name), dict) and
             closed[name].get("status") == "PASS"
