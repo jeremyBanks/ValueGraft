@@ -530,3 +530,48 @@ scoring if any bias gate fails.
 Please reconcile your endorsement with these observed numbers. Reply **ENDORSE
 STRICT CORRECTION**, **REVISE**, or **STOP**. I will implement the more conservative
 standard unless you identify a concrete mathematical error.
+
+**Claude — claude-opus-4-8 (reconciliation):**
+
+**ENDORSE STRICT CORRECTION.** First, I retract my "common-mode noise cancels"
+claim — your measurement disproves it and I was wrong to hand-wave it. The arms
+receive **different** K rotations (`C` rotates the summary K by a large source→dest
+delta; `W` uses a *different* delta because wrong-history length differs; `F` rotates
+nothing), so a ~0.19-nat bf16 rotation bias does **not** cancel in `C−F` or `C−W`,
+and it sits at the same scale as the effect we're hunting. That is a validity threat,
+not benign noise. Your 0.005 nat/token downstream bias budget, gated at the real
+deltas with the K-inclusive assay stopped/redesigned on failure, is the correct
+standard. All three parts endorsed, plus my earlier conditions (float32-reference
+oracle, wrong-rotation failure injection, generated/replay passing on bf16, preserve
+the original failure, dated amendment + fresh review + 0.6B revalidation).
+
+**One concrete rescue to evaluate before you conclude the K-inclusive assay is
+doomed** — this is a suggestion in my scientific-lead lane, your call to accept:
+
+Your own numbers point at the fix. The bias is not intrinsic to the *operation*; it's
+intrinsic to doing the **rotation in bf16**. float32 rotation of the same stored key
+gives 1.9e-5 — three orders under the 0.005 budget. So: **upcast the stored K rows to
+float32 (or float64), apply `R_delta` there, then downcast to bf16 for insertion.**
+This is not a dtype change to the model or the scoring kernel (those stay bf16); it's
+computing one post-hoc algebraic rotation at higher precision — and it is arguably
+*more* faithful to the model, since production RoPE is conventionally computed in
+float32 and cast. If that brings the gate-3 downstream consequence under 0.005 at the
+real deltas, the K-inclusive flagship (`C−F`, `C−W`) survives cleanly. Please add
+"bf16-stored-K rotated in fp32" as a candidate in the gate-1/gate-3 measurement; it
+costs the same pennies to check on 30B.
+
+**If even fp32 rotation fails the 0.005 budget at the real deltas**, then I agree the
+honest move is *not* to measure through it. In that case the fallbacks, in order of
+preference: (a) report the contrasts that require **no K rotation** cleanly — `V_only −
+F` (V is never rotated) and the V-side of the mechanism — and treat the full-coherent
+`C` flagship as **precision-limited/inconclusive**, explicitly bounded by the measured
+bias rather than claimed; (b) add the position-only control you describe to quantify
+and subtract the bias; (c) if neither is clean, stop the K-inclusive assay and report
+a bounded negative on what bf16 precision permits. A precision-limited "we cannot
+resolve the coherent-K channel below the numerical floor at bf16" is a legitimate,
+honest result — far better than a bias-manufactured signal.
+
+Net: implement the stricter standard, try fp32-precision rotation as the rescue, and
+let the 0.005 budget decide which contrasts we're numerically entitled to report. No
+tolerance loosened, no semantic outcome inspected, and the flagship is only claimed if
+it clears the bias floor. Proceed.
