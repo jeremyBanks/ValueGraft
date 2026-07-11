@@ -1,33 +1,234 @@
 #!/usr/bin/env python3
-"""Fail-closed local validation before a coherent-state pod may terminate."""
+"""Fail-closed validation before a coherent-state pod may terminate.
+
+This validator intentionally has no imports from ``src``.  A deployment must be
+validated against the frozen on-disk schema, not whatever assumptions happen to
+be importable from the checkout that performs the harvest.
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
+from typing import Any
 
 
-def validate(root: Path, mode: str) -> dict:
+SCHEMA = 2
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENT-1"
+DESIGN_ID = "coherent-state-gapped-v1"
+ARMS = (
+    "A_full",
+    "G_fresh",
+    "G_correct",
+    "G_wrong",
+    "G_Vcorrect",
+    "G_Kcorrect",
+    "G_delta",
+)
+OLD_ARMS = {"F_fresh", "C_coherent", "W_wrong", "V_value", "K_key", "D_delta"}
+FAILURE_RE = re.compile(
+    r"(?:FATAL|Traceback \(most recent call last\)|CUDA out of memory|"
+    r"OutOfMemoryError|RuntimeError|CoherentStateError|WATCH_FAILURE)",
+    re.IGNORECASE,
+)
+
+
+def _load(path: Path) -> dict[str, Any]:
+    try:
+        doc = json.loads(path.read_text())
+    except FileNotFoundError as exc:
+        raise ValueError(f"required artifact absent: {path.name}") from exc
+    except Exception as exc:
+        raise ValueError(f"invalid JSON in {path.name}: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise ValueError(f"{path.name} must contain a JSON object")
+    return doc
+
+
+def _require_identity(doc: dict[str, Any], label: str) -> None:
+    if doc.get("schema") != SCHEMA:
+        raise ValueError(f"{label} schema is not {SCHEMA}")
+    if doc.get("amendment_id") != AMENDMENT_ID:
+        raise ValueError(f"{label} amendment_id mismatch")
+    if doc.get("design_id") != DESIGN_ID:
+        raise ValueError(f"{label} design_id mismatch")
+
+
+def _validate_gate(root: Path, expected_status: str) -> dict[str, Any]:
+    gate = _load(root / "production_kernel_gate.json")
+    _require_identity(gate, "production gate")
+    if gate.get("status") != expected_status:
+        raise ValueError(
+            f"production gate status {gate.get('status')!r} != {expected_status!r}")
+    if not gate.get("completed_at"):
+        raise ValueError("production gate lacks completed_at")
+    gates = gate.get("gates")
+    if not isinstance(gates, dict):
+        raise ValueError("production gate lacks gates object")
+    expected_passes = expected_status == "PASS"
+    if gates.get("passes") is not expected_passes:
+        raise ValueError(
+            f"production gates.passes must be {str(expected_passes).lower()}")
+    if expected_status == "FAIL":
+        evidence = (
+            gate.get("error")
+            or gate.get("traceback")
+            or gates.get("error")
+            or gates.get("traceback")
+            or gates.get("failures")
+        )
+        if not evidence:
+            raise ValueError("FAIL production gate lacks failure evidence")
+    return gate
+
+
+def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool) -> None:
+    _require_identity(doc, path.name)
+    if scored:
+        if doc.get("schema") != SCHEMA or doc.get("stage") != "scored" or \
+                doc.get("status") != "scored":
+            raise ValueError(f"{path.name} is not a schema-2 scored checkpoint")
+        required = {
+            "conversation", "summary", "sources", "destination", "arm_scores",
+            "conversation_outcomes", "gates", "runtime", "fingerprint",
+        }
+        missing = sorted(required - doc.keys())
+        if missing:
+            raise ValueError(f"{path.name} missing fields {missing}")
+        for field in ("arm_scores", "conversation_outcomes"):
+            arms = doc.get(field)
+            if not isinstance(arms, dict) or set(arms) != set(ARMS):
+                raise ValueError(
+                    f"{path.name} {field} must contain exactly {list(ARMS)}")
+            stale = OLD_ARMS.intersection(arms)
+            if stale:
+                raise ValueError(f"{path.name} contains retired arms {sorted(stale)}")
+        gates = doc.get("gates")
+        if not isinstance(gates, dict) or gates.get("technical_pass") is not True:
+            raise ValueError(f"{path.name} lacks technical_pass=true")
+        fingerprint = doc.get("fingerprint")
+        if not isinstance(fingerprint, dict):
+            raise ValueError(f"{path.name} lacks fingerprint object")
+        _require_identity(fingerprint, f"{path.name} fingerprint")
+    else:
+        if doc.get("stage") != "void" or doc.get("status") != "void":
+            raise ValueError(f"{path.name} is not a void checkpoint")
+        evidence = doc.get("failure") or doc.get("error") or doc.get("failures")
+        if not evidence:
+            raise ValueError(f"{path.name} void checkpoint lacks failure evidence")
+
+
+def _checkpoint_paths(root: Path) -> list[Path]:
+    return sorted(root.glob("conv_*.json"))
+
+
+def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
+    manifest = _load(root / "manifest.json")
+    _require_identity(manifest, "manifest")
+    if manifest.get("status") != "COMPLETE":
+        raise ValueError("complete harvest lacks COMPLETE manifest")
+    if manifest.get("resume_probe_verified") is not True:
+        raise ValueError("manifest lacks resume_probe_verified=true")
+    probe = _load(root / "resume_probe.json")
+    _require_identity(probe, "resume probe")
+    if probe.get("resume_probe_verified") is not True:
+        raise ValueError("resume probe was not verified on restart")
+    _validate_gate(root, "PASS")
+
+    paths = _checkpoint_paths(root)
+    if len(paths) not in (6, 12):
+        raise ValueError(f"complete harvest has invalid checkpoint N={len(paths)}")
+    seen_positions: list[int] = []
+    for path in paths:
+        doc = _load(path)
+        _validate_checkpoint(doc, path, scored=True)
+        position = doc.get("order_position")
+        if not isinstance(position, int):
+            raise ValueError(f"{path.name} lacks integer order_position")
+        seen_positions.append(position)
+    if sorted(seen_positions) != list(range(1, len(paths) + 1)):
+        raise ValueError(f"checkpoint positions are not contiguous: {seen_positions}")
+    if "COHERENT_STATE_JOB_DONE" not in log_text:
+        raise ValueError("complete harvest job log lacks completion marker")
+    return {
+        "mode": "complete",
+        "n_scored": len(paths),
+        "resume_probe_verified": True,
+        "production_gate": "PASS",
+    }
+
+
+def _validate_failure(root: Path, log_text: str) -> dict[str, Any]:
+    failure = _load(root / "failure.json") if (root / "failure.json").exists() else {}
+    evidence = FAILURE_RE.search(log_text) or failure.get("error") or failure.get("traceback")
+    if not evidence:
+        raise ValueError("failure harvest lacks meaningful failure evidence")
+
+    model_ready = "MODEL_READY" in log_text
+    gate_path = root / "production_kernel_gate.json"
+    gate_status = None
+    if gate_path.exists():
+        gate = _load(gate_path)
+        gate_status = gate.get("status")
+        if gate_status == "FAIL":
+            _validate_gate(root, "FAIL")
+        elif gate_status == "PASS":
+            _validate_gate(root, "PASS")
+        else:
+            raise ValueError(f"failure harvest has incomplete gate status {gate_status!r}")
+    elif model_ready:
+        raise ValueError("post-MODEL_READY failure lacks complete production gate")
+
+    paths = _checkpoint_paths(root)
+    scored = 0
+    voids = 0
+    for path in paths:
+        doc = _load(path)
+        if doc.get("status") == "scored":
+            _validate_checkpoint(doc, path, scored=True)
+            scored += 1
+        elif doc.get("status") == "void":
+            _validate_checkpoint(doc, path, scored=False)
+            voids += 1
+        else:
+            raise ValueError(
+                f"failure harvest contains non-terminal checkpoint {path.name}")
+
+    if gate_status == "PASS" and voids < 1:
+        raise ValueError("post-gate case failure lacks a void checkpoint")
+    if model_ready and gate_status not in ("PASS", "FAIL"):
+        raise ValueError("post-MODEL_READY failure lacks terminal gate evidence")
+    return {
+        "mode": "failure",
+        "model_ready": model_ready,
+        "production_gate": gate_status,
+        "n_scored": scored,
+        "n_void": voids,
+    }
+
+
+def validate(root: Path, mode: str) -> dict[str, Any]:
     log = root / "job.log"
     if not log.exists() or not log.stat().st_size:
         raise ValueError("job log missing or empty")
+    log_text = log.read_text(errors="replace")
+    # Parse every top-level JSON artifact before making any mode-specific claim.
     for path in root.glob("*.json"):
-        json.loads(path.read_text())
-    out = {"mode": mode, "json_files": len(list(root.glob("*.json")))}
+        _load(path)
     if mode == "complete":
-        manifest = json.loads((root / "manifest.json").read_text())
-        if manifest.get("status") != "COMPLETE":
-            raise ValueError("complete harvest lacks COMPLETE manifest")
-        scored = [json.loads(p.read_text()) for p in root.glob("conv_*.json")]
-        scored = [x for x in scored if x.get("status") == "scored"]
-        if len(scored) not in (6, 12):
-            raise ValueError(f"complete harvest has invalid N={len(scored)}")
-        out["n_scored"] = len(scored)
+        out = _validate_complete(root, log_text)
+    else:
+        out = _validate_failure(root, log_text)
+    out["json_files"] = len(list(root.glob("*.json")))
+    out["schema"] = SCHEMA
+    out["amendment_id"] = AMENDMENT_ID
+    out["design_id"] = DESIGN_ID
     return out
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("root", type=Path)
     ap.add_argument("mode", choices=("complete", "failure"))
