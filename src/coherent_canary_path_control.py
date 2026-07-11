@@ -202,6 +202,33 @@ def run_bidirectional_path_control(
                 } for index, (keys, values) in enumerate(gradient.fresh_rows)],
                 "attempts": attempts,
             }
-    raise CanaryRuntimeError(
-        "bidirectional path control failed all frozen ULP counts: "
-        f"{[(row['ulp_count'], row['plus_margin_movement'], row['minus_margin_movement']) for row in attempts]}")
+    # A scientifically adverse result must remain inspectable rather than being
+    # lost as an exception after the final attempt.
+    return {
+        "schema": "coherent_canary_v12_bidirectional_path_control_v1",
+        "status": "FAIL",
+        "region": region,
+        "correct_target_id": int(correct_id),
+        "counterfactual_target_id": int(counterfactual_id),
+        "probe_suffix_ids": [int(x) for x in suffix_ids],
+        "plan_geometry_sha256": hashlib.sha256(json.dumps(
+            plan.geometry(), sort_keys=True, separators=(",", ":")
+        ).encode()).hexdigest(),
+        "plan_token_ids_sha256": hashlib.sha256(b"".join(
+            int(value).to_bytes(8, "little", signed=True)
+            for value in plan.token_ids
+        )).hexdigest(),
+        "chosen_ulp_count": None,
+        "minimum_margin_movement": MIN_MARGIN_MOVEMENT,
+        "gradient_baseline": {
+            key: value for key, value in asdict(gradient).items()
+            if key not in ("fresh_rows", "gradients")
+        },
+        "fresh_row_hashes": [{
+            "layer": index, "k_sha256": tensor_sha256(keys),
+            "v_sha256": tensor_sha256(values),
+            "k_gradient_sha256": tensor_sha256(gradient.gradients[index][0]),
+            "v_gradient_sha256": tensor_sha256(gradient.gradients[index][1]),
+        } for index, (keys, values) in enumerate(gradient.fresh_rows)],
+        "attempts": attempts,
+    }

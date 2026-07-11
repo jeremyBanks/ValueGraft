@@ -427,44 +427,76 @@ def probe_suffix_ids(tokenizer, context_messages: list[dict],
 
 def score_target_q1(model, snapshot: Snapshot, *, suffix_ids: Sequence[int],
                     target_ids: Sequence[int], logical_context_end: int) -> dict:
+    """Append one immutable probe prefix, then score a target from its fork."""
+    suffix = [int(x) for x in suffix_ids]
+    _require(bool(suffix), "target-scoring probe suffix is empty")
+    prefix = append_block_to_snapshot(
+        model, snapshot, suffix, logical_start=logical_context_end,
+        label="probe_user_and_assistant_header")
+    result = score_target_from_prefix_q1(
+        model, prefix.snapshot, prefix.last_logits, target_ids=target_ids,
+        logical_target_start=prefix.logical_end)
+    targets = result["target_token_ids"]
+    result.update({
+        "probe_suffix_ids": suffix,
+        "teacher_forcing_feed_ids": suffix + targets[:-1],
+        "logical_feed_positions": list(range(
+            logical_context_end,
+            logical_context_end + len(suffix) + len(targets) - 1)),
+        "physical_feed_positions": list(range(
+            snapshot_physical_length(snapshot),
+            snapshot_physical_length(snapshot) + len(suffix) + len(targets) - 1)),
+        "probe_prefix_row_hashes": snapshot_hashes(prefix.snapshot),
+        "probe_prefix_last_logits_sha256": tensor_sha256(prefix.last_logits),
+    })
+    return result
+
+
+def score_target_from_prefix_q1(
+        model, prefix_snapshot: Snapshot, prefix_logits: torch.Tensor, *,
+        target_ids: Sequence[int], logical_target_start: int) -> dict:
+    """Score a target from a prebuilt immutable assistant-generation prefix.
+
+    This is the production primitive used when multiple targets and generation
+    must fork from one exact probe-prefix cache/logit state.
+    """
     targets = [int(x) for x in target_ids]
     _require(bool(targets), "target token sequence is empty")
-    cache = rebuild_cache(snapshot)
-    physical = snapshot_physical_length(snapshot)
-    suffix = [int(x) for x in suffix_ids]
-    _require(physical + len(suffix) + len(targets) - 1 <= MAX_LIVE_CACHE_TOKENS,
+    cache = rebuild_cache(prefix_snapshot)
+    physical = snapshot_physical_length(prefix_snapshot)
+    _require(physical + len(targets) - 1 <= MAX_LIVE_CACHE_TOKENS,
              "target scoring would exceed live-cache bound")
-    cache, logits = _forward(
-        model, cache, suffix,
-        range(logical_context_end, logical_context_end + len(suffix)),
-        range(physical, physical + len(suffix)), enable_grad=False)
-    logical = logical_context_end + len(suffix)
-    physical += len(suffix)
+    logits = prefix_logits.detach().clone()
+    logical = int(logical_target_start)
     logprobs = []
     logprob_bits = []
+    logprob_tensors = []
     for index, token_id in enumerate(targets):
         lp = torch.log_softmax(logits.float(), dim=-1)[0, token_id]
         value = float(lp.detach().cpu())
         _require(math.isfinite(value), "target log probability is nonfinite")
         logprobs.append(value)
         logprob_bits.append(_float32_bits(lp))
+        logprob_tensors.append(lp.detach().to(device="cpu", dtype=torch.float32))
         if index + 1 < len(targets):
             cache, logits = _forward(
                 model, cache, [token_id], [logical], [physical], enable_grad=False)
             logical += 1
             physical += 1
+    mean = torch.stack(logprob_tensors).mean(dtype=torch.float32)
     return {
         "target_token_ids": targets,
         "token_logprobs": logprobs,
         "token_logprob_float32_bits": logprob_bits,
-        "mean_logprob": sum(logprobs) / len(logprobs),
-        "probe_suffix_ids": suffix,
-        "teacher_forcing_feed_ids": suffix + targets[:-1],
+        "mean_logprob": float(mean),
+        "mean_logprob_float32_bits": _float32_bits(mean),
+        "probe_suffix_ids": [],
+        "teacher_forcing_feed_ids": targets[:-1],
         "logical_feed_positions": list(range(
-            logical_context_end, logical_context_end + len(suffix) + len(targets) - 1)),
+            logical_target_start, logical_target_start + len(targets) - 1)),
         "physical_feed_positions": list(range(
-            snapshot_physical_length(snapshot),
-            snapshot_physical_length(snapshot) + len(suffix) + len(targets) - 1)),
+            snapshot_physical_length(prefix_snapshot),
+            snapshot_physical_length(prefix_snapshot) + len(targets) - 1)),
     }
 
 

@@ -23,6 +23,7 @@ from coherent_canary_runtime import (
     snapshot_physical_length,
 )
 from coherent_canary_path_control import run_bidirectional_path_control
+import coherent_canary_path_control as path_control_module
 from coherent_canary_schema import (
     MODEL_ID, MODEL_REVISION, R2, CarrierRegions, ReplayEvent, ReplayPlan,
 )
@@ -195,6 +196,7 @@ def test_probe_suffix_and_q1_target_scoring(tokenizer):
         logical_context_end=fresh.logical_positions[-1] + 1)
     assert len(score["token_logprobs"]) == 2
     assert len(score["token_logprob_float32_bits"]) == 2
+    assert len(score["mean_logprob_float32_bits"]) == 8
     assert score["teacher_forcing_feed_ids"] == suffix + [1]
     assert len(score["logical_feed_positions"]) == len(suffix) + 1
     assert all(len(row) == 8 for row in score["token_logprob_float32_bits"])
@@ -284,3 +286,16 @@ def test_bidirectional_path_control_reinserts_detached_bf16_rows(tokenizer):
     assert len(chosen["minus"]["margin_float32_bits"]) == 8
     assert chosen["plus"]["insertion"]["use_keys"] is True
     assert chosen["plus"]["insertion"]["use_values"] is True
+
+
+def test_bidirectional_path_failure_persists_all_attempts(tokenizer, monkeypatch):
+    monkeypatch.setattr(path_control_module, "MIN_MARGIN_MOVEMENT", 1e30)
+    model = GradientBf16FakeCacheModel()
+    fresh = build_fresh_destination_plan(tokenizer, history(), middle_end_msg=3)
+    result = run_bidirectional_path_control(
+        model, fresh, region=R2, suffix_ids=[5],
+        correct_id=1, counterfactual_id=2)
+    assert result["status"] == "FAIL"
+    assert result["chosen_ulp_count"] is None
+    assert [row["ulp_count"] for row in result["attempts"]] == [
+        1, 2, 4, 8, 16, 32, 64]

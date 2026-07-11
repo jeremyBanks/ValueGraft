@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import struct
 from typing import Sequence
 
 import torch
@@ -12,12 +13,13 @@ from coherent_canary_runtime import (
     append_block_to_snapshot, continue_fresh_plan, execute_fresh_plan,
     execute_prefix_block, execute_replay_plan, extract_rows, force_content_q1,
     greedy_generate_q1, probe_suffix_ids, replace_rows,
-    require_generated_forced_identity, score_target_q1, snapshot_hashes,
-    tensor_sha256,
+    require_generated_forced_identity, score_target_from_prefix_q1,
+    snapshot_hashes, tensor_sha256, _float32_bits,
 )
 from coherent_canary_schema import R1, R2, R3
 from coherent_canary_tokens import build_fresh_destination_plan, build_role_native_plan
 from coherent_state_tokens import generation_prefix_ids
+from coherent_state_tokens import rendered_assistant_content_ids
 
 
 class CanaryTechnicalError(RuntimeError):
@@ -50,27 +52,42 @@ def _probe_record(model, tokenizer, snapshot, messages, context_ids,
                   logical_end: int, probe: str, correct_text: str,
                   wrong_text: str, eos_ids: Sequence[int]) -> dict:
     suffix = probe_suffix_ids(tokenizer, messages, context_ids, probe)
-    correct_ids = tokenizer.encode(correct_text, add_special_tokens=False)
-    wrong_ids = tokenizer.encode(wrong_text, add_special_tokens=False)
-    correct = score_target_q1(
-        model, snapshot, suffix_ids=suffix, target_ids=correct_ids,
-        logical_context_end=logical_end)
-    wrong = score_target_q1(
-        model, snapshot, suffix_ids=suffix, target_ids=wrong_ids,
-        logical_context_end=logical_end)
+    target_context = list(messages) + [{"role": "user", "content": probe}]
+    correct_ids = [int(value) for value in rendered_assistant_content_ids(
+        tokenizer, target_context, correct_text)]
+    wrong_ids = [int(value) for value in rendered_assistant_content_ids(
+        tokenizer, target_context, wrong_text)]
+    _require(correct_ids == [int(value) for value in tokenizer.encode(
+        correct_text, add_special_tokens=False)] and
+             wrong_ids == [int(value) for value in tokenizer.encode(
+                 wrong_text, add_special_tokens=False)],
+             "contextual target IDs differ from frozen bare target IDs")
     prefix = append_block_to_snapshot(
         model, snapshot, suffix, logical_start=logical_end,
         label="probe_user_and_assistant_header")
+    correct = score_target_from_prefix_q1(
+        model, prefix.snapshot, prefix.last_logits, target_ids=correct_ids,
+        logical_target_start=prefix.logical_end)
+    wrong = score_target_from_prefix_q1(
+        model, prefix.snapshot, prefix.last_logits, target_ids=wrong_ids,
+        logical_target_start=prefix.logical_end)
     generation = greedy_generate_q1(
         model, prefix.snapshot, prefix.last_logits,
         logical_start=prefix.logical_end, eos_ids=eos_ids)
+    margin = (torch.tensor(correct["mean_logprob"], dtype=torch.float32) -
+              torch.tensor(wrong["mean_logprob"], dtype=torch.float32))
     return {
         "probe": probe, "suffix_ids": suffix,
         "correct_text": correct_text, "counterfactual_text": wrong_text,
         "correct": correct, "counterfactual": wrong,
-        "margin": correct["mean_logprob"] - wrong["mean_logprob"],
+        "margin": float(margin),
+        "margin_float32_bits": _float32_bits(margin),
+        "margin_arithmetic": (
+            "float32-rounded correct mean minus float32-rounded "
+            "counterfactual mean"),
         "probe_prefix_trace": {
-            "calls": prefix.calls, "token_ids": prefix.executed_token_ids,
+            "calls": prefix.calls, "suffix_ids": suffix,
+            "token_ids": prefix.executed_token_ids,
             "logical_positions": prefix.logical_positions,
             "physical_positions": prefix.physical_positions,
             "row_hashes": snapshot_hashes(prefix.snapshot),
@@ -82,11 +99,37 @@ def _probe_record(model, tokenizer, snapshot, messages, context_ids,
     }
 
 
+def _identity_branch_record(prefix, generation, *, content_start: int) -> dict:
+    content_end = content_start + len(generation.content_ids)
+    rows = extract_rows(
+        generation.snapshot, content_start, content_end,
+        max_rows=64, to_cpu=True)
+    return {
+        "prefix": {
+            "token_ids": list(prefix.executed_token_ids),
+            "logical_positions": list(prefix.logical_positions),
+            "physical_positions": list(prefix.physical_positions),
+            "calls": list(prefix.calls),
+            "row_hashes": snapshot_hashes(prefix.snapshot),
+            "last_logits_sha256": tensor_sha256(prefix.last_logits),
+            "physical_end": prefix.physical_end,
+            "logical_end": prefix.logical_end,
+        },
+        "generation": {
+            key: value for key, value in asdict(generation).items()
+            if key != "snapshot"
+        },
+        "content_start": content_start,
+        "content_end": content_end,
+        "content_row_hashes": snapshot_hashes(rows),
+    }
+
+
 def run_generated_forced_identity(model, tokenizer, fixture: dict,
                                   eos_ids: Sequence[int]) -> dict:
     prefix_ids = generation_prefix_ids(tokenizer, fixture["messages"])
     branches = []
-    for repeat in range(2):
+    for _ in range(2):
         generated_prefix = execute_prefix_block(
             model, prefix_ids, label="identity_generation_prefix")
         generated = greedy_generate_q1(
@@ -98,11 +141,24 @@ def run_generated_forced_identity(model, tokenizer, fixture: dict,
             model, forced_prefix.snapshot, forced_prefix.last_logits,
             content_ids=generated.content_ids,
             logical_start=forced_prefix.logical_end, eos_ids=eos_ids)
-        branches.append(require_generated_forced_identity(
+        comparison = require_generated_forced_identity(
             generated_prefix, generated, forced_prefix, forced,
-            content_start=generated_prefix.physical_end))
+            content_start=generated_prefix.physical_end)
+        generated_record = _identity_branch_record(
+            generated_prefix, generated,
+            content_start=generated_prefix.physical_end)
+        forced_record = _identity_branch_record(
+            forced_prefix, forced, content_start=forced_prefix.physical_end)
+        branches.append({
+            "generated": generated_record,
+            "forced": forced_record,
+            "runner_comparison": comparison,
+        })
     _require(branches[0] == branches[1], "identity repeat differs")
-    return {"status": "PASS", "repeat_count": 2, "evidence": branches}
+    return {
+        "status": "PASS", "repeat_count": 2,
+        "separate_branches": branches,
+    }
 
 
 def run_fresh_self_replacement(model, plan) -> dict:
@@ -149,7 +205,19 @@ def _transplant_complete(model, plan, source_rows, region: str):
     boundary = execute_fresh_plan(model, plan, stop_at=end)
     replaced, insertion = replace_rows(
         boundary.snapshot, source_rows, start, use_keys=True, use_values=True)
-    return continue_fresh_plan(model, plan, replaced, start_at=end), insertion
+    completed = continue_fresh_plan(model, plan, replaced, start_at=end)
+    return completed, {
+        "insertion": insertion,
+        "boundary_before_hashes": snapshot_hashes(boundary.snapshot),
+        "boundary_after_hashes": snapshot_hashes(replaced),
+        "source_row_hashes": snapshot_hashes(source_rows),
+        "continuation_calls": completed.calls,
+        "continuation_token_ids": completed.executed_token_ids,
+        "continuation_logical_positions": completed.logical_positions,
+        "continuation_physical_positions": completed.physical_positions,
+        "completed_snapshot_hashes": snapshot_hashes(completed.snapshot),
+        "completed_last_logits_sha256": tensor_sha256(completed.last_logits),
+    }
 
 
 def run_natural_calibration(model, tokenizer, fixture: dict,
@@ -168,15 +236,18 @@ def run_natural_calibration(model, tokenizer, fixture: dict,
     fresh = execute_fresh_plan(model, fresh_plan)
     approve_text = fixture["correct_target"]
     deny_text = fixture["counterfactual_target"]
-    approve_id = tokenizer.encode(approve_text, add_special_tokens=False)
-    deny_id = tokenizer.encode(deny_text, add_special_tokens=False)
+    compact = compact_messages(green_history, middle)
+    target_context = compact + [{"role": "user", "content": fixture["probe"]}]
+    approve_id = [int(value) for value in rendered_assistant_content_ids(
+        tokenizer, target_context, approve_text)]
+    deny_id = [int(value) for value in rendered_assistant_content_ids(
+        tokenizer, target_context, deny_text)]
     _require(len(approve_id) == len(deny_id) == 1, "calibration targets differ")
     source_start, source_end = green_plan.regions.interval(R2)
     green_rows = extract_rows(green.snapshot, source_start, source_end)
     amber_rows = extract_rows(amber.snapshot, source_start, source_end)
     tg, tg_insert = _transplant_complete(model, fresh_plan, green_rows, R2)
     ta, ta_insert = _transplant_complete(model, fresh_plan, amber_rows, R2)
-    compact = compact_messages(green_history, middle)
     raw = {
         "A_g": _probe_record(model, tokenizer, green.snapshot,
             source_messages(green_history, middle), green_plan.token_ids,
@@ -200,7 +271,7 @@ def run_natural_calibration(model, tokenizer, fixture: dict,
         raw, approve_id=approve_id, deny_id=deny_id,
         special_ids=getattr(tokenizer, "all_special_ids", ()))
     return {**summary, "raw": raw,
-            "green_insertion": tg_insert, "amber_insertion": ta_insert}
+            "green_lineage": tg_insert, "amber_lineage": ta_insert}
 
 
 def _natural_generation_ok(record: dict, target_ids: Sequence[int],
@@ -223,7 +294,18 @@ def summarize_natural_calibration(raw: dict, *, approve_id: Sequence[int],
                                   special_ids: Sequence[int]) -> dict:
     _require(set(raw) == {"A_g", "A_a", "F", "T_g", "T_a"},
              "natural calibration does not contain exactly five cells")
-    margins = {key: float(raw[key]["margin"]) for key in raw}
+    def decode_bits(bits: str) -> float:
+        _require(isinstance(bits, str) and len(bits) == 8 and
+                 bits == bits.lower(), "natural float32 bits are malformed")
+        try:
+            value = struct.unpack("<f", bytes.fromhex(bits))[0]
+        except (ValueError, struct.error) as exc:
+            raise CanaryTechnicalError(
+                f"natural float32 bits are invalid: {bits}") from exc
+        return float(value)
+
+    margins = {key: decode_bits(raw[key]["margin_float32_bits"])
+               for key in raw}
     _require(all(torch.isfinite(torch.tensor(value)).item()
                  for value in margins.values()),
              "natural calibration margin is nonfinite")
@@ -262,10 +344,12 @@ def run_path_control(model, tokenizer, fixture: dict) -> dict:
     suffix = probe_suffix_ids(
         tokenizer, compact_messages(fixture["correct"], fixture["middle_end_msg"]),
         plan.token_ids, fixture["probe"])
-    correct_ids = tokenizer.encode(
-        fixture["correct_target"], add_special_tokens=False)
-    counterfactual_ids = tokenizer.encode(
-        fixture["counterfactual_target"], add_special_tokens=False)
+    compact = compact_messages(fixture["correct"], fixture["middle_end_msg"])
+    target_context = compact + [{"role": "user", "content": fixture["probe"]}]
+    correct_ids = rendered_assistant_content_ids(
+        tokenizer, target_context, fixture["correct_target"])
+    counterfactual_ids = rendered_assistant_content_ids(
+        tokenizer, target_context, fixture["counterfactual_target"])
     _require(len(correct_ids) == len(counterfactual_ids) == 1,
              "path-control targets must each be one production token")
     return run_bidirectional_path_control(

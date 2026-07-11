@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+import struct
 
 import pytest
 import torch
@@ -61,6 +62,7 @@ def natural_cell(margin: float, first_token: int, *, stop="model_eos",
                  cap=False, eos=9):
     return {
         "margin": margin,
+        "margin_float32_bits": struct.pack("<f", margin).hex(),
         "generation": {
             "content_ids": [first_token], "stop_reason": stop,
             "cap_hit": cap, "stop_candidate_id": eos, "eos_ids": [eos],
