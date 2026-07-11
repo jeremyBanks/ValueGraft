@@ -45,6 +45,31 @@ def test_runtime_fingerprint_binds_geometry_dtype_backend_and_eos():
     assert [row["layer"] for row in result["attention_layers"]] == [0, 1]
 
 
+def test_generation_eos_set_may_include_primary_endoftext_member():
+    model = FakeModel()
+    model.generation_config.eos_token_id = [9, 7]
+    result = runtime_fingerprint(
+        model, SimpleNamespace(eos_token_id=9),
+        requested_model="fake", requested_revision="abc",
+        resolved_snapshot="abc", expected_geometry={
+            "layers": 2, "attention_heads": 4, "kv_heads": 2,
+            "head_dim": 8, "rope_theta": 10000.0})
+    assert result["eos_ids"] == [7, 9]
+    assert result["eos_sources"]["tokenizer_primary"] == [9]
+
+
+def test_primary_eos_outside_generation_set_fails():
+    model = FakeModel()
+    model.generation_config.eos_token_id = [7]
+    with pytest.raises(CanaryPreflightError, match="not contained"):
+        runtime_fingerprint(
+            model, SimpleNamespace(eos_token_id=9),
+            requested_model="fake", requested_revision="abc",
+            resolved_snapshot="abc", expected_geometry={
+                "layers": 2, "attention_heads": 4, "kv_heads": 2,
+                "head_dim": 8, "rope_theta": 10000.0})
+
+
 def test_runtime_fingerprint_rejects_wrong_geometry():
     with pytest.raises(CanaryPreflightError, match="geometry"):
         runtime_fingerprint(

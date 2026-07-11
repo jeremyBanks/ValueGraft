@@ -97,16 +97,31 @@ def runtime_fingerprint(model, tokenizer, *, requested_model: str,
     tokenizer_eos = _eos_set(getattr(tokenizer, "eos_token_id", None))
     generation_eos = _eos_set(getattr(
         getattr(model, "generation_config", None), "eos_token_id", None))
-    nonempty = [value for value in (model_eos, text_eos, tokenizer_eos,
-                                    generation_eos) if value]
-    _require(nonempty and all(value == nonempty[0] for value in nonempty),
-             f"EOS metadata differs: {nonempty}")
+    primary_sources = {
+        "model_config": model_eos,
+        "text_config": text_eos,
+        "tokenizer_primary": tokenizer_eos,
+    }
+    authoritative_eos = generation_eos or model_eos or text_eos or tokenizer_eos
+    _require(bool(authoritative_eos), "EOS metadata is empty")
+    _require(all(not value or value.issubset(authoritative_eos)
+                 for value in primary_sources.values()),
+             f"primary EOS metadata is not contained in generation set: "
+             f"{primary_sources} vs {authoritative_eos}")
     return {
         "requested_model": requested_model,
         "requested_revision": requested_revision,
         "resolved_snapshot": resolved_snapshot,
         "dtype": "torch.bfloat16", "attention_backend": "eager",
-        "geometry": observed, "eos_ids": sorted(nonempty[0]),
+        "geometry": observed, "eos_ids": sorted(authoritative_eos),
+        "eos_sources": {
+            "model_config": sorted(model_eos),
+            "text_config": sorted(text_eos),
+            "tokenizer_primary": sorted(tokenizer_eos),
+            "generation_config": sorted(generation_eos),
+            "policy": ("generation_config full set is authoritative when "
+                       "nonempty; every primary EOS must be a member"),
+        },
         "attention_layers": layers,
         "torch_version": torch.__version__,
         "transformers_version": importlib.metadata.version("transformers"),
