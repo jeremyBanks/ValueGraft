@@ -17,6 +17,7 @@ def tokenizer():
 
 
 def _case():
+    filler = "packing detail " * 500
     correct = [
         {"role": "system", "content": "Keep a careful decision record."},
         {"role": "user", "content": "If the marker is green, choose north; otherwise choose south. The unchanged desk code is cedar."},
@@ -24,7 +25,7 @@ def _case():
         {"role": "user", "content": "The marker is green. Record the result now."},
         {"role": "assistant", "content": "The rule and desk code are recorded."},
         {"role": "user", "content": "Now discuss only unrelated packing steps."},
-        {"role": "assistant", "content": "We should label the crate and verify its seal."},
+        {"role": "assistant", "content": "We should label the crate and verify its seal. " + filler},
     ]
     wrong = copy.deepcopy(correct)
     wrong[3]["content"] = "The marker is amber. Record the result now."
@@ -56,7 +57,12 @@ def _case():
             "why_independent_of_focal": "desk code does not affect route",
         },
         "changed_message_allowlist": [3],
+        "distractor_fact_inventory": ["crate label", "seal check"],
+        "retained_tail_purpose": "exercise a byte-identical unrelated tail",
         "tokenizer_binding": {"model": MODEL_ID, "revision": MODEL_REVISION},
+        "observed_mechanical_evidence": {},
+        "review": "PENDING",
+        "warning": "Draft only; not reviewed or executable.",
     }
 
 

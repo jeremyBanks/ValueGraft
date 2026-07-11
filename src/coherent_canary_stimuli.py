@@ -106,9 +106,19 @@ def validate_case(tokenizer, case: dict) -> dict:
     _require(case.get("execution_ready") is False,
              f"{case_id} incorrectly authorizes execution")
     _require(case.get("stratum") == "engineered", f"{case_id} stratum differs")
+    band = case.get("length_band")
+    _require(band in ("short", "mid"), f"{case_id} length band differs")
     provenance = case.get("authoring_provenance")
     _require(isinstance(provenance, dict) and provenance,
              f"{case_id} authoring provenance is empty")
+    _require(isinstance(case.get("distractor_fact_inventory"), list) and
+             len(case["distractor_fact_inventory"]) >= 2,
+             f"{case_id} distractor inventory is incomplete")
+    _require(str(case.get("retained_tail_purpose", "")).strip() != "",
+             f"{case_id} retained-tail purpose is empty")
+    _require(case.get("review") == "PENDING", f"{case_id} review is not PENDING")
+    _require(str(case.get("warning", "")).strip() != "",
+             f"{case_id} draft warning is empty")
 
     correct = _messages(case, "correct")
     wrong = _messages(case, "wrong_focal")
@@ -162,6 +172,13 @@ def validate_case(tokenizer, case: dict) -> dict:
              f"{case_id} focal category differs")
     _require(focal["correct_target"].strip() != focal["counterfactual_target"].strip(),
              f"{case_id} focal targets are identical")
+    focal_indices = {
+        int(value) for field in ("establishing_message_indices",
+                                 "downstream_reference_indices")
+        for value in focal.get(field, [])
+    }
+    _require(focal_indices and all(0 < value < middle for value in focal_indices),
+             f"{case_id} focal indices are absent/outside evicted block")
     for key in ("plant_id", "probe", "target", "countertarget",
                 "why_independent_of_focal"):
         _require(str(control.get(key, "")).strip() != "",
@@ -172,9 +189,15 @@ def validate_case(tokenizer, case: dict) -> dict:
         "establishing_message_indices", [])}
     _require(control_indices and not control_indices.intersection(allow),
              f"{case_id} nonfocal control overlaps changed messages")
+    _require(all(0 < value < middle for value in control_indices),
+             f"{case_id} control indices lie outside evicted block")
 
     correct_evidence, correct_plan = _variant_evidence(tokenizer, correct)
     wrong_evidence, wrong_plan = _variant_evidence(tokenizer, wrong)
+    history_tokens = correct_evidence["canonical_token_count"]
+    expected_band = (1000, 2000) if band == "short" else (4000, 6000)
+    _require(expected_band[0] <= history_tokens <= expected_band[1],
+             f"{case_id} history tokens {history_tokens} outside {band} band {expected_band}")
     require_matching_geometry(correct_plan, wrong_plan)
     correct_ids = correct_plan.token_ids
     wrong_ids = wrong_plan.token_ids
@@ -188,6 +211,21 @@ def validate_case(tokenizer, case: dict) -> dict:
     _require(model_binding.get("model") == MODEL_ID, f"{case_id} tokenizer model differs")
     _require(model_binding.get("revision") == MODEL_REVISION,
              f"{case_id} tokenizer revision differs")
+    target_counts = {
+        "focal_correct_token_count": len(tokenizer.encode(
+            focal["correct_target"], add_special_tokens=False)),
+        "focal_counterfactual_token_count": len(tokenizer.encode(
+            focal["counterfactual_target"], add_special_tokens=False)),
+        "control_target_token_count": len(tokenizer.encode(
+            control["target"], add_special_tokens=False)),
+        "control_countertarget_token_count": len(tokenizer.encode(
+            control["countertarget"], add_special_tokens=False)),
+    }
+    _require(all(1 <= value <= 4 for value in target_counts.values()),
+             f"{case_id} target token count lies outside 1..4: {target_counts}")
+    _require(abs(target_counts["focal_correct_token_count"] -
+                 target_counts["focal_counterfactual_token_count"]) <= 1,
+             f"{case_id} focal target token lengths are needlessly asymmetric")
     return {
         "case_id": case_id,
         "status": "MECHANICAL_DRAFT_PASS",
@@ -202,16 +240,7 @@ def validate_case(tokenizer, case: dict) -> dict:
             "retained_tail_byte_identical": True,
             "role_native_geometry_identical": True,
         },
-        "targets": {
-            "focal_correct_token_count": len(tokenizer.encode(
-                focal["correct_target"], add_special_tokens=False)),
-            "focal_counterfactual_token_count": len(tokenizer.encode(
-                focal["counterfactual_target"], add_special_tokens=False)),
-            "control_target_token_count": len(tokenizer.encode(
-                control["target"], add_special_tokens=False)),
-            "control_countertarget_token_count": len(tokenizer.encode(
-                control["countertarget"], add_special_tokens=False)),
-        },
+        "targets": target_counts,
     }
 
 
