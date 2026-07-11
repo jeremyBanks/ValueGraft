@@ -221,6 +221,20 @@ def _validate_ladder_hash_rows(
     return value
 
 
+def _recompute_external_donors(
+        repo: Path, tokenizer, validate_with_tokenizer, donor_sha256_json):
+    expected = validate_with_tokenizer(
+        tokenizer, repo / "data" / "synthetic",
+        resolved_revision=PRODUCTION_REVISION)
+    for row in expected["rows"]:
+        row["target_path"] = Path(row["target_path"]).relative_to(repo).as_posix()
+        row["donor_path"] = Path(row["donor_path"]).relative_to(repo).as_posix()
+    expected["canonical_payload_sha256"] = donor_sha256_json({
+        key: value for key, value in expected.items()
+        if key != "canonical_payload_sha256"})
+    return expected
+
+
 def _deep_validate_ladder_stages(
         repo: Path, stages: dict[str, dict[str, Any]]) -> None:
     """Recompute local-ladder raw verdicts, never trusting producer booleans."""
@@ -228,7 +242,8 @@ def _deep_validate_ladder_stages(
     sys.path.insert(0, str(repo / "src"))
     from coherent_state_calibration import validate_calibration_constructions
     from l_coherent_state_hf import v10_gate_schema
-    from validate_coherent_external_donors import validate_with_tokenizer
+    from validate_coherent_external_donors import (
+        sha256_json as donor_sha256_json, validate_with_tokenizer)
 
     schema = v10_gate_schema(expected_attention_layers=28)
     for name in STAGE_ORDER:
@@ -569,9 +584,8 @@ def _deep_validate_ladder_stages(
     expected_calibration = validate_calibration_constructions(tokenizer)
     if stages["calibration_construction"].get("raw") != expected_calibration:
         raise ReleaseError("ladder calibration construction differs from recomputation")
-    expected_donors = validate_with_tokenizer(
-        tokenizer, repo / "data" / "synthetic",
-        resolved_revision=PRODUCTION_REVISION)
+    expected_donors = _recompute_external_donors(
+        repo, tokenizer, validate_with_tokenizer, donor_sha256_json)
     if stages["external_donor_construction"].get("raw") != expected_donors:
         raise ReleaseError("ladder external donors differ from recomputation")
     if stages["retired_G_delta"].get("raw") != {

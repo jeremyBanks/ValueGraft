@@ -250,6 +250,76 @@ def test_wrong_scientific_identity_fails(tmp_path):
         _validate(repo, launch, result, apparatus)
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [("model", "wrong/model"), ("resolved_revision", "0" * 40),
+     ("dtype", "torch.float32"), ("device", "cuda:0")])
+def test_wrong_ladder_subject_fields_fail(tmp_path, field, value):
+    def mutate(manifest, _sidecars, _parent):
+        manifest[field] = value
+    repo, launch, result, apparatus = _fixture(tmp_path, mutate)
+    with pytest.raises(MODULE.ReleaseError, match="subject or status differs"):
+        _validate(repo, launch, result, apparatus)
+
+
+def test_wrong_stage_order_fails(tmp_path):
+    def mutate(manifest, _sidecars, _parent):
+        manifest["loaded_gapped_production_gate"]["stage_order"].reverse()
+    repo, launch, result, apparatus = _fixture(tmp_path, mutate)
+    with pytest.raises(MODULE.ReleaseError, match="gate envelope differs"):
+        _validate(repo, launch, result, apparatus)
+
+
+@pytest.mark.parametrize("missing", ["manifest", "sidecar"])
+def test_absent_committed_manifest_or_sidecar_fails(tmp_path, missing):
+    repo, launch, result, apparatus = _fixture(tmp_path)
+    if missing == "manifest":
+        relative = MODULE.ELIGIBLE_LADDER_PATH
+    else:
+        relative = str(
+            Path(MODULE.ELIGIBLE_LADDER_PATH).parent /
+            "ladder__stage_generated_replay_identity.json")
+    _git(repo, "rm", relative)
+    _git(repo, "commit", "-m", f"remove {missing}")
+    removed = _git(repo, "rev-parse", "HEAD")
+    with pytest.raises(MODULE.ReleaseError):
+        _validate(repo, launch, removed, apparatus)
+
+
+def test_uncommitted_ladder_path_cannot_satisfy_result_commit(tmp_path):
+    repo, launch, result, apparatus = _fixture(tmp_path)
+    path = repo / MODULE.ELIGIBLE_LADDER_PATH
+    path.write_text("{}\n")
+    prior = MODULE.LADDER_LAUNCH_COMMIT
+    MODULE.LADDER_LAUNCH_COMMIT = launch
+    try:
+        with pytest.raises(MODULE.ReleaseError):
+            MODULE.validate_ladder_commit(
+                repo, result_commit=launch,
+                ladder_path=MODULE.ELIGIBLE_LADDER_PATH,
+                semantic_launch_commit=result, current_apparatus=apparatus)
+    finally:
+        MODULE.LADDER_LAUNCH_COMMIT = prior
+
+
+def test_nonancestor_ladder_result_fails(tmp_path):
+    repo, launch, result, apparatus = _fixture(tmp_path)
+    tree = _git(repo, "rev-parse", f"{result}^{{tree}}")
+    other = subprocess.run(
+        ["git", "commit-tree", tree], cwd=repo, check=True,
+        input="unrelated launch\n", text=True, capture_output=True).stdout.strip()
+    prior = MODULE.LADDER_LAUNCH_COMMIT
+    MODULE.LADDER_LAUNCH_COMMIT = launch
+    try:
+        with pytest.raises(MODULE.ReleaseError, match="not on semantic-launch ancestry"):
+            MODULE.validate_ladder_commit(
+                repo, result_commit=result,
+                ladder_path=MODULE.ELIGIBLE_LADDER_PATH,
+                semantic_launch_commit=other, current_apparatus=apparatus)
+    finally:
+        MODULE.LADDER_LAUNCH_COMMIT = prior
+
+
 def test_apparatus_drift_from_ladder_launch_fails(tmp_path):
     repo, launch, result, apparatus = _fixture(tmp_path)
     apparatus["files"][0]["sha256"] = "f" * 64
@@ -312,6 +382,18 @@ def test_missing_eager_backend_layer_is_rejected():
         MODULE._deep_validate_ladder_stages(ROOT, stages)
 
 
+def test_resolved_non_eager_backend_is_rejected():
+    stages = _live_ladder_stages()
+    fingerprint = stages["attention_backend"]["raw"]["fingerprint"]
+    fingerprint["layers"][0]["resolved_implementation"] = "sdpa"
+    unhashed = {key: value for key, value in fingerprint.items()
+                if key != "sha256"}
+    fingerprint["sha256"] = hashlib.sha256(
+        MODULE._canonical(unhashed)).hexdigest()
+    with pytest.raises(MODULE.ReleaseError, match="backend layer"):
+        MODULE._deep_validate_ladder_stages(ROOT, stages)
+
+
 def test_relaxed_synthetic_threshold_is_rejected():
     stages = _live_ladder_stages()
     stages["synthetic_schedule_fixtures"]["threshold"] = 0.01
@@ -343,6 +425,22 @@ def test_local_ladder_hash_rows_accept_28_layers_8_heads_and_exact_span():
     rows[0]["k_shape"] = [1, 4, 37, 128]
     with pytest.raises(MODULE.ReleaseError, match="shape differs"):
         MODULE._validate_ladder_hash_rows(rows, "local", rows=37)
+
+
+def test_external_donor_recomputation_uses_repo_relative_paths():
+    helper = MODULE._load_harvest_helpers(ROOT)
+    tokenizer = helper._validation_tokenizer()
+    import sys
+    sys.path.insert(0, str(ROOT / "src"))
+    from validate_coherent_external_donors import sha256_json, validate_with_tokenizer
+    expected = MODULE._recompute_external_donors(
+        ROOT, tokenizer, validate_with_tokenizer, sha256_json)
+    artifact = json.loads((
+        ROOT / "results" / "coherent_state_ladder" /
+        "coherent_external_donors_gapped_v10_Qwen3-30B-A3B-Instruct-2507_20260711T122320Z.json"
+    ).read_text())
+    observed = {key: artifact[key] for key in expected}
+    assert observed == expected
 
 
 def test_release_layer_does_not_change_v10_apparatus_inventory():
