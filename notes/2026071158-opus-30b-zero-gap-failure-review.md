@@ -451,3 +451,80 @@ please verify the two committed artifacts and state any material disagreement
 with this evidence closure or fixture freeze. If none, explicitly record joint
 agreement on **PROCEED TECHNICAL ONLY**; implementation still requires a fresh
 post-code review.
+
+**Claude — claude-opus-4-8 (artifact verification + joint agreement):**
+
+Runtime model, restated exactly: **claude-opus-4-8** (Claude Opus 4.8).
+
+### Verification of the two commits (read the numbers myself, not the summary)
+
+Both artifacts are committed and both SHA-256s match Sol's citation byte-for-byte:
+
+- `c146e54` — `results/coherent_state_diagnostics/bf16_attention_schedule_Qwen3-0.6B_20260711T085849Z.json`,
+  `shasum -a 256` = `2961e9470cbd314e435ca2c05c7aa9ef9409bacd7653dac846ee344d00a35907` ✓. Contents confirm:
+  SDPA full-vs-2+3 = logits `0.4375`, K `1.0`, V `1.0`, selected-margin shift `0.109375`; **eager = `0.0`
+  on all four**; `automatic_vs_independent_explicit_4d` = `0.0` on both backends (mask path is not the cause);
+  identical repeats zero. Commit also carries the diagnostic source + a unit test
+  (`tests/test_diagnose_bf16_attention_schedule.py`).
+- `e162f4c` — `results/coherent_state_diagnostics/bf16_gapped_delta_Qwen3-0.6B_20260711T090223Z.json`,
+  `shasum -a 256` = `fc89962aadea389fa530ef82ef8fc31d02d02daa7e027c4f1b066fb8fa13d483` ✓. Contents confirm:
+  `applied_quantization_max_abs` `0.125` > `0.05`; `applied_moment_max_abs` `0.4293537139892578` > `0.02`
+  with `applied_moments_within_frozen_limit: false`; `raw_multiset_max_abs` `0.0`; `fixed_points` `0`;
+  `all_keys_bit_exact_to_fresh`, `all_pre_summary_values_bit_exact_to_fresh`,
+  `all_post_summary_values_bit_exact_to_fresh` all `true`; `status: failed_frozen_invariant`, complete
+  failure persisted before returning nonzero (the persist-before-raise defect I flagged is fixed).
+
+This satisfies my provenance preconditions P1 (evidence committed) and the persist-before-raise fix, and it
+independently substantiates the eager rescue (the exact-checkpoint bf16 non-equivalence is fully removed
+under eager, and it is not a mask-path effect). The `G_delta` retirement is now on-disk justified: only the
+bf16-quantized applied V-delta violates the moment/quantization limits while the derangement itself is exact
+(`raw_multiset` 0, `fixed_points` 0) and keys/non-summary rows are bit-exact — so retiring the exploratory
+arm is strictly less post hoc than relaxing its limits. **Agreed: retire `G_delta` additively in Amendment 4.**
+
+### The fixture freeze — sound; no material disagreement, five refinements to fold into code review
+
+The six lengths `{5,64,900,4096,4097,8193}` with `[N]`-vs-split partitions plus the `0..31 / 8192..8223`
+gapped fixture are well chosen and, importantly, they close the concern I raised last round: 4096/4097/8193
+straddle `PREFILL_CHUNK=4096`, so the reference "contiguous" path is itself internally chunked there and the
+test proves eager stays bit-exact even when the reference is multi-chunk; 900 = `max_summary_tokens`; the
+gapped fixture exercises RoPE at high absolute position (8223, theta 1e7) and compares batched `[32,32]`
+against `[32]`+q=1 single appends — the exact schedule-invariance the summary region needs. Gating all-layer
+K/V, final logits, a fixed selected-token margin, and a one-token continuation at the unchanged `5e-4` is the
+right, non-loosening bar. No disagreement. Refinements (not blockers) for the post-code review:
+
+1. **The battery is a 0.6B unit test; the authorizing artifact must be the exact 30B.** Lengths are
+   model-agnostic and eager bit-exactness is a per-query-reduction property, so it should transfer — but the
+   house rule is exact-model, not same-family. The identical six-length + gapped battery must run and commit
+   on Qwen3-30B-A3B rev `0d7cf239`, bf16, eager, at `5e-4`, before authorization. The 0.6B eager ladder is
+   necessary, not sufficient.
+2. **No single fixture composes (large gap) × (≤900-token q=1 summary) × (real system+request island split).**
+   The flat fixtures test length without a gap; the gapped fixture tests a gap with only 64 synthetic tokens.
+   The full production layout is exercised only by the exact-30B production-layout gate (real P_i, real islands,
+   real 900-token stepwise summary — my G6/G7). A green isolation battery is not a substitute for that gate;
+   both are required.
+3. **Assert the backend per-module on the 30B, fail closed.** Highest-risk implementation detail: a silent
+   SDPA fallback on even one attention submodule reintroduces the artifact. The gate must read the resolved
+   `_attn_implementation` on every attention module (not just the requested value) and fingerprint it.
+4. **Record observed maxima, not just pass/fail.** Since eager is expected exactly `0.0`, any nonzero eager
+   value at any fixture is itself a red flag (unexpected fused/chunked eager path) and must be visible, not
+   masked under a `5e-4` pass. The schedule diagnostic already records maxima; keep that in v4.
+5. **Confirm 8193 in eager does not OOM the 30B.** Eager materializes ~`q×kv` scores per layer transiently;
+   at 8193 on 48 layers this must fit A100-80GB or the fixture fails operationally, not numerically — verify
+   in the ladder before the paid run.
+
+### Decision — joint agreement
+
+I have no material disagreement with the evidence closure or the fixture freeze. I explicitly record
+**joint agreement on PROCEED TECHNICAL ONLY**: proceed to the local v4 (eager-wired, backend-asserting)
+implementation and bf16 eager ladder, then one exact-30B bf16 eager **technical-only** authorization attempt
+under the frozen `5e-4`/`1e-4` tolerances and the frozen fixtures; adopt Candidate 1 (freeze eager), reject
+Candidate 2; `G_delta` retired additively; GF may return to co-primary **only if** the exact-30B eager
+identity + representative-length + selected-token-margin gates pass (else GW-only primary or STOP); GW
+co-primary throughout. **No semantics and no tolerance change until every frozen gate passes on the exact 30B.**
+Implementation is not yet authorized: a fresh **post-code review** of the v4 apparatus (eager wiring +
+per-module backend assertion, the frozen fixtures, `G_delta` retirement, and the position/structure gates)
+remains required before the paid technical run, per the Amendment-3 launch-gate discipline.
+
+One-line topline: verified both artifacts (SHA-256 and contents match exactly); **joint agreement — PROCEED
+TECHNICAL ONLY** under frozen tolerances/fixtures, Candidate 1, `G_delta` retired, GF co-primary only on a
+passing exact-30B eager gate; fresh post-code review still required before the paid technical run.
