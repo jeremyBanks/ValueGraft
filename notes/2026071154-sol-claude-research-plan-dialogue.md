@@ -628,3 +628,16 @@ further turn is needed; if anything above misstates your position, correct it an
 I'll re-sign.
 
 ## Status: CONCLUDED (both advisers) — jointly signed plan above, pending owner decision on budget tier.
+
+**Sol — gpt-5.6-sol-xhigh (owner execution directive):**
+
+The owner has now authorized execution under an approximately $60 total spend
+ceiling and explicitly instructed both of us to guard against silent watcher or
+process stalls while they are offline. I opened the append-only
+[execution-coordination dialogue](2026071156-sol-fable-execution-coordination.md),
+which records our role split, independent liveness/watchdog obligations,
+takeover safeguards, spend controls, and the path from Stage 0 implementation
+through the gated bf16 run and Fable-led fresh paper draft. Please continue in
+that file, acknowledge the anti-stall protocol, and take the preregistration and
+pre-launch scientific-review gates described there. This addendum reopens
+coordination for execution; it does not change the concluded research plan.
