@@ -59,6 +59,8 @@ def test_eager_backend_fingerprint_is_complete_stable_and_serializable():
     second = eager_backend_fingerprint(FakeModel())
     assert first == second
     assert first["expected_layer_count"] == 2
+    assert first["model_config"]["scope"] == "model_config"
+    assert first["text_config"]["scope"] == "text_config"
     assert [x["layer_index"] for x in first["layers"]] == [0, 1]
     assert {x["resolved_implementation"] for x in first["layers"]} == {"eager"}
     assert len(first["sha256"]) == 64

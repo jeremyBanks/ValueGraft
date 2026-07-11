@@ -82,8 +82,11 @@ def eager_backend_fingerprint(model, *, progress=None) -> dict:
             "resolved_implementation": "eager",
         }
 
-    model_record = config_record("model.config", model.config)
-    text_record = config_record("model.config.text_config", cfg)
+    # Stable schema labels, not Python expression spellings.  The independent
+    # validators require these exact names and verify the actual config classes
+    # and resolved fields separately.
+    model_record = config_record("model_config", model.config)
+    text_record = config_record("text_config", cfg)
     records = []
     partial = {
         "requested_implementation": "eager",

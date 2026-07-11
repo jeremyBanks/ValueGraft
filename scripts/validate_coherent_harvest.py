@@ -686,11 +686,62 @@ def _validate_v6_pass_gates(gates: dict[str, Any]) -> None:
                 row.get("donor_id") != WRONG_DONORS[cid] or
                 row.get("subject_native") is not False or
                 row.get("correct_prefix_tokens") != row.get("wrong_prefix_tokens") or
-                row.get("structural_slots_equal") is not True or
-                row.get("special_ids_excluded") is not True or
+                row.get("correct_wrong_length_equal") is not True or
+                row.get("structural_tokens_equal") is not True or
+                row.get("system_request_header_retained_tail_unchanged") is not True or
+                row.get("changes_confined_to_declared_content_positions") is not True or
+                row.get("replacement_spans_non_overlapping") is not True or
                 row.get("replacement_coverage_exact") is not True or
                 int(row.get("changed_position_count", 0)) < 1):
             raise ValueError(f"external donor row differs: {cid}")
+        correct_ids = row.get("correct_prefix_ids")
+        structural = row.get("structural_positions")
+        content = row.get("content_positions")
+        changed = row.get("changed_positions")
+        for values, count_key, hash_key in (
+                (correct_ids, "correct_prefix_tokens", "correct_prefix_sha256"),
+                (structural, "structural_position_count",
+                 "structural_positions_sha256"),
+                (content, "content_position_count", "content_positions_sha256"),
+                (changed, "changed_position_count", "changed_positions_sha256")):
+            if (not isinstance(values, list) or row.get(count_key) != len(values) or
+                    _sha256_ints(values, f"donor[{cid}].{count_key}") !=
+                    row.get(hash_key)):
+                raise ValueError(f"external donor row array differs: {cid}")
+        if (not set(changed).issubset(content) or
+                any(position < 0 or position >= len(correct_ids)
+                    for position in structural + content + changed)):
+            raise ValueError(f"external donor position coverage differs: {cid}")
+        replacements = row.get("replacements")
+        if (not isinstance(replacements, list) or
+                row.get("replacement_count") != len(replacements) or
+                not replacements):
+            raise ValueError(f"external donor replacements differ: {cid}")
+        covered: list[int] = []
+        for replacement in replacements:
+            if not isinstance(replacement, dict):
+                raise ValueError(f"external donor replacement malformed: {cid}")
+            start, end = replacement.get("start"), replacement.get("end")
+            if (not isinstance(start, int) or not isinstance(end, int) or
+                    not 0 <= start < end <= len(correct_ids) or
+                    replacement.get("length") != end - start or
+                    replacement.get("contains_special_token") is not False):
+                raise ValueError(f"external donor replacement bounds differ: {cid}")
+            for values_key, hash_key in (
+                    ("target_ids", "target_ids_sha256"),
+                    ("donor_pool_ids", "source_pool_sha256"),
+                    ("replacement_ids", "replacement_sha256")):
+                values = replacement.get(values_key)
+                if (_sha256_ints(values, f"donor[{cid}].{values_key}") !=
+                        replacement.get(hash_key)):
+                    raise ValueError(f"external donor replacement hash differs: {cid}")
+            if (len(replacement["target_ids"]) != end - start or
+                    len(replacement["replacement_ids"]) != end - start):
+                raise ValueError(f"external donor replacement length differs: {cid}")
+            covered.extend(range(start, end))
+        if (len(covered) != len(set(covered)) or
+                sorted(covered) != sorted(content)):
+            raise ValueError(f"external donor replacement coverage differs: {cid}")
 
     retired = _required_pass_stage(gates, "retired_G_delta")
     retired_raw = retired.get("raw") or {}

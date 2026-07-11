@@ -142,18 +142,52 @@ def complete_pass_gates() -> dict:
             "ordinary_resolved_call_widths": partition(count),
             "message_block_resolved_call_widths": partition(count),
         })
-    donor_rows = [{
-        "order_position": order,
-        "target_id": cid,
-        "donor_id": MODULE.WRONG_DONORS[cid],
-        "subject_native": False,
-        "correct_prefix_tokens": 50,
-        "wrong_prefix_tokens": 50,
-        "structural_slots_equal": True,
-        "special_ids_excluded": True,
-        "replacement_coverage_exact": True,
-        "changed_position_count": 7,
-    } for order, cid in enumerate(MODULE.FROZEN_ORDER, 1)]
+    donor_rows = []
+    for order, cid in enumerate(MODULE.FROZEN_ORDER, 1):
+        correct_ids = list(range(10))
+        structural = [0, 1, 8, 9]
+        content = [2, 3, 4, 5, 6, 7]
+        changed = [2, 3]
+        replacement = {
+            "start": 2, "end": 8, "length": 6,
+            "target_ids": correct_ids[2:8],
+            "donor_pool_ids": [20, 21, 22, 23, 24, 25],
+            "replacement_ids": [25, 24, 23, 22, 21, 20],
+            "contains_special_token": False,
+        }
+        replacement.update({
+            "target_ids_sha256": MODULE._sha256_ints(
+                replacement["target_ids"], "target"),
+            "source_pool_sha256": MODULE._sha256_ints(
+                replacement["donor_pool_ids"], "pool"),
+            "replacement_sha256": MODULE._sha256_ints(
+                replacement["replacement_ids"], "replacement"),
+        })
+        donor_rows.append({
+            "order_position": order, "target_id": cid,
+            "donor_id": MODULE.WRONG_DONORS[cid], "subject_native": False,
+            "correct_prefix_tokens": len(correct_ids),
+            "wrong_prefix_tokens": len(correct_ids),
+            "correct_prefix_ids": correct_ids,
+            "correct_prefix_sha256": MODULE._sha256_ints(correct_ids, "correct"),
+            "structural_position_count": len(structural),
+            "structural_positions": structural,
+            "structural_positions_sha256": MODULE._sha256_ints(
+                structural, "structural"),
+            "content_position_count": len(content),
+            "content_positions": content,
+            "content_positions_sha256": MODULE._sha256_ints(content, "content"),
+            "changed_position_count": len(changed),
+            "changed_positions": changed,
+            "changed_positions_sha256": MODULE._sha256_ints(changed, "changed"),
+            "replacement_count": 1, "replacements": [replacement],
+            "structural_tokens_equal": True,
+            "system_request_header_retained_tail_unchanged": True,
+            "changes_confined_to_declared_content_positions": True,
+            "correct_wrong_length_equal": True,
+            "replacement_spans_non_overlapping": True,
+            "replacement_coverage_exact": True,
+        })
     gates = {
         "schema": 2,
         "amendment_id": MODULE.AMENDMENT_ID,
