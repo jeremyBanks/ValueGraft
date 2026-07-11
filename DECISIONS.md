@@ -397,3 +397,25 @@ Capture everything very well (owner).
   authorizing path. Continue the healthy Mac run, committing each durable case. Revisit
   a documented CPU-host amendment only after an actual failure or corroborated
   non-compute stall; retain the paid A100 for the exact 30B technical-only gate.
+
+- **Amendment 11: make the local ladder an evidentiary gate, not a scheduling gate.**
+  The owner asked us to seriously reconsider serial idling when first-principles
+  confidence is high. A deep `claude-fable-5` consultation, an independent contract
+  audit, and later code/science re-audits converged: one 30B technical-only attempt may
+  overlap the unchanged local ladder because it exposes no semantic outcome and cannot
+  adapt an arm, threshold, estimand, stopping rule, or interpretation. It consumes the
+  existing attempt and technical sub-cap. The paid artifact remains provisional; any
+  local ladder FAIL makes it ineligible for semantic authorization.
+
+- **Replace temporal memory with a machine-enforced conjunction.** Amendment-10 ordering
+  had been the only enforcement of the local-ladder requirement. The external release
+  overlay now independently recomputes the exact eligible ladder's complete 28-layer raw
+  evidence and exact 35-file launch apparatus, independently resolves the committed 30B
+  technical PASS, and requires `L AND T`. The designated local and remote wrappers bind
+  the sole committed preflight packet and its exact technical result; the semantic result
+  must preserve a deterministic outer-gate receipt and pass independent harvest; a final
+  committed release attestation is required before claims. The overlay deliberately sits
+  outside the v10 apparatus globs, preserving the live ladder and v10 scientific identity.
+  Evidence: `COHERENT-STATE-PREREGISTRATION-AMENDMENT-11.md`,
+  `COHERENT-STATE-AUTHORIZATION-CLARIFICATION-11A.md`, and
+  `notes/2026071171-fable-parallel-gate-sequencing-review.md`.

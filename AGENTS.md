@@ -25,10 +25,14 @@ conversation-compaction boundaries.
    (arms A–F, probe suite, build ladder).
 4. `amendments-from-external-review.md` — controls added after review (B-causal,
    negative grafts, leakage classes, metric hierarchy).
-5. `COHERENT-STATE-PREREGISTRATION-AMENDMENT-{1..10}.md` — the additive frozen
+5. `COHERENT-STATE-PREREGISTRATION-AMENDMENT-{1..11}.md` — the additive frozen
    contract for the current `coherent-state-gapped-v10` assay. Amendment 10 adds
    independent prior-technical/semantic-launch authorization reconstruction,
    serial-terminal closure, and normal incremental-generation provenance.
+   Amendment 11 changes execution scheduling only: the local ladder and one paid
+   technical-only attempt may overlap, but semantics require a separately
+   machine-enforced `L AND T` release overlay. Also read
+   `COHERENT-STATE-AUTHORIZATION-CLARIFICATION-11A.md`.
 6. `followup-explorations-arms-GH.md`, `phase2-scaleup-and-coding-extension.md`
    — future work, only after the main analysis.
 
@@ -90,6 +94,11 @@ conversation-compaction boundaries.
   must appear there. Filenames contain only compact user/model identifiers and
   omit effort, task labels, and source IDs. Each conversation note ends with an
   unlinked `## Conversation sources` list of the opaque main/subagent source IDs.
+- **Amendment-11 semantic release:** never invoke the inventoried semantic job
+  directly. Seal/verify the unique `results/v10_release/preflight_*.json` with
+  `uv run python scripts/validate_semantic_release.py`, then launch only through
+  `scripts/launch_semantic_release.sh`. A semantic result does not count until a
+  separately committed final release attestation also passes.
 
 ## Source-control policy (07-05)
 

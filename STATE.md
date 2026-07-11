@@ -25,12 +25,26 @@ every possible write-time channel elsewhere in the cache.
   running from 0/12. Intermediate sidecars are committed at each durable milestone.
 - The accidental historical v6 CPU ladder remains paused and cannot authorize v10.
 
-The sequence is fail-closed: finish and commit the v10 ladder; run the full tests,
-monitor self-test, and exact-commit code/science/Fable reviews; push the frozen
-candidate; execute one paid technical-only 30B gate; harvest, commit, and independently
-validate it; only then authorize the preregistered semantic N=6 and conditional N=12
-sequence. Every render must be saved and committed. A technical failure stops semantic
-execution.
+Amendment 11 now separates scheduling from authorization. The healthy local ladder
+continues, while one paid technical-only 30B attempt may run concurrently after the
+remaining exact-commit launch gates. The paid result is provisional and cannot authorize
+semantics alone. Before any semantic work, the external release resolver must independently
+validate `L AND T`: the exact committed terminal local-ladder PASS and the exact committed,
+independently harvested 30B technical PASS. A remote outer wrapper revalidates the same
+packet before inference; a separate final release receipt is required before any semantic
+result counts. The scientific assay remains schema-2 `coherent-state-gapped-v10` under
+Amendments 1–10; Amendment 11 is a separately identified authorization overlay. Every render
+must still be saved and committed.
+
+The release layer was frozen and implemented without changing any of the 35 inventoried v10
+apparatus files; the aggregate remains
+`818a60623c4858f0796865a124d255897325136f147ad611c1810026c9352715`, byte-identical to
+the ladder-launch commit. Independent code and science re-audits returned GO after the
+resolver gained deep 28-layer raw/numeric/source recomputation, exact path/inventory checks,
+remote pre-inference closure, exact technical binding, outer receipt, and post-run release
+closure. The targeted suite passed 34/34; the prior full suite passed 230 tests and monitor
+self-test passed 59/59. A fresh full-suite run on the final exact candidate remains required
+before paid launch.
 
 Claude Opus 4.8 raised a recent-prior-art concern that history-conditioned notes may
 reside on downstream tokens. After direct geometry inspection, two independent audits,
