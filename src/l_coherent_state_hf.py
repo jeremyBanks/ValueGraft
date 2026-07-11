@@ -7,6 +7,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import tempfile
@@ -148,6 +149,19 @@ def _snapshot_max_abs(a, b) -> tuple[float, float]:
     rows = compare_rows(a, b)
     return (max(x["k_max_abs"] for x in rows),
             max(x["v_max_abs"] for x in rows))
+
+
+def _scalar_metric_max(raw: dict, metric_names) -> float:
+    """Aggregate only the predeclared scalar metrics in a mixed raw payload."""
+    values = []
+    for name in metric_names:
+        value = raw.get(name)
+        if not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+            raise RuntimeError(f"raw metric {name} is missing or non-finite")
+        values.append(float(value))
+    if not values:
+        raise RuntimeError("no scalar metrics were declared for aggregation")
+    return max(values)
 
 
 FROZEN_FIXTURE_LITERAL = "alpha beta gamma delta epsilon"
@@ -1512,7 +1526,9 @@ def run_loaded_gapped_gates(
             raw = {"logits_max_abs": logits, "k_max_abs": key,
                    "v_max_abs": value, "per_layer": per_layer}
             stage.update({"raw": raw, "observed_coverage": 1,
-                          "observed_aggregate": max(raw.values())})
+                          "observed_aggregate": _scalar_metric_max(
+                              raw, ("logits_max_abs", "k_max_abs",
+                                    "v_max_abs"))})
             _set_stage(sink, name, stage)
             passes = stage["observed_aggregate"] <= identity_tolerance
             _close_stage(sink, name, stage, passes=passes)
@@ -1617,7 +1633,9 @@ def run_loaded_gapped_gates(
                    "earlier_cache_max_abs": earlier_cache,
                    "per_layer": per_layer}
             stage.update({"raw": raw, "observed_coverage": 1,
-                          "observed_aggregate": max(raw.values())})
+                          "observed_aggregate": _scalar_metric_max(
+                              raw, ("earlier_logits_max_abs",
+                                    "earlier_cache_max_abs"))})
             _set_stage(sink, name, stage)
             passes = stage["observed_aggregate"] <= identity_tolerance
             _close_stage(sink, name, stage, passes=passes)

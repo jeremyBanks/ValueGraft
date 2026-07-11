@@ -13,6 +13,7 @@ from l_coherent_state_hf import (
     MAX_TECHNICAL_LOGICAL_POSITION,
     V5_GATE_STAGE_ORDER,
     _require_summary_boundary,
+    _scalar_metric_max,
     _validate_exact_length_wrong,
     _verify_intervention,
     v5_gate_schema,
@@ -145,3 +146,38 @@ def test_ladder_durable_sink_persists_running_stage_then_terminalizes(tmp_path):
     assert manifest["status"] == "FAIL"
     with pytest.raises(RuntimeError, match="resume/overwrite"):
         LadderDurableDiagnosticSink(output)
+
+
+def test_model_identity_aggregates_ignore_per_layer_raw_payloads():
+    rebuild_raw = {
+        "logits_max_abs": 0.01,
+        "k_max_abs": 0.02,
+        "v_max_abs": 0.03,
+        "per_layer": [{"layer": 0, "k_max_abs": 0.02,
+                       "v_max_abs": 0.03}],
+    }
+    assert _scalar_metric_max(
+        rebuild_raw,
+        ("logits_max_abs", "k_max_abs", "v_max_abs")) == 0.03
+    future_raw = {
+        "earlier_logits_max_abs": 0.04,
+        "earlier_cache_max_abs": 0.05,
+        "per_layer": [{"layer": 0, "k_max_abs": 0.01,
+                       "v_max_abs": 0.05}],
+    }
+    assert _scalar_metric_max(
+        future_raw,
+        ("earlier_logits_max_abs", "earlier_cache_max_abs")) == 0.05
+    source = inspect.getsource(ladder.run_loaded_gapped_gates)
+    assert "max(raw.values())" not in source
+
+
+def test_model_identity_aggregate_rejects_missing_or_nonfinite_scalar():
+    with pytest.raises(RuntimeError, match="missing or non-finite"):
+        _scalar_metric_max(
+            {"logits_max_abs": 0.0, "per_layer": []},
+            ("logits_max_abs", "k_max_abs"))
+    with pytest.raises(RuntimeError, match="missing or non-finite"):
+        _scalar_metric_max(
+            {"earlier_logits_max_abs": float("nan")},
+            ("earlier_logits_max_abs",))
