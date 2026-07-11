@@ -2,7 +2,17 @@ import copy
 
 import pytest
 
-from coherent_canary_schema import CASE_SCHEMA, DESIGN_ID, MODEL_ID, MODEL_REVISION, CanarySchemaError
+from coherent_canary_schema import (
+    ANCHOR_ASSISTANT,
+    ANCHOR_USER,
+    CASE_SCHEMA,
+    DESIGN_ID,
+    ENGINEERED_CARRIER_CONTENT,
+    ENGINEERED_CARRIER_REQUEST,
+    MODEL_ID,
+    MODEL_REVISION,
+    CanarySchemaError,
+)
 from coherent_canary_stimuli import validate_case
 
 
@@ -59,7 +69,14 @@ def _case():
         "changed_message_allowlist": [3],
         "distractor_fact_inventory": ["crate label", "seal check"],
         "retained_tail_purpose": "exercise a byte-identical unrelated tail",
-        "tokenizer_binding": {"model": MODEL_ID, "revision": MODEL_REVISION},
+        "tokenizer_binding": {
+            "model": MODEL_ID,
+            "revision": MODEL_REVISION,
+            "carrier_request": ENGINEERED_CARRIER_REQUEST,
+            "carrier_content": ENGINEERED_CARRIER_CONTENT,
+            "anchor_user": ANCHOR_USER,
+            "anchor_assistant": ANCHOR_ASSISTANT,
+        },
         "observed_mechanical_evidence": {},
         "review": "PENDING",
         "warning": "Draft only; not reviewed or executable.",

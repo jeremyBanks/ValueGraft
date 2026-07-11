@@ -12,6 +12,10 @@ from arms_common import canonical_ids_any, render_hf
 from coherent_canary_schema import (
     CASE_SCHEMA,
     DESIGN_ID,
+    ANCHOR_ASSISTANT,
+    ANCHOR_USER,
+    ENGINEERED_CARRIER_CONTENT,
+    ENGINEERED_CARRIER_REQUEST,
     ENGINEERED_CASE_IDS,
     MODEL_ID,
     MODEL_REVISION,
@@ -223,6 +227,15 @@ def validate_case(tokenizer, case: dict) -> dict:
     _require(model_binding.get("model") == MODEL_ID, f"{case_id} tokenizer model differs")
     _require(model_binding.get("revision") == MODEL_REVISION,
              f"{case_id} tokenizer revision differs")
+    fixed_literals = {
+        "carrier_request": ENGINEERED_CARRIER_REQUEST,
+        "carrier_content": ENGINEERED_CARRIER_CONTENT,
+        "anchor_user": ANCHOR_USER,
+        "anchor_assistant": ANCHOR_ASSISTANT,
+    }
+    for key, literal in fixed_literals.items():
+        _require(model_binding.get(key) == literal,
+                 f"{case_id} tokenizer binding {key} differs")
     target_counts = {
         "focal_correct_token_count": len(tokenizer.encode(
             focal["correct_target"], add_special_tokens=False)),
