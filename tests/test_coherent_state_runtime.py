@@ -4,7 +4,11 @@ import pytest
 import torch
 
 from coherent_state_hf import CoherentStateError
-from coherent_state_runtime import arm_snapshot, validate_generated_replay
+from coherent_state_runtime import (
+    arm_snapshot,
+    gapped_arm_boundary,
+    validate_generated_replay,
+)
 
 
 def _snap(layers=2, rows=5):
@@ -57,3 +61,32 @@ def test_unknown_or_full_arm_cannot_enter_compacted_constructor():
     rows = [(k[..., :2, :], v[..., :2, :]) for k, v in fresh]
     with pytest.raises(CoherentStateError, match="unsupported"):
         arm_snapshot("A_full", fresh, rows, rows, 2, 0, 0, 10_000.0, 1)
+
+
+def test_gapped_arms_copy_without_key_rotation():
+    fresh = _snap()
+    correct = [(k[..., :2, :].clone() + 11, v[..., :2, :].clone() + 7)
+               for k, v in fresh]
+    wrong = [(k[..., :2, :].clone() - 13, v[..., :2, :].clone() - 9)
+             for k, v in fresh]
+    coherent, _ = gapped_arm_boundary(
+        "G_correct", fresh, correct, wrong, 2, 17)
+    wrong_arm, _ = gapped_arm_boundary(
+        "G_wrong", fresh, correct, wrong, 2, 17)
+    for (kf, vf), (kc, vc), (kw, vw), (ks, vs), (kx, vx) in zip(
+            fresh, coherent, wrong_arm, correct, wrong):
+        assert torch.equal(kc[..., 2:4, :], ks)
+        assert torch.equal(vc[..., 2:4, :], vs)
+        assert torch.equal(kw[..., 2:4, :], kx)
+        assert torch.equal(vw[..., 2:4, :], vx)
+        assert torch.equal(kc[..., :2, :], kf[..., :2, :])
+        assert torch.equal(vc[..., :2, :], vf[..., :2, :])
+        assert torch.equal(kc[..., 4:, :], kf[..., 4:, :])
+        assert torch.equal(vc[..., 4:, :], vf[..., 4:, :])
+
+
+def test_full_arm_cannot_enter_gapped_constructor():
+    fresh = _snap()
+    rows = [(k[..., :2, :], v[..., :2, :]) for k, v in fresh]
+    with pytest.raises(CoherentStateError, match="unsupported gapped"):
+        gapped_arm_boundary("A_full", fresh, rows, rows, 2, 1)

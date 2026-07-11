@@ -287,7 +287,8 @@ class IncrementalTrace:
 
 def append_ids_stepwise(model, cache, first_logits: torch.Tensor,
                         token_ids: Sequence[int], start_position: int,
-                        *, attention_masks: Iterable[torch.Tensor | None] | None = None):
+                        *, start_cache_position: int | None = None,
+                        attention_masks: Iterable[torch.Tensor | None] | None = None):
     """Teacher-force exact IDs one token at a time through the common kernel path."""
     ids = [int(x) for x in token_ids]
     if not ids:
@@ -305,6 +306,9 @@ def append_ids_stepwise(model, cache, first_logits: torch.Tensor,
                   "past_key_values": cache,
                   "position_ids": torch.tensor([[pos]], device=model.device),
                   "use_cache": True}
+        if start_cache_position is not None:
+            kwargs["cache_position"] = torch.tensor(
+                [start_cache_position + offset], device=model.device)
         if mask is not None:
             kwargs["attention_mask"] = mask
         with torch.no_grad():
@@ -318,7 +322,8 @@ def append_ids_stepwise(model, cache, first_logits: torch.Tensor,
 
 def generate_greedy_incremental(model, cache, first_logits: torch.Tensor,
                                 start_position: int, max_tokens: int,
-                                eos_ids: set[int]):
+                                eos_ids: set[int], *,
+                                start_cache_position: int | None = None):
     """Generate and append non-EOS tokens; reaching ``max_tokens`` fails closed."""
     if max_tokens <= 0:
         raise CoherentStateError("max_tokens must be positive")
@@ -337,11 +342,16 @@ def generate_greedy_incremental(model, cache, first_logits: torch.Tensor,
         logprobs.append(float(lp.item()))
         pos = start_position + offset
         with torch.no_grad():
-            out = model(
-                input_ids=torch.tensor([[token_id]], device=model.device),
-                past_key_values=cache,
-                position_ids=torch.tensor([[pos]], device=model.device),
-                use_cache=True)
+            kwargs = {
+                "input_ids": torch.tensor([[token_id]], device=model.device),
+                "past_key_values": cache,
+                "position_ids": torch.tensor([[pos]], device=model.device),
+                "use_cache": True,
+            }
+            if start_cache_position is not None:
+                kwargs["cache_position"] = torch.tensor(
+                    [start_cache_position + offset], device=model.device)
+            out = model(**kwargs)
         cache, logits = out.past_key_values, out.logits[:, -1, :]
     raise CoherentStateError(
         f"generation hit {max_tokens}-token cap without EOS; render is invalid")

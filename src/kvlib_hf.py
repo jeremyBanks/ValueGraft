@@ -50,7 +50,8 @@ def rebuild_cache(snap, cache_cls, *, clone=True):
 PREFILL_CHUNK = 4096
 
 
-def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None):
+def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None,
+            cache_position=None):
     """Forward pass building/extending a cache; returns (cache, last_logits).
     Long inputs are fed in PREFILL_CHUNK pieces (bounds activation memory;
     KV result identical — verified vs single-shot on short inputs)."""
@@ -61,6 +62,7 @@ def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None)
                 input_ids=input_ids,
                 past_key_values=past,
                 position_ids=position_ids,
+                cache_position=cache_position,
                 attention_mask=attention_mask,
                 use_cache=True,
                 logits_to_keep=1,
@@ -71,11 +73,13 @@ def prefill(model, input_ids, past=None, position_ids=None, attention_mask=None)
     for lo in range(0, n, PREFILL_CHUNK):
         hi = min(lo + PREFILL_CHUNK, n)
         pos = position_ids[:, lo:hi] if position_ids is not None else None
+        cpos = cache_position[lo:hi] if cache_position is not None else None
         with torch.no_grad():
             out = model(
                 input_ids=input_ids[:, lo:hi],
                 past_key_values=cache,
                 position_ids=pos,
+                cache_position=cpos,
                 use_cache=True,
                 logits_to_keep=1,
             )
@@ -175,7 +179,8 @@ def rotate_keys(keys, delta, base):
                      dim=-1).to(keys.dtype)
 
 
-def tf_logprobs(model, cache, feed_ids, target_ids, position_ids=None):
+def tf_logprobs(model, cache, feed_ids, target_ids, position_ids=None,
+                cache_position=None):
     """Teacher-forced logprobs of target_ids, where the last len(target_ids)
     logit positions of the feed score them (mirrors kvlib.batched_teacher_forced).
     feed = [prefix..., t_0..t_{n-2}]; returns list of n logprobs."""
@@ -185,7 +190,8 @@ def tf_logprobs(model, cache, feed_ids, target_ids, position_ids=None):
     ids = torch.tensor([feed_ids], device=dev)
     with torch.no_grad():
         out = model(input_ids=ids, past_key_values=cache,
-                    position_ids=position_ids, use_cache=True,
+                    position_ids=position_ids, cache_position=cache_position,
+                    use_cache=True,
                     logits_to_keep=n)
     lp = torch.log_softmax(out.logits[0].float(), dim=-1)
     tgt = torch.tensor(target_ids, device=dev)

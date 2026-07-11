@@ -29,6 +29,8 @@ from coherent_state_hf import (
     sha256_ids,
 )
 from coherent_state_tokens import (
+    GappedDestinationLayout,
+    gapped_destination_layout,
     generation_prefix_ids,
     probe_layout,
     summary_destination_layout,
@@ -40,6 +42,10 @@ from kvlib_hf import prefill, rebuild_cache, snapshot_cache, tf_logprobs
 ARM_NAMES = (
     "A_full", "F_fresh", "C_coherent", "W_wrong",
     "V_only", "K_only", "D_delta",
+)
+GAPPED_ARM_NAMES = (
+    "A_full", "G_fresh", "G_correct", "G_wrong",
+    "G_Vcorrect", "G_Kcorrect", "G_delta",
 )
 
 
@@ -65,6 +71,10 @@ def _ids(model, ids: Sequence[int]) -> torch.Tensor:
 
 def _positions(model, start: int, n: int) -> torch.Tensor:
     return torch.arange(start, start + n, device=model.device)[None]
+
+
+def _cache_positions(model, start: int, n: int) -> torch.Tensor:
+    return torch.arange(start, start + n, device=model.device)
 
 
 def eos_ids(model) -> set[int]:
@@ -109,6 +119,39 @@ def capture_forced_summary(model, tokenizer, source_messages: list[dict],
         prefix_ids=prefix, summary_ids=list(summary_ids),
         summary_text=tokenizer.decode(summary_ids),
         summary_start=trace.start_position, summary_end=trace.end_position,
+        rows=rows, trace=asdict(trace), row_hashes=row_hashes(rows),
+        prefix_sha256=sha256_ids(prefix), source_kind=source_kind,
+        cache=cache, logits=logits)
+
+
+def capture_forced_prefix_ids(model, tokenizer, prefix_ids: Sequence[int],
+                              summary_ids: Sequence[int], *,
+                              source_kind: str,
+                              prefix_position_ids: Sequence[int] | None = None,
+                              summary_start: int | None = None) -> SourceCapture:
+    """Force a summary after an already frozen exact prefix token stream."""
+    prefix = [int(x) for x in prefix_ids]
+    if not prefix:
+        raise CoherentStateError("forced exact prefix is empty")
+    logical_prefix = (list(range(len(prefix))) if prefix_position_ids is None
+                      else [int(x) for x in prefix_position_ids])
+    if len(logical_prefix) != len(prefix):
+        raise CoherentStateError("forced prefix logical-position length mismatch")
+    start = len(prefix) if summary_start is None else int(summary_start)
+    cache, first = prefill(
+        model, _ids(model, prefix),
+        position_ids=torch.tensor([logical_prefix], device=model.device),
+        cache_position=_cache_positions(model, 0, len(prefix)))
+    cache, logits, trace = append_ids_stepwise(
+        model, cache, first, summary_ids, start,
+        start_cache_position=len(prefix))
+    physical_start = len(prefix)
+    rows = extract_summary_rows(
+        cache, physical_start, physical_start + len(summary_ids))
+    return SourceCapture(
+        prefix_ids=prefix, summary_ids=list(summary_ids),
+        summary_text=tokenizer.decode(summary_ids),
+        summary_start=start, summary_end=start + len(summary_ids),
         rows=rows, trace=asdict(trace), row_hashes=row_hashes(rows),
         prefix_sha256=sha256_ids(prefix), source_kind=source_kind,
         cache=cache, logits=logits)
@@ -174,6 +217,84 @@ def build_fresh_destination(model, tokenizer, conv: dict,
     return layout, trace, snapshot_cache(cache), fresh_rows
 
 
+def build_gapped_fresh_boundary(
+        model, tokenizer, conv: dict, summary_text: str,
+        summary_ids: Sequence[int], request: str,
+        correct_prefix_ids: Sequence[int]) \
+        -> tuple[GappedDestinationLayout, object, Snapshot, Snapshot]:
+    """Build compact physical storage through the gapped summary boundary."""
+    layout = gapped_destination_layout(
+        tokenizer, conv, summary_text, summary_ids, request,
+        correct_prefix_ids)
+    system_ids = layout.prefix_ids[:layout.system_end]
+    request_ids = layout.prefix_ids[layout.system_end:]
+    cache, first = prefill(
+        model, _ids(model, system_ids),
+        position_ids=torch.tensor(
+            [layout.prefix_position_ids[:layout.system_end]],
+            device=model.device),
+        cache_position=_cache_positions(model, 0, len(system_ids)))
+    if request_ids:
+        cache, first = prefill(
+            model, _ids(model, request_ids), past=cache,
+            position_ids=torch.tensor(
+                [layout.prefix_position_ids[layout.system_end:]],
+                device=model.device),
+            cache_position=_cache_positions(
+                model, len(system_ids), len(request_ids)))
+    cache, _, trace = append_ids_stepwise(
+        model, cache, first, summary_ids, layout.source_summary_start,
+        start_cache_position=len(layout.prefix_ids))
+    fresh_rows = extract_summary_rows(
+        cache, layout.physical_summary_start, layout.physical_summary_end)
+    return layout, trace, snapshot_cache(cache), fresh_rows
+
+
+def append_gapped_post_summary(model, boundary_snapshot: Snapshot,
+                               layout: GappedDestinationLayout) -> Snapshot:
+    """Fork one arm at the boundary and causally append close + retained tail."""
+    cache = rebuild_cache(boundary_snapshot, DynamicCache)
+    if layout.post_summary_ids:
+        cache, _ = prefill(
+            model, _ids(model, layout.post_summary_ids), past=cache,
+            position_ids=torch.tensor(
+                [layout.post_summary_position_ids], device=model.device),
+            cache_position=_cache_positions(
+                model, layout.physical_summary_end,
+                len(layout.post_summary_ids)))
+    return snapshot_cache(cache)
+
+
+def gapped_arm_boundary(arm: str, fresh_boundary: Snapshot,
+                        correct_rows: Snapshot, wrong_rows: Snapshot,
+                        destination_start: int,
+                        placebo_seed: int) -> tuple[Snapshot, list[dict]]:
+    """Apply only the amended same-position summary-row intervention."""
+    if arm not in GAPPED_ARM_NAMES[1:]:
+        raise CoherentStateError(f"unsupported gapped arm: {arm}")
+    if arm == "G_fresh":
+        return list(fresh_boundary), []
+    if arm == "G_correct":
+        return replace_summary_rows(
+            fresh_boundary, correct_rows, destination_start,
+            use_keys=True, use_values=True), []
+    if arm == "G_wrong":
+        return replace_summary_rows(
+            fresh_boundary, wrong_rows, destination_start,
+            use_keys=True, use_values=True), []
+    if arm == "G_Vcorrect":
+        return replace_summary_rows(
+            fresh_boundary, correct_rows, destination_start,
+            use_keys=False, use_values=True), []
+    if arm == "G_Kcorrect":
+        return replace_summary_rows(
+            fresh_boundary, correct_rows, destination_start,
+            use_keys=True, use_values=False), []
+    snap, raw = delta_deranged_snapshot(
+        fresh_boundary, correct_rows, destination_start, placebo_seed)
+    return snap, [asdict(x) for x in raw]
+
+
 def arm_snapshot(arm: str, fresh_snapshot: Snapshot, correct_rows: Snapshot,
                  wrong_rows: Snapshot, destination_start: int,
                  correct_delta: int, wrong_delta: int, rope_theta: float,
@@ -213,7 +334,8 @@ def arm_snapshot(arm: str, fresh_snapshot: Snapshot, correct_rows: Snapshot,
 
 def score_target(model, tokenizer, snapshot: Snapshot,
                  context_messages: list[dict], context_ids: Sequence[int],
-                 probe: str, target: str, *, consume_snapshot: bool = False) -> dict:
+                 probe: str, target: str, *, consume_snapshot: bool = False,
+                 logical_context_end: int | None = None) -> dict:
     layout = probe_layout(tokenizer, context_messages, context_ids, probe, target)
     feed = teacher_forcing_feed(layout)
     cache = rebuild_cache(snapshot, DynamicCache, clone=not consume_snapshot)
@@ -222,9 +344,12 @@ def score_target(model, tokenizer, snapshot: Snapshot,
         # build a new branch for another target; this bounds production scoring
         # to one persistent fresh base plus one transient working cache.
         snapshot.clear()
-    pos = _positions(model, len(context_ids), len(feed))
+    logical_start = (len(context_ids) if logical_context_end is None
+                     else int(logical_context_end))
+    pos = _positions(model, logical_start, len(feed))
+    cache_pos = _cache_positions(model, len(context_ids), len(feed))
     token_lps = tf_logprobs(model, cache, feed, layout.target_ids,
-                           position_ids=pos)
+                           position_ids=pos, cache_position=cache_pos)
     if len(token_lps) != len(layout.target_ids) or not all(
             math.isfinite(float(x)) for x in token_lps):
         raise CoherentStateError("non-finite or incomplete target logprobs")
@@ -239,15 +364,18 @@ def score_target(model, tokenizer, snapshot: Snapshot,
 
 def score_arm(model, tokenizer, snapshot: Snapshot,
               context_messages: list[dict], context_ids: Sequence[int],
-              plants: Sequence[dict], targets: dict[str, dict]) -> dict:
+              plants: Sequence[dict], targets: dict[str, dict], *,
+              logical_context_end: int | None = None) -> dict:
     rows = []
     for plant in plants:
         target = targets[plant["id"]]
         correct = score_target(model, tokenizer, snapshot, context_messages,
-                               context_ids, plant["probe"], target["correct"])
+                               context_ids, plant["probe"], target["correct"],
+                               logical_context_end=logical_context_end)
         counterfactual = score_target(
             model, tokenizer, snapshot, context_messages, context_ids,
-            plant["probe"], target["counterfactual"])
+            plant["probe"], target["counterfactual"],
+            logical_context_end=logical_context_end)
         rows.append({
             "plant_id": plant["id"], "category": plant["category"],
             "probe": plant["probe"], "correct": correct,
