@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -137,6 +138,49 @@ def science_fingerprint() -> dict:
         "code_commit": "a" * 40,
         "apparatus_inventory": {"aggregate_sha256": "b" * 64},
         "input_inventory": {"files": [], "aggregate_sha256": "c" * 64},
+    }
+
+
+def production_static_fingerprint() -> dict:
+    commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    subject = MODULE._expected_static_subject_metadata()
+    runtime = {
+        "python": "3.11.9 (frozen test fixture)",
+        "platform": "Linux-frozen-test",
+        "torch": "2.4.1+cu124", "transformers": "5.0.0",
+        "cuda": "12.4", "gpu": "NVIDIA A100 80GB PCIe",
+        "execution_packages": {
+            "accelerate": "1.14.0", "huggingface_hub": "1.22.0",
+            "safetensors": "0.8.0", "sentencepiece": "0.2.1",
+            "torch": "2.4.1", "transformers": "5.0.0",
+        },
+    }
+    return {
+        "schema": 2, "design_id": MODULE.DESIGN_ID,
+        "amendment_id": MODULE.AMENDMENT_ID,
+        "amendment_sha256": {
+            relative: hashlib.sha256(MODULE._launch_blob(
+                ROOT, commit, relative)).hexdigest()
+            for relative in MODULE.AMENDMENT_PATHS},
+        "model": MODULE.MODEL_ID, "revision": MODULE.MODEL_REVISION,
+        "dtype": MODULE.PARAMETER_DTYPE, "code_commit": commit,
+        "runtime_environment": runtime,
+        "apparatus_inventory": MODULE._expected_apparatus_inventory(ROOT, commit),
+        "input_inventory": MODULE._expected_input_inventory(ROOT, commit),
+        "scenario_sha256": hashlib.sha256(MODULE._launch_blob(
+            ROOT, commit, "data/scenarios.json")).hexdigest(),
+        "targets_sha256": hashlib.sha256(MODULE._launch_blob(
+            ROOT, commit, "data/coherent_state_targets.json")).hexdigest(),
+        "summary_request_sha256": hashlib.sha256(
+            MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
+        "frozen_order": list(MODULE.FROZEN_ORDER),
+        "wrong_donors": MODULE.WRONG_DONORS,
+        "structural_seed": 20_260_711, "max_reply_tokens": 320,
+        "max_summary_tokens": 900, "identity_tolerance": 1e-4,
+        "zero_gap_tolerance": 5e-4, "attention_backend": "eager",
+        "max_technical_logical_position": MODULE.MAX_TECHNICAL_LOGICAL_POSITION,
+        "arms": list(MODULE.ARMS), "subject_metadata": subject,
     }
 
 
@@ -674,28 +718,16 @@ def technical_tree(root: Path) -> None:
         }
     gates["stage_refs"] = refs
     backend = backend_fingerprint()
-    fingerprint = {
-        **identity(), "attention_backend": "eager",
-        "code_commit": "a" * 40,
-        "apparatus_inventory": {"aggregate_sha256": "b" * 64},
+    static = production_static_fingerprint()
+    fingerprint = dict(static)
+    fingerprint["subject_metadata"] = {
+        **static["subject_metadata"],
+        "attention_backend_resolved": "eager",
         "attention_backend_fingerprint": backend,
-        "summary_request_sha256": hashlib.sha256(
-            MODULE.SUMMARY_REQUEST.encode()).hexdigest(),
-        "subject_metadata": {
-            "tokenizer_vocab_sha256": MODULE._canonical_json_sha256(
-                MODULE._validation_tokenizer().get_vocab()),
-            "chat_template_sha256": hashlib.sha256(str(
-                MODULE._validation_tokenizer().chat_template).encode()).hexdigest(),
-        },
-        "input_inventory": {"files": [{
-            "path": f"data/synthetic/{cid}.json",
-            "bytes": (ROOT / "data" / "synthetic" / f"{cid}.json").stat().st_size,
-            "sha256": hashlib.sha256((
-                ROOT / "data" / "synthetic" / f"{cid}.json").read_bytes()).hexdigest(),
-        } for cid in sorted(set(MODULE.FROZEN_ORDER).union(
-            MODULE.WRONG_DONORS.values()))]},
+        "context_limit": 32768,
     }
-    static = dict(fingerprint)
+    fingerprint["attention_backend_fingerprint"] = backend
+    fingerprint["context_limit"] = 32768
     gates["static_provenance"]["raw"] = {
         "fingerprint_static_sha256": MODULE._canonical_json_sha256(static),
         "apparatus_inventory_sha256": MODULE._canonical_json_sha256(
@@ -707,7 +739,7 @@ def technical_tree(root: Path) -> None:
         "dtype": MODULE.PARAMETER_DTYPE, "attention_backend": "eager",
         "technical_only": True,
     }
-    apparatus = {"aggregate_sha256": "b" * 64}
+    apparatus = static["apparatus_inventory"]
     gate_doc = {
         **identity(), "status": "PASS", "completed_at": "2026-07-11T00:00:00Z",
         "model": MODULE.MODEL_ID, "revision": MODULE.MODEL_REVISION,
@@ -866,6 +898,42 @@ def test_intervention_rejects_zero_sensitivity_counterexample():
         MODULE._validate_v7_pass_gates(
             gates, fingerprint=science_fingerprint(), repo_root=None,
             static_fingerprint=science_fingerprint(), verify_sources=False)
+
+
+def test_static_provenance_rejects_self_consistent_but_false_inventory():
+    static = production_static_fingerprint()
+    final = dict(static)
+    backend = backend_fingerprint()
+    final["subject_metadata"] = {
+        **static["subject_metadata"],
+        "attention_backend_resolved": "eager",
+        "attention_backend_fingerprint": backend,
+        "context_limit": 32768,
+    }
+    final["attention_backend_fingerprint"] = backend
+    final["context_limit"] = 32768
+    static["input_inventory"] = copy.deepcopy(static["input_inventory"])
+    static["input_inventory"]["aggregate_sha256"] = "0" * 64
+    final["input_inventory"] = static["input_inventory"]
+    with pytest.raises(ValueError, match="static fingerprint reconstruction"):
+        MODULE._validate_static_fingerprint(static, final, ROOT)
+
+
+def test_static_provenance_rejects_final_static_binding_divergence():
+    static = production_static_fingerprint()
+    backend = backend_fingerprint()
+    final = dict(static)
+    final["subject_metadata"] = {
+        **static["subject_metadata"],
+        "attention_backend_resolved": "eager",
+        "attention_backend_fingerprint": backend,
+        "context_limit": 32768,
+    }
+    final["attention_backend_fingerprint"] = backend
+    final["context_limit"] = 32768
+    final["structural_seed"] += 1
+    with pytest.raises(ValueError, match="final/static fingerprint binding"):
+        MODULE._validate_static_fingerprint(static, final, ROOT)
 
 
 def test_semantic_complete_validates_bound_prior_authorization_and_envelope(

@@ -9,11 +9,13 @@ be importable from the checkout that performs the harvest.
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import hashlib
 import json
 import math
 import os
 import re
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -84,6 +86,28 @@ WRONG_DONORS = {
     "c12": "c28", "c08": "c29", "c03": "c30",
 }
 EXTERNAL_AUTHORS = {"sonnet", "opus", "codex-gpt5.5", "sonnet-render"}
+AMENDMENT_PATHS = tuple(
+    f"COHERENT-STATE-PREREGISTRATION-AMENDMENT-{index}.md"
+    for index in range(1, 8))
+APPARATUS_REQUIRED = (
+    *AMENDMENT_PATHS,
+    "src/analyze_coherent_state.py", "src/arms_common.py",
+    "src/coherent_state_calibration.py", "src/coherent_state_cases.py",
+    "src/coherent_state_hf.py", "src/coherent_state_integrity.py",
+    "src/coherent_state_runtime.py", "src/coherent_state_store.py",
+    "src/coherent_state_tokens.py", "src/cross_arch_probe.py",
+    "src/l_coherent_state_hf.py", "src/kvlib_hf.py", "src/pod.py",
+    "src/run_coherent_state_hf.py", "src/validate_coherent_external_donors.py",
+    "scripts/classify_pod.sh", "scripts/coherent_lifecycle_lib.sh",
+    "scripts/coherent_monitor_selftest.sh", "scripts/job_coherent_state_bf16.sh",
+    "scripts/job_coherent_state_semantic_bf16.sh", "scripts/launch_pod.sh",
+    "scripts/preflight.py", "scripts/preflight.sh",
+    "scripts/validate_coherent_harvest.py", "scripts/watch_coherent_state_pod.sh",
+)
+APPARATUS_GLOBS = (
+    "src/coherent_state_*.py", "scripts/*coherent*.sh",
+    "scripts/*coherent*.py",
+)
 OLD_ARMS = {
     "F_fresh", "C_coherent", "W_wrong", "V_value", "K_key", "D_delta",
     "G_delta",
@@ -132,6 +156,175 @@ def _canonical_json_sha256(value: Any) -> str:
     return hashlib.sha256(json.dumps(
         value, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
         allow_nan=False).encode()).hexdigest()
+
+
+def _git_bytes(repo: Path, *args: str) -> bytes:
+    try:
+        return subprocess.run(
+            ["git", *args], cwd=repo, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout
+    except subprocess.CalledProcessError as exc:
+        raise ValueError(
+            f"cannot reconstruct launch commit with git {' '.join(args)}: "
+            f"{exc.stderr.decode(errors='replace').strip()}") from exc
+
+
+def _launch_blob(repo: Path, commit: str, relative: str) -> bytes:
+    return _git_bytes(repo, "show", f"{commit}:{relative}")
+
+
+def _expected_apparatus_inventory(repo: Path, commit: str) -> dict[str, Any]:
+    tree = _git_bytes(repo, "ls-tree", "-r", "--name-only", commit).decode().splitlines()
+    selected = set(APPARATUS_REQUIRED)
+    selected.update(path for path in tree
+                    if any(fnmatch.fnmatch(path, pattern)
+                           for pattern in APPARATUS_GLOBS))
+    missing = sorted(set(APPARATUS_REQUIRED) - set(tree))
+    if missing:
+        raise ValueError(f"launch commit lacks required apparatus files {missing}")
+    rows = []
+    for relative in sorted(selected):
+        raw = _launch_blob(repo, commit, relative)
+        rows.append({
+            "path": relative, "bytes": len(raw),
+            "sha256": hashlib.sha256(raw).hexdigest(),
+        })
+    return {
+        "files": rows, "file_count": len(rows),
+        "aggregate_sha256": _canonical_json_sha256(rows),
+    }
+
+
+def _expected_input_inventory(repo: Path, commit: str) -> dict[str, Any]:
+    paths = {"data/scenarios.json", "data/coherent_state_targets.json"}
+    paths.update(f"data/synthetic/{cid}.json" for cid in
+                 set(FROZEN_ORDER).union(WRONG_DONORS.values()))
+    rows = []
+    for relative in sorted(paths):
+        raw = _launch_blob(repo, commit, relative)
+        rows.append({
+            "path": relative, "bytes": len(raw),
+            "sha256": hashlib.sha256(raw).hexdigest(),
+        })
+    donor_provenance = {}
+    for donor_id in WRONG_DONORS.values():
+        relative = f"data/synthetic/{donor_id}.json"
+        raw = _launch_blob(repo, commit, relative)
+        parsed = json.loads(raw)
+        author = (parsed.get("meta") or {}).get("author")
+        if author not in EXTERNAL_AUTHORS:
+            raise ValueError(f"launch donor {donor_id} author differs")
+        donor_provenance[donor_id] = {
+            "donor_id": donor_id, "path": relative,
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "recorded_author": author, "subject_native": False,
+        }
+    return {
+        "files": rows,
+        "aggregate_sha256": _canonical_json_sha256(rows),
+        "external_donor_provenance": donor_provenance,
+    }
+
+
+def _expected_static_subject_metadata() -> dict[str, Any]:
+    try:
+        from transformers import AutoConfig
+        config = AutoConfig.from_pretrained(
+            MODEL_ID, revision=MODEL_REVISION,
+            attn_implementation=ATTENTION_BACKEND, local_files_only=True)
+    except Exception as exc:
+        raise ValueError(f"exact production config unavailable to harvest: {exc}") from exc
+    tokenizer = _validation_tokenizer()
+    resolved = getattr(config, "_commit_hash", None)
+    return {
+        "resolved_model_revision": resolved,
+        "attention_backend_requested": ATTENTION_BACKEND,
+        "config_sha256": _canonical_json_sha256(config.to_dict()),
+        "tokenizer_revision_requested": MODEL_REVISION,
+        "tokenizer_class": type(tokenizer).__name__,
+        "tokenizer_vocab_sha256": _canonical_json_sha256(tokenizer.get_vocab()),
+        "chat_template_sha256": hashlib.sha256(
+            str(tokenizer.chat_template).encode()).hexdigest(),
+        "special_tokens_map_sha256": _canonical_json_sha256(
+            tokenizer.special_tokens_map),
+    }
+
+
+def _validate_static_fingerprint(
+        static: Any, fingerprint: Any, repo: Path) -> None:
+    if not isinstance(static, dict) or not isinstance(fingerprint, dict):
+        raise ValueError("technical static/final fingerprint is malformed")
+    commit = static.get("code_commit")
+    if (not isinstance(commit, str) or len(commit) != 40 or
+            any(char not in "0123456789abcdef" for char in commit.lower())):
+        raise ValueError("technical launch commit is malformed")
+    resolved = _git_bytes(repo, "rev-parse", f"{commit}^{{commit}}").decode().strip()
+    if resolved != commit:
+        raise ValueError("technical launch commit did not resolve exactly")
+    expected_apparatus = _expected_apparatus_inventory(repo, commit)
+    expected_inputs = _expected_input_inventory(repo, commit)
+    expected_subject = _expected_static_subject_metadata()
+    amendment_hashes = {
+        relative: hashlib.sha256(
+            _launch_blob(repo, commit, relative)).hexdigest()
+        for relative in AMENDMENT_PATHS
+    }
+    exact_fields = {
+        "schema": SCHEMA, "design_id": DESIGN_ID,
+        "amendment_id": AMENDMENT_ID,
+        "amendment_sha256": amendment_hashes,
+        "model": MODEL_ID, "revision": MODEL_REVISION,
+        "dtype": PARAMETER_DTYPE, "code_commit": commit,
+        "apparatus_inventory": expected_apparatus,
+        "input_inventory": expected_inputs,
+        "scenario_sha256": hashlib.sha256(_launch_blob(
+            repo, commit, "data/scenarios.json")).hexdigest(),
+        "targets_sha256": hashlib.sha256(_launch_blob(
+            repo, commit, "data/coherent_state_targets.json")).hexdigest(),
+        "summary_request_sha256": hashlib.sha256(
+            SUMMARY_REQUEST.encode()).hexdigest(),
+        "frozen_order": list(FROZEN_ORDER), "wrong_donors": WRONG_DONORS,
+        "structural_seed": 20_260_711, "max_reply_tokens": 320,
+        "max_summary_tokens": 900, "identity_tolerance": 1e-4,
+        "zero_gap_tolerance": 5e-4, "attention_backend": ATTENTION_BACKEND,
+        "max_technical_logical_position": MAX_TECHNICAL_LOGICAL_POSITION,
+        "arms": list(ARMS), "subject_metadata": expected_subject,
+    }
+    runtime = static.get("runtime_environment")
+    if not isinstance(runtime, dict):
+        raise ValueError("technical runtime environment is malformed")
+    packages = runtime.get("execution_packages")
+    expected_packages = {
+        "accelerate": "1.14.0", "huggingface_hub": "1.22.0",
+        "safetensors": "0.8.0", "sentencepiece": "0.2.1",
+        "torch": "2.4.1", "transformers": "5.0.0",
+    }
+    if (not str(runtime.get("python", "")).startswith("3.11") or
+            "linux" not in str(runtime.get("platform", "")).lower() or
+            runtime.get("torch") != "2.4.1+cu124" or
+            runtime.get("transformers") != "5.0.0" or
+            runtime.get("cuda") != "12.4" or
+            runtime.get("gpu") != "NVIDIA A100 80GB PCIe" or
+            packages != expected_packages):
+        raise ValueError("technical runtime environment differs from frozen image")
+    exact_fields["runtime_environment"] = runtime
+    if set(static) != set(exact_fields) or any(
+            static.get(key) != value for key, value in exact_fields.items()):
+        raise ValueError("technical static fingerprint reconstruction differs")
+
+    expected_final = dict(static)
+    expected_final["subject_metadata"] = {
+        **expected_subject,
+        "attention_backend_resolved": ATTENTION_BACKEND,
+        "attention_backend_fingerprint": fingerprint.get(
+            "attention_backend_fingerprint"),
+        "context_limit": fingerprint.get("context_limit"),
+    }
+    expected_final["attention_backend_fingerprint"] = fingerprint.get(
+        "attention_backend_fingerprint")
+    expected_final["context_limit"] = fingerprint.get("context_limit")
+    if fingerprint != expected_final:
+        raise ValueError("technical final/static fingerprint binding differs")
 
 
 def _chunk_widths(width: int) -> list[int]:
@@ -1118,6 +1311,10 @@ def _validate_v7_pass_gates(
     if gates.get("max_technical_logical_position") != \
             MAX_TECHNICAL_LOGICAL_POSITION:
         raise ValueError("technical gate maximum logical position differs")
+    if verify_sources:
+        if repo_root is None:
+            raise ValueError("strict static validation lacks repository root")
+        _validate_static_fingerprint(static_fingerprint, fingerprint, repo_root)
 
     static = _required_pass_stage(gates, "static_provenance")
     static_raw = static.get("raw") or {}
@@ -1857,11 +2054,14 @@ def _validate_technical(root: Path, log_text: str) -> dict[str, Any]:
             unique == "production_kernel_gate.json"):
         raise ValueError("technical manifest unique gate path differs")
     for field in (
-            "fingerprint_static", "apparatus_inventory", "model", "revision",
+            "fingerprint", "fingerprint_static", "apparatus_inventory", "model", "revision",
             "dtype", "attention_backend", "attention_backend_fingerprint",
             "geometry", "context_limit"):
         if manifest.get(field) != gate.get(field):
             raise ValueError(f"technical manifest/gate {field} binding differs")
+    if ((gate.get("fingerprint_static") or {}).get("apparatus_inventory") !=
+            gate.get("apparatus_inventory")):
+        raise ValueError("technical top-level/static apparatus binding differs")
     expanded_gates = _resolve_heavy_stages(root, gate)
     _validate_v7_pass_gates(
         expanded_gates, fingerprint=gate.get("fingerprint"),
