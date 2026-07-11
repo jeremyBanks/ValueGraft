@@ -41,10 +41,14 @@ authorization is `$2`; the full canary has a hard `$8` ceiling only after the
 forecast, with at least `$15` reserved for failures and final synthesis/review.
 
 No paid coherent-state compute has run and no pod is active. The latest focused
-Fable review reported `$2.611132`, bringing conservative provider-usage estimates
-to `$33.787580` against the owner's approximate `$60` ceiling; this is not
-verified as incremental cash billing. The prior RunPod balance observation
-remains `$63.3160022124`.
+Fable review plus two capped Claude Sonnet 5 reserve-stimulus authoring attempts
+bring conservative provider-usage estimates to `$36.863842` against the owner's
+approximate `$60` ceiling; this is not verified as incremental cash billing. The
+second Sonnet attempt left complete authored text and exact-width choices in a
+temporary constructor; Sol executed that tokenizer-only constructor without
+creative changes. E01--e06 now all have committed mechanically passing drafts,
+but all remain non-executable pending blind, paired, and diversity review. The
+prior RunPod balance observation remains `$63.3160022124`.
 
 The retired local v10 ladder processes (PIDs 55251/55253) and accidental
 historical v6 ladder processes (70711/70713) were observed stopped/paused, then

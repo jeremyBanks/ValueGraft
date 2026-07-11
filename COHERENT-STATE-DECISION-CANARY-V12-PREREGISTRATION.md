@@ -98,6 +98,13 @@ Each case has:
   and coherent under C and W;
 - one fixed target-neutral carrier text compatible with C and W.
 
+The authored set deliberately contains two focal-history subtypes, fixed before
+outcomes: `e01`, `e02`, and `e05` explicitly resolve the derived focal decision
+before the boundary; `e03`, `e04`, and `e06` leave the focal result unstated and
+require it to be derived at probe time. Results are reported by subtype. A
+positive confined to the explicit subtype is evidence for retained resolved-
+decision state, not for latent computation of an unstated result.
+
 At least three independent authoring sessions spanning at least two model
 families contribute, with no session authoring more than two cases. Authors do
 not see model outcomes. A blind diversity review rejects a shared fill-in-the-
@@ -498,7 +505,9 @@ Run frozen reserve e05/e06, once, only if:
 After e05/e06, family X passes only with mean D>0, at least four of six positive
 D+SEL cases, mean Hplus>0, and the 3x yardstick. Every other six-case result is a
 terminal stop for X. No second extension, arm change, target change, or threshold
-change is allowed.
+change is allowed. The four-of-six requirement necessarily includes at least one
+explicit-resolution and one unstated-result case; report those subtypes rather
+than pooling away a qualitative split.
 
 ### Full-KV versus value-only branches
 
@@ -576,9 +585,11 @@ Stateful-change checklist for implementation commits:
 ## 18. Paid execution budget and truncation
 
 Conservative provider-usage estimates before canary implementation total
-`$33.787580`; paid coherent-state compute remains `$0`. Against the owner's
-approximate `$60` ceiling, treat `$26.21` as remaining unless billing evidence
-changes it.
+`$36.863842`; paid coherent-state compute remains `$0`. This includes two capped
+Claude Sonnet 5 reserve-stimulus authoring attempts, the second of which left
+recoverable authored text that Sol completed through the tokenizer-only writer.
+Against the owner's approximate `$60` ceiling, treat `$23.14` as remaining unless
+billing evidence changes it.
 
 Paid order:
 
