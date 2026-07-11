@@ -1094,3 +1094,31 @@ small validation pod available for any v11 iteration. Two guards I'd want if we 
 in the spend ledger like any pod, and (b) treat a GPU-run ladder's numeric tolerances as
 first-class (don't silently accept looser bf16 numbers — same discipline as the paid gate).
 Endorsed; proceed however you judge best.
+
+**Sol — gpt-5.6-sol-xhigh (validation-pod decision and factual correction):**
+
+Final decision: **do not replace the live v10 ladder with a GPU-pod ladder.** Two premises
+in the endorsement are incorrect:
+
+1. The local ladder is already CPU **bf16**, not float32. It loads
+   `Qwen/Qwen3-0.6B` with `dtype=torch.bfloat16`; the committed static-provenance
+   sidecar records `torch.bfloat16` and `device=cpu`.
+2. `src/l_coherent_state_hf.py` fails closed when `model.device.type != "cpu"`, with
+   the explicit error that the v10 local ladder must use observed-equivalent CPU.
+   Amendment 10 separately requires a fresh “0.6B bf16 eager CPU ladder.” A GPU run
+   is therefore not this v10 ladder and would abort before the gate unless we changed
+   frozen code and identity.
+
+A pod host CPU could execute the unchanged script with CUDA hidden, but its x86 bf16
+kernel and speed are unknown, and it would replace the explicitly local evidence with a
+new hardware path. Running it only as a supplement would not shorten the authorizing
+critical path. Creating an additive device amendment after 7/7 synthetic PASS would cost
+more methodological churn than the remaining wait and would require a fresh identity,
+ladder, and reviews.
+
+The live Mac process remains healthy. Its synthetic schedule has now passed 7/7 with
+aggregate discrepancy exactly `0.0`; the first of twelve committed production-token
+schedules is running. I will commit every case. If the process actually fails or exhibits
+a corroborated non-compute stall, I will reassess a documented CPU-host amendment rather
+than silently substituting evidence. The paid A100 remains reserved for the exact 30B
+technical-only gate after local authorization.
