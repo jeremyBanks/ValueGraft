@@ -15,6 +15,10 @@ import statistics
 import struct
 from typing import Any, Mapping, Sequence
 
+from coherent_canary_controls import (
+    CanaryControlError,
+    norm_matched_value_placebo_row,
+)
 from coherent_canary_runtime import (
     continue_fresh_plan,
     execute_fresh_plan,
@@ -46,6 +50,9 @@ ARM_SOURCES = {
     "WF": ("W", "F"), "WC": ("W", "C"), "WW": ("W", "W"),
 }
 P_CELLS = ("CC", "WW", "FC", "FW")
+PRIMARY_ARM_COUNT = 31
+PLACEBO_CONTROL_COUNT = 3
+VALUE_PLACEBO_CELL = "V_PLACEBO"
 
 
 class CanaryCaseError(RuntimeError):
@@ -281,6 +288,7 @@ def _arm_record(model, tokenizer, case: Mapping[str, Any], plans,
     nonfocal = case["nonfocal_control"]
     logical_end = plans["F"].logical_positions[-1] + 1
     return {
+        "arm_kind": "primary",
         "schedule": schedule, "region": region, "cell": cell,
         "key_source": key_source, "value_source": value_source,
         "insertion": insertion,
@@ -301,6 +309,163 @@ def _arm_record(model, tokenizer, case: Mapping[str, Any], plans,
                 str(nonfocal["countertarget"]), eos_ids),
         },
     }
+
+
+def _compact_placebo_summary(
+        row_diagnostics: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    attempts = [
+        0 if row.get("projection_attempt") is None
+        else int(row["projection_attempt"]) + 1
+        for row in row_diagnostics
+    ]
+    norm_errors = [float(row["applied_relative_norm_error"])
+                   for row in row_diagnostics]
+    cosines = [abs(float(row["applied_cosine_with_delta"]))
+               for row in row_diagnostics]
+    return {
+        "row_count": len(row_diagnostics),
+        "attempt_count": sum(attempts),
+        "max_attempt_count_per_row": max(attempts, default=0),
+        "zero_delta_count": sum(
+            bool(row["zero_semantic_delta"]) for row in row_diagnostics),
+        "max_applied_relative_norm_error": max(norm_errors, default=0.0),
+        "max_applied_abs_cosine": max(cosines, default=0.0),
+        "canonical_diagnostics_sha256": _sha(list(row_diagnostics)),
+    }
+
+
+def _build_value_placebo_rows(fresh_rows, correct_rows, wrong_rows, *,
+                              case_id: str, destination_start: int):
+    """Construct compactly-audited fresh-key, norm-matched placebo rows."""
+    _require(len(fresh_rows) == len(correct_rows) == len(wrong_rows) and
+             bool(fresh_rows), "placebo source layer coverage differs")
+    source_result_hashes = {
+        "fresh_source_rows_sha256": _sha(snapshot_hashes(fresh_rows)),
+        "correct_source_rows_sha256": _sha(snapshot_hashes(correct_rows)),
+        "wrong_source_rows_sha256": _sha(snapshot_hashes(wrong_rows)),
+    }
+    placebo_rows = []
+    row_diagnostics: list[dict[str, Any]] = []
+    expected_row_count = 0
+    for layer_index, (fresh_layer, correct_layer, wrong_layer) in enumerate(
+            zip(fresh_rows, correct_rows, wrong_rows)):
+        fresh_keys, fresh_values = fresh_layer
+        _, correct_values = correct_layer
+        _, wrong_values = wrong_layer
+        _require(fresh_values.shape == correct_values.shape == wrong_values.shape,
+                 f"placebo value geometry differs at layer {layer_index}")
+        row_count = int(fresh_values.shape[-2])
+        _require(row_count > 0, "placebo selected no rows")
+        expected_row_count += row_count
+        placebo_values = fresh_values.clone()
+        for row_offset in range(row_count):
+            row_index = destination_start + row_offset
+            try:
+                placebo_value, diagnostics = norm_matched_value_placebo_row(
+                    fresh_values[..., row_offset, :],
+                    correct_values[..., row_offset, :],
+                    wrong_values[..., row_offset, :],
+                    case_id=case_id,
+                    layer_index=layer_index,
+                    row_index=row_index,
+                )
+            except CanaryControlError as exc:
+                if not str(exc).startswith("PLACEBO_UNAVAILABLE:"):
+                    raise
+                failure_basis = {
+                    "completed_row_diagnostics": row_diagnostics,
+                    "failed_layer_index": layer_index,
+                    "failed_row_index": row_index,
+                    "error": str(exc),
+                }
+                compact = _compact_placebo_summary(row_diagnostics)
+                compact.update({
+                    "status": "PLACEBO_UNAVAILABLE",
+                    "row_index_basis": "fresh_destination_physical",
+                    "row_count": expected_row_count + sum(
+                        int(layer[1].shape[-2])
+                        for layer in fresh_rows[layer_index + 1:]),
+                    "completed_row_count": len(row_diagnostics),
+                    "failed_layer_index": layer_index,
+                    "failed_row_index": row_index,
+                    "canonical_diagnostics_sha256": _sha(failure_basis),
+                    "source_result_hashes": source_result_hashes,
+                    "error": str(exc),
+                })
+                return None, compact
+            placebo_values[..., row_offset, :] = placebo_value
+            row_diagnostics.append(diagnostics)
+        placebo_rows.append((fresh_keys.clone(), placebo_values))
+
+    compact = _compact_placebo_summary(row_diagnostics)
+    compact.update({
+        "status": "AVAILABLE",
+        "row_index_basis": "fresh_destination_physical",
+        "source_result_hashes": {
+            **source_result_hashes,
+            "placebo_result_rows_sha256": _sha(snapshot_hashes(placebo_rows)),
+        },
+    })
+    return placebo_rows, compact
+
+
+def _placebo_arm_record(model, tokenizer, case: Mapping[str, Any], plans,
+                        executions, boundaries, *, region: str,
+                        eos_ids: Sequence[int]) -> dict[str, Any]:
+    _require(region in REGIONS, "placebo region differs")
+    boundary = boundaries[region]
+    fresh_rows = _selected_rows(
+        executions, plans, boundary, schedule="N", region=region, source="F")
+    correct_rows = _selected_rows(
+        executions, plans, boundary, schedule="N", region=region, source="C")
+    wrong_rows = _selected_rows(
+        executions, plans, boundary, schedule="N", region=region, source="W")
+    start, end = plans["F"].physical_regions.interval(region)
+    placebo_rows, diagnostics = _build_value_placebo_rows(
+        fresh_rows, correct_rows, wrong_rows,
+        case_id=str(case["case_id"]), destination_start=start)
+    record: dict[str, Any] = {
+        "arm_kind": "placebo_control",
+        "schedule": "N",
+        "region": region,
+        "cell": VALUE_PLACEBO_CELL,
+        "key_source": "F",
+        "value_source": "deterministic_norm_matched_orthogonal",
+        "control_status": diagnostics["status"],
+        "diagnostics": diagnostics,
+    }
+    if placebo_rows is None:
+        return record
+
+    replaced, insertion = replace_rows(
+        boundary.snapshot, placebo_rows, start,
+        use_keys=True, use_values=True)
+    completed = continue_fresh_plan(
+        model, plans["F"], replaced, start_at=end)
+    correct, _, middle = case_histories(case)
+    visible = compact_messages(correct, middle)
+    focal = case["focal"]
+    nonfocal = case["nonfocal_control"]
+    logical_end = plans["F"].logical_positions[-1] + 1
+    record.update({
+        "insertion": insertion,
+        "boundary_before_hashes": snapshot_hashes(boundary.snapshot),
+        "boundary_after_hashes": snapshot_hashes(replaced),
+        "continuation": execution_record(completed),
+        "scores": {
+            "focal": probe_record(
+                model, tokenizer, completed.snapshot, visible,
+                plans["F"].token_ids, logical_end, str(focal["probe"]),
+                str(focal["correct_target"]),
+                str(focal["counterfactual_target"]), eos_ids),
+            "nonfocal": probe_record(
+                model, tokenizer, completed.snapshot, visible,
+                plans["F"].token_ids, logical_end,
+                str(nonfocal["probe"]), str(nonfocal["target"]),
+                str(nonfocal["countertarget"]), eos_ids),
+        },
+    })
+    return record
 
 
 def run_treatment_case(model, tokenizer, case: Mapping[str, Any], *,
@@ -335,24 +500,36 @@ def run_treatment_case(model, tokenizer, case: Mapping[str, Any], *,
             str(nonfocal["target"]), str(nonfocal["countertarget"]),
             eos_ids),
     }
-    arms = []
+    primary_arms = []
     for region in REGIONS:
         for cell in ARM_SOURCES:
             if cell == "FF":
-                arms.append({
+                primary_arms.append({
+                    "arm_kind": "primary",
                     "schedule": "N", "region": region, "cell": "FF",
                     "key_source": "F", "value_source": "F",
                     "shared_fresh_baseline": True,
                     "scores": fresh_scores,
                 })
             else:
-                arms.append(_arm_record(
+                primary_arms.append(_arm_record(
                     model, tokenizer, case, plans, executions, boundaries,
                     schedule="N", region=region, cell=cell, eos_ids=eos_ids))
     for cell in P_CELLS:
-        arms.append(_arm_record(
+        primary_arms.append(_arm_record(
             model, tokenizer, case, plans, executions, boundaries,
             schedule="P", region=R2, cell=cell, eos_ids=eos_ids))
+    _require(len(primary_arms) == PRIMARY_ARM_COUNT,
+             "primary treatment arm count differs")
+    placebo_arms = [
+        _placebo_arm_record(
+            model, tokenizer, case, plans, executions, boundaries,
+            region=region, eos_ids=eos_ids)
+        for region in REGIONS
+    ]
+    _require(len(placebo_arms) == PLACEBO_CONTROL_COUNT,
+             "placebo control count differs")
+    arms = primary_arms + placebo_arms
     return {
         "schema": TREATMENT_SCHEMA,
         "design_id": DESIGN_ID,
@@ -365,5 +542,9 @@ def run_treatment_case(model, tokenizer, case: Mapping[str, Any], *,
         "fresh_scores": fresh_scores,
         "arms": arms,
         "arm_count": len(arms),
+        "primary_arm_count": len(primary_arms),
+        "placebo_control_count": len(placebo_arms),
+        "available_placebo_control_count": sum(
+            arm["control_status"] == "AVAILABLE" for arm in placebo_arms),
         "phase_a_scores_present": False,
     }
