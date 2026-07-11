@@ -48,8 +48,6 @@ from coherent_state_integrity import (
     INDEX_NAME,
     RECEIPT_NAME,
     apparatus_inventory,
-    raw_sha256,
-    seal_payload,
     verify_prior_technical_authorization,
     write_sealed_payload,
     write_terminal_envelope,
