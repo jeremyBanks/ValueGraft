@@ -519,3 +519,28 @@ Capture everything very well (owner).
   requires live exact-model summary generation and complete provenance, and must call a
   replay of banked text replay—not preserved live native state. Evidence:
   `notes/2026071184-sol-banked-30b-render-reuse-audit.md`.
+
+- **The tested schedule failure is deterministic query-shape arithmetic, not
+  future-token influence.** In the preregistered c10 diagnostic, all A/B/C repeats were
+  bit-exact. A 23-token call and the first 23 rows of an otherwise identical 4,096-token
+  call first differed after layer-0 attention, whereas two equal-shaped 4,096-token calls
+  with different causally future rows remained bit-exact on rows 0–22 through every
+  layer. The changed-tail positive control diverged beginning exactly at row 23. Classify
+  this pinned local outcome as `QUERY_SHAPE_ROUNDING`; do not claim a specific tiling or
+  reduction implementation without lower-level evidence and do not generalize its
+  magnitude to 30B/A100. A replacement experiment treats P and O as prospective distinct
+  conditions and measures their interaction rather than gating on cache equality.
+  Evidence: the sealed artifact at `f19c4df` and
+  `notes/2026071185-sol-c10-schedule-origin-result.md`.
+
+- **Build a new matched paired corpus instead of repairing c02/c10 for confirmation.**
+  The inherited defects in c02/c10 are broad enough that symmetric repair would amount to
+  writing new conversations, while the capped 30B bank adds no native-cache provenance
+  after replay. Author twelve concise, diverse correct histories together with one
+  referent-specific and one sense-specific minimally counterfactual history each; freeze
+  all twelve before any semantic outcome. Require exact per-message production-tokenizer
+  geometry, blind whole-conversation review, target-aware diff review, and disagreement
+  adjudication. Use two frozen members for a local full-apparatus technical-completeness
+  run only. The subject must freely generate the summary under correct-history P; force
+  the identical summary IDs through every other history/schedule. Imported conversation
+  bodies are openly authored replay inputs, not live native state.
