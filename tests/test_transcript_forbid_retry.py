@@ -214,7 +214,40 @@ def test_participants_block_includes_labeled_contributing_subagents() -> None:
         messages,
         datetime(2026, 7, 10, tzinfo=timezone.utc),
     )
-    assert path.name == "20260710000000-conversation-user-gpt56.md"
+    assert path.name == "20260710000000-conversation-user-gpt56-methodologyaudit.md"
+
+
+def test_note_filename_compacts_opaque_subagents_and_caps_component_bytes() -> None:
+    mod = load_update_module()
+    messages = [
+        make_message(mod, "claude-code", "2026-07-10", 1, "2026-07-10T00:00:00Z", "request")
+    ]
+    for index in range(30):
+        label = f"agent-{index:016x}" if index < 14 else f"descriptive_contributor_{index:02d}_with_context"
+        messages.append(
+            mod.MessageRecord(
+                platform="claude-code",
+                date="2026-07-10",
+                sequence=1,
+                message_index=index + 2,
+                timestamp=f"2026-07-10T00:{index + 1:02d}:00Z",
+                role="assistant",
+                heading_metadata=f"  [model=claude-fable-5; subagent={label}]",
+                text="assessment",
+                source_line=index + 2,
+            )
+        )
+
+    path = mod.provisional_note_path_for_messages(
+        Path("notes"),
+        messages,
+        datetime(2026, 7, 10, tzinfo=timezone.utc),
+    )
+
+    assert "subagents14" in path.name
+    assert "descriptivecontributor14withcontext" in path.name
+    assert len(path.name.encode("utf-8")) <= 240
+    assert path.name.endswith(".md")
 
 
 def test_codex_discovery_includes_repo_user_sessions_only(tmp_path: Path, monkeypatch) -> None:

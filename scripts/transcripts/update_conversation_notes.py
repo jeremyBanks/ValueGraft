@@ -68,6 +68,7 @@ OLD_PARTICIPANTS_SECTION_HEADING = "**Participants in this Conversation.**"
 OLD_MODEL_SECTION_HEADING = "**Models in this Conversation.**"
 RESERVED_NOTE_NAMES = {"AGENTS.md", "README.md"}
 ARCHIVE_SUFFIXES = {".md", ".txt"}
+MAX_NOTE_TITLE_BYTES = 220
 FORBIDDEN_RETRY_PROMPT = """\
 A previous attempt at this summary used words or phrases that matched forbidden
 output filters.
@@ -502,8 +503,23 @@ def compact_prefix_for_new_note(
     return compact_prefix(timestamp, index)
 
 
+def bounded_note_title(title: str, max_bytes: int = MAX_NOTE_TITLE_BYTES) -> str:
+    if len(title.encode("utf-8")) <= max_bytes:
+        return title
+    digest = hashlib.sha256(title.encode("utf-8")).hexdigest()[:10]
+    suffix = f"-{digest}"
+    budget = max_bytes - len(suffix.encode("utf-8"))
+    truncated = title.encode("utf-8")[:budget].decode("utf-8", errors="ignore").rstrip("-")
+    return truncated + suffix
+
+
+def note_title_for_messages(messages: list[MessageRecord]) -> str:
+    title = conversation_title(title_participant_entries_for_messages(messages))
+    return bounded_note_title(title)
+
+
 def note_name_for_messages(prefix: str, messages: list[MessageRecord]) -> str:
-    return f"{prefix}-{conversation_title(title_participant_entries_for_messages(messages))}.md"
+    return f"{prefix}-{note_title_for_messages(messages)}.md"
 
 
 def provisional_note_path_for_messages(
@@ -521,7 +537,7 @@ def existing_note_path_for_messages(
     messages: list[MessageRecord],
     first_timestamp: datetime,
 ) -> Path:
-    title = conversation_title(title_participant_entries_for_messages(messages))
+    title = note_title_for_messages(messages)
     cache = ArchiveTimestampCache.load(root)
     paths = archive_note_files(notes_dir)
     cache.prepare(paths)
@@ -636,8 +652,11 @@ def model_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
 
 
 def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
-    entries = title_participant_entries_for_messages(messages)
     visible_messages = [msg for msg in messages if not msg.transcript_scaffolding]
+    entries: list[str] = []
+    if any(msg.role == "user" for msg in visible_messages):
+        entries.append("User")
+    entries.extend(model_entries_for_messages(visible_messages))
     subagent_stats: dict[str, tuple[int, int]] = {}
     for index, msg in enumerate(visible_messages):
         if msg.role != "assistant":
@@ -655,16 +674,41 @@ def participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]
             key=lambda item: (-item[1][0], item[1][1], item[0]),
         )
     )
+    if not entries:
+        entries.append("No user or assistant model metadata found.")
     return entries
 
 
 def title_participant_entries_for_messages(messages: list[MessageRecord]) -> list[str]:
-    """Return compact filename participants, excluding potentially many subagents."""
+    """Return filename participants with readable subagents and compact opaque IDs."""
     entries: list[str] = []
     visible_messages = [msg for msg in messages if not msg.transcript_scaffolding]
     if any(msg.role == "user" for msg in visible_messages):
         entries.append("User")
     entries.extend(model_entries_for_messages(visible_messages))
+    subagent_labels = [
+        parse_heading_fields(msg.heading_metadata).get("subagent")
+        for msg in visible_messages
+        if msg.role == "assistant"
+    ]
+    ordered_labels: list[str] = []
+    for raw_label in subagent_labels:
+        if not raw_label:
+            continue
+        label = raw_label.rstrip("/").rsplit("/", 1)[-1]
+        if label not in ordered_labels:
+            ordered_labels.append(label)
+    opaque_count = 0
+    readable_labels: list[str] = []
+    for label in ordered_labels:
+        normalized = label.removeprefix("agent-")
+        if re.fullmatch(r"[0-9a-f]{12,}", normalized, flags=re.IGNORECASE):
+            opaque_count += 1
+        else:
+            readable_labels.append(label)
+    if opaque_count:
+        entries.append(f"subagents{opaque_count}")
+    entries.extend(readable_labels)
     if not entries:
         entries.append("No user or assistant model metadata found.")
     return entries
