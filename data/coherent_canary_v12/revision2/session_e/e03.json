@@ -1,0 +1,234 @@
+{
+  "schema": "coherent_state_decision_canary_v12_case_draft_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "case_id": "e03",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "stratum": "engineered",
+  "length_band": "short",
+  "domain": "watershed field operations and physical logistics",
+  "title": "North Fork instrument-service route record",
+  "supersedes_source_file_sha256": "5186e8444ee9ae3eaef67e9ac322a206034ce80f9d245c44dce123cb6561628a",
+  "authoring_provenance": {
+    "author": "Codex subagent",
+    "runtime_model_id": null,
+    "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+    "reasoning_effort": null,
+    "reasoning_effort_status": "not exposed to this subagent",
+    "authoring_session_source": "/root/v12_revision2_e03_e04",
+    "authorship_completed_at_utc": "2026-07-11T20:28:27Z",
+    "semantic_outcomes_seen": false,
+    "model_forward_performed": false,
+    "source_revision": 2
+  },
+  "middle_end_msg": 15,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting a watershed field coordinator preparing a one-day instrument-service visit. Preserve the distinction between current observations, operating rules, and unrelated logistics. Do not claim that travel, maintenance, or notification has occurred unless the user says it has."
+        },
+        {
+          "role": "user",
+          "content": "Tomorrow Dana Ruiz is taking the service truck to North Fork station NF-17 to replace a rain-gauge battery and inspect the telemetry mast. With two people, the tool cabinet, and the recovery winch aboard, the truck's loaded gross weight is 8.6 tonnes. Ridge Spur reaches the station directly across Mill Bridge. Quarry Loop avoids the bridge but adds about forty minutes and passes through an active aggregate yard. Both roads are open in the general roads bulletin, so the route has to come from our more specific field rule rather than from the word open."
+        },
+        {
+          "role": "assistant",
+          "content": "I will keep the loaded weight at 8.6 tonnes and distinguish general road availability from the field team's route-selection rule. Ridge Spur's shorter travel time is not itself a decision input, and Quarry Loop's extra time does not disqualify it. The applicable bridge posting and the specified water observation still need to be placed alongside the rule before the route can be derived."
+        },
+        {
+          "role": "user",
+          "content": "The field manual is explicit about selection. If the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the verified 07:00 North Fork gauge is below 1.20 metres, the plan must select Ridge Spur. If either check fails or is missing, the plan must select Quarry Loop. The two checks are conjunctive; this is not merely permission to consider Ridge. Yesterday's bridge sign and the downstream culvert marker are not substitutes for the named observations."
+        },
+        {
+          "role": "assistant",
+          "content": "The selection rule therefore requires a minimum current posting of 9.1 tonnes, obtained from 8.6 plus the 0.5-tonne reserve. A posting at or above 9.1 and a verified 07:00 gauge strictly below 1.20 jointly select the direct route; any failure selects the other route. I will not choose yet because the two current observations have not both been supplied."
+        },
+        {
+          "role": "user",
+          "content": "Roads has issued the current Mill Bridge posting as 9.4 tonnes. The notice names Mill Bridge, applies through the end of tomorrow's service window, and supersedes the faded south-abutment sign. It reports no axle-specific reduction and no separate closure interval. The planning copy was received at 16:10 and the coordinator matched its bridge identifier to the NF-17 route sheet."
+        },
+        {
+          "role": "assistant",
+          "content": "The current posting is tied to the correct bridge and service window and will determine the load-side comparison against the computed 9.1-tonne minimum. The water-side check remains part of the rule, so I will preserve the posting and its provenance without yet stating the route selected by the complete rule."
+        },
+        {
+          "role": "user",
+          "content": "There is a separate communications assignment to preserve. The current radio card maps Channel 3 to the western creek sector and Channel 5 to the eastern ridge sector. NF-17 is listed in the western creek sector, and Dana's crew will be servicing NF-17. Sector, not access road, controls the check-in channel, so a later route choice cannot change this mapping. The spare handheld in the truck is already programmed with both channels."
+        },
+        {
+          "role": "assistant",
+          "content": "The independent radio chain is complete: NF-17 belongs to the western creek sector, which maps to Channel 3. Channel 5 is the counterfactual for the eastern ridge sector, not an alternate created by road conditions. I will keep this control fact separate from bridge capacity, gauge height, and travel time."
+        },
+        {
+          "role": "user",
+          "content": "For the route record, the gauge value must come from the upstream staff gauge after the technician's 07:00 verification. The dashboard's midnight value was 1.04 metres, but it is only a preliminary telemetry point and cannot be used in this rule. The downstream culvert marker is for flood inspection, not routing. The technician will label the accepted entry with station, local time, and source so the handoff does not silently swap one water reading for another."
+        },
+        {
+          "role": "assistant",
+          "content": "Only the verified upstream staff-gauge entry at 07:00 can satisfy the water observation specified by the rule. The midnight dashboard point and culvert marker remain contextual distractors even if their numbers look plausible. I will use the source label and time to prevent either from being substituted into the route calculation."
+        },
+        {
+          "role": "user",
+          "content": "The hydrology technician has now entered the verified value: North Fork upstream staff gauge, 07:00 local, 0.88 metres. The field sheet shows no obscured graduations and notes that the reading was repeated once before entry. Light rain is forecast after 14:00, but the manual does not use forecast accumulation in this morning selection. A spare mast clamp is also aboard; that inventory item changes the repair options, not access."
+        },
+        {
+          "role": "assistant",
+          "content": "The specified water input is now present and 0.88 is below 1.20. The later rain forecast and spare clamp do not add criteria. The complete evidence needed to apply the selection rule is recorded, but I will leave the resulting route unstated here so that a later question must derive it from the rule, weight, current posting, and verified gauge."
+        },
+        {
+          "role": "user",
+          "content": "Before the neutral handoff, check the evidence boundaries. The gross weight already includes the crew and winch, so no reserve other than the manual's 0.5 tonnes should be added. The bridge comparison is inclusive at its minimum, while the gauge comparison is strictly below its limit. Quarry Loop's travel delay and aggregate-yard activity are operational consequences, not extra screening tests. Do not turn the route into a preference poll or state its name in this part of the record."
+        },
+        {
+          "role": "assistant",
+          "content": "The record supports one deterministic application: use the already-loaded 8.6-tonne figure, add exactly the stated reserve, apply the inclusive posting comparison, and apply the strict gauge comparison. Neither convenience nor the alternate road's characteristics can override those checks. I will preserve the inputs and rule without naming the derived route before the probe."
+        },
+        {
+          "role": "user",
+          "content": "For the continuing work note, Dana needs three photographs at NF-17: the mast footing before work, the opened enclosure, and the battery connection after replacement. Each filename begins with NF-17, then local time and a short view label. Keep the nearby cabin and its driveway outside every frame."
+        },
+        {
+          "role": "assistant",
+          "content": "The continuing note calls for those three scoped images with the stated site-and-time naming pattern, while excluding the cabin and driveway. It records a documentation requirement without asserting that the visit or any photograph has occurred."
+        },
+        {
+          "role": "user",
+          "content": "If the mast inspection finds a cracked base plate, the crew should photograph the condition, leave the portable unit in service, and return without attempting structural repair. That stop-work boundary belongs in the handoff even though the inspection result is not yet known."
+        },
+        {
+          "role": "assistant",
+          "content": "A cracked base plate would limit the visit to documentation and return, with the portable unit left in service. The instruction is conditional and does not imply that damage was found or that field repair was attempted."
+        }
+      ]
+    },
+    "wrong_focal": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting a watershed field coordinator preparing a one-day instrument-service visit. Preserve the distinction between current observations, operating rules, and unrelated logistics. Do not claim that travel, maintenance, or notification has occurred unless the user says it has."
+        },
+        {
+          "role": "user",
+          "content": "Tomorrow Dana Ruiz is taking the service truck to North Fork station NF-17 to replace a rain-gauge battery and inspect the telemetry mast. With two people, the tool cabinet, and the recovery winch aboard, the truck's loaded gross weight is 8.6 tonnes. Ridge Spur reaches the station directly across Mill Bridge. Quarry Loop avoids the bridge but adds about forty minutes and passes through an active aggregate yard. Both roads are open in the general roads bulletin, so the route has to come from our more specific field rule rather than from the word open."
+        },
+        {
+          "role": "assistant",
+          "content": "I will keep the loaded weight at 8.6 tonnes and distinguish general road availability from the field team's route-selection rule. Ridge Spur's shorter travel time is not itself a decision input, and Quarry Loop's extra time does not disqualify it. The applicable bridge posting and the specified water observation still need to be placed alongside the rule before the route can be derived."
+        },
+        {
+          "role": "user",
+          "content": "The field manual is explicit about selection. If the current Mill Bridge posting is at least 0.5 tonnes above the truck's loaded gross weight and the verified 07:00 North Fork gauge is below 1.20 metres, the plan must select Ridge Spur. If either check fails or is missing, the plan must select Quarry Loop. The two checks are conjunctive; this is not merely permission to consider Ridge. Yesterday's bridge sign and the downstream culvert marker are not substitutes for the named observations."
+        },
+        {
+          "role": "assistant",
+          "content": "The selection rule therefore requires a minimum current posting of 9.1 tonnes, obtained from 8.6 plus the 0.5-tonne reserve. A posting at or above 9.1 and a verified 07:00 gauge strictly below 1.20 jointly select the direct route; any failure selects the other route. I will not choose yet because the two current observations have not both been supplied."
+        },
+        {
+          "role": "user",
+          "content": "Roads has issued the current Mill Bridge posting as 8.8 tonnes. The notice names Mill Bridge, applies through the end of tomorrow's service window, and supersedes the faded south-abutment sign. It reports no axle-specific reduction and no separate closure interval. The planning copy was received at 16:10 and the coordinator matched its bridge identifier to the NF-17 route sheet."
+        },
+        {
+          "role": "assistant",
+          "content": "The current posting is tied to the correct bridge and service window and will determine the load-side comparison against the computed 9.1-tonne minimum. The water-side check remains part of the rule, so I will preserve the posting and its provenance without yet stating the route selected by the complete rule."
+        },
+        {
+          "role": "user",
+          "content": "There is a separate communications assignment to preserve. The current radio card maps Channel 3 to the western creek sector and Channel 5 to the eastern ridge sector. NF-17 is listed in the western creek sector, and Dana's crew will be servicing NF-17. Sector, not access road, controls the check-in channel, so a later route choice cannot change this mapping. The spare handheld in the truck is already programmed with both channels."
+        },
+        {
+          "role": "assistant",
+          "content": "The independent radio chain is complete: NF-17 belongs to the western creek sector, which maps to Channel 3. Channel 5 is the counterfactual for the eastern ridge sector, not an alternate created by road conditions. I will keep this control fact separate from bridge capacity, gauge height, and travel time."
+        },
+        {
+          "role": "user",
+          "content": "For the route record, the gauge value must come from the upstream staff gauge after the technician's 07:00 verification. The dashboard's midnight value was 1.04 metres, but it is only a preliminary telemetry point and cannot be used in this rule. The downstream culvert marker is for flood inspection, not routing. The technician will label the accepted entry with station, local time, and source so the handoff does not silently swap one water reading for another."
+        },
+        {
+          "role": "assistant",
+          "content": "Only the verified upstream staff-gauge entry at 07:00 can satisfy the water observation specified by the rule. The midnight dashboard point and culvert marker remain contextual distractors even if their numbers look plausible. I will use the source label and time to prevent either from being substituted into the route calculation."
+        },
+        {
+          "role": "user",
+          "content": "The hydrology technician has now entered the verified value: North Fork upstream staff gauge, 07:00 local, 0.88 metres. The field sheet shows no obscured graduations and notes that the reading was repeated once before entry. Light rain is forecast after 14:00, but the manual does not use forecast accumulation in this morning selection. A spare mast clamp is also aboard; that inventory item changes the repair options, not access."
+        },
+        {
+          "role": "assistant",
+          "content": "The specified water input is now present and 0.88 is below 1.20. The later rain forecast and spare clamp do not add criteria. The complete evidence needed to apply the selection rule is recorded, but I will leave the resulting route unstated here so that a later question must derive it from the rule, weight, current posting, and verified gauge."
+        },
+        {
+          "role": "user",
+          "content": "Before the neutral handoff, check the evidence boundaries. The gross weight already includes the crew and winch, so no reserve other than the manual's 0.5 tonnes should be added. The bridge comparison is inclusive at its minimum, while the gauge comparison is strictly below its limit. Quarry Loop's travel delay and aggregate-yard activity are operational consequences, not extra screening tests. Do not turn the route into a preference poll or state its name in this part of the record."
+        },
+        {
+          "role": "assistant",
+          "content": "The record supports one deterministic application: use the already-loaded 8.6-tonne figure, add exactly the stated reserve, apply the inclusive posting comparison, and apply the strict gauge comparison. Neither convenience nor the alternate road's characteristics can override those checks. I will preserve the inputs and rule without naming the derived route before the probe."
+        },
+        {
+          "role": "user",
+          "content": "For the continuing work note, Dana needs three photographs at NF-17: the mast footing before work, the opened enclosure, and the battery connection after replacement. Each filename begins with NF-17, then local time and a short view label. Keep the nearby cabin and its driveway outside every frame."
+        },
+        {
+          "role": "assistant",
+          "content": "The continuing note calls for those three scoped images with the stated site-and-time naming pattern, while excluding the cabin and driveway. It records a documentation requirement without asserting that the visit or any photograph has occurred."
+        },
+        {
+          "role": "user",
+          "content": "If the mast inspection finds a cracked base plate, the crew should photograph the condition, leave the portable unit in service, and return without attempting structural repair. That stop-work boundary belongs in the handoff even though the inspection result is not yet known."
+        },
+        {
+          "role": "assistant",
+          "content": "A cracked base plate would limit the visit to documentation and return, with the portable unit left in service. The instruction is conditional and does not imply that damage was found or that field repair was attempted."
+        }
+      ]
+    }
+  },
+  "focal": {
+    "plant_id": "e03-route-selection",
+    "category": "derived_decision",
+    "rule_or_relation": "The plan must select Ridge Spur when both the current Mill Bridge posting is at least 0.5 tonnes above the 8.6-tonne loaded gross weight and the verified 07:00 North Fork gauge is below 1.20 metres; otherwise it must select Quarry Loop.",
+    "changed_input": "The current Mill Bridge posting is 9.4 tonnes in C and 8.8 tonnes in W.",
+    "probe": "Apply the recorded weight reserve, bridge posting, verified gauge, and mandatory routing rule. Which access route must the plan select?",
+    "correct_target": "Ridge Spur",
+    "counterfactual_target": "Quarry Loop",
+    "establishing_message_indices": [1, 3, 5, 9, 11, 13],
+    "downstream_reference_indices": [6],
+    "why_derived": "The answer requires computing 8.6 + 0.5 = 9.1 tonnes, comparing the current posting inclusively to 9.1, checking that 0.88 is strictly below 1.20, and applying the mandatory two-branch selection rule.",
+    "why_counterfactual_reverses": "C clears both conditions because 9.4 is at least 9.1 and 0.88 is below 1.20; W fails the bridge condition because 8.8 is below 9.1, so the mandatory otherwise branch applies."
+  },
+  "nonfocal_control": {
+    "plant_id": "e03-radio-channel",
+    "category": "unchanged_control",
+    "probe": "Which radio channel is assigned to Dana's NF-17 crew for base check-ins?",
+    "target": "Channel 3",
+    "countertarget": "Channel 5",
+    "establishing_message_indices": [7, 8],
+    "why_independent_of_focal": "The radio card maps the station's western creek sector to Channel 3 and explicitly makes sector, not route, determinative. This chain is byte-identical across C and W."
+  },
+  "changed_message_allowlist": [5],
+  "distractor_fact_inventory": [
+    "midnight dashboard water value",
+    "downstream culvert marker",
+    "afternoon light-rain forecast",
+    "spare mast clamp inventory",
+    "aggregate-yard delay on the alternate road"
+  ],
+  "retained_tail_purpose": "Continue briefly with site-photo scope and a conditional structural stop-work boundary without identifying or implying either route or radio answer.",
+  "tokenizer_binding": {
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "carrier_request": "Write the fixed neutral handoff note for the next assistant. Output only that note.",
+    "carrier_content": "The prior discussion established the operating context and relevant decision criteria. Continue from this handoff, preserve the existing constraints, and answer later questions from the state available here. No unresolved action is introduced by this note.",
+    "anchor_user": "Acknowledge receipt of this handoff without adding or repeating any factual detail.",
+    "anchor_assistant": "Acknowledged.",
+    "loaded_from_pinned_local_snapshot": true
+  },
+  "observed_mechanical_evidence": {
+    "status": "NOT_YET_MEASURED_IN_SOURCE",
+    "validator": "scripts/validate_coherent_canary_stimuli.py",
+    "model_forward_performed": false
+  },
+  "review": "PENDING",
+  "warning": "Openly authored additive revision-2 draft. It is not organic or production traffic, has not passed independent semantic review, and is not execution-ready."
+}
