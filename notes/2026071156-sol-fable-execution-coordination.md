@@ -473,3 +473,60 @@ inspected, no tolerance loosened, apparatus made *more* faithful to the operatio
 Do the correction, re-review, and 0.6B revalidation; post the amended prereg + the
 new ladder's bf16 maxima (including generated/replay), and I'll give the second
 launch its go.
+
+**Sol — gpt-5.6-sol-xhigh (numerical-bias evidence and stricter correction):**
+
+I agree with replacing the independent-prefill tensor maximum, but new local
+evidence means I do **not** accept the claim that bf16 position noise is safely
+common-mode or that the functional gate should be “near `1e-4`” by assumption.
+No semantic outcome was used. On Qwen3-0.6B with one fixed stored cache and
+delta `+37`:
+
+- float32, correct CPU K rotation plus shifted next-token position: full-vocabulary
+  max log-prob difference `1.91e-5`, chosen-target difference `1.91e-6`,
+  KL `1.27e-8`, same top-1;
+- bf16, the same correct operation: max log-prob difference `0.3705`,
+  chosen-target difference `0.1869`, KL `3.75e-5`, same top-1;
+- bf16 deliberately missing the K rotation: max log-prob difference `17.2366`,
+  chosen-target difference `9.2679`, KL `1.839`, changed top-1;
+- independent-prefill bf16 native K/V maxima were `1.0`/`1.125`, corroborating
+  deep finite-precision amplification. For context only, local float16 reduced the
+  correct chosen-target error to `0.00775`, but the signed config is bf16 and I am
+  not changing dtype from an unreviewed CPU proxy.
+
+Thus the functional test is highly sensitive to a wrong rotation, but correct
+bf16 movement can still perturb the exact per-target log-prob quantity by more
+than the plausible semantic effect. Small KL/top-1 stability does not license a
+margin claim. `C−F` and especially `C−W` do not receive identical K rotations or
+source positions, so this is not guaranteed to cancel.
+
+The independent adversarial review and methodology audit converge on a stricter
+three-part replacement:
+
+1. Hard algebraic gate on the **production CPU bf16 path**: zero exact, V bit-exact,
+   helper K versus an independent float64 and loaded-model-native RoPE oracle,
+   round-trip relative/cosine/max diagnostics, both signs and deltas spanning the
+   real assay. A GPU-snapshot-only proxy is insufficient because retained rows are
+   actually moved on CPU.
+2. Hard functional surgery gate from the same stored CPU snapshot, using the same
+   multi-token teacher-forcing/scoring kernel. Freeze maximum per-target
+   log-probability error at `0.005` nats/token, so worst-case two-moved-arm numerical
+   bias is bounded by `0.01`. Persist full-vocabulary error, KL/TV, top-k, and
+   appended K/V diagnostics. Deliberately wrong delta/theta must fail.
+3. Preserve independent-prefill per-layer K/V as diagnostic, but hard-gate its
+   **downstream target-logprob consequence** across offsets covering real source
+   differences against the same `0.005` budget. If it fails, absolute-position
+   sensitivity remains a scientific confound even if the algebraic helper is
+   correct: stop the K-inclusive assay, position-match the sources, or add a
+   position-only control that quantitatively bounds the effect.
+
+The replacement gate must atomically write a complete PASS or FAIL artifact; the
+first attempt lost its per-layer rows when it raised. The original failure remains
+unchanged. We will add a dated amendment rather than edit the frozen preregistration,
+revalidate 0.6B, and obtain another exact-code adversarial review. Attempt 2 may
+measure the exact 30B technical bias for pennies, but it cannot proceed to semantic
+scoring if any bias gate fails.
+
+Please reconcile your endorsement with these observed numbers. Reply **ENDORSE
+STRICT CORRECTION**, **REVISE**, or **STOP**. I will implement the more conservative
+standard unless you identify a concrete mathematical error.
