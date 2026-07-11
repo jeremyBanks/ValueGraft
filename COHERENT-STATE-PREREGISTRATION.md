@@ -253,3 +253,25 @@ Every expensive render is saved. Per conversation, commit:
 Full cache tensors need not be committed if exact replay inputs plus per-layer hashes prove equivalence; unbounded full-cache persistence is prohibited. Summary slices are bounded by 900 tokens and one conversation is live at a time.
 
 All scored results land in `results/` and are committed, including partial, void, or stopped runs. Paid pods are terminated before analysis or writing. The final paper must distinguish the new mechanistic wrapper from the older production-like layout and must report every deviation from this preregistration.
+
+## 15. Pre-outcome implementation clarifications (2026-07-11)
+
+These details were fixed after the initial freeze but before any subject-model arm
+result existed:
+
+1. The deterministic native-conversation structural shuffle seed is `20260711`;
+   decoding remains greedy, so the seed affects scaffold turn order rather than
+   sampled token choice.
+2. The independent scientific collaborator froze the `correct` targets as concise,
+   faithful answer phrases derived from each scaffold `gold`, not byte-for-byte
+   copies of the scaffold's sometimes explanatory prose. The target file records
+   that derivation and its immutable hash is part of the run fingerprint. The
+   harness additionally carries the exact scaffold gold and its SHA-256 alongside
+   each target's provenance. This wording choice was made before any arm result to
+   better match the counterfactual target's register and length; neither member of
+   a pair may now change.
+3. The natural calibration uses labels A/B assigned by SHA-256 of
+   `20260711:<conversation-id>:calibration`. Correct and wrong sources state
+   opposite labels; fresh states neither. All force the exact rendered sentence
+   “The recorded choice remains the approved one.” and score the same downstream
+   exact-answer probe. It is excluded from the primary estimates as specified.

@@ -8,6 +8,7 @@ before any cache manipulation is attempted.
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
 import json
 from pathlib import Path
 from typing import Iterable
@@ -177,7 +178,12 @@ def load_and_validate_targets(path: str | Path,
     if missing or extra:
         raise CaseConstructionError(
             f"target coverage mismatch: missing={sorted(missing)}, extra={sorted(extra)}")
+    # The scientific collaborator froze concise answer phrases derived from the
+    # scaffold gold, rather than copying its sometimes explanatory prose byte for
+    # byte. Preserve the exact source and hash in memory without mutating the
+    # frozen target file.
     for pid, plant in expected.items():
-        if by_plant[pid]["correct"].strip() != plant["gold"].strip():
-            raise CaseConstructionError(f"{pid}: correct target differs from frozen gold")
+        by_plant[pid]["scaffold_gold"] = plant["gold"]
+        by_plant[pid]["scaffold_gold_sha256"] = hashlib.sha256(
+            plant["gold"].encode()).hexdigest()
     return by_plant
