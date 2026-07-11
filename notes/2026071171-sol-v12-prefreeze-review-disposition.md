@@ -38,6 +38,10 @@ Before the final review dispositions, the complete focused v12 suite passed
 after the dispositions. A final complete focused suite is still required before
 the freeze commit.
 
+**Final observation:** after all dispositions and budget corrections, the
+complete focused v12 suite passed `158/158` tests with only two SWIG deprecation
+warnings. The pre-freeze static gate is therefore complete.
+
 No local or paid subject-model forward has occurred. Paid coherent-state compute
 remains `$0`.
 
@@ -51,4 +55,3 @@ in `.sol-v4/spend-ledger.md`; no further external-review calls are authorized
 before data collection. The exact-model phase must begin with the already-frozen
 `$2` gate tranche and may extend only if the observed cost still fits the
 owner's total ceiling and the retained synthesis reserve.
-
