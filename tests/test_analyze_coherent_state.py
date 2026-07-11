@@ -68,6 +68,18 @@ def test_calibration_does_not_pseudoreplicate_majority_label():
     assert out["calibration"]["both_directional_variants"] == 1
 
 
+def test_calibration_summary_mean_weights_unique_variants_equally():
+    docs = _docs()
+    for doc in docs:
+        value = 1.0 if doc["calibration"]["correct_label"] == "A" else 0.2
+        doc["calibration_outcomes"] = {
+            "G_correct": value, "G_fresh": 0.0, "G_wrong": 0.0}
+    out = analyze(docs)
+    assert out["calibration"]["mean_GF"] == pytest.approx(0.6)
+    assert out["calibration"]["repeated_execution_weighted_mean_GF"] == \
+        pytest.approx((5 * 1.0 + 0.2) / 6)
+
+
 def test_n6_futility_requires_both_nonpositive_and_calibration_failure():
     out = analyze(_docs(cf=-0.1, cw=-0.2, calibration=False))
     assert out["serial_decision"] == "STOP_FUTILITY"

@@ -157,12 +157,16 @@ def calibration_fires(docs):
         }
     both = sum(row["fires"] for row in variants.values())
     all_rows = [row for rows in rows_by_label.values() for row in rows]
+    variant_rows = [row for row in variants.values()
+                    if row["mean_GF"] is not None and row["mean_GW"] is not None]
     return {
         "fires": both == 2,
         "rule": "both unique label variants have positive GF and GW",
         "variants": variants,
-        "mean_GF": mean([x[0] for x in all_rows]),
-        "mean_GW": mean([x[1] for x in all_rows]),
+        "mean_GF": mean([row["mean_GF"] for row in variant_rows]),
+        "mean_GW": mean([row["mean_GW"] for row in variant_rows]),
+        "repeated_execution_weighted_mean_GF": mean([x[0] for x in all_rows]),
+        "repeated_execution_weighted_mean_GW": mean([x[1] for x in all_rows]),
         "both_directional_variants": both,
         "n": len(docs), "frozen_at_n": 6,
     }
