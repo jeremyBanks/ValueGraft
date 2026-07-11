@@ -260,10 +260,16 @@ conditional on those IDs. It does not make imported authored text subject-native
 and does not emulate another serving engine's batching policy.
 
 Correct and wrong N branches must have exactly identical call widths and
-positions. The exact generated-C carrier replayed under C must be bit-exact on
-every saved K/V row and token log probability. Same-stack repeats
-must also be bit-exact. Any discrepancy is `INVALID_TECHNICAL`; no tolerance is
-introduced after observing it.
+positions. Generated-versus-forced identity is a technical gate on a separate
+literal fixture, not a requirement that greedy decoding reproduce the externally
+fixed engineered carrier. Under that fixture, greedily generate one sequence,
+persist the observed IDs, rebuild the identical prefix, force those observed IDs
+q=1, and require bit-exact token log probabilities and K/V rows. The gate fixture
+is: system `Answer plainly.`; user `Write one short neutral sentence acknowledging
+that a record exists.`; greedy temperature 0; maximum 64 content tokens; normal
+EOS required. The engineered carrier remains forced fixed text under every
+history. Same-stack repeats must also be bit-exact. Any discrepancy is
+`INVALID_TECHNICAL`; no tolerance is introduced after observing it.
 
 ## 8. Schedule sensitivity P
 
@@ -440,8 +446,24 @@ Before semantic treatment scoring on the pod, persist and independently validate
 
 ### 14.1 Technical bidirectional path control (gating)
 
-Start from a fresh technical R2 boundary on the exact public gapped path. Freeze
-model weights and compute the gradient of one frozen downstream target margin
+The technical and natural controls share one exact fixture but produce separate
+artifacts and have different interpretations. Its literal source conversation is:
+
+- system: `Apply the stated policy exactly. At the final question answer with exactly approve or deny.`
+- user C: `Policy: approve only when the status is green. Current status: green.`
+- user W: `Policy: approve only when the status is green. Current status: amber.`
+- assistant: `The policy and current record have been processed. Use the recorded state for the decision.`
+- frozen compaction boundary after that assistant message;
+- retained user: `At the final question, answer with exactly one policy label.`
+- retained assistant: `Understood.`
+
+The common revision-2 engineered carrier and anchor are inserted at the boundary
+through the exact public v12 planner. The probe is `Decision?`; targets are the
+single production-tokenizer tokens `approve` and `deny`; the frozen margin is
+`log p(approve) - log p(deny)` from one immutable probe-prefix forward.
+
+Start from this fixture's fresh technical R2 boundary on the exact public gapped
+path. Freeze model weights and compute the gradient of the frozen downstream margin
 with respect to the selected R2 K/V rows. The edit is explicitly bf16-aware:
 for every layer/channel/token row with a nonzero finite gradient, flatten heads
 and head dimensions, select the lowest flat index among elements with maximal
@@ -471,7 +493,9 @@ persistence, and harvester functions**. The literal control texts are:
 - system: `Apply the stated policy exactly. At the final question answer with exactly approve or deny.`
 - policy/status A: `Policy: approve only when the status is green. Current status: green.`
 - policy/status B: `Policy: approve only when the status is green. Current status: amber.`
-- neutral carrier: `The policy and current record have been processed. Use the recorded state for the decision.`
+- source assistant before the frozen boundary: `The policy and current record have been processed. Use the recorded state for the decision.`
+- retained user/assistant: `At the final question, answer with exactly one policy label.` / `Understood.`
+- post-boundary carrier/anchor: the exact common revision-2 engineered literals;
 - probe: `Decision?`
 - targets: `approve` and `deny`.
 
