@@ -47,13 +47,18 @@ from coherent_state_runtime import (
     capture_forced_prefix_ids,
     capture_generated_summary,
     complete_assistant_context,
+    eager_backend_fingerprint,
     gapped_arm_boundary,
     score_arm,
     score_target,
     validate_position_schedule,
     validate_generated_replay,
 )
-from coherent_state_tokens import matched_wrong_prefix_ids
+from coherent_state_tokens import (
+    gapped_destination_layout,
+    generation_prefix_ids,
+    matched_wrong_prefix_ids,
+)
 from coherent_state_store import (
     ArtifactError,
     atomic_write_json,
@@ -69,15 +74,16 @@ from l_coherent_state_hf import run_loaded_gapped_gates
 MODEL = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
 STRUCTURAL_SEED = 20_260_711
-PLACEBO_SEED = 20_260_711
 ARTIFACT_SCHEMA = 2
-DESIGN_ID = "coherent-state-gapped-v3"
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3"
+DESIGN_ID = "coherent-state-gapped-v4"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4"
 AMENDMENT_PATHS = (
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-1.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-2.md"),
     Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-3.md"),
+    Path("COHERENT-STATE-PREREGISTRATION-AMENDMENT-4.md"),
 )
+ATTENTION_BACKEND = "eager"
 EXPECTED_GEOMETRY = {
     "layers": 48, "attention_heads": 32, "kv_heads": 4,
     "head_dim": 128, "rope_theta": 10_000_000,
@@ -86,8 +92,7 @@ MAX_REPLY_TOKENS = 320
 MAX_SUMMARY_TOKENS = 900
 IDENTITY_TOLERANCE = 1e-4
 ZERO_GAP_TOLERANCE = 5e-4
-PLACEBO_MOMENT_TOLERANCE = 0.02
-PLACEBO_QUANTIZATION_TOLERANCE = 0.05
+MAX_TECHNICAL_LOGICAL_POSITION = 8_193
 
 
 def utc_now() -> str:
@@ -170,12 +175,14 @@ def model_geometry(config) -> dict:
     cfg = getattr(config, "text_config", config)
     rp = getattr(cfg, "rope_parameters", None) or {}
     theta = getattr(cfg, "rope_theta", None) or rp.get("rope_theta")
+    head_dim = getattr(cfg, "head_dim", None)
+    if head_dim is None:
+        head_dim = cfg.hidden_size // cfg.num_attention_heads
     return {
         "layers": int(cfg.num_hidden_layers),
         "attention_heads": int(cfg.num_attention_heads),
         "kv_heads": int(cfg.num_key_value_heads),
-        "head_dim": int(getattr(cfg, "head_dim",
-                                cfg.hidden_size // cfg.num_attention_heads)),
+        "head_dim": int(head_dim),
         "rope_theta": int(theta),
     }
 
@@ -185,14 +192,48 @@ def sha256_json(value) -> str:
         value, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()
 
 
+class DurableDiagnosticSink(dict):
+    """A mapping that atomically checkpoints each top-level gate update."""
+
+    def __init__(self, persist):
+        super().__init__()
+        self._persist = persist
+
+    def _changed(self) -> None:
+        self._persist(dict(self))
+
+    def __setitem__(self, key, value) -> None:
+        super().__setitem__(key, value)
+        self._changed()
+
+    def __delitem__(self, key) -> None:
+        super().__delitem__(key)
+        self._changed()
+
+    def clear(self) -> None:
+        super().clear()
+        self._changed()
+
+    def pop(self, key, default=None):
+        out = super().pop(key, default)
+        self._changed()
+        return out
+
+    def update(self, *args, **kwargs) -> None:
+        super().update(*args, **kwargs)
+        self._changed()
+
+
 def prepare_subject_metadata():
-    config = AutoConfig.from_pretrained(MODEL, revision=REVISION)
+    config = AutoConfig.from_pretrained(
+        MODEL, revision=REVISION, attn_implementation=ATTENTION_BACKEND)
     resolved = getattr(config, "_commit_hash", None)
     if resolved != REVISION:
         raise CoherentStateError(f"resolved revision {resolved} != {REVISION}")
     tokenizer = AutoTokenizer.from_pretrained(MODEL, revision=REVISION)
     metadata = {
         "resolved_model_revision": resolved,
+        "attention_backend_requested": ATTENTION_BACKEND,
         "config_sha256": sha256_json(config.to_dict()),
         "tokenizer_revision_requested": REVISION,
         "tokenizer_class": type(tokenizer).__name__,
@@ -212,7 +253,9 @@ def load_subject(config, tokenizer):
         raise CoherentStateError(
             f"model geometry {geometry} != {EXPECTED_GEOMETRY}")
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL, revision=REVISION, dtype=torch.bfloat16, device_map=None)
+        MODEL, revision=REVISION, config=config,
+        attn_implementation=ATTENTION_BACKEND,
+        dtype=torch.bfloat16, device_map=None)
     model.to("cuda")
     model.eval()
     floating = {p.dtype for p in model.parameters() if p.is_floating_point()}
@@ -221,7 +264,45 @@ def load_subject(config, tokenizer):
         raise CoherentStateError(f"live parameter dtypes are {floating}, not bf16")
     if devices != {"cuda"}:
         raise CoherentStateError(f"live parameter devices are {devices}, not CUDA")
-    return model, tokenizer, geometry
+    if getattr(model.config, "_commit_hash", None) != REVISION:
+        raise CoherentStateError(
+            f"live model revision {getattr(model.config, '_commit_hash', None)} "
+            f"!= {REVISION}")
+    backend = eager_backend_fingerprint(model)
+    return model, tokenizer, geometry, backend
+
+
+def model_context_limit(model) -> int:
+    cfg = getattr(model.config, "text_config", model.config)
+    limit = int(getattr(cfg, "max_position_embeddings", 0) or 0)
+    if limit <= MAX_TECHNICAL_LOGICAL_POSITION:
+        raise CoherentStateError(
+            f"model context limit {limit} does not cover frozen technical "
+            f"position {MAX_TECHNICAL_LOGICAL_POSITION}")
+    return limit
+
+
+def assert_technical_gate_has_no_semantic_scores(gates: dict) -> None:
+    """Fail closed if the technical-only gate leaks a treatment outcome."""
+    forbidden = {
+        "arm_scores", "conversation_outcomes", "calibration_outcomes",
+        "technical_margins_not_semantic_outcomes",
+    }
+
+    def walk(value, path="gates"):
+        if isinstance(value, dict):
+            hit = forbidden.intersection(value)
+            if hit:
+                raise CoherentStateError(
+                    f"technical gate contains forbidden semantic score field "
+                    f"{path}.{sorted(hit)[0]}")
+            for key, child in value.items():
+                walk(child, f"{path}.{key}")
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                walk(child, f"{path}[{index}]")
+
+    walk(gates)
 
 
 def _serializable_source(capture) -> dict:
@@ -342,7 +423,7 @@ def _assert_boundary_intervention(arm: str, fresh, branch, layout,
         "pre_tail_storage_lengths": branch_lengths,
         "pre_tail_row_hashes": _snapshot_hashes(branch),
         "non_summary_rows_bit_exact": True,
-        "declared_summary_intervention_exact": arm != "G_delta",
+        "declared_summary_intervention_exact": True,
     }
 
 
@@ -361,6 +442,63 @@ class Runner:
         self.donors = donors
         self.donor_provenance = donor_provenance
         self.run_dir = args.run_dir
+        self.context_limit = model_context_limit(model)
+
+    def _restore_generated_summary(self, existing: dict,
+                                   correct_messages: list[dict]):
+        """Rebuild live tensors from a durable generation without regenerating text."""
+        summary = existing.get("summary") or {}
+        actual = (existing.get("sources") or {}).get("correct_actual") or {}
+        ids = summary.get("token_ids")
+        if not isinstance(ids, list) or not ids:
+            raise ArtifactError("durable generated summary has no token IDs")
+        if summary.get("token_sha256") != sha256_ids(ids):
+            raise ArtifactError("durable generated summary token hash mismatch")
+        if self.tokenizer.decode(ids) != summary.get("text"):
+            raise ArtifactError("durable generated summary text/ID mismatch")
+        restored = capture_forced_summary(
+            self.model, self.tokenizer, correct_messages, ids,
+            source_kind="generated_incremental_exact_reconstruction")
+        if (restored.prefix_ids != actual.get("prefix_token_ids") or
+                restored.summary_start != actual.get("summary_start") or
+                restored.summary_end != actual.get("summary_end") or
+                restored.row_hashes != actual.get("summary_row_hashes")):
+            raise ArtifactError(
+                "durable generated source does not reconstruct bit-exactly")
+        prior_trace = actual.get("trace") or {}
+        if restored.trace.get("token_ids") != prior_trace.get("token_ids"):
+            raise ArtifactError("durable generated trace token IDs changed")
+        old_lp = prior_trace.get("token_logprobs") or []
+        new_lp = restored.trace.get("token_logprobs") or []
+        if len(old_lp) != len(new_lp) or max(
+                (abs(float(a) - float(b)) for a, b in zip(old_lp, new_lp)),
+                default=float("inf")) > IDENTITY_TOLERANCE:
+            raise ArtifactError("durable generated trace log-probabilities changed")
+        restored.summary_text = summary["text"]
+        return restored
+
+    def _persist_generated_summary(self, path: Path, existing: dict,
+                                   generated) -> dict:
+        """Durably save all generated evidence before independent validation."""
+        return promote_checkpoint(path, existing, {
+            "summary": {
+                "text": generated.summary_text,
+                "token_ids": generated.summary_ids,
+                "token_sha256": sha256_ids(generated.summary_ids),
+                "request": SUMMARY_REQUEST,
+                "request_sha256": hashlib.sha256(
+                    SUMMARY_REQUEST.encode()).hexdigest(),
+                "actual_row_hashes": generated.row_hashes,
+                "generation_trace": generated.trace,
+            },
+            "sources": {
+                "correct_actual": _serializable_source(generated),
+            },
+            "capture_progress": {
+                "generated_source_persisted": True,
+                "generated_replay_pending_at_durable_save": True,
+            },
+        }, "captured")
 
     def ckpath(self, position: int, cid: str) -> Path:
         return checkpoint_path(self.run_dir, position, cid)
@@ -558,16 +696,41 @@ class Runner:
 
         try:
             correct_messages = correct_source_messages(conv, SUMMARY_REQUEST)
-            generated = capture_generated_summary(
-                self.model, self.tokenizer, correct_messages,
-                max_tokens=MAX_SUMMARY_TOKENS)
+            prefix_ids = generation_prefix_ids(self.tokenizer, correct_messages)
+            if len(prefix_ids) + MAX_SUMMARY_TOKENS > self.context_limit:
+                raise CoherentStateError(
+                    f"{cid}: prefix plus frozen summary cap exceeds context "
+                    f"{len(prefix_ids)}+{MAX_SUMMARY_TOKENS}>{self.context_limit}")
+            durable_generation = bool(
+                (existing.get("capture_progress") or {}).get(
+                    "generated_source_persisted"))
+            if durable_generation:
+                generated = self._restore_generated_summary(
+                    existing, correct_messages)
+                print(
+                    f"SUMMARY_RESUME position={position} id={cid} "
+                    f"tokens={len(generated.summary_ids)}",
+                    flush=True)
+            else:
+                generated = capture_generated_summary(
+                    self.model, self.tokenizer, correct_messages,
+                    max_tokens=MAX_SUMMARY_TOKENS)
+                if generated.source_kind != "generated_incremental":
+                    raise CoherentStateError(
+                        "correct source is not generated_incremental")
+                # This is the expensive, irreplaceable generation artifact. Save
+                # it atomically before running even the independent replay gate.
+                existing = self._persist_generated_summary(
+                    path, existing, generated)
+                print(
+                    f"SUMMARY_DURABLE position={position} id={cid} "
+                    f"tokens={len(generated.summary_ids)}",
+                    flush=True)
             replay = capture_forced_summary(
                 self.model, self.tokenizer, correct_messages,
                 generated.summary_ids, source_kind="correct_stepwise_replay")
             identity = validate_generated_replay(
                 generated, replay, IDENTITY_TOLERANCE)
-            if generated.source_kind != "generated_incremental":
-                raise CoherentStateError("correct source is not generated_incremental")
             if not (generated.summary_start == replay.summary_start and
                     generated.summary_end == replay.summary_end and
                     generated.summary_ids == replay.summary_ids):
@@ -575,29 +738,13 @@ class Runner:
                     "generated/replay summary span or IDs differ")
             replay.cache = None
 
-            prior_summary = existing.get("summary")
-            if prior_summary is not None:
-                if (prior_summary.get("token_ids") != generated.summary_ids or
-                        prior_summary.get("actual_row_hashes") != generated.row_hashes):
-                    raise CoherentStateError(
-                        "resumed generated summary differs from captured artifact")
             existing = promote_checkpoint(path, existing, {
-                "summary": {
-                    "text": generated.summary_text,
-                    "token_ids": generated.summary_ids,
-                    "token_sha256": sha256_ids(generated.summary_ids),
-                    "request": SUMMARY_REQUEST,
-                    "request_sha256": hashlib.sha256(
-                        SUMMARY_REQUEST.encode()).hexdigest(),
-                    "actual_row_hashes": generated.row_hashes,
-                },
                 "sources": {
-                    "correct_actual": _serializable_source(generated),
                     "correct_replay": _serializable_source(replay),
                     "generated_replay_identity": identity,
                 },
                 "capture_progress": {
-                    "generated_replay_persisted": True,
+                    "generated_replay_validated": True,
                 },
             }, "captured")
             print(f"CHECKPOINT_CAPTURED position={position} id={cid}", flush=True)
@@ -667,6 +814,15 @@ class Runner:
             wrong.cache = None
             _release_cuda()
 
+            declared_layout = gapped_destination_layout(
+                self.tokenizer, conv, generated.summary_text,
+                generated.summary_ids, SUMMARY_REQUEST,
+                generated.prefix_ids)
+            if declared_layout.logical_next_position > self.context_limit:
+                raise CoherentStateError(
+                    f"{cid}: logical destination end "
+                    f"{declared_layout.logical_next_position} exceeds context "
+                    f"{self.context_limit}")
             layout, fresh_trace, fresh_boundary, fresh_rows = \
                 build_gapped_fresh_boundary(
                 self.model, self.tokenizer, conv, generated.summary_text,
@@ -675,6 +831,9 @@ class Runner:
                     layout.source_summary_start):
                 raise CoherentStateError(
                     "correct/wrong/fresh summary logical starts differ")
+            if layout != declared_layout:
+                raise CoherentStateError(
+                    "destination layout changed between context gate and execution")
             if (len(generated.prefix_ids) != len(wrong.prefix_ids) or
                     len(layout.prefix_position_ids) != len(layout.prefix_ids)):
                 raise CoherentStateError("gapped prefix coverage mismatch")
@@ -741,10 +900,10 @@ class Runner:
 
             correct_boundary, _ = gapped_arm_boundary(
                 "G_correct", fresh_boundary, generated.rows, wrong.rows,
-                layout.physical_summary_start, PLACEBO_SEED + position)
+                layout.physical_summary_start, 0)
             wrong_boundary, _ = gapped_arm_boundary(
                 "G_wrong", fresh_boundary, generated.rows, wrong.rows,
-                layout.physical_summary_start, PLACEBO_SEED + position)
+                layout.physical_summary_start, 0)
             if not inserted_exact(generated.rows, correct_boundary):
                 raise CoherentStateError("correct gapped K/V insertion is not exact")
             if not inserted_exact(wrong.rows, wrong_boundary):
@@ -868,7 +1027,7 @@ class Runner:
                     arm,
                     lambda arm=arm: gapped_arm_boundary(
                         arm, fresh_boundary, generated.rows, wrong.rows,
-                        layout.physical_summary_start, PLACEBO_SEED + position),
+                        layout.physical_summary_start, 0),
                     layout, plants, fresh_boundary, generated.rows, wrong.rows)
                 arm_scores[arm] = score
                 arm_diagnostics[arm] = diag
@@ -887,21 +1046,6 @@ class Runner:
                     if branch_audit != self_branch_audit:
                         raise CoherentStateError(
                             "fresh direct and self-replaced branch audits differ")
-                if arm == "G_delta":
-                    if not diag or any(x["fixed_points"] for x in diag):
-                        raise CoherentStateError("placebo derangement has fixed points")
-                    if max(x["max_multiset_diff"] for x in diag) != 0:
-                        raise CoherentStateError("placebo intended delta multiset changed")
-                    if max(max(x["mean_diff"], x["covariance_diff"])
-                           for x in diag) > PLACEBO_MOMENT_TOLERANCE:
-                        raise CoherentStateError("placebo moment diagnostic exceeds tolerance")
-                    if max(max(x["applied_delta_max_abs_error"],
-                               x["applied_multiset_diff"],
-                               x["applied_mean_diff"],
-                               x["applied_covariance_diff"])
-                           for x in diag) > PLACEBO_QUANTIZATION_TOLERANCE:
-                        raise CoherentStateError(
-                            "placebo applied-delta quantization exceeds tolerance")
                 existing = promote_checkpoint(path, existing, {
                     "arm_scores": {arm: score},
                     "arm_diagnostics": {arm: diag},
@@ -1013,6 +1157,10 @@ def parse_args():
     ap.add_argument("--donor-dir", type=Path, default=Path("data/synthetic"))
     ap.add_argument("--resume-probe-stop-after-one", action="store_true",
                     help="operational gate: exit 75 after first scored checkpoint")
+    ap.add_argument(
+        "--technical-only", action="store_true",
+        help=("run and persist the exact-model technical gate, then exit "
+              "without rendering, calibration, or semantic scoring"))
     return ap.parse_args()
 
 
@@ -1033,6 +1181,8 @@ def main():
     fingerprint = None
     provenance = None
     geometry = None
+    backend_fingerprint = None
+    context_limit = None
     started_at = utc_now()
     production_gate = None
 
@@ -1070,7 +1220,7 @@ def main():
         scenarios = frozen_scenarios(scenario_map)
         targets = load_and_validate_targets(args.targets, scenario_map)
         donors, donor_provenance = load_external_donors(args.donor_dir)
-        fingerprint = {
+        static_fingerprint = {
             "schema": ARTIFACT_SCHEMA,
             "design_id": DESIGN_ID,
             "amendment_id": AMENDMENT_ID,
@@ -1086,44 +1236,95 @@ def main():
             "wrong_donors": WRONG_DONOR,
             "external_donor_provenance": donor_provenance,
             "structural_seed": STRUCTURAL_SEED,
-            "placebo_seed": PLACEBO_SEED,
             "max_reply_tokens": MAX_REPLY_TOKENS,
             "max_summary_tokens": MAX_SUMMARY_TOKENS,
             "identity_tolerance": IDENTITY_TOLERANCE,
             "zero_gap_tolerance": ZERO_GAP_TOLERANCE,
-            "placebo_moment_tolerance": PLACEBO_MOMENT_TOLERANCE,
-            "placebo_quantization_tolerance": PLACEBO_QUANTIZATION_TOLERANCE,
+            "attention_backend": ATTENTION_BACKEND,
+            "max_technical_logical_position": MAX_TECHNICAL_LOGICAL_POSITION,
             "subject_metadata": subject_metadata,
         }
         prior = json.loads(manifest_path.read_text()) if manifest_path.exists() else None
-        if prior is not None and prior.get("fingerprint") != fingerprint:
-            raise ArtifactError("run manifest fingerprint mismatch")
+        if args.technical_only and list(args.run_dir.glob("conv_*.json")):
+            raise ArtifactError(
+                "technical-only run directory already contains conversation checkpoints")
         started_at = prior.get("started_at") if prior else started_at
         phase = "SETUP"
         write_manifest(
             "SETUP", phase,
             resumed_at=utc_now() if prior else None,
-            fingerprint=fingerprint, provenance=provenance,
+            fingerprint_static=static_fingerprint, provenance=provenance,
+            technical_only=args.technical_only,
             production_kernel_gate_path=gate_path.name)
+        atomic_write_json(gate_attempt_path, {
+            "schema": ARTIFACT_SCHEMA,
+            "design_id": DESIGN_ID,
+            "amendment_id": AMENDMENT_ID,
+            "status": "RUNNING",
+            "started_at": utc_now(),
+            "model": MODEL,
+            "revision": REVISION,
+            "dtype": "torch.bfloat16",
+            "attention_backend_requested": ATTENTION_BACKEND,
+            "technical_only": args.technical_only,
+            "fingerprint_static": static_fingerprint,
+            "gates": {},
+        })
         print("PHASE SETUP", flush=True)
         phase = "MODEL_LOADING"
-        model, tokenizer, geometry = load_subject(config, tokenizer)
+        model, tokenizer, geometry, backend_fingerprint = load_subject(
+            config, tokenizer)
+        context_limit = model_context_limit(model)
+        subject_metadata = {
+            **subject_metadata,
+            "attention_backend_resolved": ATTENTION_BACKEND,
+            "attention_backend_fingerprint": backend_fingerprint,
+            "context_limit": context_limit,
+        }
+        provenance["subject"] = subject_metadata
+        fingerprint = {
+            **static_fingerprint,
+            "subject_metadata": subject_metadata,
+            "attention_backend_fingerprint": backend_fingerprint,
+            "context_limit": context_limit,
+        }
+        if prior is not None and prior.get("fingerprint") not in (None, fingerprint):
+            raise ArtifactError("run manifest fingerprint mismatch")
         phase = "MODEL_READY"
         write_manifest(
             "RUNNING", phase, fingerprint=fingerprint,
             provenance=provenance, geometry=geometry,
+            attention_backend=ATTENTION_BACKEND,
+            attention_backend_fingerprint=backend_fingerprint,
+            context_limit=context_limit,
+            technical_only=args.technical_only,
             production_kernel_gate_path=gate_path.name)
-        print(f"MODEL_READY revision={REVISION} dtype=bf16 geometry={geometry}",
+        print(f"MODEL_READY revision={REVISION} dtype=bf16 "
+              f"attention_backend={ATTENTION_BACKEND} "
+              f"backend_sha256={backend_fingerprint['sha256']} "
+              f"context_limit={context_limit} geometry={geometry}",
               flush=True)
         phase = "PRODUCTION_GATE"
-        gate_sink = {}
+
+        def persist_gate_progress(gates: dict) -> None:
+            running = json.loads(gate_attempt_path.read_text())
+            atomic_write_json(gate_attempt_path, {
+                **running,
+                "status": "RUNNING",
+                "updated_at": utc_now(),
+                "fingerprint": fingerprint,
+                "geometry": geometry,
+                "context_limit": context_limit,
+                "attention_backend_fingerprint": backend_fingerprint,
+                "gates": gates,
+            })
+
+        gate_sink = DurableDiagnosticSink(persist_gate_progress)
         try:
             production_gate = run_loaded_gapped_gates(
                 model, tokenizer,
                 identity_tolerance=IDENTITY_TOLERANCE,
                 zero_gap_tolerance=ZERO_GAP_TOLERANCE,
-                placebo_quantization_tolerance=PLACEBO_QUANTIZATION_TOLERANCE,
-                placebo_moment_tolerance=PLACEBO_MOMENT_TOLERANCE,
                 diagnostic_sink=gate_sink)
         except Exception as gate_exc:
             production_gate = {
@@ -1135,6 +1336,30 @@ def main():
                     "traceback": traceback.format_exc(),
                 },
             }
+        try:
+            assert_technical_gate_has_no_semantic_scores(production_gate)
+        except Exception as semantic_gate_exc:
+            production_gate = {
+                **production_gate,
+                "passes": False,
+                "failure": {
+                    "error_type": type(semantic_gate_exc).__name__,
+                    "error": str(semantic_gate_exc),
+                    "traceback": traceback.format_exc(),
+                },
+            }
+        backend_gate = production_gate.get("attention_backend") or {}
+        if (backend_gate.get("passes") is not True or
+                backend_gate.get("observed_backend") != ATTENTION_BACKEND or
+                backend_gate.get("fingerprint") != backend_fingerprint):
+            production_gate = {
+                **production_gate,
+                "passes": False,
+                "failure": production_gate.get("failure") or {
+                    "error_type": "CoherentStateError",
+                    "error": "production gate lacks exact eager backend attestation",
+                },
+            }
         gate_status = "PASS" if production_gate.get("passes") is True else "FAIL"
         gate_doc = {
             "schema": ARTIFACT_SCHEMA,
@@ -1143,6 +1368,11 @@ def main():
             "status": gate_status, "completed_at": utc_now(),
             "model": MODEL, "revision": REVISION,
             "dtype": "torch.bfloat16", "geometry": geometry,
+            "attention_backend": ATTENTION_BACKEND,
+            "attention_backend_fingerprint": backend_fingerprint,
+            "context_limit": context_limit,
+            "fingerprint": fingerprint,
+            "technical_only": args.technical_only,
             "gates": production_gate,
         }
         if gate_status == "FAIL":
@@ -1156,13 +1386,38 @@ def main():
             raise CoherentStateError(
                 "production gapped gate failed; complete evidence was persisted")
         print("PRODUCTION_GAPPED_GATE_PASS", flush=True)
+        if args.technical_only:
+            if list(args.run_dir.glob("conv_*.json")):
+                raise ArtifactError(
+                    "technical-only gate unexpectedly produced a checkpoint")
+            phase = "TECHNICAL_COMPLETE"
+            write_manifest(
+                "TECHNICAL_PASS", phase, completed_at=utc_now(),
+                fingerprint=fingerprint, provenance=provenance,
+                geometry=geometry, context_limit=context_limit,
+                attention_backend=ATTENTION_BACKEND,
+                attention_backend_fingerprint=backend_fingerprint,
+                technical_only=True,
+                production_kernel_gate_path=gate_path.name,
+                production_kernel_gate_attempt_path=gate_attempt_path.name,
+                production_kernel_gate_status="PASS",
+                production_kernel_gate=production_gate,
+                semantic_scoring_performed=False,
+                conversation_checkpoints=[])
+            print("COHERENCE_TECHNICAL_ONLY_DONE status=PASS semantics=none",
+                  flush=True)
+            return 0
         phase = "SEMANTIC_RUN"
         write_manifest(
             "RUNNING", phase, fingerprint=fingerprint,
             provenance=provenance, geometry=geometry,
             production_kernel_gate_path=gate_path.name,
             production_kernel_gate_attempt_path=gate_attempt_path.name,
-            production_kernel_gate_status=gate_status)
+            production_kernel_gate_status=gate_status,
+            attention_backend=ATTENTION_BACKEND,
+            attention_backend_fingerprint=backend_fingerprint,
+            context_limit=context_limit,
+            technical_only=False)
         runner = Runner(
             args, model, tokenizer, scenarios, targets, fingerprint,
             provenance, geometry, donors, donor_provenance)
@@ -1251,6 +1506,13 @@ def main():
             failure_manifest["provenance"] = provenance
         if geometry is not None:
             failure_manifest["geometry"] = geometry
+        if backend_fingerprint is not None:
+            failure_manifest["attention_backend"] = ATTENTION_BACKEND
+            failure_manifest["attention_backend_fingerprint"] = \
+                backend_fingerprint
+        if context_limit is not None:
+            failure_manifest["context_limit"] = context_limit
+        failure_manifest["technical_only"] = args.technical_only
         write_manifest("ERROR", phase, **failure_manifest)
         print(f"FATAL {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
         traceback.print_exc()

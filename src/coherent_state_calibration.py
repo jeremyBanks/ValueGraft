@@ -15,7 +15,12 @@ from coherent_state_runtime import (
     gapped_arm_boundary,
     score_arm,
 )
-from coherent_state_tokens import generation_prefix_ids, rendered_assistant_content_ids
+from coherent_state_tokens import (
+    generation_prefix_ids,
+    gapped_destination_layout,
+    probe_layout,
+    rendered_assistant_content_ids,
+)
 
 
 CALIBRATION_SYSTEM = (
@@ -60,6 +65,125 @@ def calibration_fresh_messages() -> list[dict]:
         {"role": "system", "content": CALIBRATION_SYSTEM},
         {"role": "user", "content": CALIBRATION_REQUEST},
     ]
+
+
+def _calibration_construction(tokenizer, conversation_id: str) -> dict:
+    """Validate one frozen calibration variant without a model forward."""
+    correct_label, wrong_label = calibration_labels(conversation_id)
+    summary_ids = rendered_assistant_content_ids(
+        tokenizer, calibration_fresh_messages(), CALIBRATION_SUMMARY)
+    if len(summary_ids) < 2:
+        raise CoherentStateError("calibration summary is too short")
+    correct_messages = calibration_source_messages(correct_label)
+    wrong_messages = calibration_source_messages(wrong_label)
+    correct_ids = generation_prefix_ids(tokenizer, correct_messages)
+    wrong_ids = generation_prefix_ids(tokenizer, wrong_messages)
+    if len(correct_ids) != len(wrong_ids):
+        raise CoherentStateError("calibration sources are not position matched")
+    changed_positions = [i for i, (a, b) in enumerate(
+        zip(correct_ids, wrong_ids)) if a != b]
+    if not changed_positions:
+        raise CoherentStateError("calibration sources differ at no token position")
+    marker_ids = tokenizer.encode("<|im_start|>", add_special_tokens=False)
+    if len(marker_ids) != 1:
+        raise CoherentStateError("calibration chat-boundary marker is not one token")
+    starts = [i for i, token_id in enumerate(correct_ids)
+              if token_id == marker_ids[0]]
+    if len(starts) != len(correct_messages) + 1:
+        raise CoherentStateError("calibration message boundary count differs")
+    allowed_content_positions = list(range(starts[1], starts[2]))
+    allowed = set(allowed_content_positions)
+    if any(i not in allowed for i in changed_positions):
+        raise CoherentStateError(
+            "calibration wrong source changed a non-record message slot")
+    special = set(int(x) for x in tokenizer.all_special_ids)
+    if any(correct_ids[i] in special or wrong_ids[i] in special
+           for i in changed_positions):
+        raise CoherentStateError(
+            "calibration wrong source changed a structural/special token")
+    structural_positions = [i for i in range(len(correct_ids))
+                            if i not in changed_positions]
+    if any(correct_ids[i] != wrong_ids[i] for i in structural_positions):
+        raise CoherentStateError("calibration structural slots differ")
+    target_correct = f"Label {correct_label}."
+    target_wrong = f"Label {wrong_label}."
+    correct_target_ids = tokenizer.encode(
+        target_correct, add_special_tokens=False)
+    wrong_target_ids = tokenizer.encode(target_wrong, add_special_tokens=False)
+    if len(correct_target_ids) != len(wrong_target_ids):
+        raise CoherentStateError(
+            "calibration targets are not token-length matched")
+    conv = {
+        "id": f"calibration-{conversation_id}",
+        "messages": correct_messages[:-1],
+        "sections": {"middle_end_msg": 3},
+    }
+    layout = gapped_destination_layout(
+        tokenizer, conv, CALIBRATION_SUMMARY, summary_ids,
+        CALIBRATION_REQUEST, correct_ids)
+    rendered_correct_ids = probe_layout(
+        tokenizer, layout.messages, layout.context_ids,
+        CALIBRATION_PROBE, target_correct).target_ids
+    rendered_wrong_ids = probe_layout(
+        tokenizer, layout.messages, layout.context_ids,
+        CALIBRATION_PROBE, target_wrong).target_ids
+    if len(rendered_correct_ids) != len(rendered_wrong_ids):
+        raise CoherentStateError(
+            "calibration targets differ in rendered scoring-token length")
+    return {
+        "conversation_id": conversation_id,
+        "correct_label": correct_label,
+        "wrong_label": wrong_label,
+        "summary_text": CALIBRATION_SUMMARY,
+        "summary_ids": summary_ids,
+        "summary_sha256": sha256_ids(summary_ids),
+        "correct_prefix_ids": correct_ids,
+        "wrong_prefix_ids": wrong_ids,
+        "correct_prefix_sha256": sha256_ids(correct_ids),
+        "wrong_prefix_sha256": sha256_ids(wrong_ids),
+        "prefix_length": len(correct_ids),
+        "changed_positions": changed_positions,
+        "allowed_first_record_content_positions": allowed_content_positions,
+        "structural_positions": structural_positions,
+        "exact_length": True,
+        "changed_only_first_record_content": True,
+        "structural_slots_equal": True,
+        "special_ids_excluded": True,
+        "targets": {
+            "correct_text": target_correct,
+            "wrong_text": target_wrong,
+            "correct_ids": correct_target_ids,
+            "wrong_ids": wrong_target_ids,
+            "equal_token_length": True,
+            "token_length": len(correct_target_ids),
+            "rendered_correct_ids": rendered_correct_ids,
+            "rendered_wrong_ids": rendered_wrong_ids,
+            "rendered_equal_token_length": True,
+            "rendered_token_length": len(rendered_correct_ids),
+        },
+    }
+
+
+def validate_calibration_constructions(tokenizer) -> dict:
+    """Validate both unique frozen variants without margins or model execution."""
+    variants = {
+        cid: _calibration_construction(tokenizer, cid)
+        for cid in ("c10", "c07")
+    }
+    coverage = sorted({row["correct_label"] for row in variants.values()})
+    if coverage != ["A", "B"]:
+        raise CoherentStateError(
+            f"calibration constructions do not cover both labels: {coverage}")
+    return {
+        "schema": 2,
+        "amendment_id": AMENDMENT_ID,
+        "design_id": DESIGN_ID,
+        "passes": True,
+        "model_forwards": 0,
+        "semantic_outcomes": 0,
+        "label_coverage": coverage,
+        "variants": variants,
+    }
 
 
 def run_calibration(model, tokenizer, conversation_id: str) -> dict:
