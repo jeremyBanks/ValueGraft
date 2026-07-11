@@ -46,6 +46,12 @@ to `$33.787580` against the owner's approximate `$60` ceiling; this is not
 verified as incremental cash billing. The prior RunPod balance observation
 remains `$63.3160022124`.
 
+The retired local v10 ladder processes (PIDs 55251/55253) and accidental
+historical v6 ladder processes (70711/70713) were observed stopped/paused, then
+terminated with SIGTERM after their useful durable evidence was committed. A
+follow-up process listing contained none of the four PIDs. No authorizing work
+was discarded; both designs are nonauthorizing.
+
 The immediate work is to freeze the additive canary preregistration, implement
 and independently harvest its complete runner, and begin the corrected
 negative/methodological paper scaffold in parallel. Do not resume long-corpus
