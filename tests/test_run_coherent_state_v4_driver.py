@@ -24,6 +24,30 @@ def test_durable_diagnostic_sink_persists_every_top_level_mutation():
     ]
 
 
+def test_open_gate_attempt_terminalizes_failure_atomically(tmp_path):
+    attempt = tmp_path / "production_kernel_gate_unique.json"
+    canonical = tmp_path / "production_kernel_gate.json"
+    attempt.write_text(json.dumps({
+        "schema": 2,
+        "design_id": driver.DESIGN_ID,
+        "amendment_id": driver.AMENDMENT_ID,
+        "status": "RUNNING",
+        "gates": {"attention_backend": {"status": "RUNNING"}},
+    }))
+    failure = {"error_type": "Injected", "error": "model load stopped"}
+    assert driver.terminalize_running_gate_attempt(
+        attempt, canonical, failure, geometry=None) is True
+    unique = json.loads(attempt.read_text())
+    assert json.loads(canonical.read_text()) == unique
+    assert unique["status"] == "FAIL"
+    assert unique["gates"]["passes"] is False
+    assert unique["gates"]["failure"] == failure
+    assert unique["error"] == failure
+    assert driver.terminalize_running_gate_attempt(
+        attempt, canonical, {"error": "overwrite"}) is False
+    assert json.loads(attempt.read_text()) == unique
+
+
 def test_technical_gate_rejects_semantic_score_fields_recursively():
     driver.assert_technical_gate_has_no_semantic_scores({
         "passes": True,

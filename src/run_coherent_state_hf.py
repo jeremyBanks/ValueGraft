@@ -224,6 +224,31 @@ class DurableDiagnosticSink(dict):
         self._changed()
 
 
+def terminalize_running_gate_attempt(
+        attempt_path: Path, gate_path: Path, failure: dict, **fields) -> bool:
+    """Turn an already-opened unique gate sink into a durable terminal FAIL."""
+    if not attempt_path.exists():
+        return False
+    attempt = json.loads(attempt_path.read_text())
+    if attempt.get("status") != "RUNNING":
+        return False
+    failed = {
+        **attempt,
+        **fields,
+        "status": "FAIL",
+        "completed_at": utc_now(),
+        "gates": {
+            **(attempt.get("gates") or {}),
+            "passes": False,
+            "failure": failure,
+        },
+        "error": failure,
+    }
+    atomic_write_json(attempt_path, failed)
+    atomic_write_json(gate_path, failed)
+    return True
+
+
 def prepare_subject_metadata():
     config = AutoConfig.from_pretrained(
         MODEL, revision=REVISION, attn_implementation=ATTENTION_BACKEND)
@@ -1183,6 +1208,7 @@ def main():
     geometry = None
     backend_fingerprint = None
     context_limit = None
+    static_fingerprint = None
     started_at = utc_now()
     production_gate = None
 
@@ -1464,22 +1490,39 @@ def main():
                    "traceback": traceback.format_exc()}
         failure_path = args.run_dir / "failure.json"
         atomic_write_json(failure_path, failure)
-        if phase in {"MODEL_READY", "PRODUCTION_GATE"} and not gate_path.exists():
-            atomic_write_json(gate_path, {
+        attempt_terminalized = terminalize_running_gate_attempt(
+            gate_attempt_path, gate_path, failure,
+            geometry=geometry,
+            attention_backend=ATTENTION_BACKEND,
+            attention_backend_fingerprint=backend_fingerprint,
+            context_limit=context_limit,
+            fingerprint=fingerprint,
+            fingerprint_static=static_fingerprint)
+        if (not attempt_terminalized and
+                phase in {"MODEL_READY", "PRODUCTION_GATE"} and
+                not gate_path.exists()):
+            failed_gate = {
                 "schema": ARTIFACT_SCHEMA,
                 "design_id": DESIGN_ID,
                 "amendment_id": AMENDMENT_ID,
                 "status": "FAIL", "completed_at": utc_now(),
                 "model": MODEL, "revision": REVISION,
                 "dtype": "torch.bfloat16", "geometry": geometry,
+                "attention_backend": ATTENTION_BACKEND,
+                "attention_backend_fingerprint": backend_fingerprint,
+                "context_limit": context_limit,
+                "fingerprint": fingerprint,
                 "gates": {"passes": False, "failure": failure},
-            })
+                "error": failure,
+            }
+            atomic_write_json(gate_path, failed_gate)
         if gate_path.exists() and not gate_attempt_path.exists():
             atomic_write_json(
                 gate_attempt_path, json.loads(gate_path.read_text()))
         void_refs = terminalize_partial_checkpoints(args.run_dir, failure)
         gate_doc = json.loads(gate_path.read_text()) if gate_path.exists() else {}
-        if gate_doc.get("status") == "PASS" and not void_refs:
+        if (gate_doc.get("status") == "PASS" and not void_refs and
+                not args.technical_only):
             run_void = args.run_dir / "conv_00_run_failure.json"
             atomic_write_json(run_void, {
                 "schema": ARTIFACT_SCHEMA,
