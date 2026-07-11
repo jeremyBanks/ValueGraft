@@ -108,7 +108,7 @@ def promote_checkpoint(path: Path, existing: dict, additions: dict,
 def validate_scored_checkpoint(doc: dict) -> None:
     if (doc.get("schema") != 2 or doc.get("design_id") != DESIGN_ID or
             doc.get("amendment_id") != AMENDMENT_ID):
-        raise ArtifactError("scored checkpoint is not Amendments-1-2-3 schema 2")
+        raise ArtifactError("scored checkpoint is not Amendments-1-2-3-4 schema 2")
     required = (
         "conversation", "summary", "sources", "destination", "arm_scores",
         "conversation_outcomes", "gates", "runtime",
@@ -127,6 +127,11 @@ def validate_scored_checkpoint(doc: dict) -> None:
         raise ArtifactError("scored checkpoint has non-finite outcomes")
     if set(doc["arm_scores"]) != set(GAPPED_ARM_NAMES):
         raise ArtifactError("arm-score keys do not equal the amended G arm set")
+    fingerprint = doc.get("fingerprint") or {}
+    if fingerprint.get("attention_backend") != "eager":
+        raise ArtifactError("checkpoint fingerprint does not freeze eager attention")
+    if not isinstance(fingerprint.get("attention_backend_fingerprint"), dict):
+        raise ArtifactError("checkpoint lacks attention-backend fingerprint")
     calibration = doc.get("calibration_outcomes") or {}
     if set(calibration) != {"G_fresh", "G_correct", "G_wrong"}:
         raise ArtifactError("calibration outcomes do not equal the amended G set")

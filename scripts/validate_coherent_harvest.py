@@ -16,8 +16,12 @@ from typing import Any
 
 
 SCHEMA = 2
-AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3"
-DESIGN_ID = "coherent-state-gapped-v3"
+AMENDMENT_ID = "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4"
+DESIGN_ID = "coherent-state-gapped-v4"
+MODEL_ID = "Qwen/Qwen3-30B-A3B-Instruct-2507"
+MODEL_REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+PARAMETER_DTYPE = "torch.bfloat16"
+ATTENTION_BACKEND = "eager"
 ARMS = (
     "A_full",
     "G_fresh",
@@ -25,7 +29,6 @@ ARMS = (
     "G_wrong",
     "G_Vcorrect",
     "G_Kcorrect",
-    "G_delta",
 )
 FROZEN_ORDER = (
     "c10", "c02", "c01", "c04", "c07", "c11",
@@ -37,7 +40,10 @@ WRONG_DONORS = {
     "c05": "c25", "c09": "c26", "c06": "c27",
     "c12": "c28", "c08": "c29", "c03": "c30",
 }
-OLD_ARMS = {"F_fresh", "C_coherent", "W_wrong", "V_value", "K_key", "D_delta"}
+OLD_ARMS = {
+    "F_fresh", "C_coherent", "W_wrong", "V_value", "K_key", "D_delta",
+    "G_delta",
+}
 FAILURE_RE = re.compile(
     r"(?:FATAL|Traceback \(most recent call last\)|CUDA out of memory|"
     r"OutOfMemoryError|RuntimeError|CoherentStateError|WATCH_FAILURE)",
@@ -66,6 +72,23 @@ def _require_identity(doc: dict[str, Any], label: str) -> None:
         raise ValueError(f"{label} design_id mismatch")
 
 
+def _require_backend_fingerprint(doc: dict[str, Any], label: str) -> None:
+    if doc.get("attention_backend") != ATTENTION_BACKEND:
+        raise ValueError(f"{label} does not freeze eager attention")
+    attestation = doc.get("attention_backend_fingerprint")
+    if not isinstance(attestation, dict) or not attestation:
+        raise ValueError(f"{label} lacks attention-backend fingerprint")
+    if attestation.get("requested_implementation") != ATTENTION_BACKEND:
+        raise ValueError(f"{label} backend request is not eager")
+    layers = attestation.get("layers")
+    if not isinstance(layers, list) or len(layers) != 48:
+        raise ValueError(f"{label} backend fingerprint does not cover 48 layers")
+    if any(row.get("resolved_implementation") != ATTENTION_BACKEND
+           for row in layers if isinstance(row, dict)) or \
+            any(not isinstance(row, dict) for row in layers):
+        raise ValueError(f"{label} contains a non-eager attention layer")
+
+
 def _validate_gate(root: Path, expected_status: str) -> dict[str, Any]:
     gate = _load(root / "production_kernel_gate.json")
     _require_identity(gate, "production gate")
@@ -77,6 +100,20 @@ def _validate_gate(root: Path, expected_status: str) -> dict[str, Any]:
     gates = gate.get("gates")
     if not isinstance(gates, dict):
         raise ValueError("production gate lacks gates object")
+    if gate.get("model") != MODEL_ID or gate.get("revision") != MODEL_REVISION:
+        raise ValueError("production gate model or revision mismatch")
+    if gate.get("dtype") != PARAMETER_DTYPE:
+        raise ValueError("production gate dtype mismatch")
+    backend = gates.get("attention_backend")
+    if not isinstance(backend, dict):
+        raise ValueError("production gate lacks attention-backend evidence")
+    if (backend.get("observed_backend") != ATTENTION_BACKEND or
+            backend.get("passes") is not True):
+        raise ValueError("production gate did not attest eager attention")
+    fingerprint = backend.get("fingerprint")
+    if not isinstance(fingerprint, dict) or \
+            fingerprint.get("requested_implementation") != ATTENTION_BACKEND:
+        raise ValueError("production gate backend fingerprint is malformed")
     expected_passes = expected_status == "PASS"
     if gates.get("passes") is not expected_passes:
         raise ValueError(
@@ -127,6 +164,7 @@ def _validate_checkpoint(doc: dict[str, Any], path: Path, *, scored: bool,
             raise ValueError(f"{path.name} fingerprint frozen order mismatch")
         if fingerprint.get("wrong_donors") != WRONG_DONORS:
             raise ValueError(f"{path.name} fingerprint donor map mismatch")
+        _require_backend_fingerprint(fingerprint, f"{path.name} fingerprint")
         if (expected_fingerprint is not None and
                 fingerprint != expected_fingerprint):
             raise ValueError(
@@ -154,6 +192,7 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
     if not isinstance(manifest_fingerprint, dict):
         raise ValueError("manifest lacks run fingerprint")
     _require_identity(manifest_fingerprint, "manifest fingerprint")
+    _require_backend_fingerprint(manifest_fingerprint, "manifest fingerprint")
     probe = _load(root / "resume_probe.json")
     _require_identity(probe, "resume probe")
     if probe.get("resume_probe_verified") is not True:
@@ -186,6 +225,32 @@ def _validate_complete(root: Path, log_text: str) -> dict[str, Any]:
         "n_scored": len(paths),
         "resume_probe_verified": True,
         "production_gate": "PASS",
+    }
+
+
+def _validate_technical(root: Path, log_text: str) -> dict[str, Any]:
+    manifest = _load(root / "manifest.json")
+    _require_identity(manifest, "technical manifest")
+    if (manifest.get("status") != "TECHNICAL_PASS" or
+            manifest.get("phase") != "TECHNICAL_COMPLETE"):
+        raise ValueError("technical harvest lacks terminal TECHNICAL_PASS manifest")
+    fingerprint = manifest.get("fingerprint")
+    if not isinstance(fingerprint, dict):
+        raise ValueError("technical manifest lacks run fingerprint")
+    _require_identity(fingerprint, "technical manifest fingerprint")
+    _require_backend_fingerprint(fingerprint, "technical manifest fingerprint")
+    _validate_gate(root, "PASS")
+    if _checkpoint_paths(root):
+        raise ValueError("technical-only harvest contains conversation checkpoints")
+    if "COHERENT_STATE_TECHNICAL_DONE" not in log_text:
+        raise ValueError("technical harvest job log lacks completion marker")
+    if "CHECKPOINT_SCORED" in log_text or "PHASE RENDER" in log_text:
+        raise ValueError("technical-only log contains semantic execution markers")
+    return {
+        "mode": "technical",
+        "n_scored": 0,
+        "production_gate": "PASS",
+        "attention_backend": ATTENTION_BACKEND,
     }
 
 
@@ -263,6 +328,8 @@ def validate(root: Path, mode: str) -> dict[str, Any]:
         _load(path)
     if mode == "complete":
         out = _validate_complete(root, log_text)
+    elif mode == "technical":
+        out = _validate_technical(root, log_text)
     else:
         out = _validate_failure(root, log_text)
     out["json_files"] = len(list(root.glob("*.json")))
@@ -275,7 +342,7 @@ def validate(root: Path, mode: str) -> dict[str, Any]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("root", type=Path)
-    ap.add_argument("mode", choices=("complete", "failure"))
+    ap.add_argument("mode", choices=("technical", "complete", "failure"))
     args = ap.parse_args()
     print(json.dumps(validate(args.root, args.mode), sort_keys=True))
 

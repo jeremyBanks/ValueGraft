@@ -27,14 +27,43 @@ def identity() -> dict:
     }
 
 
+def backend_fingerprint() -> dict:
+    return {
+        "requested_implementation": "eager",
+        "layers": [
+            {"layer_index": i, "resolved_implementation": "eager"}
+            for i in range(48)
+        ],
+        "sha256": "backend-fixture",
+    }
+
+
+def run_fingerprint() -> dict:
+    return {
+        **identity(),
+        "frozen_order": list(MODULE.FROZEN_ORDER),
+        "wrong_donors": MODULE.WRONG_DONORS,
+        "attention_backend": "eager",
+        "attention_backend_fingerprint": backend_fingerprint(),
+    }
+
+
 def gate(status: str) -> dict:
     passes = status == "PASS"
     return {
         **identity(),
+        "model": MODULE.MODEL_ID,
+        "revision": MODULE.MODEL_REVISION,
+        "dtype": MODULE.PARAMETER_DTYPE,
         "status": status,
         "completed_at": "2026-07-11T00:00:00Z",
         "gates": {
             "passes": passes,
+            "attention_backend": {
+                "observed_backend": "eager",
+                "passes": True,
+                "fingerprint": backend_fingerprint(),
+            },
             **({} if passes else {"error": "injected global gate failure"}),
         },
     }
@@ -44,11 +73,7 @@ def checkpoint(position: int, status: str = "scored") -> dict:
     base = {
         **identity(),
         "order_position": position,
-        "fingerprint": {
-            **identity(),
-            "frozen_order": list(MODULE.FROZEN_ORDER),
-            "wrong_donors": MODULE.WRONG_DONORS,
-        },
+        "fingerprint": run_fingerprint(),
         "conversation_id": MODULE.FROZEN_ORDER[position - 1],
     }
     if status == "void":
@@ -74,11 +99,7 @@ def complete_tree(root: Path) -> None:
     (root / "job.log").write_text("MODEL_READY\nCOHERENT_STATE_JOB_DONE\n")
     write(root / "manifest.json", {
         **identity(), "status": "COMPLETE", "resume_probe_verified": True,
-        "fingerprint": {
-            **identity(),
-            "frozen_order": list(MODULE.FROZEN_ORDER),
-            "wrong_donors": MODULE.WRONG_DONORS,
-        }})
+        "fingerprint": run_fingerprint()})
     write(root / "resume_probe.json", {
         **identity(), "status": "VERIFIED", "resume_probe_verified": True})
     write(root / "production_kernel_gate.json", gate("PASS"))
@@ -98,6 +119,36 @@ def test_complete_requires_schema2_gapped_arms_and_verified_resume(tmp_path: Pat
     write(tmp_path / "resume_probe.json", probe)
     with pytest.raises(ValueError, match="not verified"):
         MODULE.validate(tmp_path, "complete")
+
+
+def test_technical_pass_requires_eager_gate_and_no_semantic_artifacts(
+        tmp_path: Path):
+    (tmp_path / "job.log").write_text(
+        "MODEL_READY attention_backend=eager\nCOHERENT_STATE_TECHNICAL_DONE\n")
+    write(tmp_path / "manifest.json", {
+        **identity(), "status": "TECHNICAL_PASS",
+        "phase": "TECHNICAL_COMPLETE", "fingerprint": run_fingerprint()})
+    write(tmp_path / "production_kernel_gate.json", gate("PASS"))
+    out = MODULE.validate(tmp_path, "technical")
+    assert out["n_scored"] == 0
+    assert out["attention_backend"] == "eager"
+
+    bad = gate("PASS")
+    bad["gates"]["attention_backend"]["observed_backend"] = "sdpa"
+    write(tmp_path / "production_kernel_gate.json", bad)
+    with pytest.raises(ValueError, match="eager attention"):
+        MODULE.validate(tmp_path, "technical")
+
+
+def test_technical_pass_rejects_checkpoint_or_semantic_log_marker(tmp_path: Path):
+    (tmp_path / "job.log").write_text("COHERENT_STATE_TECHNICAL_DONE\n")
+    write(tmp_path / "manifest.json", {
+        **identity(), "status": "TECHNICAL_PASS",
+        "phase": "TECHNICAL_COMPLETE", "fingerprint": run_fingerprint()})
+    write(tmp_path / "production_kernel_gate.json", gate("PASS"))
+    write(tmp_path / "conv_01_c10.json", checkpoint(1))
+    with pytest.raises(ValueError, match="conversation checkpoints"):
+        MODULE.validate(tmp_path, "technical")
 
 
 def test_complete_rejects_retired_or_missing_arm(tmp_path: Path):

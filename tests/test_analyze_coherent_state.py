@@ -17,8 +17,8 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
         w = c - cw
         docs.append({
             "schema": 2,
-            "design_id": "coherent-state-gapped-v3",
-            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+            "design_id": "coherent-state-gapped-v4",
+            "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
             "conversation_id": FROZEN_ORDER[i],
             "order_position": i + 1,
             "status": "scored",
@@ -31,7 +31,6 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
                 "G_wrong": w,
                 "G_Vcorrect": f + vf,
                 "G_Kcorrect": f,
-                "G_delta": f,
             },
             "calibration_outcomes": {
                 "G_correct": 0.3 if calibration else 0.0,
@@ -41,13 +40,15 @@ def _docs(n=6, *, cf=0.4, cw=0.3, vf=0.0, calibration=True,
             "calibration": {"correct_label": calibration_labels[i]},
             "fingerprint": {
                 "schema": 2,
-                "design_id": "coherent-state-gapped-v3",
+                "design_id": "coherent-state-gapped-v4",
                 "amendment_id":
-                    "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
+                    "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
                 "frozen_order": list(FROZEN_ORDER),
                 "wrong_donors": WRONG_DONOR,
                 "scenario_sha256": "scenario-fixture",
                 "targets_sha256": "targets-fixture",
+                "attention_backend": "eager",
+                "attention_backend_fingerprint": {"passes": True},
             },
         })
     return docs
@@ -149,7 +150,15 @@ def test_old_packed_or_unversioned_documents_fail_closed():
         analyze(docs)
     docs = _docs()
     docs[0]["design_id"] = "coherent-state-packed-v0"
-    with pytest.raises(AnalysisError, match="Amendments-1-2-3"):
+    with pytest.raises(AnalysisError, match="Amendments-1-2-3-4"):
+        analyze(docs)
+
+
+def test_missing_or_wrong_backend_fails_closed():
+    docs = _docs()
+    docs[0]["fingerprint"] = dict(docs[0]["fingerprint"])
+    docs[0]["fingerprint"]["attention_backend"] = "sdpa"
+    with pytest.raises(AnalysisError, match="eager attention"):
         analyze(docs)
 
 

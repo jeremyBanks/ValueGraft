@@ -58,12 +58,15 @@ def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
     arms = {
         "A_full": 1.0, "G_fresh": 0.0, "G_correct": 0.2,
         "G_wrong": 0.1, "G_Vcorrect": 0.1, "G_Kcorrect": 0.1,
-        "G_delta": 0.0,
     }
     doc = {
         "schema": 2,
-        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3",
-        "design_id": "coherent-state-gapped-v3",
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
+        "design_id": "coherent-state-gapped-v4",
+        "fingerprint": {
+            "attention_backend": "eager",
+            "attention_backend_fingerprint": {"passes": True},
+        },
         "conversation": {}, "summary": {}, "sources": {},
         "destination": {
             "position_policy": "gapped_same_source_summary_position"},
@@ -80,4 +83,29 @@ def test_scored_validation_rejects_packed_or_nonfinite_artifacts():
     del doc["conversation_outcomes"]["F_fresh"]
     doc["conversation_outcomes"]["G_correct"] = float("nan")
     with pytest.raises(ArtifactError, match="non-finite"):
+        validate_scored_checkpoint(doc)
+
+
+def test_scored_validation_rejects_wrong_backend():
+    arms = {
+        "A_full": 1.0, "G_fresh": 0.0, "G_correct": 0.2,
+        "G_wrong": 0.1, "G_Vcorrect": 0.1, "G_Kcorrect": 0.1,
+    }
+    doc = {
+        "schema": 2,
+        "amendment_id": "COHERENT-STATE-PREREGISTRATION-AMENDMENTS-1-2-3-4",
+        "design_id": "coherent-state-gapped-v4",
+        "fingerprint": {
+            "attention_backend": "sdpa",
+            "attention_backend_fingerprint": {"passes": False},
+        },
+        "conversation": {}, "summary": {}, "sources": {},
+        "destination": {"position_policy": "gapped_same_source_summary_position"},
+        "arm_scores": {key: {} for key in arms},
+        "conversation_outcomes": arms,
+        "calibration_outcomes": {
+            "G_fresh": 0.0, "G_correct": 1.0, "G_wrong": 0.0},
+        "gates": {"technical_pass": True}, "runtime": {},
+    }
+    with pytest.raises(ArtifactError, match="eager attention"):
         validate_scored_checkpoint(doc)

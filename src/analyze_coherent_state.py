@@ -19,13 +19,12 @@ from coherent_state_runtime import AMENDMENT_ID, DESIGN_ID
 
 
 ARMS = ("A_full", "G_fresh", "G_correct", "G_wrong",
-        "G_Vcorrect", "G_Kcorrect", "G_delta")
+        "G_Vcorrect", "G_Kcorrect")
 CONTRASTS = {
     "GF": ("G_correct", "G_fresh"),
     "GW": ("G_correct", "G_wrong"),
     "GVF": ("G_Vcorrect", "G_fresh"),
     "GKF": ("G_Kcorrect", "G_fresh"),
-    "GCD": ("G_correct", "G_delta"),
     "AF": ("A_full", "G_fresh"),
 }
 
@@ -108,6 +107,11 @@ def validate_docs(docs):
     if not reference_fingerprint.get("scenario_sha256") or \
             not reference_fingerprint.get("targets_sha256"):
         raise AnalysisError("fingerprint lacks scenario/target hashes")
+    if reference_fingerprint.get("attention_backend") != "eager":
+        raise AnalysisError("fingerprint does not freeze eager attention")
+    if not isinstance(reference_fingerprint.get(
+            "attention_backend_fingerprint"), dict):
+        raise AnalysisError("fingerprint lacks attention-backend evidence")
     for expected, doc in enumerate(docs, 1):
         fingerprint = doc.get("fingerprint") or {}
         if int(doc.get("schema", -1)) != 2:
@@ -116,7 +120,7 @@ def validate_docs(docs):
                 doc.get("amendment_id", fingerprint.get("amendment_id")) !=
                 AMENDMENT_ID):
             raise AnalysisError(
-                f"{doc.get('_path')} is not an Amendments-1-2-3 gapped artifact")
+                f"{doc.get('_path')} is not an Amendments-1-2-3-4 gapped artifact")
         if int(doc.get("order_position", -1)) != expected:
             raise AnalysisError(
                 f"non-contiguous frozen order at {doc.get('_path')}: "

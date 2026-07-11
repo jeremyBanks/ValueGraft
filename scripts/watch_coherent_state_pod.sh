@@ -35,7 +35,7 @@ harvest_and_terminate() {
       echo "HARVEST_RETRY $attempt endpoint unavailable"; sleep 60; continue
     fi
     ssh="ssh -i $KEY -p $port -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 root@$ip"
-    run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_gapped_v3_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)"
+    run_remote="$($ssh "grep -o '/workspace/repo/results/coherent_state/coherent_state_gapped_v4_[^ ]*' /workspace/exp/job.log 2>/dev/null | tail -1" 2>/dev/null)"
     run_path_rc=$?
     run_path_class="$(coherent_run_path_class "$run_path_rc")"
     if [ "$run_path_class" = UNVERIFIED ]; then
@@ -143,18 +143,20 @@ PY
   if ! OBS="$($SSH "PC_ERROR_SIGNATURES='$PC_ERROR_SIGNATURES' bash -s" <<'REMOTE'
 LOG=/workspace/exp/job.log
 ALIVE=$(pgrep -f "job.sh|run_coherent_state_hf.py" | grep -v $$ | wc -l | tr -d " ")
-DONE=$(grep -c "COHERENT_STATE_JOB_DONE" "$LOG" 2>/dev/null || true)
+FULLDONE=$(grep -c "COHERENT_STATE_JOB_DONE" "$LOG" 2>/dev/null || true)
+TECHDONE=$(grep -c "COHERENT_STATE_TECHNICAL_DONE" "$LOG" 2>/dev/null || true)
+DONE=$((FULLDONE + TECHDONE))
 CRASH=$(grep -cE "$PC_ERROR_SIGNATURES" "$LOG" 2>/dev/null || true)
 READY=$(grep -c "MODEL_READY" "$LOG" 2>/dev/null || true)
-RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_gapped_v3_[^ ]*" "$LOG" 2>/dev/null | tail -1)
+RUN=$(grep -o "/workspace/repo/results/coherent_state/coherent_state_gapped_v4_[^ ]*" "$LOG" 2>/dev/null | tail -1)
 if [ -n "$RUN" ] && [ -d "$RUN" ]; then
   CK=$(find "$RUN" -maxdepth 1 -name "conv_*.json" | wc -l | tr -d " ")
-  MT=$(find "$RUN" -maxdepth 1 -name "conv_*.json" -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)
+  MT=$(find "$RUN" -maxdepth 1 \( -name "conv_*.json" -o -name "production_kernel_gate.json" -o -name "manifest.json" \) -exec stat -c %Y {} + 2>/dev/null | sort -n | tail -1)
 else CK=0; MT=0; fi
 GPU=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader,nounits 2>/dev/null | head -1)
 AGE=$(( $(date +%s) - $(stat -c %Y "$LOG" 2>/dev/null || echo 0) ))
 DISK=$(df -BG /workspace | tail -1 | awk '{gsub(/G/,"",$4);print $4}')
-echo "ALIVE=$ALIVE DONE=$DONE CRASH=$CRASH READY=$READY CK=$CK MT=${MT:-0} AGE=$AGE GPU=$GPU DISK=$DISK"
+echo "ALIVE=$ALIVE DONE=$DONE TECH=$TECHDONE CRASH=$CRASH READY=$READY CK=$CK MT=${MT:-0} AGE=$AGE GPU=$GPU DISK=$DISK"
 REMOTE
 )"; then
       echo "$(date -Is) transient SSH observation failure"
@@ -162,7 +164,7 @@ REMOTE
       continue
   fi
   echo "$(date -Is) elapsed=$ELAPSED rate=$RATE $OBS"
-  eval "$(echo "$OBS" | sed -n 's/.*ALIVE=\([0-9]*\) DONE=\([0-9]*\) CRASH=\([0-9]*\) READY=\([0-9]*\) CK=\([0-9]*\) MT=\([0-9]*\) AGE=\([0-9]*\) GPU=\([0-9]*\).*/ALIVE=\1;DONE=\2;CRASH=\3;READY=\4;CK=\5;MT=\6;AGE=\7;GPU_UTIL=\8/p')"
+  eval "$(echo "$OBS" | sed -n 's/.*ALIVE=\([0-9]*\) DONE=\([0-9]*\) TECH=\([0-9]*\) CRASH=\([0-9]*\) READY=\([0-9]*\) CK=\([0-9]*\) MT=\([0-9]*\) AGE=\([0-9]*\) GPU=\([0-9]*\).*/ALIVE=\1;DONE=\2;TECH=\3;CRASH=\4;READY=\5;CK=\6;MT=\7;AGE=\8;GPU_UTIL=\9/p')"
   SIG="${CK:-0}:${MT:-0}"
   if [ "$SIG" != "$LAST_SIG" ]; then LAST_SIG="$SIG"; LAST_PROGRESS="$NOW"; fi
   if [ "${READY:-0}" = 0 ] && [ "$ELAPSED" -gt 2700 ]; then
@@ -195,7 +197,11 @@ REMOTE
       fi
     fi
     if [ "$PC_CLASS" = "DONE" ]; then
-      harvest_and_terminate complete || exit $?
+      if [ "${TECH:-0}" -gt 0 ]; then
+        harvest_and_terminate technical || exit $?
+      else
+        harvest_and_terminate complete || exit $?
+      fi
       echo "WATCH_COMPLETE"
       exit 0
     fi
