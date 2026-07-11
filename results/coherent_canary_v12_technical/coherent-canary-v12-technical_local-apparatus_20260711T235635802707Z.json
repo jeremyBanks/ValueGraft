@@ -1,0 +1,64 @@
+{
+  "bindings": {
+    "carrier_fixture": {
+      "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+      "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+    },
+    "identity_fixture": {
+      "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+      "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+    },
+    "preregistration": {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+      "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+    },
+    "technical_fixture": {
+      "path": "data/coherent_canary_v12/technical_control_fixture.json",
+      "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+    }
+  },
+  "completed_at_utc": "2026-07-11T23:56:40.459301+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "diagnostic_summary": {
+    "error_message": "model geometry differs: {'layers': 28, 'attention_heads': 16, 'kv_heads': 8, 'head_dim': 128, 'rope_theta': -1.0} != {'layers': 28, 'attention_heads': 16, 'kv_heads': 8, 'head_dim': 128, 'rope_theta': 1000000.0}",
+    "error_type": "CanaryPreflightError"
+  },
+  "error": {
+    "message": "model geometry differs: {'layers': 28, 'attention_heads': 16, 'kv_heads': 8, 'head_dim': 128, 'rope_theta': -1.0} != {'layers': 28, 'attention_heads': 16, 'kv_heads': 8, 'head_dim': 128, 'rope_theta': 1000000.0}",
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/jeb/experimentation/scripts/run_coherent_canary_v12_technical.py\", line 226, in run\n    prepared = stage(document, \"prepare_pinned_subject\", lambda:\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/jeb/experimentation/scripts/run_coherent_canary_v12_technical.py\", line 169, in stage\n    value = function()\n            ^^^^^^^^^^\n  File \"/Users/jeb/experimentation/scripts/run_coherent_canary_v12_technical.py\", line 227, in <lambda>\n    prepare_pinned_subject(\n  File \"/Users/jeb/experimentation/src/coherent_canary_loader.py\", line 945, in prepare_pinned_subject\n    fingerprint = attest_loaded_subject(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/jeb/experimentation/src/coherent_canary_loader.py\", line 840, in attest_loaded_subject\n    fingerprint = runtime_fingerprint(\n                  ^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/jeb/experimentation/src/coherent_canary_preflight.py\", line 70, in runtime_fingerprint\n    _require(observed == dict(expected_geometry),\n  File \"/Users/jeb/experimentation/src/coherent_canary_preflight.py\", line 22, in _require\n    raise CanaryPreflightError(message)\ncoherent_canary_preflight.CanaryPreflightError: model geometry differs: {'layers': 28, 'attention_heads': 16, 'kv_heads': 8, 'head_dim': 128, 'rope_theta': -1.0} != {'layers': 28, 'attention_heads': 16, 'kv_heads': 8, 'head_dim': 128, 'rope_theta': 1000000.0}\n",
+    "type": "CanaryPreflightError"
+  },
+  "estimated_cost_usd": 0.0,
+  "hourly_cost_usd": 0.0,
+  "output_path": "/Users/jeb/experimentation/results/coherent_canary_v12_technical/coherent-canary-v12-technical_local-apparatus_20260711T235635802707Z.json",
+  "provenance": {
+    "repository_branch": "trunk",
+    "repository_head": "0a6e0a63e6f16f2dc79db922c19c5fe5af52182a",
+    "runner_platform": "macOS-26.2-arm64-arm-64bit",
+    "runner_python": "3.12.11"
+  },
+  "schema": "coherent_state_decision_canary_v12_technical_raw_v1",
+  "source_bindings": {
+    "fixed_text_evidence": {
+      "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+      "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+    },
+    "identity_fixture": {
+      "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+      "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+    },
+    "preregistration": {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+      "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+    },
+    "technical_fixture": {
+      "path": "data/coherent_canary_v12/technical_control_fixture.json",
+      "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+    }
+  },
+  "stage_timings": {},
+  "started_at_utc": "2026-07-11T23:56:35.802899+00:00",
+  "status": "ERROR",
+  "subject": "local-apparatus",
+  "wall_time_seconds": 4.656407041940838
+}
