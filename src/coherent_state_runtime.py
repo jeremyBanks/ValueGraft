@@ -445,7 +445,7 @@ def _run_gapped_schedule_branch(model, layout: GappedDestinationLayout,
 
 def measure_gapped_destination_schedule(
         model, layout: GappedDestinationLayout, summary_ids: Sequence[int], *,
-        tolerance: float = 5e-4, progress=None) -> dict:
+        conversation_id: str, tolerance: float = 5e-4, progress=None) -> dict:
     """Compare the exact production destination schedule to an alternative.
 
     Both branches use the actual compacted token stream, identical gapped
@@ -463,6 +463,7 @@ def measure_gapped_destination_schedule(
                    for start in range(0, len(layout.prefix_ids), 4096)]
     evidence = {
         "schema": 2, "design_id": DESIGN_ID, "amendment_id": AMENDMENT_ID,
+        "conversation_id": str(conversation_id),
         "status": "RUNNING", "passes": False,
         "semantic_scoring_performed": False,
         "prefix_token_ids": list(layout.prefix_ids),

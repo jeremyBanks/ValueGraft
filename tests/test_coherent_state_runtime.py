@@ -128,7 +128,7 @@ def test_actual_gapped_destination_schedule_compares_every_saved_summary_row(
 
     monkeypatch.setattr(runtime, "_run_gapped_schedule_branch", branch)
     observed = runtime.measure_gapped_destination_schedule(
-        object(), layout, [21, 22])
+        object(), layout, [21, 22], conversation_id="c10")
     assert calls == [[2, 2], [4]]
     assert observed["status"] == "PASS"
     assert observed["summary_step_widths"] == [1, 1]
@@ -151,7 +151,8 @@ def test_actual_gapped_destination_schedule_persists_error(monkeypatch):
     progress = []
     with pytest.raises(torch.OutOfMemoryError, match="injected"):
         runtime.measure_gapped_destination_schedule(
-            object(), layout, [21], progress=progress.append)
+            object(), layout, [21], conversation_id="c10",
+            progress=progress.append)
     assert progress[-1]["status"] == "ERROR"
     assert progress[-1]["failure_evidence"]["error_type"] == "OutOfMemoryError"
 
