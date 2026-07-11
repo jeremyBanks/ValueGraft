@@ -983,207 +983,264 @@
     },
     "20260711": {
       "note": "notes/20260711.md",
-      "source_count": 49,
+      "source_count": 63,
       "sources": [
         {
-          "note": "notes/2026071146-conversation-user-gpt56.md",
+          "note": "notes/2026071106-conversation-user-gpt56.md",
           "blob_id": "227f42c95b4ea91c88d37c54f9d17524e98c90ea"
         },
         {
-          "note": "notes/2026071147-sol-empirical-statistical-audit.md",
+          "note": "notes/2026071107-sol-empirical-statistical-audit.md",
           "blob_id": "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec"
         },
         {
-          "note": "notes/2026071148-sol-methodology-implementation-audit.md",
+          "note": "notes/2026071108-sol-methodology-implementation-audit.md",
           "blob_id": "781b415e9487265c772e252aff747e4049b031e5"
         },
         {
-          "note": "notes/2026071149-sol-independent-scientific-consultation.md",
+          "note": "notes/2026071109-sol-independent-scientific-consultation.md",
           "blob_id": "3c970b9682c674a1525d05ee062d446f2c5b4f3f"
         },
         {
-          "note": "notes/2026071150-sol-final-conclusions-and-budgeted-research-plan.md",
+          "note": "notes/2026071110-sol-final-conclusions-and-budgeted-research-plan.md",
           "blob_id": "c3ea9a5d3fc5213820fdc248a623720497ef003c"
         },
         {
-          "note": "notes/2026071151-conversation-user-opus48.md",
+          "note": "notes/2026071111-conversation-user-opus48.md",
           "blob_id": "eb9116fee89f44c9871a9cdd2531e7e668074a7f"
         },
         {
-          "note": "notes/2026071152-why-value-grafting-mostly-fails.md",
+          "note": "notes/2026071112-why-value-grafting-mostly-fails.md",
           "blob_id": "23376f899d0a4854f48def5de190c31684155acf"
         },
         {
-          "note": "notes/2026071153-corrections-from-sol-audit.md",
+          "note": "notes/2026071113-corrections-from-sol-audit.md",
           "blob_id": "14d36b97809794012e60e439c3c9a9bd3ab997ae"
         },
         {
-          "note": "notes/2026071154-sol-claude-research-plan-dialogue.md",
+          "note": "notes/2026071114-sol-claude-research-plan-dialogue.md",
           "blob_id": "008e73ae245d7f53bd034f433baed2ddbf277ff4"
         },
         {
-          "note": "notes/2026071155-sol-final-paper-review.md",
+          "note": "notes/2026071115-sol-final-paper-review.md",
           "blob_id": "e76cf2ee2ac57d8b7e804a62a8c24f883be202d0"
         },
         {
-          "note": "notes/2026071156-sol-fable-execution-coordination.md",
-          "blob_id": "f2a9a2f02cc8307de53918b11a61ab72ea42a3a2"
+          "note": "notes/2026071116-sol-fable-execution-coordination.md",
+          "blob_id": "70cca31b47dc2badad48c0271b41554cf5bbb2cd"
         },
         {
-          "note": "notes/2026071157-fable-outcome-interpretation-matrix.md",
+          "note": "notes/2026071117-fable-outcome-interpretation-matrix.md",
           "blob_id": "0fb4af7c6a67056795c9d59a0e8a9c8bb02b7a89"
         },
         {
-          "note": "notes/2026071158-conversation-gpt56.md",
+          "note": "notes/2026071118-conversation-gpt56.md",
           "blob_id": "ea063b4ca1cfa377767751d086906369fb6f9592"
         },
         {
-          "note": "notes/2026071159-opus-gapped-v2-launch-review.md",
+          "note": "notes/2026071119-opus-gapped-v2-launch-review.md",
           "blob_id": "5b9c4dcaf4a8e915872190724dab79de2d3306e1"
         },
         {
-          "note": "notes/2026071160-opus-30b-zero-gap-failure-review.md",
+          "note": "notes/2026071120-opus-30b-zero-gap-failure-review.md",
           "blob_id": "517c90e4c3020812070f2c6d346eed612cdfbde7"
         },
         {
-          "note": "notes/2026071161-opus-v6-prelaunch-review.md",
+          "note": "notes/2026071121-opus-v6-prelaunch-review.md",
           "blob_id": "2c9190b439ac7fe93b370c30fb09901dffcf11b6"
         },
         {
-          "note": "notes/2026071162-v7-semantic-aggregate-validator-provenance.md",
+          "note": "notes/2026071122-v7-semantic-aggregate-validator-provenance.md",
           "blob_id": "ba79d81eb113415654aef32e4d5310fbca4c9673"
         },
         {
-          "note": "notes/2026071163-sol-v7-v8-adversarial-review.md",
+          "note": "notes/2026071123-sol-v7-v8-adversarial-review.md",
           "blob_id": "b40c8a806fff9991ab8bc723ff2d41aa39059fc0"
         },
         {
-          "note": "notes/2026071164-opus-v8-preladder-review.md",
+          "note": "notes/2026071124-opus-v8-preladder-review.md",
           "blob_id": "234a1d59d9d7afd0eba5f98a1d133f9afda69cb3"
         },
         {
-          "note": "notes/2026071165-conversation-user-gpt56.md",
+          "note": "notes/2026071125-conversation-user-gpt56.md",
           "blob_id": "c5c413c5a4e39633e887656a7bd443d02e092c4e"
         },
         {
-          "note": "notes/2026071166-conversation-user-opus48.md",
+          "note": "notes/2026071126-conversation-user-opus48.md",
           "blob_id": "49e48cb21192c0bd1eed6f4bcb6dabe4562e98d1"
         },
         {
-          "note": "notes/2026071167-sol-v8-v10-semantic-closure-review.md",
+          "note": "notes/2026071127-sol-v8-v10-semantic-closure-review.md",
           "blob_id": "b5c09f76d16f043bea87f65c9e58c060615ddbdb"
         },
         {
-          "note": "notes/2026071168-sol-claude-joint-research-plan.md",
+          "note": "notes/2026071128-sol-claude-joint-research-plan.md",
           "blob_id": "3befd1390c7be0dd1a11224b98f33b683a727a28"
         },
         {
-          "note": "notes/2026071169-opus-prior-art-verification.md",
+          "note": "notes/2026071129-opus-prior-art-verification.md",
           "blob_id": "c93e082210aa65795e52cfe8d1300377ad8ca612"
         },
         {
-          "note": "notes/2026071170-fable-tail-channel-design-review.md",
+          "note": "notes/2026071130-fable-tail-channel-design-review.md",
           "blob_id": "c6bf9acb4970f4371a222a1962d3a5bde404766c"
         },
         {
-          "note": "notes/2026071171-sol-memento-primary-source-correction.md",
+          "note": "notes/2026071131-sol-memento-primary-source-correction.md",
           "blob_id": "7eccaee9451d3d2233c8854606bf6255b0bf7845"
         },
         {
-          "note": "notes/2026071172-sol-models-take-notes-primary-source-reading.md",
+          "note": "notes/2026071132-sol-models-take-notes-primary-source-reading.md",
           "blob_id": "1824d6182f2310263cffd10018366074c47c2cd6"
         },
         {
-          "note": "notes/2026071173-fable-parallel-gate-sequencing-review.md",
+          "note": "notes/2026071133-fable-parallel-gate-sequencing-review.md",
           "blob_id": "3c605b36a98c751708f4fedbd1f2dc6e124582a4"
         },
         {
-          "note": "notes/2026071174-conversation-user-gpt56.md",
-          "blob_id": "5ebf7d5bc0ef4aa7585b78d8d51b7fc0f88a8f56"
+          "note": "notes/2026071134-conversation-user-gpt56.md",
+          "blob_id": "4650c5e2be2e6279197dd600fbec5401a807280d"
         },
         {
-          "note": "notes/2026071175-fable-c10-schedule-failure-design-review.md",
+          "note": "notes/2026071135-fable-c10-schedule-failure-design-review.md",
           "blob_id": "dccd0352923673a6468c23d22cd928ae80133689"
         },
         {
-          "note": "notes/2026071176-conversation-user-opus48.md",
-          "blob_id": "2afb9a7cf10a9fdab6e8eb2992a8910be45035a2"
+          "note": "notes/2026071136-conversation-user-opus48.md",
+          "blob_id": "ccb0a7db6dff0385a4a70af00b8f280a9e06563a"
         },
         {
-          "note": "notes/2026071177-sol-schedule-discontinuity-and-claim-boundary.md",
+          "note": "notes/2026071137-sol-schedule-discontinuity-and-claim-boundary.md",
           "blob_id": "315bc4e4906475bb762f1f2544986fc602b856dc"
         },
         {
-          "note": "notes/2026071178-carver-schedule-sensitivity-forensic-audit.md",
+          "note": "notes/2026071138-carver-schedule-sensitivity-forensic-audit.md",
           "blob_id": "f80bb652d4763b96da0f002ce178824be56c92c6"
         },
         {
-          "note": "notes/2026071179-fable-raw-input-and-independence-audit.md",
+          "note": "notes/2026071139-fable-raw-input-and-independence-audit.md",
           "blob_id": "9e51497d6be5b78c039057663d905d5b427a3da2"
         },
         {
-          "note": "notes/2026071180-sol-wrong-history-control-invalidity.md",
+          "note": "notes/2026071140-sol-wrong-history-control-invalidity.md",
           "blob_id": "df7c96a79ff1103400de864f7829768e5888c83d"
         },
         {
-          "note": "notes/2026071181-lagrange-schedule-robust-estimand-design-audit.md",
+          "note": "notes/2026071141-lagrange-schedule-robust-estimand-design-audit.md",
           "blob_id": "3729d6ce06feba02969183ffd3a9a1c831d06ea3"
         },
         {
-          "note": "notes/2026071182-fable-raw-input-audit-supplement.md",
+          "note": "notes/2026071142-fable-raw-input-audit-supplement.md",
           "blob_id": "8b87d5ac01a50e9f0b79127784e5a8b027622d42"
         },
         {
-          "note": "notes/2026071183-carver-v10-gate-and-sample-lineage-audit.md",
+          "note": "notes/2026071143-carver-v10-gate-and-sample-lineage-audit.md",
           "blob_id": "b7d0ec42c4def550a91582f370e87d43670abd1f"
         },
         {
-          "note": "notes/2026071184-opus-paper-spine-and-methodological-postmortem.md",
-          "blob_id": "3711b0863cf273b598bf67ebe11b7e24c0e3eed2"
+          "note": "notes/2026071144-opus-paper-spine-and-methodological-postmortem.md",
+          "blob_id": "34045294dd4d9dc71f132607a1269973116421cf"
         },
         {
-          "note": "notes/2026071185-lagrange-counterfactual-control-estimand.md",
+          "note": "notes/2026071145-lagrange-counterfactual-control-estimand.md",
           "blob_id": "b11e21769d2f45707934b42a36327e02aeaa6d8e"
         },
         {
-          "note": "notes/2026071186-counterfactual-control-feasibility-audit.md",
+          "note": "notes/2026071146-counterfactual-control-feasibility-audit.md",
           "blob_id": "6f6ed755f5dc12fb7629896536f7efa95b4d2f37"
         },
         {
-          "note": "notes/2026071187-sol-banked-30b-render-reuse-audit.md",
+          "note": "notes/2026071147-sol-banked-30b-render-reuse-audit.md",
           "blob_id": "258b2a784e41705719ae33526b4e31e5fd5c4ea3"
         },
         {
-          "note": "notes/2026071188-sol-c10-schedule-origin-result.md",
+          "note": "notes/2026071148-sol-c10-schedule-origin-result.md",
           "blob_id": "94b79dcdd415d506b6c7e1ee5a5b16becb3f884f"
         },
         {
-          "note": "notes/2026071189-independent-paired-v11-design-review.md",
+          "note": "notes/2026071149-independent-paired-v11-design-review.md",
           "blob_id": "988c4100c42680b6de9ff9ca90b9ee2b787e8cf8"
         },
         {
-          "note": "notes/2026071190-trajectory-red-team-ultra-regroup.md",
+          "note": "notes/2026071150-trajectory-red-team-ultra-regroup.md",
           "blob_id": "77e50b8884e7ac2d2de3bcca92a8e800d45a455e"
         },
         {
-          "note": "notes/2026071191-causal-statistical-blackboard-ultra-regroup.md",
+          "note": "notes/2026071151-causal-statistical-blackboard-ultra-regroup.md",
           "blob_id": "2c145095bba8c49f70136b67d4367b383669a4ba"
         },
         {
-          "note": "notes/2026071192-sol-ultra-regroup-decision.md",
+          "note": "notes/2026071152-sol-ultra-regroup-decision.md",
           "blob_id": "2d94e0e6a97efe8f562e563648879b8f984f0b45"
         },
         {
-          "note": "notes/2026071193-fable-ultra-regroup-review.md",
+          "note": "notes/2026071153-fable-ultra-regroup-review.md",
           "blob_id": "984a3fc11430df1a0750c3417f0b468e0959bc37"
         },
         {
-          "note": "notes/2026071194-provenance-correction-fable-regroup-review.md",
+          "note": "notes/2026071154-provenance-correction-fable-regroup-review.md",
           "blob_id": "eb344ce46c327432e1ae46bfa9d7aa97f9f6dc8e"
+        },
+        {
+          "note": "notes/2026071155-sol-fable-review-disposition-and-canary-closure.md",
+          "blob_id": "46a1a0fc5ba86bf8f717fdaf38ea059b0b404e02"
+        },
+        {
+          "note": "notes/2026071156-canary-preregistration-independent-audit.md",
+          "blob_id": "5212aa688f49341c93a5b4f60d73fedf1dbbfad6"
+        },
+        {
+          "note": "notes/2026071157-canary-code-architecture-independent-audit.md",
+          "blob_id": "fa8dd0aa25f0accee0b7f4bb4ae0bbd059ef7adf"
+        },
+        {
+          "note": "notes/2026071158-sol-v12-turn-addition-schedule-correction.md",
+          "blob_id": "b1168b70170876426631a3b788e0d51e810654f1"
+        },
+        {
+          "note": "notes/2026071159-sol-v12-boundary-order-correction.md",
+          "blob_id": "a1e3f2016aa8bd0a188d5f8b263710752e889227"
+        },
+        {
+          "note": "notes/2026071160-sol-v12-precarrier-length-and-review-failure.md",
+          "blob_id": "a5e2d003820a9d85c2834bc579c8d17982a5b57c"
+        },
+        {
+          "note": "notes/2026071161-sol-v12-event-aligned-region-correction.md",
+          "blob_id": "6f3995664f8ccd20b8cd746aa4dcf1c0db8e5bb4"
+        },
+        {
+          "note": "notes/2026071162-conversation-opus48.md",
+          "blob_id": "c90713fe09a5ae843177720176cd2d5fda0ac9f7"
+        },
+        {
+          "note": "notes/2026071163-sol-v12-bf16-path-control-correction.md",
+          "blob_id": "c80950bc67be658be090f630773d20749f88049e"
+        },
+        {
+          "note": "notes/2026071164-sol-v12-p-schedule-closure.md",
+          "blob_id": "fd119d21a3134e99e255ed67dd1e5c2ee07e6105"
+        },
+        {
+          "note": "notes/2026071165-sol-v12-control-fixture-and-generation-gate-closure.md",
+          "blob_id": "8a0974149345480a5028b29e409bfb365699864e"
+        },
+        {
+          "note": "notes/2026071166-sol-v12-fresh-destination-map-closure.md",
+          "blob_id": "d78865b88f0aadf5a12f6360a82bbcb82212c8cb"
+        },
+        {
+          "note": "notes/2026071167-sol-v12-execution-audit-and-runtime-closure.md",
+          "blob_id": "2f998e0af82cc932a30ef199ad10f9daddc0a8a3"
+        },
+        {
+          "note": "notes/2026071168-sol-v12-harvest-and-release-closure.md",
+          "blob_id": "02511860faca72da02ee3e25ef633a50351e7c08"
         }
       ],
       "source_blob_ids": [
         "008e73ae245d7f53bd034f433baed2ddbf277ff4",
+        "02511860faca72da02ee3e25ef633a50351e7c08",
         "0fb4af7c6a67056795c9d59a0e8a9c8bb02b7a89",
         "14d36b97809794012e60e439c3c9a9bd3ab997ae",
         "1824d6182f2310263cffd10018366074c47c2cd6",
@@ -1191,30 +1248,38 @@
         "23376f899d0a4854f48def5de190c31684155acf",
         "234a1d59d9d7afd0eba5f98a1d133f9afda69cb3",
         "258b2a784e41705719ae33526b4e31e5fd5c4ea3",
-        "2afb9a7cf10a9fdab6e8eb2992a8910be45035a2",
         "2c145095bba8c49f70136b67d4367b383669a4ba",
         "2c9190b439ac7fe93b370c30fb09901dffcf11b6",
         "2d94e0e6a97efe8f562e563648879b8f984f0b45",
+        "2f998e0af82cc932a30ef199ad10f9daddc0a8a3",
         "315bc4e4906475bb762f1f2544986fc602b856dc",
-        "3711b0863cf273b598bf67ebe11b7e24c0e3eed2",
+        "34045294dd4d9dc71f132607a1269973116421cf",
         "3729d6ce06feba02969183ffd3a9a1c831d06ea3",
         "3befd1390c7be0dd1a11224b98f33b683a727a28",
         "3c605b36a98c751708f4fedbd1f2dc6e124582a4",
         "3c970b9682c674a1525d05ee062d446f2c5b4f3f",
+        "4650c5e2be2e6279197dd600fbec5401a807280d",
+        "46a1a0fc5ba86bf8f717fdaf38ea059b0b404e02",
         "49e48cb21192c0bd1eed6f4bcb6dabe4562e98d1",
         "517c90e4c3020812070f2c6d346eed612cdfbde7",
+        "5212aa688f49341c93a5b4f60d73fedf1dbbfad6",
         "5b9c4dcaf4a8e915872190724dab79de2d3306e1",
-        "5ebf7d5bc0ef4aa7585b78d8d51b7fc0f88a8f56",
+        "6f3995664f8ccd20b8cd746aa4dcf1c0db8e5bb4",
         "6f6ed755f5dc12fb7629896536f7efa95b4d2f37",
+        "70cca31b47dc2badad48c0271b41554cf5bbb2cd",
         "77e50b8884e7ac2d2de3bcca92a8e800d45a455e",
         "781b415e9487265c772e252aff747e4049b031e5",
         "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec",
         "7eccaee9451d3d2233c8854606bf6255b0bf7845",
+        "8a0974149345480a5028b29e409bfb365699864e",
         "8b87d5ac01a50e9f0b79127784e5a8b027622d42",
         "94b79dcdd415d506b6c7e1ee5a5b16becb3f884f",
         "984a3fc11430df1a0750c3417f0b468e0959bc37",
         "988c4100c42680b6de9ff9ca90b9ee2b787e8cf8",
         "9e51497d6be5b78c039057663d905d5b427a3da2",
+        "a1e3f2016aa8bd0a188d5f8b263710752e889227",
+        "a5e2d003820a9d85c2834bc579c8d17982a5b57c",
+        "b1168b70170876426631a3b788e0d51e810654f1",
         "b11e21769d2f45707934b42a36327e02aeaa6d8e",
         "b40c8a806fff9991ab8bc723ff2d41aa39059fc0",
         "b5c09f76d16f043bea87f65c9e58c060615ddbdb",
@@ -1223,17 +1288,22 @@
         "c3ea9a5d3fc5213820fdc248a623720497ef003c",
         "c5c413c5a4e39633e887656a7bd443d02e092c4e",
         "c6bf9acb4970f4371a222a1962d3a5bde404766c",
+        "c80950bc67be658be090f630773d20749f88049e",
+        "c90713fe09a5ae843177720176cd2d5fda0ac9f7",
         "c93e082210aa65795e52cfe8d1300377ad8ca612",
+        "ccb0a7db6dff0385a4a70af00b8f280a9e06563a",
+        "d78865b88f0aadf5a12f6360a82bbcb82212c8cb",
         "dccd0352923673a6468c23d22cd928ae80133689",
         "df7c96a79ff1103400de864f7829768e5888c83d",
         "e76cf2ee2ac57d8b7e804a62a8c24f883be202d0",
         "ea063b4ca1cfa377767751d086906369fb6f9592",
         "eb344ce46c327432e1ae46bfa9d7aa97f9f6dc8e",
         "eb9116fee89f44c9871a9cdd2531e7e668074a7f",
-        "f2a9a2f02cc8307de53918b11a61ab72ea42a3a2",
-        "f80bb652d4763b96da0f002ce178824be56c92c6"
+        "f80bb652d4763b96da0f002ce178824be56c92c6",
+        "fa8dd0aa25f0accee0b7f4bb4ae0bbd059ef7adf",
+        "fd119d21a3134e99e255ed67dd1e5c2ee07e6105"
       ],
-      "summary_hash": "0c027dfa0f0fd459c58ea2d4391116bd501e44210023fbfe44850cc6e45035e8",
+      "summary_hash": "04053064ab2d567dbc4d225a2b49f614d5e5bc923feae87d1c2368d4ef11baa0",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
