@@ -293,6 +293,9 @@ P is a numerical yardstick, not a replicate or alternative primary. C/W P
 plans must have exact token, message-start, region, call-width, logical-position,
 and physical-position equality before execution.
 
+If the ambiguity reserve runs, P also runs the same four R2 cells for e05/e06;
+the six-case yardstick then uses all six completed cases.
+
 For state family X and cases i, define
 `S_X = mean_i(abs(D_i,N^X - D_i,P^X))`. A clear N decision requires
 `mean_i(D_i,N^X) > 0` and `mean_i(D_i,N^X) >= 3*S_X`. Compute this separately
@@ -462,11 +465,19 @@ Pre-treatment adequacy requires:
 
 - both full-history oracles favor their own focal target;
 - the non-focal oracle remains correct under C/W;
+- for every focal and non-focal oracle predicate, the forced margin has the
+  target's required sign **and** generated content IDs begin with the complete
+  exact target token-ID sequence; empty generation, a cap hit, or explanation
+  text before the target fails generated competence;
 - fresh compaction shows positive focal damage relative to A_C before that case
   can support a utility interpretation; zero/negative damage does not invalidate
   its fixed-text semantic contrast;
-- carrier/summary generation ends normally with no embedded special token or
-  cap hit;
+- utility-eligible damage requires both `Y_focal(A_C)>Y_focal(FF)` and
+  `mean_lp_C(A_C)>mean_lp_C(FF)`; record both components for every case;
+- generated conversation summaries and the generated/forced identity fixture
+  end normally with no embedded non-EOS special token or cap hit; the engineered
+  carrier is externally fixed and therefore has finite forced-token support, not
+  a generation-stop predicate;
 - the target-neutral carrier is blind-approved;
 - forced carrier NLLs are finite for every token under C and W.
 
@@ -564,7 +575,8 @@ All terms must be finite and both denominators strictly positive. Require
 unclipped and values above one are reported. The two label-balanced directions
 are oriented views of these same five raw cells, not independent fixtures or
 duplicated evidence. Oracle generation must begin with/favor its exact target;
-forced-margin direction is mandatory even if generated prose is longer. The
+for this single-token fixture that means the first generated content token equals
+the target token and the forced margin has the required sign. The
 natural calibration result is reported before e01.
 Its failure is scientifically adverse but does not relabel a passing technical
 path control as broken; the frozen engineered decision rules remain terminal.
@@ -612,6 +624,11 @@ change is allowed. The four-of-six requirement necessarily includes at least one
 explicit-resolution and one unstated-result case; report those subtypes rather
 than pooling away a qualitative split.
 
+Only a family classified `AMBIGUOUS` at four is reclassified over six. A family
+already `PASS4` or `STOP4` remains terminal even when the other family's ambiguity
+triggers shared e05/e06 execution; its reserve observations are descriptive and
+cannot rescue or overturn the four-case decision.
+
 ### Full-KV versus value-only branches
 
 - Full-KV pass/value-only stop: conversation discovery may proceed for the
@@ -642,6 +659,11 @@ Canary reporting is descriptive:
 - schedule and region results without treating them as independent N;
 - direct paired full-KV-minus-value-only contrast;
 - all truncation and reserve-trigger decisions.
+
+Use the ordinary median and arithmetic mean. Report sample SD (`n-1` denominator)
+for `n>=2`; report SD as undefined/null for a singleton or empty stratum. These
+summary conventions never enter a decision threshold except where the rules
+explicitly name the arithmetic mean.
 
 If a later N=12 benchmark is proposed, it must be independently authored and
 preregistered. It will support at most a fixed purposive-benchmark claim and is
