@@ -10,9 +10,11 @@ reinterpret v10, and it does not execute the frozen paired-v11 confirmatory
 contract. V10 remains permanently non-authorizing. V11 remains paused with its
 drafts non-executable.
 
-The strategy record is in `notes/2026071189-sol-ultra-regroup-decision.md`; the
-Fable review and Sol's disposition are in `notes/2026071190` and
-`notes/2026071192`. This document freezes the literal experiment that follows
+The strategy record is in `notes/2026071192-sol-ultra-regroup-decision.md`. The
+exact Fable review and Sol disposition files are
+`notes/2026071193-fable-ultra-regroup-review.md` and
+`notes/2026071192-sol-fable-review-disposition-and-canary-closure.md`. This
+document freezes the literal experiment that follows
 from those decisions. Until its status is changed additively to `FROZEN`, it
 authorizes tokenizer-only construction and unit tests, but no local or paid
 model forward.
@@ -63,6 +65,10 @@ incremental loop over fixed token IDs.
 - Device: one paid NVIDIA GPU environment capable of loading the exact model.
 - Transformers and repository commit must be identical between the sealed
   preflight packet and run. No unrecorded dependency upgrade is allowed.
+- Expected model geometry, independently checked against the loaded config:
+  48 decoder layers, 32 attention heads, 4 KV heads, head dimension 128, and
+  RoPE theta 10,000,000. Any mismatch aborts rather than updating this document
+  from the runtime.
 
 The pod gate is not inherited from a local pass. A required exact-stack subset
 runs and persists before any semantic treatment score.
@@ -102,18 +108,21 @@ regions, schedules, and probes within a case do not increase N.
 
 ### 3.2 Conditional conversation stratum
 
-This stratum runs only after a clear engineered full-KV pass. Freeze three
+This stratum runs only after a clear engineered pass in at least one primary
+claim family. Freeze exactly three
 discovery cases before the first conversation treatment score:
 
-- one predesignated existing v11 draft may be adapted additively after complete
-  blind and target-aware review;
-- at least two cases must be structurally different and independently authored;
+- `d01` is an additive discovery derivative of the committed `v11-c01` draft,
+  after complete blind and target-aware review;
+- `d02` and `d03` are newly authored after the engineered branch opens, under
+  this already-frozen contract and without access to arm/region/layer values;
+- d02/d03 must be structurally different and independently authored;
 - the three may not share one planning-dialogue scaffold or author session;
 - each has one focal changed plant and one byte-identical non-focal control;
 - each has a correct/minimally-counterfactual history with exact geometry and a
   retained tail.
 
-Conversation authors are told only which already-frozen decision branch opened;
+Conversation authors are told only which already-frozen claim-family branch opened;
 they do not see per-case, arm, layer, region, or schedule results. All cases are
 exploratory and excluded from confirmation.
 
@@ -222,15 +231,21 @@ The primary source protocol is `N = role_native_q1_replay`:
 5. Continue through the history, carrier request, generated/forced carrier,
    canonical close, and anchor exchange.
 
+The model predicts the Qwen assistant-close/EOS token but the generation loop
+does not append its K/V row. The replay plan therefore appends the exact
+canonical close once as the next structural block. A duplicate or absent close
+is invalid. No implicit `prefill` auto-chunking is permitted: every explicit
+call is at most 4,096 tokens or the stimulus fails/splits under a recorded plan.
+
 For fixed IDs, q=1 forcing computes the same state as q=1 greedy selection
 conditional on those IDs. It does not make imported authored text subject-native
 and does not emulate another serving engine's batching policy.
 
 Correct and wrong N branches must have exactly identical call widths and
-positions. The exact generated-C carrier replayed under C must be bit-exact or
-within the frozen same-stack numerical identity threshold on every saved row and
-token log probability; the threshold must be justified by a repeated same-
-schedule measurement before this document becomes FROZEN.
+positions. The exact generated-C carrier replayed under C must be bit-exact on
+every saved K/V row and token log probability. Same-stack repeats
+must also be bit-exact. Any discrepancy is `INVALID_TECHNICAL`; no tolerance is
+introduced after observing it.
 
 ## 8. Schedule sensitivity P
 
@@ -240,10 +255,12 @@ carrier forced q=1. P runs on the same exact 30B stack for every engineered
 primary case's R2 full-KV correct/wrong contrast. P is a numerical yardstick,
 not a replicate or alternative primary.
 
-For history contrast `D`, define `Q = abs(D_N - D_P)`. A clear N decision
-requires `abs(D_N) >= 3 * Q` and the prespecified direction under N. The 3x rule
-is an exploratory robustness heuristic. O/ordinary-4096 is deferred and may not
-be added after outcomes to rescue a result.
+For state family X and cases i, define
+`S_X = mean_i(abs(D_i,N^X - D_i,P^X))`. A clear N decision requires
+`mean_i(D_i,N^X) > 0` and `mean_i(D_i,N^X) >= 3*S_X`. Compute this separately
+for full-KV and value-only. The 3x rule is an exploratory robustness heuristic.
+O/ordinary-4096 is deferred and may not be added after outcomes to rescue a
+result.
 
 ## 9. Fresh gapped destination
 
@@ -273,12 +290,14 @@ For each history/carrier/schedule/region persist source K/V rows from:
 - `C`: correct-history carrier;
 - `W`: minimally counterfactual-history carrier.
 
-At destination, run the complete 3x3 grid with key source first and value source
+At destination under N, run the complete 3x3 grid for all three regions, with
+key source first and value source
 second:
 
 `FF, FC, FW, CF, CC, CW, WF, WC, WW`.
 
-The preregistered primary families are:
+Under P, run R2 `CC`, `WW`, `FC`, and `FW` only. The preregistered primary
+families are:
 
 - full-KV: `CC` versus `WW`;
 - value-only: `FC` versus `FW`.
@@ -287,11 +306,15 @@ The preregistered primary families are:
 fresh utility baseline. Every replacement must be bit-exact in selected rows and
 bit-identical to fresh outside them before downstream recomputation.
 
-Add one deterministic nonsemantic V control per case/region. For every layer and
-selected token row, match the L2 norm of the `V_C - V_W` delta, then apply a
-frozen seeded orthogonal/permutation construction that is independent of target
-labels. The exact algorithm and seed must be in the FROZEN version and tested
-for zero target access.
+Add one deterministic nonsemantic V control per case/region. Flatten all heads
+and head dimensions for each layer/token row. Let `d = V_C - V_W`. Draw a
+deterministic Rademacher vector `r` from a SHA-256 counter stream seeded by the
+UTF-8 string `coherent-state-v12-placebo-20260711` plus case/layer/row indices.
+Project it orthogonal to d, normalize it to `L2(u)=L2(d)`, reshape it, and set
+`V_placebo = V_F + u` with fresh keys. If `L2(d)=0`, use `u=0`; if projection
+norm is zero, advance the counter until nonzero. Persist pre/post norms, dot
+products, seed material, and dtype conversion. No target text or label enters
+the PRNG.
 
 ## 11. Oracles, probes, and raw outcomes
 
@@ -320,11 +343,13 @@ For state family `X` (`R=full-KV`, `V=value-only`) and primary R2/N:
 - `D_focal^X = Y_focal(X_C) - Y_focal(X_W)`;
 - `D_nonfocal^X = Y_nonfocal(X_C) - Y_nonfocal(X_W)`;
 - `SEL^X = D_focal^X - abs(D_nonfocal^X)`;
+- `Hplus^X = mean_lp_C(X_C) - mean_lp_C(X_W)`;
 - `U^X = Y_focal(X_C) - Y_focal(FF)`;
-- `LP_C^X = mean_lp_C(X_C) - mean_lp_C(FF)`.
+- `Uplus^X = mean_lp_C(X_C) - mean_lp_C(FF)`.
 
-The semantic claim direction is `D_focal > 0` and `SEL > 0`. Utility requires
-`U > 0`; favorable correct-target movement requires `LP_C > 0`. The wrong-state
+The semantic claim direction is `D_focal > 0`, `SEL > 0`, and `Hplus > 0`.
+Utility requires `U > 0`; favorable utility-side correct-target movement
+requires `Uplus > 0`. The wrong-state
 arm moving only by generic disruption fails selectivity.
 
 For conversation native-summary crossover, compute these contrasts separately
@@ -358,16 +383,18 @@ Pre-treatment adequacy requires:
 
 - both full-history oracles favor their own focal target;
 - the non-focal oracle remains correct under C/W;
-- fresh compaction shows nonzero focal damage relative to A_C for a utility
-  interpretation;
+- fresh compaction shows positive focal damage relative to A_C before that case
+  can support a utility interpretation; zero/negative damage does not invalidate
+  its fixed-text semantic contrast;
 - carrier/summary generation ends normally with no embedded special token or
   cap hit;
 - the target-neutral carrier is blind-approved;
-- forced carrier NLLs are finite and the frozen support criterion passes.
+- forced carrier NLLs are finite for every token under C and W.
 
-The exact support statistic/threshold must be fixed from tokenizer-only or
-pre-treatment calibration evidence before FROZEN status; no arbitrary historical
-0.30-nat case exclusion is inherited.
+NLL and headroom remain continuous diagnostics. No arbitrary historical
+0.30-nat or post-observation support cutoff is inherited. Full-history competence
+is literal: A_C must generate/favor the C target, A_W must generate/favor the W
+target, and the non-focal oracle must remain correct in both histories.
 
 ## 14. Exact-model gates and positive control
 
@@ -383,67 +410,106 @@ Before semantic treatment scoring on the pod, persist and independently validate
 8. deterministic perturbation sensitivity;
 9. durable save/resume and independent lineage reconstruction.
 
-Then run two label-balanced variants of a downstream-note causal positive control
-adapted from the released prefill-note design through the **same gapped
-destination and row replacement functions**. For each direction, the full-KV
-note transplant must move the target margin toward its source conclusion and
-recover at least 0.5 of the oracle-versus-stale margin gap. Failure aborts before
-any canary treatment score. This threshold is an apparatus sensitivity gate,
-not a semantic effect-size precedent.
+### 14.1 Technical bidirectional path control (gating)
+
+Start from a fresh technical R2 boundary on the exact public gapped path. Freeze
+model weights and compute the gradient of one frozen downstream target margin
+with respect to the selected R2 K/V rows. Normalize the complete selected-row
+gradient to unit L2 and try the fixed signed epsilon sequence
+`[0.001, 0.003, 0.01, 0.03, 0.1]`, stopping at the first epsilon for which bf16
+rounding changes the persisted rows and both directions are measurable. Detach
+the `+` and `-` edited rows, destroy the graph and live destination, reconstruct
+a new fresh gapped destination, reinsert through the exact public K+V replacement
+function, recompute the bridge, and score.
+
+The gate passes only if `+` raises and `-` lowers the frozen margin by at least
+`1e-4`, selected insertion/confinement remains exact, and the full raw trace,
+gradient norm, epsilon attempts, row hashes, and log probabilities persist. It
+licenses intervention/readout sensitivity only. Failure aborts semantic scoring.
+
+### 14.2 Natural downstream-note calibration (reported, not a plumbing gate)
+
+Run two label-balanced variants of a downstream-note causal calibration through
+the **same gapped destination, R2 interval, row replacement, target scorer,
+persistence, and harvester functions**. The literal control texts are:
+
+- system: `Apply the stated policy exactly. At the final question answer with exactly approve or deny.`
+- policy/status A: `Policy: approve only when the status is green. Current status: green.`
+- policy/status B: `Policy: approve only when the status is green. Current status: amber.`
+- neutral carrier: `The policy and current record have been processed. Use the recorded state for the decision.`
+- probe: `Decision?`
+- targets: `approve` and `deny`.
+
+The label-balanced variant swaps which source is named C/W for reporting and
+which target is treated as positive; it does not create an independent fixture.
+Production-tokenizer IDs and exact matched geometry must be committed before
+FROZEN status; if the literal strings do not match geometrically, an additive
+revision replaces them before any forward.
+
+For both directions, A-green must generate/favor `approve`, A-amber must
+generate/favor `deny`, and the R2 full-KV transplant must move the margin toward
+its source conclusion with recovery at least 0.5 of the corresponding oracle-
+versus-stale margin gap. The natural calibration result is reported before e01.
+Its failure is scientifically adverse but does not relabel a passing technical
+path control as broken; the frozen engineered decision rules remain terminal.
 
 ## 15. Decision rules
 
 All rules refer to R2/N and the four engineered primary cases unless stated.
 
-### Clear engineered pass
+### Claim-family terminal logic
 
-Proceed to the conversation stratum only if:
+Apply the following independently to X in {full-KV R, value-only V}. Proceed to
+the conversation stratum for family X only if:
 
-- all technical, pre-treatment, and positive-control gates pass;
-- at least three of four cases have `D_focal^R > 0` and `SEL^R > 0`;
-- mean `LP_C^R > 0`;
-- the aggregate full-KV N contrast clears the 3x N-versus-P yardstick.
+- all technical, pre-treatment, and bidirectional path-control gates pass;
+- mean `D_focal^X > 0`;
+- at least three of four cases have `D_focal^X > 0` and `SEL^X > 0`;
+- mean `Hplus^X > 0`;
+- X clears its aggregate 3x N-versus-P yardstick.
 
 ### Clear engineered stop
 
-Stop conversation execution and the summary-state program under the current
-budget if the positive control passes but either:
+Family X is a clear stop after four if the path control passes but either:
 
-- mean `D_focal^R <= 0`; or
-- fewer than two of four cases have both `D_focal^R > 0` and `SEL^R > 0`.
+- mean `D_focal^X <= 0`; or
+- at most one of four cases has both `D_focal^X > 0` and `SEL^X > 0`.
 
 Report the accepted residual risk: engineered short/mid-length nulls do not
 logically exclude a channel unique to longer organic histories.
+
+Every other valid four-case result for either family is `AMBIGUOUS`; this
+includes schedule failure, nonpositive Hplus, or conflicting signs not already a
+clear stop. If both families stop, stop the program. If either is ambiguous, run
+the single shared reserve extension.
 
 ### Single ambiguity extension
 
 Run frozen reserve e05/e06, once, only if:
 
-- mean `D_focal^R > 0` and exactly two of four primary cases have positive D and
-  SEL; or
-- at least three have positive D and SEL but the aggregate schedule ratio is
-  below 3x.
+- either claim family is `AMBIGUOUS` under the exhaustive rule above.
 
-The six-case terminal decision applies the same proportional sign threshold
-(at least four of six) and 3x yardstick. No second extension, arm change, target
-change, or threshold change is allowed.
+After e05/e06, family X passes only with mean D>0, at least four of six positive
+D+SEL cases, mean Hplus>0, and the 3x yardstick. Every other six-case result is a
+terminal stop for X. No second extension, arm change, target change, or threshold
+change is allowed.
 
 ### Full-KV versus value-only branches
 
 - Full-KV pass/value-only stop: conversation discovery may proceed for the
   narrower full-KV claim. No value-only confirmation or live-agent treatment is
   authorized. Difference language requires the direct paired R-minus-V contrast.
-- Value-only promising: in addition to the full-KV branch, at least three of
-  four primary cases must have positive `D_focal^V`, `SEL^V`, `U^V`, and
-  `LP_C^V`, and the aggregate V contrast must clear the 3x yardstick. This only
-  authorizes conversation discovery.
+- Value-only pass/full-KV stop: conversation discovery may independently proceed
+  for the value-only claim. It cannot be described as a component of an
+  established full-KV channel. A mitigation branch additionally requires mean
+  U>0 and Uplus>0 among cases with positive observed A_C-minus-FF damage.
 - R1/R3-only positivity cannot change the R2 branch.
 
 ### Conversation discovery branch
 
 A later independent confirmatory proposal is allowed only after all three
 frozen conversation cases complete and at least two show, within the target-
-neutral summary cell, positive D, SEL, U, and LP_C for the claim family being
+neutral summary cell, positive D, SEL, Hplus, U, and Uplus for the claim family being
 considered, with an aggregate 3x schedule yardstick. One or two completed cases
 because of a cost stop cannot authorize confirmation.
 
@@ -498,8 +564,8 @@ Stateful-change checklist for implementation commits:
    snapshots immediately after scoring;
 4. correctness proof = row hashes, self-replacement, generated/forced identity,
    immutable reconstruction, and independent lineage harvest;
-5. probe gate = local full apparatus plus exact-stack gate subset and same-path
-   downstream-note positive control.
+5. probe gate = local full apparatus plus exact-stack gate subset, bidirectional
+   technical path control, and natural downstream-note calibration.
 
 ## 18. Paid execution budget and truncation
 
@@ -511,22 +577,76 @@ changes it.
 Paid order:
 
 1. pod provenance/gates;
-2. positive control;
-3. complete e01 full arm/region/schedule set;
-4. observed full-canary cost forecast and committed decision;
-5. e02--e04;
-6. conditional c01 neutral cell, then native crossover;
-7. conditional c02/c03 in the same order;
-8. frozen ambiguity reserve only if triggered.
+2. bidirectional technical path control;
+3. natural downstream-note calibration;
+4. complete e01 full arm/region/schedule set;
+5. observed full-canary cost forecast and committed decision;
+6. e02--e04;
+7. four-case engineered verdict;
+8. e05/e06 only if the frozen ambiguity rule triggers;
+9. terminal engineered verdict;
+10. conditional d01 neutral cell, then native crossover;
+11. conditional d02/d03, case-atomic, in that order.
 
 Initial authorization is `$2` through step 3. The run may extend to a hard `$8`
-total canary ceiling only after the observed forecast. Provisioning overhead is
-included. Stop the pod before repairs, analysis, or writing. At least `$15`
+total canary ceiling only after the observed forecast. The `$8` includes
+provisioning, failed starts, e01--e04, the possible e05/e06 extension, and any
+conversation work; the extension's `$3` sub-cap is inside, not additional to,
+`$8`. Record the provider hourly price and forecast each next complete case from
+observed wall time with a 25% safety buffer. Do not begin a case unless its full
+forecast fits the remaining cap. Incomplete cases are persisted but do not
+contribute to a decision. If all three conversation cases cannot fit, do not
+begin that stratum. Stop the pod before repairs, analysis, or writing. At least `$15`
 remains reserved for failures and final synthesis/review. A GO branch does not
 authorize spending that reserve on a cut-rate confirmation; it returns an
 observed forecast to the owner for a funding decision.
 
-## 19. Authorship, attribution, and paper use
+## 19. Implementation boundary
+
+Use a new additive namespace and design schema. Stable low-level primitives for
+canonical rendering, q=1 append/generation, cache snapshot/rebuild, row hashing,
+explicit prefill, and target scoring may be wrapped. Do not import or reinterpret
+the v10 arm enums, cyclic wrong-history constructor, summary-only `SourceCapture`,
+old gapped layout/arm constructors, deranged-delta control, store schema,
+release overlay, or harvester.
+
+Required additive components are:
+
+- independent token/event/region planning;
+- role-native runtime and maximal R3 capture;
+- bounded store with separate `technical`, `eligibility`, and `treatment` modes;
+- machine-enforced technical -> committed eligibility -> treatment release;
+- an independent harvester that does not import runner/layout constructors;
+- paid-stack preflight/launch wrappers.
+
+The harvester rerenders literal messages, reconstructs event calls and
+R1/R2/R3 intervals, verifies visible-text and source-lineage hashes, recomputes
+all formulas and decision branches from raw token log probabilities, and ignores
+runner aggregates.
+
+## 20. Claim boundaries (mandatory wording)
+
+- The canary is exploratory and permanently excluded from confirmation.
+- Its authored cases are fixed fixtures, not random population draws.
+- Imported assistant histories forced through q=1 are replay, not native
+  live-agent trajectories.
+- The semantic contrast is a controlled-mediator, fixed-visible-text effect,
+  not the natural total effect of changing history.
+- Fresh comparisons are utility contrasts and include execution-policy
+  differences.
+- Full-KV success does not validate value-only copying.
+- R2 success is content-plus-boundary retention, not summary-content-only
+  success; R3 success is an engineered-anchor result.
+- The 3x schedule rule is an exploratory heuristic, not a universal numerical
+  law.
+- Path-control success validates the tested intervention/readout path but does
+  not establish a natural semantic channel.
+- Failure is a bounded stopping result for this checkpoint, carrier, schedule,
+  and budget, not evidence of universal absence.
+- No canary p-value, interval, or sign count supports a confirmatory efficacy or
+  live-agent claim.
+
+## 21. Authorship, attribution, and paper use
 
 Record the exact runtime model for every author and reviewer. Do not infer Fable
 versus Opus from an intended alias. Collaborative commits use the exact
