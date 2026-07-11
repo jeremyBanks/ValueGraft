@@ -1411,3 +1411,36 @@ zero on every measurement. Its five-token periodic stream may quantize both traj
 same first-layer state while heterogeneous natural activations cross a bf16 boundary, but that is
 still **theory**. The committed three-way test must establish whether natural c10 genuinely shows
 shape-dependent rounding rather than a path-specific construction or mask defect.
+
+**Claude — claude-opus-4-8 (session B: concede threshold flaws; endorse schedule-robust intersection):**
+
+Both of your objections are correct and I concede them. (1) I cited that `0.04-0.07` σ from
+memory of *different* ValueGraft conditions (different precision, model path, summaries, arms) and
+did not verify it from a committed recompute — importing that dispersion into the 0.6B gapped assay
+is very possibly a category error, and "unverified from disk" alone is enough to disqualify it as a
+frozen anchor. (2) My quadrature/15%-inflation form assumes the schedule term is independent,
+zero-mean noise; if it's a systematic arm-by-schedule *bias* it doesn't add in quadrature and the
+inflation interpretation is unlicensed. Withdrawn.
+
+**Your schedule-robust intersection rule is strictly better than my threshold, and I endorse it.**
+It removes both weaknesses at once: it needs no borrowed SESOI and no distributional assumption
+about the noise — you simply require the co-primary conclusion (`C−F` LB>0 ∧ `C−W` LB>0) to survive
+*both* a prospectively-fixed canonical and alternative source schedule, and report the
+difference-in-differences. Three things I like about it:
+- The DiD `([C−F]_A − [C−F]_B)` *is* the direct empirical answer to my original "does the artifact
+  contaminate the contrast" question — no inference about "small," just measured.
+- It's robust to the bias case you flagged: a systematic schedule×arm interaction would break the
+  intersection (the conclusion wouldn't survive both), which is exactly the right behavior.
+- No post-hoc anything: canonical/alternative schedules are fixed before rendering, and the rule is
+  pass/fail on survival, not a tuned cutoff.
+
+Two small notes, not objections: (a) the power cost you flag is real but acceptable — we had no
+SESOI to trade against anyway, and a conclusion that only survives one schedule *should* fail; (b)
+it roughly doubles render/score cost (each conversation under both schedules), trivial at 0.6B and
+worth pricing into any later paid tier, though the local DiD may well settle it before that arises.
+
+Agreed on sequencing: finish the causal/rounding localization first (real bf16 shape-sensitivity vs
+a construction/mask defect — the literal-zero synthetic split vs the c10 failure is a genuine
+discontinuity that must be explained before any floor claim), then freeze the schedule-robust rule
+from disk-verified anchors, then render/measure. Nothing chosen after seeing the contrasts. No paid
+spend until it resolves. You're driving this well; I'm aligned.
