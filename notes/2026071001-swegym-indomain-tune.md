@@ -1,5 +1,69 @@
 # Brief-SWE-Gym: CONFIRM-then-OPTIMIZE (reconciled combined design; free step DONE)
 
+## 2026-07-10 UPDATE — tune finished; data exhausted; the decisive confirm is the original pool
+
+**Tune result (idx 215-486, N=98).** The naive scalar graft did NOT replicate here
+(E-tuned − B = −0.0017, spans 0). But the in-domain-tuned per-layer champion (layers
+12-17 + 30-35, α=1.0, selected on the tune-41 subset) **cleared baseline held-out**:
+E-champion − B = **+0.0117 CI[+0.0063,+0.0172]** on eval-57 (44/57 improved).
+
+**FREE diagnostics (0 spend, from the persisted champeval scores):**
+- Full 98: E-champion − B = **+0.0111 CI[+0.0069,+0.0155]** (73/98); tune-41 +0.0103,
+  eval-57 +0.0117 — **not split-specific** (the "eval leans favorable" worry is overblown:
+  over 200 random half-splits, **200/200 have positive mean**, 5-95th pctile [+0.0071,+0.0149]).
+- Head-to-head on the full 98: E-champion − E-tuned = **+0.0128 CI[+0.0040,+0.0230]** — the
+  champion **beats** the scalar (the head-to-head only spanned 0 on the thin eval-57 alone).
+So the champion is more robust than the eval-57-only read suggested — WITHIN the idx≥215 pool.
+
+**DATA-HEADROOM number (the constraint the owner asked me to check FIRST): EXHAUSTED.**
+Ran the real `find_cut` filter over all 491 parquet rows: exactly **173 pass** the
+6k–15k-token budget/cut filter, and **all 173 are already used** (75 at idx 1-213 + 98 at
+idx 215-486). **Zero unused budget-passing trajectories remain.** A brand-new disjoint set
+is impossible without relaxing the filter (which yields out-of-band, shorter/longer,
+lower-quality trajectories).
+
+**TOP RECOMMENDATION (~$2-3 of the $11): apply the FIXED champion to the ORIGINAL 75
+(idx 1-213).** These were scored only with scalar / synthetic-champion arms, never the
+SWE-Gym champion, and were **entirely disjoint from this champion's selection** (which used
+only idx≥215). They are in-band budget-passers. Re-scoring them with the fixed champion is
+the one clean, in-band, fully out-of-sample N=75 replication the exhausted data still
+allows — the decisive test of whether +0.011 is real or specific to the idx≥215 pool. It
+also re-tests the scalar α-sweep + placebo + discrete metric on this independent set. The
+champion config was reconstructed and byte-verified (sha256
+`6faa2d72…` matches the champeval intervention record) and committed, since the pod's copy
+was lost on termination.
+
+**Why not the alternatives.** (a) *New disjoint set* — impossible, data exhausted. (b)
+*Fresh-seed re-split of the 98* — FREE (CPU), already done above (200/200 positive); no GPU
+needed, and it's partly circular since selection used a subset of the same 98. (c) *Relax
+the budget filter* — unlocks only out-of-band trajectories (a different regime than the one
+tuned/measured), a weaker and confounded test; keep as an optional way to burn leftover
+credit, not the primary. (d) *Compression dose-response* — changes the question (cross-regime
+generalization) rather than resolving the sign.
+
+**EXACT LAUNCH COMMAND (the confirm; ~$2-3, do not launch — owner fires):**
+```bash
+SC_HF_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507 SC_LOAD_DTYPE=bfloat16 SC_SUMMARY=brief \
+SC_SWE_MIN_IDX=0 SC_SWE_N=75 \
+SC_CHAMPION_CONFIG=data/champion_configs/swegym_tuned_20260710T145330Z.json \
+SC_E_ALPHAS="0.5,0.75,1.0" SC_SWE_PLACEBO=1 \
+scripts/launch_pod.sh swegymconfirm scripts/job_swegym_confirm_bf16.sh
+```
+Writes `results/swegym_confirm_<STAMP>_brief` (UNIQUE; never reuses existing dirs); prints
+E-champion−B, E-champion−E-tuned, the α-sweep, content-specificity, and the discrete metric
+over the 75. **Optional** (to also spend the remaining ~$7 on an out-of-band robustness
+check): add a second launch of the same job with the budget filter relaxed — but that needs
+a small harness knob (SC_SWE_MIN_TOK/SC_SWE_MAX_TOK) not yet added; flag if wanted.
+
+**One-line paper-conclusion effect:** if E-champion−B clears 0 on the original 75, §3.3/§10
+change from "one fragile, thin-N, possibly-pool-specific positive" to "a modest in-domain
+per-layer-tuned graft that replicates across two disjoint trajectory pools (while the naive
+scalar does not)"; if it spans 0, the champion positive was pool-specific and the paper
+stays at its clean bounding-null with the scalar proxy as the only (fragile) signal.
+
+---
+
+
 **Status:** built + committed; the paid run is queued, NOT launched (owner fires it).
 The free step 0 is DONE (numbers below). Reconciles the α-sweep/profiling design with
 an independent prioritization: the paper's only fragile claim is the brief-SWE-Gym
