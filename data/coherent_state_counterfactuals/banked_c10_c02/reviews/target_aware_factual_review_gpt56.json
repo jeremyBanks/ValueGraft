@@ -1,0 +1,503 @@
+{
+  "schema": "coherent_state_counterfactual_target_aware_factual_review_v1",
+  "review_type": "target_aware_paired_factual_and_minimality_audit",
+  "review_date": "2026-07-11",
+  "reviewer": {
+    "model_id": "gpt-5.6",
+    "task_name": "counterfactual_factual_review"
+  },
+  "scope": {
+    "included": [
+      "AGENTS.md",
+      "the four committed UNREVIEWED candidate JSON files in data/coherent_state_counterfactuals/banked_c10_c02",
+      "the exact base conversations data/synthetic/c02.json and data/synthetic/c10.json",
+      "data/coherent_state_targets.json",
+      "data/coherent_state_counterfactuals/banked_c10_c02/reviews/blind_naturalness_review_gpt56.json"
+    ],
+    "excluded": "No broader notes, findings, decisions, incident records, preregistration documents, candidate-authoring note, or experiment results were read or used.",
+    "comparison_unit": "Conversation message role/content pairs were compared by zero-based message index. Non-message conversation fields were compared structurally. A counterfactual was considered to establish an answer only when the history identifies that answer as the user's selected option or intended in-chat sense; merely listing it as an unselected option or the other overloaded sense does not establish it as the probe answer.",
+    "verdict_constraint": "No candidate can PASS because the committed blind naturalness/coherence review failed all four. This audit therefore assigns only REVISE or REJECT."
+  },
+  "hash_method": {
+    "raw_file_sha256": "SHA-256 over the exact committed file bytes",
+    "canonical_sha256": "SHA-256 over UTF-8 JSON serialized with sorted object keys, ensure_ascii=false, and separators ',' and ':'"
+  },
+  "source_bindings": {
+    "targets": {
+      "path": "data/coherent_state_targets.json",
+      "raw_file_sha256": "220fd7fa083dbced339e66dd2ee21b2b030d952965af9073bcc62c72bbc65085"
+    },
+    "blind_review": {
+      "path": "data/coherent_state_counterfactuals/banked_c10_c02/reviews/blind_naturalness_review_gpt56.json",
+      "raw_file_sha256": "f3e54790bb45b529977dce52e71335742b038b61bb3873fa5db360c63a00ca9e",
+      "overall_verdict": "FAIL"
+    },
+    "bases": {
+      "c02": {
+        "path": "data/synthetic/c02.json",
+        "raw_file_sha256": "277415b1d89f13a2985081b98af5f0bb80061523c113f9a234022aca40a29fd2",
+        "canonical_sha256": "f18f45246d0b6975df294580b0bf854bd4341561d6111c7471c0b42b2f7a4905",
+        "message_count": 45,
+        "middle_end_msg": 33
+      },
+      "c10": {
+        "path": "data/synthetic/c10.json",
+        "raw_file_sha256": "25b44ca66584d7141c10202234e77f959cd84e0bbc7a00c2db3b6b51b6a7d035",
+        "canonical_sha256": "fa2cfa96592006baa3416ab0a632526ced45971eb02c21c822b3972ef2f71bd4",
+        "message_count": 45,
+        "middle_end_msg": 33
+      }
+    }
+  },
+  "global_diff_findings": {
+    "observed": "For every candidate, the only message role/content differences from its exact base are the indices recorded in changed_message_allowlist; no roles differ. Conversation id, title, sections, plants, and meta are structurally identical to the base. Thus every non-allowlisted message, both selected plant rows, all other plant rows, and every unrelated factual chain are unchanged by the candidate diff.",
+    "important_qualification": "Byte/structural identity proves that an unrelated chain was not altered by the counterfactual edit; it does not prove that the inherited chain is factually sound or conversationally complete. The blind review identified several defects that are present identically in the base and candidate.",
+    "paired_repair_rule": "Repairs to inherited, non-focal defects must be made identically in a newly rendered correct/counterfactual pair. Repairing only the candidate would introduce non-focal differences and invalidate the matched comparison. All revised pairs require fresh hashes and fresh mechanical validation."
+  },
+  "candidates": {
+    "banked-c02-referent-1": {
+      "bindings": {
+        "candidate_path": "data/coherent_state_counterfactuals/banked_c10_c02/c02_referent_unreviewed.json",
+        "candidate_raw_file_sha256": "fdb3db2f7404acff497ce3de775f6239145f0650fe3d4bd990ead8d985a0548d",
+        "base_path": "data/synthetic/c02.json",
+        "base_raw_file_sha256": "277415b1d89f13a2985081b98af5f0bb80061523c113f9a234022aca40a29fd2",
+        "base_canonical_sha256": "f18f45246d0b6975df294580b0bf854bd4341561d6111c7471c0b42b2f7a4905",
+        "counterfactual_conversation_canonical_sha256": "22f782c3731b262c35e46e16f40dfc1f37995baa352dc46930d52925d15d79b4",
+        "target_row_canonical_sha256": "4033ce15beab5771ee27231883de080e47c58a735d3884eb8f9be8efbb2cb2ac"
+      },
+      "frozen_target": {
+        "correct": "boxed lunches from the worker co-op bakery on Fifth",
+        "counterfactual": "a hot buffet catered by Cateright",
+        "basis": "Catering option 3 was chosen; the Cateright hot buffet (option 2) is a ruled-out alternative."
+      },
+      "target_establishment": {
+        "frozen_counterfactual_established": true,
+        "correct_answer_no_longer_established_as_selection": true,
+        "exactly_and_only_frozen_counterfactual_established": false,
+        "evidence": [
+          "Message 31 explicitly changes the selection from the third option to the second option while leaving the three-option list intact.",
+          "Message 32 explicitly confirms Option 2, a hot buffet catered by Cateright.",
+          "The boxed-lunch answer remains only as listed option 3; no message identifies it as selected after the edit.",
+          "Message 32 newly attributes the choice to variety, convenience, and guest comfort, motivations not established by the user or frozen target. The user stated only that quotes and dietary coverage were compared. This makes the candidate broader than the frozen counterfactual."
+        ]
+      },
+      "changed_message_audit": [
+        {
+          "message_index": 31,
+          "role": "user",
+          "base_content_sha256": "458a255d8060f3f588afa3d528d666e8bb2610c7019f22f9326c884d30039432",
+          "counterfactual_content_sha256": "9db22064fbdeb936122d4b574cd317df11f84c42576e22e3b03b0e938755839b",
+          "change_summary": "Only 'third' is changed to 'second'.",
+          "necessary": true,
+          "minimal": true,
+          "finding": "This is the smallest direct edit that changes the selected option to the frozen counterfactual."
+        },
+        {
+          "message_index": 32,
+          "role": "assistant",
+          "base_content_sha256": "c43bf21212054fd0087adc7dd5fb15f88e39bd0f476837b52bd65ce9f5c0b131",
+          "counterfactual_content_sha256": "7e7f920001cead35db9447e207bb72299a31c90350d702c9305bd37a0196f383",
+          "change_summary": "The confirmation is changed from Option 3/boxed lunches to Option 2/Cateright, but praise adjectives, sentence adverbs, and the stated rationale are also changed.",
+          "necessary": true,
+          "minimal": false,
+          "finding": "Changing the explicit confirmation is necessary to avoid an immediate contradiction. The guest-friendly/practical/formally/variety-convenience-comfort alterations are not required to establish the target and invent a rationale."
+        }
+      ],
+      "focal_reference_trace": {
+        "pre_focal_or_generic_occurrences": [
+          {
+            "message_index": 22,
+            "zone": "evicted",
+            "finding": "Generic budget examples mention catering but contain no selected option and establish neither target."
+          }
+        ],
+        "evicted_downstream_references": [
+          {
+            "message_index": 32,
+            "role": "assistant",
+            "finding": "Direct confirmation of the edited selection; changed consistently, apart from unsupported rationale."
+          }
+        ],
+        "retained_downstream_references": [
+          {
+            "message_index": 37,
+            "role": "user",
+            "finding": "Anaphor 'the catering we picked' reactivates the focal decision but does not identify either option."
+          },
+          {
+            "message_index": 38,
+            "role": "assistant",
+            "finding": "Only an acknowledgment; it neither leaks an answer nor resolves the break-timing question. This text is identical in the base and candidate."
+          }
+        ]
+      },
+      "non_focal_selected_plant_integrity": {
+        "plant_id": "c02-sense-1",
+        "verdict": "UNCHANGED_BY_DIFF",
+        "evidence": "The Beacon clarification at messages 11-12, its downstream speaker-program reference at message 14, and retained references at messages 39-40 and 44 are byte-identical to the base. The c02-sense-1 plant row is also structurally identical."
+      },
+      "unrelated_factual_chain_integrity": {
+        "verdict": "UNCHANGED_BY_DIFF_BUT_BASE_HAS_DEFECTS",
+        "evidence": "All messages except 31-32 and every non-message conversation field are identical to c02.json. Ravi/keynote hosting, Beacon, Hall B, venue, pricing, sponsorship, volunteer, and all other plant chains were not edited."
+      },
+      "defect_attribution": {
+        "pre_existing_base_defects_shared_by_correct_and_counterfactual": [
+          "Messages 36, 38, and 40 fail to provide the requested keynote-host assignment/briefing, catering/break-timing answer, and Beacon blurb. These exact failures predate and are unchanged by the counterfactual edit.",
+          "Message 42 asserts 180-200 seats using hypothetical room dimensions never supplied for the user's smaller east-side annex; this unsupported capacity chain is unchanged.",
+          "The ornate faux-record formatting, repetitive praise, emojis, and register mismatch identified by the blind review are inherited throughout the base and candidate."
+        ],
+        "newly_introduced_or_target_relative_defects": [
+          "Message 32 invents a Cateright-specific motivation ('variety, convenience, and guest comfort') not supported by the base or frozen target."
+        ]
+      },
+      "exact_repairs_required": [
+        "Keep message 31's sole third-to-second selection edit.",
+        "Rewrite message 32 so it confirms only 'Option 2: a hot buffet from Cateright'; remove the invented motivation and all target-unnecessary adjective/adverb substitutions. If a rationale line remains, it may say only that the user compared quotes and dietary coverage, without asserting which factor caused the choice.",
+        "In both newly rendered paired histories, complete messages 36, 38, and 40 with concise, responsive text that does not identify either member of the focal or non-focal target pair; replace message 42 with a capacity answer that says the maximum cannot be derived without posted occupancy/approved layout, without naming the annex sense.",
+        "Reduce the inherited repetitive faux-document/praise register in both paired histories sufficiently to address the blind failure.",
+        "Re-run target-aware and blind review plus token/alignment validation on the revised exact pair."
+      ],
+      "verdict": "REVISE",
+      "verdict_reason": "The selected counterfactual is unambiguous and the original answer is no longer selected, so the artifact is repairable. It is not acceptable as-is because message 32 exceeds the frozen fact and the committed blind review failed on inherited whole-conversation defects."
+    },
+    "banked-c02-sense-1": {
+      "bindings": {
+        "candidate_path": "data/coherent_state_counterfactuals/banked_c10_c02/c02_sense_unreviewed.json",
+        "candidate_raw_file_sha256": "03bce8100c9c68a67a7b8d25adc0927b2f43cbc21f87c7489d26cb9f26bdd616",
+        "base_path": "data/synthetic/c02.json",
+        "base_raw_file_sha256": "277415b1d89f13a2985081b98af5f0bb80061523c113f9a234022aca40a29fd2",
+        "base_canonical_sha256": "f18f45246d0b6975df294580b0bf854bd4341561d6111c7471c0b42b2f7a4905",
+        "counterfactual_conversation_canonical_sha256": "c1fdc354fa17fa483050931813bea5518f395cde45bb60434d6ce36e6024e47d",
+        "target_row_canonical_sha256": "62b6047971b4e75d92189f0e9d7c78866be7e6b556c06fcf9305f30ec9378b70"
+      },
+      "frozen_target": {
+        "correct": "the mentorship track pairing first-time speakers with veterans",
+        "counterfactual": "the sponsors' Beacon networking lounge",
+        "basis": "'Beacon' was disambiguated to the mentorship track; the sponsor networking lounge is the other sense."
+      },
+      "target_establishment": {
+        "frozen_counterfactual_established": true,
+        "correct_answer_no_longer_established_as_users_in_chat_sense": true,
+        "exactly_and_only_frozen_counterfactual_established": false,
+        "evidence": [
+          "Message 11 states that when the user says Beacon with the assistant, the user means the sponsors' networking lounge.",
+          "Message 12 labels the sponsor networking lounge as 'Your Priority' and labels the mentorship track as the other speaker-focused meaning.",
+          "Message 14 removes the two later uses that would have called the mentorship program Beacon.",
+          "The mentorship track remains described as the other overloaded Beacon meaning, which is required context and does not establish it as the user's intended sense.",
+          "Message 12 adds an operating plan, hosted introductions, coffee/seating, office hours, staffing, founder/hiring-team windows, signage, and tone decisions not present in the base or frozen target.",
+          "Retained message 44 calls Beacon a 'session'. Under the counterfactual mapping that term fits the mentorship track better than a drop-in networking lounge and creates residual evidence for the original sense."
+        ]
+      },
+      "changed_message_audit": [
+        {
+          "message_index": 11,
+          "role": "user",
+          "base_content_sha256": "a6ad6f8e7b064068d8cadf93a801f001b9bacad8a1b36e2010ade51532c09359",
+          "counterfactual_content_sha256": "8c2ca640253516473736a0403f7bf67d1cc82b8af216fbec656283b1b7c7fb67",
+          "change_summary": "The two meanings are swapped so the user's in-chat Beacon means the sponsor lounge rather than mentorship.",
+          "necessary": true,
+          "minimal": true,
+          "finding": "At the proposition level, both clauses must be swapped to preserve the two-sense contrast while changing only the user's intended mapping. The rewritten wording does that without changing unrelated plans."
+        },
+        {
+          "message_index": 12,
+          "role": "assistant",
+          "base_content_sha256": "f4846bd913247d474c73fcecfb54d6dc552e4cb7daef64d1ab3c23322c6efba5",
+          "counterfactual_content_sha256": "cdd3b27601841cf6deeb7481cab54f373c8137f0acf5e7e2d181d4ab0a88ce03",
+          "change_summary": "The priority and other-sense sections are swapped, but a detailed sponsor-lounge operating plan is newly authored.",
+          "necessary": true,
+          "minimal": false,
+          "finding": "Swapping the labels and short definitions is necessary. The detailed format and operating-plan additions are target-unnecessary new facts."
+        },
+        {
+          "message_index": 14,
+          "role": "assistant",
+          "base_content_sha256": "6fb4f8a73b408d8eedba448190b64329d39c6717dbd0fb8714cf21d0bffb0e2f",
+          "counterfactual_content_sha256": "b9b1d267ab1525ae1c3e6547436fba79089d726437ec9996c5e92870227a2546",
+          "change_summary": "'Beacon mentorship track' becomes 'separate mentorship track' and 'via Beacon' becomes 'through mentoring'.",
+          "necessary": true,
+          "minimal": true,
+          "finding": "Both substitutions are required to prevent a downstream evicted message from reattaching the Beacon name to the original correct sense; no other content changes."
+        }
+      ],
+      "focal_reference_trace": {
+        "pre_focal_or_generic_occurrences": [],
+        "evicted_downstream_references": [
+          {
+            "message_index": 12,
+            "role": "assistant",
+            "finding": "Direct mapping confirmation, changed consistently but padded with new operational facts."
+          },
+          {
+            "message_index": 14,
+            "role": "assistant",
+            "finding": "Speaker-mix answer formerly called mentoring Beacon twice; both references were minimally neutralized."
+          }
+        ],
+        "retained_downstream_references": [
+          {
+            "message_index": 39,
+            "role": "user",
+            "finding": "Requests a Beacon program blurb without spelling out its sense."
+          },
+          {
+            "message_index": 40,
+            "role": "assistant",
+            "finding": "Generic acknowledgment neither identifies the sense nor supplies the requested blurb; inherited unchanged from the base."
+          },
+          {
+            "message_index": 44,
+            "role": "assistant",
+            "finding": "Uses 'Beacon session' as a volunteer destination. This was compatible with the original mentorship sense but is a target-relative type drift for the counterfactual sponsor lounge."
+          }
+        ]
+      },
+      "non_focal_selected_plant_integrity": {
+        "plant_id": "c02-referent-1",
+        "verdict": "UNCHANGED_BY_DIFF",
+        "evidence": "The catering decision and confirmation at messages 31-32, the retained anaphor at message 37, the response at message 38, and the c02-referent-1 plant row are byte/structurally identical to the base."
+      },
+      "unrelated_factual_chain_integrity": {
+        "verdict": "UNCHANGED_BY_DIFF_BUT_BASE_HAS_DEFECTS",
+        "evidence": "All messages except 11, 12, and 14 and every non-message field are identical to c02.json. The candidate does not alter Ravi/keynote, catering, Hall B, venue, pricing, sponsorship, volunteer, or other plant facts."
+      },
+      "defect_attribution": {
+        "pre_existing_base_defects_shared_by_correct_and_counterfactual": [
+          "Messages 36, 38, and 40 are incomplete/non-responsive; message 42 gives unsupported hall capacity; and the ornate repetitive register is inherited exactly, as the blind review found.",
+          "Message 44 already uses the somewhat loose phrase 'Beacon session'. Its words are shared, though its incompatibility with a lounge arises only after the sense swap."
+        ],
+        "newly_introduced_or_target_relative_defects": [
+          "Message 12 introduces a detailed sponsor-lounge operating plan not licensed by the frozen counterfactual.",
+          "Because Beacon now means the sponsor lounge, unchanged message 44's 'Beacon session' favors the original mentorship/program type and weakens the exclusivity of the counterfactual mapping."
+        ]
+      },
+      "exact_repairs_required": [
+        "Keep message 11's two-sense swap and message 14's two neutralizing substitutions.",
+        "Reduce message 12 to the two definitions and priority mapping. Remove hosted introductions, coffee/seating, office hours, staffing, founder/hiring-team windows, signage, and tone claims unless those facts are independently present in both paired histories.",
+        "In both paired histories, replace message 44's 'Guide 3 people to the Beacon session' example with a focal-neutral destination such as 'Guide 3 people to their assigned room or activity.'",
+        "In both paired histories, replace message 40 with a coherent under-80-word blurb that remains sense-neutral, or redesign the prompt/response pair so it is natural without restating either Beacon meaning. Complete messages 36 and 38 and correct message 42 as specified for the paired c02 repair.",
+        "Reduce inherited padding/register discontinuity in both paired histories and re-run target-aware, blind, and mechanical review."
+      ],
+      "verdict": "REVISE",
+      "verdict_reason": "The intended sponsor-lounge sense is explicitly recoverable and the mentorship track is no longer established as the user's in-chat sense. The candidate remains repairable, but newly invented lounge operations, the retained 'Beacon session' type drift, and inherited blind-review failures prevent acceptance."
+    },
+    "banked-c10-referent-1": {
+      "bindings": {
+        "candidate_path": "data/coherent_state_counterfactuals/banked_c10_c02/c10_referent_unreviewed.json",
+        "candidate_raw_file_sha256": "876dffac15e24a99e3f8007c23d6910db7718a5272c328a959a31271d547a15a",
+        "base_path": "data/synthetic/c10.json",
+        "base_raw_file_sha256": "25b44ca66584d7141c10202234e77f959cd84e0bbc7a00c2db3b6b51b6a7d035",
+        "base_canonical_sha256": "fa2cfa96592006baa3416ab0a632526ced45971eb02c21c822b3972ef2f71bd4",
+        "counterfactual_conversation_canonical_sha256": "7e585232f97aad85485e179433c7275bbd2bdc1912ab32d329f2fd5b13d61319",
+        "target_row_canonical_sha256": "483ef3b76648d985296aa0ef3f939fa910338e5b49c5c84de3cea7e24b83ac88"
+      },
+      "frozen_target": {
+        "correct": "an L-shape with a center island where the dining door was",
+        "counterfactual": "a U-shape with a peninsula",
+        "basis": "Kitchen scheme 2 was chosen; the U-shape with peninsula (scheme 3) is a ruled-out alternative."
+      },
+      "target_establishment": {
+        "frozen_counterfactual_established": true,
+        "correct_answer_no_longer_established_as_final_selection": true,
+        "exactly_and_only_frozen_counterfactual_established": false,
+        "evidence": [
+          "Message 27 changes the final selection from scheme 2 to scheme 3, and message 28 explicitly confirms a U-shaped kitchen with a peninsula.",
+          "The L-shape/center-island scheme remains only as the unchosen second option in message 27. Earlier messages 2 and 4 mention/recommend L-shape/island concepts but precede and are overridden by the explicit final verdict; the base plant itself records early contamination at indices 2 and 4.",
+          "Message 28 wrongly transfers 'located where the dining room door previously was' from scheme 2 to scheme 3 even though the option list attaches that location only to the L-shape/center-island scheme.",
+          "Downstream evicted message 30 remains unchanged and uses 'changing the island size' as a project-specific change-order example, leaving an island reference inconsistent with the selected peninsula."
+        ]
+      },
+      "changed_message_audit": [
+        {
+          "message_index": 27,
+          "role": "user",
+          "base_content_sha256": "38a3bc52c6f9ebce56ec260b332eb47c836b0adcf98c61fe687345271c0fa797",
+          "counterfactual_content_sha256": "c0b2b388fc6d1d356b2e2728d795795645011d62686b2db22cfc574f7937b38c",
+          "change_summary": "Only 'second' is changed to 'third'.",
+          "necessary": true,
+          "minimal": true,
+          "finding": "This is the smallest direct selection edit and exactly points to the frozen scheme 3 counterfactual."
+        },
+        {
+          "message_index": 28,
+          "role": "assistant",
+          "base_content_sha256": "cc33ece0fa832f7765b6bc4522e2ab13565a8cb5bff9a6f566f76e1c2095e73f",
+          "counterfactual_content_sha256": "a84860f517399dbd20728bb40ee98b7cc4a655540f36532c34f73e324002ec43",
+          "change_summary": "L-shape/island/Option 2 language is replaced with U-shape/peninsula/Option 3 throughout the truncated assistant reply, plus 'fully' is added.",
+          "necessary": true,
+          "minimal": false,
+          "finding": "Changing the direct confirmation and target-specific rationale terms is necessary, but attaching the dining-door location to scheme 3 is factually wrong, 'fully' is unnecessary, and multiple design rationales are unsupported extrapolations rather than frozen facts."
+        }
+      ],
+      "focal_reference_trace": {
+        "pre_focal_or_generic_occurrences": [
+          {
+            "message_indices": [2, 3, 4],
+            "zone": "evicted",
+            "finding": "The opening layout discussion mentions galley, L-shape, and island concepts and recommends an L-shaped option. This is shared pre-existing early contamination, not a candidate edit, and does not override the later explicit final choice."
+          }
+        ],
+        "evicted_downstream_references": [
+          {
+            "message_index": 28,
+            "role": "assistant",
+            "finding": "Direct confirmation, edited but with a transferred dining-door property and unsupported rationale."
+          },
+          {
+            "message_index": 30,
+            "role": "assistant",
+            "finding": "Project-specific change-order explanation still says 'changing the island size'. This was coherent for the correct L-shape/island history but is inconsistent with the counterfactual peninsula and was omitted from the allowlist."
+          }
+        ],
+        "retained_downstream_references": [
+          {
+            "message_index": 37,
+            "role": "user",
+            "finding": "Anaphor 'the layout we decided on' and tape-outline reminder reactivate the decision but do not identify either layout."
+          },
+          {
+            "message_index": 38,
+            "role": "assistant",
+            "finding": "Generic acknowledgment neither leaks a layout nor answers the plumbing question; unchanged inherited defect."
+          },
+          {
+            "message_index": 42,
+            "role": "assistant",
+            "finding": "Uses 'layout' generically while misreading a countertop-templating question; it does not identify either target layout and is unchanged from the base."
+          }
+        ]
+      },
+      "non_focal_selected_plant_integrity": {
+        "plant_id": "c10-sense-1",
+        "verdict": "UNCHANGED_BY_DIFF",
+        "evidence": "The Cedar mapping at messages 31-32, retained Cedar reference at message 35, response at message 36, and the c10-sense-1 plant row are byte/structurally identical to c10.json."
+      },
+      "unrelated_factual_chain_integrity": {
+        "verdict": "UNCHANGED_BY_DIFF_BUT_BASE_HAS_DEFECTS",
+        "evidence": "Only messages 27-28 differ. Countertop/Naomi, Cedar, electrical-subcontractor, permits, beam, contractor, financing, flooring, budget, and every other plant chain are otherwise unchanged. Message 30 is textually unchanged but becomes target-relative inconsistent because it refers to an island after the selected layout changes."
+      },
+      "defect_attribution": {
+        "pre_existing_base_defects_shared_by_correct_and_counterfactual": [
+          "The target plant records contaminated_early indices 2 and 4; the early assistant recommends L-shaped/island concepts before the later user verdict.",
+          "Messages 36, 38, and 40 are clipped/non-responsive. Message 42 answers countertop templating as a full design-to-construction timeline and repeats permitting despite the already filed permit. These are byte-identical inherited defects.",
+          "The repetitive praise, faux-file records, and ornate formatting identified by the blind review are inherited."
+        ],
+        "newly_introduced_or_target_relative_defects": [
+          "Message 28 falsely transfers the dining-door location from scheme 2 to scheme 3 and adds unsupported scheme-3 rationale.",
+          "Unchanged message 30's island-size example is no longer coherent with the final U-shape/peninsula selection and retains a component of the original correct answer."
+        ]
+      },
+      "exact_repairs_required": [
+        "Keep message 27's sole second-to-third edit.",
+        "Rewrite message 28 to state only that the final choice is scheme 3, a U-shaped kitchen with a peninsula. Remove the dining-door-location clause, 'fully', and any rationale not stated by the user.",
+        "Add message 30 to the focal allowlist and replace the project-specific 'changing the island size' example with a target-neutral example such as 'changing a cabinet or fixture size'; validate token equality again.",
+        "For an execution candidate rather than a banked witness, regenerate the paired early conversation so messages 2 and 4 do not recommend or lexically prefigure the frozen correct layout; verify the previously recorded early-contamination condition is absent.",
+        "In both paired histories, give messages 36, 38, 40, and 42 concise responsive answers that do not reveal focal identities: Cedar scheduling can be conditional on shared work/access; plumbing can direct comparison of fixture locations to Bogdan's quote; electrical-sub confirmation must say it is not established in the record and name the action; countertop templating must discuss fabricator lead time rather than permitting/full construction.",
+        "Reduce inherited padding/register defects in both histories and re-run all factual, blind, and mechanical gates."
+      ],
+      "verdict": "REVISE",
+      "verdict_reason": "The final scheme-3 selection is explicit and repairable, but the candidate is not an exact counterfactual because it transfers a scheme-2 location and leaves an evicted island reference. Early contamination and the blind-review failures also require paired regeneration before use."
+    },
+    "banked-c10-sense-1": {
+      "bindings": {
+        "candidate_path": "data/coherent_state_counterfactuals/banked_c10_c02/c10_sense_unreviewed.json",
+        "candidate_raw_file_sha256": "40df199fc4a92986569e918453329877c9c0382dac0108febe6ed29b46ff5329",
+        "base_path": "data/synthetic/c10.json",
+        "base_raw_file_sha256": "25b44ca66584d7141c10202234e77f959cd84e0bbc7a00c2db3b6b51b6a7d035",
+        "base_canonical_sha256": "fa2cfa96592006baa3416ab0a632526ced45971eb02c21c822b3972ef2f71bd4",
+        "counterfactual_conversation_canonical_sha256": "4205acf403e9faf6eb57fe34e13cba94b34167c36beaa2f8b651e8eac82345bf",
+        "target_row_canonical_sha256": "db73425792571ae75149c9d596078dbf830569781e7c7fd062ebc816a16ef4e1"
+      },
+      "frozen_target": {
+        "correct": "the back deck rebuild bundled into the remodel",
+        "counterfactual": "the cedar closet lining idea upstairs",
+        "basis": "'Cedar' was disambiguated to the deck rebuild; the closet lining is the other sense."
+      },
+      "target_establishment": {
+        "frozen_counterfactual_established": true,
+        "correct_answer_no_longer_established_as_users_in_chat_sense": true,
+        "exactly_and_only_frozen_counterfactual_established": false,
+        "evidence": [
+          "Message 31 says that when the user says Cedar with the assistant, Cedar means the cedar closet lining idea upstairs, 'Closet only'.",
+          "Message 32 repeatedly confirms the closet mapping; the deck remains only the partner's/other sense.",
+          "Message 32 then says the back deck is a separate unrelated project 'upstairs, in the master bedroom', directly contradicting both the physical meaning of a back deck and message 31's statement that the deck rebuild is bundled into the remodel.",
+          "Message 32 also adds closet scope (trim, shelves, installation) not present in the frozen target."
+        ]
+      },
+      "changed_message_audit": [
+        {
+          "message_index": 31,
+          "role": "user",
+          "base_content_sha256": "cbba7af47e691a53e407060b1b76b4d2dd7fa888f9f5da562b5799112bc31db0",
+          "counterfactual_content_sha256": "c74136a050cb226807f3409210034169f469cc719faccfe08df9b153aadabaaa",
+          "change_summary": "The partner's and user's two Cedar meanings are swapped, and 'Deck only' becomes 'Closet only'.",
+          "necessary": true,
+          "minimal": true,
+          "finding": "At the proposition level, swapping both meanings and the exclusivity sentence is the minimal coherent way to establish the frozen other sense while preserving the two-project contrast."
+        },
+        {
+          "message_index": 32,
+          "role": "assistant",
+          "base_content_sha256": "45de1556a0c6f79eee4928abfa83048a495f9927e9f83aabb96bf034075b046c",
+          "counterfactual_content_sha256": "5854afbb0282a4a9d89d4a55f6a076e8248e37b177894094eed12b2678f6167c",
+          "change_summary": "Deck terms are replaced with closet terms throughout the assistant confirmation and the inverse exclusions are swapped.",
+          "necessary": true,
+          "minimal": false,
+          "finding": "The direct mapping changes are necessary, but the edit mechanically carries the base location parenthetical onto the deck, calls a bundled project unrelated, invents closet sub-scope, and overgeneralizes the user's chat-specific shorthand to all communications."
+        }
+      ],
+      "focal_reference_trace": {
+        "pre_focal_or_generic_occurrences": [],
+        "evicted_downstream_references": [
+          {
+            "message_index": 32,
+            "role": "assistant",
+            "finding": "Direct mapping confirmation; contains the newly introduced deck-location/bundling contradiction and excess closet scope."
+          }
+        ],
+        "retained_downstream_references": [
+          {
+            "message_index": 35,
+            "role": "user",
+            "finding": "Asks whether Cedar should wait for framing inspection. It is an anaphoric reactivation and does not explicitly identify either project, though the dependency must remain plausible for both senses."
+          },
+          {
+            "message_index": 36,
+            "role": "assistant",
+            "finding": "Only praises the question and gives no scheduling answer. It neither leaks an identity nor resolves the chain; unchanged inherited defect."
+          }
+        ]
+      },
+      "non_focal_selected_plant_integrity": {
+        "plant_id": "c10-referent-1",
+        "verdict": "UNCHANGED_BY_DIFF",
+        "evidence": "The layout verdict and confirmation at messages 27-28, retained layout reference at message 37, response at message 38, and c10-referent-1 plant row are byte/structurally identical to c10.json."
+      },
+      "unrelated_factual_chain_integrity": {
+        "verdict": "UNCHANGED_BY_DIFF_BUT_BASE_HAS_DEFECTS",
+        "evidence": "Only messages 31-32 differ. Layout, countertop/Naomi, electrical subcontractor, permit, beam, contractor, financing, flooring, budget, and all other factual chains are unchanged."
+      },
+      "defect_attribution": {
+        "pre_existing_base_defects_shared_by_correct_and_counterfactual": [
+          "The assistant's message 32 already overgeneralizes a user-to-assistant shorthand into a rule for all project communications; that scope inflation is inherited in form.",
+          "Messages 36, 38, and 40 are clipped/non-responsive, message 42 misreads countertop templating and repeats permit work, and the ornate repetitive register is inherited exactly, as identified by the blind review."
+        ],
+        "newly_introduced_or_target_relative_defects": [
+          "Message 32 locates a back deck upstairs in the master bedroom and calls it separate/unrelated despite message 31 saying it is bundled into this remodel.",
+          "Message 32 invents closet trim, shelves, and installation scope beyond 'cedar closet lining idea upstairs'."
+        ]
+      },
+      "exact_repairs_required": [
+        "Keep message 31's coherent two-sense swap.",
+        "Rewrite message 32 to say only that in this chat Cedar means the cedar closet lining idea upstairs and that the back deck rebuild is the other meaning. Delete 'separate, unrelated', delete '(upstairs, in the master bedroom)' from the deck clause, retain that the deck is bundled into the remodel, and remove invented trim/shelves/installation scope.",
+        "Limit the shorthand rule to the user's use with the assistant; do not convert it into an all-team/all-communications convention unless that scope is added identically and explicitly by the user in both paired histories.",
+        "In both paired histories, complete message 36 with selection-neutral dependency advice and repair messages 38, 40, and 42 as specified for the paired c10 repair; reduce inherited padding/register defects.",
+        "Re-run target-aware, blind, and mechanical review on the revised exact pair."
+      ],
+      "verdict": "REVISE",
+      "verdict_reason": "The intended closet sense is explicit and the deck is no longer the user's in-chat sense, so the swap is salvageable. The direct deck-location/bundling contradiction, invented closet scope, and inherited blind-review failures require revision."
+    }
+  },
+  "overall_verdict": "REVISE_ALL_FOUR",
+  "overall_summary": "All four candidates make the frozen counterfactual probe answer recoverable and stop identifying the frozen correct answer as the user's final selection or intended in-chat sense. None establishes exactly and only the frozen counterfactual: c02-referent invents a selection rationale; c02-sense invents lounge operations and retains a 'Beacon session' type cue; c10-referent transfers a scheme-2 location and leaves an island reference; c10-sense introduces a direct deck location/bundling contradiction and extra closet scope. Every candidate also inherits the blind-review failures from its base. Each swap is nevertheless locally repairable, so all four are REVISE rather than REJECT. No artifact is execution-ready, and inherited repairs must be made symmetrically in newly rendered correct/counterfactual pairs."
+}
