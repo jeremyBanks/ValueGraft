@@ -828,7 +828,7 @@
       "timestamp_source": "conversation manifest first timestamp"
     },
     "notes/2026071146-conversation-user-gpt56.md": {
-      "object_id": "2538d66bdff02137bbda39cf31c2f07c7288868e",
+      "object_id": "b63a2bf86e4ff3bc003edb4c6bb7bb0734b45beb",
       "archive_timestamp_utc": "2026-07-11T02:50:35.343000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -853,7 +853,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071151-conversation-user-opus48.md": {
-      "object_id": "15552845d7f11db7b2378e980013f50969f9d2e4",
+      "object_id": "eb9116fee89f44c9871a9cdd2531e7e668074a7f",
       "archive_timestamp_utc": "2026-07-11T03:28:16.690000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -865,6 +865,96 @@
     "notes/2026071153-corrections-from-sol-audit.md": {
       "object_id": "14d36b97809794012e60e439c3c9a9bd3ab997ae",
       "archive_timestamp_utc": "2026-07-11T03:58:45Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071154-sol-claude-research-plan-dialogue.md": {
+      "object_id": "008e73ae245d7f53bd034f433baed2ddbf277ff4",
+      "archive_timestamp_utc": "2026-07-11T04:43:27Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071155-sol-final-paper-review.md": {
+      "object_id": "e76cf2ee2ac57d8b7e804a62a8c24f883be202d0",
+      "archive_timestamp_utc": "2026-07-11T04:56:59Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071156-sol-fable-execution-coordination.md": {
+      "object_id": "dfaff6845a5721ec30e80bd7e0af47eccbf96027",
+      "archive_timestamp_utc": "2026-07-11T05:07:01Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071157-fable-outcome-interpretation-matrix.md": {
+      "object_id": "0fb4af7c6a67056795c9d59a0e8a9c8bb02b7a89",
+      "archive_timestamp_utc": "2026-07-11T05:11:29Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071158-opus-gapped-v2-launch-review.md": {
+      "object_id": "5b9c4dcaf4a8e915872190724dab79de2d3306e1",
+      "archive_timestamp_utc": "2026-07-11T07:59:08Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071159-opus-30b-zero-gap-failure-review.md": {
+      "object_id": "517c90e4c3020812070f2c6d346eed612cdfbde7",
+      "archive_timestamp_utc": "2026-07-11T08:53:54Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071160-opus-v6-prelaunch-review.md": {
+      "object_id": "2c9190b439ac7fe93b370c30fb09901dffcf11b6",
+      "archive_timestamp_utc": "2026-07-11T10:12:12Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071161-v7-semantic-aggregate-validator-provenance.md": {
+      "object_id": "ba79d81eb113415654aef32e4d5310fbca4c9673",
+      "archive_timestamp_utc": "2026-07-11T11:02:51Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071162-sol-v7-v8-adversarial-review.md": {
+      "object_id": "b40c8a806fff9991ab8bc723ff2d41aa39059fc0",
+      "archive_timestamp_utc": "2026-07-11T11:34:29Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071163-opus-v8-preladder-review.md": {
+      "object_id": "234a1d59d9d7afd0eba5f98a1d133f9afda69cb3",
+      "archive_timestamp_utc": "2026-07-11T11:51:13Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071164-conversation-user-opus48.md": {
+      "object_id": "acb157db37ae43e0ec037130b5ba60d293f7007e",
+      "archive_timestamp_utc": "2026-07-11T12:10:52.497000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071165-sol-v8-v10-semantic-closure-review.md": {
+      "object_id": "b5c09f76d16f043bea87f65c9e58c060615ddbdb",
+      "archive_timestamp_utc": "2026-07-11T12:33:53Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071166-sol-claude-joint-research-plan.md": {
+      "object_id": "3befd1390c7be0dd1a11224b98f33b683a727a28",
+      "archive_timestamp_utc": "2026-07-11T13:18:14Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071167-opus-prior-art-verification.md": {
+      "object_id": "c93e082210aa65795e52cfe8d1300377ad8ca612",
+      "archive_timestamp_utc": "2026-07-11T13:25:02Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071168-fable-tail-channel-design-review.md": {
+      "object_id": "c6bf9acb4970f4371a222a1962d3a5bde404766c",
+      "archive_timestamp_utc": "2026-07-11T13:56:59Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071169-sol-memento-primary-source-correction.md": {
+      "object_id": "7eccaee9451d3d2233c8854606bf6255b0bf7845",
+      "archive_timestamp_utc": "2026-07-11T14:45:02Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071170-sol-models-take-notes-primary-source-reading.md": {
+      "object_id": "1824d6182f2310263cffd10018366074c47c2cd6",
+      "archive_timestamp_utc": "2026-07-11T14:46:06Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071171-fable-parallel-gate-sequencing-review.md": {
+      "object_id": "4462eb308518392441e6211532326bdcfc134485",
+      "archive_timestamp_utc": "2026-07-11T15:21:35Z",
       "timestamp_source": "git current-file lifetime"
     }
   }
