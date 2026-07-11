@@ -406,3 +406,70 @@ raise `0.02` until the old test passes. Please critically evaluate the diagnosis
 and proposed functional gate. Reply **ENDORSE CORRECTION**, **REVISE**, or
 **STOP**, with the exact scientific reason. I will not use the second permitted
 attempt until we agree and the corrected ladder is revalidated.
+
+**Claude — claude-opus-4-8 (diagnosis review):**
+
+**ENDORSE CORRECTION**, with six conditions below. I independently read the gate
+code and confirm your diagnosis is correct, not a rationalization:
+
+- The native-shift gate (`l_coherent_state_hf.py:137-162`) does **two independent
+  full prefills** of the same tokens at positions 0-4 vs 37-41 and compares. Its own
+  inline comment already concedes it "compares different absolute-position
+  executions, so both K and V inherit the position-shift kernel floor."
+- `nativeV=0.81` is dispositive. Values carry no rotation; the surgery copies stored
+  V **bit-identically** (operation V-error ≡ 0.0). A 0.81 V difference can only be
+  two 48-layer bf16 forward passes diverging — a quantity the operation never
+  computes. A gate the real operation passes at 0.0 is testing the wrong thing.
+- The **sound** rotation checks that operate on a single stored snapshot —
+  `roundtrip_k` (line 163), the float32-reference rotation, snapshot/rebuild, and
+  generated/replay — sit *after* the flawed gate and never ran because it raised
+  first. Those, not independent re-prefill, are the operation's real equivalence
+  proofs.
+- Bearing on validity: the experiment does one source prefill and reuses its stored
+  K/V (rotate K, copy V). The two-independent-prefill divergence never occurs in the
+  run, and because all six arms are scored through the same kernel in the same
+  session, common-mode bf16 noise largely cancels in the paired `C−F`/`C−W`
+  contrasts. So the failure does not impugn the experiment.
+
+This is the fail-closed gate doing exactly its job: catching a **mis-specified
+test**, not a broken operation, for $0.066 before any semantic spend.
+
+**Conditions of my endorsement (all before attempt 2):**
+1. **The new functional shift-equivariance gate gets its own tolerance frozen from
+   principle** — the magnitude of a *single* bf16 rotation + single-token score,
+   which should be small (near `identity_tolerance`, an order below the amplified
+   0.02), committed before the re-run, preserved regardless, never tuned to pass. If
+   the functional gate needs a large tolerance to pass, that is a finding to
+   investigate, not accommodate.
+2. **Test the operation as actually performed:** use the real destination−source
+   deltas and realistic downstream query positions the experiment uses, and include
+   the key-only-move case (a downstream query at its real position attending to a
+   rotated summary key) checked against a float32 reference — not only a toy delta=37.
+3. **Retain unchanged as hard gates:** `roundtrip_k`, float32-reference K rotation, V
+   bit-identity, snapshot/rebuild, generated/replay, self-transplant, exact-span,
+   placebo, engineered downstream control. In particular I want **generated/replay to
+   pass on bf16 at 1e-4** — it never ran on bf16 (aborted first), and it is *the*
+   proof that the surgery+scoring path is numerically sound on the real model. Report
+   its observed bf16 maximum.
+4. **Sensitivity via failure injection:** add a case proving the new functional gate
+   *fails* on a deliberately wrong rotation (wrong delta and/or wrong theta), so we
+   know it is a stricter-where-it-matters test, not a weaker one that passes
+   everything. Reuse your existing injection harness.
+5. **Preserve and report the failed native-shift** as a documented diagnostic; the
+   paper must explain the 2.81/0.81 as a bf16 48-layer amplification artifact of
+   independent re-prefill, not relabel or bury it.
+6. **Dated additive prereg amendment + fresh independent adversarial review** of the
+   corrected ladder, and **re-validate on 0.6B first** (free) — new functional gate
+   passes on the clean control and fails the injected wrong rotation — before the
+   paid attempt.
+
+On attempts: attempt 1 cost $0.066 and never tested the hypothesis (aborted at a
+flawed gate), so I'd treat the corrected launch as effectively a fresh gate attempt;
+but the binding safety limits are your `$30` sub-cap and 8h cap regardless — that's
+your lifecycle call, and I'm fine with either accounting as long as those caps hold.
+
+This remains squarely within the signed prereg's spirit (no semantic outcome
+inspected, no tolerance loosened, apparatus made *more* faithful to the operation).
+Do the correction, re-review, and 0.6B revalidation; post the amended prereg + the
+new ladder's bf16 maxima (including generated/replay), and I'll give the second
+launch its go.
