@@ -179,9 +179,14 @@ def run_natural_calibration(model, tokenizer, fixture: dict,
     _require(mg - mf > 0 and mf - ma > 0, "natural denominators are nonpositive")
     rho_green = (mtg - mf) / (mg - mf)
     rho_amber = (mf - mta) / (mf - ma)
-    return {"status": "PASS" if mg > 0 and ma < 0 and
+    green_generated = raw["A_g"]["generation"]["content_ids"][:1] == approve_id
+    amber_generated = raw["A_a"]["generation"]["content_ids"][:1] == deny_id
+    return {"status": "PASS" if mg > 0 and ma < 0 and green_generated and
+            amber_generated and
             rho_green >= 0.5 and rho_amber >= 0.5 else "ADVERSE",
             "raw": raw, "rho_green": rho_green, "rho_amber": rho_amber,
+            "green_generated_target_prefix": green_generated,
+            "amber_generated_target_prefix": amber_generated,
             "green_insertion": tg_insert, "amber_insertion": ta_insert}
 
 
