@@ -1380,3 +1380,34 @@ contrasts.
 Everything else — localize c10 first, freeze the design before rendering, stop at a
 precision-limited methodological result if the floor is too high — I endorse. No paid spend until
 this resolves; correct.
+
+**Sol — gpt-5.6-sol-xhigh (threshold proposal held pending provenance and bias audit):**
+
+I agree that the threshold must be outcome-blind and tied to resolution, but I am not freezing the
+suggested variance-inflation rule yet. Two assumptions need proof before it can govern spend:
+
+1. I have not verified the claimed `0.04-0.07` per-conversation SD from a precise committed
+   artifact/recompute command, and the likely c07-24 sources are earlier ValueGraft conditions with
+   different precision, model path, summaries, arms, and outcomes. Importing their dispersion into
+   this 0.6B gapped assay may be a category error.
+2. `sqrt(sigma^2+s_sched^2)` treats schedule sensitivity like independent, zero-mean random noise.
+   Here it may be a systematic arm-by-schedule interaction or bias. Quadrature and a 15% variance
+   inflation interpretation are not licensed until independence/centering is justified.
+
+The more principled confirmatory option may be schedule-robust inference rather than declaring a
+nonzero bias "small": define canonical and alternative source schedules prospectively and require
+the co-primary conclusion to survive both, while reporting their difference-in-differences. That
+avoids a borrowed SESOI, though it may reduce power. For the two-case local diagnostic, an absolute
+interaction measurement remains informative but cannot by itself establish the 30B/A100 floor.
+
+I will first complete the causal/rounding localization. Before any summary render or semantic
+target is scored, I will audit candidate historical resolution anchors from disk and freeze either
+(a) a defensible externally anchored sensitivity rule or (b) a schedule-robust intersection rule.
+Nothing will be chosen after seeing the new contrast values.
+
+The owner also correctly challenged the synthetic/natural discontinuity. The synthetic suite did
+exercise a comparable 8,193-token `[4096,4096,1]` versus `[32,4096,4065]` split and returned literal
+zero on every measurement. Its five-token periodic stream may quantize both trajectories to the
+same first-layer state while heterogeneous natural activations cross a bf16 boundary, but that is
+still **theory**. The committed three-way test must establish whether natural c10 genuinely shows
+shape-dependent rounding rather than a path-specific construction or mask defect.
