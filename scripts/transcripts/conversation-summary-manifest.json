@@ -874,8 +874,8 @@
     },
     {
       "first_timestamp": "2026-07-11T03:28:16.690000Z",
-      "input_hash": "684857f99c059004ca9dd43554b304e1a72a08edb200931275384da915691636",
-      "last_timestamp": "2026-07-11T04:19:13.036000Z",
+      "input_hash": "ff6327c53a4e6a33a6738ae2ec1d1f16ba8fe10ce866467d28518e209d1dcc0d",
+      "last_timestamp": "2026-07-11T08:13:49.333000Z",
       "mode": "summary",
       "models": [
         "claude-opus-4-8"
@@ -885,7 +885,7 @@
         {
           "date": "2026-07-11",
           "first_message": 1,
-          "last_message": 46,
+          "last_message": 136,
           "platform": "claude-code",
           "sequence": 3
         }
@@ -895,7 +895,7 @@
         "provider": "codex",
         "reasoning": "medium"
       },
-      "summary_hash": "e03b5deba9994c3c2b65d100dcf294d83174fb6d5d7e2e091009315aeb7c1ede"
+      "summary_hash": "8f4fb30b495afc6f98f95abc755bf067d3fabda352df4b74c24d5d7793b695db"
     },
     {
       "first_timestamp": "2026-07-05T02:08:52.348000Z",
@@ -1522,8 +1522,8 @@
     },
     {
       "first_timestamp": "2026-07-11T02:50:35.343000Z",
-      "input_hash": "fe6cce9a857bc1eb6f298cb71fd886f77f7c5376366cebbbec3c89a242208b0f",
-      "last_timestamp": "2026-07-11T04:37:18.707000Z",
+      "input_hash": "4f7a5af58bd9a9f450bc8e3793edf8f09dc8483c716e03b3743ea9080b00b55d",
+      "last_timestamp": "2026-07-11T15:21:50.749000Z",
       "mode": "summary",
       "models": [
         "gpt-5.6-sol-xhigh"
@@ -1533,7 +1533,7 @@
         {
           "date": "2026-07-11",
           "first_message": 1,
-          "last_message": 80,
+          "last_message": 334,
           "platform": "codex",
           "sequence": 1
         }
@@ -1543,7 +1543,32 @@
         "provider": "codex",
         "reasoning": "medium"
       },
-      "summary_hash": "8a2a2df3fec359b1a6da80fe74ce5f46a0a726f82ff2a480ea5b0f9addb03edf"
+      "summary_hash": "91d45cae0e470259c6ce5e3c44afaec04dce0fb74d28d7f6c55cd0f2c972c34c"
+    },
+    {
+      "first_timestamp": "2026-07-11T12:10:52.497000Z",
+      "input_hash": "c8cbdc660856496a714cd6bb48e01c290352d647e58a765f6a2465facb9c2da2",
+      "last_timestamp": "2026-07-11T15:23:18.341000Z",
+      "mode": "summary",
+      "models": [
+        "claude-opus-4-8"
+      ],
+      "note": "notes/2026071173-conversation-user-opus48.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-11",
+          "first_message": 1,
+          "last_message": 63,
+          "platform": "claude-code",
+          "sequence": 4
+        }
+      ],
+      "summarizer": {
+        "model": "gpt-5.6-luna",
+        "provider": "codex",
+        "reasoning": "medium"
+      },
+      "summary_hash": "78fca49b4ca8f99b5c368b4e80daac45a217c56e36019f6d9a7d079cc1e4bb7e"
     }
   ],
   "version": 1
