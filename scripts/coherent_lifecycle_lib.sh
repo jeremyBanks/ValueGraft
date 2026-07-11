@@ -9,6 +9,13 @@ coherent_remote_dir_class() {
   esac
 }
 
+coherent_run_path_class() {
+  case "${1:?run-path discovery exit code required}" in
+    0) echo OBSERVED ;;
+    *) echo UNVERIFIED ;;
+  esac
+}
+
 coherent_terminal_status() {
   case "${1:-}" in
     EXITED|TERMINATED) return 0 ;;

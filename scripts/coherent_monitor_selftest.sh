@@ -44,6 +44,9 @@ PASS=$((PASS + 12))
 [ "$(coherent_remote_dir_class 0)" = EXISTS ]
 [ "$(coherent_remote_dir_class 1)" = ABSENT ]
 [ "$(coherent_remote_dir_class 255)" = UNVERIFIED ]
+[ "$(coherent_run_path_class 0)" = OBSERVED ]
+[ "$(coherent_run_path_class 1)" = UNVERIFIED ]
+[ "$(coherent_run_path_class 255)" = UNVERIFIED ]
 for terminal in EXITED TERMINATED; do
   coherent_terminal_status "$terminal"
 done
@@ -52,7 +55,7 @@ for nonterminal in RUNNING CREATED "" None; do
     echo "FAIL nonterminal status accepted: ${nonterminal:-<empty>}"; exit 1
   fi
 done
-PASS=$((PASS + 9))
+PASS=$((PASS + 12))
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
