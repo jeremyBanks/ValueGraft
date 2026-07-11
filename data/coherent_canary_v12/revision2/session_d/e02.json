@@ -1,0 +1,301 @@
+{
+  "schema": "coherent_state_decision_canary_v12_case_draft_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "case_id": "e02",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "stratum": "engineered",
+  "length_band": "short",
+  "domain": "nonprofit meal delivery allocation",
+  "title": "East Ward cold-chain route selection",
+  "supersedes_source_file_sha256": "91ac899075e1ef9756106e62a423deb6de94fcfcc5115feb45bca1d862e23eb4",
+  "authoring_provenance": {
+    "author": "Independent Codex subagent",
+    "runtime_model_id": null,
+    "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+    "reasoning_effort": null,
+    "reasoning_effort_status": "not exposed to this subagent; no level inferred",
+    "authoring_session_source_id": "/root/v12_revision2_e01_e02",
+    "authored_at_utc": "2026-07-11T20:55:00Z",
+    "source_revision": 2,
+    "superseded_source_path": "data/coherent_canary_v12/drafts/codex_session_a/e02.json",
+    "superseded_source_file_sha256": "91ac899075e1ef9756106e62a423deb6de94fcfcc5115feb45bca1d862e23eb4",
+    "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+    "subject_model_forward_performed": false
+  },
+  "middle_end_msg": 17,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting a community meal program with an accurate planning conversation. Apply the program's stated allocation sequence, distinguish verified measurements from estimates, keep unrelated service facts separate, and never imply that a reservation, dispatch, or external contact has occurred."
+        },
+        {
+          "role": "user",
+          "content": "Before we discuss Saturday deliveries, note one item for the public-services desk. Walk-in intake at the Linden center is on Thursday. That weekday comes from the benefits team's service calendar and does not depend on a kitchen test, a driving route, a volunteer assignment, or any hub chosen for food distribution."
+        },
+        {
+          "role": "assistant",
+          "content": "I have recorded Thursday as the Linden walk-in day and will keep it separate from delivery planning. I will not infer that weekday from route or refrigeration evidence, and a later change in the staging decision would not alter the benefits-team calendar."
+        },
+        {
+          "role": "user",
+          "content": "The East Ward Meal Network has one refrigerated Saturday run serving the same six apartment stops from either Cedar or Harbor. The vehicle and driver are the same in both plans. We are deciding only where sealed meal crates should be staged before loading. The board asked us to base that choice on comparable cold-hold tests and the full route sheets, not on which kitchen staff happen to prefer."
+        },
+        {
+          "role": "assistant",
+          "content": "That fixes the comparison unit: one vehicle, one driver, and one stop list, with the staging hub as the decision variable. I will treat staff preference as irrelevant. I will also distinguish time spent driving from time a sealed test crate remains within the required temperature band, because a shorter route cannot compensate for a hub that fails the cold-chain screen."
+        },
+        {
+          "role": "user",
+          "content": "The allocation sequence has two stages. First, remove any hub whose verified sealed-crate cold hold is below 45 minutes. Then, if more than one hub remains, choose the eligible hub with the lower total driving time on the common stop list. A hub that fails the first stage cannot return to consideration because its route is shorter. If only one survives, that hub is selected."
+        },
+        {
+          "role": "assistant",
+          "content": "I will screen cold-hold eligibility before looking at route length. Forty-five minutes qualifies and anything below it does not. When both qualify, the lower driving total selects the hub; when only one qualifies, that survivor is selected without using the ineligible hub's route time as a tradeoff."
+        },
+        {
+          "role": "user",
+          "content": "Both kitchen tests used the same insulated crate model, six chilled meal packs, the same calibrated logger, and the same pass band. Staff sealed each crate after a twenty-minute loading simulation and left it in the marked dispatch area with no replacement ice. Harbor's uninterrupted logger trace stayed within the band for 58 minutes. The kitchen lead signed the trace review after checking that there were no missing samples."
+        },
+        {
+          "role": "assistant",
+          "content": "Harbor therefore clears the 45-minute eligibility threshold on a complete trace. Because the crate design, payload, logger, loading simulation, and handling condition were matched, the test can be compared with Cedar's result once that result is stated. I am not using Harbor's route length yet."
+        },
+        {
+          "role": "user",
+          "content": "Cedar's test used the same sealed-container protocol and held the required temperature for 62 minutes. The kitchen lead confirmed that result from the uninterrupted sensor trace; it is not a projection from the shorter route."
+        },
+        {
+          "role": "assistant",
+          "content": "I have Cedar's verified cold-hold result and will treat it as the remaining eligibility input. The route duration and cold-hold duration are different measurements, so I will not substitute one for the other."
+        },
+        {
+          "role": "user",
+          "content": "The route planner then drove both versions with the normal Saturday restrictions loaded: no use of the school lane before noon, the same six stops, and the same return point. Cedar totaled 38 minutes of driving and Harbor totaled 51. The worksheet separates driving from loading time, and its totals were checked against the turn-by-turn traces rather than copied from an unconstrained map estimate."
+        },
+        {
+          "role": "assistant",
+          "content": "Those are comparable route totals for the second stage. Cedar has the lower driving time at 38 minutes, while Harbor is 51. The school-lane restriction and common stops were applied to both, so the difference is not explained by a different route definition. The cold-hold screen still comes first."
+        },
+        {
+          "role": "user",
+          "content": "Apply the board's sequence now and name the staging hub. Explain first which candidates survive the sealed-crate threshold and then, only if needed, how the matched route totals determine the selection. Do not claim that the driver or kitchen has been assigned."
+        },
+        {
+          "role": "assistant",
+          "content": "Choose Cedar. Both hubs clear the 45-minute cold-hold screen, and Cedar's 38-minute route is shorter than Harbor's 51-minute route, so the second step selects Cedar."
+        },
+        {
+          "role": "user",
+          "content": "For the loading lead, clarify two details that do not alter the hub rule. Meal packs stay in their labeled crate until the vehicle is at the loading line, and a crate whose seal is broken during staging must be checked again rather than assumed equivalent to the test crate. These are handling safeguards, not extra scoring criteria for choosing between otherwise eligible hubs."
+        },
+        {
+          "role": "assistant",
+          "content": "The lead should preserve the labeled-crate grouping until loading and send any prematurely opened crate through a fresh check. Those instructions protect the conditions represented by the tests; they do not add a third comparison stage, revise the recorded test durations, or authorize a different staging choice."
+        },
+        {
+          "role": "user",
+          "content": "A volunteer may arrive after the loading briefing has started. Suggest a simple way for the lead to bring that person into the work without repeating any recorded hub, route, test duration, or service-calendar detail."
+        },
+        {
+          "role": "assistant",
+          "content": "Give the late volunteer the current role card, point out the person supervising that role, and ask for a read-back of the next two handling steps before work begins."
+        },
+        {
+          "role": "user",
+          "content": "If the read-back reveals that one instruction was unclear, what should the lead do before the volunteer touches a crate? Keep the answer about briefing practice rather than any earlier decision."
+        },
+        {
+          "role": "assistant",
+          "content": "Restate the unclear step in concrete order, have the volunteer repeat it again, and wait for an accurate read-back before assigning the task. Record no completion until the work itself is observed."
+        }
+      ]
+    },
+    "wrong_focal": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are assisting a community meal program with an accurate planning conversation. Apply the program's stated allocation sequence, distinguish verified measurements from estimates, keep unrelated service facts separate, and never imply that a reservation, dispatch, or external contact has occurred."
+        },
+        {
+          "role": "user",
+          "content": "Before we discuss Saturday deliveries, note one item for the public-services desk. Walk-in intake at the Linden center is on Thursday. That weekday comes from the benefits team's service calendar and does not depend on a kitchen test, a driving route, a volunteer assignment, or any hub chosen for food distribution."
+        },
+        {
+          "role": "assistant",
+          "content": "I have recorded Thursday as the Linden walk-in day and will keep it separate from delivery planning. I will not infer that weekday from route or refrigeration evidence, and a later change in the staging decision would not alter the benefits-team calendar."
+        },
+        {
+          "role": "user",
+          "content": "The East Ward Meal Network has one refrigerated Saturday run serving the same six apartment stops from either Cedar or Harbor. The vehicle and driver are the same in both plans. We are deciding only where sealed meal crates should be staged before loading. The board asked us to base that choice on comparable cold-hold tests and the full route sheets, not on which kitchen staff happen to prefer."
+        },
+        {
+          "role": "assistant",
+          "content": "That fixes the comparison unit: one vehicle, one driver, and one stop list, with the staging hub as the decision variable. I will treat staff preference as irrelevant. I will also distinguish time spent driving from time a sealed test crate remains within the required temperature band, because a shorter route cannot compensate for a hub that fails the cold-chain screen."
+        },
+        {
+          "role": "user",
+          "content": "The allocation sequence has two stages. First, remove any hub whose verified sealed-crate cold hold is below 45 minutes. Then, if more than one hub remains, choose the eligible hub with the lower total driving time on the common stop list. A hub that fails the first stage cannot return to consideration because its route is shorter. If only one survives, that hub is selected."
+        },
+        {
+          "role": "assistant",
+          "content": "I will screen cold-hold eligibility before looking at route length. Forty-five minutes qualifies and anything below it does not. When both qualify, the lower driving total selects the hub; when only one qualifies, that survivor is selected without using the ineligible hub's route time as a tradeoff."
+        },
+        {
+          "role": "user",
+          "content": "Both kitchen tests used the same insulated crate model, six chilled meal packs, the same calibrated logger, and the same pass band. Staff sealed each crate after a twenty-minute loading simulation and left it in the marked dispatch area with no replacement ice. Harbor's uninterrupted logger trace stayed within the band for 58 minutes. The kitchen lead signed the trace review after checking that there were no missing samples."
+        },
+        {
+          "role": "assistant",
+          "content": "Harbor therefore clears the 45-minute eligibility threshold on a complete trace. Because the crate design, payload, logger, loading simulation, and handling condition were matched, the test can be compared with Cedar's result once that result is stated. I am not using Harbor's route length yet."
+        },
+        {
+          "role": "user",
+          "content": "Cedar's test used the same sealed-container protocol and held the required temperature for 41 minutes. The kitchen lead confirmed that result from the uninterrupted sensor trace; it is not a projection from the shorter route."
+        },
+        {
+          "role": "assistant",
+          "content": "I have Cedar's verified cold-hold result and will treat it as the remaining eligibility input. The route duration and cold-hold duration are different measurements, so I will not substitute one for the other."
+        },
+        {
+          "role": "user",
+          "content": "The route planner then drove both versions with the normal Saturday restrictions loaded: no use of the school lane before noon, the same six stops, and the same return point. Cedar totaled 38 minutes of driving and Harbor totaled 51. The worksheet separates driving from loading time, and its totals were checked against the turn-by-turn traces rather than copied from an unconstrained map estimate."
+        },
+        {
+          "role": "assistant",
+          "content": "Those are comparable route totals for the second stage. Cedar has the lower driving time at 38 minutes, while Harbor is 51. The school-lane restriction and common stops were applied to both, so the difference is not explained by a different route definition. The cold-hold screen still comes first."
+        },
+        {
+          "role": "user",
+          "content": "Apply the board's sequence now and name the staging hub. Explain first which candidates survive the sealed-crate threshold and then, only if needed, how the matched route totals determine the selection. Do not claim that the driver or kitchen has been assigned."
+        },
+        {
+          "role": "assistant",
+          "content": "Choose Harbor. Harbor clears the 45-minute cold-hold screen, while Cedar's 41-minute result fails it. Only Harbor remains eligible, so the driving-time comparison does not change the selection."
+        },
+        {
+          "role": "user",
+          "content": "For the loading lead, clarify two details that do not alter the hub rule. Meal packs stay in their labeled crate until the vehicle is at the loading line, and a crate whose seal is broken during staging must be checked again rather than assumed equivalent to the test crate. These are handling safeguards, not extra scoring criteria for choosing between otherwise eligible hubs."
+        },
+        {
+          "role": "assistant",
+          "content": "The lead should preserve the labeled-crate grouping until loading and send any prematurely opened crate through a fresh check. Those instructions protect the conditions represented by the tests; they do not add a third comparison stage, revise the recorded test durations, or authorize a different staging choice."
+        },
+        {
+          "role": "user",
+          "content": "A volunteer may arrive after the loading briefing has started. Suggest a simple way for the lead to bring that person into the work without repeating any recorded hub, route, test duration, or service-calendar detail."
+        },
+        {
+          "role": "assistant",
+          "content": "Give the late volunteer the current role card, point out the person supervising that role, and ask for a read-back of the next two handling steps before work begins."
+        },
+        {
+          "role": "user",
+          "content": "If the read-back reveals that one instruction was unclear, what should the lead do before the volunteer touches a crate? Keep the answer about briefing practice rather than any earlier decision."
+        },
+        {
+          "role": "assistant",
+          "content": "Restate the unclear step in concrete order, have the volunteer repeat it again, and wait for an accurate read-back before assigning the task. Record no completion until the work itself is observed."
+        }
+      ]
+    }
+  },
+  "focal": {
+    "plant_id": "e02_route_hub",
+    "category": "derived_decision",
+    "rule_or_relation": "Exclude hubs with a verified cold hold below 45 minutes; if more than one remains, select the eligible hub with the lower total driving time, and if one remains select it.",
+    "changed_input": "The one load-bearing input is Cedar's verified cold-hold time: 62 minutes in C versus 41 minutes in W.",
+    "probe": "Which staging hub did the board's sequence select for the refrigerated route? Answer with only the hub name.",
+    "correct_target": "Cedar",
+    "counterfactual_target": "Harbor",
+    "establishing_message_indices": [5, 7, 9, 11, 14],
+    "downstream_reference_indices": [14],
+    "why_derived": "The answer requires first screening both hubs against comparable sealed-crate cold-hold evidence and then applying the route-time tiebreak only to eligible survivors.",
+    "why_counterfactual_reverses": "Changing only Cedar's verified cold hold from above to below the threshold removes the otherwise shorter hub at stage one, leaving Harbor as the sole eligible choice."
+  },
+  "nonfocal_control": {
+    "plant_id": "e02_intake_day",
+    "category": "unchanged_control",
+    "probe": "On which day is walk-in intake at the Linden center? Answer with only the weekday.",
+    "target": "Thursday",
+    "countertarget": "Tuesday",
+    "establishing_message_indices": [1, 2],
+    "why_independent_of_focal": "The benefits-team service calendar is established before delivery planning and explicitly does not depend on hubs, route times, cold-hold tests, or volunteer assignments."
+  },
+  "changed_message_allowlist": [9, 14],
+  "distractor_fact_inventory": [
+    {
+      "chain_id": "matched-test-method",
+      "indices": [7, 8],
+      "summary": "The two kitchens use the same crate, payload, logger, pass band, loading simulation, and handling conditions."
+    },
+    {
+      "chain_id": "loading-safeguards",
+      "indices": [15, 16],
+      "summary": "Crate grouping and retesting after a broken seal preserve handling validity without adding another hub-selection criterion."
+    }
+  ],
+  "retained_tail_purpose": "A byte-identical late-volunteer briefing exchange provides a short natural continuation after the carrier while omitting every hub, route duration, test duration, service weekday, and target implication.",
+  "tokenizer_binding": {
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "carrier_request": "Write the fixed neutral handoff note for the next assistant. Output only that note.",
+    "carrier_content": "The prior discussion established the operating context and relevant decision criteria. Continue from this handoff, preserve the existing constraints, and answer later questions from the state available here. No unresolved action is introduced by this note.",
+    "anchor_user": "Acknowledge receipt of this handoff without adding or repeating any factual detail.",
+    "anchor_assistant": "Acknowledged."
+  },
+  "observed_mechanical_evidence": {
+    "status": "TOKENIZER_RECONSTRUCTION_COMPLETE_UNREVIEWED",
+    "method": "Tokenizer-only reconstruction with the pinned production tokenizer; no subject-model forward pass.",
+    "production_tokenizer": {
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "tokenizer_class_observed": "Qwen2Tokenizer",
+      "local_files_only": true
+    },
+    "variants": {
+      "correct": {
+        "canonical_token_count": 1274,
+        "pre_carrier_token_count": 1105,
+        "canonical_token_ids_sha256": "21b4add2d7a8c61eb8ca64c84d50cbdc094e0ea1d11ac4887a80c01a6bccbfc3",
+        "literal_messages_sha256": "1e03a62dd36a9ad1a64d766586970bb9c2c258952b9901a9e36b4d86ee928261",
+        "message_start_positions": [0, 53, 119, 172, 254, 329, 412, 475, 560, 624, 672, 718, 801, 869, 924, 971, 1046, 1105, 1152, 1191, 1231],
+        "canonical_message_widths": [53, 66, 53, 82, 75, 83, 63, 85, 64, 48, 46, 83, 68, 55, 47, 75, 59, 47, 39, 40, 43],
+        "content_token_widths": [48, 61, 48, 77, 70, 78, 58, 80, 59, 43, 41, 78, 63, 50, 42, 70, 54, 42, 34, 35, 38],
+        "role_native_geometry_sha256": "4dce288a6b7c9559434799aae5b264af3a98ce7b7cb0af705d89c62f631ba905",
+        "source_replay_token_count": 1371,
+        "decoded_round_trip": true
+      },
+      "wrong_focal": {
+        "canonical_token_count": 1274,
+        "pre_carrier_token_count": 1105,
+        "canonical_token_ids_sha256": "816b137bc08c1c0ef45560ab980f2b3e2302f4632d37cc000d4eca28a7194496",
+        "literal_messages_sha256": "a9d2d7ca7cb61c63db5d8b4bccb041bc8bbdf3d3beac8e38b49c92ca26855a1c",
+        "message_start_positions": [0, 53, 119, 172, 254, 329, 412, 475, 560, 624, 672, 718, 801, 869, 924, 971, 1046, 1105, 1152, 1191, 1231],
+        "canonical_message_widths": [53, 66, 53, 82, 75, 83, 63, 85, 64, 48, 46, 83, 68, 55, 47, 75, 59, 47, 39, 40, 43],
+        "content_token_widths": [48, 61, 48, 77, 70, 78, 58, 80, 59, 43, 41, 78, 63, 50, 42, 70, 54, 42, 34, 35, 38],
+        "role_native_geometry_sha256": "4dce288a6b7c9559434799aae5b264af3a98ce7b7cb0af705d89c62f631ba905",
+        "source_replay_token_count": 1371,
+        "decoded_round_trip": true
+      }
+    },
+    "pair": {
+      "canonical_changed_position_count": 40,
+      "canonical_changed_positions_sha256": "5609a56e927c20978a68a7e9d08ddfae1f1fa71a628108f437349fe71d3c6b78",
+      "retained_tail_byte_identical": true,
+      "role_native_geometry_identical": true
+    },
+    "target_phrase_token_counts": {
+      "focal_correct": 2,
+      "focal_counterfactual": 2,
+      "control_target": 1,
+      "control_countertarget": 1
+    }
+  },
+  "review": "PENDING",
+  "warning": "DRAFT_UNREVIEWED. Revision 2 is not frozen, not reviewed, not executable, and must not be used for semantic outcomes."
+}

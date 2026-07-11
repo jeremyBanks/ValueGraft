@@ -1,0 +1,269 @@
+{
+  "schema": "coherent_state_decision_canary_v12_case_draft_v1",
+  "design_id": "coherent-state-decision-canary-v12",
+  "case_id": "e01",
+  "status": "DRAFT_UNREVIEWED",
+  "execution_ready": false,
+  "stratum": "engineered",
+  "length_band": "short",
+  "domain": "software release operations",
+  "title": "Atlas release rehearsal and overnight incident-room record",
+  "supersedes_source_file_sha256": "b6aef73d8d2a4d07d67762ee697adce1343c857e1c680f337c9f830d4f7c8546",
+  "authoring_provenance": {
+    "author": "Independent Codex subagent",
+    "runtime_model_id": null,
+    "runtime_model_id_status": "not exposed to this subagent; no alias inferred",
+    "reasoning_effort": null,
+    "reasoning_effort_status": "not exposed to this subagent; no level inferred",
+    "authoring_session_source_id": "/root/v12_revision2_e01_e02",
+    "authored_at_utc": "2026-07-11T20:55:00Z",
+    "source_revision": 2,
+    "superseded_source_path": "data/coherent_canary_v12/drafts/codex_session_a/e01.json",
+    "superseded_source_file_sha256": "b6aef73d8d2a4d07d67762ee697adce1343c857e1c680f337c9f830d4f7c8546",
+    "outcome_blinding": "No local or paid semantic outcome, source K/V, arm result, layer scan, or target score was inspected. Only the frozen contract, prior authored source, tokenizer-only validation code, and formal content-review findings were read.",
+    "subject_model_forward_performed": false
+  },
+  "middle_end_msg": 15,
+  "variants": {
+    "correct": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are helping a release coordinator maintain an exact incident-room record. Separate measurements from interpretations, apply the stated routing rule literally, and do not claim that a deployment, notification, or approval has occurred unless the conversation says so."
+        },
+        {
+          "role": "user",
+          "content": "Tonight's Atlas 4.8 rehearsal is meant to determine its next release ring, not to reopen the whole launch plan. The rule is mandatory in both directions: select partner beta if and only if the migration is additive and the logged rollback interval is under eight minutes; select the staff ring otherwise. A favorable judgment cannot substitute for either input, and satisfying both conditions requires the partner-beta selection."
+        },
+        {
+          "role": "assistant",
+          "content": "I will use that as a complete selection rule. The pass branch is not merely permission: an additive migration together with a rollback interval below eight minutes selects partner beta. Every other combination selects the staff ring. I will keep the two observations separate until both are documented and will not infer a result from the team's confidence or from unrelated operational notes."
+        },
+        {
+          "role": "user",
+          "content": "One unrelated records question was settled before the rehearsal. Atlas traces from this exercise are classified as short-lived operational diagnostics, and the retention matrix keeps that class for 21 days. That duration is governed by the diagnostics classification, not by the eventual release ring, so it must remain unchanged if the gate outcome changes."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded independently: the rehearsal traces are kept for 21 days under the diagnostics-retention matrix. I will not use that duration as evidence about the migration or rollback test, and I will not change it when applying the release-ring rule."
+        },
+        {
+          "role": "user",
+          "content": "Here is the operational context for the schema half. The patch introduces a nullable source-region field for new routing reports. Existing rows remain valid, the old reader ignores the new field, and the migration plan contains no rename, type conversion, backfill requirement, or destructive statement. Priya compared the generated statement with the reviewed plan while Leon checked that the prior service binary can still read a row written after the change."
+        },
+        {
+          "role": "assistant",
+          "content": "Those observations support the additive classification without relying on the timing test. Adding one nullable field leaves existing records readable, and the compatibility check addresses the mixed-version interval. I am treating the absence of a rewrite or destructive operation as part of the schema evidence, while reserving the second gate condition for the logged rehearsal timestamps."
+        },
+        {
+          "role": "user",
+          "content": "Priya's review found that the migration only adds the nullable `source_region` column; it drops or rewrites nothing. The rehearsal began at 19:12:00 and the database was accepting writes again at 19:18:40, so the measured rollback interval was six minutes forty seconds. The timing came from the deployment log, not an estimate."
+        },
+        {
+          "role": "assistant",
+          "content": "The record now contains both gate inputs from distinct sources: the reviewed migration statement supplies the schema classification, and the deployment log supplies the rollback interval. The recovery endpoint is the return of accepted writes, so the measurement uses the same operational definition as the rule rather than an earlier process-exit marker."
+        },
+        {
+          "role": "user",
+          "content": "Apply the mandatory selection rule to those recorded inputs. State the ring and explain the branch in one sentence. Do not turn the answer into a general launch recommendation, because capacity planning, customer messaging, and the production window are separate decisions that have not been requested here."
+        },
+        {
+          "role": "assistant",
+          "content": "Atlas 4.8 should use the partner beta ring. The migration is additive, and the logged rollback interval of six minutes forty seconds is under the eight-minute limit, so both required conditions are satisfied."
+        },
+        {
+          "role": "user",
+          "content": "Before the overnight shift arrives, I want the record to distinguish the rehearsal evidence from follow-up work. A delayed dashboard export is still expected, but it does not define rollback completion and therefore cannot revise the measured interval. The shift should compare the export with the deployment log only as a consistency check and should preserve both sources if their timestamps differ."
+        },
+        {
+          "role": "assistant",
+          "content": "That distinction is clear. The deployment log remains the controlling source for the measured recovery endpoint, while the later dashboard export is corroborating material. If the export differs, the overnight shift should record the discrepancy and investigate its clock or ingestion path rather than silently replacing the logged measurement or treating a delayed display as a failed recovery."
+        },
+        {
+          "role": "user",
+          "content": "Leon will also watch for mixed-version read errors during the quiet period. If one appears, it belongs in a new incident observation with the first affected request, the reader version, and the matching trace reference. It should not be rewritten as if it had been present during the rehearsal, and nobody should claim that the issue was resolved merely because a later request succeeded."
+        },
+        {
+          "role": "assistant",
+          "content": "A new error should be appended with its own observation time and evidence, preserving the earlier rehearsal record. A later successful request can establish recovery for that request but cannot erase the earlier failure. The next shift can then assess the new incident on its own evidence without confusing chronological updates with facts already observed during the gate exercise."
+        },
+        {
+          "role": "user",
+          "content": "The next coordinator may receive an automated alert whose clock differs slightly from the service log. How should that discrepancy be recorded before anyone decides whether it is a real new event? Keep the guidance short and do not repeat any settled measurement, classification, duration, or ring."
+        },
+        {
+          "role": "assistant",
+          "content": "Record both timestamps with their named sources, note the observed offset, and leave the event's relationship to the existing record undecided until one clock can be reconciled against a common reference."
+        }
+      ]
+    },
+    "wrong_focal": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are helping a release coordinator maintain an exact incident-room record. Separate measurements from interpretations, apply the stated routing rule literally, and do not claim that a deployment, notification, or approval has occurred unless the conversation says so."
+        },
+        {
+          "role": "user",
+          "content": "Tonight's Atlas 4.8 rehearsal is meant to determine its next release ring, not to reopen the whole launch plan. The rule is mandatory in both directions: select partner beta if and only if the migration is additive and the logged rollback interval is under eight minutes; select the staff ring otherwise. A favorable judgment cannot substitute for either input, and satisfying both conditions requires the partner-beta selection."
+        },
+        {
+          "role": "assistant",
+          "content": "I will use that as a complete selection rule. The pass branch is not merely permission: an additive migration together with a rollback interval below eight minutes selects partner beta. Every other combination selects the staff ring. I will keep the two observations separate until both are documented and will not infer a result from the team's confidence or from unrelated operational notes."
+        },
+        {
+          "role": "user",
+          "content": "One unrelated records question was settled before the rehearsal. Atlas traces from this exercise are classified as short-lived operational diagnostics, and the retention matrix keeps that class for 21 days. That duration is governed by the diagnostics classification, not by the eventual release ring, so it must remain unchanged if the gate outcome changes."
+        },
+        {
+          "role": "assistant",
+          "content": "Recorded independently: the rehearsal traces are kept for 21 days under the diagnostics-retention matrix. I will not use that duration as evidence about the migration or rollback test, and I will not change it when applying the release-ring rule."
+        },
+        {
+          "role": "user",
+          "content": "Here is the operational context for the schema half. The patch introduces a nullable source-region field for new routing reports. Existing rows remain valid, the old reader ignores the new field, and the migration plan contains no rename, type conversion, backfill requirement, or destructive statement. Priya compared the generated statement with the reviewed plan while Leon checked that the prior service binary can still read a row written after the change."
+        },
+        {
+          "role": "assistant",
+          "content": "Those observations support the additive classification without relying on the timing test. Adding one nullable field leaves existing records readable, and the compatibility check addresses the mixed-version interval. I am treating the absence of a rewrite or destructive operation as part of the schema evidence, while reserving the second gate condition for the logged rehearsal timestamps."
+        },
+        {
+          "role": "user",
+          "content": "Priya's review found that the migration only adds the nullable `source_region` column; it drops or rewrites nothing. The rehearsal began at 19:12:00 and the database was accepting writes again at 19:22:40, so the measured rollback interval was ten minutes forty seconds. The timing came from the deployment log, not an estimate."
+        },
+        {
+          "role": "assistant",
+          "content": "The record now contains both gate inputs from distinct sources: the reviewed migration statement supplies the schema classification, and the deployment log supplies the rollback interval. The recovery endpoint is the return of accepted writes, so the measurement uses the same operational definition as the rule rather than an earlier process-exit marker."
+        },
+        {
+          "role": "user",
+          "content": "Apply the mandatory selection rule to those recorded inputs. State the ring and explain the branch in one sentence. Do not turn the answer into a general launch recommendation, because capacity planning, customer messaging, and the production window are separate decisions that have not been requested here."
+        },
+        {
+          "role": "assistant",
+          "content": "Atlas 4.8 should use the staff ring for this release. The migration is additive, but the logged rollback interval of ten minutes forty seconds exceeds the eight-minute limit, so one required condition fails."
+        },
+        {
+          "role": "user",
+          "content": "Before the overnight shift arrives, I want the record to distinguish the rehearsal evidence from follow-up work. A delayed dashboard export is still expected, but it does not define rollback completion and therefore cannot revise the measured interval. The shift should compare the export with the deployment log only as a consistency check and should preserve both sources if their timestamps differ."
+        },
+        {
+          "role": "assistant",
+          "content": "That distinction is clear. The deployment log remains the controlling source for the measured recovery endpoint, while the later dashboard export is corroborating material. If the export differs, the overnight shift should record the discrepancy and investigate its clock or ingestion path rather than silently replacing the logged measurement or treating a delayed display as a failed recovery."
+        },
+        {
+          "role": "user",
+          "content": "Leon will also watch for mixed-version read errors during the quiet period. If one appears, it belongs in a new incident observation with the first affected request, the reader version, and the matching trace reference. It should not be rewritten as if it had been present during the rehearsal, and nobody should claim that the issue was resolved merely because a later request succeeded."
+        },
+        {
+          "role": "assistant",
+          "content": "A new error should be appended with its own observation time and evidence, preserving the earlier rehearsal record. A later successful request can establish recovery for that request but cannot erase the earlier failure. The next shift can then assess the new incident on its own evidence without confusing chronological updates with facts already observed during the gate exercise."
+        },
+        {
+          "role": "user",
+          "content": "The next coordinator may receive an automated alert whose clock differs slightly from the service log. How should that discrepancy be recorded before anyone decides whether it is a real new event? Keep the guidance short and do not repeat any settled measurement, classification, duration, or ring."
+        },
+        {
+          "role": "assistant",
+          "content": "Record both timestamps with their named sources, note the observed offset, and leave the event's relationship to the existing record undecided until one clock can be reconciled against a common reference."
+        }
+      ]
+    }
+  },
+  "focal": {
+    "plant_id": "e01_release_ring",
+    "category": "derived_decision",
+    "rule_or_relation": "Select partner beta if and only if the migration is additive and the logged rollback interval is under eight minutes; select the staff ring otherwise.",
+    "changed_input": "The one load-bearing input is the logged rollback interval: 6:40 in C versus 10:40 in W.",
+    "probe": "Under the recorded mandatory selection rule, which ring was selected for Atlas 4.8? Answer with only the ring name.",
+    "correct_target": "partner beta",
+    "counterfactual_target": "staff ring",
+    "establishing_message_indices": [1, 5, 7, 10],
+    "downstream_reference_indices": [10],
+    "why_derived": "The answer requires combining the independently established additive-schema finding with the logged rollback duration and applying the mandatory biconditional selection rule.",
+    "why_counterfactual_reverses": "Changing only the rollback endpoint moves the measured duration from below to above eight minutes; under the explicit otherwise branch, that reverses the required ring."
+  },
+  "nonfocal_control": {
+    "plant_id": "e01_trace_retention",
+    "category": "unchanged_control",
+    "probe": "For how long are the Atlas rehearsal traces retained? Answer with only the duration.",
+    "target": "21 days",
+    "countertarget": "30 days",
+    "establishing_message_indices": [3, 4],
+    "why_independent_of_focal": "The duration is fixed by the diagnostics-retention matrix and is explicitly independent of the schema and rollback conditions that select a release ring."
+  },
+  "changed_message_allowlist": [7, 10],
+  "distractor_fact_inventory": [
+    {
+      "chain_id": "dashboard-clock-reconciliation",
+      "indices": [11, 12],
+      "summary": "A delayed dashboard export is corroborating evidence and must not silently replace the deployment-log endpoint."
+    },
+    {
+      "chain_id": "mixed-version-observation-discipline",
+      "indices": [13, 14],
+      "summary": "Any later mixed-version read error is appended chronologically with evidence rather than projected backward or erased by a later success."
+    }
+  ],
+  "retained_tail_purpose": "A short byte-identical clock-reconciliation exchange follows the carrier naturally without naming or implying either release ring, either rollback duration, the schema classification, or the trace-retention duration.",
+  "tokenizer_binding": {
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_class_observed": "Qwen2Tokenizer",
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "carrier_request": "Write the fixed neutral handoff note for the next assistant. Output only that note.",
+    "carrier_content": "The prior discussion established the operating context and relevant decision criteria. Continue from this handoff, preserve the existing constraints, and answer later questions from the state available here. No unresolved action is introduced by this note.",
+    "anchor_user": "Acknowledge receipt of this handoff without adding or repeating any factual detail.",
+    "anchor_assistant": "Acknowledged."
+  },
+  "observed_mechanical_evidence": {
+    "status": "TOKENIZER_RECONSTRUCTION_COMPLETE_UNREVIEWED",
+    "method": "Tokenizer-only reconstruction with the pinned production tokenizer; no subject-model forward pass.",
+    "production_tokenizer": {
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "tokenizer_class_observed": "Qwen2Tokenizer",
+      "local_files_only": true
+    },
+    "variants": {
+      "correct": {
+        "canonical_token_count": 1124,
+        "pre_carrier_token_count": 1025,
+        "canonical_token_ids_sha256": "6615a3fd7e12ec4f780502099fc5e25b5cf2e7443ccbac8c999b0c94c06ccf2e",
+        "literal_messages_sha256": "99a79e819fc9aa4d0f16acabac976cdc97df575cae58ecbeb45ac295f042f36d",
+        "message_start_positions": [0, 50, 134, 208, 276, 330, 418, 486, 570, 634, 692, 738, 811, 880, 957, 1025, 1083],
+        "canonical_message_widths": [50, 84, 74, 68, 54, 88, 68, 84, 64, 58, 46, 73, 69, 77, 68, 58, 41],
+        "content_token_widths": [45, 79, 69, 63, 49, 83, 63, 79, 59, 53, 41, 68, 64, 72, 63, 53, 36],
+        "role_native_geometry_sha256": "ca5b8a1dfae7a35dbaefebf96b14400783559d7f95e5418b51e6ae753bd414b4",
+        "source_replay_token_count": 1221,
+        "decoded_round_trip": true
+      },
+      "wrong_focal": {
+        "canonical_token_count": 1124,
+        "pre_carrier_token_count": 1025,
+        "canonical_token_ids_sha256": "b2e425f3f9c98363cdcf8bfd67184a0a9f77d34eb935ef1cc0773e26a0fb1369",
+        "literal_messages_sha256": "a53194def46a28340653855311e541adb3d860c0a8d5a6aeaccf32fcba746941",
+        "message_start_positions": [0, 50, 134, 208, 276, 330, 418, 486, 570, 634, 692, 738, 811, 880, 957, 1025, 1083],
+        "canonical_message_widths": [50, 84, 74, 68, 54, 88, 68, 84, 64, 58, 46, 73, 69, 77, 68, 58, 41],
+        "content_token_widths": [45, 79, 69, 63, 49, 83, 63, 79, 59, 53, 41, 68, 64, 72, 63, 53, 36],
+        "role_native_geometry_sha256": "ca5b8a1dfae7a35dbaefebf96b14400783559d7f95e5418b51e6ae753bd414b4",
+        "source_replay_token_count": 1221,
+        "decoded_round_trip": true
+      }
+    },
+    "pair": {
+      "canonical_changed_position_count": 35,
+      "canonical_changed_positions_sha256": "358ab16fa344c01198ca41f5454305035c7f72b18a50b6becef57174552d461f",
+      "retained_tail_byte_identical": true,
+      "role_native_geometry_identical": true
+    },
+    "target_phrase_token_counts": {
+      "focal_correct": 2,
+      "focal_counterfactual": 2,
+      "control_target": 3,
+      "control_countertarget": 3
+    }
+  },
+  "review": "PENDING",
+  "warning": "DRAFT_UNREVIEWED. Revision 2 is not frozen, not reviewed, not executable, and must not be used for semantic outcomes."
+}
