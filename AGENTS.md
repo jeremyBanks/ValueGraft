@@ -255,13 +255,32 @@ corrected errors (the -0.31 stance, the 'keys hurt', the fixed-summary numbers).
 Brief Fable on: the robust metric, the CI'd effect (referent significant/sense
 underpowered/stance null), keys-neutral, and the own-summary mechanism.
 
+## FABLE CONTEXT MUST BE MINIMAL AND DECISION-SPECIFIC (owner 07-11)
+
+Do **not** keep resuming a huge accumulated Fable session or dump the whole repo / full
+project history into routine consultations. That is expensive, can make the model less
+independent, and encourages continuation of the team's existing frame instead of a fresh
+perspective. Give Fable the smallest structured evidence bundle that is sufficient for
+the exact decision: normally the current question, the literal primary artifacts or
+short audit notes that bear on it, and only the cited code/spec snippets needed to verify
+them. State material current facts explicitly, but omit irrelevant trajectory and prior
+argument. Point to `notes/README.md` and the generated daily/overall summaries as optional
+orientation when background or project trajectory may help; do not require Fable to read
+the full archive. Every focused prompt must state the review boundary and explicitly say
+that unrelated settled questions are out of scope and need not be re-litigated. Prefer a
+fresh session for a genuinely fresh perspective. If a focused consult
+cannot finish for roughly `$4`, stop and narrow the context/question rather than raising
+the cap or repeatedly resuming. A large comprehensive context is appropriate for the
+final paper synthesis/final review, where integration across the whole record is the task.
+
 ## FABLE WRITES TO A NOTES FILE — every serious consult (owner 07-09)
 
 Fable's major outputs (verdicts, assessments, trajectory reviews, experiment
 designs) were living only in agent-to-agent replies and GETTING LOST. New standing
 practice for EVERY serious Fable consultation: **I create an empty `notes/` file**
 (naming convention `YYYYMMDD<counter>-slug.md`, next counter after the latest),
-pass Fable a **ton of context** in the prompt, and instruct it to **write/edit its
+pass Fable the **minimal sufficient decision-specific evidence bundle** defined above,
+and instruct it to **write/edit its
 assessment directly into that file itself** (it owns the file), returning only the
 path + a short topline. This preserves Fable's reasoning for posterity and for the
 paper. Combine with the un-anchored rule (don't lead the prompt) and CURRENT FACTS
