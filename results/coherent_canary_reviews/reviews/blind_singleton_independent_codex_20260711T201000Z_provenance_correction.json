@@ -1,0 +1,39 @@
+{
+  "schema": "coherent_state_decision_canary_v12_review_provenance_correction_v1",
+  "correction_type": "additive_hash_semantics_correction",
+  "corrects_review": {
+    "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/reviews/blind_singleton_independent_codex_20260711T201000Z.json",
+    "sha256": "bcbd3f9387d3863e96ba089fda68f6f1fda76674eaf6e3793587bf74d078a269",
+    "commit": "6dd8305df90c01212eff2cc4a50997159057aa20"
+  },
+  "packet": {
+    "path": "/Users/jeb/experimentation/results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T201000Z_9a0abe757eb3.json",
+    "serialized_file_sha256": "e5cc97efbe7ed5ee506990898dcdab4bee540d6468b9a0d8702a97eab9dc2c39",
+    "serialized_file_sha256_meaning": "SHA-256 of the complete packet file as serialized on disk, including its packet_sha256 field.",
+    "embedded_content_seal_sha256": "9a0abe757eb31062ba52ee989ae439945b947f128910fd1e1c8b5ec93a49fb41",
+    "embedded_content_seal_sha256_meaning": "The value stored in the packet's packet_sha256 field; it seals the packet content computed before that field was added and is not the SHA-256 of the final serialized file."
+  },
+  "incorrect_original_statement": {
+    "json_pointer": "/packet_binding/embedded_packet_sha256_matches_observed_file_sha256",
+    "recorded_value": true,
+    "correct_value": false,
+    "explanation": "The original review mislabeled the embedded content seal as the observed serialized-file SHA-256. The two hashes intentionally bind different byte/content representations and are not equal."
+  },
+  "substantive_review_effect": {
+    "verdicts_changed": false,
+    "carrier_verdict_changed": false,
+    "overall_verdict_changed": false,
+    "statement": "All substantive history assessments, per-history verdicts, the carrier verdict, and the overall verdict in the original review remain unchanged. This correction is provenance-only."
+  },
+  "history_policy": {
+    "original_review_modified": false,
+    "original_commit_amended": false,
+    "correction_method": "Additive correction artifact; the original review and commit remain intact."
+  },
+  "provenance": {
+    "author": "independent Codex subagent that authored the corrected review",
+    "runtime_model": "not exposed",
+    "runtime_effort": "not exposed",
+    "runtime_model_or_effort_inferred": false
+  }
+}
