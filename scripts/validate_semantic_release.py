@@ -330,14 +330,21 @@ def build_release_attestation(
     repo: Path,
     *,
     evidence_commit: str,
+    verification_launch_commit: str | None = None,
     ladder_result_commit: str,
     ladder_path: str,
     technical_result_commit: str,
     technical_run_dir: str,
 ) -> dict[str, Any]:
     evidence = _resolve_commit(repo, evidence_commit, "release evidence")
+    verification_launch = _resolve_commit(
+        repo, verification_launch_commit or evidence,
+        "release verification launch")
     head = str(_git(repo, "rev-parse", "HEAD")).strip()
-    _require_ancestor(repo, evidence, head, "release evidence")
+    if head != verification_launch:
+        raise ReleaseError(
+            f"HEAD {head} != release verification launch {verification_launch}")
+    _require_ancestor(repo, evidence, verification_launch, "release evidence")
 
     sys.path.insert(0, str(repo / "src"))
     from coherent_state_integrity import (  # pylint: disable=import-outside-toplevel
@@ -346,10 +353,11 @@ def build_release_attestation(
     apparatus = apparatus_inventory(repo)
     ladder = validate_ladder_commit(
         repo, result_commit=ladder_result_commit, ladder_path=ladder_path,
-        semantic_launch_commit=evidence, current_apparatus=apparatus)
+        semantic_launch_commit=verification_launch,
+        current_apparatus=apparatus)
     technical = verify_prior_technical_authorization(
         repo, repo / technical_run_dir, technical_result_commit,
-        evidence, apparatus)
+        verification_launch, apparatus)
     return _seal({
         "schema": SCHEMA,
         "authorization_contract_id": CONTRACT_ID,
@@ -416,6 +424,7 @@ def verify_committed_attestation(
     _require_ancestor(repo, evidence, launch, "attested evidence")
     recomputed = build_release_attestation(
         repo, evidence_commit=evidence,
+        verification_launch_commit=launch,
         ladder_result_commit=attestation["ladder"]["result_commit"],
         ladder_path=attestation["ladder"]["path"],
         technical_result_commit=attestation["technical"]["result_commit"],

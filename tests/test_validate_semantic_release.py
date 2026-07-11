@@ -6,6 +6,7 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+from types import SimpleNamespace
 
 import pytest
 
@@ -270,3 +271,66 @@ def test_wrapper_validates_before_invoking_launcher():
     launch = text.index("scripts/launch_pod.sh")
     assert verify < launch
     assert "set -euo pipefail" in text
+
+
+def test_committed_attestation_recomputes_from_descendant_launch(
+        tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-b", "trunk")
+    _git(repo, "config", "user.email", "test@example.com")
+    _git(repo, "config", "user.name", "Test")
+    for relative in MODULE.OVERLAY_PATHS:
+        path = repo / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(relative + "\n")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-m", "release evidence")
+    evidence = _git(repo, "rev-parse", "HEAD")
+
+    import sys
+    sys.path.insert(0, str(ROOT / "src"))
+    import coherent_state_integrity
+    apparatus = {
+        "files": [{"path": "src/dummy.py", "bytes": 1, "sha256": "a" * 64}],
+        "file_count": 1, "aggregate_sha256": "b" * 64}
+    monkeypatch.setattr(
+        coherent_state_integrity, "apparatus_inventory", lambda _repo: apparatus)
+    monkeypatch.setattr(
+        MODULE, "validate_ladder_commit",
+        lambda *_args, **_kwargs: {
+            "status": "PASS", "result_commit": "c" * 40,
+            "path": MODULE.ELIGIBLE_LADDER_PATH,
+            "manifest_raw_sha256": "d" * 64,
+            "manifest_payload_sha256": "e" * 64,
+            "stage_payload_sha256": {}, "committed_cases": 12,
+            "synthetic_fixtures": 7, "attention_layers": 28,
+            "bridge": {"all_inventoried_bytes_exact": True}})
+    technical = SimpleNamespace(
+        result_commit="f" * 40, run_dir="results/technical",
+        gate_payload_sha256="1" * 64,
+        raw_sha256={"manifest": "2" * 64},
+        harvest={"attestation": {"payload_sha256": "3" * 64}})
+    monkeypatch.setattr(
+        coherent_state_integrity, "verify_prior_technical_authorization",
+        lambda *_args, **_kwargs: technical)
+
+    attestation = MODULE.build_release_attestation(
+        repo, evidence_commit=evidence,
+        ladder_result_commit="c" * 40,
+        ladder_path=MODULE.ELIGIBLE_LADDER_PATH,
+        technical_result_commit="f" * 40,
+        technical_run_dir="results/technical")
+    relative = "results/v10_release/release.json"
+    path = repo / relative
+    path.parent.mkdir(parents=True)
+    path.write_bytes(MODULE._canonical(attestation) + b"\n")
+    _git(repo, "add", relative)
+    _git(repo, "commit", "-m", "commit release attestation")
+    launch = _git(repo, "rev-parse", "HEAD")
+    _git(repo, "remote", "add", "origin", ".")
+    _git(repo, "update-ref", "refs/remotes/origin/trunk", launch)
+
+    observed = MODULE.verify_committed_attestation(repo, relative, launch)
+    assert observed["status"] == "PASS"
+    assert observed["launch_commit"] == launch
