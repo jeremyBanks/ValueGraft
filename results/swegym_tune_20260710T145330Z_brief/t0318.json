@@ -1,0 +1,442 @@
+{
+ "idx": 318,
+ "meta": {
+  "n_tokens_full": 6980,
+  "cut_msg": 14,
+  "n_ctx_tokens": 4990
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "split": "eval",
+ "min_idx": 214,
+ "gold_action": {
+  "tool": "execute_bash",
+  "path": null,
+  "command": "python3 /workspace/getmoto__moto__3.1/reproduce_error.py"
+ },
+ "summary_tokens": 99,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 36,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.0944485592479529,
+   "gen": "<function=execute_bash>\n<parameter=command>python /workspace/getmoto__moto__3.1/reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": null,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -0.22535113001093304,
+   "gen": "Now that the script to reproduce the error is created, I'll run it to confirm the issue. Let's execute the script.\n\n<function=execute_bash>\n<parameter=command>python3 reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": null,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -0.1866221627368356,
+   "gen": "Now, let's run the script to reproduce the error.\n\n<function=execute_bash>\n<parameter=command>python3 reproduce_error.py</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": null,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "E-a0.25": {
+   "intervention": {
+    "arm": "E-a0.25",
+    "graft_type": "value",
+    "alpha": 0.25,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.22473135483506626
+  },
+  "P-a0.25": {
+   "intervention": {
+    "arm": "P-a0.25",
+    "graft_type": "value-placebo",
+    "alpha": 0.25,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1552,
+    "kind": "placebo"
+   },
+   "tf_mean": -0.13934771585639716
+  },
+  "E-a0.5": {
+   "intervention": {
+    "arm": "E-a0.5",
+    "graft_type": "value",
+    "alpha": 0.5,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.20330079362128414
+  },
+  "P-a0.5": {
+   "intervention": {
+    "arm": "P-a0.5",
+    "graft_type": "value-placebo",
+    "alpha": 0.5,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1552,
+    "kind": "placebo"
+   },
+   "tf_mean": -0.051644898672937124
+  },
+  "E-a0.75": {
+   "intervention": {
+    "arm": "E-a0.75",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.1866221627368356
+  },
+  "P-a0.75": {
+   "intervention": {
+    "arm": "P-a0.75",
+    "graft_type": "value-placebo",
+    "alpha": 0.75,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1552,
+    "kind": "placebo"
+   },
+   "tf_mean": -1.4590200665527482
+  },
+  "E-a1": {
+   "intervention": {
+    "arm": "E-a1",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.18184087124227155
+  },
+  "P-a1": {
+   "intervention": {
+    "arm": "P-a1",
+    "graft_type": "value-placebo",
+    "alpha": 1.0,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1552,
+    "kind": "placebo"
+   },
+   "tf_mean": -2.5369188995190703
+  },
+  "E-a1.5": {
+   "intervention": {
+    "arm": "E-a1.5",
+    "graft_type": "value",
+    "alpha": 1.5,
+    "champion": null,
+    "kind": "alpha-sweep"
+   },
+   "tf_mean": -0.1839262752302439
+  },
+  "P-a1.5": {
+   "intervention": {
+    "arm": "P-a1.5",
+    "graft_type": "value-placebo",
+    "alpha": 1.5,
+    "placebo": "position-shuffle",
+    "placebo_seed": 1552,
+    "kind": "placebo"
+   },
+   "tf_mean": -3.552527827610901
+  },
+  "R0": {
+   "intervention": {
+    "arm": "R0",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 0,
+    "layers": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "tf_mean": -0.21269329369505582
+  },
+  "R1": {
+   "intervention": {
+    "arm": "R1",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 1,
+    "layers": [
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "tf_mean": -0.20881632838664427
+  },
+  "R2": {
+   "intervention": {
+    "arm": "R2",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 2,
+    "layers": [
+     12,
+     13,
+     14,
+     15,
+     16,
+     17
+    ]
+   },
+   "tf_mean": -0.23151394097198125
+  },
+  "R3": {
+   "intervention": {
+    "arm": "R3",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 3,
+    "layers": [
+     18,
+     19,
+     20,
+     21,
+     22,
+     23
+    ]
+   },
+   "tf_mean": -0.23666675645722496
+  },
+  "R4": {
+   "intervention": {
+    "arm": "R4",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 4,
+    "layers": [
+     24,
+     25,
+     26,
+     27,
+     28,
+     29
+    ]
+   },
+   "tf_mean": -0.20628846557598438
+  },
+  "R5": {
+   "intervention": {
+    "arm": "R5",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 5,
+    "layers": [
+     30,
+     31,
+     32,
+     33,
+     34,
+     35
+    ]
+   },
+   "tf_mean": -0.19264859465919493
+  },
+  "R6": {
+   "intervention": {
+    "arm": "R6",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 6,
+    "layers": [
+     36,
+     37,
+     38,
+     39,
+     40,
+     41
+    ]
+   },
+   "tf_mean": -0.2520211233387521
+  },
+  "R7": {
+   "intervention": {
+    "arm": "R7",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 7,
+    "layers": [
+     42,
+     43,
+     44,
+     45,
+     46,
+     47
+    ]
+   },
+   "tf_mean": -0.22229236498697308
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -3.9292794034914085,
+   "gen": "# Analysis of the Issue\n\nThe problem occurs in the moto library when generating S3 presigned URLs with tagging information. When using the requests library to download files via these presigned URLs, an error occurs because a header value expected to be a string is being returned as an integer.\n\n## Root Cause\n\nThe issue stems from how moto handles S3 tagging headers in presigned URLs. When S3 objects have tags, the response headers include tagging information, but the code is not properly conver",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -3.690064431640258,
+   "gen": "You're on the right track! Let's walk through the **solution** and **implementation** for this issue in the `moto` library.\n\n---\n\n### \ud83d\udd0d **Problem Summary**\nWhen an S3 object has tags, the `moto` library generates a response that includes a `x-amz-tagging` header. However, in some cases, this header value is being passed as a **non-string** (e.g., a dictionary or list), which causes issues when `requests` tries to handle it.\n\nThe error typically looks like:\n```python\nTypeError: 'dict' object cann",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": null,
+   "champion_config_sha256": null,
+   "champion_label": null,
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack.",
+   "alpha_sweep": [
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.5
+   ],
+   "placebo": "position-shuffle per swept alpha (arms P-a{alpha})",
+   "profile_regions": 8,
+   "profile_alpha": 1.0,
+   "held_out_split": {
+    "rule": "sha256(SC_TRAJ_SPLIT_SEED:idx) parity -> tune|eval",
+    "seed": 20260710,
+    "note": "select alpha / build the layer champion on TUNE, report on the DISJOINT EVAL split; ~75 usable trajectories so each split is thin -- overfitting caveat in the analysis"
+   }
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1 min_idx=214",
+   "min_idx": 214,
+   "n_requested": 150,
+   "instance_ids": null,
+   "secondary_metric": "discrete next-action-match (tool/path/command parsed from the free generation vs the true next action) recorded per generating arm -- a behavioral check that does NOT need test execution; addresses the logprob-proxy caveat"
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T14:55:06Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "4480dec8617d",
+   "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}

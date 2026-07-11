@@ -1,0 +1,364 @@
+{
+ "idx": 441,
+ "meta": {
+  "n_tokens_full": 14285,
+  "cut_msg": 38,
+  "n_ctx_tokens": 10894
+ },
+ "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+ "dtype": "torch.bfloat16",
+ "split": "tune",
+ "min_idx": 214,
+ "gold_action": {
+  "tool": "str_replace_editor",
+  "path": "/workspace/bokeh__bokeh__3.4/src/bokeh/embed/elements.py",
+  "command": "str_replace"
+ },
+ "summary_tokens": 136,
+ "failed_evicted_commands": [],
+ "n_target_tokens": 290,
+ "arms": {
+  "A": {
+   "intervention": {
+    "arm": "A-full"
+   },
+   "tf_mean": -0.7597184656103174,
+   "gen": "Now I have found the relevant functions in `serialization.py`:\n\n- `make_id()`: This function generates IDs for Bokeh objects. It checks the `settings.simple_ids()` flag. If `simple_ids` is `True`, it returns a simple monotonically increasing integer ID prefixed with \"p\" (e.g., `p1050`). If `simple_ids` is `False`, it calls `make_globally_unique_id()`, which returns a UUID.\n- `make_globally_unique_id()`: Returns a UUID as a string.\n- `make_globally_unique_css_safe_id()`: Returns a globally unique",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  },
+  "B": {
+   "intervention": {
+    "arm": "B-compacted"
+   },
+   "tf_mean": -1.131845209192768,
+   "gen": "The function `make_globally_unique_css_safe_id()` in `serialization.py` is designed to generate globally unique IDs that are safe for use in CSS selectors (e.g., `#id`). It ensures the ID starts with an alphabetic character, which is required for valid CSS IDs, by retrying up to 100 times if the UUID starts with a digit. If all attempts fail, it prefixes the ID with `\"bk-\"`.\n\nTo resolve the issue of non-unique and potentially invalid IDs in script tags (e.g., `p1050`), the solution is to use `ma",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  },
+  "E-tuned": {
+   "intervention": {
+    "arm": "E-tuned",
+    "graft_type": "value",
+    "alpha": 0.75,
+    "champion": null,
+    "note": "SCALAR value-graft at flat alpha; NOT the tuned champion"
+   },
+   "tf_mean": -1.1177582496303078,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/bokeh__bokeh__3.4/src/bokeh/util/serialization.py</parameter>\n<parameter=view_range>[300, 340]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": false,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "E-champion": {
+   "intervention": {
+    "arm": "E-champion",
+    "graft_type": "value",
+    "alpha": null,
+    "champion": {
+     "config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+     "config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+     "label": "swegym_tuned_20260710T145330Z",
+     "family": "alpha_map"
+    }
+   },
+   "tf_mean": -1.056168120319208,
+   "gen": "<function=str_replace_editor>\n<parameter=command>view</parameter>\n<parameter=path>/workspace/bokeh__bokeh__3.4/src/bokeh/util/serialization.py</parameter>\n<parameter=view_range>[300, 340]</parameter>\n</function>",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": true,
+    "tool_match": true,
+    "path_match": false,
+    "cmd_match": false,
+    "match": false
+   }
+  },
+  "R0": {
+   "intervention": {
+    "arm": "R0",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 0,
+    "layers": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "tf_mean": -1.1283422968026449
+  },
+  "R1": {
+   "intervention": {
+    "arm": "R1",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 1,
+    "layers": [
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "tf_mean": -1.1282970273372532
+  },
+  "R2": {
+   "intervention": {
+    "arm": "R2",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 2,
+    "layers": [
+     12,
+     13,
+     14,
+     15,
+     16,
+     17
+    ]
+   },
+   "tf_mean": -1.1093236802732156
+  },
+  "R3": {
+   "intervention": {
+    "arm": "R3",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 3,
+    "layers": [
+     18,
+     19,
+     20,
+     21,
+     22,
+     23
+    ]
+   },
+   "tf_mean": -1.1422675831067581
+  },
+  "R4": {
+   "intervention": {
+    "arm": "R4",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 4,
+    "layers": [
+     24,
+     25,
+     26,
+     27,
+     28,
+     29
+    ]
+   },
+   "tf_mean": -1.1498625966231304
+  },
+  "R5": {
+   "intervention": {
+    "arm": "R5",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 5,
+    "layers": [
+     30,
+     31,
+     32,
+     33,
+     34,
+     35
+    ]
+   },
+   "tf_mean": -1.0770674288364896
+  },
+  "R6": {
+   "intervention": {
+    "arm": "R6",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 6,
+    "layers": [
+     36,
+     37,
+     38,
+     39,
+     40,
+     41
+    ]
+   },
+   "tf_mean": -1.1228872247228763
+  },
+  "R7": {
+   "intervention": {
+    "arm": "R7",
+    "graft_type": "value",
+    "alpha": 1.0,
+    "kind": "region-profile",
+    "region_index": 7,
+    "layers": [
+     42,
+     43,
+     44,
+     45,
+     46,
+     47
+    ]
+   },
+   "tf_mean": -1.1410344475143963
+  },
+  "B-min-pack": {
+   "intervention": null,
+   "tf_mean": -1.8802640774488415,
+   "gen": "Based on your description, the issue is that Bokeh's `script` tag IDs (like `p1050`) are not globally unique across multiple HTML files, which can cause conflicts when embedding multiple Bokeh plots on a single page. The root cause is in the ID generation logic within Bokeh's serialization utilities.\n\nHere's how to fix this by ensuring globally unique and CSS-safe IDs:\n\n## Solution: Use UUID-based IDs for Script Tags\n\nThe key is to modify the ID generation to use UUIDs instead of sequential inte",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  },
+  "H-pack": {
+   "intervention": null,
+   "tf_mean": -1.8646766863318582,
+   "gen": "Based on your description, here's a clear breakdown of the issue and the solution path:\n\n### Problem Summary\nWhen embedding multiple Bokeh plots on a single HTML page, the default script tags use short, sequential IDs like `p1050`, `p1051`, etc. These IDs are **not globally unique** across different plots, leading to potential conflicts (e.g., JavaScript errors, incorrect rendering, or event handling issues).\n\n### Root Cause\nThe ID generation logic is likely in the `bokeh.embed` or `bokeh.core.t",
+   "gen_first_cmd": "",
+   "repeats_failed": false,
+   "action_match": {
+    "has_action": false,
+    "tool_match": false,
+    "path_match": null,
+    "cmd_match": null,
+    "match": false
+   }
+  }
+ },
+ "_manifest": {
+  "manifest_schema": 1,
+  "harness": "src/run_swegym_hf.py",
+  "model": {
+   "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "repo_id_requested": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+   "resolved_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+   "architecture": "qwen3_moe"
+  },
+  "load": {
+   "dtype": "torch.bfloat16",
+   "dtype_env_requested": "bfloat16",
+   "config_dtype": "torch.bfloat16",
+   "quantization": null,
+   "kv_geometry": {
+    "num_attention_heads": 32,
+    "num_key_value_heads": 4,
+    "head_dim": 128,
+    "num_hidden_layers": 48,
+    "rope_theta": 10000000
+   },
+   "dtype_matches_request": true
+  },
+  "intervention": {
+   "arm": "E-tuned",
+   "graft_type": "value",
+   "alpha": 0.75,
+   "champion_config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+   "champion_config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+   "champion_label": "swegym_tuned_20260710T145330Z",
+   "alignment": "difflib positional-within-region (tail+summary regions)",
+   "grafted_arms": [
+    {
+     "arm": "E-tuned",
+     "kind": "scalar",
+     "alpha": 0.75,
+     "champion": null,
+     "note": "flat value-graft at alpha; NOT the tuned champion"
+    },
+    {
+     "arm": "E-champion",
+     "kind": "champion",
+     "family": "alpha_map",
+     "alpha": null,
+     "champion_config_path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+     "champion_config_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53",
+     "champion_label": "swegym_tuned_20260710T145330Z"
+    }
+   ],
+   "note": "E-tuned = SCALAR value-graft at alpha=0.750 (NOT the tuned champion). E-champion (only if SC_CHAMPION_CONFIG set) = the tuned per-layer/per-head map. Other arms: A(full), B(compacted), B-min-pack, H-pack.",
+   "alpha_sweep": null,
+   "placebo": null,
+   "profile_regions": 8,
+   "profile_alpha": 1.0,
+   "held_out_split": {
+    "rule": "sha256(SC_TRAJ_SPLIT_SEED:idx) parity -> tune|eval",
+    "seed": 20260710,
+    "note": "select alpha / build the layer champion on TUNE, report on the DISJOINT EVAL split; ~75 usable trajectories so each split is thin -- overfitting caveat in the analysis"
+   }
+  },
+  "metric": {
+   "definition": "teacher-forced mean per-token logprob of the TRUE next assistant action, on SWE-Gym/OpenHands-derived trajectories",
+   "is_proxy": true,
+   "resolve_rate_measured": false,
+   "proxy_note": "PROXY for action prediction under compaction -- this is NOT SWE-bench/SWE-Gym resolve rate or test-pass rate. No patch is applied and no test is run. Report as a logprob proxy."
+  },
+  "condition": {
+   "summary_kind": "brief",
+   "summary_request_sha256": "d32f3f90eed98c08bdd04597a651689c011224022a2c20f80cf35d0210887c2e",
+   "summary_source": "self-gen (model summarizes its own trajectory)"
+  },
+  "corpus": {
+   "name": "SWE-Gym/OpenHands trajectories",
+   "parquet": "swegym.parquet",
+   "split": "shard 0/1 min_idx=214",
+   "min_idx": 214,
+   "n_requested": 150,
+   "instance_ids": null,
+   "secondary_metric": "discrete next-action-match (tool/path/command parsed from the free generation vs the true next action) recorded per generating arm -- a behavioral check that does NOT need test execution; addresses the logprob-proxy caveat"
+  },
+  "code": {
+   "git_commit": null,
+   "git_dirty": null
+  },
+  "run": {
+   "timestamp_utc": "2026-07-10T19:52:27Z",
+   "gpu_name": "NVIDIA A100 80GB PCIe",
+   "hostname": "4480dec8617d",
+   "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+   "python_version": "3.11.10",
+   "torch_version": "2.4.1+cu124",
+   "transformers_version": "4.57.6"
+  }
+ }
+}
