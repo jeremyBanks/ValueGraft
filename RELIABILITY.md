@@ -15,6 +15,7 @@
 | Launch a model id that's a typo / multimodal      | preflight **check B** (hub resolve + text-only arch)                    | RED, `exit 1` before any spend                                  | 5-of-16 multimodal, unloadable id |
 | Launch the WRONG CHECKPOINT (right family)         | preflight **check B2** (known-wrong-twin registry)                      | RED unless `SC_ALLOW_CHECKPOINT="id:reason"` logged             | #34 thinking-vs-Instruct (hours) |
 | Rent the right GPU/image on an incompatible host driver | RunPod `allowedCudaVersions` + `pod_admission.py` before bootstrap | provider filters CUDA; launcher rejects/terminates wrong GPU, driver, or VRAM with `exit 86` | #27, #43 driver drift |
+| Retry while a prior pod may still bill / suppress required deploy failure | exact wrapper 85/86/87 taxonomy + pre-job cleanup trap + lifecycle fault injection | only confirmed no-allocation or positively deleted host retries; cleanup/transport/setup failures stop | #44 lifecycle near miss |
 | rsync a source path that doesn't exist            | preflight **check C** (manifest vs disk)                               | RED; kills rsync's silent `\|\| true` drop                       | "fix silently didn't apply" |
 | Trust a launch that hung / crashed at start       | `launch_pod.sh` **post-launch real-work check** + bounded ssh          | hang → nonzero exit; no-proc/crash → `exit 1`, loud            | #3, #28, #35 launcher hang |
 | Trust a monitor you never validated               | `monitor_selftest.sh` (fault-injection incl. happy-path)               | any wrong classification → `exit 1`, "MONITOR NOT CLEARED"      | #35, #36 + monitor quartet |
@@ -50,6 +51,16 @@ type and image; pinned Torch/CUDA 13 initialized only on the former. Therefore
   A100-80GB PCIe name, driver `>=580.65.06`, and at least 80,000 MiB, and bounds
   admission attempts at three. Rejected allocated hosts are terminated before
   bootstrap. Unfiltered fallback is forbidden.
+- Exact-v12 retry semantics are mechanical: 85 means an explicit provider
+  no-allocation response, 86 means an allocated incompatible/unattestable host
+  whose DELETE succeeded, and 87 means cleanup failed. Only 85/86 may retry.
+  Every provider call has a finite timeout; transport ambiguity and every
+  bootstrap/deploy/provenance failure stop. Required HF credentials are checked
+  locally, after transfer, and after remote rename.
+- Before allocating, the exact wrapper runs the production frozen-repository
+  verifier and binds its observed head to the mechanically captured SHA. The
+  remote job checks out that exact commit on local branch `trunk` and repeats
+  the verifier, so later remote-trunk movement cannot change executed bytes.
 - Every result records the observed driver/runtime fingerprint. A different
   runtime requires its own technical gate; never blend raw numeric evidence
   across environments merely because model weights and GPU marketing names

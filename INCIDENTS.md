@@ -728,3 +728,34 @@ the provider's CUDA-capability filter, then independently read the actual GPU,
 driver, and memory before bootstrap. Reject and terminate incompatible hosts
 before installing or launching. Persist the observed host/runtime fingerprint
 with every result. An AI recommendation is a lead, not provider validation.
+
+## Incident #44 (07-12): the first host-admission fix could leak or duplicate billing pods
+
+WHAT: a fresh pre-spend audit of the first CUDA-13 admission implementation
+found that failed `DELETE` was suppressed with `|| true`, bootstrap shared the
+retryable incompatible-host exit, transient status and transfer failures could
+leave a pod billing, required credential rsync was suppressed, and the exact job
+still compared against a moving remote-trunk tip. REST/GQL calls also had no
+timeout. The eight initial tests checked source literals rather than lifecycle
+behavior, so all passed despite these defects.
+
+WHY: the correction focused on selecting a compatible driver but did not model
+the allocation as an owned lifecycle with explicit terminal states. Error codes
+encoded where a failure happened, not whether it was safe to allocate again.
+Generic historical deployment conveniences (`|| true`, a moving branch clone)
+were reused on a one-use scientific path without reclassifying which inputs and
+artifacts were mandatory.
+
+IMPACT: the audit ran before attempt 3, so no pod, result, or money was affected.
+Had an ordinary setup or cleanup failure occurred, the wrapper could have
+allocated another pod while the first remained live, or paid to repeat a
+deterministic defect. This is a caught near miss, not an observed billing leak.
+
+RULE 35 — RETRY SAFETY IS A LIFECYCLE PROPERTY: a wrapper may retry only a
+provider-confirmed no-allocation response or a positively terminated rejected
+host. Allocation ambiguity is non-retryable. Cleanup failure is its own fatal
+state. Arm cleanup only after a valid pod ID is durably known; disarm only after
+wanted work is detached. Required credentials deploy fail-closed. Bound every
+provider call. Test the actual shell lifecycle with injected failures rather
+than testing only source literals. Bind the exact commit locally before spend
+and again in the remote clone.

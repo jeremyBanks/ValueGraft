@@ -396,6 +396,13 @@ blocking failure.
   `>=580.65.06`, A100-80GB, three attempts, no unfiltered fallback). An
   AI-recommended provider is not validated until a provider-qualification
   checklist proves it can enforce the experiment's host-level invariants.
+- **POD RETRY SAFETY (incident #44).** On exact v12, only exit 85 (explicit
+  provider no-allocation) and 86 (rejected host with successful DELETE) may
+  retry, within the three-attempt bound. Exit 87 means cleanup failed; every
+  other status stops. API calls are timeout-bounded, required credentials are
+  deployed fail-closed, and the exact wrapper runs the frozen verifier locally
+  before allocation. Never re-run the wrapper after an ambiguous post-launch
+  failure; inspect the one registered pod and preserve wanted artifacts first.
 - LAUNCH detached jobs the PROVEN way: `scripts/launch_pod.sh <name> <job.sh>`
   (it does `nohup bash job.sh > job.log 2>&1 &` and the ssh RETURNS) — this
   reliably detached all session. Or a run_in_background Bash running an inline

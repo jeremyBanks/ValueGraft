@@ -1,5 +1,51 @@
 # STATE.md — session handoff / current state
 
+## CURRENT TRUTH (2026-07-12) — exact-v12 attempt three awaiting A7/B7 freeze
+
+No pod is active. Two exact technical rentals occurred and both stopped before
+any subject forward or semantic observation. Attempt 1 used host driver
+`580.159.03`; pinned Torch/CUDA 13 initialized and loaded the exact 30B model,
+then the loader incorrectly compared raw per-expert checkpoint topology to
+Transformers 5's packed MoE runtime topology. The corrected loader now derives
+all 531 runtime tensors from all 18,867 checkpoint rows, conserves the exact
+parameter count, attests the retained conversion recipe, and bit-checks nine
+complete tensors at three cross-shard sentinels.
+
+Attempt 2 used the same Secure A100 type and image but driver `550.90.12`;
+pinned CUDA 13 could not initialize, so it stopped before model download. This
+proved that the container image did not pin the host driver. The correction
+preserves Torch 2.12.1 / CUDA 13 / Transformers 5.0.0 / bf16 / eager, asks
+RunPod for CUDA 13, and admits only the exact A100-80GB PCIe with driver
+`>=580.65.06` and at least 80,000 MiB before bootstrap.
+
+A fresh code audit then found that the first admission wrapper could swallow a
+failed deletion, retry bootstrap failures as bad hosts, suppress required-token
+deployment, leak a billing pod on several failures, and race a moving trunk.
+Commits `f7c72e5` and `5496b94` closed those paths with explicit 85/86/87
+taxonomy, one-pod pre-job cleanup, fail-closed credential transfer, bounded API
+calls, exact-commit checkout, local pre-spend frozen verification, and mocked
+lifecycle tests. Sol observed `24/24` provisioning tests and the complete
+focused suite at `189/189`; Bash syntax, ShellCheck, and Python compilation were
+clean. Two fresh Codex audit contexts returned conditional GO after the new
+freeze. A capped Fable post-fix review series consumed nominal subsidized usage
+but produced no verdict; none is attributed.
+
+Authorization 6 is invalid for the current history. The immediate next step is
+an additive A7 apparatus commit and immediate B7 authorization-only child, then
+one result-only launch-authorization record, push, frozen verification,
+preflight, and one bounded exact technical attempt. Only exits 85/86 may retry,
+within three total admissions; exit 87 or any other/new failure class stops.
+No Phase A or treatment is authorized by this state.
+
+The two rentals' observed balance deltas total `$0.0971406935`; their combined
+conservative bound is `$0.2023333333`. A fresh read observed zero active RunPod
+pods and balance `$63.1124828884`; the difference from the last termination-time
+balance may include delayed settlement and is not assigned without billing
+evidence. The owner additionally requires a final end-to-end audit of money and
+tokens across RunPod, Claude, Codex, and other providers, with resumed-session
+deduplication and exact/lower-bound/upper-bound/unknown labels. That read-only
+inventory has begun in parallel and must be reconciled after the last run.
+
 ## CURRENT TRUTH (2026-07-11, ultra-depth regroup) — v11 paused; exploratory canary next
 
 The twelve-case paired-v11 corpus is **paused before any semantic model forward**.
