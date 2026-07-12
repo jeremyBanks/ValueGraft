@@ -1,0 +1,321 @@
+{
+  "analysis": "legacy synthetic conversation-body source stratification",
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 42
+  },
+  "causal_caveat": "The blocks also differ in length, authoring process, plant construction, and similarity to the tuning corpus. Source family is not causally isolated. Intervals are nominal and conditional on these realized rendered conversations.",
+  "code_git_head": "5343271fa391f9c5a09ff2021e5393d78b12f25b",
+  "configurations": {
+    "intersection": {
+      "assistant_authored_aliases_c13_c24": {
+        "ci_95_percentile": [
+          -0.06654432734398132,
+          -0.0035891048648834323
+        ],
+        "conversation_ids": [
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": -0.03341715042866136,
+        "n_conversations": 12,
+        "n_plants": 146
+      },
+      "pooled_c07_c24": {
+        "ci_95_percentile": [
+          -0.031641067137027384,
+          0.052461260175939516
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12",
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": 0.00790584194746917,
+        "n_conversations": 18,
+        "n_plants": 203
+      },
+      "qwen3_4b_rendered_c07_c12": {
+        "ci_95_percentile": [
+          0.03452612191034456,
+          0.17582603039982161
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12"
+        ],
+        "mean_raw_EB_nats_per_token": 0.11375069961264561,
+        "n_conversations": 6,
+        "n_plants": 57
+      }
+    },
+    "per-head": {
+      "assistant_authored_aliases_c13_c24": {
+        "ci_95_percentile": [
+          -0.04431359188022971,
+          0.03887662508030068
+        ],
+        "conversation_ids": [
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": -0.003958980398883955,
+        "n_conversations": 12,
+        "n_plants": 146
+      },
+      "pooled_c07_c24": {
+        "ci_95_percentile": [
+          -0.026692781433757414,
+          0.06233411428536478
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12",
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": 0.017087674099495697,
+        "n_conversations": 18,
+        "n_plants": 203
+      },
+      "qwen3_4b_rendered_c07_c12": {
+        "ci_95_percentile": [
+          -0.030674748566907332,
+          0.17145415377803164
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12"
+        ],
+        "mean_raw_EB_nats_per_token": 0.07099664877955586,
+        "n_conversations": 6,
+        "n_plants": 57
+      }
+    },
+    "per-layer": {
+      "assistant_authored_aliases_c13_c24": {
+        "ci_95_percentile": [
+          -0.07608287893223953,
+          -0.02808281532163098
+        ],
+        "conversation_ids": [
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": -0.05033053769030094,
+        "n_conversations": 12,
+        "n_plants": 146
+      },
+      "pooled_c07_c24": {
+        "ci_95_percentile": [
+          -0.04075490795216884,
+          0.042665044467009985
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12",
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": -0.0025987327070669916,
+        "n_conversations": 18,
+        "n_plants": 203
+      },
+      "qwen3_4b_rendered_c07_c12": {
+        "ci_95_percentile": [
+          0.05518871595928169,
+          0.18099153391295783
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12"
+        ],
+        "mean_raw_EB_nats_per_token": 0.11966168005700593,
+        "n_conversations": 6,
+        "n_plants": 57
+      }
+    },
+    "union": {
+      "assistant_authored_aliases_c13_c24": {
+        "ci_95_percentile": [
+          -0.0800446996402817,
+          -0.003538511426556948
+        ],
+        "conversation_ids": [
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": -0.041461948288990476,
+        "n_conversations": 12,
+        "n_plants": 146
+      },
+      "pooled_c07_c24": {
+        "ci_95_percentile": [
+          -0.053432577559006614,
+          0.03379344700654048
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12",
+          "c13",
+          "c14",
+          "c15",
+          "c16",
+          "c17",
+          "c18",
+          "c19",
+          "c20",
+          "c21",
+          "c22",
+          "c23",
+          "c24"
+        ],
+        "mean_raw_EB_nats_per_token": -0.011717285305589138,
+        "n_conversations": 18,
+        "n_plants": 203
+      },
+      "qwen3_4b_rendered_c07_c12": {
+        "ci_95_percentile": [
+          -0.02480729184609478,
+          0.1543528555277798
+        ],
+        "conversation_ids": [
+          "c07",
+          "c08",
+          "c09",
+          "c10",
+          "c11",
+          "c12"
+        ],
+        "mean_raw_EB_nats_per_token": 0.06447079882733359,
+        "n_conversations": 6,
+        "n_plants": 57
+      }
+    }
+  },
+  "estimand": "plant-weighted mean raw_EB = lp_E - lp_B in nats/token, with conversation-clustered percentile bootstrap",
+  "generated_utc": "2026-07-12T05:25:36.949835+00:00",
+  "inputs": [
+    {
+      "configuration": "per-head",
+      "path": "results/champion_validate/headscan_30b_bf16_heads_shuffle_pos_20260709T194156Z.json",
+      "sha256": "6ff588754bd833160a5698418ffb471b5d6316ad019dbbad0ad543fff19576a7"
+    },
+    {
+      "configuration": "per-layer",
+      "path": "results/champion_validate/headscan_30b_bf16_layers_shuffle_pos_20260709T194156Z.json",
+      "sha256": "81ad20bb5ad045adf6bb1b6d6226948fa0a81ba475c3edc5a7d8218dc8b5632c"
+    },
+    {
+      "configuration": "intersection",
+      "path": "results/champion_validate/headscan_30b_bf16_intersection_shuffle_pos_20260709T194156Z.json",
+      "sha256": "5197132a0eea5e19e397d92ca1a05f8c222f7cb42b1344564e0a9e9bdf57c640"
+    },
+    {
+      "configuration": "union",
+      "path": "results/champion_validate/headscan_30b_bf16_union_shuffle_pos_20260709T194156Z.json",
+      "sha256": "b9f368a743a95c3a5434befab68d59b09ae5e1c0a10dffa977dd7ca09deb5f1a"
+    }
+  ],
+  "schema_version": 1,
+  "status": "exploratory_source_stratification"
+}

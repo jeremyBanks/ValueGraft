@@ -41,7 +41,7 @@ DEFAULT_INPUTS = {
 
 BLOCKS = {
     "qwen3_4b_rendered_c07_c12": set(range(7, 13)),
-    "claude_authored_c13_c24": set(range(13, 25)),
+    "assistant_authored_aliases_c13_c24": set(range(13, 25)),
     "pooled_c07_c24": set(range(7, 25)),
 }
 

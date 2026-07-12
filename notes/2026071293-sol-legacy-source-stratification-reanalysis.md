@@ -9,7 +9,7 @@
 The legacy headline table pools c07–c24 even though the conversation bodies came
 from two materially different sources: c07–c12 were rendered by
 `mlx-community/Qwen3-4B-Instruct-2507-4bit`, while c13–c24 were authored by
-Claude-family assistant sessions. A pooled interval alone makes this evidence
+assistant sessions whose files retain only `sonnet`/`opus`/`fable` aliases. A pooled interval alone makes this evidence
 look more homogeneous than it is.
 
 I added `src/analyze_legacy_source_split.py`, which reads the exact four saved
@@ -18,11 +18,13 @@ the original plant-weighted `raw_EB = lp_E - lp_B` estimand, and repeats the
 original conversation-clustered percentile bootstrap (10,000 replicates, seed
 42). The machine-readable output records every input path and SHA-256:
 
-`results/legacy_source_stratification/legacy-source-stratification_Qwen3-30B-A3B-Instruct-2507_20260712T050958Z.json`
+`results/legacy_source_stratification/legacy-source-stratification_Qwen3-30B-A3B-Instruct-2507_20260712T052531Z.json`
+
+SHA-256: `df4c1a74e110e0add4c74e621fe8a0920d78e95829a869612e00cc2ebc18e196`.
 
 ## Observed results
 
-| Configuration | c07–c12: 4B-rendered (6 conversations / 57 plants) | c13–c24: Claude-authored (12 conversations / 146 plants) | Pooled c07–c24 |
+| Configuration | c07–c12: 4B-rendered (6 conversations / 57 plants) | c13–c24: assistant-authored, stored aliases only (12 conversations / 146 plants) | Pooled c07–c24 |
 |---|---:|---:|---:|
 | Per-head | +0.071 [−0.031, +0.170] | −0.004 [−0.044, +0.038] | +0.017 [−0.027, +0.062] |
 | Per-layer | **+0.120 [+0.055, +0.181]** | **−0.050 [−0.076, −0.028]** | −0.003 [−0.041, +0.043] |
