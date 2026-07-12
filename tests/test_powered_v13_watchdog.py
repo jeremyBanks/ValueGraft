@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 from decimal import Decimal
+import fcntl
+import os
 from pathlib import Path
 import subprocess
 import urllib.error
@@ -136,6 +138,10 @@ def test_record_rejects_literal_cap_or_deadline_tampering():
          "STOP_RATE_INCREASE"),
         ("RUNNING", None, RuntimeError("network"), 0,
          "HOLD_PROVIDER_AMBIGUOUS"),
+        ("COMPLETE", None, RuntimeError("network"), 0,
+         "STOP_JOB_COMPLETE"),
+        ("DEAD", None, RuntimeError("network"), 0,
+         "STOP_PROCESS_DEATH"),
         ("RUNNING", None, _http_404(), 0,
          "STOP_PROVIDER_GONE"),
         ("RUNNING", None, RuntimeError("network"), 3180,
@@ -302,6 +308,30 @@ def test_independent_supervisor_can_resume_after_watcher_exit(tmp_path):
     assert recovered["status"] == "TERMINATED_HARVESTED"
     assert recovered["termination_reason"] == "process_death"
     assert backend.delete_calls == 1
+
+
+def test_second_writer_cannot_mutate_an_owned_watchdog_record(tmp_path):
+    path = tmp_path / "guard.json"
+    watchdog.write_record_exclusive(path, _record())
+    owner_path = path.with_name(f".{path.name}.owner.lock")
+    descriptor = os.open(owner_path, os.O_RDWR | os.O_CREAT, 0o600)
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with pytest.raises(watchdog.V13WatchdogError,
+                           match="already owns"):
+            watchdog.watch(
+                record_path=path,
+                backend=FakeBackend(),
+                clock=lambda: 1_000_010,
+                sleep=lambda _seconds: None,
+                probe=lambda _command: "RUNNING",
+                harvest=_harvest,
+                max_cycles=1,
+            )
+        assert watchdog.read_record(path)["status"] == "ALLOCATED"
+    finally:
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+        os.close(descriptor)
 
 
 def test_post_probe_clock_and_dynamic_harvest_preserve_normal_cleanup_deadline(

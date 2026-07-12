@@ -60,7 +60,9 @@ def test_init_binds_all_external_files_and_exclusive_record(tmp_path):
 
     repeated = subprocess.run(
         command, cwd=ROOT, text=True, capture_output=True, check=False)
-    assert repeated.returncode != 0
+    assert repeated.returncode == 2
+    assert "STAGE-T WATCHDOG ERROR" in repeated.stderr
+    assert "Traceback" not in repeated.stderr
     assert record.is_file()
 
 

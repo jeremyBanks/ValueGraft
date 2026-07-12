@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from decimal import Decimal, InvalidOperation, ROUND_FLOOR
+import fcntl
 import hashlib
 import json
 import os
@@ -327,6 +328,15 @@ def write_record_exclusive(path: Path, value: Mapping[str, Any]) -> None:
         handle.write(raw)
         handle.flush()
         os.fsync(handle.fileno())
+    _fsync_directory(path.parent)
+
+
+def _fsync_directory(path: Path) -> None:
+    descriptor = os.open(Path(path), os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
 
 
 def read_record(path: Path) -> dict[str, Any]:
@@ -351,6 +361,7 @@ def replace_record(path: Path, value: Mapping[str, Any]) -> None:
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temporary, path)
+        _fsync_directory(path.parent)
     finally:
         try:
             temporary.unlink()
@@ -406,6 +417,14 @@ def guard_decision(
              "job state differs")
     if now_epoch >= frozen["delete_trigger_epoch"]:
         return "STOP_DEADLINE"
+    # A definitive job terminal observation is sufficient to start bounded
+    # harvest/deletion even when the simultaneous provider GET is ambiguous.
+    # Provider uncertainty never licenses continued rent after known completion
+    # or process death.
+    if job_state == "COMPLETE":
+        return "STOP_JOB_COMPLETE"
+    if job_state == "DEAD":
+        return "STOP_PROCESS_DEATH"
     if provider_error is not None:
         if (isinstance(provider_error, urllib.error.HTTPError)
                 and provider_error.code == 404):
@@ -423,10 +442,6 @@ def guard_decision(
         return "HOLD_PROVIDER_AMBIGUOUS"
     if observed_rate > Decimal(frozen["created_cost_per_hr_usd"]):
         return "STOP_RATE_INCREASE"
-    if job_state == "COMPLETE":
-        return "STOP_JOB_COMPLETE"
-    if job_state == "DEAD":
-        return "STOP_PROCESS_DEATH"
     if job_state == "AMBIGUOUS":
         return "HOLD_JOB_AMBIGUOUS"
     return "CONTINUE"
@@ -541,7 +556,7 @@ def cleanup_once(
     return result, confirmed
 
 
-def watch(
+def _watch_locked(
     *,
     record_path: Path,
     backend: ProviderBackend,
@@ -617,6 +632,46 @@ def watch(
             return record
         remaining = record["delete_trigger_epoch"] - int(clock())
         sleep(max(1, min(POLL_SECONDS, remaining if remaining > 0 else 1)))
+
+
+def watch(
+    *,
+    record_path: Path,
+    backend: ProviderBackend,
+    clock: Callable[[], float] = time.time,
+    sleep: Callable[[float], None] = time.sleep,
+    probe: Callable[[Sequence[str]], str] = probe_job,
+    harvest: Callable[[Sequence[str], int, int], Mapping[str, Any]] | None = None,
+    max_cycles: int | None = None,
+) -> dict[str, Any]:
+    """Own the sole record writer, then run the provider-clock loop."""
+
+    record_path = Path(record_path)
+    lock_path = record_path.with_name(f".{record_path.name}.owner.lock")
+    flags = os.O_RDWR | os.O_CREAT
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(lock_path, flags, 0o600)
+    try:
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise V13WatchdogError(
+                "another process already owns the watchdog record") from exc
+        return _watch_locked(
+            record_path=record_path,
+            backend=backend,
+            clock=clock,
+            sleep=sleep,
+            probe=probe,
+            harvest=harvest,
+            max_cycles=max_cycles,
+        )
+    finally:
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_UN)
+        finally:
+            os.close(descriptor)
 
 
 __all__ = [

@@ -241,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
         args.function(args)
-    except V13WatchdogError as exc:
+    except (V13WatchdogError, OSError) as exc:
         print(f"STAGE-T WATCHDOG ERROR: {exc}", file=sys.stderr)
         return 2
     return 0
