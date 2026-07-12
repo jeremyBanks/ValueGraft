@@ -1,0 +1,268 @@
+{
+  "schema": "coherent-state-powered-successor-v13-recipe-foundation-v1",
+  "design_id": "coherent-state-powered-successor-v13",
+  "template_version": "powered-v13-eight-family-template-v1",
+  "generator_version": "powered-v13-recipe-compiler-1",
+  "status": "COMPACT_FRAME_ONLY_NO_PERMUTATION_NO_EXECUTION",
+  "factorization": {
+    "resolution_modes": 2,
+    "domain_skins": 8,
+    "label_pairs": 8,
+    "logic_evidence_packs": 8,
+    "nonfocal_tail_packs": 4,
+    "canonical_tuples_per_stratum": 4096,
+    "strata": 8,
+    "canonical_tuples_total": 32768
+  },
+  "resolution_modes": [
+    "explicit_resolution",
+    "unstated_resolution"
+  ],
+  "domain_skin_ids": [
+    "canal_cooperative",
+    "museum_workroom",
+    "library_network",
+    "hill_observatory",
+    "civic_archive",
+    "festival_logistics",
+    "estuary_observers",
+    "community_kitchen"
+  ],
+  "domain_skins": [
+    {
+      "id": "canal_cooperative",
+      "organization": "Canal Cooperative",
+      "ledger": "lockside worksheet",
+      "coordinator": "rotation steward",
+      "subject": "incoming parcel",
+      "site": "east lock",
+      "distractor_a": "canvas-cover inventory",
+      "distractor_b": "volunteer radio roster"
+    },
+    {
+      "id": "museum_workroom",
+      "organization": "Museum Workroom",
+      "ledger": "handling register",
+      "coordinator": "collections scheduler",
+      "subject": "loan crate",
+      "site": "north annex",
+      "distractor_a": "humidity-card replacement",
+      "distractor_b": "docent badge renewal"
+    },
+    {
+      "id": "library_network",
+      "organization": "Library Network",
+      "ledger": "transfer docket",
+      "coordinator": "circulation planner",
+      "subject": "traveling collection",
+      "site": "river branch",
+      "distractor_a": "book-cart wheel service",
+      "distractor_b": "evening key census"
+    },
+    {
+      "id": "hill_observatory",
+      "organization": "Hill Observatory",
+      "ledger": "observation notebook",
+      "coordinator": "survey convener",
+      "subject": "equipment bundle",
+      "site": "upland shelter",
+      "distractor_a": "rain-gauge calibration",
+      "distractor_b": "trail-marker repainting"
+    },
+    {
+      "id": "civic_archive",
+      "organization": "Civic Archive",
+      "ledger": "accession worksheet",
+      "coordinator": "records coordinator",
+      "subject": "document carton",
+      "site": "map room",
+      "distractor_a": "scanner lamp replacement",
+      "distractor_b": "reading-room locker audit"
+    },
+    {
+      "id": "festival_logistics",
+      "organization": "Festival Logistics Desk",
+      "ledger": "routing folio",
+      "coordinator": "site dispatcher",
+      "subject": "vendor kit",
+      "site": "garden concourse",
+      "distractor_a": "awning-tag inventory",
+      "distractor_b": "usher lanyard exchange"
+    },
+    {
+      "id": "estuary_observers",
+      "organization": "Estuary Observers",
+      "ledger": "inspection journal",
+      "coordinator": "route facilitator",
+      "subject": "monitoring case",
+      "site": "marsh outpost",
+      "distractor_a": "sample-bottle count",
+      "distractor_b": "footbridge notice renewal"
+    },
+    {
+      "id": "community_kitchen",
+      "organization": "Community Kitchen",
+      "ledger": "service worksheet",
+      "coordinator": "shift coordinator",
+      "subject": "pantry tote",
+      "site": "courtyard pantry",
+      "distractor_a": "apron-mending queue",
+      "distractor_b": "delivery-bicycle service"
+    }
+  ],
+  "label_pair_ids": [
+    "garnet_mallow",
+    "heron_otter",
+    "willow_copper",
+    "falcon_maple",
+    "riverstone_sunbeam",
+    "juniper_alder",
+    "quartz_flint",
+    "comet_violet"
+  ],
+  "label_pairs": [
+    {"id": "garnet_mallow", "zero": "Garnet", "one": "Mallow"},
+    {"id": "heron_otter", "zero": "Heron", "one": "Otter"},
+    {"id": "willow_copper", "zero": "Willow", "one": "Copper"},
+    {"id": "falcon_maple", "zero": "Falcon", "one": "Maple"},
+    {"id": "riverstone_sunbeam", "zero": "Riverstone", "one": "Sunbeam"},
+    {"id": "juniper_alder", "zero": "Juniper", "one": "Alder"},
+    {"id": "quartz_flint", "zero": "Quartz", "one": "Flint"},
+    {"id": "comet_violet", "zero": "Comet", "one": "Violet"}
+  ],
+  "logic_evidence_pack_ids": [
+    "magnitude_1_c0_w1",
+    "magnitude_1_c1_w0",
+    "magnitude_2_c0_w1",
+    "magnitude_2_c1_w0",
+    "magnitude_3_c0_w1",
+    "magnitude_3_c1_w0",
+    "magnitude_4_c0_w1",
+    "magnitude_4_c1_w0"
+  ],
+  "nonfocal_tail_pack_ids": [
+    "system_correspondence_word",
+    "system_receipt_mark",
+    "tail_shelf_word",
+    "tail_desk_mark"
+  ],
+  "nonfocal_tail_packs": [
+    {
+      "id": "system_correspondence_word",
+      "location": "system",
+      "fact_name": "correspondence word",
+      "target": "Morrow",
+      "countertarget": "Trellis",
+      "probe": "What is the standing correspondence word?"
+    },
+    {
+      "id": "system_receipt_mark",
+      "location": "system",
+      "fact_name": "receipt mark",
+      "target": "Pewter",
+      "countertarget": "Dovetail",
+      "probe": "What is the standing receipt mark?"
+    },
+    {
+      "id": "tail_shelf_word",
+      "location": "tail_user",
+      "fact_name": "shelf word",
+      "target": "Nimbus",
+      "countertarget": "Solace",
+      "probe": "What shelf word is stated in the retained exchange?"
+    },
+    {
+      "id": "tail_desk_mark",
+      "location": "tail_assistant",
+      "fact_name": "desk mark",
+      "target": "Russet",
+      "countertarget": "Ivory",
+      "probe": "What desk mark is stated in the retained exchange?"
+    }
+  ],
+  "strata": [
+    {
+      "id": "threshold_eligibility",
+      "family_shape": "inclusive threshold",
+      "discourse_order": "rule, background record, changed score, audit"
+    },
+    {
+      "id": "sequential_tiebreak",
+      "family_shape": "two candidates both pass and tie on primary score; an equal-width changed timestamp flips the deterministic earlier-time tie-break",
+      "discourse_order": "candidate records, qualification, equal score, timestamp tie-break"
+    },
+    {
+      "id": "conjunction_all_conditions",
+      "family_shape": "all three predicates with exactly one changed predicate",
+      "discourse_order": "three predicate records, changed third predicate, all-conditions rule"
+    },
+    {
+      "id": "interval_schedule_overlap",
+      "family_shape": "both intervals meet a minimum duration and the larger overlap wins",
+      "discourse_order": "reference window, candidate windows, minimum duration, larger overlap"
+    },
+    {
+      "id": "arithmetic_capacity_budget",
+      "family_shape": "capacity minus reserve compared with ceiling(requests/group)",
+      "discourse_order": "request evidence, capacity ledger, ceiling calculation, reserve inequality"
+    },
+    {
+      "id": "categorical_set_membership",
+      "family_shape": "all required tags and no forbidden tag",
+      "discourse_order": "observed categories, required set, forbidden set, membership rule"
+    },
+    {
+      "id": "ordered_priority_exception",
+      "family_shape": "ordered priority with one named exception suppressing the first action",
+      "discourse_order": "named exception, ordered triggers, suppression, next applicable action"
+    },
+    {
+      "id": "referent_alias_resolution",
+      "family_shape": "two- or three-hop alias graph with one changed intermediate link",
+      "discourse_order": "query referent, outer alias, changed intermediate link, terminal resolution"
+    }
+  ],
+  "canonical_candidate_id": {
+    "hash": "SHA-256",
+    "payload": [
+      "design_id",
+      "stratum_id",
+      "template_version",
+      "canonical_tuple_object"
+    ],
+    "json": "UTF-8; ensure_ascii=false; sort object keys; separators=(',', ':'); reject non-finite numbers",
+    "rank_in_payload": false,
+    "seed_in_payload": false
+  },
+  "compact_pool_digests": {
+    "threshold_eligibility": "be87659352ce3cf7ed8dacb41db6b63d66ed0405211ca952854a5694ba7e2187",
+    "sequential_tiebreak": "ad82ad6308f3694f94df8ef0f474411cb3fa3ef6383433d0a436849b2c5b931c",
+    "conjunction_all_conditions": "7a1a1e70a8f2c4a92f4730dc19b079917e920512ebe8d1520a127cedd4ba6686",
+    "interval_schedule_overlap": "886c0e1d80626a5dabd5d5afe93dcd5a5a5164902b1d093ab2d15778422f77bf",
+    "arithmetic_capacity_budget": "490b531211aa27889570579eee076976c5bf33211bf45d6a74128f08ae3436f1",
+    "categorical_set_membership": "f166ea70b0d30358fe14898307f51f68758df0f9d7658b9da82fc61cf4badd98",
+    "ordered_priority_exception": "1664c70f4674294556f7ff12019a6e44fbc2d13cad6f8165de43eb4b3a61bdec",
+    "referent_alias_resolution": "bfc44d3609f2e8d54d0dd7324b1c134338f9bf0ba32df56a0b90575e60a9113c"
+  },
+  "randomization_boundary": {
+    "permutation_seed_present": false,
+    "literal_permutation_present": false,
+    "compact_tuple_enumeration_allowed": true,
+    "compact_logic_evaluation_allowed": true,
+    "in_pool_conversation_materialization_allowed": false,
+    "template_tests": "out-of-pool development sentinel components only",
+    "next_required_event": "commit one 128-bit OS-random seed and literal PCG64 permutation per stratum before ranked conversation materialization"
+  },
+  "pending": [
+    "production-tokenizer target and nonprefix geometry",
+    "production-tokenizer equal-width changed messages",
+    "production-tokenizer 940-1180 noncarrier skeleton width",
+    "actual-source 900-1400 token width",
+    "blind singleton and target-aware paired content review",
+    "committed permutation seeds and literal permutations",
+    "ranked literal-history collision audit",
+    "Phase A",
+    "treatment release"
+  ],
+  "execution_authorized": false
+}
