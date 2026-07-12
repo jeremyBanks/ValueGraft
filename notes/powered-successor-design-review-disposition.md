@@ -183,3 +183,27 @@ statistically inadequate N.
    identity, exact controls, checkpoints, and release seal.
 6. Run e01 plus long-geometry pilots and read the observed numbers before any
    unseen primary treatment.
+
+## Addendum — Opus mechanism speculation received after the audits
+
+The owner supplied the note whose slug is
+`speculation-why-graft-fails-and-mitigations` before the literal preregistration
+was committed. Its claims are explicitly speculative, but its proposed fork is
+high-value and consistent with the directly checked prior-art result that
+causal information can accumulate on downstream aggregator tokens.
+
+Disposition:
+
+- It does **not** replace Goal A. A confident R2 bound is still required to turn
+  the current N=1 observation into a real result.
+- Its M1 retained-tail graft becomes the first surplus locus.
+- Its M2' verbatim second-carrier copy, inert matched-length trail, M3
+  read-demand bridge, and maximal-state restart join the frozen discovery menu
+  on the first untouched reserve split.
+- A winning discovery condition is confirmed only on the second untouched
+  reserve split.
+- Second-copy value-only is tested before full-KV because value rows are not
+  RoPE-positioned. Later-position K rows are never moved earlier without a
+  separately validated position transform.
+- No expected direction from the note enters a gate, exclusion, or primary
+  analysis.
