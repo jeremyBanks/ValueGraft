@@ -26,10 +26,10 @@ SHA-256: `df4c1a74e110e0add4c74e621fe8a0920d78e95829a869612e00cc2ebc18e196`.
 
 | Configuration | c07–c12: 4B-rendered (6 conversations / 57 plants) | c13–c24: assistant-authored, stored aliases only (12 conversations / 146 plants) | Pooled c07–c24 |
 |---|---:|---:|---:|
-| Per-head | +0.071 [−0.031, +0.170] | −0.004 [−0.044, +0.038] | +0.017 [−0.027, +0.062] |
+| Per-head | +0.071 [−0.031, +0.171] | −0.004 [−0.044, +0.039] | +0.017 [−0.027, +0.062] |
 | Per-layer | **+0.120 [+0.055, +0.181]** | **−0.050 [−0.076, −0.028]** | −0.003 [−0.041, +0.043] |
-| Intersection | **+0.114 [+0.035, +0.175]** | **−0.033 [−0.067, −0.004]** | +0.008 [−0.032, +0.052] |
-| Union | +0.064 [−0.027, +0.152] | **−0.041 [−0.080, −0.003]** | −0.012 [−0.053, +0.034] |
+| Intersection | **+0.114 [+0.035, +0.176]** | **−0.033 [−0.067, −0.004]** | +0.008 [−0.032, +0.052] |
+| Union | +0.064 [−0.025, +0.154] | **−0.041 [−0.080, −0.004]** | −0.012 [−0.053, +0.034] |
 
 Values are nats/token with nominal 95% bootstrap intervals, conditional on the
 realized conversation bodies. Minor rounding in this table is from the exact
