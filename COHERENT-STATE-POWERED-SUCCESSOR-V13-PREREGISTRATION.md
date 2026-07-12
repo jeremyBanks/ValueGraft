@@ -326,7 +326,8 @@ Cached K rows are post-RoPE and may never be permuted across positions. VP keeps
 fresh K and moves complete bf16 V rows only. The two event classes are (a)
 carrier assistant content R1 and (b) the structural suffix R2 minus R1
 (canonical carrier close, acknowledgment user message, and acknowledgment
-assistant header).
+assistant header). Their literal SHA/input/map keys are exactly lowercase
+`content` and `structural`, respectively.
 
 For each class of width `m`, compute one digest per integer row index `j` as
 `SHA256(canonical_json([design_id, stable_candidate_id, render_id, class,
