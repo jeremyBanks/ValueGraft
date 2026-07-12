@@ -166,3 +166,17 @@ result). Mechanics of why this is the sharpest failure in the record:
 state it reviews already encodes the drift as history and (b) it re-plans forward instead of diffing
 against the terminal goal — and it can make things worse by rendering the drifted objective more
 coherent and defensible. Preserving focus on the wrong target is not a safeguard.
+
+## 10. Postmortem addendum — N=12 was a floor, and probably itself too small
+
+Clarifying the "short on data" point (owner-raised): 12 was not a principled sufficiency target — it
+was the *floor* inherited from the old synthetic prereg, which itself conceded 12 was underpowered
+("inconclusive, not equivalence; no defensible SESOI"). Reasons 12 is likely insufficient for a
+*tight* confident bound: the effect sits at the ~0.06-nat numerical floor (a tight bound requires the
+CI shrunk below that); only ~12 conversation-clusters gives a wide clustered interval (~11 df); and
+the effect is heterogeneous/sign-unstable across schedule, precision, and focal/non-focal, inflating
+variance. A rigorous design might want 24, the full c01–c24 corpus, replicated renders, or a
+run-until-the-CI-converges rule — all fundable from the unspent budget, since "is N enough" is
+empirically settleable by spending rather than guessed a priori. The failure is therefore not "N < 12"
+but "N < a fifth of a floor number that was probably already too small." The sufficiency debate the
+owner intended to have never became reachable.
