@@ -1,0 +1,37 @@
+{
+ "consumerUserId": "user_3G5wF5ViMltodbCpnDgQzyxVUhB",
+ "containerDiskInGb": 200,
+ "costPerHr": 1.39,
+ "createdAt": "2026-07-12 23:27:13.02 +0000 UTC",
+ "desiredStatus": "RUNNING",
+ "env": {
+  "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEyaMzCoAfXuAwhOAuoszLymMVEyTi63s7xPddF84bla runpod-experiment"
+ },
+ "gpuCount": 1,
+ "id": "t8ymnp8y1ccy4p",
+ "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+ "lastStartedAt": "2026-07-12 23:27:13.015 +0000 UTC",
+ "lastStatusChange": "Rented by User: Sun Jul 12 2026 23:27:13 GMT+0000 (Coordinated Universal Time)",
+ "machine": {
+  "dataCenterId": "CA-MTL-3",
+  "diskThroughputMBps": 4646,
+  "gpuTypeId": "NVIDIA A100 80GB PCIe",
+  "location": "CA",
+  "maxDownloadSpeedMbps": 3568,
+  "maxUploadSpeedMbps": 2184,
+  "secureCloud": true,
+  "supportPublicIp": true,
+  "reservedCountVersion": 207970
+ },
+ "machineId": "x4ekbzerk3l8",
+ "memoryInGb": 117,
+ "name": "powered-v13-stage-t-966f846119444335f0e836ad",
+ "ports": [
+  "22/tcp"
+ ],
+ "publicIp": "",
+ "templateId": "",
+ "vcpuCount": 31,
+ "volumeInGb": 0,
+ "volumeMountPath": "/workspace"
+}

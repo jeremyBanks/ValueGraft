@@ -113,6 +113,17 @@ recorded, at `2026-07-12T22:47:59Z`:
   technical arm ran. A corrected response schema and new explicit retry release
   decision are required; the exhausted authorization must not be reused.
 
+The subsequent one-shot infrastructure retry positively admitted an exact
+secure A100 80GB host (driver `580.159.04`, CUDA available, 81,920 MiB) but
+failed after `HOST_ADMITTED` and before `SYNCED`; no job or technical arm
+started. The watchdog proved DELETE, direct 404, and empty inventory. The outer
+authority is consumed with no fallback. Conservative cumulative Stage-T usage
+is 106 provider seconds and `$0.04092777777777777777777777777`; a post-delete
+provider read still showed balance `$57.1090060887` and zero Pods. The exact
+setup subcause is unknown because only the generic `V13LifecycleError` type was
+retained. Further Stage-T apparatus work and paid retry are closed; write the
+measured N=48 feasibility rejection.
+
 Create another exclusive checkpoint at every static phase transition, before
 and after any allocation/pilot, after every Phase-A candidate, after every
 treatment durability block, and before provider deletion.

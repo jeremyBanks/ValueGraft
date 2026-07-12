@@ -43,6 +43,13 @@ failure class; do not load the whole history as routine context.
 | Overwrite/collision | A model run overwrote another result | Unique model+UTC output path printed at process start |
 | Apparatus spiral | Many amendments optimized gates while N stayed one | Every new gate names the decision-bearing threat; validation has a frozen attempt bound |
 
+The powered-v13 Stage-T infrastructure retry admitted the exact secure A100 but
+failed before `SYNCED`. Its bounded-command wrapper retained only
+`V13LifecycleError`, not the failing subcommand or stderr, so the exact setup
+cause is unknowable from committed evidence. The one-shot authority is consumed
+and further Stage-T construction is closed; see the note slug
+`powered-v13-stage-t-infra-retry-post-admission-failure`.
+
 ## Rules when an anomaly appears
 
 1. Preserve raw bytes and classify KNOWN versus THEORY.

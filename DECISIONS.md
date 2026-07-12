@@ -81,6 +81,13 @@ decisions that govern current work.
   active goal hour `7.8758`; by hour `11.8758`, either Stage A is authorized or
   a measured written N=48 feasibility rejection replaces further construction.
 
+The one explicit infrastructure retry admitted the exact host but failed before
+`SYNCED`, consumed its no-fallback authority, and retained insufficient command
+diagnostics to identify the setup subcause. Stage-T apparatus construction is
+therefore closed under the hour-`7.8758` stop rule. No further paid retry is
+authorized. The successor must now record the measured N=48 feasibility
+rejection rather than revise this canary again.
+
 ## 2026-07-12 — collaboration and judgment
 
 - The main agent owns all scientific and operational decisions. Ordinary

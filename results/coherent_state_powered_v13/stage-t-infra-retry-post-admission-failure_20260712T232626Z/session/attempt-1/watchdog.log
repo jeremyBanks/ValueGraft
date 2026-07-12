@@ -1,0 +1,4 @@
+API ERROR 404 {"error":"pod not found","status":404}
+
+{"active_inventory_absent_observed": true, "harvest_succeeded": false, "per_pod_404_observed": true, "pod_id": "t8ymnp8y1ccy4p", "record_sha256": "4f41e7f0d26085e07ad533d48bb2eed016e4e24444dbd0b84bce097cef446f00", "release_receipt_sha256": "f246252644a08f31285a0ce75a362744a3d609372c6df3e7a91dc38939feac37", "status": "TERMINATED_HARVEST_FAILED", "termination_reason": "process_death"}
+STAGE-T WATCHDOG ERROR: watchdog record is already terminal
