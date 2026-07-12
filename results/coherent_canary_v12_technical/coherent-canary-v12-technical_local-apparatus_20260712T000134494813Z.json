@@ -1,0 +1,1108 @@
+{
+  "bindings": {
+    "carrier_fixture": {
+      "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+      "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+    },
+    "identity_fixture": {
+      "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+      "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+    },
+    "preregistration": {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+      "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+    },
+    "technical_fixture": {
+      "path": "data/coherent_canary_v12/technical_control_fixture.json",
+      "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+    }
+  },
+  "completed_at_utc": "2026-07-12T00:01:43.132282+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "diagnostic_summary": {
+    "error_message": "generated identity branch did not stop normally",
+    "error_type": "CanaryRuntimeError"
+  },
+  "error": {
+    "message": "generated identity branch did not stop normally",
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/jeb/experimentation/scripts/run_coherent_canary_v12_technical.py\", line 250, in run\n    document[\"generated_forced_identity\"] = stage(\n                                            ^^^^^^\n  File \"/Users/jeb/experimentation/scripts/run_coherent_canary_v12_technical.py\", line 169, in stage\n    value = function()\n            ^^^^^^^^^^\n  File \"/Users/jeb/experimentation/scripts/run_coherent_canary_v12_technical.py\", line 252, in <lambda>\n    run_generated_forced_identity(\n  File \"/Users/jeb/experimentation/src/coherent_canary_technical.py\", line 149, in run_generated_forced_identity\n    comparison = require_generated_forced_identity(\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/jeb/experimentation/src/coherent_canary_runtime.py\", line 629, in require_generated_forced_identity\n    _require(generated.stop_reason == \"model_eos\" and not generated.cap_hit,\n  File \"/Users/jeb/experimentation/src/coherent_canary_runtime.py\", line 34, in _require\n    raise CanaryRuntimeError(message)\ncoherent_canary_runtime.CanaryRuntimeError: generated identity branch did not stop normally\n",
+    "type": "CanaryRuntimeError"
+  },
+  "estimated_cost_usd": 0.0,
+  "hourly_cost_usd": 0.0,
+  "output_path": "/Users/jeb/experimentation/results/coherent_canary_v12_technical/coherent-canary-v12-technical_local-apparatus_20260712T000134494813Z.json",
+  "provenance": {
+    "dependencies": {
+      "accelerate": "1.14.0",
+      "huggingface-hub": "1.22.0",
+      "safetensors": "0.8.0",
+      "torch": "2.12.1",
+      "transformers": "5.0.0"
+    },
+    "device": {
+      "cuda_visible_devices": null,
+      "deterministic_algorithms": false,
+      "device_type": "cpu",
+      "float32_matmul_precision": "highest",
+      "machine": "arm64",
+      "platform": "macOS-26.2-arm64-arm-64bit",
+      "python": "3.12.11",
+      "torch_num_interop_threads": 10,
+      "torch_num_threads": 4
+    },
+    "model_inventory": {
+      "files": [
+        {
+          "path": "config.json",
+          "sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+          "size_bytes": 726
+        },
+        {
+          "path": "generation_config.json",
+          "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+          "size_bytes": 239
+        },
+        {
+          "path": "model.safetensors",
+          "sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+          "size_bytes": 1503300328
+        }
+      ],
+      "inventory_sha256": "f9515563585d0d82304cd290928ef3e207179c2e00154b000e85fbc2cd3c92bf",
+      "kind": "model",
+      "repo_id": "Qwen/Qwen3-0.6B",
+      "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "snapshot_path": "/Users/jeb/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca",
+      "weight_tensor_count": 311,
+      "weight_tensors_sha256": "2e5c029f845c011937e74306abd2895ac985b39092c00e73372cd8c1a519e83a"
+    },
+    "model_snapshot": "/Users/jeb/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca",
+    "model_snapshot_contract": {
+      "created_at_utc": "2026-07-11T22:17:00Z",
+      "design_id": "coherent-state-decision-canary-v12",
+      "outcome_blinding": "Created before any v12 subject-model forward or semantic outcome.",
+      "protocol_tokenizer": {
+        "files": [
+          {
+            "path": "merges.txt",
+            "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+            "size_bytes": 1671839
+          },
+          {
+            "path": "tokenizer.json",
+            "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+            "size_bytes": 11422654
+          },
+          {
+            "path": "tokenizer_config.json",
+            "sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+            "size_bytes": 9377
+          },
+          {
+            "path": "vocab.json",
+            "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "size_bytes": 2776833
+          }
+        ],
+        "inventory_sha256": "aaf92eec1d388cb80d43138f3a578f206b7e6988b704c8a41f050ea17c3ab412",
+        "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+      },
+      "schema": "coherent_state_decision_canary_v12_model_snapshot_contract_v1",
+      "sources": {
+        "exact_remote_metadata": "Hugging Face Hub model_info(files_metadata=true) at the literal 40-hex revision; LFS SHA-256 and sizes were read from immutable sibling metadata. Small config, generation-config, and safetensors-index files were downloaded at that revision and hashed locally.",
+        "local_snapshot": "Complete pinned local HF cache snapshot; every required file was streamed and hashed, and every safetensors header was inspected without loading the model.",
+        "protocol_tokenizer": "Complete tokenizer file set at the pinned 30B revision; literal file bytes were streamed and hashed."
+      },
+      "subjects": {
+        "exact-subject": {
+          "files": [
+            {
+              "path": "config.json",
+              "sha256": "a1ee086a68d0cbfc87316da00ba4b8507bd1292978108e2496201a30a450f438",
+              "size_bytes": 963
+            },
+            {
+              "path": "generation_config.json",
+              "sha256": "19d306dd769db12a9d710b44cf7f83b635efbe5166b84fb4358a08fb7d88bb53",
+              "size_bytes": 239
+            },
+            {
+              "path": "model-00001-of-00016.safetensors",
+              "sha256": "afe775cbdefb257e1bf1d8551fb930bd4b78d74da0b10bbb651f6b6a6f67c325",
+              "size_bytes": 3998893112
+            },
+            {
+              "path": "model-00002-of-00016.safetensors",
+              "sha256": "c0eefe9ed74050f4144fcb1b614c6915462e756b6673a9cca67f446b00c3434f",
+              "size_bytes": 3999974192
+            },
+            {
+              "path": "model-00003-of-00016.safetensors",
+              "sha256": "18ebd81e648667b1513786fc75886044e8ccb06b04562a35cbea59a41e4bcbbf",
+              "size_bytes": 3997360832
+            },
+            {
+              "path": "model-00004-of-00016.safetensors",
+              "sha256": "5df2f491c8c96651963a0d84db89d7647febc0e5f4f96cc67c2edac2d4a731b2",
+              "size_bytes": 3999975056
+            },
+            {
+              "path": "model-00005-of-00016.safetensors",
+              "sha256": "276477e938cd0de42c967faa7c10bc03a1a4b3e82135d5e17469152d0dd5374e",
+              "size_bytes": 3999975400
+            },
+            {
+              "path": "model-00006-of-00016.safetensors",
+              "sha256": "ac03cec889c40085113ddcb8f73216a157e7b83f06bb37aaf6a4699b84fa4abe",
+              "size_bytes": 3999975400
+            },
+            {
+              "path": "model-00007-of-00016.safetensors",
+              "sha256": "382aee85a70fccca2bde6043a0aefc16f3fd2e87e2a8d1ccf1eba442f7a98e92",
+              "size_bytes": 3999975472
+            },
+            {
+              "path": "model-00008-of-00016.safetensors",
+              "sha256": "effec719bf78d74170f294d94f1240b8f6f30c5402a04a3dc2cb42c8cdaa101a",
+              "size_bytes": 3997362064
+            },
+            {
+              "path": "model-00009-of-00016.safetensors",
+              "sha256": "6f272f00be2100f34d3a0463fb6e66b106f015bbc9aaba02b1898a102938d7c1",
+              "size_bytes": 3999975408
+            },
+            {
+              "path": "model-00010-of-00016.safetensors",
+              "sha256": "c2bc4101cde6b7c9dda36bbdff815c2ff19541d7732e94d306d87a0806c133b3",
+              "size_bytes": 3999975400
+            },
+            {
+              "path": "model-00011-of-00016.safetensors",
+              "sha256": "adb34c5b4c1e4c85527218638c246181ffb7763ed033c0f3d09f5242e7022712",
+              "size_bytes": 3999975408
+            },
+            {
+              "path": "model-00012-of-00016.safetensors",
+              "sha256": "d4276b408eca9c249fd317f725074e9a443107ca6cfd518d5cea3911f1cefce2",
+              "size_bytes": 3987924896
+            },
+            {
+              "path": "model-00013-of-00016.safetensors",
+              "sha256": "c7070b4e079477665f2a6f5a26704bdcbd757afa4b7edc3d628128abe9157c51",
+              "size_bytes": 3999975088
+            },
+            {
+              "path": "model-00014-of-00016.safetensors",
+              "sha256": "c50e816929903e80e9e6ca4d6eec3b643a50478e61407495fbc10f3c999b0fd5",
+              "size_bytes": 3999975400
+            },
+            {
+              "path": "model-00015-of-00016.safetensors",
+              "sha256": "5351255875a9b79507db1357e61f109ec880fd3e4a2000d5f7c51494aa77d288",
+              "size_bytes": 3999975400
+            },
+            {
+              "path": "model-00016-of-00016.safetensors",
+              "sha256": "fa5623e55641935f938894cc91090732452ef22da12596e857c8dff4fa71627b",
+              "size_bytes": 1085307128
+            },
+            {
+              "path": "model.safetensors.index.json",
+              "sha256": "8dde190b862c7c80ec7403c6495de00c60bbaf246ed479cee4506284989c584c",
+              "size_bytes": 1699758
+            }
+          ],
+          "inventory_sha256": "e4a1e14cd357c39294e52e76431d5a32f68a405c0d3a50ba4d9848cd2d799bac",
+          "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+          "parameter_count": 30532122624,
+          "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+          "weight_name_to_shard_sha256": "1fb6383028ceb4aa49d9a2f13f3345dbc55781b041580fe891fea7a81e8e89e2",
+          "weight_tensor_count": 18867
+        },
+        "local-apparatus": {
+          "files": [
+            {
+              "path": "config.json",
+              "sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "size_bytes": 726
+            },
+            {
+              "path": "generation_config.json",
+              "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "size_bytes": 239
+            },
+            {
+              "path": "model.safetensors",
+              "sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "size_bytes": 1503300328
+            }
+          ],
+          "inventory_sha256": "f9515563585d0d82304cd290928ef3e207179c2e00154b000e85fbc2cd3c92bf",
+          "model_id": "Qwen/Qwen3-0.6B",
+          "parameter_count": 751632384,
+          "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+          "weight_tensor_count": 311,
+          "weight_tensors_sha256": "2e5c029f845c011937e74306abd2895ac985b39092c00e73372cd8c1a519e83a"
+        }
+      }
+    },
+    "protocol_tokenizer_inventory": {
+      "files": [
+        {
+          "path": "merges.txt",
+          "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+          "size_bytes": 1671839
+        },
+        {
+          "path": "tokenizer.json",
+          "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+          "size_bytes": 11422654
+        },
+        {
+          "path": "tokenizer_config.json",
+          "sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+          "size_bytes": 9377
+        },
+        {
+          "path": "vocab.json",
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "size_bytes": 2776833
+        }
+      ],
+      "inventory_sha256": "aaf92eec1d388cb80d43138f3a578f206b7e6988b704c8a41f050ea17c3ab412",
+      "kind": "protocol_tokenizer",
+      "repo_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "snapshot_path": "/Users/jeb/.cache/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+    },
+    "protocol_tokenizer_snapshot": "/Users/jeb/.cache/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "repository_authorization": {
+      "apparatus_commit": "6a3441d5560b16239bedadf45c64b1bc0e6d0883",
+      "authorization_commit": "f7655c4ff2cd1a593f497d222a851b6aa2d4805b",
+      "authorization_sha256": "a207914310061398f256bfb4485d119efb4a93fa92901e6f5c705d1e3244f752",
+      "branch": "trunk",
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "sha256": "1da85bc00023f42925b962fb1c49cee06220566a90c8a49645777dcfaf70c16e"
+        },
+        {
+          "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+          "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+        },
+        {
+          "path": "COHERENT-STATE-DECISION-CANARY-V12-STIMULUS-CONTRACT.md",
+          "sha256": "ad3e2eb4daf00bf24e688a09708ddad84cbe0906283bd92537e68667801770c0"
+        },
+        {
+          "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+          "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+        },
+        {
+          "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+          "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+        },
+        {
+          "path": "data/coherent_canary_v12/model_snapshot_contract.json",
+          "sha256": "ee05d45a55bb75e810897c1590a23bb0d3edfbf8ec8add05215c54edaa9a8677"
+        },
+        {
+          "path": "data/coherent_canary_v12/revision2/session_d/e01.json",
+          "sha256": "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090"
+        },
+        {
+          "path": "data/coherent_canary_v12/revision2/session_d/e02.json",
+          "sha256": "0d52caab89a6f7d6877f097fc451b5ac529f010720e8118ad89044a054ca9ff0"
+        },
+        {
+          "path": "data/coherent_canary_v12/revision2/session_e/e03.json",
+          "sha256": "3594202e1ec405b7cb2c0a5f9351d3e3c68b65ba6affb38ba83ce5a507273ed3"
+        },
+        {
+          "path": "data/coherent_canary_v12/revision2/session_f/e05.json",
+          "sha256": "cd73088f32a1cdc81cebe9f95d5a5d8e739e977977f83dac3b1c055db268812a"
+        },
+        {
+          "path": "data/coherent_canary_v12/revision2/session_f/e06.json",
+          "sha256": "27bbd14802438d45a8160aa58b9bb044ab8338fb4b8e4d8b76a036c9c3bfcc4f"
+        },
+        {
+          "path": "data/coherent_canary_v12/revision4/session_h/e04.json",
+          "sha256": "99d79f0009299178dd48947168415d17aeb9fea643d082452cc564a17911c541"
+        },
+        {
+          "path": "data/coherent_canary_v12/technical_control_fixture.json",
+          "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+        },
+        {
+          "path": "notes/2026071152-sol-ultra-regroup-decision.md",
+          "sha256": "6f60a787a9e1b1a64495d0246e97b5fca9ab67ea169b039f3a1635c34d00bd78"
+        },
+        {
+          "path": "notes/2026071153-fable-ultra-regroup-review.md",
+          "sha256": "11143e4f0a742c373f9a3394b0728e854f8664d4c9f7279b7810f2deb6ad8e35"
+        },
+        {
+          "path": "notes/2026071155-sol-fable-review-disposition-and-canary-closure.md",
+          "sha256": "987d90f10b7752adf62c3e2ba2ad8838cfd88ff5719ab29dfeeaf812f802ce89"
+        },
+        {
+          "path": "notes/2026071156-canary-preregistration-independent-audit.md",
+          "sha256": "b8b84af49bf69c88c6ec398f6c765d925404a855cbcb4295876065c5dcc9ab93"
+        },
+        {
+          "path": "notes/2026071167-sol-v12-execution-audit-and-runtime-closure.md",
+          "sha256": "70893a40a8b6f0b87cf5a5ad0d9278e197a145ee8b8131d1ca5c26af5f35907e"
+        },
+        {
+          "path": "notes/2026071168-sol-v12-harvest-and-release-closure.md",
+          "sha256": "3380ff1a8d2888d9c1f7f256dee8467537e4dae61181a4af0f90c9772e0b404d"
+        },
+        {
+          "path": "pyproject.toml",
+          "sha256": "a5f5e8ea89722f9dca872ff67b9b3e7aa15dd7d2db3596c2c0e330d3be72fe46"
+        },
+        {
+          "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T210013Z_7f36752b3295.json",
+          "sha256": "981b703749edfa3d2a2b1cf57419776b3dda18fa3cc8788d83a3f51ad0e2e2ec"
+        },
+        {
+          "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_cross_case_diversity_20260711T210013Z_8d7e38e6e2e4.json",
+          "sha256": "d45bf013d2be9d79b5e0dc86de7071536edb295648f626c153b8822caf18f1dd"
+        },
+        {
+          "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_target_aware_paired_20260711T210013Z_55779fc94383.json",
+          "sha256": "2945ae429651e7a853ce64157fd4428d3252d4f18085772bb384e273efc10e61"
+        },
+        {
+          "path": "results/coherent_canary_reviews/reviews/revision4_blind_singleton_independent_codex_20260711T210013Z.json",
+          "sha256": "4b9eace0b4f4754ca0de6fcd6dc59852374ab5fd804f42bfb06d108da1d1fcda"
+        },
+        {
+          "path": "results/coherent_canary_reviews/reviews/revision4_paired_diversity_independent_codex_20260711T210013Z.json",
+          "sha256": "1909224e4dab2265d9b033d7b016c1a9842a24dce9531cf17d240a54287a375b"
+        },
+        {
+          "path": "results/coherent_canary_validation/coherent_canary_control_fixtures_literal_Qwen3-30B-A3B-Instruct-2507_20260711T205951Z.json",
+          "sha256": "afd08ed73537c5d91826a6fe6dcdfe67605c4d0dd8897daaecf196702fc4c69a"
+        },
+        {
+          "path": "results/coherent_canary_validation/coherent_canary_revision4_full_manifest_Qwen3-30B-A3B-Instruct-2507_20260711T205951Z.json",
+          "sha256": "738c176fc08075ba905d4c48b70d095a8da0dca649f382e4d7596e4a406affb2"
+        },
+        {
+          "path": "results/coherent_canary_validation/coherent_canary_v12_codex_runtime_provenance_correction_gpt-5.6-sol_20260711T214629Z.json",
+          "sha256": "039f308ae5f3fefd84875a077dabc5fd7e2d74c4c39e97301d7910f08611422a"
+        },
+        {
+          "path": "scripts/aggregate_coherent_canary_v12_harvest.py",
+          "sha256": "14007fee9eab8a37f7f6882572af046a218040996e4d3ea62f0469387dcb4e0a"
+        },
+        {
+          "path": "scripts/build_coherent_canary_review_packets.py",
+          "sha256": "43762ee3b8b5e666df51225dead8c115a121081243dec344dad79f0b3a62ed46"
+        },
+        {
+          "path": "scripts/harvest_coherent_canary_v12.py",
+          "sha256": "9dbe29ad84cd001e13c5144605f506d52a4f6b06d00353436a49fb67bbbfdfad"
+        },
+        {
+          "path": "scripts/run_coherent_canary_v12_phase_a.py",
+          "sha256": "fe9eddd9a5f13fc1e056e0ac483611748a0dd0ad738d2a45dfcc9eac2dfee6ba"
+        },
+        {
+          "path": "scripts/run_coherent_canary_v12_technical.py",
+          "sha256": "2d6a6eb3a48b5ad6aa88863574db142dd0b4f51d9f605a258408851bc8087a6f"
+        },
+        {
+          "path": "scripts/run_coherent_canary_v12_treatment.py",
+          "sha256": "eeb6bcd1ae9e82abe9c54ec3e75fa676c394215d52cee761384c56878e77e412"
+        },
+        {
+          "path": "scripts/validate_coherent_canary_control_fixtures.py",
+          "sha256": "222b31b4e96017046b718b453561eb0e0b69d008ac21aed1c13848d370fdfd2c"
+        },
+        {
+          "path": "scripts/validate_coherent_canary_stimuli.py",
+          "sha256": "973ca9f4b07af8eb99fc122921566d59f7a7141e0623ef9668511b1f24af2060"
+        },
+        {
+          "path": "scripts/validate_coherent_canary_v12_phase_a.py",
+          "sha256": "30bc12eca1894bb4de6b249ac58c2d333cd16cb24041d4a25de7c7580372d79d"
+        },
+        {
+          "path": "scripts/validate_coherent_canary_v12_technical.py",
+          "sha256": "5dee8702d637ceba9991a30099cc5a72029b31817fc4d9bf411367d5f20b62c2"
+        },
+        {
+          "path": "src/coherent_canary_artifacts.py",
+          "sha256": "d71389bbfa10f41bfcd2a85e3abcfb6adac126ceb181905ebb298c63e8cbc1b6"
+        },
+        {
+          "path": "src/coherent_canary_case.py",
+          "sha256": "89f519e28293ba1048a3c76209f25bcc7e7fd20c2bd2e7a9b23a1f58fd24d48c"
+        },
+        {
+          "path": "src/coherent_canary_controls.py",
+          "sha256": "82d4e25f077d7805e72d194e64c2f1550e7953000079db610f57996ecda81599"
+        },
+        {
+          "path": "src/coherent_canary_loader.py",
+          "sha256": "330b03b6b052eb167c25f080c2c64bdf4ae1e9da276b7badbac09f5ff6f2e1db"
+        },
+        {
+          "path": "src/coherent_canary_path_control.py",
+          "sha256": "5a2e2bceb7d157a72400e18bfda4269219c5d0a8cd203ec9baf36fde37be79da"
+        },
+        {
+          "path": "src/coherent_canary_preflight.py",
+          "sha256": "94735df650135f976dba59748d16a0bceed3543d566a64549d090b156cb3a6f8"
+        },
+        {
+          "path": "src/coherent_canary_runtime.py",
+          "sha256": "2148f1976c1c0ce65c5f9728c5867cd06e5b2fa7dd955bb5286563c44c4c9f84"
+        },
+        {
+          "path": "src/coherent_canary_schema.py",
+          "sha256": "4cfa5ac087ef87587b7d5f1e9744f2cf7b08c34f0759562dcae5483a8be73999"
+        },
+        {
+          "path": "src/coherent_canary_stimuli.py",
+          "sha256": "4f6244af6171a268250de51abfa6e38b6a6d7c08ad4e1bdd1c9ca4c1ac01de70"
+        },
+        {
+          "path": "src/coherent_canary_store.py",
+          "sha256": "21af0e1db005ec30ded56618321f51f63df9b043d518c13e4fbf193695eeac52"
+        },
+        {
+          "path": "src/coherent_canary_technical.py",
+          "sha256": "36e98a210ea581a6e3dd55fd2bd8a2c6e9026690f6dc79abb21ff2f066e79188"
+        },
+        {
+          "path": "src/coherent_canary_tokens.py",
+          "sha256": "265eb70ed8a35da6eda5a754e659c2a2af8d9b759b5d88c20fc4852554229142"
+        },
+        {
+          "path": "src/coherent_state_tokens.py",
+          "sha256": "b6a052bcbe451084fb48ee203c8460f29c7b4a2ad3575287bd3c8771a5f65d15"
+        },
+        {
+          "path": "uv.lock",
+          "sha256": "3b2be962b4925229f900575877bacf2463f053d0749b7a33065586f2ac6c9a8d"
+        }
+      ],
+      "head": "f7655c4ff2cd1a593f497d222a851b6aa2d4805b",
+      "inventory_sha256": "38842b00361a95fb6b277b23a39211ffa38f6830216ca69acdd2038856f30128",
+      "post_authorization_result_additions": []
+    },
+    "repository_branch": "trunk",
+    "repository_head": "f7655c4ff2cd1a593f497d222a851b6aa2d4805b",
+    "runner_platform": "macOS-26.2-arm64-arm-64bit",
+    "runner_python": "3.12.11",
+    "runtime_fingerprint": {
+      "all_parameters_frozen": true,
+      "attention_backend": "eager",
+      "attention_layers": [
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 0,
+          "name": "model.layers.0.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 1,
+          "name": "model.layers.1.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 2,
+          "name": "model.layers.2.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 3,
+          "name": "model.layers.3.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 4,
+          "name": "model.layers.4.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 5,
+          "name": "model.layers.5.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 6,
+          "name": "model.layers.6.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 7,
+          "name": "model.layers.7.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 8,
+          "name": "model.layers.8.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 9,
+          "name": "model.layers.9.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 10,
+          "name": "model.layers.10.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 11,
+          "name": "model.layers.11.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 12,
+          "name": "model.layers.12.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 13,
+          "name": "model.layers.13.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 14,
+          "name": "model.layers.14.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 15,
+          "name": "model.layers.15.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 16,
+          "name": "model.layers.16.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 17,
+          "name": "model.layers.17.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 18,
+          "name": "model.layers.18.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 19,
+          "name": "model.layers.19.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 20,
+          "name": "model.layers.20.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 21,
+          "name": "model.layers.21.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 22,
+          "name": "model.layers.22.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 23,
+          "name": "model.layers.23.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 24,
+          "name": "model.layers.24.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 25,
+          "name": "model.layers.25.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 26,
+          "name": "model.layers.26.self_attn"
+        },
+        {
+          "backend": "eager",
+          "class": "Qwen3Attention",
+          "layer": 27,
+          "name": "model.layers.27.self_attn"
+        }
+      ],
+      "buffer_devices": [
+        "cpu"
+      ],
+      "dtype": "torch.bfloat16",
+      "eos_ids": [
+        151643,
+        151645
+      ],
+      "eos_sources": {
+        "generation_config": [
+          151643,
+          151645
+        ],
+        "model_config": [
+          151645
+        ],
+        "policy": "generation_config full set is authoritative when nonempty; every primary EOS must be a member",
+        "text_config": [
+          151645
+        ],
+        "tokenizer_primary": [
+          151645
+        ]
+      },
+      "fingerprint_sha256": "ed0c30820b6a14796bf249a305546a57f06c8bed2358cb2b1e251acd1cf22716",
+      "geometry": {
+        "attention_heads": 16,
+        "head_dim": 128,
+        "kv_heads": 8,
+        "layers": 28,
+        "rope_theta": 1000000.0
+      },
+      "loaded_parameter_topology_sha256": "3ae32b986ca20b9ff91e3076f33533782f90d3043105fab8057c4c6b29128e8a",
+      "loading_info": {
+        "error_msgs": [],
+        "mismatched_keys": [],
+        "missing_keys": [],
+        "unexpected_keys": []
+      },
+      "model_inventory_sha256": "f9515563585d0d82304cd290928ef3e207179c2e00154b000e85fbc2cd3c92bf",
+      "parameter_count": 751632384,
+      "parameter_devices": [
+        "cpu"
+      ],
+      "platform": "macOS-26.2-arm64-arm-64bit",
+      "protocol_tokenizer_attestation": {
+        "all_special_ids": [
+          151645,
+          151643,
+          151644,
+          151646,
+          151647,
+          151648,
+          151649,
+          151650,
+          151651,
+          151652,
+          151653,
+          151654,
+          151655,
+          151656
+        ],
+        "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+        "class": "Qwen2Tokenizer",
+        "eos_token_id": 151645,
+        "identity_prefix_ids_sha256": "44bc1b106347e9008c6d7f1d30ab51166942c419ad66819eae733d2e990c3881",
+        "identity_prefix_token_count": 27,
+        "length": 151669,
+        "pad_token_id": 151643,
+        "special_token_ids": {
+          "<|endoftext|>": 151643,
+          "<|im_end|>": 151645,
+          "<|im_start|>": 151644
+        },
+        "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+        "vocab_size": 151643
+      },
+      "protocol_tokenizer_inventory_sha256": "aaf92eec1d388cb80d43138f3a578f206b7e6988b704c8a41f050ea17c3ab412",
+      "protocol_tokenizer_snapshot": "/Users/jeb/.cache/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+      "protocol_tokenizer_spec": {
+        "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+      },
+      "python": "3.12.11",
+      "release_binding": {
+        "apparatus_commit": "6a3441d5560b16239bedadf45c64b1bc0e6d0883",
+        "authorization_commit": "f7655c4ff2cd1a593f497d222a851b6aa2d4805b",
+        "authorization_sha256": "a207914310061398f256bfb4485d119efb4a93fa92901e6f5c705d1e3244f752",
+        "model_snapshot_contract_sha256": "ee05d45a55bb75e810897c1590a23bb0d3edfbf8ec8add05215c54edaa9a8677",
+        "protocol_tokenizer_contract_entry_sha256": "fd3cec807d09dea54aaaa99295e6291edc9f36ef407a4ae08796115cef79a570",
+        "sealed_inventory_sha256": "38842b00361a95fb6b277b23a39211ffa38f6830216ca69acdd2038856f30128",
+        "subject_contract_entry_sha256": "cb0b371e978d337b4c0bbad95c217d1772279d45cc36fa4f88d8792433f1da1c"
+      },
+      "requested_model": "Qwen/Qwen3-0.6B",
+      "requested_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "resolved_snapshot": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "subject_spec": {
+        "architecture": "Qwen3ForCausalLM",
+        "attention_heads": 16,
+        "device_type": "cpu",
+        "head_dim": 128,
+        "key": "local-apparatus",
+        "kv_heads": 8,
+        "layers": 28,
+        "model_id": "Qwen/Qwen3-0.6B",
+        "model_type": "qwen3",
+        "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+        "rope_theta": 1000000.0
+      },
+      "torch_version": "2.12.1",
+      "training": false,
+      "transformers_version": "5.0.0",
+      "weight_tensors_sha256": "2e5c029f845c011937e74306abd2895ac985b39092c00e73372cd8c1a519e83a"
+    }
+  },
+  "runtime_fingerprint": {
+    "all_parameters_frozen": true,
+    "attention_backend": "eager",
+    "attention_layers": [
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 0,
+        "name": "model.layers.0.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 1,
+        "name": "model.layers.1.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 2,
+        "name": "model.layers.2.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 3,
+        "name": "model.layers.3.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 4,
+        "name": "model.layers.4.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 5,
+        "name": "model.layers.5.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 6,
+        "name": "model.layers.6.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 7,
+        "name": "model.layers.7.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 8,
+        "name": "model.layers.8.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 9,
+        "name": "model.layers.9.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 10,
+        "name": "model.layers.10.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 11,
+        "name": "model.layers.11.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 12,
+        "name": "model.layers.12.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 13,
+        "name": "model.layers.13.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 14,
+        "name": "model.layers.14.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 15,
+        "name": "model.layers.15.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 16,
+        "name": "model.layers.16.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 17,
+        "name": "model.layers.17.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 18,
+        "name": "model.layers.18.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 19,
+        "name": "model.layers.19.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 20,
+        "name": "model.layers.20.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 21,
+        "name": "model.layers.21.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 22,
+        "name": "model.layers.22.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 23,
+        "name": "model.layers.23.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 24,
+        "name": "model.layers.24.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 25,
+        "name": "model.layers.25.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 26,
+        "name": "model.layers.26.self_attn"
+      },
+      {
+        "backend": "eager",
+        "class": "Qwen3Attention",
+        "layer": 27,
+        "name": "model.layers.27.self_attn"
+      }
+    ],
+    "buffer_devices": [
+      "cpu"
+    ],
+    "dtype": "torch.bfloat16",
+    "eos_ids": [
+      151643,
+      151645
+    ],
+    "eos_sources": {
+      "generation_config": [
+        151643,
+        151645
+      ],
+      "model_config": [
+        151645
+      ],
+      "policy": "generation_config full set is authoritative when nonempty; every primary EOS must be a member",
+      "text_config": [
+        151645
+      ],
+      "tokenizer_primary": [
+        151645
+      ]
+    },
+    "fingerprint_sha256": "ed0c30820b6a14796bf249a305546a57f06c8bed2358cb2b1e251acd1cf22716",
+    "geometry": {
+      "attention_heads": 16,
+      "head_dim": 128,
+      "kv_heads": 8,
+      "layers": 28,
+      "rope_theta": 1000000.0
+    },
+    "loaded_parameter_topology_sha256": "3ae32b986ca20b9ff91e3076f33533782f90d3043105fab8057c4c6b29128e8a",
+    "loading_info": {
+      "error_msgs": [],
+      "mismatched_keys": [],
+      "missing_keys": [],
+      "unexpected_keys": []
+    },
+    "model_inventory_sha256": "f9515563585d0d82304cd290928ef3e207179c2e00154b000e85fbc2cd3c92bf",
+    "parameter_count": 751632384,
+    "parameter_devices": [
+      "cpu"
+    ],
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "protocol_tokenizer_attestation": {
+      "all_special_ids": [
+        151645,
+        151643,
+        151644,
+        151646,
+        151647,
+        151648,
+        151649,
+        151650,
+        151651,
+        151652,
+        151653,
+        151654,
+        151655,
+        151656
+      ],
+      "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+      "class": "Qwen2Tokenizer",
+      "eos_token_id": 151645,
+      "identity_prefix_ids_sha256": "44bc1b106347e9008c6d7f1d30ab51166942c419ad66819eae733d2e990c3881",
+      "identity_prefix_token_count": 27,
+      "length": 151669,
+      "pad_token_id": 151643,
+      "special_token_ids": {
+        "<|endoftext|>": 151643,
+        "<|im_end|>": 151645,
+        "<|im_start|>": 151644
+      },
+      "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+      "vocab_size": 151643
+    },
+    "protocol_tokenizer_inventory_sha256": "aaf92eec1d388cb80d43138f3a578f206b7e6988b704c8a41f050ea17c3ab412",
+    "protocol_tokenizer_snapshot": "/Users/jeb/.cache/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "protocol_tokenizer_spec": {
+      "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+    },
+    "python": "3.12.11",
+    "release_binding": {
+      "apparatus_commit": "6a3441d5560b16239bedadf45c64b1bc0e6d0883",
+      "authorization_commit": "f7655c4ff2cd1a593f497d222a851b6aa2d4805b",
+      "authorization_sha256": "a207914310061398f256bfb4485d119efb4a93fa92901e6f5c705d1e3244f752",
+      "model_snapshot_contract_sha256": "ee05d45a55bb75e810897c1590a23bb0d3edfbf8ec8add05215c54edaa9a8677",
+      "protocol_tokenizer_contract_entry_sha256": "fd3cec807d09dea54aaaa99295e6291edc9f36ef407a4ae08796115cef79a570",
+      "sealed_inventory_sha256": "38842b00361a95fb6b277b23a39211ffa38f6830216ca69acdd2038856f30128",
+      "subject_contract_entry_sha256": "cb0b371e978d337b4c0bbad95c217d1772279d45cc36fa4f88d8792433f1da1c"
+    },
+    "requested_model": "Qwen/Qwen3-0.6B",
+    "requested_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "resolved_snapshot": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "subject_spec": {
+      "architecture": "Qwen3ForCausalLM",
+      "attention_heads": 16,
+      "device_type": "cpu",
+      "head_dim": 128,
+      "key": "local-apparatus",
+      "kv_heads": 8,
+      "layers": 28,
+      "model_id": "Qwen/Qwen3-0.6B",
+      "model_type": "qwen3",
+      "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "rope_theta": 1000000.0
+    },
+    "torch_version": "2.12.1",
+    "training": false,
+    "transformers_version": "5.0.0",
+    "weight_tensors_sha256": "2e5c029f845c011937e74306abd2895ac985b39092c00e73372cd8c1a519e83a"
+  },
+  "schema": "coherent_state_decision_canary_v12_technical_raw_v1",
+  "source_bindings": {
+    "fixed_text_evidence": {
+      "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+      "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+    },
+    "identity_fixture": {
+      "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+      "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+    },
+    "preregistration": {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+      "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+    },
+    "technical_fixture": {
+      "path": "data/coherent_canary_v12/technical_control_fixture.json",
+      "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+    }
+  },
+  "stage_timings": {
+    "prepare_pinned_subject": {
+      "completed_at_utc": "2026-07-12T00:01:39.146110+00:00",
+      "started_at_utc": "2026-07-12T00:01:34.523240+00:00",
+      "wall_time_seconds": 4.622879458125681
+    }
+  },
+  "started_at_utc": "2026-07-12T00:01:34.494995+00:00",
+  "status": "ERROR",
+  "subject": "local-apparatus",
+  "wall_time_seconds": 8.637299874797463
+}
