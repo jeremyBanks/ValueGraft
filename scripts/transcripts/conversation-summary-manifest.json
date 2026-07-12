@@ -1727,6 +1727,56 @@
         "reasoning": "medium"
       },
       "summary_hash": "44bab3b31dee8f169e32d337a6c29288a0228521748d27dde0dc208ae5c5a595"
+    },
+    {
+      "first_timestamp": "2026-07-12T00:25:38.598000Z",
+      "input_hash": "c1d22f2a98962eba768501f889eb4056cc234d7fb4c25ca9b7098dd4c0f6b275",
+      "last_timestamp": "2026-07-12T01:16:22.275000Z",
+      "mode": "summary",
+      "models": [
+        "claude-opus-4-8"
+      ],
+      "note": "notes/2026071275-conversation-opus48.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-12",
+          "first_message": 1,
+          "last_message": 3,
+          "platform": "claude-code",
+          "sequence": 1
+        }
+      ],
+      "summarizer": {
+        "model": "gpt-5.6-luna",
+        "provider": "codex",
+        "reasoning": "medium"
+      },
+      "summary_hash": "a82719525eb8ecb21dbffd0c877b290743518aca9e128623f78a9d4388746585"
+    },
+    {
+      "first_timestamp": "2026-07-12T00:01:28.888000Z",
+      "input_hash": "05ddddbf78fa822773fb1663f8a8110a5ec2c7cd9d5d72250b3c11e5bd17ddd5",
+      "last_timestamp": "2026-07-12T01:16:09.920000Z",
+      "mode": "summary",
+      "models": [
+        "gpt-5.6-sol-ultra"
+      ],
+      "note": "notes/2026071273-conversation-user-gpt56.md",
+      "source_ranges": [
+        {
+          "date": "2026-07-12",
+          "first_message": 1,
+          "last_message": 44,
+          "platform": "codex",
+          "sequence": 1
+        }
+      ],
+      "summarizer": {
+        "model": "gpt-5.6-luna",
+        "provider": "codex",
+        "reasoning": "medium"
+      },
+      "summary_hash": "ea447d36053abe5e871a4eace477b6a91e16e433ea4814e0284c5e58e5ab4074"
     }
   ],
   "version": 1
