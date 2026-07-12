@@ -1,0 +1,24 @@
+{
+  "created_at_utc": "2026-07-12T03:51:54Z",
+  "git_head": "b3dc08a1e3c16a768905c2fd2255385c6cc3104d",
+  "phase_a_fixture": {
+    "path": "results/coherent_canary_v12_phase_a/coherent-canary-v12-phase-a-e01_exact-subject_20260712T030639073087Z.json",
+    "sha256": "2cd7f6f190b9f4e9598844e45e5488779b72cd54a1fd51dd5b8a5b24154d672d"
+  },
+  "prepared_before_treatment_inspection": true,
+  "schema": "coherent_canary_v12_e01_treatment_postrun_audit_pre_run_integrity_v1",
+  "synthetic_tests": {
+    "command": "PYTHONPATH=src uv run pytest -q .sol-v4/treatment_postrun_audit/test_postrun_audit.py --basetemp .sol-v4/treatment_postrun_audit/.pytest_tmp",
+    "passed": 6,
+    "status": "PASS"
+  },
+  "tracked_harvester": {
+    "path": "scripts/harvest_coherent_canary_v12.py",
+    "sha256": "9dbe29ad84cd001e13c5144605f506d52a4f6b06d00353436a49fb67bbbfdfad"
+  },
+  "working_files": {
+    "README.md": "2e70e25a79a033af1686448854c8521d6f38fe6d1734af68d4158b8d9ee1b415",
+    "postrun_audit.py": "7076bf6b01acae3f85de1a3e5c150e4593bb7d2c4d3ed222e8c63b1f31a0b46a",
+    "test_postrun_audit.py": "495b458ab58499bd0ca8e26f66e4efbde780d7242a995f131b0bfdf6c55220bb"
+  }
+}
