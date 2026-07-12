@@ -1,3 +1,7 @@
+> **ARCHIVE:** complete pre-takeover writeup guidance. Its publication target,
+> arms, and paper paths are historical. Preserve for prose lessons only; a new
+> publication brief comes after powered collection.
+>
 >> ⛔ BLOCKING REQUIREMENT: the paper MUST fully document DATA PROVENANCE and experimental
 >> methodology per **METHODS-PROVENANCE-REQUIREMENTS.md** (who/what generated every piece of
 >> data — prompts authored, replies model-native, summary self-gen, gold from planted facts;

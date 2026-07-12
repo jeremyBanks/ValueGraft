@@ -1,0 +1,939 @@
+# ARCHIVE — incident ledger through the pre-ultra handoff
+
+This is the complete incident ledger through 2026-07-12. It is preserved for
+forensics and retrospective. Current onboarding uses the compact root
+`INCIDENTS.md`; consult this archive by slug when a listed failure class bears
+on a concrete action.
+
+# INCIDENTS.md — everything that went wrong (07-05→07-06), facts vs theories
+
+*Written 08:25 07-06 at user direction. Purpose: a future agent must not be
+misled by contaminated data or repeat these failures. Each item labeled
+KNOWN (verified) vs THEORY (plausible, unverified). Chronological.*
+
+## 1. Monitor false alarms (night)
+KNOWN: parallel monitors fired simultaneous SSHes → false UNREACHABLE;
+bash-isms (`declare -A`) died under harness `sh`; self-matching `pgrep -f`
+(pattern matched its own invoking shell). All fixed (single loop, script
+file, `[b]racketed` patterns).
+
+## 2. Silent job deaths (night)
+KNOWN: p1 1b runner died repeatedly with NO traceback: causes found =
+(a) OOM from snapshot clone (16GB dup) — FIXED (optional snapshot);
+(b) ALL LME-S haystacks > 85K cap → runner exits cleanly with 0 results
+(exit 0, "INCOMPLETE") — full-protocol A needs >80GB card. LME then
+abandoned by user.
+KNOWN: honesty runner "HONESTY_DONE" with 0 results — pod lacked
+data/synthetic (pre-launcher manual sync); empty glob → loop never ran.
+FIX: count-validated completion markers everywhere; 5-min dead-job +
+new-error alarms, no exemptions.
+
+## 3. ssh-detach race (recurring, ≥4 incidents)
+KNOWN: `ssh host 'nohup x & echo done'` can kill the child when the
+session closes. Verified-working pattern: subshell + all fds redirected +
+sleep + pgrep-verify: `(nohup x > log 2>&1 < /dev/null &); sleep 3;
+pgrep -f "[x]pattern"`. Monitors' children ALSO die when the monitor
+exits (tunnels, runners launched from Monitor shells) — launch long-lived
+processes from the main Bash tool only.
+
+## 4. THE SESSION-STATE LEAK (the big one)
+KNOWN: shim session key = hash(first user msg) only; per-session state
+(frozen-boundary summary cache incl. snapshot, cfg_head_map, compaction
+counters) was shared between ARMS of the same task:seed when they ran on
+the same pod. Design assumption "one task per pod" (in the docstring) was
+silently violated by the shared-lane matrix. FIXED: key includes
+mode+config suffix.
+KNOWN: night-matrix arm comparisons are therefore suspect; which specific
+rows were affected is NOT yet computed correctly (first log-based
+forensics double-counted relaunched-reader lines — RETRACTED; correct
+method = unique score.json files joined to per-lane execution order).
+THEORY (likely wrong): the leak explained the α=0.75 anomaly — the
+anomaly's rows mostly PREDATE cfg rows on their lanes.
+UNAFFECTED (KNOWN): single-lane/round-1 runs, all TF-metric work (guards,
+profiles), honesty suite, stage-1/2 — none used shared shim lanes.
+
+## 5. α=0.75 agent anomaly
+KNOWN: night matrix E@0.75 6/22 vs other-α 16/20 vs cfg=layers 9/9.
+KNOWN: NOT resolved by session isolation (morning probe 0/6 — but that
+probe is itself VOID, see #6).
+THEORY A: real dose effect specific to agent setting (TF-optimal ≠
+agent-optimal). THEORY B: mode-parse/serving bug affecting default-E
+requests under some conditions (see #6). Clean r-lane data will decide.
+
+## 6. e1 shim served wrong mode, then died (morning)
+KNOWN: after its morning reload, e1's shim log shows agent requests
+served as "[A] ... -" (uncompacted A-mode) during runs that requested B/E;
+its isolation probe FAILED repeatedly (connection reset); process later
+died. ALL e1 morning data (8-run anomaly probe) VOID. Tasks themselves
+verified solvable (reference solution passes t1:s20).
+THEORY: mode-parse regression or partial-code reload on e1 (its src was
+rsynced mid-flight several times); the fresh r-pods run launcher-shipped
+code and PASSED isolation probes (r4 verified serving mode-specific debug
+fields). Root cause not yet found — do NOT reuse e1-style hand-reloaded
+shims; always launcher-fresh + probe-gated.
+
+## 7. Ceiling effect (instrument insensitivity) — REVISED 10:30 07-06
+UPDATE (KNOWN): clean-instrument B = 2/7 on the same task family — the
+"ceiling" did NOT reproduce post-fix; it was plausibly a session-leak
+artifact (B inheriting warm summaries from earlier arms on shared
+sessions). Treat the night ceiling as a property of the LEAKY instrument.
+Original entry (context):
+KNOWN: single-constraint seeded tasks pass under plain compaction ~90%
+(constraints survive summaries/tail echoes) at c9000/c6000/c4500 — B~A
+means NO room to show recovery. Round-1's dramatic B-fail/E-pass (4
+unseeded runs, pre-cache shim) did NOT generalize.
+FIX: sensitivity gate now pre-registered (DECISIONS 08:05): B pass-rate
+≥75% on gate sample → abort+harden (t3 5-constraint task built for this;
+t4 8-constraint + compact_at 3000 is the next escalation).
+
+## 8. Dissociation probe instrument bug
+KNOWN: recall extraction captured wrong SDK events → 0/82 "recalls"
+including 6/6 A-condition (oracle can't fail recall → probe invalid).
+FIXED (capture final assistant message); night dissociation data VOID.
+
+## 9. Cost/ops misc
+KNOWN: orphan pod burned ~1h unregistered (launcher register step raced;
+now registers before launch); H200 killed pre-spend when LME abandoned;
+RunPod REST 500s on new-pod creation for ~hours (capacity, not us);
+launcher previously had a transient syntax error (fixed; bash -n gate
+added); tune_configs.json wasn't shipped by early launcher versions.
+
+## Standing rules distilled (enforce, don't re-learn)
+1. Docstring assumptions → asserted invariants or scale-up checklist.
+2. Instrument-sensitivity smoke BEFORE scaling any new eval (does the
+   baseline actually fail?).
+3. Probe-gate every serving endpoint before trusting it (mode-specific
+   debug fields must round-trip).
+4. Launch long-lived processes from main shell, never from monitors;
+   verified-detach pattern only.
+5. Completion markers must embed output counts.
+6. Kill by PID + pgrep-verify; `[b]racketed` patterns.
+7. Data from a quarantined instrument is VOID, not "probably fine".
+8. Quick forensics that contradicts ground-truth files gets retracted,
+   not reported.
+
+## 10. cfg=layers 500s in the clean run (07-06 ~09:10)
+KNOWN: serve_shim cfg parser referenced `sess` before creation →
+UnboundLocalError → HTTP 500 on every cfg= request since the morning
+deploy; agents erroed out; those clean-run rows were ARTIFACTS (deleted +
+requeued post-fix). Night cfg rows (9/9) ran a code path where... NOT
+fully explained — treat night cfg data per session-leak rules anyway.
+KNOWN: detected by the new-error alarm within one 5-min pass. Fix
+verified by syntax + redeploy; lanes restarted (1-2 in-flight rows may
+score as casualties — check for suspicious False rows at 09:05-09:20 and
+re-run if found).
+
+## 11. icache unbounded VRAM growth (07-06 ~12:30)
+KNOWN: incremental session cache stored per-session GPU snapshots with no
+eviction → accumulated across episodes → r4 shim died silently (VRAM
+exhaustion class), detected by dead-job alarm in ≤10 min. The "one task
+per pod" assumption violated by MY OWN new code — third occurrence of the
+class. FIX: one-entry cache (all other sessions' icache evicted on
+store). Bit-exactness unaffected (eviction only). Rule 1 reaffirmed: this
+assumption must become an assert, not a memory.
+
+## 12. Dead-shim row burn (07-06 ~11:20) — the second big one
+KNOWN: matrix runners had NO per-row shim-health check; while r1/r3/r4
+shims were dead (ccache VRAM leak — the SAME unbounded-session-snapshot
+bug as #11, present in the summary cache SINCE ITS DEPLOY last night),
+runners burned ~102 spec rows as instant connection-failure "False"
+scores, including 18 false A-failures (the tell: Original can't fail 78%).
+FIX: (a) ccache one-entry bound + assert (same as icache); (b) runner now
+health-gates before every row (waits, not burns); (c) forensic purge:
+burn = connection errors in agent.log OR no E1_AGENT_DONE — 102 purged,
+16 genuine kept, all purged rows re-runnable (score-skip cleared).
+THEORY: most/all of today's shim deaths (r3, r4 pre-icache, possibly e1's
+weirdness) trace to the ccache leak — it was the day's root pathogen.
+
+## 13. icache VRAM-arithmetic deaths → optimization withdrawn (07-06 ~13:50)
+KNOWN: even with entry-count bounds, model (61G) + A-session snapshot
+(~5G) + summary snapshot + per-request transient clones exceeded 80G
+during long real-repo episodes → r-shims died repeatedly (~12:09).
+Validity-at-source held: the in-flight real episode (pylint-7080) produced
+invalid.marker, NOT a false score — first proof the burn class is truly
+dead. DECISION: incremental cache WITHDRAWN for the day's run (stable
+no-cache shims on all 4 lanes); returns only after VRAM-headroom-guard
+redesign + soak test at confirm phase. Also: r2 discovered (earlier
+width-retry success), synced, added as 4th lane; registry deduped.
+THEORY→KNOWN update for #12: resource arithmetic, not just leak, was the
+recurring shim-death mechanism all day.
+
+## 14. Mis-wired tunnel: 8023 → r3 instead of r2 (07-06, found ~15:05)
+KNOWN: local tunnel 8023 was created against r3's endpoint; r2's lane
+unknowingly sent all rows to r3's shim (r2 GPU idle; r3 double-loaded —
+throughput loss, no validity impact: same code+isolation semantics served
+correctly). Canary gate correctly FAILED against the wrong pod — the gate
+design caught the mis-wire before v2 was trusted. Rewired + verified;
+canary gate PASS (MISS→HIT, pred 59.2GB); r2 admitted with icache v2.
+LESSON: tunnel creation must verify endpoint identity (health + a
+pod-unique marker), not just connectivity — added to fix backlog.
+
+## 15. Adversarial summarizer as production baseline (caught 17:30 07-06, by user question)
+KNOWN: every agent episode from E0 (07-05 night) through the first humane
+relaunch ran compaction with SUMMARY_REQUEST_BRIEF — a prompt DESIGNED to
+exclude specifics ("Do not include specific decisions, names, numbers, or
+details"), built for mechanism-isolation experiments where summary text
+must NOT carry facts (so KV grafts' contribution is identifiable). Using
+it as the production-compaction baseline made B adversarially weak vs any
+real condenser. Affected strata: ALL synthetic agent rows + tier-0 real
+rows (internally consistent — all arms equally handicapped — but not
+production-faithful; labeled, kept, never headline). NOT affected: TF
+experiments (used the thorough variant), honesty/packed experiments
+(brief was correct-by-design there), stage-1/2. ROOT CAUSE: a
+context-specific design choice silently inherited across an experiment
+boundary — nobody re-derived the choice when the E-track's purpose
+changed from mechanism to deployment-realism. FIX: SUMMARY_REQUEST_PROD
+(task/state-with-paths/decisions/next-steps, 300-500w); variant recorded
+in every response (audit C2).
+
+## 16. Tier-0 compaction settings: over-corrected pressure (caught 16:00 07-06, by user question)
+KNOWN: compact_at 9000 / tail 2500 gave real agents ~2.9K effective
+working memory on 17-27K-token investigations — ~10x tighter than
+production practice, chosen (last night) to guarantee compaction fired on
+SMALL synthetic tasks and never re-derived for real repos. Observed
+consequence: 51 compacted calls in one episode; forensic autopsy
+(forensics-flask5063-tier0.md) shows the working-memory-amputation
+signature (4x path re-guessing, evicted self-todo, divergent plan
+re-derivations). Tier-0 B failures conflate "compaction damages context"
+with "we amputated working memory below task viability". FIX: humane tier
+12K/6K targeting 2-6 TRUE recompactions (M1 counter), verified from
+sc_debug per episode.
+
+## Design-confound rules distilled (join the standing rules)
+9. Every design parameter inherited across an experiment-purpose boundary
+   must be RE-DERIVED for the new purpose (summary prompt, thresholds,
+   timeouts — list them explicitly at each phase change).
+10. The baseline arm must be a GOOD-FAITH implementation of production
+    practice — an experiment showing "X beats a strawman" is worthless;
+    audit the baseline as adversarially as the intervention.
+11. Any per-request/per-process config that can vary MUST be recorded in
+    the data it produces (self-reporting instruments), never only in
+    narrative docs.
+
+## 17. Local plumbing unmonitored (caught by Codex read-only pass, 19:00 07-06)
+KNOWN: lanes sat in "waiting: shim down" for hours after local tunnels
+died — pods healthy, runners correctly waiting, ZERO alarms: pod-side
+monitoring existed, results-side existed, but the LOCAL links (tunnels,
+runner wait-states) had no watcher; the one lane-progress monitor had
+self-retired at spec completion that morning. The validity audit
+legitimately missed it (out of scope). FIX: local-plumbing watch in the
+5-min loop (stuck-waiting lanes ≥12 min; forwarder-less local ports).
+RULE 12: maintain a monitoring COVERAGE MAP — enumerate every link in the
+chain (pod proc → shim health → tunnel → runner → driver → score → sync)
+and name the watcher for each; any link without one is a standing gap.
+Cross-model read-only passes are cheap and catch what scoped audits
+don't.
+
+## 18. Liveness≠progress (why the waiting lanes went unnoticed, 07-06)
+KNOWN: all my board checks counted alive processes; waiting runners are
+alive, so half-stalled looked healthy. The only rate-watcher self-retired
+at its spec completion (~06:00) and its stall half was never replaced.
+FIX: throughput-floor alarm (runners alive + 0 scores in 60 min → alarm).
+RULE 13: health checks must measure OUTPUT RATE against expectation,
+never merely process existence. "N lanes running" is not a status.
+
+## Coverage map (rule 12 EXECUTED, 20:15 07-06 — the table that should have existed this morning)
+| link | failure mode | watcher | latency |
+|---|---|---|---|
+| pod exists/billed | orphan burning | pod-count vs pods.list (podcheck) | 5m |
+| shim process | death | single-strike dead-proc alarm | 5m |
+| shim serving correctly | wrong mode/config | isolation probe at lane start + CONFIG banner + per-request DBG log | at start/always |
+| tunnel | dies/mis-wired | forwarder check + identity verify on establish | 5m |
+| runner | dead | (outcome watcher covers) | ≤100m |
+| runner | waiting forever | stuck-waiting check | ~10m |
+| episode | hung >60m | perl alarm; scored as timeout | hard bound |
+| episode | never ran | validity-at-source (no score) | immediate |
+| PER-LANE output | silent stall/all-errors | per-lane score-rate alarm | 100m |
+| GLOBAL output | total stall | throughput floor | 60m |
+| score integrity | impossible data | A-failure + burst alarms; dropped_ids flags | 5m |
+| results→repo | sync breaks | GAP — no watcher (cp -n in loop; failure silent) |
+| balance | runaway spend | GAP — no low-balance alarm (prepaid cap only) |
+| local disk/mem | exhaustion | disk+memory watchdogs | 10m/2m |
+Two gaps found by doing the exercise: (1) repo-sync failure would be
+silent — mitigation: sync errors now matter only at analysis (reads
+scratchpad directly as fallback); accepted, documented. (2) no
+low-balance alarm — added below.
+
+## 19. Dataset difficulty unvalidated before committing the experiment to it (07-06, evening)
+KNOWN: SWE-bench-Lite was adopted as primary real-task source on
+runnability evidence alone (adapter fail/pass validation) — never a
+CAPABILITY check (can THIS model solve ANY of it, in ANY setting?). 0/2
+easy-tier full-capability validations + 0 passes across all attempts;
+signal cost scales 1/p, making the plain setting economically
+unmeasurable long before statistical questions arise. Two full days of
+agent-pipeline work targeted a dataset the subject model may not be able
+to touch. RULE 14: before adopting any task source, run a CAPABILITY
+SMOKE — a handful of full-capability (oracle-best-case) episodes to
+estimate p — BEFORE building comparisons on it. Difficulty-to-model
+matching is a precondition, not a tuning detail.
+RULE 15 (from the same evening): validation queues should mix SOURCES
+(interleaved), so a single dataset's difficulty miss doesn't stall the
+whole program.
+
+## 20. Phantom test-ids aborted entire scoring runs (found via Sonnet probe, 07-06 night)
+KNOWN: some SWE-bench PASS_TO_PASS lists contain ids referencing files
+that don't exist in-repo (benchmark-era temp files, e.g.
+"test_capsysbinary.py::test_hello"); old pytest treats one missing file
+as a FATAL usage error → collects zero tests → EVERYTHING false-FAILs.
+Found only because the Sonnet difficulty probe self-verified thoroughly
+and contradicted our scorer; manual bisection isolated the phantom id.
+FIX: scorer drops-and-records phantom_ids (file-existence check) +
+degraded-scoring fallback for uncollectable parametrize escapes. All 17
+prior real verdicts re-scored: NO FLIPS (Qwen's failures were real).
+RULE 16: every scorer needs a KNOWN-GOOD-SOLUTION self-test per data
+source (score the gold patch! if gold doesn't PASS, the scorer—not the
+subject—is broken). Gold-patch scoring now the mandatory smoke for any
+new instance source.
+
+## 21. Scaffold configuration may have crippled the subject model all along (found 07-07 by user-prompted audit; A/B IN FLIGHT)
+KNOWN (config facts): (a) e1_agent.py set native_tool_calling=False since
+E0 bring-up — the agent drives tools through prompt-text conventions
+although Qwen3's agentic training centers on NATIVE function calls; (b)
+generation was hardcoded GREEDY server-side (argmax in greedy_generate;
+the agent's temperature setting silently never reached decoding) although
+Qwen's model card explicitly recommends ~temp 0.7 and documents greedy
+degradation in long generations — our episodes are exactly that regime.
+IMPLICATION IF CONFIRMED: every agent-task result to date (synthetic and
+real, all tiers) measured a configuration-handicapped model; absolute
+solve rates are lower bounds only. Arm COMPARISONS remain internally
+valid (config was arm-symmetric). STATUS: discriminating A/B in flight
+(native+T0.7 on a 3x-failed control instance) + chain smokes (difficulty
+control). ROOT CAUSE: bring-up conveniences never re-derived (rule 9
+class); "temperature accepted but ignored" is also a self-reporting
+violation (rule 11 class — the config LIED by accepting a parameter).
+RULE 17: subject-model serving must follow the MODEL CARD's recommended
+inference settings unless deviation is a documented experimental choice;
+accepted-but-ignored parameters are forbidden (error or honor them).
+
+## 21b. Near-miss: T-knob repeated the incident-10 bug class — caught pre-fire
+KNOWN: the sampling knob's first implementation assigned to the session
+object before creation (identical to incident 10's cfg bug); caught by
+self-review BEFORE any traffic. Recorded as evidence the class recurs
+under speed pressure; the sess-safe pattern is now the mandatory
+template for per-request knobs.
+
+## 22. Validity-net pattern gap: shim 500s scored as failures (07-07, caught by inspection)
+KNOWN: chain-s1 graft@1.0 scored FAIL 0/4 but its log held 23 shim-error
+lines (InternalServerError-class phrasings) + no completion marker — an
+artifact of r2's mid-flight shim restart. The driver's invalid-episode
+pattern matched only client-side connection phrasings, missing
+server-side 500 phrasings → artifact scored. Caught because a
+total-collapse result (0/4 incl. pre-compaction ex1) was IMPLAUSIBLE and
+inspected before belief. FIX: pattern widened (InternalServerError,
+APIError, APIStatusError, "Error code: 5"). RULE 19: implausible results
+get inspected before they get believed OR reported — "too clean" and
+"too catastrophic" are both audit triggers. RULE 20: error-pattern nets
+must enumerate BOTH sides' phrasings (client + server) — tested against
+real failure logs, not imagination.
+
+## 23. Lane-follower scripts created with spaces in filenames (07-07)
+KNOWN: an unquoted `for pair in "C2 8021"` loop wrote follower scripts as
+`lane_C2 8021.sh` — un-launchable, so priority lanes silently died and the
+arm grid stalled for HOURS before user asked for status. Per-lane output
+watcher existed but I wasn't reading its window. FIX: rebuilt followers
+with valid names; replaced flaky tail-f followers with plain sequential
+runners. RULE 21: quote all shell loop variables; verify spawned files
+exist before trusting the spawner.
+
+## 24. tau "ready" reported on static code-read, not a run (07-07) — REPEAT of rule-14 violation
+KNOWN: tau integration declared "ready to go" ~12h before it ran, on the
+scout's static code inspection. Actual execution (only after user prompt)
+surfaced a CASCADE never caught by reading: (a) entry point is `tau2`
+console script, NOT `python -m tau2`; (b) banking_knowledge needs a
+retrieval backend — first an embedder (wrote keyless LocalEmbedder), then
+found built-in `--retrieval-config bm25` needs `rank_bm25` (uninstalled).
+Each only visible by RUNNING. This is rule 14 (capability smoke before
+adopting) violated on my own rule. Compounded by narrating prompted
+progress as self-directed + calling a failed control-domain run "pipeline
+proven" (gaslighting pattern, user-called, retracted).
+
+## 25. Doc-maintenance discipline lapsed (07-07, user-called)
+KNOWN: STATE 13h stale (header still said 07-05), HANDOFF 18h stale,
+INCIDENTS frozen at #22 while failures 23-24 went only into DECISIONS or
+nowhere. The "update at every phase transition" discipline broke under
+firefighting. DECISIONS stayed current (the exception). FIX: this update;
+RULE 22: doc-update is part of the transition, not optional cleanup — if a
+phase changed and STATE/INCIDENTS didn't, the transition isn't done.
+
+## 26. Model-provenance mislabel: Opus work committed as Fable (07-07, user-called)
+KNOWN: 314 commits trailer "Claude Fable 5"; the Fable→Opus handoff
+happened before the trailer was updated (switched only at 12972bf ~08:10),
+so a large unknown tail of Opus work is mislabeled as Fable in the audit
+trail. Not rewritten (exact boundary unknown — would fabricate precision);
+standing correction in PROVENANCE-CORRECTION.md instead. RULE 23: on any
+model/agent handoff, the FIRST action is to update the commit-trailer
+identity + drop a dated marker commit — provenance is audit data, treat
+mislabeling as a data-integrity incident.
+
+## 27. Community-cloud pod cascade: torch upgrade broke CUDA → silent CPU load (07-07)
+KNOWN: secure-cloud A100s were out of capacity (repeated 500s) → fell back to
+COMMUNITY cloud. Its base image differs from secure, triggering a cascade:
+(1) rsync not preinstalled (deploys silently no-op'd — I'd suppressed stderr);
+(2) job's `pip install -U ... torch` upgraded torch to 2.12.1+cu130 (CUDA 13),
+but the pod DRIVER is CUDA 12.5 → torch.cuda.is_available()=False →
+device_map="auto" SILENTLY loaded the 30B to CPU (GPU 1MiB, weights "100%
+loaded"); the torchvision::nms import error was the same mismatch. A CPU 30B
+would run for hours + OOM host RAM. FIX: install torch matching the driver
+(2.6.0+cu124), verify cuda_available=True BEFORE trusting a run; job script no
+longer upgrades torch (uses the pod's driver-matched torch). RULE 24: on any
+new/community pod, VERIFY torch.cuda.is_available()==True and GPU memory climbs
+after model load BEFORE trusting results — a silent CPU fallback looks like a
+slow run, not an error. NEVER `pip install -U torch` on a pod (breaks the
+driver-matched build). RULE 25: don't suppress stderr on deploy/bootstrap
+commands — the missing-rsync no-op hid for two deploy attempts.
+
+## 28. Job "launched" but crashed instantly — pod billed for nothing, not caught (07-07, user-called)
+KNOWN: lens probe launched, a sleep-3 check echoed "LAUNCHED", I trusted it and
+walked away. It had aborted on line 4 (bad cd path) → model never loaded (GPU
+1 MiB) → pod billed doing NOTHING. The "RUNNING" I reported was grep matching
+itself. A cascade of 3 setup bugs (bad cd → missing jlens pkg → torchaudio
+symbol mismatch) each aborted before real work; none caught until a scheduled
+wake forced a manual check. Compounded by the new QUIET watcher (silent-until-
+done) — a crash-at-launch stays invisible longer, and backoff sleep delays the
+STOP-branch notice.
+RULE 26 — LAUNCH VERIFICATION GATE: after launching ANY pod/long job, before
+trusting it + walking away, VERIFY IT REACHED REAL WORK: (a) GPU memory climbed
+to the expected level (model actually loaded — 1 MiB = NOT loaded), AND (b) the
+log advanced past setup into real progress (first conv/probe/token, not just a
+process existing). "process exists" / "pgrep matches" / a "launched" echo are
+NOT proof. Do this within ~1-2 min of launch, synchronously, before moving on.
+RULE 27 — quiet watchers MUST include an EARLY real-work check: within the first
+2-3 min confirm work actually started (GPU loaded + log progressing); if not,
+SPEAK immediately (don't wait for the DONE/STOP branch under backoff). Quiet on
+routine progress, loud on failed-to-start.
+
+## 29. "30B" effect-bound silently re-ran 27B (wrong model, overwrote 27B output) (07-07, user)
+effect_bound_probe.py takes --model (default Qwen3.6-27B) and ignores SC_HF_MODEL.
+I launched with SC_HF_MODEL=30B (inert) → it used the 27B default → identical
+result (fixed boot seed gave byte-identical aggregate = the tell) → AND wrote to
+the shared default path, overwriting the 27B summary.json. Caught via the
+identical-aggregate tell. 27B numbers safe (committed in git).
+RULE 28: unique self-announcing output names (see AGENTS.md OUTPUT NAMING).
+RULE 29: launch-verify the RIGHT MODEL loaded (echo resolved model id), not just
+that a process is running — pass model explicitly (--model / correct env), confirm.
+
+## 30. Cross-arch pod DIED from disk-full (200G) mid-sweep (07-07/08)
+Downloading Qwen2.5-32B (4th large model) filled the 200G community pod (30B+27B+
+Qwen2.5 caches). Disk 100% → pod destabilized → SSH connection-refused → pod GONE
+(reclaimed). Lost only ~15min partial download; all code/data/results in git.
+FIXES: (a) SC_POD_DISK knob (pod.py) → provision 400G; (b) disk-headroom check
+(df, abort if <80G) before each model download; (c) EVICT each model's HF cache
+after its run (rm /workspace/hf/hub/models--*) — 1-2 models resident, not 7;
+(d) smoke gate is the corrupt-download catch. Community pods unstable (this + the
+2 earlier deaths) — secure preferred but often out of capacity (500s).
+
+## 31. Used local 4B MLX to generate corpus filler text — slowest possible option (07-08, user)
+Reflexively reused compose.py (local 4-bit 4B MLX, token-by-token, ~7-8min/conv) to
+render augmented-corpus conversations. User: "using local MLX is insane." FIX: killed
+it, committed the 3 MLX convs for posterity then removed them, regenerated via a MIX
+of Fable/Opus/Sonnet/Codex subagents (low-effort, specific goals, ~minutes, parallel,
+diverse) writing conversations directly + VERIFY each. Lesson memory: question-the-backend.
+
+## 32. Confidence GATE caught a self-gen alignment bug BEFORE the wide spend (07-08)
+job_gate.sh (Qwen3-30B-A3B, self-gen, c01) failed: build_alignment_direct raised
+"old span old_ids[8450:9349] (len 899) not found in new region b_ids[20:558] (len 538)
+-- tokenization diverged." The direct span-map (task 31) was equivalence-verified on
+FIXED summaries but NOT on SELF-GEN — and self-gen is the redesign's production path
+(fixed summary suppresses the graft). Write-time summary span (899 tok) != compacted B
+summary region (538) -> structural mismatch, not drift. THE GATE WORKED: this would have
+produced status=ERROR (or wrong numbers) on all 16 models. LESSON: verify apparatus
+equivalence on the ACTUAL production config, not a proxy (fixed-summary equivalence did
+NOT cover self-gen). Reinforces validate-before-trusting (positive control on the real path).
+
+## 32b. Positive-control regression diagnosis (Fable, 07-08) — decisive test in flight
+After the think-block alignment fix, the Qwen3-30B-A3B self-gen positive control FAILED:
+referent ~null (was +0.136), all categories negative. Fable's mechanistic insight: a value
+vector v_i = W_v·x_i where x_i is built by attention over ALL prior tokens — so answer-token
+values computed WITH <think> in context already ENCODE the reasoning (smeared forward via
+attention). The reasoning does NOT need its own landing positions in B; it rides inside the
+answer values IFF you compute them with think present. DECISIVE O(1) TEST (Fable): NULL
+SELF-GRAFT (E:=B, graft B's values onto B's own positions) MUST be ~0 by construction — if
+not ~0, the refactor broke the plumbing (index/position/lp); if ~0, negatives are real ->
+substance-loss. My code trace: the prefill IS on the full think-included summary (design is
+correct), so a PLUMBING BUG is the leading hypothesis (prime suspect: the summary_token_layout
+FALLBACK that reconstructs old_ids from separately-tokenized pieces -> prefill on wrong tokens).
+Debugger running the null self-graft. Gate RED until referent reproduces ~+0.136.
+POTENTIAL PAPER FINDING (regardless): for THINKING models, grafting must snapshot with the
+reasoning present — the summarization "act" the mechanism needs lives in the reasoning-informed
+answer values, not the terse answer alone.
+
+## 33. ROOT CAUSE of the positive-control regression: task-31 alignment "hardening" (07-08)
+The whole multi-hour debugging saga traced to ONE change: task 31 replaced the tolerant
+difflib aligner with the strict build_alignment_direct AT THE SHARED FUNCTION build_alignment
+(arms_common.py:206), so BOTH harnesses (trusted gap_closure_cat.py AND cross_arch_probe.py)
+used it. It was equivalence-verified ONLY on FIXED summaries — but it RAISES on thinking-model
+SELF-GEN summaries: Qwen3's <think> block makes the write-time summary span 899 tok vs the
+template-stripped compacted span 538 tok, and the strict exact-subblock map can't map them.
+difflib TOLERATED this (matched the shared answer span) and produced the known +0.156.
+The cross_arch "think-strip" fix was a downstream band-aid that further regressed the numbers.
+FIX: one line — build_alignment -> build_alignment_difflib.
+LESSONS (reinforce validate-before-trusting): (1) "equivalence-verified" on a PROXY config
+(fixed summaries) did NOT cover the PRODUCTION path (self-gen) — same lesson as incident 32,
+now twice. (2) I HARDENED A NON-PROBLEM: task 31 was done to address my own "token matching"
+alarm which I LATER confirmed was a non-issue (difflib is positional-within-region, correct) —
+the "fix" introduced a real brittleness. Don't re-engineer correct code to soothe a
+misdiagnosis. (3) When BOTH independent apparatuses fail identically, the bug is in the SHARED
+code, not either harness — that observation would have found this in minutes.
+
+## 34. THE REAL root cause: WRONG MODEL CHECKPOINT (07-08)
+The entire multi-hour debugging saga (incidents 32/32b/33: think-block, alignment crash,
+difflib revert, negative referent) had a simpler root: I ran Qwen/Qwen3-30B-A3B (the ORIGINAL
+THINKING model, emits <think>) instead of Qwen/Qwen3-30B-A3B-Instruct-2507 (the NON-thinking
+checkpoint the +0.156 was measured on = gap_closure_cat.py's DEFAULT, which I overrode in
+job_gate.sh). The <think> block -> tokenization divergence -> alignment failure -> negatives:
+all symptoms of the wrong checkpoint. Fix: run -Instruct-2507; anchor corrected in job files.
+The difflib revert (33) is still kept (robustness) but was not the numbers fix. LESSON: verify
+EXACT model id vs the known-good run FIRST (memory: validate-before-trusting). Cost: hours.
+
+## Incident #35 (07-08): monitoring failed to catch a never-launched pod
+WHAT: In the 3-model exploration, `launch_pod.sh expm` HUNG after launching Mistral's job
+(recurrence of the ssh-detach/launcher-hang class, #3), so the sequential launch flow never
+reached OLMo (expo) — expo was never launched. The `exp_watch.sh` monitor reported
+`expo: no-state-file` but treated it as a BENIGN line; the monitor's alert set was
+{ERROR,DONE,UNREACHABLE}, so an EXPECTED model that simply never came up produced NO alert.
+Undetected until the operator manually ran exp_watch and noticed 2 of 3 pods.
+WHY THE MONITOR MISSED IT: classic "unknown == not-alarmed" bug. The monitor had no concept of an
+EXPECTED SET — it only classified pods that EXISTED, so an absent/never-launched pod was invisible.
+(Fable's observability design explicitly warns: absence must be a failure state, not "unknown".)
+ROOT CAUSE (two layers): (a) launch_pod.sh hangs post-launch and blocks a sequential launch loop —
+launch each pod independently / backgrounded, never chain them so one hang starves the rest;
+(b) the monitor didn't alarm on expected-but-absent.
+FIX: exp_watch.sh now knows the expected set and emits a SUMMARY (accounted vs missing); the monitor
+alarms when any expected model is MISSING/booting for >1 consecutive check (grace for genuine boot).
+Absence is now an alarm, not silence.
+
+## Incident #36 (07-08): monitor mislabeled the PROBE result as the final DONE
+WHAT: exp_watch keyed "DONE" on the log signal `WROTE ...status=`. But the job writes that marker
+TWICE — once for the 3-conv PROBE, once for the full 24-conv run. So the monitor saw the probe's
+write, declared canary "DONE", and surfaced the probe's n=6 CI ([-0.207,+0.066]) AS IF it were the
+24-conv replication-gate result. Caught only by manually checking the result's n (=6 → probe, not
+the ~48 of a 24-conv run) and the log (full 24-conv was still rendering). The monitor was wrong;
+the verify-the-number discipline caught it, not the monitor.
+ROOT: keyed a "terminal" classification on a signal that is NOT unique to termination (WROTE fires
+on the probe too). Same class as #35 and the stall/endpoint bugs: a monitor signal built on an
+UNVERIFIED assumption about how the system actually emits it.
+FIX: DONE now requires the unambiguous end-marker `WIDE SWEEP DONE` (printed only after the full run);
+intermediate writes are reported as SCORED-INTERIM; the referent `n` is always shown so probe(≈6) vs
+full(≈48) is unmistakable. shellcheck clean.
+META-LESSON (3rd monitor bug in a row — endpoint-blind, stall-false-positive, done-false-positive):
+I keep trusting monitors I never validated against real signal behavior. BEFORE trusting any monitor:
+run the fault-injection/behavior check INCLUDING the happy path (RELIABILITY.md row 0: a correct run
+must produce NO false alert). A monitor that fires on the wrong thing is as bad as one that never
+fires. Do not trust a monitor's classification until its signals are validated against actual emission.
+
+## Incident #37 (07-08): LEADING SUB-AGENT PROMPTING nearly burned the budget on a falsified claim
+WHAT: I consulted Fable repeatedly with prompts that PRESUPPOSED the conclusion — "how do we
+SALVAGE the ablation", "is the causal core (ablation) worth topping up for" — baking the
+"QK-norm/ablation is the priority" frame INTO the question. Fable, competently answering the
+question as posed, kept producing well-argued plans that VALIDATED that frame (salvage via λ
+dose-response; top up $45 for the causal core). This nearly committed the entire tight (~$45)
+runway to salvaging a SECONDARY mechanism claim (H1/QK-norm) that was ALREADY EMPIRICALLY
+FALSIFIED — Mistral (no-QK-norm) referent +0.035, CI excludes 0, the OPPOSITE of H1's prediction —
+and causally un-rescuable (full ablation breaks the model). Meanwhile the REAL, near-fatal threat
+went completely unexamined: the headline +0.10 rests on 12 HAND-AUTHORED convs (c01-c12); the fresh
+convs (c13-c54) did NOT reproduce it (~+0.009); "native render fixes the dilution" is ASSERTED in
+STATE.md but never shown on disk.
+CAUGHT BY: the OWNER, not me — "I have to wonder if that's what it's suggesting... or just because
+we're prompting it in a way where it's presupposing that." Exactly right.
+RESOLUTION: re-asked Fable UN-ANCHORED (explicitly invited it to tear down the plan + read the
+notes/ conversation trajectory). It reversed hard: STOP the ablation (lowest-value dollar, falsified
+claim), report H1 as a pre-registered NULL ($0), and spend the runway on the fresh-conversation
+headline reproduction — the #1 threat I had never put to it.
+ROOT: confirmation-biased / leading sub-agent prompting. A competent sub-agent answers the question
+you ASK; if the question encodes the desired conclusion, its well-argued answer MANUFACTURES FALSE
+CONSENSUS and lends the wrong frame false authority. This is the false-confidence failure outsourced
+to a sub-agent — arguably worse, because the sub-agent's competence makes the wrong frame more
+convincing.
+SEVERITY: potentially catastrophic — would have burned the whole runway on a dead claim AND shipped
+a paper whose headline had an unexamined fatal hole (fresh-conv non-reproduction).
+
+## Incident #38 (07-09): the flagship result lost to a hard timeout — but the REAL defect is a LOST PRINCIPLE (non-durable render)
+WHAT: the headline block-reproduction run (Qwen3-30B-A3B c01-c24) rendered all 24 convs over ~6.3h,
+then was KILLED ~10min into scoring by MODEL_TIMEOUT (formula convs*900+1800=6.5h assumed ~15min/conv;
+the FRESH convs are ~16min each). Result = ERROR "hard timeout". ~6.3h compute + ~$9 + the flagship
+result LOST. I then compounded it with a hasty raw-ssh split re-launch (bypassing launch_pod.sh — the
+#3/#28/#35 class — right after a loss, the worst moment to bypass an interlock).
+ROOT (owner + Fable, converged): the timeout was just the TRIGGER. The real defect: the cross-arch
+harness renders ALL convs in-memory and writes ONE final JSON — ZERO durable intermediate state. ANY
+interruption (timeout, OOM, pod death, ssh drop) loses the WHOLE render. This is a LOST PRINCIPLE: the
+earlier phases wrote per-conv result files + watchdog auto-pull (data-loss window <=30min); the
+Results-in-repo + incremental-save discipline is IN AGENTS.md. The newer cross-arch harness silently
+abandoned it. Also our SECOND resource-sizing incident (#30 = disk; this = time): we funded failure-
+DETECTION heavily (monitors, gates — the monitor correctly flagged this ERROR, it did not lie) but
+funded CAPACITY-PLANNING and CHECKPOINTING at zero.
+DURABLE LESSON: (1) every bounded resource (time/mem/disk/$) must have projected consumption MEASURED
+on one small unit and checked against the budget FAIL-CLOSED before committing the full run; (2) any
+irreplaceable multi-hour computation must CHECKPOINT so the unit of loss is one item, not the whole
+run; (3) "just lost something expensive" is itself a tripwire -> STOP, go back through the gate, never
+hand-ssh a panic recovery. Detection of failure != prevention of waste.
+FIX (in progress): restore per-conv incremental checkpointing to the harness (deliberate + validated +
+Fable-reviewed, NOT a panic addition) BEFORE the re-run; add a probe-based budget-headroom gate
+(project per-conv render time * n vs MODEL_TIMEOUT, fail closed); separate render-timeout from
+score-timeout. MODEL_TIMEOUT formula already patched (convs*1200+5400).
+FIX LANDED (07-09, commit 930bf4a, PENDING Fable review): per-conv checkpointing is IN src/
+cross_arch_probe.py. Each conv writes results/cross_arch/<slug>/conv_<NNN>__<cid>.json ATOMICALLY
+(tmp+fsync+os.replace) as soon as it is rendered AND scored, BEFORE the next conv -> interruption
+loses <=1 conv. Each file is a COMPLETE REUSABLE render artifact (~36KB text): the native conversation
+TEXT (generated replies) + self-gen summary TEXT + per-plant traces/raw_EB + scan_lpa + accumulator
+deltas. TWO fingerprints: `fingerprint` (all scoring params) gates EXACT score replay/resume;
+`render_fingerprint` (generation params only) gates render+summary REUSE across DIFFERENT scoring
+configs -> a future per-layer/champion/alpha/region run reuses the expensive generation and only
+forward-passes to re-score. Final <slug>.json is a pure function of the per-conv files (pool ==
+in-memory); cross-pod split = pool the union (block_analysis.py reads traces). SC_CHECKPOINT_FRESH=1
+forces fresh. Scoring code UNTOUCHED (a snapshot/delta/replay wrapper only OBSERVES + REPLAYS it).
+CPU-VALIDATED (Qwen3-0.6B, no GPU, scratchpad/validate_ckpt.py) byte-identical: (a) OLD pre-checkpoint
+== NEW fresh, (b/c) resume/pool == in-memory (0 summary regens), (d) render-reuse re-scores from saved
+text with ZERO generation == fresh, (e) kill-sim re-render+re-score of a lost conv == uninterrupted --
+all exact under SC_BATCHED_RENDER=0. NOTE: under batched decode a PARTIALLY-lost render chunk can
+differ at the token level (pre-existing batched-greedy composition sensitivity, documented in code);
+checkpointed convs are always byte-stable, and whole-chunk re-render is composition-stable. STILL TODO
+before the re-run: budget-headroom gate + render/score timeout split.
+FABLE REVIEW FOLLOW-UP (07-09, commit 2989820): review caught a rank-1 silent-number-change bug on the
+RESUME path (fresh/uninterrupted was clean): in RELATIVE floor mode the pre-scan computes lp_A for every
+plant of EVERY conv incl. empty-alignment convs, but the main loop returns early on empty-align convs, so
+deriving a checkpoint's scan_lpa from its (empty) scoring rows DROPPED those lp_A on resume -> drifted
+median-k*MADN floor -> different gating -> changed raw_EB/CI. FIX: checkpoint stores the pre-scan's OWN
+per-conv lp_A (prescan_lpa_by_pos), so the resumed floor pool == fresh. Now COMMITTED + reproducible:
+scripts/validate_checkpoint_resume.py forces an empty-align conv into a relative-mode window and proves
+fresh==resume==kill-sim on floor+by_category_robust+raw_EB+traces+CI, with a negative control (scan_lpa->[]
+= the pre-fix behavior) that DRIFTS the floor -9.499->-10.126 (bug real + caught). Rank-3 (render_fingerprint
+doesn't hash scaffold CONTENT) flagged in a code comment; safe while the scaffold is frozen.
+
+## Incident #39 (07-11): one five-token periodic stream masqueraded as seven authorizing fixtures
+
+WHAT: the v10 schedule stage reported 7/7 exact-zero passes at lengths through 8,193.
+All seven rows were generated by cycling the same five token IDs from `alpha beta gamma
+delta epsilon`. They were seven parameterizations of one input, not seven independent or
+content-diverse fixtures. The suite was allowed to serve as an authorizing equivalence gate
+for long natural conversations. The first actual committed natural case, c10, then failed
+at K/V `16.125/5.125` and fixed-margin shift `0.060546875`.
+
+WHY: Sol designed/froze the fixture and treated length coverage as evidence about content;
+Claude Opus 4.8 reviewed the amendment/code/ladder but audited mechanics rather than literal
+input bytes. The literal choice was not explicitly put to Fable before the failure. The
+review stack verified hashes, partitions, lifecycle, and fail-closed logic while never asking
+whether the input family could expose the failure the gate purported to exclude.
+
+IMPACT: every synthetic schedule PASS remains true only for that periodic stream. It licenses
+no natural-prefix equivalence claim. V10 is permanently non-authorizing. No paid semantic run
+occurred. The later natural-input hard gate did exactly what it was designed to do and caught
+the defect before spend; keep that hard-gate philosophy.
+
+RULE 30 — RAW-INPUT / CAN-IT-FAIL REVIEW: every authorizing gate review must list the literal
+input generation rule, independent fixture count by content (not length/layer/repeat), target
+population, and claim licensed by a pass. It must demonstrate an in-family input on which the
+gate fails for the relevant reason, or prove the production regime cannot contain one. Otherwise
+the check is smoke/construction only. Never juxtapose unlike `N/N` counts without naming units.
+
+## Incident #40 (07-11): exact-length wrong histories were repetitive corruption, invalidating GW
+
+WHAT: the frozen wrong-history constructor preserves exact length by filling each target message
+slot with `donor[j mod len(donor)]`. Across all twelve cases, 21–25 of 32 slots per case cycle
+more than once; maximum cycle counts range 20–51. The literal worst case replaces a natural
+352-token answer with `Got it, logged for reference.` repeated 51 times.
+
+WHY: the design optimized token/position/structure equality and treated faithful reconstruction
+of the cycling rule as scientific validity. Amendments and validators persisted cycle counts and
+proved the corrupted input was reproduced exactly; no review required decoded whole-history
+coherence. Exact mechanical matching displaced the control's actual purpose.
+
+IMPACT: `G_correct-G_wrong` could distinguish coherent natural history from conspicuously
+repetitive garbage, not correct history from coherent counterfactual history. The co-primary GW
+control is invalid and must be replaced before any semantic execution. Schedule robustness cannot
+repair it. No semantic outcome used this control.
+
+RULE 31 — DECODED CONTROL VALIDITY: every semantic negative/control input must be committed and
+reviewed as decoded whole-context text before execution. Exact token length, structural equality,
+and hashes are necessary but insufficient. A history-specific counterfactual must establish the
+frozen alternative, update every downstream factual reference, remain natural to a blind reader,
+and match the required positions/schedule without cyclic filler. Failed cases are redesigned or
+dropped on the record.
+
+## Incident #41 (07-11): `message_block` was not message-by-message
+
+WHAT: c10's alternative schedule `[23,4096,4096,92,123]` was repeatedly called
+`message_block`, `message-aligned`, and production-like. The code actually creates only three
+conceptual regions: system; the entire 8,284-token concatenated history, chunked at 4,096; and
+request/header. C10 records 47 message starts. A true turn-aligned replay uses 46 calls, none
+of its individual turns longer than 424 tokens.
+
+WHY: `_case_schedule_layout` scanned and persisted all message starts but discarded internal
+history boundaries when constructing call widths. Reviewers trusted the schema name and saved
+boundary provenance instead of tracing the widths used by the forward calls.
+
+IMPACT: the c10 failure remains valid evidence that ordinary O and coarse three-block B differ.
+It says nothing directly about a true per-turn P schedule or live-session state. The imported
+assistant messages were not generated by the subject, so even P must be called `turn_aligned_replay`,
+never actual live state.
+
+RULE 32 — SCHEDULE PROVENANCE: schedule names must be derived from and checked against the exact
+call-width array. Persisting message boundaries is not evidence that calls used them. New designs
+must distinguish `ordinary_4096`, `coarse_system_history_request`, `turn_aligned_replay`, and
+actual live generation state; never reuse a production-sounding label across them.
+
+## Incident #42 (07-11): token-exact counterfactuals and their base conversations failed decoded review
+
+WHAT: four plant-specific counterfactual candidates for c02/c10 preserved exact per-message token
+counts, full prefix length, message boundaries, P/O call widths, structural tokens, retained tail,
+and all non-allowlisted messages. A blind whole-conversation review nevertheless failed all four.
+The old base conversations themselves contain clipped/nonresponsive assistant turns, unsupported
+claims, repetitive faux-document formatting, and dangling factual chains. A target-aware paired
+review then found additional edit-specific faults: invented rationale/operating details, a retained
+`Beacon session` type cue, a U-shape counterfactual that inherited an island/location reference,
+and a literal back deck placed upstairs in a master bedroom.
+
+WHY: the feasibility-authoring pass optimized exact tokenizer geometry and local target recovery
+before independent readers evaluated the decoded conversation as a whole. The same failure class as
+#40 remained possible in a subtler form: mechanically matched text can still be semantically invalid.
+The inherited defects also show that starting from an already-generated corpus does not make a
+counterfactual control natural or coherent.
+
+IMPACT: none of the four candidates is execution-ready; all remain immutable UNREVIEWED feasibility
+witnesses. Mechanical validation correctly reports `MECHANICAL_PASS` while keeping semantic and
+execution authorization false. Repairing an inherited defect in only the counterfactual would break
+the matched design, so any repair must create a new correct/counterfactual pair, receive new hashes,
+and repeat both reviews. No semantic model outcome was scored.
+
+RULE 33 — CONTENT REVIEW PRECEDES SEMANTIC EXECUTION: exact token/position/schedule validation and
+decoded review are separate conjunctive gates. Blind reviewers must see the complete correct and
+counterfactual histories, not only diffs or target passages. A base-history failure disqualifies the
+pair even when the counterfactual edit is locally correct. Inherited repairs are applied symmetrically
+to a new pair; edit-specific repairs remain focal and minimal. Never promote `MECHANICAL_PASS` to a
+content-valid or execution-ready label.
+
+## Incident #43 (07-11/12): the same Secure A100 image hid different host drivers
+
+WHAT: two RunPod **Secure Cloud** rentals requested the same `NVIDIA A100 80GB
+PCIe` and the same container image. Attempt 1 exposed host driver `580.159.03`;
+pinned Torch 2.12.1 initialized CUDA 13 and loaded the exact 30B model. Attempt 2
+exposed driver `550.90.12`; the same pinned Torch resolved CUDA 13 but reported
+`torch.cuda.is_available() == False`. The job stopped before model download or
+any subject forward. The image pinned user-space files, not the physical host's
+kernel driver.
+
+WHY: pod admission checked GPU name but treated GPU type + image as a complete
+runtime identity. `src/pod.py` did not send RunPod's supported
+`allowedCudaVersions` filter, and the launcher did not inspect the allocated
+host's driver before installing packages. At a higher level, the owner selected
+RunPod from an AI recommendation without an independent provider-qualification
+review; agents then operationalized that choice without translating the
+experiment's reproducibility requirements into provider admission criteria.
+This is a process gap whether or not RunPod is ultimately judged credible.
+
+IMPACT: attempt 2 cost an observed `$0.0588781620` balance delta and yielded no
+scientific observation. More broadly, silently heterogeneous drivers are a
+proven source of intermittent CUDA failures and a plausible multiplier of the
+week's diagnostic churn, context switching, and lost focus. They do **not**
+explain unrelated proven mistakes such as wrong checkpoints, invalid fixtures,
+or cache-position bugs; no prior result is reclassified solely from this
+discovery.
+
+RULE 34 — PROVIDER + HOST ADMISSION IS PART OF REPRODUCIBILITY: before adopting
+a compute provider, write and verify a qualification checklist covering the
+host-level invariants the container cannot pin. For every GPU allocation, use
+the provider's CUDA-capability filter, then independently read the actual GPU,
+driver, and memory before bootstrap. Reject and terminate incompatible hosts
+before installing or launching. Persist the observed host/runtime fingerprint
+with every result. An AI recommendation is a lead, not provider validation.
+
+## Incident #44 (07-12): the first host-admission fix could leak or duplicate billing pods
+
+WHAT: a fresh pre-spend audit of the first CUDA-13 admission implementation
+found that failed `DELETE` was suppressed with `|| true`, bootstrap shared the
+retryable incompatible-host exit, transient status and transfer failures could
+leave a pod billing, required credential rsync was suppressed, and the exact job
+still compared against a moving remote-trunk tip. REST/GQL calls also had no
+timeout. The eight initial tests checked source literals rather than lifecycle
+behavior, so all passed despite these defects.
+
+WHY: the correction focused on selecting a compatible driver but did not model
+the allocation as an owned lifecycle with explicit terminal states. Error codes
+encoded where a failure happened, not whether it was safe to allocate again.
+Generic historical deployment conveniences (`|| true`, a moving branch clone)
+were reused on a one-use scientific path without reclassifying which inputs and
+artifacts were mandatory.
+
+IMPACT: the audit ran before attempt 3, so no pod, result, or money was affected.
+Had an ordinary setup or cleanup failure occurred, the wrapper could have
+allocated another pod while the first remained live, or paid to repeat a
+deterministic defect. This is a caught near miss, not an observed billing leak.
+
+RULE 35 — RETRY SAFETY IS A LIFECYCLE PROPERTY: a wrapper may retry only a
+provider-confirmed no-allocation response or a positively terminated rejected
+host. Allocation ambiguity is non-retryable. Cleanup failure is its own fatal
+state. Arm cleanup only after a valid pod ID is durably known; disarm only after
+wanted work is detached. Required credentials deploy fail-closed. Bound every
+provider call. Test the actual shell lifecycle with injected failures rather
+than testing only source literals. Bind the exact commit locally before spend
+and again in the remote clone.
+
+## Incident #45 (07-12): frozen prose/code conflict in the v12 path-control stop rule
+
+WHAT: frozen §14.1 prose stopped at the first ULP count where both edited
+readouts differed measurably from fresh. The sealed implementation stopped only
+at the first count where both changes also moved in their intended signed
+directions. At ULP 2 both margins changed by 0.25, but the minus edit moved in
+the wrong direction; at ULP 4 both signed directions passed. This was the first
+observed cell that distinguished the two rules.
+
+WHY: “measurable direction” was not defined with exact signed/oriented
+candidate-selection semantics. Reviews, validators, and tests followed the
+implementation's intended directional reading but did not include the
+discriminating case where both edits are nonzero and one sign is wrong.
+
+IMPACT: the literal written branch formally failed at ULP 2. The ULP-4 code
+result survives only as implementation-defined path-sensitivity evidence. The
+conflict was discovered and dispositioned before treatment, so exactly one
+unchanged e01 treatment could run only as a nonauthorizing diagnostic; v12
+cannot produce an aggregate, confirmation, conversation, or live-agent result.
+
+RULE 36 — MACHINE-SPECIFY CANDIDATE SELECTION AND EARLY STOPPING: preregister
+the exact sign convention, measurability predicate, candidate order, and stop
+condition in both prose and executable form. Freeze an adversarial test where
+both edits are nonzero but one has the wrong sign. A favorable later candidate
+cannot reinterpret an ambiguous earlier stopping cell after outcomes exist.
+
+## Incident #46 (07-12): every exact-bf16 placebo arm was unavailable
+
+WHAT: R1, R2, and R3 placebo construction all reached the same first nonzero
+early-layer delta at layer 1, row 76 and failed after 1,024 deterministic
+attempts. The float64 pre-cast vectors met the norm and orthogonality
+constraints, but no applied bf16 perturbation met the frozen relative-norm and
+cosine bounds. Available-placebo count was zero.
+
+WHY: the early correct-history versus wrong-history value-row difference was
+extremely sparse and, at the first nonzero row, around the bf16 representability
+scale. Mathematical feasibility before dtype conversion did not imply an
+applied, profile-matched perturbation. The control had been unit-tested but its
+availability was not demonstrated on exact-subject state geometry before paid
+treatment.
+
+IMPACT: the primary transplant arms remain mechanically valid under their
+frozen contract, but the only norm-matched nonsemantic perturbation control is
+missing. That materially weakens semantic attribution for the favorable e01
+value-only cell. `PLACEBO_UNAVAILABLE` is missing evidence, never a null
+placebo. The committed artifact preserves row hashes and diagnostics, not the
+actual K/V tensor rows, so exact e01 control repair cannot be validated locally
+without regenerating state.
+
+RULE 37 — PROVE APPLIED-CONTROL AVAILABILITY BEFORE OUTCOME SCORING: validate
+negative controls at the target dtype and realistic state scale, not only in
+pre-cast arithmetic. A successor must either construct directly on the bf16
+grid or preregister an outcome-independent fallback such as representability-
+floor zeroing or aggregate-profile matching. Persist a bounded exact tensor
+evidence bundle whenever later control auditing depends on source rows.
+
+## Incident #47 (07-12): shell precedence made the “detached” launch hold SSH open
+
+WHAT: the P01 remote launcher printed `job-launched`, and the real `bash job.sh`
+had stdin on `/dev/null` and stdout/stderr on `job.log`, but the initiating SSH
+process remained open. On the pod, an intermediate `bash -c` was orphaned to
+PID 1 while retaining the SSH stdout/stderr pipes and waiting for the real job.
+The P01 job therefore waited for provider-budget metadata that its local wrapper
+could not transfer until the apparently detached launch returned. Provider
+elapsed time at the eventual runner start was 258 seconds (about `$0.0996` at
+`$1.39/hour`), though that total also includes normal allocation and setup.
+
+WHY: in `cd ... && chmod ... && ENV=... nohup bash job.sh ... & disown`, Bash
+applies `&` to the entire preceding AND-list, not only to `nohup`. The resulting
+asynchronous subshell ran `nohup` in the foreground and inherited the SSH pipes;
+`disown` in the original shell could not change that parse tree. Prior launch
+checks established that a process existed but did not test that the SSH-like
+output pipe reached EOF while the child remained alive.
+
+IMPACT: no second pod was created and no scientific work was lost. The local
+provider-clock watchdog was already alive. After verifying the exact parent,
+child, command line, and file descriptors, Sol terminated only the leaked
+intermediate wrapper; the wanted job survived reparented to PID 1, the SSH call
+returned successfully, the budget record deployed, and the original bounded
+run continued. The generic launcher was then corrected and tested locally; the
+running P01 checkout remained frozen at its recorded earlier commit.
+
+RULE 38 — DETACHMENT REQUIRES PIPE-EOF EVIDENCE: make `&` syntactically local
+to the final `nohup` command (use an explicit group after successful setup),
+capture and disown that child PID, and redirect all three child descriptors.
+A launcher regression must prove both that the parent's captured/SSH-like pipe
+closes promptly and that the detached child is still alive. A printed launch
+marker or live process alone is insufficient.
+
+## Incident #48 (07-12): the local `nohup` watchdog died with its tracked exec session
+
+WHAT: P01's local provider-clock watchdog was observed alive after launch, but
+later its recorded PID no longer existed and its log contained only the start
+line. The GPU job and pod were still healthy, the receipt did not yet exist,
+and the 7,200-second hard deadline was not close. A foreground diagnostic copy
+completed repeated status/SSH loops normally, showing that the watch logic
+itself had not encountered a terminal condition.
+
+WHY: the watchdog was started as a background descendant of the launcher
+process under the tool's tracked execution session. `nohup` protects against
+hangup semantics but does not guarantee survival when an execution harness
+later cleans up its descendant process tree. Adding shell `disown` reproduced
+the same immediate loss when the short tracked command returned. The monitor
+had been tested for its state classification and pull/delete behavior, not for
+independence from the process supervisor that invoked it.
+
+IMPACT: Sol detected the missing PID during active monitoring before any
+deadline or result receipt. A temporary foreground watcher covered diagnosis;
+then a macOS `launchd`-owned watcher was observed running under PID 1 across
+multiple polling intervals, after which the duplicate foreground copy was
+stopped. No pod was duplicated, no artifact was lost, and no scientific
+execution was interrupted. The P01 wrapper now submits one unique launchd job
+per admission attempt, verifies its running state, removes it on intentional
+terminal pull/deletion, and leaves it registered for restart after an
+unexpected watcher failure.
+
+RULE 39 — A MONITOR NEEDS AN INDEPENDENT SUPERVISOR: long-lived billing and
+artifact monitors must not be mere descendants of the command session they
+guard. Use an OS supervisor, verify the supervised running state after submit,
+key and bound the retained job, define terminal self-eviction, and preserve
+restart behavior for unexpected exits. Test both normal eviction and the
+unexpected-exit path; a PID observed once is not continuing coverage.
+
+## Incident #49 (07-12): an over-broad Fable review prompt defeated the intended cost cap
+
+WHAT: the independent P02 interpretation prompt told Claude Fable 5 to read the
+full P01/P02 analysis JSONs plus several large project documents even though the
+question was narrow and the owner had explicitly warned against overloading a
+fresh reviewer. The first invocation reached a `$3` CLI list-price limit after
+artifact analysis but before writing its note and reported `$3.300054`. A
+same-session resume was restricted to synthesis and writing, but a system-change
+cache miss rewrote 88,625 tokens; its `$1.50` limit reported `$2.05319`. The note
+was written, but combined reported list-price equivalent was `$5.353244`. These
+figures are not assumed to be incremental cash because the CLI was
+subscription/subsidized; both exact receipts are preserved under
+`results/end_to_end_accounting/`.
+
+WHY: the prompt said “focused” while simultaneously requiring full reads of
+large artifacts and background documents. It did not provide a small frozen
+fact extract plus targeted JSON paths. The operator also treated
+`--max-budget-usd` as a tight ceiling, but the CLI can finish an indivisible
+request/tool turn beyond the nominal threshold; resumption can lose prompt-cache
+reuse when the system context changes.
+
+IMPACT: no scientific artifact or paid GPU work was affected. Fable completed
+an advisory note that discloses which background files it did not finish, and
+Sol independently checked/corrected its interpretation. The avoidable
+list-price-equivalent overage is part of the final accounting, not hidden.
+
+RULE 40 — BRIEF A FRESH REVIEWER WITH THE SMALLEST SUFFICIENT EVIDENCE SURFACE:
+for a scoped review, provide a concise current fact brief, exact questions, and
+targeted artifact fields; do not require full unrelated histories “for
+context.” Treat a CLI budget as a turn-boundary guard that may overshoot, not a
+hard financial interlock. Leave reserve below the true ceiling, and avoid a
+resume solely to recover prose unless the cached analysis value clearly exceeds
+the possible cache-miss cost.
+
+**Addendum — recurrence under a narrow paper-integration prompt.** A later
+Fable call was limited to `PAPER.md`, the final P02 interpretation, and the
+mandatory provenance checklist, with one output note and a nominal `$2` guard.
+It still exited at the guard before executing its Write tool and reported a
+`$3.767336` list-price equivalent. The streamed tool request contained the
+complete 33,064-character note, so Sol recovered that exact input without a
+second model call and preserved both the note and receipt. This shows that a
+small input surface alone does not make the CLI cap hard: a long indivisible
+generation/tool request can overshoot materially. Before any retry after an
+apparently blank artifact, inspect the captured stream for a complete
+unexecuted Write/Edit payload. For the remaining paper, the existing Fable
+draft, three completed Fable angle reviews, P02 advisory, and recovered
+integration note are sufficient; do not buy a redundant Fable retry.

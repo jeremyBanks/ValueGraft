@@ -1,3 +1,8 @@
+# ARCHIVE — cross-architecture value-graft sign-map preregistration
+
+This complete historical protocol is preserved for audit. It does not govern
+the powered coherent-state successor.
+
 # Pre-registration — cross-architecture value-graft sign map
 
 > Committed BEFORE running the 16-model sweep (design v2.1 requirement). Confirmatory,

@@ -1,3 +1,9 @@
+# ARCHIVE — legacy claims ledger through the pre-ultra handoff
+
+This complete ledger is preserved for audit history. It is not the source for
+the powered successor or its future paper. A new claims ledger will be created
+only after successor outcomes exist.
+
 # CLAIMS.md — audited claims ledger for the ValueGraft paper
 
 > ## ⚠ SUPERSEDED AS FINAL-PAPER SOURCE (2026-07-12)
