@@ -12,7 +12,7 @@ from scripts.accounting.snapshot_openrouter_key_usage import (
 )
 
 
-def _fetch(api_key: str) -> tuple[int, str, bytes]:
+def _fetch_key(api_key: str) -> tuple[int, str, bytes]:
     assert api_key == "secret-test-key"
     return (
         200,
@@ -41,12 +41,27 @@ def _fetch(api_key: str) -> tuple[int, str, bytes]:
     )
 
 
+def _fetch_credits(api_key: str) -> tuple[int, str, bytes]:
+    assert api_key == "secret-test-key"
+    return (
+        200,
+        "application/json",
+        json.dumps(
+            {"data": {"total_credits": 114, "total_usage": 95.541220588}}
+        ).encode(),
+    )
+
+
 def test_snapshot_is_exact_allowlisted_and_credential_free() -> None:
-    snapshot = collect_snapshot("secret-test-key", fetch=_fetch)
+    snapshot = collect_snapshot(
+        "secret-test-key", fetch_key=_fetch_key, fetch_credits=_fetch_credits
+    )
     rendered = json.dumps(snapshot)
     assert snapshot["usage_counters"]["usage"] == "0.0232311"
     assert snapshot["usage_counters"]["limit_remaining"] == "49.9767689"
     assert snapshot["classification"]["cash_paid_usd"] is None
+    assert snapshot["account_context_nonadditive"]["total_credits"] == "114"
+    assert snapshot["account_context_nonadditive"]["total_usage"] == "95.541220588"
     assert "secret-test-key" not in rendered
     assert "private label" not in rendered
     assert "private user" not in rendered
@@ -59,7 +74,7 @@ def test_snapshot_rejects_non_numeric_usage() -> None:
         return 200, "application/json", body
 
     with pytest.raises(OpenRouterSnapshotError):
-        collect_snapshot("secret", fetch=malformed)
+        collect_snapshot("secret", fetch_key=malformed, fetch_credits=malformed)
 
 
 def test_write_refuses_overwrite(tmp_path: Path) -> None:

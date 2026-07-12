@@ -1,0 +1,54 @@
+{
+  "account_context_nonadditive": {
+    "cash_paid_claimed": false,
+    "scope": "authenticated OpenRouter account lifetime; not project attribution",
+    "total_credits": "114",
+    "total_usage": "95.541220588"
+  },
+  "captured_at_utc": "2026-07-12T13:23:51.584056Z",
+  "classification": {
+    "cash_paid_usd": null,
+    "measurement": "exact_source_record_for_current_key",
+    "project_attribution": "not implied by the endpoint; the response is key-lifetime and period-to-date, without generation timestamps",
+    "unit": "OpenRouter credits used"
+  },
+  "key_context": {
+    "include_byok_in_limit": false,
+    "is_free_tier": false,
+    "limit_reset": null
+  },
+  "request": {
+    "authorization_serialized": false,
+    "credits_endpoint": "https://openrouter.ai/api/v1/credits",
+    "key_endpoint": "https://openrouter.ai/api/v1/key",
+    "official_contracts": [
+      "https://openrouter.ai/docs/api/api-reference/api-keys/get-current-key",
+      "https://openrouter.ai/docs/api/api-reference/credits/get-credits"
+    ]
+  },
+  "response_commitment": {
+    "credits": {
+      "content_type": "application/json",
+      "http_status": 200,
+      "raw_response_sha256": "fd42dbc1edd22d598210aa94bdd658b1cc57c159dcd3daf9d643a74c1040142f"
+    },
+    "key": {
+      "content_type": "application/json",
+      "http_status": 200,
+      "raw_response_sha256": "098e6b91434f4bc00c5e120f4e3cf9765984c92bee37ba740c29d3e4c6ed20d8"
+    }
+  },
+  "schema": "openrouter_key_usage_snapshot_v2",
+  "usage_counters": {
+    "byok_usage": "0",
+    "byok_usage_daily": "0",
+    "byok_usage_monthly": "0",
+    "byok_usage_weekly": "0",
+    "limit": "50",
+    "limit_remaining": "49.9767689",
+    "usage": "0.0232311",
+    "usage_daily": "0",
+    "usage_monthly": "0.0232311",
+    "usage_weekly": "0.0232311"
+  }
+}
