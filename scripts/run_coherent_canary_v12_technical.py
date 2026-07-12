@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the lean v12 technical gate and persist one complete raw JSON record."""
+"""Run the v12 technical gate with a durable post-generation checkpoint."""
 
 from __future__ import annotations
 
@@ -175,6 +175,25 @@ def stage(document: dict[str, Any], name: str, function: Callable[[], Any]) -> A
     return value
 
 
+def persist_identity_checkpoint(document: dict[str, Any], output: Path) -> dict:
+    """Durably save the expensive generated/forced render before later gates."""
+    directory = output.parent.parent / "coherent_canary_v12_technical_checkpoints"
+    checkpoint = directory / f"{output.stem}_generated-forced-identity.json"
+    snapshot = {
+        **json_safe(document),
+        "status": "CHECKPOINT",
+        "checkpoint_stage": "generated_forced_identity",
+        "checkpoint_completed_at_utc": utc_now(),
+    }
+    atomic_create_json(checkpoint, snapshot)
+    return {
+        "stage": "generated_forced_identity",
+        "path": str(checkpoint),
+        "sha256": file_sha256(checkpoint),
+        "size_bytes": checkpoint.stat().st_size,
+    }
+
+
 def run(args: argparse.Namespace) -> tuple[Path, dict[str, Any], int]:
     require(args.subject in SUBJECTS, f"unknown subject: {args.subject}")
     require(args.hourly_cost_usd is None or args.hourly_cost_usd >= 0,
@@ -202,6 +221,7 @@ def run(args: argparse.Namespace) -> tuple[Path, dict[str, Any], int]:
             "repository_branch": git_value(args.repo, "branch", "--show-current"),
         },
         "stage_timings": {},
+        "durable_checkpoints": [],
         "diagnostic_summary": {},
     }
     exit_code = 1
@@ -251,6 +271,8 @@ def run(args: argparse.Namespace) -> tuple[Path, dict[str, Any], int]:
             document, "generated_forced_identity", lambda:
             run_generated_forced_identity(
                 model, tokenizer, identity_fixture, eos_ids))
+        document["durable_checkpoints"].append(
+            persist_identity_checkpoint(document, output))
         require(document["generated_forced_identity"].get("status") != "ERROR",
                 "generated/forced identity had an apparatus error after "
                 "persisting available evidence")

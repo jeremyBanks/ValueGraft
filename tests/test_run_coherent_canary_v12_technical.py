@@ -264,6 +264,17 @@ def test_success_writes_complete_lean_raw_record_and_prints_before_load(
         "A_g", "A_a", "F", "T_g", "T_a"}
     assert persisted["estimated_cost_usd"] is not None
     assert "runtime_fingerprint" in persisted["provenance"]
+    assert len(persisted["durable_checkpoints"]) == 1
+    checkpoint_row = persisted["durable_checkpoints"][0]
+    checkpoint = Path(checkpoint_row["path"])
+    assert checkpoint.is_file()
+    assert hashlib.sha256(checkpoint.read_bytes()).hexdigest() == \
+        checkpoint_row["sha256"]
+    checkpoint_document = json.loads(checkpoint.read_text())
+    assert checkpoint_document["status"] == "CHECKPOINT"
+    assert checkpoint_document["checkpoint_stage"] == \
+        "generated_forced_identity"
+    assert checkpoint_document["generated_forced_identity"]["status"] == "PASS"
     monkeypatch.setattr(VALIDATOR, "SOURCE_PATHS", {
         "preregistration": "prereg.md",
         "identity_fixture": "identity.json",

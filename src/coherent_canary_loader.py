@@ -114,7 +114,7 @@ PROTOCOL_TOKENIZER_ATTESTATION = {
 MODEL_SNAPSHOT_CONTRACT_PATH = Path(
     "data/coherent_canary_v12/model_snapshot_contract.json")
 FROZEN_AUTHORIZATION_PATH = Path(
-    "COHERENT-STATE-DECISION-CANARY-V12-FROZEN-AUTHORIZATION-4.json")
+    "COHERENT-STATE-DECISION-CANARY-V12-FROZEN-AUTHORIZATION-5.json")
 MANDATORY_FROZEN_PATHS = {
     "AGENTS.md", "pyproject.toml", "uv.lock",
     "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
@@ -135,6 +135,7 @@ MANDATORY_FROZEN_PATHS = {
     "notes/2026071156-canary-preregistration-independent-audit.md",
     "notes/2026071167-sol-v12-execution-audit-and-runtime-closure.md",
     "notes/2026071168-sol-v12-harvest-and-release-closure.md",
+    "notes/2026071176-sol-v12-exact-launch-review-disposition.md",
     "results/coherent_canary_validation/"
     "coherent_canary_revision4_full_manifest_Qwen3-30B-A3B-Instruct-2507_"
     "20260711T205951Z.json",
@@ -159,6 +160,8 @@ MANDATORY_FROZEN_PATHS = {
     "scripts/validate_coherent_canary_control_fixtures.py",
     "scripts/validate_coherent_canary_stimuli.py",
     "scripts/harvest_coherent_canary_v12.py",
+    "scripts/job_coherent_canary_v12_technical.sh",
+    "scripts/pull_coherent_canary_v12_technical.sh",
     "scripts/run_coherent_canary_v12_technical.py",
     "scripts/validate_coherent_canary_v12_technical.py",
     "scripts/run_coherent_canary_v12_phase_a.py",
