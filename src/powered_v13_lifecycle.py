@@ -20,9 +20,11 @@ from typing import Any, Callable, Mapping, Protocol, Sequence
 import urllib.error
 
 from powered_v13_import_audit import (
+    CONTRACT_SCHEMA,
     DESIGN_ID,
     FORBIDDEN_INVENTORY_PATHS,
     REPORT_SCHEMA as IMPORT_REPORT_SCHEMA,
+    audit_stage_t_imports,
 )
 from powered_v13_watchdog import build_record, write_record_exclusive
 
@@ -390,6 +392,14 @@ def verify_release_binding(
              and receipt.get("authorization_commit") == expected_authorization_commit
              and receipt.get("manifest_path") == manifest_path,
              "Stage-T launch receipt binding differs")
+    import_report_path = Path(import_report_path).resolve(strict=True)
+    try:
+        import_report_relative = import_report_path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise V13LifecycleError(
+            "Stage-T import report is not inside the exact checkout") from exc
+    import_report_relative = _safe_repo_path(
+        import_report_relative, "Stage-T import report path")
     report, report_raw = _strict_json(import_report_path, "Stage-T import report")
     _require(sha256_bytes(report_raw) == expected_import_report_sha256,
              "Stage-T import report file hash differs")
@@ -438,6 +448,17 @@ def verify_release_binding(
              if isinstance(row, Mapping)]
     _require(len(paths) == len(inventory) and paths == sorted(set(paths)),
              "Stage-T manifest inventory paths differ")
+    report_rows = [row for row in inventory
+                   if isinstance(row, Mapping)
+                   and row.get("path") == import_report_relative]
+    _require(len(report_rows) == 1,
+             "Stage-T import report is absent from manifest inventory")
+    report_row = report_rows[0]
+    _require(report_row.get("mode") == "100644"
+             and type(report_row.get("bytes")) is int
+             and report_row.get("bytes") == len(report_raw)
+             and report_row.get("sha256") == expected_import_report_sha256,
+             "Stage-T manifest does not bind exact import-report bytes")
     changed = authorization.get("changed_paths")
     _require(isinstance(changed, list), "authorization changed paths are absent")
     changed_paths = [_safe_repo_path(path, "authorization changed path")
@@ -448,12 +469,19 @@ def verify_release_binding(
     _require(JOB_PATH in paths, "exact Stage-T job is absent from parent inventory")
     contract_path = report.get("contract_path")
     _require(contract_path in paths, "import-audit contract is absent from inventory")
+    roots = report.get("execution_roots")
+    _require(isinstance(roots, list), "import-audit execution roots are absent")
+    recomputed_report = audit_stage_t_imports(
+        repo, contract_path=Path(contract_path), execution_roots=roots)
+    _require(report == recomputed_report
+             and report_raw == canonical_json_bytes(recomputed_report) + b"\n",
+             "Stage-T import report differs from exact-checkout recomputation")
     return VerifiedRelease(
         authorization_commit=expected_authorization_commit,
         manifest_path=manifest_path,
         receipt_path=Path(receipt_path).resolve(strict=True),
         receipt_sha256=expected_receipt_sha256,
-        import_report_path=Path(import_report_path).resolve(strict=True),
+        import_report_path=import_report_path,
         import_report_sha256=expected_import_report_sha256,
         sync_paths=sync_paths,
     )

@@ -347,31 +347,51 @@ def _binding_fixture(tmp_path):
     repo = tmp_path / "release-repo"
     (repo / "scripts").mkdir(parents=True)
     (repo / "release").mkdir()
-    for relative in (life.JOB_PATH, "contract.json", "PREREG.md"):
+    contents = {
+        life.JOB_PATH: "import helper\n",
+        "src/helper.py": "VALUE = 1\n",
+        "PREREG.md": "PREREG.md\n",
+    }
+    for relative, content in contents.items():
         path = repo / relative
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(relative + "\n")
+        path.write_text(content)
     commit = "a" * 40
     manifest_path = "release/stage-t.json"
-    inventory = [{"path": path} for path in sorted((
-        "PREREG.md", "contract.json", life.JOB_PATH))]
+    report_relative = "release/import-audit.json"
+    inventory_paths = sorted((
+        "PREREG.md", "contract.json", report_relative, life.JOB_PATH,
+        "src/helper.py",
+    ))
+    contract_doc = {
+        "schema": life.CONTRACT_SCHEMA,
+        "design_id": life.DESIGN_ID,
+        "stage": "TECHNICAL_CANARY",
+        "inventory_paths": inventory_paths,
+    }
+    (repo / "contract.json").write_bytes(
+        life.canonical_json_bytes(contract_doc) + b"\n")
+    report = repo / report_relative
+    report.write_text("placeholder\n")
+    report_doc = life.audit_stage_t_imports(
+        repo, contract_path=Path("contract.json"),
+        execution_roots=[life.JOB_PATH])
+    report.write_bytes(life.canonical_json_bytes(report_doc) + b"\n")
+    inventory = []
+    for relative in inventory_paths:
+        path = repo / relative
+        inventory.append({
+            "path": relative, "mode": "100644",
+            "bytes": path.stat().st_size, "sha256": life.file_sha256(path),
+        })
     manifest = {"inventory": inventory}
-    (repo / manifest_path).write_bytes(life.canonical_json_bytes(manifest) + b"\n")
+    (repo / manifest_path).write_bytes(
+        life.canonical_json_bytes(manifest) + b"\n")
     receipt = tmp_path / "receipts" / "powered-v13-stage-t-launch-receipt.json"
     receipt.parent.mkdir()
     receipt_doc = {"design_id": life.DESIGN_ID, "stage": "TECHNICAL_CANARY",
                    "authorization_commit": commit, "manifest_path": manifest_path}
     receipt.write_bytes(life.canonical_json_bytes(receipt_doc) + b"\n")
-    report = tmp_path / "import.json"
-    report_doc = {
-        "schema": life.IMPORT_REPORT_SCHEMA, "design_id": life.DESIGN_ID,
-        "stage": "TECHNICAL_CANARY", "status": "PASS", "semantic_n": 0,
-        "production_entropy_requested": False, "execution_roots": [life.JOB_PATH],
-        "contract_path": "contract.json",
-    }
-    report_doc["report_sha256"] = life.sha256_bytes(
-        life.canonical_json_bytes(report_doc))
-    report.write_bytes(life.canonical_json_bytes(report_doc) + b"\n")
     receipt_sha = life.file_sha256(receipt)
     report_sha = life.file_sha256(report)
 
@@ -394,7 +414,44 @@ def test_release_binding_derives_exact_authorized_sync_allowlist(tmp_path):
         expected_receipt_sha256=args[4], import_report_path=args[5],
         expected_import_report_sha256=args[6], verify_checkout=args[7])
     assert verified.sync_paths == tuple(sorted((
-        "PREREG.md", "contract.json", "release/stage-t.json", life.JOB_PATH)))
+        "PREREG.md", "contract.json", "release/import-audit.json",
+        "release/stage-t.json", life.JOB_PATH, "src/helper.py")))
+
+
+def test_release_binding_rejects_caller_pinned_forged_minimal_pass_report(tmp_path):
+    args = list(_binding_fixture(tmp_path))
+    report = args[5]
+    forged = {
+        "schema": life.IMPORT_REPORT_SCHEMA, "design_id": life.DESIGN_ID,
+        "stage": "TECHNICAL_CANARY", "status": "PASS", "semantic_n": 0,
+        "production_entropy_requested": False,
+        "execution_roots": [life.JOB_PATH], "contract_path": "contract.json",
+    }
+    forged["report_sha256"] = life.sha256_bytes(
+        life.canonical_json_bytes(forged))
+    report.write_bytes(life.canonical_json_bytes(forged) + b"\n")
+    args[6] = life.file_sha256(report)
+    manifest_path = args[0] / args[2]
+    manifest = json.loads(manifest_path.read_text())
+    row = next(row for row in manifest["inventory"]
+               if row["path"] == "release/import-audit.json")
+    row["bytes"] = report.stat().st_size
+    row["sha256"] = args[6]
+    manifest_path.write_bytes(life.canonical_json_bytes(manifest) + b"\n")
+
+    def verify_checkout(**_kwargs):
+        evidence = args[7](**_kwargs)
+        evidence["authorization"]["manifest_sha256"] = life.file_sha256(
+            manifest_path)
+        return evidence
+
+    with pytest.raises(life.V13LifecycleError, match="recomputation"):
+        life.verify_release_binding(
+            repo=args[0], expected_authorization_commit=args[1],
+            manifest_path=args[2], receipt_path=args[3],
+            expected_receipt_sha256=args[4], import_report_path=args[5],
+            expected_import_report_sha256=args[6],
+            verify_checkout=verify_checkout)
 
 
 def test_release_binding_rejects_production_path(tmp_path):
@@ -402,7 +459,13 @@ def test_release_binding_rejects_production_path(tmp_path):
     manifest_path = args[0] / args[2]
     manifest = json.loads(manifest_path.read_text())
     forbidden = sorted(life.FORBIDDEN_INVENTORY_PATHS)[0]
-    manifest["inventory"].append({"path": forbidden})
+    path = args[0] / forbidden
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("forbidden\n")
+    manifest["inventory"].append({
+        "path": forbidden, "mode": "100644", "bytes": path.stat().st_size,
+        "sha256": life.file_sha256(path),
+    })
     manifest["inventory"] = sorted(manifest["inventory"], key=lambda row: row["path"])
     manifest_path.write_bytes(life.canonical_json_bytes(manifest) + b"\n")
 
