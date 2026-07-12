@@ -848,3 +848,37 @@ capture and disown that child PID, and redirect all three child descriptors.
 A launcher regression must prove both that the parent's captured/SSH-like pipe
 closes promptly and that the detached child is still alive. A printed launch
 marker or live process alone is insufficient.
+
+## Incident #48 (07-12): the local `nohup` watchdog died with its tracked exec session
+
+WHAT: P01's local provider-clock watchdog was observed alive after launch, but
+later its recorded PID no longer existed and its log contained only the start
+line. The GPU job and pod were still healthy, the receipt did not yet exist,
+and the 7,200-second hard deadline was not close. A foreground diagnostic copy
+completed repeated status/SSH loops normally, showing that the watch logic
+itself had not encountered a terminal condition.
+
+WHY: the watchdog was started as a background descendant of the launcher
+process under the tool's tracked execution session. `nohup` protects against
+hangup semantics but does not guarantee survival when an execution harness
+later cleans up its descendant process tree. Adding shell `disown` reproduced
+the same immediate loss when the short tracked command returned. The monitor
+had been tested for its state classification and pull/delete behavior, not for
+independence from the process supervisor that invoked it.
+
+IMPACT: Sol detected the missing PID during active monitoring before any
+deadline or result receipt. A temporary foreground watcher covered diagnosis;
+then a macOS `launchd`-owned watcher was observed running under PID 1 across
+multiple polling intervals, after which the duplicate foreground copy was
+stopped. No pod was duplicated, no artifact was lost, and no scientific
+execution was interrupted. The P01 wrapper now submits one unique launchd job
+per admission attempt, verifies its running state, removes it on intentional
+terminal pull/deletion, and leaves it registered for restart after an
+unexpected watcher failure.
+
+RULE 39 — A MONITOR NEEDS AN INDEPENDENT SUPERVISOR: long-lived billing and
+artifact monitors must not be mere descendants of the command session they
+guard. Use an OS supervisor, verify the supervised running state after submit,
+key and bound the retained job, define terminal self-eviction, and preserve
+restart behavior for unexpected exits. Test both normal eviction and the
+unexpected-exit path; a PID observed once is not continuing coverage.
