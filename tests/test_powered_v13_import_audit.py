@@ -1,6 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
+import stat
 import subprocess
 import sys
 
@@ -12,6 +13,8 @@ import powered_v13_import_audit as audit
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts/audit_powered_v13_stage_t_imports.py"
 CONTRACT = "data/technical-canary-inventory-contract.json"
+PLACEHOLDER_SCHEMA = (
+    "powered-v13-technical-canary-import-audit-placeholder-v1")
 
 
 def _write(repo: Path, relative: str, content: str | bytes):
@@ -38,6 +41,35 @@ def _repo(tmp_path: Path, *, root_source="import helper\n"):
     paths = [CONTRACT, "scripts/root.py", "src/helper.py"]
     _contract(tmp_path, paths)
     return paths
+
+
+def _placeholder(relative: str) -> bytes:
+    return audit.canonical_json_bytes({
+        "schema": PLACEHOLDER_SCHEMA,
+        "design_id": audit.DESIGN_ID,
+        "stage": audit.STAGE,
+        "report_path": relative,
+    }) + b"\n"
+
+
+def _self_inventoried_repo(tmp_path: Path):
+    report = "data/technical-canary-import-audit-v1.json"
+    _write(tmp_path, "scripts/root.py", "import helper\n")
+    _write(tmp_path, "src/helper.py", "VALUE = 1\n")
+    _write(tmp_path, report, _placeholder(report))
+    _contract(tmp_path, [CONTRACT, report, "scripts/root.py", "src/helper.py"])
+    return report
+
+
+def _cli(tmp_path: Path, output: str, *extra: str):
+    command = [
+        sys.executable, str(SCRIPT), "--repo", str(tmp_path),
+        "--contract", CONTRACT,
+        "--execution-roots-json", '["scripts/root.py"]',
+        "--output", output, *extra,
+    ]
+    return subprocess.run(
+        command, cwd=ROOT, text=True, capture_output=True, check=False)
 
 
 def test_exact_inventoried_local_import_closure_passes(tmp_path):
@@ -145,3 +177,76 @@ def test_cli_exclusive_writes_report(tmp_path):
         command, cwd=ROOT, text=True, capture_output=True, check=False)
     assert second.returncode == 2
     assert "already exists" in second.stderr
+
+
+def test_cli_replaces_only_exact_self_inventory_placeholder(tmp_path):
+    report = _self_inventoried_repo(tmp_path)
+    output = tmp_path / report
+    result = _cli(
+        tmp_path, report, "--replace-canonical-placeholder")
+    assert result.returncode == 0, result.stderr
+    document = json.loads(output.read_bytes())
+    assert document["status"] == "PASS"
+    assert document["contract_path"] == CONTRACT
+    assert document["inventory_path_count"] == 4
+    assert output.read_bytes() == audit.canonical_json_bytes(document) + b"\n"
+    assert stat.S_IMODE(output.stat().st_mode) == 0o644
+    assert not list(output.parent.glob(f".{output.name}.*.tmp"))
+
+    repeated = _cli(
+        tmp_path, report, "--replace-canonical-placeholder")
+    assert repeated.returncode == 2
+    assert "not the exact canonical placeholder" in repeated.stderr
+
+
+@pytest.mark.parametrize("existing", [
+    b"{}\n",
+    _placeholder("data/a-different-report.json"),
+    audit.canonical_json_bytes({
+        "schema": PLACEHOLDER_SCHEMA,
+        "design_id": audit.DESIGN_ID,
+        "stage": audit.STAGE,
+        "report_path": "data/technical-canary-import-audit-v1.json",
+        "extra": True,
+    }) + b"\n",
+])
+def test_cli_replacement_refuses_any_other_existing_file(tmp_path, existing):
+    report = _self_inventoried_repo(tmp_path)
+    (tmp_path / report).write_bytes(existing)
+    result = _cli(
+        tmp_path, report, "--replace-canonical-placeholder")
+    assert result.returncode == 2
+    assert "not the exact canonical placeholder" in result.stderr
+    assert (tmp_path / report).read_bytes() == existing
+
+
+def test_cli_default_mode_refuses_even_exact_placeholder(tmp_path):
+    report = _self_inventoried_repo(tmp_path)
+    result = _cli(tmp_path, report)
+    assert result.returncode == 2
+    assert "already exists" in result.stderr
+    assert (tmp_path / report).read_bytes() == _placeholder(report)
+
+
+def test_cli_replacement_refuses_wrong_placeholder_mode(tmp_path):
+    report = _self_inventoried_repo(tmp_path)
+    output = tmp_path / report
+    output.chmod(0o600)
+    result = _cli(
+        tmp_path, report, "--replace-canonical-placeholder")
+    assert result.returncode == 2
+    assert "mode-100644 regular file" in result.stderr
+    assert output.read_bytes() == _placeholder(report)
+
+
+def test_cli_replacement_refuses_symlinked_placeholder(tmp_path):
+    report = _self_inventoried_repo(tmp_path)
+    output = tmp_path / report
+    target = tmp_path / "real-placeholder.json"
+    output.replace(target)
+    output.symlink_to(target)
+    result = _cli(
+        tmp_path, report, "--replace-canonical-placeholder")
+    assert result.returncode == 2
+    assert "symlinked" in result.stderr
+    assert output.is_symlink()
