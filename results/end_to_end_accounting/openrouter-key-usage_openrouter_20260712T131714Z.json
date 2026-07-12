@@ -1,0 +1,37 @@
+{
+  "captured_at_utc": "2026-07-12T13:17:14.966218Z",
+  "classification": {
+    "cash_paid_usd": null,
+    "measurement": "exact_source_record_for_current_key",
+    "project_attribution": "not implied by the endpoint; the response is key-lifetime and period-to-date, without generation timestamps",
+    "unit": "OpenRouter credits used"
+  },
+  "key_context": {
+    "include_byok_in_limit": false,
+    "is_free_tier": false,
+    "limit_reset": null
+  },
+  "request": {
+    "authorization_serialized": false,
+    "endpoint": "https://openrouter.ai/api/v1/key",
+    "official_contract": "https://openrouter.ai/docs/api/api-reference/api-keys/get-current-key"
+  },
+  "response_commitment": {
+    "content_type": "application/json",
+    "http_status": 200,
+    "raw_response_sha256": "098e6b91434f4bc00c5e120f4e3cf9765984c92bee37ba740c29d3e4c6ed20d8"
+  },
+  "schema": "openrouter_key_usage_snapshot_v1",
+  "usage_counters": {
+    "byok_usage": "0",
+    "byok_usage_daily": "0",
+    "byok_usage_monthly": "0",
+    "byok_usage_weekly": "0",
+    "limit": "50",
+    "limit_remaining": "49.9767689",
+    "usage": "0.0232311",
+    "usage_daily": "0",
+    "usage_monthly": "0.0232311",
+    "usage_weekly": "0.0232311"
+  }
+}
