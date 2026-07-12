@@ -757,6 +757,21 @@ checkout, verifies the exact parent inventory and two-path child diff, and
 fails on absent, duplicate, stale, modified, attached, dirty, wrong-parent,
 extra-diff, wrong-status, or wrong-receipt input before model load.
 
+Stage-T setup may exceed the receipt's 300-second freshness window while it
+installs the frozen runtime and downloads (but does not load) the pinned public
+model. Therefore one setup receipt authorizes paid setup. Its freshness is
+enforced locally immediately before allocation; the fixed remote pre-setup gate
+re-verifies its exact bytes, hash, authorization commit, manifest, detached
+checkout, and clean tree without claiming that the setup receipt is still a
+fresh subject-launch receipt. The same fixed release function creates a second
+fresh receipt from the same authorization commit and manifest only after setup
+succeeds. The fresh receipt is the sole entry in the subject's receipt
+directory, is verified under the unmodified 300-second rule before model load,
+and is copied into the bounded harvest before launch. Both receipt bytes and
+hashes are preserved. Credentials occupy a separate non-harvested directory and
+can never be scanned as receipt entries. No technical arm or model load may
+begin between setup completion and creation of the fresh receipt.
+
 Stage T authorizes at most two bounded allocation attempts but only one admitted
 host and only the two Section 9 exceptions. A rejected host is positively
 deleted before the second request; there is no restart after model loading or
