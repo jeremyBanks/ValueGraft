@@ -1,0 +1,158 @@
+{
+  "available_placebo_control_count": 0,
+  "case_id": "e01",
+  "decompositions": [
+    {
+      "all_token_semantic_directions_positive": false,
+      "contrast": "CC-WW",
+      "correct_target_mean_difference": -0.13103485107421875,
+      "correct_target_text": "partner beta",
+      "correct_target_token_ids": [
+        36258,
+        13440
+      ],
+      "correct_target_token_logprob_differences": [
+        -0.36254119873046875,
+        0.10047149658203125
+      ],
+      "counterfactual_target_mean_difference": -0.228271484375,
+      "counterfactual_target_text": "staff ring",
+      "counterfactual_target_token_ids": [
+        27122,
+        10058
+      ],
+      "counterfactual_target_token_logprob_differences": [
+        -0.5812911987304688,
+        0.12474822998046875
+      ],
+      "family": "full_KV",
+      "first_token_semantic_direction_positive": true,
+      "region": "R2_boundary",
+      "schedule": "N",
+      "semantic_margin_mean_difference": 0.09723663330078125,
+      "semantic_margin_token_differences": [
+        0.21875,
+        -0.0242767333984375
+      ]
+    },
+    {
+      "all_token_semantic_directions_positive": true,
+      "contrast": "FC-FW",
+      "correct_target_mean_difference": 0.710261344909668,
+      "correct_target_text": "partner beta",
+      "correct_target_token_ids": [
+        36258,
+        13440
+      ],
+      "correct_target_token_logprob_differences": [
+        1.1191349029541016,
+        0.3013877868652344
+      ],
+      "counterfactual_target_mean_difference": 0.5357160568237305,
+      "counterfactual_target_text": "staff ring",
+      "counterfactual_target_token_ids": [
+        27122,
+        10058
+      ],
+      "counterfactual_target_token_logprob_differences": [
+        0.9628849029541016,
+        0.10854721069335938
+      ],
+      "family": "value_only",
+      "first_token_semantic_direction_positive": true,
+      "region": "R2_boundary",
+      "schedule": "N",
+      "semantic_margin_mean_difference": 0.1745452880859375,
+      "semantic_margin_token_differences": [
+        0.15625,
+        0.192840576171875
+      ]
+    },
+    {
+      "all_token_semantic_directions_positive": false,
+      "contrast": "CC-WW",
+      "correct_target_mean_difference": -0.44602203369140625,
+      "correct_target_text": "partner beta",
+      "correct_target_token_ids": [
+        36258,
+        13440
+      ],
+      "correct_target_token_logprob_differences": [
+        -1.1166305541992188,
+        0.22458648681640625
+      ],
+      "counterfactual_target_mean_difference": -0.48491764068603516,
+      "counterfactual_target_text": "staff ring",
+      "counterfactual_target_token_ids": [
+        27122,
+        10058
+      ],
+      "counterfactual_target_token_logprob_differences": [
+        -1.0853805541992188,
+        0.11554527282714844
+      ],
+      "family": "full_KV",
+      "first_token_semantic_direction_positive": false,
+      "region": "R2_boundary",
+      "schedule": "P",
+      "semantic_margin_mean_difference": 0.038895606994628906,
+      "semantic_margin_token_differences": [
+        -0.03125,
+        0.10904121398925781
+      ]
+    },
+    {
+      "all_token_semantic_directions_positive": false,
+      "contrast": "FC-FW",
+      "correct_target_mean_difference": 0.22855281829833984,
+      "correct_target_text": "partner beta",
+      "correct_target_token_ids": [
+        36258,
+        13440
+      ],
+      "correct_target_token_logprob_differences": [
+        1.0875301361083984,
+        -0.6304244995117188
+      ],
+      "counterfactual_target_mean_difference": 0.20750629901885986,
+      "counterfactual_target_text": "staff ring",
+      "counterfactual_target_token_ids": [
+        27122,
+        10058
+      ],
+      "counterfactual_target_token_logprob_differences": [
+        1.2750301361083984,
+        -0.8600175380706787
+      ],
+      "family": "value_only",
+      "first_token_semantic_direction_positive": false,
+      "region": "R2_boundary",
+      "schedule": "P",
+      "semantic_margin_mean_difference": 0.02104651927947998,
+      "semantic_margin_token_differences": [
+        -0.1875,
+        0.22959303855895996
+      ]
+    }
+  ],
+  "design_id": "coherent-state-decision-canary-v12",
+  "primary_arm_count": 31,
+  "schema": "coherent-canary-v12-e01-token-decomposition/v1",
+  "source": {
+    "package_dir": "results/coherent_canary_v12_treatment_package/coherent-canary-v12-treatment-e01_exact-subject_20260712T040237879370Z",
+    "package_manifest_sha256": "f733915b6606d5fdf6a23c31ccf4f08746da7a6d75f8dfff6e2a629390220dbe",
+    "raw_artifact_sha256": "f6622d978c80d8f4f874c208ef9f6d9546ab3f1bf7676655c9a0b4662718d082"
+  },
+  "subject": {
+    "attention_backend": "eager",
+    "dtype": "torch.bfloat16",
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+  },
+  "unique_primary_focal_generations": [
+    "Ring 3"
+  ],
+  "unique_primary_nonfocal_generations": [
+    "30 days"
+  ]
+}
