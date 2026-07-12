@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -105,3 +107,20 @@ def test_report_declares_numeric_dataset_order() -> None:
     assert "sorted numerically by saved dataset idx" in report[
         "statistical_contract"
     ]["unit"]
+
+
+def test_preserved_shared_system_prompt_reconstructs_exactly() -> None:
+    path = (
+        REPO_ROOT
+        / "results"
+        / "swegym_paper_reanalysis"
+        / "swegym-shared-system-prompt_provenance_20260712T054055Z.json"
+    )
+    artifact = json.loads(path.read_text())
+    content = "\n".join(artifact["lines"])
+    assert len(content) == artifact["content_length_characters"] == 4758
+    expected_sha256 = "1120aa8819abb372428afb82f6a5f49d1d243e4bf58cb27fd481809acd339e84"
+    assert artifact["content_sha256_utf8"] == expected_sha256
+    assert hashlib.sha256(content.encode()).hexdigest() == expected_sha256
+    assert artifact["source"]["rows_scanned"] == 491
+    assert artifact["source"]["all_rows_share_exact_system_prompt"] is True
