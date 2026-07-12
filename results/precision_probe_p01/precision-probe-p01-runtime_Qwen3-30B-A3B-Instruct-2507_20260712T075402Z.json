@@ -1,0 +1,25 @@
+{
+  "component_reuse_does_not_inherit_v12_eligibility": true,
+  "created_at_utc": "2026-07-12T07:57:46.506531+00:00",
+  "dependencies": {
+    "accelerate": "1.14.0",
+    "bitsandbytes": "0.49.2",
+    "huggingface-hub": "0.36.2",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.12.1",
+    "transformers": "4.57.6"
+  },
+  "expected_commit": "f67d631e8a31177118c62eb0da8b8acfc059de41",
+  "formal_v12_decision_eligible": false,
+  "gpu": "NVIDIA A100 80GB PCIe, GPU-470c3e18-9f87-0a04-f3bd-e974d59e1903, 580.159.04, 81920",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "observed_commit": "f67d631e8a31177118c62eb0da8b8acfc059de41",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+  "protocol_id": "precision-probe-p01",
+  "python": "3.12.11",
+  "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "schema": "precision_probe_p01_runtime_attestation_v1",
+  "torch_cuda": "13.0",
+  "v12_reentry_authorized": false
+}

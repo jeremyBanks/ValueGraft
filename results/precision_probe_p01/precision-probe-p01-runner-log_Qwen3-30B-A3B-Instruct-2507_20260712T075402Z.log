@@ -1,0 +1,89 @@
+{"completion_marker_path": "/workspace/repo_precision_probe_p01/results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-completion_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json", "event": "RUN", "model": "Qwen/Qwen3-30B-A3B-Instruct-2507", "protocol_id": "precision-probe-p01", "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe", "run_directory": "/workspace/repo_precision_probe_p01/results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z", "run_manifest_path": "/workspace/repo_precision_probe_p01/results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-run-manifest_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json"}
+`torch_dtype` is deprecated! Use `dtype` instead!
+/workspace/p01-venv/lib/python3.12/site-packages/bitsandbytes/backends/cuda/ops.py:213: FutureWarning: _check_is_size will be removed in a future PyTorch release along with guard_size_oblivious.     Use _check(i >= 0) instead.
+  torch._check_is_size(blocksize)
+/workspace/p01-venv/lib/python3.12/site-packages/bitsandbytes/backends/cuda/ops.py:468: FutureWarning: _check_is_size will be removed in a future PyTorch release along with guard_size_oblivious.     Use _check(i >= 0) instead.
+  torch._check_is_size(blocksize)
+Traceback (most recent call last):
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 1749, in <module>
+    main()
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 1744, in main
+    _, _, code = run(parse_args())
+                 ^^^^^^^^^^^^^^^^^
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 1692, in run
+    raise fatal_interrupt
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 1603, in run
+    receipt = execute_outcome(
+              ^^^^^^^^^^^^^^^^
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 1089, in execute_outcome
+    raise fatal_interrupt
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 991, in execute_outcome
+    phase = _stage(
+            ^^^^^^^
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 358, in _stage
+    value = function()
+            ^^^^^^^^^^
+  File "/workspace/repo_precision_probe_p01/scripts/run_precision_probe_p01.py", line 993, in <lambda>
+    lambda: run_phase_a_case(
+            ^^^^^^^^^^^^^^^^^
+  File "/workspace/repo_precision_probe_p01/src/coherent_canary_case.py", line 186, in run_phase_a_case
+    c_result = execute_replay_plan(model, plans["C_N"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/repo_precision_probe_p01/src/coherent_canary_runtime.py", line 336, in execute_replay_plan
+    return _run_events(model, plan.token_ids, plan.events, stop_at=stop,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/repo_precision_probe_p01/src/coherent_canary_runtime.py", line 304, in _run_events
+    cache, last_logits = _forward(
+                         ^^^^^^^^^
+  File "/workspace/repo_precision_probe_p01/src/coherent_canary_runtime.py", line 261, in _forward
+    result = model(
+             ^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 918, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/models/qwen3_moe/modeling_qwen3_moe.py", line 650, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+                                      ^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 1072, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/models/qwen3_moe/modeling_qwen3_moe.py", line 487, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/modeling_layers.py", line 94, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/models/qwen3_moe/modeling_qwen3_moe.py", line 359, in forward
+    hidden_states = self.mlp(hidden_states)
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p01-venv/lib/python3.12/site-packages/transformers/models/qwen3_moe/modeling_qwen3_moe.py", line 252, in forward
+    idx, top_x = torch.where(expert_mask[expert_idx].squeeze(0))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

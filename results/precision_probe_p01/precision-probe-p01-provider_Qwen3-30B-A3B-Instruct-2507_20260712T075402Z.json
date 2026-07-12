@@ -1,0 +1,23 @@
+{
+  "expected_commit": "f67d631e8a31177118c62eb0da8b8acfc059de41",
+  "hourly_cost_usd": 1.39,
+  "job_recorded_at_utc": "2026-07-12T09:50:32.416227+00:00",
+  "lossless_package_count": 11,
+  "max_cost_usd": 4.0,
+  "max_provider_seconds": 7200,
+  "operational_interrupt_elapsed_seconds": 7020,
+  "operational_interrupt_epoch": 1783849828,
+  "outcome_package_count": 4,
+  "packaging_exit": 0,
+  "pod_name": "precision-p01-20260712T0754Z-1",
+  "protocol_id": "precision-probe-p01",
+  "provider_clock_started_epoch": 1783842808,
+  "provider_elapsed_seconds_at_job_record": 7024,
+  "provider_elapsed_seconds_at_runner_start": 258,
+  "provider_pod_id": "x72deho8ka2cdy",
+  "provider_wall_cap_seconds": 7200,
+  "recorded_at_utc": "2026-07-12T07:53:29.524929+00:00",
+  "recovery_raw_count": 0,
+  "runner_exit": 124,
+  "schema": "precision_probe_p01_provider_budget_v1"
+}

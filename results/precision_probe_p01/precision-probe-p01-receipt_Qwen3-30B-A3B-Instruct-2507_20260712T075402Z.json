@@ -1,0 +1,224 @@
+{
+  "artifacts": [
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01-job-log_Qwen3-30B-A3B-Instruct-2507_20260712T075402Z.md",
+      "sha256": "dd49249b6580d61360c52e48739a99b0d60eec4c9f4ab905b6a6eb1127a2436d",
+      "size_bytes": 20084
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01-provider_Qwen3-30B-A3B-Instruct-2507_20260712T075402Z.json",
+      "sha256": "523f4b6fa9fcb5198c7b5b2b77035fd39776021e11eefd7c391faa9ae66d6f6e",
+      "size_bytes": 861
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01-runner-log_Qwen3-30B-A3B-Instruct-2507_20260712T075402Z.log",
+      "sha256": "462db651e6abcc30f706ce707a5ba25e83d78555225a07e5fbfc3c8769431df6",
+      "size_bytes": 6675
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01-runtime_Qwen3-30B-A3B-Instruct-2507_20260712T075402Z.json",
+      "sha256": "63b8e4e1b7e5945ed4d4266ab31a3a5d3efb352b1ca388e4c07bd67e7822fd66",
+      "size_bytes": 957
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-completion_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json",
+      "sha256": "8f8a6daad933c01a4b73336af96f00135324010252e38a823d0b0b6a89f6a383",
+      "size_bytes": 12302
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-extension-decision_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json",
+      "sha256": "9af97d246fc8946926e4b524ebbc9b4bf2a73c62dba433ff850539823260f257",
+      "size_bytes": 1034
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-bf16-e01-repeat1-compact_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json",
+      "sha256": "7fc86d397d17e731152c3bb1c4dcdee4dbea8443f6e7298bddbb9c7f4cba29a1",
+      "size_bytes": 132123
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-bf16-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "c7fd7c4747fb15e9cbacc299a394de210666e65865fd46e4d29dd05e09825319",
+      "size_bytes": 1982113
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-bf16-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "13e94ce63a3fddc5b66d7ac6f131f3d3da6d097a6b34c759422acf464538e455",
+      "size_bytes": 1136
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-bf16-e01-repeat1-renders_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.md",
+      "sha256": "08c8f9ec9e51475d968a991bb17d950579edea8b0ee22a023f30ab6d0ef42893",
+      "size_bytes": 40845
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-bf16-e01-repeat2-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "92f794788bf9e9ddc61f3475f9afbca0c3d7952dd219e74d7786ec22cfe9bf62",
+      "size_bytes": 7550
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-bf16-e01-repeat2-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "462ace033b2d65cf8f0463e1ce94370679ab3128b8c10d467d8620190df93739",
+      "size_bytes": 1125
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-bf16-e01-repeat2-renders_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.md",
+      "sha256": "b0ce2102b670165030c1f974c9690925c2932bef3ebb2ba86b6cef5c26fd0be9",
+      "size_bytes": 287
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat1-compact_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json",
+      "sha256": "f8a01975093d7fe5e5fa853641bb0c0bf462c32a3894a34dea4637b15f222eb5",
+      "size_bytes": 135526
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "62e85241103de059eddfa19090205c84b0acf9931a2dacd57d6cc9f82b2ab502",
+      "size_bytes": 1987249
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "be58a0ae7999c67106d1af77e3d6a32cf61ad06fd331b04bc54099667011cf32",
+      "size_bytes": 1136
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat1-renders_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.md",
+      "sha256": "edcc5f84f55259755e6aa83a6649277ff3c51da94d8710ecdce40baa7d8e2904",
+      "size_bytes": 41796
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat2-compact_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json",
+      "sha256": "04dd55bcc357261c7d3dc496970ea6b99a8b64ab08b1ead6afa344eb3523ccfe",
+      "size_bytes": 135525
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat2-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "97d6623806bf71a62c84896632eeca044063d9ad5c293417cc1376e0f64f4f6a",
+      "size_bytes": 1987273
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat2-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "d42e5f9c91acca308154226b75dfc97cf9a48a18d5e87dd0cf77a9b8d8d6045e",
+      "size_bytes": 1136
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-outcome-nf4-e01-repeat2-renders_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.md",
+      "sha256": "9dabefb1162da974d28539e1160f39091421718d6c2a6fd4dd42d39cfcdce563",
+      "size_bytes": 41796
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-phase-a-checkpoint-bf16-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "9dfefa9550cb188872eb883f8a6bcef97a72a0091fa3f5e85c81d0ed42b4575f",
+      "size_bytes": 207136
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-phase-a-checkpoint-bf16-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "e77d7fd457edf6a84dd8113d6b8746ebdf6fee007c4dec064a85e75454daabfc",
+      "size_bytes": 1132
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-phase-a-checkpoint-nf4-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "5dff121b69c28b6528099a6613f9b39df6fa01b684b85d9e86978021c1935653",
+      "size_bytes": 209156
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-phase-a-checkpoint-nf4-e01-repeat1-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "372c8cce0d4ff02f63c39a3c62801cffd4a095b493dfb0d2c6d4346589d595aa",
+      "size_bytes": 1132
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-phase-a-checkpoint-nf4-e01-repeat2-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "d8029ca6813fa23ad967b75c0d6c15dfaf167daf85e06db810612a0fc959c6e5",
+      "size_bytes": 209160
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-phase-a-checkpoint-nf4-e01-repeat2-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "94afb31a5ed55a0b2eb6587ee542bff2a0e6f1a614ae361d5c55adb18c2533aa",
+      "size_bytes": 1132
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-run-manifest_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json",
+      "sha256": "362eb33df3eeb1a2aba76aab971afa3c3888108d4a62ed022c978c95f6b16a76",
+      "size_bytes": 80086
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-bf16-identity-checkpoint-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "c816df8255fb4f5f526eab1bbf9329c95b549a84790aa301575e0749e53d8af6",
+      "size_bytes": 22779
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-bf16-identity-checkpoint-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "ed476dc503fd91fc654e62626b4b5252fb5f0adceb0b64d16af64a8df4f0d915",
+      "size_bytes": 1129
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-bf16-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "4cd4b9e810de59f8169165c2d04349e2a528a8fe250c972e7a361d76c815985e",
+      "size_bytes": 247780
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-bf16-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "d9c000d45b9ced8fe40dcdbf217a8185315cf844f643df8c7a60f3646465601f",
+      "size_bytes": 1133
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-bf16-renders_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.md",
+      "sha256": "7abfdb1147e0c37ff4d61fa5ff4d9f668fb25bb77b747a40d4d6dc43ef070294",
+      "size_bytes": 922
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-nf4-identity-checkpoint-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "3b861fad262f700da73b3db5c185ae18233db302f33dd362c05f51d8fb15c704",
+      "size_bytes": 24699
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-nf4-identity-checkpoint-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "43ae336b2f8930a9fbef7d8dc5c49baf3957d58122dc2e9e985f9491b2093378",
+      "size_bytes": 1129
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-nf4-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/chunk-000001.json",
+      "sha256": "5284ca4f8a881c629ff973e402a5583a301ef0926bdf800583d52fdb8f862cb5",
+      "size_bytes": 249904
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-nf4-raw_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.lossless-package/manifest.json",
+      "sha256": "64064317dddbeabcaab1317359b7316697fabf17a5968640023f0416974b3802",
+      "size_bytes": 1133
+    },
+    {
+      "path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-technical-nf4-renders_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.md",
+      "sha256": "a59fc77507045270b1e3acfd394d721801a83cd9b6000ed2894f7d7e9f3bdae7",
+      "size_bytes": 997
+    }
+  ],
+  "completed_at_utc": "2026-07-12T09:50:32.479384+00:00",
+  "component_reuse_does_not_inherit_v12_eligibility": true,
+  "expected_commit": "f67d631e8a31177118c62eb0da8b8acfc059de41",
+  "formal_v12_decision_eligible": false,
+  "lossless_package_count": 11,
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "observed_commit": "f67d631e8a31177118c62eb0da8b8acfc059de41",
+  "outcome_package_count": 4,
+  "packaging_exit": 0,
+  "protocol_id": "precision-probe-p01",
+  "provider": {
+    "elapsed_seconds_at_receipt": 7024,
+    "hourly_cost_usd": 1.39,
+    "max_cost_usd": 4.0,
+    "operational_interrupt_elapsed_seconds": 7020,
+    "operational_interrupt_epoch": 1783849828,
+    "pod_name": "precision-p01-20260712T0754Z-1",
+    "provider_clock_started_epoch": 1783842808,
+    "provider_pod_id": "x72deho8ka2cdy",
+    "provider_wall_cap_seconds": 7200,
+    "scientific_extension_cap_seconds": 7200
+  },
+  "recovery_raw_count": 0,
+  "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "runner_completion_path": "results/precision_probe_p01/precision-probe-p01_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z/precision-probe-p01-completion_Qwen3-30B-A3B-Instruct-2507_20260712T075751683593Z.json",
+  "runner_completion_status": "ERROR",
+  "runner_exit": 124,
+  "schema": "precision_probe_p01_pod_receipt_v1",
+  "terminal_status": "ERROR",
+  "v12_reentry_authorized": false
+}
