@@ -815,3 +815,36 @@ pre-cast arithmetic. A successor must either construct directly on the bf16
 grid or preregister an outcome-independent fallback such as representability-
 floor zeroing or aggregate-profile matching. Persist a bounded exact tensor
 evidence bundle whenever later control auditing depends on source rows.
+
+## Incident #47 (07-12): shell precedence made the “detached” launch hold SSH open
+
+WHAT: the P01 remote launcher printed `job-launched`, and the real `bash job.sh`
+had stdin on `/dev/null` and stdout/stderr on `job.log`, but the initiating SSH
+process remained open. On the pod, an intermediate `bash -c` was orphaned to
+PID 1 while retaining the SSH stdout/stderr pipes and waiting for the real job.
+The P01 job therefore waited for provider-budget metadata that its local wrapper
+could not transfer until the apparently detached launch returned. Provider
+elapsed time at the eventual runner start was 258 seconds (about `$0.0996` at
+`$1.39/hour`), though that total also includes normal allocation and setup.
+
+WHY: in `cd ... && chmod ... && ENV=... nohup bash job.sh ... & disown`, Bash
+applies `&` to the entire preceding AND-list, not only to `nohup`. The resulting
+asynchronous subshell ran `nohup` in the foreground and inherited the SSH pipes;
+`disown` in the original shell could not change that parse tree. Prior launch
+checks established that a process existed but did not test that the SSH-like
+output pipe reached EOF while the child remained alive.
+
+IMPACT: no second pod was created and no scientific work was lost. The local
+provider-clock watchdog was already alive. After verifying the exact parent,
+child, command line, and file descriptors, Sol terminated only the leaked
+intermediate wrapper; the wanted job survived reparented to PID 1, the SSH call
+returned successfully, the budget record deployed, and the original bounded
+run continued. The generic launcher was then corrected and tested locally; the
+running P01 checkout remained frozen at its recorded earlier commit.
+
+RULE 38 — DETACHMENT REQUIRES PIPE-EOF EVIDENCE: make `&` syntactically local
+to the final `nohup` command (use an explicit group after successful setup),
+capture and disown that child PID, and redirect all three child descriptors.
+A launcher regression must prove both that the parent's captured/SSH-like pipe
+closes promptly and that the detached child is still alive. A printed launch
+marker or live process alone is insufficient.
