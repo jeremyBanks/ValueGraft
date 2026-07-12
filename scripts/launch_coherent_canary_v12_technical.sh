@@ -24,6 +24,21 @@ HEAD_COMMIT="$(git rev-parse HEAD)"
   echo "exact v12 launch requires HEAD == origin/trunk" >&2
   exit 2
 }
+PYTHONPATH=src uv run python - "$HEAD_COMMIT" <<'PY'
+from pathlib import Path
+import sys
+from coherent_canary_loader import verify_frozen_repository
+
+observed = verify_frozen_repository(Path.cwd())
+if observed["head"] != sys.argv[1]:
+    raise SystemExit("frozen verifier head differs from launch head")
+print(
+    "V12 FROZEN VERIFIED",
+    f"apparatus={observed['apparatus_commit']}",
+    f"authorization={observed['authorization_commit']}",
+    f"inventory={observed['inventory_sha256']}",
+)
+PY
 
 export MODELS="Qwen/Qwen3-30B-A3B-Instruct-2507"
 export SC_EXPECTED_COMMIT="$HEAD_COMMIT"

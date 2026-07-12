@@ -18,6 +18,7 @@ launch_pod.sh separately verifies the actual driver after allocation.
 """
 
 import json
+import math
 import subprocess
 import sys
 import time
@@ -37,6 +38,17 @@ RUNPOD_CUDA_VERSIONS = {
     "13.0", "12.9", "12.8", "12.7", "12.6", "12.5", "12.4",
     "12.3", "12.2", "12.1", "12.0", "11.8",
 }
+
+
+def api_timeout_seconds() -> float:
+    raw = os.environ.get("SC_POD_API_TIMEOUT_S", "30")
+    try:
+        value = float(raw)
+    except ValueError as exc:
+        raise ValueError(f"invalid SC_POD_API_TIMEOUT_S: {raw!r}") from exc
+    if not math.isfinite(value) or value <= 0:
+        raise ValueError(f"invalid SC_POD_API_TIMEOUT_S: {raw!r}")
+    return value
 
 
 def api_key():
@@ -86,7 +98,7 @@ def api(method, path, body=None):
                  "User-Agent": "curl/8.4"},
         data=json.dumps(body).encode() if body is not None else None)
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=api_timeout_seconds()) as r:
             return json.loads(r.read() or "{}")
     except urllib.error.HTTPError as e:
         print("API ERROR", e.code, e.read().decode()[:500])
@@ -100,7 +112,7 @@ def gql(query):
                  "Content-Type": "application/json",
                  "User-Agent": "curl/8.4"},
         data=json.dumps({"query": query}).encode())
-    with urllib.request.urlopen(req) as r:
+    with urllib.request.urlopen(req, timeout=api_timeout_seconds()) as r:
         return json.loads(r.read())
 
 

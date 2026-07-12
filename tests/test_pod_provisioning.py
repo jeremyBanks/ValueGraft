@@ -29,6 +29,34 @@ def test_create_body_rejects_invalid_cuda_filter(monkeypatch):
         pod.create_body("gpu")
 
 
+def test_runpod_http_calls_use_positive_bounded_timeout(monkeypatch):
+    observed = []
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            return b"{}"
+
+    def fake_urlopen(request, *, timeout):
+        observed.append(timeout)
+        return Response()
+
+    monkeypatch.setenv("SC_POD_API_TIMEOUT_S", "12.5")
+    monkeypatch.setattr(pod, "api_key", lambda: "key")
+    monkeypatch.setattr(pod.urllib.request, "urlopen", fake_urlopen)
+    assert pod.api("GET", "/pods") == {}
+    assert pod.gql("query { ok }") == {}
+    assert observed == [12.5, 12.5]
+    monkeypatch.setenv("SC_POD_API_TIMEOUT_S", "0")
+    with pytest.raises(ValueError, match="SC_POD_API_TIMEOUT_S"):
+        pod.api_timeout_seconds()
+
+
 def test_create_requires_provider_pod_id_before_writing_state(
         monkeypatch, tmp_path):
     state = tmp_path / "pod.json"
@@ -82,6 +110,9 @@ def test_exact_launch_wrapper_binds_cuda_driver_and_commit_mechanically():
     assert '"$status" -eq 85' in wrapper
     assert '"$status" -eq 86' in wrapper
     assert "status=$status); not retrying" in wrapper
+    assert "verify_frozen_repository(Path.cwd())" in wrapper
+    assert wrapper.index("verify_frozen_repository(Path.cwd())") < \
+        wrapper.index("bash scripts/launch_pod.sh")
     assert launcher.index("nvidia-smi --query-gpu=name,driver_version,memory.total") < \
         launcher.index("apt-get update")
     assert "src/pod_admission.py" in launcher
@@ -270,7 +301,9 @@ def test_launcher_does_not_cleanup_or_retry_allocation_without_known_pod(
 def _wrapper_fixture(tmp_path: Path) -> tuple[dict[str, str], Path]:
     root = tmp_path / "wrapper-repo"
     scripts = root / "scripts"
+    fake_bin = tmp_path / "wrapper-bin"
     scripts.mkdir(parents=True)
+    fake_bin.mkdir()
     event_log = tmp_path / "wrapper-events.log"
     count_file = tmp_path / "wrapper-count"
     _executable(scripts / "launch_pod.sh", r'''#!/bin/sh
@@ -280,6 +313,7 @@ echo "$1" >> "$FAKE_WRAPPER_EVENTS"
 rc=$(printf '%s' "$FAKE_WRAPPER_RCS" | cut -d, -f"$count")
 exit "${rc:-1}"
 ''')
+    _executable(fake_bin / "uv", "#!/bin/sh\nexit 0\n")
     (scripts / "job_coherent_canary_v12_technical.sh").write_text("#!/bin/sh\n")
     subprocess.run(["git", "init", "-q", "-b", "trunk"], cwd=root, check=True)
     subprocess.run(["git", "config", "user.email", "test@example.com"],
@@ -293,6 +327,7 @@ exit "${rc:-1}"
                    cwd=root, check=True)
     env = os.environ.copy()
     env.update({
+        "PATH": f"{fake_bin}:{env['PATH']}",
         "SC_REPO_ROOT": str(root),
         "SC_ADMISSION_MAX_ATTEMPTS": "3",
         "FAKE_WRAPPER_COUNT": str(count_file),
