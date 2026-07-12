@@ -1,0 +1,37 @@
+{
+  "schema": "end-to-end-accounting-event/v1",
+  "captured_at_utc": "2026-07-12T16:39:19Z",
+  "provider_surface": "Claude CLI",
+  "purpose": "Fresh focused freeze-readiness review of the literal powered-successor v13 preregistration",
+  "session_id": "935af4ee-f273-4da0-8927-bcaa7205df17",
+  "runtime_model_requested": "claude-fable-5",
+  "runtime_model_observed": "claude-fable-5",
+  "effort": "max",
+  "maximum_list_price_budget_usd": 4.0,
+  "duration_ms": 744573,
+  "duration_api_ms": 736364,
+  "num_turns": 7,
+  "terminal_status": "error_max_budget_usd_after_artifact_write",
+  "artifact_status": "complete",
+  "reported_list_price_equivalent_usd": 4.163304,
+  "cash_spend_usd": null,
+  "cash_spend_classification": "unknown; Claude CLI was subscription/subsidized and reported cost is not assumed to be incremental cash billing",
+  "aggregate_usage": {
+    "input_tokens": 3239,
+    "output_tokens": 48413,
+    "cache_creation_input_tokens": 68645,
+    "cache_read_input_tokens": 78829,
+    "reported_cost_usd": 4.163304
+  },
+  "model_usage": {
+    "claude-fable-5": {
+      "input_tokens": 3270,
+      "output_tokens": 48696,
+      "cache_creation_input_tokens": 76657,
+      "cache_read_input_tokens": 162664,
+      "reported_cost_usd": 4.163304
+    }
+  },
+  "output_artifact": "notes/fable-v13-preregistration-review.md",
+  "evidence": "Claude CLI JSON result captured immediately after the focused invocation. The note write and final topline completed before the CLI returned its max-budget terminal status. No web search or fetch was used. Reported cost is list-price-equivalent usage, not verified incremental cash."
+}
