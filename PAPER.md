@@ -122,7 +122,7 @@ The correct old-state graft often outperformed position-shuffled and Gaussian so
 Several earlier headline claims from this stratum are void or retired, and we list them so they are not re-cited:
 
 - **The four-level compression treatment conclusion is void.** Ultra/brief/medium cells generated summary text under level-specific requests but reconstructed old state under the default realistic request; only the realistic cell was internally consistent. Compression ratios remain descriptions of text. No flat-across-30× or severity conclusion is licensed.
-- **The +10–12 percentage-point judged-recovery headline is retired.** It came from a local 4-bit MLX stack, brief/adversarial summaries, conversations c01–c12, and was render-fragile: a clean rerender moved judged sense from +8.7 to +1.0 points and referent from +9.7 to +5.2, with intervals spanning zero.
+- **The +10–12 percentage-point judged-recovery headline is retired.** It came from a local 4-bit-weight MLX stack with fp16 KV cache, brief/adversarial summaries, conversations c01–c12, and was render-fragile: a clean rerender moved judged sense from +8.7 to +1.0 points and referent from +9.7 to +5.2, with intervals spanning zero. Its failure to reproduce at bf16 does not identify whether weight quantization/runtime, corpus, or the corrected apparatus explains the difference; a clean precision interaction remains untested.
 - **The packed "H-pack" construction is not evidence for value-only recovery.** It changed fabrication/admission behavior but simultaneously altered layout, transformed K, and V; it restored 0/24 evicted facts, and the earlier "38/48 accurate" claim was unreproducible.
 - **Cross-architecture rows support no law.** Heterogeneous gates and provenance do not support a QK-norm, dense/MoE, keys-neutral, or shared-direction generalization.
 
@@ -300,6 +300,7 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 - Whether any training-free transplant family can recover a practically meaningful fraction of compaction damage.
 - Any effect — positive, negative, or null — on real agent task outcomes.
 - Any cross-architecture generalization.
+- Whether weight quantization or KV-cache dtype changes the effect.
 
 **Also deliberately absent:** an overall cost figure. The end-to-end money/token audit is still open and will be reported separately, distinguishing cash, subscription usage, provider credits, list-price equivalents, estimates, lower bounds, and unknowns.
 
@@ -334,7 +335,7 @@ The formal re-entry requirements are recorded in `notes/2026071288-sol-data-coll
 
 ## 12. Limitations
 
-Beyond the per-stratum caveats above: the principal experiments concern Qwen3, mostly one checkpoint; heterogeneous historical side experiments on other architectures do not establish generalization. Neither v12 replay schedule is native continuous generation, and the one suggestive cell was schedule-sensitive — the construct validity of forced replay for live-agent state is untested. The legacy stratum's source state was reconstructed rather than captured. The strongest positive lead lacks its matched placebo; the diagnostic lacks any placebo. Several provenance elements are irrecoverable: legacy `git_commit: null` manifests, the SWE-Gym upstream revision and row-level trajectory-generator identities, per-trajectory summary text, and all K/V tensor values from e01. Neither the SWE out-of-fitting structural-match endpoint nor e01 free generation moved in the treatment's favor; for the transplant evidence retained here, no task-success endpoint was measured.
+Beyond the per-stratum caveats above: the principal experiments concern Qwen3, mostly one checkpoint; heterogeneous historical side experiments on other architectures do not establish generalization. The exact redesign and diagnostic were bf16 only. The early 4-bit-weight MLX hint used fp16 KV cache and a now-retired, confounded apparatus, so neither weight-quantization dependence nor KV-cache-dtype dependence has been tested cleanly. A bitsandbytes NF4 arm would change weight representation and kernels while ordinarily leaving KV state floating-point; it would be a useful matched runtime/weight-quantization axis, not an isolated test of “4-bit KV.” It was not run because formal v12 stopped before eligible treatment, its diagnostic lacked placebos, and paid collection had closed; a new precision axis belongs behind the same re-entry gates rather than being attached post hoc to an N=1 diagnostic. Neither v12 replay schedule is native continuous generation, and the one suggestive cell was schedule-sensitive — the construct validity of forced replay for live-agent state is untested. The legacy stratum's source state was reconstructed rather than captured. The strongest positive lead lacks its matched placebo; the diagnostic lacks any placebo. Several provenance elements are irrecoverable: legacy `git_commit: null` manifests, the SWE-Gym upstream revision and row-level trajectory-generator identities, per-trajectory summary text, and all K/V tensor values from e01. Neither the SWE out-of-fitting structural-match endpoint nor e01 free generation moved in the treatment's favor; for the transplant evidence retained here, no task-success endpoint was measured.
 
 ---
 
@@ -437,6 +438,7 @@ The legacy and SWE paper statistics are exactly recomputable from committed scor
 | Exploratory agent pilots | `results/agent_clean_run/chain-*`; SWE-bench-derived rows in `results/agent_clean_run/`; `DECISIONS.md` entries 2026-07-07 08:15–10:45 |
 | Retired judged/H-pack claims | `uv run python scripts/reproduce.py --only sense`; `uv run python scripts/reproduce.py --only honesty`; source verdicts under `results/judge_semantic*/` and `results/phase2_30b_scored.json` |
 | Data-collection stop and re-entry requirements | `notes/2026071288-sol-data-collection-stop-and-future-reentry.md` |
+| Quantization-axis disposition | `notes/2026071296-sol-quantization-axis-disposition.md` |
 | End-to-end accounting requirement | `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` |
 | Methods/provenance checklist (questions, not answers) | `METHODS-PROVENANCE-REQUIREMENTS.md` |
 
