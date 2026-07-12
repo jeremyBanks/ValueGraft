@@ -4,6 +4,7 @@ import importlib.util
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
 import json
 
 
@@ -384,6 +385,49 @@ def test_existing_duration_repair_absorbs_latest_continuation_before_splitting()
         [1, 2, 3],
         [4, 5],
     ]
+
+
+def test_dry_run_reports_duration_repair_from_live_continuation(capsys) -> None:
+    mod = load_update_module()
+    timestamps = [
+        "2026-07-05T00:00:00Z",
+        "2026-07-05T02:00:00Z",
+        "2026-07-05T04:20:00Z",
+        "2026-07-05T07:00:00Z",
+        "2026-07-05T08:00:00Z",
+    ]
+    segments = {
+        ("codex", "2026-07-05", 1): [
+            make_message(mod, "codex", "2026-07-05", 1, timestamp, f"message {index}", index)
+            for index, timestamp in enumerate(timestamps, 1)
+        ]
+    }
+    record = mod.NoteRecord(
+        note="notes/existing.md",
+        source_ranges=[mod.SourceRange("codex", "2026-07-05", 1, 1, 3)],
+        first_timestamp=timestamps[0],
+        last_timestamp=timestamps[2],
+        input_hash="input",
+        summary_hash="summary",
+    )
+    args = SimpleNamespace(
+        max_coalesce_gap_hours=2.0,
+        max_note_duration_hours=6.0,
+        split_window_start_hours=4.0,
+        split_window_end_hours=5.0,
+        force_small_continuations=False,
+        min_continuation_messages=20,
+        min_continuation_chars=8_000,
+        target_chars=180_000,
+    )
+
+    mod.dry_run_update_notes([record], segments, args)
+
+    output = capsys.readouterr().out
+    assert "existing notes exceeding duration policy: 1" in output
+    assert "notes/existing.md" in output
+    assert "current ranges: codex 2026-07-05#1 1-5" in output
+    assert "would become 2 notes" in output
 
 
 def test_existing_duration_repair_does_not_reabsorb_a_shared_segment_into_earlier_note() -> None:

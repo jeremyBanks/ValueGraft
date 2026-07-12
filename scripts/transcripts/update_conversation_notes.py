@@ -1150,31 +1150,26 @@ def dry_run_update_notes(
     print("DRY RUN: no prompts, summaries, notes, manifest, or git commits will be written.")
     print(f"manifest records: {len(records)}")
 
-    split_candidates = []
-    if max_note_duration_hours is not None and max_note_duration_hours > 0:
-        for record in records:
-            messages = all_messages_for_ranges(segments, record.source_ranges)
-            if not messages:
-                continue
-            chunks = split_messages_by_duration(
-                messages,
-                max_note_duration_hours,
-                args.split_window_start_hours,
-                args.split_window_end_hours,
-            )
-            if len(chunks) > 1:
-                split_candidates.append((record, messages, chunks))
+    repair_plans = plan_existing_duration_repairs(
+        records,
+        segments,
+        max_note_duration_hours,
+        args.split_window_start_hours,
+        args.split_window_end_hours,
+    )
 
-    print(f"existing notes exceeding duration policy: {len(split_candidates)}")
-    for record, messages, chunks in split_candidates:
+    print(f"existing notes exceeding duration policy: {len(repair_plans)}")
+    for plan in repair_plans:
+        record = records[plan.record_index]
+        messages = all_messages_for_ranges(segments, plan.expanded_ranges)
         print(f"- {record.note}")
         print(
             f"  current: {messages[0].timestamp} -> {messages[-1].timestamp} "
             f"({message_duration_hours(messages):.2f}h, {len(messages)} messages)"
         )
-        print(f"  current ranges: {render_ranges_for_plan(record.source_ranges)}")
-        print(f"  would become {len(chunks)} notes:")
-        print_message_chunk_plan(chunks, indent="    ")
+        print(f"  current ranges: {render_ranges_for_plan(plan.expanded_ranges)}")
+        print(f"  would become {len(plan.chunks)} notes:")
+        print_message_chunk_plan(plan.chunks, indent="    ")
 
     continuations: list[tuple[Path, tuple[str, str, int], int, int, int, int]] = []
     for key, (last_message, record_idx) in covered.items():
