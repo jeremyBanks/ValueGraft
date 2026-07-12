@@ -1,112 +1,97 @@
-_This conversation covers the recovery of a reproducible exact-technical GPU
-workflow, successful technical and treatment-blind Phase-A validation on a
-qualified A100 host, and the conservative decision to stop formal v12 after a
-preregistration/path-control ambiguity while permitting one exploratory e01
-diagnostic. The exploratory treatment run is currently active, with no result or
-receipt yet available._
+_This conversation covers the terminal validation, failure analysis, and
+scientific interpretation of the v12 apparatus, culminating in a formally
+stopped protocol and one bounded e01 diagnostic. The current handoff is paper
+drafting and final cost/token reconciliation; no further GPU or treatment work
+is authorized._
 
 **Participants:** User and gpt-5.6-sol-ultra.
 
-**Handoff State.** Two earlier Secure RunPod attempts failed before scientific
-comparison: one due to a false-positive Transformers 5 packed-MoE topology
-check, and one due to an incorrect commit SHA followed by an incompatible host
-driver. The loader issue was corrected and independently validated: Transformers
-5 converts 18,432 raw expert tensors into 96 packed tensors while preserving the
-48×128×3 expert grid and total 30,532,122,624 parameters. The infrastructure
-issue was confirmed as Secure-pool host variability: observed drivers included
-580.159.03, 550.90.12, 580.126.20, and 580.159.04 beneath the same container
-image. Future GPU work must gate and record GPU identity, driver, CUDA, cuDNN,
-Torch build, dtype, backend, platform, and kernel before paid work.
+**Handoff State.** Formal v12 is stopped under the written path-control rule:
+ULP2 was the mandated stop because both edits were measurable but one moved in
+the wrong direction. The sealed implementation continued to ULP4, which is
+retained only as implementation-defined plumbing evidence and cannot rescue the
+formal branch. Exactly one unchanged e01 treatment run was allowed as a
+post-ambiguity, diagnostic-only experiment; it is not formal v12 evidence and
+authorizes no e02–e06, aggregate, confirmation, conversation, or live-agent
+work. Data collection is complete, no pod is active, and the accepted artifacts
+and lifecycle records are committed and pushed.
 
-The durable provisioning fix requests CUDA-13-compatible capacity, independently
-requires an A100 80GB PCIe and driver ≥580.65.06, verifies the actual runtime
-before model download, and fails closed on incompatibility. Lifecycle safeguards
-now include finite API timeouts, explicit cleanup ownership for precreated pods,
-no automatic replacement after ambiguous failures, receipt-driven artifact
-pulling, exact pinned-head verification, and a provider-clock ceiling. The
-intended documentation form is a neutral critical-incident/postmortem note with
-evidence, causal limits, prevention rules, and explicit stop conditions. A
-further process lesson is that the provider was adopted from an AI
-recommendation without a suitability review against
-reproducible-scientific-compute requirements.
+The exact 30B technical gate and treatment-blind Phase A both passed on a
+qualified same-host stack: Qwen3-30B-A3B-Instruct-2507 at revision `0d7cf239…`,
+bf16/eager attention, A100 80GB PCIe, driver `580.159.04`, Linux `6.8.0-100`,
+Torch `2.12.1+cu130`, Transformers `5.0.0`. Phase A returned
+`PRETREATMENT_PASS`; treatment fields were absent. The e01 diagnostic passed
+runner, independent-validation, receipt, cross-host fresh-score identity, raw
+reconstruction, and local replay checks. Its raw artifact was losslessly
+packaged because the complete treatment JSON exceeded the repository hook limit.
+Exact K/V tensor values were not retained, only hashes, shapes, traces, and
+scores, so future placebo reconstruction requires a new model run.
 
-**Technical Results.** The local 0.6B apparatus initially failed normal-EOS
-termination, but after the approved local-only amendment it passed
-generated/forced equivalence, repeats, replay, self-replacement, and path
-controls; natural calibration was valid but adverse. This result authorized only
-bounded exact technical work, never semantic release. The exact 30B technical
-gate subsequently passed with independent validation, bit-exact identity
-evidence, repeated controls, corrected MoE attestation, and
-`semantic_release_eligible=true`. The accepted technical artifact was pulled,
-hash-verified, committed, and the pod terminated.
+**Scientific Result.** The strongest e01 pattern was a small value-only effect
+at R2/N: `D_focal=+0.174545`, `D_nonfocal=-0.000070`, `SEL=+0.174476`,
+`Hplus=+0.710260`, recovering only 0.81% of fresh margin damage and 4.24% of
+correct-target log-probability damage. Full K+V failed selectivity and
+correct-target movement. The value-only signal shrank to `D=+0.021046` under
+schedule P, did not reproduce coherently in R1/R3, and all 31 primary cells
+generated the same incorrect outputs (`Ring 3` and `30 days`). All three
+norm-matched placebo constructions were unavailable, so placebo count is missing
+evidence, not a null result. Natural calibration was adverse
+(`rho_green=-0.035714`, `rho_amber=0.297872`). The defensible conclusion is a
+weak, uncontrolled, schedule-sensitive mechanistic hint in one explicitly
+resolved fixture—not semantic recovery, useful mitigation, or a general channel.
 
-A same-host technical requalification was required after the first Phase-A
-attempt used a different kernel from the passing report. The requalification
-passed on a healthy Secure A100 PCIe host using the CUDA-13 stack, platform
-`Linux-6.8.0-100-generic-x86_64-with-glibc2.35`, Torch `2.12.1+cu130`,
-Transformers 5.0.0, bf16, and eager attention. Phase A then ran on the same
-host/GPU environment and independently returned `PRETREATMENT_PASS`; treatment
-scores were absent. It established exact-subject competence, fresh-compaction
-damage, carrier support, and the required focal/nonfocal controls, but it was
-not treatment evidence.
+A token-level reanalysis found that the alternate P schedule’s small positive
+phrase-average masked a wrong-direction first target token, with the second
+token compensating. This further weakens the apparent effect. The final
+interpretation must preserve the distinction between forced log-probability
+movement and behavioral/task recovery, and must not treat correlated regions,
+schedules, or arm decompositions as independent replications.
 
-The natural calibration remains `VALID BUT ADVERSE`: it failed the preregistered
-requirement of at least 50% recovery in both directions, although the amber
-transplantation recovered substantial correct-target log-probability and
-demonstrated a non-null history-dependent signal. It remains one short,
-one-token fixture and does not establish generality, selectivity, value-only
-efficacy, or categorical utility.
+**Infrastructure/Postmortem.** Secure RunPod hosts varied materially despite the
+same container and GPU class: observed drivers included `580.159.03`,
+`550.90.12`, and `580.159.04`; the CUDA-13 stack failed on the 550 host. This
+established that container pinning alone did not define a reproducible runtime.
+The workflow now records and gates driver, GPU, platform, runtime, and exact
+commit. Provider selection was also adopted from an AI recommendation without an
+explicit reproducibility/qualification review; the durable lesson is to qualify
+infrastructure against scientific invariants before committing the workflow. The
+packed-MoE loader failure was separately diagnosed as a legitimate Transformers
+5 representation conversion (`18,867` raw tensors to `531` packed tensors), not
+a wrong checkpoint.
 
-**Scientific Decision.** Formal v12 is conservatively stopped because the
-written path-control rule mandates stopping at ULP2, where one direction moved
-incorrectly, while the sealed implementation continued to ULP4 and passed there.
-The pre-freeze code review establishes that the implementation behavior was
-intentional, but selecting it as the formal result would conflict with the
-literal preregistration. Therefore the formal status is `INVALID_TECHNICAL`; the
-ULP4 result is exploratory only. No e02–e06, aggregate v12 claim, conversation
-study, confirmation claim, or live-agent evaluation is authorized.
+**Accounting.** A final end-to-end audit remains required after paper and review
+work stop. Provisional snapshots reported roughly 3.21B Claude tokens, 2.17B
+Codex tokens, and 5.38B combined tokens, but source cutoffs differ and both
+reconstructions must be rerun after quiescence. RunPod recorded consumption was
+approximately `$418.89` in the latest provisional snapshot, with the final
+settled total still pending; recent named v12/e01 deltas include `$0.2322` for
+exact technical work and `$0.4342` for the diagnostic treatment unit. Separate
+actual cash/deposits, provider credits, subscription workload, API-list-price
+equivalents, OpenRouter usage, and unknowns; never collapse them into one total.
+Preserve exact, reconstructed, estimated, lower-bound, and unknown
+classifications, deduplicate resumed/forked sessions, reconcile all RunPod
+billing pages, and commit machine-readable plus Markdown ledgers.
 
-One unchanged e01 treatment run was permitted as a predeclared exploratory
-diagnostic. It must remain diagnostic-only and formally ineligible, cannot
-rescue formal v12, and cannot authorize aggregate expansion. The exact
-scientific apparatus, e01 bytes, model revision, technical and Phase-A reports,
-runtime fingerprint, and treatment inputs are hash-bound to verifier-valid
-commit `cbdfa481fe08de62bf8178d09ca040716d610f21`. The treatment execution
-bundle requires 31 primary records plus 3 norm-matched placebo controls,
-independent harvesting, a cross-host fresh-score witness, and lossless packaging
-of oversized raw output.
+**Paper Handoff.** The existing README is unsafe as an incremental base and
+should be replaced with a fresh science-first paper. Keep four evidence strata
+separate: original synthetic experiments, SWE-Gym/OpenHands trajectory work,
+v10/v11 methodological failures, and formal v12/e01. Correct stale claims about
+summary-only intervention, compression, content-specificity, placebo validity,
+replication, model provenance, and novelty. Include exact artifact
+paths/commits/configurations, the ULP2 prose/code conflict, adverse calibration,
+zero placebo availability, e01’s diagnostic status, infrastructure postmortem,
+and related work. Use conservative language: no equivalence or definitive null
+claims, no population inference from v12’s descriptive N=1, and no live-agent
+performance claim. The intended form is a fresh academic/paper-style narrative
+with a compact postmortem component, not a continuation of the old README’s
+positive framing.
 
-**Current Run.** A qualifying pod `t09se1chhqpw5e` was allocated at
-`$1.39/hour`, matched A100 80GB PCIe, driver `580.159.04`, 81,920 MiB, and the
-CUDA-13 placement requirement. The pinned verifier and runtime checks passed,
-the treatment runner launched on GPU `GPU-b2a…`, and the model is resident at
-approximately 61 GiB while actively computing. At the latest checkpoint it had
-run for about 11 minutes 47 seconds, with no error, receipt, or treatment
-result. The independent watchdog remains authoritative, with deletion required
-no later than 2,300 seconds after allocation and an early deletion trigger 120
-seconds before that bound. No replacement allocation is authorized.
-
-After a terminal artifact appears, the required sequence is receipt-driven pull,
-raw reconstruction if chunked, byte/hash verification, independent validation,
-commit and push, then pod deletion confirmation. A successful exploratory result
-must still be reported as diagnostic-only; any error, invalidity, packaging
-failure, or watchdog termination must be preserved without retrying
-automatically.
-
-**Accounting.** A final end-to-end accounting audit is required after research,
-paper work, and model-assisted review stop. It must separately report actual
-cash transactions, RunPod consumed credits, subscription workload, nominal
-list-price equivalents, local inference workload, and unknowns, with each
-measurement labeled exact, reconstructed, estimated, lower-bound, or unknown.
-Current provisional snapshots include roughly 5.38 billion combined Claude/Codex
-tokens and about $418.89 in recorded RunPod consumed credits, but these are
-live, source-specific snapshots rather than final totals. Claude list-price
-equivalents are not cash charges; Codex and Claude usage occurred through
-subscriptions. RunPod payment/deposit history, long-context pricing, OpenRouter
-activity, subscription invoices, and final post-quiescence token reconstruction
-remain unresolved. The final ledger must deduplicate resumed and forked
-sessions, exhaust provider pagination, reconcile every pod, and be committed as
-reproducible Markdown plus machine-readable data.
+The drafting brief has been committed with the corrected evidence hierarchy,
+provenance requirements, prior-art positioning, and unsafe-claim list. Claude
+Fable 5 has been assigned the initial narrative draft from that bounded brief;
+its draft is to be preserved verbatim before scientific editing. Final review
+must pass factual/numeric provenance, methods-checklist coverage, and fresh-eyes
+readability checks.
 
 ## Conversation sources
 
@@ -136,3 +121,5 @@ reproducible Markdown plus machine-readable data.
 - `019f5455-6528-71f3-a64c-a190a65348b4`
 - `019f545f-f94c-7383-b3bf-a02aaf53493e`
 - `019f546b-5486-7a03-9398-f11c1a88bd40`
+- `019f548e-e46f-7df2-8fcd-178d2962d024`
+- `019f548f-0d8e-76f0-ae6f-06be9df34784`
