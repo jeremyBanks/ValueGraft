@@ -825,9 +825,73 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
     assert rendered.index("verify-release") < rendered.index("pip install")
     assert rendered.index("snapshot_download") < rendered.index("nohup /bin/bash")
     assert "RUN_COMPLETE.json" in rendered and "WORKER_EXITED_ZERO" in rendered
+    assert rendered.index("write(terminal") < rendered.index(
+        "write(state_path")
     assert "/external/import-report.json" not in rendered
     assert "/external/hf-token" in rendered
     assert "powered_v13_recipe" not in rendered
+
+
+@pytest.mark.parametrize("status,returncode", [("COMPLETE", 0), ("DEAD", 22)])
+def test_terminal_publisher_fsync_path_writes_receipt_before_state(
+        tmp_path, status, returncode):
+    receipt = tmp_path / "receipts/job-terminal.json"
+    state = tmp_path / "partials/job-state.json"
+    receipt.parent.mkdir()
+    state.parent.mkdir()
+    state.write_text('{"state":"RUNNING"}\n')
+    result = subprocess.run([
+        sys.executable, "-c", life.JOB_TERMINAL_PUBLISHER,
+        str(receipt), str(state), str(returncode), status, "batch-1",
+    ], text=True, capture_output=True, check=False)
+    assert result.returncode == 0, result.stderr
+    assert json.loads(receipt.read_text()) == {
+        "schema": life.JOB_TERMINAL_SCHEMA,
+        "status": status, "returncode": returncode,
+        "primary_batch_id": "batch-1",
+    }
+    assert json.loads(state.read_text()) == {
+        "state": status, "returncode": returncode,
+    }
+    assert not list(tmp_path.rglob("*.tmp"))
+
+
+def test_watchdog_harvest_rejects_missing_terminal_receipt(
+        tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location("stage_t_harvest_cli", CLI)
+    assert spec is not None and spec.loader is not None
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+    pod_state = tmp_path / "pod-state.json"
+    key = tmp_path / "ssh-key"
+    pod_state.write_text('{"id":"pod_stage_t_1"}\n')
+    key.write_text("key\n")
+
+    class Provider:
+        pass
+
+    monkeypatch.setattr(cli, "RunPodProvider", lambda **_kwargs: Provider())
+    monkeypatch.setattr(
+        cli, "_endpoint", lambda _provider, _state: ("203.0.113.8", 2222))
+
+    def run(command, **_kwargs):
+        destination = Path(command[-1])
+        destination.mkdir(parents=True, exist_ok=True)
+        source = command[-2]
+        category = source.rstrip("/").rsplit("/", 1)[-1]
+        name = "job-start.json" if category == "receipts" else "one.json"
+        (destination / name).write_text("{}\n")
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(cli.subprocess, "run", run)
+    destination = tmp_path / "harvest"
+    output = tmp_path / "harvest-manifest.json"
+    with pytest.raises(life.V13LifecycleError, match="terminal receipt"):
+        cli.command_watchdog_harvest(argparse.Namespace(
+            pod_state=pod_state, ssh_key=key, destination=destination,
+            output=output, primary_batch_id="batch-1"))
+    assert not destination.exists()
+    assert not output.exists()
 
 
 def test_concrete_ssh_transport_bounds_endpoint_wait_without_commands(tmp_path):

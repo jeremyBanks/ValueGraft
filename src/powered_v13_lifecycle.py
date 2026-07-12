@@ -37,6 +37,24 @@ from powered_v13_watchdog import build_record, read_record, write_record_exclusi
 
 SCHEMA = "coherent-state-powered-successor-v13-stage-t-lifecycle-v1"
 HARVEST_SCHEMA = "coherent-state-powered-successor-v13-stage-t-harvest-v1"
+JOB_TERMINAL_SCHEMA = (
+    "coherent-state-powered-successor-v13-stage-t-job-terminal-v1")
+JOB_TERMINAL_PUBLISHER = (
+    "import json,os,sys; "
+    "terminal,state_path,rc_text,state,batch=sys.argv[1:]; "
+    "rc=int(rc_text); "
+    "assert state in {'COMPLETE','DEAD'}; "
+    "assert (state=='COMPLETE' and rc==0) or "
+    "(state=='DEAD' and rc!=0)\n"
+    "def write(path,value):\n"
+    " raw=(json.dumps(value,sort_keys=True,separators=(',',':'))+'\\n').encode();\n"
+    " tmp=path+'.tmp'; fd=os.open(tmp,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o644);\n"
+    " handle=os.fdopen(fd,'wb'); handle.write(raw); handle.flush(); os.fsync(handle.fileno()); handle.close();\n"
+    " os.replace(tmp,path); directory=os.open(os.path.dirname(path),os.O_RDONLY); os.fsync(directory); os.close(directory)\n"
+    f"write(terminal,{{'schema':{JOB_TERMINAL_SCHEMA!r},"
+    "'status':state,'returncode':rc,'primary_batch_id':batch}); "
+    "write(state_path,{'state':state,'returncode':rc})"
+)
 MAX_ALLOCATION_ATTEMPTS = 2
 MAX_EVENTS = 64
 MAX_STATE_BYTES = 128 * 1024
@@ -922,9 +940,11 @@ class OpenSshTransport:
             f"{shlex.quote(REMOTE_VENV + '/bin/python')} -c {shlex.quote(completion_check)} "
             f"\"$run_dir\" {shlex.quote(self.primary_batch_id)}; "
             "then state=COMPLETE; else [ \"$status\" -ne 0 ] || status=22; fi; "
-            f"printf '{{\"returncode\":%s,\"state\":\"%s\"}}\\n' \"$status\" \"$state\" > {shlex.quote(state + '.tmp')}; "
-            f"mv {shlex.quote(state + '.tmp')} {shlex.quote(state)}; "
-            f"printf '{{\"returncode\":%s,\"status\":\"%s\"}}\\n' \"$status\" \"$state\" > {shlex.quote(terminal_receipt)}; "
+            f"{shlex.quote(REMOTE_VENV + '/bin/python')} -c "
+            f"{shlex.quote(JOB_TERMINAL_PUBLISHER)} "
+            f"{shlex.quote(terminal_receipt)} "
+            f"{shlex.quote(state)} \"$status\" \"$state\" "
+            f"{shlex.quote(self.primary_batch_id)}; "
             "exit \"$status\""
         )
         job_auth = (

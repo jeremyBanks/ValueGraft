@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from powered_v13_lifecycle import (  # noqa: E402
     ATTEMPT_DIRECTORY_TOKEN,
     HARVEST_ROOTS,
+    JOB_TERMINAL_SCHEMA,
     LIFECYCLE_STATE_TOKEN,
     LaunchdWatcherBackend,
     OpenSshTransport,
@@ -200,6 +201,24 @@ def command_watchdog_harvest(args: argparse.Namespace) -> None:
             if result.returncode != 0:
                 raise V13LifecycleError(
                     f"bounded harvest failed for {category}")
+        terminal_path = temporary / "receipts/job-terminal.json"
+        terminal = _strict_object(terminal_path, "Stage-T job terminal receipt")
+        raw = terminal_path.read_bytes()
+        if raw != canonical_json_bytes(terminal) + b"\n":
+            raise V13LifecycleError(
+                "Stage-T job terminal receipt is not canonical JSON plus LF")
+        if (set(terminal) != {
+                "schema", "status", "returncode", "primary_batch_id"}
+                or terminal.get("schema") != JOB_TERMINAL_SCHEMA
+                or terminal.get("primary_batch_id") != args.primary_batch_id
+                or terminal.get("status") not in {"COMPLETE", "DEAD"}
+                or type(terminal.get("returncode")) is not int
+                or not ((terminal["status"] == "COMPLETE"
+                         and terminal["returncode"] == 0)
+                        or (terminal["status"] == "DEAD"
+                            and terminal["returncode"] != 0))):
+            raise V13LifecycleError(
+                "Stage-T job terminal receipt fields/batch/returncode differ")
         manifest = build_harvest_manifest(temporary)
         os.replace(temporary, args.destination)
         _write_json_exclusive(args.output, manifest)
@@ -265,6 +284,7 @@ def command_run(args: argparse.Namespace) -> None:
         "--ssh-key", str(args.ssh_key.resolve()), "--destination",
         f"{ATTEMPT_DIRECTORY_TOKEN}/harvest", "--output",
         f"{ATTEMPT_DIRECTORY_TOKEN}/harvest-manifest.json",
+        "--primary-batch-id", args.primary_batch_id,
     ]
     lifecycle = StageTLifecycle(
         repo=args.repo, session_root=session, release=release,
@@ -309,6 +329,7 @@ def parser() -> argparse.ArgumentParser:
     pull.add_argument("--ssh-key", required=True, type=Path)
     pull.add_argument("--destination", required=True, type=Path)
     pull.add_argument("--output", required=True, type=Path)
+    pull.add_argument("--primary-batch-id", required=True)
     pull.set_defaults(function=command_watchdog_harvest)
     run = commands.add_parser("run")
     run.add_argument("--repo", required=True, type=Path)
