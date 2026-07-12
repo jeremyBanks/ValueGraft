@@ -23,9 +23,12 @@ class InfraRetryEntrypointError(RuntimeError):
     """The sole retry entry point failed before provider construction."""
 
 
+EXECUTING_ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_URL = "https://github.com/jeremyBanks/ValueGraft.git"
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
-    result.add_argument("--outer-repo", required=True, type=Path)
     result.add_argument("--outer-authorization-commit", required=True)
     result.add_argument("--outer-manifest", required=True)
     result.add_argument("--outer-receipt-directory", required=True, type=Path)
@@ -37,9 +40,6 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--ssh-key", required=True, type=Path)
     result.add_argument("--hf-token", required=True, type=Path)
     result.add_argument("--primary-batch-id", required=True)
-    result.add_argument(
-        "--repository-url", default="https://github.com/jeremyBanks/ValueGraft.git"
-    )
     return result
 
 
@@ -62,7 +62,7 @@ def _one_inner_receipt(directory: Path) -> Path:
 def build_delegate_command(args: argparse.Namespace) -> list[str]:
     """Verify both authorities before constructing the fixed delegate command."""
     verify_infra_retry_checkout(
-        args.outer_repo,
+        EXECUTING_ROOT,
         authorization_commit=args.outer_authorization_commit,
         manifest_path=args.outer_manifest,
         receipt_directory=args.outer_receipt_directory,
@@ -75,7 +75,7 @@ def build_delegate_command(args: argparse.Namespace) -> list[str]:
     )
     inner_receipt = _one_inner_receipt(args.inner_receipt_directory)
     receipt_sha256 = hashlib.sha256(inner_receipt.read_bytes()).hexdigest()
-    helper = args.outer_repo.resolve() / "scripts/run_powered_v13_stage_t_lifecycle.py"
+    helper = EXECUTING_ROOT / "scripts/run_powered_v13_stage_t_lifecycle.py"
     if helper.is_symlink() or not helper.is_file():
         raise InfraRetryEntrypointError("fixed outer lifecycle helper is absent or symlinked")
     return [
@@ -94,7 +94,7 @@ def build_delegate_command(args: argparse.Namespace) -> list[str]:
         "--ssh-key", str(args.ssh_key.resolve()),
         "--hf-token", str(args.hf_token.resolve()),
         "--primary-batch-id", args.primary_batch_id,
-        "--repository-url", args.repository_url,
+        "--repository-url", REPOSITORY_URL,
     ]
 
 
