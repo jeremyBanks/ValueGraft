@@ -1,0 +1,50 @@
+{
+  "schema": "end-to-end-accounting-event/v1",
+  "captured_at_utc": "2026-07-12T06:17:53Z",
+  "provider_surface": "Claude CLI",
+  "purpose": "final paper generic structure and writing review",
+  "session_id": "cdfb92dc-51df-4d0b-b03a-d9a48b16c43c",
+  "runtime_model_requested": "claude-fable-5",
+  "runtime_model_observed": "claude-fable-5",
+  "effort": "xhigh",
+  "invocations": [
+    {
+      "maximum_list_price_budget_usd": 1.25,
+      "duration_ms": 78487,
+      "duration_api_ms": 17321,
+      "num_turns": 9,
+      "terminal_status": "error_max_budget_usd_after_assessment_composed",
+      "reported_list_price_equivalent_usd": 1.7197239999999998
+    },
+    {
+      "maximum_list_price_budget_usd": 0.35,
+      "duration_ms": 39002,
+      "duration_api_ms": 5514,
+      "num_turns": 3,
+      "terminal_status": "error_max_budget_usd_after_note_written",
+      "reported_list_price_equivalent_usd": 0.38162300000000005
+    }
+  ],
+  "overall_terminal_status": "artifact_completed_across_two_budget-terminated_invocations",
+  "reported_list_price_equivalent_usd": 2.101347,
+  "cash_spend_usd": null,
+  "cash_spend_classification": "unknown; Claude CLI was subscription/subsidized and reported cost is not assumed to be incremental cash billing",
+  "aggregate_model_usage": {
+    "claude-fable-5": {
+      "input_tokens": 261,
+      "output_tokens": 7475,
+      "cache_creation_input_tokens": 75518,
+      "cache_read_input_tokens": 213542,
+      "reported_cost_usd": 2.100262
+    },
+    "claude-haiku-4-5-20251001": {
+      "input_tokens": 1010,
+      "output_tokens": 15,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "reported_cost_usd": 0.001085
+    }
+  },
+  "output_artifact": "notes/2026071297-fable-final-paper-generic-review.md",
+  "evidence": "Two Claude CLI result objects captured immediately after the initial and resumed invocations; final ledger must deduplicate this session against transcript-derived inventory"
+}
