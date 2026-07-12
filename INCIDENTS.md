@@ -882,3 +882,37 @@ guard. Use an OS supervisor, verify the supervised running state after submit,
 key and bound the retained job, define terminal self-eviction, and preserve
 restart behavior for unexpected exits. Test both normal eviction and the
 unexpected-exit path; a PID observed once is not continuing coverage.
+
+## Incident #49 (07-12): an over-broad Fable review prompt defeated the intended cost cap
+
+WHAT: the independent P02 interpretation prompt told Claude Fable 5 to read the
+full P01/P02 analysis JSONs plus several large project documents even though the
+question was narrow and the owner had explicitly warned against overloading a
+fresh reviewer. The first invocation reached a `$3` CLI list-price limit after
+artifact analysis but before writing its note and reported `$3.300054`. A
+same-session resume was restricted to synthesis and writing, but a system-change
+cache miss rewrote 88,625 tokens; its `$1.50` limit reported `$2.05319`. The note
+was written, but combined reported list-price equivalent was `$5.353244`. These
+figures are not assumed to be incremental cash because the CLI was
+subscription/subsidized; both exact receipts are preserved under
+`results/end_to_end_accounting/`.
+
+WHY: the prompt said “focused” while simultaneously requiring full reads of
+large artifacts and background documents. It did not provide a small frozen
+fact extract plus targeted JSON paths. The operator also treated
+`--max-budget-usd` as a tight ceiling, but the CLI can finish an indivisible
+request/tool turn beyond the nominal threshold; resumption can lose prompt-cache
+reuse when the system context changes.
+
+IMPACT: no scientific artifact or paid GPU work was affected. Fable completed
+an advisory note that discloses which background files it did not finish, and
+Sol independently checked/corrected its interpretation. The avoidable
+list-price-equivalent overage is part of the final accounting, not hidden.
+
+RULE 40 — BRIEF A FRESH REVIEWER WITH THE SMALLEST SUFFICIENT EVIDENCE SURFACE:
+for a scoped review, provide a concise current fact brief, exact questions, and
+targeted artifact fields; do not require full unrelated histories “for
+context.” Treat a CLI budget as a turn-boundary guard that may overshoot, not a
+hard financial interlock. Leave reserve below the true ceiling, and avoid a
+resume solely to recover prose unless the cached analysis value clearly exceeds
+the possible cache-miss cost.
