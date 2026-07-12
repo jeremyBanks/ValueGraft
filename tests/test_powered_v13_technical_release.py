@@ -331,6 +331,74 @@ def test_stage_t_receipt_mutation_duplicate_and_staleness_fail(
         )
 
 
+def test_remote_setup_accepts_stale_exact_receipt_only_and_rejects_future(
+    tmp_path: Path,
+) -> None:
+    repo, _root, authorization, receipts, _manifest_doc = _valid_release(
+        tmp_path)
+    stale_at = T0 + timedelta(days=1)
+    setup = release._verify_stage_t_remote_setup_checkout_for_test(
+        repo,
+        authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH,
+        receipt_directory=receipts,
+        now=stale_at,
+    )
+    assert setup["status"] == "PASS"
+    assert setup["receipt"]["age_seconds"] == 86400
+    assert setup["receipt"]["receipt_role"] == "REMOTE_SETUP_ONLY"
+    assert setup["receipt"]["age_gate"] == \
+        "LOCAL_PREALLOCATION_AND_FRESH_SUBJECT_RECEIPT"
+
+    with pytest.raises(ReleaseVerificationError, match="stale"):
+        verify_stage_t_checkout(
+            repo,
+            authorization_commit=authorization,
+            manifest_path=MANIFEST_PATH,
+            receipt_directory=receipts,
+            now=stale_at,
+        )
+    with pytest.raises(ReleaseVerificationError, match="too far in the future"):
+        release._verify_stage_t_remote_setup_checkout_for_test(
+            repo,
+            authorization_commit=authorization,
+            manifest_path=MANIFEST_PATH,
+            receipt_directory=receipts,
+            now=T0 - timedelta(seconds=6),
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("schema", "forged-stage-t-receipt-v1", "identity differs"),
+        ("authorization_commit", "0" * 40, "authorization_commit binding differs"),
+        ("static_root_commit", "0" * 40, "static_root_commit binding differs"),
+        ("manifest_path", "release/other.json", "manifest_path binding differs"),
+        ("manifest_sha256", "0" * 64, "manifest_sha256 binding differs"),
+    ],
+)
+def test_remote_setup_rejects_wrong_receipt_schema_and_release_bindings(
+    tmp_path: Path, field: str, value: str, message: str,
+) -> None:
+    repo, _root, authorization, receipts, _manifest_doc = _valid_release(
+        tmp_path)
+    receipt_path = receipts / STAGE_T_RECEIPT_BASENAME
+    receipt = json.loads(receipt_path.read_bytes())
+    receipt[field] = value
+    receipt["payload_sha256"] = receipt_payload_sha256(receipt)
+    receipt_path.write_bytes(canonical_json_bytes(receipt) + b"\n")
+
+    with pytest.raises(ReleaseVerificationError, match=message):
+        release._verify_stage_t_remote_setup_checkout_for_test(
+            repo,
+            authorization_commit=authorization,
+            manifest_path=MANIFEST_PATH,
+            receipt_directory=receipts,
+            now=T0 + timedelta(days=1),
+        )
+
+
 def test_stage_t_preregistration_change_is_exactly_one_line(tmp_path: Path) -> None:
     repo, root = _root(tmp_path)
     manifest = _manifest(repo, root)
@@ -461,7 +529,8 @@ def test_generic_engine_rejects_forged_custom_spec_and_stage_key(
 def test_production_receipt_apis_expose_no_clock_or_tolerance_knobs() -> None:
     forbidden = {
         "created_at", "now", "max_age_seconds", "max_receipt_age_seconds",
-        "future_skew_seconds",
+        "future_skew_seconds", "allow_stale", "skip_age", "enforce_age",
+        "age_policy", "verify_checkout",
     }
     for function in (
         release.create_stage_t_launch_receipt,
@@ -472,6 +541,11 @@ def test_production_receipt_apis_expose_no_clock_or_tolerance_knobs() -> None:
         release.verify_stage_a_checkout,
     ):
         assert not (forbidden & set(inspect.signature(function).parameters))
+    assert list(inspect.signature(
+        release._verify_stage_t_remote_setup_checkout).parameters) == [
+            "repo", "authorization_commit", "manifest_path",
+            "receipt_directory",
+        ]
 
 
 def test_public_stage_t_receipt_and_checkout_use_real_clock_and_pass(

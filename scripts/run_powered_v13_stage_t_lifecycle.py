@@ -29,16 +29,19 @@ from powered_v13_lifecycle import (  # noqa: E402
     OpenSshTransport,
     POD_STATE_TOKEN,
     REMOTE_ARTIFACTS,
+    REMOTE_EXTERNAL,
+    REMOTE_REPO,
     RecoveringWatcherSupervisor,
     RunPodProvider,
     StageTLifecycle,
+    STAGE_T_RECEIPT_BASENAME,
     V13LifecycleError,
     build_harvest_manifest,
     canonical_json_bytes,
     job_probe_exit,
+    _verify_remote_setup_release_binding,
     verify_release_binding,
 )
-from powered_v13_release import verify_stage_t_checkout  # noqa: E402
 
 
 def _strict_object(path: Path, label: str) -> dict:
@@ -74,10 +77,33 @@ def command_verify(args: argparse.Namespace) -> None:
         expected_receipt_sha256=args.receipt_sha256,
         import_report_path=args.import_report,
         expected_import_report_sha256=args.import_report_sha256,
-        verify_checkout=verify_stage_t_checkout,
     )
     print(json.dumps({
         "status": "PASS",
+        "authorization_commit": release.authorization_commit,
+        "receipt_sha256": release.receipt_sha256,
+        "import_report_sha256": release.import_report_sha256,
+        "job_path": release.job_path,
+        "sync_paths": list(release.sync_paths),
+    }, sort_keys=True))
+
+
+def _command_verify_remote_setup(args: argparse.Namespace) -> None:
+    """Fixed admitted-host setup gate; never the subject receipt verifier."""
+
+    report_relative = Path(args.import_report)
+    release = _verify_remote_setup_release_binding(
+        repo=Path(REMOTE_REPO),
+        expected_authorization_commit=args.authorization_commit,
+        manifest_path=args.manifest,
+        receipt_path=(Path(REMOTE_EXTERNAL) / STAGE_T_RECEIPT_BASENAME),
+        expected_receipt_sha256=args.receipt_sha256,
+        import_report_path=Path(REMOTE_REPO) / report_relative,
+        expected_import_report_sha256=args.import_report_sha256,
+    )
+    print(json.dumps({
+        "status": "PASS",
+        "verification_role": "REMOTE_SETUP_ONLY",
         "authorization_commit": release.authorization_commit,
         "receipt_sha256": release.receipt_sha256,
         "import_report_sha256": release.import_report_sha256,
@@ -241,7 +267,6 @@ def command_run(args: argparse.Namespace) -> None:
         expected_receipt_sha256=args.receipt_sha256,
         import_report_path=args.import_report,
         expected_import_report_sha256=args.import_report_sha256,
-        verify_checkout=verify_stage_t_checkout,
     )
     session = args.session_root.resolve()
     transient_state = session.with_name(f"{session.name}.provider-state.json")
@@ -316,6 +341,14 @@ def parser() -> argparse.ArgumentParser:
     verify.add_argument("--import-report", required=True, type=Path)
     verify.add_argument("--import-report-sha256", required=True)
     verify.set_defaults(function=command_verify)
+    setup_verify = commands.add_parser(
+        "_verify-remote-setup", help=argparse.SUPPRESS)
+    setup_verify.add_argument("--authorization-commit", required=True)
+    setup_verify.add_argument("--manifest", required=True)
+    setup_verify.add_argument("--receipt-sha256", required=True)
+    setup_verify.add_argument("--import-report", required=True)
+    setup_verify.add_argument("--import-report-sha256", required=True)
+    setup_verify.set_defaults(function=_command_verify_remote_setup)
     probe = commands.add_parser("job-probe")
     probe.add_argument("--lifecycle-state", required=True, type=Path)
     probe.add_argument("--remote-state", type=Path)

@@ -4,6 +4,7 @@ import argparse
 from copy import deepcopy
 from decimal import Decimal
 import importlib.util
+import inspect
 import json
 import os
 from pathlib import Path
@@ -522,7 +523,7 @@ def _binding_fixture(tmp_path):
 
 def test_release_binding_derives_exact_authorized_sync_allowlist(tmp_path):
     args = _binding_fixture(tmp_path)
-    verified = life.verify_release_binding(
+    verified = life._verify_release_binding_core(
         repo=args[0], expected_authorization_commit=args[1],
         manifest_path=args[2], receipt_path=args[3],
         expected_receipt_sha256=args[4], import_report_path=args[5],
@@ -530,6 +531,56 @@ def test_release_binding_derives_exact_authorized_sync_allowlist(tmp_path):
     assert verified.sync_paths == tuple(sorted((
         "PREREG.md", "contract.json", "release/import-audit.json",
         "release/stage-t.json", life.JOB_PATH, "src/helper.py")))
+
+
+def test_release_binding_public_and_remote_setup_wrappers_are_fixed() -> None:
+    public = inspect.signature(life.verify_release_binding).parameters
+    setup = inspect.signature(
+        life._verify_remote_setup_release_binding).parameters
+    assert "verify_checkout" not in public
+    assert "verify_checkout" not in setup
+    assert "_verify_remote_setup_release_binding" not in life.__all__
+    assert "verify_checkout=verify_stage_t_checkout" in inspect.getsource(
+        life.verify_release_binding)
+    assert "verify_checkout=_verify_stage_t_remote_setup_checkout" in \
+        inspect.getsource(life._verify_remote_setup_release_binding)
+
+
+def test_release_binding_rejects_wrong_expected_receipt_hash_before_checkout(
+        tmp_path):
+    args = _binding_fixture(tmp_path)
+
+    def forbidden_checkout(**_kwargs):
+        pytest.fail("checkout ran after receipt hash rejection")
+
+    with pytest.raises(life.V13LifecycleError, match="receipt hash differs"):
+        life._verify_release_binding_core(
+            repo=args[0], expected_authorization_commit=args[1],
+            manifest_path=args[2], receipt_path=args[3],
+            expected_receipt_sha256="0" * 64,
+            import_report_path=args[5],
+            expected_import_report_sha256=args[6],
+            verify_checkout=forbidden_checkout)
+
+
+def test_release_binding_rejects_setup_receipt_binding_before_checkout(
+        tmp_path):
+    args = list(_binding_fixture(tmp_path))
+    receipt = json.loads(args[3].read_text())
+    receipt["manifest_path"] = "release/other.json"
+    args[3].write_bytes(life.canonical_json_bytes(receipt) + b"\n")
+    args[4] = life.file_sha256(args[3])
+
+    def forbidden_checkout(**_kwargs):
+        pytest.fail("checkout ran after outer receipt binding rejection")
+
+    with pytest.raises(life.V13LifecycleError, match="receipt binding differs"):
+        life._verify_release_binding_core(
+            repo=args[0], expected_authorization_commit=args[1],
+            manifest_path=args[2], receipt_path=args[3],
+            expected_receipt_sha256=args[4], import_report_path=args[5],
+            expected_import_report_sha256=args[6],
+            verify_checkout=forbidden_checkout)
 
 
 def test_release_binding_rejects_caller_pinned_forged_minimal_pass_report(tmp_path):
@@ -560,7 +611,7 @@ def test_release_binding_rejects_caller_pinned_forged_minimal_pass_report(tmp_pa
         return evidence
 
     with pytest.raises(life.V13LifecycleError, match="recomputation"):
-        life.verify_release_binding(
+        life._verify_release_binding_core(
             repo=args[0], expected_authorization_commit=args[1],
             manifest_path=args[2], receipt_path=args[3],
             expected_receipt_sha256=args[4], import_report_path=args[5],
@@ -588,7 +639,7 @@ def test_release_binding_rejects_production_path(tmp_path):
         evidence["authorization"]["manifest_sha256"] = life.file_sha256(manifest_path)
         return evidence
     with pytest.raises(life.V13LifecycleError, match="production-only"):
-        life.verify_release_binding(
+        life._verify_release_binding_core(
             repo=args[0], expected_authorization_commit=args[1],
             manifest_path=args[2], receipt_path=args[3],
             expected_receipt_sha256=args[4], import_report_path=args[5],
@@ -875,7 +926,7 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
             }, sort_keys=True, separators=(",", ":")) + "\n"
         elif "torch.cuda.is_available" in text:
             stdout = "NVIDIA A100 80GB PCIe\n"
-        elif "verify-release" in text:
+        elif "_verify-remote-setup" in text:
             stdout = '{"status": "PASS"}\n'
         elif "nohup /bin/bash" in text:
             stdout = "4321\n"
@@ -924,7 +975,8 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
         capture_output=True, check=False)
     assert syntax.returncode == 0, syntax.stderr
     rendered = "\n".join(" ".join(command) for command, _cwd in commands)
-    assert "git clone --quiet --filter=blob:none --no-checkout --sparse" in rendered
+    assert "git clone --quiet --no-checkout --sparse" in rendered
+    assert "--filter=blob:none" not in rendered
     assert "uv==0.9.18" in rendered and "uv python install 3.12.11" in rendered
     assert "torch==2.12.1" in rendered and "transformers==5.0.0" in rendered
     assert "2.12.1+cu130" in rendered and "torch.version.cuda" in rendered
@@ -933,7 +985,9 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
     assert "--output-parent /workspace/powered-v13-stage-t/artifacts/results" in rendered
     assert "--receipt-directory /workspace/powered-v13-stage-t/launch-receipts" \
         in rendered
-    assert rendered.index("verify-release") < rendered.index("pip install")
+    assert rendered.index("_verify-remote-setup") < rendered.index("pip install")
+    assert not any(flag in rendered for flag in (
+        "--allow-stale", "--skip-age", "--max-age", "--age-policy"))
     assert rendered.index("snapshot_download") < rendered.index(
         "create_stage_t_launch_receipt") < rendered.index("nohup /bin/bash")
     assert "RUN_COMPLETE.json" in rendered and "WORKER_EXITED_ZERO" in rendered
@@ -946,6 +1000,35 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
         in rendered
     assert "/receipts/subject-launch-receipt.json" in rendered
     assert "powered_v13_recipe" not in rendered
+
+
+def test_cli_keeps_normal_preallocation_and_private_remote_setup_paths_fixed():
+    spec = importlib.util.spec_from_file_location("stage_t_lifecycle_cli", CLI)
+    assert spec is not None and spec.loader is not None
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+    run_source = inspect.getsource(cli.command_run)
+    setup_source = inspect.getsource(cli._command_verify_remote_setup)
+    assert run_source.index("verify_release_binding") < run_source.index(
+        "RunPodProvider")
+    assert "_verify_remote_setup_release_binding" not in run_source
+    assert "_verify_remote_setup_release_binding" in setup_source
+    assert "verify_release_binding(" not in setup_source
+
+    parsed = cli.parser()
+    subparsers = next(
+        action for action in parsed._actions
+        if isinstance(action, argparse._SubParsersAction))
+    for name in ("run", "verify-release", "_verify-remote-setup"):
+        options = {
+            option
+            for action in subparsers.choices[name]._actions
+            for option in action.option_strings
+        }
+        assert not ({
+            "--allow-stale", "--skip-age", "--max-age", "--age-policy",
+            "--verify-checkout",
+        } & options)
 
 
 @pytest.mark.parametrize("status,returncode", [("COMPLETE", 0), ("DEAD", 22)])

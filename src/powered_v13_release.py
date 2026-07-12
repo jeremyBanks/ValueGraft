@@ -1281,6 +1281,36 @@ def _verify_launch_receipt(
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Verify exact release bindings and the bounded receipt age."""
+    receipt = _verify_launch_receipt_bindings(
+        receipt_path,
+        authorization_evidence=authorization_evidence,
+        stage_key=stage_key,
+    )
+    age = _receipt_age_seconds(receipt, now=now)
+    if age < -DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS:
+        raise ReleaseVerificationError("launch receipt timestamp is too far in the future")
+    if age > DEFAULT_RECEIPT_MAX_AGE_SECONDS:
+        raise ReleaseVerificationError("launch receipt is stale")
+    return {**receipt, "age_seconds": age}
+
+
+def _receipt_age_seconds(
+    receipt: Mapping[str, Any], *, now: datetime | None = None,
+) -> float:
+    created = _parse_utc(receipt.get("created_utc"), "created_utc")
+    current = now or datetime.now(timezone.utc)
+    if current.tzinfo is None:
+        raise ReleaseVerificationError("receipt verification time is timezone-naive")
+    return (current.astimezone(timezone.utc) - created).total_seconds()
+
+
+def _verify_launch_receipt_bindings(
+    receipt_path: Path,
+    *,
+    authorization_evidence: Mapping[str, Any],
+    stage_key: _StageKey,
+) -> dict[str, Any]:
+    """Verify every immutable receipt field without making a clock decision."""
     spec = _spec_for(stage_key)
     fields = {
         "schema",
@@ -1316,21 +1346,12 @@ def _verify_launch_receipt(
     for key, expected_value in expected.items():
         if receipt[key] != expected_value:
             raise ReleaseVerificationError(f"launch receipt {key} binding differs")
-    created = _parse_utc(receipt["created_utc"], "created_utc")
-    current = now or datetime.now(timezone.utc)
-    if current.tzinfo is None:
-        raise ReleaseVerificationError("receipt verification time is timezone-naive")
-    age = (current.astimezone(timezone.utc) - created).total_seconds()
-    if age < -DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS:
-        raise ReleaseVerificationError("launch receipt timestamp is too far in the future")
-    if age > DEFAULT_RECEIPT_MAX_AGE_SECONDS:
-        raise ReleaseVerificationError("launch receipt is stale")
+    _parse_utc(receipt["created_utc"], "created_utc")
     return {
         "receipt_path": str(Path(receipt_path).resolve()),
         "receipt_sha256": sha256_bytes(raw),
         "payload_sha256": receipt["payload_sha256"],
         "created_utc": receipt["created_utc"],
-        "age_seconds": age,
     }
 
 
@@ -1443,6 +1464,97 @@ def verify_stage_t_checkout(
         manifest_path=manifest_path,
         receipt_directory=receipt_directory,
         stage_key=_StageKey.TECHNICAL_CANARY,
+    )
+
+
+def _verify_stage_t_remote_setup_checkout(
+    repo: Path,
+    *,
+    authorization_commit: str,
+    manifest_path: str,
+    receipt_directory: Path,
+) -> dict[str, Any]:
+    """Verify the fixed remote setup receipt without rechecking its age.
+
+    This private gate exists only because the locally fresh allocation receipt
+    is transported to the admitted host before a bounded, potentially long
+    dependency/model bootstrap.  It has no clock or policy selector and is not
+    used by the subject.  The subject receives a newly created receipt and uses
+    ``verify_stage_t_checkout`` with the unchanged 300-second age gate.
+    """
+
+    return _verify_stage_t_remote_setup_checkout_at(
+        repo,
+        authorization_commit=authorization_commit,
+        manifest_path=manifest_path,
+        receipt_directory=receipt_directory,
+    )
+
+
+def _verify_stage_t_remote_setup_checkout_at(
+    repo: Path,
+    *,
+    authorization_commit: str,
+    manifest_path: str,
+    receipt_directory: Path,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Internal fixed setup implementation with a private test-only clock."""
+
+    repo = Path(repo).resolve()
+    exact_commit = _require_exact_commit(
+        repo, authorization_commit, "authorization_commit")
+    _require_detached_head(repo, exact_commit)
+    _require_clean_tree(repo)
+    receipt_path = _scan_unique_receipt(
+        Path(receipt_directory), stage_key=_StageKey.TECHNICAL_CANARY)
+    authorization = _verify_authorization_commit(
+        repo,
+        authorization_commit=exact_commit,
+        manifest_path=manifest_path,
+        stage_key=_StageKey.TECHNICAL_CANARY,
+    )
+    receipt = _verify_launch_receipt_bindings(
+        receipt_path,
+        authorization_evidence=authorization,
+        stage_key=_StageKey.TECHNICAL_CANARY,
+    )
+    age = _receipt_age_seconds(receipt, now=now)
+    if age < -DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS:
+        raise ReleaseVerificationError(
+            "launch receipt timestamp is too far in the future")
+    return {
+        "status": "PASS",
+        "design_id": DESIGN_ID,
+        "stage": STAGE_T,
+        "detached_head": exact_commit,
+        "clean_tree": True,
+        "authorization": authorization,
+        "receipt": {
+            **receipt,
+            "age_seconds": age,
+            "receipt_role": "REMOTE_SETUP_ONLY",
+            "age_gate": "LOCAL_PREALLOCATION_AND_FRESH_SUBJECT_RECEIPT",
+        },
+    }
+
+
+def _verify_stage_t_remote_setup_checkout_for_test(
+    repo: Path,
+    *,
+    authorization_commit: str,
+    manifest_path: str,
+    receipt_directory: Path,
+    now: datetime,
+) -> dict[str, Any]:
+    """Private deterministic-clock setup helper; never a production API."""
+
+    return _verify_stage_t_remote_setup_checkout_at(
+        repo,
+        authorization_commit=authorization_commit,
+        manifest_path=manifest_path,
+        receipt_directory=receipt_directory,
+        now=now,
     )
 
 

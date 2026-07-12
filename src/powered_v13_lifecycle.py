@@ -32,6 +32,10 @@ from powered_v13_import_audit import (
     REPORT_SCHEMA as IMPORT_REPORT_SCHEMA,
     audit_stage_t_imports,
 )
+from powered_v13_release import (
+    _verify_stage_t_remote_setup_checkout,
+    verify_stage_t_checkout,
+)
 from powered_v13_watchdog import (
     DELETE_LEAD_SECONDS,
     MAX_PROVIDER_SECONDS,
@@ -788,7 +792,7 @@ class OpenSshTransport:
             "set -euo pipefail; "
             f"test ! -e {shlex.quote(REMOTE_ROOT)}; "
             f"mkdir -p {shlex.quote(REMOTE_ROOT)}; "
-            f"git clone --quiet --filter=blob:none --no-checkout --sparse -- "
+            f"git clone --quiet --no-checkout --sparse -- "
             f"{shlex.quote(self.repository_url)} {shlex.quote(REMOTE_REPO + '.tmp')}; "
             f"git -C {shlex.quote(REMOTE_REPO + '.tmp')} sparse-checkout init --no-cone; "
             f"git -C {shlex.quote(REMOTE_REPO + '.tmp')} sparse-checkout set --no-cone -- {sparse}; "
@@ -820,12 +824,11 @@ class OpenSshTransport:
         ], timeout_seconds=remaining())
         remote_verify = shlex.join([
             "python3", f"{REMOTE_REPO}/scripts/run_powered_v13_stage_t_lifecycle.py",
-            "verify-release", "--repo", REMOTE_REPO,
+            "_verify-remote-setup",
             "--authorization-commit", commit,
             "--manifest", self.manifest_path,
-            "--receipt", f"{REMOTE_EXTERNAL}/{STAGE_T_RECEIPT_BASENAME}",
             "--receipt-sha256", self.receipt_sha256,
-            "--import-report", f"{REMOTE_REPO}/{self.import_report_path}",
+            "--import-report", self.import_report_path,
             "--import-report-sha256", self.import_report_sha256,
         ])
         verified = self._run(
@@ -1192,13 +1195,13 @@ class LaunchdWatcherBackend:
         return read_record(record_path)
 
 
-def verify_release_binding(
+def _verify_release_binding_core(
     *, repo: Path, expected_authorization_commit: str, manifest_path: str,
     receipt_path: Path, expected_receipt_sha256: str,
     import_report_path: Path, expected_import_report_sha256: str,
     verify_checkout: Callable[..., Mapping[str, Any]],
 ) -> VerifiedRelease:
-    """Bind checkout, receipt, import report, and the exact sync allowlist."""
+    """Private fixed-wrapper engine; tests may inject a synthetic checkout."""
 
     repo = Path(repo).resolve(strict=True)
     _require(_HEX_COMMIT.fullmatch(expected_authorization_commit) is not None,
@@ -1307,6 +1310,44 @@ def verify_release_binding(
         import_report_path=import_report_path,
         import_report_sha256=expected_import_report_sha256,
         sync_paths=sync_paths,
+    )
+
+
+def verify_release_binding(
+    *, repo: Path, expected_authorization_commit: str, manifest_path: str,
+    receipt_path: Path, expected_receipt_sha256: str,
+    import_report_path: Path, expected_import_report_sha256: str,
+) -> VerifiedRelease:
+    """Bind the exact release with the normal 300-second launch gate."""
+
+    return _verify_release_binding_core(
+        repo=repo,
+        expected_authorization_commit=expected_authorization_commit,
+        manifest_path=manifest_path,
+        receipt_path=receipt_path,
+        expected_receipt_sha256=expected_receipt_sha256,
+        import_report_path=import_report_path,
+        expected_import_report_sha256=expected_import_report_sha256,
+        verify_checkout=verify_stage_t_checkout,
+    )
+
+
+def _verify_remote_setup_release_binding(
+    *, repo: Path, expected_authorization_commit: str, manifest_path: str,
+    receipt_path: Path, expected_receipt_sha256: str,
+    import_report_path: Path, expected_import_report_sha256: str,
+) -> VerifiedRelease:
+    """Bind admitted-host setup without weakening the subject receipt gate."""
+
+    return _verify_release_binding_core(
+        repo=repo,
+        expected_authorization_commit=expected_authorization_commit,
+        manifest_path=manifest_path,
+        receipt_path=receipt_path,
+        expected_receipt_sha256=expected_receipt_sha256,
+        import_report_path=import_report_path,
+        expected_import_report_sha256=expected_import_report_sha256,
+        verify_checkout=_verify_stage_t_remote_setup_checkout,
     )
 
 

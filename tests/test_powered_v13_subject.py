@@ -15,6 +15,7 @@ from typing import Any
 
 import pytest
 
+import powered_v13_release as release
 import powered_v13_subject as subject
 
 
@@ -580,6 +581,35 @@ def test_public_api_has_no_policy_hash_clock_spec_or_callback_parameters():
         "ExactSubjectHandle", "MODEL_ID", "MODEL_REVISION",
         "PoweredV13SubjectError", "open_exact_subject",
     ]
+
+
+def test_subject_uses_only_normal_fresh_receipt_verifier(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+):
+    receipts = tmp_path / "receipts"
+    receipts.mkdir()
+    receipt = {
+        "design_id": subject.DESIGN_ID,
+        "stage": release.STAGE_T,
+        "authorization_commit": "a" * 40,
+        "manifest_path": "release/stage-t.json",
+    }
+    (receipts / release.STAGE_T_RECEIPT_BASENAME).write_bytes(
+        release.canonical_json_bytes(receipt) + b"\n")
+    calls = []
+
+    def stale_normal_verifier(*args, **kwargs):
+        calls.append((args, kwargs))
+        raise release.ReleaseVerificationError("launch receipt is stale")
+
+    monkeypatch.setattr(
+        release, "verify_stage_t_checkout", stale_normal_verifier)
+    with pytest.raises(release.ReleaseVerificationError, match="stale"):
+        subject._fixed_stage_t_release(REPO, receipts)
+    assert len(calls) == 1
+    source = inspect.getsource(subject._fixed_stage_t_release)
+    assert "release.verify_stage_t_checkout(" in source
+    assert "remote_setup" not in source and "allow_stale" not in source
 
 
 def test_production_import_graph_has_no_pool_recipe_or_permutation_import():
