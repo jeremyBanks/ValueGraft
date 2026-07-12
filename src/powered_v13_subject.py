@@ -279,6 +279,44 @@ def _run_text(command: Sequence[str], *, cwd: Path | None = None) -> str:
     return result.stdout
 
 
+def _git(
+    repo: Path, *args: str, check: bool = True,
+) -> subprocess.CompletedProcess[bytes]:
+    """Run Git against ``repo`` without ambient repository redirection.
+
+    Git honors a broad family of ``GIT_*`` variables that can redirect the
+    repository, work tree, index, object database, namespace, replacements,
+    and pathspec behavior even when ``cwd`` names the intended checkout.  This
+    loader's pre/post-load boundary must describe the passed checkout itself.
+    """
+    environment = {
+        key: value for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    environment["GIT_LITERAL_PATHSPECS"] = "1"
+    try:
+        result = subprocess.run(
+            ["git", *args], cwd=Path(repo), env=environment,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+    except OSError as exc:
+        raise PoweredV13SubjectError(f"git invocation failed: {exc}") from exc
+    if check and result.returncode != 0:
+        detail = result.stderr.decode("utf-8", "replace").strip()
+        raise PoweredV13SubjectError(
+            f"git {' '.join(args)} failed with {result.returncode}: {detail}"
+        )
+    return result
+
+
+def _git_text(repo: Path, *args: str) -> str:
+    try:
+        return _git(repo, *args).stdout.decode("utf-8", "strict")
+    except UnicodeDecodeError as exc:
+        raise PoweredV13SubjectError("git output is not UTF-8") from exc
+
+
 def _fixed_stage_t_release(repo: Path, receipt_directory: Path) -> dict[str, Any]:
     """Adapt the fixed receipt to the fixed release verifier, with no override."""
     import powered_v13_release as release
@@ -323,13 +361,9 @@ def _fixed_stage_t_release(repo: Path, receipt_directory: Path) -> dict[str, Any
         release.STAGE_T_INVENTORY_CONTRACT_PATH,
         "Stage-T inventory-contract path",
     )
-    inventory_raw = subprocess.run(
-        ["git", "cat-file", "blob", f"{static_root}:{contract_path}"],
-        cwd=Path(repo), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        check=False,
+    inventory_raw = _git(
+        Path(repo), "cat-file", "blob", f"{static_root}:{contract_path}"
     )
-    _require(inventory_raw.returncode == 0,
-             "cannot reread Stage-T inventory contract from static root")
     inventory_doc = _json_object(
         inventory_raw.stdout, "Stage-T inventory contract"
     )
@@ -502,20 +536,16 @@ def _recheck_stage_t_binding(
     _require(isinstance(authorization, Mapping),
              "post-load Stage-T authorization evidence is absent")
     expected_head = authorization.get("authorization_commit")
-    head = _run_text(["git", "rev-parse", "HEAD"], cwd=repo).strip()
+    head = _git_text(repo, "rev-parse", "HEAD").strip()
     _require(head == expected_head,
              "Stage-T checkout HEAD changed during subject load")
-    symbolic = subprocess.run(
-        ["git", "symbolic-ref", "-q", "HEAD"], cwd=repo,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
-    )
+    symbolic = _git(repo, "symbolic-ref", "-q", "HEAD", check=False)
     _require(symbolic.returncode == 1,
              "Stage-T checkout stopped being detached during subject load")
-    status = subprocess.run(
-        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
-        cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    status = _git(
+        repo, "status", "--porcelain=v1", "-z", "--untracked-files=all"
     )
-    _require(status.returncode == 0 and not status.stdout,
+    _require(not status.stdout,
              "Stage-T checkout changed or became dirty during subject load")
     after = _load_contracts(repo)
     _require(after == bundle,

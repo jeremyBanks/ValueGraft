@@ -7,7 +7,9 @@ import hashlib
 import inspect
 import json
 import math
+import os
 from pathlib import Path
+import subprocess
 from types import SimpleNamespace
 from typing import Any
 
@@ -50,6 +52,22 @@ def canonical(value: Any) -> bytes:
     return json.dumps(
         value, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
     ).encode()
+
+
+def git(repo: Path, *args: str) -> str:
+    environment = {
+        key: value for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    result = subprocess.run(
+        ["git", *args], cwd=repo, env=environment, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    )
+    if result.returncode != 0:
+        raise AssertionError(
+            f"git {' '.join(args)} failed ({result.returncode}): {result.stderr}"
+        )
+    return result.stdout.strip()
 
 
 class FakeDevice:
@@ -499,6 +517,59 @@ def test_contract_is_canonical_and_hash_binds_factual_model_bits():
     assert bundle.subject_contract["subject"]["revision"] == subject.MODEL_REVISION
     assert bundle.subject_contract["load_policy"] == subject._LOAD_POLICY
     assert bundle.legacy_contract_sha256 == subject._LEGACY_BINDING["file_sha256"]
+
+
+def test_subject_git_boundary_ignores_ambient_repo_and_replacement_redirection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+):
+    real = tmp_path / "real"
+    real.mkdir()
+    git(real, "init", "-b", "trunk")
+    git(real, "config", "user.email", "subject-test@example.com")
+    git(real, "config", "user.name", "Subject Test")
+    (real / "tracked.txt").write_text("same committed tree\n")
+    git(real, "add", "tracked.txt")
+    git(real, "commit", "-m", "shared root")
+    commit = git(real, "rev-parse", "HEAD")
+    git(real, "checkout", "--detach", commit)
+
+    decoy = tmp_path / "decoy"
+    subprocess.run(
+        ["git", "clone", "--quiet", str(real), str(decoy)],
+        env={key: value for key, value in os.environ.items()
+             if not key.startswith("GIT_")},
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
+    )
+    git(decoy, "checkout", "--detach", commit)
+    (decoy / "tracked.txt").write_text("replacement decoy tree\n")
+    git(decoy, "add", "tracked.txt")
+    git(decoy, "commit", "-m", "replacement tree")
+    replacement = git(decoy, "rev-parse", "HEAD")
+    git(decoy, "replace", commit, replacement)
+    (real / "untracked-during-load.txt").write_text("dirty real checkout\n")
+
+    bundle = subject._ContractBundle(
+        subject_contract={}, legacy_contract={},
+        subject_contract_sha256="1" * 64,
+        legacy_contract_sha256="2" * 64,
+    )
+    monkeypatch.setattr(subject, "_load_contracts", lambda _repo: bundle)
+    monkeypatch.setenv("GIT_DIR", str(decoy / ".git"))
+    monkeypatch.setenv("GIT_WORK_TREE", str(decoy))
+
+    # This is the same object-read boundary used for the Stage-T inventory.
+    # It must read the passed repository's original tree, not the decoy's
+    # replacement commit selected by the ambient Git variables.
+    assert subject._git(
+        real, "cat-file", "blob", f"{commit}:tracked.txt"
+    ).stdout == b"same committed tree\n"
+
+    with pytest.raises(subject.PoweredV13SubjectError, match="changed or became dirty"):
+        subject._recheck_stage_t_binding(
+            real,
+            {"authorization": {"authorization_commit": commit}},
+            bundle,
+        )
 
 
 def test_public_api_has_no_policy_hash_clock_spec_or_callback_parameters():
