@@ -28,10 +28,10 @@ The active handoff is the note whose slug is
   result, and zero available matched placebos**. Existing values are descriptive
   one-fixture observations only.
 - Canary-phase GPU allocation: approximately **$60 authorized**, with about
-  **$1--2 used** and a last observed quiescent RunPod balance of
-  **$57.1287946692**. This balance and current pod inventory must be verified
-  live before a new spend claim or launch. Project-wide historical provider
-  accounting is a separate ledger and must not be conflated with this phase.
+  **$1--2 used**. A fresh provider read at `2026-07-12T14:39:21Z` observed
+  **$57.1287946692 balance**, an **$80 spend limit**, and **zero active pods**.
+  Project-wide historical provider accounting is a separate ledger and must
+  not be conflated with this phase.
 
 ## Current scientific truth
 
@@ -74,8 +74,8 @@ insufficiently tested.
 - No local MLX/coherent-state generation job was observed. An old local serving
   shim and legacy Claude-side watcher processes were present and have not been
   killed by inference.
-- The last committed state reported zero active RunPod pods; a fresh provider
-  API check is pending and governs the next operational claim.
+- A fresh RunPod API check at `2026-07-12T14:39:21Z` observed zero active pods
+  and balance `$57.1287946692`.
 
 ## Non-negotiable boundaries
 
