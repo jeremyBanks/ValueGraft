@@ -296,3 +296,23 @@ def test_validator_rejects_symlinked_active_case_ancestor(tmp_path):
         validator.validate_preterminal_chain(
             root=tmp_path, identity_path=identity_path,
             terminal_evidence_path=evidence_path, runner_pid=PID)
+
+
+@pytest.mark.parametrize(("field", "value", "runner_pid", "match"), [
+    ("pid", -7, -7, "runner PID"),
+    ("process_start_token", "linux-procfs-v1:" + "-" * 36 + ":123",
+     PID, "active lock identity"),
+    ("created_utc", "2026-99-99T99:99:99Z", PID, "real UTC"),
+])
+def test_validator_rejects_lock_pid_token_and_calendar_drift(
+        tmp_path, field, value, runner_pid, match):
+    _identity_value, identity_path, evidence_path = _preterminal(tmp_path)
+    lock_path = tmp_path / "active-case.json"
+    lock = store._strict_json(lock_path.read_bytes(), "active lock")
+    lock[field] = value
+    lock_path.write_bytes(store.canonical_json_bytes(lock) + b"\n")
+    with pytest.raises(validator.IndependentTerminalValidationError,
+                       match=match):
+        validator.validate_preterminal_chain(
+            root=tmp_path, identity_path=identity_path,
+            terminal_evidence_path=evidence_path, runner_pid=runner_pid)

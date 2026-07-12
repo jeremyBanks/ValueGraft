@@ -41,7 +41,9 @@ _SLUG = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 _UTC = re.compile(
     r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z")
 _START_TOKEN = re.compile(
-    r"linux-procfs-v1:[0-9a-f-]{36}:[1-9][0-9]*")
+    r"linux-procfs-v1:"
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+    r":[1-9][0-9]*")
 
 
 class IndependentTerminalValidationError(RuntimeError):
@@ -110,6 +112,19 @@ def _plain_int(value: object, label: str, minimum: int,
                maximum: int) -> int:
     _require(type(value) is int and minimum <= value <= maximum,
              f"{label} lies outside {minimum}..{maximum}")
+    return value
+
+
+def _utc(value: object, label: str) -> str:
+    _require(isinstance(value, str) and _UTC.fullmatch(value) is not None,
+             f"{label} format differs")
+    try:
+        observed = datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError as exc:
+        raise IndependentTerminalValidationError(
+            f"{label} is not a real UTC timestamp") from exc
+    _require(observed.strftime("%Y-%m-%dT%H:%M:%SZ") == value,
+             f"{label} normalization differs")
     return value
 
 
@@ -264,6 +279,7 @@ def validate_preterminal_chain(
     root = Path(root)
     _require(not root.is_symlink() and root.is_dir(),
              "store root is absent or symlinked")
+    _plain_int(runner_pid, "runner PID", 1, 2 ** 31 - 1)
     _require(os.getpid() != runner_pid,
              "validator is not independent of the runner process")
     identity_document, _identity_raw = _strict_object(
@@ -285,9 +301,10 @@ def validate_preterminal_chain(
         and _START_TOKEN.fullmatch(lock["process_start_token"]) is not None
         and isinstance(lock.get("attempt_id"), str)
         and re.fullmatch(r"[0-9a-f]{32}", lock["attempt_id"]) is not None
-        and isinstance(lock.get("created_utc"), str)
-        and _UTC.fullmatch(lock["created_utc"]) is not None,
+        and isinstance(lock.get("created_utc"), str),
         "active lock identity/process binding differs")
+    _plain_int(lock.get("pid"), "active lock PID", 1, 2 ** 31 - 1)
+    _utc(lock.get("created_utc"), "active lock created_utc")
 
     case_relative = PurePosixPath(lock["case_dir"])
     _require(not case_relative.is_absolute()
@@ -328,9 +345,9 @@ def validate_preterminal_chain(
             and path.name == f"{sequence:03d}_{expected_kind}.json"
             and record.get("identity") == identity
             and record.get("identity_sha256") == digest
-            and isinstance(record.get("created_utc"), str)
-            and _UTC.fullmatch(record["created_utc"]) is not None,
+            and isinstance(record.get("created_utc"), str),
             f"record {sequence} identity/schema/order differs")
+        _utc(record.get("created_utc"), f"record {sequence} created_utc")
         completed = () if sequence < 2 else ARMS[:sequence - 1]
         _bounds(record.get("bounds"), completed)
         expected_parent = None if prior is None else {
@@ -401,9 +418,7 @@ def validate_and_write(
         terminal_evidence_path=terminal_evidence_path,
         runner_pid=runner_pid)
     validated_utc = now()
-    _require(isinstance(validated_utc, str)
-             and _UTC.fullmatch(validated_utc) is not None,
-             "validator UTC differs")
+    _utc(validated_utc, "validator UTC")
     receipt = {
         "schema": TERMINAL_VALIDATION_SCHEMA,
         "design_id": DESIGN_ID,
