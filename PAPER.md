@@ -1,4 +1,4 @@
-# Transplanting KV-Cache State Across Conversation Compaction: A Bounded Negative Evaluation and a Methodological Failure Catalogue
+# Transplanting KV-Cache State Across Conversation Compaction: A Negative Evaluation and a Methodological Failure Catalogue
 
 **Jeremy Banks · Anthropic Claude Fable 5 · OpenAI GPT-5.6 Sol (extra-high reasoning)**
 
@@ -10,7 +10,7 @@
 
 When a long LLM conversation is compacted — replaced by a text summary so that work can continue in a fresh context — everything the model computed while generating the original conversation is discarded along with the text. Prior work has already established, in trained settings, that generation-time key/value (KV) state can carry task-relevant information that re-encoding the visible text does not recover. This project asked a narrower, practical question: can a **training-free, post-hoc transplant** of old KV state (in particular, old value vectors under fresh keys) into a compacted context reliably mitigate compaction damage on an ordinary instruction model?
 
-The answer we can support is: **not as tested, and nothing here licenses a practical claim.** Across four evidence strata that must not be pooled, trustworthy performance evidence was mostly null, harmful, or control-incomplete. The strongest surviving performance lead is a small out-of-fitting likelihood effect on a coding-trajectory proxy (+0.0135 nats/token, 95% bootstrap CI [+0.0083, +0.0190]) with no matched placebo, no executed action, and no task-success signal. The final exact-state mechanism experiment formally stopped at a preregistered technical gate; a single permitted post-stop diagnostic produced a weak, schedule-sensitive, placebo-uncontrolled value-only trace with no behavioral recovery. We report these bounds, and we report what we believe is the project's most durable contribution: a catalogue of ten methodological failure modes — spanning finite-precision execution trajectory, source-state provenance, decoded control validity, control representability, and literal prose/code agreement — each of which can move or invalidate a KV-transplant measurement at the scale of the hoped-for effect, and each of which survived elaborate hash, test, and release machinery before being caught.
+The answer we can support is: **not as tested, and nothing here licenses a practical claim.** Across four evidence strata that must not be pooled, trustworthy performance evidence was mostly null, harmful, or control-incomplete. The strongest surviving performance lead is a small out-of-fitting likelihood effect on a coding-trajectory proxy (+0.0135 nats/token, 95% bootstrap CI [+0.0083, +0.0190]) with no matched placebo, no executed action, and no task-success signal. The final exact-state mechanism experiment formally stopped at a preregistered technical gate; a single permitted post-stop diagnostic produced a weak, schedule-sensitive, placebo-uncontrolled value-only trace with no behavioral recovery. We report these measurements and their limitations, and what we believe is the project's most durable contribution: a catalogue of ten methodological failure modes — spanning finite-precision execution trajectory, source-state provenance, decoded control validity, control representability, and literal prose/code agreement — each of which can move or invalidate a KV-transplant measurement at the scale of the hoped-for effect, and several of which survived elaborate hash, test, and release machinery before being caught.
 
 ---
 
@@ -30,7 +30,7 @@ Three things this paper does **not** claim, stated up front:
 
 - It does not claim the state channel is absent, or that transplantation can never work. Most of our confidence intervals permit modest effects; a formal stop is not a null result.
 - It does not claim equivalence anywhere. "No detected average lift" is the strongest negative reading we use.
-- It does not claim any agent-level or task-success effect, positive or negative. No live-agent evaluation was run, deliberately (§11).
+- It does not claim any agent-level or task-success effect, positive or negative. No valid paired live-agent evaluation of a treatment that cleared the mechanism gate was run (§11); earlier exploratory agent runs had separate capability, compaction, and harness confounds and are not efficacy evidence.
 
 ---
 
@@ -44,7 +44,7 @@ Three things this paper does **not** claim, stated up front:
 
 **Learning to Compress Prompts with Gist Tokens** ([arXiv:2304.08467](https://arxiv.org/abs/2304.08467)) trains models to encode prompts into reusable gist-token state. It is learned latent compression, not post-hoc state salvage, and marks the "with training, this is achievable" end of the design space.
 
-**Novelty claim, narrowed.** The broad premise — state beyond text — is established elsewhere and is not ours. What we believe is new is the specific combination evaluated here: a *training-free, post-generation* transplant of old-state components (values, keys, or both) across a *text-compaction* boundary on an unmodified instruction model, together with its negative/bounding results and the methodological catalogue that evaluation produced.
+**Novelty claim, narrowed.** The broad premise — state beyond text — is established elsewhere and is not ours. What we believe is new is the specific combination evaluated here: a *training-free, post-generation* transplant of old-state components (values, keys, or both) across a *text-compaction* boundary on an unmodified instruction model, together with its negative results and the methodological catalogue that evaluation produced.
 
 ---
 
@@ -223,7 +223,7 @@ Integrity of the diagnostic itself is well evidenced: treatment-fresh score obje
 
 > One fixed engineered case exhibited deterministic, focal-selective forced-logprob movement in the exact N/R2 value-only cell under identical visible text.
 
-We classify this as a weak, uncontrolled, schedule-sensitive mechanistic hint. It is not semantic, not useful, not robust, not general, and not behaviorally recovered — each of those words would require evidence e01 does not contain.
+We classify this as a weak, uncontrolled, schedule-sensitive mechanistic hint. It is not evidence of semantic recovery, utility, robustness, generality, or behavioral recovery — each of those claims would require evidence e01 does not contain.
 
 ---
 
@@ -236,12 +236,12 @@ We consider this the paper's most durable contribution. Each entry is a failure 
 | 1 | **Query shape/schedule is part of the computed bf16 state.** On local `Qwen/Qwen3-0.6B` (CPU, bf16, eager), the same 8,430-token c10 prefix under ordinary versus coarse replay schedules moved a fixed margin by 0.060546875 nats; c02 moved 0.1318359375. With future tokens held constant, first divergence localized to layer-0 attention when query width changed 23→4096. | Replay-schedule choice alone can produce "effects" at the scale of the sought signal. | Treat schedule as an experimental variable (`QUERY_SHAPE_ROUNDING`); measure treatment and control under bit-identical schedules. Do not invent a specific tiling/reduction mechanism or extrapolate the magnitude to other models/hardware. |
 | 2 | **A validation gate that cannot fail.** An apparent 7/7 zero-difference validation used seven lengths of one five-token periodic stream — pseudoreplication, not seven inputs. | A broken equivalence assumption certified as verified. | Every gate must be able to fail for its intended reason; validate on representative, non-degenerate inputs. |
 | 3 | **Mechanical geometry mistaken for semantic validity.** A wrong-history control cycled short donor text up to 51 times; later exact-width counterfactuals preserved tokenizer geometry but failed full decoded review. | "Controls" that were not meaningful alternative histories. | Decode and review every control as text; token-geometry equivalence is necessary, never sufficient. |
-| 4 | **Position correction is numerically consequential.** bf16 re-rotation of already-quantized keys shifted target margins at the effect scale. | Position handling masquerading as treatment effect. | Use position-preserving gapped state; never re-rotate quantized keys. |
-| 5 | **Small-model green ladders certify plumbing, not the production regime.** Local identity ladders passed while long-context 30B behavior failed. | False confidence transferred across scale. | Gate production claims on exact-stack (model, dtype, length, hardware) checks. |
+| 4 | **Position correction is numerically consequential.** bf16 re-rotation of already-quantized keys shifted target margins at the effect scale. | Position handling masquerading as treatment effect. | Preserve original positions where possible. If re-rotation is unavoidable, quantify exact-stack dtype and downstream error; do not label the result exact. |
+| 5 | **Toy fixtures certify plumbing, not schedule equivalence or the production numerical regime.** Short/periodic plumbing checks passed, while the first realistic local c10/c02 schedule fixtures failed. | False confidence transferred from nonrepresentative fixtures. | Gate production claims on representative exact-stack checks (model, dtype, length, hardware, schedule), after separate plumbing tests. |
 | 6 | **Controls can be valid in mathematics and unavailable after casting.** The norm-matched e01 placebo construction failed bf16 representability (0/3 after 1,024 attempts each). | The critical control silently absent at analysis time. | Prove control representability in the production dtype before the run; treat "no placebo" as missing evidence. |
 | 7 | **Prose/code agreement is itself a preregistration gate.** Hash-frozen code did not resolve ambiguous stopping semantics (§7.1). | A pass/fail verdict that depended on which artifact you believed. | Diff the literal decision rule in prose against the literal branch in code before sealing; ambiguity discovered later must be dispositioned conservatively. |
 | 8 | **Container identity is not host identity.** The same Secure A100 type and image surfaced NVIDIA drivers 580.159.03 and 550.90.12; pinned CUDA initialized on only one. | Irreproducible runtime; wasted provisioning. | Admission-gate the actual GPU, driver, and memory before bootstrap. (An operations/reproducibility finding; it explains no scientific error above.) |
-| 9 | **State needed for later controls was not preserved.** E01 persisted hashes/shapes/traces/scores; hashes cannot reconstruct K/V rows. | The missing placebo cannot be repaired without a full rerun. | Budget a bounded tensor bundle for control-relevant geometry — here ~39.84 MiB would have sufficed, versus ~480.94 MiB for five full snapshots. |
+| 9 | **State needed for later controls was not preserved.** E01 persisted hashes/shapes/traces/scores; hashes cannot reconstruct K/V rows. | The missing placebo cannot be repaired without a full rerun. | Budget a bounded tensor bundle for control-relevant geometry — independently estimated here at ~39.84 MiB, versus ~480.94 MiB for five full snapshots. |
 | 10 | **Confirmatory machinery ran ahead of an observed signal.** The v11 twelve-case corpus build was paused because no exact-model effect justified it; e01 did not meet the re-entry standard either. | Sunk cost pressure toward running an unjustified confirmation. | Sequence confirmation strictly behind an observed, gated signal; write the re-entry standard down before you want it. |
 
 The unifying lesson is not that rigor failed. Hashes were checked, partitions held, releases were sealed — and several of these failures happened anyway, because rigorous checks of *execution* can still validate the wrong *estimand* when the literal fixture, dtype, control, or stopping rule does not test the generalization being claimed. The check you need is the one aimed at the assumption you did not know you were making.
@@ -250,7 +250,7 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 
 ## 10. What is and is not established
 
-**Established by this repository (with the stated bounds):**
+**Established by this repository (within the stated scope):**
 
 - No detected average lift for the legacy synthetic value-graft apparatus on held-out data (§4.2), with upper bounds still permitting modest effects and with a prefill-reconstruction provenance defect.
 - A small, out-of-fitting, selected-map likelihood lead on demonstrated next actions in coding trajectories (§5), control-incomplete and behaviorally unresolved.
@@ -269,9 +269,9 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 
 ---
 
-## 11. Why no live-agent evaluation ran, and what one would require
+## 11. Why no final paired live-agent evaluation ran, and what one would require
 
-No live-agent evaluation was run, and none is authorized. The reason is scientific, not logistical: the mechanistic treatment did not clear its gate. Running coding agents now would test an unstable, control-incomplete intervention, and any observed task movement — in either direction — would be uninterpretable.
+No valid paired live-agent evaluation of a treatment that cleared the mechanistic ladder was run, and none is authorized. Earlier exploratory agent episodes in the repository encountered independent capability floors, missing compaction damage, and harness defects; they do not test the final intervention. The reason not to launch a new pair now is scientific, not logistical: the mechanistic treatment did not clear its gate. Running coding agents now would test an unstable, control-incomplete intervention, and any observed task movement — in either direction — would be uninterpretable.
 
 A defensible practical evaluation, contingent on a *future* mechanism study succeeding, would require at minimum:
 
@@ -288,7 +288,7 @@ The formal re-entry requirements are recorded in `notes/2026071288-sol-data-coll
 
 ## 12. Limitations
 
-Beyond the per-stratum caveats above: the principal experiments concern Qwen3, mostly one checkpoint; heterogeneous historical side experiments on other architectures do not establish generalization. Neither v12 replay schedule is native continuous generation, and the one suggestive cell was schedule-sensitive — the construct validity of forced replay for live-agent state is untested. The legacy stratum's source state was reconstructed rather than captured. The strongest positive lead lacks its matched placebo; the diagnostic lacks any placebo. Several provenance elements are irrecoverable: legacy `git_commit: null` manifests, the SWE-Gym upstream revision and trajectory-generator identities, per-trajectory summary text, and all K/V tensor values from e01. Neither the SWE out-of-fitting structural-match endpoint nor e01 free generation moved in the treatment's favor, and no task-success endpoint was measured.
+Beyond the per-stratum caveats above: the principal experiments concern Qwen3, mostly one checkpoint; heterogeneous historical side experiments on other architectures do not establish generalization. Neither v12 replay schedule is native continuous generation, and the one suggestive cell was schedule-sensitive — the construct validity of forced replay for live-agent state is untested. The legacy stratum's source state was reconstructed rather than captured. The strongest positive lead lacks its matched placebo; the diagnostic lacks any placebo. Several provenance elements are irrecoverable: legacy `git_commit: null` manifests, the SWE-Gym upstream revision and trajectory-generator identities, per-trajectory summary text, and all K/V tensor values from e01. Neither the SWE out-of-fitting structural-match endpoint nor e01 free generation moved in the treatment's favor; for the transplant evidence retained here, no task-success endpoint was measured.
 
 ---
 
