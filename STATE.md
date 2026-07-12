@@ -42,7 +42,10 @@ established semantic channel or useful mitigation. V11 remains paused. Any
 further mechanism test requires a fresh preregistration, a bf16-feasible
 placebo validated on actual state geometry, multiple independent cases, both
 N/P schedules, and a less saturated calibration regime. The final disposition
-is `notes/2026071287-sol-e01-diagnostic-final-interpretation.md`.
+is `notes/2026071287-sol-e01-diagnostic-final-interpretation.md`. Paid data
+collection for this research cycle is closed; the active work is the fresh
+Fable-led paper, its full review stack, and the final end-to-end token/cost
+audit.
 
 ## SUPERSEDED CURRENT TRUTH (2026-07-12) — exact-v12 attempt three awaiting A7/B7 freeze
 
