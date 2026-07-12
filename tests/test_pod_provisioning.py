@@ -3,8 +3,10 @@ from __future__ import annotations
 import os
 import pytest
 from pathlib import Path
+import signal
 import subprocess
 import textwrap
+import time
 
 import pod
 from pod_admission import PodAdmissionError, parse_gpu_row, validate_gpu
@@ -121,9 +123,47 @@ def test_exact_launch_wrapper_binds_cuda_driver_and_commit_mechanically():
     assert "AUTO_CLEANUP_ARMED=0" in launcher
     assert "bootstrap failed after host admission" in launcher
     assert "required remote Hugging Face token is absent/empty" in launcher
+    assert "&& { MODELS=" in launcher
+    assert '& launch_pid=\\$!; disown \\"\\$launch_pid\\";' in launcher
     assert 'exit 86' in launcher
     assert 'git checkout --quiet -B trunk "$EXPECTED_COMMIT"' in job
     assert 'git merge-base --is-ancestor "$EXPECTED_COMMIT" origin/trunk' in job
+
+
+def test_grouped_remote_detach_closes_pipe_while_job_remains_alive(tmp_path):
+    """The SSH-like captured pipe must not be inherited by an AND-list shell."""
+    job = tmp_path / "job.sh"
+    pid_path = tmp_path / "job.pid"
+    _executable(job, f'''#!/bin/bash
+printf '%s\\n' "$$" > {pid_path!s}
+sleep 5
+''')
+    command = (
+        f"cd {tmp_path!s} && chmod +x job.sh && {{ "
+        "nohup bash job.sh </dev/null >job.log 2>&1 & "
+        'launch_pid=$!; disown "$launch_pid"; '
+        'echo "job-launched pid=$launch_pid"; }'
+    )
+    child_pid = None
+    started = time.monotonic()
+    try:
+        completed = subprocess.run(
+            ["bash", "-c", command], capture_output=True, text=True,
+            timeout=1.0, check=True,
+        )
+        assert time.monotonic() - started < 1.0
+        assert completed.stdout.startswith("job-launched pid=")
+        deadline = time.monotonic() + 0.5
+        while not pid_path.exists() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        child_pid = int(pid_path.read_text().strip())
+        os.kill(child_pid, 0)
+    finally:
+        if child_pid is not None:
+            try:
+                os.kill(child_pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
 
 
 def test_termination_success_is_not_reclassified_by_balance_outage(
