@@ -69,6 +69,17 @@ decisions that govern current work.
 - Harvest and commit before termination. Provider deletion is verified by 404
   plus the active-pod inventory. No idle paid pod survives into analysis or
   writing.
+- Before production-pool text or entropy, add one separately released
+  technical-only e01/long canary with semantic N=0, no pool imports, and no
+  inferential use. Its hard sub-cap is `$1.50` and 3,300 provider seconds,
+  charged inside the existing `$12` admission/pilot/Phase-A bucket rather than
+  the `$8` failure reserve. It measures cold start, exact load, 4.5k eager
+  runtime, bundle/VP/arm time, VRAM, harvest, and deletion.
+- Apparatus work before that canary is a closed list: finish already-active
+  component repairs/reviews, add the canary release boundary, exact subject
+  loader/runtime, and fault-injected watchdog/cleanup. The canary must run by
+  active goal hour `7.8758`; by hour `11.8758`, either Stage A is authorized or
+  a measured written N=48 feasibility rejection replaces further construction.
 
 ## 2026-07-12 — collaboration and judgment
 
