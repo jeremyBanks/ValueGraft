@@ -3,7 +3,7 @@
 **Design ID:** `coherent-state-powered-successor-v13`  
 **Date:** 2026-07-12  
 **Decision owner:** primary Codex agent acting under the owner's powered-successor handoff  
-**Status:** **DRAFT — NO PAID WORK OR PRIMARY TREATMENT AUTHORIZED**
+**Status:** **TECHNICAL_CANARY_AUTHORIZED — E01/LONG ONLY; SEMANTIC N=0**
 
 This is a new protocol. It does not amend or inherit authorization from v10,
 v12, P01, or P02. Historical artifacts are evidence about failure modes and
