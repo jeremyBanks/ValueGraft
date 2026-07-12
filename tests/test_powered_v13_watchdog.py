@@ -36,14 +36,15 @@ def _http_404() -> urllib.error.HTTPError:
         "https://provider.invalid/pods/id", 404, "gone", {}, None)
 
 
-def _harvest(*_args):
+def _harvest(_command=None, epoch=1_000_010, timeout_seconds=60):
     return {
-        "attempted_epoch": 1_000_010,
+        "attempted_epoch": epoch,
         "returncode": 0,
         "stdout_sha256": "e" * 64,
         "stderr_sha256": "f" * 64,
         "timed_out": False,
         "succeeded": True,
+        "timeout_seconds": timeout_seconds,
     }
 
 
@@ -191,9 +192,9 @@ def test_process_death_harvest_failure_still_deletes_and_is_terminal(tmp_path):
     watchdog.write_record_exclusive(path, _record())
     backend = FakeBackend()
 
-    def failed_harvest(_command, epoch):
-        row = _harvest()
-        row.update({"attempted_epoch": epoch, "returncode": 23,
+    def failed_harvest(_command, epoch, timeout_seconds):
+        row = _harvest(_command, epoch, timeout_seconds)
+        row.update({"returncode": 23,
                     "succeeded": False})
         return row
 
@@ -264,6 +265,15 @@ def test_watchdog_refuses_to_overwrite_existing_record(tmp_path):
         watchdog.write_record_exclusive(path, _record())
 
 
+def test_pretermination_record_cannot_prefill_harvest_or_reason():
+    record = _record()
+    record["harvest"] = _harvest()
+    record["termination_reason"] = "forged"
+    with pytest.raises(watchdog.V13WatchdogError,
+                       match="pre-termination"):
+        watchdog.validate_record(record)
+
+
 def test_independent_supervisor_can_resume_after_watcher_exit(tmp_path):
     path = tmp_path / "guard.json"
     watchdog.write_record_exclusive(path, _record())
@@ -292,3 +302,58 @@ def test_independent_supervisor_can_resume_after_watcher_exit(tmp_path):
     assert recovered["status"] == "TERMINATED_HARVESTED"
     assert recovered["termination_reason"] == "process_death"
     assert backend.delete_calls == 1
+
+
+def test_post_probe_clock_and_dynamic_harvest_preserve_normal_cleanup_deadline(
+        tmp_path):
+    record = _record(created_cost_per_hr_usd="2")
+    path = tmp_path / "guard.json"
+    watchdog.write_record_exclusive(path, record)
+
+    class Clock:
+        value = record["delete_trigger_epoch"] - 1
+
+        def __call__(self):
+            return self.value
+
+        def advance(self, seconds):
+            self.value += seconds
+
+    clock = Clock()
+
+    class DelayedBackend(FakeBackend):
+        def get_pod(self, pod_id):
+            clock.advance(10)
+            return super().get_pod(pod_id)
+
+        def delete_pod(self, pod_id):
+            clock.advance(10)
+            return super().delete_pod(pod_id)
+
+        def active_pod_ids(self):
+            clock.advance(10)
+            return super().active_pod_ids()
+
+    def delayed_probe(_command):
+        clock.advance(15)
+        return "RUNNING"
+
+    def delayed_harvest(command, epoch, timeout_seconds):
+        clock.advance(timeout_seconds)
+        return _harvest(command, epoch, timeout_seconds)
+
+    result = watchdog.watch(
+        record_path=path,
+        backend=DelayedBackend(),
+        clock=clock,
+        sleep=lambda _seconds: None,
+        probe=delayed_probe,
+        harvest=delayed_harvest,
+        max_cycles=1,
+    )
+    assert result["status"] == "TERMINATED_HARVESTED"
+    assert result["termination_reason"] == "deadline"
+    assert result["harvest"]["timeout_seconds"] == 56
+    assert clock.value <= record["hard_deadline_epoch"]
+    elapsed = Decimal(clock.value - record["provider_clock_started_epoch"])
+    assert Decimal("2") * elapsed / Decimal(3600) <= Decimal("1.50")

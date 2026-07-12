@@ -34,6 +34,8 @@ DELETE_LEAD_SECONDS = 120
 POLL_SECONDS = 10
 JOB_PROBE_TIMEOUT_SECONDS = 15
 HARVEST_TIMEOUT_SECONDS = 60
+PROVIDER_API_TIMEOUT_SECONDS = 10
+CLEANUP_API_RESERVE_SECONDS = 40
 JOB_RUNNING_EXIT = 0
 JOB_COMPLETE_EXIT = 20
 JOB_DEAD_EXIT = 21
@@ -271,12 +273,14 @@ def validate_record(value: Mapping[str, Any]) -> dict[str, Any]:
     if harvest is not None:
         _require(isinstance(harvest, Mapping) and set(harvest) == {
             "attempted_epoch", "returncode", "stdout_sha256",
-            "stderr_sha256", "timed_out", "succeeded",
+            "stderr_sha256", "timed_out", "succeeded", "timeout_seconds",
         }, "watchdog harvest evidence fields differ")
         _plain_int(harvest.get("attempted_epoch"), "harvest epoch", 1,
                    (1 << 63) - 1)
         _require(type(harvest.get("returncode")) is int,
                  "harvest return code differs")
+        _plain_int(harvest.get("timeout_seconds"), "harvest timeout", 0,
+                   HARVEST_TIMEOUT_SECONDS)
         _sha(harvest.get("stdout_sha256"), "harvest stdout hash")
         _sha(harvest.get("stderr_sha256"), "harvest stderr hash")
         _require(type(harvest.get("timed_out")) is bool
@@ -301,6 +305,15 @@ def validate_record(value: Mapping[str, Any]) -> dict[str, Any]:
                  "terminal watchdog record lacks harvest/deletion evidence")
         _require((status == "TERMINATED_HARVESTED") == harvest["succeeded"],
                  "terminal watchdog status/harvest evidence differ")
+    elif status in {"ALLOCATED", "WATCHING"}:
+        _require(reason is None and harvest is None
+                 and value["per_pod_404_observed"] is False
+                 and value["active_inventory_absent_observed"] is False,
+                 "pre-termination watchdog record contains cleanup evidence")
+    else:
+        _require(status == "TERMINATING" and reason is not None
+                 and harvest is not None,
+                 "terminating watchdog record lacks reason/harvest evidence")
     return deepcopy(dict(value))
 
 
@@ -421,26 +434,35 @@ def guard_decision(
 
 def run_harvest(
     command: Sequence[str], *, epoch: int,
+    timeout_seconds: int = HARVEST_TIMEOUT_SECONDS,
     run: Callable[..., subprocess.CompletedProcess[bytes]] = subprocess.run,
 ) -> dict[str, Any]:
     argv = _command(command, "harvest command")
+    _plain_int(timeout_seconds, "harvest timeout", 0,
+               HARVEST_TIMEOUT_SECONDS)
     timed_out = False
-    try:
-        completed = run(
-            argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            timeout=HARVEST_TIMEOUT_SECONDS, check=False)
-        returncode = completed.returncode
-        stdout = completed.stdout or b""
-        stderr = completed.stderr or b""
-    except subprocess.TimeoutExpired as exc:
+    if timeout_seconds == 0:
         timed_out = True
         returncode = 124
-        stdout = exc.stdout or b""
-        stderr = exc.stderr or b""
-    except OSError as exc:
-        returncode = 127
         stdout = b""
-        stderr = f"{type(exc).__name__}: {exc}".encode("utf-8", "replace")
+        stderr = b"harvest skipped: provider cleanup reserve exhausted"
+    else:
+        try:
+            completed = run(
+                argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                timeout=timeout_seconds, check=False)
+            returncode = completed.returncode
+            stdout = completed.stdout or b""
+            stderr = completed.stderr or b""
+        except subprocess.TimeoutExpired as exc:
+            timed_out = True
+            returncode = 124
+            stdout = exc.stdout or b""
+            stderr = exc.stderr or b""
+        except OSError as exc:
+            returncode = 127
+            stdout = b""
+            stderr = f"{type(exc).__name__}: {exc}".encode("utf-8", "replace")
     return {
         "attempted_epoch": epoch,
         "returncode": returncode,
@@ -448,6 +470,7 @@ def run_harvest(
         "stderr_sha256": sha256_bytes(stderr),
         "timed_out": timed_out,
         "succeeded": not timed_out and returncode == 0,
+        "timeout_seconds": timeout_seconds,
     }
 
 
@@ -525,7 +548,7 @@ def watch(
     clock: Callable[[], float] = time.time,
     sleep: Callable[[float], None] = time.sleep,
     probe: Callable[[Sequence[str]], str] = probe_job,
-    harvest: Callable[[Sequence[str], int], Mapping[str, Any]] | None = None,
+    harvest: Callable[[Sequence[str], int, int], Mapping[str, Any]] | None = None,
     max_cycles: int | None = None,
 ) -> dict[str, Any]:
     """Run until dual deletion confirmation; ``max_cycles`` is test-only."""
@@ -542,16 +565,24 @@ def watch(
     while True:
         cycles += 1
         now = int(clock())
-        provider_pod: Mapping[str, Any] | None = None
-        provider_error: BaseException | None = None
-        try:
-            provider_pod = backend.get_pod(record["pod_id"])
-        except BaseException as exc:
-            provider_error = exc
-        job_state = probe(record["job_probe_command"])
-        action = guard_decision(
-            record=record, now_epoch=now, job_state=job_state,
-            provider_pod=provider_pod, provider_error=provider_error)
+        if now >= record["delete_trigger_epoch"]:
+            job_state = "NOT_PROBED_DEADLINE"
+            action = "STOP_DEADLINE"
+        else:
+            provider_pod: Mapping[str, Any] | None = None
+            provider_error: BaseException | None = None
+            try:
+                provider_pod = backend.get_pod(record["pod_id"])
+            except BaseException as exc:
+                provider_error = exc
+            job_state = probe(record["job_probe_command"])
+            # Provider and job probes are bounded but nonzero.  The deletion
+            # decision must use the clock *after* them, never the stale sample
+            # from before up to 25 seconds of I/O.
+            now = int(clock())
+            action = guard_decision(
+                record=record, now_epoch=now, job_state=job_state,
+                provider_pod=provider_pod, provider_error=provider_error)
         record = _append_event(
             record, epoch=now, kind="WATCHDOG_OBSERVATION",
             evidence={"action": action, "job_state": job_state})
@@ -559,10 +590,18 @@ def watch(
         if action.startswith("STOP_"):
             reason = action.removeprefix("STOP_").lower()
             if record["harvest"] is None:
+                remaining = max(0, record["hard_deadline_epoch"] - now)
+                harvest_timeout = min(
+                    HARVEST_TIMEOUT_SECONDS,
+                    max(0, remaining - CLEANUP_API_RESERVE_SECONDS),
+                )
                 observed_harvest = (
-                    dict(harvest(record["harvest_command"], now))
+                    dict(harvest(
+                        record["harvest_command"], now, harvest_timeout))
                     if harvest is not None
-                    else run_harvest(record["harvest_command"], epoch=now))
+                    else run_harvest(
+                        record["harvest_command"], epoch=now,
+                        timeout_seconds=harvest_timeout))
                 record = _append_event(
                     record, epoch=now, kind="HARVEST_FINISHED",
                     evidence={"succeeded": observed_harvest.get("succeeded")},

@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from powered_v13_watchdog import (  # noqa: E402
+    PROVIDER_API_TIMEOUT_SECONDS,
     V13WatchdogError,
     build_record,
     file_sha256,
@@ -32,7 +33,8 @@ class RunPodBackend:
 
     def __init__(self, state_path: Path):
         os.environ["SC_POD_STATE"] = str(Path(state_path).resolve())
-        os.environ["SC_POD_API_TIMEOUT_S"] = "10"
+        os.environ["SC_POD_API_TIMEOUT_S"] = str(
+            PROVIDER_API_TIMEOUT_SECONDS)
         module = importlib.import_module("pod")
         self._module = importlib.reload(module)
 
