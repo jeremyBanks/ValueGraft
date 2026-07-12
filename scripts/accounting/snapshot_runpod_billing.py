@@ -137,13 +137,19 @@ def _active_inventory(
 
 
 def collect_snapshot(
-    *, authorization: str, start_time_utc: str, end_time_utc: str
+    *,
+    authorization: str,
+    start_time_utc: str,
+    end_time_utc: str,
+    bucket_size: str = "year",
 ) -> dict[str, Any]:
+    if bucket_size not in {"hour", "day", "week", "month", "year"}:
+        raise CollectionError(f"unsupported billing bucket size: {bucket_size!r}")
     before, before_sha, before_status, before_headers = _active_inventory(
         authorization=authorization
     )
     parameters = {
-        "bucketSize": "day",
+        "bucketSize": bucket_size,
         "grouping": "podId",
         "startTime": start_time_utc,
         "endTime": end_time_utc,
@@ -228,6 +234,12 @@ def main() -> int:
     parser.add_argument("--key-file", type=Path, default=Path(".runpod_key"))
     parser.add_argument("--start-time", default="2026-07-01T00:00:00Z")
     parser.add_argument("--end-time", default=None)
+    parser.add_argument(
+        "--bucket-size",
+        choices=("hour", "day", "week", "month", "year"),
+        default="year",
+        help="Provider aggregation bucket; year is canonical within this project window.",
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.output.exists():
@@ -240,6 +252,7 @@ def main() -> int:
         authorization=key,
         start_time_utc=args.start_time,
         end_time_utc=end_time,
+        bucket_size=args.bucket_size,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
