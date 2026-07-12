@@ -121,6 +121,40 @@ def independent_pool_difference_bootstrap(
     }
 
 
+def independent_subset_difference_bootstrap(
+    left: Sequence[float],
+    right: Sequence[float],
+    *,
+    contrast: str,
+    n_reps: int = DEFAULT_REPS,
+    seed: int = DEFAULT_SEED,
+) -> dict[str, Any]:
+    """Bootstrap mean(right) - mean(left), resampling subsets separately."""
+
+    if not left or not right:
+        raise ValueError("both subsets must be non-empty")
+    rng = random.Random(seed)
+    sampled: list[float] = []
+    for _ in range(n_reps):
+        left_mean = sum(
+            left[rng.randrange(len(left))] for _ in range(len(left))
+        ) / len(left)
+        right_mean = sum(
+            right[rng.randrange(len(right))] for _ in range(len(right))
+        ) / len(right)
+        sampled.append(right_mean - left_mean)
+    sampled.sort()
+    return {
+        "contrast": contrast,
+        "mean_difference": mean(right) - mean(left),
+        "ci_95_percentile": {
+            "lower": sampled[int(0.025 * n_reps)],
+            "upper": sampled[int(0.975 * n_reps)],
+        },
+        "resampling": "independent within each subset on every replicate",
+    }
+
+
 @dataclass(frozen=True)
 class Row:
     idx: int
@@ -360,10 +394,24 @@ def build_report(
     if not set(confirmation).issubset(set(original_1)) or len(confirmation) != 45:
         raise ValueError("partial confirmation must contain 45 original-pool trajectories")
 
-    fit_ids = {idx for idx, row in profile.items() if row.split == "tune"}
-    fresh_eval_ids = {idx for idx, row in champion_eval.items() if row.split == "eval"}
+    profile_fit_ids = {idx for idx, row in profile.items() if row.split == "tune"}
+    profile_eval_ids = {idx for idx, row in profile.items() if row.split == "eval"}
+    champion_fit_ids = {
+        idx for idx, row in champion_eval.items() if row.split == "tune"
+    }
+    champion_eval_ids = {
+        idx for idx, row in champion_eval.items() if row.split == "eval"
+    }
+    fit_ids = profile_fit_ids
+    fresh_eval_ids = champion_eval_ids
     if len(fit_ids) != 41 or len(fresh_eval_ids) != 57:
         raise ValueError("expected 41 map-fitting and 57 fresh evaluation trajectories")
+    if (
+        profile_fit_ids != champion_fit_ids
+        or profile_eval_ids != champion_eval_ids
+        or profile_fit_ids | profile_eval_ids != set(profile)
+    ):
+        raise ValueError("profile and champion-eval hash-split assignments differ")
     if fit_ids & fresh_eval_ids:
         raise ValueError("fresh evaluation overlaps map-fitting IDs")
     if set(confirmation) & set(profile):
@@ -375,6 +423,9 @@ def build_report(
     if selected_map_sha != "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53":
         raise ValueError("selected-map hash differs from the recorded frozen map")
 
+    profile_fit_rows = [profile[idx] for idx in sorted(profile_fit_ids)]
+    profile_eval_rows = [profile[idx] for idx in sorted(profile_eval_ids)]
+    champion_fit_rows = [champion_eval[idx] for idx in sorted(champion_fit_ids)]
     fresh_rows = [champion_eval[idx] for idx in sorted(fresh_eval_ids)]
     confirmation_rows = [confirmation[idx] for idx in sorted(confirmation)]
     pooled_selected_rows = fresh_rows + confirmation_rows
@@ -393,6 +444,8 @@ def build_report(
         for pos in range(len(original_run_1_values))
     ]
     disjoint_values = deltas(disjoint_rows, "E-tuned", "B")
+    disjoint_fit_values = deltas(profile_fit_rows, "E-tuned", "B")
+    disjoint_eval_values = deltas(profile_eval_rows, "E-tuned", "B")
     pooled_scalar_values = original_run_2_values + disjoint_values
 
     original_1_summary_tokens = [original_1[idx].summary_tokens for idx in sorted(original_1)]
@@ -420,7 +473,7 @@ def build_report(
     program_path = Path(__file__).resolve()
 
     return {
-        "schema": "swegym-paper-metrics-reanalysis/v2",
+        "schema": "swegym-paper-metrics-reanalysis/v3",
         "generated_at_utc": generated_at_utc,
         "cost": {
             "new_gpu_spend_usd": 0.0,
@@ -466,6 +519,12 @@ def build_report(
             "selected_map_pooling_rule": (
                 "concatenate fresh-pool eval-split 57 with completed original-pool confirmation 45; "
                 "both sets are disjoint from the 41 IDs used to select the map; N=102"
+            ),
+            "disjoint_hash_split_heterogeneity_rule": (
+                "post hoc only: within the later chunked 98-row pool, report the fixed-scalar "
+                "E-tuned-minus-B metric separately on the pre-existing deterministic tune41 and "
+                "eval57 hash subsets, then bootstrap mean(eval57)-mean(tune41) by resampling the "
+                "two row subsets independently"
             ),
         },
         "inputs": directory_inputs + [map_input],
@@ -539,6 +598,65 @@ def build_report(
                 n_reps=n_reps,
                 seed=seed,
             ),
+            "chunked_disjoint_hash_split_post_hoc": {
+                "status": "POST_HOC_DESCRIPTIVE_NOT_MAP_SELECTION_EVIDENCE",
+                "split_rule": (
+                    "sha256('20260710:<dataset-index>') first-eight-hex parity: "
+                    "even=tune, odd=eval"
+                ),
+                "fixed_scalar_minus_baseline": {
+                    "tune41": percentile_bootstrap(
+                        disjoint_fit_values, n_reps=n_reps, seed=seed
+                    ),
+                    "eval57": percentile_bootstrap(
+                        disjoint_eval_values, n_reps=n_reps, seed=seed
+                    ),
+                    "eval57_minus_tune41": independent_subset_difference_bootstrap(
+                        disjoint_fit_values,
+                        disjoint_eval_values,
+                        contrast=(
+                            "mean(eval57 fixed-scalar-minus-baseline) - "
+                            "mean(tune41 fixed-scalar-minus-baseline)"
+                        ),
+                        n_reps=n_reps,
+                        seed=seed,
+                    ),
+                },
+                "relationship_to_selected_map": {
+                    "selection_fact": (
+                        "the layer map was selected on these tune41 rows from the signs of "
+                        "eight region-specific R{k}-minus-B means; the fixed-scalar split "
+                        "contrast was not the selection criterion"
+                    ),
+                    "tune41_selection_exposed": {
+                        "selected_map_minus_baseline": percentile_bootstrap(
+                            deltas(champion_fit_rows, "E-champion", "B"),
+                            n_reps=n_reps,
+                            seed=seed,
+                        ),
+                        "selected_map_minus_fixed_scalar": percentile_bootstrap(
+                            deltas(champion_fit_rows, "E-champion", "E-tuned"),
+                            n_reps=n_reps,
+                            seed=seed,
+                        ),
+                    },
+                    "eval57_out_of_fitting": {
+                        "selected_map_minus_baseline": percentile_bootstrap(
+                            deltas(fresh_rows, "E-champion", "B"),
+                            n_reps=n_reps,
+                            seed=seed,
+                        ),
+                        "fixed_scalar_minus_baseline": percentile_bootstrap(
+                            disjoint_eval_values, n_reps=n_reps, seed=seed
+                        ),
+                        "selected_map_minus_fixed_scalar": percentile_bootstrap(
+                            deltas(fresh_rows, "E-champion", "E-tuned"),
+                            n_reps=n_reps,
+                            seed=seed,
+                        ),
+                    },
+                },
+            },
             "paired_schedule_apparatus_difference": {
                 "definition": (
                     "within the same 75 IDs: (chunked E-tuned-minus-B) - "
@@ -601,6 +719,17 @@ def build_report(
             (
                 "The disjoint profile and champion-eval directories contain exactly identical saved scalar "
                 "E-tuned-minus-B deltas for all 98 IDs; this analysis counts that scalar measurement once."
+            ),
+            (
+                "The tune41-versus-eval57 fixed-scalar comparison was requested after inspecting the paper "
+                "and is descriptive post-hoc subset heterogeneity. It was not a preregistered interaction, "
+                "is not multiplicity-adjusted, and uses the same row-level independence assumption as the "
+                "other ordinary trajectory bootstraps."
+            ),
+            (
+                "The selected map was built on tune41 from region-specific R{k}-minus-B signs, not from the "
+                "fixed-scalar tune/eval contrast. Any selected-map statistic on tune41 is selection-exposed; "
+                "only the eval57 selected-map rows are out of fitting for that map."
             ),
             (
                 "The original-pool selected-map job stopped after 45 of the requested 75 rows. Its manifest "

@@ -34,6 +34,7 @@ def test_committed_reanalysis_counts_and_point_estimates() -> None:
         n_reps=100,
         seed=0,
     )
+    assert report["schema"] == "swegym-paper-metrics-reanalysis/v3"
 
     checks = report["invariant_checks"]
     assert checks["map_fitting_n"] == 41
@@ -80,6 +81,75 @@ def test_committed_reanalysis_counts_and_point_estimates() -> None:
     assert scalar["paired_schedule_apparatus_difference"]["continuous"][
         "mean"
     ] == pytest.approx(-0.002312034851520049)
+
+    split = scalar["chunked_disjoint_hash_split_post_hoc"]
+    assert split["status"] == "POST_HOC_DESCRIPTIVE_NOT_MAP_SELECTION_EVIDENCE"
+    fixed = split["fixed_scalar_minus_baseline"]
+    assert fixed["tune41"]["n"] == 41
+    assert fixed["tune41"]["mean"] == pytest.approx(-0.014642796121442911)
+    assert fixed["eval57"]["n"] == 57
+    assert fixed["eval57"]["mean"] == pytest.approx(0.0076289725699805085)
+    assert fixed["eval57_minus_tune41"]["mean_difference"] == pytest.approx(
+        0.02227176869142342
+    )
+
+    relationship = split["relationship_to_selected_map"]
+    assert relationship["tune41_selection_exposed"][
+        "selected_map_minus_baseline"
+    ]["mean"] == pytest.approx(0.010272983749017873)
+    assert relationship["eval57_out_of_fitting"][
+        "selected_map_minus_fixed_scalar"
+    ]["mean"] == pytest.approx(0.0041133806797187195)
+
+
+def test_disjoint_hash_split_bootstrap_is_seeded_and_labeled() -> None:
+    first = MODULE.independent_subset_difference_bootstrap(
+        [-2.0, 0.0],
+        [1.0, 3.0],
+        contrast="mean(right) - mean(left)",
+        n_reps=250,
+        seed=7,
+    )
+    second = MODULE.independent_subset_difference_bootstrap(
+        [-2.0, 0.0],
+        [1.0, 3.0],
+        contrast="mean(right) - mean(left)",
+        n_reps=250,
+        seed=7,
+    )
+    assert first == second
+    assert first["contrast"] == "mean(right) - mean(left)"
+    assert first["mean_difference"] == pytest.approx(3.0)
+
+
+def test_fixed_split_trajectory_bootstrap_10k_cis() -> None:
+    rows = MODULE.load_rows(
+        REPO_ROOT / "results" / "swegym_tune_20260710T145330Z_brief"
+    )
+    tune = [rows[idx] for idx in sorted(rows) if rows[idx].split == "tune"]
+    evaluation = [rows[idx] for idx in sorted(rows) if rows[idx].split == "eval"]
+    tune_values = MODULE.deltas(tune, "E-tuned", "B")
+    eval_values = MODULE.deltas(evaluation, "E-tuned", "B")
+
+    tune_report = MODULE.percentile_bootstrap(tune_values, n_reps=10_000, seed=0)
+    eval_report = MODULE.percentile_bootstrap(eval_values, n_reps=10_000, seed=0)
+    contrast = MODULE.independent_subset_difference_bootstrap(
+        tune_values,
+        eval_values,
+        contrast="mean(eval57) - mean(tune41)",
+        n_reps=10_000,
+        seed=0,
+    )
+
+    assert tune_report["ci_95_percentile"] == pytest.approx(
+        {"lower": -0.037651174760810445, "upper": 0.004816664828240534}
+    )
+    assert eval_report["ci_95_percentile"] == pytest.approx(
+        {"lower": -0.004208020197942589, "upper": 0.01928017020283557}
+    )
+    assert contrast["ci_95_percentile"] == pytest.approx(
+        {"lower": -0.0003961615678320274, "upper": 0.04649380509045927}
+    )
 
 
 def test_output_inventory_names_every_consumed_score_file() -> None:
