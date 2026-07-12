@@ -732,15 +732,16 @@ def _planned_paths(run_dir: Path, stamp: str) -> dict[str, Any]:
                     f"precision-probe-p01-outcome-{regime}-{case_id}-repeat{repeat}"
                 )
                 raw_base = f"{prefix}-raw_{MODEL_SLUG}_{stamp}"
+                checkpoint_base = (
+                    f"precision-probe-p01-phase-a-checkpoint-{regime}-{case_id}"
+                    f"-repeat{repeat}-raw_{MODEL_SLUG}_{stamp}"
+                )
                 result["outcomes"][key] = OutcomePaths(
                     raw_scratch=scratch / f"{raw_base}.json",
                     raw_package=run_dir / f"{raw_base}.lossless-package",
-                    phase_a_checkpoint_scratch=scratch / (
-                        f"{prefix}-phase-a-checkpoint-raw_{MODEL_SLUG}_{stamp}.json"
-                    ),
+                    phase_a_checkpoint_scratch=scratch / f"{checkpoint_base}.json",
                     phase_a_checkpoint_package=run_dir / (
-                        f"{prefix}-phase-a-checkpoint-raw_{MODEL_SLUG}_{stamp}"
-                        ".lossless-package"
+                        f"{checkpoint_base}.lossless-package"
                     ),
                     compact=run_dir / f"{prefix}-compact_{MODEL_SLUG}_{stamp}.json",
                     renders=run_dir / f"{prefix}-renders_{MODEL_SLUG}_{stamp}.md",

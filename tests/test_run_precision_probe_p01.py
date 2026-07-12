@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import importlib.util
 import inspect
 import json
@@ -118,6 +119,29 @@ def test_extension_decision_has_scalar_only_information_surface():
     assert "load_object" not in source
     assert "raw_package" not in source
     assert "compact" not in source
+
+
+def test_planned_names_are_unique_and_phase_checkpoints_are_not_final_outcomes(
+    tmp_path
+):
+    planned = MODULE._planned_paths(tmp_path, "20260712T070000000000Z")
+    paths = []
+    for technical in planned["technical"].values():
+        paths.extend(technical.values())
+    for outcome in planned["outcomes"].values():
+        paths.extend(Path(value) for value in MODULE.asdict(outcome).values())
+        assert not fnmatch.fnmatch(
+            outcome.phase_a_checkpoint_package.name,
+            "precision-probe-p01-outcome-*-raw_*.lossless-package",
+        )
+        assert fnmatch.fnmatch(
+            outcome.raw_package.name,
+            "precision-probe-p01-outcome-*-raw_*.lossless-package",
+        )
+    paths.extend((planned["run_manifest"], planned["extension_decision"],
+                  planned["completion"]))
+    assert len(paths) == len(set(paths))
+    assert all(len(path.name.encode("utf-8")) < 255 for path in paths)
 
 
 @pytest.mark.parametrize(
