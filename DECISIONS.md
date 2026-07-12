@@ -56,10 +56,14 @@ decisions that govern current work.
 
 ## 2026-07-12 — compute operations
 
-- Default planning assumption: one admitted, verified host remains warm through
-  a case batch because a roughly 20-minute cold start costs about `$0.46` at
-  `$1.39/hour`, before driver-lottery risk. This is provisional until official
-  provider storage/billing options and an observed warm/cold timing are checked.
+- Provider review found per-second Pod billing, local volume persistence tied
+  to the original machine, and portable network volumes constrained to one
+  datacenter. A 100-GB network volume costs about `$0.47` for two days, roughly
+  one observed 20-minute cold start. The core therefore keeps one admitted host
+  warm and buys one independent fresh-host replication; no volume is created
+  unless later frozen work needs at least three additional acquisitions or
+  observed resilience value changes the calculation. Full note slug:
+  `runpod-storage-and-session-economics`.
 - Host GPU, memory, driver, CUDA, model ID/revision, dtype, backend, and loaded
   parameter count are independently admitted before scientific work.
 - Harvest and commit before termination. Provider deletion is verified by 404
