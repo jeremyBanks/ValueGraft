@@ -129,6 +129,17 @@ def _imports(path: Path) -> list[tuple[str, str]]:
     except (OSError, UnicodeError, SyntaxError) as exc:
         raise V13ImportAuditError(f"cannot parse inventoried Python {path}: {exc}") from exc
     observed: list[tuple[str, str]] = []
+    importlib_aliases = {"importlib"}
+    import_module_aliases: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == "importlib":
+                    importlib_aliases.add(alias.asname or alias.name)
+        elif isinstance(node, ast.ImportFrom) and node.module == "importlib":
+            for alias in node.names:
+                if alias.name == "import_module":
+                    import_module_aliases.add(alias.asname or alias.name)
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             observed.extend((alias.name, "static") for alias in node.names)
@@ -138,13 +149,19 @@ def _imports(path: Path) -> list[tuple[str, str]]:
             if node.module:
                 observed.append((node.module, "static"))
         elif isinstance(node, ast.Call):
-            if isinstance(node.func, ast.Name) and node.func.id == "__import__":
+            if isinstance(node.func, ast.Name) and node.func.id in {
+                "__import__", "eval", "exec",
+            }:
                 raise V13ImportAuditError(
-                    f"dynamic __import__ is forbidden in Stage T: {path}")
-            if (isinstance(node.func, ast.Attribute)
-                    and isinstance(node.func.value, ast.Name)
-                    and node.func.value.id == "importlib"
-                    and node.func.attr == "import_module"):
+                    f"dynamic code/import call is forbidden in Stage T: {path}")
+            direct_alias = (isinstance(node.func, ast.Name)
+                            and node.func.id in import_module_aliases)
+            module_attribute = (
+                isinstance(node.func, ast.Attribute)
+                and isinstance(node.func.value, ast.Name)
+                and node.func.value.id in importlib_aliases
+                and node.func.attr == "import_module")
+            if direct_alias or module_attribute:
                 _require(len(node.args) == 1
                          and isinstance(node.args[0], ast.Constant)
                          and isinstance(node.args[0].value, str),

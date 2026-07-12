@@ -70,7 +70,11 @@ def test_reachable_local_module_must_be_in_exact_inventory(tmp_path):
 
 @pytest.mark.parametrize("source,match", [
     ("import powered_v13_recipe\n", "production-only module"),
-    ("x = __import__('helper')\n", "dynamic __import__"),
+    ("x = __import__('helper')\n", "dynamic code/import"),
+    ("import importlib as il\nil.import_module('helper')\n", "not Stage-T allowlisted"),
+    ("from importlib import import_module as load\nload('helper')\n",
+     "not Stage-T allowlisted"),
+    ("exec('import helper')\n", "dynamic code/import"),
     ("import importlib\nimportlib.import_module(name)\n", "nonliteral"),
     ("import importlib\nimportlib.import_module('helper')\n", "not Stage-T allowlisted"),
 ])
