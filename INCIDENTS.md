@@ -785,3 +785,33 @@ the exact sign convention, measurability predicate, candidate order, and stop
 condition in both prose and executable form. Freeze an adversarial test where
 both edits are nonzero but one has the wrong sign. A favorable later candidate
 cannot reinterpret an ambiguous earlier stopping cell after outcomes exist.
+
+## Incident #46 (07-12): every exact-bf16 placebo arm was unavailable
+
+WHAT: R1, R2, and R3 placebo construction all reached the same first nonzero
+early-layer delta at layer 1, row 76 and failed after 1,024 deterministic
+attempts. The float64 pre-cast vectors met the norm and orthogonality
+constraints, but no applied bf16 perturbation met the frozen relative-norm and
+cosine bounds. Available-placebo count was zero.
+
+WHY: the early correct-history versus wrong-history value-row difference was
+extremely sparse and, at the first nonzero row, around the bf16 representability
+scale. Mathematical feasibility before dtype conversion did not imply an
+applied, profile-matched perturbation. The control had been unit-tested but its
+availability was not demonstrated on exact-subject state geometry before paid
+treatment.
+
+IMPACT: the primary transplant arms remain mechanically valid under their
+frozen contract, but the only norm-matched nonsemantic perturbation control is
+missing. That materially weakens semantic attribution for the favorable e01
+value-only cell. `PLACEBO_UNAVAILABLE` is missing evidence, never a null
+placebo. The committed artifact preserves row hashes and diagnostics, not the
+actual K/V tensor rows, so exact e01 control repair cannot be validated locally
+without regenerating state.
+
+RULE 37 — PROVE APPLIED-CONTROL AVAILABILITY BEFORE OUTCOME SCORING: validate
+negative controls at the target dtype and realistic state scale, not only in
+pre-cast arithmetic. A successor must either construct directly on the bf16
+grid or preregister an outcome-independent fallback such as representability-
+floor zeroing or aggregate-profile matching. Persist a bounded exact tensor
+evidence bundle whenever later control auditing depends on source rows.
