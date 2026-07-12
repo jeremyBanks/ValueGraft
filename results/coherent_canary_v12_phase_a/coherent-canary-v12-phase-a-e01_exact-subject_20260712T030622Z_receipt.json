@@ -1,0 +1,32 @@
+{
+  "artifacts": {
+    "job_log": {
+      "path": "results/coherent_canary_v12_phase_a/coherent-canary-v12-phase-a-e01_exact-subject_20260712T030622Z_job.md",
+      "sha256": "18f8545bcd39ba947927089b7c8e056acf0497863ff906c62eecd948e9a81d5e",
+      "size_bytes": 3647
+    },
+    "raw": {
+      "path": "results/coherent_canary_v12_phase_a/coherent-canary-v12-phase-a-e01_exact-subject_20260712T030639073087Z.json",
+      "sha256": "2cd7f6f190b9f4e9598844e45e5488779b72cd54a1fd51dd5b8a5b24154d672d",
+      "size_bytes": 1661785
+    },
+    "validation": {
+      "path": "results/coherent_canary_validation/coherent_canary_v12_phase_a_e01_exact-subject_20260712T030622Z.json",
+      "sha256": "aabac5f0aa64db8f0db49110583be9a17f8453e1a523f1cbc0e0312ec3c15410",
+      "size_bytes": 6467
+    }
+  },
+  "case_id": "e01",
+  "completed_at_utc": "2026-07-12T03:14:37.643736+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "expected_commit": "139d621e206518b88d7553b5166a0123ee1cdd55",
+  "gpu": "NVIDIA A100 80GB PCIe, GPU-0396c7e5-6997-2154-b2cf-90b57c6f05ea, 580.159.04, 81920",
+  "observed_commit": "139d621e206518b88d7553b5166a0123ee1cdd55",
+  "runner_exit": 0,
+  "runner_status": "PASS",
+  "schema": "coherent_state_decision_canary_v12_phase_a_pod_receipt_v1",
+  "semantic_release_eligible": true,
+  "treatment_scores_present": false,
+  "validator_exit": 0,
+  "validator_status": "PRETREATMENT_PASS"
+}

@@ -1,0 +1,202 @@
+{
+  "case_id": "e01",
+  "checks": {
+    "bindings": {
+      "evidence": {
+        "case": {
+          "path": "/workspace/repo_phasea/data/coherent_canary_v12/revision2/session_d/e01.json",
+          "sha256": "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090"
+        },
+        "manifest": {
+          "path": "/workspace/repo_phasea/results/coherent_canary_validation/coherent_canary_revision4_full_manifest_Qwen3-30B-A3B-Instruct-2507_20260711T205951Z.json",
+          "sha256": "738c176fc08075ba905d4c48b70d095a8da0dca649f382e4d7596e4a406affb2"
+        },
+        "preregistration": {
+          "path": "/workspace/repo_phasea/COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+          "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+        },
+        "reviews": [
+          {
+            "path": "/workspace/repo_phasea/results/coherent_canary_reviews/reviews/revision4_blind_singleton_independent_codex_20260711T210013Z.json",
+            "sha256": "4b9eace0b4f4754ca0de6fcd6dc59852374ab5fd804f42bfb06d108da1d1fcda"
+          },
+          {
+            "path": "/workspace/repo_phasea/results/coherent_canary_reviews/reviews/revision4_paired_diversity_independent_codex_20260711T210013Z.json",
+            "sha256": "1909224e4dab2265d9b033d7b016c1a9842a24dce9531cf17d240a54287a375b"
+          }
+        ],
+        "technical_validation_report": {
+          "fingerprint_sha256": "b6158b989b0b467c46589f3ecbe69acba88645d4cd193dd23d925e2e4cd69484",
+          "path": "/workspace/repo_phasea/results/coherent_canary_validation/coherent_canary_v12_technical_validation_exact-subject_20260712T024859Z.json",
+          "sha256": "a8094b4a3355836cfbe0ec0936342a56e271cd992108d7bda61acd8488ee0b48",
+          "subject": "exact-subject"
+        }
+      },
+      "passed": true
+    },
+    "forced_carrier_support": {
+      "evidence": {
+        "C_N": {
+          "mean_nll": 4.922062644071827,
+          "token_count": 42
+        },
+        "W_N": {
+          "mean_nll": 4.920622549828598,
+          "token_count": 42
+        }
+      },
+      "passed": true
+    },
+    "runtime_fingerprint": {
+      "evidence": {
+        "fingerprint_sha256": "b6158b989b0b467c46589f3ecbe69acba88645d4cd193dd23d925e2e4cd69484",
+        "subject": "exact-subject"
+      },
+      "passed": true
+    },
+    "schema_and_blinding": {
+      "evidence": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "passed": true
+    },
+    "scores": {
+      "evidence": {
+        "competency": {
+          "A_C_focal_generation": true,
+          "A_C_focal_margin_positive": true,
+          "A_C_nonfocal_generation": true,
+          "A_C_nonfocal_margin_positive": true,
+          "A_W_focal_generation": true,
+          "A_W_focal_margin_negative": true,
+          "A_W_nonfocal_generation": true,
+          "A_W_nonfocal_margin_positive": true
+        },
+        "estimand_adequate": true,
+        "fresh_damage_diagnostic": {
+          "correct_target_logprob": 22.290991485144332,
+          "margin": 22.298429489135742,
+          "positive_correct_target_damage": true,
+          "positive_margin_damage": true
+        },
+        "values": {
+          "A_C_focal": {
+            "correct_ids": [
+              36258,
+              13440
+            ],
+            "correct_mean": -5.0663693400565535e-06,
+            "counter_ids": [
+              27122,
+              10058
+            ],
+            "counter_mean": -16.50018882751465,
+            "margin": 16.50018310546875
+          },
+          "A_C_nonfocal": {
+            "correct_ids": [
+              17,
+              16,
+              2849
+            ],
+            "correct_mean": 0.0,
+            "counter_ids": [
+              18,
+              15,
+              2849
+            ],
+            "counter_mean": -11.792686462402344,
+            "margin": 11.792686462402344
+          },
+          "A_W_focal": {
+            "correct_ids": [
+              36258,
+              13440
+            ],
+            "correct_mean": -19.694589614868164,
+            "counter_ids": [
+              27122,
+              10058
+            ],
+            "counter_mean": -3.46294000337366e-05,
+            "margin": -19.694555282592773
+          },
+          "A_W_nonfocal": {
+            "correct_ids": [
+              17,
+              16,
+              2849
+            ],
+            "correct_mean": 0.0,
+            "counter_ids": [
+              18,
+              15,
+              2849
+            ],
+            "counter_mean": -11.667630195617676,
+            "margin": 11.667630195617676
+          },
+          "FF_focal": {
+            "correct_ids": [
+              36258,
+              13440
+            ],
+            "correct_mean": -22.290996551513672,
+            "counter_ids": [
+              27122,
+              10058
+            ],
+            "counter_mean": -16.49275016784668,
+            "margin": -5.798246383666992
+          },
+          "FF_nonfocal": {
+            "correct_ids": [
+              17,
+              16,
+              2849
+            ],
+            "correct_mean": -3.948047399520874,
+            "counter_ids": [
+              18,
+              15,
+              2849
+            ],
+            "counter_mean": -0.2482982873916626,
+            "margin": -3.699748992919922
+          }
+        }
+      },
+      "passed": true
+    }
+  },
+  "completed_at_utc": "2026-07-12T03:14:37.575988+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "fresh_damage_diagnostic": {
+    "correct_target_logprob": 22.290991485144332,
+    "margin": 22.298429489135742,
+    "positive_correct_target_damage": true,
+    "positive_margin_damage": true
+  },
+  "inadequacy_reasons": [],
+  "invalidity_reasons": [],
+  "limitations": [
+    "No subject-model forward is rerun by this validator.",
+    "Fresh damage is diagnostic and never gates Phase-A eligibility.",
+    "A local-apparatus pass cannot release semantic treatment."
+  ],
+  "raw_artifact": {
+    "path": "results/coherent_canary_v12_phase_a/coherent-canary-v12-phase-a-e01_exact-subject_20260712T030639073087Z.json",
+    "sha256": "2cd7f6f190b9f4e9598844e45e5488779b72cd54a1fd51dd5b8a5b24154d672d"
+  },
+  "runner_status_and_decimal_margins_ignored": true,
+  "schema": "coherent_state_decision_canary_v12_phase_a_validation_v1",
+  "semantic_release_eligible": true,
+  "status": "PRETREATMENT_PASS",
+  "subject": "exact-subject"
+}
