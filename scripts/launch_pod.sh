@@ -30,6 +30,14 @@ K=$HOME/.ssh/id_ed25519_runpod
 S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
 STATE=".pod_${NAME}_state.json"
 
+admission_fail() {
+  echo "POD ADMISSION FAILED for $NAME: $1" >&2
+  if [ "${SC_TERMINATE_ON_ADMISSION_FAILURE:-0}" = "1" ] && [ -f "$STATE" ]; then
+    SC_POD_STATE="$STATE" uv run python src/pod.py terminate || true
+  fi
+  exit 86
+}
+
 if [ ! -f "$STATE" ]; then
   SC_POD_STATE=$STATE uv run python src/pod.py create "$GPU"
 fi
@@ -41,21 +49,29 @@ for _ in $(seq 1 40); do
   [ -n "$IP" ] && [ -n "$PORT" ] && [ "$IPP" != ":" ] && break
   sleep 15
 done
-[ -z "$IP" ] && { echo "FAIL: no ssh endpoint for $NAME"; exit 1; }
+[ -z "$IP" ] && admission_fail "no SSH endpoint"
 # BOUNDED ssh (macOS has no `timeout`): ServerAliveInterval/CountMax make a STALLED
 # connection die in ~60s and return nonzero instead of HANGING FOREVER. This converts
 # the recurring launcher-hang class (incidents #3, #35 — a hang after launch that
 # blocked/starved later pods) into a bounded, LOUD, nonzero-exit failure the caller sees.
 SSH="ssh -i $K -p $PORT -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 root@$IP"
 
-$SSH "apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync >/dev/null 2>&1; mkdir -p /workspace/exp/data; nvidia-smi --query-gpu=name --format=csv,noheader" || { echo "FAIL: bootstrap $NAME"; exit 1; }
-rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json tune_rules.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json data/champion_configs swegym.parquet .huggingface_key root@$IP:/workspace/exp/ 2>/dev/null || true
+GPU_INFO="$($SSH "nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader,nounits")" \
+  || admission_fail "nvidia-smi admission query failed"
+if ! SC_OBSERVED_GPU="$GPU_INFO" uv run python src/pod_admission.py; then
+  admission_fail "GPU/driver/memory requirements differ"
+fi
+echo "POD ADMISSION observed: $GPU_INFO requested_cuda=${SC_POD_ALLOWED_CUDA:-ANY}"
+
+$SSH "apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync >/dev/null 2>&1; mkdir -p /workspace/exp/data" \
+  || admission_fail "bootstrap failed"
+rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json tune_rules.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json data/champion_configs swegym.parquet .huggingface_key "root@$IP:/workspace/exp/" 2>/dev/null || true
 LME=/Users/jeb/.cache/huggingface/hub/datasets--xiaowu0162--longmemeval-cleaned/snapshots/98d7416c24c778c2fee6e6f3006e7a073259d48f/longmemeval_s_cleaned.json
-rsync -azL -e "ssh -i $K -p $PORT" "$LME" root@$IP:/workspace/exp/longmemeval_s_cleaned.json
+rsync -azL -e "ssh -i $K -p $PORT" "$LME" "root@$IP:/workspace/exp/longmemeval_s_cleaned.json"
 $SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural scenarios.json model_geometry.json champion_configs data/ 2>/dev/null; true"
 bash -n "$JOB" || { echo "FAIL: job script syntax"; exit 1; }
 for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" || { echo "FAIL: $f syntax"; exit 1; }; done
-rsync -az -e "ssh -i $K -p $PORT" "$JOB" root@$IP:/workspace/exp/job.sh
+rsync -az -e "ssh -i $K -p $PORT" "$JOB" "root@$IP:/workspace/exp/job.sh"
 echo "$NAME $PORT $IP" >> $S/pods.list
 # forward per-pod launch env (MODELS + conv limit) into the remote job execution.
 # VERIFIED-DETACH pattern (incident #3): nohup + all fds redirected + </dev/null +

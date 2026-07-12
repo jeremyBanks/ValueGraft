@@ -11,6 +11,10 @@ State in .pod_state.json (podId). Reads .runpod_key. Registers
 ~/.ssh/id_ed25519_runpod.pub via the account settings if needed (we pass the
 public key through the pod env instead — RunPod injects account SSH keys
 automatically for pods with SSH enabled; we also set it explicitly).
+
+Set SC_POD_ALLOWED_CUDA to a comma-separated RunPod CUDA capability filter
+(for example ``13.0``).  The provider applies this before choosing a host;
+launch_pod.sh separately verifies the actual driver after allocation.
 """
 
 import json
@@ -21,19 +25,62 @@ from pathlib import Path
 
 import urllib.request
 
-KEY = Path(".runpod_key").read_text().strip()
+KEY_PATH = Path(".runpod_key")
 REST = "https://rest.runpod.io/v1"
 import os
 STATE = Path(os.environ.get("SC_POD_STATE", ".pod_state.json"))
 DEFAULT_GPU = "NVIDIA A100 80GB PCIe"
 IMAGE = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
 SSH_KEY = Path.home() / ".ssh" / "id_ed25519_runpod"
+RUNPOD_CUDA_VERSIONS = {
+    "13.0", "12.9", "12.8", "12.7", "12.6", "12.5", "12.4",
+    "12.3", "12.2", "12.1", "12.0", "11.8",
+}
+
+
+def api_key():
+    return KEY_PATH.read_text().strip()
+
+
+def requested_cuda_versions():
+    raw = os.environ.get("SC_POD_ALLOWED_CUDA", "").strip()
+    if not raw:
+        return []
+    versions = list(dict.fromkeys(part.strip() for part in raw.split(",")
+                                  if part.strip()))
+    invalid = [version for version in versions
+               if version not in RUNPOD_CUDA_VERSIONS]
+    if not versions or invalid:
+        raise ValueError(
+            f"invalid SC_POD_ALLOWED_CUDA values: {invalid or raw!r}")
+    return versions
+
+
+def create_body(gpu):
+    body = {
+        "name": "semantic-continuity",
+        "imageName": IMAGE,
+        "gpuTypeIds": [gpu],
+        "gpuCount": 1,
+        "cloudType": os.environ.get("SC_POD_CLOUD", "SECURE"),
+        "containerDiskInGb": int(os.environ.get("SC_POD_DISK", "200")),
+        "volumeInGb": 0,
+        "supportPublicIp": True,
+        "ports": ["22/tcp"],
+    }
+    cuda_versions = requested_cuda_versions()
+    if cuda_versions:
+        body["allowedCudaVersions"] = cuda_versions
+    if os.environ.get("SC_POD_SPOT") == "1":
+        body["interruptible"] = True
+        body["bidPerGpu"] = float(os.environ.get("SC_POD_BID", "1.0"))
+    return body
 
 
 def api(method, path, body=None):
     req = urllib.request.Request(
         REST + path, method=method,
-        headers={"Authorization": f"Bearer {KEY}",
+        headers={"Authorization": f"Bearer {api_key()}",
                  "Content-Type": "application/json",
                  "User-Agent": "curl/8.4"},
         data=json.dumps(body).encode() if body is not None else None)
@@ -48,7 +95,7 @@ def api(method, path, body=None):
 def gql(query):
     req = urllib.request.Request(
         "https://api.runpod.io/graphql", method="POST",
-        headers={"Authorization": f"Bearer {KEY}",
+        headers={"Authorization": f"Bearer {api_key()}",
                  "Content-Type": "application/json",
                  "User-Agent": "curl/8.4"},
         data=json.dumps({"query": query}).encode())
@@ -77,21 +124,10 @@ def ensure_ssh_key():
 
 
 def create(gpu=DEFAULT_GPU):
+    body = create_body(gpu)
     ensure_ssh_key()
-    body = {
-        "name": "semantic-continuity",
-        "imageName": IMAGE,
-        "gpuTypeIds": [gpu],
-        "gpuCount": 1,
-        "cloudType": os.environ.get("SC_POD_CLOUD", "SECURE"),
-        "containerDiskInGb": int(os.environ.get("SC_POD_DISK", "200")),
-        "volumeInGb": 0,
-        "supportPublicIp": True,
-        "ports": ["22/tcp"],
-    }
-    if os.environ.get("SC_POD_SPOT") == "1":
-        body["interruptible"] = True
-        body["bidPerGpu"] = float(os.environ.get("SC_POD_BID", "1.0"))
+    print("requesting pod", gpu, "cloud", body["cloudType"],
+          "allowedCudaVersions", body.get("allowedCudaVersions", "ANY"))
     pod = api("POST", "/pods", body)
     STATE.write_text(json.dumps(pod, indent=1))
     print("created pod", pod.get("id"))
