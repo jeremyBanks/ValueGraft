@@ -1,6 +1,50 @@
 # STATE.md — session handoff / current state
 
-## CURRENT TRUTH (2026-07-12) — exact-v12 attempt three awaiting A7/B7 freeze
+## CURRENT TRUTH (2026-07-12, post-e01) — formal v12 stopped; diagnostic complete
+
+No pod is active. Formal v12 is terminal. The literal written §14.1 rule stops
+at ULP 2, where both edits changed the readout but the minus edit moved in the
+wrong direction; that branch is a technical failure. The sealed implementation
+continued to ULP 4 and observed bidirectional path sensitivity, retained only as
+implementation-defined plumbing evidence. It cannot rescue the written branch.
+
+Exact e01 Phase A returned `PRETREATMENT_PASS`. Because the stop-rule conflict
+was discovered and dispositioned before treatment, exactly one unchanged e01
+treatment ran as a post-ambiguity diagnostic. Its receipt records
+`formal_v12_decision_eligible=false`; it authorizes no e02--e06, aggregate,
+confirmation, conversation stratum, or live-agent evaluation.
+
+At primary R2/N, value-only produced a narrow favorable pattern:
+`D_focal=+0.174545`, `D_nonfocal=-0.000070`, `SEL=+0.174476`,
+`Hplus=+0.710260`, `U=+0.181650`, and `Uplus=+0.945986`. Full K+V did not:
+`D_focal=+0.097237`, `D_nonfocal=+0.245486`, `SEL=-0.148249`, and
+`Hplus=-0.131035`. Value-only `D_focal` fell to `+0.021046` under P; both
+families failed the singleton descriptive component of the 3x schedule
+yardstick. R1/R3 did not reproduce a coherent value-only pattern.
+
+Fresh compaction caused `22.298429` nats of margin damage and `22.290991` nats
+of correct-target-logprob damage. The best value-only cell recovered only 0.81%
+and 4.24%, respectively. Every one of the 31 primary cells retained the same
+wrong/other greedy focal and nonfocal answers. All three placebo constructions
+were `PLACEBO_UNAVAILABLE`, so available-placebo count is zero. Natural
+calibration was adverse (`rho_green=-0.035714`, `rho_amber=0.297872`).
+
+Artifact integrity passed: treatment FF matched Phase A canonically, raw
+reconstruction was byte-exact, and local/pod harvests matched after only
+allowlisted path/timestamp normalization. The treatment pod was deleted and
+independently observed absent. Immediate provider balance was `$61.5865176995`;
+the conservative canary delta from `$63.3160022124` was `$1.7294845129`.
+Provider settlement and the final end-to-end money/token audit remain pending.
+
+The current interpretation is one weak, uncontrolled, schedule-sensitive
+value-only directional hint in one explicitly resolved engineered fixture — no
+established semantic channel or useful mitigation. V11 remains paused. Any
+further mechanism test requires a fresh preregistration, a bf16-feasible
+placebo validated on actual state geometry, multiple independent cases, both
+N/P schedules, and a less saturated calibration regime. The final disposition
+is `notes/2026071287-sol-e01-diagnostic-final-interpretation.md`.
+
+## SUPERSEDED CURRENT TRUTH (2026-07-12) — exact-v12 attempt three awaiting A7/B7 freeze
 
 No pod is active. Two exact technical rentals occurred and both stopped before
 any subject forward or semantic observation. Attempt 1 used host driver
