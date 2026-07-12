@@ -289,6 +289,33 @@ def test_path_failure_is_saved_and_skips_natural_calibration(tmp_path, monkeypat
     assert json.loads(output.read_text())["status"] == "FAIL"
 
 
+def test_identity_failure_is_durable_and_remaining_diagnostics_run(
+        tmp_path, monkeypatch):
+    install_success_mocks(monkeypatch)
+    failed_identity = {
+        "status": "FAIL", "repeat_count": 2, "repeat_identical": True,
+        "separate_branches": [
+            {"generated": identity_branch(), "forced": identity_branch(),
+             "runner_comparison": {
+                 "status": "GENERATED_FORCED_IDENTITY_FAIL",
+                 "reason": "generated identity branch did not stop normally"}},
+            {"generated": identity_branch(), "forced": identity_branch(),
+             "runner_comparison": {
+                 "status": "GENERATED_FORCED_IDENTITY_FAIL",
+                 "reason": "generated identity branch did not stop normally"}},
+        ],
+    }
+    monkeypatch.setattr(MODULE, "run_generated_forced_identity",
+                        lambda *args, **kwargs: failed_identity)
+    output, document, code = MODULE.run(arguments(tmp_path))
+    persisted = json.loads(output.read_text())
+    assert code == 2 and document["status"] == persisted["status"] == "FAIL"
+    assert persisted["generated_forced_identity"] == failed_identity
+    assert all(key in persisted for key in (
+        "deterministic_repeats", "fresh_self_replacement",
+        "path_control", "natural_calibration"))
+
+
 def test_ordinary_exception_is_atomically_saved(tmp_path, monkeypatch):
     install_success_mocks(monkeypatch)
 

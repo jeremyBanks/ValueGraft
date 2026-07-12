@@ -276,6 +276,26 @@ def test_identity_or_self_replacement_coverage_error_fails(tmp_path):
     assert "fresh_self_replacement" in report["failures"]
 
 
+def test_cap_hit_identity_evidence_fails_only_strict_identity_gate(tmp_path):
+    raw_path, raw = raw_fixture(tmp_path, subject="local-apparatus")
+    for repeat in raw["generated_forced_identity"]["separate_branches"]:
+        repeat["generated"]["generation"].update({
+            "stop_candidate_id": 42,
+            "stop_reason": "max_content_tokens", "cap_hit": True})
+        repeat["forced"]["generation"].update({
+            "stop_candidate_id": 42,
+            "stop_reason": "forced_stop_not_eos", "cap_hit": False})
+    write_json(raw_path, raw)
+    report = MODULE.validate_technical_raw(raw_path, repo_root=tmp_path)
+    assert report["checks"]["generated_forced_equivalence"]["passed"] is True
+    assert report["checks"]["generated_forced_equivalence"]["evidence"][
+        "normal_stop"] is False
+    assert report["checks"]["generated_forced_identity"]["passed"] is False
+    assert report["failures"] == ["generated_forced_identity"]
+    assert report["status"] == "FAIL"
+    assert report["semantic_release_eligible"] is False
+
+
 def test_natural_adverse_is_reported_but_not_a_plumbing_failure(tmp_path):
     raw_path, raw = raw_fixture(tmp_path)
     raw["natural_calibration"]["raw"]["T_g"]["correct"] = target_record(1, 0.1)

@@ -231,9 +231,6 @@ def identity_view(record: Any, label: str) -> dict[str, Any]:
         decode_float32_bits(value, f"{label} identity token {index}")
     decode_float32_bits(view["stop_candidate_logprob_float32_bits"],
                         f"{label} identity stop candidate")
-    require(view["stop_reason"] == "model_eos" and view["cap_hit"] is False and
-             view["stop_candidate_id"] in view["eos_ids"],
-             f"{label} identity did not stop normally")
     require(isinstance(view["decoded_content"], str) and
             bool(view["decoded_content"]),
             f"{label} identity decoded content is empty")
@@ -243,22 +240,41 @@ def identity_view(record: Any, label: str) -> dict[str, Any]:
     return view
 
 
-def verify_identity(raw: Mapping[str, Any]) -> dict[str, Any]:
+def verify_identity(raw: Mapping[str, Any], *,
+                    require_normal_stop: bool) -> dict[str, Any]:
     section = raw.get("generated_forced_identity")
     require(isinstance(section, Mapping), "generated/forced identity is absent")
     repeats = section.get("separate_branches")
     require(isinstance(repeats, list) and len(repeats) == 2,
             "identity requires exactly two repeats")
     common = []
+    normal_stops = []
     for index, repeat in enumerate(repeats):
         require(isinstance(repeat, Mapping), f"identity repeat {index} is invalid")
         generated = identity_view(repeat.get("generated"), f"repeat {index} generated")
         forced = identity_view(repeat.get("forced"), f"repeat {index} forced")
-        require(generated == forced,
+        equivalence_fields = set(generated) - {"stop_reason", "cap_hit"}
+        require({key: generated[key] for key in equivalence_fields} ==
+                {key: forced[key] for key in equivalence_fields},
                 f"identity repeat {index} generated/forced evidence differs")
-        common.append(generated)
+        generated_normal = (
+            generated["stop_reason"] == "model_eos" and
+            generated["cap_hit"] is False and
+            generated["stop_candidate_id"] in generated["eos_ids"])
+        forced_normal = (
+            forced["stop_reason"] == "model_eos" and
+            forced["cap_hit"] is False and
+            forced["stop_candidate_id"] in forced["eos_ids"])
+        normal_stops.append(generated_normal and forced_normal)
+        common.append({"generated": generated, "forced": forced})
     require(common[0] == common[1], "identity repeats differ")
-    return {"repeat_count": 2, "content_ids": common[0]["content_ids"]}
+    if require_normal_stop:
+        require(all(normal_stops), "identity did not stop normally")
+    return {
+        "repeat_count": 2,
+        "content_ids": common[0]["generated"]["content_ids"],
+        "normal_stop": all(normal_stops),
+    }
 
 
 REPEAT_FIELDS = ("token_ids", "logical_positions", "physical_positions", "calls",
@@ -496,7 +512,10 @@ def validate_technical_raw(raw_path: Path, *, repo_root: Path) -> dict[str, Any]
                 "fingerprint_sha256": fingerprint["fingerprint_sha256"]}
 
     run_check("runtime_fingerprint", runtime_check)
-    run_check("generated_forced_identity", lambda: verify_identity(raw))
+    run_check("generated_forced_equivalence", lambda: verify_identity(
+        raw, require_normal_stop=False))
+    run_check("generated_forced_identity", lambda: verify_identity(
+        raw, require_normal_stop=True))
     run_check("deterministic_repeat", lambda: verify_deterministic_repeat(raw))
     run_check("fresh_self_replacement", lambda: verify_self_replacement(raw))
 

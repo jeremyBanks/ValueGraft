@@ -1,0 +1,47 @@
+# Fable review of the v12 local-cap amendment
+
+**Reviewer:** Claude Fable 5 (runtime model ID `claude-fable-5`), fresh scientific-methods review, scoped to the files listed below. No broad conversation archive was read.
+
+**Scope reviewed:** notes/2026071174-sol-v12-local-cap-and-durable-identity-amendment.md; COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md §7, §14, §17, §18; data/coherent_canary_v12/generated_forced_identity_fixture.json; results/coherent_canary_v12_technical/coherent-canary-v12-technical_local-apparatus_20260712T000134494813Z.json; `require_generated_forced_identity` (src/coherent_canary_runtime.py:608) plus `greedy_generate_q1`/`force_content_q1`; `run_generated_forced_identity` (src/coherent_canary_technical.py:134); identity validation in scripts/validate_coherent_canary_v12_technical.py (`identity_view`, `verify_identity`, `validate_technical_raw`).
+
+## What happened, as evidenced
+
+The third local technical run was the first to reach subject inference. The raw artifact (status `ERROR`, wall time 8.64 s, `local-apparatus` = Qwen3-0.6B on CPU under the pinned 30B protocol tokenizer) shows `CanaryRuntimeError: generated identity branch did not stop normally` raised from the pre-amendment code path, where the termination predicate ran before the equality comparisons and the exception discarded both branch records. The fixture is `FROZEN_LITERAL_PRE_FORWARD`, names `Qwen/Qwen3-30B-A3B-Instruct-2507` at the pinned revision, and freezes the exact prompt, temperature 0, the 64-content-token cap, and `normal_eos_required: true`. No semantic treatment outcome was observed; no generated/forced inequality was established. The artifact supports exactly the amendment's characterization: the 0.6B proxy failed the frozen termination predicate on a fixture engineered for the 30B subject, and nothing more.
+
+## Assessment of the three questions
+
+### 1. Is the amendment scientifically legitimate? Yes.
+
+- **The correction fixes a genuine integrity defect without touching the measurement.** Discarding a completed 64-token generated stream on a failed predicate violated §17's durability requirements ("Every generated or forced carrier, assistant token stream, … and gate result is durable before proceeding"). Persisting both branch records before applying the strict predicate, and recording an ordinary `FAIL` with evidence instead of a top-level exception, brings the code into compliance with the preregistration rather than away from it.
+- **Reordering equality checks before the normal-stop check does not change what counts as PASS.** In the amended `require_generated_forced_identity`, `GENERATED_FORCED_IDENTITY_PASS` is returned only after every check succeeds, including the final strict requirement `stop_reason == "model_eos"`, `cap_hit` false on both branches, and stop candidate in the EOS set (src/coherent_canary_runtime.py:672–675). The ordering change affects only what evidence survives a failure, not the pass condition.
+- **Retaining the original prompt is the anti-tuning choice.** Substituting an easier local prompt after observing the cap hit would be outcome-conditioned fixture selection. Reporting the proxy's termination limitation on the unchanged frozen fixture is cleaner, and the amendment says so explicitly.
+- **The cap hit is a proxy-capability observation, not an apparatus defect.** The equivalence machinery (prefix identity, per-token logprob bits, per-layer K/V rows, final unappended candidate) is exactly the §7 gate content and is still exercisable on a capped stream, because content tokens never include EOS and the stop-candidate witness exists after the 64th token on both branches.
+
+### 2. May exact technical compute proceed under the stated conditions? Yes.
+
+The amendment's advancement rule — exact **technical gate only**, conditional on a local rerun showing independent generated/forced equivalence pass, bit-identical repeats, normal termination as the sole identity failure, and all remaining local diagnostics passing their plumbing predicates — is sound because:
+
+- **The exact gate itself is not weakened anywhere in code.** The validator's strict check `verify_identity(raw, require_normal_stop=True)` applies identically to every subject; there is no subject-conditional branch relaxing it. `semantic_release_eligible` requires overall `status == "PASS"` **and** `subject == "exact-subject"`. A local cap hit leaves the local report `FAIL`, exactly as the amendment states.
+- **"Normal stop as the sole failure" is structurally, not textually, established at the validator level.** `generated_forced_equivalence` (`require_normal_stop=False`) and `generated_forced_identity` (`require_normal_stop=True`) run the same code differing in exactly one `require`. If equivalence passes and identity fails, the only possible cause is the normal-stop requirement. The advancement conditions rest on this validator pair, which is the right authority since the validator recomputes from raw evidence and ignores runner labels (`runner_status_labels_ignored: true`).
+- **The local model has no inferential role**, and the decision to try the exact gate is a resource decision bounded by §18's hard `$2.40` paid-compute ceiling including failed starts. The 30B run must still use the original fixture and cap, emit normal EOS, repeat bit-exactly, pass generated/forced equivalence, and pass the full exact validator. A wrong advancement call therefore cannot corrupt an exact result; it can only spend bounded budget on a run that fails its own strict gate.
+- **The natural-calibration carve-out is consistent with §14.2**, which preregisters it as reported-adverse rather than a plumbing gate; the validator correspondingly fails only on `INVALID`, not on adverse outcomes.
+
+### 3. Does any code relax the exact gate or misclassify evidence? No relaxation found; two fragilities noted below.
+
+The runner's top-level identity status is `PASS` only when both repeats' comparisons are `GENERATED_FORCED_IDENTITY_PASS` **and** the full branch records are bit-identical across repeats. The validator's equivalence view excludes only `stop_reason` and `cap_hit` from the field-by-field generated-vs-forced comparison while retaining content IDs, positions, logprob bits, per-layer content-row hashes, prefix hashes/logits, EOS sets, and the stop-candidate ID and bits — so the §7 "final unappended candidate" comparison survives in the equivalence check. Nothing maps a cap hit to a pass, for any subject.
+
+## BLOCKING findings
+
+None.
+
+## NONBLOCKING findings
+
+1. **String-matched failure classification in the runner.** `equivalence_checks_completed` (src/coherent_canary_technical.py, `except CanaryRuntimeError` branch) is inferred from exact equality of the exception message with `"generated identity branch did not stop normally"`. This is correct today only because that message occurs at exactly one place, the final check; any future message edit or reuse silently misclassifies. Treat this flag as advisory display only — the advancement conditions must (and per the amendment, do) rest on the independent validator's equivalence/identity check pair, not on this flag.
+2. **Durability catch is narrower than SAVE EVERY RENDER.** Only `CanaryRuntimeError` raised from `require_generated_forced_identity` is caught; a failure inside `greedy_generate_q1`, `force_content_q1`, or the prefix execution (e.g. "forced content would exceed live-cache bound") still discards any branch records built so far in that repeat. Defensible as apparatus-error-vs-measurement-outcome, but the durability rule does not fully cover those paths.
+3. **The real-model normal-EOS path remains unexercised locally.** Because the proxy caps out, the `model_eos` stop branch and its bookkeeping are covered only by deterministic fake-model regression tests (31/31 focused, 162/162 full suite), not by a real forward, before paid exact compute. Any latent defect there surfaces as a paid failure — acceptable given the §18 reserve and honest disclosure, but it means the local dress rehearsal certifies less than a full local PASS would have.
+4. **Hardcoded cap in the validator.** `identity_view` requires `len(content) <= 64` as a literal rather than reading `max_content_tokens` from the bound fixture; harmless while the fixture is frozen at 64, a drift risk if it is ever additively revised.
+5. **The advancement exception lives only in governance prose.** No code encodes the local-cap exception — which is correct (code stays uniformly strict) — but it means enforcement of the four advancement conditions is procedural. The rerun's validator report should be cited explicitly in whatever note authorizes the exact technical run.
+
+## Verdict
+
+**GO.** The amendment is a legitimate integrity correction: it preserves evidence the preregistration already required to be durable, keeps every pass condition — runner and validator, local and exact — fully strict, retains the frozen fixture and cap unchanged, and confines the local cap hit to what it is: a noninferential proxy limitation. Exact technical compute may proceed if and only if the local rerun satisfies all four stated conditions, with the validator's `generated_forced_equivalence`/`generated_forced_identity` pair as the authoritative evidence that normal termination was the sole local identity failure. This authorizes the bounded exact technical gate only — not Phase A, treatment, semantic release, or any claim.

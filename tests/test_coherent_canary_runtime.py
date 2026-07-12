@@ -240,6 +240,33 @@ def test_generated_forced_identity_is_bit_exact_and_eos_is_not_appended():
     assert evidence["status"] == "GENERATED_FORCED_IDENTITY_PASS"
 
 
+def test_generated_forced_identity_still_rejects_cap_hit_after_equivalence():
+    plan = ReplayPlan(
+        token_ids=list(range(8)), message_start_positions=[0], events=[
+            ReplayEvent("prefill", "prefix", "structural", 0, 0, 1),
+            ReplayEvent("q1", "content", "assistant", 0, 1, 2),
+            ReplayEvent("prefill", "bridge", "structural", 0, 2, 3),
+            ReplayEvent("q1", "anchor", "assistant", 0, 3, 4),
+            ReplayEvent("prefill", "suffix", "structural", 0, 4, 8),
+        ],
+        regions=CarrierRegions(1, 2, 3, 4),
+    ).validate()
+    model = ScriptedFakeCacheModel({})
+    generated_prefix = execute_replay_plan(model, plan)
+    generated = greedy_generate_q1(
+        model, generated_prefix.snapshot, generated_prefix.last_logits,
+        logical_start=8, eos_ids=[9])
+    forced_prefix = execute_replay_plan(model, plan)
+    forced = force_content_q1(
+        model, forced_prefix.snapshot, forced_prefix.last_logits,
+        content_ids=generated.content_ids, logical_start=8, eos_ids=[9])
+    assert generated.cap_hit is True and len(generated.content_ids) == 64
+    with pytest.raises(CanaryRuntimeError, match="did not stop normally"):
+        require_generated_forced_identity(
+            generated_prefix, generated, forced_prefix, forced,
+            content_start=8)
+
+
 def test_prefix_block_binds_ids_and_positions():
     model = FakeCacheModel()
     result = execute_prefix_block(model, [4, 5, 6], label="identity_prefix")

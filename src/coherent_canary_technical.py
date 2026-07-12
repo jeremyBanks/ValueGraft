@@ -10,7 +10,8 @@ import torch
 
 from coherent_canary_path_control import run_bidirectional_path_control
 from coherent_canary_runtime import (
-    append_block_to_snapshot, continue_fresh_plan, execute_fresh_plan,
+    CanaryRuntimeError, append_block_to_snapshot, continue_fresh_plan,
+    execute_fresh_plan,
     execute_prefix_block, execute_replay_plan, extract_rows, force_content_q1,
     greedy_generate_q1, probe_suffix_ids, replace_rows,
     require_generated_forced_identity, score_target_from_prefix_q1,
@@ -140,29 +141,62 @@ def run_generated_forced_identity(model, tokenizer, fixture: dict,
         generated = greedy_generate_q1(
             model, generated_prefix.snapshot, generated_prefix.last_logits,
             logical_start=generated_prefix.logical_end, eos_ids=eos_ids)
-        forced_prefix = execute_prefix_block(
-            model, prefix_ids, label="identity_generation_prefix")
-        forced = force_content_q1(
-            model, forced_prefix.snapshot, forced_prefix.last_logits,
-            content_ids=generated.content_ids,
-            logical_start=forced_prefix.logical_end, eos_ids=eos_ids)
-        comparison = require_generated_forced_identity(
-            generated_prefix, generated, forced_prefix, forced,
-            content_start=generated_prefix.physical_end)
         generated_record = _identity_branch_record(
             generated_prefix, generated, tokenizer,
             content_start=generated_prefix.physical_end)
-        forced_record = _identity_branch_record(
-            forced_prefix, forced, tokenizer,
-            content_start=forced_prefix.physical_end)
-        branches.append({
-            "generated": generated_record,
-            "forced": forced_record,
-            "runner_comparison": comparison,
-        })
-    _require(branches[0] == branches[1], "identity repeat differs")
+        branch = {"generated": generated_record}
+        try:
+            forced_prefix = execute_prefix_block(
+                model, prefix_ids, label="identity_generation_prefix")
+            forced = force_content_q1(
+                model, forced_prefix.snapshot, forced_prefix.last_logits,
+                content_ids=generated.content_ids,
+                logical_start=forced_prefix.logical_end, eos_ids=eos_ids)
+            branch["forced"] = _identity_branch_record(
+                forced_prefix, forced, tokenizer,
+                content_start=forced_prefix.physical_end)
+            try:
+                comparison = require_generated_forced_identity(
+                    generated_prefix, generated, forced_prefix, forced,
+                    content_start=generated_prefix.physical_end)
+            except CanaryRuntimeError as exc:
+                comparison = {
+                    "status": "GENERATED_FORCED_IDENTITY_FAIL",
+                    "error_type": type(exc).__name__, "reason": str(exc),
+                }
+            except Exception as exc:
+                comparison = {
+                    "status": "GENERATED_FORCED_IDENTITY_ERROR",
+                    "error_type": type(exc).__name__, "reason": str(exc),
+                }
+        except CanaryRuntimeError as exc:
+            comparison = {
+                "status": "GENERATED_FORCED_IDENTITY_FAIL",
+                "error_type": type(exc).__name__, "reason": str(exc),
+            }
+        except Exception as exc:
+            comparison = {
+                "status": "GENERATED_FORCED_IDENTITY_ERROR",
+                "error_type": type(exc).__name__, "reason": str(exc),
+            }
+        branch["runner_comparison"] = comparison
+        branches.append(branch)
+        if "forced" not in branch:
+            break
+    repeat_identical = len(branches) == 2 and branches[0] == branches[1]
+    comparison_error = any(
+        branch["runner_comparison"].get("status") ==
+        "GENERATED_FORCED_IDENTITY_ERROR"
+        for branch in branches)
+    comparisons_pass = all(
+        branch["runner_comparison"].get("status") ==
+        "GENERATED_FORCED_IDENTITY_PASS"
+        for branch in branches)
     return {
-        "status": "PASS", "repeat_count": 2,
+        "status": ("ERROR" if comparison_error else
+                   "PASS" if comparisons_pass and repeat_identical else "FAIL"),
+        "requested_repeat_count": 2, "repeat_count": len(branches),
+        "repeat_identical": repeat_identical,
         "separate_branches": branches,
     }
 

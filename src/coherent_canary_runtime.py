@@ -626,8 +626,6 @@ def require_generated_forced_identity(
     _require(tensor_sha256(generated_prefix.last_logits) ==
              tensor_sha256(forced_prefix.last_logits),
              "generated/forced prefix logits differ")
-    _require(generated.stop_reason == "model_eos" and not generated.cap_hit,
-             "generated identity branch did not stop normally")
     _require(bool(generated.content_ids), "generated identity content is empty")
     _require(generated.content_ids == forced.content_ids,
              "generated/forced content IDs differ")
@@ -650,9 +648,8 @@ def require_generated_forced_identity(
              "generated/forced token logprob bits differ")
     _require(generated.stop_candidate_id == forced.stop_candidate_id and
              generated.stop_candidate_logprob_float32_bits ==
-             forced.stop_candidate_logprob_float32_bits and
-             forced.stop_candidate_id in forced.eos_ids,
-             "generated/forced EOS witness differs")
+             forced.stop_candidate_logprob_float32_bits,
+             "generated/forced stop-candidate witness differs")
     end = content_start + len(generated.content_ids)
     generated_rows = extract_rows(
         generated.snapshot, content_start, end,
@@ -672,6 +669,10 @@ def require_generated_forced_identity(
             "k_dtype": str(gk.dtype), "v_dtype": str(gv.dtype),
             "k_sha256": tensor_sha256(gk), "v_sha256": tensor_sha256(gv),
         })
+    _require(generated.stop_reason == forced.stop_reason == "model_eos" and
+             not generated.cap_hit and not forced.cap_hit and
+             generated.stop_candidate_id in generated.eos_ids,
+             "generated identity branch did not stop normally")
     return {
         "status": "GENERATED_FORCED_IDENTITY_PASS",
         "prefix_token_ids": list(generated_prefix.executed_token_ids),

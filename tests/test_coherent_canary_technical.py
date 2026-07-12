@@ -6,10 +6,13 @@ import torch
 from transformers import DynamicCache
 
 from coherent_canary_schema import MODEL_ID, MODEL_REVISION
+import coherent_canary_technical as technical_module
 from coherent_canary_technical import (
-    compact_messages, run_fresh_self_replacement, source_messages,
+    compact_messages, run_fresh_self_replacement,
+    run_generated_forced_identity, source_messages,
     summarize_natural_calibration,
 )
+from coherent_canary_runtime import CanaryRuntimeError
 from coherent_canary_tokens import build_fresh_destination_plan, build_role_native_plan
 from arms_common import canonical_ids_any, render_hf
 
@@ -125,3 +128,52 @@ def test_natural_nonpositive_denominator_is_durable_adverse_not_exception():
     assert result["status"] == "ADVERSE"
     assert result["rho_green"] is None
     assert result["checks"]["denominators_positive"] is False
+
+
+def test_cap_hit_identity_persists_both_branch_records_and_returns_fail(
+        monkeypatch):
+    prefix = SimpleNamespace(
+        snapshot="snapshot", last_logits="logits",
+        logical_end=1, physical_end=1)
+    generation = SimpleNamespace(content_ids=[3] * 64)
+    monkeypatch.setattr(technical_module, "generation_prefix_ids",
+                        lambda *args: [1])
+    monkeypatch.setattr(technical_module, "execute_prefix_block",
+                        lambda *args, **kwargs: prefix)
+    monkeypatch.setattr(technical_module, "greedy_generate_q1",
+                        lambda *args, **kwargs: generation)
+    monkeypatch.setattr(technical_module, "force_content_q1",
+                        lambda *args, **kwargs: generation)
+    monkeypatch.setattr(technical_module, "_identity_branch_record",
+                        lambda *args, **kwargs: {
+                            "generation": {"content_ids": [3] * 64,
+                                           "decoded_content": "saved render"},
+                            "content_row_hashes": [{"layer": 0}]})
+
+    def stop_failure(*args, **kwargs):
+        raise CanaryRuntimeError(
+            "generated identity branch did not stop normally")
+
+    monkeypatch.setattr(technical_module, "require_generated_forced_identity",
+                        stop_failure)
+    result = run_generated_forced_identity(
+        object(), object(), {"messages": []}, [9])
+    assert result["status"] == "FAIL"
+    assert result["repeat_identical"] is True
+    assert len(result["separate_branches"]) == 2
+    for branch in result["separate_branches"]:
+        assert branch["generated"]["generation"]["decoded_content"] == \
+            "saved render"
+        assert branch["forced"]["content_row_hashes"] == [{"layer": 0}]
+        assert branch["runner_comparison"]["reason"] == \
+            "generated identity branch did not stop normally"
+
+    monkeypatch.setattr(technical_module, "force_content_q1",
+                        lambda *args, **kwargs: (_ for _ in ()).throw(
+                            CanaryRuntimeError("forced branch failed")))
+    partial = run_generated_forced_identity(
+        object(), object(), {"messages": []}, [9])
+    assert partial["status"] == "FAIL" and partial["repeat_count"] == 1
+    assert partial["separate_branches"][0]["generated"]["generation"][
+        "decoded_content"] == "saved render"
+    assert "forced" not in partial["separate_branches"][0]

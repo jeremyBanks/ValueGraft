@@ -251,6 +251,9 @@ def run(args: argparse.Namespace) -> tuple[Path, dict[str, Any], int]:
             document, "generated_forced_identity", lambda:
             run_generated_forced_identity(
                 model, tokenizer, identity_fixture, eos_ids))
+        require(document["generated_forced_identity"].get("status") != "ERROR",
+                "generated/forced identity had an apparatus error after "
+                "persisting available evidence")
 
         middle = int(technical_fixture["middle_end_msg"])
         correct_history = technical_fixture["correct"]
