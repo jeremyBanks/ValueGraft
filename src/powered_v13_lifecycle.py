@@ -40,9 +40,15 @@ LAUNCH_TIMEOUT_SECONDS = 60
 TERMINAL_WAIT_SECONDS = 3400
 JOB_PATH = "scripts/run_powered_v13_stage_t.py"
 HARVEST_ROOTS = ("logs", "partials", "receipts", "results")
+EXPECTED_GPU_NAME = "NVIDIA A100 80GB PCIe"
+EXPECTED_GPU_MEMORY_MIB = 81920
+MINIMUM_NVIDIA_DRIVER = (580, 65, 6)
+PROVIDER_CUDA_FILTER = "13.0"
 _HEX_COMMIT = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 _POD_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{1,127}")
+_GPU_UUID = re.compile(r"GPU-[A-Za-z0-9][A-Za-z0-9-]{1,127}")
+_DRIVER_VERSION = re.compile(r"[0-9]+(?:\.[0-9]+)+")
 
 
 class V13LifecycleError(RuntimeError):
@@ -274,10 +280,15 @@ class RunPodProvider:
 
     def __init__(self, *, state_path: Path, module: Any | None = None):
         self.state_path = Path(state_path).resolve()
+        self._enforce_provider_environment()
+        self.module = module or importlib.reload(importlib.import_module("pod"))
+
+    def _enforce_provider_environment(self) -> None:
+        """Pin provider-side filters immediately before every create call."""
         os.environ["SC_POD_STATE"] = str(self.state_path)
         os.environ["SC_POD_CLOUD"] = "SECURE"
+        os.environ["SC_POD_ALLOWED_CUDA"] = PROVIDER_CUDA_FILTER
         os.environ.pop("SC_POD_SPOT", None)
-        self.module = module or importlib.reload(importlib.import_module("pod"))
 
     @staticmethod
     def _provider_money(value: object, label: str) -> str:
@@ -308,8 +319,11 @@ class RunPodProvider:
         })
 
     def create_secure_a100(self) -> Allocation:
+        # Do this at call time as well as construction time: another in-process
+        # caller must not be able to weaken the paid allocation filter.
+        self._enforce_provider_environment()
         try:
-            response = self.module.create(self.module.DEFAULT_GPU)
+            response = self.module.create(EXPECTED_GPU_NAME)
         except urllib.error.HTTPError as exc:
             if exc.code == 500:
                 raise NoCapacity("provider returned explicit no-capacity") from exc
@@ -447,18 +461,30 @@ def verify_release_binding(
 
 def validate_admission(pod: Mapping[str, Any], evidence: Mapping[str, Any]) -> dict[str, Any]:
     _require(pod.get("cloudType") == "SECURE", "allocated host is not secure cloud")
-    _require(pod.get("gpuCount") == 1, "allocated host does not have one GPU")
+    _require(type(pod.get("gpuCount")) is int and pod.get("gpuCount") == 1,
+             "allocated host does not have one GPU")
     name = evidence.get("gpu_name")
     memory = evidence.get("memory_mib")
-    _require(isinstance(name, str) and "A100" in name and type(memory) is int
-             and memory >= 80000, "host is not an A100 80GB")
+    _require(name == EXPECTED_GPU_NAME,
+             "host GPU name differs from the exact A100 80GB PCIe contract")
+    _require(type(memory) is int and memory == EXPECTED_GPU_MEMORY_MIB,
+             "host GPU memory differs from the exact 81920 MiB contract")
+    driver = evidence.get("driver_version")
+    _require(isinstance(driver, str)
+             and _DRIVER_VERSION.fullmatch(driver) is not None,
+             "host NVIDIA driver version is malformed")
+    driver_components = tuple(int(part) for part in driver.split("."))
+    _require(driver_components >= MINIMUM_NVIDIA_DRIVER,
+             "host NVIDIA driver is below 580.65.06")
     _require(evidence.get("cuda_available") is True
+             and type(evidence.get("gpu_count")) is int
+             and evidence.get("gpu_count") == 1
              and isinstance(evidence.get("gpu_uuid"), str)
-             and bool(evidence["gpu_uuid"])
-             and isinstance(evidence.get("driver_version"), str)
-             and bool(evidence["driver_version"]),
-             "host CUDA/GPU/driver admission differs")
-    return deepcopy(dict(evidence))
+             and _GPU_UUID.fullmatch(evidence["gpu_uuid"]) is not None,
+             "host one-GPU/CUDA/UUID admission differs")
+    result = deepcopy(dict(evidence))
+    result["driver_components"] = list(driver_components)
+    return result
 
 
 def validate_provider_snapshot(value: Mapping[str, Any]) -> dict[str, Any]:
@@ -741,7 +767,7 @@ class StageTLifecycle:
             try:
                 admission = self.transport.admit(
                     allocation, timeout_seconds=SSH_ADMISSION_TIMEOUT_SECONDS)
-                validate_admission(allocation.response, admission)
+                admission = validate_admission(allocation.response, admission)
             except BaseException as exc:
                 terminal = self._cleanup(
                     handle, pod_id=pod_id, reason="admission_rejected")

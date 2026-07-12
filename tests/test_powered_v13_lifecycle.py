@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 from decimal import Decimal
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -94,8 +95,8 @@ class FakeTransport:
             raise life.AdmissionRejected("wrong host")
         return {
             "gpu_name": "NVIDIA A100 80GB PCIe", "memory_mib": 81920,
-            "cuda_available": True, "gpu_uuid": "GPU-fixed",
-            "driver_version": "580.65",
+            "cuda_available": True, "gpu_count": 1,
+            "gpu_uuid": "GPU-fixed", "driver_version": "580.65.06",
         }
 
     def sync(self, allocation, *, repo, relative_paths, external_files,
@@ -213,6 +214,9 @@ def test_happy_path_has_one_host_exact_sync_detach_harvest_delete_no_warm_hold(
     assert transport.synced == ["contract.json", life.JOB_PATH]
     assert supervisor.harvests == 1
     assert result["events"][-1]["kind"] == "NO_WARM_HOLD_TERMINAL"
+    admitted = next(row for row in result["events"]
+                    if row["kind"] == "HOST_ADMITTED")
+    assert admitted["evidence"]["driver_components"] == [580, 65, 6]
     create = next(row for row in log if isinstance(row, tuple)
                   and row[0] == "create")
     attempt = result["attempts"][0]
@@ -424,6 +428,38 @@ def test_provider_snapshot_is_safe_exact_and_secret_free():
         life.validate_provider_snapshot({**result, "api_key": "secret"})
 
 
+def _valid_admission_evidence():
+    return {
+        "gpu_name": "NVIDIA A100 80GB PCIe",
+        "memory_mib": 81920,
+        "cuda_available": True,
+        "gpu_count": 1,
+        "gpu_uuid": "GPU-fixed",
+        "driver_version": "580.159.03",
+    }
+
+
+def test_admission_requires_exact_cuda13_a100_80gb_driver_contract():
+    pod = {"cloudType": "SECURE", "gpuCount": 1}
+    observed = life.validate_admission(pod, _valid_admission_evidence())
+    assert observed["driver_components"] == [580, 159, 3]
+
+
+@pytest.mark.parametrize("changes, message", [
+    ({"gpu_name": "NVIDIA H100 80GB HBM3"}, "GPU name differs"),
+    ({"memory_mib": 40960}, "GPU memory differs"),
+    ({"driver_version": "550.90.12"}, "below 580.65.06"),
+    ({"driver_version": "not-a-driver"}, "version is malformed"),
+    ({"gpu_count": 2}, "one-GPU/CUDA/UUID"),
+    ({"cuda_available": False}, "one-GPU/CUDA/UUID"),
+])
+def test_admission_rejects_wrong_paid_host(changes, message):
+    pod = {"cloudType": "SECURE", "gpuCount": 1}
+    evidence = {**_valid_admission_evidence(), **changes}
+    with pytest.raises(life.V13LifecycleError, match=message):
+        life.validate_admission(pod, evidence)
+
+
 class FakePodModule:
     DEFAULT_GPU = "NVIDIA A100 80GB PCIe"
 
@@ -459,12 +495,18 @@ def test_runpod_adapter_reuses_pod_api_and_classifies_capacity(tmp_path):
     state = tmp_path / "pod.json"
     module = FakePodModule(state)
     provider = life.RunPodProvider(state_path=state, module=module)
+    assert os.environ["SC_POD_ALLOWED_CUDA"] == "13.0"
+    assert os.environ["SC_POD_CLOUD"] == "SECURE"
+    assert "SC_POD_SPOT" not in os.environ
     assert provider.safe_snapshot() == {
         "balance_usd": "57.12", "spend_limit_usd": "80",
         "active_pod_ids": [],
     }
+    os.environ["SC_POD_ALLOWED_CUDA"] = ""
     allocation = provider.create_secure_a100()
     assert allocation.pod_id == "pod_stage_t_1"
+    assert os.environ["SC_POD_ALLOWED_CUDA"] == "13.0"
+    assert ("create", "NVIDIA A100 80GB PCIe") in module.calls
     with pytest.raises(life.PodNotFound):
         provider.get_pod("pod_stage_t_1")
 
