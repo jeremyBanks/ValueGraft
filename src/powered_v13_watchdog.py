@@ -572,15 +572,23 @@ def _watch_locked(
     _require(record["status"] not in _TERMINAL_STATUSES,
              "watchdog record is already terminal")
     now = int(clock())
-    record = _append_event(
-        record, epoch=now, kind="WATCHDOG_STARTED",
-        status="WATCHING")
+    if record["status"] == "TERMINATING":
+        record = _append_event(
+            record, epoch=now, kind="WATCHDOG_RESUMED_TERMINATION",
+            evidence={"termination_reason": record["termination_reason"]})
+    else:
+        record = _append_event(
+            record, epoch=now, kind="WATCHDOG_STARTED",
+            status="WATCHING")
     replace_record(record_path, record)
     cycles = 0
     while True:
         cycles += 1
         now = int(clock())
-        if now >= record["delete_trigger_epoch"]:
+        if record["status"] == "TERMINATING":
+            job_state = "NOT_PROBED_TERMINATING"
+            action = "STOP_RESUME_TERMINATION"
+        elif now >= record["delete_trigger_epoch"]:
             job_state = "NOT_PROBED_DEADLINE"
             action = "STOP_DEADLINE"
         else:

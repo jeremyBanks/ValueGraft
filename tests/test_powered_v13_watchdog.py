@@ -310,6 +310,51 @@ def test_independent_supervisor_can_resume_after_watcher_exit(tmp_path):
     assert backend.delete_calls == 1
 
 
+def test_supervisor_resumes_after_watcher_dies_post_harvest_preconfirmation(
+        tmp_path):
+    path = tmp_path / "guard.json"
+    watchdog.write_record_exclusive(path, _record())
+    backend = FakeBackend(
+        get_after_delete="present",
+        inventory_after_delete=("pod_stage_t_1",),
+    )
+    harvest_calls = []
+
+    def counted_harvest(command, epoch, timeout_seconds):
+        harvest_calls.append((tuple(command), epoch, timeout_seconds))
+        return _harvest(command, epoch, timeout_seconds)
+
+    interrupted = watchdog.watch(
+        record_path=path,
+        backend=backend,
+        clock=lambda: 1_000_010,
+        sleep=lambda _seconds: None,
+        probe=lambda _command: "COMPLETE",
+        harvest=counted_harvest,
+        max_cycles=1,
+    )
+    assert interrupted["status"] == "TERMINATING"
+    assert interrupted["harvest"]["succeeded"] is True
+    assert len(harvest_calls) == 1
+
+    backend.get_after_delete = "404"
+    backend.inventory_after_delete = ()
+    recovered = watchdog.watch(
+        record_path=path,
+        backend=backend,
+        clock=lambda: 1_000_011,
+        sleep=lambda _seconds: None,
+        probe=lambda _command: pytest.fail("terminating resume probed job"),
+        harvest=counted_harvest,
+        max_cycles=1,
+    )
+    assert recovered["status"] == "TERMINATED_HARVESTED"
+    assert recovered["termination_reason"] == "job_complete"
+    assert len(harvest_calls) == 1
+    assert any(row["kind"] == "WATCHDOG_RESUMED_TERMINATION"
+               for row in recovered["events"])
+
+
 def test_second_writer_cannot_mutate_an_owned_watchdog_record(tmp_path):
     path = tmp_path / "guard.json"
     watchdog.write_record_exclusive(path, _record())
