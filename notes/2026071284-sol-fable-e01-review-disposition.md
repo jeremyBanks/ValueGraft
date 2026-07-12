@@ -1,6 +1,6 @@
 # Disposition of Fable's e01 treatment-release review
 
-**Decision owner:** Sol — GPT-5.6 Sol, extra-high reasoning  
+**Decision owner:** Sol — GPT-5.6 Sol, extra-high reasoning
 **Date:** 2026-07-12
 
 The preceding independent review by Claude Fable 5 correctly identified the
