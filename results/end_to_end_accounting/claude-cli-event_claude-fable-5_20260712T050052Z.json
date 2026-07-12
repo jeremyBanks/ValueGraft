@@ -1,0 +1,43 @@
+{
+  "schema": "end-to-end-accounting-event/v1",
+  "captured_at_utc": "2026-07-12T05:00:52Z",
+  "provider_surface": "Claude CLI",
+  "purpose": "initial fresh final-paper draft",
+  "session_id": "f9075d55-ff32-4cb4-955d-e5594c4e1d48",
+  "runtime_model_requested": "claude-fable-5",
+  "runtime_model_observed": "claude-fable-5",
+  "effort": "xhigh",
+  "maximum_list_price_budget_usd": 4.0,
+  "duration_ms": 328653,
+  "duration_api_ms": 329742,
+  "num_turns": 5,
+  "terminal_status": "success",
+  "reported_list_price_equivalent_usd": 2.587544,
+  "cash_spend_usd": null,
+  "cash_spend_classification": "unknown; Claude CLI was subscription/subsidized and this reported cost is not assumed to be incremental cash billing",
+  "aggregate_usage": {
+    "input_tokens": 3269,
+    "output_tokens": 25330,
+    "cache_creation_input_tokens": 57272,
+    "cache_read_input_tokens": 141521
+  },
+  "model_usage": {
+    "claude-fable-5": {
+      "input_tokens": 3269,
+      "output_tokens": 25330,
+      "cache_creation_input_tokens": 57272,
+      "cache_read_input_tokens": 141521,
+      "reported_cost_usd": 2.586151
+    },
+    "claude-haiku-4-5-20251001": {
+      "input_tokens": 1283,
+      "output_tokens": 22,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "reported_cost_usd": 0.001393
+    }
+  },
+  "output_artifact": "notes/2026071291-fable-fresh-final-paper-initial-draft.md",
+  "output_commit": "3bca330",
+  "evidence": "Claude CLI terminal result object captured immediately after completion; final ledger must deduplicate this session against any transcript-derived inventory"
+}
