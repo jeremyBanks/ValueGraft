@@ -878,7 +878,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071116-sol-fable-execution-coordination.md": {
-      "object_id": "b54e60ff2d208fda6a96ef2282480ef605468503",
+      "object_id": "d30c284099538d5ac3f95deae28c0aa72023ecf6",
       "archive_timestamp_utc": "2026-07-11T05:07:01Z",
       "timestamp_source": "git current-file lifetime"
     },
@@ -1173,7 +1173,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071275-conversation-user-gpt56.md": {
-      "object_id": "49fa18cdfd8701154256898f8ebd206956860aca",
+      "object_id": "d5ac751b5ee53894a7b0ba8daa3f36e134bafb41",
       "archive_timestamp_utc": "2026-07-12T00:01:28.888000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -1206,6 +1206,26 @@
       "object_id": "cfef8058ebba1d3bb4eaccc34633ddfff4b18757",
       "archive_timestamp_utc": "2026-07-12T01:17:13.859236Z",
       "timestamp_source": "filesystem birth time"
+    },
+    "notes/2026071282-sol-v12-attempt3-cross-model-review-disposition.md": {
+      "object_id": "b18f31f0074acdb4b4f70acf3bae637c6005f966",
+      "archive_timestamp_utc": "2026-07-12T01:43:54Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071283-fable-e01-treatment-release-review.md": {
+      "object_id": "7cb02a2f667b7f536d0b30c40ed8c46f3fa51ce1",
+      "archive_timestamp_utc": "2026-07-12T03:48:53Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071284-sol-fable-e01-review-disposition.md": {
+      "object_id": "29919b43f1eae40b827ebfa99e2b96bb502b8c13",
+      "archive_timestamp_utc": "2026-07-12T03:50:43Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071285-conversation-user-opus48.md": {
+      "object_id": "caace32b0d3c6b1d874a7efcbc601982e10a3c6f",
+      "archive_timestamp_utc": "2026-07-12T03:59:48.019000Z",
+      "timestamp_source": "conversation manifest first timestamp"
     }
   }
 }
