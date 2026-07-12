@@ -78,6 +78,10 @@ decisions that govern current work.
 - Serious Fable advice is written to a dedicated `notes/` file from the
   smallest sufficient, non-leading evidence bundle. It is advisory and must be
   dispositioned against literal artifacts.
+- Parallel implementation may use detached temporary worktrees for isolated
+  shards. Agents commit there without pushing; the main agent reviews the exact
+  commit and integrates accepted additive history on `trunk`. Temporary
+  worktrees are removed only after useful work is preserved.
 - Root is the small live working surface. Completed plans, audits, ledgers, and
   superseded Markdown move intact to `notes/` and are referenced by descriptive
   slug; archive numbering may change.
@@ -109,6 +113,12 @@ decisions that govern current work.
   stratum permutation; rank is metadata and never seeds eligibility. The old
   narrow bounded simulation is preliminary evidence only until its required
   stratified finite-population replacement passes.
+- Production randomization is an acyclic `C0 -> C1 -> C2` boundary. `C0` is a
+  clean pushed pre-seed root with exact Git-object inventory and compact-pool
+  digests; seed-only `C1` records eight internal 16-byte OS-random values;
+  `C2` separately records every PCG64 integer permutation. Durable replay uses
+  the literal integers without NumPy. Only verified ranks 1--10 may be
+  materialized. Real entropy remains forbidden until every pre-seed gate passes.
 - VP is a bounded whole-bf16 partial V-row permutation and qualifies only the
   value-only cell. Full-KV has a wrong-history matched semantic control but is
   never called nonsemantic-placebo-complete.
