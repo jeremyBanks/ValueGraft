@@ -15,6 +15,7 @@ import math
 import os
 from pathlib import Path, PurePosixPath
 import platform
+import re
 import subprocess
 from typing import Any, Mapping, Sequence
 
@@ -88,6 +89,35 @@ PROTOCOL_TOKENIZER = {
     "model_id": MODEL_30B,
     "revision": REVISION_30B,
 }
+EXACT_MOE_LAYOUT = {
+    "hidden_size": 2048,
+    "moe_intermediate_size": 768,
+    "num_experts": 128,
+    "decoder_sparse_step": 1,
+    "tie_word_embeddings": False,
+}
+_EXACT_EXPERT_WEIGHT = re.compile(
+    r"^model\.layers\.(\d+)\.mlp\.experts\.(\d+)\."
+    r"(gate_proj|up_proj|down_proj)\.weight$")
+_EXACT_MOE_CONVERSION_RECIPE = [
+    {
+        "source_patterns": [
+            "mlp.experts.*.gate_proj.weight",
+            "mlp.experts.*.up_proj.weight",
+        ],
+        "target_patterns": ["mlp.experts.gate_up_proj"],
+        "operations": [
+            {"class": "MergeModulelist", "dim": 0},
+            {"class": "Concatenate", "dim": 1},
+        ],
+    },
+    {
+        "source_patterns": ["mlp.experts.*.down_proj.weight"],
+        "target_patterns": ["mlp.experts.down_proj"],
+        "operations": [{"class": "MergeModulelist", "dim": 0}],
+    },
+]
+_EXACT_MOE_CONTENT_SENTINELS = ((0, 0), (24, 64), (47, 127))
 PROTOCOL_TOKENIZER_ATTESTATION = {
     "class": "Qwen2Tokenizer",
     "length": 151669,
@@ -136,6 +166,7 @@ MANDATORY_FROZEN_PATHS = {
     "notes/2026071167-sol-v12-execution-audit-and-runtime-closure.md",
     "notes/2026071168-sol-v12-harvest-and-release-closure.md",
     "notes/2026071176-sol-v12-exact-launch-review-disposition.md",
+    "notes/2026071177-sol-v12-transformers-moe-loader-correction.md",
     "results/coherent_canary_validation/"
     "coherent_canary_revision4_full_manifest_Qwen3-30B-A3B-Instruct-2507_"
     "20260711T205951Z.json",
@@ -280,6 +311,15 @@ def validate_config(snapshot: Path, spec: SubjectSpec) -> dict[str, Any]:
         "torch_dtype": "bfloat16",
         "quantization_config": None,
     }
+    if spec == EXACT_SPEC:
+        observed.update({
+            "hidden_size": config.get("hidden_size"),
+            "moe_intermediate_size": config.get("moe_intermediate_size"),
+            "num_experts": config.get("num_experts"),
+            "decoder_sparse_step": config.get("decoder_sparse_step"),
+            "tie_word_embeddings": config.get("tie_word_embeddings"),
+        })
+        expected.update(EXACT_MOE_LAYOUT)
     _require(observed == expected,
              f"snapshot config differs for {spec.key}: {observed} != {expected}")
     return observed
@@ -670,6 +710,238 @@ def _quantization_absent(model) -> dict[str, Any]:
     return fields
 
 
+def _checkpoint_parameter_rows(
+        weight_tensors: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    rows = []
+    seen = set()
+    for row in weight_tensors:
+        _require(isinstance(row, Mapping) and
+                 isinstance(row.get("name"), str) and row["name"] and
+                 isinstance(row.get("shape"), list) and row["shape"] and
+                 all(isinstance(value, int) and value >= 1
+                     for value in row["shape"]) and
+                 row.get("dtype") == "BF16",
+                 "checkpoint parameter topology row is invalid")
+        name = str(row["name"])
+        _require(name not in seen,
+                 f"checkpoint parameter topology duplicates {name}")
+        seen.add(name)
+        rows.append({"name": name, "shape": list(row["shape"]),
+                     "dtype": "BF16"})
+    _require(bool(rows), "checkpoint parameter topology is empty")
+    return sorted(rows, key=lambda row: row["name"])
+
+
+def expected_loaded_parameter_topology(
+        weight_tensors: Sequence[Mapping[str, Any]], *,
+        spec: SubjectSpec) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Derive runtime rows from the immutable checkpoint representation.
+
+    Transformers 5 stores Qwen3 MoE experts as two packed runtime parameters
+    per layer even though the canonical checkpoint has three parameters per
+    expert.  Dense checkpoints retain a one-to-one representation.
+    """
+    _frozen_spec(spec)
+    checkpoint_rows = _checkpoint_parameter_rows(weight_tensors)
+    checkpoint_hash = hashlib.sha256(_canonical(checkpoint_rows)).hexdigest()
+    checkpoint_parameter_count = sum(
+        math.prod(row["shape"]) for row in checkpoint_rows)
+    if spec == LOCAL_SPEC:
+        return checkpoint_rows, {
+            "schema": "coherent_canary_loaded_parameter_topology_v1",
+            "representation": "checkpoint-identity",
+            "checkpoint_tensor_count": len(checkpoint_rows),
+            "expected_runtime_tensor_count": len(checkpoint_rows),
+            "checkpoint_parameter_count": checkpoint_parameter_count,
+            "expected_runtime_parameter_count": checkpoint_parameter_count,
+            "checkpoint_topology_sha256": checkpoint_hash,
+            "expected_runtime_topology_sha256": checkpoint_hash,
+        }
+
+    _require(spec == EXACT_SPEC, "unknown exact topology conversion")
+    hidden = EXACT_MOE_LAYOUT["hidden_size"]
+    intermediate = EXACT_MOE_LAYOUT["moe_intermediate_size"]
+    num_experts = EXACT_MOE_LAYOUT["num_experts"]
+    expert_rows: dict[tuple[int, int, str], dict[str, Any]] = {}
+    unchanged_rows = []
+    for row in checkpoint_rows:
+        match = _EXACT_EXPERT_WEIGHT.fullmatch(row["name"])
+        if match is None:
+            _require(".mlp.experts." not in row["name"],
+                     f"unrecognized exact expert tensor: {row['name']}")
+            unchanged_rows.append(row)
+            continue
+        layer, expert = int(match.group(1)), int(match.group(2))
+        projection = match.group(3)
+        _require(0 <= layer < spec.layers and 0 <= expert < num_experts,
+                 f"exact expert index is outside frozen layout: {row['name']}")
+        expected_shape = ([intermediate, hidden]
+                          if projection in {"gate_proj", "up_proj"}
+                          else [hidden, intermediate])
+        _require(row["shape"] == expected_shape,
+                 f"exact expert tensor shape differs: {row['name']}")
+        key = (layer, expert, projection)
+        _require(key not in expert_rows,
+                 f"exact expert tensor is duplicated: {row['name']}")
+        expert_rows[key] = row
+
+    expected_keys = {
+        (layer, expert, projection)
+        for layer in range(spec.layers)
+        for expert in range(num_experts)
+        for projection in ("gate_proj", "up_proj", "down_proj")
+    }
+    _require(set(expert_rows) == expected_keys,
+             "exact checkpoint expert layer/index/projection coverage differs")
+    packed_rows = []
+    for layer in range(spec.layers):
+        packed_rows.extend([
+            {
+                "name": f"model.layers.{layer}.mlp.experts.gate_up_proj",
+                "shape": [num_experts, 2 * intermediate, hidden],
+                "dtype": "BF16",
+            },
+            {
+                "name": f"model.layers.{layer}.mlp.experts.down_proj",
+                "shape": [num_experts, hidden, intermediate],
+                "dtype": "BF16",
+            },
+        ])
+    runtime_rows = sorted([*unchanged_rows, *packed_rows],
+                          key=lambda row: row["name"])
+    runtime_parameter_count = sum(
+        math.prod(row["shape"]) for row in runtime_rows)
+    _require(runtime_parameter_count == checkpoint_parameter_count,
+             "exact packed runtime parameter count differs from checkpoint")
+    runtime_hash = hashlib.sha256(_canonical(runtime_rows)).hexdigest()
+    return runtime_rows, {
+        "schema": "coherent_canary_loaded_parameter_topology_v1",
+        "representation": "transformers-5-qwen2-style-moe-packed",
+        "checkpoint_tensor_count": len(checkpoint_rows),
+        "unchanged_tensor_count": len(unchanged_rows),
+        "checkpoint_expert_tensor_count": len(expert_rows),
+        "packed_expert_tensor_count": len(packed_rows),
+        "expected_runtime_tensor_count": len(runtime_rows),
+        "layers": spec.layers,
+        "experts_per_layer": num_experts,
+        "gate_up_source_order": ["gate_proj", "up_proj"],
+        "expert_source_order": "ascending-integer-index",
+        "checkpoint_parameter_count": checkpoint_parameter_count,
+        "expected_runtime_parameter_count": runtime_parameter_count,
+        "checkpoint_topology_sha256": checkpoint_hash,
+        "expected_runtime_topology_sha256": runtime_hash,
+    }
+
+
+def attest_weight_conversion_recipe(model, *, spec: SubjectSpec) -> dict[str, Any]:
+    """Bind the exact runtime to Transformers' actually retained load recipe."""
+    _frozen_spec(spec)
+    if spec == LOCAL_SPEC:
+        return {"representation": "checkpoint-identity", "converters": []}
+    conversions = getattr(model, "_weight_conversions", None)
+    _require(isinstance(conversions, (list, tuple)),
+             "loaded exact subject lacks weight conversion record")
+    observed = []
+    for conversion in conversions:
+        if type(conversion).__name__ != "WeightConverter":
+            continue
+        operations = []
+        for operation in getattr(conversion, "operations", []):
+            row = {"class": type(operation).__name__}
+            if hasattr(operation, "dim"):
+                row["dim"] = int(operation.dim)
+            operations.append(row)
+        observed.append({
+            "source_patterns": list(getattr(conversion, "source_patterns", [])),
+            "target_patterns": list(getattr(conversion, "target_patterns", [])),
+            "operations": operations,
+        })
+    _require(observed == _EXACT_MOE_CONVERSION_RECIPE,
+             f"loaded exact weight conversion recipe differs: {observed}")
+    return {
+        "representation": "transformers-5-qwen2-style-moe-packed",
+        "converters": observed,
+    }
+
+
+def _tensor_sha256(tensor: torch.Tensor) -> str:
+    value = tensor.detach().contiguous().to(device="cpu").view(torch.uint8)
+    return hashlib.sha256(value.numpy().tobytes()).hexdigest()
+
+
+def attest_moe_content_sentinels(
+        model, *, spec: SubjectSpec, model_snapshot: Path,
+        weight_tensors: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Bit-compare three cross-checkpoint expert triples after packing."""
+    _frozen_spec(spec)
+    if spec == LOCAL_SPEC:
+        return {
+            "schema": "coherent_canary_weight_content_sentinels_v1",
+            "representation": "checkpoint-identity",
+            "sentinels": [],
+        }
+    _require(spec == EXACT_SPEC, "unknown exact content sentinel layout")
+    from safetensors import safe_open
+
+    rows = {str(row["name"]): row for row in weight_tensors}
+    _require(len(rows) == len(weight_tensors),
+             "weight content sentinel inventory names are duplicated")
+    hidden = EXACT_MOE_LAYOUT["hidden_size"]
+    intermediate = EXACT_MOE_LAYOUT["moe_intermediate_size"]
+    num_experts = EXACT_MOE_LAYOUT["num_experts"]
+    evidence = []
+    for layer, expert in _EXACT_MOE_CONTENT_SENTINELS:
+        _require(0 <= layer < spec.layers and 0 <= expert < num_experts,
+                 "weight content sentinel index is outside frozen layout")
+        gate_up_name = f"model.layers.{layer}.mlp.experts.gate_up_proj"
+        down_name = f"model.layers.{layer}.mlp.experts.down_proj"
+        gate_up = model.get_parameter(gate_up_name)
+        down = model.get_parameter(down_name)
+        _require(list(gate_up.shape) == [num_experts, 2 * intermediate, hidden] and
+                 list(down.shape) == [num_experts, hidden, intermediate],
+                 "weight content sentinel packed parameter shape differs")
+        for projection, runtime_name, runtime_tensor in (
+            ("gate_proj", gate_up_name,
+             gate_up[expert, :intermediate, :]),
+            ("up_proj", gate_up_name,
+             gate_up[expert, intermediate:, :]),
+            ("down_proj", down_name, down[expert]),
+        ):
+            source_name = (f"model.layers.{layer}.mlp.experts.{expert}."
+                           f"{projection}.weight")
+            row = rows.get(source_name)
+            _require(isinstance(row, Mapping) and
+                     isinstance(row.get("shard"), str),
+                     f"weight content sentinel source is absent: {source_name}")
+            shard = _safe_relative_file(str(row["shard"]))
+            with safe_open(str(model_snapshot / shard), framework="pt",
+                           device="cpu") as handle:
+                _require(source_name in handle.keys(),
+                         f"weight content sentinel key is absent: {source_name}")
+                source_tensor = handle.get_tensor(source_name)
+            runtime_cpu = runtime_tensor.detach().contiguous().to(device="cpu")
+            _require(source_tensor.dtype == torch.bfloat16 and
+                     runtime_cpu.dtype == torch.bfloat16 and
+                     list(source_tensor.shape) == list(runtime_cpu.shape) and
+                     torch.equal(source_tensor, runtime_cpu),
+                     f"packed expert content differs: {source_name}")
+            digest = _tensor_sha256(source_tensor)
+            _require(_tensor_sha256(runtime_cpu) == digest,
+                     f"packed expert content hash differs: {source_name}")
+            evidence.append({
+                "layer": layer, "expert": expert,
+                "projection": projection, "source_name": source_name,
+                "runtime_name": runtime_name, "shard": shard,
+                "shape": list(source_tensor.shape), "dtype": "BF16",
+                "sha256": digest,
+            })
+    return {
+        "schema": "coherent_canary_weight_content_sentinels_v1",
+        "representation": "transformers-5-qwen2-style-moe-packed",
+        "sentinels": evidence,
+    }
+
+
 def attest_protocol_tokenizer(tokenizer, *, snapshot: Path,
                               inventory: Mapping[str, Any]) -> dict[str, Any]:
     _require(inventory.get("kind") == "protocol_tokenizer" and
@@ -804,13 +1076,16 @@ def attest_loaded_subject(model, tokenizer, *, spec: SubjectSpec,
         "dtype": "BF16" if parameter.dtype == torch.bfloat16
         else str(parameter.dtype),
     } for name, parameter in named_parameters), key=lambda row: row["name"])
-    weight_parameter_rows = sorted(({
-        "name": str(row["name"]),
-        "shape": [int(value) for value in row["shape"]],
-        "dtype": str(row["dtype"]),
-    } for row in model_inventory["weight_tensors"]), key=lambda row: row["name"])
-    _require(loaded_parameter_rows == weight_parameter_rows,
-             "loaded parameter names/shapes/dtypes differ from weight inventory")
+    expected_parameter_rows, topology_attestation = \
+        expected_loaded_parameter_topology(
+            model_inventory["weight_tensors"], spec=spec)
+    _require(loaded_parameter_rows == expected_parameter_rows,
+             "loaded parameter names/shapes/dtypes differ from expected "
+             "runtime topology")
+    conversion_attestation = attest_weight_conversion_recipe(model, spec=spec)
+    content_sentinels = attest_moe_content_sentinels(
+        model, spec=spec, model_snapshot=model_snapshot,
+        weight_tensors=model_inventory["weight_tensors"])
     loaded_parameter_count = sum(
         math.prod(row["shape"]) for row in loaded_parameter_rows)
     _require(loaded_parameter_count == subject_contract_entry["parameter_count"],
@@ -857,6 +1132,9 @@ def attest_loaded_subject(model, tokenizer, *, spec: SubjectSpec,
         "loading_info": {key: list(loading_info[key]) for key in
                          loading_info_keys},
         "parameter_count": loaded_parameter_count,
+        "loaded_parameter_topology_attestation": topology_attestation,
+        "weight_conversion_attestation": conversion_attestation,
+        "weight_content_sentinels": content_sentinels,
         "loaded_parameter_topology_sha256": hashlib.sha256(
             _canonical(loaded_parameter_rows)).hexdigest(),
         "parameter_devices": sorted(devices),

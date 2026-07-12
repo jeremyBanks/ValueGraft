@@ -9,7 +9,8 @@ from types import SimpleNamespace
 import pytest
 from safetensors.torch import save as save_safetensors
 import torch
-from transformers import AutoTokenizer
+from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
+from transformers.conversion_mapping import get_model_conversion_mapping
 import coherent_canary_loader as loader_module
 
 from coherent_canary_loader import (
@@ -76,6 +77,8 @@ def fake_snapshot(tmp_path: Path, *, spec=LOCAL_SPEC, sharded=False) -> Path:
         "rope_theta": spec.rope_theta, "torch_dtype": "bfloat16",
         "quantization_config": None,
     }
+    if spec == EXACT_SPEC:
+        config.update(loader_module.EXACT_MOE_LAYOUT)
     files = {
         "config.json": json.dumps(config).encode(),
         "generation_config.json": json.dumps({"eos_token_id": [9, 7]}).encode(),
@@ -391,6 +394,123 @@ def test_exact_contract_opens_against_pinned_index_and_canonical_file_hash():
     assert len(name_to_shard) == exact["weight_tensor_count"]
     assert hashlib.sha256(canonical_map).hexdigest() == \
         exact["weight_name_to_shard_sha256"]
+
+
+def exact_checkpoint_topology_rows() -> list[dict]:
+    layout = loader_module.EXACT_MOE_LAYOUT
+    rows = [{"name": "lm_head.weight", "shape": [151669, layout["hidden_size"]],
+             "dtype": "BF16"}]
+    shapes = {
+        "gate_proj": [layout["moe_intermediate_size"], layout["hidden_size"]],
+        "up_proj": [layout["moe_intermediate_size"], layout["hidden_size"]],
+        "down_proj": [layout["hidden_size"], layout["moe_intermediate_size"]],
+    }
+    for layer in range(EXACT_SPEC.layers):
+        for expert in range(layout["num_experts"]):
+            for projection, shape in shapes.items():
+                rows.append({
+                    "name": (f"model.layers.{layer}.mlp.experts.{expert}."
+                             f"{projection}.weight"),
+                    "shape": shape, "dtype": "BF16",
+                })
+    return rows
+
+
+def test_exact_moe_checkpoint_topology_derives_packed_runtime_rows():
+    source = exact_checkpoint_topology_rows()
+    runtime, evidence = loader_module.expected_loaded_parameter_topology(
+        source, spec=EXACT_SPEC)
+    assert len(source) == 1 + 48 * 128 * 3
+    assert len(runtime) == 1 + 48 * 2
+    assert evidence["checkpoint_expert_tensor_count"] == 48 * 128 * 3
+    assert evidence["packed_expert_tensor_count"] == 48 * 2
+    assert evidence["checkpoint_parameter_count"] == \
+        evidence["expected_runtime_parameter_count"]
+    by_name = {row["name"]: row for row in runtime}
+    assert by_name["model.layers.0.mlp.experts.gate_up_proj"]["shape"] == \
+        [128, 1536, 2048]
+    assert by_name["model.layers.47.mlp.experts.down_proj"]["shape"] == \
+        [128, 2048, 768]
+
+    missing = source[:-1]
+    with pytest.raises(CanaryLoaderError, match="coverage differs"):
+        loader_module.expected_loaded_parameter_topology(
+            missing, spec=EXACT_SPEC)
+    wrong_shape = [dict(row) for row in source]
+    wrong_shape[1] = {**wrong_shape[1], "shape": [1, 1]}
+    with pytest.raises(CanaryLoaderError, match="shape differs"):
+        loader_module.expected_loaded_parameter_topology(
+            wrong_shape, spec=EXACT_SPEC)
+    wrong_dtype = [dict(row) for row in source]
+    wrong_dtype[1] = {**wrong_dtype[1], "dtype": "F16"}
+    with pytest.raises(CanaryLoaderError, match="topology row is invalid"):
+        loader_module.expected_loaded_parameter_topology(
+            wrong_dtype, spec=EXACT_SPEC)
+
+
+def test_exact_moe_conversion_recipe_matches_transformers_5():
+    snapshot = (Path.home() / ".cache/huggingface/hub/"
+                "models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots" /
+                REVISION_30B)
+    config = AutoConfig.from_pretrained(
+        str(snapshot), local_files_only=True, trust_remote_code=False)
+    with torch.device("meta"):
+        model = AutoModelForCausalLM.from_config(
+            config, attn_implementation="eager", trust_remote_code=False)
+    model._weight_conversions = get_model_conversion_mapping(model)
+    evidence = loader_module.attest_weight_conversion_recipe(
+        model, spec=EXACT_SPEC)
+    assert evidence["converters"] == loader_module._EXACT_MOE_CONVERSION_RECIPE
+
+
+def test_exact_moe_content_sentinel_compares_packed_slices(
+        tmp_path, monkeypatch):
+    layout = {
+        "hidden_size": 3, "moe_intermediate_size": 2,
+        "num_experts": 2, "decoder_sparse_step": 1,
+        "tie_word_embeddings": False,
+    }
+    monkeypatch.setattr(loader_module, "EXACT_MOE_LAYOUT", layout)
+    monkeypatch.setattr(loader_module, "_EXACT_MOE_CONTENT_SENTINELS", ((0, 0),))
+    gate = torch.arange(6, dtype=torch.float32).reshape(2, 3).to(torch.bfloat16)
+    up = (gate + 10).to(torch.bfloat16)
+    down = (gate.T + 20).to(torch.bfloat16).contiguous()
+    names = {
+        "model.layers.0.mlp.experts.0.gate_proj.weight": gate,
+        "model.layers.0.mlp.experts.0.up_proj.weight": up,
+        "model.layers.0.mlp.experts.0.down_proj.weight": down,
+    }
+    shard = tmp_path / "model.safetensors"
+    shard.write_bytes(save_safetensors(names))
+    inventory = [
+        {"name": name, "shape": list(tensor.shape), "dtype": "BF16",
+         "shard": shard.name}
+        for name, tensor in names.items()
+    ]
+    model = torch.nn.Module()
+    model.model = torch.nn.Module()
+    model.model.layers = torch.nn.ModuleList([torch.nn.Module()])
+    layer = model.model.layers[0]
+    layer.mlp = torch.nn.Module()
+    layer.mlp.experts = torch.nn.Module()
+    layer.mlp.experts.gate_up_proj = torch.nn.Parameter(torch.stack([
+        torch.cat([gate, up], dim=0), torch.zeros((4, 3), dtype=torch.bfloat16),
+    ]))
+    layer.mlp.experts.down_proj = torch.nn.Parameter(torch.stack([
+        down, torch.zeros((3, 2), dtype=torch.bfloat16),
+    ]))
+    evidence = loader_module.attest_moe_content_sentinels(
+        model, spec=EXACT_SPEC, model_snapshot=tmp_path,
+        weight_tensors=inventory)
+    assert len(evidence["sentinels"]) == 3
+    assert {row["projection"] for row in evidence["sentinels"]} == \
+        {"gate_proj", "up_proj", "down_proj"}
+    with torch.no_grad():
+        layer.mlp.experts.gate_up_proj[0, 0, 0] += 1
+    with pytest.raises(CanaryLoaderError, match="packed expert content differs"):
+        loader_module.attest_moe_content_sentinels(
+            model, spec=EXACT_SPEC, model_snapshot=tmp_path,
+            weight_tensors=inventory)
 
 
 def test_loaded_subject_attestation_rehashes_weights_and_rejects_quantization(

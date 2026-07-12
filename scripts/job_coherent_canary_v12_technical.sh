@@ -161,6 +161,9 @@ document = {
 receipt.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n")
 print("RECEIPT", receipt)
 PY
+CURRENT_RECEIPT_POINTER="$BOOT/v12_exact_technical_current_receipt.txt"
+printf '%s\n' "$RECEIPT" > "${CURRENT_RECEIPT_POINTER}.tmp"
+mv "${CURRENT_RECEIPT_POINTER}.tmp" "$CURRENT_RECEIPT_POINTER"
 
 read -r REPORT_STATUS SEMANTIC_ELIGIBLE CHECKPOINT_COUNT < <(
   "$PY" - "$REPORT" "$RECEIPT" <<'PY'
