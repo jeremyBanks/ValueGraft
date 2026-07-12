@@ -1,0 +1,51 @@
+{
+  "schema": "end-to-end-accounting-event/v1",
+  "captured_at_utc": "2026-07-12T08:58:28Z",
+  "provider_surface": "Claude CLI",
+  "purpose": "outcome-blind minimal P02 fallback design review",
+  "session_id": "e6f3aed0-68bc-45ef-9790-3a1c3fac8101",
+  "runtime_model_requested": "claude-fable-5",
+  "runtime_model_observed": "claude-fable-5",
+  "effort": "xhigh",
+  "invocations": [
+    {
+      "maximum_list_price_budget_usd": 1.5,
+      "duration_ms": 303065,
+      "duration_api_ms": 61850,
+      "num_turns": 10,
+      "terminal_status": "error_max_budget_usd_before_note_write",
+      "reported_list_price_equivalent_usd": 2.081349
+    },
+    {
+      "maximum_list_price_budget_usd": 0.5,
+      "duration_ms": 79003,
+      "duration_api_ms": 6680,
+      "num_turns": 2,
+      "terminal_status": "error_max_budget_usd_after_note_written",
+      "reported_list_price_equivalent_usd": 0.852726
+    }
+  ],
+  "overall_terminal_status": "artifact_completed_across_two_budget-terminated_invocations",
+  "artifact_status": "complete",
+  "reported_list_price_equivalent_usd": 2.934075,
+  "cash_spend_usd": null,
+  "cash_spend_classification": "unknown; Claude CLI was subscription/subsidized and reported cost is not assumed to be incremental cash billing",
+  "aggregate_model_usage": {
+    "claude-fable-5": {
+      "input_tokens": 3685,
+      "output_tokens": 26405,
+      "cache_creation_input_tokens": 60075,
+      "cache_read_input_tokens": 373623,
+      "reported_cost_usd": 2.932223
+    },
+    "claude-haiku-4-5-20251001": {
+      "input_tokens": 1752,
+      "output_tokens": 20,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "reported_cost_usd": 0.001852
+    }
+  },
+  "output_artifact": "notes/20260712A5-fable-p02-outcome-blind-fallback-review.md",
+  "evidence": "Two Claude CLI result objects captured immediately after the initial and resumed invocations; both hard budget flags were exceeded before the CLI terminated, the second invocation successfully wrote the complete note, and the final ledger must deduplicate this resumed session against transcript-derived inventory"
+}
