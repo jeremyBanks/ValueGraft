@@ -10,7 +10,7 @@
 
 When a long LLM conversation is compacted — replaced by a text summary so that work can continue in a fresh context — everything the model computed while generating the original conversation is discarded along with the text. Recent work provides evidence, in trained settings, that generation-time key/value (KV) state can carry task-relevant information that re-encoding the visible text does not recover. This project asked a narrower, practical question: can a **training-free, post-hoc transplant** of old KV state (in particular, old value vectors under fresh keys) into a compacted context reliably mitigate compaction damage on an ordinary instruction model?
 
-The answer we can support is: **the project did not establish practical benefit, and the clean literal proposal remains unresolved.** Across four evidence strata that must not be pooled, trustworthy performance evidence was inconclusive, heterogeneous, or control-incomplete. The strongest surviving performance lead is a small out-of-fitting likelihood effect on a coding-trajectory proxy (+0.0135 nats/token, nominal 95% bootstrap CI [+0.0083, +0.0191]) with no matched placebo, no executed action, and no task-success signal. The final exact-state mechanism experiment formally stopped at a preregistered technical gate; a single permitted post-stop diagnostic produced a weak, schedule-sensitive, placebo-uncontrolled value-only trace with no behavioral recovery. No experiment simultaneously combined subject-native conversation generation, actual incremental-state capture, a naturally triggered compaction boundary, matched controls, and a behavioral endpoint. We report these measurements and limitations, and what we believe is the project's most durable contribution: a catalogue of ten methodological failures. Some moved numerical readouts at the scale of the hoped-for effect; others invalidated controls, provenance, or repairability. Several survived elaborate hash, test, and release machinery before being caught.
+The answer we can support is: **the project did not establish practical benefit, and the clean literal proposal remains unresolved.** Across four evidence strata that must not be pooled, trustworthy performance evidence was inconclusive, heterogeneous, or control-incomplete. The strongest surviving performance lead is a small out-of-fitting likelihood effect on a coding-trajectory proxy (+0.0135 nats/token, nominal 95% bootstrap CI [+0.0083, +0.0191]) with no matched placebo, no executed action, and no task-success signal. The final exact-state mechanism experiment formally stopped at a preregistered technical gate; a single permitted post-stop diagnostic produced a weak, schedule-sensitive, placebo-uncontrolled value-only trace with no behavioral recovery. A later one-fixture precision screen ran the same engineered case under bundled NF4 and bfloat16 weight/runtime regimes, with bfloat16 KV cache in both. Its prospectively specified conditional second run reproduced every normalized common field of the interrupted first run exactly on a second A100 host, as did both within-regime repeats—but this was reproducibility of one fixed computation, not new evidence of recovery: the grafts remained nonselective, every generated answer remained wrong, and no matched placebo was available. No experiment simultaneously combined subject-native conversation generation, actual incremental-state capture, a naturally triggered compaction boundary, matched controls, and a behavioral endpoint. We report these measurements and limitations, and what we believe is the project's most durable contribution: a catalogue of ten methodological failures. Some moved numerical readouts at the scale of the hoped-for effect; others invalidated controls, provenance, or repairability. Several survived elaborate hash, test, and release machinery before being caught.
 
 ---
 
@@ -24,7 +24,7 @@ Recent preprints give direct evidence that generation-time state can matter. MEM
 
 The intended endpoint was always practical mitigation: the project owner's goal from the outset was to reduce compaction damage in real agent workloads, with mechanism experiments as the gate to a paired agent evaluation, not as the destination.
 
-This paper reports that the gate was not cleared. We organize the evidence by stratum (§3), because the four bodies of evidence here differ in subject model provenance, source-state procedure, intervention region, controls, and formal status, and pooling them would manufacture confidence none of them individually supports. We then report the mechanism redesign that was meant to resolve the question cleanly, why it formally stopped before its treatment arm (§7), what the one permitted diagnostic showed and failed to show (§8), and the failure catalogue (§9). We close with what is and is not established, and what a defensible agent evaluation would require (§10–11).
+This paper reports that the gate was not cleared. We organize the evidence by stratum (§3), because the four bodies of evidence here differ in subject model provenance, source-state procedure, intervention region, controls, and formal status, and pooling them would manufacture confidence none of them individually supports. We then report the mechanism redesign that was meant to resolve the question cleanly, why it formally stopped before its treatment arm (§7), what the one permitted diagnostic showed and failed to show, and a later two-regime precision screen of the same fixture whose conditional reproduction changed the apparatus-provenance record but no scientific boundary (§8). We then present the failure catalogue (§9), what is and is not established, and what a defensible agent evaluation would require (§10–11).
 
 Three things this paper does **not** claim, stated up front:
 
@@ -69,9 +69,9 @@ The four evidence strata, which differ in nearly every methodological dimension 
 | Legacy synthetic (§4) | Foreign/mixed-source conversation bodies; 30B self-generated summaries; prefill-*reconstructed* source state; combined summary+tail value graft | No detected average lift in that exact exploratory apparatus; no equivalence, and no clean generation-state null |
 | SWE-Gym/OpenHands proxy (§5) | OpenHands-derived historical trajectories described at acquisition as successful; 30B self-generated brief summaries; actual generation-mutated source snapshot; combined summary+tail value graft | Small out-of-fitting demonstrated-next-action likelihood effect for one selected layer map; no matched placebo, executed action, or task-success result |
 | Coherent-state v10/v11 (§6.1) | Local technical fixtures, failed controls, paused draft corpus | Methodological evidence only; no semantic treatment result and no sample |
-| Formal v12 + e01 (§6–8) | Exact 30B bf16 canary; fixed authored correct/wrong histories; same fixed carrier text; N/P forced replay | Formal technical stop; one later non-authorizing N=1 diagnostic gives a weak, schedule-sensitive, placebo-uncontrolled value-only hint |
+| Formal v12 + e01 + precision screen (§6–8) | Exact 30B bf16 canary; fixed authored correct/wrong histories; same fixed carrier text; N/P forced replay; later bundled NF4/bfloat16 re-execution of the same fixture on a second software stack (P01/P02) | Formal technical stop; one later non-authorizing N=1 diagnostic gives a weak, schedule-sensitive, placebo-uncontrolled value-only hint; the screen's conditional reproduction matched every normalized common field across two observed hosts—apparatus reproducibility, no added selectivity, recovery, or sample |
 
-Statistical conventions used throughout: a confidence interval spanning zero is reported as "no detected average lift," never as zero or equivalence; overlapping marginal intervals are never treated as a paired-difference test; fitting, internal evaluation, and confirmation-labelled samples are distinguished and reported separately before any explicitly descriptive pooling; and the v12/e01 material is N=1 descriptive evidence carrying no p-value, interval, or population claim.
+Statistical conventions used throughout: a confidence interval spanning zero is reported as "no detected average lift," never as zero or equivalence; overlapping marginal intervals are never treated as a paired-difference test; fitting, internal evaluation, and confirmation-labelled samples are distinguished and reported separately before any explicitly descriptive pooling; and the v12/e01 material—including the P01/P02 precision screen that re-executed the same fixture—is N=1 descriptive evidence carrying no p-value, interval, or population claim.
 
 ---
 
@@ -122,7 +122,7 @@ The correct old-state graft often outperformed position-shuffled and Gaussian so
 Several earlier headline claims from this stratum are void or retired, and we list them so they are not re-cited:
 
 - **The four-level compression treatment conclusion is void.** Ultra/brief/medium cells generated summary text under level-specific requests but reconstructed old state under the default realistic request; only the realistic cell was internally consistent. Compression ratios remain descriptions of text. No flat-across-30× or severity conclusion is licensed.
-- **The +10–12 percentage-point judged-recovery headline is retired.** It came from a local 4-bit-weight MLX stack with fp16 KV cache, brief/adversarial summaries, conversations c01–c12, and was render-fragile: a clean rerender moved judged sense from +8.7 to +1.0 points and referent from +9.7 to +5.2, with intervals spanning zero. Its failure to reproduce at bf16 does not identify whether weight quantization/runtime, corpus, or the corrected apparatus explains the difference; a clean precision interaction remains untested.
+- **The +10–12 percentage-point judged-recovery headline is retired.** It came from a local 4-bit-weight MLX stack with fp16 KV cache, brief/adversarial summaries, conversations c01–c12, and was render-fragile: a clean rerender moved judged sense from +8.7 to +1.0 points and referent from +9.7 to +5.2, with intervals spanning zero. The later pod-based NF4/bfloat16 comparison (§8.4) used a different one-case estimand and cannot adjudicate this retired judged-recovery claim. Its bundled weight/runtime result does not identify whether quantization, kernel implementation, corpus, or apparatus explained the historical difference; a clean precision interaction on that original endpoint remains untested.
 - **The packed "H-pack" construction is not evidence for value-only recovery.** It changed fabrication/admission behavior but simultaneously altered layout, transformed K, and V; it restored 0/24 evicted facts, and the earlier "38/48 accurate" claim was unreproducible.
 - **Cross-architecture rows support no law.** Heterogeneous gates and provenance do not support a QK-norm, dense/MoE, keys-neutral, or shared-direction generalization.
 
@@ -214,7 +214,7 @@ Independently, the frozen natural calibration was adverse. On this one fixed cal
 
 ## 8. The e01 diagnostic
 
-Exactly one unchanged e01 treatment execution was permitted after the stop, explicitly classified **diagnostic-only**: its receipt's `phase_a_release_status` field was `PRETREATMENT_PASS`, and the receipt records no formal or expansion eligibility. It is one engineered case. Nothing below carries a p-value, an interval, or a population claim.
+Exactly one unchanged e01 treatment execution was permitted within the v12 authorization after the stop, explicitly classified **diagnostic-only**: its receipt's `phase_a_release_status` field was `PRETREATMENT_PASS`, and the receipt records no formal or expansion eligibility. It is one engineered case. Nothing below carries a p-value, an interval, or a population claim. A later, separately frozen precision screen re-executed the same fixture under two bundled weight/runtime regimes on a different software stack (§8.4); it does not alter this diagnostic's authorization, its status, or the formal stop.
 
 ### 8.1 Results
 
@@ -249,7 +249,103 @@ Integrity of the diagnostic itself is well evidenced: treatment-fresh score obje
 
 > In one execution, one fixed engineered case produced a favorable focal-over-single-nonfocal forced-logprob contrast in the N/R2 value-only cell under identical visible text.
 
-We classify this as a weak, uncontrolled, schedule-sensitive mechanistic hint. Forward-run repeatability was not tested, so the same-condition 30B/A100 noise floor is unknown. The movement is of the same broad order as schedule-induced shifts observed in the separate local 0.6B diagnostic, although that diagnostic is neither a replicate nor a quantitative bound for this stack. One nonfocal probe does not establish general selectivity. The result does not establish semantic specificity, utility, robustness, generality, or behavioral recovery. Schedule-, boundary-, or key-interaction-dependent numerical or lexical residue remains a sufficient alternative explanation.
+We classify this as a weak, uncontrolled, schedule-sensitive mechanistic hint. Forward-run repeatability on this Transformers 5 stack was not tested, so its same-condition 30B/A100 noise floor is unknown. The later precision screen observed exact within-run and cross-host reproducibility of its own fixed computation on a different software stack (§8.4); that is adjacent apparatus evidence, not a measurement of this stack's noise floor. The movement is of the same broad order as schedule-induced shifts observed in the separate local 0.6B diagnostic, although that diagnostic is neither a replicate nor a quantitative bound for this stack. One nonfocal probe does not establish general selectivity. The result does not establish semantic specificity, utility, robustness, generality, or behavioral recovery. Schedule-, boundary-, or key-interaction-dependent numerical or lexical residue remains a sufficient alternative explanation.
+
+### 8.4 The precision screen (P01/P02): one fixed computation, exactly reproduced
+
+After the diagnostic, the same engineered e01 fixture was re-executed under a
+separately frozen one-case **precision screen**. It compared bundled NF4 and
+bfloat16 weight/runtime regimes, with KV-cache storage bfloat16 in both. The
+common fields covered oracle-to-fresh damage; N/R2 value-only and full-K+V
+contrasts; P/R2 value-only contrasts; focal and nonfocal probes; and five
+free-generation cells (FF, FC, FW, CC, WW). **P01** is a post-run partial
+descriptive analysis of an interrupted run: it completed NF4 repeats 1 and 2
+and bfloat16 repeat 1, but not bfloat16 repeat 2. **P02** is a prospectively
+specified **conditional reproduction**: its apparatus and analysis were frozen
+before P01 values were opened, but the decision to spend on P02 was made after
+P01 looked interesting. P02 completed two repeats in each regime. Neither run
+reopens formal v12. P02's runner status `COMPLETE` and terminal `PASS` receipt
+are operational labels, not scientific verdicts.
+
+The screen used Transformers 4.57.6 rather than the Transformers 5.0.0 stack of
+§§6–8. Its bfloat16 regime is therefore descriptive cross-stack context for the
+earlier e01 diagnostic, not a same-stack replication of it; numerical
+differences between §8.1 and this section are bundled apparatus differences and
+license no stability or instability conclusion about either stack.
+
+**Exact common-field reproduction.** An independent comparator bound the P01
+and P02 analysis artifacts by SHA-256. All twenty regime-specific common
+estimands were exactly equal, and every P02-minus-P01 scalar difference was
+`0.0`. The focal and nonfocal five-cell generation payloads also matched
+exactly—decoded strings, content-token IDs, generation hashes, stop reasons,
+cap flags, and change vectors—as did both complete unavailable-placebo
+diagnostics. Within P02, the two repeats of each regime had identical normalized
+payload hashes, zero differing JSON pointers, and scalar repeat deltas of
+exactly zero.
+
+P01 and P02 ran on different physical A100 UUIDs under adjacent driver patch
+versions (`580.159.04` and `580.159.03`). This is reproducibility and portability
+evidence within the two sampled hosts: it rules against ordinary run-to-run
+instability or one particular host instance as explanations of the P01 pattern
+under those conditions. It does not prove universal determinism, guarantee a
+third execution or a different GPU/driver-major result, or establish
+whole-artifact byte identity. The protocols have different metadata and arm
+inventories, so their whole-package hashes appropriately differ; equality was
+established only after normalization to the specified common scientific
+fields. The repeats test execution stability of one fixed computation. They are
+not independent cases, and a cross-runtime difference exceeding a zero repeat
+difference is not a statistical noise comparison.
+
+Matched-repeat-1 values were:
+
+| Estimand | NF4 | bfloat16 |
+|---|---:|---:|
+| Oracle→fresh focal margin damage | +22.1007595 | +23.6558170 |
+| Oracle→fresh nonfocal margin damage | +14.5325801 | +15.4574559 |
+| N/R2 value-only `D` focal | +0.1031094 | +0.0394001 |
+| N/R2 value-only `D` nonfocal | +0.1613944 | +0.0415351 |
+| N/R2 full-KV `D` focal | −0.3457737 | +0.2329350 |
+| N/R2 full-KV `D` nonfocal | −0.0778708 | −0.1132853 |
+| P/R2 value-only `D` focal | +0.0328388 | +0.0121040 |
+| P/R2 value-only `D` nonfocal | +0.0044076 | +0.1552229 |
+| N-minus-P value-only shift, focal | +0.0702705 | +0.0272961 |
+| N-minus-P value-only shift, nonfocal | +0.1569867 | −0.1136878 |
+
+**Reading the movements.** Gross compaction damage dominates. Fresh state lost
+24.0006 nats of correct-target log probability in NF4 and 22.7969 in
+bfloat16, alongside the 22.10 and 23.66 focal margin damage above. The graft
+contrasts are roughly two orders of magnitude smaller, and no graft restored
+the answer. N/R2 value-only `D` is not focal-selective: nonfocal movement is
+larger in both regimes, giving signed selectivity −0.0582850 (NF4) and
+−0.0021350 (bfloat16). Correct-target movement `H+` is −0.2478943 in NF4—the
+countertarget worsens more while the correct target itself also worsens—and
++0.1935272 in bfloat16, but without selectivity, a working placebo, or any
+change to the wrong generated answer. Moving from N to P reduces the focal
+value-only contrast in both regimes. Those differences are deterministic
+descriptions of two schedules, not estimates of random variability. The
+full-K+V focal sign split (−0.3457737 NF4; +0.2329350 bfloat16) is a stable
+one-fixture runtime signature, not evidence for quantization causality.
+
+No focal cell in either regime generated the correct target `partner beta`;
+every nonfocal cell generated `30 days`. The bfloat16 focal tuple was `Ring 3`
+in all five cells. NF4 differed only in its fresh cell, which generated the
+literal sentence “Atlas 4.8 was not selected under the recorded mandatory
+selection rule”; every graft cell generated `Ring 3`. This flip reproduced
+exactly but was not semantically specific. The saved records do not include the
+alternate first-token logits, so a near-decision-boundary explanation cannot be
+tested and is not promoted. The norm-matched constructor again returned
+`PLACEBO_UNAVAILABLE` in both regimes, at layer 1 / destination row 76 (NF4)
+and row 77 (bfloat16): repeated missing-control evidence, not a null placebo.
+
+The screen therefore changes the provenance of one precision-axis paragraph,
+not the paper's headline. It upgrades a post-run partial observation to an
+exactly reproduced fixed-fixture computation under two observed hosts, while
+adding no independent semantic fixture or population information. The
+NF4/bfloat16 contrast bundles checkpoint weight representation with
+linear-kernel implementation; nothing isolates quantization as a cause. One
+P02 ran, no case or arm was added after values, and no P03 was launched. The
+screen licenses no semantic-transfer, efficacy, quantization-causality,
+population, or agent claim.
 
 ---
 
@@ -271,7 +367,7 @@ We consider this the paper's most durable contribution. Each entry is a failure 
 |---|---|---|---|
 | 2 | **Pseudoreplicated, nonrepresentative validation inputs.** An apparent 7/7 zero-difference validation used seven lengths of one five-token periodic stream — seven parameter settings, not seven representative inputs. | A fragile equivalence assumption appeared broadly verified. | Every gate must be able to fail for its intended reason; validate on representative, non-degenerate inputs. |
 | 3 | **Mechanical geometry mistaken for semantic validity.** A wrong-history control cycled short donor text up to 51 times; later exact-width counterfactuals preserved tokenizer geometry but failed full decoded review. | "Controls" that were not meaningful alternative histories. | Decode and review every control as text; token-geometry equivalence is necessary, never sufficient. |
-| 6 | **A control constructor can fail to yield an available production-dtype control.** For each of three e01 regions, attempts 0–1023 yielded no applied-bf16 perturbation satisfying the frozen norm and cosine tolerances at the shared first nonzero row. | The critical control was absent at analysis time; the bounded failed search does not prove global nonrepresentability. | Demonstrate that the constructor yields qualifying controls in the production dtype before the run; treat "no placebo" as missing evidence. |
+| 6 | **A control constructor can fail to yield an available production-dtype control.** For each of three e01 regions, attempts 0–1023 yielded no applied-bf16 perturbation satisfying the frozen norm and cosine tolerances at the shared first nonzero row. The precision screen later returned `PLACEBO_UNAVAILABLE` again in both regimes (§8.4). | The critical control was absent at analysis time; the bounded failed search does not prove global nonrepresentability. | Demonstrate that the constructor yields qualifying controls in the production dtype before the run; treat "no placebo" as missing evidence. |
 | 7 | **Prose/code agreement is itself a preregistration gate.** Hash-frozen code did not resolve ambiguous stopping semantics (§7.1). | A pass/fail verdict that depended on which artifact you believed. | Diff the literal decision rule in prose against the literal branch in code before sealing; ambiguity discovered later must be dispositioned conservatively. |
 | 9 | **State needed for later controls was not preserved.** E01 retained rich score, token, trace, generation, and runtime records, but no K/V elements; hashes cannot reconstruct K/V rows. | The missing placebo cannot be repaired without a full rerun. | Budget a bounded tensor bundle for control-relevant geometry — independently estimated here at ~39.84 MiB, versus ~480.94 MiB for five full snapshots. |
 
@@ -294,6 +390,7 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 - A small, out-of-fitting, selected-map likelihood lead on demonstrated next actions in coding trajectories (§5), control-incomplete and behaviorally unresolved.
 - A formal technical stop of the exact-state canary under its literal preregistered rule (§7), before any formally eligible treatment outcome.
 - One N=1, diagnostic-only, placebo-missing, schedule-sensitive value-only trace under identical visible text, with no behavioral recovery (§8).
+- Exact reproduction of the one-fixture NF4/bfloat16 precision screen: a prospectively specified conditional second run matched every normalized common scientific field of the interrupted first run across two observed A100 hosts, with exact within-regime repeats (§8.4). This is apparatus and portability evidence within the sampled conditions, carrying no selectivity, behavioral recovery, or available placebo.
 - Ten concrete failure modes with guardrails for activation-state experimentation (§9).
 
 **Not established, in either direction:**
@@ -302,7 +399,7 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 - Whether any training-free transplant family can recover a practically meaningful fraction of compaction damage.
 - Any effect — positive, negative, or null — on real agent task outcomes.
 - Any cross-architecture generalization.
-- Whether weight quantization or KV-cache dtype changes the effect.
+- Whether weight quantization or KV-cache dtype changes the effect. The precision screen's exactly reproducible regime differences on one fixture do not answer this: NF4 versus bfloat16 bundles weight representation with kernel implementation, and KV-cache storage was bfloat16 in both (§8.4).
 
 **Also deliberately absent:** an overall cost figure. The end-to-end money/token audit is still open under `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` and will be reported separately, distinguishing cash, subscription usage, provider credits, list-price equivalents, estimates, lower bounds, and unknowns.
 
@@ -331,13 +428,13 @@ A defensible future **black-box efficacy** evaluation would require at minimum:
 
 To support **mechanistic attribution** as well, it would additionally require bit-identical schedules across treatment and controls, a same-visible-text wrong-history comparator, and a delta-matched nonsemantic perturbation placebo. A task-success difference without those controls would still answer the bundled-system question, but not the semantic-state hypothesis.
 
-The formal re-entry requirements are recorded in `notes/2026071288-sol-data-collection-stop-and-future-reentry.md`. Paid data collection for this project is finished.
+The formal re-entry requirements are recorded in `notes/2026071288-sol-data-collection-stop-and-future-reentry.md`. Paid data collection for this project is finished. The one-fixture precision screen (§8.4) ran under its own frozen protocol and recorded launch decision (`notes/20260712A8-sol-p02-conditional-replication-expectations-and-launch-decision.md`) and is likewise closed: exactly one conditional reproduction ran, no result-driven extension was permitted, and no further execution of it is warranted for this paper.
 
 ---
 
 ## 12. Limitations
 
-Beyond the per-stratum caveats above: the principal experiments concern Qwen3, mostly one checkpoint; heterogeneous historical side experiments on other architectures do not establish generalization. The exact redesign and diagnostic were bf16 only. The early 4-bit-weight MLX hint used fp16 KV cache and a now-retired, confounded apparatus, so neither weight-quantization dependence nor KV-cache-dtype dependence has been tested cleanly. A bitsandbytes NF4 arm would change weight representation and kernels while ordinarily leaving KV state floating-point; it would be a useful matched runtime/weight-quantization axis, not an isolated test of “4-bit KV.” It was not run because formal v12 stopped before eligible treatment, its diagnostic lacked placebos, and paid collection had closed; a new precision axis belongs behind the same re-entry gates rather than being attached post hoc to an N=1 diagnostic. Neither v12 replay schedule is native continuous generation, and the one suggestive cell was schedule-sensitive — the construct validity of forced replay for live-agent state is untested. The legacy stratum's source state was reconstructed rather than captured. The strongest positive lead lacks its matched placebo; the diagnostic lacks any placebo. Several provenance elements are irrecoverable: legacy `git_commit: null` manifests, the SWE-Gym upstream revision and row-level trajectory-generator identities, per-trajectory summary text, and all K/V tensor values from e01. Neither the SWE out-of-fitting structural-match endpoint nor e01 free generation moved in the treatment's favor; for the transplant evidence retained here, no task-success endpoint was measured.
+Beyond the per-stratum caveats above: the principal experiments concern Qwen3, mostly one checkpoint; heterogeneous historical side experiments on other architectures do not establish generalization. The exact redesign and diagnostic were bf16 only. The early 4-bit-weight MLX hint used fp16 KV cache and a now-retired, confounded apparatus, so neither weight-quantization dependence nor KV-cache-dtype dependence has been tested cleanly. The later precision screen (§8.4) added an NF4 weight/runtime regime alongside bfloat16 on the same single engineered fixture, with KV-cache storage bfloat16 in both. It is a bundled weight-representation-plus-kernel axis on a different software stack, not an isolated test of quantization or “4-bit KV,” and its exactly reproducible regime differences describe one fixed computation rather than a causal precision effect. It ran without a working placebo, without any correct graft generation, and without adding a fixture or sample, so the quantization question remains open. Unbundling weight representation from kernel implementation, with a control demonstrated constructible at the target dtype and geometry, belongs behind the recorded re-entry gates. Neither v12 replay schedule is native continuous generation, and the one suggestive cell was schedule-sensitive—a pattern the later screen also exhibited—so the construct validity of forced replay for live-agent state is untested. The legacy stratum's source state was reconstructed rather than captured. The strongest positive lead lacks its matched placebo; the diagnostic and precision screen lack any available placebo. Several provenance elements are irrecoverable: legacy `git_commit: null` manifests, the SWE-Gym upstream revision and row-level trajectory-generator identities, per-trajectory summary text, all K/V tensor values from e01, and the precision screen's alternate first-token logits. Neither the SWE out-of-fitting structural-match endpoint nor e01/precision-screen free generation moved in the treatment's favor; for the transplant evidence retained here, no task-success endpoint was measured.
 
 ---
 
@@ -411,6 +508,52 @@ The legacy and SWE paper statistics are exactly recomputable from committed scor
 
 `Qwen/Qwen3-0.6B` revision `c1899de289a04d12100db370d81485cdf75e47ca`, with tokenizer `Qwen/Qwen3-30B-A3B-Instruct-2507` revision `0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe`; 28 layers, 16 query heads, 8 KV heads (GQA ratio 2), head dimension 128, QK norm, RoPE theta 1,000,000; macOS 26.2 arm64, Python 3.12.11, Torch 2.12.1, Transformers 5.0.0, CPU bf16 eager; four intra-op and ten inter-op threads; deterministic algorithms false; float32 matmul precision `highest`; code commit `cfde9bcc13f90261e93d3c5348f2cb75e31e7608`. On the 8,430-token c10 prefix, fixed-margin movement was 0.060546875; c02 moved 0.1318359375. The first stored K/V divergence appeared at layer 1, consistent with an origin in layer-0 attention under query-width change 23→4096.
 
+### A.6 Precision screen P01/P02
+
+The screen re-executed the literal e01 fixture from A.3 under separately
+frozen one-case protocols. It compared NF4-quantized weights against bfloat16
+weights while retaining bfloat16 linear compute and bfloat16 KV-cache storage
+in both regimes. The common targeted cells used N and P replay schedules at R2,
+value-only and full-K+V families, and five free-generation cells (FF, FC, FW,
+CC, WW) per probe. P01's full 34-arm protocol completed NF4 repeats 1 and 2 and
+bfloat16 repeat 1 before interruption; its bfloat16 repeat 2 never reached
+Phase A. P02's targeted protocol completed full Phase A plus six graft cells in
+both repeats of both regimes, with one bounded placebo attempt per repeat-1
+regime.
+
+Subject: `Qwen/Qwen3-30B-A3B-Instruct-2507`, revision
+`0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe`, slow tokenizer, eager
+attention. Software: Python 3.12.11, Torch 2.12.1 / CUDA 13.0,
+Transformers 4.57.6, Accelerate 1.14.0, bitsandbytes 0.49.2,
+huggingface-hub 0.36.2, safetensors 0.8.0, and tokenizers 0.22.2. This differs
+from the Transformers 5.0.0 stack in A.3, so the bfloat16 screen is descriptive
+cross-stack context for the earlier diagnostic, not a same-stack replication.
+
+P01 ran on a distinct A100 host (driver `580.159.04`) and was interrupted; its
+analysis is post-run and partial. P02 ran on an A100 80GB PCIe host with GPU
+UUID `GPU-8a42830e-71ab-fb23-351d-125ccbd5bdb2`, driver `580.159.03`, and
+81,920 MiB, from launch commit
+`a40b1dffe8d7bf5e310d308e22d26fef126a73b7`. P02's preregistration SHA-256
+was `dbcece8f189a0574b776149cf597dc1ce8a3b592981440062c749ddb404e221d`;
+its apparatus and analysis were frozen before P01 values were opened, while
+the spend decision was later recorded as conditional on P01's interesting
+pattern. The runner completed with status `COMPLETE` and an outer terminal
+receipt of `PASS`—operational labels only. All 42 lossless packages and all
+four final outcome packages verified; compact/render consistency passed; no
+recovery file was used. The artifact pull returned status 0 before deletion,
+and a later provider query returned HTTP 404 with zero active pods.
+
+The independent comparator bound P01 analysis SHA-256
+`c370d1cc2dbe2a9ee5db64a19ce8837f9879f3b8fc008210756d2985d41aac7e`
+and P02 analysis SHA-256
+`7b4b77e178f0b50d532459512dd028a044877627d4490197510eba135d5ab551`,
+and established exact equality of every specified normalized common scientific
+field. Whole-package hashes appropriately differ because protocol metadata and
+arm inventories differ. Saved generation records preserve content-token IDs,
+decoded text, stop reasons, and hashes, but not alternate first-token logits.
+Provider-settlement records feeding the still-open end-to-end cost audit are
+retained under `results/precision_probe_p02/`.
+
 ## Appendix B: Artifact map
 
 | Claim | Primary artifact(s) |
@@ -441,6 +584,12 @@ The legacy and SWE paper statistics are exactly recomputable from committed scor
 | Retired judged/H-pack claims | `uv run python scripts/reproduce.py --only sense`; `uv run python scripts/reproduce.py --only honesty`; source verdicts under `results/judge_semantic*/` and `results/phase2_30b_scored.json` |
 | Data-collection stop and re-entry requirements | `notes/2026071288-sol-data-collection-stop-and-future-reentry.md` |
 | Quantization-axis disposition | `notes/2026071296-sol-quantization-axis-disposition.md` |
+| P01 packages, runtime, renders, logs, and receipts | `results/precision_probe_p01/` |
+| P01 independent post-run partial analysis | `results/precision_probe_p01_analysis/precision-probe-p01-postrun-partial-descriptive_Qwen3-30B-A3B-Instruct-2507_20260712T100530891850Z.json` (SHA-256 `c370d1cc2dbe2a9ee5db64a19ce8837f9879f3b8fc008210756d2985d41aac7e`) |
+| P02 receipt-bound packages, renders, runtime, logs, and settlement | `results/precision_probe_p02/` |
+| P02 independent analysis | `results/precision_probe_p02_analysis/precision-probe-p02-independent-analysis_Qwen3-30B-A3B-Instruct-2507_20260712T114104839688Z.json` (SHA-256 `7b4b77e178f0b50d532459512dd028a044877627d4490197510eba135d5ab551`) |
+| P01↔P02 exact common-field comparison | `results/precision_probe_p01_p02_comparison/precision-probe-p01-p02-exact-comparison_Qwen3-30B-A3B-Instruct-2507_20260712T120014514457Z.json` (SHA-256 `588229df5f4ca5c8613dc4f21564043214bfe889fc4dba176300ace0435442be`) |
+| P02 frozen expectations, advisory review, and final interpretation | `notes/20260712A8-sol-p02-conditional-replication-expectations-and-launch-decision.md`; `notes/20260712A9-fable-p02-result-interpretation-and-paper-disposition.md`; `notes/20260712AA-sol-p02-final-interpretation-and-fable-disposition.md` |
 | End-to-end accounting requirement | `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` |
 | Methods/provenance checklist (questions, not answers) | `METHODS-PROVENANCE-REQUIREMENTS.md` |
 
@@ -463,9 +612,14 @@ Zero-GPU paper-table recomputation:
 uv run python src/analyze_legacy_source_split.py --output /tmp/legacy-source-split.json
 uv run python scripts/analyze_swegym_paper_metrics.py \
   --timestamp 20260712T000000Z --output /tmp/swegym-paper-metrics.json
+uv run python scripts/compare_precision_probe_p01_p02.py \
+  --p01 results/precision_probe_p01_analysis/precision-probe-p01-postrun-partial-descriptive_Qwen3-30B-A3B-Instruct-2507_20260712T100530891850Z.json \
+  --p02 results/precision_probe_p02_analysis/precision-probe-p02-independent-analysis_Qwen3-30B-A3B-Instruct-2507_20260712T114104839688Z.json \
+  --output /tmp/precision-probe-p01-p02-comparison.json
 uv run pytest -q tests/test_analyze_legacy_source_split.py \
   tests/test_analyze_swegym_paper_metrics.py \
-  tests/test_analyze_coherent_canary_v12_e01_tokens.py
+  tests/test_analyze_coherent_canary_v12_e01_tokens.py \
+  tests/test_compare_precision_probe_p01_p02.py
 ```
 
 ## References
