@@ -1,0 +1,89 @@
+{
+  "checks": {
+    "deterministic_repeat": {
+      "passed": false,
+      "reason": "deterministic repeat is absent"
+    },
+    "fresh_self_replacement": {
+      "passed": false,
+      "reason": "fresh self-replacement is absent"
+    },
+    "generated_forced_equivalence": {
+      "passed": false,
+      "reason": "generated/forced identity is absent"
+    },
+    "generated_forced_identity": {
+      "passed": false,
+      "reason": "generated/forced identity is absent"
+    },
+    "natural_calibration_valid": {
+      "evidence": {
+        "reason": "natural calibration is absent",
+        "status": "INVALID"
+      },
+      "passed": false
+    },
+    "path_control": {
+      "passed": false,
+      "reason": "path control is absent"
+    },
+    "runtime_fingerprint": {
+      "passed": false,
+      "reason": "runtime fingerprint is absent"
+    },
+    "source_bindings": {
+      "evidence": {
+        "fixed_text_evidence": {
+          "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+          "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+        },
+        "identity_fixture": {
+          "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+          "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+        },
+        "preregistration": {
+          "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+          "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+        },
+        "technical_fixture": {
+          "path": "data/coherent_canary_v12/technical_control_fixture.json",
+          "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+        }
+      },
+      "passed": true
+    }
+  },
+  "completed_at_utc": "2026-07-12T00:41:31.012951+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "failures": [
+    "runtime_fingerprint",
+    "generated_forced_equivalence",
+    "generated_forced_identity",
+    "deterministic_repeat",
+    "fresh_self_replacement",
+    "path_control",
+    "natural_calibration_valid"
+  ],
+  "limitations": [
+    "No subject-model forward is rerun by this validator.",
+    "Raw logits, gradients, and cache hashes remain bound observations; the validator checks their internal consistency and arithmetic.",
+    "The validator does not prove full-vocabulary argmax selection or backend-kernel correctness."
+  ],
+  "natural_calibration": {
+    "reason": "natural calibration is absent",
+    "status": "INVALID"
+  },
+  "path_control": {
+    "reason": "path control is absent",
+    "status": "FAIL"
+  },
+  "raw_artifact": {
+    "path": "results/coherent_canary_v12_technical/coherent-canary-v12-technical_exact-subject_20260712T003917643039Z.json",
+    "sha256": "f5e6fff8ac94087224ac3812499dbff929df90fdf63062cb3068ec78c8bbbc2b"
+  },
+  "runner_status_labels_ignored": true,
+  "schema": "coherent_state_decision_canary_v12_technical_validation_v1",
+  "semantic_release_eligible": false,
+  "status": "FAIL",
+  "subject": null
+}

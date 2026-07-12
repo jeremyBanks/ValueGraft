@@ -1,0 +1,65 @@
+{
+  "bindings": {
+    "carrier_fixture": {
+      "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+      "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+    },
+    "identity_fixture": {
+      "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+      "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+    },
+    "preregistration": {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+      "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+    },
+    "technical_fixture": {
+      "path": "data/coherent_canary_v12/technical_control_fixture.json",
+      "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+    }
+  },
+  "completed_at_utc": "2026-07-12T00:41:30.185601+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "diagnostic_summary": {
+    "error_message": "loaded parameter names/shapes/dtypes differ from weight inventory",
+    "error_type": "CanaryLoaderError"
+  },
+  "durable_checkpoints": [],
+  "error": {
+    "message": "loaded parameter names/shapes/dtypes differ from weight inventory",
+    "traceback": "Traceback (most recent call last):\n  File \"/workspace/repo/scripts/run_coherent_canary_v12_technical.py\", line 246, in run\n    prepared = stage(document, \"prepare_pinned_subject\", lambda:\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/repo/scripts/run_coherent_canary_v12_technical.py\", line 169, in stage\n    value = function()\n            ^^^^^^^^^^\n  File \"/workspace/repo/scripts/run_coherent_canary_v12_technical.py\", line 247, in <lambda>\n    prepare_pinned_subject(\n  File \"/workspace/repo/src/coherent_canary_loader.py\", line 948, in prepare_pinned_subject\n    fingerprint = attest_loaded_subject(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/repo/src/coherent_canary_loader.py\", line 812, in attest_loaded_subject\n    _require(loaded_parameter_rows == weight_parameter_rows,\n  File \"/workspace/repo/src/coherent_canary_loader.py\", line 49, in _require\n    raise CanaryLoaderError(message)\ncoherent_canary_loader.CanaryLoaderError: loaded parameter names/shapes/dtypes differ from weight inventory\n",
+    "type": "CanaryLoaderError"
+  },
+  "estimated_cost_usd": 0.07363464476126763,
+  "hourly_cost_usd": 2.0,
+  "output_path": "/workspace/repo/results/coherent_canary_v12_technical/coherent-canary-v12-technical_exact-subject_20260712T003917643039Z.json",
+  "provenance": {
+    "repository_branch": "trunk",
+    "repository_head": "ca3f3eef6b7355f2b49f53ccfff9e9fa3ea8c5dc",
+    "runner_platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+    "runner_python": "3.12.11"
+  },
+  "schema": "coherent_state_decision_canary_v12_technical_raw_v1",
+  "source_bindings": {
+    "fixed_text_evidence": {
+      "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+      "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+    },
+    "identity_fixture": {
+      "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+      "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+    },
+    "preregistration": {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+      "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+    },
+    "technical_fixture": {
+      "path": "data/coherent_canary_v12/technical_control_fixture.json",
+      "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+    }
+  },
+  "stage_timings": {},
+  "started_at_utc": "2026-07-12T00:39:17.643236+00:00",
+  "status": "ERROR",
+  "subject": "exact-subject",
+  "wall_time_seconds": 132.54236057028174
+}

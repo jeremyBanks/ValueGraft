@@ -1,0 +1,31 @@
+{
+  "artifacts": {
+    "identity_checkpoints": [],
+    "job_log": {
+      "path": "results/coherent_canary_v12_technical/coherent-canary-v12-technical_exact-subject_20260712T003837Z_job.md",
+      "sha256": "fa981f90ed32464442a52fddce299fcea6805281902839a9b0eb3f969ae654b6",
+      "size_bytes": 5023
+    },
+    "raw": {
+      "path": "results/coherent_canary_v12_technical/coherent-canary-v12-technical_exact-subject_20260712T003917643039Z.json",
+      "sha256": "f5e6fff8ac94087224ac3812499dbff929df90fdf63062cb3068ec78c8bbbc2b",
+      "size_bytes": 3809
+    },
+    "validation": {
+      "path": "results/coherent_canary_validation/coherent_canary_v12_technical_validation_exact-subject_20260712T003837Z.json",
+      "sha256": "f161226c749fac343ca21f2fe4751b24ba9cc9a5a3c2eb998f239bb99d7498ef",
+      "size_bytes": 3039
+    }
+  },
+  "completed_at_utc": "2026-07-12T00:41:31.102506+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "expected_commit": "ca3f3eef6b7355f2b49f53ccfff9e9fa3ea8c5dc",
+  "gpu": "NVIDIA A100 80GB PCIe, GPU-19ebb3fc-5c9a-cc85-a8ce-27b33628c50a, 580.159.03, 81920",
+  "hourly_cost_usd_used_for_estimate": 2.0,
+  "observed_commit": "ca3f3eef6b7355f2b49f53ccfff9e9fa3ea8c5dc",
+  "runner_exit": 1,
+  "schema": "coherent_state_decision_canary_v12_exact_technical_pod_receipt_v1",
+  "semantic_release_eligible": false,
+  "validator_exit": 0,
+  "validator_status": "FAIL"
+}
