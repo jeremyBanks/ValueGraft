@@ -14,6 +14,7 @@
 | Launch >1 pod / spend >$5 / irreversible          | `launch_pod.sh` → `preflight.py --verify` (green token gate)            | `exit 5`, no pod launches without a fresh matching token        | assumed-precondition scaling |
 | Launch a model id that's a typo / multimodal      | preflight **check B** (hub resolve + text-only arch)                    | RED, `exit 1` before any spend                                  | 5-of-16 multimodal, unloadable id |
 | Launch the WRONG CHECKPOINT (right family)         | preflight **check B2** (known-wrong-twin registry)                      | RED unless `SC_ALLOW_CHECKPOINT="id:reason"` logged             | #34 thinking-vs-Instruct (hours) |
+| Rent the right GPU/image on an incompatible host driver | RunPod `allowedCudaVersions` + `pod_admission.py` before bootstrap | provider filters CUDA; launcher rejects/terminates wrong GPU, driver, or VRAM with `exit 86` | #27, #43 driver drift |
 | rsync a source path that doesn't exist            | preflight **check C** (manifest vs disk)                               | RED; kills rsync's silent `\|\| true` drop                       | "fix silently didn't apply" |
 | Trust a launch that hung / crashed at start       | `launch_pod.sh` **post-launch real-work check** + bounded ssh          | hang → nonzero exit; no-proc/crash → `exit 1`, loud            | #3, #28, #35 launcher hang |
 | Trust a monitor you never validated               | `monitor_selftest.sh` (fault-injection incl. happy-path)               | any wrong classification → `exit 1`, "MONITOR NOT CLEARED"      | #35, #36 + monitor quartet |
@@ -30,6 +31,36 @@
 **The order of operations, every scaled run:** `preflight.sh` GREEN → `monitor_selftest.sh` CLEARED
 → launch (auto post-launch check) → canary/probe yields a real number → fan out → monitor alarms on any PROBLEM.
 Each arrow is a mechanism, not a memory.
+
+---
+
+# HARD RULE: THE HOST DRIVER IS PART OF THE EXPERIMENTAL ENVIRONMENT
+
+A container image does **not** pin the physical host's NVIDIA kernel driver.
+RunPod Secure A100 hosts returned `580.159.03` and `550.90.12` for the same GPU
+type and image; pinned Torch/CUDA 13 initialized only on the former. Therefore
+"same image" is not a reproducibility claim.
+
+- Provider creation must request the required CUDA capability with
+  `SC_POD_ALLOWED_CUDA` / `allowedCudaVersions`.
+- Before apt, pip, model download, or job launch, `launch_pod.sh` reads the
+  actual GPU name, driver version, and memory and runs `src/pod_admission.py`.
+- Exact v12 uses `scripts/launch_coherent_canary_v12_technical.sh`, which derives
+  the full expected git SHA mechanically, requests CUDA 13.0, requires the exact
+  A100-80GB PCIe name, driver `>=580.65.06`, and at least 80,000 MiB, and bounds
+  admission attempts at three. Rejected allocated hosts are terminated before
+  bootstrap. Unfiltered fallback is forbidden.
+- Every result records the observed driver/runtime fingerprint. A different
+  runtime requires its own technical gate; never blend raw numeric evidence
+  across environments merely because model weights and GPU marketing names
+  match.
+- Provider selection itself requires a qualification checklist. An AI-generated
+  provider recommendation is discovery input, not evidence that the service can
+  enforce the experiment's invariants.
+
+This finding can explain intermittent CUDA/runtime failures and may have
+amplified diagnostic churn. It is not a blanket retrospective explanation for
+independently established code, fixture, or model-selection errors.
 
 ---
 

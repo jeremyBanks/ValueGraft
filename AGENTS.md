@@ -386,6 +386,16 @@ blocking failure.
 
 ## Pod / RunPod ops (learned 07-08, hours lost to flaky pods)
 
+- **HOST DRIVER IS PART OF THE RUNTIME (incident #43).** The same Secure A100
+  GPU type + container image returned drivers `580.159.03` and `550.90.12`;
+  CUDA 13 initialized only on the former. A container does not pin the host
+  kernel driver. Provision with `SC_POD_ALLOWED_CUDA` (RunPod
+  `allowedCudaVersions`), then independently gate actual GPU name, driver, and
+  memory through `src/pod_admission.py` **before bootstrap**. Exact v12 must use
+  `scripts/launch_coherent_canary_v12_technical.sh` (CUDA 13.0, driver
+  `>=580.65.06`, A100-80GB, three attempts, no unfiltered fallback). An
+  AI-recommended provider is not validated until a provider-qualification
+  checklist proves it can enforce the experiment's host-level invariants.
 - LAUNCH detached jobs the PROVEN way: `scripts/launch_pod.sh <name> <job.sh>`
   (it does `nohup bash job.sh > job.log 2>&1 &` and the ssh RETURNS) — this
   reliably detached all session. Or a run_in_background Bash running an inline

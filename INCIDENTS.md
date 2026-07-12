@@ -693,3 +693,38 @@ counterfactual histories, not only diffs or target passages. A base-history fail
 pair even when the counterfactual edit is locally correct. Inherited repairs are applied symmetrically
 to a new pair; edit-specific repairs remain focal and minimal. Never promote `MECHANICAL_PASS` to a
 content-valid or execution-ready label.
+
+## Incident #43 (07-11/12): the same Secure A100 image hid different host drivers
+
+WHAT: two RunPod **Secure Cloud** rentals requested the same `NVIDIA A100 80GB
+PCIe` and the same container image. Attempt 1 exposed host driver `580.159.03`;
+pinned Torch 2.12.1 initialized CUDA 13 and loaded the exact 30B model. Attempt 2
+exposed driver `550.90.12`; the same pinned Torch resolved CUDA 13 but reported
+`torch.cuda.is_available() == False`. The job stopped before model download or
+any subject forward. The image pinned user-space files, not the physical host's
+kernel driver.
+
+WHY: pod admission checked GPU name but treated GPU type + image as a complete
+runtime identity. `src/pod.py` did not send RunPod's supported
+`allowedCudaVersions` filter, and the launcher did not inspect the allocated
+host's driver before installing packages. At a higher level, the owner selected
+RunPod from an AI recommendation without an independent provider-qualification
+review; agents then operationalized that choice without translating the
+experiment's reproducibility requirements into provider admission criteria.
+This is a process gap whether or not RunPod is ultimately judged credible.
+
+IMPACT: attempt 2 cost an observed `$0.0588781620` balance delta and yielded no
+scientific observation. More broadly, silently heterogeneous drivers are a
+proven source of intermittent CUDA failures and a plausible multiplier of the
+week's diagnostic churn, context switching, and lost focus. They do **not**
+explain unrelated proven mistakes such as wrong checkpoints, invalid fixtures,
+or cache-position bugs; no prior result is reclassified solely from this
+discovery.
+
+RULE 34 — PROVIDER + HOST ADMISSION IS PART OF REPRODUCIBILITY: before adopting
+a compute provider, write and verify a qualification checklist covering the
+host-level invariants the container cannot pin. For every GPU allocation, use
+the provider's CUDA-capability filter, then independently read the actual GPU,
+driver, and memory before bootstrap. Reject and terminate incompatible hosts
+before installing or launching. Persist the observed host/runtime fingerprint
+with every result. An AI recommendation is a lead, not provider validation.
