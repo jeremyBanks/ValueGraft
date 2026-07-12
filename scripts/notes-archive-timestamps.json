@@ -878,7 +878,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071116-sol-fable-execution-coordination.md": {
-      "object_id": "70cca31b47dc2badad48c0271b41554cf5bbb2cd",
+      "object_id": "b54e60ff2d208fda6a96ef2282480ef605468503",
       "archive_timestamp_utc": "2026-07-11T05:07:01Z",
       "timestamp_source": "git current-file lifetime"
     },
@@ -968,7 +968,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071134-conversation-user-gpt56.md": {
-      "object_id": "4650c5e2be2e6279197dd600fbec5401a807280d",
+      "object_id": "8bbedc71edc47b3ee22d48392cac07301e37fb2a",
       "archive_timestamp_utc": "2026-07-11T16:33:54.579000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
@@ -1137,10 +1137,75 @@
       "archive_timestamp_utc": "2026-07-11T21:16:00Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071168-sol-v12-harvest-and-release-closure.md": {
+    "notes/2026071168-conversation-user-gpt56.md": {
+      "object_id": "1891225b29e993e58c088f0711b28c0e906fe011",
+      "archive_timestamp_utc": "2026-07-11T21:17:52.178000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071169-sol-v12-harvest-and-release-closure.md": {
       "object_id": "02511860faca72da02ee3e25ef633a50351e7c08",
       "archive_timestamp_utc": "2026-07-11T21:40:37Z",
       "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071170-scientific-validation-threat-model-correction.md": {
+      "object_id": "c1f363daf7e273578fecb4a4c0c63eea21c4a29e",
+      "archive_timestamp_utc": "2026-07-11T22:46:39Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071171-fable-v12-prefreeze-scientific-review.md": {
+      "object_id": "c477f6dcf7e6e9cf71df4c8d0f8788513d4a5045",
+      "archive_timestamp_utc": "2026-07-11T23:44:05Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071172-sol-v12-prefreeze-review-disposition.md": {
+      "object_id": "d035bd6670fe58037659f1eaab6d19b1c418d0dd",
+      "archive_timestamp_utc": "2026-07-11T23:45:16Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071173-sol-v12-loading-info-representation-correction.md": {
+      "object_id": "8776a863a03be9efbac64659829944a4d07581cc",
+      "archive_timestamp_utc": "2026-07-11T23:55:35Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071274-sol-v12-runtime-rope-metadata-correction.md": {
+      "object_id": "140f168b9fafd9c5d66452ef443e6ffe49fef3e9",
+      "archive_timestamp_utc": "2026-07-12T00:00:58Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071275-conversation-user-gpt56.md": {
+      "object_id": "49fa18cdfd8701154256898f8ebd206956860aca",
+      "archive_timestamp_utc": "2026-07-12T00:01:28.888000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071276-sol-v12-local-cap-and-durable-identity-amendment.md": {
+      "object_id": "367a7ae1b09137ab63759827240bc2b827a06c6d",
+      "archive_timestamp_utc": "2026-07-12T00:19:25Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071277-fable-v12-local-cap-amendment-review.md": {
+      "object_id": "355349c865063009193b45364d8274cfcff49adb",
+      "archive_timestamp_utc": "2026-07-12T00:19:25Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071278-conversation-opus48.md": {
+      "object_id": "a65a12019a853fc3458bccf5b8468a1d28b848cc",
+      "archive_timestamp_utc": "2026-07-12T00:25:38.598000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071279-sol-v12-exact-launch-review-disposition.md": {
+      "object_id": "bd50d5708f63556b193c1b1df3f4612beda12da1",
+      "archive_timestamp_utc": "2026-07-12T00:35:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071280-sol-v12-transformers-moe-loader-correction.md": {
+      "object_id": "c241ddc23a66c91b2d284d173f0840c9bd57b18c",
+      "archive_timestamp_utc": "2026-07-12T00:58:45Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071281-sol-critical-host-driver-and-provider-qualification-finding.md": {
+      "object_id": "cfef8058ebba1d3bb4eaccc34633ddfff4b18757",
+      "archive_timestamp_utc": "2026-07-12T01:17:13.859236Z",
+      "timestamp_source": "filesystem birth time"
     }
   }
 }
