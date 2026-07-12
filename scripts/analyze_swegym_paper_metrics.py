@@ -111,7 +111,7 @@ def independent_pool_difference_bootstrap(
         sampled.append(disjoint_mean - original_mean)
     sampled.sort()
     return {
-        "contrast": "mean(disjoint98) - mean(original75_repeat_averaged)",
+        "contrast": "mean(disjoint98_chunked) - mean(original75_chunked)",
         "mean_difference": mean(disjoint) - mean(original),
         "ci_95_percentile": {
             "lower": sampled[int(0.025 * n_reps)],
@@ -130,6 +130,7 @@ class Row:
     gold_has_action: bool
     model: str | None
     dtype: str | None
+    summary_tokens: int | None
 
 
 def load_rows(directory: Path) -> dict[int, Row]:
@@ -153,6 +154,7 @@ def load_rows(directory: Path) -> dict[int, Row]:
             gold_has_action=doc.get("gold_action") is not None,
             model=doc.get("model"),
             dtype=doc.get("dtype"),
+            summary_tokens=doc.get("summary_tokens"),
         )
     return rows
 
@@ -377,25 +379,28 @@ def build_report(
     confirmation_rows = [confirmation[idx] for idx in sorted(confirmation)]
     pooled_selected_rows = fresh_rows + confirmation_rows
 
-    # The same original trajectories were rendered twice.  Average their
-    # per-trajectory treatment deltas first, so the inferential N remains 75.
+    # These same 75 IDs were scored under two DIFFERENT schedules.  The first
+    # predates chunked prefill; the second and the disjoint 98 use 4096-token
+    # chunks.  Never average them as repeats.  Keep the first as a legacy-
+    # schedule result and use only the second for schedule-matched pooling.
     original_run_1_rows = [original_1[idx] for idx in sorted(original_1)]
     original_run_2_rows = [original_2[idx] for idx in sorted(original_2)]
     disjoint_rows = [profile[idx] for idx in sorted(profile)]
     original_run_1_values = deltas(original_run_1_rows, "E-tuned", "B")
     original_run_2_values = deltas(original_run_2_rows, "E-tuned", "B")
-    original_average_values = [
-        (
-            arm_tf(original_1[idx], "E-tuned")
-            - arm_tf(original_1[idx], "B")
-            + arm_tf(original_2[idx], "E-tuned")
-            - arm_tf(original_2[idx], "B")
-        )
-        / 2.0
-        for idx in sorted(original_1)
+    paired_schedule_effect_differences = [
+        original_run_2_values[pos] - original_run_1_values[pos]
+        for pos in range(len(original_run_1_values))
     ]
     disjoint_values = deltas(disjoint_rows, "E-tuned", "B")
-    pooled_scalar_values = original_average_values + disjoint_values
+    pooled_scalar_values = original_run_2_values + disjoint_values
+
+    original_1_summary_tokens = [original_1[idx].summary_tokens for idx in sorted(original_1)]
+    original_2_summary_tokens = [original_2[idx].summary_tokens for idx in sorted(original_2)]
+    if any(value is None for value in original_1_summary_tokens + original_2_summary_tokens):
+        raise ValueError("original schedule comparison requires saved summary token counts")
+    original_1_summary_tokens = [int(value) for value in original_1_summary_tokens]
+    original_2_summary_tokens = [int(value) for value in original_2_summary_tokens]
 
     directory_inputs = [
         describe_input_directory(repo_root, key, paths[key])
@@ -415,7 +420,7 @@ def build_report(
     program_path = Path(__file__).resolve()
 
     return {
-        "schema": "swegym-paper-metrics-reanalysis/v1",
+        "schema": "swegym-paper-metrics-reanalysis/v2",
         "generated_at_utc": generated_at_utc,
         "cost": {
             "new_gpu_spend_usd": 0.0,
@@ -450,12 +455,13 @@ def build_report(
                 "upper_index": int(0.975 * n_reps),
                 "multiplicity_adjustment": None,
             },
-            "repeated_original_rule": (
-                "average the two E-tuned-minus-B measurements within each of the same 75 IDs, "
-                "then bootstrap 75 trajectory averages"
+            "original_schedule_rule": (
+                "do not average the same 75 IDs across schedules: original_run_1 predates "
+                "4096-token chunked prefill and is reported separately; original_run_2 is "
+                "the schedule-matched original-pool component"
             ),
             "pooled_scalar_rule": (
-                "concatenate 75 repeat-averaged original-pool deltas with 98 disjoint-pool deltas; N=173"
+                "concatenate 75 chunked original_run_2 deltas with 98 chunked disjoint-pool deltas; N=173"
             ),
             "selected_map_pooling_rule": (
                 "concatenate fresh-pool eval-split 57 with completed original-pool confirmation 45; "
@@ -466,6 +472,7 @@ def build_report(
         "invariant_checks": {
             "subject_model_uniform": True,
             "original_run_ids_equal": True,
+            "original_runs_are_not_repeats": True,
             "original_unique_n": 75,
             "later_unique_n": 98,
             "original_later_overlap_n": 0,
@@ -514,27 +521,73 @@ def build_report(
             },
         },
         "fixed_scalar_alpha_0_75": {
-            "original_run_1_75": percentile_bootstrap(
+            "legacy_single_call_original75": percentile_bootstrap(
                 original_run_1_values, n_reps=n_reps, seed=seed
             ),
-            "original_run_2_75": percentile_bootstrap(
+            "chunked_original75": percentile_bootstrap(
                 original_run_2_values, n_reps=n_reps, seed=seed
             ),
-            "original75_repeat_averaged": percentile_bootstrap(
-                original_average_values, n_reps=n_reps, seed=seed
-            ),
-            "disjoint98": percentile_bootstrap(
+            "chunked_disjoint98": percentile_bootstrap(
                 disjoint_values, n_reps=n_reps, seed=seed
             ),
-            "unique_pooled173": percentile_bootstrap(
+            "chunked_unique_pooled173": percentile_bootstrap(
                 pooled_scalar_values, n_reps=n_reps, seed=seed
             ),
-            "pool_heterogeneity": independent_pool_difference_bootstrap(
-                original_average_values,
+            "chunked_pool_heterogeneity": independent_pool_difference_bootstrap(
+                original_run_2_values,
                 disjoint_values,
                 n_reps=n_reps,
                 seed=seed,
             ),
+            "paired_schedule_apparatus_difference": {
+                "definition": (
+                    "within the same 75 IDs: (chunked E-tuned-minus-B) - "
+                    "(legacy single-call E-tuned-minus-B); this is an apparatus "
+                    "contrast, not an isolated causal schedule effect"
+                ),
+                "continuous": percentile_bootstrap(
+                    paired_schedule_effect_differences, n_reps=n_reps, seed=seed
+                ),
+                "summary_token_counts": {
+                    "legacy_single_call": {
+                        "mean": mean(original_1_summary_tokens),
+                        "minimum": min(original_1_summary_tokens),
+                        "maximum": max(original_1_summary_tokens),
+                    },
+                    "chunked": {
+                        "mean": mean(original_2_summary_tokens),
+                        "minimum": min(original_2_summary_tokens),
+                        "maximum": max(original_2_summary_tokens),
+                    },
+                    "ids_with_different_counts": sum(
+                        left != right
+                        for left, right in zip(
+                            original_1_summary_tokens, original_2_summary_tokens
+                        )
+                    ),
+                    "t0001": {
+                        "legacy_single_call": original_1[1].summary_tokens,
+                        "chunked": original_2[1].summary_tokens,
+                    },
+                },
+            },
+        },
+        "schedule_provenance": {
+            "legacy_single_call_original75": {
+                "directory": DEFAULT_PATHS["original_run_1"],
+                "result_commit": "e75ffd536df3c3502c4171ed46da4d7d38e3d727",
+                "relationship_to_chunking": "result predates chunked-prefill commit",
+            },
+            "chunked_prefill_commit": "317a0dd1a13a25b614e867a39270ee176e73926f",
+            "chunked_original75": {
+                "directory": DEFAULT_PATHS["original_run_2"],
+                "manifest_timestamp_utc": "2026-07-10T02:00:06Z",
+            },
+            "chunked_disjoint98": {
+                "directory": DEFAULT_PATHS["disjoint_profile"],
+                "manifest_timestamp_utc": "2026-07-10T14:55:06Z",
+            },
+            "status": "RECONSTRUCTED_FROM_GIT_AND_MANIFEST_LINEAGE",
         },
         "missing_data_and_interpretation_caveats": [
             (
@@ -542,8 +595,8 @@ def build_report(
                 "classification is historical/path-level provenance, not born-annotated proof in these files."
             ),
             (
-                "The two original runs repeat the same 75 trajectory IDs; they are averaged within ID and "
-                "never treated as 150 independent observations."
+                "The two original runs use the same 75 trajectory IDs but different prefill schedules. "
+                "They are reported separately and never averaged or treated as 150 observations."
             ),
             (
                 "The disjoint profile and champion-eval directories contain exactly identical saved scalar "

@@ -62,16 +62,24 @@ def test_committed_reanalysis_counts_and_point_estimates() -> None:
     assert structural["selected_map_breaks"] == 3
 
     scalar = report["fixed_scalar_alpha_0_75"]
-    assert scalar["original75_repeat_averaged"]["mean"] == pytest.approx(
-        0.014487352947805163
+    assert scalar["legacy_single_call_original75"]["mean"] == pytest.approx(
+        0.015643370373565186
     )
-    assert scalar["disjoint98"]["mean"] == pytest.approx(-0.0016888082090843917)
-    assert scalar["unique_pooled173"]["mean"] == pytest.approx(
-        0.005323978419624952
+    assert scalar["chunked_original75"]["mean"] == pytest.approx(
+        0.013331335522045138
     )
-    assert scalar["pool_heterogeneity"]["mean_difference"] == pytest.approx(
-        -0.016176161156889555
+    assert scalar["chunked_disjoint98"]["mean"] == pytest.approx(
+        -0.0016888082090843917
     )
+    assert scalar["chunked_unique_pooled173"]["mean"] == pytest.approx(
+        0.004822814795740549
+    )
+    assert scalar["chunked_pool_heterogeneity"]["mean_difference"] == pytest.approx(
+        -0.01502014373112953
+    )
+    assert scalar["paired_schedule_apparatus_difference"]["continuous"][
+        "mean"
+    ] == pytest.approx(-0.002312034851520049)
 
 
 def test_output_inventory_names_every_consumed_score_file() -> None:

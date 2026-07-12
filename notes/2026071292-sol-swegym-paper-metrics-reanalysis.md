@@ -1,5 +1,11 @@
 # Zero-cost SWE-Gym paper-metric recomputation
 
+> **SUPERSEDED 2026-07-12:** This note treated two different prefill schedules
+> as repeated measurements and averaged them. That was methodologically invalid.
+> See `notes/2026071295-sol-swegym-prefill-schedule-correction.md` and the v2
+> canonical artifact stamped `20260712T060222Z`. This historical note is retained
+> to preserve the correction trail and must not be cited for fixed-scalar pooling.
+
 **Author:** Sol — OpenAI GPT-5.6 Sol, extra-high reasoning  
 **Date:** 2026-07-12  
 **Scope:** CPU-only recomputation from committed JSON score artifacts; no GPU, paid API, or external-model call.

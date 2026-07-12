@@ -1,0 +1,2010 @@
+{
+  "analysis_program": {
+    "path": "scripts/analyze_swegym_paper_metrics.py",
+    "repository_head_at_analysis": "93812581a28d591f1e7cec893f41b12c1b25a9be",
+    "sha256": "3ed409a7d7dd67fbf5db4db0cb94e68afe991caa21dbafc335fd9058bc3224b4"
+  },
+  "cost": {
+    "description": "CPU-only arithmetic over already committed JSON score files",
+    "external_model_calls": 0,
+    "new_gpu_spend_usd": 0.0
+  },
+  "fixed_scalar_alpha_0_75": {
+    "chunked_disjoint98": {
+      "ci_95_percentile": {
+        "lower": -0.0135579755313655,
+        "upper": 0.008930518331888657
+      },
+      "mean": -0.0016888082090843917,
+      "n": 98,
+      "n_negative": 45,
+      "n_positive": 53,
+      "n_zero": 0
+    },
+    "chunked_original75": {
+      "ci_95_percentile": {
+        "lower": 0.0015645537346935035,
+        "upper": 0.026336808348697817
+      },
+      "mean": 0.013331335522045138,
+      "n": 75,
+      "n_negative": 29,
+      "n_positive": 46,
+      "n_zero": 0
+    },
+    "chunked_pool_heterogeneity": {
+      "ci_95_percentile": {
+        "lower": -0.03193109749273688,
+        "upper": 0.0015096854013195082
+      },
+      "contrast": "mean(disjoint98_chunked) - mean(original75_chunked)",
+      "mean_difference": -0.01502014373112953,
+      "resampling": "independent within each pool on every replicate"
+    },
+    "chunked_unique_pooled173": {
+      "ci_95_percentile": {
+        "lower": -0.0036415556744314177,
+        "upper": 0.013045009005638318
+      },
+      "mean": 0.004822814795740549,
+      "n": 173,
+      "n_negative": 74,
+      "n_positive": 99,
+      "n_zero": 0
+    },
+    "legacy_single_call_original75": {
+      "ci_95_percentile": {
+        "lower": 0.0049116176802697226,
+        "upper": 0.027093505746937564
+      },
+      "mean": 0.015643370373565186,
+      "n": 75,
+      "n_negative": 30,
+      "n_positive": 45,
+      "n_zero": 0
+    },
+    "paired_schedule_apparatus_difference": {
+      "continuous": {
+        "ci_95_percentile": {
+          "lower": -0.010999165887132682,
+          "upper": 0.006501148350135759
+        },
+        "mean": -0.002312034851520049,
+        "n": 75,
+        "n_negative": 38,
+        "n_positive": 37,
+        "n_zero": 0
+      },
+      "definition": "within the same 75 IDs: (chunked E-tuned-minus-B) - (legacy single-call E-tuned-minus-B); this is an apparatus contrast, not an isolated causal schedule effect",
+      "summary_token_counts": {
+        "chunked": {
+          "maximum": 343,
+          "mean": 119.56,
+          "minimum": 79
+        },
+        "ids_with_different_counts": 64,
+        "legacy_single_call": {
+          "maximum": 272,
+          "mean": 115.61333333333333,
+          "minimum": 81
+        },
+        "t0001": {
+          "chunked": 131,
+          "legacy_single_call": 84
+        }
+      }
+    }
+  },
+  "generated_at_utc": "2026-07-12T06:02:22Z",
+  "inputs": [
+    {
+      "directory": "results/swegym_30b_bf16",
+      "file_set_sha256": "ee970e6b487913ab38795349747efec636e3a4cdd3ad47488862abeba23d9b30",
+      "file_set_sha256_definition": "sha256 of sorted '<repo-path>\\t<file-sha256>\\n' rows",
+      "files": [
+        {
+          "path": "results/swegym_30b_bf16/t0001.json",
+          "sha256": "9a25da2d9e514aec5dec46e688db664a86d47656d51593e561a4ea9b9f7d140b"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0004.json",
+          "sha256": "0603347b98ddbabef9fbab5340047f25467cea19b057f44f25fc4078c2b6c183"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0005.json",
+          "sha256": "661c8d0d526a0d534a9965570111c0925034c8e08201d389690dd27047b4f165"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0010.json",
+          "sha256": "f412327a625ff1aa32b914166da3b5546443d571af18baea150845a5eb05fbbe"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0012.json",
+          "sha256": "acf78f9eaf13e8fc4e6dbfb7fca77a79e3287e7ab23be479f5ce7698b225153e"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0014.json",
+          "sha256": "a27b496fc13ba9d4d09d2754a9e7cee379a6b6bddc845cf10ae8517f25c4fbf7"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0016.json",
+          "sha256": "3981aa57a2d397190e284a48f15c8dd33a18244ae2dab31edaf77f7c9b9142e2"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0019.json",
+          "sha256": "a005578f3f82cc5615f7a422e4a34a01ea6d62a2f9a4c38aebd2be41e3155b57"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0023.json",
+          "sha256": "5fdc435e74b27fcb2fad69e833dd1d116d277490e942ab10099f0ea21050a222"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0024.json",
+          "sha256": "840dda25f65b04ca22f138c76bda216d2b8aca07cfcfbf5d09e21b1942616696"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0025.json",
+          "sha256": "cb2cc74d0329b55f20387f9ecb3e43f87e19c53c5c177e892795f0f9c57260eb"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0026.json",
+          "sha256": "6fc4e29cd7e4407449323c7c0c7b08f7f375b9f01f4ce34ebb2789a32e1a822b"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0027.json",
+          "sha256": "977779f3daa23678bc3c5d899bb7adf4f91ec1953e875dca60c7209a6c6ee7ae"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0035.json",
+          "sha256": "a4bd2acca7408d4d5a475142a41450cd0a7fd90f1493ade616532e2f18ad85a3"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0037.json",
+          "sha256": "c4162d8ed8c0c10d0a950989ab113a335552f08cec381198a075fc1068768188"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0040.json",
+          "sha256": "b7c8c948676644a1a7b2b2c401c1e5279498f0d51e3f5522a70143d43f7596df"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0042.json",
+          "sha256": "f22531ab16ce433696c3e476b88fca85286d1e603c4b44a365c2355c31c7d5c8"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0044.json",
+          "sha256": "ffe3e82eb2bd26a5d790fd8286b8d04a7c53ffd12433faae5611c2b9c3327a58"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0045.json",
+          "sha256": "032d26190941ae01c825e7de3c8db30691de6a3414fdc3c1e86bedadab1bc0a3"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0047.json",
+          "sha256": "2f0bd8b0894ff6bc573fc1f3931848bd07b6cf9e262289383675e74c472335c4"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0048.json",
+          "sha256": "06082d47509edd371ad170a8cbe0d069e75e95bc961fafb2aa61ee598e7740a4"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0050.json",
+          "sha256": "80b3c1cb719dcc021a6aa79d23602c62677384807bb71f9cc853d1088a8f3830"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0051.json",
+          "sha256": "72c4cb55e051b3b004a6e3309ca582faa9e62376d09b577f755aad350c4e81e7"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0053.json",
+          "sha256": "b3dce48eeaa4a5ac80e04c3125bb510540a1610d5aea3d54e1d74f6b965427f1"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0055.json",
+          "sha256": "ff77e56963e24ad8d166048aa02832d79766ceb3d55a01bf75f4978b8e9c66c5"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0058.json",
+          "sha256": "82aec75fccb5b9c5f44c9dfe2ee2b2d38e07dba4e61e3ff6bfbe902257441e09"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0061.json",
+          "sha256": "9cc03ca0532ee25227c5648ea9eb6a40c3b8ce68d7067f33ab0c032d9e099347"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0064.json",
+          "sha256": "4f6a1a5cd9d3db008ef368e547eed97e361734ef925c3b96d6e14083199e281f"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0065.json",
+          "sha256": "28f39ba4394f3b12e28715c66d5cafcfd3493958af98a47c66d27186f8bcd7d6"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0068.json",
+          "sha256": "0666530825e3d36aa4879770af634dd9fa005db287deb018119db9ef39169ce7"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0074.json",
+          "sha256": "e4f6ce7e30ced45ecfe3450bcd1f1b7ae1567035ba312cb960b456084bfb84b7"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0078.json",
+          "sha256": "ac2d02ba3b843a19ff019524bac9c42c57b7ff30245a83ed8ebdeecde3685d9f"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0080.json",
+          "sha256": "ee01d086a4417b7dbfce463b41ed635e420cfb09d0a369b715faa14c6d4e8eeb"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0082.json",
+          "sha256": "151adf8e1f7eb4a475debb8b0983032208706cf80e9242d45830cd10a4975f71"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0083.json",
+          "sha256": "ecfcf40da2431e8825c703fe0e3f640e889ea5760d0d04ad1a5d84ac32085f62"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0084.json",
+          "sha256": "fc25300ba0bd6b16c6af8fe853a0514ad0195da46f4aa2c6ae1623fba5482cd3"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0085.json",
+          "sha256": "72f7c3c3a88c0536da623f98777923eb0b4fdd68f748cb8d8fa2a3641f6870b4"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0086.json",
+          "sha256": "91ce3d02730de774ab1b8b92081aed99578e6010ec76632fdcbe6e71f048a8bb"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0087.json",
+          "sha256": "f36c651d8ddc9fb078e0dc5bdf28b3b22b9ae1fa0c77c142ff24f0aa76d5df86"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0088.json",
+          "sha256": "cc8969bd1bba30cab8281ca4b3ce88330335db74f81a9d57788838dee85a5d9b"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0089.json",
+          "sha256": "57dfdce6b78560d5135ea71e8f86ae8af64fd709549ad16b94577b60f65998b5"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0090.json",
+          "sha256": "45cd6dccb7c489e8cedce4a509d4a4abc4b21241bebdd39e3fea8e4118c8ecb8"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0093.json",
+          "sha256": "bdd178901e55446976d4eea44706cd185d7adda209adf898318f468c247705f7"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0095.json",
+          "sha256": "0771d82e51f3b211fe1aa0291c5321ac57415078f50d844925c9d59ac4357664"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0097.json",
+          "sha256": "cd1ff8e05d232f7b0940e3b782f179058c1a90fe444c9985a503365708dec9cc"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0100.json",
+          "sha256": "8e8f7aa91067872f8beeb6c5b3a6c73e96f1125f01b0064df95db55c86b484c6"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0103.json",
+          "sha256": "caca722b786cc295edd2c8708a997b1e9de2dd905f46f298c0f4cb0702f32b60"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0107.json",
+          "sha256": "2a571b3f63232e9568a9eaa90282dd006eafc262c5bb8f0438b6fec7e969bd9e"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0108.json",
+          "sha256": "98f490226a4ced8eb518183371f8a1b1841b2bc542cab4592b1f68c5c8e8fe31"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0109.json",
+          "sha256": "8ae97f983030e8805329f8167bd4d940866c9a26ea1770c675acc3e44e672fdd"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0110.json",
+          "sha256": "f5b0f8dddef7cd545db997ea5af351ce8ad9e78ff61e030062edaf710861af92"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0124.json",
+          "sha256": "2bc3babdf8b52baa08e14899915c7bff55d4baee1d0750bc66d3afc8287851dd"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0131.json",
+          "sha256": "3fcb732b24e9b584808f54c782bca600a61ea9ce7b244566bb3fc5c0706ffc52"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0146.json",
+          "sha256": "c75dc57c6b38b3d69fe5d3cef2e0fd232750d35ca35ce3a3a5589e522b104904"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0153.json",
+          "sha256": "d16f8451cee615c8daef3b21000123c0532881af70c1cf98136dab22ecfc2f27"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0158.json",
+          "sha256": "17ea388d0c071714dfa516ac5f860840d692fb1d47fb5f1ffa232e7123818c03"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0169.json",
+          "sha256": "0d338099c3e56bbe3c6c039d17c0d15418f17521e7deb74c511dd309564611b0"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0175.json",
+          "sha256": "0b00cf9de24cf68a54171025ec83dcd8fdbd82ac149efc823a2c5578a6ccff72"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0180.json",
+          "sha256": "9bf602add0b0cdac6a7d3809bbb7d63103e96731532c5cf9111a1bd2fdcebe91"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0187.json",
+          "sha256": "64d7ef73554f3c020045c86d4bca7ee9680afabd642566630adf03fe38bc8713"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0192.json",
+          "sha256": "47fe91982edcf55cff3bc1041c5243c4f69088b5f3dc96b469f2a2bf42ea78cc"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0193.json",
+          "sha256": "d23234ca442e696cc595af4d612914684b5b573c18117770a2dc3770929c9f3c"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0195.json",
+          "sha256": "b634e72c24ce02153e5baa9aa5c16b6df7de0875ef281bec7809f11fba166468"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0196.json",
+          "sha256": "30a00267f3340d7c15cd5562a401d08ef2a875abe93ced85369a102c6e03509f"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0197.json",
+          "sha256": "78251ed09a1887725ff2ad885033e4216516933773e0a128b55c0ce232048668"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0198.json",
+          "sha256": "802a98f9e147ddfae3ddd6e2a125a0a15699912154d8e2736570b0680cb53ac3"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0199.json",
+          "sha256": "8c4ab80493ae277fab1f2a55465c544ab4ff26336db317005329b19d4efe2cab"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0201.json",
+          "sha256": "2d872d73223eb2a90e2b7b6bffd74235becd7e90c270f92e846e135b00e6daa8"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0202.json",
+          "sha256": "0384c7ec2ed8c116347bc660e315c80d80b38007e9e5e4b4127ec5bc0ebebd5c"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0206.json",
+          "sha256": "687b16384bab18af1fa758c28deda6e4d79365a8c2d3f3c326bd7409dfd8b75b"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0207.json",
+          "sha256": "4382b85503d0c18be5d49f61e32b4e086ae3c307c60c4ff42598e2801eaa5c12"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0208.json",
+          "sha256": "10e056a8fff0f7aacffac09f40c2a34fa178db16b3a71bebc19969835daa73b1"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0209.json",
+          "sha256": "3e989dc6e15e15571523eec9599d8ecd913f610d5a7ad2572ba03ff34b6bd7a3"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0210.json",
+          "sha256": "e0e22302f0f5dbd28ea2c6f06f70d11f67cb6e3ddcdacbeaa2d58874a4b1694a"
+        },
+        {
+          "path": "results/swegym_30b_bf16/t0213.json",
+          "sha256": "6dc0a4f3cc9c2f226d3042ef88e1ca056e0b3450f47fb5d1c9777e15582342ea"
+        }
+      ],
+      "manifest_present": false,
+      "role": "original_run_1",
+      "score_file_count": 75
+    },
+    {
+      "directory": "results/swegym_30b_bf16_brief",
+      "file_set_sha256": "6a134c5083008bebf08cc87d982323c020fc414f2e2346e7c462955b35e10baf",
+      "file_set_sha256_definition": "sha256 of sorted '<repo-path>\\t<file-sha256>\\n' rows",
+      "files": [
+        {
+          "path": "results/swegym_30b_bf16_brief/manifest.json",
+          "sha256": "78470524ab3eebe4f3faf4475df9ffa4be2312910c5f6c220627b9a3786ff7a6"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0001.json",
+          "sha256": "d40c9528ca83ed1c92d72cdbcf074ebbba51b83342b9b26d5973cc15a6be9c39"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0004.json",
+          "sha256": "06165af5a57ea73d6df2f8168135819cc9f4861a9b6034b6d75008c530ffcc55"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0005.json",
+          "sha256": "0fc218e4e398dcc6ff546fa339f4ebf3ad274f96fa7ca25b5a1e580065f1c5e8"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0010.json",
+          "sha256": "b294bc6cbb4bbd306c3f35cc3ca49be6f08bb0a1bbfa6924ec3988db98fb98be"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0012.json",
+          "sha256": "f261ff19899d11e7ac9f62e6ac6631db26a6b28fde7b13943732e413737270fe"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0014.json",
+          "sha256": "7d1d98cb11378e74a9d71592d300c78fb09927b205342200d10d7e1babc46bf7"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0016.json",
+          "sha256": "15215e0a35fcc903ed54452682cb2478d88fde0bf365bf8b6fd7ecd20fd42f10"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0019.json",
+          "sha256": "2766c175d0c2387770a15a32a7ff76261cebe2bf06f317f8b9b4095458590515"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0023.json",
+          "sha256": "a25b1a15386981730c4f8751d277fbc67935063d275be862c315682d9d88cc47"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0024.json",
+          "sha256": "2c42bd9feeddac76db60bbd6ca1e7f6cb5d9600d160265852df2ce907f9c11fb"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0025.json",
+          "sha256": "fd558485c43348ba44126424a8128d10cd0e740eb34ccaee77d1a2d317f2f176"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0026.json",
+          "sha256": "56bc2454451fcd2d710e70569e78f1e105a73e4bd9e740b9041616c0ae2f4822"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0027.json",
+          "sha256": "8792907b793c6a437ae72ac7f8f9b7e2e78bb55be2106cd1526b5a0e045ab961"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0035.json",
+          "sha256": "56f52fbec564d964625b96e15a894ae9bec64307a5912aa484dbb5177420e05d"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0037.json",
+          "sha256": "e78de900cd6f8649cdccd5378d36c32c39d290c2f68fcc3f69d3753614138046"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0040.json",
+          "sha256": "3b9c05f88bb6e06d7d15488d78361c24f4f0ac17f6a7845818bfdddca0c7fbdc"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0042.json",
+          "sha256": "fc6a10a76ec9d8f2654ab4e4377579d978305e51b600b4cd21ec8d5032b8e47d"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0044.json",
+          "sha256": "9db1fa1728a79b926e39594027cdd1bf7a0ba7a265e889efd54fcc01d898c269"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0045.json",
+          "sha256": "a5d4962a01067f978b980051e6ee1fadcd6c029005353eb37c737ece5b14b319"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0047.json",
+          "sha256": "740be15fb8f3d9576a03e7287ba48a32dc86f5781b4859a6909f4d3201471929"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0048.json",
+          "sha256": "9c2a96182bccc28865911789d0abd094651deadd50cd6c1559999f4ac05b6f9a"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0050.json",
+          "sha256": "780ddad8e6d6991239ad1bed5a751a7398a185a46770c34a0de603586f027974"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0051.json",
+          "sha256": "3328398fd5b226cc0a119a02fdeb35c573c0c63ef8414b43b47f0574eb9327e8"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0053.json",
+          "sha256": "429c2bf243f8e985cb2054d0944c4adcb3e779cdfa0c5e9a474f47700f76141f"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0055.json",
+          "sha256": "928c7399eadd8be45ebeba7f751f5197a7a80f0660e9e23c76ba39b270307062"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0058.json",
+          "sha256": "b3235e38b42908b646d2d043ff6d94bcd44ee0dd9942d30fb7501d19b65a2274"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0061.json",
+          "sha256": "53f969e9d8ab05d28600f638bbaa5cc1d235318e6b7118c3e4c1ff533885e147"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0064.json",
+          "sha256": "d839e7b7baddea24d0b62c9889700bfd3bb81e3377ad61bb24f96bbda999acb1"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0065.json",
+          "sha256": "f74a323e7e4cafe0fd74bdc19c8485a3ad9dedc8ecc82284880f62b935ba90a0"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0068.json",
+          "sha256": "96088787e5d2d8b63110154346ded2b934d061ad65df6fb5ee6036385f5ee09d"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0074.json",
+          "sha256": "8e17edc135b0318621e3a263dd4ef4e41d52fc26b84aa832aa8d5b34c039d32e"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0078.json",
+          "sha256": "d1a5c84077c3da6d9fbc9531cf19253eae3f99a0b4708b97c6097e69706a5e3a"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0080.json",
+          "sha256": "cc1cde07ab308ab2f5d12de24bb625900211449f99e632708afc83c0bb90f696"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0082.json",
+          "sha256": "d7390318125567635c317ae0ada147efcd01bd2531c9a4b45fdf6d37170c255b"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0083.json",
+          "sha256": "98cc640bfe123ca38ba869744049cd86b152fca1b77eed078c6a3719ce358933"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0084.json",
+          "sha256": "3b962e167d2c7af63124d8c786ede3072f5a8a1fa9eae997bb0b000217c4ed39"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0085.json",
+          "sha256": "10d43fb9a31410bc321c7dca3e42774020e3840179e6ffd60b5a274e32c62210"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0086.json",
+          "sha256": "8c0052db85f98629d6a1d3cc26668f5983553c2b74333efdd9b3026cbe2828ad"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0087.json",
+          "sha256": "2024c7e9a3d400fb1cc5edb6d0d9951be93fd7703a0084b78d3d86b4a300a124"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0088.json",
+          "sha256": "35960df3018bd3a41f7fbec6a3191cb6478fc76ca5587d14d5fb4cf2e635daea"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0089.json",
+          "sha256": "dae601b37bc9ff2f9bf4f02df324cc966cc152d90573da29169d22a1871e846b"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0090.json",
+          "sha256": "c06313aca43aba1c6eb00cd192280b460d2fc37b1bfc3a33a5fce786adca5d89"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0093.json",
+          "sha256": "faf4d47e528cf9602e36785ba9c417f0fa3dd80004f2c0f24c27a8d02329a823"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0095.json",
+          "sha256": "6f32af5828aec487a4fd9aee453464e67a6b281f12444d162accf19001477cc2"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0097.json",
+          "sha256": "bb4e07ea7fd7a2b80c926a8be6f0d481bc5ccfb83f232d0f17d03529f1ad0a5f"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0100.json",
+          "sha256": "bbe1a3cd18512a16bcb22c8f85b4dcd68da9c74ff6617b9df9c80762c63f8f29"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0103.json",
+          "sha256": "4614a7d42384ffec0ae7084215dddfd58a9a09c9e03140b55616974052798b09"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0107.json",
+          "sha256": "a553daf812b13bf69e67558f4c3930beb652a6dbe41a0a2aeb749c0e1d10494c"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0108.json",
+          "sha256": "e4e2f81cf4c7d5687176f4bc393f4302892307dcbc18fd8a376859690cdca89d"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0109.json",
+          "sha256": "528426fa508470da12b7d0e0d00941a0afa680b4c0da8f067cb98a43eaa292e2"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0110.json",
+          "sha256": "e2074d49856c2eeefa8120bc6f13a9b4692ba3973c2fdf931de62208e5748697"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0124.json",
+          "sha256": "e702861a210c818d6d64dac49142455701935234e167a5632f617d0bdd47274f"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0131.json",
+          "sha256": "16c042b29097048bff055a41c894854df139c02f4af7a03bd65af0e0bb6d8d1c"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0146.json",
+          "sha256": "ba53ac84fb72a2599c3d9bd2a30d3cc52943f093f8210f158febc50a9528192e"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0153.json",
+          "sha256": "990158b987194edf0e86730c3dfdc0f51c12c2cf8e86c4c54b48e2ced5791491"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0158.json",
+          "sha256": "35ce2be060b1909b0f8bd920997c8e1e72ae788b57e2f1b35248e446fbe382f5"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0169.json",
+          "sha256": "8eac1d9821298ef26bc712d1af75b52c61676786610904dcab917239bd28cd36"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0175.json",
+          "sha256": "f9bb32fb2dfa570cc1a79ed32de39a395af86fbdfed45cb08740a76777cff36e"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0180.json",
+          "sha256": "f21982d3d9d59f27f02bec2dc20760accba7a810516f72b1398cf60f771422af"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0187.json",
+          "sha256": "6996ebe188cb452e5e18348e493b5a1d55eee31c1c4037594031686ba5feb9de"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0192.json",
+          "sha256": "a1acd91c393346257a353ca82159112461fecf9e16bac720d57b1b2fdce2d717"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0193.json",
+          "sha256": "1868744efd056142684edb68c29789cf1f9fbab6faafcff01cd9e62e6072810a"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0195.json",
+          "sha256": "4a68f07453448b62dd9ec06087a522b13a6d18d80c57f4891614e21718908aa3"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0196.json",
+          "sha256": "e049cbdbfacedecb6b9938a407b424111bb6e3f8e7456ab65453d80321c91348"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0197.json",
+          "sha256": "5ff3c7ef2dc0298e808a317d033ab346d90ad9ef1f6bceab4c4d5d4b490a562b"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0198.json",
+          "sha256": "d1a11929af5225b22f670f2ba4ff27bd3d3c10d327d65202251881766c69e3f9"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0199.json",
+          "sha256": "53b0e0cbc77912b581be375db2c61532150a7a41e03dbfbd3ae3b87a329f83a7"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0201.json",
+          "sha256": "2599609dde59217b9b1bbe7a38b1bdd797e3e3d8ca1eb18ad5399873b8469f0d"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0202.json",
+          "sha256": "56788dd207f3f94a41f53fe6b1718d22a10978a7f9c7b4224046b68cbe45fef1"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0206.json",
+          "sha256": "a50b8012541061939e5d38b76d594741a74de7cab7c7a37c6e58bf11fadf7322"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0207.json",
+          "sha256": "d930ffd5540dacf2483344d0ba4644cdef94aa321478a6e14cccbced5115b169"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0208.json",
+          "sha256": "3a676cbd8b837b27c52867fb5658aaff0fb83824c197af836341dabdc232d1f3"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0209.json",
+          "sha256": "f9ab6dfff78f98d2090ebe892733091cbb986e7dfd604037e6a3cd83c62880b6"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0210.json",
+          "sha256": "74417efb1f127f2e52578bd1c148b8ddcb786a12b42ec8d44fccda34e81e3202"
+        },
+        {
+          "path": "results/swegym_30b_bf16_brief/t0213.json",
+          "sha256": "67073465cc93805d245bdb9dee04b80399b2cceca478a640578d421df60cb8ab"
+        }
+      ],
+      "manifest_present": true,
+      "role": "original_run_2",
+      "score_file_count": 75
+    },
+    {
+      "directory": "results/swegym_tune_20260710T145330Z_brief",
+      "file_set_sha256": "79089b8691ff4f6877cbda87e663f7324113f904edc7311bed9942233ff4de77",
+      "file_set_sha256_definition": "sha256 of sorted '<repo-path>\\t<file-sha256>\\n' rows",
+      "files": [
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/manifest.json",
+          "sha256": "7dbfd9e7a21dfc88a590d14075fabc17ac05bb1ca4b4e99a4d848b2693181058"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0215.json",
+          "sha256": "d1f10ddc061ba1cfd751857faa41201dcf1edba5bd282be5d32ed7223016a765"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0216.json",
+          "sha256": "d0835ca9629314052b7e4c5e9ba1692267fe76dbe5d73e06ed7777e0bc12759e"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0221.json",
+          "sha256": "ef92376c0aa163ae5f1938e8f336b232392f1595f41989709da77cfed1e8733e"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0222.json",
+          "sha256": "faa26b21536870f9b619e6a7f63260c8031a53ec4346c942b1abc366db55ee9c"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0223.json",
+          "sha256": "e03cce78c603b783bd9ad92146fd1bbcacf84598bb67565a67d147ae4bbaca35"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0224.json",
+          "sha256": "e4066f000ec2d12c377af312d430b427907420886104cc66249dea3030f1b966"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0226.json",
+          "sha256": "2c1053003b307bd0efd16eb97428dedf47cf0c34bdcc0d859c400a18fd26de96"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0230.json",
+          "sha256": "9fa6632af27f765e720b0386d93f9d91c1e575e8c5d6b92ea878c71936a53ede"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0231.json",
+          "sha256": "e330b2d09c1929006463326c7b645bef743ed0cc77fe38d0252ae57b403ca7ba"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0232.json",
+          "sha256": "c33bb5931aa69dbd624c8eff34f59f6b415a0aaebc05a7c2c9e45868bce23804"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0236.json",
+          "sha256": "c16e2c6592f1a77368c765834136c39e242ad84e19771f18f66869c167783975"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0237.json",
+          "sha256": "c9a2eb4d6764973edbb7f2aa7b6ab703ee6d5bf235fa3a296befdbb9b098bf3d"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0242.json",
+          "sha256": "13650560b4a7886f3c9d8657d109bb758d29cf2e7ed1bbf6520ff2ceb2a8c668"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0243.json",
+          "sha256": "b1c739f153ebab14e7b2303d364b9ba30ab80f57fd7ca8a84d629589e1499d64"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0244.json",
+          "sha256": "8d3805022245e5e587449bac6d84dfc1d4cd8d44a8381a8af67a8ea5f1403dc5"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0250.json",
+          "sha256": "a095cd59937249eb530998d38f2428f3e3beb0653fbc5500be328007281e1906"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0259.json",
+          "sha256": "f7070f35608244b060bf3aa182f7b7c557dfff1fa2191cb57bb056f0da34c6b2"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0260.json",
+          "sha256": "9e08dc45cae03fe72d2c84f2d86749c50f5e58bfe7035fbc22a1a753adf20352"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0262.json",
+          "sha256": "5e0d9206a801e5234c8c99db9a021d00d49bd178e723a0830b279797507d8d90"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0268.json",
+          "sha256": "0a35bbcd7c50a8a70415afec1824cfbdcf32b9319b5a8d98fac53cc273f6f341"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0270.json",
+          "sha256": "0053d002987a80ca011dec3abf2ddc2e05d62323a29785461486c11b82e40500"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0273.json",
+          "sha256": "9a762a9066e63e40076d44b8c4aa5d2def5a83b9f52938f5c2e444249285d59b"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0276.json",
+          "sha256": "e2bc2b3c18a43c23def72a98cb11da09ffa154cd17b465073a07942bf476a26e"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0277.json",
+          "sha256": "981feff2c3c4bdde06cc0d406e6df480dbb1b23b45f062200f079dcd08cfcc86"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0279.json",
+          "sha256": "27c13acaba07deee09f45b626628a282394c2dfd5e6a1f5f04612183a73c6239"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0281.json",
+          "sha256": "3b35025845a50ae652ec119a11100def5bfc623b2acb691b99db6de7d913aabc"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0287.json",
+          "sha256": "74a14b6e57cbe0425f8e97c8b8f51658937a2c959dd8d80a223c86df063f6a1f"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0294.json",
+          "sha256": "20769f38ded6885c7a07fa7e2f4bc143157ae284e775c674a8fceb89a54390aa"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0297.json",
+          "sha256": "941267a0dc162e0b28d84426477f6bdd9d261a95a4f97c7ab68ae53d68397e43"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0300.json",
+          "sha256": "4f553df5a517794cd8941339019eb7c54218ca7563d205c2b741b3b9857f867b"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0304.json",
+          "sha256": "ef1d6286ffc31384728486e4389251718627ea20ac7f8af07d7ed1f484696099"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0305.json",
+          "sha256": "53cbad4f0a870aed3e5a1103021306511cd22e685517b691a4e2d47490105837"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0307.json",
+          "sha256": "9e448174cd2f402ed8489ecdfa8d02fd854ab4de1279468ac93ce0da9f8f8aaf"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0310.json",
+          "sha256": "3f9492c460a3afdca529250a5db9aca750caf8ad5e5ceda50596a5386b31ebf2"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0313.json",
+          "sha256": "2c30070335f42a142b72191bbdac5e6427556cb81a4cdb7a43c7600abb431537"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0314.json",
+          "sha256": "43ba427a5cf6f58764e81a98cd904f5c34577a32005b21c37db26016e2fd0938"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0316.json",
+          "sha256": "bf7a63f2bbdbd31cb7675c1a5770afafb6578dbfbcbf11568fcdea65060264c0"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0318.json",
+          "sha256": "bc0ff6caf91433d7985d10d85c0da61162891dca6472b1a695b99f4848bb1b36"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0320.json",
+          "sha256": "1a58abf7363a8347db4363c79face3b4fc18b52d8294f948a9b9ce5892ab2abc"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0322.json",
+          "sha256": "fc46db0538a820166e84f36b9a7a8142816ce2afbc0089b93e900781781e9b45"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0323.json",
+          "sha256": "d75c8d8556c484e99ef179f6231543b788603562f7797f319277280a91e40fad"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0325.json",
+          "sha256": "378a5a2520e7d5051aebe9afbdcdd87d47ffcde3216fbe15ed685d7671e0a0b6"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0327.json",
+          "sha256": "b53cbf5e6c15f7e25aa34a4062d469970aad43ca40043f932ea6c695c220a7ce"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0328.json",
+          "sha256": "01df6351e9dec2af4d0ec6c262fde0efd06d6c89d74ecc897ce601cf5e4c52b5"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0329.json",
+          "sha256": "83702a127bdae47cbded49fe2fc3b93bd610633c58891aac486ac8b809cf361c"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0333.json",
+          "sha256": "2f5b90f2f143a232646f8b1959e34b0ebb8b0768dd7a4e07db673cd307b08e98"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0337.json",
+          "sha256": "0725a179391605c0a509f71163997523e3141a64cada6008773201780c52c665"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0343.json",
+          "sha256": "7327a06b553b43b5af571000174d89cbc4c5b8db2b09d4af2367ff6f6846735e"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0346.json",
+          "sha256": "8bc012c044ba8f9130c98b80ff22792f5830d52a159012a19c4a5ec4fefa97c4"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0348.json",
+          "sha256": "a321777dc4bc339db636e546435dd246ab019598f385998835dc199243771ba2"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0351.json",
+          "sha256": "1931e5cde36df2b9cdfc8bc278484c0924d214f4e074d79452c58136e94f7ae5"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0354.json",
+          "sha256": "9425aa0969d15715a856e216cc522a381aa1681670307480d477893f46d8fe48"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0360.json",
+          "sha256": "b633fd617409055f09c5be0bb51c8b9d2d56349343af10d7f209a14600f2a80e"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0362.json",
+          "sha256": "2341cecd2e0ba33817a6345d3600d024edaf6b55277d672d317cfb4afa8e1283"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0372.json",
+          "sha256": "43c70ddae1d723c7547b19e2db753b895ecbfb7063ec86deeb9ae0b1ba9658db"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0376.json",
+          "sha256": "beae54ab98c2267d4da3397550d27581646c493d30c52a7edc4a0f93bca77848"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0379.json",
+          "sha256": "6e724e75f2fd66adc6f7fc2184f61a18b046adaaea90ef65bac9e6c4d6559f07"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0381.json",
+          "sha256": "fbe4be5916015ed3fe3a01572f72c48cd66b8d994bd96781b79ab16f92c6d816"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0383.json",
+          "sha256": "8b2a122980e242e3ee33e487832bfe6a1a18a9c4899e06fffb87745d7f6458e9"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0389.json",
+          "sha256": "01135c42131c713eb2642fbf8ce80b6dbb40accd03b5717bf6793c37ebd15881"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0390.json",
+          "sha256": "0f43853ca852c1ff5ffbf128b8df8deb51d93796a9ea4ea17dcdcbdf4574a33f"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0391.json",
+          "sha256": "ac1d3f130794bed8e3f96a55b86e5576e75975729e23b850cb1f22a6e6458751"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0392.json",
+          "sha256": "1f0c6d6e8942c0c70fb88e030c8e1523fbb23656c57c84e50ef463fdec213aea"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0393.json",
+          "sha256": "12428bbf6e94d803c4ac6378e833024c56dbed9440b892bdfe6908fb3e0a278c"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0398.json",
+          "sha256": "1eef5c2b48778e501d6daf031e0ac1d758aec268eeafc9238fa00109adf2804a"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0400.json",
+          "sha256": "4c5fcd965e4b7c02a0d88ca20eacf39cb6d2c30b3d32274330f9f1edda631978"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0402.json",
+          "sha256": "8f9de3c8c07623970aa0b8b43356bb703be4eef4a375f76072775babc8004275"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0413.json",
+          "sha256": "b73d72fcef0b9dd123266f6eed24fdcfff7545673742873eb3bb476995162c04"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0415.json",
+          "sha256": "ff417ceb768c8831a0d346dce4989218c09399460a183af00825ecbb63472a23"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0418.json",
+          "sha256": "6ee2dc8606d4e2af01b846a74a258b43a5888284c1f9486beba3a25c510f32e5"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0419.json",
+          "sha256": "7c73110cf296471ba52f1db22188e8ad90ac882fdac732f8fc47bec36164c6de"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0425.json",
+          "sha256": "e25d9b0f13e6eb11324f968ad45ab5bb73cd8365c965c59ff31f545b281d2ada"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0430.json",
+          "sha256": "a25a20243e7c87521843e4e2ef11cb548ed3d9c2c4fcfd01d4ff256c674a8516"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0433.json",
+          "sha256": "33622eab5e0e971051ab6aaf9aea1004193985ee8c2a52a00a5fda052ca7c7f9"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0434.json",
+          "sha256": "d6628f7ec6030e0be8998a5de3e1e8d4bdae5c4cf7aa736b9ee37857d36a4355"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0435.json",
+          "sha256": "a35f93f4797c02e44c3cf8413b40b2a6f6e8cd0b3b0d9ba33325148174771a4d"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0436.json",
+          "sha256": "abe4b3e09d7e85d76ae4297763d94cc40064f0ccfd7c3405b1d3ed4ce9fe5472"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0440.json",
+          "sha256": "994a9841609ffe8199027ed868fdeaee74369ba0a1d8fce113a880d3f845ed8e"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0441.json",
+          "sha256": "bf8b653d66baba944e70ab5ae0fe6c8da5c6f7dcfebeec13bd4da64eb3ab838d"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0445.json",
+          "sha256": "f9c7380da384528d80b2d27373187f14cdc42f001edfe0e63648f697faecde6c"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0446.json",
+          "sha256": "07d4b5d0f34c34f5e00bc927ab2510a46673561b0ae99cf4cd8992ccd997247f"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0450.json",
+          "sha256": "ce73bcb96b32d160e97bfa83f82f77650bfd8d2c798846ef180a1aa1774b683b"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0451.json",
+          "sha256": "bec7ad375cd791e5f700da0723ccdc0de489460e0bbedf77a22b48300fd18fec"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0454.json",
+          "sha256": "80b9b9bc4bbae86eb1e7c02d47c40e03b137feb0567d69fcbea0fa94dd5dc90c"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0457.json",
+          "sha256": "5ebd76724dde7c697b2cfe0adedc316e1b3c2bc7f0794870ff808d08601b9380"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0460.json",
+          "sha256": "c324188b8c7b85125f7d638e51fa474c81af9bc0dcd712e2560669189adb8ddb"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0461.json",
+          "sha256": "6fb16ec1e08c9c9f22b0daeee98c52d70e1444434ffe40f9cb6605e868ac8885"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0463.json",
+          "sha256": "c5059b2447b10429d0bb4a1ce5187ac996e769b0897fc47863018345a88b150e"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0465.json",
+          "sha256": "7978b559c59fe66786f92da8e0e490582ccc4d7f5caf1d360056a444c3d754f8"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0474.json",
+          "sha256": "2d9eda1b7f40e56821091b4e0b57c4fd6d326d4edaa5d1818601a4cef3aa0ef8"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0475.json",
+          "sha256": "b890926efdf862e6400445468a34bf0544451e66c0e72683964f8fa4f8b97b8d"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0476.json",
+          "sha256": "b23da1f47981b880e20e0846915c637da05b234c2a15901811d52e5eb3fbcecf"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0478.json",
+          "sha256": "7df1c64ef222363cbb5d2226550e3942c527cfe06ba90318940b693c5f2221fe"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0479.json",
+          "sha256": "dca07cd97af4cf7b8cc41bcc7f16932eb5831809fc8a01ce0b1a1db9b3ab9c88"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0480.json",
+          "sha256": "31f9b9dd706ead61b30fd3d814ec69be2ba44fd33a3f810966ffd95d3227c302"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0482.json",
+          "sha256": "c65e30f5e4f64785e53e70924cc7cf77a4edc8046e6aced055c4e9e4b682bd74"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0484.json",
+          "sha256": "a977434b6e691d7d2e9894967c0597f1515467d066ad51df8010b9d8c7f76399"
+        },
+        {
+          "path": "results/swegym_tune_20260710T145330Z_brief/t0486.json",
+          "sha256": "3a1e7f702413b0d2f102f8376e302b08fa7373f9913934ccdc71b325d6cc3361"
+        }
+      ],
+      "manifest_present": true,
+      "role": "disjoint_profile",
+      "score_file_count": 98
+    },
+    {
+      "directory": "results/swegym_champeval_20260710T145330Z_brief",
+      "file_set_sha256": "148009c271f59198103418f771a706729a241b3a6bcdbb00e92f7ef3b8061fa7",
+      "file_set_sha256_definition": "sha256 of sorted '<repo-path>\\t<file-sha256>\\n' rows",
+      "files": [
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/manifest.json",
+          "sha256": "78b27d783c3adda2d0e2beab13d81856d6db232522a6e8cd3d805d04b9d3bc15"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0215.json",
+          "sha256": "628193c75f9408c1a57a04464a3615adda263045f579eb836fd721cb8381b7c4"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0216.json",
+          "sha256": "2216ca8148dcbc6844dc41b9ac0ad91b36e7eaadbabe953833ce9e5c3de5f554"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0221.json",
+          "sha256": "207476dcc153279f8327f0a5caa8b6479aac3075c08eb5e175898cc2352e2b1c"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0222.json",
+          "sha256": "0f4b93970e6bddb9299be5d74e48f58fe6f7f13f68831c5549d4c05e32d56738"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0223.json",
+          "sha256": "629d5ebef8404a6e5941a6d604efd98503cd02f90f784d2ae23f01fa3addd932"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0224.json",
+          "sha256": "4aa7047422d82be9fd03841b8fa2dc7bd9d4da95503673a7405141f19990a735"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0226.json",
+          "sha256": "40d6959e79dfb471c4767e34a9c9b924a58885a93cafbd4b928f57b93f5440ca"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0230.json",
+          "sha256": "a7f57cae0e1d6d9b8375f98ba2e0a3fcd726dae6e572fa72bb79ed4f7b47b468"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0231.json",
+          "sha256": "9e31d89a4fa517aa1ea880b9a8f80374e374a2f5a62ea2f618442806f99c0516"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0232.json",
+          "sha256": "ee587eb534de6b821c54c4ae31dae4f5aba3039734a7be59b376c025d38d415e"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0236.json",
+          "sha256": "be362a802277887fcbc1745c53af05b4ba55366f260b18c027938cfdc3dc6775"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0237.json",
+          "sha256": "4543e481b10dd8dc771b3a92c493b055613bb86a41dac2c4db543fb598eb367a"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0242.json",
+          "sha256": "fce86354db607f08c0a85ff885ad3478324a317b7824556d3907fba842aef231"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0243.json",
+          "sha256": "174fb858a3b89f75b272999566fc122eb94cdc020add700178dec9c79038a521"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0244.json",
+          "sha256": "4554b8e8bca2beb7d62e000843325337911fb290c3bae0c57b5e037afbf4e384"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0250.json",
+          "sha256": "07e98571647b0ca32d57d240507fb0a9589cddcc7d263c856ba8b07dcd0606b0"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0259.json",
+          "sha256": "89066c30f40bb1a5a381b690bf130ad825d6bb2b561cfa35ec1a2e7e790183e9"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0260.json",
+          "sha256": "5306c0d93b2e1d3a9a6e3249aede710e0ae0d9af3265c1e24079f8d0a0481b9f"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0262.json",
+          "sha256": "843570c34ad624072d73dc422f68f623d690ca05dc73443b2c84d82fe7d3d1bc"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0268.json",
+          "sha256": "9b44d05e60305c1810152ae037cb0eb716afdc9e8579bcf78976d56f4f62ce80"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0270.json",
+          "sha256": "97a19259280cc9a5ba3ccb4f02219f6f4719d8ef39a2fa15c8c7f6c18a8b08c5"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0273.json",
+          "sha256": "8e632fb1ed82b8bccde4f95a4655c6991b75a8d4cc06ecf0b266953669022b4a"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0276.json",
+          "sha256": "6759a48f4d39bc8969eef056bc07939b7fcdc49a0aa34b93d52cf6e4d811f457"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0277.json",
+          "sha256": "07720781839cf78bc5c9da05b9347c7b61ea291b59eb4e00d4c13113d5721891"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0279.json",
+          "sha256": "99609fd2f5ea52f3ce054b643b2495b431df82c27cc451c90da6c35f0a12d7b2"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0281.json",
+          "sha256": "195100f71b5c3bd3798c4a0afc005d42dfee295bfa341dfdbcb55f2c02406bd1"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0287.json",
+          "sha256": "69b300b70665d7cd7d970589bfcda603db8e8dc0139829a1dd3b6776b6f2dca0"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0294.json",
+          "sha256": "0f5bedb758b266d90260134cc04ec55117751ee0bcf77b0dd9abe7f9cb42b3c7"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0297.json",
+          "sha256": "11defbdce7bc7c8574096009565643149904d307eb0ce97dc831d249ad93efff"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0300.json",
+          "sha256": "22a6a22e16c78fac5581d4f15d9b8b8e144c36b3f78f004ff600b9ceef7331f0"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0304.json",
+          "sha256": "7f951094571e3e8831fda5e20c4b74751801db7e0d4d585c9622b27f70fc63de"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0305.json",
+          "sha256": "2fe934a697566ef10c64bc1fb02842f45b499d5b3cf1ec5c6d097a439d22868a"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0307.json",
+          "sha256": "97f981bcfca92100581ba745071f7c4f9fbbcfd821cf2a613a5e1f242ebf5a32"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0310.json",
+          "sha256": "d302e92cb7aa194ee8c143d8bbd01ea5578e89c446954e784b15b2d2ad681e5f"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0313.json",
+          "sha256": "fa8024344e14f558bd647c76c66631f255a24644de7d3d5ebcef86e74d7b4c4c"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0314.json",
+          "sha256": "119369eba3d13784c1694dae403359c99b16d3c8e2e6079aebc56007a5f7ce6c"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0316.json",
+          "sha256": "a9e8812e9a79ec7af6f5ee24df5b361269ee08120ebede3661e9246f258f4f3f"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0318.json",
+          "sha256": "a5ddc872aba3467370eae0d5ac813eeef99ed63ecde0391aff16c518d6d630ca"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0320.json",
+          "sha256": "3adb07a9b93e228b8a30955e60650762b715d47c7d6533e19f2843bff9b06982"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0322.json",
+          "sha256": "0abce15ece731d3bd8b61df87c75479806d5f2fd5f66d57c3a9986ebfdeb08de"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0323.json",
+          "sha256": "d8e411ed40bbfd6cf19342d034d5480dd090f4f36688dde1824084b0e1ef5839"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0325.json",
+          "sha256": "865e87dd7c0baa1164b4ffb99aa68429f5d276320546d04d7910ac46a808d395"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0327.json",
+          "sha256": "1606cae808ccfddf4e7b7e9d7c90a84bb117e274d1fbb64488f1e08108c965a1"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0328.json",
+          "sha256": "54806ddb225890632773698957acc51e1702e08d12660643b0967079e1c564a8"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0329.json",
+          "sha256": "0e2c35c5756cb856cb7a63b224dabd29bbbc7984cc4b8b6f081bc86e6cd5044b"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0333.json",
+          "sha256": "0e417f5e3d5e6447aeee7aa52c7fae7d9ac2cbc45801a55bd55e31ebe17cfcef"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0337.json",
+          "sha256": "dadbb2d3a6a0e9cf6477c55f13307488f725e2e2d9206bf19bfcb7e107cfdcb4"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0343.json",
+          "sha256": "e93effe0ee8121df09bcbdbffb4ba851ea8e2311a83acd8226e074ec1e60cd04"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0346.json",
+          "sha256": "eab268bfc89fc191ddc0706d38a0c2ecc6795cd3aba904513f55e7c68d221d64"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0348.json",
+          "sha256": "b73296663c6f09d59acb1fd640269ad6802463ac87358556d01aa1e34f2239b5"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0351.json",
+          "sha256": "66413769695feec7be7ac5f1eccab7dc278c0063dd2aaabb388a00e1d246e232"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0354.json",
+          "sha256": "7fb35966a5e801314cdeeee566896892a025b4cf45f7efc50e6794c179b00d30"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0360.json",
+          "sha256": "369e6446eacc662c89f042ecc6cf70ab274d991c691a77ed105018e4be9ac19b"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0362.json",
+          "sha256": "16ca787600b5c8605bf29168529d5f8d4fe4f29bd67c917a13a7b45f1e4e6c2b"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0372.json",
+          "sha256": "eddcdf193800b578eb5e772a32b45254076a716dd99403e201cd04581b7100dd"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0376.json",
+          "sha256": "9c372bed142d6bd2226c1cbbd2201e16484bd3e2cd907ecacac19db7410f9989"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0379.json",
+          "sha256": "3384b7b06b15e1e1ea6e14d87de5d448b9f5b353587ae9d82acd41f1997e77d6"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0381.json",
+          "sha256": "58f424a2a3ba9d5ddfc6bb72d0fb6e25f41365e6d45403fd5e14c98b5808f182"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0383.json",
+          "sha256": "c433c3b411a619c65460fe0d058f9c9f7a744d88550c109db117592cd652bd68"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0389.json",
+          "sha256": "d879fc457be3a1502dba8c6748ad28049c030c370d15fa096b3b247804e40b7f"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0390.json",
+          "sha256": "f697b5125ec008efed10724f14dde18674d58e21ced0bc3df239398963bcfcc4"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0391.json",
+          "sha256": "ce396767d5b464ad8d59631b654521d336bd9f37645d64a0b4540a90e5fe3f91"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0392.json",
+          "sha256": "f99553835512545d58eedad4dba14ac52396be2aadf048af0258d4e25f94de54"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0393.json",
+          "sha256": "f0d9fc0cd85c89ca9c53d4e3fc620e8ed9f553ac1dcaba1fae975d7ed09acc32"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0398.json",
+          "sha256": "87cf1d1da5559f9a64269b4edd56464875e71fb8a6467a6cf7d6581f1b10401f"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0400.json",
+          "sha256": "7e381dc5f4a38df0beff0519afa69a7eddb0e903e3262c2cb22d995a2cd5e9b7"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0402.json",
+          "sha256": "0c002a067c1be723ab1fa40e68f9190366b53bd7c6a890e65ace52fe93a2b984"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0413.json",
+          "sha256": "0d114d323a53d3e24e0f3ae5bfcbae4c9ddf205b479c495637c14e5ce4498bbc"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0415.json",
+          "sha256": "effe189a7126747ff13953d4e563121cd4df0ca347b2178aad3880e4830018ed"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0418.json",
+          "sha256": "4ddf75b8ef9b17b9942a09edf6544eef696fe7fe76a7273530594ab979e92d7d"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0419.json",
+          "sha256": "1e0ea26516ef6023d185598e761c223e374bf32914897f6989080713cb24d45d"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0425.json",
+          "sha256": "b7d3cb728883db9ea25582f44c097add82636f2c5ecf6f4957ea6e8a32d7b417"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0430.json",
+          "sha256": "f90fd6028d7c75212b8a332c6a92b97dc9fee763773f7d910f8c93c8a4126c1f"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0433.json",
+          "sha256": "8eb11b0e69d8c99494c50f8354ee37e9f730ee50b2a38a763c7025ee2bb6b917"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0434.json",
+          "sha256": "2017ffae8f45186592075bdde8c0f2f94a65c5ddc41ec6868f79e682a12c4529"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0435.json",
+          "sha256": "7d78097db2b8368f0fd610789b23c59f0c0249e1e91949042d5a5716ce2bb7fc"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0436.json",
+          "sha256": "37d7db392458fbafdd39771a69baf854e9e99fe438a57e95fce071065246d0e5"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0440.json",
+          "sha256": "c45c096603c90b60b08b0b28a74f5e88121c7da589185f492532e11d23dd2c3e"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0441.json",
+          "sha256": "912db8d6e8f4c35d7ddbe24357dcd89f3a209a1ffcbbb874480aedc49f0581e2"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0445.json",
+          "sha256": "1eb894375f890c6dcebb6523cbb1dcc129c544cb8ceb4c008f7f5816d6d57b46"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0446.json",
+          "sha256": "2f5cd5356951a3dbe62299c660ed889f61c95d43da0b96de7a77f1d13b8156d3"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0450.json",
+          "sha256": "9a694ddffd4305587567c33f631adde36616601e88c3289ce3f56f3364241ea3"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0451.json",
+          "sha256": "a2821589466e4e230c721b74d6c724536c39f52b97082e1d3f5f784bb585b392"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0454.json",
+          "sha256": "6adab3c4af3195e451a04860e57e341b5c2097dd862600fdcd5dc648a4bfc4da"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0457.json",
+          "sha256": "c00f484db51b5c43c078210923ec8818fcb7a5b28165d18b8fa129aa24fe9046"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0460.json",
+          "sha256": "a0f588e50dc780abb4aa2043e04b8c5740233ea5cc8d6e84d2d284ce1b74387d"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0461.json",
+          "sha256": "9daf1b6589aa5e1842885659e2718e49cddf96ec1d08bcf3295f9edd1bb02a29"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0463.json",
+          "sha256": "30426b4ee04daeba179730bb39b90e703ff7a6b47ed2f670bff5b3abc9fd73b4"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0465.json",
+          "sha256": "687516f469c38f680cf1b59f49c212e2a3637dc5af35579b9bcab9a949846000"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0474.json",
+          "sha256": "b3edee3695a885f0145182c9347d33a4ae102247ee14ff2f55758e6c73901b45"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0475.json",
+          "sha256": "cfc941ecb63d5dc35ea488a67837844ed3126335d6f62839371dff49d3423bfc"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0476.json",
+          "sha256": "2569e17f64551d895814e0f557aac761f01fef88ee01b5cd42ca4f2b114d2e87"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0478.json",
+          "sha256": "4575725f75631b2de6bc49a58714fbf04c4ca6319b64b536b7a68b45e6b4626b"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0479.json",
+          "sha256": "3b4e36b0ef981a01da321acffc14d2c39372a12f61af56baab678bbe8a46b932"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0480.json",
+          "sha256": "60365995f66c8929f046892f427dd20245c0b48d1bc7a9cd42d69e4f0e7f9cb7"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0482.json",
+          "sha256": "b697c03a0c99ce01b4f2ea5f91262ce26b7ba0b6fe61307ff7fb561f78154173"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0484.json",
+          "sha256": "f3676037b3440c7ae234f664d512965fb492c55c0ebd5d8a3c14c4e926ac49a9"
+        },
+        {
+          "path": "results/swegym_champeval_20260710T145330Z_brief/t0486.json",
+          "sha256": "cc1d2e9efbdb1760d151105fd2d6e185ef604b92aa5fc4550cde7c2a2af46d39"
+        }
+      ],
+      "manifest_present": true,
+      "role": "disjoint_champion_eval",
+      "score_file_count": 98
+    },
+    {
+      "directory": "results/swegym_confirm_20260711T011101Z_brief",
+      "file_set_sha256": "4d1606d372970bc0b51e6f78ff51514cb494e46796f5dc47b1657cf0bd7b2d99",
+      "file_set_sha256_definition": "sha256 of sorted '<repo-path>\\t<file-sha256>\\n' rows",
+      "files": [
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/manifest.json",
+          "sha256": "c30cb7b4b570eb357efa4685e21f572c79a7be62f4cd151572eaac39681a8801"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0001.json",
+          "sha256": "098c109add5dde11490d10acb7b4dec9437160a35e0b46498d8ced086707abe5"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0004.json",
+          "sha256": "341e17c0644b368a118de69a70011593e2f4f732445c8c72d2128e263dca5107"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0005.json",
+          "sha256": "0bf6e7b5625ee24b585b1ccc351b6c879ee0013188f1e41807b825524d6abe28"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0010.json",
+          "sha256": "67d7f5e03a8b0b57b183e487a0c11f38b4c522a139d6f8cfd3a4c8da2b2908b5"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0012.json",
+          "sha256": "e9f1bcb5c6a7faeb75b3a77f7196df1b74b1ad757a41ab9d1c666290f6f3e0e5"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0014.json",
+          "sha256": "66982754eb62d8bbd2b7cc4311f7d8efb7d06acc76a4c301c9c7cc8bff8779b9"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0016.json",
+          "sha256": "6f543e02ee20fad515e9f1d6063879cd0b562ace20ccfd7bf206c97a70493c6e"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0019.json",
+          "sha256": "30db2f4afc8dac63ed44696f87248c7194dcf81f67fd693191cb02684dab01a8"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0023.json",
+          "sha256": "3531f552ffddd6bbb74ea18f0e44b9e16a3eea3e1aeb8d8ea4e688e076a8a479"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0024.json",
+          "sha256": "441ae7b5e57cffb9fe18d386708a5354209963f483050b60e3246a034ab1fa34"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0025.json",
+          "sha256": "4455c06e8aeaba600be19ddb3d0ff2d7839e7a66d76fcce6fdf6a28e923c90ae"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0026.json",
+          "sha256": "2cc5decb24ab60f75e538ac2987724bcea28c199df389e020e34e951befbe0f0"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0027.json",
+          "sha256": "9a228e674f58562f6924d5c3ec91be7746943df7d911847083a9fbeeef4e8b6f"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0035.json",
+          "sha256": "21bc5c31c972f99e4ddb5fda9056e4d82b20578bdbb96979bf0ddc5e79411911"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0037.json",
+          "sha256": "ad8a0cd90bf1951d84f4e37f232663a95b7e3ec5102b08c9fd39a5dec34e27f6"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0040.json",
+          "sha256": "e571169841dec56e0741a6cc157da39ea651782d5a0a45a818a2a05d77ea912c"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0042.json",
+          "sha256": "725669a0a4a7e79743fcc414d93f22302f303e46f1faf2be7b8c551e29fde762"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0044.json",
+          "sha256": "2acc5df7cc3529ee97b51ff374c54cfe554f142c5a2eac01bc0aa5a70df57c19"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0045.json",
+          "sha256": "38c3fcd003381af0ce6e2d640255671d4d4b46e36f6ac54bbfaadd341a28760f"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0047.json",
+          "sha256": "4dc2eddfee454ca5908c4d2f7867075d31a1169500b58a70a0128b4a12b6e136"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0048.json",
+          "sha256": "120fc86afdf17b99582426d994023d5df2507880938cf20f3d06cb3cdce9066e"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0050.json",
+          "sha256": "b81be2171ea1675b7e10ef476254665911c8a9f6c08713aff9bb3afa16fe7cf2"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0051.json",
+          "sha256": "6986642fca7a482266c57ac66172426e642773c8d2168209bc367c4d2796987e"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0053.json",
+          "sha256": "11ceb8123da3988cec00a5f83966d651a5ac29a87a3ce2f2f03a49beceb86232"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0055.json",
+          "sha256": "0ab4019a9d361ab3145372411190ef756e68c564ec3e5899c7d9e3ce8d5dfec1"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0058.json",
+          "sha256": "7100aea3b0ea8ec9a33f4714cf8107b1f601d0bb6bbd982a77c3af784e8909e6"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0061.json",
+          "sha256": "813a694f4391a0d94fe7c915ef4622cf70e409a81ccb3fa4de87af73804fe44f"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0064.json",
+          "sha256": "8846e48657d33b345fe6ceb08d7bffc3d5faacbf3b2fa8e5fb85dd7a63fd21c6"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0065.json",
+          "sha256": "177a15bc1ceb84d987602ba30832dc145afd88a1933c6595f38661646fe99b44"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0068.json",
+          "sha256": "9e10b4927d3de6873f18643be53366479453551ab6e39165d65cead7d0de33d8"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0074.json",
+          "sha256": "04d7e54bdf1de0318cfb962b608e6fc2fbd1cd1ae6eeb61a0c7086e501fd4817"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0078.json",
+          "sha256": "e5e65f2e9d485edc49ee70d9867ec6deea24a1ed05d3300fe8cad02fe82a00cc"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0080.json",
+          "sha256": "4a8a703fb78e2d52e82d6908df1393adb228e5d18fab6f86423a655c4064fe03"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0082.json",
+          "sha256": "365318aa186928534afacbdcf966d4272c73d124b01c8720a205e40e9462e57c"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0083.json",
+          "sha256": "0dc57c75842c110f464101dfacee7942a1e8cb7ca0acea9d65e9e9b50fb5cc06"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0084.json",
+          "sha256": "13f2e8ad606fb2f7b4ba93a642624f38e3749f816936b8de80c47c7c1e4988cc"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0085.json",
+          "sha256": "447485f29e7a3d2e3c9aa1685f400477dba74a014610818028813e4060534d2c"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0086.json",
+          "sha256": "c04f75c5d0d8eb9b0e71ccca0aa967be674a79cafbea5e36eaf512519d9d3edc"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0087.json",
+          "sha256": "74ed717410b105475dc54c23305725a9acefe70fd12266691c77a708e0bf111f"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0088.json",
+          "sha256": "32d8080b7684b174c080560eb3f064972b6a2c1f70310c74c496ec688bed0b5a"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0089.json",
+          "sha256": "34120f9c1044a074da28d799bdf1a697db53ac85c201b4df729b8c11463d5daa"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0090.json",
+          "sha256": "a358b9206e727bab35bd7d2ed7d3ac27582a53dfa57450bf26e9d175d3eae3b2"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0093.json",
+          "sha256": "c1cb7a6e65b4347a575435d506c7c6ffa66d920d6c2ead1c0016c75a2041e1ae"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0095.json",
+          "sha256": "2cc90ec05d89a8c096cbbfd68685908a32ac2bf1a7ba807813ec28ae635f284f"
+        },
+        {
+          "path": "results/swegym_confirm_20260711T011101Z_brief/t0097.json",
+          "sha256": "328a19a5e15a21571a39fdf479d2d50db48bef343af45ea7e3e4574f37355d45"
+        }
+      ],
+      "manifest_present": true,
+      "role": "original_partial_confirmation",
+      "score_file_count": 45
+    },
+    {
+      "path": "data/champion_configs/swegym_tuned_20260710T145330Z.json",
+      "role": "selected_map",
+      "sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53"
+    }
+  ],
+  "invariant_checks": {
+    "fit_confirmation_overlap_n": 0,
+    "fit_fresh_overlap_n": 0,
+    "fresh_evaluation_n": 57,
+    "later_scalar_duplicate_measurement": {
+      "all_per_trajectory_deltas_exactly_equal_as_parsed_floats": true,
+      "counting_rule": "count once, from disjoint_profile; do not double-count the identical replay",
+      "max_absolute_difference": 0.0,
+      "n": 98
+    },
+    "later_unique_n": 98,
+    "map_fitting_n": 41,
+    "original_later_overlap_n": 0,
+    "original_run_ids_equal": true,
+    "original_runs_are_not_repeats": true,
+    "original_unique_n": 75,
+    "partial_original_confirmation_n": 45,
+    "selected_map_alpha_map": {
+      "12": 1.0,
+      "13": 1.0,
+      "14": 1.0,
+      "15": 1.0,
+      "16": 1.0,
+      "17": 1.0,
+      "30": 1.0,
+      "31": 1.0,
+      "32": 1.0,
+      "33": 1.0,
+      "34": 1.0,
+      "35": 1.0
+    },
+    "selected_map_row_references": {
+      "all_E_champion_rows_reference_frozen_map_sha256": true,
+      "rows_checked": 143,
+      "selected_map_sha256": "6faa2d7227d46c86f0c614bef808d0424d4f124203a9dc7f7558e2b07e994d53"
+    },
+    "selected_map_sha256_verified": true,
+    "subject_model_uniform": true,
+    "unique_fixed_scalar_n": 173
+  },
+  "missing_data_and_interpretation_caveats": [
+    "The original_run_1 directory has no manifest and its rows omit dtype. Its bf16/brief classification is historical/path-level provenance, not born-annotated proof in these files.",
+    "The two original runs use the same 75 trajectory IDs but different prefill schedules. They are reported separately and never averaged or treated as 150 observations.",
+    "The disjoint profile and champion-eval directories contain exactly identical saved scalar E-tuned-minus-B deltas for all 98 IDs; this analysis counts that scalar measurement once.",
+    "The original-pool selected-map job stopped after 45 of the requested 75 rows. Its manifest does not contain a finalized instance-id list; the actual 45 t*.json files define the result.",
+    "No selected-map-matched placebo was run. Scalar/layer-sweep placebos do not identify whether the selected-map lead is recovered hidden-history information or map-specific disturbance.",
+    "Structural match is agreement with the demonstrated next action under the historical parser, not unique correctness, action execution, patch application, tests, or task success.",
+    "The bootstrap treats trajectory rows as independent. Saved score JSONs do not carry a stable underlying task/repository cluster ID, so task-clustered uncertainty is not recomputed here.",
+    "Per-trajectory summary text, exact target text/token IDs, K/V tensors, and upstream row-level trajectory-generator identity were not saved, so this is score recomputation rather than an independent rerun of model inference.",
+    "The confirmation subset is a stopped prefix, not a randomized completion of the planned 75; pooling 57+45 is descriptive wholly out-of-fitting evidence, not a preregistered meta-analysis."
+  ],
+  "schedule_provenance": {
+    "chunked_disjoint98": {
+      "directory": "results/swegym_tune_20260710T145330Z_brief",
+      "manifest_timestamp_utc": "2026-07-10T14:55:06Z"
+    },
+    "chunked_original75": {
+      "directory": "results/swegym_30b_bf16_brief",
+      "manifest_timestamp_utc": "2026-07-10T02:00:06Z"
+    },
+    "chunked_prefill_commit": "317a0dd1a13a25b614e867a39270ee176e73926f",
+    "legacy_single_call_original75": {
+      "directory": "results/swegym_30b_bf16",
+      "relationship_to_chunking": "result predates chunked-prefill commit",
+      "result_commit": "e75ffd536df3c3502c4171ed46da4d7d38e3d727"
+    },
+    "status": "RECONSTRUCTED_FROM_GIT_AND_MANIFEST_LINEAGE"
+  },
+  "schema": "swegym-paper-metrics-reanalysis/v2",
+  "selected_map_out_of_fitting": {
+    "fresh57": {
+      "continuous": {
+        "fixed_scalar_minus_baseline": {
+          "ci_95_percentile": {
+            "lower": -0.004208020197942589,
+            "upper": 0.01928017020283557
+          },
+          "mean": 0.007628972569980509,
+          "n": 57,
+          "n_negative": 25,
+          "n_positive": 32,
+          "n_zero": 0
+        },
+        "selected_map_minus_baseline": {
+          "ci_95_percentile": {
+            "lower": 0.006292900901444672,
+            "upper": 0.01715533138255282
+          },
+          "mean": 0.011742353249699225,
+          "n": 57,
+          "n_negative": 13,
+          "n_positive": 44,
+          "n_zero": 0
+        },
+        "selected_map_minus_fixed_scalar": {
+          "ci_95_percentile": {
+            "lower": -0.004742343966110774,
+            "upper": 0.012888869920021159
+          },
+          "mean": 0.004113380679718718,
+          "n": 57,
+          "n_negative": 25,
+          "n_positive": 32,
+          "n_zero": 0
+        }
+      },
+      "selection_exclusion": "split=eval; disjoint from 41 split=tune map-fitting IDs",
+      "source": "results/swegym_champeval_20260710T145330Z_brief",
+      "structural_match_vs_baseline": {
+        "definition": "saved composite demonstration-action structural match: tool plus path/command fields implemented by the historical scorer",
+        "n": 57,
+        "paired_selected_minus_reference": {
+          "ci_95_percentile": {
+            "lower": -0.08771929824561403,
+            "upper": 0.05263157894736842
+          },
+          "mean": -0.017543859649122806,
+          "n": 57,
+          "n_negative": 3,
+          "n_positive": 2,
+          "n_zero": 52
+        },
+        "reference_matches": 31,
+        "reference_rate": 0.543859649122807,
+        "selected_map_breaks": 3,
+        "selected_map_fixes": 2,
+        "selected_map_matches": 30,
+        "selected_map_rate": 0.5263157894736842
+      }
+    },
+    "original45_partial_confirmation": {
+      "continuous": {
+        "fixed_scalar_minus_baseline": {
+          "ci_95_percentile": {
+            "lower": 0.0012718803693831167,
+            "upper": 0.03557786330219414
+          },
+          "mean": 0.017241084729455243,
+          "n": 45,
+          "n_negative": 17,
+          "n_positive": 28,
+          "n_zero": 0
+        },
+        "selected_map_minus_baseline": {
+          "ci_95_percentile": {
+            "lower": 0.006093842745033528,
+            "upper": 0.025990040399022075
+          },
+          "mean": 0.01583593553405697,
+          "n": 45,
+          "n_negative": 12,
+          "n_positive": 33,
+          "n_zero": 0
+        },
+        "selected_map_minus_fixed_scalar": {
+          "ci_95_percentile": {
+            "lower": -0.014055113781275453,
+            "upper": 0.009856183252058285
+          },
+          "mean": -0.0014051491953982701,
+          "n": 45,
+          "n_negative": 23,
+          "n_positive": 22,
+          "n_zero": 0
+        }
+      },
+      "selection_exclusion": "original index pool; wholly disjoint from later-pool map fitting",
+      "source": "results/swegym_confirm_20260711T011101Z_brief",
+      "structural_match_vs_baseline": {
+        "definition": "saved composite demonstration-action structural match: tool plus path/command fields implemented by the historical scorer",
+        "n": 45,
+        "paired_selected_minus_reference": {
+          "ci_95_percentile": {
+            "lower": 0.0,
+            "upper": 0.06666666666666667
+          },
+          "mean": 0.022222222222222223,
+          "n": 45,
+          "n_negative": 0,
+          "n_positive": 1,
+          "n_zero": 44
+        },
+        "reference_matches": 22,
+        "reference_rate": 0.4888888888888889,
+        "selected_map_breaks": 0,
+        "selected_map_fixes": 1,
+        "selected_map_matches": 23,
+        "selected_map_rate": 0.5111111111111111
+      }
+    },
+    "pooled102": {
+      "continuous": {
+        "fixed_scalar_minus_baseline": {
+          "ci_95_percentile": {
+            "lower": 0.001765954027330982,
+            "upper": 0.022214037999212777
+          },
+          "mean": 0.011869610287395834,
+          "n": 102,
+          "n_negative": 42,
+          "n_positive": 60,
+          "n_zero": 0
+        },
+        "selected_map_minus_baseline": {
+          "ci_95_percentile": {
+            "lower": 0.008334605849432334,
+            "upper": 0.019087182824960088
+          },
+          "mean": 0.013548345433974703,
+          "n": 102,
+          "n_negative": 25,
+          "n_positive": 77,
+          "n_zero": 0
+        },
+        "selected_map_minus_fixed_scalar": {
+          "ci_95_percentile": {
+            "lower": -0.005643053710700187,
+            "upper": 0.008825167220963291
+          },
+          "mean": 0.0016787351465788701,
+          "n": 102,
+          "n_negative": 48,
+          "n_positive": 54,
+          "n_zero": 0
+        }
+      },
+      "source_components": [
+        "fresh57",
+        "original45_partial_confirmation"
+      ],
+      "structural_match_vs_baseline": {
+        "definition": "saved composite demonstration-action structural match: tool plus path/command fields implemented by the historical scorer",
+        "n": 102,
+        "paired_selected_minus_reference": {
+          "ci_95_percentile": {
+            "lower": -0.049019607843137254,
+            "upper": 0.049019607843137254
+          },
+          "mean": 0.0,
+          "n": 102,
+          "n_negative": 3,
+          "n_positive": 3,
+          "n_zero": 96
+        },
+        "reference_matches": 53,
+        "reference_rate": 0.5196078431372549,
+        "selected_map_breaks": 3,
+        "selected_map_fixes": 3,
+        "selected_map_matches": 53,
+        "selected_map_rate": 0.5196078431372549
+      }
+    }
+  },
+  "statistical_contract": {
+    "bootstrap": {
+      "lower_index": 250,
+      "method": "ordinary percentile bootstrap of the arithmetic mean, sampling trajectories with replacement",
+      "multiplicity_adjustment": null,
+      "replicates": 10000,
+      "rng": "Python random.Random",
+      "seed": 0,
+      "upper_index": 9750
+    },
+    "continuous_metric": "per trajectory: arm.tf_mean - reference.tf_mean, in nats per target token; tf_mean is the saved teacher-forced mean log-probability of the demonstrated next action",
+    "original_schedule_rule": "do not average the same 75 IDs across schedules: original_run_1 predates 4096-token chunked prefill and is reported separately; original_run_2 is the schedule-matched original-pool component",
+    "pooled_scalar_rule": "concatenate 75 chunked original_run_2 deltas with 98 chunked disjoint-pool deltas; N=173",
+    "selected_map_pooling_rule": "concatenate fresh-pool eval-split 57 with completed original-pool confirmation 45; both sets are disjoint from the 41 IDs used to select the map; N=102",
+    "unit": "one saved trajectory score row; every component is sorted numerically by saved dataset idx before bootstrap, and pooled components are concatenated in the stated order"
+  },
+  "subject": {
+    "load_dtype_where_recorded": "torch.bfloat16",
+    "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "resolved_revision_where_recorded": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
+  }
+}
