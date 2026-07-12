@@ -55,7 +55,7 @@ from powered_v13_tokens import (
 
 
 STIMULI_SCHEMA = "coherent-state-powered-successor-v13-tokenizer-mechanical-v1"
-FORBIDDEN_SURFACE_SCHEMA = "powered-v13-carrier-forbidden-surface-expansion-v1"
+FORBIDDEN_SURFACE_SCHEMA = "powered-v13-carrier-forbidden-surface-expansion-v2"
 CARRIER_ATTEMPT_SCHEMA = "powered-v13-carrier-attempt-spec-v1"
 TARGET_BANK_SCHEMA = "powered-v13-production-target-bank-qualification-v1"
 
@@ -156,6 +156,26 @@ def sha256_ints(values: Sequence[int]) -> str:
         canonical_json_bytes(canonical_values)).hexdigest()
 
 
+def _plain_int_sequence(
+    values: object,
+    label: str,
+    *,
+    allow_empty: bool = False,
+    maximum_exclusive: int | None = None,
+) -> list[int]:
+    _require(isinstance(values, Sequence)
+             and not isinstance(values, (str, bytes)),
+             f"{label} is not an integer sequence")
+    result = list(values)
+    _require(allow_empty or bool(result), f"{label} is empty")
+    _require(all(type(value) is int and value >= 0
+                 and (maximum_exclusive is None
+                      or value < maximum_exclusive)
+                 for value in result),
+             f"{label} contains a non-plain or out-of-range integer")
+    return result
+
+
 def _sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -254,7 +274,8 @@ def _tokenizer_binding(tokenizer) -> dict[str, Any]:
              "production tokenizer vocabulary hash differs")
     _require(template_sha == PINNED_CHAT_TEMPLATE_SHA256,
              "production tokenizer chat-template hash differs")
-    _require(int(tokenizer.eos_token_id) == 151645,
+    _require(type(tokenizer.eos_token_id) is int
+             and tokenizer.eos_token_id == 151645,
              "production tokenizer EOS ID differs")
     return {
         "model_id": MODEL_ID,
@@ -272,7 +293,7 @@ def _tokenizer_binding(tokenizer) -> dict[str, Any]:
         "vocabulary_sha256": vocab_sha,
         "chat_template_sha256": template_sha,
         "eos_token": str(tokenizer.eos_token),
-        "eos_token_id": int(tokenizer.eos_token_id),
+        "eos_token_id": tokenizer.eos_token_id,
         "transformers_version": _installed_version("transformers"),
         "tokenizers_version": _installed_version("tokenizers"),
         "huggingface_hub_version": _installed_version("huggingface-hub"),
@@ -378,12 +399,18 @@ def _validate_no_special_literals(tokenizer, text: str, label: str) -> None:
 
 def _canonical_evidence(tokenizer, messages: list[dict[str, str]],
                         label: str) -> tuple[dict[str, Any], list[int], list[int]]:
-    ids = [int(value) for value in canonical_ids_any(
-        tokenizer, messages, render_hf)]
+    ids = _plain_int_sequence(
+        canonical_ids_any(tokenizer, messages, render_hf),
+        f"{label} canonical token IDs",
+        maximum_exclusive=len(tokenizer),
+    )
     decoded = tokenizer.decode(
         ids, skip_special_tokens=False, clean_up_tokenization_spaces=False)
-    decoded_ids = [int(value) for value in tokenizer.encode(
-        decoded, add_special_tokens=False)]
+    decoded_ids = _plain_int_sequence(
+        tokenizer.encode(decoded, add_special_tokens=False),
+        f"{label} re-encoded token IDs",
+        maximum_exclusive=len(tokenizer),
+    )
     _require(decoded_ids == ids, f"{label} canonical stream does not round-trip")
     starts = message_starts(tokenizer, ids)
     _require(len(starts) == len(messages) and starts[0] == 0,
@@ -397,8 +424,11 @@ def _canonical_evidence(tokenizer, messages: list[dict[str, str]],
         content = str(message.get("content", ""))
         _validate_no_special_literals(tokenizer, content,
                                       f"{label} message {index}")
-        content_ids = [int(value) for value in tokenizer.encode(
-            content, add_special_tokens=False)]
+        content_ids = _plain_int_sequence(
+            tokenizer.encode(content, add_special_tokens=False),
+            f"{label} message {index} content token IDs",
+            maximum_exclusive=len(tokenizer),
+        )
         _require(content_ids, f"{label} message {index} has no content tokens")
         _require(len(content_ids) <= MAX_PREFILL_CALL_TOKENS,
                  f"{label} message {index} exceeds 4096 content tokens")
@@ -617,6 +647,48 @@ def _normalized_surface(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
+def _surface_skeleton(value: str) -> str:
+    """Return alphanumerics after compatibility/case/mark normalization."""
+
+    normalized = unicodedata.normalize("NFKD", value).casefold()
+    return "".join(character for character in normalized
+                   if character.isalnum())
+
+
+def _contains_separator_insensitive_skeleton(text: str, skeleton: str) -> bool:
+    """Match a bounded literal while ignoring arbitrary non-alphanumerics.
+
+    This closes finite-enumeration gaps such as bullets, zero-width format
+    characters, combining marks, apostrophes, and mixed punctuation inserted
+    between the characters of a forbidden word or phrase.  Adjacent
+    alphanumerics still enforce literal word boundaries, so ``Quartzite`` does
+    not become the bounded target ``Quartz``.
+    """
+
+    _require(isinstance(skeleton, str) and bool(skeleton)
+             and all(character.isalnum() for character in skeleton),
+             "forbidden surface skeleton is invalid")
+    normalized = unicodedata.normalize("NFKD", text).casefold()
+    for start, character in enumerate(normalized):
+        if character != skeleton[0]:
+            continue
+        if start > 0 and normalized[start - 1].isalnum():
+            continue
+        cursor = start
+        matched = True
+        for wanted in skeleton[1:]:
+            cursor += 1
+            while cursor < len(normalized) and not normalized[cursor].isalnum():
+                cursor += 1
+            if cursor >= len(normalized) or normalized[cursor] != wanted:
+                matched = False
+                break
+        if matched and (cursor + 1 == len(normalized)
+                        or not normalized[cursor + 1].isalnum()):
+            return True
+    return False
+
+
 def _case_declared_forbidden_phrases(
     fixture: Mapping[str, Any],
 ) -> list[str]:
@@ -677,20 +749,63 @@ def expand_carrier_forbidden_surfaces(tokenizer, fixture: Mapping[str, Any]) -> 
          if _normalized_surface(form)},
         key=lambda value: (-len(value), value),
     )
+    skeleton_sources: dict[str, str] = {}
+    for form in sorted(base_forms):
+        skeleton = _surface_skeleton(form)
+        if skeleton and (skeleton not in skeleton_sources
+                         or form < skeleton_sources[skeleton]):
+            skeleton_sources[skeleton] = form
+    skeleton_records = [
+        {"skeleton": skeleton, "surface": skeleton_sources[skeleton]}
+        for skeleton in sorted(skeleton_sources, key=lambda value: (-len(value), value))
+    ]
 
-    special_ids = set(int(value) for value in tokenizer.all_special_ids)
+    special_ids = set(_plain_int_sequence(
+        tokenizer.all_special_ids,
+        "production tokenizer special IDs",
+        maximum_exclusive=len(tokenizer),
+    ))
+    _require(len(raw_surface_forms) <= 4096
+             and all(len(form.encode("utf-8")) <= 512
+                     for form in raw_surface_forms),
+             "forbidden surface expansion exceeds frozen batching bounds")
+    _require(len(base_forms) <= 1024,
+             "forbidden semantic base inventory exceeds frozen batching bound")
+    token_inputs = [
+        (form, token_surface)
+        for form in sorted(base_forms)
+        for token_surface in (form, " " + form)
+    ]
+    encoded_batch = tokenizer(
+        [token_surface for _form, token_surface in token_inputs],
+        add_special_tokens=False,
+        padding=False,
+        truncation=False,
+        return_attention_mask=False,
+        return_token_type_ids=False,
+    )
+    _require(isinstance(encoded_batch, Mapping)
+             and set(encoded_batch) == {"input_ids"},
+             "forbidden surface tokenizer batch fields differ")
+    encoded_rows = encoded_batch["input_ids"]
+    _require(isinstance(encoded_rows, Sequence)
+             and len(encoded_rows) == len(token_inputs),
+             "forbidden surface tokenizer batch width differs")
     token_record_by_ids: dict[tuple[int, ...], str] = {}
-    for form in sorted(raw_surface_forms):
+    for (form, _token_surface), raw_ids in zip(token_inputs, encoded_rows):
         # Both forms are needed for Qwen BPE: a word at the beginning of text
         # and the same word following whitespace can have different first IDs.
-        for token_surface in (form, " " + form):
-            ids = tuple(int(value) for value in tokenizer.encode(
-                token_surface, add_special_tokens=False))
-            if not ids or any(value in special_ids for value in ids):
-                continue
-            previous = token_record_by_ids.get(ids)
-            if previous is None or form < previous:
-                token_record_by_ids[ids] = form
+        ids = tuple(_plain_int_sequence(
+            raw_ids,
+            "forbidden surface token IDs",
+            allow_empty=True,
+            maximum_exclusive=len(tokenizer),
+        ))
+        if not ids or any(value in special_ids for value in ids):
+            continue
+        previous = token_record_by_ids.get(ids)
+        if previous is None or form < previous:
+            token_record_by_ids[ids] = form
     token_records = [
         {"ids": list(ids), "surface": token_record_by_ids[ids]}
         for ids in sorted(token_record_by_ids)
@@ -712,6 +827,8 @@ def expand_carrier_forbidden_surfaces(tokenizer, fixture: Mapping[str, Any]) -> 
             PINNED_TOKENIZER_BACKEND_SHA256,
         "unicode_normalization_modes": ["NFC", "NFD", "NFKC", "NFKD"],
         "casefold_applied": True,
+        "separator_insensitive_matching_applied": True,
+        "production_token_subsequences_use_semantic_base_forms": True,
         "punctuation_hyphen_space_expansion_applied": True,
         "slash_camel_split_letter_expansion_applied": True,
         "plain_nonfocal_fact_name_included": True,
@@ -722,6 +839,7 @@ def expand_carrier_forbidden_surfaces(tokenizer, fixture: Mapping[str, Any]) -> 
         "base_forms": sorted(base_forms),
         "raw_surface_forms": sorted(raw_surface_forms),
         "normalized_surface_forms": normalized_forms,
+        "separator_insensitive_surfaces": skeleton_records,
         "production_token_subsequences": token_records,
     }
     return {**core, "expansion_sha256": sha256_json(core)}
@@ -784,8 +902,11 @@ def validate_carrier_attempt(
     _require(CARRIER_WORD_BOUNDS[0] <= word_count <= CARRIER_WORD_BOUNDS[1],
              f"carrier word count {word_count} is outside 40..60")
 
-    ids = [int(value) for value in generated_content_ids]
-    _require(ids, "carrier generated-content token IDs are empty")
+    ids = _plain_int_sequence(
+        generated_content_ids,
+        "carrier generated-content token IDs",
+        maximum_exclusive=len(tokenizer),
+    )
     _require(all(value not in set(tokenizer.all_special_ids) for value in ids),
              "carrier content contains a special token ID")
     _require(CARRIER_TOKEN_BOUNDS[0] <= len(ids) <= CARRIER_TOKEN_BOUNDS[1],
@@ -795,8 +916,8 @@ def validate_carrier_attempt(
              "carrier content-token cap differs from frozen 80")
     _require(hit_token_cap is False,
              "carrier generation hit the token cap or omitted a false cap flag")
-    _require(termination_token_id is not None and
-             int(termination_token_id) == int(tokenizer.eos_token_id),
+    _require(type(termination_token_id) is int
+             and termination_token_id == tokenizer.eos_token_id,
              "carrier generation did not terminate with EOS")
     _require(len(ids) + 1 <= CARRIER_MAX_SAMPLING_CALLS,
              "carrier content plus EOS exceeds the frozen sampling-call cap")
@@ -804,8 +925,11 @@ def validate_carrier_attempt(
         ids, skip_special_tokens=False, clean_up_tokenization_spaces=False)
     _require(decoded == carrier_content,
              "carrier generated-content IDs do not decode exactly to text")
-    reencoded = [int(value) for value in tokenizer.encode(
-        decoded, add_special_tokens=False)]
+    reencoded = _plain_int_sequence(
+        tokenizer.encode(decoded, add_special_tokens=False),
+        "carrier re-encoded content token IDs",
+        maximum_exclusive=len(tokenizer),
+    )
     _require(reencoded == ids,
              "carrier encode(decode(ids)) does not reproduce exact content IDs")
 
@@ -815,6 +939,12 @@ def validate_carrier_attempt(
         if _contains_bounded_surface(normalized_text, surface):
             raise V13StimulusError(
                 f"carrier leaks forbidden normalized surface {surface!r}")
+    for record in expansion["separator_insensitive_surfaces"]:
+        if _contains_separator_insensitive_skeleton(
+                carrier_content, record["skeleton"]):
+            raise V13StimulusError(
+                "carrier leaks forbidden separator-insensitive surface "
+                f"{record['surface']!r}")
     for record in expansion["production_token_subsequences"]:
         index = _find_subsequence(ids, record["ids"])
         if index is not None:
@@ -836,7 +966,7 @@ def validate_carrier_attempt(
         "decoded_text_exact": True,
         "encode_decode_ids_exact": True,
         "decoded_round_trip": True,
-        "termination_token_id": int(termination_token_id),
+        "termination_token_id": termination_token_id,
         "terminated_with_eos": True,
         "content_ids_exclude_terminal_eos": True,
         "hit_token_cap": False,
@@ -889,8 +1019,11 @@ def _exact_pair_checks(fixture: Mapping[str, Any]) -> tuple[
              "C/W role sequences differ")
     middle = int(fixture.get("middle_end_msg", -1))
     _require(middle == 7, "sentinel retained-tail boundary differs")
-    allowlist = [int(value) for value in fixture.get(
-        "changed_message_allowlist", [])]
+    allowlist = _plain_int_sequence(
+        fixture.get("changed_message_allowlist", []),
+        "changed-message allowlist",
+        maximum_exclusive=len(correct),
+    )
     changed = [index for index, (left, right) in enumerate(zip(correct, wrong))
                if left != right]
     _require(allowlist == [3, 6] and changed == allowlist,
@@ -961,8 +1094,11 @@ def _probe_evidence(tokenizer, context_messages: list[dict[str, str]],
     _require(len(tokenizer.encode(probe, add_special_tokens=False)) <=
              MAX_PREFILL_CALL_TOKENS,
              f"{label} probe exceeds 4096 tokens")
-    source_ids = [int(value) for value in canonical_ids_any(
-        tokenizer, context_messages, render_hf)]
+    source_ids = _plain_int_sequence(
+        canonical_ids_any(tokenizer, context_messages, render_hf),
+        f"{label} source token IDs",
+        maximum_exclusive=len(tokenizer),
+    )
     prefix = build_probe_generation_prefix(tokenizer, context_messages, probe)
     _require(prefix[:len(source_ids)] == source_ids and len(prefix) > len(source_ids),
              f"{label} probe prefix is not a strict source extension")
@@ -979,8 +1115,11 @@ def _probe_evidence(tokenizer, context_messages: list[dict[str, str]],
     target_id_rows = []
     for target in targets:
         _validate_no_special_literals(tokenizer, target, f"{label} target")
-        ids = [int(value) for value in probe_target_ids(
-            tokenizer, context_messages, probe, target)]
+        ids = _plain_int_sequence(
+            probe_target_ids(tokenizer, context_messages, probe, target),
+            f"{label} target token IDs",
+            maximum_exclusive=len(tokenizer),
+        )
         _require(1 <= len(ids) <= 4,
                  f"{label} target {target!r} is outside 1..4 answer tokens")
         _require(all(value not in set(tokenizer.all_special_ids) for value in ids),
@@ -990,25 +1129,32 @@ def _probe_evidence(tokenizer, context_messages: list[dict[str, str]],
             clean_up_tokenization_spaces=False)
         _require(decoded_target == target,
                  f"{label} target IDs do not decode to exact target text")
-        reencoded_target = [int(value) for value in tokenizer.encode(
-            decoded_target, add_special_tokens=False)]
+        reencoded_target = _plain_int_sequence(
+            tokenizer.encode(decoded_target, add_special_tokens=False),
+            f"{label} re-encoded target token IDs",
+            maximum_exclusive=len(tokenizer),
+        )
         _require(reencoded_target == ids,
                  f"{label} target encode(decode(ids)) differs")
-        full = [int(value) for value in canonical_ids_any(
-            tokenizer,
-            context_messages + [
-                {"role": "user", "content": probe},
-                {"role": "assistant", "content": target},
-            ],
-            render_hf,
-        )]
+        full = _plain_int_sequence(
+            canonical_ids_any(
+                tokenizer,
+                context_messages + [
+                    {"role": "user", "content": probe},
+                    {"role": "assistant", "content": target},
+                ],
+                render_hf,
+            ),
+            f"{label} full target render token IDs",
+            maximum_exclusive=len(tokenizer),
+        )
         target_end = answer_position + len(ids)
         _require(full[:answer_position] == prefix,
                  f"{label} target render changed the answer header")
         _require(full[answer_position:target_end] == ids,
                  f"{label} target does not begin at the answer position")
         _require(target_end < len(full) and
-                 full[target_end] == int(tokenizer.eos_token_id),
+                 full[target_end] == tokenizer.eos_token_id,
                  f"{label} target is not followed by the assistant close")
         target_rows.append({
             "text": target,
@@ -1160,8 +1306,11 @@ def _all_probe_contexts(tokenizer, fixture: Mapping[str, Any],
     fresh_w = full_w[:1] + full_w[middle:]
     _require(fresh_c == fresh_w,
              "C/W compact fresh visible messages differ")
-    fresh_ids = [int(value) for value in canonical_ids_any(
-        tokenizer, fresh_c, render_hf)]
+    fresh_ids = _plain_int_sequence(
+        canonical_ids_any(tokenizer, fresh_c, render_hf),
+        "fresh probe-context token IDs",
+        maximum_exclusive=len(tokenizer),
+    )
     _require(fresh_ids == correct["fresh"].token_ids == wrong["fresh"].token_ids,
              "F probe context differs from exact fresh destination")
     contexts = {"C": full_c, "W": full_w, "F": fresh_c}
@@ -1193,15 +1342,18 @@ def validate_development_sentinel(
     binding = _tokenizer_binding(tokenizer)
     correct_messages, wrong_messages, middle, allowlist = _exact_pair_checks(
         fixture)
-    carrier_ids = [int(value) for value in tokenizer.encode(
-        carrier_content, add_special_tokens=False)]
+    carrier_ids = _plain_int_sequence(
+        tokenizer.encode(carrier_content, add_special_tokens=False),
+        "development carrier token IDs",
+        maximum_exclusive=len(tokenizer),
+    )
     attempt = carrier_attempt_spec(
         fixture, render_index=1, attempt_index=1)
     carrier = validate_carrier_attempt(
         tokenizer, fixture, carrier_content,
         attempt_spec=attempt,
         generated_content_ids=carrier_ids,
-        termination_token_id=int(tokenizer.eos_token_id),
+        termination_token_id=tokenizer.eos_token_id,
         hit_token_cap=False,
     )
     correct = _variant_plans(

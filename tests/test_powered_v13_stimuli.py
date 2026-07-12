@@ -24,7 +24,7 @@ EXPECTED_SENTINEL_MATRIX_SHA256_BY_AUTHORIZATION_FIELDS = {
         "seed_manifest_sha256",
         "seed_git_commit", "literal_permutation_sha256",
         "literal_git_commit",
-    }): "e5d78fa98bbf2e1725535b34aba37ee8f954c1c2319de80548e946fc49f4954e",
+    }): "f545875979b59bdeb1efea452e2f2818420c07ec2da5d76527ee8951b566ec7f",
 }
 EXPECTED_TARGET_BANK_QUALIFICATION_SHA256 = (
     "378c078e4ab5862e6a8895a130443dcb4e2d990d1dda69e18598114841b374ab"
@@ -356,6 +356,7 @@ def test_forbidden_expansion_covers_unicode_case_punctuation_numbers_and_time(
     assert expansion["unicode_normalization_modes"] == [
         "NFC", "NFD", "NFKC", "NFKD"]
     assert expansion["casefold_applied"] is True
+    assert expansion["separator_insensitive_matching_applied"] is True
     assert expansion["punctuation_hyphen_space_expansion_applied"] is True
     assert expansion["slash_camel_split_letter_expansion_applied"] is True
     assert expansion["plain_nonfocal_fact_name_included"] is True
@@ -376,6 +377,8 @@ def test_forbidden_expansion_covers_unicode_case_punctuation_numbers_and_time(
     assert "orchardexchange" in normalized
     assert "orchardExchange" in expansion["raw_surface_forms"]
     assert "q.u.a.r.t.z" in normalized
+    assert any(record["skeleton"] == "quartz"
+               for record in expansion["separator_insensitive_surfaces"])
     assert "filing/token" in normalized
     assert "seventy three" in normalized
     assert "seventy-three" in normalized
@@ -403,6 +406,14 @@ def test_forbidden_expansion_covers_unicode_case_punctuation_numbers_and_time(
         ("threshold_eligibility", "sixty_seven", "normalized surface"),
         ("threshold_eligibility", "sixty.seven", "normalized surface"),
         ("threshold_eligibility", "Q.u.a.r.t.z", "normalized surface"),
+        ("threshold_eligibility", "Q•u•a•r•t•z", "separator-insensitive"),
+        ("threshold_eligibility", "Q·u·a·r·t·z", "separator-insensitive"),
+        ("threshold_eligibility", "Q\u200bu\u200ba\u200br\u200bt\u200bz",
+         "separator-insensitive"),
+        ("threshold_eligibility", "Q'u'a'r't'z", "separator-insensitive"),
+        ("threshold_eligibility", "Q|u|a|r|t|z", "separator-insensitive"),
+        ("threshold_eligibility", "Q\\u\\a\\r\\t\\z",
+         "separator-insensitive"),
         ("threshold_eligibility", "Orchard/Exchange", "normalized surface"),
         ("threshold_eligibility", "OrchardExchange", "normalized surface"),
         ("threshold_eligibility", "orchardExchange", "normalized surface"),
@@ -444,6 +455,14 @@ def test_case_declared_forbidden_phrases_are_accepted_expanded_and_hash_bound(
         stimuli.validate_carrier_attempt(
             tokenizer, fixture, text,
             **_carrier_args(tokenizer, fixture, text))
+    for obfuscated in ("veiled•checkpoint", "veiled\u200bcheckpoint"):
+        text = stimuli.FROZEN_TEST_CARRIER_CONTENT.replace(
+            "settled detail", obfuscated)
+        with pytest.raises(stimuli.V13StimulusError,
+                           match="separator-insensitive"):
+            stimuli.validate_carrier_attempt(
+                tokenizer, fixture, text,
+                **_carrier_args(tokenizer, fixture, text))
 
 
 @pytest.mark.parametrize(
@@ -537,6 +556,30 @@ def test_carrier_gate_rejects_digit_special_literal_length_cap_and_non_eos(
             stimuli.validate_carrier_attempt(
                 tokenizer, fixture, stimuli.FROZEN_TEST_CARRIER_CONTENT,
                 **valid_args, max_new_tokens=changed_cap)
+
+
+@pytest.mark.parametrize("replacement", ["785", 785.0, True, -1, 10**9])
+def test_carrier_gate_rejects_nonplain_or_out_of_range_generated_ids(
+        tokenizer, replacement):
+    fixture = _fixture()
+    args = _carrier_args(tokenizer, fixture)
+    changed = list(args["generated_content_ids"])
+    changed[0] = replacement
+    with pytest.raises(stimuli.V13StimulusError,
+                       match="non-plain or out-of-range integer"):
+        stimuli.validate_carrier_attempt(
+            tokenizer, fixture, stimuli.FROZEN_TEST_CARRIER_CONTENT,
+            **(args | {"generated_content_ids": changed}))
+
+
+@pytest.mark.parametrize("replacement", ["151645", 151645.0, True])
+def test_carrier_gate_rejects_nonplain_eos_witness(tokenizer, replacement):
+    fixture = _fixture()
+    args = _carrier_args(tokenizer, fixture)
+    with pytest.raises(stimuli.V13StimulusError, match="terminate with EOS"):
+        stimuli.validate_carrier_attempt(
+            tokenizer, fixture, stimuli.FROZEN_TEST_CARRIER_CONTENT,
+            **(args | {"termination_token_id": replacement}))
 
 
 def test_exactly_80_content_tokens_then_separate_eos_witness_is_accepted(
