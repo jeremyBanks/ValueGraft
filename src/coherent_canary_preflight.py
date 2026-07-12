@@ -60,12 +60,14 @@ def runtime_fingerprint(model, tokenizer, *, requested_model: str,
                         requested_revision: str, resolved_snapshot: str,
                         expected_geometry: Mapping[str, int | float]) -> dict:
     config = getattr(model.config, "text_config", model.config)
+    rope_parameters = getattr(config, "rope_parameters", None)
     observed = {
         "layers": int(getattr(config, "num_hidden_layers", -1)),
         "attention_heads": int(getattr(config, "num_attention_heads", -1)),
         "kv_heads": int(getattr(config, "num_key_value_heads", -1)),
         "head_dim": int(getattr(config, "head_dim", -1)),
-        "rope_theta": float(getattr(config, "rope_theta", -1)),
+        "rope_theta": float(rope_parameters.get("rope_theta", -1)
+                            if isinstance(rope_parameters, Mapping) else -1),
     }
     _require(observed == dict(expected_geometry),
              f"model geometry differs: {observed} != {dict(expected_geometry)}")

@@ -36,7 +36,9 @@ class Qwen3ForCausalLM(torch.nn.Module):
         config = SimpleNamespace(
             model_type="qwen3", num_hidden_layers=28,
             num_attention_heads=16, num_key_value_heads=8, head_dim=128,
-            rope_theta=1_000_000.0, eos_token_id=151645,
+            rope_parameters={"rope_theta": 1_000_000.0,
+                             "rope_type": "default"},
+            eos_token_id=151645,
             _attn_implementation="eager",
             _attn_implementation_internal="eager",
             _commit_hash=LOCAL_SPEC.revision,

@@ -24,7 +24,8 @@ class FakeModel(torch.nn.Module):
         super().__init__()
         cfg = SimpleNamespace(
             num_hidden_layers=2, num_attention_heads=4,
-            num_key_value_heads=2, head_dim=8, rope_theta=10000.0,
+            num_key_value_heads=2, head_dim=8,
+            rope_parameters={"rope_theta": 10000.0, "rope_type": "default"},
             eos_token_id=9, _attn_implementation="eager",
             _attn_implementation_internal="eager")
         cfg.text_config = cfg
