@@ -768,6 +768,12 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
         if "nvidia-smi --query-gpu" in text:
             stdout = (
                 "NVIDIA A100 80GB PCIe, GPU-fixed, 580.159.03, 81920\n")
+        elif "create_stage_t_launch_receipt" in text:
+            stdout = json.dumps({
+                "fresh_receipt_sha256": "d" * 64,
+                "fresh_receipt_created_utc":
+                    "2026-07-12T22:00:00.000000Z",
+            }, sort_keys=True, separators=(",", ":")) + "\n"
         elif "torch.cuda.is_available" in text:
             stdout = "NVIDIA A100 80GB PCIe\n"
         elif "verify-release" in text:
@@ -803,6 +809,10 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
         external_files=(receipt, report), timeout_seconds=300)
     assert synced["detached_head"] == "a" * 40
     assert synced["model_download_auth_mode"] == "token_file"
+    assert synced["release_receipt_sha256"] == life.file_sha256(receipt)
+    assert synced["fresh_launch_receipt_sha256"] == "d" * 64
+    assert synced["fresh_launch_receipt_created_utc"] == \
+        "2026-07-12T22:00:00.000000Z"
     launched = transport.launch_detached(
         allocation, job_path=life.JOB_PATH,
         authorization_commit="a" * 40, timeout_seconds=60)
@@ -822,13 +832,20 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
     assert "huggingface-hub==1.22.0" in rendered
     assert "--primary-batch-id stage-t-batch-1" in rendered
     assert "--output-parent /workspace/powered-v13-stage-t/artifacts/results" in rendered
+    assert "--receipt-directory /workspace/powered-v13-stage-t/launch-receipts" \
+        in rendered
     assert rendered.index("verify-release") < rendered.index("pip install")
-    assert rendered.index("snapshot_download") < rendered.index("nohup /bin/bash")
+    assert rendered.index("snapshot_download") < rendered.index(
+        "create_stage_t_launch_receipt") < rendered.index("nohup /bin/bash")
     assert "RUN_COMPLETE.json" in rendered and "WORKER_EXITED_ZERO" in rendered
     assert rendered.index("write(terminal") < rendered.index(
         "write(state_path")
     assert "/external/import-report.json" not in rendered
-    assert "/external/hf-token" in rendered
+    assert "/external/hf-token" not in rendered
+    assert "/secrets/hf-token" in rendered
+    assert "/launch-receipts/powered-v13-technical-canary-launch-receipt.json" \
+        in rendered
+    assert "/receipts/subject-launch-receipt.json" in rendered
     assert "powered_v13_recipe" not in rendered
 
 

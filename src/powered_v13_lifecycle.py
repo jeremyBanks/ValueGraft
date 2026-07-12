@@ -70,6 +70,8 @@ REMOTE_ROOT = "/workspace/powered-v13-stage-t"
 REMOTE_REPO = f"{REMOTE_ROOT}/repo"
 REMOTE_ARTIFACTS = f"{REMOTE_ROOT}/artifacts"
 REMOTE_EXTERNAL = f"{REMOTE_ROOT}/external"
+REMOTE_SECRETS = f"{REMOTE_ROOT}/secrets"
+REMOTE_LAUNCH_RECEIPTS = f"{REMOTE_ROOT}/launch-receipts"
 REMOTE_VENV = f"{REMOTE_ROOT}/venv"
 MODEL_ID = "Qwen/Qwen3-30B-A3B-Instruct-2507"
 MODEL_REVISION = "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe"
@@ -786,7 +788,8 @@ class OpenSshTransport:
             f"git -C {shlex.quote(REMOTE_REPO + '.tmp')} sparse-checkout set --no-cone -- {sparse}; "
             f"git -C {shlex.quote(REMOTE_REPO + '.tmp')} checkout --quiet --detach {shlex.quote(commit)}; "
             f"mv {shlex.quote(REMOTE_REPO + '.tmp')} {shlex.quote(REMOTE_REPO)}; "
-            f"mkdir -p {shlex.quote(REMOTE_EXTERNAL)} {shlex.quote(REMOTE_ARTIFACTS)}"
+            f"mkdir -p {shlex.quote(REMOTE_EXTERNAL)} "
+            f"{shlex.quote(REMOTE_SECRETS)} {shlex.quote(REMOTE_ARTIFACTS)}"
         )
         self._run(self._ssh(endpoint, remote_prepare),
                   timeout_seconds=remaining())
@@ -833,7 +836,7 @@ class OpenSshTransport:
         self._run([
             "rsync", "-az", "--checksum", "-e", rsync_shell,
             str(self.hf_token),
-            f"root@{endpoint[0]}:{REMOTE_EXTERNAL}/hf-token",
+            f"root@{endpoint[0]}:{REMOTE_SECRETS}/hf-token",
         ], timeout_seconds=remaining())
         dependencies = " ".join(shlex.quote(value) for value in (
             "torch==2.12.1", "transformers==5.0.0", "accelerate==1.14.0",
@@ -855,8 +858,26 @@ class OpenSshTransport:
         )
         download_auth = (
             f"export HF_TOKEN=\"$(tr -d '[:space:]' < "
-            f"{shlex.quote(REMOTE_EXTERNAL + '/hf-token')})\"; ")
-        token_chmod = f"chmod 600 {shlex.quote(REMOTE_EXTERNAL + '/hf-token')}; "
+            f"{shlex.quote(REMOTE_SECRETS + '/hf-token')})\"; ")
+        token_chmod = f"chmod 600 {shlex.quote(REMOTE_SECRETS + '/hf-token')}; "
+        fresh_receipt_code = (
+            "import json,sys; from pathlib import Path; "
+            "from powered_v13_release import (STAGE_T_RECEIPT_BASENAME,"
+            "create_stage_t_launch_receipt,sha256_bytes,verify_stage_t_checkout); "
+            "repo,receipt_dir,commit,manifest=sys.argv[1:]; "
+            "document=create_stage_t_launch_receipt(Path(repo),Path(receipt_dir),"
+            "authorization_commit=commit,manifest_path=manifest); "
+            "evidence=verify_stage_t_checkout(Path(repo),"
+            "authorization_commit=commit,manifest_path=manifest,"
+            "receipt_directory=Path(receipt_dir)); "
+            "assert evidence.get('status')=='PASS' and "
+            "evidence.get('detached_head')==commit and "
+            "evidence.get('clean_tree') is True; "
+            "path=Path(receipt_dir)/STAGE_T_RECEIPT_BASENAME; "
+            "print(json.dumps({'fresh_receipt_sha256':sha256_bytes(path.read_bytes()),"
+            "'fresh_receipt_created_utc':document['created_utc']},"
+            "sort_keys=True,separators=(',',':')))"
+        )
         remote_bootstrap = (
             "set -euo pipefail; "
             f"test \"$(git -C {shlex.quote(REMOTE_REPO)} rev-parse HEAD)\" = {shlex.quote(commit)}; "
@@ -878,14 +899,45 @@ class OpenSshTransport:
             f"{shlex.quote('from huggingface_hub import snapshot_download; print(snapshot_download(repo_id=' + repr(MODEL_ID) + ', revision=' + repr(MODEL_REVISION) + ', local_files_only=False))')}); "
             f"test \"${{snapshot##*/}}\" = {shlex.quote(MODEL_REVISION)}; "
             f"test \"$(git -C {shlex.quote(REMOTE_REPO)} rev-parse HEAD)\" = {shlex.quote(commit)}; "
-            f"test -z \"$(git -C {shlex.quote(REMOTE_REPO)} status --porcelain --untracked-files=all)\""
+            f"test -z \"$(git -C {shlex.quote(REMOTE_REPO)} status --porcelain --untracked-files=all)\"; "
+            f"test ! -e {shlex.quote(REMOTE_LAUNCH_RECEIPTS)}; "
+            f"PYTHONPATH={shlex.quote(REMOTE_REPO + '/src')} "
+            f"{shlex.quote(REMOTE_VENV + '/bin/python')} -c "
+            f"{shlex.quote(fresh_receipt_code)} {shlex.quote(REMOTE_REPO)} "
+            f"{shlex.quote(REMOTE_LAUNCH_RECEIPTS)} {shlex.quote(commit)} "
+            f"{shlex.quote(self.manifest_path)}; "
+            f"mkdir -p {shlex.quote(REMOTE_ARTIFACTS + '/receipts')}; "
+            f"cp -n {shlex.quote(REMOTE_LAUNCH_RECEIPTS + '/' + STAGE_T_RECEIPT_BASENAME)} "
+            f"{shlex.quote(REMOTE_ARTIFACTS + '/receipts/subject-launch-receipt.json')}; "
+            f"test \"$(sha256sum {shlex.quote(REMOTE_LAUNCH_RECEIPTS + '/' + STAGE_T_RECEIPT_BASENAME)} | cut -d' ' -f1)\" = "
+            f"\"$(sha256sum {shlex.quote(REMOTE_ARTIFACTS + '/receipts/subject-launch-receipt.json')} | cut -d' ' -f1)\""
         )
-        self._run(self._ssh(endpoint, remote_bootstrap),
-                  timeout_seconds=remaining())
+        bootstrapped = self._run(self._ssh(endpoint, remote_bootstrap),
+                                 timeout_seconds=remaining())
+        lines = [line for line in bootstrapped.stdout.splitlines() if line.strip()]
+        _require(bool(lines), "fresh Stage-T receipt evidence is absent")
+        try:
+            fresh_receipt = json.loads(lines[-1])
+        except json.JSONDecodeError as exc:
+            raise V13LifecycleError(
+                "fresh Stage-T receipt evidence is malformed") from exc
+        _require(isinstance(fresh_receipt, Mapping)
+                 and set(fresh_receipt) == {
+                     "fresh_receipt_sha256", "fresh_receipt_created_utc"}
+                 and _SHA256.fullmatch(str(
+                     fresh_receipt.get("fresh_receipt_sha256"))) is not None
+                 and fresh_receipt["fresh_receipt_sha256"] != self.receipt_sha256
+                 and isinstance(fresh_receipt.get("fresh_receipt_created_utc"), str),
+                 "fresh Stage-T receipt hash/time binding differs")
+        self.fresh_receipt_sha256 = fresh_receipt["fresh_receipt_sha256"]
+        self.fresh_receipt_created_utc = fresh_receipt[
+            "fresh_receipt_created_utc"]
         return {
             "status": "PASS", "relative_paths": paths,
             "external_file_count": 1,
             "release_receipt_sha256": self.receipt_sha256,
+            "fresh_launch_receipt_sha256": self.fresh_receipt_sha256,
+            "fresh_launch_receipt_created_utc": self.fresh_receipt_created_utc,
             "inventoried_import_report_sha256": self.import_report_sha256,
             "remote_repo": REMOTE_REPO, "detached_head": commit,
             "python": "3.12.11", "uv": "0.9.18",
@@ -916,7 +968,7 @@ class OpenSshTransport:
         scientific_command = shlex.join([
             REMOTE_VENV + "/bin/python", "-u", job_path,
             "--repo", REMOTE_REPO,
-            "--receipt-directory", REMOTE_EXTERNAL,
+            "--receipt-directory", REMOTE_LAUNCH_RECEIPTS,
             "--output-parent", REMOTE_ARTIFACTS + "/results",
             "--primary-batch-id", self.primary_batch_id,
         ])
@@ -949,7 +1001,7 @@ class OpenSshTransport:
         )
         job_auth = (
             f"export HF_TOKEN=\"$(tr -d '[:space:]' < "
-            f"{shlex.quote(REMOTE_EXTERNAL + '/hf-token')})\"; ")
+            f"{shlex.quote(REMOTE_SECRETS + '/hf-token')})\"; ")
         remote = (
             "set -euo pipefail; "
             f"cd {shlex.quote(REMOTE_REPO)}; "
