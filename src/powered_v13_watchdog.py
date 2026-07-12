@@ -1,10 +1,11 @@
 """Fail-closed provider watchdog for the powered-v13 Stage-T canary.
 
 The watchdog owns the provider clock after one Pod ID has been returned.  Its
-record fixes the smaller of the literal 3,300-second cap and the conservative
-rate-derived $1.50 cap.  A terminal cleanup requires both a per-Pod 404 and a
-complete active-inventory observation that omits the Pod.  Harvest failure is
-recorded but never delays deletion beyond the reserved cleanup lead.
+record fixes the smaller of the remaining cumulative 3,300-second cap and the
+conservative rate-derived $1.50 cap.  A terminal cleanup requires both a
+per-Pod 404 and a complete active-inventory observation that omits the Pod.
+Harvest failure is recorded but never delays deletion beyond the reserved
+cleanup lead.
 
 This module deliberately contains no experiment, fixture, model, pool,
 permutation, or analysis import.
@@ -140,18 +141,27 @@ def _event(value: object) -> dict[str, Any]:
     return {"epoch": epoch, "kind": kind, "evidence": deepcopy(dict(evidence))}
 
 
-def _bounded_duration_seconds(*, created_rate: Decimal,
-                              prior_spend: Decimal) -> int:
-    remaining = MAX_TOTAL_SPEND_USD - prior_spend
-    _require(remaining > 0, "no Stage-T provider budget remains")
-    seconds = int((remaining * Decimal(3600) / created_rate).to_integral_value(
+def _bounded_duration_seconds(
+    *, created_rate: Decimal, prior_spend: Decimal,
+    prior_provider_seconds: int,
+) -> int:
+    remaining_spend = MAX_TOTAL_SPEND_USD - prior_spend
+    _require(remaining_spend > 0, "no Stage-T provider budget remains")
+    remaining_provider_seconds = MAX_PROVIDER_SECONDS - prior_provider_seconds
+    _require(remaining_provider_seconds > DELETE_LEAD_SECONDS,
+             "remaining Stage-T provider seconds cannot fund safe cleanup")
+    dollar_seconds = int((
+        remaining_spend * Decimal(3600) / created_rate
+    ).to_integral_value(
         rounding=ROUND_FLOOR))
-    result = min(MAX_PROVIDER_SECONDS, seconds)
+    result = min(remaining_provider_seconds, dollar_seconds)
     _require(result > DELETE_LEAD_SECONDS,
              "remaining Stage-T provider window cannot fund safe cleanup")
     _require(prior_spend + created_rate * Decimal(result) / Decimal(3600)
              <= MAX_TOTAL_SPEND_USD,
              "rate-derived provider deadline exceeds $1.50")
+    _require(prior_provider_seconds + result <= MAX_PROVIDER_SECONDS,
+             "provider deadline exceeds 3,300 cumulative seconds")
     return result
 
 
@@ -160,6 +170,7 @@ def build_record(
     pod_id: str,
     created_cost_per_hr_usd: str,
     prior_stage_t_spend_usd: str,
+    prior_stage_t_provider_seconds: int,
     provider_clock_started_epoch: int,
     pod_state_sha256: str,
     create_response_sha256: str,
@@ -174,10 +185,14 @@ def build_record(
              "pod ID is invalid")
     rate = _money(created_cost_per_hr_usd, "created rate", positive=True)
     prior = _money(prior_stage_t_spend_usd, "prior Stage-T spend")
+    prior_seconds = _plain_int(
+        prior_stage_t_provider_seconds, "prior Stage-T provider seconds", 0,
+        MAX_PROVIDER_SECONDS)
     start = _plain_int(provider_clock_started_epoch, "provider clock start", 1,
                        (1 << 63) - 1)
     duration = _bounded_duration_seconds(
-        created_rate=rate, prior_spend=prior)
+        created_rate=rate, prior_spend=prior,
+        prior_provider_seconds=prior_seconds)
     hard_deadline = start + duration
     record = {
         "schema": SCHEMA,
@@ -185,6 +200,7 @@ def build_record(
         "pod_id": pod_id,
         "created_cost_per_hr_usd": format(rate, "f"),
         "prior_stage_t_spend_usd": format(prior, "f"),
+        "prior_stage_t_provider_seconds": prior_seconds,
         "max_total_spend_usd": format(MAX_TOTAL_SPEND_USD, "f"),
         "max_provider_seconds": MAX_PROVIDER_SECONDS,
         "provider_clock_started_epoch": start,
@@ -210,6 +226,7 @@ def build_record(
             "kind": "ALLOCATION_REGISTERED",
             "evidence": {
                 "created_cost_per_hr_usd": format(rate, "f"),
+                "prior_stage_t_provider_seconds": prior_seconds,
                 "bounded_provider_seconds": duration,
             },
         }],
@@ -220,7 +237,8 @@ def build_record(
 def validate_record(value: Mapping[str, Any]) -> dict[str, Any]:
     fields = {
         "schema", "design_id", "pod_id", "created_cost_per_hr_usd",
-        "prior_stage_t_spend_usd", "max_total_spend_usd",
+        "prior_stage_t_spend_usd", "prior_stage_t_provider_seconds",
+        "max_total_spend_usd",
         "max_provider_seconds", "provider_clock_started_epoch",
         "bounded_provider_seconds", "delete_trigger_epoch",
         "hard_deadline_epoch", "delete_lead_seconds", "pod_state_sha256",
@@ -241,6 +259,9 @@ def validate_record(value: Mapping[str, Any]) -> dict[str, Any]:
                   positive=True)
     prior = _money(value.get("prior_stage_t_spend_usd"),
                    "prior Stage-T spend")
+    prior_seconds = _plain_int(
+        value.get("prior_stage_t_provider_seconds"),
+        "prior Stage-T provider seconds", 0, MAX_PROVIDER_SECONDS)
     _require(value.get("max_total_spend_usd") == "1.50"
              and value.get("max_provider_seconds") == MAX_PROVIDER_SECONDS
              and value.get("delete_lead_seconds") == DELETE_LEAD_SECONDS,
@@ -251,7 +272,8 @@ def validate_record(value: Mapping[str, Any]) -> dict[str, Any]:
                           "bounded provider seconds", 1,
                           MAX_PROVIDER_SECONDS)
     _require(duration == _bounded_duration_seconds(
-        created_rate=rate, prior_spend=prior),
+        created_rate=rate, prior_spend=prior,
+        prior_provider_seconds=prior_seconds),
         "bounded provider duration does not recompute")
     _require(value.get("hard_deadline_epoch") == start + duration
              and value.get("delete_trigger_epoch") ==

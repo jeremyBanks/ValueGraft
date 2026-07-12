@@ -123,12 +123,15 @@ class FakeTransport:
 
 class FakeSupervisor:
     def __init__(self, provider, *, terminal_status="TERMINATED_HARVESTED",
-                 reason="job_complete", dual=True, death=None, log=None):
+                 reason="job_complete", dual=True, death=None,
+                 start_errors=(), terminal_advance_seconds=0, log=None):
         self.provider = provider
         self.terminal_status = terminal_status
         self.reason = reason
         self.dual = dual
         self.death = death
+        self.start_errors = list(start_errors)
+        self.terminal_advance_seconds = terminal_advance_seconds
         self.log = log if log is not None else []
         self.harvests = 0
         self.cleanup_requests = 0
@@ -138,6 +141,8 @@ class FakeSupervisor:
         assert pod_state_path.is_file()
         assert lifecycle_state_path.is_file()
         self.log.append(("watcher_start", record_path.name))
+        if self.start_errors and self.start_errors.pop(0):
+            raise OSError("watcher start failed")
         return {"record_path": record_path}
 
     def request_cleanup(self, handle, *, reason):
@@ -146,6 +151,7 @@ class FakeSupervisor:
 
     def wait_terminal(self, handle, *, timeout_seconds):
         self.log.append(("wait", timeout_seconds))
+        self.provider.clock.value += self.terminal_advance_seconds
         if self.death:
             self.log.append(("emergency_cleanup", self.death))
         self.harvests += 1 if self.death != "after_harvest" else 0
@@ -188,7 +194,8 @@ def _release(tmp_path: Path) -> tuple[Path, life.VerifiedRelease]:
 def _run(tmp_path, *, provider_actions=("success",), admissions=(True,),
          sync_error=False, launch_error=False,
          terminal_status="TERMINATED_HARVESTED", reason="job_complete",
-         dual=True, death=None):
+         dual=True, death=None, start_errors=(), terminal_advance_seconds=0,
+         prior_stage_t_provider_seconds=0):
     clock = Clock()
     log = []
     provider = FakeProvider(clock, provider_actions, log)
@@ -196,12 +203,14 @@ def _run(tmp_path, *, provider_actions=("success",), admissions=(True,),
         admissions, sync_error=sync_error, launch_error=launch_error, log=log)
     supervisor = FakeSupervisor(
         provider, terminal_status=terminal_status, reason=reason,
-        dual=dual, death=death, log=log)
+        dual=dual, death=death, start_errors=start_errors,
+        terminal_advance_seconds=terminal_advance_seconds, log=log)
     repo, release = _release(tmp_path)
     runner = life.StageTLifecycle(
         repo=repo, session_root=tmp_path / "session", release=release,
         provider=provider, transport=transport, supervisor=supervisor,
         clock=clock, prior_stage_t_spend_usd="0",
+        prior_stage_t_provider_seconds=prior_stage_t_provider_seconds,
         job_probe_command=["probe"], harvest_command=["harvest"],
     )
     return runner, provider, transport, supervisor, log
@@ -225,6 +234,12 @@ def test_happy_path_has_one_host_exact_sync_detach_harvest_delete_no_warm_hold(
                   and row[0] == "create")
     attempt = result["attempts"][0]
     assert create[2] == attempt["clock_started_epoch"]
+    assert attempt["attempt_provider_seconds"] > 0
+    assert result["observed_stage_t_provider_seconds"] == \
+        attempt["attempt_provider_seconds"]
+    assert result["events"][-1]["evidence"][
+        "observed_stage_t_provider_seconds"] == \
+        result["observed_stage_t_provider_seconds"]
     assert log.index(("watcher_start", "watchdog.json")) < \
         next(i for i, row in enumerate(log)
              if isinstance(row, tuple) and row[0] == "admit")
@@ -269,6 +284,66 @@ def test_admission_reject_is_positively_deleted_before_attempt_two(tmp_path):
                                result["attempts"][1]["clock_started_epoch"]))
     assert first_delete < second_create
     assert Decimal(result["observed_stage_t_spend_usd"]) > 0
+    first, second = result["attempts"]
+    assert first["attempt_provider_seconds"] > 0
+    second_record = json.loads((
+        runner.root / "attempt-2" / "watchdog.json").read_text())
+    assert second_record["prior_stage_t_provider_seconds"] == \
+        first["observed_stage_t_provider_seconds"]
+    assert second_record["bounded_provider_seconds"] == \
+        3300 - first["observed_stage_t_provider_seconds"]
+    assert result["observed_stage_t_provider_seconds"] == \
+        second["observed_stage_t_provider_seconds"]
+
+
+def test_caller_prior_provider_seconds_reduce_first_attempt_window(tmp_path):
+    runner, _provider, _transport, _supervisor, _log = _run(
+        tmp_path, prior_stage_t_provider_seconds=900)
+    result = runner.run()
+    record = json.loads((
+        runner.root / "attempt-1" / "watchdog.json").read_text())
+    assert record["prior_stage_t_provider_seconds"] == 900
+    assert record["bounded_provider_seconds"] == 2400
+    assert result["observed_stage_t_provider_seconds"] > 900
+
+
+def test_caller_prior_seconds_without_cleanup_lead_forbid_allocation(tmp_path):
+    runner, provider, _transport, _supervisor, _log = _run(
+        tmp_path, prior_stage_t_provider_seconds=3180)
+    with pytest.raises(life.V13LifecycleError, match="cannot fund safe cleanup"):
+        runner.run()
+    assert provider.creates == 0
+    assert runner.state["status"] == "BLOCKED"
+
+
+def test_pre_watchdog_rejection_charges_seconds_before_second_attempt(tmp_path):
+    runner, provider, _transport, _supervisor, _log = _run(
+        tmp_path, provider_actions=("success", "success"),
+        start_errors=(True, False))
+    result = runner.run()
+    assert provider.creates == 2
+    first = result["attempts"][0]
+    assert first["result"] == "PRE_WATCHDOG_REJECTED_DELETED"
+    assert first["attempt_provider_seconds"] > 0
+    second_record = json.loads((
+        runner.root / "attempt-2" / "watchdog.json").read_text())
+    assert second_record["prior_stage_t_provider_seconds"] == \
+        first["observed_stage_t_provider_seconds"]
+    assert second_record["bounded_provider_seconds"] == \
+        3300 - first["observed_stage_t_provider_seconds"]
+
+
+def test_insufficient_cumulative_seconds_forbid_second_allocation(tmp_path):
+    runner, provider, _transport, _supervisor, _log = _run(
+        tmp_path, provider_actions=("success", "success"),
+        admissions=(False, True), terminal_advance_seconds=3180)
+    with pytest.raises(life.V13LifecycleError, match="cannot fund safe cleanup"):
+        runner.run()
+    assert provider.creates == 1
+    assert runner.state["status"] == "BLOCKED"
+    assert runner.state["observed_stage_t_provider_seconds"] > 3180
+    assert runner.state["events"][-1]["kind"] == \
+        "PROVIDER_SECONDS_EXHAUSTED"
 
 
 def test_admission_cleanup_without_dual_deletion_forbids_attempt_two(tmp_path):
@@ -289,6 +364,9 @@ def test_no_retry_after_admission_or_job_start(tmp_path, phase):
         runner.run()
     assert provider.creates == 1 and provider.active == []
     assert supervisor.cleanup_requests == 1
+    assert runner.state["attempts"][0]["attempt_provider_seconds"] > 0
+    assert runner.state["observed_stage_t_provider_seconds"] == \
+        runner.state["attempts"][0]["observed_stage_t_provider_seconds"]
 
 
 @pytest.mark.parametrize("death", ["before_harvest", "after_harvest"])
@@ -343,6 +421,27 @@ def test_fixed_job_probe_exit_contract():
         lifecycle_status="JOB_STARTED", remote_state="COMPLETE") == 20
     assert life.job_probe_exit(
         lifecycle_status="JOB_STARTED", remote_state="DEAD") == 21
+
+
+def test_run_cli_requires_exact_prior_provider_seconds_input():
+    spec = importlib.util.spec_from_file_location("stage_t_lifecycle_cli", CLI)
+    assert spec is not None and spec.loader is not None
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+    argv = [
+        "run", "--repo", ".", "--authorization-commit", "a" * 40,
+        "--manifest", "manifest.json", "--receipt", "receipt.json",
+        "--receipt-sha256", "b" * 64, "--import-report", "report.json",
+        "--import-report-sha256", "c" * 64, "--session-root", "session",
+        "--prior-stage-t-spend-usd", "0", "--ssh-key", "ssh-key",
+        "--hf-token", "hf-token", "--primary-batch-id", "batch",
+    ]
+    with pytest.raises(SystemExit) as missing:
+        cli.parser().parse_args(argv)
+    assert missing.value.code == 2
+    parsed = cli.parser().parse_args([
+        *argv, "--prior-stage-t-provider-seconds", "0"])
+    assert parsed.prior_stage_t_provider_seconds == 0
 
 
 def test_harvest_manifest_hashes_every_required_category(tmp_path):
@@ -978,7 +1077,8 @@ def _watchdog_fixture(tmp_path):
     record_path = tmp_path / "watchdog.json"
     record = life.build_record(
         pod_id="pod_stage_t_1", created_cost_per_hr_usd="1",
-        prior_stage_t_spend_usd="0", provider_clock_started_epoch=1_000_000,
+        prior_stage_t_spend_usd="0", prior_stage_t_provider_seconds=0,
+        provider_clock_started_epoch=1_000_000,
         pod_state_sha256=life.file_sha256(pod_state),
         create_response_sha256="a" * 64, job_sha256="b" * 64,
         release_receipt_sha256="c" * 64,

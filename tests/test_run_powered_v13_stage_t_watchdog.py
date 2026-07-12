@@ -39,6 +39,7 @@ def _command(tmp_path: Path, *extra: str):
         "--release-receipt", str(receipt),
         "--record", str(record),
         "--prior-stage-t-spend-usd", "0",
+        "--prior-stage-t-provider-seconds", "0",
         "--provider-clock-started-epoch", "1000000",
         "--job-probe-command-json", '["probe","pod_stage_t_1"]',
         "--harvest-command-json", '["harvest","pod_stage_t_1"]',
@@ -55,6 +56,7 @@ def test_init_binds_all_external_files_and_exclusive_record(tmp_path):
     assert summary["pod_id"] == "pod_stage_t_1"
     observed = watchdog.read_record(record)
     assert observed["status"] == "ALLOCATED"
+    assert observed["prior_stage_t_provider_seconds"] == 0
     assert observed["bounded_provider_seconds"] == 3300
     assert observed["job_probe_command"] == ["probe", "pod_stage_t_1"]
     assert observed["harvest_command"] == ["harvest", "pod_stage_t_1"]

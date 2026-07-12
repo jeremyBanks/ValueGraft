@@ -251,6 +251,8 @@ def command_run(args: argparse.Namespace) -> None:
         "status": "STARTING", "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
         "authorization_commit": release.authorization_commit,
         "session_root": str(session), "provider_state": str(transient_state),
+        "prior_stage_t_provider_seconds":
+            args.prior_stage_t_provider_seconds,
     }, sort_keys=True), flush=True)
     provider = RunPodProvider(state_path=transient_state)
     transport = OpenSshTransport(
@@ -290,11 +292,14 @@ def command_run(args: argparse.Namespace) -> None:
         repo=args.repo, session_root=session, release=release,
         provider=provider, transport=transport, supervisor=supervisor,
         clock=time.time, prior_stage_t_spend_usd=args.prior_stage_t_spend_usd,
+        prior_stage_t_provider_seconds=args.prior_stage_t_provider_seconds,
         job_probe_command=job_probe, harvest_command=harvest)
     result = lifecycle.run()
     print(json.dumps({
         "status": result["status"], "session_root": str(session),
         "observed_stage_t_spend_usd": result["observed_stage_t_spend_usd"],
+        "observed_stage_t_provider_seconds":
+            result["observed_stage_t_provider_seconds"],
         "admitted_pod_id": result["admitted_pod_id"],
     }, sort_keys=True))
 
@@ -341,6 +346,8 @@ def parser() -> argparse.ArgumentParser:
     run.add_argument("--import-report-sha256", required=True)
     run.add_argument("--session-root", required=True, type=Path)
     run.add_argument("--prior-stage-t-spend-usd", required=True)
+    run.add_argument(
+        "--prior-stage-t-provider-seconds", required=True, type=int)
     run.add_argument("--ssh-key", required=True, type=Path)
     run.add_argument("--hf-token", required=True, type=Path)
     run.add_argument("--primary-batch-id", required=True)

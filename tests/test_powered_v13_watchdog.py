@@ -21,6 +21,7 @@ def _record(**changes):
         "pod_id": "pod_stage_t_1",
         "created_cost_per_hr_usd": "1.2",
         "prior_stage_t_spend_usd": "0",
+        "prior_stage_t_provider_seconds": 0,
         "provider_clock_started_epoch": 1_000_000,
         "pod_state_sha256": SHA,
         "create_response_sha256": "b" * 64,
@@ -93,6 +94,15 @@ def test_record_uses_smaller_literal_time_or_rate_derived_spend_deadline():
         created_cost_per_hr_usd="1.2", prior_stage_t_spend_usd="0.5")
     assert carried["bounded_provider_seconds"] == 3000
 
+    time_carried = _record(prior_stage_t_provider_seconds=900)
+    assert time_carried["bounded_provider_seconds"] == 2400
+    assert time_carried["hard_deadline_epoch"] == 1_002_400
+
+    both_carried = _record(
+        created_cost_per_hr_usd="2", prior_stage_t_spend_usd="0.5",
+        prior_stage_t_provider_seconds=1200)
+    assert both_carried["bounded_provider_seconds"] == 1800
+
 
 @pytest.mark.parametrize(
     "changes,match",
@@ -100,6 +110,8 @@ def test_record_uses_smaller_literal_time_or_rate_derived_spend_deadline():
         ({"created_cost_per_hr_usd": "1.20"}, "canonical"),
         ({"prior_stage_t_spend_usd": "1.49",
           "created_cost_per_hr_usd": "2"}, "safe cleanup"),
+        ({"prior_stage_t_provider_seconds": 3180}, "safe cleanup"),
+        ({"prior_stage_t_provider_seconds": True}, "provider seconds"),
         ({"provider_clock_started_epoch": True}, "provider clock"),
         ({"job_probe_command": []}, "job probe"),
     ],
@@ -114,6 +126,7 @@ def test_record_rejects_literal_cap_or_deadline_tampering():
     for field, value in (
         ("max_total_spend_usd", "2.00"),
         ("max_provider_seconds", 3301),
+        ("prior_stage_t_provider_seconds", 1),
         ("delete_lead_seconds", 1),
         ("hard_deadline_epoch", record["hard_deadline_epoch"] + 1),
     ):

@@ -32,7 +32,13 @@ from powered_v13_import_audit import (
     REPORT_SCHEMA as IMPORT_REPORT_SCHEMA,
     audit_stage_t_imports,
 )
-from powered_v13_watchdog import build_record, read_record, write_record_exclusive
+from powered_v13_watchdog import (
+    DELETE_LEAD_SECONDS,
+    MAX_PROVIDER_SECONDS,
+    build_record,
+    read_record,
+    write_record_exclusive,
+)
 
 
 SCHEMA = "coherent-state-powered-successor-v13-stage-t-lifecycle-v1"
@@ -1404,6 +1410,7 @@ class StageTLifecycle:
         self, *, repo: Path, session_root: Path, release: VerifiedRelease,
         provider: Provider, transport: Transport, supervisor: WatcherSupervisor,
         clock: Callable[[], float], prior_stage_t_spend_usd: str,
+        prior_stage_t_provider_seconds: int,
         job_probe_command: Sequence[str], harvest_command: Sequence[str],
     ):
         self.repo = Path(repo).resolve(strict=True)
@@ -1416,6 +1423,10 @@ class StageTLifecycle:
         self.prior_spend = _exact_money(
             prior_stage_t_spend_usd, "prior Stage-T spend")
         self.accumulated_spend = Decimal(self.prior_spend)
+        _require(type(prior_stage_t_provider_seconds) is int
+                 and 0 <= prior_stage_t_provider_seconds <= MAX_PROVIDER_SECONDS,
+                 "prior Stage-T provider seconds are invalid")
+        self.accumulated_provider_seconds = prior_stage_t_provider_seconds
         self.job_probe_command = tuple(job_probe_command)
         self.harvest_command = tuple(harvest_command)
         _require(self.job_probe_command and self.harvest_command,
@@ -1432,6 +1443,8 @@ class StageTLifecycle:
             "admitted_pod_id": None,
             "job_started": False,
             "observed_stage_t_spend_usd": self.prior_spend,
+            "observed_stage_t_provider_seconds":
+                self.accumulated_provider_seconds,
             "force_cleanup_reason": None,
             "events": [],
         }
@@ -1492,6 +1505,8 @@ class StageTLifecycle:
             pod_id=pod_id,
             created_cost_per_hr_usd=str(allocation.response.get("costPerHr")),
             prior_stage_t_spend_usd=self.prior_spend,
+            prior_stage_t_provider_seconds=
+                self.accumulated_provider_seconds,
             provider_clock_started_epoch=started,
             pod_state_sha256=file_sha256(state_path),
             create_response_sha256=file_sha256(response_path),
@@ -1503,7 +1518,9 @@ class StageTLifecycle:
         write_record_exclusive(watchdog_path, record)
         return response_path, state_path, watchdog_path
 
-    def _charge_attempt(self, allocation: Allocation, *, started: int) -> str:
+    def _charge_attempt(
+        self, allocation: Allocation, *, started: int,
+    ) -> dict[str, Any]:
         elapsed = max(0, int(self.clock()) - started)
         try:
             rate = Decimal(str(allocation.response.get("costPerHr")))
@@ -1511,11 +1528,33 @@ class StageTLifecycle:
             raise V13LifecycleError("allocated rate is not decimal") from exc
         _require(rate.is_finite() and rate > 0, "allocated rate is invalid")
         self.accumulated_spend += rate * Decimal(elapsed) / Decimal(3600)
+        self.accumulated_provider_seconds += elapsed
         value = ("0" if self.accumulated_spend == 0 else
                  format(self.accumulated_spend.normalize(), "f"))
         self.prior_spend = value
         self.state["observed_stage_t_spend_usd"] = value
-        return value
+        self.state["observed_stage_t_provider_seconds"] = (
+            self.accumulated_provider_seconds)
+        return {
+            "attempt_provider_seconds": elapsed,
+            "observed_stage_t_provider_seconds":
+                self.accumulated_provider_seconds,
+            "observed_stage_t_spend_usd": value,
+        }
+
+    def _require_attempt_provider_window(self, attempt: int) -> None:
+        remaining = MAX_PROVIDER_SECONDS - self.accumulated_provider_seconds
+        if remaining <= DELETE_LEAD_SECONDS:
+            evidence = {
+                "attempt": attempt,
+                "observed_stage_t_provider_seconds":
+                    self.accumulated_provider_seconds,
+                "remaining_stage_t_provider_seconds": remaining,
+                "delete_lead_seconds": DELETE_LEAD_SECONDS,
+            }
+            self._set("BLOCKED", "PROVIDER_SECONDS_EXHAUSTED", evidence)
+            raise V13LifecycleError(
+                "remaining Stage-T provider seconds cannot fund safe cleanup")
 
     def _positive_absence(self, pod_id: str) -> None:
         try:
@@ -1564,7 +1603,12 @@ class StageTLifecycle:
                  "Stage T requires zero active Pods before allocation")
         self._set("READY", "PROVIDER_PREFLIGHT", snapshot)
         for attempt in range(1, MAX_ALLOCATION_ATTEMPTS + 1):
-            self._set("ALLOCATING", "ALLOCATION_CLOCK_STARTED", {"attempt": attempt})
+            self._require_attempt_provider_window(attempt)
+            self._set("ALLOCATING", "ALLOCATION_CLOCK_STARTED", {
+                "attempt": attempt,
+                "prior_stage_t_provider_seconds":
+                    self.accumulated_provider_seconds,
+            })
             started = int(self.clock())
             try:
                 allocation = self.provider.create_secure_a100()
@@ -1606,13 +1650,15 @@ class StageTLifecycle:
                     })
                     raise V13LifecycleError(
                         "pre-watchdog cleanup failed; retry forbidden") from cleanup_exc
-                self._charge_attempt(allocation, started=started)
+                charge = self._charge_attempt(allocation, started=started)
                 self.state["attempts"].append({
                     "attempt": attempt, "clock_started_epoch": started,
                     "result": "PRE_WATCHDOG_REJECTED_DELETED", "pod_id": pod_id,
+                    **charge,
                 })
                 self._event("PRE_WATCHDOG_REJECTED_DELETED", {
                     "attempt": attempt, "error_type": type(exc).__name__,
+                    **charge,
                 })
                 if attempt == MAX_ALLOCATION_ATTEMPTS:
                     self._set("BLOCKED", "ATTEMPTS_EXHAUSTED", {})
@@ -1636,13 +1682,14 @@ class StageTLifecycle:
             except BaseException as exc:
                 terminal = self._cleanup(
                     handle, pod_id=pod_id, reason="admission_rejected")
-                spend = self._charge_attempt(allocation, started=started)
+                charge = self._charge_attempt(allocation, started=started)
                 self.state["attempts"][-1]["result"] = "REJECTED_DELETED"
+                self.state["attempts"][-1].update(charge)
                 self._event("ADMISSION_REJECTED_DELETED", {
                     "attempt": attempt, "harvest_succeeded":
                     terminal["harvest"]["succeeded"],
                     "error_type": type(exc).__name__,
-                    "observed_stage_t_spend_usd": spend,
+                    **charge,
                 })
                 if attempt == MAX_ALLOCATION_ATTEMPTS:
                     self._set("ADMISSION_REJECTED", "ATTEMPTS_EXHAUSTED", {})
@@ -1691,15 +1738,18 @@ class StageTLifecycle:
                     })
                     raise V13LifecycleError(
                         "post-admission cleanup failed; retry forbidden") from cleanup_exc
-                self._charge_attempt(allocation, started=started)
+                charge = self._charge_attempt(allocation, started=started)
+                self.state["attempts"][-1].update(charge)
                 self._set("BLOCKED", "POST_ADMISSION_FAILURE", {
                     "pod_id": pod_id, "error_type": type(exc).__name__,
                     "cleanup_status": terminal["status"],
+                    **charge,
                 })
                 raise V13LifecycleError(
                     "post-admission failure cleaned; retry forbidden") from exc
             self._positive_absence(pod_id)
-            self._charge_attempt(allocation, started=started)
+            charge = self._charge_attempt(allocation, started=started)
+            self.state["attempts"][-1].update(charge)
             successful_job = bool(
                 terminal["status"] == "TERMINATED_HARVESTED"
                 and terminal.get("termination_reason") == "job_complete"
@@ -1711,6 +1761,7 @@ class StageTLifecycle:
                 "pod_id": pod_id,
                 "termination_reason": terminal.get("termination_reason"),
                 "harvest_succeeded": terminal["harvest"]["succeeded"],
+                **charge,
             })
             return deepcopy(self.state)
         raise AssertionError("bounded attempt loop fell through")

@@ -142,6 +142,7 @@ def command_init(args: argparse.Namespace) -> None:
         pod_id=pod_id,
         created_cost_per_hr_usd=state_rate,
         prior_stage_t_spend_usd=args.prior_stage_t_spend_usd,
+        prior_stage_t_provider_seconds=args.prior_stage_t_provider_seconds,
         provider_clock_started_epoch=args.provider_clock_started_epoch,
         pod_state_sha256=file_sha256(state_path),
         create_response_sha256=file_sha256(response_path),
@@ -158,6 +159,8 @@ def command_init(args: argparse.Namespace) -> None:
         "pod_id": pod_id,
         "delete_trigger_epoch": record["delete_trigger_epoch"],
         "hard_deadline_epoch": record["hard_deadline_epoch"],
+        "prior_stage_t_provider_seconds":
+            record["prior_stage_t_provider_seconds"],
         "bounded_provider_seconds": record["bounded_provider_seconds"],
     }, sort_keys=True))
 
@@ -228,6 +231,8 @@ def parser() -> argparse.ArgumentParser:
     init.add_argument("--release-receipt", required=True, type=Path)
     init.add_argument("--record", required=True, type=Path)
     init.add_argument("--prior-stage-t-spend-usd", required=True)
+    init.add_argument(
+        "--prior-stage-t-provider-seconds", required=True, type=int)
     init.add_argument("--provider-clock-started-epoch", required=True, type=int)
     init.add_argument("--job-probe-command-json", required=True)
     init.add_argument("--harvest-command-json", required=True)
