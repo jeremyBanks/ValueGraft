@@ -17,7 +17,7 @@ money, make the result as robust and confident as possible"* — they spent abou
 order of **2–4 cases**, and stopped, calling a tiny exploratory null "done." A full day and enormous
 effort went into perfecting the measurement *apparatus* and almost none into *using* it. Every
 safeguard (notes, summaries, reminders, a supervisory "ultra" mode, even the human) failed to catch
-the drift. The full autopsy is in `notes/opus-gap-analysis-asked-vs-did-and-upper-bound.md` — **read
+the drift. The full autopsy is in the autopsy note (slug `gap-analysis-asked-vs-did`) — **read
 it early; it is about how *you* will fail if you're not careful.**
 
 Operating rules that follow directly, and that you must hold as hard constraints:
@@ -49,15 +49,15 @@ recover it? It is a bounded mechanistic question, not a deployment/task-success 
 Prior art establishes the channel *exists* (so our novelty is narrow): **MEMENTO** (arXiv 2604.09852)
 and **"Models Take Notes at Prefill"** (arXiv 2606.17107) — the latter finds the information is
 written onto *downstream aggregator tokens*, and a source token's own K/V drives <1% of the decision.
-Both verified real in `notes/2026071129-opus-prior-art-verification.md`.
+Both verified real in slug `opus-prior-art-verification`.
 
 ## 2. What has been done (trajectory, high-level)
 
 1. **Original ValueGraft** (earlier work): mostly null; an early "+10–12 point recovery" headline that
    was 4-bit + a *broken* apparatus and did not survive correction; a *source-dependent sign reversal*
    in the synthetic corpus; a borderline in-domain SWE-Gym positive. See
-   `notes/2026071113-corrections-from-sol-audit.md` and the independent audits
-   `notes/2026071107-*` / `notes/2026071108-*`.
+   slug `corrections-from-sol-audit` and the independent audits
+   slug `sol-empirical-statistical-audit` / slug `sol-methodology-implementation-audit`.
 2. **Mechanism-first redesign** → a **position-preserving "gapped"** coherent-state apparatus (keeps
    summary tokens at their original logical positions; copies K/V bit-exactly; no lossy key rotation).
 3. **Apparatus-validation spiral** — this is where the time went: **12 preregistration amendments**
@@ -155,22 +155,24 @@ Strong candidates for the surplus budget — think of these as a starting menu, 
 
 ## 8. Pointers (where to fill in every detail)
 
-- **The failure autopsy (read first):** `notes/opus-gap-analysis-asked-vs-did-and-upper-bound.md`
-- **Full execution trajectory / all decisions:** `notes/2026071116-sol-fable-execution-coordination.md`
-  (long, append-only; the whole story is here).
-- **Paper (current):** `PAPER.md`; narrative spine + methodological postmortem:
-  `notes/2026071144-opus-paper-spine-and-methodological-postmortem.md`.
-- **Apparatus design:** `COHERENT-STATE-PREREGISTRATION.md` + `…-AMENDMENT-1..10.md`.
-- **Prior art (verified):** `notes/2026071129-opus-prior-art-verification.md`;
-  `notes/2026071132-sol-models-take-notes-primary-source-reading.md`;
-  `notes/2026071131-sol-memento-primary-source-correction.md`.
-- **Original-result corrections + independent audits:** `notes/2026071113-corrections-from-sol-audit.md`;
-  `notes/2026071107-sol-empirical-statistical-audit.md`;
-  `notes/2026071108-sol-methodology-implementation-audit.md`.
-- **Outcome-interpretation matrix / estimand semantics:**
-  `notes/2026071117-fable-outcome-interpretation-matrix.md`.
-- **Owner's precision-axis request:** `notes/owner-request-precision-axis-quantization-dependence.md`.
-- **Results:** `results/coherent_canary_v12_harvest/`, `results/precision_probe_p01/`,
+Note files in `notes/` are auto-renumbered by the archive normalizer, so **find each by its slug, not a
+number**: `git ls-files notes | grep <slug>`. Slugs below.
+
+- **The failure autopsy (read first):** slug `gap-analysis-asked-vs-did`.
+- **Full execution trajectory / all decisions:** slug `sol-fable-execution-coordination` (long,
+  append-only; the whole story is here).
+- **Paper (current):** `PAPER.md`; narrative spine + methodological postmortem: slug
+  `paper-spine-and-methodological-postmortem`.
+- **Apparatus design:** `COHERENT-STATE-PREREGISTRATION.md` + `…-AMENDMENT-1..10.md` (repo root; not
+  renumbered).
+- **Prior art (verified):** slugs `opus-prior-art-verification`,
+  `sol-models-take-notes-primary-source-reading`, `sol-memento-primary-source-correction`.
+- **Original-result corrections + independent audits:** slugs `corrections-from-sol-audit`,
+  `sol-empirical-statistical-audit`, `sol-methodology-implementation-audit`.
+- **Outcome-interpretation matrix / estimand semantics:** slug `fable-outcome-interpretation-matrix`.
+- **Owner's precision-axis request:** slug `owner-request-precision-axis-quantization-dependence`.
+- **This handoff:** slug `handoff-to-new-ultra-agent`.
+- **Results (stable paths):** `results/coherent_canary_v12_harvest/`, `results/precision_probe_p01/`,
   `results/precision_probe_p02_analysis/`, `results/coherent_canary_v12_budget/` (spend records).
 - **Repo orientation:** `AGENTS.md` (entry point), `STATE.md`, `FINDINGS.md`, `DECISIONS.md`.
 
