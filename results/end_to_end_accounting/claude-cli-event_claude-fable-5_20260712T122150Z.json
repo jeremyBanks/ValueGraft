@@ -1,0 +1,45 @@
+{
+  "schema": "end-to-end-accounting-event/v1",
+  "captured_at_utc": "2026-07-12T12:21:50Z",
+  "provider_surface": "Claude CLI",
+  "purpose": "Narrow P02-to-final-paper narrative integration",
+  "session_id": "56c08296-8939-459b-98b0-28c2fccb9a39",
+  "runtime_model_requested": "claude-fable-5",
+  "runtime_model_observed": "claude-fable-5",
+  "effort": "max",
+  "maximum_list_price_budget_usd": 2.0,
+  "duration_ms": 636326,
+  "duration_api_ms": 29083,
+  "num_turns": 6,
+  "terminal_status": "error_max_budget_usd_after_write_tool_request",
+  "artifact_status": "recovered_exactly_from_unexecuted_streamed_write_tool_input",
+  "reported_list_price_equivalent_usd": 3.767336,
+  "cash_spend_usd": null,
+  "cash_spend_classification": "unknown; Claude CLI was subscription/subsidized and reported cost is not assumed to be incremental cash billing",
+  "aggregate_usage": {
+    "input_tokens": 3325,
+    "output_tokens": 1168,
+    "cache_creation_input_tokens": 36716,
+    "cache_read_input_tokens": 35588,
+    "reported_cost_usd": 3.767336
+  },
+  "model_usage": {
+    "claude-fable-5": {
+      "input_tokens": 3356,
+      "output_tokens": 53310,
+      "cache_creation_input_tokens": 48985,
+      "cache_read_input_tokens": 87494,
+      "reported_cost_usd": 3.766254
+    },
+    "claude-haiku-4-5-20251001": {
+      "input_tokens": 977,
+      "output_tokens": 21,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "reported_cost_usd": 0.001082
+    }
+  },
+  "output_artifact": "notes/20260712AB-fable-p02-paper-integration-draft.md",
+  "output_artifact_sha256": "2ea534eb37afe9befe191643366936987a80c40519b03b4f8a51cd5ae6108cb3",
+  "evidence": "Claude CLI streamed the complete Write-tool input but the budget guard stopped before the tool executed, leaving a blank note. Sol recovered the exact streamed input without another model call and wrote it through apply_patch. Aggregate and per-model usage differ and are both preserved; final accounting must reconcile and deduplicate this session against transcript-derived inventory."
+}

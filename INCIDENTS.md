@@ -916,3 +916,17 @@ context.” Treat a CLI budget as a turn-boundary guard that may overshoot, not 
 hard financial interlock. Leave reserve below the true ceiling, and avoid a
 resume solely to recover prose unless the cached analysis value clearly exceeds
 the possible cache-miss cost.
+
+**Addendum — recurrence under a narrow paper-integration prompt.** A later
+Fable call was limited to `PAPER.md`, the final P02 interpretation, and the
+mandatory provenance checklist, with one output note and a nominal `$2` guard.
+It still exited at the guard before executing its Write tool and reported a
+`$3.767336` list-price equivalent. The streamed tool request contained the
+complete 33,064-character note, so Sol recovered that exact input without a
+second model call and preserved both the note and receipt. This shows that a
+small input surface alone does not make the CLI cap hard: a long indivisible
+generation/tool request can overshoot materially. Before any retry after an
+apparently blank artifact, inspect the captured stream for a complete
+unexecuted Write/Edit payload. For the remaining paper, the existing Fable
+draft, three completed Fable angle reviews, P02 advisory, and recovered
+integration note are sufficient; do not buy a redundant Fable retry.
