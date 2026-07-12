@@ -1,0 +1,37 @@
+{
+  "schema": "end-to-end-accounting-event/v1",
+  "captured_at_utc": "2026-07-12T11:52:13Z",
+  "provider_surface": "Claude CLI",
+  "purpose": "Resume cached Fable P02 interpretation session and write the reviewed note",
+  "session_id": "86f1c0e2-57a1-4682-aba1-6f6a8206fbe9",
+  "runtime_model_requested": "claude-fable-5",
+  "runtime_model_observed": "claude-fable-5",
+  "effort": "max",
+  "maximum_list_price_budget_usd": 1.5,
+  "duration_ms": 73646,
+  "duration_api_ms": 0,
+  "num_turns": 2,
+  "terminal_status": "error_max_budget_usd_after_note_written",
+  "artifact_status": "complete",
+  "reported_list_price_equivalent_usd": 2.05319,
+  "cash_spend_usd": null,
+  "cash_spend_classification": "unknown; Claude CLI was subscription/subsidized and reported cost is not assumed to be incremental cash billing",
+  "aggregate_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "reported_cost_usd": 2.05319
+  },
+  "model_usage": {
+    "claude-fable-5": {
+      "input_tokens": 25,
+      "output_tokens": 5305,
+      "cache_creation_input_tokens": 88625,
+      "cache_read_input_tokens": 15190,
+      "reported_cost_usd": 2.05319
+    }
+  },
+  "output_artifact": "notes/20260712A9-fable-p02-result-interpretation-and-paper-disposition.md",
+  "evidence": "Claude CLI JSON result captured immediately after the resumed invocation. The note was completely written before the list-price guard stopped the terminal response. The aggregate usage object reported zeros while modelUsage reported nonzero usage; both are preserved without silently choosing one. Final accounting must deduplicate both invocations in this resumed session against transcript-derived inventory."
+}
