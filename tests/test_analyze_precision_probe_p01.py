@@ -27,6 +27,7 @@ def historical_combined_outcome() -> dict:
     phase_run = MODULE.load_object(PHASE_RAW)
     _, treatment_run = MODULE.reconstruct_package(TREATMENT_PACKAGE)
     return {
+        "schema": MODULE.OUTCOME_RAW_SCHEMA,
         "protocol_id": MODULE.PROTOCOL_ID,
         "formal_v12_decision_eligible": False,
         "v12_reentry_authorized": False,

@@ -30,6 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL_ID = "precision-probe-p01"
 ANALYSIS_SCHEMA = "precision_probe_p01_independent_analysis_v1"
 PACKAGE_SCHEMA = "lossless-json-gzip-base64-package/v1"
+OUTCOME_RAW_SCHEMA = "precision_probe_p01_outcome_raw_v1"
 PHASE_A_SCHEMA = "coherent_state_decision_canary_v12_phase_a_raw_v1"
 TREATMENT_SCHEMA = "coherent_state_decision_canary_v12_treatment_raw_v1"
 REGIMES = ("nf4", "bf16")
@@ -475,8 +476,9 @@ def analyze_outcome(raw: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def identify_outcome(raw: Mapping[str, Any]) -> tuple[str, str, int]:
-    require(raw.get("protocol_id") == PROTOCOL_ID,
-            "packaged outcome protocol differs")
+    require(raw.get("schema") == OUTCOME_RAW_SCHEMA and
+            raw.get("protocol_id") == PROTOCOL_ID,
+            "packaged outcome schema/protocol differs")
     require(raw.get("formal_v12_decision_eligible") is False and
             raw.get("v12_reentry_authorized") is False and
             raw.get("component_reuse_does_not_inherit_v12_eligibility") is True,
@@ -502,7 +504,10 @@ def package_rows(run_dir: Path) -> list[dict[str, Any]]:
         if header.get("schema") != PACKAGE_SCHEMA:
             continue
         manifest, raw = reconstruct_package(manifest_path.parent)
-        if raw.get("protocol_id") != PROTOCOL_ID:
+        # The run also packages one technical-gate document per regime.  Only
+        # outcome packages carry case/repeat keys and enter the estimands.
+        if (raw.get("protocol_id") != PROTOCOL_ID or
+                raw.get("schema") != OUTCOME_RAW_SCHEMA):
             continue
         key = identify_outcome(raw)
         rows.append({
