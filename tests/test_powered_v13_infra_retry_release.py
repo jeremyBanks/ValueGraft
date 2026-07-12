@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
+import json
 from pathlib import Path
 import subprocess
 
@@ -31,15 +33,78 @@ def git(*args: str) -> str:
     ).stdout.strip()
 
 
-def static_root() -> str:
-    # This test is added in the static-root commit. It remains a stable locator
-    # when the suite later runs from the two-path authorization child.
-    return git("log", "-1", "--format=%H", "--", "tests/test_powered_v13_infra_retry_release.py")
+def repo_git(repo: Path, *args: str) -> str:
+    return subprocess.run(
+        ["git", *args], cwd=repo, text=True, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, check=True,
+    ).stdout.strip()
 
 
-def test_real_static_root_manifest_binds_retry_and_evidence() -> None:
+def make_static_repo(tmp_path: Path) -> tuple[Path, str]:
+    repo = tmp_path / "repo"
+    subprocess.run(
+        ["git", "clone", "-q", "--no-hardlinks", str(ROOT), str(repo)],
+        check=True,
+    )
+    repo_git(repo, "checkout", "-q", "--detach", release.ONE_ATTEMPT_CONTROLLER_COMMIT)
+    repo_git(repo, "config", "user.email", "test@example.invalid")
+    repo_git(repo, "config", "user.name", "Release Test")
+    release_paths = (
+        release.AMENDMENT_PATH,
+        release.CONTRACT_PATH,
+        "scripts/run_powered_v13_stage_t_infra_retry_1.py",
+        "src/powered_v13_infra_retry_entrypoint.py",
+        "src/powered_v13_infra_retry_release.py",
+    )
+    for path in release_paths:
+        destination = repo / path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        raw = (ROOT / path).read_bytes()
+        if path == release.AMENDMENT_PATH and release.NEW_STATUS_LINE in raw:
+            raw = raw.replace(release.NEW_STATUS_LINE, release.OLD_STATUS_LINE, 1)
+        destination.write_bytes(raw)
+    repo_git(repo, "add", *release_paths)
+    repo_git(repo, "commit", "-q", "-m", "synthetic retry static root")
+    return repo, repo_git(repo, "rev-parse", "HEAD")
+
+
+def make_authorization_repo(
+    tmp_path: Path,
+    *,
+    extra_path: bool = False,
+    wrong_status: bool = False,
+    wrong_manifest: bool = False,
+) -> tuple[Path, str]:
+    repo, static_root_commit = make_static_repo(tmp_path)
+    amendment = repo / release.AMENDMENT_PATH
+    raw = amendment.read_bytes()
+    replacement = release.NEW_STATUS_LINE
+    if wrong_status:
+        replacement = b"**Status:** **INFRA_RETRY_AUTHORIZED WITH EXTRA CHANGE**\n"
+    amendment.write_bytes(raw.replace(release.OLD_STATUS_LINE, replacement, 1))
+    manifest = release.build_infra_retry_manifest(
+        repo, static_root_commit=static_root_commit, manifest_path=MANIFEST_PATH
+    )
+    if wrong_manifest:
+        manifest["retry_constraints"]["max_provider_allocations"] = 2
+    manifest_raw = release.encode_infra_retry_manifest(manifest)
+    manifest_path = repo / MANIFEST_PATH
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_bytes(manifest_raw)
+    paths = [release.AMENDMENT_PATH, MANIFEST_PATH]
+    if extra_path:
+        extra = repo / "unexpected-provider-authority.txt"
+        extra.write_text("unexpected\n")
+        paths.append("unexpected-provider-authority.txt")
+    repo_git(repo, "add", *paths)
+    repo_git(repo, "commit", "-q", "-m", "synthetic retry authorization")
+    return repo, repo_git(repo, "rev-parse", "HEAD")
+
+
+def test_real_static_root_manifest_binds_retry_and_evidence(tmp_path: Path) -> None:
+    repo, static_root_commit = make_static_repo(tmp_path)
     document = release.build_infra_retry_manifest(
-        ROOT, static_root_commit=static_root(), manifest_path=MANIFEST_PATH
+        repo, static_root_commit=static_root_commit, manifest_path=MANIFEST_PATH
     )
     assert document["inventory_count"] == len(release.FIXED_INVENTORY_PATHS)
     assert document["original_scientific_payload"] == {
@@ -70,14 +135,116 @@ def test_real_static_root_manifest_binds_retry_and_evidence() -> None:
     )
 
 
-def test_manifest_tampering_fails_closed() -> None:
+def test_manifest_tampering_fails_closed(tmp_path: Path) -> None:
+    repo, static_root_commit = make_static_repo(tmp_path)
     document = release.build_infra_retry_manifest(
-        ROOT, static_root_commit=static_root(), manifest_path=MANIFEST_PATH
+        repo, static_root_commit=static_root_commit, manifest_path=MANIFEST_PATH
     )
     tampered = deepcopy(document)
     tampered["retry_constraints"]["max_provider_allocations"] = 2
     with pytest.raises(release.InfraRetryReleaseError, match="constraints differ"):
-        release.verify_infra_retry_manifest(ROOT, tampered)
+        release.verify_infra_retry_manifest(repo, tampered)
+
+
+def test_real_two_path_authorization_and_fresh_receipt_pass(tmp_path: Path) -> None:
+    repo, authorization = make_authorization_repo(tmp_path)
+    evidence = release.verify_infra_retry_authorization(
+        repo, authorization_commit=authorization, manifest_path=MANIFEST_PATH
+    )
+    assert evidence["static_root_commit"] == repo_git(
+        repo, "rev-parse", f"{authorization}^"
+    )
+    assert evidence["changed_paths"] == sorted((release.AMENDMENT_PATH, MANIFEST_PATH))
+    receipts = tmp_path / "receipts"
+    t0 = datetime(2026, 7, 12, 23, 10, tzinfo=timezone.utc)
+    release.create_infra_retry_receipt(
+        repo, receipts, authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH, created_at=t0,
+    )
+    verified = release.verify_infra_retry_checkout(
+        repo, authorization_commit=authorization, manifest_path=MANIFEST_PATH,
+        receipt_directory=receipts, now=t0 + timedelta(seconds=2),
+    )
+    assert verified["status"] == "PASS"
+    assert verified["receipt"]["age_seconds"] == 2
+
+
+@pytest.mark.parametrize(
+    ("mutation", "match"),
+    [
+        ({"extra_path": True}, "two-path"),
+        ({"wrong_status": True}, "status-only"),
+        ({"wrong_manifest": True}, "constraints differ"),
+    ],
+)
+def test_authorization_extra_path_status_or_manifest_fails_closed(
+    tmp_path: Path, mutation: dict[str, bool], match: str,
+) -> None:
+    repo, authorization = make_authorization_repo(tmp_path, **mutation)
+    with pytest.raises(release.InfraRetryReleaseError, match=match):
+        release.verify_infra_retry_authorization(
+            repo, authorization_commit=authorization, manifest_path=MANIFEST_PATH
+        )
+
+
+def test_stale_attached_dirty_and_extra_receipt_checkout_fail_closed(
+    tmp_path: Path,
+) -> None:
+    repo, authorization = make_authorization_repo(tmp_path)
+    receipts = tmp_path / "receipts"
+    t0 = datetime(2026, 7, 12, 23, 10, tzinfo=timezone.utc)
+    release.create_infra_retry_receipt(
+        repo, receipts, authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH, created_at=t0,
+    )
+    kwargs = {
+        "authorization_commit": authorization,
+        "manifest_path": MANIFEST_PATH,
+        "receipt_directory": receipts,
+        "now": t0 + timedelta(seconds=1),
+    }
+    with pytest.raises(release.InfraRetryReleaseError, match="stale"):
+        release.verify_infra_retry_checkout(
+            repo, **{**kwargs, "now": t0 + timedelta(seconds=301)}
+        )
+    repo_git(repo, "checkout", "-q", "-b", "attached-test")
+    with pytest.raises(release.InfraRetryReleaseError, match="on a branch"):
+        release.verify_infra_retry_checkout(repo, **kwargs)
+    repo_git(repo, "checkout", "-q", "--detach", authorization)
+    (repo / release.AMENDMENT_PATH).write_bytes(
+        (repo / release.AMENDMENT_PATH).read_bytes() + b"dirty\n"
+    )
+    with pytest.raises(release.InfraRetryReleaseError, match="dirty"):
+        release.verify_infra_retry_checkout(repo, **kwargs)
+    repo_git(repo, "restore", release.AMENDMENT_PATH)
+    (receipts / "extra.json").write_text("{}\n")
+    with pytest.raises(release.InfraRetryReleaseError, match="observed 2"):
+        release.verify_infra_retry_checkout(repo, **kwargs)
+
+
+def test_noncanonical_and_tampered_receipts_fail_closed(tmp_path: Path) -> None:
+    repo, authorization = make_authorization_repo(tmp_path)
+    receipts = tmp_path / "receipts"
+    t0 = datetime(2026, 7, 12, 23, 10, tzinfo=timezone.utc)
+    receipt_path = release.create_infra_retry_receipt(
+        repo, receipts, authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH, created_at=t0,
+    )
+    receipt = json.loads(receipt_path.read_bytes())
+    receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+    with pytest.raises(release.InfraRetryReleaseError, match="not canonical"):
+        release.verify_infra_retry_checkout(
+            repo, authorization_commit=authorization, manifest_path=MANIFEST_PATH,
+            receipt_directory=receipts, now=t0,
+        )
+    receipt["manifest_sha256"] = "0" * 64
+    receipt["payload_sha256"] = release._receipt_payload_sha256(receipt)
+    receipt_path.write_bytes(release.canonical_json_bytes(receipt) + b"\n")
+    with pytest.raises(release.InfraRetryReleaseError, match="manifest binding differs"):
+        release.verify_infra_retry_checkout(
+            repo, authorization_commit=authorization, manifest_path=MANIFEST_PATH,
+            receipt_directory=receipts, now=t0,
+        )
 
 
 def _args(tmp_path: Path) -> argparse.Namespace:
@@ -97,7 +264,7 @@ def _args(tmp_path: Path) -> argparse.Namespace:
         session_root=tmp_path / "session",
         ssh_key=tmp_path / "ssh-key",
         hf_token=tmp_path / "hf-token",
-        primary_batch_id="stage-t-infra-retry-1-test",
+        primary_batch_id=f"stage-t-infra-retry-1-{'a' * 12}-20260712T231000Z",
     )
 
 
@@ -134,6 +301,31 @@ def test_inner_mismatch_never_reaches_delegate(tmp_path: Path, monkeypatch) -> N
 
     monkeypatch.setattr(entry, "verify_stage_t_checkout", fail_inner)
     with pytest.raises(RuntimeError, match="inner mismatch"):
+        entry.run(args, delegate=delegate)
+    assert called is False
+
+
+@pytest.mark.parametrize("violation", ["batch", "outer_session", "inner_session"])
+def test_batch_or_session_boundary_violation_never_reaches_delegate(
+    tmp_path: Path, monkeypatch, violation: str,
+) -> None:
+    args = _args(tmp_path)
+    if violation == "batch":
+        args.primary_batch_id = "stage-t-infra-retry-1-bbbbbbbbbbbb-20260712T231000Z"
+    elif violation == "outer_session":
+        args.session_root = entry.EXECUTING_ROOT / "forbidden-session"
+    else:
+        args.session_root = args.inner_repo / "forbidden-session"
+    called = False
+
+    def delegate(*_args, **_kwargs):
+        nonlocal called
+        called = True
+        raise AssertionError("delegate reached")
+
+    monkeypatch.setattr(entry, "verify_infra_retry_checkout", lambda *_a, **_k: {})
+    monkeypatch.setattr(entry, "verify_stage_t_checkout", lambda *_a, **_k: {})
+    with pytest.raises(entry.InfraRetryEntrypointError):
         entry.run(args, delegate=delegate)
     assert called is False
 

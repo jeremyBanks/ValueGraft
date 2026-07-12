@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 from pathlib import Path
+import re
 import subprocess
 import sys
 from typing import Callable, Sequence
@@ -25,6 +26,9 @@ class InfraRetryEntrypointError(RuntimeError):
 
 EXECUTING_ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_URL = "https://github.com/jeremyBanks/ValueGraft.git"
+_BATCH_ID_RE = re.compile(
+    r"stage-t-infra-retry-1-([0-9a-f]{12})-[0-9]{8}T[0-9]{6}Z\Z"
+)
 
 
 def parser() -> argparse.ArgumentParser:
@@ -61,6 +65,24 @@ def _one_inner_receipt(directory: Path) -> Path:
 
 def build_delegate_command(args: argparse.Namespace) -> list[str]:
     """Verify both authorities before constructing the fixed delegate command."""
+    match = _BATCH_ID_RE.fullmatch(args.primary_batch_id)
+    if match is None or match.group(1) != args.outer_authorization_commit[:12]:
+        raise InfraRetryEntrypointError(
+            "primary batch ID does not bind outer authorization short hash"
+        )
+    session = args.session_root.resolve()
+    for label, repository in (
+        ("executing outer", EXECUTING_ROOT),
+        ("inner", args.inner_repo.resolve()),
+    ):
+        try:
+            session.relative_to(repository)
+        except ValueError:
+            pass
+        else:
+            raise InfraRetryEntrypointError(
+                f"session root may not be inside {label} repository"
+            )
     verify_infra_retry_checkout(
         EXECUTING_ROOT,
         authorization_commit=args.outer_authorization_commit,
@@ -87,7 +109,7 @@ def build_delegate_command(args: argparse.Namespace) -> list[str]:
         "--receipt-sha256", receipt_sha256,
         "--import-report", str(args.import_report),
         "--import-report-sha256", args.import_report_sha256,
-        "--session-root", str(args.session_root.resolve()),
+        "--session-root", str(session),
         "--prior-stage-t-spend-usd", CARRY_IN_CONSERVATIVE_SPEND_USD,
         "--prior-stage-t-provider-seconds", str(CARRY_IN_PROVIDER_SECONDS),
         "--max-allocation-attempts", "1",
