@@ -306,7 +306,7 @@ def test_alias_rule_has_changed_intermediate_link_and_two_or_three_hops(
         wrong.evidence["resolution_path"][2]
 
 
-def test_in_pool_text_expansion_fails_before_message_compilation(monkeypatch):
+def test_invented_ranked_authorization_cannot_reach_message_compilation(monkeypatch):
     candidate = next(recipe.enumerate_candidate_tuples("threshold_eligibility"))
     called = False
 
@@ -316,8 +316,20 @@ def test_in_pool_text_expansion_fails_before_message_compilation(monkeypatch):
         raise AssertionError("production conversation text was inspected")
 
     monkeypatch.setattr(recipe, "_messages_for_variant", forbidden)
-    with pytest.raises(recipe.RecipeError, match="requires authorization"):
-        recipe.materialize_ranked_candidate(candidate, None)  # type: ignore[arg-type]
+    assert not hasattr(recipe, "RankedMaterializationAuthorization")
+    assert not hasattr(recipe, "materialize_ranked_candidate")
+    invented = recipe._RankedMaterializationAuthorization(
+        status="PERMUTATION_COMMITTED_RANKED_CANDIDATE",
+        candidate_id=recipe.stable_candidate_id(candidate),
+        permutation_rank=1,
+        seed_manifest_sha256="a" * 64,
+        seed_git_commit="b" * 40,
+        literal_permutation_sha256="c" * 64,
+        literal_git_commit="d" * 40,
+    )
+    with pytest.raises(recipe.RecipeError, match="Git-anchored"):
+        recipe._materialize_ranked_candidate(
+            candidate, invented, capability=object())
     assert called is False
 
 
@@ -336,6 +348,18 @@ def test_out_of_pool_development_fixture_passes_static_schema(stratum, explicit)
     assert fixture["pool_member"] is False
     assert fixture["materialization_authorization"]["kind"] == \
         "OUT_OF_POOL_DEVELOPMENT_SENTINEL"
+    assert fixture["materialization_authorization"]["status"] == \
+        "OUT_OF_POOL_DEVELOPMENT_SENTINEL"
+    assert set(fixture["materialization_authorization"]) == {
+        "kind", "status", "candidate_id", "permutation_rank",
+        "seed_manifest_sha256", "seed_git_commit",
+        "literal_permutation_sha256", "literal_git_commit",
+    }
+    assert all(
+        value is None
+        for key, value in fixture["materialization_authorization"].items()
+        if key not in {"kind", "status"}
+    )
     assert fixture["execution_ready"] is False
     assert fixture["length_design"]["production_tokenizer_status"] == \
         "PENDING_NOT_MEASURED_OR_CLAIMED"
@@ -473,6 +497,79 @@ def test_carrier_forbidden_inventory_mutation_fails_closed():
     fixture["carrier_forbidden_inventory"]["contextual_names"].pop("site")
     with pytest.raises(recipe.RecipeError, match="carrier-forbidden inventory differs"):
         recipe.validate_fixture_schema(fixture)
+
+
+@pytest.mark.parametrize(
+    "mutation,match",
+    (
+        ("extra", "authorization fields differ"),
+        ("status", "development authorization status differs"),
+        ("rank", "unexpectedly contains a binding"),
+        ("literal_commit", "unexpectedly contains a binding"),
+    ),
+)
+def test_development_authorization_schema_is_exact(mutation, match):
+    fixture = _dev_fixture()
+    authorization = fixture["materialization_authorization"]
+    if mutation == "extra":
+        authorization["extra"] = True
+    elif mutation == "status":
+        authorization["status"] = "PERMUTATION_COMMITTED_RANKED_CANDIDATE"
+    elif mutation == "rank":
+        authorization["permutation_rank"] = 1
+    else:
+        authorization["literal_git_commit"] = "d" * 40
+    with pytest.raises(recipe.RecipeError, match=match):
+        recipe.validate_fixture_schema(fixture)
+
+
+@pytest.mark.parametrize(
+    "mutation,match",
+    (
+        ("extra", "authorization fields differ"),
+        ("status", "authorization status differs"),
+        ("rank_bool", "rank is invalid"),
+        ("rank_eleven", "rank is invalid"),
+        ("seed_hash", "seed_manifest_sha256 is invalid"),
+        ("seed_commit", "seed_git_commit is invalid"),
+        ("literal_hash", "literal_permutation_sha256 is invalid"),
+        ("literal_commit", "literal_git_commit is invalid"),
+    ),
+)
+def test_ranked_authorization_schema_requires_exact_hashes_and_both_commits(
+        mutation, match):
+    candidate = next(recipe.enumerate_candidate_tuples("threshold_eligibility"))
+    authorization = {
+        "kind": "PERMUTATION_COMMITTED_RANKED_CANDIDATE",
+        "status": "PERMUTATION_COMMITTED_RANKED_CANDIDATE",
+        "candidate_id": recipe.stable_candidate_id(candidate),
+        "permutation_rank": 10,
+        "seed_manifest_sha256": "a" * 64,
+        "seed_git_commit": "b" * 40,
+        "literal_permutation_sha256": "c" * 64,
+        "literal_git_commit": "d" * 40,
+    }
+    recipe._validate_materialization_authorization(
+        authorization, candidate=candidate, pool_member=True)
+    if mutation == "extra":
+        authorization["extra"] = True
+    elif mutation == "status":
+        authorization["status"] = "wrong"
+    elif mutation == "rank_bool":
+        authorization["permutation_rank"] = True
+    elif mutation == "rank_eleven":
+        authorization["permutation_rank"] = 11
+    elif mutation == "seed_hash":
+        authorization["seed_manifest_sha256"] = "A" * 64
+    elif mutation == "seed_commit":
+        authorization["seed_git_commit"] = "b" * 39
+    elif mutation == "literal_hash":
+        authorization["literal_permutation_sha256"] = "c" * 63
+    else:
+        authorization["literal_git_commit"] = "D" * 40
+    with pytest.raises(recipe.RecipeError, match=match):
+        recipe._validate_materialization_authorization(
+            authorization, candidate=candidate, pool_member=True)
 
 
 @pytest.mark.parametrize(

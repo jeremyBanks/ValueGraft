@@ -80,13 +80,13 @@ def _require_clean_integration_head() -> tuple[str, list[dict[str, str]]]:
 
 
 def _os_random_seeds() -> dict[str, str]:
-    seeds: dict[str, str] = {}
-    for stratum in STRATA:
-        while True:
-            candidate = secrets.token_bytes(16).hex()
-            if candidate not in seeds.values():
-                seeds[stratum] = candidate
-                break
+    seeds = {
+        stratum: secrets.token_bytes(16).hex()
+        for stratum in STRATA
+    }
+    if len(set(seeds.values())) != len(STRATA):
+        raise SeedWriterError(
+            "duplicate OS-random stratum seed; aborting without resampling")
     return seeds
 
 

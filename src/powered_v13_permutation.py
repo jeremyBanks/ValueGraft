@@ -6,10 +6,12 @@ The boundary is intentionally two-step:
 2. from that dedicated seed commit, write and separately commit every literal
    integer permutation.
 
-Only compact tuples and stable IDs are handled here.  This module does not
-import or call the conversation materializer.  Later replay validates the
-persisted integers structurally and therefore does not depend on the installed
-NumPy version.  A separate construction-time check replays PCG64 exactly.
+Seed/permutation construction handles only compact tuples and stable IDs.  The
+one ranked-text bridge in this module remains unreachable until it proves the
+clean pushed C0/C1/C2 Git chain and then invokes the recipe's private compiler.
+Later replay validates the persisted integers structurally and therefore does
+not depend on the installed NumPy version.  A separate construction-time check
+replays PCG64 exactly.
 """
 
 from __future__ import annotations
@@ -21,6 +23,7 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
 from typing import Any, Mapping, Sequence
 
 from powered_v13_recipe import (
@@ -30,7 +33,10 @@ from powered_v13_recipe import (
     STRATA,
     TEMPLATE_VERSION,
     CandidateTuple,
-    RankedMaterializationAuthorization,
+    _GIT_ANCHORED_MATERIALIZATION_CAPABILITY,
+    _RANKED_AUTHORIZATION_STATUS,
+    _RankedMaterializationAuthorization,
+    _materialize_ranked_candidate,
     enumerate_candidate_tuples,
     stable_candidate_id,
 )
@@ -44,6 +50,7 @@ SEED_MANIFEST_RELATIVE_PATH = (
     "data/coherent_state_powered_v13/permutation-seeds-v1.json")
 LITERAL_PERMUTATION_RELATIVE_PATH = (
     "data/coherent_state_powered_v13/literal-permutations-v1.json")
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 # These are the exact selection/randomization inputs that become immutable at
 # the seed boundary.  The later Stage-A static manifest is broader and binds
@@ -160,10 +167,6 @@ def _validated_git_sha(value: object, label: str) -> str:
     _require(isinstance(value, str) and _GIT_SHA.fullmatch(value) is not None,
              f"{label} is not a full lowercase git SHA")
     return value
-
-
-def _load_json_mapping(path: Path, label: str) -> dict[str, Any]:
-    return _load_json_mapping_bytes(path.read_bytes(), label)
 
 
 def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -631,38 +634,141 @@ def validate_construction_rng_replay(
                  f"{stratum} PCG64 construction replay differs")
 
 
-def ranked_materialization_authorization(
-    literal_permutation_path: Path,
-    seed_manifest_path: Path,
+def _git_text(*args: str) -> str:
+    try:
+        completed = subprocess.run(
+            ["git", *args], cwd=REPO_ROOT, check=True, text=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise V13PermutationError(
+            f"Git boundary command failed: {' '.join(args)}") from exc
+    return completed.stdout.strip()
+
+
+def _git_bytes(*args: str) -> bytes:
+    try:
+        completed = subprocess.run(
+            ["git", *args], cwd=REPO_ROOT, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise V13PermutationError(
+            f"Git boundary command failed: {' '.join(args)}") from exc
+    return completed.stdout
+
+
+def _single_parent(commit: str, label: str) -> str:
+    fields = _git_text("rev-list", "--parents", "-n", "1", commit).split()
+    _require(len(fields) == 2 and fields[0] == commit,
+             f"{label} must have exactly one parent")
+    return _validated_git_sha(fields[1], f"{label} parent")
+
+
+def _require_added_only(commit: str, relative: str, label: str) -> None:
+    changed = _git_text(
+        "diff-tree", "--no-commit-id", "--name-status", "--no-renames",
+        "-r", commit).splitlines()
+    _require(changed == [f"A\t{relative}"],
+             f"{label} must add only {relative}")
+
+
+def _committed_ranked_candidate(
     *,
     stratum: str,
     rank: int,
-    expected_seed_git_commit: str,
-) -> tuple[CandidateTuple, RankedMaterializationAuthorization]:
-    """Bind one compact tuple/rank to both actual immutable file hashes."""
+) -> tuple[CandidateTuple, _RankedMaterializationAuthorization]:
+    """Resolve one rank only from the clean, pushed C0/C1/C2 Git chain."""
 
     _require(stratum in STRATA, "authorization stratum is invalid")
     _require(isinstance(rank, int) and not isinstance(rank, bool)
              and 1 <= rank <= 10,
              "authorization rank is invalid")
-    literal = _load_json_mapping(
-        literal_permutation_path, "literal permutations")
-    seed_raw = seed_manifest_path.read_bytes()
+
+    root = Path(_git_text("rev-parse", "--show-toplevel")).resolve()
+    _require(root == REPO_ROOT.resolve(),
+             "materializer repository root differs from module repository")
+    _require(_git_text("branch", "--show-current") == "trunk",
+             "ranked materialization requires integration trunk")
+    _require(not _git_text(
+        "status", "--porcelain=v1", "--untracked-files=all"),
+        "ranked materialization requires a completely clean tree")
+
+    literal_commit = _validated_git_sha(
+        _git_text("rev-parse", "HEAD"), "literal_git_commit")
+    _require(_git_text("cat-file", "-t", literal_commit) == "commit",
+             "literal Git object is not a commit")
+    upstream = _validated_git_sha(
+        _git_text("rev-parse", "@{upstream}"), "upstream commit")
+    _require(upstream == literal_commit,
+             "dedicated literal-permutation HEAD is not pushed")
+    seed_commit = _single_parent(literal_commit, "literal permutation commit")
+    _require_added_only(
+        literal_commit, LITERAL_PERMUTATION_RELATIVE_PATH,
+        "literal permutation commit")
+    _require(_git_text("cat-file", "-t", seed_commit) == "commit",
+             "seed Git object is not a commit")
+    preseed_commit = _single_parent(seed_commit, "seed manifest commit")
+    _require_added_only(
+        seed_commit, SEED_MANIFEST_RELATIVE_PATH, "seed manifest commit")
+    _require(_git_text("cat-file", "-t", preseed_commit) == "commit",
+             "pre-seed Git object is not a commit")
+
+    seed_raw = _git_bytes(
+        "show", f"{seed_commit}:{SEED_MANIFEST_RELATIVE_PATH}")
+    literal_raw = _git_bytes(
+        "show", f"{literal_commit}:{LITERAL_PERMUTATION_RELATIVE_PATH}")
+    seed_path = REPO_ROOT / SEED_MANIFEST_RELATIVE_PATH
+    literal_path = REPO_ROOT / LITERAL_PERMUTATION_RELATIVE_PATH
+    _require(seed_path.read_bytes() == seed_raw,
+             "worktree seed bytes differ from committed C1 object")
+    _require(literal_path.read_bytes() == literal_raw,
+             "worktree literal bytes differ from committed C2 object")
+
+    seed_manifest = _load_json_mapping_bytes(seed_raw, "seed manifest Git object")
+    validate_seed_manifest(seed_manifest)
+    repository = seed_manifest["repository_boundary"]
+    _require(repository["preseed_git_commit"] == preseed_commit,
+             "seed commit parent differs from manifest-bound C0")
+    for record in seed_manifest["input_inventory"]:
+        relative = record["path"]
+        base_raw = _git_bytes("show", f"{preseed_commit}:{relative}")
+        _require(sha256_bytes(base_raw) == record["sha256"],
+                 f"C0 inventory Git-object hash differs: {relative}")
+        _require((REPO_ROOT / relative).read_bytes() == base_raw,
+                 f"worktree frame input differs from C0: {relative}")
+
+    literal = _load_json_mapping_bytes(
+        literal_raw, "literal permutation Git object")
     validate_literal_permutations(
-        literal, seed_raw,
-        expected_seed_git_commit=expected_seed_git_commit)
+        literal, seed_raw, expected_seed_git_commit=seed_commit)
     row = literal["strata"][stratum]["first_ten"][rank - 1]
     candidate = _candidate_from_record(stratum, row)
     identifier = stable_candidate_id(candidate)
     _require(identifier == row["stable_candidate_id"],
              "authorization candidate ID differs")
-    return candidate, RankedMaterializationAuthorization(
-        status="PERMUTATION_COMMITTED_RANKED_CANDIDATE",
+    return candidate, _RankedMaterializationAuthorization(
+        status=_RANKED_AUTHORIZATION_STATUS,
         candidate_id=identifier,
         permutation_rank=rank,
-        seed_manifest_sha256=sha256_file(seed_manifest_path),
-        seed_git_commit=expected_seed_git_commit,
-        literal_permutation_sha256=sha256_file(literal_permutation_path),
+        seed_manifest_sha256=sha256_bytes(seed_raw),
+        seed_git_commit=seed_commit,
+        literal_permutation_sha256=sha256_bytes(literal_raw),
+        literal_git_commit=literal_commit,
+    )
+
+
+def materialize_committed_ranked_candidate(
+    *,
+    stratum: str,
+    rank: int,
+) -> dict[str, Any]:
+    """Compile ranked text only after the fixed-path C0/C1/C2 proof passes."""
+
+    candidate, authorization = _committed_ranked_candidate(
+        stratum=stratum, rank=rank)
+    return _materialize_ranked_candidate(
+        candidate,
+        authorization,
+        capability=_GIT_ANCHORED_MATERIALIZATION_CAPABILITY,
     )
 
 
@@ -696,8 +802,8 @@ __all__ = [
     "build_seed_manifest",
     "build_stratum_permutation",
     "canonical_json_bytes",
+    "materialize_committed_ranked_candidate",
     "parse_json_mapping_bytes",
-    "ranked_materialization_authorization",
     "sha256_bytes",
     "sha256_file",
     "validate_construction_rng_replay",

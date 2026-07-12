@@ -18,9 +18,10 @@ The replacement implementation now has the following boundary:
 1. The seed writer starts only from a clean, pushed integration root `C0` and
    verifies the exact selection/randomization input inventory against
    `git show C0:path`.
-2. It requests exactly eight separate `secrets.token_bytes(16)` values,
-   exclusive-writes only the fixed seed path, and exits without constructing a
-   permutation or text. The content-state says `SEEDS_FROZEN...`; it does not
+2. It requests `secrets.token_bytes(16)` exactly once for each of the eight
+   strata. Any duplicate aborts after the eighth request without resampling.
+   It exclusive-writes only the fixed seed path and exits without constructing
+   a permutation or text. The content-state says `SEEDS_FROZEN...`; it does not
    claim that its own future commit already exists.
 3. The next step requires a pushed dedicated `C1` whose only changed path is
    that seed file and whose parent is the manifest-bound `C0`.
@@ -40,10 +41,19 @@ The replacement implementation now has the following boundary:
 8. Each stratum persists all 4,096 indices and all 4,096 ranked stable IDs, but
    repeats canonical tuples only for ranks 1--10. The pretty artifact is about
    2.98 MB in the synthetic full-frame test, below the 4 MB preflight bound.
-9. Only a resolver that validates both actual files may mint a materialization
-   receipt. The recipe itself independently rejects rank 11 before reaching the
-   history materializer. The receipt names `seed_manifest_sha256`, the separate
-   40-character `seed_git_commit`, and `literal_permutation_sha256`.
+9. Ranked expansion has one public entry point and no caller-supplied path,
+   hash, or commit parameter. It requires a clean pushed `trunk` at a dedicated
+   literal-only `C2`, proves its parent is the dedicated seed-only `C1`, proves
+   `C1`'s parent is the manifest-bound `C0`, reads both fixed files through
+   `git show`, matches their worktree bytes, rehashes every `C0` inventory blob,
+   and structurally validates the literal before resolving ranks 1--10.
+10. The recipe's ranked compiler and receipt type are private and additionally
+    capability-gated. The receipt separately records `seed_manifest_sha256`,
+    `seed_git_commit`, `literal_permutation_sha256`, and
+    `literal_git_commit`. Persisted fixture validation requires the exact
+    authorization fields, status, candidate ID, integer rank at most ten, two
+    lowercase SHA-256 values, and two real-shape Git commit IDs; development
+    sentinels carry the same binding fields with null values and reject extras.
 
 ## Independent golden and tests
 
@@ -56,27 +66,38 @@ and the ranked-ID-array SHA is
 The independent audit supplied these values before the replacement tests were
 written; the new implementation agrees exactly.
 
-The focused suite has 17 tests, including a real synthetic bare-remote Git
-sequence `C0 -> seed-only C1 -> literal output`, exact eight-by-16-byte entropy
-calls, duplicate/extra/forged-field rejection, NumPy-free structural replay,
-full 8x4,096 bijection/global-ID validation, rank-10 acceptance/rank-11
-pre-text rejection, compact-size bound, and exclusive-create non-overwrite.
+The focused permutation suite has 24 test cases, including a real synthetic
+bare-remote Git sequence `C0 -> seed-only C1 -> literal-only C2`, exact
+eight-by-16-byte entropy calls plus duplicate abort without resampling,
+duplicate/extra/forged-field rejection, NumPy-free structural replay, full
+8x4,096 bijection/global-ID validation, rank-10 acceptance/rank-11 pre-Git
+rejection, compact-size bound, exclusive-create non-overwrite, and deliberate
+uncommitted, unpushed, dirty, non-dedicated-C1, non-dedicated-C2,
+manifest-parent, and C0-inventory failures.
+The success path monkeypatches the private compiler with a non-text sentinel;
+no in-pool history is materialized. The recipe suite separately exercises
+invented-receipt capability rejection and strict persisted authorization
+schemas for both ranked and development records.
 
 Implementation hashes at disposition:
 
 - `src/powered_v13_permutation.py`:
-  `26634e8cb03264467c08fb50838982f6cfc1f1ce7b4db102d270f3a40257dde1`
+  `470daa8e794dd077cadb3487568af7bc4c8b68b822b871839a8c5abf87e3b8ce`
+- `src/powered_v13_recipe.py`:
+  `94913b6800de0b17371c22d6c15083af8e2418f555cb074e7266836e6573c0cd`
 - seed writer:
-  `cd9da951ef4c569a9aa19e75f8198e6acbbd16df83e14156950ceccdd1de61f9`
+  `1d7bf230ad46f57577147684ba336ecbde2b8e95de57a55db6dc395161d16cc1`
 - literal writer:
-  `6b986a9733985da1ab0b73885ca036bf2ea9f73cca1bde902dbdfc6ad25a35a3`
+  `bf098259719c1833236b526b6893a4f7337f689f9f086d066a9bf830c0cc86f9`
 - focused tests:
-  `2993175abb6de118a3313bd379faba9c0519e54acebed9986013308bb147b37c`
+  `a1b17cd1574b6591156e107aede727b1a0921aad893be7dd9e3e1af708063fce`
+- recipe tests:
+  `c51b2427cf6415bc305d4d199dbc2cb27a7e2eb6311f7c65f4a97f0adfb5b73a`
 
 ## Remaining boundary
 
-This is not permission to request the real seeds. The repaired implementation
-still needs an independent re-audit at its committed hash, and the tokenizer,
-content-review, harness, release, corruption, and build-ladder gates must pass
-before `C0`. Any failure after real seeds freezes the frame and makes the
-candidate ineligible or terminates v13; it is not repaired by resampling.
+This is not permission to request the real seeds. The repair commit still needs
+independent review at its committed hash, and the tokenizer, content-review,
+harness, release, corruption, and build-ladder gates must pass before `C0`.
+Any failure after real seeds freezes the frame and makes the candidate
+ineligible or terminates v13; it is not repaired by resampling.

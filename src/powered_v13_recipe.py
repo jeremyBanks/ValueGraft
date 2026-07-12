@@ -6,7 +6,8 @@ algorithm, pure rule evaluators, and the conversation-template compiler.
 
 The randomization boundary is deliberate: enumerating and auditing the compact
 parameter frame does *not* materialize any in-pool conversation.  In-pool text
-can be compiled only with an explicit post-permutation authorization record.
+can be compiled only through the fixed-path Git-anchored permutation entry
+point after its dedicated literal-permutation commit.
 Tests exercise the templates with component values that are outside every
 production pool.
 
@@ -72,13 +73,13 @@ class RuleEvaluation:
 
 
 @dataclass(frozen=True, slots=True)
-class RankedMaterializationAuthorization:
-    """Receipt required before any in-pool tuple can become conversation text.
+class _RankedMaterializationAuthorization:
+    """Private receipt required before an in-pool tuple becomes text.
 
-    This record does not create or inspect a permutation.  A later release
-    verifier is responsible for binding its two hashes to the committed seed
-    and literal permutation and for establishing that candidate_id is truly at
-    permutation_rank.  The compiler merely refuses unreceipted expansion.
+    The Git-anchored permutation entry point constructs it only after binding
+    both fixed files and their real C1/C2 objects and establishing that the
+    candidate truly occupies the requested rank.  Stage A later revalidates
+    these persisted bindings as part of release.
     """
 
     status: str
@@ -87,6 +88,29 @@ class RankedMaterializationAuthorization:
     seed_manifest_sha256: str
     seed_git_commit: str
     literal_permutation_sha256: str
+    literal_git_commit: str
+
+
+_RANKED_AUTHORIZATION_STATUS = "PERMUTATION_COMMITTED_RANKED_CANDIDATE"
+_DEVELOPMENT_AUTHORIZATION_STATUS = "OUT_OF_POOL_DEVELOPMENT_SENTINEL"
+_AUTHORIZATION_BINDING_FIELDS = (
+    "candidate_id",
+    "permutation_rank",
+    "seed_manifest_sha256",
+    "seed_git_commit",
+    "literal_permutation_sha256",
+    "literal_git_commit",
+)
+_AUTHORIZATION_FIELDS = frozenset({
+    "kind",
+    "status",
+    *_AUTHORIZATION_BINDING_FIELDS,
+})
+
+# A syntactically plausible receipt is not authority to inspect ranked text.
+# The Git-anchored permutation module imports this private capability and calls
+# the private compiler only after it has verified the real C0/C1/C2 objects.
+_GIT_ANCHORED_MATERIALIZATION_CAPABILITY = object()
 
 
 @dataclass(frozen=True, slots=True)
@@ -1059,7 +1083,7 @@ def _messages_for_variant(candidate: CandidateTuple, variant: str,
 
 
 def _authorization_record(candidate: CandidateTuple,
-                          authorization: RankedMaterializationAuthorization | None,
+                          authorization: _RankedMaterializationAuthorization | None,
                           *, development: bool) -> dict[str, Any]:
     identifier = stable_candidate_id(candidate)
     if development:
@@ -1068,31 +1092,35 @@ def _authorization_record(candidate: CandidateTuple,
         _require(authorization is None,
                  "development sentinel must not carry a production authorization")
         return {
-            "kind": "OUT_OF_POOL_DEVELOPMENT_SENTINEL",
-            "permutation_rank": None,
-            "seed_manifest_sha256": None,
-            "seed_git_commit": None,
-            "literal_permutation_sha256": None,
+            "kind": _DEVELOPMENT_AUTHORIZATION_STATUS,
+            "status": _DEVELOPMENT_AUTHORIZATION_STATUS,
+            **{field: None for field in _AUTHORIZATION_BINDING_FIELDS},
         }
     _require(is_pool_member(candidate), "ranked expansion requires an in-pool tuple")
     _require(authorization is not None, "in-pool text expansion requires authorization")
-    _require(authorization.status == "PERMUTATION_COMMITTED_RANKED_CANDIDATE",
+    _require(authorization.status == _RANKED_AUTHORIZATION_STATUS,
              "materialization authorization status differs")
     _require(authorization.candidate_id == identifier,
              "authorization candidate ID differs")
-    _require(1 <= authorization.permutation_rank <= 10,
+    _require(isinstance(authorization.permutation_rank, int)
+             and not isinstance(authorization.permutation_rank, bool)
+             and 1 <= authorization.permutation_rank <= 10,
              "only ranks one through ten may be materialized")
     for value in (authorization.seed_manifest_sha256,
                   authorization.literal_permutation_sha256):
-        _require(re.fullmatch(r"[0-9a-f]{64}", value) is not None,
+        _require(isinstance(value, str)
+                 and re.fullmatch(r"[0-9a-f]{64}", value) is not None,
                  "authorization hash is not lowercase SHA-256")
-    _require(re.fullmatch(r"[0-9a-f]{40}", authorization.seed_git_commit)
-             is not None, "authorization seed git commit is invalid")
+    for value in (authorization.seed_git_commit,
+                  authorization.literal_git_commit):
+        _require(isinstance(value, str)
+                 and re.fullmatch(r"[0-9a-f]{40}", value) is not None,
+                 "authorization git commit is invalid")
     return {"kind": authorization.status, **asdict(authorization)}
 
 
 def _materialize(candidate: CandidateTuple,
-                 authorization: RankedMaterializationAuthorization | None,
+                 authorization: _RankedMaterializationAuthorization | None,
                  *, development: bool) -> dict[str, Any]:
     mode, skin, labels, nonfocal = _resolve_components(candidate)
     authorization_record = _authorization_record(
@@ -1234,17 +1262,21 @@ def materialize_development_sentinel(stratum_id: str, *, explicit: bool) -> dict
     )
 
 
-def materialize_ranked_candidate(
+def _materialize_ranked_candidate(
     candidate: CandidateTuple,
-    authorization: RankedMaterializationAuthorization,
+    authorization: _RankedMaterializationAuthorization,
+    *,
+    capability: object,
 ) -> dict[str, Any]:
-    """Compile one already-ranked tuple after an external permutation commit.
+    """Private compiler reached only from the Git-anchored C2 entry point.
 
-    Calling this function is intentionally outside the foundation test suite;
-    doing so before the real seed and literal permutation are committed would
-    violate the sampling protocol.
+    The capability check occurs before component resolution or message
+    compilation, so an invented authorization object alone cannot expose any
+    in-pool conversation text.
     """
 
+    _require(capability is _GIT_ANCHORED_MATERIALIZATION_CAPABILITY,
+             "ranked expansion requires the Git-anchored materializer")
     return _materialize(candidate, authorization, development=False)
 
 
@@ -1257,6 +1289,48 @@ def _messages(fixture: Mapping[str, Any], variant: str) -> list[Mapping[str, Any
 def _nonprefix(left: str, right: str) -> bool:
     a, b = left.casefold(), right.casefold()
     return a != b and not a.startswith(b) and not b.startswith(a)
+
+
+def _validate_materialization_authorization(
+    value: object,
+    *,
+    candidate: CandidateTuple,
+    pool_member: bool,
+) -> None:
+    _require(isinstance(value, Mapping),
+             "materialization authorization is not a mapping")
+    _require(set(value) == _AUTHORIZATION_FIELDS,
+             "materialization authorization fields differ")
+    if pool_member:
+        _require(value.get("kind") == _RANKED_AUTHORIZATION_STATUS,
+                 "materialization authorization kind differs")
+        _require(value.get("status") == _RANKED_AUTHORIZATION_STATUS,
+                 "materialization authorization status differs")
+        _require(value.get("candidate_id") == stable_candidate_id(candidate),
+                 "materialization authorization candidate ID differs")
+        rank = value.get("permutation_rank")
+        _require(isinstance(rank, int) and not isinstance(rank, bool)
+                 and 1 <= rank <= 10,
+                 "materialization authorization rank is invalid")
+        for field in ("seed_manifest_sha256", "literal_permutation_sha256"):
+            digest = value.get(field)
+            _require(isinstance(digest, str)
+                     and re.fullmatch(r"[0-9a-f]{64}", digest) is not None,
+                     f"materialization authorization {field} is invalid")
+        for field in ("seed_git_commit", "literal_git_commit"):
+            commit = value.get(field)
+            _require(isinstance(commit, str)
+                     and re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
+                     f"materialization authorization {field} is invalid")
+        return
+
+    _require(value.get("kind") == _DEVELOPMENT_AUTHORIZATION_STATUS,
+             "development authorization kind differs")
+    _require(value.get("status") == _DEVELOPMENT_AUTHORIZATION_STATUS,
+             "development authorization status differs")
+    _require(all(value.get(field) is None
+                 for field in _AUTHORIZATION_BINDING_FIELDS),
+             "development authorization unexpectedly contains a binding")
 
 
 def validate_fixture_schema(fixture: Mapping[str, Any]) -> dict[str, Any]:
@@ -1292,8 +1366,16 @@ def validate_fixture_schema(fixture: Mapping[str, Any]) -> dict[str, Any]:
         logic_pack_id=str(canonical_tuple["logic_pack_id"]),
         nonfocal_tail_pack_id=str(canonical_tuple["nonfocal_tail_pack_id"]),
     )
+    pool_member = is_pool_member(candidate)
+    _require(fixture.get("pool_member") is pool_member,
+             "fixture pool-member flag differs")
     _require(fixture.get("stable_candidate_id") == stable_candidate_id(candidate),
              "stable candidate ID differs")
+    _validate_materialization_authorization(
+        fixture.get("materialization_authorization"),
+        candidate=candidate,
+        pool_member=pool_member,
+    )
     resolved_mode, resolved_skin, resolved_labels, resolved_nonfocal = \
         _resolve_components(candidate)
     _require(fixture.get("resolution_mode") == resolved_mode,
@@ -1479,7 +1561,6 @@ __all__ = [
     "POOL_SIZE_PER_STRATUM",
     "RECIPE_SCHEMA",
     "RESOLUTION_MODES",
-    "RankedMaterializationAuthorization",
     "RecipeError",
     "STRATA",
     "TEMPLATE_VERSION",
@@ -1491,7 +1572,6 @@ __all__ = [
     "evaluate_rule",
     "is_pool_member",
     "materialize_development_sentinel",
-    "materialize_ranked_candidate",
     "recipe_definition",
     "stable_candidate_id",
     "validate_fixture_schema",

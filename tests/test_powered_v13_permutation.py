@@ -88,6 +88,39 @@ def _pushed_preseed_repo(tmp_path: Path) -> tuple[Path, Path]:
     return repo, remote
 
 
+def _write_pushed_seed_c1(repo: Path) -> tuple[bytes, str, object]:
+    script = _load_script("write_powered_v13_seed_manifest")
+    script.REPO = repo
+    assert script.main([]) == 0
+    seed_path = repo / permutation.SEED_MANIFEST_RELATIVE_PATH
+    seed_raw = seed_path.read_bytes()
+    _git(repo, "add", permutation.SEED_MANIFEST_RELATIVE_PATH)
+    _git(repo, "commit", "-m", "freeze synthetic seeds")
+    _git(repo, "push", "origin", "trunk")
+    return seed_raw, _git(repo, "rev-parse", "HEAD"), script
+
+
+def _write_literal_worktree(repo: Path) -> tuple[Path, object]:
+    script = _load_script("write_powered_v13_literal_permutations")
+    script.REPO = repo
+    assert script.main([]) == 0
+    return repo / permutation.LITERAL_PERMUTATION_RELATIVE_PATH, script
+
+
+def _commit_literal_c2(repo: Path, *, push: bool,
+                       extra_path: str | None = None) -> str:
+    _git(repo, "add", permutation.LITERAL_PERMUTATION_RELATIVE_PATH)
+    if extra_path is not None:
+        path = repo / extra_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("extra C2 content\n")
+        _git(repo, "add", extra_path)
+    _git(repo, "commit", "-m", "freeze synthetic literal permutations")
+    if push:
+        _git(repo, "push", "origin", "trunk")
+    return _git(repo, "rev-parse", "HEAD")
+
+
 @pytest.fixture(scope="module")
 def seed_manifest() -> dict:
     return permutation.build_seed_manifest(permutation.SeedManifestInput(
@@ -113,12 +146,16 @@ def literal(seed_raw: bytes) -> dict:
     )
 
 
-def test_module_is_pre_text_and_uses_lazy_numpy_import():
+def test_construction_is_pre_text_and_git_materializer_has_no_binding_inputs():
     source = inspect.getsource(permutation)
-    assert "materialize_ranked_candidate" not in source
     assert "materialize_development_sentinel" not in source
+    assert "_messages_for_variant" not in source
     assert "import numpy as np" not in source
     assert "def _numpy_module" in source
+    signature = inspect.signature(
+        permutation.materialize_committed_ranked_candidate)
+    assert list(signature.parameters) == ["stratum", "rank"]
+    assert not hasattr(permutation, "ranked_materialization_authorization")
 
 
 def test_seed_manifest_binds_exact_frame_entropy_and_no_later_state(
@@ -266,44 +303,15 @@ def test_literal_rejects_extra_field_wrong_seed_bytes_and_wrong_commit(
             literal, seed_raw, expected_seed_git_commit="c" * 40)
 
 
-def test_rank_resolver_binds_actual_files_and_hard_caps_at_ten(
-        tmp_path: Path, literal: dict, seed_raw: bytes):
-    seed_path = tmp_path / "seeds.json"
-    literal_path = tmp_path / "literal.json"
-    seed_path.write_bytes(seed_raw)
-    literal_path.write_bytes(_pretty_json(literal))
-    candidate, authorization = permutation.ranked_materialization_authorization(
-        literal_path, seed_path, stratum=recipe.STRATA[0], rank=10,
-        expected_seed_git_commit=TEST_SEED_COMMIT)
-    assert authorization.candidate_id == recipe.stable_candidate_id(candidate)
-    assert authorization.permutation_rank == 10
-    assert authorization.seed_manifest_sha256 == permutation.sha256_file(seed_path)
-    assert authorization.seed_git_commit == TEST_SEED_COMMIT
-    assert authorization.literal_permutation_sha256 == permutation.sha256_file(
-        literal_path)
+def test_git_materializer_hard_caps_rank_before_git_or_text(monkeypatch):
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("Git or history materializer was reached")
+
+    monkeypatch.setattr(permutation, "_git_text", forbidden)
+    monkeypatch.setattr(permutation, "_materialize_ranked_candidate", forbidden)
     with pytest.raises(permutation.V13PermutationError, match="rank is invalid"):
-        permutation.ranked_materialization_authorization(
-            literal_path, seed_path, stratum=recipe.STRATA[0], rank=11,
-            expected_seed_git_commit=TEST_SEED_COMMIT)
-
-
-def test_recipe_rank_eleven_rejects_before_any_history_text(monkeypatch):
-    candidate = next(recipe.enumerate_candidate_tuples(recipe.STRATA[0]))
-    authorization = recipe.RankedMaterializationAuthorization(
-        status="PERMUTATION_COMMITTED_RANKED_CANDIDATE",
-        candidate_id=recipe.stable_candidate_id(candidate),
-        permutation_rank=11,
-        seed_manifest_sha256="a" * 64,
-        seed_git_commit="b" * 40,
-        literal_permutation_sha256="c" * 64,
-    )
-
-    def forbidden_text(*_args, **_kwargs):
-        raise AssertionError("history materializer was reached")
-
-    monkeypatch.setattr(recipe, "_messages_for_variant", forbidden_text)
-    with pytest.raises(recipe.RecipeError, match="ranks one through ten"):
-        recipe.materialize_ranked_candidate(candidate, authorization)
+        permutation.materialize_committed_ranked_candidate(
+            stratum=recipe.STRATA[0], rank=11)
 
 
 def test_exclusive_writer_never_overwrites(tmp_path: Path, seed_manifest: dict):
@@ -332,35 +340,36 @@ def test_seed_generator_requests_exactly_eight_independent_16_byte_values(
     assert len(set(seeds.values())) == len(recipe.STRATA)
 
 
-def test_real_git_object_seed_then_permutation_boundary(
+def test_seed_generator_aborts_duplicate_after_exactly_eight_requests(
+        monkeypatch: pytest.MonkeyPatch):
+    script = _load_script("write_powered_v13_seed_manifest")
+    calls: list[int] = []
+
+    def duplicate_entropy(width: int) -> bytes:
+        calls.append(width)
+        value = 1 if len(calls) in (1, 8) else len(calls)
+        return value.to_bytes(width, "big")
+
+    monkeypatch.setattr(script.secrets, "token_bytes", duplicate_entropy)
+    with pytest.raises(script.SeedWriterError, match="without resampling"):
+        script._os_random_seeds()
+    assert calls == [16] * len(recipe.STRATA)
+
+
+def test_real_git_object_c0_c1_c2_reaches_only_nontext_internal_compiler(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys):
     repo, _remote = _pushed_preseed_repo(tmp_path)
-    seed_script = _load_script("write_powered_v13_seed_manifest")
-    literal_script = _load_script("write_powered_v13_literal_permutations")
-    monkeypatch.setattr(seed_script, "REPO", repo)
-    monkeypatch.setattr(literal_script, "REPO", repo)
-
-    assert seed_script.main([]) == 0
+    seed_raw, seed_commit, _seed_script = _write_pushed_seed_c1(repo)
     seed_path = repo / permutation.SEED_MANIFEST_RELATIVE_PATH
     assert seed_path.exists()
-    seed_raw = seed_path.read_bytes()
     assert not (repo / permutation.LITERAL_PERMUTATION_RELATIVE_PATH).exists()
-    assert _git(repo, "status", "--short") == (
-        f"?? {permutation.SEED_MANIFEST_RELATIVE_PATH}")
+    assert _git(repo, "status", "--short") == ""
 
-    _git(repo, "add", permutation.SEED_MANIFEST_RELATIVE_PATH)
-    _git(repo, "commit", "-m", "freeze synthetic seeds")
-    _git(repo, "push", "origin", "trunk")
-    seed_commit = _git(repo, "rev-parse", "HEAD")
-    raw_from_git, manifest, verified_commit = (
-        literal_script._verify_dedicated_seed_head())
-    assert raw_from_git == seed_raw
-    assert verified_commit == seed_commit
+    literal_path, _literal_script = _write_literal_worktree(repo)
+    manifest = permutation.parse_json_mapping_bytes(
+        seed_raw, "synthetic seed manifest")
     assert manifest["repository_boundary"]["preseed_git_commit"] == _git(
-        repo, "rev-parse", "HEAD^")
-
-    assert literal_script.main([]) == 0
-    literal_path = repo / permutation.LITERAL_PERMUTATION_RELATIVE_PATH
+        repo, "rev-parse", f"{seed_commit}^")
     assert literal_path.exists() and literal_path.stat().st_size < 4_000_000
     literal = permutation.parse_json_mapping_bytes(
         literal_path.read_bytes(), "synthetic literal")
@@ -368,9 +377,172 @@ def test_real_git_object_seed_then_permutation_boundary(
         literal, seed_raw, expected_seed_git_commit=seed_commit)
     permutation.validate_construction_rng_replay(
         literal, seed_raw, expected_seed_git_commit=seed_commit)
+    literal_commit = _commit_literal_c2(repo, push=True)
+    monkeypatch.setattr(permutation, "REPO_ROOT", repo)
+    reached: dict[str, object] = {}
+
+    def nontext_compiler(candidate, authorization, *, capability):
+        reached.update({
+            "candidate": candidate,
+            "authorization": authorization,
+            "capability": capability,
+        })
+        return {"status": "NON_TEXT_INTERNAL_COMPILER_REACHED"}
+
+    monkeypatch.setattr(
+        permutation, "_materialize_ranked_candidate", nontext_compiler)
+    result = permutation.materialize_committed_ranked_candidate(
+        stratum=recipe.STRATA[0], rank=10)
+    assert result == {"status": "NON_TEXT_INTERNAL_COMPILER_REACHED"}
+    candidate = reached["candidate"]
+    authorization = reached["authorization"]
+    assert authorization.candidate_id == recipe.stable_candidate_id(candidate)
+    assert authorization.permutation_rank == 10
+    assert authorization.seed_manifest_sha256 == permutation.sha256_bytes(seed_raw)
+    assert authorization.seed_git_commit == seed_commit
+    assert authorization.literal_permutation_sha256 == permutation.sha256_file(
+        literal_path)
+    assert authorization.literal_git_commit == literal_commit
+    assert reached["capability"] is recipe._GIT_ANCHORED_MATERIALIZATION_CAPABILITY
     output = capsys.readouterr().out
     assert "ranked_conversation_text_materialized" in output
     assert '"ranked_conversation_text_materialized": false' in output
+
+
+def test_uncommitted_arbitrary_seed_literal_pair_cannot_resolve(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    repo, _remote = _pushed_preseed_repo(tmp_path)
+    _write_pushed_seed_c1(repo)
+    literal_path, _script = _write_literal_worktree(repo)
+    literal_path.write_bytes(literal_path.read_bytes() + b" ")
+    monkeypatch.setattr(permutation, "REPO_ROOT", repo)
+    monkeypatch.setattr(
+        permutation, "_materialize_ranked_candidate",
+        lambda *_args, **_kwargs: pytest.fail("text compiler was reached"))
+    with pytest.raises(permutation.V13PermutationError, match="clean tree"):
+        permutation.materialize_committed_ranked_candidate(
+            stratum=recipe.STRATA[0], rank=1)
+
+
+def test_unpushed_literal_c2_cannot_resolve(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    repo, _remote = _pushed_preseed_repo(tmp_path)
+    _write_pushed_seed_c1(repo)
+    _write_literal_worktree(repo)
+    _commit_literal_c2(repo, push=False)
+    monkeypatch.setattr(permutation, "REPO_ROOT", repo)
+    monkeypatch.setattr(
+        permutation, "_materialize_ranked_candidate",
+        lambda *_args, **_kwargs: pytest.fail("text compiler was reached"))
+    with pytest.raises(permutation.V13PermutationError, match="not pushed"):
+        permutation.materialize_committed_ranked_candidate(
+            stratum=recipe.STRATA[0], rank=1)
+
+
+def test_non_dedicated_literal_c2_cannot_resolve(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    repo, _remote = _pushed_preseed_repo(tmp_path)
+    _write_pushed_seed_c1(repo)
+    _write_literal_worktree(repo)
+    _commit_literal_c2(repo, push=True, extra_path="extra-c2.txt")
+    monkeypatch.setattr(permutation, "REPO_ROOT", repo)
+    monkeypatch.setattr(
+        permutation, "_materialize_ranked_candidate",
+        lambda *_args, **_kwargs: pytest.fail("text compiler was reached"))
+    with pytest.raises(permutation.V13PermutationError,
+                       match="must add only"):
+        permutation.materialize_committed_ranked_candidate(
+            stratum=recipe.STRATA[0], rank=1)
+
+
+def test_non_dedicated_seed_c1_cannot_resolve(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    repo, _remote = _pushed_preseed_repo(tmp_path)
+    seed_script = _load_script("write_powered_v13_seed_manifest")
+    seed_script.REPO = repo
+    assert seed_script.main([]) == 0
+    seed_path = repo / permutation.SEED_MANIFEST_RELATIVE_PATH
+    seed_raw = seed_path.read_bytes()
+    (repo / "extra-c1.txt").write_text("extra C1 content\n")
+    _git(repo, "add", permutation.SEED_MANIFEST_RELATIVE_PATH, "extra-c1.txt")
+    _git(repo, "commit", "-m", "non-dedicated synthetic seed commit")
+    _git(repo, "push", "origin", "trunk")
+    seed_commit = _git(repo, "rev-parse", "HEAD")
+    literal = permutation.build_literal_permutations(
+        seed_raw,
+        seed_git_commit=seed_commit,
+        observed_utc="2026-07-12T18:01:00Z",
+    )
+    permutation.write_json_exclusive(
+        repo / permutation.LITERAL_PERMUTATION_RELATIVE_PATH, literal)
+    _commit_literal_c2(repo, push=True)
+    monkeypatch.setattr(permutation, "REPO_ROOT", repo)
+    monkeypatch.setattr(
+        permutation, "_materialize_ranked_candidate",
+        lambda *_args, **_kwargs: pytest.fail("text compiler was reached"))
+    with pytest.raises(permutation.V13PermutationError,
+                       match="seed manifest commit must add only"):
+        permutation.materialize_committed_ranked_candidate(
+            stratum=recipe.STRATA[0], rank=1)
+
+
+@pytest.mark.parametrize(
+    "mutation,match",
+    (
+        ("parent", "manifest-bound C0"),
+        ("inventory", "C0 inventory Git-object hash differs"),
+    ),
+)
+def test_git_materializer_rejects_forged_c0_boundary(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation, match):
+    repo, _remote = _pushed_preseed_repo(tmp_path)
+    seed_script = _load_script("write_powered_v13_seed_manifest")
+    seed_script.REPO = repo
+    assert seed_script.main([]) == 0
+    seed_path = repo / permutation.SEED_MANIFEST_RELATIVE_PATH
+    manifest = permutation.parse_json_mapping_bytes(
+        seed_path.read_bytes(), "synthetic seed manifest")
+    if mutation == "parent":
+        manifest["repository_boundary"]["preseed_git_commit"] = "a" * 40
+    else:
+        manifest["input_inventory"][0]["sha256"] = "0" * 64
+    seed_path.write_bytes(_pretty_json(manifest))
+    seed_raw = seed_path.read_bytes()
+    _git(repo, "add", permutation.SEED_MANIFEST_RELATIVE_PATH)
+    _git(repo, "commit", "-m", "forged synthetic seed boundary")
+    _git(repo, "push", "origin", "trunk")
+    seed_commit = _git(repo, "rev-parse", "HEAD")
+    literal = permutation.build_literal_permutations(
+        seed_raw,
+        seed_git_commit=seed_commit,
+        observed_utc="2026-07-12T18:01:00Z",
+    )
+    permutation.write_json_exclusive(
+        repo / permutation.LITERAL_PERMUTATION_RELATIVE_PATH, literal)
+    _commit_literal_c2(repo, push=True)
+    monkeypatch.setattr(permutation, "REPO_ROOT", repo)
+    monkeypatch.setattr(
+        permutation, "_materialize_ranked_candidate",
+        lambda *_args, **_kwargs: pytest.fail("text compiler was reached"))
+    with pytest.raises(permutation.V13PermutationError, match=match):
+        permutation.materialize_committed_ranked_candidate(
+            stratum=recipe.STRATA[0], rank=1)
+
+
+def test_dirty_pushed_literal_c2_cannot_resolve(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    repo, _remote = _pushed_preseed_repo(tmp_path)
+    _write_pushed_seed_c1(repo)
+    _write_literal_worktree(repo)
+    _commit_literal_c2(repo, push=True)
+    (repo / "untracked-after-c2.txt").write_text("dirty\n")
+    monkeypatch.setattr(permutation, "REPO_ROOT", repo)
+    monkeypatch.setattr(
+        permutation, "_materialize_ranked_candidate",
+        lambda *_args, **_kwargs: pytest.fail("text compiler was reached"))
+    with pytest.raises(permutation.V13PermutationError, match="clean tree"):
+        permutation.materialize_committed_ranked_candidate(
+            stratum=recipe.STRATA[0], rank=1)
 
 
 def test_seed_writer_rejects_dirty_untracked_preseed_repo(

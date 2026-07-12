@@ -65,22 +65,23 @@ def _verify_dedicated_seed_head() -> tuple[bytes, dict, str]:
     head = _git("rev-parse", "HEAD")
     if _git("rev-parse", "@{upstream}") != head:
         raise PermutationWriterError("dedicated seed HEAD is not pushed")
-    changed = set(filter(None, _git(
-        "diff-tree", "--no-commit-id", "--name-only", "-r", head).splitlines()))
-    if changed != {relative}:
+    changed = _git(
+        "diff-tree", "--no-commit-id", "--name-status", "--no-renames",
+        "-r", head).splitlines()
+    if changed != [f"A\t{relative}"]:
         raise PermutationWriterError(
-            "HEAD must be a dedicated seed-manifest-only commit")
-    seed_commit = _git("log", "-1", "--format=%H", "--", relative)
-    if seed_commit != head:
+            "HEAD must add only the seed manifest in a dedicated commit")
+    parents = _git("rev-list", "--parents", "-n", "1", head).split()
+    if len(parents) != 2 or parents[0] != head:
         raise PermutationWriterError(
-            "seed manifest was not introduced by the current HEAD")
+            "dedicated seed HEAD must have exactly one parent")
     seed_raw = _git_bytes("show", f"{head}:{relative}")
     if absolute.read_bytes() != seed_raw:
         raise PermutationWriterError(
             "worktree seed bytes differ from the committed git object")
     seed_manifest = parse_json_mapping_bytes(seed_raw, "seed manifest git object")
     validate_seed_manifest(seed_manifest)
-    parent = _git("rev-parse", f"{head}^")
+    parent = parents[1]
     boundary = seed_manifest["repository_boundary"]
     if boundary["preseed_git_commit"] != parent:
         raise PermutationWriterError(
