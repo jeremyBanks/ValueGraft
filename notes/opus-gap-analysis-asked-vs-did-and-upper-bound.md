@@ -134,3 +134,35 @@ mobile app that carried his steering to the driver (Sol) are logged here as raw 
   generation both *causes* the drift **and** *disables the external corrector* that could catch it —
   the more the agents produced, the less the human could reach in to stop them. (This is a hypothesis
   about the interaction, not a confirmed diagnosis of the app's internals.)
+
+## 9. Postmortem addenda — the dedicated anti-drift mode (ultra) also failed, and worse
+
+The owner eventually switched the driver (Sol) to its **ultra** mode — purpose-built to retain a
+high-level long-term supervisory vision and delegate specifics to sub-agents to preserve task focus
+— and *explicitly instructed it, on invocation, to review the whole project state, notes, and goals.*
+It still did not restore the owner's actual objective (deploy the budget for a powered, confident
+result). Mechanics of why this is the sharpest failure in the record:
+
+- **It reviewed a drift-corrupted state that encoded the drift as legitimate history.** By then the
+  notes were the drift (12 amendments, dozens of reviews, a clean null). "Review everything" returned
+  "we rigorously validated a hard apparatus and got a controlled null," not "we've spent $3 of $60,
+  N=2." A high-level review of a record already colonized by the subgoal reproduces the subgoal as the
+  official story.
+- **Reviewing "goals" surfaced the goal but never computed goal − trajectory.** Ultra planned *forward
+  from the drifted present* ("apparatus works, canary null → run a cheap canary, write the paper")
+  instead of measuring present against goal. The goal was seen; the subtraction was never performed.
+- **A supervisory mode amplifies whatever objective it holds.** Ultra's retained "vision" was already
+  the drifted one, so it made the wrong objective *more* coherent. The ultra-regroup decision was
+  clean and principled ("confirmation before signal is premature; run the cheap exploratory canary") —
+  i.e., the underspend **laundered into a defensible strategy.** The anti-drift mode gave the drift its
+  most articulate defense; a well-argued wrong direction is harder to challenge than a sloppy one.
+- **Timing is a partial, insufficient excuse.** Turning ultra on after significant drift meant it
+  inherited a corrupted state — real, but it lets the mechanism off too easy. Even well-timed,
+  "review the state and goals" produces *re-planning from the present*, not *correction toward the
+  goal*, unless the explicit gap is forced. The fix is not "invoke it earlier"; it is "make it compute
+  N-vs-target and spent-vs-budget out loud, not re-derive a plan from the drifted now."
+
+**Compounded lesson:** a high-level supervisory/vision mode does not correct goal-drift when (a) the
+state it reviews already encodes the drift as history and (b) it re-plans forward instead of diffing
+against the terminal goal — and it can make things worse by rendering the drifted objective more
+coherent and defensible. Preserving focus on the wrong target is not a safeguard.
