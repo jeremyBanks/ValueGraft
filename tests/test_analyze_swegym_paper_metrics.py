@@ -1,0 +1,107 @@
+from __future__ import annotations
+
+import importlib.util
+import sys
+from pathlib import Path
+
+import pytest
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SCRIPT = REPO_ROOT / "scripts" / "analyze_swegym_paper_metrics.py"
+SPEC = importlib.util.spec_from_file_location("analyze_swegym_paper_metrics", SCRIPT)
+assert SPEC and SPEC.loader
+MODULE = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = MODULE
+SPEC.loader.exec_module(MODULE)
+
+
+def test_percentile_bootstrap_is_seeded_and_counts_signs() -> None:
+    first = MODULE.percentile_bootstrap([-1.0, 0.0, 2.0], n_reps=250, seed=7)
+    second = MODULE.percentile_bootstrap([-1.0, 0.0, 2.0], n_reps=250, seed=7)
+    assert first == second
+    assert first["n"] == 3
+    assert first["mean"] == pytest.approx(1.0 / 3.0)
+    assert (first["n_negative"], first["n_zero"], first["n_positive"]) == (1, 1, 1)
+
+
+def test_committed_reanalysis_counts_and_point_estimates() -> None:
+    report = MODULE.build_report(
+        REPO_ROOT,
+        generated_at_utc="2026-07-12T00:00:00Z",
+        n_reps=100,
+        seed=0,
+    )
+
+    checks = report["invariant_checks"]
+    assert checks["map_fitting_n"] == 41
+    assert checks["fresh_evaluation_n"] == 57
+    assert checks["partial_original_confirmation_n"] == 45
+    assert checks["fit_fresh_overlap_n"] == 0
+    assert checks["fit_confirmation_overlap_n"] == 0
+    assert checks["unique_fixed_scalar_n"] == 173
+
+    selected = report["selected_map_out_of_fitting"]
+    assert selected["fresh57"]["continuous"]["selected_map_minus_baseline"][
+        "mean"
+    ] == pytest.approx(0.011742353249699225)
+    assert selected["original45_partial_confirmation"]["continuous"][
+        "selected_map_minus_baseline"
+    ]["mean"] == pytest.approx(0.01583593553405697)
+    assert selected["pooled102"]["continuous"]["selected_map_minus_baseline"][
+        "mean"
+    ] == pytest.approx(0.013548345433974703)
+
+    structural = selected["pooled102"]["structural_match_vs_baseline"]
+    assert structural["n"] == 102
+    assert structural["reference_matches"] == 53
+    assert structural["selected_map_matches"] == 53
+    assert structural["selected_map_fixes"] == 3
+    assert structural["selected_map_breaks"] == 3
+
+    scalar = report["fixed_scalar_alpha_0_75"]
+    assert scalar["original75_repeat_averaged"]["mean"] == pytest.approx(
+        0.014487352947805163
+    )
+    assert scalar["disjoint98"]["mean"] == pytest.approx(-0.0016888082090843917)
+    assert scalar["unique_pooled173"]["mean"] == pytest.approx(
+        0.005323978419624952
+    )
+    assert scalar["pool_heterogeneity"]["mean_difference"] == pytest.approx(
+        -0.016176161156889555
+    )
+
+
+def test_output_inventory_names_every_consumed_score_file() -> None:
+    report = MODULE.build_report(
+        REPO_ROOT,
+        generated_at_utc="2026-07-12T00:00:00Z",
+        n_reps=10,
+        seed=0,
+    )
+    directories = {
+        item["role"]: item
+        for item in report["inputs"]
+        if "directory" in item
+    }
+    assert directories["original_run_1"]["score_file_count"] == 75
+    assert directories["original_run_1"]["manifest_present"] is False
+    assert directories["original_run_2"]["score_file_count"] == 75
+    assert directories["disjoint_profile"]["score_file_count"] == 98
+    assert directories["disjoint_champion_eval"]["score_file_count"] == 98
+    assert directories["original_partial_confirmation"]["score_file_count"] == 45
+    for item in directories.values():
+        assert len(item["file_set_sha256"]) == 64
+        assert all(len(file["sha256"]) == 64 for file in item["files"])
+
+
+def test_report_declares_numeric_dataset_order() -> None:
+    report = MODULE.build_report(
+        REPO_ROOT,
+        generated_at_utc="2026-07-12T00:00:00Z",
+        n_reps=10,
+        seed=0,
+    )
+    assert "sorted numerically by saved dataset idx" in report[
+        "statistical_contract"
+    ]["unit"]
