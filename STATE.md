@@ -95,21 +95,22 @@ insufficiently tested.
 ## Latest cycle checkpoint
 
 The immutable checkpoint
-`results/coherent_state_powered_v13/cycle-checkpoint_local_20260712T214003Z.json`
-recorded, at `2026-07-12T21:40:03Z`:
+`results/coherent_state_powered_v13/cycle-checkpoint_local_20260712T223918Z.json`
+recorded, at `2026-07-12T22:39:18Z`:
 
-- active goal elapsed time `18274` seconds (`5.0761` hours), leaving about
-  `2.7997` hours before the Stage-T hour-`7.8758` stop clock;
+- active goal elapsed time `21817` seconds (`6.0603` hours), leaving about
+  `1.8155` hours before the Stage-T hour-`7.8758` stop clock;
 - provider balance `$57.1287946692`, spend limit `$80`, and zero active pods;
 - independent semantic progress `1/48`, leaving gap `47`;
 - observed Phase-A spend `$0`; conservative future buckets
   `$12 + $30 + $4.50 + $8 = $54.50`, leaving `$2.6287946692` against the
   current balance;
 - the integration tree was clean and both budget inequalities passed; overall
-  status remained **HOLD** only because eight named unpaid/execution/publication
-  gates remain. The closed Stage-T runner and lifecycle core are integrated;
-  the concrete provider adapter is under final cross-review and no paid work is
-  authorized yet.
+  status remained **HOLD** only because seven named execution/publication gates
+  remain. The exact Stage-T static root, concrete lifecycle, cumulative cap,
+  dual-receipt path, import closure, independent audits, and Fable review are
+  complete. The dedicated authorization child and receipt do not yet exist, so
+  no paid work is authorized yet.
 
 Create another exclusive checkpoint at every static phase transition, before
 and after any allocation/pilot, after every Phase-A candidate, after every

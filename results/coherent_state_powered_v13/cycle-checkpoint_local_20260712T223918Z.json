@@ -1,0 +1,93 @@
+{
+  "assessment": {
+    "hold_reasons": [
+      "PENDING_GATES"
+    ],
+    "paid_progression_gate_pass": false,
+    "status": "HOLD"
+  },
+  "derived": {
+    "completed_gate_count": 11,
+    "goal_elapsed_hours": "6.060277777777777777777777778",
+    "named_gates_complete": false,
+    "pending_gate_count": 7,
+    "provider_observation_age_seconds": 20,
+    "provider_observation_fresh": true,
+    "provider_observation_max_age_seconds": 300,
+    "semantic_collection_complete": false,
+    "semantic_gap_n": 47,
+    "semantic_progress": "1/48",
+    "total_gate_count": 18
+  },
+  "design_id": "coherent-state-powered-successor-v13",
+  "inequalities": {
+    "future_balance": {
+      "excluded_already_spent_term": "phase_spent_usd",
+      "formula": "projected_remaining_phase_a_usd + projected_core_usd + projected_audit_usd + reserve_usd <= provider_balance_usd",
+      "included_terms": [
+        "projected_remaining_phase_a_usd",
+        "projected_core_usd",
+        "projected_audit_usd",
+        "reserve_usd"
+      ],
+      "lhs_usd": "54.5",
+      "pass": true,
+      "rhs_usd": "57.1287946692",
+      "slack_usd": "2.6287946692"
+    },
+    "phase_cap": {
+      "formula": "phase_spent_usd + projected_remaining_phase_a_usd <= phase_cap_usd",
+      "lhs_usd": "12",
+      "pass": true,
+      "rhs_usd": "12",
+      "slack_usd": "0"
+    }
+  },
+  "observation": {
+    "active_pod_ids": [],
+    "checkpoint_utc": "2026-07-12T22:39:18Z",
+    "completed_gates": [
+      "corrected finite-population statistics and independent implementation",
+      "strict seed and permutation boundary repair committed",
+      "placebo bundle and terminal store foundations hardened",
+      "stimuli tokenizer and OOV boundary exact final audit PASS",
+      "staged release repair exact final re-audit PASS",
+      "exact Stage-T subject loader and attestation independent review PASS",
+      "technical-only closed Stage-T runner integrated and independent false-pass audit PASS",
+      "provider watchdog and terminal validator final re-audit PASS",
+      "concrete provider lifecycle dual-receipt cumulative-seconds and cleanup repairs integrated",
+      "static Stage-T import closure recomputed PASS at clean root",
+      "fresh Fable critical release review blockers repaired"
+    ],
+    "git_clean": true,
+    "git_commit": "365ed5968cb961a970b93cef5b0b43b6b338a9cc",
+    "goal_elapsed_seconds": 21817,
+    "independent_n": 1,
+    "independent_unit_ids": [
+      "e01"
+    ],
+    "pending_gates": [
+      "dedicated Stage-T authorization receipt lifecycle launch",
+      "Stage-T canary harvest deletion and disposition",
+      "real C0 C1 entropy and C2 permutation freeze plus ranked first-ten reviews",
+      "fresh independent full-freeze scientific review",
+      "dedicated Stage-A static authorization",
+      "Phase-A Stage-B treatment host-audit and N48 analysis",
+      "surplus exploration paper review and publication"
+    ],
+    "phase": "STAGE_T_STATIC_ROOT_FROZEN",
+    "phase_cap_usd": "12",
+    "phase_spent_usd": "0",
+    "projected_audit_usd": "4.5",
+    "projected_core_usd": "30",
+    "projected_remaining_phase_a_usd": "12",
+    "provider_balance_usd": "57.1287946692",
+    "provider_observed_utc": "2026-07-12T22:38:58Z",
+    "provider_spend_limit_usd": "80",
+    "reserve_usd": "8",
+    "status": "DRAFT_NO_PAID_WORK_AUTHORIZED",
+    "target_n": 48
+  },
+  "schema": "coherent_state_powered_v13_cycle_checkpoint_v1",
+  "scope": "cycle observation only; not treatment authorization"
+}
