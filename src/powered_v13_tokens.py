@@ -29,6 +29,7 @@ def _plain_token_ids(
     label: str,
     *,
     allow_empty: bool = False,
+    maximum_token_id: int | None = None,
 ) -> list[int]:
     if (not isinstance(values, Sequence)
             or isinstance(values, (str, bytes))):
@@ -39,13 +40,30 @@ def _plain_token_ids(
     if any(type(value) is not int or value < 0 for value in result):
         raise V13SchemaError(
             f"{label} contains a non-plain or negative token ID")
+    if maximum_token_id is not None:
+        if type(maximum_token_id) is not int or maximum_token_id < 0:
+            raise V13SchemaError(f"{label} token-ID maximum is invalid")
+        if any(value > maximum_token_id for value in result):
+            raise V13SchemaError(
+                f"{label} contains an out-of-vocabulary token ID")
     return result
+
+
+def _maximum_token_id(tokenizer) -> int:
+    try:
+        width = len(tokenizer)
+    except (TypeError, AttributeError) as exc:
+        raise V13SchemaError("tokenizer vocabulary width is unavailable") from exc
+    if type(width) is not int or width <= 0:
+        raise V13SchemaError("tokenizer vocabulary width is invalid")
+    return width - 1
 
 
 def _single_id(tokenizer, text: str) -> int:
     ids = _plain_token_ids(
         tokenizer.encode(text, add_special_tokens=False),
         f"boundary {text!r}",
+        maximum_token_id=_maximum_token_id(tokenizer),
     )
     if len(ids) != 1:
         raise V13SchemaError(f"boundary {text!r} is not one token: {ids}")
@@ -53,7 +71,10 @@ def _single_id(tokenizer, text: str) -> int:
 
 
 def message_starts(tokenizer, ids: Sequence[int]) -> list[int]:
-    frozen_ids = _plain_token_ids(ids, "canonical message stream")
+    frozen_ids = _plain_token_ids(
+        ids, "canonical message stream",
+        maximum_token_id=_maximum_token_id(tokenizer),
+    )
     marker = _single_id(tokenizer, "<|im_start|>")
     return [index for index, value in enumerate(frozen_ids) if value == marker]
 
@@ -85,10 +106,12 @@ def _assistant_content_bounds(tokenizer, messages: list[dict], ids: list[int],
     header_end = len(_plain_token_ids(
         generation_prefix_ids(tokenizer, preceding),
         f"assistant message {index} generation prefix",
+        maximum_token_id=_maximum_token_id(tokenizer),
     ))
     content_ids = _plain_token_ids(
         rendered_assistant_content_ids(tokenizer, preceding, content),
         f"assistant message {index} content",
+        maximum_token_id=_maximum_token_id(tokenizer),
     )
     content_end = header_end + len(content_ids)
     message_end = starts[index + 1] if index + 1 < len(starts) else len(ids)
@@ -169,6 +192,7 @@ def build_role_native_plan(
     ids = _plain_token_ids(
         canonical_ids_any(tokenizer, messages, render_hf),
         "role-native canonical stream",
+        maximum_token_id=_maximum_token_id(tokenizer),
     )
     starts = message_starts(tokenizer, ids)
     if len(starts) != len(messages) or starts[0] != 0:
@@ -305,6 +329,7 @@ def build_fresh_destination_plan(
     compact_ids = _plain_token_ids(
         canonical_ids_any(tokenizer, compact_messages, render_hf),
         "fresh compact canonical stream",
+        maximum_token_id=_maximum_token_id(tokenizer),
     )
     if compact_ids != token_ids:
         raise V13SchemaError("fresh compact render differs from source mapping")
@@ -380,6 +405,7 @@ def build_probe_generation_prefix(
     return _plain_token_ids(
         generation_prefix_ids(tokenizer, messages),
         "probe generation prefix",
+        maximum_token_id=_maximum_token_id(tokenizer),
     )
 
 
@@ -398,4 +424,5 @@ def probe_target_ids(
     return _plain_token_ids(
         rendered_assistant_content_ids(tokenizer, preceding, target),
         "probe target content",
+        maximum_token_id=_maximum_token_id(tokenizer),
     )

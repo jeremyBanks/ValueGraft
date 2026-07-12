@@ -623,7 +623,7 @@ def test_carrier_gate_rejects_token_text_mismatch(tokenizer):
     ("canonical_ids_any", "generation_prefix_ids",
      "rendered_assistant_content_ids"),
 )
-@pytest.mark.parametrize("replacement_type", ("string", "float"))
+@pytest.mark.parametrize("replacement_type", ("string", "float", "oov"))
 def test_full_sentinel_rejects_type_laundering_at_token_plan_boundaries(
         tokenizer, monkeypatch, boundary_name, replacement_type):
     original = getattr(token_plans, boundary_name)
@@ -632,10 +632,14 @@ def test_full_sentinel_rejects_type_laundering_at_token_plan_boundaries(
         observed = original(*args, **kwargs)
         if replacement_type == "string":
             return [str(value) for value in observed]
-        return [float(value) for value in observed]
+        if replacement_type == "float":
+            return [float(value) for value in observed]
+        result = list(observed)
+        result[-1] = len(tokenizer)
+        return result
 
     monkeypatch.setattr(token_plans, boundary_name, malformed)
-    with pytest.raises(V13SchemaError, match="non-plain"):
+    with pytest.raises(V13SchemaError, match="non-plain|out-of-vocabulary"):
         stimuli.validate_development_sentinel(tokenizer, _fixture())
 
 

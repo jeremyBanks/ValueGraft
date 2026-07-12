@@ -159,6 +159,12 @@ def test_token_plan_boundary_rejects_nonplain_or_negative_ids(malformed):
         tokens._plain_token_ids(malformed, "synthetic boundary")
 
 
+def test_token_plan_boundary_rejects_out_of_vocabulary_ids():
+    with pytest.raises(V13SchemaError, match="out-of-vocabulary"):
+        tokens._plain_token_ids(
+            [0, 11], "synthetic boundary", maximum_token_id=10)
+
+
 def test_dynamic_planner_rejects_boolean_middle_index(tokenizer):
     with pytest.raises(V13SchemaError, match="middle_end_msg"):
         build_role_native_plan(
