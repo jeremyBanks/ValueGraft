@@ -84,7 +84,8 @@ class RankedMaterializationAuthorization:
     status: str
     candidate_id: str
     permutation_rank: int
-    permutation_seed_commit_sha256: str
+    seed_manifest_sha256: str
+    seed_git_commit: str
     literal_permutation_sha256: str
 
 
@@ -1069,7 +1070,8 @@ def _authorization_record(candidate: CandidateTuple,
         return {
             "kind": "OUT_OF_POOL_DEVELOPMENT_SENTINEL",
             "permutation_rank": None,
-            "permutation_seed_commit_sha256": None,
+            "seed_manifest_sha256": None,
+            "seed_git_commit": None,
             "literal_permutation_sha256": None,
         }
     _require(is_pool_member(candidate), "ranked expansion requires an in-pool tuple")
@@ -1078,12 +1080,14 @@ def _authorization_record(candidate: CandidateTuple,
              "materialization authorization status differs")
     _require(authorization.candidate_id == identifier,
              "authorization candidate ID differs")
-    _require(1 <= authorization.permutation_rank <= POOL_SIZE_PER_STRATUM,
-             "permutation rank is outside the stratum pool")
-    for value in (authorization.permutation_seed_commit_sha256,
+    _require(1 <= authorization.permutation_rank <= 10,
+             "only ranks one through ten may be materialized")
+    for value in (authorization.seed_manifest_sha256,
                   authorization.literal_permutation_sha256):
         _require(re.fullmatch(r"[0-9a-f]{64}", value) is not None,
                  "authorization hash is not lowercase SHA-256")
+    _require(re.fullmatch(r"[0-9a-f]{40}", authorization.seed_git_commit)
+             is not None, "authorization seed git commit is invalid")
     return {"kind": authorization.status, **asdict(authorization)}
 
 
