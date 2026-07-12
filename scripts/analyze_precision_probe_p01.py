@@ -130,7 +130,11 @@ def reconstruct_package(package_dir: Path) -> tuple[dict[str, Any], dict[str, An
                 chunk.get("payload_encoding") == "base64" and
                 chunk.get("index") == expected_index and
                 chunk.get("name") == name and
-                chunk.get("compressed_offset_bytes") == offset,
+                chunk.get("compressed_offset_bytes") == offset and
+                chunk.get("compressed_segment_size_bytes") ==
+                descriptor.get("compressed_segment_size_bytes") and
+                chunk.get("compressed_segment_sha256") ==
+                descriptor.get("compressed_segment_sha256"),
                 f"package chunk wrapper differs: {path}")
         try:
             segment = base64.b64decode(chunk["payload"], validate=True)
