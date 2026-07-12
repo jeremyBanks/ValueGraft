@@ -89,7 +89,10 @@ namespace, preregistration, and release path.
 
 ## Git and credentials
 
-- Work only on `trunk`; never branch, rebase, amend, or rewrite history.
+- Integrate, publish, and push only additive reviewed history on `trunk`; never
+  rebase, amend, or rewrite it. Detached temporary worktrees are allowed for
+  isolated parallel shards. Review their commits before integrating them and
+  remove the worktrees after their useful commits are preserved on `trunk`.
 - Stage explicit paths. Never use `git add -A`. Never expose or stage key files.
 - Commit and push every completed unit. Existing dirty/untracked work belongs
   to the user or another agent; preserve it and avoid overlapping edits.

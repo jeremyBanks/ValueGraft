@@ -61,11 +61,14 @@ insufficiently tested.
    prior `...165226Z` file remains preliminary partial evidence. The protocol
    is still DRAFT and authorizes no paid work.
 4. The compact 32,768-tuple/eight-stratum pre-seed recipe foundation has passed
-   exhaustive audit without materializing any ranked history. Finish the
-   tokenizer/surface layer, then commit independent permutation seeds and
-   validate/review only the frozen first ten ranks per stratum. Re-verify only
-   the production
-   apparatus paths the new design relies on,
+   exhaustive audit without materializing any ranked history. The strict
+   seed/permutation implementation and its synthetic C0/C1 Git boundary are
+   committed; an exact-hash re-audit is running. The first tokenizer/carrier
+   layer failed independent audit before freeze and is being repaired in a
+   detached worktree. Do not request real entropy until that repair, the
+   Stage-A release completeness repair, and the remaining unpaid gates pass.
+   Then validate/review only the frozen first ten ranks per stratum. Re-verify
+   only the production apparatus paths the new design relies on,
    including the required model/config build ladder and literal-input failure
    tests; do not reopen an apparatus-validation spiral.
 5. After a dedicated static authorization, run capped treatment-blind Phase A;
@@ -92,17 +95,18 @@ insufficiently tested.
 ## Latest cycle checkpoint
 
 The immutable checkpoint
-`results/coherent_state_powered_v13/cycle-checkpoint_local_20260712T175127Z.json`
-recorded, at `2026-07-12T17:51:27Z`:
+`results/coherent_state_powered_v13/cycle-checkpoint_local_20260712T182757Z.json`
+recorded, at `2026-07-12T18:27:57Z`:
 
-- active goal elapsed time `4566` seconds (`1.2683` hours);
+- active goal elapsed time `6753` seconds (`1.8758` hours);
 - provider balance `$57.1287946692`, spend limit `$80`, and zero active pods;
 - independent semantic progress `1/48`, leaving gap `47`;
 - observed Phase-A spend `$0`; conservative future buckets
   `$12 + $30 + $4.50 + $8 = $54.50`, leaving `$2.6287946692` against the
   current balance;
-- budget inequalities passed, but overall status **HOLD** because the named
-  static, paid Phase-A, treatment, host-audit, and publication gates remain.
+- the integration tree was clean and both budget inequalities passed; overall
+  status remained **HOLD** only because nine named unpaid/execution/publication
+  gates remain.
 
 Create another exclusive checkpoint at every static phase transition, before
 and after any allocation/pilot, after every Phase-A candidate, after every
@@ -110,8 +114,9 @@ treatment durability block, and before provider deletion.
 
 ## Non-negotiable boundaries
 
-- Work only on `trunk`; make additive history corrections; explicitly stage,
-  commit, and push each unit.
+- Integrate and push only additive reviewed history on `trunk`. Use detached
+  temporary worktrees for genuinely isolated parallel shards, review their
+  commits, then preserve the accepted work on `trunk` and remove the worktree.
 - Save and commit every render and every scored result, including contaminated
   or void artifacts under quarantine paths.
 - Use exact model ID/revision/dtype/backend provenance and pass the build ladder
