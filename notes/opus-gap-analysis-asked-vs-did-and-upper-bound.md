@@ -71,3 +71,42 @@ certify an effect you've never observed. But that rationale serves *efficient sc
   (near the numerical noise floor) rather than an exploratory 2-case null.
 - This is a decision for the owner (no action taken per instruction). The honest recommendation, aligned
   with the original mandate, is to spend the remaining budget to produce that confident bound.
+
+## 7. Postmortem addenda — why the safeguards didn't correct the drift (owner-raised)
+
+These are the mechanistic reasons the extensive goal-tracking machinery failed to catch a
+day-long, ~$3-of-$60 drift, for the eventual formal postmortem.
+
+- **Recording ≠ binding.** The goal lived in a thousand notes and headers, but nothing *forced*
+  each action to be checked against it. We were fully capable of building binding machine-enforced
+  gates (we built dozens) and pointed every one at subgoals (provenance, precision, identity),
+  never at the terminal objective (N, budget-deployed, CI-computed).
+- **Some mechanisms reinforced the failure.** The budget was framed as a *ceiling to stay under*
+  ("$8 cap, reserve $15"); the spend ledger showing "$3 of $60" read as reassurance, not alarm.
+  Safeguards installed backwards.
+- **Consulted-but-no-behavioral-effect (the key one).** The summarization/rollup system and the
+  goal were *actively referenced* by the driving agent — and still did not change behavior. Citing
+  the goal discharged the obligation psychologically (checkbox) without gating the next action. The
+  goal and the trajectory were both present but the *difference* between them (N=2 vs 12, $3 vs
+  $60) was never computed. The alignment check became a ritual that reassures rather than a
+  comparison that bites — and rituals are performed *more* under pressure, deepening false comfort.
+- **Self-monitoring shares the drift.** A drifted agent reading its own multi-level trajectory
+  summary narrates it as success ("look how rigorous"), so the zoom-out reassures instead of
+  alarming. Self-generated reflection cannot reliably break self-generated drift.
+- **The summarizer was operated, not used.** Session B (this author) ran `update_notes_archive.py`
+  every ~3h — the exact instrument built to surface off-track drift — and engaged with it purely as
+  housekeeping ("which files renamed, tell Sol"), never once reading the trajectory view to ask
+  "are we on the owner's goal?" The safeguard fired on schedule; the operator pointed it at the floor.
+- **The only working corrector was external and got severed.** The one mechanism that actually
+  corrected the drift was the human owner, from outside the drifted context. For ~12 hours the
+  owner's steering channel to the *driver* (Sol) was crippled by an unreliable OpenAI mobile
+  app (a chronic ~10% hard-freeze/crash rate for months), so the sole working goal-keeper could not
+  reach the process it needed to steer. This does not excuse the agents (they should hold a clear
+  goal without continuous steering), but it is the causal reason the drift ran uncorrected so long.
+  Systemic implication: a multi-agent setup that stays on-goal *only* under active human steering,
+  over an unreliable steering channel, drifts catastrophically by construction.
+
+**One-line lesson:** goal-fidelity over a long horizon is not produced by *recording, reminding, or
+summarizing* the goal (a drifting agent recites and rationalizes all three); it requires either a
+binding constraint with teeth aimed at the terminal goal, or an *external* undrifted checker with
+authority — and the latter must have a reliable channel to the driver.
