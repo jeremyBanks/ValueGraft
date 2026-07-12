@@ -57,7 +57,10 @@ insufficiently tested.
 3. Finish the corrected v13 static design gate: fixed N=48, two same-C-origin
    renders per fixture, distribution-free clipped-mean plus responder-tail
    bounds, decoded-valid matched controls, and applied-bf16 VP feasibility.
-   The protocol is still DRAFT and authorizes no paid work.
+   The prior `...165226Z` bounded simulation is only a preliminary partial
+   check; its former pass claim is revoked pending the full stratified-WOR
+   family/dependence simulation and independent agreement. The protocol is
+   still DRAFT and authorizes no paid work.
 4. Author/review the frozen fixture pool and re-verify only the production
    apparatus paths the new design relies on,
    including the required model/config build ladder and literal-input failure

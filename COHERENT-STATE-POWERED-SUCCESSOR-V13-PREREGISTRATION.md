@@ -102,13 +102,27 @@ Each candidate contains:
   authoring prompt.
 
 Each stratum has a finite enumerated parameter pool of at least 4,096 tuples.
-Before any candidate text or gate is inspected, one 128-bit OS-random seed per
-stratum is committed. NumPy PCG64 applies that seed to a without-replacement
-permutation of the pool. That literal permutation, generator version, parameter
-pools, and template definitions live under `data/coherent_state_powered_v13/`
-and are bound by the static manifest. Candidate IDs are their immutable
-permutation ranks. A literal-history collision aborts the recipe rather than
-resampling. Order never changes after static freeze.
+Every canonical parameter tuple first receives a stable candidate ID equal to
+SHA-256 of the design ID, stratum ID, template version, and canonical tuple
+bytes. Candidate IDs therefore do not depend on sampling order. Carrier-attempt
+seeds and every other candidate-specific random seed derive from this stable ID,
+never from a permutation rank. Before any candidate text or gate is inspected,
+one 128-bit OS-random permutation seed per stratum is committed. NumPy PCG64
+applies that seed to a without-replacement permutation of the stable-ID pool.
+Permutation rank is recorded separately from candidate ID. The literal
+permutation, generator version, parameter pools, template definitions, and
+canonical-ID algorithm live under `data/coherent_state_powered_v13/` and are
+bound by the static manifest. A tuple-ID or literal-history collision aborts
+the recipe rather than resampling. Order never changes after static freeze.
+
+All SHA inputs in this protocol use canonical UTF-8 JSON arrays with
+`ensure_ascii=false` and separators `(',', ':')`; no informal delimiter
+concatenation is allowed. A tuple's final element is its canonical JSON object
+with sorted keys. A 128-bit permutation seed is recorded as exactly 32 lowercase
+hex digits, converted by `int(seed_hex, 16)`, and passed directly to
+`numpy.random.Generator(numpy.random.PCG64(seed_int)).permutation(pool_size)`
+under the manifest-pinned NumPy version. The complete integer permutation is
+persisted, so later replay never depends on another NumPy version.
 
 ### 3.2 Independent unit and selection
 
@@ -133,6 +147,17 @@ The realized content/Phase-A acceptance rate and every rejection reason are
 reported. Inference is to the conditional recipe `R | eligible`, not the
 unfiltered generator.
 
+Eligibility is a fixed potential attribute of each stable-ID tuple under its
+predeclared render seeds and exact runtime. The independent random permutation
+is therefore exchangeable over the finite eligible population. The unordered
+first six eligible tuples are a simple random sample without replacement from
+that population. Conditioning on the predeclared feasibility event that the
+sixth eligible tuple appears by rank ten is also invariant to eligible-tuple
+labels, so it does not change that uniform subset law. No rank-derived seed or
+rank-varying treatment is permitted. The finite eligible unit includes its two
+frozen render streams; the estimand is not an expectation over fresh render
+RNG.
+
 ### 3.3 Legacy sensitivity
 
 `e01` is outcome-seen and is technical/pilot material only. The five outcome-
@@ -155,21 +180,30 @@ Every candidate must pass all of the following on literal bytes:
    N-plan geometry, and fresh-destination geometry;
 7. exact decoded round trip, no embedded special literal, clipping, repeated
    padding, empty message, fake external action, or call above 4,096 tokens;
-8. targets 1--4 tokens and target/countertarget lengths differing by at most
-   one token;
-9. randomized blind singleton review of every C and W history;
-10. independent target-aware paired review of derivation, minimality,
+8. a production-tokenizer skeleton width of 940--1,180 tokens after subtracting
+   only the dynamic carrier-content span from the complete canonical source
+   through the final retained-tail assistant; the compiler proves the exact
+   subtraction against its frozen sentinel carrier and framing;
+9. targets 1--4 tokens and target/countertarget lengths differing by at most
+   one token; focal target and countertarget token sequences, and nonfocal
+   target and countertarget sequences, must be distinct and neither sequence
+   may be a prefix of the other;
+10. randomized blind singleton review of every C and W history;
+11. independent target-aware paired review of derivation, minimality,
     downstream repair, nonfocal independence, retained-tail neutrality, and
     leakage;
-11. cross-template review confirming the eight templates are substantively
+12. cross-template review confirming the eight templates are substantively
     distinct while recording intentional within-template structure;
-12. third-reviewer adjudication by another model family for any disagreement.
+13. third-reviewer adjudication by another model family for any disagreement.
 
-Failed candidates are archived under their original hashes. Before static
-freeze, a repair creates a new additive candidate and regenerates the literal
-permutation/manifest; reviewed files are never edited in place. After static
-freeze, only the first ten already bound indices may run and no repair or
-replacement is allowed. Qwen is not an author or judge.
+Failed candidates are archived under their original hashes. Component banks and
+templates may be repaired only before permutation seeds are committed. Once a
+seed is committed or any ranked candidate is materialized, no template, pool,
+rule, candidate, or permutation repair/replacement is allowed under v13; a
+mechanical or review failure is simply an ineligible frozen candidate. If the
+pool/compiler itself is invalid, v13 terminates pre-treatment rather than
+adapting its frame after inspection. Reviewed files are never edited in place.
+Qwen is not an author or judge.
 
 ## 5. Genuine carrier renders
 
@@ -187,10 +221,12 @@ Exact prompt:
 > fact. Output only the handoff.
 
 Sampling is q=1, temperature `0.7`, top-p `0.95`, top-k disabled, maximum 80
-content tokens, normal EOS required. Attempt seeds derive from
-`SHA256(design_id | case_id | render_index | attempt_index)` and are converted
-to a recorded nonnegative 63-bit PyTorch generator seed. At most three attempts
-per render are allowed, in order.
+content tokens, normal EOS required. Attempt digest is
+`SHA256(canonical_json([design_id, stable_candidate_id, render_index,
+attempt_index]))`. Its first eight digest bytes are interpreted unsigned
+big-endian and bitwise-ANDed with `(2^63)-1` to obtain the recorded nonnegative
+63-bit PyTorch generator seed. At most three attempts per render are allowed,
+in order.
 
 An accepted render must:
 
@@ -292,32 +328,49 @@ carrier assistant content R1 and (b) the structural suffix R2 minus R1
 (canonical carrier close, acknowledgment user message, and acknowledgment
 assistant header).
 
-For each class of width `m`, SHA256 of
-`design_id|case_id|render|class` defines a permutation of its row indices. The
-frozen moved-row counts are `[2,4,8,16,32,64,m]`, retaining only distinct values
-between 2 and m. For each ordered count pair and rotation direction `+1,-1`,
-rotate the selected rows by one cycle and leave unselected rows fresh. Apply the
-same token-index map at every layer. Evaluate at most the first 98 distinct
-candidates in lexicographic `(content_count, structural_count, direction)`
-order after SHA index permutation. Selection may inspect only C/W/F row values
-and geometry, never a probe, target logit, continuation, or outcome.
+For each class of width `m`, compute one digest per integer row index `j` as
+`SHA256(canonical_json([design_id, stable_candidate_id, render_id, class,
+j]))` and sort indices by `(digest_bytes, j)` ascending. This literal order is
+the class permutation. The frozen moved-row counts are
+`[2,4,8,16,32,64,m]`, retaining only first occurrences whose values lie in
+`[2,m]`. For a count `k`, take the first `k` permuted indices `p`. Direction
+`+1` assigns correct-history donor row `C[p[t]]` to destination
+`p[(t+1) mod k]`; direction `-1` assigns it to `p[(t-1) mod k]`. All
+unselected V rows remain fresh. Classes never mix, and the same token-index map
+is applied at every layer. Evaluate the at-most-98 candidates in nested order:
+content counts in their retained list order, structural counts in their
+retained list order, then directions `(+1,-1)`. Selection may inspect only
+C/W/F row values and geometry, never a probe, target logit, continuation, or
+outcome.
 
-All norms and cosines are accumulated on CPU float64 in layer-major,
-class-major, token-major, head-major, dimension-major order. An active layer has
-finite `||C_l-F_l||_F > 0`; zero-real-delta layers, including possible layer 0,
-are excluded from ratios rather than divided by zero. A candidate is accepted
-only if at least 24 layers are active, every moved row changes bytes in at least
-one active layer, aggregate active-layer displacement ratio
-`||VP-F||/||C-F||` is in `[0.75,1.33]`, median active-layer ratio is in
-`[0.50,2.00]`, and absolute active-layer aggregate cosine with `C-W` is at most
-`0.20`. A zero/nonfinite denominator or cosine rejects the candidate.
+Each bf16 scalar is cast to IEEE float64 before subtraction. For layer `l`,
+flatten the two classes in class-major, token-major, head-major,
+dimension-major order and define `a_l=VP_l-F_l`, `b_l=C_l-F_l`, and
+`d_l=C_l-W_l` in float64. Every dot product and sum of squares uses Python
+`math.fsum` over the frozen layer-major then flattened-coordinate order. An
+active layer has finite `norm(b_l)>0`; zero-real-delta layers, including
+possible layer 0, are excluded rather than divided by zero. Its displacement
+ratio is `r_l=norm(a_l)/norm(b_l)`. The aggregate ratio is
+`sqrt(fsum_l ||a_l||^2)/sqrt(fsum_l ||b_l||^2)`. The aggregate cosine is
+`fsum_l dot(a_l,d_l) / sqrt(fsum_l ||a_l||^2 * fsum_l ||d_l||^2)` over active
+layers. Sort `(r_l, layer_index)` ascending for the median; with an even count,
+use `math.fsum` of the two central ratios divided by two.
+
+The first candidate in the frozen search order is accepted only if at least 24
+layers are active, every moved destination row differs bytewise from fresh in
+at least one active layer, the aggregate ratio is in `[0.75,1.33]`, the median
+ratio is in `[0.50,2.00]`, and the absolute aggregate cosine is at most `0.20`.
+Every interval is inclusive. A nonfinite input/difference/accumulator, zero
+`a`, `b`, or `d` aggregate denominator, or undefined cosine rejects the
+candidate.
 
 If none passes, VP is `PLACEBO_UNAVAILABLE`; no tolerance changes. Realistic
 exact-subject e01 geometry must demonstrate availability before scaled Phase A,
 and VP availability is computed outcome-blind for every selected render before
 treatment release. The availability rate and every rejected diagnostic are
 reported. VP qualifies **only the value-only cell**: `VALUE_PLACEBO_COMPLETE`
-requires both renders available in at least 90% of primary fixtures. Full-KV
+requires both renders available in at least 44 of 48 primary fixtures (the
+integer realization of at least 90%). Full-KV
 has the decoded-valid same-position WW history control but no nonsemantic
 full-KV placebo, and is never described as placebo-complete. Primary numerical
 bounds remain computable when VP is unavailable, with the control limitation in
@@ -366,13 +419,26 @@ ratio-of-means are mandatory companion components.
 
 ## 9. Treatment-blind Phase-A eligibility
 
-Phase A may expose only content/review evidence, carrier attempts and leakage
-review, technical identities, A_C/A_W/FF scores, forced-token support, source
-and fresh R2 tensor bundles/hashes, VP construction availability without any
-continuation/probe, and runtime/cost. It cannot construct, score, persist, or
-reveal CC/WW/FC/FW/VP continuation or probe outcomes. Persisting the exact
-selected source/fresh rows is mandatory and is treatment-input reuse, not an
-outcome.
+For every new candidate semantic fixture, Phase A may expose only
+content/review evidence, carrier attempts and leakage review, technical
+identities, A_C/A_W/FF scores, forced-token support, source and fresh R2 tensor
+bundles/hashes, VP construction availability without any continuation/probe,
+and runtime/cost. It cannot construct, score, persist, or reveal
+CC/WW/FC/FW/VP continuation or probe outcomes for those candidates. Persisting
+the exact selected source/fresh rows is mandatory and is treatment-input reuse,
+not an outcome.
+
+There are exactly two noncandidate technical exceptions. The frozen,
+outcome-seen e01 canary may execute all six arms and its already observed probe
+in a separate `technical_e01` namespace. The frozen 4.5k-token outcome-free
+geometry fixture may exercise the same six cache-construction, recomputation,
+persistence, and fixed neutral-probe paths in `technical_long`; its probe fact
+is byte-identical and directly visible in every history and is not a semantic
+plant. These exceptions measure end-to-end arm time, identity, persistence, VP
+availability, and length scaling. Their numerical values cannot enter N,
+eligibility, a selector, a threshold, a template choice, or a scientific claim.
+Only predeclared pass/fail technical diagnostics and timings may gate scaled
+Phase A. No outcome-unseen legacy or new semantic case receives an exception.
 
 A content-eligible fixture becomes primary recovery-eligible only if, for both
 accepted renders:
@@ -381,9 +447,12 @@ accepted renders:
 2. A_W greedily begins with the complete exact W target and has `M(A_W)<0`;
 3. the nonfocal oracle under C/W and fresh compaction greedily begins with the
    exact nonfocal target and favors it over its countertarget;
-4. `Dplus_ir >= 5.0` nats/token and `Dmargin_ir >= 5.0` nats;
+4. `Dplus_ir >= 5.0` nats/token and `Dmargin_ir >= 5.0` nats/token;
 5. all target scores are finite and no required generation is empty or capped;
-6. both target-neutral render reviews and generated-to-forced identities pass.
+6. FF does not greedily begin with the complete C target;
+7. the complete canonical source through the final retained-tail assistant and
+   before any probe is 900--1,400 production-tokenizer tokens, inclusive;
+8. both target-neutral render reviews and generated-to-forced identities pass.
 
 This defines `R | eligible`. It is a sensitivity-enriched benchmark and not a
 prevalence estimate for ordinary conversations. Candidate eligibility and
@@ -465,13 +534,16 @@ Mandatory companions, none substituted for the finite-sample primary bound:
 - ratio-of-means `E(X)/E(Dplus)` by Fieller inversion labeled model-based and
   returning `+infinity` when denominator support is inadequate.
 
-Behavioral eligibility requires A_C to generate the exact C target and FF not
-to do so. Freeze one fixture-level endpoint:
-`B_i = 1{CC or FC begins with the exact C target}`. It is reported as a named
-finite-panel count. A marginal binomial interval, if shown, is explicitly
-model-based because stratum flip probabilities may differ; it is not part of
-the joint 0.05 family. Greedy answers are generated only for A_C, A_W, FF, CC,
-and FC; wrong/placebo arms remain score-only.
+Behavioral eligibility requires both A_C renders to begin with the complete C
+target and both FF renders not to do so. For each of the 48 eligible fixtures,
+freeze `B_Ri=1` only if CC begins with the complete C-target token sequence in
+both renders, `B_Vi=1` analogously for FC, and `B_i=max(B_Ri,B_Vi)`. Report all
+three finite-panel counts with denominator 48; a missing/capped required greedy
+generation is a technical failure, not a changed denominator. A marginal
+binomial interval, if shown, is explicitly model-based because stratum flip
+probabilities may differ; it is not part of the joint 0.05 family. Greedy
+answers are generated only for A_C, A_W, FF, CC, and FC; wrong/placebo arms
+remain score-only.
 
 ## 12. Analysis validation before release
 
@@ -480,17 +552,23 @@ pass before treatment release:
 
 1. machine proof that the alpha ledger is exactly `0.02+0.02+0.01=0.05` and
    that the clipped range is exactly one;
-2. at least 200,000 trials under bounded two-point, uniform, beta, skewed,
-   rare-responder, and contaminated distributions, with cell correlations 0,
-   0.5, and 0.9; empirical noncoverage may exceed 0.05 only by a preregistered
-   two-sided 99% Monte Carlo binomial tolerance around 0.05;
+2. at least 200,000 repeated stratified samples without replacement from a
+   fixed finite population under each crossing of bounded two-point, uniform,
+   beta, skewed, rare-responder, and contaminated families with cell-dependence
+   targets 0, 0.5, and 0.9; exact finite-population clipped means and responder
+   prevalences are the truths; realized cell dependence and stratum
+   heterogeneity are recorded; empirical noncoverage may exceed 0.05 only up
+   to the exact two-sided 99% Binomial(`trials`, 0.05) upper acceptance count,
+   not a normal approximation;
 3. a zero-variance/rare-responder case that the old draft falsely resolved must
    retain the positive Hoeffding radius and correct tail bound;
 4. power grids over clipped means, variance, and tail prevalence. Freeze gate:
    N=48 joint-resolution probability must be at least 0.80 for two independent
    worst-variance endpoints on `{-0.5,+0.5}` with true mean `0.05` and zero
    `>0.5` responders, and at least 0.95 when both true clipped means are zero
-   with SD at most 0.25;
+   with SD at most 0.25 and zero `>0.5` responders; nonzero responder
+   prevalences remain in the reported grid but are not subject to those two
+   headline power gates;
 5. damage near the 5-nat gate correlated with raw recovery, verifying that the
    code labels the estimand conditional rather than claiming unfiltered R;
 6. host offsets and identity/placebo failures abort without adding N;
@@ -533,10 +611,11 @@ Before any paid Phase A on the primary host, the static release must bind:
 
 The static freeze then authorizes, in this order and only within Section 16's
 Phase-A cap: one e01 short production timing/VP canary; one 4.5k-token geometry
-timing canary; then treatment-blind candidate carrier generation, A_C/A_W/FF
-screening, and source-row persistence. Scaled screening requires observed VP
-availability on e01. Before treatment release, every selected render must have
-its VP availability status computed without a probe or continuation.
+timing canary using only the technical-long exception in Section 9; then
+treatment-blind candidate carrier generation, A_C/A_W/FF screening, and
+source-row persistence. Scaled screening requires observed VP availability on
+e01. Before treatment release, every selected render must have its VP
+availability status computed without a probe or continuation.
 
 The independent-host audit replays both saved renders of the eligible-rank-1
 fixture from each stratum (eight fixtures) after the primary run. It requires a
@@ -589,7 +668,27 @@ A hard kill or process error quarantines every partial artifact for the one live
 case. Partial arms are never resumed into a terminal case and never count as N;
 the entire case/render is recomputed from its validated Phase-A bundles. A
 terminal immutable case is skipped only after exact release/runtime/case/render
-binding validates. This is the sole resume policy.
+binding validates on the same runtime fingerprint.
+
+A primary batch is bound to one `primary_batch_id`, GPU UUID, and runtime
+fingerprint. Results from different primary batches or fingerprints are never
+combined. If the host is lost before all 48 terminal cases, that entire batch
+is quarantined and its scientific scores remain uninspected; only the technical
+loss time and cost may be read. Before any primary score is unmasked, at most
+one full-batch restart on a newly admitted host is allowed if the refreshed
+worst-case projection can fund all 48 cases, the host audit, and the $8 reserve.
+The restart gets a new batch-specific launch receipt and runtime attestation,
+rebuilds every source/fresh foundation from the release-bound text/token
+artifacts, and recomputes all 48 cases; old-host terminal cases and tensor
+bundles cannot be reused. The Stage-B manifest's original Phase-A bundle hashes
+remain immutable audit evidence rather than executable restart inputs. Before
+any restarted arm score, the new batch receipt must list and hash-bind every
+regenerated C/W/F foundation and its exact case/render/release/runtime source
+mapping, and an independent verifier must accept the complete regenerated
+foundation set. If that projection or binding fails, any score was inspected,
+or the restart host is also lost, the terminal result is
+`INVALID_TECHNICAL_INCOMPLETE_PRIMARY` with no primary bound. This is the sole
+cross-host restart policy.
 
 ## 15. Staged release and unblinding boundary
 
@@ -608,7 +707,20 @@ After Section 18's unpaid gates pass, a dedicated commit changes status to
 `STATIC_FROZEN_PHASE_A_AUTHORIZED`. Its manifest references its immutable parent
 tree/commit rather than the commit that contains itself. It authorizes only the
 capped treatment-blind operations in Sections 13 and 16. No CC/WW/FC/FW/VP
-continuation or probe may execute.
+continuation or probe may execute for a new semantic candidate; only the
+two frozen technical carveouts in Section 9 may exercise those arms.
+
+That authorization commit contains only the status transition and Stage-A
+manifest. After it exists, a separate Stage-A launch receipt records the exact
+authorization-commit hash and manifest SHA-256. The remote checks out that
+commit detached, requires a clean tree, verifies that its parent is the
+manifest's `static_root_commit`, and rehashes every experiment-bearing path from
+that recorded parent tree rather than from the status-changing child. It also
+verifies that the child diff contains exactly the new manifest plus the single
+allowed preregistration status transition, verifies the child's literal status,
+then binds the live host/runtime attestation to the receipt. Absent, duplicate,
+stale, modified, dirty-tree, wrong-parent, extra-diff, wrong-status, or wrong-
+receipt input fails before model execution.
 
 ### Stage B — primary treatment release
 
@@ -617,15 +729,21 @@ committed before release. A unique treatment manifest lists 48 case hashes, 96
 accepted-render hashes, all rejected-attempt/review hashes, Phase-A score and
 tensor-bundle hashes, VP-availability statuses, selector/analysis hashes, and
 the immutable `phase_a_root_commit` that is its immediate parent. The commit
-adding this manifest contains no other experiment change. The launch receipt,
-created after that commit exists, records the release-commit hash and manifest
-SHA-256; the manifest never claims its own commit hash.
+adding this manifest changes the literal status to `TREATMENT_RELEASED` and
+contains no bytes other than that status transition and manifest. The launch
+receipt, created after that commit exists, records the release-commit hash and
+manifest SHA-256; the manifest never claims its own commit hash.
 
 The remote checks out the recorded release commit, verifies its parent equals
-`phase_a_root_commit`, rehashes every listed byte, then persists separate live
-host/runtime attestations. An absent, duplicate, stale, modified, or wrong-
-parent release fails. Only then may treatment run. Terminal-case reuse follows
-Section 14; partial cases quarantine and recompute.
+`phase_a_root_commit`, requires a clean tree and literal `TREATMENT_RELEASED`
+status, and rehashes every listed experiment/Phase-A byte from that parent tree.
+It separately verifies that the child diff contains exactly the treatment
+manifest plus the single allowed preregistration status transition, verifies
+the launch receipt, then persists separate batch/host/runtime attestations. An
+absent, duplicate, stale, modified, dirty-tree, extra-diff, wrong-status, wrong-
+receipt, or wrong-parent release fails. Only then may treatment run. Terminal-
+case reuse and a possible whole-batch restart follow Section 14; partial cases
+quarantine and recompute.
 
 ## 16. Provider and compute gate
 
@@ -644,14 +762,26 @@ Hard buckets before observed release:
   exists.
 
 After e01/long pilots and the first two candidates in every stratum complete,
-compute observed provider seconds per candidate, accepted-render yield,
-content/Phase-A eligibility yield, source-bundle bytes, and arm time. Use the
-maximum observed balanced-batch per-candidate time and the 90% one-sided exact
-lower confidence bound on overall eligibility yield to project the candidates
-needed, capped by ten per stratum. If the yield lower bound is zero, projection
-is infinite. Continue screening only if:
+compute observed provider dollars/seconds per candidate, accepted-render yield,
+content/Phase-A eligibility yield separately by stratum, source-bundle bytes,
+and arm time. Yield is descriptive and cannot reduce the cost forecast. For
+each unresolved stratum, assume every remaining frozen rank through ten must be
+screened; a stratum with six eligible cases has zero remaining slots. Multiply
+the sum of those slots by the maximum observed balanced-batch per-candidate
+dollars, then add any still-unspent literal pilot/gate allowance, to obtain
+`projected_remaining_phaseA`. Record `phaseA_start_balance`, the refreshed
+provider-ledger `phaseA_spent`, and current unspent `live_balance`. Continue
+screening only if both:
 
-`spent_phaseA + projected_remaining_phaseA + projected_core + 4.50 + 8.00 <= live_balance`.
+`phaseA_spent + projected_remaining_phaseA <= 12.00`
+
+`projected_remaining_phaseA + projected_core + 4.50 + 8.00 <= live_balance`.
+
+The first inequality enforces the whole Phase-A bucket. The second compares
+only future costs with the current remaining balance, so already spent dollars
+are not double-counted. A projection is recomputed after every candidate and
+may decrease only because a frozen rank completed or a stratum reached six
+eligible fixtures, never because pooled yield looked favorable.
 
 Scaled Phase A also requires:
 
@@ -666,7 +796,7 @@ Scaled Phase A also requires:
 One fresh admitted-host timing measurement may distinguish a slow host from a
 design overrun before unseen outcomes. The gate controls waste; it does not
 authorize shrinking N after seeing treatment results. Exceeding a candidate,
-time, Phase-A dollar, or yield bound produces
+rank, time, Phase-A dollar, or worst-case projection bound produces
 `RECIPE_INFEASIBLE_PRETREATMENT` or `BUDGET_INFEASIBLE_PRETREATMENT`, preserves
 all artifacts, and exposes no treatment.
 
@@ -683,6 +813,9 @@ Terminal labels are mutually prioritized:
 
 - **RECIPE_INFEASIBLE_PRETREATMENT** or **BUDGET_INFEASIBLE_PRETREATMENT:** a
   bounded static/Phase-A gate failed before any primary treatment;
+- **INVALID_TECHNICAL_INCOMPLETE_PRIMARY:** no single runtime-bound batch
+  completed all 48 fixtures under Section 14's restart rule, so no primary
+  bound exists;
 - **INVALID_TECHNICAL:** a decision-bearing technical/release identity failed;
 - **JOINT_BOUND_RESOLVED_VALUE_CONTROL_COMPLETE:** the joint bound resolved and
   `VALUE_PLACEBO_COMPLETE` also holds;
@@ -740,7 +873,8 @@ Before any paid work:
    pass;
 6. the Stage-A verifier has demonstrated acceptance plus deliberate token,
    position, source, hash, control, parent-commit, and duplicate-manifest
-   rejection cases;
+   rejection cases, and the detached remote checkout/clean-tree/status/receipt
+   procedure has passed locally;
 7. one dedicated authorization commit contains only the status/manifest needed
    by Section 15 and changes the status to
    `STATIC_FROZEN_PHASE_A_AUTHORIZED`.
@@ -752,14 +886,15 @@ Before any primary treatment:
 1. exact e01 and long-geometry gates/timings pass within the Phase-A cap;
 2. the e01 VP is observed available and its tensor evidence independently
    validates;
-3. balanced yield/cost projection passes after two candidates per stratum;
+3. the worst-case per-stratum rank-through-ten cost projection passes after two
+   candidates per stratum and after every later candidate;
 4. exactly six eligible fixtures per stratum, 96 accepted render artifacts,
    mandatory source/fresh bundles, all rejections, and outcome-blind VP statuses
    are durable and committed;
 5. the live balance inequality and `$30` core projection pass;
 6. an independent validator builds the acyclic Stage-B manifest, demonstrates
-   every rejection path, and the release-only commit/launch receipt satisfy
-   Section 15.
+   every rejection path, and the release-only commit changes the literal status
+   to `TREATMENT_RELEASED` with its launch receipt satisfying Section 15.
 
 No informal message, old seal, green status string, or provider allocation can
 waive these conditions.

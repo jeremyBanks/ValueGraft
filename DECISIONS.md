@@ -101,8 +101,14 @@ decisions that govern current work.
   is authorized while the root protocol status is DRAFT.
 - Phase A/pilots are capped at `$12`, treatment is projected/capped at `$30`,
   the independent host audit at `$4.50`, and at least `$8` remains for failure,
-  cleanup, and artifact recovery. After two candidates per stratum, observed
-  yield and cost must project the full run within live balance.
+  cleanup, and artifact recovery. After two candidates per stratum, the
+  projection assumes every unresolved frozen rank through ten must run; pooled
+  yield cannot discount the forecast, and already spent dollars are not added
+  again to the refreshed live balance.
+- Stable tuple-hash IDs and all render streams are fixed before the independent
+  stratum permutation; rank is metadata and never seeds eligibility. The old
+  narrow bounded simulation is preliminary evidence only until its required
+  stratified finite-population replacement passes.
 - VP is a bounded whole-bf16 partial V-row permutation and qualifies only the
   value-only cell. Full-KV has a wrong-history matched semantic control but is
   never called nonsemantic-placebo-complete.

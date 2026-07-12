@@ -95,6 +95,27 @@ These simulations audit implementation and power; the mathematical coverage
 comes from bounded concentration plus the union-bound alpha ledger, not from a
 finite simulation being treated as proof.
 
+## Subsequent freeze-audit correction
+
+The `...165226Z.json` artifact above is now classified as a **preliminary
+partial check**, not a passing Section-12 freeze artifact. Its formulas and
+headline power cases were useful and numerically correct, but its scenario
+matrix did not cross every required family with every dependence setting, did
+not repeatedly sample the literal stratified finite-population law, used a
+normal Monte Carlo tolerance instead of the exact binomial acceptance count,
+and predated the durable independent byte-for-byte recomputation. The earlier
+sentence “all preregistered simulation gates: pass” is therefore revoked for
+authorization purposes. The JSON remains immutable evidence of the sequence of
+design work.
+
+A new exclusive-create simulation artifact must satisfy the corrected live
+protocol and receive independent disposition before static freeze. The same
+follow-up audit also required stable tuple-derived render seeds, conservative
+per-stratum rank-through-ten cost projection, exact staged-release status and
+parent-tree verification, an explicit whole-batch host-loss rule, deterministic
+VP/seed algorithms, and an exact primary length band. Those corrections live in
+the still-DRAFT successor preregistration and authorize no paid work.
+
 ## Still not authorized
 
 The corrected document remains DRAFT. No paid work is authorized until an
