@@ -1,0 +1,52 @@
+{
+  "create_response_path": "/Users/jeb/experimentation/.sol-v4/treatment_execution/provider_clock/v12e01diag0402_create_response.json",
+  "created_cost_per_hr": 1.39,
+  "delete_trigger_epoch": 1783831043,
+  "events": [
+    {
+      "at_utc": "2026-07-12T04:01:04.767995+00:00",
+      "cost_per_hr": 1.39,
+      "event": "ALLOCATION_REGISTERED"
+    },
+    {
+      "at_utc": "2026-07-12T04:01:04.803605+00:00",
+      "event": "WATCHDOG_STARTED",
+      "pid": 52613
+    },
+    {
+      "at_utc": "2026-07-12T04:19:31.971544+00:00",
+      "event": "TERMINATION_STARTED",
+      "reason": "artifacts_committed_and_pushed"
+    },
+    {
+      "at_utc": "2026-07-12T04:19:35.120294+00:00",
+      "event": "POD_CONFIRMED_GONE",
+      "reason": "artifacts_committed_and_pushed"
+    }
+  ],
+  "hard_deadline_epoch": 1783831163,
+  "hard_deadline_utc": "2026-07-12T04:39:23+00:00",
+  "job_path": "/Users/jeb/experimentation/.sol-v4/treatment_execution/job_coherent_canary_v12_treatment_e01.sh",
+  "job_sha256": "0cefac1b75eb72f54cb0626cc8fe27f544d08f5aa03b428b9ba167a47493303e",
+  "last_provider_observation": {
+    "action": "PRESERVE_ACTIVE",
+    "at_utc": "2026-07-12T04:17:07.938268+00:00",
+    "costPerHr": 1.39,
+    "desiredStatus": "RUNNING",
+    "publicIp_present": true,
+    "seconds_until_delete_trigger": 1216
+  },
+  "max_cost_per_hr": 1.39,
+  "max_rental_seconds": 2300,
+  "name": "v12e01diag0402",
+  "pod_id": "t09se1chhqpw5e",
+  "provider_clock_started_epoch": 1783828863,
+  "provider_clock_started_utc": "2026-07-12T04:01:03+00:00",
+  "schema": "coherent_canary_v12_treatment_provider_guard_v1",
+  "state_path": "/Users/jeb/experimentation/.pod_v12e01diag0402_state.json",
+  "status": "TERMINATED",
+  "terminal_reason": "artifacts_committed_and_pushed",
+  "terminated_at_utc": "2026-07-12T04:19:35.122116+00:00",
+  "watchdog_pid": 52613,
+  "watchdog_started_at_utc": "2026-07-12T04:01:04.803121+00:00"
+}
