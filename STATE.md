@@ -54,14 +54,17 @@ insufficiently tested.
    literal reusable artifacts.
 2. The diverse experiment menu is complete and archived under the slug
    `powered-successor-experiment-menu`.
-3. Finish the corrected v13 static design gate: fixed N=48, two same-C-origin
-   renders per fixture, distribution-free clipped-mean plus responder-tail
-   bounds, decoded-valid matched controls, and applied-bf16 VP feasibility.
-   The prior `...165226Z` bounded simulation is only a preliminary partial
-   check; its former pass claim is revoked pending the full stratified-WOR
-   family/dependence simulation and independent agreement. The protocol is
-   still DRAFT and authorizes no paid work.
-4. Author/review the frozen fixture pool and re-verify only the production
+3. The corrected fixed-N statistical design, independent recomputation, and
+   full 18-scenario/17-power-population 200,000-trial validation have passed
+   durable independent audit. The authoritative artifact is the
+   `powered-v13-finite-population-simulation_local_20260712T174743Z` result; the
+   prior `...165226Z` file remains preliminary partial evidence. The protocol
+   is still DRAFT and authorizes no paid work.
+4. The compact 32,768-tuple/eight-stratum pre-seed recipe foundation has passed
+   exhaustive audit without materializing any ranked history. Finish the
+   tokenizer/surface layer, then commit independent permutation seeds and
+   validate/review only the frozen first ten ranks per stratum. Re-verify only
+   the production
    apparatus paths the new design relies on,
    including the required model/config build ladder and literal-input failure
    tests; do not reopen an apparatus-validation spiral.
@@ -85,6 +88,25 @@ insufficiently tested.
   killed by inference.
 - A fresh RunPod API check at `2026-07-12T14:39:21Z` observed zero active pods
   and balance `$57.1287946692`.
+
+## Latest cycle checkpoint
+
+The immutable checkpoint
+`results/coherent_state_powered_v13/cycle-checkpoint_local_20260712T175127Z.json`
+recorded, at `2026-07-12T17:51:27Z`:
+
+- active goal elapsed time `4566` seconds (`1.2683` hours);
+- provider balance `$57.1287946692`, spend limit `$80`, and zero active pods;
+- independent semantic progress `1/48`, leaving gap `47`;
+- observed Phase-A spend `$0`; conservative future buckets
+  `$12 + $30 + $4.50 + $8 = $54.50`, leaving `$2.6287946692` against the
+  current balance;
+- budget inequalities passed, but overall status **HOLD** because the named
+  static, paid Phase-A, treatment, host-audit, and publication gates remain.
+
+Create another exclusive checkpoint at every static phase transition, before
+and after any allocation/pilot, after every Phase-A candidate, after every
+treatment durability block, and before provider deletion.
 
 ## Non-negotiable boundaries
 
