@@ -1027,7 +1027,7 @@
         },
         {
           "note": "notes/2026071116-sol-fable-execution-coordination.md",
-          "blob_id": "b54e60ff2d208fda6a96ef2282480ef605468503"
+          "blob_id": "d30c284099538d5ac3f95deae28c0aa72023ecf6"
         },
         {
           "note": "notes/2026071117-fable-outcome-interpretation-matrix.md",
@@ -1303,7 +1303,6 @@
         "b1168b70170876426631a3b788e0d51e810654f1",
         "b11e21769d2f45707934b42a36327e02aeaa6d8e",
         "b40c8a806fff9991ab8bc723ff2d41aa39059fc0",
-        "b54e60ff2d208fda6a96ef2282480ef605468503",
         "b5c09f76d16f043bea87f65c9e58c060615ddbdb",
         "b7d0ec42c4def550a91582f370e87d43670abd1f",
         "ba79d81eb113415654aef32e4d5310fbca4c9673",
@@ -1317,6 +1316,7 @@
         "c93e082210aa65795e52cfe8d1300377ad8ca612",
         "ccb0a7db6dff0385a4a70af00b8f280a9e06563a",
         "d035bd6670fe58037659f1eaab6d19b1c418d0dd",
+        "d30c284099538d5ac3f95deae28c0aa72023ecf6",
         "d78865b88f0aadf5a12f6360a82bbcb82212c8cb",
         "dccd0352923673a6468c23d22cd928ae80133689",
         "df7c96a79ff1103400de864f7829768e5888c83d",
@@ -1328,7 +1328,7 @@
         "fa8dd0aa25f0accee0b7f4bb4ae0bbd059ef7adf",
         "fd119d21a3134e99e255ed67dd1e5c2ee07e6105"
       ],
-      "summary_hash": "b7a0bbd8aec9d1f894ced0fedac32f1847b1bc7b6d731de18670b7657282780f",
+      "summary_hash": "e2396dab5bcda55fab13d78fcb164303d728d82ccfa08679ee43f9ca292fcaff",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
@@ -1345,7 +1345,7 @@
     },
     "20260712": {
       "note": "notes/20260712.md",
-      "source_count": 8,
+      "source_count": 12,
       "sources": [
         {
           "note": "notes/2026071274-sol-v12-runtime-rope-metadata-correction.md",
@@ -1353,7 +1353,7 @@
         },
         {
           "note": "notes/2026071275-conversation-user-gpt56.md",
-          "blob_id": "49fa18cdfd8701154256898f8ebd206956860aca"
+          "blob_id": "d5ac751b5ee53894a7b0ba8daa3f36e134bafb41"
         },
         {
           "note": "notes/2026071276-sol-v12-local-cap-and-durable-identity-amendment.md",
@@ -1378,19 +1378,39 @@
         {
           "note": "notes/2026071281-sol-critical-host-driver-and-provider-qualification-finding.md",
           "blob_id": "cfef8058ebba1d3bb4eaccc34633ddfff4b18757"
+        },
+        {
+          "note": "notes/2026071282-sol-v12-attempt3-cross-model-review-disposition.md",
+          "blob_id": "b18f31f0074acdb4b4f70acf3bae637c6005f966"
+        },
+        {
+          "note": "notes/2026071283-fable-e01-treatment-release-review.md",
+          "blob_id": "7cb02a2f667b7f536d0b30c40ed8c46f3fa51ce1"
+        },
+        {
+          "note": "notes/2026071284-sol-fable-e01-review-disposition.md",
+          "blob_id": "29919b43f1eae40b827ebfa99e2b96bb502b8c13"
+        },
+        {
+          "note": "notes/2026071285-conversation-user-opus48.md",
+          "blob_id": "caace32b0d3c6b1d874a7efcbc601982e10a3c6f"
         }
       ],
       "source_blob_ids": [
         "140f168b9fafd9c5d66452ef443e6ffe49fef3e9",
+        "29919b43f1eae40b827ebfa99e2b96bb502b8c13",
         "355349c865063009193b45364d8274cfcff49adb",
         "367a7ae1b09137ab63759827240bc2b827a06c6d",
-        "49fa18cdfd8701154256898f8ebd206956860aca",
+        "7cb02a2f667b7f536d0b30c40ed8c46f3fa51ce1",
         "a65a12019a853fc3458bccf5b8468a1d28b848cc",
+        "b18f31f0074acdb4b4f70acf3bae637c6005f966",
         "bd50d5708f63556b193c1b1df3f4612beda12da1",
         "c241ddc23a66c91b2d284d173f0840c9bd57b18c",
-        "cfef8058ebba1d3bb4eaccc34633ddfff4b18757"
+        "caace32b0d3c6b1d874a7efcbc601982e10a3c6f",
+        "cfef8058ebba1d3bb4eaccc34633ddfff4b18757",
+        "d5ac751b5ee53894a7b0ba8daa3f36e134bafb41"
       ],
-      "summary_hash": "15a144edf541382794c041e6ae9d3bce31037bfe87091b9511e86c2cdd4eef1e",
+      "summary_hash": "9cb8daa59b4b7f2fdab79874e77dc97ce34e8918654eea3e9fc1ac1e3a96dc9e",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
