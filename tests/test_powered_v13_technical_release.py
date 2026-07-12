@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
+import inspect
 import json
 from pathlib import Path
 import subprocess
 
 import pytest
 
+import powered_v13_release as release
 from powered_v13_release import (
     STAGE_T,
     STAGE_T_INVENTORY_CONTRACT_PATH,
@@ -17,16 +19,16 @@ from powered_v13_release import (
     STAGE_T_PREREGISTRATION_PATH,
     STAGE_T_RECEIPT_BASENAME,
     ReleaseVerificationError,
+    _create_stage_t_launch_receipt_for_test as create_stage_t_launch_receipt,
+    _verify_stage_t_checkout_for_test as verify_stage_t_checkout,
     build_stage_t_manifest,
     canonical_json_bytes,
-    create_stage_t_launch_receipt,
     encode_stage_t_inventory_contract,
     encode_stage_t_manifest,
     receipt_payload_sha256,
     sha256_bytes,
     verify_stage_a_authorization_commit,
     verify_stage_t_authorization_commit,
-    verify_stage_t_checkout,
     verify_stage_t_manifest_document,
 )
 
@@ -60,10 +62,13 @@ def _write(repo: Path, relative: str, payload: bytes) -> None:
     path.write_bytes(payload)
 
 
-def _root(tmp_path: Path) -> tuple[Path, str]:
+def _root(tmp_path: Path, *, object_format: str = "sha1") -> tuple[Path, str]:
     repo = tmp_path / "repo"
     repo.mkdir()
-    _git(repo, "init", "-b", "trunk")
+    init_args = ["init", "-b", "trunk"]
+    if object_format == "sha256":
+        init_args = ["init", "--object-format=sha256", "-b", "trunk"]
+    _git(repo, *init_args)
     _git(repo, "config", "user.email", "technical-release@example.com")
     _git(repo, "config", "user.name", "Technical Release Test")
     _write(
@@ -122,8 +127,10 @@ def _authorization(
     return _git(repo, "rev-parse", "HEAD")
 
 
-def _valid_release(tmp_path: Path, *, detach: bool = True):
-    repo, root = _root(tmp_path)
+def _valid_release(
+    tmp_path: Path, *, detach: bool = True, object_format: str = "sha1"
+):
+    repo, root = _root(tmp_path, object_format=object_format)
     manifest = _manifest(repo, root)
     authorization = _authorization(repo, manifest)
     receipts = tmp_path / "receipts"
@@ -182,7 +189,9 @@ def test_stage_a_wrapper_cannot_accept_stage_t_release(tmp_path: Path) -> None:
     repo, _root, authorization, _receipts, _manifest_doc = _valid_release(
         tmp_path, detach=False
     )
-    with pytest.raises(ReleaseVerificationError, match="Stage-A manifest identity"):
+    with pytest.raises(
+        ReleaseVerificationError, match="Stage-A manifest (?:fields|identity)"
+    ):
         verify_stage_a_authorization_commit(
             repo,
             authorization_commit=authorization,
@@ -339,3 +348,228 @@ def test_stage_t_preregistration_change_is_exactly_one_line(tmp_path: Path) -> N
             authorization_commit=authorization,
             manifest_path=MANIFEST_PATH,
         )
+
+
+def test_replacement_ref_attack_is_rejected_before_authorization_read(
+    tmp_path: Path,
+) -> None:
+    repo, root = _root(tmp_path)
+    manifest = _manifest(repo, root)
+    valid_authorization = _authorization(repo, manifest)
+    receipts = tmp_path / "receipts"
+    create_stage_t_launch_receipt(
+        repo,
+        receipts,
+        authorization_commit=valid_authorization,
+        manifest_path=MANIFEST_PATH,
+        created_at=T0,
+    )
+    root_tree = _git(repo, "rev-parse", f"{root}^{{tree}}")
+    bad_authorization = _git(
+        repo, "commit-tree", root_tree, "-p", root, "-m", "bad authorization"
+    )
+    _git(repo, "replace", bad_authorization, valid_authorization)
+
+    receipt_path = receipts / STAGE_T_RECEIPT_BASENAME
+    receipt = json.loads(receipt_path.read_bytes())
+    receipt["authorization_commit"] = bad_authorization
+    receipt["payload_sha256"] = receipt_payload_sha256(receipt)
+    receipt_path.write_bytes(canonical_json_bytes(receipt) + b"\n")
+    _git(repo, "checkout", "--detach", bad_authorization)
+
+    with pytest.raises(ReleaseVerificationError, match="replacement refs"):
+        verify_stage_t_checkout(
+            repo,
+            authorization_commit=bad_authorization,
+            manifest_path=MANIFEST_PATH,
+            receipt_directory=receipts,
+            now=T0,
+        )
+
+
+def test_legacy_graft_metadata_is_rejected(tmp_path: Path) -> None:
+    repo, root = _root(tmp_path)
+    git_dir = Path(_git(repo, "rev-parse", "--git-dir"))
+    if not git_dir.is_absolute():
+        git_dir = repo / git_dir
+    graft = git_dir / "info" / "grafts"
+    graft.parent.mkdir(parents=True, exist_ok=True)
+    graft.write_text(f"{root}\n", encoding="ascii")
+    with pytest.raises(ReleaseVerificationError, match="graft metadata"):
+        _manifest(repo, root)
+
+
+def test_inherited_git_repository_selection_environment_is_ignored(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo, root = _root(tmp_path)
+    expected = _manifest(repo, root)
+    poison = str(tmp_path / "ambient-git-override")
+    for name in (
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_COMMON_DIR",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_INDEX_FILE",
+        "GIT_NAMESPACE",
+        "GIT_SHALLOW_FILE",
+        "GIT_REPLACE_REF_BASE",
+    ):
+        monkeypatch.setenv(name, poison)
+    monkeypatch.setenv("GIT_GLOB_PATHSPECS", "1")
+
+    assert _manifest(repo, root) == expected
+
+
+def test_generic_engine_rejects_forged_custom_spec_and_stage_key(
+    tmp_path: Path,
+) -> None:
+    repo, root = _root(tmp_path)
+    forged = release._ReleaseSpec(
+        label="Weak",
+        stage="WEAK",
+        manifest_schema="weak-manifest-v1",
+        inventory_contract_schema="weak-contract-v1",
+        receipt_schema="weak-receipt-v1",
+        preregistration_path="PROTOCOL.md",
+        inventory_contract_path="data/weak.json",
+        receipt_basename="weak.json",
+        old_status_line=b"OLD\n",
+        new_status_line=b"NEW\n",
+    )
+    with pytest.raises(ReleaseVerificationError, match="frozen built-in key"):
+        release._build_manifest(
+            repo,
+            static_root_commit=root,
+            manifest_path=MANIFEST_PATH,
+            stage_key=forged,
+        )
+    with pytest.raises(ReleaseVerificationError, match="frozen built-in key"):
+        release._spec_for("technical-canary")
+
+    for function in (
+        release.build_stage_t_manifest,
+        release.verify_stage_t_authorization_commit,
+        release.create_stage_t_launch_receipt,
+        release.verify_stage_t_checkout,
+    ):
+        parameters = inspect.signature(function).parameters
+        assert not ({"stage", "stage_key", "spec", "capability"} & set(parameters))
+
+
+def test_production_receipt_apis_expose_no_clock_or_tolerance_knobs() -> None:
+    forbidden = {
+        "created_at", "now", "max_age_seconds", "max_receipt_age_seconds",
+        "future_skew_seconds",
+    }
+    for function in (
+        release.create_stage_t_launch_receipt,
+        release.create_stage_a_launch_receipt,
+        release.verify_stage_t_launch_receipt,
+        release.verify_stage_a_launch_receipt,
+        release.verify_stage_t_checkout,
+        release.verify_stage_a_checkout,
+    ):
+        assert not (forbidden & set(inspect.signature(function).parameters))
+
+
+def test_public_stage_t_receipt_and_checkout_use_real_clock_and_pass(
+    tmp_path: Path,
+) -> None:
+    repo, root = _root(tmp_path)
+    manifest = _manifest(repo, root)
+    authorization = _authorization(repo, manifest)
+    receipts = tmp_path / "receipts"
+    release.create_stage_t_launch_receipt(
+        repo,
+        receipts,
+        authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH,
+    )
+    _git(repo, "checkout", "--detach", authorization)
+    evidence = release.verify_stage_t_checkout(
+        repo,
+        authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH,
+        receipt_directory=receipts,
+    )
+    assert evidence["status"] == "PASS"
+    assert 0 <= evidence["receipt"]["age_seconds"] <= 5
+
+
+@pytest.mark.parametrize(
+    ("created_at", "message"),
+    [
+        (datetime(2000, 1, 1, tzinfo=timezone.utc), "stale"),
+        (datetime(2100, 1, 1, tzinfo=timezone.utc), "too far in the future"),
+    ],
+)
+def test_public_checkout_rejects_ancient_and_future_receipts_without_knobs(
+    tmp_path: Path, created_at: datetime, message: str,
+) -> None:
+    repo, root = _root(tmp_path)
+    manifest = _manifest(repo, root)
+    authorization = _authorization(repo, manifest)
+    receipts = tmp_path / "receipts"
+    create_stage_t_launch_receipt(
+        repo,
+        receipts,
+        authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH,
+        created_at=created_at,
+    )
+    _git(repo, "checkout", "--detach", authorization)
+    with pytest.raises(ReleaseVerificationError, match=message):
+        release.verify_stage_t_checkout(
+            repo,
+            authorization_commit=authorization,
+            manifest_path=MANIFEST_PATH,
+            receipt_directory=receipts,
+        )
+
+
+@pytest.mark.parametrize(
+    ("schema", "tag"),
+    [
+        (STAGE_T_MANIFEST_SCHEMA, "duplicate-stage-t"),
+        (release.STAGE_A_MANIFEST_SCHEMA, "cross-stage-a"),
+    ],
+)
+def test_stage_t_root_rejects_preexisting_duplicate_or_cross_stage_manifest(
+    tmp_path: Path, schema: str, tag: str,
+) -> None:
+    repo, _root_commit = _root(tmp_path)
+    extra = f"release/{tag}.json"
+    _write(repo, extra, canonical_json_bytes({"schema": schema}) + b"\n")
+    paths = tuple(sorted((*INVENTORY_PATHS, extra)))
+    _write(
+        repo,
+        STAGE_T_INVENTORY_CONTRACT_PATH,
+        encode_stage_t_inventory_contract(paths),
+    )
+    _git(repo, "add", extra, STAGE_T_INVENTORY_CONTRACT_PATH)
+    _git(repo, "commit", "-m", "forbidden preexisting release artifact")
+    contaminated_root = _git(repo, "rev-parse", "HEAD")
+    with pytest.raises(
+        ReleaseVerificationError, match="duplicate or cross-stage"
+    ):
+        _manifest(repo, contaminated_root)
+
+
+def test_sha256_git_repository_still_passes_full_stage_t_gate(
+    tmp_path: Path,
+) -> None:
+    repo, root, authorization, receipts, _manifest_doc = _valid_release(
+        tmp_path, object_format="sha256"
+    )
+    evidence = verify_stage_t_checkout(
+        repo,
+        authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH,
+        receipt_directory=receipts,
+        now=T0,
+    )
+    assert evidence["status"] == "PASS"
+    assert len(root) == len(authorization) == 64
+    assert len(evidence["authorization"]["static_root_tree"]) == 64

@@ -3,13 +3,19 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+import inspect
 import json
 from pathlib import Path
 import subprocess
 
 import pytest
 
+import powered_v13_release as release
 from powered_v13_release import (
+    STAGE_T_INVENTORY_CONTRACT_PATH,
+    STAGE_T_MANIFEST_SCHEMA,
+    STAGE_T_NEW_STATUS_LINE,
+    STAGE_T_OLD_STATUS_LINE,
     STAGE_A_INVENTORY_CONTRACT_PATH,
     STAGE_A_MANIFEST_SCHEMA,
     STAGE_A_NEW_STATUS_LINE,
@@ -17,31 +23,42 @@ from powered_v13_release import (
     STAGE_A_PREREGISTRATION_PATH,
     STAGE_A_RECEIPT_BASENAME,
     ReleaseVerificationError,
+    _create_stage_a_launch_receipt_for_test as create_stage_a_launch_receipt,
+    _verify_stage_a_checkout_for_test as verify_stage_a_checkout,
+    build_stage_t_manifest,
     build_stage_a_manifest,
     canonical_json_bytes,
-    create_stage_a_launch_receipt,
+    encode_stage_t_inventory_contract,
+    encode_stage_t_manifest,
     encode_stage_a_inventory_contract,
     encode_stage_a_manifest,
     receipt_payload_sha256,
     sha256_bytes,
     verify_stage_a_authorization_commit,
-    verify_stage_a_checkout,
     verify_stage_a_manifest_document,
 )
 
 
 PREREGISTRATION = STAGE_A_PREREGISTRATION_PATH
 MANIFEST_PATH = "release/powered-v13-stage-a-manifest.json"
+STAGE_T_MANIFEST_PATH = "release/powered-v13-technical-canary-manifest.json"
 EXPERIMENT_PATHS = tuple(
     sorted(
         (
             PREREGISTRATION,
             STAGE_A_INVENTORY_CONTRACT_PATH,
+            STAGE_T_MANIFEST_PATH,
             "locks/exact.lock",
             "src/runner.py",
         )
     )
 )
+STAGE_T_EXPERIMENT_PATHS = tuple(sorted((
+    PREREGISTRATION,
+    STAGE_T_INVENTORY_CONTRACT_PATH,
+    "locks/technical.lock",
+    "src/technical_runner.py",
+)))
 OLD_STATUS = STAGE_A_OLD_STATUS_LINE
 NEW_STATUS = STAGE_A_NEW_STATUS_LINE
 T0 = datetime(2026, 7, 12, 18, 0, 0, tzinfo=timezone.utc)
@@ -79,8 +96,34 @@ def init_static_root(tmp_path: Path) -> tuple[Path, str]:
     write(
         repo,
         PREREGISTRATION,
-        b"# Synthetic protocol\n\n" + OLD_STATUS + b"\nNo paid work.\n",
+        b"# Synthetic protocol\n\n" + STAGE_T_OLD_STATUS_LINE + b"\nNo paid work.\n",
     )
+    write(repo, "src/technical_runner.py", b"SEMANTIC_N = 0\n")
+    write(repo, "locks/technical.lock", b"technical==1 --hash=sha256:abcd\n")
+    write(
+        repo,
+        STAGE_T_INVENTORY_CONTRACT_PATH,
+        encode_stage_t_inventory_contract(STAGE_T_EXPERIMENT_PATHS),
+    )
+    git(repo, "add", *STAGE_T_EXPERIMENT_PATHS)
+    git(repo, "commit", "-m", "technical root")
+    technical_root = git(repo, "rev-parse", "HEAD")
+    technical_manifest = build_stage_t_manifest(
+        repo,
+        static_root_commit=technical_root,
+        manifest_path=STAGE_T_MANIFEST_PATH,
+    )
+    write(
+        repo,
+        PREREGISTRATION,
+        (repo / PREREGISTRATION).read_bytes().replace(
+            STAGE_T_OLD_STATUS_LINE, STAGE_T_NEW_STATUS_LINE, 1
+        ),
+    )
+    write(repo, STAGE_T_MANIFEST_PATH, encode_stage_t_manifest(technical_manifest))
+    git(repo, "add", PREREGISTRATION, STAGE_T_MANIFEST_PATH)
+    git(repo, "commit", "-m", "technical authorization")
+
     write(repo, "src/runner.py", b"def run():\n    return 'blind'\n")
     write(repo, "locks/exact.lock", b"package==1.2.3 --hash=sha256:abcd\n")
     write(
@@ -88,7 +131,13 @@ def init_static_root(tmp_path: Path) -> tuple[Path, str]:
         STAGE_A_INVENTORY_CONTRACT_PATH,
         encode_stage_a_inventory_contract(EXPERIMENT_PATHS),
     )
-    git(repo, "add", *EXPERIMENT_PATHS)
+    git(
+        repo,
+        "add",
+        STAGE_A_INVENTORY_CONTRACT_PATH,
+        "src/runner.py",
+        "locks/exact.lock",
+    )
     git(repo, "commit", "-m", "static root")
     return repo, git(repo, "rev-parse", "HEAD")
 
@@ -559,3 +608,101 @@ def test_exact_head_mismatch_is_rejected_before_launch(tmp_path: Path) -> None:
             receipt_directory=release.receipt_directory,
             now=T0,
         )
+
+
+def test_stage_a_manifest_binds_exact_prior_stage_t_authorization(
+    tmp_path: Path,
+) -> None:
+    repo, root = init_static_root(tmp_path)
+    manifest = manifest_for(repo, root)
+    prior = manifest["prior_stage_t_authorization"]
+    assert prior["stage"] == "TECHNICAL_CANARY"
+    assert prior["manifest_path"] == STAGE_T_MANIFEST_PATH
+    assert len(prior["authorization_commit"]) == 40
+
+    tampered = deepcopy(manifest)
+    tampered["prior_stage_t_authorization"]["authorization_commit"] = "0" * 40
+    with pytest.raises(ReleaseVerificationError, match="binding differs"):
+        verify_stage_a_manifest_document(repo, tampered)
+
+
+def test_public_stage_a_receipt_and_checkout_use_real_clock_and_pass(
+    tmp_path: Path,
+) -> None:
+    repo, root = init_static_root(tmp_path)
+    manifest = manifest_for(repo, root)
+    authorization = commit_authorization(repo, manifest)
+    receipts = tmp_path / "public-receipts"
+    release.create_stage_a_launch_receipt(
+        repo,
+        receipts,
+        authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH,
+    )
+    git(repo, "checkout", "--detach", authorization)
+    evidence = release.verify_stage_a_checkout(
+        repo,
+        authorization_commit=authorization,
+        manifest_path=MANIFEST_PATH,
+        receipt_directory=receipts,
+    )
+    assert evidence["status"] == "PASS"
+    assert 0 <= evidence["receipt"]["age_seconds"] <= 5
+
+
+@pytest.mark.parametrize(
+    ("schema", "tag"),
+    [
+        (STAGE_T_MANIFEST_SCHEMA, "duplicate-stage-t"),
+        (STAGE_A_MANIFEST_SCHEMA, "preexisting-stage-a"),
+    ],
+)
+def test_stage_a_root_rejects_duplicate_or_preexisting_stage_manifest(
+    tmp_path: Path, schema: str, tag: str,
+) -> None:
+    repo, _root = init_static_root(tmp_path)
+    extra = f"release/{tag}.json"
+    write(repo, extra, canonical_json_bytes({"schema": schema}) + b"\n")
+    contract_paths = tuple(sorted((*EXPERIMENT_PATHS, extra)))
+    write(
+        repo,
+        STAGE_A_INVENTORY_CONTRACT_PATH,
+        encode_stage_a_inventory_contract(contract_paths),
+    )
+    git(repo, "add", extra, STAGE_A_INVENTORY_CONTRACT_PATH)
+    git(repo, "commit", "-m", "contaminate Stage-A root manifest lineage")
+    contaminated = git(repo, "rev-parse", "HEAD")
+    with pytest.raises(
+        ReleaseVerificationError,
+        match="exactly one prior Stage-T|preexisting Stage-A",
+    ):
+        manifest_for(repo, contaminated)
+
+
+def test_stage_a_contract_must_bind_prior_stage_t_manifest(tmp_path: Path) -> None:
+    repo, _root = init_static_root(tmp_path)
+    omitted = tuple(
+        path for path in EXPERIMENT_PATHS if path != STAGE_T_MANIFEST_PATH
+    )
+    write(
+        repo,
+        STAGE_A_INVENTORY_CONTRACT_PATH,
+        encode_stage_a_inventory_contract(omitted),
+    )
+    git(repo, "add", STAGE_A_INVENTORY_CONTRACT_PATH)
+    git(repo, "commit", "-m", "omit prior Stage-T manifest from Stage-A contract")
+    root = git(repo, "rev-parse", "HEAD")
+    with pytest.raises(ReleaseVerificationError, match="omits the prior Stage-T"):
+        manifest_for(repo, root)
+
+
+def test_stage_a_rejects_modified_prior_stage_t_manifest(tmp_path: Path) -> None:
+    repo, _root = init_static_root(tmp_path)
+    prior = json.loads((repo / STAGE_T_MANIFEST_PATH).read_bytes())
+    prior["unexpected_mutation"] = True
+    write(repo, STAGE_T_MANIFEST_PATH, canonical_json_bytes(prior) + b"\n")
+    git(repo, "add", STAGE_T_MANIFEST_PATH)
+    git(repo, "commit", "-m", "mutate prior Stage-T manifest")
+    root = git(repo, "rev-parse", "HEAD")
+    with pytest.raises(ReleaseVerificationError, match="prior Stage-T authorization"):
+        manifest_for(repo, root)

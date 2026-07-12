@@ -21,12 +21,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from enum import Enum
 import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
+from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
 
@@ -52,7 +54,7 @@ STAGE_T_NEW_STATUS_LINE = (
     b"E01/LONG ONLY; SEMANTIC N=0**\n"
 )
 STAGE_A = "STATIC_PHASE_A"
-STAGE_A_MANIFEST_SCHEMA = "powered-v13-stage-a-manifest-v1"
+STAGE_A_MANIFEST_SCHEMA = "powered-v13-stage-a-manifest-v2"
 STAGE_A_INVENTORY_CONTRACT_SCHEMA = "powered-v13-stage-a-inventory-contract-v1"
 STAGE_A_RECEIPT_SCHEMA = "powered-v13-stage-a-launch-receipt-v1"
 STAGE_A_PREREGISTRATION_PATH = (
@@ -93,34 +95,56 @@ class _ReleaseSpec:
     new_status_line: bytes
 
 
-_STAGE_T_SPEC = _ReleaseSpec(
-    label="Stage-T",
-    stage=STAGE_T,
-    manifest_schema=STAGE_T_MANIFEST_SCHEMA,
-    inventory_contract_schema=STAGE_T_INVENTORY_CONTRACT_SCHEMA,
-    receipt_schema=STAGE_T_RECEIPT_SCHEMA,
-    preregistration_path=STAGE_T_PREREGISTRATION_PATH,
-    inventory_contract_path=STAGE_T_INVENTORY_CONTRACT_PATH,
-    receipt_basename=STAGE_T_RECEIPT_BASENAME,
-    old_status_line=STAGE_T_OLD_STATUS_LINE,
-    new_status_line=STAGE_T_NEW_STATUS_LINE,
-)
-_STAGE_A_SPEC = _ReleaseSpec(
-    label="Stage-A",
-    stage=STAGE_A,
-    manifest_schema=STAGE_A_MANIFEST_SCHEMA,
-    inventory_contract_schema=STAGE_A_INVENTORY_CONTRACT_SCHEMA,
-    receipt_schema=STAGE_A_RECEIPT_SCHEMA,
-    preregistration_path=STAGE_A_PREREGISTRATION_PATH,
-    inventory_contract_path=STAGE_A_INVENTORY_CONTRACT_PATH,
-    receipt_basename=STAGE_A_RECEIPT_BASENAME,
-    old_status_line=STAGE_A_OLD_STATUS_LINE,
-    new_status_line=STAGE_A_NEW_STATUS_LINE,
-)
+class _StageKey(Enum):
+    TECHNICAL_CANARY = "technical-canary"
+    STATIC_PHASE_A = "static-phase-a"
+
+
+_STAGE_SPECS: Mapping[_StageKey, _ReleaseSpec] = MappingProxyType({
+    _StageKey.TECHNICAL_CANARY: _ReleaseSpec(
+        label="Stage-T",
+        stage=STAGE_T,
+        manifest_schema=STAGE_T_MANIFEST_SCHEMA,
+        inventory_contract_schema=STAGE_T_INVENTORY_CONTRACT_SCHEMA,
+        receipt_schema=STAGE_T_RECEIPT_SCHEMA,
+        preregistration_path=STAGE_T_PREREGISTRATION_PATH,
+        inventory_contract_path=STAGE_T_INVENTORY_CONTRACT_PATH,
+        receipt_basename=STAGE_T_RECEIPT_BASENAME,
+        old_status_line=STAGE_T_OLD_STATUS_LINE,
+        new_status_line=STAGE_T_NEW_STATUS_LINE,
+    ),
+    _StageKey.STATIC_PHASE_A: _ReleaseSpec(
+        label="Stage-A",
+        stage=STAGE_A,
+        manifest_schema=STAGE_A_MANIFEST_SCHEMA,
+        inventory_contract_schema=STAGE_A_INVENTORY_CONTRACT_SCHEMA,
+        receipt_schema=STAGE_A_RECEIPT_SCHEMA,
+        preregistration_path=STAGE_A_PREREGISTRATION_PATH,
+        inventory_contract_path=STAGE_A_INVENTORY_CONTRACT_PATH,
+        receipt_basename=STAGE_A_RECEIPT_BASENAME,
+        old_status_line=STAGE_A_OLD_STATUS_LINE,
+        new_status_line=STAGE_A_NEW_STATUS_LINE,
+    ),
+})
+_RELEASE_SCHEMA_STAGE: Mapping[str, _StageKey] = MappingProxyType({
+    STAGE_T_MANIFEST_SCHEMA: _StageKey.TECHNICAL_CANARY,
+    "powered-v13-stage-a-manifest-v1": _StageKey.STATIC_PHASE_A,
+    STAGE_A_MANIFEST_SCHEMA: _StageKey.STATIC_PHASE_A,
+})
 
 
 class ReleaseVerificationError(RuntimeError):
     """A staged release or launch condition failed closed."""
+
+
+def _spec_for(stage_key: _StageKey) -> _ReleaseSpec:
+    """Return only one of the two frozen release specifications."""
+    if type(stage_key) is not _StageKey:
+        raise ReleaseVerificationError("release stage key is not a frozen built-in key")
+    try:
+        return _STAGE_SPECS[stage_key]
+    except KeyError as exc:  # Defensive if the enum grows without a frozen spec.
+        raise ReleaseVerificationError("release stage key has no frozen specification") from exc
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -147,10 +171,19 @@ def _git(
     input_bytes: bytes | None = None,
     check: bool = True,
 ) -> subprocess.CompletedProcess[bytes]:
+    # Git's repository, object, index, namespace, replacement, and pathspec
+    # selection can all be redirected through inherited GIT_* variables.  The
+    # release boundary must instead describe the repository passed by ``repo``.
+    environment = {
+        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    environment["GIT_LITERAL_PATHSPECS"] = "1"
     try:
         result = subprocess.run(
             ["git", *args],
             cwd=repo,
+            env=environment,
             input=input_bytes,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -170,7 +203,28 @@ def _git_text(repo: Path, *args: str) -> str:
     return _git(repo, *args).stdout.decode("utf-8", "strict")
 
 
+def _reject_git_rewrite_metadata(repo: Path) -> None:
+    replacements = [
+        line for line in _git_text(
+            repo, "for-each-ref", "--format=%(refname)", "refs/replace/"
+        ).splitlines() if line
+    ]
+    if replacements:
+        raise ReleaseVerificationError(
+            f"repository contains forbidden replacement refs: {replacements!r}"
+        )
+    graft_text = _git_text(repo, "rev-parse", "--git-path", "info/grafts").strip()
+    graft_path = Path(graft_text)
+    if not graft_path.is_absolute():
+        graft_path = repo / graft_path
+    if graft_path.exists() or graft_path.is_symlink():
+        raise ReleaseVerificationError(
+            f"repository contains forbidden graft metadata: {graft_path}"
+        )
+
+
 def _require_exact_commit(repo: Path, value: Any, label: str) -> str:
+    _reject_git_rewrite_metadata(repo)
     if not isinstance(value, str) or not _GIT_OID_RE.fullmatch(value):
         raise ReleaseVerificationError(f"{label} is not an exact lowercase Git OID")
     resolved = _git_text(repo, "rev-parse", "--verify", f"{value}^{{commit}}").strip()
@@ -238,6 +292,165 @@ def _inventory(repo: Path, commit: str, paths: Sequence[str]) -> list[dict[str, 
     return rows
 
 
+def _scan_release_manifest_paths(
+    repo: Path, commit: str
+) -> dict[_StageKey, list[str]]:
+    """Find every tracked JSON object claiming a known release schema."""
+    found = {
+        _StageKey.TECHNICAL_CANARY: [],
+        _StageKey.STATIC_PHASE_A: [],
+    }
+    candidates: set[str] = set()
+    prefix = f"{commit}:".encode("ascii")
+    for schema in _RELEASE_SCHEMA_STAGE:
+        result = _git(
+            repo, "grep", "-I", "-l", "-F", schema, commit, check=False
+        )
+        if result.returncode not in {0, 1}:
+            detail = result.stderr.decode("utf-8", "replace").strip()
+            raise ReleaseVerificationError(
+                f"Git release-schema scan failed with {result.returncode}: {detail}"
+            )
+        for raw_line in result.stdout.splitlines():
+            if not raw_line.startswith(prefix):
+                raise ReleaseVerificationError(
+                    "malformed Git release-schema scan result"
+                )
+            try:
+                candidates.add(raw_line[len(prefix):].decode("utf-8", "strict"))
+            except UnicodeDecodeError as exc:
+                raise ReleaseVerificationError(
+                    "non-UTF-8 release-schema candidate path"
+                ) from exc
+    for path in sorted(candidates):
+        mode, _oid, blob = _tree_entry(repo, commit, path)
+        if mode not in {"100644", "100755"}:
+            continue
+        try:
+            value = json.loads(blob)
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if not isinstance(value, dict):
+            continue
+        stage_key = _RELEASE_SCHEMA_STAGE.get(value.get("schema"))
+        if stage_key is not None:
+            found[stage_key].append(_safe_path(path, "release manifest path"))
+    for paths in found.values():
+        paths.sort()
+    return found
+
+
+def _prior_stage_t_lineage(
+    repo: Path,
+    stage_a_root: str,
+    *,
+    stage_t_manifest_path: str,
+) -> dict[str, Any]:
+    """Recover and verify the one Stage-T authorization that added the manifest."""
+    current_mode, _current_oid, current_raw = _tree_entry(
+        repo, stage_a_root, stage_t_manifest_path
+    )
+    if current_mode != "100644":
+        raise ReleaseVerificationError("prior Stage-T manifest is not mode 100644")
+    candidates = [
+        line for line in _git_text(
+            repo,
+            "log",
+            "--format=%H",
+            "--diff-filter=A",
+            stage_a_root,
+            "--",
+            stage_t_manifest_path,
+        ).splitlines() if line
+    ]
+    valid: list[dict[str, Any]] = []
+    for candidate in candidates:
+        try:
+            evidence = _verify_authorization_commit(
+                repo,
+                authorization_commit=candidate,
+                manifest_path=stage_t_manifest_path,
+                stage_key=_StageKey.TECHNICAL_CANARY,
+            )
+        except ReleaseVerificationError:
+            continue
+        if evidence["manifest_sha256"] == sha256_bytes(current_raw):
+            valid.append(evidence)
+    if len(valid) != 1:
+        raise ReleaseVerificationError(
+            "Stage-A root does not have one exact prior Stage-T authorization lineage"
+        )
+    evidence = valid[0]
+    return {
+        "stage": STAGE_T,
+        "authorization_commit": evidence["authorization_commit"],
+        "static_root_commit": evidence["static_root_commit"],
+        "manifest_path": evidence["manifest_path"],
+        "manifest_sha256": evidence["manifest_sha256"],
+    }
+
+
+def _require_parent_manifest_state(
+    repo: Path,
+    root: str,
+    *,
+    contract_paths: Sequence[str],
+    stage_key: _StageKey,
+) -> dict[str, Any] | None:
+    """Enforce the exact release lineage visible in an immutable parent tree."""
+    _spec_for(stage_key)
+    found = _scan_release_manifest_paths(repo, root)
+    stage_t_paths = found[_StageKey.TECHNICAL_CANARY]
+    stage_a_paths = found[_StageKey.STATIC_PHASE_A]
+    if stage_key is _StageKey.TECHNICAL_CANARY:
+        if stage_t_paths or stage_a_paths:
+            raise ReleaseVerificationError(
+                "Stage-T root contains a duplicate or cross-stage release manifest"
+            )
+        return None
+    if len(stage_t_paths) != 1 or stage_a_paths:
+        raise ReleaseVerificationError(
+            "Stage-A root lacks exactly one prior Stage-T manifest or contains "
+            "a preexisting Stage-A manifest"
+        )
+    stage_t_path = stage_t_paths[0]
+    if stage_t_path not in contract_paths:
+        raise ReleaseVerificationError(
+            "Stage-A inventory contract omits the prior Stage-T manifest"
+        )
+    return _prior_stage_t_lineage(
+        repo, root, stage_t_manifest_path=stage_t_path
+    )
+
+
+def _require_child_manifest_state(
+    repo: Path,
+    child: str,
+    *,
+    manifest_path: str,
+    stage_key: _StageKey,
+    prior_stage_t: Mapping[str, Any] | None,
+) -> None:
+    """Require the complete authorization tree to contain only valid stage lineage."""
+    _spec_for(stage_key)
+    found = _scan_release_manifest_paths(repo, child)
+    stage_t_paths = found[_StageKey.TECHNICAL_CANARY]
+    stage_a_paths = found[_StageKey.STATIC_PHASE_A]
+    if stage_key is _StageKey.TECHNICAL_CANARY:
+        if stage_t_paths != [manifest_path] or stage_a_paths:
+            raise ReleaseVerificationError(
+                "Stage-T child manifest set is duplicate or cross-stage"
+            )
+        return
+    if prior_stage_t is None:
+        raise ReleaseVerificationError("Stage-A child lacks prior Stage-T lineage")
+    expected_stage_t = prior_stage_t.get("manifest_path")
+    if stage_t_paths != [expected_stage_t] or stage_a_paths != [manifest_path]:
+        raise ReleaseVerificationError(
+            "Stage-A child manifest set is duplicate or cross-stage"
+        )
+
+
 def _status_line(value: bytes, label: str) -> bytes:
     if not isinstance(value, bytes) or not value or len(value) > 4096:
         raise ReleaseVerificationError(f"{label} must be nonempty bounded bytes")
@@ -263,7 +476,7 @@ def _build_manifest(
     *,
     static_root_commit: str,
     manifest_path: str,
-    spec: _ReleaseSpec,
+    stage_key: _StageKey,
 ) -> dict[str, Any]:
     """Build, but do not write, a deterministic parent-tree manifest.
 
@@ -272,6 +485,7 @@ def _build_manifest(
     silently change it.  Every byte is read from ``static_root_commit`` through
     Git's object database.
     """
+    spec = _spec_for(stage_key)
     repo = Path(repo).resolve()
     root = _require_exact_commit(repo, static_root_commit, "static_root_commit")
     prereg = spec.preregistration_path
@@ -284,7 +498,7 @@ def _build_manifest(
         )
 
     normalized = _read_inventory_contract(
-        repo, root, manifest_path=manifest_rel, spec=spec
+        repo, root, manifest_path=manifest_rel, stage_key=stage_key
     )
     old = spec.old_status_line
     new = spec.new_status_line
@@ -294,9 +508,12 @@ def _build_manifest(
     if new in prereg_bytes:
         raise ReleaseVerificationError("new status line already appears in the parent")
 
+    prior_stage_t = _require_parent_manifest_state(
+        repo, root, contract_paths=normalized, stage_key=stage_key
+    )
     rows = _inventory(repo, root, normalized)
     root_tree = _git_text(repo, "rev-parse", f"{root}^{{tree}}").strip()
-    return {
+    document = {
         "schema": spec.manifest_schema,
         "design_id": DESIGN_ID,
         "stage": spec.stage,
@@ -313,6 +530,9 @@ def _build_manifest(
         "inventory": rows,
         "inventory_sha256": sha256_bytes(canonical_json_bytes(rows)),
     }
+    if stage_key is _StageKey.STATIC_PHASE_A:
+        document["prior_stage_t_authorization"] = prior_stage_t
+    return document
 
 
 def build_stage_t_manifest(
@@ -326,7 +546,7 @@ def build_stage_t_manifest(
         repo,
         static_root_commit=static_root_commit,
         manifest_path=manifest_path,
-        spec=_STAGE_T_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
     )
 
 
@@ -341,7 +561,7 @@ def build_stage_a_manifest(
         repo,
         static_root_commit=static_root_commit,
         manifest_path=manifest_path,
-        spec=_STAGE_A_SPEC,
+        stage_key=_StageKey.STATIC_PHASE_A,
     )
 
 
@@ -371,8 +591,9 @@ def _contract_inventory_paths(
     value: Any,
     *,
     manifest_path: str | None,
-    spec: _ReleaseSpec,
+    stage_key: _StageKey,
 ) -> list[str]:
+    spec = _spec_for(stage_key)
     if not isinstance(value, list) or not value:
         raise ReleaseVerificationError(
             f"{spec.label} inventory contract paths are empty or not a list"
@@ -398,15 +619,16 @@ def _contract_inventory_paths(
 
 
 def _encode_inventory_contract(
-    inventory_paths: Sequence[str], *, spec: _ReleaseSpec
+    inventory_paths: Sequence[str], *, stage_key: _StageKey
 ) -> bytes:
     """Encode one fixed-path parent-tree inventory contract."""
+    spec = _spec_for(stage_key)
     if not isinstance(inventory_paths, Sequence) or isinstance(
         inventory_paths, (str, bytes)
     ):
         raise ReleaseVerificationError("inventory_paths must be a path sequence")
     paths = _contract_inventory_paths(
-        list(inventory_paths), manifest_path=None, spec=spec
+        list(inventory_paths), manifest_path=None, stage_key=stage_key
     )
     document = {
         "schema": spec.inventory_contract_schema,
@@ -419,12 +641,16 @@ def _encode_inventory_contract(
 
 def encode_stage_t_inventory_contract(inventory_paths: Sequence[str]) -> bytes:
     """Encode the fixed Stage-T parent-tree inventory contract."""
-    return _encode_inventory_contract(inventory_paths, spec=_STAGE_T_SPEC)
+    return _encode_inventory_contract(
+        inventory_paths, stage_key=_StageKey.TECHNICAL_CANARY
+    )
 
 
 def encode_stage_a_inventory_contract(inventory_paths: Sequence[str]) -> bytes:
     """Encode the fixed Stage-A parent-tree inventory contract."""
-    return _encode_inventory_contract(inventory_paths, spec=_STAGE_A_SPEC)
+    return _encode_inventory_contract(
+        inventory_paths, stage_key=_StageKey.STATIC_PHASE_A
+    )
 
 
 def _read_inventory_contract(
@@ -432,8 +658,9 @@ def _read_inventory_contract(
     commit: str,
     *,
     manifest_path: str,
-    spec: _ReleaseSpec,
+    stage_key: _StageKey,
 ) -> list[str]:
+    spec = _spec_for(stage_key)
     mode, _oid, raw = _tree_entry(
         repo, commit, spec.inventory_contract_path
     )
@@ -462,7 +689,9 @@ def _read_inventory_contract(
             f"{spec.label} inventory contract identity differs"
         )
     return _contract_inventory_paths(
-        document["inventory_paths"], manifest_path=manifest_path, spec=spec
+        document["inventory_paths"],
+        manifest_path=manifest_path,
+        stage_key=stage_key,
     )
 
 
@@ -471,9 +700,10 @@ def _verify_manifest_document(
     manifest: Mapping[str, Any],
     *,
     expected_manifest_path: str | None = None,
-    spec: _ReleaseSpec,
+    stage_key: _StageKey,
 ) -> dict[str, Any]:
     """Recompute every manifest binding from the named immutable parent."""
+    spec = _spec_for(stage_key)
     repo = Path(repo).resolve()
     fields = {
         "schema",
@@ -488,6 +718,8 @@ def _verify_manifest_document(
         "inventory",
         "inventory_sha256",
     }
+    if stage_key is _StageKey.STATIC_PHASE_A:
+        fields.add("prior_stage_t_authorization")
     doc = _require_object(manifest, fields, f"{spec.label} manifest")
     if (
         doc["schema"] != spec.manifest_schema
@@ -510,8 +742,16 @@ def _verify_manifest_document(
     if not manifest_rel.endswith(".json") or not _path_absent(repo, root, manifest_rel):
         raise ReleaseVerificationError("manifest path is not a new .json path")
     contract_paths = _read_inventory_contract(
-        repo, root, manifest_path=manifest_rel, spec=spec
+        repo, root, manifest_path=manifest_rel, stage_key=stage_key
     )
+    prior_stage_t = _require_parent_manifest_state(
+        repo, root, contract_paths=contract_paths, stage_key=stage_key
+    )
+    if stage_key is _StageKey.STATIC_PHASE_A:
+        if doc["prior_stage_t_authorization"] != prior_stage_t:
+            raise ReleaseVerificationError(
+                "Stage-A prior Stage-T authorization binding differs"
+            )
 
     transition = _require_object(
         doc["status_transition"],
@@ -575,6 +815,7 @@ def _verify_manifest_document(
         "new_status_line": new,
         "inventory": expected_inventory,
         "inventory_sha256": expected_inventory_sha,
+        "prior_stage_t_authorization": prior_stage_t,
     }
 
 
@@ -589,7 +830,7 @@ def verify_stage_t_manifest_document(
         repo,
         manifest,
         expected_manifest_path=expected_manifest_path,
-        spec=_STAGE_T_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
     )
 
 
@@ -604,7 +845,7 @@ def verify_stage_a_manifest_document(
         repo,
         manifest,
         expected_manifest_path=expected_manifest_path,
-        spec=_STAGE_A_SPEC,
+        stage_key=_StageKey.STATIC_PHASE_A,
     )
 
 
@@ -655,8 +896,9 @@ def _reject_duplicate_changed_manifests(
     changes: Sequence[tuple[str, str]],
     manifest_path: str,
     *,
-    spec: _ReleaseSpec,
+    stage_key: _StageKey,
 ) -> None:
+    spec = _spec_for(stage_key)
     matches: list[str] = []
     for status, path in changes:
         if status == "D" or not path.endswith(".json"):
@@ -683,9 +925,10 @@ def _verify_authorization_commit(
     *,
     authorization_commit: str,
     manifest_path: str,
-    spec: _ReleaseSpec,
+    stage_key: _StageKey,
 ) -> dict[str, Any]:
     """Verify one fixed one-parent, two-path authorization commit."""
+    spec = _spec_for(stage_key)
     repo = Path(repo).resolve()
     child = _require_exact_commit(repo, authorization_commit, "authorization_commit")
     manifest_rel = _safe_path(manifest_path, "manifest_path")
@@ -699,7 +942,10 @@ def _verify_authorization_commit(
         repo, child, manifest_rel, f"{spec.label} manifest"
     )
     binding = _verify_manifest_document(
-        repo, manifest, expected_manifest_path=manifest_rel, spec=spec
+        repo,
+        manifest,
+        expected_manifest_path=manifest_rel,
+        stage_key=stage_key,
     )
     if binding["static_root_commit"] != parent:
         raise ReleaseVerificationError(
@@ -708,7 +954,7 @@ def _verify_authorization_commit(
 
     changes = _diff_name_status(repo, parent, child)
     _reject_duplicate_changed_manifests(
-        repo, child, changes, manifest_rel, spec=spec
+        repo, child, changes, manifest_rel, stage_key=stage_key
     )
     prereg = binding["preregistration_path"]
     expected_changes = sorted([("A", manifest_rel), ("M", prereg)])
@@ -737,6 +983,13 @@ def _verify_authorization_commit(
         raise ReleaseVerificationError(
             f"{spec.label} manifest changed during verification"
         )
+    _require_child_manifest_state(
+        repo,
+        child,
+        manifest_path=manifest_rel,
+        stage_key=stage_key,
+        prior_stage_t=binding["prior_stage_t_authorization"],
+    )
     return {
         "authorization_commit": child,
         "static_root_commit": parent,
@@ -747,6 +1000,7 @@ def _verify_authorization_commit(
         "inventory_sha256": binding["inventory_sha256"],
         "preregistration_path": prereg,
         "changed_paths": [path for _status, path in changes],
+        "prior_stage_t_authorization": binding["prior_stage_t_authorization"],
     }
 
 
@@ -761,7 +1015,7 @@ def verify_stage_t_authorization_commit(
         repo,
         authorization_commit=authorization_commit,
         manifest_path=manifest_path,
-        spec=_STAGE_T_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
     )
 
 
@@ -776,7 +1030,7 @@ def verify_stage_a_authorization_commit(
         repo,
         authorization_commit=authorization_commit,
         manifest_path=manifest_path,
-        spec=_STAGE_A_SPEC,
+        stage_key=_StageKey.STATIC_PHASE_A,
     )
 
 
@@ -862,8 +1116,9 @@ def _empty_receipt_directory(receipt_directory: Path) -> Path:
 
 
 def _scan_unique_receipt(
-    receipt_directory: Path, *, spec: _ReleaseSpec
+    receipt_directory: Path, *, stage_key: _StageKey
 ) -> Path:
+    spec = _spec_for(stage_key)
     directory = Path(receipt_directory)
     if directory.is_symlink() or not directory.is_dir():
         raise ReleaseVerificationError(
@@ -898,15 +1153,16 @@ def _create_launch_receipt(
     *,
     authorization_commit: str,
     manifest_path: str,
+    stage_key: _StageKey,
     created_at: datetime | None = None,
-    spec: _ReleaseSpec,
 ) -> dict[str, Any]:
     """Create one exact post-commit receipt without replacing prior bytes."""
+    spec = _spec_for(stage_key)
     evidence = _verify_authorization_commit(
         repo,
         authorization_commit=authorization_commit,
         manifest_path=manifest_path,
-        spec=spec,
+        stage_key=stage_key,
     )
     created = _format_utc(created_at or datetime.now(timezone.utc))
     receipt: dict[str, Any] = {
@@ -924,7 +1180,7 @@ def _create_launch_receipt(
     directory = _empty_receipt_directory(Path(receipt_directory))
     output_path = directory / spec.receipt_basename
     _write_bytes_exclusive(output_path, encoded)
-    verified_path = _scan_unique_receipt(directory, spec=spec)
+    verified_path = _scan_unique_receipt(directory, stage_key=stage_key)
     if verified_path != output_path or output_path.read_bytes() != encoded:
         raise ReleaseVerificationError("launch receipt changed during exclusive write")
     return receipt
@@ -936,7 +1192,6 @@ def create_stage_t_launch_receipt(
     *,
     authorization_commit: str,
     manifest_path: str,
-    created_at: datetime | None = None,
 ) -> dict[str, Any]:
     """Create one exact Stage-T post-commit receipt."""
     return _create_launch_receipt(
@@ -944,8 +1199,7 @@ def create_stage_t_launch_receipt(
         receipt_directory,
         authorization_commit=authorization_commit,
         manifest_path=manifest_path,
-        created_at=created_at,
-        spec=_STAGE_T_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
     )
 
 
@@ -955,7 +1209,6 @@ def create_stage_a_launch_receipt(
     *,
     authorization_commit: str,
     manifest_path: str,
-    created_at: datetime | None = None,
 ) -> dict[str, Any]:
     """Create one exact Stage-A post-commit receipt."""
     return _create_launch_receipt(
@@ -963,8 +1216,45 @@ def create_stage_a_launch_receipt(
         receipt_directory,
         authorization_commit=authorization_commit,
         manifest_path=manifest_path,
+        stage_key=_StageKey.STATIC_PHASE_A,
+    )
+
+
+def _create_stage_t_launch_receipt_for_test(
+    repo: Path,
+    receipt_directory: Path,
+    *,
+    authorization_commit: str,
+    manifest_path: str,
+    created_at: datetime,
+) -> dict[str, Any]:
+    """Private deterministic-clock helper; never a production entry point."""
+    return _create_launch_receipt(
+        repo,
+        receipt_directory,
+        authorization_commit=authorization_commit,
+        manifest_path=manifest_path,
         created_at=created_at,
-        spec=_STAGE_A_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
+    )
+
+
+def _create_stage_a_launch_receipt_for_test(
+    repo: Path,
+    receipt_directory: Path,
+    *,
+    authorization_commit: str,
+    manifest_path: str,
+    created_at: datetime,
+) -> dict[str, Any]:
+    """Private deterministic-clock helper; never a production entry point."""
+    return _create_launch_receipt(
+        repo,
+        receipt_directory,
+        authorization_commit=authorization_commit,
+        manifest_path=manifest_path,
+        created_at=created_at,
+        stage_key=_StageKey.STATIC_PHASE_A,
     )
 
 
@@ -987,16 +1277,11 @@ def _verify_launch_receipt(
     receipt_path: Path,
     *,
     authorization_evidence: Mapping[str, Any],
+    stage_key: _StageKey,
     now: datetime | None = None,
-    max_age_seconds: int = DEFAULT_RECEIPT_MAX_AGE_SECONDS,
-    future_skew_seconds: int = DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS,
-    spec: _ReleaseSpec,
 ) -> dict[str, Any]:
     """Verify exact release bindings and the bounded receipt age."""
-    if type(max_age_seconds) is not int or max_age_seconds <= 0:
-        raise ReleaseVerificationError("max_age_seconds must be a positive integer")
-    if type(future_skew_seconds) is not int or future_skew_seconds < 0:
-        raise ReleaseVerificationError("future_skew_seconds must be a nonnegative integer")
+    spec = _spec_for(stage_key)
     fields = {
         "schema",
         "design_id",
@@ -1036,9 +1321,9 @@ def _verify_launch_receipt(
     if current.tzinfo is None:
         raise ReleaseVerificationError("receipt verification time is timezone-naive")
     age = (current.astimezone(timezone.utc) - created).total_seconds()
-    if age < -future_skew_seconds:
+    if age < -DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS:
         raise ReleaseVerificationError("launch receipt timestamp is too far in the future")
-    if age > max_age_seconds:
+    if age > DEFAULT_RECEIPT_MAX_AGE_SECONDS:
         raise ReleaseVerificationError("launch receipt is stale")
     return {
         "receipt_path": str(Path(receipt_path).resolve()),
@@ -1053,18 +1338,12 @@ def verify_stage_t_launch_receipt(
     receipt_path: Path,
     *,
     authorization_evidence: Mapping[str, Any],
-    now: datetime | None = None,
-    max_age_seconds: int = DEFAULT_RECEIPT_MAX_AGE_SECONDS,
-    future_skew_seconds: int = DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS,
 ) -> dict[str, Any]:
     """Verify an exact Stage-T receipt and bounded age."""
     return _verify_launch_receipt(
         receipt_path,
         authorization_evidence=authorization_evidence,
-        now=now,
-        max_age_seconds=max_age_seconds,
-        future_skew_seconds=future_skew_seconds,
-        spec=_STAGE_T_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
     )
 
 
@@ -1072,18 +1351,12 @@ def verify_stage_a_launch_receipt(
     receipt_path: Path,
     *,
     authorization_evidence: Mapping[str, Any],
-    now: datetime | None = None,
-    max_age_seconds: int = DEFAULT_RECEIPT_MAX_AGE_SECONDS,
-    future_skew_seconds: int = DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS,
 ) -> dict[str, Any]:
     """Verify an exact Stage-A receipt and bounded age."""
     return _verify_launch_receipt(
         receipt_path,
         authorization_evidence=authorization_evidence,
-        now=now,
-        max_age_seconds=max_age_seconds,
-        future_skew_seconds=future_skew_seconds,
-        spec=_STAGE_A_SPEC,
+        stage_key=_StageKey.STATIC_PHASE_A,
     )
 
 
@@ -1121,30 +1394,29 @@ def _verify_checkout(
     authorization_commit: str,
     manifest_path: str,
     receipt_directory: Path,
+    stage_key: _StageKey,
     now: datetime | None = None,
-    max_receipt_age_seconds: int = DEFAULT_RECEIPT_MAX_AGE_SECONDS,
-    future_skew_seconds: int = DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS,
-    spec: _ReleaseSpec,
 ) -> dict[str, Any]:
     """Verify the complete local analogue of a remote launch gate."""
+    spec = _spec_for(stage_key)
     repo = Path(repo).resolve()
     exact_commit = _require_exact_commit(repo, authorization_commit, "authorization_commit")
     _require_detached_head(repo, exact_commit)
     _require_clean_tree(repo)
-    receipt_path = _scan_unique_receipt(Path(receipt_directory), spec=spec)
+    receipt_path = _scan_unique_receipt(
+        Path(receipt_directory), stage_key=stage_key
+    )
     authorization = _verify_authorization_commit(
         repo,
         authorization_commit=exact_commit,
         manifest_path=manifest_path,
-        spec=spec,
+        stage_key=stage_key,
     )
     receipt = _verify_launch_receipt(
         receipt_path,
         authorization_evidence=authorization,
+        stage_key=stage_key,
         now=now,
-        max_age_seconds=max_receipt_age_seconds,
-        future_skew_seconds=future_skew_seconds,
-        spec=spec,
     )
     return {
         "status": "PASS",
@@ -1163,9 +1435,6 @@ def verify_stage_t_checkout(
     authorization_commit: str,
     manifest_path: str,
     receipt_directory: Path,
-    now: datetime | None = None,
-    max_receipt_age_seconds: int = DEFAULT_RECEIPT_MAX_AGE_SECONDS,
-    future_skew_seconds: int = DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS,
 ) -> dict[str, Any]:
     """Verify the complete fixed Stage-T remote launch gate."""
     return _verify_checkout(
@@ -1173,10 +1442,7 @@ def verify_stage_t_checkout(
         authorization_commit=authorization_commit,
         manifest_path=manifest_path,
         receipt_directory=receipt_directory,
-        now=now,
-        max_receipt_age_seconds=max_receipt_age_seconds,
-        future_skew_seconds=future_skew_seconds,
-        spec=_STAGE_T_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
     )
 
 
@@ -1186,9 +1452,6 @@ def verify_stage_a_checkout(
     authorization_commit: str,
     manifest_path: str,
     receipt_directory: Path,
-    now: datetime | None = None,
-    max_receipt_age_seconds: int = DEFAULT_RECEIPT_MAX_AGE_SECONDS,
-    future_skew_seconds: int = DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS,
 ) -> dict[str, Any]:
     """Verify the complete fixed Stage-A remote launch gate."""
     return _verify_checkout(
@@ -1196,8 +1459,43 @@ def verify_stage_a_checkout(
         authorization_commit=authorization_commit,
         manifest_path=manifest_path,
         receipt_directory=receipt_directory,
+        stage_key=_StageKey.STATIC_PHASE_A,
+    )
+
+
+def _verify_stage_t_checkout_for_test(
+    repo: Path,
+    *,
+    authorization_commit: str,
+    manifest_path: str,
+    receipt_directory: Path,
+    now: datetime,
+) -> dict[str, Any]:
+    """Private deterministic-clock helper; never a production entry point."""
+    return _verify_checkout(
+        repo,
+        authorization_commit=authorization_commit,
+        manifest_path=manifest_path,
+        receipt_directory=receipt_directory,
         now=now,
-        max_receipt_age_seconds=max_receipt_age_seconds,
-        future_skew_seconds=future_skew_seconds,
-        spec=_STAGE_A_SPEC,
+        stage_key=_StageKey.TECHNICAL_CANARY,
+    )
+
+
+def _verify_stage_a_checkout_for_test(
+    repo: Path,
+    *,
+    authorization_commit: str,
+    manifest_path: str,
+    receipt_directory: Path,
+    now: datetime,
+) -> dict[str, Any]:
+    """Private deterministic-clock helper; never a production entry point."""
+    return _verify_checkout(
+        repo,
+        authorization_commit=authorization_commit,
+        manifest_path=manifest_path,
+        receipt_directory=receipt_directory,
+        now=now,
+        stage_key=_StageKey.STATIC_PHASE_A,
     )
