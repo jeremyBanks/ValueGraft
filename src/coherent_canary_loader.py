@@ -144,9 +144,10 @@ PROTOCOL_TOKENIZER_ATTESTATION = {
 MODEL_SNAPSHOT_CONTRACT_PATH = Path(
     "data/coherent_canary_v12/model_snapshot_contract.json")
 FROZEN_AUTHORIZATION_PATH = Path(
-    "COHERENT-STATE-DECISION-CANARY-V12-FROZEN-AUTHORIZATION-6.json")
+    "COHERENT-STATE-DECISION-CANARY-V12-FROZEN-AUTHORIZATION-7.json")
 MANDATORY_FROZEN_PATHS = {
-    "AGENTS.md", "pyproject.toml", "uv.lock",
+    "AGENTS.md", "INCIDENTS.md", "RELIABILITY.md",
+    "pyproject.toml", "uv.lock",
     "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
     "COHERENT-STATE-DECISION-CANARY-V12-STIMULUS-CONTRACT.md",
     MODEL_SNAPSHOT_CONTRACT_PATH.as_posix(),
@@ -164,9 +165,11 @@ MANDATORY_FROZEN_PATHS = {
     "notes/2026071155-sol-fable-review-disposition-and-canary-closure.md",
     "notes/2026071156-canary-preregistration-independent-audit.md",
     "notes/2026071167-sol-v12-execution-audit-and-runtime-closure.md",
-    "notes/2026071168-sol-v12-harvest-and-release-closure.md",
-    "notes/2026071176-sol-v12-exact-launch-review-disposition.md",
-    "notes/2026071177-sol-v12-transformers-moe-loader-correction.md",
+    "notes/2026071169-sol-v12-harvest-and-release-closure.md",
+    "notes/2026071279-sol-v12-exact-launch-review-disposition.md",
+    "notes/2026071280-sol-v12-transformers-moe-loader-correction.md",
+    "notes/2026071281-sol-critical-host-driver-and-provider-qualification-finding.md",
+    "notes/2026071282-sol-v12-attempt3-cross-model-review-disposition.md",
     "results/coherent_canary_validation/"
     "coherent_canary_revision4_full_manifest_Qwen3-30B-A3B-Instruct-2507_"
     "20260711T205951Z.json",
@@ -180,6 +183,8 @@ MANDATORY_FROZEN_PATHS = {
     "revision4_blind_singleton_independent_codex_20260711T210013Z.json",
     "results/coherent_canary_reviews/reviews/"
     "revision4_paired_diversity_independent_codex_20260711T210013Z.json",
+    "results/coherent_canary_reviews/reviews/"
+    "v12_attempt2_provisioning_audit_claude_20260712T0106Z.md",
     "results/coherent_canary_reviews/packets/"
     "coherent_canary_v12_blind_singleton_20260711T210013Z_7f36752b3295.json",
     "results/coherent_canary_reviews/packets/"
@@ -191,6 +196,9 @@ MANDATORY_FROZEN_PATHS = {
     "scripts/validate_coherent_canary_control_fixtures.py",
     "scripts/validate_coherent_canary_stimuli.py",
     "scripts/harvest_coherent_canary_v12.py",
+    "scripts/launch_coherent_canary_v12_technical.sh",
+    "scripts/launch_pod.sh",
+    "scripts/preflight.py", "scripts/preflight.sh",
     "scripts/job_coherent_canary_v12_technical.sh",
     "scripts/pull_coherent_canary_v12_technical.sh",
     "scripts/run_coherent_canary_v12_technical.py",
@@ -205,6 +213,8 @@ MANDATORY_FROZEN_PATHS = {
     "src/coherent_canary_schema.py", "src/coherent_canary_stimuli.py",
     "src/coherent_canary_store.py", "src/coherent_canary_technical.py",
     "src/coherent_canary_tokens.py", "src/coherent_state_tokens.py",
+    "src/pod.py", "src/pod_admission.py",
+    "tests/test_pod_provisioning.py",
 }
 
 
