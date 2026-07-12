@@ -878,7 +878,7 @@
       "timestamp_source": "git current-file lifetime"
     },
     "notes/2026071116-sol-fable-execution-coordination.md": {
-      "object_id": "d30c284099538d5ac3f95deae28c0aa72023ecf6",
+      "object_id": "38cc319fd69344e0b50b023bfbc0cfd63c6e007b",
       "archive_timestamp_utc": "2026-07-11T05:07:01Z",
       "timestamp_source": "git current-file lifetime"
     },
@@ -1167,65 +1167,295 @@
       "archive_timestamp_utc": "2026-07-11T23:55:35Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071274-sol-v12-runtime-rope-metadata-correction.md": {
+    "notes/2026071204-sol-v12-runtime-rope-metadata-correction.md": {
       "object_id": "140f168b9fafd9c5d66452ef443e6ffe49fef3e9",
       "archive_timestamp_utc": "2026-07-12T00:00:58Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071275-conversation-user-gpt56.md": {
-      "object_id": "d5ac751b5ee53894a7b0ba8daa3f36e134bafb41",
+    "notes/2026071205-conversation-user-gpt56.md": {
+      "object_id": "d61549be0e9b5c55e2db12e485f23e3aa3f4ade8",
       "archive_timestamp_utc": "2026-07-12T00:01:28.888000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
-    "notes/2026071276-sol-v12-local-cap-and-durable-identity-amendment.md": {
+    "notes/2026071206-sol-v12-local-cap-and-durable-identity-amendment.md": {
       "object_id": "367a7ae1b09137ab63759827240bc2b827a06c6d",
       "archive_timestamp_utc": "2026-07-12T00:19:25Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071277-fable-v12-local-cap-amendment-review.md": {
+    "notes/2026071207-fable-v12-local-cap-amendment-review.md": {
       "object_id": "355349c865063009193b45364d8274cfcff49adb",
       "archive_timestamp_utc": "2026-07-12T00:19:25Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071278-conversation-opus48.md": {
+    "notes/2026071208-conversation-opus48.md": {
       "object_id": "a65a12019a853fc3458bccf5b8468a1d28b848cc",
       "archive_timestamp_utc": "2026-07-12T00:25:38.598000Z",
       "timestamp_source": "conversation manifest first timestamp"
     },
-    "notes/2026071279-sol-v12-exact-launch-review-disposition.md": {
+    "notes/2026071209-sol-v12-exact-launch-review-disposition.md": {
       "object_id": "bd50d5708f63556b193c1b1df3f4612beda12da1",
       "archive_timestamp_utc": "2026-07-12T00:35:32Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071280-sol-v12-transformers-moe-loader-correction.md": {
+    "notes/2026071210-sol-v12-transformers-moe-loader-correction.md": {
       "object_id": "c241ddc23a66c91b2d284d173f0840c9bd57b18c",
       "archive_timestamp_utc": "2026-07-12T00:58:45Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071281-sol-critical-host-driver-and-provider-qualification-finding.md": {
+    "notes/2026071211-sol-critical-host-driver-and-provider-qualification-finding.md": {
       "object_id": "cfef8058ebba1d3bb4eaccc34633ddfff4b18757",
       "archive_timestamp_utc": "2026-07-12T01:17:13.859236Z",
       "timestamp_source": "filesystem birth time"
     },
-    "notes/2026071282-sol-v12-attempt3-cross-model-review-disposition.md": {
+    "notes/2026071212-sol-v12-attempt3-cross-model-review-disposition.md": {
       "object_id": "b18f31f0074acdb4b4f70acf3bae637c6005f966",
       "archive_timestamp_utc": "2026-07-12T01:43:54Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071283-fable-e01-treatment-release-review.md": {
+    "notes/2026071213-fable-e01-treatment-release-review.md": {
       "object_id": "7cb02a2f667b7f536d0b30c40ed8c46f3fa51ce1",
       "archive_timestamp_utc": "2026-07-12T03:48:53Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071284-sol-fable-e01-review-disposition.md": {
+    "notes/2026071214-sol-fable-e01-review-disposition.md": {
       "object_id": "29919b43f1eae40b827ebfa99e2b96bb502b8c13",
       "archive_timestamp_utc": "2026-07-12T03:50:43Z",
       "timestamp_source": "git current-file lifetime"
     },
-    "notes/2026071285-conversation-user-opus48.md": {
+    "notes/2026071215-conversation-user-opus48.md": {
       "object_id": "caace32b0d3c6b1d874a7efcbc601982e10a3c6f",
       "archive_timestamp_utc": "2026-07-12T03:59:48.019000Z",
       "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071216-fable-e01-diagnostic-interpretation.md": {
+      "object_id": "00af8238b6b61ed5cdde57ae38269e377fbef4ea",
+      "archive_timestamp_utc": "2026-07-12T04:31:34Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071217-sol-e01-diagnostic-final-interpretation.md": {
+      "object_id": "a564fffac60feb89f45945f0beaec5fc80bc1ead",
+      "archive_timestamp_utc": "2026-07-12T04:36:02Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071218-sol-data-collection-stop-and-future-reentry.md": {
+      "object_id": "bf8b0821ea161dba8f06d4446cf056c2a1396ec5",
+      "archive_timestamp_utc": "2026-07-12T04:41:44Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071219-sol-e01-token-level-decomposition.md": {
+      "object_id": "5e68bd1ae069d0b508296ded253f3ac7fc9f580a",
+      "archive_timestamp_utc": "2026-07-12T04:50:57Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071220-sol-final-paper-facts-and-writing-brief.md": {
+      "object_id": "8477988b7559ee2f79b226636aef9d7914e44199",
+      "archive_timestamp_utc": "2026-07-12T04:53:55Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071221-20260712-old-inconclusive-paper-draft-do-not-continue.md": {
+      "object_id": "b10f8ca026b2b9f1ebfcf3cd0426a8546f18198c",
+      "archive_timestamp_utc": "2026-07-12T05:00:38Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071222-fable-fresh-final-paper-initial-draft.md": {
+      "object_id": "4d70f09ab1e02816293006ea89b099bc6eab99ec",
+      "archive_timestamp_utc": "2026-07-12T05:00:38Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071223-conversation-gpt56.md": {
+      "object_id": "ec59579d13b4fbe0051c29543a61a1f574085565",
+      "archive_timestamp_utc": "2026-07-12T05:03:58.911000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071224-sol-legacy-source-stratification-reanalysis.md": {
+      "object_id": "3e1cf9cc4a8bbf62cb713ba118a9c2151ff45fcb",
+      "archive_timestamp_utc": "2026-07-12T05:11:22Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071225-sol-swegym-paper-metrics-reanalysis.md": {
+      "object_id": "51a5d5ffa654c25eab3790755c35bdcb93d306aa",
+      "archive_timestamp_utc": "2026-07-12T05:24:11Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071226-conversation-user-opus48.md": {
+      "object_id": "dc2016fed871b09b0dc714eeeaddde9e9177698b",
+      "archive_timestamp_utc": "2026-07-12T05:25:39.895000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071227-owner-request-precision-axis-quantization-dependence.md": {
+      "object_id": "5b619e84986c6a9edce010734ee283a332c563a5",
+      "archive_timestamp_utc": "2026-07-12T05:32:43Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071228-sol-legacy-head-map-lineage-audit.md": {
+      "object_id": "cf7171a4dabe72885dad0c5e456cc82c3b0ea5a2",
+      "archive_timestamp_utc": "2026-07-12T05:56:44Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071229-sol-swegym-prefill-schedule-correction.md": {
+      "object_id": "9024158e9f74286ed47fe91669f0a2194cf3f150",
+      "archive_timestamp_utc": "2026-07-12T06:04:18Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071230-sol-quantization-axis-disposition.md": {
+      "object_id": "7dec5192c2061b71edd6458c7f457fe934b18350",
+      "archive_timestamp_utc": "2026-07-12T06:08:27Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071231-fable-final-paper-generic-review.md": {
+      "object_id": "4b7c7d1232d5647765257e6c5c012b6015d7becb",
+      "archive_timestamp_utc": "2026-07-12T06:18:23Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071232-fable-final-paper-skeptical-review.md": {
+      "object_id": "b7a896e8251367057ecc441e8e779407af4af845",
+      "archive_timestamp_utc": "2026-07-12T06:24:56Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071233-fable-final-paper-accessibility-review.md": {
+      "object_id": "f689cfcbc94902350965a9bf7ae64678369d8614",
+      "archive_timestamp_utc": "2026-07-12T06:40:33Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071234-sol-swegym-cluster-sensitivity.md": {
+      "object_id": "35bf9125d3d0053c6dbeae1008f6244c8a230d49",
+      "archive_timestamp_utc": "2026-07-12T06:43:17Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071235-fable-precision-axis-design-review.md": {
+      "object_id": "db1ab25551b56758947bd3e415e3606b52a8c357",
+      "archive_timestamp_utc": "2026-07-12T06:49:10Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071236-sol-swegym-fixed-split-heterogeneity.md": {
+      "object_id": "1ebec0fdeaf5ee513b801fdbecfd8956724f4738",
+      "archive_timestamp_utc": "2026-07-12T06:49:53Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071237-sol-graft-dose-recovery.md": {
+      "object_id": "3886f31831c8eacc453746d6a10ba547250562fd",
+      "archive_timestamp_utc": "2026-07-12T06:50:52Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071238-sol-p01-prelaunch-audit.md": {
+      "object_id": "382c0065b63a50b39cf840eeb6c30a474e5caa63",
+      "archive_timestamp_utc": "2026-07-12T07:52:34Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071239-fable-p02-outcome-blind-fallback-review.md": {
+      "object_id": "f21ebc91ea7eee19ecefccbe32e2bdbea03bd524",
+      "archive_timestamp_utc": "2026-07-12T08:58:13Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071240-conversation-user-gpt56.md": {
+      "object_id": "8bbbda5f81af8c00be5c7428fd322bb824008796",
+      "archive_timestamp_utc": "2026-07-12T09:19:13.633000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071241-sol-p01-independent-partial-analysis.md": {
+      "object_id": "fde9a023b8ca04ba409c3e21d53c5ceb665e55f4",
+      "archive_timestamp_utc": "2026-07-12T10:07:43Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071242-fable-p02-launch-value-review.md": {
+      "object_id": "25ab1f6dd594a7b339142541e03768336e3244fc",
+      "archive_timestamp_utc": "2026-07-12T10:19:01Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071243-sol-p02-conditional-replication-expectations-and-launch-decision.md": {
+      "object_id": "446deb2e513f2fec81d0ea94d77ec4307a946fa9",
+      "archive_timestamp_utc": "2026-07-12T10:20:52Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071244-fable-p02-result-interpretation-and-paper-disposition.md": {
+      "object_id": "be27259b4187816df9367bdf55c016892356e319",
+      "archive_timestamp_utc": "2026-07-12T11:53:23Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071245-sol-p02-final-interpretation-and-fable-disposition.md": {
+      "object_id": "9516e45d2f8ae7cd293e7ab218cb3e60b44b886e",
+      "archive_timestamp_utc": "2026-07-12T12:02:06Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071246-fable-p02-paper-integration-draft.md": {
+      "object_id": "2a2ac02fa7562a3964ad01abd6a65928069a5e7a",
+      "archive_timestamp_utc": "2026-07-12T12:22:42Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071247-conversation-user-opus48.md": {
+      "object_id": "8b30859706fa87e027d127e28031b137a364a519",
+      "archive_timestamp_utc": "2026-07-12T12:29:29.966000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071248-sol-related-work-primary-source-verification.md": {
+      "object_id": "0152e0ff59eb39394fffeb95ad7bacaffbf2a385",
+      "archive_timestamp_utc": "2026-07-12T12:29:49Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071249-sol-four-bit-pod-comparison-completion-gate.md": {
+      "object_id": "848a50fd71265ab102d7fede9ccb13cae362beab",
+      "archive_timestamp_utc": "2026-07-12T12:39:07Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071250-sol-runpod-accounting-reconciliation.md": {
+      "object_id": "ff35b85843a9781cd97f303f4d7dd544887175e6",
+      "archive_timestamp_utc": "2026-07-12T13:11:57Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071251-sol-local-compute-and-residual-provider-audit.md": {
+      "object_id": "fef8507fa23ce88e61faff5a171c6f1dd2e8b0da",
+      "archive_timestamp_utc": "2026-07-12T13:41:10Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071252-opus-gap-analysis-asked-vs-did-and-upper-bound.md": {
+      "object_id": "3d5dbc5dfe62050ebbc82f28266166bba52eb5cf",
+      "archive_timestamp_utc": "2026-07-12T13:44:52Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071253-conversation-user-gpt55.md": {
+      "object_id": "e77a004c025adf0deb8f63e0abdc7d00b7ce56bc",
+      "archive_timestamp_utc": "2026-07-12T13:54:18.333000Z",
+      "timestamp_source": "conversation manifest first timestamp"
+    },
+    "notes/2026071254-codex-gpt55-final-paper-review.md": {
+      "object_id": "eb345bcbe7cdee69675b17edbfb9872a59b40bf5",
+      "archive_timestamp_utc": "2026-07-12T13:56:49Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071255-sol-wrap-up-handoff.md": {
+      "object_id": "67ada3c35dda411a4d9833ed6b332d4c1ceaabd8",
+      "archive_timestamp_utc": "2026-07-12T14:13:38Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071256-20260712-handoff-to-new-ultra-agent.md": {
+      "object_id": "6d043e5d86e16916be1a4300290084a65d45ea85",
+      "archive_timestamp_utc": "2026-07-12T14:15:15Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071257-20260712-superseded-old-paper-corpus-brief.md": {
+      "object_id": "f05e7e23a0005d860fd4c28b838eb66ccbb73376",
+      "archive_timestamp_utc": "2026-07-12T14:26:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071258-20260712-superseded-old-paper-draft-prior-synthesis-20260709.md": {
+      "object_id": "f58c2eac0c22356a3c5c70da9616c66bae83af95",
+      "archive_timestamp_utc": "2026-07-12T14:26:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071259-20260712-superseded-old-paper-facts.md": {
+      "object_id": "5c3f6c319652c46f604c71c7b89f727f615a19a9",
+      "archive_timestamp_utc": "2026-07-12T14:26:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071260-20260712-superseded-old-paper-methods-brief.md": {
+      "object_id": "b36b0ad961b670f3eb1dad8a1010dd17604ac1df",
+      "archive_timestamp_utc": "2026-07-12T14:26:32Z",
+      "timestamp_source": "git current-file lifetime"
+    },
+    "notes/2026071261-20260712-superseded-old-paper-related-work-brief.md": {
+      "object_id": "9ef91bfc7b4c7c314eacfb2eb4f5f9760402a67a",
+      "archive_timestamp_utc": "2026-07-12T14:26:32Z",
+      "timestamp_source": "git current-file lifetime"
     }
   }
 }
