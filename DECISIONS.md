@@ -609,3 +609,61 @@ Capture everything very well (owner).
   valid usable treatment, exact coding-model ladder, full-context competence,
   and observed compaction damage. Two to six tasks would be feasibility only;
   no current task result supports a practical performance claim.
+
+## V12 terminal disposition and e01 diagnostic decision (2026-07-12)
+
+- **The literal written path-control rule governs formal v12.** At ULP 2 both
+  edits measurably changed the margin but the minus edit moved in the wrong
+  direction. Formal v12 therefore failed its technical gate. The sealed
+  implementation's later ULP-4 pass is preserved only as evidence that the
+  intervention/readout path is bidirectionally sensitive at that edit size; a
+  favorable code-defined observation cannot reinterpret the written stop rule
+  after exact cells are known.
+
+- **One unchanged e01 treatment was permitted only as a post-ambiguity
+  diagnostic.** The conflict and conservative disposition were committed before
+  treatment. The outcome cannot select between the prose and code readings or
+  enter the frozen decision tree. Stop v12 permanently after e01: no e02--e06,
+  four-/six-case aggregate, conversation branch, confirmation, or live-agent
+  work. The harvest field `semantic_evidence_eligible=true` records that the
+  sealed apparatus and Phase-A eligibility checks passed; it does not override
+  the receipt's `formal_v12_decision_eligible=false` or confer formal status.
+
+- **Interpret e01 as one weak value-only hint, not a full-KV or efficacy
+  result.** At N/R2, value-only had positive focal direction, selectivity,
+  correct-target movement, and fresh utility; full K+V was nonselective and
+  worsened the correct target. The value-only contrast collapsed under P, mixed
+  signs appeared across R1/R3 and K/V decompositions, the best movement recovered
+  only 0.81% of margin damage, and no generated answer changed. This supports at
+  most an exact-apparatus, single-case history-dependent state observation.
+
+- **Zero available placebos means missing control evidence.** Every frozen
+  norm-matched placebo was unavailable after bf16 casting. Never report that as
+  a null placebo. The primary measurements remain mechanically valid, but the
+  semantic attribution is uncontrolled.
+
+- **A successor is a new study, not a v12 rescue.** It must preregister
+  unambiguous signed candidate-selection/stop semantics; demonstrate a
+  bf16-feasible placebo on actual exact-subject geometry before outcome scoring;
+  persist a bounded tensor evidence bundle; use multiple independent fixtures
+  with less saturated, behaviorally sensitive calibration; and run FC/FW/FF
+  plus placebo under both N and P. Comparable placebo movement, lack of
+  cross-case replication, continued schedule collapse, or behavioral nulls are
+  stopping evidence rather than reasons to add cases.
+
+- **The final frozen v12 canary ceiling was `$2.40`, superseding the earlier
+  contemplated `$8` extension.** The immediate provider delta from the
+  conservative `$63.3160022124` origin through e01 teardown was
+  `$1.7294845129`; remaining headroom never authorizes scientific continuation.
+  Final provider settlement and end-to-end token/cost accounting remain
+  separate deliverables.
+
+- **Clarify the older positive-control language.** Exact-stack technical and
+  path controls did exercise the apparatus. The frozen natural semantic
+  calibration was report-only and observed adverse, not a passing semantic
+  positive control capable of licensing stronger interpretation.
+
+Evidence: `results/coherent_canary_v12_budget/coherent_canary_v12_path_control_spec_conflict_disposition_20260712T0334Z.md`,
+`results/coherent_canary_v12_harvest/coherent-canary-v12-harvest-e01-exact-subject-20260712T040158Z.json`,
+`notes/2026071286-fable-e01-diagnostic-interpretation.md`, and
+`notes/2026071287-sol-e01-diagnostic-final-interpretation.md`.
