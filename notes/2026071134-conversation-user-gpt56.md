@@ -1,179 +1,102 @@
-_This conversation documents the invalidation of v10, the discovery of
-schedule-dependent bf16 divergence and defective controls, and a pivot from
-blind v11 expansion to a smaller v12 carrier-state canary. No subject-model
-forward or paid experiment has yet occurred; the project remains in apparatus
-validation._
+_This conversation covers the collapse of v10’s schedule-invariance assumption,
+forensic discovery of multiple invalid controls, and a deliberate pivot toward a
+smaller, independently reviewed v12 canary before any paid semantic experiment.
+The latest state is materially improved but not execution-ready: stimulus
+reviews pass, while the causal runtime, persistence, release, and harvest layers
+remain incomplete._
 
-**Participants:** User, gpt-5.6-sol-xhigh, and gpt-5.6-sol-ultra.
+**Participants:** User and gpt-5.6-sol-xhigh.
 
-**Handoff State.** V10 is permanently non-authorizing, its paid run was
-cancelled before launch, and no semantic result was collected. The old ladder is
-paused after c10 and c02 failed; c01 has no substantive completion. C10 showed
-an approximately `0.06055`-nat fixed-margin shift, maximum K/V divergence
-`16.125`, and continuation-logit change `0.84375`. C02 independently showed a
-`0.1318359375` margin shift, K/V maxima `6.5/5.6875`, final-logit maximum `0.5`,
-and continuation-logit maximum `0.46875`. These results are established for the
-tested Qwen3-0.6B CPU/bf16/eager configuration, not the intended 30B A100 setup.
+**Established results.** Natural c10 and c02 both failed the v10
+cache-equivalence gate on Qwen3-0.6B CPU bf16 eager attention. c10 shifted the
+selected margin by approximately `0.0605` nats; c02 shifted it by
+`0.1318359375`, with cache/logit divergence appearing at layers 1 and 4
+respectively. The frozen A/B/C diagnostic classified the cause as
+`QUERY_SHAPE_ROUNDING`: equal-shaped branches showed no future-token leakage,
+while 23-token and 4096-token query shapes diverged. Thus schedule dependence is
+a real apparatus confound, not a causal-mask defect; P and O must be treated as
+distinct protocols. V10 is permanently non-authorizing, its ladder remains
+paused, no semantic result was collected, and paid experiment compute remains
+`$0`.
 
-The frozen c10 origin diagnostic completed with `QUERY_SHAPE_ROUNDING`.
-Equal-shaped 4,096-token branches whose future content differed were
-bit-identical in the first 23 rows, while identical prefixes processed under
-23-token and 4,096-token query shapes diverged. This rules out the suspected
-future-token leak in c10 and identifies call-shape-dependent bf16 arithmetic as
-the local cause. The durable methodological claim is narrower: at finite
-precision, KV state depends on call boundaries, query shape, kernel, backend,
-hardware, and library version. P and O must therefore be explicit replay
-protocols, not assumed-equivalent executions. P is turn-aligned replay of
-imported assistant text, not native live-agent state.
+The synthetic “7/7 exact-zero” gate was invalid as general validation: it used
+seven lengths of one repetitive five-token stream, constituting
+pseudoreplication and failing to represent natural inputs. The original
+`G_wrong` control was also invalid because short donor token pools were cycled
+to fill target slots, producing incoherent repetition. A purported
+message-aligned schedule was actually one large history chunked at 4096, not
+turn-by-turn replay. These findings are recorded as process incidents; future
+gates must audit literal bytes, independent fixture count, content diversity,
+production representativeness, and the exact claim licensed by each fixture.
 
-The old synthetic gate was invalid as general scientific validation. Its seven
-fixtures were seven lengths of one five-token periodic stream, creating
-pseudoreplication and allowing exact equality on that trajectory without
-establishing natural-input schedule invariance. The old `G_wrong` control was
-also invalid because it cycled short donor token IDs into target-length slots,
-producing incoherent repetitive histories. The coarse `message_block` schedule
-was mislabelled as message-aligned: it concatenated the full history before
-chunking rather than replaying actual message boundaries. These controls cannot
-authorize future work.
+The corrective control design uses coherent, plant-specific minimally
+counterfactual histories, identical canonical widths and P/O schedules, forced
+common summary/carrier tokens, focal and non-focal scoring, and same-schedule
+correct-versus-counterfactual contrasts. Four banked c02/c10 candidates passed
+mechanical geometry but failed blind and target-aware content review because the
+inherited conversations themselves contained clipped turns, broken factual
+chains, and an introduced Cedar contradiction. They remain historical
+diagnostics only. Existing 30B text banks are also unsuitable as primary
+evidence: most replies hit the 320-token cap, provenance is incomplete, and
+replayed text is not native live-cache state.
 
-The hard natural-case gate nevertheless worked: it stopped paid semantic
-execution before contamination and exposed schedule divergence and control
-defects. The durable review rule is that every authorizing gate requires
-raw-input inspection, independent fixture count, content-diversity and
-production-representativeness review, exact claim boundaries, and fail-closed
-technical, provenance, and content checks. Attribution of the cyclic-fixture
-design is settled as Sol/gpt-5.6-sol’s primary design error, with Claude Opus
-4.8 sharing responsibility for the independent-review failure; Fable did not
-choose the fixture and identified its degeneracy when later shown the
-construction.
+**Strategic pivot.** The planned twelve-case v11 confirmation was paused before
+further model work. Independent red-team and statistical reviews concluded that
+constructing twelve long cases before observing any exact-model signal had poor
+decision value. The replacement is a six-case, tokenizer-only authored v12
+canary with two pre-sealed reserve cases, permanently excluded from later
+confirmation. It tests a narrower claim: whether an ordinary untrained 30B model
+leaves history-specific decision state at a fixed neutral handoff boundary, and
+separately whether coherent full K+V or value-only transplantation can use it.
+Fresh comparisons are utility contrasts containing schedule differences; matched
+correct/wrong histories and focal selectivity are the semantic controls. Replay
+is explicitly not live-agent native state, and any positive canary only
+authorizes a later independent study.
 
-The banked c10/c02 counterfactual candidates were mechanically exact but failed
-blind naturalness and target-aware factual review. All four remain historical
-feasibility witnesses only. The banked 30B corpus is unsuitable as primary
-confirmatory material: 226/264 assistant replies hit the 320-token cap, raw
-token IDs and resolved revision were not preserved, and the text is
-model-authored surface text rather than preserved native live-cache state. It
-may be retained after coherence review, but not used as clean primary evidence.
+The v12 stimulus set is now at revision 4. All 12 anonymous histories passed
+blind singleton review; all six paired causal contrasts and cross-case diversity
+passed; prior scaffold, padding, stale-index, and chronology defects were
+corrected additively. The current source manifest contains literal
+token/event/position arrays and observed round trips. No subject-model forward
+pass has occurred. The exact model/revision, role-native N replay, P schedule,
+R1/R2/R3 whole-call region boundaries, generated/forced identity requirements,
+oracle schedule, 64-token stopping rule, natural-control recovery formula, and
+post-bf16 placebo tolerances have been frozen before outcomes.
 
-The earlier v11 replacement effort is paused. Three mechanically exact drafts
-remain committed as explicitly `DRAFT_UNREVIEWED` engineering fixtures: c01 at
-6,221 tokens, c04 at 6,688, and c05 at 6,862. Additional local checkpoints
-existed for c02, c03, and c06, but no v11 forward pass occurred. The shared
-planning-record scaffold and same-author provenance require blind diversity and
-coherence review before any expansion; these drafts are not momentum toward a
-confirmatory N.
+**Current implementation state.** Pure planning, tokenization, stimulus
+validation, review-packet tooling, and initial fake-model runtime tests are
+working. The runtime now exercises exact N/fresh event execution,
+logical-versus-packed positions, bounded row extraction, K/V replacement,
+downstream recomputation, and q=1 target scoring in deterministic tests.
+However, the independent execution audit found that v12 still lacks the real
+subject-model runner, bounded persistent store, treatment/eligibility release
+modes, differentiable positive-control executor, independent harvester, and
+budget/preflight wrappers. The preregistration therefore remains nonauthorizing;
+no GPU launch or paid run is permitted until these are implemented and locally
+validated.
 
-**Design Pivot.** The project now uses a separate v12 carrier-state canary
-rather than completing twelve long v11 cases before observing the exact model.
-The canary tests whether an ordinary untrained 30B model leaves history-specific
-decision state at an identical neutral handoff boundary, and separately tests
-coherent full-KV versus the original value-only intervention. Its cases are
-fixed stress tests, not statistical replicates, and canary cases are permanently
-excluded from any later confirmatory corpus.
+The required execution order is: finalize and bind stimuli/reviews; complete the
+runtime, differentiable control, persistence, harvester, and release machinery;
+run the full `$0` local 0.6B apparatus; rerun critical gates on the paid 30B
+stack; only then perform the exact-model canary. The canary is exploratory, not
+confirmatory and cannot support a paper efficacy claim. Expected local execution
+was estimated at roughly 4–10 hours on the Mac; a paid run was previously
+projected at `$8–$20` with an `$8` hard ceiling, though no paid case has started
+and the current implementation has not yet reached that decision point.
 
-The primary semantic comparison is same-schedule, same-shape correct history
-versus a coherent, plant-specific minimally counterfactual history. Fresh
-compacted state is a utility contrast and includes destination-path execution
-differences; it is not by itself a clean semantic causal contrast. Each
-wrong-history arm must be scored on both focal plants so focal movement can be
-separated from generic disturbance. Forced summaries are a controlled-mediator
-design: they hold visible summary tokens fixed while changing source history,
-but may create history-summary contradiction. Summary leakage must therefore be
-classified before outcomes, and forced-summary NLL must be reported.
+Operationally, subagents are being used as bounded adversarial reviewers and
+implementers, not as decision authorities. Fable’s broad-context resume failed
+economically; a later narrowly scoped review cost `$2.611132` and identified two
+accepted blockers. The standing rule is to provide only the minimum
+decision-specific evidence bundle, use summaries for optional orientation, and
+reserve Fable for high-value synthesis rather than allowing it to block
+progress. Final scientific and go/no-go judgment remains with the primary agent.
 
-The current state-family plan distinguishes:
-
-- Full coherent K+V insertion (`R`), testing whether a usable summary-state
-  channel exists.
-- Value-only insertion (`V`), testing the original mitigation idea directly.
-- Fresh compacted state (`F`), correct-history state, and plant-specific
-  counterfactual-history state.
-- Nested carrier regions: R1 content, R2 content plus canonical close/boundary,
-  and R3 including a fixed role-native bridge/anchor.
-
-R2 is the primary decision region; R1 and R3 are descriptive extensions. Every
-arm must contain identical visible carrier, close, bridge, anchor, and probe
-text. Regions end only at complete call boundaries. The same visible text and
-identical logical geometry are required across source histories and schedules. P
-is the primary replay schedule; O, ordinary 4,096-token chunking, is a
-prespecified sensitivity condition. Neither is native live-agent execution.
-
-The canary’s primary history-specific estimands use correct-minus-counterfactual
-comparisons under identical schedules, with focal selectivity against the
-unchanged plant. Fresh comparisons report practical utility separately.
-Correct-target and counterfactual-target log probabilities must be reported
-separately; a larger margin alone does not establish improved competence.
-Full-KV success does not authorize value-only claims. A positive R with null V
-means a coherent channel may exist while naive value copying fails.
-
-The v12 stimulus process has been repeatedly corrected. Revision-1 fixtures were
-rejected because the retained tail inflated advertised pre-carrier lengths, five
-cases lacked the intended causal depth, and the long case had chronology
-defects. Revision-2 corrected the causal boundary and region geometry;
-revision-3 repaired the long case and its stale control indices; revision-4
-passed the blind singleton review and paired/diversity review for all six causal
-pairs and twelve histories. The cases are mechanically valid, independently
-reviewed, and still non-executable until the final metadata, manifest, and
-apparatus bindings are frozen.
-
-The v12 runtime architecture now includes tokenizer-only N/P replay planning,
-fresh compact reconstruction, R1–R3 region extraction, K/V/K+V replacement,
-causal downstream recomputation, target scoring, generated-versus-forced
-identity logic, gradient-based bidirectional path control, deterministic value
-placebos, an append-only store foundation, tensor-bundle support, and a separate
-harvester. Focused fake-model and pure-function suites pass, but they do not
-establish real Qwen causal behavior, gapped-mask correctness, bf16 gradient
-equivalence, or authentic model outputs.
-
-Several independent audits found and corrected real implementation defects: a
-planner had split structural additions into the wrong call shapes; an R2
-boundary initially cut through a call; a generated/forced fixture lacked
-checkpoint binding; float32 bits were encoded with inconsistent endianness in
-the harvester; review status was reported stale; tensor geometry and N/P
-interval equality were under-bound; and loader inventory and
-subject-specification paths could be caller-controlled. These are treated as
-authorization blockers until corrected, tested, and independently harvested
-rather than as minor bookkeeping issues.
-
-**Current Blockers.** V12 is not frozen and no subject-model forward is
-authorized. The independent harvester still requires production-grade
-completion: little-endian raw-bit decoding, independent recomputation of
-technical/path-control and natural-calibration outcomes, lossless gradient
-evidence, actual selected/outside tensor-row lineage, probe-prefix binding to
-scored states, exact receipt cardinality and parent-chain validation,
-phase-separated eligibility versus treatment artifacts, review-schema
-validation, placebo coverage, and machine-enforced treatment blindness.
-
-The execution path also requires a production runner, exact local and 30B
-loaders, technical/Phase-A/treatment release modes, bounded raw artifacts,
-durable tensor persistence and resume checks, budget wrappers, and a clean
-committed repository inventory. The loader must bind immutable model snapshots,
-complete safetensors inventories, exact geometry, tokenizer/chat-template
-identity, EOS policy, dtype, eager backend, device placement, dependency
-versions, and clean Git state. The local apparatus uses Qwen3-0.6B CPU/bf16; the
-exact subject is Qwen3-30B-A3B-Instruct-2507 at revision
-`0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe`, bf16, eager attention, 48 layers, 4
-KV heads, and head dimension 128. Protocol tokenization remains pinned to the
-30B Instruct tokenizer.
-
-**Required Sequence.** First complete and independently validate the harvester,
-loader, tensor artifacts, phase-separated release state machine, technical
-runner, and exact raw schemas. Then freeze the final v12 manifest and code
-inventory. Run the `$0` local apparatus only after the frozen technical gates
-pass; this local run is a technical diagnostic, not evidence about the 30B
-numerical floor. Only a valid local apparatus can justify a bounded exact-30B
-canary, expected at approximately `$3–$5` for one to three cases and excluded
-from later confirmation. A strong canary would authorize a newly authored
-independent confirmatory corpus; a null, severe leakage, absent headroom,
-invalid control, or schedule interaction at effect scale would terminate the
-current mechanism program under the stated budget.
-
-No subject-model forward has occurred, no paid coherent-state compute has been
-spent, and no pod is active. The intended document remains a paper-style
-corrected negative or methodological report, which should begin in parallel
-rather than waiting for a future positive result. A live coding-agent evaluation
-remains deferred until a coherent state channel and native cache-forking
-infrastructure clear their respective technical gates.
+The handoff priority is to finish and independently audit the v12 execution
+architecture, then run only the local technical apparatus. Do not resume
+v10/v11, authorize paid semantic work, reinterpret mechanical review passes as
+scientific evidence, or expand the corpus until the runtime, positive control,
+release boundary, and harvester produce a valid local result.
 
 ## Conversation sources
 
@@ -209,7 +132,3 @@ infrastructure clear their respective technical gates.
 - `019f52fb-46e6-7bc1-a929-63dab10b0be4`
 - `019f52fb-6caa-79c2-922f-59ae90a63c13`
 - `019f52fb-878c-79a3-bb5e-301ae792cb55`
-- `019f5308-3355-70b0-870b-0f9fd0117845`
-- `019f5308-1975-7511-92ae-fd96e8fb151c`
-- `019f5307-f779-7992-a5bf-8821fd6d05b9`
-- `019f530f-5d11-7d90-96b2-9c0ca1cd5c7a`
