@@ -14,7 +14,33 @@ MAX_PROVIDER_USD=4.00
 SSH_KEY="$HOME/.ssh/id_ed25519_runpod"
 CURRENT_STATE=""
 CURRENT_LAUNCH_PID=""
+CURRENT_WATCHDOG_LABEL=""
 WATCHDOG_CONFIRMED=0
+WATCHDOG_TERMINAL=0
+LAUNCHD_DOMAIN="gui/$(id -u)"
+
+stop_launchd_watchdog() {
+  local label="$1"
+  [ -n "$label" ] || return 0
+  launchctl bootout "$LAUNCHD_DOMAIN/$label" >/dev/null 2>&1 || \
+    launchctl remove "$label" >/dev/null 2>&1 || true
+}
+
+launchd_watchdog_is_running() {
+  local label="$1" status
+  status="$(launchctl print "$LAUNCHD_DOMAIN/$label" 2>/dev/null)" || return 1
+  grep -Eq '^[[:space:]]*state = running[[:space:]]*$' <<< "$status"
+}
+
+# shellcheck disable=SC2329  # invoked indirectly by the --watch EXIT trap
+remove_own_launchd_label() {
+  local label="$1" status="$2"
+  trap - EXIT
+  if [ "$WATCHDOG_TERMINAL" -eq 1 ]; then
+    stop_launchd_watchdog "$label"
+  fi
+  exit "$status"
+}
 
 terminate_owned() {
   local state="$1" reason="$2" output status
@@ -41,6 +67,8 @@ cleanup_unwatched_allocation() {
   if [ "$status" -ne 0 ] && [ -n "$CURRENT_STATE" ] && \
       [ -s "$CURRENT_STATE" ] && [ "$WATCHDOG_CONFIRMED" -eq 0 ]; then
     echo "P01 OWNED CLEANUP: failure after allocation but before watchdog confirmation" >&2
+    stop_launchd_watchdog "$CURRENT_WATCHDOG_LABEL"
+    CURRENT_WATCHDOG_LABEL=""
     if [ -n "$CURRENT_LAUNCH_PID" ]; then
       kill "$CURRENT_LAUNCH_PID" 2>/dev/null || true
       wait "$CURRENT_LAUNCH_PID" 2>/dev/null || true
@@ -82,6 +110,7 @@ PY
       pull_status=$?
       set -e
       terminate_owned "$state" provider_rate_changed
+      WATCHDOG_TERMINAL=1
       exit "$pull_status"
     fi
 
@@ -100,6 +129,7 @@ PY
       if [ "$pull_status" -eq 0 ]; then
         echo "P01 WATCH artifacts secured; terminating name=$name"
         terminate_owned "$state" artifacts_secured
+        WATCHDOG_TERMINAL=1
         exit 0
       fi
       echo "P01 WATCH receipt exists but pull failed status=$pull_status; preserving until deadline" >&2
@@ -124,6 +154,7 @@ PY
         pull_status=$?
         set -e
         terminate_owned "$state" unreceipted_job_exit
+        WATCHDOG_TERMINAL=1
         exit "$pull_status"
       fi
     fi
@@ -136,6 +167,7 @@ PY
       set -e
       echo "P01 WATCH final pull status=$pull_status; terminating to enforce cap" >&2
       terminate_owned "$state" hard_provider_deadline
+      WATCHDOG_TERMINAL=1
       exit "$pull_status"
     fi
     sleep 15
@@ -143,10 +175,16 @@ PY
 }
 
 if [ "${1:-}" = "--watch" ]; then
-  [ "$#" -eq 6 ] || {
-    echo "usage: $0 --watch NAME STATE START_EPOCH CAP_SECONDS RATE" >&2
+  [ "$#" -eq 7 ] || {
+    echo "usage: $0 --watch NAME STATE START_EPOCH CAP_SECONDS RATE LAUNCHD_LABEL" >&2
     exit 2
   }
+  [[ "$7" =~ ^[A-Za-z0-9._-]+$ ]] || {
+    echo "unsafe launchd watchdog label: $7" >&2
+    exit 2
+  }
+  SELF_WATCHDOG_LABEL="$7"
+  trap 'remove_own_launchd_label "$SELF_WATCHDOG_LABEL" "$?"' EXIT
   watch_pod "$2" "$3" "$4" "$5" "$6"
   exit $?
 fi
@@ -212,13 +250,21 @@ command -v caffeinate >/dev/null || {
   echo "caffeinate is required for the provider-clock watchdog" >&2
   exit 2
 }
+command -v launchctl >/dev/null || {
+  echo "launchctl is required for the provider-clock watchdog" >&2
+  exit 2
+}
+CAFFEINATE="$(command -v caffeinate)"
 
 for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
   NAME="${BASE_NAME}-${attempt}"
   STATE="$ROOT/.pod_${NAME}_state.json"
   CURRENT_STATE="$STATE"
   CURRENT_LAUNCH_PID=""
+  CURRENT_WATCHDOG_LABEL=""
   WATCHDOG_CONFIRMED=0
+  WATCHDOG_LABEL="com.semantic-continuity.precision-p01.${NAME//_/-}"
+  WATCHDOG_TARGET="$LAUNCHD_DOMAIN/$WATCHDOG_LABEL"
   LAUNCH_LOG="$LOG_DIR/${NAME}_launcher.log"
   LAUNCH_STATUS_FILE="$LOG_DIR/${NAME}_launcher.status"
   WATCH_LOG="$LOG_DIR/${NAME}_watchdog.log"
@@ -228,6 +274,10 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
     echo "refusing existing launch status: $LAUNCH_STATUS_FILE" >&2
     exit 2
   }
+  if launchctl print "$WATCHDOG_TARGET" >/dev/null 2>&1; then
+    echo "refusing existing launchd watchdog: $WATCHDOG_TARGET" >&2
+    exit 2
+  fi
 
   echo "P01 ADMISSION attempt=$attempt/$MAX_ATTEMPTS name=$NAME commit=$HEAD_COMMIT"
   (
@@ -246,7 +296,6 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
   # Start clock ownership as soon as create() writes the provider response,
   # not when SSH/bootstrap/model setup later finishes.
   while [ ! -s "$STATE" ] && kill -0 "$LAUNCH_PID" 2>/dev/null; do sleep 1; done
-  WATCHDOG_PID=""
   if [ -s "$STATE" ]; then
     read -r RATE START_EPOCH CAP_SECONDS < <(python3 - "$STATE" \
       "$MAX_PROVIDER_SECONDS" "$MAX_PROVIDER_USD" <<'PY'
@@ -297,19 +346,31 @@ with os.fdopen(descriptor, "w") as handle:
     json.dump(value, handle, indent=2, sort_keys=True)
     handle.write("\n")
 PY
-    nohup caffeinate -dimsu bash "$SELF" --watch "$NAME" "$STATE" \
-      "$START_EPOCH" "$CAP_SECONDS" "$RATE" \
-      > "$WATCH_LOG" 2>&1 < /dev/null &
-    WATCHDOG_PID=$!
+    if ! launchctl submit -l "$WATCHDOG_LABEL" -o "$WATCH_LOG" -e "$WATCH_LOG" -- \
+      /usr/bin/env "HOME=$HOME" "PATH=$PATH" "SC_REPO_ROOT=$ROOT" \
+      "$CAFFEINATE" -dimsu /bin/bash "$SELF" --watch "$NAME" "$STATE" \
+      "$START_EPOCH" "$CAP_SECONDS" "$RATE" "$WATCHDOG_LABEL"; then
+      echo "provider-clock watchdog launchctl submission failed" >&2
+      kill "$LAUNCH_PID" 2>/dev/null || true
+      wait "$LAUNCH_PID" 2>/dev/null || true
+      terminate_owned "$STATE" watchdog_submit_failure
+      CURRENT_STATE=""
+      exit 2
+    fi
+    CURRENT_WATCHDOG_LABEL="$WATCHDOG_LABEL"
     sleep 1
-    kill -0 "$WATCHDOG_PID" 2>/dev/null || {
-      echo "provider-clock watchdog failed to remain alive" >&2
-      wait "$LAUNCH_PID" || true
+    launchd_watchdog_is_running "$WATCHDOG_LABEL" || {
+      echo "provider-clock watchdog failed launchd running-state verification" >&2
+      stop_launchd_watchdog "$WATCHDOG_LABEL"
+      CURRENT_WATCHDOG_LABEL=""
+      kill "$LAUNCH_PID" 2>/dev/null || true
+      wait "$LAUNCH_PID" 2>/dev/null || true
       terminate_owned "$STATE" watchdog_start_failure
+      CURRENT_STATE=""
       exit 2
     }
     WATCHDOG_CONFIRMED=1
-    echo "P01 WATCHDOG pid=$WATCHDOG_PID rate=$RATE cap_seconds=$CAP_SECONDS log=$WATCH_LOG"
+    echo "P01 WATCHDOG label=$WATCHDOG_LABEL target=$WATCHDOG_TARGET rate=$RATE cap_seconds=$CAP_SECONDS log=$WATCH_LOG"
   fi
 
   set +e
@@ -322,10 +383,8 @@ PY
   fi
 
   if [ "$TRACKED_STATUS" -eq 85 ] || [ "$TRACKED_STATUS" -eq 86 ]; then
-    if [ -n "${WATCHDOG_PID:-}" ]; then
-      kill "$WATCHDOG_PID" 2>/dev/null || true
-      wait "$WATCHDOG_PID" 2>/dev/null || true
-    fi
+    stop_launchd_watchdog "$CURRENT_WATCHDOG_LABEL"
+    CURRENT_WATCHDOG_LABEL=""
     if [ "$attempt" -lt "$MAX_ATTEMPTS" ]; then
       echo "bounded no-allocation/rejected-host status=$TRACKED_STATUS; trying the one remaining admission" >&2
       continue
@@ -369,17 +428,15 @@ print(value.get("publicIp") or "", (value.get("portMappings") or {}).get("22") o
   if [ "$BUDGET_DEPLOYED" -ne 1 ]; then
     echo "FATAL: provider budget was not deployed; terminating before subject work" >&2
     terminate_owned "$STATE" budget_transfer_failure
-    if [ -n "${WATCHDOG_PID:-}" ]; then
-      kill "$WATCHDOG_PID" 2>/dev/null || true
-      wait "$WATCHDOG_PID" 2>/dev/null || true
-    fi
+    stop_launchd_watchdog "$CURRENT_WATCHDOG_LABEL"
+    CURRENT_WATCHDOG_LABEL=""
     CURRENT_STATE=""
     WATCHDOG_CONFIRMED=0
     exit 1
   fi
 
   if [ "$TRACKED_STATUS" -eq 0 ]; then
-    echo "P01 LAUNCHED name=$NAME commit=$HEAD_COMMIT watchdog_pid=$WATCHDOG_PID"
+    echo "P01 LAUNCHED name=$NAME commit=$HEAD_COMMIT watchdog_label=$WATCHDOG_LABEL"
     echo "The watchdog will pull and verify artifacts before termination."
     exit 0
   fi

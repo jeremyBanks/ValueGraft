@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import textwrap
+import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -111,10 +112,139 @@ def test_launcher_is_clean_pushed_secure_and_owns_provider_clock() -> None:
     assert "MAX_PROVIDER_SECONDS=7200" in source
     assert "MAX_PROVIDER_USD=4.00" in source
     assert "provider_clock_started_epoch" in source
-    assert "caffeinate -dimsu" in source
+    assert "launchctl submit" in source
+    assert "launchctl print" in source
+    assert "launchctl bootout" in source
+    assert "state = running" in source
+    assert 'trap \'remove_own_launchd_label "$SELF_WATCHDOG_LABEL" "$?"\' EXIT' in source
+    assert 'if [ "$WATCHDOG_TERMINAL" -eq 1 ]; then' in source
+    assert '"$CAFFEINATE" -dimsu' in source
+    assert "nohup caffeinate" not in source
+    assert "WATCHDOG_PID" not in source
     assert "cleanup_unwatched_allocation" in source
     assert 'WATCHDOG_CONFIRMED=1' in source
     assert "SC_ADMISSION_MAX_ATTEMPTS must be 1 or 2" in source
+
+
+def test_watchdog_removes_own_launchd_label_after_normal_exit(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    fake_bin = tmp_path / "bin"
+    launchctl_log = tmp_path / "launchctl.log"
+    pull_log = tmp_path / "pull.log"
+    (root / "scripts").mkdir(parents=True)
+    (root / "src").mkdir()
+    fake_bin.mkdir()
+    state = root / ".pod_fixture_state.json"
+    state.write_text('{"id":"fixture"}\n')
+
+    _executable(
+        root / "scripts/pull_precision_probe_p01.sh",
+        """
+        #!/bin/sh
+        printf '%s\n' "$*" >> "$FAKE_PULL_LOG"
+        """,
+    )
+    _executable(
+        fake_bin / "uv",
+        """
+        #!/bin/sh
+        case "$*" in
+          *"pod.py status"*)
+            printf '%s\n' '{"publicIp":"127.0.0.1","portMappings":{"22":"2222"},"costPerHr":1.0}'
+            ;;
+          *"pod.py terminate"*)
+            printf '%s\n' 'terminated fixture'
+            ;;
+          *) exit 9 ;;
+        esac
+        """,
+    )
+    _executable(
+        fake_bin / "ssh",
+        """
+        #!/bin/sh
+        printf '%s\n' 'results/precision_probe_p01/precision-probe-p01-receipt_Qwen3-30B-A3B-Instruct-2507_20260712T080000Z.json'
+        """,
+    )
+    _executable(
+        fake_bin / "launchctl",
+        """
+        #!/bin/sh
+        printf '%s\n' "$*" >> "$FAKE_LAUNCHCTL_LOG"
+        """,
+    )
+
+    label = "com.semantic-continuity.precision-p01.fixture"
+    env = os.environ.copy()
+    env.update({
+        "PATH": f"{fake_bin}:{env['PATH']}",
+        "SC_REPO_ROOT": str(root),
+        "FAKE_LAUNCHCTL_LOG": str(launchctl_log),
+        "FAKE_PULL_LOG": str(pull_log),
+    })
+    result = subprocess.run(
+        [
+            "bash",
+            str(LAUNCH),
+            "--watch",
+            "fixture",
+            str(state),
+            str(int(time.time())),
+            "3600",
+            "1.0",
+            label,
+        ],
+        cwd=root,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=10,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert pull_log.read_text().strip() == "fixture"
+    assert (
+        launchctl_log.read_text().strip()
+        == f"bootout gui/{os.getuid()}/{label}"
+    )
+    assert "P01 TERMINATION OWNED reason=artifacts_secured" in result.stdout
+
+
+def test_watchdog_unexpected_failure_leaves_label_for_launchd_restart(
+    tmp_path: Path,
+) -> None:
+    fake_bin = tmp_path / "bin"
+    launchctl_log = tmp_path / "launchctl.log"
+    fake_bin.mkdir()
+    _executable(
+        fake_bin / "launchctl",
+        """
+        #!/bin/sh
+        printf '%s\n' "$*" >> "$FAKE_LAUNCHCTL_LOG"
+        """,
+    )
+    env = os.environ.copy()
+    env.update({
+        "PATH": f"{fake_bin}:{env['PATH']}",
+        "SC_REPO_ROOT": "/dev/null",
+        "FAKE_LAUNCHCTL_LOG": str(launchctl_log),
+    })
+    result = subprocess.run(
+        [
+            "bash", str(LAUNCH), "--watch", "fixture",
+            "/tmp/unused-p01-state.json", str(int(time.time())),
+            "3600", "1.0", "com.semantic-continuity.p01.fixture",
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=10,
+    )
+    assert result.returncode != 0
+    assert not launchctl_log.exists()
 
 
 def test_watchdog_attempts_pull_before_every_owned_termination() -> None:
