@@ -29,11 +29,19 @@ done
 
 [ ! -e "$CLONE_TMP" ] || { echo "FATAL: clone path already exists"; exit 3; }
 [ ! -e "$REPO" ] || { echo "FATAL: repository path already exists"; exit 3; }
-git clone --quiet https://github.com/jeremyBanks/ValueGraft.git "$CLONE_TMP"
+git clone --quiet --no-checkout https://github.com/jeremyBanks/ValueGraft.git "$CLONE_TMP"
 cd "$CLONE_TMP"
-git checkout --quiet trunk
+git cat-file -e "${EXPECTED_COMMIT}^{commit}" 2>/dev/null || {
+  echo "FATAL: expected commit is absent from the cloned repository"
+  exit 3
+}
+git merge-base --is-ancestor "$EXPECTED_COMMIT" origin/trunk || {
+  echo "FATAL: expected commit is not an ancestor of cloned origin/trunk"
+  exit 3
+}
+git checkout --quiet -B trunk "$EXPECTED_COMMIT"
 [ "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT" ] || {
-  echo "FATAL: origin/trunk $(git rev-parse HEAD) != expected $EXPECTED_COMMIT"
+  echo "FATAL: checked-out commit $(git rev-parse HEAD) != expected $EXPECTED_COMMIT"
   exit 3
 }
 mv "$CLONE_TMP" "$REPO"

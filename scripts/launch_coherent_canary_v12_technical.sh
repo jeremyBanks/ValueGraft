@@ -2,7 +2,7 @@
 # Bounded, CUDA-compatible admission path for the exact v12 technical gate.
 set -euo pipefail
 
-ROOT=/Users/jeb/experimentation
+ROOT="${SC_REPO_ROOT:-/Users/jeb/experimentation}"
 BASE_NAME="${1:-v12tech}"
 MAX_ADMISSION_ATTEMPTS="${SC_ADMISSION_MAX_ATTEMPTS:-3}"
 cd "$ROOT"
@@ -33,7 +33,9 @@ export SC_POD_ALLOWED_CUDA=13.0
 export SC_EXPECTED_GPU_NAME="NVIDIA A100 80GB PCIe"
 export SC_MIN_NVIDIA_DRIVER=580.65.06
 export SC_MIN_GPU_MEMORY_MIB=80000
-export SC_TERMINATE_ON_ADMISSION_FAILURE=1
+export SC_SSH_WAIT_ATTEMPTS=20
+export SC_TERMINATE_ON_LAUNCH_FAILURE=1
+export SC_REQUIRE_HF_TOKEN_DEPLOY=1
 
 echo "V12 EXACT ADMISSION commit=$HEAD_COMMIT cuda=$SC_POD_ALLOWED_CUDA min_driver=$SC_MIN_NVIDIA_DRIVER attempts=$MAX_ADMISSION_ATTEMPTS"
 for attempt in $(seq 1 "$MAX_ADMISSION_ATTEMPTS"); do
@@ -53,15 +55,20 @@ for attempt in $(seq 1 "$MAX_ADMISSION_ATTEMPTS"); do
     echo "V12 EXACT ADMITTED name=$NAME commit=$HEAD_COMMIT"
     exit 0
   fi
-  if [ "$status" -ne 86 ]; then
-    if [ ! -e "$STATE" ] && [ "$attempt" -lt "$MAX_ADMISSION_ATTEMPTS" ]; then
-      echo "no pod was allocated for $NAME; retrying bounded admission" >&2
+  if [ "$status" -eq 85 ]; then
+    if [ "$attempt" -lt "$MAX_ADMISSION_ATTEMPTS" ]; then
+      echo "provider allocated no pod for $NAME; retrying bounded allocation" >&2
       continue
     fi
-    echo "v12 exact launch failed outside admission (status=$status); not retrying" >&2
-    exit "$status"
+    echo "provider allocated no pod after $MAX_ADMISSION_ATTEMPTS attempts" >&2
+    exit 85
   fi
-  echo "v12 exact host $NAME rejected and terminated (attempt $attempt/$MAX_ADMISSION_ATTEMPTS)" >&2
+  if [ "$status" -eq 86 ]; then
+    echo "v12 exact host $NAME rejected and termination succeeded (attempt $attempt/$MAX_ADMISSION_ATTEMPTS)" >&2
+    continue
+  fi
+  echo "v12 exact launch failed outside bounded allocation/admission (status=$status); not retrying" >&2
+  exit "$status"
 done
 
 echo "no compatible exact-v12 host admitted after $MAX_ADMISSION_ATTEMPTS attempts" >&2

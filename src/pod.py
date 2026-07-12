@@ -23,6 +23,7 @@ import sys
 import time
 from pathlib import Path
 
+import urllib.error
 import urllib.request
 
 KEY_PATH = Path(".runpod_key")
@@ -58,7 +59,7 @@ def requested_cuda_versions():
 
 def create_body(gpu):
     body = {
-        "name": "semantic-continuity",
+        "name": os.environ.get("SC_POD_NAME", "semantic-continuity"),
         "imageName": IMAGE,
         "gpuTypeIds": [gpu],
         "gpuCount": 1,
@@ -129,6 +130,9 @@ def create(gpu=DEFAULT_GPU):
     print("requesting pod", gpu, "cloud", body["cloudType"],
           "allowedCudaVersions", body.get("allowedCudaVersions", "ANY"))
     pod = api("POST", "/pods", body)
+    if not isinstance(pod, dict) or not isinstance(pod.get("id"), str) or \
+            not pod["id"].strip():
+        raise RuntimeError("RunPod create response did not contain a pod ID")
     STATE.write_text(json.dumps(pod, indent=1))
     print("created pod", pod.get("id"))
     return pod
@@ -155,7 +159,13 @@ def terminate():
     pid = json.loads(STATE.read_text())["id"]
     api("DELETE", f"/pods/{pid}")
     print("terminated", pid)
-    balance()
+    # Deletion is the lifecycle operation. A subsequent accounting outage must
+    # not make callers believe deletion itself failed and allocate another pod.
+    try:
+        balance()
+    except Exception as exc:
+        print(f"WARNING: pod deletion succeeded but balance lookup failed: {exc}",
+              file=sys.stderr)
 
 
 if __name__ == "__main__":
@@ -163,7 +173,17 @@ if __name__ == "__main__":
     if cmd == "balance":
         balance()
     elif cmd == "create":
-        create(*sys.argv[2:])
+        try:
+            create(*sys.argv[2:])
+        except urllib.error.HTTPError as exc:
+            # RunPod documents capacity through the create response poorly; in
+            # practice an HTTP 500 is its observed no-allocation response.  It
+            # is safe for the bounded wrapper to retry a received HTTP 500.
+            # Transport failures remain allocation-ambiguous and are not
+            # converted to this status.
+            if exc.code == 500:
+                raise SystemExit(85) from exc
+            raise
     elif cmd == "status":
         status()
     elif cmd == "ssh-cmd":

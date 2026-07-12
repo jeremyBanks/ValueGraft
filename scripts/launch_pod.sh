@@ -9,7 +9,8 @@
 # - registers pod in scratchpad/pods.list for the watchdog + auto-pull
 set -euo pipefail
 NAME=$1; JOB=$2; GPU="${3:-NVIDIA A100 80GB PCIe}"
-cd /Users/jeb/experimentation
+ROOT="${SC_REPO_ROOT:-/Users/jeb/experimentation}"
+cd "$ROOT"
 
 # ── FAIL-CLOSED PRE-FLIGHT GATE ────────────────────────────────────────────
 # No pod launches without a fresh GREEN token (scripts/preflight.py) whose
@@ -27,29 +28,69 @@ fi
 # ───────────────────────────────────────────────────────────────────────────
 
 K=$HOME/.ssh/id_ed25519_runpod
-S=/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad
+S="${SC_POD_SCRATCH:-/private/tmp/claude-501/-Users-jeb-experimentation/bda7fb9f-f447-4890-904b-dde750ff3370/scratchpad}"
 STATE=".pod_${NAME}_state.json"
+SSH_WAIT_ATTEMPTS="${SC_SSH_WAIT_ATTEMPTS:-40}"
+[[ "$SSH_WAIT_ATTEMPTS" =~ ^[1-9][0-9]*$ ]] || {
+  echo "SC_SSH_WAIT_ATTEMPTS must be a positive integer" >&2
+  exit 2
+}
+AUTO_CLEANUP_ARMED=0
+
+cleanup_on_failure() {
+  status=$?
+  trap - EXIT
+  if [ "$status" -ne 0 ] && [ "$AUTO_CLEANUP_ARMED" -eq 1 ] && \
+     [ "${SC_TERMINATE_ON_LAUNCH_FAILURE:-${SC_TERMINATE_ON_ADMISSION_FAILURE:-0}}" = "1" ]; then
+    echo "TERMINATING $NAME after pre-job launch failure (status=$status)" >&2
+    if ! SC_POD_STATE="$STATE" uv run python src/pod.py terminate; then
+      echo "FATAL: automatic termination failed for $NAME; refusing any retry" >&2
+      exit 87
+    fi
+  fi
+  exit "$status"
+}
+trap cleanup_on_failure EXIT
 
 admission_fail() {
   echo "POD ADMISSION FAILED for $NAME: $1" >&2
-  if [ "${SC_TERMINATE_ON_ADMISSION_FAILURE:-0}" = "1" ] && [ -f "$STATE" ]; then
-    SC_POD_STATE="$STATE" uv run python src/pod.py terminate || true
-  fi
   exit 86
 }
 
 if [ ! -f "$STATE" ]; then
-  SC_POD_STATE=$STATE uv run python src/pod.py create "$GPU"
+  set +e
+  SC_POD_NAME="$NAME" SC_POD_STATE="$STATE" \
+    uv run python src/pod.py create "$GPU"
+  CREATE_STATUS=$?
+  set -e
+  if [ "$CREATE_STATUS" -ne 0 ]; then
+    [ "$CREATE_STATUS" -eq 85 ] && \
+      echo "POD ALLOCATION UNAVAILABLE for $NAME" >&2
+    exit "$CREATE_STATUS"
+  fi
+  AUTO_CLEANUP_ARMED=1
 fi
 # wait for ssh endpoint
-for _ in $(seq 1 40); do
-  IPP=$(SC_POD_STATE=$STATE uv run python src/pod.py status 2>/dev/null | \
-    python3 -c "import json,sys; d=json.load(sys.stdin); print((d.get('publicIp') or '')+':'+str((d.get('portMappings') or {}).get('22','')))")
+IP=""; PORT=""; IPP=""
+STATUS_READS=0
+for _ in $(seq 1 "$SSH_WAIT_ATTEMPTS"); do
+  if ! IPP=$(SC_POD_STATE="$STATE" uv run python src/pod.py status 2>/dev/null | \
+    python3 -c "import json,sys; d=json.load(sys.stdin); print((d.get('publicIp') or '')+':'+str((d.get('portMappings') or {}).get('22','')))"); then
+    sleep 15
+    continue
+  fi
+  STATUS_READS=$((STATUS_READS + 1))
   IP=${IPP%%:*}; PORT=${IPP##*:}
   [ -n "$IP" ] && [ -n "$PORT" ] && [ "$IPP" != ":" ] && break
   sleep 15
 done
-[ -z "$IP" ] && admission_fail "no SSH endpoint"
+if [ -z "$IP" ] || [ -z "$PORT" ] || [ "$IPP" = ":" ]; then
+  if [ "$STATUS_READS" -eq 0 ]; then
+    echo "FAIL: provider status could not be read during endpoint wait" >&2
+    exit 1
+  fi
+  admission_fail "no SSH endpoint"
+fi
 # BOUNDED ssh (macOS has no `timeout`): ServerAliveInterval/CountMax make a STALLED
 # connection die in ~60s and return nonzero instead of HANGING FOREVER. This converts
 # the recurring launcher-hang class (incidents #3, #35 — a hang after launch that
@@ -64,20 +105,46 @@ fi
 echo "POD ADMISSION observed: $GPU_INFO requested_cuda=${SC_POD_ALLOWED_CUDA:-ANY}"
 
 $SSH "apt-get update -q >/dev/null 2>&1; apt-get install -y -q rsync >/dev/null 2>&1; mkdir -p /workspace/exp/data" \
-  || admission_fail "bootstrap failed"
-rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json tune_rules.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json data/champion_configs swegym.parquet .huggingface_key "root@$IP:/workspace/exp/" 2>/dev/null || true
+  || { echo "FAIL: bootstrap failed after host admission" >&2; exit 1; }
+rsync -azL -e "ssh -i $K -p $PORT" src tune_configs.json tune_rules.json data/scenarios.json data/model_geometry.json data/synthetic data/natural data/decoy_probes.json data/champion_configs swegym.parquet "root@$IP:/workspace/exp/" 2>/dev/null || true
+if [ "${SC_REQUIRE_HF_TOKEN_DEPLOY:-0}" = "1" ]; then
+  [ -s .huggingface_key ] || {
+    echo "FAIL: required local Hugging Face token is absent/empty" >&2
+    exit 1
+  }
+  rsync -azL -e "ssh -i $K -p $PORT" .huggingface_key \
+    "root@$IP:/workspace/exp/.huggingface_key"
+  $SSH "test -s /workspace/exp/.huggingface_key" || {
+    echo "FAIL: required remote Hugging Face token is absent/empty" >&2
+    exit 1
+  }
+else
+  rsync -azL -e "ssh -i $K -p $PORT" .huggingface_key \
+    "root@$IP:/workspace/exp/.huggingface_key" 2>/dev/null || true
+fi
 LME=/Users/jeb/.cache/huggingface/hub/datasets--xiaowu0162--longmemeval-cleaned/snapshots/98d7416c24c778c2fee6e6f3006e7a073259d48f/longmemeval_s_cleaned.json
 rsync -azL -e "ssh -i $K -p $PORT" "$LME" "root@$IP:/workspace/exp/longmemeval_s_cleaned.json"
-$SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural scenarios.json model_geometry.json champion_configs data/ 2>/dev/null; true"
+if [ "${SC_REQUIRE_HF_TOKEN_DEPLOY:-0}" = "1" ]; then
+  $SSH "cd /workspace/exp || exit 1
+    mv -f .huggingface_key .hf_key || exit 1
+    test -s .hf_key || exit 1
+    mkdir -p data || exit 1
+    mv -f synthetic natural scenarios.json model_geometry.json champion_configs data/ 2>/dev/null || true"
+else
+  $SSH "cd /workspace/exp && mv -f .huggingface_key .hf_key 2>/dev/null; mkdir -p data && mv -f synthetic natural scenarios.json model_geometry.json champion_configs data/ 2>/dev/null; true"
+fi
 bash -n "$JOB" || { echo "FAIL: job script syntax"; exit 1; }
 for f in src/*.py; do python3 -c "import ast,sys; ast.parse(open('$f').read())" || { echo "FAIL: $f syntax"; exit 1; }; done
 rsync -az -e "ssh -i $K -p $PORT" "$JOB" "root@$IP:/workspace/exp/job.sh"
-echo "$NAME $PORT $IP" >> $S/pods.list
+echo "$NAME $PORT $IP" >> "$S/pods.list"
 # forward per-pod launch env (MODELS + conv limit) into the remote job execution.
 # VERIFIED-DETACH pattern (incident #3): nohup + all fds redirected + </dev/null +
 # disown so the job survives the ssh close. The ssh RETURNS immediately.
 $SSH "cd /workspace/exp && chmod +x job.sh && MODELS='${MODELS:-}' SC_EXPECTED_COMMIT='${SC_EXPECTED_COMMIT:-}' SC_TECHNICAL_RESULT_COMMIT='${SC_TECHNICAL_RESULT_COMMIT:-}' SC_TECHNICAL_RUN_DIR='${SC_TECHNICAL_RUN_DIR:-}' SC_SEMANTIC_RUN_DIR='${SC_SEMANTIC_RUN_DIR:-}' SC_CONV_LIMIT='${SC_CONV_LIMIT:-}' SC_CONV_START='${SC_CONV_START:-}' SC_HF_MODEL='${SC_HF_MODEL:-}' SC_TASK_COMPETENCE_MODE='${SC_TASK_COMPETENCE_MODE:-}' SC_PROBE_CONVS='${SC_PROBE_CONVS:-}' SC_ABLATE_QK_NORM='${SC_ABLATE_QK_NORM:-}' SC_CHAMPION_SCAN='${SC_CHAMPION_SCAN:-}' SC_CHAMPION_REGIONS='${SC_CHAMPION_REGIONS:-}' SC_CHAMPION_CONFIG='${SC_CHAMPION_CONFIG:-}' SC_LOAD_DTYPE='${SC_LOAD_DTYPE:-}' SC_TUNE_TAG='${SC_TUNE_TAG:-}' SC_QUANT_PKG='${SC_QUANT_PKG:-}' SC_GC_ALPHA='${SC_GC_ALPHA:-}' SC_FULL_DEPTH='${SC_FULL_DEPTH:-}' SC_SUMMARY='${SC_SUMMARY:-}' SC_SWE_N='${SC_SWE_N:-}' SC_E_ALPHA='${SC_E_ALPHA:-}' SC_SWE_TAG='${SC_SWE_TAG:-}' SC_SHARD='${SC_SHARD:-}' SC_LEVELS='${SC_LEVELS:-}' SC_SUMMARY_LEVEL='${SC_SUMMARY_LEVEL:-}' SC_SELFGEN='${SC_SELFGEN:-}' SC_STAGE='${SC_STAGE:-}' SC_E_ALPHAS='${SC_E_ALPHAS:-}' SC_SWE_PLACEBO='${SC_SWE_PLACEBO:-}' SC_PROFILE_REGIONS='${SC_PROFILE_REGIONS:-}' SC_PROFILE_ALPHA='${SC_PROFILE_ALPHA:-}' SC_SWE_MIN_IDX='${SC_SWE_MIN_IDX:-}' nohup bash job.sh</dev/null > job.log 2>&1 & disown; echo job-launched" \
   || { echo "FAIL: launch ssh for $NAME did not return cleanly (hang/drop) — NOT trusting it"; exit 1; }
+# A detached job may now contain wanted work. An ambiguous post-launch check
+# leaves this one registered pod for inspection; the wrapper never retries it.
+AUTO_CLEANUP_ARMED=0
 
 # ── POST-LAUNCH REAL-WORK CHECK (incident #28: a 'launched' echo is NOT proof) ──
 # A job can abort on line 4 (bad cd / missing pkg) and bill the pod for nothing while
