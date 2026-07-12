@@ -1,0 +1,208 @@
+{
+  "checks": {
+    "deterministic_repeat": {
+      "evidence": {
+        "correct_history_N": {
+          "token_count": 186
+        },
+        "fresh_destination": {
+          "token_count": 144
+        }
+      },
+      "passed": true
+    },
+    "fresh_self_replacement": {
+      "evidence": {
+        "coverage": [
+          "R1_content/K+V",
+          "R1_content/K-only",
+          "R1_content/V-only",
+          "R2_boundary/K+V",
+          "R2_boundary/K-only",
+          "R2_boundary/V-only",
+          "R3_anchor/K+V",
+          "R3_anchor/K-only",
+          "R3_anchor/V-only"
+        ]
+      },
+      "passed": true
+    },
+    "generated_forced_equivalence": {
+      "evidence": {
+        "content_ids": [
+          32,
+          3255,
+          315,
+          279,
+          7745,
+          6724,
+          13
+        ],
+        "normal_stop": true,
+        "repeat_count": 2
+      },
+      "passed": true
+    },
+    "generated_forced_identity": {
+      "evidence": {
+        "content_ids": [
+          32,
+          3255,
+          315,
+          279,
+          7745,
+          6724,
+          13
+        ],
+        "normal_stop": true,
+        "repeat_count": 2
+      },
+      "passed": true
+    },
+    "natural_calibration_valid": {
+      "evidence": {
+        "amber_denominator": 23.500000117637683,
+        "checks": {
+          "amber_generation": true,
+          "amber_oracle_margin_negative": true,
+          "denominators_positive": true,
+          "green_generation": true,
+          "green_oracle_margin_positive": true,
+          "rho_amber_at_least_half": false,
+          "rho_green_at_least_half": false
+        },
+        "green_denominator": 14.000000717304829,
+        "margins": {
+          "A_a": -16.00000000046566,
+          "A_g": 21.50000083447685,
+          "F": 7.500000117172021,
+          "T_a": 0.5,
+          "T_g": 6.999999929219484
+        },
+        "rho_amber": 0.29787234392046846,
+        "rho_green": -0.03571429730960708,
+        "status": "ADVERSE"
+      },
+      "passed": true
+    },
+    "path_control": {
+      "evidence": {
+        "attempts": [
+          {
+            "minus_movement": 0.5,
+            "passes": false,
+            "plus_movement": 0.0,
+            "ulp_count": 1
+          },
+          {
+            "minus_movement": -0.25,
+            "passes": false,
+            "plus_movement": 0.25,
+            "ulp_count": 2
+          },
+          {
+            "minus_movement": 0.25,
+            "passes": true,
+            "plus_movement": 0.5,
+            "ulp_count": 4
+          }
+        ],
+        "chosen_ulp_count": 4,
+        "status": "PASS"
+      },
+      "passed": true
+    },
+    "runtime_fingerprint": {
+      "evidence": {
+        "fingerprint_sha256": "b6158b989b0b467c46589f3ecbe69acba88645d4cd193dd23d925e2e4cd69484",
+        "subject": "exact-subject"
+      },
+      "passed": true
+    },
+    "source_bindings": {
+      "evidence": {
+        "fixed_text_evidence": {
+          "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+          "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+        },
+        "identity_fixture": {
+          "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+          "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+        },
+        "preregistration": {
+          "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+          "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+        },
+        "technical_fixture": {
+          "path": "data/coherent_canary_v12/technical_control_fixture.json",
+          "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+        }
+      },
+      "passed": true
+    }
+  },
+  "completed_at_utc": "2026-07-12T03:01:14.610230+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "failures": [],
+  "limitations": [
+    "No subject-model forward is rerun by this validator.",
+    "Raw logits, gradients, and cache hashes remain bound observations; the validator checks their internal consistency and arithmetic.",
+    "The validator does not prove full-vocabulary argmax selection or backend-kernel correctness."
+  ],
+  "natural_calibration": {
+    "amber_denominator": 23.500000117637683,
+    "checks": {
+      "amber_generation": true,
+      "amber_oracle_margin_negative": true,
+      "denominators_positive": true,
+      "green_generation": true,
+      "green_oracle_margin_positive": true,
+      "rho_amber_at_least_half": false,
+      "rho_green_at_least_half": false
+    },
+    "green_denominator": 14.000000717304829,
+    "margins": {
+      "A_a": -16.00000000046566,
+      "A_g": 21.50000083447685,
+      "F": 7.500000117172021,
+      "T_a": 0.5,
+      "T_g": 6.999999929219484
+    },
+    "rho_amber": 0.29787234392046846,
+    "rho_green": -0.03571429730960708,
+    "status": "ADVERSE"
+  },
+  "path_control": {
+    "attempts": [
+      {
+        "minus_movement": 0.5,
+        "passes": false,
+        "plus_movement": 0.0,
+        "ulp_count": 1
+      },
+      {
+        "minus_movement": -0.25,
+        "passes": false,
+        "plus_movement": 0.25,
+        "ulp_count": 2
+      },
+      {
+        "minus_movement": 0.25,
+        "passes": true,
+        "plus_movement": 0.5,
+        "ulp_count": 4
+      }
+    ],
+    "chosen_ulp_count": 4,
+    "status": "PASS"
+  },
+  "raw_artifact": {
+    "path": "results/coherent_canary_v12_technical/coherent-canary-v12-technical_exact-subject_20260712T024940208896Z.json",
+    "sha256": "f622bb352c299291827a060bccf9d90e03904c13922b15f89695c1c997023f15"
+  },
+  "runner_status_labels_ignored": true,
+  "schema": "coherent_state_decision_canary_v12_technical_validation_v1",
+  "semantic_release_eligible": true,
+  "status": "PASS",
+  "subject": "exact-subject"
+}
