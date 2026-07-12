@@ -7,8 +7,9 @@
 
 This is a new protocol. It does not amend or inherit authorization from v10,
 v12, P01, or P02. Historical artifacts are evidence about failure modes and
-costs only. Authorization has three acyclic stages: draft; static freeze that
-authorizes a capped paid treatment-blind Phase A; and a separate treatment
+costs only. Authorization has four acyclic stages: draft; a separately frozen
+technical-only engineering canary with semantic `N=0`; static freeze that
+authorizes capped paid treatment-blind Phase A; and a separate treatment
 release. Section 18 defines the transitions.
 
 ## 1. Purpose and claim boundary
@@ -441,6 +442,15 @@ eligibility, a selector, a threshold, a template choice, or a scientific claim.
 Only predeclared pass/fail technical diagnostics and timings may gate scaled
 Phase A. No outcome-unseen legacy or new semantic case receives an exception.
 
+The two exceptions may first run once under the separately released Stage-T
+engineering canary in Section 15. That run has semantic `N=0`, is excluded from
+every candidate, eligibility, selector, treatment, and inferential artifact,
+and may measure only exact-subject load/identity, fixed technical path
+correctness, wall time, VRAM, bundle I/O, deterministic VP construction, arm
+time, harvest, and deletion. It requests no production permutation entropy,
+does not import the production-pool materializer, and cannot inspect or create
+any ranked v13 candidate text.
+
 A content-eligible fixture becomes primary recovery-eligible only if, for both
 accepted renders:
 
@@ -729,6 +739,34 @@ cross-host restart policy.
 
 There is no self-hashing commit or circular amendment.
 
+### Stage T — technical engineering canary release
+
+A technical manifest binds the exact subject loader/attestation, technical-only
+runner, bundle/placebo/store/runtime dependencies, fault-injected provider
+watchdog and cleanup path, dependency locks, and literal hash-allowlisted e01
+and technical-long inputs at one immutable `technical_root_commit`. Production
+pool, seed, permutation, ranked fixture, candidate review, selector, and
+analysis artifacts are absent from both the inventory and import graph.
+
+After the first Section 18 transition passes, a dedicated commit changes the
+literal status from DRAFT to `TECHNICAL_CANARY_AUTHORIZED`. It contains only
+that status transition and one technical manifest; the manifest names its
+immutable parent rather than its own future commit. A post-commit receipt binds
+the authorization commit and manifest bytes. The remote uses a clean detached
+checkout, verifies the exact parent inventory and two-path child diff, and
+fails on absent, duplicate, stale, modified, attached, dirty, wrong-parent,
+extra-diff, wrong-status, or wrong-receipt input before model load.
+
+Stage T authorizes at most two bounded allocation attempts but only one admitted
+host and only the two Section 9 exceptions. A rejected host is positively
+deleted before the second request; there is no restart after model loading or
+technical execution begins. Stage T ends at the earlier of `$1.50` total
+provider spend or 3,300 provider seconds, including acquisition, setup, idle,
+harvest, and cleanup. It has no semantic N, no production entropy, and no warm
+hold after completion. All artifacts are harvested and the pod is deleted and
+independently observed absent. The `$1.50` is spent inside the existing `$12`
+pilot/Phase-A bucket; the protected `$8` failure/cleanup reserve is unchanged.
+
 ### Stage A — static Phase-A release
 
 A static manifest binds only experiment-bearing bytes: this preregistration and
@@ -738,12 +776,13 @@ control/runner code; reused low-level primitives; dependency locks; model
 contract; literal gate fixtures; and the exact **parent commit** containing all
 those bytes. Mutable orientation docs and unrelated history are excluded.
 
-After Section 18's unpaid gates pass, a dedicated commit changes status to
-`STATIC_FROZEN_PHASE_A_AUTHORIZED`. Its manifest references its immutable parent
-tree/commit rather than the commit that contains itself. It authorizes only the
-capped treatment-blind operations in Sections 13 and 16. No CC/WW/FC/FW/VP
-continuation or probe may execute for a new semantic candidate; only the
-two frozen technical carveouts in Section 9 may exercise those arms.
+After Section 18's full static gates pass, a dedicated commit changes status
+from `TECHNICAL_CANARY_AUTHORIZED` to
+`STATIC_FROZEN_PHASE_A_AUTHORIZED`. Its manifest references its immutable
+parent tree/commit rather than the commit that contains itself. It authorizes
+only the capped treatment-blind operations in Sections 13 and 16. No
+CC/WW/FC/FW/VP continuation or probe may execute for a new semantic candidate;
+only the two frozen technical carveouts in Section 9 may exercise those arms.
 
 That authorization commit contains only the status transition and Stage-A
 manifest. After it exists, a separate Stage-A launch receipt records the exact
@@ -782,13 +821,16 @@ quarantine and recompute.
 
 ## 16. Provider and compute gate
 
-The last observed provider state before this draft was `$57.1287946692`, no
-active pods, at `2026-07-12T14:39:21Z`. Refresh immediately before allocation.
+The latest provider checkpoint before the Stage-T amendment observed
+`$57.1287946692`, no active pods, at `2026-07-12T18:26:48Z`. Refresh immediately
+before allocation.
 
 Hard buckets before observed release:
 
 - at most `$12.00` total for admission, exact gates, e01/long pilots, render
-  attempts, balanced yield measurement, and all treatment-blind Phase A;
+  attempts, balanced yield measurement, and all treatment-blind Phase A. The
+  one Stage-T technical canary is a `$1.50` and 3,300-provider-second sub-cap of
+  this bucket, leaving at most `$10.50` if fully spent;
 - at most `$30.00` projected for the 48-case treatment core after mandatory
   source-bundle reuse;
 - at most `$4.50` for the independent-host audit;
@@ -835,7 +877,9 @@ rank, time, Phase-A dollar, or worst-case projection bound produces
 `RECIPE_INFEASIBLE_PRETREATMENT` or `BUDGET_INFEASIBLE_PRETREATMENT`, preserves
 all artifacts, and exposes no treatment.
 
-Keep the admitted core host warm through the treatment-release review for at
+The Stage-T host is harvested and deleted immediately after its bounded
+technical measurements; it is never the core warm host. Keep the later admitted
+core host warm through the treatment-release review for at
 most 45 idle minutes or `$1.10`, whichever occurs first. If release is not ready,
 harvest bundles and terminate; a new host must rebuild or independently verify
 compatible bundles under the post-screen projection. No network volume is
@@ -891,9 +935,36 @@ analysis/writing.
 
 ## 18. Authorization conditions
 
-### DRAFT to STATIC_FROZEN_PHASE_A_AUTHORIZED
+### DRAFT to TECHNICAL_CANARY_AUTHORIZED
 
-Before any paid work:
+Before the first paid minute:
+
+1. the Stage-T manifest and import audit prove that only hash-allowlisted e01
+   and technical-long inputs are reachable, semantic N is zero, production
+   entropy is never requested, and production-pool modules cannot import;
+2. the exact model ID/revision, bf16 dtype, eager backend, tokenizer/template,
+   dependency, GPU, driver, and CUDA attestation plus L0/L1/L3 code passes local
+   fake-runtime and corruption tests; the manifest freezes the on-host order as
+   attestation and build ladder before any timing/VP/arm measurement, with
+   immediate abort and cleanup on failure;
+3. the bundle/VP/store path needed by the canary has passed independent review,
+   exact byte-corruption tests, and CPU-as-execution, arbitrary-VP, partial-
+   resume, and cross-runtime rejection cases;
+4. the provider watchdog passes happy-path and fault-injection tests for the
+   `$1.50`, 3,300-second, process-death, harvest, deletion-404, and active-
+   inventory gates;
+5. the technical release verifier accepts the exact parent/two-path child and
+   rejects wrong status, parent, inventory, hash, diff, checkout, and receipt;
+6. a dedicated authorization commit contains only the Stage-T manifest and
+   literal DRAFT-to-`TECHNICAL_CANARY_AUTHORIZED` transition.
+
+The technical run may then observe only the metrics in Sections 9 and 15. Any
+semantic or production-pool artifact is a fatal protocol violation, not a
+pilot result.
+
+### TECHNICAL_CANARY_AUTHORIZED to STATIC_FROZEN_PHASE_A_AUTHORIZED
+
+Before any paid treatment-blind semantic Phase A:
 
 1. the archived Fable freeze review and independent adversarial
    statistics/release review have additive main-agent dispositions;
@@ -904,14 +975,15 @@ Before any paid work:
    threshold and an independent implementation agrees byte-for-byte;
 4. complete template/pool/generator/permutation and content-review manifests
    pass locally for every candidate allowed by the ten-per-stratum cap;
-5. local build-ladder, corruption, checkpoint-quarantine, and warm-order tests
-   pass;
+5. local plus Stage-T build-ladder, corruption, checkpoint-quarantine, and
+   warm-order tests pass, and the observed technical timings preserve the live
+   `$12/$30/$4.50/$8` inequalities;
 6. the Stage-A verifier has demonstrated acceptance plus deliberate token,
    position, source, hash, control, parent-commit, and duplicate-manifest
    rejection cases, and the detached remote checkout/clean-tree/status/receipt
    procedure has passed locally;
 7. one dedicated authorization commit contains only the status/manifest needed
-   by Section 15 and changes the status to
+   by Section 15 and changes the technical status to
    `STATIC_FROZEN_PHASE_A_AUTHORIZED`.
 
 ### Phase A to TREATMENT_RELEASED
