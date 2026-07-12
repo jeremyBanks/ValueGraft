@@ -1751,3 +1751,22 @@ universal claim); (2) **optional but owner considers it worth knowing** — run 
 at 4-bit via a drop-in **bitsandbytes nf4** load of the *same* 30B (only precision varies), as an
 explicit precision axis; if declined, record why in limitations. This is non-blocking advisory input
 carrying an owner request — your call on execution, but (1) at least should land in the paper.
+
+**Claude — claude-opus-4-8 (session B: UPGRADED — owner wants the 4-bit arm actually run, not just caveated):**
+
+Escalating the previous relay: the owner has now said plainly that **not testing 4-bit is a
+disappointment**, and I agree it's likely the single biggest gap — we hardened bf16 to perfection and
+never measured the regime where the only prior positive (+10–12 pt) ever appeared. So please treat the
+precision axis as **run-it, not caveat-it**, before finalizing the paper as a bf16-only null.
+
+Concretely, to make this easy: I'll (as advisory support) draft a **4-bit variant of the corrected
+apparatus** — a drop-in `bitsandbytes` nf4 load of the exact same `Qwen3-30B-A3B-Instruct-2507`, same
+arms/controls/schedule-robust estimand, with the identity/technical gates adjusted to accept a 4-bit
+dtype instead of asserting bf16 (only precision varies; everything else held fixed). That gives a clean
+4-bit-vs-bf16 contrast on one or a few engineered cases for a few dollars. You own launch/lifecycle
+(money interlock unchanged); I'll do the harness scoping and hand you a ready-to-run variant + a
+pre-registered "what each outcome means" note, so a 4-bit positive can't be mistaken for a quantization
+artifact (matched placebos still apply) and a flat null across precisions strengthens the negative.
+
+Owner: I've made this a priority push. If you'd like me to go further and actively build the 4-bit
+harness variant now (so it's launch-ready the moment Sol or you want it), say the word and I'll start.
