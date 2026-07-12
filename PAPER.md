@@ -2,10 +2,6 @@
 
 **Jeremy Banks · Anthropic Claude Fable 5 · OpenAI GPT-5.6 Sol (extra-high and ultra reasoning)**
 
-*Working-paper status: under factual, methodological, and readability review. The published repository landing page remains unchanged until every review gate passes.*
-
----
-
 ## Abstract
 
 When a long LLM conversation is compacted — replaced by a text summary so that work can continue in a fresh context — everything the model computed while generating the original conversation is discarded along with the text. Recent work provides evidence, in trained settings, that generation-time key/value (KV) state can carry task-relevant information that re-encoding the visible text does not recover. This project asked a narrower, practical question: can a **training-free, post-hoc transplant** of old KV state (in particular, old value vectors under fresh keys) into a compacted context reliably mitigate compaction damage on an ordinary instruction model?
@@ -440,14 +436,17 @@ not additive:
 | Surface | Audited quantity | Measurement class |
 |---|---:|---|
 | RunPod | 304.913 billed Pod-hours and 424.871205699397252292 USD-denominated Pod credits across the complete 76-Pod account window. Independent project evidence covers at least 283.679 hours / 394.948127557756380202 credits; three unattributed Pods account for the remaining 21.234 hours / 29.92307814164087209 credits. Serverless endpoints and network volumes were each exactly zero. | Account window: exact source record; project share: lower bound; residual: attribution unknown. Consumed credits are not cash paid. |
-| Claude CLI | 3,243,974,397 logged tokens through a frozen prefix: 2,203,668 uncached input, 22,729,207 five-minute cache writes, 46,282,248 one-hour cache writes, 3,161,014,194 cache reads, and 11,745,080 output. Applying the 2026-07-12 standard-speed, token-only API schedule gives $3,014.85823075. | Tokens: exact source record. Price: exact arithmetic under a counterfactual schedule, not cash paid; subscription cash is unknown. |
+| Claude CLI | 3,262,758,065 logged tokens through a frozen prefix: 2,207,532 uncached input, 22,729,207 five-minute cache writes, 47,164,649 one-hour cache writes, 3,178,855,829 cache reads, and 11,800,848 output. Applying the frozen 2026-07-12 standard-speed, token-only API schedule gives $3,034.01657825. | Tokens: exact source record. Price: exact arithmetic under a counterfactual schedule, not cash paid; subscription cash is unknown. |
 | Codex CLI | A 2026-07-12 13:49 UTC working freeze reconstructs 3,225,425,541 tokens through the last metered boundary. Treating every structurally inherited graph-child prefix as fresh instead gives 87,597,633,283 tokens; this is a method sensitivity, not a confidence interval. Three completed response items across two active threads remained beyond the metered boundary. | Reconstructed and not source-exact; the moving working freeze is not the final cutoff. Subscription cash is unknown. |
 | Mac-local inference | At least 8.536905 hours across 88 retained, directly timed experimental result files. | Lower bound; neither total machine use nor accelerator-busy time. |
 
 OpenRouter separately reports an exact current-key lifetime envelope of
 0.0232311 credits and an overlapping authenticated-account lifetime envelope
 of 95.541220588 credits used out of 114 total credits; project share, tokens,
-and cash are unknown. Claude/ChatGPT subscription invoices and allocations,
+and cash are unknown. The notes manifests retain 77 Luna-attributed summary
+outputs, but Luna was invoked through ephemeral Codex processes absent from the
+project state ledger; historical requests, retries, tokens, API equivalent,
+and cash are therefore unknown. Claude/ChatGPT subscription invoices and allocations,
 RunPod deposits, OpenRouter cash, Gemini use, Hugging Face plan or egress
 costs, Mac electricity, and hardware amortization are also unknown. Appendix
 A.7 records the cutoffs and arithmetic; Appendix B points to the full ledgers.
@@ -625,15 +624,16 @@ were bfloat16 in every layer in both regimes.
 The accounting window begins with the first repository commit at
 `2026-07-04T20:05:15Z`. Each surface has its own recorded cutoff, and work after
 a cutoff—including the final delivery response—falls outside that snapshot.
-The Claude collector froze 207,051,892 bytes across 405 JSONL files at
-`2026-07-12T13:03:55.304595Z`, globally deduplicated assistant message IDs, and
-expanded them into 8,944 request rows. The resulting exact logged workload is
-3,243,974,397 tokens. Applying Anthropic's public 2026-07-12 standard,
+The Claude collector froze 207,424,274 bytes across 405 JSONL files at
+`2026-07-12T14:09:33.034130Z`, globally deduplicated 8,965 assistant message
+IDs, and expanded them into 8,966 request rows (one selected message contained
+two recorded usage iterations). The resulting exact logged workload is
+3,262,758,065 tokens. Applying Anthropic's public 2026-07-12 standard,
 non-batch rates per million tokens—Fable 5:
 10/12.5/20/1/50; Opus 4.8: 5/6.25/10/0.5/25; and Sonnet 5 introductory:
 2/2.5/4/0.2/10 for uncached input / five-minute cache write / one-hour cache
 write / cache read / output—gives model subtotals of $1,333.2098915,
-$1,587.12888875, and $94.5194505, respectively. The $3,014.85823075 total is a
+$1,606.28723625, and $94.5194505, respectively. The $3,034.01657825 total is a
 token-only, standard-speed API counterfactual; all three models included their
 full one-million-token context window at standard rates on the retrieval date.
 The project used subsidized
