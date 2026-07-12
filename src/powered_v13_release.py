@@ -6,15 +6,15 @@ It implements only the acyclic Stage-A boundary described by Sections 15 and
 
 * a canonical manifest inventories explicit blobs from an immutable parent;
 * the authorization child has exactly one parent and changes exactly two paths;
-* the preregistration change is one manifest-configured, exact line replacement;
+* the preregistration change is the fixed v13 exact line replacement;
 * the other change is one newly added, canonical manifest;
 * a post-commit receipt is written with create-if-absent semantics; and
 * launch verification requires exact detached HEAD, a clean checkout, one
   receipt, exact bindings, and a fresh receipt timestamp.
 
-The old and new status lines are opaque UTF-8 bytes supplied to the manifest
-builder.  The module intentionally does not contain the real authorization
-line and therefore cannot guess or perform the live v13 status transition.
+The preregistration path, status transition, inventory-contract path, and
+receipt basename are fixed here so a caller cannot weaken the release by
+supplying a smaller or different contract.
 """
 
 from __future__ import annotations
@@ -32,7 +32,22 @@ from typing import Any, Mapping, Sequence
 DESIGN_ID = "coherent-state-powered-successor-v13"
 STAGE_A = "STATIC_PHASE_A"
 STAGE_A_MANIFEST_SCHEMA = "powered-v13-stage-a-manifest-v1"
+STAGE_A_INVENTORY_CONTRACT_SCHEMA = "powered-v13-stage-a-inventory-contract-v1"
 STAGE_A_RECEIPT_SCHEMA = "powered-v13-stage-a-launch-receipt-v1"
+STAGE_A_PREREGISTRATION_PATH = (
+    "COHERENT-STATE-POWERED-SUCCESSOR-V13-PREREGISTRATION.md"
+)
+STAGE_A_INVENTORY_CONTRACT_PATH = (
+    "data/coherent_state_powered_v13/stage-a-inventory-contract.json"
+)
+STAGE_A_RECEIPT_BASENAME = "powered-v13-stage-a-launch-receipt.json"
+STAGE_A_OLD_STATUS_LINE = (
+    b"**Status:** **DRAFT \xe2\x80\x94 NO PAID WORK OR PRIMARY TREATMENT AUTHORIZED**\n"
+)
+STAGE_A_NEW_STATUS_LINE = (
+    b"**Status:** **STATIC_FROZEN_PHASE_A_AUTHORIZED \xe2\x80\x94 "
+    b"CAPPED TREATMENT-BLIND PHASE A ONLY**\n"
+)
 DEFAULT_RECEIPT_MAX_AGE_SECONDS = 300
 DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS = 5
 
@@ -186,43 +201,29 @@ def build_stage_a_manifest(
     repo: Path,
     *,
     static_root_commit: str,
-    experiment_paths: Sequence[str],
-    preregistration_path: str,
     manifest_path: str,
-    old_status_line: bytes,
-    new_status_line: bytes,
 ) -> dict[str, Any]:
     """Build, but do not write, a deterministic Stage-A parent-tree manifest.
 
-    ``experiment_paths`` is deliberately explicit: no filesystem glob or live
-    worktree read can silently expand the frozen inventory.  Every byte is read
-    from ``static_root_commit`` through Git's object database.
+    The exact inventory comes from the fixed, canonical parent-tree contract;
+    no filesystem glob, live-worktree read, or caller-supplied path list can
+    silently change it.  Every byte is read from ``static_root_commit`` through
+    Git's object database.
     """
     repo = Path(repo).resolve()
     root = _require_exact_commit(repo, static_root_commit, "static_root_commit")
-    prereg = _safe_path(preregistration_path, "preregistration_path")
+    prereg = STAGE_A_PREREGISTRATION_PATH
     manifest_rel = _safe_path(manifest_path, "manifest_path")
     if not manifest_rel.endswith(".json"):
         raise ReleaseVerificationError("manifest_path must end in .json")
-    if not isinstance(experiment_paths, Sequence) or isinstance(
-        experiment_paths, (str, bytes)
-    ):
-        raise ReleaseVerificationError("experiment_paths must be a path sequence")
-    normalized = [_safe_path(path, "experiment path") for path in experiment_paths]
-    if not normalized or len(normalized) != len(set(normalized)):
-        raise ReleaseVerificationError("experiment paths are empty or duplicated")
-    normalized = sorted(normalized)
-    if prereg not in normalized:
-        raise ReleaseVerificationError("experiment inventory omits the preregistration")
-    if manifest_rel in normalized:
-        raise ReleaseVerificationError("new manifest may not inventory itself")
     if not _path_absent(repo, root, manifest_rel):
         raise ReleaseVerificationError("Stage-A manifest path already exists in static root")
 
-    old = _status_line(old_status_line, "old_status_line")
-    new = _status_line(new_status_line, "new_status_line")
-    if old == new:
-        raise ReleaseVerificationError("status transition does not change bytes")
+    normalized = _read_stage_a_inventory_contract(
+        repo, root, manifest_path=manifest_rel
+    )
+    old = STAGE_A_OLD_STATUS_LINE
+    new = STAGE_A_NEW_STATUS_LINE
     _mode, _oid, prereg_bytes = _tree_entry(repo, root, prereg)
     if prereg_bytes.count(old) != 1:
         raise ReleaseVerificationError("old status line is not unique in the parent")
@@ -267,6 +268,80 @@ def _require_plain_int(value: Any, label: str) -> int:
     return value
 
 
+def _contract_inventory_paths(value: Any, *, manifest_path: str | None) -> list[str]:
+    if not isinstance(value, list) or not value:
+        raise ReleaseVerificationError(
+            "Stage-A inventory contract paths are empty or not a list"
+        )
+    paths = [_safe_path(path, "inventory contract path") for path in value]
+    if paths != sorted(set(paths)):
+        raise ReleaseVerificationError(
+            "Stage-A inventory contract paths are not sorted and unique"
+        )
+    required = {
+        STAGE_A_PREREGISTRATION_PATH,
+        STAGE_A_INVENTORY_CONTRACT_PATH,
+    }
+    if not required.issubset(paths):
+        raise ReleaseVerificationError(
+            "Stage-A inventory contract omits its contract or preregistration"
+        )
+    if manifest_path is not None and manifest_path in paths:
+        raise ReleaseVerificationError(
+            "new Stage-A manifest may not appear in the parent inventory contract"
+        )
+    return paths
+
+
+def encode_stage_a_inventory_contract(inventory_paths: Sequence[str]) -> bytes:
+    """Encode the fixed-path parent-tree inventory contract for static freeze."""
+    if not isinstance(inventory_paths, Sequence) or isinstance(
+        inventory_paths, (str, bytes)
+    ):
+        raise ReleaseVerificationError("inventory_paths must be a path sequence")
+    paths = _contract_inventory_paths(list(inventory_paths), manifest_path=None)
+    document = {
+        "schema": STAGE_A_INVENTORY_CONTRACT_SCHEMA,
+        "design_id": DESIGN_ID,
+        "stage": STAGE_A,
+        "inventory_paths": paths,
+    }
+    return canonical_json_bytes(document) + b"\n"
+
+
+def _read_stage_a_inventory_contract(
+    repo: Path, commit: str, *, manifest_path: str
+) -> list[str]:
+    mode, _oid, raw = _tree_entry(
+        repo, commit, STAGE_A_INVENTORY_CONTRACT_PATH
+    )
+    if mode != "100644":
+        raise ReleaseVerificationError(
+            "Stage-A inventory contract is not mode 100644"
+        )
+    try:
+        value = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ReleaseVerificationError(
+            "Stage-A inventory contract is not UTF-8 JSON"
+        ) from exc
+    fields = {"schema", "design_id", "stage", "inventory_paths"}
+    document = _require_object(value, fields, "Stage-A inventory contract")
+    if raw != canonical_json_bytes(dict(document)) + b"\n":
+        raise ReleaseVerificationError(
+            "Stage-A inventory contract bytes are not canonical JSON plus LF"
+        )
+    if (
+        document["schema"] != STAGE_A_INVENTORY_CONTRACT_SCHEMA
+        or document["design_id"] != DESIGN_ID
+        or document["stage"] != STAGE_A
+    ):
+        raise ReleaseVerificationError("Stage-A inventory contract identity differs")
+    return _contract_inventory_paths(
+        document["inventory_paths"], manifest_path=manifest_path
+    )
+
+
 def verify_stage_a_manifest_document(
     repo: Path,
     manifest: Mapping[str, Any],
@@ -301,12 +376,17 @@ def verify_stage_a_manifest_document(
         raise ReleaseVerificationError("static root tree hash differs")
     manifest_rel = _safe_path(doc["manifest_path"], "manifest_path")
     prereg = _safe_path(doc["preregistration_path"], "preregistration_path")
+    if prereg != STAGE_A_PREREGISTRATION_PATH:
+        raise ReleaseVerificationError("preregistration path is not the fixed v13 path")
     if expected_manifest_path is not None and manifest_rel != _safe_path(
         expected_manifest_path, "expected_manifest_path"
     ):
         raise ReleaseVerificationError("manifest path binding differs")
     if not manifest_rel.endswith(".json") or not _path_absent(repo, root, manifest_rel):
         raise ReleaseVerificationError("manifest path is not a new .json path")
+    contract_paths = _read_stage_a_inventory_contract(
+        repo, root, manifest_path=manifest_rel
+    )
 
     transition = _require_object(
         doc["status_transition"],
@@ -323,8 +403,8 @@ def verify_stage_a_manifest_document(
         _decode_lower_hex(transition["new_bytes_hex"], "new status hex"),
         "new status line",
     )
-    if old == new:
-        raise ReleaseVerificationError("status transition does not change bytes")
+    if old != STAGE_A_OLD_STATUS_LINE or new != STAGE_A_NEW_STATUS_LINE:
+        raise ReleaseVerificationError("status transition is not the fixed v13 transition")
 
     inventory = doc["inventory"]
     if not isinstance(inventory, list) or not inventory:
@@ -345,8 +425,10 @@ def verify_stage_a_manifest_document(
         paths.append(path)
     if paths != sorted(set(paths)):
         raise ReleaseVerificationError("inventory paths are not sorted and unique")
-    if prereg not in paths or manifest_rel in paths:
-        raise ReleaseVerificationError("inventory preregistration/manifest membership differs")
+    if paths != contract_paths:
+        raise ReleaseVerificationError(
+            "manifest inventory paths differ from the fixed parent contract"
+        )
     expected_inventory = _inventory(repo, root, paths)
     if inventory != expected_inventory:
         raise ReleaseVerificationError("manifest inventory differs from static parent bytes")
@@ -555,9 +637,63 @@ def _write_bytes_exclusive(path: Path, payload: bytes) -> None:
             pass
 
 
+def _empty_receipt_directory(receipt_directory: Path) -> Path:
+    directory = Path(receipt_directory)
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        raise ReleaseVerificationError(
+            f"could not create launch receipt directory: {exc}"
+        ) from exc
+    if directory.is_symlink() or not directory.is_dir():
+        raise ReleaseVerificationError(
+            "launch receipt directory is not a real directory"
+        )
+    try:
+        entries = list(directory.iterdir())
+    except OSError as exc:
+        raise ReleaseVerificationError(
+            f"could not scan launch receipt directory: {exc}"
+        ) from exc
+    if entries:
+        raise ReleaseVerificationError(
+            f"launch receipt directory is not empty: {[entry.name for entry in entries]!r}"
+        )
+    return directory
+
+
+def _scan_unique_receipt(receipt_directory: Path) -> Path:
+    directory = Path(receipt_directory)
+    if directory.is_symlink() or not directory.is_dir():
+        raise ReleaseVerificationError(
+            "launch receipt directory is absent or is not a real directory"
+        )
+    try:
+        entries = list(directory.iterdir())
+    except OSError as exc:
+        raise ReleaseVerificationError(
+            f"could not scan launch receipt directory: {exc}"
+        ) from exc
+    if len(entries) != 1:
+        raise ReleaseVerificationError(
+            f"exactly one Stage-A launch receipt directory entry is required, "
+            f"observed {len(entries)}"
+        )
+    receipt = entries[0]
+    if receipt.name != STAGE_A_RECEIPT_BASENAME:
+        raise ReleaseVerificationError(
+            f"launch receipt basename differs from {STAGE_A_RECEIPT_BASENAME}"
+        )
+    if receipt.is_symlink() or not receipt.is_file():
+        raise ReleaseVerificationError(
+            "launch receipt is not one regular non-symlink file"
+        )
+    return receipt
+
+
 def create_stage_a_launch_receipt(
     repo: Path,
-    output_path: Path,
+    receipt_directory: Path,
     *,
     authorization_commit: str,
     manifest_path: str,
@@ -582,8 +718,11 @@ def create_stage_a_launch_receipt(
     }
     receipt["payload_sha256"] = receipt_payload_sha256(receipt)
     encoded = canonical_json_bytes(receipt) + b"\n"
-    _write_bytes_exclusive(Path(output_path), encoded)
-    if Path(output_path).read_bytes() != encoded:
+    directory = _empty_receipt_directory(Path(receipt_directory))
+    output_path = directory / STAGE_A_RECEIPT_BASENAME
+    _write_bytes_exclusive(output_path, encoded)
+    verified_path = _scan_unique_receipt(directory)
+    if verified_path != output_path or output_path.read_bytes() != encoded:
         raise ReleaseVerificationError("launch receipt changed during exclusive write")
     return receipt
 
@@ -701,7 +840,7 @@ def verify_stage_a_checkout(
     *,
     authorization_commit: str,
     manifest_path: str,
-    receipt_paths: Sequence[Path],
+    receipt_directory: Path,
     now: datetime | None = None,
     max_receipt_age_seconds: int = DEFAULT_RECEIPT_MAX_AGE_SECONDS,
     future_skew_seconds: int = DEFAULT_RECEIPT_FUTURE_SKEW_SECONDS,
@@ -711,19 +850,14 @@ def verify_stage_a_checkout(
     exact_commit = _require_exact_commit(repo, authorization_commit, "authorization_commit")
     _require_detached_head(repo, exact_commit)
     _require_clean_tree(repo)
-    if not isinstance(receipt_paths, Sequence) or isinstance(receipt_paths, (str, bytes)):
-        raise ReleaseVerificationError("receipt_paths must be a path sequence")
-    if len(receipt_paths) != 1:
-        raise ReleaseVerificationError(
-            f"exactly one Stage-A launch receipt is required, observed {len(receipt_paths)}"
-        )
+    receipt_path = _scan_unique_receipt(Path(receipt_directory))
     authorization = verify_stage_a_authorization_commit(
         repo,
         authorization_commit=exact_commit,
         manifest_path=manifest_path,
     )
     receipt = verify_stage_a_launch_receipt(
-        Path(receipt_paths[0]),
+        receipt_path,
         authorization_evidence=authorization,
         now=now,
         max_age_seconds=max_receipt_age_seconds,

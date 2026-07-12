@@ -10,28 +10,40 @@ import subprocess
 import pytest
 
 from powered_v13_release import (
+    STAGE_A_INVENTORY_CONTRACT_PATH,
     STAGE_A_MANIFEST_SCHEMA,
+    STAGE_A_NEW_STATUS_LINE,
+    STAGE_A_OLD_STATUS_LINE,
+    STAGE_A_PREREGISTRATION_PATH,
+    STAGE_A_RECEIPT_BASENAME,
     ReleaseVerificationError,
     build_stage_a_manifest,
     canonical_json_bytes,
     create_stage_a_launch_receipt,
+    encode_stage_a_inventory_contract,
     encode_stage_a_manifest,
     receipt_payload_sha256,
+    sha256_bytes,
     verify_stage_a_authorization_commit,
     verify_stage_a_checkout,
     verify_stage_a_manifest_document,
 )
 
 
-PREREGISTRATION = "PROTOCOL.md"
+PREREGISTRATION = STAGE_A_PREREGISTRATION_PATH
 MANIFEST_PATH = "release/powered-v13-stage-a-manifest.json"
-EXPERIMENT_PATHS = (PREREGISTRATION, "locks/exact.lock", "src/runner.py")
-
-# These deliberately synthetic lines document the generic contract.  The
-# release implementation contains neither the real v13 DRAFT line nor the real
-# authorization line; callers must freeze both literal LF-terminated bytes.
-OLD_STATUS = b"**Status:** SYNTHETIC DRAFT\n"
-NEW_STATUS = b"**Status:** SYNTHETIC STATIC AUTHORIZATION\n"
+EXPERIMENT_PATHS = tuple(
+    sorted(
+        (
+            PREREGISTRATION,
+            STAGE_A_INVENTORY_CONTRACT_PATH,
+            "locks/exact.lock",
+            "src/runner.py",
+        )
+    )
+)
+OLD_STATUS = STAGE_A_OLD_STATUS_LINE
+NEW_STATUS = STAGE_A_NEW_STATUS_LINE
 T0 = datetime(2026, 7, 12, 18, 0, 0, tzinfo=timezone.utc)
 
 
@@ -71,6 +83,11 @@ def init_static_root(tmp_path: Path) -> tuple[Path, str]:
     )
     write(repo, "src/runner.py", b"def run():\n    return 'blind'\n")
     write(repo, "locks/exact.lock", b"package==1.2.3 --hash=sha256:abcd\n")
+    write(
+        repo,
+        STAGE_A_INVENTORY_CONTRACT_PATH,
+        encode_stage_a_inventory_contract(EXPERIMENT_PATHS),
+    )
     git(repo, "add", *EXPERIMENT_PATHS)
     git(repo, "commit", "-m", "static root")
     return repo, git(repo, "rev-parse", "HEAD")
@@ -80,11 +97,7 @@ def manifest_for(repo: Path, root: str) -> dict:
     return build_stage_a_manifest(
         repo,
         static_root_commit=root,
-        experiment_paths=EXPERIMENT_PATHS,
-        preregistration_path=PREREGISTRATION,
         manifest_path=MANIFEST_PATH,
-        old_status_line=OLD_STATUS,
-        new_status_line=NEW_STATUS,
     )
 
 
@@ -123,25 +136,29 @@ class ValidRelease:
     repo: Path
     root: str
     authorization: str
-    receipt: Path
+    receipt_directory: Path
     manifest: dict
+
+    @property
+    def receipt(self) -> Path:
+        return self.receipt_directory / STAGE_A_RECEIPT_BASENAME
 
 
 def valid_release(tmp_path: Path, *, detach: bool = True) -> ValidRelease:
     repo, root = init_static_root(tmp_path)
     manifest = manifest_for(repo, root)
     authorization = commit_authorization(repo, manifest)
-    receipt = tmp_path / "receipts" / "stage-a-launch.json"
+    receipt_directory = tmp_path / "receipts"
     create_stage_a_launch_receipt(
         repo,
-        receipt,
+        receipt_directory,
         authorization_commit=authorization,
         manifest_path=MANIFEST_PATH,
         created_at=T0,
     )
     if detach:
         git(repo, "checkout", "--detach", authorization)
-    return ValidRelease(repo, root, authorization, receipt, manifest)
+    return ValidRelease(repo, root, authorization, receipt_directory, manifest)
 
 
 def test_manifest_is_canonical_explicit_parent_tree_inventory(tmp_path: Path) -> None:
@@ -163,37 +180,109 @@ def test_manifest_is_canonical_explicit_parent_tree_inventory(tmp_path: Path) ->
     assert manifest_for(repo, root) == manifest
 
 
-def test_manifest_requires_strict_configured_one_line_transition(tmp_path: Path) -> None:
+def test_manifest_pins_real_v13_preregistration_and_status_transition(
+    tmp_path: Path,
+) -> None:
     repo, root = init_static_root(tmp_path)
-    with pytest.raises(ReleaseVerificationError, match="LF-terminated"):
-        build_stage_a_manifest(
+    manifest = manifest_for(repo, root)
+
+    assert STAGE_A_PREREGISTRATION_PATH == (
+        "COHERENT-STATE-POWERED-SUCCESSOR-V13-PREREGISTRATION.md"
+    )
+    assert STAGE_A_OLD_STATUS_LINE == (
+        b"**Status:** **DRAFT \xe2\x80\x94 NO PAID WORK OR PRIMARY TREATMENT AUTHORIZED**\n"
+    )
+    assert STAGE_A_NEW_STATUS_LINE == (
+        b"**Status:** **STATIC_FROZEN_PHASE_A_AUTHORIZED \xe2\x80\x94 "
+        b"CAPPED TREATMENT-BLIND PHASE A ONLY**\n"
+    )
+    assert manifest["preregistration_path"] == STAGE_A_PREREGISTRATION_PATH
+    assert manifest["status_transition"] == {
+        "path": STAGE_A_PREREGISTRATION_PATH,
+        "old_bytes_hex": STAGE_A_OLD_STATUS_LINE.hex(),
+        "new_bytes_hex": STAGE_A_NEW_STATUS_LINE.hex(),
+    }
+
+    wrong_path = deepcopy(manifest)
+    wrong_path["preregistration_path"] = "PROTOCOL.md"
+    wrong_path["status_transition"]["path"] = "PROTOCOL.md"
+    with pytest.raises(ReleaseVerificationError, match="fixed v13 path"):
+        verify_stage_a_manifest_document(repo, wrong_path)
+
+    wrong_status = deepcopy(manifest)
+    wrong_status["status_transition"]["new_bytes_hex"] = (
+        b"**Status:** **SOME OTHER AUTHORIZATION**\n".hex()
+    )
+    with pytest.raises(ReleaseVerificationError, match="fixed v13 transition"):
+        verify_stage_a_manifest_document(repo, wrong_status)
+
+
+def test_manifest_inventory_cannot_omit_contract_required_path(tmp_path: Path) -> None:
+    repo, root = init_static_root(tmp_path)
+    manifest = deepcopy(manifest_for(repo, root))
+    manifest["inventory"] = [
+        row for row in manifest["inventory"] if row["path"] != "src/runner.py"
+    ]
+    manifest["inventory_count"] = len(manifest["inventory"])
+    manifest["inventory_sha256"] = sha256_bytes(
+        canonical_json_bytes(manifest["inventory"])
+    )
+    authorization = commit_authorization(repo, manifest)
+
+    with pytest.raises(ReleaseVerificationError, match="fixed parent contract"):
+        verify_stage_a_authorization_commit(
             repo,
-            static_root_commit=root,
-            experiment_paths=EXPERIMENT_PATHS,
-            preregistration_path=PREREGISTRATION,
+            authorization_commit=authorization,
             manifest_path=MANIFEST_PATH,
-            old_status_line=OLD_STATUS,
-            new_status_line=b"not-terminated",
         )
-    with pytest.raises(ReleaseVerificationError, match="old status line is not unique"):
-        build_stage_a_manifest(
+
+
+def test_inventory_contract_must_remain_strict_canonical_json(tmp_path: Path) -> None:
+    repo, _root = init_static_root(tmp_path)
+    contract = json.loads((repo / STAGE_A_INVENTORY_CONTRACT_PATH).read_bytes())
+    write(
+        repo,
+        STAGE_A_INVENTORY_CONTRACT_PATH,
+        (json.dumps(contract, indent=2, sort_keys=True) + "\n").encode(),
+    )
+    git(repo, "add", STAGE_A_INVENTORY_CONTRACT_PATH)
+    git(repo, "commit", "-m", "alter inventory contract encoding")
+    altered_root = git(repo, "rev-parse", "HEAD")
+
+    with pytest.raises(ReleaseVerificationError, match="not canonical"):
+        manifest_for(repo, altered_root)
+
+
+def test_manifest_binds_the_inventory_contract_blob(tmp_path: Path) -> None:
+    repo, root = init_static_root(tmp_path)
+    manifest = deepcopy(manifest_for(repo, root))
+    contract_row = next(
+        row
+        for row in manifest["inventory"]
+        if row["path"] == STAGE_A_INVENTORY_CONTRACT_PATH
+    )
+    contract_row["sha256"] = "0" * 64
+    manifest["inventory_sha256"] = sha256_bytes(
+        canonical_json_bytes(manifest["inventory"])
+    )
+    authorization = commit_authorization(repo, manifest)
+
+    with pytest.raises(ReleaseVerificationError, match="inventory differs"):
+        verify_stage_a_authorization_commit(
             repo,
-            static_root_commit=root,
-            experiment_paths=EXPERIMENT_PATHS,
-            preregistration_path=PREREGISTRATION,
+            authorization_commit=authorization,
             manifest_path=MANIFEST_PATH,
-            old_status_line=b"**Status:** ANOTHER DRAFT\n",
-            new_status_line=NEW_STATUS,
         )
 
 
 def test_detached_clean_exact_release_and_fresh_receipt_pass(tmp_path: Path) -> None:
     release = valid_release(tmp_path)
+    assert release.receipt.name == "powered-v13-stage-a-launch-receipt.json"
     verified = verify_stage_a_checkout(
         release.repo,
         authorization_commit=release.authorization,
         manifest_path=MANIFEST_PATH,
-        receipt_paths=[release.receipt],
+        receipt_directory=release.receipt_directory,
         now=T0 + timedelta(seconds=12),
     )
     assert verified["status"] == "PASS"
@@ -213,7 +302,7 @@ def test_branch_checkout_is_rejected_even_at_exact_head(tmp_path: Path) -> None:
             release.repo,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
-            receipt_paths=[release.receipt],
+            receipt_directory=release.receipt_directory,
             now=T0,
         )
 
@@ -227,7 +316,7 @@ def test_dirty_checkout_is_rejected(tmp_path: Path, dirty_path: str) -> None:
             release.repo,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
-            receipt_paths=[release.receipt],
+            receipt_directory=release.receipt_directory,
             now=T0,
         )
 
@@ -280,41 +369,79 @@ def test_duplicate_manifest_in_authorization_diff_is_rejected(tmp_path: Path) ->
 
 def test_duplicate_receipt_is_rejected_at_create_and_launch(tmp_path: Path) -> None:
     release = valid_release(tmp_path)
-    with pytest.raises(ReleaseVerificationError, match="already exists"):
+    with pytest.raises(ReleaseVerificationError, match="not empty"):
         create_stage_a_launch_receipt(
             release.repo,
-            release.receipt,
+            release.receipt_directory,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
             created_at=T0,
         )
 
-    second = tmp_path / "receipts" / "second.json"
-    create_stage_a_launch_receipt(
-        release.repo,
-        second,
-        authorization_commit=release.authorization,
-        manifest_path=MANIFEST_PATH,
-        created_at=T0,
-    )
-    with pytest.raises(ReleaseVerificationError, match="exactly one"):
+    # The checkout scans the directory itself; callers cannot hide a second
+    # receipt by passing only the expected path.
+    (release.receipt_directory / "undisclosed-second.json").write_bytes(b"{}\n")
+    with pytest.raises(ReleaseVerificationError, match="observed 2"):
         verify_stage_a_checkout(
             release.repo,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
-            receipt_paths=[release.receipt, second],
+            receipt_directory=release.receipt_directory,
+            now=T0,
+        )
+
+
+@pytest.mark.parametrize("entry_kind", ["directory", "symlink"])
+def test_any_extra_receipt_directory_entry_is_rejected(
+    tmp_path: Path, entry_kind: str
+) -> None:
+    release = valid_release(tmp_path)
+    extra = release.receipt_directory / f"extra-{entry_kind}"
+    if entry_kind == "directory":
+        extra.mkdir()
+    else:
+        target = tmp_path / "symlink-target"
+        target.write_bytes(b"not a receipt\n")
+        extra.symlink_to(target)
+
+    with pytest.raises(ReleaseVerificationError, match="observed 2"):
+        verify_stage_a_checkout(
+            release.repo,
+            authorization_commit=release.authorization,
+            manifest_path=MANIFEST_PATH,
+            receipt_directory=release.receipt_directory,
+            now=T0,
+        )
+
+
+def test_fixed_receipt_entry_must_be_a_regular_file(tmp_path: Path) -> None:
+    release = valid_release(tmp_path)
+    expected_bytes = release.receipt.read_bytes()
+    release.receipt.unlink()
+    target = tmp_path / "receipt-symlink-target.json"
+    target.write_bytes(expected_bytes)
+    release.receipt.symlink_to(target)
+
+    with pytest.raises(ReleaseVerificationError, match="non-symlink"):
+        verify_stage_a_checkout(
+            release.repo,
+            authorization_commit=release.authorization,
+            manifest_path=MANIFEST_PATH,
+            receipt_directory=release.receipt_directory,
             now=T0,
         )
 
 
 def test_absent_and_stale_receipts_are_rejected(tmp_path: Path) -> None:
     release = valid_release(tmp_path)
-    with pytest.raises(ReleaseVerificationError, match="exactly one"):
+    empty_receipt_directory = tmp_path / "empty-receipts"
+    empty_receipt_directory.mkdir()
+    with pytest.raises(ReleaseVerificationError, match="observed 0"):
         verify_stage_a_checkout(
             release.repo,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
-            receipt_paths=[],
+            receipt_directory=empty_receipt_directory,
             now=T0,
         )
     with pytest.raises(ReleaseVerificationError, match="stale"):
@@ -322,7 +449,7 @@ def test_absent_and_stale_receipts_are_rejected(tmp_path: Path) -> None:
             release.repo,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
-            receipt_paths=[release.receipt],
+            receipt_directory=release.receipt_directory,
             now=T0 + timedelta(seconds=301),
         )
 
@@ -352,7 +479,7 @@ def test_receipt_manifest_hash_mismatch_is_rejected(tmp_path: Path) -> None:
             release.repo,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
-            receipt_paths=[release.receipt],
+            receipt_directory=release.receipt_directory,
             now=T0,
         )
 
@@ -428,6 +555,6 @@ def test_exact_head_mismatch_is_rejected_before_launch(tmp_path: Path) -> None:
             release.repo,
             authorization_commit=release.authorization,
             manifest_path=MANIFEST_PATH,
-            receipt_paths=[release.receipt],
+            receipt_directory=release.receipt_directory,
             now=T0,
         )
