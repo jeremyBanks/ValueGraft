@@ -1,6 +1,6 @@
 # Powered-v13 Stage-T infrastructure retry 1
 
-**Status:** **DRAFT — NO PROVIDER ALLOCATION AUTHORIZED**
+**Status:** **INFRA_RETRY_AUTHORIZED — ONE EXTRA ALLOCATION; NO FALLBACK; SEMANTIC N=0**
 
 This amendment is an outcome-transparent outer infrastructure retry boundary.
 It does not change the scientific canary. The only scientific payload remains
