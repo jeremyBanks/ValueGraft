@@ -757,8 +757,9 @@ def load_verified_bundle(
     _sha(expected_file_sha256, "expected bundle file SHA")
     _require(isinstance(path, (str, os.PathLike)), "bundle path is not path-like")
     path = Path(path)
-    _require(path.is_file() and path.stat().st_size <= MAX_BUNDLE_BYTES,
-             "bundle is absent or exceeds frozen byte bound")
+    _require(not path.is_symlink() and path.is_file()
+             and path.stat().st_size <= MAX_BUNDLE_BYTES,
+             "bundle is absent, symlinked, or exceeds frozen byte bound")
     stat_before = path.stat()
     hash_before = file_sha256(path)
     _require(hash_before == expected_file_sha256,

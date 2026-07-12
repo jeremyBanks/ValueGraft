@@ -293,6 +293,18 @@ def test_load_requires_external_file_and_descriptor_commitments(saved, descripto
             expected_descriptor=changed)
 
 
+def test_load_rejects_symlinked_external_bundle(saved, descriptor):
+    path, binding = saved
+    linked = path.with_name("linked-bundle.safetensors")
+    linked.symlink_to(path)
+    with pytest.raises(bundle.V13BundleError, match="symlinked"):
+        bundle.load_verified_bundle(
+            linked,
+            expected_file_sha256=binding["sha256"],
+            expected_descriptor=descriptor,
+        )
+
+
 def test_serialized_corruption_and_change_during_read_fail(
         saved, descriptor, monkeypatch):
     path, binding = saved
