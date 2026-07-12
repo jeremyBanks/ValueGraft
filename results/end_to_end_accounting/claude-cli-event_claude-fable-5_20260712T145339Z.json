@@ -1,0 +1,44 @@
+{
+  "schema": "end-to-end-accounting-event/v1",
+  "captured_at_utc": "2026-07-12T14:53:39Z",
+  "provider_surface": "Claude CLI",
+  "purpose": "Fresh focused review of the powered successor design, controls, sequential analysis, and allocation of the remaining GPU budget",
+  "session_id": "d0c85f24-66e9-49a8-9a9a-c7594f11a912",
+  "runtime_model_requested": "claude-fable-5",
+  "runtime_model_observed": "claude-fable-5",
+  "effort": "max",
+  "maximum_list_price_budget_usd": 4.0,
+  "duration_ms": 419298,
+  "duration_api_ms": 420449,
+  "num_turns": 3,
+  "terminal_status": "success",
+  "artifact_status": "complete",
+  "reported_list_price_equivalent_usd": 2.2856370000000004,
+  "cash_spend_usd": null,
+  "cash_spend_classification": "unknown; Claude CLI was subscription/subsidized and reported cost is not assumed to be incremental cash billing",
+  "aggregate_usage": {
+    "input_tokens": 3408,
+    "output_tokens": 28488,
+    "cache_creation_input_tokens": 37145,
+    "cache_read_input_tokens": 82590,
+    "reported_cost_usd": 2.2856370000000004
+  },
+  "model_usage": {
+    "claude-haiku-4-5-20251001": {
+      "input_tokens": 1582,
+      "output_tokens": 17,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "reported_cost_usd": 0.001667
+    },
+    "claude-fable-5": {
+      "input_tokens": 3408,
+      "output_tokens": 28488,
+      "cache_creation_input_tokens": 37145,
+      "cache_read_input_tokens": 82590,
+      "reported_cost_usd": 2.28397
+    }
+  },
+  "output_artifact": "notes/2026071258-fable-powered-successor-design-review.md",
+  "evidence": "Claude CLI JSON result captured immediately after the fresh focused invocation. The review wrote its note and returned a five-item topline. No web search/fetch was used. Final accounting must treat reported cost as list-price-equivalent usage, not verified incremental cash."
+}

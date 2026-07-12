@@ -1,3 +1,9 @@
+# ARCHIVE — legacy model queue through the pre-ultra handoff
+
+This complete queue is preserved for retrospective only. Its budget, status,
+and enrichment priorities were superseded on 2026-07-12. Models may re-enter
+only through the powered successor’s frozen experiment menu.
+
 # MODEL-QUEUE.md — enrichment plan (post-pivot, 2026-07-09)
 
 Models now serve **ENRICHMENT** (the QK-norm regression is dead — incident #37): map the graft's effect

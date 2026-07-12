@@ -50,7 +50,8 @@ insufficiently tested.
 
 ## Active work
 
-1. Verify live provider balance/pods and the literal reusable artifacts.
+1. Refresh provider balance/pods immediately before launch and verify the
+   literal reusable artifacts.
 2. Pre-generate a diverse experiment menu before choosing the successor.
 3. Freeze a new CI-driven, replicated, multi-fixture design with decoded-valid
    matched controls and a placebo demonstrated feasible at the applied dtype.

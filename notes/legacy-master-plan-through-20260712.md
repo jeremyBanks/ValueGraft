@@ -1,3 +1,9 @@
+# ARCHIVE — legacy master plan through the pre-ultra handoff
+
+This complete plan is preserved for retrospective only. Its paper-first phases,
+budget, and active-task claims were superseded on 2026-07-12. Current planning
+lives in root `STATE.md` and the active successor preregistration.
+
 # MASTER-PLAN.md — two phases, run independently to completion
 
 Owner note: this is the durable spine for a long autonomous run (user 07-07:
