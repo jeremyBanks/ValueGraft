@@ -1,0 +1,198 @@
+{
+  "schema": "runpod_project_reconciliation_v1",
+  "prepared_at_utc": "2026-07-12T13:05:20Z",
+  "prepared_by": "gpt-5.6-sol-xhigh",
+  "method_version": "runpod-accounting-v1",
+  "provider_window": {
+    "start_time_utc": "2026-07-01T00:00:00Z",
+    "canonical_end_time_utc": "2026-07-12T12:46:08.057000Z",
+    "unit": "USD credits consumed",
+    "cash_equivalence_claimed": false
+  },
+  "canonical_provider_evidence": [
+    {
+      "path": "results/end_to_end_accounting/runpod-billing-snapshot_runpod_20260712T124601Z.json",
+      "file_sha256": "fd2a31a1ae1b2630f81c4bcf6fe17dfe6768fbd924a277da678a2c957f9a9c86",
+      "snapshot_id": "runpod-snapshot:1821304b80f6e0441fdf4c0a09ccdc41ecc1205612c183cf77fd5b64349abc39",
+      "captured_at_utc": "2026-07-12T12:46:02.344746Z",
+      "billing_response_sha256": "3b0fed5dae659288f978bd28d42a518ada0cb174afa9649731685a8492a87993"
+    },
+    {
+      "path": "results/end_to_end_accounting/runpod-billing-snapshot_runpod_20260712T124608Z.json",
+      "file_sha256": "b5da8d1df6b486fd2767d52b595e55e9d3954e5b17b0f3f7a691e1940a657e36",
+      "snapshot_id": "runpod-snapshot:c9baeb2868a8dc6742255eac1291fa48eae65d1b66a4f9660ba7b3e08ba8a735",
+      "captured_at_utc": "2026-07-12T12:46:09.174025Z",
+      "billing_response_sha256": "3b0fed5dae659288f978bd28d42a518ada0cb174afa9649731685a8492a87993"
+    }
+  ],
+  "provider_account_pod_consumption": {
+    "measurement_class": "exact_source_record",
+    "project_attribution": "not_implied_by_account_total",
+    "pod_count": 76,
+    "amount_usd_credits": "424.871205699397252292",
+    "billed_time_ms": 1097688401,
+    "billed_hours_formula": "1097688401 / 3600000",
+    "billed_hours_rounded_12dp": "304.913444722222"
+  },
+  "project_attribution": {
+    "cutoff_utc": "2026-07-12T12:45:14.778043Z",
+    "cutoff_reason": "This was the endTime of the first committed billing request. Only local state or transcript evidence earlier than this cutoff was treated as independent attribution evidence.",
+    "classification_rule": "A provider Pod ID was independently project-attributed when it had a repo-root .pod*_state.json launch snapshot or appeared literally in a timestamped event from the project-scoped raw Codex or Claude transcript archives before the cutoff. IDs meeting neither condition remain unattributed.",
+    "local_evidence_search": ".pod*_state.json",
+    "transcript_evidence_search": [
+      "$HOME/.codex/sessions/**/*.jsonl",
+      "$HOME/.claude/projects/-Users-jeb-experimentation/**/*.jsonl"
+    ],
+    "local_state_snapshot_group": {
+      "pod_count": 45,
+      "amount_usd_credits": "267.926330000627786196",
+      "billed_time_ms": 699132009,
+      "pod_ids": [
+        "0rjwbqwpte2rzf",
+        "0u1nt1z6zoxhvm",
+        "0ufjmmzvagptfd",
+        "13e4gahyjfwrz1",
+        "27irwplre7fmm6",
+        "2dlybozd35bzr4",
+        "2k4s986sioi2p2",
+        "3pww5ajhfsjqnf",
+        "54ejwte7eay1sg",
+        "5nbs5exro1ppc2",
+        "6ii6w03u4t1x78",
+        "8f4eqv3q28nj43",
+        "8lrh1yuoq93ird",
+        "96yjg965q8fnhi",
+        "9bsxwfmr7pzl6a",
+        "9gm7ypcafpazq6",
+        "9knz1qj9c44bi0",
+        "b2bhmx002t2vza",
+        "c0e9j71vncdihm",
+        "d5ub9am6ephqlo",
+        "es2sc9kg3c2kle",
+        "hdfl6s321bltro",
+        "ik8irhx4yhqdj0",
+        "jgio0mcsd7i0kk",
+        "lveawgxzfm5xte",
+        "lyt5x3popltrgx",
+        "moig8n55mp5k07",
+        "obg4hhgb4gy572",
+        "ocdluygijjaisw",
+        "otv9b2lyptkmh2",
+        "p636wvrnqbzy06",
+        "p92qmwn1yzhj0i",
+        "ps53u6q7u3rm36",
+        "rv7x3vwmfyvpah",
+        "t09se1chhqpw5e",
+        "tg61alg8xc701h",
+        "ugsa1p4n17vhzg",
+        "ujg3iqy5cirnga",
+        "ussx6rs6q8twq2",
+        "vt7b2t2lo7bzb7",
+        "w99udryqm0szp1",
+        "waowgxxhysrgnd",
+        "welhpjmbqyd880",
+        "x6odspzmulsje7",
+        "x72deho8ka2cdy"
+      ]
+    },
+    "pre_capture_transcript_only_group": {
+      "pod_count": 28,
+      "amount_usd_credits": "127.021797557128594006",
+      "billed_time_ms": 322114094,
+      "pod_ids": [
+        "0q6qigyy02hbeq",
+        "28ibm2tba11soz",
+        "2aoqkuio5zt5nu",
+        "2ljom5e6eyir09",
+        "2vasci152rpelv",
+        "381vhlt0yjlcdu",
+        "4dt7559i8t2ec1",
+        "4tvh7tirs654dx",
+        "6kay2v5yt2or9n",
+        "754gbs86hbt1z7",
+        "8wgdf4snci5fbe",
+        "an5g3hkylbcu1t",
+        "bf1qyogdx9o0qa",
+        "bgoasqa2g8nzsi",
+        "dywmaclndfieps",
+        "h5xbshqihd9959",
+        "haraf45ijgnker",
+        "hp7jbpnsldiiff",
+        "muhfah529vzrof",
+        "pwzzum543155ld",
+        "t3j7uo66ix9tcg",
+        "tjlcskpgy0cfqy",
+        "u513d5hb7s4m3j",
+        "usamhbexh7q6n0",
+        "v73xgjm79xu3uf",
+        "w96yd5c5ehr3hm",
+        "ykjfg2za1xrglk",
+        "zlialnk70whm91"
+      ]
+    },
+    "independently_attributed_lower_bound": {
+      "measurement_class": "lower_bound",
+      "pod_count": 73,
+      "amount_usd_credits": "394.948127557756380202",
+      "billed_time_ms": 1021246103,
+      "billed_hours_formula": "1021246103 / 3600000",
+      "billed_hours_rounded_12dp": "283.679473055556"
+    },
+    "unattributed_provider_window_group": {
+      "measurement_class": "attribution_unknown",
+      "pod_count": 3,
+      "amount_usd_credits": "29.92307814164087209",
+      "billed_time_ms": 76442298,
+      "pods": [
+        {
+          "pod_id": "9jb0bqjrcfuq0t",
+          "amount_usd_credits": "0.10394732188433409",
+          "billed_time_ms": 729681
+        },
+        {
+          "pod_id": "mgxyzamnu3ece6",
+          "amount_usd_credits": "17.989733720663935",
+          "billed_time_ms": 45674850
+        },
+        {
+          "pod_id": "mvn478byps3ifl",
+          "amount_usd_credits": "11.829397099092603",
+          "billed_time_ms": 30037767
+        }
+      ]
+    }
+  },
+  "bucket_sensitivity": {
+    "daily_bucket_evidence_path": "results/end_to_end_accounting/runpod-billing-snapshot_runpod_20260712T124514Z.json",
+    "daily_bucket_evidence_file_sha256": "3c7a9abf98042c62bfad2d273eb03a003c381674644f07ff11f884923d0bffee",
+    "daily_bucket_amount_usd_credits": "424.871205699397249212",
+    "annual_bucket_amount_usd_credits": "424.871205699397252292",
+    "annual_minus_daily_usd_credits": "0.000000000000003080",
+    "pod_count_equal": true,
+    "billed_time_ms_equal": true,
+    "interpretation": "The provider's bucket-level decimal spellings create a 3.080e-15 USD-credit aggregation sensitivity. The direct annual aggregate is canonical; the daily sum is a nonadditive sensitivity check."
+  },
+  "active_inventory": {
+    "status": "zero_active_pods_observed",
+    "active_pod_count": 0,
+    "observed_in_both_canonical_snapshots": true,
+    "inventory_complete_in_both_canonical_snapshots": true
+  },
+  "cash_deposit_or_payment_history": {
+    "status": "unknown",
+    "amount_usd": null,
+    "reason": "No sanitized payment-history export or transaction receipts are present in the evidence bundle. Provider Pod credits consumed are not evidence of cash deposited, and no cash figure is inferred from balance or Pod consumption."
+  },
+  "reconciliation_checks": {
+    "group_counts_sum_to_provider_count": "45 + 28 + 3 = 76",
+    "group_amounts_sum_to_provider_total": "267.926330000627786196 + 127.021797557128594006 + 29.92307814164087209 = 424.871205699397252292",
+    "lower_bound_plus_unknown_equals_provider_total": "394.948127557756380202 + 29.92307814164087209 = 424.871205699397252292",
+    "group_billed_time_ms_sum_to_provider_total": "699132009 + 322114094 + 76442298 = 1097688401"
+  },
+  "limitations": [
+    "The exact provider total is for the provider account's requested Pod-billing window; it is not automatically an exact project total.",
+    "The 28 transcript-only attributions rely on local raw Codex and Claude transcript archives that are not committed to this repository. Their IDs appeared before the first billing capture cutoff, avoiding circular attribution from the billing snapshots themselves.",
+    "The three unattributed Pod IDs are neither assigned to the project nor declared unrelated. Their exact provider amounts remain an attribution gap.",
+    "No new provider or network request was made while preparing this reconciliation artifact."
+  ]
+}
