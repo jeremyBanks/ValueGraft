@@ -1,155 +1,167 @@
 # ValueGraft Notes: 2026-07
 
-_ValueGraft began as a controlled study of semantic continuity across context
-compaction, produced encouraging but heterogeneous signals, and then narrowed
-through provenance audits, independent replication, and numerical-schedule
-failures into a bounded methodological result. Moderate value grafting may alter
-behavior around retained information, but reliable recovery, general
-coding-agent benefit, and a settled mechanism were not established._
+_ValueGraft progressed from an initially promising cache-state intervention to a
+tightly bounded, provenance-sensitive methodological program. Early results
+suggested reduced semantic reinterpretation and improved coding proxies, but
+successive audits separated packed-layout effects, content-specificity, and net
+recovery, ultimately finding mostly null held-out outcomes. The month ended with
+a rigorously specified v12 coherent-state canary that had not yet produced a
+semantic result._
 
-**Participants/contributors:** Jeremy Banks (user); `claude-fable-5` (Anthropic
-Claude Fable 5); `claude-sonnet-5` (Anthropic Claude Sonnet 5);
-`claude-opus-4-8` (Anthropic Claude Opus 4.8); `gpt-5.5-high` (high reasoning
-effort); `gpt-5.5-xhigh` (xhigh reasoning effort; GPT-5.5); `gpt-5.5-medium`;
-`gpt-5.5-low`; `gpt-5.5` (low effort); Google Gemini Pro 3.1;
-`gpt-5.6-sol-xhigh` (extra-high reasoning); and `gpt-5.6-sol-ultra`.
+**Participants/contributors:** Jeremy Banks (user/owner); `claude-fable-5`;
+`claude-sonnet-5`; `claude-opus-4-8`; `gpt-5.5-high` (high reasoning effort);
+`gpt-5.5-xhigh` (xhigh reasoning effort); `gpt-5.5-medium`; `gpt-5.5-low`;
+`gpt-5.5` (low effort); Google Gemini Pro 3.1; `gpt-5.6-sol-xhigh`;
+`gpt-5.6-sol-ultra`; GPT-5.6 Sol (extra-high reasoning).
 
-## From cache intervention to bounded behavioral claim
+## From mechanism hypothesis to bounded intervention claim
 
-The early work established the experimental vocabulary and implementation ladder
-for transplanting write-time cache state across a summary boundary. ValueGraft
-came to mean the intervention family, with V-Graft denoting fresh keys plus
-blended write-time values; K-only and coupled KV variants were kept distinct.
-Keys were treated as addressability structures requiring positional handling,
-while values were treated as content-bearing state. Summary packing, write-time
-state, and value-only grafting were eventually separated as independent axes.
+The project began by testing whether preserving write-time KV state across text
+compaction retained information that fresh summary encoding lost. The
+experimental vocabulary separated summary encoding, key policy, value policy,
+and correspondence mechanisms. `ValueGraft` became the intervention family, with
+V-Graft denoting fresh keys plus blended write-time values; K-only, coupled KV,
+packed-layout, and SoftGraft variants were kept distinct.
 
-Initial 4B and 30B experiments suggested that write-time state could reduce
-fabrication and modestly improve continuation likelihood. The strongest early
-signals included reduced decoy fabrication in packed write-time arms, a roughly
-10%–24% continuation-gap proxy improvement depending on scale, and a
-brief-summary SWE-Gym signal near +0.0156 nats/token. These results were later
-reclassified: packed-layout effects, 4-bit precision, foreign or aggressively
-brief summaries, proxy metrics, and incomplete provenance prevented them from
-supporting a clean value-only semantic-recovery claim.
+Initial 4B and 30B results showed directional continuation gains, reduced
+fabrication in some packed-layout conditions, and an approximately +0.0156
+nat/token gain on 75 offline coding traces. These results motivated the
+practical framing of compaction-damage mitigation rather than the stronger claim
+that “meaning lives in values.” Packed `H-pack`/`B-min-pack` comparisons,
+however, changed layout and cache provenance together. Their honesty effects
+therefore remain auxiliary calibration evidence, not clean evidence for
+value-only grafting.
 
-The cleaner bf16 value-only evidence was substantially weaker. Referent effects
-reproduced on the exact Qwen3-30B-A3B-Instruct-2507 checkpoint, with an
-approximate +0.12 recovery signal and a referent > sense > stance pattern, but
-the placebo-controlled effect-bound comparison was null on both tested models. A
-per-layer champion was also null on held-out conversations, while aligned values
-consistently outperformed scrambled values. This demonstrated content-specific
-intervention influence without demonstrating net improvement over ordinary
-compaction. Later independent SWE-Gym trajectories failed to replicate the
-original scalar effect; the combined unique-trajectory estimate was small and
-compatible with zero.
+The strongest reproducible value-only evidence was a Qwen3-30B-A3B-Instruct-2507
+referent effect of roughly +0.12 recovery, with the expected referent > sense >
+stance pattern. Independent harnesses reproduced it after an earlier
+wrong-checkpoint error was corrected. Yet later provenance-clean,
+placebo-controlled tests found no reliable improvement over ordinary compaction:
+the primary `effect_bound` estimate was approximately +0.017 with a confidence
+interval crossing zero on Qwen3.6-27B and −0.049 with a confidence interval
+crossing zero on Qwen3-30B-A3B. A per-layer champion was similarly null on
+held-out conversations. Correct grafts beat scrambled-value placebos,
+establishing content-specific intervention effects, but not net semantic
+recovery.
 
-The resulting claim is bounded: value grafting can change model behavior around
-information retained in a summary, and may reduce some semantic reinterpretation
-under particular model, summary, and evaluation conditions. It does not
-establish recovery of facts omitted from the summary, general task success,
-broad coding-agent improvement, or a general theory that meaning resides in
-values.
+The coding result narrowed in parallel. The original brief-summary SWE-Gym pool
+showed a small positive teacher-forced next-action likelihood effect,
+approximately +0.013–+0.016 nats/token. Independent disjoint trajectories
+produced approximately −0.0035 with an interval spanning zero, and no tested
+scalar alpha improved reliably. A later layer-tuned map remained a small
+provisional positive on 102 out-of-fitting trajectories, but only 45 of the
+planned 75 confirmation trajectories were completed. No result demonstrated
+coding-agent task success. Log probability and action matching remain offline
+proxies, not task completion measures.
 
-## Methodological corrections and evidence discipline
+## Methodological corrections and apparatus failures
 
-The project progressively adopted provenance-matched, held-out,
-placebo-controlled evaluation. Headline reporting shifted from unstable
-gap-closure ratios to raw `E−B` log-probability lift, helped rates, and
-conversation-cluster bootstrap intervals. Teacher-forced likelihood and
-action-match metrics were explicitly labeled proxies rather than task success or
-resolution rates.
+The evidence hierarchy now distinguishes:
 
-Several apparent results were invalidated or downgraded:
+- content-specificity from net improvement over the fresh-compaction baseline;
+- recall, honesty, and continuity;
+- full-state preservation from old-value/fresh-key transplantation;
+- utility contrasts (`correct` versus `fresh`) from history-specificity
+  contrasts (`correct` versus coherent counterfactual);
+- model-, checkpoint-, precision-, backend-, schedule-, layout-, and
+  benchmark-specific findings.
 
-- The honesty cornerstone used 4-bit MLX and a packed coupled intervention, with
-  improvements largely attributable to layout and caution behavior.
-- Native-render weakness was not established as a validity requirement;
-  independent rendering varied from positive to null.
-- Slot-mask and full-strength grafts failed contamination or stability checks,
-  while moderate or per-layer doses were safer.
-- SWE-bench was retired for the tested model after repeated full-context
-  failures and an apparent capability floor.
-- Tau2 banking sessions were too short to produce meaningful compaction; forced
-  compaction evicted too little useful context and all arms scored zero.
-- A filename collision destroyed the persisted production-champion arm and five
-  brief-champion trajectories. Surviving data remain usable only with this loss
-  recorded.
-- The old paper’s synthetic-corpus provenance, compression request
-  reconstruction, tail coverage, placebo interpretation, and held-out
-  aggregation were corrected or narrowed.
+The original wrong-history control was retired because cyclic donor phrases
+repeatedly recycled short text and compared coherent history against repetitive
+corruption. Future counterfactuals must be plant-specific, naturally coherent,
+token-length and schedule matched, and independently reviewed. The purported
+message-aligned schedule was also reclassified as a coarse
+system/history/request partition rather than turn-by-turn replay.
 
-The durable evaluation rules are to verify exact checkpoint, tokenizer,
-precision, backend, configuration, summary condition, intervention, alpha,
-split, and code provenance before interpreting any result; to use positive
-controls capable of detecting the target failure mode; and to treat failed
-controls, schedule instability, unsupported counterfactuals, or harvest
-inconsistencies as stopping results.
+The v10 schedule-invariance premise failed on Qwen3-0.6B CPU bf16 eager
+attention. Natural inputs showed deterministic schedule-dependent margin shifts
+of about 0.0605 and 0.1318 nats. The c10 origin diagnostic implicated
+query-shape-dependent bf16 arithmetic rather than tested future-token leakage.
+An earlier 7/7 exact-zero gate was exposed as a pseudoreplication over one
+periodic stream and permanently ceased to authorize research.
 
-## Interpretability and mechanism limits
+These findings led to a separate v12 exploratory canary with engineered carrier
+cases, fixed correct and counterfactual histories, full-KV and value-only arms,
+region localization, norm-matched placebos, schedule yardsticks, pre-treatment
+eligibility, and independent harvesting. R2 is the primary content-plus-boundary
+region; R1/R3 are descriptive. The canary is a decision instrument for whether a
+confirmatory study is worthwhile, not an efficacy test.
 
-J-lens and related residual-state readouts provided low-resolution corroboration
-rather than direct KV-cache evidence. A broad layer sweep found localized
-write-time/fresh separations, but intervention effects were small,
-moderate-alpha behavior was better than alpha one, and sparse challenges
-produced near-zero recovery when the relation itself was absent from the
-summary. Span-first reporting replaced raw token rankings because punctuation
-and subword fragments dominated many high-divergence rows.
+Its validation corrected turn-addition geometry, carrier/tail ordering,
+event-aligned intervention boundaries, bf16 path controls, fresh-destination
+mapping, schedule P, generated/forced identity requirements, and loader
+diagnostics. The focused suite reached 162/162 and later 165/165. The Qwen3 MoE
+loader was corrected to recognize conversion from 18,867 checkpoint tensors to
+531 packed runtime tensors while enforcing the frozen 48-layer × 128-expert ×
+3-projection topology, parameter conservation, exact shapes and dtypes,
+conversion order, and bit-exact packing sentinels. Runtime RoPE inspection was
+corrected to use `config.rope_parameters["rope_theta"]`.
 
-Prior-art review found adjacent work on KV eviction, compression, cache editing,
-cross-context reuse, learned compact states, and reusable or composable KV
-representations. It supports the possibility that generation-time state carries
-information beyond re-encoded text, and that boundary or aggregator tokens may
-matter, but does not settle the narrower training-free intervention question.
-K-only results were generally negative or unhelpful, with only noisy small-model
-prospecting for identifier-like targets; no general key claim is supported.
+The local subject-model run reached inference but hit a frozen 64-token cap
+without normal EOS. Generated and forced branch evidence had previously been
+discarded; the amendment now persists both branches and records equivalence,
+identity, and ordinary failure separately. This is a proxy limitation, not a
+semantic result. The exact 30B forward pass, cache intervention, semantic
+comparison, and treatment outcome remained unobserved.
 
-## Schedule failures and the v12 canary
+Infrastructure audits found materially different host drivers behind nominally
+identical cloud requests: one initialized CUDA and loaded the model, while
+another could not provide pinned CUDA 13. Container and GPU labels are therefore
+insufficient provenance. Exact execution now requires qualified hardware and
+driver checks, fresh authorization bound to the launch commit, nonzero failure
+enforcement, raw-artifact receipts, hash-verified collection, cost monitoring,
+and immediate termination on mismatch.
 
-By July 11, the central unresolved issue was no longer only statistical power
-but whether the apparatus could resolve effects at the hypothesized scale. Local
-Qwen3-0.6B diagnostics showed substantial query-shape-dependent bf16 divergence:
-selected-margin shifts were about 0.06055 nats in c10 and 0.132 nats in c02,
-with large K/V maxima differences. Identical protected prefixes remained
-bit-identical under equal-shaped branches, ruling out the tested future-token
-leak, but short- versus long-query execution diverged after attention. This is
-an apparatus observation, not evidence of a semantic effect or a universal 30B
-mechanism.
+## Interpretation, terminology, and project record
 
-The v10 experiment was permanently invalidated as an authorizing instrument. Its
-repeated-stream synthetic gate, repetitive wrong-history donor,
-schedule-dependent divergence, incomplete provenance, and invalid controls meant
-that no paid semantic run launched and no semantic outcome exists. Position/key
-re-rotation was retired, the cyclic wrong-history control was rejected, and
-pseudoreplicated schedule fixtures were disallowed.
+The defensible scientific conclusion is that generation-time or write-time state
+may contain information beyond visible summary text, and that value
+transplantation can produce content-specific changes under some conditions. The
+evidence does not establish reliable recovery of omitted facts, general semantic
+continuity, broad downstream utility, or a reusable technique. A summary-region
+null cannot exclude information stored in boundary, aggregator, or downstream
+rows, but that possibility remains untested.
 
-The replacement is an exploratory v12 carrier-state canary, not confirmation of
-the earlier graft result. It uses four reviewed engineered cases, an
-event-aligned R2 carrier region, full-KV and value-only contrasts,
-focal-selectivity and norm-matched placebo controls, explicit P/N schedules,
-turn-addition call shapes, carrier-before-tail ordering, length and
-bf16-representability gates, exact destination maps, and separate technical,
-eligibility, and treatment release phases. No subject-model forward had yet
-occurred. Canary cases are permanently excluded from later confirmation.
+Moderate value doses are safer than alpha one; per-layer tuning can avoid
+observed instability but has not yielded transferable benefit. Keys remain
+primarily an addressability mechanism and require RoPE re-rotation when moved;
+values do not. J-lens residual-stream readouts provide low-resolution
+corroboration and hypothesis generation, not direct KV inspection or task
+evidence. Small-model and 4-bit results generate hypotheses only; primary claims
+require provenance-matched bf16 validation.
+
+The paper and README were rewritten around an empirical bounding result, with
+provenance and methodological postmortems after the scientific findings. The
+camel-case method name should not be treated as evidence of a reusable method
+unless future work establishes generality. Earlier interpretability tangents and
+notes-hygiene incidents remain separate from the main claims.
+
+Archive tooling expanded to sparse day → month → year → README rollups with
+manifests, provenance retention, filtering, sharding, splitting, and focused
+validation. The six-hour conversation-note policy and dry-run regeneration
+remained pending at month end. A filename collision caused real loss of one
+production-champion arm and five brief-champion trajectories; future runs
+require unique per-run directories and durable checkpointing before harvesting.
 
 ## Current state / handoff
 
-- The paper should remain a science-first bounding and methodological
-  postmortem, not a general claim of KV memory or coding-agent improvement.
-- Treat the clean bf16 value-only champion as null or unresolved for net
-  recovery; retain content-specific aligned-versus-scrambled effects as a
-  distinct, weaker observation.
-- Do not spend further semantic compute until the v12 store, lossless tensor
-  evidence, independent harvester, release receipts, budget enforcement, exact
-  runner, and provenance validators are complete.
-- Rerun all mechanical, blind-review, positive-control, monitor, and local
-  schedule tests on one clean exact commit, then authorize only the small paid
-  technical/gate tranche.
-- Any schedule instability at target-effect scale, failed positive control,
-  provenance mismatch, or harvest inconsistency must stop the canary.
-- Preserve unique per-run directories, explicit manifests, checkpointed
-  trajectories, and the distinction between technical validation, semantic
-  evidence, proxy metrics, and task success.
+- Preserve the null or source-conditional interpretation. Do not revive the
+  earlier broad semantic-recovery or honesty cornerstone claims.
+- Treat ValueGraft as a provenance-sensitive intervention study whose confirmed
+  result is content-specific perturbation without demonstrated general net
+  recovery.
+- Resolve the `rope_theta`/loader attestation path without weakening identity
+  checks, then rerun the complete local v12 apparatus and independently inspect
+  raw artifacts.
+- Any exact 30B attempt remains conditional on the final preregistration,
+  release inventory, qualified host, strict technical gates, and budget
+  controls. A technical pass does not authorize semantic treatment
+  automatically.
+- Rewrite future reporting from the audited evidence, keeping packed-layout
+  results, SWE-Gym proxies, J-lens findings, and coherent-state tests explicitly
+  separated.
+- Do not infer task success from teacher-forced likelihood, action matching, or
+  a favorable placebo contrast.
 
 ## Sources
 

@@ -7,7 +7,7 @@
       "level": "month",
       "key": "202607",
       "mode": "summary",
-      "source_count": 8,
+      "source_count": 9,
       "sources": [
         {
           "note": "notes/20260704.md",
@@ -55,10 +55,16 @@
           "note": "notes/20260711.md",
           "level": "day",
           "key": "20260711",
-          "blob_id": "7b8b92d25548deee7cc1c6bbbd60f40b1b7e13d6"
+          "blob_id": "f5c79331d920fd2c75bc9628a7a02fc6c1c80f07"
+        },
+        {
+          "note": "notes/20260712.md",
+          "level": "day",
+          "key": "20260712",
+          "blob_id": "a7766576f3fcf36e2c0c4bee6e5e92fcf72c233f"
         }
       ],
-      "summary_hash": "d6f7119431a8fc2593d0782a45ae9c341e456abae6d5a3f282697a65876fba19",
+      "summary_hash": "ed26e914afcda07efb54d4fdf5f2dd5fc2b4477646824559f5cfadc9ba5c517b",
       "summarizer": {
         "provider": "codex",
         "model": "gpt-5.6-luna",
@@ -76,10 +82,10 @@
           "note": "notes/202607.md",
           "level": "month",
           "key": "202607",
-          "blob_id": "c7a5fe228489641d2c0c7309c1a12754639ea5e4"
+          "blob_id": "5b6410356cd41db44dfa784dfea1634c83693a2c"
         }
       ],
-      "summary_hash": "aebbb85823d04b431970507724366ab264bb710c4be48e1957658caf4a50aebe",
+      "summary_hash": "6e074f9e677b67d7e0725844ebcb02f64504cb74bb3554ae5f1970ee09cf394c",
       "summarizer": {
         "provider": "promote"
       }

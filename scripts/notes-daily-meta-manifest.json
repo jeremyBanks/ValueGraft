@@ -983,7 +983,7 @@
     },
     "20260711": {
       "note": "notes/20260711.md",
-      "source_count": 63,
+      "source_count": 68,
       "sources": [
         {
           "note": "notes/2026071106-conversation-user-gpt56.md",
@@ -1027,7 +1027,7 @@
         },
         {
           "note": "notes/2026071116-sol-fable-execution-coordination.md",
-          "blob_id": "70cca31b47dc2badad48c0271b41554cf5bbb2cd"
+          "blob_id": "b54e60ff2d208fda6a96ef2282480ef605468503"
         },
         {
           "note": "notes/2026071117-fable-outcome-interpretation-matrix.md",
@@ -1099,7 +1099,7 @@
         },
         {
           "note": "notes/2026071134-conversation-user-gpt56.md",
-          "blob_id": "4650c5e2be2e6279197dd600fbec5401a807280d"
+          "blob_id": "8bbedc71edc47b3ee22d48392cac07301e37fb2a"
         },
         {
           "note": "notes/2026071135-fable-c10-schedule-failure-design-review.md",
@@ -1234,8 +1234,28 @@
           "blob_id": "2f998e0af82cc932a30ef199ad10f9daddc0a8a3"
         },
         {
-          "note": "notes/2026071168-sol-v12-harvest-and-release-closure.md",
+          "note": "notes/2026071168-conversation-user-gpt56.md",
+          "blob_id": "1891225b29e993e58c088f0711b28c0e906fe011"
+        },
+        {
+          "note": "notes/2026071169-sol-v12-harvest-and-release-closure.md",
           "blob_id": "02511860faca72da02ee3e25ef633a50351e7c08"
+        },
+        {
+          "note": "notes/2026071170-scientific-validation-threat-model-correction.md",
+          "blob_id": "c1f363daf7e273578fecb4a4c0c63eea21c4a29e"
+        },
+        {
+          "note": "notes/2026071171-fable-v12-prefreeze-scientific-review.md",
+          "blob_id": "c477f6dcf7e6e9cf71df4c8d0f8788513d4a5045"
+        },
+        {
+          "note": "notes/2026071172-sol-v12-prefreeze-review-disposition.md",
+          "blob_id": "d035bd6670fe58037659f1eaab6d19b1c418d0dd"
+        },
+        {
+          "note": "notes/2026071173-sol-v12-loading-info-representation-correction.md",
+          "blob_id": "8776a863a03be9efbac64659829944a4d07581cc"
         }
       ],
       "source_blob_ids": [
@@ -1244,6 +1264,7 @@
         "0fb4af7c6a67056795c9d59a0e8a9c8bb02b7a89",
         "14d36b97809794012e60e439c3c9a9bd3ab997ae",
         "1824d6182f2310263cffd10018366074c47c2cd6",
+        "1891225b29e993e58c088f0711b28c0e906fe011",
         "227f42c95b4ea91c88d37c54f9d17524e98c90ea",
         "23376f899d0a4854f48def5de190c31684155acf",
         "234a1d59d9d7afd0eba5f98a1d133f9afda69cb3",
@@ -1258,7 +1279,6 @@
         "3befd1390c7be0dd1a11224b98f33b683a727a28",
         "3c605b36a98c751708f4fedbd1f2dc6e124582a4",
         "3c970b9682c674a1525d05ee062d446f2c5b4f3f",
-        "4650c5e2be2e6279197dd600fbec5401a807280d",
         "46a1a0fc5ba86bf8f717fdaf38ea059b0b404e02",
         "49e48cb21192c0bd1eed6f4bcb6dabe4562e98d1",
         "517c90e4c3020812070f2c6d346eed612cdfbde7",
@@ -1266,13 +1286,14 @@
         "5b9c4dcaf4a8e915872190724dab79de2d3306e1",
         "6f3995664f8ccd20b8cd746aa4dcf1c0db8e5bb4",
         "6f6ed755f5dc12fb7629896536f7efa95b4d2f37",
-        "70cca31b47dc2badad48c0271b41554cf5bbb2cd",
         "77e50b8884e7ac2d2de3bcca92a8e800d45a455e",
         "781b415e9487265c772e252aff747e4049b031e5",
         "7e52c21d33cb1b6ace7fa2bf3de868e143d634ec",
         "7eccaee9451d3d2233c8854606bf6255b0bf7845",
+        "8776a863a03be9efbac64659829944a4d07581cc",
         "8a0974149345480a5028b29e409bfb365699864e",
         "8b87d5ac01a50e9f0b79127784e5a8b027622d42",
+        "8bbedc71edc47b3ee22d48392cac07301e37fb2a",
         "94b79dcdd415d506b6c7e1ee5a5b16becb3f884f",
         "984a3fc11430df1a0750c3417f0b468e0959bc37",
         "988c4100c42680b6de9ff9ca90b9ee2b787e8cf8",
@@ -1282,16 +1303,20 @@
         "b1168b70170876426631a3b788e0d51e810654f1",
         "b11e21769d2f45707934b42a36327e02aeaa6d8e",
         "b40c8a806fff9991ab8bc723ff2d41aa39059fc0",
+        "b54e60ff2d208fda6a96ef2282480ef605468503",
         "b5c09f76d16f043bea87f65c9e58c060615ddbdb",
         "b7d0ec42c4def550a91582f370e87d43670abd1f",
         "ba79d81eb113415654aef32e4d5310fbca4c9673",
+        "c1f363daf7e273578fecb4a4c0c63eea21c4a29e",
         "c3ea9a5d3fc5213820fdc248a623720497ef003c",
+        "c477f6dcf7e6e9cf71df4c8d0f8788513d4a5045",
         "c5c413c5a4e39633e887656a7bd443d02e092c4e",
         "c6bf9acb4970f4371a222a1962d3a5bde404766c",
         "c80950bc67be658be090f630773d20749f88049e",
         "c90713fe09a5ae843177720176cd2d5fda0ac9f7",
         "c93e082210aa65795e52cfe8d1300377ad8ca612",
         "ccb0a7db6dff0385a4a70af00b8f280a9e06563a",
+        "d035bd6670fe58037659f1eaab6d19b1c418d0dd",
         "d78865b88f0aadf5a12f6360a82bbcb82212c8cb",
         "dccd0352923673a6468c23d22cd928ae80133689",
         "df7c96a79ff1103400de864f7829768e5888c83d",
@@ -1303,7 +1328,69 @@
         "fa8dd0aa25f0accee0b7f4bb4ae0bbd059ef7adf",
         "fd119d21a3134e99e255ed67dd1e5c2ee07e6105"
       ],
-      "summary_hash": "04053064ab2d567dbc4d225a2b49f614d5e5bc923feae87d1c2368d4ef11baa0",
+      "summary_hash": "b7a0bbd8aec9d1f894ced0fedac32f1847b1bc7b6d731de18670b7657282780f",
+      "input_policy": {
+        "ordinary_threshold_chars": 8192,
+        "ordinary_head_chars": 6144,
+        "ordinary_tail_chars": 2048,
+        "conversation_threshold_chars": 16384,
+        "conversation_head_chars": 12288,
+        "conversation_tail_chars": 4096
+      },
+      "summarizer": {
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
+      }
+    },
+    "20260712": {
+      "note": "notes/20260712.md",
+      "source_count": 8,
+      "sources": [
+        {
+          "note": "notes/2026071274-sol-v12-runtime-rope-metadata-correction.md",
+          "blob_id": "140f168b9fafd9c5d66452ef443e6ffe49fef3e9"
+        },
+        {
+          "note": "notes/2026071275-conversation-user-gpt56.md",
+          "blob_id": "49fa18cdfd8701154256898f8ebd206956860aca"
+        },
+        {
+          "note": "notes/2026071276-sol-v12-local-cap-and-durable-identity-amendment.md",
+          "blob_id": "367a7ae1b09137ab63759827240bc2b827a06c6d"
+        },
+        {
+          "note": "notes/2026071277-fable-v12-local-cap-amendment-review.md",
+          "blob_id": "355349c865063009193b45364d8274cfcff49adb"
+        },
+        {
+          "note": "notes/2026071278-conversation-opus48.md",
+          "blob_id": "a65a12019a853fc3458bccf5b8468a1d28b848cc"
+        },
+        {
+          "note": "notes/2026071279-sol-v12-exact-launch-review-disposition.md",
+          "blob_id": "bd50d5708f63556b193c1b1df3f4612beda12da1"
+        },
+        {
+          "note": "notes/2026071280-sol-v12-transformers-moe-loader-correction.md",
+          "blob_id": "c241ddc23a66c91b2d284d173f0840c9bd57b18c"
+        },
+        {
+          "note": "notes/2026071281-sol-critical-host-driver-and-provider-qualification-finding.md",
+          "blob_id": "cfef8058ebba1d3bb4eaccc34633ddfff4b18757"
+        }
+      ],
+      "source_blob_ids": [
+        "140f168b9fafd9c5d66452ef443e6ffe49fef3e9",
+        "355349c865063009193b45364d8274cfcff49adb",
+        "367a7ae1b09137ab63759827240bc2b827a06c6d",
+        "49fa18cdfd8701154256898f8ebd206956860aca",
+        "a65a12019a853fc3458bccf5b8468a1d28b848cc",
+        "bd50d5708f63556b193c1b1df3f4612beda12da1",
+        "c241ddc23a66c91b2d284d173f0840c9bd57b18c",
+        "cfef8058ebba1d3bb4eaccc34633ddfff4b18757"
+      ],
+      "summary_hash": "15a144edf541382794c041e6ae9d3bce31037bfe87091b9511e86c2cdd4eef1e",
       "input_policy": {
         "ordinary_threshold_chars": 8192,
         "ordinary_head_chars": 6144,
