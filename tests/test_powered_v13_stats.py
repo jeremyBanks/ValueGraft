@@ -11,11 +11,17 @@ from powered_v13_stats import (
     V13StatsError,
     alpha_ledger,
     analyze_primary,
+    behavioral_recovery_counts,
     collapse_render_rows,
+    descriptive_cell_summary,
+    fieller_ratio_upper,
     hoeffding_ucb,
+    nominal_ordinary_t_ucb,
     nominal_stratified_t_ucb,
+    pooled_within_fixture_render_variance,
     responder_prevalence_ucb,
     select_final_sample,
+    stratified_cluster_bootstrap,
 )
 
 
@@ -134,6 +140,9 @@ def test_nominal_zero_variance_returns_no_interval():
     result = nominal_stratified_t_ucb(fixtures, cell="full_kv")
     assert result.estimate == pytest.approx(0.1)
     assert result.ucb is None
+    ordinary = nominal_ordinary_t_ucb(fixtures, cell="full_kv")
+    assert ordinary.estimate == pytest.approx(0.1)
+    assert ordinary.ucb is None
 
 
 def test_hoeffding_is_bounded_and_rejects_out_of_range():
@@ -142,3 +151,114 @@ def test_hoeffding_is_bounded_and_rejects_out_of_range():
     assert value < DELTA_CLIP
     with pytest.raises(V13StatsError, match="outside"):
         hoeffding_ucb([2.0], lower=-0.5, upper=0.5, alpha=0.02)
+
+
+def test_stratified_cluster_bootstrap_is_seeded_and_keeps_fixture_n():
+    fixtures = collapse_render_rows(render_rows())
+    first = stratified_cluster_bootstrap(fixtures, replicates=2_000)
+    second = stratified_cluster_bootstrap(fixtures, replicates=2_000)
+    assert first == second
+    assert first.replicates == 2_000
+    assert len(first.index_stream_sha256) == 64
+    assert first.cells["full_kv"].replicates == 2_000
+    assert first.cells["value_only"].replicates == 2_000
+    assert first.cells["full_kv"].estimate == pytest.approx(
+        analyze_primary(fixtures).cells["full_kv"].raw_mean)
+
+
+def test_default_bootstrap_stream_has_frozen_golden_hashes():
+    result = stratified_cluster_bootstrap(
+        collapse_render_rows(render_rows()))
+    assert result.index_stream_sha256 == (
+        "8f4482ef33ca2c3c00dc523a674446fbffc045d1ffa330fd80975ab31b80b494")
+    assert result.cells["full_kv"].replicate_values_sha256 == (
+        "db66c581a2526d06dda2a4ebe83102d015969fb650e142cb10a99862e91bf5f8")
+    assert result.cells["value_only"].replicate_values_sha256 == (
+        "c37947872fb35e47ea78de53b63cc8ca438c1a69cbc79e2527d05f1ffce3996a")
+    assert result.cells["full_kv"].ucb == pytest.approx(
+        0.03889583333333334)
+    assert result.cells["value_only"].ucb == pytest.approx(
+        -0.03810416666666667)
+
+
+def test_bootstrap_constant_values_and_bad_configuration():
+    fixtures = collapse_render_rows(constant_rows(full=0.125, value=-0.25))
+    result = stratified_cluster_bootstrap(fixtures, replicates=64)
+    assert result.cells["full_kv"].ucb == 0.125
+    assert result.cells["value_only"].ucb == -0.25
+    with pytest.raises(V13StatsError, match="replicate"):
+        stratified_cluster_bootstrap(fixtures, replicates=0)
+    with pytest.raises(V13StatsError, match="seed"):
+        stratified_cluster_bootstrap(fixtures, seed=True)
+
+
+def test_pooled_two_render_variance_uses_within_fixture_sample_variance():
+    fixtures = collapse_render_rows(render_rows())
+    full = pooled_within_fixture_render_variance(fixtures, cell="full_kv")
+    value = pooled_within_fixture_render_variance(fixtures, cell="value_only")
+    assert full.fixture_count == FINAL_N
+    assert full.pooled_variance == pytest.approx(0.0002)
+    assert value.pooled_variance == pytest.approx(0.0002)
+    assert full.pooled_standard_deviation == pytest.approx(math.sqrt(0.0002))
+
+
+def test_descriptive_summary_freezes_strata_signs_and_fixture_order():
+    fixtures = collapse_render_rows(render_rows())
+    summary = descriptive_cell_summary(fixtures, cell="full_kv")
+    assert summary.mean == pytest.approx(0.0385)
+    assert summary.positive_count == FINAL_N
+    assert summary.zero_count == 0
+    assert summary.negative_count == 0
+    assert len(summary.stratum_means) == len(STRATA)
+    assert len(summary.leave_one_stratum_out_means) == len(STRATA)
+    assert [row[0] for row in summary.fixture_values[:2]] == [
+        "s1-c1", "s1-c2"]
+
+
+def test_behavioral_endpoint_requires_both_renders_and_fixed_denominator():
+    fixtures = collapse_render_rows(render_rows())
+    rows = []
+    for fixture in fixtures:
+        for render_id in ("r1", "r2"):
+            rows.append({
+                "case_id": fixture.case_id,
+                "render_id": render_id,
+                "render_origin": "C",
+                "a_c_begins_target": True,
+                "ff_begins_target": False,
+                "cc_begins_target": fixture.case_id != "s1-c1",
+                "fc_begins_target": (
+                    fixture.case_id == "s1-c1" and render_id == "r1"),
+                "a_c_valid_generation": True,
+                "ff_valid_generation": True,
+                "cc_valid_generation": True,
+                "fc_valid_generation": True,
+            })
+    result = behavioral_recovery_counts(fixtures, rows)
+    assert result.denominator == FINAL_N
+    assert result.full_kv_both_render_count == FINAL_N - 1
+    assert result.value_only_both_render_count == 0
+    assert result.either_cell_both_render_count == FINAL_N - 1
+
+    rows[0]["ff_begins_target"] = True
+    with pytest.raises(V13StatsError, match="FF eligibility"):
+        behavioral_recovery_counts(fixtures, rows)
+    rows[0]["ff_begins_target"] = False
+    rows[0]["cc_valid_generation"] = False
+    with pytest.raises(V13StatsError, match="generation is invalid"):
+        behavioral_recovery_counts(fixtures, rows)
+
+
+def test_fieller_bounded_and_unbounded_denominator_support():
+    numerators = [0.1 + index / 10_000 for index in range(FINAL_N)]
+    bounded = fieller_ratio_upper(numerators, [5.0] * FINAL_N)
+    assert bounded.bounded
+    assert math.isfinite(bounded.upper)
+    assert bounded.upper >= bounded.ratio_estimate
+
+    alternating = [-1.0 if index % 2 else 1.0 for index in range(FINAL_N)]
+    unbounded = fieller_ratio_upper(numerators, alternating)
+    assert not unbounded.bounded
+    assert unbounded.upper == math.inf
+    with pytest.raises(V13StatsError, match="exactly 48"):
+        fieller_ratio_upper(numerators[:-1], [5.0] * (FINAL_N - 1))

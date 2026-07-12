@@ -522,17 +522,37 @@ masked. At N=48:
 
 Mandatory companions, none substituted for the finite-sample primary bound:
 
-- raw `X_R/X_V` means and a stratified fixture-cluster bootstrap with 100,000
-  within-stratum resamples, both renders retained as one cluster;
-- Welch--Satterthwaite and ordinary t UCBs labeled **model-based nominal**, not
-  guaranteed 95%; zero observed variance returns no nominal interval;
+- raw `X_R/X_V` means and a stratified fixture-cluster bootstrap with exactly
+  100,000 replicates. The seed digest is SHA-256 of canonical JSON
+  `["coherent-state-powered-successor-v13","analysis",
+  "stratified_cluster_bootstrap_v1"]`, namely
+  `cd12a03d4b107b93598407b5a2e3b49708629e5b75357641a66b50efa982bb75`;
+  its first-eight-byte 63-bit seed is `5553677475614063507`, passed to pinned
+  NumPy PCG64. In every replicate, draw six fixture indices with replacement
+  independently within each stratum, use the same index draws for both cells,
+  retain both renders inside their fixture mean, and compute the equal-weight
+  48-fixture raw mean. Report the one-sided 95th percentile using NumPy
+  `quantile(method='higher')`, plus the replicate-stream hash;
+- one-sided 95% Welch--Satterthwaite stratified and ordinary 48-fixture t UCBs
+  labeled **model-based nominal**, not guaranteed 95%. The stratified variance
+  is `sum_h (1/8)^2*s_h^2/6` with the usual component-wise Satterthwaite df;
+  the ordinary UCB is `mean+t_.95,47*s/sqrt(48)`. Either returns no interval
+  when its estimated variance is zero;
 - stratum-specific and leave-one-stratum-out means, median, MAD, sign count,
   min/max, and complete fixture/render values;
-- pooled within-fixture variance from the two same-C-origin render replicates;
+- pooled within-fixture variance from the two same-C-origin render replicates:
+  for each cell, average the 48 within-fixture sample variances
+  `(render1-render2)^2/2` and report its square root;
 - raw focal margin/correct/countertarget components, nonfocal movement,
   specificity, damage, and VP movement/availability;
-- ratio-of-means `E(X)/E(Dplus)` by Fieller inversion labeled model-based and
-  returning `+infinity` when denominator support is inadequate.
+- ratio-of-means `E(X)/E(Dplus)` by ordinary paired-fixture Fieller inversion,
+  labeled model-based. For each cell use its 48 recovery values and the 48
+  two-render-average damage values, ordinary mean covariance divided by 48,
+  and two-sided `t_.975,47`. Invert
+  `(xbar-r*dbar)^2 <= t^2*(Vx-2*r*Cxd+r^2*Vd)`; report the upper root when the
+  quadratic is bounded and `+infinity` when the denominator coefficient is
+  nonpositive, the discriminant is nonfinite/negative, or support is otherwise
+  unbounded.
 
 Behavioral eligibility requires both A_C renders to begin with the complete C
 target and both FF renders not to do so. For each of the 48 eligible fixtures,
@@ -543,7 +563,10 @@ generation is a technical failure, not a changed denominator. A marginal
 binomial interval, if shown, is explicitly model-based because stratum flip
 probabilities may differ; it is not part of the joint 0.05 family. Greedy
 answers are generated only for A_C, A_W, FF, CC, and FC; wrong/placebo arms
-remain score-only.
+remain score-only. Behavioral collapse accepts only upstream independently
+validated release/case/render/target-token-bound rows with C render origin and
+explicit nonempty, normal-EOS, uncapped generation validity for A_C, FF, CC,
+and FC.
 
 ## 12. Analysis validation before release
 
@@ -553,16 +576,27 @@ pass before treatment release:
 1. machine proof that the alpha ledger is exactly `0.02+0.02+0.01=0.05` and
    that the clipped range is exactly one;
 2. at least 200,000 repeated stratified samples without replacement from a
-   fixed finite population under each crossing of bounded two-point, uniform,
-   beta, skewed, rare-responder, and contaminated families with cell-dependence
-   targets 0, 0.5, and 0.9; exact finite-population clipped means and responder
-   prevalences are the truths; realized cell dependence and stratum
+   fixed finite population of 4,096 units per stratum under each crossing of
+   bounded two-point, uniform, beta, skewed, rare-responder, and contaminated
+   families with cell-dependence targets 0, 0.5, and 0.9; dependence is Pearson
+   correlation of the two clipped endpoints after flattening the equal-weight
+   eight-stratum population, and every realized correlation must lie within
+   0.03 absolute of its target; exact finite-population clipped means and
+   responder prevalences are the truths; realized dependence and stratum
    heterogeneity are recorded; empirical noncoverage may exceed 0.05 only up
    to the exact two-sided 99% Binomial(`trials`, 0.05) upper acceptance count,
    not a normal approximation;
 3. a zero-variance/rare-responder case that the old draft falsely resolved must
    retain the positive Hoeffding radius and correct tail bound;
-4. power grids over clipped means, variance, and tail prevalence. Freeze gate:
+4. 200,000-trial power grids with these literal constructions: independent
+   `{-0.5,+0.5}` cells at clipped means
+   `{-0.10,0,0.05,0.10,0.15}` and zero raw responders; independent
+   `{-s,+s}` cells at `s in {0,0.125,0.25,0.375,0.5}` and zero responders; and
+   shared any-cell responder prevalence
+   `p in {0,0.0025,0.005,0.01,0.02,0.05,0.10}`, with both raw cells equal to
+   `5` for responders and otherwise `-0.5*p/(1-p)` so the population clipped
+   mean is zero before finite-count rounding. Record exact realized finite-
+   population means, SDs, and prevalences at every point. Freeze gate:
    N=48 joint-resolution probability must be at least 0.80 for two independent
    worst-variance endpoints on `{-0.5,+0.5}` with true mean `0.05` and zero
    `>0.5` responders, and at least 0.95 when both true clipped means are zero
