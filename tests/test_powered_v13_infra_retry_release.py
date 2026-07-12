@@ -18,6 +18,7 @@ sys.path.insert(0, str(SRC))
 
 import powered_v13_infra_retry_entrypoint as entry  # noqa: E402
 import powered_v13_infra_retry_release as release  # noqa: E402
+from powered_v13_release import create_stage_t_launch_receipt  # noqa: E402
 
 
 MANIFEST_PATH = (
@@ -41,6 +42,7 @@ def repo_git(repo: Path, *args: str) -> str:
 
 
 def make_static_repo(tmp_path: Path) -> tuple[Path, str]:
+    tmp_path.mkdir(parents=True, exist_ok=True)
     repo = tmp_path / "repo"
     subprocess.run(
         ["git", "clone", "-q", "--no-hardlinks", str(ROOT), str(repo)],
@@ -248,24 +250,53 @@ def test_noncanonical_and_tampered_receipts_fail_closed(tmp_path: Path) -> None:
 
 
 def _args(tmp_path: Path) -> argparse.Namespace:
+    inner_repo = tmp_path / "inner-repo"
+    inner_repo.mkdir()
     inner_receipts = tmp_path / "inner-receipts"
     inner_receipts.mkdir()
     (inner_receipts / "powered-v13-technical-canary-launch-receipt.json").write_bytes(
         b"inner\n"
     )
+    outer_receipts = tmp_path / "outer-receipts"
+    outer_receipts.mkdir()
+    (outer_receipts / release.RECEIPT_BASENAME).write_bytes(b"outer\n")
+    import_report = inner_repo / (
+        "data/coherent_state_powered_v13/technical-canary-import-audit-v1.json"
+    )
+    import_report.parent.mkdir(parents=True)
+    import_report.write_bytes(b"report\n")
+    batch_id = f"stage-t-infra-retry-1-{'a' * 12}-20260712T231000Z"
     return argparse.Namespace(
         outer_authorization_commit="a" * 40,
         outer_manifest=MANIFEST_PATH,
-        outer_receipt_directory=tmp_path / "outer-receipts",
-        inner_repo=tmp_path / "inner-repo",
+        outer_receipt_directory=outer_receipts,
+        inner_repo=inner_repo,
         inner_receipt_directory=inner_receipts,
         import_report=Path("data/coherent_state_powered_v13/technical-canary-import-audit-v1.json"),
         import_report_sha256="b" * 64,
-        session_root=tmp_path / "session",
+        session_root=tmp_path / batch_id,
         ssh_key=tmp_path / "ssh-key",
         hf_token=tmp_path / "hf-token",
-        primary_batch_id=f"stage-t-infra-retry-1-{'a' * 12}-20260712T231000Z",
+        primary_batch_id=batch_id,
     )
+
+
+def _mock_success(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(entry, "CONSUMPTION_ROOT", tmp_path / "fixed-consumption-root")
+    monkeypatch.setattr(entry, "verify_infra_retry_checkout", lambda *_a, **_k: {
+        "authorization": {
+            "manifest_sha256": "c" * 64,
+            "static_root_commit": "d" * 40,
+        },
+        "receipt": {"authorization_commit": "a" * 40},
+    })
+    monkeypatch.setattr(entry, "verify_stage_t_checkout", lambda *_a, **_k: {
+        "authorization": {"manifest_sha256": "e" * 64},
+        "receipt": {
+            "receipt_sha256": release.sha256_bytes(b"inner\n"),
+        },
+    })
+    monkeypatch.setattr(entry, "verify_release_binding", lambda **_k: object())
 
 
 def test_outer_mismatch_never_reaches_delegate(tmp_path: Path, monkeypatch) -> None:
@@ -305,13 +336,17 @@ def test_inner_mismatch_never_reaches_delegate(tmp_path: Path, monkeypatch) -> N
     assert called is False
 
 
-@pytest.mark.parametrize("violation", ["batch", "outer_session", "inner_session"])
+@pytest.mark.parametrize(
+    "violation", ["batch", "basename", "outer_session", "inner_session"]
+)
 def test_batch_or_session_boundary_violation_never_reaches_delegate(
     tmp_path: Path, monkeypatch, violation: str,
 ) -> None:
     args = _args(tmp_path)
     if violation == "batch":
         args.primary_batch_id = "stage-t-infra-retry-1-bbbbbbbbbbbb-20260712T231000Z"
+    elif violation == "basename":
+        args.session_root = tmp_path / "wrong-basename"
     elif violation == "outer_session":
         args.session_root = entry.EXECUTING_ROOT / "forbidden-session"
     else:
@@ -334,8 +369,7 @@ def test_delegate_command_has_unoverrideable_carry_ins_and_one_attempt(
     tmp_path: Path, monkeypatch,
 ) -> None:
     args = _args(tmp_path)
-    monkeypatch.setattr(entry, "verify_infra_retry_checkout", lambda *_a, **_k: {})
-    monkeypatch.setattr(entry, "verify_stage_t_checkout", lambda *_a, **_k: {})
+    _mock_success(monkeypatch, tmp_path)
     observed = []
 
     def delegate(command, *, check):
@@ -354,6 +388,69 @@ def test_delegate_command_has_unoverrideable_carry_ins_and_one_attempt(
         release.ORIGINAL_AUTHORIZATION_COMMIT
     )
     assert command[command.index("--repository-url") + 1] == entry.REPOSITORY_URL
+    marker = entry.CONSUMPTION_ROOT / f"{args.outer_authorization_commit}.json"
+    record = json.loads(marker.read_bytes())
+    assert record["outer_authorization_commit"] == args.outer_authorization_commit
+    assert record["inner_authorization_commit"] == release.ORIGINAL_AUTHORIZATION_COMMIT
+    assert record["batch_id"] == args.primary_batch_id
+    assert record["session_root"] == str(args.session_root.resolve())
+    assert record["max_allocation_attempts"] == 1
+
+
+def test_authorization_consumption_blocks_second_delegate_forever(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    outer_repo, outer_authorization = make_authorization_repo(tmp_path / "outer")
+    outer_receipts = tmp_path / "outer-receipts"
+    release.create_infra_retry_receipt(
+        outer_repo, outer_receipts, authorization_commit=outer_authorization,
+        manifest_path=MANIFEST_PATH,
+    )
+    inner_repo = tmp_path / "inner-repo"
+    subprocess.run(
+        ["git", "clone", "-q", "--no-hardlinks", str(ROOT), str(inner_repo)],
+        check=True,
+    )
+    repo_git(inner_repo, "checkout", "-q", "--detach", release.ORIGINAL_AUTHORIZATION_COMMIT)
+    inner_receipts = tmp_path / "inner-receipts"
+    create_stage_t_launch_receipt(
+        inner_repo, inner_receipts,
+        authorization_commit=release.ORIGINAL_AUTHORIZATION_COMMIT,
+        manifest_path=release.ORIGINAL_MANIFEST_PATH,
+    )
+    report = inner_repo / "data/coherent_state_powered_v13/technical-canary-import-audit-v1.json"
+    batch_id = (
+        f"stage-t-infra-retry-1-{outer_authorization[:12]}-20260712T231000Z"
+    )
+    args = argparse.Namespace(
+        outer_authorization_commit=outer_authorization,
+        outer_manifest=MANIFEST_PATH,
+        outer_receipt_directory=outer_receipts,
+        inner_repo=inner_repo,
+        inner_receipt_directory=inner_receipts,
+        import_report=report,
+        import_report_sha256=release.sha256_bytes(report.read_bytes()),
+        session_root=tmp_path / batch_id,
+        ssh_key=tmp_path / "ssh-key",
+        hf_token=tmp_path / "hf-token",
+        primary_batch_id=batch_id,
+    )
+    monkeypatch.setattr(entry, "EXECUTING_ROOT", outer_repo)
+    monkeypatch.setattr(entry, "CONSUMPTION_ROOT", tmp_path / "fixed-consumption-root")
+    calls = []
+
+    def delegate(command, *, check):
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 9)
+
+    assert entry.run(args, delegate=delegate) == 9
+    with pytest.raises(entry.InfraRetryEntrypointError, match="already consumed"):
+        entry.run(args, delegate=delegate)
+    assert len(calls) == 1
+    marker = entry.CONSUMPTION_ROOT / f"{outer_authorization}.json"
+    assert marker.is_file()
+    record = json.loads(marker.read_bytes())
+    assert marker.read_bytes() == release.canonical_json_bytes(record) + b"\n"
 
 
 def test_parser_exposes_no_outer_root_or_budget_override(tmp_path: Path) -> None:

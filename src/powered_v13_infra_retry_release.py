@@ -67,6 +67,9 @@ CUMULATIVE_SPEND_CAP_USD = "1.50"
 MAX_ADDITIONAL_PROVIDER_SECONDS = 3242
 MAX_ADDITIONAL_SPEND_USD = "1.251772222222222222222222222"
 PINNED_COST_PER_HOUR_USD = "1.39"
+CONSUMPTION_ROOT_RELATIVE = (
+    ".local/state/valuegraft/powered-v13-stage-t-infra-retry-1-consumed"
+)
 
 FAILURE_EVIDENCE_PATHS = (
     INCIDENT_PATH,
@@ -304,6 +307,8 @@ def _fixed_retry_constraints() -> dict[str, Any]:
         "max_additional_provider_seconds": MAX_ADDITIONAL_PROVIDER_SECONDS,
         "max_additional_spend_usd": MAX_ADDITIONAL_SPEND_USD,
         "max_provider_allocations": 1,
+        "max_authorization_invocations": 1,
+        "consumption_record_relative_root": CONSUMPTION_ROOT_RELATIVE,
         "outer_authorization_is_sole_provider_authority": True,
         "fresh_inner_stage_t_receipts_permitted": 1,
         "inner_stage_t_receipt_provider_authority": False,

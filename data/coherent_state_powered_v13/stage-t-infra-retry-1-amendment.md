@@ -46,3 +46,12 @@ for creating a provider allocation. It permits creation and use of one fresh
 inner Stage-T receipt solely to bind the immutable `766db12` scientific payload
 at the existing subject gate; neither that inner receipt nor the exhausted
 original authorization independently authorizes any allocation.
+
+The paid entry point consumes the outer authorization exactly once before it
+delegates, even if the delegate later fails. It writes one canonical,
+create-if-absent, fsynced record keyed by the full outer authorization hash
+under the fixed account-home state root (resolved from the operating-system
+account database, not the caller's `HOME` environment)
+`.local/state/valuegraft/powered-v13-stage-t-infra-retry-1-consumed/`.
+An existing record permanently rejects reuse. The session directory basename
+must equal the authorization-bound primary batch ID.
