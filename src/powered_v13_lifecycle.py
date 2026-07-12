@@ -1519,7 +1519,7 @@ def build_harvest_manifest(root: Path) -> dict[str, Any]:
 
 
 class StageTLifecycle:
-    """One-shot, at-most-two-attempt lifecycle with one admitted host."""
+    """One-shot, bounded-attempt lifecycle with one admitted host."""
 
     def __init__(
         self, *, repo: Path, session_root: Path, release: VerifiedRelease,
@@ -1527,6 +1527,7 @@ class StageTLifecycle:
         clock: Callable[[], float], prior_stage_t_spend_usd: str,
         prior_stage_t_provider_seconds: int,
         job_probe_command: Sequence[str], harvest_command: Sequence[str],
+        max_allocation_attempts: int = MAX_ALLOCATION_ATTEMPTS,
     ):
         self.repo = Path(repo).resolve(strict=True)
         self.root = Path(session_root)
@@ -1542,6 +1543,10 @@ class StageTLifecycle:
                  and 0 <= prior_stage_t_provider_seconds <= MAX_PROVIDER_SECONDS,
                  "prior Stage-T provider seconds are invalid")
         self.accumulated_provider_seconds = prior_stage_t_provider_seconds
+        _require(type(max_allocation_attempts) is int
+                 and 1 <= max_allocation_attempts <= MAX_ALLOCATION_ATTEMPTS,
+                 "max allocation attempts are invalid")
+        self.max_allocation_attempts = max_allocation_attempts
         self.job_probe_command = tuple(job_probe_command)
         self.harvest_command = tuple(harvest_command)
         _require(self.job_probe_command and self.harvest_command,
@@ -1553,6 +1558,7 @@ class StageTLifecycle:
             "schema": SCHEMA,
             "design_id": DESIGN_ID,
             "authorization_commit": release.authorization_commit,
+            "max_allocation_attempts": self.max_allocation_attempts,
             "status": "INITIALIZED",
             "attempts": [],
             "admitted_pod_id": None,
@@ -1566,7 +1572,7 @@ class StageTLifecycle:
         self._event("INITIALIZED", {})
 
     def _event(self, kind: str, evidence: Mapping[str, Any]) -> None:
-        _require(len(self.state["attempts"]) <= MAX_ALLOCATION_ATTEMPTS
+        _require(len(self.state["attempts"]) <= self.max_allocation_attempts
                  and len(self.state["events"]) < MAX_EVENTS,
                  "lifecycle retained state exceeds bound")
         self.state["events"].append({
@@ -1717,7 +1723,7 @@ class StageTLifecycle:
         _require(snapshot["active_pod_ids"] == [],
                  "Stage T requires zero active Pods before allocation")
         self._set("READY", "PROVIDER_PREFLIGHT", snapshot)
-        for attempt in range(1, MAX_ALLOCATION_ATTEMPTS + 1):
+        for attempt in range(1, self.max_allocation_attempts + 1):
             self._require_attempt_provider_window(attempt)
             self._set("ALLOCATING", "ALLOCATION_CLOCK_STARTED", {
                 "attempt": attempt,
@@ -1733,7 +1739,7 @@ class StageTLifecycle:
                     "result": "NO_CAPACITY", "pod_id": None,
                 })
                 self._event("NO_CAPACITY", {"attempt": attempt})
-                if attempt == MAX_ALLOCATION_ATTEMPTS:
+                if attempt == self.max_allocation_attempts:
                     self._set("NO_CAPACITY", "ATTEMPTS_EXHAUSTED", {})
                     return deepcopy(self.state)
                 continue
@@ -1775,10 +1781,11 @@ class StageTLifecycle:
                     "attempt": attempt, "error_type": type(exc).__name__,
                     **charge,
                 })
-                if attempt == MAX_ALLOCATION_ATTEMPTS:
+                if attempt == self.max_allocation_attempts:
                     self._set("BLOCKED", "ATTEMPTS_EXHAUSTED", {})
                     raise V13LifecycleError(
-                        "pre-watchdog setup failed twice; allocation stopped") from exc
+                        "pre-watchdog setup exhausted allocation attempts; "
+                        "allocation stopped") from exc
                 continue
             self.state["attempts"].append({
                 "attempt": attempt, "clock_started_epoch": started,
@@ -1838,7 +1845,7 @@ class StageTLifecycle:
                     "error_type": type(exc).__name__,
                     **failure, **charge,
                 })
-                if attempt == MAX_ALLOCATION_ATTEMPTS:
+                if attempt == self.max_allocation_attempts:
                     self._set("ADMISSION_REJECTED", "ATTEMPTS_EXHAUSTED", {})
                     return deepcopy(self.state)
                 continue

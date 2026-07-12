@@ -26,6 +26,7 @@ from powered_v13_lifecycle import (  # noqa: E402
     JOB_TERMINAL_SCHEMA,
     LIFECYCLE_STATE_TOKEN,
     LaunchdWatcherBackend,
+    MAX_ALLOCATION_ATTEMPTS,
     OpenSshTransport,
     POD_STATE_TOKEN,
     REMOTE_ARTIFACTS,
@@ -42,6 +43,19 @@ from powered_v13_lifecycle import (  # noqa: E402
     _verify_remote_setup_release_binding,
     verify_release_binding,
 )
+
+
+def _max_allocation_attempts(value: str) -> int:
+    try:
+        parsed = int(value, 10)
+    except (TypeError, ValueError) as exc:
+        raise argparse.ArgumentTypeError(
+            "max allocation attempts must be an integer") from exc
+    if not 1 <= parsed <= MAX_ALLOCATION_ATTEMPTS:
+        raise argparse.ArgumentTypeError(
+            f"max allocation attempts must be between 1 and "
+            f"{MAX_ALLOCATION_ATTEMPTS}")
+    return parsed
 
 
 def _strict_object(path: Path, label: str) -> dict:
@@ -278,6 +292,7 @@ def command_run(args: argparse.Namespace) -> None:
         "session_root": str(session), "provider_state": str(transient_state),
         "prior_stage_t_provider_seconds":
             args.prior_stage_t_provider_seconds,
+        "max_allocation_attempts": args.max_allocation_attempts,
     }, sort_keys=True), flush=True)
     provider = RunPodProvider(state_path=transient_state)
     transport = OpenSshTransport(
@@ -318,7 +333,8 @@ def command_run(args: argparse.Namespace) -> None:
         provider=provider, transport=transport, supervisor=supervisor,
         clock=time.time, prior_stage_t_spend_usd=args.prior_stage_t_spend_usd,
         prior_stage_t_provider_seconds=args.prior_stage_t_provider_seconds,
-        job_probe_command=job_probe, harvest_command=harvest)
+        job_probe_command=job_probe, harvest_command=harvest,
+        max_allocation_attempts=args.max_allocation_attempts)
     result = lifecycle.run()
     print(json.dumps({
         "status": result["status"], "session_root": str(session),
@@ -381,6 +397,9 @@ def parser() -> argparse.ArgumentParser:
     run.add_argument("--prior-stage-t-spend-usd", required=True)
     run.add_argument(
         "--prior-stage-t-provider-seconds", required=True, type=int)
+    run.add_argument(
+        "--max-allocation-attempts", type=_max_allocation_attempts,
+        default=MAX_ALLOCATION_ATTEMPTS)
     run.add_argument("--ssh-key", required=True, type=Path)
     run.add_argument("--hf-token", required=True, type=Path)
     run.add_argument("--primary-batch-id", required=True)

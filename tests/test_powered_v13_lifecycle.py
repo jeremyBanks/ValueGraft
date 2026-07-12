@@ -223,7 +223,8 @@ def _run(tmp_path, *, provider_actions=("success",), admissions=(True,),
          sync_error=False, launch_error=False,
          terminal_status="TERMINATED_HARVESTED", reason="job_complete",
          dual=True, death=None, start_errors=(), terminal_advance_seconds=0,
-         prior_stage_t_provider_seconds=0, provider_response_mutation=None):
+         prior_stage_t_provider_seconds=0, provider_response_mutation=None,
+         max_allocation_attempts=life.MAX_ALLOCATION_ATTEMPTS):
     clock = Clock()
     log = []
     provider = FakeProvider(
@@ -242,6 +243,7 @@ def _run(tmp_path, *, provider_actions=("success",), admissions=(True,),
         clock=clock, prior_stage_t_spend_usd="0",
         prior_stage_t_provider_seconds=prior_stage_t_provider_seconds,
         job_probe_command=["probe"], harvest_command=["harvest"],
+        max_allocation_attempts=max_allocation_attempts,
     )
     return runner, provider, transport, supervisor, log
 
@@ -329,6 +331,37 @@ def test_admission_reject_is_positively_deleted_before_attempt_two(tmp_path):
         3300 - first["observed_stage_t_provider_seconds"]
     assert result["observed_stage_t_provider_seconds"] == \
         second["observed_stage_t_provider_seconds"]
+
+
+def test_one_attempt_admission_reject_stops_without_fallback(tmp_path):
+    runner, provider, _transport, supervisor, _log = _run(
+        tmp_path, provider_actions=("success", "success"),
+        admissions=(False, True), max_allocation_attempts=1)
+    result = runner.run()
+    assert result["status"] == "ADMISSION_REJECTED"
+    assert result["max_allocation_attempts"] == 1
+    assert provider.creates == 1 and provider.active == []
+    assert supervisor.cleanup_requests == 1
+    assert [row["result"] for row in result["attempts"]] == [
+        "REJECTED_DELETED"]
+    assert result["events"][-1]["kind"] == "ATTEMPTS_EXHAUSTED"
+
+
+def test_two_attempt_default_remains_unchanged(tmp_path):
+    runner, provider, _transport, _supervisor, _log = _run(
+        tmp_path, provider_actions=("no_capacity", "success"))
+    result = runner.run()
+    assert result["max_allocation_attempts"] == 2
+    assert provider.creates == 2
+    assert result["admitted_pod_id"] == "pod_stage_t_2"
+
+
+@pytest.mark.parametrize("value", [True, False, 0, 3])
+def test_max_allocation_attempts_rejects_non_plain_or_out_of_range_int(
+        tmp_path, value):
+    with pytest.raises(life.V13LifecycleError,
+                       match="max allocation attempts are invalid"):
+        _run(tmp_path, max_allocation_attempts=value)
 
 
 def test_provider_schema_rejection_persists_safe_stage_code_and_shape(tmp_path):
@@ -506,6 +539,17 @@ def test_run_cli_requires_exact_prior_provider_seconds_input():
     parsed = cli.parser().parse_args([
         *argv, "--prior-stage-t-provider-seconds", "0"])
     assert parsed.prior_stage_t_provider_seconds == 0
+    assert parsed.max_allocation_attempts == 2
+    parsed = cli.parser().parse_args([
+        *argv, "--prior-stage-t-provider-seconds", "0",
+        "--max-allocation-attempts", "1"])
+    assert parsed.max_allocation_attempts == 1
+    for invalid in ("0", "3", "true"):
+        with pytest.raises(SystemExit) as rejected:
+            cli.parser().parse_args([
+                *argv, "--prior-stage-t-provider-seconds", "0",
+                "--max-allocation-attempts", invalid])
+        assert rejected.value.code == 2
 
 
 def test_harvest_manifest_hashes_every_required_category(tmp_path):
