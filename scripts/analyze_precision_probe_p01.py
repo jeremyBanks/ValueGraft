@@ -31,6 +31,10 @@ PROTOCOL_ID = "precision-probe-p01"
 ANALYSIS_SCHEMA = "precision_probe_p01_independent_analysis_v1"
 PACKAGE_SCHEMA = "lossless-json-gzip-base64-package/v1"
 OUTCOME_RAW_SCHEMA = "precision_probe_p01_outcome_raw_v1"
+TECHNICAL_RAW_SCHEMA = "precision_probe_p01_technical_raw_v1"
+RUN_MANIFEST_SCHEMA = "precision_probe_p01_run_manifest_v1"
+COMPLETION_SCHEMA = "precision_probe_p01_completion_v1"
+DECISION_SCHEMA = "precision_probe_p01_outcome_blind_extension_decision_v1"
 PHASE_A_SCHEMA = "coherent_state_decision_canary_v12_phase_a_raw_v1"
 TREATMENT_SCHEMA = "coherent_state_decision_canary_v12_treatment_raw_v1"
 REGIMES = ("nf4", "bf16")
@@ -481,7 +485,8 @@ def identify_outcome(raw: Mapping[str, Any]) -> tuple[str, str, int]:
             "packaged outcome schema/protocol differs")
     require(raw.get("formal_v12_decision_eligible") is False and
             raw.get("v12_reentry_authorized") is False and
-            raw.get("component_reuse_does_not_inherit_v12_eligibility") is True,
+            raw.get("component_reuse_does_not_inherit_v12_eligibility") is True and
+            raw.get("semantic_evidence_eligible") is False,
             "packaged outcome v12 ineligibility labels differ")
     regime = raw.get("regime")
     case_id = raw.get("case_id")
@@ -494,7 +499,7 @@ def identify_outcome(raw: Mapping[str, Any]) -> tuple[str, str, int]:
     return str(regime), str(case_id), int(repeat)
 
 
-def package_rows(run_dir: Path) -> list[dict[str, Any]]:
+def packaged_p01_documents(run_dir: Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for manifest_path in sorted(run_dir.rglob("manifest.json")):
         try:
@@ -504,21 +509,412 @@ def package_rows(run_dir: Path) -> list[dict[str, Any]]:
         if header.get("schema") != PACKAGE_SCHEMA:
             continue
         manifest, raw = reconstruct_package(manifest_path.parent)
-        # The run also packages one technical-gate document per regime.  Only
-        # outcome packages carry case/repeat keys and enter the estimands.
-        if (raw.get("protocol_id") != PROTOCOL_ID or
-                raw.get("schema") != OUTCOME_RAW_SCHEMA):
+        if raw.get("protocol_id") != PROTOCOL_ID:
             continue
-        key = identify_outcome(raw)
         rows.append({
-            "key": key,
             "package_dir": manifest_path.parent,
             "package_manifest_sha256": file_sha256(manifest_path),
             "raw_artifact_sha256": manifest["original"]["sha256"],
             "raw": raw,
         })
+    require(rows, f"no p01 lossless packages found under {run_dir}")
+    return rows
+
+
+def package_rows(
+    run_dir: Path,
+    documents: Sequence[Mapping[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    source = documents if documents is not None else packaged_p01_documents(run_dir)
+    for generic in source:
+        raw = generic["raw"]
+        # The run also packages one technical-gate document per regime.  Only
+        # outcome packages carry case/repeat keys and enter the estimands.
+        if (raw.get("schema") != OUTCOME_RAW_SCHEMA or
+                raw.get("status") != "COMPLETE"):
+            continue
+        key = identify_outcome(raw)
+        rows.append({**dict(generic), "key": key})
     require(rows, f"no p01 lossless outcome packages found under {run_dir}")
     return rows
+
+
+def _require_formal_boundary(document: Mapping[str, Any], label: str) -> None:
+    require(document.get("protocol_id") == PROTOCOL_ID and
+            document.get("formal_v12_decision_eligible") is False and
+            document.get("v12_reentry_authorized") is False and
+            document.get("component_reuse_does_not_inherit_v12_eligibility")
+            is True and document.get("semantic_evidence_eligible") is False,
+            f"{label} protocol/formal boundary differs")
+
+
+def _technical_gate_summary(
+    run_dir: Path, documents: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    rows = [dict(row) for row in documents
+            if row["raw"].get("schema") == TECHNICAL_RAW_SCHEMA and
+            row["raw"].get("status") == "PASS"]
+    require(len(rows) == 2, "p01 requires exactly two passing final technical packages")
+    by_regime: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        raw = row["raw"]
+        _require_formal_boundary(raw, "technical package")
+        regime = raw.get("regime")
+        require(regime in REGIMES and regime not in by_regime,
+                "technical package regime coverage differs")
+        subject = raw.get("subject_attestation")
+        runtime = raw.get("runtime_fingerprint")
+        require(isinstance(subject, Mapping) and
+                isinstance(subject.get("bindings"), Mapping) and
+                isinstance(subject.get("runtime_fingerprint"), Mapping) and
+                subject["runtime_fingerprint"] == runtime,
+                f"{regime} technical subject/runtime binding differs")
+        bindings = subject["bindings"]
+        require(bindings.get("regime") == regime and
+                bindings.get("protocol_id") == PROTOCOL_ID,
+                f"{regime} loader binding differs")
+        require(isinstance(runtime, Mapping) and
+                runtime.get("regime") == regime and
+                runtime.get("model_id") ==
+                "Qwen/Qwen3-30B-A3B-Instruct-2507" and
+                runtime.get("requested_revision") ==
+                "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe" and
+                runtime.get("attention_backend") == "eager" and
+                runtime.get("kv_dtype") == "torch.bfloat16" and
+                runtime.get("eos_ids") == [151643, 151645],
+                f"{regime} runtime fingerprint differs")
+
+        g0 = bindings.get("g0")
+        weights = bindings.get("weights")
+        kv = bindings.get("kv")
+        host = bindings.get("host")
+        loading = bindings.get("loading_info")
+        require(isinstance(g0, Mapping) and g0.get("passes") is True and
+                g0.get("topology", {}).get("checkpoint_key_count") == 18_867 and
+                g0.get("topology", {}).get("eligible_linear_count") == 18_672 and
+                g0.get("topology", {}).get("eligible_logical_elements") ==
+                29_909_581_824,
+                f"{regime} G0 topology gate differs")
+        require(isinstance(kv, Mapping) and
+                kv.get("observed_real_forward") is True and
+                kv.get("layers") == 48 and
+                kv.get("dtype") == "torch.bfloat16" and
+                kv.get("expected_shape", [None, None, None, None])[:2] == [1, 4] and
+                kv.get("expected_shape", [None, None, None, None])[-1:] == [128],
+                f"{regime} real-forward KV gate differs")
+        require(isinstance(host, Mapping) and
+                host.get("gpu_name") == "NVIDIA A100 80GB PCIe" and
+                isinstance(host.get("gpu_uuid"), str),
+                f"{regime} host binding differs")
+        require(isinstance(loading, Mapping) and loading and
+                all(value == [] for value in loading.values()),
+                f"{regime} model loading-info gate differs")
+        require(isinstance(weights, Mapping), f"{regime} weight gate is absent")
+        if regime == "nf4":
+            sentinels = weights.get("sentinels")
+            require(weights.get("linear4bit_modules") == 18_672 and
+                    weights.get("expert_linear4bit_modules") == 18_432 and
+                    weights.get("expert_logical_coverage") == {
+                        "observed": 28_991_029_248,
+                        "expected": 28_991_029_248,
+                    } and
+                    weights.get("total_logical_quantized_coverage") == {
+                        "observed": 29_909_581_824,
+                        "expected": 29_909_581_824,
+                        "checkpoint_total": 30_532_122_624,
+                    } and weights.get("quant_type") == "nf4" and
+                    weights.get("double_quantization") is True and
+                    weights.get("compute_dtype") == "torch.bfloat16" and
+                    weights.get("ordinary_linears") == ["lm_head"] and
+                    isinstance(sentinels, list) and len(sentinels) == 9 and
+                    all(float(item.get("max_abs_error", 0)) > 0 and
+                        float(item.get("mean_abs_error", 0)) > 0
+                        for item in sentinels),
+                    "NF4 full-coverage/sentinel gate differs")
+        else:
+            require(weights.get("regime") == "bf16" and
+                    weights.get("logical_parameter_elements") ==
+                    30_532_122_624 and
+                    weights.get("floating_parameter_dtype") ==
+                    "torch.bfloat16" and
+                    weights.get("quantization_modules") == [],
+                    "bf16 full-precision weight gate differs")
+
+        identity = raw.get("generated_forced_identity")
+        deterministic = raw.get("deterministic_repeats")
+        replacement = raw.get("fresh_self_replacement")
+        require(isinstance(identity, Mapping) and identity.get("status") == "PASS" and
+                isinstance(deterministic, Mapping) and
+                set(deterministic) == {"correct_history_N", "fresh_destination"} and
+                all(item.get("status") == "PASS"
+                    for item in deterministic.values()) and
+                isinstance(replacement, Mapping) and
+                replacement.get("status") == "PASS" and
+                len(replacement.get("regions", [])) == 9 and
+                all(item.get("status") == "PASS"
+                    for item in replacement["regions"]),
+                f"{regime} G2 identity/surgery gate differs")
+        by_regime[str(regime)] = {
+            "package": {
+                "path": row["package_dir"].relative_to(run_dir).as_posix(),
+                "manifest_sha256": row["package_manifest_sha256"],
+                "raw_artifact_sha256": row["raw_artifact_sha256"],
+            },
+            "runtime_fingerprint": dict(runtime),
+            "host": dict(host),
+            "weights": dict(weights),
+            "kv": dict(kv),
+            "g2_status": "PASS",
+        }
+    require(set(by_regime) == set(REGIMES), "technical regime set differs")
+    nf4_runtime = by_regime["nf4"]["runtime_fingerprint"]
+    bf16_runtime = by_regime["bf16"]["runtime_fingerprint"]
+    stable_fields = (
+        "model_id", "requested_revision", "resolved_snapshot", "architecture",
+        "attention_backend", "kv_dtype", "eos_ids", "geometry",
+        "repository_commit", "dependency_versions", "gpu_uuid",
+    )
+    differing = [field for field in stable_fields
+                 if nf4_runtime.get(field) != bf16_runtime.get(field)]
+    require(not differing, f"matched-runtime fields differ: {differing}")
+    require(by_regime["nf4"]["host"]["gpu_uuid"] ==
+            by_regime["bf16"]["host"]["gpu_uuid"],
+            "NF4/bf16 did not run on the same GPU host")
+    return {
+        "status": "PASS",
+        "same_host": True,
+        "stable_runtime_fields_equal": True,
+        "regimes": by_regime,
+    }
+
+
+def _bound_file_matches(row: Any, path: Path, label: str) -> None:
+    require(isinstance(row, Mapping) and
+            set(row) == {"path", "sha256", "size_bytes"} and
+            row.get("sha256") == file_sha256(path) and
+            row.get("size_bytes") == path.stat().st_size,
+            f"{label} binding differs")
+
+
+def _validate_completion_and_manifest(
+    run_dir: Path, *, observed_outcomes: set[tuple[str, str, int]],
+    outcome_timings: Mapping[tuple[str, str, int], float],
+) -> dict[str, Any]:
+    completion_paths = sorted(run_dir.glob("precision-probe-p01-completion_*.json"))
+    manifest_paths = sorted(run_dir.glob("precision-probe-p01-run-manifest_*.json"))
+    require(len(completion_paths) == len(manifest_paths) == 1,
+            "p01 run requires exactly one completion and one run manifest")
+    completion_path = completion_paths[0]
+    manifest_path = manifest_paths[0]
+    completion = load_object(completion_path)
+    manifest = load_object(manifest_path)
+    require(completion.get("schema") == COMPLETION_SCHEMA and
+            completion.get("status") == "COMPLETE",
+            "p01 runner completion is not COMPLETE")
+    require(manifest.get("schema") == RUN_MANIFEST_SCHEMA and
+            manifest.get("status") == "COMPLETE",
+            "p01 run manifest is not COMPLETE")
+    _require_formal_boundary(completion, "runner completion")
+    _require_formal_boundary(manifest, "run manifest")
+    _bound_file_matches(completion.get("run_manifest"), manifest_path,
+                        "runner manifest")
+    inventory = completion.get("artifact_inventory")
+    require(isinstance(inventory, list) and inventory,
+            "runner completion inventory is empty")
+    raw_inventory: list[Mapping[str, Any]] = []
+    for row in inventory:
+        require(isinstance(row, Mapping) and
+                set(row) == {"path", "sha256", "size_bytes"} and
+                isinstance(row.get("path"), str),
+                "runner completion inventory row differs")
+        raw_inventory.append(row)
+    actual = {
+        path.relative_to(run_dir).as_posix(): path
+        for path in run_dir.rglob("*")
+        if path.is_file() and path != completion_path
+    }
+    inventory_by_path: dict[str, Mapping[str, Any]] = {}
+    for row in raw_inventory:
+        matches = [relative for relative in actual
+                   if row["path"] == relative or
+                   row["path"].endswith("/" + relative)]
+        require(len(matches) == 1 and matches[0] not in inventory_by_path,
+                f"runner inventory path cannot be resolved uniquely: "
+                f"{row['path']}")
+        inventory_by_path[matches[0]] = row
+    require(set(inventory_by_path) == set(actual),
+            "runner completion inventory is not exhaustive")
+    for relative, path in actual.items():
+        row = inventory_by_path[relative]
+        require(row.get("sha256") == file_sha256(path) and
+                row.get("size_bytes") == path.stat().st_size,
+                f"runner inventory bytes differ: {relative}")
+    require(completion.get("recovery_raw_files") == [],
+            "runner completion retained recovery raw files")
+
+    provider = manifest.get("provider")
+    require(isinstance(provider, Mapping) and
+            isinstance(provider.get("effective_hard_deadline_seconds"),
+                       (int, float)) and
+            float(completion.get("provider_elapsed_seconds", math.inf)) <=
+            float(provider["effective_hard_deadline_seconds"]) and
+            float(completion.get("estimated_provider_cost_usd", math.inf)) <= 4.0,
+            "runner completion exceeded its provider ceiling")
+    require(manifest.get("model") ==
+            "Qwen/Qwen3-30B-A3B-Instruct-2507" and
+            manifest.get("revision") ==
+            "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "run manifest subject differs")
+    bindings = manifest.get("bindings")
+    required_bindings = {
+        "preregistration", "identity_fixture", "technical_fixture",
+        "case_e01", "case_e02", "case_e03", "runner",
+        "precision_subject_loader", "artifact_packager",
+        "coherent_canary_case", "coherent_canary_runtime",
+        "coherent_canary_technical", "coherent_canary_tokens",
+        "coherent_canary_controls", "coherent_canary_schema",
+        "coherent_state_tokens",
+    }
+    require(isinstance(bindings, Mapping) and
+            required_bindings <= set(bindings),
+            f"run source bindings are incomplete: "
+            f"{sorted(required_bindings-set(bindings or {}))}")
+
+    regimes = manifest.get("regimes")
+    require(isinstance(regimes, Mapping) and set(regimes) == set(REGIMES) and
+            all(isinstance(regimes[regime], Mapping) and
+                regimes[regime].get("status") == "OUTCOMES_FINISHED" and
+                regimes[regime].get("technical", {}).get("status") == "PASS"
+                for regime in REGIMES),
+            "run manifest regime/technical status differs")
+    manifest_outcomes: set[tuple[str, str, int]] = set()
+    for regime_name in REGIMES:
+        rows = regimes[regime_name].get("outcomes")
+        require(isinstance(rows, list),
+                f"{regime_name} manifest outcome list is absent")
+        for row in rows:
+            require(isinstance(row, Mapping) and
+                    row.get("regime") == regime_name and
+                    row.get("completion_status") == "COMPLETE" and
+                    row.get("recovery_raw_path") is None,
+                    f"{regime_name} manifest outcome receipt differs")
+            key = (regime_name, row.get("case_id"), row.get("repeat_index"))
+            require(key not in manifest_outcomes and
+                    key[1] in {"e01", "e02", "e03"} and
+                    isinstance(key[2], int),
+                    f"duplicate/invalid manifest outcome receipt: {key}")
+            package = row.get("raw_package")
+            require(isinstance(package, Mapping) and
+                    package.get("verification_status") == "VERIFIED" and
+                    isinstance(package.get("path"), str),
+                    f"{key} raw package receipt differs")
+            package_dir = run_dir / Path(package["path"]).name
+            require(package_dir.is_dir() and
+                    package.get("manifest_sha256") ==
+                    file_sha256(package_dir / "manifest.json"),
+                    f"{key} raw package binding differs")
+            for artifact_name in ("compact", "renders"):
+                binding_row = row.get(artifact_name)
+                require(isinstance(binding_row, Mapping) and
+                        isinstance(binding_row.get("path"), str),
+                        f"{key} {artifact_name} binding is absent")
+                artifact_path = run_dir / Path(binding_row["path"]).name
+                _bound_file_matches(binding_row, artifact_path,
+                                    f"{key} {artifact_name}")
+            manifest_outcomes.add(key)
+    require(manifest_outcomes == observed_outcomes,
+            "manifest selected outcomes differ from final packages")
+    matched = manifest.get("matched_runtime_gate")
+    require(isinstance(matched, Mapping) and matched.get("status") == "PASS" and
+            completion.get("matched_runtime_gate") == matched,
+            "run manifest matched-runtime gate is not PASS")
+
+    selected = manifest.get("selected_case_repeats")
+    expected_selected = ({"e01": 2, "e02": 1, "e03": 1}
+                         if observed_outcomes & EXTENSION_KEYS else {"e01": 2})
+    require(selected == expected_selected,
+            "run manifest selected case/repeat set differs from packages")
+    decision_binding = manifest.get("extension_decision")
+    decision_paths = sorted(run_dir.glob(
+        "precision-probe-p01-extension-decision_*.json"))
+    require(len(decision_paths) == 1,
+            "p01 run requires exactly one frozen extension decision")
+    decision_path = decision_paths[0]
+    _bound_file_matches(decision_binding, decision_path, "extension decision")
+    decision = load_object(decision_path)
+    _require_formal_boundary(decision, "extension decision")
+    inputs = decision.get("inputs")
+    require(decision.get("schema") == DECISION_SCHEMA and
+            isinstance(inputs, Mapping),
+            "extension decision schema/inputs differ")
+    statuses = inputs.get("nf4_e01_completion_statuses")
+    times = inputs.get("nf4_e01_outcome_wall_time_seconds")
+    require(statuses == ["COMPLETE", "COMPLETE"] and
+            isinstance(times, list) and len(times) == 2 and
+            all(isinstance(value, (int, float)) and
+                not isinstance(value, bool) and math.isfinite(float(value)) and
+                float(value) >= 0 for value in times),
+            "extension decision completion/timing inputs differ")
+    raw_times = [outcome_timings[("nf4", "e01", repeat)]
+                 for repeat in (1, 2)]
+    require(all(math.isclose(float(declared), float(observed),
+                             rel_tol=0, abs_tol=1e-12)
+                for declared, observed in zip(times, raw_times)),
+            "extension decision timings differ from final NF4 e01 raws")
+    elapsed = inputs.get("provider_elapsed_seconds")
+    rate = inputs.get("hourly_cost_usd")
+    cap = inputs.get("provider_wall_cap_seconds")
+    require(all(isinstance(value, (int, float)) and
+                not isinstance(value, bool) and math.isfinite(float(value)) and
+                float(value) > 0 for value in (elapsed, rate, cap)),
+            "extension decision provider scalar inputs differ")
+    slower = max(float(value) for value in times)
+    hard_deadline = min(7200.0, float(cap), 4.0 * 3600.0 / float(rate))
+    forecast = float(elapsed) + 1.20 * (6.0 * slower + 900.0)
+    allowed = forecast <= hard_deadline
+    require(math.isclose(float(inputs.get("slower_complete_nf4_e01_seconds")),
+                         slower, rel_tol=0, abs_tol=1e-12) and
+            math.isclose(float(inputs.get("four_dollar_rate_ceiling_seconds")),
+                         4.0 * 3600.0 / float(rate), rel_tol=0,
+                         abs_tol=1e-9) and
+            math.isclose(float(inputs.get("effective_hard_deadline_seconds")),
+                         hard_deadline, rel_tol=0, abs_tol=1e-9) and
+            math.isclose(float(inputs.get("forecast_seconds")), forecast,
+                         rel_tol=0, abs_tol=1e-9),
+            "extension decision derived timing fields differ")
+    require(decision.get("selected_case_repeats") == expected_selected and
+            decision.get("extension_allowed") is allowed and
+            allowed is (expected_selected != {"e01": 2}) and
+            decision.get("decision") ==
+            ("EXTEND_E02_E03" if allowed else "BASE_E01_ONLY") and
+            decision.get("formula") ==
+            "elapsed + 1.20 * (6*t + 900) <= min(7200, cap, 4*3600/rate)" and
+            decision.get("score_or_generation_accessible_to_decision") is False and
+            decision.get("outcome_information_surface") == [
+                "completion_status", "outcome_wall_time_seconds"],
+            "frozen extension decision differs from observed execution")
+    return {
+        "completion": {
+            "path": completion_path.relative_to(run_dir).as_posix(),
+            "sha256": file_sha256(completion_path),
+        },
+        "manifest": {
+            "path": manifest_path.relative_to(run_dir).as_posix(),
+            "sha256": file_sha256(manifest_path),
+        },
+        "extension_decision": {
+            "path": decision_path.relative_to(run_dir).as_posix(),
+            "sha256": file_sha256(decision_path),
+            "decision": decision.get("decision"),
+        },
+        "matched_runtime_gate": dict(matched),
+        "selected_case_repeats": dict(selected),
+        "source_binding_names": sorted(bindings),
+        "provider_elapsed_seconds": completion["provider_elapsed_seconds"],
+        "estimated_provider_cost_usd": completion[
+            "estimated_provider_cost_usd"],
+    }
 
 
 def recursive_differences(left: Any, right: Any, path: str = "") -> list[str]:
@@ -578,7 +974,9 @@ def summarize_values(values_by_case: Mapping[str, float]) -> dict[str, Any]:
 
 
 def analyze_run(run_dir: Path) -> dict[str, Any]:
-    packages = package_rows(run_dir)
+    packaged_documents = packaged_p01_documents(run_dir)
+    technical_gates = _technical_gate_summary(run_dir, packaged_documents)
+    packages = package_rows(run_dir, packaged_documents)
     by_key: dict[tuple[str, str, int], dict[str, Any]] = {}
     for row in packages:
         key = row["key"]
@@ -593,10 +991,21 @@ def analyze_run(run_dir: Path) -> dict[str, Any]:
     allowed = BASE_KEYS | EXTENSION_KEYS
     require(observed <= allowed,
             f"unexpected outcome runtime/case/repeat keys: {sorted(observed-allowed)}")
+    completion_record = _validate_completion_and_manifest(
+        run_dir, observed_outcomes=observed,
+        outcome_timings={
+            key: float(row["raw"]["outcome_wall_time_seconds"])
+            for key, row in by_key.items()
+        })
 
     outcome_rows: dict[str, Any] = {}
     for key in sorted(by_key):
         regime, case_id, repeat = key
+        raw_runtime = by_key[key]["raw"].get("runtime_fingerprint")
+        require(raw_runtime == technical_gates["regimes"][regime][
+            "runtime_fingerprint"],
+            f"{regime}/{case_id}/repeat{repeat} outcome runtime differs "
+            "from its passing technical gate")
         analysis = analyze_outcome(by_key[key]["raw"])
         label = f"{regime}:{case_id}:r{repeat}"
         outcome_rows[label] = {
@@ -643,6 +1052,13 @@ def analyze_run(run_dir: Path) -> dict[str, Any]:
             "Hplus_bf16": bf16["primary_Hplus_value_N_R2"],
         }
 
+    cross_runtime_case_summary = summarize_values({
+        case_id: cross_runtime[f"{case_id}:r1"][
+            "Delta_runtime_nf4_minus_bf16"]
+        for case_id in (("e01", "e02", "e03")
+                        if extension_observed else ("e01",))
+    })
+
     aggregate: dict[str, Any] = {}
     for regime in REGIMES:
         # Repeats remain literal repeatability observations.  For the optional
@@ -670,11 +1086,14 @@ def analyze_run(run_dir: Path) -> dict[str, Any]:
         "extension_executed": bool(extension_observed),
         "outcome_keys": [list(key) for key in sorted(observed)],
         "input_file_inventory": binding_inventory(run_dir),
+        "runner_completion_and_manifest": completion_record,
+        "technical_gates": technical_gates,
         "outcomes": outcome_rows,
         "within_runtime_repeat_stability": repeat_stability,
         "all_mandatory_repeats_stable": all_stable,
         "small_cross_runtime_contrast_interpretation_permitted": all_stable,
         "cross_runtime_primary_contrasts": cross_runtime,
+        "cross_runtime_primary_case_summary": cross_runtime_case_summary,
         "per_runtime_case_summary": aggregate,
         "inference": {
             "p_values_computed": False,
