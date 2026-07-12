@@ -19,21 +19,15 @@ from powered_v13_schema import CARRIER_REQUEST, MODEL_ID, MODEL_REVISION
 
 
 EXPECTED_SENTINEL_MATRIX_SHA256_BY_AUTHORIZATION_FIELDS = {
-    # Detached repair base (superseded by the concurrently hardened receipt).
     frozenset({
-        "kind", "permutation_rank", "permutation_seed_commit_sha256",
-        "literal_permutation_sha256",
-    }): "6005a3b83c72806a30f33400a569b711c2f483267998058e2747aa774d64ba04",
-    # Final parent-integrated receipt shape; all five authority fields are None
-    # for these out-of-pool sentinels.
-    frozenset({
-        "kind", "permutation_rank", "seed_manifest_sha256",
+        "kind", "status", "candidate_id", "permutation_rank",
+        "seed_manifest_sha256",
         "seed_git_commit", "literal_permutation_sha256",
         "literal_git_commit",
-    }): "417bc4ff698ae915fa26bd8cc0693a5f6063812509a5c50fb05ea54843990cf4",
+    }): "e5d78fa98bbf2e1725535b34aba37ee8f954c1c2319de80548e946fc49f4954e",
 }
 EXPECTED_TARGET_BANK_QUALIFICATION_SHA256 = (
-    "d9102f13b6c6123bad559a661e7f32aaedf26e934bb8d05d95dd4c62eb370213"
+    "378c078e4ab5862e6a8895a130443dcb4e2d990d1dda69e18598114841b374ab"
 )
 FROZEN_80_TOKEN_TEST_CARRIER = (
     "The earlier exchange established shared operating context and confirmed "
@@ -81,6 +75,16 @@ def _carrier_args(tokenizer, fixture,
     }
 
 
+def test_integer_sequence_hash_uses_protocol_canonical_json_without_coercion():
+    values = [0, 1, 151_643, -1]
+    assert stimuli.sha256_ints(values) == sha256(
+        canonical_json_bytes(values)).hexdigest()
+    for invalid in ([True], [1.0], ["1"]):
+        with pytest.raises(stimuli.V13StimulusError,
+                           match="contains a non-integer"):
+            stimuli.sha256_ints(invalid)  # type: ignore[arg-type]
+
+
 @pytest.mark.parametrize("stratum", STRATA)
 @pytest.mark.parametrize("explicit", (True, False))
 def test_all_family_by_subtype_out_of_pool_sentinels_pass_exact_mechanics(
@@ -98,7 +102,8 @@ def test_all_family_by_subtype_out_of_pool_sentinels_pass_exact_mechanics(
     assert result["literal_permutation_present"] is False
     authorization = fixture["materialization_authorization"]
     assert all(authorization.get(key) is None for key in (
-        "permutation_rank", "seed_manifest_sha256", "seed_git_commit",
+        "candidate_id", "permutation_rank", "seed_manifest_sha256",
+        "seed_git_commit",
         "literal_permutation_sha256", "literal_git_commit",
     ))
     assert result["pair"] == {

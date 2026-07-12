@@ -147,10 +147,13 @@ def sha256_json(value: Any) -> str:
 
 
 def sha256_ints(values: Sequence[int]) -> str:
-    digest = hashlib.sha256()
+    canonical_values: list[int] = []
     for value in values:
-        digest.update(int(value).to_bytes(8, "little", signed=True))
-    return digest.hexdigest()
+        _require(isinstance(value, int) and not isinstance(value, bool),
+                 "integer-sequence hash input contains a non-integer")
+        canonical_values.append(value)
+    return hashlib.sha256(
+        canonical_json_bytes(canonical_values)).hexdigest()
 
 
 def _sha256_file(path: Path) -> str:
@@ -861,15 +864,21 @@ def _exact_pair_checks(fixture: Mapping[str, Any]) -> tuple[
     _require(fixture.get("pool_member") is False,
              "tokenizer sentinel unexpectedly belongs to production pool")
     authorization = fixture.get("materialization_authorization", {})
-    _require(authorization.get("kind") == "OUT_OF_POOL_DEVELOPMENT_SENTINEL",
+    development_status = "OUT_OF_POOL_DEVELOPMENT_SENTINEL"
+    _require(authorization.get("kind") == development_status,
              "tokenizer sentinel has non-development authorization")
+    _require(authorization.get("status") == development_status,
+             "tokenizer sentinel has non-development authorization status")
+    _require(set(authorization) == {
+        "kind", "status", "candidate_id", "permutation_rank",
+        "seed_manifest_sha256", "seed_git_commit",
+        "literal_permutation_sha256", "literal_git_commit",
+    }, "tokenizer sentinel authorization fields differ")
     _require(all(authorization.get(key) is None for key in (
+        "candidate_id",
         "permutation_rank", "seed_manifest_sha256", "seed_git_commit",
         "literal_permutation_sha256", "literal_git_commit")),
         "tokenizer sentinel carries rank/seed/permutation state")
-    _require(all(value is None for key, value in authorization.items()
-                 if key != "kind"),
-             "tokenizer sentinel carries unexpected authorization state")
     correct = fixture["variants"]["C"]["messages"]
     wrong = fixture["variants"]["W"]["messages"]
     _require(len(correct) == len(wrong) == 9, "C/W message counts differ")
