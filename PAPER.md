@@ -1,6 +1,6 @@
 # Transplanting KV-Cache State Across Conversation Compaction: Inconclusive Evidence and a Methodological Failure Catalogue
 
-**Jeremy Banks · Anthropic Claude Fable 5 · OpenAI GPT-5.6 Sol (extra-high reasoning)**
+**Jeremy Banks · Anthropic Claude Fable 5 · OpenAI GPT-5.6 Sol (extra-high and ultra reasoning)**
 
 *Working-paper status: under factual, methodological, and readability review. The published repository landing page remains unchanged until every review gate passes.*
 
@@ -428,7 +428,25 @@ those historical claims are retired. The checkpoint, data-origin,
 intervention, scoring, exclusion, and reproducibility facts that survive are
 reported in this paper.
 
-**Also deliberately absent:** an overall cost figure. The end-to-end money/token audit is still open under `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` and will be reported separately, distinguishing cash, subscription usage, provider credits, list-price equivalents, estimates, lower bounds, and unknowns.
+**Resource accounting.** No single “project cost” is defensible: this work mixed
+metered provider credits, subscription-included model usage, and unmetered local
+computation. The audited quantities are therefore reported separately and are
+not additive:
+
+| Surface | Audited quantity | Measurement class |
+|---|---:|---|
+| RunPod | 304.913 billed Pod-hours and 424.871205699397252292 USD-denominated Pod credits across the complete 76-Pod account window. Independent project evidence covers at least 283.679 hours / 394.948127557756380202 credits; three unattributed Pods account for the remaining 21.234 hours / 29.92307814164087209 credits. Serverless endpoints and network volumes were each exactly zero. | Account window: exact source record; project share: lower bound; residual: attribution unknown. Consumed credits are not cash paid. |
+| Claude CLI | 3,243,974,397 logged tokens through a frozen prefix: 2,203,668 uncached input, 22,729,207 five-minute cache writes, 46,282,248 one-hour cache writes, 3,161,014,194 cache reads, and 11,745,080 output. Applying the 2026-07-12 standard-speed, token-only API schedule gives $3,014.85823075. | Tokens: exact source record. Price: exact arithmetic under a counterfactual schedule, not cash paid; subscription cash is unknown. |
+| Codex CLI | A 2026-07-12 13:49 UTC working freeze reconstructs 3,225,425,541 tokens through the last metered boundary. Treating every structurally inherited graph-child prefix as fresh instead gives 87,597,633,283 tokens; this is a method sensitivity, not a confidence interval. Three completed response items across two active threads remained beyond the metered boundary. | Reconstructed and not source-exact; the moving working freeze is not the final cutoff. Subscription cash is unknown. |
+| Mac-local inference | At least 8.536905 hours across 88 retained, directly timed experimental result files. | Lower bound; neither total machine use nor accelerator-busy time. |
+
+OpenRouter separately reports an exact current-key lifetime envelope of
+0.0232311 credits and an overlapping authenticated-account lifetime envelope
+of 95.541220588 credits used out of 114 total credits; project share, tokens,
+and cash are unknown. Claude/ChatGPT subscription invoices and allocations,
+RunPod deposits, OpenRouter cash, Gemini use, Hugging Face plan or egress
+costs, Mac electricity, and hardware amortization are also unknown. Appendix
+A.7 records the cutoffs and arithmetic; Appendix B points to the full ledgers.
 
 ---
 
@@ -469,7 +487,7 @@ Beyond the per-stratum caveats above: the principal experiments concern Qwen3, m
 
 - **Jeremy Banks** — the research question, direction, and funding; repeated methodological corrections; final scope and taste decisions. The mitigation-first framing of the project was his intent from the beginning.
 - **Anthropic Claude Fable 5** — initial final-paper drafting and synthesis; earlier strategic/diagnostic consultation recorded in the notes archive.
-- **OpenAI GPT-5.6 Sol (extra-high reasoning)** — primary final analysis, execution, interpretation, and scientific decision authority, including the facts brief this draft is bound to.
+- **OpenAI GPT-5.6 Sol (extra-high and ultra reasoning)** — primary final analysis, execution, interpretation, and scientific decision authority, including the facts brief this draft is bound to.
 
 Additional model contributions, attributed only where runtime evidence supports them: **Claude Opus 4.8** (paper-spine and methodological-postmortem analysis), and assistant sessions stored only under the aliases **`sonnet`, `opus`, and `fable`** (authorship of legacy conversation bodies c13–c24; exact provider/runtime/version not preserved there). The e01 transcript and two later review passes are bound by session IDs and rollout hashes to **OpenAI GPT-5.6 Sol, extra-high reasoning**.
 
@@ -587,7 +605,7 @@ and established exact equality of every specified normalized common scientific
 field. Whole-package hashes appropriately differ because protocol metadata and
 arm inventories differ. Saved generation records preserve content-token IDs,
 decoded text, stop reasons, and hashes, but not alternate first-token logits.
-Provider-settlement records feeding the still-open end-to-end cost audit are
+Provider-settlement records included in the end-to-end accounting audit are
 retained under `results/precision_probe_p02/`.
 
 The NF4 load gate was itself persisted on both pods. Each observed
@@ -597,6 +615,48 @@ attention, and 48 router linears), and 29,909,581,824 / 29,909,581,824 eligible
 logical linear-weight elements covered. `lm_head` was the only ordinary linear;
 embeddings, norms, and other non-eligible parameters were not four-bit. K/V tensors
 were bfloat16 in every layer in both regimes.
+
+### A.7 Resource-accounting provenance
+
+The accounting window begins with the first repository commit at
+`2026-07-04T20:05:15Z`. Each surface has its own recorded cutoff, and work after
+a cutoff—including the final delivery response—falls outside that snapshot.
+The Claude collector froze 207,051,892 bytes across 405 JSONL files at
+`2026-07-12T13:03:55.304595Z`, globally deduplicated assistant message IDs, and
+expanded them into 8,944 request rows. The resulting exact logged workload is
+3,243,974,397 tokens. Applying Anthropic's public 2026-07-12 standard,
+non-batch rates per million tokens—Fable 5:
+10/12.5/20/1/50; Opus 4.8: 5/6.25/10/0.5/25; and Sonnet 5 introductory:
+2/2.5/4/0.2/10 for uncached input / five-minute cache write / one-hour cache
+write / cache read / output—gives model subtotals of $1,333.2098915,
+$1,587.12888875, and $94.5194505, respectively. The $3,014.85823075 total is a
+token-only, standard-speed API counterfactual; all three models included their
+full one-million-token context window at standard rates on the retrieval date.
+The project used subsidized
+Claude CLI access; no incremental cash charge or subscription allocation was
+observed, and any separately priced server-side tool use is excluded.
+[Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing).
+
+The Codex collector freezes the project thread graph and referenced rollout
+byte prefixes, then applies two correlated ownership cross-checks. Stable
+source identities prove the one root-replay prefix found so far, but Codex
+rewrites graph-child source IDs. Those inherited prefixes are therefore
+structural reconstructions based on the spawn edge, complete ordered
+four-counter sequence, and direct-parent pre-creation endpoint—not exact-source
+observations. The no-graph-collapse total retains the consequence of declining
+that structural inference. All owned metered events in the working freeze had
+completed-response evidence; completed responses at active file tails lacked a
+later token-count record and therefore remained outside the primary total.
+
+RunPod values come from two agreeing annual-bucket provider snapshots. The
+project lower bound uses independently observed Pod IDs, while three IDs remain
+unattributed. Separate official queries returned zero rows and zero charges for
+serverless endpoints and network volumes. The Mac floor sums only retained
+`mlx-community/*` result JSONs with numeric top-level `wall_seconds`.
+OpenRouter exposes overlapping key- and account-lifetime envelopes without
+generation timestamps or project labels. Full hashes, selection rules,
+nonadditivity constraints, exact arithmetic, and unknowns are preserved in the
+accounting artifacts.
 
 ## Appendix B: Artifact map
 
@@ -637,6 +697,7 @@ were bfloat16 in every layer in both regimes.
 | P01↔P02 exact common-field comparison | `results/precision_probe_p01_p02_comparison/precision-probe-p01-p02-exact-comparison_Qwen3-30B-A3B-Instruct-2507_20260712T120014514457Z.json` (SHA-256 `588229df5f4ca5c8613dc4f21564043214bfe889fc4dba176300ace0435442be`) |
 | P02 frozen expectations, advisory review, final interpretation, and four-bit completion gate | `notes/20260712A8-sol-p02-conditional-replication-expectations-and-launch-decision.md`; `notes/20260712A9-fable-p02-result-interpretation-and-paper-disposition.md`; `notes/20260712AA-sol-p02-final-interpretation-and-fable-disposition.md`; `notes/20260712AD-sol-four-bit-pod-comparison-completion-gate.md` |
 | End-to-end accounting requirement | `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` |
+| End-to-end token, compute, and provider accounting | `scripts/accounting/`; `results/end_to_end_accounting/`; `notes/20260712AE-sol-runpod-accounting-reconciliation.md`; `notes/20260712AF-sol-local-compute-and-residual-provider-audit.md` |
 | Methods/provenance checklist (questions, not answers) | `METHODS-PROVENANCE-REQUIREMENTS.md` |
 
 Raw e01 record: 8,897,066 bytes, SHA-256 `f6622d978c80d8f4f874c208ef9f6d9546ab3f1bf7676655c9a0b4662718d082`. The receipt's original raw path is no longer present; reconstruct and verify it from the tracked package, then reproduce the harvest and token decomposition:
