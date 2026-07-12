@@ -1,0 +1,94 @@
+{
+  "assessment": {
+    "hold_reasons": [
+      "PENDING_GATES"
+    ],
+    "paid_progression_gate_pass": false,
+    "status": "HOLD"
+  },
+  "derived": {
+    "completed_gate_count": 6,
+    "goal_elapsed_hours": "1.268333333333333333333333333",
+    "named_gates_complete": false,
+    "pending_gate_count": 13,
+    "provider_observation_age_seconds": 0,
+    "provider_observation_fresh": true,
+    "provider_observation_max_age_seconds": 300,
+    "semantic_collection_complete": false,
+    "semantic_gap_n": 47,
+    "semantic_progress": "1/48",
+    "total_gate_count": 19
+  },
+  "design_id": "coherent-state-powered-successor-v13",
+  "inequalities": {
+    "future_balance": {
+      "excluded_already_spent_term": "phase_spent_usd",
+      "formula": "projected_remaining_phase_a_usd + projected_core_usd + projected_audit_usd + reserve_usd <= provider_balance_usd",
+      "included_terms": [
+        "projected_remaining_phase_a_usd",
+        "projected_core_usd",
+        "projected_audit_usd",
+        "reserve_usd"
+      ],
+      "lhs_usd": "54.50",
+      "pass": true,
+      "rhs_usd": "57.1287946692",
+      "slack_usd": "2.6287946692"
+    },
+    "phase_cap": {
+      "formula": "phase_spent_usd + projected_remaining_phase_a_usd <= phase_cap_usd",
+      "lhs_usd": "12",
+      "pass": true,
+      "rhs_usd": "12",
+      "slack_usd": "0"
+    }
+  },
+  "observation": {
+    "active_pod_ids": [],
+    "checkpoint_utc": "2026-07-12T17:51:27Z",
+    "completed_gates": [
+      "corrected_primary_bound",
+      "independent_bound_recomputation",
+      "full_finite_population_simulation",
+      "compact_recipe_foundation",
+      "dynamic_carrier_planner",
+      "cycle_checkpoint_mechanism"
+    ],
+    "git_clean": true,
+    "git_commit": "a9e17aa72680549c140fc44c7fe193a36743c7d1",
+    "goal_elapsed_seconds": 4566,
+    "independent_n": 1,
+    "independent_unit_ids": [
+      "e01"
+    ],
+    "pending_gates": [
+      "corrected_freeze_audit_disposition",
+      "tokenizer_surface_and_ranked_geometry",
+      "permutation_seed_and_first10_materialization",
+      "content_reviews",
+      "placebo_and_harness_tests",
+      "stage_a_release_verifier",
+      "static_phase_a_authorization",
+      "paid_phase_a",
+      "treatment_release",
+      "primary_n48",
+      "independent_host_audit",
+      "surplus_exploration",
+      "paper_review_publish"
+    ],
+    "phase": "static_design_unpaid",
+    "phase_cap_usd": "12",
+    "phase_spent_usd": "0",
+    "projected_audit_usd": "4.50",
+    "projected_core_usd": "30",
+    "projected_remaining_phase_a_usd": "12",
+    "provider_balance_usd": "57.1287946692",
+    "provider_observed_utc": "2026-07-12T17:51:27Z",
+    "provider_spend_limit_usd": "80",
+    "reserve_usd": "8",
+    "status": "DRAFT_NO_PAID_WORK_AUTHORIZED",
+    "target_n": 48
+  },
+  "schema": "coherent_state_powered_v13_cycle_checkpoint_v1",
+  "scope": "cycle observation only; not treatment authorization"
+}
