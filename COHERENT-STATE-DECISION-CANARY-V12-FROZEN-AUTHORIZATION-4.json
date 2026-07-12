@@ -1,0 +1,218 @@
+{
+  "apparatus_commit": "ec5f118414e877dd947e589614f719b9df7754d0",
+  "branch": "trunk",
+  "design_id": "coherent-state-decision-canary-v12",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "1da85bc00023f42925b962fb1c49cee06220566a90c8a49645777dcfaf70c16e"
+    },
+    {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-PREREGISTRATION.md",
+      "sha256": "fc02e86d007369121accbee69471383200fa3f566183e2ed96102e2cf7428b17"
+    },
+    {
+      "path": "COHERENT-STATE-DECISION-CANARY-V12-STIMULUS-CONTRACT.md",
+      "sha256": "ad3e2eb4daf00bf24e688a09708ddad84cbe0906283bd92537e68667801770c0"
+    },
+    {
+      "path": "data/coherent_canary_v12/fixed_text_token_evidence_v2.json",
+      "sha256": "88ee75b1bbd4e1e5780f49cf6e0972def55fc3d1a1bf787f3157ac696ae59504"
+    },
+    {
+      "path": "data/coherent_canary_v12/generated_forced_identity_fixture.json",
+      "sha256": "6123c5462f15cdd303af4629758ab82e6458f08db3ed9d840664478aaf9a7651"
+    },
+    {
+      "path": "data/coherent_canary_v12/model_snapshot_contract.json",
+      "sha256": "ee05d45a55bb75e810897c1590a23bb0d3edfbf8ec8add05215c54edaa9a8677"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_d/e01.json",
+      "sha256": "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_d/e02.json",
+      "sha256": "0d52caab89a6f7d6877f097fc451b5ac529f010720e8118ad89044a054ca9ff0"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_e/e03.json",
+      "sha256": "3594202e1ec405b7cb2c0a5f9351d3e3c68b65ba6affb38ba83ce5a507273ed3"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_f/e05.json",
+      "sha256": "cd73088f32a1cdc81cebe9f95d5a5d8e739e977977f83dac3b1c055db268812a"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision2/session_f/e06.json",
+      "sha256": "27bbd14802438d45a8160aa58b9bb044ab8338fb4b8e4d8b76a036c9c3bfcc4f"
+    },
+    {
+      "path": "data/coherent_canary_v12/revision4/session_h/e04.json",
+      "sha256": "99d79f0009299178dd48947168415d17aeb9fea643d082452cc564a17911c541"
+    },
+    {
+      "path": "data/coherent_canary_v12/technical_control_fixture.json",
+      "sha256": "cfc05dfe62a4dafbb7947bc2b8df9cccf125a6dfa5b2ec70d11a8f5762467921"
+    },
+    {
+      "path": "notes/2026071152-sol-ultra-regroup-decision.md",
+      "sha256": "6f60a787a9e1b1a64495d0246e97b5fca9ab67ea169b039f3a1635c34d00bd78"
+    },
+    {
+      "path": "notes/2026071153-fable-ultra-regroup-review.md",
+      "sha256": "11143e4f0a742c373f9a3394b0728e854f8664d4c9f7279b7810f2deb6ad8e35"
+    },
+    {
+      "path": "notes/2026071155-sol-fable-review-disposition-and-canary-closure.md",
+      "sha256": "987d90f10b7752adf62c3e2ba2ad8838cfd88ff5719ab29dfeeaf812f802ce89"
+    },
+    {
+      "path": "notes/2026071156-canary-preregistration-independent-audit.md",
+      "sha256": "b8b84af49bf69c88c6ec398f6c765d925404a855cbcb4295876065c5dcc9ab93"
+    },
+    {
+      "path": "notes/2026071167-sol-v12-execution-audit-and-runtime-closure.md",
+      "sha256": "70893a40a8b6f0b87cf5a5ad0d9278e197a145ee8b8131d1ca5c26af5f35907e"
+    },
+    {
+      "path": "notes/2026071168-sol-v12-harvest-and-release-closure.md",
+      "sha256": "3380ff1a8d2888d9c1f7f256dee8467537e4dae61181a4af0f90c9772e0b404d"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "a5f5e8ea89722f9dca872ff67b9b3e7aa15dd7d2db3596c2c0e330d3be72fe46"
+    },
+    {
+      "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_blind_singleton_20260711T210013Z_7f36752b3295.json",
+      "sha256": "981b703749edfa3d2a2b1cf57419776b3dda18fa3cc8788d83a3f51ad0e2e2ec"
+    },
+    {
+      "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_cross_case_diversity_20260711T210013Z_8d7e38e6e2e4.json",
+      "sha256": "d45bf013d2be9d79b5e0dc86de7071536edb295648f626c153b8822caf18f1dd"
+    },
+    {
+      "path": "results/coherent_canary_reviews/packets/coherent_canary_v12_target_aware_paired_20260711T210013Z_55779fc94383.json",
+      "sha256": "2945ae429651e7a853ce64157fd4428d3252d4f18085772bb384e273efc10e61"
+    },
+    {
+      "path": "results/coherent_canary_reviews/reviews/revision4_blind_singleton_independent_codex_20260711T210013Z.json",
+      "sha256": "4b9eace0b4f4754ca0de6fcd6dc59852374ab5fd804f42bfb06d108da1d1fcda"
+    },
+    {
+      "path": "results/coherent_canary_reviews/reviews/revision4_paired_diversity_independent_codex_20260711T210013Z.json",
+      "sha256": "1909224e4dab2265d9b033d7b016c1a9842a24dce9531cf17d240a54287a375b"
+    },
+    {
+      "path": "results/coherent_canary_validation/coherent_canary_control_fixtures_literal_Qwen3-30B-A3B-Instruct-2507_20260711T205951Z.json",
+      "sha256": "afd08ed73537c5d91826a6fe6dcdfe67605c4d0dd8897daaecf196702fc4c69a"
+    },
+    {
+      "path": "results/coherent_canary_validation/coherent_canary_revision4_full_manifest_Qwen3-30B-A3B-Instruct-2507_20260711T205951Z.json",
+      "sha256": "738c176fc08075ba905d4c48b70d095a8da0dca649f382e4d7596e4a406affb2"
+    },
+    {
+      "path": "results/coherent_canary_validation/coherent_canary_v12_codex_runtime_provenance_correction_gpt-5.6-sol_20260711T214629Z.json",
+      "sha256": "039f308ae5f3fefd84875a077dabc5fd7e2d74c4c39e97301d7910f08611422a"
+    },
+    {
+      "path": "scripts/aggregate_coherent_canary_v12_harvest.py",
+      "sha256": "14007fee9eab8a37f7f6882572af046a218040996e4d3ea62f0469387dcb4e0a"
+    },
+    {
+      "path": "scripts/build_coherent_canary_review_packets.py",
+      "sha256": "43762ee3b8b5e666df51225dead8c115a121081243dec344dad79f0b3a62ed46"
+    },
+    {
+      "path": "scripts/harvest_coherent_canary_v12.py",
+      "sha256": "9dbe29ad84cd001e13c5144605f506d52a4f6b06d00353436a49fb67bbbfdfad"
+    },
+    {
+      "path": "scripts/run_coherent_canary_v12_phase_a.py",
+      "sha256": "fe9eddd9a5f13fc1e056e0ac483611748a0dd0ad738d2a45dfcc9eac2dfee6ba"
+    },
+    {
+      "path": "scripts/run_coherent_canary_v12_technical.py",
+      "sha256": "b22dde68888b26cf3779364db9db0e1ecd8a199f0dc2c25ad730a6e24c2264fb"
+    },
+    {
+      "path": "scripts/run_coherent_canary_v12_treatment.py",
+      "sha256": "eeb6bcd1ae9e82abe9c54ec3e75fa676c394215d52cee761384c56878e77e412"
+    },
+    {
+      "path": "scripts/validate_coherent_canary_control_fixtures.py",
+      "sha256": "222b31b4e96017046b718b453561eb0e0b69d008ac21aed1c13848d370fdfd2c"
+    },
+    {
+      "path": "scripts/validate_coherent_canary_stimuli.py",
+      "sha256": "973ca9f4b07af8eb99fc122921566d59f7a7141e0623ef9668511b1f24af2060"
+    },
+    {
+      "path": "scripts/validate_coherent_canary_v12_phase_a.py",
+      "sha256": "30bc12eca1894bb4de6b249ac58c2d333cd16cb24041d4a25de7c7580372d79d"
+    },
+    {
+      "path": "scripts/validate_coherent_canary_v12_technical.py",
+      "sha256": "55f1a61442eaa100b27318f5ecd0e470f9754be2cac323a04976131c6997858f"
+    },
+    {
+      "path": "src/coherent_canary_artifacts.py",
+      "sha256": "d71389bbfa10f41bfcd2a85e3abcfb6adac126ceb181905ebb298c63e8cbc1b6"
+    },
+    {
+      "path": "src/coherent_canary_case.py",
+      "sha256": "89f519e28293ba1048a3c76209f25bcc7e7fd20c2bd2e7a9b23a1f58fd24d48c"
+    },
+    {
+      "path": "src/coherent_canary_controls.py",
+      "sha256": "82d4e25f077d7805e72d194e64c2f1550e7953000079db610f57996ecda81599"
+    },
+    {
+      "path": "src/coherent_canary_loader.py",
+      "sha256": "a5ff2432d1e1d82cf60d746ac32e4477bd3bc60b372fc9a63ed30af71c1f1677"
+    },
+    {
+      "path": "src/coherent_canary_path_control.py",
+      "sha256": "5a2e2bceb7d157a72400e18bfda4269219c5d0a8cd203ec9baf36fde37be79da"
+    },
+    {
+      "path": "src/coherent_canary_preflight.py",
+      "sha256": "94735df650135f976dba59748d16a0bceed3543d566a64549d090b156cb3a6f8"
+    },
+    {
+      "path": "src/coherent_canary_runtime.py",
+      "sha256": "a6bb4cdb6a16fb2e366f88a3f7d1eba54d2158c4fb60f9f34ee6b343e0fd012e"
+    },
+    {
+      "path": "src/coherent_canary_schema.py",
+      "sha256": "4cfa5ac087ef87587b7d5f1e9744f2cf7b08c34f0759562dcae5483a8be73999"
+    },
+    {
+      "path": "src/coherent_canary_stimuli.py",
+      "sha256": "4f6244af6171a268250de51abfa6e38b6a6d7c08ad4e1bdd1c9ca4c1ac01de70"
+    },
+    {
+      "path": "src/coherent_canary_store.py",
+      "sha256": "21af0e1db005ec30ded56618321f51f63df9b043d518c13e4fbf193695eeac52"
+    },
+    {
+      "path": "src/coherent_canary_technical.py",
+      "sha256": "c0cacfd0227ee83838df643edf5a5ac8dc8ed5478f871bd704daa36c5193dc6f"
+    },
+    {
+      "path": "src/coherent_canary_tokens.py",
+      "sha256": "265eb70ed8a35da6eda5a754e659c2a2af8d9b759b5d88c20fc4852554229142"
+    },
+    {
+      "path": "src/coherent_state_tokens.py",
+      "sha256": "b6a052bcbe451084fb48ee203c8460f29c7b4a2ad3575287bd3c8771a5f65d15"
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "3b2be962b4925229f900575877bacf2463f053d0749b7a33065586f2ac6c9a8d"
+    }
+  ],
+  "inventory_sha256": "598fc2f5ae90619936153a767d8b9fe87b8842190eba266d322737dbb1400787",
+  "schema": "coherent_state_decision_canary_v12_frozen_authorization_v1",
+  "status": "FROZEN"
+}
