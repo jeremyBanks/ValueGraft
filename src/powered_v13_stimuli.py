@@ -647,12 +647,22 @@ def _normalized_surface(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
+def _is_surface_alphanumeric(character: str) -> bool:
+    # Unicode Lm contains punctuation-like modifier letters such as U+02BC
+    # MODIFIER LETTER APOSTROPHE.  Treating those as semantic letters creates
+    # a separator bypass (Qʼuʼaʼrʼtʼz), so only ordinary letter/number classes
+    # participate in surface skeletons and their word boundaries.
+    return unicodedata.category(character) in {
+        "Lu", "Ll", "Lt", "Lo", "Nd", "Nl", "No",
+    }
+
+
 def _surface_skeleton(value: str) -> str:
     """Return alphanumerics after compatibility/case/mark normalization."""
 
     normalized = unicodedata.normalize("NFKD", value).casefold()
     return "".join(character for character in normalized
-                   if character.isalnum())
+                   if _is_surface_alphanumeric(character))
 
 
 def _contains_separator_insensitive_skeleton(text: str, skeleton: str) -> bool:
@@ -666,25 +676,28 @@ def _contains_separator_insensitive_skeleton(text: str, skeleton: str) -> bool:
     """
 
     _require(isinstance(skeleton, str) and bool(skeleton)
-             and all(character.isalnum() for character in skeleton),
+             and all(_is_surface_alphanumeric(character)
+                     for character in skeleton),
              "forbidden surface skeleton is invalid")
     normalized = unicodedata.normalize("NFKD", text).casefold()
     for start, character in enumerate(normalized):
         if character != skeleton[0]:
             continue
-        if start > 0 and normalized[start - 1].isalnum():
+        if start > 0 and _is_surface_alphanumeric(normalized[start - 1]):
             continue
         cursor = start
         matched = True
         for wanted in skeleton[1:]:
             cursor += 1
-            while cursor < len(normalized) and not normalized[cursor].isalnum():
+            while (cursor < len(normalized)
+                   and not _is_surface_alphanumeric(normalized[cursor])):
                 cursor += 1
             if cursor >= len(normalized) or normalized[cursor] != wanted:
                 matched = False
                 break
         if matched and (cursor + 1 == len(normalized)
-                        or not normalized[cursor + 1].isalnum()):
+                        or not _is_surface_alphanumeric(
+                            normalized[cursor + 1])):
             return True
     return False
 

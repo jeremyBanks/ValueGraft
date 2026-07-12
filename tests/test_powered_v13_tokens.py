@@ -1,5 +1,6 @@
 import pytest
 
+import powered_v13_tokens as tokens
 from arms_common import canonical_ids_any, render_hf
 from powered_v13_schema import (
     PRIMARY_ARMS,
@@ -150,3 +151,16 @@ def test_dynamic_planner_rejects_missing_tail_or_empty_carrier(tokenizer):
         build_role_native_plan(
             tokenizer, _history("green"), middle_end_msg=5,
             carrier_content=" ")
+
+
+@pytest.mark.parametrize("malformed", [["1"], [1.0], [True], [-1]])
+def test_token_plan_boundary_rejects_nonplain_or_negative_ids(malformed):
+    with pytest.raises(V13SchemaError, match="non-plain or negative"):
+        tokens._plain_token_ids(malformed, "synthetic boundary")
+
+
+def test_dynamic_planner_rejects_boolean_middle_index(tokenizer):
+    with pytest.raises(V13SchemaError, match="middle_end_msg"):
+        build_role_native_plan(
+            tokenizer, _history("green"), middle_end_msg=True,
+            carrier_content=CARRIER)

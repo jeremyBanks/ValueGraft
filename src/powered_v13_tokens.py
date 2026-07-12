@@ -24,16 +24,38 @@ from powered_v13_schema import (
 )
 
 
+def _plain_token_ids(
+    values: object,
+    label: str,
+    *,
+    allow_empty: bool = False,
+) -> list[int]:
+    if (not isinstance(values, Sequence)
+            or isinstance(values, (str, bytes))):
+        raise V13SchemaError(f"{label} is not a token-ID sequence")
+    result = list(values)
+    if not allow_empty and not result:
+        raise V13SchemaError(f"{label} is empty")
+    if any(type(value) is not int or value < 0 for value in result):
+        raise V13SchemaError(
+            f"{label} contains a non-plain or negative token ID")
+    return result
+
+
 def _single_id(tokenizer, text: str) -> int:
-    ids = list(tokenizer.encode(text, add_special_tokens=False))
+    ids = _plain_token_ids(
+        tokenizer.encode(text, add_special_tokens=False),
+        f"boundary {text!r}",
+    )
     if len(ids) != 1:
         raise V13SchemaError(f"boundary {text!r} is not one token: {ids}")
-    return int(ids[0])
+    return ids[0]
 
 
 def message_starts(tokenizer, ids: Sequence[int]) -> list[int]:
+    frozen_ids = _plain_token_ids(ids, "canonical message stream")
     marker = _single_id(tokenizer, "<|im_start|>")
-    return [index for index, value in enumerate(ids) if int(value) == marker]
+    return [index for index, value in enumerate(frozen_ids) if value == marker]
 
 
 def _bounded_prefill_events(label: str, role: str, message_index: int,
@@ -60,9 +82,14 @@ def _assistant_content_bounds(tokenizer, messages: list[dict], ids: list[int],
     content = str(messages[index].get("content", ""))
     if not content:
         raise V13SchemaError(f"assistant message {index} has empty content")
-    header_end = len(generation_prefix_ids(tokenizer, preceding))
-    content_ids = [int(value) for value in rendered_assistant_content_ids(
-        tokenizer, preceding, content)]
+    header_end = len(_plain_token_ids(
+        generation_prefix_ids(tokenizer, preceding),
+        f"assistant message {index} generation prefix",
+    ))
+    content_ids = _plain_token_ids(
+        rendered_assistant_content_ids(tokenizer, preceding, content),
+        f"assistant message {index} content",
+    )
     content_end = header_end + len(content_ids)
     message_end = starts[index + 1] if index + 1 < len(starts) else len(ids)
     if not (starts[index] < header_end < content_end <= message_end):
@@ -89,7 +116,7 @@ def complete_source_messages(
         raise V13SchemaError("history must start with a system message")
     if history_messages[-1].get("role") != "assistant":
         raise V13SchemaError("history must end with an assistant message")
-    if not isinstance(middle_end_msg, int) or not (
+    if type(middle_end_msg) is not int or not (
             2 < middle_end_msg < len(history_messages)):
         raise V13SchemaError("middle_end_msg is outside the history")
     if not isinstance(carrier_content, str) or not carrier_content.strip():
@@ -139,8 +166,10 @@ def build_role_native_plan(
         anchor_user=anchor_user,
         anchor_assistant=anchor_assistant,
     )
-    ids = [int(value) for value in canonical_ids_any(
-        tokenizer, messages, render_hf)]
+    ids = _plain_token_ids(
+        canonical_ids_any(tokenizer, messages, render_hf),
+        "role-native canonical stream",
+    )
     starts = message_starts(tokenizer, ids)
     if len(starts) != len(messages) or starts[0] != 0:
         raise V13SchemaError("canonical message-start coverage differs")
@@ -273,8 +302,10 @@ def build_fresh_destination_plan(
     )
     compact_messages = deepcopy(full_messages[:1]) + deepcopy(
         full_messages[middle_end_msg:])
-    compact_ids = [int(value) for value in canonical_ids_any(
-        tokenizer, compact_messages, render_hf)]
+    compact_ids = _plain_token_ids(
+        canonical_ids_any(tokenizer, compact_messages, render_hf),
+        "fresh compact canonical stream",
+    )
     if compact_ids != token_ids:
         raise V13SchemaError("fresh compact render differs from source mapping")
 
@@ -346,7 +377,10 @@ def build_probe_generation_prefix(
     messages = deepcopy(completed_source_messages) + [
         {"role": "user", "content": probe},
     ]
-    return [int(value) for value in generation_prefix_ids(tokenizer, messages)]
+    return _plain_token_ids(
+        generation_prefix_ids(tokenizer, messages),
+        "probe generation prefix",
+    )
 
 
 def probe_target_ids(
@@ -361,5 +395,7 @@ def probe_target_ids(
     preceding = deepcopy(completed_source_messages) + [
         {"role": "user", "content": probe},
     ]
-    return [int(value) for value in rendered_assistant_content_ids(
-        tokenizer, preceding, target)]
+    return _plain_token_ids(
+        rendered_assistant_content_ids(tokenizer, preceding, target),
+        "probe target content",
+    )

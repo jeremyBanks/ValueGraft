@@ -10,12 +10,15 @@ from pathlib import Path
 import pytest
 
 import powered_v13_stimuli as stimuli
+import powered_v13_tokens as token_plans
 from powered_v13_recipe import (
     STRATA,
     canonical_json_bytes,
     materialize_development_sentinel,
 )
-from powered_v13_schema import CARRIER_REQUEST, MODEL_ID, MODEL_REVISION
+from powered_v13_schema import (
+    CARRIER_REQUEST, MODEL_ID, MODEL_REVISION, V13SchemaError,
+)
 
 
 EXPECTED_SENTINEL_MATRIX_SHA256_BY_AUTHORIZATION_FIELDS = {
@@ -411,6 +414,7 @@ def test_forbidden_expansion_covers_unicode_case_punctuation_numbers_and_time(
         ("threshold_eligibility", "Q\u200bu\u200ba\u200br\u200bt\u200bz",
          "separator-insensitive"),
         ("threshold_eligibility", "Q'u'a'r't'z", "separator-insensitive"),
+        ("threshold_eligibility", "Qʼuʼaʼrʼtʼz", "separator-insensitive"),
         ("threshold_eligibility", "Q|u|a|r|t|z", "separator-insensitive"),
         ("threshold_eligibility", "Q\\u\\a\\r\\t\\z",
          "separator-insensitive"),
@@ -455,7 +459,9 @@ def test_case_declared_forbidden_phrases_are_accepted_expanded_and_hash_bound(
         stimuli.validate_carrier_attempt(
             tokenizer, fixture, text,
             **_carrier_args(tokenizer, fixture, text))
-    for obfuscated in ("veiled•checkpoint", "veiled\u200bcheckpoint"):
+    for obfuscated in (
+        "veiled•checkpoint", "veiled\u200bcheckpoint", "veiledʼcheckpoint",
+    ):
         text = stimuli.FROZEN_TEST_CARRIER_CONTENT.replace(
             "settled detail", obfuscated)
         with pytest.raises(stimuli.V13StimulusError,
@@ -610,6 +616,27 @@ def test_carrier_gate_rejects_token_text_mismatch(tokenizer):
         stimuli.validate_carrier_attempt(
             tokenizer, fixture, stimuli.FROZEN_TEST_CARRIER_CONTENT,
             **(args | {"generated_content_ids": altered_ids}))
+
+
+@pytest.mark.parametrize(
+    "boundary_name",
+    ("canonical_ids_any", "generation_prefix_ids",
+     "rendered_assistant_content_ids"),
+)
+@pytest.mark.parametrize("replacement_type", ("string", "float"))
+def test_full_sentinel_rejects_type_laundering_at_token_plan_boundaries(
+        tokenizer, monkeypatch, boundary_name, replacement_type):
+    original = getattr(token_plans, boundary_name)
+
+    def malformed(*args, **kwargs):
+        observed = original(*args, **kwargs)
+        if replacement_type == "string":
+            return [str(value) for value in observed]
+        return [float(value) for value in observed]
+
+    monkeypatch.setattr(token_plans, boundary_name, malformed)
+    with pytest.raises(V13SchemaError, match="non-plain"):
+        stimuli.validate_development_sentinel(tokenizer, _fixture())
 
 
 def test_carrier_gate_rejects_same_decoded_text_with_noncanonical_exact_ids(
