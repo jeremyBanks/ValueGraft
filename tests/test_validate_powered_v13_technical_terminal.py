@@ -108,8 +108,12 @@ def _preterminal(root: Path, *, case_id="technical_e01"):
         bindings=[bundle, descriptor, receipt],
     )
     for index, arm in enumerate(PRIMARY_ARMS, start=1):
-        checkpoint = _binding(root, f"arm_{arm}_checkpoint", arm)
-        artifact = _binding(root, f"arm_{arm}_artifact", arm)
+        checkpoint = _binding(
+            root, f"arm_{arm}_checkpoint",
+            "a-FF" if arm == "FF" else arm)
+        artifact = _binding(
+            root, f"arm_{arm}_artifact",
+            "z-FF" if arm == "FF" else arm)
         _append(
             root, identity, f"ARM_{arm}", arms=PRIMARY_ARMS[:index],
             payload={
@@ -223,7 +227,7 @@ def test_validator_rejects_corrupt_partial_or_forged_preterminal_chain(
         tmp_path, mutation, match):
     identity, identity_path, evidence_path = _preterminal(tmp_path)
     if mutation == "artifact":
-        artifact = next((tmp_path / "artifacts").glob("FF-arm_FF_artifact.bin"))
+        artifact = next((tmp_path / "artifacts").glob("*arm_FF_artifact.bin"))
         artifact.write_bytes(b"changed")
     elif mutation == "evidence":
         evidence = store._strict_json(evidence_path.read_bytes(), "evidence")
@@ -278,3 +282,17 @@ def test_validator_source_has_no_store_import():
     source = SCRIPT.read_text()
     assert "import powered_v13_store" not in source
     assert "from powered_v13_store" not in source
+
+
+def test_validator_rejects_symlinked_active_case_ancestor(tmp_path):
+    identity, identity_path, evidence_path = _preterminal(tmp_path)
+    digest = store.identity_sha256(identity)
+    case_directory = tmp_path / "active" / digest
+    outside = tmp_path.parent / f"{tmp_path.name}-external-case"
+    case_directory.rename(outside)
+    case_directory.symlink_to(outside, target_is_directory=True)
+    with pytest.raises(validator.IndependentTerminalValidationError,
+                       match="active case path contains a symlink"):
+        validator.validate_preterminal_chain(
+            root=tmp_path, identity_path=identity_path,
+            terminal_evidence_path=evidence_path, runner_pid=PID)

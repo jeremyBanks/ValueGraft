@@ -201,8 +201,12 @@ def _bindings(root: Path, value: object,
         _require(path.stat().st_size == size and file_sha256(path) == digest,
                  f"artifact {index} external bytes differ")
         rows.append(dict(row))
-    _require([row["kind"] for row in rows] == sorted(expected_kinds),
-             "artifact kind set/order differs")
+    _require(len(rows) == len(expected_kinds)
+             and {row["kind"] for row in rows} == set(expected_kinds),
+             "artifact kind set differs")
+    _require([row["path"] for row in rows] == sorted(
+        row["path"] for row in rows),
+        "artifact bindings are not in canonical path order")
     _require(len({row["path"] for row in rows}) == len(rows),
              "artifact binding path repeats")
     return rows
@@ -285,7 +289,23 @@ def validate_preterminal_chain(
         and _UTC.fullmatch(lock["created_utc"]) is not None,
         "active lock identity/process binding differs")
 
-    record_directory = root / lock["case_dir"] / "records"
+    case_relative = PurePosixPath(lock["case_dir"])
+    _require(not case_relative.is_absolute()
+             and all(part not in {"", ".", ".."}
+                     for part in case_relative.parts),
+             "active case path is unsafe")
+    case_directory = root
+    for part in case_relative.parts:
+        case_directory = case_directory / part
+        _require(not case_directory.is_symlink(),
+                 "active case path contains a symlink")
+    try:
+        case_directory.resolve(strict=True).relative_to(
+            root.resolve(strict=True))
+    except (OSError, ValueError) as exc:
+        raise IndependentTerminalValidationError(
+            "active case path is absent or escapes root") from exc
+    record_directory = case_directory / "records"
     _require(not record_directory.is_symlink() and record_directory.is_dir(),
              "active record directory differs")
     paths = sorted(record_directory.iterdir())
