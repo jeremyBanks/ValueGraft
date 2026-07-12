@@ -134,7 +134,7 @@ Several earlier headline claims from this stratum are void or retired, and we li
 
 The strongest surviving performance lead in the repository is a **likelihood proxy on historical coding-agent trajectories**, and we are careful to describe it as exactly that.
 
-**Setup.** The source paper describes the released 491 SWE-Gym/OpenHands trajectories as successful, rejection-sampled rollouts from `gpt-4o-2024-08-06` and `claude-3-5-sonnet-20241022`; the local ignored/untracked parquet preserves only a `messages` column, so row-level generator attribution and the immutable upstream revision are unavailable. The 30B subject did not generate the trajectory bodies. It generated a brief compaction summary; unlike the legacy stratum, the source state used by the graft was the *actual generation-mutated snapshot*. The intervention combined summary and retained-tail values. A layer map (α = 1 on layers 12–17 and 30–35) was selected on 41 fresh-pool trajectory rows, evaluated on 57 row-disjoint fresh trajectories, and partially confirmed on 45 of a planned 75 original-pool trajectories. The row split hashed trajectory index rather than task identity; a later audit recovered an exact observable-task surrogate and found task overlap (§5 below). The metric is teacher-forced mean token log-probability of the *historically demonstrated next action*: the model scores a fixed saved continuation rather than sampling an answer, in natural-log units per target token (nats/token).
+**Setup.** The source paper describes the released 491 SWE-Gym/OpenHands trajectories as successful, rejection-sampled rollouts from `gpt-4o-2024-08-06` and `claude-3-5-sonnet-20241022`; the local ignored/untracked parquet preserves only a `messages` column, so row-level generator attribution and the immutable upstream revision are unavailable. The 30B subject did not generate the trajectory bodies: it prefilled that foreign text into a growing cache, then decoded its own brief compaction summary. Unlike the legacy stratum, the source state used by the graft was the actual live snapshot from that process, but its retained-tail rows were prefill-written from imported GPT-4o/Claude text; only its summary rows were generation-written by the 30B subject. The intervention combined summary and retained-tail values. A layer map (α = 1 on layers 12–17 and 30–35) was selected on 41 fresh-pool trajectory rows, evaluated on 57 row-disjoint fresh trajectories, and partially confirmed on 45 of a planned 75 original-pool trajectories. The row split hashed trajectory index rather than task identity; a later audit recovered an exact observable-task surrogate and found task overlap (§5 below). The metric is teacher-forced mean token log-probability of the *historically demonstrated next action*: the model scores a fixed saved continuation rather than sampling an answer, in natural-log units per target token (nats/token).
 
 **The fixed scalar under the brief summary.** Two runs scored the same original 75 IDs under the same brief-summary request but different prefill schedules, so they are not repeats and must not be averaged. The legacy single-call run gives +0.0156 nats/token, nominal 95% bootstrap CI [+0.0049, +0.0271]; the later 4,096-token-chunked run gives +0.0133 [+0.0016, +0.0263]. Summary-token counts differ for 64/75 IDs (t0001: 84 versus 131); the paired chunked-minus-single-call graft-effect contrast is −0.0023 [−0.0110, +0.0065], an apparatus contrast rather than an isolated schedule effect because the summaries and downstream states were regenerated.
 
@@ -150,6 +150,8 @@ The same fixed scalar also swung across the pre-existing hash halves of the late
 
 The 102 rows are row-level out-of-fitting for this layer map, but not fully task-disjoint. Hashing the exact initial task description with its versioned workspace recovered 293 observable task clusters across all 491 rows. Seven fitting-task clusters recurred in eight of the 102 rows. Removing every such row left 94 rows / 69 tasks: **+0.0142** with task-cluster interval **[+0.0079, +0.0206]**. Thus task overlap did not generate the pooled sign, but the strict analysis is post hoc and does not retroactively make the split task-preregistered. The research program had also inspected the original pool in earlier scalar runs, confirmation stopped at a budget-capped prefix of 45/75, and many analyses preceded this one. All intervals remain nominal, pool-conditional, and not multiplicity-adjusted confirmation intervals.
 
+The layer selection itself has no detected advantage over the fixed scalar graft. On the same descriptive 102-row pool, selected minus fixed was only **+0.0017** nats/token with a nominal row-bootstrap interval **[−0.0056, +0.0088]**. The positive compacted-baseline contrast therefore cannot be attributed specifically to the selected layer map.
+
 **Why this is not an agent result.** Every one of the following caveats binds:
 
 - The target is one historically demonstrated next action, not necessarily the unique correct action.
@@ -164,7 +166,7 @@ The 102 rows are row-level out-of-fitting for this layer map, but not fully task
 
 The selected-map lead therefore has no demonstrated bearing on ordinary deployed compaction: it appears only under the intentionally detail-stripping brief request, while the realistic-summary scalar is null and the selected map was not run in that condition.
 
-Several alternatives fit the selected-map likelihood movement. Layer selection may change generic confidence or calibration; a teacher demonstration measures imitation likelihood rather than correctness; pool composition may explain the heterogeneous scalar result; and without a map-matched delta control, content-specific recovery cannot be separated from layer-specific perturbation. The combined tail+summary intervention also does not identify where the signal lives. From the hash-matched local parquet, every one of the 173 reconstructible tails was one complete contiguous matching block; on the fresh 57, at least **93.38%** of pooled aligned-position mass was retained tail. Exact summary alignment is unrecoverable because generated summary text/token IDs were not saved. The small likelihood movement could therefore be wholly mediated by copying full-history-conditioned values for recent verbatim tail text, without recovering anything from the compacted-away region. A tail-only ablation is the first required decomposition. The structural-match wash supplies no corroborating action-level movement.
+Several alternatives fit the selected-map likelihood movement. Layer selection may change generic confidence or calibration; a teacher demonstration measures imitation likelihood rather than correctness; pool composition may explain the heterogeneous scalar result; and without a map-matched delta control, content-specific recovery cannot be separated from layer-specific perturbation. The combined tail+summary intervention also does not identify where the signal lives. From the hash-matched local parquet, every one of the 173 reconstructible tails was one complete contiguous matching block; on the fresh 57, at least **93.38%** of pooled aligned-position mass was retained tail. Exact summary alignment is unrecoverable because generated summary text/token IDs were not saved. Those tail rows were computed by the 30B subject while prefilling foreign historical text, not while generating its own conversation. The small likelihood movement could therefore be wholly mediated by copying full-history-conditioned prefill values for recent verbatim tail text, without recovering either generation-written conversation state or anything from the compacted-away region. A tail-only ablation is the first required decomposition. The structural-match wash supplies no corroborating action-level movement.
 
 The licensed sentence is: *a selected-map, demonstrated-next-action likelihood lead of about +0.013 nats/token on trajectory rows not used to fit the map; the sign survived task-cluster resampling and a post-hoc removal of fitting-task overlap, but the result has no matched placebo, executed action, or task-success endpoint.* It is a reason the question stays open; it is not coding-agent improvement.
 
@@ -270,6 +272,17 @@ before P01 values were opened, but the decision to spend on P02 was made after
 P01 looked interesting. P02 completed two repeats in each regime. Neither run
 reopens formal v12. P02's runner status `COMPLETE` and terminal `PASS` receipt
 are operational labels, not scientific verdicts.
+
+This was a genuine eligible-linear four-bit regime, not a label inferred from a
+checkpoint name. Both pod admission records observed bitsandbytes
+`load_in_4bit=true`, NF4 double quantization, uint8 quantization storage, and
+bfloat16 configured linear compute. They counted 18,672 `Linear4bit` modules
+(18,432 expert, 192 attention, and 48 router linears) and exact coverage of all
+29,909,581,824 eligible logical linear-weight elements. `lm_head` remained the
+sole ordinary linear; embeddings, norms, and other non-eligible parameters were
+not four-bit. The comparison is therefore a four-bit eligible-linear-weight and
+kernel regime versus an unquantized bfloat16-weight regime, with bfloat16 K/V in
+both—not a four-bit-KV test or an isolated causal quantization contrast.
 
 The screen used Transformers 4.57.6 rather than the Transformers 5.0.0 stack of
 §§6–8. Its bfloat16 regime is therefore descriptive cross-stack context for the
@@ -405,6 +418,16 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 - Any cross-architecture generalization.
 - Whether weight quantization or KV-cache dtype changes the effect. The precision screen's exactly reproducible regime differences on one fixture do not answer this: NF4 versus bfloat16 bundles weight representation with kernel implementation, and KV-cache storage was bfloat16 in both (§8.4).
 
+The July 8 methods/provenance checklist also contains substantive claims that
+were believed at the time but later audits superseded. We retain and answer its
+literal provenance questions; we do **not** repeat as findings its
+native-context recovery claim, referent-over-sense-over-stance dissociation,
+keys-neutral claim, or cross-architecture geometry and dense/MoE deconfound
+claims. No clean per-model-native cross-architecture study was completed, and
+those historical claims are retired. The checkpoint, data-origin,
+intervention, scoring, exclusion, and reproducibility facts that survive are
+reported in this paper.
+
 **Also deliberately absent:** an overall cost figure. The end-to-end money/token audit is still open under `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` and will be reported separately, distinguishing cash, subscription usage, provider credits, list-price equivalents, estimates, lower bounds, and unknowns.
 
 ---
@@ -510,7 +533,7 @@ Replay schedule N forces historical assistant content token by token (q = 1); P 
 
 ### A.4 Reproducibility boundary
 
-The legacy and SWE paper statistics are exactly recomputable from committed score rows using the scripts in Appendix B. Exact forward inference is not. Legacy headline artifacts omit a trustworthy code commit; the three head-derived variants also lack their originating fitting profile/config/log, and the 4B body-generation records omit checkpoint revision, runtime, and code commit. SWE tune/evaluation manifests have null code bindings, while the parquet, generated summary texts, target token IDs, and complete free generations are not tracked. A committed hash-bound artifact preserves the post-hoc task/repository surrogate mapping, but recreating the mapping or exact tail geometry requires the ignored parquet; exact summary dose and end-to-end structural reparsing remain impossible. E01 differs: its 8,897,066-byte raw score record is byte-for-byte reconstructible from the committed package and re-harvests to the paper table. But its K/V tensor values were never saved, so a new placebo or control requires rerunning the model. The ~39.84 MiB control bundle and ~480.94 MiB five-snapshot figure are future-design storage estimates, not existing artifacts.
+The legacy statistics and SWE row-level paper metrics are recomputable from committed score rows. The SWE task-clustered intervals and tail-dose audit additionally require the exact hash-bound but ignored `swegym.parquet`; their committed derived artifacts preserve the reported outputs and hashed task mapping, but the supplied scripts do not recompute them on a clean clone without that parquet. Exact forward inference is not reproducible. Legacy headline artifacts omit a trustworthy code commit; the three head-derived variants also lack their originating fitting profile/config/log, and the 4B body-generation records omit checkpoint revision, runtime, and code commit. SWE tune/evaluation manifests have null code bindings, while the parquet, generated summary texts, target token IDs, and complete free generations are not tracked. A committed hash-bound artifact preserves the post-hoc task/repository surrogate mapping, but recreating the mapping or exact tail geometry requires the ignored parquet; exact summary dose and end-to-end structural reparsing remain impossible. E01 differs: its 8,897,066-byte raw score record is byte-for-byte reconstructible from the committed package and re-harvests to the paper table. But its K/V tensor values were never saved, so a new placebo or control requires rerunning the model. The ~39.84 MiB control bundle and ~480.94 MiB five-snapshot figure are future-design storage estimates, not existing artifacts.
 
 ### A.5 Local schedule diagnostic
 
@@ -537,7 +560,12 @@ huggingface-hub 0.36.2, safetensors 0.8.0, and tokenizers 0.22.2. This differs
 from the Transformers 5.0.0 stack in A.3, so the bfloat16 screen is descriptive
 cross-stack context for the earlier diagnostic, not a same-stack replication.
 
-P01 ran on a distinct A100 host (driver `580.159.04`) and was interrupted; its
+P01 ran from commit
+`f67d631e8a31177118c62eb0da8b8acfc059de41`, under preregistration SHA-256
+`5619c5ced93f2e60564fcc2c98e24fd9bbf687f93b6cab6132f5be2105cda374`,
+on an A100 80GB PCIe host with GPU UUID
+`GPU-470c3e18-9f87-0a04-f3bd-e974d59e1903`, 81,920 MiB, Linux
+`6.8.0-124-generic`, and driver `580.159.04`; it was interrupted and its
 analysis is post-run and partial. P02 ran on an A100 80GB PCIe host with GPU
 UUID `GPU-8a42830e-71ab-fb23-351d-125ccbd5bdb2`, driver `580.159.03`, and
 81,920 MiB, from launch commit
@@ -561,6 +589,14 @@ arm inventories differ. Saved generation records preserve content-token IDs,
 decoded text, stop reasons, and hashes, but not alternate first-token logits.
 Provider-settlement records feeding the still-open end-to-end cost audit are
 retained under `results/precision_probe_p02/`.
+
+The NF4 load gate was itself persisted on both pods. Each observed
+`load_in_4bit=true`, NF4 double quantization, uint8 quantization storage,
+bfloat16 configured compute, 18,672 `Linear4bit` modules (18,432 expert, 192
+attention, and 48 router linears), and 29,909,581,824 / 29,909,581,824 eligible
+logical linear-weight elements covered. `lm_head` was the only ordinary linear;
+embeddings, norms, and other non-eligible parameters were not four-bit. K/V tensors
+were bfloat16 in every layer in both regimes.
 
 ## Appendix B: Artifact map
 
@@ -599,7 +635,7 @@ retained under `results/precision_probe_p02/`.
 | P02 receipt-bound packages, renders, runtime, logs, and settlement | `results/precision_probe_p02/` |
 | P02 independent analysis | `results/precision_probe_p02_analysis/precision-probe-p02-independent-analysis_Qwen3-30B-A3B-Instruct-2507_20260712T114104839688Z.json` (SHA-256 `7b4b77e178f0b50d532459512dd028a044877627d4490197510eba135d5ab551`) |
 | P01↔P02 exact common-field comparison | `results/precision_probe_p01_p02_comparison/precision-probe-p01-p02-exact-comparison_Qwen3-30B-A3B-Instruct-2507_20260712T120014514457Z.json` (SHA-256 `588229df5f4ca5c8613dc4f21564043214bfe889fc4dba176300ace0435442be`) |
-| P02 frozen expectations, advisory review, and final interpretation | `notes/20260712A8-sol-p02-conditional-replication-expectations-and-launch-decision.md`; `notes/20260712A9-fable-p02-result-interpretation-and-paper-disposition.md`; `notes/20260712AA-sol-p02-final-interpretation-and-fable-disposition.md` |
+| P02 frozen expectations, advisory review, final interpretation, and four-bit completion gate | `notes/20260712A8-sol-p02-conditional-replication-expectations-and-launch-decision.md`; `notes/20260712A9-fable-p02-result-interpretation-and-paper-disposition.md`; `notes/20260712AA-sol-p02-final-interpretation-and-fable-disposition.md`; `notes/20260712AD-sol-four-bit-pod-comparison-completion-gate.md` |
 | End-to-end accounting requirement | `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` |
 | Methods/provenance checklist (questions, not answers) | `METHODS-PROVENANCE-REQUIREMENTS.md` |
 
@@ -616,7 +652,11 @@ uv run python scripts/analyze_coherent_canary_v12_e01_tokens.py \
   --output /tmp/e01-token-decomposition.json
 ```
 
-Zero-GPU paper-table recomputation:
+Zero-GPU paper-table recomputation from the retained local research environment
+is shown below. The clustering and dose commands require the exact local
+`swegym.parquet` whose SHA-256 is reported in §5; the dose command also requires
+the pinned tokenizer in the local Hugging Face cache. Those two commands do not
+run from a clean clone containing only tracked files.
 
 ```bash
 uv run python src/analyze_legacy_source_split.py --output /tmp/legacy-source-split.json
