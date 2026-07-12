@@ -1,0 +1,47 @@
+{
+  "schema": "precision_probe_p02_launch_authorization_v1",
+  "protocol_id": "precision-probe-p02",
+  "status": "AUTHORIZED_ONCE",
+  "authorized_at_utc": "2026-07-12T10:27:50Z",
+  "authorized_by": "Sol — gpt-5.6-sol-xhigh",
+  "authorization_parent_commit": "99d4658a5dbeb899ca2af0b0a096d5878615e61d",
+  "authorized_launch_commit_rule": "the clean pushed trunk commit containing this immutable authorization record",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "preregistration_sha256": "dbcece8f189a0574b776149cf597dc1ce8a3b592981440062c749ddb404e221d",
+  "formal_v12_decision_eligible": false,
+  "v12_reentry_authorized": false,
+  "component_reuse_does_not_inherit_v12_eligibility": true,
+  "semantic_evidence_eligible": false,
+  "conditional_replication_after_p01_access": true,
+  "automatic_retry_authorized": false,
+  "scientific_rerun_authorized": false,
+  "scientific_budget_usd": 3.9,
+  "absolute_provider_envelope_usd": 4.0,
+  "runpod_prelaunch_balance_usd": 58.8111503024,
+  "runpod_spend_limit_usd": 80.0,
+  "active_pods_observed": 0,
+  "p02_active_guard_observed_absent": true,
+  "apparatus_sha256": {
+    "scientific_runner": "8e90461d46bc16690674c62e981c585195a70a0a26d939090f2ba7043dbfa8ec",
+    "targeted_case": "b82d6f56053d511ffc4c43d2356cf25933701861263a1866c55674d539656167",
+    "independent_analyzer": "19adcddcf776d0094bee7c68d29027d36b7f35367a3ee2b5af86861f458f92b3",
+    "pod_job": "4a1cb8c8cc83fc0bdb7c818f2dd918f88f1f9b48794ae97046932a1de42bef33",
+    "local_launcher_watchdog": "ff4d97d2f1255bf44fb6e31a511283e68162a576d0c8a9fe0acbdc7ab906b942",
+    "receipt_driven_puller": "ee5d29d14863a4766d714e5871c8b793755d5ab94d5aab7d6a44cef5102aeedb"
+  },
+  "observed_validation": {
+    "bash_parse": "PASS",
+    "shellcheck": "PASS",
+    "focused_and_reused_component_tests": "101 passed, 2 unrelated SWIG deprecation warnings",
+    "independent_analyzer_real_p02_tree_exercised": false,
+    "independent_analyzer_residual": "No real P02 artifact exists before launch; package, tamper, grid, formula, eligibility, repeat, and claim-boundary contracts were tested synthetically."
+  },
+  "decision_records": [
+    "PRECISION-PROBE-P02-PREREGISTRATION.md",
+    "notes/20260712A6-sol-p01-independent-partial-analysis.md",
+    "notes/20260712A7-fable-p02-launch-value-review.md",
+    "notes/20260712A8-sol-p02-conditional-replication-expectations-and-launch-decision.md"
+  ],
+  "authorization_scope": "One provider allocation and one P02 execution. Any scientific result is terminal for this protocol. A pre-subject operational failure may be considered for one separately recorded reprovision only under the A8 boundary; this record itself does not authorize that reprovision."
+}
