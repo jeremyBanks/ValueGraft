@@ -10,6 +10,7 @@ analysis contains six fixtures from every one of eight fixed strata.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 import math
 from typing import Iterable, Mapping, Sequence
 
@@ -23,9 +24,12 @@ CELLS = ("full_kv", "value_only")
 RENDER_IDS = ("r1", "r2")
 FINAL_N = 48
 PER_STRATUM = 6
-FAMILY_ALPHA = 0.05
-MEAN_FAMILY_ALPHA = 0.04
-TAIL_ALPHA = 0.01
+_FAMILY_ALPHA_EXACT = Fraction(1, 20)
+_MEAN_FAMILY_ALPHA_EXACT = Fraction(1, 25)
+_TAIL_ALPHA_EXACT = Fraction(1, 100)
+FAMILY_ALPHA = float(_FAMILY_ALPHA_EXACT)
+MEAN_FAMILY_ALPHA = float(_MEAN_FAMILY_ALPHA_EXACT)
+TAIL_ALPHA = float(_TAIL_ALPHA_EXACT)
 CLIP_LOWER = -0.5
 CLIP_UPPER = 0.5
 DELTA_CLIP = 0.35
@@ -42,7 +46,8 @@ def _require(condition: bool, message: str) -> None:
 
 
 def _finite_number(value: object, label: str) -> float:
-    _require(isinstance(value, (int, float, np.integer, np.floating)),
+    _require(not isinstance(value, (bool, np.bool_)) and
+             isinstance(value, (int, float, np.integer, np.floating)),
              f"{label} is not numeric")
     out = float(value)
     _require(math.isfinite(out), f"{label} is nonfinite")
@@ -62,7 +67,9 @@ class FixtureValue:
         _require(isinstance(self.case_id, str) and self.case_id,
                  "case_id is empty")
         _require(self.stratum in STRATA, f"unknown stratum {self.stratum!r}")
-        _require(isinstance(self.eligible_rank, int) and self.eligible_rank >= 1,
+        _require(not isinstance(self.eligible_rank, bool) and
+                 isinstance(self.eligible_rank, int) and
+                 self.eligible_rank >= 1,
                  "eligible_rank must be a positive integer")
         _finite_number(self.full_kv, "full_kv")
         _finite_number(self.value_only, "value_only")
@@ -75,15 +82,13 @@ class FixtureValue:
             _require(render_id in RENDER_IDS, "invalid render ID")
             _finite_number(full_kv, f"{self.case_id}:{render_id}:full_kv")
             _finite_number(value_only, f"{self.case_id}:{render_id}:value_only")
-        _require(math.isclose(
-            self.full_kv,
-            sum(row[1] for row in self.render_values) / 2.0,
-            rel_tol=0.0, abs_tol=1e-15),
+        _require(
+            self.full_kv ==
+            math.fsum(row[1] for row in self.render_values) / 2.0,
             f"{self.case_id} full_kv is not the render mean")
-        _require(math.isclose(
-            self.value_only,
-            sum(row[2] for row in self.render_values) / 2.0,
-            rel_tol=0.0, abs_tol=1e-15),
+        _require(
+            self.value_only ==
+            math.fsum(row[2] for row in self.render_values) / 2.0,
             f"{self.case_id} value_only is not the render mean")
         return self
 
@@ -113,7 +118,9 @@ def collapse_render_rows(rows: Iterable[Mapping[str, object]]) -> list[FixtureVa
         ranks = {row.get("eligible_rank") for row in case_rows}
         _require(len(strata) == 1 and next(iter(strata)) in STRATA,
                  f"{case_id} stratum differs")
-        _require(len(ranks) == 1 and isinstance(next(iter(ranks)), int),
+        _require(len(ranks) == 1 and
+                 not isinstance(next(iter(ranks)), bool) and
+                 isinstance(next(iter(ranks)), int),
                  f"{case_id} eligible rank differs")
         ordered = sorted(case_rows, key=lambda row: str(row["render_id"]))
         render_values = tuple(
@@ -126,8 +133,8 @@ def collapse_render_rows(rows: Iterable[Mapping[str, object]]) -> list[FixtureVa
             case_id=case_id,
             stratum=str(next(iter(strata))),
             eligible_rank=int(next(iter(ranks))),
-            full_kv=sum(row[1] for row in render_values) / 2.0,
-            value_only=sum(row[2] for row in render_values) / 2.0,
+            full_kv=math.fsum(row[1] for row in render_values) / 2.0,
+            value_only=math.fsum(row[2] for row in render_values) / 2.0,
             render_values=render_values,
         ).validate()
         fixtures.append(fixture)
@@ -151,7 +158,7 @@ def select_final_sample(fixtures: Sequence[FixtureValue]) -> list[FixtureValue]:
     for stratum in STRATA:
         members = sorted(
             (fixture for fixture in fixtures if fixture.stratum == stratum),
-            key=lambda fixture: fixture.eligible_rank)
+            key=lambda fixture: (fixture.eligible_rank, fixture.case_id))
         ranks = [fixture.eligible_rank for fixture in members]
         _require(len(ranks) == len(set(ranks)),
                  f"duplicate eligible rank in {stratum}")
@@ -209,9 +216,12 @@ def responder_prevalence_ucb(successes: int, n: int, alpha: float) -> float:
 
 
 def analyze_primary(fixtures: Sequence[FixtureValue]) -> PrimaryResult:
+    # Arithmetic order is frozen: STRATA order, then eligible rank/case ID,
+    # then CELLS order.  All reported means use math.fsum so the production and
+    # stdlib-only recomputation do not inherit a backend reduction algorithm.
     selected = select_final_sample(fixtures)
     cell_results: dict[str, BoundedCellResult] = {}
-    gamma = MEAN_FAMILY_ALPHA / len(CELLS)
+    gamma = float(_MEAN_FAMILY_ALPHA_EXACT / len(CELLS))
     radius = (CLIP_UPPER - CLIP_LOWER) * math.sqrt(
         math.log(1.0 / gamma) / (2.0 * FINAL_N))
     for cell in CELLS:
@@ -226,11 +236,16 @@ def analyze_primary(fixtures: Sequence[FixtureValue]) -> PrimaryResult:
                                for fixture in selected])
             _require(int(mask.sum()) == PER_STRATUM,
                      f"{stratum} count differs")
-            raw_strata[stratum] = float(raw[mask].mean())
-            clipped_strata[stratum] = float(clipped[mask].mean())
-        clipped_mean = float(clipped.mean())
+            raw_strata[stratum] = (
+                math.fsum(float(value) for value in raw[mask]) /
+                PER_STRATUM)
+            clipped_strata[stratum] = (
+                math.fsum(float(value) for value in clipped[mask]) /
+                PER_STRATUM)
+        clipped_mean = math.fsum(float(value) for value in clipped) / FINAL_N
         cell_results[cell] = BoundedCellResult(
-            cell=cell, raw_mean=float(raw.mean()),
+            cell=cell,
+            raw_mean=math.fsum(float(value) for value in raw) / FINAL_N,
             clipped_mean=clipped_mean, radius=radius,
             ucb=min(CLIP_UPPER, clipped_mean + radius), alpha=gamma,
             clipped_count_low=int(np.sum(raw < CLIP_LOWER)),
@@ -272,20 +287,23 @@ def nominal_stratified_t_ucb(fixtures: Sequence[FixtureValue], *, cell: str,
     _require(0.0 < alpha < 1.0, "nominal alpha outside (0,1)")
     selected = select_final_sample(fixtures)
     weight = 1.0 / len(STRATA)
-    estimate = 0.0
+    stratum_estimates: list[float] = []
     components: list[float] = []
     for stratum in STRATA:
         values = np.asarray([getattr(fixture, cell) for fixture in selected
                              if fixture.stratum == stratum], dtype=np.float64)
-        estimate += weight * float(values.mean())
+        stratum_mean = math.fsum(float(value) for value in values) / values.size
+        stratum_estimates.append(weight * stratum_mean)
         variance = (0.0 if bool(np.all(values == values[0]))
                     else float(values.var(ddof=1)))
         components.append(weight * weight * variance / values.size)
-    variance_estimate = sum(components)
+    estimate = math.fsum(stratum_estimates)
+    variance_estimate = math.fsum(components)
     if variance_estimate <= 0.0:
         return NominalCellResult(cell, estimate, None, None, None, None, alpha)
-    denominator = sum(component * component / (PER_STRATUM - 1)
-                      for component in components if component > 0.0)
+    denominator = math.fsum(
+        component * component / (PER_STRATUM - 1)
+        for component in components if component > 0.0)
     _require(denominator > 0.0, "nominal df denominator is zero")
     degrees = variance_estimate * variance_estimate / denominator
     critical = float(stats.t.ppf(1.0 - alpha, degrees))
@@ -334,19 +352,24 @@ def hoeffding_ucb(values: Sequence[float], *, lower: float, upper: float,
              "value lies outside preregistered bounds")
     radius = (upper - lower) * math.sqrt(
         math.log(1.0 / alpha) / (2.0 * len(array)))
-    return min(upper, float(np.mean(array)) + radius)
+    mean = math.fsum(float(value) for value in array) / len(array)
+    return min(upper, mean + radius)
 
 
 def alpha_ledger() -> dict[str, object]:
+    cell_alpha_exact = _MEAN_FAMILY_ALPHA_EXACT / len(CELLS)
+    exact_spent = len(CELLS) * cell_alpha_exact + _TAIL_ALPHA_EXACT
+    _require(exact_spent == _FAMILY_ALPHA_EXACT,
+             "exact primary alpha ledger does not sum to 1/20")
     events = [
         {"n_total": FINAL_N, "endpoint": "clipped_mean",
-         "cell": cell, "alpha": MEAN_FAMILY_ALPHA / len(CELLS)}
+         "cell": cell, "alpha": float(cell_alpha_exact)}
         for cell in CELLS
     ] + [{
         "n_total": FINAL_N, "endpoint": "large_responder_prevalence",
-        "cell": "any_primary_cell", "alpha": TAIL_ALPHA,
+        "cell": "any_primary_cell", "alpha": float(_TAIL_ALPHA_EXACT),
     }]
     spent = math.fsum(float(event["alpha"]) for event in events)
-    _require(math.isclose(spent, FAMILY_ALPHA, rel_tol=0.0, abs_tol=1e-15),
+    _require(spent == FAMILY_ALPHA,
              "primary alpha ledger does not sum to 0.05")
     return {"family_alpha": FAMILY_ALPHA, "spent": spent, "events": events}
