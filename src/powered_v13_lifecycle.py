@@ -119,6 +119,16 @@ class PodNotFound(V13LifecycleError):
 class AdmissionRejected(V13LifecycleError):
     """The allocated host failed the exact secure-A100 admission."""
 
+    def __init__(
+        self, message: str, *, stage: str = "REMOTE_HOST_ATTESTATION",
+        code: str = "REMOTE_HOST_ATTESTATION_REJECTED",
+        evidence: Mapping[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.stage = stage
+        self.code = code
+        self.evidence = deepcopy(dict(evidence or {}))
+
 
 def _require(condition: bool, message: str) -> None:
     if not condition:
@@ -463,25 +473,30 @@ class RunPodProvider:
         for pod_id in new_ids:
             try:
                 pod = self.get_pod(pod_id)
+                provider_shape = _validate_provider_allocation_shape(pod)
                 rate = self._provider_money(
                     pod.get("costPerHr"), "recovered Pod rate")
                 valid = bool(
                     Decimal(rate) > 0
-                    and pod.get("name") == evidence["provider_name"]
-                    and pod.get("cloudType") == "SECURE"
-                    and type(pod.get("gpuCount")) is int
-                    and pod.get("gpuCount") == 1)
+                    and pod.get("name") == evidence["provider_name"])
                 inspections.append({
                     "pod_id": pod_id, "nonce_name_matches":
                         pod.get("name") == evidence["provider_name"],
-                    "secure_one_gpu": pod.get("cloudType") == "SECURE"
-                        and type(pod.get("gpuCount")) is int
-                        and pod.get("gpuCount") == 1,
+                    "secure_one_gpu": True,
+                    "provider_allocation": provider_shape,
                     "canonical_cost_per_hr_usd": rate,
                     "attributable": valid,
                 })
                 if valid:
                     attributable.append((pod_id, rate))
+            except AdmissionRejected as exc:
+                inspections.append({
+                    "pod_id": pod_id, "attributable": False,
+                    "inspection_error_type": type(exc).__name__,
+                    "admission_failure_stage": exc.stage,
+                    "admission_failure_code": exc.code,
+                    "provider_allocation": exc.evidence,
+                })
             except BaseException as exc:
                 inspections.append({
                     "pod_id": pod_id, "attributable": False,
@@ -1351,10 +1366,68 @@ def _verify_remote_setup_release_binding(
     )
 
 
-def validate_admission(pod: Mapping[str, Any], evidence: Mapping[str, Any]) -> dict[str, Any]:
-    _require(pod.get("cloudType") == "SECURE", "allocated host is not secure cloud")
-    _require(type(pod.get("gpuCount")) is int and pod.get("gpuCount") == 1,
-             "allocated host does not have one GPU")
+def _provider_allocation_observation(pod: Mapping[str, Any]) -> dict[str, Any]:
+    machine = pod.get("machine") if isinstance(pod, Mapping) else None
+    return {
+        "schema": "runpod-secure-allocation-shape-v1",
+        "machine_present": isinstance(machine, Mapping),
+        "machine_secure_cloud": (
+            machine.get("secureCloud") if isinstance(machine, Mapping)
+            and type(machine.get("secureCloud")) is bool else None),
+        "machine_gpu_type_id": (
+            machine.get("gpuTypeId") if isinstance(machine, Mapping)
+            and isinstance(machine.get("gpuTypeId"), str) else None),
+        "gpu_count": (
+            pod.get("gpuCount") if isinstance(pod, Mapping)
+            and type(pod.get("gpuCount")) is int else None),
+        "top_level_cloud_type_present": (
+            isinstance(pod, Mapping) and "cloudType" in pod),
+        "top_level_cloud_type": (
+            pod.get("cloudType") if isinstance(pod, Mapping)
+            and isinstance(pod.get("cloudType"), str) else None),
+    }
+
+
+def _validate_provider_allocation_shape(
+    pod: Mapping[str, Any],
+) -> dict[str, Any]:
+    observed = _provider_allocation_observation(pod)
+
+    def reject(condition: bool, message: str, code: str) -> None:
+        if not condition:
+            raise AdmissionRejected(
+                message, stage="PROVIDER_ALLOCATION_SCHEMA", code=code,
+                evidence=observed)
+
+    machine = pod.get("machine") if isinstance(pod, Mapping) else None
+    reject(isinstance(machine, Mapping),
+           "allocated host machine metadata is absent",
+           "PROVIDER_MACHINE_METADATA_ABSENT")
+    reject(machine.get("secureCloud") is True,
+           "allocated host machine is not secure cloud",
+           "PROVIDER_MACHINE_NOT_SECURE")
+    reject(machine.get("gpuTypeId") == EXPECTED_GPU_NAME,
+           "allocated host machine GPU SKU differs",
+           "PROVIDER_MACHINE_GPU_SKU_MISMATCH")
+    reject(type(pod.get("gpuCount")) is int and pod.get("gpuCount") == 1,
+           "allocated host does not have one GPU",
+           "PROVIDER_GPU_COUNT_MISMATCH")
+    reject("cloudType" not in pod or pod.get("cloudType") == "SECURE",
+           "allocated host top-level cloud type differs",
+           "PROVIDER_TOP_LEVEL_CLOUD_TYPE_MISMATCH")
+    return observed
+
+
+def validate_admission(
+    pod: Mapping[str, Any], evidence: Mapping[str, Any],
+) -> dict[str, Any]:
+    provider_allocation = _validate_provider_allocation_shape(pod)
+    return _validate_host_runtime_contract(evidence, provider_allocation)
+
+
+def _validate_host_runtime_contract(
+    evidence: Mapping[str, Any], provider_allocation: Mapping[str, Any],
+) -> dict[str, Any]:
     name = evidence.get("gpu_name")
     memory = evidence.get("memory_mib")
     _require(name == EXPECTED_GPU_NAME,
@@ -1377,6 +1450,7 @@ def validate_admission(pod: Mapping[str, Any], evidence: Mapping[str, Any]) -> d
              "host one-GPU/CUDA/UUID admission differs")
     result = deepcopy(dict(evidence))
     result["driver_components"] = list(driver_components)
+    result["provider_allocation"] = provider_allocation
     return result
 
 
@@ -1716,21 +1790,53 @@ class StageTLifecycle:
             self._set("WATCHDOG_STARTED", "WATCHDOG_STARTED", {
                 "attempt": attempt, "pod_id": pod_id,
             })
+            admission_stage = "PROVIDER_ALLOCATION_SCHEMA"
+            provider_observation = _provider_allocation_observation(
+                allocation.response)
             try:
-                admission = self.transport.admit(
+                provider_shape = _validate_provider_allocation_shape(
+                    allocation.response)
+                admission_stage = "REMOTE_HOST_ATTESTATION"
+                host_evidence = self.transport.admit(
                     allocation, timeout_seconds=SSH_ADMISSION_TIMEOUT_SECONDS)
-                admission = validate_admission(allocation.response, admission)
+                admission_stage = "HOST_RUNTIME_CONTRACT"
+                admission = _validate_host_runtime_contract(
+                    host_evidence, provider_shape)
             except BaseException as exc:
+                failure_stage = (
+                    exc.stage if isinstance(exc, AdmissionRejected)
+                    else admission_stage)
+                failure_code = (
+                    exc.code if isinstance(exc, AdmissionRejected)
+                    else {
+                        "PROVIDER_ALLOCATION_SCHEMA":
+                            "PROVIDER_ALLOCATION_SCHEMA_REJECTED",
+                        "REMOTE_HOST_ATTESTATION":
+                            "REMOTE_HOST_ATTESTATION_FAILED",
+                        "HOST_RUNTIME_CONTRACT":
+                            "HOST_RUNTIME_CONTRACT_REJECTED",
+                    }[failure_stage])
+                failure = {
+                    "admission_failure_stage": failure_stage,
+                    "admission_failure_code": failure_code,
+                    "provider_allocation": (
+                        exc.evidence if isinstance(exc, AdmissionRejected)
+                        and exc.stage == "PROVIDER_ALLOCATION_SCHEMA"
+                        else provider_observation),
+                    "host_attestation_received":
+                        admission_stage == "HOST_RUNTIME_CONTRACT",
+                }
                 terminal = self._cleanup(
                     handle, pod_id=pod_id, reason="admission_rejected")
                 charge = self._charge_attempt(allocation, started=started)
                 self.state["attempts"][-1]["result"] = "REJECTED_DELETED"
                 self.state["attempts"][-1].update(charge)
+                self.state["attempts"][-1].update(failure)
                 self._event("ADMISSION_REJECTED_DELETED", {
                     "attempt": attempt, "harvest_succeeded":
                     terminal["harvest"]["succeeded"],
                     "error_type": type(exc).__name__,
-                    **charge,
+                    **failure, **charge,
                 })
                 if attempt == MAX_ALLOCATION_ATTEMPTS:
                     self._set("ADMISSION_REJECTED", "ATTEMPTS_EXHAUSTED", {})

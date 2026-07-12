@@ -21,6 +21,32 @@ ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "scripts/run_powered_v13_stage_t_lifecycle.py"
 
 
+PRESERVED_CREATE_RESPONSE_SHAPE = {
+    "id": "pod_stage_t_preserved",
+    "costPerHr": "1.2",
+    "gpuCount": 1,
+    "machine": {
+        "dataCenterId": "CA-MTL-1",
+        "gpuTypeId": "NVIDIA A100 80GB PCIe",
+        "secureCloud": True,
+        "supportPublicIp": True,
+    },
+    "publicIp": "203.0.113.8",
+}
+
+
+def _provider_response(pod_id: str, **extra):
+    response = deepcopy(PRESERVED_CREATE_RESPONSE_SHAPE)
+    response["id"] = pod_id
+    response.update(extra)
+    return response
+
+
+@pytest.fixture
+def preserved_create_response():
+    return deepcopy(PRESERVED_CREATE_RESPONSE_SHAPE)
+
+
 class Clock:
     def __init__(self):
         self.value = 1_000_000
@@ -31,13 +57,15 @@ class Clock:
 
 
 class FakeProvider:
-    def __init__(self, clock, actions=("success",), log=None):
+    def __init__(self, clock, actions=("success",), log=None,
+                 response_mutation=None):
         self.clock = clock
         self.actions = list(actions)
         self.log = log if log is not None else []
         self.creates = 0
         self.active = []
         self.deleted = set()
+        self.response_mutation = response_mutation
 
     def safe_snapshot(self):
         self.log.append("snapshot")
@@ -53,10 +81,9 @@ class FakeProvider:
         if action == "ambiguous":
             raise OSError("connection reset after POST")
         pod_id = f"pod_stage_t_{self.creates}"
-        response = {
-            "id": pod_id, "costPerHr": "1.2", "cloudType": "SECURE",
-            "gpuCount": 1,
-        }
+        response = _provider_response(pod_id)
+        if self.response_mutation is not None:
+            self.response_mutation(response)
         self.active.append(pod_id)
         return life.Allocation(
             response=response,
@@ -196,10 +223,12 @@ def _run(tmp_path, *, provider_actions=("success",), admissions=(True,),
          sync_error=False, launch_error=False,
          terminal_status="TERMINATED_HARVESTED", reason="job_complete",
          dual=True, death=None, start_errors=(), terminal_advance_seconds=0,
-         prior_stage_t_provider_seconds=0):
+         prior_stage_t_provider_seconds=0, provider_response_mutation=None):
     clock = Clock()
     log = []
-    provider = FakeProvider(clock, provider_actions, log)
+    provider = FakeProvider(
+        clock, provider_actions, log,
+        response_mutation=provider_response_mutation)
     transport = FakeTransport(
         admissions, sync_error=sync_error, launch_error=launch_error, log=log)
     supervisor = FakeSupervisor(
@@ -287,6 +316,11 @@ def test_admission_reject_is_positively_deleted_before_attempt_two(tmp_path):
     assert Decimal(result["observed_stage_t_spend_usd"]) > 0
     first, second = result["attempts"]
     assert first["attempt_provider_seconds"] > 0
+    assert first["admission_failure_stage"] == "REMOTE_HOST_ATTESTATION"
+    assert first["admission_failure_code"] == \
+        "REMOTE_HOST_ATTESTATION_REJECTED"
+    assert first["host_attestation_received"] is False
+    assert first["provider_allocation"]["machine_secure_cloud"] is True
     second_record = json.loads((
         runner.root / "attempt-2" / "watchdog.json").read_text())
     assert second_record["prior_stage_t_provider_seconds"] == \
@@ -295,6 +329,35 @@ def test_admission_reject_is_positively_deleted_before_attempt_two(tmp_path):
         3300 - first["observed_stage_t_provider_seconds"]
     assert result["observed_stage_t_provider_seconds"] == \
         second["observed_stage_t_provider_seconds"]
+
+
+def test_provider_schema_rejection_persists_safe_stage_code_and_shape(tmp_path):
+    def wrong_sku(response):
+        response["machine"]["gpuTypeId"] = "NVIDIA H100 80GB HBM3"
+        response["env"] = ["DO_NOT_PERSIST_THIS_SECRET"]
+
+    runner, provider, _transport, supervisor, _log = _run(
+        tmp_path, provider_actions=("success", "success"),
+        provider_response_mutation=wrong_sku)
+    result = runner.run()
+    assert result["status"] == "ADMISSION_REJECTED"
+    assert provider.creates == 2 and supervisor.cleanup_requests == 2
+    rejected = [
+        event for event in result["events"]
+        if event["kind"] == "ADMISSION_REJECTED_DELETED"]
+    assert len(rejected) == 2
+    for event in rejected:
+        evidence = event["evidence"]
+        assert evidence["admission_failure_stage"] == \
+            "PROVIDER_ALLOCATION_SCHEMA"
+        assert evidence["admission_failure_code"] == \
+            "PROVIDER_MACHINE_GPU_SKU_MISMATCH"
+        assert evidence["host_attestation_received"] is False
+        assert evidence["provider_allocation"]["machine_gpu_type_id"] == \
+            "NVIDIA H100 80GB HBM3"
+        assert "env" not in evidence["provider_allocation"]
+        assert "error_message" not in evidence
+        assert "DO_NOT_PERSIST_THIS_SECRET" not in json.dumps(evidence)
 
 
 def test_caller_prior_provider_seconds_reduce_first_attempt_window(tmp_path):
@@ -668,10 +731,52 @@ def _valid_admission_evidence():
     }
 
 
-def test_admission_requires_exact_cuda13_a100_80gb_driver_contract():
-    pod = {"cloudType": "SECURE", "gpuCount": 1}
+def test_admission_accepts_preserved_nested_secure_allocation_shape(
+        preserved_create_response):
+    pod = preserved_create_response
+    assert "cloudType" not in pod
     observed = life.validate_admission(pod, _valid_admission_evidence())
     assert observed["driver_components"] == [580, 159, 3]
+    assert observed["provider_allocation"] == {
+        "schema": "runpod-secure-allocation-shape-v1",
+        "machine_present": True,
+        "machine_secure_cloud": True,
+        "machine_gpu_type_id": "NVIDIA A100 80GB PCIe",
+        "gpu_count": 1,
+        "top_level_cloud_type_present": False,
+        "top_level_cloud_type": None,
+    }
+
+    with_top_level = deepcopy(pod)
+    with_top_level["cloudType"] = "SECURE"
+    assert life.validate_admission(
+        with_top_level, _valid_admission_evidence())["provider_allocation"][
+            "top_level_cloud_type"] == "SECURE"
+
+
+@pytest.mark.parametrize(("mutation", "code"), [
+    (lambda pod: pod.pop("machine"), "PROVIDER_MACHINE_METADATA_ABSENT"),
+    (lambda pod: pod["machine"].pop("secureCloud"),
+     "PROVIDER_MACHINE_NOT_SECURE"),
+    (lambda pod: pod["machine"].update({"secureCloud": False}),
+     "PROVIDER_MACHINE_NOT_SECURE"),
+    (lambda pod: pod["machine"].update({"gpuTypeId": "NVIDIA H100 80GB HBM3"}),
+     "PROVIDER_MACHINE_GPU_SKU_MISMATCH"),
+    (lambda pod: pod.update({"gpuCount": 2}),
+     "PROVIDER_GPU_COUNT_MISMATCH"),
+    (lambda pod: pod.update({"cloudType": "COMMUNITY"}),
+     "PROVIDER_TOP_LEVEL_CLOUD_TYPE_MISMATCH"),
+])
+def test_admission_rejects_missing_false_or_wrong_nested_provider_shape(
+        preserved_create_response, mutation, code):
+    mutation(preserved_create_response)
+    with pytest.raises(life.AdmissionRejected) as caught:
+        life.validate_admission(
+            preserved_create_response, _valid_admission_evidence())
+    assert caught.value.stage == "PROVIDER_ALLOCATION_SCHEMA"
+    assert caught.value.code == code
+    assert caught.value.evidence["schema"] == \
+        "runpod-secure-allocation-shape-v1"
 
 
 @pytest.mark.parametrize("changes, message", [
@@ -683,7 +788,7 @@ def test_admission_requires_exact_cuda13_a100_80gb_driver_contract():
     ({"cuda_available": False}, "one-GPU/CUDA/UUID"),
 ])
 def test_admission_rejects_wrong_paid_host(changes, message):
-    pod = {"cloudType": "SECURE", "gpuCount": 1}
+    pod = _provider_response("pod_stage_t_1")
     evidence = {**_valid_admission_evidence(), **changes}
     with pytest.raises(life.V13LifecycleError, match=message):
         life.validate_admission(pod, evidence)
@@ -714,8 +819,7 @@ class FakePodModule:
         self.calls.append(("create", gpu))
         if self.create_error:
             raise self.create_error
-        value = {"id": "pod_stage_t_1", "costPerHr": "1.2",
-                 "cloudType": "SECURE", "gpuCount": 1}
+        value = _provider_response("pod_stage_t_1")
         self.state_path.write_text(json.dumps(value))
         return value
 
@@ -777,10 +881,8 @@ class AmbiguousCreatePodModule:
 
     def create(self, gpu):
         assert gpu == "NVIDIA A100 80GB PCIe"
-        pod = {
-            "id": "pod_recovered", "name": os.environ["SC_POD_NAME"],
-            "costPerHr": "1.2", "cloudType": "SECURE", "gpuCount": 1,
-        }
+        pod = _provider_response(
+            "pod_recovered", name=os.environ["SC_POD_NAME"])
         self.active.append(pod)
         if self.raise_after_create:
             raise OSError("response lost after POST")
@@ -807,6 +909,13 @@ def test_runpod_adapter_reconciles_and_deletes_attributable_ambiguous_create(
     assert evidence["status"] == "ATTRIBUTED_DELETED"
     assert evidence["per_pod_404_observed"] is True
     assert evidence["active_inventory_absent_observed"] is True
+    inspection = evidence["new_pod_inspections"][0]
+    assert inspection["secure_one_gpu"] is True
+    assert inspection["provider_allocation"]["machine_secure_cloud"] is True
+    assert inspection["provider_allocation"]["machine_gpu_type_id"] == \
+        "NVIDIA A100 80GB PCIe"
+    assert inspection["provider_allocation"][
+        "top_level_cloud_type_present"] is False
 
 
 def test_runpod_adapter_zero_new_pods_is_fatal_ambiguous_without_retry(tmp_path):
@@ -840,10 +949,8 @@ def test_runpod_adapter_polls_eventual_inventory_then_deletes_nonce_match(tmp_pa
     def sleep(seconds):
         now[0] += max(seconds, 1)
         if not module.active:
-            module.active.append({
-                "id": "pod_eventual", "name": os.environ["SC_POD_NAME"],
-                "costPerHr": "1.2", "cloudType": "SECURE", "gpuCount": 1,
-            })
+            module.active.append(_provider_response(
+                "pod_eventual", name=os.environ["SC_POD_NAME"]))
 
     # The module's create adds immediately; override it to model eventual
     # provider visibility after the POST-side exception.
@@ -868,12 +975,9 @@ def test_runpod_adapter_deletes_all_nonce_matches_but_not_concurrent_pod(tmp_pat
     def create(_gpu):
         name = os.environ["SC_POD_NAME"]
         module.active.extend([
-            {"id": "pod_owned_1", "name": name, "costPerHr": "1.2",
-             "cloudType": "SECURE", "gpuCount": 1},
-            {"id": "pod_owned_2", "name": name, "costPerHr": "1.2",
-             "cloudType": "SECURE", "gpuCount": 1},
-            {"id": "pod_other", "name": "someone-else", "costPerHr": "1.2",
-             "cloudType": "SECURE", "gpuCount": 1},
+            _provider_response("pod_owned_1", name=name),
+            _provider_response("pod_owned_2", name=name),
+            _provider_response("pod_other", name="someone-else"),
         ])
         raise OSError("response lost")
 
@@ -944,10 +1048,8 @@ def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
         import_report_path="import-report.json",
         import_report_sha256=life.file_sha256(report),
         run_command=run, sleep=lambda _seconds: None)
-    allocation = life.Allocation(response={
-        "id": "pod_stage_t_1", "costPerHr": "1.2",
-        "cloudType": "SECURE", "gpuCount": 1,
-    }, state_bytes=b"{}")
+    allocation = life.Allocation(
+        response=_provider_response("pod_stage_t_1"), state_bytes=b"{}")
     admission = transport.admit(allocation, timeout_seconds=420)
     assert life.validate_admission(allocation.response, admission)[
         "driver_components"] == [580, 159, 3]
