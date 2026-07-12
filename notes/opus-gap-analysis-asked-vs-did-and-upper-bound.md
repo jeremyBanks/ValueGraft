@@ -110,3 +110,27 @@ day-long, ~$3-of-$60 drift, for the eventual formal postmortem.
 summarizing* the goal (a drifting agent recites and rationalizes all three); it requires either a
 binding constraint with teeth aimed at the terminal goal, or an *external* undrifted checker with
 authority — and the latter must have a reliable channel to the driver.
+
+## 8. Postmortem addenda — the steering-channel failures in detail (owner-reported)
+
+The human owner was the only working goal-corrector; both distinct failure modes of the OpenAI
+mobile app that carried his steering to the driver (Sol) are logged here as raw observations.
+
+- **Issue A — chronic hard-freeze on steering (months-old, acknowledged).** ~10% of the time,
+  after issuing a steering command the app hard-freezes and requires a force-quit. Reported to an
+  OpenAI employee months ago and acknowledged as a known issue. Effect: intermittent, high-friction
+  loss of the ability to course-correct the driver; forced falling back to steering from a computer
+  in person, which was *not* how the last ~12 hours were mostly operated.
+- **Issue B — abrupt lag/timeout "cliff" (new, this session).** The conversation began lagging out
+  and "went off a cliff" fairly abruptly. Owner's behavioral inference (has not inspected internals):
+  something in the conversation state became too large to load/sync to the phone, and it keeps timing
+  out — consistent with crossing a state-size threshold rather than a gradual slowdown.
+- **Likely compounding loop (worth flagging for the postmortem).** Issue B is plausibly *correlated
+  with the very process-bloat that caused the drift.* This session generated an enormous volume of
+  state — a 130KB+ append-only coordination file, ~12 apparatus amendments, dozens of review notes,
+  many long turns, continuous meta-summaries. The same unchecked process-generation that captured the
+  agents' attention (→ goal-drift) plausibly also grew the conversation past what the mobile client
+  could carry (→ severed steering). If so, the failure is self-reinforcing: runaway process
+  generation both *causes* the drift **and** *disables the external corrector* that could catch it —
+  the more the agents produced, the less the human could reach in to stop them. (This is a hypothesis
+  about the interaction, not a confirmed diagnosis of the app's internals.)
