@@ -6,6 +6,43 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 
 ---
 
+> ## 2026-07-12 P01/P02 PRECISION SCREEN — exact fixed-computation reproduction, no recovery
+>
+> P01 yielded a post-run matched repeat-1 NF4/bfloat16 screen after its cap
+> interrupted bfloat16 repeat 2. P02 was then run once under a frozen,
+> prospectively specified conditional-reproduction protocol on a second A100
+> host and completed both repeats of both regimes. Every normalized common
+> scalar and generation field compared between P01 and P02 matched exactly, all
+> cross-run scalar deltas were `0.0`, both unavailable-placebo diagnostics
+> failed at the same layer/row, and both within-regime P02 repeats were exact.
+> The hosts had different GPU UUIDs and adjacent driver patches. This is strong
+> fixed-computation reproducibility evidence under the two observed hosts, not
+> a second semantic case, an estimate of sampling variability, or universal
+> hardware/driver invariance.
+>
+> The reproduced pattern is negative/bounding. Oracle-to-fresh focal damage was
+> `22.100760` (NF4) and `23.655817` (bfloat16). N/R2 value-only correct-minus-
+> wrong source movement was small (`+0.103109`, `+0.039400`) and nonselective:
+> the corresponding nonfocal movement was larger (`+0.161394`, `+0.041535`),
+> giving signed selectivity `-0.058285` and `-0.002135`. None of the five focal
+> cells in either regime generated the correct target `partner beta`; correct
+> and wrong sources led to the same wrong literal answer. Correct-target
+> movement itself was adverse in NF4 (`-0.247894`) and favorable but uncontrolled
+> in bfloat16 (`+0.193527`). Every frozen placebo was unavailable, which is
+> missing control evidence rather than a null placebo.
+>
+> The exact NF4/bfloat16 differences are stable one-fixture runtime signatures,
+> but the axis bundles checkpoint weight representation and linear-kernel
+> implementation; KV-cache storage is bfloat16 in both regimes. Therefore the
+> screen licenses no semantic-transfer, efficacy, quantization-causality,
+> population, or agent claim. P02 does not reopen formal v12, and another paid
+> execution of this protocol has no useful decision value for the current
+> paper. Canonical interpretation:
+> `notes/20260712AA-sol-p02-final-interpretation-and-fable-disposition.md`.
+> Exact comparator:
+> `results/precision_probe_p01_p02_comparison/precision-probe-p01-p02-exact-comparison_Qwen3-30B-A3B-Instruct-2507_20260712T120014514457Z.json`
+> (SHA-256 `588229df5f4ca5c8613dc4f21564043214bfe889fc4dba176300ace0435442be`).
+
 > ## ⚠ 2026-07-12 FINAL V12 STATUS — formal stop; one nonauthorizing diagnostic
 >
 > Formal coherent-state v12 stopped under the literal written path-control

@@ -1,5 +1,51 @@
 # STATE.md — session handoff / current state
 
+## CURRENT TRUTH (2026-07-12, post-P02) — paid collection closed; paper/accounting active
+
+No RunPod pod is active. P02 completed its frozen matched NF4/bfloat16 2-by-2
+design on a second A100 host, persisted every render and outcome package, passed
+all operational/integrity gates, and was deleted. Its scientific result is a
+prospectively specified **conditional reproduction**, not a new independent
+fixture: the choice to run P02 followed the interesting P01 screen, while the
+P02 apparatus and analysis were frozen before P01 values were opened.
+
+Every normalized common scientific field compared between P01 and P02 was
+exactly equal. All ten requested scalar estimands matched in both regimes, all
+P02-minus-P01 scalar deltas were `0.0`, the focal/nonfocal five-cell generation
+payloads matched, and both unavailable-placebo diagnostics failed at the same
+layer/row. Both repeats within each P02 regime were also exactly equal. P01 and
+P02 used different physical A100 UUIDs and adjacent driver patches
+(`580.159.04` and `580.159.03`). This establishes reproducibility of the fixed
+computation under the two observed hosts; it does not establish universal
+hardware invariance or add independent population information.
+
+The scientific interpretation remains negative/bounding. Compaction caused
+roughly 22--24 nats of focal damage, no graft generated the correct target
+`partner beta`, and the signed value-only source selectivity was negative in
+both regimes (`-0.058285` NF4; `-0.002135` bfloat16) because nonfocal movement
+equaled or exceeded focal movement. Correct-target movement was adverse in NF4
+and modestly favorable in bfloat16. Every norm-matched placebo remained
+unavailable. The NF4/bfloat16 comparison bundles weight representation and
+linear-kernel implementation while both KV caches use bfloat16. The data
+license no semantic-transfer, efficacy, quantization-causality, population, or
+agent claim, and no further paid run is warranted for the current paper.
+
+Canonical machine evidence is in `results/precision_probe_p01_analysis/`,
+`results/precision_probe_p02_analysis/`, and
+`results/precision_probe_p01_p02_comparison/`. Final interpretation is
+`notes/20260712AA-sol-p02-final-interpretation-and-fable-disposition.md`.
+Provider creation-rate cost for P02 was `$1.647922222222222`; the provisional
+prelaunch-to-quiescent balance delta is `$1.6823556332` and remains a
+nonadditive cross-check until final reconciliation. The observed quiescent
+balance was `$57.1287946692`, the pod later returned provider 404, and zero
+active pods were observed.
+
+Active work is now: update the canonical paper from current facts, run the full
+Fable/Codex/methods-provenance review stack, regenerate only conversation notes
+affected by the corrected summarizer logic, then freeze and publish the final
+end-to-end token/money audit. Codex and Claude workload totals are still moving
+while that model-assisted work continues and must not be presented as final.
+
 ## CURRENT TRUTH (2026-07-12, post-e01) — formal v12 stopped; diagnostic complete
 
 No pod is active. Formal v12 is terminal. The literal written §14.1 rule stops

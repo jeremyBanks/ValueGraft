@@ -667,3 +667,50 @@ Evidence: `results/coherent_canary_v12_budget/coherent_canary_v12_path_control_s
 `results/coherent_canary_v12_harvest/coherent-canary-v12-harvest-e01-exact-subject-20260712T040158Z.json`,
 `notes/2026071286-fable-e01-diagnostic-interpretation.md`, and
 `notes/2026071287-sol-e01-diagnostic-final-interpretation.md`.
+
+## P01/P02 precision-screen disposition (2026-07-12)
+
+- **Keep P01 explicitly post-run and partial.** Its cap-interrupted 2-by-2 did
+  not complete, but its NF4 repeat-1/repeat-2 and bfloat16 repeat-1 packages are
+  technically valid descriptive artifacts. The matched repeat-1 comparison was
+  reconstructed only after the terminal interruption and cannot be narrated as
+  preregistered or complete.
+
+- **Classify P02 as a conditional reproduction.** The P02 apparatus and
+  analyzer were frozen before P01 outcome values were opened, but the decision
+  to spend on P02 was made after P01 displayed an interesting one-fixture
+  pattern. P02 therefore tests prospective reproduction of that pattern; it is
+  neither an outcome-blind discovery run nor an independent semantic fixture.
+
+- **Treat exact agreement as fixed-computation portability evidence only.** An
+  independent comparator observed exact equality of every specified common
+  scalar, generation payload, change vector, and unavailable-placebo diagnostic
+  across P01 and P02, plus exact within-regime repeats in P02. The two executions
+  used distinct A100 UUIDs and adjacent driver patches. Report concordance under
+  those observed conditions, never universal determinism, whole-package byte
+  identity, increased semantic sample size, or statistical repeat evidence.
+
+- **Close positive claim families.** Roughly 22--24 nats of damage remained;
+  no graft generated the correct target; value-only source movement was
+  nonselective; correct and wrong source states produced the same wrong answers;
+  and all placebos were unavailable. The NF4/bfloat16 axis also bundles weight
+  representation with linear-kernel implementation. No semantic-transfer,
+  efficacy, quantization-causality, population, or agent claim is authorized.
+
+- **Stop paid execution for this paper.** A third execution of the unchanged
+  one-fixture protocol would add little decision value after exact reproduction.
+  Informative successors require a new preregistration, multiple independent
+  fixtures, and a control construction demonstrated feasible on actual bf16
+  geometry. The no-result-driven-extension rule was followed: no P03 launched.
+
+- **Keep provider accounting nonadditive until final reconciliation.** P02's
+  creation-rate calculation is `$1.647922222222222`. The provisional
+  prelaunch-to-quiescent balance delta is `$1.6823556332`; it is a cross-check,
+  not a second charge to add. Final project accounting occurs only after the
+  last model-assisted paper/summarization action.
+
+Evidence:
+`results/precision_probe_p01_analysis/precision-probe-p01-postrun-partial-descriptive_Qwen3-30B-A3B-Instruct-2507_20260712T100530891850Z.json`,
+`results/precision_probe_p02_analysis/precision-probe-p02-independent-analysis_Qwen3-30B-A3B-Instruct-2507_20260712T114104839688Z.json`,
+`results/precision_probe_p01_p02_comparison/precision-probe-p01-p02-exact-comparison_Qwen3-30B-A3B-Instruct-2507_20260712T120014514457Z.json`, and
+`notes/20260712AA-sol-p02-final-interpretation-and-fable-disposition.md`.
