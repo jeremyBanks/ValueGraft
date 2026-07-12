@@ -132,7 +132,7 @@ Several earlier headline claims from this stratum are void or retired, and we li
 
 The strongest surviving performance lead in the repository is a **likelihood proxy on historical coding-agent trajectories**, and we are careful to describe it as exactly that.
 
-**Setup.** The source paper describes the released 491 SWE-Gym/OpenHands trajectories as successful, rejection-sampled rollouts from `gpt-4o-2024-08-06` and `claude-3-5-sonnet-20241022`; the local ignored/untracked parquet preserves only a `messages` column, so row-level generator attribution and the immutable upstream revision are unavailable. The 30B subject did not generate the trajectory bodies. It generated a brief compaction summary; unlike the legacy stratum, the source state used by the graft was the *actual generation-mutated snapshot*. The intervention combined summary and retained-tail values. A layer map (α = 1 on layers 12–17 and 30–35) was selected on 41 fresh-pool trajectories, evaluated on 57 disjoint fresh trajectories, and partially confirmed on 45 of a planned 75 original-pool trajectories. The metric is teacher-forced mean token log-probability of the *historically demonstrated next action*.
+**Setup.** The source paper describes the released 491 SWE-Gym/OpenHands trajectories as successful, rejection-sampled rollouts from `gpt-4o-2024-08-06` and `claude-3-5-sonnet-20241022`; the local ignored/untracked parquet preserves only a `messages` column, so row-level generator attribution and the immutable upstream revision are unavailable. The 30B subject did not generate the trajectory bodies. It generated a brief compaction summary; unlike the legacy stratum, the source state used by the graft was the *actual generation-mutated snapshot*. The intervention combined summary and retained-tail values. A layer map (α = 1 on layers 12–17 and 30–35) was selected on 41 fresh-pool trajectories, evaluated on 57 disjoint fresh trajectories, and partially confirmed on 45 of a planned 75 original-pool trajectories. The metric is teacher-forced mean token log-probability of the *historically demonstrated next action*: the model scores a fixed saved continuation rather than sampling an answer, in natural-log units per target token (nats/token).
 
 **The fixed scalar under the brief summary.** Two runs scored the same original 75 IDs under the same brief-summary request but different prefill schedules, so they are not repeats and must not be averaged. The legacy single-call run gives +0.0156 nats/token, nominal 95% bootstrap CI [+0.0049, +0.0271]; the later 4,096-token-chunked run gives +0.0133 [+0.0016, +0.0263]. Summary-token counts differ for 64/75 IDs (t0001: 84 versus 131); the paired chunked-minus-single-call graft-effect contrast is −0.0023 [−0.0110, +0.0065], an apparatus contrast rather than an isolated schedule effect because the summaries and downstream states were regenerated.
 
@@ -158,7 +158,9 @@ The 102 rows are out-of-fitting *for this layer map*, but they are not a pristin
 - A fixed scalar under realistic summaries showed no detected average lift (+0.0006 [−0.0136, +0.0146], n = 75), and the selected map was never tested there.
 - Dataset provenance is partially unpreserved: the local `swegym.parquet` hashes `ea4bf37de020e165c5210bedddeef523d8834a89a35a8c65fec24f76f0eae4f1`, but its immutable upstream revision, row-level generator attribution, and per-trajectory generated summary text/hashes were not retained.
 
-Several alternatives fit the selected-map likelihood movement. Layer selection may change generic confidence or calibration; the combined tail+summary intervention does not identify where the signal lives; a teacher demonstration measures imitation likelihood rather than correctness; pool composition may explain the heterogeneous scalar result; and without a map-matched delta control, content-specific recovery cannot be separated from layer-specific perturbation. The structural-match wash supplies no corroborating action-level movement.
+The selected-map lead therefore has no demonstrated bearing on ordinary deployed compaction: it appears only under the intentionally detail-stripping brief request, while the realistic-summary scalar is null and the selected map was not run in that condition.
+
+Several alternatives fit the selected-map likelihood movement. Layer selection may change generic confidence or calibration; a teacher demonstration measures imitation likelihood rather than correctness; pool composition may explain the heterogeneous scalar result; and without a map-matched delta control, content-specific recovery cannot be separated from layer-specific perturbation. The combined tail+summary intervention also does not identify where the signal lives. In particular, copying full-history-conditioned values for verbatim retained-tail text could create the entire movement without recovering anything from the compacted-away region; a tail-only ablation is the first required decomposition. The structural-match wash supplies no corroborating action-level movement.
 
 The licensed sentence is: *a selected-map, demonstrated-next-action likelihood lead of about +0.013 nats/token on rows not used to fit the map, without a matched placebo, executed action, or task-success endpoint.* It is a reason the question stays open; it is not coding-agent improvement.
 
@@ -172,7 +174,7 @@ The coherent-state v10/v11 effort — a preregistered assay with local technical
 
 ### 6.2 v12: the same-visible-text design
 
-The final canary, v12, asked the cleanest version of the question. Two histories — one **correct**, one **minimally counterfactual** — each produce KV state for the *same fixed neutral carrier text*, and a **fresh** arm re-encodes that same carrier text in a position-preserving gapped destination. Within a fixed replay schedule and arm construction, the visible text downstream of the histories is identical, so arm differences must be mediated by the retained state. The primary semantic contrast is correct-history versus wrong-history state (D); correct-history versus fresh is the preregistered within-assay recovery contrast (U), not evidence of practical utility. Full K+V and value-only transplants are separate families, and the intervention operates at matched positions with no re-rotation of quantized keys (a hard-won requirement; see §9, item 4).
+The final canary, v12, asked the cleanest version of the question. Two histories — one **correct**, one **minimally counterfactual** — each produce KV state for the *same fixed neutral carrier text*, and a **fresh** arm re-encodes that same carrier text in a position-preserving gapped destination. Within a fixed replay schedule and arm construction, the visible text downstream of the histories is identical, so arm differences must be mediated by the retained state as computed under that schedule. The primary semantic contrast is correct-history versus wrong-history state (D); correct-history versus fresh is the preregistered within-assay recovery contrast (U), not evidence of practical utility. Full K+V and value-only transplants are separate families, and the intervention operates at matched positions with no re-rotation of quantized keys (a hard-won requirement; see §9, item 4).
 
 The carrier was not a naturally generated summary. The exact request was `Write the fixed neutral handoff note for the next assistant. Output only that note.` The forced assistant note was:
 
@@ -182,7 +184,7 @@ The exact anchor user turn was `Acknowledge receipt of this handoff without addi
 
 Three transplant regions were defined: R1 (carrier content), R2 (adds the carrier close plus the anchor user turn and assistant-generation header), and R3 (adds the fixed acknowledgment content). **R2 alone was primary.** The N-schedule grid crossed key source × value source over {Fresh, Correct, Wrong}: FF, FC, FW, CF, CC, CW, WF, WC, WW; P evaluated CC, WW, FC, and FW at R2. All cells, regions, and schedules are correlated views of **one case** — they add perspectives, not sample size.
 
-The test case, e01, was an engineered fixed transcript authored by an independent Codex subagent. A later additive provenance correction binds the literal author/reviewer sessions to `gpt-5.6-sol`, `xhigh`, via session IDs and rollout hashes. Its sole causal input changes from a 6:40 rollback interval to 10:40; downstream statements were coherently updated to apply the explicit rule, so the two histories also state the resulting `partner beta` versus `staff ring` decision. An unchanged nonfocal probe (correct `21 days`, counter-answer `30 days`) serves as the selectivity control. Because the focal answer was explicitly resolved and repeated before the carrier, this fixture can detect retained resolved or lexical target state; it is not a test of recovering an unstated computation.
+The test case, e01, was an engineered fixed transcript authored in a separate Codex session. A later additive provenance correction binds the literal author and reviewer sessions to the same `gpt-5.6-sol`, `xhigh` model family via session IDs and rollout hashes; separation was session-level, not model-family independence. Its sole causal input changes from a 6:40 rollback interval to 10:40; downstream statements were coherently updated to apply the explicit rule, so the two histories also state the resulting `partner beta` versus `staff ring` decision. An unchanged nonfocal probe (correct `21 days`, counter-answer `30 days`) serves as the selectivity control. Because the focal answer was explicitly resolved and repeated before the carrier, this fixture can detect retained resolved or lexical target state; it is not a test of recovering an unstated computation.
 
 **Exact subject and key runtime fields** (complete fingerprint in the raw artifact): `Qwen/Qwen3-30B-A3B-Instruct-2507`, revision `0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe`, bf16, eager attention, on an accepted A100 80GB PCIe host; technical-run commit `3b3539f6`, Phase-A commit `139d621e`, treatment-execution commit `cbdfa481`; runtime fingerprint `b6158b989b0b467c46589f3ecbe69acba88645d4cd193dd23d925e2e4cd69484`.
 
@@ -192,9 +194,9 @@ The test case, e01, was an engineered fixed transcript authored by an independen
 
 ### 7.1 A prose/code conflict at the path-control gate
 
-V12's preregistration required a passing path control before any treatment: minimal persisted edits (measured in units of last place, ULP) must demonstrably propagate to the readout. The frozen prose said to stop at the **first** ULP count at which both persisted edits differed measurably from fresh. The sealed code, however, continued until both edits also moved in the **intended signed directions**. The exact cells exposed the divergence:
+V12's preregistration required a passing path control before any treatment: minimal persisted edits (measured in units of last place, ULP) must demonstrably propagate to the frozen downstream margin `log p(approve) − log p(deny)`. The frozen prose said to stop at the **first** ULP count at which both persisted edits differed measurably from fresh. The sealed code, however, continued until both edits also moved the margin in the **intended signed directions**. The exact cells exposed the divergence:
 
-| ULP | Oriented + movement | Oriented − movement | Sealed-code verdict |
+| ULP | + edit Δmargin (nats) | − edit Δmargin (nats) | Sealed-code verdict |
 |---:|---:|---:|---|
 | 1 | 0.0 | +0.5 | fail |
 | 2 | +0.25 | −0.25 | fail |
@@ -206,7 +208,7 @@ The status sequence is therefore: (1) design and rule frozen; (2) path-control p
 
 ### 7.2 Adverse natural calibration
 
-Independently, the frozen natural calibration was adverse. The green transplant recovered −3.6% and the amber transplant 29.8% of their respective full-oracle margin gaps, both below the preregistered 50% reference; the green transplant slightly worsened its already-green fresh margin, and both transplanted cells still freely generated `approve`. The same-visible-text green-minus-amber transplant contrast nevertheless moved 6.5 margin units in the source-history direction, so this was adverse evidence for large bidirectional answer recovery, not a zero-channel result. A path control or calibration establishes only the behavior it measures; neither establishes semantic validity.
+Independently, the frozen natural calibration was adverse. On this one fixed calibration fixture, the green transplant recovered −3.6% and the amber transplant 29.8% of their respective full-oracle margin gaps, both below the preregistered 50% reference; the green transplant slightly worsened its already-green fresh margin, and both transplanted cells still freely generated `approve`. The same-visible-text green-minus-amber transplant contrast nevertheless moved 6.5 margin units in the source-history direction, so this was adverse evidence for large bidirectional answer recovery, not a zero-channel result. A path control or calibration establishes only the behavior it measures; neither establishes semantic validity.
 
 ---
 
@@ -232,10 +234,10 @@ For state source `X`, let `Y(X) = mean_lp(correct target | X) − mean_lp(wrong 
 ### 8.2 Reading the table honestly
 
 - **Full K+V failed its own criteria.** At the primary N/R2 cell, nonfocal movement (+0.245) exceeded focal movement (+0.097), and the correct target worsened (H+ = −0.131).
-- **Value-only N/R2 is the one internally favorable cell**: focal movement +0.175 with essentially zero nonfocal movement (−0.00007), and the correct target improving.
+- **Value-only N/R2 is the one internally favorable primary-region treatment cell**: focal movement +0.175 with essentially zero nonfocal movement (−0.00007), and the correct target improving. N/R1 full K+V also has favorable signs, but only outside the primary region and without a consistent family pattern.
 - **The effect is schedule-sensitive.** Value-only D focal collapsed from +0.1745 under N to +0.0210 under P. Worse, at token level under P, the *first* `partner`-versus-`staff` choice token moved in the **wrong** direction (−0.1875); only the conditional second token (+0.2296) made the phrase mean slightly positive. Since neither N nor P is native generation, we cannot say which — if either — reflects live-agent state.
-- **The surrounding cells do not corroborate.** R1, R3, key-only, and crossed cells form no coherent pattern around the favorable cell.
-- **The recovered fraction is tiny.** Fresh re-encoding of the carrier cost 22.298 nats of focal margin and 22.291 nats of correct-target log-probability relative to the full-history oracle. The best value-only cell recovered 0.81% and 4.24% of that damage, respectively.
+- **The surrounding cells do not corroborate a stable family/region mechanism.** The isolated favorable-looking N/R1 full-K+V cell, adverse cells in both families, key-only results, and crossed cells form no coherent pattern around the primary value-only result.
+- **The offset is tiny.** Fresh re-encoding of the carrier cost 22.298 nats of focal margin and 22.291 nats of correct-target log-probability relative to the full-history oracle. The best value-only cell offset 0.81% and 4.24% of that damage, respectively; this arithmetic does not identify semantic restoration.
 - **Semantic attribution is not identified.** The focal decision and target words were explicitly present before the carrier. With no working placebo and strong schedule/region/K-V interaction, the favorable cell is also compatible with deterministic lexical or resolved-state residue whose downstream effect depends on replay and boundary geometry.
 - **There was no behavioral recovery.** The result records 31 schedule/region cells but only 29 distinct scored branches because the direct-fresh `FF` branch was reused across N/R1, N/R2, and N/R3. Every distinct branch freely generated the same unrelated/wrong answers (`Ring 3`, `30 days`). R2 alone was primary; R1/R3 were descriptive. No transplant changed what the model actually said.
 - **The placebo is missing, not null.** All three planned norm-matched bf16 region controls were unavailable. At their shared first nonzero row — layer 1, fresh-destination physical row 76 — none of deterministic attempts 0–1023 produced an applied-bf16 perturbation satisfying the frozen relative-norm and cosine tolerances. This bounded failure does not prove that no representable perturbation exists; it means zero placebos were available in this run.
@@ -247,13 +249,13 @@ Integrity of the diagnostic itself is well evidenced: treatment-fresh score obje
 
 > In one execution, one fixed engineered case produced a favorable focal-over-single-nonfocal forced-logprob contrast in the N/R2 value-only cell under identical visible text.
 
-We classify this as a weak, uncontrolled, schedule-sensitive mechanistic hint. Forward-run repeatability was not tested, and one nonfocal probe does not establish general selectivity. It does not establish semantic specificity, utility, robustness, generality, or behavioral recovery. Schedule-, boundary-, or key-interaction-dependent numerical or lexical residue remains a sufficient alternative explanation.
+We classify this as a weak, uncontrolled, schedule-sensitive mechanistic hint. Forward-run repeatability was not tested, so the same-condition 30B/A100 noise floor is unknown. The movement is of the same broad order as schedule-induced shifts observed in the separate local 0.6B diagnostic, although that diagnostic is neither a replicate nor a quantitative bound for this stack. One nonfocal probe does not establish general selectivity. The result does not establish semantic specificity, utility, robustness, generality, or behavioral recovery. Schedule-, boundary-, or key-interaction-dependent numerical or lexical residue remains a sufficient alternative explanation.
 
 ---
 
 ## 9. The methodological failure catalogue
 
-We consider this the paper's most durable contribution. Each entry is a failure that occurred in this project, its consequence, and a scoped guardrail suggested by the experience. The three groups below have different epistemic status; an observed numerical hazard is not the same contribution as an operational incident. Several passed elaborate hash, test, review, and release machinery — the machinery validated the wrong literal assumption.
+We consider this the paper's most durable contribution. Each entry is a failure that occurred in this project, its consequence, and a scoped guardrail suggested by the experience. The three groups below have different epistemic status; an observed numerical hazard is not the same contribution as an operational incident. Item numbers preserve the original cross-project chronology, so they appear out of order within the epistemic groups. Several passed elaborate hash, test, review, and release machinery — the machinery validated the wrong literal assumption.
 
 ### 9.1 Measurement hazards observed on the tested stack
 
@@ -286,7 +288,7 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 
 ## 10. What is and is not established
 
-**Established by this repository (within the stated scope):**
+**Observed or established by this repository (within the stated scope):**
 
 - No detected pooled average lift for the legacy synthetic value-graft apparatus on its exact mixed target corpus (§4.2), alongside descriptive post-hoc source-block estimates with opposite signs, intervals permitting modest effects, and a prefill-reconstruction provenance defect.
 - A small, out-of-fitting, selected-map likelihood lead on demonstrated next actions in coding trajectories (§5), control-incomplete and behaviorally unresolved.
@@ -302,7 +304,7 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 - Any cross-architecture generalization.
 - Whether weight quantization or KV-cache dtype changes the effect.
 
-**Also deliberately absent:** an overall cost figure. The end-to-end money/token audit is still open and will be reported separately, distinguishing cash, subscription usage, provider credits, list-price equivalents, estimates, lower bounds, and unknowns.
+**Also deliberately absent:** an overall cost figure. The end-to-end money/token audit is still open under `results/coherent_canary_v12_budget/end_to_end_token_and_cost_audit_requirement_20260712T0307Z.md` and will be reported separately, distinguishing cash, subscription usage, provider credits, list-price equivalents, estimates, lower bounds, and unknowns.
 
 ---
 
