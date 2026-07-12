@@ -1,0 +1,38 @@
+{
+  "captured_at_utc": "2026-07-12T13:27:51.734531Z",
+  "combined_amount_usd": "0",
+  "request": {
+    "authorization_serialized": false,
+    "bucket_size": "year",
+    "official_contracts": {
+      "network_volumes": "https://docs.runpod.io/api-reference/billing/GET/billing/networkvolumes",
+      "serverless_endpoints": "https://docs.runpod.io/api-reference/billing/GET/billing/endpoints"
+    }
+  },
+  "resources": {
+    "network_volumes": {
+      "amount_usd": "0",
+      "content_type": "application/json",
+      "http_status": 200,
+      "pagination_headers": {},
+      "response_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "row_count": 0,
+      "rows": []
+    },
+    "serverless_endpoints": {
+      "amount_usd": "0",
+      "content_type": "application/json",
+      "http_status": 200,
+      "pagination_headers": {},
+      "response_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "row_count": 0,
+      "rows": []
+    }
+  },
+  "schema": "runpod_nonpod_billing_snapshot_v1",
+  "scope": "Exact provider response for non-Pod RunPod billing categories in the requested window; not evidence of cash deposits or project attribution.",
+  "window": {
+    "end_time_utc": "2026-07-12T13:27:51Z",
+    "start_time_utc": "2026-07-01T00:00:00Z"
+  }
+}
